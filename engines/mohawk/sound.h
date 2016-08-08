@@ -132,8 +132,6 @@ public:
 	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
-	void pauseSound();
-	void resumeSound();
 	bool isPlaying(uint16 id);
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
@@ -149,8 +147,6 @@ public:
 	// Riven-specific sound functions
 	void playSLST(uint16 index, uint16 card);
 	void playSLST(SLSTRecord slstRecord);
-	void pauseSLST();
-	void resumeSLST();
 	void stopAllSLST(bool fade = false);
 	static byte convertRivenVolume(uint16 volume);
 

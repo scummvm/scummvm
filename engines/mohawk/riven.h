@@ -121,6 +121,7 @@ public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
 	virtual ~MohawkEngine_Riven();
 
+	Sound *_sound;
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;

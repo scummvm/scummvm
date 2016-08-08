@@ -518,16 +518,6 @@ void Sound::stopSLSTSound(uint16 index, bool fade) {
 	_currentSLSTSounds.remove_at(index);
 }
 
-void Sound::pauseSLST() {
-	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++)
-		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, true);
-}
-
-void Sound::resumeSLST() {
-	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++)
-		_vm->_mixer->pauseHandle(*_currentSLSTSounds[i].handle, false);
-}
-
 Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
 	uint16 header = stream->readUint16BE();
 	uint16 rate = 0;
@@ -589,18 +579,6 @@ void Sound::stopSound(uint16 id) {
 			_handles[i].type = kFreeHandle;
 			_handles[i].id = 0;
 		}
-}
-
-void Sound::pauseSound() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle)
-			_vm->_mixer->pauseHandle(_handles[i].handle, true);
-}
-
-void Sound::resumeSound() {
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle)
-			_vm->_mixer->pauseHandle(_handles[i].handle, false);
 }
 
 bool Sound::isPlaying(uint16 id) {

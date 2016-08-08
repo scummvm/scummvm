@@ -59,6 +59,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_curStack = kStackUnknown;
 	_hotspots = nullptr;
 	_gfx = nullptr;
+	_sound = nullptr;
 	_externalScriptHandler = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
@@ -92,6 +93,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
+	delete _sound;
 	delete _gfx;
 	delete _console;
 	delete _externalScriptHandler;
@@ -123,6 +125,7 @@ Common::Error MohawkEngine_Riven::run() {
 		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
+	_sound = new Sound(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
