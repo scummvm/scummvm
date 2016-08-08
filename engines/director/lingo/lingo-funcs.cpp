@@ -189,25 +189,35 @@ void Lingo::func_mciwait(Common::String &s) {
 	warning("STUB: MCI wait file: %s", s.c_str());
 }
 
-void Lingo::func_goto(Common::String &frame, Common::String &movie) {
-	if (!_vm->_movies || !_vm->_movies->contains(movie)) {
-		warning("Movie %s does not exist", movie.c_str());
-		return;
-	}
+void Lingo::func_goto(Datum &frame, Datum &movie) {
+	if (movie.type != VOID) {
+		movie.toString();
 
-	_vm->_currentScore = _vm->_movies->getVal(movie);
-	_vm->_currentScore->loadArchive();
-
-	if (frame.empty())
-		return;
-
-	for (uint16 i = 0; i < frame.size(); i++) {
-		if (!Common::isDigit(frame[i])) {
-			_vm->_currentScore->setStartToLabel(frame);
+		if (!_vm->_movies || !_vm->_movies->contains(*movie.u.s)) {
+			warning("Movie %s does not exist", movie.u.s->c_str());
 			return;
 		}
+
+		_vm->_currentScore = _vm->_movies->getVal(*movie.u.s);
+		_vm->_currentScore->loadArchive();
 	}
-	_vm->_currentScore->setCurrentFrame(strtol(frame.c_str(), 0, 10));
+
+	if (!_vm->_currentScore) {
+		warning("func_goto: No score is loaded");
+		return;
+	}
+
+	if (frame.type == VOID)
+		return;
+
+	if (frame.type == STRING) {
+		_vm->_currentScore->setStartToLabel(*frame.u.s);
+		return;
+	}
+
+	frame.toInt();
+
+	_vm->_currentScore->setCurrentFrame(frame.u.i);
 }
 
 void Lingo::func_gotoloop() {

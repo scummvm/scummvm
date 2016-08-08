@@ -677,18 +677,13 @@ void Lingo::c_goto() {
 	Datum mode = g_lingo->pop();
 	Datum frame, movie;
 
-	if (mode.u.i == 1 || mode.u.i == 3)
-		frame = g_lingo->pop();
-
 	if (mode.u.i == 2 || mode.u.i == 3)
 		movie = g_lingo->pop();
 
-	frame.toString();
-	movie.toString();
+	if (mode.u.i == 1 || mode.u.i == 3)
+		frame = g_lingo->pop();
 
-	warning("c_goto(%s, %s)", frame.u.s->c_str(), movie.u.s->c_str());
-
-	//g_lingo->func_goto(frame, movie);
+	g_lingo->func_goto(frame, movie);
 }
 
 void Lingo::c_gotoloop() {
@@ -704,13 +699,28 @@ void Lingo::c_gotoprevious() {
 }
 
 void Lingo::c_play() {
-	Common::String frame((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
+	Datum mode = g_lingo->pop();
+	Datum frame, movie;
 
-	Common::String movie((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
+	if (mode.u.i == 2 || mode.u.i == 3)
+		movie = g_lingo->pop();
 
-	warning("STUB: c_play(%s, %s)", frame.c_str(), movie.c_str());
+	if (mode.u.i == 1 || mode.u.i == 3)
+		frame = g_lingo->pop();
+
+	if (frame.type == VOID) {
+		frame.u.s = new Common::String("<void>");
+		frame.type = STRING;
+	}
+	frame.toString();
+
+	if (movie.type == VOID) {
+		movie.u.s = new Common::String("<void>");
+		movie.type = STRING;
+	}
+	movie.toString();
+
+	warning("STUB: c_play(%s, %s)", frame.u.s->c_str(), movie.u.s->c_str());
 }
 
 void Lingo::c_playdone() {

@@ -301,7 +301,7 @@ public:
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
-	void func_goto(Common::String &frame, Common::String &movie);
+	void func_goto(Datum &frame, Datum &movie);
 	void func_gotoloop();
 	void func_gotonext();
 	void func_gotoprevious();
