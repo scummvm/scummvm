@@ -258,6 +258,7 @@ class EventManager {
 	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
 	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
+	void setMousePointerFromSpriteData(byte* mouseSprite); 
 
 public:
 	explicit EventManager(DMEngine *vm);
