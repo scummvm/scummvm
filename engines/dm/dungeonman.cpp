@@ -1518,17 +1518,6 @@ bool DungeonMan::f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
 }
 
 void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY) {
-	uint16 L0271_ui_SquareFirstThingIndex;
-	uint16 L0272_ui_Multiple;
-#define AL0272_ui_SquareFirstThingIndex L0272_ui_Multiple
-#define AL0272_ui_Column                L0272_ui_Multiple
-	Thing L0273_T_Thing;
-	Thing* L0274_ps_Generic = nullptr;
-	Thing* L0275_pui_Multiple = nullptr;
-#define AL0275_pT_Thing                      L0275_pui_Multiple
-#define AL0275_pui_CumulativeFirstThingCount L0275_pui_Multiple
-
-
 	if (thingToUnlink == Thing::_endOfList)
 		return;
 
@@ -1536,43 +1525,46 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 	clearFlag(tmp, 0xC000);
 	thingToUnlink = Thing(tmp);
 
+	Thing *thingPtr = nullptr;
 	if (mapX >= 0) {
-		L0274_ps_Generic = (Thing*)f156_getThingData(thingToUnlink);
-		AL0275_pT_Thing = &_g283_squareFirstThings[L0271_ui_SquareFirstThingIndex = f160_getSquareFirstThingIndex(mapX, mapY)]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
-		if ((*L0274_ps_Generic == Thing::_endOfList) && (((Thing*)AL0275_pT_Thing)->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
+		thingPtr = (Thing*)f156_getThingData(thingToUnlink);
+		uint16 firstThingIndex = f160_getSquareFirstThingIndex(mapX, mapY);
+		Thing *currThing = &_g283_squareFirstThings[firstThingIndex]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
+		if ((*thingPtr == Thing::_endOfList) && (((Thing*)currThing)->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
 			clearFlag(_g271_currMapData[mapX][mapY], k0x0010_ThingListPresent);
-			AL0272_ui_SquareFirstThingIndex = _g278_dungeonFileHeader._squareFirstThingCount - 1;
-			for (uint16 i = 0; i < AL0272_ui_SquareFirstThingIndex - L0271_ui_SquareFirstThingIndex; ++i)
-				AL0275_pT_Thing[i] = AL0275_pT_Thing[i + 1];
+			uint16 squareFirstThingIdx = _g278_dungeonFileHeader._squareFirstThingCount - 1;
+			for (uint16 i = 0; i < squareFirstThingIdx - firstThingIndex; ++i)
+				currThing[i] = currThing[i + 1];
 
-			_g283_squareFirstThings[AL0272_ui_SquareFirstThingIndex] = Thing::_none;
-			AL0275_pui_CumulativeFirstThingCount = (Thing*)_g270_currMapColCumulativeSquareFirstThingCount + mapX + 1;
-			AL0272_ui_Column = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
-			while (AL0272_ui_Column--) { /* For each column starting from and after the column containing the square where the thing is unlinked */
-				(*(uint16*)AL0275_pui_CumulativeFirstThingCount++)--; /* Decrement the cumulative first thing count */
+			_g283_squareFirstThings[squareFirstThingIdx] = Thing::_none;
+			uint16 *cumulativeFirstThingCount = _g270_currMapColCumulativeSquareFirstThingCount + mapX + 1;
+			uint16 currColumn = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
+			while (currColumn--) { /* For each column starting from and after the column containing the square where the thing is unlinked */
+				(*cumulativeFirstThingCount++)--; /* Decrement the cumulative first thing count */
 			}
-			*L0274_ps_Generic = Thing::_endOfList;
+			*thingPtr = Thing::_endOfList;
 			return;
 		}
-		if (((Thing*)AL0275_pT_Thing)->getTypeAndIndex() == thingToUnlink.toUint16()) {
-			*AL0275_pT_Thing = *L0274_ps_Generic;
-			*L0274_ps_Generic = Thing::_endOfList;
+		if (((Thing*)currThing)->getTypeAndIndex() == thingToUnlink.toUint16()) {
+			*currThing = *thingPtr;
+			*thingPtr = Thing::_endOfList;
 			return;
 		}
-		thingInList = *AL0275_pT_Thing;
+		thingInList = *currThing;
 	}
-	L0273_T_Thing = f159_getNextThing(thingInList);
-	while (L0273_T_Thing.getTypeAndIndex() != thingToUnlink.toUint16()) {
-		if ((L0273_T_Thing == Thing::_endOfList) || (L0273_T_Thing == Thing::_none)) {
-			*L0274_ps_Generic = Thing::_endOfList;
+
+	Thing currThing = f159_getNextThing(thingInList);
+	while (currThing.getTypeAndIndex() != thingToUnlink.toUint16()) {
+		if ((currThing == Thing::_endOfList) || (currThing == Thing::_none)) {
+			*thingPtr = Thing::_endOfList;
 			return;
 		}
-		L0273_T_Thing = f159_getNextThing(thingInList = L0273_T_Thing);
+		currThing = f159_getNextThing(thingInList = currThing);
 	}
-	L0274_ps_Generic = (Thing*)f156_getThingData(thingInList);
-	*L0274_ps_Generic = f159_getNextThing(L0273_T_Thing);
-	L0274_ps_Generic = (Thing*)f156_getThingData(thingToUnlink);
-	*L0274_ps_Generic = Thing::_endOfList;
+	thingPtr = (Thing*)f156_getThingData(thingInList);
+	*thingPtr = f159_getNextThing(currThing);
+	thingPtr = (Thing*)f156_getThingData(thingToUnlink);
+	*thingPtr = Thing::_endOfList;
 }
 
 int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
