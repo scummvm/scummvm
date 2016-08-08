@@ -275,19 +275,32 @@ public:
 	static void b_alert();
 	static void b_cursor();
 	static void b_printFrom();
+	static void b_showGlobals();
+	static void b_showLocals();
 
 	static void b_editableText();
 	static void b_installMenu();
 	static void b_updateStage();
 	static void b_moveableSprite();
+	static void b_puppetPalette();
+	static void b_puppetSound();
+	static void b_puppetSprite();
+	static void b_puppetTempo();
+	static void b_puppetTransition();
+	static void b_spriteBox();
+	static void b_zoomBox();
 
+	static void b_continue();
 	static void b_dontPassEvent();
 	static void b_delay();
 	static void b_do();
 	static void b_nothing();
-	static void b_continue();
 	static void b_pause();
 	static void b_playAccel();
+	static void b_quit();
+	static void b_restart();
+	static void b_shutDown();
+	static void b_startTimer();
 
 	static void b_closeDA();
 	static void b_closeResFile();
@@ -295,12 +308,8 @@ public:
 	static void b_openDA();
 	static void b_openResFile();
 	static void b_openXlib();
-
-	static void b_puppetPalette();
-	static void b_puppetSound();
-	static void b_puppetSprite();
-	static void b_puppetTempo();
-	static void b_puppetTransition();
+	static void b_showResFile();
+	static void b_showXlib();
 
 	static void b_point();
 

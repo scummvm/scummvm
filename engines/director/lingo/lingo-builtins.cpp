@@ -56,6 +56,8 @@ static struct BuiltinProto {
 	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },
 	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },
 	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },
+	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },
+	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },
 	// Control
 	{ "continue",		Lingo::b_continue,		0, 0, false },
 	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
@@ -64,11 +66,17 @@ static struct BuiltinProto {
 	{ "nothing",		Lingo::b_nothing,		0, 0, false },
 	{ "pause",			Lingo::b_pause,			0, 0, false },
 	{ "playAccel",		Lingo::b_playAccel,		-1,0, false }, // variable number of parameters
+	{ "quit",			Lingo::b_quit,			0, 0, false },
+	{ "restart",		Lingo::b_restart,		0, 0, false },
+	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },
+	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
 	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false }, // variable number of parameters
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
+	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },
+	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },
 	// Score
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
@@ -78,7 +86,9 @@ static struct BuiltinProto {
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },
 	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },
+	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },
+	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },
 	// Point
 	{ "point",	Lingo::b_point, 2, 2, true },
 	// Sound
@@ -310,6 +320,26 @@ void Lingo::b_openXlib() {
 	delete d.u.s;
 }
 
+void Lingo::b_showResFile() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_showResFile(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
+void Lingo::b_showXlib() {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	warning("STUB: b_showXlib(%s)", d.u.s->c_str());
+
+	delete d.u.s;
+}
+
 ///////////////////
 // Control
 ///////////////////
@@ -349,6 +379,23 @@ void Lingo::b_printFrom() {
 	warning("STUB: b_printFrom");
 }
 
+void Lingo::b_quit() {
+	warning("STUB: b_quit");
+}
+
+void Lingo::b_restart() {
+	warning("STUB: b_restart");
+}
+
+void Lingo::b_shutDown() {
+	warning("STUB: b_shutDown");
+}
+
+void Lingo::b_startTimer() {
+	warning("STUB: b_startTimer");
+}
+
+
 ///////////////////
 // Misc
 ///////////////////
@@ -374,6 +421,16 @@ void Lingo::b_cursor() {
 	d.toInt();
 	warning("STUB: b_cursor(%d)", d.u.i);
 }
+
+void Lingo::b_showGlobals() {
+	warning("STUB: b_showGlobals");
+}
+
+void Lingo::b_showLocals() {
+	warning("STUB: b_showLocals");
+}
+
+
 
 ///////////////////
 // Score
@@ -416,6 +473,15 @@ void Lingo::b_puppetTempo() {
 void Lingo::b_puppetTransition() {
 	warning("STUB: b_puppetTransition");
 }
+
+void Lingo::b_spriteBox() {
+	warning("STUB: b_spriteBox");
+}
+
+void Lingo::b_zoomBox() {
+	warning("STUB: b_zoomBox");
+}
+
 
 
 ///////////////////
