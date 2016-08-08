@@ -67,12 +67,18 @@ static struct BuiltinProto {
 	// Misc
 	{ "alert",	 		Lingo::b_alert,			1, 1, false },
 	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
+	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false }, // variable number of parameters
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
+	// Score
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },
-	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },
-	{ "updatestage",	Lingo::b_updatestage,	0, 0, false },
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
+	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },
+	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },
+	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },
+	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },
+	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },
+	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },
 	// Point
 	{ "point",	Lingo::b_point, 2, 2, true },
 	// Sound
@@ -346,10 +352,6 @@ void Lingo::b_printFrom() {
 ///////////////////
 // Misc
 ///////////////////
-void Lingo::b_updatestage() {
-	warning("STUB: b_updatestage");
-}
-
 void Lingo::b_ilk() {
 	Datum d = g_lingo->pop();
 	d.u.i = d.type;
@@ -373,6 +375,13 @@ void Lingo::b_cursor() {
 	warning("STUB: b_cursor(%d)", d.u.i);
 }
 
+///////////////////
+// Score
+///////////////////
+void Lingo::b_updateStage() {
+	warning("STUB: b_updateStage");
+}
+
 void Lingo::b_editableText() {
 	warning("STUB: b_editableText");
 }
@@ -385,6 +394,27 @@ void Lingo::b_installMenu() {
 void Lingo::b_moveableSprite() {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_moveableSprite(%d)", d.u.i);
+}
+
+void Lingo::b_puppetPalette() {
+	warning("STUB: b_puppetPalette");
+}
+
+void Lingo::b_puppetSound() {
+	warning("STUB: b_puppetSound");
+}
+
+void Lingo::b_puppetSprite() {
+	warning("STUB: b_puppetSprite");
+}
+
+void Lingo::b_puppetTempo() {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_puppetTempo(%d)", d.u.i);
+}
+
+void Lingo::b_puppetTransition() {
+	warning("STUB: b_puppetTransition");
 }
 
 

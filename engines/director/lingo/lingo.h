@@ -271,14 +271,15 @@ public:
 	static void b_string();
 	static void b_tan();
 
-	static void b_editableText();
-	static void b_installMenu();
-	static void b_updatestage();
 	static void b_ilk();
-	static void b_moveableSprite();
 	static void b_alert();
 	static void b_cursor();
 	static void b_printFrom();
+
+	static void b_editableText();
+	static void b_installMenu();
+	static void b_updateStage();
+	static void b_moveableSprite();
 
 	static void b_dontPassEvent();
 	static void b_delay();
@@ -294,6 +295,12 @@ public:
 	static void b_openDA();
 	static void b_openResFile();
 	static void b_openXlib();
+
+	static void b_puppetPalette();
+	static void b_puppetSound();
+	static void b_puppetSprite();
+	static void b_puppetTempo();
+	static void b_puppetTransition();
 
 	static void b_point();
 
