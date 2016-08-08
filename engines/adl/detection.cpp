@@ -32,13 +32,15 @@
 
 namespace Adl {
 
-#define GAMEOPTION_COLOR     GUIO_GAMEOPTIONS1
-#define GAMEOPTION_SCANLINES GUIO_GAMEOPTIONS2
-#define GAMEOPTION_MONO      GUIO_GAMEOPTIONS3
+// Mystery House was designed for monochrome display, so we default to
+// monochrome mode there. All the other games default to color mode.
+#define GAMEOPTION_COLOR_DEFAULT_OFF GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SCANLINES         GUIO_GAMEOPTIONS2
+#define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_COLOR,
+		GAMEOPTION_COLOR_DEFAULT_OFF,
 		{
 			_s("Color mode"),
 			_s("Use color graphics"),
@@ -48,7 +50,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	},
 
 	{
-		GAMEOPTION_MONO,
+		GAMEOPTION_COLOR_DEFAULT_ON,
 		{
 			_s("Color mode"),
 			_s("Use color graphics"),
@@ -91,7 +93,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES1
 	},
@@ -105,7 +107,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_COLOR, GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES1
 	},
@@ -119,7 +121,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES2
 	},
@@ -133,7 +135,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES0
 	},
@@ -150,7 +152,7 @@ static const AdlGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformApple2GS, // FIXME
 			ADGF_UNSTABLE,
-			GUIO2(GAMEOPTION_MONO, GAMEOPTION_SCANLINES)
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES6
 	},
