@@ -564,7 +564,8 @@ void Gui::drawMainGameWindow() {
 			border.topOffset,
 			kBlitDirect);
 	}
-	drawObjectsInWindow(kMainGameWindow, _mainGameWindow->getSurface());
+
+	drawObjectsInWindow(data, _mainGameWindow->getSurface());
 
 	if (MACVENTURE_DEBUG_GUI) {
 		Graphics::MacWindow *win = findWindow(data.refcon);
@@ -579,7 +580,7 @@ void Gui::drawMainGameWindow() {
 }
 
 void Gui::drawSelfWindow() {
-	drawObjectsInWindow(kSelfWindow, _selfWindow->getSurface());
+	drawObjectsInWindow(getWindowData(kSelfWindow), _selfWindow->getSurface());
 	if (_engine->isObjSelected(1)) invertWindowColors(kSelfWindow);
 	findWindow(kSelfWindow)->setDirty(true);
 }
@@ -594,7 +595,7 @@ void Gui::drawInventories() {
 		srf->clear(kColorGreen);
 		BorderBounds border = borderBounds(data.type);
 		srf->fillRect(srf->getBounds(), kColorWhite);
-		drawObjectsInWindow(data.refcon, srf);
+		drawObjectsInWindow(data, srf);
 
 		if (MACVENTURE_DEBUG_GUI) {
 			Graphics::MacWindow *win = findWindow(data.refcon);
@@ -641,14 +642,13 @@ void Gui::drawConsoleWindow() {
 	_consoleText->renderInto(srf, bounds.leftOffset);
 }
 
-void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface) {
-	WindowData &data = findWindowData(target);
-	BorderBounds border = borderBounds(data.type);
+void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSurface *surface) {
+	BorderBounds border = borderBounds(targetData.type);
 	Common::Point pos;
 	ObjID child;
 	BlitMode mode;
 
-	if (data.children.size() == 0) return;
+	if (targetData.children.size() == 0) return;
 
 	Graphics::ManagedSurface *composeSurface = new Graphics::ManagedSurface();
 	composeSurface->create(
@@ -657,11 +657,11 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		surface->format);
 	composeSurface->clear(kColorGreen);
 
-	for (uint i = 0; i < data.children.size(); i++) {
-		child = data.children[i].obj;
-		mode = (BlitMode)data.children[i].mode;
+	for (uint i = 0; i < targetData.children.size(); i++) {
+		child = targetData.children[i].obj;
+		mode = (BlitMode)targetData.children[i].mode;
 		pos = _engine->getObjPosition(child);
-		pos -= data.scrollPos;
+		pos -= targetData.scrollPos;
 		ensureAssetLoaded(child);
 
 		_assets[child]->blitInto(
@@ -682,7 +682,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 		// For test
 		if (MACVENTURE_DEBUG_GUI) {
 			Common::Rect testBounds = _engine->getObjBounds(child);
-			testBounds.translate(-data.scrollPos.x, -data.scrollPos.y);
+			testBounds.translate(-targetData.scrollPos.x, -targetData.scrollPos.y);
 			surface->frameRect(testBounds, kColorGreen);
 		}
 	}

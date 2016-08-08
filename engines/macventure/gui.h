@@ -219,7 +219,7 @@ private: // Methods
 	void drawConsoleWindow();
 
 	void drawDraggedObject();
-	void drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface);
+	void drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSurface *surface);
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 	void drawDialog();
 
