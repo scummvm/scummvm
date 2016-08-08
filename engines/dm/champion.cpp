@@ -1083,7 +1083,7 @@ void ChampionMan::f316_deleteScent(uint16 scentIndex) {
 }
 
 void ChampionMan::f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount) {
-	int16 scentIndex = _vm->_championMan->_g407_party._scentCount;
+	int16 scentIndex = _g407_party._scentCount;
 	if (scentIndex) {
 		bool mergeFl = getFlag(cycleCount, k0x8000_mergeCycles);
 		if (mergeFl)
@@ -1094,7 +1094,7 @@ void ChampionMan::f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount
 		newScent.setMapY(mapY); /* BUG0_00 Useless code */
 		newScent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex); /* BUG0_00 Useless code */
 
-		Scent *curScent = _vm->_championMan->_g407_party._scents; /* BUG0_00 Useless code */
+		Scent *curScent = _g407_party._scents; /* BUG0_00 Useless code */
 		bool cycleCountDefined = false;
 		while (scentIndex--) {
 			if (&*curScent++ == &newScent) {
@@ -1135,7 +1135,7 @@ void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) 
 }
 
 int16 ChampionMan::f310_getMovementTicks(Champion *champ) {
-	uint16 maximumLoad = _vm->_championMan->f309_getMaximumLoad(champ);
+	uint16 maximumLoad = f309_getMaximumLoad(champ);
 	uint16 curLoad = champ->_load;
 	uint16 woundTicks;
 	int16 ticks;
@@ -1166,7 +1166,7 @@ int16 ChampionMan::f310_getMovementTicks(Champion *champ) {
 }
 
 bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex, uint16 ammunitionSlotIndex) {
-	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *curChampion = &_gK71_champions[champIndex];
 	Thing curThing = curChampion->_slots[weaponSlotIndex];
 	if (curThing.getType() != k5_WeaponThingType)
 		return false;
@@ -1188,15 +1188,15 @@ bool ChampionMan::f294_isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint1
 }
 
 void ChampionMan::f293_drawAllChampionStates() {
-	for (int16 i = k0_ChampionFirst; i < _vm->_championMan->_g305_partyChampionCount; i++)
-		_vm->_championMan->f292_drawChampionState((ChampionIndex)i);
+	for (int16 i = k0_ChampionFirst; i < _g305_partyChampionCount; i++)
+		f292_drawChampionState((ChampionIndex)i);
 }
 
 void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
-	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
-	if (_vm->_championMan->f285_getIndexInCell(curChampion->_cell) != kM1_ChampionNone) {
+	Champion *curChampion = &_gK71_champions[champIndex];
+	if (f285_getIndexInCell(curChampion->_cell) != kM1_ChampionNone) {
 		uint16 numCell = k0_CellNorthWest;
-		while (_vm->_championMan->f285_getIndexInCell(numCell) != kM1_ChampionNone)
+		while (f285_getIndexInCell(numCell) != kM1_ChampionNone)
 			numCell++;
 
 		curChampion->_cell = (ViewCell)numCell;
@@ -1205,10 +1205,10 @@ void ChampionMan::f283_viAltarRebirth(uint16 champIndex) {
 	uint16 maximumHealth = curChampion->_maxHealth;
 	curChampion->_maxHealth = MAX(25, maximumHealth - (maximumHealth >> 6) - 1);
 	curChampion->_currHealth = curChampion->_maxHealth >> 1;
-	_vm->_menuMan->f393_drawSpellAreaControls(_vm->_championMan->_g514_magicCasterChampionIndex);
+	_vm->_menuMan->f393_drawSpellAreaControls(_g514_magicCasterChampionIndex);
 	curChampion->_dir = _vm->_dungeonMan->_g308_partyDir;
 	setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	f292_drawChampionState((ChampionIndex)champIndex);
 }
 
 void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex) {
@@ -1260,7 +1260,7 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 }
 
 bool ChampionMan::f327_isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount) {
-	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *curChampion = &_gK71_champions[champIndex];
 	if (curChampion->_currMana < requiredManaAmount)
 		return false;
 
@@ -1284,8 +1284,8 @@ void ChampionMan::f326_championShootProjectile(Champion* champ, Thing thing, int
 }
 
 void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
-	Champion *championPtr = _vm->_championMan->_gK71_champions;
-	for (uint16 championIndex = k0_ChampionFirst; championIndex < _vm->_championMan->_g305_partyChampionCount; championIndex++, championPtr++) {
+	Champion *championPtr = _gK71_champions;
+	for (uint16 championIndex = k0_ChampionFirst; championIndex < _g305_partyChampionCount; championIndex++, championPtr++) {
 		int16 pendingWounds = _g410_championPendingWounds[championIndex];
 		setFlag(championPtr->_wounds, pendingWounds);
 		_g410_championPendingWounds[championIndex] = 0;
@@ -1300,7 +1300,7 @@ void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
 
 		curHealth -= pendingDamage;
 		if (curHealth <= 0) {
-			_vm->_championMan->f319_championKill(championIndex);
+			f319_championKill(championIndex);
 		} else {
 			championPtr->_currHealth = curHealth;
 			setFlag(championPtr->_attributes, k0x0100_ChampionAttributeStatistics);
@@ -1344,7 +1344,7 @@ void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
 
 				textPosY = 5;
 			}
-			_vm->_textMan->f53_printToLogicalScreen(textPosX, textPosY, k15_ColorWhite, k8_ColorRed, _vm->_championMan->f288_getStringFromInteger(pendingDamage, false, 3).c_str());
+			_vm->_textMan->f53_printToLogicalScreen(textPosX, textPosY, k15_ColorWhite, k8_ColorRed, f288_getStringFromInteger(pendingDamage, false, 3).c_str());
 
 			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
 			if (eventIndex == -1) {
@@ -1358,22 +1358,22 @@ void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
 				M33_setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 5);
 				_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(eventIndex));
 			}
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)championIndex);
+			f292_drawChampionState((ChampionIndex)championIndex);
 			_vm->_eventMan->f77_hideMouse();
 		}
 	}
 }
 
 void ChampionMan::f319_championKill(uint16 champIndex) {
-	Champion *curChampion = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *curChampion = &_gK71_champions[champIndex];
 	curChampion->_currHealth = 0;
 	setFlag(curChampion->_attributes, k0x1000_ChampionAttributeStatusBox);
 	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		if (_vm->_g331_pressingEye) {
 			_vm->_g331_pressingEye = false;
 			_vm->_eventMan->_g597_ignoreMouseMovements = false;
-			if (!_vm->_championMan->_g415_leaderEmptyHanded) {
-				_vm->_objectMan->f34_drawLeaderObjectName(_vm->_championMan->_g414_leaderHandObject);
+			if (!_g415_leaderEmptyHanded) {
+				_vm->_objectMan->f34_drawLeaderObjectName(_g414_leaderHandObject);
 			}
 			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
 			_vm->_eventMan->f77_hideMouse();
@@ -1400,7 +1400,7 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 	curChampion->_symbols[0] = '\0';
 	curChampion->_dir = _vm->_dungeonMan->_g308_partyDir;
 	curChampion->_maximumDamageReceived = 0;
-	uint16 curChampionIconIndex = _vm->_championMan->M26_championIconIndex(curCell, _vm->_dungeonMan->_g308_partyDir);
+	uint16 curChampionIconIndex = M26_championIconIndex(curCell, _vm->_dungeonMan->_g308_partyDir);
 	if (_vm->M0_indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
 		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
 		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
@@ -1412,26 +1412,26 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex << 2], k0_ColorBlack);
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	f292_drawChampionState((ChampionIndex)champIndex);
 
 	int16 aliveChampionIndex;
-	for (aliveChampionIndex = k0_ChampionFirst, curChampion = _vm->_championMan->_gK71_champions; aliveChampionIndex < _vm->_championMan->_g305_partyChampionCount; aliveChampionIndex++, curChampion++) {
+	for (aliveChampionIndex = k0_ChampionFirst, curChampion = _gK71_champions; aliveChampionIndex < _g305_partyChampionCount; aliveChampionIndex++, curChampion++) {
 		if (curChampion->_currHealth)
 			break;
 	}
 
-	if (aliveChampionIndex == _vm->_championMan->_g305_partyChampionCount) { /* BUG0_43 The game does not end if the last living champion in the party is killed while looking at a candidate champion in a portrait. The condition to end the game when the whole party is killed is not true because the code considers the candidate champion as alive (in the loop above) */
-		_vm->_championMan->_g303_partyDead = true;
+	if (aliveChampionIndex == _g305_partyChampionCount) { /* BUG0_43 The game does not end if the last living champion in the party is killed while looking at a candidate champion in a portrait. The condition to end the game when the whole party is killed is not true because the code considers the candidate champion as alive (in the loop above) */
+		_g303_partyDead = true;
 		return;
 	}
 
-	if (champIndex == _vm->_championMan->_g411_leaderIndex)
+	if (champIndex == _g411_leaderIndex)
 		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)aliveChampionIndex);
 
-	if (champIndex == _vm->_championMan->_g514_magicCasterChampionIndex)
+	if (champIndex == _g514_magicCasterChampionIndex)
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(aliveChampionIndex);
 	else
-		_vm->_menuMan->f393_drawSpellAreaControls(_vm->_championMan->_g514_magicCasterChampionIndex);
+		_vm->_menuMan->f393_drawSpellAreaControls(_g514_magicCasterChampionIndex);
 }
 
 void ChampionMan::f318_dropAllObjects(uint16 champIndex) {
@@ -1468,7 +1468,7 @@ void ChampionMan::f318_dropAllObjects(uint16 champIndex) {
 		k1_ChampionSlotActionHand
 	};
 
-	uint16 curCell = _vm->_championMan->_gK71_champions[champIndex]._cell;
+	uint16 curCell = _gK71_champions[champIndex]._cell;
 	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
 		Thing curThing = f300_getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
 		if (curThing != Thing::_none)
@@ -1485,11 +1485,11 @@ void ChampionMan::f323_unpoison(int16 champIndex) {
 		if ((eventPtr->_type == k75_TMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
 			_vm->_timeline->f237_deleteEvent(eventIndex);
 	}
-	_vm->_championMan->_gK71_champions[champIndex]._poisonEventCount = 0;
+	_gK71_champions[champIndex]._poisonEventCount = 0;
 }
 
 void ChampionMan::f331_applyTimeEffects() {
-	if (!_vm->_championMan->_g305_partyChampionCount)
+	if (!_g305_partyChampionCount)
 		return;
 
 	Scent checkScent;
@@ -1497,10 +1497,10 @@ void ChampionMan::f331_applyTimeEffects() {
 	checkScent.setMapY(_vm->_dungeonMan->_g307_partyMapY);
 	checkScent.setMapIndex(_vm->_dungeonMan->_g309_partyMapIndex);
 
-	for (byte loopScentIndex = 0; loopScentIndex + 1 < _vm->_championMan->_g407_party._scentCount; loopScentIndex++) {
-		if (&_vm->_championMan->_g407_party._scents[loopScentIndex] != &checkScent) {
-			_vm->_championMan->_g407_party._scentStrengths[loopScentIndex] = MAX(0, _vm->_championMan->_g407_party._scentStrengths[loopScentIndex] - 1);
-			if (!_vm->_championMan->_g407_party._scentStrengths[loopScentIndex] && !loopScentIndex) {
+	for (byte loopScentIndex = 0; loopScentIndex + 1 < _g407_party._scentCount; loopScentIndex++) {
+		if (&_g407_party._scents[loopScentIndex] != &checkScent) {
+			_g407_party._scentStrengths[loopScentIndex] = MAX(0, _g407_party._scentStrengths[loopScentIndex] - 1);
+			if (!_g407_party._scentStrengths[loopScentIndex] && !loopScentIndex) {
 				f316_deleteScent(0);
 				continue;
 			}
@@ -1509,14 +1509,14 @@ void ChampionMan::f331_applyTimeEffects() {
 
 	uint16 gameTime = _vm->_g313_gameTime & 0xFFFF;
 	uint16 timeCriteria = (((gameTime & 0x0080) + ((gameTime & 0x0100) >> 2)) + ((gameTime & 0x0040) << 2)) >> 2;
-	Champion *championPtr = _vm->_championMan->_gK71_champions;
-	for (uint16 championIndex = k0_ChampionFirst; championIndex < _vm->_championMan->_g305_partyChampionCount; championIndex++, championPtr++) {
-		if (championPtr->_currHealth && (_vm->M0_indexToOrdinal(championIndex) != _vm->_championMan->_g299_candidateChampionOrdinal)) {
-			uint16 wizardSkillLevel = _vm->_championMan->f303_getSkillLevel(championIndex, k3_ChampionSkillWizard) + _vm->_championMan->f303_getSkillLevel(championIndex, k2_ChampionSkillPriest);
+	Champion *championPtr = _gK71_champions;
+	for (uint16 championIndex = k0_ChampionFirst; championIndex < _g305_partyChampionCount; championIndex++, championPtr++) {
+		if (championPtr->_currHealth && (_vm->M0_indexToOrdinal(championIndex) != _g299_candidateChampionOrdinal)) {
+			uint16 wizardSkillLevel = f303_getSkillLevel(championIndex, k3_ChampionSkillWizard) + f303_getSkillLevel(championIndex, k2_ChampionSkillPriest);
 			if ((championPtr->_currMana < championPtr->_maxMana)
 				&& (timeCriteria < championPtr->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + wizardSkillLevel)) {
 				int16 manaGain = championPtr->_maxMana / 40;
-				if (_vm->_championMan->_g300_partyIsSleeping)
+				if (_g300_partyIsSleeping)
 					manaGain <<= 1;
 
 				manaGain++;
@@ -1536,7 +1536,7 @@ void ChampionMan::f331_applyTimeEffects() {
 
 			int16 staminaLoss = 0;
 			int16 staminaAmount = f26_getBoundedValue(1, (championPtr->_maxStamina >> 8) - 1, 6);
-			if (_vm->_championMan->_g300_partyIsSleeping)
+			if (_g300_partyIsSleeping)
 				staminaAmount <<= 1;
 
 			int32 compDelay = _vm->_g313_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime;
@@ -1579,7 +1579,7 @@ void ChampionMan::f331_applyTimeEffects() {
 
 			if ((championPtr->_currHealth < championPtr->_maxHealth) && (championPtr->_currStamina >= (championPtr->_maxStamina >> 2)) && (timeCriteria < (championPtr->_statistics[k4_ChampionStatVitality][k1_ChampionStatCurrent] + 12))) {
 				int16 healthGain = (championPtr->_maxHealth >> 7) + 1;
-				if (_vm->_championMan->_g300_partyIsSleeping)
+				if (_g300_partyIsSleeping)
 					healthGain <<= 1;
 
 				if (_vm->_objectMan->f33_getIconIndex(championPtr->_slots[k10_ChampionSlotNeck]) == k121_IconIndiceJunkEkkhardCross)
@@ -1587,7 +1587,7 @@ void ChampionMan::f331_applyTimeEffects() {
 
 				championPtr->_currHealth += MIN(healthGain, (int16)(championPtr->_maxHealth - championPtr->_currHealth));
 			}
-			if (!((int)_vm->_g313_gameTime & (_vm->_championMan->_g300_partyIsSleeping ? 63 : 255))) {
+			if (!((int)_vm->_g313_gameTime & (_g300_partyIsSleeping ? 63 : 255))) {
 				for (uint16 i = k0_ChampionStatLuck; i <= k6_ChampionStatAntifire; i++) {
 					byte *curStatistic = championPtr->_statistics[i];
 					uint16 statisticMaximum = curStatistic[k0_ChampionStatMaximum];
@@ -1597,7 +1597,7 @@ void ChampionMan::f331_applyTimeEffects() {
 						curStatistic[k1_ChampionStatCurrent] -= curStatistic[k1_ChampionStatCurrent] / statisticMaximum;
 				}
 			}
-			if (!_vm->_championMan->_g300_partyIsSleeping && (championPtr->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < _vm->_g313_gameTime)) {
+			if (!_g300_partyIsSleeping && (championPtr->_dir != _vm->_dungeonMan->_g308_partyDir) && (_vm->_projexpl->_g361_lastCreatureAttackTime + 60 < _vm->_g313_gameTime)) {
 				championPtr->_dir = _vm->_dungeonMan->_g308_partyDir;
 				championPtr->_maximumDamageReceived = 0;
 				setFlag(championPtr->_attributes, k0x0400_ChampionAttributeIcon);
@@ -1780,24 +1780,24 @@ void ChampionMan::f278_resetDataToStartGame() {
 }
 
 void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex) {
-	if (!_vm->_championMan->_g415_leaderEmptyHanded)
+	if (!_g415_leaderEmptyHanded)
 		return;
 
-	if (_vm->_championMan->_g305_partyChampionCount == 4)
+	if (_g305_partyChampionCount == 4)
 		return;
 
-	uint16 previousPartyChampionCount = _vm->_championMan->_g305_partyChampionCount;
-	Champion *championPtr = &_vm->_championMan->_gK71_champions[previousPartyChampionCount];
+	uint16 previousPartyChampionCount = _g305_partyChampionCount;
+	Champion *championPtr = &_gK71_champions[previousPartyChampionCount];
 	championPtr->resetToZero();
 	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portraits could be missing in the data)
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, gBoxChampionPortrait, _vm->_championMan->M27_getChampionPortraitX(championPortraitIndex), _vm->_championMan->M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, gBoxChampionPortrait, M27_getChampionPortraitX(championPortraitIndex), M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
 	championPtr->_actionIndex = k255_ChampionActionNone;
 	championPtr->_enableActionEventIndex = -1;
 	championPtr->_hideDamageReceivedIndex = -1;
 	championPtr->_dir = _vm->_dungeonMan->_g308_partyDir;
 	uint16 viewCell = k0_ViewCellFronLeft;
-	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone)
+	while (f285_getIndexInCell(M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone)
 		viewCell++;
 
 	championPtr->_cell = (ViewCell)M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir);
@@ -1838,16 +1838,16 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 		setFlag(championPtr->_attributes, k0x0010_ChampionAttributeMale);
 
 	decodedStringPtr++;
-	championPtr->_currHealth = championPtr->_maxHealth = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	championPtr->_currHealth = championPtr->_maxHealth = f279_getDecodedValue(decodedStringPtr, 4);
 	decodedStringPtr += 4;
-	championPtr->_currStamina = championPtr->_maxStamina = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	championPtr->_currStamina = championPtr->_maxStamina = f279_getDecodedValue(decodedStringPtr, 4);
 	decodedStringPtr += 4;
-	championPtr->_currMana = championPtr->_maxMana = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 4);
+	championPtr->_currMana = championPtr->_maxMana = f279_getDecodedValue(decodedStringPtr, 4);
 	decodedStringPtr += 4;
 	decodedStringPtr++;
 	for (int16 statIdx = k0_ChampionStatLuck; statIdx <= k6_ChampionStatAntifire; statIdx++) {
 		championPtr->_statistics[statIdx][k2_ChampionStatMinimum] = 30;
-		championPtr->_statistics[statIdx][k1_ChampionStatCurrent] = championPtr->_statistics[statIdx][k0_ChampionStatMaximum] = _vm->_championMan->f279_getDecodedValue(decodedStringPtr, 2);
+		championPtr->_statistics[statIdx][k1_ChampionStatCurrent] = championPtr->_statistics[statIdx][k0_ChampionStatMaximum] = f279_getDecodedValue(decodedStringPtr, 2);
 		decodedStringPtr += 2;
 	}
 	championPtr->_statistics[k0_ChampionStatLuck][k2_ChampionStatMinimum] = 10;
@@ -1865,13 +1865,13 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 
 		championPtr->_skills[skillIdx]._experience = baseSkillExperience;
 	}
-	_vm->_championMan->_g299_candidateChampionOrdinal = previousPartyChampionCount + 1;
-	if (++_vm->_championMan->_g305_partyChampionCount == 1) {
+	_g299_candidateChampionOrdinal = previousPartyChampionCount + 1;
+	if (++_g305_partyChampionCount == 1) {
 		_vm->_eventMan->f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->_g508_refreshActionArea = true;
 	} else {
 		_vm->_menuMan->f388_clearActingChampion();
-		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_vm->_championMan->_g305_partyChampionCount - 1));
+		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_g305_partyChampionCount - 1));
 	}
 
 	int16 curMapX = _vm->_dungeonMan->_g306_partyMapX;
@@ -1942,7 +1942,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 				else
 					curSlotIndex = slotIdx++;
 			}
-			_vm->_championMan->f301_addObjectInSlot((ChampionIndex)previousPartyChampionCount, curThing, (ChampionSlot)curSlotIndex);
+			f301_addObjectInSlot((ChampionIndex)previousPartyChampionCount, curThing, (ChampionSlot)curSlotIndex);
 		}
 		curThing = _vm->_dungeonMan->f159_getNextThing(curThing);
 	}
@@ -1952,7 +1952,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 
 void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 	int16 barGraphHeights[3];
-	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *champ = &_gK71_champions[champIndex];
 	int16 barGraphIdx = 0;
 	if (champ->_currHealth > 0) {
 		int32 barGraphHeight = (((int32)champ->_currHealth << 10) * 25) / champ->_maxHealth;
@@ -2162,7 +2162,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	uint16 championIconIndex = M26_championIconIndex(curChampion->_cell, _vm->_dungeonMan->_g308_partyDir);
 	if (getFlag(championAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(championIconIndex))) {
 		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[championIconIndex], g46_ChampionColor[champIndex]);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[championIconIndex], _vm->_championMan->M26_championIconIndex(curChampion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[championIconIndex], M26_championIconIndex(curChampion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
 	if (getFlag(championAttributes, k0x0800_ChampionAttributePanel) && isInventoryChampion) {
 		if (_vm->_g333_pressingMouth)
@@ -2333,8 +2333,8 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 						renamedChampionString[curCharacterIndex] = '\0';
 
 					bool found = false;
-					for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_g305_partyChampionCount - 1; idx++) {
-						if (!strcmp(_vm->_championMan->_gK71_champions[idx]._name, renamedChampionString)) {
+					for (uint16 idx = k0_ChampionFirst; idx < _g305_partyChampionCount - 1; idx++) {
+						if (!strcmp(_gK71_champions[idx]._name, renamedChampionString)) {
 							// If an existing champion already has the specified name for the new champion
 							found = true;
 							break;
@@ -2439,13 +2439,13 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 }
 
 uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
-	if (_vm->_championMan->_g300_partyIsSleeping)
+	if (_g300_partyIsSleeping)
 		return 1;
 
 	bool ignoreTmpExp = getFlag(skillIndex, k0x8000_IgnoreTemporaryExperience);
 	bool ignoreObjModifiers = getFlag(skillIndex, k0x4000_IgnoreObjectModifiers);
 	clearFlag(skillIndex, k0x8000_IgnoreTemporaryExperience | k0x4000_IgnoreObjectModifiers);
-	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *champ = &_gK71_champions[champIndex];
 	Skill *skill = &champ->_skills[skillIndex];
 	int32 exp = skill->_experience;
 	if (!ignoreTmpExp)

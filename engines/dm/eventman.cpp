@@ -426,9 +426,9 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 
 void EventManager::f71_mouseDropChampionIcon() {
 	_gK100_preventBuildPointerScreenArea = true;
-	uint16 L0058_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
-	_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-	_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
+	uint16 L0058_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
+	_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+	_g598_mousePointerBitmapUpdated = true;
 	bool L0057_B_UseByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
 	_vm->_displayMan->f21_blitToScreen(_g613_mousePointerOriginalColorsChampionIcon, &g54_BoxChampionIcons[L0058_ui_ChampionIconIndex << 2], 16, k12_ColorDarkestGray, 18);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = L0057_B_UseByteBoxCoordinatesBackup;
@@ -443,7 +443,7 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 	//	return;
 
 	_gK100_preventBuildPointerScreenArea = true;
-	if (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+	if (_g599_useChampionIconOrdinalAsMousePointerBitmap) {
 		if ((mousePosY > 28) || (mousePosX < 274)) {
 			_gK104_mousePointerType = k4_pointerTypeAutoselect;
 			f71_mouseDropChampionIcon();
@@ -491,8 +491,8 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 	if (_gK104_mousePointerType == k4_pointerTypeAutoselect) {
 		_gK104_mousePointerType = (_g600_useObjectAsMousePointerBitmap) ? k1_pointerTypeObjectIcon : (_g601_useHandAsMousePointerBitmap) ? k3_pointerTypeHand : k0_pointerTypeArrow;
 	}
-	if (_vm->_eventMan->_g598_mousePointerBitmapUpdated || (_gK104_mousePointerType != _gK105_previousMousePointerType)) {
-		_vm->_eventMan->_g598_mousePointerBitmapUpdated = false;
+	if (_g598_mousePointerBitmapUpdated || (_gK104_mousePointerType != _gK105_previousMousePointerType)) {
+		_g598_mousePointerBitmapUpdated = false;
 		switch (_gK104_mousePointerType) {
 		case k0_pointerTypeArrow:
 			setMousePointerFromSpriteData(g42_bitmapArrowPointer);
@@ -657,30 +657,30 @@ void EventManager::f380_processCommandQueue() {
 	static MouseInput* G0484_ps_SecondaryMouseInputBackup;
 
 
-	_vm->_eventMan->_g435_isCommandQueueLocked = true;
+	_g435_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) { /* If the command queue is empty */
-		_vm->_eventMan->_g435_isCommandQueueLocked = false;
-		_vm->_eventMan->f360_processPendingClick();
+		_g435_isCommandQueueLocked = false;
+		f360_processPendingClick();
 		return;
 	}
 
 	Command cmd = _commandQueue.pop();
 	cmdType = cmd._type;
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_g310_disabledMovementTicks || (_vm->_g311_projectileDisableMovementTicks && (_vm->_g312_lastProjectileDisabledMovementDirection == (M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
-		_vm->_eventMan->_g435_isCommandQueueLocked = false;
-		_vm->_eventMan->f360_processPendingClick();
+		_g435_isCommandQueueLocked = false;
+		f360_processPendingClick();
 		return;
 	}
 	L1161_i_CommandX = cmd._pos.x;
 	L1162_i_CommandY = cmd._pos.y;
-	_vm->_eventMan->_g435_isCommandQueueLocked = false;
-	_vm->_eventMan->f360_processPendingClick();
+	_g435_isCommandQueueLocked = false;
+	f360_processPendingClick();
 	if ((cmdType == k2_CommandTurnRight) || (cmdType == k1_CommandTurnLeft)) {
-		_vm->_eventMan->f365_commandTurnParty(cmdType);
+		f365_commandTurnParty(cmdType);
 		return;
 	}
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft)) {
-		_vm->_eventMan->f366_commandMoveParty(cmdType);
+		f366_commandMoveParty(cmdType);
 		return;
 	}
 	if ((cmdType >= k12_CommandClickInChampion_0_StatusBox) && (cmdType <= k15_CommandClickInChampion_3_StatusBox)) {
@@ -732,11 +732,11 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if (cmdType == k80_CommandClickInDungeonView) {
-		_vm->_eventMan->f377_commandProcessType80ClickInDungeonView(L1161_i_CommandX, L1162_i_CommandY);
+		f377_commandProcessType80ClickInDungeonView(L1161_i_CommandX, L1162_i_CommandY);
 		return;
 	}
 	if (cmdType == k81_CommandClickInPanel) {
-		_vm->_eventMan->f378_commandProcess81ClickInPanel(L1161_i_CommandX, L1162_i_CommandY);
+		f378_commandProcess81ClickInPanel(L1161_i_CommandX, L1162_i_CommandY);
 		return;
 	}
 
@@ -754,8 +754,8 @@ void EventManager::f380_processCommandQueue() {
 			f379_drawSleepScreen();
 			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
-			_vm->_eventMan->_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
-			_vm->_eventMan->_g442_secondaryMouseInput = 0;
+			_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
+			_g442_secondaryMouseInput = 0;
 			_g443_primaryKeyboardInput = g460_primaryKeyboardInput_partySleeping;
 			_g444_secondaryKeyboardInput = nullptr;
 			f357_discardAllInput();
@@ -780,12 +780,12 @@ void EventManager::f380_processCommandQueue() {
 		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
 											 "GAME FROZEN", k136_heightViewport);
 		_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
-		G0483_ps_PrimaryMouseInputBackup = _vm->_eventMan->_g441_primaryMouseInput;
-		G0484_ps_SecondaryMouseInputBackup = _vm->_eventMan->_g442_secondaryMouseInput;
+		G0483_ps_PrimaryMouseInputBackup = _g441_primaryMouseInput;
+		G0484_ps_SecondaryMouseInputBackup = _g442_secondaryMouseInput;
 		G0481_ps_PrimaryKeyboardInputBackup = _g443_primaryKeyboardInput;
 		G0482_ps_SecondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
-		_vm->_eventMan->_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
-		_vm->_eventMan->_g442_secondaryMouseInput = 0;
+		_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
+		_g442_secondaryMouseInput = 0;
 		_g443_primaryKeyboardInput = g461_primaryKeyboardInput_frozenGame;
 		_g444_secondaryKeyboardInput = nullptr;
 		f357_discardAllInput();
@@ -794,8 +794,8 @@ void EventManager::f380_processCommandQueue() {
 	if (cmdType == k148_CommandUnfreezeGame) {
 		_vm->_g301_gameTimeTicking = true;
 		_vm->_menuMan->f457_drawEnabledMenus();
-		_vm->_eventMan->_g441_primaryMouseInput = G0483_ps_PrimaryMouseInputBackup;
-		_vm->_eventMan->_g442_secondaryMouseInput = G0484_ps_SecondaryMouseInputBackup;
+		_g441_primaryMouseInput = G0483_ps_PrimaryMouseInputBackup;
+		_g442_secondaryMouseInput = G0484_ps_SecondaryMouseInputBackup;
 		_g443_primaryKeyboardInput = G0481_ps_PrimaryKeyboardInputBackup;
 		_g444_secondaryKeyboardInput = G0482_ps_SecondaryKeyboardInputBackup;
 		f357_discardAllInput();
@@ -1162,7 +1162,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		dispMan.D24_fillScreenBox(box, k0_ColorBlack);
 		dispMan.D24_fillScreenBox(g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2], k0_ColorBlack);
 		_vm->_menuMan->f457_drawEnabledMenus();
-		_vm->_eventMan->f78_showMouse();
+		f78_showMouse();
 		return;
 	}
 
@@ -1213,7 +1213,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 
 	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
 	_vm->_menuMan->f457_drawEnabledMenus();
-	_vm->_eventMan->f67_setMousePointerToNormal((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+	f67_setMousePointerToNormal((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
 
 void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
@@ -1339,11 +1339,11 @@ void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint1
 	uint16 L1126_ui_Command;
 
 	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)champIndex);
+		f368_commandSetLeader((ChampionIndex)champIndex);
 	} else {
-		L1126_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
+		L1126_ui_Command = f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
 		if ((L1126_ui_Command >= k16_CommandSetLeaderChampion_0) && (L1126_ui_Command <= k19_CommandSetLeaderChampion_3)) {
-			_vm->_eventMan->f368_commandSetLeader((ChampionIndex)(L1126_ui_Command - k16_CommandSetLeaderChampion_0));
+			f368_commandSetLeader((ChampionIndex)(L1126_ui_Command - k16_CommandSetLeaderChampion_0));
 		} else {
 			if ((L1126_ui_Command >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (L1126_ui_Command <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand)) {
 				_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(L1126_ui_Command - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
@@ -1358,13 +1358,13 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 	static byte G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
 
 	_gK100_preventBuildPointerScreenArea = true;
-	if (!_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+	if (!_g599_useChampionIconOrdinalAsMousePointerBitmap) {
 		if (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir)) == kM1_ChampionNone) {
 			_gK100_preventBuildPointerScreenArea = false;
 			return;
 		}
-		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
-		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = true;
+		_g598_mousePointerBitmapUpdated = true;
+		_g599_useChampionIconOrdinalAsMousePointerBitmap = true;
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		byte *L0056_puc_Bitmap = _gK190_mousePointerTempBuffer;
 		memset(L0056_puc_Bitmap, 0, 32 * 18);
@@ -1377,11 +1377,11 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, G0622_s_Box_MousePointer_ChampionIcon, L0055_pi_ChampionIconBox->_x1, L0055_pi_ChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
 
 		_vm->_displayMan->D24_fillScreenBox(*L0055_pi_ChampionIconBox, k0_ColorBlack);
-		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(champIconIndex);
+		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(champIconIndex);
 	} else {
-		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
-		uint16 L0052_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
-		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		_g598_mousePointerBitmapUpdated = true;
+		uint16 L0052_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
+		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 		int16 L0054_i_ChampionIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(L0052_ui_ChampionIconIndex + _vm->_dungeonMan->_g308_partyDir));
 		if (L0052_ui_ChampionIconIndex == champIconIndex) {
 			setFlag(_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
@@ -1469,7 +1469,7 @@ void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint
 		}
 		return;
 	}
-	L1132_i_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
+	L1132_i_Command = f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
 	if (L1132_i_Command != k0_CommandNone) {
 		f369_commandProcessTypes101To108_clickInSpellSymbolsArea((CommandType)L1132_i_Command);
 	}
@@ -1515,7 +1515,7 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 
 
 	if (_vm->_championMan->_g506_actingChampionOrdinal) {
-		L1134_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
+		L1134_ui_Command = f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (L1134_ui_Command != k0_CommandNone) {
 			if (L1134_ui_Command == k112_CommandClickInActionAreaPass) {
 				warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
@@ -1537,7 +1537,7 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 		}
 	} else {
 		if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
-			L1134_ui_Command = _vm->_eventMan->f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
+			L1134_ui_Command = f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
 			if (L1134_ui_Command != k0_CommandNone) {
 				if ((L1134_ui_Command = L1134_ui_Command - k116_CommandClickInActionAreaChampion_0_Action) < _vm->_championMan->_g305_partyChampionCount) {
 					_vm->_menuMan->f389_processCommands116To119_setActingChampion(L1134_ui_Command);

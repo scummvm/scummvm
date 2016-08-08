@@ -415,12 +415,12 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		return;
 	}
 	L1213_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex = (ChampionIndex)champIndex];
-	_vm->_menuMan->f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
+	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->f78_showMouse();
-	_vm->_menuMan->f393_drawSpellAreaControls((ChampionIndex)champIndex);
-	_vm->_displayMan->f21_blitToScreen(_vm->_menuMan->_gK72_bitmapSpellAreaLine, &gK75_BoxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
-	_vm->_menuMan->f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
-	_vm->_displayMan->f21_blitToScreen(_vm->_menuMan->_gK72_bitmapSpellAreaLine, &gK76_BoxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	f393_drawSpellAreaControls((ChampionIndex)champIndex);
+	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &gK75_BoxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
+	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &gK76_BoxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
 	_vm->_eventMan->f77_hideMouse();
 }
 
@@ -436,17 +436,17 @@ void MenuMan::f457_drawEnabledMenus() {
 	} else {
 		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_g514_magicCasterChampionIndex;
 		_vm->_championMan->_g514_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
-		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(AL1462_i_MagicCasterChampionIndex);
+		f394_setMagicCasterAndDrawSpellArea(AL1462_i_MagicCasterChampionIndex);
 		if (!_vm->_championMan->_g506_actingChampionOrdinal) {
-			_vm->_menuMan->_g509_actionAreaContainsIcons = true;
+			_g509_actionAreaContainsIcons = true;
 		}
-		_vm->_menuMan->f387_drawActionArea();
+		f387_drawActionArea();
 		if (AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 			_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)_vm->M1_ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
 		} else {
 			_vm->_displayMan->f98_drawFloorAndCeiling();
-			_vm->_menuMan->f395_drawMovementArrows();
+			f395_drawMovementArrows();
 		}
 		_vm->_eventMan->f69_setMousePointer();
 	}
@@ -862,7 +862,7 @@ bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
 	Champion* L1199_ps_Champion;
 
 
-	if (!_vm->_championMan->_g506_actingChampionOrdinal || (actionListIndex != -1 && (_vm->_menuMan->_g713_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
+	if (!_vm->_championMan->_g506_actingChampionOrdinal || (actionListIndex != -1 && (_g713_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
 		return false;
 
 	L1199_ps_Champion = &_vm->_championMan->_gK71_champions[L1196_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)];
@@ -871,14 +871,14 @@ bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
 		// L1198_B_ClickTriggeredAction is set to -1 since booleans are stored in int16 in the original
 		L1198_B_ClickTriggeredAction = true;
 	} else {
-		L1197_ui_ActionIndex = _vm->_menuMan->_g713_actionList._actionIndices[actionListIndex];
+		L1197_ui_ActionIndex = _g713_actionList._actionIndices[actionListIndex];
 		L1199_ps_Champion->_actionDefense += g495_actionDefense[L1197_ui_ActionIndex]; /* BUG0_54 The defense modifier of an action is permanent.
 																									 Each action has an associated defense modifier value and a number of ticks while the champion cannot perform another action because the action icon is grayed out. If an action has a non zero defense modifier and a zero value for the number of ticks then the defense modifier is applied but it is never removed. This causes no issue in the original games because there are no actions in this case but it may occur in a version where data is customized. This statement should only be executed if the value for the action in G0491_auc_Graphic560_ActionDisabledTicks is not 0 otherwise the action is not disabled at the end of F0407_MENUS_IsActionPerformed and thus not enabled later in F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction where the defense modifier is also removed */
 		setFlag(L1199_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
 		L1198_B_ClickTriggeredAction = f407_isActionPerformed(L1196_ui_ChampionIndex, L1197_ui_ActionIndex);
 		L1199_ps_Champion->_actionIndex = (ChampionAction)L1197_ui_ActionIndex;
 	}
-	_vm->_menuMan->f388_clearActingChampion();
+	f388_clearActingChampion();
 	return L1198_B_ClickTriggeredAction;
 }
 
@@ -1155,7 +1155,7 @@ T0407014:
 			if ((AL1246_i_ActionHandWeaponClass >= k32_WeaponClassFirstSling) && (AL1246_i_ActionHandWeaponClass <= k47_WeaponClassLastSling)) {
 				if (AL1250_i_ReadyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
 T0407032:
-					_vm->_menuMan->_g513_actionDamage = kM2_damageNoAmmunition;
+					_g513_actionDamage = kM2_damageNoAmmunition;
 					L1255_i_ActionExperienceGain = 0;
 					AL1245_B_ActionPerformed = false;
 					break;
@@ -1441,7 +1441,7 @@ bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int
 			AL1237_ui_CellDelta = 1;
 T0402005: /* Check if there is another champion in front */
 			if (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(AL1236_ui_ChampionCell + AL1237_ui_CellDelta)) != kM1_ChampionNone) {
-				_vm->_menuMan->_g513_actionDamage = kM1_damageCantReach;
+				_g513_actionDamage = kM1_damageCantReach;
 				goto T0402010;
 			}
 		}
@@ -1452,7 +1452,7 @@ T0402005: /* Check if there is another champion in front */
 		if ((_vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
-		_vm->_menuMan->_g513_actionDamage = _vm->_groupMan->f231_getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing), _vm->M1_ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
+		_g513_actionDamage = _vm->_groupMan->f231_getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing), _vm->M1_ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
 		return true;
 	}
 T0402010:
@@ -1612,11 +1612,11 @@ void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) 
 	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
 	_vm->_championMan->_g506_actingChampionOrdinal = _vm->M0_indexToOrdinal(champIndex);
 	f383_setActionList(L1191_ps_ActionSet);
-	_vm->_menuMan->_g509_actionAreaContainsIcons = false;
+	_g509_actionAreaContainsIcons = false;
 	setFlag(L1190_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
-	_vm->_menuMan->f387_drawActionArea();
-	_vm->_menuMan->f387_drawActionArea();
+	f387_drawActionArea();
+	f387_drawActionArea();
 }
 
 void MenuMan::f383_setActionList(ActionSet* actionSet) {
@@ -1628,8 +1628,8 @@ void MenuMan::f383_setActionList(ActionSet* actionSet) {
 	uint16 L1171_ui_ActionIndex;
 	uint16 L1172_ui_MinimumSkillLevel;
 
-	_vm->_menuMan->_g713_actionList._actionIndices[0] = (ChampionAction)actionSet->_actionIndices[0];
-	_vm->_menuMan->_g713_actionList._minimumSkillLevel[0] = 1;
+	_g713_actionList._actionIndices[0] = (ChampionAction)actionSet->_actionIndices[0];
+	_g713_actionList._minimumSkillLevel[0] = 1;
 	L1170_ui_NextAvailableActionListIndex = 1;
 	for (L1169_ui_ActionListIndex = 1; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
 		if ((L1171_ui_ActionIndex = actionSet->_actionIndices[L1169_ui_ActionListIndex]) == k255_ChampionActionNone)
@@ -1638,14 +1638,14 @@ void MenuMan::f383_setActionList(ActionSet* actionSet) {
 			continue;
 		clearFlag(L1172_ui_MinimumSkillLevel, k0x0080_actionRequiresCharge);
 		if (_vm->_championMan->f303_getSkillLevel(_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal), g496_ActionSkillIndex[L1171_ui_ActionIndex]) >= L1172_ui_MinimumSkillLevel) {
-			_vm->_menuMan->_g713_actionList._actionIndices[L1170_ui_NextAvailableActionListIndex] = (ChampionAction)L1171_ui_ActionIndex;
-			_vm->_menuMan->_g713_actionList._minimumSkillLevel[L1170_ui_NextAvailableActionListIndex] = L1172_ui_MinimumSkillLevel;
+			_g713_actionList._actionIndices[L1170_ui_NextAvailableActionListIndex] = (ChampionAction)L1171_ui_ActionIndex;
+			_g713_actionList._minimumSkillLevel[L1170_ui_NextAvailableActionListIndex] = L1172_ui_MinimumSkillLevel;
 			L1170_ui_NextAvailableActionListIndex++;
 		}
 	}
 	_g507_actionCount = L1170_ui_NextAvailableActionListIndex;
 	for (L1169_ui_ActionListIndex = L1170_ui_NextAvailableActionListIndex; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
-		_vm->_menuMan->_g713_actionList._actionIndices[L1169_ui_ActionListIndex] = k255_ChampionActionNone;
+		_g713_actionList._actionIndices[L1169_ui_ActionListIndex] = k255_ChampionActionNone;
 	}
 }
 

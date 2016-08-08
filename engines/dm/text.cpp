@@ -157,7 +157,7 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	L0030_i_StringLength = strlen(string);
 	warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
 	if (true) { // there is a test here with F0561_SCROLLER_IsTextScrolling
-		_vm->_textMan->f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7 - 6) + 177, color, k0_ColorBlack, string);
+		f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7 - 6) + 177, color, k0_ColorBlack, string);
 	} else {
 		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
 		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
@@ -223,6 +223,6 @@ void TextMan::f443_endgamePrintString(int16 x, int16 y, Color textColor, char* t
 		}
 		L1407_pc_Character++;
 	}
-	_vm->_textMan->f53_printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
+	f53_printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
 }
 }

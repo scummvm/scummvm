@@ -138,7 +138,7 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
-	int16 L0005_i_IconIndex = _vm->_objectMan->f32_getObjectType(thing);
+	int16 L0005_i_IconIndex = f32_getObjectType(thing);
 	if (L0005_i_IconIndex != kM1_IconIndiceNone) {
 		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
 			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
@@ -208,7 +208,7 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	byte* L0020_puc_Bitmap_Destination;
 	int16 L1569_i_Width;
 
-	L0017_ps_SlotBox = &_vm->_objectMan->_g30_slotBoxes[slotBoxIndex];
+	L0017_ps_SlotBox = &_g30_slotBoxes[slotBoxIndex];
 	if ((L0017_ps_SlotBox->_iconIndex = iconIndex) == kM1_IconIndiceNone) {
 		return;
 	}
@@ -237,15 +237,15 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 	char* objectName = nullptr;
-	int16 L0007_i_IconIndex = _vm->_objectMan->f33_getIconIndex(thing);
+	int16 L0007_i_IconIndex = f33_getIconIndex(thing);
 	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
 		char champBonesName[16];
 		strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
-		strcat(champBonesName, _vm->_objectMan->_g352_objectNames[L0007_i_IconIndex]);
+		strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
 		objectName = champBonesName;
 	} else {
-		objectName = _vm->_objectMan->_g352_objectNames[L0007_i_IconIndex];
+		objectName = _g352_objectNames[L0007_i_IconIndex];
 	}
 	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
@@ -265,7 +265,7 @@ void ObjectMan::f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
 
 	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
 	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
-	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
+	f36_extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
 	_vm->_displayMan->f21_blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 }

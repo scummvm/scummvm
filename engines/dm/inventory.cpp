@@ -86,14 +86,14 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 		return;
 	}
 	_vm->_g321_stopWaitingForPlayerInput = true;
-	AL1102_ui_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal;
+	AL1102_ui_InventoryChampionOrdinal = _g432_inventoryChampionOrdinal;
 	if (_vm->M0_indexToOrdinal(championIndex) == AL1102_ui_InventoryChampionOrdinal) {
 		championIndex = k4_ChampionCloseInventory;
 	}
 	_vm->_eventMan->f78_showMouse();
 	if (AL1102_ui_InventoryChampionOrdinal) {
-		_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-		_vm->_inventoryMan->f334_closeChest();
+		_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		f334_closeChest();
 		L1103_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(AL1102_ui_InventoryChampionOrdinal)];
 		if (L1103_ps_Champion->_currHealth && !_vm->_championMan->_g299_candidateChampionOrdinal) {
 			setFlag(L1103_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
@@ -115,7 +115,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 		}
 	}
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
+	_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
 	if (!AL1102_ui_InventoryChampionOrdinal) {
 		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
@@ -694,8 +694,8 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 	static char* G0431_apc_StatisticNames[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
 
 
-	_vm->_inventoryMan->f334_closeChest();
-	L1094_ps_Champion = &_vm->_championMan->_gK71_champions[L1093_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal)];
+	f334_closeChest();
+	L1094_ps_Champion = &_vm->_championMan->_gK71_champions[L1093_ui_ChampionIndex = _vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal)];
 	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
 	L1091_i_Y = 58;
 	for (AL1090_ui_SkillIndex = k0_ChampionSkillFighter; AL1090_ui_SkillIndex <= k3_ChampionSkillWizard; AL1090_ui_SkillIndex++) {
@@ -731,7 +731,7 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 }
 
 void InventoryMan::f350_drawStopPressingMouth() {
-	_vm->_inventoryMan->f347_drawPanel();
+	f347_drawPanel();
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	warning(false, "Ignored code: G0587_i_HideMousePointerRequestCount");
 	_vm->_eventMan->f77_hideMouse();
@@ -740,8 +740,8 @@ void InventoryMan::f350_drawStopPressingMouth() {
 void InventoryMan::f353_drawStopPressingEye() {
 	Thing L1100_T_LeaderHandObject;
 
-	_vm->_inventoryMan->f332_drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
-	_vm->_inventoryMan->f347_drawPanel();
+	f332_drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
+	f347_drawPanel();
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	if ((L1100_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject) != Thing::_none) {
 		_vm->_objectMan->f34_drawLeaderObjectName(L1100_T_LeaderHandObject);
@@ -781,7 +781,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 
 
 	if (_vm->_championMan->_g415_leaderEmptyHanded) {
-		if (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+		if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
 			return;
 		}
 		_vm->_eventMan->_g597_ignoreMouseMovements = true;
@@ -793,7 +793,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		} else {
 			_vm->_eventMan->f78_showMouse();
 			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
-			_vm->_inventoryMan->f345_drawPanelFoodWaterPoisoned();
+			f345_drawPanelFoodWaterPoisoned();
 			_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 		}
 		return;
@@ -807,7 +807,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
 	L1089_ui_Weight = _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing);
-	L1083_ps_Champion = &_vm->_championMan->_gK71_champions[L1080_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal)];
+	L1083_ps_Champion = &_vm->_championMan->_gK71_champions[L1080_ui_ChampionIndex = _vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal)];
 	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1078_T_Thing);
 	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
 		if (!(L1082_ps_Junk->getChargeCount())) {
@@ -915,7 +915,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	}
 	_vm->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-	if (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+	if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
 		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
 	}
 	_vm->_championMan->f292_drawChampionState((ChampionIndex)L1080_ui_ChampionIndex);
@@ -954,12 +954,12 @@ void InventoryMan::f352_processCommand71_clickOnEye() {
 	_vm->_eventMan->f357_discardAllInput();
 	_vm->_eventMan->f78_showMouse();
 	_vm->f22_delay(8);
-	_vm->_inventoryMan->f332_drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
+	f332_drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
 	if (_vm->_championMan->_g415_leaderEmptyHanded) {
 		f351_drawChampionSkillsAndStatistics();
 	} else {
 		_vm->_objectMan->f35_clearLeaderObjectName();
-		_vm->_inventoryMan->f342_drawPanelObject(_vm->_championMan->_g414_leaderHandObject, true);
+		f342_drawPanelObject(_vm->_championMan->_g414_leaderHandObject, true);
 	}
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 

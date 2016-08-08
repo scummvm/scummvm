@@ -114,19 +114,19 @@ void Timeline::f237_deleteEvent(uint16 eventIndex) {
 	uint16 L0587_ui_EventCount;
 
 
-	_vm->_timeline->_g370_events[eventIndex]._type = k0_TMEventTypeNone;
-	if (eventIndex < _vm->_timeline->_g373_firstUnusedEventIndex) {
-		_vm->_timeline->_g373_firstUnusedEventIndex = eventIndex;
+	_g370_events[eventIndex]._type = k0_TMEventTypeNone;
+	if (eventIndex < _g373_firstUnusedEventIndex) {
+		_g373_firstUnusedEventIndex = eventIndex;
 	}
-	_vm->_timeline->_g372_eventCount--;
-	if ((L0587_ui_EventCount = _vm->_timeline->_g372_eventCount) == 0) {
+	_g372_eventCount--;
+	if ((L0587_ui_EventCount = _g372_eventCount) == 0) {
 		return;
 	}
 	L0586_ui_TimelineIndex = f235_getIndex(eventIndex);
 	if (L0586_ui_TimelineIndex == L0587_ui_EventCount) {
 		return;
 	}
-	_vm->_timeline->_g371_timeline[L0586_ui_TimelineIndex] = _vm->_timeline->_g371_timeline[L0587_ui_EventCount];
+	_g371_timeline[L0586_ui_TimelineIndex] = _g371_timeline[L0587_ui_EventCount];
 	f236_fixChronology(L0586_ui_TimelineIndex);
 }
 
@@ -138,16 +138,16 @@ void Timeline::f236_fixChronology(uint16 timelineIndex) {
 	bool L0585_B_ChronologyFixed;
 
 
-	if ((L0583_ui_EventCount = _vm->_timeline->_g372_eventCount) == 1) {
+	if ((L0583_ui_EventCount = _g372_eventCount) == 1) {
 		return;
 	}
 
-	L0584_ps_Event = &_vm->_timeline->_g370_events[L0582_ui_EventIndex = _vm->_timeline->_g371_timeline[timelineIndex]];
+	L0584_ps_Event = &_g370_events[L0582_ui_EventIndex = _g371_timeline[timelineIndex]];
 	L0585_B_ChronologyFixed = false;
 	while (timelineIndex > 0) { /* Check if the event should be moved earlier in the timeline */
 		L0581_ui_TimelineIndex = (timelineIndex - 1) >> 1;
-		if (f234_isEventABeforeB(L0584_ps_Event, &_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex]])) {
-			_vm->_timeline->_g371_timeline[timelineIndex] = _vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex];
+		if (f234_isEventABeforeB(L0584_ps_Event, &_g370_events[_g371_timeline[L0581_ui_TimelineIndex]])) {
+			_g371_timeline[timelineIndex] = _g371_timeline[L0581_ui_TimelineIndex];
 			timelineIndex = L0581_ui_TimelineIndex;
 			L0585_B_ChronologyFixed = true;
 		} else {
@@ -159,18 +159,18 @@ void Timeline::f236_fixChronology(uint16 timelineIndex) {
 	L0583_ui_EventCount = ((L0583_ui_EventCount - 1) - 1) >> 1;
 	while (timelineIndex <= L0583_ui_EventCount) { /* Check if the event should be moved later in the timeline */
 		L0581_ui_TimelineIndex = (timelineIndex << 1) + 1;
-		if (((L0581_ui_TimelineIndex + 1) < _vm->_timeline->_g372_eventCount) && (f234_isEventABeforeB(&_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex + 1]], &_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex]]))) {
+		if (((L0581_ui_TimelineIndex + 1) < _g372_eventCount) && (f234_isEventABeforeB(&_g370_events[_g371_timeline[L0581_ui_TimelineIndex + 1]], &_g370_events[_g371_timeline[L0581_ui_TimelineIndex]]))) {
 			L0581_ui_TimelineIndex++;
 		}
-		if (f234_isEventABeforeB(&_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex]], L0584_ps_Event)) {
-			_vm->_timeline->_g371_timeline[timelineIndex] = _vm->_timeline->_g371_timeline[L0581_ui_TimelineIndex];
+		if (f234_isEventABeforeB(&_g370_events[_g371_timeline[L0581_ui_TimelineIndex]], L0584_ps_Event)) {
+			_g371_timeline[timelineIndex] = _g371_timeline[L0581_ui_TimelineIndex];
 			timelineIndex = L0581_ui_TimelineIndex;
 		} else {
 			break;
 		}
 	}
 T0236011:
-	_vm->_timeline->_g371_timeline[timelineIndex] = L0582_ui_EventIndex;
+	_g371_timeline[timelineIndex] = L0582_ui_EventIndex;
 }
 
 bool Timeline::f234_isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
@@ -186,11 +186,11 @@ uint16 Timeline::f235_getIndex(uint16 eventIndex) {
 	uint16* L0580_pui_TimelineEntry;
 
 
-	for (L0579_ui_TimelineIndex = 0, L0580_pui_TimelineEntry = _vm->_timeline->_g371_timeline; L0579_ui_TimelineIndex < _vm->_timeline->_g369_eventMaxCount; L0579_ui_TimelineIndex++) {
+	for (L0579_ui_TimelineIndex = 0, L0580_pui_TimelineEntry = _g371_timeline; L0579_ui_TimelineIndex < _g369_eventMaxCount; L0579_ui_TimelineIndex++) {
 		if (*L0580_pui_TimelineEntry++ == eventIndex)
 			break;
 	}
-	if (L0579_ui_TimelineIndex >= _vm->_timeline->_g369_eventMaxCount) { /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
+	if (L0579_ui_TimelineIndex >= _g369_eventMaxCount) { /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
 		L0579_ui_TimelineIndex = 0; /* BUG0_01 Coding error without consequence. Wrong return value. If the specified event index is not found in the timeline the function returns 0 which is the same value that is returned if the event index is found in the first timeline entry. No consequence because this code is never executed */
 	}
 	return L0579_ui_TimelineIndex;
@@ -202,11 +202,11 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 	TimelineEvent* L0591_ps_Event;
 
 
-	if (_vm->_timeline->_g372_eventCount == _vm->_timeline->_g369_eventMaxCount) {
+	if (_g372_eventCount == _g369_eventMaxCount) {
 		_vm->f19_displayErrorAndStop(45);
 	}
 	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
-		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _vm->_timeline->_g370_events; L0588_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 			if ((L0591_ps_Event->_type >= k5_TMEventTypeCorridor) && (L0591_ps_Event->_type <= k10_TMEventTypeDoor)) {
 				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY()) && ((L0591_ps_Event->_type != k6_TMEventTypeWall) || (L0591_ps_Event->_C.A._cell == event->_C.A._cell))) {
 					L0591_ps_Event->_C.A._effect = event->_C.A._effect;
@@ -225,7 +225,7 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 		}
 	} else {
 		if (event->_type == k1_TMEventTypeDoorAnimation) {
-			for (L0588_ui_EventIndex = 0, L0591_ps_Event = _vm->_timeline->_g370_events; L0588_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+			for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY())) {
 					if (L0591_ps_Event->_type == k10_TMEventTypeDoor) {
 						if (L0591_ps_Event->_C.A._effect == k2_SensorEffToggle) {
@@ -241,7 +241,7 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 			}
 		} else {
 			if (event->_type == k2_TMEventTypeDoorDestruction) {
-				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _vm->_timeline->_g370_events; L0588_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 					if ((event->getMapXY() == L0591_ps_Event->getMapXY()) && (M29_map(event->_mapTime) == M29_map(L0591_ps_Event->_mapTime))) {
 						if ((L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) || (L0591_ps_Event->_type == k10_TMEventTypeDoor)) {
 							f237_deleteEvent(L0588_ui_EventIndex);
@@ -251,14 +251,14 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 			}
 		}
 	}
-	_vm->_timeline->_g370_events[L0590_ui_NewEventIndex = _vm->_timeline->_g373_firstUnusedEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
+	_g370_events[L0590_ui_NewEventIndex = _g373_firstUnusedEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
 	do {
-		if (_vm->_timeline->_g373_firstUnusedEventIndex == _vm->_timeline->_g369_eventMaxCount)
+		if (_g373_firstUnusedEventIndex == _g369_eventMaxCount)
 			break;
-		_vm->_timeline->_g373_firstUnusedEventIndex++;
-	} while ((_vm->_timeline->_g370_events[_vm->_timeline->_g373_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
-	_vm->_timeline->_g371_timeline[_vm->_timeline->_g372_eventCount] = L0590_ui_NewEventIndex;
-	f236_fixChronology(_vm->_timeline->_g372_eventCount++);
+		_g373_firstUnusedEventIndex++;
+	} while ((_g370_events[_g373_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
+	_g371_timeline[_g372_eventCount] = L0590_ui_NewEventIndex;
+	f236_fixChronology(_g372_eventCount++);
 	return L0590_ui_NewEventIndex;
 }
 
@@ -380,13 +380,13 @@ T0261053:
 }
 
 bool Timeline::f240_isFirstEventExpiered() {
-	return (_vm->_timeline->_g372_eventCount && (M30_time(_vm->_timeline->_g370_events[_vm->_timeline->_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
+	return (_g372_eventCount && (M30_time(_g370_events[_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
 }
 
 void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
 	uint16 L0592_ui_EventIndex;
 
-	*event = _vm->_timeline->_g370_events[L0592_ui_EventIndex = _vm->_timeline->_g371_timeline[0]];
+	*event = _g370_events[L0592_ui_EventIndex = _g371_timeline[0]];
 	f237_deleteEvent(L0592_ui_EventIndex);
 }
 
@@ -424,7 +424,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				}
 			}
 			event->_mapTime++;
-			_vm->_timeline->f238_addEventGetEventIndex(event);
+			f238_addEventGetEventIndex(event);
 			return;
 		}
 		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->f144_getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
@@ -436,7 +436,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				L0597_puc_Square->setDoorState(L0596_i_DoorState);
 				_vm->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				event->_mapTime++;
-				_vm->_timeline->f238_addEventGetEventIndex(event);
+				f238_addEventGetEventIndex(event);
 				return;
 			}
 		}
@@ -457,7 +457,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 			return;
 		}
 	}
-	_vm->_timeline->f238_addEventGetEventIndex(event);
+	f238_addEventGetEventIndex(event);
 T0241020_Return:
 	;
 }
@@ -478,11 +478,11 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	if (L0605_i_Effect == k1_SensorEffClear) {
 		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
 			event->_mapTime++;
-			_vm->_timeline->f238_addEventGetEventIndex(event);
+			f238_addEventGetEventIndex(event);
 		} else {
 			if (((L0606_T_Thing = _vm->_groupMan->f175_groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->f144_getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 				event->_mapTime++;
-				_vm->_timeline->f238_addEventGetEventIndex(event);
+				f238_addEventGetEventIndex(event);
 			} else {
 				clearFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
 			}
@@ -520,7 +520,7 @@ void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
 		}
 	}
 	event->_type = k1_TMEventTypeDoorAnimation;
-	_vm->_timeline->f238_addEventGetEventIndex(event);
+	f238_addEventGetEventIndex(event);
 }
 
 void Timeline::f251_timelineProcessEvent9_squarePit(TimelineEvent* event) {
@@ -578,7 +578,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		}
 		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
 			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(L0645_T_Thing);
-			L0647_ps_Event = &_vm->_timeline->_g370_events[L0646_ps_Projectile->_eventIndex];
+			L0647_ps_Event = &_g370_events[L0646_ps_Projectile->_eventIndex];
 			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
 			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
 			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_g400_moveResultDir);
@@ -586,7 +586,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 		} else {
 			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
-				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _vm->_timeline->_g370_events; AL0644_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
+				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _g370_events; AL0644_ui_EventIndex < _g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
 					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 						L0647_ps_Event->_B._location._mapX = _vm->_moveSens->_g397_moveResultMapX;
 						L0647_ps_Event->_B._location._mapY = _vm->_moveSens->_g398_moveResultMapY;
@@ -854,7 +854,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
-							_vm->_timeline->f238_addEventGetEventIndex(&L0619_s_Event);
+							f238_addEventGetEventIndex(&L0619_s_Event);
 						}
 					}
 				}
@@ -904,7 +904,7 @@ T0252001:
 			}
 		}
 		event->_mapTime += 5;
-		_vm->_timeline->f238_addEventGetEventIndex(event);
+		f238_addEventGetEventIndex(event);
 	}
 }
 
@@ -1027,7 +1027,7 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
 		M33_setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 4);
 		L0676_s_Event._priority = 0;
-		_vm->_timeline->f238_addEventGetEventIndex(&L0676_s_Event);
+		f238_addEventGetEventIndex(&L0676_s_Event);
 	}
 }
 
@@ -1063,7 +1063,7 @@ void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) 
 T0255002:
 		L0670_ui_Step--;
 		event->_C.A._effect = L0670_ui_Step;
-		_vm->_timeline->f238_addEventGetEventIndex(event);
+		f238_addEventGetEventIndex(event);
 		break;
 	case 1:
 		L0667_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
