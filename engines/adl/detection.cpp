@@ -91,7 +91,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformApple2GS, // FIXME
+			Common::kPlatformApple2,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
@@ -105,7 +105,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformApple2GS, // FIXME
+			Common::kPlatformApple2,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
@@ -119,7 +119,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformApple2GS, // FIXME
+			Common::kPlatformApple2,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
@@ -133,7 +133,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformApple2GS, // FIXME
+			Common::kPlatformApple2,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
@@ -150,7 +150,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformApple2GS, // FIXME
+			Common::kPlatformApple2,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
