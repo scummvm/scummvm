@@ -24,19 +24,24 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CAutoMusicPlayer, CAutoMusicPlayerBase)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(LeaveRoomMsg)
+END_MESSAGE_MAP()
+
 CAutoMusicPlayer::CAutoMusicPlayer() : CAutoMusicPlayerBase() {
 }
 
 void CAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_leaveRoomSound, indent);
 
 	CAutoMusicPlayerBase::save(file, indent);
 }
 
 void CAutoMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
+	_leaveRoomSound = file->readString();
 
 	CAutoMusicPlayerBase::load(file);
 }
@@ -47,6 +52,22 @@ bool CAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
 		if (msg->_newRoom == room)
 			addTimer(2000);
 	}
+
+	return true;
+}
+
+bool CAutoMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	if (_isRepeated) {
+		CRoomItem *room = findRoom();
+		if (msg->_oldRoom == room) {
+			CChangeMusicMsg changeMsg;
+			changeMsg._flags = 1;
+			changeMsg.execute(this);
+		}
+	}
+
+	if (!_leaveRoomSound.empty())
+		playSound(_leaveRoomSound);
 
 	return true;
 }

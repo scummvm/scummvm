@@ -58,4 +58,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_LINK_ITEM_H */
+#endif /* TITANIC_SEASONAL_MUSIC_PLAYER_H */

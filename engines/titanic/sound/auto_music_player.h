@@ -29,9 +29,11 @@
 namespace Titanic {
 
 class CAutoMusicPlayer : public CAutoMusicPlayerBase {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 private:
-	CString _string2;
+	CString _leaveRoomSound;
 public:
 	CLASSDEF;
 	CAutoMusicPlayer();
@@ -49,4 +51,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_LINK_ITEM_H */
+#endif /* TITANIC_AUTO_MUSIC_PLAYER_H */
