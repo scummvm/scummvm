@@ -90,7 +90,6 @@ void yyerror(char *s) {
 %token tSPRITE tINTERSECTS tWITHIN
 
 %type<code> asgn begin elseif elsestmtoneliner end expr if repeatwhile repeatwith stmtlist
-%type<s> gotoframe gotomovie
 %type<narg> argdef arglist
 
 %right '='
@@ -434,48 +433,34 @@ gotofunc: tGO tLOOP				{ g_lingo->code1(g_lingo->c_gotoloop); }
 	| tGO tNEXT					{ g_lingo->code1(g_lingo->c_gotonext); }
 	| tGO tPREVIOUS				{ g_lingo->code1(g_lingo->c_gotoprevious); }
 	| tGO gotoframe 			{
-		g_lingo->code1(g_lingo->c_goto);
-		g_lingo->codeString($2->c_str());
-		g_lingo->codeString("");
-		delete $2; }
+		g_lingo->codeConst(1);
+		g_lingo->code1(g_lingo->c_goto); }
 	| tGO gotoframe gotomovie	{
-		g_lingo->code1(g_lingo->c_goto);
-		g_lingo->codeString($2->c_str());
-		g_lingo->codeString($3->c_str());
-		delete $2;
-		delete $3; }
+		g_lingo->codeConst(3);
+		g_lingo->code1(g_lingo->c_goto); }
 	| tGO gotomovie				{
-		g_lingo->code1(g_lingo->c_goto);
-		g_lingo->codeString("");
-		g_lingo->codeString($2->c_str());
-		delete $2; }
+		g_lingo->codeConst(2);
+		g_lingo->code1(g_lingo->c_goto); }
 	;
 
-gotoframe: tFRAME STRING		{ $$ = $2; }
-	| STRING					{ $$ = $1; }
+gotoframe: tFRAME expr
+	| expr
 	;
 
-gotomovie: tOF tMOVIE STRING	{ $$ = $3; }
-	| tMOVIE STRING				{ $$ = $2; }
+gotomovie: tOF tMOVIE expr
+	| tMOVIE expr
 	;
 
 playfunc: tPLAY tDONE			{ g_lingo->code1(g_lingo->c_playdone); }
 	| tPLAY gotoframe 			{
-		g_lingo->code1(g_lingo->c_play);
-		g_lingo->codeString($2->c_str());
-		g_lingo->codeString("");
-		delete $2; }
+		g_lingo->codeConst(1);
+		g_lingo->code1(g_lingo->c_play); }
 	| tPLAY gotoframe gotomovie	{
-		g_lingo->code1(g_lingo->c_play);
-		g_lingo->codeString($2->c_str());
-		g_lingo->codeString($3->c_str());
-		delete $2;
-		delete $3; }
+		g_lingo->codeConst(3);
+		g_lingo->code1(g_lingo->c_play); }
 	| tPLAY gotomovie				{
-		g_lingo->code1(g_lingo->c_play);
-		g_lingo->codeString("");
-		g_lingo->codeString($2->c_str());
-		delete $2; }
+		g_lingo->codeConst(2);
+		g_lingo->code1(g_lingo->c_play); }
 	;
 
 // macro

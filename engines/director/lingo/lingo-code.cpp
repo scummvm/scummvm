@@ -674,13 +674,21 @@ void Lingo::c_mciwait() {
 }
 
 void Lingo::c_goto() {
-	Common::String frame((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-	g_lingo->_pc += g_lingo->calcStringAlignment(frame.c_str());
+	Datum mode = g_lingo->pop();
+	Datum frame, movie;
 
-	Common::String movie((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-	g_lingo->_pc += g_lingo->calcStringAlignment(movie.c_str());
+	if (mode.u.i == 1 || mode.u.i == 3)
+		frame = g_lingo->pop();
 
-	g_lingo->func_goto(frame, movie);
+	if (mode.u.i == 2 || mode.u.i == 3)
+		movie = g_lingo->pop();
+
+	frame.toString();
+	movie.toString();
+
+	warning("c_goto(%s, %s)", frame.u.s->c_str(), movie.u.s->c_str());
+
+	//g_lingo->func_goto(frame, movie);
 }
 
 void Lingo::c_gotoloop() {
