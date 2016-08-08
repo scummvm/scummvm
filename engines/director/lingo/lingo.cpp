@@ -273,10 +273,10 @@ Common::String *Datum::toString() {
 	Common::String *s = new Common::String;
 	switch (type) {
 	case INT:
-		s->format("%d", u.i);
+		*s = Common::String::format("%d", u.i);
 		break;
 	case FLOAT:
-		s->format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
+		*s = Common::String::format(g_lingo->_floatPrecisionFormat.c_str(), u.f);
 		break;
 	case STRING:
 		delete s;
