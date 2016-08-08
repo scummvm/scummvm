@@ -26,11 +26,18 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CWaterLappingSounds, CRoomAutoSoundPlayer);
 
+CWaterLappingSounds::CWaterLappingSounds() : CRoomAutoSoundPlayer(),
+		_value(0) {
+	_filename = "z#217.wav";
+	_repeated = false;
+	_startSeconds = 0;
+}
+
 void CWaterLappingSounds::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeQuotedLine(_filename, indent);
+	file->writeNumberLine(_repeated, indent);
+	file->writeNumberLine(_startSeconds, indent);
 	file->writeNumberLine(_value, indent);
 
 	CRoomAutoSoundPlayer::save(file, indent);
@@ -38,9 +45,9 @@ void CWaterLappingSounds::save(SimpleFile *file, int indent) {
 
 void CWaterLappingSounds::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_fieldD4 = file->readNumber();
-	_fieldE0 = file->readNumber();
+	_filename = file->readString();
+	_repeated = file->readNumber();
+	_startSeconds = file->readNumber();
 	_value = file->readNumber();
 	
 	CRoomAutoSoundPlayer::load(file);

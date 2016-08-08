@@ -33,7 +33,7 @@ public:
 	int _value;
 public:
 	CLASSDEF;
-	CWaterLappingSounds() : CRoomAutoSoundPlayer(), _value(0) {}
+	CWaterLappingSounds();
 
 	/**
 	 * Save the data for the class to file

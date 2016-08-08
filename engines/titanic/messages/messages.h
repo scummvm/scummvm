@@ -317,7 +317,7 @@ MESSAGE1(CSetChevRoomBits, int, value, 0);
 MESSAGE1(CSetFrameMsg, int, frameNumber, 0);
 MESSAGE0(CSetMusicControlsMsg);
 MESSAGE2(CSetVarMsg, CString, varName, "", int, value, 0);
-MESSAGE2(CSetVolumeMsg, int, value1, 70, int, value2, 0);
+MESSAGE2(CSetVolumeMsg, int, volume, 70, int, secondsTransition, 0);
 MESSAGE2(CShipSettingMsg, int, value, 0, CString, name, "");
 MESSAGE1(CShowTextMsg, CString, value, "NO TEXT INCLUDED!!!");
 MESSAGE2(CSignalObject, CString, strValue, "", int, numValue, 0);

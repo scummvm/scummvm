@@ -24,22 +24,30 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CAutoSoundPlayer, CGameObject)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(SignalObject)
+	ON_MESSAGE(SetVolumeMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+END_MESSAGE_MAP()
+
 CAutoSoundPlayer::CAutoSoundPlayer() : CGameObject(),
-	_fieldBC(0), _fieldCC(70), _fieldD0(0), _fieldD4(0), _fieldD8(-1),
-	_fieldDC(0), _fieldE0(-1), _fieldE4(0), _fieldE8(0) {
+	_fieldBC(0), _volume(70), _fieldD0(0), _repeated(false), _soundHandle(-1),
+	_stopSeconds(0), _startSeconds(-1), _active(false), _fieldE8(0) {
 }
 
 void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeQuotedLine(_filename, indent);
+	file->writeNumberLine(_volume, indent);
 	file->writeNumberLine(_fieldD0, indent);
-	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldD8, indent);
-	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_repeated, indent);
+	file->writeNumberLine(_soundHandle, indent);
+	file->writeNumberLine(_stopSeconds, indent);
+	file->writeNumberLine(_startSeconds, indent);
+	file->writeNumberLine(_active, indent);
 	file->writeNumberLine(_fieldE8, indent);
 
 	CGameObject::save(file, indent);
@@ -48,17 +56,79 @@ void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 void CAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
-	_string1 = file->readString();
-	_fieldCC = file->readNumber();
+	_filename = file->readString();
+	_volume = file->readNumber();
 	_fieldD0 = file->readNumber();
-	_fieldD4 = file->readNumber();
-	_fieldD8 = file->readNumber();
-	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_repeated = file->readNumber();
+	_soundHandle = file->readNumber();
+	_stopSeconds = file->readNumber();
+	_startSeconds = file->readNumber();
+	_active = file->readNumber();
 	_fieldE8 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CAutoSoundPlayer::TurnOn(CTurnOn *msg) {
+	if (_soundHandle == -1) {
+		CProximity prox;
+		prox._fieldC = _fieldD0;
+		prox._repeated = _repeated;
+		if (_fieldE8)
+			prox._field28 = 2;
+		prox._channelVolume = (_startSeconds == -1) ? _volume : 0;
+
+		_soundHandle = playSound(_filename, prox);
+		if (_startSeconds != -1)
+			setSoundVolume(_soundHandle, _volume, _startSeconds);
+
+		_active = true;
+	}
+
+	return true;
+}
+
+bool CAutoSoundPlayer::TurnOff(CTurnOff *msg) {
+	if (_soundHandle != -1) {
+		if (isSoundActive(_soundHandle))
+			stopSound(_soundHandle, _stopSeconds);
+
+		_soundHandle = -1;
+		_active = false;
+	}
+
+	return true;
+}
+
+bool CAutoSoundPlayer::SignalObject(CSignalObject *msg) {
+	if (_soundHandle != -1) {
+		if (isSoundActive(_soundHandle))
+			stopSound(_soundHandle, msg->_numValue);
+
+		_soundHandle = -1;
+		_active = false;
+	}
+
+	return true;
+}
+
+bool CAutoSoundPlayer::SetVolumeMsg(CSetVolumeMsg *msg) {
+	if (_soundHandle != -1 && isSoundActive(_soundHandle))
+		setSoundVolume(_soundHandle, msg->_volume, msg->_secondsTransition);
+
+	return true;
+}
+
+bool CAutoSoundPlayer::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	if (_active) {
+		_soundHandle = -1;
+		_active = false;
+
+		CTurnOn onMsg;
+		onMsg.execute(this);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
