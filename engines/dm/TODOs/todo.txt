@@ -1,19 +1,12 @@
 Bugs:
 	Display:
-		Broken colour palette
-		Portraits, alcoves etc. look broken from afar
-		Arrow and hand display is messed up
-		Items are displayed in the wrong cells
-
+		Broken colour palette for dungeon and cursor
 		Gui is messed up by drawn spell area line on startup
 		Spellcasting tabs are displayed inproperly, switching between them is possible tho
 
-
 	Logic:
-		When object are put on the right side of the current square, they disappear
-		Object display is a bit mixed up with regards to which cell is it drawn in
-
-		
+		End game method is broken
+		Items thrown on the right side end up on the left side 
 
 
 Possible bugs:
