@@ -24,7 +24,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
-#include "mohawk/sound.h"
+#include "mohawk/riven_sound.h"
 #include "mohawk/video.h"
 
 #include "gui/message.h"
@@ -2429,7 +2429,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 			// Play the sound of not being able to move
 			_vm->_cursor->setCursor(kRivenHideCursor);
 			_vm->_system->updateScreen();
-			_vm->_sound->playSoundBlocking(13);
+			_vm->_sound->playSound(13);
 		}
 	} else {
 		// We're not at the bottom, and we can move down again
@@ -2463,7 +2463,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 		// Play the sound of not being able to move
 		_vm->_cursor->setCursor(kRivenHideCursor);
 		_vm->_system->updateScreen();
-		_vm->_sound->playSoundBlocking(13);
+		_vm->_sound->playSound(13);
 		return;
 	}
 

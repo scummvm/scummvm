@@ -42,20 +42,6 @@ namespace Mohawk {
 
 #define MAX_CHANNELS 2         // Can there be more than 2?
 
-struct SLSTRecord {
-	uint16 index;
-	uint16 sound_count;
-	uint16 *sound_ids;
-	uint16 fade_flags;
-	uint16 loop;
-	uint16 global_volume;
-	uint16 u0;
-	uint16 u1;
-	uint16 *volumes;
-	int16 *balances;
-	uint16 *u2;
-};
-
 enum SndHandleType {
 	kFreeHandle,
 	kUsedHandle
@@ -65,11 +51,6 @@ struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
 	uint samplesPerSecond;
-	uint16 id;
-};
-
-struct SLSTSndHandle {
-	Audio::SoundHandle *handle;
 	uint16 id;
 };
 
@@ -144,12 +125,6 @@ public:
 	void stopBackgroundMyst();
 	void changeBackgroundVolumeMyst(uint16 vol);
 
-	// Riven-specific sound functions
-	void playSLST(uint16 index, uint16 card);
-	void playSLST(SLSTRecord slstRecord);
-	void stopAllSLST(bool fade = false);
-	static byte convertRivenVolume(uint16 volume);
-
 private:
 	MohawkEngine *_vm;
 	MidiDriver *_midiDriver;
@@ -166,11 +141,6 @@ private:
 
 	// Myst-specific
 	SndHandle _mystBackgroundSound;
-
-	// Riven-specific
-	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
-	void stopSLSTSound(uint16 id, bool fade);
-	Common::Array<SLSTSndHandle> _currentSLSTSounds;
 };
 
 } // End of namespace Mohawk

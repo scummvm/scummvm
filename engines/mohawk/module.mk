@@ -57,6 +57,7 @@ MODULE_OBJS += \
 	riven_graphics.o \
 	riven_saveload.o \
 	riven_scripts.o \
+	riven_sound.o \
 	riven_vars.o
 endif
 
