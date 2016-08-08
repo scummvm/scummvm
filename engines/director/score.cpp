@@ -429,6 +429,11 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 void Score::setStartToLabel(Common::String label) {
+	if (!_labels) {
+		warning("setStartToLabel: No labels set");
+		return;
+	}
+
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
