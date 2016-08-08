@@ -520,6 +520,8 @@ void AdlEngine::dropItem(byte noun) {
 }
 
 Common::Error AdlEngine::run() {
+	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
+
 	_console = new Console(this);
 	_speaker = new Speaker();
 	_display = new Display();

@@ -109,8 +109,6 @@ Display::Display() :
 		_cursorPos(0),
 		_showCursor(false) {
 
-	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
-
 	_monochrome = !ConfMan.getBool("color");
 	_scanlines = ConfMan.getBool("scanlines");
 
