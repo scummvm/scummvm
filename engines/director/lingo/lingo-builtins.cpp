@@ -32,67 +32,77 @@ static struct BuiltinProto {
 	bool parens;
 } builtins[] = {
 	// Math
-	{ "abs",	Lingo::b_abs,		1, 1, true },
-	{ "atan",	Lingo::b_atan,		1, 1, true },
-	{ "cos",	Lingo::b_cos,		1, 1, true },
-	{ "exp",	Lingo::b_exp,		1, 1, true },
-	{ "float",	Lingo::b_float,		1, 1, true },
+	{ "abs",	Lingo::b_abs,		1, 1, true },	// D2
+	{ "atan",	Lingo::b_atan,		1, 1, true },	// 		D4
+	{ "cos",	Lingo::b_cos,		1, 1, true },	// 		D4
+	{ "exp",	Lingo::b_exp,		1, 1, true },	// 		D4
+	{ "float",	Lingo::b_float,		1, 1, true },	// 		D4
 	{ "integer",Lingo::b_integer,	1, 1, true },
-	{ "log",	Lingo::b_log,		1, 1, true },
-	{ "pi",		Lingo::b_pi,		0, 0, true },
-	{ "power",	Lingo::b_power,		2, 2, true },
-	{ "random",	Lingo::b_random,	1, 1, true },
+	{ "log",	Lingo::b_log,		1, 1, true },	// 		D4
+	{ "pi",		Lingo::b_pi,		0, 0, true },	// 		D4
+	{ "power",	Lingo::b_power,		2, 2, true },	// 		D4
+	{ "random",	Lingo::b_random,	1, 1, true },	// D2
 	{ "sin",	Lingo::b_sin,		1, 1, true },
-	{ "sqrt",	Lingo::b_sqrt,		1, 1, true },
-	{ "tan",	Lingo::b_tan,		1, 1, true },
+	{ "sqrt",	Lingo::b_sqrt,		1, 1, true },	// D2
+	{ "tan",	Lingo::b_tan,		1, 1, true },	// 		D4
 	// String
-	{ "chars",	Lingo::b_chars,		3, 3, true },
-	{ "length",	Lingo::b_length,	1, 1, true },
-	{ "string",	Lingo::b_string,	1, 1, true },
+	{ "chars",	Lingo::b_chars,		3, 3, true },	// D2
+	{ "length",	Lingo::b_length,	1, 1, true },	// D2
+	{ "string",	Lingo::b_string,	1, 1, true },	// D2
 	// Files
-	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },
-	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },
-	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },
-	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },
-	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },
-	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },
-	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },
-	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },
+	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
+	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
+	{ "closeXlib",		Lingo::b_closeXlib,		0, 1, false },	// D2
+		// open													// D2
+	{ "openDA",	 		Lingo::b_openDA, 		1, 1, false },	// D2
+	{ "openResFile",	Lingo::b_openResFile,	1, 1, false },	// D2
+	{ "openXlib",		Lingo::b_openXlib,		1, 1, false },	// D2
+	{ "showResFile",	Lingo::b_showResFile,	0, 1, false },	// D2
+	{ "showXlib",		Lingo::b_showXlib,		0, 1, false },	// D2
 	// Control
-	{ "continue",		Lingo::b_continue,		0, 0, false },
-	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },
-	{ "delay",	 		Lingo::b_delay,			1, 1, false },
-	{ "do",		 		Lingo::b_do,			1, 1, false },
-	{ "nothing",		Lingo::b_nothing,		0, 0, false },
-	{ "pause",			Lingo::b_pause,			0, 0, false },
-	{ "playAccel",		Lingo::b_playAccel,		-1,0, false }, // variable number of parameters
-	{ "quit",			Lingo::b_quit,			0, 0, false },
-	{ "restart",		Lingo::b_restart,		0, 0, false },
-	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },
-	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },
+	{ "continue",		Lingo::b_continue,		0, 0, false },	// D2
+	{ "dontPassEvent",	Lingo::b_dontPassEvent,	0, 0, false },	// D2
+	{ "delay",	 		Lingo::b_delay,			1, 1, false },	// D2
+	{ "do",		 		Lingo::b_do,			1, 1, false },	// D2
+	{ "nothing",		Lingo::b_nothing,		0, 0, false },	// D2
+	{ "pause",			Lingo::b_pause,			0, 0, false },	// D2
+		// play													// D2
+	{ "playAccel",		Lingo::b_playAccel,		-1,0, false },	// D2
+		// play done											// D2
+	{ "quit",			Lingo::b_quit,			0, 0, false },	// D2
+	{ "restart",		Lingo::b_restart,		0, 0, false },	// D2
+	{ "shutDown",		Lingo::b_shutDown,		0, 0, false },	// D2
+	{ "startTimer",		Lingo::b_startTimer,	0, 0, false },	// D2
+		// when keyDown											// D2
+		// when mouseDown										// D2
+		// when mouseUp											// D2
+		// when timeOut											// D2
 	// Misc
-	{ "alert",	 		Lingo::b_alert,			1, 1, false },
-	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },
-	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false }, // variable number of parameters
-	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },
-	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },
-	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },
+	{ "alert",	 		Lingo::b_alert,			1, 1, false },	// D2
+	{ "cursor",	 		Lingo::b_cursor,		1, 1, false },	// D2
+	{ "printFrom",	 	Lingo::b_printFrom,		-1,0, false },	// D2
+	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 		D4
+		// put													// D2
+		// set													// D2
+	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
+	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
 	// Score
-	{ "editableText",	Lingo::b_editableText,	0, 0, false },
-	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },
-	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },
-	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },
-	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },
-	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },
-	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },
-	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },
-	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },
-	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },
-	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },
+	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
+		// go													// D2
+	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
+	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
+	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
+	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
+	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
+	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2
+	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
+	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
+	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
+	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
 	// Point
 	{ "point",	Lingo::b_point, 2, 2, true },
 	// Sound
-	{ "beep",	 		Lingo::b_beep,			0, 1, false },
+	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ 0, 0, 0, 0, false }
 };
 
