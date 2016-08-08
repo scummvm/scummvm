@@ -589,13 +589,11 @@ void Gui::drawInventories() {
 	Graphics::ManagedSurface *srf;
 	for (uint i = 0; i < _inventoryWindows.size(); i++) {
 		const WindowData &data = getWindowData((WindowReference)(kInventoryStart + i));
-		srf = findWindow(data.refcon)->getSurface();
+		Graphics::MacWindow *win = findWindow(data.refcon);
+		srf = win->getSurface();
+		srf->clear(kColorGreen);
 		BorderBounds border = borderBounds(data.type);
-		srf->fillRect(Common::Rect(
-			border.leftOffset,
-			border.topOffset,
-			srf->w + border.rightOffset,
-			srf->h + border.bottomOffset), kColorWhite);
+		srf->fillRect(srf->getBounds(), kColorWhite);
 		drawObjectsInWindow(data.refcon, srf);
 
 		if (MACVENTURE_DEBUG_GUI) {
@@ -643,7 +641,7 @@ void Gui::drawConsoleWindow() {
 	_consoleText->renderInto(srf, bounds.leftOffset);
 }
 
-void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface * surface) {
+void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *surface) {
 	WindowData &data = findWindowData(target);
 	BorderBounds border = borderBounds(data.type);
 	Common::Point pos;
@@ -652,16 +650,22 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 
 	if (data.children.size() == 0) return;
 
+	Graphics::ManagedSurface *composeSurface = new Graphics::ManagedSurface();
+	composeSurface->create(
+		surface->w - border.leftOffset - border.rightOffset,
+		surface->h - border.topOffset - border.bottomOffset,
+		surface->format);
+	composeSurface->clear(kColorGreen);
+
 	for (uint i = 0; i < data.children.size(); i++) {
 		child = data.children[i].obj;
 		mode = (BlitMode)data.children[i].mode;
 		pos = _engine->getObjPosition(child);
-		pos += Common::Point(border.leftOffset, border.topOffset);
 		pos -= data.scrollPos;
 		ensureAssetLoaded(child);
 
 		_assets[child]->blitInto(
-			surface,
+			composeSurface,
 			pos.x,
 			pos.y,
 			mode);
@@ -671,7 +675,7 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 				child == _draggedObj.id) {
 
 				_assets[child]->blitInto(
-					surface, pos.x, pos.y, kBlitOR);
+					composeSurface, pos.x, pos.y, kBlitOR);
 			}
 		}
 
@@ -681,8 +685,10 @@ void Gui::drawObjectsInWindow(WindowReference target, Graphics::ManagedSurface *
 			testBounds.translate(-data.scrollPos.x, -data.scrollPos.y);
 			surface->frameRect(testBounds, kColorGreen);
 		}
-
 	}
+	Common::Point composePosition = Common::Point(border.leftOffset, border.topOffset);
+	surface->transBlitFrom(*composeSurface, composePosition, kColorGreen);
+	delete composeSurface;
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * surface) {
