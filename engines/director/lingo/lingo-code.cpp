@@ -762,7 +762,7 @@ void Lingo::c_call() {
 		return;
 	}
 
-	if (sym->nargs < nargs) {
+	if (sym->nargs != -1 && sym->nargs < nargs) {
 		warning("Incorrect number of arguments for function %s. Dropping extra %d", name.c_str(), nargs - sym->nargs);
 		for (int i = 0; i < nargs - sym->nargs; i++)
 			g_lingo->pop();
