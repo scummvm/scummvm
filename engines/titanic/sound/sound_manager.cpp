@@ -443,7 +443,7 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 }
 
 void QSoundManager::updateVolumes() {
-	for (int idx = 0; idx < CHANNELS_COUNT; ++idx)
+	for (uint idx = 0; idx < CHANNELS_COUNT; ++idx)
 		updateVolume(idx, 250);
 }
 

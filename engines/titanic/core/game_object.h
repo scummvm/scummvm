@@ -220,7 +220,7 @@ protected:
 	 * @param volume	Volume percentage (0 to 100)
 	 * @param seconds	Number of seconds to transition to the new volume
 	 */
-	void setSoundVolume(uint handle, uint percent, uint seconds);
+	void setSoundVolume(int handle, uint percent, uint seconds);
 
 	/**
 	 * Plays a sound, and saves it's handle in the global sound handles list

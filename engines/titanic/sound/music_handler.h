@@ -23,6 +23,8 @@
 #ifndef TITANIC_MUSIC_HANDLER_H
 #define TITANIC_MUSIC_HANDLER_H
 
+#include "titanic/sound/music_wave.h"
+
 namespace Titanic {
 
 class CProjectItem;
@@ -35,6 +37,14 @@ private:
 	int _field124;
 public:
 	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);
+
+	/**
+	 * Creates a new music wave class instance, and assigns it to a slot
+	 * in the music handler
+	 * @param waveIndex		Slot to save new instance in
+	 * @param count			Number of files the new instance will contain
+	 */
+	CMusicWave *createMusicWave(int waveIndex, int count);
 
 	bool isBusy();
 

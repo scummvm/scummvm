@@ -402,6 +402,7 @@ MODULE_OBJS := \
 	sound/music_handler.o \
 	sound/music_room.o \
 	sound/music_player.o \
+	sound/music_wave.o \
 	sound/node_auto_sound_player.o \
 	sound/proximity.o \
 	sound/qmixer.o \

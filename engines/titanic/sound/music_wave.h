@@ -20,26 +20,24 @@
  *
  */
 
-#include "titanic/sound/music_handler.h"
-#include "titanic/sound/sound_manager.h"
-#include "titanic/core/project_item.h"
+#ifndef TITANIC_MUSIC_WAVE_H
+#define TITANIC_MUSIC_WAVE_H
+
+#include "titanic/support/string.h"
 
 namespace Titanic {
 
-CMusicHandler::CMusicHandler(CProjectItem *project, CSoundManager *soundManager) :
-		_project(project), _soundManager(soundManager),
-		_field124(0) {
+class CProjectItem;
+class CSoundManager;
 
-}
+class CMusicWave {
+private:
+public:
+	CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index);
 
-CMusicWave *CMusicHandler::createMusicWave(int v1, int v2) {
-	// TODO
-	return nullptr;
-}
-
-bool CMusicHandler::isBusy() {
-	// TODO
-	return false;
-}
+	void load(int index, const CString &filename, int v3);
+};
 
 } // End of namespace Titanic
+
+#endif /* TITANIC_MUSIC_WAVE_H */

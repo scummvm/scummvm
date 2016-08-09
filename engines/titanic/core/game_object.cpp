@@ -487,7 +487,7 @@ void CGameObject::playGlobalSound(const CString &resName, int mode, bool initial
 		sound.setVolume(_soundHandles[handleIndex], newVolume, 2);
 }
 
-void CGameObject::setSoundVolume(uint handle, uint percent, uint seconds) {
+void CGameObject::setSoundVolume(int handle, uint percent, uint seconds) {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
 		if (gameManager)
