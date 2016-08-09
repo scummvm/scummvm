@@ -176,7 +176,7 @@ T0386006:
 
 void MenuMan::f456_drawDisabledMenu() {
 	if (!_vm->_championMan->_g300_partyIsSleeping) {
-		warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+		_vm->_eventMan->f363_highlightBoxDisable();
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 			if (_vm->_inventoryMan->_g424_panelContent == k4_PanelContentChest) {
@@ -459,7 +459,7 @@ int16 MenuMan::f408_getClickOnSpellCastResult() {
 
 	L1260_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
 	_vm->_eventMan->f78_showMouse();
-	warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+	_vm->_eventMan->f363_highlightBoxDisable();
 	if ((L1259_i_SpellCastResult = f412_getChampionSpellCastResult(_vm->_championMan->_g514_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
 		L1260_ps_Champion->_symbols[0] = '\0';
 		f397_drawAvailableSymbols(L1260_ps_Champion->_symbolStep = 0);

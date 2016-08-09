@@ -258,7 +258,7 @@ class EventManager {
 	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
 	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
-	void setMousePointerFromSpriteData(byte* mouseSprite); 
+	void setMousePointerFromSpriteData(byte* mouseSprite);
 
 public:
 	explicit EventManager(DMEngine *vm);
@@ -320,6 +320,7 @@ public:
 	void f544_resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
 	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
 	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f362_commandHighlightBoxEnable"); }// @ F0362_COMMAND_HighlightBoxEnable
+	void f363_highlightBoxDisable() { warning(false, "STUB METHOD: f363_highlightBoxDisable"); } // @ F0363_COMMAND_HighlightBoxDisable
 };
 
 }

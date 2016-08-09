@@ -1504,7 +1504,7 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 	L1131_ps_Box = &G0464_as_Graphic561_Box_SpellSymbolsAndDelete[L1130_ui_SymbolIndex];
 	f362_commandHighlightBoxEnable(L1131_ps_Box->_x1, L1131_ps_Box->_x2, L1131_ps_Box->_y1, L1131_ps_Box->_y2);
 	_vm->f22_delay(1);
-	warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+	f363_highlightBoxDisable();
 	if (L1130_ui_SymbolIndex < 6) {
 		_vm->_menuMan->f399_addChampionSymbol(L1130_ui_SymbolIndex);
 	} else {

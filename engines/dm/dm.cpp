@@ -395,7 +395,7 @@ void DMEngine::f2_gameloop() {
 				_eventMan->f77_hideMouse();
 			}
 		}
-		// F0363_COMMAND_HighlightBoxDisable();
+		_eventMan->f363_highlightBoxDisable();
 		f65_playPendingSound();
 		_championMan->f320_applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_g303_partyDead)
@@ -440,9 +440,9 @@ void DMEngine::f2_gameloop() {
 			if (_engineShouldQuit)
 				return;
 			_displayMan->updateScreen();
-			// if (!_g321_stopWaitingForPlayerInput) {
-			//		F0363_COMMAND_HighlightBoxDisable();
-			// }
+			if (!_g321_stopWaitingForPlayerInput) {
+				_eventMan->f363_highlightBoxDisable();
+			}
 
 			_system->delayMillis(2);
 			if (++vblankCounter >= _g318_waitForInputMaxVerticalBlankCount * 5)
@@ -537,7 +537,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 		f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 		f22_delay(240);
 	}
-	
+
 	if (_displayMan->_g322_paletteSwitchingEnabled) {
 		uint16 oldPalTopAndBottomScreen[16];
 		for (uint16 i = 0; i < 16; ++i)
