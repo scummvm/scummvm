@@ -810,7 +810,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if (cmdType == k202_CommandEntranceDrawCredits) {
-		warning(false, "MISSING CODE: F0442_STARTEND_ProcessCommand202_EntranceDrawCredits()");
+		_vm->f442_SARTEND_processCommand202_entranceDrawCredits();
 		return;
 	}
 	if ((cmdType >= k210_CommandClickOnDialogChoice_1) && (cmdType <= k213_CommandClickOnDialogChoice_4)) {
@@ -827,8 +827,9 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 
 	_vm->_g321_stopWaitingForPlayerInput = true;
 	if (cmdType == k1_CommandTurnLeft) {
-		warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+		f362_commandHighlightBoxEnable(234, 261, 125, 145);
 	} else {
+		f362_commandHighlightBoxEnable(291, 318, 125, 145);
 	}
 	if (Square(L1114_ui_Square = _vm->_dungeonMan->f151_getSquare(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs) {
 		f364_commandTakeStairs(getFlag(L1114_ui_Square, k0x0004_StairsUp));
@@ -883,7 +884,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	}
 	AL1118_ui_MovementArrowIndex = cmdType - k3_CommandMoveForward;
 	L1120_ps_Box = &g463_BoxMovementArrows[AL1118_ui_MovementArrowIndex];
-	warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+	f362_commandHighlightBoxEnable(L1120_ps_Box->_x1, L1120_ps_Box->_x2, L1120_ps_Box->_y1, L1120_ps_Box->_y2);
 	L1123_B_StairsSquare = (Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX = _vm->_dungeonMan->_g306_partyMapX, L1122_i_MapY = _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs);
 	if (L1123_B_StairsSquare && (AL1118_ui_MovementArrowIndex == 2)) { /* If moving backward while in stairs */
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
@@ -1494,13 +1495,13 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 		if (_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex]._symbols[0] == '\0') {
 			return;
 		}
-		warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+		f362_commandHighlightBoxEnable(234, 303, 63, 73);
 		_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
 		return;
 	}
 	L1130_ui_SymbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
 	L1131_ps_Box = &G0464_as_Graphic561_Box_SpellSymbolsAndDelete[L1130_ui_SymbolIndex];
-	warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+	f362_commandHighlightBoxEnable(L1131_ps_Box->_x1, L1131_ps_Box->_x2, L1131_ps_Box->_y1, L1131_ps_Box->_y2);
 	_vm->f22_delay(1);
 	warning(false, "MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
 	if (L1130_ui_SymbolIndex < 6) {
@@ -1518,17 +1519,17 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 		L1134_ui_Command = f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (L1134_ui_Command != k0_CommandNone) {
 			if (L1134_ui_Command == k112_CommandClickInActionAreaPass) {
-				warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+				f362_commandHighlightBoxEnable(285, 319, 77, 83);
 				_vm->_menuMan->f391_didClickTriggerAction(-1);
 			} else {
 				if ((L1134_ui_Command - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
 					if (L1134_ui_Command == k113_CommandClickInActionAreaAction_0) {
-						warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+						f362_commandHighlightBoxEnable(234, 318, 86, 96);
 					} else {
 						if (L1134_ui_Command == k114_CommandClickInActionAreaAction_1) {
-							warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+							f362_commandHighlightBoxEnable(234, 318, 98, 108);
 						} else {
-							warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+							f362_commandHighlightBoxEnable(234, 318, 110, 120);
 						}
 					}
 					_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(L1134_ui_Command - k113_CommandClickInActionAreaAction_0);

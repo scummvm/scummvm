@@ -240,7 +240,7 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
 	f503_loadSounds();
-	warning(false, "MISSING CODE: F0437_STARTEND_DrawTitle");
+	f437_STARTEND_drawTittle();
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
@@ -262,7 +262,7 @@ void DMEngine::f463_initializeGame() {
 }
 
 void DMEngine::f448_initMemoryManager() {
-	warning(false, "STUB FUNCTION");
+	warning(false, "STUB METHOD: f448_initMemoryManager");
 	for (uint16 i = 0; i < 16; ++i)
 		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
 }

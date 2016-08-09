@@ -319,6 +319,7 @@ public:
 	void f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY); // @ F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE
 	void f544_resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
 	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
+	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f362_commandHighlightBoxEnable"); }// @ F0362_COMMAND_HighlightBoxEnable
 };
 
 }
