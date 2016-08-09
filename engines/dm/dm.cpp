@@ -731,6 +731,7 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 		f22_delay(3);
 	}
 	delete[] _savedScreenForOpenEntranceDoors;
+	_savedScreenForOpenEntranceDoors = nullptr;
 }
 
 
