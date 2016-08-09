@@ -85,7 +85,8 @@ struct Symbol {	/* symbol table entry */
 		int		i;			/* VAR */
 		double	f;			/* FLOAT */
 		ScriptData	*defn;	/* FUNCTION, PROCEDURE */
-		void (*func)(void); /* BUILTIN */
+		void (*func)();		/* OPCODE */
+		void (*bltin)(int);	/* BUILTIN */
 		Common::String	*s;	/* STRING */
 		FloatArray *arr;	/* ARRAY, POINT, RECT */
 	} u;
@@ -254,66 +255,66 @@ public:
 
 	static void c_open();
 
-	static void b_abs();
-	static void b_atan();
-	static void b_chars();
-	static void b_cos();
-	static void b_exp();
-	static void b_float();
-	static void b_integer();
-	static void b_length();
-	static void b_log();
-	static void b_pi();
-	static void b_power();
-	static void b_random();
-	static void b_sin();
-	static void b_sqrt();
-	static void b_string();
-	static void b_tan();
+	static void b_abs(int nargs);
+	static void b_atan(int nargs);
+	static void b_chars(int nargs);
+	static void b_cos(int nargs);
+	static void b_exp(int nargs);
+	static void b_float(int nargs);
+	static void b_integer(int nargs);
+	static void b_length(int nargs);
+	static void b_log(int nargs);
+	static void b_pi(int nargs);
+	static void b_power(int nargs);
+	static void b_random(int nargs);
+	static void b_sin(int nargs);
+	static void b_sqrt(int nargs);
+	static void b_string(int nargs);
+	static void b_tan(int nargs);
 
-	static void b_ilk();
-	static void b_alert();
-	static void b_cursor();
-	static void b_printFrom();
-	static void b_showGlobals();
-	static void b_showLocals();
+	static void b_ilk(int nargs);
+	static void b_alert(int nargs);
+	static void b_cursor(int nargs);
+	static void b_printFrom(int nargs);
+	static void b_showGlobals(int nargs);
+	static void b_showLocals(int nargs);
 
-	static void b_editableText();
-	static void b_installMenu();
-	static void b_updateStage();
-	static void b_moveableSprite();
-	static void b_puppetPalette();
-	static void b_puppetSound();
-	static void b_puppetSprite();
-	static void b_puppetTempo();
-	static void b_puppetTransition();
-	static void b_spriteBox();
-	static void b_zoomBox();
+	static void b_editableText(int nargs);
+	static void b_installMenu(int nargs);
+	static void b_updateStage(int nargs);
+	static void b_moveableSprite(int nargs);
+	static void b_puppetPalette(int nargs);
+	static void b_puppetSound(int nargs);
+	static void b_puppetSprite(int nargs);
+	static void b_puppetTempo(int nargs);
+	static void b_puppetTransition(int nargs);
+	static void b_spriteBox(int nargs);
+	static void b_zoomBox(int nargs);
 
-	static void b_continue();
-	static void b_dontPassEvent();
-	static void b_delay();
-	static void b_do();
-	static void b_nothing();
-	static void b_pause();
-	static void b_playAccel();
-	static void b_quit();
-	static void b_restart();
-	static void b_shutDown();
-	static void b_startTimer();
+	static void b_continue(int nargs);
+	static void b_dontPassEvent(int nargs);
+	static void b_delay(int nargs);
+	static void b_do(int nargs);
+	static void b_nothing(int nargs);
+	static void b_pause(int nargs);
+	static void b_playAccel(int nargs);
+	static void b_quit(int nargs);
+	static void b_restart(int nargs);
+	static void b_shutDown(int nargs);
+	static void b_startTimer(int nargs);
 
-	static void b_closeDA();
-	static void b_closeResFile();
-	static void b_closeXlib();
-	static void b_openDA();
-	static void b_openResFile();
-	static void b_openXlib();
-	static void b_showResFile();
-	static void b_showXlib();
+	static void b_closeDA(int nargs);
+	static void b_closeResFile(int nargs);
+	static void b_closeXlib(int nargs);
+	static void b_openDA(int nargs);
+	static void b_openResFile(int nargs);
+	static void b_openXlib(int nargs);
+	static void b_showResFile(int nargs);
+	static void b_showXlib(int nargs);
 
-	static void b_point();
+	static void b_point(int nargs);
 
-	static void b_beep();
+	static void b_beep(int nargs);
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

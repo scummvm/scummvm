@@ -26,7 +26,7 @@ namespace Director {
 
 static struct BuiltinProto {
 	const char *name;
-	void (*func)(void);
+	void (*func)(int);
 	int minArgs;
 	int maxArgs;
 	bool parens;
@@ -116,7 +116,7 @@ void Lingo::initBuiltIns() {
 		sym->nargs = blt->minArgs;
 		sym->maxArgs = blt->maxArgs;
 		sym->parens = blt->parens;
-		sym->u.func = blt->func;
+		sym->u.bltin = blt->func;
 
 		_handlers[blt->name] = sym;
 	}
@@ -125,7 +125,7 @@ void Lingo::initBuiltIns() {
 ///////////////////
 // Math
 ///////////////////
-void Lingo::b_abs() {
+void Lingo::b_abs(int nargs) {
 	Datum d = g_lingo->pop();
 
 	if (d.type == INT)
@@ -136,21 +136,21 @@ void Lingo::b_abs() {
 	g_lingo->push(d);
 }
 
-void Lingo::b_atan() {
+void Lingo::b_atan(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = atan(d.u.f);
 	g_lingo->push(d);
 }
 
-void Lingo::b_cos() {
+void Lingo::b_cos(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = cos(d.u.f);
 	g_lingo->push(d);
 }
 
-void Lingo::b_exp() {
+void Lingo::b_exp(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt(); // Lingo uses int, so we're enforcing it
 	d.toFloat();
@@ -158,33 +158,33 @@ void Lingo::b_exp() {
 	g_lingo->push(d);
 }
 
-void Lingo::b_float() {
+void Lingo::b_float(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	g_lingo->push(d);
 }
 
-void Lingo::b_integer() {
+void Lingo::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	g_lingo->push(d);
 }
 
-void Lingo::b_log() {
+void Lingo::b_log(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = log(d.u.f);
 	g_lingo->push(d);
 }
 
-void Lingo::b_pi() {
+void Lingo::b_pi(int nargs) {
 	Datum d;
 	d.toFloat();
 	d.u.f = M_PI;
 	g_lingo->push(d);
 }
 
-void Lingo::b_power() {
+void Lingo::b_power(int nargs) {
 	Datum d1 = g_lingo->pop();
 	Datum d2 = g_lingo->pop();
 	d1.toFloat();
@@ -193,7 +193,7 @@ void Lingo::b_power() {
 	g_lingo->push(d1);
 }
 
-void Lingo::b_random() {
+void Lingo::b_random(int nargs) {
 	Datum max = g_lingo->pop();
 	Datum res;
 
@@ -205,21 +205,21 @@ void Lingo::b_random() {
 	g_lingo->push(res);
 }
 
-void Lingo::b_sin() {
+void Lingo::b_sin(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = sin(d.u.f);
 	g_lingo->push(d);
 }
 
-void Lingo::b_sqrt() {
+void Lingo::b_sqrt(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = sqrt(d.u.f);
 	g_lingo->push(d);
 }
 
-void Lingo::b_tan() {
+void Lingo::b_tan(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toFloat();
 	d.u.f = tan(d.u.f);
@@ -229,7 +229,7 @@ void Lingo::b_tan() {
 ///////////////////
 // String
 ///////////////////
-void Lingo::b_chars() {
+void Lingo::b_chars(int nargs) {
 	Datum to = g_lingo->pop();
 	Datum from = g_lingo->pop();
 	Datum s = g_lingo->pop();
@@ -253,7 +253,7 @@ void Lingo::b_chars() {
 	g_lingo->push(s);
 }
 
-void Lingo::b_length() {
+void Lingo::b_length(int nargs) {
 	Datum d = g_lingo->pop();
 
 	if (d.type != STRING)
@@ -267,7 +267,7 @@ void Lingo::b_length() {
 	g_lingo->push(d);
 }
 
-void Lingo::b_string() {
+void Lingo::b_string(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toString();
 	g_lingo->push(d);
@@ -276,11 +276,11 @@ void Lingo::b_string() {
 ///////////////////
 // Files
 ///////////////////
-void Lingo::b_closeDA() {
+void Lingo::b_closeDA(int nargs) {
 	warning("STUB: b_closeDA");
 }
 
-void Lingo::b_closeResFile() {
+void Lingo::b_closeResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -290,7 +290,7 @@ void Lingo::b_closeResFile() {
 	delete d.u.s;
 }
 
-void Lingo::b_closeXlib() {
+void Lingo::b_closeXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -300,7 +300,7 @@ void Lingo::b_closeXlib() {
 	delete d.u.s;
 }
 
-void Lingo::b_openDA() {
+void Lingo::b_openDA(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -310,7 +310,7 @@ void Lingo::b_openDA() {
 	delete d.u.s;
 }
 
-void Lingo::b_openResFile() {
+void Lingo::b_openResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -320,7 +320,7 @@ void Lingo::b_openResFile() {
 	delete d.u.s;
 }
 
-void Lingo::b_openXlib() {
+void Lingo::b_openXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -330,7 +330,7 @@ void Lingo::b_openXlib() {
 	delete d.u.s;
 }
 
-void Lingo::b_showResFile() {
+void Lingo::b_showResFile(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -340,7 +340,7 @@ void Lingo::b_showResFile() {
 	delete d.u.s;
 }
 
-void Lingo::b_showXlib() {
+void Lingo::b_showXlib(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -353,55 +353,55 @@ void Lingo::b_showXlib() {
 ///////////////////
 // Control
 ///////////////////
-void Lingo::b_dontPassEvent() {
+void Lingo::b_dontPassEvent(int nargs) {
 	warning("STUB: b_dontPassEvent");
 }
 
-void Lingo::b_continue() {
+void Lingo::b_continue(int nargs) {
 	warning("STUB: b_continue");
 }
 
-void Lingo::b_nothing() {
+void Lingo::b_nothing(int nargs) {
 	warning("STUB: b_nothing");
 }
 
-void Lingo::b_delay() {
+void Lingo::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	warning("STUB: b_delay(%d)", d.u.i);
 }
 
-void Lingo::b_do() {
+void Lingo::b_do(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toString();
 	warning("STUB: b_do(%s)", d.u.s->c_str());
 }
 
-void Lingo::b_pause() {
+void Lingo::b_pause(int nargs) {
 	warning("STUB: b_pause");
 }
 
-void Lingo::b_playAccel() {
+void Lingo::b_playAccel(int nargs) {
 	warning("STUB: b_playAccel");
 }
 
-void Lingo::b_printFrom() {
+void Lingo::b_printFrom(int nargs) {
 	warning("STUB: b_printFrom");
 }
 
-void Lingo::b_quit() {
+void Lingo::b_quit(int nargs) {
 	warning("STUB: b_quit");
 }
 
-void Lingo::b_restart() {
+void Lingo::b_restart(int nargs) {
 	warning("STUB: b_restart");
 }
 
-void Lingo::b_shutDown() {
+void Lingo::b_shutDown(int nargs) {
 	warning("STUB: b_shutDown");
 }
 
-void Lingo::b_startTimer() {
+void Lingo::b_startTimer(int nargs) {
 	warning("STUB: b_startTimer");
 }
 
@@ -409,14 +409,14 @@ void Lingo::b_startTimer() {
 ///////////////////
 // Misc
 ///////////////////
-void Lingo::b_ilk() {
+void Lingo::b_ilk(int nargs) {
 	Datum d = g_lingo->pop();
 	d.u.i = d.type;
 	d.type = SYMBOL;
 	g_lingo->push(d);
 }
 
-void Lingo::b_alert() {
+void Lingo::b_alert(int nargs) {
 	Datum d = g_lingo->pop();
 
 	d.toString();
@@ -426,17 +426,17 @@ void Lingo::b_alert() {
 	delete d.u.s;
 }
 
-void Lingo::b_cursor() {
+void Lingo::b_cursor(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	warning("STUB: b_cursor(%d)", d.u.i);
 }
 
-void Lingo::b_showGlobals() {
+void Lingo::b_showGlobals(int nargs) {
 	warning("STUB: b_showGlobals");
 }
 
-void Lingo::b_showLocals() {
+void Lingo::b_showLocals(int nargs) {
 	warning("STUB: b_showLocals");
 }
 
@@ -445,50 +445,50 @@ void Lingo::b_showLocals() {
 ///////////////////
 // Score
 ///////////////////
-void Lingo::b_updateStage() {
+void Lingo::b_updateStage(int nargs) {
 	warning("STUB: b_updateStage");
 }
 
-void Lingo::b_editableText() {
+void Lingo::b_editableText(int nargs) {
 	warning("STUB: b_editableText");
 }
 
-void Lingo::b_installMenu() {
+void Lingo::b_installMenu(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_installMenu(%d)", d.u.i);
 }
 
-void Lingo::b_moveableSprite() {
+void Lingo::b_moveableSprite(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_moveableSprite(%d)", d.u.i);
 }
 
-void Lingo::b_puppetPalette() {
+void Lingo::b_puppetPalette(int nargs) {
 	warning("STUB: b_puppetPalette");
 }
 
-void Lingo::b_puppetSound() {
+void Lingo::b_puppetSound(int nargs) {
 	warning("STUB: b_puppetSound");
 }
 
-void Lingo::b_puppetSprite() {
+void Lingo::b_puppetSprite(int nargs) {
 	warning("STUB: b_puppetSprite");
 }
 
-void Lingo::b_puppetTempo() {
+void Lingo::b_puppetTempo(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_puppetTempo(%d)", d.u.i);
 }
 
-void Lingo::b_puppetTransition() {
+void Lingo::b_puppetTransition(int nargs) {
 	warning("STUB: b_puppetTransition");
 }
 
-void Lingo::b_spriteBox() {
+void Lingo::b_spriteBox(int nargs) {
 	warning("STUB: b_spriteBox");
 }
 
-void Lingo::b_zoomBox() {
+void Lingo::b_zoomBox(int nargs) {
 	warning("STUB: b_zoomBox");
 }
 
@@ -497,7 +497,7 @@ void Lingo::b_zoomBox() {
 ///////////////////
 // Point
 ///////////////////
-void Lingo::b_point() {
+void Lingo::b_point(int nargs) {
 	Datum y = g_lingo->pop();
 	Datum x = g_lingo->pop();
 	Datum d;
@@ -518,7 +518,7 @@ void Lingo::b_point() {
 ///////////////////
 // Sound
 ///////////////////
-void Lingo::b_beep() {
+void Lingo::b_beep(int nargs) {
 	Datum d = g_lingo->pop();
 	warning("STUB: b_beep(%d)", d.u.i);
 }

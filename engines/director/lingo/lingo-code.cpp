@@ -769,9 +769,7 @@ void Lingo::c_call() {
 	}
 
 	if (sym->type == BLTIN) {
-		// FIXME. TODO. Pass nargs
-
-		(*sym->u.func)();
+		(*sym->u.bltin)(nargs);
 
 		return;
 	}
