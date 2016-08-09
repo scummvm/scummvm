@@ -45,18 +45,30 @@ Dialog::~Dialog() {
 }
 
 void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
-  switch(action) {
-  case kDACloseDialog:
-    _gui->closeDialog();
-    break;
-  case kDASubmit:
-    _gui->setTextInput(_userInput);
-    _gui->closeDialog();
-    break;
-  case kDASaveAs:
-    _gui->saveInto(0);
-    _gui->closeDialog();
-    break;
+	switch(action) {
+ 		case kDACloseDialog:
+			_gui->closeDialog();
+			break;
+ 		case kDASubmit:
+			_gui->setTextInput(_userInput);
+			_gui->closeDialog();
+			break;
+		case kDASaveAs:
+			_gui->saveGame();
+			_gui->closeDialog();
+			break;
+		case kDALoadGame:
+			_gui->loadGame();
+			_gui->closeDialog();
+			break;
+		case kDANewGame:
+			_gui->newGame();
+			_gui->closeDialog();
+			break;
+		case kDAQuit:
+			_gui->quitGame();
+			_gui->closeDialog();
+			break;
   }
 }
 

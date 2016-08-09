@@ -867,13 +867,20 @@ void Gui::getTextFromUser() {
 	showPrebuiltDialog(kSpeakDialog);
 }
 
-void Gui::loadGame(int slot) {
-	_engine->loadGameState(slot);
+void Gui::loadGame() {
+	_engine->scummVMSaveLoadDialog(false);
 }
 
-void Gui::saveInto(int slot) {
-	_engine->saveGameState(slot, "desc");
-	_engine->preparedToRun();
+void Gui::saveGame() {
+	_engine->scummVMSaveLoadDialog(true);
+}
+
+void Gui::newGame() {
+	warning("New Game not implemented!");
+}
+
+void Gui::quitGame() {
+	_engine->requestQuit();
 }
 
 void Gui::createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::ManagedSurface *outerSurface, const BorderBounds &borders) {
@@ -1098,13 +1105,13 @@ void Gui::handleMenuAction(MenuAction action) {
 		warning("Unimplemented MacVenture Menu Action: New");
 		break;
 	case MacVenture::kMenuActionOpen:
-		_engine->scummVMSaveLoadDialog(false);
+		loadGame();
 		break;
 	case MacVenture::kMenuActionSave:
-		_engine->scummVMSaveLoadDialog(true);
+		saveGame();
 		break;
 	case MacVenture::kMenuActionSaveAs:
-		_engine->scummVMSaveLoadDialog(true);
+		saveGame();
 		break;
 	case MacVenture::kMenuActionQuit:
 		debug("MacVenture Menu Action: Quit");

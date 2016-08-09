@@ -47,6 +47,18 @@ PrebuiltDialog prebuiltDialogs[kPrebuiltDialogCount] = {
       {kDETextInput, "", kDANone, Common::Point(10, 25), 350, 40},
       {kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
     }
+},
+
+  { /* kWinGameDialog */
+	  Common::Rect(20, 100, 400, 200),
+	  {
+		  {kDEPlainText, "You Won!", kDANone, Common::Point(10, 10), 400, 20},
+		  {kDEPlainText, "What do you want to do?", kDANone, Common::Point(10, 30), 400, 20},
+		  {kDEButton, "New Game", kDANewGame, Common::Point(40, 30), 50, 20},
+		  {kDEButton, "Load", kDALoadGame, Common::Point(100, 30), 50, 20},
+		  {kDEButton, "Quit", kDAQuit, Common::Point(160, 30), 50, 20},
+		  {kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+	  }
   }
 
 };
