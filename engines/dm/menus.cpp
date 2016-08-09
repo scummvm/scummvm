@@ -309,21 +309,21 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champCount = champMan._g305_partyChampionCount;
 	switch (champIndex) {
 	case k0_ChampionFirst:
-		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		_vm->_eventMan->f6_highlightScreenBox(233, 277, 42, 49);
 		textMan.f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		if (champCount) {
 			if (champCurrHealth[1]) {
-				warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+				_vm->_eventMan->f6_highlightScreenBox(280, 291, 42, 48);;
 			}
 labelChamp2:
 			if (champCount > 2) {
 				if (champCurrHealth[2]) {
-					warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+					_vm->_eventMan->f6_highlightScreenBox(294, 305, 42, 48);
 				}
 labelChamp3:
 				if (champCount > 3) {
 					if (champCurrHealth[3]) {
-						warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+						_vm->_eventMan->f6_highlightScreenBox(308, 319, 42, 48);
 					}
 				}
 			}
@@ -331,32 +331,32 @@ labelChamp3:
 		break;
 	case k1_ChampionSecond:
 		if (champCurrHealth[0]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
-		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		_vm->_eventMan->f6_highlightScreenBox(247, 291, 42, 49);
 		textMan.f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp2;
 	case k2_ChampionThird:
 		if (champCurrHealth[0]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
 		if (champCurrHealth[1]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
 		}
-		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		_vm->_eventMan->f6_highlightScreenBox(261, 305, 42, 49);
 		textMan.f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		goto labelChamp3;
 	case k3_ChampionFourth:
 		if (champCurrHealth[0]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
 		if (champCurrHealth[1]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
 		}
 		if (champCurrHealth[2]) {
-			warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+			_vm->_eventMan->f6_highlightScreenBox(261, 272, 42, 48);
 		}
-		warning(false, "MISSING CODE: F0006_MAIN_HighlightScreenBox");
+		_vm->_eventMan->f6_highlightScreenBox(275, 319, 42, 49);
 		textMan.f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
 		break;
 	}

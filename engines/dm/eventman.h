@@ -164,7 +164,7 @@ public:
 	Common::Point _pos;
 	CommandType _type;
 
-	Command(Common::Point position, CommandType commandType): _pos(position), _type(commandType) {}
+	Command(Common::Point position, CommandType commandType) : _pos(position), _type(commandType) {}
 }; // @ COMMAND
 
 
@@ -321,6 +321,7 @@ public:
 	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
 	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f362_commandHighlightBoxEnable"); }// @ F0362_COMMAND_HighlightBoxEnable
 	void f363_highlightBoxDisable() { warning(false, "STUB METHOD: f363_highlightBoxDisable"); } // @ F0363_COMMAND_HighlightBoxDisable
+	void f6_highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f6_highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
 };
 
 }
