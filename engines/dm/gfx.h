@@ -290,12 +290,12 @@ extern uint16 g21_PalDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_Dung
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {
 public:
-	uint16 _x1;
-	uint16 _x2;
-	uint16 _y1;
-	uint16 _y2;
+	int16 _x1;
+	int16 _x2;
+	int16 _y1;
+	int16 _y2;
 
-	Box(uint16 x1, uint16 x2, uint16 y1, uint16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
+	Box(int16 x1, int16 x2, int16 y1, int16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
 	Box() {}
 	template <typename T>
 	explicit Box(T *ptr) {
