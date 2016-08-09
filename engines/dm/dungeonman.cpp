@@ -1568,19 +1568,22 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 }
 
 int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
-	int16 L0256_i_SquareType;
-	bool L0257_B_NorthSouthOrientedStairs;
+	bool northSouthOrientedStairs = !getFlag(f151_getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient);
 
-
-	if (L0257_B_NorthSouthOrientedStairs = !getFlag(f151_getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient)) {
+	if (northSouthOrientedStairs) {
 		mapX = mapX + _vm->_dirIntoStepCountEast[kDirEast];
 		mapY = mapY + _vm->_dirIntoStepCountNorth[kDirEast];
 	} else {
 		mapX = mapX + _vm->_dirIntoStepCountEast[kDirNorth];
 		mapY = mapY + _vm->_dirIntoStepCountNorth[kDirNorth];
 	}
-	return ((((L0256_i_SquareType = Square(f151_getSquare(mapX, mapY)).getType()) == k0_ElementTypeWall) || (L0256_i_SquareType == k3_ElementTypeStairs)) << 1) + L0257_B_NorthSouthOrientedStairs;
+	int16 squareType = Square(f151_getSquare(mapX, mapY)).getType();
 
+	int16 retval = ((squareType == k0_ElementTypeWall) || (squareType == k3_ElementTypeStairs)) ? 1 : 0;
+	retval <<= 1;
+	retval += (northSouthOrientedStairs ? 1 : 0);
+
+	return retval;
 }
 
 Thing DungeonMan::f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
