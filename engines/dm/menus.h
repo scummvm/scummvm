@@ -79,6 +79,7 @@ public:
 	int16 _g513_actionDamage; // @ G0513_i_ActionDamage
 	ActionList _g713_actionList; // @ G0713_s_ActionList
 	byte *_gK72_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
+	byte *_gK73_bitmapSpellAreaLines; // @ K0073_puc_Bitmap_SpellAreaLines
 	Thing _g517_actionTargetGroupThing; // @ G0517_T_ActionTargetGroupThing
 	uint16 _g507_actionCount; // @ G0507_ui_ActionCount
 

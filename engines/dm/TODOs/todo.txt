@@ -8,6 +8,7 @@ Bugs:
 	Logic:
 		F0444_STARTEND_Endgame is broken
 		Items thrown on the right side end up on the left side 
+		I'm not sure, but the cooldown between champion actions when fighting monsters seems too muh
 
 
 Possible bugs:

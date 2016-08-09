@@ -105,6 +105,7 @@ MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_g513_actionDamage = 0;
 	_g713_actionList.resetToZero();
 	_gK72_bitmapSpellAreaLine = new byte[96 * 12];
+	_gK73_bitmapSpellAreaLines = new byte[3 * 96 * 12];
 	_g517_actionTargetGroupThing = Thing(0);
 	_g507_actionCount = 0;
 }
@@ -367,32 +368,28 @@ labelChamp3:
 #define k3_SpellAreaChampionSymbols 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
 
 void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
-	DisplayMan &dispMan = *_vm->_displayMan;
-
-	Champion &champ = _vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	char L1204_ac_SpellSymbolString[2] = {'\0', '\0'};
+	Champion *L1203_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
-		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k11_MenuSpellAreLinesIndice), _gK72_bitmapSpellAreaLine,
-								  gK74_BoxSpellAreaLine, 0, 12, 48, 48, kM1_ColorNoTransparency);
+		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+		_vm->_displayMan->f132_blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, gK74_BoxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 1;
-		byte c = 96 + (6 * champ._symbolStep);
-		char spellSymbolString[2] = {'\0', '\0'};
+		char character = 96 + (6 * L1203_ps_Champion->_symbolStep);
 		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
-			spellSymbolString[0] = c++;
-			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
+			L1204_ac_SpellSymbolString[0] = character++;
+			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
-		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k11_MenuSpellAreLinesIndice), _gK72_bitmapSpellAreaLine,
-								  gK74_BoxSpellAreaLine, 0, 24, 48, 48, kM1_ColorNoTransparency);
-		char spellSymbolString[2] = {'\0', '\0'};
+		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+		_vm->_displayMan->f132_blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, gK74_BoxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 8;
 		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
-			if ((spellSymbolString[0] = champ._symbols[symbolIndex]) == '\0')
+			if ((L1204_ac_SpellSymbolString[0] = L1203_ps_Champion->_symbols[symbolIndex]) == '\0')
 				break;
-			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
+			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	}
+
 }
 
 void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {

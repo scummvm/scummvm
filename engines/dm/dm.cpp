@@ -241,7 +241,9 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->loadPalette(g21_PalDungeonView[0]);
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
-	f503_loadSounds();
+
+	f503_loadSounds(); // @ F0506_AMIGA_AllocateData
+
 	f437_STARTEND_drawTittle();
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
@@ -251,7 +253,8 @@ void DMEngine::f463_initializeGame() {
 		if (_engineShouldQuit)
 			return;
 	} while (f435_loadgame(1) != k1_LoadgameSuccess);
-	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
+
+	_displayMan->f466_loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_gK73_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->f461_allocateFlippedWallBitmaps();
