@@ -707,9 +707,9 @@ void DMEngine::f439_drawEntrance() {
 }
 
 void DMEngine::f438_STARTEND_OpenEntranceDoors() {
-	Box rightDoorBox(109, 231, 33, 193);
+	Box rightDoorBox(109, 231, 30, 193);
 	byte *rightDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
-	Box leftDoorBox(0, 100, 33, 193);
+	Box leftDoorBox(0, 100, 30, 193);
 	uint16 leftDoorBlitFrom = 0;
 	byte *leftDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
 
