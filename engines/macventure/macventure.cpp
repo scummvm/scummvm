@@ -634,8 +634,8 @@ void MacVentureEngine::playSounds(bool pause) {
 		}
 	}
 	if (pause && delay > 0) {
-		warning("Sound pausing not yet tested. Pausing for %d", delay * 1000);
-		g_system->delayMillis(delay * 1000);
+		warning("Sound pausing not yet tested. Pausing for %d", delay);
+		g_system->delayMillis(delay);
 		preparedToRun();
 	}
 }

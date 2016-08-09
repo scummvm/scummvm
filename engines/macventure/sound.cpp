@@ -42,7 +42,8 @@ SoundManager::~SoundManager(){
 		delete _container;
 
 	Common::HashMap<ObjID, SoundAsset*>::iterator it;
-	for (it = _assets.begin(); it != _assets.end(); it++) {
+	Common::HashMap<ObjID, SoundAsset*>::iterator end = _assets.end();
+	for (it = _assets.begin(); it != end; it++) {
 		delete it->_value;
 	}
 }
@@ -60,7 +61,7 @@ void SoundManager::ensureLoaded(ObjID sound) {
 
 SoundAsset::SoundAsset(Container *container, ObjID id) :
 	_container(container), _id(id), _length(0), _frequency(1) {
-
+	debug("SoundAsset::SoundAsset(%d)", _id);
 	if (_container->getItemByteSize(_id) == 0)
 		warning("Trying to load an empty sound asset.");
 
@@ -99,17 +100,19 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 	delete stream;
 }
 
-SoundAsset::~SoundAsset() {}
+SoundAsset::~SoundAsset() {
+	debug("SoundAsset::~SoundAsset(%d)", _id);
+}
 
 void SoundAsset::play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle) {
 	if (_data.size() == 0) return;
-	Audio::AudioStream *sound = Audio::makeRawStream(&_data.front(), _length, _frequency, Audio::FLAG_UNSIGNED);
+	Audio::AudioStream *sound = Audio::makeRawStream(&_data.front(), _length, _frequency, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 	mixer->playStream(Audio::Mixer::kPlainSoundType, soundHandle, sound);
 }
 
 uint32 SoundAsset::getPlayLength() {
-
-	return _length / _frequency;
+	// Transform to milliseconds
+	return _length * 1000 / _frequency;
 }
 
 void SoundAsset::decode10(Common::SeekableReadStream *stream) {
