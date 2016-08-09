@@ -35,85 +35,86 @@ class Gui;
 class DialogElement;
 extern PrebuiltDialog prebuiltDialogs[];
 
-
 class Dialog {
 public:
 	Dialog(Gui *gui, Common::Point pos, uint width, uint height);
- 	Dialog(Gui *gui, PrebuiltDialogs prebuilt);
+	Dialog(Gui *gui, PrebuiltDialogs prebuilt);
 
 	~Dialog();
 
-  bool processEvent(Common::Event event);
-  void draw();
-  void localize(Common::Point &point);
-  void handleDialogAction(DialogElement *trigger, DialogAction action);
+	bool processEvent(Common::Event event);
+	void draw();
+	void localize(Common::Point &point);
+	void handleDialogAction(DialogElement *trigger, DialogAction action);
 
-  const Graphics::Font& getFont();
+	const Graphics::Font& getFont();
 
-  void addButton(Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
-  void addText(Common::String content, Common::Point position);
-  void addTextInput(Common::Point position, int width, int height);
+	void addButton(Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
+	void addText(Common::String content, Common::Point position);
+	void addTextInput(Common::Point position, int width, int height);
 
-  void setUserInput(Common::String content);
-
-private:
-  void addPrebuiltElement(const PrebuiltDialogElement &element);
+	void setUserInput(Common::String content);
 
 private:
-  Gui *_gui;
+	void addPrebuiltElement(const PrebuiltDialogElement &element);
 
-  Common::String _userInput;
-  Common::Array<DialogElement*> _elements;
-  Common::Rect _bounds;
+private:
+	Gui *_gui;
+
+	Common::String _userInput;
+	Common::Array<DialogElement*> _elements;
+	Common::Rect _bounds;
 };
 
 class DialogElement {
 public:
-  DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
-  virtual ~DialogElement() {}
+	DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
+	virtual ~DialogElement() {}
 
-  bool processEvent(Dialog *dialog, Common::Event event);
-  void draw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
-  const Common::String& getText();
+	bool processEvent(Dialog *dialog, Common::Event event);
+	void draw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	const Common::String& getText();
 
 private:
-  virtual bool doProcessEvent(Dialog *dialog, Common::Event event) = 0;
-  virtual void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) = 0;
-  virtual const Common::String& doGetText();
+	virtual bool doProcessEvent(Dialog *dialog, Common::Event event) = 0;
+	virtual void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) = 0;
+	virtual const Common::String& doGetText();
 
 protected:
-  Common::String _text;
-  Common::Rect _bounds;
-  DialogAction _action;
+	Common::String _text;
+	Common::Rect _bounds;
+	DialogAction _action;
 };
 
 // Dialog elements
 class DialogButton : public DialogElement {
 public:
-  DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
-  ~DialogButton() {}
+	DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
+	~DialogButton() {}
 
 private:
-  bool doProcessEvent(Dialog *dialog, Common::Event event);
-  void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event);
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
 };
 
 class DialogPlainText : public DialogElement {
 public:
-  DialogPlainText(Dialog *dialog, Common::String content, Common::Point position);
-  ~DialogPlainText();
+	DialogPlainText(Dialog *dialog, Common::String content, Common::Point position);
+	~DialogPlainText();
+
 private:
-  bool doProcessEvent(Dialog *dialog, Common::Event event);
-  void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event);
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
 };
 
 class DialogTextInput : public DialogElement {
 public:
-  DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height);
-  ~DialogTextInput();
+	DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height);
+	~DialogTextInput();
+
 private:
-  bool doProcessEvent(Dialog *dialog, Common::Event event);
-  void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
+	bool doProcessEvent(Dialog *dialog, Common::Event event);
+	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
 };
 
 } // End of namespace MacVenture

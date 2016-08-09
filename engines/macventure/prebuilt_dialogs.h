@@ -28,47 +28,47 @@
 namespace MacVenture {
 
 enum DialogAction {
-  kDANone,
-  kDACloseDialog,
-  kDASubmit,
-  kDASaveAs,
-  kDALoadGame,
-  kDAQuit,
-  kDANewGame
+	kDANone,
+	kDACloseDialog,
+	kDASubmit,
+	kDASaveAs,
+	kDALoadGame,
+	kDAQuit,
+	kDANewGame
 };
 
 enum PrebuiltDialogs {
-  kSaveAsDialog = 0, //TODO: Currently unused, we are using ScummVM dialogs instead.
-  kSpeakDialog = 1,
-  kWinGameDialog = 2,
-  kPrebuiltDialogCount
+	kSaveAsDialog = 0, //TODO: Currently unused, we are using ScummVM dialogs instead.
+	kSpeakDialog = 1,
+	kWinGameDialog = 2,
+	kPrebuiltDialogCount
 };
 
 enum PrebuiltElementType {
-  kDEPlainText,
-  kDEButton,
-  kDETextInput,
-  kDEEnd
+	kDEPlainText,
+	kDEButton,
+	kDETextInput,
+	kDEEnd
 };
 
 struct PrebuiltDialogElement {
-  PrebuiltElementType type;
-  Common::String title;
-  DialogAction action;
-  Common::Point position;
-  uint width;
-  uint height;
+	PrebuiltElementType type;
+	Common::String title;
+	DialogAction action;
+	Common::Point position;
+	uint width;
+	uint height;
 };
 
 // Prebuilt dialogs
 enum {
-  // HACK
-  kMaxPrebuiltDialogElements = 10
+	// HACK
+	kMaxPrebuiltDialogElements = 10
 };
 
 struct PrebuiltDialog {
-  Common::Rect bounds;
-  PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
+	Common::Rect bounds;
+	PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
 };
 } // End of namespace MacVenture
 
