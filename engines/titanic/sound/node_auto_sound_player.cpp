@@ -21,23 +21,63 @@
  */
 
 #include "titanic/sound/node_auto_sound_player.h"
+#include "titanic/sound/auto_music_player.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CNodeAutoSoundPlayer, CAutoSoundPlayer)
+	ON_MESSAGE(EnterNodeMsg)
+	ON_MESSAGE(LeaveNodeMsg)
+END_MESSAGE_MAP()
+
 void CNodeAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_enabled, indent);
 	CAutoSoundPlayer::save(file, indent);
 }
 
 void CNodeAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldEC = file->readNumber();
+	_enabled = file->readNumber();
 	CAutoSoundPlayer::load(file);
 }
 
 bool CNodeAutoSoundPlayer::EnterNodeMsg(CEnterNodeMsg *msg) {
-	warning("CNodeAutoSoundPlayer::handleEvent");
+	CNodeItem *node = findNode();
+	CRoomItem *room = findRoom();
+
+	if (node == msg->_newNode) {
+		CTurnOn onMsg;
+		onMsg.execute(this);
+
+		if (_enabled) {
+			CChangeMusicMsg changeMsg;
+			changeMsg._flags = 1;
+			changeMsg.execute(room, CAutoMusicPlayer::_type,
+				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+		}
+	}
+
+	return true;
+}
+
+bool CNodeAutoSoundPlayer::LeaveNodeMsg(CLeaveNodeMsg *msg) {
+	CNodeItem *node = findNode();
+	CRoomItem *room = findRoom();
+
+	if (node == msg->_oldNode) {
+		CTurnOff offMsg;
+		offMsg.execute(this);
+
+		if (_enabled) {
+			CChangeMusicMsg changeMsg;
+			changeMsg._flags = 2;
+			changeMsg.execute(room, CAutoMusicPlayer::_type,
+				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+		}
+	}
+
 	return true;
 }
 

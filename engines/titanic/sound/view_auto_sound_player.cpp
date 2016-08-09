@@ -21,19 +21,64 @@
  */
 
 #include "titanic/sound/view_auto_sound_player.h"
+#include "titanic/sound/auto_music_player.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CViewAutoSoundPlayer, CAutoSoundPlayer)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CViewAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldEC, indent);
+	file->writeNumberLine(_enabled, indent);
 	CAutoSoundPlayer::save(file, indent);
 }
 
 void CViewAutoSoundPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldEC = file->readNumber();
+	_enabled = file->readNumber();
 	CAutoSoundPlayer::load(file);
+}
+
+bool CViewAutoSoundPlayer::EnterViewMsg(CEnterViewMsg *msg) {
+	CViewItem *view = findView();
+	CRoomItem *room = findRoom();
+
+	if (view == msg->_newView) {
+		CTurnOn onMsg;
+		onMsg.execute(this);
+
+		if (_enabled) {
+			CChangeMusicMsg changeMsg;
+			changeMsg._flags = 1;
+			changeMsg.execute(room, CAutoMusicPlayer::_type,
+				MSGFLAG_CLASS_DEF |MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+		}
+	}
+
+	return true;
+}
+
+bool CViewAutoSoundPlayer::LeaveViewMsg(CLeaveViewMsg *msg) {
+	CViewItem *view = findView();
+	CRoomItem *room = findRoom();
+
+	if (view == msg->_oldView) {
+		CTurnOff offMsg;
+		offMsg.execute(this);
+
+		if (_enabled) {
+			CChangeMusicMsg changeMsg;
+			changeMsg._flags = 2;
+			changeMsg.execute(room, CAutoMusicPlayer::_type,
+				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

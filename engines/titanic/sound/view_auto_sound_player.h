@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CViewAutoSoundPlayer : public CAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
-	int _fieldEC;
+	bool _enabled;
 public:
 	CLASSDEF;
-	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(0) {}
+	CViewAutoSoundPlayer() : CAutoSoundPlayer(), _enabled(false) {}
 
 	/**
 	 * Save the data for the class to file

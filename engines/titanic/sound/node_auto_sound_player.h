@@ -29,12 +29,14 @@
 namespace Titanic {
 
 class CNodeAutoSoundPlayer : public CAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP;
 	bool EnterNodeMsg(CEnterNodeMsg *msg);
+	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
 private:
-	int _fieldEC;
+	bool _enabled;
 public:
 	CLASSDEF;
-	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _fieldEC(1) {}
+	CNodeAutoSoundPlayer() : CAutoSoundPlayer(), _enabled(true) {}
 
 	/**
 	 * Save the data for the class to file
