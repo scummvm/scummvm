@@ -272,6 +272,7 @@ private:
 	Common::RandomSource *_rnd;
 	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
 	Common::Queue<PendingSound> _pendingSounds;
+	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 public:
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;

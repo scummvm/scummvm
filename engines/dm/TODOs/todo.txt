@@ -4,7 +4,6 @@ Bugs:
 		Gui is messed up by drawn spell area line on startup
 		Spellcasting tabs are displayed inproperly, switching between them is possible tho
 		When reordering a champions, the icons in the top right corner ar drawn twice under the cursor
-		No dugeon is shown during opening the entrance doors
 
 	Logic:
 		F0444_STARTEND_Endgame is broken

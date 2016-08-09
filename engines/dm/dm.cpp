@@ -185,6 +185,7 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_g313_gameTime = 0;
 	_g353_stringBuildBuffer[0] = '\0';
 	_g318_waitForInputMaxVerticalBlankCount = 0;
+	_savedScreenForOpenEntranceDoors = nullptr;
 	for (uint16 i = 0; i < 10; ++i)
 		_g562_entranceDoorAnimSteps[i] = nullptr;
 	_g564_interfaceCredits = nullptr;
@@ -214,6 +215,7 @@ DMEngine::~DMEngine() {
 	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
 		delete[] _gK24_soundData[i]._firstSample;
 
+	delete[] _savedScreenForOpenEntranceDoors;
 	// clear debug channels
 	DebugMan.clearAllDebugChannels();
 }
@@ -689,6 +691,10 @@ void DMEngine::f439_drawEntrance() {
 	_displayMan->f128_drawDungeon(kDirSouth, 2, 0);
 	warning(false, "IGNORED CODE: G0324_B_DrawViewportRequested = false;");
 
+	if (!_savedScreenForOpenEntranceDoors)
+		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];
+	memcpy(_savedScreenForOpenEntranceDoors, _displayMan->_g348_bitmapScreen, 320 * 200);
+
 	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
 	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _g562_entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
 
@@ -698,24 +704,21 @@ void DMEngine::f439_drawEntrance() {
 }
 
 void DMEngine::f438_STARTEND_OpenEntranceDoors() {
-	Box rightDoorBox(109, 231, 0 + 33, 160 + 33);
+	Box rightDoorBox(109, 231, 33, 193);
 	byte *rightDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
-	Box leftDoorBox(0, 100, 0 + 33, 160 + 33);
+	Box leftDoorBox(0, 100, 33, 193);
 	uint16 leftDoorBlitFrom = 0;
 	byte *leftDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
 
 	Box screenBox(0, 319, 0, 199);
-	byte *tmpScreen = new byte[320 * 200];
-	memcpy(tmpScreen, _displayMan->_g348_bitmapScreen, 320 * 200);
-	
-	uint16 animStep = 1;
-	do {
+
+	for (uint16 animStep = 1; animStep < 32; ++animStep) {
 		if ((animStep % 3) == 1) {
 			// Strangerke: CHECKME: Earlier versions of the game were using G0565_puc_Graphic535_Sound02DoorRattle instead of k02_soundDOOR_RATTLE 2
 			f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
 		}
 
-		_displayMan->f21_blitToScreen(tmpScreen, &screenBox, 160, kM1_ColorNoTransparency, 200);
+		_displayMan->f21_blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
 		_displayMan->f132_blitToBitmap(leftDoorBitmap, _displayMan->_g348_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
 		_displayMan->f132_blitToBitmap(rightDoorBitmap, _displayMan->_g348_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
 		_eventMan->f357_discardAllInput();
@@ -726,7 +729,8 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 		rightDoorBox._x1 += 4;
 
 		f22_delay(3);
-	} while (++animStep != 32);
+	}
+	delete[] _savedScreenForOpenEntranceDoors;
 }
 
 
