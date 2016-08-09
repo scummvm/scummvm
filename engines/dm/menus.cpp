@@ -297,71 +297,69 @@ const char* MenuMan::f384_getActionName(ChampionAction actionIndex) {
 Box g504_BoxSpellAreaControls = Box(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
 
 void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
-	ChampionMan &champMan = *_vm->_championMan;
-	DisplayMan &dispMan = *_vm->_displayMan;
-	TextMan &textMan = *_vm->_textMan;
 
-	Champion &champ = champMan._gK71_champions[champIndex];
-	int16 champCurrHealth[4];
-	for (uint16 i = 0; i < 4; ++i)
-		champCurrHealth[i] = champMan._gK71_champions[i]._currHealth;
-	_vm->_eventMan->f77_hideMouse();
-	dispMan.D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
-	int16 champCount = champMan._g305_partyChampionCount;
+
+	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	int16 champHP0 = _vm->_championMan->_gK71_champions[0]._currHealth;
+	int16 champHP1 = _vm->_championMan->_gK71_champions[1]._currHealth;
+	int16 champHP2 = _vm->_championMan->_gK71_champions[2]._currHealth;
+	int16 champHP3 = _vm->_championMan->_gK71_champions[3]._currHealth;
+	_vm->_eventMan->f78_showMouse();
+	_vm->_displayMan->D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
 	switch (champIndex) {
-	case k0_ChampionFirst:
+	case 0:
 		_vm->_eventMan->f6_highlightScreenBox(233, 277, 42, 49);
-		textMan.f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
-		if (champCount) {
-			if (champCurrHealth[1]) {
-				_vm->_eventMan->f6_highlightScreenBox(280, 291, 42, 48);;
+		_vm->_textMan->f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		if (_vm->_championMan->_g305_partyChampionCount > 1) {
+			if (champHP1) {
+				_vm->_eventMan->f6_highlightScreenBox(280, 291, 42, 48);
 			}
-labelChamp2:
-			if (champCount > 2) {
-				if (champCurrHealth[2]) {
+T0393002:
+			if (_vm->_championMan->_g305_partyChampionCount > 2) {
+				if (champHP2) {
 					_vm->_eventMan->f6_highlightScreenBox(294, 305, 42, 48);
 				}
-labelChamp3:
-				if (champCount > 3) {
-					if (champCurrHealth[3]) {
+T0393003:
+				if (_vm->_championMan->_g305_partyChampionCount > 3) {
+					if (champHP3) {
 						_vm->_eventMan->f6_highlightScreenBox(308, 319, 42, 48);
 					}
 				}
 			}
 		}
 		break;
-	case k1_ChampionSecond:
-		if (champCurrHealth[0]) {
+	case 1:
+		if (champHP0) {
 			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
 		_vm->_eventMan->f6_highlightScreenBox(247, 291, 42, 49);
-		textMan.f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
-		goto labelChamp2;
-	case k2_ChampionThird:
-		if (champCurrHealth[0]) {
+		_vm->_textMan->f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		goto T0393002;
+	case 2:
+		if (champHP0) {
 			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
-		if (champCurrHealth[1]) {
+		if (champHP1) {
 			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
 		}
 		_vm->_eventMan->f6_highlightScreenBox(261, 305, 42, 49);
-		textMan.f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
-		goto labelChamp3;
-	case k3_ChampionFourth:
-		if (champCurrHealth[0]) {
+		_vm->_textMan->f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		goto T0393003;
+	case 3:
+		if (champHP0) {
 			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
 		}
-		if (champCurrHealth[1]) {
+		if (champHP1) {
 			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
 		}
-		if (champCurrHealth[2]) {
+		if (champHP2) {
 			_vm->_eventMan->f6_highlightScreenBox(261, 272, 42, 48);
 		}
 		_vm->_eventMan->f6_highlightScreenBox(275, 319, 42, 49);
-		textMan.f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ._name);
-		break;
+		_vm->_textMan->f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 	}
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f77_hideMouse();
 }
 
 #define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
@@ -389,7 +387,6 @@ void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
 			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	}
-
 }
 
 void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
