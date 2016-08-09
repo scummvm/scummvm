@@ -122,6 +122,32 @@ void Lingo::initBuiltIns() {
 	}
 }
 
+void Lingo::printStubWithArglist(const char *funcname, int nargs) {
+	Common::String s(funcname);
+
+	s += '(';
+
+	for (int i = 0; i < nargs; i++) {
+		Datum d = _stack[_stack.size() - nargs + i];
+
+		d.toString();
+		s += *d.u.s;
+
+		if (i != nargs - 1)
+			s += ", ";
+	}
+
+	s += ")";
+
+	warning("STUB: %s", s.c_str());
+}
+
+void Lingo::dropStack(int nargs) {
+	for (int i = 0; i < nargs; i++)
+		pop();
+}
+
+
 ///////////////////
 // Math
 ///////////////////
@@ -382,11 +408,15 @@ void Lingo::b_pause(int nargs) {
 }
 
 void Lingo::b_playAccel(int nargs) {
-	warning("STUB: b_playAccel");
+	g_lingo->printStubWithArglist("b_playAccel", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_printFrom(int nargs) {
-	warning("STUB: b_printFrom");
+	g_lingo->printStubWithArglist("b_printFrom", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_quit(int nargs) {
@@ -464,15 +494,21 @@ void Lingo::b_moveableSprite(int nargs) {
 }
 
 void Lingo::b_puppetPalette(int nargs) {
-	warning("STUB: b_puppetPalette");
+	g_lingo->printStubWithArglist("b_puppetPalette", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_puppetSound(int nargs) {
-	warning("STUB: b_puppetSound");
+	g_lingo->printStubWithArglist("b_puppetSound", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_puppetSprite(int nargs) {
-	warning("STUB: b_puppetSprite");
+	g_lingo->printStubWithArglist("b_puppetSprite", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_puppetTempo(int nargs) {
@@ -481,15 +517,21 @@ void Lingo::b_puppetTempo(int nargs) {
 }
 
 void Lingo::b_puppetTransition(int nargs) {
-	warning("STUB: b_puppetTransition");
+	g_lingo->printStubWithArglist("b_puppetTransition", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_spriteBox(int nargs) {
-	warning("STUB: b_spriteBox");
+	g_lingo->printStubWithArglist("b_spriteBox", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 void Lingo::b_zoomBox(int nargs) {
-	warning("STUB: b_zoomBox");
+	g_lingo->printStubWithArglist("b_zoomBox", nargs);
+
+	g_lingo->dropStack(nargs);
 }
 
 
