@@ -1587,57 +1587,56 @@ int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
 }
 
 Thing DungeonMan::f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
-	int16 L0293_i_Type;
-	int16 L0294_i_ThingType;
-	Thing L0295_T_Thing;
-	Junk* L0296_ps_Junk;
-
-
-	L0294_i_ThingType = k5_WeaponThingType;
-	if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit)) {
+	int16 thingType = k5_WeaponThingType;
+	if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit))
 		iconIndex = k4_IconIndiceWeaponTorchUnlit;
-	}
+
+	int16 junkType;
+
 	switch (iconIndex) {
 	case k54_IconIndiceWeaponRock:
-		L0293_i_Type = k30_WeaponTypeRock;
+		junkType = k30_WeaponTypeRock;
 		break;
 	case k128_IconIndiceJunkBoulder:
-		L0293_i_Type = k25_JunkTypeBoulder;
-		L0294_i_ThingType = k10_JunkThingType;
+		junkType = k25_JunkTypeBoulder;
+		thingType = k10_JunkThingType;
 		break;
 	case k51_IconIndiceWeaponArrow:
-		L0293_i_Type = k27_WeaponTypeArrow;
+		junkType = k27_WeaponTypeArrow;
 		break;
 	case k52_IconIndiceWeaponSlayer:
-		L0293_i_Type = k28_WeaponTypeSlayer;
+		junkType = k28_WeaponTypeSlayer;
 		break;
 	case k55_IconIndiceWeaponPoisonDart:
-		L0293_i_Type = k31_WeaponTypePoisonDart;
+		junkType = k31_WeaponTypePoisonDart;
 		break;
 	case k56_IconIndiceWeaponThrowingStar:
-		L0293_i_Type = k32_WeaponTypeThrowingStar;
+		junkType = k32_WeaponTypeThrowingStar;
 		break;
 	case k32_IconIndiceWeaponDagger:
-		L0293_i_Type = k8_WeaponTypeDagger;
+		junkType = k8_WeaponTypeDagger;
 		break;
 	case k4_IconIndiceWeaponTorchUnlit:
-		L0293_i_Type = k2_WeaponTypeTorch;
+		junkType = k2_WeaponTypeTorch;
 		break;
 	default:
 		return Thing::_none;
 	}
-	if ((L0295_T_Thing = f166_getUnusedThing(L0294_i_ThingType)) == Thing::_none) {
+
+	Thing unusedThing = f166_getUnusedThing(thingType);
+	if (unusedThing == Thing::_none)
 		return Thing::_none;
-	}
-	L0296_ps_Junk = (Junk*)f156_getThingData(L0295_T_Thing);
-	L0296_ps_Junk->setType(L0293_i_Type); /* Also works for WEAPON in cases other than Boulder */
-	if ((iconIndex == k4_IconIndiceWeaponTorchUnlit) && ((Weapon*)L0296_ps_Junk)->isLit()) { /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
-		((Weapon*)L0296_ps_Junk)->setChargeCount(15);
-	}
-	return L0295_T_Thing;
+
+	Junk *junkPtr = (Junk*)f156_getThingData(unusedThing);
+	junkPtr->setType(junkType); /* Also works for WEAPON in cases other than Boulder */
+	if ((iconIndex == k4_IconIndiceWeaponTorchUnlit) && ((Weapon*)junkPtr)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
+		((Weapon*)junkPtr)->setChargeCount(15);
+
+	return unusedThing;
 }
 
 int16 DungeonMan::f169_getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo) {
+	// TODO: Use ScummVM random number generator
 	return ((((((val1 * 31417) & 0xFFFF) >> 1) + ((val2 * 11) & 0xFFFF)
 			  + _g278_dungeonFileHeader._ornamentRandomSeed) & 0xFFFF) >> 2) % modulo; /* Pseudorandom number generator */
 }
