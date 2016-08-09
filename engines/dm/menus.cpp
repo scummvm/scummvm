@@ -97,7 +97,7 @@ byte g498_PalChangesActionAreaObjectIcon[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 Box gK74_BoxSpellAreaLine = Box(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine 
 Box gK75_BoxSpellAreaLine2 = Box(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2 
 Box gK76_BoxSpellAreaLine3 = Box(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
-Box g0_BoxSpellArea = Box(224, 319, 77, 121);
+Box g0_BoxSpellArea = Box(224, 319, 42, 74);
 
 MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_g508_refreshActionArea = false;
