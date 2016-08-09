@@ -33,7 +33,9 @@
 
 namespace DM {
 
-DialogMan::DialogMan(DMEngine* vm) : _vm(vm) {}
+DialogMan::DialogMan(DMEngine* vm) : _vm(vm) {
+	_g335_selectedDialogChoice = 0;
+}
 
 void DialogMan::f427_dialogDraw(char* msg1, char* msg2, char* choice1, char* choice2, char* choice3, char* choice4, bool screenDialog, bool clearScreen, bool fading) {
 	static Box constBox1 = Box(0, 223, 101, 125);

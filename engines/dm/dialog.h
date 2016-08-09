@@ -33,6 +33,7 @@ namespace DM {
 class DialogMan {
 	DMEngine *_vm;
 public:
+	uint16 _g335_selectedDialogChoice; // @ G0335_ui_SelectedDialogChoice
 	explicit DialogMan(DMEngine *vm);
 	void f427_dialogDraw(char *msg1, char *msg2, char *choice1, char *choice2,
 						 char *choice3, char *choice4, bool screenDialog, bool clearScreen, bool fading); // @ F0427_DIALOG_Draw

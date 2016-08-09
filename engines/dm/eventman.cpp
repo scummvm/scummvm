@@ -38,6 +38,7 @@
 #include "projexpl.h"
 #include "text.h"
 #include "group.h"
+#include "dialog.h"
 
 
 namespace DM {
@@ -814,7 +815,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 	if ((cmdType >= k210_CommandClickOnDialogChoice_1) && (cmdType <= k213_CommandClickOnDialogChoice_4)) {
-		warning(false, "MISSING CODE:G0335_ui_SelectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);");
+		_vm->_dialog->_g335_selectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);
 		return;
 	}
 	if (cmdType == k215_CommandRestartGame) {
