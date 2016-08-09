@@ -21,19 +21,41 @@
  */
 
 #include "titanic/sound/trigger_auto_music_player.h"
+#include "titanic/sound/auto_music_player.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTriggerAutoMusicPlayer, CGameObject)
+	ON_MESSAGE(TriggerAutoMusicPlayerMsg)
+END_MESSAGE_MAP()
+
 void CTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_fieldBC, indent);
+	file->writeQuotedLine(_roomName, indent);
 	CGameObject::save(file, indent);
 }
 
 void CTriggerAutoMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readString();
+	_roomName = file->readString();
 	CGameObject::load(file);
+}
+
+bool CTriggerAutoMusicPlayer::TriggerAutoMusicPlayerMsg(CTriggerAutoMusicPlayerMsg *msg) {
+	CRoomItem *room1 = msg->_value == 1 ? locateRoom(_roomName) : findRoom();
+	CRoomItem *room2 = msg->_value == 2 ? locateRoom(_roomName) : findRoom();
+
+	CChangeMusicMsg changeMsg;
+	changeMsg._flags = 1;
+	changeMsg.execute(room1, CAutoMusicPlayer::_type,
+		MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+
+	changeMsg._flags = 2;
+	changeMsg.execute(room2, CAutoMusicPlayer::_type,
+		MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+
+	return true;
 }
 
 } // End of namespace Titanic

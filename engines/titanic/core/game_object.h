@@ -393,6 +393,11 @@ protected:
 	CRoomItem *getHiddenRoom() const;
 
 	/**
+	 * Locates a room with the given name
+	 */
+	CRoomItem *locateRoom(const CString &name) const;
+
+	/**
 	 * Scan the specified room for an item by name
 	 */
 	CTreeItem *findUnder(CTreeItem *parent, const CString &name) const;

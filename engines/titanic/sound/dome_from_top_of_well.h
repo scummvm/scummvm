@@ -31,6 +31,7 @@ class CDomeFromTopOfWell : public CViewAutoSoundPlayer {
 	DECLARE_MESSAGE_MAP;
 public:
 	CLASSDEF;
+	CDomeFromTopOfWell();
 
 	/**
 	 * Save the data for the class to file

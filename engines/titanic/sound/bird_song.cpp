@@ -24,16 +24,33 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBirdSong, CAutoSoundPlayer)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(SignalObject)
+END_MESSAGE_MAP()
+
 void CBirdSong::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CRoomAutoSoundPlayer::save(file, indent);
 }
 
 void CBirdSong::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CRoomAutoSoundPlayer::load(file);
+}
+
+bool CBirdSong::TurnOn(CTurnOn *msg) {
+	if (!_flag)
+		CAutoSoundPlayer::TurnOn(msg);
+	return true;
+}
+
+bool CBirdSong::SignalObject(CSignalObject *msg) {
+	_flag = true;
+	CAutoSoundPlayer::SignalObject(msg);
+	return true;
 }
 
 } // End of namespace Titanic

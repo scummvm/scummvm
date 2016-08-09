@@ -28,8 +28,10 @@
 namespace Titanic {
 
 class CEnterViewTogglesOtherMusic : public CTriggerAutoMusicPlayer {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
 protected:
-	int _fieldC8;
+	int _value;
 public:
 	CLASSDEF;
 	CEnterViewTogglesOtherMusic();

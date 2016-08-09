@@ -1248,6 +1248,19 @@ CRoomItem *CGameObject::getHiddenRoom() const {
 	return root ? root->findHiddenRoom() : nullptr;
 }
 
+CRoomItem *CGameObject::locateRoom(const CString &name) const {
+	if (name.empty())
+		return nullptr;
+
+	CProjectItem *project = getRoot();
+	for (CRoomItem *room = project->findFirstRoom(); room; room = project->findNextRoom(room)) {
+		if (!room->getName().compareToIgnoreCase(name))
+			return room;
+	}
+
+	return nullptr;
+}
+
 CGameObject *CGameObject::getHiddenObject(const CString &name) const {
 	CRoomItem *room = getHiddenRoom();
 	return room ? static_cast<CGameObject *>(findUnder(room, name)) : nullptr;
