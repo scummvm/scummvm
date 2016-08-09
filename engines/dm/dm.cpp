@@ -696,4 +696,40 @@ void DMEngine::f439_drawEntrance() {
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
 	_displayMan->f436_STARTEND_FadeToPalette(g20_PalEntrance);
 }
+
+void DMEngine::f438_STARTEND_OpenEntranceDoors() {
+	Box rightDoorBox(109, 231, 0 + 33, 160 + 33);
+	byte *rightDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
+	Box leftDoorBox(0, 100, 0 + 33, 160 + 33);
+	uint16 leftDoorBlitFrom = 0;
+	byte *leftDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
+
+	Box screenBox(0, 319, 0, 199);
+	byte *tmpScreen = new byte[320 * 200];
+	memcpy(tmpScreen, _displayMan->_g348_bitmapScreen, 320 * 200);
+	
+	uint16 animStep = 1;
+	do {
+		if ((animStep % 3) == 1) {
+			// Strangerke: CHECKME: Earlier versions of the game were using G0565_puc_Graphic535_Sound02DoorRattle instead of k02_soundDOOR_RATTLE 2
+			f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
+		}
+
+		_displayMan->f21_blitToScreen(tmpScreen, &screenBox, 160, kM1_ColorNoTransparency, 200);
+		_displayMan->f132_blitToBitmap(leftDoorBitmap, _displayMan->_g348_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
+		_displayMan->f132_blitToBitmap(rightDoorBitmap, _displayMan->_g348_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
+		_eventMan->f357_discardAllInput();
+		_displayMan->updateScreen();
+
+		leftDoorBox._x2 -= 4;
+		leftDoorBlitFrom += 4;
+		rightDoorBox._x1 += 4;
+
+		f22_delay(3);
+	} while (++animStep != 32);
+}
+
+
+
+
 } // End of namespace DM

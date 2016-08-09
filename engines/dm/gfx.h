@@ -677,8 +677,8 @@ public:
 
 	void f20_blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void f20_blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
-	void f21_blitToScreen(byte* bitmap, int16 *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
-	void f21_blitToScreen(byte* bitmap, Box *box, int16 viewDoorOrnIndex, Color transparent, int16 doorOrnOrdinal); // @ F0021_MAIN_BlitToScreen
+	void f21_blitToScreen(byte *bitmap, int16* box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
+	void f21_blitToScreen(byte* bitmap, Box* box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which

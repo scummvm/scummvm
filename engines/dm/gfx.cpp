@@ -826,9 +826,6 @@ void DisplayMan::f460_initializeGraphicData() {
 	_g709_bitmapWallSet_DoorFrameFront = new byte[32 * 123];
 	_g296_bitmapViewport = new byte[224 * 136];
 
-	warning(false, "SKIPPED CODE: G0086_puc_Bitmap_ViewportBlackArea it is useless");
-	warning(false, "SKIPPED CODE: G0087_puc_Bitmap_ViewportFloorArea it is useless");
-
 	if (!_g639_derivedBitmapByteCount)
 		_g639_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
 	if (!_g638_derivedBitmaps) {

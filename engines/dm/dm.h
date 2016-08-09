@@ -258,7 +258,7 @@ public:
 	void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
 	void f65_playPendingSound(); // @ F0065_SOUND_PlayPendingSound_CPSD
 	bool f505_soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume); // @ F0505_SOUND_GetVolume
-	void f438_STARTEND_OpenEntranceDoors() { warning(true, "STUB: f438_STARTEND_OpenEntranceDoors"); } // @ F0438_STARTEND_OpenEntranceDoors
+	void f438_STARTEND_OpenEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
 	void f437_STARTEND_drawTittle() { warning(false, "STUB METHOD: f437_STARTEND_drawTittle"); }// @ F0437_STARTEND_DrawTitle
 	void f442_SARTEND_processCommand202_entranceDrawCredits() { warning(false, "STUB METHOD: f442_SARTEND_processCommand202_entranceDrawCredits"); }// @ F0442_STARTEND_ProcessCommand202_EntranceDrawCredits
 
