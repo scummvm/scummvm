@@ -349,8 +349,13 @@ void RivenCard::onMouseDown(const Common::Point &mouse) {
 	onMouseMove(mouse);
 
 	_pressedHotspot = _hoveredHotspot;
+
+	RivenScriptPtr script;
 	if (_pressedHotspot) {
-		RivenScriptPtr script = _pressedHotspot->getScript(kMouseDownScript);
+		script = _pressedHotspot->getScript(kMouseDownScript);
+	}
+
+	if (script) {
 		_vm->_scriptMan->runScript(script, false);
 	}
 }
@@ -358,31 +363,39 @@ void RivenCard::onMouseDown(const Common::Point &mouse) {
 void RivenCard::onMouseUp(const Common::Point &mouse) {
 	onMouseMove(mouse);
 
+	RivenScriptPtr script;
 	if (_pressedHotspot && _pressedHotspot == _hoveredHotspot) {
-		RivenScriptPtr script = _pressedHotspot->getScript(kMouseUpScript);
-		_vm->_scriptMan->runScript(script, false);
+		script = _pressedHotspot->getScript(kMouseUpScript);
 	}
 
 	_pressedHotspot = nullptr;
+
+	if (script) {
+		_vm->_scriptMan->runScript(script, false);
+	}
 }
 
 void RivenCard::onMouseMove(const Common::Point &mouse) {
 	RivenHotspot *hotspot = getHotspotContainingPoint(mouse);
 
-	if (hotspot) {
-		if (hotspot != _hoveredHotspot) {
-			if (_hoveredHotspot) {
-				RivenScriptPtr script = _hoveredHotspot->getScript(kMouseLeaveScript);
-				_vm->_scriptMan->runScript(script, false);
-			}
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
 
-			_hoveredHotspot = hotspot;
-			RivenScriptPtr script = _hoveredHotspot->getScript(kMouseEnterScript);
-			_vm->_scriptMan->runScript(script, false);
-		}
-	} else {
+	// Detect hotspot exit
+	if (_hoveredHotspot && (!hotspot || hotspot != _hoveredHotspot)) {
+		script += _hoveredHotspot->getScript(kMouseLeaveScript);
+	}
+
+	// Detect hotspot entry
+	if (hotspot && hotspot != _hoveredHotspot) {
+		_hoveredHotspot = hotspot;
+		script += _hoveredHotspot->getScript(kMouseEnterScript);
+	}
+
+	if (!hotspot) {
 		_hoveredHotspot = nullptr;
 	}
+
+	_vm->_scriptMan->runScript(script, false);
 }
 
 void RivenCard::onMouseDragUpdate() {
