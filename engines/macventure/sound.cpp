@@ -39,7 +39,7 @@ SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
 
 SoundManager::~SoundManager(){
 	if (_container)
-	delete _container;
+		delete _container;
 
 	Common::HashMap<ObjID, SoundAsset*>::iterator it;
 	for (it = _assets.begin(); it != _assets.end(); it++) {
