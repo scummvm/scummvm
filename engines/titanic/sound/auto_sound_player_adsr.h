@@ -28,10 +28,13 @@
 namespace Titanic {
 
 class CAutoSoundPlayerADSR : public CAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 private:
-	CString _string2;
-	CString _string3;
-	CString _string4;
+	CString _soundName1;
+	CString _soundName2;
+	CString _soundName3;
 public:
 	CLASSDEF;
 

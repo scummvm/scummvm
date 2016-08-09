@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBackgroundSoundMaker, CGameObject)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
+
 void CBackgroundSoundMaker::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
@@ -34,6 +38,10 @@ void CBackgroundSoundMaker::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CBackgroundSoundMaker::FrameMsg(CFrameMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

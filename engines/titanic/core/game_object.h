@@ -196,6 +196,13 @@ protected:
 	int playSound(const CString &name, CProximity &prox);
 
 	/**
+	 * Queues a sound to play after a specified one finishes
+	 * @param resName	Filename of sound to play
+	 * @param volume	Volume level
+	 */
+	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int val3 = 0, bool repeated = false);
+
+	/**
 	 * Stop a sound
 	 * @param handle	Sound handle
 	 * @param seconds	Optional number of seconds to transition sound off

@@ -24,20 +24,56 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CAutoSoundPlayerADSR, CAutoSoundPlayer)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+END_MESSAGE_MAP()
+
 void CAutoSoundPlayerADSR::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_soundName1, indent);
+	file->writeQuotedLine(_soundName2, indent);
+	file->writeQuotedLine(_soundName3, indent);
 	CAutoSoundPlayer::save(file, indent);
 }
 
 void CAutoSoundPlayerADSR::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
-	_string4 = file->readString();
+	_soundName1 = file->readString();
+	_soundName2 = file->readString();
+	_soundName3 = file->readString();
 	CAutoSoundPlayer::load(file);
+}
+
+bool CAutoSoundPlayerADSR::TurnOn(CTurnOn *msg) {
+	if (_soundHandle == -1) {
+		if (!_soundName1.empty()) {
+			_soundHandle = playSound(_soundName1, _volume, _fieldD0);
+
+			if (!_soundName2.empty())
+				_soundHandle = queueSound(_soundName2, _soundHandle, _volume, _fieldD0);
+
+			_soundHandle = queueSound(_filename, _soundHandle, _volume, _fieldD0);
+			_active = true;
+		}
+	}
+
+	return true;
+}
+
+bool CAutoSoundPlayerADSR::TurnOff(CTurnOff *msg) {
+	if (_soundHandle != -1) {
+		if (!_soundName3.empty())
+			queueSound(_soundName3, _soundHandle, _volume, _fieldD0);
+
+		if (isSoundActive(_soundHandle))
+			stopSound(_soundHandle);
+
+		_soundHandle = -1;
+		_active = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

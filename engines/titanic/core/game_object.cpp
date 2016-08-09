@@ -743,6 +743,16 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	return 0;
 }
 
+int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int val3, bool repeated) {
+	CProximity prox;
+	prox._fieldC = val3;
+	prox._repeated = repeated;
+	prox._channelVolume = volume;
+	prox._soundHandle = priorHandle;
+
+	return playSound(name, prox);
+}
+
 void CGameObject::stopSound(int handle, uint seconds) {
 	if (handle != 0 && handle != -1) {
 		CGameManager *gameManager = getGameManager();
