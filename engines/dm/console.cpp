@@ -59,7 +59,8 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	registerCmd("noclip", WRAP_METHOD(Console, Cmd_noclip));
 	registerCmd("pos", WRAP_METHOD(Console, Cmd_pos));
 	registerCmd("map", WRAP_METHOD(Console, Cmd_map));
-	registerCmd("items", WRAP_METHOD(Console, Cmd_items));
+	registerCmd("listItems", WRAP_METHOD(Console, Cmd_listItems));
+	registerCmd("gimme", WRAP_METHOD(Console, Cmd_gimme));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
@@ -147,7 +148,8 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 	return true;
 
 argumentError:
-	debugPrintf("Usage: %s get\nUsage: %s set <#> <#>\n", argv[0], argv[0]);
+	debugPrintf("Usage: %s get\n", argv[0]);
+	debugPrintf("Usage: %s set <#> <#>\n", argv[0]);
 	return true;
 }
 
@@ -187,26 +189,65 @@ bool Console::Cmd_map(int argc, const char** argv) {
 	return true;
 
 argumentError:
-	debugPrintf("Usage: %s get\nUsage: %s set <#>\n", argv[0], argv[0]);
+	debugPrintf("Usage: %s get\n", argv[0]);
+	debugPrintf("Usage: %s set <#>\n", argv[0]);
 	return true;
 }
 
-bool Console::Cmd_items(int argc, const char** argv) {
-	if (argc == 2 && cstrEquals("list", argv[1])) {
-		debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
-		for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
-			const char *name = _vm->_objectMan->_g352_objectNames[i - 1];
-			const char *prevName = _vm->_objectMan->_g352_objectNames[i];
-			if (!cstrEquals(prevName, name))
-				debugPrintf(" | %s", name);
-			if (i % 5 == 0)
-				debugPrintf("\n");
-		}
-		debugPrintf("\n");
-	} else {
-		debugPrintf("Usage: %s list\n", argv[0]);
+bool Console::Cmd_listItems(int argc, const char** argv) {
+	debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
+	for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
+		const char *name = _vm->_objectMan->_g352_objectNames[i - 1];
+		const char *prevName = _vm->_objectMan->_g352_objectNames[i];
+		if (!cstrEquals(prevName, name))
+			debugPrintf(" | %s", name);
+		if (i % 5 == 0)
+			debugPrintf("\n");
+	}
+	debugPrintf("\n");
+
+	return true;
+}
+
+bool Console::Cmd_gimme(int argc, const char** argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: gimme <item name>   // item name can have spaces\n");
 		return true;
 	}
+
+	Common::String requestedItemName;
+	for (int16 i = 1; i < argc; ++i)
+		requestedItemName += argv[i];
+
+	for (int16 thingType = 0; thingType < 16; ++thingType) { // 16 number of item types
+		uint16 *thingDataArray = _vm->_dungeonMan->_g284_thingData[thingType];
+		uint16 thingTypeSize = g235_ThingDataWordCount[thingType];
+		uint16 thingCount = _vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[thingType];
+
+		Thing dummyThing(0);
+		dummyThing.setType(thingType);
+		for (int16 thingIndex = 0; thingIndex < thingCount; ++thingIndex) {
+			dummyThing.setIndex(thingIndex);
+			int16 iconIndex = _vm->_objectMan->f33_getIconIndex(dummyThing);
+			if (iconIndex != -1) {
+				const char *displayName = _vm->_objectMan->_g352_objectNames[iconIndex];
+				if (cstrEquals(displayName, requestedItemName.c_str())) {
+					uint16 *newThingData = new uint16[(thingCount + 1) * thingTypeSize];
+					memcpy(newThingData, thingDataArray, sizeof(uint16) * thingTypeSize * thingCount);
+					delete[] thingDataArray;
+					for (uint16 i = 0; i < thingTypeSize; ++i)
+						newThingData[thingCount * thingTypeSize + i] = newThingData[thingIndex * thingTypeSize + i];
+					_vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[thingType]++;
+					_vm->_dungeonMan->_g284_thingData[thingType] = newThingData;
+					_vm->_championMan->f301_addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
+					debugPrintf("Item gimmed to the first champion, last slot\n");
+					return true;
+				}
+			}
+		}
+	}
+
+	debugPrintf("No item found with name '%s'\n", requestedItemName.c_str());
 	return true;
 }
 

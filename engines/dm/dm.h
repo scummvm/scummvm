@@ -116,6 +116,11 @@ public:
 	byte getCell() const { return _data >> 14; }
 	ThingType getType() const { return (ThingType)((_data >> 10) & 0xF); }
 	uint16 getIndex() const { return _data & 0x3FF; }
+
+	void setCell(uint16 cell) { _data = (_data & ~(0x3 << 14)) | ((cell & 0x3) << 14); }
+	void setType(uint16 type) { _data = (_data & ~(0xF << 10)) | ((type & 0xF) << 10); }
+	void setIndex(uint16 index) { _data = (_data & ~0x3FF) | (index & 0x3FF); }
+
 	uint16 getTypeAndIndex() { return _data & 0x3FFF; }
 	uint16 toUint16() const { return _data; } // I don't like 'em cast operators
 	bool operator==(const Thing &rhs) const { return _data == rhs._data; }

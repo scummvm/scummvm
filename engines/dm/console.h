@@ -53,7 +53,8 @@ public:
 
 	bool Cmd_pos(int argc, const char **argv);
 	bool Cmd_map(int argc, const char **argv);
-	bool Cmd_items(int argc, const char **argv);
+	bool Cmd_listItems(int argc, const char **argv);
+	bool Cmd_gimme(int argc, const char **argv);
 };
 }
 
