@@ -870,91 +870,78 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 		-1    /* Left */
 	};
 
-	uint16 L1115_ui_Multiple;
-#define AL1115_ui_Square L1115_ui_Multiple
-#define AL1115_ui_Ticks  L1115_ui_Multiple
-	int16 L1116_i_SquareType;
-	int16 L1117_B_MovementBlocked;
-	uint16 L1118_ui_Multiple;
-#define AL1118_ui_ChampionIndex      L1118_ui_Multiple
-#define AL1118_ui_MovementArrowIndex L1118_ui_Multiple
-	Champion* L1119_ps_Champion;
-	Box* L1120_ps_Box;
-	int16 L1121_i_MapX;
-	int16 L1122_i_MapY;
-	bool L1123_B_StairsSquare;
-
 	_vm->_g321_stopWaitingForPlayerInput = true;
-	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
-	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
-		_vm->_championMan->f325_decrementStamina(AL1118_ui_ChampionIndex, ((L1119_ps_Champion->_load * 3) / _vm->_championMan->f309_getMaximumLoad(L1119_ps_Champion)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
-		L1119_ps_Champion++;
+	Champion *championsPtr = _vm->_championMan->_gK71_champions;
+	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_g305_partyChampionCount; idx++) {
+		_vm->_championMan->f325_decrementStamina(idx, ((championsPtr->_load * 3) / _vm->_championMan->f309_getMaximumLoad(championsPtr)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
+		championsPtr++;
 	}
-	AL1118_ui_MovementArrowIndex = cmdType - k3_CommandMoveForward;
-	L1120_ps_Box = &boxMovementArrows[AL1118_ui_MovementArrowIndex];
-	f362_commandHighlightBoxEnable(L1120_ps_Box->_x1, L1120_ps_Box->_x2, L1120_ps_Box->_y1, L1120_ps_Box->_y2);
-	L1123_B_StairsSquare = (Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX = _vm->_dungeonMan->_g306_partyMapX, L1122_i_MapY = _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs);
-	if (L1123_B_StairsSquare && (AL1118_ui_MovementArrowIndex == 2)) { /* If moving backward while in stairs */
+	uint16 movementArrowIdx = cmdType - k3_CommandMoveForward;
+	Box *highlightBox = &boxMovementArrows[movementArrowIdx];
+	f362_commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
+	int16 partyMapX = _vm->_dungeonMan->_g306_partyMapX;
+	int16 partyMapY = _vm->_dungeonMan->_g307_partyMapY;
+	uint16 AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(partyMapX, partyMapY).toByte();
+	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_ElementTypeStairs);
+	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
-	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, movementArrowToStepForwardCount[AL1118_ui_MovementArrowIndex], movementArrowToSepRightCount[AL1118_ui_MovementArrowIndex], L1121_i_MapX, L1122_i_MapY);
-	L1116_i_SquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX, L1122_i_MapY).toByte()).getType();
-	if (L1116_i_SquareType == k3_ElementTypeStairs) {
+	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, movementArrowToStepForwardCount[movementArrowIdx], movementArrowToSepRightCount[movementArrowIdx], partyMapX, partyMapY);
+	int16 partySquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(partyMapX, partyMapY).toByte()).getType();
+	if (partySquareType == k3_ElementTypeStairs) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
-		_vm->_dungeonMan->_g306_partyMapX = L1121_i_MapX;
-		_vm->_dungeonMan->_g307_partyMapY = L1122_i_MapY;
+		_vm->_dungeonMan->_g306_partyMapX = partyMapX;
+		_vm->_dungeonMan->_g307_partyMapY = partyMapY;
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
-	L1117_B_MovementBlocked = false;
-	if (L1116_i_SquareType == k0_ElementTypeWall) {
-		L1117_B_MovementBlocked = true;
-	} else {
-		if (L1116_i_SquareType == k4_DoorElemType) {
-			L1117_B_MovementBlocked = Square(AL1115_ui_Square).getDoorState();
-			L1117_B_MovementBlocked = (L1117_B_MovementBlocked != k0_doorState_OPEN) && (L1117_B_MovementBlocked != k1_doorState_FOURTH) && (L1117_B_MovementBlocked != k5_doorState_DESTROYED);
-		} else {
-			if (L1116_i_SquareType == k6_ElementTypeFakeWall) {
-				L1117_B_MovementBlocked = (!getFlag(AL1115_ui_Square, k0x0004_FakeWallOpen) && !getFlag(AL1115_ui_Square, k0x0001_FakeWallImaginary));
-			}
-		}
-	}
-	if (_vm->_championMan->_g305_partyChampionCount == 0) {
-	} else {
-		if (L1117_B_MovementBlocked) {
-			AL1118_ui_MovementArrowIndex += (_vm->_dungeonMan->_g308_partyDir + 2);
-			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, M21_normalizeModulo4(AL1118_ui_MovementArrowIndex));
-			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, returnNextVal(AL1118_ui_MovementArrowIndex));
-			L1117_B_MovementBlocked = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
-			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
-				L1117_B_MovementBlocked |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
 
-			if (L1117_B_MovementBlocked)
-				_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L1121_i_MapX, L1122_i_MapY, k0_soundModePlayImmediately);
-		} else if (L1117_B_MovementBlocked = (_vm->_groupMan->f175_groupGetThing(L1121_i_MapX, L1122_i_MapY) != Thing::_endOfList))
-			_vm->_groupMan->f209_processEvents29to41(L1121_i_MapX, L1122_i_MapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+	bool isMovementBlocked = false;
+	if (partySquareType == k0_ElementTypeWall)
+		isMovementBlocked = true;
+	else if (partySquareType == k4_DoorElemType) {
+		byte doorState = Square(AL1115_ui_Square).getDoorState();
+		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
+	} else if (partySquareType == k6_ElementTypeFakeWall)
+		isMovementBlocked = (!getFlag(AL1115_ui_Square, k0x0004_FakeWallOpen) && !getFlag(AL1115_ui_Square, k0x0001_FakeWallImaginary));
+
+	if (_vm->_championMan->_g305_partyChampionCount) {
+		if (isMovementBlocked) {
+			movementArrowIdx += (_vm->_dungeonMan->_g308_partyDir + 2);
+			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(partyMapX, partyMapY, M21_normalizeModulo4(movementArrowIdx));
+			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(partyMapX, partyMapY, returnNextVal(movementArrowIdx));
+			int16 damage = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
+				damage |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+
+			if (damage)
+				_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
+		} else if (isMovementBlocked = (_vm->_groupMan->f175_groupGetThing(partyMapX, partyMapY) != Thing::_endOfList))
+			_vm->_groupMan->f209_processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
+
 	// DEBUG CODE: check for Console flag
-	if (L1117_B_MovementBlocked && !_vm->_console->_debugNoclip) {
+	if (isMovementBlocked && !_vm->_console->_debugNoclip) {
 		f357_discardAllInput();
 		_vm->_g321_stopWaitingForPlayerInput = false;
 		return;
 	}
-	if (L1123_B_StairsSquare) {
-		_vm->_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, L1121_i_MapX, L1122_i_MapY);
-	} else {
-		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1121_i_MapX, L1122_i_MapY);
+
+	if (isStairsSquare)
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, partyMapX, partyMapY);
+	else
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, partyMapX, partyMapY);
+
+	uint16 disabledMovtTicks = 1;
+	championsPtr = _vm->_championMan->_gK71_champions;
+	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_g305_partyChampionCount; idx++) {
+		if (championsPtr->_currHealth)
+			disabledMovtTicks = MAX((int32)disabledMovtTicks, (int32)_vm->_championMan->f310_getMovementTicks(championsPtr));
+
+		championsPtr++;
 	}
-	AL1115_ui_Ticks = 1;
-	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
-	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
-		if (L1119_ps_Champion->_currHealth) {
-			AL1115_ui_Ticks = MAX((int32)AL1115_ui_Ticks, (int32)_vm->_championMan->f310_getMovementTicks(L1119_ps_Champion));
-		}
-		L1119_ps_Champion++;
-	}
-	_vm->_g310_disabledMovementTicks = AL1115_ui_Ticks;
+	_vm->_g310_disabledMovementTicks = disabledMovtTicks;
 	_vm->_g311_projectileDisableMovementTicks = 0;
 }
 
