@@ -946,43 +946,36 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 }
 
 bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY) {
-	bool L1149_B_ObjectThrown;
-
-
 #define k0_sideLeft 0 // @ C0_SIDE_LEFT 
 #define k1_sideRight 1 // @ C0_SIDE_LEFT 
 
-	if ((posY < 47) || (posY > 102)) {
+	if ((posY < 47) || (posY > 102))
 		return false;
-	}
+
+	bool objectThrownFl;
 	if (posX <= 111) {
 		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
-			if (posX < 64) {
+			if (posX < 64)
 				return false;
-			}
-		} else {
-			if (posX < 32) {
-				return false;
-			}
-		}
-		// Strangerke: Only poresent in CSB2.1... But it fixes a bug so we keep it
-		L1149_B_ObjectThrown = _vm->_championMan->f329_isLeaderHandObjectThrown(k0_sideLeft);
+		} else if (posX < 32)
+			return false;
+
+		// Strangerke: Only present in CSB2.1... But it fixes a bug so we keep it
+		objectThrownFl = _vm->_championMan->f329_isLeaderHandObjectThrown(k0_sideLeft);
 	} else {
 		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
-			if (posX > 163) {
+			if (posX > 163)
 				return false;
-			}
-		} else {
-			if (posX > 191) {
-				return false;
-			}
-		}
-		L1149_B_ObjectThrown = _vm->_championMan->f329_isLeaderHandObjectThrown(k1_sideRight);
+		} else if (posX > 191)
+			return false;
+
+		objectThrownFl = _vm->_championMan->f329_isLeaderHandObjectThrown(k1_sideRight);
 	}
-	if (L1149_B_ObjectThrown) {
+
+	if (objectThrownFl)
 		_vm->_g321_stopWaitingForPlayerInput = true;
-	}
-	return L1149_B_ObjectThrown;
+
+	return objectThrownFl;
 }
 
 void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
@@ -1031,101 +1024,84 @@ void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 }
 
 void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
-	uint16 L1135_ui_MapX;
-	uint16 L1136_ui_MapY;
+	uint16 mapX = _vm->_dungeonMan->_g306_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir];
+	uint16 mapY = _vm->_dungeonMan->_g307_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 
-
-	L1135_ui_MapX = _vm->_dungeonMan->_g306_partyMapX;
-	L1136_ui_MapY = _vm->_dungeonMan->_g307_partyMapY;
-	L1135_ui_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1136_ui_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
-	if ((L1135_ui_MapX >= 0) && (L1135_ui_MapX < _vm->_dungeonMan->_g273_currMapWidth) && (L1136_ui_MapY >= 0) && (L1136_ui_MapY < _vm->_dungeonMan->_g274_currMapHeight)) {
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(L1135_ui_MapX, L1136_ui_MapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
-	}
+	if ((mapX >= 0) && (mapX < _vm->_dungeonMan->_g273_currMapWidth)
+	 && (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight))
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
 }
 
 void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
-	uint16 L1150_ui_ViewCell;
-	Junk* L1151_ps_Junk;
-	Thing L1152_T_Thing;
-	uint16 L1153_ui_IconIndex;
-	uint16 L1154_ui_Weight;
-	int16 L1155_i_MapX;
-	int16 L1156_i_MapY;
-
 	if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
-		if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
+		if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone)
 			return;
-		}
-		L1155_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
-		L1156_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
-		L1155_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1156_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+
+		int16 L1155_i_MapX = _vm->_dungeonMan->_g306_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir];
+		int16 L1156_i_MapY = _vm->_dungeonMan->_g307_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+
 		if (_vm->_championMan->_g415_leaderEmptyHanded) {
-			L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
-			if ((((Door*)L1151_ps_Junk)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
+			Junk *junkPtr = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
+			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
 				_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}
-		} else {
-			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY)) {
-				return;
-			}
-		}
+		} else if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY))
+			return;
 	}
+
 	if (_vm->_championMan->_g415_leaderEmptyHanded) {
-		for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k5_ViewCellDoorButtonOrWallOrn + 1; L1150_ui_ViewCell++) {
-			if (_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[L1150_ui_ViewCell].isPointInside(posX, posY - 33)) {
-				if (L1150_ui_ViewCell == k5_ViewCellDoorButtonOrWallOrn) {
-					if (!_vm->_dungeonMan->_g286_isFacingAlcove) {
+		for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k5_ViewCellDoorButtonOrWallOrn + 1; currViewCell++) {
+			if (_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[currViewCell].isPointInside(posX, posY - 33)) {
+				if (currViewCell == k5_ViewCellDoorButtonOrWallOrn) {
+					if (!_vm->_dungeonMan->_g286_isFacingAlcove)
 						f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
-					}
-				} else {
-					f373_processType80_clickInDungeonView_grabLeaderHandObject(L1150_ui_ViewCell);
-				}
+				} else
+					f373_processType80_clickInDungeonView_grabLeaderHandObject(currViewCell);
+
 				return;
 			}
 		}
 	} else {
-		L1152_T_Thing = _vm->_championMan->_g414_leaderHandObject;
-		L1151_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1152_T_Thing);
+		Thing thingHandObject = _vm->_championMan->_g414_leaderHandObject;
+		Junk *junkPtr = (Junk*)_vm->_dungeonMan->f156_getThingData(thingHandObject);
 		if (_vm->_dungeonMan->_g285_squareAheadElement == k0_ElementTypeWall) {
-			for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k1_ViewCellFrontRight + 1; L1150_ui_ViewCell++) {
-				if (g462_BoxObjectPiles[L1150_ui_ViewCell].isPointInside(posX, posY)) {
-					f374_processType80_clickInDungeonViewDropLeaderHandObject(L1150_ui_ViewCell);
+			for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k1_ViewCellFrontRight + 1; currViewCell++) {
+				if (g462_BoxObjectPiles[currViewCell].isPointInside(posX, posY)) {
+					f374_processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
 					return;
 				}
 			}
 			if (_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
-				if (_vm->_dungeonMan->_g286_isFacingAlcove) {
+				if (_vm->_dungeonMan->_g286_isFacingAlcove)
 					f374_processType80_clickInDungeonViewDropLeaderHandObject(k4_ViewCellAlcove);
-				} else {
+				else {
 					if (_vm->_dungeonMan->_g288_isFacingFountain) {
-						L1153_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1152_T_Thing);
-						L1154_ui_Weight = _vm->_dungeonMan->f140_getObjectWeight(L1152_T_Thing);
-						if ((L1153_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1153_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
-							L1151_ps_Junk->setChargeCount(3); /* Full */
-						} else {
-							if (L1153_ui_IconIndex == k195_IconIndicePotionEmptyFlask) {
-								((Potion*)L1151_ps_Junk)->setType(k15_PotionTypeWaterFlask);
-							} else {
-								goto T0377019;
-							}
+						uint16 iconIdx = _vm->_objectMan->f33_getIconIndex(thingHandObject);
+						uint16 weight = _vm->_dungeonMan->f140_getObjectWeight(thingHandObject);
+						if ((iconIdx >= k8_IconIndiceJunkWater) && (iconIdx <= k9_IconIndiceJunkWaterSkin))
+							junkPtr->setChargeCount(3); /* Full */
+						else if (iconIdx == k195_IconIndicePotionEmptyFlask)
+							((Potion*)junkPtr)->setType(k15_PotionTypeWaterFlask);
+						else {
+							f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
+							return;
 						}
 						_vm->_championMan->f296_drawChangedObjectIcons();
-						_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(L1152_T_Thing) - L1154_ui_Weight;
+						_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(thingHandObject) - weight;
 					}
-T0377019:
 					f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
 				}
 			}
 		} else {
-			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY)) {
+			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY))
 				return;
-			}
-			for (L1150_ui_ViewCell = k0_ViewCellFronLeft; L1150_ui_ViewCell < k3_ViewCellBackLeft + 1; L1150_ui_ViewCell++) {
-				if (g462_BoxObjectPiles[L1150_ui_ViewCell].isPointInside(posX, posY)) {
-					f374_processType80_clickInDungeonViewDropLeaderHandObject(L1150_ui_ViewCell);
+
+			for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k3_ViewCellBackLeft + 1; currViewCell++) {
+				if (g462_BoxObjectPiles[currViewCell].isPointInside(posX, posY)) {
+					f374_processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
 					return;
 				}
 			}
