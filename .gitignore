@@ -199,3 +199,7 @@ dists/msvc*/**
 
 #Ignore bison debug output
 *.output
+
+#Ignore Xcode output/project files
+out/
+scummvm.xcodeproj
