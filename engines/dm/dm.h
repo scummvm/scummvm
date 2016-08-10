@@ -30,16 +30,16 @@
 
 #include "common/random.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "engines/savestate.h"
+
+#include "console.h"
 
 
 
 namespace DM {
 
-class Console;
 class DisplayMan;
 class DungeonMan;
 class EventManager;
@@ -241,6 +241,7 @@ public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
 	virtual bool hasFeature(EngineFeature f) const;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void f22_delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
 	uint16 f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
@@ -266,7 +267,6 @@ private:
 	int16 _g528_saveFormat; // @ G0528_i_Format
 	int16 _g527_platform; // @ G0527_i_Platform
 	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
-	Console *_console;
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
@@ -274,6 +274,7 @@ private:
 	Common::Queue<PendingSound> _pendingSounds;
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 public:
+	Console *_console;
 	DisplayMan *_displayMan;
 	DungeonMan *_dungeonMan;
 	EventManager *_eventMan;
@@ -315,12 +316,6 @@ public:
 	int32 _g313_gameTime; // @ G0313_ul_GameTime
 	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 	int16 _g318_waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
-};
-
-class Console : public GUI::Debugger {
-public:
-	explicit Console(DMEngine *vm) {}
-	virtual ~Console(void) {}
 };
 
 } // End of namespace DM

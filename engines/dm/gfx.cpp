@@ -1211,6 +1211,7 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 
 void DisplayMan::updateScreen() {
 	_vm->_system->copyRectToScreen(_g348_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
 }
 

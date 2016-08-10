@@ -531,6 +531,10 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			if (event.synthetic)
 				break;
 
+			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+				_vm->_console->attach();
+			}
+
 			if (grabKey) {
 				*grabKey = event;
 				return event.type;

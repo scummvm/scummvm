@@ -30,6 +30,7 @@ MODULE := engines/dm
 
 MODULE_OBJS := \
 	champion.o \
+	console.o \
 	detection.o \
 	dialog.o \
 	dm.o \
