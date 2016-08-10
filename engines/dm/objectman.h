@@ -66,7 +66,6 @@ public:
 	IconIndice f39_getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
 	void f35_clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
 	void f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY); // @ F0037_OBJECT_DrawIconToScreen
-
 };
 
 }

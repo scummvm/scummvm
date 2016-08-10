@@ -30,6 +30,7 @@
 #include "champion.h"
 #include "dungeonman.h"
 #include "movesens.h"
+#include "objectman.h"
 
 
 namespace DM {
@@ -58,6 +59,7 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	registerCmd("noclip", WRAP_METHOD(Console, Cmd_noclip));
 	registerCmd("pos", WRAP_METHOD(Console, Cmd_pos));
 	registerCmd("map", WRAP_METHOD(Console, Cmd_map));
+	registerCmd("items", WRAP_METHOD(Console, Cmd_items));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
@@ -188,4 +190,24 @@ argumentError:
 	debugPrintf("Usage: %s get\nUsage: %s set <#>\n", argv[0], argv[0]);
 	return true;
 }
+
+bool Console::Cmd_items(int argc, const char** argv) {
+	if (argc == 2 && cstrEquals("list", argv[1])) {
+		debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
+		for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
+			const char *name = _vm->_objectMan->_g352_objectNames[i - 1];
+			const char *prevName = _vm->_objectMan->_g352_objectNames[i];
+			if (!cstrEquals(prevName, name))
+				debugPrintf(" | %s", name);
+			if (i % 5 == 0)
+				debugPrintf("\n");
+		}
+		debugPrintf("\n");
+	} else {
+		debugPrintf("Usage: %s list\n", argv[0]);
+		return true;
+	}
+	return true;
+}
+
 }

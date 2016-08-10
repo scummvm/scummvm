@@ -51,11 +51,9 @@ public:
 	bool _debugNoclip;
 	bool Cmd_noclip(int argc, const char **argv);
 
-	// Cmd_pos
 	bool Cmd_pos(int argc, const char **argv);
-
-	// Cmd_map
 	bool Cmd_map(int argc, const char **argv);
+	bool Cmd_items(int argc, const char **argv);
 };
 }
 
