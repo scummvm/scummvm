@@ -144,6 +144,15 @@ void Lingo::printStubWithArglist(const char *funcname, int nargs) {
 	warning("STUB: %s", s.c_str());
 }
 
+void Lingo::convertVOIDtoString(int arg, int nargs) {
+	if (_stack[_stack.size() - nargs + arg].type == VOID) {
+		if (_stack[_stack.size() - nargs + arg].u.s != NULL)
+			g_lingo->_stack[_stack.size() - nargs + arg].type = STRING;
+		else
+			warning("Incorrect convertVOIDtoString for arg %d of %d", arg, nargs);
+	}
+}
+
 void Lingo::dropStack(int nargs) {
 	for (int i = 0; i < nargs; i++)
 		pop();
@@ -496,6 +505,8 @@ void Lingo::b_moveableSprite(int nargs) {
 }
 
 void Lingo::b_puppetPalette(int nargs) {
+	g_lingo->convertVOIDtoString(0, nargs);
+
 	g_lingo->printStubWithArglist("b_puppetPalette", nargs);
 
 	g_lingo->dropStack(nargs);

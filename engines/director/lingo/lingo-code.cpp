@@ -57,7 +57,7 @@ void Lingo::push(Datum d) {
 
 void Lingo::pushVoid() {
 	Datum d;
-	d.u.i = 0;
+	d.u.s = NULL;
 	d.type = VOID;
 	push(d);
 }
@@ -81,7 +81,7 @@ void Lingo::c_printtop(void) {
 
 	switch (d.type) {
 	case VOID:
-		warning("Void");
+		warning("Void, came from %s", d.u.s ? d.u.s->c_str() : "<>");
 		break;
 	case INT:
 		warning("%d", d.u.i);
@@ -123,7 +123,7 @@ void Lingo::c_constpush() {
 
 void Lingo::c_voidpush() {
 	Datum d;
-	d.u.i = 0;
+	d.u.s = NULL;
 	d.type = VOID;
 	g_lingo->push(d);
 }
@@ -186,7 +186,7 @@ void Lingo::c_assign() {
 		return;
 	}
 
-	if (d1.u.sym->type == STRING) // Free memory if needed
+	if ((d1.u.sym->type == STRING || d1.u.sym->type == VOID) && d1.u.sym->u.s) // Free memory if needed
 		delete d1.u.sym->u.s;
 
 	if (d1.u.sym->type == POINT || d1.u.sym->type == RECT || d1.u.sym->type == ARRAY)
@@ -252,6 +252,8 @@ void Lingo::c_eval() {
 		d.u.arr = d.u.sym->u.arr;
 	else if (d.u.sym->type == SYMBOL)
 		d.u.i = d.u.sym->u.i;
+	else if (d.u.sym->type == VOID)
+		d.u.s = new Common::String(*d.u.sym->name);
 	else
 		warning("c_eval: unhandled type: %s", d.type2str());
 
@@ -761,7 +763,7 @@ void Lingo::c_call() {
 	for (int i = nargs; i < sym->nargs; i++) {
 		Datum d;
 
-		d.u.i = 0;
+		d.u.s = NULL;
 		d.type = VOID;
 		g_lingo->push(d);
 	}
