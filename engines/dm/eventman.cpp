@@ -438,9 +438,6 @@ void EventManager::f71_mouseDropChampionIcon() {
 }
 
 void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
-	uint16 L1577_i_ChampionIndex;
-	int16 L1578_i_XOverChampionStatusBox;
-
 	// if (_gK100_preventBuildPointerScreenArea)
 	//	return;
 
@@ -449,50 +446,36 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 		if ((mousePosY > 28) || (mousePosX < 274)) {
 			_gK104_mousePointerType = k4_pointerTypeAutoselect;
 			f71_mouseDropChampionIcon();
-		} else {
+		} else
 			_gK104_mousePointerType = k2_pointerTypeChampionIcon;
-		}
-	} else {
-		if (mousePosY >= 169) {
-			_gK104_mousePointerType = k0_pointerTypeArrow;
-		} else {
-			if (mousePosX >= 274) {
+	} else if (mousePosY >= 169)
+		_gK104_mousePointerType = k0_pointerTypeArrow;
+	else if (mousePosX >= 274)
+		_gK104_mousePointerType = k0_pointerTypeArrow;
+	else if (mousePosY <= 28) {
+		uint16 championIdx = mousePosX / 69;
+		uint16 xOverChampionStatusBox = mousePosX % 69;
+		if (championIdx >= _vm->_championMan->_g305_partyChampionCount)
+			_gK104_mousePointerType = k4_pointerTypeAutoselect;
+		else if (xOverChampionStatusBox > 42)
+			_gK104_mousePointerType = k4_pointerTypeAutoselect;
+		else {
+			championIdx++;
+			if (championIdx == _vm->_inventoryMan->_g432_inventoryChampionOrdinal)
 				_gK104_mousePointerType = k0_pointerTypeArrow;
-			} else {
-				if (mousePosY <= 28) {
-					L1577_i_ChampionIndex = mousePosX / 69;
-					L1578_i_XOverChampionStatusBox = mousePosX % 69;
-					if (L1577_i_ChampionIndex >= _vm->_championMan->_g305_partyChampionCount) {
-						_gK104_mousePointerType = k4_pointerTypeAutoselect;
-					} else {
-						if (L1578_i_XOverChampionStatusBox > 42) {
-							_gK104_mousePointerType = k4_pointerTypeAutoselect;
-						} else {
-							L1577_i_ChampionIndex++;
-							if (L1577_i_ChampionIndex == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-								_gK104_mousePointerType = k0_pointerTypeArrow;
-							} else {
-								if (mousePosY <= 6) {
-									_gK104_mousePointerType = k0_pointerTypeArrow;
-								} else {
-									_gK104_mousePointerType = k4_pointerTypeAutoselect;
-								}
-							}
-						}
-					}
-				} else {
-					if (mousePosX >= 224) {
-						_gK104_mousePointerType = k0_pointerTypeArrow;
-					} else {
-						_gK104_mousePointerType = k4_pointerTypeAutoselect;
-					}
-				}
-			}
+			else if (mousePosY <= 6)
+				_gK104_mousePointerType = k0_pointerTypeArrow;
+			else
+				_gK104_mousePointerType = k4_pointerTypeAutoselect;
 		}
-	}
-	if (_gK104_mousePointerType == k4_pointerTypeAutoselect) {
+	} else if (mousePosX >= 224)
+		_gK104_mousePointerType = k0_pointerTypeArrow;
+	else
+		_gK104_mousePointerType = k4_pointerTypeAutoselect;
+
+	if (_gK104_mousePointerType == k4_pointerTypeAutoselect)
 		_gK104_mousePointerType = (_g600_useObjectAsMousePointerBitmap) ? k1_pointerTypeObjectIcon : (_g601_useHandAsMousePointerBitmap) ? k3_pointerTypeHand : k0_pointerTypeArrow;
-	}
+
 	if (_g598_mousePointerBitmapUpdated || (_gK104_mousePointerType != _gK105_previousMousePointerType)) {
 		_g598_mousePointerBitmapUpdated = false;
 		switch (_gK104_mousePointerType) {
@@ -515,21 +498,20 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 }
 
 void EventManager::f69_setMousePointer() {
-	if (_vm->_championMan->_g415_leaderEmptyHanded) {
+	if (_vm->_championMan->_g415_leaderEmptyHanded)
 		f67_setMousePointerToNormal((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
-	} else {
+	else
 		f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
-	}
 }
 
 void EventManager::f78_showMouse() {
-	//if(_g587_hideMousePointerRequestCount++ == 0)
-	CursorMan.showMouse(true);
+	if(_g587_hideMousePointerRequestCount++ == 0)
+		CursorMan.showMouse(true);
 }
 
 void EventManager::f77_hideMouse() {
-	// if(_g587_hideMousePointerRequestCount-- == 1)
-	// CursorMan.showMouse(false);
+	if(_g587_hideMousePointerRequestCount-- == 1)
+		CursorMan.showMouse(false);
 }
 
 bool EventManager::isMouseButtonDown(MouseButton button) {
@@ -540,7 +522,6 @@ void EventManager::setMousePos(Common::Point pos) {
 	_vm->_system->warpMouse(pos.x, pos.y);
 }
 
-
 Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Event *grabMouseClick) {
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -548,10 +529,12 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 		case Common::EVENT_KEYDOWN: {
 			if (event.synthetic)
 				break;
+
 			if (grabKey) {
 				*grabKey = event;
 				return event.type;
 			}
+
 			if (_g443_primaryKeyboardInput) {
 				KeyboardInput *input = _g443_primaryKeyboardInput;
 				while (input->_commandToIssue != k0_CommandNone) {
@@ -637,8 +620,8 @@ void EventManager::f359_processClick(Common::Point mousePos, MouseButton button)
 CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button) {
 	if (!input)
 		return k0_CommandNone;
-	CommandType commandType = k0_CommandNone;
 
+	CommandType commandType = k0_CommandNone;
 	while ((commandType = input->_commandTypeToIssue) != k0_CommandNone) {
 		if (input->_hitbox.isPointInside(mousePos) && input->_button == button)
 			break;
