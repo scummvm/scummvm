@@ -200,6 +200,21 @@ struct Node {
 struct List {
 	reg_t first;
 	reg_t last;
+
+#ifdef ENABLE_SCI32
+	/**
+	 * The next node for each level of recursion during iteration over this list
+	 * by kListEachElementDo.
+	 */
+	reg_t nextNodes[10];
+
+	/**
+	 * The current level of recursion of kListEachElementDo for this list.
+	 */
+	int numRecursions;
+
+	List() : numRecursions(0) {}
+#endif
 };
 
 struct Hunk {
