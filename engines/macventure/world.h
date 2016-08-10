@@ -92,6 +92,8 @@ public:
 	World(MacVentureEngine *engine, Common::MacResManager *resMan);
 	~World();
 
+	void startNewGame();
+
 	void setObjAttr(ObjID objID, uint32 attrID, Attribute value);
 	void setGlobal(uint32 attrID, Attribute value);
 	void updateObj(ObjID objID);

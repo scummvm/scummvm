@@ -8,25 +8,17 @@ namespace MacVenture {
 World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_resourceManager = resMan;
 	_engine = engine;
+	_saveGame = NULL;
 
-	if ((_startGameFileName = _engine->getStartGameFileName()) == "")
-		error("Could not load initial game configuration");
 
-	Common::File saveGameFile;
-	if (!saveGameFile.open(_startGameFileName))
-		error("Could not load initial game configuration");
+	startNewGame();
 
-	debug("Loading save game state from %s", _startGameFileName.c_str());
-	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
+	//_--------------------
 
-	_saveGame = new SaveGame(_engine, saveGameRes);
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID));
 	calculateObjectRelations();
 
 	_gameText = new Container(_engine->getFilePath(kTextPathID));
-
-	delete saveGameRes;
-	saveGameFile.close();
 }
 
 
@@ -39,6 +31,25 @@ World::~World()	{
 		delete _objectConstants;
 }
 
+void World::startNewGame() {
+	if (_saveGame)
+		delete _saveGame;
+
+	if ((_startGameFileName = _engine->getStartGameFileName()) == "")
+		error("Could not load initial game configuration");
+
+	Common::File saveGameFile;
+	if (!saveGameFile.open(_startGameFileName))
+		error("Could not load initial game configuration");
+
+	debug("Loading save game state from %s", _startGameFileName.c_str());
+	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
+
+	_saveGame = new SaveGame(_engine, saveGameRes);
+
+	delete saveGameRes;
+	saveGameFile.close();
+}
 
 uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	uint res;
