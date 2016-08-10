@@ -636,17 +636,11 @@ CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, C
 	return commandType;
 }
 
-
 void EventManager::f380_processCommandQueue() {
-	int16 AL1159_i_ChampionIndex;
-	CommandType cmdType;
-	int16 L1161_i_CommandX;
-	int16 L1162_i_CommandY;
-	static KeyboardInput* G0481_ps_PrimaryKeyboardInputBackup;
-	static KeyboardInput* G0482_ps_SecondaryKeyboardInputBackup;
-	static MouseInput* G0483_ps_PrimaryMouseInputBackup;
-	static MouseInput* G0484_ps_SecondaryMouseInputBackup;
-
+	static KeyboardInput *primaryKeyboardInputBackup;
+	static KeyboardInput *secondaryKeyboardInputBackup;
+	static MouseInput *primaryMouseInputBackup;
+	static MouseInput *secondaryMouseInputBackup;
 
 	_g435_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) { /* If the command queue is empty */
@@ -656,90 +650,104 @@ void EventManager::f380_processCommandQueue() {
 	}
 
 	Command cmd = _commandQueue.pop();
-	cmdType = cmd._type;
+	CommandType cmdType = cmd._type;
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_g310_disabledMovementTicks || (_vm->_g311_projectileDisableMovementTicks && (_vm->_g312_lastProjectileDisabledMovementDirection == (M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
 		_g435_isCommandQueueLocked = false;
 		f360_processPendingClick();
 		return;
 	}
-	L1161_i_CommandX = cmd._pos.x;
-	L1162_i_CommandY = cmd._pos.y;
+
+	int16 commandX = cmd._pos.x;
+	int16 commandY = cmd._pos.y;
 	_g435_isCommandQueueLocked = false;
 	f360_processPendingClick();
 	if ((cmdType == k2_CommandTurnRight) || (cmdType == k1_CommandTurnLeft)) {
 		f365_commandTurnParty(cmdType);
 		return;
 	}
+
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft)) {
 		f366_commandMoveParty(cmdType);
 		return;
 	}
+
 	if ((cmdType >= k12_CommandClickInChampion_0_StatusBox) && (cmdType <= k15_CommandClickInChampion_3_StatusBox)) {
-		if (((AL1159_i_ChampionIndex = cmdType - k12_CommandClickInChampion_0_StatusBox) < _vm->_championMan->_g305_partyChampionCount) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
-			f367_commandProcessTypes12to27_clickInChampionStatusBox(AL1159_i_ChampionIndex, L1161_i_CommandX, L1162_i_CommandY);
-		}
+		int16 championIdx = cmdType - k12_CommandClickInChampion_0_StatusBox;
+		if ((championIdx < _vm->_championMan->_g305_partyChampionCount) && !_vm->_championMan->_g299_candidateChampionOrdinal)
+			f367_commandProcessTypes12to27_clickInChampionStatusBox(championIdx, commandX, commandY);
+
 		return;
 	}
+
 	if ((cmdType >= k125_CommandClickOnChamptionIcon_Top_Left) && (cmdType <= k128_CommandClickOnChamptionIcon_Lower_Left)) {
 		f70_mouseProcessCommands125To128_clickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);
+
 		return;
 	}
+
 	if ((cmdType >= k28_CommandClickOnSlotBoxInventoryReadyHand) && (cmdType < (k65_CommandClickOnSlotBoxChest_8 + 1))) {
-		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
+		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone)
 			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(cmdType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
-		}
+
 		return;
 	}
+
 	if ((cmdType >= k7_CommandToggleInventoryChampion_0) && (cmdType <= k11_CommandCloseInventory)) {
-		if ((((AL1159_i_ChampionIndex = cmdType - k7_CommandToggleInventoryChampion_0) == k4_ChampionCloseInventory) || (AL1159_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount)) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
-			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)AL1159_i_ChampionIndex);
-		}
+		int16 championIndex = cmdType - k7_CommandToggleInventoryChampion_0;
+		if (((championIndex == k4_ChampionCloseInventory) || (championIndex < _vm->_championMan->_g305_partyChampionCount)) && !_vm->_championMan->_g299_candidateChampionOrdinal)
+			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)championIndex);
+
 		return;
 	}
+
 	if (cmdType == k83_CommandToggleInventoryLeader) {
-		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
+		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone)
 			_vm->_inventoryMan->f355_toggleInventory(_vm->_championMan->_g411_leaderIndex);
-		}
+
 		return;
 	}
+
 	if (cmdType == k100_CommandClickInSpellArea) {
-		if ((!_vm->_championMan->_g299_candidateChampionOrdinal) && (_vm->_championMan->_g514_magicCasterChampionIndex != kM1_ChampionNone)) {
-			f370_commandProcessType100_clickInSpellArea(L1161_i_CommandX, L1162_i_CommandY);
-		}
+		if ((!_vm->_championMan->_g299_candidateChampionOrdinal) && (_vm->_championMan->_g514_magicCasterChampionIndex != kM1_ChampionNone))
+			f370_commandProcessType100_clickInSpellArea(commandX, commandY);
+
 		return;
 	}
+
 	if (cmdType == k111_CommandClickInActionArea) {
-		if (!_vm->_championMan->_g299_candidateChampionOrdinal) {
-			f371_commandProcessType111To115_ClickInActionArea(L1161_i_CommandX, L1162_i_CommandY);
-		}
+		if (!_vm->_championMan->_g299_candidateChampionOrdinal)
+			f371_commandProcessType111To115_ClickInActionArea(commandX, commandY);
+
 		return;
 	}
+
 	if (cmdType == k70_CommandClickOnMouth) {
 		_vm->_inventoryMan->f349_processCommand70_clickOnMouth();
 		return;
 	}
+
 	if (cmdType == k71_CommandClickOnEye) {
 		_vm->_inventoryMan->f352_processCommand71_clickOnEye();
 		return;
 	}
+
 	if (cmdType == k80_CommandClickInDungeonView) {
-		f377_commandProcessType80ClickInDungeonView(L1161_i_CommandX, L1162_i_CommandY);
+		f377_commandProcessType80ClickInDungeonView(commandX, commandY);
 		return;
 	}
 	if (cmdType == k81_CommandClickInPanel) {
-		f378_commandProcess81ClickInPanel(L1161_i_CommandX, L1162_i_CommandY);
+		f378_commandProcess81ClickInPanel(commandX, commandY);
 		return;
 	}
 
-	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
+	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth)
 		return;
-	}
 
 	if (cmdType == k145_CommandSleep) {
 		if (!_vm->_championMan->_g299_candidateChampionOrdinal) {
-			if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+			if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal)
 				_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
-			}
+
 			_vm->_menuMan->f456_drawDisabledMenu();
 			_vm->_championMan->_g300_partyIsSleeping = true;
 			f379_drawSleepScreen();
@@ -753,16 +761,19 @@ void EventManager::f380_processCommandQueue() {
 		}
 		return;
 	}
+
 	if (cmdType == k146_CommandWakeUp) {
 		_vm->_championMan->f314_wakeUp();
 		return;
 	}
+
 	if (cmdType == k140_CommandSaveGame) {
-		if ((_vm->_championMan->_g305_partyChampionCount > 0) && !_vm->_championMan->_g299_candidateChampionOrdinal) {
+		if ((_vm->_championMan->_g305_partyChampionCount > 0) && !_vm->_championMan->_g299_candidateChampionOrdinal)
 			_vm->f433_processCommand140_saveGame(1, "Nice save:)");
-		}
+
 		return;
 	}
+
 	if (cmdType == k147_CommandFreezeGame) {
 		_vm->_g301_gameTimeTicking = false;
 		_vm->_menuMan->f456_drawDisabledMenu();
@@ -771,10 +782,10 @@ void EventManager::f380_processCommandQueue() {
 		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
 											 "GAME FROZEN", k136_heightViewport);
 		_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
-		G0483_ps_PrimaryMouseInputBackup = _g441_primaryMouseInput;
-		G0484_ps_SecondaryMouseInputBackup = _g442_secondaryMouseInput;
-		G0481_ps_PrimaryKeyboardInputBackup = _g443_primaryKeyboardInput;
-		G0482_ps_SecondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
+		primaryMouseInputBackup = _g441_primaryMouseInput;
+		secondaryMouseInputBackup = _g442_secondaryMouseInput;
+		primaryKeyboardInputBackup = _g443_primaryKeyboardInput;
+		secondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
 		_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
 		_g442_secondaryMouseInput = 0;
 		_g443_primaryKeyboardInput = g461_primaryKeyboardInput_frozenGame;
@@ -782,73 +793,82 @@ void EventManager::f380_processCommandQueue() {
 		f357_discardAllInput();
 		return;
 	}
+
 	if (cmdType == k148_CommandUnfreezeGame) {
 		_vm->_g301_gameTimeTicking = true;
 		_vm->_menuMan->f457_drawEnabledMenus();
-		_g441_primaryMouseInput = G0483_ps_PrimaryMouseInputBackup;
-		_g442_secondaryMouseInput = G0484_ps_SecondaryMouseInputBackup;
-		_g443_primaryKeyboardInput = G0481_ps_PrimaryKeyboardInputBackup;
-		_g444_secondaryKeyboardInput = G0482_ps_SecondaryKeyboardInputBackup;
+		_g441_primaryMouseInput = primaryMouseInputBackup;
+		_g442_secondaryMouseInput = secondaryMouseInputBackup;
+		_g443_primaryKeyboardInput = primaryKeyboardInputBackup;
+		_g444_secondaryKeyboardInput = secondaryKeyboardInputBackup;
 		f357_discardAllInput();
 		return;
 	}
+
 	if (cmdType == k200_CommandEntranceEnterDungeon) {
 		_vm->_g298_newGame = k1_modeLoadDungeon;
 		return;
 	}
+
 	if (cmdType == k201_CommandEntranceResume) {
 		_vm->_g298_newGame = k0_modeLoadSavedGame;
 		return;
 	}
+
 	if (cmdType == k202_CommandEntranceDrawCredits) {
 		_vm->f442_SARTEND_processCommand202_entranceDrawCredits();
 		return;
 	}
+
 	if ((cmdType >= k210_CommandClickOnDialogChoice_1) && (cmdType <= k213_CommandClickOnDialogChoice_4)) {
 		_vm->_dialog->_g335_selectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);
 		return;
 	}
-	if (cmdType == k215_CommandRestartGame) {
+
+	if (cmdType == k215_CommandRestartGame)
 		_vm->_g523_restartGameRequest = true;
-	}
 }
 
 void EventManager::f365_commandTurnParty(CommandType cmdType) {
-	uint16 L1114_ui_Square;
-
 	_vm->_g321_stopWaitingForPlayerInput = true;
-	if (cmdType == k1_CommandTurnLeft) {
+	if (cmdType == k1_CommandTurnLeft)
 		f362_commandHighlightBoxEnable(234, 261, 125, 145);
-	} else {
+	else
 		f362_commandHighlightBoxEnable(291, 318, 125, 145);
-	}
-	if (Square(L1114_ui_Square = _vm->_dungeonMan->f151_getSquare(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs) {
-		f364_commandTakeStairs(getFlag(L1114_ui_Square, k0x0004_StairsUp));
+
+	uint16 partySquare = _vm->_dungeonMan->f151_getSquare(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY).toByte();
+	if (Square(partySquare).getType() == k3_ElementTypeStairs) {
+		f364_commandTakeStairs(getFlag(partySquare, k0x0004_StairsUp));
 		return;
 	}
+
 	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, false);
 	_vm->_championMan->f284_setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + ((cmdType == k2_CommandTurnRight) ? 1 : 3)));
 	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, true);
 }
 
 void EventManager::f366_commandMoveParty(CommandType cmdType) {
-	static Box g463_BoxMovementArrows[4] = { // @ G0463_as_Graphic561_Box_MovementArrows
+	static Box boxMovementArrows[4] = { // @ G0463_as_Graphic561_Box_MovementArrows
 		/* { X1, X2, Y1, Y2 } */
 		Box(263, 289, 125, 145),   /* Forward */
 		Box(291, 318, 147, 167),   /* Right */
 		Box(263, 289, 147, 167),   /* Backward */
-		Box(234, 261, 147, 167)}; /* Left */
+		Box(234, 261, 147, 167)    /* Left */
+	};
 
-	static int16 g465_movementArrowToStepForwardCount[4] = { // @ G0465_ai_Graphic561_MovementArrowToStepForwardCount
+	static int16 movementArrowToStepForwardCount[4] = { // @ G0465_ai_Graphic561_MovementArrowToStepForwardCount
 		1,   /* Forward */
 		0,   /* Right */
 		-1,  /* Backward */
-		0}; /* Left */
-	static int16 g466_movementArrowToSepRightCount[4] = { // @ G0466_ai_Graphic561_MovementArrowToStepRightCount
+		0    /* Left */
+	};
+
+	static int16 movementArrowToSepRightCount[4] = { // @ G0466_ai_Graphic561_MovementArrowToStepRightCount
 		0,    /* Forward */
 		1,    /* Right */
 		0,    /* Backward */
-		-1}; /* Left */
+		-1    /* Left */
+	};
 
 	uint16 L1115_ui_Multiple;
 #define AL1115_ui_Square L1115_ui_Multiple
@@ -863,9 +883,6 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	int16 L1121_i_MapX;
 	int16 L1122_i_MapY;
 	bool L1123_B_StairsSquare;
-	int16 L1124_i_FirstDamagedChampionIndex;
-	int16 L1125_i_SecondDamagedChampionIndex;
-
 
 	_vm->_g321_stopWaitingForPlayerInput = true;
 	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
@@ -874,14 +891,14 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 		L1119_ps_Champion++;
 	}
 	AL1118_ui_MovementArrowIndex = cmdType - k3_CommandMoveForward;
-	L1120_ps_Box = &g463_BoxMovementArrows[AL1118_ui_MovementArrowIndex];
+	L1120_ps_Box = &boxMovementArrows[AL1118_ui_MovementArrowIndex];
 	f362_commandHighlightBoxEnable(L1120_ps_Box->_x1, L1120_ps_Box->_x2, L1120_ps_Box->_y1, L1120_ps_Box->_y2);
 	L1123_B_StairsSquare = (Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX = _vm->_dungeonMan->_g306_partyMapX, L1122_i_MapY = _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs);
 	if (L1123_B_StairsSquare && (AL1118_ui_MovementArrowIndex == 2)) { /* If moving backward while in stairs */
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
-	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, g465_movementArrowToStepForwardCount[AL1118_ui_MovementArrowIndex], g466_movementArrowToSepRightCount[AL1118_ui_MovementArrowIndex], L1121_i_MapX, L1122_i_MapY);
+	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, movementArrowToStepForwardCount[AL1118_ui_MovementArrowIndex], movementArrowToSepRightCount[AL1118_ui_MovementArrowIndex], L1121_i_MapX, L1122_i_MapY);
 	L1116_i_SquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX, L1122_i_MapY).toByte()).getType();
 	if (L1116_i_SquareType == k3_ElementTypeStairs) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
@@ -906,18 +923,17 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	if (_vm->_championMan->_g305_partyChampionCount == 0) {
 	} else {
 		if (L1117_B_MovementBlocked) {
-			L1117_B_MovementBlocked = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, M21_normalizeModulo4(AL1118_ui_MovementArrowIndex += (_vm->_dungeonMan->_g308_partyDir + 2))), 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
-			if (L1124_i_FirstDamagedChampionIndex != (L1125_i_SecondDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, returnNextVal(AL1118_ui_MovementArrowIndex)))) {
+			AL1118_ui_MovementArrowIndex += (_vm->_dungeonMan->_g308_partyDir + 2);
+			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, M21_normalizeModulo4(AL1118_ui_MovementArrowIndex));
+			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, returnNextVal(AL1118_ui_MovementArrowIndex));
+			L1117_B_MovementBlocked = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
 				L1117_B_MovementBlocked |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
-			}
-			if (L1117_B_MovementBlocked) {
+
+			if (L1117_B_MovementBlocked)
 				_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L1121_i_MapX, L1122_i_MapY, k0_soundModePlayImmediately);
-			}
-		} else {
-			if (L1117_B_MovementBlocked = (_vm->_groupMan->f175_groupGetThing(L1121_i_MapX, L1122_i_MapY) != Thing::_endOfList)) {
-				_vm->_groupMan->f209_processEvents29to41(L1121_i_MapX, L1122_i_MapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
-			}
-		}
+		} else if (L1117_B_MovementBlocked = (_vm->_groupMan->f175_groupGetThing(L1121_i_MapX, L1122_i_MapY) != Thing::_endOfList))
+			_vm->_groupMan->f209_processEvents29to41(L1121_i_MapX, L1122_i_MapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
 	// DEBUG CODE: check for Console flag
 	if (L1117_B_MovementBlocked && !_vm->_console->_debugNoclip) {
