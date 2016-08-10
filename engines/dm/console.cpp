@@ -39,8 +39,8 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 
 	_debugNoclip = false;
 
-	registerCmd("godmode", WRAP_METHOD(Console, Cmd_godmode));
-	registerCmd("noclip", WRAP_METHOD(Console, Cmd_noclip));
+	registerCmd(".godmode", WRAP_METHOD(Console, Cmd_godmode));
+	registerCmd(".noclip", WRAP_METHOD(Console, Cmd_noclip));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
