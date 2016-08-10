@@ -733,7 +733,7 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 void InventoryMan::f350_drawStopPressingMouth() {
 	f347_drawPanel();
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
-	warning(false, "Ignored code: G0587_i_HideMousePointerRequestCount");
+	_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
 	_vm->_eventMan->f77_hideMouse();
 }
 

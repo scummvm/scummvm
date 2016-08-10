@@ -357,6 +357,7 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_g443_primaryKeyboardInput = nullptr;
 	_g444_secondaryKeyboardInput = nullptr;
 	_g597_ignoreMouseMovements = false;
+	warning(false, "_g587_hideMousePointerRequestCount should start with value 1");
 	_g587_hideMousePointerRequestCount = 0;
 	_g558_mouseButtonStatus = 0;
 }
