@@ -63,6 +63,7 @@ enum Direction {
 	kDirSouth = 2,
 	kDirWest = 3
 };
+const char *debugGetDirectionName(Direction dir);
 
 
 

@@ -76,6 +76,13 @@ void warning(bool repeat, const char* s, ...) {
 	}
 }
 
+const char* debugGetDirectionName(Direction dir) {
+	static const char* directionNames[] = {"North", "East", "South", "West"};
+	if (dir < 0 || dir > 3)
+		return "Invalid direction";
+	return directionNames[dir];
+}
+
 void turnDirRight(Direction &dir) {
 	dir = (Direction)((dir + 1) & 3);
 }
@@ -367,7 +374,7 @@ void DMEngine::f2_gameloop() {
 	while (true) {
 		if (_engineShouldQuit)
 			return;
-		
+
 		// DEBUG CODE
 		for (int16 i = 0; i < _championMan->_g305_partyChampionCount; ++i) {
 			Champion &champ = _championMan->_gK71_champions[i];
@@ -380,7 +387,7 @@ void DMEngine::f2_gameloop() {
 		}
 
 		for (;;) {
-			
+
 
 			if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
 				f3_processNewPartyMap(_g327_newPartyMapIndex);

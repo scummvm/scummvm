@@ -26,6 +26,10 @@
 */
 
 #include "console.h"
+#include "dm.h"
+#include "champion.h"
+#include "dungeonman.h"
+#include "movesens.h"
 
 
 namespace DM {
@@ -35,7 +39,7 @@ bool cstrEquals(const char* a, const char *b) { return strcmp(a, b) == 0; }
 class SingleUseFlag {
 	bool _flag;
 public:
-	SingleUseFlag(): _flag(true) {}
+	SingleUseFlag() : _flag(true) {}
 	bool check() {
 		bool currFlagState = _flag;
 		_flag = false;
@@ -52,6 +56,7 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 
 	registerCmd(".godmode", WRAP_METHOD(Console, Cmd_godmode));
 	registerCmd(".noclip", WRAP_METHOD(Console, Cmd_noclip));
+	registerCmd(".pos", WRAP_METHOD(Console, Cmd_pos));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
@@ -94,7 +99,7 @@ bool Console::Cmd_noclip(int argc, const char** argv) {
 		_debugNoclip = true;
 		static SingleUseFlag warnedForNoclip;
 		if (warnedForNoclip.check())
-			debugPrintf("Noclip can cause unexpected glitches and crashes.\n");
+			debugPrintf("Noclip can cause glitches and crashes.\n");
 	} else if (cstrEquals("off", argv[1])) {
 		_debugNoclip = false;
 	} else
@@ -108,5 +113,38 @@ argumentError:
 	return true;
 }
 
+bool Console::Cmd_pos(int argc, const char** argv) {
+	if (argc == 2 && cstrEquals("get", argv[1])) {
+		debugPrintf("Position: (%d, %d)  Direction: %s\n", _vm->_dungeonMan->_g306_partyMapX, 
+					_vm->_dungeonMan->_g307_partyMapY, debugGetDirectionName(_vm->_dungeonMan->_g308_partyDir));
+	} else if (argc == 4 && cstrEquals("set", argv[1])) {
+		int x = atoi(argv[2]);
+		int y = atoi(argv[3]);
+		if (x == 0 || y == 0) {
+			debugPrintf("Error, supply two non-null numbers to '%s set' command\n", argv[0]);
+			return true;
+		}
 
+		Map &currMap = *_vm->_dungeonMan->_g269_currMap;
+		// not >= because dimensions are inslucsive
+		if (x > currMap._width || y > currMap._height) {
+			debugPrintf("Position (%d, %d) is out of bounds, possible values: ([1-%d],[1-%d])\n", x, y,
+						currMap._width, currMap._height);
+			return true;
+		}
+
+		static SingleUseFlag warnForSettingPos;
+		if (warnForSettingPos.check())
+			debugPrintf("Setting position directly can cause glitches and crashes.\n");
+		debugPrintf("Position set to (%d, %d)\n", x, y);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, x, y);
+	} else
+		goto argumentError;
+
+	return true;
+
+argumentError:
+	debugPrintf("Usage: %s get\nUsage: %s set <#> <#>\n", argv[0], argv[0]);
+	return true;
+}
 }
