@@ -57,6 +57,7 @@ Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	registerCmd(".godmode", WRAP_METHOD(Console, Cmd_godmode));
 	registerCmd(".noclip", WRAP_METHOD(Console, Cmd_noclip));
 	registerCmd(".pos", WRAP_METHOD(Console, Cmd_pos));
+	registerCmd(".map", WRAP_METHOD(Console, Cmd_map));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
@@ -97,8 +98,8 @@ bool Console::Cmd_noclip(int argc, const char** argv) {
 
 	if (cstrEquals("on", argv[1])) {
 		_debugNoclip = true;
-		static SingleUseFlag warnedForNoclip;
-		if (warnedForNoclip.check())
+		static SingleUseFlag haventWarned;
+		if (haventWarned.check())
 			debugPrintf("Noclip can cause glitches and crashes.\n");
 	} else if (cstrEquals("off", argv[1])) {
 		_debugNoclip = false;
@@ -115,13 +116,13 @@ argumentError:
 
 bool Console::Cmd_pos(int argc, const char** argv) {
 	if (argc == 2 && cstrEquals("get", argv[1])) {
-		debugPrintf("Position: (%d, %d)  Direction: %s\n", _vm->_dungeonMan->_g306_partyMapX, 
+		debugPrintf("Position: (%d, %d)  Direction: %s\n", _vm->_dungeonMan->_g306_partyMapX,
 					_vm->_dungeonMan->_g307_partyMapY, debugGetDirectionName(_vm->_dungeonMan->_g308_partyDir));
 	} else if (argc == 4 && cstrEquals("set", argv[1])) {
 		int x = atoi(argv[2]);
 		int y = atoi(argv[3]);
-		if (x == 0 || y == 0) {
-			debugPrintf("Error, supply two non-null numbers to '%s set' command\n", argv[0]);
+		if ((x == 0 && !cstrEquals("0", argv[2])) || (y == 0 && !cstrEquals("0", argv[3]))) {
+			debugPrintf("Error, supply two numbers to '%s set' command\n", argv[0]);
 			return true;
 		}
 
@@ -133,8 +134,8 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 			return true;
 		}
 
-		static SingleUseFlag warnForSettingPos;
-		if (warnForSettingPos.check())
+		static SingleUseFlag haventWarned;
+		if (haventWarned.check())
 			debugPrintf("Setting position directly can cause glitches and crashes.\n");
 		debugPrintf("Position set to (%d, %d)\n", x, y);
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, x, y);
@@ -145,6 +146,46 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 
 argumentError:
 	debugPrintf("Usage: %s get\nUsage: %s set <#> <#>\n", argv[0], argv[0]);
+	return true;
+}
+
+bool Console::Cmd_map(int argc, const char** argv) {
+	if (argc == 2 && cstrEquals("get", argv[1])) {
+		debugPrintf("Map index: %d\n", _vm->_dungeonMan->_g309_partyMapIndex);
+	} else if (argc == 3 && cstrEquals("set", argv[1])) {
+		int index = atoi(argv[2]);
+		if (index == 0 && !cstrEquals("0", argv[2])) {
+			debugPrintf("Error, supply a number to '%s set' command\n", argv[0]);
+			return true;
+		}
+
+		// not >= because dimensions are inslucsive
+		if (index < 0 || index >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount) {
+			debugPrintf("Map index %d is out of bounds, possible values [0, %d]\n", _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount - 1);
+			return true;
+		}
+
+		static SingleUseFlag haventWarned;
+		if (haventWarned.check())
+			debugPrintf("Setting map directly can cause glitches and crashes.\n");
+		debugPrintf("Map set to %d\n", index);
+
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
+		_vm->_g327_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(
+			_vm->_dungeonMan->_g309_partyMapIndex, index - _vm->_dungeonMan->_g309_partyMapIndex,
+			&_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
+		if (_vm->_g327_newPartyMapIndex == -1)
+			_vm->_g327_newPartyMapIndex = index;
+		_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
+		_vm->_championMan->f284_setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
+		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+	} else
+		goto argumentError;
+
+	return true;
+
+argumentError:
+	debugPrintf("Usage: %s get\nUsage: %s set <#>\n", argv[0], argv[0]);
 	return true;
 }
 }
