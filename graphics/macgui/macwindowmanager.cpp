@@ -322,6 +322,7 @@ void MacWindowManager::removeMarked() {
 	}
 	_windowsToRemove.clear();
 	_needsRemoval = false;
+	_lastId = _windows.size();
 }
 
 void MacWindowManager::removeFromStack(BaseMacWindow *target) {
