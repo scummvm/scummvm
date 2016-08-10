@@ -523,6 +523,9 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		view->getPosition(p1._posX, p1._posY, p1._posZ);
 	}
 
+	// Loop through adding each of the speech portions in. We use the
+	// _priorSoundHandle of CProximity to chain each successive speech
+	// to start when the prior one finishes
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
 		uint id = _titleEngine._indexes[idx];
 		if (id > 100000)
@@ -535,18 +538,18 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		}
 
 		// Start the speech
-		p1._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
+		p1._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p1);
 		if (!milli)
 			continue;
 
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
-		p3._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
+		p3._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p3);
 		if (idx == 0)
 			g_vm->_events->sleep(milli);
 
-		p2._soundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
+		p2._priorSoundHandle = _gameManager->_sound.playSpeech(_dialogueFile, id - _dialogueId, p2);
 	}
 }
 

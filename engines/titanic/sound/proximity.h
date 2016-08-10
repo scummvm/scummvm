@@ -36,7 +36,7 @@ public:
 	int _field4;
 	int _channelVolume;
 	int _fieldC;
-	uint _soundHandle;
+	int _priorSoundHandle;
 	int _field14;
 	double _frequencyMultiplier;
 	double _field1C;

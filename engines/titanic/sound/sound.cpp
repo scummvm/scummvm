@@ -48,16 +48,12 @@ void CSound::preLoad() {
 
 void CSound::preEnterView(CViewItem *newView, bool isNewRoom) {
 	CNodeItem *node = newView->findNode();
-	CRoomItem *room = node->findRoom();
 	double xp, yp, zp;
 	node->getPosition(xp, yp, zp);
 
 	double cosVal = cos(newView->_angle);
 	double sinVal = -sin(newView->_angle);
 
-	// WORKAROUND: The original does a weird call below, doing the room's
-	// (width + height) / 2 and passing it in the isNewRoom field, along with
-	// two extra unused parameters that aren't used
 	_soundManager.setListenerPosition(xp, yp, zp, cosVal, sinVal, 0, isNewRoom);
 }
 

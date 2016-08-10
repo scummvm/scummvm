@@ -191,17 +191,17 @@ public:
 	/**
 	 * Returns the music volume percent
 	 */
-	int getMusicVolume() const { return _musicPercent; }
+	double getMusicVolume() const { return _musicPercent; }
 
 	/**
 	 * Returns the speech volume percent
 	 */
-	int getSpeechVolume() const { return _speechPercent; }
+	double getSpeechVolume() const { return _speechPercent; }
 
 	/**
 	 * Returns the parrot volume percent
 	 */
-	int getParrotVolume() const { return _parrotPercent; }
+	double getParrotVolume() const { return _parrotPercent; }
 
 	/**
 	 * Gets the volume for a given mode? value
@@ -255,7 +255,7 @@ class QSoundManager : public CSoundManager, public QMixer {
 		bool _isTimed;
 		uint _ticks;
 		int _channel;
-		uint _handle;
+		int _handle;
 		uint _val3;
 
 		Slot() : _waveFile(0), _isTimed(0), _ticks(0), _channel(-1), _handle(0), _val3(0) {}

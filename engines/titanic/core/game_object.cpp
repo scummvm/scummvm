@@ -748,7 +748,7 @@ int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, 
 	prox._fieldC = val3;
 	prox._repeated = repeated;
 	prox._channelVolume = volume;
-	prox._soundHandle = priorHandle;
+	prox._priorSoundHandle = priorHandle;
 
 	return playSound(name, prox);
 }

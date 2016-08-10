@@ -151,11 +151,15 @@ int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 	int channel = -1;
 	uint flags = QMIX_CLEARQUEUE;
 
-	for (uint idx = 0; idx < _slots.size(); ++idx) {
-		if (_slots[idx]._handle == prox._soundHandle) {
-			channel = _slots[idx]._channel;
-			flags = QMIX_QUEUEWAVE;
-			break;
+	if (prox._priorSoundHandle >= 1) {
+		// This sound should only be started after a prior one finishes,
+		// so scan the slots for the specified sound
+		for (uint idx = 0; idx < _slots.size(); ++idx) {
+			if (_slots[idx]._handle == prox._priorSoundHandle) {
+				channel = _slots[idx]._channel;
+				flags = QMIX_QUEUEWAVE;
+				break;
+			}
 		}
 	}
 
