@@ -27,7 +27,8 @@
 
 #include "gui/debugger.h"
 
-
+#ifndef DM_CONSOLE_H
+#define DM_CONSOLE_H
 
 namespace DM {
 
@@ -52,3 +53,5 @@ public:
 
 };
 }
+
+#endif
