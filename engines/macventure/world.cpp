@@ -10,10 +10,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_engine = engine;
 	_saveGame = NULL;
 
-
 	startNewGame();
-
-	//_--------------------
 
 	_objectConstants = new Container(_engine->getFilePath(kObjectPathID));
 	calculateObjectRelations();
@@ -47,6 +44,8 @@ void World::startNewGame() {
 
 	_saveGame = new SaveGame(_engine, saveGameRes);
 
+	calculateObjectRelations();
+	
 	delete saveGameRes;
 	saveGameFile.close();
 }

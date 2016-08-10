@@ -185,16 +185,18 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	void newGame();
+	void setInitialFlags();
+	void setNewGameState();
 
 	void initDebugChannels();
+	void reset();
+	void resetInternals();
+	void resetGui();
+	void refreshScreen();
 
 	// datafiles.cpp
 	void loadDataBundle();
 	Common::SeekableReadStream *getBorderFile(MVWindowType windowType, bool isActive);
-
-	void reset();
-	void resetInternals();
-	void resetGui();
 
 	void requestQuit();
 	void requestUnpause();
