@@ -32,6 +32,17 @@ namespace DM {
 
 bool cstrEquals(const char* a, const char *b) { return strcmp(a, b) == 0; }
 
+class SingleUseFlag {
+	bool _flag;
+public:
+	SingleUseFlag(): _flag(true) {}
+	bool check() {
+		bool currFlagState = _flag;
+		_flag = false;
+		return currFlagState;
+	}
+};
+
 Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	_debugGodmodeMana = false;
 	_debugGodmodeHP = false;
@@ -81,11 +92,9 @@ bool Console::Cmd_noclip(int argc, const char** argv) {
 
 	if (cstrEquals("on", argv[1])) {
 		_debugNoclip = true;
-		static bool warnedForNoclip = false;
-		if (!warnedForNoclip) {
+		static SingleUseFlag warnedForNoclip;
+		if (warnedForNoclip.check())
 			debugPrintf("Noclip can cause unexpected glitches and crashes.\n");
-			warnedForNoclip = true;
-		}
 	} else if (cstrEquals("off", argv[1])) {
 		_debugNoclip = false;
 	} else
@@ -98,4 +107,6 @@ argumentError:
 	debugPrintf("Usage: %s <on/off>\n", argv[0]);
 	return true;
 }
+
+
 }
