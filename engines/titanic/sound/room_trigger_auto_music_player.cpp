@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CRoomTriggerAutoMusicPlayer, CTriggerAutoMusicPlayer)
+	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 void CRoomTriggerAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CTriggerAutoMusicPlayer::save(file, indent);
@@ -34,8 +39,23 @@ void CRoomTriggerAutoMusicPlayer::load(SimpleFile *file) {
 	CTriggerAutoMusicPlayer::load(file);
 }
 
+bool CRoomTriggerAutoMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	if (msg->_oldRoom == findRoom()) {
+		CTriggerAutoMusicPlayerMsg triggerMsg;
+		triggerMsg._value = 1;
+		triggerMsg.execute(this);
+	}
+
+	return true;
+}
+
 bool CRoomTriggerAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CRoomTriggerAutoMusicPlayer::handleEvent");
+	if (msg->_newRoom == findRoom()) {
+		CTriggerAutoMusicPlayerMsg triggerMsg;
+		triggerMsg._value = 2;
+		triggerMsg.execute(this);
+	}
+
 	return true;
 }
 

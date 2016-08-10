@@ -260,6 +260,11 @@ protected:
 	int addTimer(uint firstDuration, uint repeatDuration = 0);
 
 	/**
+	 * Start an animation timer
+	 */
+	int startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration = 0);
+
+	/**
 	 * Stops a timer
 	 */
 	void stopTimer(int id);
@@ -417,7 +422,10 @@ protected:
 	 */
 	void setPassengerClass(int newClass);
 
-	void setMovie14(int v);
+	/**
+	 * Overrides whether the object's movie has audio timing
+	 */
+	void movieSetAudioTiming(bool flag);
 
 	void fn10(int v1, int v2, int v3);
 
@@ -767,6 +775,8 @@ public:
 	void petAddToInventory();
 
 	CTreeItem *petContainerRemove(CGameObject *obj);
+
+	bool petCheckNode(const CString &name);
 
 	/**
 	 * Dismiss a bot

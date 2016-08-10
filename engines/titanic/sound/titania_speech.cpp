@@ -24,24 +24,133 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTitaniaSpeech, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(MovieFrameMsg)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 void CTitaniaSpeech::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_paraNum, indent);
+	file->writeNumberLine(_frameNum, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CTitaniaSpeech::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_paraNum = file->readNumber();
+	_frameNum = file->readNumber();
 
 	CGameObject::load(file);
 }
 
+bool CTitaniaSpeech::ActMsg(CActMsg *msg) {
+	CSetFrameMsg frameMsg;
+	CVisibleMsg visibleMsg;
+	CActMsg actMsg;
+
+	if (msg->_action == "TitaniaSpeech") {
+		switch (_paraNum) {
+		case 0:
+			movieSetAudioTiming(true);
+			loadSound("a#12.wav");
+			sleep(1000);
+			playMovie(0, 187, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+			movieEvent(0);
+			break;
+
+		case 1:
+			loadSound("a#11.wav");
+			addTimer(0);
+			startAnimTimer("Para2", 300);
+			addTimer(6000);
+			addTimer(12000);
+			addTimer(18000);
+			addTimer(24000);
+			startAnimTimer("NextPara", 30000);
+			break;
+
+		case 2:
+			visibleMsg._visible = false;
+			visibleMsg.execute("TitaniaStillControl");
+			loadSound("a#10.wav");
+			playMovie(585, 706, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+			playSound("a#10.wav");
+			break;
+
+		case 3:
+			visibleMsg._visible = false;
+			visibleMsg.execute("TitaniaStillControl");
+			loadSound("a#9.wav");
+			playMovie(707, 905, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+			playSound("a#9.wav");
+			break;
+
+		case 4:
+			visibleMsg._visible = false;
+			visibleMsg.execute("TitaniaStillControl");
+			loadSound("a#8.wav");
+			playMovie(906, 938, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+			playSound("a#8.wav");
+			break;
+
+		default:
+			sleep(3000);
+			actMsg._action = "SleepTitania";
+			actMsg.execute(this);
+		}
+	}
+
+	return true;
+}
+
+bool CTitaniaSpeech::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_paraNum == 5) {
+		startAnimTimer("NextPara", 0);
+	} else {
+		if (_paraNum != 1)
+			addTimer(0);
+		startAnimTimer("NextPara", 3000);
+	}
+
+	return true;
+}
+
+bool CTitaniaSpeech::MovieFrameMsg(CMovieFrameMsg *msg) {
+	int frame = getMovieFrame();
+	if (!frame)
+		playSound("a#12.wav");
+
+	return true;
+}
+
+bool CTitaniaSpeech::TimerMsg(CTimerMsg *msg) {
+	CSetFrameMsg frameMsg;
+	CVisibleMsg visibleMsg;
+	CActMsg actMsg("TitaniaSpeech");
+
+	if (msg->_action == "NextPara") {
+		visibleMsg.execute("TitaniaStillControl");
+		++_paraNum;
+		actMsg.execute(this);
+	} else if (msg->_action == "Para2") {
+		playSound("a#11.wav");
+	} else {
+		frameMsg._frameNumber = _frameNum;
+		frameMsg.execute("TitaniaStillControl");
+	}
+
+	return true;
+}
+
 bool CTitaniaSpeech::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CTitaniaSpeech::handleEvent");
+	CActMsg actMsg("Disable");
+	actMsg.execute("ShipAnnouncements");
+
 	return true;
 }
 

@@ -37,7 +37,7 @@ CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
 CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false),
-		_field14(0) {
+		_hasAudioTiming(false) {
 }
 
 CMovie::~CMovie() {

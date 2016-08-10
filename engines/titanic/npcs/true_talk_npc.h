@@ -62,11 +62,6 @@ protected:
 	int _field104;
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
-	
-	/**
-	 * Start an animation timer
-	 */
-	int startAnimTimer(const CString &action, uint firstDuration, uint duration);
 
 	/**
 	 * Stop an animation timer

@@ -783,6 +783,14 @@ int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	return timer->_id;
 }
 
+int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
+	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
+		repeatDuration > 0, firstDuration, repeatDuration, this, 0, action);
+	getGameManager()->addTimer(timer);
+
+	return timer->_id;
+}
+
 void CGameObject::stopTimer(int id) {
 	getGameManager()->stopTimer(id);
 }
@@ -1330,14 +1338,14 @@ void CGameObject::fn10(int v1, int v2, int v3) {
 	_field4C = v3;
 }
 
-void CGameObject::setMovie14(int v) {
+void CGameObject::movieSetAudioTiming(bool flag) {
 	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
 
 	if (_surface && _surface->_movie)
-		_surface->_movie->_field14 = v;
+		_surface->_movie->_hasAudioTiming = flag;
 }
 
 void CGameObject::movieEvent(int frameNumber) {
@@ -1479,6 +1487,11 @@ CTreeItem *CGameObject::petContainerRemove(CGameObject *obj) {
 	pet->removeFromInventory(item, false, false);
 
 	return item;
+}
+
+bool CGameObject::petCheckNode(const CString &name) {
+	CPetControl *pet = getPetControl();
+	return pet ? pet->checkNode(name) : false;
 }
 
 bool CGameObject::petDismissBot(const CString &name) {

@@ -198,14 +198,6 @@ void CTrueTalkNPC::processInput(CTextInputMsg *msg, CViewItem *view) {
 		talkManager->processInput(this, msg, view);
 }
 
-int CTrueTalkNPC::startAnimTimer(const CString &action, uint firstDuration, uint duration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		duration > 0, firstDuration, duration, this, 0, action);
-	getGameManager()->addTimer(timer);
-
-	return timer->_id;
-}
-
 void CTrueTalkNPC::stopAnimTimer(int id) {
 	getGameManager()->stopTimer(id);
 }

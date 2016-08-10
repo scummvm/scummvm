@@ -29,12 +29,14 @@
 namespace Titanic {
 
 class CRestrictedAutoMusicPlayer : public CAutoMusicPlayer {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 private:
-	CString _string3;
-	CString _string4;
-	CString _string5;
-	CString _string6;
+	CString _oldNodeName;
+	CString _newNodeName;
+	CString _newRoomName;
+	CString _oldRoomName;
 public:
 	CLASSDEF;
 

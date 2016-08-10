@@ -24,30 +24,92 @@
 
 namespace Titanic {
 
-CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _fieldF0(0),
-	_string2("NULL"), _string3("NULL"), _string4("NULL"), _string5("NULL") {
+BEGIN_MESSAGE_MAP(CSeasonNoises, CViewAutoSoundPlayer)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+END_MESSAGE_MAP()
+
+CSeasonNoises::CSeasonNoises() : CViewAutoSoundPlayer(), _seasonNumber(0),
+	_springName("NULL"), _summerName("NULL"), _autumnName("NULL"), _winterName("NULL") {
 }
 
 void CSeasonNoises::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writeQuotedLine(_string5, indent);
+	file->writeNumberLine(_seasonNumber, indent);
+	file->writeQuotedLine(_springName, indent);
+	file->writeQuotedLine(_summerName, indent);
+	file->writeQuotedLine(_autumnName, indent);
+	file->writeQuotedLine(_winterName, indent);
 
 	CViewAutoSoundPlayer::save(file, indent);
 }
 
 void CSeasonNoises::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldF0 = file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
-	_string4 = file->readString();
-	_string5 = file->readString();
+	_seasonNumber = file->readNumber();
+	_springName = file->readString();
+	_summerName = file->readString();
+	_autumnName = file->readString();
+	_winterName = file->readString();
 
 	CViewAutoSoundPlayer::load(file);
+}
+
+bool CSeasonNoises::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_seasonNumber = (_seasonNumber + 1) % 4;
+	CActMsg actMsg("Update");
+	actMsg.execute(this);
+
+	return true;
+}
+
+bool CSeasonNoises::EnterViewMsg(CEnterViewMsg *msg) {
+	CActMsg actMsg("Update");
+	return true;
+}
+
+bool CSeasonNoises::ActMsg(CActMsg *msg) {
+	msg->_action = "Update";
+
+	switch (_seasonNumber) {
+	case 0:
+		_filename = _springName;
+		break;
+	case 1:
+		_filename = _summerName;
+		break;
+	case 2:
+		_filename = _autumnName;
+		break;
+	case 3:
+		_filename = _winterName;
+		break;
+	default:
+		break;
+	}
+	
+	CSignalObject signalMsg;
+	signalMsg._numValue = 2;
+	signalMsg.execute(this);
+
+	CTurnOn onMsg;
+	onMsg.execute(this);
+
+	return true;
+}
+
+bool CSeasonNoises::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	if (_active) {
+		_active = false;
+		_soundHandle = -1;
+
+		CActMsg actMsg("Update");
+		actMsg.execute(this);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

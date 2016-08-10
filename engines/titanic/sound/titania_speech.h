@@ -29,12 +29,17 @@
 namespace Titanic {
 
 class CTitaniaSpeech : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
-	int _value1, _value2;
+	int _paraNum, _frameNum;
 public:
 	CLASSDEF;
-	CTitaniaSpeech() : CGameObject(), _value1(1), _value2(0) {}
+	CTitaniaSpeech() : CGameObject(), _paraNum(1), _frameNum(0) {}
 
 	/**
 	 * Save the data for the class to file

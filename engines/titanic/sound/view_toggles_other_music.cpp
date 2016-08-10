@@ -24,21 +24,35 @@
 
 namespace Titanic {
 
-CViewTogglesOtherMusic::CViewTogglesOtherMusic() : CEnterViewTogglesOtherMusic(), _fieldCC(0) {
+BEGIN_MESSAGE_MAP(CViewTogglesOtherMusic, CEnterViewTogglesOtherMusic)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
+CViewTogglesOtherMusic::CViewTogglesOtherMusic() : 
+		CEnterViewTogglesOtherMusic(), _value(1) {
 }
 
 void CViewTogglesOtherMusic::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_value, indent);
 
 	CEnterViewTogglesOtherMusic::save(file, indent);
 }
 
 void CViewTogglesOtherMusic::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldCC = file->readNumber();
+	_value = file->readNumber();
 
 	CEnterViewTogglesOtherMusic::load(file);
+}
+
+bool CViewTogglesOtherMusic::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (msg->_oldView == findView()) {
+		CTriggerAutoMusicPlayerMsg playerMsg(_value);
+		playerMsg.execute(this);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

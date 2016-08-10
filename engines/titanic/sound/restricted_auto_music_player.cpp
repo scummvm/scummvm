@@ -21,32 +21,59 @@
  */
 
 #include "titanic/sound/restricted_auto_music_player.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CRestrictedAutoMusicPlayer, CAutoMusicPlayer)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(LeaveRoomMsg)
+END_MESSAGE_MAP()
+
 void CRestrictedAutoMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writeQuotedLine(_string5, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_oldNodeName, indent);
+	file->writeQuotedLine(_newNodeName, indent);
+	file->writeQuotedLine(_newRoomName, indent);
+	file->writeQuotedLine(_oldRoomName, indent);
 
 	CAutoMusicPlayer::save(file, indent);
 }
 
 void CRestrictedAutoMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
-	_string4 = file->readString();
-	_string5 = file->readString();
-	_string6 = file->readString();
+	_oldNodeName = file->readString();
+	_newNodeName = file->readString();
+	_newRoomName = file->readString();
+	_oldRoomName = file->readString();
 
 	CAutoMusicPlayer::load(file);
 }
 
 bool CRestrictedAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CRestrictedAutoMusicPlayer::handleEvent");
-	return true;
+	if (!msg->_oldRoom)
+		return true;
+	if (petCheckNode(_oldNodeName))
+		return false;
+
+	CString roomName = msg->_oldRoom->getName();
+	if (_oldRoomName.compareToIgnoreCase(roomName)) {
+		_isRepeated = true;
+		return false;
+	} else {
+		return CAutoMusicPlayer::EnterRoomMsg(msg);
+	}
+}
+
+bool CRestrictedAutoMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	CString roomName = msg->_newRoom->getName();
+
+	if (petCheckNode(_newNodeName) || _newRoomName.compareToIgnoreCase(roomName)) {
+		_isRepeated = false;
+		return true;
+	} else {
+		return CAutoMusicPlayer::LeaveRoomMsg(msg);
+	}
 }
 
 } // End of namespace Titanic

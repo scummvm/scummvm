@@ -50,7 +50,7 @@ protected:
 public:
 	bool _handled;
 	bool _hasVideoFrame;
-	int _field14;
+	bool _hasAudioTiming;
 public:
 	static CMovieList *_playingMovies;
 	static CVideoSurface *_movieSurface;

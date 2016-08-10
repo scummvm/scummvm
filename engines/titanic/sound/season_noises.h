@@ -28,12 +28,17 @@
 namespace Titanic {
 
 class CSeasonNoises : public CViewAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP;
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 private:
-	int _fieldF0;
-	CString _string2;
-	CString _string3;
-	CString _string4;
-	CString _string5;
+	int _seasonNumber;
+	CString _springName;
+	CString _summerName;
+	CString _autumnName;
+	CString _winterName;
 public:
 	CLASSDEF;
 	CSeasonNoises();
