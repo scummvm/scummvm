@@ -933,8 +933,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
 	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
 		if (L1119_ps_Champion->_currHealth) {
-			warning(false, "possibly dangerous cast to uint16");
-			AL1115_ui_Ticks = MAX(AL1115_ui_Ticks, (uint16)_vm->_championMan->f310_getMovementTicks(L1119_ps_Champion));
+			AL1115_ui_Ticks = MAX((int32)AL1115_ui_Ticks, (int32)_vm->_championMan->f310_getMovementTicks(L1119_ps_Champion));
 		}
 		L1119_ps_Champion++;
 	}
