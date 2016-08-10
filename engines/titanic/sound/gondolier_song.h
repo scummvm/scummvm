@@ -28,11 +28,17 @@
 namespace Titanic {
 
 class CGondolierSong : public CRoomAutoSoundPlayer {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool SignalObject(CSignalObject *msg);
+	bool SetVolumeMsg(CSetVolumeMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
+	bool _enabled;
 	int _value;
 public:
 	CLASSDEF;
-	CGondolierSong() : CRoomAutoSoundPlayer(), _value(0) {}
+	CGondolierSong() : CRoomAutoSoundPlayer(), _enabled(true), _value(0) {}
 
 	/**
 	 * Save the data for the class to file
