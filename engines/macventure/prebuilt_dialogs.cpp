@@ -59,6 +59,18 @@ PrebuiltDialog prebuiltDialogs[kPrebuiltDialogCount] = {
 			{kDEButton, "Quit", kDAQuit, Common::Point(200, 60), 70, 20},
 			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
 		}
+	},
+
+	{ /* kLoseGameDialog */
+		Common::Rect(20, 100, 320, 200),
+		{
+			{kDEPlainText, "You Died", kDANone, Common::Point(20, 16), 280, 20},
+			{kDEPlainText, "What do you want to do?", kDANone, Common::Point(20, 30), 280, 20},
+			{kDEButton, "New Game", kDANewGame, Common::Point(20, 60), 70, 20},
+			{kDEButton, "Load", kDALoadGame, Common::Point(110, 60), 70, 20},
+			{kDEButton, "Quit", kDAQuit, Common::Point(200, 60), 70, 20},
+			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+		}
 	}
 };
 } // End of namespace MacVenture

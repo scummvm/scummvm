@@ -317,7 +317,7 @@ void MacVentureEngine::winGame() {
 }
 
 void MacVentureEngine::loseGame() {
-	_gui->showPrebuiltDialog(kWinGameDialog);
+	_gui->showPrebuiltDialog(kLoseGameDialog);
 	_paused = true;
 	//_gameState = kGameStateLosing;
 }
