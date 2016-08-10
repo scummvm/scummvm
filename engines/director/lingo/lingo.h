@@ -318,6 +318,8 @@ public:
 	static void b_point(int nargs);
 
 	static void b_beep(int nargs);
+	static void b_mci(int nargs);
+	static void b_mciwait(int nargs);
 
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);

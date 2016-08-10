@@ -103,6 +103,8 @@ static struct BuiltinProto {
 	{ "point",	Lingo::b_point, 2, 2, true },
 	// Sound
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
+	{ "mci",	 		Lingo::b_mci,			1, 1, false },
+	{ "mciwait",		Lingo::b_mciwait,			1, 1, false },
 	{ 0, 0, 0, 0, false }
 };
 
@@ -565,6 +567,21 @@ void Lingo::b_beep(int nargs) {
 	warning("STUB: b_beep(%d)", d.u.i);
 }
 
+void Lingo::b_mci(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	g_lingo->func_mci(*d.u.s);
+}
+
+void Lingo::b_mciwait(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toString();
+
+	g_lingo->func_mciwait(*d.u.s);
+}
 
 
 } // End of namespace Director

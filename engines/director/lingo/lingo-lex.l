@@ -91,8 +91,6 @@ whitespace [\t ]
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }
 (?i:macro)			{ count(); return tMACRO; }
-(?i:mci)			{ count(); return tMCI; }
-(?i:mciwait)		{ count(); return tMCIWAIT; }
 (?i:method)			{ count(); return tMETHOD; }
 (?i:movie)			{ count(); return tMOVIE; }
 (?i:next)			{ count(); return tNEXT; }

@@ -657,22 +657,6 @@ void Lingo::c_ifcode() {
 //************************
 // Built-in functions
 //************************
-void Lingo::c_mci() {
-	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-
-	g_lingo->func_mci(s);
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
-}
-
-void Lingo::c_mciwait() {
-	Common::String s((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
-
-	g_lingo->func_mciwait(s);
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(s.c_str());
-}
-
 void Lingo::c_goto() {
 	Datum mode = g_lingo->pop();
 	Datum frame, movie;
