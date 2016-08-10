@@ -30,34 +30,39 @@
 
 namespace DM {
 
+bool cstrEquals(const char* a, const char *b) { return strcmp(a, b) == 0; }
+
 Console::Console(DM::DMEngine* vm) : _vm(vm) {
 	_debugGodmodeMana = false;
 	_debugGodmodeHP = false;
 	_debugGodmodeStamina = false;
 
+	_debugNoclip = false;
+
 	registerCmd("godmode", WRAP_METHOD(Console, Cmd_godmode));
+	registerCmd("noclip", WRAP_METHOD(Console, Cmd_noclip));
 }
 
 bool Console::Cmd_godmode(int argc, const char** argv) {
-	if (argc < 3)
+	if (argc != 3)
 		goto argumentError;
 
 	bool setFlagTo;
 
-	if (strcmp("on", argv[2]) == 0) {
+	if (cstrEquals("on", argv[2])) {
 		setFlagTo = true;
-	} else if (strcmp("off", argv[2]) == 0) {
+	} else if (cstrEquals("off", argv[2])) {
 		setFlagTo = false;
 	} else
 		goto argumentError;
 
-	if (strcmp("all", argv[1]) == 0) {
+	if (cstrEquals("all", argv[1])) {
 		_debugGodmodeHP = _debugGodmodeMana = _debugGodmodeStamina = setFlagTo;
-	} else if (strcmp("mana", argv[1]) == 0) {
+	} else if (cstrEquals("mana", argv[1])) {
 		_debugGodmodeMana = setFlagTo;
-	} else if (strcmp("hp", argv[1]) == 0) {
+	} else if (cstrEquals("hp", argv[1])) {
 		_debugGodmodeHP = setFlagTo;
-	} else if (strcmp("stamina", argv[1]) == 0) {
+	} else if (cstrEquals("stamina", argv[1])) {
 		_debugGodmodeStamina = setFlagTo;
 	} else
 		goto argumentError;
@@ -70,4 +75,27 @@ argumentError:
 	return true;
 }
 
+bool Console::Cmd_noclip(int argc, const char** argv) {
+	if (argc != 2)
+		goto argumentError;
+
+	if (cstrEquals("on", argv[1])) {
+		_debugNoclip = true;
+		static bool warnedForNoclip = false;
+		if (!warnedForNoclip) {
+			debugPrintf("Noclip can cause unexpected glitches and crashes.\n");
+			warnedForNoclip = true;
+		}
+	} else if (cstrEquals("off", argv[1])) {
+		_debugNoclip = false;
+	} else
+		goto argumentError;
+
+	debugPrintf("Noclip set to %s\n", argv[1]);
+	return true;
+
+argumentError:
+	debugPrintf("Usage: %s <on/off>\n", argv[0]);
+	return true;
+}
 }

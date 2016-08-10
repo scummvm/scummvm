@@ -35,13 +35,20 @@ class DMEngine;
 
 class Console : public GUI::Debugger {
 	DMEngine *_vm;
+
 public:
+	explicit Console(DM::DMEngine *vm);
+	virtual ~Console(void) {}
+
+	// Cmd_godmode
 	bool _debugGodmodeMana;
 	bool _debugGodmodeHP;
 	bool _debugGodmodeStamina;
-
-	explicit Console(DM::DMEngine *vm);
-	virtual ~Console(void) {}
 	bool Cmd_godmode(int argc, const char **argv);
+
+	// Cmd_noclip
+	bool _debugNoclip;
+	bool Cmd_noclip(int argc, const char **argv);
+
 };
 }

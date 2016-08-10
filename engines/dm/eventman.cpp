@@ -918,7 +918,8 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 			}
 		}
 	}
-	if (L1117_B_MovementBlocked) {
+	// DEBUG CODE: check for Console flag
+	if (L1117_B_MovementBlocked && !_vm->_console->_debugNoclip) {
 		f357_discardAllInput();
 		_vm->_g321_stopWaitingForPlayerInput = false;
 		return;
