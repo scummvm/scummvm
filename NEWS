@@ -47,6 +47,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug in Conquests of the Longbow: The Adventures of Robin Hood that caused
      the game to crash while wandering through the Sherwood Forest.
    - Added a detection entry for the ImagiNation Network (INN) demo.
+   - Fixed a bug in Space Quest 4 that caused a crash when the player uses the "Catalog"
+     option while visiting Hz. So Good.
 
  SCUMM:
    - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
