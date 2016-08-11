@@ -234,7 +234,11 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 }
 
 void DMEngine::f22_delay(uint16 verticalBlank) {
-	_system->delayMillis(verticalBlank * 20); // Google says most Amiga games had a refreshrate of 50 hz
+	for (uint16 i = 0; i < verticalBlank * 2; ++i) {
+		_eventMan->f357_discardAllInput();
+		_displayMan->updateScreen();
+		_system->delayMillis(10); // Google says most Amiga games had a refreshrate of 50 hz
+	}
 }
 
 uint16 DMEngine::f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {
@@ -628,6 +632,7 @@ T0444017:
 			curPalette[i] = darkBluePalette[i];
 		curPalette[15] = D09_RGB_WHITE;
 		_displayMan->f436_STARTEND_FadeToPalette(curPalette);
+		_displayMan->updateScreen();
 		if (waitBeforeDrawingRestart)
 			f22_delay(300);
 
