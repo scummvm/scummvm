@@ -268,6 +268,7 @@ public:
 	void f438_STARTEND_OpenEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
 	void f437_STARTEND_drawTittle() { warning(false, "STUB METHOD: f437_STARTEND_drawTittle"); }// @ F0437_STARTEND_DrawTitle
 	void f442_SARTEND_processCommand202_entranceDrawCredits() { warning(false, "STUB METHOD: f442_SARTEND_processCommand202_entranceDrawCredits"); }// @ F0442_STARTEND_ProcessCommand202_EntranceDrawCredits
+	void f445_STARTEND_fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 
 private:
 	int16 _g528_saveFormat; // @ G0528_i_Format

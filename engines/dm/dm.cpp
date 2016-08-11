@@ -764,5 +764,16 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 
 
 
+void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
+	_timeline->f261_processTimeline();
+	_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+	f65_playPendingSound();
+	_eventMan->f357_discardAllInput();
+	_displayMan->updateScreen();
+	f22_delay(1);
+	_g313_gameTime++; /* BUG0_71 Some timings are too short on fast computers. 
+					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
+	
+}
 
 } // End of namespace DM
