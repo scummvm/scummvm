@@ -251,6 +251,25 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
+	// Torin's autosave system checks for the presence of autosave.cat
+	// by opening it. Since we don't use .cat files, we instead check
+	// for autosave.000 or autosave.001.
+	//
+	// This has the added benefit of not detecting an SSCI autosave.cat
+	// accompanying SSCI autosave files that we wouldn't be able to load.
+	if (g_sci->getGameId() == GID_TORIN && name == "autosave.cat") {
+		Common::String pattern = g_sci->wrapFilename("autosave.###");
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+		bool exists = !saveFileMan->listSavefiles(pattern).empty();
+		if (exists) {
+			// Dummy handle. Torin only checks if this is SIGNAL_REG,
+			// and calls kFileIOClose on it.
+			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+		} else {
+			return SIGNAL_REG;
+		}
+	}
+
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
 		debugC(kDebugLevelFile, "Attempted to open a file with an empty filename");
@@ -707,7 +726,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	// their own slots and .cat file.
 	// The autosave system uses autosave.000 and autosave.001.
 	// It also checks the presence of autosave.cat to determine if it should
-	// show the chapter selection menu on startup.
+	// show the chapter selection menu on startup. (See kFileIOOpen.)
 	bool torinAutosave = g_sci->getGameId() == GID_TORIN && game_id == "Autosave";
 
 	if (argv[0].isNull()) {
@@ -831,14 +850,6 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = NULL_REG; // write failure
 		}
 		delete out;
-	}
-
-	if (torinAutosave && !s->r_acc.isNull()) {
-		// Create autosave.cat so that the game can detect the presence
-		// of autosaves.
-		Common::WriteStream *t;
-		t = saveFileMan->openForSaving(g_sci->wrapFilename("autosave.cat"));
-		delete t;
 	}
 
 	return s->r_acc;
