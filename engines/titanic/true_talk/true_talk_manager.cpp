@@ -505,13 +505,13 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 
 	if (milli > 0) {
 		p3._channelVolume = (index * 3) / 2;
-		p3._field28 = 1;
+		p3._positioningMode = POSMODE_POLAR;
 		p3._azimuth = -135.0;
 		p3._range = 1.0;
 		p3._elevation = 0;
 
 		p2._channelVolume = (index * 3) / 4;
-		p2._field28 = 0;
+		p2._positioningMode = POSMODE_NONE;
 		p2._azimuth = 135.0;
 		p2._range = 1.0;
 		p2._elevation = 0;
@@ -519,7 +519,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 
 	_gameManager->_sound.stopChannel(p1._channel);
 	if (view) {
-		p1._field28 = 2;
+		p1._positioningMode = POSMODE_VECTOR;
 		view->getPosition(p1._posX, p1._posY, p1._posZ);
 	}
 

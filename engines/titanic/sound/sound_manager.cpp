@@ -97,7 +97,7 @@ void QSoundManager::Slot::clear() {
 	_ticks = 0;
 	_channel = -1;
 	_handle = 0;
-	_val3 = 0;
+	_positioningMode = POSMODE_NONE;
 }
 
 /*------------------------------------------------------------------------*/
@@ -346,7 +346,7 @@ void QSoundManager::setListenerPosition(double posX, double posY, double posZ,
 	if (stopSounds) {
 		// Stop any running sounds
 		for (uint idx = 0; idx < _slots.size(); ++idx) {
-			if (_slots[idx]._val3)
+			if (_slots[idx]._positioningMode != 0)
 				stopSound(_slots[idx]._handle);
 		}
 	}
@@ -367,14 +367,14 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 	if (slotIndex == -1)
 		return -1;
 
-	switch (prox._field28) {
-	case 1:
+	switch (prox._positioningMode) {
+	case POSMODE_POLAR:
 		qsWaveMixSetPolarPosition(iChannel, 8, QSPOLAR(prox._azimuth, prox._range, prox._elevation));
 		qsWaveMixEnableChannel(iChannel, QMIX_CHANNEL_ELEVATION, true);
 		qsWaveMixSetDistanceMapping(iChannel, 8, QMIX_DISTANCES(5.0, 3.0, 1.0));
 		break;
 
-	case 2:
+	case POSMODE_VECTOR:
 		qsWaveMixSetSourcePosition(iChannel, 8, QSVECTOR(prox._posX, prox._posY, prox._posZ));
 		qsWaveMixEnableChannel(iChannel, QMIX_CHANNEL_ELEVATION, true);
 		qsWaveMixSetDistanceMapping(iChannel, 8, QMIX_DISTANCES(5.0, 3.0, 1.0));
@@ -401,7 +401,7 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 		slot._handle = _handleCtr++;
 		slot._channel = iChannel;
 		slot._waveFile = waveFile;
-		slot._val3 = prox._field28;
+		slot._positioningMode = prox._positioningMode;
 
 		return slot._handle;
 	} else {

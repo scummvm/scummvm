@@ -726,7 +726,7 @@ int CGameObject::playSound(const CString &name, uint volume, int val3, bool repe
 }
 
 int CGameObject::playSound(const CString &name, CProximity &prox) {
-	if (prox._field28 == 2) {
+	if (prox._positioningMode == POSMODE_VECTOR) {
 		// If the proximity doesn't have a position defined, default it to
 		// the position of the view to which the game object belongs
 		if (prox._posX == 0.0 && prox._posY == 0.0 && prox._posZ == 0.0)

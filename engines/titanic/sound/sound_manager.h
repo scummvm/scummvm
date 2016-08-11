@@ -264,9 +264,10 @@ class QSoundManager : public CSoundManager, public QMixer {
 		uint _ticks;
 		int _channel;
 		int _handle;
-		uint _val3;
+		PositioningMode _positioningMode;
 
-		Slot() : _waveFile(0), _isTimed(0), _ticks(0), _channel(-1), _handle(0), _val3(0) {}
+		Slot() : _waveFile(0), _isTimed(0), _ticks(0), _channel(-1),
+			_handle(0), _positioningMode(POSMODE_NONE) {}
 		void clear();
 	};
 private:

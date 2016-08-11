@@ -27,6 +27,8 @@
 
 namespace Titanic {
 
+enum PositioningMode { POSMODE_NONE = 0, POSMODE_POLAR = 1, POSMODE_VECTOR = 2 };
+
 class TTtalker;
 
 typedef void (*CEndTalkerFn)(TTtalker *talker);
@@ -42,7 +44,7 @@ public:
 	double _field1C;
 	bool _repeated;
 	int _channel;
-	int _field28;
+	PositioningMode _positioningMode;
 	double _azimuth;
 	double _range;
 	double _elevation;

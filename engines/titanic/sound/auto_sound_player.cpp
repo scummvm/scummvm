@@ -75,7 +75,7 @@ bool CAutoSoundPlayer::TurnOn(CTurnOn *msg) {
 		prox._fieldC = _fieldD0;
 		prox._repeated = _repeated;
 		if (_fieldE8)
-			prox._field28 = 2;
+			prox._positioningMode = POSMODE_VECTOR;
 		prox._channelVolume = (_startSeconds == -1) ? _volume : 0;
 
 		_soundHandle = playSound(_filename, prox);

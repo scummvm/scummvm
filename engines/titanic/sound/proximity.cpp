@@ -27,7 +27,7 @@ namespace Titanic {
 
 CProximity::CProximity() : _field4(0), _channelVolume(100), _fieldC(0),
 		_priorSoundHandle(-1), _field14(0), _frequencyMultiplier(0.0), _field1C(1.875),
-		_repeated(false), _channel(10), _field28(0), _azimuth(0.0),
+		_repeated(false), _channel(10), _positioningMode(POSMODE_NONE), _azimuth(0.0),
 		_range(0.5), _elevation(0), _posX(0.0), _posY(0.0), _posZ(0.0),
 		_hasVelocity(false), _velocityX(0), _velocityY(0), _velocityZ(0),
 		_field54(0), _field58(0), _field5C(0), _field60(0), _endTalkerFn(nullptr),
