@@ -142,9 +142,8 @@ CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) 
 	return waveFile;
 }
 
-int QSoundManager::proc5() const {
-	error("TODO");
-	return 0;
+CWaveFile *QSoundManager::loadMusic(const CString &name) {
+	return loadSound(name);
 }
 
 int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
@@ -170,7 +169,7 @@ int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 	return 0;
 }
 
-void QSoundManager::stopSound(uint handle) {
+void QSoundManager::stopSound(int handle) {
 	resetChannel(10);
 
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
@@ -206,7 +205,7 @@ void QSoundManager::stopChannel(int channel) {
 	}
 }
 
-void QSoundManager::setCanFree(uint handle) {
+void QSoundManager::setCanFree(int handle) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		if (_slots[idx]._handle == handle)
 			_slots[idx]._isTimed = true;
@@ -260,7 +259,7 @@ int QSoundManager::resetChannel(int iChannel) {
 	return newChannel;
 }
 
-void QSoundManager::setVolume(uint handle, uint volume, uint seconds) {
+void QSoundManager::setVolume(int handle, uint volume, uint seconds) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		Slot &slot = _slots[idx];
 		if (slot._handle == handle) {
@@ -279,7 +278,7 @@ void QSoundManager::setVolume(uint handle, uint volume, uint seconds) {
 	}
 }
 
-void QSoundManager::setVectorPosition(uint handle, double x, double y, double z, uint panRate) {
+void QSoundManager::setVectorPosition(int handle, double x, double y, double z, uint panRate) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		Slot &slot = _slots[idx];
 		if (slot._handle == handle) {
@@ -290,7 +289,7 @@ void QSoundManager::setVectorPosition(uint handle, double x, double y, double z,
 	}
 }
 
-void QSoundManager::setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate) {
+void QSoundManager::setPolarPosition(int handle, double range, double azimuth, double elevation, uint panRate) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		Slot &slot = _slots[idx];
 		if (slot._handle == handle) {
@@ -302,7 +301,7 @@ void QSoundManager::setPolarPosition(uint handle, double range, double azimuth, 
 	}
 }
 
-bool QSoundManager::isActive(uint handle) const {
+bool QSoundManager::isActive(int handle) const {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		if (_slots[idx]._handle == handle)
 			return true;

@@ -60,7 +60,15 @@ public:
 	 */
 	virtual CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId) { return 0; }
 
-	virtual int proc5() const { return 0; }
+	/**
+	 * Loads a music file
+	 * @param name		Name of music resource
+	 * @returns			Loaded wave file
+	 * @remarks The original created a streaming audio buffer for the wave file,
+	 *		and passed this to the method. For ScummVM, this has been discarded
+	 *		in favor of simply passing the filename.
+	 */
+	virtual CWaveFile *loadMusic(const CString &name) { return nullptr; }
 
 	/**
 	 * Start playing a previously loaded wave file
@@ -70,14 +78,14 @@ public:
 	/**
 	 * Stop playing the specified sound
 	 */
-	virtual void stopSound(uint handle) = 0;
+	virtual void stopSound(int handle) = 0;
 
 	/**
 	 * Stops a designated range of channels
 	 */
 	virtual void stopChannel(int channel) = 0;
 
-	virtual void proc9(uint handle) {}
+	virtual void proc9(int handle) {}
 
 	/**
 	 * Stops sounds on all playing channels
@@ -90,7 +98,7 @@ public:
 	 * @param volume	New volume
 	 * @param seconds	Number of seconds to transition to the new volume
 	 */
-	virtual void setVolume(uint handle, uint volume, uint seconds) = 0;
+	virtual void setVolume(int handle, uint volume, uint seconds) = 0;
 
 	/**
 	 * Set the position for a sound
@@ -100,7 +108,7 @@ public:
 	 * @param z			z position in metres
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setVectorPosition(uint handle, double x, double y, double z, uint panRate) {}
+	virtual void setVectorPosition(int handle, double x, double y, double z, uint panRate) {}
 
 	/**
 	 * Set the position for a sound
@@ -110,12 +118,12 @@ public:
 	 * @param elevation	Elevation value in degrees
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate) {}
+	virtual void setPolarPosition(int handle, double range, double azimuth, double elevation, uint panRate) {}
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(uint handle) const = 0;
+	virtual bool isActive(int handle) const = 0;
 
 	/**
 	 * Returns true if the given sound is currently active
@@ -320,7 +328,15 @@ public:
 	 */
 	virtual CWaveFile *loadSpeech(CDialogueFile *dialogueFile, int speechId);
 
-	virtual int proc5() const;
+	/**
+	 * Loads a music file
+	 * @param name		Name of music resource
+	 * @returns			Loaded wave file
+	 * @remarks The original created a streaming audio buffer for the wave file,
+	 *		and passed this to the method. For ScummVM, this has been discarded
+	 *		in favor of simply passing the filename.
+	 */
+	virtual CWaveFile *loadMusic(const CString &name);
 
 	/**
 	 * Start playing a previously loaded sound resource
@@ -330,7 +346,7 @@ public:
 	/**
 	 * Stop playing the specified sound
 	 */
-	virtual void stopSound(uint handle);
+	virtual void stopSound(int handle);
 
 	/**
 	 * Stops a designated range of channels
@@ -340,7 +356,7 @@ public:
 	/**
 	 * Flags that a sound can be freed if a timeout is set
 	 */
-	virtual void setCanFree(uint handle);
+	virtual void setCanFree(int handle);
 
 	/**
 	 * Stops sounds on all playing channels
@@ -353,7 +369,7 @@ public:
 	 * @param volume	New volume
 	 * @param seconds	Number of seconds to transition to the new volume
 	 */
-	virtual void setVolume(uint handle, uint volume, uint seconds);
+	virtual void setVolume(int handle, uint volume, uint seconds);
 
 	/**
 	 * Set the position for a sound
@@ -363,7 +379,7 @@ public:
 	 * @param z			z position in metres
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setVectorPosition(uint handle, double x, double y, double z, uint panRate);
+	virtual void setVectorPosition(int handle, double x, double y, double z, uint panRate);
 
 	/**
 	 * Set the position for a sound
@@ -373,12 +389,12 @@ public:
 	 * @param elevation	Elevation value in degrees
 	 * @param panRate	Rate in milliseconds to transition
 	 */
-	virtual void setPolarPosition(uint handle, double range, double azimuth, double elevation, uint panRate);
+	virtual void setPolarPosition(int handle, double range, double azimuth, double elevation, uint panRate);
 
 	/**
 	 * Returns true if the given sound is currently active
 	 */
-	virtual bool isActive(uint handle) const;
+	virtual bool isActive(int handle) const;
 
 	/**
 	 * Returns true if the given sound is currently active

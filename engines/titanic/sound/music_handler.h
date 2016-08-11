@@ -34,6 +34,7 @@ class CMusicHandler {
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
+	CMusicWave *_musicWaves[4];
 	int _field124;
 public:
 	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);

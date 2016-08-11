@@ -23,18 +23,41 @@
 #ifndef TITANIC_MUSIC_WAVE_H
 #define TITANIC_MUSIC_WAVE_H
 
+#include "common/array.h"
 #include "titanic/support/string.h"
 
 namespace Titanic {
 
 class CProjectItem;
 class CSoundManager;
+class CWaveFile;
 
 class CMusicWave {
+	struct CMusicWaveFile {
+		CWaveFile *_waveFile;
+		int _value;
+		CMusicWaveFile() : _waveFile(nullptr), _value(0) {}
+	};
 private:
+	CProjectItem *_project;
+	CSoundManager *_soundManager;
+	Common::Array<CMusicWaveFile> _items;
+private:
+	/**
+	 * Loads the specified wave file, and returns a CWaveFile instance for it
+	 */
+	CWaveFile *createWaveFile(const CString &name);
 public:
 	CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index);
 
+	/**
+	 * Sets the maximum number of allowed files that be defined
+	 */
+	void setSize(uint count);
+
+	/**
+	 * Loads a new file into the list of available entries
+	 */
 	void load(int index, const CString &filename, int v3);
 };
 

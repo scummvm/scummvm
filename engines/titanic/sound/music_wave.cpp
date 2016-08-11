@@ -26,11 +26,25 @@
 
 namespace Titanic {
 
-CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index) {
+CMusicWave::CMusicWave(CProjectItem *project, CSoundManager *soundManager, int index) :
+		_project(project), _soundManager(soundManager) {
+}
+
+void CMusicWave::setSize(uint count) {
+	assert(_items.empty());
+	_items.resize(count);
 }
 
 void CMusicWave::load(int index, const CString &filename, int v3) {
-	// TODO
+	assert(!_items[index]._waveFile);
+	_items[index]._waveFile = createWaveFile(filename);
+	_items[index]._value = v3;
+}
+
+CWaveFile *CMusicWave::createWaveFile(const CString &name) {
+	if (name.empty())
+		return nullptr;
+	return _soundManager->loadSound(name);
 }
 
 } // End of namespace Titanic
