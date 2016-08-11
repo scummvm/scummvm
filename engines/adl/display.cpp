@@ -133,6 +133,8 @@ Display::Display() :
 	_textBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 	createFont();
+
+	_startMillis = g_system->getMillis();
 }
 
 Display::~Display() {
@@ -487,7 +489,11 @@ void Display::updateTextSurface() {
 			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
 
 			if (!(c & 0x80)) {
-				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
+				// Blink text. We subtract _startMillis to make this compatible
+				// with the event recorder, which returns offsetted values on
+				// playback.
+				const uint32 millisPassed = g_system->getMillis() - _startMillis;
+				if (!(c & 0x40) || ((millisPassed / 270) & 1))
 					r.translate(0, 4 * 8 * 2);
 			}
 
