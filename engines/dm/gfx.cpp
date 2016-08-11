@@ -728,6 +728,10 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	for (uint16 i = 0; i < 32; i++)
 		_g345_aui_BlankBuffer[i] = 0;
+
+	// HACK
+	memcpy(_g346_paletteMiddleScreen, g20_PalEntrance, sizeof(uint16) * 16);
+	memcpy(_g347_paletteTopAndBottomScreen, g20_PalEntrance, sizeof(uint16) * 16);
 }
 
 DisplayMan::~DisplayMan() {
@@ -1210,7 +1214,13 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 
 
 void DisplayMan::updateScreen() {
+	// apply copper
+	warning(false, "Top of the screen color is offset as well"); // loop should start from 320 * 30
+	for (uint32 i = 0; i < 320 * 170; ++i)
+		_g348_bitmapScreen[i] += 16;
 	_vm->_system->copyRectToScreen(_g348_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	for (uint32 i = 0; i < 320 * 170; ++i) // loop should start from 320 * 30
+		_g348_bitmapScreen[i] -= 16;
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
 }
@@ -1719,7 +1729,7 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		goto T0119020;
 	case k2_ElementTypePit:
 		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice,
-														  g143_FrameFloorPit_D2L);
+										g143_FrameFloorPit_D2L);
 	case k5_ElementTypeTeleporter:
 	case k1_CorridorElemType:
 T0119018:
@@ -1786,7 +1796,7 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		goto T0120029;
 	case k2_ElementTypePit:
 		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[k2_PitInvisibleAspect]
-																			 ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice, g145_FrameFloorPit_D2R);
+														   ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice, g145_FrameFloorPit_D2R);
 	case k5_ElementTypeTeleporter:
 	case k1_CorridorElemType:
 T0120027:
@@ -2157,9 +2167,6 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
-	loadPalette(g20_PalEntrance); // dummy code
-
-
 	if (_g297_drawFloorAndCeilingRequested)
 		f98_drawFloorAndCeiling();
 	_g578_useByteBoxCoordinates = true;
@@ -2896,7 +2903,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 	byte* paletteChanges;
 	byte* bitmapGreenAnt;
 	byte* coordinateSet;
-	int16 derivedBitmapIndex = - 1;
+	int16 derivedBitmapIndex = -1;
 	bool L0135_B_DrawAlcoveObjects;
 	int16 byteWidth;
 	int16 heightRedEagle;
@@ -3673,6 +3680,23 @@ uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
 		RGBcolor -= 256;
 	}
 	return RGBcolor;
+}
+
+void DisplayMan::f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom) {
+	// memcpy(_g347_paletteTopAndBottomScreen, topAndBottom, sizeof(uint16) * 16);
+	// memcpy(_g346_paletteMiddleScreen, middleScreen, sizeof(uint16) * 16);
+	byte colorPalette[32 * 3];
+	for (int i = 0; i < 16; ++i) {
+		colorPalette[i * 3] = (topAndBottom[i] >> 8) * (256 / 16);
+		colorPalette[i * 3 + 1] = (topAndBottom[i] >> 4) * (256 / 16);
+		colorPalette[i * 3 + 2] = topAndBottom[i] * (256 / 16);
+	}
+	for (int i = 16; i < 32; ++i) {
+		colorPalette[i * 3] = (middleScreen[i] >> 8) * (256 / 16);
+		colorPalette[i * 3 + 1] = (middleScreen[i] >> 4) * (256 / 16);
+		colorPalette[i * 3 + 2] = middleScreen[i] * (256 / 16);
+	}
+	_vm->_system->getPaletteManager()->setPalette(colorPalette, 0, 32);
 }
 
 }

@@ -246,10 +246,9 @@ uint16 DMEngine::f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {
 }
 
 void DMEngine::f463_initializeGame() {
+	f448_initMemoryManager();
 	_displayMan->f479_loadGraphics();
 	_displayMan->f460_initializeGraphicData();
-	warning(false, "Dummy code in f463_initializeGame, setting palette");
-	_displayMan->loadPalette(g21_PalDungeonView[0]);
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
 
@@ -279,6 +278,7 @@ void DMEngine::f463_initializeGame() {
 
 void DMEngine::f448_initMemoryManager() {
 	warning(false, "STUB METHOD: f448_initMemoryManager");
+	_displayMan->f508_buildPaletteChangeCopperList(gK57_PalSwoosh, gK57_PalSwoosh);
 	for (uint16 i = 0; i < 16; ++i)
 		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
 }
@@ -319,7 +319,7 @@ void DMEngine::f462_startGame() {
 		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	}
 
-	warning(false, "TODO: build copper");
+	_displayMan->f508_buildPaletteChangeCopperList(g21_PalDungeonView[0], _displayMan->_g347_paletteTopAndBottomScreen);
 	_menuMan->f395_drawMovementArrows();
 	_championMan->f278_resetDataToStartGame();
 	_g301_gameTimeTicking = true;
