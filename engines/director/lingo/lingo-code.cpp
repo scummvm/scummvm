@@ -718,6 +718,11 @@ void Lingo::c_call() {
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
 
 	int nargs = READ_UINT32(&(*g_lingo->_currentScript)[g_lingo->_pc++]);
+
+	g_lingo->call(name, nargs);
+}
+
+void Lingo::call(Common::String &name, int nargs) {
 	bool drop = false;
 
 	Symbol *sym;

@@ -634,7 +634,11 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 
 	printStubWithArglist(s.c_str(), nargs);
 
-	dropStack(nargs);
+	Datum method = _stack[_stack.size() - nargs + 0];
+
+	s = name + "-" + *method.u.s;
+
+	call(s, nargs);
 }
 
 } // End of namespace Director

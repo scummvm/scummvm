@@ -240,6 +240,9 @@ public:
 	static void c_ge();
 	static void c_le();
 	static void c_call();
+
+	void call(Common::String &name, int nargs);
+
 	static void c_procret();
 
 	static void c_mci();
