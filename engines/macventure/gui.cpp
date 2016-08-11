@@ -22,14 +22,14 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "common/debug-channels.h"
+#include "common/debug.h"
 #include "image/bmp.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
 
 namespace MacVenture {
-
-#define MACVENTURE_DEBUG_GUI true
 
 enum MenuAction;
 
@@ -567,7 +567,7 @@ void Gui::drawMainGameWindow() {
 
 	drawObjectsInWindow(data, _mainGameWindow->getSurface());
 
-	if (MACVENTURE_DEBUG_GUI) {
+	if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 		Graphics::MacWindow *win = findWindow(data.refcon);
 		Common::Rect innerDims  = win->getInnerDimensions();
 		int x = win->getDimensions().left;
@@ -597,7 +597,7 @@ void Gui::drawInventories() {
 		srf->fillRect(srf->getBounds(), kColorWhite);
 		drawObjectsInWindow(data, srf);
 
-		if (MACVENTURE_DEBUG_GUI) {
+		if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 			Graphics::MacWindow *win = findWindow(data.refcon);
 			Common::Rect innerDims  = win->getInnerDimensions();
 			int x = win->getDimensions().left;
@@ -676,8 +676,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 			}
 		}
 
-		// For test
-		if (MACVENTURE_DEBUG_GUI) {
+		if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 			Common::Rect testBounds = _engine->getObjBounds(child);
 			testBounds.translate(-targetData.scrollPos.x, -targetData.scrollPos.y);
 			surface->frameRect(testBounds, kColorGreen);
