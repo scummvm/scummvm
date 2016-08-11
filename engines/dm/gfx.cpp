@@ -36,6 +36,7 @@
 #include "group.h"
 #include "timeline.h"
 #include "champion.h"
+#include "eventman.h"
 
 
 namespace DM {
@@ -1200,14 +1201,13 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 
 void DisplayMan::updateScreen() {
 	// apply copper
-	warning(false, "Top of the screen color is offset as well"); // loop should start from 320 * 30
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_g348_bitmapScreen[i] += 16;
 	_vm->_system->copyRectToScreen(_g348_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	for (uint32 i = 320 * 30; i < 320 * 170; ++i) // loop should start from 320 * 30
-		_g348_bitmapScreen[i] -= 16;
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
+	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
+		_g348_bitmapScreen[i] -= 16;
 }
 
 void DisplayMan::f97_drawViewport(int16 palSwitchingRequestedState) {
@@ -3735,6 +3735,7 @@ void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 			}
 		}
 		_vm->f22_delay(1);
+		_vm->_eventMan->f357_discardAllInput();
 		f508_buildPaletteChangeCopperList(K0016_aui_Palette_FadeTemporary, K0016_aui_Palette_FadeTemporary);
 	}
 }
@@ -3748,9 +3749,9 @@ void DisplayMan::f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16*
 		colorPalette[i * 3 + 2] = topAndBottom[i] * (256 / 16);
 	}
 	for (int i = 16; i < 32; ++i) {
-		colorPalette[i * 3] = (middleScreen[i] >> 8) * (256 / 16);
-		colorPalette[i * 3 + 1] = (middleScreen[i] >> 4) * (256 / 16);
-		colorPalette[i * 3 + 2] = middleScreen[i] * (256 / 16);
+		colorPalette[i * 3] = (middleScreen[i - 16] >> 8) * (256 / 16);
+		colorPalette[i * 3 + 1] = (middleScreen[i - 16] >> 4) * (256 / 16);
+		colorPalette[i * 3 + 2] = middleScreen[i - 16] * (256 / 16);
 	}
 	_vm->_system->getPaletteManager()->setPalette(colorPalette, 0, 32);
 }
