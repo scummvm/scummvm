@@ -195,16 +195,39 @@ argumentError:
 }
 
 bool Console::Cmd_listItems(int argc, const char** argv) {
-	debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
+	Common::String searchedString = "";
+	for (int16 i = 1; i < argc; ++i) {
+		searchedString += argv[i];
+		searchedString += " ";
+	}
+	searchedString.deleteLastChar();
+
+	bool atleastOneFound = false;
+	int16 namesPrintedInLine = 0;
+
+	if(strstr(_vm->_objectMan->_g352_objectNames[0], searchedString.c_str()) != nullptr)
+		debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
+
 	for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
 		const char *name = _vm->_objectMan->_g352_objectNames[i - 1];
 		const char *prevName = _vm->_objectMan->_g352_objectNames[i];
-		if (!cstrEquals(prevName, name))
+
+		if (!cstrEquals(name, prevName) && (strstr(name, searchedString.c_str()) != nullptr)) {
 			debugPrintf(" | %s", name);
-		if (i % 5 == 0)
-			debugPrintf("\n");
+			atleastOneFound = true;
+
+			if ((++namesPrintedInLine % 6) == 0) {
+				namesPrintedInLine = 0;
+				debugPrintf("\n");
+			}
+		}
 	}
-	debugPrintf("\n");
+
+	if (atleastOneFound) {
+		debugPrintf("\n");
+	} else {
+		debugPrintf("No itemnames found containing '%s'\n", searchedString.c_str());
+	}
 
 	return true;
 }
