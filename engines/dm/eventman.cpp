@@ -1237,8 +1237,6 @@ void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(ui
 }
 
 void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
-	int16 L1144_i_IconIndex;
-
 	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone)
 		return;
 
@@ -1254,7 +1252,7 @@ void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uin
 	uint16 currCell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->f298_getObjectRemovedFromLeaderHand();
 	_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
-	if (droppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && ((L1144_i_IconIndex = _vm->_objectMan->f33_getIconIndex(removedThing)) == k147_IconIndiceJunkChampionBones)) {
+	if (droppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && (_vm->_objectMan->f33_getIconIndex(removedThing) == k147_IconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->f156_getThingData(removedThing);
 		TimelineEvent newEvent;
 		M33_setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
