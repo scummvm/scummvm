@@ -1521,6 +1521,7 @@ void EventManager::f544_resetPressingEyeOrMouth() {
 }
 
 void EventManager::f541_waitForMouseOrKeyActivity() {
+	f357_discardAllInput();
 	Common::Event event;
 	while (true) {
 		if (_vm->_system->getEventManager()->pollEvent(event)) {
