@@ -325,7 +325,13 @@ public:
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
 
+	static void b_backspace(int nargs);
+	static void b_empty(int nargs);
+	static void b_enter(int nargs);
 	static void b_false(int nargs);
+	static void b_quote(int nargs);
+	static void b_return(int nargs);
+	static void b_tab(int nargs);
 	static void b_true(int nargs);
 
 	static void b_factory(int nargs);

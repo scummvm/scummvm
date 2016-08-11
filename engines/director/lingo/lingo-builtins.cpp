@@ -106,7 +106,13 @@ static struct BuiltinProto {
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
 	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
 	// Constants
+	{ "backspace",		Lingo::b_backspace,		0, 0, false },	// D2
+	{ "empty",			Lingo::b_empty,			0, 0, false },	// D2
+	{ "enter",			Lingo::b_enter,			0, 0, false },	// D2
 	{ "false",			Lingo::b_false,			0, 0, false },	// D2
+	{ "quote",			Lingo::b_quote,			0, 0, false },	// D2
+	{ "return",			Lingo::b_return,		0, 0, false },	// D2
+	{ "tab",			Lingo::b_tab,			0, 0, false },	// D2
 	{ "true",			Lingo::b_true,			0, 0, false },	// D2
 
 	{ 0, 0, 0, 0, false }
@@ -603,11 +609,29 @@ void Lingo::b_mciwait(int nargs) {
 ///////////////////
 // Constants
 ///////////////////
-void Lingo::b_true(int nargs) {
+void Lingo::b_backspace(int nargs) {
 	Datum d;
 
-	d.type = INT;
-	d.u.i = 1;
+	d.type = STRING;
+	d.u.s = new Common::String("\b");
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_empty(int nargs) {
+	Datum d;
+
+	d.type = STRING;
+	d.u.s = new Common::String("");
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_enter(int nargs) {
+	Datum d;
+
+	d.type = STRING;
+	d.u.s = new Common::String("\n");
 
 	g_lingo->push(d);
 }
@@ -621,6 +645,45 @@ void Lingo::b_false(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_quote(int nargs) {
+	Datum d;
+
+	d.type = STRING;
+	d.u.s = new Common::String("\"");
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_return(int nargs) {
+	Datum d;
+
+	d.type = STRING;
+	d.u.s = new Common::String("\r");
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_tab(int nargs) {
+	Datum d;
+
+	d.type = STRING;
+	d.u.s = new Common::String("\t");
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_true(int nargs) {
+	Datum d;
+
+	d.type = INT;
+	d.u.i = 1;
+
+	g_lingo->push(d);
+}
+
+///////////////////
+// Factory
+///////////////////
 void Lingo::b_factory(int nargs) {
 	// This is intentionally empty
 }
