@@ -334,7 +334,9 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID targ
 		return;
 	}
 
-	if (type == kUpdateWindow) { obj.target = target; }
+	if (type == kUpdateWindow) {
+		obj.target = target;
+	}
 
 	if (type != kHightlightExits) {
 		obj.object = objID;
@@ -348,14 +350,6 @@ void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID targ
 		obj.invisible = _world->getObjAttr(objID, kAttrUnclickable);
 	}
 	_objQueue.push_back(obj);
-}
-
-bool MacVentureEngine::isObjEnqueued(ObjID objID) {
-	Common::Array<QueuedObject>::const_iterator it;
-	for (it = _objQueue.begin(); it != _objQueue.end(); it++) {
-		if ((*it).object == objID) return true;
-	}
-	return false;
 }
 
 void MacVentureEngine::enqueueText(TextQueueID type, ObjID target, ObjID source, ObjID text) {
@@ -403,28 +397,26 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 				//}
 			}
 			if (objID > 0) {
-				int i = findObjectInArray(objID, _currentSelection);
+				int currentObjectIndex = findObjectInArray(objID, _currentSelection);
+
+				if (currentObjectIndex >= 0)
+					unselectAll();
 
 				if (isDoubleClick) {
-					if (i >= 0)
-						unselectAll();
 					selectObject(objID);
 					_destObject = objID;
-					_deltaPoint = Common::Point(0, 0);
+					setDeltaPoint(Common::Point(0, 0));
 					if (!_cmdReady) {
 						selectControl(kActivateObject);
 						_activeControl = kActivateObject;
 						_cmdReady = true;
 					}
-					preparedToRun();
 				} else {
-					if (i >= 0)
-						unselectAll();
 					selectObject(objID);
 					if (getInvolvedObjects() == 1)
 						_cmdReady = true;
-					preparedToRun();
 				}
+				preparedToRun();
 			}
 		}
 	}
@@ -432,14 +424,14 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 
 void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent) {
 	_destObject = newParent;
-	updateDelta(delta);
+	setDeltaPoint(delta);
 	selectControl(kMoveObject);
 	activateCommand(kMoveObject);
 	refreshReady();
 	preparedToRun();
 }
 
-void MacVentureEngine::updateDelta(Common::Point newPos) {
+void MacVentureEngine::setDeltaPoint(Common::Point newPos) {
 	debugC(4, kMVDebugMain, "Update delta: Old(%d, %d), New(%d, %d)",
 		_deltaPoint.x, _deltaPoint.y,
 		newPos.x, newPos.y);
@@ -489,7 +481,7 @@ Common::String MacVentureEngine::getStartGameFileName() {
 	Common::String result = Common::String(fileName, length);
 	// HACK, see definition of toASCII
 	toASCII(result);
-  return result;
+	return result;
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
@@ -537,7 +529,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	while (!_currentSelection.empty()) {
 		ObjID obj = _currentSelection.front();
 		_currentSelection.remove_at(0);
-		if ((_gameState == kGameStateInit || _gameState == kGameStatePlaying) && _world->isObjActive(obj)) {
+		if (isGameRunning() && _world->isObjActive(obj)) {
 			if (_scriptEngine->runControl(_selectedControl, obj, _destObject, _deltaPoint)) {
 				_haltedInSelection = true;
 				return true;
@@ -548,7 +540,7 @@ bool MacVenture::MacVentureEngine::runScriptEngine() {
 	if (_selectedControl == 1)
 		_gameChanged = false;
 
-	else if (_gameState == kGameStateInit || _gameState == kGameStatePlaying) {
+	else if (isGameRunning()) {
 		if (_scriptEngine->runControl(kTick, _selectedControl, _destObject, _deltaPoint)) {
 			_haltedAtEnd = true;
 			return true;
@@ -675,7 +667,7 @@ void MacVentureEngine::resetVars() {
 	_activeControl = kNoCommand;
 	_currentSelection.clear();
 	_destObject = 0;
-	_deltaPoint = Common::Point(0, 0);
+	setDeltaPoint(Common::Point(0, 0));
 	_cmdReady = false;
 }
 
@@ -916,6 +908,18 @@ void MacVentureEngine::toggleExits() {
 
 void MacVentureEngine::zoomObject(ObjID objID) {
 	warning("zoomObject: unimplemented");
+}
+
+bool MacVentureEngine::isObjEnqueued(ObjID objID) {
+	Common::Array<QueuedObject>::const_iterator it;
+	for (it = _objQueue.begin(); it != _objQueue.end(); it++) {
+		if ((*it).object == objID) return true;
+	}
+	return false;
+}
+
+bool MacVentureEngine::isGameRunning() {
+	return (_gameState == kGameStateInit || _gameState == kGameStatePlaying);
 }
 
 ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlType id) {

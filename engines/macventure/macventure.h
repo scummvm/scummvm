@@ -222,7 +222,7 @@ public:
 
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
-	void updateDelta(Common::Point newPos);
+	void setDeltaPoint(Common::Point newPos);
 	void focusObjWin(ObjID objID);
 	void updateWindow(WindowReference winID);
 
@@ -295,6 +295,8 @@ private:
 	void zoomObject(ObjID objID);
 
 	bool isObjEnqueued(ObjID obj);
+
+	bool isGameRunning();
 
 	// Data loading
 	bool loadGlobalSettings();
