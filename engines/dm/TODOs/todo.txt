@@ -6,15 +6,14 @@ Bugs:
 		When reordering a champions, the icons in the top right corner ar drawn twice under the cursor
 
 	Logic:
-		F0444_STARTEND_Endgame is broken
 		Items thrown on the right side end up on the left side 
 		I'm not sure, but the cooldown between champion actions when fighting monsters seems too muh
+		Clicking with a scroll in hand on the eye in the inventory makes userinput glitchy
 
 
 Possible bugs:
 	- k1_LeftMouseButton and k2_RightMouseButton have values 1 and 2 respectively, contrary to the original in the original: MASK0x0001_MOUSE_RIGHT_BUTTON, MASK0x0002_MOUSE_LEFT_BUTTON
 	- possible garbage value return in f140_getObjectWeight
-	- After loading, creatures are in the wrong cells of a square
 
 	
 Todo:

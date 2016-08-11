@@ -2055,7 +2055,7 @@ void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
 				return;
 			}
 		}
-		warning(false, "F0446_STARTEND_FuseSequence()");
+		_vm->f446_STARTEND_fuseSequnce();
 	}
 }
 

@@ -762,7 +762,144 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 	_savedScreenForOpenEntranceDoors = nullptr;
 }
 
+void DMEngine::f446_STARTEND_fuseSequnce() {
+	int16 L1424_i_Multiple;
+#define AL1424_B_RemoveFluxcagesFromLoadChaosSquare L1424_i_Multiple
+#define AL1424_i_Attack                             L1424_i_Multiple
+#define AL1424_i_CreatureTypeSwitchCount            L1424_i_Multiple
+#define AL1424_i_MapX                               L1424_i_Multiple
+#define AL1424_i_TextStringThingCount               L1424_i_Multiple
+	int16 L1425_i_Multiple;
+#define AL1425_i_FluxcageMapX         L1425_i_Multiple
+#define AL1425_i_MapY                 L1425_i_Multiple
+#define AL1425_i_CycleCount           L1425_i_Multiple
+#define AL1425_i_TextStringThingIndex L1425_i_Multiple
+	int16 L1426_i_Multiple;
+#define AL1426_i_FluxcageMapY            L1426_i_Multiple
+#define AL1426_i_FuseSequenceUpdateCount L1426_i_Multiple
+#define AL1426_i_TextStringThingCount    L1426_i_Multiple
+	Thing L1427_T_Thing;
+	Group* L1428_ps_Group;
+	Explosion* L1429_ps_Explosion;
+	Thing L1430_T_NextThing;
+	int16 L1431_i_LordChaosMapX;
+	int16 L1432_i_LordChaosMapY;
+	Thing L1433_T_LordChaosThing;
+	char L1434_c_TextFirstCharacter;
+	Thing L1435_aT_TextStringThings[8];
+	char L1436_ac_String[200];
 
+
+	_g302_gameWon = true;
+	if (_inventoryMan->_g432_inventoryChampionOrdinal) {
+		_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
+	}
+	_eventMan->f363_highlightBoxDisable();
+	_championMan->_g407_party._magicalLightAmount = 200;
+	_inventoryMan->f337_setDungeonViewPalette();
+	_championMan->_g407_party._fireShieldDefense = _championMan->_g407_party._spellShieldDefense = _championMan->_g407_party._shieldDefense = 100;
+	_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+	f445_STARTEND_fuseSequenceUpdate();
+	L1431_i_LordChaosMapX = _dungeonMan->_g306_partyMapX;
+	L1432_i_LordChaosMapY = _dungeonMan->_g307_partyMapY;
+	L1431_i_LordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_g308_partyDir], L1432_i_LordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_g308_partyDir];
+	L1428_ps_Group = (Group*)_dungeonMan->f156_getThingData(L1433_T_LordChaosThing = _groupMan->f175_groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
+	L1428_ps_Group->_health[0] = 10000;
+	_dungeonMan->f146_setGroupCells(L1428_ps_Group, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_g309_partyMapIndex);
+	_dungeonMan->f148_setGroupDirections(L1428_ps_Group, returnOppositeDir(_dungeonMan->_g308_partyDir), _dungeonMan->_g309_partyMapIndex);
+
+	AL1424_B_RemoveFluxcagesFromLoadChaosSquare = true;
+	AL1425_i_FluxcageMapX = _dungeonMan->_g306_partyMapX;
+	AL1426_i_FluxcageMapY = _dungeonMan->_g307_partyMapY;
+T0446002:
+	L1427_T_Thing = _dungeonMan->f162_getSquareFirstObject(AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
+	while (L1427_T_Thing != Thing::_endOfList) {
+		if (L1427_T_Thing.getType() == k15_ExplosionThingType) {
+			L1429_ps_Explosion = (Explosion*)_dungeonMan->f156_getThingData(L1427_T_Thing);
+			if (L1429_ps_Explosion->getType() == k50_ExplosionType_Fluxcage) {
+				_dungeonMan->f164_unlinkThingFromList(L1427_T_Thing, Thing(0), AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
+				L1429_ps_Explosion->setNextThing(Thing::_none);
+				goto T0446002;
+			}
+		}
+		L1427_T_Thing = _dungeonMan->f159_getNextThing(L1427_T_Thing);
+	}
+	if (AL1424_B_RemoveFluxcagesFromLoadChaosSquare) {
+		AL1424_B_RemoveFluxcagesFromLoadChaosSquare = false;
+		AL1425_i_FluxcageMapX = L1431_i_LordChaosMapX;
+		AL1426_i_FluxcageMapY = L1432_i_LordChaosMapY;
+		goto T0446002;
+	}
+
+	f445_STARTEND_fuseSequenceUpdate();
+	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
+		_projexpl->f213_explosionCreate(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		f445_STARTEND_fuseSequenceUpdate();
+	}
+	f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+	L1428_ps_Group->_type = k25_CreatureTypeLordOrder;
+	f445_STARTEND_fuseSequenceUpdate();
+	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
+		_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		f445_STARTEND_fuseSequenceUpdate();
+	}
+	for (AL1425_i_CycleCount = 4; --AL1425_i_CycleCount; ) {
+		for (AL1424_i_CreatureTypeSwitchCount = 5; --AL1424_i_CreatureTypeSwitchCount; ) {
+			f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+			L1428_ps_Group->_type = (AL1424_i_CreatureTypeSwitchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
+			for (AL1426_i_FuseSequenceUpdateCount = AL1425_i_CycleCount; AL1426_i_FuseSequenceUpdateCount--; f445_STARTEND_fuseSequenceUpdate());
+		}
+	}
+	_projexpl->f213_explosionCreate(Thing::_explFireBall, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	f445_STARTEND_fuseSequenceUpdate();
+	L1428_ps_Group->_type = k26_CreatureTypeGreyLord;
+	f445_STARTEND_fuseSequenceUpdate();
+	_displayMan->_g77_doNotDrawFluxcagesDuringEndgame = true;
+	f445_STARTEND_fuseSequenceUpdate();
+	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_g273_currMapWidth; AL1424_i_MapX++) {
+		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_g274_currMapHeight; AL1425_i_MapY++) {
+			if (((L1427_T_Thing = _groupMan->f175_groupGetThing(AL1424_i_MapX, AL1425_i_MapY)) != Thing::_endOfList) && ((AL1424_i_MapX != L1431_i_LordChaosMapX) || (AL1425_i_MapY != L1432_i_LordChaosMapY))) {
+				_groupMan->f189_delete(AL1424_i_MapX, AL1425_i_MapY);
+			}
+		}
+	}
+	f445_STARTEND_fuseSequenceUpdate();
+	/* Count and get list of text things located at 0, 0 in the current map. Their text is then printed as messages in the order specified by their first letter (which is not printed) */
+	L1427_T_Thing = _dungeonMan->f161_getSquareFirstThing(0, 0);
+	AL1424_i_TextStringThingCount = 0;
+	while (L1427_T_Thing != Thing::_endOfList) {
+		if (L1427_T_Thing.getType() == k2_TextstringType) {
+			L1435_aT_TextStringThings[AL1424_i_TextStringThingCount++] = L1427_T_Thing;
+		}
+		L1427_T_Thing = _dungeonMan->f159_getNextThing(L1427_T_Thing);
+	}
+	L1434_c_TextFirstCharacter = 'A';
+	AL1426_i_TextStringThingCount = AL1424_i_TextStringThingCount;
+	while (AL1424_i_TextStringThingCount--) {
+		for (AL1425_i_TextStringThingIndex = 0; AL1425_i_TextStringThingIndex < AL1426_i_TextStringThingCount; AL1425_i_TextStringThingIndex++) {
+			_dungeonMan->f168_decodeText(L1436_ac_String, L1435_aT_TextStringThings[AL1425_i_TextStringThingIndex], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
+			if (L1436_ac_String[1] == L1434_c_TextFirstCharacter) {
+				_textMan->f43_messageAreaClearAllRows();
+				L1436_ac_String[1] = '\n'; /* New line */
+				_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, &L1436_ac_String[1]);
+				f445_STARTEND_fuseSequenceUpdate();
+				f22_delay(780);
+				L1434_c_TextFirstCharacter++;
+				break;
+			}
+		}
+	}
+
+	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
+		_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		f445_STARTEND_fuseSequenceUpdate();
+	}
+
+	f22_delay(600);
+	_g524_restartGameAllowed = false;
+	f444_endGame(true);
+}
 
 void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 	_timeline->f261_processTimeline();
