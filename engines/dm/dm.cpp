@@ -279,8 +279,10 @@ void DMEngine::f463_initializeGame() {
 void DMEngine::f448_initMemoryManager() {
 	warning(false, "STUB METHOD: f448_initMemoryManager");
 	_displayMan->f508_buildPaletteChangeCopperList(gK57_PalSwoosh, gK57_PalSwoosh);
-	for (uint16 i = 0; i < 16; ++i)
+	for (uint16 i = 0; i < 16; ++i) {
 		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
+		_displayMan->_g346_paletteMiddleScreen[i] = g21_PalDungeonView[0][i];
+	}
 }
 
 void DMEngine::f462_startGame() {
@@ -307,6 +309,7 @@ void DMEngine::f462_startGame() {
 	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
 	if (!_g298_newGame) {
+		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 		_displayMan->_g578_useByteBoxCoordinates = false;
 		f22_delay(1);
 		_displayMan->D24_fillScreenBox(boxScreenTop, k0_ColorBlack);

@@ -45,6 +45,7 @@ namespace DM {
 #define C10_DUNGEON_DM 10
 
 LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
+	bool L1366_B_FadePalette = true;
 	Common::String fileName;
 	Common::SaveFileManager *saveFileManager = nullptr;
 	Common::InSaveFile *file = nullptr;
@@ -142,15 +143,12 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_timeline->f233_initTimeline();
 		_groupMan->f196_initActiveGroups();
 
-		warning(false, "Disabled code in f435_loadgame");
-#if 0
 		if (L1366_B_FadePalette) {
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
-			D26_WaitForVerticalBlank();
-			D18_FillScreenBlack();
+			f22_delay(1);
+			_displayMan->fillScreen(k0_ColorBlack);
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 		}
-#endif
 	} else {
 		_g528_saveFormat = dmSaveHeader._saveFormat;
 		_g527_platform = dmSaveHeader._platform;

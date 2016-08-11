@@ -1201,10 +1201,10 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 void DisplayMan::updateScreen() {
 	// apply copper
 	warning(false, "Top of the screen color is offset as well"); // loop should start from 320 * 30
-	for (uint32 i = 0; i < 320 * 170; ++i)
+	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_g348_bitmapScreen[i] += 16;
 	_vm->_system->copyRectToScreen(_g348_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
-	for (uint32 i = 0; i < 320 * 170; ++i) // loop should start from 320 * 30
+	for (uint32 i = 320 * 30; i < 320 * 170; ++i) // loop should start from 320 * 30
 		_g348_bitmapScreen[i] -= 16;
 	_vm->_console->onFrame();
 	_vm->_system->updateScreen();
@@ -3740,8 +3740,7 @@ void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 }
 
 void DisplayMan::f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom) {
-	// memcpy(_g347_paletteTopAndBottomScreen, topAndBottom, sizeof(uint16) * 16);
-	// memcpy(_g346_paletteMiddleScreen, middleScreen, sizeof(uint16) * 16);
+	_gK17_paletteFadeFrom = topAndBottom;
 	byte colorPalette[32 * 3];
 	for (int i = 0; i < 16; ++i) {
 		colorPalette[i * 3] = (topAndBottom[i] >> 8) * (256 / 16);
