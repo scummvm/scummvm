@@ -24,6 +24,7 @@
 #define TITANIC_MUSIC_HANDLER_H
 
 #include "titanic/sound/music_wave.h"
+#include "titanic/sound/wave_file.h"
 
 namespace Titanic {
 
@@ -35,9 +36,12 @@ private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
-	int _field124;
+	bool _stopWaves;
+	CWaveFile *_waveFile;
+	int _soundHandle;
 public:
 	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);
+	~CMusicHandler();
 
 	/**
 	 * Creates a new music wave class instance, and assigns it to a slot
@@ -49,7 +53,16 @@ public:
 
 	bool isBusy();
 
-	void set124(int val) { _field124 = val; }
+	/**
+	 * Flags whether the loaded music waves will be stopped when the
+	 * music handler is stopped
+	 */
+	void setStopWaves(bool flag) { _stopWaves = flag; }
+
+	/**
+	 * Stop playing the music
+	 */
+	void stop();
 };
 
 } // End of namespace Titanic

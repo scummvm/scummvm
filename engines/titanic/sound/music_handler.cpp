@@ -27,9 +27,13 @@
 namespace Titanic {
 
 CMusicHandler::CMusicHandler(CProjectItem *project, CSoundManager *soundManager) :
-		_project(project), _soundManager(soundManager),
-		_field124(0) {
+		_project(project), _soundManager(soundManager), _stopWaves(false),
+		_soundHandle(-1), _waveFile(nullptr) {
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
+}
+
+CMusicHandler::~CMusicHandler() {
+	stop();
 }
 
 CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
@@ -57,6 +61,20 @@ CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
 bool CMusicHandler::isBusy() {
 	// TODO
 	return false;
+}
+
+void CMusicHandler::stop() {
+	if (_waveFile) {
+		_soundManager->stopSound(_soundHandle);
+		delete _waveFile;
+		_waveFile = nullptr;
+		_soundHandle = -1;
+	}
+
+	for (int idx = 0; idx < 4; ++idx) {
+		if (_stopWaves && _musicWaves[idx])
+			_musicWaves[idx]->stop();
+	}
 }
 
 } // End of namespace Titanic

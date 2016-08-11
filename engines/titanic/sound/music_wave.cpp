@@ -47,4 +47,8 @@ CWaveFile *CMusicWave::createWaveFile(const CString &name) {
 	return _soundManager->loadSound(name);
 }
 
+void CMusicWave::stop() {
+
+}
+
 } // End of namespace Titanic

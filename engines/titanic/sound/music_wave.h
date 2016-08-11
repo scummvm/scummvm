@@ -59,6 +59,11 @@ public:
 	 * Loads a new file into the list of available entries
 	 */
 	void load(int index, const CString &filename, int v3);
+
+	/**
+	 * Stops the music
+	 */
+	void stop();
 };
 
 } // End of namespace Titanic

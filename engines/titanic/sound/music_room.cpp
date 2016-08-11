@@ -58,7 +58,8 @@ void CMusicRoom::startMusic(int musicId) {
 }
 
 void CMusicRoom::stopMusic() {
-	// TODO
+	if (_musicHandler)
+		_musicHandler->stop();
 }
 
 } // End of namespace Titanic

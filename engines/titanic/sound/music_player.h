@@ -41,12 +41,12 @@ class CMusicPlayer : public CGameObject {
 protected:
 	bool _isActive;
 	CString _stopTarget;
-	int _fieldCC;
+	bool _stopWaves;
 	int _musicId;
 public:
 	CLASSDEF;
 	CMusicPlayer() : CGameObject(),
-		_isActive(false), _fieldCC(0), _musicId(100) {}
+		_isActive(false), _stopWaves(false), _musicId(100) {}
 
 	/**
 	 * Save the data for the class to file
