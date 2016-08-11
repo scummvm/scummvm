@@ -24,7 +24,7 @@
 
 namespace MacVenture {
 CommandButton::CommandButton() {
-	_gui = nullptr;
+	_gui = NULL;
 }
 
 CommandButton::CommandButton(ControlData data, Gui *g) {
