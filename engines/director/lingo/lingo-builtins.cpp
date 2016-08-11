@@ -621,4 +621,20 @@ void Lingo::b_false(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_factory(int nargs) {
+	// This is intentionally empty
+}
+
+void Lingo::factoryCall(Common::String &name, int nargs) {
+	Common::String s("factoryCall: ");
+
+	s += name;
+
+	convertVOIDtoString(0, nargs);
+
+	printStubWithArglist(s.c_str(), nargs);
+
+	dropStack(nargs);
+}
+
 } // End of namespace Director

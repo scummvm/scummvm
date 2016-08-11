@@ -270,6 +270,18 @@ void Lingo::processIf(int elselabel, int endlabel) {
 
 void Lingo::codeFactory(Common::String &name) {
 	_currentFactory = name;
+
+	Symbol *sym = new Symbol;
+
+	sym->name = (char *)calloc(name.size() + 1, 1);
+	Common::strlcpy(sym->name, name.c_str(), name.size());
+	sym->type = BLTIN;
+	sym->nargs = -1;
+	sym->maxArgs = 0;
+	sym->parens = true;
+	sym->u.bltin = g_lingo->b_factory;
+
+	_handlers[name] = sym;
 }
 
 }

@@ -755,7 +755,10 @@ void Lingo::c_call() {
 	}
 
 	if (sym->type == BLTIN) {
-		(*sym->u.bltin)(nargs);
+		if (sym->u.bltin == b_factory)
+			g_lingo->factoryCall(name, nargs);
+		else
+			(*sym->u.bltin)(nargs);
 
 		return;
 	}
