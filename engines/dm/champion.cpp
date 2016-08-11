@@ -1414,7 +1414,7 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 		f323_unpoison(champIndex);
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex << 2], k0_ColorBlack);
+	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex], k0_ColorBlack);
 	f292_drawChampionState((ChampionIndex)champIndex);
 
 	int16 aliveChampionIndex;
