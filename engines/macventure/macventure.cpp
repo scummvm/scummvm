@@ -761,18 +761,17 @@ void MacVentureEngine::highlightExit(ObjID objID) {
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {
 	if (objID == _destObject) return;
 	int idx;
+	debugC(5, kMVDebugMain, "Select primary object (%d)", objID);
 	if (_destObject > 0 &&
 		(idx = findObjectInArray(_destObject, _selectedObjs)) != -1 &&
-		findObjectInArray(_destObject, _currentSelection) == -1)
-	{
-		_selectedObjs.remove_at(idx);
-		highlightExit(_destObject);
+		findObjectInArray(_destObject, _currentSelection) == -1) {
+		unselectAll();
 	}
 	_destObject = objID;
 	if (findObjectInArray(_destObject, _selectedObjs) == -1) {
-		_selectedObjs.push_back(_destObject);
-		highlightExit(_destObject);
+		selectObject(_destObject);
 	}
+
 	_cmdReady = true;
 }
 
