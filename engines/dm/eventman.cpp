@@ -1296,26 +1296,21 @@ void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
 }
 
 void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
-	uint16 L1126_ui_Command;
-
 	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		f368_commandSetLeader((ChampionIndex)champIndex);
 	} else {
-		L1126_ui_Command = f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
-		if ((L1126_ui_Command >= k16_CommandSetLeaderChampion_0) && (L1126_ui_Command <= k19_CommandSetLeaderChampion_3)) {
-			f368_commandSetLeader((ChampionIndex)(L1126_ui_Command - k16_CommandSetLeaderChampion_0));
-		} else {
-			if ((L1126_ui_Command >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (L1126_ui_Command <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand)) {
-				_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(L1126_ui_Command - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
-			}
-		}
+		uint16 commandType = f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
+		if ((commandType >= k16_CommandSetLeaderChampion_0) && (commandType <= k19_CommandSetLeaderChampion_3))
+			f368_commandSetLeader((ChampionIndex)(commandType - k16_CommandSetLeaderChampion_0));
+		else if ((commandType >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (commandType <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand))
+			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 	}
 }
 
 void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex) {
-	static Box G0621_s_Box_MousePointer_ChampionIconShadow = Box(2, 20, 2, 15);
-	static Box G0622_s_Box_MousePointer_ChampionIcon = Box(0, 18, 0, 13);
-	static byte G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
+	static Box championIconShadowBox = Box(2, 20, 2, 15);
+	static Box championIconBox = Box(0, 18, 0, 13);
+	static byte mousePointerIconShadowBox[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
 
 	_gK100_preventBuildPointerScreenArea = true;
 	if (!_g599_useChampionIconOrdinalAsMousePointerBitmap) {
@@ -1326,38 +1321,35 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 		_g598_mousePointerBitmapUpdated = true;
 		_g599_useChampionIconOrdinalAsMousePointerBitmap = true;
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		byte *L0056_puc_Bitmap = _gK190_mousePointerTempBuffer;
-		memset(L0056_puc_Bitmap, 0, 32 * 18);
-		Box *L0055_pi_ChampionIconBox = &g54_BoxChampionIcons[champIconIndex];
+		byte *tmpBitmap = _gK190_mousePointerTempBuffer;
+		memset(tmpBitmap, 0, 32 * 18);
+		Box *curChampionIconBox = &g54_BoxChampionIcons[champIconIndex];
 
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, L0056_puc_Bitmap, G0621_s_Box_MousePointer_ChampionIconShadow, L0055_pi_ChampionIconBox->_x1, L0055_pi_ChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
-
-		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(L0056_puc_Bitmap, _g613_mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, G0045_auc_Graphic562_PaletteChanges_MousePointerIconShadow);
-
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, G0622_s_Box_MousePointer_ChampionIcon, L0055_pi_ChampionIconBox->_x1, L0055_pi_ChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
-
-		_vm->_displayMan->D24_fillScreenBox(*L0055_pi_ChampionIconBox, k0_ColorBlack);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
+		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(tmpBitmap, _g613_mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
+		_vm->_displayMan->D24_fillScreenBox(*curChampionIconBox, k0_ColorBlack);
 		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(champIconIndex);
 	} else {
 		_g598_mousePointerBitmapUpdated = true;
-		uint16 L0052_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
+		uint16 championIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
 		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-		int16 L0054_i_ChampionIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(L0052_ui_ChampionIconIndex + _vm->_dungeonMan->_g308_partyDir));
-		if (L0052_ui_ChampionIconIndex == champIconIndex) {
-			setFlag(_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)L0054_i_ChampionIndex);
+		int16 championCellIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir));
+		if (championIconIndex == champIconIndex) {
+			setFlag(_vm->_championMan->_gK71_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)championCellIndex);
 		} else {
-			int16 L0053_i_ChampionIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir));
-			if (L0053_i_ChampionIndex >= 0) {
-				_vm->_championMan->_gK71_champions[L0053_i_ChampionIndex]._cell = (ViewCell)M21_normalizeModulo4(L0052_ui_ChampionIconIndex + _vm->_dungeonMan->_g308_partyDir);
-				setFlag(_vm->_championMan->_gK71_champions[L0053_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
-				_vm->_championMan->f292_drawChampionState((ChampionIndex)L0053_i_ChampionIndex);
-			} else {
-				_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[L0052_ui_ChampionIconIndex], k0_ColorBlack);
-			}
-			_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._cell = (ViewCell)M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir);
-			setFlag(_vm->_championMan->_gK71_champions[L0054_i_ChampionIndex]._attributes, k0x0400_ChampionAttributeIcon);
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)L0054_i_ChampionIndex);
+			int16 championIndex = _vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir));
+			if (championIndex >= 0) {
+				_vm->_championMan->_gK71_champions[championIndex]._cell = (ViewCell)M21_normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir);
+				setFlag(_vm->_championMan->_gK71_champions[championIndex]._attributes, k0x0400_ChampionAttributeIcon);
+				_vm->_championMan->f292_drawChampionState((ChampionIndex)championIndex);
+			} else
+				_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[championIconIndex], k0_ColorBlack);
+
+			_vm->_championMan->_gK71_champions[championCellIndex]._cell = (ViewCell)M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir);
+			setFlag(_vm->_championMan->_gK71_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			_vm->_championMan->f292_drawChampionState((ChampionIndex)championCellIndex);
 		}
 	}
 	_gK100_preventBuildPointerScreenArea = false;
@@ -1365,78 +1357,60 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 }
 
 void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
-	int16 L1132_i_Command;
-	int16 L1133_i_ChampionIndex;
-
-
-	L1133_i_ChampionIndex = kM1_ChampionNone;
+	int16 championIndex = kM1_ChampionNone;
 	if (posY <= 48) {
 		switch (_vm->_championMan->_g514_magicCasterChampionIndex) {
 		case 0:
-			if ((posX >= 280) && (posX <= 291)) {
-				L1133_i_ChampionIndex = 1;
-			} else {
-				if ((posX >= 294) && (posX <= 305)) {
-					L1133_i_ChampionIndex = 2;
-				} else {
-					if (posX >= 308) {
-						L1133_i_ChampionIndex = 3;
-					}
-				}
-			}
+			if ((posX >= 280) && (posX <= 291))
+				championIndex = 1;
+			else if ((posX >= 294) && (posX <= 305))
+				championIndex = 2;
+			else if (posX >= 308)
+				championIndex = 3;
+
 			break;
 		case 1:
-			if ((posX >= 233) && (posX <= 244)) {
-				L1133_i_ChampionIndex = 0;
-			} else {
-				if ((posX >= 294) && (posX <= 305)) {
-					L1133_i_ChampionIndex = 2;
-				} else {
-					if (posX >= 308) {
-						L1133_i_ChampionIndex = 3;
-					}
-				}
-			}
+			if ((posX >= 233) && (posX <= 244))
+				championIndex = 0;
+			else if ((posX >= 294) && (posX <= 305))
+				championIndex = 2;
+			else if (posX >= 308)
+				championIndex = 3;
+
 			break;
 		case 2:
-			if ((posX >= 233) && (posX <= 244)) {
-				L1133_i_ChampionIndex = 0;
-			} else {
-				if ((posX >= 247) && (posX <= 258)) {
-					L1133_i_ChampionIndex = 1;
-				} else {
-					if (posX >= 308) {
-						L1133_i_ChampionIndex = 3;
-					}
-				}
-			}
+			if ((posX >= 233) && (posX <= 244))
+				championIndex = 0;
+			else if ((posX >= 247) && (posX <= 258))
+				championIndex = 1;
+			else if (posX >= 308)
+				championIndex = 3;
+
 			break;
 		case 3:
-			if ((posX >= 247) && (posX <= 258)) {
-				L1133_i_ChampionIndex = 1;
-			} else {
-				if ((posX >= 261) && (posX <= 272)) {
-					L1133_i_ChampionIndex = 2;
-				} else {
-					if (posX <= 244) {
-						L1133_i_ChampionIndex = 0;
-					}
-				}
-			}
+			if ((posX >= 247) && (posX <= 258))
+				championIndex = 1;
+			else if ((posX >= 261) && (posX <= 272))
+				championIndex = 2;
+			else if (posX <= 244)
+				championIndex = 0;
+
+			break;
 		}
-		if ((L1133_i_ChampionIndex != kM1_ChampionNone) && (L1133_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount)) {
-			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(L1133_i_ChampionIndex);
-		}
+
+		if ((championIndex != kM1_ChampionNone) && (championIndex < _vm->_championMan->_g305_partyChampionCount))
+			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(championIndex);
+
 		return;
 	}
-	L1132_i_Command = f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
-	if (L1132_i_Command != k0_CommandNone) {
-		f369_commandProcessTypes101To108_clickInSpellSymbolsArea((CommandType)L1132_i_Command);
-	}
+
+	CommandType newCommand = f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
+	if (newCommand != k0_CommandNone)
+		f369_commandProcessTypes101To108_clickInSpellSymbolsArea(newCommand);
 }
 
 void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType) {
-	static Box G0464_as_Graphic561_Box_SpellSymbolsAndDelete[7] = {
+	static Box spellSymbolsAndDelete[7] = {
 		/* { X1, X2, Y1, Y2 } */
 		Box(235, 247, 51, 61),   /* Symbol 1 */
 		Box(249, 261, 51, 61),   /* Symbol 2 */
@@ -1446,63 +1420,51 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 		Box(305, 317, 51, 61),   /* Symbol 6 */
 		Box(305, 318, 63, 73)}; /* Delete */
 
-	uint16 L1130_ui_SymbolIndex;
-	Box* L1131_ps_Box;
-
-
 	if (cmdType == k108_CommandClickInSpeallAreaCastSpell) {
-		if (_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex]._symbols[0] == '\0') {
+		if (_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex]._symbols[0] == '\0')
 			return;
-		}
+
 		f362_commandHighlightBoxEnable(234, 303, 63, 73);
 		_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
 		return;
 	}
-	L1130_ui_SymbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
-	L1131_ps_Box = &G0464_as_Graphic561_Box_SpellSymbolsAndDelete[L1130_ui_SymbolIndex];
-	f362_commandHighlightBoxEnable(L1131_ps_Box->_x1, L1131_ps_Box->_x2, L1131_ps_Box->_y1, L1131_ps_Box->_y2);
+
+	uint16 symbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
+	Box *highlightBox = &spellSymbolsAndDelete[symbolIndex];
+	f362_commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
 	_vm->f22_delay(1);
 	f363_highlightBoxDisable();
-	if (L1130_ui_SymbolIndex < 6) {
-		_vm->_menuMan->f399_addChampionSymbol(L1130_ui_SymbolIndex);
-	} else {
+
+	if (symbolIndex < 6)
+		_vm->_menuMan->f399_addChampionSymbol(symbolIndex);
+	else
 		_vm->_menuMan->f400_deleteChampionSymbol();
-	}
 }
 
 void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
-	uint16 L1134_ui_Command;
-
-
 	if (_vm->_championMan->_g506_actingChampionOrdinal) {
-		L1134_ui_Command = f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
-		if (L1134_ui_Command != k0_CommandNone) {
-			if (L1134_ui_Command == k112_CommandClickInActionAreaPass) {
+		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
+		if (mouseCommand != k0_CommandNone) {
+			if (mouseCommand == k112_CommandClickInActionAreaPass) {
 				f362_commandHighlightBoxEnable(285, 319, 77, 83);
 				_vm->_menuMan->f391_didClickTriggerAction(-1);
-			} else {
-				if ((L1134_ui_Command - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
-					if (L1134_ui_Command == k113_CommandClickInActionAreaAction_0) {
-						f362_commandHighlightBoxEnable(234, 318, 86, 96);
-					} else {
-						if (L1134_ui_Command == k114_CommandClickInActionAreaAction_1) {
-							f362_commandHighlightBoxEnable(234, 318, 98, 108);
-						} else {
-							f362_commandHighlightBoxEnable(234, 318, 110, 120);
-						}
-					}
-					_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(L1134_ui_Command - k113_CommandClickInActionAreaAction_0);
-				}
+			} else if ((mouseCommand - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
+				if (mouseCommand == k113_CommandClickInActionAreaAction_0)
+					f362_commandHighlightBoxEnable(234, 318, 86, 96);
+				else if (mouseCommand == k114_CommandClickInActionAreaAction_1)
+					f362_commandHighlightBoxEnable(234, 318, 98, 108);
+				else
+					f362_commandHighlightBoxEnable(234, 318, 110, 120);
+
+				_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
 			}
 		}
-	} else {
-		if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
-			L1134_ui_Command = f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
-			if (L1134_ui_Command != k0_CommandNone) {
-				if ((L1134_ui_Command = L1134_ui_Command - k116_CommandClickInActionAreaChampion_0_Action) < _vm->_championMan->_g305_partyChampionCount) {
-					_vm->_menuMan->f389_processCommands116To119_setActingChampion(L1134_ui_Command);
-				}
-			}
+	} else if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
+		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
+		if (mouseCommand != k0_CommandNone) {
+			mouseCommand -= k116_CommandClickInActionAreaChampion_0_Action;
+			if (mouseCommand < _vm->_championMan->_g305_partyChampionCount)
+				_vm->_menuMan->f389_processCommands116To119_setActingChampion(mouseCommand);
 		}
 	}
 }
