@@ -165,7 +165,7 @@ bool Console::Cmd_map(int argc, const char** argv) {
 
 		// not >= because dimensions are inslucsive
 		if (index < 0 || index >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount) {
-			debugPrintf("Map index %d is out of bounds, possible values [0, %d]\n", _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount - 1);
+			debugPrintf("Map index %d is out of bounds, possible values [0, %d]\n", index, _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount - 1);
 			return true;
 		}
 
@@ -216,8 +216,11 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 	}
 
 	Common::String requestedItemName;
-	for (int16 i = 1; i < argc; ++i)
+	for (int16 i = 1; i < argc; ++i) {
 		requestedItemName += argv[i];
+		requestedItemName += " ";
+	}
+	requestedItemName.deleteLastChar();
 
 	for (int16 thingType = 0; thingType < 16; ++thingType) { // 16 number of item types
 		uint16 *thingDataArray = _vm->_dungeonMan->_g284_thingData[thingType];
