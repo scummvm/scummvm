@@ -44,8 +44,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      interacting with the armor in room 37 (main house, downstairs). This bug is also
      present in the original game.
    - Fixed auto-saving in the fan-made Cascade Quest.
-   - Fixed a bug in Conquests of the Longbow: The Adventures of Robin Hood that caused
-     the game to crash while wandering through the Sherwood Forest.
+   - Fixed a game bug in the Conquests of Longbow scripts that could cause crashes in Sherwood Forest.
    - Added a detection entry for the ImagiNation Network (INN) demo.
 
  SCUMM:
