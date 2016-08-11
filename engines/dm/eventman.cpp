@@ -1173,9 +1173,8 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_g313_gameTime;
 		f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
-	} else {
+	} else
 		_vm->_menuMan->f393_drawSpellAreaControls(champMan._g514_magicCasterChampionIndex);
-	}
 
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	Color champColor = g46_ChampionColor[championIndex];
@@ -1213,67 +1212,59 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 }
 
 void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell) {
-	int16 L1137_i_MapX;
-	int16 L1138_i_MapY;
-	Thing L1139_T_Thing;
-
-
-	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
+	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone)
 		return;
-	}
-	L1137_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
-	L1138_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+
+	int16 mapX = _vm->_dungeonMan->_g306_partyMapX;
+	int16 mapY = _vm->_dungeonMan->_g307_partyMapY;
 	if (viewCell >= k2_ViewCellBackRight) {
-		L1137_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1138_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
-		if (((L1139_T_Thing = _vm->_groupMan->f175_groupGetThing(L1137_i_MapX, L1138_i_MapY)) != Thing::_endOfList) &&
-			!_vm->_moveSens->f264_isLevitating(L1139_T_Thing) &&
-			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(L1139_T_Thing), M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
+		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		Thing groupThing = _vm->_groupMan->f175_groupGetThing(mapX, mapY);
+		if ((groupThing != Thing::_endOfList) &&
+			!_vm->_moveSens->f264_isLevitating(groupThing) &&
+			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(groupThing), M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}
-	L1139_T_Thing = _vm->_dungeonMan->_g292_pileTopObject[viewCell];
-	if (_vm->_objectMan->f33_getIconIndex(L1139_T_Thing) != kM1_IconIndiceNone) {
-		_vm->_moveSens->f267_getMoveResult(L1139_T_Thing, L1137_i_MapX, L1138_i_MapY, kM1_MapXNotOnASquare, 0);
-		_vm->_championMan->f297_putObjectInLeaderHand(L1139_T_Thing, true);
+
+	Thing topPileThing = _vm->_dungeonMan->_g292_pileTopObject[viewCell];
+	if (_vm->_objectMan->f33_getIconIndex(topPileThing) != kM1_IconIndiceNone) {
+		_vm->_moveSens->f267_getMoveResult(topPileThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
+		_vm->_championMan->f297_putObjectInLeaderHand(topPileThing, true);
 	}
+
 	_vm->_g321_stopWaitingForPlayerInput = true;
 }
 
 void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
-	int16 L1140_i_MapX;
-	int16 L1141_i_MapY;
-	Thing L1142_T_Thing;
-	Junk* L1143_ps_Junk;
 	int16 L1144_i_IconIndex;
-	uint16 L1145_ui_Cell;
-	bool L1146_B_DroppingIntoAnAlcove;
-	TimelineEvent L1147_s_Event;
 
-
-	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) {
+	if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone)
 		return;
-	}
-	L1140_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
-	L1141_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
-	if (L1146_B_DroppingIntoAnAlcove = (viewCell == k4_ViewCellAlcove)) {
+
+	int16 mapX = _vm->_dungeonMan->_g306_partyMapX;
+	int16 mapY = _vm->_dungeonMan->_g307_partyMapY;
+	bool droppingIntoAnAlcove = (viewCell == k4_ViewCellAlcove);
+	if (droppingIntoAnAlcove)
 		viewCell = k2_ViewCellBackRight;
-	}
-	if (viewCell > k1_ViewCellFrontRight) {
-		L1140_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1141_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
-	}
-	L1145_ui_Cell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
-	L1142_T_Thing = _vm->_championMan->f298_getObjectRemovedFromLeaderHand();
-	_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(L1142_T_Thing, L1145_ui_Cell), kM1_MapXNotOnASquare, 0, L1140_i_MapX, L1141_i_MapY);
-	if (L1146_B_DroppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && ((L1144_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1142_T_Thing)) == k147_IconIndiceJunkChampionBones)) {
-		L1143_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1142_T_Thing);
-		M33_setMapAndTime(L1147_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
-		L1147_s_Event._type = k13_TMEventTypeViAltarRebirth;
-		L1147_s_Event._priority = L1143_ps_Junk->getChargeCount();
-		L1147_s_Event._B._location._mapX = L1140_i_MapX;
-		L1147_s_Event._B._location._mapY = L1141_i_MapY;
-		L1147_s_Event._C.A._cell = L1145_ui_Cell;
-		L1147_s_Event._C.A._effect = k2_SensorEffToggle;
-		_vm->_timeline->f238_addEventGetEventIndex(&L1147_s_Event);
+
+	if (viewCell > k1_ViewCellFrontRight)
+		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+
+	uint16 currCell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
+	Thing removedThing = _vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+	_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
+	if (droppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && ((L1144_i_IconIndex = _vm->_objectMan->f33_getIconIndex(removedThing)) == k147_IconIndiceJunkChampionBones)) {
+		Junk *removedJunk = (Junk*)_vm->_dungeonMan->f156_getThingData(removedThing);
+		TimelineEvent newEvent;
+		M33_setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
+		newEvent._type = k13_TMEventTypeViAltarRebirth;
+		newEvent._priority = removedJunk->getChargeCount();
+		newEvent._B._location._mapX = mapX;
+		newEvent._B._location._mapY = mapY;
+		newEvent._C.A._cell = currCell;
+		newEvent._C.A._effect = k2_SensorEffToggle;
+		_vm->_timeline->f238_addEventGetEventIndex(&newEvent);
 	}
 	_vm->_g321_stopWaitingForPlayerInput = true;
 }
