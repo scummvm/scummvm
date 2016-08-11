@@ -322,6 +322,9 @@ public:
 	static void b_mci(int nargs);
 	static void b_mciwait(int nargs);
 
+	static void b_false(int nargs);
+	static void b_true(int nargs);
+
 	void func_mci(Common::String &s);
 	void func_mciwait(Common::String &s);
 	void func_goto(Datum &frame, Datum &movie);

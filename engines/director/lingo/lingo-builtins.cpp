@@ -104,7 +104,11 @@ static struct BuiltinProto {
 	// Sound
 	{ "beep",	 		Lingo::b_beep,			0, 1, false },	// D2
 	{ "mci",	 		Lingo::b_mci,			1, 1, false },
-	{ "mciwait",		Lingo::b_mciwait,			1, 1, false },
+	{ "mciwait",		Lingo::b_mciwait,		1, 1, false },
+	// Constants
+	{ "false",			Lingo::b_false,			0, 0, false },	// D2
+	{ "true",			Lingo::b_true,			0, 0, false },	// D2
+
 	{ 0, 0, 0, 0, false }
 };
 
@@ -513,6 +517,8 @@ void Lingo::b_puppetPalette(int nargs) {
 }
 
 void Lingo::b_puppetSound(int nargs) {
+	g_lingo->convertVOIDtoString(0, nargs);
+
 	g_lingo->printStubWithArglist("b_puppetSound", nargs);
 
 	g_lingo->dropStack(nargs);
@@ -594,5 +600,25 @@ void Lingo::b_mciwait(int nargs) {
 	g_lingo->func_mciwait(*d.u.s);
 }
 
+///////////////////
+// Constants
+///////////////////
+void Lingo::b_true(int nargs) {
+	Datum d;
+
+	d.type = INT;
+	d.u.i = 1;
+
+	g_lingo->push(d);
+}
+
+void Lingo::b_false(int nargs) {
+	Datum d;
+
+	d.type = INT;
+	d.u.i = 0;
+
+	g_lingo->push(d);
+}
 
 } // End of namespace Director
