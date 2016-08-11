@@ -1063,22 +1063,10 @@ void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* to
 }
 
 void DisplayMan::f566_viewportBlitToScreen() {
-	warning(false, "MISSING FUNCTIONALITY: using correct colorpalette");
 	Box box(0, 223, 33, 33 + 135);
 
 	f132_blitToBitmap(_g296_bitmapViewport, _g348_bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency);
 }
-
-void DisplayMan::loadPalette(uint16 *palette) {
-	byte colorPalette[16 * 3];
-	for (int i = 0; i < 16; ++i) {
-		colorPalette[i * 3] = (palette[i] >> 8) * (256 / 16);
-		colorPalette[i * 3 + 1] = (palette[i] >> 4) * (256 / 16);
-		colorPalette[i * 3 + 2] = palette[i] * (256 / 16);
-	}
-	_vm->_system->getPaletteManager()->setPalette(colorPalette, 0, 16);
-}
-
 
 void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];

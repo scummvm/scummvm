@@ -656,7 +656,6 @@ public:
 	void f479_loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader	
 	void f460_initializeGraphicData(); // @ F0460_START_InitializeGraphicData
 	void f96_loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
-	void loadPalette(uint16 *palette);
 	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 	void f102_drawDoorBitmap(Frame *frame);// @ F0102_DUNGEONVIEW_DrawDoorBitmap
 	void f103_drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *frame); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
