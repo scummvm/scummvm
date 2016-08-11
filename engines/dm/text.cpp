@@ -160,7 +160,7 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 		f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7 - 6) + 177, color, k0_ColorBlack, string);
 	} else {
 		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
-		if(f561_isTextScrolling(&_gK60_s_TextScroller, false))
+		if (f561_isTextScrolling(&_gK60_s_TextScroller, false))
 			f560_SCROLLER_setCommand(&_gK60_s_TextScroller, 1);
 	}
 	_g359_messageAreaCursorColumn += L0030_i_StringLength;
@@ -224,5 +224,20 @@ void TextMan::f443_endgamePrintString(int16 x, int16 y, Color textColor, char* t
 		L1407_pc_Character++;
 	}
 	f53_printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
+}
+
+void TextMan::f43_messageAreaClearAllRows() {
+	int16 L0023_i_RowIndex;
+
+	f561_isTextScrolling(&_gK60_s_TextScroller, true);
+
+	Box tmpBox(0, 319, 169, 199);
+	_vm->_displayMan->D24_fillScreenBox(tmpBox, k0_ColorBlack);
+	
+	_g358_messageAreaCursorRow = 3;
+	_g359_messageAreaCursorColumn = 0;
+	for (L0023_i_RowIndex = 0; L0023_i_RowIndex < 4; L0023_i_RowIndex++) {
+		_g360_messageAreaRowExpirationTime[L0023_i_RowIndex] = -1;
+	}
 }
 }

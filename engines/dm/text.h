@@ -66,6 +66,7 @@ public:
 		warning(false, "STUB METHOD: f561_isTextScrolling"); return true;
 	} // @ F0561_SCROLLER_IsTextScrolling
 	void f560_SCROLLER_setCommand(TextScroller *scroller, int16 command) { warning(false, "STUB METHOD: f560_SCROLLER_setCommand");  } // @ F0560_SCROLLER_SetCommand
+	void f43_messageAreaClearAllRows(); // @ F0043_TEXT_MESSAGEAREA_ClearAllRows
 };
 
 }
