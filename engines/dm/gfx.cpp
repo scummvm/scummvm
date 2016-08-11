@@ -704,7 +704,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g99_bitmapWall_D0R_Native = nullptr;
 
 	_g322_paletteSwitchingEnabled = false;
-	warning(false, "DUMMY CODE: setting _g304_dungeonViewPaletteIndex");
 	_g304_dungeonViewPaletteIndex = 0;
 
 	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
@@ -729,9 +728,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (uint16 i = 0; i < 32; i++)
 		_g345_aui_BlankBuffer[i] = 0;
 
-	// HACK
-	memcpy(_g346_paletteMiddleScreen, g20_PalEntrance, sizeof(uint16) * 16);
-	memcpy(_g347_paletteTopAndBottomScreen, g20_PalEntrance, sizeof(uint16) * 16);
+	_gK17_paletteFadeFrom = nullptr;
 }
 
 DisplayMan::~DisplayMan() {
@@ -3668,6 +3665,78 @@ uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
 		RGBcolor -= 256;
 	}
 	return RGBcolor;
+}
+
+void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
+	static uint16 K0016_aui_Palette_FadeTemporary[16];
+	uint16 L1374_ui_CurrentRGBColor;
+	int16 L1375_ui_TargetRGBColor;
+	int16 L1376_i_Color;
+	int16 L1377_i_Counter;
+	uint16* L1378_pui_PaletteRegister;
+
+
+	L1378_pui_PaletteRegister = K0016_aui_Palette_FadeTemporary;
+	for (L1376_i_Color = 0; L1376_i_Color < 16; L1376_i_Color++) {
+		L1378_pui_PaletteRegister[L1376_i_Color] = _gK17_paletteFadeFrom[L1376_i_Color];
+	}
+	for (L1377_i_Counter = 0; L1377_i_Counter < 8; L1377_i_Counter++) {
+		for (L1376_i_Color = 0, L1378_pui_PaletteRegister = K0016_aui_Palette_FadeTemporary; L1376_i_Color < 16; L1376_i_Color++, L1378_pui_PaletteRegister++) {
+			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D12_MASK_BLUE_COMPONENT);
+			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D12_MASK_BLUE_COMPONENT);
+			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
+				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
+					*L1378_pui_PaletteRegister -= 2;
+				} else {
+					*L1378_pui_PaletteRegister -= 1;
+				}
+			} else {
+				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
+					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
+						*L1378_pui_PaletteRegister += 2;
+					} else {
+						*L1378_pui_PaletteRegister += 1;
+					}
+				}
+			}
+			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D11_MASK_GREEN_COMPONENT) >> 4;
+			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D11_MASK_GREEN_COMPONENT) >> 4;
+			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
+				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
+					*L1378_pui_PaletteRegister -= 32;
+				} else {
+					*L1378_pui_PaletteRegister -= 16;
+				}
+			} else {
+				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
+					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
+						*L1378_pui_PaletteRegister += 32;
+					} else {
+						*L1378_pui_PaletteRegister += 16;
+					}
+				}
+			}
+			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D10_MASK_RED_COMPONENT) >> 8;
+			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D10_MASK_RED_COMPONENT) >> 8;
+			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
+				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
+					*L1378_pui_PaletteRegister -= 512;
+				} else {
+					*L1378_pui_PaletteRegister -= 256;
+				}
+			} else {
+				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
+					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
+						*L1378_pui_PaletteRegister += 512;
+					} else {
+						*L1378_pui_PaletteRegister += 256;
+					}
+				}
+			}
+		}
+		_vm->f22_delay(1);
+		f508_buildPaletteChangeCopperList(K0016_aui_Palette_FadeTemporary, K0016_aui_Palette_FadeTemporary);
+	}
 }
 
 void DisplayMan::f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom) {
