@@ -251,6 +251,25 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
+	// Torin's autosave system checks for the presence of autosave.cat
+	// by opening it. Since we don't use .cat files, we instead check
+	// for autosave.000 or autosave.001.
+	//
+	// This has the added benefit of not detecting an SSCI autosave.cat
+	// accompanying SSCI autosave files that we wouldn't be able to load.
+	if (g_sci->getGameId() == GID_TORIN && name == "autosave.cat") {
+		Common::String pattern = g_sci->wrapFilename("autosave.###");
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+		bool exists = !saveFileMan->listSavefiles(pattern).empty();
+		if (exists) {
+			// Dummy handle. Torin only checks if this is SIGNAL_REG,
+			// and calls kFileIOClose on it.
+			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+		} else {
+			return SIGNAL_REG;
+		}
+	}
+
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
 		debugC(kDebugLevelFile, "Attempted to open a file with an empty filename");
@@ -688,7 +707,7 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id;
+	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
 	int16 virtualId = argv[1].toSint16();
 	int16 savegameId = -1;
 	Common::String game_description;
@@ -702,6 +721,13 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		warning("kSaveGame - won't save from within kernel function");
 		return NULL_REG;
 	}
+
+	// Torin has two sets of saves: autosave.### and torinsg.###, both with
+	// their own slots and .cat file.
+	// The autosave system uses autosave.000 and autosave.001.
+	// It also checks the presence of autosave.cat to determine if it should
+	// show the chapter selection menu on startup. (See kFileIOOpen.)
+	bool torinAutosave = g_sci->getGameId() == GID_TORIN && game_id == "Autosave";
 
 	if (argv[0].isNull()) {
 		// Direct call, from a patched Game::save
@@ -722,9 +748,15 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		if (savegameId < 0)
 			return NULL_REG;
 
+	} else if (torinAutosave) {
+		if (argv[2].isNull())
+			error("kSaveGame: called with description being NULL");
+		game_description = s->_segMan->getString(argv[2]);
+		savegameId = virtualId;
+
+		debug(3, "kSaveGame(%s,%d,%s,%s) [Torin autosave]", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 	} else {
 		// Real call from script
-		game_id = s->_segMan->getString(argv[0]);
 		if (argv[2].isNull())
 			error("kSaveGame: called with description being NULL");
 		game_description = s->_segMan->getString(argv[2]);
@@ -798,6 +830,10 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::OutSaveFile *out;
 
+	if (torinAutosave) {
+		filename = g_sci->wrapFilename(Common::String::format("autosave.%03d", savegameId));
+	}
+
 	out = saveFileMan->openForSaving(filename);
 	if (!out) {
 		warning("Error opening savegame \"%s\" for writing", filename.c_str());
@@ -826,6 +862,10 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
+
+	// See comment in kSaveGame
+	bool torinAutosave = g_sci->getGameId() == GID_TORIN && game_id == "Autosave";
+
 	if (argv[0].isNull()) {
 		// Direct call, either from launcher or from a patched Game::restore
 		if (savegameId == -1) {
@@ -841,7 +881,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 			pausedMusic = true;
 		}
 		// don't adjust ID of the saved game, it's already correct
-	} else {
+	} else if (!torinAutosave) {
 		if (g_sci->getGameId() == GID_JONES) {
 			// Jones has one save slot only
 			savegameId = 0;
@@ -858,14 +898,19 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = NULL_REG; // signals success
 
 	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-	if (findSavegame(saves, savegameId) == -1) {
+	if (!torinAutosave)
+		listSavegames(saves);
+	if (!torinAutosave && findSavegame(saves, savegameId) == -1) {
 		s->r_acc = TRUE_REG;
 		warning("Savegame ID %d not found", savegameId);
 	} else {
 		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 		Common::String filename = g_sci->getSavegameName(savegameId);
 		Common::SeekableReadStream *in;
+
+		if (torinAutosave) {
+			filename = g_sci->wrapFilename(Common::String::format("autosave.%03d", savegameId));
+		}
 
 		in = saveFileMan->openForLoading(filename);
 		if (in) {
