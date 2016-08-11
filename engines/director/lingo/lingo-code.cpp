@@ -253,7 +253,7 @@ void Lingo::c_eval() {
 	else if (d.u.sym->type == SYMBOL)
 		d.u.i = d.u.sym->u.i;
 	else if (d.u.sym->type == VOID)
-		d.u.s = new Common::String(*d.u.sym->name);
+		d.u.s = new Common::String(d.u.sym->name);
 	else
 		warning("c_eval: unhandled type: %s", d.type2str());
 
