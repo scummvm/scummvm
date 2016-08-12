@@ -118,9 +118,10 @@ argumentError:
 }
 
 bool Console::Cmd_pos(int argc, const char** argv) {
+	DungeonMan &dm = *_vm->_dungeonMan;
 	if (argc == 2 && cstrEquals("get", argv[1])) {
-		debugPrintf("Position: (%d, %d)  Direction: %s\n", _vm->_dungeonMan->_g306_partyMapX,
-					_vm->_dungeonMan->_g307_partyMapY, debugGetDirectionName(_vm->_dungeonMan->_g308_partyDir));
+		debugPrintf("Position: (%d, %d)  Direction: %s\n", dm._g306_partyMapX + dm._g269_currMap->_offsetMapX,
+					dm._g307_partyMapY + dm._g269_currMap->_offsetMapY, debugGetDirectionName(_vm->_dungeonMan->_g308_partyDir));
 	} else if (argc == 4 && cstrEquals("set", argv[1])) {
 		int x = atoi(argv[2]);
 		int y = atoi(argv[3]);
@@ -131,9 +132,10 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 
 		Map &currMap = *_vm->_dungeonMan->_g269_currMap;
 		// not >= because dimensions are inslucsive
-		if (x > currMap._width || y > currMap._height) {
+		if (x < currMap._offsetMapX || x > currMap._width + currMap._offsetMapX 
+			|| y < currMap._offsetMapY || y > currMap._height + currMap._offsetMapY) {
 			debugPrintf("Position (%d, %d) is out of bounds, possible values: ([1-%d],[1-%d])\n", x, y,
-						currMap._width, currMap._height);
+						currMap._width + currMap._offsetMapX, currMap._height + currMap._offsetMapY);
 			return true;
 		}
 
@@ -141,7 +143,8 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 		if (haventWarned.check())
 			debugPrintf("Setting position directly can cause glitches and crashes.\n");
 		debugPrintf("Position set to (%d, %d)\n", x, y);
-		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, x, y);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY,
+										   x - currMap._offsetMapX, y - currMap._offsetMapY);
 	} else
 		goto argumentError;
 
