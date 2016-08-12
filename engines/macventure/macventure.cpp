@@ -163,7 +163,7 @@ Common::Error MacVentureEngine::run() {
 	} else {
 		setNewGameState();
 	}
-	_selectedControl = kStartOrResume;
+	selectControl(kStartOrResume);
 
 	_gui->addChild(kSelfWindow, 1);
 	_gui->updateWindow(kSelfWindow, false);
@@ -243,7 +243,6 @@ void MacVentureEngine::reset() {
 void MacVentureEngine::resetInternals() {
 	_scriptEngine->reset();
 	_currentSelection.clear();
-	_selectedObjs.clear();
 	_objQueue.clear();
 	_textQueue.clear();
 }
@@ -645,7 +644,7 @@ void MacVentureEngine::playSounds(bool pause) {
 }
 
 void MacVentureEngine::updateControls() {
-	_selectedControl = kNoCommand;
+	selectControl(kNoCommand);
 	_gui->clearControls();
 	toggleExits();
 	resetVars();
@@ -670,20 +669,16 @@ void MacVentureEngine::selectObject(ObjID objID) {
 		if (findParentWindow(objID) != findParentWindow(_currentSelection[0]))
 			unselectAll();
 	}
-	if (findObjectInArray(objID, _currentSelection) == -1)
+	if (findObjectInArray(objID, _currentSelection) == -1) {
 		_currentSelection.push_back(objID);
-	if (findObjectInArray(objID, _selectedObjs) == -1) {
-		_selectedObjs.push_back(objID);
 		highlightExit(objID);
 	}
 }
 
 void MacVentureEngine::unselectObject(ObjID objID) {
 	int idxCur = findObjectInArray(objID, _currentSelection);
-	int idxSel = findObjectInArray(objID, _selectedObjs);
-	if (idxCur != -1) _currentSelection.remove_at(idxCur);
-	if (idxSel != -1) {
-		_selectedObjs.remove_at(idxSel);
+	if (idxCur != -1){
+		_currentSelection.remove_at(idxCur);
 		highlightExit(objID);
 	}
 }
@@ -751,12 +746,11 @@ void MacVentureEngine::selectPrimaryObject(ObjID objID) {
 	int idx;
 	debugC(5, kMVDebugMain, "Select primary object (%d)", objID);
 	if (_destObject > 0 &&
-		(idx = findObjectInArray(_destObject, _selectedObjs)) != -1 &&
-		findObjectInArray(_destObject, _currentSelection) == -1) {
+		(idx = findObjectInArray(_destObject, _currentSelection)) != -1) {
 		unselectAll();
 	}
 	_destObject = objID;
-	if (findObjectInArray(_destObject, _selectedObjs) == -1) {
+	if (findObjectInArray(_destObject, _currentSelection) == -1) {
 		selectObject(_destObject);
 	}
 
@@ -885,9 +879,11 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 }
 
 void MacVentureEngine::toggleExits() {
-	while (!_selectedObjs.empty()) {
-		ObjID obj = _selectedObjs.front();
-		_selectedObjs.remove_at(0);
+	warning("delete this when done testing!");
+	Common::Array<ObjID> exits = _currentSelection;
+	while (!exits.empty()) {
+		ObjID obj = exits.front();
+		exits.remove_at(0);
 		highlightExit(obj);
 		updateWindow(findParentWindow(obj));
 	}

@@ -344,7 +344,6 @@ private: // Attributes
 	ObjID _destObject;
 	ControlAction _selectedControl;
 	Common::Array<ObjID> _currentSelection;
-	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
 	Common::String _userInput;
 
