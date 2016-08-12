@@ -41,10 +41,6 @@
 
 namespace DM {
 
-Box g106_BoxThievesEye_ViewPortVisibleArea(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
-byte g198_PalChangesDoorButtonAndWallOrn_D3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
-byte g199_PalChangesDoorButtonAndWallOrn_D2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
-
 byte g197_doorButtonCoordSet[1] = {0}; // @ G0197_auc_Graphic558_DoorButtonCoordinateSet
 
 uint16 g208_doorButtonCoordSets[1][4][6] = { // @ G0208_aaauc_Graphic558_DoorButtonCoordinateSets
@@ -655,9 +651,9 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 			_g101_currMapWallOrnInfo[j][i] = 0;
 			_g102_currMapFloorOrnInfo[j][i] = 0;
 		}
-		for (int j = 0; j < 17; j++) {
+
+		for (int j = 0; j < 17; j++)
 			_g103_currMapDoorOrnInfo[j][i] = 0;
-		}
 	}
 
 	for (int i = 0; i < 16; i++) {
@@ -707,20 +703,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g322_paletteSwitchingEnabled = false;
 	_g304_dungeonViewPaletteIndex = 0;
 
-	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
-		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-										Frame(64, 159, 17, 102, 48, 88, 0, 0),	/* Closed Or Destroyed */
-										Frame(64, 159, 17, 38, 48, 88, 0, 66),	/* Vertical Closed one fourth */
-										Frame(64, 159, 17, 60, 48, 88, 0, 44),	/* Vertical Closed half */
-										Frame(64, 159, 17, 82, 48, 88, 0, 22),	/* Vertical Closed three fourth */
-										Frame(64, 75, 17, 102, 48, 88, 36, 0),	/* Left Horizontal Closed one fourth */
-										Frame(64, 87, 17, 102, 48, 88, 24, 0),	/* Left Horizontal Closed half */
-										Frame(64, 99, 17, 102, 48, 88, 12, 0),	/* Left Horizontal Closed three fourth */
-										Frame(148, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
-										Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
-										Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
-	);
-
 	for (uint16 i = 0; i < 16; ++i) {
 		_g347_paletteTopAndBottomScreen[i] = 0;
 		_g346_paletteMiddleScreen[i] = 0;
@@ -730,6 +712,33 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 		_g345_aui_BlankBuffer[i] = 0;
 
 	_gK17_paletteFadeFrom = nullptr;
+
+	initConstants();
+}
+
+void DisplayMan::initConstants() {
+	const byte palChangesDoorButtonAndWallOrn_D3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+	const byte palChangesDoorButtonAndWallOrn_D2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+
+	for (int i = 0; i < 16; i++) {
+		g198_PalChangesDoorButtonAndWallOrn_D3[i] = palChangesDoorButtonAndWallOrn_D3[i];
+		g199_PalChangesDoorButtonAndWallOrn_D2[i] = palChangesDoorButtonAndWallOrn_D2[i];
+	}
+
+	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
+		Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
+		Frame(64, 159, 17, 38, 48, 88, 0, 66),	 /* Vertical Closed one fourth */
+		Frame(64, 159, 17, 60, 48, 88, 0, 44),	 /* Vertical Closed half */
+		Frame(64, 159, 17, 82, 48, 88, 0, 22),	 /* Vertical Closed three fourth */
+		Frame(64, 75, 17, 102, 48, 88, 36, 0),	 /* Left Horizontal Closed one fourth */
+		Frame(64, 87, 17, 102, 48, 88, 24, 0),	 /* Left Horizontal Closed half */
+		Frame(64, 99, 17, 102, 48, 88, 12, 0),	 /* Left Horizontal Closed three fourth */
+		Frame(148, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
+		Frame(136, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
+		Frame(124, 159, 17, 102, 48, 88, 48, 0)	 /* Right Horizontal Closed three fourth */
+	);
+
+	g106_BoxThievesEye_ViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
 }
 
 DisplayMan::~DisplayMan() {

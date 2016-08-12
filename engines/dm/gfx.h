@@ -599,6 +599,10 @@ class DisplayMan {
 public:
 	byte *_g700_bitmapWallSet_Wall_D1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
 private:
+	Box g106_BoxThievesEye_ViewPortVisibleArea; // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
+	byte g198_PalChangesDoorButtonAndWallOrn_D3[16]; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+	byte g199_PalChangesDoorButtonAndWallOrn_D2[16]; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+
 	byte *_g701_bitmapWallSet_Wall_D0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
 	byte *_g702_bitmapWallSet_Wall_D0R; // @ G0702_puc_Bitmap_WallSet_Wall_D0R
 	byte *_g703_bitmapWallSet_DoorFrameTop_D2LCR; // @ G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
@@ -753,6 +757,9 @@ public:
 	void f436_STARTEND_FadeToPalette(uint16 *P0849_pui_Palette); // @ F0436_STARTEND_FadeToPalette
 	void f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom); // @ F0508_AMIGA_BuildPaletteChangeCopperList
 	void f136_shadeScreenBox(Box* box, Color color) { warning(false, "STUB METHOD: f136_shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
+
+private:
+	void initConstants();
 };
 
 }
