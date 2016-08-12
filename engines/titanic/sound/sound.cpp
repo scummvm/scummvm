@@ -68,8 +68,18 @@ void CSound::setVolume(uint handle, uint volume, uint seconds) {
 	_soundManager.setVolume(handle, volume, seconds);
 }
 
-void CSound::fn4(CWaveFile *waveFile, int val) {	
-	// TODO
+void CSound::activateSound(CWaveFile *waveFile, bool freeFlag) {	
+	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+		CSoundItem *sound = *i;
+		if (sound->_waveFile == waveFile) {
+			sound->_active = true;
+			sound->_freeFlag = freeFlag;
+
+			if (!freeFlag && waveFile->size() > 51200)
+				sound->_freeFlag = true;
+			break;
+		}
+	}
 }
 
 void CSound::stopChannel(int channel) {
@@ -79,7 +89,7 @@ void CSound::stopChannel(int channel) {
 void CSound::checkSounds() {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		CSoundItem *soundItem = *i;
-		if (soundItem->_field24 && soundItem->_field28) {
+		if (soundItem->_active && soundItem->_freeFlag) {
 			if (_soundManager.isActive(soundItem->_waveFile)) {
 				_sounds.remove(soundItem);
 				delete soundItem;
@@ -92,7 +102,7 @@ void CSound::removeOldest() {
 	for (CSoundItemList::iterator i = _sounds.reverse_begin();
 			i != _sounds.end(); --i) {
 		CSoundItem *soundItem = *i;
-		if (soundItem->_field28 && !_soundManager.isActive(soundItem->_waveFile)) {
+		if (soundItem->_active && !_soundManager.isActive(soundItem->_waveFile)) {
 			_sounds.remove(soundItem);
 			delete soundItem;
 			break;
@@ -145,7 +155,7 @@ int CSound::playSound(const CString &name, CProximity &prox) {
 		return -1;
 
 	prox._field6C = waveFile->fn1();
-	fn4(waveFile, prox._field60);
+	activateSound(waveFile, prox._freeSoundFlag);
 
 	return _soundManager.playSound(*waveFile, prox);
 }
@@ -192,7 +202,7 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 		return -1;
 
 	prox._field6C = waveFile->fn1();
-	fn4(waveFile, prox._field60);
+	activateSound(waveFile, prox._freeSoundFlag);
 
 	return _soundManager.playSound(*waveFile, prox);
 }

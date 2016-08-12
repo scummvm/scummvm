@@ -58,7 +58,7 @@ public:
 	int _field54;
 	int _field58;
 	int _field5C;
-	int _field60;
+	bool _freeSoundFlag;
 	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;
 	int _field6C;

@@ -41,15 +41,15 @@ public:
 	CWaveFile *_waveFile;
 	File *_dialogueFileHandle;
 	int _speechId;
-	int _field24;
-	int _field28;
+	bool _freeFlag;
+	bool _active;
 public:
 	CSoundItem() : ListItem(), _waveFile(nullptr), _dialogueFileHandle(nullptr),
-		_speechId(0), _field24(0), _field28(0) {}
+		_speechId(0), _freeFlag(false), _active(false) {}
 	CSoundItem(const CString &name) : ListItem(), _name(name), _waveFile(nullptr),
-		_dialogueFileHandle(nullptr), _speechId(0), _field24(0), _field28(0) {}
+		_dialogueFileHandle(nullptr), _speechId(0), _freeFlag(false), _active(false) {}
 	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
-		_dialogueFileHandle(dialogueFile), _speechId(speechId), _field24(0), _field28(0) {}
+		_dialogueFileHandle(dialogueFile), _speechId(speechId), _freeFlag(false), _active(false) {}
 };
 
 class CSoundItemList : public List<CSoundItem> {
@@ -123,7 +123,10 @@ public:
 	 */
 	void setVolume(uint handle, uint volume, uint seconds);
 
-	void fn4(CWaveFile *waveFile, int val);
+	/**
+	 * Flags a sound about to be played as activated
+	 */
+	void activateSound(CWaveFile *waveFile, bool freeFlag);
 
 	/**
 	 * Stops any sounds attached to a given channel

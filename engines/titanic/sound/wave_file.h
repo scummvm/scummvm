@@ -37,7 +37,7 @@ private:
 	uint _size;
 public:
 	QSoundManager *_owner;
-	Audio::AudioStream *_stream;
+	Audio::SeekableAudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
 	Audio::Mixer::SoundType _soundType;
 public:

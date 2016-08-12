@@ -177,12 +177,13 @@ class QMixer {
 		CWaveFile *_waveFile;
 		Audio::SoundHandle _soundHandle;
 		LPQMIXDONECALLBACK _callback;
+		int _loops;
 		void *_userData;
 		SoundEntry() : _started(false), _waveFile(nullptr), _callback(nullptr),
-			_userData(nullptr) {}
+			_loops(0), _userData(nullptr) {}
 
-		SoundEntry(CWaveFile *waveFile, LPQMIXDONECALLBACK callback, void *userData) :
-			_started(false), _waveFile(waveFile), _callback(callback), _userData(userData) {}
+		SoundEntry(CWaveFile *waveFile, LPQMIXDONECALLBACK callback, int loops, void *userData) :
+			_started(false), _waveFile(waveFile), _callback(callback), _loops(loops), _userData(userData) {}
 	};
 	struct ChannelEntry {
 		Common::List<SoundEntry> _sounds;

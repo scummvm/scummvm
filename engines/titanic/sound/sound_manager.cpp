@@ -32,7 +32,7 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 	_masterPercent(75.0), _parrotPercent(75.0), _handleCtr(1) {
 }
 
-uint CSoundManager::getModeVolume(int mode) {
+double CSoundManager::getModeVolume(int mode) {
 	switch (mode) {
 	case -1:
 		return _masterPercent;
@@ -414,7 +414,7 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 		return slot._handle;
 	} else {
 		_sounds.flushChannel(waveFile, iChannel);
-		if (prox._field60)
+		if (prox._freeSoundFlag)
 			delete waveFile;
 		return 0;
 	}

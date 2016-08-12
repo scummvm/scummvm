@@ -118,7 +118,7 @@ int QMixer::qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *waveFile, int l
 	}
 
 	// Add the sound to the channel
-	channel._sounds.push_back(SoundEntry(waveFile, params.callback, params.dwUser));
+	channel._sounds.push_back(SoundEntry(waveFile, params.callback, loops, params.dwUser));
 	qsWaveMixPump();
 
 	return 0;
@@ -138,9 +138,21 @@ void QMixer::qsWaveMixPump() {
 		if (!channel._sounds.empty()) {
 			SoundEntry &sound = channel._sounds.front();
 			if (sound._started && !_mixer->isSoundHandleActive(sound._soundHandle)) {
-				if (sound._callback)
-					sound._callback(iChannel, sound._waveFile, sound._userData);
-				channel._sounds.erase(channel._sounds.begin());
+				if (sound._loops == -1 || sound._loops-- > 0) {
+					// Need to loop the sound again
+					sound._waveFile->_stream->rewind();
+					_mixer->playStream(sound._waveFile->_soundType,
+						&sound._soundHandle, sound._waveFile->_stream,
+						-1, 0xff, 0, DisposeAfterUse::NO);
+				} else {
+					// Sound is finished
+					if (sound._callback)
+						// Call the callback to signal end
+						sound._callback(iChannel, sound._waveFile, sound._userData);
+
+					// Remove sound record from channel
+					channel._sounds.erase(channel._sounds.begin());
+				}
 			}
 		}
 
@@ -150,7 +162,8 @@ void QMixer::qsWaveMixPump() {
 			SoundEntry &sound = channel._sounds.front();
 			if (!sound._started) {
 				_mixer->playStream(sound._waveFile->_soundType,
-					&sound._soundHandle, sound._waveFile->_stream);
+					&sound._soundHandle, sound._waveFile->_stream,
+					-1, 0xff, 0, DisposeAfterUse::NO);
 				sound._started = true;
 			}
 		}
