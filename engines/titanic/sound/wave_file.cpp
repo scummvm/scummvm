@@ -29,11 +29,11 @@
 namespace Titanic {
 
 CWaveFile::CWaveFile() : _owner(nullptr), _stream(nullptr),
-		_soundType(Audio::Mixer::SoundType::kPlainSoundType) {
+		_soundType(Audio::Mixer::kPlainSoundType) {
 }
 
 CWaveFile::CWaveFile(QSoundManager *owner) : _owner(owner), _stream(nullptr),
-		_soundType(Audio::Mixer::SoundType::kPlainSoundType) {
+		_soundType(Audio::Mixer::kPlainSoundType) {
 }
 
 CWaveFile::~CWaveFile() {
@@ -58,7 +58,7 @@ bool CWaveFile::loadSound(const CString &name) {
 	Common::SeekableReadStream *stream = file.readStream();
 	_size = stream->size();
 	_stream = Audio::makeWAVStream(stream->readStream(_size), DisposeAfterUse::YES);
-	_soundType = Audio::Mixer::SoundType::kSFXSoundType;
+	_soundType = Audio::Mixer::kSFXSoundType;
 
 	return true;
 }
@@ -74,7 +74,7 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 	_size = res->_size;
 	_stream = Audio::makeWAVStream(new Common::MemoryReadStream(data, _size, DisposeAfterUse::YES),
 		DisposeAfterUse::YES);
-	_soundType = Audio::Mixer::SoundType::kSpeechSoundType;
+	_soundType = Audio::Mixer::kSpeechSoundType;
 
 	return true;
 }
@@ -89,7 +89,7 @@ bool CWaveFile::loadMusic(const CString &name) {
 	Common::SeekableReadStream *stream = file.readStream();
 	_size = stream->size();
 	_stream = Audio::makeWAVStream(stream->readStream(_size), DisposeAfterUse::YES);
-	_soundType = Audio::Mixer::SoundType::kMusicSoundType;
+	_soundType = Audio::Mixer::kMusicSoundType;
 
 	return true;
 }

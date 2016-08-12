@@ -157,7 +157,7 @@ struct QMIXPLAYPARAMS {
 
 	QMIXPLAYPARAMS() : dwSize(36), lpImage(nullptr), hwndNotify(0), callback(nullptr),
 		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0), 
-		lpChannelParams(nullptr), _soundType(Audio::Mixer::SoundType::kPlainSoundType)  {}
+		lpChannelParams(nullptr), _soundType(Audio::Mixer::kPlainSoundType)  {}
 };
 
 /**
