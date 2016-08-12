@@ -164,18 +164,16 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 
 
 void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String desc) {
-	warning(false, "DUMMY CODE in f433_processCommand140_saveGame, saveAndPlayChoice is always 0");
-	int16 saveAndPlayChoice = 0;
 	char *message = nullptr;
 
 	_menuMan->f456_drawDisabledMenu();
 	_eventMan->f78_showMouse();
 
-	// do {
-	//		ask the player what he wants
-	// while 
+	// TODO: localization
+	_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
+	int16 saveAndPlayChoice = _dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 
-	// F0427_DIALOG_Draw(0, G0551_pc_SAVINGGAME, 0, 0, 0, 0, false, false, false);
+	_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 
 	uint16 champHandObjWeight = 0;
 	if (!_championMan->_g415_leaderEmptyHanded) {
