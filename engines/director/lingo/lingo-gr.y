@@ -500,7 +500,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		begin argdef nl argstore stmtlist 		{
 			g_lingo->codeConst(0); // Push fake value on stack
 			g_lingo->code1(g_lingo->c_procret);
-			g_lingo->define(*$2, $4, $5, &g_lingo->_currentFactory);
+			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;
 argdef:  /* nothing */ 		{ $$ = 0; }
 	| ID					{ g_lingo->codeArg($1); $$ = 1; }
