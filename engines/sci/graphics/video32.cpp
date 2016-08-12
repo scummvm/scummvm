@@ -371,7 +371,25 @@ void AVIPlayer::renderFrame() const {
 			return;
 		}
 
-		bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
+		// KQ7 1.51 encodes videos with palette entry 0 as white, which makes
+		// the area around the video turn white too, since it is coded to use
+		// palette entry 0. This happens to work in the original game because
+		// the video is rendered by VfW, not in the engine itself. To fix this,
+		// we just modify the incoming pixel data from the video so if a pixel
+		// is using entry 0, we change it to use entry 255, which is guaranteed
+		// to always be white
+		if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
+			uint8 *target = bitmap.getPixels();
+			uint8 *source = (uint8 *)surface->getPixels();
+			uint8 *end = (uint8 *)surface->getPixels() + surface->w * surface->h;
+
+			while (source != end) {
+				uint8 value = *source++;
+				*target++ = value == 0 ? 255 : value;
+			}
+		} else {
+			bitmap.getBuffer().copyRectToSurface(*surface, 0, 0, Common::Rect(surface->w, surface->h));
+		}
 
 		const bool dirtyPalette = _decoder->hasDirtyPalette();
 		if (dirtyPalette) {
@@ -383,6 +401,9 @@ void AVIPlayer::renderFrame() const {
 				palette.colors[i].b = *rawPalette++;
 				palette.colors[i].used = true;
 			}
+
+			// Prevent KQ7 1.51 from setting entry 0 to white
+			palette.colors[0].used = false;
 
 			g_sci->_gfxPalette32->submit(palette);
 		}
