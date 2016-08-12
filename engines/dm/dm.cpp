@@ -55,6 +55,7 @@
 #include "timeline.h"
 #include "projexpl.h"
 #include "dialog.h"
+#include <graphics/cursorman.h>
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -235,6 +236,7 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 
 void DMEngine::f22_delay(uint16 verticalBlank) {
 	for (uint16 i = 0; i < verticalBlank * 2; ++i) {
+		_eventMan->processInput();
 		_displayMan->updateScreen();
 		_system->delayMillis(10); // Google says most Amiga games had a refreshrate of 50 hz
 	}
