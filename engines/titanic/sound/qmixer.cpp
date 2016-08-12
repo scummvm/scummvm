@@ -138,7 +138,8 @@ void QMixer::qsWaveMixPump() {
 		if (!channel._sounds.empty()) {
 			SoundEntry &sound = channel._sounds.front();
 			if (sound._started && !_mixer->isSoundHandleActive(sound._soundHandle)) {
-				sound._callback(iChannel, sound._waveFile, sound._userData);
+				if (sound._callback)
+					sound._callback(iChannel, sound._waveFile, sound._userData);
 				channel._sounds.erase(channel._sounds.begin());
 			}
 		}

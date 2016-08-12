@@ -323,7 +323,7 @@ bool QSoundManager::isActive(const CWaveFile *waveFile) const {
 }
 
 void QSoundManager::waveMixPump() {
-
+	qsWaveMixPump();
 }
 
 uint QSoundManager::getLatency() const {
