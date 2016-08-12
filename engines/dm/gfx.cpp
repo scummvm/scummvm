@@ -3559,7 +3559,8 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				}
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, 0, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				f493_addDerivedBitmap(k0_DerivedBitmapViewport);
-				f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
+				warning(false, "DISABLED CODE: f480_releaseBlock in f115_cthulhu");
+				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 			} else {
 				if (rebirthExplosion) {
 					explosionCoordinates = g227_RebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
