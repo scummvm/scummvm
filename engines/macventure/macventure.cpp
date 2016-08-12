@@ -270,21 +270,13 @@ void MacVentureEngine::requestUnpause() {
 
 void MacVentureEngine::selectControl(ControlAction id) {
 	debugC(2, kMVDebugMain, "Select control %x", id);
-	_selectedControl = id;
-}
-
-void MacVentureEngine::activateCommand(ControlAction id) {
 	if (id == kClickToContinue) {
 		_clickToContinue = false;
 		_paused = true;
 		return;
 	}
-	if (id != _activeControl) {
-		if (_activeControl)
-			_activeControl = kNoCommand;
-		_activeControl = id;
-	}
-	debugC(2, kMVDebugMain, "Activating Command %x... Command %x is active", id, _activeControl);
+
+	_selectedControl = id;
 	refreshReady();
 }
 
@@ -408,7 +400,6 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 					setDeltaPoint(Common::Point(0, 0));
 					if (!_cmdReady) {
 						selectControl(kActivateObject);
-						_activeControl = kActivateObject;
 						_cmdReady = true;
 					}
 				} else {
@@ -426,7 +417,6 @@ void MacVentureEngine::handleObjectDrop(ObjID objID, Common::Point delta, ObjID 
 	_destObject = newParent;
 	setDeltaPoint(delta);
 	selectControl(kMoveObject);
-	activateCommand(kMoveObject);
 	refreshReady();
 	preparedToRun();
 }
@@ -655,16 +645,14 @@ void MacVentureEngine::playSounds(bool pause) {
 }
 
 void MacVentureEngine::updateControls() {
-	if (_activeControl)
-		_activeControl = kNoCommand;
+	_selectedControl = kNoCommand;
 	_gui->clearControls();
 	toggleExits();
 	resetVars();
 }
 
 void MacVentureEngine::resetVars() {
-	_selectedControl = kNoCommand;
-	_activeControl = kNoCommand;
+	selectControl(kNoCommand);
 	_currentSelection.clear();
 	_destObject = 0;
 	setDeltaPoint(Common::Point(0, 0));

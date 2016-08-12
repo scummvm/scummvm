@@ -1247,7 +1247,7 @@ bool Gui::processEvent(Common::Event &event) {
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
 		if (_engine->needsClickToContinue()) {
-			_engine->activateCommand(kClickToContinue);
+			_engine->selectControl(kClickToContinue);
 			return true;
 		}
 
@@ -1271,7 +1271,6 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 		}
 
 		_engine->selectControl(data.getData().refcon);
-		_engine->activateCommand(data.getData().refcon);
 		_engine->refreshReady();
 		_engine->preparedToRun();
 	}

@@ -201,7 +201,6 @@ public:
 	void requestQuit();
 	void requestUnpause();
 	void selectControl(ControlAction action);
-	void activateCommand(ControlAction id);
 	void refreshReady();
 	void preparedToRun();
 	void gameChanged();
@@ -344,7 +343,6 @@ private: // Attributes
 	// Selections
 	ObjID _destObject;
 	ControlAction _selectedControl;
-	ControlAction _activeControl;
 	Common::Array<ObjID> _currentSelection;
 	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
