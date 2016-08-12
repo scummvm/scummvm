@@ -630,8 +630,8 @@ static const yytype_uint16 yyrline[] =
      393,   394,   395,   396,   399,   400,   401,   402,   404,   405,
      408,   411,   414,   415,   416,   419,   420,   431,   432,   433,
      434,   437,   440,   445,   446,   449,   450,   453,   454,   457,
-     460,   490,   490,   496,   499,   499,   505,   506,   507,   508,
-     510,   514,   522,   523,   524
+     460,   490,   490,   496,   499,   499,   504,   505,   506,   507,
+     509,   513,   521,   522,   523
 };
 #endif
 
@@ -2473,39 +2473,38 @@ yyreduce:
   case 115:
 #line 500 "engines/director/lingo/lingo-gr.y"
     {
-			g_lingo->codeConst(0); // Push fake value on stack
-			g_lingo->code1(g_lingo->c_procret);
+			g_lingo->code1(STOP);
 			g_lingo->define(*(yyvsp[(2) - (8)].s), (yyvsp[(4) - (8)].code), (yyvsp[(5) - (8)].narg) + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; ;}
     break;
 
   case 116:
-#line 505 "engines/director/lingo/lingo-gr.y"
+#line 504 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = 0; ;}
     break;
 
   case 117:
-#line 506 "engines/director/lingo/lingo-gr.y"
+#line 505 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg((yyvsp[(1) - (1)].s)); (yyval.narg) = 1; ;}
     break;
 
   case 118:
-#line 507 "engines/director/lingo/lingo-gr.y"
+#line 506 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg((yyvsp[(3) - (3)].s)); (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
     break;
 
   case 119:
-#line 508 "engines/director/lingo/lingo-gr.y"
+#line 507 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArg((yyvsp[(4) - (4)].s)); (yyval.narg) = (yyvsp[(1) - (4)].narg) + 1; ;}
     break;
 
   case 120:
-#line 510 "engines/director/lingo/lingo-gr.y"
+#line 509 "engines/director/lingo/lingo-gr.y"
     { g_lingo->codeArgStore(); ;}
     break;
 
   case 121:
-#line 514 "engines/director/lingo/lingo-gr.y"
+#line 513 "engines/director/lingo/lingo-gr.y"
     {
 		g_lingo->code1(g_lingo->c_call);
 		g_lingo->codeString((yyvsp[(1) - (3)].s)->c_str());
@@ -2515,23 +2514,23 @@ yyreduce:
     break;
 
   case 122:
-#line 522 "engines/director/lingo/lingo-gr.y"
+#line 521 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = 0; ;}
     break;
 
   case 123:
-#line 523 "engines/director/lingo/lingo-gr.y"
+#line 522 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = 1; ;}
     break;
 
   case 124:
-#line 524 "engines/director/lingo/lingo-gr.y"
+#line 523 "engines/director/lingo/lingo-gr.y"
     { (yyval.narg) = (yyvsp[(1) - (3)].narg) + 1; ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 2535 "engines/director/lingo/lingo-gr.cpp"
+#line 2534 "engines/director/lingo/lingo-gr.cpp"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2745,6 +2744,6 @@ yyreturn:
 }
 
 
-#line 527 "engines/director/lingo/lingo-gr.y"
+#line 526 "engines/director/lingo/lingo-gr.y"
 
 
