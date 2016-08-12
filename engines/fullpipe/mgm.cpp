@@ -528,7 +528,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	debugC(2, kDebugPathfinding, "MGM::recalcOffsets(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
 
 	if (st1idx == st2idx) {
-		memset(&item->subItems[subIdx], 0, sizeof(item->subItems[subIdx]));
+		memset(item->subItems[subIdx], 0, sizeof(*(item->subItems[subIdx])));
 		return 0;
 	}
 
