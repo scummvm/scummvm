@@ -768,6 +768,16 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 	_savedScreenForOpenEntranceDoors = nullptr;
 }
 
+void DMEngine::f442_SARTEND_processCommand202_entranceDrawCredits() {
+	_eventMan->f78_showMouse();
+	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
+	_displayMan->f466_loadIntoBitmap(k5_creditsGraphicIndice, _displayMan->_g348_bitmapScreen);
+	_displayMan->f436_STARTEND_FadeToPalette(g19_PalCredits);
+	f22_delay(50);
+	_eventMan->f541_waitForMouseOrKeyActivity();
+	_g298_newGame = k202_modeEntranceDrawCredits;
+}
+
 void DMEngine::f446_STARTEND_fuseSequnce() {
 	int16 L1424_i_Multiple;
 #define AL1424_B_RemoveFluxcagesFromLoadChaosSquare L1424_i_Multiple
@@ -914,9 +924,9 @@ void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 	_eventMan->f357_discardAllInput();
 	_displayMan->updateScreen();
 	f22_delay(1);
-	_g313_gameTime++; /* BUG0_71 Some timings are too short on fast computers. 
+	_g313_gameTime++; /* BUG0_71 Some timings are too short on fast computers.
 					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
-	
+
 }
 
 } // End of namespace DM

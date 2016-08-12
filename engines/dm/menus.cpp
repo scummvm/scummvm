@@ -965,7 +965,7 @@ bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		2,  /* BRANDISH */
 		0,  /* THROW */
 		2}; /* FUSE */
-	unsigned char G0497_auc_Graphic560_ActionExperienceGain[44] = {
+	static unsigned char G0497_auc_Graphic560_ActionExperienceGain[44] = {
 		0,  /* N */
 		8,  /* BLOCK */
 		10, /* CHOP */
