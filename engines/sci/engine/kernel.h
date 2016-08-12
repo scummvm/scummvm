@@ -450,6 +450,17 @@ reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv);
 
+reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWin(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinClose(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinGetDuration(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv);
+
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);

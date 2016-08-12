@@ -61,33 +61,15 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
 
-	videoState.fileName.toLowercase();
-	bool isVMD = videoState.fileName.hasSuffix(".vmd");
-
-	if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled) || !isVMD)) {
+	if (screenWidth == 640 && width <= 320 && height <= 240) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
 		scaleBuffer = new byte[width * height * bytesPerPixel];
 	}
 
-	uint16 x, y;
-
-	// Sanity check...
-	if (videoState.x > 0 && videoState.y > 0 && isVMD) {
-		x = videoState.x;
-		y = videoState.y;
-
-		if (x + width > screenWidth || y + height > screenHeight) {
-			// Happens in the Lighthouse demo
-			warning("VMD video won't fit on screen, centering it instead");
-			x = (screenWidth - width) / 2;
-			y = (screenHeight - height) / 2;
-		}
-	} else {
-		x = (screenWidth - width) / 2;
-		y = (screenHeight - height) / 2;
-	}
+	uint16 x = (screenWidth - width) / 2;
+	uint16 y = (screenHeight - height) / 2;
 
 	bool skipVideo = false;
 	EngineState *s = g_sci->getEngineState();
@@ -181,16 +163,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		// TODO: This appears to be some sort of subop. case 0 contains the string
 		// for the video, so we'll just play it from there for now.
 
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
-			// SCI2.1 always has argv[0] as 1, the rest of the arguments seem to
-			// follow SCI1.1/2.
-			if (argv[0].toUint16() != 1)
-				error("SCI2.1 kShowMovie argv[0] not 1");
-			argv++;
-			argc--;
-		}
-#endif
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
@@ -243,50 +215,100 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 }
 
 #ifdef ENABLE_SCI32
+reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv) {
+	Common::String fileName = s->_segMan->getString(argv[0]);
+	const int16 numTicks = argv[1].toSint16();
+	const int16 x = argc > 3 ? argv[2].toSint16() : 0;
+	const int16 y = argc > 3 ? argv[3].toSint16() : 0;
 
-reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
-	int16 subop = argv[0].toUint16();
-
-	switch (subop) {
-	case 0: { // init
-		int id = argv[1].toUint16();
-		reg_t obj = argv[2];
-		int16 flag = argv[3].toSint16();
-		int16 x = argv[4].toUint16();
-		int16 y = argv[5].toUint16();
-		warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-		g_sci->_robotDecoder->load(id);
-		g_sci->_robotDecoder->start();
-		g_sci->_robotDecoder->setPos(x, y);
-		}
-		break;
-	case 1:	// LSL6 hires (startup)
-		// TODO
-		return NULL_REG;	// an integer is expected
-	case 4: {	// start - we don't really have a use for this one
-			//int id = argv[1].toUint16();
-			//warning("kRobot(start), id %d", id);
-		}
-		break;
-	case 7:	// unknown, called e.g. by Phantasmagoria
-		warning("kRobot(%d)", subop);
-		break;
-	case 8: // sync
-		//if (true) {	// debug: automatically skip all robot videos
-		if (g_sci->_robotDecoder->endOfVideo()) {
-			g_sci->_robotDecoder->close();
-			// Signal the engine scripts that the video is done
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), SIGNAL_REG);
-		} else {
-			writeSelector(s->_segMan, argv[1], SELECTOR(signal), NULL_REG);
-		}
-		break;
-	default:
-		warning("kRobot(%d)", subop);
-		break;
-	}
+	g_sci->_video32->getSEQPlayer().play(fileName, numTicks, x, y);
 
 	return s->r_acc;
+}
+
+reg_t kShowMovieWin(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv) {
+	// SCI2.1 adds a movie ID to the call, but the movie ID is broken,
+	// so just ignore it
+	if (getSciVersion() > SCI_VERSION_2) {
+		++argv;
+		--argc;
+	}
+
+	const Common::String fileName = s->_segMan->getString(argv[0]);
+	return make_reg(0, g_sci->_video32->getAVIPlayer().open(fileName));
+}
+
+reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv) {
+	// SCI2.1 adds a movie ID to the call, but the movie ID is broken,
+	// so just ignore it
+	if (getSciVersion() > SCI_VERSION_2) {
+		++argv;
+		--argc;
+	}
+
+	const int16 x = argv[0].toSint16();
+	const int16 y = argv[1].toSint16();
+	const int16 width = argc > 3 ? argv[2].toSint16() : 0;
+	const int16 height = argc > 3 ? argv[3].toSint16() : 0;
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init1x(x, y, width, height));
+}
+
+reg_t kShowMovieWinPlay(EngineState *s, int argc, reg_t *argv) {
+	if (getSciVersion() == SCI_VERSION_2) {
+		AVIPlayer::EventFlags flags = (AVIPlayer::EventFlags)argv[0].toUint16();
+		return make_reg(0, g_sci->_video32->getAVIPlayer().playUntilEvent(flags));
+	} else {
+		// argv[0] is a broken movie ID
+		const int16 from = argc > 2 ? argv[1].toSint16() : 0;
+		const int16 to = argc > 2 ? argv[2].toSint16() : 0;
+		const int16 showStyle = argc > 3 ? argv[3].toSint16() : 0;
+		const bool cue = argc > 4 ? (bool)argv[4].toSint16() : false;
+		return make_reg(0, g_sci->_video32->getAVIPlayer().play(from, to, showStyle, cue));
+	}
+}
+
+reg_t kShowMovieWinClose(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getAVIPlayer().close());
+}
+
+reg_t kShowMovieWinGetDuration(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_video32->getAVIPlayer().getDuration());
+}
+
+reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv) {
+	// SCI2.1 adds a movie ID to the call, but the movie ID is broken,
+	// so just ignore it
+	if (getSciVersion() > SCI_VERSION_2) {
+		++argv;
+		--argc;
+	}
+
+	const uint16 frameNo = argv[0].toUint16();
+	return make_reg(0, g_sci->_video32->getAVIPlayer().cue(frameNo));
+}
+
+reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
+	const int defaultFlags =
+		AVIPlayer::kEventFlagEnd |
+		AVIPlayer::kEventFlagEscapeKey;
+
+	// argv[0] is the movie number, which is not used by this method
+	const AVIPlayer::EventFlags flags = (AVIPlayer::EventFlags)(argc > 1 ? argv[1].toUint16() : defaultFlags);
+
+	return make_reg(0, g_sci->_video32->getAVIPlayer().playUntilEvent(flags));
+}
+
+reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv) {
+	// argv[0] is a broken movie ID
+	const int16 x = argv[1].toSint16();
+	const int16 y = argv[2].toSint16();
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init2x(x, y));
 }
 
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
