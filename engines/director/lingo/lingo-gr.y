@@ -77,7 +77,7 @@ void yyerror(char *s) {
 }
 
 %token UNARY
-%token CASTREF VOID VAR POINT RECT ARRAY SYMBOL
+%token CASTREF VOID VAR POINT RECT ARRAY SYMBOL OBJECT
 %token<i> INT
 %token<e> THEENTITY THEENTITYWITHID
 %token<f> FLOAT

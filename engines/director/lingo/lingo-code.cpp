@@ -728,6 +728,14 @@ void Lingo::call(Common::String &name, int nargs) {
 	Symbol *sym;
 
 	if (!g_lingo->_handlers.contains(name)) {
+		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
+		if (s && s->type == OBJECT) {
+			debug(3, "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
+			name = *s->u.s;
+		}
+	}
+
+	if (!g_lingo->_handlers.contains(name)) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
 		drop = true;
 	} else {

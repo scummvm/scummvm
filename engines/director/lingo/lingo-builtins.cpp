@@ -702,6 +702,16 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 	s = name + "-" + *method.u.s;
 
 	call(s, nargs);
+
+	if (method.u.s->compareToIgnoreCase("mNew")) {
+		warning("Got mNew method");
+		Datum d;
+
+		d.type = OBJECT;
+		d.u.s = new Common::String(name);
+
+		g_lingo->push(d);
+	}
 }
 
 } // End of namespace Director
