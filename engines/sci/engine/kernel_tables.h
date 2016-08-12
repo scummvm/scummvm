@@ -423,27 +423,6 @@ static const SciKernelMapSubEntry kList_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
-//    version,         subId, function-mapping,                    signature,              workarounds
-static const SciKernelMapSubEntry kShowMovieWin_subops[] = {
-	{ SIG_SCI2,            0, MAP_CALL(ShowMovieWinOpen),          "r",                    NULL },
-	{ SIG_SCI2,            1, MAP_CALL(ShowMovieWinInit),          "ii(ii)",               NULL },
-	{ SIG_SCI2,            2, MAP_CALL(ShowMovieWinPlay),          "i",                    NULL },
-	{ SIG_SCI2,            6, MAP_CALL(ShowMovieWinClose),         "",                     NULL },
-	{ SIG_SINCE_SCI21,     0, MAP_CALL(ShowMovieWinOpen),          "ir",                   NULL },
-	{ SIG_SINCE_SCI21,     1, MAP_CALL(ShowMovieWinInit),          "iii(ii)",              NULL },
-	{ SIG_SINCE_SCI21,     2, MAP_CALL(ShowMovieWinPlay),          "i(ii)(i)(i)",          NULL },
-	{ SIG_SINCE_SCI21,     6, MAP_CALL(ShowMovieWinClose),         "i",                    NULL },
-	// Since movies are rendered within the graphics engine in ScummVM,
-	// it is not necessary to copy the palette from SCI to MCI, so this
-	// can be a no-op
-	{ SIG_SINCE_SCI21,     7, MAP_EMPTY(ShowMovieWinSetPalette),   "i",                    NULL },
-	{ SIG_SINCE_SCI21,     8, MAP_CALL(ShowMovieWinGetDuration),   "i",                    NULL },
-	{ SIG_SINCE_SCI21,    11, MAP_CALL(ShowMovieWinCue),           "ii",                   NULL },
-	{ SIG_SINCE_SCI21,    14, MAP_CALL(ShowMovieWinPlayUntilEvent), "i(i)",                NULL },
-	{ SIG_SINCE_SCI21,    15, MAP_CALL(ShowMovieWinInitDouble),    "iii",                  NULL },
-	SCI_SUBOPENTRY_TERMINATOR
-};
-
 // There are a lot of subops to PlayVMD, but only a few of them are ever
 // actually used by games
 //    version,         subId, function-mapping,                    signature,              workarounds
@@ -709,11 +688,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
-	{ MAP_CALL(ShowMovie),         SIG_SCI16, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
-#ifdef ENABLE_SCI32
-	{ "ShowMovie", kShowMovie32,   SIG_SCI32, SIGFOR_DOS,    "ri(i)(i)",              NULL,            NULL },
-	{ "ShowMovie", kShowMovieWin,  SIG_SCI32, SIGFOR_WIN,    "(.*)",                  kShowMovieWin_subops, NULL },
-#endif
+	{ MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
@@ -845,7 +820,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(List),              SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kList_subops,    NULL },
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
 	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  kPlayVMD_subops, NULL },
-	{ MAP_EMPTY(Robot),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
 	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
 	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii(i)(i)",            NULL,            NULL },
