@@ -3645,8 +3645,7 @@ bool DisplayMan::f491_isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 		_g638_derivedBitmaps[derivedBitmapIndex] = new byte[_g639_derivedBitmapByteCount[derivedBitmapIndex] * 2];
 		return false;
 	} else {
-		warning(false, "f491_isDerivedBitmapInCache always returns false");
-		return false;
+		return true;
 	}
 }
 
