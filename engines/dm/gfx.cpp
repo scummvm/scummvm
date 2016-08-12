@@ -1130,9 +1130,12 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 	uint16 destWidth = destByteWidth * 2;
 	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._x2 + 1 - box._x1; ++x) { // + 1 for inclusive boundaries
-			byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
-			if (srcPixel != transparent)
-				destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
+			if (srcX + x < srcWidth && y + srcY < srcHeight
+				&& box._x1 + x < destWidth && y + box._y1 < destHight) {
+				byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
+				if (srcPixel != transparent)
+					destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
+			}
 		}
 }
 
