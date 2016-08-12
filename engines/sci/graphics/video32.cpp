@@ -161,6 +161,9 @@ AVIPlayer::IOStatus AVIPlayer::open(const Common::String &fileName) {
 }
 
 AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width, int16 height) {
+	if (_status == kAVINotOpen) {
+		return kIOFileNotFound;
+	}
 
 	_pixelDouble = false;
 
@@ -189,7 +192,7 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 	// SCI2.1mid uses init2x to draw a pixel-doubled AVI, but SCI2 has only the
 	// one play routine which automatically pixel-doubles in hi-res mode
 	if (getSciVersion() == SCI_VERSION_2) {
-		// NOTE: This is somewhat of a hack; credits.avi from GK1 is not
+		// This is somewhat of a hack; credits.avi from GK1 is not
 		// rendered correctly in SSCI because it is a 640x480 video, but the
 		// game script gives the wrong dimensions. Since this is the only
 		// high-resolution AVI ever used, just set the draw rectangle to draw
@@ -216,6 +219,10 @@ AVIPlayer::IOStatus AVIPlayer::init1x(const int16 x, const int16 y, int16 width,
 }
 
 AVIPlayer::IOStatus AVIPlayer::init2x(const int16 x, const int16 y) {
+	if (_status == kAVINotOpen) {
+		return kIOFileNotFound;
+	}
+
 	_drawRect.left = x;
 	_drawRect.top = y;
 	_drawRect.right = x + _decoder->getWidth() * 2;
@@ -283,6 +290,10 @@ void AVIPlayer::init() {
 }
 
 AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int16, const bool async) {
+	if (_status == kAVINotOpen) {
+		return kIOFileNotFound;
+	}
+
 	if (from >= 0 && to > 0 && from <= to) {
 		_decoder->seekToFrame(from);
 		_decoder->setEndFrame(to);
