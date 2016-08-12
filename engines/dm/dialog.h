@@ -30,6 +30,18 @@
 
 namespace DM {
 
+#define k0_DIALOG_SET_VIEWPORT 0
+#define k1_DIALOG_SET_SCREEN   1
+#define k2_DIALOG_SET_UNKNOWN  2
+#define k1_ONE_CHOICE          1
+#define k2_TWO_CHOICES         2
+#define k4_FOUR_CHOICES        4
+#define k0_DIALOG_CHOICE_NONE  0
+#define k1_DIALOG_CHOICE_1     1
+#define k2_DIALOG_CHOICE_2     2
+#define k3_DIALOG_CHOICE_3     3
+#define k4_DIALOG_CHOICE_4     4
+
 class DialogMan {
 	DMEngine *_vm;
 public:
@@ -39,6 +51,7 @@ public:
 						 char *choice3, char *choice4, bool screenDialog, bool clearScreen, bool fading); // @ F0427_DIALOG_Draw
 	void f425_printCenteredChoice(byte *bitmap, char *str, int16 posX, int16 posY); // @ F0425_DIALOG_PrintCenteredChoice
 	bool f426_isMessageOnTwoLines(char *str, char *part1, char *part2); // @ F0426_DIALOG_IsMessageOnTwoLines
+	int16 f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driveType, int16 automaticChoiceIfFlopyInDrive); // @ F0424_DIALOG_GetChoice
 };
 
 }

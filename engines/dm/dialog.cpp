@@ -39,8 +39,8 @@ DialogMan::DialogMan(DMEngine* vm) : _vm(vm) {
 
 void DialogMan::f427_dialogDraw(char* msg1, char* msg2, char* choice1, char* choice2, char* choice3, char* choice4, bool screenDialog, bool clearScreen, bool fading) {
 	static Box constBox1 = Box(0, 223, 101, 125);
-	static Box constBox2 = Box(0, 223,  76, 100);
-	static Box constBox3 = Box(0, 223,  51,  75);
+	static Box constBox2 = Box(0, 223, 76, 100);
+	static Box constBox3 = Box(0, 223, 51, 75);
 	static Box dialog2ChoicesPatch = Box(102, 122, 89, 125);
 	static Box dialog4ChoicesPatch = Box(102, 122, 62, 97);
 
@@ -137,6 +137,7 @@ void DialogMan::f427_dialogDraw(char* msg1, char* msg2, char* choice1, char* cho
 		_vm->_displayMan->f436_STARTEND_FadeToPalette(_vm->_displayMan->_g347_paletteTopAndBottomScreen);
 
 	_vm->_displayMan->_g297_drawFloorAndCeilingRequested = true;
+	_vm->_displayMan->updateScreen();
 }
 
 void DialogMan::f425_printCenteredChoice(byte* bitmap, char* str, int16 posX, int16 posY) {
@@ -159,5 +160,109 @@ bool DialogMan::f426_isMessageOnTwoLines(char* str, char* part1, char* part2) {
 	part1[splitPosition] = '\0';
 	strcpy(part2, &part1[splitPosition + 1]);
 	return true;
+}
+
+int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driveType, int16 automaticChoiceIfFlopyInDrive) {
+	MouseInput* L1298_ps_PrimaryMouseInputBackup;
+	MouseInput* L1299_ps_SecondaryMouseInputBackup;
+	KeyboardInput* L1300_ps_PrimaryKeyboardInputBackup;
+	KeyboardInput* L1301_ps_SecondaryKeyboardInputBackup;
+	Box L1303_s_BoxB;
+	Box L1304_s_BoxA;
+
+	_vm->_eventMan->f77_hideMouse();
+	L1298_ps_PrimaryMouseInputBackup = _vm->_eventMan->_g441_primaryMouseInput;
+	L1299_ps_SecondaryMouseInputBackup = _vm->_eventMan->_g442_secondaryMouseInput;
+	L1300_ps_PrimaryKeyboardInputBackup = _vm->_eventMan->_g443_primaryKeyboardInput;
+	L1301_ps_SecondaryKeyboardInputBackup = _vm->_eventMan->_g444_secondaryKeyboardInput;
+	_vm->_eventMan->_g442_secondaryMouseInput = 0;
+	_vm->_eventMan->_g443_primaryKeyboardInput = nullptr;
+	_vm->_eventMan->_g444_secondaryKeyboardInput = nullptr;
+	_vm->_eventMan->_g441_primaryMouseInput = g480_PrimaryMouseInput_DialogSets[dialogSetIndex][choiceCount - 1];
+	_vm->_eventMan->f357_discardAllInput();
+	_g335_selectedDialogChoice = 99;
+	do {
+		Common::Event key;
+		Common::EventType eventType = _vm->_eventMan->processInput(&key);
+		_vm->_eventMan->f380_processCommandQueue();
+		_vm->_displayMan->updateScreen();
+		_vm->f22_delay(1);
+		if ((_g335_selectedDialogChoice == 99) && (choiceCount == 1) 
+			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
+			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
+			_g335_selectedDialogChoice = k1_DIALOG_CHOICE_1;
+		}
+	} while (_g335_selectedDialogChoice == 99);
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	L1304_s_BoxA = _vm->_eventMan->_g441_primaryMouseInput[_g335_selectedDialogChoice - 1]._hitbox;
+	L1304_s_BoxA._x1 -= 3;
+	L1304_s_BoxA._x2 += 3;
+	L1304_s_BoxA._y1 -= 3;
+	L1304_s_BoxA._y2 += 4;
+	_vm->_eventMan->f78_showMouse();
+	_vm->_displayMan->_g297_drawFloorAndCeilingRequested = true;
+	L1303_s_BoxB._x1 = 0;
+	L1303_s_BoxB._y1 = 0;
+	L1303_s_BoxB._y2 = L1304_s_BoxA._y2 - L1304_s_BoxA._y1 + 3;
+	L1303_s_BoxB._x2 = L1304_s_BoxA._x2 - L1304_s_BoxA._x1 + 3;
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_g296_bitmapViewport,
+										L1303_s_BoxB, L1304_s_BoxA._x1, L1304_s_BoxA._y1, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 25);
+	_vm->f22_delay(1);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._y2 = L1303_s_BoxB._y1;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k5_ColorLightBrown);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._x2 = L1303_s_BoxB._x1;
+	L1303_s_BoxB._y2--;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k5_ColorLightBrown);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._y2--;
+	L1303_s_BoxB._y1 = L1303_s_BoxB._y2;
+	L1303_s_BoxB._x1 -= 2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._x1 = L1303_s_BoxB._x2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
+	_vm->f22_delay(5);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._y1++;
+	L1303_s_BoxB._y2 = L1303_s_BoxB._y1;
+	L1303_s_BoxB._x2 -= 2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k5_ColorLightBrown);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._x1++;
+	L1303_s_BoxB._x2 = L1303_s_BoxB._x1;
+	L1303_s_BoxB._y2--;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k5_ColorLightBrown);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._x2--;
+	L1303_s_BoxB._x1 = L1303_s_BoxB._x2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._y1 = L1303_s_BoxB._y2 = L1303_s_BoxB._y2 - 2;
+	L1303_s_BoxB._x1++;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._y1 = L1303_s_BoxB._y2 = L1303_s_BoxB._y2 + 2;
+	L1303_s_BoxB._x1--;
+	L1303_s_BoxB._x2 += 2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k13_ColorLightestGray);
+	L1303_s_BoxB = L1304_s_BoxA;
+	L1303_s_BoxB._x1 = L1303_s_BoxB._x2 = L1303_s_BoxB._x2 + 3;
+	L1303_s_BoxB._y2 += 2;
+	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k13_ColorLightestGray);
+	_vm->f22_delay(5);
+	L1304_s_BoxA._x2 += 3;
+	L1304_s_BoxA._y2 += 3;
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g348_bitmapScreen,
+										L1304_s_BoxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 25, k200_heightScreen);
+	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->_g441_primaryMouseInput = L1298_ps_PrimaryMouseInputBackup;
+	_vm->_eventMan->_g442_secondaryMouseInput = L1299_ps_SecondaryMouseInputBackup;
+	_vm->_eventMan->_g443_primaryKeyboardInput = L1300_ps_PrimaryKeyboardInputBackup;
+	_vm->_eventMan->_g444_secondaryKeyboardInput = L1301_ps_SecondaryKeyboardInputBackup;
+	_vm->_eventMan->f357_discardAllInput();
+	_vm->_eventMan->f78_showMouse();
+	return _g335_selectedDialogChoice;
 }
 }
