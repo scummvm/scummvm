@@ -23,16 +23,17 @@
 #ifndef SCI_GRAPHICS_VIDEO32_H
 #define SCI_GRAPHICS_VIDEO32_H
 
-#include "common/rect.h"              // for Rect
-#include "common/scummsys.h"          // for int16, uint8, int32
-#include "common/str.h"               // for String
-#include "sci/video/robot_decoder.h"  // for RobotDecoder
+#include "common/rect.h"          // for Rect
+#include "common/scummsys.h"      // for int16, uint8, uint16, int32
+#include "common/str.h"           // for String
+#include "sci/engine/vm_types.h"  // for reg_t
 
 namespace Video {
 class AdvancedVMDDecoder;
 class AVIDecoder;
 }
 namespace Sci {
+class EventManager;
 class Plane;
 class ScreenItem;
 class SegManager;

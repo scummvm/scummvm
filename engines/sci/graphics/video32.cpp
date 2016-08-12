@@ -20,37 +20,29 @@
  *
  */
 
-#include "audio/mixer.h"
-#include "common/config-manager.h"
-#include "sci/console.h"
-#include "sci/event.h"
-#include "sci/graphics/cursor.h"
-#include "sci/graphics/frameout.h"
-#include "sci/graphics/palette32.h"
-#include "sci/graphics/text32.h"
-#include "sci/graphics/video32.h"
-#include "audio/mixer.h"                 // for Audio::Mixer::kSFXSoundType
 #include "common/config-manager.h"       // for ConfMan
-#include "common/textconsole.h"          // for error, warning
-#include "common/system.h"
+#include "common/textconsole.h"          // for warning, error
+#include "common/util.h"                 // for ARRAYSIZE
+#include "common/system.h"               // for g_system
 #include "engine.h"                      // for Engine, g_engine
-#include "engines/util.h"
-#include "graphics/scaler/scalebit.h"
+#include "engines/util.h"                // for initGraphics
 #include "sci/console.h"                 // for Console
 #include "sci/engine/state.h"            // for EngineState
 #include "sci/engine/vm_types.h"         // for reg_t
 #include "sci/event.h"                   // for SciEvent, EventManager, SCI_...
-#include "sci/graphics/celobj32.h"       // for CelInfo32
+#include "sci/graphics/celobj32.h"       // for CelInfo32, ::kLowResX, ::kLo...
 #include "sci/graphics/cursor.h"         // for GfxCursor
+#include "sci/graphics/frameout.h"       // for GfxFrameout
 #include "sci/graphics/helpers.h"        // for Color, Palette
 #include "sci/graphics/palette32.h"      // for GfxPalette32
 #include "sci/graphics/plane32.h"        // for Plane, PlanePictureCodes::kP...
 #include "sci/graphics/screen_item32.h"  // for ScaleInfo, ScreenItem, Scale...
-#include "sci/graphics/text32.h"         // for BitmapResource
-#include "sci/video/seq_decoder.h"
 #include "sci/sci.h"                     // for SciEngine, g_sci, getSciVersion
-#include "video/avi_decoder.h"
-#include "video/coktel_decoder.h"
+#include "sci/graphics/video32.h"
+#include "sci/video/seq_decoder.h"       // for SEQDecoder
+#include "video/avi_decoder.h"           // for AVIDecoder
+#include "video/coktel_decoder.h"        // for AdvancedVMDDecoder
+namespace Graphics { struct Surface; }
 
 namespace Sci {
 
