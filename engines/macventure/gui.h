@@ -98,6 +98,8 @@ public:
 	Gui(MacVentureEngine *engine, Common::MacResManager *resman);
 	~Gui();
 
+	void reloadInternals();
+
 	void draw();
 	void drawMenu();
 	void drawTitle();
@@ -211,6 +213,7 @@ private: // Methods
 	void loadBorders(Graphics::MacWindow *target, MVWindowType type);
 	void loadBorder(Graphics::MacWindow *target, MVWindowType type, bool active);
 	void loadGraphics();
+	void clearAssets();
 
 	// Drawers
 	void drawWindows();
