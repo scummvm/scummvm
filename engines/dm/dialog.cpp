@@ -175,7 +175,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1299_ps_SecondaryMouseInputBackup = _vm->_eventMan->_g442_secondaryMouseInput;
 	L1300_ps_PrimaryKeyboardInputBackup = _vm->_eventMan->_g443_primaryKeyboardInput;
 	L1301_ps_SecondaryKeyboardInputBackup = _vm->_eventMan->_g444_secondaryKeyboardInput;
-	_vm->_eventMan->_g442_secondaryMouseInput = 0;
+	_vm->_eventMan->_g442_secondaryMouseInput = nullptr;
 	_vm->_eventMan->_g443_primaryKeyboardInput = nullptr;
 	_vm->_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	_vm->_eventMan->_g441_primaryMouseInput = g480_PrimaryMouseInput_DialogSets[dialogSetIndex][choiceCount - 1];
@@ -185,8 +185,8 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 		Common::Event key;
 		Common::EventType eventType = _vm->_eventMan->processInput(&key);
 		_vm->_eventMan->f380_processCommandQueue();
-		_vm->_displayMan->updateScreen();
 		_vm->f22_delay(1);
+		_vm->_displayMan->updateScreen();
 		if ((_g335_selectedDialogChoice == 99) && (choiceCount == 1) 
 			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
 			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
