@@ -23,9 +23,11 @@
 #ifndef SCI_GRAPHICS_CURSOR32_H
 #define SCI_GRAPHICS_CURSOR32_H
 
-#include "common/rect.h"
-#include "common/serializer.h"
-#include "sci/graphics/helpers.h"
+#include "common/rect.h"            // for Point, Rect
+#include "common/scummsys.h"        // for int16, byte, uint8
+#include "common/serializer.h"      // for Serializable, Serializer (ptr only)
+#include "sci/graphics/celobj32.h"  // for CelInfo32
+#include "sci/graphics/helpers.h"   // for GuiResourceId
 
 namespace Sci {
 

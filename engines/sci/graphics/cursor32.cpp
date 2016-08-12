@@ -20,11 +20,12 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/cursorman.h"
-#include "sci/graphics/celobj32.h"
+#include "common/rational.h"        // for Rational, operator*
+#include "common/system.h"          // for OSystem, g_system
+#include "graphics/cursorman.h"     // for CursorMan
+#include "sci/graphics/celobj32.h"  // for CelObjView, CelInfo32, Ratio
 #include "sci/graphics/cursor32.h"
-#include "sci/graphics/frameout.h"
+#include "sci/graphics/frameout.h"  // for GfxFrameout
 
 namespace Sci {
 
