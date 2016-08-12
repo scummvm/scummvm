@@ -30,13 +30,13 @@ BEGIN_MESSAGE_MAP(CBackground, CGameObject)
 	ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
-CBackground::CBackground() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldDC(0) {
+CBackground::CBackground() : CGameObject(), _startFrame(0), _endFrame(0), _fieldDC(0) {
 }
 
 void CBackground::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_startFrame, indent);
+	file->writeNumberLine(_endFrame, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_fieldDC, indent);
@@ -46,8 +46,8 @@ void CBackground::save(SimpleFile *file, int indent) {
 
 void CBackground::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	_startFrame = file->readNumber();
+	_endFrame = file->readNumber();
 	_string1 = file->readString();
 	_string2 = file->readString();
 	_fieldDC = file->readNumber();
@@ -58,9 +58,9 @@ void CBackground::load(SimpleFile *file) {
 bool CBackground::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
 	if (_fieldDC) {
-		playMovie(_fieldBC, _fieldC0, 16);
+		playMovie(_startFrame, _endFrame, 16);
 	} else {
-		playMovie(_fieldBC, _fieldC0, 0);
+		playMovie(_startFrame, _endFrame, 0);
 	}
 	return true;
 }

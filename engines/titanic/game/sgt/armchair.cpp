@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CArmchair, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CArmchair::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +38,50 @@ void CArmchair::save(SimpleFile *file, int indent) {
 void CArmchair::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CArmchair::TurnOn(CTurnOn *msg) {
+	if (_statics->_v8 == "Closed" && _statics->_v12 == "Closed") {
+		CVisibleMsg visibleMsg(false);
+		visibleMsg.execute("Deskchair");
+
+		if (_statics->_v9 == "Open") {
+			CActMsg actMsg("Squash");
+			actMsg.execute("Deskchair");
+			_startFrame = 22;
+			_endFrame = 31;
+		} else {
+			_startFrame = 0;
+			_endFrame = 10;
+		}
+
+		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playSound("b#0.wav");
+		_statics->_v8 = "Open";
+		_fieldE0 = 0;
+	}
+
+	return true;
+}
+
+bool CArmchair::TurnOff(CTurnOff *msg) {
+	if (_statics->_v8 == "Open") {
+		_statics->_v8 = "Closed";
+		_startFrame = 11;
+		_endFrame = 21;
+		_fieldE0 = 1;
+		playMovie(11, 21, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playSound("b#0.wav");
+	}
+
+	return true;
+}
+
+bool CArmchair::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_statics->_v8 == "Closed")
+		loadFrame(0);
+
+	return true;
 }
 
 } // End of namespace Titanic

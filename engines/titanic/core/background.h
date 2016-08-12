@@ -34,8 +34,8 @@ class CBackground : public CGameObject {
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 protected:
-	int _fieldBC;
-	int _fieldC0;
+	int _startFrame;
+	int _endFrame;
 	CString _string1;
 	CString _string2;
 	int _fieldDC;
