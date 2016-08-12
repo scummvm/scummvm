@@ -305,7 +305,7 @@ LABEL_38:
 			ani->changeStatics2(inter->_staticsId1);
 		}
 
-		int xpos = inter->_yOffs + obj->_ox;
+		int xpos = inter->_xOffs + obj->_ox;
 		int ypos = inter->_yOffs + obj->_oy;
 
 		obj->setPicAniInfo(&aniInfo);
