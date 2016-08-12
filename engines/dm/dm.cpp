@@ -235,7 +235,6 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 
 void DMEngine::f22_delay(uint16 verticalBlank) {
 	for (uint16 i = 0; i < verticalBlank * 2; ++i) {
-		_eventMan->f357_discardAllInput();
 		_displayMan->updateScreen();
 		_system->delayMillis(10); // Google says most Amiga games had a refreshrate of 50 hz
 	}
