@@ -32,11 +32,6 @@ namespace Titanic {
 
 class QSoundManager;
 
-enum SoundType {
-	SOUND_SFX = 0,
-	SOUND_SPEECH = 1
-};
-
 class CWaveFile {
 private:
 	uint _size;
@@ -44,7 +39,7 @@ public:
 	QSoundManager *_owner;
 	Audio::AudioStream *_stream;
 	Audio::SoundHandle _soundHandle;
-	SoundType _soundType;
+	Audio::Mixer::SoundType _soundType;
 public:
 	CWaveFile();
 	CWaveFile(QSoundManager *owner);
@@ -66,6 +61,11 @@ public:
 	 * Tries to load speech from a specified dialogue file
 	 */
 	bool loadSpeech(CDialogueFile *dialogueFile, int speechIndex);
+
+	/**
+	 * Tries to load the specified music wave file
+	 */
+	bool loadMusic(const CString &name);
 
 	/**
 	 * Returns true if the wave file has data loaded

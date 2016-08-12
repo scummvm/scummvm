@@ -28,7 +28,10 @@ QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
 }
 
 bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
-	// Not currently implemented in ScummVM
+	assert(_channels.empty());
+	assert(config.iChannels > 0 && config.iChannels < 256);
+	
+	_channels.resize(config.iChannels);
 	return true;
 }
 
@@ -48,6 +51,7 @@ int QMixer::qsWaveMixEnableChannel(int iChannel, uint flags, bool enabled) {
 
 void QMixer::qsWaveMixCloseSession() {
 	_mixer->stopAll();
+	_channels.clear();
 }
 
 void QMixer::qsWaveMixFreeWave(Audio::SoundHandle &handle) {
@@ -94,18 +98,62 @@ void QMixer::qsWaveMixSetSourceVelocity(int iChannel, uint flags, const QSVECTOR
 	// Not currently implemented in ScummVM
 }
 
-int QMixer::qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *mixWave, int loops, const QMIXPLAYPARAMS &params) {
-	// Not currently implemented in ScummVM
+int QMixer::qsWaveMixPlayEx(int iChannel, uint flags, CWaveFile *waveFile, int loops, const QMIXPLAYPARAMS &params) {
+	if (iChannel == -1) {
+		// Find a free channel
+		for (iChannel = 0; iChannel < (int)_channels.size(); ++iChannel) {
+			if (_channels[iChannel]._sounds.empty())
+				break;
+		}
+		assert(iChannel != (int)_channels.size());
+	}
+
+	// If the new sound replaces current ones, then clear the channel
+	ChannelEntry &channel = _channels[iChannel];
+	if (flags & QMIX_CLEARQUEUE) {
+		if (!channel._sounds.empty() && channel._sounds.front()._started)
+			_mixer->stopHandle(channel._sounds.front()._soundHandle);
+
+		channel._sounds.clear();
+	}
+
+	// Add the sound to the channel
+	channel._sounds.push_back(SoundEntry(waveFile, params.callback, params.dwUser));
+	qsWaveMixPump();
+
 	return 0;
 }
 
 bool QMixer::qsWaveMixIsChannelDone(int iChannel) const {
-	// Not currently implemented in ScummVM
-	return true;
+	return _channels[iChannel]._sounds.empty();
 }
 
 void QMixer::qsWaveMixPump() {
-	// TODO: Handle checking for done sounds, and calling their end functions
+	// Iterate through each of the channels
+	for (uint iChannel = 0; iChannel < _channels.size(); ++iChannel) {
+		ChannelEntry &channel = _channels[iChannel];
+
+		// If the playing sound on the channel is finished, then call
+		// the callback registered for it, and remove it from the list
+		if (!channel._sounds.empty()) {
+			SoundEntry &sound = channel._sounds.front();
+			if (sound._started && !_mixer->isSoundHandleActive(sound._soundHandle)) {
+				sound._callback(iChannel, sound._waveFile, sound._userData);
+				channel._sounds.erase(channel._sounds.begin());
+			}
+		}
+
+		// If there's an unstarted sound at the front of a channel's
+		// sound list, then start it playing
+		if (!channel._sounds.empty()) {
+			SoundEntry &sound = channel._sounds.front();
+			if (!sound._started) {
+				_mixer->playStream(sound._waveFile->_soundType,
+					&sound._soundHandle, sound._waveFile->_stream);
+				sound._started = true;
+			}
+		}
+	}
 }
 
 } // End of namespace Titanic z

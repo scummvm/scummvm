@@ -152,9 +152,12 @@ struct QMIXPLAYPARAMS {
 	int lEndLoop;
 	int lEnd;
 	const void *lpChannelParams;	// initialize with these parameters
+	// Properties introduced by ScummVM
+	Audio::Mixer::SoundType _soundType;
 
 	QMIXPLAYPARAMS() : dwSize(36), lpImage(nullptr), hwndNotify(0), callback(nullptr),
-		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0), lpChannelParams(nullptr) {}
+		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0), 
+		lpChannelParams(nullptr), _soundType(Audio::Mixer::SoundType::kPlainSoundType)  {}
 };
 
 /**
@@ -169,8 +172,24 @@ struct QMIXPLAYPARAMS {
  * currently ignored, and all sounds play at full volume.
  */
 class QMixer {
+	struct SoundEntry {
+		bool _started;
+		CWaveFile *_waveFile;
+		Audio::SoundHandle _soundHandle;
+		LPQMIXDONECALLBACK _callback;
+		void *_userData;
+		SoundEntry() : _started(false), _waveFile(nullptr), _callback(nullptr),
+			_userData(nullptr) {}
+
+		SoundEntry(CWaveFile *waveFile, LPQMIXDONECALLBACK callback, void *userData) :
+			_started(false), _waveFile(waveFile), _callback(callback), _userData(userData) {}
+	};
+	struct ChannelEntry {
+		Common::List<SoundEntry> _sounds;
+	};
 private:
 	Audio::Mixer *_mixer;
+	Common::Array<ChannelEntry> _channels;
 public:
 	QMixer(Audio::Mixer *mixer);
 	virtual ~QMixer() {}

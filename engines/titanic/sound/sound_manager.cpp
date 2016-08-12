@@ -143,7 +143,15 @@ CWaveFile *QSoundManager::loadSpeech(CDialogueFile *dialogueFile, int speechId) 
 }
 
 CWaveFile *QSoundManager::loadMusic(const CString &name) {
-	return loadSound(name);
+	CWaveFile *waveFile = new CWaveFile();
+
+	// Try to load the specified sound
+	if (!waveFile->loadMusic(name)) {
+		delete waveFile;
+		return nullptr;
+	}
+
+	return waveFile;
 }
 
 int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
