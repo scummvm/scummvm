@@ -673,7 +673,7 @@ T0444017:
 		_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
 	}
 	Box box(0, 319, 0, 199);
-	_displayMan->f132_blitToBitmap(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), _displayMan->_g348_bitmapScreen, box, 0, 0, 160, 160, kM1_ColorNoTransparency);
+	_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen);
 
 	_displayMan->f436_STARTEND_FadeToPalette(g19_PalCredits);
 	_eventMan->f541_waitForMouseOrKeyActivity();
@@ -751,8 +751,10 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 		}
 
 		_displayMan->f21_blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
-		_displayMan->f132_blitToBitmap(leftDoorBitmap, _displayMan->_g348_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
-		_displayMan->f132_blitToBitmap(rightDoorBitmap, _displayMan->_g348_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen, kM1_ColorNoTransparency);
+		_displayMan->f132_blitToBitmap(leftDoorBitmap, _displayMan->_g348_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
+									   kM1_ColorNoTransparency, 161, k200_heightScreen);
+		_displayMan->f132_blitToBitmap(rightDoorBitmap, _displayMan->_g348_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
+									   kM1_ColorNoTransparency, 161, k200_heightScreen);
 		_eventMan->f357_discardAllInput();
 		_displayMan->updateScreen();
 

@@ -115,12 +115,10 @@ MenuMan::~MenuMan() {
 }
 
 void MenuMan::f395_drawMovementArrows() {
-	DisplayMan &disp = *_vm->_displayMan;
-	byte *arrowsBitmap = disp.f489_getNativeBitmapOrGraphic(k13_MovementArrowsIndice);
-	Box &dest = g2_BoxMovementArrows;
-	uint16 byteWidth = disp.getPixelWidth(k13_MovementArrowsIndice) / 2;
-
-	disp.f132_blitToBitmap(arrowsBitmap, disp._g348_bitmapScreen, dest, 0, 0, byteWidth, k160_byteWidthScreen, kM1_ColorNoTransparency);
+	_vm->_eventMan->f78_showMouse();
+	_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
+									   &g2_BoxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
+	_vm->_eventMan->f77_hideMouse();
 }
 void MenuMan::f388_clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
@@ -169,7 +167,7 @@ T0386006:
 	box2._x2 = box._x2 - 2;
 	box2._y1 = 95;
 	box2._y2 = 110;
-	dm.f132_blitToBitmap(bitmapIcon, dm._g348_bitmapScreen, box2, 0, 0, 8, k160_byteWidthScreen, kM1_ColorNoTransparency);
+	dm.f21_blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
 		_vm->_displayMan->f136_shadeScreenBox(&box, k0_ColorBlack);
 	}
@@ -264,8 +262,8 @@ void MenuMan::f387_drawActionArea() {
 			box = g500_BoxActionArea2ActionMenu;
 		if (_g713_actionList._actionIndices[1] == k255_ChampionActionNone)
 			box = g501_BoxActionArea1ActionMenu;
-		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k10_MenuActionAreaIndice), dispMan._g348_bitmapScreen,
-								  box, 0, 0, 48, k160_byteWidthScreen, kM1_ColorNoTransparency);
+		dispMan.f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
+								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
 		textMan.f41_printWithTrailingSpaces(dispMan._g348_bitmapScreen, k160_byteWidthScreen,
 											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._gK71_champions[_vm->M1_ordinalToIndex(champMan._g506_actingChampionOrdinal)]._name,
 											k7_ChampionNameMaximumLength, k200_heightScreen);

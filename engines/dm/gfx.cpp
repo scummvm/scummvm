@@ -1072,7 +1072,8 @@ void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* to
 void DisplayMan::f566_viewportBlitToScreen() {
 	Box box(0, 223, 33, 33 + 135);
 
-	f132_blitToBitmap(_g296_bitmapViewport, _g348_bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency);
+	f132_blitToBitmap(_g296_bitmapViewport, _g348_bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency,
+					  k136_heightViewport, k200_heightScreen);
 }
 
 void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
@@ -1125,8 +1126,6 @@ void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 
 void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
-				// Note: if you want to use srcHeight and destHight parameters, remove the defaults values and 
-				// and complete the function calls at the callsites, otherwise their value can be the default -1
 	uint16 srcWidth = srcByteWidth * 2;
 	uint16 destWidth = destByteWidth * 2;
 	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) // + 1 for inclusive boundaries
@@ -1464,12 +1463,14 @@ void DisplayMan::f21_blitToScreen(byte* bitmap, Box* box, int16 byteWidth, Color
 
 void DisplayMan::f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (f._srcByteWidth)
-		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency,
+						  f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::f100_drawWallSetBitmap(byte *bitmap, Frame &f) {
 	if (f._srcByteWidth)
-		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh,
+						  f._srcHeight, k136_heightViewport);
 }
 
 
@@ -2327,12 +2328,12 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 	f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
 									g163_FrameWalls[k0_ViewSquare_D3C]._srcByteWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
 	f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, k10_ColorFlesh, 64, 51);
-	f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, BoxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency);
+	f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, BoxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency, 51, 51);
 
 	f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
 									g163_FrameWalls[k3_ViewSquare_D2C]._srcByteWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
 	f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, k10_ColorFlesh, 72, 71);
-	f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, BoxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency);
+	f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, BoxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency, 71, 71);
 
 	f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
 									g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
@@ -2447,13 +2448,15 @@ void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementC
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth)
-		f132_blitToBitmap(f489_getNativeBitmapOrGraphic(nativeIndex), _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh);
+		f132_blitToBitmap(f489_getNativeBitmapOrGraphic(nativeIndex), _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh,
+						  f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth) {
 		f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeIndex), _g74_tmpBitmap, f._srcByteWidth, f._srcHeight);
-		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh);
+		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh,
+						  f._srcHeight, k136_heightViewport);
 	}
 }
 
