@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/str-array.h"
+
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
@@ -360,14 +362,19 @@ Common::String *Lingo::toLowercaseMac(Common::String *s) {
 
 void Lingo::runTests() {
 	Common::File inFile;
-	Common::ArchiveMemberList fileList;
-	SearchMan.listMatchingMembers(fileList, "*.lingo");
+	Common::ArchiveMemberList fsList;
+	SearchMan.listMatchingMembers(fsList, "*.lingo");
+	Common::StringArray fileList;
 
 	int counter = 1;
 
-	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
-		Common::ArchiveMember       const &m      = **it;
-		Common::SeekableReadStream *const  stream = m.createReadStream();
+	for (Common::ArchiveMemberList::iterator it = fsList.begin(); it != fsList.end(); ++it)
+		fileList.push_back((*it)->getName());
+
+	Common::sort(fileList.begin(), fileList.end());
+
+	for (int i = 0; i < fileList.size(); i++) {
+		Common::SeekableReadStream *const  stream = SearchMan.createReadStreamForMember(fileList[i]);
 		if (stream) {
 			uint size = stream->size();
 
@@ -375,7 +382,7 @@ void Lingo::runTests() {
 
 			stream->read(script, size);
 
-			warning("Compiling file %s of size %d, id: %d", m.getName().c_str(), size, counter);
+			warning("Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
