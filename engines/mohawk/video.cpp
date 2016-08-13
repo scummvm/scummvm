@@ -405,47 +405,15 @@ bool VideoManager::drawNextFrame(VideoEntryPtr videoEntry) {
 	return true;
 }
 
-void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
-	Common::SeekableReadStream *mlstStream = _vm->getResource(ID_MLST, card);
-	uint16 recordCount = mlstStream->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		MLSTRecord mlstRecord;
-		mlstRecord.index = mlstStream->readUint16BE();
-		mlstRecord.movieID = mlstStream->readUint16BE();
-		mlstRecord.code = mlstStream->readUint16BE();
-		mlstRecord.left = mlstStream->readUint16BE();
-		mlstRecord.top = mlstStream->readUint16BE();
-
-		for (byte j = 0; j < 2; j++)
-			if (mlstStream->readUint16BE() != 0)
-				warning("u0[%d] in MLST non-zero", j);
-
-		if (mlstStream->readUint16BE() != 0xFFFF)
-			warning("u0[2] in MLST not 0xFFFF");
-
-		mlstRecord.loop = mlstStream->readUint16BE();
-		mlstRecord.volume = mlstStream->readUint16BE();
-		mlstRecord.u1 = mlstStream->readUint16BE();
-
-		if (mlstRecord.u1 != 1)
-			warning("mlstRecord.u1 not 1");
-
-		// We've found a match, add it
-		if (mlstRecord.index == mlstId) {
-			// Make sure we don't have any duplicates
-			for (uint32 j = 0; j < _mlstRecords.size(); j++)
-				if (_mlstRecords[j].index == mlstRecord.index || _mlstRecords[j].code == mlstRecord.code) {
-					_mlstRecords.remove_at(j);
-					j--;
-				}
-
-			_mlstRecords.push_back(mlstRecord);
-			break;
+void VideoManager::activateMLST(const MLSTRecord &mlst) {
+	// Make sure we don't have any duplicates
+	for (uint32 j = 0; j < _mlstRecords.size(); j++)
+		if (_mlstRecords[j].index == mlst.index || _mlstRecords[j].code == mlst.code) {
+			_mlstRecords.remove_at(j);
+			j--;
 		}
-	}
 
-	delete mlstStream;
+	_mlstRecords.push_back(mlst);
 }
 
 void VideoManager::clearMLST() {

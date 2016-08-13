@@ -25,6 +25,7 @@
 
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/video.h"
 
 #include "common/rect.h"
 #include "common/system.h"
@@ -79,6 +80,9 @@ public:
 	/** Get the card's sound description with the specified index */
 	SLSTRecord getSound(uint16 index) const;
 
+	/** Get the card's movie description with the specified index */
+	MLSTRecord getMovie(uint16 index) const;
+
 	/** Draw borders for all the hotspots in the card */
 	void drawHotspotRects();
 
@@ -128,6 +132,7 @@ private:
 	void loadHotspots(uint16 id);
 	void loadCardPictureList(uint16 id);
 	void loadCardSoundList(uint16 id);
+	void loadCardMovieList(uint16 id);
 	void loadCardHotspotEnableList(uint16 id);
 	void loadCardWaterEffectList(uint16 id);
 	void setCurrentCardVariable();
@@ -164,6 +169,7 @@ private:
 	// Resource lists
 	Common::Array<Picture> _pictureList;
 	Common::Array<SLSTRecord> _soundList;
+	Common::Array<MLSTRecord> _movieList;
 	Common::Array<HotspotEnableRecord> _hotspotEnableList;
 	Common::Array<WaterEffectRecord> _waterEffectList;
 };
