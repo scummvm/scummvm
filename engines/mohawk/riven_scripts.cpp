@@ -610,7 +610,7 @@ void RivenSimpleCommand::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 41: activate MLST record and play
 void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCard()->getId());
+	_vm->_video->activateMLST(_vm->getCard()->getMovie(argv[0]));
 	_vm->_video->playMovieRiven(argv[0]);
 }
 
@@ -643,7 +643,7 @@ void RivenSimpleCommand::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 46: activate MLST record (movie lists)
 void RivenSimpleCommand::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCard()->getId());
+	_vm->_video->activateMLST(_vm->getCard()->getMovie(argv[0]));
 }
 
 void RivenSimpleCommand::dump(byte tabs) {

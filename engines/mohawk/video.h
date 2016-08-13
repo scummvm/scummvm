@@ -318,7 +318,7 @@ public:
 	bool isVideoPlaying();
 
 	// Riven-related functions
-	void activateMLST(uint16 mlstId, uint16 card);
+	void activateMLST(const MLSTRecord &mlst);
 	void clearMLST();
 	void disableAllMovies();
 	VideoEntryPtr playMovieRiven(uint16 id);

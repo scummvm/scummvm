@@ -40,6 +40,7 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	loadHotspots(id);
 	loadCardPictureList(id);
 	loadCardSoundList(id);
+	loadCardMovieList(id);
 	loadCardHotspotEnableList(id);
 	loadCardWaterEffectList(id);
 }
@@ -510,6 +511,63 @@ void RivenCard::dump() const {
 		}
 		debugN("\n");
 	}
+
+	for (uint i = 0; i < _movieList.size(); i++) {
+		debug("== Movie %d ==", _movieList[i].index);
+		debug("movieID: %d", _movieList[i].movieID);
+		debug("code: %d", _movieList[i].code);
+		debug("left: %d", _movieList[i].left);
+		debug("top: %d", _movieList[i].top);
+		debug("u0[0]: %d", _movieList[i].u0[0]);
+		debug("u0[1]: %d", _movieList[i].u0[1]);
+		debug("u0[2]: %d", _movieList[i].u0[2]);
+		debug("loop: %d", _movieList[i].loop);
+		debug("volume: %d", _movieList[i].volume);
+		debug("u1: %d", _movieList[i].u1);
+		debugN("\n");
+	}
+}
+
+void RivenCard::loadCardMovieList(uint16 id) {
+	Common::SeekableReadStream *mlstStream = _vm->getResource(ID_MLST, id);
+
+	uint16 recordCount = mlstStream->readUint16BE();
+	_movieList.resize(recordCount);
+
+	for (uint16 i = 0; i < recordCount; i++) {
+		MLSTRecord &mlstRecord = _movieList[i];
+		mlstRecord.index = mlstStream->readUint16BE();
+		mlstRecord.movieID = mlstStream->readUint16BE();
+		mlstRecord.code = mlstStream->readUint16BE();
+		mlstRecord.left = mlstStream->readUint16BE();
+		mlstRecord.top = mlstStream->readUint16BE();
+
+		for (byte j = 0; j < 2; j++)
+			if (mlstStream->readUint16BE() != 0)
+				warning("u0[%d] in MLST non-zero", j);
+
+		if (mlstStream->readUint16BE() != 0xFFFF)
+			warning("u0[2] in MLST not 0xFFFF");
+
+		mlstRecord.loop = mlstStream->readUint16BE();
+		mlstRecord.volume = mlstStream->readUint16BE();
+		mlstRecord.u1 = mlstStream->readUint16BE();
+
+		if (mlstRecord.u1 != 1)
+			warning("mlstRecord.u1 not 1");
+	}
+
+	delete mlstStream;
+}
+
+MLSTRecord RivenCard::getMovie(uint16 index) const {
+	for (uint16 i = 0; i < _movieList.size(); i++) {
+		if (_movieList[i].index == index) {
+			return _movieList[i];
+		}
+	}
+
+	error("Could not find movie %d in card %d", index, _id);
 }
 
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
