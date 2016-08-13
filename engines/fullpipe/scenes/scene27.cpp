@@ -331,7 +331,7 @@ void sceneHandler27_aimDude() {
 void sceneHandler27_wipeDo() {
 	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
 		if (g_vars->scene27_bats[i]->currX < 800.0) {
-			g_vars->scene27_bats[i]->field_10 = atan2(800.0 - g_vars->scene27_bats[i]->currX, 520.0 - g_vars->scene27_bats[i]->currY);
+			g_vars->scene27_bats[i]->field_10 = atan2(520.0 - g_vars->scene27_bats[i]->currY, 800.0 - g_vars->scene27_bats[i]->currX);
 			g_vars->scene27_bats[i]->power += 1.0;
 		}
     }
@@ -360,7 +360,7 @@ bool sceneHandler27_batFallLogic(uint batn) {
 }
 
 bool sceneHandler27_batCalcDistance(int bat1, int bat2) {
-	double at = atan2(g_vars->scene27_bats[bat1]->currX - g_vars->scene27_bats[bat2]->currX, g_vars->scene27_bats[bat1]->currY - g_vars->scene27_bats[bat2]->currY);
+	double at = atan2(g_vars->scene27_bats[bat1]->currY - g_vars->scene27_bats[bat2]->currY, g_vars->scene27_bats[bat1]->currX - g_vars->scene27_bats[bat2]->currX);
 	double dy = g_vars->scene27_bats[bat1]->currY - g_vars->scene27_bats[bat2]->currY;
 	double dx = g_vars->scene27_bats[bat1]->currX - g_vars->scene27_bats[bat2]->currX;
 	double ay = cos(at);
@@ -375,7 +375,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 	if (0.0 != bat1->power) {
 		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
-			+ atan2(bat2->currX - bat1->currX, bat2->currY - bat1->currY);
+			+ atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
 		double rndCos = cos(rndF);
 		double rndSin = sin(rndF);
 
@@ -386,7 +386,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		bat1->powerSin -= pow1y * 1.1;
 
 		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
-							   + atan2(bat1->currX - bat2->currX, bat1->currY - bat2->currY));
+							   + atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
 		double pow2x = cos(bat2->field_10 - rndF) * (double)((int)(bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
 		double pow2y = sin(bat2->field_10 - rndF) * (double)((int)(bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
 
@@ -405,7 +405,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		else
 			bat1->powerSin += pow2y * 0.64;
 
-		bat1->field_10 = atan2(bat1->powerCos, bat1->powerSin);
+		bat1->field_10 = atan2(bat1->powerSin, bat1->powerCos);
 		bat1->power = sqrt(bat1->powerCos * bat1->powerCos + bat1->powerSin * bat1->powerSin);
 		bat2->powerCos += pow1x * 0.64;
 
@@ -414,7 +414,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		else
 			bat2->powerSin += pow1y * 0.64;
 
-		bat2->field_10 = atan2(bat2->powerCos, bat2->powerSin);
+		bat2->field_10 = atan2(bat2->powerSin, bat2->powerCos);
 		bat2->power = sqrt(bat2->powerCos * bat2->powerCos + bat2->powerSin * bat2->powerSin);
 
 		g_fp->playSound(SND_27_026, 0);
