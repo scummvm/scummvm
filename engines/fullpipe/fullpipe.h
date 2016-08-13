@@ -49,12 +49,13 @@ enum FullpipeGameFeatures {
 };
 
 enum AccessDebugChannels {
-	kDebugPathfinding = 1 << 0,
-	kDebugDrawing     = 1 << 1,
-	kDebugLoading     = 1 << 2,
-	kDebugAnimation   = 1 << 3,
-	kDebugMemory      = 1 << 4,
-	kDebugEvents      = 1 << 5
+	kDebugPathfinding	= 1 << 0,
+	kDebugDrawing		= 1 << 1,
+	kDebugLoading		= 1 << 2,
+	kDebugAnimation		= 1 << 3,
+	kDebugMemory		= 1 << 4,
+	kDebugEvents		= 1 << 5,
+	kDebugBehavior		= 1 << 6
 };
 
 class BehaviorManager;

@@ -83,7 +83,7 @@ void BehaviorManager::updateBehaviors() {
 	if (!_isActive)
 		return;
 
-	debugC(4, kDebugAnimation, "BehaviorManager::updateBehaviors()");
+	debugC(4, kDebugBehavior, "BehaviorManager::updateBehaviors()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo *beh = _behaviors[i];
 
@@ -122,7 +122,7 @@ void BehaviorManager::updateBehaviors() {
 }
 
 void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *entry) {
-	debugC(4, kDebugAnimation, "BehaviorManager::updateBehavior() %d", entry->_movesCount);
+	debugC(4, kDebugBehavior, "BehaviorManager::updateBehavior() %d", entry->_movesCount);
 	for (int i = 0; i < entry->_movesCount; i++) {
 		BehaviorMove *bhi = entry->_behaviorMoves[i];
 		if (!(bhi->_flags & 1)) {
@@ -144,7 +144,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *e
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorAnim *bhe) {
-	debugC(4, kDebugAnimation, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
+	debugC(4, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
 
 	MessageQueue *mq = 0;
 
@@ -236,7 +236,7 @@ void BehaviorInfo::clear() {
 }
 
 void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
-	debugC(4, kDebugAnimation, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initAmbientBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 	_animsCount = 1;
@@ -260,7 +260,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	debugC(4, kDebugAnimation, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
 
 	clear();
 

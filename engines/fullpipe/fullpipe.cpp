@@ -52,6 +52,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
 	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
+	DebugMan.addDebugChannel(kDebugBehavior, "behavior", "Behavior");
 	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
 
