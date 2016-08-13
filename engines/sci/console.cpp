@@ -489,6 +489,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Lofs type: %s\n", getSciVersionDesc(_engine->_features->detectLofsType()));
 	debugPrintf("Move count type: %s\n", (_engine->_features->handleMoveCount()) ? "increment" : "ignore");
 	debugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
+	debugPrintf("PseudoMouse ability: %s\n", _engine->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue ? "yes" : "no");
 #ifdef ENABLE_SCI32
 	if ((getSciVersion() >= SCI_VERSION_2_1_EARLY) && (getSciVersion() <= SCI_VERSION_2_1_LATE))
 		debugPrintf("SCI2.1 kernel table: %s\n", (_engine->_features->detectSci21KernelType() == SCI_VERSION_2) ? "modified SCI2 (old)" : "SCI2.1 (new)");

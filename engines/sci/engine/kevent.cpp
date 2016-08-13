@@ -258,11 +258,12 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
 		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
 		uint16 eventType = SCI_EVENT_DIRECTION;
-		// Check if the game is using cursor views. These games allowed control
-		// of the mouse cursor via the keyboard controls (the so called
-		// "PseudoMouse" functionality in script 933).
-		if (g_sci->_features->detectSetCursorType() == SCI_VERSION_1_1)
+		// It seems with SCI1 Sierra started to add the SCI_EVENT_DIRECTION bit instead of setting it directly.
+		// It was done inside the keyboard driver and is required for the PseudoMouse functionality and class
+		// to work (script 933).
+		if (g_sci->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue) {
 			eventType |= SCI_EVENT_KEYBOARD;
+		}
 
 		for (int i = 0; i < 9; i++) {
 			if (keyToDirMap[i].key == message) {
