@@ -450,6 +450,69 @@ void RivenCard::setCurrentCardVariable() {
 	_vm->_vars["currentcardid"] = _id;
 }
 
+void RivenCard::dump() const {
+	debug("== Card ==");
+	debug("id: %d", _id);
+	if (_name >= 0) {
+		debug("name: %s", _vm->getStack()->getName(kCardNames, _name).c_str());
+	} else {
+		debug("name: [no name]");
+	}
+	debug("zipModePlace: %d", _zipModePlace);
+	debug("globalId: %x", _vm->getStack()->getCardGlobalId(_id));
+	debugN("\n");
+
+	for (uint i = 0; i < _scripts.size(); i++) {
+		debug("== Script %d ==", i);
+		debug("type: %s", RivenScript::getTypeName(_scripts[i].type));
+		_scripts[i].script->dumpScript(0);
+		debugN("\n");
+	}
+
+	for (uint i = 0; i < _hotspots.size(); i++) {
+		debug("== Hotspot %d ==", i);
+		_hotspots[i]->dump();
+	}
+
+	for (uint i = 0; i < _pictureList.size(); i++) {
+		const Common::Rect &rect = _pictureList[i].rect;
+		debug("== Picture %d ==", _pictureList[i].index);
+		debug("pictureId: %d", _pictureList[i].id);
+		debug("rect: (%d, %d, %d, %d)", rect.left, rect.top, rect.right, rect.bottom);
+		debugN("\n");
+	}
+
+	for (uint i = 0; i < _waterEffectList.size(); i++) {
+		debug("== Effect %d ==", _waterEffectList[i].index);
+		debug("sfxeId: %d", _waterEffectList[i].sfxeId);
+		debug("u0: %d", _waterEffectList[i].u0);
+		debugN("\n");
+	}
+
+	for (uint i = 0; i < _hotspotEnableList.size(); i++) {
+		debug("== Hotspot enable %d ==", _hotspotEnableList[i].index);
+		debug("hotspotId: %d", _hotspotEnableList[i].hotspotId);
+		debug("enabled: %d", _hotspotEnableList[i].enabled);
+		debugN("\n");
+	}
+
+	for (uint i = 0; i < _soundList.size(); i++) {
+		debug("== Ambient sound list %d ==", _soundList[i].index);
+		debug("globalVolume: %d", _soundList[i].globalVolume);
+		debug("fadeFlags: %d", _soundList[i].fadeFlags);
+		debug("loop: %d", _soundList[i].loop);
+		debug("suspend: %d", _soundList[i].suspend);
+		debug("u0: %d", _soundList[i].u0);
+		for (uint j = 0; j < _soundList[i].soundIds.size(); j++) {
+			debug("sound[%d].id: %d", j, _soundList[i].soundIds[j]);
+			debug("sound[%d].volume: %d", j, _soundList[i].volumes[j]);
+			debug("sound[%d].balance: %d", j, _soundList[i].balances[j]);
+			debug("sound[%d].u2: %d", j, _soundList[i].u2[j]);
+		}
+		debugN("\n");
+	}
+}
+
 RivenHotspot::RivenHotspot(MohawkEngine_Riven *vm, Common::ReadStream *stream) :
 		_vm(vm) {
 	loadFromStream(stream);
@@ -545,6 +608,25 @@ void RivenHotspot::setRect(const Common::Rect &rect) {
 
 int16 RivenHotspot::getNameId() const {
 	return _nameResource;
+}
+
+void RivenHotspot::dump() const {
+	debug("index: %d", _index);
+	debug("blstId: %d", _blstID);
+	debug("name: %s", getName().c_str());
+	debug("rect: (%d, %d, %d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+	debug("flags: %d", _flags);
+	debug("mouseCursor: %d", _mouseCursor);
+	debug("u0: %d", _u0);
+	debug("u1: %d", _u1);
+	debugN("\n");
+
+	for (uint i = 0; i < _scripts.size(); i++) {
+		debug("=== Hotspot script %d ===", i);
+		debug("type: %s", RivenScript::getTypeName(_scripts[i].type));
+		_scripts[i].script->dumpScript(0);
+		debugN("\n");
+	}
 }
 
 } // End of namespace Mohawk

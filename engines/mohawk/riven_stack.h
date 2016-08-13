@@ -95,6 +95,12 @@ public:
 
 	/** Get the global id of the currently active card */
 	uint32 getCurrentCardGlobalId() const;
+
+	/** Get the global id of a card in the stack */
+	uint32 getCardGlobalId(uint16 cardId) const;
+
+	/** Write all of the stack's data including its cards to standard output */
+	void dump() const;
 private:
 	void loadResourceNames();
 	void loadCardIdMap();

@@ -117,6 +117,9 @@ public:
 	/** Frame update handler for mouse dragging */
 	void onMouseDragUpdate();
 
+	/** Write all of the card's data to standard output */
+	void dump() const;
+
 private:
 	void loadCardResource(uint16 id);
 	void loadHotspots(uint16 id);
@@ -208,6 +211,9 @@ public:
 
 	/** Get the hotspot's enable list id */
 	uint16 getBlstId() const;
+
+	/** Write all of the hotspot's data to standard output */
+	void dump() const;
 
 private:
 	enum {

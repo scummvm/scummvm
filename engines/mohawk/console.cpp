@@ -379,11 +379,13 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
 	registerCmd("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("dumpCard",		WRAP_METHOD(RivenConsole, Cmd_DumpCard));
 	registerCmd("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
 	registerCmd("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
 	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
 	registerCmd("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
 	registerCmd("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("dumpStack",		WRAP_METHOD(RivenConsole, Cmd_DumpStack));
 	registerCmd("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
 	registerCmd("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
 	registerCmd("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
@@ -539,6 +541,32 @@ bool RivenConsole::Cmd_ZipMode(int argc, const char **argv) {
 	debugPrintf("Zip Mode is ");
 	debugPrintf(zipModeActive ? "Enabled" : "Disabled");
 	debugPrintf("\n");
+	return true;
+}
+
+bool RivenConsole::Cmd_DumpCard(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: dumpCard\n");
+		return true;
+	}
+
+	_vm->getCard()->dump();
+
+	debugPrintf("Card dump complete.\n");
+
+	return true;
+}
+
+bool RivenConsole::Cmd_DumpStack(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: dumpStack\n");
+		return true;
+	}
+
+	_vm->getStack()->dump();
+
+	debugPrintf("Stack dump complete.\n");
+
 	return true;
 }
 

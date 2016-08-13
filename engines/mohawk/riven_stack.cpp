@@ -114,11 +114,30 @@ uint16 RivenStack::getCardStackId(uint32 globalId) const {
 }
 
 uint32 RivenStack::getCurrentCardGlobalId() const {
-	return _cardIdMap[_vm->getCard()->getId()];
+	return getCardGlobalId(_vm->getCard()->getId());
 }
 
 void RivenStack::setCurrentStackVariable() {
 	_vm->_vars["currentstackid"] = _id;
+}
+
+uint32 RivenStack::getCardGlobalId(uint16 cardId) const {
+	return _cardIdMap[cardId];
+}
+
+void RivenStack::dump() const {
+	debug("= Stack =");
+	debug("id: %d", _id);
+	debug("name: %s", _vm->getStackName(_id).c_str());
+	debugN("\n");
+
+	for (uint i = 0; i < _cardIdMap.size(); i++) {
+		if (!_vm->hasResource(ID_CARD, i)) continue;
+
+		RivenCard *card = new RivenCard(_vm, i);
+		card->dump();
+		delete card;
+	}
 }
 
 RivenNameList::RivenNameList() {

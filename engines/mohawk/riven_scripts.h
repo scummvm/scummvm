@@ -90,6 +90,9 @@ public:
 	/** Append the commands of the other script to this script */
 	RivenScript &operator+=(const RivenScript &other);
 
+	/** Get a caption for a script type */
+	static const char *getTypeName(uint16 type);
+
 private:
 	Common::Array<RivenCommand *> _commands;
 	bool _continueRunning;
