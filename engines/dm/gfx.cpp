@@ -38,11 +38,8 @@
 #include "champion.h"
 #include "eventman.h"
 
-
 namespace DM {
 
-Frame g172_Frame_DoorFrame_D0C = Frame(96, 127, 0, 122, 16, 123, 0, 0); // @ G0172_s_Graphic558_Frame_DoorFrame_D0C
-Frame g173_Frame_DoorFrameTop_D2L = Frame(0, 59, 22, 24, 48, 3, 16, 0); // @ G0173_s_Graphic558_Frame_DoorFrameTop_D2L
 Frame g174_Frame_DoorFrameTop_D2C = Frame(64, 159, 22, 24, 48, 3, 0, 0); // @ G0174_s_Graphic558_Frame_DoorFrameTop_D2C
 Frame g175_Frame_DoorFrameTop_D2R = Frame(164, 223, 22, 24, 48, 3, 16, 0); // @ G0175_s_Graphic558_Frame_DoorFrameTop_D2R
 Frame g176_Frame_DoorFrameTop_D1L = Frame(0, 31, 14, 17, 64, 4, 16, 0); // @ G0176_s_Graphic558_Frame_DoorFrameTop_D1L
@@ -51,7 +48,6 @@ Frame g178_Frame_DoorFrameTop_D1R = Frame(192, 223, 14, 17, 64, 4, 16, 0); // @ 
 Frame g110_FrameStairsUpFront_D3L = Frame(0, 79, 25, 70, 40, 46, 0, 0); // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L
 Frame g111_FrameStairsUpFront_D3C = Frame(64, 159, 25, 70, 48, 46, 0, 0); // @ G0111_s_Graphic558_Frame_StairsUpFront_D3C
 Frame g112_FrameStairsUpFront_D3R = Frame(149, 223, 25, 70, 40, 46, 5, 0); // @ G0112_s_Graphic558_Frame_StairsUpFront_D3R
-Frame g113_FrameStairsUpFront_D2L = Frame(0, 63, 22, 83, 32, 62, 0, 0); // @ G0113_s_Graphic558_Frame_StairsUpFront_D2L
 Frame g114_FrameStairsUpFront_D2C = Frame(64, 159, 22, 83, 48, 62, 0, 0); // @ G0114_s_Graphic558_Frame_StairsUpFront_D2C
 Frame g115_FrameStairsUpFront_D2R = Frame(160, 223, 22, 83, 32, 62, 0, 0); // @ G0115_s_Graphic558_Frame_StairsUpFront_D2R
 Frame g116_FrameStairsUpFront_D1L = Frame(0, 31, 9, 108, 16, 100, 0, 0); // @ G0116_s_Graphic558_Frame_StairsUpFront_D1L
@@ -62,7 +58,6 @@ Frame g120_FrameStairsUpFront_D0R = Frame(192, 223, 58, 101, 16, 44, 0, 0); // @
 Frame g121_FrameStairsDownFront_D3L = Frame(0, 79, 28, 68, 40, 41, 0, 0); // @ G0121_s_Graphic558_Frame_StairsDownFront_D3L
 Frame g122_FrameStairsDownFront_D3C = Frame(64, 159, 28, 70, 48, 43, 0, 0); // @ G0122_s_Graphic558_Frame_StairsDownFront_D3C
 Frame g123_FrameStairsDownFront_D3R = Frame(149, 223, 28, 68, 40, 41, 5, 0); // @ G0123_s_Graphic558_Frame_StairsDownFront_D3R
-Frame g124_FrameStairsDownFront_D2L = Frame(0, 63, 24, 85, 32, 62, 0, 0); // @ G0124_s_Graphic558_Frame_StairsDownFront_D2L
 Frame g125_FrameStairsDownFront_D2C = Frame(64, 159, 24, 85, 48, 62, 0, 0); // @ G0125_s_Graphic558_Frame_StairsDownFront_D2C
 Frame g126_FrameStairsDownFront_D2R = Frame(160, 223, 24, 85, 32, 62, 0, 0); // @ G0126_s_Graphic558_Frame_StairsDownFront_D2R
 Frame g127_FrameStairsDownFront_D1L = Frame(0, 31, 18, 108, 16, 91, 0, 0); // @ G0127_s_Graphic558_Frame_StairsDownFront_D1L
@@ -70,7 +65,6 @@ Frame g128_FrameStairsDownFront_D1C = Frame(32, 191, 18, 108, 80, 91, 0, 0); // 
 Frame g129_FrameStairsDownFront_D1R = Frame(192, 223, 18, 108, 16, 91, 0, 0); // @ G0129_s_Graphic558_Frame_StairsDownFront_D1R
 Frame g130_FrameStairsDownFront_D0L = Frame(0, 31, 76, 135, 16, 60, 0, 0); // @ G0130_s_Graphic558_Frame_StairsDownFront_D0L
 Frame g131_FrameStairsDownFront_D0R = Frame(192, 223, 76, 135, 16, 60, 0, 0); // @ G0131_s_Graphic558_Frame_StairsDownFront_D0R
-Frame g132_FrameStairsSide_D2L = Frame(60, 75, 57, 61, 8, 5, 0, 0); // @ G0132_s_Graphic558_Frame_StairsSide_D2L
 Frame g133_FrameStairsSide_D2R = Frame(148, 163, 57, 61, 8, 5, 0, 0); // @ G0133_s_Graphic558_Frame_StairsSide_D2R
 Frame g134_FrameStairsUpSide_D1L = Frame(32, 63, 57, 99, 16, 43, 0, 0); // @ G0134_s_Graphic558_Frame_StairsUpSide_D1L
 Frame g135_FrameStairsUpSide_D1R = Frame(160, 191, 57, 99, 16, 43, 0, 0); // @ G0135_s_Graphic558_Frame_StairsUpSide_D1R
@@ -81,7 +75,6 @@ Frame g139_FrameStairsSide_D0R = Frame(208, 223, 73, 85, 8, 13, 0, 0); // @ G013
 Frame g140_FrameFloorPit_D3L = Frame(0, 79, 66, 73, 40, 8, 0, 0); // @ G0140_s_Graphic558_Frame_FloorPit_D3L
 Frame g141_FrameFloorPit_D3C = Frame(64, 159, 66, 73, 48, 8, 0, 0); // @ G0141_s_Graphic558_Frame_FloorPit_D3C
 Frame g142_FrameFloorPit_D3R = Frame(144, 223, 66, 73, 40, 8, 0, 0); // @ G0142_s_Graphic558_Frame_FloorPit_D3R
-Frame g143_FrameFloorPit_D2L = Frame(0, 79, 77, 88, 40, 12, 0, 0); // @ G0143_s_Graphic558_Frame_FloorPit_D2L
 Frame g144_FrameFloorPit_D2C = Frame(64, 159, 77, 88, 48, 12, 0, 0); // @ G0144_s_Graphic558_Frame_FloorPit_D2C
 Frame g145_FrameFloorPit_D2R = Frame(144, 223, 77, 88, 40, 12, 0, 0); // @ G0145_s_Graphic558_Frame_FloorPit_D2R
 Frame g146_FrameFloorPit_D1L = Frame(0, 63, 93, 116, 32, 24, 0, 0); // @ G0146_s_Graphic558_Frame_FloorPit_D1L
@@ -90,7 +83,6 @@ Frame g148_FrameFloorPit_D1R = Frame(160, 223, 93, 116, 32, 24, 0, 0); // @ G014
 Frame g149_FrameFloorPit_D0L = Frame(0, 31, 124, 135, 16, 12, 0, 0); // @ G0149_s_Graphic558_Frame_FloorPit_D0L
 Frame g150_FrameFloorPit_D0C = Frame(16, 207, 124, 135, 96, 12, 0, 0); // @ G0150_s_Graphic558_Frame_FloorPit_D0C
 Frame g151_FrameFloorPit_D0R = Frame(192, 223, 124, 135, 16, 12, 0, 0); // @ G0151_s_Graphic558_Frame_FloorPit_D0R
-Frame g152_FrameFloorPit_D2L = Frame(0, 79, 19, 23, 40, 5, 0, 0); // @ G0152_s_Graphic558_Frame_CeilingPit_D2L
 Frame g153_FrameFloorPit_D2C = Frame(64, 159, 19, 23, 48, 5, 0, 0); // @ G0153_s_Graphic558_Frame_CeilingPit_D2C
 Frame g154_FrameFloorPit_D2R = Frame(144, 223, 19, 23, 40, 5, 0, 0); // @ G0154_s_Graphic558_Frame_CeilingPit_D2R
 Frame g155_FrameFloorPit_D1L = Frame(0, 63, 8, 16, 32, 9, 0, 0); // @ G0155_s_Graphic558_Frame_CeilingPit_D1L
@@ -1688,18 +1680,24 @@ T0118028:
 }
 
 void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
-	static DoorFrames g182_doorFrame_D2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
+	static Frame doorFrameTopD2L = Frame(0, 59, 22, 24, 48, 3, 16, 0); // @ G0173_s_Graphic558_Frame_DoorFrameTop_D2L
+	static Frame frameStairsUpFrontD2L = Frame(0, 63, 22, 83, 32, 62, 0, 0); // @ G0113_s_Graphic558_Frame_StairsUpFront_D2L
+	static Frame frameStairsDownFrontD2L = Frame(0, 63, 24, 85, 32, 62, 0, 0); // @ G0124_s_Graphic558_Frame_StairsDownFront_D2L
+	static Frame frameStairsSideD2L = Frame(60, 75, 57, 61, 8, 5, 0, 0); // @ G0132_s_Graphic558_Frame_StairsSide_D2L
+	static Frame frameFloorPitD2L = Frame(0, 79, 77, 88, 40, 12, 0, 0); // @ G0143_s_Graphic558_Frame_FloorPit_D2L
+	static Frame FrameCeilingPitD2L = Frame(0, 79, 19, 23, 40, 5, 0, 0); // @ G0152_s_Graphic558_Frame_CeilingPit_D2L
+	static DoorFrames doorFrameD2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-													  Frame(0, 63, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
-													  Frame(0, 63, 24, 39, 32, 61, 0, 45),	/* Vertical Closed one fourth */
-													  Frame(0, 63, 24, 54, 32, 61, 0, 30),	/* Vertical Closed half */
-													  Frame(0, 63, 24, 69, 32, 61, 0, 15),	/* Vertical Closed three fourth */
-													  Frame(0, 7, 24, 82, 32, 61, 24, 0),	/* Left Horizontal Closed one fourth */
-													  Frame(0, 15, 24, 82, 32, 61, 16, 0),	/* Left Horizontal Closed half */
-													  Frame(0, 23, 24, 82, 32, 61, 8, 0),	/* Left Horizontal Closed three fourth */
-													  Frame(56, 63, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed one fourth */
-													  Frame(48, 63, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed half */
-													  Frame(40, 63, 24, 82, 32, 61, 32, 0)	/* Right Horizontal Closed three fourth */
+		Frame(0, 63, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
+		Frame(0, 63, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
+		Frame(0, 63, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
+		Frame(0, 63, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
+		Frame(0, 7, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
+		Frame(0, 15, 24, 82, 32, 61, 16, 0),   /* Left Horizontal Closed half */
+		Frame(0, 23, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
+		Frame(56, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
+		Frame(48, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
+		Frame(40, 63, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1709,9 +1707,9 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	switch (squareAspect[k0_ElemAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
-			f104_drawFloorPitOrStairsBitmap(_g677_stairsNativeBitmapIndex_Up_Front_D2L, g113_FrameStairsUpFront_D2L);
+			f104_drawFloorPitOrStairsBitmap(_g677_stairsNativeBitmapIndex_Up_Front_D2L, frameStairsUpFrontD2L);
 		} else {
-			f104_drawFloorPitOrStairsBitmap(_g684_stairsNativeBitmapIndex_Down_Front_D2L, g124_FrameStairsDownFront_D2L);
+			f104_drawFloorPitOrStairsBitmap(_g684_stairsNativeBitmapIndex_Down_Front_D2L, frameStairsDownFrontD2L);
 		}
 		goto T0119018;
 	case k0_ElementTypeWall:
@@ -1723,21 +1721,21 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		}
 		return;
 	case k18_ElementTypeStairsSide:
-		f104_drawFloorPitOrStairsBitmap(_g689_stairsNativeBitmapIndex_Side_D2L, g132_FrameStairsSide_D2L);
+		f104_drawFloorPitOrStairsBitmap(_g689_stairsNativeBitmapIndex_Side_D2L, frameStairsSideD2L);
 	case k16_DoorSideElemType:
 		order = k0x0342_CellOrder_BackRight_FrontLeft_FrontRight;
 		goto T0119019;
 	case k17_DoorFrontElemType:
 		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k3_viewFloor_D2L);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
-		f100_drawWallSetBitmap(_g703_bitmapWallSet_DoorFrameTop_D2LCR, g173_Frame_DoorFrameTop_D2L);
+		f100_drawWallSetBitmap(_g703_bitmapWallSet_DoorFrameTop_D2LCR, doorFrameTopD2L);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect], _g694_doorNativeBitmapIndex_Front_D2LCR,
-					  M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &g182_doorFrame_D2L);
+					  M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2L);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		goto T0119020;
 	case k2_ElementTypePit:
 		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice,
-										g143_FrameFloorPit_D2L);
+										frameFloorPitD2L);
 	case k5_ElementTypeTeleporter:
 	case k1_CorridorElemType:
 T0119018:
@@ -1745,7 +1743,7 @@ T0119018:
 T0119019:
 		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k3_viewFloor_D2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 T0119020:
-		f112_drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &g152_FrameFloorPit_D2L, posX, posY, false);
+		f112_drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &FrameCeilingPitD2L, posX, posY, false);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, order);
 	}
 	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
@@ -2139,7 +2137,8 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
-	static Box g108_BoxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
+	static Frame doorFrameD0C = Frame(96, 127, 0, 122, 16, 123, 0, 0); // @ G0172_s_Graphic558_Frame_DoorFrame_D0C
+	static Box boxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
 
 	uint16 squareAspect[5];
 
@@ -2149,11 +2148,11 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
 			memmove(_g74_tmpBitmap, _g709_bitmapWallSet_DoorFrameFront, 32 * 123);
 			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
-							  _g74_tmpBitmap, g108_BoxThievesEyeHoleInDoorFrame, g172_Frame_DoorFrame_D0C._box._x1 - _boxThievesEyeViewPortVisibleArea._x1,
+							  _g74_tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._x1 - _boxThievesEyeViewPortVisibleArea._x1,
 							  0, 48, 16, k9_ColorGold, 95, 123);
-			f100_drawWallSetBitmap(_g74_tmpBitmap, g172_Frame_DoorFrame_D0C);
+			f100_drawWallSetBitmap(_g74_tmpBitmap, doorFrameD0C);
 		} else {
-			f100_drawWallSetBitmap(_g709_bitmapWallSet_DoorFrameFront, g172_Frame_DoorFrame_D0C);
+			f100_drawWallSetBitmap(_g709_bitmapWallSet_DoorFrameFront, doorFrameD0C);
 		}
 		break;
 	case k19_ElementTypeStaisFront:
@@ -2328,7 +2327,6 @@ void DisplayMan::f95_loadWallSet(WallSet set) {
 										g712_FrameWall_D3R2._srcByteWidth, g712_FrameWall_D3R2._srcHeight);
 	}
 }
-
 
 void DisplayMan::f96_loadCurrentMapGraphics() {
 	Box BoxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
