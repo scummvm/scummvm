@@ -69,7 +69,7 @@ struct ControlData {
 	ControlAction refcon;
 	ControlType type;
 	uint8 titleLength;
-	char* title;
+	Common::String title;
 	uint16 border;
 };
 

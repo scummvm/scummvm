@@ -512,9 +512,11 @@ bool Gui::loadControls() {
 		data.type = (ControlType)id; id++;
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
-			data.title = new char[data.titleLength + 1];
-			res->read(data.title, data.titleLength);
-			data.title[data.titleLength] = '\0';
+			char *title = new char[data.titleLength + 1];
+			res->read(title, data.titleLength);
+			title[data.titleLength] = '\0';
+			data.title = Common::String(title);
+			delete[] title;
 		}
 		if (data.type != kControlExitBox) {
 			BorderBounds bbs = borderBounds(getWindowData(kCommandsWindow).type);
