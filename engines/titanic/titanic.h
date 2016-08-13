@@ -58,6 +58,13 @@ enum TitanicDebugChannels {
 	kDebugSound     = 1 << 3
 };
 
+enum Season {
+	SPRING = 0,
+	SUMMER = 1,
+	AUTUMN = 2,
+	WINTER = 3
+};
+
 #define TITANIC_SAVEGAME_VERSION 1
 
 #define SCREEN_WIDTH 640

@@ -336,6 +336,11 @@ protected:
 	bool changeView(const CString &viewName, const CString &clipName);
 
 	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName);
+
+	/**
 	 * Get the centre of the game object's bounds
 	 */
 	Point getControid() const;

@@ -1172,6 +1172,10 @@ void CGameObject::loadSurface() {
 		_surface->loadIfReady();
 }
 
+bool CGameObject::changeView(const CString &viewName) {
+	return changeView(viewName, "");
+}
+
 bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
 	CViewItem *newView = parseView(viewName);
 	CGameManager *gameManager = getGameManager();
