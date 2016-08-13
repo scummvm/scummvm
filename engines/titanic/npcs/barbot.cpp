@@ -378,8 +378,126 @@ bool CBarbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
-	// TODO
-	return false;
+	if (msg->_endFrame == _frameNum) {
+		_frameNum = -1;
+		_field14C = g_vm->_events->getTicksCount();
+	}
+
+	if (msg->_endFrame == _field148) {
+		_field148 = -1;
+		_field150 = g_vm->_events->getTicksCount();
+	}
+
+	if (msg->_endFrame == _field13C) {
+		if (_field124)
+			playMovie(_frames[53]._startFrame, _frames[53]._startFrame, 0);
+		else if (_field128)
+			playMovie(_frames[27]._endFrame, _frames[27]._endFrame, 0);
+
+		_field13C = -1;
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[58]._endFrame || msg->_endFrame == _frames[21]._endFrame) {
+		CVisibleMsg visibleMsg(true);
+		visibleMsg.execute("BarShelfVisCentre");
+	}
+
+	if (msg->_endFrame == _frames[57]._endFrame) {
+		startTalking(this, 250575);
+		playSound("c#10.wav", _volume);
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[55]._endFrame) {
+		playSound("c#10.wav", _volume);
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[56]._endFrame
+			|| msg->_endFrame == _frames[54]._endFrame) {
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = 1;
+		statusMsg.execute("PickUpGlass");
+		CMoveToStartPosMsg moveMsg;
+		moveMsg.execute("BeerGlass");
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[30]._endFrame) {
+		_field124 = 0;
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = 0;
+		statusMsg.execute("PickUpGlass");
+	}
+
+	if (msg->_endFrame == _frames[45]._endFrame) {
+		if (!_field130) {
+			CVisibleMsg visibleMsg(false);
+			visibleMsg.execute("BarShelfVisCentre");
+		}
+
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[44]._endFrame) {
+		_field128 = _field130 = 1;
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = 1;
+		statusMsg.execute("PickUpVisCentre");
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("VisionCentre");
+	}
+
+	if (msg->_endFrame == _frames[46]._endFrame) {
+		if (!_field130 && !_field12C && _field11C && _field114 && _field118)
+			startTalking(this, 250571);
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[43]._endFrame
+			|| msg->_endFrame == _frames[42]._endFrame
+			|| msg->_endFrame == _frames[41]._endFrame) {
+		if (_field124)
+			playMovie(_frames[53]._startFrame, _frames[53]._startFrame, 0);
+		return true;
+	}
+
+	if (msg->_endFrame == _frames[38]._endFrame || msg->_endFrame == _frames[23]._endFrame) {
+		playSound("c#3.wav", _volume);
+	} else if (msg->_endFrame == _frames[36]._endFrame) {
+		playSound("c#6.wav", _volume);
+	}
+	else if (msg->_endFrame == _frames[35]._endFrame) {
+		playSound("c#8.wav", _volume);
+	}
+	else if (msg->_endFrame == _frames[33]._endFrame) {
+		playSound("c#4.wav", _volume);
+	} else if (msg->_endFrame == _frames[32]._endFrame) {
+		startTalking(this, 145);
+		playSound("c#9.wav", _volume);
+	} else if (msg->_endFrame == _frames[47]._endFrame) {
+		playSound("c#9.wav", _volume);
+		_field12C = _field15C = 1;
+	} else if (msg->_endFrame == _frames[30]._endFrame) {
+		playSound("c#4.wav", 60);
+	} else if (msg->_endFrame == _frames[29]._endFrame) {
+		if (!_fieldC4) {
+			performAction(true, nullptr);
+			setVisible(false);
+			CActMsg actMsg("ResetCount");
+			actMsg.execute("BarBell");
+		}
+	} else if (msg->_endFrame == _frames[27]._endFrame) {
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = 1;
+		statusMsg.execute("PickUpVisCentre");
+		_field128 = 1;
+		_field134 = 0;
+		startTalking(this, 250586);
+	}
+
+	return true;
 }
 
 bool CBarbot::TrueTalkSelfQueueAnimSetMsg(CTrueTalkSelfQueueAnimSetMsg *msg) {
