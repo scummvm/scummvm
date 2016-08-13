@@ -200,7 +200,7 @@ const char *RivenScript::getTypeName(uint16 type) {
 		"CardLoad",
 		"CardLeave",
 		"CardUnknown",
-		"CardOpen",
+		"CardEnter",
 		"CardUpdate"
 	};
 

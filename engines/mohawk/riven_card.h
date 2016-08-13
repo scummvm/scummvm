@@ -56,7 +56,10 @@ public:
 	};
 
 	/** Initialization routine used to draw a card for the first time or to refresh it */
-	void open();
+	void enter();
+
+	/** Run the card's leave scripts */
+	void leave();
 
 	/** Run one of the card's scripts */
 	void runScript(uint16 scriptType);
@@ -131,7 +134,6 @@ private:
 
 	RivenScriptPtr getScript(uint16 scriptType) const;
 	void defaultLoadScript();
-	void runLeaveScripts();
 
 	void updateMouseCursor();
 
