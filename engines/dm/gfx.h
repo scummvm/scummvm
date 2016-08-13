@@ -530,7 +530,7 @@ class DisplayMan {
 	uint32 *_packedItemPos;
 	byte *_packedBitmaps;
 	byte **_bitmaps;
-	DoorFrames *g186_doorFrame_D1C;
+	DoorFrames *_doorFrameD1C;
 	// pointers are not owned by these fields
 	byte *_g75_palChangesProjectile[4]; // @G0075_apuc_PaletteChanges_Projectile
 
@@ -599,9 +599,9 @@ class DisplayMan {
 public:
 	byte *_g700_bitmapWallSet_Wall_D1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
 private:
-	Box g106_BoxThievesEye_ViewPortVisibleArea; // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
-	byte g198_PalChangesDoorButtonAndWallOrn_D3[16]; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
-	byte g199_PalChangesDoorButtonAndWallOrn_D2[16]; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
+	Box _boxThievesEyeViewPortVisibleArea; // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
+	byte _palChangesDoorButtonAndWallOrnD3[16]; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
+	byte _palChangesDoorButtonAndWallOrnD2[16]; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
 
 	byte *_g701_bitmapWallSet_Wall_D0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
 	byte *_g702_bitmapWallSet_Wall_D0R; // @ G0702_puc_Bitmap_WallSet_Wall_D0R
@@ -748,6 +748,9 @@ public:
 	// I only use WORD_BOX, so this will probably deem useless
 	bool _g578_useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
 	bool _g77_doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
+
+	Frame _doorFrameLeftD1C; // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
+	Frame _doorFrameRightD1C; // @ G0171_s_Graphic558_Frame_DoorFrameRight_D1C
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
