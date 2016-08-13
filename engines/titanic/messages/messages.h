@@ -278,7 +278,7 @@ MESSAGE1(CNutPuzzleMsg, CString, value, "");
 MESSAGE1(COnSummonBotMsg, int, value, 0);
 MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, int, value, 0);
-MESSAGE2(CParrotSpeakMsg, CString, value1, "", CString, value2, "");
+MESSAGE2(CParrotSpeakMsg, CString, target, "", CString, action, "");
 MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);

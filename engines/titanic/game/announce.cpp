@@ -104,7 +104,7 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 
 	} else if (msg->_timerCtr == 2) {
 		CParrotSpeakMsg speakMsg;
-		speakMsg._value1 = "Announcements";
+		speakMsg._target = "Announcements";
 		speakMsg.execute("PerchedParrot");
 	}
 
