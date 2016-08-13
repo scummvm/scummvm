@@ -30,6 +30,7 @@
 
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
+bool gDebugChannelsOnly = false;
 
 namespace Common {
 
@@ -137,6 +138,9 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 void debug(const char *s, ...) {
 	va_list va;
 
+	if (gDebugChannelsOnly)
+		return;
+
 	va_start(va, s);
 	debugHelper(s, va);
 	va_end(va);
@@ -145,7 +149,7 @@ void debug(const char *s, ...) {
 void debug(int level, const char *s, ...) {
 	va_list va;
 
-	if (level > gDebugLevel)
+	if (level > gDebugLevel || gDebugChannelsOnly)
 		return;
 
 	va_start(va, s);
@@ -157,6 +161,9 @@ void debug(int level, const char *s, ...) {
 void debugN(const char *s, ...) {
 	va_list va;
 
+	if (gDebugChannelsOnly)
+		return;
+
 	va_start(va, s);
 	debugHelper(s, va, false);
 	va_end(va);
@@ -165,7 +172,7 @@ void debugN(const char *s, ...) {
 void debugN(int level, const char *s, ...) {
 	va_list va;
 
-	if (level > gDebugLevel)
+	if (level > gDebugLevel || gDebugChannelsOnly)
 		return;
 
 	va_start(va, s);

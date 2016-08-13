@@ -118,6 +118,15 @@ void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
  */
 extern int gDebugLevel;
 
+/**
+ * Specify if we want to show only the debug channels and suppress
+ * the non-channeled output.
+ *
+ * This option is useful when you want to have higher levels of channels
+ * visible without the noise from other subsystems or OSystem.
+ */
+extern bool gDebugChannelsOnly;
+
 //Global constant for EventRecorder debug channel
 enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
