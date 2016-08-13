@@ -264,20 +264,22 @@ public:
 
 	static void b_abs(int nargs);
 	static void b_atan(int nargs);
-	static void b_chars(int nargs);
 	static void b_cos(int nargs);
 	static void b_exp(int nargs);
 	static void b_float(int nargs);
 	static void b_integer(int nargs);
-	static void b_length(int nargs);
 	static void b_log(int nargs);
 	static void b_pi(int nargs);
 	static void b_power(int nargs);
 	static void b_random(int nargs);
 	static void b_sin(int nargs);
 	static void b_sqrt(int nargs);
-	static void b_string(int nargs);
 	static void b_tan(int nargs);
+
+	static void b_chars(int nargs);
+	static void b_charToNum(int nargs);
+	static void b_length(int nargs);
+	static void b_string(int nargs);
 
 	static void b_ilk(int nargs);
 	static void b_alert(int nargs);
@@ -286,6 +288,8 @@ public:
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
 
+	static void b_constrainH(int nargs);
+	static void b_constrainV(int nargs);
 	static void b_editableText(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_updateStage(int nargs);

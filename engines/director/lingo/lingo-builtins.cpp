@@ -46,9 +46,10 @@ static struct BuiltinProto {
 	{ "sqrt",	Lingo::b_sqrt,		1, 1, true },	// D2
 	{ "tan",	Lingo::b_tan,		1, 1, true },	// 		D4
 	// String
-	{ "chars",	Lingo::b_chars,		3, 3, true },	// D2
-	{ "length",	Lingo::b_length,	1, 1, true },	// D2
-	{ "string",	Lingo::b_string,	1, 1, true },	// D2
+	{ "chars",		Lingo::b_chars,		3, 3, true },	// D2
+	{ "charToNum",	Lingo::b_charToNum,	1, 1, true },	// D2
+	{ "length",		Lingo::b_length,	1, 1, true },	// D2
+	{ "string",		Lingo::b_string,	1, 1, true },	// D2
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
@@ -87,6 +88,8 @@ static struct BuiltinProto {
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
 	// Score
+	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
+	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
 	{ "editableText",	Lingo::b_editableText,	0, 0, false },	// D2
 		// go													// D2
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
@@ -300,6 +303,20 @@ void Lingo::b_chars(int nargs) {
 	g_lingo->push(s);
 }
 
+void Lingo::b_charToNum(int nargs) {
+	Datum d = g_lingo->pop();
+
+	if (d.type != STRING)
+		error("Incorrect type for 'charToNum' function: %s", d.type2str());
+
+	byte chr = d.u.s->c_str()[0];
+	delete d.u.s;
+
+	d.u.i = chr;
+	d.type = INT;
+	g_lingo->push(d);
+}
+
 void Lingo::b_length(int nargs) {
 	Datum d = g_lingo->pop();
 
@@ -496,8 +513,24 @@ void Lingo::b_showLocals(int nargs) {
 ///////////////////
 // Score
 ///////////////////
-void Lingo::b_updateStage(int nargs) {
-	warning("STUB: b_updateStage");
+void Lingo::b_constrainH(int nargs) {
+	Datum num = g_lingo->pop();
+	Datum sprite = g_lingo->pop();
+
+	num.toInt();
+	sprite.toInt();
+
+	warning("STUB: b_constrainH(%d, %d)", sprite.u.i, num.u.i);
+}
+
+void Lingo::b_constrainV(int nargs) {
+	Datum num = g_lingo->pop();
+	Datum sprite = g_lingo->pop();
+
+	num.toInt();
+	sprite.toInt();
+
+	warning("STUB: b_constrainV(%d, %d)", sprite.u.i, num.u.i);
 }
 
 void Lingo::b_editableText(int nargs) {
@@ -557,6 +590,10 @@ void Lingo::b_zoomBox(int nargs) {
 	g_lingo->printStubWithArglist("b_zoomBox", nargs);
 
 	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_updateStage(int nargs) {
+	warning("STUB: b_updateStage");
 }
 
 
