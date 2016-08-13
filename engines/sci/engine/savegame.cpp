@@ -226,7 +226,7 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 		if (s.isLoading())
 			arr.resize(len);
 
-		for (int i = 0; i < len; ++i) {
+		for (uint i = 0; i < len; ++i) {
 			sync(s, arr[i], i);
 		}
 	}
