@@ -9,6 +9,7 @@ World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
 	_resourceManager = resMan;
 	_engine = engine;
 	_saveGame = NULL;
+	_gameText = NULL;
 
 	startNewGame();
 
@@ -26,6 +27,9 @@ World::~World()	{
 
 	if (_objectConstants)
 		delete _objectConstants;
+
+	if (_gameText)
+		delete _gameText;
 }
 
 void World::startNewGame() {
@@ -45,7 +49,7 @@ void World::startNewGame() {
 	_saveGame = new SaveGame(_engine, saveGameRes);
 
 	calculateObjectRelations();
-	
+
 	delete saveGameRes;
 	saveGameFile.close();
 }
@@ -70,6 +74,7 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	if (res & 0x8000)
 		res = -((res ^ 0xffff) + 1);
 	debugC(5, kMVDebugMain, "Attribute %x from object %x is %x", attrID, objID, res);
+	delete objStream;
 	return res;
 }
 

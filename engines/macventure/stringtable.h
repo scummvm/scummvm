@@ -90,6 +90,7 @@ private:
 			delete[] str;
 		}
 
+		delete res;
 		return true;
 	}
 

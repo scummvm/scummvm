@@ -55,7 +55,9 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	initDebugChannels();
 
 	_debugger = NULL;
+	_resourceManager = NULL;
 	_gui = NULL;
+	_world = NULL;
 	_scriptEngine = NULL;
 	_filenames = NULL;
 
@@ -82,8 +84,14 @@ MacVentureEngine::~MacVentureEngine() {
 	if (_debugger)
 		delete _debugger;
 
+	if (_resourceManager)
+		delete _resourceManager;
+
 	if (_gui)
 		delete _gui;
+
+	if (_world)
+		delete _world;
 
 	if (_scriptEngine)
 		delete _scriptEngine;
@@ -471,6 +479,10 @@ Common::String MacVentureEngine::getStartGameFileName() {
 	Common::String result = Common::String(fileName, length);
 	// HACK, see definition of toASCII
 	toASCII(result);
+
+	delete[] fileName;
+	delete res;
+
 	return result;
 }
 
@@ -1065,11 +1077,11 @@ ControlAction MacVentureEngine::getSelectedControl() {
 
 bool MacVentureEngine::loadGlobalSettings() {
 	Common::MacResIDArray resArray;
-	Common::SeekableReadStream *res;
 
 	if ((resArray = _resourceManager->getResIDArray(MKTAG('G', 'N', 'R', 'L'))).size() == 0)
 		return false;
 
+	Common::SeekableReadStream *res;
 	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kGlobalSettingsID);
 	if (res) {
 		_globalSettings.numObjects = res->readUint16BE();
@@ -1103,9 +1115,9 @@ bool MacVentureEngine::loadGlobalSettings() {
 		_globalSettings.commands = new uint8[_globalSettings.numCommands];
 		res->read(_globalSettings.commands, _globalSettings.numCommands);
 
+		delete res;
 		return true;
 	}
-
 	return false;
 }
 
@@ -1136,6 +1148,12 @@ bool MacVentureEngine::loadTextHuffman() {
 
 		_textHuffman = new HuffmanLists(numEntries, lengths, masks, values);
 		debugC(4, kMVDebugMain, "Text is huffman-encoded");
+
+
+		delete res;
+		delete masks;
+		delete lengths;
+		delete values;
 		return true;
 	}
 	return false;

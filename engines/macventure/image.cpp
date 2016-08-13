@@ -98,9 +98,12 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 		return;
 	}
 	if (size == 2) {
-		realID = _container->getItem(id)->readUint16BE();
+		Common::SeekableReadStream *newItemStream = _container->getItem(id);
+		realID = newItemStream->readUint16BE();
+		delete newItemStream;
 	}
-	Common::BitStream32BEMSB stream(_container->getItem(realID), true);
+	Common::SeekableReadStream *baseStream = _container->getItem(realID);
+	Common::BitStream32BEMSB stream(baseStream);
 
 	uint8 mode = stream.getBits(3);
 	int w, h;
@@ -133,6 +136,8 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 		decodePPIC3(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
 	}
+
+	delete baseStream;
 }
 
 void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {

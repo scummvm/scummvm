@@ -52,6 +52,12 @@ public:
 		_header = _res->readUint32BE();
 		_simplified = false;
 
+		for (uint i = 0; i < 16; ++i)
+			_huff.push_back(0);
+
+		for (uint i = 0; i < 16; ++i)
+			_lens.push_back(0);
+
 		if (!(_header & 0x80000000)) {
 			// Is simplified container
 			_simplified = true;
@@ -97,7 +103,8 @@ public:
 
 				for (uint j = 0; j < 64; ++j) {
 					uint32 length = 0;
-					uint32 mask = _res->readUint32BE();
+					uint32 mask = 0;
+					mask = _res->readUint32BE();
 					mask >>= (16 - bits);
 					mask &= 0xFFFF;
 					debugC(11, kMVDebugContainer, "Load mask of object &%d:%d is %x", i, j, mask);
@@ -202,8 +209,8 @@ protected:
 
 	ContainerHeader _header;
 
-	uint16 _huff[15];   // huffman masks
-	uint8  _lens[16];   // huffman lengths
+	Common::Array<uint16> _huff;   // huffman masks
+	Common::Array<uint8> _lens;   // huffman lengths
 	Common::Array<ItemGroup> _groups;
 
 	Common::String _filename;

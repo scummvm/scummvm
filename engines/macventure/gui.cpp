@@ -138,6 +138,9 @@ Gui::~Gui() {
 		delete _dialog;
 
 	clearAssets();
+
+	if (_graphics)
+		delete _graphics;
 }
 
 void Gui::initGUI() {
@@ -421,6 +424,7 @@ bool Gui::loadMenus() {
 		}
 
 		i++;
+		delete res;
 	}
 
 	return true;
@@ -463,12 +467,15 @@ bool Gui::loadWindows() {
 			res->read(newTitle, data.titleLength);
 			newTitle[data.titleLength] = '\0';
 			data.title = Common::String(newTitle);
+			delete[] newTitle;
 		}
 		data.scrollPos = Common::Point(0, 0);
 
 		debugC(4, kMVDebugGUI, "Window loaded: %s", data.title.c_str());
 
 		_windowData->push_back(data);
+
+		delete res;
 	}
 
 	return true;
@@ -518,7 +525,9 @@ bool Gui::loadControls() {
 		}
 
 
-		i++;
+		_controlData->push_back(CommandButton(data, this));
+
+		delete res;
 	}
 
 	return true;

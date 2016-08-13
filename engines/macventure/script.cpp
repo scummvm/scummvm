@@ -1208,6 +1208,7 @@ void ScriptAsset::loadInstructions() {
 	for (uint i = 0; i < amount; i++) {
 		_instructions.push_back(res->readByte());
 	}
+	delete res;
 	debugC(2, kMVDebugScript, "SCRIPT: Load %d instructions for script %d", amount, _id);
 }
 

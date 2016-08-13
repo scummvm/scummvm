@@ -117,7 +117,7 @@ void TextAsset::decodeOld() {
 void TextAsset::decodeHuffman() {
 	_decoded = Common::String("");
 	Common::SeekableReadStream *res = _container->getItem(_id);
-	Common::BitStream8MSB stream(res);
+	Common::BitStream8MSB stream(res, true);
 	uint16 strLen = 0;
 	if (stream.getBit()) {
 		strLen = stream.getBits(15);
@@ -174,6 +174,7 @@ void TextAsset::decodeHuffman() {
 		}
 	}
 	_decoded += '\0';
+	delete res;
 	debugC(4, kMVDebugText, "Decoded %d'th string (new): %s", _id, _decoded.c_str());
 }
 Common::String TextAsset::getNoun(ObjID subval) {
