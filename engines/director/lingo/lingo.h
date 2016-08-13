@@ -296,7 +296,7 @@ public:
 	static void b_constrainV(int nargs);
 	static void b_editableText(int nargs);
 	static void b_installMenu(int nargs);
-	static void b_updateStage(int nargs);
+	static void b_label(int nargs);
 	static void b_moveableSprite(int nargs);
 	static void b_puppetPalette(int nargs);
 	static void b_puppetSound(int nargs);
@@ -304,6 +304,7 @@ public:
 	static void b_puppetTempo(int nargs);
 	static void b_puppetTransition(int nargs);
 	static void b_spriteBox(int nargs);
+	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
 
 	static void b_continue(int nargs);
