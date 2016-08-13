@@ -72,11 +72,10 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 	uint16 y = (screenHeight - height) / 2;
 
 	bool skipVideo = false;
-	EngineState *s = g_sci->getEngineState();
 
 	if (videoDecoder->hasDirtyPalette()) {
-		const byte *palette = videoDecoder->getPalette() + s->_vmdPalStart * 3;
-		g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
+		const byte *palette = videoDecoder->getPalette();
+		g_system->getPaletteManager()->setPalette(palette, 0, 255);
 	}
 
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
@@ -85,7 +84,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 
 			if (frame) {
 				if (scaleBuffer) {
-					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows
+					// TODO: Probably should do aspect ratio correction in KQ6
 					g_sci->_gfxScreen->scale2x((const byte *)frame->getPixels(), scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else {
@@ -93,8 +92,8 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 				}
 
 				if (videoDecoder->hasDirtyPalette()) {
-					const byte *palette = videoDecoder->getPalette() + s->_vmdPalStart * 3;
-					g_system->getPaletteManager()->setPalette(palette, s->_vmdPalStart, s->_vmdPalEnd - s->_vmdPalStart);
+					const byte *palette = videoDecoder->getPalette();
+					g_system->getPaletteManager()->setPalette(palette, 0, 255);
 				}
 
 				g_system->updateScreen();
