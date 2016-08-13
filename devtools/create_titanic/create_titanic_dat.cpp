@@ -249,6 +249,25 @@ static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
 	{ nullptr, 0, 0, 0 }
 };
 
+struct FrameRange {
+	int _startFrame;
+	int _endFrame;
+};
+
+static const FrameRange BARBOT_FRAME_RANGES[60] = {
+	{ 558, 585 }, { 659, 692 }, { 802, 816 }, { 1941, 1977 }, { 1901, 1941 },
+	{ 810, 816 }, { 857, 865}, { 842, 857 }, { 821, 842 }, { 682, 692 },
+	{ 1977, 2018 }, { 2140, 2170 }, { 2101, 2139 }, { 2018, 2099}, { 1902, 2015 },
+	{ 1811, 1901 }, { 1751, 1810 }, { 1703, 1750 }, { 1681, 1702 }, { 1642, 1702 },
+	{ 1571, 1641 }, { 1499, 1570 }, { 1403, 1463 }, { 1464, 1499 }, { 1288, 1295 },
+	{ 1266, 1287 }, { 1245, 1265 }, { 1208, 1244 }, { 1171, 1207 }, { 1120, 1170 },
+	{ 1092, 1120 }, { 1092, 1092 }, { 1044, 1091 }, { 1011, 1043 }, { 1001, 1010 },
+	{ 985, 1001 }, { 927, 984 }, { 912, 926 }, { 898, 906 }, { 802, 896 },
+	{ 865, 896 }, { 842, 865 }, { 816, 842 }, { 802, 842 }, { 740, 801 },
+	{ 692, 740 }, { 610, 692 }, { 558, 610 }, { 500, 558 }, { 467, 500 },
+	{ 421, 466 }, { 349, 420 }, { 306, 348 }, { 305, 306 }, { 281, 305 },
+	{ 202, 281 }, { 182, 202 }, { 165, 182 }, { 96, 165 }, { 0, 95 }
+};
 
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
@@ -576,6 +595,19 @@ void writePhrases(const char *name, const CommonPhrase *phrases) {
 	dataOffset += size;
 }
 
+void writeBarbotFrameRanges() {
+	outputFile.seek(dataOffset);
+
+	for (int idx = 0; idx < 60; ++idx) {
+		outputFile.writeLong(BARBOT_FRAME_RANGES[idx]._startFrame);
+		outputFile.writeLong(BARBOT_FRAME_RANGES[idx]._endFrame);
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("FRAMES/BARBOT", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -692,6 +724,7 @@ void writeData() {
 	writeAllTagMappings();
 	writeAllUpdateStates();
 	writeAllScriptPreResponses();
+	writeBarbotFrameRanges();
 }
 
 void createScriptMap() {
