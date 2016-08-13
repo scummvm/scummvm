@@ -372,8 +372,8 @@ void AVIPlayer::renderFrame() const {
 		// to always be white
 		if (getSciVersion() == SCI_VERSION_2_1_EARLY && g_sci->getGameId() == GID_KQ7) {
 			uint8 *target = bitmap.getPixels();
-			uint8 *source = (uint8 *)surface->getPixels();
-			uint8 *end = (uint8 *)surface->getPixels() + surface->w * surface->h;
+			const uint8 *source = (const uint8 *)surface->getPixels();
+			const uint8 *end = (const uint8 *)surface->getPixels() + surface->w * surface->h;
 
 			while (source != end) {
 				uint8 value = *source++;
@@ -409,7 +409,7 @@ void AVIPlayer::renderFrame() const {
 		Common::Rect drawRect(_drawRect);
 
 		if (_pixelDouble) {
-			const uint32 *source = (uint32 *)surface->getPixels();
+			const uint32 *source = (const uint32 *)surface->getPixels();
 			uint32 *target = (uint32 *)_scaleBuffer;
 			// target pitch here is in uint32s, not bytes
 			const uint16 pitch = surface->pitch / 2;
