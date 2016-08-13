@@ -26,6 +26,10 @@ namespace Titanic {
 
 int CAnnoyBarbot::_v1;
 
+BEGIN_MESSAGE_MAP(CAnnoyBarbot, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CAnnoyBarbot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_v1, indent);
@@ -36,6 +40,15 @@ void CAnnoyBarbot::load(SimpleFile *file) {
 	file->readNumber();
 	_v1 = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CAnnoyBarbot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if ((++_v1 % 3) == 1) {
+		CActMsg actMsg("GoRingBell");
+		actMsg.execute("Barbot");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

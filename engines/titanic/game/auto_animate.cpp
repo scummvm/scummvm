@@ -24,24 +24,44 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CAutoAnimate, CBackground)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(InitializeAnimMsg)
+END_MESSAGE_MAP()
+
 void CAutoAnimate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_enabled, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_repeat, indent);
 	CBackground::save(file, indent);
 }
 
 void CAutoAnimate::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_enabled = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_repeat = file->readNumber();
 	CBackground::load(file);
 }
 
 bool CAutoAnimate::EnterViewMsg(CEnterViewMsg *msg) {
-	warning("CAutoAnimate::handleEvent");
+	if (_enabled) {
+		uint flags = _repeat ? MOVIE_REPEAT : 0;
+		if (_startFrame != _endFrame)
+			playMovie(_startFrame, _endFrame, flags);
+		else
+			playMovie(flags);
+
+		if (!_fieldE4)
+			_enabled = false;
+	}
+
+	return true;
+}
+
+bool CAutoAnimate::InitializeAnimMsg(CInitializeAnimMsg *msg) {
+	_enabled = true;
 	return true;
 }
 

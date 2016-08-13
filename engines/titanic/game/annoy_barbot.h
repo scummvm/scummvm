@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CAnnoyBarbot : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 private:
 	static int _v1;
 public:

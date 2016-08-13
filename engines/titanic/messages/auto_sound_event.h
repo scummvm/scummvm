@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CAutoSoundEvent : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg *msg);
 public:
 	int _value1;
 	int _value2;

@@ -29,14 +29,16 @@
 namespace Titanic {
 
 class CAutoAnimate : public CBackground {
+	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool InitializeAnimMsg(CInitializeAnimMsg *msg);
 private:
-	int _fieldE0;
+	bool _enabled;
 	int _fieldE4;
-	int _fieldE8;
+	bool _repeat;
 public:
 	CLASSDEF;
-	CAutoAnimate() : CBackground(), _fieldE0(1), _fieldE4(1), _fieldE8(0) {}
+	CAutoAnimate() : CBackground(), _enabled(true), _fieldE4(1), _repeat(false) {}
 
 	/**
 	 * Save the data for the class to file

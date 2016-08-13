@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CAuditoryCentre, CBrain)
+	ON_MESSAGE(PuzzleSolvedMsg)
+END_MESSAGE_MAP()
+
 void CAuditoryCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBrain::save(file, indent);
@@ -32,6 +36,12 @@ void CAuditoryCentre::save(SimpleFile *file, int indent) {
 void CAuditoryCentre::load(SimpleFile *file) {
 	file->readNumber();
 	CBrain::load(file);
+}
+
+bool CAuditoryCentre::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	_fieldE0 = 1;
+	setVisible(true);
+	return true;
 }
 
 } // End of namespace Titanic

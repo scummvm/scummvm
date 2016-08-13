@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CAuditoryCentre : public CBrain {
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
 public:
 	CLASSDEF;
 

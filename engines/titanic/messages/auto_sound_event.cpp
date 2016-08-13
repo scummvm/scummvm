@@ -24,7 +24,11 @@
 
 namespace Titanic {
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _value1(0), _value2(70) {
+BEGIN_MESSAGE_MAP(CAutoSoundEvent, CGameObject)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
+
+CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _value1(0), _value2(0xFFFFFF) {
 }
 
 void CAutoSoundEvent::save(SimpleFile *file, int indent) {
@@ -41,6 +45,13 @@ void CAutoSoundEvent::load(SimpleFile *file) {
 	_value2  = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CAutoSoundEvent::FrameMsg(CFrameMsg *msg) {
+	if (_value1 >= 0)
+		_value1 = (_value1 + 1) & _value2;
+
+	return true;
 }
 
 } // End of namespace Titanic

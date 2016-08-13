@@ -24,15 +24,22 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBarBell, CGameObject)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
 CBarBell::CBarBell() : CGameObject(), _fieldBC(0),
-	_fieldC0(65), _fieldC4(0), _fieldC8(0), _fieldCC(0) {
+	_volume(65), _soundVal3(0), _fieldC8(0), _fieldCC(0) {
 }
 
 void CBarBell::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_volume, indent);
+	file->writeNumberLine(_soundVal3, indent);
 	file->writeNumberLine(_fieldC8, indent);
 	file->writeNumberLine(_fieldCC, indent);
 
@@ -42,8 +49,8 @@ void CBarBell::save(SimpleFile *file, int indent) {
 void CBarBell::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
+	_volume = file->readNumber();
+	_soundVal3 = file->readNumber();
 	_fieldC8 = file->readNumber();
 	_fieldCC = file->readNumber();
 
@@ -52,6 +59,72 @@ void CBarBell::load(SimpleFile *file) {
 
 bool CBarBell::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_fieldBC = 0;
+	return true;
+}
+
+bool CBarBell::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if ((_fieldC8 % 3) == 2) {
+		switch (_fieldBC) {
+		case 0:
+		case 1:
+		case 5:
+			playSound("c#54.wav", _volume, _soundVal3);
+			break;
+
+		case 2:
+			playSound("c#52.wav", _volume, _soundVal3);
+			break;
+
+		case 3:
+			playSound("c#53.wav", _volume, _soundVal3);
+			break;
+
+		case 4:
+			playSound("c#55.wav", _volume, _soundVal3);
+			break;
+
+		default:
+			playSound("c#51.wav", _volume, _soundVal3);
+			break;
+		}
+	} else if (_fieldBC >= 5) {
+		if (_fieldBC == 6) {
+			CActMsg actMsg("BellRing3");
+			actMsg.execute("Barbot");
+		}
+
+		playSound("c#51.wav", _volume, _soundVal3);
+	} else {
+		if (_fieldBC == 3) {
+			CActMsg actMsg("BellRing1");
+			actMsg.execute("Barbot");
+		} else if (_fieldBC == 4) {
+			CActMsg actMsg("BellRing2");
+			actMsg.execute("Barbot");
+		}
+
+		playSound("c#54.wav", _volume, _soundVal3);
+	}
+
+	return true;
+}
+
+bool CBarBell::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (!_fieldBC) {
+		CTurnOn onMsg;
+		onMsg.execute("Barbot");
+	}
+
+	++_fieldBC;
+	return 2;
+}
+
+bool CBarBell::ActMsg(CActMsg *msg) {
+	if (msg->_action == "ResetCount") {
+		_fieldBC = 0;
+		++_fieldC8;
+	}
+
 	return true;
 }
 

@@ -29,11 +29,15 @@
 namespace Titanic {
 
 class CBarBell : public CGameObject {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool ActMsg(CActMsg *msg);
 public:
 	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
+	int _volume;
+	int _soundVal3;
 	int _fieldC8;
 	int _fieldCC;
 public:
