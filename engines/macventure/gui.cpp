@@ -314,14 +314,14 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
-		newData.bounds.translate(newData.bounds.left + settings.invOffsetX, newData.bounds.top + settings.invOffsetY);
+		newData.bounds.translate(newData.bounds.left + settings._invOffsetX, newData.bounds.top + settings._invOffsetY);
 	} else {
 		BorderBounds bbs = borderBounds(kInvWindow);
 		newData.bounds = Common::Rect(
-			settings.invLeft - bbs.leftOffset,
-			settings.invTop - bbs.topOffset,
-			settings.invLeft + settings.invWidth,
-			settings.invTop + settings.invHeight);
+			settings._invLeft - bbs.leftOffset,
+			settings._invTop - bbs.topOffset,
+			settings._invLeft + settings._invWidth,
+			settings._invTop + settings._invHeight);
 	}
 	newData.type = kInvWindow;
 	newData.hasCloseBox = true;

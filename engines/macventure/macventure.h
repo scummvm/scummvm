@@ -91,25 +91,34 @@ enum FilePathID {
 };
 
 
-struct GlobalSettings {
-	uint16 numObjects;    // number of game objects defined
-	uint16 numGlobals;    // number of globals defined
-	uint16 numCommands;   // number of commands defined
-	uint16 numAttributes; // number of attributes
-	uint16 numGroups;     // number of object groups
-	uint16 invTop;        // inventory window bounds
-	uint16 invLeft;
-	uint16 invHeight;
-	uint16 invWidth;
-	uint16 invOffsetY;    // positioning offset for
-	uint16 invOffsetX;    // new inventory windows
-	uint16 defaultFont;   // default font
-	uint16 defaultSize;   // default font size
-	uint8  *attrIndices; // attribute indices into attribute table
-	uint16 *attrMasks;   // attribute masks
-	uint8  *attrShifts;  // attribute bit shifts
-	uint8  *cmdArgCnts;  // command argument counts
-	uint8  *commands;    // command buttons
+class GlobalSettings {
+public:
+	GlobalSettings();
+	~GlobalSettings();
+
+	void loadSettings(Common::SeekableReadStream *dataStream);
+
+// HACK MAybe this should be private, but the class is only here to handle
+// memory allocation/deallocation
+public:
+	uint16 _numObjects;    // number of game objects defined
+	uint16 _numGlobals;    // number of globals defined
+	uint16 _numCommands;   // number of commands defined
+	uint16 _numAttributes; // number of attributes
+	uint16 _numGroups;     // number of object groups
+	uint16 _invTop;        // inventory window bounds
+	uint16 _invLeft;
+	uint16 _invHeight;
+	uint16 _invWidth;
+	uint16 _invOffsetY;    // positioning offset for
+	uint16 _invOffsetX;    // new inventory windows
+	uint16 _defaultFont;   // default font
+	uint16 _defaultSize;   // default font size
+	Common::Array<uint8> _attrIndices; // attribute indices into attribute table
+	Common::Array<uint16> _attrMasks;   // attribute masks
+	Common::Array<uint8> _attrShifts;  // attribute bit shifts
+	Common::Array<uint8> _cmdArgCnts;  // command argument counts
+	Common::Array<uint8> _commands;    // command buttons
 };
 
 enum GameState {
@@ -327,7 +336,7 @@ private: // Attributes
 
 	// Engine state
 	GameState _gameState;
-	GlobalSettings _globalSettings;
+	GlobalSettings *_globalSettings;
 	HuffmanLists *_textHuffman;
 	bool _oldTextEncoding;
 	bool _paused, _halted, _cmdReady, _prepared;

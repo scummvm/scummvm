@@ -56,6 +56,7 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 
 	_debugger = NULL;
 	_resourceManager = NULL;
+	_globalSettings = NULL;
 	_gui = NULL;
 	_world = NULL;
 	_scriptEngine = NULL;
@@ -86,6 +87,9 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_resourceManager)
 		delete _resourceManager;
+
+	if (_globalSettings)
+		delete _globalSettings;
 
 	if (_gui)
 		delete _gui;
@@ -487,7 +491,7 @@ Common::String MacVentureEngine::getStartGameFileName() {
 }
 
 const GlobalSettings& MacVentureEngine::getGlobalSettings() const {
-	return _globalSettings;
+	return *_globalSettings;
 }
 
 // Private engine methods
@@ -979,7 +983,7 @@ uint32 MacVentureEngine::randBetween(uint32 min, uint32 max) {
 }
 
 uint32 MacVentureEngine::getInvolvedObjects() {
-	return (_selectedControl ? _globalSettings.cmdArgCnts[_selectedControl - 1] : 3000);
+	return (_selectedControl ? getGlobalSettings()._cmdArgCnts[_selectedControl - 1] : 3000);
 }
 
 Common::Point MacVentureEngine::getObjPosition(ObjID objID) {
@@ -1084,37 +1088,8 @@ bool MacVentureEngine::loadGlobalSettings() {
 	Common::SeekableReadStream *res;
 	res = _resourceManager->getResource(MKTAG('G', 'N', 'R', 'L'), kGlobalSettingsID);
 	if (res) {
-		_globalSettings.numObjects = res->readUint16BE();
-		_globalSettings.numGlobals = res->readUint16BE();
-		_globalSettings.numCommands = res->readUint16BE();
-		_globalSettings.numAttributes = res->readUint16BE();
-		_globalSettings.numGroups = res->readUint16BE();
-		res->readUint16BE(); // unknown
-		_globalSettings.invTop = res->readUint16BE();
-		_globalSettings.invLeft = res->readUint16BE();
-		_globalSettings.invWidth = res->readUint16BE();
-		_globalSettings.invHeight = res->readUint16BE();
-		_globalSettings.invOffsetY = res->readUint16BE();
-		_globalSettings.invOffsetX = res->readSint16BE();
-		_globalSettings.defaultFont = res->readUint16BE();
-		_globalSettings.defaultSize = res->readUint16BE();
-
-		_globalSettings.attrIndices = new uint8[_globalSettings.numAttributes];
-		res->read(_globalSettings.attrIndices, _globalSettings.numAttributes);
-
-		_globalSettings.attrMasks = new uint16[_globalSettings.numAttributes];
-		for (int i = 0; i < _globalSettings.numAttributes; i++)
-			_globalSettings.attrMasks[i] = res->readUint16BE();
-
-		_globalSettings.attrShifts = new uint8[_globalSettings.numAttributes];
-		res->read(_globalSettings.attrShifts, _globalSettings.numAttributes);
-
-		_globalSettings.cmdArgCnts = new uint8[_globalSettings.numCommands];
-		res->read(_globalSettings.cmdArgCnts, _globalSettings.numCommands);
-
-		_globalSettings.commands = new uint8[_globalSettings.numCommands];
-		res->read(_globalSettings.commands, _globalSettings.numCommands);
-
+		_globalSettings = new GlobalSettings();
+		_globalSettings->loadSettings(res);
 		delete res;
 		return true;
 	}
@@ -1149,7 +1124,6 @@ bool MacVentureEngine::loadTextHuffman() {
 		_textHuffman = new HuffmanLists(numEntries, lengths, masks, values);
 		debugC(4, kMVDebugMain, "Text is huffman-encoded");
 
-
 		delete res;
 		delete masks;
 		delete lengths;
@@ -1159,6 +1133,52 @@ bool MacVentureEngine::loadTextHuffman() {
 	return false;
 }
 
+// Global Settings
+GlobalSettings::GlobalSettings() {
+}
 
+GlobalSettings::~GlobalSettings() {
+
+}
+
+void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {
+	_numObjects = dataStream->readUint16BE();
+	_numGlobals = dataStream->readUint16BE();
+	_numCommands = dataStream->readUint16BE();
+	_numAttributes = dataStream->readUint16BE();
+	_numGroups = dataStream->readUint16BE();
+	dataStream->readUint16BE(); // unknown
+	_invTop = dataStream->readUint16BE();
+	_invLeft = dataStream->readUint16BE();
+	_invWidth = dataStream->readUint16BE();
+	_invHeight = dataStream->readUint16BE();
+	_invOffsetY = dataStream->readUint16BE();
+	_invOffsetX = dataStream->readSint16BE();
+	_defaultFont = dataStream->readUint16BE();
+	_defaultSize = dataStream->readUint16BE();
+
+	uint8 *attrIndices = new uint8[_numAttributes];
+	dataStream->read(attrIndices, _numAttributes);
+	_attrIndices = Common::Array<uint8>(attrIndices, _numAttributes);
+	delete[] attrIndices;
+
+	for (int i = 0; i < _numAttributes; i++)
+		_attrMasks.push_back(dataStream->readUint16BE());
+
+	uint8 *attrShifts = new uint8[_numAttributes];
+	dataStream->read(attrShifts, _numAttributes);
+	_attrShifts = Common::Array<uint8>(attrShifts, _numAttributes);
+	delete[] attrShifts;
+
+	uint8 *cmdArgCnts = new uint8[_numCommands];
+	dataStream->read(cmdArgCnts, _numCommands);
+	_cmdArgCnts = Common::Array<uint8>(cmdArgCnts, _numCommands);
+	delete[] cmdArgCnts;
+
+	uint8 *commands = new uint8[_numCommands];
+	dataStream->read(commands, _numCommands);
+	_commands = Common::Array<uint8>(commands, _numCommands);
+	delete[] commands;
+}
 
 } // End of namespace MacVenture

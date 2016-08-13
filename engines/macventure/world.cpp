@@ -56,7 +56,7 @@ void World::startNewGame() {
 
 uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 	uint res;
-	uint32 index = _engine->getGlobalSettings().attrIndices[attrID];
+	uint32 index = _engine->getGlobalSettings()._attrIndices[attrID];
 	// HACK, but if I try to initialize it in the else clause, it goes out of scope and segfaults
 	Common::SeekableReadStream *objStream = _objectConstants->getItem(objID);
 	if (!(index & 0x80)) { // It's not a constant
@@ -69,8 +69,8 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 		res = objStream->readByte() << 8;
 		res |= objStream->readByte();
 	}
-	res &= _engine->getGlobalSettings().attrMasks[attrID];
-	res >>= _engine->getGlobalSettings().attrShifts[attrID];
+	res &= _engine->getGlobalSettings()._attrMasks[attrID];
+	res >>= _engine->getGlobalSettings()._attrShifts[attrID];
 	if (res & 0x8000)
 		res = -((res ^ 0xffff) + 1);
 	debugC(5, kMVDebugMain, "Attribute %x from object %x is %x", attrID, objID, res);
@@ -88,11 +88,11 @@ void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
 	if (attrID < kAttrOtherDoor)
 		_engine->enqueueObject(kUpdateObject, objID);
 
-	uint32 idx = _engine->getGlobalSettings().attrIndices[attrID];
-	value <<= _engine->getGlobalSettings().attrShifts[attrID];
-	value &= _engine->getGlobalSettings().attrMasks[attrID];
+	uint32 idx = _engine->getGlobalSettings()._attrIndices[attrID];
+	value <<= _engine->getGlobalSettings()._attrShifts[attrID];
+	value &= _engine->getGlobalSettings()._attrMasks[attrID];
 	Attribute oldVal = _saveGame->getAttr(objID, idx);
-	oldVal &= ~_engine->getGlobalSettings().attrMasks[attrID];
+	oldVal &= ~_engine->getGlobalSettings()._attrMasks[attrID];
 	_saveGame->setAttr(idx, objID, (value | oldVal));
 	_engine->gameChanged();
 }
@@ -195,7 +195,7 @@ bool World::intersects(ObjID objID, Common::Rect rect) {
 void World::calculateObjectRelations() {
 	_relations.clear();
 	ObjID val, next;
-	uint32 numObjs = _engine->getGlobalSettings().numObjects;
+	uint32 numObjs = _engine->getGlobalSettings()._numObjects;
 	const AttributeGroup &parents = *_saveGame->getGroup(0);
 	for (uint i = 0; i < numObjs * 2; i++) {
 		_relations.push_back(0);
@@ -305,9 +305,9 @@ void SaveGame::saveInto(Common::OutSaveFile *file) {
 
 void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream * res) {
 	GlobalSettings settings = engine->getGlobalSettings();
-	for (int i = 0; i < settings.numGroups; ++i) {
+	for (int i = 0; i < settings._numGroups; ++i) {
 		AttributeGroup g;
-		for (int j = 0; j < settings.numObjects; ++j)
+		for (int j = 0; j < settings._numObjects; ++j)
 			g.push_back(res->readUint16BE());
 
 		_groups.push_back(g);
@@ -316,7 +316,7 @@ void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *
 
 void SaveGame::loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream * res) {
 	GlobalSettings settings = engine->getGlobalSettings();
-	for (int i = 0; i < settings.numGlobals; ++i) {
+	for (int i = 0; i < settings._numGlobals; ++i) {
 		_globals.push_back(res->readUint16BE());
 	}
 }
