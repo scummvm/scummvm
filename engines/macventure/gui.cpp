@@ -367,6 +367,7 @@ void Gui::clearAssets() {
 	for (; it != _assets.end(); it++) {
 		delete it->_value;
 	}
+	_assets.clear();
 }
 
 bool Gui::loadMenus() {
@@ -672,9 +673,11 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 
 	if (targetData.children.size() == 0) return;
 
-	Graphics::ManagedSurface *composeSurface = new Graphics::ManagedSurface();
-	createInnerSurface(composeSurface, surface, border);
-	composeSurface->clear(kColorGreen);
+	Graphics::ManagedSurface composeSurface;
+	createInnerSurface(&composeSurface, surface, border);
+	assert(composeSurface.w <= surface->w &&
+			composeSurface.h <= surface->h);
+	composeSurface.clear(kColorGreen);
 
 	for (uint i = 0; i < targetData.children.size(); i++) {
 		child = targetData.children[i].obj;
@@ -684,7 +687,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 		ensureAssetLoaded(child);
 
 		_assets[child]->blitInto(
-			composeSurface,
+			&composeSurface,
 			pos.x,
 			pos.y,
 			mode);
@@ -694,7 +697,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 				child == _draggedObj.id) {
 
 				_assets[child]->blitInto(
-					composeSurface, pos.x, pos.y, kBlitOR);
+					&composeSurface, pos.x, pos.y, kBlitOR);
 			}
 		}
 
@@ -705,8 +708,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 		}
 	}
 	Common::Point composePosition = Common::Point(border.leftOffset, border.topOffset);
-	surface->transBlitFrom(*composeSurface, composePosition, kColorGreen);
-	delete composeSurface;
+	surface->transBlitFrom(composeSurface, composePosition, kColorGreen);
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface * surface) {
