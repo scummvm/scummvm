@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CActButton, CSTButton)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
 CActButton::CActButton() : CSTButton() {
 }
 
@@ -35,6 +39,12 @@ void CActButton::save(SimpleFile *file, int indent) {
 void CActButton::load(SimpleFile *file) {
 	file->readNumber();
 	CSTButton::load(file);
+}
+
+bool CActButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	CActMsg actMsg(_actionName);
+	actMsg.execute(_actionTarget);
+	return true;
 }
 
 } // End of namespace Titanic

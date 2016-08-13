@@ -34,12 +34,12 @@ class CSTButton : public CBackground {
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
-private:
+protected:
 	int _statusInc;
-	CString _statusTarget;
+	CString _actionTarget;
 	int _fieldF0;
 	int _currentStatus;
-	CString _string4;
+	CString _actionName;
 	CString _soundName;
 	int _buttonFrame;
 public:

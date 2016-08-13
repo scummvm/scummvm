@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CAnnounce : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool TimerMsg(CTimerMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool ActMsg(CActMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
+	int _nameIndex;
+	int _soundHandle;
+	bool _leaveFlag;
+	bool _enabled;
 public:
 	CLASSDEF;
 	CAnnounce();

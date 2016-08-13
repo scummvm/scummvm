@@ -32,10 +32,10 @@ END_MESSAGE_MAP()
 
 CSTButton::CSTButton() : CBackground() {
 	_statusInc = 0;
-	_statusTarget = "NULL";
+	_actionTarget = "NULL";
 	_fieldF0 = 0;
 	_currentStatus = 0;
-	_string4 = "NULL";
+	_actionName = "NULL";
 	_soundName = "NULL";
 	_buttonFrame = 0;
 }
@@ -43,10 +43,10 @@ CSTButton::CSTButton() : CBackground() {
 void CSTButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_statusInc, indent);
-	file->writeQuotedLine(_statusTarget, indent);
+	file->writeQuotedLine(_actionTarget, indent);
 	file->writeNumberLine(_fieldF0, indent);
 	file->writeNumberLine(_currentStatus, indent);
-	file->writeQuotedLine(_string4, indent);
+	file->writeQuotedLine(_actionName, indent);
 	file->writeQuotedLine(_soundName, indent);
 	file->writeNumberLine(_buttonFrame, indent);
 
@@ -56,10 +56,10 @@ void CSTButton::save(SimpleFile *file, int indent) {
 void CSTButton::load(SimpleFile *file) {
 	file->readNumber();
 	_statusInc = file->readNumber();
-	_statusTarget = file->readString();
+	_actionTarget = file->readString();
 	_fieldF0 = file->readNumber();
 	_currentStatus = file->readNumber();
-	_string4 = file->readString();
+	_actionName = file->readString();
 	_soundName = file->readString();
 	_buttonFrame = file->readNumber() != 0;
 
@@ -79,7 +79,7 @@ bool CSTButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 	CStatusChangeMsg statusMsg(oldStatus, newStatus, false);
 	_currentStatus = newStatus;
-	statusMsg.execute(_statusTarget);
+	statusMsg.execute(_actionTarget);
 
 	if (!statusMsg._success) {
 		_currentStatus -= _statusInc;

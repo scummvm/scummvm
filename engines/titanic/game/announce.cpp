@@ -21,30 +21,113 @@
  */
 
 #include "titanic/game/announce.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CAnnounce::CAnnounce() : _fieldBC(0), _fieldC0(0), _fieldC4(1), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CAnnounce, CGameObject)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
+CAnnounce::CAnnounce() : _nameIndex(0), _soundHandle(0), _leaveFlag(1), _enabled(false) {
 }
 
 void CAnnounce::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_nameIndex, indent);
+	file->writeNumberLine(_soundHandle, indent);
+	file->writeNumberLine(_leaveFlag, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CAnnounce::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
+	_nameIndex = file->readNumber();
+	_soundHandle = file->readNumber();
+	_leaveFlag = file->readNumber();
+	_enabled = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CAnnounce::TimerMsg(CTimerMsg *msg) {
+	if (!_enabled)
+		return false;
+
+	if (msg->_timerCtr == 1) {
+		CString numStr = "0";
+		CString waveNames1[20] = {
+			"z#181.wav", "z#211.wav", "z#203.wav", "z#202.wav", "z#201.wav",
+			"z#200.wav", "z#199.wav", "z#198.wav", "z#197.wav", "z#196.wav",
+			"z#210.wav", "z#209.wav", "z#208.wav", "z#207.wav", "z#206.wav",
+			"z#205.wav", "z#204.wav", "z#145.wav", "", ""
+		};
+		CString waveNames2[37] = {
+			"z#154.wav", "z#153.wav", "z#152.wav", "z#151.wav", "z#150.wav",
+			"z#149.wav", "z#148.wav", "z#169.wav", "z#171.wav", "z#178.wav",
+			"z#176.wav", "z#177.wav", "z#165.wav", "z#170.wav", "z#180.wav",
+			"z#156.wav", "z#172.wav", "z#173.wav", "z#160.wav", "z#158.wav",
+			"z#161.wav", "z#179.wav", "z#163.wav", "z#164.wav", "z#162.wav",
+			"z#159.wav", "z#175.wav", "z#166.wav", "z#174.wav", "z#157.wav",
+			"", "", "", "", "", "", ""
+		};
+
+		int randVal = _nameIndex ? g_vm->getRandomNumber(2) : 0;
+		switch (randVal) {
+		case 0:
+		case 1:
+			_soundHandle = playSound("z#189.wav");
+			if (_nameIndex < 20) {
+				queueSound(waveNames1[_nameIndex], _soundHandle);
+				++_nameIndex;
+			} else {
+				queueSound(waveNames1[1 + g_vm->getRandomNumber(17)], _soundHandle);
+			}
+			break;
+
+		case 2:
+			_soundHandle = playSound("z#189.wav");
+			queueSound(waveNames2[1 + g_vm->getRandomNumber(35)], _soundHandle);
+			break;
+
+		default:
+			break;
+		}
+
+		addTimer(1, 300000 + g_vm->getRandomNumber(30000), 0);
+		if (g_vm->getRandomNumber(3) == 0)
+			addTimer(2, 4000, 0);
+
+	} else if (msg->_timerCtr == 2) {
+		CParrotSpeakMsg speakMsg;
+		speakMsg._value1 = "Announcements";
+		speakMsg.execute("PerchedParrot");
+	}
+
+	return true;
+}
+
+bool CAnnounce::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	if (_leaveFlag) {
+		addTimer(1, 1000, 0);
+		_leaveFlag = 0;
+		_enabled = true;
+	}
+
+	return true;
+}
+
+bool CAnnounce::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Enable")
+		_enabled = true;
+	else if (msg->_action == "Disable")
+		_enabled = false;
+
+	return true;
 }
 
 } // End of namespace Titanic

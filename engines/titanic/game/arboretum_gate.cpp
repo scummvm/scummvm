@@ -325,8 +325,7 @@ bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
 		loadFrame(_initialFrame);
 	}
 
-	warning("CArboretumGate::handleEvent");
-	return false;
+	return true;
 }
 
 } // End of namespace Titanic
