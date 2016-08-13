@@ -524,6 +524,8 @@ int main(int argc, char *argv[]) {
 		// 4355 ('this' : used in base member initializer list)
 		//   only disabled for specific engines where it is used in a safe way
 		//
+		// 4373 (previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers)
+		//
 		// 4510 ('class' : default constructor could not be generated)
 		//
 		// 4511 ('class' : copy constructor could not be generated)
@@ -572,6 +574,8 @@ int main(int argc, char *argv[]) {
 		projectWarnings["kyra"].push_back("4610");
 
 		projectWarnings["m4"].push_back("4355");
+
+		projectWarnings["sci"].push_back("4373");
 
 		if (msvcVersion == 9)
 			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
