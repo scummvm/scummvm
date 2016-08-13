@@ -29,7 +29,11 @@
 
 // This is a convenience macro to test whether the compiler used is a GCC
 // version, which is at least major.minor.
-#define GCC_ATLEAST(major, minor) (defined(__GNUC__) && (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))))
+#ifdef __GNUC__
+	#define GCC_ATLEAST(major, minor) (__GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor)))
+#else
+	#define GCC_ATLEAST(major, minor) 0
+#endif
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
