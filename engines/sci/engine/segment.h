@@ -227,7 +227,7 @@ template<typename T>
 struct SegmentObjTable : public SegmentObj {
 	typedef T value_type;
 	struct Entry {
-		T data;
+		T *data;
 		int next_free; /* Only used for free entries */
 	};
 	enum { HEAPENTRY_INVALID = -1 };
@@ -243,6 +243,14 @@ public:
 		initTable();
 	}
 
+	~SegmentObjTable() {
+		for (uint i = 0; i < _table.size(); i++) {
+			if (isValidEntry(i)) {
+				freeEntry(i);
+			}
+		}
+	}
+
 	void initTable() {
 		entries_used = 0;
 		first_free = HEAPENTRY_INVALID;
@@ -256,10 +264,13 @@ public:
 			first_free = _table[oldff].next_free;
 
 			_table[oldff].next_free = oldff;
+			assert(_table[oldff].data == nullptr);
+			_table[oldff].data = new T;
 			return oldff;
 		} else {
 			uint newIdx = _table.size();
 			_table.push_back(Entry());
+			_table.back().data = new T;
 			_table[newIdx].next_free = newIdx;	// Tag as 'valid'
 			return newIdx;
 		}
@@ -278,6 +289,8 @@ public:
 			::error("Table::freeEntry: Attempt to release invalid table index %d", idx);
 
 		_table[idx].next_free = first_free;
+		delete _table[idx].data;
+		_table[idx].data = nullptr;
 		first_free = idx;
 		entries_used--;
 	}
@@ -292,8 +305,8 @@ public:
 
 	uint size() const { return _table.size(); }
 
-	T &at(uint index) { return _table[index].data; }
-	const T &at(uint index) const { return _table[index].data; }
+	T &at(uint index) { return *_table[index].data; }
+	const T &at(uint index) const { return *_table[index].data; }
 
 	T &operator[](uint index) { return at(index); }
 	const T &operator[](uint index) const { return at(index); }
@@ -353,8 +366,8 @@ struct HunkTable : public SegmentObjTable<Hunk> {
 	}
 
 	virtual void freeEntry(int idx) {
-		SegmentObjTable<Hunk>::freeEntry(idx);
 		freeEntryContents(idx);
+		SegmentObjTable<Hunk>::freeEntry(idx);
 	}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
@@ -792,42 +805,14 @@ public:
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
-struct BitmapTable : public SegmentObjTable<SciBitmap *> {
-	BitmapTable() : SegmentObjTable<SciBitmap *>(SEG_TYPE_BITMAP) {}
-
-	virtual ~BitmapTable() {
-		for (uint i = 0; i < _table.size(); i++) {
-			if (isValidEntry(i)) {
-				freeEntryContents(i);
-			}
-		}
-	}
-
-	int allocEntry() {
-		int offset = SegmentObjTable<SciBitmap *>::allocEntry();
-		at(offset) = new SciBitmap;
-		return offset;
-	}
-
-	void freeEntryContents(const int offset) {
-		delete at(offset);
-		at(offset) = nullptr;
-	}
-
-	virtual void freeEntry(const int offset) override {
-		SegmentObjTable<SciBitmap *>::freeEntry(offset);
-		freeEntryContents(offset);
-	}
-
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) override {
-		freeEntry(sub_addr.getOffset());
-	}
+struct BitmapTable : public SegmentObjTable<SciBitmap> {
+	BitmapTable() : SegmentObjTable<SciBitmap>(SEG_TYPE_BITMAP) {}
 
 	SegmentRef dereference(reg_t pointer) {
 		SegmentRef ret;
 		ret.isRaw = true;
-		ret.maxSize = at(pointer.getOffset())->getRawSize();
-		ret.raw = at(pointer.getOffset())->getRawData();
+		ret.maxSize = at(pointer.getOffset()).getRawSize();
+		ret.raw = at(pointer.getOffset()).getRawData();
 		return ret;
 	}
 

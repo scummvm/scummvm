@@ -959,15 +959,11 @@ SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int1
 	offset = table->allocEntry();
 
 	*addr = make_reg(_bitmapSegId, offset);
-	SciBitmap *bitmap = table->at(offset);
+	SciBitmap &bitmap = table->at(offset);
 
-	if (bitmap == nullptr) {
-		*addr = NULL_REG;
-	}
+	bitmap.create(width, height, skipColor, displaceX, displaceY, scaledWidth, scaledHeight, paletteSize, remap, gc);
 
-	bitmap->create(width, height, skipColor, displaceX, displaceY, scaledWidth, scaledHeight, paletteSize, remap, gc);
-
-	return bitmap;
+	return &bitmap;
 }
 
 SciBitmap *SegManager::lookupBitmap(const reg_t addr) {
@@ -979,7 +975,7 @@ SciBitmap *SegManager::lookupBitmap(const reg_t addr) {
 	if (!bitmapTable.isValidEntry(addr.getOffset()))
 		error("Attempt to use invalid entry %04x:%04x as bitmap", PRINT_REG(addr));
 
-	return (bitmapTable.at(addr.getOffset()));
+	return &(bitmapTable.at(addr.getOffset()));
 }
 
 void SegManager::freeBitmap(const reg_t addr) {

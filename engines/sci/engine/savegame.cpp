@@ -159,23 +159,6 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 	}
 }
 
-void syncWithSerializer(Common::Serializer &s, SciBitmap *&obj) {
-	bool hasEntry;
-	if (s.isSaving()) {
-		hasEntry = obj != nullptr;
-	}
-	s.syncAsByte(hasEntry);
-
-	if (hasEntry) {
-		if (s.isLoading()) {
-			obj = new SciBitmap;
-		}
-
-		obj->saveLoadWithSerializer(s);
-	} else {
-		obj = nullptr;
-	}
-}
 #endif
 
 #pragma mark -
@@ -183,7 +166,7 @@ void syncWithSerializer(Common::Serializer &s, SciBitmap *&obj) {
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
 template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
-	void operator()(Common::Serializer &s, T &obj) const {
+	void operator()(Common::Serializer &s, T &obj, int) const {
 		syncWithSerializer(s, obj);
 	}
 };
@@ -191,10 +174,31 @@ struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 // Syncer for entries in a segment obj table
 template<typename T>
 struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
-	void operator()(Common::Serializer &s, typename T::Entry &entry) const {
+	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
 		s.syncAsSint32LE(entry.next_free);
 
-		syncWithSerializer(s, entry.data);
+		bool hasData;
+		if (s.getVersion() >= 37) {
+			if (s.isSaving()) {
+				hasData = entry.data != nullptr;
+			}
+			s.syncAsByte(hasData);
+		} else {
+			hasData = (entry.next_free == index);
+		}
+
+		if (hasData) {
+			if (s.isLoading()) {
+				entry.data = new typename T::value_type;
+			}
+			syncWithSerializer(s, *entry.data);
+		} else if (s.isLoading()) {
+			if (s.getVersion() < 37) {
+				typename T::value_type dummy;
+				syncWithSerializer(s, dummy);
+			}
+			entry.data = nullptr;
+		}
 	}
 };
 
@@ -222,9 +226,8 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 		if (s.isLoading())
 			arr.resize(len);
 
-		typename Common::Array<T>::iterator i;
-		for (i = arr.begin(); i != arr.end(); ++i) {
-			sync(s, *i);
+		for (int i = 0; i < len; ++i) {
+			sync(s, arr[i], i);
 		}
 	}
 };
