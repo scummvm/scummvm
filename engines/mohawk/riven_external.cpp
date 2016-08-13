@@ -229,10 +229,10 @@ void RivenExternal::runCredits(uint16 video, uint32 delay) {
 	_vm->_gfx->beginCredits();
 	uint nextCreditsFrameStart = 0;
 
-	VideoHandle videoHandle = _vm->_video->findVideoHandleRiven(video);
+	VideoEntryPtr videoPtr = _vm->_video->findVideoRiven(video);
 
 	while (!_vm->shouldQuit() && _vm->_gfx->getCurCreditsImage() <= 320) {
-		if (videoHandle->getCurFrame() >= (int32)videoHandle->getFrameCount() - 1) {
+		if (videoPtr->getCurFrame() >= (int32)videoPtr->getFrameCount() - 1) {
 			if (nextCreditsFrameStart == 0) {
 				// Set us up to start after delay ms
 				nextCreditsFrameStart = _vm->_system->getMillis() + delay;
@@ -267,7 +267,7 @@ void RivenExternal::runDomeButtonMovie() {
 void RivenExternal::runDomeCheck() {
 	// Check if we clicked while the golden frame was showing
 
-	VideoHandle video = _vm->_video->findVideoHandleRiven(1);
+	VideoEntryPtr video = _vm->_video->findVideoRiven(1);
 	assert(video);
 
 	int32 curFrame = video->getCurFrame();
@@ -879,12 +879,12 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 			_vm->_video->playMovieRiven(7);
 		}
 	} else {
-		VideoHandle handle = _vm->_video->findVideoHandleRiven(7);
-		if (handle)
-			handle->setEnabled(false);
-		handle = _vm->_video->findVideoHandleRiven(8);
-		if (handle)
-			handle->setEnabled(false);
+		VideoEntryPtr video = _vm->_video->findVideoRiven(7);
+		if (video)
+			video->setEnabled(false);
+		video = _vm->_video->findVideoRiven(8);
+		if (video)
+			video->setEnabled(false);
 	}
 }
 
@@ -1178,7 +1178,7 @@ void RivenExternal::lowerPins() {
 	uint32 &upMovie = _vm->_vars["gupmoov"];
 
 	// Play the video of the pins going down
-	VideoHandle handle = _vm->_video->playMovieRiven(upMovie);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(upMovie);
 	assert(handle);
 	handle->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, startTime + 550, 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1210,7 +1210,7 @@ void RivenExternal::xgrotatepins(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(12);
 
 	// Play the video of the pins rotating
-	VideoHandle handle = _vm->_video->playMovieRiven(_vm->_vars["gupmoov"]);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(_vm->_vars["gupmoov"]);
 	assert(handle);
 	handle->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, startTime + 1215, 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1296,7 +1296,7 @@ void RivenExternal::xgpincontrols(uint16 argc, uint16 *argv) {
 	_vm->_sound->playSound(14);
 
 	// Actually play the movie
-	VideoHandle handle = _vm->_video->playMovieRiven(pinMovieCodes[imagePos - 1]);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(pinMovieCodes[imagePos - 1]);
 	assert(handle);
 	uint32 startTime = 9630 - pinPos * 600;
 	handle->setBounds(Audio::Timestamp(0, startTime, 600), Audio::Timestamp(0, startTime + 550, 600));
@@ -1376,7 +1376,7 @@ void RivenExternal::xgrviewer(uint16 argc, uint16 *argv) {
 	uint32 newPos = curPos + buttonPos;
 
 	// Now play the movie
-	VideoHandle handle = _vm->_video->playMovieRiven(1);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(1);
 	assert(handle);
 	handle->setBounds(Audio::Timestamp(0, s_viewerTimeIntervals[curPos], 600), Audio::Timestamp(0, s_viewerTimeIntervals[newPos], 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1447,7 +1447,7 @@ void RivenExternal::xglviewer(uint16 argc, uint16 *argv) {
 	uint32 newPos = curPos + buttonPos;
 
 	// Now play the movie
-	VideoHandle handle = _vm->_video->playMovieRiven(1);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(1);
 	assert(handle);
 	handle->setBounds(Audio::Timestamp(0, s_viewerTimeIntervals[curPos], 600), Audio::Timestamp(0, s_viewerTimeIntervals[newPos], 600));
 	_vm->_video->waitUntilMovieEnds(handle);
@@ -1497,10 +1497,10 @@ static void catherineViewerIdleTimer(MohawkEngine_Riven *vm) {
 
 	// Begin playing the new movie
 	vm->_video->activateMLST(movie, vm->getCard()->getId());
-	VideoHandle videoHandle = vm->_video->playMovieRiven(30);
+	VideoEntryPtr video = vm->_video->playMovieRiven(30);
 
 	// Reset the timer
-	vm->installTimer(&catherineViewerIdleTimer, videoHandle->getDuration().msecs() + vm->_rnd->getRandomNumber(60) * 1000);
+	vm->installTimer(&catherineViewerIdleTimer, video->getDuration().msecs() + vm->_rnd->getRandomNumber(60) * 1000);
 }
 
 void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
@@ -1538,9 +1538,9 @@ void RivenExternal::xglview_prisonon(uint16 argc, uint16 *argv) {
 	// Begin playing a movie immediately if Catherine is already in the viewer
 	if (cathMovie == 8 || (cathMovie >= 13 && cathMovie <= 16)) {
 		_vm->_video->activateMLST(cathMovie, _vm->getCard()->getId());
-		VideoHandle videoHandle = _vm->_video->playMovieRiven(30);
+		VideoEntryPtr video = _vm->_video->playMovieRiven(30);
 
-		timeUntilNextMovie = videoHandle->getDuration().msecs() + _vm->_rnd->getRandomNumber(60) * 1000;
+		timeUntilNextMovie = video->getDuration().msecs() + _vm->_rnd->getRandomNumber(60) * 1000;
 	} else {
 		// Otherwise, just redraw the imager
 		timeUntilNextMovie = _vm->_rnd->getRandomNumberRng(10, 20) * 1000;
@@ -2013,7 +2013,7 @@ void RivenExternal::xschool280_playwhark(uint16 argc, uint16 *argv) {
 	// Handle movement
 	// (11560/600)s is the length of each of the two movies. We divide it into 19 parts
 	// (one for each of the possible positions the villager can have).
-	VideoHandle handle = _vm->_video->playMovieRiven(doomMLST);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(doomMLST);
 	Audio::Timestamp startTime = Audio::Timestamp(0, (11560 / 19) * (*posVar), 600);
 	*posVar += number; // Adjust to the end
 	Audio::Timestamp endTime = Audio::Timestamp(0, (11560 / 19) * (*posVar), 600);
@@ -2072,7 +2072,7 @@ void RivenExternal::xbookclick(uint16 argc, uint16 *argv) {
 	_vm->_system->updateScreen();
 
 	// Let's hook onto our video
-	VideoHandle video = _vm->_video->findVideoHandleRiven(argv[0]);
+	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
 
 	// Convert from the standard QuickTime base time to milliseconds
 	// The values are in terms of 1/600 of a second.
@@ -2368,7 +2368,7 @@ static void rebelPrisonWindowTimer(MohawkEngine_Riven *vm) {
 	// Randomize a video out in the middle of Tay
 	uint16 movie = vm->_rnd->getRandomNumberRng(2, 13);
 	vm->_video->activateMLST(movie, vm->getCard()->getId());
-	VideoHandle handle = vm->_video->playMovieRiven(movie);
+	VideoEntryPtr handle = vm->_video->playMovieRiven(movie);
 
 	// Ensure the next video starts after this one ends
 	uint32 timeUntilNextVideo = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(38, 58) * 1000;
@@ -2469,7 +2469,7 @@ void RivenExternal::xtexterior300_telescopedown(uint16 argc, uint16 *argv) {
 		// Play a piece of the moving down movie
 		static const uint32 timeIntervals[] = { 4320, 3440, 2560, 1760, 880, 0 };
 		uint16 movieCode = telescopeCover ? 1 : 2;
-		VideoHandle handle = _vm->_video->playMovieRiven(movieCode);
+		VideoEntryPtr handle = _vm->_video->playMovieRiven(movieCode);
 		handle->setBounds(Audio::Timestamp(0, timeIntervals[telescopePos], 600), Audio::Timestamp(0, timeIntervals[telescopePos - 1], 600));
 		_vm->_sound->playSound(14); // Play the moving sound
 		_vm->_video->waitUntilMovieEnds(handle);
@@ -2502,7 +2502,7 @@ void RivenExternal::xtexterior300_telescopeup(uint16 argc, uint16 *argv) {
 	// Play a piece of the moving up movie
 	static const uint32 timeIntervals[] = { 0, 800, 1680, 2560, 3440, 4320 };
 	uint16 movieCode = _vm->_vars["ttelecover"] ? 4 : 5;
-	VideoHandle handle = _vm->_video->playMovieRiven(movieCode);
+	VideoEntryPtr handle = _vm->_video->playMovieRiven(movieCode);
 	handle->setBounds(Audio::Timestamp(0, timeIntervals[telescopePos - 1], 600), Audio::Timestamp(0, timeIntervals[telescopePos], 600));
 	_vm->_sound->playSound(14); // Play the moving sound
 	_vm->_video->waitUntilMovieEnds(handle);

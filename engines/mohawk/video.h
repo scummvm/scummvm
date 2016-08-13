@@ -321,10 +321,11 @@ public:
 	void activateMLST(uint16 mlstId, uint16 card);
 	void clearMLST();
 	void disableAllMovies();
-	VideoHandle playMovieRiven(uint16 id);
+	VideoEntryPtr playMovieRiven(uint16 id);
 	void playMovieBlockingRiven(uint16 id);
-	VideoHandle findVideoHandleRiven(uint16 id);
+	VideoEntryPtr findVideoRiven(uint16 id);
 	void stopMovieRiven(uint16 id);
+	void waitUntilMovieEnds(const VideoEntryPtr &video);
 
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);

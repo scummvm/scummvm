@@ -615,18 +615,18 @@ static void sunnersTopStairsTimer(MohawkEngine_Riven *vm) {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
 	uint32 timerTime = 500;
 
-	if (!oldHandle || oldHandle->endOfVideo()) {
+	if (!oldVideo || oldVideo->endOfVideo()) {
 		uint32 &sunnerTime = vm->_vars["jsunnertime"];
 
 		if (sunnerTime == 0) {
 			timerTime = vm->_rnd->getRandomNumberRng(2, 15) * 1000;
 		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(1, 3));
+			VideoEntryPtr video = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(1, 3));
 
-			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
+			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(2, 15) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -645,10 +645,10 @@ static void sunnersMidStairsTimer(MohawkEngine_Riven *vm) {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
 	uint32 timerTime = 500;
 
-	if (!oldHandle || oldHandle->endOfVideo()) {
+	if (!oldVideo || oldVideo->endOfVideo()) {
 		uint32 &sunnerTime = vm->_vars["jsunnertime"];
 
 		if (sunnerTime == 0) {
@@ -662,9 +662,9 @@ static void sunnersMidStairsTimer(MohawkEngine_Riven *vm) {
 			else if (randValue == 5)
 				movie = 3;
 
-			VideoHandle handle = vm->_video->playMovieRiven(movie);
+			VideoEntryPtr video = vm->_video->playMovieRiven(movie);
 
-			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
+			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 10) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -683,18 +683,18 @@ static void sunnersLowerStairsTimer(MohawkEngine_Riven *vm) {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(1);
+	VideoEntryPtr oldVideo = vm->_video->findVideoRiven(1);
 	uint32 timerTime = 500;
 
-	if (!oldHandle || oldHandle->endOfVideo()) {
+	if (!oldVideo || oldVideo->endOfVideo()) {
 		uint32 &sunnerTime = vm->_vars["jsunnertime"];
 
 		if (sunnerTime == 0) {
 			timerTime = vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		} else if (sunnerTime < vm->getTotalPlayTime()) {
-			VideoHandle handle = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(3, 5));
+			VideoEntryPtr video = vm->_video->playMovieRiven(vm->_rnd->getRandomNumberRng(3, 5));
 
-			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -713,10 +713,10 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 	// Play a random sunners video if the script one is not playing already
 	// and then set a new timer for when the new video should be played
 
-	VideoHandle oldHandle = vm->_video->findVideoHandleRiven(3);
+	VideoEntryPtr oldvideo = vm->_video->findVideoRiven(3);
 	uint32 timerTime = 500;
 
-	if (!oldHandle || oldHandle->endOfVideo()) {
+	if (!oldvideo || oldvideo->endOfVideo()) {
 		uint32 &sunnerTime = vm->_vars["jsunnertime"];
 
 		if (sunnerTime == 0) {
@@ -726,9 +726,9 @@ static void sunnersBeachTimer(MohawkEngine_Riven *vm) {
 			// activate the MLST, we have to set it manually here.
 			uint16 mlstID = vm->_rnd->getRandomNumberRng(3, 8);
 			vm->_video->activateMLST(mlstID, vm->getCard()->getId());
-			VideoHandle handle = vm->_video->playMovieRiven(mlstID);
+			VideoEntryPtr video = vm->_video->playMovieRiven(mlstID);
 
-			timerTime = handle->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
+			timerTime = video->getDuration().msecs() + vm->_rnd->getRandomNumberRng(1, 30) * 1000;
 		}
 
 		sunnerTime = timerTime + vm->getTotalPlayTime();
@@ -763,7 +763,7 @@ void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
 
 	uint16 id = _scriptMan->getStoredMovieOpcodeID();
 
-	if (handle != _video->findVideoHandleRiven(id)) // Check if we've got a video match
+	if (handle != _video->findVideoRiven(id)) // Check if we've got a video match
 		return;
 
 	// Run the opcode if we can at this point
@@ -792,8 +792,8 @@ void MohawkEngine_Riven::checkSunnerAlertClick() {
 		return;
 
 	// If the alert video is no longer playing, we have nothing left to do
-	VideoHandle handle = _video->findVideoHandleRiven(1);
-	if (!handle || handle->endOfVideo())
+	VideoEntryPtr video = _video->findVideoRiven(1);
+	if (!video || video->endOfVideo())
 		return;
 
 	sunners = 1;
