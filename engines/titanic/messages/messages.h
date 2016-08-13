@@ -331,7 +331,7 @@ MESSAGE0(CSubSendCCarryMsg);
 MESSAGE0(CSUBTransition);
 MESSAGE0(CSubTurnOffMsg);
 MESSAGE0(CSubTurnOnMsg);
-MESSAGE2(CSummonBotMsg, CString, strValue, "", int, numValue, 0);
+MESSAGE2(CSummonBotMsg, CString, npcName, "", int, value, 0);
 MESSAGE1(CSummonBotQueryMsg, CString, npcName, "");
 MESSAGE1(CTakeHeadPieceMsg, CString, value, "NULL");
 MESSAGE2(CTextInputMsg, CString, input, "", CString, response, "");

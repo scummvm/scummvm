@@ -21,26 +21,54 @@
  */
 
 #include "titanic/npcs/callbot.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
-CCallBot::CCallBot() : CGameObject(), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CCallBot, CGameObject)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
+CCallBot::CCallBot() : CGameObject(), _enabled(0) {
 }
 
 void CCallBot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeQuotedLine(_npcName, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CCallBot::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_fieldC8 = file->readNumber();
+	_npcName = file->readString();
+	_enabled = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CCallBot::TurnOn(CTurnOn *msg) {
+	_enabled = true;
+	return true;
+}
+
+bool CCallBot::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_enabled) {
+		CRoomItem *room = getRoom();
+		
+		if (room) {
+			CSummonBotQueryMsg queryMsg;
+			queryMsg._npcName = _npcName;
+			if (queryMsg.execute(room))
+				petOnSummonBot(_npcName, 0);
+		}
+
+		_enabled = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

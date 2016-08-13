@@ -29,6 +29,20 @@
 namespace Titanic {
 
 class CBarbot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TrueTalkSelfQueueAnimSetMsg(CTrueTalkSelfQueueAnimSetMsg *msg);
+	bool TrueTalkQueueUpAnimSetMsg(CTrueTalkQueueUpAnimSetMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	static int _v0;

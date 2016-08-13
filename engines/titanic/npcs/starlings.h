@@ -28,8 +28,11 @@
 namespace Titanic {
 
 class CStarlings : public CCharacter {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 private:
-	static int _v1;
+	bool _enabled;
 public:
 	CLASSDEF;
 	CStarlings();

@@ -26,6 +26,23 @@ namespace Titanic {
 
 int CBarbot::_v0;
 
+BEGIN_MESSAGE_MAP(CBarbot, CTrueTalkNPC)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(TrueTalkSelfQueueAnimSetMsg)
+	ON_MESSAGE(TrueTalkQueueUpAnimSetMsg)
+	ON_MESSAGE(TrueTalkGetStateValueMsg)
+	ON_MESSAGE(TrueTalkTriggerActionMsg)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+	ON_MESSAGE(MovieFrameMsg)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 CBarbot::CBarbot() : CTrueTalkNPC() {
 	_field108 = 0;
 	_field10C = 0;
@@ -233,9 +250,74 @@ void CBarbot::load(SimpleFile *file) {
 	CTrueTalkNPC::load(file);
 }
 
+bool CBarbot::ActMsg(CActMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::EnterViewMsg(CEnterViewMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TurnOn(CTurnOn *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TurnOff(CTurnOff *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::LeaveViewMsg(CLeaveViewMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TrueTalkSelfQueueAnimSetMsg(CTrueTalkSelfQueueAnimSetMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TrueTalkQueueUpAnimSetMsg(CTrueTalkQueueUpAnimSetMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::FrameMsg(CFrameMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	// TODO
+	return false;
+}
+
+bool CBarbot::MovieFrameMsg(CMovieFrameMsg *msg) {
+	// TODO
+	return false;
+}
+
 bool CBarbot::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("TODO: Barbot::CEnterRoomMsg");
-	return true;
+	// TODO
+	return false;
 }
 
 } // End of namespace Titanic

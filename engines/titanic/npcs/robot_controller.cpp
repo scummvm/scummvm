@@ -24,21 +24,37 @@
 
 namespace Titanic {
 
-CRobotController::CRobotController() : CGameObject(), _string1("BellBot") {
+BEGIN_MESSAGE_MAP(CRobotController, CGameObject)
+	ON_MESSAGE(SummonBotMsg)
+	ON_MESSAGE(SummonBotQueryMsg)
+END_MESSAGE_MAP()
+
+CRobotController::CRobotController() : CGameObject(), _robotName("BellBot") {
 }
 
 void CRobotController::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_robotName, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CRobotController::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
+	_robotName = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CRobotController::SummonBotMsg(CSummonBotMsg *msg) {
+	if (!petDismissBot(msg->_npcName))
+		petOnSummonBot(msg->_npcName, msg->_value);
+
+	return true;
+}
+
+bool CRobotController::SummonBotQueryMsg(CSummonBotQueryMsg *msg) {
+	return _robotName == msg->_npcName;
 }
 
 } // End of namespace Titanic

@@ -24,23 +24,40 @@
 
 namespace Titanic {
 
-int CStarlings::_v1;
+BEGIN_MESSAGE_MAP(CStarlings, CCharacter)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(StatusChangeMsg)
+END_MESSAGE_MAP()
 
-CStarlings::CStarlings() : CCharacter() {
+CStarlings::CStarlings() : CCharacter(), _enabled(false) {
 }
 
 void CStarlings::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CCharacter::save(file, indent);
 }
 
 void CStarlings::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
+	_enabled = file->readNumber();
 
 	CCharacter::load(file);
+}
+
+bool CStarlings::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_enabled)
+		setVisible(false);
+	else
+		playMovie(MOVIE_REPEAT);
+	return true;
+}
+
+bool CStarlings::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_enabled = msg->_newStatus == 1;
+	setVisible(!_enabled);
+	return true;
 }
 
 } // End of namespace Titanic
