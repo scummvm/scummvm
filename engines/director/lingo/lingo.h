@@ -271,6 +271,7 @@ public:
 	static void b_exp(int nargs);
 	static void b_float(int nargs);
 	static void b_integer(int nargs);
+	static void b_integerp(int nargs);
 	static void b_log(int nargs);
 	static void b_pi(int nargs);
 	static void b_power(int nargs);

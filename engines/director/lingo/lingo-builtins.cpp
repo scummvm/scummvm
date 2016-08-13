@@ -38,6 +38,7 @@ static struct BuiltinProto {
 	{ "exp",	Lingo::b_exp,		1, 1, true },	// 		D4
 	{ "float",	Lingo::b_float,		1, 1, true },	// 		D4
 	{ "integer",Lingo::b_integer,	1, 1, true },
+	{ "integerp",Lingo::b_integerp,	1, 1, true },
 	{ "log",	Lingo::b_log,		1, 1, true },	// 		D4
 	{ "pi",		Lingo::b_pi,		0, 0, true },	// 		D4
 	{ "power",	Lingo::b_power,		2, 2, true },	// 		D4
@@ -217,6 +218,14 @@ void Lingo::b_float(int nargs) {
 void Lingo::b_integer(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
+	g_lingo->push(d);
+}
+
+void Lingo::b_integerp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == INT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
 	g_lingo->push(d);
 }
 

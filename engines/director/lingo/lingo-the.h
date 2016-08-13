@@ -28,6 +28,8 @@ namespace Director {
 enum TheEntityType {
 	kTheNOEntity = 0,
 	kTheFrame = 1,
+	kTheFreeBlock,
+	kTheFreeBytes,
 	kThePathName,
 	kTheMenu,
 	kTheMenuItem,
