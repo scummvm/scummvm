@@ -71,7 +71,7 @@ protected:
 	/**
 	 * Perform an action
 	 */
-	void performAction(bool startTalking, CViewItem *view);
+	void performAction(bool startTalking, CViewItem *view = nullptr);
 public:
 	CLASSDEF;
 	CTrueTalkNPC();

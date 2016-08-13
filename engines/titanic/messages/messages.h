@@ -352,7 +352,7 @@ MESSAGE0(CTrueTalkSelfQueueAnimSetMsg);
 MESSAGE3(CTrueTalkTriggerActionMsg, int, action, 0, int, param1, 0, int, param2, 0);
 MESSAGE0(CTurnOff);
 MESSAGE0(CTurnOn);
-MESSAGE1(CUse, CCarry *, item, nullptr);
+MESSAGE1(CUse, CGameObject *, item, nullptr);
 MESSAGE1(CUseWithCharMsg, CCharacter *, character, nullptr);
 MESSAGE1(CUseWithOtherMsg, CGameObject *, other, 0);
 MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());

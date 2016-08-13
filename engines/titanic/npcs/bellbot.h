@@ -28,6 +28,20 @@
 namespace Titanic {
 
 class CBellBot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool OnSummonBotMsg(COnSummonBotMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool Use(CUse *msg);
+	bool DismissBotMsg(CDismissBotMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
+	bool PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg);
+	bool NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
 private:
 	int _field108;
 public:
