@@ -43,7 +43,7 @@ TextAsset::TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID 
 void TextAsset::decodeOld() {
 	Common::SeekableReadStream *res = _container->getItem(_id);
 	uint16 strLen = res->readUint16BE();
-	Common::BitStream32BELSB stream(res);
+	Common::BitStream32BELSB stream(res, true);
 	char* str = new char[strLen + 1];
 	bool lowercase = false;
 	char c;
