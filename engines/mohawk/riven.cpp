@@ -384,7 +384,10 @@ void MohawkEngine_Riven::changeToCard(uint16 dest) {
 			}
 	}
 
-	delete _card;
+	if (_card) {
+		_card->leave();
+		delete _card;
+	}
 	_card = new RivenCard(this, dest);
 
 	refreshCard(); // Handles hotspots and scripts
@@ -394,7 +397,7 @@ void MohawkEngine_Riven::refreshCard() {
 	// Clear any timer still floating around
 	removeTimer();
 
-	_card->open();
+	_card->enter();
 
 	if (_showHotspots)
 		_card->drawHotspotRects();

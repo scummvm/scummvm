@@ -42,12 +42,9 @@ RivenCard::RivenCard(MohawkEngine_Riven *vm, uint16 id) :
 	loadCardSoundList(id);
 	loadCardHotspotEnableList(id);
 	loadCardWaterEffectList(id);
-	setCurrentCardVariable();
 }
 
 RivenCard::~RivenCard() {
-	runLeaveScripts();
-
 	for (uint i = 0; i < _hotspots.size(); i++) {
 		delete _hotspots[i];
 	}
@@ -66,7 +63,9 @@ void RivenCard::loadCardResource(uint16 id) {
 	delete inStream;
 }
 
-void RivenCard::open() {
+void RivenCard::enter() {
+	setCurrentCardVariable();
+
 	_vm->_activatedPLST = false;
 	_vm->_activatedSLST = false;
 
@@ -77,7 +76,7 @@ void RivenCard::open() {
 	initializeZipMode();
 	_vm->_gfx->applyScreenUpdate(true);
 
-	runScript(kCardOpenScript);
+	runScript(kCardEnterScript);
 }
 
 void RivenCard::initializeZipMode() {
@@ -430,7 +429,7 @@ void RivenCard::updateMouseCursor() {
 	_vm->_system->updateScreen();
 }
 
-void RivenCard::runLeaveScripts() {
+void RivenCard::leave() {
 	RivenScriptPtr script(new RivenScript());
 
 	if (_pressedHotspot) {
