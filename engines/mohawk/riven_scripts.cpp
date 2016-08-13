@@ -189,6 +189,25 @@ RivenScript &RivenScript::operator+=(const RivenScript &other) {
 	return *this;
 }
 
+const char *RivenScript::getTypeName(uint16 type) {
+	static const char *names[] = {
+		"MouseDown",
+		"MouseDrag",
+		"MouseUp",
+		"MouseEnter",
+		"MouseInside",
+		"MouseLeave",
+		"CardLoad",
+		"CardLeave",
+		"CardUnknown",
+		"CardOpen",
+		"CardUpdate"
+	};
+
+	assert(type < ARRAYSIZE(names));
+	return names[type];
+}
+
 RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
 	*lhs += *rhs;
 	return lhs;
