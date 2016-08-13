@@ -521,6 +521,8 @@ void Lingo::b_constrainH(int nargs) {
 	sprite.toInt();
 
 	warning("STUB: b_constrainH(%d, %d)", sprite.u.i, num.u.i);
+
+	g_lingo->push(Datum(0));
 }
 
 void Lingo::b_constrainV(int nargs) {
@@ -531,6 +533,8 @@ void Lingo::b_constrainV(int nargs) {
 	sprite.toInt();
 
 	warning("STUB: b_constrainV(%d, %d)", sprite.u.i, num.u.i);
+
+	g_lingo->push(Datum(0));
 }
 
 void Lingo::b_editableText(int nargs) {
@@ -647,75 +651,35 @@ void Lingo::b_mciwait(int nargs) {
 // Constants
 ///////////////////
 void Lingo::b_backspace(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("\b");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("\b")));
 }
 
 void Lingo::b_empty(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("")));
 }
 
 void Lingo::b_enter(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("\n");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("\n")));
 }
 
 void Lingo::b_false(int nargs) {
-	Datum d;
-
-	d.type = INT;
-	d.u.i = 0;
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(0));
 }
 
 void Lingo::b_quote(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("\"");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("\"")));
 }
 
 void Lingo::b_return(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("\r");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("\r")));
 }
 
 void Lingo::b_tab(int nargs) {
-	Datum d;
-
-	d.type = STRING;
-	d.u.s = new Common::String("\t");
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String("\t")));
 }
 
 void Lingo::b_true(int nargs) {
-	Datum d;
-
-	d.type = INT;
-	d.u.i = 1;
-
-	g_lingo->push(d);
+	g_lingo->push(Datum(1));
 }
 
 ///////////////////

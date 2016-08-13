@@ -140,13 +140,10 @@ void Lingo::c_fconstpush() {
 }
 
 void Lingo::c_stringpush() {
-	Datum d;
 	char *s = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
 	g_lingo->_pc += g_lingo->calcStringAlignment(s);
 
-	d.u.s = new Common::String(s);
-	d.type = STRING;
-	g_lingo->push(d);
+	g_lingo->push(Datum(new Common::String(s)));
 }
 
 void Lingo::c_varpush() {

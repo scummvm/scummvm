@@ -111,6 +111,9 @@ struct Datum {	/* interpreter stack type */
 	} u;
 
 	Datum() { u.sym = NULL; type = VOID; }
+	Datum(int val) { u.i = val; type = INT; }
+	Datum(double val) { u.f = val; type = FLOAT; }
+	Datum(Common::String *val) { u.s = val; type = STRING; }
 
 	double toFloat();
 	int toInt();
