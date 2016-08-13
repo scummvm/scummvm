@@ -503,9 +503,9 @@ void RivenSimpleCommand::changeStack(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 28: disable a movie
 void RivenSimpleCommand::disableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
-	if (handle)
-		handle->setEnabled(false);
+	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
+	if (video)
+		video->setEnabled(false);
 }
 
 // Command 29: disable all movies
@@ -515,9 +515,9 @@ void RivenSimpleCommand::disableAllMovies(uint16 op, uint16 argc, uint16 *argv) 
 
 // Command 31: enable a movie
 void RivenSimpleCommand::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
-	if (handle)
-		handle->setEnabled(true);
+	VideoEntryPtr video = _vm->_video->findVideoRiven(argv[0]);
+	if (video)
+		video->setEnabled(true);
 }
 
 // Command 32: play foreground movie - blocking (movie_id)

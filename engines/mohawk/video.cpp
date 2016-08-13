@@ -203,6 +203,10 @@ void VideoManager::playMovieBlockingCentered(const Common::String &fileName, boo
 	waitUntilMovieEnds(VideoHandle(ptr));
 }
 
+void VideoManager::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	waitUntilMovieEnds(VideoHandle(video));
+}
+
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	if (!videoHandle)
 		return;
@@ -448,7 +452,7 @@ void VideoManager::clearMLST() {
 	_mlstRecords.clear();
 }
 
-VideoHandle VideoManager::playMovieRiven(uint16 id) {
+VideoEntryPtr VideoManager::playMovieRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++) {
 		if (_mlstRecords[i].code == id) {
 			debug(1, "Play tMOV %d (non-blocking) at (%d, %d) %s, Volume = %d", _mlstRecords[i].movieID, _mlstRecords[i].left, _mlstRecords[i].top, _mlstRecords[i].loop != 0 ? "looping" : "non-looping", _mlstRecords[i].volume);
@@ -461,11 +465,11 @@ VideoHandle VideoManager::playMovieRiven(uint16 id) {
 				ptr->start();
 			}
 
-			return VideoHandle(ptr);
+			return ptr;
 		}
 	}
 
-	return VideoHandle();
+	return VideoEntryPtr();
 }
 
 void VideoManager::playMovieBlockingRiven(uint16 id) {
@@ -484,9 +488,9 @@ void VideoManager::playMovieBlockingRiven(uint16 id) {
 
 void VideoManager::stopMovieRiven(uint16 id) {
 	debug(2, "Stopping movie %d", id);
-	VideoHandle handle = findVideoHandleRiven(id);
-	if (handle)
-		removeEntry(handle._ptr);
+	VideoEntryPtr video = findVideoRiven(id);
+	if (video)
+		removeEntry(video);
 }
 
 void VideoManager::disableAllMovies() {
@@ -548,14 +552,14 @@ VideoEntryPtr VideoManager::open(const Common::String &fileName) {
 	return entry;
 }
 
-VideoHandle VideoManager::findVideoHandleRiven(uint16 id) {
+VideoEntryPtr VideoManager::findVideoRiven(uint16 id) {
 	for (uint16 i = 0; i < _mlstRecords.size(); i++)
 		if (_mlstRecords[i].code == id)
 			for (VideoList::iterator it = _videos.begin(); it != _videos.end(); it++)
 				if ((*it)->getID() == _mlstRecords[i].movieID)
-					return VideoHandle(*it);
+					return *it;
 
-	return VideoHandle();
+	return VideoEntryPtr();
 }
 
 VideoHandle VideoManager::findVideoHandle(uint16 id) {
