@@ -196,7 +196,8 @@ public:
 
 		}
 
-		Common::SeekableReadStream *res = _res->readStream(getItemByteSize(id) * 2);
+		// HACK Should Limit the size of the stream returned
+		Common::SeekableReadStream *res = _res->readStream(_res->size() - _res->pos() + 1);
 		return res;
 	}
 

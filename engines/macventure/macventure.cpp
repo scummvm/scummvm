@@ -1125,9 +1125,9 @@ bool MacVentureEngine::loadTextHuffman() {
 		debugC(4, kMVDebugMain, "Text is huffman-encoded");
 
 		delete res;
-		delete masks;
-		delete lengths;
-		delete values;
+		delete[] masks;
+		delete[] lengths;
+		delete[] values;
 		return true;
 	}
 	return false;
