@@ -174,7 +174,6 @@ void TextAsset::decodeHuffman() {
 		}
 	}
 	_decoded += '\0';
-	delete res;
 	debugC(4, kMVDebugText, "Decoded %d'th string (new): %s", _id, _decoded.c_str());
 }
 Common::String TextAsset::getNoun(ObjID subval) {
