@@ -683,8 +683,9 @@ void MacVentureEngine::unselectAll() {
 
 void MacVentureEngine::selectObject(ObjID objID) {
 	if (!_currentSelection.empty()) {
-		if (findParentWindow(objID) != findParentWindow(_currentSelection[0]))
-			unselectAll();
+		if (findParentWindow(objID) != findParentWindow(_currentSelection[0])) {
+			//unselectAll();
+		}
 	}
 	if (findObjectInArray(objID, _currentSelection) == -1) {
 		_currentSelection.push_back(objID);
@@ -896,7 +897,6 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 }
 
 void MacVentureEngine::toggleExits() {
-	warning("delete this when done testing!");
 	Common::Array<ObjID> exits = _currentSelection;
 	while (!exits.empty()) {
 		ObjID obj = exits.front();
