@@ -100,7 +100,26 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]));
+	const bool found = g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]);
+
+	// NOTE: MGDX is assumed to use the older kSetNowSeen since it was
+	// released before SQ6, but this has not been verified since it cannot be
+	// disassembled at the moment (Phar Lap Windows-only release)
+	if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+		g_sci->getGameId() == GID_SQ6 ||
+		g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+
+		if (!found) {
+			error("kSetNowSeen: Unable to find screen item %04x:%04x", PRINT_REG(argv[0]));
+		}
+		return s->r_acc;
+	}
+
+	if (!found) {
+		warning("kSetNowSeen: Unable to find screen item %04x:%04x", PRINT_REG(argv[0]));
+	}
+
+	return make_reg(0, found);
 }
 
 reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
