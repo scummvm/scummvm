@@ -23,7 +23,7 @@
 #ifndef FULLPIPE_MOTION_H
 #define FULLPIPE_MOTION_H
 
-#include "fullpipe/mgm.h"
+#include "fullpipe/anihandler.h"
 
 namespace Fullpipe {
 
