@@ -61,16 +61,6 @@ private:
 	void loadResource(const CString &name);
 
 	/**
-	 * Loads a movie
-	 */
-	void loadMovie(const CString &name, bool pendingFlag = true);
-
-	/**
-	 * Loads an image
-	 */
-	void loadImage(const CString &name, bool pendingFlag = true);
-
-	/**
 	 * Process and remove any registered movie range info
 	 */
 	void processMoveRangeInfo();
@@ -127,6 +117,16 @@ protected:
 	 * and locates the designated view
 	 */
 	CViewItem * parseView(const CString &viewString);
+
+	/**
+	 * Loads a movie
+	 */
+	void loadMovie(const CString &name, bool pendingFlag = true);
+
+	/**
+	 * Loads an image
+	 */
+	void loadImage(const CString &name, bool pendingFlag = true);
 
 	void inc54();
 	void dec54();

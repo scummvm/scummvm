@@ -212,7 +212,133 @@ bool CParrot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
-	// TODO
+	if ((_npcFlags & NPCFLAG_2000000) && clipExistsByEnd("Take Off", msg->_endFrame)) {
+		setVisible(false);
+		moveUnder(findRoom());
+		stopMovie();
+
+		CActMsg actMsg1("LoseParrot");
+		actMsg1.execute("ParrotLobbyController");
+
+		if (_field134) {
+			CActMsg actMsg2("PanAwayFromParrot");
+			actMsg2.execute(_field134);
+			_field134 = nullptr;
+		} else {
+			CActMsg actMsg2("Shut");
+			actMsg2.execute("ParrotCage");
+		}
+
+		_npcFlags &= ~NPCFLAG_2000000;
+		_v4 = 2;
+	} else if (_npcFlags & NPCFLAG_10000) {
+		if (_npcFlags & NPCFLAG_20000) {
+			_npcFlags = (_npcFlags & ~NPCFLAG_20000) | NPCFLAG_40000;
+			if (_npcFlags & NPCFLAG_100000) {
+				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
+				movieEvent(236);
+			} else {
+				playClip("Walk Right Loop", MOVIE_NOTIFY_OBJECT);
+			}
+		} else if (_npcFlags & NPCFLAG_40000) {
+			int xp = _bounds.left + _bounds.width() / 2;
+
+			if (_npcFlags & NPCFLAG_100000) {
+				if ((xp - _field128) > 32) {
+					setPosition(Point(_bounds.left - 40, _bounds.top));
+					playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
+					movieEvent(236);
+				} else {
+					setPosition(Point(_bounds.left - 10, _bounds.top));
+					playClip("Walk Left Outro", MOVIE_NOTIFY_OBJECT);
+					_npcFlags = (_npcFlags & ~NPCFLAG_40000) | NPCFLAG_80000;
+				}
+			} else {
+				if ((_field128 - xp) > 32) {
+					playClip("Walk Right Loop", MOVIE_NOTIFY_OBJECT);
+					movieEvent(244);
+				} else {
+					playClip("Walk Right Outro", MOVIE_NOTIFY_OBJECT);
+					_npcFlags = (_npcFlags & NPCFLAG_40000) | NPCFLAG_80000;
+				}
+			}
+		} else if (_npcFlags & NPCFLAG_80000) {
+			loadFrame(0);
+			if (_npcFlags & NPCFLAG_100000)
+				setPosition(Point(_bounds.left - 30, _bounds.top));
+			else
+				setPosition(Point(_bounds.left + 14, _bounds.top));
+
+			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000);
+			CTrueTalkNPC::MovieEndMsg(msg);
+		} else {
+			if (_npcFlags & NPCFLAG_1000000) {
+				Point pt = getMousePos();
+				if (pt.x > 70 || pt.y < 90 || pt.y > 280) {
+					stopMovie();
+					loadFrame(0);
+					_npcFlags &= ~NPCFLAG_1000000;
+				}
+
+				if (clipExistsByEnd("Walk Left Loop", msg->_endFrame)) {
+					playClip("Lean Over To Chicken", MOVIE_NOTIFY_OBJECT);
+					setPosition(Point(_bounds.left - 55, _bounds.top));
+					_field130 = (-100 - _bounds.left) / 5;
+					movieEvent(261);
+					movieEvent(262);
+					movieEvent(265);
+					movieEvent(268);
+					movieEvent(271);
+					return true;
+
+				} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
+					playClip("Eat Chicken", 0);
+					playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
+					_v1 = 1;
+
+					CStatusChangeMsg statusMsg;
+					statusMsg._newStatus = 0;
+					statusMsg.execute("PerchCoreHolder");
+
+					CTrueTalkTriggerActionMsg actionMsg;
+					actionMsg._param1 = 280266;
+					actionMsg._param2 = 1;
+					actionMsg.execute(this);
+
+					CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
+					if (chicken) {
+						CActMsg actMsg("Eaten");
+						actMsg.execute(chicken);
+					}
+
+					_npcFlags &= ~NPCFLAG_1000000;
+					return true;
+				}
+			}
+
+			if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
+				CStatusChangeMsg statusMsg;
+				statusMsg._newStatus = 1;
+				statusMsg.execute("PerchCoreHolder");
+
+				if (_v2) {
+					loadMovie("z168.avi", false);
+					playClip("Take Off", MOVIE_NOTIFY_OBJECT);
+					setPosition(Point(20, 10));
+					_npcFlags |= NPCFLAG_2000000;
+				} else {
+					_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 | NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000);
+					_npcFlags |= NPCFLAG_400000;
+					stopMovie();
+					loadFrame(0);
+					setPosition(Point(-90, _bounds.top));
+				}
+			} else {
+				CTrueTalkNPC::MovieEndMsg(msg);
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -285,7 +411,69 @@ bool CParrot::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
-	// TODO
+	const char *const ROOM_NAMES[] = {
+		"SGTState", "SGTLittleLift", "SecClassLittleLift", "SecClassState",
+		"Lift", "ServiceElevator", "Dome", "Home", "MoonEmbLobby", nullptr
+	};
+
+	if (!stateGet24() || _v4 == 3 || compareViewNameTo("Titania.Node 18.N"))
+		return true;
+
+	// Check for rooms not to speak in
+	for (const char *const *s = &ROOM_NAMES[0]; *s; ++s) {
+		if (compareTo(*s))
+			return true;
+	}
+
+	// Don't have the parrot speak too often
+	if ((g_vm->_events->getTicksCount() - _field120) < 20000 || _field100)
+		return true;
+
+	playSound("z#475.wav", 50);
+
+	if (msg->_target == "Bomb") {
+		startTalking("PerchedParrot", 280236);
+	} else if (msg->_target == "Announcements") {
+		startTalking("PerchedParrot", 280263);
+	} else if (msg->_target == "Television") {
+		startTalking("PerchedParrot", 280264);
+	} else if (msg->_target == "Barbot") {
+		if (msg->_action == "AskForDrink")
+			startTalking("PerchedParrot", 280262);
+	} else if (msg->_target == "SuccUBus") {
+		if (msg->_action == "TurnOn")
+			startTalking("PerchedParrot", 80161);
+		else if (msg->_action == "EnterView")
+			startTalking("PerchedParrot", 80159);
+	} else if (msg->_target == "Cellpoints") {
+		if (g_vm->getRandomNumber(2) == 0) {
+			switch (g_vm->getRandomNumber(2)) {
+			case 0:
+				startTalking("PerchedParrot", 80193);
+				break;
+			case 1:
+				startTalking("PerchedParrot", 80197);
+				break;
+			case 2:
+				startTalking("PerchedParrot", 80198);
+				break;
+			default:
+				break;
+			}
+		} else if (msg->_action == "DoorBot") {
+			startTalking("PerchedParrot", 80195);
+		} else if (msg->_action == "DeskBot") {
+			startTalking("PerchedParrot", 80194);
+		} else if (msg->_action == "BarBot") {
+			startTalking("PerchedParrot", 80191);
+		} else if (msg->_action == "BellBot") {
+			startTalking("PerchedParrot", 80192);
+		} else if (msg->_action == "LiftBot") {
+			startTalking("PerchedParrot", 80196);
+		}
+	}
+
+	_field120 = g_vm->_events->getTicksCount();
 	return true;
 }
 
@@ -384,7 +572,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	Point pt = getMousePos();
 	CGameObject *dragObject = getDraggingObject();
 	int xp = _bounds.left + _bounds.width() / 2;
-//; edi=xp, ebp=dragObject
+
 	if ((_npcFlags & NPCFLAG_400000) && !hasActiveMovie()) {
 		_field128 = xp - (_field124 + _bounds.width() / 2);
 
@@ -420,34 +608,149 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 	if (_field128 > 64) {
 		_npcFlags |= NPCFLAG_10000 | NPCFLAG_20000;
 
-		// TODO
+		if (_field128 >= xp) {
+			setPosition(Point(_bounds.left + 30, _bounds.top));
+			_npcFlags |= NPCFLAG_200000;
+			playClip("Walk Right Intro", MOVIE_NOTIFY_OBJECT);
+		} else {
+			_npcFlags |= NPCFLAG_100000;
+			playClip("Walk Left Intro", MOVIE_NOTIFY_OBJECT);
+		}
+	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_field12C) {
+		CParrotTriesChickenMsg triesMsg;
+		triesMsg.execute(dragObject);
+
+		CTrueTalkTriggerActionMsg triggerMsg;
+		int id;
+		switch (triesMsg._value2) {
+		case 1:
+			id = 280056 + (triesMsg._value1 ? 234 : 0);
+			break;
+		case 2:
+			id = 280055 + (triesMsg._value1 ? 234 : 0);
+			break;
+		case 3:
+			id = 280054 + (triesMsg._value1 ? 234 : 0);
+			break;
+		default:
+			id = 280053 + (triesMsg._value1 ? 234 : 0);
+			break;
+		}
+
+		if (id < 280266) {
+			if (pt.x < 75) {
+				_npcFlags |= NPCFLAG_1000000;
+				playClip("Walk Left Intro", MOVIE_STOP_PREVIOUS);
+				playClip("Walk Left Loop", MOVIE_NOTIFY_OBJECT);
+				movieEvent(236);
+				chickenFlag = false;
+			} else if ((pt.x - xp) > 15) {
+				_npcFlags |= NPCFLAG_800000;
+				playClip("Peck At Feet Right", MOVIE_NOTIFY_OBJECT);
+				movieEvent(170);
+			} else if ((xp - pt.x) > 15) {
+				_npcFlags |= NPCFLAG_800000;
+				playClip("Peck At Feet Left", MOVIE_NOTIFY_OBJECT);
+				movieEvent(142);
+			} else {
+				_npcFlags |= NPCFLAG_800000;
+				playClip("Peck At Feet", MOVIE_NOTIFY_OBJECT);
+				movieEvent(157);
+			}
+		}
+
+		if (chickenFlag) {
+			triggerMsg._param2 = 1;
+			triggerMsg.execute(this);
+			_field12C = 1;
+		}
 	}
 
 	return true;
 }
 
 bool CParrot::MovieFrameMsg(CMovieFrameMsg *msg) {
-	// TODO
+	if (_npcFlags & NPCFLAG_800000) {
+		CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
+		if (chicken) {
+			CActMsg actMsg("Eaten");
+			actMsg.execute(chicken);
+		}
+
+		_npcFlags &= ~NPCFLAG_800000;
+	}
+
+	switch (msg->_frameNumber) {
+	case 244:
+		setPosition(Point(_bounds.left, _bounds.top + 45));
+		break;
+	case 261:
+	case 262:
+	case 265:
+	case 268:
+	case 271:
+		setPosition(Point(_bounds.left + _field130, _bounds.top));
+		break;
+	default:
+		break;
+	}
+
 	return true;
 }
 
 bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
-	// TODO
+	const char *const NAMES[] = {
+		"Talking0", "Talking1", "Talking2", "Talking3", "Talking4",
+		"Talking5", "Talking6", "Talking7", nullptr
+	};
+
+	int xp = CLIP(msg->_value, 230, 480);
+	setVisible(true);
+	moveToView();
+	_v4 = 0;
+
+	setPosition(Point(xp - _bounds.width() / 2, _bounds.top));
+	playRandomClip(NAMES, MOVIE_NOTIFY_OBJECT);
+
+	CActMsg actMsg("GainParrot");
+	actMsg.execute("ParrotLobbyController");
+
 	return true;
 }
 
 bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
-	// TODO
+	if (!_v4) {
+		loadMovie("z167.avi", false);
+		loadFrame(0);
+	}
+
 	return true;
 }
 
 bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
-	// TODO
+	if (_v4) {
+		CActMsg actMsg("PanAwayFromParrot");
+		actMsg.execute(msg->_target);
+		_field134 = 0;
+	} else if (_v2) {
+		_field134 = msg->_target;
+		loadMovie("z168.avi", false);
+		stopMovie();
+		playClip("Take Off", MOVIE_NOTIFY_OBJECT);
+		_npcFlags |= NPCFLAG_2000000;
+	} else {
+		_npcFlags |= NPCFLAG_400000;
+		_field134 = msg->_target;
+		stopMovie();
+	}
+
 	return true;
 }
 
 bool CParrot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	// TODO
+	if (!_v4)
+		startTalking(this, 280259);
+
 	return true;
 }
 
