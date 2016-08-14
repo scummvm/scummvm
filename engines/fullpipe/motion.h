@@ -115,7 +115,7 @@ public:
 	virtual MessageQueue *startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 	virtual MessageQueue *doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId);
 
-	void initMovGraph2();
+	void initMctlGraph();
 	MctlConnectionPoint *findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIndex, double *minDistancePtr);
 	void replaceNodeX(int from, int to);
 
@@ -326,7 +326,7 @@ struct MG2I {
 	int _my;
 };
 
-struct MovGraph2ItemSub {
+struct MctlGraphItemSub {
 	int _staticsId2;
 	int _staticsId1;
 	MG2I _walk[3];
@@ -363,15 +363,15 @@ struct MovInfo1 {
 	void clear();
 };
 
-struct MovGraph2Item { // 744
+struct MctlGraphItem { // 744
 	int _objectId;
 	StaticANIObject *_obj;
-	MovGraph2ItemSub _subItems[4];  // 184
+	MctlGraphItemSub _subItems[4];  // 184
 };
 
-class MovGraph2 : public MovGraph {
+class MctlGraph : public MovGraph {
 public:
-	Common::Array<MovGraph2Item *> _items2;
+	Common::Array<MctlGraphItem *> _items2;
 
 public:
 	virtual void attachObject(StaticANIObject *obj);
@@ -388,7 +388,7 @@ public:
 	int getShortSide(MovGraphLink *lnk, int x, int y);
 	int findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
-	bool initDirections(StaticANIObject *obj, MovGraph2Item *item);
+	bool initDirections(StaticANIObject *obj, MctlGraphItem *item);
 	void buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
 	MessageQueue *buildMovInfo1MessageQueue(MovInfo1 *movInfo);
 

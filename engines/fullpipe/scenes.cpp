@@ -582,7 +582,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_aniMan2 = _aniMan;
 	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
-	cmp->initMovGraph2();
+	cmp->initMctlGraph();
 	cmp->attachObject(_aniMan);
 	cmp->activate();
 	getGameLoaderInteractionController()->enableFlag24();
