@@ -1,14 +1,14 @@
 Bugs:
 	Display:
-		Broken colour palette for dungeon and cursor
-		Gui is messed up by drawn spell area line on startup
+		Broken palette for cursor
+		No food and water bar graphs
 		Spellcasting tabs are displayed inproperly, switching between them is possible tho
 		When reordering a champions, the icons in the top right corner ar drawn twice under the cursor
 
 	Logic:
 		Items thrown on the right side end up on the left side 
 		I'm not sure, but the cooldown between champion actions when fighting monsters seems too muh
-		Clicking with a scroll in hand on the eye in the inventory makes userinput glitchy
+		Clicking wit ha scroll in hand on the eye in the inventory makes userinput glitchy
 
 
 Possible bugs:

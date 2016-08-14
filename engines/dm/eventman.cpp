@@ -379,6 +379,14 @@ void EventManager::initMouse() {
 	_gK104_mousePointerType = k0_pointerArrow;
 	_gK105_previousMousePointerType = k1_pointerHand;
 
+	byte mousePalette[16 * 3];
+	for (int i = 0; i < 16; ++i) {
+		mousePalette[i * 3] = (gK150_PalMousePointer[i] >> 8) * (256 / 16);
+		mousePalette[i * 3 + 1] = (gK150_PalMousePointer[i] >> 4) * (256 / 16);
+		mousePalette[i * 3 + 2] = gK150_PalMousePointer[i] * (256 / 16);
+	}
+	CursorMan.pushCursorPalette(mousePalette, 0, 16);
+
 	_mousePos = Common::Point(0, 0);
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 	CursorMan.showMouse(false);
@@ -411,17 +419,18 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	byte *L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
 
-	/*
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousepointerOjbectIconShadow);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
-	*/
 
+
+	/*
 	warning(false, "TODO - Call f129_blitToBitmapShrinkWithPalChange");
 	// dummy code
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
+	*/
 
 	_gK100_preventBuildPointerScreenArea = false;
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
@@ -506,12 +515,12 @@ void EventManager::f69_setMousePointer() {
 }
 
 void EventManager::f78_showMouse() {
-	if(_g587_hideMousePointerRequestCount++ == 0)
+	if (_g587_hideMousePointerRequestCount++ == 0)
 		CursorMan.showMouse(true);
 }
 
 void EventManager::f77_hideMouse() {
-	if(_g587_hideMousePointerRequestCount-- == 1)
+	if (_g587_hideMousePointerRequestCount-- == 1)
 		CursorMan.showMouse(false);
 }
 
@@ -980,13 +989,20 @@ bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int
 
 void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
 	byte bitmap[16 * 18];
-	for (int16 imgPart = 0; imgPart < 4; ++imgPart) {
-		for (byte *line = mouseSprite + 72 * imgPart, *pixel = bitmap; line < mouseSprite + 72 * (imgPart + 1); line += 4) {
+	memset(bitmap, 0, sizeof(bitmap));
+	for (int16 imgPart = 1; imgPart < 3; ++imgPart) {
+		for (byte *line = mouseSprite + 72 * imgPart, *pixel = bitmap;
+			 line < mouseSprite + 72 * (imgPart + 1);
+			 line += 4) {
+
 			uint16 words[2];
 			words[0] = READ_BE_UINT16(line);
 			words[1] = READ_BE_UINT16(line + 2);
-			for (int16 i = 15; i >= 0; --i)
-				*pixel++ = ((words[0] >> i) & 1) | (((words[1] >> i) & 1) << 1);
+			for (int16 i = 15; i >= 0; --i, ++pixel) {
+				uint16 val = (((words[0] >> i) & 1) | (((words[1] >> i) & 1) << 1)) << (imgPart & 0x2);
+				if (val)
+					*pixel = val + 8;
+			}
 		}
 	}
 
@@ -1028,7 +1044,7 @@ void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	uint16 mapY = _vm->_dungeonMan->_g307_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 
 	if ((mapX >= 0) && (mapX < _vm->_dungeonMan->_g273_currMapWidth)
-	 && (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight))
+		&& (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight))
 		_vm->_g321_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
 }
 
