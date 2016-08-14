@@ -86,6 +86,7 @@ ImageAsset::ImageAsset(ObjID original, Container * container) {
 }
 
 ImageAsset::~ImageAsset() {
+	debugC(3, kMVDebugImage, "~ImageAsset(%d)", _id / 2);
 }
 
 void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes) {
@@ -348,7 +349,7 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 	return val;
 }
 
-void ImageAsset::blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode) {
+void ImageAsset::blitInto(Graphics::ManagedSurface *target, int x, int y, BlitMode mode) {
 	if (mode == kBlitDirect) {
 		blitDirect(target, x, y, _imgData, _imgBitHeight, _imgBitWidth, _imgRowBytes);
 	} else if (mode < kBlitXOR){
@@ -417,12 +418,14 @@ int ImageAsset::getHeight() {
 
 void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte>& data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
+			assert(ox + x <= target->w);
+			assert(oy + y <= target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			pix = pix ? kColorBlack : kColorWhite;
 			*((byte *)target->getBasePtr(ox + x, oy + y)) = pix;
@@ -432,12 +435,14 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, c
 
 void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
+			assert(ox + x <= target->w);
+			assert(oy + y <= target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
 		}
@@ -446,12 +451,14 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, cons
 
 void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
 		byte pix = 0;
 		for (uint x = 0; x < w; x++) {
+			assert(ox + x <= target->w);
+			assert(oy + y <= target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
 		}
@@ -460,7 +467,7 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const
 
 void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
-	calculateSubsection(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
+	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
 	for (uint y = 0; y < h; y++) {
 		uint bmpofs = (y + sy) * rowBytes;
@@ -468,6 +475,8 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, cons
 		for (uint x = 0; x < w; x++) {
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
 			if (pix) { // We need to xor
+				assert(ox + x <= target->w);
+				assert(oy + y <= target->h);
 				byte p = *((byte *)target->getBasePtr(ox + x, oy + y));
 				*((byte *)target->getBasePtr(ox + x, oy + y)) =
 					(p == kColorWhite) ? kColorBlack : kColorWhite;
@@ -476,15 +485,42 @@ void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, cons
 	}
 }
 
-void ImageAsset::calculateSubsection(Graphics::ManagedSurface *target, int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h) {
-	sx = (ox < 0) ? -ox : 0;
-	sy = (oy < 0) ? -oy : 0;
-	ox = (ox < 0) ? 0 : ox;
-	oy = (oy < 0) ? 0 : oy;
-	w = MAX((int)(bitWidth - sx), 0);
-	h = MAX((int)(bitHeight - sy), 0);
-	w = w > target->w ? target->w : w;
-	h = h > target->h ? target->h : h;
+void ImageAsset::calculateSectionToDraw(Graphics::ManagedSurface *target, int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h) {
+
+	calculateSectionInDirection(target->w, bitWidth, ox, sx, w);
+	calculateSectionInDirection(target->h, bitHeight, oy, sy, h);
+
+	assert(w <= target->w);
+	assert((int)w >= 0);
+	assert(w <= bitWidth);
+	assert(h <= target->h);
+	assert((int)h >= 0);
+	assert(h <= bitHeight);
+}
+
+void ImageAsset::calculateSectionInDirection(uint targetWhole, uint originWhole, int &originPosition, uint &startPosition, uint &blittedWhole) {
+	blittedWhole = originWhole;
+	if (originPosition + blittedWhole > targetWhole) {
+		if (originPosition > (int)targetWhole) {
+			blittedWhole = 0;
+		} else {
+			blittedWhole = (blittedWhole) - ((blittedWhole + originPosition) - targetWhole);
+		}
+
+	}
+	if (originPosition < 0) {
+		if (ABS(originPosition) > (int)blittedWhole) {
+			blittedWhole = 0;
+		} else {
+			blittedWhole -= -originPosition;
+		}
+	}
+
+	startPosition = 0;
+	if (originPosition < 0) {
+		startPosition = -originPosition;
+		originPosition = 0;
+	}
 }
 
 } // End of namespace MacVenture

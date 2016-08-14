@@ -58,7 +58,7 @@ public:
 	ImageAsset(ObjID original, Container *container);
 	~ImageAsset();
 
-	void blitInto(Graphics::ManagedSurface *target, uint32 x, uint32 y, BlitMode mode);
+	void blitInto(Graphics::ManagedSurface *target, int x, int y, BlitMode mode);
 
 	bool isPointInside(Common::Point point);
 	bool isRectInside(Common::Rect rect);
@@ -82,7 +82,8 @@ private:
 	void blitOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 	void blitXOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 
-	void calculateSubsection(Graphics::ManagedSurface *target, int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h);
+	void calculateSectionToDraw(Graphics::ManagedSurface *target, int &ox, int &oy, uint bitWidth, uint bitHeight, uint &sx, uint &sy, uint &w, uint &h);
+	void calculateSectionInDirection(uint targetWhole, uint originWhole, int &originPosition, uint &startPosition, uint &blittedWhole);
 
 private:
 	ObjID _id;
