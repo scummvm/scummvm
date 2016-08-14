@@ -45,8 +45,6 @@ class CCarry : public CGameObject {
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 protected:
 	CString _string1;
-	Point _origPos;
-	CString _fullViewName;
 	int _fieldDC;
 	CString _string3;
 	CString _string4;
@@ -62,6 +60,8 @@ protected:
 	int _visibleFrame;
 public:
 	int _fieldE0;
+	Point _origPos;
+	CString _fullViewName;
 public:
 	CLASSDEF;
 	CCarry();

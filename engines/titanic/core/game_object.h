@@ -71,7 +71,6 @@ private:
 	 */
 	bool clipRect(const Rect &rect1, Rect &rect2) const;
 protected:
-	Rect _bounds;
 	double _field34;
 	double _field38;
 	double _field3C;
@@ -341,11 +340,6 @@ protected:
 	bool changeView(const CString &viewName);
 
 	/**
-	 * Get the centre of the game object's bounds
-	 */
-	Point getControid() const;
-
-	/**
 	 * Play an arbitrary clip
 	 */
 	void playClip(const CString &name, uint flags);
@@ -445,16 +439,6 @@ protected:
 	uint32 getTickCount();
 
 	/**
-	 * Adds an object to the mail list
-	 */
-	void addMail(int mailId);
-
-	/**
-	 * Sets the mail identifier for an object
-	 */
-	void setMailId(int mailId);
-
-	/**
 	 * Returns true if a mail with a specified Id exists
 	 */
 	bool mailExists(int id) const;
@@ -544,6 +528,7 @@ protected:
 	 */
 	int getNewRandomNumber(int max, int *oldVal = nullptr);
 public:
+	Rect _bounds;
 	bool _isMail;
 	int _id;
 	uint _roomFlags;
@@ -627,6 +612,11 @@ public:
 	void setPosition(const Point &newPos);
 
 	/**
+	 * Get the centre of the game object's bounds
+	 */
+	Point getControid() const;
+
+	/**
 	 * Change the object's status
 	 */
 	void playMovie(uint flags);
@@ -695,6 +685,16 @@ public:
 	 * Return the player's previous passenger class
 	 */
 	int getPriorClass() const;
+
+	/**
+	 * Adds an object to the mail list
+	 */
+	void addMail(int mailId);
+
+	/**
+	 * Sets the mail identifier for an object
+	 */
+	void setMailId(int mailId);
 
 	/**
 	 * Returns true if there's an attached surface which has a frame

@@ -24,62 +24,76 @@
 #define TITANIC_SUCCUBUS_H
 
 #include "titanic/npcs/true_talk_npc.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CSuccUBus : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool PETDeliverMsg(CPETDeliverMsg *msg);
+	bool PETReceiveMsg(CPETReceiveMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool SignalObject(CSignalObject *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool SUBTransition(CSUBTransition *msg);
+	bool SetChevRoomBits(CSetChevRoomBits *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 private:
-	static int _v0;
+	static bool _enabled;
 	static int _v1;
 	static int _v2;
 	static int _v3;
 	static int _v4;
 private:
-	int _field108;
-	int _field10C;
-	int _field110;
-	int _field114;
-	int _field118;
-	int _field11C;
-	int _field120;
-	int _field124;
-	int _field128;
-	int _field12C;
-	int _field130;
-	int _field134;
-	int _field138;
-	int _field13C;
+	int _startFrame8;
+	int _endFrame8;
+	int _startFrame11;
+	int _endFrame11;
+	int _startFrame3;
+	int _endFrame3;
+	int _startFrame4;
+	int _endFrame4;
+	int _startFrame9;
+	int _endFrame9;
+	int _startFrame10;
+	int _endFrame10;
+	int _startFrame2;
+	int _endFrame2;
 	int _field140;
-	int _field144;
-	int _field148;
-	int _field14C;
+	CGameObject *_field144;
+	int _startFrame5;
+	int _endFrame5;
 	int _field150;
 	int _field154;
 	int _field158;
-	int _field15C;
+	bool _field15C;
 	CString _string2;
-	int _field16C;
-	int _field170;
-	int _field174;
-	int _field178;
-	int _field17C;
-	int _field180;
+	int _startFrame1;
+	int _endFrame1;
+	Rect _rect1;
 	int _field184;
 	int _field188;
-	int _field18C;
+	Rect _rect2;
 	int _field190;
 	int _field194;
 	int _field198;
 	int _field19C;
-	int _field1A0;
-	int _field1A4;
-	int _field1A8;
+	int _soundHandle;
+	bool _isChicken;
+	bool _isFeathers;
 	int _field1AC;
 	int _field1B0;
-	int _field1B4;
-	int _field1B8;
-	int _field1BC;
-	int _field1C0;
+	int _startFrame6;
+	int _endFrame6;
+	int _startFrame7;
+	int _endFrame7;
 	int _field1C4;
 	int _field1C8;
 	int _field1CC;
