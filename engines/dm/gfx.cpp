@@ -40,189 +40,6 @@
 
 namespace DM {
 
-byte g194_WallOrnCoordSetIndices[60] = { // @ G0194_auc_Graphic558_WallOrnamentCoordinateSetIndices
-	1,   /* Wall Ornament 00 Unreadable Inscription */
-	1,   /* Wall Ornament 01 Square Alcove */
-	1,   /* Wall Ornament 02 Vi Altar */
-	1,   /* Wall Ornament 03 Arched Alcove */
-	0,   /* Wall Ornament 04 Hook */
-	0,   /* Wall Ornament 05 Iron Lock */
-	0,   /* Wall Ornament 06 Wood Ring */
-	0,   /* Wall Ornament 07 Small Switch */
-	0,   /* Wall Ornament 08 Dent 1 */
-	0,   /* Wall Ornament 09 Dent 2 */
-	0,   /* Wall Ornament 10 Iron Ring */
-	2,   /* Wall Ornament 11 Crack */
-	3,   /* Wall Ornament 12 Slime Outlet */
-	0,   /* Wall Ornament 13 Dent 3 */
-	0,   /* Wall Ornament 14 Tiny Switch */
-	0,   /* Wall Ornament 15 Green Switch Out */
-	0,   /* Wall Ornament 16 Blue Switch Out */
-	0,   /* Wall Ornament 17 Coin Slot */
-	0,   /* Wall Ornament 18 Double Iron Lock */
-	0,   /* Wall Ornament 19 Square Lock */
-	0,   /* Wall Ornament 20 Winged Lock */
-	0,   /* Wall Ornament 21 Onyx Lock */
-	0,   /* Wall Ornament 22 Stone Lock */
-	0,   /* Wall Ornament 23 Cross Lock */
-	0,   /* Wall Ornament 24 Topaz Lock */
-	0,   /* Wall Ornament 25 Skeleton Lock */
-	0,   /* Wall Ornament 26 Gold Lock */
-	0,   /* Wall Ornament 27 Tourquoise Lock */
-	0,   /* Wall Ornament 28 Emerald Lock */
-	0,   /* Wall Ornament 29 Ruby Lock */
-	0,   /* Wall Ornament 30 Ra Lock */
-	0,   /* Wall Ornament 31 Master Lock */
-	0,   /* Wall Ornament 32 Gem Hole */
-	2,   /* Wall Ornament 33 Slime */
-	2,   /* Wall Ornament 34 Grate */
-	1,   /* Wall Ornament 35 Fountain */
-	1,   /* Wall Ornament 36 Manacles */
-	1,   /* Wall Ornament 37 Ghoul's Head */
-	1,   /* Wall Ornament 38 Empty Torch Holder */
-	1,   /* Wall Ornament 39 Scratches */
-	4,   /* Wall Ornament 40 Poison Holes */
-	4,   /* Wall Ornament 41 Fireball Holes */
-	4,   /* Wall Ornament 42 Dagger Holes */
-	5,   /* Wall Ornament 43 Champion Mirror */
-	0,   /* Wall Ornament 44 Lever Up */
-	0,   /* Wall Ornament 45 Lever Down */
-	1,   /* Wall Ornament 46 Full Torch Holder */
-	0,   /* Wall Ornament 47 Red Switch Out */
-	0,   /* Wall Ornament 48 Eye Switch */
-	0,   /* Wall Ornament 49 Big Switch Out */
-	2,   /* Wall Ornament 50 Crack Switch Out */
-	0,   /* Wall Ornament 51 Green Switch In */
-	0,   /* Wall Ornament 52 Blue Switch In */
-	0,   /* Wall Ornament 53 Red Switch In */
-	0,   /* Wall Ornament 54 Big Switch In */
-	2,   /* Wall Ornament 55 Crack Switch In. Atari ST Version 1.0 1987-12-08: 0  */
-	6,   /* Wall Ornament 56 Amalgam (Encased Gem) */
-	6,   /* Wall Ornament 57 Amalgam (Free Gem) */
-	6,   /* Wall Ornament 58 Amalgam (Without Gem) */
-	7}; /* Wall Ornament 59 Lord Order (Outside) */
-
-CreatureAspect g219_CreatureAspects[k27_CreatureTypeCount] = { // @ G0219_as_Graphic558_CreatureAspects
-														   /* { FirstNativeBitmapRelativeIndex, FirstDerivedBitmapIndex, pixelWidthFront, HeightFront,
-														   pixelWidthSide, HeightSide, pixelWidthAttack, HeightAttack, CoordinateSet / TransparentColor,
-														   Replacement Color Set Index for color 10 / Replacement Color Set Index for color 9 } */
-	CreatureAspect(0, 0, 56 ,  84, 56 ,  84, 56 ,  84, 0x1D, 0x01),   /* Creature #00 Giant Scorpion / Scorpion */
-	CreatureAspect(4, 0, 32 ,  66,  0 ,   0, 32 ,  69, 0x0B, 0x20),   /* Creature #01 Swamp Slime / Slime Devil */
-	CreatureAspect(6, 0, 24 ,  48, 24 ,  48,  0 ,   0, 0x0B, 0x00),   /* Creature #02 Giggler */
-	CreatureAspect(10, 0, 32 ,  61,  0 ,   0, 32 ,  61, 0x24, 0x31),   /* Creature #03 Wizard Eye / Flying Eye */
-	CreatureAspect(12, 0, 32 ,  64, 56 ,  64, 32 ,  64, 0x14, 0x34),   /* Creature #04 Pain Rat / Hellhound */
-	CreatureAspect(16, 0, 24 ,  49, 40 ,  49,  0 ,   0, 0x18, 0x34),   /* Creature #05 Ruster */
-	CreatureAspect(19, 0, 32 ,  60,  0 ,   0, 32 ,  60, 0x0D, 0x00),   /* Creature #06 Screamer */
-	CreatureAspect(21, 0, 32 ,  43,  0 ,   0, 32 ,  64, 0x04, 0x00),   /* Creature #07 Rockpile / Rock pile */
-	CreatureAspect(23, 0, 32 ,  83,  0 ,   0, 32 ,  93, 0x04, 0x00),   /* Creature #08 Ghost / Rive */
-	CreatureAspect(25, 0, 32 , 101, 32 , 101, 32 , 101, 0x14, 0x00),   /* Creature #09 Stone Golem */
-	CreatureAspect(29, 0, 32 ,  82, 32 ,  82, 32 ,  83, 0x04, 0x00),   /* Creature #10 Mummy */
-	CreatureAspect(33, 0, 32 ,  80,  0 ,   0, 32 ,  99, 0x14, 0x00),   /* Creature #11 Black Flame */
-	CreatureAspect(35, 0, 32 ,  80, 32 ,  80, 32 ,  76, 0x04, 0x00),   /* Creature #12 Skeleton */
-	CreatureAspect(39, 0, 32 ,  96, 56 ,  93, 32 ,  90, 0x1D, 0x20),   /* Creature #13 Couatl */
-	CreatureAspect(43, 0, 32 ,  49, 16 ,  49, 32 ,  56, 0x04, 0x30),   /* Creature #14 Vexirk */
-	CreatureAspect(47, 0, 32 ,  59, 56 ,  43, 32 ,  67, 0x14, 0x78),   /* Creature #15 Magenta Worm / Worm */
-	CreatureAspect(51, 0, 32 ,  83, 32 ,  74, 32 ,  74, 0x04, 0x65),   /* Creature #16 Trolin / Ant Man */
-	CreatureAspect(55, 0, 24 ,  49, 24 ,  53, 24 ,  53, 0x24, 0x00),   /* Creature #17 Giant Wasp / Muncher */
-	CreatureAspect(59, 0, 32 ,  89, 32 ,  89, 32 ,  89, 0x04, 0x00),   /* Creature #18 Animated Armour / Deth Knight */
-	CreatureAspect(63, 0, 32 ,  84, 32 ,  84, 32 ,  84, 0x0D, 0xA9),   /* Creature #19 Materializer / Zytaz */
-	CreatureAspect(67, 0, 56 ,  27,  0 ,   0, 56 ,  80, 0x04, 0x65),   /* Creature #20 Water Elemental */
-	CreatureAspect(69, 0, 56 ,  77, 56 ,  81, 56 ,  77, 0x04, 0xA9),   /* Creature #21 Oitu */
-	CreatureAspect(73, 0, 32 ,  87, 32 ,  89, 32 ,  89, 0x04, 0xCB),   /* Creature #22 Demon */
-	CreatureAspect(77, 0, 32 ,  96, 32 ,  94, 32 ,  96, 0x04, 0x00),   /* Creature #23 Lord Chaos */
-	CreatureAspect(81, 0, 64 ,  94, 72 ,  94, 64 ,  94, 0x04, 0xCB),   /* Creature #24 Red Dragon / Dragon */
-	CreatureAspect(85, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB),   /* Creature #25 Lord Order */
-	CreatureAspect(86, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB)}; /* Creature #26 Grey Lord */
-
-ObjectAspect g209_ObjectAspects[k85_ObjAspectCount] = { // @ G0209_as_Graphic558_ObjectAspects
-	/* FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo, CoordinateSet */
-	ObjectAspect(0,   0, 24, 27, 0x11, 0),
-	ObjectAspect(2,   6, 24,  8, 0x00, 1),
-	ObjectAspect(3,   8,  8, 18, 0x00, 1),
-	ObjectAspect(4,  10,  8,  8, 0x00, 1),
-	ObjectAspect(5,  12,  8,  4, 0x00, 1),
-	ObjectAspect(6,  14, 16, 11, 0x00, 1),
-	ObjectAspect(7,  16, 24, 13, 0x00, 0),
-	ObjectAspect(8,  18, 32, 16, 0x00, 0),
-	ObjectAspect(9,  20, 40, 24, 0x00, 0),
-	ObjectAspect(10,  22, 16, 20, 0x00, 1),
-	ObjectAspect(11,  24, 40, 20, 0x00, 0),
-	ObjectAspect(12,  26, 32,  4, 0x00, 1),
-	ObjectAspect(13,  28, 40,  8, 0x00, 1),
-	ObjectAspect(14,  30, 32, 17, 0x00, 0),
-	ObjectAspect(15,  32, 40, 17, 0x00, 2),
-	ObjectAspect(16,  34, 16,  9, 0x00, 1),
-	ObjectAspect(17,  36, 24,  5, 0x00, 1),
-	ObjectAspect(18,  38, 16,  9, 0x00, 0),
-	ObjectAspect(19,  40,  8,  4, 0x00, 1),
-	ObjectAspect(20,  42, 32, 21, 0x00, 2),
-	ObjectAspect(21,  44, 32, 25, 0x00, 2),
-	ObjectAspect(22,  46, 32, 14, 0x00, 1),
-	ObjectAspect(23,  48, 32, 26, 0x00, 2),
-	ObjectAspect(24,  50, 32, 16, 0x00, 0),
-	ObjectAspect(25,  52, 32, 16, 0x00, 0),
-	ObjectAspect(26,  54, 16, 16, 0x00, 1),
-	ObjectAspect(27,  56, 16, 15, 0x00, 1),
-	ObjectAspect(28,  58, 16, 13, 0x00, 1),
-	ObjectAspect(29,  60, 16, 10, 0x00, 1),
-	ObjectAspect(30,  62, 40, 24, 0x00, 0),
-	ObjectAspect(31,  64, 40,  9, 0x00, 1),
-	ObjectAspect(32,  66, 16,  3, 0x00, 1),
-	ObjectAspect(33,  68, 32,  5, 0x00, 1),
-	ObjectAspect(34,  70, 40, 16, 0x00, 0),
-	ObjectAspect(35,  72,  8,  7, 0x00, 1),
-	ObjectAspect(36,  74, 32,  7, 0x00, 1),
-	ObjectAspect(37,  76, 24, 14, 0x00, 0),
-	ObjectAspect(38,  78, 16,  8, 0x00, 0),
-	ObjectAspect(39,  80,  8,  3, 0x00, 1),
-	ObjectAspect(40,  82, 40,  9, 0x00, 1),
-	ObjectAspect(41,  84, 24, 14, 0x00, 0),
-	ObjectAspect(42,  86, 40, 20, 0x00, 0),
-	ObjectAspect(43,  88, 40, 15, 0x00, 1),
-	ObjectAspect(44,  90, 32, 10, 0x00, 1),
-	ObjectAspect(45,  92, 32, 19, 0x00, 0),
-	ObjectAspect(46,  94, 40, 25, 0x00, 2),
-	ObjectAspect(47,  96, 24,  7, 0x00, 1),
-	ObjectAspect(48,  98,  8,  7, 0x00, 1),
-	ObjectAspect(49, 100, 16,  5, 0x00, 1),
-	ObjectAspect(50, 102,  8,  9, 0x00, 1),
-	ObjectAspect(51, 104, 32, 11, 0x00, 1),
-	ObjectAspect(52, 106, 32, 14, 0x00, 0),
-	ObjectAspect(53, 108, 24, 20, 0x00, 0),
-	ObjectAspect(54, 110, 16, 14, 0x00, 1),
-	ObjectAspect(55, 112, 32, 23, 0x00, 0),
-	ObjectAspect(56, 114, 24, 16, 0x00, 0),
-	ObjectAspect(57, 116, 32, 25, 0x00, 0),
-	ObjectAspect(58, 118, 24, 25, 0x00, 0),
-	ObjectAspect(59, 120,  8,  8, 0x00, 1),
-	ObjectAspect(60, 122,  8,  7, 0x00, 1),
-	ObjectAspect(61, 124,  8,  8, 0x00, 1),
-	ObjectAspect(62, 126,  8,  8, 0x00, 1),
-	ObjectAspect(63, 128,  8,  5, 0x00, 1),
-	ObjectAspect(64, 130,  8, 13, 0x01, 1),
-	ObjectAspect(65, 134, 16, 13, 0x00, 1),
-	ObjectAspect(66, 136, 16, 14, 0x00, 0),
-	ObjectAspect(67, 138, 16, 10, 0x00, 1),
-	ObjectAspect(68, 140,  8, 18, 0x00, 1),
-	ObjectAspect(69, 142,  8, 17, 0x00, 1),
-	ObjectAspect(70, 144, 32, 18, 0x00, 0),
-	ObjectAspect(71, 146, 16, 23, 0x00, 0),
-	ObjectAspect(72, 148, 16, 24, 0x00, 0),
-	ObjectAspect(73, 150, 16, 15, 0x00, 0),
-	ObjectAspect(74, 152,  8,  7, 0x00, 1),
-	ObjectAspect(75, 154,  8, 15, 0x00, 1),
-	ObjectAspect(76, 156,  8,  9, 0x00, 1),
-	ObjectAspect(77, 158, 16, 14, 0x00, 0),
-	ObjectAspect(78, 160,  8,  8, 0x00, 1),
-	ObjectAspect(79, 162, 16,  9, 0x00, 1),
-	ObjectAspect(80, 164,  8, 13, 0x01, 1),
-	ObjectAspect(81, 168,  8, 18, 0x00, 1),
-	ObjectAspect(82, 170, 24, 28, 0x00, 0),
-	ObjectAspect(83, 172, 40, 13, 0x00, 1),
-	ObjectAspect(84, 174,  8,  4, 0x00, 1),
-	ObjectAspect(85, 176, 32, 17, 0x00, 0)
-};
-
 ProjectileAspect g210_ProjectileAspect[k14_ProjectileAspectCount] = { // @ G0210_as_Graphic558_ProjectileAspects
 	/* ProjectileAspect( FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo ) */
 	ProjectileAspect(0,   0, 32, 11, 0x0011),   /* Arrow */
@@ -438,19 +255,140 @@ void DisplayMan::initConstants() {
 
 	const Frame frameWalls163[12] = { // @ G0163_as_Graphic558_Frame_Walls
 		/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
-		Frame(74, 149, 25,  75,  64,  51,  18, 0),   /* D3C */
+		Frame(74, 149, 25,  75,  64,  51,  18, 0),  /* D3C */
 		Frame(0,  83, 25,  75,  64,  51,  32, 0),   /* D3L */
-		Frame(139, 223, 25,  75,  64,  51,   0, 0),   /* D3R */
-		Frame(60, 163, 20,  90,  72,  71,  16, 0),   /* D2C */
+		Frame(139, 223, 25,  75,  64,  51,   0, 0), /* D3R */
+		Frame(60, 163, 20,  90,  72,  71,  16, 0),  /* D2C */
 		Frame(0,  74, 20,  90,  72,  71,  61, 0),   /* D2L */
-		Frame(149, 223, 20,  90,  72,  71,   0, 0),   /* D2R */
-		Frame(32, 191,  9, 119, 128, 111,  48, 0),   /* D1C */
+		Frame(149, 223, 20,  90,  72,  71,   0, 0), /* D2R */
+		Frame(32, 191,  9, 119, 128, 111,  48, 0),  /* D1C */
 		Frame(0,  63,  9, 119, 128, 111, 192, 0),   /* D1L */
-		Frame(160, 223,  9, 119, 128, 111,   0, 0),   /* D1R */
+		Frame(160, 223,  9, 119, 128, 111,   0, 0), /* D1R */
 		Frame(0, 223,  0, 135,   0,   0,   0, 0),   /* D0C */
 		Frame(0,  31,  0, 135,  16, 136,   0, 0),   /* D0L */
-		Frame(192, 223,  0, 135,  16, 136,   0, 0)
-	}; /* D0R */
+		Frame(192, 223,  0, 135,  16, 136,   0, 0)  /* D0R */
+	};
+
+	const CreatureAspect creatureAspects219[k27_CreatureTypeCount] = { // @ G0219_as_Graphic558_CreatureAspects
+	/* { FirstNativeBitmapRelativeIndex, FirstDerivedBitmapIndex, pixelWidthFront, HeightFront,
+		 pixelWidthSide, HeightSide, pixelWidthAttack, HeightAttack, CoordinateSet / TransparentColor,
+		 Replacement Color Set Index for color 10 / Replacement Color Set Index for color 9 } */
+		CreatureAspect(0, 0, 56 ,  84, 56 ,  84, 56 ,  84, 0x1D, 0x01),    /* Creature #00 Giant Scorpion / Scorpion */
+		CreatureAspect(4, 0, 32 ,  66,  0 ,   0, 32 ,  69, 0x0B, 0x20),    /* Creature #01 Swamp Slime / Slime Devil */
+		CreatureAspect(6, 0, 24 ,  48, 24 ,  48,  0 ,   0, 0x0B, 0x00),    /* Creature #02 Giggler */
+		CreatureAspect(10, 0, 32 ,  61,  0 ,   0, 32 ,  61, 0x24, 0x31),   /* Creature #03 Wizard Eye / Flying Eye */
+		CreatureAspect(12, 0, 32 ,  64, 56 ,  64, 32 ,  64, 0x14, 0x34),   /* Creature #04 Pain Rat / Hellhound */
+		CreatureAspect(16, 0, 24 ,  49, 40 ,  49,  0 ,   0, 0x18, 0x34),   /* Creature #05 Ruster */
+		CreatureAspect(19, 0, 32 ,  60,  0 ,   0, 32 ,  60, 0x0D, 0x00),   /* Creature #06 Screamer */
+		CreatureAspect(21, 0, 32 ,  43,  0 ,   0, 32 ,  64, 0x04, 0x00),   /* Creature #07 Rockpile / Rock pile */
+		CreatureAspect(23, 0, 32 ,  83,  0 ,   0, 32 ,  93, 0x04, 0x00),   /* Creature #08 Ghost / Rive */
+		CreatureAspect(25, 0, 32 , 101, 32 , 101, 32 , 101, 0x14, 0x00),   /* Creature #09 Stone Golem */
+		CreatureAspect(29, 0, 32 ,  82, 32 ,  82, 32 ,  83, 0x04, 0x00),   /* Creature #10 Mummy */
+		CreatureAspect(33, 0, 32 ,  80,  0 ,   0, 32 ,  99, 0x14, 0x00),   /* Creature #11 Black Flame */
+		CreatureAspect(35, 0, 32 ,  80, 32 ,  80, 32 ,  76, 0x04, 0x00),   /* Creature #12 Skeleton */
+		CreatureAspect(39, 0, 32 ,  96, 56 ,  93, 32 ,  90, 0x1D, 0x20),   /* Creature #13 Couatl */
+		CreatureAspect(43, 0, 32 ,  49, 16 ,  49, 32 ,  56, 0x04, 0x30),   /* Creature #14 Vexirk */
+		CreatureAspect(47, 0, 32 ,  59, 56 ,  43, 32 ,  67, 0x14, 0x78),   /* Creature #15 Magenta Worm / Worm */
+		CreatureAspect(51, 0, 32 ,  83, 32 ,  74, 32 ,  74, 0x04, 0x65),   /* Creature #16 Trolin / Ant Man */
+		CreatureAspect(55, 0, 24 ,  49, 24 ,  53, 24 ,  53, 0x24, 0x00),   /* Creature #17 Giant Wasp / Muncher */
+		CreatureAspect(59, 0, 32 ,  89, 32 ,  89, 32 ,  89, 0x04, 0x00),   /* Creature #18 Animated Armour / Deth Knight */
+		CreatureAspect(63, 0, 32 ,  84, 32 ,  84, 32 ,  84, 0x0D, 0xA9),   /* Creature #19 Materializer / Zytaz */
+		CreatureAspect(67, 0, 56 ,  27,  0 ,   0, 56 ,  80, 0x04, 0x65),   /* Creature #20 Water Elemental */
+		CreatureAspect(69, 0, 56 ,  77, 56 ,  81, 56 ,  77, 0x04, 0xA9),   /* Creature #21 Oitu */
+		CreatureAspect(73, 0, 32 ,  87, 32 ,  89, 32 ,  89, 0x04, 0xCB),   /* Creature #22 Demon */
+		CreatureAspect(77, 0, 32 ,  96, 32 ,  94, 32 ,  96, 0x04, 0x00),   /* Creature #23 Lord Chaos */
+		CreatureAspect(81, 0, 64 ,  94, 72 ,  94, 64 ,  94, 0x04, 0xCB),   /* Creature #24 Red Dragon / Dragon */
+		CreatureAspect(85, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB),   /* Creature #25 Lord Order */
+		CreatureAspect(86, 0, 32 ,  93,  0 ,   0,  0 ,   0, 0x04, 0xCB)    /* Creature #26 Grey Lord */
+	};
+	static ObjectAspect objectAspects209[k85_ObjAspectCount] = { // @ G0209_as_Graphic558_ObjectAspects
+		/* FirstNativeBitmapRelativeIndex, FirstDerivedBitmapRelativeIndex, ByteWidth, Height, GraphicInfo, CoordinateSet */
+		ObjectAspect(0,   0, 24, 27, 0x11, 0),
+		ObjectAspect(2,   6, 24,  8, 0x00, 1),
+		ObjectAspect(3,   8,  8, 18, 0x00, 1),
+		ObjectAspect(4,  10,  8,  8, 0x00, 1),
+		ObjectAspect(5,  12,  8,  4, 0x00, 1),
+		ObjectAspect(6,  14, 16, 11, 0x00, 1),
+		ObjectAspect(7,  16, 24, 13, 0x00, 0),
+		ObjectAspect(8,  18, 32, 16, 0x00, 0),
+		ObjectAspect(9,  20, 40, 24, 0x00, 0),
+		ObjectAspect(10,  22, 16, 20, 0x00, 1),
+		ObjectAspect(11,  24, 40, 20, 0x00, 0),
+		ObjectAspect(12,  26, 32,  4, 0x00, 1),
+		ObjectAspect(13,  28, 40,  8, 0x00, 1),
+		ObjectAspect(14,  30, 32, 17, 0x00, 0),
+		ObjectAspect(15,  32, 40, 17, 0x00, 2),
+		ObjectAspect(16,  34, 16,  9, 0x00, 1),
+		ObjectAspect(17,  36, 24,  5, 0x00, 1),
+		ObjectAspect(18,  38, 16,  9, 0x00, 0),
+		ObjectAspect(19,  40,  8,  4, 0x00, 1),
+		ObjectAspect(20,  42, 32, 21, 0x00, 2),
+		ObjectAspect(21,  44, 32, 25, 0x00, 2),
+		ObjectAspect(22,  46, 32, 14, 0x00, 1),
+		ObjectAspect(23,  48, 32, 26, 0x00, 2),
+		ObjectAspect(24,  50, 32, 16, 0x00, 0),
+		ObjectAspect(25,  52, 32, 16, 0x00, 0),
+		ObjectAspect(26,  54, 16, 16, 0x00, 1),
+		ObjectAspect(27,  56, 16, 15, 0x00, 1),
+		ObjectAspect(28,  58, 16, 13, 0x00, 1),
+		ObjectAspect(29,  60, 16, 10, 0x00, 1),
+		ObjectAspect(30,  62, 40, 24, 0x00, 0),
+		ObjectAspect(31,  64, 40,  9, 0x00, 1),
+		ObjectAspect(32,  66, 16,  3, 0x00, 1),
+		ObjectAspect(33,  68, 32,  5, 0x00, 1),
+		ObjectAspect(34,  70, 40, 16, 0x00, 0),
+		ObjectAspect(35,  72,  8,  7, 0x00, 1),
+		ObjectAspect(36,  74, 32,  7, 0x00, 1),
+		ObjectAspect(37,  76, 24, 14, 0x00, 0),
+		ObjectAspect(38,  78, 16,  8, 0x00, 0),
+		ObjectAspect(39,  80,  8,  3, 0x00, 1),
+		ObjectAspect(40,  82, 40,  9, 0x00, 1),
+		ObjectAspect(41,  84, 24, 14, 0x00, 0),
+		ObjectAspect(42,  86, 40, 20, 0x00, 0),
+		ObjectAspect(43,  88, 40, 15, 0x00, 1),
+		ObjectAspect(44,  90, 32, 10, 0x00, 1),
+		ObjectAspect(45,  92, 32, 19, 0x00, 0),
+		ObjectAspect(46,  94, 40, 25, 0x00, 2),
+		ObjectAspect(47,  96, 24,  7, 0x00, 1),
+		ObjectAspect(48,  98,  8,  7, 0x00, 1),
+		ObjectAspect(49, 100, 16,  5, 0x00, 1),
+		ObjectAspect(50, 102,  8,  9, 0x00, 1),
+		ObjectAspect(51, 104, 32, 11, 0x00, 1),
+		ObjectAspect(52, 106, 32, 14, 0x00, 0),
+		ObjectAspect(53, 108, 24, 20, 0x00, 0),
+		ObjectAspect(54, 110, 16, 14, 0x00, 1),
+		ObjectAspect(55, 112, 32, 23, 0x00, 0),
+		ObjectAspect(56, 114, 24, 16, 0x00, 0),
+		ObjectAspect(57, 116, 32, 25, 0x00, 0),
+		ObjectAspect(58, 118, 24, 25, 0x00, 0),
+		ObjectAspect(59, 120,  8,  8, 0x00, 1),
+		ObjectAspect(60, 122,  8,  7, 0x00, 1),
+		ObjectAspect(61, 124,  8,  8, 0x00, 1),
+		ObjectAspect(62, 126,  8,  8, 0x00, 1),
+		ObjectAspect(63, 128,  8,  5, 0x00, 1),
+		ObjectAspect(64, 130,  8, 13, 0x01, 1),
+		ObjectAspect(65, 134, 16, 13, 0x00, 1),
+		ObjectAspect(66, 136, 16, 14, 0x00, 0),
+		ObjectAspect(67, 138, 16, 10, 0x00, 1),
+		ObjectAspect(68, 140,  8, 18, 0x00, 1),
+		ObjectAspect(69, 142,  8, 17, 0x00, 1),
+		ObjectAspect(70, 144, 32, 18, 0x00, 0),
+		ObjectAspect(71, 146, 16, 23, 0x00, 0),
+		ObjectAspect(72, 148, 16, 24, 0x00, 0),
+		ObjectAspect(73, 150, 16, 15, 0x00, 0),
+		ObjectAspect(74, 152,  8,  7, 0x00, 1),
+		ObjectAspect(75, 154,  8, 15, 0x00, 1),
+		ObjectAspect(76, 156,  8,  9, 0x00, 1),
+		ObjectAspect(77, 158, 16, 14, 0x00, 0),
+		ObjectAspect(78, 160,  8,  8, 0x00, 1),
+		ObjectAspect(79, 162, 16,  9, 0x00, 1),
+		ObjectAspect(80, 164,  8, 13, 0x01, 1),
+		ObjectAspect(81, 168,  8, 18, 0x00, 1),
+		ObjectAspect(82, 170, 24, 28, 0x00, 0),
+		ObjectAspect(83, 172, 40, 13, 0x00, 1),
+		ObjectAspect(84, 174,  8,  4, 0x00, 1),
+		ObjectAspect(85, 176, 32, 17, 0x00, 0)
+	};
 
 	_frameWallD3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
@@ -465,7 +403,7 @@ void DisplayMan::initConstants() {
 
 	for (int i = 0; i < 12; i++) {
 		_fieldAspects188[i] = fieldAspects188[i];
-		g163_FrameWalls[i] = frameWalls163[i];
+		_frameWalls163[i] = frameWalls163[i];
 	}
 
 	for (int i = 0; i < 7; i++)
@@ -473,6 +411,12 @@ void DisplayMan::initConstants() {
 
 	for (int i = 0; i < k4_ExplosionAspectCount; i++)
 		_explosionAspects[i] = explosionAspects[i];
+
+	for (int i = 0; i < k27_CreatureTypeCount; i++)
+		_creatureAspects219[i] = creatureAspects219[i];
+
+	for (int i = 0; i < k85_ObjAspectCount; i++)
+		_objectAspects209[i] = objectAspects209[i];
 
 	_doorFrameD1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
 		Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
@@ -611,7 +555,7 @@ void DisplayMan::f460_initializeGraphicData() {
 	_g102_currMapFloorOrnInfo[k15_FloorOrnFootprints][k0_NativeBitmapIndex] = k241_FloorOrn_15_D3L_footprints;
 	_g102_currMapFloorOrnInfo[k15_FloorOrnFootprints][k1_CoordinateSet] = 1;
 
-	ObjectAspect *objectAspect = g209_ObjectAspects;
+	ObjectAspect *objectAspect = _objectAspects209;
 	int16 derivedBitmapIndex;
 	for (int16 objectAspectIndex = 0; objectAspectIndex < k85_ObjAspectCount; ++objectAspectIndex, ++objectAspect) {
 		derivedBitmapIndex = k104_DerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
@@ -672,7 +616,7 @@ void DisplayMan::f460_initializeGraphicData() {
 	derivedBitmapIndex = k495_DerivedBitmapFirstCreature;
 	CreatureAspect *creatureAsp;
 	for (int16 creatureIndex = 0; creatureIndex < k27_CreatureTypeCount; creatureIndex++) {
-		creatureAsp = &g219_CreatureAspects[creatureIndex];
+		creatureAsp = &_creatureAspects219[creatureIndex];
 
 		int16 creatureGraphicInfo = g243_CreatureInfo[creatureIndex]._graphicInfo;
 		creatureAsp->_firstDerivedBitmapIndex = derivedBitmapIndex;
@@ -1293,7 +1237,7 @@ void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 			f104_drawFloorPitOrStairsBitmap(_g682_stairsNativeBitmapIndex_Down_Front_D3L, frameStairsDownFrontD3L);
 		goto T0116015_redEagle;
 	case k0_WallElemType:
-		f100_drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k1_ViewSquare_D3L]);
+		f100_drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, _frameWalls163[k1_ViewSquare_D3L]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k0_ViewWall_D3L_RIGHT);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k2_ViewWall_D3L_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1327,7 +1271,7 @@ T0116017_orangeElk:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k1_ViewSquare_D3L], g163_FrameWalls[k1_ViewSquare_D3L]._box);
+		f113_drawField(&_fieldAspects188[k1_ViewSquare_D3L], _frameWalls163[k1_ViewSquare_D3L]._box);
 	}
 }
 
@@ -1363,7 +1307,7 @@ void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0117016;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k2_ViewSquare_D3R]);
+		f100_drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, _frameWalls163[k2_ViewSquare_D3R]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k1_ViewWall_D3R_LEFT);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k4_ViewWall_D3R_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1401,7 +1345,7 @@ T0117018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k2_ViewSquare_D3R], g163_FrameWalls[k2_ViewSquare_D3R]._box);
+		f113_drawField(&_fieldAspects188[k2_ViewSquare_D3R], _frameWalls163[k2_ViewSquare_D3R]._box);
 	}
 }
 
@@ -1438,7 +1382,7 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0118027;
 	case k0_ElementTypeWall:
-		f101_drawWallSetBitmapWithoutTransparency(_g698_bitmapWallSet_Wall_D3LCR, g163_FrameWalls[k0_ViewSquare_D3C]);
+		f101_drawWallSetBitmapWithoutTransparency(_g698_bitmapWallSet_Wall_D3LCR, _frameWalls163[k0_ViewSquare_D3C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k3_ViewWall_D3C_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
 			goto T0118028;
@@ -1470,7 +1414,7 @@ T0118028:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k0_ViewSquare_D3C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
+		f113_drawField(&_fieldAspects188[k0_ViewSquare_D3C], _frameWalls163[k0_ViewSquare_D3C]._box);
 	}
 }
 
@@ -1508,7 +1452,7 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0119018;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k4_ViewSquare_D2L]);
+		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, _frameWalls163[k4_ViewSquare_D2L]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k5_ViewWall_D2L_RIGHT);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k7_ViewWall_D2L_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1542,7 +1486,7 @@ T0119020:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
+		f113_drawField(&_fieldAspects188[k4_ViewSquare_D2L], _frameWalls163[k4_ViewSquare_D2L]._box);
 	}
 }
 
@@ -1581,7 +1525,7 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0120027;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k5_ViewSquare_D2R]);
+		f100_drawWallSetBitmap(_g699_bitmapWallSet_Wall_D2LCR, _frameWalls163[k5_ViewSquare_D2R]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k6_ViewWall_D2R_LEFT);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k9_ViewWall_D2R_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
@@ -1616,7 +1560,7 @@ T0120029:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
+		f113_drawField(&_fieldAspects188[k5_ViewSquare_D2R], _frameWalls163[k5_ViewSquare_D2R]._box);
 	}
 }
 
@@ -1655,7 +1599,7 @@ void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0121015;
 	case k0_ElementTypeWall:
-		f101_drawWallSetBitmapWithoutTransparency(_g699_bitmapWallSet_Wall_D2LCR, g163_FrameWalls[k3_ViewSquare_D2C]);
+		f101_drawWallSetBitmapWithoutTransparency(_g699_bitmapWallSet_Wall_D2LCR, _frameWalls163[k3_ViewSquare_D2C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k8_ViewWall_D2C_FRONT)) {
 			order = k0x0000_CellOrder_Alcove;
 			goto T0121016;
@@ -1688,7 +1632,7 @@ T0121016:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k3_ViewSquare_D2C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k3_ViewSquare_D2C], g163_FrameWalls[k3_ViewSquare_D2C]._box);
+		f113_drawField(&_fieldAspects188[k3_ViewSquare_D2C], _frameWalls163[k3_ViewSquare_D2C]._box);
 	}
 }
 
@@ -1728,7 +1672,7 @@ void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0122019;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k7_ViewSquare_D1L]);
+		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, _frameWalls163[k7_ViewSquare_D1L]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k10_ViewWall_D1L_RIGHT);
 		return;
 	case k18_ElementTypeStairsSide:
@@ -1762,7 +1706,7 @@ T0122021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
+		f113_drawField(&_fieldAspects188[k7_ViewSquare_D1L], _frameWalls163[k7_ViewSquare_D1L]._box);
 	}
 }
 
@@ -1801,7 +1745,7 @@ void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		}
 		goto T0123019;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k8_ViewSquare_D1R]);
+		f100_drawWallSetBitmap(_g700_bitmapWallSet_Wall_D1LCR, _frameWalls163[k8_ViewSquare_D1R]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k11_ViewWall_D1R_LEFT);
 		return;
 	case k18_ElementTypeStairsSide:
@@ -1835,7 +1779,7 @@ T0123021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
+		f113_drawField(&_fieldAspects188[k8_ViewSquare_D1R], _frameWalls163[k8_ViewSquare_D1R]._box);
 	}
 }
 
@@ -1876,7 +1820,7 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 							  boxThievesEyeVisibleArea,
 							  0, 0, 48, 48, k10_ColorFlesh, 95, 95);
 		}
-		f101_drawWallSetBitmapWithoutTransparency(_g700_bitmapWallSet_Wall_D1LCR, g163_FrameWalls[k6_ViewSquare_D1C]);
+		f101_drawWallSetBitmapWithoutTransparency(_g700_bitmapWallSet_Wall_D1LCR, _frameWalls163[k6_ViewSquare_D1C]);
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k12_ViewWall_D1C_FRONT)) {
 			f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, k0x0000_CellOrder_Alcove);
 		}
@@ -1914,7 +1858,7 @@ T0124018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k6_ViewSquare_D1C], g163_FrameWalls[k6_ViewSquare_D1C]._box);
+		f113_drawField(&_fieldAspects188[k6_ViewSquare_D1C], _frameWalls163[k6_ViewSquare_D1C]._box);
 	}
 }
 
@@ -1931,7 +1875,7 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 			f104_drawFloorPitOrStairsBitmap(_g692_stairsNativeBitmapIndex_Side_D0L, frameStairsSideD0L);
 		break;
 	case k0_WallElemType:
-		f100_drawWallSetBitmap(_g701_bitmapWallSet_Wall_D0L, g163_FrameWalls[k10_ViewSquare_D0L]);
+		f100_drawWallSetBitmap(_g701_bitmapWallSet_Wall_D0L, _frameWalls163[k10_ViewSquare_D0L]);
 		break;
 	default:
 		break;
@@ -1939,7 +1883,7 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 
 	f112_drawCeilingPit(k67_ceilingPitD0L_grahicIndice, &frameCeilingPitD0L, posX, posY, false);
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect])
-		f113_drawField(&_fieldAspects188[k10_ViewSquare_D0L], g163_FrameWalls[k10_ViewSquare_D0L]._box);
+		f113_drawField(&_fieldAspects188[k10_ViewSquare_D0L], _frameWalls163[k10_ViewSquare_D0L]._box);
 }
 
 void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
@@ -1964,11 +1908,11 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k11_ViewSquare_D0R, k0x0001_CellOrder_BackLeft);
 		break;
 	case k0_ElementTypeWall:
-		f100_drawWallSetBitmap(_g702_bitmapWallSet_Wall_D0R, g163_FrameWalls[k11_ViewSquare_D0R]);
+		f100_drawWallSetBitmap(_g702_bitmapWallSet_Wall_D0R, _frameWalls163[k11_ViewSquare_D0R]);
 		return;
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k11_ViewSquare_D0R], g163_FrameWalls[k11_ViewSquare_D0R]._box);
+		f113_drawField(&_fieldAspects188[k11_ViewSquare_D0R], _frameWalls163[k11_ViewSquare_D0R]._box);
 	}
 }
 
@@ -2012,7 +1956,7 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	f112_drawCeilingPit(k68_ceilingPitD0C_graphicIndice, &frameCeilingPitD0C, posX, posY, false);
 	f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k9_ViewSquare_D0C, k0x0021_CellOrder_BackLeft_BackRight);
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&_fieldAspects188[k9_ViewSquare_D0C], g163_FrameWalls[k9_ViewSquare_D0C]._box);
+		f113_drawField(&_fieldAspects188[k9_ViewSquare_D0C], _frameWalls163[k9_ViewSquare_D0C]._box);
 	}
 }
 
@@ -2201,6 +2145,69 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 		2,   /* Floor Ornament 07 Tiny Pressure Pad */
 		0    /* Floor Ornament 08 Puddle */
 	};
+	static byte g194_WallOrnCoordSetIndices[60] = { // @ G0194_auc_Graphic558_WallOrnamentCoordinateSetIndices
+		1,   /* Wall Ornament 00 Unreadable Inscription */
+		1,   /* Wall Ornament 01 Square Alcove */
+		1,   /* Wall Ornament 02 Vi Altar */
+		1,   /* Wall Ornament 03 Arched Alcove */
+		0,   /* Wall Ornament 04 Hook */
+		0,   /* Wall Ornament 05 Iron Lock */
+		0,   /* Wall Ornament 06 Wood Ring */
+		0,   /* Wall Ornament 07 Small Switch */
+		0,   /* Wall Ornament 08 Dent 1 */
+		0,   /* Wall Ornament 09 Dent 2 */
+		0,   /* Wall Ornament 10 Iron Ring */
+		2,   /* Wall Ornament 11 Crack */
+		3,   /* Wall Ornament 12 Slime Outlet */
+		0,   /* Wall Ornament 13 Dent 3 */
+		0,   /* Wall Ornament 14 Tiny Switch */
+		0,   /* Wall Ornament 15 Green Switch Out */
+		0,   /* Wall Ornament 16 Blue Switch Out */
+		0,   /* Wall Ornament 17 Coin Slot */
+		0,   /* Wall Ornament 18 Double Iron Lock */
+		0,   /* Wall Ornament 19 Square Lock */
+		0,   /* Wall Ornament 20 Winged Lock */
+		0,   /* Wall Ornament 21 Onyx Lock */
+		0,   /* Wall Ornament 22 Stone Lock */
+		0,   /* Wall Ornament 23 Cross Lock */
+		0,   /* Wall Ornament 24 Topaz Lock */
+		0,   /* Wall Ornament 25 Skeleton Lock */
+		0,   /* Wall Ornament 26 Gold Lock */
+		0,   /* Wall Ornament 27 Tourquoise Lock */
+		0,   /* Wall Ornament 28 Emerald Lock */
+		0,   /* Wall Ornament 29 Ruby Lock */
+		0,   /* Wall Ornament 30 Ra Lock */
+		0,   /* Wall Ornament 31 Master Lock */
+		0,   /* Wall Ornament 32 Gem Hole */
+		2,   /* Wall Ornament 33 Slime */
+		2,   /* Wall Ornament 34 Grate */
+		1,   /* Wall Ornament 35 Fountain */
+		1,   /* Wall Ornament 36 Manacles */
+		1,   /* Wall Ornament 37 Ghoul's Head */
+		1,   /* Wall Ornament 38 Empty Torch Holder */
+		1,   /* Wall Ornament 39 Scratches */
+		4,   /* Wall Ornament 40 Poison Holes */
+		4,   /* Wall Ornament 41 Fireball Holes */
+		4,   /* Wall Ornament 42 Dagger Holes */
+		5,   /* Wall Ornament 43 Champion Mirror */
+		0,   /* Wall Ornament 44 Lever Up */
+		0,   /* Wall Ornament 45 Lever Down */
+		1,   /* Wall Ornament 46 Full Torch Holder */
+		0,   /* Wall Ornament 47 Red Switch Out */
+		0,   /* Wall Ornament 48 Eye Switch */
+		0,   /* Wall Ornament 49 Big Switch Out */
+		2,   /* Wall Ornament 50 Crack Switch Out */
+		0,   /* Wall Ornament 51 Green Switch In */
+		0,   /* Wall Ornament 52 Blue Switch In */
+		0,   /* Wall Ornament 53 Red Switch In */
+		0,   /* Wall Ornament 54 Big Switch In */
+		2,   /* Wall Ornament 55 Crack Switch In. Atari ST Version 1.0 1987-12-08: 0  */
+		6,   /* Wall Ornament 56 Amalgam (Encased Gem) */
+		6,   /* Wall Ornament 57 Amalgam (Free Gem) */
+		6,   /* Wall Ornament 58 Amalgam (Without Gem) */
+		7    /* Wall Ornament 59 Lord Order (Outside) */
+	};
+
 
 
 	f94_loadFloorSet(_vm->_dungeonMan->_g269_currMap->_floorSet);
@@ -2209,21 +2216,21 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 	_g578_useByteBoxCoordinates = true;
 
 	f99_copyBitmapAndFlipHorizontal(_g95_bitmapWall_D3LCR_Native = _g698_bitmapWallSet_Wall_D3LCR, _g74_tmpBitmap,
-									g163_FrameWalls[k0_ViewSquare_D3C]._srcByteWidth, g163_FrameWalls[k0_ViewSquare_D3C]._srcHeight);
+									_frameWalls163[k0_ViewSquare_D3C]._srcByteWidth, _frameWalls163[k0_ViewSquare_D3C]._srcHeight);
 	f134_fillBitmap(_g90_bitmapWall_D3LCR_Flipped, k10_ColorFlesh, 64, 51);
 	f132_blitToBitmap(_g74_tmpBitmap, _g90_bitmapWall_D3LCR_Flipped, BoxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency, 51, 51);
 
 	f99_copyBitmapAndFlipHorizontal(_g96_bitmapWall_D2LCR_Native = _g699_bitmapWallSet_Wall_D2LCR, _g74_tmpBitmap,
-									g163_FrameWalls[k3_ViewSquare_D2C]._srcByteWidth, g163_FrameWalls[k3_ViewSquare_D2C]._srcHeight);
+									_frameWalls163[k3_ViewSquare_D2C]._srcByteWidth, _frameWalls163[k3_ViewSquare_D2C]._srcHeight);
 	f134_fillBitmap(_g91_bitmapWall_D2LCR_Flipped, k10_ColorFlesh, 72, 71);
 	f132_blitToBitmap(_g74_tmpBitmap, _g91_bitmapWall_D2LCR_Flipped, BoxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency, 71, 71);
 
 	f99_copyBitmapAndFlipHorizontal(_g97_bitmapWall_D1LCR_Native = _g700_bitmapWallSet_Wall_D1LCR, _g92_bitmapWall_D1LCR_Flipped,
-									g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight);
+									_frameWalls163[k6_ViewSquare_D1C]._srcByteWidth, _frameWalls163[k6_ViewSquare_D1C]._srcHeight);
 	f99_copyBitmapAndFlipHorizontal(_g98_bitmapWall_D0L_Native = _g701_bitmapWallSet_Wall_D0L, _g94_bitmapWall_D0R_Flipped,
-									g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
+									_frameWalls163[k10_ViewSquare_D0L]._srcByteWidth, _frameWalls163[k10_ViewSquare_D0L]._srcHeight);
 	f99_copyBitmapAndFlipHorizontal(_g99_bitmapWall_D0R_Native = _g702_bitmapWallSet_Wall_D0R, _g93_bitmapWall_D0L_Flipped,
-									g163_FrameWalls[k10_ViewSquare_D0L]._srcByteWidth, g163_FrameWalls[k10_ViewSquare_D0L]._srcHeight);
+									_frameWalls163[k10_ViewSquare_D0L]._srcByteWidth, _frameWalls163[k10_ViewSquare_D0L]._srcHeight);
 
 	int16 val = _vm->_dungeonMan->_g269_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
 	_g675_stairsNativeBitmapIndex_Up_Front_D3L = val++;
@@ -2307,7 +2314,7 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 	f93_applyCreatureReplColors(10, 12);
 
 	for (uint16 creatureType = 0; creatureType < currMap._creatureTypeCount; ++creatureType) {
-		CreatureAspect &aspect = g219_CreatureAspects[_g264_currMapAllowedCreatureTypes[creatureType]];
+		CreatureAspect &aspect = _creatureAspects219[_g264_currMapAllowedCreatureTypes[creatureType]];
 		uint16 replColorOrdinal = aspect.getReplColour9();
 		if (replColorOrdinal)
 			f93_applyCreatureReplColors(9, _vm->M1_ordinalToIndex(replColorOrdinal));
@@ -2538,7 +2545,7 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		if (viewWallIndex >= k10_ViewWall_D1L_RIGHT) {
 			if (viewWallIndex == k12_ViewWall_D1C_FRONT) {
 				if (L0095_B_IsInscription) {
-					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport, boxWallPatchBehindInscription, 94, 28, g163_FrameWalls[k6_ViewSquare_D1C]._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency, g163_FrameWalls[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
+					f132_blitToBitmap(_g700_bitmapWallSet_Wall_D1LCR, _g296_bitmapViewport, boxWallPatchBehindInscription, 94, 28, _frameWalls163[k6_ViewSquare_D1C]._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency, _frameWalls163[k6_ViewSquare_D1C]._srcHeight, k136_heightViewport);
 					AL0090_puc_String = L0099_auc_InscriptionString;
 					L0092_puc_Bitmap = f489_getNativeBitmapOrGraphic(k120_InscriptionFont);
 					L0097_i_TextLineIndex = 0;
@@ -3024,7 +3031,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 				continue;
 			}
 			if ((viewSquareIndex >= k0_ViewSquare_D3C) && (viewSquareIndex <= k9_ViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
-				objectAspect = &(g209_ObjectAspects[g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
+				objectAspect = &(_objectAspects209[g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = k360_FirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
 				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane)) {
 					AL_4_nativeBitmapIndex++;
@@ -3150,7 +3157,7 @@ T0115015_DrawProjectileAsObject:
 			group = (Group*)_vm->_dungeonMan->f156_getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()];
 			creatureInfo = &g243_CreatureInfo[group->_type];
-			creatureAspectStruct = &g219_CreatureAspects[creatureInfo->_creatureAspectIndex];
+			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
@@ -3495,7 +3502,7 @@ T0115129_DrawProjectiles:
 					projectileCoordinates[0] = projectilePosX;
 					projectileCoordinates[1] = 47;
 					coordinateSet = projectileCoordinates;
-					objectAspect = &g209_ObjectAspects[AL_4_projectileAspect];
+					objectAspect = &_objectAspects209[AL_4_projectileAspect];
 					AL_4_nativeBitmapIndex = objectAspect->_firstNativeBitmapRelativeIndex + k360_FirstObjectGraphicIndice;
 					drawProjectileAsObject = true;
 					goto T0115015_DrawProjectileAsObject; /* Go to code section to draw an object. Once completed, it jumps back to T0115171_BackFromT0115015_DrawProjectileAsObject below */
@@ -3632,7 +3639,7 @@ T0115200_DrawExplosion:
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
 		fieldAspect = _fieldAspects188[viewSquareIndex];
 		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
-		f113_drawField(&fieldAspect, g163_FrameWalls[viewSquareIndex]._box);
+		f113_drawField(&fieldAspect, _frameWalls163[viewSquareIndex]._box);
 	}
 T0115214_Return:
 	;
