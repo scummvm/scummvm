@@ -28,6 +28,23 @@
 namespace Titanic {
 
 class CParrot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool ParrotSpeakMsg(CParrotSpeakMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
+	bool PutParrotBackMsg(CPutParrotBackMsg *msg);
+	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
+	bool PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 public:
 	static int _v1;
 	static int _v2;
@@ -44,7 +61,7 @@ private:
 	int _field128;
 	int _field12C;
 	int _field130;
-	int _field134;
+	CTreeItem *_field134;
 	int _field138;
 	int _field13C;
 	int _field140;

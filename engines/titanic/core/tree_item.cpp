@@ -252,6 +252,19 @@ void CTreeItem::detach() {
 	_priorSibling = _nextSibling = _parent = nullptr;
 }
 
+void CTreeItem::attach(CTreeItem *item) {
+	_nextSibling = item;
+	_priorSibling = item->_priorSibling;
+	_parent = item->_parent;
+
+	if (item->_priorSibling)
+		item->_priorSibling->_nextSibling = this;
+
+	item->_priorSibling = this;
+	if (item->_parent && !item->_parent->_firstChild)
+		item->_parent->_firstChild = this;
+}
+
 CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
 	CString nameLower = name;
 	nameLower.toLowercase();

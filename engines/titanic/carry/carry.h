@@ -48,7 +48,6 @@ protected:
 	Point _origPos;
 	CString _fullViewName;
 	int _fieldDC;
-	int _fieldE0;
 	CString _string3;
 	CString _string4;
 	Point _tempPos;
@@ -61,6 +60,8 @@ protected:
 	int _enterFrame;
 	bool _enterFrameSet;
 	int _visibleFrame;
+public:
+	int _fieldE0;
 public:
 	CLASSDEF;
 	CCarry();

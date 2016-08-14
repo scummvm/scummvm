@@ -242,6 +242,11 @@ public:
 	void detach();
 
 	/**
+	 * Attaches a tree item to a new node
+	 */
+	void attach(CTreeItem *item);
+
+	/**
 	 * Finds a tree item by name
 	 */
 	CNamedItem *findByName(const CString &name, int maxLen = 0);

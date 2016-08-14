@@ -61,7 +61,7 @@ public:
 	/**
 	 * Compares the name of the item to a passed name
 	 */
-	virtual int compareTo(const CString &name, int maxLen) const;
+	virtual int compareTo(const CString &name, int maxLen = 0) const;
 
 	/**
 	 * Find a parent node for the item

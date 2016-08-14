@@ -657,10 +657,10 @@ void CGameObject::playClip(uint startFrame, uint endFrame) {
 	gameManager->playClip(clip, room, room);
 }
 
-void CGameObject::playRandomClip(const char **names, uint flags) {
+void CGameObject::playRandomClip(const char *const *names, uint flags) {
 	// Count size of array
 	int count = 0;
-	for (const char **p = names; *p; ++p)
+	for (const char *const *p = names; *p; ++p)
 		++count;
 
 	// Play clip
@@ -1206,9 +1206,9 @@ void CGameObject::dragMove(const Point &pt) {
 	setPosition(Point(pt.x - _bounds.width() / 2, pt.y - _bounds.height() / 2));
 }
 
-bool CGameObject::isObjectDragging() const {
+CGameObject *CGameObject::getDraggingObject() const {
 	CTreeItem *item = getGameManager()->_dragItem;
-	return item ? static_cast<CGameObject *>(item) != nullptr : false;
+	return static_cast<CGameObject *>(item);
 }
 
 Point CGameObject::getControid() const {

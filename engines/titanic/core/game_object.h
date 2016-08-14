@@ -358,7 +358,7 @@ protected:
 	/**
 	 * Play a clip randomly from a passed list of names
 	 */
-	void playRandomClip(const char **names, uint flags);
+	void playRandomClip(const char *const *names, uint flags);
 
 	/**
 	 * Return the current view/node/room as a single string
@@ -723,9 +723,9 @@ public:
 	void dragMove(const Point &pt);
 	
 	/**
-	 * Returns true if an item being dragged is a game object
+	 * Returns the currently dragging item (if any) if it's a game object
 	 */
-	bool isObjectDragging() const;
+	CGameObject *getDraggingObject() const;
 
 	bool compareRoomFlags(int mode, uint flags1, uint flags2);
 
