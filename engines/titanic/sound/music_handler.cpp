@@ -77,4 +77,9 @@ void CMusicHandler::stop() {
 	}
 }
 
+bool CMusicHandler::checkSound(int index) const {
+	// TODO
+	return false;
+}
+
 } // End of namespace Titanic

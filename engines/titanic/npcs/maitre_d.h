@@ -28,6 +28,18 @@
 namespace Titanic {
 
 class CMaitreD : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool RestaurantMusicChanged(CRestaurantMusicChanged *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
+	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+	bool TextInputMsg(CTextInputMsg *msg);
+	bool TriggerNPCEvent(CTriggerNPCEvent *msg);
 private:
 	static int _v1;
 private:
@@ -39,7 +51,7 @@ private:
 	int _field12C;
 	int _field130;
 	int _field134;
-	int _field138;
+	int _timerId;
 public:
 	CLASSDEF;
 	CMaitreD();

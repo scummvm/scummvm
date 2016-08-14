@@ -63,6 +63,8 @@ public:
 	 * Stop playing the music
 	 */
 	void stop();
+
+	bool checkSound(int index) const;
 };
 
 } // End of namespace Titanic
