@@ -161,7 +161,7 @@ enum TextType {
 };
 
 enum SquareAspectIndice {
-	k0_ElemAspect = 0, // @ C0_ELEMENT
+	k0_ElementAspect = 0, // @ C0_ELEMENT
 	k1_FirstGroupOrObjectAspect = 1, // @ C1_FIRST_GROUP_OR_OBJECT 
 	k2_RightWallOrnOrdAspect = 2, // @ C2_RIGHT_WALL_ORNAMENT_ORDINAL 
 	k3_FrontWallOrnOrdAspect = 3, // @ C3_FRONT_WALL_ORNAMENT_ORDINAL 

@@ -1448,7 +1448,7 @@ void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	int16 order;
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_StairsFrontElemType:
 		if (squareAspect[k2_StairsUpAspect])
 			f104_drawFloorPitOrStairsBitmap(_g675_stairsNativeBitmapIndex_Up_Front_D3L, frameStairsUpFrontD3L);
@@ -1489,7 +1489,7 @@ T0116016_blueToad:
 T0116017_orangeElk:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k1_ViewSquare_D3L], g163_FrameWalls[k1_ViewSquare_D3L]._box);
 	}
 }
@@ -1517,7 +1517,7 @@ void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g675_stairsNativeBitmapIndex_Up_Front_D3L, frameStairsUpFrontD3R);
@@ -1563,7 +1563,7 @@ T0117017:
 T0117018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k2_ViewSquare_D3R], g163_FrameWalls[k2_ViewSquare_D3R]._box);
 	}
 }
@@ -1592,7 +1592,7 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	int16 order;
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g676_stairsNativeBitmapIndex_Up_Front_D3C, frameStairsUpFrontD3C);
@@ -1632,7 +1632,7 @@ T0118027:
 T0118028:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k0_ViewSquare_D3C, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
 	}
 }
@@ -1662,7 +1662,7 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g677_stairsNativeBitmapIndex_Up_Front_D2L, frameStairsUpFrontD2L);
@@ -1704,7 +1704,7 @@ T0119020:
 		f112_drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &FrameCeilingPitD2L, posX, posY, false);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
 	}
 }
@@ -1735,7 +1735,7 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g677_stairsNativeBitmapIndex_Up_Front_D2L, frameStairsUpFrontD2R);
@@ -1778,7 +1778,7 @@ T0120028:
 T0120029:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
 	}
 }
@@ -1809,7 +1809,7 @@ void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g678_stairsNativeBitmapIndex_Up_Front_D2C, frameStairsUpFrontD2C);
@@ -1850,7 +1850,7 @@ T0121015:
 T0121016:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k3_ViewSquare_D2C, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k3_ViewSquare_D2C], g163_FrameWalls[k3_ViewSquare_D2C]._box);
 	}
 }
@@ -1882,7 +1882,7 @@ void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g679_stairsNativeBitmapIndex_Up_Front_D1L, frameStairsUpFrontD1L);
@@ -1924,7 +1924,7 @@ T0122020:
 T0122021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
 	}
 }
@@ -1955,7 +1955,7 @@ void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g679_stairsNativeBitmapIndex_Up_Front_D1L, frameStairsUpFrontD1R);
@@ -1997,7 +1997,7 @@ T0123020:
 T0123021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
 	}
 }
@@ -2015,7 +2015,7 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	byte* bitmap;
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (_vm->_dungeonMan->_g285_squareAheadElement = (ElementType)squareAspect[k0_ElemAspect]) {
+	switch (_vm->_dungeonMan->_g285_squareAheadElement = (ElementType)squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
 		if (squareAspect[k2_StairsUpAspect]) {
 			f104_drawFloorPitOrStairsBitmap(_g680_stairsNativeBitmapIndex_Up_Front_D1C, frameStairsUpFrontD1C);
@@ -2076,19 +2076,19 @@ T0124017:
 T0124018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, order);
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k6_ViewSquare_D1C], g163_FrameWalls[k6_ViewSquare_D1C]._box);
 	}
 }
 
 void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	static Frame frameStairsSideD0L = Frame(0, 15, 73, 85, 8, 13, 0, 0); // @ G0138_s_Graphic558_Frame_StairsSide_D0L
-	static Frame g149_FrameFloorPit_D0L = Frame(0, 31, 124, 135, 16, 12, 0, 0); // @ G0149_s_Graphic558_Frame_FloorPit_D0L
-	static Frame g158_FrameCeilingPit_D0L = Frame(0, 15, 0, 3, 8, 4, 0, 0); // @ G0158_s_Graphic558_Frame_CeilingPit_D0L
+	static Frame frameFloorPitD0L = Frame(0, 31, 124, 135, 16, 12, 0, 0); // @ G0149_s_Graphic558_Frame_FloorPit_D0L
+	static Frame frameCeilingPitD0L = Frame(0, 15, 0, 3, 8, 4, 0, 0); // @ G0158_s_Graphic558_Frame_CeilingPit_D0L
 
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[0]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k18_StairsSideElemType:
 		if (squareAspect[k2_StairsUpAspect])
 			f104_drawFloorPitOrStairsBitmap(_g692_stairsNativeBitmapIndex_Side_D0L, frameStairsSideD0L);
@@ -2099,6 +2099,10 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	default:
 		break;
 	}
+
+	f112_drawCeilingPit(k67_ceilingPitD0L_grahicIndice, &frameCeilingPitD0L, posX, posY, false);
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect])
+		f113_drawField(&g188_FieldAspects[k10_ViewSquare_D0L], g163_FrameWalls[k10_ViewSquare_D0L]._box);
 }
 
 void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
@@ -2109,7 +2113,7 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k18_ElementTypeStairsSide:
 		f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g692_stairsNativeBitmapIndex_Side_D0L, frameStairsSideD0R);
 		return;
@@ -2126,7 +2130,7 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 		f100_drawWallSetBitmap(_g702_bitmapWallSet_Wall_D0R, g163_FrameWalls[k11_ViewSquare_D0R]);
 		return;
 	}
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k11_ViewSquare_D0R], g163_FrameWalls[k11_ViewSquare_D0R]._box);
 	}
 }
@@ -2144,7 +2148,7 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
-	switch (squareAspect[k0_ElemAspect]) {
+	switch (squareAspect[k0_ElementAspect]) {
 	case k16_DoorSideElemType:
 		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
 			memmove(_g74_tmpBitmap, _g709_bitmapWallSet_DoorFrameFront, 32 * 123);
@@ -2170,7 +2174,7 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	}
 	f112_drawCeilingPit(k68_ceilingPitD0C_graphicIndice, &frameCeilingPitD0C, posX, posY, false);
 	f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k9_ViewSquare_D0C, k0x0021_CellOrder_BackLeft_BackRight);
-	if ((squareAspect[k0_ElemAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
 		f113_drawField(&g188_FieldAspects[k9_ViewSquare_D0C], g163_FrameWalls[k9_ViewSquare_D0C]._box);
 	}
 }
