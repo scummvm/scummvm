@@ -59,6 +59,8 @@ enum {
 	kDragThreshold = 5
 };
 
+const bool kLoadStaticMenus = true;
+
 static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuHighLevel,	"File",				0, 0, false },
 	{ kMenuHighLevel,	"Edit",				0, 0, false },
