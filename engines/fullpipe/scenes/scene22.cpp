@@ -239,7 +239,7 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 					goto LABEL_31;
 				}
 
-				MGM mgm;
+				AniHandler mgm;
 				MGMInfo mgminfo;
 
 				mgm.addItem(ANI_MAN);

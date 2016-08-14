@@ -217,7 +217,7 @@ void FullpipeEngine::initialize() {
 	_sceneRect.bottom = 599;
 
 	_floaters = new Floaters;
-	_mgm = new MGM;
+	_mgm = new AniHandler;
 }
 
 void FullpipeEngine::restartGame() {

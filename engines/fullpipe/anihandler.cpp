@@ -29,12 +29,12 @@
 
 namespace Fullpipe {
 
-void MGM::clear() {
+void AniHandler::clear() {
 	_items.clear();
 }
 
-MessageQueue *MGM::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
-	debugC(4, kDebugPathfinding, "MGM::genMQ(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
+MessageQueue *AniHandler::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
+	debugC(4, kDebugPathfinding, "AniHandler::genMQ(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
 
 	int idx = getItemIndexById(ani->_id);
 
@@ -131,8 +131,8 @@ MGMSubItem::MGMSubItem() {
 	y = 0;
 }
 
-void MGM::addItem(int objId) {
-	debugC(4, kDebugPathfinding, "MGM::addItem(%d)", objId);
+void AniHandler::addItem(int objId) {
+	debugC(4, kDebugPathfinding, "AniHandler::addItem(%d)", objId);
 
 	if (getItemIndexById(objId) == -1) {
 		MGMItem *item = new MGMItem();
@@ -143,13 +143,13 @@ void MGM::addItem(int objId) {
 	rebuildTables(objId);
 }
 
-void MGM::rebuildTables(int objId) {
+void AniHandler::rebuildTables(int objId) {
 	int idx = getItemIndexById(objId);
 
 	if (idx == -1)
 		return;
 
-	debugC(3, kDebugPathfinding, "MGM::rebuildTables. (1) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::rebuildTables. (1) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 
 	_items[idx]->subItems.clear();
 	_items[idx]->statics.clear();
@@ -174,10 +174,10 @@ void MGM::rebuildTables(int objId) {
 		_items[idx]->movements2.push_back(0);
 	}
 
-	debugC(3, kDebugPathfinding, "MGM::rebuildTables. (2) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::rebuildTables. (2) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
-int MGM::getItemIndexById(int objId) {
+int AniHandler::getItemIndexById(int objId) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->objId == objId)
 			return i;
@@ -185,8 +185,8 @@ int MGM::getItemIndexById(int objId) {
 	return -1;
 }
 
-MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
-	debugC(4, kDebugPathfinding, "MGM::genMovement(*%d)", mgminfo->ani ? mgminfo->ani->_id : -1);
+MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
+	debugC(4, kDebugPathfinding, "AniHandler::genMovement(*%d)", mgminfo->ani ? mgminfo->ani->_id : -1);
 
 	if (!mgminfo->ani)
 		return 0;
@@ -235,7 +235,7 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 	int st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
 	int subOffset = getStaticsIndexById(itemIdx, mgminfo->staticsId2);
 
-	debugC(3, kDebugPathfinding, "MGM::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
 
 	clearMovements2(itemIdx);
 	recalcOffsets(itemIdx, subIdx, st2idx, 0, 1);
@@ -393,12 +393,12 @@ MessageQueue *MGM::genMovement(MGMInfo *mgminfo) {
 
 	mq->addExCommandToEnd(ex);
 
-	debugC(3, kDebugPathfinding, "MGM::genMovement. (2) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (2) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
 
 	return mq;
 }
 
-int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
+int AniHandler::countPhases(int idx, int subIdx, int endIdx, int flag) {
 	int res = 0;
 
 	if (endIdx < 0)
@@ -415,8 +415,8 @@ int MGM::countPhases(int idx, int subIdx, int endIdx, int flag) {
 
 	return res;
 }
-void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
-	debugC(4, kDebugPathfinding, "MGM::updateAnimStatics(*%d, %d)", ani->_id, staticsId);
+void AniHandler::updateAnimStatics(StaticANIObject *ani, int staticsId) {
+	debugC(4, kDebugPathfinding, "AniHandler::updateAnimStatics(*%d, %d)", ani->_id, staticsId);
 
 	if (getItemIndexById(ani->_id) == -1)
 		return;
@@ -445,8 +445,8 @@ void MGM::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	}
 }
 
-Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
-	debugC(4, kDebugPathfinding, "MGM::getPoint([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
+Common::Point *AniHandler::getPoint(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
+	debugC(4, kDebugPathfinding, "AniHandler::getPoint([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
 
 	int idx = getItemIndexById(objectId);
 
@@ -488,7 +488,7 @@ Common::Point *MGM::getPoint(Common::Point *point, int objectId, int staticsId1,
 	return point;
 }
 
-int MGM::getStaticsIndexById(int idx, int16 id) {
+int AniHandler::getStaticsIndexById(int idx, int16 id) {
 	if (!_items[idx]->statics.size())
 		return -1;
 
@@ -500,7 +500,7 @@ int MGM::getStaticsIndexById(int idx, int16 id) {
 	return -1;
 }
 
-int MGM::getStaticsIndex(int idx, Statics *st) {
+int AniHandler::getStaticsIndex(int idx, Statics *st) {
 	if (!_items[idx]->statics.size())
 		return -1;
 
@@ -512,20 +512,20 @@ int MGM::getStaticsIndex(int idx, Statics *st) {
 	return -1;
 }
 
-void MGM::clearMovements2(int idx) {
-	debugC(2, kDebugPathfinding, "MGM::clearMovements2(%d)", idx);
+void AniHandler::clearMovements2(int idx) {
+	debugC(2, kDebugPathfinding, "AniHandler::clearMovements2(%d)", idx);
 
 	for (uint i = 0; i < _items[idx]->movements2.size(); i++)
 		_items[idx]->movements2[i] = 0;
 
-	debugC(3, kDebugPathfinding, "MGM::clearMovements2. movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::clearMovements2. movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
-int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	MGMItem *item = _items[idx];
 	int subIdx = st1idx + st2idx * item->statics.size();
 
-	debugC(2, kDebugPathfinding, "MGM::recalcOffsets(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
+	debugC(2, kDebugPathfinding, "AniHandler::recalcOffsets(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
 
 	if (st1idx == st2idx) {
 		memset(item->subItems[subIdx], 0, sizeof(*(item->subItems[subIdx])));
@@ -537,7 +537,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 
 	Common::Point point;
 
-	debugC(3, kDebugPathfinding, "MGM::recalcOffsets. movements1 sz: %d movements2 sz: %d", item->movements1.size(), item->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::recalcOffsets. movements1 sz: %d movements2 sz: %d", item->movements1.size(), item->movements2.size());
 
 	for (uint i = 0; i < item->movements1.size(); i++) {
 		Movement *mov = item->movements1[i];
@@ -551,7 +551,7 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 			int stidx = getStaticsIndex(idx, mov->_staticsObj2);
 			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
 			int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
-			debugC(1, kDebugPathfinding, "MGM::recalcOffsets, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx]->statics.size(), stidx, st2idx, item->subItems.size());
+			debugC(1, kDebugPathfinding, "AniHandler::recalcOffsets, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx]->statics.size(), stidx, st2idx, item->subItems.size());
 
 			int newsz = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
@@ -608,8 +608,8 @@ int MGM::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	return -1;
 }
 
-int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
-	debugC(4, kDebugPathfinding, "MGM::refreshOffsets(%d, %d, %d)", objectId, idx1, idx2);
+int AniHandler::refreshOffsets(int objectId, int idx1, int idx2) {
+	debugC(4, kDebugPathfinding, "AniHandler::refreshOffsets(%d, %d, %d)", objectId, idx1, idx2);
 
 	int idx = getItemIndexById(objectId);
 
@@ -631,7 +631,7 @@ int MGM::refreshOffsets(int objectId, int idx1, int idx2) {
 	return idx;
 }
 
-Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
+Common::Point *AniHandler::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
 	Common::Point point;
 
 	mov->calcSomeXY(point, 0, -1);
@@ -707,8 +707,8 @@ Common::Point *MGM::calcLength(Common::Point *pRes, Movement *mov, int x, int y,
 	return pRes;
 }
 
-ExCommand2 *MGM::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
-	debugC(2, kDebugPathfinding, "MGM::buildExCommand2(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
+ExCommand2 *AniHandler::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
+	debugC(2, kDebugPathfinding, "AniHandler::buildExCommand2(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
 
 	uint cnt;
 

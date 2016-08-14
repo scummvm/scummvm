@@ -395,7 +395,7 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->_flags |= 1;
 
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_MAN);
@@ -460,7 +460,7 @@ void sceneHandler04_dropBottle() {
 }
 
 void sceneHandler04_gotoLadder(ExCommand *ex) {
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_MAN);
@@ -550,7 +550,7 @@ void sceneHandler04_raisePlank() {
 }
 
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_KOZAWKA);
@@ -599,7 +599,7 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_KOZAWKA);
@@ -670,7 +670,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_KOZAWKA);
@@ -728,7 +728,7 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 }
 
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
-	MGM mgm;
+	AniHandler mgm;
 	MGMInfo mgminfo;
 
 	mgm.addItem(ANI_KOZAWKA);

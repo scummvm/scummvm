@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FULLPIPE_MGM_H
-#define FULLPIPE_MGM_H
+#ifndef FULLPIPE_ANIHANDLER_H
+#define FULLPIPE_ANIHANDLER_H
 
 namespace Fullpipe {
 
@@ -66,7 +66,7 @@ struct MGMInfo {
 	MGMInfo() { memset(this, 0, sizeof(MGMInfo)); }
 };
 
-class MGM : public CObject {
+class AniHandler : public CObject {
 public:
 	Common::Array<MGMItem *> _items;
 
@@ -92,4 +92,4 @@ public:
 
 } // End of namespace Fullpipe
 
-#endif /* FULLPIPE_MGM_H */
+#endif /* FULLPIPE_ANIHANDLER_H */

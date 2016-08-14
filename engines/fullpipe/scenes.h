@@ -28,7 +28,7 @@ namespace Fullpipe {
 struct Bat;
 struct BehaviorMove;
 struct Hanger;
-class MGM;
+class AniHandler;
 class MctlLadder;
 struct Ring;
 class StaticANIObject;
@@ -396,7 +396,7 @@ public:
 	StaticANIObject *scene11_boots;
 	StaticANIObject *scene11_dudeOnSwing;
 	PictureObject *scene11_hint;
-	MGM scene11_mgm;
+	AniHandler scene11_mgm;
 	bool scene11_arcadeIsOn;
 	bool scene11_scrollIsEnabled;
 	bool scene11_scrollIsMaximized;
@@ -612,7 +612,7 @@ public:
 	Common::Array<WalkingBearder *> scene29_bearders;
 	int scene29_manX;
 	int scene29_manY;
-	MGM scene29_mgm;
+	AniHandler scene29_mgm;
 
 	StaticANIObject *scene30_leg;
 	int scene30_liftFlag;

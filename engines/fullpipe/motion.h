@@ -149,7 +149,7 @@ public:
 	int _ladder_field_20;
 	int _ladder_field_24;
 	Common::Array<MctlLadderMovement *> _ladmovements;
-	MGM _mgm;
+	AniHandler _mgm;
 
 public:
 	MctlLadder();
@@ -282,7 +282,7 @@ public:
 	int _field_44;
 	Common::Array<MovGraphItem *> _items;
 	MovArr *(*_callback1)(StaticANIObject *ani, Common::Array<MovItem *> *items, signed int counter);
-	MGM _mgm;
+	AniHandler _mgm;
 
 public:
 	MovGraph();

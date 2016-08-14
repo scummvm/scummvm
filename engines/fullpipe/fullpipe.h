@@ -74,7 +74,7 @@ class GlobalMessageQueueList;
 struct MessageHandler;
 class MessageQueue;
 struct MovTable;
-class MGM;
+class AniHandler;
 class NGIArchive;
 class PictureObject;
 struct PreloadItem;
@@ -210,7 +210,7 @@ public:
 	MovTable *_movTable;
 
 	Floaters *_floaters;
-	MGM *_mgm;
+	AniHandler *_mgm;
 
 	Common::Array<Common::Point *> _arcadeKeys;
 
