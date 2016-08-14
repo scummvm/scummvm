@@ -1040,7 +1040,7 @@ void StaticANIObject::adjustSomeXY() {
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
-	g_fp->_aniHandler->addItem(_id);
+	g_fp->_aniHandler->attachObject(_id);
 
 	MessageQueue *mq = g_fp->_aniHandler->genMQ(this, msgNum, 0, 0, 0);
 
@@ -1071,7 +1071,7 @@ void StaticANIObject::changeStatics2(int objId) {
 	deleteFromGlobalMessageQueue();
 
 	if (_movement || _statics) {
-		g_fp->_aniHandler->addItem(_id);
+		g_fp->_aniHandler->attachObject(_id);
 		g_fp->_aniHandler->updateAnimStatics(this, objId);
 	} else {
 		_statics = getStaticsById(objId);

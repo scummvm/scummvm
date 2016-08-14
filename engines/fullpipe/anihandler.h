@@ -50,7 +50,7 @@ struct MGMItem {
 	MGMItem();
 };
 
-struct MGMInfo {
+struct MakeQueueStruct {
 	StaticANIObject *ani;
 	int staticsId1;
 	int staticsId2;
@@ -63,7 +63,7 @@ struct MGMInfo {
 	int y2;
 	int flags;
 
-	MGMInfo() { memset(this, 0, sizeof(MGMInfo)); }
+	MakeQueueStruct() { memset(this, 0, sizeof(MakeQueueStruct)); }
 };
 
 class AniHandler : public CObject {
@@ -72,11 +72,11 @@ public:
 
 public:
 	void clear();
-	void addItem(int objId);
+	void attachObject(int objId);
 	void rebuildTables(int objId);
 	int getItemIndexById(int objId);
 
-	MessageQueue *genMovement(MGMInfo *mgminfo);
+	MessageQueue *makeRunQueue(MakeQueueStruct *mkQueue);
 	void updateAnimStatics(StaticANIObject *ani, int staticsId);
 	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
 	int getStaticsIndexById(int idx, int16 id);

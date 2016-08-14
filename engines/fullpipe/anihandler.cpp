@@ -131,7 +131,7 @@ MGMSubItem::MGMSubItem() {
 	y = 0;
 }
 
-void AniHandler::addItem(int objId) {
+void AniHandler::attachObject(int objId) {
 	debugC(4, kDebugPathfinding, "AniHandler::addItem(%d)", objId);
 
 	if (getItemIndexById(objId) == -1) {
@@ -185,55 +185,55 @@ int AniHandler::getItemIndexById(int objId) {
 	return -1;
 }
 
-MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
-	debugC(4, kDebugPathfinding, "AniHandler::genMovement(*%d)", mgminfo->ani ? mgminfo->ani->_id : -1);
+MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
+	debugC(4, kDebugPathfinding, "AniHandler::makeRunQueue(*%d)", mkQueue->ani ? mkQueue->ani->_id : -1);
 
-	if (!mgminfo->ani)
+	if (!mkQueue->ani)
 		return 0;
 
-	Movement *mov = mgminfo->ani->_movement;
+	Movement *mov = mkQueue->ani->_movement;
 
-	if (!mov && !mgminfo->ani->_statics)
+	if (!mov && !mkQueue->ani->_statics)
 		return 0;
 
-	if (!(mgminfo->flags & 1)) {
+	if (!(mkQueue->flags & 1)) {
 		if (mov)
-			mgminfo->staticsId1 = mov->_staticsObj2->_staticsId;
+			mkQueue->staticsId1 = mov->_staticsObj2->_staticsId;
 		else
-			mgminfo->staticsId1 = mgminfo->ani->_statics->_staticsId;
+			mkQueue->staticsId1 = mkQueue->ani->_statics->_staticsId;
 	}
 
 	Common::Point point;
 
-	if (!(mgminfo->flags & 0x10) || !(mgminfo->flags & 0x20)) {
-		int nx = mgminfo->ani->_ox;
-		int ny = mgminfo->ani->_oy;
+	if (!(mkQueue->flags & 0x10) || !(mkQueue->flags & 0x20)) {
+		int nx = mkQueue->ani->_ox;
+		int ny = mkQueue->ani->_oy;
 
-		if (mgminfo->ani->_movement) {
-			mgminfo->ani->calcNextStep(&point);
+		if (mkQueue->ani->_movement) {
+			mkQueue->ani->calcNextStep(&point);
 
 			nx += point.x;
 			ny += point.y;
 		}
 
-		if (!(mgminfo->flags & 0x10))
-			mgminfo->x2 = nx;
+		if (!(mkQueue->flags & 0x10))
+			mkQueue->x2 = nx;
 
-		if (!(mgminfo->flags & 0x20))
-			mgminfo->y2 = ny;
+		if (!(mkQueue->flags & 0x20))
+			mkQueue->y2 = ny;
 	}
 
-	mov = mgminfo->ani->getMovementById(mgminfo->movementId);
+	mov = mkQueue->ani->getMovementById(mkQueue->movementId);
 
 	if (!mov)
 		return 0;
 
 
-	int itemIdx = getItemIndexById(mgminfo->ani->_id);
-	int subIdx = getStaticsIndexById(itemIdx, mgminfo->staticsId1);
+	int itemIdx = getItemIndexById(mkQueue->ani->_id);
+	int subIdx = getStaticsIndexById(itemIdx, mkQueue->staticsId1);
 	int st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
 	int st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
-	int subOffset = getStaticsIndexById(itemIdx, mgminfo->staticsId2);
+	int subOffset = getStaticsIndexById(itemIdx, mkQueue->staticsId2);
 
 	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
 
@@ -251,8 +251,8 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 	if (st1idx != subOffset && !sub2->movement)
 		return 0;
 
-	int n1x = mgminfo->x1 - mgminfo->x2 - sub1->x - sub2->x;
-	int n1y = mgminfo->y1 - mgminfo->y2 - sub1->y - sub2->y;
+	int n1x = mkQueue->x1 - mkQueue->x2 - sub1->x - sub2->x;
+	int n1y = mkQueue->y1 - mkQueue->y2 - sub1->y - sub2->y;
 
 	Common::Point point1;
 
@@ -263,8 +263,8 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 	int mult;
 	int len = -1;
 
-	if (mgminfo->flags & 0x40) {
-		mult = mgminfo->field_10;
+	if (mkQueue->flags & 0x40) {
+		mult = mkQueue->field_10;
 		len = -1;
 		n2x *= mult;
 		n2y *= mult;
@@ -274,18 +274,18 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 		n2y = point.y;
 	}
 
-	if (!(mgminfo->flags & 2)) {
+	if (!(mkQueue->flags & 2)) {
 		len = -1;
 		n2x = mult * point1.x;
 		n1x = mult * point1.x;
-		mgminfo->x1 = mgminfo->x2 + mult * point1.x + sub1->x + sub2->x;
+		mkQueue->x1 = mkQueue->x2 + mult * point1.x + sub1->x + sub2->x;
 	}
 
-	if (!(mgminfo->flags & 4)) {
+	if (!(mkQueue->flags & 4)) {
 		n2y = mult * point1.y;
 		n1y = mult * point1.y;
 		len = -1;
-		mgminfo->y1 = mgminfo->y2 + mult * point1.y + sub1->y + sub2->y;
+		mkQueue->y1 = mkQueue->y2 + mult * point1.y + sub1->y + sub2->y;
 	}
 
 	int px = 0;
@@ -348,9 +348,9 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 	for (int i = subIdx; i != st2idx;) {
 		MGMSubItem *s = _items[itemIdx]->subItems[i + subOffset * _items[itemIdx]->statics.size()];
 
-		ex2 = buildExCommand2(s->movement, mgminfo->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = buildExCommand2(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_keyCode = mgminfo->ani->_okeyCode;
+		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
 		mq->addExCommandToEnd(ex2);
 
@@ -365,9 +365,9 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 		else
 			plen = -1;
 
-		ex2 = buildExCommand2(mov, mgminfo->ani->_id, x1, y1, &x2, &y2, plen);
+		ex2 = buildExCommand2(mov, mkQueue->ani->_id, x1, y1, &x2, &y2, plen);
 		ex2->_parId = mq->_id;
-		ex2->_keyCode = mgminfo->ani->_okeyCode;
+		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
 		mq->addExCommandToEnd(ex2);
 	}
@@ -375,19 +375,19 @@ MessageQueue *AniHandler::genMovement(MGMInfo *mgminfo) {
 	for (int j = st1idx; j != subOffset;) {
 		MGMSubItem *s = _items[itemIdx]->subItems[j + subOffset * _items[itemIdx]->statics.size()];
 
-		ex2 = buildExCommand2(s->movement, mgminfo->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = buildExCommand2(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_keyCode = mgminfo->ani->_okeyCode;
+		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
 		mq->addExCommandToEnd(ex2);
 
 		j = s->staticsIndex;
 	}
 
-	ExCommand *ex = new ExCommand(mgminfo->ani->_id, 5, -1, mgminfo->x1, mgminfo->y1, 0, 1, 0, 0, 0);
+	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
-	ex->_field_14 = mgminfo->field_1C;
-	ex->_keyCode = mgminfo->ani->_okeyCode;
+	ex->_field_14 = mkQueue->field_1C;
+	ex->_keyCode = mkQueue->ani->_okeyCode;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
 
