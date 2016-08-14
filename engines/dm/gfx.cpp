@@ -40,156 +40,6 @@
 
 namespace DM {
 
-Frame g712_FrameWall_D3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
-Frame g163_FrameWalls[12] = { // @ G0163_as_Graphic558_Frame_Walls
-	/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
-	Frame(74, 149, 25,  75,  64,  51,  18, 0),   /* D3C */
-	Frame(0,  83, 25,  75,  64,  51,  32, 0),   /* D3L */
-	Frame(139, 223, 25,  75,  64,  51,   0, 0),   /* D3R */
-	Frame(60, 163, 20,  90,  72,  71,  16, 0),   /* D2C */
-	Frame(0,  74, 20,  90,  72,  71,  61, 0),   /* D2L */
-	Frame(149, 223, 20,  90,  72,  71,   0, 0),   /* D2R */
-	Frame(32, 191,  9, 119, 128, 111,  48, 0),   /* D1C */
-	Frame(0,  63,  9, 119, 128, 111, 192, 0),   /* D1L */
-	Frame(160, 223,  9, 119, 128, 111,   0, 0),   /* D1R */
-	Frame(0, 223,  0, 135,   0,   0,   0, 0),   /* D0C */
-	Frame(0,  31,  0, 135,  16, 136,   0, 0),   /* D0L */
-	Frame(192, 223,  0, 135,  16, 136,   0, 0)
-}; /* D0R */
-
-
-byte g196_DoorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
-	0,   /* Door Ornament #00 Square Grid */
-	1,   /* Door Ornament #01 Iron Bars */
-	1,   /* Door Ornament #02 Jewels */
-	1,   /* Door Ornament #03 Wooden Bars */
-	0,   /* Door Ornament #04 Arched Grid */
-	2,   /* Door Ornament #05 Block Lock */
-	3,   /* Door Ornament #06 Corner Lock */
-	1,   /* Door Ornament #07 Black door */
-	2,   /* Door Ornament #08 Red Triangle Lock */
-	2,   /* Door Ornament #09 Triangle Lock */
-	1,   /* Door Ornament #10 Ra Door */
-	1}; /* Door Ornament #11 Iron Door Damages */
-
-byte g195_FloorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnamentCoordinateSetIndices
-	0,   /* Floor Ornament 00 Square Grate */
-	0,   /* Floor Ornament 01 Square Pressure Pad */
-	0,   /* Floor Ornament 02 Moss */
-	0,   /* Floor Ornament 03 Round Grate */
-	2,   /* Floor Ornament 04 Round Pressure Plate */
-	0,   /* Floor Ornament 05 Black Flame Pit */
-	0,   /* Floor Ornament 06 Crack */
-	2,   /* Floor Ornament 07 Tiny Pressure Pad */
-	0}; /* Floor Ornament 08 Puddle */
-
-byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
-										 /* { X1, X2, Y1, Y2, ByteWidth, Height } */
-	{{80,  83, 41,  45,  8,   5},     /* D3L */
-	{140, 143, 41,  45,  8,   5},     /* D3R */
-	{16,  29, 39,  50,  8,  12},     /* D3L */
-	{107, 120, 39,  50,  8,  12},     /* D3C */
-	{187, 200, 39,  50,  8,  12},     /* D3R */
-	{67,  77, 40,  49,  8,  10},     /* D2L */
-	{146, 156, 40,  49,  8,  10},     /* D2R */
-	{0,  17, 38,  55, 16,  18},     /* D2L */
-	{102, 123, 38,  55, 16,  18},     /* D2C */
-	{206, 223, 38,  55, 16,  18},     /* D2R */
-	{48,  63, 38,  56,  8,  19},     /* D1L */
-	{160, 175, 38,  56,  8,  19},     /* D1R */
-	{96, 127, 36,  63, 16,  28}},   /* D1C */
-	{{74,  82, 41,  60,  8,  20},     /* D3L */
-	{141, 149, 41,  60,  8,  20},     /* D3R */
-	{1,  47, 37,  63, 24,  27},     /* D3L */
-	{88, 134, 37,  63, 24,  27},     /* D3C */
-	{171, 217, 37,  63, 24,  27},     /* D3R */
-	{61,  76, 38,  67,  8,  30},     /* D2L */
-	{147, 162, 38,  67,  8,  30},     /* D2R */
-	{0,  43, 37,  73, 32,  37},     /* D2L */
-	{80, 143, 37,  73, 32,  37},     /* D2C */
-	{180, 223, 37,  73, 32,  37},     /* D2R */
-	{32,  63, 36,  83, 16,  48},     /* D1L */
-	{160, 191, 36,  83, 16,  48},     /* D1R */
-	{64, 159, 36,  91, 48,  56}},   /* D1C */
-	{{80,  83, 66,  70,  8,   5},     /* D3L */
-	{140, 143, 66,  70,  8,   5},     /* D3R */
-	{16,  29, 64,  75,  8,  12},     /* D3L */
-	{106, 119, 64,  75,  8,  12},     /* D3C */
-	{187, 200, 64,  75,  8,  12},     /* D3R */
-	{67,  77, 74,  83,  8,  10},     /* D2L */
-	{146, 156, 74,  83,  8,  10},     /* D2R */
-	{0,  17, 73,  90, 16,  18},     /* D2L */
-	{100, 121, 73,  90, 16,  18},     /* D2C */
-	{206, 223, 73,  90, 16,  18},     /* D2R */
-	{48,  63, 84, 102,  8,  19},     /* D1L */
-	{160, 175, 84, 102,  8,  19},     /* D1R */
-	{96, 127, 92, 119, 16,  28}},   /* D1C */
-	{{80,  83, 49,  53,  8,   5},     /* D3L */
-	{140, 143, 49,  53,  8,   5},     /* D3R */
-	{16,  29, 50,  61,  8,  12},     /* D3L */
-	{106, 119, 50,  61,  8,  12},     /* D3C */
-	{187, 200, 50,  61,  8,  12},     /* D3R */
-	{67,  77, 53,  62,  8,  10},     /* D2L */
-	{146, 156, 53,  62,  8,  10},     /* D2R */
-	{0,  17, 55,  72, 16,  18},     /* D2L */
-	{100, 121, 55,  72, 16,  18},     /* D2C */
-	{206, 223, 55,  72, 16,  18},     /* D2R */
-	{48,  63, 57,  75,  8,  19},     /* D1L */
-	{160, 175, 57,  75,  8,  19},     /* D1R */
-	{96, 127, 64,  91, 16,  28}},   /* D1C */
-	{{75,  90, 40,  44,  8,   5},     /* D3L */
-	{133, 148, 40,  44,  8,   5},     /* D3R */
-	{1,  48, 44,  49, 24,   6},     /* D3L */
-	{88, 135, 44,  49, 24,   6},     /* D3C */
-	{171, 218, 44,  49, 24,   6},     /* D3R */
-	{60,  77, 40,  46, 16,   7},     /* D2L */
-	{146, 163, 40,  46, 16,   7},     /* D2R */
-	{0,  35, 43,  50, 32,   8},     /* D2L */
-	{80, 143, 43,  50, 32,   8},     /* D2C */
-	{184, 223, 43,  50, 32,   8},     /* D2R */
-	{32,  63, 41,  52, 16,  12},     /* D1L */
-	{160, 191, 41,  52, 16,  12},     /* D1R */
-	{64, 159, 41,  52, 48,  12}},   /* D1C */
-	{{78,  85, 36,  51,  8,  16},     /* D3L */
-	{138, 145, 36,  51,  8,  16},     /* D3R */
-	{10,  41, 34,  53, 16,  20},     /* D3L */
-	{98, 129, 34,  53, 16,  20},     /* D3C */
-	{179, 210, 34,  53, 16,  20},     /* D3R */
-	{66,  75, 34,  56,  8,  23},     /* D2L */
-	{148, 157, 34,  56,  8,  23},     /* D2R */
-	{0,  26, 33,  61, 24,  29},     /* D2L */
-	{91, 133, 33,  61, 24,  29},     /* D2C */
-	{194, 223, 33,  61, 24,  29},     /* D2R */
-	{41,  56, 31,  65,  8,  35},     /* D1L */
-	{167, 182, 31,  65,  8,  35},     /* D1R */
-	{80, 143, 29,  71, 32,  43}},   /* D1C */
-	{{75,  82, 25,  75,  8,  51},     /* D3L */
-	{142, 149, 25,  75,  8,  51},     /* D3R */
-	{12,  60, 25,  75, 32,  51},     /* D3L */
-	{88, 136, 25,  75, 32,  51},     /* D3C */
-	{163, 211, 25,  75, 32,  51},     /* D3R */
-	{64,  73, 20,  90,  8,  71},     /* D2L */
-	{150, 159, 20,  90,  8,  71},     /* D2R */
-	{0,  38, 20,  90, 32,  71},     /* D2L */
-	{82, 142, 20,  90, 32,  71},     /* D2C */
-	{184, 223, 20,  90, 32,  71},     /* D2R */
-	{41,  56,  9, 119,  8, 111},     /* D1L */
-	{169, 184,  9, 119,  8, 111},     /* D1R */
-	{64, 159,  9, 119, 48, 111}},   /* D1C */
-	{{74,  85, 25,  75,  8,  51},     /* D3L */
-	{137, 149, 25,  75,  8,  51},     /* D3R */
-	{0,  75, 25,  75, 40,  51},     /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
-	{74, 149, 25,  75, 40,  51},     /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
-	{148, 223, 25,  75, 40,  51},     /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
-	{60,  77, 20,  90, 16,  71},     /* D2L */
-	{146, 163, 20,  90, 16,  71},     /* D2R */
-	{0,  74, 20,  90, 56,  71},     /* D2L */
-	{60, 163, 20,  90, 56,  71},     /* D2C */
-	{149, 223, 20,  90, 56,  71},     /* D2R */
-	{32,  63,  9, 119, 16, 111},     /* D1L */
-	{160, 191,  9, 119, 16, 111},     /* D1R */
-	{32, 191,  9, 119, 80, 111}}}; /* D1C */
-
 byte g194_WallOrnCoordSetIndices[60] = { // @ G0194_auc_Graphic558_WallOrnamentCoordinateSetIndices
 	1,   /* Wall Ornament 00 Unreadable Inscription */
 	1,   /* Wall Ornament 01 Square Alcove */
@@ -586,6 +436,24 @@ void DisplayMan::initConstants() {
 		32    /* D1 Back  */
 	};
 
+	const Frame frameWalls163[12] = { // @ G0163_as_Graphic558_Frame_Walls
+		/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
+		Frame(74, 149, 25,  75,  64,  51,  18, 0),   /* D3C */
+		Frame(0,  83, 25,  75,  64,  51,  32, 0),   /* D3L */
+		Frame(139, 223, 25,  75,  64,  51,   0, 0),   /* D3R */
+		Frame(60, 163, 20,  90,  72,  71,  16, 0),   /* D2C */
+		Frame(0,  74, 20,  90,  72,  71,  61, 0),   /* D2L */
+		Frame(149, 223, 20,  90,  72,  71,   0, 0),   /* D2R */
+		Frame(32, 191,  9, 119, 128, 111,  48, 0),   /* D1C */
+		Frame(0,  63,  9, 119, 128, 111, 192, 0),   /* D1L */
+		Frame(160, 223,  9, 119, 128, 111,   0, 0),   /* D1R */
+		Frame(0, 223,  0, 135,   0,   0,   0, 0),   /* D0C */
+		Frame(0,  31,  0, 135,  16, 136,   0, 0),   /* D0L */
+		Frame(192, 223,  0, 135,  16, 136,   0, 0)
+	}; /* D0R */
+
+	_frameWallD3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
+
 	_doorFrameLeftD1C = Frame(43, 74, 14, 107, 16, 94, 0, 0); // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
 	_doorFrameRightD1C = Frame(149, 180, 14, 107, 16, 94, 0, 0); // @ G0171_s_Graphic558_Frame_DoorFrameRight_D1C
 
@@ -595,14 +463,16 @@ void DisplayMan::initConstants() {
 		_palChangeSmoke[i] = palChangeSmoke[i];
 	}
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 12; i++) {
 		_fieldAspects188[i] = fieldAspects188[i];
+		g163_FrameWalls[i] = frameWalls163[i];
+	}
 
 	for (int i = 0; i < 7; i++)
 		_projectileScales[i] = projectileScales[i];
 
 	for (int i = 0; i < k4_ExplosionAspectCount; i++)
-		g211_ExplosionAspects[i] = explosionAspects[i];
+		_explosionAspects[i] = explosionAspects[i];
 
 	_doorFrameD1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
 		Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
@@ -789,7 +659,7 @@ void DisplayMan::f460_initializeGraphicData() {
 	_g75_palChangesProjectile[2] = _g75_palChangesProjectile[3] = g17_PalChangesNoChanges;
 
 	derivedBitmapIndex = k438_DerivedBitmapFirstExplosion;
-	ExplosionAspect *expAsp = g211_ExplosionAspects;
+	ExplosionAspect *expAsp = _explosionAspects;
 	for (uint16 expAspIndex = 0; expAspIndex < k4_ExplosionAspectCount; ++expAspIndex, expAsp++) {
 		for (int16 scale = 4; scale < 32; scale += 2)
 			_g639_derivedBitmapByteCount[derivedBitmapIndex++] = f459_getScaledBitmapByteCount(expAsp->_byteWidth, expAsp->_height, scale);
@@ -1078,7 +948,7 @@ void DisplayMan::f131_flipVertical(byte *bitmap, uint16 byteWidth, uint16 height
 }
 
 byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16& returnByteWidth, int16& returnHeight) {
-	ExplosionAspect *explAsp = &g211_ExplosionAspects[explosionAspIndex];
+	ExplosionAspect *explAsp = &_explosionAspects[explosionAspIndex];
 	if (scale > 32)
 		scale = 32;
 	int16 pixelWidth = M78_getScaledDimension(explAsp->_byteWidth, scale);
@@ -2181,7 +2051,7 @@ void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 		f100_drawWallSetBitmap(_g697_bitmapWallSet_Wall_D3L2, frameWallD3L2);
 
 	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, 2, posX, posY) == k0_ElementTypeWall)
-		f100_drawWallSetBitmap(_g696_bitmapWallSet_Wall_D3R2, g712_FrameWall_D3R2);
+		f100_drawWallSetBitmap(_g696_bitmapWallSet_Wall_D3R2, _frameWallD3R2);
 
 	int16 tmpPosX = posX;
 	int16 tmpPosY = posY;
@@ -2299,13 +2169,39 @@ void DisplayMan::f95_loadWallSet(WallSet set) {
 		f99_copyBitmapAndFlipHorizontal(_g708_bitmapWallSet_DoorFrameLeft_D1C, _g710_bitmapWallSet_DoorFrameRight_D1C,
 										_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
 		f99_copyBitmapAndFlipHorizontal(_g697_bitmapWallSet_Wall_D3L2, _g696_bitmapWallSet_Wall_D3R2,
-										g712_FrameWall_D3R2._srcByteWidth, g712_FrameWall_D3R2._srcHeight);
+										_frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
 	}
 }
 
 void DisplayMan::f96_loadCurrentMapGraphics() {
-	Box BoxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
-	Box BoxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+	static Box BoxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
+	static Box BoxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+	static byte doorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
+		0,   /* Door Ornament #00 Square Grid */
+		1,   /* Door Ornament #01 Iron Bars */
+		1,   /* Door Ornament #02 Jewels */
+		1,   /* Door Ornament #03 Wooden Bars */
+		0,   /* Door Ornament #04 Arched Grid */
+		2,   /* Door Ornament #05 Block Lock */
+		3,   /* Door Ornament #06 Corner Lock */
+		1,   /* Door Ornament #07 Black door */
+		2,   /* Door Ornament #08 Red Triangle Lock */
+		2,   /* Door Ornament #09 Triangle Lock */
+		1,   /* Door Ornament #10 Ra Door */
+		1    /* Door Ornament #11 Iron Door Damages */
+	};
+	static byte floorOrnCoordSetIndices[9] = { // @ G0195_auc_Graphic558_FloorOrnamentCoordinateSetIndices
+		0,   /* Floor Ornament 00 Square Grate */
+		0,   /* Floor Ornament 01 Square Pressure Pad */
+		0,   /* Floor Ornament 02 Moss */
+		0,   /* Floor Ornament 03 Round Grate */
+		2,   /* Floor Ornament 04 Round Pressure Plate */
+		0,   /* Floor Ornament 05 Black Flame Pit */
+		0,   /* Floor Ornament 06 Crack */
+		2,   /* Floor Ornament 07 Tiny Pressure Pad */
+		0    /* Floor Ornament 08 Puddle */
+	};
+
 
 	f94_loadFloorSet(_vm->_dungeonMan->_g269_currMap->_floorSet);
 	f95_loadWallSet(_vm->_dungeonMan->_g269_currMap->_wallSet);
@@ -2397,14 +2293,14 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 		uint16 ornIndice = _g262_currMapFloorOrnIndices[i];
 		uint16 nativeIndice = k247_FirstFloorOrn + ornIndice * 6;
 		_g102_currMapFloorOrnInfo[i][k0_NativeBitmapIndex] = nativeIndice;
-		_g102_currMapFloorOrnInfo[i][k1_CoordinateSet] = g195_FloorOrnCoordSetIndices[ornIndice];
+		_g102_currMapFloorOrnInfo[i][k1_CoordinateSet] = floorOrnCoordSetIndices[ornIndice];
 	}
 
 	for (uint16 i = 0; i < currMap._doorOrnCount; ++i) {
 		uint16 ornIndice = _g263_currMapDoorOrnIndices[i];
 		uint16 nativeIndice = k303_FirstDoorOrn + ornIndice;
 		_g103_currMapDoorOrnInfo[i][k0_NativeBitmapIndex] = nativeIndice;
-		_g103_currMapDoorOrnInfo[i][k1_CoordinateSet] = g196_DoorOrnCoordIndices[ornIndice];
+		_g103_currMapDoorOrnInfo[i][k1_CoordinateSet] = doorOrnCoordIndices[ornIndice];
 	}
 
 	f93_applyCreatureReplColors(9, 8);
@@ -2477,6 +2373,130 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 		42, 49, 56,   /* D2L Right, D2R Left */
 		46, 53, 63,   /* D2L Front, D2C Front, D2R Front */
 		46, 57, 68    /* D1L Right, D1R Left */
+	};
+
+	static byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
+		{
+			{80,  83, 41,  45,  8,   5},   /* D3L */
+			{140, 143, 41,  45,  8,   5},  /* D3R */
+			{16,  29, 39,  50,  8,  12},   /* D3L */
+			{107, 120, 39,  50,  8,  12},  /* D3C */
+			{187, 200, 39,  50,  8,  12},  /* D3R */
+			{67,  77, 40,  49,  8,  10},   /* D2L */
+			{146, 156, 40,  49,  8,  10},  /* D2R */
+			{0,  17, 38,  55, 16,  18},    /* D2L */
+			{102, 123, 38,  55, 16,  18},  /* D2C */
+			{206, 223, 38,  55, 16,  18},  /* D2R */
+			{48,  63, 38,  56,  8,  19},   /* D1L */
+			{160, 175, 38,  56,  8,  19},  /* D1R */
+			{96, 127, 36,  63, 16,  28}    /* D1C */
+		},
+		{
+			{74,  82, 41,  60,  8,  20},   /* D3L */
+			{141, 149, 41,  60,  8,  20},  /* D3R */
+			{1,  47, 37,  63, 24,  27},    /* D3L */
+			{88, 134, 37,  63, 24,  27},   /* D3C */
+			{171, 217, 37,  63, 24,  27},  /* D3R */
+			{61,  76, 38,  67,  8,  30},   /* D2L */
+			{147, 162, 38,  67,  8,  30},  /* D2R */
+			{0,  43, 37,  73, 32,  37},    /* D2L */
+			{80, 143, 37,  73, 32,  37},   /* D2C */
+			{180, 223, 37,  73, 32,  37},  /* D2R */
+			{32,  63, 36,  83, 16,  48},   /* D1L */
+			{160, 191, 36,  83, 16,  48},  /* D1R */
+			{64, 159, 36,  91, 48,  56}    /* D1C */
+		},
+		{
+			{80,  83, 66,  70,  8,   5},   /* D3L */
+			{140, 143, 66,  70,  8,   5},  /* D3R */
+			{16,  29, 64,  75,  8,  12},   /* D3L */
+			{106, 119, 64,  75,  8,  12},  /* D3C */
+			{187, 200, 64,  75,  8,  12},  /* D3R */
+			{67,  77, 74,  83,  8,  10},   /* D2L */
+			{146, 156, 74,  83,  8,  10},  /* D2R */
+			{0,  17, 73,  90, 16,  18},    /* D2L */
+			{100, 121, 73,  90, 16,  18},  /* D2C */
+			{206, 223, 73,  90, 16,  18},  /* D2R */
+			{48,  63, 84, 102,  8,  19},   /* D1L */
+			{160, 175, 84, 102,  8,  19},  /* D1R */
+			{96, 127, 92, 119, 16,  28}    /* D1C */
+		},
+		{
+			{80,  83, 49,  53,  8,   5},   /* D3L */
+			{140, 143, 49,  53,  8,   5},  /* D3R */
+			{16,  29, 50,  61,  8,  12},   /* D3L */
+			{106, 119, 50,  61,  8,  12},  /* D3C */
+			{187, 200, 50,  61,  8,  12},  /* D3R */
+			{67,  77, 53,  62,  8,  10},   /* D2L */
+			{146, 156, 53,  62,  8,  10},  /* D2R */
+			{0,  17, 55,  72, 16,  18},    /* D2L */
+			{100, 121, 55,  72, 16,  18},  /* D2C */
+			{206, 223, 55,  72, 16,  18},  /* D2R */
+			{48,  63, 57,  75,  8,  19},   /* D1L */
+			{160, 175, 57,  75,  8,  19},  /* D1R */
+			{96, 127, 64,  91, 16,  28}    /* D1C */
+		},
+		{
+			{75,  90, 40,  44,  8,   5},   /* D3L */
+			{133, 148, 40,  44,  8,   5},  /* D3R */
+			{1,  48, 44,  49, 24,   6},    /* D3L */
+			{88, 135, 44,  49, 24,   6},   /* D3C */
+			{171, 218, 44,  49, 24,   6},  /* D3R */
+			{60,  77, 40,  46, 16,   7},   /* D2L */
+			{146, 163, 40,  46, 16,   7},  /* D2R */
+			{0,  35, 43,  50, 32,   8},    /* D2L */
+			{80, 143, 43,  50, 32,   8},   /* D2C */
+			{184, 223, 43,  50, 32,   8},  /* D2R */
+			{32,  63, 41,  52, 16,  12},   /* D1L */
+			{160, 191, 41,  52, 16,  12},  /* D1R */
+			{64, 159, 41,  52, 48,  12}    /* D1C */
+		},
+		{
+			{78,  85, 36,  51,  8,  16},   /* D3L */
+			{138, 145, 36,  51,  8,  16},  /* D3R */
+			{10,  41, 34,  53, 16,  20},   /* D3L */
+			{98, 129, 34,  53, 16,  20},   /* D3C */
+			{179, 210, 34,  53, 16,  20},  /* D3R */
+			{66,  75, 34,  56,  8,  23},   /* D2L */
+			{148, 157, 34,  56,  8,  23},  /* D2R */
+			{0,  26, 33,  61, 24,  29},    /* D2L */
+			{91, 133, 33,  61, 24,  29},   /* D2C */
+			{194, 223, 33,  61, 24,  29},  /* D2R */
+			{41,  56, 31,  65,  8,  35},   /* D1L */
+			{167, 182, 31,  65,  8,  35},  /* D1R */
+			{80, 143, 29,  71, 32,  43}    /* D1C */
+		},
+		{
+			{75,  82, 25,  75,  8,  51},   /* D3L */
+			{142, 149, 25,  75,  8,  51},  /* D3R */
+			{12,  60, 25,  75, 32,  51},   /* D3L */
+			{88, 136, 25,  75, 32,  51},   /* D3C */
+			{163, 211, 25,  75, 32,  51},  /* D3R */
+			{64,  73, 20,  90,  8,  71},   /* D2L */
+			{150, 159, 20,  90,  8,  71},  /* D2R */
+			{0,  38, 20,  90, 32,  71},    /* D2L */
+			{82, 142, 20,  90, 32,  71},   /* D2C */
+			{184, 223, 20,  90, 32,  71},  /* D2R */
+			{41,  56,  9, 119,  8, 111},   /* D1L */
+			{169, 184,  9, 119,  8, 111},  /* D1R */
+			{64, 159,  9, 119, 48, 111}    /* D1C */
+		},
+		{
+			{74,  85, 25,  75,  8,  51},   /* D3L */
+			{137, 149, 25,  75,  8,  51},  /* D3R */
+			{0,  75, 25,  75, 40,  51},    /* D3L Atari ST: {   0,  83, 25,  75, 48,  51 } */
+			{74, 149, 25,  75, 40,  51},   /* D3C Atari ST: {  74, 149, 25,  75, 48,  51 } */
+			{148, 223, 25,  75, 40,  51},  /* D3R Atari ST: { 139, 223, 25,  75, 48,  51 } */
+			{60,  77, 20,  90, 16,  71},   /* D2L */
+			{146, 163, 20,  90, 16,  71},  /* D2R */
+			{0,  74, 20,  90, 56,  71},    /* D2L */
+			{60, 163, 20,  90, 56,  71},   /* D2C */
+			{149, 223, 20,  90, 56,  71},  /* D2R */
+			{32,  63,  9, 119, 16, 111},   /* D1L */
+			{160, 191,  9, 119, 16, 111},  /* D1R */
+			{32, 191,  9, 119, 80, 111}    /* D1C */
+		}
 	};
 
 	static Box boxChampionPortraitOnWall = Box(96, 127, 35, 63); // G0109_s_Graphic558_Box_ChampionPortraitOnWall

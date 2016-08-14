@@ -785,7 +785,9 @@ public:
 	Box _boxMovementArrows;
 	byte _palChangeSmoke[16];
 	byte _projectileScales[7];
-	ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount];
+	ExplosionAspect _explosionAspects[k4_ExplosionAspectCount];
+	Frame _frameWallD3R2;
+	Frame g163_FrameWalls[12];
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
