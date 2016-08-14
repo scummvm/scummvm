@@ -326,7 +326,7 @@ struct MG2I {
 	int _my;
 };
 
-struct MctlGraphItemSub {
+struct MctlAniSub {
 	int _staticsId2;
 	int _staticsId1;
 	MG2I _walk[3];
@@ -339,14 +339,14 @@ struct LinkInfo {
 	MovGraphNode *node;
 };
 
-struct MovInfo1Sub {
+struct MctlMQSub {
 	int subIndex;
 	int x;
 	int y;
 	int distance;
 };
 
-struct MovInfo1 {
+struct MctlMQ {
 	int index;
 	Common::Point pt1;
 	Common::Point pt2;
@@ -354,24 +354,24 @@ struct MovInfo1 {
 	int distance2;
 	int subIndex;
 	int item1Index;
-	Common::Array<MovInfo1Sub *> items;
+	Common::Array<MctlMQSub *> items;
 	int itemsCount;
 	int flags;
 
-	MovInfo1() { clear(); }
-	MovInfo1(MovInfo1 *src);
+	MctlMQ() { clear(); }
+	MctlMQ(MctlMQ *src);
 	void clear();
 };
 
-struct MctlGraphItem { // 744
+struct MctlAni { // 744
 	int _objectId;
 	StaticANIObject *_obj;
-	MctlGraphItemSub _subItems[4];  // 184
+	MctlAniSub _subItems[4];  // 184
 };
 
 class MctlGraph : public MovGraph {
 public:
-	Common::Array<MctlGraphItem *> _items2;
+	Common::Array<MctlAni *> _items2;
 
 public:
 	virtual void attachObject(StaticANIObject *obj);
@@ -388,16 +388,16 @@ public:
 	int getDirBySize(MovGraphLink *lnk, int x, int y);
 	int getLinkDir(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *a3, Common::Point *a4);
 
-	bool fillData(StaticANIObject *obj, MctlGraphItem *item);
-	void generateList(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
-	MessageQueue *makeWholeQueue(MovInfo1 *movInfo);
+	bool fillData(StaticANIObject *obj, MctlAni *item);
+	void generateList(MctlMQ *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
+	MessageQueue *makeWholeQueue(MctlMQ *mctlMQ);
 
 	MovGraphNode *getHitNode(int x, int y, int fuzzyMatch);
 	MovGraphLink *getHitLink(int x, int y, int idx, int fuzzyMatch);
 	MovGraphLink *getNearestLink(int x, int y);
 	double iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj);
 
-	MessageQueue *makeLineQueue(MovInfo1 *movinfo);
+	MessageQueue *makeLineQueue(MctlMQ *movinfo);
 };
 
 class MctlConnectionPoint : public CObject {
