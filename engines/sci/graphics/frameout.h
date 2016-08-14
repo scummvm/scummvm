@@ -31,7 +31,6 @@ typedef Common::Array<DrawList> ScreenItemListList;
 typedef Common::Array<RectList> EraseListList;
 
 class GfxCursor32;
-class GfxCoordAdjuster32;
 class GfxTransitions32;
 struct PlaneShowStyle;
 
@@ -42,13 +41,12 @@ struct PlaneShowStyle;
 class GfxFrameout {
 private:
 	GfxCursor32 *_cursor;
-	GfxCoordAdjuster32 *_coordAdjuster;
 	GfxPalette32 *_palette;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
+	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
 	~GfxFrameout();
 
 	bool _isHiRes;

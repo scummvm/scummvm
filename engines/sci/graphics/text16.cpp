@@ -633,7 +633,7 @@ reg_t GfxText16::allocAndFillReferenceRectArray() {
 	if (rectCount) {
 		reg_t rectArray;
 		byte *rectArrayPtr = g_sci->getEngineState()->_segMan->allocDynmem(4 * 2 * (rectCount + 1), "text code reference rects", &rectArray);
-		GfxCoordAdjuster *coordAdjuster = g_sci->_gfxCoordAdjuster;
+		GfxCoordAdjuster16 *coordAdjuster = g_sci->_gfxCoordAdjuster;
 		for (uint curRect = 0; curRect < rectCount; curRect++) {
 			coordAdjuster->kernelLocalToGlobal(_codeRefRects[curRect].left, _codeRefRects[curRect].top);
 			coordAdjuster->kernelLocalToGlobal(_codeRefRects[curRect].right, _codeRefRects[curRect].bottom);

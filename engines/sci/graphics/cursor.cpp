@@ -80,7 +80,7 @@ GfxCursor::~GfxCursor() {
 	kernelClearZoomZone();
 }
 
-void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
+void GfxCursor::init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event) {
 	_coordAdjuster = coordAdjuster;
 	_event = event;
 }

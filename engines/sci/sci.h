@@ -75,7 +75,7 @@ class GfxCache;
 class GfxCompare;
 class GfxControls16;
 class GfxControls32;
-class GfxCoordAdjuster;
+class GfxCoordAdjuster16;
 class GfxCursor;
 class GfxMacIconBar;
 class GfxMenu;
@@ -369,7 +369,7 @@ public:
 	GfxCompare *_gfxCompare;
 	GfxControls16 *_gfxControls16; // Controls for 16-bit gfx
 	GfxControls32 *_gfxControls32; // Controls for 32-bit gfx
-	GfxCoordAdjuster *_gfxCoordAdjuster;
+	GfxCoordAdjuster16 *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette16;

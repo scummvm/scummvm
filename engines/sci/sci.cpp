@@ -732,12 +732,11 @@ void SciEngine::initGraphics() {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// SCI32 graphic objects creation
-		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor32 = new GfxCursor32();
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, nullptr, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
 		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxPalette32, _gfxTransitions32, _gfxCursor32);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxPalette32, _gfxTransitions32, _gfxCursor32);
 		_gfxCursor32->init(_gfxFrameout->getCurrentBuffer());
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);

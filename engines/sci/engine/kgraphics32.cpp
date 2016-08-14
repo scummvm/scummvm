@@ -37,7 +37,6 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"

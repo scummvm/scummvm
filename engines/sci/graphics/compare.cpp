@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-GfxCompare::GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster)
+GfxCompare::GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster)
 	: _segMan(segMan), _cache(cache), _screen(screen), _coordAdjuster(coordAdjuster) {
 }
 

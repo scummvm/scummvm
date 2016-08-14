@@ -40,7 +40,6 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
-#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
@@ -58,7 +57,7 @@
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
+GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
 	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
 	_cursor(cursor),
@@ -105,20 +104,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 		// default script width for other games is 320x200
 		break;
 	}
-
-	// TODO: Nothing in the renderer really uses this. Currently,
-	// the cursor renderer does, and kLocalToGlobal/kGlobalToLocal
-	// do, but in the real engine (1) the cursor is handled in
-	// frameOut, and (2) functions do a very simple lookup of the
-	// plane and arithmetic with the plane's gameRect. In
-	// principle, CoordAdjuster could be reused for
-	// convertGameRectToPlaneRect, but it is not super clear yet
-	// what the benefit would be to do that.
-	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
-
-	// TODO: Script resolution is hard-coded per game;
-	// also this must be set or else the engine will crash
-	_coordAdjuster->setScriptsResolution(_currentBuffer.scriptWidth, _currentBuffer.scriptHeight);
 }
 
 GfxFrameout::~GfxFrameout() {
