@@ -657,8 +657,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
-	{ MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
-	{ MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(GlobalToLocal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "GlobalToLocal", kGlobalToLocal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
+#endif
 	{ MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
 	{ MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -669,8 +671,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
 	{ MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
-	{ MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
-	{ MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(LocalToGlobal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "LocalToGlobal", kLocalToGlobal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
+#endif
 	{ MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
 	{ MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            kMemory_workarounds }, // subop

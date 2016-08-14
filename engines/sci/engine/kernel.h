@@ -426,6 +426,8 @@ reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv);
 reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv);
 reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv);
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv);
+reg_t kGlobalToLocal32(EngineState *s, int argc, reg_t *argv);
+reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv);
 
 reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv);
