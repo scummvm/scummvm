@@ -28,12 +28,29 @@
 namespace Titanic {
 
 class CDoorbot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool OnSummonBotMsg(COnSummonBotMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool DoorbotNeededInHomeMsg(CDoorbotNeededInHomeMsg *msg);
+	bool DoorbotNeededInElevatorMsg(CDoorbotNeededInElevatorMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg);
+	bool PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg);
+	bool DismissBotMsg(CDismissBotMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
+	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
+	bool TextInputMsg(CTextInputMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
 private:
 	static int _v1;
 	static int _v2;
 private:
 	int _field108;
-	int _field10C;
+	int _timerId;
 	int _field110;
 	int _field114;
 public:
