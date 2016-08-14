@@ -2818,6 +2818,8 @@ double MovGraph2::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 			newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
 			if (newDistance >= 0 && (minDistance < 0.0 || newDistance < minDistance)) {
+				listObj->clear();
+
 				listObj->push_back(linkInfoSource->link);
 				listObj->push_back(tmpList);
 
