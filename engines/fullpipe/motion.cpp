@@ -2042,23 +2042,12 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 			movinfo.pt2.y = movInfo->items[i + 2]->y;
 			movinfo.distance2 = movInfo->items[i + 2]->distance;
 
-			if (i >= movInfo->itemsCount - 4
-				 || movInfo->items[i + 2]->subIndex == 10
-				 || movInfo->items[i + 3]->subIndex == 10
-				 || movInfo->items[i + 2]->subIndex == movInfo->items[i + 3]->subIndex
-				 || movInfo->items[i + 4]->subIndex != 10) {
-				if (i >= movInfo->itemsCount - 3
-					 || movInfo->items[i + 2]->subIndex == 10
-					 || movInfo->items[i + 3]->subIndex == 10
-					 || movInfo->items[i + 2]->subIndex == movInfo->items[i + 3]->subIndex) {
-					movinfo.flags &= 3;
-				} else {
-					MG2I *m = &_items2[movInfo->index]->_subItems[movInfo->items[i + 2]->subIndex]._turnS[movInfo->items[i + 3]->subIndex];
-					movinfo.pt2.x -= m->_mx;
-					movinfo.pt2.y -= m->_my;
-					movinfo.flags &= 3;
-				}
-			} else {
+			if (i < movInfo->itemsCount - 4
+				&& movInfo->items[i + 2]->subIndex != 10
+				&& movInfo->items[i + 3]->subIndex != 10
+				&& movInfo->items[i + 2]->subIndex != movInfo->items[i + 3]->subIndex
+				&& movInfo->items[i + 4]->subIndex == 10) {
+
 				MG2I *m = &_items2[movInfo->index]->_subItems[movInfo->items[i + 2]->subIndex]._turn[movInfo->items[i + 3]->subIndex];
 
 				if (movinfo.item1Index && movinfo.item1Index != 1) {
@@ -2068,7 +2057,21 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 					movinfo.pt2.x -= m->_mx;
 					movinfo.flags = (movinfo.flags & 2) | 1;
 				}
+
+			} else if (i < movInfo->itemsCount - 3
+				&& movInfo->items[i + 2]->subIndex != 10
+				&& movInfo->items[i + 3]->subIndex != 10
+				&& movInfo->items[i + 2]->subIndex != movInfo->items[i + 3]->subIndex) {
+
+				MG2I *m = &_items2[movInfo->index]->_subItems[movInfo->items[i + 2]->subIndex]._turnS[movInfo->items[i + 3]->subIndex];
+				movinfo.pt2.x -= m->_mx;
+				movinfo.pt2.y -= m->_my;
+				movinfo.flags = (movinfo.flags & 2) | (movInfo->flags & 1);
+
+			} else {
+				movinfo.flags = (movinfo.flags & 2) | (movInfo->flags & 1);
 			}
+
 			i++; // intentional
 
 			MessageQueue *mq2 = genMovement(&movinfo);
