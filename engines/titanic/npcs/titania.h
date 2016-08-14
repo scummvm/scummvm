@@ -28,19 +28,25 @@
 namespace Titanic {
 
 class CTitania : public CCharacter {
+	DECLARE_MESSAGE_MAP;
+	bool AddHeadPieceMsg(CAddHeadPieceMsg *msg);
+	bool TakeHeadPieceMsg(CTakeHeadPieceMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 private:
-	int _fieldD4;
-	int _fieldD8;
-	int _fieldDC;
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
-	int _fieldF0;
-	int _fieldF4;
-	int _fieldF8;
-	int _fieldFC;
-	int _field100;
+	bool _speechCentre;
+	bool _olfactoryCentre;
+	bool _auditoryCentre;
+	bool _centralCore;
+	bool _visionCentre;
+	bool _eye1;
+	bool _eye2;
+	bool _ear1;
+	bool _ear2;
+	bool _nose;
+	bool _mouth;
+	bool _showIntro;
 public:
 	CLASSDEF;
 	CTitania();

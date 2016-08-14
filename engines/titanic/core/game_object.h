@@ -350,6 +350,11 @@ protected:
 	void playClip(uint startFrame, uint endFrame);
 
 	/**
+	 * Play a cutscene
+	 */
+	void playCutscene(uint startFrame, uint endFrame);
+
+	/**
 	 * Play a clip randomly from a passed list of names
 	 */
 	void playRandomClip(const char *const *names, uint flags);

@@ -153,7 +153,7 @@ void CGameManager::playClip(CMovieClip *clip, CRoomItem *oldRoom, CRoomItem *new
 
 		lockInputHandler();
 		CScreenManager::_screenManagerPtr->_mouseCursor->hide();
-		_movie->playClip(tempRect, clip->_startFrame, clip->_endFrame);
+		_movie->playCutscene(tempRect, clip->_startFrame, clip->_endFrame);
 		CScreenManager::_screenManagerPtr->_mouseCursor->show();
 		unlockInputHandler();
 	}

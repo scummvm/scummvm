@@ -24,54 +24,202 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTitania, CCharacter)
+	ON_MESSAGE(AddHeadPieceMsg)
+	ON_MESSAGE(TakeHeadPieceMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 CTitania::CTitania() : CCharacter() {
-	_fieldD4 = 0;
-	_fieldD8 = 0;
-	_fieldE0 = 0;
-	_fieldE4 = 0;
-	_fieldE8 = 0;
-	_fieldEC = 0;
-	_fieldF0 = 0;
-	_fieldF4 = 0;
-	_fieldF8 = 0;
-	_fieldFC = 0;
-	_field100 = 1;
+	_speechCentre = false;
+	_olfactoryCentre = false;
+	_centralCore = false;
+	_visionCentre = false;
+	_eye1 = false;
+	_eye2 = false;
+	_ear1 = false;
+	_ear2 = false;
+	_nose = false;
+	_mouth = false;
+	_showIntro = true;
 }
 
 void CTitania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldD8, indent);
-	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_speechCentre, indent);
+	file->writeNumberLine(_olfactoryCentre, indent);
+	file->writeNumberLine(_auditoryCentre, indent);
+	file->writeNumberLine(_centralCore, indent);
+	file->writeNumberLine(_visionCentre, indent);
+	file->writeNumberLine(_eye1, indent);
+	file->writeNumberLine(_eye2, indent);
+	file->writeNumberLine(_ear1, indent);
+	file->writeNumberLine(_ear2, indent);
+	file->writeNumberLine(_nose, indent);
+	file->writeNumberLine(_mouth, indent);
+	file->writeNumberLine(_showIntro, indent);
 
 	CCharacter::save(file, indent);
 }
 
 void CTitania::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldD4 = file->readNumber();
-	_fieldD8 = file->readNumber();
-	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
-	_field100 = file->readNumber();
+	_speechCentre = file->readNumber();
+	_olfactoryCentre = file->readNumber();
+	_auditoryCentre = file->readNumber();
+	_centralCore = file->readNumber();
+	_visionCentre = file->readNumber();
+	_eye1 = file->readNumber();
+	_eye2 = file->readNumber();
+	_ear1 = file->readNumber();
+	_ear2 = file->readNumber();
+	_nose = file->readNumber();
+	_mouth = file->readNumber();
+	_showIntro = file->readNumber();
 
 	CCharacter::load(file);
+}
+
+bool CTitania::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
+	if (msg->_value == "VisionCentre") {
+		_visionCentre = true;
+	} else if (msg->_value == "AuditoryCentre") {
+		_auditoryCentre = true;
+	} else if (msg->_value == "OlfactoryCentre") {
+		_olfactoryCentre = true;
+	} else if (msg->_value == "SpeechCentre") {
+		_speechCentre = true;
+	} else if (msg->_value == "CentralCore") {
+		_centralCore = true;
+	} else if (msg->_value == "Eye1") {
+		_eye1 = true;
+	} else if (msg->_value == "Eye2") {
+		_eye2 = true;
+	} else if (msg->_value == "Ear1") {
+		_ear1 = true;
+	} else if (msg->_value == "Ear2") {
+		_ear2 = true;
+	} else if (msg->_value == "Mouth") {
+		_mouth = true;
+	} else if (msg->_value == "Nose") {
+		_nose = true;
+	}
+
+	CActMsg actMsg("CheckHead");
+	actMsg.execute(this);
+	return true;
+}
+
+bool CTitania::TakeHeadPieceMsg(CTakeHeadPieceMsg *msg) {
+	if (msg->_value == "VisionCentre") {
+		_visionCentre = false;
+	} else if (msg->_value == "AuditoryCentre") {
+		_auditoryCentre = false;
+	} else if (msg->_value == "OlfactoryCentre") {
+		_olfactoryCentre = false;
+	} else if (msg->_value == "SpeechCentre") {
+		_speechCentre = false;
+	} else if (msg->_value == "CentralCore") {
+		_centralCore = false;
+	} else if (msg->_value == "Eye1") {
+		_eye1 = false;
+	} else if (msg->_value == "Eye2") {
+		_eye2 = false;
+	} else if (msg->_value == "Ear1") {
+		_ear1 = false;
+	} else if (msg->_value == "Ear2") {
+		_ear2 = false;
+	} else if (msg->_value == "Mouth") {
+		_mouth = false;
+	} else if (msg->_value == "Nose") {
+		_nose = false;
+	}
+
+	CActMsg actMsg("CheckHead");
+	actMsg.execute(this);
+	return true;
+}
+
+bool CTitania::ActMsg(CActMsg *msg) {
+	if (msg->_action == "SleepTitania") {
+		setVisible(true);
+		playCutscene(52, 104);
+		playSound("z#47.wav", 100);
+		changeView("Titania.Node 7.S", "");
+
+		petShow();
+		enableMouse();
+		CSetFrameMsg frameMsg;
+		frameMsg.execute("Bomb");
+
+	} else if (msg->_action == "CheckHead") {
+		CSenseWorkingMsg workingMsg1("Not Working");
+		CSenseWorkingMsg workingMsg2("Not Working");
+		CSenseWorkingMsg workingMsg3("Not Working");
+		CSenseWorkingMsg workingMsg4("Not Working");
+		
+		if (_eye1 && _eye2) {
+			workingMsg1._value = _visionCentre ? "Working" : "Random";
+		}
+		if (_ear1 && _ear2) {
+			workingMsg2._value = _auditoryCentre ? "Working" : "Random";
+		}
+		if (_nose) {
+			workingMsg4._value = _olfactoryCentre ? "Working" : "Random";
+		}
+		if (_mouth) {
+			workingMsg3._value = _speechCentre ? "Working" : "Random";
+		}
+
+		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose && _mouth
+				&& _speechCentre && _olfactoryCentre && _auditoryCentre) {
+			playSound("z#47.wav");
+
+			CActMsg actMsg("Woken");
+			actMsg.execute("MouthSlot");
+			actMsg.execute("VisionCentreSlot");
+			setPassengerClass(4);
+
+			addTimer(1000);
+		} else {
+			workingMsg1.execute("Eye1Slot");
+			workingMsg1.execute("Eye2Slot");
+			workingMsg2.execute("Ear1Slot");
+			workingMsg2.execute("Ear2Slot");
+			workingMsg3.execute("MouthSlot");
+			workingMsg4.execute("NoseSlot");
+		}
+	}
+
+	return true;
+}
+
+bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_showIntro) {
+		_showIntro = false;
+		disableMouse();
+		petHide();
+		
+		CSetFrameMsg frameMsg;
+		frameMsg._frameNumber = 25;
+		frameMsg.execute("Bomb");	
+		playCutscene(0, 52);
+
+		setVisible(false);
+		CActMsg actMsg("TitaniaSpeech");
+		actMsg.execute("TitaniaSpeech");
+	}
+
+	return true;
+}
+
+bool CTitania::TimerMsg(CTimerMsg *msg) {
+	changeView("Titania.Node 18.N", "");
+	startTalking("PerchedParrot", 80022);
+
+	return true;
 }
 
 } // End of namespace Titanic

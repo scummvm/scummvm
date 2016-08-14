@@ -122,20 +122,20 @@ void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags
 		movieStarted();
 }
 
-void OSMovie::playClip(const Point &drawPos, uint startFrame, uint endFrame) {
+void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
 	if (!_movieSurface)
 		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
 	
 	bool widthLess = _videoSurface->getWidth() < 600;
 	bool heightLess = _videoSurface->getHeight() < 340;
-	Rect r(drawPos.x, drawPos.y,
-		drawPos.x + (widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH),
-		drawPos.y + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
+	Rect r(drawRect.left, drawRect.top,
+		drawRect.left + (widthLess ? CLIP_WIDTH_REDUCED : CLIP_WIDTH),
+		drawRect.top + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
 	);
 
 	uint timePerFrame = (uint)(1000.0 / _aviSurface._frameRate);
 
-	for (; endFrame >= startFrame; ++startFrame) {
+	for (; startFrame < endFrame; ++startFrame) {
 		// Set the frame
 		_aviSurface.setFrame(startFrame);
 

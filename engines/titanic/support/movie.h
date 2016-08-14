@@ -84,9 +84,10 @@ public:
 	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) = 0;
 	
 	/**
-	 * Plays a sub-section of a movie
+	 * Plays a sub-section of a movie, and doesn't return until either
+	 * the playback ends or a key has been pressed
 	 */
-	virtual void playClip(const Point &drawPos, uint startFrame, uint endFrame) = 0;
+	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) = 0;
 	
 	/**
 	 * Stops the movie
@@ -182,9 +183,10 @@ public:
 	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj);
 	
 	/**
-	 * Plays a sub-section of a movie
+	 * Plays a sub-section of a movie, and doesn't return until either
+	 * the playback ends or a key has been pressed
 	 */
-	virtual void playClip(const Point &drawPos, uint startFrame, uint endFrame);
+	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame);
 
 	/**
 	 * Stops the movie
