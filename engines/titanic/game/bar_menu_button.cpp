@@ -21,8 +21,14 @@
  */
 
 #include "titanic/game/bar_menu_button.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CBarMenuButton, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
 
 void CBarMenuButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -34,6 +40,22 @@ void CBarMenuButton::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CBarMenuButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CBarMenuButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (_value) {
+		CPETUpMsg upMsg("", -1);
+		upMsg.execute("BarTelevision");
+	} else {
+		CPETDownMsg downMsg("", -1);
+		downMsg.execute("BarTelevision");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

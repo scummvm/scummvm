@@ -24,14 +24,21 @@
 #define TITANIC_BAR_MENU_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CBarMenu : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool PETDownMsg(CPETDownMsg *msg);
+	bool PETUpMsg(CPETUpMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
+	int _barFrameNumber;
+	bool _visibleFlag;
+	int _numFrames;
 public:
 	CLASSDEF;
 	CBarMenu();

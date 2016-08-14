@@ -24,25 +24,81 @@
 
 namespace Titanic {
 
-CBarMenu::CBarMenu() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(6) {
+BEGIN_MESSAGE_MAP(CBarMenu, CGameObject)
+	ON_MESSAGE(PETActivateMsg)
+	ON_MESSAGE(PETDownMsg)
+	ON_MESSAGE(PETUpMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
+CBarMenu::CBarMenu() : CGameObject(), _barFrameNumber(0), _visibleFlag(false), _numFrames(6) {
 }
 
 void CBarMenu::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_barFrameNumber, indent);
+	file->writeNumberLine(_visibleFlag, indent);
+	file->writeNumberLine(_numFrames, indent);
 	
 	CGameObject::save(file, indent);
 }
 
 void CBarMenu::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
+	_barFrameNumber = file->readNumber();
+	_visibleFlag = file->readNumber();
+	_numFrames = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CBarMenu::PETActivateMsg(CPETActivateMsg *msg) {
+	if (msg->_name == "Television") {
+		_visibleFlag = !_visibleFlag;
+		setVisible(_visibleFlag);
+		loadFrame(_barFrameNumber);
+	}
+
+	return true;
+}
+
+bool CBarMenu::PETDownMsg(CPETDownMsg *msg) {
+	if (_visibleFlag) {
+		if (--_barFrameNumber < 0)
+			_barFrameNumber = _numFrames - 1;
+		
+		loadFrame(_barFrameNumber);
+	}
+
+	return true;
+}
+
+bool CBarMenu::PETUpMsg(CPETUpMsg *msg) {
+	if (_visibleFlag) {
+		_barFrameNumber = (_barFrameNumber + 1) % _numFrames;
+		loadFrame(_barFrameNumber);
+	}
+
+	return true;
+}
+
+bool CBarMenu::EnterViewMsg(CEnterViewMsg *msg) {
+	petSetArea(PET_REMOTE);
+	petHighlightGlyph(2);
+	petSetRemoteTarget();
+	setVisible(_visibleFlag);
+	loadFrame(_barFrameNumber);
+
+	return true;
+}
+
+bool CBarMenu::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petClear();
+	_visibleFlag = false;
+	setVisible(false);
+
+	return true;
 }
 
 } // End of namespace Titanic
