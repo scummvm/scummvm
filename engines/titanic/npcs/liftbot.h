@@ -29,10 +29,21 @@
 namespace Titanic {
 
 class CLiftBot : public CTrueTalkNPC {
+	DECLARE_MESSAGE_MAP;
+	bool TextInputMsg(CTextInputMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg);
+	bool ActMsg(CActMsg *msg);
 private:
-	static int _v1;
-	static int _v2;
+	static bool _flag;
+	static bool _enabled;
 private:
 	int _field108;
 public:
