@@ -150,6 +150,11 @@ MODULE_OBJS += \
 	he/moonbase/distortion.o \
 	he/moonbase/moonbase.o \
 	he/moonbase/moonbase_fow.o
+
+ifdef USE_SDL_NET
+MODULE_OBJS += \
+	he/moonbase/net_main.o
+endif
 endif
 
 # This module can be built as a plugin

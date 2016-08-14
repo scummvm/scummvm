@@ -30,6 +30,7 @@
 namespace Scumm {
 
 class AI;
+class Net;
 
 class Moonbase {
 public:
@@ -71,6 +72,9 @@ public:
 	uint32 _fowSentinelConditionBits;
 
 	AI *_ai;
+#ifdef USE_SDL_NET
+	Net *_net;
+#endif
 
 private:
 	ScummEngine_v100he *_vm;
