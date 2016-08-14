@@ -117,7 +117,7 @@ MenuMan::~MenuMan() {
 void MenuMan::f395_drawMovementArrows() {
 	_vm->_eventMan->f78_showMouse();
 	_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
-									   &g2_BoxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
+									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
 	_vm->_eventMan->f77_hideMouse();
 }
 void MenuMan::f388_clearActingChampion() {
@@ -182,7 +182,7 @@ void MenuMan::f456_drawDisabledMenu() {
 				_vm->_inventoryMan->f334_closeChest();
 			}
 		} else {
-			_vm->_displayMan->f136_shadeScreenBox(&g2_BoxMovementArrows, k0_ColorBlack);
+			_vm->_displayMan->f136_shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
 		}
 		_vm->_displayMan->f136_shadeScreenBox(&g0_BoxSpellArea, k0_ColorBlack);
 		_vm->_displayMan->f136_shadeScreenBox(&g1_BoxActionArea, k0_ColorBlack);

@@ -117,7 +117,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
 	if (!AL1102_ui_InventoryChampionOrdinal) {
-		_vm->_displayMan->f136_shadeScreenBox(&g2_BoxMovementArrows, k0_ColorBlack);
+		_vm->_displayMan->f136_shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
 	}
 	L1103_ps_Champion = &_vm->_championMan->_gK71_champions[championIndex];
 	_vm->_displayMan->f466_loadIntoBitmap(k17_InventoryGraphicIndice, _vm->_displayMan->_g296_bitmapViewport);

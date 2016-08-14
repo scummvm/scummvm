@@ -120,9 +120,6 @@ namespace DM {
 #define k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
 #define k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
 
-
-
-
 /* Explosion aspects */
 #define k0_ExplosionAspectFire 0 // @ C0_EXPLOSION_ASPECT_FIRE  
 #define k1_ExplosionAspectSpell 1 // @ C1_EXPLOSION_ASPECT_SPELL 
@@ -140,12 +137,45 @@ namespace DM {
 #define k0x0200_CreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
 #define k0x0400_CreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
 
+#define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
+#define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
+#define k90_FirstStairs 90 // @ C090_GRAPHIC_FIRST_STAIRS
+#define k108_FirstDoorSet 108 // @ C108_GRAPHIC_FIRST_DOOR_SET
+#define k120_InscriptionFont 120 // @ C120_GRAPHIC_INSCRIPTION_FONT
+#define k121_FirstWallOrn 121 // @ C121_GRAPHIC_FIRST_WALL_ORNAMENT
+#define k247_FirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
+#define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
+#define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
+
+enum ViewSquare {
+	kM3_ViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
+	kM2_ViewSquare_D4L = -2, // @ CM2_VIEW_SQUARE_D4L
+	kM1_ViewSquare_D4R = -1, // @ CM1_VIEW_SQUARE_D4R
+	k0_ViewSquare_D3C = 0, // @ C00_VIEW_SQUARE_D3C
+	k1_ViewSquare_D3L = 1, // @ C01_VIEW_SQUARE_D3L
+	k2_ViewSquare_D3R = 2, // @ C02_VIEW_SQUARE_D3R
+	k3_ViewSquare_D2C = 3, // @ C03_VIEW_SQUARE_D2C
+	k4_ViewSquare_D2L = 4, // @ C04_VIEW_SQUARE_D2L
+	k5_ViewSquare_D2R = 5, // @ C05_VIEW_SQUARE_D2R
+	k6_ViewSquare_D1C = 6, // @ C06_VIEW_SQUARE_D1C
+	k7_ViewSquare_D1L = 7, // @ C07_VIEW_SQUARE_D1L
+	k8_ViewSquare_D1R = 8, // @ C08_VIEW_SQUARE_D1R
+	k9_ViewSquare_D0C = 9, // @ C09_VIEW_SQUARE_D0C
+	k10_ViewSquare_D0L = 10, // @ C10_VIEW_SQUARE_D0L
+	k11_ViewSquare_D0R = 11, // @ C11_VIEW_SQUARE_D0R
+	k3_ViewSquare_D3C_Explosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
+	k4_ViewSquare_D3L_Explosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
+	k9_ViewSquare_D1C_Explosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
+	k12_ViewSquare_D0C_Explosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
+};
+
 class ExplosionAspect {
 public:
 	uint16 _byteWidth;
 	uint16 _height;
 
 	ExplosionAspect(uint16 byteWidth, uint16 height) :_byteWidth(byteWidth), _height(height) {}
+	ExplosionAspect() : _byteWidth(0), _height(0) {}
 }; // @ EXPLOSION_ASPECT
 
 extern ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount]; // @ G0211_as_Graphic558_ExplosionAspects
@@ -751,6 +781,11 @@ public:
 
 	Frame _doorFrameLeftD1C; // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
 	Frame _doorFrameRightD1C; // @ G0171_s_Graphic558_Frame_DoorFrameRight_D1C
+	FieldAspect _fieldAspects188[12];
+	Box _boxMovementArrows;
+	byte _palChangeSmoke[16];
+	byte _projectileScales[7];
+	ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount];
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap

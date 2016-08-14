@@ -40,82 +40,6 @@
 
 namespace DM {
 
-FieldAspect g188_FieldAspects[12] = { // @ G0188_as_Graphic558_FieldAspects
-								  /* { NativeBitmapRelativeIndex, BaseStartUnitIndex, Transparent color, Mask, ByteWidth, Height, X, BitPlaneWordCount } */
-	FieldAspect(0, 63, 0x8A, 0xFF,  0,   0,  0, 64),   /* D3C */
-	FieldAspect(0, 63, 0x0A, 0x80, 48,  51, 11, 64),   /* D3L */
-	FieldAspect(0, 63, 0x0A, 0x00, 48,  51,  0, 64),   /* D3R */
-	FieldAspect(0, 60, 0x8A, 0xFF,  0,   0,  0, 64),   /* D2C */
-	FieldAspect(0, 63, 0x0A, 0x81, 40,  71,  5, 64),   /* D2L */
-	FieldAspect(0, 63, 0x0A, 0x01, 40,  71,  0, 64),   /* D2R */
-	FieldAspect(0, 61, 0x8A, 0xFF,  0,   0,  0, 64),   /* D1C */
-	FieldAspect(0, 63, 0x0A, 0x82, 32, 111,  0, 64),   /* D1L */
-	FieldAspect(0, 63, 0x0A, 0x02, 32, 111,  0, 64),   /* D1R */
-	FieldAspect(0, 59, 0x8A, 0xFF,  0,   0,  0, 64),   /* D0C */
-	FieldAspect(0, 63, 0x0A, 0x83, 16, 136,  0, 64),   /* D0L */
-	FieldAspect(0, 63, 0x0A, 0x03, 16, 136,  0, 64)}; /* D0R */
-
-Box g2_BoxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
-
-byte g212_PalChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
-
-ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
-	// ByteWidth, Height 
-	ExplosionAspect(80, 111),   // Fire
-	ExplosionAspect(64,  97),   // Spell
-	ExplosionAspect(80,  91),   // Poison
-	ExplosionAspect(80,  91)    // Death
-};
-
-#define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
-
-byte g215_ProjectileScales[7] = {
-	13,   /* D4 Back  */
-	16,   /* D4 Front */
-	19,   /* D3 Back  */
-	22,   /* D3 Front */
-	25,   /* D2 Back  */
-	28,   /* D2 Front */
-	32}; /* D1 Back  */
-
-#define k121_FirstWallOrn 121 // @ C121_GRAPHIC_FIRST_WALL_ORNAMENT
-#define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
-#define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
-#define k90_FirstStairs 90 // @ C090_GRAPHIC_FIRST_STAIRS
-#define k108_FirstDoorSet 108 // @ C108_GRAPHIC_FIRST_DOOR_SET
-#define k120_InscriptionFont 120 // @ C120_GRAPHIC_INSCRIPTION_FONT
-#define k121_FirstWallOrn 121 // @ C121_GRAPHIC_FIRST_WALL_ORNAMENT
-#define k247_FirstFloorOrn 247 // @ C247_GRAPHIC_FIRST_FLOOR_ORNAMENT
-#define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
-
-
-enum ViewSquare {
-	kM3_ViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
-	kM2_ViewSquare_D4L = -2, // @ CM2_VIEW_SQUARE_D4L
-	kM1_ViewSquare_D4R = -1, // @ CM1_VIEW_SQUARE_D4R
-	k0_ViewSquare_D3C = 0, // @ C00_VIEW_SQUARE_D3C
-	k1_ViewSquare_D3L = 1, // @ C01_VIEW_SQUARE_D3L
-	k2_ViewSquare_D3R = 2, // @ C02_VIEW_SQUARE_D3R
-	k3_ViewSquare_D2C = 3, // @ C03_VIEW_SQUARE_D2C
-	k4_ViewSquare_D2L = 4, // @ C04_VIEW_SQUARE_D2L
-	k5_ViewSquare_D2R = 5, // @ C05_VIEW_SQUARE_D2R
-	k6_ViewSquare_D1C = 6, // @ C06_VIEW_SQUARE_D1C
-	k7_ViewSquare_D1L = 7, // @ C07_VIEW_SQUARE_D1L
-	k8_ViewSquare_D1R = 8, // @ C08_VIEW_SQUARE_D1R
-	k9_ViewSquare_D0C = 9, // @ C09_VIEW_SQUARE_D0C
-	k10_ViewSquare_D0L = 10, // @ C10_VIEW_SQUARE_D0L
-	k11_ViewSquare_D0R = 11, // @ C11_VIEW_SQUARE_D0R
-	k3_ViewSquare_D3C_Explosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
-	k4_ViewSquare_D3L_Explosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
-	k9_ViewSquare_D1C_Explosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
-	k12_ViewSquare_D0C_Explosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
-};
-
-
-Frame gK12_CeilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
-Frame gK13_FloorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
-
-Frame g711_FrameWall_D3L2 = Frame(0, 15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
 Frame g712_FrameWall_D3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 Frame g163_FrameWalls[12] = { // @ G0163_as_Graphic558_Frame_Walls
 	/* { X1, X2, Y1, Y2, pixelWidth, Height, X, Y } */
@@ -627,13 +551,58 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 void DisplayMan::initConstants() {
 	const byte palChangesDoorButtonAndWallOrnD3[16] = {0, 0, 120, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 10, 0, 20}; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
 	const byte palChangesDoorButtonAndWallOrnD2[16] = {0, 120, 10, 30, 40, 30, 60, 70, 50, 90, 100, 110, 0, 20, 140, 130}; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
-	const Frame doorFrameLeftD1C = Frame(43, 74, 14, 107, 16, 94, 0, 0); // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
-	const Frame doorFrameRightD1C = Frame(149, 180, 14, 107, 16, 94, 0, 0); // @ G0171_s_Graphic558_Frame_DoorFrameRight_D1C
+	const FieldAspect fieldAspects188[12] = { // @ G0188_as_Graphic558_FieldAspects
+	/* { NativeBitmapRelativeIndex, BaseStartUnitIndex, Transparent color, Mask, ByteWidth, Height, X, BitPlaneWordCount } */
+		FieldAspect(0, 63, 0x8A, 0xFF,  0,   0,  0, 64),  /* D3C */
+		FieldAspect(0, 63, 0x0A, 0x80, 48,  51, 11, 64),  /* D3L */
+		FieldAspect(0, 63, 0x0A, 0x00, 48,  51,  0, 64),  /* D3R */
+		FieldAspect(0, 60, 0x8A, 0xFF,  0,   0,  0, 64),  /* D2C */
+		FieldAspect(0, 63, 0x0A, 0x81, 40,  71,  5, 64),  /* D2L */
+		FieldAspect(0, 63, 0x0A, 0x01, 40,  71,  0, 64),  /* D2R */
+		FieldAspect(0, 61, 0x8A, 0xFF,  0,   0,  0, 64),  /* D1C */
+		FieldAspect(0, 63, 0x0A, 0x82, 32, 111,  0, 64),  /* D1L */
+		FieldAspect(0, 63, 0x0A, 0x02, 32, 111,  0, 64),  /* D1R */
+		FieldAspect(0, 59, 0x8A, 0xFF,  0,   0,  0, 64),  /* D0C */
+		FieldAspect(0, 63, 0x0A, 0x83, 16, 136,  0, 64),  /* D0L */
+		FieldAspect(0, 63, 0x0A, 0x03, 16, 136,  0, 64)   /* D0R */
+	};
+
+	const ExplosionAspect explosionAspects[k4_ExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
+		// ByteWidth, Height 
+		ExplosionAspect(80, 111),   // Fire
+		ExplosionAspect(64,  97),   // Spell
+		ExplosionAspect(80,  91),   // Poison
+		ExplosionAspect(80,  91)    // Death
+	};
+
+	const byte palChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
+	const byte projectileScales[7] = {
+		13,   /* D4 Back  */
+		16,   /* D4 Front */
+		19,   /* D3 Back  */
+		22,   /* D3 Front */
+		25,   /* D2 Back  */
+		28,   /* D2 Front */
+		32    /* D1 Back  */
+	};
+
+	_doorFrameLeftD1C = Frame(43, 74, 14, 107, 16, 94, 0, 0); // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
+	_doorFrameRightD1C = Frame(149, 180, 14, 107, 16, 94, 0, 0); // @ G0171_s_Graphic558_Frame_DoorFrameRight_D1C
 
 	for (int i = 0; i < 16; i++) {
 		_palChangesDoorButtonAndWallOrnD3[i] = palChangesDoorButtonAndWallOrnD3[i];
 		_palChangesDoorButtonAndWallOrnD2[i] = palChangesDoorButtonAndWallOrnD2[i];
+		_palChangeSmoke[i] = palChangeSmoke[i];
 	}
+
+	for (int i = 0; i < 12; i++)
+		_fieldAspects188[i] = fieldAspects188[i];
+
+	for (int i = 0; i < 7; i++)
+		_projectileScales[i] = projectileScales[i];
+
+	for (int i = 0; i < k4_ExplosionAspectCount; i++)
+		g211_ExplosionAspects[i] = explosionAspects[i];
 
 	_doorFrameD1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
 		Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
@@ -649,9 +618,7 @@ void DisplayMan::initConstants() {
 	);
 
 	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
-
-	_doorFrameLeftD1C = doorFrameLeftD1C;
-	_doorFrameRightD1C = doorFrameRightD1C;
+	_boxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
 }
 
 DisplayMan::~DisplayMan() {
@@ -803,7 +770,7 @@ void DisplayMan::f460_initializeGraphicData() {
 			derivedBitmapIndex = k282_DerivedBitmapFirstProjectile + projectileAspect->_firstDerivedBitmapRelativeIndex;
 
 			for (int16 projectileScaleIndex = 0; projectileScaleIndex < 6; projectileScaleIndex++) {
-				int16 bitmapByteCount = f459_getScaledBitmapByteCount(projectileAspect->_byteWidth, projectileAspect->_height, g215_ProjectileScales[projectileScaleIndex]);
+				int16 bitmapByteCount = f459_getScaledBitmapByteCount(projectileAspect->_byteWidth, projectileAspect->_height, _projectileScales[projectileScaleIndex]);
 				_g639_derivedBitmapByteCount[derivedBitmapIndex] = bitmapByteCount;
 
 				if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k3_ProjectileAspectHasNone) {
@@ -1126,7 +1093,7 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 		byte *nativeBitmap = f489_getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)k2_ExplosionAspectPoison) + k348_FirstExplosionGraphicIndice);
 		bitmap = f492_getDerivedBitmap(derBitmapIndex);
 		f129_blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth, explAsp->_height, pixelWidth * 2, height,
-			(explosionAspIndex == k3_ExplosionAspectSmoke) ? g212_PalChangeSmoke : g17_PalChangesNoChanges);
+			(explosionAspIndex == k3_ExplosionAspectSmoke) ? _palChangeSmoke : g17_PalChangesNoChanges);
 		f493_addDerivedBitmap(derBitmapIndex);
 	}
 
@@ -1490,7 +1457,7 @@ T0116017_orangeElk:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k1_ViewSquare_D3L], g163_FrameWalls[k1_ViewSquare_D3L]._box);
+		f113_drawField(&_fieldAspects188[k1_ViewSquare_D3L], g163_FrameWalls[k1_ViewSquare_D3L]._box);
 	}
 }
 
@@ -1564,7 +1531,7 @@ T0117018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k2_ViewSquare_D3R], g163_FrameWalls[k2_ViewSquare_D3R]._box);
+		f113_drawField(&_fieldAspects188[k2_ViewSquare_D3R], g163_FrameWalls[k2_ViewSquare_D3R]._box);
 	}
 }
 
@@ -1633,7 +1600,7 @@ T0118028:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k0_ViewSquare_D3C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
+		f113_drawField(&_fieldAspects188[k0_ViewSquare_D3C], g163_FrameWalls[k0_ViewSquare_D3C]._box);
 	}
 }
 
@@ -1705,7 +1672,7 @@ T0119020:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
+		f113_drawField(&_fieldAspects188[k4_ViewSquare_D2L], g163_FrameWalls[k4_ViewSquare_D2L]._box);
 	}
 }
 
@@ -1779,7 +1746,7 @@ T0120029:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
+		f113_drawField(&_fieldAspects188[k5_ViewSquare_D2R], g163_FrameWalls[k5_ViewSquare_D2R]._box);
 	}
 }
 
@@ -1851,7 +1818,7 @@ T0121016:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k3_ViewSquare_D2C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k3_ViewSquare_D2C], g163_FrameWalls[k3_ViewSquare_D2C]._box);
+		f113_drawField(&_fieldAspects188[k3_ViewSquare_D2C], g163_FrameWalls[k3_ViewSquare_D2C]._box);
 	}
 }
 
@@ -1925,7 +1892,7 @@ T0122021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
+		f113_drawField(&_fieldAspects188[k7_ViewSquare_D1L], g163_FrameWalls[k7_ViewSquare_D1L]._box);
 	}
 }
 
@@ -1998,7 +1965,7 @@ T0123021:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
+		f113_drawField(&_fieldAspects188[k8_ViewSquare_D1R], g163_FrameWalls[k8_ViewSquare_D1R]._box);
 	}
 }
 
@@ -2077,7 +2044,7 @@ T0124018:
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, order);
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k6_ViewSquare_D1C], g163_FrameWalls[k6_ViewSquare_D1C]._box);
+		f113_drawField(&_fieldAspects188[k6_ViewSquare_D1C], g163_FrameWalls[k6_ViewSquare_D1C]._box);
 	}
 }
 
@@ -2102,7 +2069,7 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 
 	f112_drawCeilingPit(k67_ceilingPitD0L_grahicIndice, &frameCeilingPitD0L, posX, posY, false);
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect])
-		f113_drawField(&g188_FieldAspects[k10_ViewSquare_D0L], g163_FrameWalls[k10_ViewSquare_D0L]._box);
+		f113_drawField(&_fieldAspects188[k10_ViewSquare_D0L], g163_FrameWalls[k10_ViewSquare_D0L]._box);
 }
 
 void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
@@ -2131,7 +2098,7 @@ void DisplayMan::f126_drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 		return;
 	}
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k11_ViewSquare_D0R], g163_FrameWalls[k11_ViewSquare_D0R]._box);
+		f113_drawField(&_fieldAspects188[k11_ViewSquare_D0R], g163_FrameWalls[k11_ViewSquare_D0R]._box);
 	}
 }
 
@@ -2175,25 +2142,29 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	f112_drawCeilingPit(k68_ceilingPitD0C_graphicIndice, &frameCeilingPitD0C, posX, posY, false);
 	f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k9_ViewSquare_D0C, k0x0021_CellOrder_BackLeft_BackRight);
 	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
-		f113_drawField(&g188_FieldAspects[k9_ViewSquare_D0C], g163_FrameWalls[k9_ViewSquare_D0C]._box);
+		f113_drawField(&_fieldAspects188[k9_ViewSquare_D0C], g163_FrameWalls[k9_ViewSquare_D0C]._box);
 	}
 }
 
 void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
+	static Frame ceilingFrame(0, 223, 0, 28, 112, 29, 0, 0); // @ K0012_s_Frame_Ceiling
+	static Frame floorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
+	static Frame frameWallD3L2 = Frame(0, 15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
+
 	if (_g297_drawFloorAndCeilingRequested)
 		f98_drawFloorAndCeiling();
+
 	_g578_useByteBoxCoordinates = true;
 	for (int16 i = 0; i < 6; ++i)
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i].setToZero();
 
-	for (uint16 i = 0; i < 6; ++i) {
+	for (uint16 i = 0; i < 6; ++i)
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i]._x1 = 255;
-	}
 
 	if (_g76_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1) {
-		f100_drawWallSetBitmap(_g85_bitmapCeiling, gK12_CeilingFrame);
+		f100_drawWallSetBitmap(_g85_bitmapCeiling, ceilingFrame);
 		f99_copyBitmapAndFlipHorizontal(_g84_bitmapFloor, _g74_tmpBitmap, k112_byteWidthViewport, 70);
-		f100_drawWallSetBitmap(_g74_tmpBitmap, gK13_FloorFrame);
+		f100_drawWallSetBitmap(_g74_tmpBitmap, floorFrame);
 
 		_g698_bitmapWallSet_Wall_D3LCR = _g90_bitmapWall_D3LCR_Flipped;
 		_g699_bitmapWallSet_Wall_D2LCR = _g91_bitmapWall_D2LCR_Flipped;
@@ -2202,16 +2173,15 @@ void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_g702_bitmapWallSet_Wall_D0R = _g94_bitmapWall_D0R_Flipped;
 	} else {
 		f99_copyBitmapAndFlipHorizontal(_g85_bitmapCeiling, _g74_tmpBitmap, k112_byteWidthViewport, 29);
-		f100_drawWallSetBitmap(_g74_tmpBitmap, gK12_CeilingFrame);
-		f100_drawWallSetBitmap(_g84_bitmapFloor, gK13_FloorFrame);
+		f100_drawWallSetBitmap(_g74_tmpBitmap, ceilingFrame);
+		f100_drawWallSetBitmap(_g84_bitmapFloor, floorFrame);
 	}
 
-	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, -2, posX, posY) == k0_ElementTypeWall) {
-		f100_drawWallSetBitmap(_g697_bitmapWallSet_Wall_D3L2, g711_FrameWall_D3L2);
-	}
-	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, 2, posX, posY) == k0_ElementTypeWall) {
+	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, -2, posX, posY) == k0_ElementTypeWall)
+		f100_drawWallSetBitmap(_g697_bitmapWallSet_Wall_D3L2, frameWallD3L2);
+
+	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, 2, posX, posY) == k0_ElementTypeWall)
 		f100_drawWallSetBitmap(_g696_bitmapWallSet_Wall_D3R2, g712_FrameWall_D3R2);
-	}
 
 	int16 tmpPosX = posX;
 	int16 tmpPosY = posY;
@@ -3411,7 +3381,7 @@ T0115129_DrawProjectiles:
 						heightRedEagle = ((ProjectileAspect*)objectAspect)->_height;
 					} else {
 						AL_8_projectileScaleIndex = ((viewSquareIndex / 3) << 1) + (AL_2_viewCell >> 1);
-						scale = g215_ProjectileScales[AL_8_projectileScaleIndex];
+						scale = _projectileScales[AL_8_projectileScaleIndex];
 						if (!doNotScaleWithKineticEnergy) {
 							scale = (scale * MAX(96, projectile->_kineticEnergy + 1)) >> 8;
 						}
@@ -3574,7 +3544,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				f491_isDerivedBitmapInCache(k0_DerivedBitmapViewport);
 				AL_6_bitmapRedBanana = f489_getNativeBitmapOrGraphic(AL_4_explosionAspectIndex + k351_FirstExplosionPatternGraphicIndice);
 				if (smoke) {
-					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, 48, 32, 48, 32, g212_PalChangeSmoke);
+					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, 48, 32, 48, 32, _palChangeSmoke);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
 				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, 0, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
@@ -3640,7 +3610,7 @@ T0115200_DrawExplosion:
 	} while ((thingParam = _vm->_dungeonMan->f159_getNextThing(thingParam)) != Thing::_endOfList);
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_g77_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
-		fieldAspect = g188_FieldAspects[viewSquareIndex];
+		fieldAspect = _fieldAspects188[viewSquareIndex];
 		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
 		f113_drawField(&fieldAspect, g163_FrameWalls[viewSquareIndex]._box);
 	}
