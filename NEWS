@@ -45,13 +45,14 @@ For a more comprehensive changelog of the latest experimental code, see:
      present in the original game.
    - Fixed auto-saving in the fan-made Cascade Quest.
    - Fixed a game bug in the Conquests of Longbow scripts that could cause crashes in Sherwood Forest.
-   - Added a detection entry for the ImagiNation Network (INN) demo.
+   - Added support for the ImagiNation Network (INN) demo.
 
  SCUMM:
    - Fixed missing translations in the in-game quit and restart dialogs in Pajama Sam 1.
    - Fixed visual glitches in DOTT that occured after loading a savegame with the stereo
      in Green Tentacle's room turned on.
    - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions)
+   - Added support for the Dutch demo of Let's Explore the Airport with Buzzy.
 
  WAGE:
    - Closed memory leak.
