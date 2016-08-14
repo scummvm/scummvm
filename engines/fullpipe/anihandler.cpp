@@ -29,7 +29,7 @@
 
 namespace Fullpipe {
 
-void AniHandler::clear() {
+void AniHandler::detachAllObjects() {
 	_items.clear();
 }
 
@@ -269,7 +269,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		n2x *= mult;
 		n2y *= mult;
 	} else {
-		calcLength(&point, mov, n1x, n1y, &mult, &len, 1);
+		getNumCycles(&point, mov, n1x, n1y, &mult, &len, 1);
 		n2x = point.x;
 		n2y = point.y;
 	}
@@ -348,7 +348,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	for (int i = subIdx; i != st2idx;) {
 		MGMSubItem *s = _items[itemIdx]->subItems[i + subOffset * _items[itemIdx]->statics.size()];
 
-		ex2 = buildExCommand2(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = createCommand(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
@@ -365,7 +365,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		else
 			plen = -1;
 
-		ex2 = buildExCommand2(mov, mkQueue->ani->_id, x1, y1, &x2, &y2, plen);
+		ex2 = createCommand(mov, mkQueue->ani->_id, x1, y1, &x2, &y2, plen);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
@@ -375,7 +375,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	for (int j = st1idx; j != subOffset;) {
 		MGMSubItem *s = _items[itemIdx]->subItems[j + subOffset * _items[itemIdx]->statics.size()];
 
-		ex2 = buildExCommand2(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
+		ex2 = createCommand(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
 		ex2->_keyCode = mkQueue->ani->_okeyCode;
 
@@ -415,8 +415,8 @@ int AniHandler::getFramesCount(int idx, int subIdx, int endIdx, int flag) {
 
 	return res;
 }
-void AniHandler::updateAnimStatics(StaticANIObject *ani, int staticsId) {
-	debugC(4, kDebugPathfinding, "AniHandler::updateAnimStatics(*%d, %d)", ani->_id, staticsId);
+void AniHandler::putObjectToStatics(StaticANIObject *ani, int staticsId) {
+	debugC(4, kDebugPathfinding, "AniHandler::putObjectToStatics(*%d, %d)", ani->_id, staticsId);
 
 	if (getIndex(ani->_id) == -1)
 		return;
@@ -631,7 +631,7 @@ int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
 	return idx;
 }
 
-Common::Point *AniHandler::calcLength(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
+Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int x, int y, int *mult, int *len, int flag) {
 	Common::Point point;
 
 	mov->calcSomeXY(point, 0, -1);
@@ -707,8 +707,8 @@ Common::Point *AniHandler::calcLength(Common::Point *pRes, Movement *mov, int x,
 	return pRes;
 }
 
-ExCommand2 *AniHandler::buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
-	debugC(2, kDebugPathfinding, "AniHandler::buildExCommand2(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
+ExCommand2 *AniHandler::createCommand(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len) {
+	debugC(2, kDebugPathfinding, "AniHandler::createCommand(mov, %d, %d, %d, [%d, %d], [%d, %d], %d)", objId, x1, y1, x2->x, x2->y, y2->x, y2->y, len);
 
 	uint cnt;
 

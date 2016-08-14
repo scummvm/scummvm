@@ -156,7 +156,7 @@ StaticANIObject::~StaticANIObject() {
 
 	_movements.clear();
 
-	g_fp->_aniHandler->clear();
+	g_fp->_aniHandler->detachAllObjects();
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
@@ -1072,7 +1072,7 @@ void StaticANIObject::changeStatics2(int objId) {
 
 	if (_movement || _statics) {
 		g_fp->_aniHandler->attachObject(_id);
-		g_fp->_aniHandler->updateAnimStatics(this, objId);
+		g_fp->_aniHandler->putObjectToStatics(this, objId);
 	} else {
 		_statics = getStaticsById(objId);
 	}

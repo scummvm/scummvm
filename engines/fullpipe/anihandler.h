@@ -71,20 +71,20 @@ public:
 	Common::Array<MGMItem *> _items;
 
 public:
-	void clear();
+	void detachAllObjects();
 	void attachObject(int objId);
 	void resetData(int objId);
 	int getIndex(int objId);
 
 	MessageQueue *makeRunQueue(MakeQueueStruct *mkQueue);
-	void updateAnimStatics(StaticANIObject *ani, int staticsId);
+	void putObjectToStatics(StaticANIObject *ani, int staticsId);
 	Common::Point *getTransitionSize(Common::Point *point, int aniId, int staticsId1, int staticsId2);
 	int getStaticsIndexById(int idx, int16 id);
 	int getStaticsIndex(int idx, Statics *st);
 	void clearVisitsList(int idx);
 	int seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop);
-	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *mult, int *len, int flag);
-	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
+	Common::Point *getNumCycles(Common::Point *point, Movement *mov, int x, int y, int *mult, int *len, int flag);
+	ExCommand2 *createCommand(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
 	MessageQueue *makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
 	int getFramesCount(int idx, int subIdx, int subOffset, int flag);
 	int getNumMovements(int objectId, int idx1, int idx2);

@@ -413,7 +413,7 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 void MctlLadder::detachAllObjects() {
 	debugC(4, kDebugPathfinding, "MctlLadder::detachAllObjects()");
 
-	_aniHandler.clear();
+	_aniHandler.detachAllObjects();
 
 	for (uint i = 0; i < _ladmovements.size(); i++) {
 		delete _ladmovements[i]->movVars;
@@ -806,7 +806,7 @@ bool MovGraph::load(MfcArchive &file) {
 void MovGraph::attachObject(StaticANIObject *obj) {
 	debugC(4, kDebugPathfinding, "MovGraph::attachObject(*%d)", obj->_id);
 
-	_aniHandler.clear();
+	_aniHandler.detachAllObjects();
 	_aniHandler.attachObject(obj->_id);
 
 	for (uint i = 0; i < _items.size(); i++)
@@ -2504,7 +2504,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 	int a2 = 0;
 	int mgmLen;
 
-	_aniHandler.calcLength(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
+	_aniHandler.getNumCycles(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
 
 	int x1 = point.x;
 	int y1 = point.y;
@@ -2619,7 +2619,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
-		ex = _aniHandler.buildExCommand2(
+		ex = _aniHandler.createCommand(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[0]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
@@ -2641,7 +2641,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		else
 			par = -1;
 
-		ex = _aniHandler.buildExCommand2(
+		ex = _aniHandler.createCommand(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
@@ -2655,7 +2655,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 	}
 
 	if (!(info->flags & 4)) {
-		ex = _aniHandler.buildExCommand2(
+		ex = _aniHandler.createCommand(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[2]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
