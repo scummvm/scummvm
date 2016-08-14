@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSummonBots, CRobotController)
+	ON_MESSAGE(SummonBotQueryMsg)
+	ON_MESSAGE(SummonBotMsg)
+END_MESSAGE_MAP()
+
 CSummonBots::CSummonBots() : CRobotController(), _string2("NULL"),
 		_fieldC8(0), _fieldCC(0) {
 }
@@ -44,6 +49,38 @@ void CSummonBots::load(SimpleFile *file) {
 	_string2 = file->readString();
 
 	CRobotController::load(file);
+}
+
+bool CSummonBots::SummonBotQueryMsg(CSummonBotQueryMsg *msg) {
+	if (msg->_npcName == "BellBot") {
+		if (_fieldC8 && !petCheckNode(_string2))
+			return true;
+	} else if (msg->_npcName == "DoorBot") {
+		if (_fieldCC && !petCheckNode(_string2))
+			return true;
+	}
+
+	return false;
+}
+
+bool CSummonBots::SummonBotMsg(CSummonBotMsg *msg) {
+	if (msg->_npcName == "BellBot") {
+		if (!_fieldC8)
+			return false;
+
+		if (petDismissBot("BellBot"))
+			petOnSummonBot("Bellbot", msg->_value);
+	} else if (msg->_npcName == "DoorBot") {
+		if (!_fieldCC)
+			return false;
+
+		if (petDismissBot("Doorbot"))
+			petOnSummonBot("Doorbot", msg->_value);
+	} else {
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
