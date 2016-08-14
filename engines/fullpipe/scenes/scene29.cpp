@@ -503,7 +503,7 @@ void sceneHandler29_manHit() {
 	mgminfo.flags = (g_vars->scene29_manX <= 638 ? 2 : 0) | 0x44;
 	mgminfo.movementId = MV_MAN29_HIT;
 
-	MessageQueue *mq = g_vars->scene29_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene29_aniHandler.genMovement(&mgminfo);
 	ExCommand *ex;
 
 	if (mq) {
@@ -728,7 +728,7 @@ void sceneHandler29_manToL() {
 
 	g_vars->scene29_arcadeIsOn = true;
 
-	g_vars->scene29_mgm.addItem(g_fp->_aniMan->_id);
+	g_vars->scene29_aniHandler.addItem(g_fp->_aniMan->_id);
 
 	g_fp->_updateScreenCallback = sceneHandler29_updateScreenCallback;
 

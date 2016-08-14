@@ -96,7 +96,7 @@ void scene11_setupMusic() {
 void scene11_initScene(Scene *sc) {
 	g_vars->scene11_swingie = sc->getStaticANIObject1ById(ANI_SWINGER, -1);
 	g_vars->scene11_boots = sc->getStaticANIObject1ById(ANI_BOOTS_11, -1);
-	g_vars->scene11_mgm.clear();
+	g_vars->scene11_aniHandler.clear();
 	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_callback2 = scene11_dudeSwingCallback;
 	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_KACHELI, -1);
@@ -251,7 +251,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(45);
 
-	g_vars->scene11_mgm.addItem(g_fp->_aniMan->_id);
+	g_vars->scene11_aniHandler.addItem(g_fp->_aniMan->_id);
 
 	g_fp->_currentScene->_x = 1400 - g_fp->_sceneRect.right;
 
@@ -402,7 +402,7 @@ void sceneHandler11_jumpHitAndWin() {
 	mgminfo.flags = 66;
 	mgminfo.movementId = MV_MAN11_JUMPHIT;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_024;
@@ -447,7 +447,7 @@ void sceneHandler11_jumpOver(double angle) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_MAN11_JUMPOVER;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;
@@ -487,7 +487,7 @@ void sceneHandler11_jumpHit(double angle) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_MAN11_JUMPHIT;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;

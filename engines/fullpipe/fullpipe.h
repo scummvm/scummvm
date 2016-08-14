@@ -210,7 +210,7 @@ public:
 	MovTable *_movTable;
 
 	Floaters *_floaters;
-	AniHandler *_mgm;
+	AniHandler *_aniHandler;
 
 	Common::Array<Common::Point *> _arcadeKeys;
 

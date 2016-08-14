@@ -395,10 +395,10 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->_flags |= 1;
 
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.addItem(ANI_MAN);
 
 	mgminfo.ani = g_fp->_aniMan;
 	mgminfo.staticsId2 = ST_MAN_ONPLANK;
@@ -409,7 +409,7 @@ void sceneHandler04_jumpOnLadder() {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_MAN_JUMPONPLANK;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		mq->_flags |= 1;
@@ -460,10 +460,10 @@ void sceneHandler04_dropBottle() {
 }
 
 void sceneHandler04_gotoLadder(ExCommand *ex) {
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.addItem(ANI_MAN);
 
 	mgminfo.ani = g_fp->_aniMan;
 	mgminfo.staticsId2 = ST_MAN_UP;
@@ -474,7 +474,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_MAN_PLANKTOLADDER;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -550,10 +550,10 @@ void sceneHandler04_raisePlank() {
 }
 
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.addItem(ANI_KOZAWKA);
 
 	mgminfo.ani = ani;
 	mgminfo.staticsId2 = ST_KZW_SIT;
@@ -564,7 +564,7 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_KZW_JUMP;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
@@ -599,10 +599,10 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.addItem(ANI_KOZAWKA);
 
 	mgminfo.ani = ani;
 	mgminfo.staticsId2 = ST_KZW_JUMPOUT;
@@ -613,7 +613,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_KZW_JUMPHIT;
 
-	MessageQueue *mq1 = mgm.genMovement(&mgminfo);
+	MessageQueue *mq1 = aniHandler.genMovement(&mgminfo);
 
 	memset(&mgminfo, 0, sizeof(mgminfo));
 	mgminfo.ani = ani;
@@ -627,7 +627,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	mgminfo.flags = 117;
 	mgminfo.movementId = MV_KZW_JUMPOUT;
 
-	MessageQueue *mq2 = mgm.genMovement(&mgminfo);
+	MessageQueue *mq2 = aniHandler.genMovement(&mgminfo);
 
 	if (mq1 && mq2) {
 		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
@@ -670,10 +670,10 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.addItem(ANI_KOZAWKA);
 
 	mgminfo.ani = ani;
 	mgminfo.staticsId2 = ST_KZW_SIT;
@@ -684,7 +684,7 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_KZW_JUMPROTATE;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -728,10 +728,10 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 }
 
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
-	AniHandler mgm;
+	AniHandler aniHandler;
 	MGMInfo mgminfo;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.addItem(ANI_KOZAWKA);
 
 	mgminfo.ani = ani;
 	mgminfo.staticsId2 = 560;
@@ -742,7 +742,7 @@ MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 	mgminfo.flags = 78;
 	mgminfo.movementId = MV_KZW_JUMPROTATE;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.genMovement(&mgminfo);
 
 	if (mq) {
 		sceneHandler04_kozMove(ani->getMovementById(MV_KZW_JUMPROTATE), 1, 9, g_vars->scene04_jumpRotateKozyawki, phase * 0.5 + 1.5);

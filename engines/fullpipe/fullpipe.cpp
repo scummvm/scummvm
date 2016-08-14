@@ -140,7 +140,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scene3 = 0;
 	_movTable = 0;
 	_floaters = 0;
-	_mgm = 0;
+	_aniHandler = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -217,7 +217,7 @@ void FullpipeEngine::initialize() {
 	_sceneRect.bottom = 599;
 
 	_floaters = new Floaters;
-	_mgm = new AniHandler;
+	_aniHandler = new AniHandler;
 }
 
 void FullpipeEngine::restartGame() {

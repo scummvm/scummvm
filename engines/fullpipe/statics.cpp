@@ -156,7 +156,7 @@ StaticANIObject::~StaticANIObject() {
 
 	_movements.clear();
 
-	g_fp->_mgm->clear();
+	g_fp->_aniHandler->clear();
 }
 
 StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
@@ -1040,9 +1040,9 @@ void StaticANIObject::adjustSomeXY() {
 }
 
 MessageQueue *StaticANIObject::changeStatics1(int msgNum) {
-	g_fp->_mgm->addItem(_id);
+	g_fp->_aniHandler->addItem(_id);
 
-	MessageQueue *mq = g_fp->_mgm->genMQ(this, msgNum, 0, 0, 0);
+	MessageQueue *mq = g_fp->_aniHandler->genMQ(this, msgNum, 0, 0, 0);
 
 	if (!mq)
 		return 0;
@@ -1071,8 +1071,8 @@ void StaticANIObject::changeStatics2(int objId) {
 	deleteFromGlobalMessageQueue();
 
 	if (_movement || _statics) {
-		g_fp->_mgm->addItem(_id);
-		g_fp->_mgm->updateAnimStatics(this, objId);
+		g_fp->_aniHandler->addItem(_id);
+		g_fp->_aniHandler->updateAnimStatics(this, objId);
 	} else {
 		_statics = getStaticsById(objId);
 	}

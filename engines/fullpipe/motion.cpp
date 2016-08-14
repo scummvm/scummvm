@@ -348,7 +348,7 @@ void MctlLadder::attachObject(StaticANIObject *obj) {
 		MctlLadderMovement *movement = new MctlLadderMovement;
 
 		if (initMovement(obj, movement)) {
-			_mgm.addItem(obj->_id);
+			_aniHandler.addItem(obj->_id);
 			_ladmovements.push_back(movement);
 		} else {
 			delete movement;
@@ -413,7 +413,7 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 void MctlLadder::detachAllObjects() {
 	debugC(4, kDebugPathfinding, "MctlLadder::detachAllObjects()");
 
-	_mgm.clear();
+	_aniHandler.clear();
 
 	for (uint i = 0; i < _ladmovements.size(); i++) {
 		delete _ladmovements[i]->movVars;
@@ -497,7 +497,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		mgminfo.flags = 14;
 		mgminfo.movementId = direction ? _ladmovements[pos]->movVars->varDownGo : _ladmovements[pos]->movVars->varUpGo;
 
-		return _mgm.genMovement(&mgminfo);
+		return _aniHandler.genMovement(&mgminfo);
 	}
 
 	if (ani->_statics->_staticsId == _ladmovements[pos]->staticIds[2]) {
@@ -515,7 +515,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 			mgminfo.flags = 14;
 			mgminfo.movementId = _ladmovements[pos]->movVars->varUpGo;
 
-			return _mgm.genMovement(&mgminfo);
+			return _aniHandler.genMovement(&mgminfo);
 		}
 
 		int ox = ani->_ox;
@@ -539,7 +539,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		mgminfo.staticsId1 = _ladmovements[pos]->staticIds[0];
 		mgminfo.movementId = _ladmovements[pos]->movVars->varDownGo;
 
-		mq = _mgm.genMovement(&mgminfo);
+		mq = _aniHandler.genMovement(&mgminfo);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varUpStop, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = ani->_okeyCode;
@@ -551,7 +551,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 	}
 
 	if (ani->_statics->_staticsId != _ladmovements[pos]->staticIds[3]) {
-		mq = _mgm.genMQ(ani, _ladmovements[pos]->staticIds[0], 0, 0, 0);
+		mq = _aniHandler.genMQ(ani, _ladmovements[pos]->staticIds[0], 0, 0, 0);
 
 		if (!mq)
 			return 0;
@@ -559,7 +559,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		int nx = ani->_ox;
 		int ny = ani->_oy;
 
-		_mgm.getPoint(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
+		_aniHandler.getPoint(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
 
 		nx += point.x;
 		ny += point.y;
@@ -605,7 +605,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		mgminfo.staticsId1 = _ladmovements[pos]->staticIds[1];
 		mgminfo.movementId = _ladmovements[pos]->movVars->varUpGo;
 
-		mq = _mgm.genMovement(&mgminfo);
+		mq = _aniHandler.genMovement(&mgminfo);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varDownStop, 0, 0, 0, 1, 0, 0, 0);
 		ex->_keyCode = ani->_okeyCode;
@@ -630,7 +630,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 	mgminfo.flags = 14;
 	mgminfo.movementId = _ladmovements[pos]->movVars->varDownGo;
 
-   return _mgm.genMovement(&mgminfo);
+   return _aniHandler.genMovement(&mgminfo);
 }
 
 MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
@@ -806,8 +806,8 @@ bool MovGraph::load(MfcArchive &file) {
 void MovGraph::attachObject(StaticANIObject *obj) {
 	debugC(4, kDebugPathfinding, "MovGraph::attachObject(*%d)", obj->_id);
 
-	_mgm.clear();
-	_mgm.addItem(obj->_id);
+	_aniHandler.clear();
+	_aniHandler.addItem(obj->_id);
 
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->ani == obj)
@@ -819,7 +819,7 @@ void MovGraph::attachObject(StaticANIObject *obj) {
 
 	_items.push_back(item);
 
-	_mgm.addItem(obj->_id); // FIXME: Is it really needed?
+	_aniHandler.addItem(obj->_id); // FIXME: Is it really needed?
 }
 
 int MovGraph::detachObject(StaticANIObject *obj) {
@@ -1008,8 +1008,8 @@ bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
 		Statics *st;
 
 		if (ani->_statics) {
-			int t = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
-			if (t > _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
+			int t = _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
+			if (t > _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
 				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44 + 1]);
 			else
 				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
@@ -1247,7 +1247,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 		if (mq)
 			mgminfo.flags |= 0x31;
 
-		MessageQueue *newmq = _mgm.genMovement(&mgminfo);
+		MessageQueue *newmq = _aniHandler.genMovement(&mgminfo);
 
 		if (mq) {
 			if (newmq) {
@@ -1608,14 +1608,14 @@ bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 	int offmin = 100;
 
 	for (int i = 0; i < arrSize; i++) {
-		int off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
+		int off = _aniHandler.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
 
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
 		}
 
-		off = _mgm.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
+		off = _aniHandler.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
@@ -1689,7 +1689,7 @@ int MovGraph2::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
 
 		for (int i = 0; i < 4; i++) {
 			debugC(1, kDebugPathfinding, "WWW 5");
-			int tmp = _mgm.refreshOffsets(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
+			int tmp = _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
 
 			if (tmp >= 0 && (minidx == -1 || tmp < min)) {
 				minidx = i;
@@ -2023,7 +2023,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				mgminfo.flags = 0x7f;
 				mgminfo.movementId = mg2i->_movementId;
 
-				MessageQueue *mq2 = _mgm.genMovement(&mgminfo);
+				MessageQueue *mq2 = _aniHandler.genMovement(&mgminfo);
 				mq->transferExCommands(mq2);
 
 				delete mq2;
@@ -2504,7 +2504,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 	int a2 = 0;
 	int mgmLen;
 
-	_mgm.calcLength(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
+	_aniHandler.calcLength(&point, _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov, x, y, &mgmLen, &a2, info->flags & 1);
 
 	int x1 = point.x;
 	int y1 = point.y;
@@ -2619,7 +2619,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
-		ex = _mgm.buildExCommand2(
+		ex = _aniHandler.buildExCommand2(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[0]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
@@ -2641,7 +2641,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 		else
 			par = -1;
 
-		ex = _mgm.buildExCommand2(
+		ex = _aniHandler.buildExCommand2(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[1]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
@@ -2655,7 +2655,7 @@ MessageQueue *MovGraph2::genMovement(MovInfo1 *info) {
 	}
 
 	if (!(info->flags & 4)) {
-		ex = _mgm.buildExCommand2(
+		ex = _aniHandler.buildExCommand2(
 								  _items2[info->index]->_subItems[info->subIndex]._walk[2]._mov,
 								  _items2[info->index]->_objectId,
 								  x1,
