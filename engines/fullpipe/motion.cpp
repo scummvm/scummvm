@@ -208,7 +208,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	if (!cp)
 		return 0;
 
-	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->doWalkTo(ani, cp->_connectionX, cp->_connectionY, 1, cp->_mctlmirror);
+	MessageQueue *mq = _motionControllers[idx]->_motionControllerObj->makeQueue(ani, cp->_connectionX, cp->_connectionY, 1, cp->_mctlmirror);
 
 	if (!mq)
 		return 0;
@@ -237,11 +237,11 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 	return mq;
 }
 
-MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	int match1 = -1;
 	int match2 = -1;
 
-	debugC(1, kDebugPathfinding, "MctlCompound::doWalkTo(*%d, %d, %d, %d, %d)", (subj ? subj->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
+	debugC(1, kDebugPathfinding, "MctlCompound::makeQueue(*%d, %d, %d, %d, %d)", (subj ? subj->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
 
 	if (!subj)
 		return 0;
@@ -271,7 +271,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 		return 0;
 
 	if (match1 == match2)
-		return _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
+		return _motionControllers[match1]->_motionControllerObj->makeQueue(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	double dist;
 	MctlConnectionPoint *closestP = findClosestConnectionPoint(subj->_ox, subj->_oy, match1, xpos, ypos, match2, &dist);
@@ -279,7 +279,7 @@ MessageQueue *MctlCompound::doWalkTo(StaticANIObject *subj, int xpos, int ypos, 
 	if (!closestP)
 		return 0;
 
-	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->doWalkTo(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_mctlmirror);
+	MessageQueue *mq = _motionControllers[match1]->_motionControllerObj->makeQueue(subj, closestP->_connectionX, closestP->_connectionY, 1, closestP->_mctlmirror);
 
 	ExCommand *ex;
 
@@ -426,7 +426,7 @@ void MctlLadder::detachAllObjects() {
 MessageQueue *MctlLadder::startMove(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	debugC(4, kDebugPathfinding, "MctlLadder::startMove(*%d, %d, %d, %d, %d)", (subj ? subj->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
 
-	MessageQueue *mq = doWalkTo(subj, xpos, ypos, fuzzyMatch, staticsId);
+	MessageQueue *mq = makeQueue(subj, xpos, ypos, fuzzyMatch, staticsId);
 
 	if (mq) {
 		if (mq->chain(subj))
@@ -436,8 +436,8 @@ MessageQueue *MctlLadder::startMove(StaticANIObject *subj, int xpos, int ypos, i
 	return 0;
 }
 
-MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	debugC(1, kDebugPathfinding, "MctlLadder::doWalkTo(*%d, %d, %d, %d, %d)", (ani ? ani->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
+MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	debugC(1, kDebugPathfinding, "MctlLadder::makeQueue(*%d, %d, %d, %d, %d)", (ani ? ani->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
 
 	int pos = findObjectPos(ani);
 
@@ -476,7 +476,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		ani->_movement = 0;
 		ani->setOXY(point.x + ox, point.y + oy);
 
-		mq = doWalkTo(ani, normx, normy, fuzzyMatch, staticsId);
+		mq = makeQueue(ani, normx, normy, fuzzyMatch, staticsId);
 
 		ani->setPicAniInfo(&picinfo);
 
@@ -570,7 +570,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		ani->_movement = 0;
 		ani->setOXY(nx, ny);
 
-		MessageQueue *newmq = doWalkTo(ani, normx, normy, fuzzyMatch, staticsId);
+		MessageQueue *newmq = makeQueue(ani, normx, normy, fuzzyMatch, staticsId);
 
 		mq->mergeQueue(newmq);
 
@@ -634,7 +634,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 }
 
 MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
-	return doWalkTo(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
+	return makeQueue(ani, _ladderX + off * _width, _ladderY + off * _height, 1, 0);
 }
 
 MctlConnectionPoint *MctlCompound::findClosestConnectionPoint(int ox, int oy, int destIndex, int connectionX, int connectionY, int sourceIdx, double *minDistancePtr) {
@@ -1051,8 +1051,8 @@ bool MovGraph::canDropInventory(StaticANIObject *ani, int x, int y) {
 	return false;
 }
 
-MessageQueue *MovGraph::doWalkTo(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
-	debugC(1, kDebugPathfinding, "MovGraph::doWalkTo(*%d, %d, %d, %d, %d)", (subj ? subj->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
+MessageQueue *MovGraph::makeQueue(StaticANIObject *subj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+	debugC(1, kDebugPathfinding, "MovGraph::makeQueue(*%d, %d, %d, %d, %d)", (subj ? subj->_id : -1), xpos, ypos, fuzzyMatch, staticsId);
 
 	PicAniInfo picAniInfo;
 	int ss;
@@ -1657,7 +1657,7 @@ void MovGraph::setEnds(MovStep *step1, MovStep *step2) {
 	}
 }
 
-int MctlGraph::getItemIndexByGameObjectId(int objectId) {
+int MctlGraph::getObjIndex(int objectId) {
 	for (uint i = 0; i < _items2.size(); i++)
 		if (_items2[i]->_objectId == objectId)
 			return i;
@@ -1665,7 +1665,7 @@ int MctlGraph::getItemIndexByGameObjectId(int objectId) {
 	return -1;
 }
 
-int MctlGraph::getItemSubIndexByStaticsId(int idx, int staticsId) {
+int MctlGraph::getDirByStatics(int idx, int staticsId) {
 	for (int i = 0; i < 4; i++)
 		if (_items2[idx]->_subItems[i]._staticsId1 == staticsId || _items2[idx]->_subItems[i]._staticsId2 == staticsId)
 			return i;
@@ -1673,7 +1673,7 @@ int MctlGraph::getItemSubIndexByStaticsId(int idx, int staticsId) {
 	return -1;
 }
 
-int MctlGraph::getItemSubIndexByMovementId(int idx, int movId) {
+int MctlGraph::getDirByMovement(int idx, int movId) {
 	for (int i = 0; i < 4; i++)
 		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId || _items2[idx]->_subItems[i]._turn[0]._movementId == movId ||
 			_items2[idx]->_subItems[i]._turnS[0]._movementId == movId)
@@ -1682,8 +1682,8 @@ int MctlGraph::getItemSubIndexByMovementId(int idx, int movId) {
 	return -1;
 }
 
-int MctlGraph::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
-	if (findNode(ani->_ox, ani->_oy, 0) || findLink1(ani->_ox, ani->_oy, -1, 0) || findLink2(ani->_ox, ani->_oy)) {
+int MctlGraph::getDirByPoint(int index, StaticANIObject *ani) {
+	if (getHitNode(ani->_ox, ani->_oy, 0) || getHitLink(ani->_ox, ani->_oy, -1, 0) || getNearestLink(ani->_ox, ani->_oy)) {
 		int minidx = -1;
 		int min = 0;
 
@@ -1703,8 +1703,8 @@ int MctlGraph::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
 	return -1;
 }
 
-bool MctlGraph::initDirections(StaticANIObject *obj, MctlGraphItem *item) {
-	debugC(4, kDebugPathfinding, "MovGraph::initDirections(%d, ...)", obj->_id);
+bool MctlGraph::fillData(StaticANIObject *obj, MctlGraphItem *item) {
+	debugC(4, kDebugPathfinding, "MovGraph::fillData(%d, ...)", obj->_id);
 
 	item->_obj = obj;
 	item->_objectId = obj->_id;
@@ -1839,14 +1839,14 @@ void MctlGraph::attachObject(StaticANIObject *obj) {
 
 	MovGraph::attachObject(obj);
 
-	int id = getItemIndexByGameObjectId(obj->_id);
+	int id = getObjIndex(obj->_id);
 
 	if (id >= 0) {
 		_items2[id]->_obj = obj;
 	} else {
 		MctlGraphItem *item = new MctlGraphItem;
 
-		if (initDirections(obj, item)) {
+		if (fillData(obj, item)) {
 			_items2.push_back(item);
 		} else {
 			delete item;
@@ -1854,8 +1854,8 @@ void MctlGraph::attachObject(StaticANIObject *obj) {
 	}
 }
 
-void MctlGraph::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
-	debugC(4, kDebugPathfinding, "MctlGraph::buildMovInfo1SubItems(...)");
+void MctlGraph::generateList(MovInfo1 *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst) {
+	debugC(4, kDebugPathfinding, "MctlGraph::generateList(...)");
 
 	MovInfo1Sub *elem;
 	Common::Point point;
@@ -1880,9 +1880,9 @@ void MctlGraph::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 
 		if (linkList->size() <= 1) {
 			if (linkList->size() == 1)
-				idx1 = getShortSide((*linkList)[0], movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+				idx1 = getDirBySize((*linkList)[0], movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
 			else
-				idx1 = getShortSide(0, movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
+				idx1 = getDirBySize(0, movinfo->pt2.x - movinfo->pt1.x, movinfo->pt2.y - movinfo->pt1.y);
 
 			point.y = -1;
 			rect.bottom = -1;
@@ -1890,7 +1890,7 @@ void MctlGraph::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 			rect.top = -1;
 			rect.left = -1;
 		} else {
-			idx1 = findLink(linkList, i, &rect, &point);
+			idx1 = getLinkDir(linkList, i, &rect, &point);
 		}
 
 		if (idx1 != prevSubIndex) {
@@ -1909,9 +1909,9 @@ void MctlGraph::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 		if (i != linkList->size() - 1) {
 			while (1) {
 				i++;
-				if (findLink(linkList, i, &rect, 0) != prevSubIndex) {
+				if (getLinkDir(linkList, i, &rect, 0) != prevSubIndex) {
 					i--;
-					findLink(linkList, i, &rect, &point);
+					getLinkDir(linkList, i, &rect, &point);
 
 					break;
 				}
@@ -1965,8 +1965,8 @@ void MctlGraph::buildMovInfo1SubItems(MovInfo1 *movinfo, Common::Array<MovGraphL
 	movinfo->itemsCount = movinfo->items.size();
 }
 
-MessageQueue *MctlGraph::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
-	debugC(4, kDebugPathfinding, "MctlGraph::buildMovInfo1MessageQueue(...)");
+MessageQueue *MctlGraph::makeWholeQueue(MovInfo1 *movInfo) {
+	debugC(4, kDebugPathfinding, "MctlGraph::makeWholeQueue(...)");
 
 	MovInfo1 movinfo(movInfo);
 
@@ -2074,7 +2074,7 @@ MessageQueue *MctlGraph::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 
 			i++; // intentional
 
-			MessageQueue *mq2 = genMovement(&movinfo);
+			MessageQueue *mq2 = makeLineQueue(&movinfo);
 
 			if (!mq2) {
 				delete mq;
@@ -2122,7 +2122,7 @@ MessageQueue *MctlGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int
 		return 0;
 
 	debugC(1, kDebugPathfinding, "WWW 3");
-	MessageQueue *mq = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+	MessageQueue *mq = makeQueue(ani, xpos, ypos, fuzzyMatch, staticsId);
 
 	if (!mq)
 		return 0;
@@ -2133,7 +2133,7 @@ MessageQueue *MctlGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int
 
 			ani->getPicAniInfo(&picAniInfo);
 			ani->updateStepPos();
-			MessageQueue *mq1 = doWalkTo(ani, xpos, ypos, fuzzyMatch, staticsId);
+			MessageQueue *mq1 = makeQueue(ani, xpos, ypos, fuzzyMatch, staticsId);
 
 			ani->setPicAniInfo(&picAniInfo);
 
@@ -2156,16 +2156,16 @@ MessageQueue *MctlGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int
 	return mq;
 }
 
-MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
+MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int fuzzyMatch, int staticsId) {
 	LinkInfo linkInfoDest;
 	LinkInfo linkInfoSource;
 	MovInfo1 movInfo1;
 	PicAniInfo picAniInfo;
 	Common::Point point;
 
-	debugC(1, kDebugPathfinding, "MctlGraph::doWalkTo(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
+	debugC(1, kDebugPathfinding, "MctlGraph::makeQueue(%d, %d, %d, %d, %d)", obj->_id, xpos, ypos, fuzzyMatch, staticsId);
 
-	int idx = getItemIndexByGameObjectId(obj->_id);
+	int idx = getObjIndex(obj->_id);
 
 	if (idx < 0)
 		return 0;
@@ -2183,15 +2183,15 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	int idxsub;
 
 	if (obj->_movement)
-		idxsub = getItemSubIndexByMovementId(idx, obj->_movement->_id);
+		idxsub = getDirByMovement(idx, obj->_movement->_id);
 	else
-		idxsub = getItemSubIndexByStaticsId(idx, obj->_statics->_staticsId);
+		idxsub = getDirByStatics(idx, obj->_statics->_staticsId);
 
 	bool subMgm = false;
 
 	if (idxsub == -1) {
 		debugC(1, kDebugPathfinding, "WWW 4");
-		idxsub = getItemSubIndexByMGM(idx, obj);
+		idxsub = getDirByPoint(idx, obj);
 		subMgm = true;
 
 		if (idxsub == -1)
@@ -2229,7 +2229,7 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		MessageQueue *mq = new MessageQueue();
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
-			int idxwalk = getItemSubIndexByStaticsId(idx, staticsId);
+			int idxwalk = getDirByStatics(idx, staticsId);
 			if (idxwalk == -1) {
 				obj->setPicAniInfo(&picAniInfo);
 
@@ -2265,13 +2265,13 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		return mq;
 	}
 
-	linkInfoSource.node = findNode(obj->_ox, obj->_oy, 0);
+	linkInfoSource.node = getHitNode(obj->_ox, obj->_oy, 0);
 
 	if (!linkInfoSource.node) {
-		linkInfoSource.link = findLink1(obj->_ox, obj->_oy, idxsub, 0);
+		linkInfoSource.link = getHitLink(obj->_ox, obj->_oy, idxsub, 0);
 
 		if (!linkInfoSource.link) {
-			linkInfoSource.link = findLink2(obj->_ox, obj->_oy);
+			linkInfoSource.link = getNearestLink(obj->_ox, obj->_oy);
 
 			if (!linkInfoSource.link) {
 				obj->setPicAniInfo(&picAniInfo);
@@ -2281,10 +2281,10 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 		}
 	}
 
-	linkInfoDest.node = findNode(xpos, ypos, fuzzyMatch);
+	linkInfoDest.node = getHitNode(xpos, ypos, fuzzyMatch);
 
 	if (!linkInfoDest.node) {
-		linkInfoDest.link = findLink1(xpos, ypos, idxsub, fuzzyMatch);
+		linkInfoDest.link = getHitLink(xpos, ypos, idxsub, fuzzyMatch);
 
 		if (!linkInfoDest.link) {
 			obj->setPicAniInfo(&picAniInfo);
@@ -2294,9 +2294,9 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	}
 
 	Common::Array<MovGraphLink *> tempLinkList;
-	double minPath = findMinPath(&linkInfoSource, &linkInfoDest, &tempLinkList);
+	double minPath = iterate(&linkInfoSource, &linkInfoDest, &tempLinkList);
 
-	debugC(0, kDebugPathfinding, "MctlGraph::doWalkTo(): path: %g  parts: %d", minPath, tempLinkList.size());
+	debugC(0, kDebugPathfinding, "MctlGraph::makeQueue(): path: %g  parts: %d", minPath, tempLinkList.size());
 
 	if (minPath < 0.0 || ((linkInfoSource.node != linkInfoDest.node || !linkInfoSource.node) && !tempLinkList.size()))
 		return 0;
@@ -2343,14 +2343,14 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	}
 
 	if (staticsId) {
-		movInfo1.item1Index = getItemSubIndexByStaticsId(idx, staticsId);
+		movInfo1.item1Index = getDirByStatics(idx, staticsId);
 	} else if (tempLinkList.size() <= 1) {
 		if (tempLinkList.size() == 1)
-			movInfo1.item1Index = getShortSide(tempLinkList[0], dx2 - dx1, dy2 - dy1);
+			movInfo1.item1Index = getDirBySize(tempLinkList[0], dx2 - dx1, dy2 - dy1);
 		else
-			movInfo1.item1Index = getShortSide(0, dx2 - dx1, dy2 - dy1);
+			movInfo1.item1Index = getDirBySize(0, dx2 - dx1, dy2 - dy1);
 	} else {
-		movInfo1.item1Index = findLink(&tempLinkList, tempLinkList.size() - 1, 0, 0);
+		movInfo1.item1Index = getLinkDir(&tempLinkList, tempLinkList.size() - 1, 0, 0);
 	}
 
 	movInfo1.flags = fuzzyMatch != 0;
@@ -2358,14 +2358,14 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	if (_items2[idx]->_subItems[idxsub]._staticsId1 != obj->_statics->_staticsId)
 		movInfo1.flags |= 2;
 
-	buildMovInfo1SubItems(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
+	generateList(&movInfo1, &tempLinkList, &linkInfoSource, &linkInfoDest);
 
-	MessageQueue *mq = buildMovInfo1MessageQueue(&movInfo1);
+	MessageQueue *mq = makeWholeQueue(&movInfo1);
 
-	linkInfoDest.node = findNode(movInfo1.pt2.x, movInfo1.pt2.y, fuzzyMatch);
+	linkInfoDest.node = getHitNode(movInfo1.pt2.x, movInfo1.pt2.y, fuzzyMatch);
 
 	if (!linkInfoDest.node)
-		linkInfoDest.link = findLink1(movInfo1.pt2.x, movInfo1.pt2.y, movInfo1.item1Index, fuzzyMatch);
+		linkInfoDest.link = getHitLink(movInfo1.pt2.x, movInfo1.pt2.y, movInfo1.item1Index, fuzzyMatch);
 
 	if (fuzzyMatch || linkInfoDest.link || linkInfoDest.node) {
 		if (mq && mq->getCount() > 0 && picAniInfo.movementId) {
@@ -2400,7 +2400,7 @@ MessageQueue *MctlGraph::doWalkTo(StaticANIObject *obj, int xpos, int ypos, int 
 	return mq;
 }
 
-MovGraphNode *MctlGraph::findNode(int x, int y, int fuzzyMatch) {
+MovGraphNode *MctlGraph::getHitNode(int x, int y, int fuzzyMatch) {
 	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
 
@@ -2418,7 +2418,7 @@ MovGraphNode *MctlGraph::findNode(int x, int y, int fuzzyMatch) {
 	return 0;
 }
 
-int MctlGraph::getShortSide(MovGraphLink *lnk, int x, int y) {
+int MctlGraph::getDirBySize(MovGraphLink *lnk, int x, int y) {
 	bool cond;
 
 	if (lnk)
@@ -2432,8 +2432,8 @@ int MctlGraph::getShortSide(MovGraphLink *lnk, int x, int y) {
 		return ((y > 0) + 2);
 }
 
-int MctlGraph::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *rect, Common::Point *point) {
-	debugC(4, kDebugPathfinding, "MctlGraph::findLink(...)");
+int MctlGraph::getLinkDir(Common::Array<MovGraphLink *> *linkList, int idx, Common::Rect *rect, Common::Point *point) {
+	debugC(4, kDebugPathfinding, "MctlGraph::getLinkDir(...)");
 
 	MovGraphNode *node1 = (*linkList)[idx]->_graphSrc;
 	MovGraphNode *node2 = (*linkList)[idx]->_graphDst;
@@ -2481,8 +2481,8 @@ int MctlGraph::findLink(Common::Array<MovGraphLink *> *linkList, int idx, Common
 		return node3->_x >= node2->_x;
 }
 
-MessageQueue *MctlGraph::genMovement(MovInfo1 *info) {
-	debugC(4, kDebugPathfinding, "MctlGraph::genMovement(...)");
+MessageQueue *MctlGraph::makeLineQueue(MovInfo1 *info) {
+	debugC(4, kDebugPathfinding, "MctlGraph::makeLineQueue(...)");
 
 	int mx1 = 0;
 	int my1 = 0;
@@ -2684,8 +2684,8 @@ MessageQueue *MctlGraph::genMovement(MovInfo1 *info) {
 	return mq;
 }
 
-MovGraphLink *MctlGraph::findLink1(int x, int y, int idx, int fuzzyMatch) {
-	debugC(4, kDebugPathfinding, "MctlGraph::findLink1(...)");
+MovGraphLink *MctlGraph::getHitLink(int x, int y, int idx, int fuzzyMatch) {
+	debugC(4, kDebugPathfinding, "MctlGraph::getHitLink(...)");
 
 	Common::Point point;
 	MovGraphLink *res = 0;
@@ -2720,8 +2720,8 @@ MovGraphLink *MctlGraph::findLink1(int x, int y, int idx, int fuzzyMatch) {
 	return res;
 }
 
-MovGraphLink *MctlGraph::findLink2(int x, int y) {
-	debugC(4, kDebugPathfinding, "MctlGraph::findLink2(...)");
+MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
+	debugC(4, kDebugPathfinding, "MctlGraph::getNearestLink(...)");
 
 	double mindist = 1.0e20;
 	MovGraphLink *res = 0;
@@ -2764,8 +2764,8 @@ MovGraphLink *MctlGraph::findLink2(int x, int y) {
 		return 0;
 }
 
-double MctlGraph::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj) {
-	debugC(4, kDebugPathfinding, "MctlGraph::findMinPath(...)");
+double MctlGraph::iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj) {
+	debugC(4, kDebugPathfinding, "MctlGraph::iterate(...)");
 
 	LinkInfo linkInfoWorkSource;
 
@@ -2784,7 +2784,7 @@ double MctlGraph::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 
 					lnk->_flags |= 0x80000000;
 
-					double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+					double newDistance = iterate(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
 					if (newDistance >= 0.0 && (minDistance < 0.0 || newDistance + lnk->_length < minDistance)) {
 						listObj->clear();
@@ -2802,7 +2802,7 @@ double MctlGraph::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 
 			Common::Array<MovGraphLink *> tmpList;
 
-			double newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+			double newDistance = iterate(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
 			if (newDistance >= 0.0) {
 				listObj->clear();
@@ -2818,7 +2818,7 @@ double MctlGraph::findMinPath(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, 
 
 			tmpList.clear();
 
-			newDistance = findMinPath(&linkInfoWorkSource, linkInfoDest, &tmpList);
+			newDistance = iterate(&linkInfoWorkSource, linkInfoDest, &tmpList);
 
 			if (newDistance >= 0 && (minDistance < 0.0 || newDistance < minDistance)) {
 				listObj->clear();
