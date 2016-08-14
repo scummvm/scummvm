@@ -33,10 +33,10 @@ void AniHandler::clear() {
 	_items.clear();
 }
 
-MessageQueue *AniHandler::genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
-	debugC(4, kDebugPathfinding, "AniHandler::genMQ(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
+MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr) {
+	debugC(4, kDebugPathfinding, "AniHandler::makeQueue(*%d, %d, %d, res, point)", ani->_id, staticsIndex, staticsId);
 
-	int idx = getItemIndexById(ani->_id);
+	int idx = getIndex(ani->_id);
 
 	if (idx == -1)
 		return 0;
@@ -62,8 +62,8 @@ MessageQueue *AniHandler::genMQ(StaticANIObject *ani, int staticsIndex, int stat
 	int subidx = startidx + endidx * _items[idx]->statics.size();
 
 	if (!_items[idx]->subItems[subidx]->movement) {
-		clearMovements2(idx);
-		recalcOffsets(idx, startidx, endidx, 0, 1);
+		clearVisitsList(idx);
+		seekWay(idx, startidx, endidx, 0, 1);
 	}
 
 	if (!_items[idx]->subItems[subidx]->movement)
@@ -134,22 +134,22 @@ MGMSubItem::MGMSubItem() {
 void AniHandler::attachObject(int objId) {
 	debugC(4, kDebugPathfinding, "AniHandler::addItem(%d)", objId);
 
-	if (getItemIndexById(objId) == -1) {
+	if (getIndex(objId) == -1) {
 		MGMItem *item = new MGMItem();
 
 		item->objId = objId;
 		_items.push_back(item);
 	}
-	rebuildTables(objId);
+	resetData(objId);
 }
 
-void AniHandler::rebuildTables(int objId) {
-	int idx = getItemIndexById(objId);
+void AniHandler::resetData(int objId) {
+	int idx = getIndex(objId);
 
 	if (idx == -1)
 		return;
 
-	debugC(3, kDebugPathfinding, "AniHandler::rebuildTables. (1) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::resetData. (1) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 
 	_items[idx]->subItems.clear();
 	_items[idx]->statics.clear();
@@ -174,10 +174,10 @@ void AniHandler::rebuildTables(int objId) {
 		_items[idx]->movements2.push_back(0);
 	}
 
-	debugC(3, kDebugPathfinding, "AniHandler::rebuildTables. (2) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::resetData. (2) movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
-int AniHandler::getItemIndexById(int objId) {
+int AniHandler::getIndex(int objId) {
 	for (uint i = 0; i < _items.size(); i++)
 		if (_items[i]->objId == objId)
 			return i;
@@ -229,7 +229,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 		return 0;
 
 
-	int itemIdx = getItemIndexById(mkQueue->ani->_id);
+	int itemIdx = getIndex(mkQueue->ani->_id);
 	int subIdx = getStaticsIndexById(itemIdx, mkQueue->staticsId1);
 	int st2idx = getStaticsIndexById(itemIdx, mov->_staticsObj1->_staticsId);
 	int st1idx = getStaticsIndexById(itemIdx, mov->_staticsObj2->_staticsId);
@@ -237,10 +237,10 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 	debugC(3, kDebugPathfinding, "AniHandler::genMovement. (1) movements1 sz: %d movements2 sz: %d", _items[itemIdx]->movements1.size(), _items[itemIdx]->movements2.size());
 
-	clearMovements2(itemIdx);
-	recalcOffsets(itemIdx, subIdx, st2idx, 0, 1);
-	clearMovements2(itemIdx);
-	recalcOffsets(itemIdx, st1idx, subOffset, 0, 1);
+	clearVisitsList(itemIdx);
+	seekWay(itemIdx, subIdx, st2idx, 0, 1);
+	clearVisitsList(itemIdx);
+	seekWay(itemIdx, st1idx, subOffset, 0, 1);
 
 	MGMSubItem *sub1 = _items[itemIdx]->subItems[subIdx + st2idx * _items[itemIdx]->statics.size()];
 	MGMSubItem *sub2 = _items[itemIdx]->subItems[st1idx + subOffset * _items[itemIdx]->statics.size()];
@@ -292,8 +292,8 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	int py = 0;
 
 	if (sub1->movement) {
-		px = countPhases(itemIdx, subIdx, st2idx, 1);
-		py = countPhases(itemIdx, subIdx, st2idx, 2);
+		px = getFramesCount(itemIdx, subIdx, st2idx, 1);
+		py = getFramesCount(itemIdx, subIdx, st2idx, 2);
 	}
 
 	if (mult > 1) {
@@ -307,8 +307,8 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	}
 
 	if (sub2->movement) {
-		px += countPhases(itemIdx, st1idx, subOffset, 1);
-		py += countPhases(itemIdx, st1idx, subOffset, 2);
+		px += getFramesCount(itemIdx, st1idx, subOffset, 1);
+		py += getFramesCount(itemIdx, st1idx, subOffset, 2);
 	}
 
 	int dx1 = n1x - n2x;
@@ -398,7 +398,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	return mq;
 }
 
-int AniHandler::countPhases(int idx, int subIdx, int endIdx, int flag) {
+int AniHandler::getFramesCount(int idx, int subIdx, int endIdx, int flag) {
 	int res = 0;
 
 	if (endIdx < 0)
@@ -418,7 +418,7 @@ int AniHandler::countPhases(int idx, int subIdx, int endIdx, int flag) {
 void AniHandler::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	debugC(4, kDebugPathfinding, "AniHandler::updateAnimStatics(*%d, %d)", ani->_id, staticsId);
 
-	if (getItemIndexById(ani->_id) == -1)
+	if (getIndex(ani->_id) == -1)
 		return;
 
 	if (ani->_movement) {
@@ -437,7 +437,7 @@ void AniHandler::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	if (ani->_statics) {
 		Common::Point point;
 
-		getPoint(&point, ani->_id, ani->_statics->_staticsId, staticsId);
+		getTransitionSize(&point, ani->_id, ani->_statics->_staticsId, staticsId);
 
 		ani->setOXY(ani->_ox + point.x, ani->_oy + point.y);
 
@@ -445,10 +445,10 @@ void AniHandler::updateAnimStatics(StaticANIObject *ani, int staticsId) {
 	}
 }
 
-Common::Point *AniHandler::getPoint(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
-	debugC(4, kDebugPathfinding, "AniHandler::getPoint([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
+Common::Point *AniHandler::getTransitionSize(Common::Point *point, int objectId, int staticsId1, int staticsId2) {
+	debugC(4, kDebugPathfinding, "AniHandler::getTransitionSize([%d, %d], %d, %d, %d)", point->x, point->y, objectId, staticsId1, staticsId2);
 
-	int idx = getItemIndexById(objectId);
+	int idx = getIndex(objectId);
 
 	if (idx == -1) {
 		point->x = -1;
@@ -464,12 +464,12 @@ Common::Point *AniHandler::getPoint(Common::Point *point, int objectId, int stat
 			int subidx = st1idx + st2idx * _items[idx]->statics.size();
 
 			if (!_items[idx]->subItems[subidx]->movement) {
-				clearMovements2(idx);
-				recalcOffsets(idx, st1idx, st2idx, false, true);
+				clearVisitsList(idx);
+				seekWay(idx, st1idx, st2idx, false, true);
 
 				if (!_items[idx]->subItems[subidx]->movement) {
-					clearMovements2(idx);
-					recalcOffsets(idx, st1idx, st2idx, true, false);
+					clearVisitsList(idx);
+					seekWay(idx, st1idx, st2idx, true, false);
 				}
 			}
 
@@ -512,20 +512,20 @@ int AniHandler::getStaticsIndex(int idx, Statics *st) {
 	return -1;
 }
 
-void AniHandler::clearMovements2(int idx) {
-	debugC(2, kDebugPathfinding, "AniHandler::clearMovements2(%d)", idx);
+void AniHandler::clearVisitsList(int idx) {
+	debugC(2, kDebugPathfinding, "AniHandler::clearVisitsList(%d)", idx);
 
 	for (uint i = 0; i < _items[idx]->movements2.size(); i++)
 		_items[idx]->movements2[i] = 0;
 
-	debugC(3, kDebugPathfinding, "AniHandler::clearMovements2. movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::clearVisitsList. movements1 sz: %d movements2 sz: %d", _items[idx]->movements1.size(), _items[idx]->movements2.size());
 }
 
-int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop) {
+int AniHandler::seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop) {
 	MGMItem *item = _items[idx];
 	int subIdx = st1idx + st2idx * item->statics.size();
 
-	debugC(2, kDebugPathfinding, "AniHandler::recalcOffsets(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
+	debugC(2, kDebugPathfinding, "AniHandler::seekWay(%d, %d, %d, %d, %d)", idx, st1idx, st2idx, flip, flop);
 
 	if (st1idx == st2idx) {
 		memset(item->subItems[subIdx], 0, sizeof(*(item->subItems[subIdx])));
@@ -537,7 +537,7 @@ int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool f
 
 	Common::Point point;
 
-	debugC(3, kDebugPathfinding, "AniHandler::recalcOffsets. movements1 sz: %d movements2 sz: %d", item->movements1.size(), item->movements2.size());
+	debugC(3, kDebugPathfinding, "AniHandler::seekWay. movements1 sz: %d movements2 sz: %d", item->movements1.size(), item->movements2.size());
 
 	for (uint i = 0; i < item->movements1.size(); i++) {
 		Movement *mov = item->movements1[i];
@@ -549,9 +549,9 @@ int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool f
 			item->movements2[i] = 1;
 
 			int stidx = getStaticsIndex(idx, mov->_staticsObj2);
-			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
 			int sz = mov->_currMovement ? mov->_currMovement->_dynamicPhases.size() : mov->_dynamicPhases.size();
-			debugC(1, kDebugPathfinding, "AniHandler::recalcOffsets, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx]->statics.size(), stidx, st2idx, item->subItems.size());
+			debugC(1, kDebugPathfinding, "AniHandler::seekWay, want idx: %d, off: %d (%d + %d), sz: %d", idx, stidx + st2idx * _items[idx]->statics.size(), stidx, st2idx, item->subItems.size());
 
 			int newsz = sz + item->subItems[stidx + st2idx * _items[idx]->statics.size()]->field_C;
 
@@ -580,7 +580,7 @@ int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool f
 			item->movements2[i] = 1;
 
 			int stidx = getStaticsIndex(idx, mov->_staticsObj1);
-			int recalc = recalcOffsets(idx, stidx, st2idx, flip, flop);
+			int recalc = seekWay(idx, stidx, st2idx, flip, flop);
 
 			if (recalc < 0)
 				continue;
@@ -608,10 +608,10 @@ int AniHandler::recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool f
 	return -1;
 }
 
-int AniHandler::refreshOffsets(int objectId, int idx1, int idx2) {
-	debugC(4, kDebugPathfinding, "AniHandler::refreshOffsets(%d, %d, %d)", objectId, idx1, idx2);
+int AniHandler::getNumMovements(int objectId, int idx1, int idx2) {
+	debugC(4, kDebugPathfinding, "AniHandler::getNumMovements(%d, %d, %d)", objectId, idx1, idx2);
 
-	int idx = getItemIndexById(objectId);
+	int idx = getIndex(objectId);
 
 	if (idx != -1) {
 		int from = getStaticsIndexById(idx, idx1);
@@ -623,8 +623,8 @@ int AniHandler::refreshOffsets(int objectId, int idx1, int idx2) {
 		if (sub->movement) {
 			idx = sub->field_8;
 		} else {
-			clearMovements2(idx);
-			idx = recalcOffsets(idx, from, to, 0, 1);
+			clearVisitsList(idx);
+			idx = seekWay(idx, from, to, 0, 1);
 		}
 	}
 

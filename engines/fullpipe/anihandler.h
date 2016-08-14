@@ -73,21 +73,21 @@ public:
 public:
 	void clear();
 	void attachObject(int objId);
-	void rebuildTables(int objId);
-	int getItemIndexById(int objId);
+	void resetData(int objId);
+	int getIndex(int objId);
 
 	MessageQueue *makeRunQueue(MakeQueueStruct *mkQueue);
 	void updateAnimStatics(StaticANIObject *ani, int staticsId);
-	Common::Point *getPoint(Common::Point *point, int aniId, int staticsId1, int staticsId2);
+	Common::Point *getTransitionSize(Common::Point *point, int aniId, int staticsId1, int staticsId2);
 	int getStaticsIndexById(int idx, int16 id);
 	int getStaticsIndex(int idx, Statics *st);
-	void clearMovements2(int idx);
-	int recalcOffsets(int idx, int st1idx, int st2idx, bool flip, bool flop);
+	void clearVisitsList(int idx);
+	int seekWay(int idx, int st1idx, int st2idx, bool flip, bool flop);
 	Common::Point *calcLength(Common::Point *point, Movement *mov, int x, int y, int *mult, int *len, int flag);
 	ExCommand2 *buildExCommand2(Movement *mov, int objId, int x1, int y1, Common::Point *x2, Common::Point *y2, int len);
-	MessageQueue *genMQ(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
-	int countPhases(int idx, int subIdx, int subOffset, int flag);
-	int refreshOffsets(int objectId, int idx1, int idx2);
+	MessageQueue *makeQueue(StaticANIObject *ani, int staticsIndex, int staticsId, int *resStatId, Common::Point **pointArr);
+	int getFramesCount(int idx, int subIdx, int subOffset, int flag);
+	int getNumMovements(int objectId, int idx1, int idx2);
 };
 
 } // End of namespace Fullpipe

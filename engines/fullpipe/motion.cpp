@@ -551,7 +551,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 	}
 
 	if (ani->_statics->_staticsId != _ladmovements[pos]->staticIds[3]) {
-		mq = _aniHandler.genMQ(ani, _ladmovements[pos]->staticIds[0], 0, 0, 0);
+		mq = _aniHandler.makeQueue(ani, _ladmovements[pos]->staticIds[0], 0, 0, 0);
 
 		if (!mq)
 			return 0;
@@ -559,7 +559,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 		int nx = ani->_ox;
 		int ny = ani->_oy;
 
-		_aniHandler.getPoint(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
+		_aniHandler.getTransitionSize(&point, ani->_id, ani->_statics->_staticsId, _ladmovements[pos]->staticIds[0]);
 
 		nx += point.x;
 		ny += point.y;
@@ -572,7 +572,7 @@ MessageQueue *MctlLadder::doWalkTo(StaticANIObject *ani, int xpos, int ypos, int
 
 		MessageQueue *newmq = doWalkTo(ani, normx, normy, fuzzyMatch, staticsId);
 
-		mq->transferExCommands(newmq);
+		mq->mergeQueue(newmq);
 
 		delete newmq;
 
@@ -1008,8 +1008,8 @@ bool MovGraph::resetPosition(StaticANIObject *ani, int flag) {
 		Statics *st;
 
 		if (ani->_statics) {
-			int t = _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
-			if (t > _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
+			int t = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44]);
+			if (t > _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, movarr._link->_dwordArray2[_field_44 + 1]))
 				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44 + 1]);
 			else
 				st = ani->getStaticsById(movarr._link->_dwordArray2[_field_44]);
@@ -1251,7 +1251,7 @@ MessageQueue *MovGraph::makeWholeQueue(StaticANIObject *ani, MovArr *movarr, int
 
 		if (mq) {
 			if (newmq) {
-				mq->transferExCommands(newmq);
+				mq->mergeQueue(newmq);
 
 				delete newmq;
 			}
@@ -1608,14 +1608,14 @@ bool MovGraph::getHitPoint(int idx, int x, int y, MovArr *arr, int a6) {
 	int offmin = 100;
 
 	for (int i = 0; i < arrSize; i++) {
-		int off = _aniHandler.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
+		int off = _aniHandler.getNumMovements(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44]);
 
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
 		}
 
-		off = _aniHandler.refreshOffsets(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
+		off = _aniHandler.getNumMovements(_items[idx]->ani->_id, staticsId, (*movarr)[i]->_link->_dwordArray2[_field_44 + 1]);
 		if (off < offmin) {
 			offmin = off;
 			idxmin = i;
@@ -1689,7 +1689,7 @@ int MovGraph2::getItemSubIndexByMGM(int index, StaticANIObject *ani) {
 
 		for (int i = 0; i < 4; i++) {
 			debugC(1, kDebugPathfinding, "WWW 5");
-			int tmp = _aniHandler.refreshOffsets(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
+			int tmp = _aniHandler.getNumMovements(ani->_id, ani->_statics->_staticsId, _items2[index]->_subItems[i]._staticsId1);
 
 			if (tmp >= 0 && (minidx == -1 || tmp < min)) {
 				minidx = i;
@@ -2024,7 +2024,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				mkQueue.movementId = mg2i->_movementId;
 
 				MessageQueue *mq2 = _aniHandler.makeRunQueue(&mkQueue);
-				mq->transferExCommands(mq2);
+				mq->mergeQueue(mq2);
 
 				delete mq2;
 
@@ -2078,7 +2078,7 @@ MessageQueue *MovGraph2::buildMovInfo1MessageQueue(MovInfo1 *movInfo) {
 				return 0;
 			}
 
-			mq->transferExCommands(mq2);
+			mq->mergeQueue(mq2);
 
 			delete mq2;
 

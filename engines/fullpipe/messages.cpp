@@ -457,7 +457,7 @@ void MessageQueue::deleteExCommandByIndex(uint idx, bool doFree) {
 	_exCommands.erase(it);
 }
 
-void MessageQueue::transferExCommands(MessageQueue *mq) {
+void MessageQueue::mergeQueue(MessageQueue *mq) { // Original belongs to AniHandler
 	while (mq->_exCommands.size()) {
 		_exCommands.push_back(mq->_exCommands.front());
 		mq->_exCommands.pop_front();
