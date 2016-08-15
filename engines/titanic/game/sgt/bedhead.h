@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CBedhead : public CSGTStateRoom {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 public:
 	CLASSDEF;
 

@@ -69,11 +69,11 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_startFrame2 = 40;
 	_endFrame2 = 68;
 	_field140 = 1;
-	_field144 = 0;
+	_mailP = nullptr;
 	_startFrame5 = 0;
 	_endFrame5 = 0;
-	_field150 = 0xE0;
-	_field154 = 0;
+	_startFrame12 = 224;
+	_endFrame12 = 248;
 	_field158 = 0;
 	_field15C = 0;
 	_string2 = "NULL";
@@ -124,8 +124,8 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_startFrame5, indent);
 	file->writeNumberLine(_endFrame5, indent);
-	file->writeNumberLine(_field150, indent);
-	file->writeNumberLine(_field154, indent);
+	file->writeNumberLine(_startFrame12, indent);
+	file->writeNumberLine(_endFrame12, indent);
 	file->writeNumberLine(_field158, indent);
 	file->writeNumberLine(_field15C, indent);
 
@@ -188,8 +188,8 @@ void CSuccUBus::load(SimpleFile *file) {
 	_v2 = file->readNumber();
 	_startFrame5 = file->readNumber();
 	_endFrame5 = file->readNumber();
-	_field150 = file->readNumber();
-	_field154 = file->readNumber();
+	_startFrame12 = file->readNumber();
+	_endFrame12 = file->readNumber();
 	_field158 = file->readNumber();
 	_field15C = file->readNumber();
 
@@ -238,12 +238,12 @@ bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			CTurnOn onMsg;
 			onMsg.execute(this);
 			_enabled = true;
-		} else if (getNewRandomNumber(256) < 130) {
+		} else if (getRandomNumber(256) < 130) {
 			_enabled = false;
 			CTurnOff offMsg;
 			offMsg.execute(this);
 		} else {
-			switch (getNewRandomNumber(2)) {
+			switch (getRandomNumber(2)) {
 			case 0:
 				startTalking(this, 230055, findView());
 				break;
@@ -330,7 +330,7 @@ bool CSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 	}
 
 	petSetRemoteTarget();
-	_field144 = nullptr;
+	_mailP = nullptr;
 	if (_startFrame8 >= 0)
 		loadFrame(_startFrame8);
 
@@ -429,7 +429,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_startFrame3, _endFrame3, 0);
 
 			if (_startFrame4 >= 0) {
-				_field144 = mailObject;
+				_mailP = mailObject;
 				playMovie(_startFrame4, _endFrame4, MOVIE_NOTIFY_OBJECT);
 			}
 
@@ -559,7 +559,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
-			switch (getNewRandomNumber(_v2 ? 7 : 5, &_field1B0)) {
+			switch (getRandomNumber(_v2 ? 7 : 5, &_field1B0)) {
 			case 2:
 				startTalking(this, 230001, findView());
 				break;
@@ -609,12 +609,12 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _endFrame4) {
-		if (pet && _field144) {
-			_field144->setMailId(petRoomFlags);
+		if (pet && _mailP) {
+			_mailP->setMailId(petRoomFlags);
 		}
 
 		_field188 = 1;
-		_field144 = 0;
+		_mailP = 0;
 		if (_field1D8) {
 			_field1D8 = 0;
 			dec54();

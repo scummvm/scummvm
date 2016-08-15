@@ -531,7 +531,7 @@ protected:
 	/**
 	 * Gets a new random number
 	 */
-	int getNewRandomNumber(int max, int *oldVal = nullptr);
+	int getRandomNumber(int max, int *oldVal = nullptr);
 public:
 	Rect _bounds;
 	bool _isMail;

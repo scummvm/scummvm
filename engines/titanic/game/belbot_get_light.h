@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CBelbotGetLight : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	CString _value;
 public:

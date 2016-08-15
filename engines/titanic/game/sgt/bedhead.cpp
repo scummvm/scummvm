@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBedhead, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+END_MESSAGE_MAP()
+
 void CBedhead::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +37,16 @@ void CBedhead::save(SimpleFile *file, int indent) {
 void CBedhead::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CBedhead::TurnOn(CTurnOn *msg) {
+	// TODO
+	return true;
+}
+
+bool CBedhead::TurnOff(CTurnOff *msg) {
+	// TODO
+	return true;
 }
 
 } // End of namespace Titanic

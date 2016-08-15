@@ -28,11 +28,23 @@
 namespace Titanic {
 
 class CBilgeSuccUBus : public CSuccUBus {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg *msg);
+	bool PETReceiveMsg(CPETReceiveMsg *msg);
+	bool PETDeliverMsg(CPETDeliverMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 public:
-	int _field1DC;
-	int _field1E0;
-	int _field1E4;
-	int _field1E8;
+	int _bilgeStartFrame1;
+	int _bilgeEndFrame1;
+	int _bilgeStartFrame2;
+	int _bilgeEndFrame2;
 public:
 	CLASSDEF;
 	CBilgeSuccUBus();

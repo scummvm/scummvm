@@ -1442,7 +1442,7 @@ void CGameObject::resetMail() {
 		mailMan->resetValue();
 }
 
-int CGameObject::getNewRandomNumber(int max, int *oldVal) {
+int CGameObject::getRandomNumber(int max, int *oldVal) {
 	if (oldVal) {
 		int startingVal = *oldVal;
 		while (*oldVal == startingVal && max > 0)

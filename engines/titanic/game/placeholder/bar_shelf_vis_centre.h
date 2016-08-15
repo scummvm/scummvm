@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CBarShelfVisCentre : public CPlaceHolderItem {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CBarShelfVisCentre() : CPlaceHolderItem(), _value(0) {}
+	CBarShelfVisCentre() : CPlaceHolderItem(), _flag(false) {}
 	
 	/**
 	 * Save the data for the class to file

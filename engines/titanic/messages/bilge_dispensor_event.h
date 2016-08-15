@@ -29,9 +29,14 @@
 namespace Titanic {
 
 class CBilgeDispensorEvent : public CAutoSoundEvent {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 public:
 	CLASSDEF;
+	CBilgeDispensorEvent() : CAutoSoundEvent() {}
 
 	/**
 	 * Save the data for the class to file

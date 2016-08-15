@@ -45,13 +45,13 @@ class CSuccUBus : public CTrueTalkNPC {
 	bool SetChevRoomBits(CSetChevRoomBits *msg);
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
-private:
+protected:
 	static bool _enabled;
 	static int _v1;
 	static int _v2;
 	static int _v3;
 	static int _v4;
-private:
+protected:
 	int _startFrame8;
 	int _endFrame8;
 	int _startFrame11;
@@ -67,11 +67,11 @@ private:
 	int _startFrame2;
 	int _endFrame2;
 	int _field140;
-	CGameObject *_field144;
+	CGameObject *_mailP;
 	int _startFrame5;
 	int _endFrame5;
-	int _field150;
-	int _field154;
+	int _startFrame12;
+	int _endFrame12;
 	int _field158;
 	bool _field15C;
 	CString _string2;
