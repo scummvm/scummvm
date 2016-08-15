@@ -124,8 +124,7 @@ bool CLiftBot::TurnOn(CTurnOn *msg) {
 	_enabled = true;
 	if (!_flag) {
 		if (compareTo("LiftBotTalking", 0)) {
-			CViewItem *view = findView();
-			endTalking(this, MOVIE_REPEAT);
+			endTalking(this, MOVIE_REPEAT, findView());
 			petSetArea(PET_CONVERSATION);
 			_flag = true;
 		}

@@ -42,7 +42,7 @@ void CBasin::load(SimpleFile *file) {
 
 bool CBasin::TurnOn(CTurnOn *msg) {
 	if (_statics->_v10 == "Open" && _statics->_v11 == "Closed"
-			|| _statics->_v2 == "Closed") {
+			&& _statics->_v2 == "Closed") {
 		setVisible(true);
 		_statics->_v11 = "Open";
 		_fieldE0 = 0;

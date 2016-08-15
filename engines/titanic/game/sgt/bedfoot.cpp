@@ -55,7 +55,7 @@ bool CBedfoot::TurnOn(CTurnOn *msg) {
 
 		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
 	} else if (_statics->_v2 == "RestingUnderTV") {
-		_fieldE0;
+		_fieldE0 = 0;
 		_startFrame = 8;
 		if (_statics->_v10 == "Open") {
 			_statics->_v2 = "Open";
