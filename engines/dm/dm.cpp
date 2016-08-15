@@ -554,15 +554,14 @@ void DMEngine::f441_processEntrance() {
 }
 
 void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
+	static Box boxEndgameRestartOuterEN(103, 217, 145, 159);
+	static Box boxEndgameRestartInnerEN(105, 215, 147, 157);
 
-	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer_EN_ANY = {103, 217, 145, 159};
-	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner_EN_ANY = {105, 215, 147, 157};
+	static Box boxEndgameRestartOuterDE(82, 238, 145, 159);
+	static Box boxEndgameRestartInnerDE(84, 236, 147, 157);
 
-	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer_GR_GRE = {82, 238, 145, 159};
-	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner_GR_GRE = {84, 236, 147, 157};
-
-	static Box G0013_s_Graphic562_Box_Endgame_Restart_Outer_FR_FRA = {100, 220, 145, 159};
-	static Box G0014_s_Graphic562_Box_Endgame_Restart_Inner_FR_FRA = {102, 218, 147, 157};
+	static Box boxEndgameRestartOuterFR(100, 220, 145, 159);
+	static Box boxEndgameRestartInnerFR(102, 218, 147, 157);
 
 	Box restartOuterBox;
 	Box restartInnerBox;
@@ -570,22 +569,22 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 	switch (getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		restartOuterBox = G0013_s_Graphic562_Box_Endgame_Restart_Outer_EN_ANY;
-		restartInnerBox = G0014_s_Graphic562_Box_Endgame_Restart_Inner_EN_ANY;
+		restartOuterBox = boxEndgameRestartOuterEN;
+		restartInnerBox = boxEndgameRestartInnerEN;
 		break;
 	case Common::GR_GRE:
-		restartOuterBox = G0013_s_Graphic562_Box_Endgame_Restart_Outer_GR_GRE;
-		restartInnerBox = G0014_s_Graphic562_Box_Endgame_Restart_Inner_GR_GRE;
+		restartOuterBox = boxEndgameRestartOuterDE;
+		restartInnerBox = boxEndgameRestartInnerDE;
 		break;
 	case Common::FR_FRA:
-		restartOuterBox = G0013_s_Graphic562_Box_Endgame_Restart_Outer_FR_FRA;
-		restartInnerBox = G0014_s_Graphic562_Box_Endgame_Restart_Inner_FR_FRA;
+		restartOuterBox = boxEndgameRestartOuterFR;
+		restartInnerBox = boxEndgameRestartInnerFR;
 		break;
 	}
 
-	static Box theEndBox = Box(120, 199, 95, 108);
-	static Box championMirrorBox = Box(11, 74, 7, 49);
-	static Box championPortraitBox = Box(27, 58, 13, 41);
+	static Box theEndBox(120, 199, 95, 108);
+	static Box championMirrorBox(11, 74, 7, 49);
+	static Box championPortraitBox(27, 58, 13, 41);
 
 	bool waitBeforeDrawingRestart = true;
 
