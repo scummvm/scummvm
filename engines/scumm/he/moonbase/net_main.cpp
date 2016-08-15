@@ -60,4 +60,14 @@ int Net::whoAmI() {
 	return 0;
 }
 
+bool Net::getHostName(char *hostname, int length) {
+	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
+	return false;
+}
+
+bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
+	warning("STUB: Net::getIPfromName(\"%s\", %d, \"%s\")", ip, ipLength, nameBuffer); // PN_GetIPfromName
+	return false;
+}
+
 } // End of namespace Scumm

@@ -503,13 +503,28 @@ int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *arg
 void LogicHEmoonbase::op_net_set_fake_latency(int op, int numArgs, int32 *args) {
 	warning("STUB: op_net_set_fake_latency()");
 }
+
 int LogicHEmoonbase::op_net_get_host_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_host_name()");
-	return 1;
+	char name[MAX_HOSTNAME_SIZE];
+
+	if (_vm1->_moonbase->_net->getHostName(name, MAX_HOSTNAME_SIZE)) { // PN_GetHostName
+		return _vm1->setupStringArrayFromString(name);
+	}
+
+	return 0;
 }
+
 int LogicHEmoonbase::op_net_get_ip_from_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_ip_from_name()");
-	return 1;
+	char szName[MAX_HOSTNAME_SIZE];
+	_vm1->getStringFromArray(args[0], szName, sizeof(szName));
+
+	char ip[MAX_IP_SIZE];
+
+	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, szName)) { // PN_GetIPfromName
+		return _vm1->setupStringArrayFromString(ip);
+	}
+
+	return 0;
 }
 
 int LogicHEmoonbase::op_net_host_tcpip_game(int op, int numArgs, int32 *args) {

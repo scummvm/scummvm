@@ -39,10 +39,13 @@ public:
 	int removeUser();
 	int whoSentThis();
 	int whoAmI();
+	
 private:
 
 public:
 	//getters
+	bool getHostName(char *hostname, int length);
+	bool getIPfromName(char *ip, int ipLength, char *nameBuffer);
 
 private:
 	//mostly getters
