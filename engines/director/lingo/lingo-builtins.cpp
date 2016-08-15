@@ -722,8 +722,7 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 
 	call(s, nargs);
 
-	if (method.u.s->compareToIgnoreCase("mNew")) {
-		warning("Got mNew method");
+	if (!method.u.s->compareToIgnoreCase("mNew")) {
 		Datum d;
 
 		d.type = OBJECT;
