@@ -564,9 +564,8 @@ void DisplayMan::f460_initializeGraphicData() {
 				if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k3_ProjectileAspectHasNone) {
 					_g639_derivedBitmapByteCount[derivedBitmapIndex + 6] = bitmapByteCount;
 
-					if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k2_ProjectileAspectHasRotation) {
+					if (getFlag(projectileAspect->_graphicInfo, k0x0003_ProjectileAspectTypeMask) != k2_ProjectileAspectHasRotation)
 						_g639_derivedBitmapByteCount[derivedBitmapIndex + 12] = bitmapByteCount;
-					}
 				}
 			}
 		}
@@ -582,9 +581,8 @@ void DisplayMan::f460_initializeGraphicData() {
 		for (int16 scale = 4; scale < 32; scale += 2)
 			_g639_derivedBitmapByteCount[derivedBitmapIndex++] = f459_getScaledBitmapByteCount(expAsp->_byteWidth, expAsp->_height, scale);
 
-		if (expAspIndex == k3_ExplosionAspectSmoke) {
+		if (expAspIndex == k3_ExplosionAspectSmoke)
 			_g639_derivedBitmapByteCount[derivedBitmapIndex++] = expAsp->_byteWidth * expAsp->_height;
-		}
 	}
 
 	derivedBitmapIndex = k495_DerivedBitmapFirstCreature;
@@ -595,13 +593,11 @@ void DisplayMan::f460_initializeGraphicData() {
 		int16 creatureGraphicInfo = g243_CreatureInfo[creatureIndex]._graphicInfo;
 		creatureAsp->_firstDerivedBitmapIndex = derivedBitmapIndex;
 
-		int16 creatureFrontBitmapD3PixelCount;
-		_g639_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount
-			= f459_getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k16_Scale_D3);
+		int16 creatureFrontBitmapD3PixelCount = f459_getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k16_Scale_D3);
+		_g639_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD3PixelCount;
 
-		int16 creatureFrontBitmapD2PixelCount;
-		_g639_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount
-			= f459_getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k20_Scale_D2);
+		int16 creatureFrontBitmapD2PixelCount = f459_getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k20_Scale_D2);
+		_g639_derivedBitmapByteCount[derivedBitmapIndex++] = creatureFrontBitmapD2PixelCount;
 
 		if (getFlag(creatureGraphicInfo, k0x0008_CreatureInfoGraphicMaskSide)) {
 			_g639_derivedBitmapByteCount[derivedBitmapIndex++] = f459_getScaledBitmapByteCount(creatureAsp->_byteWidthSide, creatureAsp->_heightSide, k16_Scale_D3);
@@ -618,8 +614,8 @@ void DisplayMan::f460_initializeGraphicData() {
 			_g639_derivedBitmapByteCount[derivedBitmapIndex++] = f459_getScaledBitmapByteCount(creatureAsp->_byteWidthAttack, creatureAsp->_heightAttack, k20_Scale_D2);
 		}
 
-		int16 additionalFronGraphicCount;
-		if (additionalFronGraphicCount = getFlag(creatureGraphicInfo, k0x0003_CreatureInfoGraphicMaskAdditional)) {
+		int16 additionalFronGraphicCount = getFlag(creatureGraphicInfo, k0x0003_CreatureInfoGraphicMaskAdditional);
+		if (additionalFronGraphicCount) {
 			do {
 				_g639_derivedBitmapByteCount[derivedBitmapIndex++] = creatureAsp->_byteWidthFront * creatureAsp->_heightFront;
 				_g639_derivedBitmapByteCount[derivedBitmapIndex++] = f459_getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k16_Scale_D3);
@@ -809,7 +805,7 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	uint16 srcWidth = srcByteWidth * 2;
 	uint16 destWidth = destByteWidth * 2;
-	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) // + 1 for inclusive boundaries
+	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) { // + 1 for inclusive boundaries
 		for (uint16 x = 0; x < box._x2 + 1 - box._x1; ++x) { // + 1 for inclusive boundaries
 			if (srcX + x < srcWidth && y + srcY < srcHeight
 				&& box._x1 + x < destWidth && y + box._y1 < destHight) {
@@ -818,6 +814,7 @@ void DisplayMan::f132_blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, 
 					destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
 			}
 		}
+	}
 }
 
 void DisplayMan::D24_fillScreenBox(Box &box, Color color) {
@@ -835,7 +832,7 @@ void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte*
 													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 		 // make sure to take care of inclusive boundaries, color can have 0x8000 flag to not use mask
-
+	warning(false, "STUB: f133_blitBoxFilledWithMaskedBitmap");
 }
 
 
@@ -843,12 +840,8 @@ void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte*
 void DisplayMan::f130_flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height) {
 	uint16 width = byteWidth * 2;
 	for (uint16 y = 0; y < height; ++y) {
-		for (uint16 x = 0; x < width / 2; ++x) {
-			byte tmp;
-			tmp = bitmap[y*width + x];
-			bitmap[y*width + x] = bitmap[y*width + width - 1 - x];
-			bitmap[y*width + width - 1 - x] = tmp;
-		}
+		for (uint16 x = 0; x < width / 2; ++x)
+			SWAP<byte>(bitmap[y * width + x], bitmap[y * width + width - 1 - x]);
 	}
 }
 
@@ -873,11 +866,11 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 	int16 height = M78_getScaledDimension(explAsp->_height, scale);
 	byte *bitmap;
 	int16 derBitmapIndex = (explosionAspIndex * 14) + scale / 2 + k438_DerivedBitmapFirstExplosion - 2;
-	if ((scale == 32) && (explosionAspIndex != k3_ExplosionAspectSmoke)) {
+	if ((scale == 32) && (explosionAspIndex != k3_ExplosionAspectSmoke))
 		bitmap = f489_getNativeBitmapOrGraphic(explosionAspIndex + k348_FirstExplosionGraphicIndice);
-	} else if (f491_isDerivedBitmapInCache(derBitmapIndex)) {
+	else if (f491_isDerivedBitmapInCache(derBitmapIndex))
 		bitmap = f492_getDerivedBitmap(derBitmapIndex);
-	} else {
+	else {
 		byte *nativeBitmap = f489_getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)k2_ExplosionAspectPoison) + k348_FirstExplosionGraphicIndice);
 		bitmap = f492_getDerivedBitmap(derBitmapIndex);
 		f129_blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth, explAsp->_height, pixelWidth * 2, height,
@@ -889,7 +882,6 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 	returnHeight = height;
 	return bitmap;
 }
-
 
 void DisplayMan::updateScreen() {
 	// apply copper
@@ -903,14 +895,14 @@ void DisplayMan::updateScreen() {
 }
 
 void DisplayMan::f97_drawViewport(int16 palSwitchingRequestedState) {
-	static uint16 *gK10_dungeonViewCurrentPalette; // @ K0010_pui_DungeonViewCurrentPalette
+	static uint16 *dungeonViewCurrentPalette; // @ K0010_pui_DungeonViewCurrentPalette
 
 	// ignored code F0510_AMIGA_WaitBottomOfViewPort
 	if (palSwitchingRequestedState == k2_viewportAsBeforeSleepOrFreezeGame)
 		palSwitchingRequestedState = _g322_paletteSwitchingEnabled ? 1 : 0;
 
 	if (_g342_refreshDungeonViewPaleteRequested) {
-		gK10_dungeonViewCurrentPalette = _palDungeonView[_g304_dungeonViewPaletteIndex];
+		dungeonViewCurrentPalette = _palDungeonView[_g304_dungeonViewPaletteIndex];
 		_g342_refreshDungeonViewPaleteRequested = false;
 		if (palSwitchingRequestedState == k0_viewportNotDungeonView)
 			_g322_paletteSwitchingEnabled = true;
@@ -920,15 +912,15 @@ void DisplayMan::f97_drawViewport(int16 palSwitchingRequestedState) {
 
 	if (palSwitchingRequestedState != (_g322_paletteSwitchingEnabled ? 1 : 0)) {
 		if (palSwitchingRequestedState) {
-			f565_viewportSetPalette(gK10_dungeonViewCurrentPalette, _g347_paletteTopAndBottomScreen);
+			f565_viewportSetPalette(dungeonViewCurrentPalette, _g347_paletteTopAndBottomScreen);
 			_g322_paletteSwitchingEnabled = true;
 		} else {
 			f565_viewportSetPalette(_g347_paletteTopAndBottomScreen, _g347_paletteTopAndBottomScreen);
 			_g322_paletteSwitchingEnabled = false;
 		}
-	} else {
+	} else
 		f565_viewportSetPalette(nullptr, nullptr);
-	}
+
 	updateScreen();
 }
 
