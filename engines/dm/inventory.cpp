@@ -44,23 +44,27 @@ Box g35_BoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 Box g36_BoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box g37_BoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
-// TODO: localization
-char* G0428_apc_SkillLevelNames[15] = { // @ G0428_apc_SkillLevelNames
-	"NEOPHYTE",
-	"NOVICE",
-	"APPRENTICE",
-	"JOURNEYMAN",
-	"CRAFTSMAN",
-	"ARTISAN",
-	"ADEPT",
-	"EXPERT",
-	"` MASTER",
-	"a MASTER",
-	"b MASTER",
-	"c MASTER",
-	"d MASTER",
-	"e MASTER",
-	"ARCHMASTER"};
+char* G0428_apc_SkillLevelNames[15];
+
+void InventoryMan::initConstants() {
+	{
+		static const char* G0428_apc_SkillLevelNames_EN_ANY[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
+			"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
+		static const char* G0428_apc_SkillLevelNames_GR_GRE[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
+			"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
+		static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = { "NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
+			"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
+		const char **g428_byLanguage;
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: g428_byLanguage = G0428_apc_SkillLevelNames_EN_ANY; break;
+		case Common::GR_GRE: g428_byLanguage = G0428_apc_SkillLevelNames_GR_GRE; break;
+		case Common::FR_FRA: g428_byLanguage = G0428_apc_SkillLevelNames_FR_FRA; break;
+		}
+		for (int i = 0; i < 15; ++i)
+			g417_baseSkillName[i] = g428_byLanguage[i];
+	}
+}
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_g432_inventoryChampionOrdinal = 0;
@@ -124,8 +128,23 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
 		_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	}
-	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH"); // TODO: localization
-	_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
+
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
+		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
+		break;
+	case Common::GR_GRE:
+		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "GESUND");
+		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "KRAFT");
+		break;
+	case Common::FR_FRA:
+		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "SANTE");
+		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "VIGUEUR");
+		break;
+	}
+
 	_vm->_textMan->f52_printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 	for (AL1102_ui_SlotIndex = k0_ChampionSlotReadyHand; AL1102_ui_SlotIndex < k30_ChampionSlotChest_1; AL1102_ui_SlotIndex++) {
 		_vm->_championMan->f291_drawSlot(championIndex, AL1102_ui_SlotIndex);
@@ -180,13 +199,24 @@ void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
 	Champion &champ = _vm->_championMan->_gK71_champions[_g432_inventoryChampionOrdinal];
 	f334_closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
-	// TODO: localization
-	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
-							   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
-	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice),
-							   g35_BoxFood, k24_byteWidth, k12_ColorDarkestGray, 9);
-	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k31_WaterLabelIndice),
-							   g36_BoxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
+	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice), g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k24_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
+		break;
+	case Common::GR_GRE:
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k32_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k32_byteWidth, k12_ColorDarkestGray, 9);
+		break;
+	case Common::FR_FRA:
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k48_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
+		break;
+	}
+
 	if (champ._poisonEventCount) {
 		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k32_PoisionedLabelIndice),
 								   g37_BoxPoisoned, k48_byteWidth, k12_ColorDarkestGray, 15);
@@ -386,7 +416,14 @@ void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, in
 			if (identicalBitCount-- > 2) {
 				strcat(destString, ", ");
 			} else if (identicalBitCount == 1) {
-				strcat(destString, " AND "); // TODO: localization
+
+				switch (_vm->getGameLanguage()) { // localized
+				default:
+				case Common::EN_ANY: strcat(destString, " AND "); break;
+				case Common::GR_GRE: strcat(destString, " UND "); break;
+				case Common::FR_FRA: strcat(destString, " ET "); break;
+				}
+
 			}
 		}
 	}
@@ -454,7 +491,6 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	TextMan &textMan = *_vm->_textMan;
 
 	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
-		warning(false, "BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
 		f334_closeChest();
 	}
 
@@ -475,9 +511,20 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		char *descString = nullptr;
 		char str[40];
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
-			strcpy(str, champMan._gK71_champions[((Junk *)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
-			strcat(str, " "); // TODO: localization
-			strcat(str, objMan._g352_objectNames[iconIndex]);  // TODO: localization
+			switch (_vm->getGameLanguage()) { // localized
+			default:
+			case Common::EN_ANY:
+			case Common::GR_GRE: // german and english versions are the same
+				strcpy(str, champMan._gK71_champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				strcat(str, " ");
+				strcat(str, objMan._g352_objectNames[iconIndex]);
+				break;
+			case Common::FR_FRA:
+				strcat(str, objMan._g352_objectNames[iconIndex]);
+				strcat(str, " ");
+				strcpy(str, champMan._gK71_champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				break;
+			}
 
 			descString = str;
 		} else if ((thingType == k8_PotionThingType)
@@ -495,7 +542,6 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		textMan.f52_printToViewport(134, 68, k13_ColorLightestGray, descString);
 		f332_drawIconToViewport(iconIndex, 111, 59);
 
-		char *attribString[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"}; // TODO: localization
 
 		_g422_objDescTextYpos = 87;
 
@@ -509,7 +555,13 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit)
 				&& (iconIndex <= k7_IconIndiceWeaponTorchLit)
 				&& (weapon->getChargeCount() == 0)) {
-				f335_drawPanelObjectDescriptionString("(BURNT OUT)"); // TODO: localization
+
+				switch (_vm->getGameLanguage()) { // localized
+				default:
+				case Common::EN_ANY: f335_drawPanelObjectDescriptionString("(BURNT OUT)"); break;
+				case Common::GR_GRE: f335_drawPanelObjectDescriptionString("(AUSGEBRANNT)"); break;
+				case Common::FR_FRA: f335_drawPanelObjectDescriptionString("(CONSUME)"); break;
+				}
 			}
 			break;
 		}
@@ -529,26 +581,39 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			Junk *junk = (Junk *)rawThingPtr;
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
-				switch (junk->getChargeCount()) {
-				case 0:
-					descString = "(EMPTY)"; // TODO: localization
-					break;
-				case 1:
-					descString = "(ALMOST EMPTY)"; // TODO: localization
-					break;
-				case 2:
-					descString = "(ALMOST FULL)"; // TODO: localization
-					break;
-				case 3:
-					descString = "(FULL)"; // TODO: localization
-					break;
+				char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
+				char *descString_GE_GRE[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
+				char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
+
+				switch (_vm->getGameLanguage()) { // localized
+				default:
+				case Common::EN_ANY: descString = descString_EN_ANY[junk->getChargeCount()]; break;
+				case Common::GR_GRE: descString = descString_GE_GRE[junk->getChargeCount()]; break;
+				case Common::FR_FRA: descString = descString_FR_FRA[junk->getChargeCount()]; break;
 				}
+
 				f335_drawPanelObjectDescriptionString(descString);
 			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
 				potentialAttribMask = 0;
-				strcpy(str, "PARTY FACING "); // TODO: localization
-				static char* directionName[4] = {"NORTH", "EAST", "SOUTH", "WEST"}; // G0430_apc_DirectionNames // TODO: localization
-				strcat(str, directionName[iconIndex]);
+
+				switch (_vm->getGameLanguage()) { // localized
+				default:
+				case Common::EN_ANY: strcpy(str, "PARTY FACING "); break;
+				case Common::GR_GRE: strcpy(str, "GRUPPE BLICKT NACH "); break;
+				case Common::FR_FRA: strcpy(str, "GROUPE FACE "); break;
+				}
+
+
+				static char* directionName_EN_ANY[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
+				static char* directionName_GR_GRE[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
+				static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
+				switch (_vm->getGameLanguage()) { // localized
+				default:
+				case Common::EN_ANY: strcat(str, directionName_EN_ANY[iconIndex]); break;
+				case Common::GR_GRE: strcat(str, directionName_FR_FRA[iconIndex]); break;
+				case Common::FR_FRA: strcat(str, directionName_GR_GRE[iconIndex]); break;
+				}
+
 				f335_drawPanelObjectDescriptionString(str);
 			} else {
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
@@ -559,21 +624,49 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} // end of switch 
 
 		if (potentialAttribMask) {
+			char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
+			char *attribString_GR_GRE[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
+			char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
+			char **attribString = nullptr;
+
+			switch (_vm->getGameLanguage()) { // localized
+			default:
+			case Common::EN_ANY: attribString = attribString_EN_ANY; break;
+			case Common::GR_GRE: attribString = attribString_GR_GRE; break;
+			case Common::FR_FRA: attribString = attribString_FR_FRA; break;
+			}
+
 			f336_buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
 			f335_drawPanelObjectDescriptionString(str);
 		}
 
-		strcpy(str, "WEIGHS "); // TODO: localization
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: strcpy(str, "WEIGHS "); break;
+		case Common::GR_GRE: strcpy(str, "WIEGT "); break;
+		case Common::FR_FRA: strcpy(str, "PESE "); break;
+		}
+
 
 		uint16 weight = dunMan.f140_getObjectWeight(thingToDraw);
 		strcat(str, champMan.f288_getStringFromInteger(weight / 10, false, 3).c_str());
 
-		strcat(str, "."); // TODO: localization
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: strcat(str, "."); break;
+		case Common::GR_GRE: strcat(str, ","); break;
+		case Common::FR_FRA: strcat(str, "KG,"); break;
+		}
 
 		weight -= (weight / 10) * 10;
 		strcat(str, champMan.f288_getStringFromInteger(weight, false, 1).c_str());
 
-		strcat(str, " KG."); // TODO: localization
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY:
+		case Common::GR_GRE: strcat(str, " KG."); break;
+		case Common::FR_FRA: strcat(str, "."); break;
+		}
 
 		f335_drawPanelObjectDescriptionString(str);
 	}
@@ -696,9 +789,17 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 	int16 L1095_i_StatisticColor;
 	uint16 L1096_ui_StatisticMaximumValue;
 	char L1097_ac_String[20];
-	// TODO: localization
-	static char* G0431_apc_StatisticNames[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
 
+	static char* G0431_apc_StatisticNames_EN_ANY[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
+	static char* G0431_apc_StatisticNames_GR_GRE[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
+	static char* G0431_apc_StatisticNames_FR_FRA[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
+	char **G0431_apc_StatisticNames;
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY: G0431_apc_StatisticNames = G0431_apc_StatisticNames_EN_ANY; break;
+	case Common::GR_GRE: G0431_apc_StatisticNames = G0431_apc_StatisticNames_GR_GRE; break;
+	case Common::FR_FRA: G0431_apc_StatisticNames = G0431_apc_StatisticNames_FR_FRA; break;
+	}
 
 	f334_closeChest();
 	L1094_ps_Champion = &_vm->_championMan->_gK71_champions[L1093_ui_ChampionIndex = _vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal)];
@@ -708,10 +809,21 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->f303_getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
 		if (AL1092_i_SkillLevel == 1)
 			continue;
-		// TODO: localization
-		strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
-		strcat(L1097_ac_String, " ");
-		strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
+
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY:
+		case Common::GR_GRE: // english and german versions are the same
+			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+			strcat(L1097_ac_String, " ");
+			strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
+			break;
+		case Common::FR_FRA:
+			strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
+			strcat(L1097_ac_String, " ");
+			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+			break;
+		}
 		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
 		L1091_i_Y += 7;
 	}

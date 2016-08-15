@@ -789,9 +789,22 @@ void EventManager::f380_processCommandQueue() {
 		_vm->_g301_gameTimeTicking = false;
 		_vm->_menuMan->f456_drawDisabledMenu();
 		_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136);
-		// TODO: localization
-		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
-											 "GAME FROZEN", k136_heightViewport);
+
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY:
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
+												 "GAME FROZEN", k136_heightViewport);
+			break;
+		case Common::GR_GRE:
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 66, 69, k4_ColorCyan, k0_ColorBlack,
+												 "SPIEL ANGEHALTEN", k136_heightViewport);
+			break;
+		case Common::FR_FRA:
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 84, 69, k4_ColorCyan, k0_ColorBlack,
+												 "JEU BLOQUE", k136_heightViewport);
+			break;
+		}
 		_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 		primaryMouseInputBackup = _g441_primaryMouseInput;
 		secondaryMouseInputBackup = _g442_secondaryMouseInput;
@@ -1197,7 +1210,19 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	Color champColor = g46_ChampionColor[championIndex];
 	_vm->_textMan->f47_messageAreaPrintMessage(champColor, champ->_name);
-	_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED."); // TODO: localization
+
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
+		break;
+	case Common::GR_GRE:
+		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
+		break;
+	case Common::FR_FRA:
+		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESSUSCITE." : " REINCARNE.");
+		break;
+	}
 
 	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
 	_vm->_menuMan->f457_drawEnabledMenus();
@@ -1293,7 +1318,19 @@ bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button
 }
 
 void EventManager::f379_drawSleepScreen() {
-	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136); // TODO: localization
+	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136);
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 93, 69, k4_ColorCyan, k0_ColorBlack, "WAKE UP", k136_heightViewport);
+		break;
+	case Common::GR_GRE:
+		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 96, 69, k4_ColorCyan, k0_ColorBlack, "WECKEN", k136_heightViewport);
+		break;
+	case Common::FR_FRA:
+		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 72, 69, k4_ColorCyan, k0_ColorBlack, "REVEILLEZ-VOUS", k136_heightViewport);
+		break;
+	}
 }
 
 void EventManager::f357_discardAllInput() {

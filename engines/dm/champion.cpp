@@ -40,7 +40,6 @@
 
 namespace DM {
 
-const char *g417_baseSkillName[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"}; // TODO: localization
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
 Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
@@ -95,6 +94,26 @@ uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	0x0400}; /* Chest 8          Chest */
 
 Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
+
+const char *g417_baseSkillName[4];
+
+void ChampionMan::initConstants() {
+	{
+		static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
+		static const char *g417_baseSkillName_GR_GRE[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
+		static const char *g417_baseSkillName_FR_FRA[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
+
+		const char **g417_byLanguage;
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: g417_byLanguage = g417_baseSkillName_EN_ANY; break;
+		case Common::GR_GRE: g417_byLanguage = g417_baseSkillName_GR_GRE; break;
+		case Common::FR_FRA: g417_byLanguage = g417_baseSkillName_FR_FRA; break;
+		}
+		for (int i = 0; i < 4; ++i)
+			g417_baseSkillName[i] = g417_byLanguage[i];
+	}
+}
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	for (uint16 i = 0; i < 4; ++i) {
@@ -206,6 +225,7 @@ void ChampionMan::f289_drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal,
 uint16 ChampionMan::M70_handSlotIndex(uint16 slotBoxIndex) {
 	return slotBoxIndex & 0x1;
 }
+
 
 Common::String ChampionMan::f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
 	Common::String valToStr = Common::String::format("%d", val);
@@ -967,10 +987,22 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			_vm->_textMan->f51_messageAreaPrintLineFeed();
 			Color curChampionColor = g46_ChampionColor[champIndex];
 			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, curChampion->_name);
-			// TODO: localization
-			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " JUST GAINED A ");
+
+			switch (_vm->getGameLanguage()) { // localized
+			default:
+			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " JUST GAINED A "); break;
+			case Common::GR_GRE: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
+			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " VIENT DE DEVENIR "); break;
+			}
+
 			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, g417_baseSkillName[baseSkillIndex]);
-			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!");
+
+			switch (_vm->getGameLanguage()) { // localized
+			default:
+			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, "!"); break;
+			case Common::GR_GRE: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!"); break;
+			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " ERREICHT!"); break;
+			}
 		}
 	}
 }
@@ -2149,17 +2181,30 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		else
 			loadColor = k13_ColorLightestGray;
 
-		// TODO: localization
-		_vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD ");
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD "); break;
+		case Common::GR_GRE: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LAST "); break;
+		case Common::FR_FRA: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "CHARGE "); break;
+		}
+
 		maxLoad = curChampion->_load / 10;
 		strcpy(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());
-		strcat(_vm->_g353_stringBuildBuffer, ".");
+
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: strcat(_vm->_g353_stringBuildBuffer, "."); break;
+		case Common::GR_GRE: strcat(_vm->_g353_stringBuildBuffer, ","); break;
+		case Common::FR_FRA: strcat(_vm->_g353_stringBuildBuffer, "KG,"); break;
+		}
+
 		maxLoad = curChampion->_load - (maxLoad * 10);
 		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, false, 1).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, "/");
 		maxLoad = (f309_getMaximumLoad(curChampion) + 5) / 10;
 		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());
-		strcat(_vm->_g353_stringBuildBuffer, " KG");
+		warning(false, "Possibly wrong localization");
+		strcat(_vm->_g353_stringBuildBuffer, " KG"); // this line
 		_vm->_textMan->f52_printToViewport(148, 132, loadColor, _vm->_g353_stringBuildBuffer);
 		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
@@ -2267,7 +2312,7 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (isInventoryChamp) {
 			_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
-												_vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport, 
+												_vm->_displayMan->_g296_bitmapViewport, box, 0, 0, 16, k112_byteWidthViewport,
 												k12_ColorDarkestGray, _vm->_displayMan->getPixelHeight(nativeBitmapIndex), k136_heightViewport);
 		} else {
 			_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex),

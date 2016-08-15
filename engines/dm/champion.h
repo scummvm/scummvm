@@ -453,7 +453,6 @@ public:
 #define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
 
 #define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
-// TODO: localization
 extern const char *g417_baseSkillName[4]; // @ G0417_apc_BaseSkillNames
 
 #define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
@@ -512,6 +511,9 @@ class ChampionMan {
 	uint16 M70_handSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
 	int16 _g410_championPendingWounds[4]; // @ G0410_ai_ChampionPendingWounds
 	int16 _g409_championPendingDamage[4]; // @ G0409_ai_ChampionPendingDamage
+
+	void initConstants();
+
 public:
 
 	Champion _gK71_champions[4]; // @ K0071_as_Champions

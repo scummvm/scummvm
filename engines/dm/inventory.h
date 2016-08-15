@@ -47,10 +47,13 @@ enum PanelContent {
 	k5_PanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
 };
 
-extern char* G0428_apc_SkillLevelNames[15];
+extern char* G0428_apc_SkillLevelNames[15]; // @ G0428_apc_SkillLevelNames  
 
 class InventoryMan {
 	DMEngine *_vm;
+
+	void initConstants();
+
 public:
 	explicit InventoryMan(DMEngine *vm);
 

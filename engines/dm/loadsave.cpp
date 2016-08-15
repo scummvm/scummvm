@@ -155,7 +155,20 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_g526_dungeonId = dmSaveHeader._dungeonId;
 
 		_g524_restartGameAllowed = true;
-		_dialog->f427_dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true); // TODO: localization
+
+		switch (getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY:
+			_dialog->f427_dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			break;
+		case Common::GR_GRE:
+			_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GELADEN . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			break;
+		case Common::FR_FRA:
+			_dialog->f427_dialogDraw(nullptr, "CHARGEMENT DU JEU . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			break;
+		}
+
 	}
 	_championMan->_g303_partyDead = false;
 
@@ -169,12 +182,32 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	_menuMan->f456_drawDisabledMenu();
 	_eventMan->f78_showMouse();
 
-	// TODO: localization
-	_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
+	switch (getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
+		break;
+	case Common::GR_GRE:
+		_dialog->f427_dialogDraw(message, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", nullptr, false, false, false);
+		break;
+	case Common::FR_FRA:
+		_dialog->f427_dialogDraw(message, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", nullptr, false, false, false);
+		break;
+	}
 	int16 saveAndPlayChoice = _dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 
-	// TODO: localization
-	_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+	switch (getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+		break;
+	case Common::GR_GRE:
+		_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+		break;
+	case Common::FR_FRA:
+		_dialog->f427_dialogDraw(nullptr, "UN MOMENT A SAUVEGARDER DU JEU...", nullptr, nullptr, nullptr, nullptr, false, false, false);
+		break;
+	}
 
 	uint16 champHandObjWeight = 0;
 	if (!_championMan->_g415_leaderEmptyHanded) {
@@ -266,7 +299,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 		tmp = ((map._difficulty & 0xF) << 12) | ((map._creatureTypeCount & 0xF) << 4) | (map._doorOrnCount & 0xF);
 		file->writeUint16BE(tmp);
 
-		tmp = ((map._doorSet1 & 0xF) << 12) | ((map._doorSet0 & 0xF) << 8) 
+		tmp = ((map._doorSet1 & 0xF) << 12) | ((map._doorSet0 & 0xF) << 8)
 			| ((map._wallSet & 0xF) << 4) | (map._floorSet & 0xF);
 		file->writeUint16BE(tmp);
 	}

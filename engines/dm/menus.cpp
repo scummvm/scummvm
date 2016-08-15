@@ -683,18 +683,38 @@ void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failure
 	}
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
+
+	char *messages_EN_ANY[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
+	char *messages_GR_GRE[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
+		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.", " MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."};
+	char *messages_FR_FRA[5] = {" DOIT PRATIQUER DAVANTAGE SON ", "ENVOUTEMENT.", " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
+		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.", "EXORCISME."};
+	char **messages;
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		messages = messages_EN_ANY; break;
+	case Common::GR_GRE:
+		messages = messages_GR_GRE; break;
+	case Common::FR_FRA:
+		messages = messages_FR_FRA; break;
+	}
+
 	switch (failureType) {
 	case k0_failureNeedsMorePractice:
-		// TODO: localization
-		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, " NEEDS MORE PRACTICE WITH THIS ");
+		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, messages[0]);
 		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, g417_baseSkillName[skillIndex]);
-		L1264_pc_Message = " SPELL.";
+		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == k3_ChampionSkillWizard) {
+			L1264_pc_Message = messages[1];
+		} else {
+			L1264_pc_Message = messages[4];
+		}
 		break;
 	case k1_failureMeaninglessSpell:
-		L1264_pc_Message = " MUMBLES A MEANINGLESS SPELL."; // TODO: localization
+		L1264_pc_Message = messages[2];
 		break;
 	case k10_failureNeedsFlaskInHand:
-		L1264_pc_Message = " NEEDS AN EMPTY FLASK IN HAND FOR POTION."; // TODO: localization
+		L1264_pc_Message = messages[3];
 		break;
 	}
 	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, L1264_pc_Message);
@@ -1162,14 +1182,24 @@ T0407032:
 			_vm->_championMan->f326_championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->f303_getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
 		}
 		break;
-	case k5_ChampionActionFlip:
-		// TODO: localization
-		if (_vm->getRandomNumber(2)) {
-			f381_printMessageAfterReplacements("IT COMES UP HEADS.");
-		} else {
-			f381_printMessageAfterReplacements("IT COMES UP TAILS.");
+	case k5_ChampionActionFlip: {
+		char *messages_EN_ANY[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
+		char *messages_GR_GRE[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
+		char *messages_FR_FRA[2] = {"C'EST FACE.", "C'EST PILE."};
+		char **message;
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: message = messages_EN_ANY; break;
+		case Common::GR_GRE: message = messages_GR_GRE; break;
+		case Common::FR_FRA: message = messages_FR_FRA; break;
 		}
-		break;
+		if (_vm->getRandomNumber(2)) {
+			f381_printMessageAfterReplacements(message[0]);
+		} else {
+			f381_printMessageAfterReplacements(message[1]);
+		}
+	}
+								break;
 	case k33_ChampionActionSpellshield:
 	case k34_ChampionActionFireshield:
 		if (!f403_isPartySpellOrFireShieldSuccessful(L1247_ps_Champion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
@@ -1682,12 +1712,27 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
 	if (damage < 0) {
+		static char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
+		static char *messages_GR_GRE[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
+		static char *messages_FR_FRA[2] = {"TROP LOIN", "SANS MUNITION"};
+		static int16  pos_EN_ANY[2] = {242, 248};
+		static int16  pos_GR_GRE[2] = {242, 236};
+		static int16  pos_FR_FRA[2] = {248, 236};
+		char **message;
+		int16 *pos;
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY: message = messages_EN_ANY; pos = pos_EN_ANY;  break;
+		case Common::GR_GRE: message = messages_GR_GRE; pos = pos_GR_GRE; break;
+		case Common::FR_FRA: message = messages_FR_FRA; pos = pos_FR_FRA; break;
+		}
+
 		if (damage == kM1_damageCantReach) {
-			AL1176_i_X = 242;
-			AL1178_puc_String = (unsigned char*)"CAN'T REACH"; // TODO: localization
+			AL1176_i_X = pos[0];
+			AL1178_puc_String = (byte*)message[0];
 		} else {
-			AL1176_i_X = 248;
-			AL1178_puc_String = (unsigned char*)"NEED AMMO"; // TODO: localization
+			AL1176_i_X = pos[1];
+			AL1178_puc_String = (byte*)message[1];
 		}
 		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
 	} else {

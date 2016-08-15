@@ -241,9 +241,20 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
 		char champBonesName[16];
-		// TODO: localization
-		strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
-		strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
+
+		switch (_vm->getGameLanguage()) { // localized
+		default:
+		case Common::EN_ANY:
+		case Common::GR_GRE: // english and german version are the same
+			strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
+			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
+			break;
+		case Common::FR_FRA:
+			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
+			strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
+			break;
+		}
+
 		objectName = champBonesName;
 	} else {
 		objectName = _g352_objectNames[L0007_i_IconIndex];
