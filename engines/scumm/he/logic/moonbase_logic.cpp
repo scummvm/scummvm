@@ -515,12 +515,12 @@ int LogicHEmoonbase::op_net_get_host_name(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEmoonbase::op_net_get_ip_from_name(int op, int numArgs, int32 *args) {
-	char szName[MAX_HOSTNAME_SIZE];
-	_vm1->getStringFromArray(args[0], szName, sizeof(szName));
+	char name[MAX_HOSTNAME_SIZE];
+	_vm1->getStringFromArray(args[0], name, sizeof(name));
 
 	char ip[MAX_IP_SIZE];
 
-	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, szName)) { // PN_GetIPfromName
+	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, name)) { // PN_GetIPfromName
 		return _vm1->setupStringArrayFromString(ip);
 	}
 
@@ -538,13 +538,13 @@ int LogicHEmoonbase::op_net_host_tcpip_game(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEmoonbase::op_net_join_tcpip_game(int op, int numArgs, int32 *args) {
-	char szIP[MAX_IP_SIZE];
+	char ip[MAX_IP_SIZE];
 	char userName[MAX_PLAYER_NAME];
 
-	_vm1->getStringFromArray(args[0], szIP, sizeof(szIP));
+	_vm1->getStringFromArray(args[0], ip, sizeof(ip));
 	_vm1->getStringFromArray(args[1], userName, sizeof(userName));
 
-	return _vm1->_moonbase->_net->joinGame(szIP, userName);
+	return _vm1->_moonbase->_net->joinGame(ip, userName);
 }
 #endif
 
