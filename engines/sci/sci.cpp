@@ -251,7 +251,9 @@ Common::Error SciEngine::run() {
 	//  - Gabriel Knight 1 CD
 	//  - Police Quest 4 CD
 	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
-	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
+	//
+	// Gabriel Knight 1 on Mac is hi-res only, so it should NOT get this option.
+	// Confirmed by [md5] and originally by clone2727.
 	if (Common::checkGameGUIOption(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, ConfMan.get("guioptions"))) {
 		// GAMEOPTION_HIGH_RESOLUTION_GRAPHICS is available for the currently detected game,
 		// so read the user option now.
