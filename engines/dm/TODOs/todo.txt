@@ -1,6 +1,5 @@
 Bugs:
 	Display:
-		No food and water bar graphs
 		Spellcasting tabs are displayed inproperly, switching between them is possible tho
 		Cursor icons are drawn twice
 
@@ -21,8 +20,10 @@ Todo:
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Code stuff todo:
-	Complete stub methods
+	Complete stub methods(blitShrink, etc.)
+	Add scroller
 	Add localization
-	Save file f433_processCommand140_saveGame fails silently
+	Save file f433_processCommand140_saveGame fails silently, add error checking
+	Clean up f113_drawField
 	
 	
