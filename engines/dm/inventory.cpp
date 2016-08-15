@@ -739,7 +739,9 @@ void InventoryMan::f350_drawStopPressingMouth() {
 	f347_drawPanel();
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f78_showMouse();
 }
 
 void InventoryMan::f353_drawStopPressingEye() {
@@ -751,7 +753,9 @@ void InventoryMan::f353_drawStopPressingEye() {
 	if ((L1100_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject) != Thing::_none) {
 		_vm->_objectMan->f34_drawLeaderObjectName(L1100_T_LeaderHandObject);
 	}
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f78_showMouse();
 }
 
 void InventoryMan::f349_processCommand70_clickOnMouth() {
@@ -957,7 +961,9 @@ void InventoryMan::f352_processCommand71_clickOnEye() {
 		return;
 	}
 	_vm->_eventMan->f357_discardAllInput();
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->f77_hideMouse();
 	_vm->f22_delay(8);
 	f332_drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
 	if (_vm->_championMan->_g415_leaderEmptyHanded) {
