@@ -34,9 +34,9 @@ struct CHoseStatics {
 
 class CHose : public CCarry {
 protected:
-	static CHoseStatics *_statics;
-
 	CString _string6;
+public:
+	static CHoseStatics *_statics;
 public:
 	CLASSDEF;
 	CHose();

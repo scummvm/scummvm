@@ -21,8 +21,18 @@
  */
 
 #include "titanic/npcs/parrot_succubus.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/carry/hose.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CParrotSuccUBus, CSuccUBus)
+	ON_MESSAGE(HoseConnectedMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LeaveNodeMsg)
+END_MESSAGE_MAP()
 
 CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _field1DC(0), 
 	_field1EC(0), _field1F0(376), _field1F4(393) {
@@ -44,6 +54,98 @@ void CParrotSuccUBus::load(SimpleFile *file) {
 	_field1EC = file->readNumber();
 
 	CSuccUBus::load(file);
+}
+
+bool CParrotSuccUBus::HoseConnectedMsg(CHoseConnectedMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (msg->_value == _field1DC)
+		return true;
+	if (mailExists(pet->getRoomFlags()))
+		return false;
+
+	_field1DC = msg->_value;
+	if (_field1DC) {
+		CGameObject *item = msg->_object;
+		_string3 = item->getName();
+		CHoseConnectedMsg hoseMsg(1, this);
+		hoseMsg.execute(msg->_object);
+		item->petMoveToHiddenRoom();
+
+		CPumpingMsg pumpingMsg(1, this);
+		pumpingMsg.execute(this);
+		_field1DC = 1;
+
+		if (_enabled) {
+			_enabled = false;
+		} else {
+			playMovie(_startFrame9, _endFrame9, 0);
+			playSound("z#26.wav");
+		}
+
+		playMovie(_field1C4, _field1C8, MOVIE_NOTIFY_OBJECT);
+	} else {
+		stopMovie();
+		stopSound(_field1EC);
+		playMovie(_field1F0, _field1F4, MOVIE_NOTIFY_OBJECT);
+
+		CPumpingMsg pumpingMsg(0, this);
+		pumpingMsg.execute(_string3);
+
+		CGameObject *obj = getHiddenObject(_string3);
+		if (obj) {
+			obj->petAddToInventory();
+			obj->setVisible(true);
+		}
+
+		_enabled = true;
+		CTurnOff offMsg;
+		offMsg.execute(this);
+	}
+
+	return true;
+}
+
+bool CParrotSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_field1DC) {
+		playMovie(_field1CC, _field1D0, MOVIE_REPEAT);
+		return true;
+	} else {
+		return CSuccUBus::EnterViewMsg(msg);
+	}
+}
+
+bool CParrotSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_endFrame == _field1C8) {
+		playMovie(_field1CC, _field1D0, MOVIE_REPEAT);
+		_field1EC = playSound("z#472.wav");
+		return true;
+	} else {
+		return CSuccUBus::MovieEndMsg(msg);
+	}
+}
+
+bool CParrotSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_field1DC) {
+		CHoseConnectedMsg hoseMsg;
+		hoseMsg._value = 0;
+		hoseMsg.execute(this);
+	} else {
+		return CSuccUBus::MouseButtonDownMsg(msg);
+	}
+}
+
+bool CParrotSuccUBus::LeaveNodeMsg(CLeaveNodeMsg *msg) {
+	if (_field1DC) {
+		CGameObject *obj = getHiddenObject(_string3);
+		if (CHose::_statics->_v2.empty()) {
+			playSound("z#51.wav");
+			CHoseConnectedMsg hoseMsg;
+			hoseMsg._value = 0;
+			hoseMsg.execute(this);
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

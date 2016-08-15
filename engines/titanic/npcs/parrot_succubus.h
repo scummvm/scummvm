@@ -28,6 +28,12 @@
 namespace Titanic {
 
 class CParrotSuccUBus : public CSuccUBus {
+	DECLARE_MESSAGE_MAP;
+	bool HoseConnectedMsg(CHoseConnectedMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
 public:
 	int _field1DC;
 	CString _string3;
