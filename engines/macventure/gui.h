@@ -83,15 +83,6 @@ struct DraggedObj {
 	bool hasMoved;
 };
 
-enum CursorState {
-	// HACK, I should define a proper FSM for this
-	kCursorIdle,
-	kCursorSingleClick, // Triggered when mouse goes up
-	kCursorSingleClickAwait, // Triggered when we are in single click and mouse goes down
-	kCursorSingleClickTrap, // Trap state, for when we are in await, and the timer goes off
-	kCursorDoubleClick
-};
-
 class Gui {
 
 public:
@@ -251,9 +242,6 @@ private: // Methods
 
 };
 
-static void cursorTimerHandler(void *refCon);
-
-class Cursor {
 enum ClickState {
 	kCursorIdle = 0,
 	kCursorSCStart = 1,
@@ -271,103 +259,22 @@ enum CursorInput { // Columns for the FSM transition table
 	kCursorInputCount
 };
 
-
-ClickState _transitionTable[kCursorStateCount][kCursorInputCount] = {
-	/*				Button down,		Button Up,		Tick		*/
-	/* Idle */		{kCursorSCStart,	kCursorIdle,	kCursorIdle	},
-	/* SC Start */	{kCursorSCStart,	kCursorDCStart,	kCursorSCDrag},
-	/* SC Do */		{kCursorSCDrag, 	kCursorIdle,	kCursorSCDrag},
-	/* DC Start */	{kCursorDCDo,		kCursorDCStart,	kCursorSCSink},
-	/* DC Do */		{kCursorDCDo,		kCursorIdle,	kCursorDCDo	},
-	/* SC Sink */	{kCursorIdle,		kCursorIdle,	kCursorIdle	},
-};
+class Cursor {
 
 public:
-	Cursor(Gui *gui) {
-		_gui = gui;
-		_state = kCursorIdle;
-	}
+	Cursor(Gui *gui);
+	~Cursor();
 
-	~Cursor() {}
-
-	void tick() {
-		changeState(kTickCol);
-	}
-
-	bool processEvent(const Common::Event &event) {
-		if (event.type == Common::EVENT_MOUSEMOVE) {
-			_pos = event.mouse;
-			return true;
-		}
-		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			changeState(kButtonDownCol);
-			return true;
-		}
-		if (event.type == Common::EVENT_LBUTTONUP) {
-			changeState(kButtonUpCol);
-			return true;
-		}
-
-		return false;
-	}
-
-	Common::Point getPos() {
-		return _pos;
-	}
-
-	bool canSelectDraggable() {
-		return _state == kCursorSCDrag;
-	}
+	void tick();
+	bool processEvent(const Common::Event &event);
+	Common::Point getPos();
+	bool canSelectDraggable();
 
 private:
 
-	void changeState(CursorInput input) {
-		debugC(3, kMVDebugGUI, "Change cursor state: [%d] -> [%d]", _state, _transitionTable[_state][input]);
-		if (_state != _transitionTable[_state][input]) {
-			executeStateOut();
-			_state = _transitionTable[_state][input];
-			executeStateIn();
-		}
-	}
-
-	void executeStateIn() {
-		switch (_state) {
-		case kCursorSCStart:
-			g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
-			_gui->selectForDrag(_pos);
-			break;
-		case kCursorDCStart:
-			g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
-			break;
-		case kCursorSCSink:
-			_gui->handleSingleClick();
-			changeState(kTickCol);
-			break;
-		default:
-			break;
-		}
-	}
-
-	void executeStateOut() {
-		switch (_state) {
-		case kCursorIdle:
-			break;
-		case kCursorSCStart:
-			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-			break;
-		case kCursorSCDrag:
-			_gui->handleSingleClick();
-			break;
-		case kCursorDCStart:
-			g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
-			break;
-		case kCursorDCDo:
-			_gui->handleDoubleClick();
-			break;
-		default:
-			break;
-		}
-	}
+	void changeState(CursorInput input);
+	void executeStateIn();
+	void executeStateOut();
 
 
 private:
@@ -377,10 +284,6 @@ private:
 	ClickState _state;
 };
 
-static void cursorTimerHandler(void *refCon) {
-	Cursor *cursor = (Cursor *)refCon;
-	cursor->tick();
-}
 
 
 enum {

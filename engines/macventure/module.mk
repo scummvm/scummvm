@@ -2,6 +2,7 @@ MODULE := engines/macventure
 
 MODULE_OBJS := \
 	controls.o \
+	cursor.o \
 	datafiles.o \
 	detection.o \
 	dialog.o \
