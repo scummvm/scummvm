@@ -1711,7 +1711,8 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 			L1643_i_Width = 37;
 			if (!_vm->_displayMan->f491_isDerivedBitmapInCache(AL1174_ui_DerivedBitmapIndex)) {
 				AL1178_puc_Bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
-				_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex), 96, 45, AL1176_i_PixelWidth, 37, g17_PalChangesNoChanges);
+				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+				_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap, 96, 45, AL1176_i_PixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
 				_vm->_displayMan->f493_addDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
 			} else {
 				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);

@@ -788,6 +788,11 @@ public:
 	ProjectileAspect _projectileAspect[k14_ProjectileAspectCount]; // @ G0210_as_Graphic558_ProjectileAspects
 	uint16 _palCredits[16]; // @ G0019_aui_Graphic562_Palette_Credits
 	uint16 _palDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_DungeonView
+	byte _palChangesCreatureD3[16]; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
+	byte _palChangesCreatureD2[16]; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
+	byte _palChangesNoChanges[16]; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
+	byte _palChangesFloorOrnD3[16]; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
+	byte _palChangesFloorOrnD2[16]; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap

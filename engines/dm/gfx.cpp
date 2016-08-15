@@ -39,15 +39,6 @@
 #include "eventman.h"
 
 namespace DM {
-byte g221_PalChangesCreature_D3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130}; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
-byte g222_PalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150}; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
-
-byte g17_PalChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
-
-byte g213_PalChangesFloorOrn_D3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 140, 130}; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
-byte g214_PalChangesFloorOrn_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
-
-
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g348_bitmapScreen = nullptr;
 	_bitmaps = nullptr;
@@ -66,7 +57,6 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_g289_championPortraitOrdinal = 0;
 	_g266_currMapViAltarIndex = 0;
 	_g297_drawFloorAndCeilingRequested = true;
-
 
 	for (int i = 0; i < 4; i++)
 		_g75_palChangesProjectile[i] = nullptr;
@@ -357,6 +347,12 @@ void DisplayMan::initConstants() {
 		0x000, 0x000, 0x000, 0x000, 0x0CC, 0x000, 0x000, 0x020, 0x400, 0x000, 0x000, 0x640, 0x000, 0x000, 0x004, 0x444
 	};
 
+	static byte palChangesCreatureD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 0, 0, 110, 0, 20, 0, 130}; // @ G0221_auc_Graphic558_PaletteChanges_Creature_D3
+	static byte palChangesCreatureD2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110, 120, 130, 140, 150}; // @ G0222_auc_Graphic558_PaletteChanges_Creature_D2
+	static byte palChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
+	static byte palChangesFloorOrnD3[16] = {0, 120, 10, 30, 40, 30, 0, 60, 30, 90, 100, 110, 0, 20, 140, 130}; // @ G0213_auc_Graphic558_PaletteChanges_FloorOrnament_D3
+	static byte palChangesFloorOrnD2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 90, 100, 110, 120, 130, 140, 150}; // @ G0214_auc_Graphic558_PaletteChanges_FloorOrnament_D2
+
 	_frameWallD3R2 = Frame(208, 223, 25, 73, 8, 49, 0, 0); // @ G0712_s_Graphic558_Frame_Wall_D3R2
 
 	_doorFrameLeftD1C = Frame(43, 74, 14, 107, 16, 94, 0, 0); // @ G0170_s_Graphic558_Frame_DoorFrameLeft_D1C
@@ -367,6 +363,11 @@ void DisplayMan::initConstants() {
 		_palChangesDoorButtonAndWallOrnD2[i] = palChangesDoorButtonAndWallOrnD2[i];
 		_palChangeSmoke[i] = palChangeSmoke[i];
 		_palCredits[i] = palCredits[i];
+		_palChangesCreatureD3[i] = palChangesCreatureD3[i];
+		_palChangesCreatureD2[i] = palChangesCreatureD2[i];
+		_palChangesNoChanges[16] = palChangesNoChanges[i];
+		_palChangesFloorOrnD3[i] = palChangesFloorOrnD3[i];
+		_palChangesFloorOrnD2[i] = palChangesFloorOrnD2[i];
 		for (int j = 0; j < 6; j++)
 			_palDungeonView[j][i] = palDungeonView[j][i];
 	}
@@ -571,9 +572,9 @@ void DisplayMan::f460_initializeGraphicData() {
 		}
 	}
 
-	_g75_palChangesProjectile[0] = g213_PalChangesFloorOrn_D3;
-	_g75_palChangesProjectile[1] = g214_PalChangesFloorOrn_D2;
-	_g75_palChangesProjectile[2] = _g75_palChangesProjectile[3] = g17_PalChangesNoChanges;
+	_g75_palChangesProjectile[0] = _palChangesFloorOrnD3;
+	_g75_palChangesProjectile[1] = _palChangesFloorOrnD2;
+	_g75_palChangesProjectile[2] = _g75_palChangesProjectile[3] = _palChangesNoChanges;
 
 	derivedBitmapIndex = k438_DerivedBitmapFirstExplosion;
 	ExplosionAspect *expAsp = _explosionAspects;
@@ -880,7 +881,7 @@ byte* DisplayMan::f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale
 		byte *nativeBitmap = f489_getNativeBitmapOrGraphic(MIN(explosionAspIndex, (uint16)k2_ExplosionAspectPoison) + k348_FirstExplosionGraphicIndice);
 		bitmap = f492_getDerivedBitmap(derBitmapIndex);
 		f129_blitToBitmapShrinkWithPalChange(nativeBitmap, bitmap, explAsp->_byteWidth, explAsp->_height, pixelWidth * 2, height,
-			(explosionAspIndex == k3_ExplosionAspectSmoke) ? _palChangeSmoke : g17_PalChangesNoChanges);
+			(explosionAspIndex == k3_ExplosionAspectSmoke) ? _palChangeSmoke : _palChangesNoChanges);
 		f493_addDerivedBitmap(derBitmapIndex);
 	}
 
@@ -2324,8 +2325,8 @@ void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementC
 	for (int16 i = 0; i < 6; ++i)
 		_palDungeonView[i][replacedColor] = creatureReplColorSets[replacementColor]._RGBColor[i];
 
-	g222_PalChangesCreature_D2[replacedColor] = creatureReplColorSets[replacementColor]._D2ReplacementColor;
-	g221_PalChangesCreature_D3[replacedColor] = creatureReplColorSets[replacementColor]._D3ReplacementColor;
+	_palChangesCreatureD2[replacedColor] = creatureReplColorSets[replacementColor]._D2ReplacementColor;
+	_palChangesCreatureD3[replacedColor] = creatureReplColorSets[replacementColor]._D3ReplacementColor;
 }
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
@@ -3055,12 +3056,12 @@ T0115015_DrawProjectileAsObject:
 						AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
 						byteWidth = M78_getScaledDimension(objectAspect->_byteWidth, k20_Scale_D2);
 						heightRedEagle = M78_getScaledDimension(objectAspect->_height, k20_Scale_D2);
-						paletteChanges = g214_PalChangesFloorOrn_D2;
+						paletteChanges = _palChangesFloorOrnD2;
 					} else {
 						AL_8_shiftSetIndex = k2_ShiftSet_D2BackD3Front;
 						byteWidth = M78_getScaledDimension(objectAspect->_byteWidth, k16_Scale_D3);
 						heightRedEagle = M78_getScaledDimension(objectAspect->_height, k16_Scale_D3);
-						paletteChanges = g213_PalChangesFloorOrn_D3;
+						paletteChanges = _palChangesFloorOrnD3;
 					}
 					if (flipHorizontal) {
 						derivedBitmapIndex += 2;
@@ -3312,12 +3313,12 @@ T0115077_DrawSecondHalfSquareCreature:
 				derivedBitmapIndex++; /* Skip front D3 image in additional graphics */
 				AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
 				useCreatureSpecialD2FrontBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0080_CreatureInfoGraphicMaskSpecialD2Front) && !useCreatureSideBitmap && !useCreatureBackBitmap && !useCreatureAttackBitmap;
-				paletteChanges = g222_PalChangesCreature_D2;
+				paletteChanges = _palChangesCreatureD2;
 				scale = k20_Scale_D2;
 			} else { /* Creature is on D3 */
 				AL_8_shiftSetIndex = k2_ShiftSet_D2BackD3Front;
 				useCreatureSpecialD2FrontBitmap = false;
-				paletteChanges = g221_PalChangesCreature_D3;
+				paletteChanges = _palChangesCreatureD3;
 				scale = k16_Scale_D3;
 			}
 			byteWidth = M78_getScaledDimension(sourceByteWidth, scale);
@@ -3534,7 +3535,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 							byteWidth = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_byteWidth), explosionCoordinates[2]);
 							heightRedEagle = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_height), explosionCoordinates[2]);
 							if (AL_1_viewSquareExplosionIndex != k9_ViewSquare_D1C_Explosion) {
-								f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, ((ProjectileAspect*)objectAspect)->_byteWidth << 1, ((ProjectileAspect*)objectAspect)->_height, byteWidth << 1, heightRedEagle, g17_PalChangesNoChanges);
+								f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, ((ProjectileAspect*)objectAspect)->_byteWidth << 1, ((ProjectileAspect*)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesNoChanges);
 								AL_6_bitmapRedBanana = _g74_tmpBitmap;
 							}
 							goto T0115200_DrawExplosion;
