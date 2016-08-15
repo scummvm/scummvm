@@ -310,12 +310,6 @@ enum GraphicIndice {
 };
 
 extern byte g17_PalChangesNoChanges[16];
-extern uint16 gK57_PalSwoosh[16]; // @ K0057_aui_Palette_Swoosh
-extern uint16 gK150_PalMousePointer[16];	// @ K0150_aui_Palette_MousePointer
-extern uint16 g19_PalCredits[16];  // @ G0019_aui_Graphic562_Palette_Credits
-extern uint16 g20_PalEntrance[16]; // @ G0020_aui_Graphic562_Palette_Entrance
-extern uint16 g21_PalDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_DungeonView
-
 
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {
@@ -416,8 +410,6 @@ public:
 	FieldAspect() {}
 }; // @ FIELD_ASPECT
 
-
-
 class CreatureAspect {
 public:
 	uint16 _firstNativeBitmapRelativeIndex;
@@ -475,6 +467,9 @@ public:
 	ProjectileAspect(byte firstN, byte firstD, byte byteWidth, byte h, uint16 grap) :
 		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
 		_byteWidth(byteWidth), _height(h), _graphicInfo(grap) {}
+
+	ProjectileAspect() : _firstNativeBitmapRelativeIndex(0), 
+		_firstDerivedBitmapRelativeIndex(0), _byteWidth(0), _height(0), _graphicInfo(0) {}
 }; // @ PROJECTIL_ASPECT
 
 class CreatureReplColorSet {
@@ -790,6 +785,9 @@ public:
 	Frame _frameWalls163[12];
 	CreatureAspect _creatureAspects219[k27_CreatureTypeCount];
 	ObjectAspect _objectAspects209[k85_ObjAspectCount]; // @ G0209_as_Graphic558_ObjectAspects
+	ProjectileAspect _projectileAspect[k14_ProjectileAspectCount]; // @ G0210_as_Graphic558_ProjectileAspects
+	uint16 _palCredits[16]; // @ G0019_aui_Graphic562_Palette_Credits
+	uint16 _palDungeonView[6][16]; // @ G0021_aaui_Graphic562_Palette_DungeonView
 
 	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
 	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap

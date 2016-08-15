@@ -278,11 +278,13 @@ void DMEngine::f463_initializeGame() {
 }
 
 void DMEngine::f448_initMemoryManager() {
+	static uint16 palSwoosh[16] = {0x000, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0x000, 0xFFF, 0xAAA, 0xFFF, 0xAAA, 0x444, 0xFF0, 0xFF0}; // @ K0057_aui_Palette_Swoosh
+
 	warning(false, "STUB METHOD: f448_initMemoryManager");
-	_displayMan->f508_buildPaletteChangeCopperList(gK57_PalSwoosh, gK57_PalSwoosh);
+	_displayMan->f508_buildPaletteChangeCopperList(palSwoosh, palSwoosh);
 	for (uint16 i = 0; i < 16; ++i) {
-		_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
-		_displayMan->_g346_paletteMiddleScreen[i] = g21_PalDungeonView[0][i];
+		_displayMan->_g347_paletteTopAndBottomScreen[i] = _displayMan->_palDungeonView[0][i];
+		_displayMan->_g346_paletteMiddleScreen[i] = _displayMan->_palDungeonView[0][i];
 	}
 }
 
@@ -323,7 +325,7 @@ void DMEngine::f462_startGame() {
 		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	}
 
-	_displayMan->f508_buildPaletteChangeCopperList(g21_PalDungeonView[0], _displayMan->_g347_paletteTopAndBottomScreen);
+	_displayMan->f508_buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_g347_paletteTopAndBottomScreen);
 	_menuMan->f395_drawMovementArrows();
 	_championMan->f278_resetDataToStartGame();
 	_g301_gameTimeTicking = true;
@@ -658,7 +660,7 @@ T0444017:
 			if (_g523_restartGameRequest) {
 				_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
 				_displayMan->fillScreen(k0_ColorBlack);
-				_displayMan->f436_STARTEND_FadeToPalette(g21_PalDungeonView[0]);
+				_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palDungeonView[0]);
 				_g298_newGame = k0_modeLoadSavedGame;
 				if (f435_loadgame(1) != kM1_LoadgameFailure) {
 					f462_startGame();
@@ -675,7 +677,7 @@ T0444017:
 	Box box(0, 319, 0, 199);
 	_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen);
 
-	_displayMan->f436_STARTEND_FadeToPalette(g19_PalCredits);
+	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palCredits);
 	_eventMan->f541_waitForMouseOrKeyActivity();
 	if (_engineShouldQuit)
 		return;
@@ -696,6 +698,8 @@ void DMEngine::f439_drawEntrance() {
 	static Box doorsLowerHalfBox = Box(0, 231, 81, 160);
 	static Box closedDoorLeftBox = Box(0, 104, 30, 190);
 	static Box closedDoorRightBox = Box(105, 231, 30, 190);
+	/* Atari ST: { 0x000, 0x333, 0x444, 0x420, 0x654, 0x210, 0x040, 0x050, 0x432, 0x700, 0x543, 0x321, 0x222, 0x555, 0x310, 0x777 }, RGB colors are different */
+	static uint16 palEntrance[16] = {0x000, 0x666, 0x888, 0x840, 0xCA8, 0x0C0, 0x080, 0x0A0, 0x864, 0xF00, 0xA86, 0x642, 0x444, 0xAAA, 0x620, 0xFFF}; // @ G0020_aui_Graphic562_Palette_Entrance
 
 	byte *microDungeonCurrentMapData[32];
 
@@ -732,7 +736,7 @@ void DMEngine::f439_drawEntrance() {
 
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
 	_displayMan->f21_blitToScreen(_g562_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	_displayMan->f436_STARTEND_FadeToPalette(g20_PalEntrance);
+	_displayMan->f436_STARTEND_FadeToPalette(palEntrance);
 }
 
 void DMEngine::f438_STARTEND_OpenEntranceDoors() {
@@ -772,7 +776,7 @@ void DMEngine::f442_SARTEND_processCommand202_entranceDrawCredits() {
 	_eventMan->f78_showMouse();
 	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 	_displayMan->f466_loadIntoBitmap(k5_creditsGraphicIndice, _displayMan->_g348_bitmapScreen);
-	_displayMan->f436_STARTEND_FadeToPalette(g19_PalCredits);
+	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palCredits);
 	f22_delay(50);
 	_eventMan->f541_waitForMouseOrKeyActivity();
 	_g298_newGame = k202_modeEntranceDrawCredits;

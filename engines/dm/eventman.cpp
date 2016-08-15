@@ -369,6 +369,8 @@ EventManager::~EventManager() {
 }
 
 void EventManager::initMouse() {
+	static uint16 gK150_PalMousePointer[16] = {0x000, 0x666, 0x888, 0x620, 0x0CC, 0x840, 0x080, 0x0C0, 0xF00, 0xFA0, 0xC86, 0xFF0, 0x000, 0xAAA, 0x00F, 0xFFF}; // @ K0150_aui_Palette_MousePointer
+
 	if (!_g615_mousePointerOriginalColorsObject)
 		_g615_mousePointerOriginalColorsObject = new byte[32 * 18];
 	if (!_gK190_mousePointerTempBuffer)
