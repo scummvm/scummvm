@@ -657,7 +657,7 @@ void RivenSimpleCommand::dump(byte tabs) {
 		debugN("%s(", externalCommandName.c_str());
 		uint16 varCount = _arguments[1];
 		for (uint16 j = 0; j < varCount; j++) {
-			debugN("%d", _arguments[1 + j]);
+			debugN("%d", _arguments[2 + j]);
 			if (j != varCount - 1)
 				debugN(", ");
 		}
