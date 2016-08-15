@@ -82,6 +82,7 @@ bool Dialog::processEvent(Common::Event event) {
 	for (Common::Array<DialogElement*>::iterator it = _elements.begin(); it != _elements.end(); it++) {
 		if ((*it)->processEvent(this, event)) return true;
 	}
+	return false;
 }
 
 void Dialog::addButton(Common::String title, MacVenture::DialogAction action, Common::Point position, uint width, uint height) {

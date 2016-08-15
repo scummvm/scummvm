@@ -377,8 +377,6 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 		win = kMainGameWindow;
 	}
 
-	bool canDrag = (objID && !_world->getObjAttr(objID, kAttrInvisible));
-
 	const WindowData &windata = _gui->getWindowData(win);
 
 	if (shiftPressed) {
@@ -802,7 +800,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 
 void MacVentureEngine::closeObject(ObjID objID) {
 	warning("closeObject: not fully implemented");
-	bool success = _gui->tryCloseWindow(getObjWindow(objID));
+	_gui->tryCloseWindow(getObjWindow(objID));
 	return;
 }
 

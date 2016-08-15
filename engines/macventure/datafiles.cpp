@@ -61,6 +61,7 @@ Common::String windowTypeName(MVWindowType windowType) {
 	case kRDoc10:
 		return "RDoc10";
 	}
+	return "";
 }
 
 void MacVentureEngine::loadDataBundle() {

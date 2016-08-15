@@ -93,8 +93,6 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		int slotNum = atoi(file->c_str() + file->size() - 3);
-		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
 		SaveStateDescriptor desc;
 		// Do not allow save slot 0 (used for auto-saving) to be deleted or
 		// overwritten.
@@ -104,7 +102,7 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				SaveStateDescriptor desc = loadMetaData(in, slotNum);
+				desc = loadMetaData(in, slotNum);
 				if (desc.getSaveSlot() != slotNum) {
 					// invalid
 					delete in;

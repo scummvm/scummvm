@@ -119,7 +119,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 		}
 	}
 
-	uint highest = 0;
+	int highest = 0;
 	uint localHigh = 0;
 	do { // Saved function calls
 		highest = 0;
@@ -914,6 +914,7 @@ bool ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 	if (execFrame(true)) {
 		return true;
 	}
+	return false;
 }
 
 bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
@@ -926,6 +927,7 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 	frame->scripts.pop_front();
 	script = frame->scripts.front();
 	debugC(2, kMVDebugScript, "SCRIPT: Return from fuction %d", id);
+	return false;
 }
 
 void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
@@ -1072,9 +1074,9 @@ void ScriptEngine::opd4RELC(EngineState * state, EngineFrame * frame) {
 void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
 	word txt = state->pop();
 	if (_engine->showTextEntry(txt, frame->src, frame->dest)) {
-		state->push(0xFFFF);
+		state->push(0xFF);
 	} else {
-		state->push(0x0000);
+		state->push(0x00);
 	}
 }
 

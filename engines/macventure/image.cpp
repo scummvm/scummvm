@@ -118,7 +118,7 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 	bitWidth = w;
 	bitHeight = h;
 
-	for (int i = 0; i < rowBytes * h; i++) {
+	for (uint i = 0; i < rowBytes * h; i++) {
 		data.push_back(0);
 	}
 
@@ -300,7 +300,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		if (flags & 2) delta *= 2;
 		pos = 0;
 		uint q = delta;
-		for (int i = 0; i < bitHeight * rowBytes - delta; i++) {
+		for (uint i = 0; i < bitHeight * rowBytes - delta; i++) {
 			data[q] ^= data[pos];
 			q++;
 			pos++;
