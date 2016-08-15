@@ -48,7 +48,7 @@ namespace Fullpipe {
 enum FullpipeGameFeatures {
 };
 
-enum AccessDebugChannels {
+enum {
 	kDebugPathfinding	= 1 << 0,
 	kDebugDrawing		= 1 << 1,
 	kDebugLoading		= 1 << 2,
