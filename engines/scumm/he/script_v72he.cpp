@@ -239,10 +239,10 @@ int ScummEngine_v72he::setupStringArrayFromString(char *cStr) {
 
 	writeVar(0, 0);
 
-	int len = strlen(cStr);
+	int len = strlen(cStr) + 1;
 	byte *ptr = defineArray(0, kStringArray, 0, 0, 0, len);
 	if (ptr != nullptr)
-		strcpy((char*)ptr, cStr);
+		Common::strlcpy((char*)ptr, cStr, len);
 
 	return readVar(0);
 }
