@@ -33,6 +33,9 @@ class Net {
 public:
 	Net(ScummEngine_v100he *vm);
 
+	int hostGame(char *sessionName, char *userName);
+	int joinGame(char *IP, char *userName);
+
 private:
 
 public:

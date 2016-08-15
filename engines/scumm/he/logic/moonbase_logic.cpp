@@ -26,6 +26,7 @@
 #include "scumm/he/moonbase/ai_main.h"
 #ifdef USE_SDL_NET
 #include "scumm/he/moonbase/net_main.h"
+#include "scumm/he/moonbase/net_defines.h"
 #endif
 
 namespace Scumm {
@@ -509,12 +510,24 @@ int LogicHEmoonbase::op_net_get_ip_from_name(int op, int numArgs, int32 *args) {
 	return 1;
 }
 int LogicHEmoonbase::op_net_host_tcpip_game(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_host_tcpip_game()");
-	return 1;
+	char sessionName[MAX_SESSION_NAME];
+	char userName[MAX_PLAYER_NAME];
+
+	// TODO:
+	//SPUTM_CStringArrayFromScummString(args[0], sessionName, sizeof(sessionName));
+	//SPUTM_CStringArrayFromScummString(args[1], userName, sizeof(userName));
+
+	return _vm1->_moonbase->_net->hostGame(sessionName, userName);
 }
 int LogicHEmoonbase::op_net_join_tcpip_game(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_join_tcpip_game()");
-	return 1;
+	char szIP[MAX_IP_SIZE];
+	char userName[MAX_PLAYER_NAME];
+
+	// TODO:
+	//SPUTM_CStringArrayFromScummString(args[0], szIP, sizeof(szIP));
+	//SPUTM_CStringArrayFromScummString(args[1], userName, sizeof(userName));
+
+	return _vm1->_moonbase->_net->joinGame(szIP, userName);
 }
 #endif
 

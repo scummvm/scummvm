@@ -30,4 +30,14 @@ Net::Net(ScummEngine_v100he *vm) : _vm(vm) {
 	//some defaults for fields
 }
 
+int Net::hostGame(char *sessionName, char *userName) {
+	warning("STUB: op_net_host_tcpip_game()"); // PN_HostTCPIPGame
+	return 0;
+}
+
+int Net::joinGame(char *IP, char *userName) {
+	warning("STUB: Net::joinGame()"); // PN_JoinTCPIPGame
+	return 0;
+}
+
 } // End of namespace Scumm
