@@ -180,6 +180,7 @@ void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
 	Champion &champ = _vm->_championMan->_gK71_champions[_g432_inventoryChampionOrdinal];
 	f334_closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
+	// TODO: localization
 	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
 							   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
 	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k30_FoodLabelIndice),
@@ -707,6 +708,7 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->f303_getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
 		if (AL1092_i_SkillLevel == 1)
 			continue;
+		// TODO: localization
 		strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
 		strcat(L1097_ac_String, " ");
 		strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);

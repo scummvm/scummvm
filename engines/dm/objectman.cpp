@@ -241,6 +241,7 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
 		char champBonesName[16];
+		// TODO: localization
 		strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
 		strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
 		objectName = champBonesName;

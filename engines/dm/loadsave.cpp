@@ -173,6 +173,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
 	int16 saveAndPlayChoice = _dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 
+	// TODO: localization
 	_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 
 	uint16 champHandObjWeight = 0;

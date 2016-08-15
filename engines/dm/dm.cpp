@@ -56,6 +56,7 @@
 #include "projexpl.h"
 #include "dialog.h"
 #include <graphics/cursorman.h>
+#include <advancedDetector.h>
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -140,7 +141,7 @@ int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
-DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
+DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc) {
 // Do not load data files
 // Do not initialize graphics here
 // Do not initialize audio devices here
@@ -646,6 +647,7 @@ T0444017:
 			_displayMan->_g578_useByteBoxCoordinates = false;
 			_displayMan->D24_fillScreenBox(restartOuterBox, k12_ColorDarkestGray);
 			_displayMan->D24_fillScreenBox(restartInnerBox, k0_ColorBlack);
+			// TODO: localization
 			_textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME");
 			curPalette[1] = D03_RGB_PINK;
 			curPalette[4] = D09_RGB_WHITE;
@@ -932,4 +934,5 @@ void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
 }
 
+Common::Language DMEngine::getGameLanguage() { return _gameVersion->language; }
 } // End of namespace DM

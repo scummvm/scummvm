@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
 		AD_LISTEND
 		},
-	    Common::EN_GRB, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+	    Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 
 	AD_TABLE_END_MARKER
@@ -86,7 +86,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if(desc)
-			*engine = new DM::DMEngine(syst);
+			*engine = new DM::DMEngine(syst, desc);
 		return desc != nullptr;
 	}
 	virtual int getMaximumSaveSlot() const { return 99; }

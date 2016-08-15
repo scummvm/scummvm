@@ -40,7 +40,7 @@
 
 namespace DM {
 
-const char *g417_baseSkillName[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
+const char *g417_baseSkillName[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"}; // TODO: localization
 
 Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
 Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
@@ -2149,6 +2149,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		else
 			loadColor = k13_ColorLightestGray;
 
+		// TODO: localization
 		_vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD ");
 		maxLoad = curChampion->_load / 10;
 		strcpy(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());

@@ -1,14 +1,11 @@
 Bugs:
 	Display:
-		Broken palette for cursor
 		No food and water bar graphs
 		Spellcasting tabs are displayed inproperly, switching between them is possible tho
-		When reordering a champions, the icons in the top right corner ar drawn twice under the cursor
+		Cursor icons are drawn twice
 
 	Logic:
 		Items thrown on the right side end up on the left side 
-		I'm not sure, but the cooldown between champion actions when fighting monsters seems too muh
-		Clicking wit ha scroll in hand on the eye in the inventory makes userinput glitchy
 
 
 Possible bugs:
@@ -19,7 +16,6 @@ Possible bugs:
 Todo:
 	Add wiki entry for DM
 	
-	I forgot to add localization warnings
 	Double check enums with hex literals
 	Double check strcat, strstr usages
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions

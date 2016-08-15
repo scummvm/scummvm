@@ -37,6 +37,7 @@
 #include "console.h"
 
 
+struct ADGameDescription;
 
 namespace DM {
 
@@ -244,7 +245,7 @@ class DMEngine : public Engine {
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 	void f503_loadSounds(); // @ F0503_SOUND_LoadAll
 public:
-	explicit DMEngine(OSystem *syst);
+	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DMEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger() { return _console; }
@@ -270,6 +271,7 @@ public:
 	void f442_SARTEND_processCommand202_entranceDrawCredits();
 	void f446_STARTEND_fuseSequnce(); // @ F0446_STARTEND_FuseSequence
 	void f445_STARTEND_fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
+	Common::Language getGameLanguage();
 
 private:
 	int16 _g528_saveFormat; // @ G0528_i_Format
@@ -281,6 +283,7 @@ private:
 	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
 	Common::Queue<PendingSound> _pendingSounds;
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
+	const ADGameDescription *_gameVersion;
 public:
 	Console *_console;
 	DisplayMan *_displayMan;
