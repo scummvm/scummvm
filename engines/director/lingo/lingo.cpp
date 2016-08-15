@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "common/str-array.h"
 
 #include "director/lingo/lingo.h"
@@ -81,6 +82,9 @@ Symbol::Symbol() {
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
+
+	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
+	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 
 	for (const EventHandlerType *t = &eventHanlerDescs[0]; t->handler != kEventNone; ++t)
 		_eventHandlerTypes[t->handler] = t->name;
