@@ -475,21 +475,23 @@ int LogicHEmoonbase::op_net_set_ai_player_count(int op, int numArgs, int32 *args
 	warning("STUB: op_net_set_ai_player_count()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_add_user(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_add_user()");
-	return 1;
+	char userName[MAX_PLAYER_NAME];
+	_vm1->getStringFromArray(args[0], userName, sizeof(userName));
+	return _vm1->_moonbase->_net->addUser(userName, userName);
 }
+
 int LogicHEmoonbase::op_net_remove_user(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_remove_user()");
-	return 1;
+	return _vm1->_moonbase->_net->removeUser();
 }
+
 int LogicHEmoonbase::op_net_who_sent_this(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_who_sent_this()");
-	return 1;
+	return _vm1->_moonbase->_net->whoSentThis();
 }
+
 int LogicHEmoonbase::op_net_who_am_i(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_who_am_i()");
-	return 1;
+	return _vm1->_moonbase->_net->whoAmI();
 }
 
 int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *args) {

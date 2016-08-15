@@ -31,12 +31,32 @@ Net::Net(ScummEngine_v100he *vm) : _vm(vm) {
 }
 
 int Net::hostGame(char *sessionName, char *userName) {
-	warning("STUB: op_net_host_tcpip_game()"); // PN_HostTCPIPGame
+	warning("STUB: op_net_host_tcpip_game(\"%s\", \"%s\")", sessionName, userName); // PN_HostTCPIPGame
 	return 0;
 }
 
 int Net::joinGame(char *IP, char *userName) {
-	warning("STUB: Net::joinGame()"); // PN_JoinTCPIPGame
+	warning("STUB: Net::joinGame(\"%s\", \"%s\")", IP, userName); // PN_JoinTCPIPGame
+	return 0;
+}
+
+int Net::addUser(char *shortName, char *longName) {
+	warning("STUB: Net::addUser(\"%s\", \"%s\")", shortName, longName); // PN_AddUser
+	return 0;
+}
+
+int Net::removeUser() {
+	warning("STUB: Net::removeUser()"); // PN_RemoveUser
+	return 0;
+}
+
+int Net::whoSentThis() {
+	warning("STUB: Net::whoSentThis()"); // PN_WhoSentThis
+	return 0;
+}
+
+int Net::whoAmI() {
+	warning("STUB: Net::whoAmI()"); // PN_WhoAmI
 	return 0;
 }
 

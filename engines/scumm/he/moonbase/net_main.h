@@ -35,7 +35,10 @@ public:
 
 	int hostGame(char *sessionName, char *userName);
 	int joinGame(char *IP, char *userName);
-
+	int addUser(char *shortName, char *longName);
+	int removeUser();
+	int whoSentThis();
+	int whoAmI();
 private:
 
 public:
