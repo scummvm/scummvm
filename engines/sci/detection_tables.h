@@ -828,7 +828,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_GK1_CD },
 
-	// Gabriel Knight - English Macintosh
+	// Gabriel Knight - English Macintosh (Floppy!)
 	// This version is hi-res ONLY, so it should NOT get GAMEOPTION_HIGH_RESOLUTION_GRAPHICS
 	// (which is meant for enforcing hi-res graphics), but instead hi-res mode should be enabled all the time.
 	// Confirmed by [md5] and originally by clone2727.
