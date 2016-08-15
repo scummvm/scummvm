@@ -179,7 +179,105 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 }
 
 bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
-	// TODO
+	CPetControl *pet = getPetControl();
+
+	if (msg->_endFrame == _endFrame12) {
+		if (_startFrame10 >= 0)
+			playSound("z#27.wav");
+	} else if (msg->_endFrame == _endFrame10) {
+		if (_startFrame11 >= 0)
+			playSound("z#30.wav");
+	} else {
+		if (_endFrame9 == _endFrame10 && pet) {
+			if (_v2) {
+				startTalking(this, getRandomNumber(1) ? 230062 : 230063);
+			} else if (!findMail(pet->getRoomFlags())) {
+				switch (getRandomNumber(4)) {
+				case 0:
+					startTalking(this, 230001);
+					break;
+				case 1:
+					startTalking(this, 230002);
+					break;
+				case 2:
+					startTalking(this, 230003);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		if (msg->_endFrame == _endFrame3) {
+			switch (_field158) {
+			case 1:
+				stopSound(_soundHandle);
+				_soundHandle = playSound("z#3.wav");
+				break;
+			case 2:
+				stopSound(_soundHandle);
+				_soundHandle = playSound("z#12.wav");
+				break;
+			case 3:
+				if (_isChicken) {
+					startTalking(this, 230018);
+					_isChicken = false;
+				} else {
+					startTalking(this, 230013);
+				}
+				break;
+			case 4:
+				startTalking(this, 230017);
+				break;
+			default:
+				break;
+			}
+
+			CSUBTransition transMsg;
+			transMsg.execute(this);
+
+		} else if (msg->_endFrame == _bilgeEndFrame2) {
+			playSound("z#25.wav", 70);
+			playSound("z#24.wav", 70);
+
+		} else if (msg->_endFrame == _endFrame4) {
+			if (_mailP) {
+				_mailP->petAddToInventory();
+				CVisibleMsg visibleMsg(true);
+				visibleMsg.execute(_mailP);
+
+				_mailP = nullptr;
+				petSetArea(PET_INVENTORY);
+
+				CSUBTransition transMsg;
+				transMsg.execute(this);
+			}
+
+		} else if (msg->_endFrame == _bilgeEndFrame1) {
+			changeView("BilgeRoomWith.Node 1.N", "");
+			_v2 = 0;
+			resetMail();
+
+			if (_mailP) {
+				_mailP->petAddToInventory();
+				CVisibleMsg visibleMsg(true);
+				visibleMsg.execute(_mailP);
+
+				_mailP = nullptr;
+				petSetArea(PET_INVENTORY);
+			}
+
+			startTalking(this, 150);
+			CBodyInBilgeRoomMsg bodyMsg;
+			bodyMsg.execute("Service Elevator Entity");
+			dec54();
+			_field158 = 0;
+
+		} else {
+			_field158 = 0;
+		}
+	}
+
 	return true;
 }
 
