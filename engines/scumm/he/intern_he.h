@@ -288,7 +288,8 @@ public:
 
 	virtual byte *getStringAddress(ResId idx);
 	virtual int setupStringArray(int size);
-	void getStringFromArray(int arrayNumber, char *buffer, int maxLength);
+	virtual int setupStringArrayFromString(char *cStr);
+	virtual void getStringFromArray(int arrayNumber, char *buffer, int maxLength);
 
 protected:
 	virtual void setupOpcodes();

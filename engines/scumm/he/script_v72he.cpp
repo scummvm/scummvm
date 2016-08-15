@@ -230,6 +230,23 @@ int ScummEngine_v72he::setupStringArray(int size) {
 	return readVar(0);
 }
 
+int ScummEngine_v72he::setupStringArrayFromString(char *cStr) {
+	// this is PUI_ScummStringArrayFromCString() found in PUSERMAC.cpp
+	// I can see how its done up there in setupStringArray()
+	// yet I'd note that 'SCUMMVAR_user_reserved' var was used instead of 0
+	// and strlen(), not strlen() + 1 was used
+	// plus, this function actually copies the string, not just 'sets up' the array
+
+	writeVar(0, 0);
+
+	int len = strlen(cStr);
+	byte *ptr = defineArray(0, kStringArray, 0, 0, 0, len);
+	if (ptr != nullptr)
+		strcpy((char*)ptr, cStr);
+
+	return readVar(0);
+}
+
 void ScummEngine_v72he::readArrayFromIndexFile() {
 	int num;
 	int a, b, c;
