@@ -81,7 +81,6 @@ MODULE_OBJS := \
 	game/arb_background.o \
 	game/arboretum_gate.o \
 	game/auto_animate.o \
-	game/bilge_succubus.o \
 	game/bar_menu.o \
 	game/bar_menu_button.o \
 	game/bar_bell.o \
@@ -221,7 +220,6 @@ MODULE_OBJS := \
 	game/parrot/parrot_nut_bowl_actor.o \
 	game/parrot/parrot_nut_eater.o \
 	game/parrot/parrot_perch_holder.o \
-	game/parrot/parrot_succubus.o \
 	game/parrot/parrot_trigger.o \
 	game/parrot/player_meets_parrot.o \
 	game/pet/pet.o \
@@ -343,6 +341,7 @@ MODULE_OBJS := \
 	moves/trip_down_canal.o \
 	npcs/barbot.o \
 	npcs/bellbot.o \
+	npcs/bilge_succubus.o \
 	npcs/callbot.o \
 	npcs/character.o \
 	npcs/deskbot.o \
@@ -351,6 +350,7 @@ MODULE_OBJS := \
 	npcs/maitre_d.o \
 	npcs/mobile.o \
 	npcs/parrot.o \
+	npcs/parrot_succubus.o \
 	npcs/robot_controller.o \
 	npcs/starlings.o \
 	npcs/succubus.o \

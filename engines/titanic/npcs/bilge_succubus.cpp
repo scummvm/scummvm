@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/game/bilge_succubus.h"
+#include "titanic/npcs/bilge_succubus.h"
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"

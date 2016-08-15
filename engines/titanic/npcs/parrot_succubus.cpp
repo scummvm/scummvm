@@ -20,7 +20,7 @@
  *
  */
 
-#include "titanic/game/parrot/parrot_succubus.h"
+#include "titanic/npcs/parrot_succubus.h"
 
 namespace Titanic {
 
