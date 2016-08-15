@@ -927,10 +927,9 @@ void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 	f65_playPendingSound();
 	_eventMan->f357_discardAllInput();
 	_displayMan->updateScreen();
-	f22_delay(1);
+	f22_delay(2);
 	_g313_gameTime++; /* BUG0_71 Some timings are too short on fast computers.
 					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
-
 }
 
 } // End of namespace DM

@@ -834,8 +834,8 @@ void DisplayMan::f135_fillBoxBitmap(byte* destBitmap, Box &box, Color color, int
 void DisplayMan::f133_blitBoxFilledWithMaskedBitmap(byte* src, byte* dest, byte* mask, byte* tmp, Box& box,
 													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
-		 // make sure to take care of inclusive boundaries
-	warning(false, "STUB FUNCTION: does nothing at all");
+		 // make sure to take care of inclusive boundaries, color can have 0x8000 flag to not use mask
+
 }
 
 
