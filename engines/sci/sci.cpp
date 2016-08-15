@@ -244,7 +244,7 @@ Common::Error SciEngine::run() {
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
-	// Read user option for hires graphics
+	// Read user option for forcing hires graphics
 	// Only show/selectable for:
 	//  - King's Quest 6 CD
 	//  - King's Quest 6 CD demo
@@ -252,23 +252,13 @@ Common::Error SciEngine::run() {
 	//  - Police Quest 4 CD
 	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
 	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
-	switch (getPlatform()) {
-	case Common::kPlatformDOS:
-	case Common::kPlatformWindows:
-		// Only DOS+Windows
-		switch (_gameId) {
-		case GID_KQ6:
-		case GID_GK1:
-		case GID_PQ4:
-			if (isCD())
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
-		default:
-			break;
-		}
-	default:
-		break;
-	};
+	if (Common::checkGameGUIOption(GUIO_GAMEOPTIONS8, ConfMan.get("guioptions"))) {
+		// GAMEOPTION_HIGH_RESOLUTION_GRAPHICS is available for the currently detected game,
+		// so read the user option now.
+		// We need to do this, because the option's default is "true", but we don't want "true"
+		// for any game that does not have this option.
+		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+	}
 
 	// Initialize the game screen
 	_gfxScreen = new GfxScreen(_resMan);
