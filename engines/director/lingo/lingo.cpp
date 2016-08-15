@@ -146,7 +146,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debug(2, "Add code \"%s\" for type %d with id %d", code, type, id);
+	debugC(2, kDebugLingoCompile, "Add code \"%s\" for type %d with id %d", code, type, id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];
@@ -180,7 +180,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			else
 				_inFactory = false;
 
-			debug(2, "Code chunk:\n#####\n%s#####", chunk.c_str());
+			debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
@@ -191,7 +191,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		_hadError = true; // HACK: This is for preventing test execution
 
-		debug(2, "Code chunk:\n#####\n%s#####", begin);
+		debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
 		parse(begin);
 	} else {
 		parse(code);
@@ -211,7 +211,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	debug(2, "Executing script type: %d, id: %d", type, id);
+	debugC(2, kDebugLingoExec, "Executing script type: %d, id: %d", type, id);
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
