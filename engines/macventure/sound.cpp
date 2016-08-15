@@ -56,7 +56,7 @@ uint32 SoundManager::playSound(ObjID sound) {
 
 void SoundManager::ensureLoaded(ObjID sound) {
 	if (!_assets.contains(sound))
-	_assets[sound] = new SoundAsset(_container, sound);
+		_assets[sound] = new SoundAsset(_container, sound);
 }
 
 SoundAsset::SoundAsset(Container *container, ObjID id) :

@@ -5,7 +5,7 @@
 
 namespace MacVenture {
 
-World::World(MacVentureEngine *engine, Common::MacResManager *resMan)  {
+World::World(MacVentureEngine *engine, Common::MacResManager *resMan) {
 	_resourceManager = resMan;
 	_engine = engine;
 	_saveGame = NULL;
@@ -104,7 +104,7 @@ bool MacVenture::World::isObjActive(ObjID obj) {
 	if (!getAncestor(obj)) return false; // If our ancestor is the garbage (obj 0), we're inactive
 	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) &&
 		destObj > 0 &&			// we have a destination object &&
-		!getAncestor(destObj))  // but that destination object is in the garbage
+		!getAncestor(destObj))	// but that destination object is in the garbage
 		return false;
 	if (selectedControl != kMoveObject) return true; // We only need one
 	// Handle move object

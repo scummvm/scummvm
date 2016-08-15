@@ -46,7 +46,7 @@ Dialog::~Dialog() {
 
 void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 	switch(action) {
-		case kDACloseDialog:
+	case kDACloseDialog:
 		_gui->closeDialog();
 		break;
 		case kDASubmit:
@@ -71,7 +71,7 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 		break;
 	default:
 		break;
-  }
+	}
 }
 
 const Graphics::Font& Dialog::getFont() {
@@ -84,11 +84,11 @@ bool Dialog::processEvent(Common::Event event) {
 	}
 }
 
-void Dialog::addButton(Common::String title, MacVenture::DialogAction action, Common::Point position, uint width, uint height)  {
+void Dialog::addButton(Common::String title, MacVenture::DialogAction action, Common::Point position, uint width, uint height) {
 	_elements.push_back(new DialogButton(this, title, action, position, width, height));
 }
 
-void Dialog::addText(Common::String content, Common::Point position)  {
+void Dialog::addText(Common::String content, Common::Point position) {
 	_elements.push_back(new DialogPlainText(this, content, position));
 }
 
@@ -96,7 +96,7 @@ void Dialog::addTextInput(Common::Point position, int width, int height) {
 	_elements.push_back(new DialogTextInput(this, position, width, height));
 }
 
-void Dialog::draw()  {
+void Dialog::draw() {
 	Graphics::ManagedSurface compose;
 	// Compose the surface
 	compose.create(_bounds.width(), _bounds.height());
@@ -149,7 +149,7 @@ DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction 
 	_bounds = Common::Rect(position.x, position.y, position.x + width, position.y + height);
 }
 
-bool DialogElement::processEvent(MacVenture::Dialog *dialog, Common::Event event)  {
+bool DialogElement::processEvent(MacVenture::Dialog *dialog, Common::Event event) {
 	return doProcessEvent(dialog, event);
 }
 
@@ -218,7 +218,7 @@ bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 			if (!_text.empty()) {
 				_text.deleteLastChar();
 				dialog->setUserInput(_text);
-      			return true;
+				return true;
 			}
 			break;
 		default:
@@ -228,9 +228,9 @@ bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 				return true;
 			}
 			break;
-    }
-  }
-  return false;
+		}
+	}
+	return false;
 }
 
 void DialogTextInput::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {

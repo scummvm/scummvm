@@ -41,24 +41,25 @@ enum ControlType { // HACK, should correspond exactly with the types of controls
 };
 
 enum ControlAction { // HACK, figure out a way to put it in engine
-  kNoCommand = 0,
-  kStartOrResume = 1,
-  kClose = 2,
-  kTick = 3,
-  kActivateObject = 4,
-  kMoveObject = 5,
-  kConsume = 6,
-  kExamine = 7,
-  kGo = 8,
-  kHit = 9,
-  kOpen = 10,
-  kOperate = 11,
-  kSpeak = 12,
-  kBabble = 13,
-  kTargetName = 14,
-  kDebugObject = 15,
-  kClickToContinue = 16
+	kNoCommand = 0,
+	kStartOrResume = 1,
+	kClose = 2,
+	kTick = 3,
+	kActivateObject = 4,
+	kMoveObject = 5,
+	kConsume = 6,
+	kExamine = 7,
+	kGo = 8,
+	kHit = 9,
+	kOpen = 10,
+	kOperate = 11,
+	kSpeak = 12,
+	kBabble = 13,
+	kTargetName = 14,
+	kDebugObject = 15,
+	kClickToContinue = 16
 };
+
 struct ControlData {
 	Common::Rect bounds;
 	uint16 scrollValue;

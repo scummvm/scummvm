@@ -648,17 +648,13 @@ void ScriptEngine::op95SORT(EngineState * state, EngineFrame * frame) {
 	if (step<0) step += num;
 	word end = 0;
 	word start = 0;
-	for (word i = 1;i<num;i++)
-	{
+	for (word i = 1;i<num;i++) {
 		start += step;
 		if (start >= num) start -= num;
-		if (start == end)
-		{
+		if (start == end) {
 			end++;
 			start = end;
-		}
-		else
-		{
+		} else {
 			word a = state->peek(end);
 			word b = state->peek(start);
 			state->poke(end, b);

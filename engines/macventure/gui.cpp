@@ -594,7 +594,7 @@ void Gui::drawMainGameWindow() {
 
 	if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 		Graphics::MacWindow *win = findWindow(data.refcon);
-		Common::Rect innerDims  = win->getInnerDimensions();
+		Common::Rect innerDims = win->getInnerDimensions();
 		int x = win->getDimensions().left;
 		int y = win->getDimensions().top;
 		innerDims.translate(-x, -y);
@@ -624,7 +624,7 @@ void Gui::drawInventories() {
 
 		if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 			Graphics::MacWindow *win = findWindow(data.refcon);
-			Common::Rect innerDims  = win->getInnerDimensions();
+			Common::Rect innerDims = win->getInnerDimensions();
 			int x = win->getDimensions().left;
 			int y = win->getDimensions().top;
 			innerDims.translate(-x, -y);
@@ -846,8 +846,7 @@ void Gui::updateExit(ObjID obj) {
 		_exitsData->remove_at(ctl);
 
 	if (!_engine->isHiddenExit(obj) &&
-		_engine->getParent(obj) == _engine->getParent(1))
-	{
+		_engine->getParent(obj) == _engine->getParent(1)) {
 		ControlData data;
 		data.titleLength = 0;
 		data.refcon = (ControlAction)obj; // Objects can be exits (actions)
@@ -1290,8 +1289,7 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 			if (it->isInsideBounds(position)) {
 				it->select();
 				data = *it;
-			}
-			else {
+			} else {
 				it->unselect();
 			}
 		}
@@ -1357,8 +1355,7 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event & even
 				button = *it;
 				_engine->handleObjectSelect(button.getData().refcon, kExitsWindow, false, false);
 				return true;
-			}
-			else {
+			} else {
 				it->unselect();
 			}
 		}

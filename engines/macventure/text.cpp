@@ -34,8 +34,7 @@ TextAsset::TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID 
 
 	if (_isOld) {
 		decodeOld();
-	}
-	else {
+	} else {
 		decodeHuffman();
 	}
 }
@@ -51,35 +50,28 @@ void TextAsset::decodeOld() {
 		char val = stream.getBits(5);
 		if (val == 0x0) { // Space
 			c = ' ';
-		}
-		else if (val >= 0x1 && val <= 0x1A) {
+		} else if (val >= 0x1 && val <= 0x1A) {
 			if (lowercase) { // Ascii a-z
 				c = val + 0x60;
-			}
-			else { // Ascii A-Z
+			} else { // Ascii A-Z
 				c = val + 0x40;
 			}
 			lowercase = true;
-		}
-		else if (val == 0x1B) {
+		} else if (val == 0x1B) {
 			if (lowercase) {
 				c = '.';
-			}
-			else {
+			} else {
 				c = ',';
 			}
 			lowercase = true;
-		}
-		else if (val == 0x1C) {
+		} else if (val == 0x1C) {
 			if (lowercase) {
 				c = 0x27; // Ascii '
-			}
-			else {
+			} else {
 				c = 0x22; // Ascii '"'
 			}
 			lowercase = true;
-		}
-		else if (val == 0x1D) { // Composite
+		} else if (val == 0x1D) { // Composite
 			ObjID subval = stream.getBits(16);
 			Common::String child;
 			if (subval & 0x8000) {
@@ -95,15 +87,12 @@ void TextAsset::decodeOld() {
 				c = '?'; // HACK Will fix later, should append
 			}
 			lowercase = true;
-		}
-		else if (val == 0x1E) {
+		} else if (val == 0x1E) {
 			c = stream.getBits(8);
 			lowercase = true;
-		}
-		else if (val == 0x1F) {
+		} else if (val == 0x1F) {
 			lowercase = !lowercase;
-		}
-		else {
+		} else {
 			warning("Unrecognized char in old text %d, pos %d", _id, i);
 		}
 		str[i] = c;
@@ -121,8 +110,7 @@ void TextAsset::decodeHuffman() {
 	uint16 strLen = 0;
 	if (stream.getBit()) {
 		strLen = stream.getBits(15);
-	}
-	else {
+	} else {
 		strLen = stream.getBits(7);
 	}
 	// OK up to here
@@ -179,22 +167,19 @@ void TextAsset::decodeHuffman() {
 Common::String TextAsset::getNoun(ObjID subval) {
 	ObjID obj;
 	Common::String name;
-	if (subval & 8)
+	if (subval & 8) {
 		obj = _targetObj;
-	else
+	} else {
 		obj = _sourceObj;
-	if ((subval & 3) == 1)
-	{
+	}
+	if ((subval & 3) == 1) {
 		uint idx = _engine->getPrefixNdx(obj);
 		idx = ((idx >> 4) & 3) + 1;
 		name = _engine->getNoun(idx);
-	}
-	else
-	{
+	} else {
 		// HACK, there should be a pool of assets or something like in the GUI
 		name = *TextAsset(_engine, obj, _sourceObj, _targetObj, _container, _isOld, _huffman).decode();
-		switch (subval & 3)
-		{
+		switch (subval & 3) {
 		case 2:
 			name = _engine->getPrefixString(0, obj) + name;
 			break;

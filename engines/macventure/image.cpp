@@ -122,8 +122,7 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 		data.push_back(0);
 	}
 
-	switch (mode)
-	{
+	switch (mode) {
 	case MacVenture::kPPIC0:
 		decodePPIC0(stream, data, bitHeight, bitWidth, rowBytes);
 		break;
@@ -279,8 +278,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 		for (uint y = 0; y < bitHeight; y++) {
 			uint16 v = 0;
 			if (flags & 2) {
-				for (uint x = 0; x < rowBytes; x++)
-				{
+				for (uint x = 0; x < rowBytes; x++) {
 					data[pos] ^= v;
 					v = data[pos];
 					pos++;

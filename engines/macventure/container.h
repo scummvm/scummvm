@@ -210,8 +210,8 @@ protected:
 
 	ContainerHeader _header;
 
-	Common::Array<uint16> _huff;   // huffman masks
-	Common::Array<uint8> _lens;   // huffman lengths
+	Common::Array<uint16> _huff; // huffman masks
+	Common::Array<uint8> _lens; // huffman lengths
 	Common::Array<ItemGroup> _groups;
 
 	Common::String _filename;

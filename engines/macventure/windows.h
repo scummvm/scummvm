@@ -27,7 +27,7 @@
 #include "common/array.h"
 
 namespace MacVenture {
-  // massive HACK
+// massive HACK
 typedef uint32 ObjID;
 
 enum WindowReference {
@@ -92,7 +92,7 @@ struct BorderBounds {
 	uint16 bottomOffset;
 
 	BorderBounds(uint16 l, uint16 t, uint16 r, uint16 b) :
-    leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b) {}
+	leftOffset(l), topOffset(t), rightOffset(r), bottomOffset(b) {}
 };
 }
 #endif
