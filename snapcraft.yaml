@@ -25,7 +25,7 @@ parts:
     build-packages:
       - g++
       - make
-      - libsdl1.2-dev
+      - libsdl2-dev
       - libjpeg62-dev
       - libmpeg2-4-dev
       - libogg-dev
@@ -54,7 +54,7 @@ parts:
       - libmpeg2-4
       - libogg0
       - libpng12-0
-      - libsdl1.2debian
+      - libsdl2-2.0-0
       - libsndio6.1
       - libstdc++6
       - libtheora0

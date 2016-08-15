@@ -1,14 +1,14 @@
 language:
   - cpp
 
-sudo: false
+sudo: required
 
 addons:
   apt:
     packages:
     - g++ make
-    - libsdl1.2-dev
-    - libjpeg62-turbo-dev
+    - libsdl2-dev
+    - libjpeg-turbo8-dev
     - libmpeg2-4-dev
     - libogg-dev
     - libvorbis-dev
@@ -31,6 +31,8 @@ compiler:
 
 os:
   - linux
+
+dist: trusty
 
 script:
   - ./configure --enable-all-engines
