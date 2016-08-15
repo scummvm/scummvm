@@ -24,6 +24,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -49,6 +50,9 @@ namespace Director {
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc),
 		_rnd("director") {
+	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
+	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
+
 	if (!_mixer->isReady())
 		error("Sound initialization failed");
 
