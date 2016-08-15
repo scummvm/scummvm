@@ -720,7 +720,9 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 
 	s = name + "-" + *method.u.s;
 
+	debugC(3, kDebugLingoExec, "Stack size before call: %d", _stack.size());
 	call(s, nargs);
+	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
 
 	if (!method.u.s->compareToIgnoreCase("mNew")) {
 		Datum d;
