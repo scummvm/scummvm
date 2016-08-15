@@ -51,6 +51,7 @@ RivenCard::~RivenCard() {
 	}
 
 	_vm->_gfx->clearWaterEffects();
+	_vm->_gfx->clearFliesEffect();
 	_vm->_video->stopVideos();
 }
 

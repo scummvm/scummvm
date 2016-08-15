@@ -204,6 +204,7 @@ void MohawkEngine_Riven::handleEvents() {
 	// Update background running things
 	checkTimer();
 	_sound->updateSLST();
+	_gfx->runFliesEffect();
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
 	needsUpdate |= _video->updateMovies();
 
@@ -495,6 +496,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
 		_sound->updateSLST();
+		_gfx->runFliesEffect();
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
 		needsUpdate |= _video->updateMovies();
 

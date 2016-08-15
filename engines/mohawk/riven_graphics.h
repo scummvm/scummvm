@@ -28,6 +28,7 @@
 namespace Mohawk {
 
 class MohawkEngine_Riven;
+class FliesEffect;
 
 class RivenGraphics : public GraphicsManager {
 public:
@@ -44,10 +45,18 @@ public:
 	void drawImageRect(uint16 id, Common::Rect srcRect, Common::Rect dstRect);
 	void drawExtrasImage(uint16 id, Common::Rect dstRect);
 
+	Graphics::Surface *getEffectScreen();
+	Graphics::Surface *getBackScreen();
+
 	// Water Effect
 	void scheduleWaterEffect(uint16);
 	void clearWaterEffects();
 	bool runScheduledWaterEffects();
+
+	// Flies Effect
+	void setFliesEffect(uint16 count, bool fireflies);
+	void clearFliesEffect();
+	void runFliesEffect();
 
 	// Transitions
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
@@ -88,6 +97,9 @@ private:
 	};
 	Common::Array<SFXERecord> _waterEffects;
 
+	// Flies Effect
+	FliesEffect *_fliesEffect;
+
 	// Transitions
 	int16 _scheduledTransition;
 	Common::Rect _transitionRect;
@@ -102,11 +114,102 @@ private:
 	Graphics::Surface *_mainScreen;
 	Graphics::Surface *_effectScreen;
 	bool _dirtyScreen;
+
 	Graphics::PixelFormat _pixelFormat;
 	void clearMainScreen();
 
 	// Credits
 	uint _creditsImage, _creditsPos;
+};
+
+/**
+ * The flies effect draws flies in the scene
+ *
+ * It can draw either regular flies or fireflies.
+ * The flies' movement is simulated in 3 dimensions.
+ */
+class FliesEffect {
+public:
+	FliesEffect(MohawkEngine_Riven *vm, uint16 count, bool fireflies);
+	~FliesEffect();
+
+	/** Simulate the flies' movement and draw them to the screen */
+	void update();
+
+private:
+	struct FliesEffectEntry	{
+		bool light;
+		int posX;
+		int posY;
+		int posZ;
+		const uint16 *alphaMap;
+		uint width;
+		uint height;
+		int framesTillLightSwitch;
+		bool hasBlur;
+		int blurPosX;
+		int blurPosY;
+		const uint16 *blurAlphaMap;
+		uint blurWidth;
+		uint blurHeight;
+		float posXFloat;
+		float posYFloat;
+		float posZFloat;
+		float directionAngleRad;
+		float directionAngleRadZ;
+		float speed;
+	};
+
+	struct FliesEffectData {
+		bool lightable;
+		bool unlightIfTooBright;
+		bool isLarge;
+		bool canBlur;
+		float maxSpeed;
+		float minSpeed;
+		int maxAcceleration;
+		float blurSpeedTreshold;
+		float blurDistance;
+		uint32 color32;
+		int minFramesLit;
+		int maxLightDuration;
+	};
+
+	MohawkEngine_Riven *_vm;
+
+	uint _nextUpdateTime;
+	int _updatePeriodMs;
+
+	Common::Rect _gameRect;
+	Graphics::Surface *_effectSurface;
+	Graphics::Surface *_backSurface;
+	Common::Array<Common::Rect> _screenSurfaceDirtyRects;
+	Common::Array<Common::Rect> _effectsSurfaceDirtyRects;
+
+	const FliesEffectData *_parameters;
+	static const FliesEffectData _firefliesParameters;
+	static const FliesEffectData _fliesParameters;
+
+	Common::Array<FliesEffectEntry> _fly;
+
+	void initFlies(uint16 count);
+	void initFlyRandomPosition(uint index);
+	void initFlyAtPosition(uint index, int posX, int posY, int posZ);
+
+	void updateFlies();
+	void updateFlyPosition(uint index);
+
+	void draw();
+	void updateScreen();
+
+	void selectAlphaMap(bool horGridOffset, bool vertGridoffset, const uint16 **alphaMap, uint *width, uint *height);
+	void colorBlending(uint32 flyColor, byte &r, byte &g, byte &b, int alpha);
+
+	void addToScreenDirtyRects(const Common::Rect &rect);
+	void addToEffectsDirtyRects(const Common::Rect &rect);
+	void restoreEffectsSurface();
+
+	int randomBetween(int min, int max);
 };
 
 } // End of namespace Mohawk
