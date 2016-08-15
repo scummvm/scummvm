@@ -1484,6 +1484,26 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	}
 }
 
+void ScummEngine_v72he::getStringFromArray(int arrayNumber, char *buffer, int maxLength) {
+	// I'm not really sure it belongs here and not some other version
+	// this is ARRAY_GetStringFromArray() from ARRAYS.cpp of SPUTM
+
+	// this function makes a C-string out of <arrayNumber> contents
+	
+	VAR(0) = arrayNumber; // it was 0 in original code, but I've seen ScummVM Moonbase code which uses VAR_U32_ARRAY_UNK
+
+	int i, ch;
+	for (i = 0; i < maxLength; ++i) {
+		if (!(ch = readArray(0, 0, i))) {
+			break;
+		}
+
+		buffer[i] = ch;
+	}
+
+	buffer[i] = 0;
+}
+
 void ScummEngine_v72he::o72_writeFile() {
 	int32 resID = pop();
 	int slot = pop();
