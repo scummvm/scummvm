@@ -6,12 +6,6 @@ Bugs:
 	Logic:
 		Items thrown on the right side end up on the left side 
 
-
-Possible bugs:
-	- k1_LeftMouseButton and k2_RightMouseButton have values 1 and 2 respectively, contrary to the original in the original: MASK0x0001_MOUSE_RIGHT_BUTTON, MASK0x0002_MOUSE_LEFT_BUTTON
-	- possible garbage value return in f140_getObjectWeight
-
-	
 Todo:
 	Add wiki entry for DM
 	
@@ -20,8 +14,7 @@ Todo:
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Code stuff todo:
-	Complete stub methods(blitShrink, etc.)
-	Add scroller
+	Complete stub methods(blitShrink, blitmask, scroller, etc.)
 	Save file f433_processCommand140_saveGame fails silently, add error checking
 	Clean up f113_drawField
 	

@@ -427,11 +427,11 @@ DungeonMan::~DungeonMan() {
 void DungeonMan::f455_decompressDungeonFile() {
 	Common::File f;
 	f.open("Dungeon.dat");
-	if (f.readUint16BE() == 0x8104) {
+	if (f.readUint16BE() == 0x8104) { // if dungeon is compressed
 		_rawDunFileDataSize = f.readUint32BE();
 		delete[] _rawDunFileData;
 		_rawDunFileData = new byte[_rawDunFileDataSize];
-		f.readUint16BE();
+		f.readUint16BE(); // discard
 		byte common[4];
 		for (uint16 i = 0; i < 4; ++i)
 			common[i] = f.readByte();
@@ -475,8 +475,12 @@ void DungeonMan::f455_decompressDungeonFile() {
 				bitsUsedInWord += 10;
 			}
 		}
-	} else {
-		warning(false, "TODO: if the dungeon is uncompressed, read it here");
+	} else { // read uncompressed Dungeon.dat
+		f.seek(0);
+		_rawDunFileDataSize = f.size();
+		delete[] _rawDunFileData;
+		_rawDunFileData = new byte[_rawDunFileDataSize];
+		f.read(_rawDunFileData, _rawDunFileDataSize);
 	}
 	f.close();
 }
