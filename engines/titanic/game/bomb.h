@@ -29,18 +29,27 @@
 namespace Titanic {
 
 class CBomb : public CBackground {
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg);
+	bool SetFrameMsg(CSetFrameMsg *msg);
+	DECLARE_MESSAGE_MAP;
 private:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
 	int _fieldEC;
 	int _fieldF0;
-	int _fieldF4;
-	int _fieldF8;
+	int _countdown;
+	int _soundHandle;
 	int _fieldFC;
 	int _startingTicks;
-	int _field104;
+	int _volume;
 public:
 	CLASSDEF;
 	CBomb();
