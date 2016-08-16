@@ -82,7 +82,11 @@ enum TheEntityType {
 	kTheMultiSound,
 	kThePreloadEventAbort,
 	kTheRomanLingo,
-	kTheStage
+	kTheStage,
+	kTheStageBottom,
+	kTheStageLeft,
+	kTheStageRight,
+	kTheStageTop
 };
 
 enum TheFieldType {

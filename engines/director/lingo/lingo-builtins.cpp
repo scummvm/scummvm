@@ -53,6 +53,8 @@ static struct BuiltinProto {
 	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
 	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
 	{ "string",			Lingo::b_string,		1, 1, true },	// D2
+	{ "stringp",		Lingo::b_stringp,		1, 1, true },	// D2
+	{ "value",		 	Lingo::b_value,			1, 1, true },	// D2
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
@@ -91,6 +93,7 @@ static struct BuiltinProto {
 	{ "objectp",		Lingo::b_objectp,		1, 1, true },
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
+	{ "symbolp",		Lingo::b_symbolp,		1, 1, true },	// D2
 	// Score
 	{ "constrainH",		Lingo::b_constrainH,	2, 2, true },	// D2
 	{ "constrainV",		Lingo::b_constrainV,	2, 2, true },	// D2
@@ -374,6 +377,22 @@ void Lingo::b_string(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_stringp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == STRING) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
+void Lingo::b_value(int nargs) {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: b_value()");
+	g_lingo->push(d);
+}
+
+
 ///////////////////
 // Files
 ///////////////////
@@ -553,6 +572,13 @@ void Lingo::b_showLocals(int nargs) {
 	warning("STUB: b_showLocals");
 }
 
+void Lingo::b_symbolp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == SYMBOL) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
 
 
 ///////////////////

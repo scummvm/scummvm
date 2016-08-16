@@ -317,6 +317,7 @@ public:
 	static void b_numToChar(int nargs);
 	static void b_offset(int nargs);
 	static void b_string(int nargs);
+	static void b_stringp(int nargs);
 
 	static void b_ilk(int nargs);
 	static void b_alert(int nargs);
@@ -325,6 +326,8 @@ public:
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
+	static void b_symbolp(int nargs);
+	static void b_value(int nargs);
 
 	static void b_constrainH(int nargs);
 	static void b_constrainV(int nargs);
