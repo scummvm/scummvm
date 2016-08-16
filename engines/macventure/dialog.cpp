@@ -80,7 +80,9 @@ const Graphics::Font& Dialog::getFont() {
 
 bool Dialog::processEvent(Common::Event event) {
 	for (Common::Array<DialogElement*>::iterator it = _elements.begin(); it != _elements.end(); it++) {
-		if ((*it)->processEvent(this, event)) return true;
+		if ((*it)->processEvent(this, event)) {
+			return true;
+		}
 	}
 	return false;
 }

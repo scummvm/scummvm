@@ -27,18 +27,21 @@ namespace MacVenture {
 Container::Container(Common::String filename) {
 	_filename = filename;
 
-	if (!_file.open(_filename))
+	if (!_file.open(_filename)) {
 		error("CONTAINER: Could not open %s", _filename.c_str());
+	}
 
 	_res = _file.readStream(_file.size());
 	_header = _res->readUint32BE();
 	_simplified = false;
 
-	for (uint i = 0; i < 16; ++i)
+	for (uint i = 0; i < 16; ++i) {
 		_huff.push_back(0);
+	}
 
-	for (uint i = 0; i < 16; ++i)
+	for (uint i = 0; i < 16; ++i) {
 		_lens.push_back(0);
+	}
 
 	if (!(_header & 0x80000000)) {
 		// Is simplified container
@@ -51,16 +54,19 @@ Container::Container(Common::String filename) {
 		_res->seek(_header, SEEK_SET);
 		_numObjs = _res->readUint16BE();
 
-		for (uint i = 0; i < 15; ++i)
+		for (uint i = 0; i < 15; ++i) {
 			_huff[i] = _res->readUint16BE();
+		}
 
-		for (uint i = 0; i < 16; ++i)
+		for (uint i = 0; i < 16; ++i) {
 			_lens[i] = _res->readByte();
+		}
 
 		// Read groups
 		uint numGroups = _numObjs / 64;
-		if ((_numObjs % 64) > 0)
+		if ((_numObjs % 64) > 0) {
 			numGroups++;
+		}
 
 		for (uint i = 0; i < numGroups; ++i) {
 			ItemGroup group;
@@ -94,7 +100,9 @@ Container::Container(Common::String filename) {
 				// Look in the Huffman table
 				int x = 0;
 				for (x = 0; x < 16; x++) {
-					if (_huff[x] > mask) break;
+					if (_huff[x] > mask) {
+						break;
+					}
 				}
 
 				// I will opt to copy the code from webventure,
@@ -116,8 +124,11 @@ Container::Container(Common::String filename) {
 					length = _res->readUint32BE();
 					_res->seek(-4, SEEK_CUR);
 					bitSize--;
-					if (bitSize == 0) length = 0;
-					else length >>= (32 - bitSize) - bits;
+					if (bitSize == 0) {
+						length = 0;
+					} else {
+						length >>= (32 - bitSize) - bits;
+					}
 					length &= (1 << bitSize) - 1;
 					length |= 1 << bitSize;
 					bits += bitSize;
@@ -126,11 +137,9 @@ Container::Container(Common::String filename) {
 						_res->seek(2, SEEK_CUR);
 					}
 				}
-
 				group.lengths[j] = length;
 				debugC(4, kMVDebugContainer, "Load legth of object %d:%d is %d", i, j, length);
 			}
-
 			_groups.push_back(group);
 		}
 	}
@@ -166,9 +175,7 @@ Common::SeekableReadStream *Container::getItem(uint32 id) {
 		for (uint i = 0; i < objectIndex; i++) {
 			offset += _groups[groupID].lengths[i];
 		}
-
 		_res->seek(_groups[groupID].offset + offset + sizeof(_header), SEEK_SET);
-
 	}
 
 	// HACK Should Limit the size of the stream returned

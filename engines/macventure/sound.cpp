@@ -104,7 +104,9 @@ SoundAsset::~SoundAsset() {
 }
 
 void SoundAsset::play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle) {
-	if (_data.size() == 0) return;
+	if (_data.size() == 0) {
+		return;
+	}
 	Audio::AudioStream *sound = Audio::makeRawStream(&_data.front(), _length, _frequency, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 	mixer->playStream(Audio::Mixer::kPlainSoundType, soundHandle, sound);
 }
@@ -127,8 +129,11 @@ void SoundAsset::decode10(Common::SeekableReadStream *stream) {
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
-		if (i & 1) ch >>= 4;
-		else ch = stream->readByte();
+		if (i & 1) {
+			ch >>= 4;
+		} else {
+			ch = stream->readByte();
+		}
 		_data.push_back(wavtable[ch & 0xf]);
 	}
 }
@@ -156,14 +161,18 @@ void SoundAsset::decode12(Common::SeekableReadStream *stream) {
 				ch -= 0x80;
 				uint32 env= ch * scale;
 				ch = (env >> 8) & 0xff;
-				if (ch & 0x80) ch = 0x7f;
+				if (ch & 0x80) {
+					ch = 0x7f;
+				}
 				ch += 0x80;
 			} else {
 				ch = (ch ^ 0xff) + 1;
 				ch -= 0x80;
 				uint32 env = ch * scale;
 				ch = (env >> 8) & 0xff;
-				if (ch & 0x80) ch = 0x7f;
+				if (ch & 0x80) {
+					ch = 0x7f;
+				}
 				ch += 0x80;
 				ch = (ch ^ 0xff) + 1;
 			}
@@ -185,8 +194,11 @@ void SoundAsset::decode18(Common::SeekableReadStream *stream) {
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
-		if (i & 1) ch >>= 4;
-		else ch = stream->readByte();
+		if (i & 1) {
+			ch >>= 4;
+		} else {
+			ch = stream->readByte();
+		}
 		_data.push_back(wavtable[ch & 0xf]);
 	}
 }
@@ -204,8 +216,11 @@ void SoundAsset::decode1a(Common::SeekableReadStream *stream) {
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
-		if (i & 1) ch >>= 4;
-		else ch = stream->readByte();
+		if (i & 1) {
+			ch >>= 4;
+		} else {
+			ch = stream->readByte();
+		}
 		_data.push_back(wavtable[ch & 0xf]);
 	}
 }
@@ -231,8 +246,11 @@ void SoundAsset::decode78(Common::SeekableReadStream *stream) {
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
-		if (i & 1) ch <<= 4;
-		else ch = stream->readByte();
+		if (i & 1) {
+			ch <<= 4;
+		} else {
+			ch = stream->readByte();
+		}
 		_data.push_back(wavtable[(ch >> 4) & 0xf]);
 	}
 }
@@ -250,8 +268,11 @@ void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 	uint32 last=0x80;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
-		if (i & 1) ch <<= 4;
-		else ch = stream->readByte();
+		if (i & 1) {
+			ch <<= 4;
+		} else {
+			ch = stream->readByte();
+		}
 		last += wavtable[(ch >> 4) & 0xf];
 		_data.push_back(last & 0xff);
 	}

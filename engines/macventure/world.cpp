@@ -63,7 +63,9 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 		res = _saveGame->getAttr(objID, index);
 	} else {
 		index &= 0x7F;
-		if (objStream->size() == 0) return 0;
+		if (objStream->size() == 0) {
+			return 0;
+		}
 		// Look for the right attribute inside the object
 		objStream->skip(index * 2);
 		res = objStream->readByte() << 8;
@@ -79,8 +81,10 @@ uint32 World::getObjAttr(ObjID objID, uint32 attrID) {
 }
 
 void World::setObjAttr(ObjID objID, uint32 attrID, Attribute value) {
-	if (attrID == kAttrPosX || attrID == kAttrPosY) {}
+	if (attrID == kAttrPosX || attrID == kAttrPosY) {
 		// Round to scale
+		// Intentionally empty, we don't seem to require this functionality
+	}
 
 	if (attrID == kAttrParentObject)
 		setParent(objID, value);
@@ -101,15 +105,24 @@ bool MacVenture::World::isObjActive(ObjID obj) {
 	ObjID destObj = _engine->getDestObject();
 	Common::Point p = _engine->getDeltaPoint();
 	ControlAction selectedControl = _engine->getSelectedControl();
-	if (!getAncestor(obj)) return false; // If our ancestor is the garbage (obj 0), we're inactive
+	if (!getAncestor(obj)) {
+		return false; // If our ancestor is the garbage (obj 0), we're inactive
+	}
 	if (_engine->getInvolvedObjects() >= 2 &&	// If (we need > 1 objs for the command) &&
 		destObj > 0 &&			// we have a destination object &&
-		!getAncestor(destObj))	// but that destination object is in the garbage
+		!getAncestor(destObj)) {	// but that destination object is in the garbage
 		return false;
-	if (selectedControl != kMoveObject) return true; // We only need one
+	}
+	if (selectedControl != kMoveObject) {
+		return true; // We only need one
+	}
 	// Handle move object
-	if (!isObjDraggable(obj)) return false; // We can't move it
-	if (getObjAttr(1, kAttrParentObject) != destObj) return true; // if the target is not the player's parent, we can go
+	if (!isObjDraggable(obj)) {
+		return false; // We can't move it
+	}
+	if (getObjAttr(1, kAttrParentObject) != destObj) {
+		return true; // if the target is not the player's parent, we can go
+	}
 	Common::Rect rect(kScreenWidth, kScreenHeight);
 	rect.top -= getObjAttr(obj, kAttrPosY) + p.y;
 	rect.left -= getObjAttr(obj, kAttrPosX) + p.x;
@@ -173,7 +186,7 @@ void World::releaseChildren(ObjID objID) {
 }
 
 Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
-	if (objID & 0x8000){
+	if (objID & 0x8000) {
 		return _engine->getUserInput();
 	}
 	TextAsset text = TextAsset(_engine, objID, source, target, _gameText, _engine->isOldText(), _engine->getDecodingHuffman());
@@ -203,7 +216,9 @@ void World::calculateObjectRelations() {
 	for (uint i = numObjs - 1; i > 0; i--) {
 		val = parents[i];
 		next = _relations[val * 2];
-		if (next) { _relations[i * 2 + 1] = next; }
+		if (next) {
+			_relations[i * 2 + 1] = next;
+		}
 		_relations[val * 2] = i;
 	}
 }
@@ -231,7 +246,9 @@ void World::setParent(ObjID child, ObjID newParent) {
 }
 
 void World::loadGameFrom(Common::InSaveFile *file) {
-	if (_saveGame) delete _saveGame;
+	if (_saveGame) {
+		delete _saveGame;
+	}
 	_saveGame = new SaveGame(_engine, file);
 	calculateObjectRelations();
 }
@@ -287,7 +304,7 @@ void SaveGame::saveInto(Common::OutSaveFile *file) {
 	warning("Saving the game not yet tested!");
 	// Save attibutes
 	Common::Array<AttributeGroup>::const_iterator itg;
-	for(itg = _groups.begin(); itg != _groups.end(); itg++) {
+	for (itg = _groups.begin(); itg != _groups.end(); itg++) {
 		Common::Array<Attribute>::const_iterator ita;
 		for (ita = itg->begin(); ita != itg->end(); ita++) {
 			file->writeUint16BE((*ita));
@@ -307,8 +324,9 @@ void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *
 	GlobalSettings settings = engine->getGlobalSettings();
 	for (int i = 0; i < settings._numGroups; ++i) {
 		AttributeGroup g;
-		for (int j = 0; j < settings._numObjects; ++j)
+		for (int j = 0; j < settings._numObjects; ++j) {
 			g.push_back(res->readUint16BE());
+		}
 
 		_groups.push_back(g);
 	}

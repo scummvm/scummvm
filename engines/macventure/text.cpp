@@ -123,7 +123,9 @@ void TextAsset::decodeHuffman() {
 		uint32 entry;
 		// Find the length index
 		for (entry = 0; entry < _huffman->getNumEntries(); entry++) {
-			if (mask < _huffman->getMask(entry)) break;
+			if (mask < _huffman->getMask(entry)) {
+				break;
+			}
 		}
 
 		stream.skip(_huffman->getLength(entry));

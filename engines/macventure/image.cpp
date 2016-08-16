@@ -109,11 +109,17 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 
 	uint8 mode = stream.getBits(3);
 	int w, h;
-	if (stream.getBit()) h = stream.getBits(10);
-	else h = stream.getBits(6);
+	if (stream.getBit()) {
+		h = stream.getBits(10);
+	} else {
+		h = stream.getBits(6);
+	}
 
-	if (stream.getBit()) w = stream.getBits(10);
-	else w = stream.getBits(6);
+	if (stream.getBit()) {
+		w = stream.getBits(10);
+	} else {
+		w = stream.getBits(6);
+	}
 
 	rowBytes = ((w + 0xF) >> 3) & 0xFFFE;
 	bitWidth = w;
@@ -284,8 +290,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 					v = data[pos];
 					pos++;
 				}
-			}
-			else {
+			} else {
 				for (uint x = 0; x < rowBytes; x++) {
 					uint16 val = data[pos] ^ v;
 					val ^= (val >> 4) & 0xf;
@@ -298,7 +303,9 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 	}
 	if (flags & 4) {
 		uint16 delta = rowBytes * 4;
-		if (flags & 2) delta *= 2;
+		if (flags & 2) {
+			delta *= 2;
+		}
 		pos = 0;
 		uint q = delta;
 		for (uint i = 0; i < bitHeight * rowBytes - delta; i++) {
@@ -318,8 +325,9 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 	uint16 dw = stream.peekBits(16);
 	uint16 i = 0;
 	for (;i < 16; i++) {
-		if (huff.masks[i + 1] > dw)
+		if (huff.masks[i + 1] > dw) {
 			break;
+		}
 	}
 	stream.skip(huff.lens[i]);
 	uint8 val = huff.symbols[i];
@@ -351,7 +359,7 @@ byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
 void ImageAsset::blitInto(Graphics::ManagedSurface *target, int x, int y, BlitMode mode) {
 	if (mode == kBlitDirect) {
 		blitDirect(target, x, y, _imgData, _imgBitHeight, _imgBitWidth, _imgRowBytes);
-	} else if (mode < kBlitXOR){
+	} else if (mode < kBlitXOR) {
 		if (_container->getItemByteSize(_mask)) { // Has mask
 			switch (mode) {
 			case MacVenture::kBlitBIC:
@@ -383,35 +391,46 @@ void ImageAsset::blitInto(Graphics::ManagedSurface *target, int x, int y, BlitMo
 }
 
 bool ImageAsset::isPointInside(Common::Point point) {
-	if (point.x >= _maskBitWidth || point.y >= _maskBitHeight) return false;
-	if (_maskData.empty()) return false;
+	if (point.x >= _maskBitWidth || point.y >= _maskBitHeight) {
+		return false;
+	}
+	if (_maskData.empty()) {
+		return false;
+	}
 	// We see if the point lands on the mask.
 	uint pix = _maskData[(point.y * _maskRowBytes) + (point.x >> 3)] & (1 << (7 - (point.x & 7)));
 	return pix != 0;
 }
 
 bool ImageAsset::isRectInside(Common::Rect rect) {
-	// HACK is it &&, or ||?
-	if (_maskData.empty()) return (rect.width() > 0 && rect.height() > 0);
+	if (_maskData.empty()) {
+		return (rect.width() > 0 && rect.height() > 0);
+	}
 
 	for (int y = rect.top; y < rect.top + rect.height(); y++) {
 		uint bmpofs = y * _maskRowBytes;
 		byte pix;
 		for (int x = rect.left; x < rect.left + rect.width(); x++) {
 			pix = _maskData[bmpofs + (x >> 3)] & (1 << (7 - (x & 7)));
-			if (pix) return true;
+			if (pix) {
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
 int ImageAsset::getWidth() {
-	if (_imgData.size() == 0) return 0;
+	if (_imgData.size() == 0) {
+		return 0;
+	}
 	return MAX(0, (int)_imgBitWidth);
 }
 
 int ImageAsset::getHeight() {
-	if (_imgData.size() == 0) return 0;
+	if (_imgData.size() == 0) {
+		return 0;
+	}
 	return MAX(0, (int)_imgBitHeight);
 }
 
@@ -443,7 +462,9 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, cons
 			assert(ox + x <= target->w);
 			assert(oy + y <= target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
-			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
+			if (pix) {
+				*((byte *)target->getBasePtr(ox + x, oy + y)) = kColorWhite;
+			}
 		}
 	}
 }
@@ -459,7 +480,9 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const
 			assert(ox + x <= target->w);
 			assert(oy + y <= target->h);
 			pix = data[bmpofs + ((x + sx) >> 3)] & (1 << (7 - ((x + sx) & 7)));
-			if (pix) *((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
+			if (pix) {
+				*((byte *)target->getBasePtr(ox + x, oy + y)) = kColorBlack;
+			}
 		}
 	}
 }
@@ -505,7 +528,6 @@ void ImageAsset::calculateSectionInDirection(uint targetWhole, uint originWhole,
 		} else {
 			blittedWhole = (blittedWhole) - ((blittedWhole + originPosition) - targetWhole);
 		}
-
 	}
 	if (originPosition < 0) {
 		if (ABS(originPosition) > (int)blittedWhole) {

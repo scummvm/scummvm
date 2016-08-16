@@ -344,11 +344,15 @@ public:
 	}
 
 	void scrollDown() {
-		if (_scrollPos < (int)(_lines.size() - 1)) _scrollPos++;
+		if (_scrollPos < (int)(_lines.size() - 1)) {
+			_scrollPos++;
+		}
 	}
 
 	void scrollUp() {
-		if (_scrollPos > 0) _scrollPos--;
+		if (_scrollPos > 0) {
+			_scrollPos--;
+		}
 	}
 
 

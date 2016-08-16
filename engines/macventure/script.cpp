@@ -61,7 +61,9 @@ bool ScriptEngine::resume(bool execAll) {
 	debugC(3, kMVDebugScript, "Resume Script");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
-		if (fail) return true;
+		if (fail) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -80,8 +82,11 @@ bool ScriptEngine::execFrame(bool execAll) {
 	// Do first dispatch script (script 0)
 	if (frame->haltedInFirst || doFirst) { // We were stuck or it's the first time
 		frame->haltedInFirst = false;
-		if (doFirst) { fail = loadScript(frame, 0); }
-		else { fail = resumeFunc(frame); }
+		if (doFirst) {
+			fail = loadScript(frame, 0);
+		} else {
+			fail = resumeFunc(frame);
+		}
 		if (fail) {
 			frame->haltedInFirst = true;
 			_engine->preparedToRun();
@@ -97,7 +102,9 @@ bool ScriptEngine::execFrame(bool execAll) {
 		Common::Array<ObjID> family = _world->getFamily(_world->getObjAttr(1, kAttrParentObject), false);
 		uint32 i = frame->familyIdx;
 		for (; i < family.size(); i++) {
-			if (doFamily) { fail = loadScript(frame, family[i]); }
+			if (doFamily) {
+				fail = loadScript(frame, family[i]);
+			}
 			else { fail = resumeFunc(frame); }
 			if (fail) { // We are stuck, so we don't shift the frame
 				frame->haltedInFamily = true;
@@ -123,8 +130,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 	uint localHigh = 0;
 	do { // Saved function calls
 		highest = 0;
-		for (uint i = 0; i <frame->saves.size(); i++)
-		{
+		for (uint i = 0; i <frame->saves.size(); i++) {
 			if (highest < frame->saves[i].rank) {
 				highest = frame->saves[i].rank;
 				localHigh = i;
@@ -156,7 +162,9 @@ bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
 
 bool ScriptEngine::resumeFunc(EngineFrame * frame) {
 	bool fail = runFunc(frame);
-	if (fail) return fail;
+	if (fail) {
+		return fail;
+	}
 	frame->scripts.pop_front();
 	if (frame->scripts.size())
 		return resumeFunc(frame);
@@ -645,12 +653,16 @@ void ScriptEngine::op95SORT(EngineState * state, EngineFrame * frame) {
 	word step = neg16(state->pop());
 	word num = neg16(state->pop());
 	step %= num;
-	if (step<0) step += num;
+	if (step < 0) {
+		step += num;
+	}
 	word end = 0;
 	word start = 0;
 	for (word i = 1;i<num;i++) {
 		start += step;
-		if (start >= num) start -= num;
+		if (start >= num) {
+			start -= num;
+		}
 		if (start == end) {
 			end++;
 			start = end;
@@ -710,7 +722,9 @@ void ScriptEngine::op9dDMOD(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::op9eABS(EngineState * state, EngineFrame * frame) {
 	word val = neg16(state->pop());
-	if (val<0) val = -val;
+	if (val < 0) {
+		val = -val;
+	}
 	state->push(val);
 }
 
@@ -837,14 +851,18 @@ void ScriptEngine::opb2BEQ(EngineState * state, EngineFrame * frame, ScriptAsset
 	val = val | script->fetch();
 	val = neg16(val);
 	word b = state->pop();
-	if (b != 0) script->branch(val);
+	if (b != 0) {
+		script->branch(val);
+	}
 }
 
 void ScriptEngine::opb3BEQB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val = neg8(val);
 	word b = state->pop();
-	if (b != 0) script->branch(val);
+	if (b != 0) {
+		script->branch(val);
+	}
 }
 
 void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
@@ -853,14 +871,18 @@ void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset
 	val = val | script->fetch();
 	val = neg16(val);
 	word b = state->pop();
-	if (b == 0) script->branch(val);
+	if (b == 0) {
+		script->branch(val);
+	}
 }
 
 void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val = neg8(val);
 	word b = state->pop();
-	if (b == 0) script->branch(val);
+	if (b == 0) {
+		script->branch(val);
+	}
 }
 
 void ScriptEngine::opb6CLAT(EngineState * state, EngineFrame * frame) {
@@ -886,18 +908,22 @@ void ScriptEngine::opb8CLOW(EngineState * state, EngineFrame * frame) {
 
 void ScriptEngine::opb9CHI(EngineState * state, EngineFrame * frame) {
 	word lo = state->pop();
-	for (uint i = 0;i<frame->saves.size();i++)
-		if (frame->saves[i].rank >= lo)
+	for (uint i = 0;i<frame->saves.size();i++) {
+		if (frame->saves[i].rank >= lo) {
 			frame->saves[i].rank = 0;
+		}
+	}
 }
 
 void ScriptEngine::opbaCRAN(EngineState * state, EngineFrame * frame) {
 	word hi = state->pop();
 	word lo = state->pop();
-	for (uint i = 0;i<frame->saves.size();i++)
+	for (uint i = 0;i<frame->saves.size();i++) {
 		if (frame->saves[i].rank >= lo &&
-			frame->saves[i].rank <= hi)
+			frame->saves[i].rank <= hi) {
 			frame->saves[i].rank = 0;
+		}
+	}
 }
 
 bool ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
@@ -942,8 +968,9 @@ void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {
 	_world->setObjAttr(to, kAttrContainerOpen, _world->getObjAttr(from, 6));
 	_world->setObjAttr(from, kAttrContainerOpen, 0);
 	Common::Array<ObjID> children = _world->getChildren(from, true);
-	for (uint i = 0; i < children.size(); i++)
+	for (uint i = 0; i < children.size(); i++) {
 		_world->setObjAttr(children[i], 0, to);
+	}
 }
 
 void ScriptEngine::opbfSNOB(EngineState * state, EngineFrame * frame) {

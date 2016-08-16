@@ -39,8 +39,12 @@ void toASCII(Common::String &str) {
 	debugC(3, kMVDebugMain, "toASCII: %s", str.c_str());
 	Common::String::iterator it = str.begin();
 	for (; it != str.end(); it++) {
-		if (*it == '\216') { str.replace(it, it + 1, "e"); }
-		if (*it == '\210') { str.replace(it, it + 1, "a"); }
+		if (*it == '\216') {
+			str.replace(it, it + 1, "e");
+		}
+		if (*it == '\210') {
+			str.replace(it, it + 1, "a");
+		}
 	}
 }
 
@@ -687,7 +691,7 @@ void MacVentureEngine::selectObject(ObjID objID) {
 
 void MacVentureEngine::unselectObject(ObjID objID) {
 	int idxCur = findObjectInArray(objID, _currentSelection);
-	if (idxCur != -1){
+	if (idxCur != -1) {
 		_currentSelection.remove_at(idxCur);
 		highlightExit(objID);
 	}
@@ -709,8 +713,11 @@ int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> 
 	bool found = false;
 	uint i = 0;
 	while (i < list.size() && !found) {
-		if (list[i] == objID) found = true;
-		else i++;
+		if (list[i] == objID) {
+			found = true;
+		} else {
+			i++;
+		}
 	}
 	// HACK, should use iterator
 	return found ? i : -1;
@@ -752,7 +759,9 @@ void MacVentureEngine::highlightExit(ObjID objID) {
 }
 
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {
-	if (objID == _destObject) return;
+	if (objID == _destObject) {
+		return;
+	}
 	int idx;
 	debugC(4, kMVDebugMain, "Select primary object (%d)", objID);
 	if (_destObject > 0 &&
@@ -782,7 +791,9 @@ void MacVentureEngine::openObject(ObjID objID) {
 		_world->getObjAttr(objID, kAttrPosX),
 		_world->getObjAttr(objID, kAttrPosY));
 
-	if (getObjWindow(objID)) return;
+	if (getObjWindow(objID)) {
+		return;
+	}
 	if (objID == _world->getObjAttr(1, kAttrParentObject)) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
@@ -850,14 +861,20 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 	ObjID cur = id;
 	ObjID root = _world->getObjAttr(1, kAttrParentObject);
 	while (cur != root)	{
-		if (cur == 0 || !_world->getObjAttr(cur, kAttrContainerOpen)) break;
+		if (cur == 0 || !_world->getObjAttr(cur, kAttrContainerOpen)) {
+			break;
+		}
 		cur = _world->getObjAttr(cur, kAttrParentObject);
 	}
 	if (cur == root) {
-		if (win) return;
+		if (win) {
+			return;
+		}
 		enqueueObject(kOpenWindow, id); //open
 	} else {
-		if (!win) return;
+		if (!win) {
+			return;
+		}
 		enqueueObject(kCloseWindow, id); //close
 	}
 
@@ -904,7 +921,9 @@ void MacVentureEngine::zoomObject(ObjID objID) {
 bool MacVentureEngine::isObjEnqueued(ObjID objID) {
 	Common::Array<QueuedObject>::const_iterator it;
 	for (it = _objQueue.begin(); it != _objQueue.end(); it++) {
-		if ((*it).object == objID) return true;
+		if ((*it).object == objID) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -1049,9 +1068,13 @@ WindowReference MacVentureEngine::getObjWindow(ObjID objID) {
 }
 
 WindowReference MacVentureEngine::findParentWindow(ObjID objID) {
-	if (objID == 1) return kSelfWindow;
+	if (objID == 1) {
+		return kSelfWindow;
+	}
 	ObjID parent = _world->getObjAttr(objID, kAttrParentObject);
-	if (parent == 0) return kNoWindow;
+	if (parent == 0) {
+		return kNoWindow;
+	}
 	return getObjWindow(parent);
 }
 

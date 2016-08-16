@@ -66,8 +66,9 @@ Common::String windowTypeName(MVWindowType windowType) {
 
 void MacVentureEngine::loadDataBundle() {
 	_dataBundle = Common::makeZipArchive(MACVENTURE_DATA_BUNDLE);
-	if (!_dataBundle)
+	if (!_dataBundle) {
 		error("ENGINE: Couldn't load data bundle '%s'.", MACVENTURE_DATA_BUNDLE.c_str());
+	}
 }
 
 Common::SeekableReadStream *MacVentureEngine::getBorderFile(MVWindowType windowType, bool isActive) {
