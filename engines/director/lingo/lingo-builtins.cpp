@@ -32,26 +32,27 @@ static struct BuiltinProto {
 	bool parens;
 } builtins[] = {
 	// Math
-	{ "abs",	Lingo::b_abs,		1, 1, true },	// D2
-	{ "atan",	Lingo::b_atan,		1, 1, true },	// 		D4
-	{ "cos",	Lingo::b_cos,		1, 1, true },	// 		D4
-	{ "exp",	Lingo::b_exp,		1, 1, true },	// 		D4
-	{ "float",	Lingo::b_float,		1, 1, true },	// 		D4
-	{ "integer",Lingo::b_integer,	1, 1, true },
-	{ "integerp",Lingo::b_integerp,	1, 1, true },
-	{ "log",	Lingo::b_log,		1, 1, true },	// 		D4
-	{ "pi",		Lingo::b_pi,		0, 0, true },	// 		D4
-	{ "power",	Lingo::b_power,		2, 2, true },	// 		D4
-	{ "random",	Lingo::b_random,	1, 1, true },	// D2
-	{ "sin",	Lingo::b_sin,		1, 1, true },
-	{ "sqrt",	Lingo::b_sqrt,		1, 1, true },	// D2
-	{ "tan",	Lingo::b_tan,		1, 1, true },	// 		D4
+	{ "abs",			Lingo::b_abs,			1, 1, true },	// D2
+	{ "atan",			Lingo::b_atan,			1, 1, true },	// 		D4
+	{ "cos",			Lingo::b_cos,			1, 1, true },	// 		D4
+	{ "exp",			Lingo::b_exp,			1, 1, true },	// 		D4
+	{ "float",			Lingo::b_float,			1, 1, true },	// 		D4
+	{ "integer",		Lingo::b_integer,		1, 1, true },
+	{ "integerp",		Lingo::b_integerp,		1, 1, true },
+	{ "log",			Lingo::b_log,			1, 1, true },	// 		D4
+	{ "pi",				Lingo::b_pi,			0, 0, true },	// 		D4
+	{ "power",			Lingo::b_power,			2, 2, true },	// 		D4
+	{ "random",			Lingo::b_random,		1, 1, true },	// D2
+	{ "sin",			Lingo::b_sin,			1, 1, true },
+	{ "sqrt",			Lingo::b_sqrt,			1, 1, true },	// D2
+	{ "tan",			Lingo::b_tan,			1, 1, true },	// 		D4
 	// String
-	{ "chars",		Lingo::b_chars,		3, 3, true },	// D2
-	{ "charToNum",	Lingo::b_charToNum,	1, 1, true },	// D2
-	{ "length",		Lingo::b_length,	1, 1, true },	// D2
-	{ "numToChar",	Lingo::b_numToChar,	1, 1, true },	// D2
-	{ "string",		Lingo::b_string,	1, 1, true },	// D2
+	{ "chars",			Lingo::b_chars,			3, 3, true },	// D2
+	{ "charToNum",		Lingo::b_charToNum,		1, 1, true },	// D2
+	{ "length",			Lingo::b_length,		1, 1, true },	// D2
+	{ "numToChar",		Lingo::b_numToChar,		1, 1, true },	// D2
+	{ "offset",			Lingo::b_offset,		2, 2, true },	// D2
+	{ "string",			Lingo::b_string,		1, 1, true },	// D2
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
 	{ "closeResFile",	Lingo::b_closeResFile,	0, 1, false },	// D2
@@ -87,6 +88,7 @@ static struct BuiltinProto {
 	{ "ilk",	 		Lingo::b_ilk,			1, 2, true },	// 		D4
 		// put													// D2
 		// set													// D2
+	{ "objectp",		Lingo::b_objectp,		1, 1, true },
 	{ "showGlobals",	Lingo::b_showGlobals,	0, 0, false },	// D2
 	{ "showLocals",		Lingo::b_showLocals,	0, 0, false },	// D2
 	// Score
@@ -103,6 +105,7 @@ static struct BuiltinProto {
 	{ "puppetSprite",	Lingo::b_puppetSprite,	-1,0, false },	// D2
 	{ "puppetTempo",	Lingo::b_puppetTempo,	1, 1, false },	// D2
 	{ "puppetTransition",Lingo::b_puppetTransition,-1,0, false },// D2
+	{ "rollOver",		Lingo::b_rollOver,		1, 1, true },	// D2
 	{ "spriteBox",		Lingo::b_spriteBox,		-1,0, false },	// D2
 	{ "updateStage",	Lingo::b_updateStage,	0, 0, false },	// D2
 	{ "zoomBox",		Lingo::b_zoomBox,		-1,0, false },	// D2
@@ -353,6 +356,18 @@ void Lingo::b_numToChar(int nargs) {
 	g_lingo->push(Datum((char)d.u.i));
 }
 
+void Lingo::b_offset(int nargs) {
+	Datum target = g_lingo->pop();
+	Datum source = g_lingo->pop();
+
+	target.toString();
+	source.toString();
+
+	warning("STUB: b_offset()");
+
+	g_lingo->push(Datum(0));
+}
+
 void Lingo::b_string(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toString();
@@ -522,6 +537,14 @@ void Lingo::b_cursor(int nargs) {
 	warning("STUB: b_cursor(%d)", d.u.i);
 }
 
+void Lingo::b_objectp(int nargs) {
+	Datum d = g_lingo->pop();
+	int res = (d.type == OBJECT) ? 1 : 0;
+	d.toInt();
+	d.u.i = res;
+	g_lingo->push(d);
+}
+
 void Lingo::b_showGlobals(int nargs) {
 	warning("STUB: b_showGlobals");
 }
@@ -620,6 +643,13 @@ void Lingo::b_puppetTransition(int nargs) {
 	g_lingo->printStubWithArglist("b_puppetTransition", nargs);
 
 	g_lingo->dropStack(nargs);
+}
+
+void Lingo::b_rollOver(int nargs) {
+	Datum d = g_lingo->pop();
+	warning("STUB: b_puppetTempo(%d)", d.u.i);
+
+	g_lingo->push(Datum(0));
 }
 
 void Lingo::b_spriteBox(int nargs) {

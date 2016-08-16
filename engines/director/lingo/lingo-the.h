@@ -60,6 +60,7 @@ enum TheEntityType {
 	kTheMemorySize,
 	kTheMouseDown,
 	kTheMouseUp,
+	kThePauseState,
 	kTheRightMouseUp,
 	kTheRightMouseDown,
 	kTheStillDown,
@@ -67,6 +68,8 @@ enum TheEntityType {
 	kTheKeyCode,
 	kTheControlDown,
 	kTheCommandDown,
+	kTheResult,
+	kTheSelection,
 	kTheShiftDown,
 	kTheOptionDown,
 

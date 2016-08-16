@@ -315,11 +315,13 @@ public:
 	static void b_charToNum(int nargs);
 	static void b_length(int nargs);
 	static void b_numToChar(int nargs);
+	static void b_offset(int nargs);
 	static void b_string(int nargs);
 
 	static void b_ilk(int nargs);
 	static void b_alert(int nargs);
 	static void b_cursor(int nargs);
+	static void b_objectp(int nargs);
 	static void b_printFrom(int nargs);
 	static void b_showGlobals(int nargs);
 	static void b_showLocals(int nargs);
@@ -336,6 +338,7 @@ public:
 	static void b_puppetSprite(int nargs);
 	static void b_puppetTempo(int nargs);
 	static void b_puppetTransition(int nargs);
+	static void b_rollOver(int nargs);
 	static void b_spriteBox(int nargs);
 	static void b_updateStage(int nargs);
 	static void b_zoomBox(int nargs);
