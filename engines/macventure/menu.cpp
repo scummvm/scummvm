@@ -35,7 +35,7 @@ Menu::Menu(MacVentureEngine *engine, Graphics::MacWindowManager *wm) {
 	_menu = _wm->addMenu();
 
 	if (!loadMenuData())
-		error("Could not load menu data from %s", _engine->getGameFileName());
+		error("GUI: Could not load menu data from %s", _engine->getGameFileName());
 }
 
 Menu::~Menu() {

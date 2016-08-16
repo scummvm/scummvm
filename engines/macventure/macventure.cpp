@@ -143,11 +143,11 @@ Common::Error MacVentureEngine::run() {
 
 	_resourceManager = new Common::MacResManager();
 	if (!_resourceManager->open(getGameFileName()))
-		error("Could not open %s as a resource fork", getGameFileName());
+		error("ENGINE: Could not open %s as a resource fork", getGameFileName());
 
 	// Engine-wide loading
 	if (!loadGlobalSettings())
-		error("Could not load the engine settings");
+		error("ENGINE: Could not load the engine settings");
 
 	_oldTextEncoding = !loadTextHuffman();
 
@@ -170,7 +170,7 @@ Common::Error MacVentureEngine::run() {
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
 		if (loadGameState(directSaveSlotLoading).getCode() != Common::kNoError) {
-			error("Could not load game from slot '%d'", directSaveSlotLoading);
+			error("ENGINE: Could not load game from slot '%d'", directSaveSlotLoading);
 		}
 	} else {
 		setNewGameState();

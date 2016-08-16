@@ -47,7 +47,7 @@ public:
 		_id = id;
 
 		if (!loadStrings())
-			error("Could not load string table %x", id);
+			error("ENGINE: Could not load string table %x", id);
 	}
 
 	~StringTable() {

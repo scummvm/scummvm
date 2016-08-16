@@ -152,21 +152,21 @@ void Gui::initGUI() {
 	// Menu
 	_menu = _wm.addMenu();
 	if (!loadMenus())
-		error("Could not load menus");
+		error("GUI: Could not load menus");
 	_menu->setCommandsCallback(menuCommandsCallback, this);
 	_menu->calcDimensions();
 
 	loadGraphics();
 
 	if (!loadWindows())
-		error("Could not load windows");
+		error("GUI: Could not load windows");
 
 	initWindows();
 
 	assignObjReferences();
 
 	if (!loadControls())
-		error("Could not load controls");
+		error("GUI: Could not load controls");
 
 	draw();
 
@@ -960,7 +960,7 @@ WindowData & Gui::findWindowData(WindowReference reference) {
 	if (iter->refcon == reference)
 		return *iter;
 
-	error("Could not locate the desired window data");
+	error("GUI: Could not locate the desired window data");
 }
 
 Graphics::MacWindow * Gui::findWindow(WindowReference reference) {

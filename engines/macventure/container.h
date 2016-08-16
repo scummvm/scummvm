@@ -46,7 +46,7 @@ public:
 		_filename = filename;
 
 		if (!_file.open(_filename))
-			error("Could not open %s", _filename.c_str());
+			error("CONTAINER: Could not open %s", _filename.c_str());
 
 		_res = _file.readStream(_file.size());
 		_header = _res->readUint32BE();

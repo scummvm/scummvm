@@ -75,7 +75,7 @@ Common::Error MacVentureEngine::loadGameState(int slot) {
 	Common::String saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::InSaveFile *file;
 	if(!(file = getSaveFileManager()->openForLoading(saveFileName))) {
-		error("missing savegame file %s", saveFileName.c_str());
+		error("ENGINE: Missing savegame file %s", saveFileName.c_str());
 	}
 	_world->loadGameFrom(file);
 	reset();

@@ -37,11 +37,11 @@ void World::startNewGame() {
 		delete _saveGame;
 
 	if ((_startGameFileName = _engine->getStartGameFileName()) == "")
-		error("Could not load initial game configuration");
+		error("WORLD: Could not load initial game configuration");
 
 	Common::File saveGameFile;
 	if (!saveGameFile.open(_startGameFileName))
-		error("Could not load initial game configuration");
+		error("WORLD: Could not load initial game configuration");
 
 	debug("Loading save game state from %s", _startGameFileName.c_str());
 	Common::SeekableReadStream *saveGameRes = saveGameFile.readStream(saveGameFile.size());
