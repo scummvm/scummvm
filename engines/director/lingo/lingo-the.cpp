@@ -28,59 +28,59 @@ class Sprite;
 
 TheEntity entities[] = {
 	{ kTheCast,				"cast",				true  },
-	{ kTheClickOn,			"clickOn",			false },
+	{ kTheClickOn,			"clickOn",			false },	// D2 function
 	{ kTheColorDepth,		"colorDepth",		false },
-	{ kTheColorQD,			"colorQD",			false },
-	{ kTheCommandDown,		"commandDown",		false },
-	{ kTheControlDown,		"controlDown",		false },
-	{ kTheDoubleClick,		"doubleClick",		false },
+	{ kTheColorQD,			"colorQD",			false },	// D2 f
+	{ kTheCommandDown,		"commandDown",		false },	// D2 f
+	{ kTheControlDown,		"controlDown",		false },	// D2 f
+	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
 	{ kTheExitLock,			"exitlock",			false },
 	{ kTheFloatPrecision,	"floatPrecision",	false },
-	{ kTheFrame,			"frame",			false },
-	{ kTheFreeBlock,		"freeBlock",		false },
-	{ kTheFreeBytes,		"freeBytes",		false },
+	{ kTheFrame,			"frame",			false },	// D2 f
+	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
+	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
-	{ kTheKey,				"key",				false },
-	{ kTheKeyCode,			"keyCode",			false },
-	{ kTheLastClick,		"lastClick",		false },
-	{ kTheLastEvent,		"lastEvent",		false },
+	{ kTheKey,				"key",				false },	// D2 f
+	{ kTheKeyCode,			"keyCode",			false },	// D2 f
+	{ kTheLastClick,		"lastClick",		false },	// D2 f
+	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },
-	{ kTheLastKey,			"lastKey",			false },
-	{ kTheLastRoll,			"lastRoll",			false },
-	{ kTheMachineType,		"machineType",		false },
-	{ kTheMemorySize,		"memorySize",		false },
+	{ kTheLastKey,			"lastKey",			false },	// D2 f
+	{ kTheLastRoll,			"lastRoll",			false },	// D2 f
+	{ kTheMachineType,		"machineType",		false },	// D2 f
+	{ kTheMemorySize,		"memorySize",		false },	// D2 f
 	{ kTheMenu,				"menu",				true  },
 	{ kTheMenus,			"menus",			false },
 	{ kTheMenuItem,			"menuitem",			true  },
 	{ kTheMenuItems,		"menuitems",		false },
-	{ kTheMouseDown,		"mouseDown",		false },
+	{ kTheMouseDown,		"mouseDown",		false },	// D2 f
 	{ kTheMouseDownScript,  "mouseDownScript",	false },
-	{ kTheMouseH,			"mouseh",			false },
-	{ kTheMouseUp,			"mouseUp",			false },
+	{ kTheMouseH,			"mouseH",			false },	// D2 f
+	{ kTheMouseUp,			"mouseUp",			false },	// D2 f
 	{ kTheMouseUpScript,  	"mouseUpScript",	false },
-	{ kTheMouseV,			"mousev",			false },
-	{ kTheMovie,			"movie",			false },
+	{ kTheMouseV,			"mouseV",			false },	// D2 f
+	{ kTheMovie,			"movie",			false },	// D2 f
 	{ kTheMultiSound,		"multiSound",		false },
-	{ kTheOptionDown,		"optionDown",		false },
-	{ kThePathName,			"pathname",			false },
-	{ kThePauseState,		"pauseState",		false },
+	{ kTheOptionDown,		"optionDown",		false },	// D2 f
+	{ kThePathName,			"pathName",			false },	// D2 f
+	{ kThePauseState,		"pauseState",		false },	// D2 f
 	{ kThePerFrameHook,		"perframehook",		false },
 	{ kThePreloadEventAbort,"preloadEventAbort",false },
-	{ kTheResult,			"result",			false },
+	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
 	{ kTheRightMouseUp,		"rightMouseUp",		false },
 	{ kTheRomanLingo,		"romanLingo",		false },
-	{ kTheSelection,		"selection",		false },
-	{ kTheShiftDown,		"shiftDown",		false },
+	{ kTheSelection,		"selection",		false },	// D2 f
+	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
 	{ kTheSprite,			"sprite",			true  },
-	{ kTheSqrt,				"sqrt",				false },
+	{ kTheSqrt,				"sqrt",				false },	// D2 f
 	{ kTheStage,			"stage",			false },
-	{ kTheStageBottom,		"stageBottom",		false },
-	{ kTheStageLeft,		"stageLeft",		false },
-	{ kTheStageRight,		"stageRight",		false },
-	{ kTheStageTop,			"stageTop",			false },
-	{ kTheStillDown,		"stillDown",		false },
-	{ kTheTicks,			"ticks",			false },
+	{ kTheStageBottom,		"stageBottom",		false },	// D2 f
+	{ kTheStageLeft,		"stageLeft",		false },	// D2 f
+	{ kTheStageRight,		"stageRight",		false },	// D2 f
+	{ kTheStageTop,			"stageTop",			false },	// D2 f
+	{ kTheStillDown,		"stillDown",		false },	// D2 f
+	{ kTheTicks,			"ticks",			false },	// D2 f
 	{ kTheTimeoutLength,	"timeoutlength",	false },
 	{ kTheTimer,			"timer",			false },
 	{ kTheWindow,			"window",			false },
