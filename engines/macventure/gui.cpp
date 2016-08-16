@@ -1134,7 +1134,7 @@ void Gui::handleMenuAction(MenuAction action) {
 		saveGame();
 		break;
 	case MacVenture::kMenuActionQuit:
-		debug("MacVenture Menu Action: Quit");
+		_engine->requestQuit();
 		break;
 	case MacVenture::kMenuActionUndo:
 		warning("Unimplemented MacVenture Menu Action: Undo");
