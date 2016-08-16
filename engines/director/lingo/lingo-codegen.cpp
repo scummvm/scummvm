@@ -68,8 +68,11 @@ void Lingo::execute(int pc) {
 }
 
 Common::String Lingo::decodeInstruction(int pc) {
-	if (_functions.contains((void *)(*_currentScript)[pc])) {
-		return _functions[(void *)(*_currentScript)[pc]]->name;
+	Symbol sym;
+
+	sym.u.func = (*_currentScript)[pc];
+	if (_functions.contains((void *)sym.u.s)) {
+		return _functions[(void *)sym.u.s]->name;
 	} else {
 		return "<unknown>";
 	}
