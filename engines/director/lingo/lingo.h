@@ -83,6 +83,30 @@ typedef void (*inst)(void);
 typedef Common::Array<inst> ScriptData;
 typedef Common::Array<double> FloatArray;
 
+struct FuncDesc {
+	Common::String name;
+	const char *proto;
+
+	FuncDesc(Common::String n, const char *p) { name = n; proto = p; }
+};
+
+struct Pointer_EqualTo {
+	bool operator()(const void *x, const void *y) const { return x == y; }
+};
+
+struct Pointer_Hash {
+	uint operator()(const void *x) const {
+#ifdef SCUMM_64BITS
+		uint64 v = (uint64)x;
+		return (v >> 32) ^ (v & 0xffffffff);
+#else
+		return (uint)x;
+#endif
+	}
+};
+
+typedef Common::HashMap<void *, FuncDesc *, Pointer_Hash, Pointer_EqualTo> FuncHash;
+
 struct Symbol {	/* symbol table entry */
 	char *name;
 	int type;
@@ -156,6 +180,7 @@ public:
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
+	Common::String decodeInstruction(int pc);
 
 	void processEvent(LEvent event, int entityId);
 
@@ -402,6 +427,8 @@ private:
 
 	SymbolHash _globalvars;
 	SymbolHash *_localvars;
+
+	FuncHash _functions;
 
 	int _pc;
 

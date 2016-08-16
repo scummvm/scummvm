@@ -136,6 +136,8 @@ void Lingo::initBuiltIns() {
 		sym->u.bltin = blt->func;
 
 		_handlers[blt->name] = sym;
+
+		_functions[(void *)sym->u.s] = new FuncDesc(blt->name, "");
 	}
 }
 

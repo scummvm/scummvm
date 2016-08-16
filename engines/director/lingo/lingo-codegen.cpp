@@ -53,14 +53,25 @@ namespace Director {
 
 void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
+		Common::String instr = decodeInstruction(_pc);
+
+		debugC(1, kDebugLingoExec, "%s", instr.c_str());
 
 		for (uint i = 0; i < _stack.size(); i++) {
-			debugN(5, "%d ", _stack[i].u.i);
+			debugCN(5, kDebugLingoExec, "%d ", _stack[i].u.i);
 		}
-		debug(5, "%s", "");
+		debugCN(5, kDebugLingoExec, "%s", "");
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
+	}
+}
+
+Common::String Lingo::decodeInstruction(int pc) {
+	if (_functions.contains((void *)(*_currentScript)[pc])) {
+		return _functions[(void *)(*_currentScript)[pc]]->name;
+	} else {
+		return "<unknown>";
 	}
 }
 
