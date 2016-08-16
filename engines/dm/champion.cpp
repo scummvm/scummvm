@@ -133,6 +133,8 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_g407_party.resetToZero();
 	_g514_magicCasterChampionIndex = kM1_ChampionNone;
 	_g420_mousePointerHiddenToDrawChangedObjIconOnScreen = false;
+
+	initConstants();
 }
 
 bool ChampionMan::f329_isLeaderHandObjectThrown(int16 side) {

@@ -74,6 +74,8 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_g426_openChest = Thing::_none;
 	_g421_objDescTextXpos = 0;
 	_g422_objDescTextYpos = 0;
+
+	initConstants();
 }
 
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
