@@ -975,13 +975,6 @@ void DisplayMan::f99_copyBitmapAndFlipHorizontal(byte* srcBitmap, byte* destBitm
 }
 
 void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloorIndex) {
-	uint16 floorOrnIndex;
-	int16 nativeBitmapIndex;
-	bool drawFootprints;
-	byte* bitmap;
-	uint16* coordSets;
-
-
 	static byte g191_floorOrnNativeBitmapndexInc[9] = { // @ G0191_auc_Graphic558_FloorOrnamentNativeBitmapIndexIncrements
 		0,   /* D3L */
 		1,   /* D3C */
@@ -991,63 +984,69 @@ void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloor
 		2,   /* D2R */
 		4,   /* D1L */
 		5,   /* D1C */
-		4}; /* D1R */
+		4};  /* D1R */
 
 	static uint16 g206_floorOrnCoordSets[3][9][6] = { // @ G0206_aaauc_Graphic558_FloorOrnamentCoordinateSets
 		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
-		{{32,  79, 66,  71, 24,  6},     /* D3L */
-		{96, 127, 66,  71, 16,  6},     /* D3C */
-		{144, 191, 66,  71, 24,  6},     /* D3R */
-		{0,  63, 77,  87, 32, 11},     /* D2L */
-		{80, 143, 77,  87, 32, 11},     /* D2C */
-		{160, 223, 77,  87, 32, 11},     /* D2R */
-		{0,  31, 92, 116, 16, 25},     /* D1L */
-		{80, 143, 92, 116, 32, 25},     /* D1C */
-		{192, 223, 92, 116, 16, 25}},   /* D1R */
-		{{0,  95, 66,  74, 48,  9},     /* D3L */
-		{64, 159, 66,  74, 48,  9},     /* D3C */
-		{128, 223, 66,  74, 48,  9},     /* D3R */
-		{0,  79, 75,  89, 40, 15},     /* D2L */
-		{56, 167, 75,  89, 56, 15},     /* D2C */
-		{144, 223, 75,  89, 40, 15},     /* D2R */
-		{0,  63, 90, 118, 32, 29},     /* D1L */
-		{32, 191, 90, 118, 80, 29},     /* D1C */
-		{160, 223, 90, 118, 32, 29}},   /* D1R */
-		{{42,  57, 68,  72,  8,  5},     /* D3L */
-		{104, 119, 68,  72,  8,  5},     /* D3C */
-		{166, 181, 68,  72,  8,  5},     /* D3R */
-		{9,  40, 80,  85, 16,  6},     /* D2L */
-		{96, 127, 80,  85, 16,  6},     /* D2C */
-		{183, 214, 80,  85, 16,  6},     /* D2R */
-		{0,  15, 97, 108,  8, 12},     /* D1L */
-		{96, 127, 97, 108, 16, 12},     /* D1C	*/
-		{208, 223, 97, 108,  8, 12}}}; /* D1R */
+		{
+			{32,  79, 66,  71, 24,  6},   /* D3L */
+			{96, 127, 66,  71, 16,  6},   /* D3C */
+			{144, 191, 66,  71, 24,  6},  /* D3R */
+			{0,  63, 77,  87, 32, 11},    /* D2L */
+			{80, 143, 77,  87, 32, 11},   /* D2C */
+			{160, 223, 77,  87, 32, 11},  /* D2R */
+			{0,  31, 92, 116, 16, 25},    /* D1L */
+			{80, 143, 92, 116, 32, 25},   /* D1C */
+			{192, 223, 92, 116, 16, 25}   /* D1R */
+		},
+		{
+			{0,  95, 66,  74, 48,  9},    /* D3L */
+			{64, 159, 66,  74, 48,  9},   /* D3C */
+			{128, 223, 66,  74, 48,  9},  /* D3R */
+			{0,  79, 75,  89, 40, 15},    /* D2L */
+			{56, 167, 75,  89, 56, 15},   /* D2C */
+			{144, 223, 75,  89, 40, 15},  /* D2R */
+			{0,  63, 90, 118, 32, 29},    /* D1L */
+			{32, 191, 90, 118, 80, 29},   /* D1C */
+			{160, 223, 90, 118, 32, 29}   /* D1R */
+		},
+		{
+			{42,  57, 68,  72,  8,  5},   /* D3L */
+			{104, 119, 68,  72,  8,  5},  /* D3C */
+			{166, 181, 68,  72,  8,  5},  /* D3R */
+			{9,  40, 80,  85, 16,  6},    /* D2L */
+			{96, 127, 80,  85, 16,  6},   /* D2C */
+			{183, 214, 80,  85, 16,  6},  /* D2R */
+			{0,  15, 97, 108,  8, 12},    /* D1L */
+			{96, 127, 97, 108, 16, 12},   /* D1C */
+			{208, 223, 97, 108,  8, 12}   /* D1R */
+		}
+	};
 
 	if (floorOrnOrdinal) {
-		if (drawFootprints = getFlag(floorOrnOrdinal, k0x8000_FootprintsAspect)) {
-			if (!clearFlag(floorOrnOrdinal, k0x8000_FootprintsAspect))
-				goto T0108005;
+		bool drawFootprints = (getFlag(floorOrnOrdinal, k0x8000_FootprintsAspect) ? true : false);
+		byte *bitmap;
+		if (drawFootprints && (clearFlag(floorOrnOrdinal, k0x8000_FootprintsAspect))) {
+			floorOrnOrdinal--;
+			uint16 floorOrnIndex = floorOrnOrdinal;
+			int16 nativeBitmapIndex = _g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
+				+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
+			uint16 *coordSets = g206_floorOrnCoordSets[_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
+			if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
+				|| (viewFloorIndex == k2_viewFloor_D3R)
+				|| ((floorOrnIndex == k15_FloorOrnFootprints) && _g76_useFlippedWallAndFootprintsBitmap &&
+				((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
+				bitmap = _g74_tmpBitmap;
+				f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, coordSets[4], coordSets[5]);
+			} else
+				bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+
+			f132_blitToBitmap(bitmap, _g296_bitmapViewport,
+							  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
 		}
-		floorOrnOrdinal--;
-		floorOrnIndex = floorOrnOrdinal;
-		nativeBitmapIndex = _g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
-			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
-		coordSets = g206_floorOrnCoordSets[_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
-		if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
-			|| (viewFloorIndex == k2_viewFloor_D3R)
-			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _g76_useFlippedWallAndFootprintsBitmap &&
-			((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
-			f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeBitmapIndex),
-											bitmap = _g74_tmpBitmap, coordSets[4], coordSets[5]);
-		} else {
-			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
-		}
-		f132_blitToBitmap(bitmap, _g296_bitmapViewport,
-						  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
-T0108005:
-		if (drawFootprints) {
+
+		if (drawFootprints)
 			f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
-		}
 	}
 }
 
@@ -1055,7 +1054,6 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 	uint16 doorType;
 	DoorFrames* doorFramesTemp;
 	Door* door;
-
 
 	doorFramesTemp = doorFrames;
 	if (doorState != k0_doorState_OPEN) {
