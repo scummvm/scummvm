@@ -1283,71 +1283,80 @@ void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD3R = Frame(144, 223, 66, 73, 40, 8, 0, 0); // @ G0142_s_Graphic558_Frame_FloorPit_D3R
 	static DoorFrames doorFrameD3R = DoorFrames( // @ G0181_s_Graphic558_Frames_Door_D3R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-												Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
-												Frame(150, 197, 28, 38, 24, 41, 0, 30),	/* Vertical Closed one fourth */
-												Frame(150, 197, 28, 48, 24, 41, 0, 20),	/* Vertical Closed half */
-												Frame(150, 197, 28, 58, 24, 41, 0, 10),	/* Vertical Closed three fourth */
-												Frame(150, 153, 28, 67, 24, 41, 18, 0),	/* Left Horizontal Closed one fourth */
-												Frame(150, 161, 28, 67, 24, 41, 12, 0),	/* Left Horizontal Closed half */
-												Frame(150, 167, 28, 67, 24, 41, 6, 0),	/* Left Horizontal Closed three fourth */
-												Frame(192, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed one fourth */
-												Frame(186, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed half */
-												Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
+		Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
+		Frame(150, 197, 28, 38, 24, 41, 0, 30),	/* Vertical Closed one fourth */
+		Frame(150, 197, 28, 48, 24, 41, 0, 20),	/* Vertical Closed half */
+		Frame(150, 197, 28, 58, 24, 41, 0, 10),	/* Vertical Closed three fourth */
+		Frame(150, 153, 28, 67, 24, 41, 18, 0),	/* Left Horizontal Closed one fourth */
+		Frame(150, 161, 28, 67, 24, 41, 12, 0),	/* Left Horizontal Closed half */
+		Frame(150, 167, 28, 67, 24, 41, 6, 0),	/* Left Horizontal Closed three fourth */
+		Frame(192, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed one fourth */
+		Frame(186, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed half */
+		Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
 	uint16 squareAspect[5];
+	bool skip = false;
 
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElementAspect]) {
 	case k19_ElementTypeStaisFront:
-		if (squareAspect[k2_StairsUpAspect]) {
+		if (squareAspect[k2_StairsUpAspect])
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g675_stairsNativeBitmapIndex_Up_Front_D3L, frameStairsUpFrontD3R);
-		} else {
+		else
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(_g682_stairsNativeBitmapIndex_Down_Front_D3L, frameStairsDownFrontD3R);
-		}
-		goto T0117016;
+
+		order = k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
+		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
+		break;
 	case k0_ElementTypeWall:
 		f100_drawWallSetBitmap(_g698_bitmapWallSet_Wall_D3LCR, _frameWalls163[k2_ViewSquare_D3R]);
 		f107_isDrawnWallOrnAnAlcove(squareAspect[k4_LeftWallOrnOrdAspect], k1_ViewWall_D3R_LEFT);
-		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k4_ViewWall_D3R_FRONT)) {
+		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k4_ViewWall_D3R_FRONT))
 			order = k0x0000_CellOrder_Alcove;
-			goto T0117018;
-		}
-		return;
+		else
+			return;
+		break;
 	case k16_ElementTypeDoorSide:
 	case k18_ElementTypeStairsSide:
 		order = k0x0412_CellOrder_BackRight_BackLeft_FrontLeft;
-		goto T0117017;
+		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
+		break;
 	case k17_ElementTypeDoorFront:
 		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		memmove(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
 		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &doorFrameRightD3R);
-		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton()) {
+		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
 			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k0_viewDoorButton_D3R);
-		}
+
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect],
 					  squareAspect[k2_DoorStateAspect], _g693_doorNativeBitmapIndex_Front_D3LCR,
 					  M75_bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3R);
-		goto T0117018;
+		break;;
 	case k2_ElementTypePit:
-		if (!squareAspect[k2_PitInvisibleAspect]) {
+		if (!squareAspect[k2_PitInvisibleAspect])
 			f105_drawFloorPitOrStairsBitmapFlippedHorizontally(k49_FloorPit_D3L_GraphicIndice, frameFloorPitD3R);
-		}
+		// No break on purpose
 	case k5_ElementTypeTeleporter:
 	case k1_ElementTypeCorridor:
-T0117016:
 		order = k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
-T0117017:
- /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
+		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		f108_drawFloorOrnament(squareAspect[k4_FloorOrnOrdAspect], k2_viewFloor_D3R);
-T0117018:
+		break;
+	default:
+		skip = true;
+		break;
+	}
+
+	if (!skip)
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, order);
-	}
-	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect]) {
+
+	if ((squareAspect[k0_ElementAspect] == k5_ElementTypeTeleporter) && squareAspect[k2_TeleporterVisibleAspect])
 		f113_drawField(&_fieldAspects188[k2_ViewSquare_D3R], _frameWalls163[k2_ViewSquare_D3R]._box);
-	}
 }
 
 void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
@@ -1358,16 +1367,16 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD3C = Frame(64, 159, 66, 73, 48, 8, 0, 0); // @ G0141_s_Graphic558_Frame_FloorPit_D3C
 	static DoorFrames doorFrameD3C = DoorFrames( // @ G0180_s_Graphic558_Frames_Door_D3C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-												Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
-												Frame(88, 135, 28, 38, 24, 41, 0, 30),		/* Vertical Closed one fourth */
-												Frame(88, 135, 28, 48, 24, 41, 0, 20),		/* Vertical Closed half */
-												Frame(88, 135, 28, 58, 24, 41, 0, 10),		/* Vertical Closed three fourth */
-												Frame(88, 93, 28, 67, 24, 41, 18, 0),		/* Left Horizontal Closed one fourth */
-												Frame(88, 99, 28, 67, 24, 41, 12, 0),		/* Left Horizontal Closed half */
-												Frame(88, 105, 28, 67, 24, 41, 6, 0),		/* Left Horizontal Closed three fourth */
-												Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
-												Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
-												Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
+		Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
+		Frame(88, 135, 28, 38, 24, 41, 0, 30),		/* Vertical Closed one fourth */
+		Frame(88, 135, 28, 48, 24, 41, 0, 20),		/* Vertical Closed half */
+		Frame(88, 135, 28, 58, 24, 41, 0, 10),		/* Vertical Closed three fourth */
+		Frame(88, 93, 28, 67, 24, 41, 18, 0),		/* Left Horizontal Closed one fourth */
+		Frame(88, 99, 28, 67, 24, 41, 12, 0),		/* Left Horizontal Closed half */
+		Frame(88, 105, 28, 67, 24, 41, 6, 0),		/* Left Horizontal Closed three fourth */
+		Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
+		Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
+		Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
 	);
 
 	uint16 squareAspect[5];
