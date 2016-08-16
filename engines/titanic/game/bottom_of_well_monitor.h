@@ -28,12 +28,17 @@
 namespace Titanic {
 
 class CBottomOfWellMonitor : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
 	static int _v1, _v2;
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CBottomOfWellMonitor() : _value(1) {}
+	CBottomOfWellMonitor() : _flag(true) {}
 
 	/**
 	 * Save the data for the class to file
