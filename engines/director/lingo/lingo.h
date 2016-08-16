@@ -314,6 +314,7 @@ public:
 	static void b_chars(int nargs);
 	static void b_charToNum(int nargs);
 	static void b_length(int nargs);
+	static void b_numToChar(int nargs);
 	static void b_string(int nargs);
 
 	static void b_ilk(int nargs);
@@ -328,6 +329,7 @@ public:
 	static void b_editableText(int nargs);
 	static void b_installMenu(int nargs);
 	static void b_label(int nargs);
+	static void b_marker(int nargs);
 	static void b_moveableSprite(int nargs);
 	static void b_puppetPalette(int nargs);
 	static void b_puppetSound(int nargs);

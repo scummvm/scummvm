@@ -50,6 +50,7 @@ static struct BuiltinProto {
 	{ "chars",		Lingo::b_chars,		3, 3, true },	// D2
 	{ "charToNum",	Lingo::b_charToNum,	1, 1, true },	// D2
 	{ "length",		Lingo::b_length,	1, 1, true },	// D2
+	{ "numToChar",	Lingo::b_numToChar,	1, 1, true },	// D2
 	{ "string",		Lingo::b_string,	1, 1, true },	// D2
 	// Files
 	{ "closeDA",	 	Lingo::b_closeDA, 		0, 0, false },	// D2
@@ -95,6 +96,7 @@ static struct BuiltinProto {
 		// go													// D2
 	{ "installMenu",	Lingo::b_installMenu,	1, 1, false },	// D2
 	{ "label",			Lingo::b_label,			1, 1, true },	// D2
+	{ "marker",			Lingo::b_marker,			1, 1, true },	// D2
 	{ "moveableSprite",	Lingo::b_moveableSprite,0, 0, false },	// D2
 	{ "puppetPalette",	Lingo::b_puppetPalette, -1,0, false },	// D2
 	{ "puppetSound",	Lingo::b_puppetSound,	-1,0, false },	// D2
@@ -343,6 +345,14 @@ void Lingo::b_length(int nargs) {
 	g_lingo->push(d);
 }
 
+void Lingo::b_numToChar(int nargs) {
+	Datum d = g_lingo->pop();
+
+	d.toInt();
+
+	g_lingo->push(Datum((char)d.u.i));
+}
+
 void Lingo::b_string(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toString();
@@ -562,6 +572,14 @@ void Lingo::b_label(int nargs) {
 	Datum d = g_lingo->pop();
 	d.toInt();
 	warning("STUB: b_label(%d)", d.u.i);
+
+	g_lingo->push(Datum(0));
+}
+
+void Lingo::b_marker(int nargs) {
+	Datum d = g_lingo->pop();
+	d.toInt();
+	warning("STUB: b_marker(%d)", d.u.i);
 
 	g_lingo->push(Datum(0));
 }
