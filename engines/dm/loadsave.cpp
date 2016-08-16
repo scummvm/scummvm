@@ -161,7 +161,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		case Common::EN_ANY:
 			_dialog->f427_dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
-		case Common::GR_GRE:
+		case Common::DE_DEU:
 			_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GELADEN . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		case Common::FR_FRA:
@@ -187,7 +187,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	case Common::EN_ANY:
 		_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
 		break;
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		_dialog->f427_dialogDraw(message, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", nullptr, false, false, false);
 		break;
 	case Common::FR_FRA:
@@ -201,7 +201,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	case Common::EN_ANY:
 		_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 		break;
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 		break;
 	case Common::FR_FRA:

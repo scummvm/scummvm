@@ -100,14 +100,14 @@ const char *g417_baseSkillName[4];
 void ChampionMan::initConstants() {
 	{
 		static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
-		static const char *g417_baseSkillName_GR_GRE[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
+		static const char *g417_baseSkillName_DE_DEU[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
 		static const char *g417_baseSkillName_FR_FRA[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
 
 		const char **g417_byLanguage;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: g417_byLanguage = g417_baseSkillName_EN_ANY; break;
-		case Common::GR_GRE: g417_byLanguage = g417_baseSkillName_GR_GRE; break;
+		case Common::DE_DEU: g417_byLanguage = g417_baseSkillName_DE_DEU; break;
 		case Common::FR_FRA: g417_byLanguage = g417_baseSkillName_FR_FRA; break;
 		}
 		for (int i = 0; i < 4; ++i)
@@ -993,7 +993,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
 			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " JUST GAINED A "); break;
-			case Common::GR_GRE: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
+			case Common::DE_DEU: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
 			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " VIENT DE DEVENIR "); break;
 			}
 
@@ -1002,7 +1002,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
 			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, "!"); break;
-			case Common::GR_GRE: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!"); break;
+			case Common::DE_DEU: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!"); break;
 			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " ERREICHT!"); break;
 			}
 		}
@@ -2186,7 +2186,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD "); break;
-		case Common::GR_GRE: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LAST "); break;
+		case Common::DE_DEU: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LAST "); break;
 		case Common::FR_FRA: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "CHARGE "); break;
 		}
 
@@ -2196,7 +2196,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: strcat(_vm->_g353_stringBuildBuffer, "."); break;
-		case Common::GR_GRE: strcat(_vm->_g353_stringBuildBuffer, ","); break;
+		case Common::DE_DEU: strcat(_vm->_g353_stringBuildBuffer, ","); break;
 		case Common::FR_FRA: strcat(_vm->_g353_stringBuildBuffer, "KG,"); break;
 		}
 

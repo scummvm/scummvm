@@ -245,7 +245,7 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY:
-		case Common::GR_GRE: // english and german version are the same
+		case Common::DE_DEU: // english and german version are the same
 			strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
 			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
 			break;

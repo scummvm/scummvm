@@ -685,7 +685,7 @@ void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failure
 	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
 
 	char *messages_EN_ANY[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
-	char *messages_GR_GRE[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
+	char *messages_DE_DEU[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
 		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.", " MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."};
 	char *messages_FR_FRA[5] = {" DOIT PRATIQUER DAVANTAGE SON ", "ENVOUTEMENT.", " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
 		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.", "EXORCISME."};
@@ -694,8 +694,8 @@ void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failure
 	default:
 	case Common::EN_ANY:
 		messages = messages_EN_ANY; break;
-	case Common::GR_GRE:
-		messages = messages_GR_GRE; break;
+	case Common::DE_DEU:
+		messages = messages_DE_DEU; break;
 	case Common::FR_FRA:
 		messages = messages_FR_FRA; break;
 	}
@@ -1184,13 +1184,13 @@ T0407032:
 		break;
 	case k5_ChampionActionFlip: {
 		char *messages_EN_ANY[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
-		char *messages_GR_GRE[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
+		char *messages_DE_DEU[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
 		char *messages_FR_FRA[2] = {"C'EST FACE.", "C'EST PILE."};
 		char **message;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: message = messages_EN_ANY; break;
-		case Common::GR_GRE: message = messages_GR_GRE; break;
+		case Common::DE_DEU: message = messages_DE_DEU; break;
 		case Common::FR_FRA: message = messages_FR_FRA; break;
 		}
 		if (_vm->getRandomNumber(2)) {
@@ -1713,17 +1713,17 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	_vm->_displayMan->D24_fillScreenBox(g1_BoxActionArea, k0_ColorBlack);
 	if (damage < 0) {
 		static char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
-		static char *messages_GR_GRE[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
+		static char *messages_DE_DEU[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
 		static char *messages_FR_FRA[2] = {"TROP LOIN", "SANS MUNITION"};
 		static int16  pos_EN_ANY[2] = {242, 248};
-		static int16  pos_GR_GRE[2] = {242, 236};
+		static int16  pos_DE_DEU[2] = {242, 236};
 		static int16  pos_FR_FRA[2] = {248, 236};
 		char **message;
 		int16 *pos;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: message = messages_EN_ANY; pos = pos_EN_ANY;  break;
-		case Common::GR_GRE: message = messages_GR_GRE; pos = pos_GR_GRE; break;
+		case Common::DE_DEU: message = messages_DE_DEU; pos = pos_DE_DEU; break;
 		case Common::FR_FRA: message = messages_FR_FRA; pos = pos_FR_FRA; break;
 		}
 

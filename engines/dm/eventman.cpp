@@ -796,7 +796,7 @@ void EventManager::f380_processCommandQueue() {
 			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
 												 "GAME FROZEN", k136_heightViewport);
 			break;
-		case Common::GR_GRE:
+		case Common::DE_DEU:
 			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 66, 69, k4_ColorCyan, k0_ColorBlack,
 												 "SPIEL ANGEHALTEN", k136_heightViewport);
 			break;
@@ -1216,7 +1216,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	case Common::EN_ANY:
 		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
 		break;
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
 		break;
 	case Common::FR_FRA:
@@ -1324,7 +1324,7 @@ void EventManager::f379_drawSleepScreen() {
 	case Common::EN_ANY:
 		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 93, 69, k4_ColorCyan, k0_ColorBlack, "WAKE UP", k136_heightViewport);
 		break;
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, 96, 69, k4_ColorCyan, k0_ColorBlack, "WECKEN", k136_heightViewport);
 		break;
 	case Common::FR_FRA:

@@ -572,7 +572,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 		restartOuterBox = boxEndgameRestartOuterEN;
 		restartInnerBox = boxEndgameRestartInnerEN;
 		break;
-	case Common::GR_GRE:
+	case Common::DE_DEU:
 		restartOuterBox = boxEndgameRestartOuterDE;
 		restartInnerBox = boxEndgameRestartInnerDE;
 		break;
@@ -676,7 +676,7 @@ T0444017:
 			switch (getGameLanguage()) { // localized
 			default:
 			case Common::EN_ANY: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME"); break;
-			case Common::GR_GRE: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN"); break;
+			case Common::DE_DEU: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN"); break;
 			case Common::FR_FRA: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU"); break;
 			}
 
