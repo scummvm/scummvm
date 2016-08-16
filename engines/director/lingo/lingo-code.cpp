@@ -51,6 +51,27 @@
 
 namespace Director {
 
+static struct FuncDescr {
+	const inst func;
+	const char *name;
+	const char *args;
+} funcDescr[] = {
+	{ Lingo::c_xpop,		"c_xpop",		"" },
+	{ Lingo::c_printtop,	"c_printtop",	"" },
+	{ Lingo::c_constpush,	"c_constpush",	"i" },
+	{ Lingo::c_voidpush,	"c_voidpush",	"" },
+	{ Lingo::c_fconstpush,	"c_fconstpush",	"f" },
+	{ 0, 0, 0 }
+};
+
+void Lingo::initFuncs() {
+	Symbol sym;
+	for (FuncDescr *fnc = funcDescr; fnc->name; fnc++) {
+		sym.u.func = fnc->func;
+		_functions[(void *)sym.u.s] = new FuncDesc(fnc->name, fnc->args);
+	}
+}
+
 void Lingo::push(Datum d) {
 	_stack.push_back(d);
 }

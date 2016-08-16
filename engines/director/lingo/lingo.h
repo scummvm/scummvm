@@ -185,6 +185,7 @@ public:
 	void processEvent(LEvent event, int entityId);
 
 	void initBuiltIns();
+	void initFuncs();
 	void initTheEntities();
 
 	Common::String *toLowercaseMac(Common::String *s);

@@ -55,7 +55,7 @@ void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		Common::String instr = decodeInstruction(_pc);
 
-		debugC(1, kDebugLingoExec, "%s", instr.c_str());
+		debugC(1, kDebugLingoExec, "E: %s", instr.c_str());
 
 		for (uint i = 0; i < _stack.size(); i++) {
 			debugCN(5, kDebugLingoExec, "%d ", _stack[i].u.i);

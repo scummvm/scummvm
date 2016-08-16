@@ -86,6 +86,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 		_eventHandlerTypes[t->handler] = t->name;
 
 	initBuiltIns();
+	initFuncs();
 	initTheEntities();
 
 	_currentScript = 0;
