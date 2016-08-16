@@ -1,6 +1,7 @@
 MODULE := engines/macventure
 
 MODULE_OBJS := \
+	container.o \
 	controls.o \
 	cursor.o \
 	datafiles.o \
