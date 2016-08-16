@@ -57,6 +57,8 @@ public:
 private:
 	void addPrebuiltElement(const PrebuiltDialogElement &element);
 
+	void calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds);
+
 private:
 	Gui *_gui;
 

@@ -27,49 +27,49 @@ namespace MacVenture {
 const PrebuiltDialog g_prebuiltDialogs[kPrebuiltDialogCount] = {
 
 	{/* kSaveAsDialog */
-		Common::Rect(0, 146, 456, 254),
+		{0, 146, 456, 254},
 		{
-			{kDEButton, "YES", kDASaveAs, Common::Point(24, 68), 120, 22},
-			{kDEButton, "NO", kDACloseDialog, Common::Point(168, 68), 120, 22},
-			{kDEButton, "CANCEL", kDACloseDialog, Common::Point(312, 68), 120, 22},
-			{kDEPlainText, "Save As...", kDANone, Common::Point(100, 10), 340, 38},
-			{kDETextInput, "", kDANone, Common::Point(100, 30), 340, 20},
-			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+			{kDEButton, "YES", kDASaveAs, 24, 68, 120, 22},
+			{kDEButton, "NO", kDACloseDialog, 168, 68, 120, 22},
+			{kDEButton, "CANCEL", kDACloseDialog, 312, 68, 120, 22},
+			{kDEPlainText, "Save As...", kDANone, 100, 10, 340, 38},
+			{kDETextInput, "", kDANone, 100, 30, 340, 20},
+			{kDEEnd, "", kDANone, 0, 0, 0, 0}
 		}
 	},
 
 	{ /* kSpeakDialog */
-		Common::Rect(20, 92, 400, 200),
+		{20, 92, 400, 200},
 		{
-			{kDEButton, "OK", kDASubmit, Common::Point(10, 70), 50, 20},
-			{kDEButton, "CANCEL", kDACloseDialog, Common::Point(96, 70), 50, 20},
-			{kDEPlainText, "What would you like to say?", kDANone, Common::Point(10, 10), 400, 20},
-			{kDETextInput, "", kDANone, Common::Point(10, 25), 350, 40},
-			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+			{kDEButton, "OK", kDASubmit, 10, 70, 50, 20},
+			{kDEButton, "CANCEL", kDACloseDialog, 96, 70, 50, 20},
+			{kDEPlainText, "What would you like to say?", kDANone, 10, 10, 400, 20},
+			{kDETextInput, "", kDANone, 10, 25, 350, 40},
+			{kDEEnd, "", kDANone, 0, 0, 0, 0}
 		}
 	},
 
 	{ /* kWinGameDialog */
-		Common::Rect(20, 100, 320, 200),
+		{20, 100, 320, 200},
 		{
-			{kDEPlainText, "You Won!", kDANone, Common::Point(20, 16), 280, 20},
-			{kDEPlainText, "What do you want to do?", kDANone, Common::Point(20, 30), 280, 20},
-			{kDEButton, "New Game", kDANewGame, Common::Point(20, 60), 70, 20},
-			{kDEButton, "Load", kDALoadGame, Common::Point(110, 60), 70, 20},
-			{kDEButton, "Quit", kDAQuit, Common::Point(200, 60), 70, 20},
-			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+			{kDEPlainText, "You Won!", kDANone, 20, 16, 280, 20},
+			{kDEPlainText, "What do you want to do?", kDANone, 20, 30, 280, 20},
+			{kDEButton, "New Game", kDANewGame, 20, 60, 70, 20},
+			{kDEButton, "Load", kDALoadGame, 110, 60, 70, 20},
+			{kDEButton, "Quit", kDAQuit, 200, 60, 70, 20},
+			{kDEEnd, "", kDANone, 0, 0, 0, 0}
 		}
 	},
 
 	{ /* kLoseGameDialog */
-		Common::Rect(20, 100, 320, 200),
+		{20, 100, 320, 200},
 		{
-			{kDEPlainText, "You Died", kDANone, Common::Point(20, 16), 280, 20},
-			{kDEPlainText, "What do you want to do?", kDANone, Common::Point(20, 30), 280, 20},
-			{kDEButton, "New Game", kDANewGame, Common::Point(20, 60), 70, 20},
-			{kDEButton, "Load", kDALoadGame, Common::Point(110, 60), 70, 20},
-			{kDEButton, "Quit", kDAQuit, Common::Point(200, 60), 70, 20},
-			{kDEEnd, "", kDANone, Common::Point(0, 0), 0, 0}
+			{kDEPlainText, "You Died", kDANone, 20, 16, 280, 20},
+			{kDEPlainText, "What do you want to do?", kDANone, 20, 30, 280, 20},
+			{kDEButton, "New Game", kDANewGame, 20, 60, 70, 20},
+			{kDEButton, "Load", kDALoadGame, 110, 60, 70, 20},
+			{kDEButton, "Quit", kDAQuit, 200, 60, 70, 20},
+			{kDEEnd, "", kDANone, 0, 0, 0, 0}
 		}
 	}
 };

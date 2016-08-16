@@ -52,11 +52,19 @@ enum PrebuiltElementType {
 	kDEEnd
 };
 
+struct PrebuiltDialogBounds {
+	uint left;
+	uint top;
+	uint right;
+	uint bottom;
+};
+
 struct PrebuiltDialogElement {
 	PrebuiltElementType type;
-	Common::String title;
+	const char *title;
 	DialogAction action;
-	Common::Point position;
+	uint left;
+	uint top;
 	uint width;
 	uint height;
 };
@@ -68,7 +76,7 @@ enum {
 };
 
 struct PrebuiltDialog {
-	Common::Rect bounds;
+	PrebuiltDialogBounds bounds;
 	PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
 };
 

@@ -32,7 +32,7 @@ Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
 Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt) {
 	_gui = gui;
 	const PrebuiltDialog &dialog = g_prebuiltDialogs[prebuilt];
-	_bounds = dialog.bounds;
+	calculateBoundsFromPrebuilt(dialog.bounds);
 	for (int i = 0; dialog.elements[i].type != kDEEnd; i++) {
 		addPrebuiltElement(dialog.elements[i]);
 	}
@@ -124,15 +124,16 @@ void Dialog::setUserInput(Common::String content) {
 }
 
 void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element) {
+	Common::Point position(element.left, element.top);
 	switch(element.type) {
 	case kDEButton:
-		addButton(element.title, element.action, element.position, element.width, element.height);
+		addButton(element.title, element.action, position, element.width, element.height);
 		break;
 	case kDEPlainText:
-		addText(element.title, element.position);
+		addText(element.title, position);
 		break;
 	case kDETextInput:
-		addTextInput(element.position, element.width, element.height);
+		addTextInput(position, element.width, element.height);
 		break;
 	default:
 		break;
@@ -240,5 +241,13 @@ void DialogTextInput::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurfac
 	target.fillRect(_bounds, kColorWhite);
 	target.frameRect(_bounds, kColorBlack);
 	dialog->getFont().drawString(&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack);
+}
+
+void Dialog::calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds) {
+	_bounds = Common::Rect(
+		bounds.left,
+		bounds.top,
+		bounds.right,
+		bounds.bottom);
 }
 } // End of namespace MacVenture
