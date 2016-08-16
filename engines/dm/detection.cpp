@@ -48,6 +48,15 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 	    Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
+	{
+		"dm", "Atari ???v English",
+		{
+			{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
+			{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
+			AD_LISTEND
+		},
+	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };
