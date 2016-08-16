@@ -35,6 +35,7 @@
 #include "group.h"
 #include "projexpl.h"
 #include "text.h"
+#include "sounds.h"
 
 
 namespace DM {
@@ -181,7 +182,7 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 			if (!L0753_B_DoNotTriggerSensor) {
 				L0759_B_AtLeastOneSensorWasTriggered = true;
 				if (L0755_ps_Sensor->getAudibleA()) {
-					_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 				}
 				if (!_vm->_championMan->_g415_leaderEmptyHanded && ((L0757_ui_SensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (L0757_ui_SensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (L0757_ui_SensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
 					L0754_ps_Generic = (Thing *)_vm->_dungeonMan->f156_getThingData(L0761_T_LeaderHandObject);
@@ -299,7 +300,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					_vm->_dungeonMan->_g306_partyMapX = destMapX;
 					_vm->_dungeonMan->_g307_partyMapY = destMapY;
 					if (L0712_ps_Teleporter->isAudible()) {
-						_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 					}
 					L0723_B_DrawDungeonViewWhileFalling = true;
 					if (L0712_ps_Teleporter->getAbsoluteRotation()) {
@@ -310,7 +311,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 				} else {
 					if (L0710_i_ThingType == k4_GroupThingType) {
 						if (L0712_ps_Teleporter->isAudible()) {
-							_vm->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
 						}
 						L0720_ui_MoveGroupResult = f262_getTeleporterRotatedGroupResult(L0712_ps_Teleporter, thing, L0714_ui_MapIndexSource);
 					} else {
@@ -352,7 +353,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 								}
 							} else {
 								if (_vm->_championMan->f324_damageAll_getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF)) {
-									_vm->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+									_vm->_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 								}
 							}
 						}
@@ -480,7 +481,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 				}
 				L1638_ui_MovementSoundIndex = f514_getSound(((Group *)_vm->_dungeonMan->_g284_thingData[k4_GroupThingType])[thing.getIndex()]._type);
 				if (L1638_ui_MovementSoundIndex < k34_D13_soundCount) {
-					_vm->f064_SOUND_RequestPlay_CPSD(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
 				}
 				if (L0721_B_GroupOnPartyMap && (L0715_ui_MapIndexDestination != _vm->_dungeonMan->_g309_partyMapIndex)) { /* If the group leaves the party map */
 					_vm->_groupMan->f184_removeActiveGroup(AL0708_i_ActiveGroupIndex);
@@ -898,7 +899,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 					goto T0276079;
 			}
 			if (L0769_ps_Sensor->getAudibleA()) {
-				_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
 			}
 			f272_sensorTriggerEffect(L0769_ps_Sensor, L0778_i_Effect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
 			goto T0276079;

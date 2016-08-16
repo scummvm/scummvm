@@ -39,6 +39,7 @@
 #include "text.h"
 #include "group.h"
 #include "dialog.h"
+#include "sounds.h"
 
 
 namespace DM {
@@ -940,7 +941,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 				damage |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
 
 			if (damage)
-				_vm->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
+				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
 		} else if (isMovementBlocked = (_vm->_groupMan->f175_groupGetThing(partyMapX, partyMapY) != Thing::_endOfList))
 			_vm->_groupMan->f209_processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
@@ -1075,7 +1076,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 			Junk *junkPtr = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
-				_vm->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
 				return;
 			}

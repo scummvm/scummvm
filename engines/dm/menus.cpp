@@ -37,6 +37,7 @@
 #include "movesens.h"
 #include "group.h"
 #include "projexpl.h"
+#include "sounds.h"
 
 
 namespace DM {
@@ -1116,10 +1117,10 @@ T0407014:
 	case k13_ChampionActionSwing:
 	case k2_ChampionActionChop:
 		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
-			_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 			L1249_ui_ActionDisabledTicks = 6;
 			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->f312_getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
-			_vm->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k2_soundModePlayOneTickLater);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
 	case k24_ChampionActionDisrupt:
@@ -1145,10 +1146,10 @@ T0407014:
 	case k41_ChampionActionBrandish:
 	case k4_ChampionActionBlowHorn:
 		if (actionIndex == k8_ChampionActionWarCry) {
-			_vm->f064_SOUND_RequestPlay_CPSD(k28_soundWAR_CRY, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k28_soundWAR_CRY, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
 		}
 		if (actionIndex == k4_ChampionActionBlowHorn) {
-			_vm->f064_SOUND_RequestPlay_CPSD(k25_soundBLOW_HORN, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k25_soundBLOW_HORN, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
 		}
 		AL1245_B_ActionPerformed = f401_isGroupFrightenedByAction(champIndex, actionIndex, L1251_i_MapX, L1252_i_MapY);
 		break;
@@ -1178,7 +1179,7 @@ T0407032:
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
 		{ // so gotos won't skip init
 			Thing AL1250_T_Object = _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
-			_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 			_vm->_championMan->f326_championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->f303_getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
 		}
 		break;
@@ -1451,7 +1452,7 @@ bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int
 #define AL1237_ui_ActionHitProbability L1237_ui_Multiple
 	int16 L1238_i_CreatureOrdinal;
 
-	_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 	if (_g517_actionTargetGroupThing == Thing::_endOfList)
 		goto T0402010;
 	if (L1238_i_CreatureOrdinal = _vm->_groupMan->f177_getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, AL1236_ui_ChampionCell = champ->_cell)) {

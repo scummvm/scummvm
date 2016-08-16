@@ -36,6 +36,7 @@
 #include "projexpl.h"
 #include "group.h"
 #include "movesens.h"
+#include "sounds.h"
 
 
 namespace DM {
@@ -172,7 +173,7 @@ bool ChampionMan::f328_isObjectThrown(uint16 champIndex, int16 slotIndex, int16 
 			return false;
 	}
 
-	_vm->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 	f325_decrementStamina(champIndex, f305_getThrowingStaminaCost(curThing));
 	f330_disableAction(champIndex, 4);
 	int16 experience = 8;

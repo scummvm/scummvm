@@ -57,6 +57,7 @@
 #include "dialog.h"
 #include <graphics/cursorman.h>
 #include <advancedDetector.h>
+#include "sounds.h"
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -168,6 +169,7 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 	_timeline = nullptr;
 	_projexpl = nullptr;
 	_displayMan = nullptr;
+	_sound = nullptr;
 
 	_engineShouldQuit = false;
 	_g528_saveFormat = 0;
@@ -220,9 +222,9 @@ DMEngine::~DMEngine() {
 	delete _timeline;
 	delete _projexpl;
 	delete _dialog;
+	delete _sound;
 
-	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
-		delete[] _gK24_soundData[i]._firstSample;
+	
 
 	delete[] _savedScreenForOpenEntranceDoors;
 	// clear debug channels
@@ -254,7 +256,7 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
 	_displayMan->f95_loadWallSet(k0_WallSetStone);
 
-	f503_loadSounds(); // @ F0506_AMIGA_AllocateData
+	_sound->f503_loadSounds(); // @ F0506_AMIGA_AllocateData
 
 	f437_STARTEND_drawTittle();
 	_textMan->f54_textInitialize();
@@ -359,6 +361,7 @@ Common::Error DMEngine::run() {
 	_timeline = new Timeline(this);
 	_projexpl = new ProjExpl(this);
 	_dialog = new DialogMan(this);
+	_sound = new SoundMan(this);
 	_displayMan->setUpScreens(320, 200);
 
 	f463_initializeGame();
@@ -432,7 +435,7 @@ void DMEngine::f2_gameloop() {
 			}
 		}
 		_eventMan->f363_highlightBoxDisable();
-		f65_playPendingSound();
+		_sound->f65_playPendingSound();
 		_championMan->f320_applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_g303_partyDead)
 			break;
@@ -542,7 +545,7 @@ void DMEngine::f441_processEntrance() {
 	} while (_g298_newGame == k202_CommandEntranceDrawCredits);
 
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
-	f060_SOUND_Play(k01_soundSWITCH, 112, 0x40, 0x40);
+	_sound->f060_SOUND_Play(k01_soundSWITCH, 112, 0x40, 0x40);
 	f22_delay(20);
 	_eventMan->f78_showMouse();
 	if (_g298_newGame)
@@ -595,7 +598,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 	_eventMan->_g443_primaryKeyboardInput = nullptr;
 	_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	if (doNotDrawCreditsOnly && !_g302_gameWon) {
-		f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+		_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 		f22_delay(240);
 	}
 
@@ -784,7 +787,7 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 	for (uint16 animStep = 1; animStep < 32; ++animStep) {
 		if ((animStep % 3) == 1) {
 			// Strangerke: CHECKME: Earlier versions of the game were using G0565_puc_Graphic535_Sound02DoorRattle instead of k02_soundDOOR_RATTLE 2
-			f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
+			_sound->f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
 		}
 
 		_displayMan->f21_blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
@@ -889,7 +892,7 @@ T0446002:
 		_projexpl->f213_explosionCreate(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		f445_STARTEND_fuseSequenceUpdate();
 	}
-	f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+	_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
 	L1428_ps_Group->_type = k25_CreatureTypeLordOrder;
 	f445_STARTEND_fuseSequenceUpdate();
 	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
@@ -898,7 +901,7 @@ T0446002:
 	}
 	for (AL1425_i_CycleCount = 4; --AL1425_i_CycleCount; ) {
 		for (AL1424_i_CreatureTypeSwitchCount = 5; --AL1424_i_CreatureTypeSwitchCount; ) {
-			f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+			_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
 			L1428_ps_Group->_type = (AL1424_i_CreatureTypeSwitchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
 			for (AL1426_i_FuseSequenceUpdateCount = AL1425_i_CycleCount; AL1426_i_FuseSequenceUpdateCount--; f445_STARTEND_fuseSequenceUpdate());
 		}
@@ -957,7 +960,7 @@ T0446002:
 void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 	_timeline->f261_processTimeline();
 	_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
-	f65_playPendingSound();
+	_sound->f65_playPendingSound();
 	_eventMan->f357_discardAllInput();
 	_displayMan->updateScreen();
 	f22_delay(2);

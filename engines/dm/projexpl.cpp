@@ -32,6 +32,7 @@
 #include "group.h"
 #include "objectman.h"
 #include "movesens.h"
+#include "sounds.h"
 
 namespace DM {
 
@@ -230,7 +231,7 @@ T0217004:
 				AL0507_ui_SoundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
 			}
 		}
-		_vm->f064_SOUND_RequestPlay_CPSD(AL0507_ui_SoundIndex, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->f064_SOUND_RequestPlay_CPSD(AL0507_ui_SoundIndex, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY, k1_soundModePlayIfPrioritized);
 	}
 T0217044:
 	if (L0509_B_RemovePotion) {
@@ -321,10 +322,10 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 	L0470_ps_Explosion->setType(explThing.toUint16() - Thing::_firstExplosion.toUint16());
 	L0470_ps_Explosion->setAttack(attack);
 	if (explThing.toUint16() < Thing::_explHarmNonMaterial.toUint16()) {
-		_vm->f064_SOUND_RequestPlay_CPSD((attack > 80) ? k05_soundSTRONG_EXPLOSION : k20_soundWEAK_EXPLOSION, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->f064_SOUND_RequestPlay_CPSD((attack > 80) ? k05_soundSTRONG_EXPLOSION : k20_soundWEAK_EXPLOSION, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
 	} else {
 		if (explThing != Thing::_explSmoke) {
-			_vm->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
 		}
 	}
 	_vm->_dungeonMan->f163_linkThingToList(L0473_T_Thing, Thing(0), AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY);
@@ -564,7 +565,7 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 		break;
 	case 0xFFE4:
 		L0532_ps_Explosion->setType(L0532_ps_Explosion->getType() + 1);
-		_vm->f064_SOUND_RequestPlay_CPSD(k05_soundSTRONG_EXPLOSION, L0528_ui_MapX, L0529_ui_MapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->f064_SOUND_RequestPlay_CPSD(k05_soundSTRONG_EXPLOSION, L0528_ui_MapX, L0529_ui_MapY, k1_soundModePlayIfPrioritized);
 		goto T0220026;
 	case 0xFFA8:
 		if (L0532_ps_Explosion->getAttack() > 55) {

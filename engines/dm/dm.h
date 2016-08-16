@@ -54,6 +54,7 @@ class GroupMan;
 class Timeline;
 class ProjExpl;
 class DialogMan;
+class SoundMan;
 
 
 void warning(bool repeat, const char *s, ...);
@@ -202,36 +203,6 @@ struct SaveGameHeader {
 };
 
 
-#define k34_D13_soundCount 34 // @ D13_SOUND_COUNT
-
-class SoundData {
-public:
-	uint32 _byteCount;
-	byte* _firstSample;
-	uint32 _sampleCount;
-	SoundData(): _byteCount(0), _firstSample(nullptr), _sampleCount(0) {}
-}; // @ SOUND_DATA
-
-class Sound {
-public:
-	int16 _graphicIndex;
-	byte _period;
-	byte _priority;
-	byte _loudDistance;
-	byte _softDistance;
-	Sound(int16 index, byte period, byte priority, byte loudDist, byte softDist) :
-		_graphicIndex(index), _period(period), _priority(priority), _loudDistance(loudDist), _softDistance(softDist) {}
-}; // @ Sound
-
-class PendingSound {
-public:
-	uint8 _leftVolume;
-	uint8 _rightVolume;
-	int16 _soundIndex;
-	PendingSound(uint8 leftVolume, uint8 rightVolume, int16 soundIndex):
-		_leftVolume(leftVolume), _rightVolume(rightVolume), _soundIndex(soundIndex) {}
-};
-
 class DMEngine : public Engine {
 	void f462_startGame(); // @ F0462_START_StartGame_CPSF
 	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
@@ -243,7 +214,6 @@ class DMEngine : public Engine {
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	bool readSaveGameHeader(Common::InSaveFile *file, SaveGameHeader *header);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
-	void f503_loadSounds(); // @ F0503_SOUND_LoadAll
 public:
 	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DMEngine();
@@ -262,10 +232,6 @@ public:
 	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
-	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode); // @ F0064_SOUND_RequestPlay_CPSD
-	void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
-	void f65_playPendingSound(); // @ F0065_SOUND_PlayPendingSound_CPSD
-	bool f505_soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume); // @ F0505_SOUND_GetVolume
 	void f438_STARTEND_OpenEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
 	void f437_STARTEND_drawTittle() { warning(false, "STUB METHOD: f437_STARTEND_drawTittle"); }// @ F0437_STARTEND_DrawTitle
 	void f442_SARTEND_processCommand202_entranceDrawCredits();
@@ -280,8 +246,7 @@ private:
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
-	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
-	Common::Queue<PendingSound> _pendingSounds;
+	
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 	const ADGameDescription *_gameVersion;
 public:
@@ -299,6 +264,7 @@ public:
 	Timeline *_timeline;
 	ProjExpl *_projexpl;
 	DialogMan *_dialog;
+	SoundMan *_sound;
 
 
 	bool _engineShouldQuit;

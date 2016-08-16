@@ -34,6 +34,7 @@
 #include "objectman.h"
 #include "timeline.h"
 #include "projexpl.h"
+#include "sounds.h"
 
 
 namespace DM {
@@ -1038,7 +1039,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
 		setFlag(_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
 	}
-	_vm->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
 	if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
 		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
