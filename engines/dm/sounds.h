@@ -63,18 +63,31 @@ public:
 class SoundMan {
 	DMEngine *_vm;
 
-public:
+protected:
 	SoundMan(DMEngine* vm);
-	~SoundMan();
+public:
+	virtual ~SoundMan();
+
+	static SoundMan *getSoundMan(DMEngine *vm, const ADGameDescription *gameVersion);
 
 	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
 	Common::Queue<PendingSound> _pendingSounds;
 
-	void f503_loadSounds(); // @ F0503_SOUND_LoadAll
-	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode); // @ F0064_SOUND_RequestPlay_CPSD
-	void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
+	virtual void f503_loadSounds(); // @ F0503_SOUND_LoadAll
+	virtual void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode); // @ F0064_SOUND_RequestPlay_CPSD
+	virtual void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
 	void f65_playPendingSound(); // @ F0065_SOUND_PlayPendingSound_CPSD
 	bool f505_soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume); // @ F0505_SOUND_GetVolume
+};
+
+class SoundMan_Atari: public SoundMan {
+	friend class SoundMan;
+
+	SoundMan_Atari(DMEngine* vm): SoundMan(vm) {};
+public:
+	void f503_loadSounds() override {} // @ F0503_SOUND_LoadAll
+	void f064_SOUND_RequestPlay_CPSD(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) override {} // @ F0064_SOUND_RequestPlay_CPSD
+	void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol) override {} // @ F0060_SOUND_Play
 };
 
 }

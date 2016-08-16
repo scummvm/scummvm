@@ -27,6 +27,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include <advancedDetector.h>
 
 #include "dm.h"
 #include "gfx.h"
@@ -38,12 +39,21 @@
 
 namespace DM {
 
+SoundMan* SoundMan::getSoundMan(DMEngine* vm, const ADGameDescription* gameVersion) {
+	switch (gameVersion->platform) {
+	default: warning(false, "Unknown platform, using default Amiga SoundMan");
+	case Common::kPlatformAmiga: return new SoundMan(vm);
+	case Common::kPlatformAtariST: return new SoundMan_Atari(vm);
+	}
+}
+
 SoundMan::SoundMan(DMEngine* vm) : _vm(vm) {}
 
 SoundMan::~SoundMan() {
 	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
 		delete[] _gK24_soundData[i]._firstSample;
 }
+
 
 Sound g60_sounds[k34_D13_soundCount] = {
 Sound(533, 112,  11, 3, 6), /* k00_soundMETALLIC_THUD 0 */
@@ -206,5 +216,6 @@ void SoundMan::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 
 	}
 	_pendingSounds.push(PendingSound(leftVolume, rightVolume, soundIndex));
 }
+
 
 }

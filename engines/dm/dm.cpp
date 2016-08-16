@@ -224,7 +224,7 @@ DMEngine::~DMEngine() {
 	delete _dialog;
 	delete _sound;
 
-	
+
 
 	delete[] _savedScreenForOpenEntranceDoors;
 	// clear debug channels
@@ -361,7 +361,7 @@ Common::Error DMEngine::run() {
 	_timeline = new Timeline(this);
 	_projexpl = new ProjExpl(this);
 	_dialog = new DialogMan(this);
-	_sound = new SoundMan(this);
+	_sound = SoundMan::getSoundMan(this, _gameVersion);
 	_displayMan->setUpScreens(320, 200);
 
 	f463_initializeGame();
