@@ -37,6 +37,7 @@
 #include "timeline.h"
 #include "champion.h"
 #include "eventman.h"
+#include "lzw.h"
 
 namespace DM {
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
@@ -44,6 +45,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_bitmaps = nullptr;
 	_grapItemCount = 0;
 	_packedItemPos = nullptr;
+	_bitmapCompressedByteCount = nullptr;
+	_bitmapDecompressedByteCount = nullptr;
 	_packedBitmaps = nullptr;
 	_bitmaps = nullptr;
 	_g74_tmpBitmap = nullptr;
@@ -393,16 +396,16 @@ void DisplayMan::initConstants() {
 		_projectileAspect[i] = projectileAspect[i];
 
 	_doorFrameD1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
-		Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
-		Frame(64, 159, 17, 38, 48, 88, 0, 66),	 /* Vertical Closed one fourth */
-		Frame(64, 159, 17, 60, 48, 88, 0, 44),	 /* Vertical Closed half */
-		Frame(64, 159, 17, 82, 48, 88, 0, 22),	 /* Vertical Closed three fourth */
-		Frame(64, 75, 17, 102, 48, 88, 36, 0),	 /* Left Horizontal Closed one fourth */
-		Frame(64, 87, 17, 102, 48, 88, 24, 0),	 /* Left Horizontal Closed half */
-		Frame(64, 99, 17, 102, 48, 88, 12, 0),	 /* Left Horizontal Closed three fourth */
-		Frame(148, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
-		Frame(136, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
-		Frame(124, 159, 17, 102, 48, 88, 48, 0)	 /* Right Horizontal Closed three fourth */
+								   Frame(64, 159, 17, 102, 48, 88, 0, 0),	 /* Closed Or Destroyed */
+								   Frame(64, 159, 17, 38, 48, 88, 0, 66),	 /* Vertical Closed one fourth */
+								   Frame(64, 159, 17, 60, 48, 88, 0, 44),	 /* Vertical Closed half */
+								   Frame(64, 159, 17, 82, 48, 88, 0, 22),	 /* Vertical Closed three fourth */
+								   Frame(64, 75, 17, 102, 48, 88, 36, 0),	 /* Left Horizontal Closed one fourth */
+								   Frame(64, 87, 17, 102, 48, 88, 24, 0),	 /* Left Horizontal Closed half */
+								   Frame(64, 99, 17, 102, 48, 88, 12, 0),	 /* Left Horizontal Closed three fourth */
+								   Frame(148, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed one fourth */
+								   Frame(136, 159, 17, 102, 48, 88, 48, 0), /* Right Horizontal Closed half */
+								   Frame(124, 159, 17, 102, 48, 88, 48, 0)	 /* Right Horizontal Closed three fourth */
 	);
 
 	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
@@ -417,6 +420,8 @@ DisplayMan::~DisplayMan() {
 		delete[] _bitmaps[0];
 		delete[] _bitmaps;
 	}
+	delete[] _bitmapCompressedByteCount;
+	delete[] _bitmapDecompressedByteCount;
 
 	delete[] _g639_derivedBitmapByteCount;
 	if (_g638_derivedBitmaps) {
@@ -464,26 +469,6 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	_g74_tmpBitmap = new byte[_screenWidth * _screenHeight];
 }
 
-void DisplayMan::f479_loadGraphics() {
-	Common::File f;
-	f.open("graphics.dat");
-	_grapItemCount = f.readUint16BE();
-	delete[] _packedItemPos;
-	_packedItemPos = new uint32[_grapItemCount + 1];
-	_packedItemPos[0] = 0;
-	for (uint16 i = 1; i < _grapItemCount + 1; ++i)
-		_packedItemPos[i] = f.readUint16BE() + _packedItemPos[i - 1];
-
-	delete[] _packedBitmaps;
-	_packedBitmaps = new uint8[_packedItemPos[_grapItemCount]];
-
-	f.seek(2 + _grapItemCount * 4);
-	for (uint32 i = 0; i < _packedItemPos[_grapItemCount]; ++i)
-		_packedBitmaps[i] = f.readByte();
-
-	f.close();
-	unpackGraphics();
-}
 
 void DisplayMan::f460_initializeGraphicData() {
 	_g85_bitmapCeiling = new byte[224 * 29];
@@ -625,6 +610,49 @@ void DisplayMan::f460_initializeGraphicData() {
 	}
 }
 
+void DisplayMan::f479_loadGraphics() {
+	Common::File f;
+	f.open("graphics.dat");
+	_grapItemCount = f.readUint16BE();
+
+	delete[] _bitmapCompressedByteCount;
+	_bitmapCompressedByteCount = new uint32[_grapItemCount];
+	for (uint16 i = 0; i < _grapItemCount; ++i)
+		_bitmapCompressedByteCount[i] = f.readUint16BE();
+
+	delete[] _bitmapDecompressedByteCount;
+	_bitmapDecompressedByteCount = new uint32[_grapItemCount];
+	for (uint16 i = 0; i < _grapItemCount; ++i)
+		_bitmapDecompressedByteCount[i] = f.readUint16BE();
+
+	delete[] _packedItemPos;
+	_packedItemPos = new uint32[_grapItemCount + 1];
+	_packedItemPos[0] = 0;
+	for (uint16 i = 1; i < _grapItemCount + 1; ++i) {
+		_packedItemPos[i] = _packedItemPos[i - 1] + _bitmapDecompressedByteCount[i - 1];
+	}
+
+	delete[] _packedBitmaps;
+	_packedBitmaps = new uint8[_packedItemPos[_grapItemCount]];
+
+	LZWdecompressor lzw;
+	Common::Array<byte> tmpBuffer;
+	f.seek(2 + _grapItemCount * 4);
+	for (uint32 i = 0; i < _grapItemCount; ++i) {
+		byte *bitmap = _packedBitmaps + _packedItemPos[i];
+		f.read(bitmap, _bitmapCompressedByteCount[i]);
+		if (_bitmapCompressedByteCount[i] != _bitmapDecompressedByteCount[i]) {
+			tmpBuffer.reserve(_bitmapDecompressedByteCount[i]);
+			Common::MemoryReadStream stream(bitmap, _bitmapCompressedByteCount[i]);
+			lzw.decompress(stream, _bitmapCompressedByteCount[i], tmpBuffer.begin());
+			memcpy(bitmap, tmpBuffer.begin(), _bitmapDecompressedByteCount[i]);
+		}
+	}
+
+	f.close();
+	unpackGraphics();
+}
+
 void DisplayMan::unpackGraphics() {
 	uint32 unpackedBitmapsSize = 0;
 	for (uint16 i = 0; i <= 20; ++i)
@@ -655,6 +683,7 @@ void DisplayMan::unpackGraphics() {
 
 void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
+
 	for (uint16 i = 0; i < 6; i++) {
 		for (uint16 w = 0; w < 128; ++w) {
 			*destBitmap++ = k0_ColorBlack;
@@ -755,10 +784,12 @@ void DisplayMan::f566_viewportBlitToScreen() {
 
 void DisplayMan::f466_loadIntoBitmap(uint16 index, byte *destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
+
 	uint16 width = READ_BE_UINT16(data);
 	uint16 height = READ_BE_UINT16(data + 2);
 	uint16 nextByteIndex = 4;
-	for (uint16 k = 0; k < width * height;) {
+
+	for (int32 k = 0; k < width * height;) {
 		uint8 nextByte = data[nextByteIndex++];
 		uint8 nibble1 = (nextByte & 0xF0) >> 4;
 		uint8 nibble2 = (nextByte & 0x0F);
@@ -1178,16 +1209,16 @@ void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD3L = Frame(0, 79, 66, 73, 40, 8, 0, 0); // @ G0140_s_Graphic558_Frame_FloorPit_D3L
 	static DoorFrames doorFrameD3L = DoorFrames( // @ G0179_s_Graphic558_Frames_Door_D3L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(24, 71, 28, 67, 24, 41, 0, 0),   /* Closed Or Destroyed */
-		Frame(24, 71, 28, 38, 24, 41, 0, 30),  /* Vertical Closed one fourth */
-		Frame(24, 71, 28, 48, 24, 41, 0, 20),  /* Vertical Closed half */
-		Frame(24, 71, 28, 58, 24, 41, 0, 10),  /* Vertical Closed three fourth */
-		Frame(24, 29, 28, 67, 24, 41, 18, 0),  /* Left Horizontal Closed one fourth */
-		Frame(24, 35, 28, 67, 24, 41, 12, 0),  /* Left Horizontal Closed half */
-		Frame(24, 41, 28, 67, 24, 41, 6, 0),   /* Left Horizontal Closed three fourth */
-		Frame(66, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed one fourth */
-		Frame(60, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed half */
-		Frame(54, 71, 28, 67, 24, 41, 24, 0)   /* Right Horizontal Closed three fourth */
+												Frame(24, 71, 28, 67, 24, 41, 0, 0),   /* Closed Or Destroyed */
+												Frame(24, 71, 28, 38, 24, 41, 0, 30),  /* Vertical Closed one fourth */
+												Frame(24, 71, 28, 48, 24, 41, 0, 20),  /* Vertical Closed half */
+												Frame(24, 71, 28, 58, 24, 41, 0, 10),  /* Vertical Closed three fourth */
+												Frame(24, 29, 28, 67, 24, 41, 18, 0),  /* Left Horizontal Closed one fourth */
+												Frame(24, 35, 28, 67, 24, 41, 12, 0),  /* Left Horizontal Closed half */
+												Frame(24, 41, 28, 67, 24, 41, 6, 0),   /* Left Horizontal Closed three fourth */
+												Frame(66, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed one fourth */
+												Frame(60, 71, 28, 67, 24, 41, 24, 0),  /* Right Horizontal Closed half */
+												Frame(54, 71, 28, 67, 24, 41, 24, 0)   /* Right Horizontal Closed three fourth */
 	);
 
 	uint16 squareAspect[5];
@@ -1247,16 +1278,16 @@ void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD3R = Frame(144, 223, 66, 73, 40, 8, 0, 0); // @ G0142_s_Graphic558_Frame_FloorPit_D3R
 	static DoorFrames doorFrameD3R = DoorFrames( // @ G0181_s_Graphic558_Frames_Door_D3R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
-		Frame(150, 197, 28, 38, 24, 41, 0, 30),	/* Vertical Closed one fourth */
-		Frame(150, 197, 28, 48, 24, 41, 0, 20),	/* Vertical Closed half */
-		Frame(150, 197, 28, 58, 24, 41, 0, 10),	/* Vertical Closed three fourth */
-		Frame(150, 153, 28, 67, 24, 41, 18, 0),	/* Left Horizontal Closed one fourth */
-		Frame(150, 161, 28, 67, 24, 41, 12, 0),	/* Left Horizontal Closed half */
-		Frame(150, 167, 28, 67, 24, 41, 6, 0),	/* Left Horizontal Closed three fourth */
-		Frame(192, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed one fourth */
-		Frame(186, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed half */
-		Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
+												Frame(150, 197, 28, 67, 24, 41, 0, 0),	/* Closed Or Destroyed */
+												Frame(150, 197, 28, 38, 24, 41, 0, 30),	/* Vertical Closed one fourth */
+												Frame(150, 197, 28, 48, 24, 41, 0, 20),	/* Vertical Closed half */
+												Frame(150, 197, 28, 58, 24, 41, 0, 10),	/* Vertical Closed three fourth */
+												Frame(150, 153, 28, 67, 24, 41, 18, 0),	/* Left Horizontal Closed one fourth */
+												Frame(150, 161, 28, 67, 24, 41, 12, 0),	/* Left Horizontal Closed half */
+												Frame(150, 167, 28, 67, 24, 41, 6, 0),	/* Left Horizontal Closed three fourth */
+												Frame(192, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed one fourth */
+												Frame(186, 197, 28, 67, 24, 41, 24, 0),	/* Right Horizontal Closed half */
+												Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1322,16 +1353,16 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameFloorPitD3C = Frame(64, 159, 66, 73, 48, 8, 0, 0); // @ G0141_s_Graphic558_Frame_FloorPit_D3C
 	static DoorFrames doorFrameD3C = DoorFrames( // @ G0180_s_Graphic558_Frames_Door_D3C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
-		Frame(88, 135, 28, 38, 24, 41, 0, 30),		/* Vertical Closed one fourth */
-		Frame(88, 135, 28, 48, 24, 41, 0, 20),		/* Vertical Closed half */
-		Frame(88, 135, 28, 58, 24, 41, 0, 10),		/* Vertical Closed three fourth */
-		Frame(88, 93, 28, 67, 24, 41, 18, 0),		/* Left Horizontal Closed one fourth */
-		Frame(88, 99, 28, 67, 24, 41, 12, 0),		/* Left Horizontal Closed half */
-		Frame(88, 105, 28, 67, 24, 41, 6, 0),		/* Left Horizontal Closed three fourth */
-		Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
-		Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
-		Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
+												Frame(88, 135, 28, 67, 24, 41, 0, 0),		/* Closed Or Destroyed */
+												Frame(88, 135, 28, 38, 24, 41, 0, 30),		/* Vertical Closed one fourth */
+												Frame(88, 135, 28, 48, 24, 41, 0, 20),		/* Vertical Closed half */
+												Frame(88, 135, 28, 58, 24, 41, 0, 10),		/* Vertical Closed three fourth */
+												Frame(88, 93, 28, 67, 24, 41, 18, 0),		/* Left Horizontal Closed one fourth */
+												Frame(88, 99, 28, 67, 24, 41, 12, 0),		/* Left Horizontal Closed half */
+												Frame(88, 105, 28, 67, 24, 41, 6, 0),		/* Left Horizontal Closed three fourth */
+												Frame(130, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed one fourth */
+												Frame(124, 135, 28, 67, 24, 41, 24, 0),		/* Right Horizontal Closed half */
+												Frame(118, 135, 28, 67, 24, 41, 24, 0)		/* Right Horizontal Closed three fourth */
 	);
 
 	uint16 squareAspect[5];
@@ -1392,16 +1423,16 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	static Frame FrameCeilingPitD2L = Frame(0, 79, 19, 23, 40, 5, 0, 0); // @ G0152_s_Graphic558_Frame_CeilingPit_D2L
 	static DoorFrames doorFrameD2L = DoorFrames( // @ G0182_s_Graphic558_Frames_Door_D2L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(0, 63, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
-		Frame(0, 63, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
-		Frame(0, 63, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
-		Frame(0, 63, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
-		Frame(0, 7, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
-		Frame(0, 15, 24, 82, 32, 61, 16, 0),   /* Left Horizontal Closed half */
-		Frame(0, 23, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
-		Frame(56, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
-		Frame(48, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
-		Frame(40, 63, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
+												Frame(0, 63, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
+												Frame(0, 63, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
+												Frame(0, 63, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
+												Frame(0, 63, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
+												Frame(0, 7, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
+												Frame(0, 15, 24, 82, 32, 61, 16, 0),   /* Left Horizontal Closed half */
+												Frame(0, 23, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
+												Frame(56, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
+												Frame(48, 63, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
+												Frame(40, 63, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1464,16 +1495,16 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD2R = Frame(144, 223, 19, 23, 40, 5, 0, 0); // @ G0154_s_Graphic558_Frame_CeilingPit_D2R
 	static DoorFrames g184_doorFrame_D2R = DoorFrames( // @ G0184_s_Graphic558_Frames_Door_D2R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(160, 223, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
-		Frame(160, 223, 24, 39, 32, 61, 0, 45),	/* Vertical Closed one fourth */
-		Frame(160, 223, 24, 54, 32, 61, 0, 30),	/* Vertical Closed half */
-		Frame(160, 223, 24, 69, 32, 61, 0, 15),	/* Vertical Closed three fourth */
-		Frame(160, 167, 24, 82, 32, 61, 24, 0),	/* Left Horizontal Closed one fourth */
-		Frame(160, 175, 24, 82, 32, 61, 16, 0),	/* Left Horizontal Closed half */
-		Frame(160, 183, 24, 82, 32, 61, 8, 0),	/* Left Horizontal Closed three fourth */
-		Frame(216, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed one fourth */
-		Frame(208, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed half */
-		Frame(200, 223, 24, 82, 32, 61, 32, 0)		/* Right Horizontal Closed three fourth */
+													  Frame(160, 223, 24, 82, 32, 61, 0, 0),	/* Closed Or Destroyed */
+													  Frame(160, 223, 24, 39, 32, 61, 0, 45),	/* Vertical Closed one fourth */
+													  Frame(160, 223, 24, 54, 32, 61, 0, 30),	/* Vertical Closed half */
+													  Frame(160, 223, 24, 69, 32, 61, 0, 15),	/* Vertical Closed three fourth */
+													  Frame(160, 167, 24, 82, 32, 61, 24, 0),	/* Left Horizontal Closed one fourth */
+													  Frame(160, 175, 24, 82, 32, 61, 16, 0),	/* Left Horizontal Closed half */
+													  Frame(160, 183, 24, 82, 32, 61, 8, 0),	/* Left Horizontal Closed three fourth */
+													  Frame(216, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed one fourth */
+													  Frame(208, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed half */
+													  Frame(200, 223, 24, 82, 32, 61, 32, 0)		/* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1539,16 +1570,16 @@ void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD2C = Frame(64, 159, 19, 23, 48, 5, 0, 0); // @ G0153_s_Graphic558_Frame_CeilingPit_D2C
 	static DoorFrames doorFrameD2C = DoorFrames( // @ G0183_s_Graphic558_Frames_Door_D2C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(80, 143, 24, 82, 32, 61, 0, 0),    /* Closed Or Destroyed */
-		Frame(80, 143, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
-		Frame(80, 143, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
-		Frame(80, 143, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
-		Frame(80, 87, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
-		Frame(80, 95, 24, 82, 32, 61, 16, 0),    /* Left Horizontal Closed half */
-		Frame(80, 103, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
-		Frame(136, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
-		Frame(128, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
-		Frame(120, 143, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
+												Frame(80, 143, 24, 82, 32, 61, 0, 0),    /* Closed Or Destroyed */
+												Frame(80, 143, 24, 39, 32, 61, 0, 45),   /* Vertical Closed one fourth */
+												Frame(80, 143, 24, 54, 32, 61, 0, 30),   /* Vertical Closed half */
+												Frame(80, 143, 24, 69, 32, 61, 0, 15),   /* Vertical Closed three fourth */
+												Frame(80, 87, 24, 82, 32, 61, 24, 0),    /* Left Horizontal Closed one fourth */
+												Frame(80, 95, 24, 82, 32, 61, 16, 0),    /* Left Horizontal Closed half */
+												Frame(80, 103, 24, 82, 32, 61, 8, 0),    /* Left Horizontal Closed three fourth */
+												Frame(136, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed one fourth */
+												Frame(128, 143, 24, 82, 32, 61, 32, 0),  /* Right Horizontal Closed half */
+												Frame(120, 143, 24, 82, 32, 61, 32, 0)   /* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1611,16 +1642,16 @@ void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD1L = Frame(0, 63, 8, 16, 32, 9, 0, 0); // @ G0155_s_Graphic558_Frame_CeilingPit_D1L
 	static DoorFrames doorFrameD1L = DoorFrames( // @ G0185_s_Graphic558_Frames_Door_D1L
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(0, 31, 17, 102, 48, 88, 64, 0),	/* Closed Or Destroyed */
-		Frame(0, 31, 17, 38, 48, 88, 64, 66),	/* Vertical Closed one fourth */
-		Frame(0, 31, 17, 60, 48, 88, 64, 44),	/* Vertical Closed half */
-		Frame(0, 31, 17, 82, 48, 88, 64, 22),	/* Vertical Closed three fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed one fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed half */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed three fourth */
-		Frame(20, 31, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
-		Frame(8, 31, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
-		Frame(0, 31, 17, 102, 48, 88, 52, 0)	/* Right Horizontal Closed three fourth */
+												Frame(0, 31, 17, 102, 48, 88, 64, 0),	/* Closed Or Destroyed */
+												Frame(0, 31, 17, 38, 48, 88, 64, 66),	/* Vertical Closed one fourth */
+												Frame(0, 31, 17, 60, 48, 88, 64, 44),	/* Vertical Closed half */
+												Frame(0, 31, 17, 82, 48, 88, 64, 22),	/* Vertical Closed three fourth */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed one fourth */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed half */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0),	/* Left Horizontal Closed three fourth */
+												Frame(20, 31, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
+												Frame(8, 31, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
+												Frame(0, 31, 17, 102, 48, 88, 52, 0)	/* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;
@@ -1685,16 +1716,16 @@ void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD1R = Frame(160, 223, 8, 16, 32, 9, 0, 0); // @ G0157_s_Graphic558_Frame_CeilingPit_D1R
 	static DoorFrames doorFrameD1R = DoorFrames( // @ G0187_s_Graphic558_Frames_Door_D1R
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-		Frame(192, 223, 17, 102, 48, 88, 0, 0),   /* Closed Or Destroyed */
-		Frame(192, 223, 17, 38, 48, 88, 0, 66),   /* Vertical Closed one fourth */
-		Frame(192, 223, 17, 60, 48, 88, 0, 44),   /* Vertical Closed half */
-		Frame(192, 223, 17, 82, 48, 88, 0, 22),   /* Vertical Closed three fourth */
-		Frame(192, 203, 17, 102, 48, 88, 36, 0),  /* Left Horizontal Closed one fourth */
-		Frame(192, 215, 17, 102, 48, 88, 24, 0),  /* Left Horizontal Closed half */
-		Frame(192, 223, 17, 102, 48, 88, 12, 0),  /* Left Horizontal Closed three fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed one fourth */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed half */
-		Frame(0, 0, 0, 0, 0, 0, 0, 0)             /* Right Horizontal Closed three fourth */
+												Frame(192, 223, 17, 102, 48, 88, 0, 0),   /* Closed Or Destroyed */
+												Frame(192, 223, 17, 38, 48, 88, 0, 66),   /* Vertical Closed one fourth */
+												Frame(192, 223, 17, 60, 48, 88, 0, 44),   /* Vertical Closed half */
+												Frame(192, 223, 17, 82, 48, 88, 0, 22),   /* Vertical Closed three fourth */
+												Frame(192, 203, 17, 102, 48, 88, 36, 0),  /* Left Horizontal Closed one fourth */
+												Frame(192, 215, 17, 102, 48, 88, 24, 0),  /* Left Horizontal Closed half */
+												Frame(192, 223, 17, 102, 48, 88, 12, 0),  /* Left Horizontal Closed three fourth */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed one fourth */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0),            /* Right Horizontal Closed half */
+												Frame(0, 0, 0, 0, 0, 0, 0, 0)             /* Right Horizontal Closed three fourth */
 	);
 
 	int16 order;

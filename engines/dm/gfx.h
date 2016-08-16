@@ -552,6 +552,8 @@ class DisplayMan {
 	DMEngine *_vm;
 
 	uint16 _grapItemCount; // @ G0632_ui_GraphicCount
+	uint32 *_bitmapCompressedByteCount;
+	uint32 *_bitmapDecompressedByteCount;
 	uint32 *_packedItemPos;
 	byte *_packedBitmaps;
 	byte **_bitmaps;
