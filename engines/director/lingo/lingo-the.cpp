@@ -73,6 +73,7 @@ TheEntity entities[] = {
 	{ kTheSelection,		"selection",		false },
 	{ kTheShiftDown,		"shiftDown",		false },
 	{ kTheSprite,			"sprite",			true  },
+	{ kTheSqrt,				"sqrt",				false },
 	{ kTheStage,			"stage",			false },
 	{ kTheStillDown,		"stillDown",		false },
 	{ kTheTicks,			"ticks",			false },
@@ -326,6 +327,11 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheFloatPrecision:
 		d.type = INT;
 		d.u.i = _floatPrecision;
+		break;
+	case kTheSqrt:
+		id.toFloat();
+		d.type = FLOAT;
+		d.u.f = sqrt(id.u.f);
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);

@@ -104,6 +104,14 @@ whitespace [\t ]
 (?i:repeat)			{ count(); return tREPEAT; }
 (?i:set)			{ count(); return tSET; }
 (?i:starts)			{ count(); return tSTARTS; }
+(?i:the[ \t]+sqrt[\t ]+of[\t ]+)	{
+		count();
+
+		yylval.e[0] = g_lingo->_theEntities["sqrt"]->entity;
+		yylval.e[1] = 0;	// No field
+
+		return THEENTITYWITHID;
+	}
 (?i:the[ \t]+[[:alpha:]]+[\t ]+of[\t ]+[[:alpha:]]+)	{
 		count();
 

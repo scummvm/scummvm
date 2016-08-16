@@ -71,6 +71,7 @@ enum TheEntityType {
 	kTheResult,
 	kTheSelection,
 	kTheShiftDown,
+	kTheSqrt,
 	kTheOptionDown,
 
 	kTheColorDepth,
