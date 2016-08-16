@@ -28,11 +28,16 @@
 namespace Titanic {
 
 class CBowlUnlocker : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
-	int _value;
+	bool _bowlUnlocked;
 public:
 	CLASSDEF;
-	CBowlUnlocker() : CGameObject(), _value(0) {}
+	CBowlUnlocker() : CGameObject(), _bowlUnlocked(false) {}
 
 	/**
 	 * Save the data for the class to file
