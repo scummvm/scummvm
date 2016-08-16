@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	group.o \
 	inventory.o \
 	loadsave.o \
+	lzw.o \
 	menus.o \
 	movesens.o \
 	objectman.o \
