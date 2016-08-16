@@ -40,7 +40,7 @@ enum ControlType { // HACK, should correspond exactly with the types of controls
 	kControlClickToContinue = 9
 };
 
-enum ControlAction { // HACK, figure out a way to put it in engine
+enum ControlAction {
 	kNoCommand = 0,
 	kStartOrResume = 1,
 	kClose = 2,
