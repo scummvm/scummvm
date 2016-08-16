@@ -44,7 +44,7 @@ Box g35_BoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 Box g36_BoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box g37_BoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
-char* G0428_apc_SkillLevelNames[15];
+const char* G0428_apc_SkillLevelNames[15];
 
 void InventoryMan::initConstants() {
 	{
@@ -62,7 +62,7 @@ void InventoryMan::initConstants() {
 		case Common::FR_FRA: g428_byLanguage = G0428_apc_SkillLevelNames_FR_FRA; break;
 		}
 		for (int i = 0; i < 15; ++i)
-			g417_baseSkillName[i] = g428_byLanguage[i];
+			G0428_apc_SkillLevelNames[i] = g428_byLanguage[i];
 	}
 }
 
