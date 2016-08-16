@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBowlEar, CEar)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+	ON_MESSAGE(NutPuzzleMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 void CBowlEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CEar::save(file, indent);
@@ -32,6 +39,30 @@ void CBowlEar::save(SimpleFile *file, int indent) {
 void CBowlEar::load(SimpleFile *file) {
 	file->readNumber();
 	CEar::load(file);
+}
+
+bool CBowlEar::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	CBowlStateChangeMsg changeMsg(3);
+	changeMsg.execute("ParrotNutBowlActor");
+
+	return CEar::PETGainedObjectMsg(msg);
+}
+
+bool CBowlEar::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(false);
+	return true;
+}
+
+bool CBowlEar::NutPuzzleMsg(CNutPuzzleMsg *msg) {
+	if (msg->_value == "BowlUnlocked")
+		_fieldE0 = 1;
+
+	return true;
+}
+
+bool CBowlEar::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	setVisible(true);
+	return CEar::MouseDragStartMsg(msg);
 }
 
 } // End of namespace Titanic

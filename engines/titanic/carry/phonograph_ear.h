@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CPhonographEar : public CEar {
+	DECLARE_MESSAGE_MAP;
+	bool CorrectMusicPlayedMsg(CCorrectMusicPlayedMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 private:
-	int _field140;
+	bool _field140;
 public:
 	CLASSDEF;
-	CPhonographEar() : CEar(), _field140(1) {}
+	CPhonographEar() : CEar(), _field140(true) {}
 
 	/**
 	 * Save the data for the class to file

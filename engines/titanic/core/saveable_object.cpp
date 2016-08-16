@@ -757,7 +757,7 @@ DEFFN(CAutoSoundEvent);
 DEFFN(CBilgeAutoSoundEvent);
 DEFFN(CBilgeDispensorEvent);
 DEFFN(CBodyInBilgeRoomMsg);
-DEFFN(CBowlStateChange);
+DEFFN(CBowlStateChangeMsg);
 DEFFN(CCarryObjectArrivedMsg);
 DEFFN(CChangeMusicMsg);
 DEFFN(CChangeSeasonMsg);
@@ -1344,7 +1344,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CBilgeAutoSoundEvent, CAutoSoundEvent);
 	ADDFN(CBilgeDispensorEvent, CAutoSoundEvent);
 	ADDFN(CBodyInBilgeRoomMsg, CMessage);
-	ADDFN(CBowlStateChange, CMessage);
+	ADDFN(CBowlStateChangeMsg, CMessage);
 	ADDFN(CCarryObjectArrivedMsg, CMessage);
 	ADDFN(CChangeMusicMsg, CMessage);
 	ADDFN(CChangeSeasonMsg, CMessage);

@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CBowlEar : public CEar {
+	DECLARE_MESSAGE_MAP;
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	CLASSDEF;
 

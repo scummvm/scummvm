@@ -21,8 +21,14 @@
  */
 
 #include "titanic/carry/ear.h"
+#include "titanic/game/head_slot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CEar, CHeadPiece)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
 
 CEar::CEar() : CHeadPiece() {
 }
@@ -35,6 +41,27 @@ void CEar::save(SimpleFile *file, int indent) {
 void CEar::load(SimpleFile *file) {
 	file->readNumber();
 	CHeadPiece::load(file);
+}
+
+bool CEar::ActMsg(CActMsg *msg) {
+	if (msg->_action == "MusicSolved")
+		_fieldE0 = true;
+	return true;
+}
+
+bool CEar::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CHeadSlot *slot = dynamic_cast<CHeadSlot *>(msg->_other);
+	if (slot) {
+		setVisible(false);
+		petMoveToHiddenRoom();
+		setPosition(Point(0, 0));
+
+		CAddHeadPieceMsg addMsg(getName());
+		if (addMsg._value != "NULL")
+			addMsg.execute(addMsg._value == "Ear1" ? "Ear1Slot" : "Ear2Slot");
+	}
+
+	return CCarry::UseWithOtherMsg(msg);
 }
 
 } // End of namespace Titanic

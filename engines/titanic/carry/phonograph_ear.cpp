@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPhonographEar, CEar)
+	ON_MESSAGE(CorrectMusicPlayedMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 void CPhonographEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field140, indent);
@@ -34,6 +40,26 @@ void CPhonographEar::load(SimpleFile *file) {
 	file->readNumber();
 	_field140 = file->readNumber();
 	CEar::load(file);
+}
+
+bool CPhonographEar::CorrectMusicPlayedMsg(CCorrectMusicPlayedMsg *msg) {
+	_fieldE0 = true;
+	return true;
+}
+
+bool CPhonographEar::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	if (_field140) {
+		_field140 = false;
+		addTimer(1000);
+	}
+
+	return PETGainedObjectMsg(msg);
+}
+
+bool CPhonographEar::TimerMsg(CTimerMsg *msg) {
+	CVisibleMsg visibleMsg;
+	visibleMsg.execute("Replacement Phonograph Ear");
+	return true;
 }
 
 } // End of namespace Titanic

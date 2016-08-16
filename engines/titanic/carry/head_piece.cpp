@@ -24,13 +24,19 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CHeadPiece, CCarry)
+	ON_MESSAGE(SenseWorkingMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 CHeadPiece::CHeadPiece() : CCarry(), _string6("Not Working"),
-		_field12C(0), _field13C(0) {
+		_flag(0), _field13C(false) {
 }
 
 void CHeadPiece::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field12C, indent);
+	file->writeNumberLine(_flag, indent);
 	file->writeQuotedLine(_string6, indent);
 	file->writeNumberLine(_field13C, indent);
 
@@ -39,11 +45,49 @@ void CHeadPiece::save(SimpleFile *file, int indent) {
 
 void CHeadPiece::load(SimpleFile *file) {
 	file->readNumber();
-	_field12C = file->readNumber();
+	_flag = file->readNumber();
 	_string6 = file->readString();
 	_field13C = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CHeadPiece::SenseWorkingMsg(CSenseWorkingMsg *msg) {
+	_string6 = msg->_value;
+	return true;
+}
+
+bool CHeadPiece::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	_visibleFrame = 1;
+	if (!_field13C) {
+		stateInc38();
+		_field13C = true;
+	}
+
+	return true;
+}
+
+bool CHeadPiece::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkPoint(msg->_mousePos, false, true)) {
+		return false;
+	} else if (!_fieldE0) {
+		return true;
+	}
+
+	if (_flag) {
+		setVisible(true);
+		moveToView();
+		setPosition(Point(msg->_mousePos.x - _bounds.width() / 2,
+			msg->_mousePos.y - _bounds.height() / 2));
+
+		CTakeHeadPieceMsg takeMsg(getName());
+		if (takeMsg._value != "NULL")
+			takeMsg.execute("TitaniaControl");
+
+		_flag = false;
+	}
+
+	return CCarry::MouseDragStartMsg(msg);
 }
 
 } // End of namespace Titanic

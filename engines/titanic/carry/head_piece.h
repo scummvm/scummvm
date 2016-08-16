@@ -24,14 +24,19 @@
 #define TITANIC_HEAD_PIECE_H
 
 #include "titanic/carry/carry.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CHeadPiece : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool SenseWorkingMsg(CSenseWorkingMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 private:
-	int _field12C;
+	bool _flag;
 	CString _string6;
-	int _field13C;
+	bool _field13C;
 public:
 	CLASSDEF;
 	CHeadPiece();
