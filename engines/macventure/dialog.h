@@ -33,7 +33,6 @@ namespace MacVenture {
 using namespace Graphics::MacGUIConstants;
 class Gui;
 class DialogElement;
-extern PrebuiltDialog prebuiltDialogs[];
 
 class Dialog {
 public:

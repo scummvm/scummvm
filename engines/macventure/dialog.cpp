@@ -31,7 +31,7 @@ Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
 
 Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt) {
 	_gui = gui;
-	const PrebuiltDialog &dialog = prebuiltDialogs[prebuilt];
+	const PrebuiltDialog &dialog = g_prebuiltDialogs[prebuilt];
 	_bounds = dialog.bounds;
 	for (int i = 0; dialog.elements[i].type != kDEEnd; i++) {
 		addPrebuiltElement(dialog.elements[i]);

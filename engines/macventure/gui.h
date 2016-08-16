@@ -53,7 +53,6 @@ class ImageAsset;
 class Dialog;
 
 BorderBounds borderBounds(MVWindowType type);
-extern PrebuiltDialog prebuiltDialogs[];
 
 enum MenuAction {
 	kMenuActionAbout,

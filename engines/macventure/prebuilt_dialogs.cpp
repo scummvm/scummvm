@@ -24,7 +24,7 @@
 
 namespace MacVenture {
 
-PrebuiltDialog prebuiltDialogs[kPrebuiltDialogCount] = {
+const PrebuiltDialog g_prebuiltDialogs[kPrebuiltDialogCount] = {
 
 	{/* kSaveAsDialog */
 		Common::Rect(0, 146, 456, 254),

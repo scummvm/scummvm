@@ -71,6 +71,9 @@ struct PrebuiltDialog {
 	Common::Rect bounds;
 	PrebuiltDialogElement elements[kMaxPrebuiltDialogElements];
 };
+
+extern const PrebuiltDialog g_prebuiltDialogs[];
+
 } // End of namespace MacVenture
 
 #endif
