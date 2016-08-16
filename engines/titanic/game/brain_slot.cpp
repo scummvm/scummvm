@@ -21,18 +21,27 @@
  */
 
 #include "titanic/game/brain_slot.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
 
-int CBrainSlot::_v1;
-int CBrainSlot::_v2;
+BEGIN_MESSAGE_MAP(CBrainSlot, CGameObject)
+	ON_MESSAGE(SetFrameMsg)
+	ON_MESSAGE(AddHeadPieceMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
+bool CBrainSlot::_added;
+bool CBrainSlot::_woken;
 
 void CBrainSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
-	file->writeQuotedLine(_value2, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_v2, indent);
+	file->writeQuotedLine(_target, indent);
+	file->writeNumberLine(_added, indent);
+	file->writeNumberLine(_woken, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -40,11 +49,101 @@ void CBrainSlot::save(SimpleFile *file, int indent) {
 void CBrainSlot::load(SimpleFile *file) {
 	file->readNumber();
 	_value1 = file->readNumber();
-	_value2 = file->readString();
-	_v1 = file->readNumber();
-	_v2 = file->readNumber();
+	_target = file->readString();
+	_added = file->readNumber();
+	_woken = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CBrainSlot::SetFrameMsg(CSetFrameMsg *msg) {
+	loadFrame(msg->_frameNumber);
+	_value1 = 1;
+	return true;
+}
+
+bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
+	_added = true;
+	_cursorId = CURSOR_HAND;
+	CAddHeadPieceMsg addMsg("NULL");
+
+	if (isEquals("AuditoryCentreSlot")) {
+		if (msg->_value == "AuditoryCentre")
+			addMsg._value = "AuditoryCentre";
+	} else if (isEquals("SpeechCentreSlot")) {
+		if (msg->_value == "SpeechCentre")
+			addMsg._value = "SpeechCentre";
+	} else if (isEquals("OlfactoryCentreSlot")) {
+		if (msg->_value == "OlfactoryCentre")
+			addMsg._value = "OlfactoryCentre";
+	} else if (isEquals("VisionCentreSlot")) {
+		if (msg->_value == "VisionCentre")
+			addMsg._value = "VisionCentre";
+	} else if (isEquals("CentralCoreSlot")) {
+		if (msg->_value == "CentralCore")
+			addMsg._value = "CentralCore";
+	}
+
+	if (addMsg._value != "NULL")
+		addMsg.execute("TitaniaControl");
+
+	if (addMsg._value == "OlfactoryCentre")
+		loadFrame(2);
+	else if (addMsg._value == "AuditoryCentre")
+		loadFrame(1);
+	else if (addMsg._value == "SpeechCentre")
+		loadFrame(3);
+	else if (addMsg._value == "VisionCentre")
+		loadFrame(4);
+	else if (addMsg._value == "CentralCore") {
+		CActMsg actMsg("Insert Central Core");
+		actMsg.execute("CentralCoreSlot");
+	}
+
+	_target = msg->_value;
+	_value1 = 1;
+	return true;
+}
+
+bool CBrainSlot::EnterViewMsg(CEnterViewMsg *msg) {
+	if (getName() == "CentralCoreSlot")
+		loadFrame(21);
+	if (_woken)
+		_cursorId = CURSOR_ARROW;
+
+	return true;
+}
+
+bool CBrainSlot::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Insert Central Core")
+		playMovie(0, 21, 0);
+	else if (msg->_action == "Woken")
+		_woken = true;
+
+	return true;
+}
+
+bool CBrainSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!_value1 || _woken || !checkPoint(msg->_mousePos, false, true))
+		return false;
+
+	_cursorId = CURSOR_ARROW;
+	CVisibleMsg visibleMsg(true);
+	visibleMsg.execute(_target);
+	CTakeHeadPieceMsg takeMsg(_target);
+	takeMsg.execute("TitaniaControl");
+
+	loadFrame(isEquals("CentralCoreSlot") ? 21 : 0);
+	_value1 = 0;
+
+	CPassOnDragStartMsg passMsg;
+	passMsg._mousePos = msg->_mousePos;
+	passMsg.execute(_target);
+
+	msg->_dragItem = getRoot()->findByName(_target);
+	_added = false;
+
+	return true;
 }
 
 } // End of namespace Titanic

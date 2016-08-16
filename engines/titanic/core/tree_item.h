@@ -125,6 +125,11 @@ public:
 	virtual const CString getName() const { return CString(); }
 
 	/**
+	 * Returns true if the item's name matches a passed name
+	 */
+	virtual bool isEquals(const CString &name, int maxLen = 0) const { return false; }
+
+	/**
 	 * Compares the name of the item to a passed name
 	 */
 	virtual int compareTo(const CString &name, int maxLen = 0) const { return false; }

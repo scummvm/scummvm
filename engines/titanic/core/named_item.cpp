@@ -51,11 +51,11 @@ void CNamedItem::load(SimpleFile *file) {
 	CTreeItem::load(file);
 }
 
-int CNamedItem::compareTo(const CString &name, int maxLen) const {
+bool CNamedItem::isEquals(const CString &name, int maxLen) const {
 	if (maxLen) {
-		return getName().left(maxLen).compareToIgnoreCase(name);
+		return getName().left(maxLen).compareToIgnoreCase(name) == 0;
 	} else {
-		return getName().compareToIgnoreCase(name);
+		return getName().compareToIgnoreCase(name) == 0;
 	}
 }
 

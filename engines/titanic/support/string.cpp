@@ -122,4 +122,20 @@ CString CString::format(const char *fmt, ...) {
 	return output;
 }
 
+bool CString::operator==(const CString &x) const {
+	return compareToIgnoreCase(x) == 0;
+}
+
+bool CString::operator==(const char *x) const {
+	return compareToIgnoreCase(x) == 0;
+}
+
+bool CString::operator!=(const CString &x) const {
+	return compareToIgnoreCase(x) != 0;
+}
+
+bool CString::operator!=(const char *x) const {
+	return compareToIgnoreCase(x) != 0;
+}
+
 } // End of namespace Titanic

@@ -49,6 +49,11 @@ public:
 	explicit CString(char c) : Common::String(c) {}
 	explicit CString(int val);
 
+	bool operator==(const CString &x) const;
+	bool operator==(const char *x) const;
+	bool operator!=(const CString &x) const;
+	bool operator!=(const char *x) const;
+
 	/**
 	 * Returns the left n characters of the string
 	 */

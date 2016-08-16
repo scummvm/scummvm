@@ -59,9 +59,9 @@ public:
 	virtual const CString getName() const { return _name; }
 
 	/**
-	 * Compares the name of the item to a passed name
+	 * Returns true if the item's name matches a passed name
 	 */
-	virtual int compareTo(const CString &name, int maxLen = 0) const;
+	virtual bool isEquals(const CString &name, int maxLen = 0) const;
 
 	/**
 	 * Find a parent node for the item
