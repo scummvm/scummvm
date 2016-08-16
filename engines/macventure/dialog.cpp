@@ -49,7 +49,7 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 	case kDACloseDialog:
 		_gui->closeDialog();
 		break;
-		case kDASubmit:
+	case kDASubmit:
 		_gui->setTextInput(_userInput);
 		_gui->closeDialog();
 		break;
