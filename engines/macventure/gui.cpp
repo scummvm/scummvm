@@ -472,7 +472,7 @@ bool Gui::loadWindows() {
 		}
 		data.scrollPos = Common::Point(0, 0);
 
-		debugC(4, kMVDebugGUI, "Window loaded: %s", data.title.c_str());
+		debugC(1, kMVDebugGUI, "Window loaded: %s", data.title.c_str());
 
 		_windowData->push_back(data);
 

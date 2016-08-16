@@ -51,14 +51,14 @@ bool ScriptEngine::runControl(ControlAction action, ObjID source, ObjID destinat
 	frame.haltedInFirst = false;
 	frame.haltedInFamily = false;
 	_frames.push_back(frame);
-	debugC(3, kMVDebugScript, "SCRIPT: Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
+	debugC(3, kMVDebugScript, "Stored frame %d, action: %d src: %d dest: %d point: (%d, %d)",
 		_frames.size() - 1, frame.action, frame.src, frame.dest, frame.x, frame.y);
 
 	return resume(true);
 }
 
 bool ScriptEngine::resume(bool execAll) {
-	debugC(3, kMVDebugScript, "SCRIPT: Resume");
+	debugC(3, kMVDebugScript, "Resume Script");
 	while (_frames.size()) {
 		bool fail = execFrame(execAll);
 		if (fail) return true;
@@ -146,7 +146,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 
 bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
 	if (_scripts->getItemByteSize(scriptID) > 0) {
-		debugC(2, kMVDebugScript, "SCRIPT: Loading function %d", scriptID);
+		debugC(2, kMVDebugScript, "Loading function %d", scriptID);
 		// Insert the new script at the front
 		frame->scripts.push_front(ScriptAsset(scriptID, _scripts));
 		return runFunc(frame);
@@ -169,7 +169,7 @@ bool ScriptEngine::runFunc(EngineFrame *frame) {
 	byte op;
 	while (script.hasNext()) {
 		op = script.fetch();
-		debugC(3, kMVDebugScript, "SCRIPT: I'm running operation %d", op);
+		debugC(4, kMVDebugScript, "Running operation %d", op);
 		if (!(op & 0x80)) {
 			state->push(op);
 		} else {
@@ -921,12 +921,12 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	ScriptAsset current = script;
-	debugC(2, kMVDebugScript, "SCRIPT: Call function: %d", id);
+	debugC(2, kMVDebugScript, "Call function: %d", id);
 	if (loadScript(frame, id))
 		return true;
 	frame->scripts.pop_front();
 	script = frame->scripts.front();
-	debugC(2, kMVDebugScript, "SCRIPT: Return from fuction %d", id);
+	debugC(2, kMVDebugScript, "Return from fuction %d", id);
 	return false;
 }
 
@@ -1207,7 +1207,7 @@ void ScriptAsset::loadInstructions() {
 		_instructions.push_back(res->readByte());
 	}
 	delete res;
-	debugC(2, kMVDebugScript, "SCRIPT: Load %d instructions for script %d", amount, _id);
+	debugC(2, kMVDebugScript, "Load %d instructions for script %d", amount, _id);
 }
 
 } // End of namespace MacVenture

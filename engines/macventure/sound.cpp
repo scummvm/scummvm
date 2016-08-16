@@ -61,9 +61,8 @@ void SoundManager::ensureLoaded(ObjID sound) {
 
 SoundAsset::SoundAsset(Container *container, ObjID id) :
 	_container(container), _id(id), _length(0), _frequency(1) {
-	debug("SoundAsset::SoundAsset(%d)", _id);
 	if (_container->getItemByteSize(_id) == 0)
-		warning("Trying to load an empty sound asset.");
+		warning("Trying to load an empty sound asset (%d).", _id);
 
 	Common::SeekableReadStream *stream = _container->getItem(_id);
 
@@ -101,7 +100,7 @@ SoundAsset::SoundAsset(Container *container, ObjID id) :
 }
 
 SoundAsset::~SoundAsset() {
-	debug("SoundAsset::~SoundAsset(%d)", _id);
+	debugC(3, kMVDebugSound, "~SoundAsset(%d)", _id);
 }
 
 void SoundAsset::play(Audio::Mixer *mixer, Audio::SoundHandle *soundHandle) {

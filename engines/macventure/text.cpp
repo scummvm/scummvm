@@ -99,7 +99,7 @@ void TextAsset::decodeOld() {
 	}
 
 	str[strLen] = '\0';
-	debugC(3, kMVDebugText, "Decoded %d string (old): %s", _id, str);
+	debugC(3, kMVDebugText, "Decoded string [%d] (old encoding): %s", _id, str);
 	_decoded = Common::String(str);
 }
 
@@ -162,7 +162,7 @@ void TextAsset::decodeHuffman() {
 		}
 	}
 	_decoded += '\0';
-	debugC(4, kMVDebugText, "Decoded %d'th string (new): %s", _id, _decoded.c_str());
+	debugC(3, kMVDebugText, "Decoded string [%d] (new encoding): %s", _id, _decoded.c_str());
 }
 Common::String TextAsset::getNoun(ObjID subval) {
 	ObjID obj;

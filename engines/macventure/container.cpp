@@ -89,7 +89,7 @@ Container::Container(Common::String filename) {
 				mask = _res->readUint32BE();
 				mask >>= (16 - bits);
 				mask &= 0xFFFF;
-				debugC(11, kMVDebugContainer, "Load mask of object &%d:%d is %x", i, j, mask);
+				debugC(4, kMVDebugContainer, "Load mask of object &%d:%d is %x", i, j, mask);
 				_res->seek(-4, SEEK_CUR);
 				// Look in the Huffman table
 				int x = 0;
@@ -128,7 +128,7 @@ Container::Container(Common::String filename) {
 				}
 
 				group.lengths[j] = length;
-				debugC(11, kMVDebugContainer, "Load legth of object %d:%d is %d", i, j, length);
+				debugC(4, kMVDebugContainer, "Load legth of object %d:%d is %d", i, j, length);
 			}
 
 			_groups.push_back(group);

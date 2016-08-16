@@ -36,7 +36,7 @@ namespace MacVenture {
 
 // HACK, see below
 void toASCII(Common::String &str) {
-	debugC(1, kMVDebugMain, "toASCII: %s", str.c_str());
+	debugC(3, kMVDebugMain, "toASCII: %s", str.c_str());
 	Common::String::iterator it = str.begin();
 	for (; it != str.end(); it++) {
 		if (*it == '\216') { str.replace(it, it + 1, "e"); }
@@ -506,7 +506,7 @@ void MacVentureEngine::processEvents() {
 }
 
 bool MacVenture::MacVentureEngine::runScriptEngine() {
-	debugC(4, kMVDebugMain, "MAIN: Running script engine");
+	debugC(3, kMVDebugMain, "Running script engine");
 	if (_haltedAtEnd) {
 		_haltedAtEnd = false;
 		if (_scriptEngine->resume(false)) {
@@ -754,7 +754,7 @@ void MacVentureEngine::highlightExit(ObjID objID) {
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {
 	if (objID == _destObject) return;
 	int idx;
-	debugC(5, kMVDebugMain, "Select primary object (%d)", objID);
+	debugC(4, kMVDebugMain, "Select primary object (%d)", objID);
 	if (_destObject > 0 &&
 		(idx = findObjectInArray(_destObject, _currentSelection)) != -1) {
 		unselectAll();
@@ -776,8 +776,7 @@ void MacVentureEngine::focusObjectWindow(ObjID objID) {
 }
 
 void MacVentureEngine::openObject(ObjID objID) {
-
-	debugC(1, kMVDebugMain, "Open Object[%d] parent[%d] x[%d] y[%d]",
+	debugC(3, kMVDebugMain, "Open Object[%d] parent[%d] x[%d] y[%d]",
 		objID,
 		_world->getObjAttr(objID, kAttrParentObject),
 		_world->getObjAttr(objID, kAttrPosX),
@@ -807,7 +806,7 @@ void MacVentureEngine::closeObject(ObjID objID) {
 void MacVentureEngine::checkObject(QueuedObject old) {
 	//warning("checkObject: unimplemented");
 	bool hasChanged = false;
-	debugC(1, kMVDebugMain, "Check Object[%d] parent[%d] x[%d] y[%d]",
+	debugC(3, kMVDebugMain, "Check Object[%d] parent[%d] x[%d] y[%d]",
 		old.object,
 		old.parent,
 		old.x,
@@ -874,7 +873,7 @@ void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
 	WindowReference from = getObjWindow(fromID);
 	WindowReference to = getObjWindow(toID);
 	WindowReference tmp = to;
-	debugC(1, kMVDebugMain, "Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
+	debugC(3, kMVDebugMain, "Swap Object[%d] to Object[%d], from win[%d] to win[%d] ",
 		fromID, toID, from, to);
 
 	if (!to) {

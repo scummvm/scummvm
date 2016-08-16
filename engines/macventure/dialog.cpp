@@ -176,7 +176,7 @@ bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event even
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		dialog->localize(mouse);
 		if (_bounds.contains(mouse)) {
-			debugC(1, kMVDebugGUI, "Click! Button: %s", _text.c_str());
+			debugC(2, kMVDebugGUI, "Click! Button: %s", _text.c_str());
 			dialog->handleDialogAction(this, _action);
 			return true;
 		}
