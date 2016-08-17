@@ -157,6 +157,7 @@ private:
 	int16 neg16(int16 val);
 	int16 neg8(int16 val);
 	int16 sumChildrenAttr(int16 obj, int16 attr, bool recursive);
+	void ensureNonzeroDivisor(int16 divisor, byte opcode);
 
 	// Opcodes
 	void op80GATT(EngineState *state, EngineFrame *frame);	//get attribute

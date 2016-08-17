@@ -525,6 +525,13 @@ int16 ScriptEngine::sumChildrenAttr(int16 obj, int16 attr, bool recursive) {
 	return sum;
 }
 
+void ScriptEngine::ensureNonzeroDivisor(int16 divisor, byte opcode) {
+	// TODO Untested, since that occassion rarely comes up.
+	if (divisor == 0) {
+		error("SCRIPT: Attempt to divide by 0 in operation %x", opcode);
+	}
+}
+
 void MacVenture::ScriptEngine::op80GATT(EngineState *state, EngineFrame *frame) {
 	int16 obj = state->pop();
 	int16 attr = state->pop();
@@ -704,7 +711,8 @@ void ScriptEngine::op9aMUL(EngineState *state, EngineFrame *frame) {
 void ScriptEngine::op9bDIV(EngineState *state, EngineFrame *frame) {
 	int16 b = state->pop();
 	int16 a = state->pop();
-	state->push((a / b) | 0);
+	ensureNonzeroDivisor(b, 0x9b);
+	state->push(a / b);
 }
 
 void ScriptEngine::op9cMOD(EngineState *state, EngineFrame *frame) {
@@ -716,8 +724,9 @@ void ScriptEngine::op9cMOD(EngineState *state, EngineFrame *frame) {
 void ScriptEngine::op9dDMOD(EngineState *state, EngineFrame *frame) {
 	int16 b = state->pop();
 	int16 a = state->pop();
+	ensureNonzeroDivisor(b, 0x9d);
 	state->push(a % b);
-	state->push((a / b) | 0);
+	state->push(a / b);
 }
 
 void ScriptEngine::op9eABS(EngineState *state, EngineFrame *frame) {
@@ -1166,8 +1175,9 @@ void ScriptEngine::ope2MDIV(EngineState *state, EngineFrame *frame) {
 	int16 a = state->pop();
 	a *= b;
 	int16 c = state->pop();
+	ensureNonzeroDivisor(c, 0xe2);
 	a /= c;
-	state->push(a | 0);
+	state->push(a);
 }
 
 void ScriptEngine::ope3UPOB(EngineState *state, EngineFrame *frame) {

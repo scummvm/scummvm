@@ -1043,7 +1043,7 @@ uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
 		oneBounds.intersects(otherBounds)) {
 		uint areaOne = oneBounds.width() * oneBounds.height();
 		uint areaOther = otherBounds.width() * otherBounds.height();
-		return (areaOther * 100 / areaOne) | 0;
+		return (areaOne != 0) ? (areaOther * 100 / areaOne) : 0;
 	}
 	return 0;
 }

@@ -126,7 +126,7 @@ void SoundAsset::decode10(Common::SeekableReadStream *stream) {
 	_length = stream->readUint32BE() * 2;
 	//Unused
 	stream->readUint16BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
 		if (i & 1) {
@@ -147,7 +147,7 @@ void SoundAsset::decode12(Common::SeekableReadStream *stream) {
 	stream->seek(base, SEEK_SET);
 	_length = stream->readUint32BE() - 6;
 	stream->readUint16BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	stream->seek(0xe2, SEEK_SET);
 	// TODO: Possible source of bugs, the original just assigns the seek to the scales
 	uint32 scales = stream->pos() + 0xe2;
@@ -191,7 +191,8 @@ void SoundAsset::decode18(Common::SeekableReadStream *stream) {
 	_length = stream->readUint32BE() * 2;
 	//Unused
 	stream->readUint16BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	// TODO: It had `| 0` at the end of this line, possible source of bugs.
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
 		if (i & 1) {
@@ -213,7 +214,7 @@ void SoundAsset::decode1a(Common::SeekableReadStream *stream) {
 	_length = stream->readUint32BE();
 	//Unused
 	stream->readUint16BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
 		if (i & 1) {
@@ -228,7 +229,7 @@ void SoundAsset::decode1a(Common::SeekableReadStream *stream) {
 void SoundAsset::decode44(Common::SeekableReadStream *stream) {
 	stream->seek(0x5e, SEEK_SET);
 	_length = stream->readUint32BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	for (uint i = 0; i < _length; i++) {
 		_data.push_back(stream->readByte());
 	}
@@ -243,7 +244,7 @@ void SoundAsset::decode78(Common::SeekableReadStream *stream) {
 	//Unused
 	stream->readUint32BE();
 	_length = stream->readUint32BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
 		if (i & 1) {
@@ -264,7 +265,7 @@ void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 	//Unused
 	stream->readUint32BE();
 	_length = stream->readUint32BE();
-	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
+	_frequency = (stream->readUint32BE() * 22100 / 0x10000);
 	uint32 last = 0x80;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {

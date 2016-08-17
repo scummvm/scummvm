@@ -187,7 +187,7 @@ void ImageAsset::decodePPIC3(Common::BitStream &stream, Common::Array<byte> &dat
 		v = stream.getBits(bits);
 		while ((bits = loadBits[load++]) != 0xFF) {
 			huff.symbols[loadBits[load++]] = v % bits;
-			v = (v / bits) | 0;
+			v = (bits != 0) ? (v / bits) : 0;
 		}
 		huff.symbols[loadBits[load++]] = v;
 	}
