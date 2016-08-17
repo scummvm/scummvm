@@ -757,15 +757,16 @@ void DungeonMan::f174_setCurrentMapAndPartyMap(uint16 mapIndex) {
 	f173_setCurrentMap(_g309_partyMapIndex = mapIndex);
 
 	byte *metaMapData = _g271_currMapData[_g273_currMapWidth - 1] + _g274_currMapHeight;
+
 	_vm->_displayMan->_g264_currMapAllowedCreatureTypes = metaMapData;
-
 	metaMapData += _g269_currMap->_creatureTypeCount;
+
 	memcpy(_vm->_displayMan->_g261_currMapWallOrnIndices, metaMapData, _g269_currMap->_wallOrnCount);
-
 	metaMapData += _g269_currMap->_wallOrnCount;
+
 	memcpy(_vm->_displayMan->_g262_currMapFloorOrnIndices, metaMapData, _g269_currMap->_floorOrnCount);
+	metaMapData += _g269_currMap->_floorOrnCount;
 
-	metaMapData += _g269_currMap->_wallOrnCount;
 	memcpy(_vm->_displayMan->_g263_currMapDoorOrnIndices, metaMapData, _g269_currMap->_doorOrnCount);
 
 	_g265_currMapInscriptionWallOrnIndex = _g269_currMap->_wallOrnCount;
