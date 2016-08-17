@@ -123,6 +123,21 @@ int Net::querySessions() {
 	return 0;
 }
 
+int Net::queryProviders() {
+	warning("STUB: Net::queryProviders()"); // PN_QueryProviders
+	return 0;
+}
+
+int Net::setProvider(int providerIndex) {
+	warning("STUB: Net::setProvider(%d)", providerIndex); // PN_SetProvider
+	return 0;
+}
+
+int Net::closeProvider() {
+	warning("STUB: Net::closeProvider()"); // PN_CloseProvider
+	return 0;
+}
+
 bool Net::getHostName(char *hostname, int length) {
 	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
 	return false;
@@ -134,7 +149,7 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 }
 
 void Net::getSessionName(int sessionNumber, char *buffer, int length) {
-	warning("STUB: Net::getSessionPlayerCount(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
+	warning("STUB: Net::getSessionName(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
 }
 
 int Net::getSessionPlayerCount(int sessionNumber) {
@@ -142,6 +157,10 @@ int Net::getSessionPlayerCount(int sessionNumber) {
 	//assert(sessionNumber >= 0 && sessionNumber < NUMELEMENTS(gdefMultiPlay.gamedescptr));
 	//return gdefMultiPlay.gamedescptr[sessionNumber].currentplayers;
 	return 0;
+}
+
+void Net::getProviderName(int providerIndex, char *buffer, int length) {
+	warning("STUB: Net::getProviderName(%d, \"%s\", %d)", providerIndex, buffer, length); // PN_GetProviderName
 }
 
 } // End of namespace Scumm

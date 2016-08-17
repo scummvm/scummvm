@@ -52,6 +52,9 @@ public:
 	int32 updateQuerySessions();
 	void stopQuerySessions();
 	int querySessions();
+	int queryProviders();
+	int setProvider(int providerIndex);
+	int closeProvider();
 
 private:
 
@@ -61,6 +64,7 @@ public:
 	bool getIPfromName(char *ip, int ipLength, char *nameBuffer);
 	void getSessionName(int sessionNumber, char *buffer, int length);
 	int getSessionPlayerCount(int sessionNumber);
+	void getProviderName(int providerIndex, char *buffer, int length);
 
 private:
 	//mostly getters

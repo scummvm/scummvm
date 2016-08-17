@@ -399,21 +399,23 @@ int LogicHEmoonbase::op_net_do_init_user(int op, int numArgs, int32 *args) {
 	warning("STUB: op_net_do_init_user()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_query_providers(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_query_providers()");
-	return 1;
+	return _vm1->_moonbase->_net->queryProviders();
 }
+
 int LogicHEmoonbase::op_net_get_provider_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_provider_name()");
-	return 1;
+	char name[MAX_PROVIDER_NAME];
+	_vm1->_moonbase->_net->getProviderName(args[0] - 1, name, sizeof(name));
+	return _vm1->setupStringArrayFromString(name);
 }
+
 int LogicHEmoonbase::op_net_set_provider(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_set_provider()");
-	return 1;
+	return _vm1->_moonbase->_net->setProvider(args[0] - 1);
 }
+
 int LogicHEmoonbase::op_net_close_provider(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_close_provider()");
-	return 1;
+	return _vm1->_moonbase->_net->closeProvider();
 }
 
 int LogicHEmoonbase::op_net_start_query_sessions(int op, int numArgs, int32 *args) {
