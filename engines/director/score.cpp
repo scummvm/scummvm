@@ -975,6 +975,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			if (stream.readUint16())
 				readPaletteInfo(stream);
 			offset += 16;
+			break;
 		default:
 			offset++;
 			stream.readByte();
