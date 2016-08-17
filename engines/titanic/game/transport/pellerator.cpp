@@ -76,7 +76,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
 
 		if (name == "PelleratorObject") {
-			for (; newDest > _destination; ++_destination) {
+			for (; _destination < newDest; ++_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
@@ -123,7 +123,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				}
 			}
 		} else {
-			for (; newDest > _destination; ++_destination) {
+			for (; _destination < newDest; ++_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
@@ -177,7 +177,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
 
 		if (name == "PelleratorObject") {
-			for (; _destination < newDest; --_destination) {
+			for (; _destination > newDest; --_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
@@ -229,7 +229,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				}
 			}
 		} else {
-			for (; _destination < newDest; --_destination) {
+			for (; _destination > newDest; --_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
