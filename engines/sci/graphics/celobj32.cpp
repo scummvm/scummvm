@@ -164,8 +164,8 @@ struct SCALER_Scale {
 	const byte *_row;
 	READER _reader;
 	int16 _x;
-	static int16 _valuesX[1024];
-	static int16 _valuesY[1024];
+	static int16 _valuesX[4096];
+	static int16 _valuesY[4096];
 
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
 	_row(nullptr),
@@ -249,9 +249,9 @@ struct SCALER_Scale {
 };
 
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesX[1024];
+int16 SCALER_Scale<FLIP, READER>::_valuesX[4096];
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesY[1024];
+int16 SCALER_Scale<FLIP, READER>::_valuesY[4096];
 
 #pragma mark -
 #pragma mark CelObj - Resource readers
@@ -283,7 +283,7 @@ public:
 struct READER_Compressed {
 private:
 	const byte *const _resource;
-	byte _buffer[1024];
+	byte _buffer[4096];
 	uint32 _controlOffset;
 	uint32 _dataOffset;
 	uint32 _uncompressedDataOffset;

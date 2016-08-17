@@ -147,7 +147,7 @@ struct CelScalerTable {
 	 * the correct column to read from the source bitmap
 	 * when drawing a scaled version of the source bitmap.
 	 */
-	int valuesX[1024];
+	int valuesX[4096];
 
 	/**
 	 * The ratio used to generate the x-values.
@@ -159,7 +159,7 @@ struct CelScalerTable {
 	 * the correct row to read from a source bitmap when
 	 * drawing a scaled version of the source bitmap.
 	 */
-	int valuesY[1024];
+	int valuesY[4096];
 
 	/**
 	 * The ratio used to generate the y-values.
