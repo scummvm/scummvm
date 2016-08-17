@@ -187,6 +187,7 @@ void Gui::draw() {
 
 	drawDraggedObject();
 	drawDialog();
+	// TODO: When window titles with custom borders are in MacGui, this should be used.
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getSurface());
 }
 
@@ -408,7 +409,9 @@ bool Gui::loadMenus() {
 		char *title;
 
 		/* Skip menuID, width, height, resourceID, placeholder */
-		for (int skip = 0; skip < 5; skip++) { res->readUint16BE(); }
+		for (int skip = 0; skip < 5; skip++) {
+			res->readUint16BE();
+		}
 		titleLength = res->readByte();
 		title = new char[titleLength + 1];
 		res->read(title, titleLength);
@@ -518,7 +521,7 @@ bool Gui::loadControls() {
 		data.scrollMax = res->readUint16BE();
 		data.scrollMin = res->readUint16BE();
 		data.cdef = res->readUint16BE();
-		data.refcon = (ControlAction)res->readUint32BE();//(ControlType)id; id++;
+		data.refcon = (ControlAction)res->readUint32BE();
 		data.type = (ControlType)id; id++;
 		data.titleLength = res->readByte();
 		if (data.titleLength) {
@@ -660,10 +663,6 @@ void Gui::drawExitsWindow() {
 	}
 
 	findWindow(kExitsWindow)->setDirty(true);
-
-	// To be deleted
-	//g_system->copyRectToScreen(srf->getPixels(), srf->pitch, 0, 0, srf->w, srf->h);
-	//g_system->updateScreen();
 }
 
 void Gui::drawConsoleWindow() {
@@ -722,21 +721,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 }
 
 void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface) {
-	WindowData &data = findWindowData(target);
-	BorderBounds border = borderBounds(data.type);
-
-	uint left = 10;//getCurrentFont().getStringWidth(data.title) - 10;
-	uint right = 30;//getCurrentFont().getStringWidth(data.title) + 10;
-
-	surface->fillRect(Common::Rect(left, 0, right, border.topOffset - 1), kColorGray);
-	getCurrentFont().drawString(
-		surface,
-		data.title,
-		0,
-		right,
-		right - left,
-		kColorBlack,
-		Graphics::kTextAlignCenter);
+	// TODO: Implement when MacGui supports titles in windows with custom borders.
 }
 
 void Gui::drawDraggedObject() {
@@ -1290,12 +1275,6 @@ bool Gui::processEvent(Common::Event &event) {
 			moveDraggedObject(event.mouse);
 		}
 		processed = true;
-
-		// TEST
-		//Common::Rect mr = calculateClickRect(event.mouse, _screen.getBounds());
-		//_screen.fillRect(mr, kColorGreen);
-		//g_system->copyRectToScreen(_screen.getPixels(), _screen.pitch, 0, 0, _screen.w, _screen.h);
-		//g_system->updateScreen();
 	}
 
 	processed |= _wm.processEvent(event);

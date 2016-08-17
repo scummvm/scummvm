@@ -384,7 +384,7 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 	const WindowData &windata = _gui->getWindowData(win);
 
 	if (shiftPressed) {
-		// Do shift ;)
+		// TODO: Implement shift functionality.
 	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
 			if (objID == 0) {
@@ -450,14 +450,12 @@ bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
 	debugC(3, kMVDebugMain, "Showing speech dialog, asset %d from %d to %d", text, srcObj, destObj);
 	_gui->getTextFromUser();
 
-	// HACK WITH FLAGS
 	_prepared = false;
 	warning("Show text entry: not fully tested");
 	return true;
 }
 
 void MacVentureEngine::setTextInput(Common::String content) {
-	// HACK WITH FLAGS
 	_prepared = true;
 	_userInput = content;
 	_clickToContinue = false;
@@ -646,7 +644,7 @@ void MacVentureEngine::playSounds(bool pause) {
 			delay = _soundManager->playSound(item.reference);
 			break;
 		case kSoundWait:
-			//wait for sound to finish?
+			// Empty in the original.
 			break;
 		}
 	}
@@ -681,6 +679,7 @@ void MacVentureEngine::unselectAll() {
 void MacVentureEngine::selectObject(ObjID objID) {
 	if (!_currentSelection.empty()) {
 		if (findParentWindow(objID) != findParentWindow(_currentSelection[0])) {
+			// TODO: Needs further testing, but it doesn't seem necessary.
 			//unselectAll();
 		}
 	}
@@ -731,11 +730,7 @@ uint MacVentureEngine::getPrefixNdx(ObjID obj) {
 Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
 	uint ndx = getPrefixNdx(obj);
 	ndx = ((ndx) >> flag) & 3;
-	if (ndx) {
-		return _decodingNamingArticles->getString(ndx);
-	} else {
-		return Common::String("m1551gn0 ");
-	}
+	return _decodingNamingArticles->getString(ndx);
 }
 
 Common::String MacVentureEngine::getNoun(ObjID ndx) {
@@ -743,20 +738,9 @@ Common::String MacVentureEngine::getNoun(ObjID ndx) {
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
-	//ObjID ctl = _gui->getWinChild(obj);
-	/*if (ctl) {
-		if (findObjectInArray(obj, _selectedObjs) != -1)
-			_gui->selectExit(ctl);
-		else
-			_gui->unselectExit(ctl);
-	}
-	if (obj == _world->getObjAttr(1, kAttrParentObject)) {
-		if (findObjectInArray(obj, _selectedObjs) != -1)
-			_gui->selectExit(obj);
-		else
-			_gui->unselectExit(obj);
-	}*/
-	//updateWindow(findParentWindow(obj));
+	// TODO: It seems unnecessary since the GUI checks whether an object
+	//		is selected, which includes exits.
+	warning("STUB: highlightExit");
 }
 
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {
@@ -816,7 +800,6 @@ void MacVentureEngine::closeObject(ObjID objID) {
 }
 
 void MacVentureEngine::checkObject(QueuedObject old) {
-	//warning("checkObject: unimplemented");
 	bool hasChanged = false;
 	debugC(3, kMVDebugMain, "Check Object[%d] parent[%d] x[%d] y[%d]",
 		old.object,
@@ -887,7 +870,6 @@ void MacVentureEngine::checkObject(QueuedObject old) {
 }
 
 void MacVentureEngine::reflectSwap(ObjID fromID, ObjID toID) {
-	//warning("reflectSwap: untested");
 	WindowReference from = getObjWindow(fromID);
 	WindowReference to = getObjWindow(toID);
 	WindowReference tmp = to;
@@ -936,7 +918,7 @@ bool MacVentureEngine::isGameRunning() {
 ControlAction MacVenture::MacVentureEngine::referenceToAction(ControlType id) {
 	switch (id) {
 	case MacVenture::kControlExitBox:
-		return kActivateObject;//??
+		return kActivateObject;//?? Like this in the original
 	case MacVenture::kControlExamine:
 		return kExamine;
 	case MacVenture::kControlOpen:
@@ -994,6 +976,8 @@ uint32 MacVentureEngine::randBetween(uint32 min, uint32 max) {
 }
 
 uint32 MacVentureEngine::getInvolvedObjects() {
+	// If there is no valid control selected, we return a number too big
+	// to be useful. There is no control that uses that many objects.
 	return (_selectedControl ? getGlobalSettings()._cmdArgCnts[_selectedControl - 1] : 3000);
 }
 
@@ -1048,7 +1032,7 @@ Common::Rect MacVentureEngine::getObjBounds(ObjID objID) {
 }
 
 uint MacVentureEngine::getOverlapPercent(ObjID one, ObjID other) {
-	//not the same parent? 0 overlap
+	// If it's not the same parent, there's 0 overlap
 	if (_world->getObjAttr(one, kAttrParentObject) !=
 		_world->getObjAttr(other, kAttrParentObject))
 		return 0;

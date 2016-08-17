@@ -113,12 +113,11 @@ void TextAsset::decodeHuffman() {
 	} else {
 		strLen = stream.getBits(7);
 	}
-	// OK up to here
 	uint32 mask = 0;
 	uint32 symbol = 0;
 	char c;
 	for (uint16 i = 0; i < strLen; i++) {
-		mask = stream.peekBits(16); // The mask is OK
+		mask = stream.peekBits(16);
 
 		uint32 entry;
 		// Find the length index

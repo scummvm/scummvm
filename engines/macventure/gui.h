@@ -71,7 +71,6 @@ enum MenuAction {
 
 	kMenuActionCommand
 };
-//} using namespace MacVentureMenuActions;
 
 struct DraggedObj {
 	ObjID id;

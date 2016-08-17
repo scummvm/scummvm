@@ -1065,11 +1065,11 @@ void ScriptEngine::opcdNCHLD(EngineState *state, EngineFrame *frame) {
 }
 
 void ScriptEngine::opceVERS(EngineState *state, EngineFrame *frame) {
-	state->push(86);
+	state->push(86); // Engine version is irrelevant. Like this in the original.
 }
 
 void ScriptEngine::opcfPSCE(EngineState *state, EngineFrame *frame) {
-	state->push(0); //Not release
+	state->push(0); // Any value greater than 0 indicates "Release".
 }
 
 void ScriptEngine::opd0P1(EngineState *state, EngineFrame *frame) {

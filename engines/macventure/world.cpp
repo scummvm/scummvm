@@ -317,6 +317,7 @@ void SaveGame::saveInto(Common::OutSaveFile *file) {
 		file->writeUint16BE((*global));
 	}
 	// Save text
+	// TODO: Insert text from GUI console
 	_text = "Hello";
 	file->write(_text.c_str(), _text.size());
 }
@@ -341,6 +342,7 @@ void SaveGame::loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream 
 }
 
 void SaveGame::loadText(MacVentureEngine *engine, Common::SeekableReadStream *res) {
+	// TODO: Load console text. For now, the GUI doesn't even look at this.
 	_text = "Placeholder Console Text";
 }
 
