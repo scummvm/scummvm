@@ -39,7 +39,12 @@ public:
 	int removeUser();
 	int whoSentThis();
 	int whoAmI();
-	
+	int joinSession(int sessionIndex);
+	int endSession();
+	void disableSessionJoining();
+	void enableSessionJoining();
+	void setBotsCount(int botsCount);
+
 private:
 
 public:

@@ -455,24 +455,27 @@ int LogicHEmoonbase::op_net_create_session(int op, int numArgs, int32 *args) {
 	warning("STUB: op_net_create_session()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_join_session(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_join_session()");
-	return 1;
+	return _vm1->_moonbase->_net->joinSession(args[0] - 1);
 }
+
 int LogicHEmoonbase::op_net_end_session(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_end_session()");
-	return 1;
+	return _vm1->_moonbase->_net->endSession();
 }
+
 int LogicHEmoonbase::op_net_disable_session_player_join(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_disable_session_player_join()");
+	_vm1->_moonbase->_net->disableSessionJoining();
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_enable_session_player_join(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_enable_session_player_join()");
+	_vm1->_moonbase->_net->enableSessionJoining();
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_set_ai_player_count(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_set_ai_player_count()");
+	_vm1->_moonbase->_net->setBotsCount(args[0]);
 	return 1;
 }
 
@@ -507,7 +510,7 @@ void LogicHEmoonbase::op_net_set_fake_latency(int op, int numArgs, int32 *args) 
 int LogicHEmoonbase::op_net_get_host_name(int op, int numArgs, int32 *args) {
 	char name[MAX_HOSTNAME_SIZE];
 
-	if (_vm1->_moonbase->_net->getHostName(name, MAX_HOSTNAME_SIZE)) { // PN_GetHostName
+	if (_vm1->_moonbase->_net->getHostName(name, MAX_HOSTNAME_SIZE)) {
 		return _vm1->setupStringArrayFromString(name);
 	}
 
@@ -520,7 +523,7 @@ int LogicHEmoonbase::op_net_get_ip_from_name(int op, int numArgs, int32 *args) {
 
 	char ip[MAX_IP_SIZE];
 
-	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, name)) { // PN_GetIPfromName
+	if (_vm1->_moonbase->_net->getIPfromName(ip, MAX_IP_SIZE, name)) {
 		return _vm1->setupStringArrayFromString(ip);
 	}
 

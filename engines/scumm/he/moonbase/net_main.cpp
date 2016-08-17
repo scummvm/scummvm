@@ -60,6 +60,28 @@ int Net::whoAmI() {
 	return 0;
 }
 
+int Net::joinSession(int sessionIndex) {
+	warning("STUB: Net::joinSession(%d)", sessionIndex); // PN_JoinSession
+	return 0;
+}
+
+int Net::endSession() {
+	warning("STUB: Net::endSession()"); // PN_EndSession
+	return 0;
+}
+
+void Net::disableSessionJoining() {
+	warning("STUB: Net::disableSessionJoining()"); // PN_DisableSessionPlayerJoin
+}
+
+void Net::enableSessionJoining() {
+	warning("STUB: Net::enableSessionJoining()"); // PN_EnableSessionPlayerJoin
+}
+
+void Net::setBotsCount(int botsCount) {
+	warning("STUB: Net::setBotsCount(%d)", botsCount); // PN_SetAIPlayerCountKludge
+}
+
 bool Net::getHostName(char *hostname, int length) {
 	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
 	return false;
