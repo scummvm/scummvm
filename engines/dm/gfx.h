@@ -147,6 +147,11 @@ namespace DM {
 #define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
+/* Field Aspect Mask */
+#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK 
+#define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
+#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK            
+
 enum ViewSquare {
 	kM3_ViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
 	kM2_ViewSquare_D4L = -2, // @ CM2_VIEW_SQUARE_D4L
@@ -221,6 +226,9 @@ extern byte g215_ProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
 #define k11_ProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT                 
 #define k12_ProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME                   
 #define k13_ProjectileAspectExplosionPoisonBoltCloud 13 // @ C13_PROJECTILE_ASPECT_EXPLOSION_POISON_BOLT_POISON_CLOUD
+
+#define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
+#define kScaleThreshold 32768
 
 enum ViewCell {
 	k0_ViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT

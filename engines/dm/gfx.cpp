@@ -705,9 +705,8 @@ void DisplayMan::f461_allocateFlippedWallBitmaps() {
 
 void DisplayMan::f102_drawDoorBitmap(Frame* frame) {
 	if (frame->_srcByteWidth) {
-		f132_blitToBitmap(_g74_tmpBitmap,
-						  _g296_bitmapViewport,
-						  frame->_box, frame->_srcX, frame->_srcY, frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
+		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
+						  frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
 	}
 }
 
@@ -2170,29 +2169,30 @@ void DisplayMan::f94_loadFloorSet(FloorSet set) {
 }
 
 void DisplayMan::f95_loadWallSet(WallSet set) {
-	if ((_g231_currentWallSet != set) || _vm->_g523_restartGameRequest) {
-		_g231_currentWallSet = set;
+	if ((_g231_currentWallSet == set) && !_vm->_g523_restartGameRequest)
+		return;
 
-		int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
-		f466_loadIntoBitmap(graphicIndice++, _g709_bitmapWallSet_DoorFrameFront);
-		f466_loadIntoBitmap(graphicIndice++, _g708_bitmapWallSet_DoorFrameLeft_D1C);
-		f466_loadIntoBitmap(graphicIndice++, _g707_bitmapWallSet_DoorFrameLeft_D2C);
-		f466_loadIntoBitmap(graphicIndice++, _g706_bitmapWallSet_DoorFrameLeft_D3C);
-		f466_loadIntoBitmap(graphicIndice++, _g705_bitmapWallSet_DoorFrameLeft_D3L);
-		f466_loadIntoBitmap(graphicIndice++, _g704_bitmapWallSet_DoorFrameTop_D1LCR);
-		f466_loadIntoBitmap(graphicIndice++, _g703_bitmapWallSet_DoorFrameTop_D2LCR);
-		f466_loadIntoBitmap(graphicIndice++, _g702_bitmapWallSet_Wall_D0R);
-		f466_loadIntoBitmap(graphicIndice++, _g701_bitmapWallSet_Wall_D0L);
-		f466_loadIntoBitmap(graphicIndice++, _g700_bitmapWallSet_Wall_D1LCR);
-		f466_loadIntoBitmap(graphicIndice++, _g699_bitmapWallSet_Wall_D2LCR);
-		f466_loadIntoBitmap(graphicIndice++, _g698_bitmapWallSet_Wall_D3LCR);
-		f466_loadIntoBitmap(graphicIndice++, _g697_bitmapWallSet_Wall_D3L2);
+	_g231_currentWallSet = set;
 
-		f99_copyBitmapAndFlipHorizontal(_g708_bitmapWallSet_DoorFrameLeft_D1C, _g710_bitmapWallSet_DoorFrameRight_D1C,
-										_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
-		f99_copyBitmapAndFlipHorizontal(_g697_bitmapWallSet_Wall_D3L2, _g696_bitmapWallSet_Wall_D3R2,
-										_frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
-	}
+	int16 graphicIndice = (set * k13_WallSetGraphicCount) + k77_FirstWallSet;
+	f466_loadIntoBitmap(graphicIndice++, _g709_bitmapWallSet_DoorFrameFront);
+	f466_loadIntoBitmap(graphicIndice++, _g708_bitmapWallSet_DoorFrameLeft_D1C);
+	f466_loadIntoBitmap(graphicIndice++, _g707_bitmapWallSet_DoorFrameLeft_D2C);
+	f466_loadIntoBitmap(graphicIndice++, _g706_bitmapWallSet_DoorFrameLeft_D3C);
+	f466_loadIntoBitmap(graphicIndice++, _g705_bitmapWallSet_DoorFrameLeft_D3L);
+	f466_loadIntoBitmap(graphicIndice++, _g704_bitmapWallSet_DoorFrameTop_D1LCR);
+	f466_loadIntoBitmap(graphicIndice++, _g703_bitmapWallSet_DoorFrameTop_D2LCR);
+	f466_loadIntoBitmap(graphicIndice++, _g702_bitmapWallSet_Wall_D0R);
+	f466_loadIntoBitmap(graphicIndice++, _g701_bitmapWallSet_Wall_D0L);
+	f466_loadIntoBitmap(graphicIndice++, _g700_bitmapWallSet_Wall_D1LCR);
+	f466_loadIntoBitmap(graphicIndice++, _g699_bitmapWallSet_Wall_D2LCR);
+	f466_loadIntoBitmap(graphicIndice++, _g698_bitmapWallSet_Wall_D3LCR);
+	f466_loadIntoBitmap(graphicIndice++, _g697_bitmapWallSet_Wall_D3L2);
+
+	f99_copyBitmapAndFlipHorizontal(_g708_bitmapWallSet_DoorFrameLeft_D1C, _g710_bitmapWallSet_DoorFrameRight_D1C,
+									_doorFrameRightD1C._srcByteWidth, _doorFrameRightD1C._srcHeight);
+	f99_copyBitmapAndFlipHorizontal(_g697_bitmapWallSet_Wall_D3L2, _g696_bitmapWallSet_Wall_D3R2,
+									_frameWallD3R2._srcByteWidth, _frameWallD3R2._srcHeight);
 }
 
 void DisplayMan::f96_loadCurrentMapGraphics() {
@@ -2434,15 +2434,15 @@ void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementC
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth)
-		f132_blitToBitmap(f489_getNativeBitmapOrGraphic(nativeIndex), _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh,
-						  f._srcHeight, k136_heightViewport);
+		f132_blitToBitmap(f489_getNativeBitmapOrGraphic(nativeIndex), _g296_bitmapViewport, f._box, f._srcX, f._srcY,
+						f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth) {
 		f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeIndex), _g74_tmpBitmap, f._srcByteWidth, f._srcHeight);
-		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh,
-						  f._srcHeight, k136_heightViewport);
+		f132_blitToBitmap(_g74_tmpBitmap, _g296_bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth,
+						k112_byteWidthViewport, k10_ColorFlesh, f._srcHeight, k136_heightViewport);
 	}
 }
 
@@ -2739,22 +2739,20 @@ void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *des
 	if (destPixelWidth % 8)
 		destPixelWidth = (destPixelWidth / 8) * 8 + 8;
 
-	const uint32 SCALE_THRESHOLD = 32768;
-	uint32 scaleX = (SCALE_THRESHOLD * srcPixelWidth) / destPixelWidth;
-	uint32 scaleY = (SCALE_THRESHOLD * srcHeight) / destHeight;
+	uint32 scaleX = (kScaleThreshold * srcPixelWidth) / destPixelWidth;
+	uint32 scaleY = (kScaleThreshold * srcHeight) / destHeight;
 
 	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
 
 	// Loop through drawing output lines
 	for (uint32 destY = 0, scaleYCtr = 0; destY < (uint32)destHeight; ++destY, scaleYCtr += scaleY) {
 
-		const byte *srcLine = &srcBitmap[(scaleYCtr / SCALE_THRESHOLD) * srcPixelWidth];
+		const byte *srcLine = &srcBitmap[(scaleYCtr / kScaleThreshold) * srcPixelWidth];
 		byte *destLine = &destBitmap[destY * destPixelWidth];
 
 		// Loop through drawing the pixels of the row
-		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX) {
-			destLine[xCtr] = srcLine[scaleXCtr / SCALE_THRESHOLD];
-		}
+		for (uint32 destX = 0, xCtr = 0, scaleXCtr = 0; destX < (uint32)destPixelWidth; ++destX, ++xCtr, scaleXCtr += scaleX)
+			destLine[xCtr] = srcLine[scaleXCtr / kScaleThreshold];
 	}
 }
 
@@ -2766,31 +2764,21 @@ Common::MemoryReadStream DisplayMan::getCompressedData(uint16 index) {
 	return Common::MemoryReadStream(_packedBitmaps + _packedItemPos[index], getCompressedDataSize(index), DisposeAfterUse::NO);
 }
 
-
 uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
 }
 
-
-/* Field Aspect Mask */
-#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK 
-#define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
-#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK            
-
 void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
 	warning(false, "STUB METHOD: f113_drawField");
-	DisplayMan &dispMan = *_vm->_displayMan;
 
-	byte *bitmapMask;
-	if (fieldAspect->_mask == kMaskFieldAspectNoMask) {
-		bitmapMask = nullptr;
-	} else {
-		bitmapMask = dispMan._g74_tmpBitmap;
+	if (fieldAspect->_mask != kMaskFieldAspectNoMask) {
+		DisplayMan &dispMan = *_vm->_displayMan;
+
+		byte *bitmapMask = dispMan._g74_tmpBitmap;
 		memmove(bitmapMask, dispMan.f489_getNativeBitmapOrGraphic(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
 				fieldAspect->_height * fieldAspect->_byteWidth * 2 * sizeof(bitmapMask[0]));
-		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
+		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask))
 			dispMan.f130_flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
-		}
 	}
 }
 
@@ -2801,162 +2789,6 @@ int16 DisplayMan::f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, i
 int16 DisplayMan::M78_getScaledDimension(int16 dimension, int16 scale) {
 	return (dimension * scale + scale / 2) / 32;
 }
-
-/* This is the full dungeon view */
-Box g105_BoxExplosionPattern_D0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
-
-byte g216_ExplosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
-	10,/* D4 */   16,/* D3 */   23,/* D2 */   32,/* D1 */   32};/* D0 */
-
-byte g217_ObjectPileShiftSetIndices[16][2] = { // @ G0217_aauc_Graphic558_ObjectPileShiftSetIndices
-	/* { X shift index, Y shift index } */
-	{2, 5},
-	{0, 6},
-	{5, 7},
-	{3, 0},
-	{7, 1},
-	{1, 2},
-	{6, 3},
-	{3, 3},
-	{5, 5},
-	{2, 6},
-	{7, 7},
-	{1, 0},
-	{3, 1},
-	{6, 2},
-	{1, 3},
-	{5, 3}}; /* 16 pairs of X and Y shift values */
-
-byte g218_ObjectCoordinateSets[3][10][5][2] = { // @ G0218_aaaauc_Graphic558_ObjectCoordinateSets
-	/* { {X, Y }, {X, Y }, {X, Y }, {X, Y }, {X, Y } } */
-	{{{0,   0},{0,   0},{125,  72},{95,  72},{112, 64}},     /* D3C */
-	{{0,   0},{0,   0},{62,  72},{25,  72},{24, 64}},     /* D3L */
-	{{0,   0},{0,   0},{200,  72},{162,  72},{194, 64}},     /* D3R */
-	{{92,  78},{132,  78},{136,  86},{88,  86},{112, 74}},     /* D2C */
-	{{10,  78},{53,  78},{41,  86},{0,   0},{3, 74}},     /* D2L */
-	{{171,  78},{218,  78},{0,   0},{183,  86},{219, 74}},     /* D2R */
-	{{83,  96},{141,  96},{148, 111},{76, 111},{112, 94}},     /* D1C */
-	{{0,   0},{26,  96},{5, 111},{0,   0},{0,  0}},     /* D1L */
-	{{197,  96},{0,   0},{0,   0},{220, 111},{0,  0}},     /* D1R */
-	{{66, 131},{158, 131},{0,   0},{0,   0},{0,  0}}},   /* D0C */
-	{{{0,   0},{0,   0},{125,  72},{95,  72},{112, 63}},     /* D3C */
-	{{0,   0},{0,   0},{62,  72},{25,  72},{24, 63}},     /* D3L */
-	{{0,   0},{0,   0},{200,  72},{162,  72},{194, 63}},     /* D3R */
-	{{92,  78},{132,  78},{136,  86},{88,  86},{112, 73}},     /* D2C */
-	{{10,  78},{53,  78},{41,  86},{0,   0},{3, 73}},     /* D2L */
-	{{171,  78},{218,  78},{0,   0},{183,  86},{219, 73}},     /* D2R */
-	{{83,  96},{141,  96},{148, 111},{76, 111},{112, 89}},     /* D1C */
-	{{0,   0},{26,  96},{5, 111},{0,   0},{0,  0}},     /* D1L */
-	{{197,  96},{0,   0},{0,   0},{220, 111},{0,  0}},     /* D1R */
-	{{66, 131},{158, 131},{0,   0},{0,   0},{0,  0}}},   /* D0C */
-	{{{0,   0},{0,   0},{125,  75},{95,  75},{112, 65}},     /* D3C */
-	{{0,   0},{0,   0},{62,  75},{25,  75},{24, 65}},     /* D3L */
-	{{0,   0},{0,   0},{200,  75},{162,  75},{194, 65}},     /* D3R */
-	{{92,  81},{132,  81},{136,  88},{88,  88},{112, 76}},     /* D2C */
-	{{10,  81},{53,  81},{41,  88},{0,   0},{3, 76}},     /* D2L */
-	{{171,  81},{218,  81},{0,  0},{183,  88},{219, 76}},     /* D2R */
-	{{83,  98},{141,  98},{148, 115},{76, 115},{112, 98}},     /* D1C */
-	{{0,   0},{26,  98},{5, 115},{0,   0},{0,  0}},     /* D1L */
-	{{197,  98},{0,   0},{0,   0},{220, 115},{0,  0}},     /* D1R */
-	{{66, 135},{158, 135},{0,   0},{0,   0},{0,  0}}}}; /* D0C */
-
-
-int16 g223_ShiftSets[3][8] = { // @ G0223_aac_Graphic558_ShiftSets
-	{0, 1, 2, 3, 0, -3, -2, -1},   /* D0 Back or D1 Front */
-	{0, 1, 1, 2, 0, -2, -1, -1},   /* D1 Back or D2 Front */
-	{0, 1, 1, 1, 0, -1, -1, -1}}; /* D2 Back or D3 Front */
-
-byte g224_CreatureCoordinateSets[3][11][5][2] = { // @ G0224_aaaauc_Graphic558_CreatureCoordinateSets
-	/* { { X, Y }, { X, Y }, { X, Y }, { X, Y }, { X, Y } } */
-	{{{95,  70},{127,  70},{129,  75},{93,  75},{111,  72}},     /* D3C */
-	{{131,  70},{163,  70},{158,  75},{120,  75},{145,  72}},     /* D3L */
-	{{59,  70},{91,  70},{107,  75},{66,  75},{79,  72}},     /* D3R */
-	{{92,  81},{131,  81},{132,  90},{91,  90},{111,  85}},     /* D2C */
-	{{99,  81},{146,  81},{135,  90},{80,  90},{120,  85}},     /* D2L */
-	{{77,  81},{124,  81},{143,  90},{89,  90},{105,  85}},     /* D2R */
-	{{83, 103},{141, 103},{148, 119},{76, 119},{109, 111}},     /* D1C */
-	{{46, 103},{118, 103},{101, 119},{0,   0},{79, 111}},     /* D1L */
-	{{107, 103},{177, 103},{0,   0},{123, 119},{144, 111}},     /* D1R */
-	{{0,   0},{67, 135},{0,   0},{0,   0},{0,   0}},     /* D0L */
-	{{156, 135},{0,   0},{0,   0},{0,   0},{0,   0}}},   /* D0R */
-	{{{94,  75},{128,  75},{111,  70},{111,  72},{111,  75}},     /* D3C */
-	{{120,  75},{158,  75},{149,  70},{145,  72},{150,  75}},     /* D3L */
-	{{66,  75},{104,  75},{75,  70},{79,  72},{73,  75}},     /* D3R */
-	{{91,  90},{132,  90},{111,  83},{111,  85},{111,  90}},     /* D2C */
-	{{80,  90},{135,  90},{125,  83},{120,  85},{125,  90}},     /* D2L */
-	{{89,  90},{143,  90},{99,  83},{105,  85},{98,  90}},     /* D2R */
-	{{81, 119},{142, 119},{111, 105},{111, 111},{111, 119}},     /* D1C */
-	{{0,   0},{101, 119},{84, 105},{70, 111},{77, 119}},     /* D1L */
-	{{123, 119},{0,   0},{139, 105},{153, 111},{146, 119}},     /* D1R */
-	{{0,   0},{83, 130},{57, 121},{47, 126},{57, 130}},     /* D0L */
-	{{140, 130},{0,   0},{166, 121},{176, 126},{166, 130}}},   /* D0R */
-	{{{95,  59},{127,  59},{129,  61},{93,  61},{111,  60}},     /* D3C */
-	{{131,  59},{163,  59},{158,  61},{120,  61},{145,  60}},     /* D3L */
-	{{59,  59},{91,  59},{107,  61},{66,  61},{79,  60}},     /* D3R */
-	{{92,  65},{131,  65},{132,  67},{91,  67},{111,  66}},     /* D2C */
-	{{99,  65},{146,  65},{135,  67},{80,  67},{120,  66}},     /* D2L */
-	{{77,  65},{124,  65},{143,  67},{89,  67},{105,  66}},     /* D2R */
-	{{83,  79},{141,  79},{148,  85},{76,  85},{111,  81}},     /* D1C */
-	{{46,  79},{118,  79},{101,  85},{0,   0},{79,  81}},     /* D1L */
-	{{107,  79},{177,  79},{0,   0},{123,  85},{144,  81}},     /* D1R */
-	{{0,   0},{67,  96},{0,   0},{0,   0},{0,   0}},     /* D0L */
-	{{156,  96},{0,   0},{0,   0},{0,   0},{0,   0}}}}; /* D0R */
-
-int16 g226_ExplosionCoordinates[15][2][2] = { // @ G0226_aaai_Graphic558_ExplosionCoordinates
-	/* { { Front Left X, Front Left Y }, { Front Right X, Front Right Y } } */
-	{{100, 47},{122, 47}},   /* D4C */
-	{{52, 47},{76, 47}},   /* D4L */
-	{{148, 47},{172, 47}},   /* D4R */
-	{{95, 50},{127, 50}},   /* D3C */
-	{{31, 50},{63, 50}},   /* D3L */
-	{{159, 50},{191, 50}},   /* D3R */
-	{{92, 53},{131, 53}},   /* D2C */
-	{{-3, 53},{46, 53}},   /* D2L */
-	{{177, 53},{226, 53}},   /* D2R */
-	{{83, 57},{141, 57}},   /* D1C */
-	{{-54, 57},{18, 57}},   /* D1L */
-	{{207, 57},{277, 57}},   /* D1R */
-	{{0,  0},{0,  0}},   /* D0C */
-	{{-73, 60},{-33, 60}},   /* D0L */
-	{{256, 60},{296, 60}}}; /* D0R */
-int16 g227_RebirthStep2ExplosionCoordinates[7][3] = { // @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
-	/* { X, Y, Scale } */
-	{113, 57, 12},   /* D3C */
-	{24, 57, 12},   /* D3L */
-	{195, 57, 12},   /* D3R */
-	{111, 63, 16},   /* D2C */
-	{12, 63, 16},   /* D2L */
-	{213, 63, 16},   /* D2R */
-	{112, 76, 24}}; /* D1C */
-int16 g228_RebirthStep1ExplosionCoordinates[7][3] = { // @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
-	/* { X, Y, Scale } */
-	{112, 53, 15},   /* D3C */
-	{24, 53, 15},   /* D3L */
-	{194, 53, 15},   /* D3R */
-	{112, 59, 20},   /* D2C */
-	{15, 59, 20},   /* D2L */
-	{208, 59, 20},   /* D2R */
-	{112, 70, 32}}; /* D1C */
-
-int16 g225_CenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_CenteredExplosionCoordinates
-	/* { X, Y } */
-	{111, 47},   /* D4C */
-	{57, 47},   /* D4L */
-	{167, 47},   /* D4R */
-	{111, 50},   /* D3C */
-	{45, 50},   /* D3L */
-	{179, 50},   /* D3R */
-	{111, 53},   /* D2C */
-	{20, 53},   /* D2L */
-	{205, 53},   /* D2R */
-	{111, 57},   /* D1C */
-	{-30, 57},   /* D1L */
-	{253, 57},   /* D1R */
-	{111, 60},   /* D0C */
-	{-53, 60},   /* D0L */
-	{276, 60}}; /* D0R */
-
-#define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
 
 void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 mapXpos,
 							  int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
@@ -3052,9 +2884,189 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 	bool smoke;
 	FieldAspect fieldAspect;
 
-	if (thingParam == Thing::_endOfList) {
+	/* This is the full dungeon view */
+	Box g105_BoxExplosionPattern_D0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
+
+	byte g216_ExplosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
+		10,  /* D4 */
+		16,  /* D3 */
+		23,  /* D2 */
+		32,  /* D1 */
+		32   /* D0 */
+	};
+
+	byte g217_ObjectPileShiftSetIndices[16][2] = { // @ G0217_aauc_Graphic558_ObjectPileShiftSetIndices
+	/* { X shift index, Y shift index } */
+		{2, 5},
+		{0, 6},
+		{5, 7},
+		{3, 0},
+		{7, 1},
+		{1, 2},
+		{6, 3},
+		{3, 3},
+		{5, 5},
+		{2, 6},
+		{7, 7},
+		{1, 0},
+		{3, 1},
+		{6, 2},
+		{1, 3},
+		{5, 3}
+	};
+
+	byte g218_ObjectCoordinateSets[3][10][5][2] = { // @ G0218_aaaauc_Graphic558_ObjectCoordinateSets
+	/* { {X, Y }, {X, Y }, {X, Y }, {X, Y }, {X, Y } } */
+		{
+			{{  0,   0}, {  0,   0}, {125,  72}, { 95,  72}, {112, 64}},     /* D3C */
+			{{  0,   0}, {  0,   0}, { 62,  72}, { 25,  72}, { 24, 64}},     /* D3L */
+			{{  0,   0}, {  0,   0}, {200,  72}, {162,  72}, {194, 64}},     /* D3R */
+			{{ 92,  78}, {132,  78}, {136,  86}, { 88,  86}, {112, 74}},     /* D2C */
+			{{ 10,  78}, { 53,  78}, { 41,  86}, {  0,   0}, {  3, 74}},     /* D2L */
+			{{171,  78}, {218,  78}, {  0,   0}, {183,  86}, {219, 74}},     /* D2R */
+			{{ 83,  96}, {141,  96}, {148, 111}, { 76, 111}, {112, 94}},     /* D1C */
+			{{  0,   0}, { 26,  96}, {  5, 111}, {  0,   0}, {  0,  0}},     /* D1L */
+			{{197,  96}, {  0,   0}, {  0,   0}, {220, 111}, {  0,  0}},     /* D1R */
+			{{ 66, 131}, {158, 131}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
+		},
+		{
+			{{  0,   0}, {  0,   0}, {125,  72}, { 95,  72}, {112, 63}},     /* D3C */
+			{{  0,   0}, {  0,   0}, { 62,  72}, { 25,  72}, { 24, 63}},     /* D3L */
+			{{  0,   0}, {  0,   0}, {200,  72}, {162,  72}, {194, 63}},     /* D3R */
+			{{ 92,  78}, {132,  78}, {136,  86}, { 88,  86}, {112, 73}},     /* D2C */
+			{{ 10,  78}, { 53,  78}, { 41,  86}, {  0,   0}, {  3, 73}},     /* D2L */
+			{{171,  78}, {218,  78}, {  0,   0}, {183,  86}, {219, 73}},     /* D2R */
+			{{ 83,  96}, {141,  96}, {148, 111}, { 76, 111}, {112, 89}},     /* D1C */
+			{{  0,   0}, { 26,  96}, {  5, 111}, {  0,   0}, {  0,  0}},     /* D1L */
+			{{197,  96}, {  0,   0}, {  0,   0}, {220, 111}, {  0,  0}},     /* D1R */
+			{{ 66, 131}, {158, 131}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
+		},
+		{
+			{{  0,   0}, {  0,   0}, {125,  75}, { 95,  75}, {112, 65}},     /* D3C */
+			{{  0,   0}, {  0,   0}, { 62,  75}, { 25,  75}, { 24, 65}},     /* D3L */
+			{{  0,   0}, {  0,   0}, {200,  75}, {162,  75}, {194, 65}},     /* D3R */
+			{{ 92,  81}, {132,  81}, {136,  88}, { 88,  88}, {112, 76}},     /* D2C */
+			{{ 10,  81}, { 53,  81}, { 41,  88}, {  0,   0}, {  3, 76}},     /* D2L */
+			{{171,  81}, {218,  81}, {  0,   0}, {183,  88}, {219, 76}},     /* D2R */
+			{{ 83,  98}, {141,  98}, {148, 115}, { 76, 115}, {112, 98}},     /* D1C */
+			{{  0,   0}, { 26,  98}, {  5, 115}, {  0,   0}, {  0,  0}},     /* D1L */
+			{{197,  98}, {  0,   0}, {  0,   0}, {220, 115}, {  0,  0}},     /* D1R */
+			{{ 66, 135}, {158, 135}, {  0,   0}, {  0,   0}, {  0,  0}}      /* D0C */
+		}
+	};
+
+	int16 g223_ShiftSets[3][8] = { // @ G0223_aac_Graphic558_ShiftSets
+		{0, 1, 2, 3, 0, -3, -2, -1},   /* D0 Back or D1 Front */
+		{0, 1, 1, 2, 0, -2, -1, -1},   /* D1 Back or D2 Front */
+		{0, 1, 1, 1, 0, -1, -1, -1}    /* D2 Back or D3 Front */
+	};
+
+	byte g224_CreatureCoordinateSets[3][11][5][2] = { // @ G0224_aaaauc_Graphic558_CreatureCoordinateSets
+	/* { { X, Y }, { X, Y }, { X, Y }, { X, Y }, { X, Y } } */
+		{
+			{{ 95,  70}, {127,  70}, {129,  75}, { 93,  75}, {111,  72}},     /* D3C */
+			{{131,  70}, {163,  70}, {158,  75}, {120,  75}, {145,  72}},     /* D3L */
+			{{ 59,  70}, { 91,  70}, {107,  75}, { 66,  75}, { 79,  72}},     /* D3R */
+			{{ 92,  81}, {131,  81}, {132,  90}, { 91,  90}, {111,  85}},     /* D2C */
+			{{ 99,  81}, {146,  81}, {135,  90}, { 80,  90}, {120,  85}},     /* D2L */
+			{{ 77,  81}, {124,  81}, {143,  90}, { 89,  90}, {105,  85}},     /* D2R */
+			{{ 83, 103}, {141, 103}, {148, 119}, { 76, 119}, {109, 111}},     /* D1C */
+			{{ 46, 103}, {118, 103}, {101, 119}, {  0,   0}, { 79, 111}},     /* D1L */
+			{{107, 103}, {177, 103}, {  0,   0}, {123, 119}, {144, 111}},     /* D1R */
+			{{  0,   0}, { 67, 135}, {  0,   0}, {  0,   0}, {  0,   0}},     /* D0L */
+			{{156, 135}, {  0,   0}, {  0,   0}, {  0,   0}, {  0,   0}}      /* D0R */
+		},
+		{
+			{{ 94,  75}, {128,  75}, {111,  70}, {111,  72}, {111,  75}},     /* D3C */
+			{{120,  75}, {158,  75}, {149,  70}, {145,  72}, {150,  75}},     /* D3L */
+			{{ 66,  75}, {104,  75}, { 75,  70}, { 79,  72}, { 73,  75}},     /* D3R */
+			{{ 91,  90}, {132,  90}, {111,  83}, {111,  85}, {111,  90}},     /* D2C */
+			{{ 80,  90}, {135,  90}, {125,  83}, {120,  85}, {125,  90}},     /* D2L */
+			{{ 89,  90}, {143,  90}, { 99,  83}, {105,  85}, { 98,  90}},     /* D2R */
+			{{ 81, 119}, {142, 119}, {111, 105}, {111, 111}, {111, 119}},     /* D1C */
+			{{  0,   0}, {101, 119}, { 84, 105}, { 70, 111}, { 77, 119}},     /* D1L */
+			{{123, 119}, {  0,   0}, {139, 105}, {153, 111}, {146, 119}},     /* D1R */
+			{{  0,   0}, { 83, 130}, { 57, 121}, { 47, 126}, { 57, 130}},     /* D0L */
+			{{140, 130}, {  0,   0}, {166, 121}, {176, 126}, {166, 130}}      /* D0R */
+		},
+		{
+			{{ 95,  59}, {127,  59}, {129,  61}, { 93,  61}, {111,  60}},     /* D3C */
+			{{131,  59}, {163,  59}, {158,  61}, {120,  61}, {145,  60}},     /* D3L */
+			{{ 59,  59}, { 91,  59}, {107,  61}, { 66,  61}, { 79,  60}},     /* D3R */
+			{{ 92,  65}, {131,  65}, {132,  67}, { 91,  67}, {111,  66}},     /* D2C */
+			{{ 99,  65}, {146,  65}, {135,  67}, { 80,  67}, {120,  66}},     /* D2L */
+			{{ 77,  65}, {124,  65}, {143,  67}, { 89,  67}, {105,  66}},     /* D2R */
+			{{ 83,  79}, {141,  79}, {148,  85}, { 76,  85}, {111,  81}},     /* D1C */
+			{{ 46,  79}, {118,  79}, {101,  85}, {  0,   0}, { 79,  81}},     /* D1L */
+			{{107,  79}, {177,  79}, {  0,   0}, {123,  85}, {144,  81}},     /* D1R */
+			{{  0,   0}, { 67,  96}, {  0,   0}, {  0,   0}, {  0,   0}},     /* D0L */
+			{{156,  96}, {  0,   0}, {  0,   0}, {  0,   0}, {  0,   0}}      /* D0R */
+		}
+	};
+
+	int16 g226_ExplosionCoordinates[15][2][2] = { // @ G0226_aaai_Graphic558_ExplosionCoordinates
+	/* { { Front Left X, Front Left Y }, { Front Right X, Front Right Y } } */
+		{{100, 47}, {122, 47}},   /* D4C */
+		{{ 52, 47}, { 76, 47}},   /* D4L */
+		{{148, 47}, {172, 47}},   /* D4R */
+		{{ 95, 50}, {127, 50}},   /* D3C */
+		{{ 31, 50}, { 63, 50}},   /* D3L */
+		{{159, 50}, {191, 50}},   /* D3R */
+		{{ 92, 53}, {131, 53}},   /* D2C */
+		{{ -3, 53}, { 46, 53}},   /* D2L */
+		{{177, 53}, {226, 53}},   /* D2R */
+		{{ 83, 57}, {141, 57}},   /* D1C */
+		{{-54, 57}, { 18, 57}},   /* D1L */
+		{{207, 57}, {277, 57}},   /* D1R */
+		{{  0,  0}, {  0,  0}},   /* D0C */
+		{{-73, 60}, {-33, 60}},   /* D0L */
+		{{256, 60}, {296, 60}}    /* D0R */
+	};
+
+	int16 g227_RebirthStep2ExplosionCoordinates[7][3] = { // @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
+	/* { X, Y, Scale } */
+		{113, 57, 12},   /* D3C */
+		{ 24, 57, 12},   /* D3L */
+		{195, 57, 12},   /* D3R */
+		{111, 63, 16},   /* D2C */
+		{ 12, 63, 16},   /* D2L */
+		{213, 63, 16},   /* D2R */
+		{112, 76, 24}    /* D1C */
+	};
+
+	int16 g228_RebirthStep1ExplosionCoordinates[7][3] = { // @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
+	/* { X, Y, Scale } */
+		{112, 53, 15},   /* D3C */
+		{ 24, 53, 15},   /* D3L */
+		{194, 53, 15},   /* D3R */
+		{112, 59, 20},   /* D2C */
+		{ 15, 59, 20},   /* D2L */
+		{208, 59, 20},   /* D2R */
+		{112, 70, 32} /* D1C */
+	};
+
+	int16 g225_CenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_CenteredExplosionCoordinates
+		/* { X, Y } */
+		{111, 47},   /* D4C */
+		{ 57, 47},   /* D4L */
+		{167, 47},   /* D4R */
+		{111, 50},   /* D3C */
+		{ 45, 50},   /* D3L */
+		{179, 50},   /* D3R */
+		{111, 53},   /* D2C */
+		{ 20, 53},   /* D2L */
+		{205, 53},   /* D2R */
+		{111, 57},   /* D1C */
+		{-30, 57},   /* D1L */
+		{253, 57},   /* D1R */
+		{111, 60},   /* D0C */
+		{-53, 60},   /* D0L */
+		{276, 60}    /* D0R */
+	};
+
+	if (thingParam == Thing::_endOfList)
 		return;
-	}
+
 	group = 0;
 	groupThing = Thing::_none;
 	drawCreaturesCompleted = sqaureHasProjectile = squareHasExplosion = false;
@@ -3732,9 +3744,9 @@ bool DisplayMan::f491_isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 		// * 2, because the original uses 4 bits instead of 8 bits to store a pixel
 		_g638_derivedBitmaps[derivedBitmapIndex] = new byte[_g639_derivedBitmapByteCount[derivedBitmapIndex] * 2];
 		return false;
-	} else {
-		return true;
-	}
+	} 
+
+	return true;
 }
 
 byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
@@ -3751,15 +3763,15 @@ void DisplayMan::f480_releaseBlock(uint16 index) {
 }
 
 uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
-	if (getFlag(RGBcolor, D12_MASK_BLUE_COMPONENT)) {
+	if (getFlag(RGBcolor, D12_MASK_BLUE_COMPONENT))
 		RGBcolor--;
-	}
-	if (getFlag(RGBcolor, D11_MASK_GREEN_COMPONENT)) {
+
+	if (getFlag(RGBcolor, D11_MASK_GREEN_COMPONENT))
 		RGBcolor -= 16;
-	}
-	if (getFlag(RGBcolor, D10_MASK_RED_COMPONENT)) {
+
+	if (getFlag(RGBcolor, D10_MASK_RED_COMPONENT))
 		RGBcolor -= 256;
-	}
+
 	return RGBcolor;
 }
 
