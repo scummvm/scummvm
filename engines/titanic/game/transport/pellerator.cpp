@@ -93,7 +93,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 					for (int idx = 0; idx < 5; ++idx)
 						playMovie(253, 263, 0);
 					playMovie(153, 197, 0);
-					for (int idx = 0; idx, 5; ++idx)
+					for (int idx = 0; idx < 5; ++idx)
 						playMovie(253, 263, 0);
 					playMovie(290, 293, MOVIE_GAMESTATE);
 					break;
