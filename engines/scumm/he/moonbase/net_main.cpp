@@ -158,6 +158,19 @@ bool Net::initUser() {
 	return false;
 }
 
+void Net::remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args) {
+	warning("STUB: Net::remoteStartScript(%d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, argsCount); // PN_RemoteStartScriptCommand
+}
+
+void Net::remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex) {
+	warning("STUB: Net::remoteSendArray(%d, %d, %d, %d)", typeOfSend, sendTypeParam, priority, arrayIndex); // PN_RemoteSendArrayCommand
+}
+
+int Net::remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args) {
+	warning("STUB: Net::remoteStartScriptFunction(%d, %d, %d, %d, %d, ...)", typeOfSend, sendTypeParam, priority, defaultReturnValue, argsCount); // PN_RemoteStartScriptFunction
+	return 0;
+}
+
 bool Net::getHostName(char *hostname, int length) {
 	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
 	return false;

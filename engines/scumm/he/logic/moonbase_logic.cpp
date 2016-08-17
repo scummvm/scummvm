@@ -374,14 +374,15 @@ void LogicHEmoonbase::op_ai_clean_up(int op, int numArgs, int32 *args) {
 
 #ifdef USE_SDL_NET
 void LogicHEmoonbase::op_net_remote_start_script(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_remote_start_script()");
+	_vm1->_moonbase->_net->remoteStartScript(args[0], args[1], args[2], numArgs - 3, &args[3]);
 }
+
 void LogicHEmoonbase::op_net_remote_send_array(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_remote_send_array()");
+	_vm1->_moonbase->_net->remoteSendArray(args[0], args[1], args[2], args[3]);
 }
+
 int LogicHEmoonbase::op_net_remote_start_function(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_remote_start_function()");
-	return 1;
+	return _vm1->_moonbase->_net->remoteStartScriptFunction(args[0], args[1], args[2], args[3], numArgs - 4, &args[4]);
 }
 
 int LogicHEmoonbase::op_net_do_init_all(int op, int numArgs, int32 *args) {

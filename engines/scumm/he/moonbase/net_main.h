@@ -59,6 +59,9 @@ public:
 	bool initProvider();
 	bool initSession();
 	bool initUser();
+	void remoteStartScript(int typeOfSend, int sendTypeParam, int priority, int argsCount, int32 *args);
+	void remoteSendArray(int typeOfSend, int sendTypeParam, int priority, int arrayIndex);
+	int remoteStartScriptFunction(int typeOfSend, int sendTypeParam, int priority, int defaultReturnValue, int argsCount, int32 *args);
 
 private:
 
