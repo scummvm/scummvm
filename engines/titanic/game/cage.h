@@ -28,9 +28,15 @@
 namespace Titanic {
 
 class CCage : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
+	bool MouseMoveMsg(CMouseMoveMsg *msg);
 public:
 	static int _v1;
-	static int _v2;
+	static bool _open;
 public:
 	CLASSDEF;
 
