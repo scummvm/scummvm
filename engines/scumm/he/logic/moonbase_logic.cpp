@@ -431,13 +431,15 @@ int LogicHEmoonbase::op_net_query_sessions(int op, int numArgs, int32 *args) {
 	warning("STUB: op_net_query_sessions()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_get_session_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_session_name()");
-	return 1;
+	char name[MAX_PROVIDER_NAME];
+	_vm1->_moonbase->_net->getSessionName(args[0] - 1, name, sizeof(name));
+	return _vm1->setupStringArrayFromString(name);
 }
+
 int LogicHEmoonbase::op_net_get_session_player_count(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_session_player_count()");
-	return 1;
+	return _vm1->_moonbase->_net->getSessionPlayerCount(args[0] - 1);
 }
 
 int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {	

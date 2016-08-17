@@ -114,4 +114,15 @@ bool Net::getIPfromName(char *ip, int ipLength, char *nameBuffer) {
 	return false;
 }
 
+void Net::getSessionName(int sessionNumber, char *buffer, int length) {
+	warning("STUB: Net::getSessionPlayerCount(%d, \"%s\", %d)", sessionNumber, buffer, length); // PN_GetSessionName
+}
+
+int Net::getSessionPlayerCount(int sessionNumber) {
+	warning("STUB: Net::getSessionPlayerCount(%d)", sessionNumber); // case GET_SESSION_PLAYER_COUNT_KLUDGE:
+	//assert(sessionNumber >= 0 && sessionNumber < NUMELEMENTS(gdefMultiPlay.gamedescptr));
+	//return gdefMultiPlay.gamedescptr[sessionNumber].currentplayers;
+	return 0;
+}
+
 } // End of namespace Scumm

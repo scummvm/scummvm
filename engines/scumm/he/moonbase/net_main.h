@@ -55,7 +55,8 @@ public:
 	//getters
 	bool getHostName(char *hostname, int length);
 	bool getIPfromName(char *ip, int ipLength, char *nameBuffer);
-
+	void getSessionName(int sessionNumber, char *buffer, int length);
+	int getSessionPlayerCount(int sessionNumber);
 private:
 	//mostly getters
 
