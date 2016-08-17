@@ -29,7 +29,7 @@
 
 namespace MacVenture {
 
-ScriptEngine::ScriptEngine(MacVentureEngine * engine, World * world) {
+ScriptEngine::ScriptEngine(MacVentureEngine *engine, World *world) {
 	_engine = engine;
 	_world = world;
 	_scripts = new Container(_engine->getFilePath(kFilterPathID));
@@ -100,12 +100,12 @@ bool ScriptEngine::execFrame(bool execAll) {
 	if (frame->haltedInFamily || doFamily) { // We have to do the family or we were stuck here
 		frame->haltedInFamily = false;
 		Common::Array<ObjID> family = _world->getFamily(_world->getObjAttr(1, kAttrParentObject), false);
-		uint32 i = frame->familyIdx;
-		for (; i < family.size(); i++) {
+		for (uint32 i = frame->familyIdx; i < family.size(); i++) {
 			if (doFamily) {
 				fail = loadScript(frame, family[i]);
+			} else {
+				fail = resumeFunc(frame);
 			}
-			else { fail = resumeFunc(frame); }
 			if (fail) { // We are stuck, so we don't shift the frame
 				frame->haltedInFamily = true;
 				frame->familyIdx = i;
@@ -130,7 +130,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 	uint localHigh = 0;
 	do { // Saved function calls
 		highest = 0;
-		for (uint i = 0; i <frame->saves.size(); i++) {
+		for (uint i = 0; i < frame->saves.size(); i++) {
 			if (highest < frame->saves[i].rank) {
 				highest = frame->saves[i].rank;
 				localHigh = i;
@@ -150,7 +150,7 @@ bool ScriptEngine::execFrame(bool execAll) {
 	return false;
 }
 
-bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
+bool ScriptEngine::loadScript(EngineFrame *frame, uint32 scriptID) {
 	if (_scripts->getItemByteSize(scriptID) > 0) {
 		debugC(2, kMVDebugScript, "Loading function %d", scriptID);
 		// Insert the new script at the front
@@ -160,7 +160,7 @@ bool ScriptEngine::loadScript(EngineFrame * frame, uint32 scriptID) {
 	return false;
 }
 
-bool ScriptEngine::resumeFunc(EngineFrame * frame) {
+bool ScriptEngine::resumeFunc(EngineFrame *frame) {
 	bool fail = runFunc(frame);
 	if (fail) {
 		return fail;
@@ -525,81 +525,81 @@ word ScriptEngine::sumChildrenAttr(word obj, word attr, bool recursive) {
 	return sum;
 }
 
-void MacVenture::ScriptEngine::op80GATT(EngineState * state, EngineFrame * frame) {
+void MacVenture::ScriptEngine::op80GATT(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	word attr = state->pop();
 	state->push(_world->getObjAttr(obj, attr));
 }
 
-void ScriptEngine::op81SATT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op81SATT(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	word attr = state->pop();
 	word val = neg16(state->pop());
 	_world->setObjAttr(obj, attr, val);
 }
 
-void ScriptEngine::op82SUCH(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op82SUCH(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	word attr = state->pop();
 	word recursive = neg16(state->pop());
 	state->push(sumChildrenAttr(obj, attr, recursive));
 }
 
-void ScriptEngine::op83PUCT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op83PUCT(EngineState *state, EngineFrame *frame) {
 	state->push(frame->action);
 }
 
-void ScriptEngine::op84PUOB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op84PUOB(EngineState *state, EngineFrame *frame) {
 	state->push(frame->src);
 }
 
-void ScriptEngine::op85PUTA(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op85PUTA(EngineState *state, EngineFrame *frame) {
 	state->push(frame->dest);
 }
 
-void ScriptEngine::op86PUDX(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op86PUDX(EngineState *state, EngineFrame *frame) {
 	state->push(frame->x);
 }
 
-void ScriptEngine::op87PUDY(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op87PUDY(EngineState *state, EngineFrame *frame) {
 	state->push(frame->y);
 }
 
-void ScriptEngine::op88PUIB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::op88PUIB(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	state->push(script->fetch());
 }
 
-void ScriptEngine::op89PUI(EngineState * state, EngineFrame * frame, ScriptAsset * script) {
+void ScriptEngine::op89PUI(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val <<= 8;
 	val = val | script->fetch();
 	state->push(val);
 }
 
-void ScriptEngine::op8aGGLO(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8aGGLO(EngineState *state, EngineFrame *frame) {
 	word idx = state->pop();
 	state->push(_world->getGlobal(idx));
 }
 
-void ScriptEngine::op8bSGLO(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8bSGLO(EngineState *state, EngineFrame *frame) {
 	word idx = state->pop();
 	word val = neg16(state->pop());
 	_world->setGlobal(idx, val);
 	_engine->gameChanged();
 }
 
-void ScriptEngine::op8cRAND(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8cRAND(EngineState *state, EngineFrame *frame) {
 	word max = state->pop();
 	state->push(_engine->randBetween(0, max));
 }
 
-void ScriptEngine::op8dCOPY(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8dCOPY(EngineState *state, EngineFrame *frame) {
 	word val = state->pop();
 	state->push(val);
 	state->push(val);
 }
 
-void ScriptEngine::op8eCOPYN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8eCOPYN(EngineState *state, EngineFrame *frame) {
 	word n = state->pop();
 	word offs = n - 1;
 	word val;
@@ -610,14 +610,14 @@ void ScriptEngine::op8eCOPYN(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-void ScriptEngine::op8fSWAP(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op8fSWAP(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(b);
 	state->push(a);
 }
 
-void ScriptEngine::op90SWAPN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op90SWAPN(EngineState *state, EngineFrame *frame) {
 	word idx = state->pop();
 	word a = state->peek(idx);
 	word b = state->peek(0);
@@ -625,22 +625,22 @@ void ScriptEngine::op90SWAPN(EngineState * state, EngineFrame * frame) {
 	state->poke(0, a);
 }
 
-void ScriptEngine::op91POP(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op91POP(EngineState *state, EngineFrame *frame) {
 	state->pop();
 }
 
-void ScriptEngine::op92COPYP(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op92COPYP(EngineState *state, EngineFrame *frame) {
 	word val = state->peek(1);
 	state->push(val);
 }
 
-void ScriptEngine::op93COPYPN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op93COPYPN(EngineState *state, EngineFrame *frame) {
 	word idx = state->pop();
 	word val = state->peek(idx);
 	state->push(val);
 }
 
-void ScriptEngine::op94SHUFF(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op94SHUFF(EngineState *state, EngineFrame *frame) {
 	word a = state->pop();
 	word b = state->pop();
 	word c = state->pop();
@@ -649,7 +649,7 @@ void ScriptEngine::op94SHUFF(EngineState * state, EngineFrame * frame) {
 	state->push(b);
 }
 
-void ScriptEngine::op95SORT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op95SORT(EngineState *state, EngineFrame *frame) {
 	word step = neg16(state->pop());
 	word num = neg16(state->pop());
 	step %= num;
@@ -658,7 +658,7 @@ void ScriptEngine::op95SORT(EngineState * state, EngineFrame * frame) {
 	}
 	word end = 0;
 	word start = 0;
-	for (word i = 1;i<num;i++) {
+	for (word i = 1; i < num; i++) {
 		start += step;
 		if (start >= num) {
 			start -= num;
@@ -675,52 +675,52 @@ void ScriptEngine::op95SORT(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-void ScriptEngine::op96CLEAR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op96CLEAR(EngineState *state, EngineFrame *frame) {
 	state->clear();
 }
 
-void ScriptEngine::op97SIZE(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op97SIZE(EngineState *state, EngineFrame *frame) {
 	state->push(state->size());
 }
 
-void ScriptEngine::op98ADD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op98ADD(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a + b);
 }
 
-void ScriptEngine::op99SUB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op99SUB(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a - b);
 }
 
-void ScriptEngine::op9aMUL(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9aMUL(EngineState *state, EngineFrame *frame) {
 	int16 b = state->pop();
 	int16 a = state->pop();
 	state->push(a * b);
 }
 
-void ScriptEngine::op9bDIV(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9bDIV(EngineState *state, EngineFrame *frame) {
 	int16 b = state->pop();
 	int16 a = state->pop();
 	state->push((a / b) | 0);
 }
 
-void ScriptEngine::op9cMOD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9cMOD(EngineState *state, EngineFrame *frame) {
 	int16 b = state->pop();
 	int16 a = state->pop();
 	state->push(a % b);
 }
 
-void ScriptEngine::op9dDMOD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9dDMOD(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a % b);
 	state->push((a / b) | 0);
 }
 
-void ScriptEngine::op9eABS(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9eABS(EngineState *state, EngineFrame *frame) {
 	word val = neg16(state->pop());
 	if (val < 0) {
 		val = -val;
@@ -728,110 +728,110 @@ void ScriptEngine::op9eABS(EngineState * state, EngineFrame * frame) {
 	state->push(val);
 }
 
-void ScriptEngine::op9fNEG(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::op9fNEG(EngineState *state, EngineFrame *frame) {
 	word val = -neg16(state->pop());
 	state->push(val);
 }
 
-void ScriptEngine::opa0AND(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa0AND(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a & b);
 }
 
-void ScriptEngine::opa1OR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa1OR(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a | b);
 }
 
-void ScriptEngine::opa2XOR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa2XOR(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(a ^ b);
 }
 
-void ScriptEngine::opa3NOT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa3NOT(EngineState *state, EngineFrame *frame) {
 	word a = state->pop();
 	state->push(a ^ 0xFFFF);
 }
 
-void ScriptEngine::opa4LAND(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa4LAND(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push((a && b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opa5LOR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa5LOR(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push((a || b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opa6LXOR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa6LXOR(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push((!a != !b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opa7LNOT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa7LNOT(EngineState *state, EngineFrame *frame) {
 	word a = state->pop();
 	state->push((a == 0) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opa8GTU(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa8GTU(EngineState *state, EngineFrame *frame) {
 	uint16 b = state->pop();
 	uint16 a = state->pop();
 	state->push((a > b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opa9LTU(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opa9LTU(EngineState *state, EngineFrame *frame) {
 	uint16 b = state->pop();
 	uint16 a = state->pop();
 	state->push((a < b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opaaGTS(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opaaGTS(EngineState *state, EngineFrame *frame) {
 	// HACK !!! May not need the neg16, since word is already a signed int!!
 	word b = neg16(state->pop());
 	word a = neg16(state->pop());
 	state->push((a > b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opabLTS(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opabLTS(EngineState *state, EngineFrame *frame) {
 	// HACK !!! May not need the neg16, since word is already a signed int!!
 	word b = neg16(state->pop());
 	word a = neg16(state->pop());
 	state->push((a < b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opacEQ(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opacEQ(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push((a == b) ? 0xFFFF : 0);
 }
 
-void ScriptEngine::opadEQS(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opadEQS(EngineState *state, EngineFrame *frame) {
 	Common::String b = _world->getText(state->pop(), 0, 0); // HACK, these destinations might be wrong
 	Common::String a = _world->getText(state->pop(), 0, 0);
 	state->push((a == b) ? 1 : 0);
 }
 
-void ScriptEngine::opaeCONT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opaeCONT(EngineState *state, EngineFrame *frame) {
 	Common::String needle = _world->getText(state->pop(), 0, 0);
 	Common::String haystack = _world->getText(state->pop(), 0, 0);
 	haystack.toLowercase();
 	state->push(haystack.contains(needle) ? 1 : 0);
 }
 
-void ScriptEngine::opafCONTW(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opafCONTW(EngineState *state, EngineFrame *frame) {
 	Common::String needle = _world->getText(state->pop(), 0, 0);
 	Common::String haystack = _world->getText(state->pop(), 0, 0);
 	haystack.toLowercase();
 	state->push(haystack.contains(needle) ? 1 : 0);
 }
 
-void ScriptEngine::opb0BRA(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb0BRA(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val <<= 8;
 	val = val | script->fetch();
@@ -839,13 +839,13 @@ void ScriptEngine::opb0BRA(EngineState * state, EngineFrame * frame, ScriptAsset
 	script->branch(val);
 }
 
-void ScriptEngine::opb1BRAB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb1BRAB(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val = neg8(val);
 	script->branch(val);
 }
 
-void ScriptEngine::opb2BEQ(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb2BEQ(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val <<= 8;
 	val = val | script->fetch();
@@ -856,7 +856,7 @@ void ScriptEngine::opb2BEQ(EngineState * state, EngineFrame * frame, ScriptAsset
 	}
 }
 
-void ScriptEngine::opb3BEQB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb3BEQB(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val = neg8(val);
 	word b = state->pop();
@@ -865,7 +865,7 @@ void ScriptEngine::opb3BEQB(EngineState * state, EngineFrame * frame, ScriptAsse
 	}
 }
 
-void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb4BNE(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val <<= 8;
 	val = val | script->fetch();
@@ -876,7 +876,7 @@ void ScriptEngine::opb4BNE(EngineState * state, EngineFrame * frame, ScriptAsset
 	}
 }
 
-void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsset *script) {
+void ScriptEngine::opb5BNEB(EngineState *state, EngineFrame *frame, ScriptAsset *script) {
 	word val = script->fetch();
 	val = neg8(val);
 	word b = state->pop();
@@ -885,13 +885,13 @@ void ScriptEngine::opb5BNEB(EngineState * state, EngineFrame * frame, ScriptAsse
 	}
 }
 
-void ScriptEngine::opb6CLAT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opb6CLAT(EngineState *state, EngineFrame *frame) {
 	word rank = state->pop();
 	word func = state->pop();
 	frame->saves.push_back(FunCall(func, rank));
 }
 
-void ScriptEngine::opb7CCA(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opb7CCA(EngineState *state, EngineFrame *frame) {
 	word func = state->pop();
 	for (uint i = 0; i < frame->saves.size(); i++) {
 		if (frame->saves[i].func == func)
@@ -899,26 +899,26 @@ void ScriptEngine::opb7CCA(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-void ScriptEngine::opb8CLOW(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opb8CLOW(EngineState *state, EngineFrame *frame) {
 	word hi = state->pop();
-	for (uint i = 0;i<frame->saves.size();i++)
+	for (uint i = 0; i < frame->saves.size(); i++)
 		if (frame->saves[i].rank <= hi)
 			frame->saves[i].rank = 0;
 }
 
-void ScriptEngine::opb9CHI(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opb9CHI(EngineState *state, EngineFrame *frame) {
 	word lo = state->pop();
-	for (uint i = 0;i<frame->saves.size();i++) {
+	for (uint i = 0; i < frame->saves.size(); i++) {
 		if (frame->saves[i].rank >= lo) {
 			frame->saves[i].rank = 0;
 		}
 	}
 }
 
-void ScriptEngine::opbaCRAN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opbaCRAN(EngineState *state, EngineFrame *frame) {
 	word hi = state->pop();
 	word lo = state->pop();
-	for (uint i = 0;i<frame->saves.size();i++) {
+	for (uint i = 0; i < frame->saves.size(); i++) {
 		if (frame->saves[i].rank >= lo &&
 			frame->saves[i].rank <= hi) {
 			frame->saves[i].rank = 0;
@@ -926,7 +926,7 @@ void ScriptEngine::opbaCRAN(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-bool ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
+bool ScriptEngine::opbbFORK(EngineState *state, EngineFrame *frame) {
 	EngineFrame newframe;
 	newframe.action = (ControlAction)state->pop();
 	newframe.src = state->pop();
@@ -943,7 +943,7 @@ bool ScriptEngine::opbbFORK(EngineState * state, EngineFrame * frame) {
 	return false;
 }
 
-bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsset &script) {
+bool ScriptEngine::opbcCALL(EngineState *state, EngineFrame *frame, ScriptAsset &script) {
 	word id = state->pop();
 	ScriptAsset newfun = ScriptAsset(id, _scripts);
 	ScriptAsset current = script;
@@ -956,12 +956,12 @@ bool ScriptEngine::opbcCALL(EngineState * state, EngineFrame * frame, ScriptAsse
 	return false;
 }
 
-void ScriptEngine::opbdFOOB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opbdFOOB(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	_engine->enqueueObject(kFocusWindow, obj);
 }
 
-void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opbeSWOB(EngineState *state, EngineFrame *frame) {
 	ObjID from = state->pop();
 	ObjID to = state->pop();
 	_engine->enqueueObject(kUpdateWindow, from, to);
@@ -973,62 +973,63 @@ void ScriptEngine::opbeSWOB(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-void ScriptEngine::opbfSNOB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opbfSNOB(EngineState *state, EngineFrame *frame) {
 	_engine->enqueueObject(kAnimateBack, frame->src);
 }
 
-void ScriptEngine::opc0TEXI(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc0TEXI(EngineState *state, EngineFrame *frame) {
 	_engine->enqueueObject(kHightlightExits, 0);
 }
 
-void ScriptEngine::opc1PTXT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc1PTXT(EngineState *state, EngineFrame *frame) {
 	word tid = state->pop();
 	_engine->enqueueText(kTextPlain, frame->dest, frame->src, tid);
 }
 
-void ScriptEngine::opc2PNEW(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc2PNEW(EngineState *state, EngineFrame *frame) {
 	_engine->enqueueText(kTextNewLine, frame->dest, frame->src, 0);
 }
 
-void ScriptEngine::opc3PTNE(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc3PTNE(EngineState *state, EngineFrame *frame) {
 	word tid = state->pop();
 	_engine->enqueueText(kTextPlain, frame->dest, frame->src, tid);
 	_engine->enqueueText(kTextNewLine, frame->dest, frame->src, 0);
 }
 
-void ScriptEngine::opc4PNTN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc4PNTN(EngineState *state, EngineFrame *frame) {
 	word tid = state->pop();
 	_engine->enqueueText(kTextNewLine, frame->dest, frame->src, 0);
 	_engine->enqueueText(kTextPlain, frame->dest, frame->src, tid);
 	_engine->enqueueText(kTextNewLine, frame->dest, frame->src, 0);
 }
 
-void ScriptEngine::opc5PNUM(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc5PNUM(EngineState *state, EngineFrame *frame) {
 	word tid = state->pop();
 	_engine->enqueueText(kTextNumber, frame->dest, frame->src, tid);
 }
 
-void ScriptEngine::opc6P2(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc6P2(EngineState *state, EngineFrame *frame) {
 	state->push(2);
 }
 
-void ScriptEngine::opc7PLBG(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc7PLBG(EngineState *state, EngineFrame *frame) {
 	word target = state->pop();
 	_engine->enqueueSound(kSoundPlay, target);
 }
 
-void ScriptEngine::opc8PLAW(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc8PLAW(EngineState *state, EngineFrame *frame) {
 	word target = state->pop();
 	_engine->enqueueSound(kSoundPlayAndWait, target);
 }
 
-void ScriptEngine::opc9WAIT(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opc9WAIT(EngineState *state, EngineFrame *frame) {
 	_engine->enqueueSound(kSoundWait, 0);
 }
 
-void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
-	for (uint i = 0; i < 3; i++) // We skip year, month and date
+void ScriptEngine::opcaTIME(EngineState *state, EngineFrame *frame) {
+	for (uint i = 0; i < 3; i++) {// We skip year, month and date
 		state->push(0x00);
+	}
 
 	uint32 totalPlayTime = _engine->getTotalPlayTime() / 1000; // In seconds
 	word hours = totalPlayTime / 3600;
@@ -1041,12 +1042,12 @@ void ScriptEngine::opcaTIME(EngineState * state, EngineFrame * frame) {
 	debugC(2, kMVDebugScript, "Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
 }
 
-void ScriptEngine::opcbDAY(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opcbDAY(EngineState *state, EngineFrame *frame) {
 	// Probaby irrelevant, so we push Day [9]
 	state->push(9);
 }
 
-void ScriptEngine::opccCHLD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opccCHLD(EngineState *state, EngineFrame *frame) {
 	bool recursive = state->pop() != 0;
 	word obj = state->pop();
 	Common::Array<ObjID> children = _world->getChildren(obj, recursive);
@@ -1056,49 +1057,49 @@ void ScriptEngine::opccCHLD(EngineState * state, EngineFrame * frame) {
 	state->push(children.size());
 }
 
-void ScriptEngine::opcdNCHLD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opcdNCHLD(EngineState *state, EngineFrame *frame) {
 	bool recursive = state->pop() != 0;
 	word obj = state->pop();
 	Common::Array<ObjID> children = _world->getChildren(obj, recursive);
 	state->push(children.size());
 }
 
-void ScriptEngine::opceVERS(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opceVERS(EngineState *state, EngineFrame *frame) {
 	state->push(86);
 }
 
-void ScriptEngine::opcfPSCE(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opcfPSCE(EngineState *state, EngineFrame *frame) {
 	state->push(0); //Not release
 }
 
-void ScriptEngine::opd0P1(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd0P1(EngineState *state, EngineFrame *frame) {
 	state->push(1);
 }
 
-void ScriptEngine::opd1GOBD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd1GOBD(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	Common::Rect bounds = _engine->getObjBounds(obj);
 	state->push(bounds.width());
 	state->push(bounds.height());
 }
 
-void ScriptEngine::opd2GOVP(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd2GOVP(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	state->push(_engine->getOverlapPercent(b, a));
 }
 
-void ScriptEngine::opd3CAPC(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd3CAPC(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	_world->captureChildren(obj);
 }
 
-void ScriptEngine::opd4RELC(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd4RELC(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	_world->releaseChildren(obj);
 }
 
-void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd5DLOG(EngineState *state, EngineFrame *frame) {
 	word txt = state->pop();
 	if (_engine->showTextEntry(txt, frame->src, frame->dest)) {
 		state->push(0xFF);
@@ -1107,60 +1108,60 @@ void ScriptEngine::opd5DLOG(EngineState * state, EngineFrame * frame) {
 	}
 }
 
-void ScriptEngine::opd6ACMD(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd6ACMD(EngineState *state, EngineFrame *frame) {
 	_engine->selectControl((ControlAction)state->pop());
 }
 
-void ScriptEngine::opd7LOSE(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd7LOSE(EngineState *state, EngineFrame *frame) {
 	_engine->loseGame();
 }
 
-void ScriptEngine::opd8WIN(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd8WIN(EngineState *state, EngineFrame *frame) {
 	_engine->winGame();
 }
 
-void ScriptEngine::opd9SLEEP(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opd9SLEEP(EngineState *state, EngineFrame *frame) {
 	word ticks = state->pop();
 	g_system->delayMillis((ticks / 60) * 1000);
 	_engine->preparedToRun();
 }
 
-void ScriptEngine::opdaCLICK(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opdaCLICK(EngineState *state, EngineFrame *frame) {
 	_engine->updateState(false);
 	_engine->clickToContinue();
 }
 
-void ScriptEngine::opdbROBQ(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opdbROBQ(EngineState *state, EngineFrame *frame) {
 	_engine->runObjQueue();
 }
 
-void ScriptEngine::opdcRSQ(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opdcRSQ(EngineState *state, EngineFrame *frame) {
 	_engine->playSounds(true);
 }
 
-void ScriptEngine::opddRTQ(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opddRTQ(EngineState *state, EngineFrame *frame) {
 	_engine->printTexts();
 }
 
-void ScriptEngine::opdeUPSC(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opdeUPSC(EngineState *state, EngineFrame *frame) {
 	_engine->updateState(true);
 }
 
-void ScriptEngine::opdfFMAI(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::opdfFMAI(EngineState *state, EngineFrame *frame) {
 	word ticks = state->pop();
 	g_system->delayMillis((ticks / 60) * 1000);
 	_engine->revert();
 }
 
-void ScriptEngine::ope0CHGR(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope0CHGR(EngineState *state, EngineFrame *frame) {
 	state->pop();
 }
 
-void ScriptEngine::ope1CHSO(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope1CHSO(EngineState *state, EngineFrame *frame) {
 	state->pop();
 }
 
-void ScriptEngine::ope2MDIV(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope2MDIV(EngineState *state, EngineFrame *frame) {
 	word b = state->pop();
 	word a = state->pop();
 	a *= b;
@@ -1169,25 +1170,25 @@ void ScriptEngine::ope2MDIV(EngineState * state, EngineFrame * frame) {
 	state->push(a | 0);
 }
 
-void ScriptEngine::ope3UPOB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope3UPOB(EngineState *state, EngineFrame *frame) {
 	word obj = state->pop();
 	_world->updateObj(obj);
 }
 
-void ScriptEngine::ope4PLEV(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope4PLEV(EngineState *state, EngineFrame *frame) {
 	state->push(0);
 }
 
-void ScriptEngine::ope5WEV(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope5WEV(EngineState *state, EngineFrame *frame) {
 	op00NOOP(0xe5);
 }
 
-void ScriptEngine::ope6GFIB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope6GFIB(EngineState *state, EngineFrame *frame) {
 	state->push(0);
 	op00NOOP(0xe6);
 }
 
-void ScriptEngine::ope7CFIB(EngineState * state, EngineFrame * frame) {
+void ScriptEngine::ope7CFIB(EngineState *state, EngineFrame *frame) {
 	state->pop();
 	op00NOOP(0xe7);
 }
@@ -1198,7 +1199,7 @@ void ScriptEngine::op00NOOP(byte op) {
 
 
 
-ScriptAsset::ScriptAsset(ObjID id, Container * container) {
+ScriptAsset::ScriptAsset(ObjID id, Container *container) {
 	_id = id;
 	_container = container;
 	_ip = 0x0;

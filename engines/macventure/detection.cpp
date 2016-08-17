@@ -54,14 +54,14 @@ public:
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
 	}
 
-	virtual const char * getName() const override {
+	virtual const char *getName() const override {
 		return "MacVenture";
 	}
-	virtual const char * getOriginalCopyright() const override {
+	virtual const char *getOriginalCopyright() const override {
 		return "(C) ICOM Simulations";
 	}
 
-	virtual bool createInstance(OSystem * syst, Engine ** engine, const ADGameDescription * desc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -121,7 +121,7 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 
 int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-bool MacVentureMetaEngine::createInstance(OSystem * syst, Engine ** engine, const ADGameDescription *game) const {
+bool MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
 	if (game) {
 		*engine = new MacVenture::MacVentureEngine(syst, game);
 	}

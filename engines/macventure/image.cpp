@@ -61,7 +61,7 @@ static const byte loadBits[] = {
 	0xff
 };
 
-ImageAsset::ImageAsset(ObjID original, Container * container) {
+ImageAsset::ImageAsset(ObjID original, Container *container) {
 	_id = (original * 2);
 	_mask = (original * 2) + 1;
 
@@ -147,7 +147,7 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 	delete baseStream;
 }
 
-void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC0(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint words = bitWidth >> 4;
 	uint bytes = bitWidth & 0xF;
 	uint v = 0;
@@ -170,15 +170,15 @@ void ImageAsset::decodePPIC0(Common::BitStream & stream, Common::Array<byte> &da
 
 }
 
-void ImageAsset::decodePPIC1(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC1(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	decodeHuffGraphic(PPIC1Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC2(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC2(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	decodeHuffGraphic(PPIC2Huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodePPIC3(Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	// We need to load the huffman from the PPIC itself
 	PPICHuff huff;
 	uint16 v, bits;
@@ -192,10 +192,13 @@ void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &da
 		huff.symbols[loadBits[load++]] = v;
 	}
 	huff.symbols[0x10] = 0;
-	for (uint i = 0x10; i > 0; i--)
-		for (uint j = i; j <= 0x10; j++)
-			if (huff.symbols[j] >= huff.symbols[i - 1])
+	for (uint i = 0x10; i > 0; i--) {
+		for (uint j = i; j <= 0x10; j++) {
+			if (huff.symbols[j] >= huff.symbols[i - 1]) {
 				huff.symbols[j]++;
+			}
+		}
+	}
 
 	for (int i = 0x10; i >= 0; i--) {
 		if (huff.symbols[i] == 0x10) {
@@ -207,14 +210,19 @@ void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &da
 	bits = stream.getBits(2) + 1;
 	uint16 mask = 0;
 	for (uint i = 0; i < 0xf; i++) {
-		if (i)
-			while (!stream.getBit()) bits++;
+		if (i) {
+			while (!stream.getBit()) {
+				bits++;
+			}
+		}
 		huff.lens[i] = bits;
 		huff.masks[i] = mask;
 		mask += 1 << (16 - bits);
 	}
 	huff.masks[0xf] = mask;
-	while (mask&(1 << (16 - bits))) bits++;
+	while (mask&(1 << (16 - bits))) {
+		bits++;
+	}
 	huff.masks[0x10] = mask | (1 << (16 - bits));
 	huff.lens[0xf] = bits;
 	huff.lens[0x10] = bits;
@@ -222,14 +230,15 @@ void ImageAsset::decodePPIC3(Common::BitStream & stream, Common::Array<byte> &da
 	decodeHuffGraphic(huff, stream, data, bitHeight, bitWidth, rowBytes);
 }
 
-void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	byte flags = 0;
 	_walkRepeat = 0;
 	_walkLast = 0;
-	if (bitWidth & 3)
+	if (bitWidth & 3) {
 		flags = stream.getBits(5);
-	else
+	} else {
 		flags = stream.getBits(4) << 1;
+	}
 
 	byte odd = 0;
 	byte blank = bitWidth & 0xf;
@@ -316,7 +325,7 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff & huff, Common::BitStream & st
 	}
 }
 
-byte ImageAsset::walkHuff(const PPICHuff & huff, Common::BitStream & stream) {
+byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream &stream) {
 	if (_walkRepeat) {
 		_walkRepeat--;
 		_walkLast = ((_walkLast << 8) & 0xFF00) | (_walkLast >> 8);
@@ -434,7 +443,7 @@ int ImageAsset::getHeight() {
 	return MAX(0, (int)_imgBitHeight);
 }
 
-void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte>& data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::blitDirect(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
 	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
@@ -451,7 +460,7 @@ void ImageAsset::blitDirect(Graphics::ManagedSurface * target, int ox, int oy, c
 	}
 }
 
-void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::blitBIC(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
 	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
@@ -469,7 +478,7 @@ void ImageAsset::blitBIC(Graphics::ManagedSurface * target, int ox, int oy, cons
 	}
 }
 
-void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::blitOR(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
 	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 
@@ -487,7 +496,7 @@ void ImageAsset::blitOR(Graphics::ManagedSurface * target, int ox, int oy, const
 	}
 }
 
-void ImageAsset::blitXOR(Graphics::ManagedSurface * target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
+void ImageAsset::blitXOR(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes) {
 	uint sx, sy, w, h;
 	calculateSectionToDraw(target, ox, oy, bitWidth, bitHeight, sx, sy, w, h);
 

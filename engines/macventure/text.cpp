@@ -43,7 +43,7 @@ void TextAsset::decodeOld() {
 	Common::SeekableReadStream *res = _container->getItem(_id);
 	uint16 strLen = res->readUint16BE();
 	Common::BitStream32BELSB stream(res, true);
-	char* str = new char[strLen + 1];
+	char *str = new char[strLen + 1];
 	bool lowercase = false;
 	char c;
 	for (uint16 i = 0; i < strLen; i++) {

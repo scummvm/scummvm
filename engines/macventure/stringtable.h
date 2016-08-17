@@ -79,7 +79,7 @@ private:
 		uint8 strLength = 0;
 		for (uint i = 0; i < numStrings; ++i) {
 			strLength = res->readByte();
-			char* str = new char[strLength + 1];
+			char *str = new char[strLength + 1];
 			res->read(str, strLength);
 			str[strLength] = '\0';
 			// HACK until a proper special char implementation is found, this will have to do.

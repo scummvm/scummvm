@@ -59,7 +59,7 @@ bool CommandButton::isInsideBounds(const Common::Point point) const {
 	return _data.bounds.contains(point);
 }
 
-const ControlData& CommandButton::getData() const {
+const ControlData &CommandButton::getData() const {
 	return _data;
 }
 

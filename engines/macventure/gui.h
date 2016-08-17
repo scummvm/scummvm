@@ -313,8 +313,9 @@ public:
 		if (wrappedLines.empty()) // Sometimes we have empty lines
 			_lines.push_back("");
 
-		for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j)
+		for (Common::StringArray::const_iterator j = wrappedLines.begin(); j != wrappedLines.end(); ++j) {
 			_lines.push_back(*j);
+		}
 
 		updateScroll();
 	}

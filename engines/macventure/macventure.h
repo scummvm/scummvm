@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MACVENTURE_H
-#define MACVENTURE_H
+#ifndef MACVENTURE_MACVENTURE_H
+#define MACVENTURE_MACVENTURE_H
 
 #include "engines/engine.h"
 #include "common/scummsys.h"
@@ -243,7 +243,7 @@ public:
 	bool isPaused();
 	bool needsClickToContinue();
 	Common::String getCommandsPausedString() const;
-	const GlobalSettings& getGlobalSettings() const;
+	const GlobalSettings &getGlobalSettings() const;
 	Common::String getFilePath(FilePathID id) const;
 	bool isOldText() const;
 	const HuffmanLists *getDecodingHuffman() const;
@@ -310,7 +310,7 @@ private:
 	bool loadGlobalSettings();
 	bool loadTextHuffman();
 
-	const char* getGameFileName() const;
+	const char *getGameFileName() const;
 
 private: // Attributes
 

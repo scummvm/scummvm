@@ -74,7 +74,7 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 	}
 }
 
-const Graphics::Font& Dialog::getFont() {
+const Graphics::Font &Dialog::getFont() {
 	return _gui->getCurrentFont();
 }
 
@@ -161,11 +161,11 @@ void DialogElement::draw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &t
 	doDraw(dialog, target);
 }
 
-const Common::String& DialogElement::getText() {
+const Common::String &DialogElement::getText() {
 	return doGetText();
 }
 
-const Common::String& DialogElement::doGetText() {
+const Common::String &DialogElement::doGetText() {
 	return _text;
 }
 

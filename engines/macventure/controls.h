@@ -90,7 +90,7 @@ public:
 
 	void draw(Graphics::ManagedSurface &surface) const;
 	bool isInsideBounds(const Common::Point point) const;
-	const ControlData& getData() const;
+	const ControlData &getData() const;
 	void select();
 	void unselect();
 	bool isSelected();

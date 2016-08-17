@@ -37,7 +37,7 @@ SoundManager::SoundManager(MacVentureEngine *engine, Audio::Mixer *mixer) {
 	debugC(1, kMVDebugSound, "Created sound manager with file %s", filename.c_str());
 }
 
-SoundManager::~SoundManager(){
+SoundManager::~SoundManager() {
 	if (_container)
 		delete _container;
 
@@ -159,7 +159,7 @@ void SoundAsset::decode12(Common::SeekableReadStream *stream) {
 			byte ch = stream->readByte();
 			if (ch & 0x80) {
 				ch -= 0x80;
-				uint32 env= ch * scale;
+				uint32 env = ch * scale;
 				ch = (env >> 8) & 0xff;
 				if (ch & 0x80) {
 					ch = 0x7f;
@@ -265,7 +265,7 @@ void SoundAsset::decode7e(Common::SeekableReadStream *stream) {
 	stream->readUint32BE();
 	_length = stream->readUint32BE();
 	_frequency = (stream->readUint32BE() * 22100 / 0x10000) | 0;
-	uint32 last=0x80;
+	uint32 last = 0x80;
 	byte ch = 0;
 	for (uint i = 0; i < _length; i++) {
 		if (i & 1) {

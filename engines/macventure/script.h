@@ -148,9 +148,9 @@ public:
 
 private:
 	bool execFrame(bool execAll);
-	bool loadScript(EngineFrame * frame, uint32 scriptID);
-	bool resumeFunc(EngineFrame * frame);
-	bool runFunc(EngineFrame * frame);
+	bool loadScript(EngineFrame *frame, uint32 scriptID);
+	bool resumeFunc(EngineFrame *frame);
+	bool runFunc(EngineFrame *frame);
 
 private:
 

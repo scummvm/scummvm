@@ -131,8 +131,9 @@ bool MacVenture::World::isObjActive(ObjID obj) {
 
 ObjID World::getAncestor(ObjID objID) {
 	ObjID root = getObjAttr(1, kAttrParentObject);
-	while (objID != 0 && objID != 1 && objID != root)
+	while (objID != 0 && objID != 1 && objID != root) {
 		objID = getObjAttr(objID, kAttrParentObject);
+	}
 	return objID;
 }
 
@@ -279,11 +280,11 @@ void SaveGame::setAttr(uint32 attrID, ObjID objID, Attribute value) {
 	_groups[attrID][objID] = value;
 }
 
-const Common::Array<AttributeGroup>& MacVenture::SaveGame::getGroups() {
+const Common::Array<AttributeGroup> &MacVenture::SaveGame::getGroups() {
 	return _groups;
 }
 
-const AttributeGroup * SaveGame::getGroup(uint32 groupID) {
+const AttributeGroup *SaveGame::getGroup(uint32 groupID) {
 	assert(groupID < _groups.size());
 	return &(_groups[groupID]);
 }
@@ -292,11 +293,11 @@ void SaveGame::setGlobal(uint32 attrID, Attribute value) {
 	_globals[attrID] = value;
 }
 
-const Common::Array<uint16>& SaveGame::getGlobals() {
+const Common::Array<uint16> &SaveGame::getGlobals() {
 	return _globals;
 }
 
-const Common::String & SaveGame::getText() {
+const Common::String &SaveGame::getText() {
 	return _text;
 }
 
@@ -320,7 +321,7 @@ void SaveGame::saveInto(Common::OutSaveFile *file) {
 	file->write(_text.c_str(), _text.size());
 }
 
-void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream * res) {
+void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 	GlobalSettings settings = engine->getGlobalSettings();
 	for (int i = 0; i < settings._numGroups; ++i) {
 		AttributeGroup g;
@@ -332,14 +333,14 @@ void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *
 	}
 }
 
-void SaveGame::loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream * res) {
+void SaveGame::loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 	GlobalSettings settings = engine->getGlobalSettings();
 	for (int i = 0; i < settings._numGlobals; ++i) {
 		_globals.push_back(res->readUint16BE());
 	}
 }
 
-void SaveGame::loadText(MacVentureEngine *engine, Common::SeekableReadStream * res) {
+void SaveGame::loadText(MacVentureEngine *engine, Common::SeekableReadStream *res) {
 	_text = "Placeholder Console Text";
 }
 

@@ -54,8 +54,9 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 	// Depends on MACVENTURE_DESC_LENGTH
 	byte descSize = s->readByte();
 	s->seek(-(5 + MACVENTURE_DESC_LENGTH + descSize), SEEK_END);
-	for (int i = 0; i < descSize; ++i)
+	for (int i = 0; i < descSize; ++i) {
 		name += s->readByte();
+	}
 	desc.setDescription(name);
 
 	return desc;

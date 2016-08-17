@@ -387,10 +387,11 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 		// Do shift ;)
 	} else {
 		if (_selectedControl && _currentSelection.size() > 0 && getInvolvedObjects() > 1) {
-			if (objID == 0)
+			if (objID == 0) {
 				selectPrimaryObject(windata.objRef);
-			else
+			} else {
 				selectPrimaryObject(objID);
+			}
 			preparedToRun();
 		} else {
 			if (objID == 0) {
@@ -633,7 +634,7 @@ void MacVentureEngine::printTexts() {
 }
 
 void MacVentureEngine::playSounds(bool pause) {
-	int delay=0;
+	int delay = 0;
 	while (!_soundQueue.empty()) {
 		QueuedSound item = _soundQueue.front();
 		_soundQueue.remove_at(0);
@@ -984,7 +985,7 @@ bool MacVentureEngine::isOldText() const {
 	return _oldTextEncoding;
 }
 
-const HuffmanLists * MacVentureEngine::getDecodingHuffman() const {
+const HuffmanLists *MacVentureEngine::getDecodingHuffman() const {
 	return _textHuffman;
 }
 
@@ -1122,17 +1123,20 @@ bool MacVentureEngine::loadTextHuffman() {
 		res->readUint16BE(); // Skip
 
 		uint32 *masks = new uint32[numEntries];
-		for (uint i = 0; i < numEntries - 1; i++)
+		for (uint i = 0; i < numEntries - 1; i++) {
 			// For some reason there are one lass mask than entries
 			masks[i] = res->readUint16BE();
+		}
 
 		uint32 *lengths = new uint32[numEntries];
-		for (uint i = 0; i < numEntries; i++)
+		for (uint i = 0; i < numEntries; i++) {
 			lengths[i] = res->readByte();
+		}
 
 		uint32 *values = new uint32[numEntries];
-		for (uint i = 0; i < numEntries; i++)
+		for (uint i = 0; i < numEntries; i++) {
 			values[i] = res->readByte();
+		}
 
 		_textHuffman = new HuffmanLists(numEntries, lengths, masks, values);
 		debugC(4, kMVDebugMain, "Text is huffman-encoded");
@@ -1175,8 +1179,9 @@ void GlobalSettings::loadSettings(Common::SeekableReadStream *dataStream) {
 	_attrIndices = Common::Array<uint8>(attrIndices, _numAttributes);
 	delete[] attrIndices;
 
-	for (int i = 0; i < _numAttributes; i++)
+	for (int i = 0; i < _numAttributes; i++) {
 		_attrMasks.push_back(dataStream->readUint16BE());
+	}
 
 	uint8 *attrShifts = new uint8[_numAttributes];
 	dataStream->read(attrShifts, _numAttributes);

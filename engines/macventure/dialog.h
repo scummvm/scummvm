@@ -46,7 +46,7 @@ public:
 	void localize(Common::Point &point);
 	void handleDialogAction(DialogElement *trigger, DialogAction action);
 
-	const Graphics::Font& getFont();
+	const Graphics::Font &getFont();
 
 	void addButton(Common::String title, DialogAction action, Common::Point position, uint width = 0, uint height = 0);
 	void addText(Common::String content, Common::Point position);
@@ -74,12 +74,12 @@ public:
 
 	bool processEvent(Dialog *dialog, Common::Event event);
 	void draw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target);
-	const Common::String& getText();
+	const Common::String &getText();
 
 private:
 	virtual bool doProcessEvent(Dialog *dialog, Common::Event event) = 0;
 	virtual void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) = 0;
-	virtual const Common::String& doGetText();
+	virtual const Common::String &doGetText();
 
 protected:
 	Common::String _text;
