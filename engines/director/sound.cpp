@@ -36,6 +36,12 @@ DirectorSound::DirectorSound() {
 	_mixer = g_system->getMixer();
 }
 
+DirectorSound::~DirectorSound() {
+	delete _sound1;
+	delete _sound2;
+	delete _scriptSound;
+}
+
 void DirectorSound::playWAV(Common::String filename, uint8 soundChannel) {
 	Common::File *file = new Common::File();
 

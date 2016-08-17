@@ -39,6 +39,7 @@ private:
 
 public:
 	DirectorSound();
+	~DirectorSound();
 
 	void playWAV(Common::String filename, uint8 channelID);
 	void playAIFF(Common::String filename, uint8 channelID);
