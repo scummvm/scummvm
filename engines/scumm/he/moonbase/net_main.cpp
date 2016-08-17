@@ -138,6 +138,26 @@ int Net::closeProvider() {
 	return 0;
 }
 
+bool Net::initAll() {
+	warning("STUB: Net::initAll()"); // PN_DoInitAll
+	return false;
+}
+
+bool Net::initProvider() {
+	warning("STUB: Net::initProvider()"); // PN_DoInitProvider
+	return false;
+}
+
+bool Net::initSession() {
+	warning("STUB: Net::initSession()"); // PN_DoInitSession
+	return false;
+}
+
+bool Net::initUser() {
+	warning("STUB: Net::initUser()"); // PN_DoInitUser
+	return false;
+}
+
 bool Net::getHostName(char *hostname, int length) {
 	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
 	return false;

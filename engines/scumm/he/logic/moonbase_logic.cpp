@@ -383,21 +383,21 @@ int LogicHEmoonbase::op_net_remote_start_function(int op, int numArgs, int32 *ar
 	warning("STUB: op_net_remote_start_function()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_do_init_all(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_do_init_all()");
-	return 1;
+	return _vm1->_moonbase->_net->initAll();
 }
+
 int LogicHEmoonbase::op_net_do_init_provider(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_do_init_provider()");
-	return 1;
+	return _vm1->_moonbase->_net->initProvider();
 }
+
 int LogicHEmoonbase::op_net_do_init_session(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_do_init_session()");
-	return 1;
+	return _vm1->_moonbase->_net->initSession();
 }
+
 int LogicHEmoonbase::op_net_do_init_user(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_do_init_user()");
-	return 1;
+	return _vm1->_moonbase->_net->initUser();
 }
 
 int LogicHEmoonbase::op_net_query_providers(int op, int numArgs, int32 *args) {

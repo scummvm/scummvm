@@ -55,6 +55,10 @@ public:
 	int queryProviders();
 	int setProvider(int providerIndex);
 	int closeProvider();
+	bool initAll();
+	bool initProvider();
+	bool initSession();
+	bool initUser();
 
 private:
 
@@ -65,7 +69,7 @@ public:
 	void getSessionName(int sessionNumber, char *buffer, int length);
 	int getSessionPlayerCount(int sessionNumber);
 	void getProviderName(int providerIndex, char *buffer, int length);
-
+	
 private:
 	//mostly getters
 
