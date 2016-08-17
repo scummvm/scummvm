@@ -884,7 +884,7 @@ public:
 	CStarControl *getStarControl() const;
 
 	void starFn1(int v);
-	void starFn2();
+	bool starFn2();
 
 	/*--- CTrueTalkManager Methods ---*/
 

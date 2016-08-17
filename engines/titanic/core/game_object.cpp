@@ -1608,10 +1608,9 @@ void CGameObject::starFn1(int v) {
 		starControl->fn1(v);
 }
 
-void CGameObject::starFn2() {
+bool CGameObject::starFn2() {
 	CStarControl *starControl = getStarControl();
-	if (starControl)
-		starControl->fn4();
+	return starControl ? starControl->fn4() : false;
 }
 
 /*------------------------------------------------------------------------*/

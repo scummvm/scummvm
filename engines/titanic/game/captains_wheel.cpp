@@ -24,6 +24,15 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCaptainsWheel, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 CCaptainsWheel::CCaptainsWheel() : CBackground(),
 	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0),
 	_fieldF0(0), _fieldF4(0) {
@@ -51,6 +60,150 @@ void CCaptainsWheel::load(SimpleFile *file) {
 	_fieldF4 = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CCaptainsWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_fieldE0) {
+		_fieldE0 = false;
+		CTurnOff offMsg;
+		offMsg.execute(this);
+		playMovie(162, 168, 0);
+	} else {
+		playMovie(0, 8, MOVIE_NOTIFY_OBJECT);
+	}
+
+	return true;
+}
+
+bool CCaptainsWheel::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_fieldE0) {
+		_fieldE0 = false;
+		CTurnOff offMsg;
+		offMsg.execute(this);
+		playMovie(162, 168, MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CCaptainsWheel::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Spin") {
+		if (_fieldE0) {
+			CTurnOn onMsg;
+			onMsg.execute("RatchetySound");
+			playMovie(8, 142, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		}
+	} else if (msg->_action == "Honk") {
+		if (_fieldE0) {
+			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		}
+	} else if (msg->_action == "Go") {
+		if (!_fieldE0) {
+			inc54();
+			_fieldE0 = false;
+			_fieldE4 = 1;
+
+			CTurnOff offMsg;
+			offMsg.execute(this);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		}
+	} else if (msg->_action == "Cruise") {
+		if (_fieldE0) {
+			inc54();
+			_fieldE0 = false;
+			_fieldE4 = 2;
+
+			CTurnOff offMsg;
+			offMsg.execute(this);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		}
+	} else if (msg->_action == "SetDestin") {
+		playSound("a#44.wav");
+		CSetVolumeMsg volumeMsg;
+		volumeMsg._volume = 25;
+		volumeMsg.execute("EngineSounds");
+		CTurnOn onMsg;
+		onMsg.execute("EngineSounds");
+		_fieldF0 = 1;
+	} else if (msg->_action == "ClearDestin") {
+		_fieldF0 = 0;
+	}
+
+	return true;
+}
+
+bool CCaptainsWheel::TurnOff(CTurnOff *msg) {
+	CSignalObject signalMsg;
+	signalMsg._numValue = 0;
+
+	static const char *const NAMES[8] = {
+		"WheelSpin", "SeagullHorn", "WheelStopButt", "StopHotSpot",
+		"WheelCruiseButt", "CruiseHotSpot", "WheelGoButt","GoHotSpot"
+	};
+	for (int idx = 0; idx < 8; ++idx)
+		signalMsg.execute(NAMES[idx]);
+
+	return true;
+}
+
+bool CCaptainsWheel::TurnOn(CTurnOn *msg) {
+	CSignalObject signalMsg;
+	signalMsg._numValue = 1;
+	signalMsg.execute("WheelSpin");
+	signalMsg.execute("SeagullHorn");
+
+	if (_fieldE0) {
+		signalMsg.execute("WheelStopButt");
+		signalMsg.execute("StopHotSpot");
+	}
+
+	if (_fieldEC) {
+		signalMsg.execute("WheelCruiseButt");
+		signalMsg.execute("CruiseHotSpot");
+	}
+
+	if (_fieldF0) {
+		signalMsg.execute("WheelGoButt");
+		signalMsg.execute("GoHotSpot");
+	}
+
+	return true;
+}
+
+bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_endFrame == 8) {
+		_fieldE0 = true;
+		CTurnOn onMsg;
+		onMsg.execute(this);
+	}
+
+	if (msg->_endFrame == 142) {
+		CTurnOff offMsg;
+		offMsg.execute("RatchetySound");
+	}
+
+	if (msg->_endFrame == 168) {
+		switch (_fieldE4) {
+		case 1: {
+			CActMsg actMsg(starFn2() ? "GoEnd" : "Go");
+			actMsg.execute("GoSequence");
+			break;
+		}
+
+		case 2: {
+			CActMsg actMsg("Cruise");
+			actMsg.execute("CruiseSequence");
+			break;
+		}
+
+		default:
+			break;
+		}
+
+		_fieldE4 = 0;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

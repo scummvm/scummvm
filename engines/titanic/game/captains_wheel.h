@@ -28,6 +28,13 @@
 namespace Titanic {
 
 class CCaptainsWheel : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	int _fieldE0;
 	int _fieldE4;
