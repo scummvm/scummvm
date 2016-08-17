@@ -2881,13 +2881,11 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 	int16 explosionScale;
 	bool squareHasExplosion;
 	bool rebirthExplosion;
-	bool smoke;
-	FieldAspect fieldAspect;
 
 	/* This is the full dungeon view */
-	Box g105_BoxExplosionPattern_D0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
+	static Box boxExplosionPatternD0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
 
-	byte g216_ExplosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
+	static byte explosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
 		10,  /* D4 */
 		16,  /* D3 */
 		23,  /* D2 */
@@ -2895,7 +2893,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		32   /* D0 */
 	};
 
-	byte g217_ObjectPileShiftSetIndices[16][2] = { // @ G0217_aauc_Graphic558_ObjectPileShiftSetIndices
+	static byte objectPileShiftSetIndices[16][2] = { // @ G0217_aauc_Graphic558_ObjectPileShiftSetIndices
 	/* { X shift index, Y shift index } */
 		{2, 5},
 		{0, 6},
@@ -2915,7 +2913,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		{5, 3}
 	};
 
-	byte g218_ObjectCoordinateSets[3][10][5][2] = { // @ G0218_aaaauc_Graphic558_ObjectCoordinateSets
+	static byte objectCoordinateSets[3][10][5][2] = { // @ G0218_aaaauc_Graphic558_ObjectCoordinateSets
 	/* { {X, Y }, {X, Y }, {X, Y }, {X, Y }, {X, Y } } */
 		{
 			{{  0,   0}, {  0,   0}, {125,  72}, { 95,  72}, {112, 64}},     /* D3C */
@@ -2955,13 +2953,13 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		}
 	};
 
-	int16 g223_ShiftSets[3][8] = { // @ G0223_aac_Graphic558_ShiftSets
+	static int16 shiftSets[3][8] = { // @ G0223_aac_Graphic558_ShiftSets
 		{0, 1, 2, 3, 0, -3, -2, -1},   /* D0 Back or D1 Front */
 		{0, 1, 1, 2, 0, -2, -1, -1},   /* D1 Back or D2 Front */
 		{0, 1, 1, 1, 0, -1, -1, -1}    /* D2 Back or D3 Front */
 	};
 
-	byte g224_CreatureCoordinateSets[3][11][5][2] = { // @ G0224_aaaauc_Graphic558_CreatureCoordinateSets
+	static byte creatureCoordinateSets[3][11][5][2] = { // @ G0224_aaaauc_Graphic558_CreatureCoordinateSets
 	/* { { X, Y }, { X, Y }, { X, Y }, { X, Y }, { X, Y } } */
 		{
 			{{ 95,  70}, {127,  70}, {129,  75}, { 93,  75}, {111,  72}},     /* D3C */
@@ -3004,7 +3002,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		}
 	};
 
-	int16 g226_ExplosionCoordinates[15][2][2] = { // @ G0226_aaai_Graphic558_ExplosionCoordinates
+	static int16 explosionCoordinatesArray[15][2][2] = { // @ G0226_aaai_Graphic558_ExplosionCoordinates
 	/* { { Front Left X, Front Left Y }, { Front Right X, Front Right Y } } */
 		{{100, 47}, {122, 47}},   /* D4C */
 		{{ 52, 47}, { 76, 47}},   /* D4L */
@@ -3023,7 +3021,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		{{256, 60}, {296, 60}}    /* D0R */
 	};
 
-	int16 g227_RebirthStep2ExplosionCoordinates[7][3] = { // @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
+	static int16 rebirthStep2ExplosionCoordinates[7][3] = { // @ G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates
 	/* { X, Y, Scale } */
 		{113, 57, 12},   /* D3C */
 		{ 24, 57, 12},   /* D3L */
@@ -3034,7 +3032,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		{112, 76, 24}    /* D1C */
 	};
 
-	int16 g228_RebirthStep1ExplosionCoordinates[7][3] = { // @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
+	static int16 rebirthStep1ExplosionCoordinates[7][3] = { // @ G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates
 	/* { X, Y, Scale } */
 		{112, 53, 15},   /* D3C */
 		{ 24, 53, 15},   /* D3L */
@@ -3045,7 +3043,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 		{112, 70, 32} /* D1C */
 	};
 
-	int16 g225_CenteredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_CenteredExplosionCoordinates
+	static int16 centeredExplosionCoordinates[15][2] = { // @ G0225_aai_Graphic558_CenteredExplosionCoordinates
 		/* { X, Y } */
 		{111, 47},   /* D4C */
 		{ 57, 47},   /* D4L */
@@ -3118,7 +3116,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane)) {
 					AL_4_nativeBitmapIndex++;
 				}
-				coordinateSet = g218_ObjectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
+				coordinateSet = objectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
 				if (!coordinateSet[1]) /* If object is not visible */
 					continue;
 T0115015_DrawProjectileAsObject:
@@ -3174,8 +3172,8 @@ T0115015_DrawProjectileAsObject:
 				AL_4_xPos = coordinateSet[0];
 				boxByteGreen._y2 = coordinateSet[1];
 				if (!drawProjectileAsObject) { /* If drawing an object that is not a projectile */
-					AL_4_xPos += g223_ShiftSets[AL_8_shiftSetIndex][g217_ObjectPileShiftSetIndices[objectShiftIndex][0]];
-					boxByteGreen._y2 += g223_ShiftSets[AL_8_shiftSetIndex][g217_ObjectPileShiftSetIndices[objectShiftIndex][1]];
+					AL_4_xPos += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][0]];
+					boxByteGreen._y2 += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][1]];
 					objectShiftIndex++; /* The next object drawn will use the next shift values */
 					if (L0135_B_DrawAlcoveObjects) {
 						if (objectShiftIndex >= 14) {
@@ -3309,7 +3307,7 @@ T0115015_DrawProjectileAsObject:
 			viewSquareIndex--;
 		}
 T0115077_DrawSecondHalfSquareCreature:
-		coordinateSet = g224_CreatureCoordinateSets[((CreatureAspect*)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
+		coordinateSet = creatureCoordinateSets[((CreatureAspect*)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
 		if (!coordinateSet[1])
 			goto T0115126_CreatureNotVisible;
 		AL_0_creatureGraphicInfoRed = creatureGraphicInfoGreen;
@@ -3438,11 +3436,11 @@ T0115077_DrawSecondHalfSquareCreature:
 			}
 		}
 		AL_4_yPos = coordinateSet[1];
-		AL_4_yPos += g223_ShiftSets[AL_8_shiftSetIndex][M23_getVerticalOffsetM23(creatureAspectInt)];
+		AL_4_yPos += shiftSets[AL_8_shiftSetIndex][M23_getVerticalOffsetM23(creatureAspectInt)];
 		boxByteGreen._y2 = MIN(AL_4_yPos, (int16)135);
 		boxByteGreen._y1 = MAX(0, AL_4_yPos - (heightRedEagle - 1));
 		AL_4_xPos = coordinateSet[0];
-		AL_4_xPos += g223_ShiftSets[AL_8_shiftSetIndex][M22_getHorizontalOffsetM22(creatureAspectInt)];
+		AL_4_xPos += shiftSets[AL_8_shiftSetIndex][M22_getHorizontalOffsetM22(creatureAspectInt)];
 		if (viewLane == k1_ViewLaneLeft) {
 			AL_4_xPos -= 100;
 		} else {
@@ -3474,7 +3472,7 @@ T0115126_CreatureNotVisible:
 		}
 		/* Draw projectiles */
 T0115129_DrawProjectiles:
-		if (!sqaureHasProjectile || ((viewSquareIndex = AL_10_viewSquareIndexBackup) > k9_ViewSquare_D0C) || (!(projectilePosX = g218_ObjectCoordinateSets[0][viewSquareIndex][AL_2_viewCell = currentViewCellToDraw][0]))) /* If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn */
+		if (!sqaureHasProjectile || ((viewSquareIndex = AL_10_viewSquareIndexBackup) > k9_ViewSquare_D0C) || (!(projectilePosX = objectCoordinateSets[0][viewSquareIndex][AL_2_viewCell = currentViewCellToDraw][0]))) /* If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn */
 			continue;
 		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
 		do {
@@ -3606,7 +3604,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 			explosion = (Explosion*)_vm->_dungeonMan->f156_getThingData(thingParam);
 			if ((rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1)) && ((AL_1_viewSquareExplosionIndex < k3_ViewSquare_D3C_Explosion) || (AL_1_viewSquareExplosionIndex > k9_ViewSquare_D1C_Explosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
 				continue;
-			smoke = false;
+			bool smoke = false;
 			if ((AL_4_explosionType == k0_ExplosionType_Fireball) || (AL_4_explosionType == k2_ExplosionType_LightningBolt) || (AL_4_explosionType == k101_ExplosionType_RebirthStep2)) {
 				AL_4_explosionAspectIndex = k0_ExplosionAspectFire;
 			} else {
@@ -3620,7 +3618,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						if (AL_4_explosionType == k100_ExplosionType_RebirthStep1) {
 							objectAspect = (ObjectAspect*)&_projectileAspect[_vm->M1_ordinalToIndex(-_vm->_dungeonMan->f142_getProjectileAspect(Thing::_explLightningBolt))];
 							AL_6_bitmapRedBanana = f489_getNativeBitmapOrGraphic(((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + (k316_FirstProjectileGraphicIndice + 1));
-							explosionCoordinates = g228_RebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
+							explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 							byteWidth = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_byteWidth), explosionCoordinates[2]);
 							heightRedEagle = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_height), explosionCoordinates[2]);
 							if (AL_1_viewSquareExplosionIndex != k9_ViewSquare_D1C_Explosion) {
@@ -3656,26 +3654,26 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					f129_blitToBitmapShrinkWithPalChange(AL_6_bitmapRedBanana, _g74_tmpBitmap, 48, 32, 48, 32, _palChangeSmoke);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
-				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, 0, f492_getDerivedBitmap(k0_DerivedBitmapViewport), g105_BoxExplosionPattern_D0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
+				f133_blitBoxFilledWithMaskedBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, 0, f492_getDerivedBitmap(k0_DerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				f493_addDerivedBitmap(k0_DerivedBitmapViewport);
 				warning(false, "DISABLED CODE: f480_releaseBlock in f115_cthulhu");
 				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 			} else {
 				if (rebirthExplosion) {
-					explosionCoordinates = g227_RebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
+					explosionCoordinates = rebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 					explosionScale = explosionCoordinates[2];
 				} else {
 					if (explosion->getCentered()) {
-						explosionCoordinates = g225_CenteredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
+						explosionCoordinates = centeredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
 					} else {
 						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == returnPrevVal(directionParam))) {
 							AL_2_viewCell = k0_ViewCellFronLeft;
 						} else {
 							AL_2_viewCell = k1_ViewCellFrontRight;
 						}
-						explosionCoordinates = g226_ExplosionCoordinates[AL_1_viewSquareExplosionIndex][AL_2_viewCell];
+						explosionCoordinates = explosionCoordinatesArray[AL_1_viewSquareExplosionIndex][AL_2_viewCell];
 					}
-					explosionScale = MAX(4, (MAX(48, explosion->getAttack() + 1) * g216_ExplosionBaseScales[AL_10_explosionScaleIndex]) >> 8) & (int)0xFFFE;
+					explosionScale = MAX(4, (MAX(48, explosion->getAttack() + 1) * explosionBaseScales[AL_10_explosionScaleIndex]) >> 8) & (int)0xFFFE;
 				}
 				AL_6_bitmapRedBanana = f114_getExplosionBitmap(AL_4_explosionAspectIndex, explosionScale, byteWidth, heightRedEagle);
 T0115200_DrawExplosion:
@@ -3719,7 +3717,7 @@ T0115200_DrawExplosion:
 	} while ((thingParam = _vm->_dungeonMan->f159_getNextThing(thingParam)) != Thing::_endOfList);
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_g77_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
-		fieldAspect = _fieldAspects188[viewSquareIndex];
+		FieldAspect fieldAspect = _fieldAspects188[viewSquareIndex];
 		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
 		f113_drawField(&fieldAspect, _frameWalls163[viewSquareIndex]._box);
 	}
@@ -3777,69 +3775,52 @@ uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
 
 void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 	static uint16 K0016_aui_Palette_FadeTemporary[16];
-	uint16 L1374_ui_CurrentRGBColor;
-	int16 L1375_ui_TargetRGBColor;
-	int16 L1376_i_Color;
-	int16 L1377_i_Counter;
-	uint16* L1378_pui_PaletteRegister;
+	uint16 *paletteRegister = K0016_aui_Palette_FadeTemporary;
 
+	for (int16 i = 0; i < 16; i++) 
+		paletteRegister[i] = _gK17_paletteFadeFrom[i];
 
-	L1378_pui_PaletteRegister = K0016_aui_Palette_FadeTemporary;
-	for (L1376_i_Color = 0; L1376_i_Color < 16; L1376_i_Color++) {
-		L1378_pui_PaletteRegister[L1376_i_Color] = _gK17_paletteFadeFrom[L1376_i_Color];
-	}
-	for (L1377_i_Counter = 0; L1377_i_Counter < 8; L1377_i_Counter++) {
-		for (L1376_i_Color = 0, L1378_pui_PaletteRegister = K0016_aui_Palette_FadeTemporary; L1376_i_Color < 16; L1376_i_Color++, L1378_pui_PaletteRegister++) {
-			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D12_MASK_BLUE_COMPONENT);
-			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D12_MASK_BLUE_COMPONENT);
-			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
-				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
-					*L1378_pui_PaletteRegister -= 2;
-				} else {
-					*L1378_pui_PaletteRegister -= 1;
-				}
-			} else {
-				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
-					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
-						*L1378_pui_PaletteRegister += 2;
-					} else {
-						*L1378_pui_PaletteRegister += 1;
-					}
-				}
+	for (int16 i = 0; i < 8; i++) {
+		paletteRegister = K0016_aui_Palette_FadeTemporary;
+		for (int16 colIdx = 0; colIdx < 16; colIdx++, paletteRegister++) {
+			uint16 currentRGBColor = getFlag(*paletteRegister, D12_MASK_BLUE_COMPONENT);
+			int16 targetRGBColor = getFlag(P0849_pui_Palette[colIdx], D12_MASK_BLUE_COMPONENT);
+			if (currentRGBColor > targetRGBColor) {
+				if (currentRGBColor > targetRGBColor + 1)
+					*paletteRegister -= 2;
+				else
+					*paletteRegister -= 1;
+			} else if (currentRGBColor < targetRGBColor) {
+				if (currentRGBColor < targetRGBColor - 1)
+					*paletteRegister += 2;
+				else
+					*paletteRegister += 1;
 			}
-			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D11_MASK_GREEN_COMPONENT) >> 4;
-			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D11_MASK_GREEN_COMPONENT) >> 4;
-			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
-				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
-					*L1378_pui_PaletteRegister -= 32;
-				} else {
-					*L1378_pui_PaletteRegister -= 16;
-				}
-			} else {
-				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
-					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
-						*L1378_pui_PaletteRegister += 32;
-					} else {
-						*L1378_pui_PaletteRegister += 16;
-					}
-				}
+			currentRGBColor = getFlag(*paletteRegister, D11_MASK_GREEN_COMPONENT) >> 4;
+			targetRGBColor = getFlag(P0849_pui_Palette[colIdx], D11_MASK_GREEN_COMPONENT) >> 4;
+			if (currentRGBColor > targetRGBColor) {
+				if (currentRGBColor > targetRGBColor + 1)
+					*paletteRegister -= 32;
+				else
+					*paletteRegister -= 16;
+			} else if (currentRGBColor < targetRGBColor) {
+				if (currentRGBColor < targetRGBColor - 1)
+					*paletteRegister += 32;
+				else
+					*paletteRegister += 16;
 			}
-			L1374_ui_CurrentRGBColor = getFlag(*L1378_pui_PaletteRegister, D10_MASK_RED_COMPONENT) >> 8;
-			L1375_ui_TargetRGBColor = getFlag(P0849_pui_Palette[L1376_i_Color], D10_MASK_RED_COMPONENT) >> 8;
-			if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor) {
-				if (L1374_ui_CurrentRGBColor > L1375_ui_TargetRGBColor + 1) {
-					*L1378_pui_PaletteRegister -= 512;
-				} else {
-					*L1378_pui_PaletteRegister -= 256;
-				}
-			} else {
-				if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor) {
-					if (L1374_ui_CurrentRGBColor < L1375_ui_TargetRGBColor - 1) {
-						*L1378_pui_PaletteRegister += 512;
-					} else {
-						*L1378_pui_PaletteRegister += 256;
-					}
-				}
+			currentRGBColor = getFlag(*paletteRegister, D10_MASK_RED_COMPONENT) >> 8;
+			targetRGBColor = getFlag(P0849_pui_Palette[colIdx], D10_MASK_RED_COMPONENT) >> 8;
+			if (currentRGBColor > targetRGBColor) {
+				if (currentRGBColor > targetRGBColor + 1)
+					*paletteRegister -= 512;
+				else
+					*paletteRegister -= 256;
+			} else if (currentRGBColor < targetRGBColor) {
+				if (currentRGBColor < targetRGBColor - 1)
+					*paletteRegister += 512;
+				else
+					*paletteRegister += 256;
 			}
 		}
 		_vm->f22_delay(1);
