@@ -500,11 +500,10 @@ int LogicHEmoonbase::op_net_who_am_i(int op, int numArgs, int32 *args) {
 int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *args) {
 	// Parameter 1 is the provider name and 
 	// Parameter 2 is the (optional) tcp/ip address
-	warning("STUB: op_net_set_provider_by_name()");
-	return 1;
+	return _vm1->_moonbase->_net->setProviderByName(args[0], args[1]);
 }
 void LogicHEmoonbase::op_net_set_fake_latency(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_set_fake_latency()");
+	_vm1->_moonbase->_net->setFakeLatency(args[0]);
 }
 
 int LogicHEmoonbase::op_net_get_host_name(int op, int numArgs, int32 *args) {

@@ -44,6 +44,8 @@ public:
 	void disableSessionJoining();
 	void enableSessionJoining();
 	void setBotsCount(int botsCount);
+	int32 setProviderByName(int32 parameter1, int32 parameter2);
+	void setFakeLatency(int time);
 
 private:
 
@@ -57,6 +59,8 @@ private:
 
 public:
 	//fields
+	int _latencyTime; // ms
+	bool _fakeLatency;
 
 	ScummEngine_v100he *_vm;
 };

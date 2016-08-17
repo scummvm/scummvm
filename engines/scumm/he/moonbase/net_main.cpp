@@ -26,7 +26,7 @@
 
 namespace Scumm {
 
-Net::Net(ScummEngine_v100he *vm) : _vm(vm) {
+Net::Net(ScummEngine_v100he *vm) : _latencyTime(1), _fakeLatency(false), _vm(vm) {
 	//some defaults for fields
 }
 
@@ -80,6 +80,17 @@ void Net::enableSessionJoining() {
 
 void Net::setBotsCount(int botsCount) {
 	warning("STUB: Net::setBotsCount(%d)", botsCount); // PN_SetAIPlayerCountKludge
+}
+
+int32 Net::setProviderByName(int32 parameter1, int32 parameter2) {
+	warning("STUB: Net::setProviderByName(%d, %d)", parameter1, parameter2); // PN_SetProviderByName
+	return 0;
+}
+
+void Net::setFakeLatency(int time) {
+	_latencyTime = time;
+	debug("NETWORK: Setting Fake Latency to %d ms \n", _latencyTime); // TODO: is it OK to use debug instead of SPUTM_xprintf?
+	_fakeLatency = true;
 }
 
 bool Net::getHostName(char *hostname, int length) {
