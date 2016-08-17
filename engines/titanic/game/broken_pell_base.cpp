@@ -26,7 +26,7 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CBrokenPellBase, CBackground);
 
-int CBrokenPellBase::_v1;
+bool CBrokenPellBase::_v1;
 int CBrokenPellBase::_v2;
 
 void CBrokenPellBase::save(SimpleFile *file, int indent) {

@@ -30,10 +30,14 @@ namespace Titanic {
 struct CExitPelleratorStatics {
 	CString _v1;
 	int _v2;
-	int _v3;
+	bool _isWinter;
 };
 
 class CExitPellerator : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
 private:
 	static CExitPelleratorStatics *_statics;
 public:

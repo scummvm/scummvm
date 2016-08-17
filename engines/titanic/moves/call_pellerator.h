@@ -24,10 +24,16 @@
 #define TITANIC_CALL_PELLERATOR_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CCallPellerator : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	CLASSDEF;
 

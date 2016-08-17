@@ -20,9 +20,16 @@
  *
  */
 
-#include "titanic/game/call_pellerator.h"
+#include "titanic/moves/call_pellerator.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CCallPellerator, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(PETActivateMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
 
 void CCallPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +39,44 @@ void CCallPellerator::save(SimpleFile *file, int indent) {
 void CCallPellerator::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CCallPellerator::EnterViewMsg(CEnterViewMsg *msg) {
+	petSetArea(PET_REMOTE);
+	petHighlightGlyph(1);
+	CString name = getFullViewName();
+
+	if (name == "TopOfWell.Node 6.S") {
+		petDisplayMessage(2, "You are standing outside the Pellerator.");
+	}
+
+	petSetRemoteTarget();
+	return true;
+}
+
+bool CCallPellerator::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petClear();
+	return true;
+}
+
+bool CCallPellerator::PETActivateMsg(CPETActivateMsg *msg) {
+	CString name = getFullViewName();
+
+	if (msg->_name == "Pellerator") {
+		if (petDoorOrBellbotPresent()) {
+			petDisplayMessage("I'm sorry, you cannot enter this pellerator at present as a bot is in the way.");
+		} else if (name == "Bar.Node 1.S") {
+			changeView("Pellerator.Node 1.S");
+		} else {
+			changeView("Pellerator.Node 1.N");
+		}
+	}
+
+	return true;
+}
+
+bool CCallPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

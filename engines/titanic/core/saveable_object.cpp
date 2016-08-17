@@ -103,7 +103,6 @@
 #include "titanic/game/broken_pellerator.h"
 #include "titanic/game/broken_pellerator_froz.h"
 #include "titanic/game/cage.h"
-#include "titanic/game/call_pellerator.h"
 #include "titanic/game/captains_wheel.h"
 #include "titanic/game/cdrom.h"
 #include "titanic/game/cdrom_computer.h"
@@ -333,6 +332,7 @@
 #include "titanic/messages/pet_messages.h"
 #include "titanic/messages/service_elevator_door.h"
 
+#include "titanic/moves/call_pellerator.h"
 #include "titanic/moves/enter_bomb_room.h"
 #include "titanic/moves/enter_bridge.h"
 #include "titanic/moves/enter_exit_first_class_state.h"

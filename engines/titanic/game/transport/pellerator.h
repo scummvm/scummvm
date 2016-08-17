@@ -30,12 +30,16 @@ namespace Titanic {
 
 class CPellerator : public CTransport {
 	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
-private:
-	static int _v1;
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+public:
+	static int _soundHandle;
 	static int _v2;
 public:
 	CLASSDEF;
+	CPellerator();
 
 	/**
 	 * Save the data for the class to file

@@ -94,7 +94,6 @@ MODULE_OBJS := \
 	game/broken_pell_base.o \
 	game/broken_pellerator.o \
 	game/broken_pellerator_froz.o \
-	game/call_pellerator.o \
 	game/cage.o \
 	game/captains_wheel.o \
 	game/cdrom.o \
@@ -317,6 +316,7 @@ MODULE_OBJS := \
 	messages/messages.o \
 	messages/mouse_messages.o \
 	messages/service_elevator_door.o \
+	moves/call_pellerator.o \
 	moves/enter_bomb_room.o \
 	moves/enter_bridge.o \
 	moves/enter_exit_first_class_state.o \

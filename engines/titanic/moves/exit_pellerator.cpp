@@ -21,8 +21,15 @@
  */
 
 #include "titanic/moves/exit_pellerator.h"
+#include "titanic/game/transport/pellerator.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CExitPellerator, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(ChangeSeasonMsg)
+END_MESSAGE_MAP()
 
 CExitPelleratorStatics *CExitPellerator::_statics;
 
@@ -38,7 +45,7 @@ void CExitPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_statics->_v1, indent);
 	file->writeNumberLine(_statics->_v2, indent);
-	file->writeNumberLine(_statics->_v3, indent);
+	file->writeNumberLine(_statics->_isWinter, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -47,9 +54,84 @@ void CExitPellerator::load(SimpleFile *file) {
 	file->readNumber();
 	_statics->_v1 = file->readString();
 	_statics->_v2 = file->readNumber();
-	_statics->_v3 = file->readNumber();
+	_statics->_isWinter = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CExitPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CString name = getName();
+	
+	if (name == "ExitPellerator") {
+		if (_statics->_v2 != 2) {
+			switch (getRandomNumber(2)) {
+			case 0:
+				CPellerator::_soundHandle = queueSound("z#457.wav", CPellerator::_soundHandle);
+				break;
+			case 1:
+				CPellerator::_soundHandle = queueSound("z#458.wav", CPellerator::_soundHandle);
+				break;
+			default:
+				CPellerator::_soundHandle = queueSound("z#464.wav", CPellerator::_soundHandle);
+				break;
+			}
+		}
+
+		switch (_statics->_v2) {
+		case 0:
+			changeView("PromenadeDeck.Node 1.W");
+			break;
+		case 1:
+			changeView("MusicRoomLobby.Node 1.S");
+			break;
+		case 4:
+			changeView("TopOfWell.Node 6.N");
+			break;
+		case 5:
+			changeView("1stClassRestaurant.Lobby Node.E");
+			break;
+		case 6:
+			changeView(_statics->_isWinter ? "FrozenArboretum.Node 4.S" : "Arboretum.Node 4.W");
+			break;
+		default:
+			petDisplayMessage(2, "Please exit from the other side.");
+			CPellerator::_soundHandle = queueSound("z#438.wav", CPellerator::_soundHandle);
+
+		}
+	} else if (name == "ExitPellerator2") {
+		if (_statics->_v2 == 2) {
+			switch (getRandomNumber(2)) {
+			case 0:
+				CPellerator::_soundHandle = queueSound("z#457.wav", CPellerator::_soundHandle);
+				break;
+			case 1:
+				CPellerator::_soundHandle = queueSound("z#458.wav", CPellerator::_soundHandle);
+				break;
+			default:
+				CPellerator::_soundHandle = queueSound("z#464.wav", CPellerator::_soundHandle);
+				break;
+			}
+		}
+
+		if (_statics->_v2 == 2) {
+			changeView("Bar.Node 1.N");
+		} else {
+			petDisplayMessage(2, "Please exit from the other side.");
+			CPellerator::_soundHandle = queueSound("z#438.wav", CPellerator::_soundHandle);
+		}
+	}
+
+	return true;
+}
+
+bool CExitPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_statics->_v2 = msg->_newStatus;
+	return true;
+}
+
+bool CExitPellerator::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_statics->_isWinter = msg->_season == "Winter";
+	return true;
 }
 
 } // End of namespace Titanic

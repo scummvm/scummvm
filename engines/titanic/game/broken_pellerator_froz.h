@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CBrokenPelleratorFroz : public CBrokenPellBase {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
 	CString _string2;
 	CString _string3;
