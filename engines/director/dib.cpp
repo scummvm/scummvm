@@ -62,7 +62,7 @@ void DIBDecoder::loadPalette(Common::SeekableReadStream &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	_paletteColorCount = steps;
-	_palette = new byte[index];
+	_palette = new byte[index + 1];
 
 	for (uint8 i = 0; i < steps; i++) {
 		_palette[index - 2] = stream.readByte();

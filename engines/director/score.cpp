@@ -201,7 +201,7 @@ void Score::loadPalette(Common::SeekableSubReadStreamEndian &stream) {
 	uint16 steps = stream.size() / 6;
 	uint16 index = (steps * 3) - 1;
 	uint16 _paletteColorCount = steps;
-	byte *_palette = new byte[index];
+	byte *_palette = new byte[index + 1];
 
 	for (uint8 i = 0; i < steps; i++) {
 		_palette[index - 2] = stream.readByte();
