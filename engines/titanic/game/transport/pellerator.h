@@ -36,7 +36,7 @@ class CPellerator : public CTransport {
 	bool TimerMsg(CTimerMsg *msg);
 public:
 	static int _soundHandle;
-	static int _v2;
+	static int _destination;
 public:
 	CLASSDEF;
 	CPellerator();

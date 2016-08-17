@@ -39,7 +39,7 @@ BEGIN_MESSAGE_MAP(CPellerator, CTransport)
 END_MESSAGE_MAP()
 
 int CPellerator::_soundHandle;
-int CPellerator::_v2;
+int CPellerator::_destination;
 
 CPellerator::CPellerator() : CTransport() {
 }
@@ -47,7 +47,7 @@ CPellerator::CPellerator() : CTransport() {
 void CPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_soundHandle, indent);
-	file->writeNumberLine(_v2, indent);
+	file->writeNumberLine(_destination, indent);
 
 	CTransport::save(file, indent);
 }
@@ -55,13 +55,234 @@ void CPellerator::save(SimpleFile *file, int indent) {
 void CPellerator::load(SimpleFile *file) {
 	file->readNumber();
 	_soundHandle = file->readNumber();
-	_v2 = file->readNumber();
+	_destination = file->readNumber();
 
 	CTransport::load(file);
 }
 
 bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
-	warning("CPellerator::StatusChangeMsg");
+	setVisible(true);
+	playGlobalSound("z#74.wav", -2, true, true, 0);
+	int classNum = getPassengerClass();
+	int newDest = msg->_newStatus;
+
+	if (msg->_newStatus == _destination) {
+		petDisplayMessage(1, "You are already at your chosen destination.");
+	} else if (classNum == 3 || (msg->_newStatus > 4 && classNum != 1)) {
+		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+	} else if (newDest > _destination) {
+		CString name = getName();
+		changeView(name == "PelleratorObject2" ?
+			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
+
+		if (name == "PelleratorObject") {
+			for (; newDest > _destination; ++_destination) {
+				switch (_destination) {
+				case 0:
+				case 1:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(299, 304, 0);
+					playMovie(305, 313, MOVIE_GAMESTATE);
+					break;
+
+				case 2:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(299, 304, 0);
+					for (int idx = 0; idx < 5; ++idx)
+						playMovie(253, 263, 0);
+					playMovie(153, 197, 0);
+					for (int idx = 0; idx, 5; ++idx)
+						playMovie(253, 263, 0);
+					playMovie(290, 293, MOVIE_GAMESTATE);
+					break;
+
+				case 4:
+					playMovie(267, 270, 0);
+					for (int idx = 0; idx < 5; ++idx)
+						playMovie(253, 263, 0);
+					playMovie(3, 71, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(253, 263, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				case 5:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(299, 304, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(253, 263, 0);
+					playMovie(3, 71, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(299, 304, 0);
+
+				}
+			}
+		} else {
+			for (; newDest > _destination; ++_destination) {
+				switch (_destination) {
+				case 0:
+				case 1:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(299, 304, 0);
+					playMovie(305, 313, MOVIE_GAMESTATE);
+					break;
+
+				case 2:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 4; ++idx)
+						playMovie(299, 304, 0);
+					for (int idx = 0; idx < 15; ++idx)
+						playMovie(245, 255, 0);
+					playMovie(264, 267, MOVIE_GAMESTATE);
+					++_destination;
+					break;
+
+				case 4:
+					playMovie(241, 244, 0);
+					for (int idx = 0; idx < 15; ++idx)
+						playMovie(245, 255, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				case 5:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(229, 304, 0);
+					for (int idx = 0; idx < 12; ++idx)
+						playMovie(245, 255, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(299, 304, 0);
+					playMovie(305, 313, MOVIE_GAMESTATE);
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+
+		playMovie(264, 264, MOVIE_NOTIFY_OBJECT);
+		_destination = newDest;
+	} else if (newDest < _destination) {
+		CString name = getName();
+		changeView(name == "PelleratorObject2" ?
+			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
+
+		if (name == "PelleratorObject") {
+			for (; _destination < newDest; --_destination) {
+				switch (_destination) {
+				case 0:
+				case 1:
+					playMovie(351, 359, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				case 3:
+					playMovie(241, 244, 0);
+					for (int idx = 0; idx < 5; ++idx)
+						playMovie(245, 255, 0);
+					playMovie(197, 239, 0);
+					for (int idx = 0; idx < 5; ++idx)
+						playMovie(245, 255, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					--_destination;
+					break;
+
+				case 4:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(299, 304, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(245, 255, 0);
+					playMovie(78, 149, 0);
+					for (int idx = 0; idx < 5; ++idx)
+						playMovie(245, 255, 0);
+					playMovie(264, 267, MOVIE_GAMESTATE);
+					break;
+
+				case 5:
+					playMovie(351, 359, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(336, 341, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(245, 255, 0);
+					playMovie(78, 149, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				default:
+					break;
+				}
+			}
+		} else {
+			for (; _destination < newDest; --_destination) {
+				switch (_destination) {
+				case 0:
+				case 1:
+					playMovie(351, 359, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				case 3:
+					playMovie(267, 270, 0);
+					for (int idx = 0; idx < 15; ++idx)
+						playMovie(253, 263, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					--_destination;
+					break;
+
+				case 4:
+					playMovie(315, 323, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(299, 304, 0);
+					for (int idx = 0; idx < 15; ++idx)
+						playMovie(253, 263, 0);
+					playMovie(290, 293, MOVIE_GAMESTATE);
+					break;
+
+				case 5:
+					playMovie(351, 359, 0);
+					for (int idx = 0; idx < 7; ++idx)
+						playMovie(336, 341, 0);
+					for (int idx = 0; idx < 13; ++idx)
+						playMovie(253, 263, 0);
+					for (int idx = 0; idx < 3; ++idx)
+						playMovie(336, 341, 0);
+					playMovie(342, 348, MOVIE_GAMESTATE);
+					break;
+
+				default:
+					break;
+				}
+			}
+		}
+
+		playMovie(264, 264, MOVIE_NOTIFY_OBJECT);
+		_destination = newDest;
+	}
+
+	CStatusChangeMsg statusMsg;
+	statusMsg._newStatus = _destination;
+	statusMsg.execute("ExitPellerator");
+
 	return true;
 }
 
@@ -73,28 +294,28 @@ bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 	}
 
 	CString name = msg->_oldRoom ? msg->_oldRoom->getName() : "";
-	int oldVal = _v2;
+	int oldVal = _destination;
 
 	if (name.empty()) {
-		_v2 = 4;
+		_destination = 4;
 		oldVal = 4;
 	} else if (name == "PromenadeDeck") {
-		_v2 = 0;
+		_destination = 0;
 	} else if (name == "MusicRoomLobby") {
-		_v2 = 1;
+		_destination = 1;
 	} else if (name == "Bar") {
-		_v2 = 2;
+		_destination = 2;
 	} else if (name == "TopOfWell") {
-		_v2 = 4;
+		_destination = 4;
 	} else if (name == "1stClassRestaurant") {
-		_v2 = 5;
+		_destination = 5;
 	} else if (name == "Arboretum" || name == "FrozenArboretum") {
-		_v2 = 6;
+		_destination = 6;
 	}
 
-	if (_v2 != oldVal) {
+	if (_destination != oldVal) {
 		CStatusChangeMsg statusMsg;
-		statusMsg._newStatus = _v2;
+		statusMsg._newStatus = _destination;
 		statusMsg.execute("ExitPellerator");
 	}
 
@@ -106,7 +327,7 @@ bool CPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 	setVisible(false);
 	stopGlobalSound(true, -1);
 
-	switch (_v2) {
+	switch (_destination) {
 	case 0:
 		_soundHandle = queueSound("z#429.wav", _soundHandle);
 		break;
