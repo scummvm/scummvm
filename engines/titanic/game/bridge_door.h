@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CBridgeDoor : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF;
 

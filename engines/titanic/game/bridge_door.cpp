@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBridgeDoor, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CBridgeDoor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +38,25 @@ void CBridgeDoor::save(SimpleFile *file, int indent) {
 void CBridgeDoor::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CBridgeDoor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	setVisible(true);
+	playMovie(0, 6, 0);
+	changeView("Titania.Node 12.N");
+
+	return true;
+}
+
+bool CBridgeDoor::StatusChangeMsg(CStatusChangeMsg *msg) {
+	setVisible(true);
+	playMovie(7, 0, MOVIE_NOTIFY_OBJECT);
+	return true;
+}
+
+bool CBridgeDoor::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic
