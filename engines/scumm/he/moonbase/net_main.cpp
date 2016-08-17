@@ -104,6 +104,25 @@ bool Net::destroyPlayer(int32 playerDPID) {
 	return false;
 }
 
+int32 Net::startQuerySessions() {
+	warning("STUB: Net::startQuerySessions()"); // StartQuerySessions
+	return 0;
+}
+
+int32 Net::updateQuerySessions() {
+	warning("STUB: Net::updateQuerySessions()"); // UpdateQuerySessions
+	return 0;
+}
+
+void Net::stopQuerySessions() {
+	warning("STUB: Net::stopQuerySessions()"); // StopQuerySessions
+}
+
+int Net::querySessions() {
+	warning("STUB: Net::querySessions()"); // PN_QuerySessions
+	return 0;
+}
+
 bool Net::getHostName(char *hostname, int length) {
 	warning("STUB: Net::getHostName(\"%s\", %d)", hostname, length); // PN_GetHostName
 	return false;

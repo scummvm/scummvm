@@ -48,6 +48,10 @@ public:
 	int32 setProviderByName(int32 parameter1, int32 parameter2);
 	void setFakeLatency(int time);
 	bool destroyPlayer(int32 playerDPID);
+	int32 startQuerySessions();
+	int32 updateQuerySessions();
+	void stopQuerySessions();
+	int querySessions();
 
 private:
 
@@ -57,6 +61,7 @@ public:
 	bool getIPfromName(char *ip, int ipLength, char *nameBuffer);
 	void getSessionName(int sessionNumber, char *buffer, int length);
 	int getSessionPlayerCount(int sessionNumber);
+
 private:
 	//mostly getters
 

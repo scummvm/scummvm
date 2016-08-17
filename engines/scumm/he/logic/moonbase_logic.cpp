@@ -415,21 +415,22 @@ int LogicHEmoonbase::op_net_close_provider(int op, int numArgs, int32 *args) {
 	warning("STUB: op_net_close_provider()");
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_start_query_sessions(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_start_query_sessions()");
-	return 1;
+	return _vm1->_moonbase->_net->startQuerySessions();
 }
+
 int LogicHEmoonbase::op_net_update_query_sessions(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_update_query_sessions()");
-	return 1;
+	return _vm1->_moonbase->_net->updateQuerySessions();
 }
+
 int LogicHEmoonbase::op_net_stop_query_sessions(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_stop_query_sessions()");
+	_vm1->_moonbase->_net->stopQuerySessions();
 	return 1;
 }
+
 int LogicHEmoonbase::op_net_query_sessions(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_query_sessions()");
-	return 1;
+	return _vm1->_moonbase->_net->querySessions();
 }
 
 int LogicHEmoonbase::op_net_get_session_name(int op, int numArgs, int32 *args) {
