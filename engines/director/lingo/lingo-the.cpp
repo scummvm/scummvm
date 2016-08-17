@@ -325,6 +325,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		break;
 	case kTheCast:
 		d = getTheCast(id, field);
+		break;
 	case kThePerFrameHook:
 		warning("STUB: getting the perframehook");
 		break;
