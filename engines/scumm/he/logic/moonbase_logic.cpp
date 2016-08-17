@@ -439,21 +439,23 @@ int LogicHEmoonbase::op_net_get_session_player_count(int op, int numArgs, int32 
 	warning("STUB: op_net_get_session_player_count()");
 	return 1;
 }
-int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_destroy_player()");
-	return 1;
+
+int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {	
+	return _vm1->_moonbase->_net->destroyPlayer(args[0]);
 }
+
 int LogicHEmoonbase::op_net_get_player_long_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_player_long_name()");
-	return 1;
+	return _vm1->setupStringArrayFromString("long name"); // TODO: gdefMultiPlay.playername1
 }
+
 int LogicHEmoonbase::op_net_get_player_short_name(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_get_player_short_name()");
-	return 1;
+	return _vm1->setupStringArrayFromString("short"); // TODO: gdefMultiPlay.playername2
 }
+
 int LogicHEmoonbase::op_net_create_session(int op, int numArgs, int32 *args) {
-	warning("STUB: op_net_create_session()");
-	return 1;
+	char name[MAX_SESSION_NAME];
+	_vm1->getStringFromArray(args[0], name, sizeof(name));
+	return _vm1->_moonbase->_net->createSession(name);
 }
 
 int LogicHEmoonbase::op_net_join_session(int op, int numArgs, int32 *args) {
@@ -502,6 +504,7 @@ int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *arg
 	// Parameter 2 is the (optional) tcp/ip address
 	return _vm1->_moonbase->_net->setProviderByName(args[0], args[1]);
 }
+
 void LogicHEmoonbase::op_net_set_fake_latency(int op, int numArgs, int32 *args) {
 	_vm1->_moonbase->_net->setFakeLatency(args[0]);
 }

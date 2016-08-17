@@ -60,6 +60,11 @@ int Net::whoAmI() {
 	return 0;
 }
 
+int Net::createSession(char *name) {
+	warning("STUB: Net::createSession(\"%s\")", name); // PN_CreateSession
+	return 0;
+}
+
 int Net::joinSession(int sessionIndex) {
 	warning("STUB: Net::joinSession(%d)", sessionIndex); // PN_JoinSession
 	return 0;
@@ -91,6 +96,12 @@ void Net::setFakeLatency(int time) {
 	_latencyTime = time;
 	debug("NETWORK: Setting Fake Latency to %d ms \n", _latencyTime); // TODO: is it OK to use debug instead of SPUTM_xprintf?
 	_fakeLatency = true;
+}
+
+bool Net::destroyPlayer(int32 playerDPID) {
+	// bool PNETWIN_destroyplayer(DPID idPlayer)
+	warning("STUB: Net::destroyPlayer(%d)", playerDPID);
+	return false;
 }
 
 bool Net::getHostName(char *hostname, int length) {

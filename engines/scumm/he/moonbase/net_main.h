@@ -39,6 +39,7 @@ public:
 	int removeUser();
 	int whoSentThis();
 	int whoAmI();
+	int createSession(char *name);
 	int joinSession(int sessionIndex);
 	int endSession();
 	void disableSessionJoining();
@@ -46,6 +47,7 @@ public:
 	void setBotsCount(int botsCount);
 	int32 setProviderByName(int32 parameter1, int32 parameter2);
 	void setFakeLatency(int time);
+	bool destroyPlayer(int32 playerDPID);
 
 private:
 
