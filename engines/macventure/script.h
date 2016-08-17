@@ -34,7 +34,6 @@ class Container;
 class World;
 
 typedef uint32 ObjID;
-typedef int16 word;
 
 class ScriptAsset {
 public:
@@ -44,7 +43,7 @@ public:
 	void reset();
 	uint8 fetch();
 	bool hasNext();
-	void branch(word amount);
+	void branch(int16 amount);
 
 	ObjID getId();
 
@@ -66,22 +65,22 @@ public:
 		clear();
 	}
 
-	void push(word data) {
+	void push(int16 data) {
 		sp--;
 		stack[sp] = unneg16(data);
 	}
 
-	word pop() {
-		word v = stack[sp];
+	int16 pop() {
+		int16 v = stack[sp];
 		sp++;
 		return v;
 	}
 
-	word peek(word off) {
+	int16 peek(int16 off) {
 		return stack[sp + off];
 	}
 
-	void poke(word off, word val) {
+	void poke(int16 off, int16 val) {
 		stack[sp + off] = unneg16(val);
 	}
 
@@ -92,12 +91,12 @@ public:
 		}
 	}
 
-	word size() {
+	int16 size() {
 		return 0x80 - sp;
 	}
 
 private:
-	word unneg16(word data) {
+	int16 unneg16(int16 data) {
 		if (data < 0)
 			data = ((-data) ^ 0xFFFF) + 1;
 
@@ -106,15 +105,15 @@ private:
 
 private:
 
-	word stack[0x80];
-	word sp;
+	int16 stack[0x80];
+	int16 sp;
 };
 
 struct FunCall {
-	word func;
-	word rank;
+	int16 func;
+	int16 rank;
 
-	FunCall(word f, word r) {
+	FunCall(int16 f, int16 r) {
 		func = f;
 		rank = r;
 	}
@@ -155,9 +154,9 @@ private:
 private:
 
 	// Aux
-	word neg16(word val);
-	word neg8(word val);
-	word sumChildrenAttr(word obj, word attr, bool recursive);
+	int16 neg16(int16 val);
+	int16 neg8(int16 val);
+	int16 sumChildrenAttr(int16 obj, int16 attr, bool recursive);
 
 	// Opcodes
 	void op80GATT(EngineState *state, EngineFrame *frame);	//get attribute
