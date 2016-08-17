@@ -95,7 +95,20 @@ Common::String Lingo::decodeInstruction(int pc) {
 					res += Common::String::format(" [%5d]", v);
 					break;
 				}
+			case 's':
+				{
+					char *s = (char *)&(*_currentScript)[pc];
+					pc += calcStringAlignment(s);
+
+					res += Common::String::format(" \"%s\"", s);
+					break;
+				}
+			default:
+				warning("decodeInstruction: Unknown parameter type: %c", pars[-1]);
 			}
+
+			if (*pars)
+				res += ',';
 		}
 	} else {
 		res = "<unknown>";
