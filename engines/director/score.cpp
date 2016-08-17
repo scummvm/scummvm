@@ -892,8 +892,6 @@ Frame::Frame(const Frame &frame) {
 }
 
 Frame::~Frame() {
-	delete[] &_sprites;
-	delete[] &_drawRects;
 	delete _palette;
 }
 
@@ -1611,7 +1609,6 @@ Sprite::Sprite(const Sprite &sprite) {
 
 Sprite::~Sprite() {
 	delete _cast;
-	delete &_startPoint;
 }
 
 } //End of namespace Director
