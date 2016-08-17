@@ -55,7 +55,7 @@ void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		Common::String instr = decodeInstruction(_pc);
 
-		debugC(1, kDebugLingoExec, "E: %s", instr.c_str());
+		debugC(1, kDebugLingoExec, "[%3d]: %s", _pc, instr.c_str());
 
 		for (uint i = 0; i < _stack.size(); i++) {
 			debugCN(5, kDebugLingoExec, "%d ", _stack[i].u.i);
@@ -69,13 +69,39 @@ void Lingo::execute(int pc) {
 
 Common::String Lingo::decodeInstruction(int pc) {
 	Symbol sym;
+	Common::String res;
 
-	sym.u.func = (*_currentScript)[pc];
+	sym.u.func = (*_currentScript)[pc++];
 	if (_functions.contains((void *)sym.u.s)) {
-		return _functions[(void *)sym.u.s]->name;
+		res = _functions[(void *)sym.u.s]->name;
+		const char *pars = _functions[(void *)sym.u.s]->proto;
+		inst i;
+
+		while (*pars) {
+			switch (*pars++) {
+			case 'i':
+				{
+					i = (*_currentScript)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" %d", v);
+					break;
+				}
+			case 'o':
+				{
+					i = (*_currentScript)[pc++];
+					int v = READ_UINT32(&i);
+
+					res += Common::String::format(" [%5d]", v);
+					break;
+				}
+			}
+		}
 	} else {
-		return "<unknown>";
+		res = "<unknown>";
 	}
+
+	return res;
 }
 
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
