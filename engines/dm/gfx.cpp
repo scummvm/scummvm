@@ -2868,19 +2868,9 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 	int16 projectileDirection;
 	int16 projectileAspectType;
 	int16 projectileBitmapIndexDelta;
-	bool doNotScaleWithKineticEnergy;
 	bool drawProjectileAsObject; /* When true, the code section to draw an object is called (with a goto) to draw the projectile, then the code section goes back to projectile processing with another goto */
-	bool sqaureHasProjectile;
 	uint16 currentViewCellToDraw = 0;
 	bool projectileFlipVertical = false;
-	bool projectileAspectTypeHasBackGraphicAndRotation;
-	bool flipVertical;
-	Explosion* explosion;
-	Explosion* fluxcageExplosion;
-	int16* explosionCoordinates;
-	int16 explosionScale;
-	bool squareHasExplosion;
-	bool rebirthExplosion;
 
 	/* This is the full dungeon view */
 	static Box boxExplosionPatternD0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
@@ -3067,15 +3057,16 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 
 	group = 0;
 	groupThing = Thing::_none;
-	drawCreaturesCompleted = sqaureHasProjectile = squareHasExplosion = false;
+	bool squareHasExplosion = drawCreaturesCompleted = false;
+	bool squareHasProjectile = false;
 	cellCounter = 0;
 	firstThingToDraw = thingParam;
 	if (getFlag(orderedViewCellOrdinals, k0x0008_CellOrder_DoorFront)) { /* If the function call is to draw objects on a door square viewed from the front */
 		doorFrontViewDrawingPass = (orderedViewCellOrdinals & 0x0001) + 1; /* Two function calls are made in that case to draw objects on both sides of the door frame. The door and its frame are drawn between the two calls. This value indicates the drawing pass so that creatures are drawn in the right order and so that Fluxcages are not drawn twice */
 		orderedViewCellOrdinals >>= 4; /* Remove the first nibble that was used for the door front view pass */
-	} else {
+	} else
 		doorFrontViewDrawingPass = 0; /* The function call is not to draw objects on a door square viewed from the front */
-	}
+
 	L0135_B_DrawAlcoveObjects = !(remainingViewCellOrdinalsToProcess = orderedViewCellOrdinals);
 	AL_10_viewSquareIndexBackup = viewSquareIndex;
 	viewLane = (viewSquareIndex + 3) % 3;
@@ -3103,7 +3094,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 				continue;
 			}
 			if (AL_4_thingType == k14_ProjectileThingType) {
-				sqaureHasProjectile = true;
+				squareHasProjectile = true;
 				continue;
 			}
 			if (AL_4_thingType == k15_ExplosionThingType) {
@@ -3113,9 +3104,9 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 			if ((viewSquareIndex >= k0_ViewSquare_D3C) && (viewSquareIndex <= k9_ViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
 				objectAspect = &(_objectAspects209[g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = k360_FirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
-				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane)) {
+				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane))
 					AL_4_nativeBitmapIndex++;
-				}
+
 				coordinateSet = objectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
 				if (!coordinateSet[1]) /* If object is not visible */
 					continue;
@@ -3153,19 +3144,17 @@ T0115015_DrawProjectileAsObject:
 					if (flipHorizontal) {
 						derivedBitmapIndex += 2;
 						paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
-					} else {
-						if (useAlcoveObjectImage) {
+					} else if (useAlcoveObjectImage)
 							derivedBitmapIndex += 4;
-						}
-					}
-					if (f491_isDerivedBitmapInCache(derivedBitmapIndex)) {
+
+					if (f491_isDerivedBitmapInCache(derivedBitmapIndex))
 						AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
-					} else {
+					else {
 						bitmapGreenAnt = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
 						f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex), objectAspect->_byteWidth << 1, objectAspect->_height, byteWidth << 1, heightRedEagle, paletteChanges);
-						if (flipHorizontal) {
+						if (flipHorizontal)
 							f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, M77_getNormalizedByteWidth(byteWidth), heightRedEagle);
-						}
+
 						f493_addDerivedBitmap(derivedBitmapIndex);
 					}
 				}
@@ -3176,27 +3165,24 @@ T0115015_DrawProjectileAsObject:
 					boxByteGreen._y2 += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][1]];
 					objectShiftIndex++; /* The next object drawn will use the next shift values */
 					if (L0135_B_DrawAlcoveObjects) {
-						if (objectShiftIndex >= 14) {
+						if (objectShiftIndex >= 14)
 							objectShiftIndex = 2;
-						}
-					} else {
+					} else
 						objectShiftIndex &= 0x000F;
-					}
 				}
 				boxByteGreen._y1 = boxByteGreen._y2 - (heightRedEagle - 1);
-				if (boxByteGreen._y2 > 135) {
+				if (boxByteGreen._y2 > 135)
 					boxByteGreen._y2 = 135;
-				}
+
 				boxByteGreen._x2 = MIN(223, AL_4_xPos + byteWidth);
 				if (boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1)) {
-					if (flipHorizontal) {
+					if (flipHorizontal)
 						AL_4_xPos = paddingPixelCount;
-					} else {
+					else
 						AL_4_xPos = 0;
-					}
-				} else {
+				} else
 					AL_4_xPos = byteWidth - AL_4_xPos - 1;
-				}
+
 				if (drawingGrabbableObject) {
 					bitmapGreenAnt = AL_6_bitmapRedBanana;
 
@@ -3207,9 +3193,8 @@ T0115015_DrawProjectileAsObject:
 						if ((heightGreenGoat = AL_6_box->_y2 - AL_6_box->_y1) < 14) { /* If the box is too small then enlarge it a little */
 							heightGreenGoat = heightGreenGoat >> 1;
 							AL_6_box->_y1 += heightGreenGoat - 7;
-							if (heightGreenGoat < 4) {
+							if (heightGreenGoat < 4)
 								AL_6_box->_y2 -= heightGreenGoat - 3;
-							}
 						}
 					} else { /* If there are several grabbable objects then enlarge the box so it includes all objects */
 						AL_6_box->_x1 = MIN(AL_6_box->_x1, boxByteGreen._x1);
@@ -3233,6 +3218,7 @@ T0115015_DrawProjectileAsObject:
 		drawingLastBackRowCell = ((AL_2_viewCell <= k1_ViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
 		if ((groupThing == Thing::_none) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
+
 		if (group == 0) { /* If all creature data and info has not already been gathered */
 			group = (Group*)_vm->_dungeonMan->f156_getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()];
@@ -3249,63 +3235,52 @@ T0115015_DrawProjectileAsObject:
 			if (creatureSize == k1_MaskCreatureSizeHalf) {
 				AL_0_creatureIndexRed = 0;
 				creatureIndexGreen = -1;
-			} else {
+			} else
 				goto T0115129_DrawProjectiles; /* No creature to draw at cell, skip to projectiles */
-			}
 		}
 		creatureDirectionDelta = M21_normalizeModulo4(directionParam - _vm->_groupMan->M50_getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
 		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
 				goto T0115129_DrawProjectiles; /* Do not draw a single centered creature now, wait until second pass (for a front view door) or until all cells have been drawn so the creature is drawn over all the objects on the floor */
-			drawCreaturesCompleted = true;
-			if ((creatureSize == k1_MaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) { /* Side view of half square creature */
-				AL_2_viewCell = k3_HalfSizedViewCell_CenterColumn;
-			} else {
-				AL_2_viewCell = k4_HalfSizedViewCell_FrontRow;
-			}
-		} else {
-			if ((creatureSize == k1_MaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
-				if (drawingLastBackRowCell && (doorFrontViewDrawingPass != 2)) {
-					if ((creatureIndexGreen >= 0) && (creatureDirectionDelta & 0x0001)) {
-						AL_2_viewCell = k2_HalfSizedViewCell_BackRow; /* Side view of a half square creature on the back row. Drawn during pass 1 for a door square */
-					} else {
-						goto T0115129_DrawProjectiles;
-					}
-				} else {
-					if ((doorFrontViewDrawingPass != 1) && !remainingViewCellOrdinalsToProcess) {
-						if (creatureDirectionDelta & 0x0001) {
-							if (creatureIndexGreen >= 0) {
-								AL_2_viewCell = k4_HalfSizedViewCell_FrontRow; /* Side view of a half square creature on the front row. Drawn during pass 2 for a door square */
-							} else {
-								goto T0115129_DrawProjectiles;
-							}
-						} else {
-							drawCreaturesCompleted = true;
-							if (creatureIndexGreen < 0) {
-								creatureIndexGreen = 0;
-							}
-							twoHalfSquareCreaturesFrontView = group->getCount();
-							if (((AL_4_groupCells = _vm->_groupMan->M50_getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == returnPrevVal(directionParam))) {
 
-								AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
-							} else {
-								AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
-							}
-						}
-					} else {
-						goto T0115129_DrawProjectiles;
-					}
-				}
-			} else {
-				if (creatureSize != k0_MaskCreatureSizeQuarter)
+			drawCreaturesCompleted = true;
+			if ((creatureSize == k1_MaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) /* Side view of half square creature */
+				AL_2_viewCell = k3_HalfSizedViewCell_CenterColumn;
+			else
+				AL_2_viewCell = k4_HalfSizedViewCell_FrontRow;
+		} else if ((creatureSize == k1_MaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
+			if (drawingLastBackRowCell && (doorFrontViewDrawingPass != 2)) {
+				if ((creatureIndexGreen >= 0) && (creatureDirectionDelta & 0x0001))
+					AL_2_viewCell = k2_HalfSizedViewCell_BackRow; /* Side view of a half square creature on the back row. Drawn during pass 1 for a door square */
+				else
 					goto T0115129_DrawProjectiles;
-			}
-		}
+			} else if ((doorFrontViewDrawingPass != 1) && !remainingViewCellOrdinalsToProcess) {
+				if (creatureDirectionDelta & 0x0001) {
+					if (creatureIndexGreen >= 0)
+						AL_2_viewCell = k4_HalfSizedViewCell_FrontRow; /* Side view of a half square creature on the front row. Drawn during pass 2 for a door square */
+					else
+						goto T0115129_DrawProjectiles;
+				} else {
+					drawCreaturesCompleted = true;
+					if (creatureIndexGreen < 0)
+						creatureIndexGreen = 0;
+
+					twoHalfSquareCreaturesFrontView = group->getCount();
+					if (((AL_4_groupCells = _vm->_groupMan->M50_getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == returnPrevVal(directionParam)))
+						AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
+					else
+						AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
+				}
+			} else
+				goto T0115129_DrawProjectiles;
+		} else if (creatureSize != k0_MaskCreatureSizeQuarter)
+			goto T0115129_DrawProjectiles;
+
 		creatureAspectInt = activeGroup->_aspect[creatureIndexGreen];
-		if (viewSquareIndex > k9_ViewSquare_D0C) {
+		if (viewSquareIndex > k9_ViewSquare_D0C)
 			viewSquareIndex--;
-		}
+
 T0115077_DrawSecondHalfSquareCreature:
 		coordinateSet = creatureCoordinateSets[((CreatureAspect*)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
 		if (!coordinateSet[1])
@@ -3331,6 +3306,7 @@ T0115077_DrawSecondHalfSquareCreature:
 					AL_4_nativeBitmapIndex++; /* If the creature has a side image, it preceeds the attack image */
 					derivedBitmapIndex += 2;
 				}
+
 				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack)) {
 					AL_4_nativeBitmapIndex++; /* If the creature has a back image, it preceeds the attack image */
 					derivedBitmapIndex += 2;
@@ -3347,19 +3323,16 @@ T0115077_DrawSecondHalfSquareCreature:
 						AL_4_nativeBitmapIndex++; /* If the creature does not have a side image, the back image follows the front image */
 						derivedBitmapIndex += 2;
 					}
-				} else {
-					if (useFlippedHorizontallyCreatureFrontImage = getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack) && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
+				} else if (useFlippedHorizontallyCreatureFrontImage = getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack) && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
+					derivedBitmapIndex += 2;
+					if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide))
 						derivedBitmapIndex += 2;
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
-							derivedBitmapIndex += 2;
-						}
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack)) {
-							derivedBitmapIndex += 2;
-						}
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack)) {
-							derivedBitmapIndex += 2;
-						}
-					}
+
+					if (getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack))
+						derivedBitmapIndex += 2;
+
+					if (getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack))
+						derivedBitmapIndex += 2;
 				}
 			}
 		}
@@ -3373,29 +3346,25 @@ T0115077_DrawSecondHalfSquareCreature:
 					f99_copyBitmapAndFlipHorizontal(AL_6_bitmapRedBanana, _g74_tmpBitmap, byteWidth, heightRedEagle);
 					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
-			} else {
-				if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
-					AL_6_bitmapRedBanana = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-					if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
-						f99_copyBitmapAndFlipHorizontal(AL_6_bitmapRedBanana, _g74_tmpBitmap, byteWidth, heightRedEagle);
-						AL_6_bitmapRedBanana = _g74_tmpBitmap;
-					}
-				} else { /* Use first additional derived graphic: front D1 */
-					if (f491_isDerivedBitmapInCache(derivedBitmapIndex)) { /* If derived graphic is already in memory */
-						AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
-					} else {
-						bitmapGreenAnt = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
-							f99_copyBitmapAndFlipHorizontal(bitmapGreenAnt, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex), byteWidth, heightRedEagle);
-						}
-						f493_addDerivedBitmap(derivedBitmapIndex);
-					}
+			} else if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
+				AL_6_bitmapRedBanana = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
+				if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
+					f99_copyBitmapAndFlipHorizontal(AL_6_bitmapRedBanana, _g74_tmpBitmap, byteWidth, heightRedEagle);
+					AL_6_bitmapRedBanana = _g74_tmpBitmap;
 				}
+			} else if (f491_isDerivedBitmapInCache(derivedBitmapIndex)) /* If derived graphic is already in memory */
+				AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
+			else {
+				bitmapGreenAnt = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
+				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))
+					f99_copyBitmapAndFlipHorizontal(bitmapGreenAnt, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex), byteWidth, heightRedEagle);
+
+				f493_addDerivedBitmap(derivedBitmapIndex);
 			}
 		} else { /* Creature is on D2 or D3 */
-			if (useFlippedHorizontallyCreatureFrontImage) {
+			if (useFlippedHorizontallyCreatureFrontImage)
 				derivedBitmapIndex++; /* Skip front D1 image in additional graphics */
-			}
+
 			if (viewSquareIndex >= k3_ViewSquare_D2C) { /* Creature is on D2 */
 				derivedBitmapIndex++; /* Skip front D3 image in additional graphics */
 				AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
@@ -3408,12 +3377,13 @@ T0115077_DrawSecondHalfSquareCreature:
 				paletteChanges = _palChangesCreatureD3;
 				scale = k16_Scale_D3;
 			}
+
 			byteWidth = M78_getScaledDimension(sourceByteWidth, scale);
 			heightRedEagle = M78_getScaledDimension(sourceHeight, scale);
 			transparentColor = paletteChanges[((CreatureAspect*)objectAspect)->getTranspColour()] / 10;
-			if (derivedBitmapInCache = f491_isDerivedBitmapInCache(derivedBitmapIndex)) {
+			if (derivedBitmapInCache = f491_isDerivedBitmapInCache(derivedBitmapIndex))
 				AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex);
-			} else {
+			else {
 				bitmapGreenAnt = f489_getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
 				f129_blitToBitmapShrinkWithPalChange(bitmapGreenAnt, AL_6_bitmapRedBanana = f492_getDerivedBitmap(derivedBitmapIndex), sourceByteWidth << 1, sourceHeight, byteWidth << 1, heightRedEagle, paletteChanges);
 				f493_addDerivedBitmap(derivedBitmapIndex);
@@ -3431,9 +3401,8 @@ T0115077_DrawSecondHalfSquareCreature:
 					f130_flipBitmapHorizontal(AL_6_bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 				}
 				creaturePaddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
-			} else {
+			} else
 				creaturePaddingPixelCount = 0;
-			}
 		}
 		AL_4_yPos = coordinateSet[1];
 		AL_4_yPos += shiftSets[AL_8_shiftSetIndex][M23_getVerticalOffsetM23(creatureAspectInt)];
@@ -3441,13 +3410,12 @@ T0115077_DrawSecondHalfSquareCreature:
 		boxByteGreen._y1 = MAX(0, AL_4_yPos - (heightRedEagle - 1));
 		AL_4_xPos = coordinateSet[0];
 		AL_4_xPos += shiftSets[AL_8_shiftSetIndex][M22_getHorizontalOffsetM22(creatureAspectInt)];
-		if (viewLane == k1_ViewLaneLeft) {
+
+		if (viewLane == k1_ViewLaneLeft)
 			AL_4_xPos -= 100;
-		} else {
-			if (viewLane) { /* Lane right */
-				AL_4_xPos += 100;
-			}
-		}
+		else if (viewLane) /* Lane right */
+			AL_4_xPos += 100;
+
 		if (!(boxByteGreen._x2 = f26_getBoundedValue(0, AL_4_xPos + byteWidth, 223)))
 			goto T0115126_CreatureNotVisible;
 		int16 AL_0_creaturePosX;
@@ -3455,25 +3423,26 @@ T0115077_DrawSecondHalfSquareCreature:
 			if (boxByteGreen._x1 == 223)
 				goto T0115126_CreatureNotVisible;
 			AL_0_creaturePosX = creaturePaddingPixelCount;
-		} else {
+		} else
 			AL_0_creaturePosX = creaturePaddingPixelCount + (byteWidth - AL_4_xPos - 1);
-		}
+
 		f132_blitToBitmap(AL_6_bitmapRedBanana, _g296_bitmapViewport, boxByteGreen, AL_0_creaturePosX, 0, M77_getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, (Color)transparentColor, heightRedEagle, 136);
 T0115126_CreatureNotVisible:
 		if (twoHalfSquareCreaturesFrontView) {
 			twoHalfSquareCreaturesFrontView = false;
 			creatureAspectInt = activeGroup->_aspect[!creatureIndexGreen]; /* Aspect of the other creature in the pair */
-			if (AL_2_viewCell == k1_HalfSizedViewCell_RightColumn) {
+			if (AL_2_viewCell == k1_HalfSizedViewCell_RightColumn)
 				AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
-			} else {
+			else
 				AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
-			}
+
 			goto T0115077_DrawSecondHalfSquareCreature;
 		}
 		/* Draw projectiles */
 T0115129_DrawProjectiles:
-		if (!sqaureHasProjectile || ((viewSquareIndex = AL_10_viewSquareIndexBackup) > k9_ViewSquare_D0C) || (!(projectilePosX = objectCoordinateSets[0][viewSquareIndex][AL_2_viewCell = currentViewCellToDraw][0]))) /* If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn */
+		if (!squareHasProjectile || ((viewSquareIndex = AL_10_viewSquareIndexBackup) > k9_ViewSquare_D0C) || (!(projectilePosX = objectCoordinateSets[0][viewSquareIndex][AL_2_viewCell = currentViewCellToDraw][0]))) /* If there is no projectile to draw or if projectiles are not visible on the specified square or on the cell being drawn */
 			continue;
+
 		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
 		do {
 			if ((thingParam.getType() == k14_ProjectileThingType) && (thingParam.getCell() == cellYellowBear)) {
@@ -3482,7 +3451,9 @@ T0115129_DrawProjectiles:
 					objectAspect = (ObjectAspect*)&_projectileAspect[_vm->M1_ordinalToIndex(-AL_4_projectileAspect)];
 					AL_4_nativeBitmapIndex = ((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + k316_FirstProjectileGraphicIndice;
 					projectileAspectType = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
-					if (((doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask)) || (projectile->_kineticEnergy == 255)) && (viewSquareIndex == k9_ViewSquare_D0C)) {
+
+					bool doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask);
+					if ((doNotScaleWithKineticEnergy || (projectile->_kineticEnergy == 255)) && (viewSquareIndex == k9_ViewSquare_D0C)) {
 						scale = 0; /* Use native bitmap without resizing */
 						byteWidth = ((ProjectileAspect*)objectAspect)->_byteWidth;
 						heightRedEagle = ((ProjectileAspect*)objectAspect)->_height;
@@ -3495,38 +3466,38 @@ T0115129_DrawProjectiles:
 						byteWidth = M78_getScaledDimension(((ProjectileAspect*)objectAspect)->_byteWidth, scale);
 						heightRedEagle = M78_getScaledDimension(((ProjectileAspect*)objectAspect)->_height, scale);
 					}
-					if (projectileAspectTypeHasBackGraphicAndRotation = (projectileAspectType == k0_ProjectileAspectHasBackGraphicRotation)) {
+					bool projectileAspectTypeHasBackGraphicAndRotation = (projectileAspectType == k0_ProjectileAspectHasBackGraphicRotation);
+					if (projectileAspectTypeHasBackGraphicAndRotation)
 						projectileFlipVertical = ((mapXpos + mapYpos) & 0x0001);
-					}
+
+					bool flipVertical;
 					if (projectileAspectType == k3_ProjectileAspectHasNone) {
 						projectileBitmapIndexDelta = 0;
 						flipVertical = flipHorizontal = false;
-					} else {
-						if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_g370_events[projectile->_eventIndex]._C._projectile.getDir())) != isOrientedWestEast(directionParam)) {
-							if (projectileAspectType == k2_ProjectileAspectHasRotation) {
-								projectileBitmapIndexDelta = 1;
-							} else {
-								projectileBitmapIndexDelta = 2;
-							}
-							if (projectileAspectTypeHasBackGraphicAndRotation) {
-								flipHorizontal = !AL_2_viewCell || (AL_2_viewCell == k3_ViewCellBackLeft);
-								if (!(flipVertical = projectileFlipVertical)) {
-									flipHorizontal = !flipHorizontal;
-								}
-							} else {
-								flipVertical = false;
-								flipHorizontal = (returnNextVal(directionParam) == projectileDirection);
-							}
+					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_g370_events[projectile->_eventIndex]._C._projectile.getDir())) != isOrientedWestEast(directionParam)) {
+						if (projectileAspectType == k2_ProjectileAspectHasRotation)
+							projectileBitmapIndexDelta = 1;
+						else
+							projectileBitmapIndexDelta = 2;
+
+						if (projectileAspectTypeHasBackGraphicAndRotation) {
+							flipHorizontal = !AL_2_viewCell || (AL_2_viewCell == k3_ViewCellBackLeft);
+							if (!(flipVertical = projectileFlipVertical))
+								flipHorizontal = !flipHorizontal;
 						} else {
-							if ((projectileAspectType >= k2_ProjectileAspectHasRotation) || ((projectileAspectType == k1_ProjectileAspectBackGraphic) && (projectileDirection != directionParam)) || (projectileAspectTypeHasBackGraphicAndRotation && projectileFlipVertical)) { /* If the projectile does not have a back graphic or has one but is not seen from the back or if it has a back graphic and rotation and should be flipped vertically */
-								projectileBitmapIndexDelta = 0;
-							} else {
-								projectileBitmapIndexDelta = 1;
-							}
-							flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < k2_ViewCellBackRight);
-							flipHorizontal = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == k2_ViewLaneRight) || (!viewLane && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
+							flipVertical = false;
+							flipHorizontal = (returnNextVal(directionParam) == projectileDirection);
 						}
+					} else {
+						if ((projectileAspectType >= k2_ProjectileAspectHasRotation) || ((projectileAspectType == k1_ProjectileAspectBackGraphic) && (projectileDirection != directionParam)) || (projectileAspectTypeHasBackGraphicAndRotation && projectileFlipVertical)) /* If the projectile does not have a back graphic or has one but is not seen from the back or if it has a back graphic and rotation and should be flipped vertically */
+							projectileBitmapIndexDelta = 0;
+						else
+							projectileBitmapIndexDelta = 1;
+
+						flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < k2_ViewCellBackRight);
+						flipHorizontal = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == k2_ViewLaneRight) || (!viewLane && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
 					}
+
 					AL_4_nativeBitmapIndex += projectileBitmapIndexDelta;
 					paddingPixelCount = 0;
 					if (!scale) {
@@ -3591,18 +3562,23 @@ T0115129_DrawProjectiles:
 T0115171_BackFromT0115015_DrawProjectileAsObject:;
 		} while ((thingParam = _vm->_dungeonMan->f159_getNextThing(thingParam)) != Thing::_endOfList);
 	} while (remainingViewCellOrdinalsToProcess);
+
 	/* Draw explosions */
 	if (!squareHasExplosion)
-		goto T0115214_Return;
-	fluxcageExplosion = 0;
+		return;
+
+	Explosion *fluxcageExplosion = nullptr;
+	int16 *explosionCoordinates;
+
 	AL_1_viewSquareExplosionIndex = AL_10_viewSquareIndexBackup + 3; /* Convert square index to square index for explosions */
 	AL_10_explosionScaleIndex = AL_1_viewSquareExplosionIndex / 3;
 	thingParam = firstThingToDraw; /* Restart processing list of things from the beginning. The next loop draws only explosion things among the list */
 	do {
 		if (thingParam.getType() == k15_ExplosionThingType) {
 			AL_2_cellPurpleMan = thingParam.getCell();
-			explosion = (Explosion*)_vm->_dungeonMan->f156_getThingData(thingParam);
-			if ((rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1)) && ((AL_1_viewSquareExplosionIndex < k3_ViewSquare_D3C_Explosion) || (AL_1_viewSquareExplosionIndex > k9_ViewSquare_D1C_Explosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
+			Explosion *explosion = (Explosion*)_vm->_dungeonMan->f156_getThingData(thingParam);
+			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1);
+			if (rebirthExplosion && ((AL_1_viewSquareExplosionIndex < k3_ViewSquare_D3C_Explosion) || (AL_1_viewSquareExplosionIndex > k9_ViewSquare_D1C_Explosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
 				continue;
 			bool smoke = false;
 			if ((AL_4_explosionType == k0_ExplosionType_Fireball) || (AL_4_explosionType == k2_ExplosionType_LightningBolt) || (AL_4_explosionType == k101_ExplosionType_RebirthStep2)) {
@@ -3659,6 +3635,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				warning(false, "DISABLED CODE: f480_releaseBlock in f115_cthulhu");
 				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 			} else {
+				int16 explosionScale;
 				if (rebirthExplosion) {
 					explosionCoordinates = rebirthStep2ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 					explosionScale = explosionCoordinates[2];
@@ -3677,7 +3654,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				}
 				AL_6_bitmapRedBanana = f114_getExplosionBitmap(AL_4_explosionAspectIndex, explosionScale, byteWidth, heightRedEagle);
 T0115200_DrawExplosion:
-				flipVertical = _vm->getRandomNumber(2);
+				bool flipVertical = _vm->getRandomNumber(2);
 				paddingPixelCount = 0;
 				if (flipHorizontal = _vm->getRandomNumber(2)) {
 					paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1; /* Number of unused pixels in the units on the right of the bitmap */
@@ -3715,14 +3692,13 @@ T0115200_DrawExplosion:
 			}
 		}
 	} while ((thingParam = _vm->_dungeonMan->f159_getNextThing(thingParam)) != Thing::_endOfList);
+
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_g77_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
 		FieldAspect fieldAspect = _fieldAspects188[viewSquareIndex];
 		(fieldAspect._nativeBitmapRelativeIndex)++; /* NativeBitmapRelativeIndex is now the index of the Fluxcage field graphic */
 		f113_drawField(&fieldAspect, _frameWalls163[viewSquareIndex]._box);
 	}
-T0115214_Return:
-	;
 }
 
 uint16 DisplayMan::M77_getNormalizedByteWidth(uint16 byteWidth) {
