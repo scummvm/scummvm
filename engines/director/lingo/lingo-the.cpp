@@ -483,8 +483,8 @@ Datum Lingo::getTheCast(Datum &id1, int field) {
 		return d;
 	} else {
 		warning("The cast %d found", id);
-		return d;
 	}
+
 	cast = _vm->_currentScore->_casts[id];
 	castInfo = _vm->_currentScore->_castsInfo[id];
 
