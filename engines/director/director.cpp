@@ -141,7 +141,8 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 	Common::FSList movies;
 
 	Common::HashMap<Common::String, Score *> nameMap;
-	directory.getChildren(movies, Common::FSNode::kListFilesOnly);
+	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))
+		return nameMap;
 
 	if (!movies.empty()) {
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
