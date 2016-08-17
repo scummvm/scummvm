@@ -188,9 +188,6 @@ Score::~Score() {
 	if (_movieArchive)
 		_movieArchive->close();
 
-	delete _surface;
-	delete _trailSurface;
-
 	delete _font;
 	delete _movieArchive;
 
