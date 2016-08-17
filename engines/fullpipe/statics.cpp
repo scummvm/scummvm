@@ -96,7 +96,7 @@ Common::Point *StepArray::getPoint(Common::Point *point, int index, int offset) 
 }
 
 bool StepArray::gotoNextPoint() {
-	if (_currPointIndex < _maxPointIndex) {
+	if (_currPointIndex < _maxPointIndex - 1) {
 		_currPointIndex++;
 		return true;
 	} else {
