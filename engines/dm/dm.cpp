@@ -25,6 +25,7 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -262,11 +263,17 @@ void DMEngine::f463_initializeGame() {
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
+
+	int16 saveSlot = 1;
 	do {
-		f441_processEntrance();
-		if (_engineShouldQuit)
-			return;
-	} while (f435_loadgame(1) != k1_LoadgameSuccess);
+		if (ConfMan.hasKey("save_slot")) {
+			saveSlot = ConfMan.getInt("save_slot");
+		} else {
+			f441_processEntrance();
+			if (_engineShouldQuit)
+				return;
+		}
+	} while (f435_loadgame(saveSlot) != k1_LoadgameSuccess);
 
 	_displayMan->f466_loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_gK73_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 

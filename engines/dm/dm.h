@@ -212,7 +212,6 @@ class DMEngine : public Engine {
 	void initArrays();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	bool readSaveGameHeader(Common::InSaveFile *file, SaveGameHeader *header);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -294,6 +293,8 @@ public:
 	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
 	int16 _g318_waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 };
+
+bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header);
 
 } // End of namespace DM
 

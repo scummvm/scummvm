@@ -32,6 +32,8 @@
 #include "common/fs.h"
 
 #include "engines/advancedDetector.h"
+#include <common/system.h>
+
 namespace DM {
 static const PlainGameDescriptor DMGames[] = {
 	{"dm", "Dungeon Master"},
@@ -46,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
 		AD_LISTEND
 		},
-	    Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 	},
 	{
 		"dm", "Atari ???v English",
@@ -94,13 +96,72 @@ public:
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const { return gameDescriptions; }
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-		if(desc)
+		if (desc)
 			*engine = new DM::DMEngine(syst, desc);
 		return desc != nullptr;
 	}
+
+	virtual bool hasFeature(MetaEngineFeature f) const {
+		return
+			(f == kSupportsListSaves) ||
+			(f == kSupportsLoadingDuringStartup) ||
+			(f == kSavesSupportThumbnail) ||
+			(f == kSavesSupportMetaInfo) ||
+			(f == kSavesSupportCreationDate);
+	}
+
 	virtual int getMaximumSaveSlot() const { return 99; }
-	virtual SaveStateList listSaves(const char *target) const { return SaveStateList(); }
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const { return SaveStateDescriptor(); }
+
+	virtual SaveStateList listSaves(const char *target) const {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		SaveGameHeader header;
+		Common::String pattern = target;
+		pattern += ".###";
+
+		Common::StringArray filenames;
+		filenames = saveFileMan->listSavefiles(pattern.c_str());
+
+		SaveStateList saveList;
+
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			// Obtain the last 3 digits of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 3);
+
+			if ((slotNum >= 0) && (slotNum <= 999)) {
+				Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+				if (in) {
+					if (DM::readSaveGameHeader(in, &header))
+						saveList.push_back(SaveStateDescriptor(slotNum, header._descr.getDescription()));
+					delete in;
+				}
+			}
+		}
+
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+		return saveList;
+	}
+
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		Common::String filename = Common::String::format("%s.%03u", target, slot);
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+		if (in) {
+			DM::SaveGameHeader header;
+
+			bool successfulRead = DM::readSaveGameHeader(in, &header);
+			delete in;
+
+			if (successfulRead) {
+				SaveStateDescriptor desc(slot, header._descr.getDescription());
+
+				return header._descr;
+			}
+		}
+
+		return SaveStateDescriptor();
+	}
+
 	virtual void removeSaveState(const char *target, int slot) const {}
 };
 

@@ -375,7 +375,7 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::Strin
 }
 
 
-bool DMEngine::readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {
+bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {
 	uint32 id = in->readUint32BE();
 
 	// Check if it's a valid ScummVM savegame
