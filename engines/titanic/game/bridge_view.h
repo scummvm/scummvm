@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CBridgeView : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	int _fieldE0;
+	int _mode;
 public:
 	CLASSDEF;
-	CBridgeView() : CBackground(), _fieldE0(0) {}
+	CBridgeView() : CBackground(), _mode(0) {}
 
 	/**
 	 * Save the data for the class to file

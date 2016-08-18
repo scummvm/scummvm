@@ -24,16 +24,92 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CBridgeView, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CBridgeView::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_mode, indent);
 	CBackground::save(file, indent);
 }
 
 void CBridgeView::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_mode = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CBridgeView::ActMsg(CActMsg *msg) {
+	CTurnOn onMsg;
+	CSetVolumeMsg volumeMsg;
+	volumeMsg._secondsTransition = 1;
+
+	if (msg->_action == "End") {
+		_mode = 4;
+		petLockInput();
+		petHide();
+		setVisible(true);
+		playMovie(MOVIE_NOTIFY_OBJECT);
+	} else if (msg->_action == "Go") {
+		_mode = 1;
+		setVisible(true);
+		volumeMsg._volume = 100;
+		volumeMsg.execute("EngineSounds");
+		onMsg.execute("EngineSounds");
+		playMovie(MOVIE_NOTIFY_OBJECT);
+	} else {
+		volumeMsg._volume = 50;
+		volumeMsg.execute("EngineSounds");
+		onMsg.execute("EngineSounds");
+
+		if (msg->_action == "Cruise") {
+			_mode = 2;
+			setVisible(true);
+			playMovie(MOVIE_NOTIFY_OBJECT);
+		} else if (msg->_action == "GoENd") {
+			_mode = 3;
+			setVisible(true);
+			CChangeMusicMsg musicMsg;
+			musicMsg._flags = 1;
+			musicMsg.execute("BridgeAutoMusicPlayer");
+			playSound("a#42.wav");
+			playMovie(MOVIE_NOTIFY_OBJECT);
+		}
+	}
+
+	return true;
+}
+
+bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
+	CTurnOff offMsg;
+	offMsg.execute("EngineSounds");
+
+	switch (_mode) {
+	case 0:
+	case 1:
+		setVisible(false);
+		dec54();
+		break;
+
+	case 2: {
+		setVisible(false);
+		CActMsg actMsg("End");
+		actMsg.execute("HomeSequence");
+		break;
+	}
+
+	case 3:
+		setVisible(false);
+		changeView("TheEnd.Node 3.N");
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
