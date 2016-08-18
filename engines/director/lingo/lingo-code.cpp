@@ -872,6 +872,7 @@ void Lingo::c_procret() {
 	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size() + 1);
 
 	CFrame *fp = g_lingo->_callstack.back();
+	g_lingo->_callstack.pop_back();
 
 	g_lingo->_currentScript = fp->retscript;
 	g_lingo->_pc = fp->retpc;
