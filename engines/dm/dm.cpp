@@ -60,6 +60,8 @@
 #include <advancedDetector.h>
 #include "sounds.h"
 #include <graphics/surface.h>
+#include <common/translation.h>
+#include <gui/saveload.h>
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -178,7 +180,7 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 	_g527_platform = 0;
 	_g526_dungeonId = 0;
 
-	_g298_newGame = false;
+	_g298_newGame = 0;
 	_g523_restartGameRequest = false;
 	_g321_stopWaitingForPlayerInput = true;
 	_g301_gameTimeTicking = false;
@@ -269,12 +271,18 @@ void DMEngine::f463_initializeGame() {
 
 	int16 saveSlot = 1;
 	do {
+		// if loading from the launcher
 		if (ConfMan.hasKey("save_slot")) {
 			saveSlot = ConfMan.getInt("save_slot");
-		} else {
+		} else { // else show the entrance
 			f441_processEntrance();
 			if (_engineShouldQuit)
 				return;
+		}
+		if (_g298_newGame == k0_modeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			saveSlot = dialog->runModalWithCurrentTarget();
+			delete dialog;
 		}
 	} while (f435_loadgame(saveSlot) != k1_LoadgameSuccess);
 
