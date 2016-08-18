@@ -1,8 +1,8 @@
 MODULE := engines/cryo
 
 MODULE_OBJS = \
-	cryo.o \
 	eden.o \
+	cryo.o \
 	detection.o
 
 # This module can be built as a plugin

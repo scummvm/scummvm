@@ -7698,7 +7698,7 @@ skip:
 			return;
 
 #define CLFile_Write(h, ptr, size) \
-	debug("writing 0x%X bytes", *size); \
+	debug("writing 0x%lX bytes", *size); \
 	h->write(ptr, *size);
 
 		vavaoffsetout();

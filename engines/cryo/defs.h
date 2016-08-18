@@ -55,7 +55,7 @@ enum Areas {
 	arWhiteArch,
 	arMoorkusLair
 };
-};
+}
 
 #define MKRM(a,l) (((a) << 8) | (l))
 
@@ -154,7 +154,7 @@ enum Objects {
 	obTablet5,
 	obTablet6
 };
-};
+}
 
 enum PERSO {
 	PER_ROI = 0,
@@ -242,7 +242,7 @@ enum PersonId {
 	pidDinosaur,                            // different species of friendly dino
 	pidEnemy                                // different species of enemy dino
 };
-};
+}
 
 // person in room mask bits
 namespace PersonMask {
@@ -263,7 +263,7 @@ enum PersonMask {
 	pmEnemy  = 0x2000,
 	pmMorkus = 0x4000
 };
-};
+}
 
 namespace PersonFlags {
 enum PersonFlags {
@@ -289,7 +289,7 @@ enum PersonFlags {
 	pfInParty = 0x40,
 	pf80 = 0x80
 };
-};
+}
 
 #pragma pack(push, 1)
 struct perso_t {
@@ -320,7 +320,7 @@ enum ObjectFlags {
 	ofFlag1 = 1,
 	ofInHands = 2       // Currently holding this object in hands
 };
-};
+}
 
 #define MAX_OBJECTS 42
 struct object_t {
@@ -339,7 +339,7 @@ enum DialogFlags {
 	dfRepeatable = 0x40,
 	dfSpoken = 0x80
 };
-};
+}
 
 namespace DialogType {
 enum DialogType {
@@ -351,7 +351,7 @@ enum DialogType {
 	dtInspect,
 	dtHint
 };
-};
+}
 
 struct dial_t {
 	char        flags;          // 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
@@ -415,7 +415,7 @@ enum RoomFlags {
 	rf40 = 0x40,
 	rf80 = 0x80
 };
-};
+}
 
 struct room_t {
 	unsigned char   ff_0;
@@ -446,7 +446,7 @@ enum AreaFlags {
 	TyrannSighted = 0x4000,
 	afFlag8000 = 0x8000
 };
-};
+}
 
 namespace AreaType {
 enum AreaType {
@@ -454,7 +454,7 @@ enum AreaType {
 	atValley = 2,
 	atCave = 3
 };
-};
+}
 
 struct area_t {
 	unsigned char   num;
@@ -483,7 +483,7 @@ enum ValleyNews {
 	vnHidden = 0x80,
 	vnEnd = 0xFF
 };
-};
+}
 
 namespace DisplayFlags {
 enum DisplayFlags {
@@ -496,7 +496,7 @@ enum DisplayFlags {
 	dfFlag40 = 0x40,
 	dfFlag80 = 0x80
 };
-};
+}
 
 namespace DrawFlags {
 enum DrawFlags {
@@ -507,7 +507,7 @@ enum DrawFlags {
 	drDrawMenu = 0x10,
 	drDrawFlag20 = 0x20
 };
-};
+}
 
 namespace MenuFlags {
 enum MenuFlags {
@@ -517,7 +517,7 @@ enum MenuFlags {
 	mfFlag8 = 8,
 	mfFlag10 = 0x10
 };
-};
+}
 
 namespace MusicType {
 enum MusicType {  //TODO: same as DialogType?
@@ -527,7 +527,7 @@ enum MusicType {  //TODO: same as DialogType?
 	mtEvent = 4,
 	mtFF = 0xFF
 };
-};
+}
 
 namespace EventType {
 enum EventType {
@@ -549,7 +549,7 @@ enum EventType {
 	etEvent12 = 18,
 	etGotoArea = 0x80   // + area id
 };
-};
+}
 
 namespace GameFlags {
 enum GameFlags {
@@ -570,7 +570,7 @@ enum GameFlags {
 	gfFlag4000 = 0x4000,
 	gfFlag8000 = 0x8000
 };
-};
+}
 
 struct global_t {
 	unsigned char   areaNum;
