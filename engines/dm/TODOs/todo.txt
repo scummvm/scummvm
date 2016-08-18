@@ -16,6 +16,5 @@ Todo:
 Code stuff todo:
 	Complete stub methods(blitShrink, blitmask, scroller, etc.)
 	Save file f433_processCommand140_saveGame fails silently, add error checking
-	Clean up f113_drawField
 	
 	

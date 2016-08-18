@@ -2771,17 +2771,24 @@ uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 }
 
 void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
-	warning(false, "STUB METHOD: f113_drawField");
+	byte* bitmapMask = nullptr;
 
 	if (fieldAspect->_mask != kMaskFieldAspectNoMask) {
-		DisplayMan &dispMan = *_vm->_displayMan;
-
-		byte *bitmapMask = dispMan._g74_tmpBitmap;
-		memmove(bitmapMask, dispMan.f489_getNativeBitmapOrGraphic(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
-				fieldAspect->_height * fieldAspect->_byteWidth * 2 * sizeof(bitmapMask[0]));
-		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask))
-			dispMan.f130_flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
+		bitmapMask = _g74_tmpBitmap;
+		memmove(bitmapMask, f489_getNativeBitmapOrGraphic(k69_FieldMask_D3R_GraphicIndice + getFlag(fieldAspect->_mask, kMaskFieldAspectIndex)),
+				fieldAspect->_height * fieldAspect->_byteWidth * 2);
+		if (getFlag(fieldAspect->_mask, kMaskFieldAspectFlipMask)) {
+			f130_flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
+		}
 	}
+
+	f491_isDerivedBitmapInCache(k0_DerivedBitmapViewport);
+	byte *bitmap = f489_getNativeBitmapOrGraphic(k73_FieldTeleporterGraphicIndice + fieldAspect->_nativeBitmapRelativeIndex);
+	f133_blitBoxFilledWithMaskedBitmap(bitmap, _g296_bitmapViewport, bitmapMask, f492_getDerivedBitmap(k0_DerivedBitmapViewport), box,
+									   _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
+									   (Color)fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
+	f493_addDerivedBitmap(k0_DerivedBitmapViewport);
+	f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 }
 
 int16 DisplayMan::f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale) {
