@@ -292,7 +292,6 @@ int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 sr
 #define AP0483_i_PrimaryDirection srcMapX
 	int16 L0556_i_Direction;
 
-
 	if (srcMapX == destMapX) {
 		_vm->_projexpl->_g363_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
 		if (srcMapY > destMapY) {

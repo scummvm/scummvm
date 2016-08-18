@@ -141,11 +141,7 @@ bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
 
 #define setFlag(val, mask) ((val) |= (mask))
-
-
 #define getFlag(val, mask) ((val) & (mask))
-
-
 #define clearFlag(val, mask) ((val) &= (~(mask))) // @ M09_CLEAR
 
 uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE

@@ -41,16 +41,6 @@
 
 namespace DM {
 
-
-Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
-Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
-Box g54_BoxChampionIcons[4] = {
-	Box(281, 299,  0, 13),
-	Box(301, 319,  0, 13),
-	Box(301, 319, 15, 28),
-	Box(281, 299, 15, 28)};
-Color g46_ChampionColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
-
 int16 g39_LightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
 
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
@@ -99,20 +89,37 @@ Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_Champi
 const char *g417_baseSkillName[4];
 
 void ChampionMan::initConstants() {
-	{
-		static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
-		static const char *g417_baseSkillName_DE_DEU[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
-		static const char *g417_baseSkillName_FR_FRA[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
+	static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
+	static const char *g417_baseSkillName_DE_DEU[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
+	static const char *g417_baseSkillName_FR_FRA[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
+	static Box boxChampionIcons[4] = {
+		Box(281, 299,  0, 13),
+		Box(301, 319,  0, 13),
+		Box(301, 319, 15, 28),
+		Box(281, 299, 15, 28)
+	};
 
-		const char **g417_byLanguage;
-		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY: g417_byLanguage = g417_baseSkillName_EN_ANY; break;
-		case Common::DE_DEU: g417_byLanguage = g417_baseSkillName_DE_DEU; break;
-		case Common::FR_FRA: g417_byLanguage = g417_baseSkillName_FR_FRA; break;
-		}
-		for (int i = 0; i < 4; ++i)
-			g417_baseSkillName[i] = g417_byLanguage[i];
+	static Color championColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
+
+	const char **g417_byLanguage;
+	switch (_vm->getGameLanguage()) { // localized
+	case Common::EN_ANY: 
+		g417_byLanguage = g417_baseSkillName_EN_ANY;
+		break;
+	case Common::DE_DEU:
+		g417_byLanguage = g417_baseSkillName_DE_DEU;
+		break;
+	case Common::FR_FRA:
+		g417_byLanguage = g417_baseSkillName_FR_FRA;
+		break;
+	default:
+		error("Unexpected language used");
+	}
+
+	for (int i = 0; i < 4; ++i) {
+		g417_baseSkillName[i] = g417_byLanguage[i];
+		_championColor[i] = championColor[i];
+		_boxChampionIcons[i] = boxChampionIcons[i];
 	}
 }
 
@@ -139,9 +146,9 @@ ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 }
 
 bool ChampionMan::f329_isLeaderHandObjectThrown(int16 side) {
-	if (_g411_leaderIndex == kM1_ChampionNone) {
+	if (_g411_leaderIndex == kM1_ChampionNone)
 		return false;
-	}
+
 	return f328_isObjectThrown(_g411_leaderIndex, kM1_ChampionSlotLeaderHand, side);
 }
 
@@ -459,7 +466,7 @@ void ChampionMan::f296_drawChangedObjectIcons() {
 			}
 		}
 
-		if (invMan._g424_panelContent = k4_PanelContentChest) {
+		if (invMan._g424_panelContent == k4_PanelContentChest) {
 			thing = invMan._g425_chestSlots;
 			for (int16 slotIndex = 0; slotIndex < 8; ++slotIndex, thing++) {
 				drawViewport |= (f295_hasObjectIconInSlotBoxChanged(slotIndex + k38_SlotBoxChestFirstSlot, *thing) ? 1 : 0);
@@ -512,7 +519,7 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 			}
 		}
 
-		if (iconIndex = k4_IconIndiceWeaponTorchUnlit) {
+		if (iconIndex == k4_IconIndiceWeaponTorchUnlit) {
 			((Weapon *)rawObjPtr)->setLit(true);
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 			f296_drawChangedObjectIcons();
@@ -988,7 +995,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 			f292_drawChampionState((ChampionIndex)champIndex);
 			_vm->_textMan->f51_messageAreaPrintLineFeed();
-			Color curChampionColor = g46_ChampionColor[champIndex];
+			Color curChampionColor = _championColor[champIndex];
 			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, curChampion->_name);
 
 			switch (_vm->getGameLanguage()) { // localized
@@ -1449,7 +1456,7 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 		f323_unpoison(champIndex);
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[curChampionIconIndex], k0_ColorBlack);
+	_vm->_displayMan->D24_fillScreenBox(_boxChampionIcons[curChampionIconIndex], k0_ColorBlack);
 	f292_drawChampionState((ChampionIndex)champIndex);
 
 	int16 aliveChampionIndex;
@@ -2032,7 +2039,7 @@ void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
 		if (barGraphHeight) {
 			box._y1 = 27 - barGraphHeight;
 			box._y2 = 26;
-			_vm->_displayMan->D24_fillScreenBox(box, g46_ChampionColor[champIndex]);
+			_vm->_displayMan->D24_fillScreenBox(box, _championColor[champIndex]);
 		}
 		box._x1 += 7;
 		box._x2 += 7;
@@ -2068,6 +2075,9 @@ uint16 ChampionMan::f309_getMaximumLoad(Champion *champ) {
 }
 
 void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
+	static Box boxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
+	static Box boxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
+
 	int16 championStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
 	Champion *curChampion = &_gK71_champions[champIndex];
 	uint16 championAttributes = curChampion->_attributes;
@@ -2155,7 +2165,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 			else
 				nativeBitmapIndex = k33_SlotBoxNormalIndice;
 
-			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), gBoxMouth, k16_byteWidth, k12_ColorDarkestGray, 18);
+			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), boxMouth, k16_byteWidth, k12_ColorDarkestGray, 18);
 			nativeBitmapIndex = k33_SlotBoxNormalIndice;
 			for (int i = k1_ChampionStatStrength; i <= k6_ChampionStatAntifire; i++) {
 				if ((curChampion->_statistics[i][k1_ChampionStatCurrent] < curChampion->_statistics[i][k0_ChampionStatMaximum])) {
@@ -2163,7 +2173,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 					break;
 				}
 			}
-			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), gBoxEye, k16_byteWidth, k12_ColorDarkestGray, 18);
+			_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(nativeBitmapIndex), boxEye, k16_byteWidth, k12_ColorDarkestGray, 18);
 			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 		}
 	}
@@ -2213,8 +2223,8 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	}
 	uint16 championIconIndex = M26_championIconIndex(curChampion->_cell, _vm->_dungeonMan->_g308_partyDir);
 	if (getFlag(championAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(championIconIndex))) {
-		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[championIconIndex], g46_ChampionColor[champIndex]);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[championIconIndex], M26_championIconIndex(curChampion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
+		_vm->_displayMan->D24_fillScreenBox(_boxChampionIcons[championIconIndex], _championColor[champIndex]);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, _boxChampionIcons[championIconIndex], M26_championIconIndex(curChampion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
 	if (getFlag(championAttributes, k0x0800_ChampionAttributePanel) && isInventoryChampion) {
 		if (_vm->_g333_pressingMouth)

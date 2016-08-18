@@ -38,9 +38,6 @@ namespace DM {
 #define k0x4000_IgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
 #define k0x8000_IgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
 
-extern Box g54_BoxChampionIcons[4]; // @ G0054_ai_Graphic562_Box_ChampionIcons
-extern Color g46_ChampionColor[4]; // @ G0046_auc_Graphic562_ChampionColor
-
 extern int16 g39_LightPowerToLightAmount[16]; // @ G0039_ai_Graphic562_LightPowerToLightAmount
 
 class Scent {
@@ -590,8 +587,11 @@ public:
 	void f331_applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
 	void save2_PartyPart(Common::OutSaveFile *file);
 	void load2_PartyPart(Common::InSaveFile* file);
-};
 
+
+	Box _boxChampionIcons[4];
+	Color _championColor[4];
+};
 
 }
 
