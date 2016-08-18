@@ -724,7 +724,7 @@ void Lingo::c_ifcode() {
 
 void Lingo::c_whencode() {
 	Datum d;
-	int start = g_lingo->_pc + 1;
+	int start = g_lingo->_pc;
 	int end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start]);
 
