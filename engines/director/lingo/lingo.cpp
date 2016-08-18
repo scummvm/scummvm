@@ -376,7 +376,7 @@ void Lingo::runTests() {
 
 	Common::sort(fileList.begin(), fileList.end());
 
-	for (int i = 0; i < fileList.size(); i++) {
+	for (uint i = 0; i < fileList.size(); i++) {
 		Common::SeekableReadStream *const  stream = SearchMan.createReadStreamForMember(fileList[i]);
 		if (stream) {
 			uint size = stream->size();
