@@ -670,6 +670,7 @@ private:
 	int16 _g695_doorNativeBitmapIndex_Front_D1LCR[2]; // @ G0695_ai_DoorNativeBitmapIndex_Front_D1LCR
 
 	uint16 *_gK17_paletteFadeFrom; // @ K0017_pui_Palette_FadeFrom
+	uint16 _gK16_paletteFadeTemporary[16]; // @ K0016_aui_Palette_FadeTemporary
 public:
 
 	uint16 _screenWidth;

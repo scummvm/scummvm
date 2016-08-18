@@ -136,6 +136,8 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 		_g345_aui_BlankBuffer[i] = 0;
 
 	_gK17_paletteFadeFrom = nullptr;
+	for (uint16 i = 0; i < 16; ++i)
+		_gK16_paletteFadeTemporary[i] = 0;
 
 	initConstants();
 }
@@ -3751,14 +3753,13 @@ uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
 }
 
 void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
-	static uint16 K0016_aui_Palette_FadeTemporary[16];
-	uint16 *paletteRegister = K0016_aui_Palette_FadeTemporary;
+	uint16 *paletteRegister = _gK16_paletteFadeTemporary;
 
 	for (int16 i = 0; i < 16; i++) 
 		paletteRegister[i] = _gK17_paletteFadeFrom[i];
 
 	for (int16 i = 0; i < 8; i++) {
-		paletteRegister = K0016_aui_Palette_FadeTemporary;
+		paletteRegister = _gK16_paletteFadeTemporary;
 		for (int16 colIdx = 0; colIdx < 16; colIdx++, paletteRegister++) {
 			uint16 currentRGBColor = getFlag(*paletteRegister, D12_MASK_BLUE_COMPONENT);
 			int16 targetRGBColor = getFlag(P0849_pui_Palette[colIdx], D12_MASK_BLUE_COMPONENT);
@@ -3802,7 +3803,7 @@ void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 		}
 		_vm->f22_delay(1);
 		_vm->_eventMan->f357_discardAllInput();
-		f508_buildPaletteChangeCopperList(K0016_aui_Palette_FadeTemporary, K0016_aui_Palette_FadeTemporary);
+		f508_buildPaletteChangeCopperList(_gK16_paletteFadeTemporary, _gK16_paletteFadeTemporary);
 	}
 }
 
