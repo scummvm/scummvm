@@ -267,6 +267,7 @@ public:
 	static void c_repeatwhilecode();
 	static void c_repeatwithcode();
 	static void c_ifcode();
+	static void c_whencode();
 	static void c_eq();
 	static void c_neq();
 	static void c_gt();

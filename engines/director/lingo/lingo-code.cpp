@@ -92,6 +92,7 @@ static struct FuncDescr {
 	{ Lingo::c_repeatwhilecode,"c_repeatwhilecode","oo" },
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
+	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
 	{ Lingo::c_gotonext,	"c_gotonext",	"" },
@@ -719,6 +720,19 @@ void Lingo::c_ifcode() {
 		debug(8, "executing end");
 	} else
 		debug(8, "Skipped end");
+}
+
+void Lingo::c_whencode() {
+	Datum d;
+	int start = g_lingo->_pc + 1;
+	int end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
+	Common::String eventname((char *)&(*g_lingo->_currentScript)[start]);
+
+	start += g_lingo->calcStringAlignment(eventname.c_str());
+
+	warning("STUB: c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+
+	g_lingo->_pc = end;
 }
 
 //************************

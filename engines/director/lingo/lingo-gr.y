@@ -90,7 +90,7 @@ void yyerror(char *s) {
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
 
-%type<code> asgn begin elseif elsestmtoneliner end expr if repeatwhile repeatwith stmtlist
+%type<code> asgn begin elseif elsestmtoneliner end expr if when repeatwhile repeatwith stmtlist
 %type<narg> argdef arglist
 
 %right '='
@@ -217,8 +217,11 @@ stmt: stmtoneliner
 		(*g_lingo->_currentScript)[$1 + 3] = body;	/* body of loop */
 		(*g_lingo->_currentScript)[$1 + 4] = inc;	/* increment */
 		(*g_lingo->_currentScript)[$1 + 5] = end; }	/* end, if cond fails */
-	| tWHEN ID tTHEN expr {
-			g_lingo->code1(g_lingo->c_ifcode);
+	| when expr end {
+			inst end = 0;
+			WRITE_UINT32(&end, $3);
+			g_lingo->code1(g_lingo->c_whencode);
+			(*g_lingo->_currentScript)[$1 + 1] = end;
 		}
 	;
 
@@ -340,6 +343,12 @@ stmtlist: /* nothing */		{ $$ = g_lingo->_currentScript->size(); }
 	| stmtlist nl
 	| stmtlist stmt
 	;
+
+when:	  tWHEN	ID tTHEN	{
+		$$ = g_lingo->code1(g_lingo->c_whencode);
+		g_lingo->code1(STOP);
+		g_lingo->codeString($2->c_str());
+		delete $2; }
 
 expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| FLOAT		{

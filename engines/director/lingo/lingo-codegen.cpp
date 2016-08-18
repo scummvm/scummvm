@@ -78,6 +78,7 @@ Common::String Lingo::decodeInstruction(int pc) {
 		inst i;
 
 		while (*pars) {
+			warning("--- %d  of %d --  %s", pc, _currentScript->size(), res.c_str());
 			switch (*pars++) {
 			case 'i':
 				{
