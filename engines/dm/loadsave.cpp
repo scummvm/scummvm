@@ -37,6 +37,8 @@
 #include "eventman.h"
 #include "projexpl.h"
 #include "dialog.h"
+#include <gui/saveload.h>
+#include <common/translation.h>
 
 
 namespace DM {
@@ -179,54 +181,124 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 }
 
 
-void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String desc) {
-	char *message = nullptr;
-
+void DMEngine::f433_processCommand140_saveGame() {
 	_menuMan->f456_drawDisabledMenu();
 	_eventMan->f78_showMouse();
 
 	switch (getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_dialog->f427_dialogDraw(message, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
 		break;
 	case Common::DE_DEU:
-		_dialog->f427_dialogDraw(message, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", nullptr, false, false, false);
 		break;
 	case Common::FR_FRA:
-		_dialog->f427_dialogDraw(message, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", nullptr, false, false, false);
-		break;
-	}
-	int16 saveAndPlayChoice = _dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
-
-	switch (getGameLanguage()) { // localized
-	default:
-	case Common::EN_ANY:
-		_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
-		break;
-	case Common::DE_DEU:
-		_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
-		break;
-	case Common::FR_FRA:
-		_dialog->f427_dialogDraw(nullptr, "UN MOMENT A SAUVEGARDER DU JEU...", nullptr, nullptr, nullptr, nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", nullptr, false, false, false);
 		break;
 	}
 
-	uint16 champHandObjWeight = 0;
-	if (!_championMan->_g415_leaderEmptyHanded) {
-		champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_g414_leaderHandObject);
-		_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load -= champHandObjWeight;
+	enum SaveAndPlayChoice {
+		kSaveAndPlay = 1,
+		kSaveAndQuit = 2,
+		kCancel = 3
+	};
+
+	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+
+	if (saveAndPlayChoice == kSaveAndQuit || saveAndPlayChoice == kSaveAndPlay) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int16 saveSlot = dialog->runModalWithCurrentTarget();
+		Common::String saveDescription = dialog->getResultString();
+		if (saveDescription.empty())
+			saveDescription = "Nice save ^^";
+		delete dialog;
+
+		if (saveSlot >= 0) {
+			switch (getGameLanguage()) { // localized
+			default:
+			case Common::EN_ANY:
+				_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				break;
+			case Common::DE_DEU:
+				_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				break;
+			case Common::FR_FRA:
+				_dialog->f427_dialogDraw(nullptr, "UN MOMENT A SAUVEGARDER DU JEU...", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				break;
+			}
+
+			uint16 champHandObjWeight = 0;
+			if (!_championMan->_g415_leaderEmptyHanded) {
+				champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_g414_leaderHandObject);
+				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load -= champHandObjWeight;
+			}
+
+			writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice);
+
+			if (!_championMan->_g415_leaderEmptyHanded) {
+				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;
+			}
+		} else
+			saveAndPlayChoice = kCancel;
 	}
 
 
-	Common::String savefileName = getSavefileName(slot);
+	if (saveAndPlayChoice == kSaveAndQuit) {
+		_eventMan->f77_hideMouse();
+		f444_endGame(false);
+	}
+
+	_g524_restartGameAllowed = true;
+	_menuMan->f457_drawEnabledMenus();
+	_eventMan->f77_hideMouse();
+}
+
+Common::String DMEngine::getSavefileName(uint16 slot) {
+	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
+}
+
+#define SAVEGAME_ID       MKTAG('D', 'M', 'D', 'M')
+#define SAVEGAME_VERSION  1
+
+void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::String& saveName) {
+	out->writeUint32BE(SAVEGAME_ID);
+
+	// Write version
+	out->writeByte(SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(saveName);
+	out->writeByte(0);
+
+	// Save the game thumbnail
+	if (_saveThumbnail) {
+		out->write(_saveThumbnail->getData(), _saveThumbnail->size());
+	} else
+		Graphics::saveThumbnail(*out);
+
+	// Creation date/time
+	TimeDate curTime;
+	_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+	uint32 playTime = getTotalPlayTime() / 1000;
+
+	out->writeUint32BE(saveDate);
+	out->writeUint16BE(saveTime);
+	out->writeUint32BE(playTime);
+}
+
+void DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
+	Common::String savefileName = getSavefileName(saveSlot);
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
 
 	if (!file)
 		return; // TODO: silent fail
 
-	writeSaveGameHeader(file, desc);
+	writeSaveGameHeader(file, saveDescription);
 
 	file->writeSint16BE(_g528_saveFormat);
 	file->writeSint16BE(saveAndPlayChoice);
@@ -282,7 +354,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 			file->writeUint16BE(header._thingCounts[i]);
 	}
 
-	 // save _g277_dungeonMaps
+	// save _g277_dungeonMaps
 	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._mapCount; ++i) {
 		Map &map = _dungeonMan->_g277_dungeonMaps[i];
 		uint16 tmp;
@@ -307,7 +379,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 		file->writeUint16BE(tmp);
 	}
 
-// save _g280_dungeonColumnsCumulativeSquareThingCount
+	// save _g280_dungeonColumnsCumulativeSquareThingCount
 	for (uint16 i = 0; i < _dungeonMan->_g282_dungeonColumCount; ++i)
 		file->writeUint16BE(_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[i]);
 
@@ -331,55 +403,7 @@ void DMEngine::f433_processCommand140_saveGame(uint16 slot, const Common::String
 	file->flush();
 	file->finalize();
 	delete file;
-
-	if (!saveAndPlayChoice) {
-		_eventMan->f77_hideMouse();
-		f444_endGame(false);
-	}
-	if (!_championMan->_g415_leaderEmptyHanded) {
-		_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;
-	}
-	_g524_restartGameAllowed = true;
-	_menuMan->f457_drawEnabledMenus();
-	_eventMan->f77_hideMouse();
 }
-
-Common::String DMEngine::getSavefileName(uint16 slot) {
-	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
-}
-
-#define SAVEGAME_ID       MKTAG('D', 'M', 'D', 'M')
-#define SAVEGAME_VERSION  1
-
-void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::String& saveName) {
-	out->writeUint32BE(SAVEGAME_ID);
-
-	// Write version
-	out->writeByte(SAVEGAME_VERSION);
-
-	// Write savegame name
-	out->writeString(saveName);
-	out->writeByte(0);
-
-	// Save the game thumbnail
-	if (_saveThumbnail) {
-		out->write(_saveThumbnail->getData(), _saveThumbnail->size());
-	} else
-		Graphics::saveThumbnail(*out);
-
-	// Creation date/time
-	TimeDate curTime;
-	_system->getTimeAndDate(curTime);
-
-	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
-	uint32 playTime = getTotalPlayTime() / 1000;
-
-	out->writeUint32BE(saveDate);
-	out->writeUint16BE(saveTime);
-	out->writeUint32BE(playTime);
-}
-
 
 bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {
 	uint32 id = in->readUint32BE();

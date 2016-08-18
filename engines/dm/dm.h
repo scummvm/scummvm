@@ -213,6 +213,7 @@ class DMEngine : public Engine {
 	void initArrays();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
+	void writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -227,7 +228,7 @@ public:
 	int16 M0_indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 	void f19_displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
-	void f433_processCommand140_saveGame(uint16 slot, const Common::String desc); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
+	void f433_processCommand140_saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResponse f435_loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame

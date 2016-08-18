@@ -781,7 +781,7 @@ void EventManager::f380_processCommandQueue() {
 
 	if (cmdType == k140_CommandSaveGame) {
 		if ((_vm->_championMan->_g305_partyChampionCount > 0) && !_vm->_championMan->_g299_candidateChampionOrdinal)
-			_vm->f433_processCommand140_saveGame(1, "Nice save:)");
+			_vm->f433_processCommand140_saveGame();
 
 		return;
 	}
