@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#include <graphics/surface.h>
+#include "graphics/thumbnail.h"
+
 #include "inventory.h"
 #include "dungeonman.h"
 #include "eventman.h"
@@ -53,7 +56,7 @@ void InventoryMan::initConstants() {
 			"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
 		static const char* G0428_apc_SkillLevelNames_DE_DEU[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
 			"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
-		static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = { "NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
+		static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
 			"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
 		const char **g428_byLanguage;
 		switch (_vm->getGameLanguage()) { // localized
@@ -80,6 +83,14 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 }
 
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
+	if (championIndex == kM1_ChampionNone) {
+		delete _vm->_saveThumbnail;
+		_vm->_saveThumbnail = nullptr;
+	} else if (!_vm->_saveThumbnail) {
+		_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic();
+		Graphics::saveThumbnail(*_vm->_saveThumbnail);
+	}
+
 	uint16 L1102_ui_Multiple;
 #define AL1102_ui_InventoryChampionOrdinal L1102_ui_Multiple
 #define AL1102_ui_SlotIndex                L1102_ui_Multiple

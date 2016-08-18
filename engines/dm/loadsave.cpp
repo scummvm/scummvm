@@ -359,7 +359,10 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::Strin
 	out->writeByte(0);
 
 	// Save the game thumbnail
-	Graphics::saveThumbnail(*out);
+	if (_saveThumbnail) {
+		out->write(_saveThumbnail->getData(), _saveThumbnail->size());
+	} else
+		Graphics::saveThumbnail(*out);
 
 	// Creation date/time
 	TimeDate curTime;

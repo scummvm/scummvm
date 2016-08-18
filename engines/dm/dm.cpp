@@ -59,6 +59,7 @@
 #include <graphics/cursorman.h>
 #include <advancedDetector.h>
 #include "sounds.h"
+#include <graphics/surface.h>
 
 namespace DM {
 void warning(bool repeat, const char* s, ...) {
@@ -202,6 +203,8 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 		_g562_entranceDoorAnimSteps[i] = nullptr;
 	_g564_interfaceCredits = nullptr;
 	debug("DMEngine::DMEngine");
+
+	_saveThumbnail = nullptr;
 }
 
 DMEngine::~DMEngine() {
@@ -225,7 +228,7 @@ DMEngine::~DMEngine() {
 	delete _dialog;
 	delete _sound;
 
-
+	delete _saveThumbnail;
 
 	delete[] _savedScreenForOpenEntranceDoors;
 	// clear debug channels

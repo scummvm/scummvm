@@ -35,6 +35,7 @@
 #include "engines/savestate.h"
 
 #include "console.h"
+#include <common/memstream.h>
 
 
 struct ADGameDescription;
@@ -265,6 +266,7 @@ public:
 	DialogMan *_dialog;
 	SoundMan *_sound;
 
+	Common::MemoryWriteStreamDynamic *_saveThumbnail;
 
 	bool _engineShouldQuit;
 
