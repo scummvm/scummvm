@@ -843,6 +843,7 @@ void Lingo::call(Common::String &name, int nargs) {
 		g_lingo->push(d);
 	}
 
+	debugC(5, kDebugLingoExec, "Pushing frame %d", g_lingo->_callstack.size() + 1);
 	CFrame *fp = new CFrame;
 
 	fp->sp = sym;
@@ -867,6 +868,8 @@ void Lingo::c_procret() {
 		g_lingo->_returning = true;
 		return;
 	}
+
+	debugC(5, kDebugLingoExec, "Popping frame %d", g_lingo->_callstack.size() + 1);
 
 	CFrame *fp = g_lingo->_callstack.back();
 
