@@ -72,28 +72,29 @@ GroupMan::~GroupMan() {
 void GroupMan::f196_initActiveGroups() {
 	if (_vm->_g298_newGame)
 		_g376_maxActiveGroupCount = 60;
+
 	if (_g375_activeGroups)
 		delete[] _g375_activeGroups;
+
 	_g375_activeGroups = new ActiveGroup[_g376_maxActiveGroupCount];
 	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i)
 		_g375_activeGroups[i]._groupThingIndex = -1;
 }
 
 uint16 GroupMan::f145_getGroupCells(Group *group, int16 mapIndex) {
-	byte cells;
-	cells = group->_cells;
+	byte cells = group->_cells;
 	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
 		cells = _g375_activeGroups[cells]._cells;
 	return cells;
 }
 
-byte gGroupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
-
 uint16 GroupMan::f147_getGroupDirections(Group *group, int16 mapIndex) {
+	static byte groupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
+
 	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
 		return _g375_activeGroups[group->getActiveGroupIndex()]._directions;
 
-	return gGroupDirections[group->getDir()];
+	return groupDirections[group->getDir()];
 }
 
 int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
@@ -102,6 +103,7 @@ int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
 	if (groupCells == k255_CreatureTypeSingleCenteredCreature)
 		return _vm->M0_indexToOrdinal(0);
 
+	int retval = 0;
 	byte creatureIndex = group->getCount();
 	if (getFlag(g243_CreatureInfo[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
 		if ((f147_getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
@@ -109,16 +111,21 @@ int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
 
 		do {
 			byte creatureCell = M50_getCreatureValue(groupCells, creatureIndex);
-			if (creatureCell == cell || creatureCell == returnNextVal(cell))
-				return _vm->M0_indexToOrdinal(creatureIndex);
+			if (creatureCell == cell || creatureCell == returnNextVal(cell)) {
+				retval = _vm->M0_indexToOrdinal(creatureIndex);
+				break;
+			}
 		} while (creatureIndex--);
 	} else {
 		do {
-			if (M50_getCreatureValue(groupCells, creatureIndex) == cell)
-				return _vm->M0_indexToOrdinal(creatureIndex);
+			if (M50_getCreatureValue(groupCells, creatureIndex) == cell) {
+				retval = _vm->M0_indexToOrdinal(creatureIndex);
+				break;
+			}
 		} while (creatureIndex--);
 	}
-	return 0;
+
+	return retval;
 }
 
 uint16 GroupMan::M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
@@ -126,64 +133,82 @@ uint16 GroupMan::M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 }
 
 void GroupMan::f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode) {
-	Group *L0367_ps_Group = (Group *)_vm->_dungeonMan->f156_getThingData(groupThing);
-	uint16 L0368_ui_CreatureType = L0367_ps_Group->_type;
-	if ((mode >= k0_soundModePlayImmediately) && getFlag(g243_CreatureInfo[L0368_ui_CreatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
-		int16 L0369_i_CreatureIndex = L0367_ps_Group->getCount();
-		uint16 L0370_ui_GroupCells = f145_getGroupCells(L0367_ps_Group, _vm->_dungeonMan->_g272_currMapIndex);
+	Group *group = (Group *)_vm->_dungeonMan->f156_getThingData(groupThing);
+	uint16 creatureType = group->_type;
+	if ((mode >= k0_soundModePlayImmediately) && getFlag(g243_CreatureInfo[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+		int16 creatureIndex = group->getCount();
+		uint16 groupCells = f145_getGroupCells(group, _vm->_dungeonMan->_g272_currMapIndex);
 		do {
-			f186_dropCreatureFixedPossessions(L0368_ui_CreatureType, mapX, mapY, (L0370_ui_GroupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : M50_getCreatureValue(L0370_ui_GroupCells, L0369_i_CreatureIndex), mode);
-		} while (L0369_i_CreatureIndex--);
+			f186_dropCreatureFixedPossessions(creatureType, mapX, mapY,
+				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : M50_getCreatureValue(groupCells, creatureIndex), mode);
+		} while (creatureIndex--);
 	}
-	Thing L0365_T_CurrentThing = L0367_ps_Group->_slot;
-	if ((L0365_T_CurrentThing) != Thing::_endOfList) {
+
+	Thing currentThing = group->_slot;
+	if ((currentThing) != Thing::_endOfList) {
 		bool L0371_B_WeaponDropped = false;
-		Thing L0366_T_NextThing;
+		Thing nextThing;
 		do {
-			L0366_T_NextThing = _vm->_dungeonMan->f159_getNextThing(L0365_T_CurrentThing);
-			L0365_T_CurrentThing = M15_thingWithNewCell(L0365_T_CurrentThing, _vm->getRandomNumber(4));
-			if ((L0365_T_CurrentThing).getType() == k5_WeaponThingType) {
+			nextThing = _vm->_dungeonMan->f159_getNextThing(currentThing);
+			currentThing = M15_thingWithNewCell(currentThing, _vm->getRandomNumber(4));
+			if ((currentThing).getType() == k5_WeaponThingType) {
 				L0371_B_WeaponDropped = true;
 			}
-			_vm->_moveSens->f267_getMoveResult(L0365_T_CurrentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
-		} while ((L0365_T_CurrentThing = L0366_T_NextThing) != Thing::_endOfList);
-		if (mode >= k0_soundModePlayImmediately) {
+			_vm->_moveSens->f267_getMoveResult(currentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+		} while ((currentThing = nextThing) != Thing::_endOfList);
+
+		if (mode >= k0_soundModePlayImmediately)
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(L0371_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
-		}
 	}
 }
 
 void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
-	static uint16 g245FixedPossessionCreature_12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
+	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
 		k23_ObjectInfoIndexFirstWeapon + k9_WeaponTypeFalchion,
-		k69_ObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield, 0};
-	static uint16 g246FixedPossessionCreature_9StoneGolem[2] = { // @ G0246_aui_Graphic559_FixedPossessionsCreature09StoneGolem
-		k23_ObjectInfoIndexFirstWeapon + k24_WeaponTypeStoneClub, 0};
-	static uint16 g247FixedPossessionCreature_16TrolinAntman[2] = { // @ G0247_aui_Graphic559_FixedPossessionsCreature16Trolin_Antman
-		k23_ObjectInfoIndexFirstWeapon + k23_WeaponTypeClub, 0};
-	static uint16 g248FixedPossessionCreature_18AnimatedArmourDethKnight[7] = { // @ G0248_aui_Graphic559_FixedPossessionsCreature18AnimatedArmour_DethKnight
+		k69_ObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield,
+		0}
+	;
+	static uint16 fixedPossessionCreature9StoneGolem[2] = { // @ G0246_aui_Graphic559_FixedPossessionsCreature09StoneGolem
+		k23_ObjectInfoIndexFirstWeapon + k24_WeaponTypeStoneClub,
+		0
+	};
+	static uint16 fixedPossessionCreatur16TrolinAntman[2] = { // @ G0247_aui_Graphic559_FixedPossessionsCreature16Trolin_Antman
+		k23_ObjectInfoIndexFirstWeapon + k23_WeaponTypeClub,
+		0
+	};
+	static uint16 fixedPossessionCreature18AnimatedArmourDethKnight[7] = { // @ G0248_aui_Graphic559_FixedPossessionsCreature18AnimatedArmour_DethKnight
 		k69_ObjectInfoIndexFirstArmour + k41_ArmourTypeFootPlate,
 		k69_ObjectInfoIndexFirstArmour + k40_ArmourTypeLegPlate,
 		k69_ObjectInfoIndexFirstArmour + k39_ArmourTypeTorsoPlate,
 		k23_ObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
 		k69_ObjectInfoIndexFirstArmour + k38_ArmourTypeArmet,
-		k23_ObjectInfoIndexFirstWeapon + k10_WeaponTypeSword, 0};
-	static uint16 g249FixedPossessionCreature_7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
+		k23_ObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
+		0
+	};
+	static uint16 fixedPossessionCreature7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
 		k127_ObjectInfoIndexFirstJunk + k25_JunkTypeBoulder,
 		k127_ObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | k0x8000_randomDrop,
 		k23_ObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
-		k23_ObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop, 0};
-	static uint16 g250FixedPossessionCreature_4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
+		k23_ObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
+		0
+	};
+	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
 		k127_ObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank,
-		k127_ObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | k0x8000_randomDrop, 0};
-	static uint16 g251FixedPossessionCreature_6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
+		k127_ObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | k0x8000_randomDrop,
+		0
+	};
+	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
 		k127_ObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice,
-		k127_ObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | k0x8000_randomDrop, 0};
-	static uint16 g252FixedPossessionCreature_15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
+		k127_ObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | k0x8000_randomDrop,
+		0
+	};
+	static uint16 fixedPossessionCreature15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
 		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound,
 		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
-		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop, 0};
-	static uint16 g253FixedPossessionCreature_24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
+		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
+		0
+	};
+	static uint16 fixedPossessionCreature24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
 		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
 		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
 		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
@@ -195,71 +220,72 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop,
 		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop, 0};
 
-	uint16 *L0359_pui_FixedPossessions;
-
-	bool L0361_B_Cursed = false;
+	uint16 *fixedPossessions;
+	bool cursedPossessions = false;
 	switch (creatureType) {
-	default:
-		return;
-	case k12_CreatureTypeSkeleton:
-		L0359_pui_FixedPossessions = g245FixedPossessionCreature_12Skeleton;
-		break;
-	case k9_CreatureTypeStoneGolem:
-		L0359_pui_FixedPossessions = g246FixedPossessionCreature_9StoneGolem;
-		break;
-	case k16_CreatureTypeTrolinAntman:
-		L0359_pui_FixedPossessions = g247FixedPossessionCreature_16TrolinAntman;
-		break;
-	case k18_CreatureTypeAnimatedArmourDethKnight:
-		L0361_B_Cursed = true;
-		L0359_pui_FixedPossessions = g248FixedPossessionCreature_18AnimatedArmourDethKnight;
-		break;
-	case k7_CreatureTypeRockpile:
-		L0359_pui_FixedPossessions = g249FixedPossessionCreature_7rockRockPile;
-		break;
 	case k4_CreatureTypePainRatHellHound:
-		L0359_pui_FixedPossessions = g250FixedPossessionCreature_4PainRatHellHound;
+		fixedPossessions = fixedPossessionCreature4PainRatHellHound;
 		break;
 	case k6_CreatureTypeScreamer:
-		L0359_pui_FixedPossessions = g251FixedPossessionCreature_6screamer;
+		fixedPossessions = fixedPossessionCreature6screamer;
+		break;
+	case k7_CreatureTypeRockpile:
+		fixedPossessions = fixedPossessionCreature7rockRockPile;
+		break;
+	case k9_CreatureTypeStoneGolem:
+		fixedPossessions = fixedPossessionCreature9StoneGolem;
+		break;
+	case k12_CreatureTypeSkeleton:
+		fixedPossessions = fixedPossessionCreature12Skeleton;
+		break;
+	case k16_CreatureTypeTrolinAntman:
+		fixedPossessions = fixedPossessionCreatur16TrolinAntman;
 		break;
 	case k15_CreatureTypeMagnetaWormWorm:
-		L0359_pui_FixedPossessions = g252FixedPossessionCreature_15MagnetaWormWorm;
+		fixedPossessions = fixedPossessionCreature15MagnetaWormWorm;
+		break;
+	case k18_CreatureTypeAnimatedArmourDethKnight:
+		cursedPossessions = true;
+		fixedPossessions = fixedPossessionCreature18AnimatedArmourDethKnight;
 		break;
 	case k24_CreatureTypeRedDragon:
-		L0359_pui_FixedPossessions = g253FixedPossessionCreature_24RedDragon;
+		fixedPossessions = fixedPossessionCreature24RedDragon;
+		break;
+	default:
+		return;
 	}
-	uint16 L0356_ui_FixedPossession;
-	bool L0362_B_WeaponDropped = false;
-	while (L0356_ui_FixedPossession = *L0359_pui_FixedPossessions++) {
-		if (getFlag(L0356_ui_FixedPossession, k0x8000_randomDrop) && _vm->getRandomNumber(2))
-			continue;
-		int16 L0357_i_ThingType;
-		if (clearFlag(L0356_ui_FixedPossession, k0x8000_randomDrop) >= k127_ObjectInfoIndexFirstJunk) {
-			L0357_i_ThingType = k10_JunkThingType;
-			L0356_ui_FixedPossession -= k127_ObjectInfoIndexFirstJunk;
-		} else {
-			if (L0356_ui_FixedPossession >= k69_ObjectInfoIndexFirstArmour) {
-				L0357_i_ThingType = k6_ArmourThingType;
-				L0356_ui_FixedPossession -= k69_ObjectInfoIndexFirstArmour;
-			} else {
-				L0362_B_WeaponDropped = true;
-				L0357_i_ThingType = k5_WeaponThingType;
-				L0356_ui_FixedPossession -= k23_ObjectInfoIndexFirstWeapon;
-			}
-		}
-		Thing L0358_T_Thing = _vm->_dungeonMan->f166_getUnusedThing(L0357_i_ThingType);
-		if ((L0358_T_Thing) == Thing::_none)
+
+	uint16 currFixedPossession;
+	bool weaponDropped = false;
+	while (currFixedPossession = *fixedPossessions++) {
+		if (getFlag(currFixedPossession, k0x8000_randomDrop) && _vm->getRandomNumber(2))
 			continue;
 
-		Weapon *L0360_ps_Weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(L0358_T_Thing);
+		int16 currThingType;
+		if (clearFlag(currFixedPossession, k0x8000_randomDrop) >= k127_ObjectInfoIndexFirstJunk) {
+			currThingType = k10_JunkThingType;
+			currFixedPossession -= k127_ObjectInfoIndexFirstJunk;
+		} else if (currFixedPossession >= k69_ObjectInfoIndexFirstArmour) {
+			currThingType = k6_ArmourThingType;
+			currFixedPossession -= k69_ObjectInfoIndexFirstArmour;
+		} else {
+			weaponDropped = true;
+			currThingType = k5_WeaponThingType;
+			currFixedPossession -= k23_ObjectInfoIndexFirstWeapon;
+		}
+
+		Thing nextUnusedThing = _vm->_dungeonMan->f166_getUnusedThing(currThingType);
+		if ((nextUnusedThing) == Thing::_none)
+			continue;
+
+		Weapon *currWeapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(nextUnusedThing);
 /* The same pointer type is used no matter the actual type k5_WeaponThingType, k6_ArmourThingType or k10_JunkThingType */
-		L0360_ps_Weapon->setType(L0356_ui_FixedPossession);
-		L0360_ps_Weapon->setCursed(L0361_B_Cursed);
-		L0358_T_Thing = M15_thingWithNewCell(L0358_T_Thing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
-		_vm->_moveSens->f267_getMoveResult(L0358_T_Thing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+		currWeapon->setType(currFixedPossession);
+		currWeapon->setCursed(cursedPossessions);
+		nextUnusedThing = M15_thingWithNewCell(nextUnusedThing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
+		_vm->_moveSens->f267_getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 	}
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(L0362_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
+	_vm->_sound->f064_SOUND_RequestPlay_CPSD(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 }
 
 int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
