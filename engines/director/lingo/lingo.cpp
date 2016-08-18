@@ -313,6 +313,8 @@ const char *Datum::type2str(bool isk) {
 		return isk ? "#point" : "POINT";
 	case SYMBOL:
 		return isk ? "#symbol" : "SYMBOL";
+	case OBJECT:
+		return isk ? "#object" : "OBJECT";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;

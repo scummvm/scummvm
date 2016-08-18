@@ -170,6 +170,9 @@ void Lingo::c_printtop(void) {
 	case SYMBOL:
 		warning("%s", d.type2str(true));
 		break;
+	case OBJECT:
+		warning("#%s", d.u.s->c_str());
+		break;
 	default:
 		warning("--unknown--");
 	}
@@ -263,8 +266,11 @@ void Lingo::c_assign() {
 		delete d2.u.arr;
 	} else if (d2.type == SYMBOL) {
 		d1.u.sym->u.i = d2.u.i;
+	} else if (d2.type == OBJECT) {
+		d1.u.sym->u.s = d2.u.s;
 	} else {
 		warning("c_assign: unhandled type: %s", d2.type2str());
+		d1.u.sym->u.s = d2.u.s;
 	}
 
 	d1.u.sym->type = d2.type;
