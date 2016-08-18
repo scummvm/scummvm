@@ -2473,7 +2473,7 @@ yyreduce:
   case 115:
 #line 500 "engines/director/lingo/lingo-gr.y"
     {
-			g_lingo->code1(STOP);
+			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*(yyvsp[(2) - (8)].s), (yyvsp[(4) - (8)].code), (yyvsp[(5) - (8)].narg) + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; ;}
     break;

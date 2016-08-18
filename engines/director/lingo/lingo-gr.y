@@ -498,7 +498,7 @@ defn: tMACRO ID { g_lingo->_indef = true; g_lingo->_currentFactory.clear(); }
 		}
 	| tMETHOD ID { g_lingo->_indef = true; }
 		begin argdef nl argstore stmtlist 		{
-			g_lingo->code1(STOP);
+			g_lingo->code1(g_lingo->c_procret);
 			g_lingo->define(*$2, $4, $5 + 1, &g_lingo->_currentFactory);
 			g_lingo->_indef = false; }	;
 argdef:  /* nothing */ 		{ $$ = 0; }
