@@ -47,7 +47,7 @@ namespace DM {
 #define C10_DUNGEON_DM 10
 
 LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
-	if (slot == -1)
+	if (slot == -1 && _g298_newGame == k0_modeLoadSavedGame)
 		return kM1_LoadgameFailure;
 
 	bool L1366_B_FadePalette = true;

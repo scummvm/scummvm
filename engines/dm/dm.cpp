@@ -269,7 +269,7 @@ void DMEngine::f463_initializeGame() {
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
 
-	int16 saveSlot = 1;
+	int16 saveSlot = -1;
 	do {
 		// if loading from the launcher
 		if (ConfMan.hasKey("save_slot")) {
@@ -278,11 +278,12 @@ void DMEngine::f463_initializeGame() {
 			f441_processEntrance();
 			if (_engineShouldQuit)
 				return;
-		}
-		if (_g298_newGame == k0_modeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-			saveSlot = dialog->runModalWithCurrentTarget();
-			delete dialog;
+
+			if (_g298_newGame == k0_modeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+				saveSlot = dialog->runModalWithCurrentTarget();
+				delete dialog;
+			}
 		}
 	} while (f435_loadgame(saveSlot) != k1_LoadgameSuccess);
 
