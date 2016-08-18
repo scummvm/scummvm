@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CChestOfDrawers, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CChestOfDrawers::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +38,43 @@ void CChestOfDrawers::save(SimpleFile *file, int indent) {
 void CChestOfDrawers::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
+	if (_statics->_v6 == "Closed" && _statics->_v5 == "Open") {
+		_fieldE0 = false;
+		_statics->_v6 = "Open";
+		_startFrame = 1;
+		_endFrame = 14;
+		playSound("b#11.wav");
+	}
+
+	return true;
+}
+
+bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
+	if (_statics->_v6 == "Open" && _statics->_v5 == "Closed") {
+		CVisibleMsg visibleMsg;
+		visibleMsg.execute("Drawer");
+		_statics->_v6 = "Closed";
+		_fieldE0 = true;
+		
+		_startFrame = 14;
+		_endFrame = 27;
+		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playSound("b#11.wav");
+	}
+
+	return true;
+}
+
+bool CChestOfDrawers::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_statics->_v6 == "Open") {
+		CVisibleMsg visibleMsg;
+		visibleMsg.execute("Drawer");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

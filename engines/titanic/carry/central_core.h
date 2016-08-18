@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CCentralCore : public CBrain {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
+	bool DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg);
 public:
 	CLASSDEF;
 

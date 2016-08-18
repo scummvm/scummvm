@@ -727,7 +727,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 	if (_enabled) {
-		_roomFlags = msg->_value;
+		_roomFlags = msg->_roomNum;
 		playSound("z#98.wav", 100);
 	}
 

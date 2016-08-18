@@ -28,11 +28,22 @@
 namespace Titanic {
 
 class CChevCode : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool SetChevLiftBits(CSetChevLiftBits *msg);
+	bool SetChevClassBits(CSetChevClassBits *msg);
+	bool SetChevFloorBits(CSetChevFloorBits *msg);
+	bool SetChevRoomBits(CSetChevRoomBits *msg);
+	bool GetChevLiftNum(CGetChevLiftNum *msg);
+	bool GetChevClassNum(CGetChevClassNum *msg);
+	bool GetChevFloorNum(CGetChevFloorNum *msg);
+	bool GetChevRoomNum(CGetChevRoomNum *msg);
+	bool CheckChevCode(CCheckChevCode *msg);
+	bool GetChevCodeFromRoomNameMsg(CGetChevCodeFromRoomNameMsg *msg);
 public:
-	int _value;
+	int _floorBits;
 public:
 	CLASSDEF;
-	CChevCode() : CGameObject(), _value(0) {}
+	CChevCode() : CGameObject(), _floorBits(0) {}
 
 	/**
 	 * Save the data for the class to file

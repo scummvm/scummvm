@@ -21,8 +21,13 @@
  */
 
 #include "titanic/gfx/changes_season_button.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CChangesSeasonButton, CSTButton)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
 
 CChangesSeasonButton::CChangesSeasonButton() : CSTButton() {
 }
@@ -35,6 +40,12 @@ void CChangesSeasonButton::save(SimpleFile *file, int indent) {
 void CChangesSeasonButton::load(SimpleFile *file) {
 	file->readNumber();
 	CSTButton::load(file);
+}
+
+bool CChangesSeasonButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CChangeSeasonMsg changeMsg(_actionName);
+	changeMsg.execute(getRoot(), nullptr, MSGFLAG_SCAN);
+	return true;
 }
 
 } // End of namespace Titanic

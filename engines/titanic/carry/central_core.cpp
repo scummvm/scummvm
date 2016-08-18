@@ -21,8 +21,15 @@
  */
 
 #include "titanic/carry/central_core.h"
+#include "titanic/npcs/parrot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CCentralCore, CBrain)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(DropZoneLostObjectMsg)
+	ON_MESSAGE(DropZoneGotObjectMsg)
+END_MESSAGE_MAP()
 
 void CCentralCore::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +39,55 @@ void CCentralCore::save(SimpleFile *file, int indent) {
 void CCentralCore::load(SimpleFile *file) {
 	file->readNumber();
 	CBrain::load(file);
+}
+
+bool CCentralCore::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CString name = msg->_other->getName();
+	if (name == "HammerDispensorButton") {
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("BigHammer");
+	} else if (name == "SpeechCentre") {
+		CShowTextMsg textMsg("This does not reach.");
+		textMsg.execute("PET");
+	}
+
+	return CBrain::UseWithOtherMsg(msg);
+}
+
+bool CCentralCore::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
+	CString name = msg->_object->getName();
+	if (name == "PerchCoreHolder") {
+		CParrot::_v2 = 1;
+		if (isEquals("CentralCore"))
+			CParrot::_v5 = 0;
+
+		CActMsg actMsg("LosePerch");
+		actMsg.execute("ParrotLobbyController");
+	} else if (name == "PerchHolder") {
+		CActMsg actMsg("LoseStick");
+		actMsg.execute("ParrotLobbyController");
+	}
+
+	return true;
+}
+
+bool CCentralCore::DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg) {
+	CString name = msg->_object->getName();
+	if (name == "PerchCoreHolder") {
+		if (isEquals("CentralCore")) {
+			CParrot::_v5 = 1;
+			CActMsg actMsg("CoreReplaced");
+			actMsg.execute("ParrotCage");
+		}
+
+		CActMsg actMsg("GainPerch");
+		actMsg.execute("ParrotLobbyController");
+	} else if (name == "PerchHolder") {
+		CActMsg actMsg("GainStick");
+		actMsg.execute("ParrotLobbyController");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

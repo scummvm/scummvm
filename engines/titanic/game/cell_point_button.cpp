@@ -24,12 +24,17 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCellPointButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 CCellPointButton::CCellPointButton() : CBackground() {
 	_fieldE0 = 0;
 	_fieldE4 = 0;
 	_fieldE8 = 0;
 	_fieldEC = 0;
-	_fieldF0 = 0;
+	_regionNum = 0;
 	_fieldF4 = 0;
 	_fieldF8 = 0;
 	_fieldFC = 0;
@@ -44,7 +49,7 @@ void CCellPointButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldE4, indent);
 	file->writeNumberLine(_fieldE8, indent);
 	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_regionNum, indent);
 	file->writeNumberLine(_fieldF4, indent);
 	file->writeNumberLine(_fieldF8, indent);
 	file->writeNumberLine(_fieldFC, indent);
@@ -52,7 +57,7 @@ void CCellPointButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field104, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_field118, indent);
+	file->writeNumberLine(_dialNum, indent);
 
 	CBackground::save(file, indent);
 }
@@ -63,7 +68,7 @@ void CCellPointButton::load(SimpleFile *file) {
 	_fieldE4 = file->readNumber();
 	_fieldE8 = file->readNumber();
 	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_regionNum = file->readNumber();
 	_fieldF4 = file->readNumber();
 	_fieldF8 = file->readNumber();
 	_fieldFC = file->readNumber();
@@ -71,9 +76,28 @@ void CCellPointButton::load(SimpleFile *file) {
 	_field104 = file->readNumber();
 	_field108 = file->readNumber();
 	_string3 = file->readString();
-	_field118 = file->readNumber();
+	_dialNum = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CCellPointButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (getRandomNumber(2) == 0) {
+		CParrotSpeakMsg speakMsg("Cellpoints", _string3);
+		speakMsg.execute("PerchedParrot");
+	}
+
+	playMovie(0);
+	_regionNum = _regionNum ? 0 : 1;
+	playSound("z#425.wav");
+	talkSetDialRegion(_string3, _dialNum, _regionNum);
+
+	return true;
+}
+
+bool CCellPointButton::EnterViewMsg(CEnterViewMsg *msg) {
+	_regionNum = talkGetDialRegion(_string3, _dialNum);
+	return true;
 }
 
 } // End of namespace Titanic

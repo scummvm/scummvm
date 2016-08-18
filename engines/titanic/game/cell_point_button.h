@@ -28,12 +28,15 @@
 namespace Titanic {
 
 class CCellPointButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
 	int _fieldEC;
-	int _fieldF0;
+	int _regionNum;
 	int _fieldF4;
 	int _fieldF8;
 	int _fieldFC;
@@ -41,7 +44,7 @@ public:
 	int _field104;
 	int _field108;
 	CString _string3;
-	int _field118;
+	int _dialNum;
 public:
 	CLASSDEF;
 	CCellPointButton();
