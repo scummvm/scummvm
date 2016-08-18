@@ -142,7 +142,123 @@ bool CChevCode::GetChevRoomNum(CGetChevRoomNum *msg) {
 }
 
 bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
-	// TODO
+	CGetChevClassNum getClassMsg;
+	CGetChevLiftNum getLiftMsg;
+	CGetChevFloorNum getFloorMsg;
+	CGetChevRoomNum getRoomMsg;
+	CString roomName;
+	int classNum = 0;
+	uint bits;
+
+	if (_floorBits & 1) {
+		switch (_floorBits) {
+		case 0x1D0D9:
+			roomName = "ParrLobby";
+			classNum = 4;
+			break;
+		case 0x196D9:
+			roomName = "FCRestrnt";
+			classNum = 4;
+			break;
+		case 0x39FCB:
+			roomName = "Bridge";
+			classNum = 4;
+			break;
+		case 0x2F86D:
+			roomName = "CrtrsCham";
+			classNum = 4;
+			break;
+		case 0x465FB:
+			roomName = "SculpCham";
+			classNum = 4;
+			break;
+		case 0x3D94B:
+			roomName = "BilgeRoom";
+			classNum = 4;
+			break;
+		case 0x59FAD:
+			roomName = "BoWell";
+			classNum = 4;
+			break;
+		case 0x4D6AF:
+			roomName = "Arboretum";
+			classNum = 4;
+			break;
+		case 0x8A397:
+			roomName = "TitRoom";
+			classNum = 4;
+			break;
+		case 0x79C45:
+			roomName = "PromDeck";
+			classNum = 4;
+			break;
+		case 0xB3D97:
+			roomName = "Bar";
+			classNum = 4;
+			break;
+		case 0xCC971:
+			roomName = "EmbLobby";
+			classNum = 4;
+			break;
+		case 0xF34DB:
+			roomName = "MusicRoom";
+			classNum = 4;
+			break;
+		default:
+			roomName = "BadRoom";
+			classNum = 5;
+			break;
+		}
+
+		bits = classNum == 5 ? 0x3D94B : _floorBits;
+	} else {
+		getFloorMsg.execute(this);
+		getRoomMsg.execute(this);
+		getClassMsg.execute(this);
+		getLiftMsg.execute(this);
+		if (getFloorMsg._floorNum > 37 || getRoomMsg._roomNum > 18)
+			classNum = 5;
+
+		if (classNum == 5) {
+			bits = 0x3D94B;
+		} else {
+			switch (getClassMsg._classNum) {
+			case 1:
+				if (getFloorMsg._floorNum >= 2 && getFloorMsg._floorNum <= 18
+					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 3
+					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+					classNum = 1;
+				else
+					classNum = 5;
+				break;
+
+			case 2:
+				if (getFloorMsg._floorNum >= 19 && getFloorMsg._floorNum <= 26
+					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 5
+					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+					classNum = 2;
+				else
+					classNum = 5;
+				break;
+
+			case 3:
+				if (getFloorMsg._floorNum >= 27 && getFloorMsg._floorNum <= 37
+					&& getRoomMsg._roomNum >= 1 && getRoomMsg._roomNum <= 18
+					&& (getLiftMsg._liftNum & 1) == 1
+					&& getLiftMsg._liftNum >= 1 && getLiftMsg._liftNum <= 4)
+					classNum = 3;
+				else
+					classNum = 5;
+				break;
+			}
+		}
+		// TODO
+	}
+
+	msg->_classNum = classNum;
+	msg->_chevCode = bits;
+
+	// WORKAROUND: Skipped code from original that was for debugging purposes only
 	return true;
 }
 

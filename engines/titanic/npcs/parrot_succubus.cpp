@@ -129,6 +129,7 @@ bool CParrotSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		CHoseConnectedMsg hoseMsg;
 		hoseMsg._value = 0;
 		hoseMsg.execute(this);
+		return true;
 	} else {
 		return CSuccUBus::MouseButtonDownMsg(msg);
 	}
@@ -136,7 +137,7 @@ bool CParrotSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CParrotSuccUBus::LeaveNodeMsg(CLeaveNodeMsg *msg) {
 	if (_field1DC) {
-		CGameObject *obj = getHiddenObject(_string3);
+		getHiddenObject(_string3);
 		if (CHose::_statics->_v2.empty()) {
 			playSound("z#51.wav");
 			CHoseConnectedMsg hoseMsg;

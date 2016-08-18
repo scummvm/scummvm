@@ -211,7 +211,7 @@ MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
 MESSAGE2(CChangeMusicMsg, CString, filename, "", int, flags, 0);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
 MESSAGE0(CCheckAllPossibleCodes);
-MESSAGE2(CCheckChevCode, int, value1, 0, int, value2, 0);
+MESSAGE2(CCheckChevCode, int, classNum, 0, uint, chevCode, 0);
 MESSAGE1(CChildDragEndMsg, int, value, 0);
 MESSAGE2(CChildDragMoveMsg, int, value1, 0, int, value2, 0);
 MESSAGE2(CChildDragStartMsg, int, value1, 0, int, value2, 0);
