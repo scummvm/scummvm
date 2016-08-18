@@ -39,28 +39,28 @@ END_MESSAGE_MAP()
 
 void CChevCode::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_floorBits, indent);
+	file->writeNumberLine(_chevCode, indent);
 	CGameObject::save(file, indent);
 }
 
 void CChevCode::load(SimpleFile *file) {
 	file->readNumber();
-	_floorBits = file->readNumber();
+	_chevCode = file->readNumber();
 	CGameObject::load(file);
 }
 
 bool CChevCode::SetChevLiftBits(CSetChevLiftBits *msg) {
-	_floorBits &= ~0xC0000;
+	_chevCode &= ~0xC0000;
 	if (msg->_liftNum > 0 && msg->_liftNum < 5)
-		_floorBits = ((msg->_liftNum - 1) << 18) | _floorBits;
+		_chevCode = ((msg->_liftNum - 1) << 18) | _chevCode;
 
 	return true;
 }
 
 bool CChevCode::SetChevClassBits(CSetChevClassBits *msg) {
-	_floorBits &= ~0x30000;
+	_chevCode &= ~0x30000;
 	if (msg->_classNum > 0 && msg->_classNum < 4)
-		_floorBits = (msg->_classNum << 16) | msg->_classNum;
+		_chevCode = (msg->_classNum << 16) | msg->_classNum;
 
 	return true;
 }
@@ -68,7 +68,7 @@ bool CChevCode::SetChevClassBits(CSetChevClassBits *msg) {
 bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 	int section = (msg->_floorNum + 4) / 10;
 	int index = (msg->_floorNum + 4) % 10;
-	_floorBits &= ~0xFF00;
+	_chevCode &= ~0xFF00;
 	
 	int val;
 	switch (section) {
@@ -88,31 +88,31 @@ bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 		break;
 	}
 	
-	_floorBits |= ((index + val) << 8);
+	_chevCode |= ((index + val) << 8);
 	return true;
 }
 
 bool CChevCode::SetChevRoomBits(CSetChevRoomBits *msg) {
-	_floorBits &= ~0xff;
+	_chevCode &= ~0xff;
 	if (msg->_roomNum > 0 && msg->_roomNum < 128)
-		_floorBits |= msg->_roomNum * 2;
+		_chevCode |= msg->_roomNum * 2;
 
 	return true;
 }
 
 bool CChevCode::GetChevLiftNum(CGetChevLiftNum *msg) {
-	msg->_liftNum = (_floorBits >> 18) & 3 + 1;
+	msg->_liftNum = (_chevCode >> 18) & 3 + 1;
 	return true;
 }
 
 bool CChevCode::GetChevClassNum(CGetChevClassNum *msg) {
-	msg->_classNum = (_floorBits >> 16) & 3;
+	msg->_classNum = (_chevCode >> 16) & 3;
 	return true;
 }
 
 bool CChevCode::GetChevFloorNum(CGetChevFloorNum *msg) {
-	int val1 = (_floorBits >> 8) & 0xF;
-	int val2 = (_floorBits >> 12) & 0xF - 9;
+	int val1 = (_chevCode >> 8) & 0xF;
+	int val2 = (_chevCode >> 12) & 0xF - 9;
 
 	switch (val2) {
 	case 0:
@@ -137,7 +137,7 @@ bool CChevCode::GetChevFloorNum(CGetChevFloorNum *msg) {
 }
 
 bool CChevCode::GetChevRoomNum(CGetChevRoomNum *msg) {
-	msg->_roomNum = (_floorBits >> 1) & 0x7F;
+	msg->_roomNum = (_chevCode >> 1) & 0x7F;
 	return true;
 }
 
@@ -150,8 +150,8 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 	int classNum = 0;
 	uint bits;
 
-	if (_floorBits & 1) {
-		switch (_floorBits) {
+	if (_chevCode & 1) {
+		switch (_chevCode) {
 		case 0x1D0D9:
 			roomName = "ParrLobby";
 			classNum = 4;
@@ -210,7 +210,7 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 			break;
 		}
 
-		bits = classNum == 5 ? 0x3D94B : _floorBits;
+		bits = classNum == 5 ? 0x3D94B : _chevCode;
 	} else {
 		getFloorMsg.execute(this);
 		getRoomMsg.execute(this);

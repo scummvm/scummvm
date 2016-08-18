@@ -28,13 +28,21 @@
 namespace Titanic {
 
 class CChevPanel : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool SetChevPanelBitMsg(CSetChevPanelBitMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool ClearChevPanelBits(CClearChevPanelBits *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool SetChevPanelButtonsMsg(CSetChevPanelButtonsMsg *msg);
 public:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
+	Point _startPos;
+	int _chevCode;
 public:
 	CLASSDEF;
-	CChevPanel() : _fieldBC(0), _fieldC0(0), _fieldC4(0) {}
+	CChevPanel() : _chevCode(0) {}
 
 	/**
 	 * Save the data for the class to file

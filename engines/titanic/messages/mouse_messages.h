@@ -179,6 +179,32 @@ public:
 	}
 };
 
+class CChildDragMoveMsg : public CMessage {
+public:
+	Point _mousePos;
+public:
+	CLASSDEF;
+	CChildDragMoveMsg() : CMessage() {}
+	CChildDragMoveMsg(const Point &pt) : CMessage(), _mousePos(pt) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+};
+
+class CChildDragStartMsg : public CMessage {
+public:
+	Point _mousePos;
+public:
+	CLASSDEF;
+	CChildDragStartMsg() : CMessage() {}
+	CChildDragStartMsg(const Point &pt) : CMessage(), _mousePos(pt) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+};
+
 } // End of namespace Titanic
 
 #endif /* TITANIC_MOUSE_MESSAGES_H */

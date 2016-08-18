@@ -40,10 +40,10 @@ class CChevCode : public CGameObject {
 	bool CheckChevCode(CCheckChevCode *msg);
 	bool GetChevCodeFromRoomNameMsg(CGetChevCodeFromRoomNameMsg *msg);
 public:
-	int _floorBits;
+	int _chevCode;
 public:
 	CLASSDEF;
-	CChevCode() : CGameObject(), _floorBits(0) {}
+	CChevCode() : CGameObject(), _chevCode(0) {}
 
 	/**
 	 * Save the data for the class to file
