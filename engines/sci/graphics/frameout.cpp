@@ -57,11 +57,10 @@
 
 namespace Sci {
 
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
+GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
 	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
 	_cursor(cursor),
-	_resMan(resMan),
 	_segMan(segMan),
 	_transitions(transitions),
 	_benchmarkingFinished(false),

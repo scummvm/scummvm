@@ -42,11 +42,10 @@ class GfxFrameout {
 private:
 	GfxCursor32 *_cursor;
 	GfxPalette32 *_palette;
-	ResourceManager *_resMan;
 	SegManager *_segMan;
 
 public:
-	GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
+	GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
 	~GfxFrameout();
 
 	bool _isHiRes;
