@@ -545,7 +545,7 @@ void Lingo::b_alert(int nargs) {
 
 	d.toString();
 
-	warning("STUB: b_alert");
+	warning("STUB: b_alert(%s)", d.u.s->c_str());
 
 	delete d.u.s;
 }

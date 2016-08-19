@@ -121,17 +121,17 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return NULL;
 
 		if (!strncmp(res, "macro ", 6)) {
-			warning("See macro");
+			debugC(3, kDebugLingoCompile, "See macro");
 			return res;
 		}
 
 		if (!strncmp(res, "factory ", 8)) {
-			warning("See factory");
+			debugC(3, kDebugLingoCompile, "See factory");
 			return res;
 		}
 
 		if (!strncmp(res, "method ", 7)) {
-			warning("See method");
+			debugC(3, kDebugLingoCompile, "See method");
 			return res;
 		}
 
@@ -241,7 +241,7 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	debug(2, "processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+	debug(2, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
@@ -412,7 +412,7 @@ void Lingo::runTests() {
 
 			stream->read(script, size);
 
-			warning("Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
+			debugC(2, kDebugLingoCompile, "Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
 			addCode(script, kMovieScript, counter);
@@ -420,7 +420,7 @@ void Lingo::runTests() {
 			if (!_hadError)
 				executeScript(kMovieScript, counter);
 			else
-				warning("Skipping execution");
+				debugC(2, kDebugLingoCompile, "Skipping execution");
 
 			free(script);
 

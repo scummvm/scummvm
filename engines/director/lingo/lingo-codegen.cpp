@@ -281,7 +281,7 @@ int Lingo::codeFunc(Common::String *s, int numpar) {
 	if (s->equalsIgnoreCase("me")) {
 		if (!g_lingo->_currentFactory.empty()) {
 			g_lingo->codeString(g_lingo->_currentFactory.c_str());
-			debug(2, "Repaced 'me' with %s", g_lingo->_currentFactory.c_str());
+			debugC(2, kDebugLingoCompile, "Replaced 'me' with %s", g_lingo->_currentFactory.c_str());
 		} else {
 			warning("'me' out of factory method");
 			g_lingo->codeString(s->c_str());

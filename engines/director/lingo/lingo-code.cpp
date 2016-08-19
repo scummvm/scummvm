@@ -702,24 +702,25 @@ void Lingo::c_ifcode() {
 	int end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 	int skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
 
-	debug(8, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
+	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
 	g_lingo->execute(savepc + 4);	/* condition */
 
 	d = g_lingo->pop();
 
 	if (d.toInt()) {
-		debug(8, "executing then");
+		debugC(8, kDebugLingoExec, "executing then");
 		g_lingo->execute(then);
 	} else if (elsep) { /* else part? */
-		debug(8, "executing else");
+		debugC(8, kDebugLingoExec, "executing else");
 		g_lingo->execute(elsep);
 	}
 
 	if (!g_lingo->_returning && !skipEnd) {
 		g_lingo->_pc = end; /* next stmt */
-		debug(8, "executing end");
-	} else
-		debug(8, "Skipped end");
+		debugC(8, kDebugLingoExec, "executing end");
+	} else {
+		debugC(8, kDebugLingoExec, "Skipped end");
+	}
 }
 
 void Lingo::c_whencode() {
@@ -809,7 +810,7 @@ void Lingo::call(Common::String &name, int nargs) {
 	if (!g_lingo->_handlers.contains(name)) {
 		Symbol *s = g_lingo->lookupVar(name.c_str(), false);
 		if (s && s->type == OBJECT) {
-			debug(3, "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
+			debugC(3, kDebugLingoExec,  "Dereferencing object reference: %s to %s", name.c_str(), s->u.s->c_str());
 			name = *s->u.s;
 		}
 	}
