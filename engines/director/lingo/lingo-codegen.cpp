@@ -57,10 +57,14 @@ void Lingo::execute(int pc) {
 
 		debugC(1, kDebugLingoExec, "[%3d]: %s", _pc, instr.c_str());
 
+		Common::String stack("Stack: ");
+
 		for (uint i = 0; i < _stack.size(); i++) {
-			debugCN(5, kDebugLingoExec, "%d ", _stack[i].u.i);
+			Datum d = _stack[i];
+			d.toString();
+			stack += Common::String::format("<%s> ", d.u.s->c_str());
 		}
-		debugCN(5, kDebugLingoExec, "%s", "");
+		debugC(5, kDebugLingoExec, "%s", stack.c_str());
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
@@ -78,7 +82,6 @@ Common::String Lingo::decodeInstruction(int pc) {
 		inst i;
 
 		while (*pars) {
-			warning("--- %d  of %d --  %s", pc, _currentScript->size(), res.c_str());
 			switch (*pars++) {
 			case 'i':
 				{
