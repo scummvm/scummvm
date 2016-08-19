@@ -1135,9 +1135,11 @@ Bitmap *Bitmap::reverseImage(bool flip) {
 }
 
 Bitmap *Bitmap::flipVertical() {
-	_flipping = Graphics::FLIP_V;
+	Bitmap *b = new Bitmap(this);
 
-	return this;
+	b->_flipping = Graphics::FLIP_V;
+
+	return b;
 }
 
 void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
