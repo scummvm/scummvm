@@ -396,6 +396,13 @@ static const SciKernelMapSubEntry kBitmap_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCD_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CheckCD),                   "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(GetSavedCD),                "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
 	{ SIG_SINCE_SCI21,     0, MAP_CALL(NewList),                   "",                     NULL },
 	{ SIG_SINCE_SCI21,     1, MAP_CALL(DisposeList),               "l",                    NULL },
@@ -871,7 +878,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
-	{ MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(CD),                SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",            kCD_subops,      NULL },
 	{ MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
 	{ MAP_CALL(List),              SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kList_subops,    NULL },
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },

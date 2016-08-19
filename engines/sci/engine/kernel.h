@@ -610,6 +610,8 @@ reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
+reg_t kCheckCD(EngineState *s, int argc, reg_t *argv);
+reg_t kGetSavedCD(EngineState *s, int argc, reg_t *argv);
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
 reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);

@@ -40,6 +40,9 @@
 #include "sci/engine/savegame.h"
 #include "sci/sound/audio.h"
 #include "sci/console.h"
+#ifdef ENABLE_SCI32
+#include "sci/resource.h"
+#endif
 
 namespace Sci {
 
@@ -196,26 +199,25 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 
 reg_t kCD(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Stub
-	switch (argv[0].toUint16()) {
-	case 0:
-		if (argc == 1) {
-			// Check if a disc is in the drive
-			return TRUE_REG;
-		} else {
-			// Check if the specified disc is in the drive
-			// and return the current disc number. We just
-			// return the requested disc number.
-			return argv[1];
-		}
-	case 1:
-		// Return the current CD number
-		return make_reg(0, 1);
-	default:
-		warning("CD(%d)", argv[0].toUint16());
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kCheckCD(EngineState *s, int argc, reg_t *argv) {
+	const int16 cdNo = argc > 0 ? argv[0].toSint16() : 0;
+
+	if (cdNo) {
+		g_sci->getResMan()->findDisc(cdNo);
 	}
 
-	return NULL_REG;
+	return make_reg(0, g_sci->getResMan()->getCurrentDiscNo());
+}
+
+reg_t kGetSavedCD(EngineState *s, int argc, reg_t *argv) {
+	// TODO: This is wrong, CD number needs to be available prior to
+	// the save game being loaded
+	return make_reg(0, g_sci->getResMan()->getCurrentDiscNo());
 }
 
 #endif

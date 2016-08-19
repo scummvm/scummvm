@@ -397,6 +397,24 @@ public:
 	 * resource manager.
 	 */
 	void addResourcesFromChunk(uint16 id);
+
+	/**
+	 * Updates the currently active disc number.
+	 */
+	void findDisc(const int16 discNo);
+
+	/**
+	 * Gets the currently active disc number.
+	 */
+	int16 getCurrentDiscNo() const { return _currentDiscNo; }
+
+private:
+	/**
+	 * The currently active disc number.
+	 */
+	int16 _currentDiscNo;
+
+public:
 #endif
 
 	bool detectHires();

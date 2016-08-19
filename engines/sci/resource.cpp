@@ -859,6 +859,13 @@ void ResourceManager::addResourcesFromChunk(uint16 id) {
 	scanNewSources();
 }
 
+void ResourceManager::findDisc(const int16 discNo) {
+	// Since all resources are expected to be copied from the original discs
+	// into a single game directory, this call just records the number of the CD
+	// that the game has requested
+	_currentDiscNo = discNo;
+}
+
 #endif
 
 void ResourceManager::freeResourceSources() {
@@ -878,7 +885,9 @@ void ResourceManager::init() {
 	_LRU.clear();
 	_resMap.clear();
 	_audioMapSCI1 = NULL;
-
+#ifdef ENABLE_SCI32
+	_currentDiscNo = 1;
+#endif
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
 	_mapVersion = detectMapVersion();
