@@ -427,14 +427,6 @@ Common::Error DMEngine::run() {
 }
 
 void DMEngine::f2_gameloop() {
-	//HACK: Remove this block to get real starting position in the Hall of Champions
-	if (_g298_newGame) {
-		warning(false, "DUMMY CODE: SETTING PARTY POS AND DIRECTION");
-		_dungeonMan->_g306_partyMapX = 9;
-		_dungeonMan->_g307_partyMapY = 9;
-		_dungeonMan->_g308_partyDir = kDirWest;
-	}
-
 	_canLoadFromGMM = true;
 	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {
@@ -471,8 +463,7 @@ void DMEngine::f2_gameloop() {
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
-			warning(false, "DUMMY CODE: clearing screen to black");
-			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // dummy code
+			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
 			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 			if (_g325_setMousePointerToObjectInMainLoop) {
 				_g325_setMousePointerToObjectInMainLoop = false;
@@ -818,7 +809,6 @@ void DMEngine::f439_drawEntrance() {
 	// note, a global variable is used here in the original
 	_displayMan->f466_loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_g348_bitmapScreen);
 	_displayMan->f128_drawDungeon(kDirSouth, 2, 0);
-	warning(false, "IGNORED CODE: G0324_B_DrawViewportRequested = false;");
 
 	if (!_savedScreenForOpenEntranceDoors)
 		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];

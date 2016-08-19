@@ -260,6 +260,7 @@ class EventManager {
 	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
 	void setMousePointerFromSpriteData(byte* mouseSprite);
 
+	Box _highlightScreenBox; // @ G0336_i_HighlightBoxX1
 public:
 	explicit EventManager(DMEngine *vm);
 	~EventManager();
@@ -319,8 +320,8 @@ public:
 	void f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY); // @ F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE
 	void f544_resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
 	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
-	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f362_commandHighlightBoxEnable"); }// @ F0362_COMMAND_HighlightBoxEnable
-	void f363_highlightBoxDisable() { warning(false, "STUB METHOD: f363_highlightBoxDisable"); } // @ F0363_COMMAND_HighlightBoxDisable
+	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
+	void f363_highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
 	void f6_highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f6_highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
 };
 

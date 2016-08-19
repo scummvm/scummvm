@@ -2147,7 +2147,8 @@ void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 }
 
 void DisplayMan::f98_drawFloorAndCeiling() {
-	warning(false, "f98_drawFloorAndCeiling doesn't do anything");
+	Box box(0, 223, 0, 36);
+	f135_fillBoxBitmap(_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport);
 	_g297_drawFloorAndCeilingRequested = false;
 }
 
@@ -3735,9 +3736,7 @@ byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
 	return _g638_derivedBitmaps[derivedBitmapIndex];
 }
 
-void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {
-	warning(false, "f493_addDerivedBitmap DOES NOTHING");
-}
+void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {}
 
 void DisplayMan::f480_releaseBlock(uint16 index) {
 	delete[] _g638_derivedBitmaps[index];

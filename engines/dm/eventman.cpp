@@ -314,6 +314,7 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	warning(false, "_g587_hideMousePointerRequestCount should start with value 1");
 	_g587_hideMousePointerRequestCount = 0;
 	_g558_mouseButtonStatus = 0;
+	_highlightScreenBox.setToZero();
 }
 
 EventManager::~EventManager() {
@@ -1556,4 +1557,18 @@ void EventManager::f541_waitForMouseOrKeyActivity() {
 		_vm->_displayMan->updateScreen();
 	}
 }
+
+void EventManager::f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) {
+	_highlightScreenBox = Box(x1, x2, y1, y2);
+	f6_highlightScreenBox(x1, x2, y1, y2);
+	_g341_highlightBoxEnabled = true;
+}
+
+void EventManager::f363_highlightBoxDisable() {
+	if (_g341_highlightBoxEnabled == true) {
+		f6_highlightScreenBox(_highlightScreenBox._x1, _highlightScreenBox._x2, _highlightScreenBox._y1, _highlightScreenBox._y2);
+		_g341_highlightBoxEnabled = false;
+	}
+}
+
 } // end of namespace DM

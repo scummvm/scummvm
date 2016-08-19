@@ -2216,8 +2216,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		strcat(_vm->_g353_stringBuildBuffer, "/");
 		maxLoad = (f309_getMaximumLoad(curChampion) + 5) / 10;
 		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(maxLoad, true, 3).c_str());
-		warning(false, "Possibly wrong localization");
-		strcat(_vm->_g353_stringBuildBuffer, " KG"); // this line
+		strcat(_vm->_g353_stringBuildBuffer, " KG");
 		_vm->_textMan->f52_printToViewport(148, 132, loadColor, _vm->_g353_stringBuildBuffer);
 		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}

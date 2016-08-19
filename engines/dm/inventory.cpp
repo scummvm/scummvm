@@ -246,8 +246,7 @@ void InventoryMan::f346_drawPanelResurrectReincarnate() {
 }
 
 void InventoryMan::f347_drawPanel() {
-	warning(false, "possible reintroduction of BUG0_48");
-	f334_closeChest(); // possibility of BUG0_48
+	f334_closeChest();
 
 	ChampionMan &cm = *_vm->_championMan;
 	if (cm._g299_candidateChampionOrdinal) {
