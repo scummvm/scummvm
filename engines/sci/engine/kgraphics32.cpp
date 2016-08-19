@@ -366,7 +366,7 @@ reg_t kMessageBox(EngineState *s, int argc, reg_t *argv) {
  * effect
  */
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
-	ShowStyleType type = (ShowStyleType)argv[0].toUint16();
+	const uint16 type = argv[0].toUint16();
 	reg_t planeObj = argv[1];
 	int16 seconds = argv[2].toSint16();
 	// NOTE: This value seems to indicate whether the transition is an
@@ -401,6 +401,10 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 		divisions = argc > 9 ? argv[9].toSint16() : -1;
 	}
 
+	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
+		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
+	}
+
 // TODO: Reuse later for SCI2 and SCI3 implementation and then discard
 //	warning("kSetShowStyle: effect %d, plane: %04x:%04x (%s), sec: %d, "
 //			"dir: %d, prio: %d, animate: %d, ref frame: %d, black screen: %d, "
@@ -412,7 +416,7 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// NOTE: The order of planeObj and showStyle are reversed
 	// because this is how SCI3 called the corresponding method
 	// on the KernelMgr
-	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
+	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, (ShowStyleType)type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
 	return s->r_acc;
 }

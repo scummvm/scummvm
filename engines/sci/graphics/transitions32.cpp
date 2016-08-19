@@ -203,10 +203,6 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 		color = 0;
 	}
 
-	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
-		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
-	}
-
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
 	if (plane == nullptr) {
 		error("Plane %04x:%04x is not present in active planes list", PRINT_REG(planeObj));
