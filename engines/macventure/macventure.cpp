@@ -955,11 +955,10 @@ Common::String MacVentureEngine::getCommandsPausedString() const {
 }
 
 Common::String MacVentureEngine::getFilePath(FilePathID id) const {
-	const Common::Array<Common::String> &names = _filenames->getStrings();
 	if (id <= 3) { // We don't want a file in the subdirectory
-		return Common::String(names[id]);
+		return _filenames->getString(id);
 	} else { // We want a game file
-		return Common::String(names[3] + "/" + names[id]);
+		return _filenames->getString(3) + "/" + _filenames->getString(id);
 	}
 }
 
