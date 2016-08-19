@@ -1124,12 +1124,8 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 Bitmap *Bitmap::reverseImage(bool flip) {
 	Bitmap *b = new Bitmap(this);
 
-	if (flip) {
-		if (b->_flipping == Graphics::FLIP_NONE)
-			b->_flipping = Graphics::FLIP_H;
-		else
-			b->_flipping = Graphics::FLIP_NONE;
-	}
+	if (flip)
+		b->_flipping ^= Graphics::FLIP_H;
 
 	return b;
 }
@@ -1137,7 +1133,7 @@ Bitmap *Bitmap::reverseImage(bool flip) {
 Bitmap *Bitmap::flipVertical() {
 	Bitmap *b = new Bitmap(this);
 
-	b->_flipping = Graphics::FLIP_V;
+	b->_flipping ^= Graphics::FLIP_V;
 
 	return b;
 }
