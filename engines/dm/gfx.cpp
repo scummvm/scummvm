@@ -1023,31 +1023,32 @@ void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloor
 		}
 	};
 
-	if (floorOrnOrdinal) {
-		bool drawFootprints = (getFlag(floorOrnOrdinal, k0x8000_FootprintsAspect) ? true : false);
-		byte *bitmap;
-		if (drawFootprints && (clearFlag(floorOrnOrdinal, k0x8000_FootprintsAspect))) {
-			floorOrnOrdinal--;
-			uint16 floorOrnIndex = floorOrnOrdinal;
-			int16 nativeBitmapIndex = _g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
-				+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
-			uint16 *coordSets = g206_floorOrnCoordSets[_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
-			if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
-				|| (viewFloorIndex == k2_viewFloor_D3R)
-				|| ((floorOrnIndex == k15_FloorOrnFootprints) && _g76_useFlippedWallAndFootprintsBitmap &&
-				((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
-				bitmap = _g74_tmpBitmap;
-				f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, coordSets[4], coordSets[5]);
-			} else
-				bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+	if (!floorOrnOrdinal)
+		return;
 
-			f132_blitToBitmap(bitmap, _g296_bitmapViewport,
-							  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
-		}
+	bool drawFootprints = (getFlag(floorOrnOrdinal, k0x8000_FootprintsAspect) ? true : false);
+	byte *bitmap;
+	if (!drawFootprints || clearFlag(floorOrnOrdinal, k0x8000_FootprintsAspect)) {
+		floorOrnOrdinal--;
+		uint16 floorOrnIndex = floorOrnOrdinal;
+		int16 nativeBitmapIndex = _g102_currMapFloorOrnInfo[floorOrnIndex][k0_NativeBitmapIndex]
+			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
+		uint16 *coordSets = g206_floorOrnCoordSets[_g102_currMapFloorOrnInfo[floorOrnIndex][k1_CoordinateSet]][viewFloorIndex];
+		if ((viewFloorIndex == k8_viewFloor_D1R) || (viewFloorIndex == k5_viewFloor_D2R)
+			|| (viewFloorIndex == k2_viewFloor_D3R)
+			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _g76_useFlippedWallAndFootprintsBitmap &&
+			((viewFloorIndex == k7_viewFloor_D1C) || (viewFloorIndex == k4_viewFloor_D2C) || (viewFloorIndex == k1_viewFloor_D3C)))) {
+			bitmap = _g74_tmpBitmap;
+			f99_copyBitmapAndFlipHorizontal(f489_getNativeBitmapOrGraphic(nativeBitmapIndex), bitmap, coordSets[4], coordSets[5]);
+		} else
+			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 
-		if (drawFootprints)
-			f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
+		f132_blitToBitmap(bitmap, _g296_bitmapViewport,
+						  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
 	}
+
+	if (drawFootprints)
+		f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
 }
 
 void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* doorNativeBitmapIndices, int16 byteCount, int16 viewDoorOrnIndex, DoorFrames* doorFrames) {
@@ -3101,7 +3102,7 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 			}
 
 			if ((viewSquareIndex >= k0_ViewSquare_D3C) && (viewSquareIndex <= k9_ViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
-				objectAspect = &(_objectAspects209[g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
+				objectAspect = &(_objectAspects209[_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = k360_FirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
 				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane))
 					AL_4_nativeBitmapIndex++;

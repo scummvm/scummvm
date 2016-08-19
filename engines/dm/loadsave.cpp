@@ -56,11 +56,11 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::InSaveFile *file = nullptr;
 
 	struct {
-		int16 _saveFormat = 0;
-		int16 _saveAndPlayChoice = 0;
-		int32 _gameId = 0;
-		int16 _platform = 0;
-		uint16 _dungeonId = 0;
+		int16 _saveFormat;
+		int16 _saveAndPlayChoice;
+		int32 _gameId;
+		int16 _platform;
+		uint16 _dungeonId;
 	} dmSaveHeader;
 
 	if (!_g298_newGame) {

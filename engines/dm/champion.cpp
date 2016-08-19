@@ -1282,7 +1282,7 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & gSlotMasks[slotIndex])))
+	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & gSlotMasks[slotIndex])))
 		return;
 
 	_vm->_eventMan->f78_showMouse();
@@ -1928,7 +1928,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 	while (curThing != Thing::_endOfList) {
 		ThingType thingType = curThing.getType();
 		if ((thingType > k3_SensorThingType) && (curThing.getCell() == championObjectsCell)) {
-			int16 objectAllowedSlots = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(curThing)]._allowedSlots;
+			int16 objectAllowedSlots = _vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(curThing)]._allowedSlots;
 			uint16 curSlotIndex;
 			switch (thingType) {
 			case k6_ArmourThingType: {

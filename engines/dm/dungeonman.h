@@ -84,6 +84,7 @@ public:
 	uint16 _allowedSlots;
 	ObjectInfo(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
 		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
+	ObjectInfo() : _type(0), _objectAspectIndex(0), _actionSetIndex(0), _allowedSlots(0) {}
 	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
 	uint16 getAllowedSlots() { return _allowedSlots; }
 	void setAllowedSlot(ObjectAllowedSlot slot, bool val) {
@@ -94,8 +95,6 @@ public:
 		}
 	}
 }; // @ OBJECT_INFO
-
-extern ObjectInfo g237_ObjectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
 
 enum ArmourAttribute {
 	k0x0080_ArmourAttributeIsAShield = 0x0080, // @ MASK0x0080_IS_A_SHIELD
@@ -747,6 +746,10 @@ public:
 	ElementType _g285_squareAheadElement; // @ G0285_i_SquareAheadElement 
 	Thing _g292_pileTopObject[5]; // @ G0292_aT_PileTopObject
 	DoorInfo _g275_currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
+	
+	ObjectInfo g237_ObjectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
+
+	void setupArrays();
 };
 
 }

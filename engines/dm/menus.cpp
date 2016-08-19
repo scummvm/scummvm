@@ -153,7 +153,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = k201_IconIndiceActionEmptyHand;
-	} else if (g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thing)]._actionSetIndex) {
+	} else if (_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
 	} else {
 		dm.f134_fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
@@ -1626,11 +1626,9 @@ void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) 
 		return;
 	}
 	if ((L1189_T_Thing = L1190_ps_Champion->_slots[k1_ChampionSlotActionHand]) == Thing::_none) {
-		L1188_ui_ActionSetIndex = 2; /* Actions Punck, Kick and War Cry */
-	} else {
-		if ((L1188_ui_ActionSetIndex = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
-			return;
-		}
+		L1188_ui_ActionSetIndex = 2; /* Actions Punch, Kick and War Cry */
+	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
+		return;
 	}
 	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
 	_vm->_championMan->_g506_actingChampionOrdinal = _vm->M0_indexToOrdinal(champIndex);
