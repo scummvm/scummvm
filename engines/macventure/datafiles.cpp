@@ -32,34 +32,35 @@ namespace MacVenture {
 
 #define MACVENTURE_DATA_BUNDLE Common::String("macventure.zip")
 
+struct BorderName {
+	MVWindowType type;
+	const char *name;
+};
+
+static const BorderName g_borderNames[] = {
+	{kDocument, "Document"},
+	{kDBox, "DBox"},
+	{kPlainDBox, "PlainDBox"},
+	{kAltBox, "AltBox"},
+	{kNoGrowDoc, "NoGrowDoc"},
+	{kMovableDBox, "MovableDBox"},
+	{kZoomDoc, "ZoomDoc"},
+	{kZoomNoGrow, "ZoomNoGrow"},
+	{kInvWindow, "InvWindow"},
+	{kRDoc16, "RDoc16"},
+	{kRDoc4, "RDoc4"},
+	{kRDoc6, "RDoc6"},
+	{kRDoc10, "RDoc10"},
+	{kNoType, "No type"}
+};
+
 Common::String windowTypeName(MVWindowType windowType) {
-	switch (windowType) {
-	case kDocument:
-		return "Document";
-	case kDBox:
-		return "DBox";
-	case kPlainDBox:
-		return "PlainDBox";
-	case kAltBox:
-		return "AltBox";
-	case kNoGrowDoc:
-		return "NoGrowDoc";
-	case kMovableDBox:
-		return "MovableDBox";
-	case kZoomDoc:
-		return "ZoomDoc";
-	case kZoomNoGrow:
-		return "ZoomNoGrow";
-	case kInvWindow:
-		return "InvWindow";
-	case kRDoc16:
-		return "RDoc16";
-	case kRDoc4:
-		return "RDoc4";
-	case kRDoc6:
-		return "RDoc6";
-	case kRDoc10:
-		return "RDoc10";
+	int i = 0;
+	while (g_borderNames[i].type != kNoType) {
+		i++;
+		if (g_borderNames[i].type == windowType) {
+			return g_borderNames[i].name;
+		}
 	}
 	return "";
 }

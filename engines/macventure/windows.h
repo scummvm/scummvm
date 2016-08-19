@@ -55,7 +55,8 @@ enum MVWindowType {
 	kRDoc16 = 0x10,
 	kRDoc4 = 0x12,
 	kRDoc6 = 0x14,
-	kRDoc10 = 0x16
+	kRDoc10 = 0x16,
+	kNoType = 0xFF
 };
 
 struct DrawableObject {
