@@ -66,9 +66,9 @@ void TextAsset::decodeOld() {
 			lowercase = true;
 		} else if (val == 0x1C) {
 			if (lowercase) {
-				c = 0x27; // Ascii '
+				c = '\'';
 			} else {
-				c = 0x22; // Ascii '"'
+				c = '"';
 			}
 			lowercase = true;
 		} else if (val == 0x1D) { // Composite
