@@ -71,7 +71,7 @@ void Lingo::execute(int pc) {
 	}
 }
 
-Common::String Lingo::decodeInstruction(int pc) {
+Common::String Lingo::decodeInstruction(int pc, int *newPc) {
 	Symbol sym;
 	Common::String res;
 
@@ -117,6 +117,9 @@ Common::String Lingo::decodeInstruction(int pc) {
 	} else {
 		res = "<unknown>";
 	}
+
+	if (newPc)
+		*newPc = pc;
 
 	return res;
 }

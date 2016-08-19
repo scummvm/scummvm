@@ -180,7 +180,7 @@ public:
 
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
-	Common::String decodeInstruction(int pc);
+	Common::String decodeInstruction(int pc, int *newPC = NULL);
 
 	void processEvent(LEvent event, int entityId);
 
