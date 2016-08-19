@@ -301,6 +301,15 @@ Common::String *Datum::toString() {
 		delete s;
 		s = u.s;
 		break;
+	case OBJECT:
+		*s = Common::String::format("#%s", u.s->c_str());
+		break;
+	case VOID:
+		*s = "#void";
+		break;
+	case VAR:
+		*s = Common::String::format("var: #%s", u.sym->name);
+		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
 	}
