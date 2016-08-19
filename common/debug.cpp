@@ -120,6 +120,18 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 
 } // End of namespace Common
 
+bool debugLevelSet(int level) {
+	return level <= gDebugLevel;
+}
+
+bool debugChannelSet(int level, uint32 debugChannels) {
+	if (gDebugLevel != 11)
+		if (level > gDebugLevel || !(DebugMan.isDebugChannelEnabled(debugChannels)))
+			return false;
+
+	return true;
+}
+
 
 #ifndef DISABLE_TEXT_CONSOLE
 

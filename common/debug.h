@@ -31,11 +31,10 @@ inline void debug(const char *s, ...) {}
 inline void debug(int level, const char *s, ...) {}
 inline void debugN(const char *s, ...) {}
 inline void debugN(int level, const char *s, ...) {}
-inline void debugC(int level, uint32 engineChannel, const char *s, ...) {}
-inline void debugC(uint32 engineChannel, const char *s, ...) {}
-inline void debugCN(int level, uint32 engineChannel, const char *s, ...) {}
-inline void debugCN(uint32 engineChannel, const char *s, ...) {}
-
+inline void debugC(int level, uint32 debugChannels, const char *s, ...) {}
+inline void debugC(uint32 debugChannels, const char *s, ...) {}
+inline void debugCN(int level, uint32 debugChannels, const char *s, ...) {}
+inline void debugCN(uint32 debugChannels, const char *s, ...) {}
 
 #else
 
@@ -109,6 +108,18 @@ void debugC(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 void debugCN(uint32 debugChannels, const char *s, ...) GCC_PRINTF(2, 3);
 
 #endif
+
+/**
+ * Returns true if the debug level is set to the specified level
+ */
+bool debugLevelSet(int level);
+
+/**
+ * Returns true if the debug level and channel are active
+ *
+ * @see enableDebugChannel
+ */
+bool debugChannelSet(int level, uint32 debugChannels);
 
 /**
  * The debug level. Initially set to -1, indicating that no debug output
