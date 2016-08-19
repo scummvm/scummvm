@@ -565,8 +565,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// the file should be over 10MB, as it contains all the game speech and is usually
 	// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
 	// also have a small resource.aud file
-	if (allFiles.contains("resource.aud") || allFiles.contains("audio001.002")) {
-		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] :  allFiles["audio001.002"];
+	if (allFiles.contains("resource.aud") || allFiles.contains("resaud.001") || allFiles.contains("audio001.002")) {
+		Common::FSNode file = allFiles.contains("resource.aud") ? allFiles["resource.aud"] : (allFiles.contains("resaud.001") ? allFiles["resaud.001"] : allFiles["audio001.002"]);
 		Common::SeekableReadStream *tmpStream = file.createReadStream();
 		if (tmpStream->size() > 10 * 1024 * 1024) {
 			// We got a CD version, so set the CD flag accordingly

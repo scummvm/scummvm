@@ -296,6 +296,7 @@ protected:
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash> ResourceMap;
 
+class IntMapResourceSource;
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
@@ -413,6 +414,12 @@ private:
 	 * The currently active disc number.
 	 */
 	int16 _currentDiscNo;
+
+	/**
+	 * If true, the game has multiple audio volumes that contain different
+	 * audio files for each disc.
+	 */
+	bool _multiDiscAudio;
 
 public:
 #endif
@@ -538,7 +545,7 @@ protected:
 	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
-	int readAudioMapSCI11(ResourceSource *map);
+	int readAudioMapSCI11(IntMapResourceSource *map);
 
 	/**
 	 * Reads SCI1 audio map files.

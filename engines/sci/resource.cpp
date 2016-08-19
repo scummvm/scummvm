@@ -573,6 +573,9 @@ Resource *ResourceManager::testResource(ResourceId id) {
 }
 
 int ResourceManager::addAppropriateSources() {
+#ifdef ENABLE_SCI32
+	_multiDiscAudio = false;
+#endif
 	if (Common::File::exists("resource.map")) {
 		// SCI0-SCI2 file naming scheme
 		ResourceSource *map = addExternalMap("resource.map");
@@ -614,6 +617,10 @@ int ResourceManager::addAppropriateSources() {
 		// We need to have the same number of maps as resource archives
 		if (mapFiles.empty() || files.empty() || mapFiles.size() != files.size())
 			return 0;
+
+		if (Common::File::exists("resaud.001")) {
+			_multiDiscAudio = true;
+		}
 
 		for (Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin(); mapIterator != mapFiles.end(); ++mapIterator) {
 			Common::String mapName = (*mapIterator)->getName();
@@ -1747,11 +1754,42 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// if we use the first entries in the resource file, half of the
 				// game will be English and umlauts will also be missing :P
 				if (resource->_source->getSourceType() == kSourceVolume) {
+					// Maps are read during the scanning process (below), so
+					// need to be treated as unallocated in order for the new
+					// data from this volume to be picked up and used
+					if (resId.getType() == kResourceTypeMap) {
+						resource->_status = kResStatusNoMalloc;
+					}
 					resource->_source = source;
 					resource->_fileOffset = fileOffset;
 					resource->size = 0;
 				}
 			}
+
+#ifdef ENABLE_SCI32
+			// Different CDs may have different audio maps on each disc. The
+			// ResourceManager does not know how to deal with this; it expects
+			// each resource ID to be unique across an entire game. To work
+			// around this problem, all audio maps from this disc must be
+			// processed immediately, since they will be replaced by the audio
+			// map from the next disc on the next call to readResourceMapSCI1
+			if (_multiDiscAudio && resId.getType() == kResourceTypeMap) {
+				IntMapResourceSource *audioMap = static_cast<IntMapResourceSource *>(addSource(new IntMapResourceSource("MAP", mapVolumeNr, resId.getNumber())));
+				Common::String volumeName;
+				if (resId.getNumber() == 65535) {
+					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+				} else {
+					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);
+				}
+
+				ResourceSource *audioVolume = addSource(new AudioVolumeResourceSource(this, volumeName, audioMap, mapVolumeNr));
+				if (!audioMap->_scanned) {
+					audioVolume->_scanned = true;
+					audioMap->_scanned = true;
+					audioMap->scanSource(this);
+				}
+			}
+#endif
 		}
 	}
 
