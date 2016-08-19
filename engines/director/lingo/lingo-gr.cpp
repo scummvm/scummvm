@@ -1993,7 +1993,7 @@ yyreduce:
     {
 			inst end = 0;
 			WRITE_UINT32(&end, (yyvsp[(3) - (3)].code));
-			g_lingo->code1(g_lingo->c_whencode);
+			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[(yyvsp[(1) - (3)].code) + 1] = end;
 		;}
     break;

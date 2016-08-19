@@ -220,7 +220,7 @@ stmt: stmtoneliner
 	| when expr end {
 			inst end = 0;
 			WRITE_UINT32(&end, $3);
-			g_lingo->code1(g_lingo->c_whencode);
+			g_lingo->code1(STOP);
 			(*g_lingo->_currentScript)[$1 + 1] = end;
 		}
 	;
