@@ -53,7 +53,7 @@ bool CPhonographEar::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 		addTimer(1000);
 	}
 
-	return PETGainedObjectMsg(msg);
+	return CEar::PETGainedObjectMsg(msg);
 }
 
 bool CPhonographEar::TimerMsg(CTimerMsg *msg) {
