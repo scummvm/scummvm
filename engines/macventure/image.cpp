@@ -530,26 +530,23 @@ void ImageAsset::calculateSectionToDraw(Graphics::ManagedSurface *target, int &o
 }
 
 void ImageAsset::calculateSectionInDirection(uint targetWhole, uint originWhole, int &originPosition, uint &startPosition, uint &blittedWhole) {
+	startPosition = 0;
 	blittedWhole = originWhole;
-	if (originPosition + blittedWhole > targetWhole) {
-		if (originPosition > (int)targetWhole) {
-			blittedWhole = 0;
-		} else {
-			blittedWhole = (blittedWhole) - ((blittedWhole + originPosition) - targetWhole);
-		}
-	}
 	if (originPosition < 0) {
 		if (ABS(originPosition) > (int)blittedWhole) {
 			blittedWhole = 0;
 		} else {
 			blittedWhole -= -originPosition;
 		}
-	}
-
-	startPosition = 0;
-	if (originPosition < 0) {
 		startPosition = -originPosition;
 		originPosition = 0;
+	}
+	if (originPosition + blittedWhole > targetWhole) {
+		if (originPosition > (int)targetWhole) {
+			blittedWhole = 0;
+		} else {
+			blittedWhole = targetWhole - originPosition;
+		}
 	}
 }
 
