@@ -241,6 +241,7 @@ enum ViewCell {
 
 enum GraphicIndice {
 	k0_dialogBoxGraphicIndice = 0, // @ C000_GRAPHIC_DIALOG_BOX
+	k1_titleGraphicsIndice = 1, // @ C001_GRAPHIC_TITLE
 	k2_entranceLeftDoorGraphicIndice = 2, // @ C002_GRAPHIC_ENTRANCE_LEFT_DOOR
 	k3_entranceRightDoorGraphicIndice = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
 	k4_entranceGraphicIndice = 4, // @ C004_GRAPHIC_ENTRANCE
@@ -317,7 +318,6 @@ enum GraphicIndice {
 	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
 };
 
-extern byte g17_PalChangesNoChanges[16];
 
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {

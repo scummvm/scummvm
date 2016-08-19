@@ -234,7 +234,7 @@ public:
 	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
 	void f438_STARTEND_OpenEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
-	void f437_STARTEND_drawTittle() { warning(false, "STUB METHOD: f437_STARTEND_drawTittle"); }// @ F0437_STARTEND_DrawTitle
+	void f437_STARTEND_drawTittle(); // @ F0437_STARTEND_DrawTitle
 	void f442_SARTEND_processCommand202_entranceDrawCredits();
 	void f446_STARTEND_fuseSequnce(); // @ F0446_STARTEND_FuseSequence
 	void f445_STARTEND_fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate

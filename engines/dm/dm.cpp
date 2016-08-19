@@ -286,7 +286,9 @@ void DMEngine::f463_initializeGame() {
 
 	_sound->f503_loadSounds(); // @ F0506_AMIGA_AllocateData
 
-	f437_STARTEND_drawTittle();
+	if (!ConfMan.hasKey("save_slot")) // skip drawing title if loading from launcher
+		f437_STARTEND_drawTittle();
+
 	_textMan->f54_textInitialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
@@ -324,7 +326,6 @@ void DMEngine::f463_initializeGame() {
 void DMEngine::f448_initMemoryManager() {
 	static uint16 palSwoosh[16] = {0x000, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0x000, 0xFFF, 0xAAA, 0xFFF, 0xAAA, 0x444, 0xFF0, 0xFF0}; // @ K0057_aui_Palette_Swoosh
 
-	warning(false, "STUB METHOD: f448_initMemoryManager");
 	_displayMan->f508_buildPaletteChangeCopperList(palSwoosh, palSwoosh);
 	for (uint16 i = 0; i < 16; ++i) {
 		_displayMan->_g347_paletteTopAndBottomScreen[i] = _displayMan->_palDungeonView[0][i];
@@ -862,6 +863,83 @@ void DMEngine::f438_STARTEND_OpenEntranceDoors() {
 	}
 	delete[] _savedScreenForOpenEntranceDoors;
 	_savedScreenForOpenEntranceDoors = nullptr;
+}
+
+void DMEngine::f437_STARTEND_drawTittle() {
+	static Box G0003_s_Graphic562_Box_Title_StrikesBack_Destination(0, 319, 118, 174);
+	static Box G0004_s_Graphic562_Box_Title_StrikesBack_Source(0, 319, 0, 56);
+	static Box G0005_s_Graphic562_Box_Title_Presents(0, 319, 90, 105);
+	static Box K0078_s_Box_Title_Dungeon_Chaos(0, 319, 0, 79);
+
+	int16 L1380_i_Counter;
+	uint16 L1381_ui_DestinationHeight;
+	int16 L1382_i_DestinationPixelWidth;
+	byte *L1383_l_Bitmap_TitleSteps;
+	byte* L1384_puc_Bitmap_Title;
+	byte* L1387_apuc_Bitmap_ShrinkedTitle[20]; /* Only the first 18 entries are actually used */
+	byte* L1389_puc_Bitmap_Master_StrikesBack;
+	byte* L1761_puc_Bitmap_Dungeon_Chaos; /* Unreferenced on Atari ST */
+	int16 L1391_aai_Coordinates[20][5]; /* Only the first 18 entries are actually used */
+	uint16 L1392_aui_Palette[16];
+
+
+	_displayMan->_g578_useByteBoxCoordinates = false;
+
+	byte *alloactedMem = L1383_l_Bitmap_TitleSteps = new byte[145600 * 2];
+
+	L1384_puc_Bitmap_Title = L1383_l_Bitmap_TitleSteps;
+	_displayMan->f466_loadIntoBitmap(k1_titleGraphicsIndice, L1383_l_Bitmap_TitleSteps);
+
+	L1383_l_Bitmap_TitleSteps += 320 * 200;
+	for (uint16 i = 0; i < 16; ++i)
+		L1392_aui_Palette[i] = D01_RGB_DARK_BLUE;
+
+	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->fillScreen(k0_ColorBlack);
+	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
+	L1392_aui_Palette[15] = D09_RGB_WHITE;
+	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, L1389_puc_Bitmap_Master_StrikesBack = L1383_l_Bitmap_TitleSteps, G0004_s_Graphic562_Box_Title_StrikesBack_Source, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
+	L1383_l_Bitmap_TitleSteps += 320 * 57;
+	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, L1761_puc_Bitmap_Dungeon_Chaos = L1383_l_Bitmap_TitleSteps, K0078_s_Box_Title_Dungeon_Chaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
+	L1383_l_Bitmap_TitleSteps += 320 * 80;
+	L1384_puc_Bitmap_Title = L1761_puc_Bitmap_Dungeon_Chaos;
+	L1381_ui_DestinationHeight = 12;
+	L1382_i_DestinationPixelWidth = 48;
+	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
+		L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter] = L1383_l_Bitmap_TitleSteps;
+		_displayMan->f129_blitToBitmapShrinkWithPalChange(L1384_puc_Bitmap_Title, L1383_l_Bitmap_TitleSteps, 320, 80, L1382_i_DestinationPixelWidth, L1381_ui_DestinationHeight, _displayMan->_palChangesNoChanges);
+		L1391_aai_Coordinates[L1380_i_Counter][1] = (L1391_aai_Coordinates[L1380_i_Counter][0] = (320 - L1382_i_DestinationPixelWidth) / 2) + L1382_i_DestinationPixelWidth - 1;
+		L1391_aai_Coordinates[L1380_i_Counter][3] = (L1391_aai_Coordinates[L1380_i_Counter][2] = ((int)(160 - L1381_ui_DestinationHeight)) / 2) + L1381_ui_DestinationHeight - 1;
+		L1383_l_Bitmap_TitleSteps += (L1391_aai_Coordinates[L1380_i_Counter][4] = ((L1382_i_DestinationPixelWidth + 15) / 16) * 8) * L1381_ui_DestinationHeight;
+		L1381_ui_DestinationHeight += 4;
+		L1382_i_DestinationPixelWidth += 16;
+	}
+	L1392_aui_Palette[15] = D01_RGB_DARK_BLUE;
+	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->fillScreen(k0_ColorBlack);
+	L1392_aui_Palette[3] = D05_RGB_DARK_GOLD;
+	L1392_aui_Palette[4] = D02_RGB_LIGHT_BROWN;
+	L1392_aui_Palette[5] = D06_RGB_GOLD;
+	L1392_aui_Palette[6] = D04_RGB_LIGHTER_BROWN;
+	L1392_aui_Palette[8] = D08_RGB_YELLOW;
+	L1392_aui_Palette[15] = D07_RGB_RED;
+	L1392_aui_Palette[10] = D01_RGB_DARK_BLUE;
+	L1392_aui_Palette[12] = D01_RGB_DARK_BLUE;
+	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	f22_delay(1);
+	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
+		f22_delay(2);
+		Box box(L1391_aai_Coordinates[L1380_i_Counter]);
+		_displayMan->f132_blitToBitmap(L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter], _displayMan->_g348_bitmapScreen, box, 0, 0, L1391_aai_Coordinates[L1380_i_Counter][4], k160_byteWidthScreen, kM1_ColorNoTransparency, L1391_aai_Coordinates[L1380_i_Counter][3] - L1391_aai_Coordinates[L1380_i_Counter][2] + 1, k200_heightScreen);
+	}
+	f22_delay(25L);
+	_displayMan->f132_blitToBitmap(L1389_puc_Bitmap_Master_StrikesBack, _displayMan->_g348_bitmapScreen, G0003_s_Graphic562_Box_Title_StrikesBack_Destination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
+	L1392_aui_Palette[10] = D00_RGB_BLACK;
+	L1392_aui_Palette[12] = D07_RGB_RED;
+	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	delete[] alloactedMem;
+	f22_delay(75L);
 }
 
 void DMEngine::f442_SARTEND_processCommand202_entranceDrawCredits() {
