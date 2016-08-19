@@ -21,17 +21,22 @@
  */
 
 #include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CSGTStateRoom, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(VisibleMsg)
 	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(LeaveRoomMsg)
 END_MESSAGE_MAP()
 
 CSGTStateRoomStatics *CSGTStateRoom::_statics;
 
 void CSGTStateRoom::init() {
 	_statics = new CSGTStateRoomStatics();
+	_statics->_v1 = "Closed";
 }
 
 void CSGTStateRoom::deinit() {
@@ -94,8 +99,80 @@ void CSGTStateRoom::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CSGTStateRoom::ActMsg(CActMsg *msg) {
+	CPetControl *pet = getPetControl();
+	uint roomFlags = pet->getRoomFlags();
+	uint assignedRoom = pet->getAssignedRoomFlags();
+
+	if (roomFlags != assignedRoom) {
+		petDisplayMessage("This is not your assigned room. Please do not enjoy.");
+	} else if (_fieldE0) {
+		CTurnOn onMsg;
+		onMsg.execute(this);
+	} else {
+		CTurnOff offMsg;
+		offMsg.execute(this);
+	}
+
+	return true;
+}
+
+bool CSGTStateRoom::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	return true;
+}
+
 bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CSGTStateRoom::handleEvent");
+	CPetControl *pet = getPetControl();
+	uint roomFlags = pet->getRoomFlags();
+	uint assignedRoom = pet->getAssignedRoomFlags();
+
+	if (roomFlags == assignedRoom) {
+		loadFrame(_fieldE8);
+		_fieldE0 = _fieldEC;
+		setVisible(_fieldF0);
+
+		if (isEquals("Desk") && _statics->_v5 == "Closed")
+			loadFrame(1);
+	}
+
+	if (isEquals("Drawer")) {
+		petSetArea(PET_REMOTE);
+		if (roomFlags == assignedRoom && getPassengerClass() == 3
+				&& _statics->_v13) {
+			playSound("b#21.wav");
+			_statics->_v13 = 0;
+		}
+
+		_statics->_v7 = "Closed";
+		setVisible(false);
+		_fieldE0 = true;
+	} else if (roomFlags != assignedRoom) {
+		loadFrame(0);
+		if (_fieldE4) {
+			setVisible(true);
+			if (isEquals("Desk"))
+				loadFrame(1);
+		} else {
+			setVisible(false);
+		}
+	}
+
+	return true;
+}
+
+bool CSGTStateRoom::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	CPetControl *pet = getPetControl();
+	uint roomFlags = pet->getRoomFlags();
+	uint assignedRoom = pet->getAssignedRoomFlags();
+
+	if (roomFlags == assignedRoom) {
+		_fieldE8 = getMovieFrame();
+		_fieldEC = _fieldE0;
+		_fieldF0 = _visible;
+	}
+
+	_statics->_v14 = roomFlags;
 	return true;
 }
 

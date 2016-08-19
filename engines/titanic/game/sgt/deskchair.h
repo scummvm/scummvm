@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CDeskchair : public CSGTStateRoom {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF;
 

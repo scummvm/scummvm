@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDesk, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CDesk::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +38,46 @@ void CDesk::save(SimpleFile *file, int indent) {
 void CDesk::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CDesk::TurnOn(CTurnOn *msg) {
+	if (_statics->_v5 == "Closed" && _statics->_v1 == "RestingG"
+			&& _statics->_v1 == "OpenWrong") {
+		_statics->_v5 = "Open";
+		_fieldE0 = false;
+		_startFrame = 1;
+		_endFrame = 26;
+		playMovie(1, 26, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playSound("b#12.wav");
+	}
+
+	return true;
+}
+
+bool CDesk::TurnOff(CTurnOff *msg) {
+	if (_statics->_v5 == "Open" && _statics->_v6 == "Closed"
+			&& _statics->_v1 == "Open") {
+		CVisibleMsg visibleMsg(false);
+		visibleMsg.execute("ChestOfDrawers");
+
+		_statics->_v5 = "Closed";
+		_fieldE0 = true;
+		_startFrame = 26;
+		_endFrame = 51;
+		playMovie(26, 51, MOVIE_GAMESTATE);
+		playSound("b#9.wav");
+	}
+
+	return true;
+}
+
+bool CDesk::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_statics->_v5 == "Open") {
+		CVisibleMsg visibleMsg(true);
+		visibleMsg.execute("ChestOfDrawers");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDoorAutoSoundEvent, CAutoSoundEvent)
+	ON_MESSAGE(PreEnterNodeMsg)
+	ON_MESSAGE(LeaveNodeMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 void CDoorAutoSoundEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string1, indent);
@@ -42,6 +48,18 @@ void CDoorAutoSoundEvent::load(SimpleFile *file) {
 	_fieldE0 = file->readNumber();
 
 	CAutoSoundEvent::load(file);
+}
+
+bool CDoorAutoSoundEvent::PreEnterNodeMsg(CPreEnterNodeMsg *msg) {
+	return true;
+}
+
+bool CDoorAutoSoundEvent::LeaveNodeMsg(CLeaveNodeMsg *msg) {
+	return true;
+}
+
+bool CDoorAutoSoundEvent::TimerMsg(CTimerMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

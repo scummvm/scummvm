@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CDoorAutoSoundEvent : public CAutoSoundEvent {
+	DECLARE_MESSAGE_MAP;
+	bool PreEnterNodeMsg(CPreEnterNodeMsg *msg);
+	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
 	CString _string1;
 	CString _string2;

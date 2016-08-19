@@ -28,9 +28,12 @@
 namespace Titanic {
 
 class CDeskClickResponder : public CClickResponder {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 protected:
 	int _fieldD4;
-	int _fieldD8;
+	uint _ticks;
 public:
 	CLASSDEF;
 

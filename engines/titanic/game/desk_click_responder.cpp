@@ -21,13 +21,19 @@
  */
 
 #include "titanic/game/desk_click_responder.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CDeskClickResponder, CClickResponder)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+END_MESSAGE_MAP()
 
 void CDeskClickResponder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldD8, indent);
+	file->writeNumberLine(_ticks, indent);
 
 	CClickResponder::save(file, indent);
 }
@@ -35,9 +41,28 @@ void CDeskClickResponder::save(SimpleFile *file, int indent) {
 void CDeskClickResponder::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldD4 = file->readNumber();
-	_fieldD8 = file->readNumber();
+	_ticks = file->readNumber();
 
 	CClickResponder::load(file);
+}
+
+bool CDeskClickResponder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	_fieldD4 = (_fieldD4 + 1) % 3;
+	if (_fieldD4)
+		return CClickResponder::MouseButtonDownMsg(msg);
+
+	uint ticks = g_vm->_events->getTicksCount();
+	if (!_ticks || ticks > (_ticks + 4000)) {
+		playSound("a#22.wav");
+		_ticks = ticks;
+	}
+
+	return true;
+}
+
+bool CDeskClickResponder::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	_ticks = 0;
+	return true;
 }
 
 } // End of namespace Titanic
