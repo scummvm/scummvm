@@ -28,98 +28,63 @@
 
 namespace Adl {
 
-const DataBlockPtr DiskImage_DSK::getDataBlock(uint track, uint sector, uint offset, uint size) const {
-	return Common::SharedPtr<DiskImage::DataBlock>(new DiskImage::DataBlock(this, track, sector, offset, size));
-}
+#define TRACKS 35
+// The Apple II uses either 13- or 16-sector disks. We currently pad out
+// 13-sector disks, so we set SECTORS_PER_TRACK to 16 here.
+#define SECTORS_PER_TRACK 16
+#define BYTES_PER_SECTOR 256
+#define RAW_IMAGE_SIZE(S) (TRACKS * (S) * BYTES_PER_SECTOR)
+#define NIB_IMAGE_SIZE (RAW_IMAGE_SIZE(13) * 2)
 
-Common::SeekableReadStream *DiskImage_DSK::createReadStream(uint track, uint sector, uint offset, uint size) const {
-	_f->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
-	Common::SeekableReadStream *stream = _f->readStream(size * _bytesPerSector + _bytesPerSector - offset);
+static Common::SeekableReadStream *readImage_DSK(const Common::String &filename) {
+	Common::File *f = new Common::File;
 
-	if (_f->eos() || _f->err())
-		error("Error reading disk image");
-
-	return stream;
-}
-
-bool DiskImage_DSK::open(const Common::String &filename) {
-	assert(!_f->isOpen());
-
-	if (!_f->open(filename))
-		return false;
-
-	uint filesize = _f->size();
-	switch (filesize) {
-	case 143360:
-		_tracks = 35;
-		_sectorsPerTrack = 16;
-		_bytesPerSector = 256;
-		break;
-	default:
-		warning("Unrecognized disk image '%s' of size %d bytes", filename.c_str(), filesize);
-		return false;
+	if (!f->open(filename)) {
+		delete f;
+		return nullptr;
 	}
 
-	return true;
-}
+	if (f->size() != RAW_IMAGE_SIZE(16))
+		error("Unrecognized DSK image '%s' of size %d bytes", filename.c_str(), f->size());
 
-const DataBlockPtr DiskImage_NIB::getDataBlock(uint track, uint sector, uint offset, uint size) const {
-	return Common::SharedPtr<DiskImage::DataBlock>(new DiskImage::DataBlock(this, track, sector, offset, size));
-}
-
-Common::SeekableReadStream *DiskImage_NIB::createReadStream(uint track, uint sector, uint offset, uint size) const {
-	_memStream->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
-	Common::SeekableReadStream *stream = _memStream->readStream(size * _bytesPerSector + _bytesPerSector - offset);
-
-	if (_memStream->eos() || _memStream->err())
-		error("Error reading NIB image");
-
-	return stream;
+	return f;
 }
 
 // 4-and-4 encoding (odd-even)
-static uint8 read44(Common::SeekableReadStream *f) {
+static uint8 read44(Common::SeekableReadStream &f) {
 	// 1s in the other fields, so we can just AND
-	uint8 ret = f->readByte();
-	return ((ret << 1) | 1) & f->readByte();
+	uint8 ret = f.readByte();
+	return ((ret << 1) | 1) & f.readByte();
 }
 
-bool DiskImage_NIB::open(const Common::String &filename) {
-	assert(!_f->isOpen());
+static Common::SeekableReadStream *readImage_NIB(const Common::String &filename) {
+	Common::File f;
 
-	if (!_f->open(filename))
-		return false;
+	if (!f.open(filename))
+		return nullptr;
 
-	uint filesize = _f->size();
-	switch (filesize) {
-	case 232960:
-		_tracks = 35;
-		_sectorsPerTrack = 16; // we always pad it out
-		_bytesPerSector = 256;
-		break;
-	default:
-		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), filesize);
-	}
+	if (f.size() != NIB_IMAGE_SIZE)
+		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), f.size());
 
 	// starting at 0xaa, 32 is invalid (see below)
 	const byte c_5and3_lookup[] = { 32, 0, 32, 1, 2, 3, 32, 32, 32, 32, 32, 4, 5, 6, 32, 32, 7, 8, 32, 9, 10, 11, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 12, 13, 32, 32, 14, 15, 32, 16, 17, 18, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 19, 20, 32, 21, 22, 23, 32, 32, 32, 32, 32, 24, 25, 26, 32, 32, 27, 28, 32, 29, 30, 31 };
 	// starting at 0x96, 64 is invalid (see below)
 	const byte c_6and2_lookup[] = { 0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63 };
 
-	uint32 diskSize = _tracks * _sectorsPerTrack * _bytesPerSector;
-	byte *diskImage = (byte *)calloc(diskSize, 1);
-	_memStream = new Common::MemoryReadStream(diskImage, diskSize, DisposeAfterUse::YES);
+	// we always pad it out
+	const uint sectorsPerTrack = 16;
+	byte *diskImage = (byte *)calloc(RAW_IMAGE_SIZE(sectorsPerTrack), 1);
 
 	bool sawAddress = false;
 	uint8 volNo, track, sector;
 	bool newStyle;
 
-	while (_f->pos() < _f->size()) {
+	while (f.pos() < f.size()) {
 		// Read until we find two sync bytes.
-		if (_f->readByte() != 0xd5 || _f->readByte() != 0xaa)
+		if (f.readByte() != 0xd5 || f.readByte() != 0xaa)
 			continue;
 
-		byte prologue = _f->readByte();
+		byte prologue = f.readByte();
 
 		if (sawAddress && (prologue == 0xb5 || prologue == 0x96)) {
 			warning("NIB: data for %02x/%02x/%02x missing", volNo, track, sector);
@@ -140,10 +105,10 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				}
 			}
 
-			volNo = read44(_f);
-			track = read44(_f);
-			sector = read44(_f);
-			uint8 checksum = read44(_f);
+			volNo = read44(f);
+			track = read44(f);
+			sector = read44(f);
+			uint8 checksum = read44(f);
 			if ((volNo ^ track ^ sector) != checksum)
 				error("invalid NIB checksum");
 
@@ -163,17 +128,17 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 
 		// We should always find the data field after an address field.
 		// TODO: we ignore volNo?
-		byte *output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
+		byte *output = diskImage + (track * sectorsPerTrack + sector) * BYTES_PER_SECTOR;
 
 		if (newStyle) {
 			// We hardcode the DOS 3.3 mapping here. TODO: Do we also need raw/prodos?
 			int raw2dos[16] = { 0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15 };
 			sector = raw2dos[sector];
-			output = diskImage + (track * _sectorsPerTrack + sector) * _bytesPerSector;
+			output = diskImage + (track * sectorsPerTrack + sector) * BYTES_PER_SECTOR;
 
 			// 6-and-2 uses 342 on-disk bytes
 			byte inbuffer[342];
-			_f->read(inbuffer, 342);
+			f.read(inbuffer, 342);
 
 			byte oldVal = 0;
 			for (uint n = 0; n < 342; ++n) {
@@ -188,7 +153,7 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				inbuffer[n] = oldVal;
 			}
 
-			byte checksum = _f->readByte();
+			byte checksum = f.readByte();
 			if (checksum < 0x96 || oldVal != c_6and2_lookup[checksum - 0x96])
 				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
 
@@ -208,7 +173,7 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 		} else {
 			// 5-and-3 uses 410 on-disk bytes, decoding to just over 256 bytes
 			byte inbuffer[410];
-			_f->read(inbuffer, 410);
+			f.read(inbuffer, 410);
 
 			bool truncated = false;
 			byte oldVal = 0;
@@ -218,16 +183,16 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				if (inbuffer[n] == 0xd5) {
 					// Early end of block.
 					truncated = true;
-					_f->seek(-(410 - n), SEEK_CUR);
-					warning("NIB: early end of block @ 0x%x (%x, %x)", _f->pos(), track, sector);
+					f.seek(-(410 - n), SEEK_CUR);
+					warning("NIB: early end of block @ 0x%x (%x, %x)", f.pos(), track, sector);
 					break;
 				}
 				byte val = c_5and3_lookup[inbuffer[n] - 0xaa];
 				if (val == 0x20) {
 					// Badly-encoded nibbles, stop trying to decode here.
 					truncated = true;
-					warning("NIB: bad nibble %02x @ 0x%x (%x, %x)", inbuffer[n], _f->pos(), track, sector);
-					_f->seek(-(410 - n), SEEK_CUR);
+					warning("NIB: bad nibble %02x @ 0x%x (%x, %x)", inbuffer[n], f.pos(), track, sector);
+					f.seek(-(410 - n), SEEK_CUR);
 					break;
 				}
 				// undo checksum
@@ -235,7 +200,7 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 				inbuffer[n] = oldVal;
 			}
 			if (!truncated) {
-				byte checksum = _f->readByte();
+				byte checksum = f.readByte();
 				if (checksum < 0xaa || oldVal != c_5and3_lookup[checksum - 0xaa])
 					warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
 			}
@@ -259,7 +224,52 @@ bool DiskImage_NIB::open(const Common::String &filename) {
 		}
 	}
 
-	return true;
+	return new Common::MemoryReadStream(diskImage, RAW_IMAGE_SIZE(sectorsPerTrack), DisposeAfterUse::YES);
+}
+
+bool DiskImage::open(const Common::String &filename) {
+	Common::String lcName(filename);
+	lcName.toLowercase();
+
+	if (lcName.hasSuffix(".dsk"))
+		_stream = readImage_DSK(filename);
+	else if (lcName.hasSuffix(".nib"))
+		_stream = readImage_NIB(filename);
+
+	return _stream != nullptr;
+}
+
+const DataBlockPtr DiskImage::getDataBlock(uint track, uint sector, uint offset, uint size) const {
+	return DataBlockPtr(new DiskImage::DataBlock(this, track, sector, offset, size, _mode13));
+}
+
+Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector, uint offset, uint size, uint sectorsPerTrackToRead) const {
+	const uint bytesToRead = size * BYTES_PER_SECTOR + BYTES_PER_SECTOR - offset;
+	byte *const data = (byte *)malloc(bytesToRead);
+	uint dataOffset = 0;
+
+	if (sector > sectorsPerTrackToRead - 1)
+		error("Sector %i is out of bounds for %i-sector reading", sector, sectorsPerTrackToRead);
+
+	while (dataOffset < bytesToRead) {
+		uint bytesRemInTrack = (sectorsPerTrackToRead - 1 - sector) * BYTES_PER_SECTOR + BYTES_PER_SECTOR - offset;
+		_stream->seek((track * SECTORS_PER_TRACK + sector) * BYTES_PER_SECTOR + offset);
+
+		if (bytesToRead - dataOffset < bytesRemInTrack)
+			bytesRemInTrack = bytesToRead - dataOffset;
+
+		if (_stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack)
+			error("Error reading disk image");
+
+		++track;
+
+		sector = 0;
+		offset = 0;
+
+		dataOffset += bytesRemInTrack;
+	}
+
+	return new Common::MemoryReadStream(data, bytesToRead, DisposeAfterUse::YES);
 }
 
 const DataBlockPtr Files_Plain::getDataBlock(const Common::String &filename, uint offset) const {
@@ -449,7 +459,7 @@ Common::SeekableReadStream *Files_DOS33::createReadStream(const Common::String &
 }
 
 bool Files_DOS33::open(const Common::String &filename) {
-	_disk = new DiskImage_DSK();
+	_disk = new DiskImage();
 	if (!_disk->open(filename))
 		return false;
 

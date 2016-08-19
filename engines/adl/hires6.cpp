@@ -69,7 +69,7 @@ static Common::MemoryReadStream *loadSectors(DiskImage *disk, byte track, byte s
 }
 
 void HiRes6Engine::runIntro() const {
-	DiskImage_DSK *boot(new DiskImage_DSK());
+	DiskImage *boot(new DiskImage());
 
 	if (!boot->open(disks[0]))
 		error("Failed to open disk image '%s'", disks[0]);
@@ -109,7 +109,7 @@ void HiRes6Engine::runIntro() const {
 }
 
 void HiRes6Engine::init() {
-	_boot = new DiskImage_DSK();
+	_boot = new DiskImage();
 	_graphics = new Graphics_v2(*_display);
 
 	if (!_boot->open(disks[0]))
@@ -177,7 +177,7 @@ void HiRes6Engine::init() {
 
 void HiRes6Engine::loadDisk(byte disk) {
 	delete _disk;
-	_disk = new DiskImage_NIB();
+	_disk = new DiskImage();
 
 	if (!_disk->open(disks[disk]))
 		error("Failed to open disk image '%s'", disks[disk]);

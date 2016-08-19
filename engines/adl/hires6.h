@@ -82,7 +82,7 @@ private:
 
 	void loadDisk(byte disk);
 
-	DiskImage_DSK *_boot;
+	DiskImage *_boot;
 	byte _currVerb, _currNoun;
 	Common::Array<DiskDataDesc> _diskDataDesc;
 };
