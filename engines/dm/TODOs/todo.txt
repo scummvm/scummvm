@@ -19,3 +19,5 @@ Code stuff todo:
 	
 	Add loading from dungeon
 	Fix incorrect thumbnail	
+	Add translations to f433_processCommand140_saveGame 'LOAD'
+	

@@ -219,6 +219,10 @@ public:
 	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~DMEngine();
 	virtual bool hasFeature(EngineFeature f) const;
+
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+
 	GUI::Debugger *getDebugger() { return _console; }
 
 	void f22_delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
@@ -250,6 +254,7 @@ private:
 	
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 	const ADGameDescription *_gameVersion;
+	bool _canLoadFromGMM;
 public:
 	Console *_console;
 	DisplayMan *_displayMan;
@@ -270,6 +275,7 @@ public:
 	Common::MemoryWriteStreamDynamic *_saveThumbnail;
 
 	bool _engineShouldQuit;
+	int _loadSaveSlotAtRuntime;
 
 	int16 _g298_newGame; // @ G0298_B_NewGame
 	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested

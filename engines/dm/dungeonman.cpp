@@ -740,8 +740,6 @@ void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
 		DoorInfo(5, 255)    /* Door type 3 Ra door */
 	};
 
-	if (_g272_currMapIndex == mapIndex)
-		return;
 
 	_g272_currMapIndex = mapIndex;
 	_g271_currMapData = _g279_dungeonMapData[mapIndex];

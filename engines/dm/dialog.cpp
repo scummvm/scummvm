@@ -223,7 +223,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1303_s_BoxB = L1304_s_BoxA;
 	L1303_s_BoxB._x1 = L1303_s_BoxB._x2;
 	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
-	_vm->f22_delay(5);
+	_vm->f22_delay(2);
 	L1303_s_BoxB = L1304_s_BoxA;
 	L1303_s_BoxB._y1++;
 	L1303_s_BoxB._y2 = L1303_s_BoxB._y1;
@@ -251,7 +251,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1303_s_BoxB._x1 = L1303_s_BoxB._x2 = L1303_s_BoxB._x2 + 3;
 	L1303_s_BoxB._y2 += 2;
 	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k13_ColorLightestGray);
-	_vm->f22_delay(5);
+	_vm->f22_delay(2);
 	L1304_s_BoxA._x2 += 3;
 	L1304_s_BoxA._y2 += 3;
 	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g348_bitmapScreen,

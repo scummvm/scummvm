@@ -207,6 +207,8 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 	debug("DMEngine::DMEngine");
 
 	_saveThumbnail = nullptr;
+	_canLoadFromGMM = false;
+	_loadSaveSlotAtRuntime = -1;
 }
 
 DMEngine::~DMEngine() {
@@ -241,6 +243,26 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsSavingDuringRuntime) ||
 		(f == kSupportsLoadingDuringRuntime);
+}
+
+Common::Error DMEngine::loadGameState(int slot) {
+	if (f435_loadgame(slot) != kM1_LoadgameFailure) {
+		_displayMan->fillScreen(k0_ColorBlack);
+		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palDungeonView[0]);
+		_g298_newGame = k0_modeLoadSavedGame;
+
+		f462_startGame();
+		_g523_restartGameRequest = false;
+		_eventMan->f77_hideMouse();
+		_eventMan->f357_discardAllInput();
+		return Common::kNoError;
+	}
+
+	return Common::kNoGameDataFoundError;
+}
+
+bool DMEngine::canLoadGameStateCurrently() {
+	return _canLoadFromGMM;
 }
 
 void DMEngine::f22_delay(uint16 verticalBlank) {
@@ -386,9 +408,18 @@ Common::Error DMEngine::run() {
 	f463_initializeGame();
 	while (true) {
 		f2_gameloop();
+
 		if (_engineShouldQuit)
 			return Common::kNoError;
-		f444_endGame(_championMan->_g303_partyDead);
+
+		if (_loadSaveSlotAtRuntime == -1)
+			f444_endGame(_championMan->_g303_partyDead);
+		else {
+			loadGameState(_loadSaveSlotAtRuntime);
+			_menuMan->f457_drawEnabledMenus();
+			_displayMan->updateScreen();
+			_loadSaveSlotAtRuntime = -1;
+		}
 	}
 
 	return Common::kNoError;
@@ -403,10 +434,13 @@ void DMEngine::f2_gameloop() {
 		_dungeonMan->_g308_partyDir = kDirWest;
 	}
 
+	_canLoadFromGMM = true;
 	_g318_waitForInputMaxVerticalBlankCount = 10;
 	while (true) {
-		if (_engineShouldQuit)
+		if (_engineShouldQuit) {
+			_canLoadFromGMM = false;
 			return;
+		}
 
 		// DEBUG CODE
 		for (int16 i = 0; i < _championMan->_g305_partyChampionCount; ++i) {
@@ -495,8 +529,10 @@ void DMEngine::f2_gameloop() {
 			}
 
 			_eventMan->f380_processCommandQueue();
-			if (_engineShouldQuit)
+			if (_engineShouldQuit || _loadSaveSlotAtRuntime != -1) {
+				_canLoadFromGMM = false;
 				return;
+			}
 			_displayMan->updateScreen();
 			if (!_g321_stopWaitingForPlayerInput) {
 				_eventMan->f363_highlightBoxDisable();
@@ -508,6 +544,7 @@ void DMEngine::f2_gameloop() {
 
 		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 	}
+	_canLoadFromGMM = false;
 }
 
 int16 DMEngine::M1_ordinalToIndex(int16 val) {

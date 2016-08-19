@@ -56,18 +56,12 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::InSaveFile *file = nullptr;
 
 	struct {
-		int16 _saveFormat;
-		int16 _saveAndPlayChoice;
-		int32 _gameId;
-		int16 _platform;
-		uint16 _dungeonId;
+		int16 _saveFormat = 0;
+		int16 _saveAndPlayChoice = 0;
+		int32 _gameId = 0;
+		int16 _platform = 0;
+		uint16 _dungeonId = 0;
 	} dmSaveHeader;
-
-	dmSaveHeader._saveFormat = 0;
-	dmSaveHeader._saveAndPlayChoice = 0;
-	dmSaveHeader._gameId = 0;
-	dmSaveHeader._platform = 0;
-	dmSaveHeader._dungeonId = 0;
 
 	if (!_g298_newGame) {
 		fileName = getSavefileName(slot);
@@ -188,23 +182,35 @@ void DMEngine::f433_processCommand140_saveGame() {
 	switch (getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", "LOAD", false, false, false);
 		break;
 	case Common::DE_DEU:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", "LOAD", false, false, false);
 		break;
 	case Common::FR_FRA:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", nullptr, false, false, false);
+		_dialog->f427_dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", "LOAD", false, false, false);
 		break;
 	}
 
 	enum SaveAndPlayChoice {
 		kSaveAndPlay = 1,
 		kSaveAndQuit = 2,
-		kCancel = 3
+		kCancel = 3,
+		kLoad = 4
 	};
 
-	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->f424_dialogGetChoice(3, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->f424_dialogGetChoice(4, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+
+	if (saveAndPlayChoice == kLoad) {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		int loadSlot = dialog->runModalWithCurrentTarget();
+		if (loadSlot >= 0) {
+			_loadSaveSlotAtRuntime = loadSlot;
+			return;
+		}
+
+		saveAndPlayChoice = kCancel;
+	}
 
 	if (saveAndPlayChoice == kSaveAndQuit || saveAndPlayChoice == kSaveAndPlay) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
