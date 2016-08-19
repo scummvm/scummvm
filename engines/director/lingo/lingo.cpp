@@ -198,8 +198,10 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	_inFactory = false;
 
-	if (_currentScript->size() && !_hadError)
-		Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
+	if (debugChannelSet(3, kDebugLingoCompile)) {
+		if (_currentScript->size() && !_hadError)
+			Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
+	}
 }
 
 void Lingo::executeScript(ScriptType type, uint16 id) {
