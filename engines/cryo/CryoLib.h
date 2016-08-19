@@ -34,15 +34,15 @@ extern short __debug, __libError, __osError;
 #define CLNoError       __libError = 0;
 
 #define CLCheckError() if(__debug && __libError){   \
-		char buffer[260];           \
-		sprintf(buffer, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
-		DebugStr(c2pstr(buffer));   \
+		char buffer_[260];           \
+		sprintf(buffer_, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
+		DebugStr(c2pstr(buffer_));   \
 	};
 
 #define CLAssert(x) if(!(x)) {  \
-		char buffer[260];           \
-		sprintf(buffer, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
-		DebugStr(c2pstr(buffer));   \
+		char buffer_[260];           \
+		sprintf(buffer_, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
+		DebugStr(c2pstr(buffer_));   \
 	};
 
 struct rect_t {

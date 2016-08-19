@@ -101,7 +101,7 @@ enum OBJECT {
 	OBJ_PLAQUE, // 38
 	OBJ_39,
 	OBJ_40,
-	OBJ_41,
+	OBJ_41
 };
 
 namespace Objects {
