@@ -28,6 +28,14 @@
 namespace Titanic {
 
 class CChickenDispensor : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool TurnOff(CTurnOff *msg);
 public:
 	int _fieldE0;
 	int _fieldE4;

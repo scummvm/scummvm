@@ -76,5 +76,4 @@ bool CCrushedTV::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	return CCarry::MouseDragStartMsg(msg);
 }
 
-
 } // End of namespace Titanic

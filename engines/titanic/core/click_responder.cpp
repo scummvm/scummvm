@@ -24,20 +24,33 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CClickResponder, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CClickResponder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_message, indent);
+	file->writeQuotedLine(_soundName, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CClickResponder::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
+	_message = file->readString();
+	_soundName = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CClickResponder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_soundName.empty())
+		playSound(_soundName);
+	if (!_message.empty())
+		petDisplayMessage(_message);
+
+	return true;
 }
 
 } // End of namespace Titanic

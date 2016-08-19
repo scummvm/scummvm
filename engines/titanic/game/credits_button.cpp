@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCreditsButton, CBackground)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CCreditsButton::CCreditsButton() : CBackground(), _fieldE0(1) {
 }
 
@@ -37,6 +42,21 @@ void CCreditsButton::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CCreditsButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return true;
+}
+
+bool CCreditsButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_fieldE0) {
+		playSound("a#20.wav");
+		CSignalObject signalMsg;
+		signalMsg._numValue = 1;
+		signalMsg.execute("CreditsPlayer");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

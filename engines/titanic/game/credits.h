@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CCredits : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool SignalObject(CSignalObject *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
 	int _fieldBC, _fieldC0;
 public:

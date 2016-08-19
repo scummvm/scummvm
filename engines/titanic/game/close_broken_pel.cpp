@@ -24,16 +24,26 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCloseBrokenPel, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CCloseBrokenPel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_target, indent);
 	CBackground::save(file, indent);
 }
 
 void CCloseBrokenPel::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
+	_target = file->readString();
 	CBackground::load(file);
+}
+
+bool CCloseBrokenPel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CActMsg actMsg("Close");
+	actMsg.execute(_target);
+	return true;
 }
 
 } // End of namespace Titanic

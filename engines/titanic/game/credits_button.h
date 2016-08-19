@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CCreditsButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	int _fieldE0;
 public:

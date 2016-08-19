@@ -28,6 +28,12 @@
 namespace Titanic {
 
 class CChevSwitch : public CToggleSwitch {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool SetChevButtonImageMsg(CSetChevButtonImageMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+public:
+	int _value;
 public:
 	CLASSDEF;
 	CChevSwitch();

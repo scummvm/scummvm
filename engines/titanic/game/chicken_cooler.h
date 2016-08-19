@@ -29,7 +29,9 @@
 namespace Titanic {
 
 class CChickenCooler : public CGameObject {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;

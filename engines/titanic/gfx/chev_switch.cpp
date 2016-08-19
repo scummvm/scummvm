@@ -24,7 +24,13 @@
 
 namespace Titanic {
 
-CChevSwitch::CChevSwitch() : CToggleSwitch() {
+BEGIN_MESSAGE_MAP(CChevSwitch, CToggleSwitch)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(SetChevButtonImageMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CChevSwitch::CChevSwitch() : CToggleSwitch(), _value(0) {
 }
 
 void CChevSwitch::save(SimpleFile *file, int indent) {
@@ -35,6 +41,38 @@ void CChevSwitch::save(SimpleFile *file, int indent) {
 void CChevSwitch::load(SimpleFile *file) {
 	file->readNumber();
 	CToggleSwitch::load(file);
+}
+
+bool CChevSwitch::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return true;
+}
+
+bool CChevSwitch::SetChevButtonImageMsg(CSetChevButtonImageMsg *msg) {
+	if (msg->_value2 && getParent()) {
+		error("TODO: Don't know parent type");
+	}
+
+	_fieldBC = msg->_value1;
+	if (_fieldBC) {
+		loadImage((_value & 1) ? "on_odd.tga" : "on_even.tga");
+	} else {
+		loadImage((_value & 1) ? "off_odd.tga" : "off_even.tga");
+	}
+
+	return true;
+}
+
+bool CChevSwitch::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	_fieldBC ^= 1;
+	if (getParent()) {
+		CSetChevPanelBitMsg bitMsg(_value, _fieldBC);
+		bitMsg.execute(getParent());
+	}
+
+	CSetChevButtonImageMsg chevMsg(_fieldBC, 0);
+	chevMsg.execute(this);
+
+	return true;
 }
 
 } // End of namespace Titanic

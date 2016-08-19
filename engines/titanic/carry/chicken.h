@@ -41,7 +41,7 @@ class CChicken : public CCarry {
 	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
 	bool PETObjectStateMsg(CPETObjectStateMsg *msg);
 	bool PETLostObjectMsg(CPETLostObjectMsg *msg);
-private:
+public:
 	static int _v1;
 public:
 	int _field12C;

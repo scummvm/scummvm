@@ -21,8 +21,14 @@
  */
 
 #include "titanic/game/chicken_cooler.h"
+#include "titanic/carry/chicken.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CChickenCooler, CGameObject)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
 
 void CChickenCooler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -41,7 +47,32 @@ void CChickenCooler::load(SimpleFile *file) {
 }
 
 bool CChickenCooler::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CChickenCoolor::handlEvent");
+	if (_fieldC0) {
+		CGameObject *obj = getMailManFirstObject();
+		if (obj) {
+			// WORKAROUND: Redundant loop for chicken in originalhere
+		} else {
+			getNextMail(nullptr);
+			if (CChicken::_v1 > _fieldBC)
+				CChicken::_v1 = _fieldBC;
+		}
+	}
+
+	return true;
+}
+
+bool CChickenCooler::EnterViewMsg(CEnterViewMsg *msg) {
+	if (!_fieldC0) {
+		for (CGameObject *obj = getMailManFirstObject(); obj;
+				obj = getNextMail(obj)) {
+			if (obj->isEquals("Chicken"))
+				return true;
+		}
+
+		if (CChicken::_v1 > _fieldBC)
+			CChicken::_v1 = _fieldBC;
+	}
+
 	return true;
 }
 

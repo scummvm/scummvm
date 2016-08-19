@@ -25,19 +25,19 @@
 namespace Titanic {
 
 CSGTUpperDoorsSound::CSGTUpperDoorsSound() {
-	_string2 = "b#53.wav";
+	_soundName = "b#53.wav";
 }
 
 void CSGTUpperDoorsSound::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_soundName, indent);
 
 	CClickResponder::save(file, indent);
 }
 
 void CSGTUpperDoorsSound::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
+	_soundName = file->readString();
 
 	CClickResponder::load(file);
 }

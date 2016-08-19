@@ -28,7 +28,7 @@
 namespace Titanic {
 
 class CToggleSwitch : public CGameObject {
-private:
+protected:
 	int _fieldBC;
 	Point _pos1;
 public:

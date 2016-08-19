@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCookie, CGameObject)
+	ON_MESSAGE(LeaveNodeMsg)
+	ON_MESSAGE(FreshenCookieMsg)
+END_MESSAGE_MAP()
+
 void CCookie::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
@@ -38,6 +43,18 @@ void CCookie::load(SimpleFile *file) {
 	_value2 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CCookie::LeaveNodeMsg(CLeaveNodeMsg *msg) {
+	if (_value2)
+		_value1 = 1;
+	return true;
+}
+
+bool CCookie::FreshenCookieMsg(CFreshenCookieMsg *msg) {
+	_value1 = msg->_value2;
+	_value2 = msg->_value1;
+	return true;
 }
 
 } // End of namespace Titanic

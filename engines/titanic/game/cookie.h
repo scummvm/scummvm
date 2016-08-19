@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CCookie : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool LeaveNodeMsg(CLeaveNodeMsg *msg);
+	bool FreshenCookieMsg(CFreshenCookieMsg *msg);
 public:
 	int _value1;
 	int _value2;

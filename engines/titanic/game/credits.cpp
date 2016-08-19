@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CCredits, CGameObject)
+	ON_MESSAGE(SignalObject)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 CCredits::CCredits() : CGameObject(), _fieldBC(-1), _fieldC0(1) {
 }
 
@@ -41,6 +46,36 @@ void CCredits::load(SimpleFile *file) {
 	_fieldC0 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CCredits::SignalObject(CSignalObject *msg) {
+	petHide();
+	disableMouse();
+	addTimer(50);
+	return true;
+}
+
+bool CCredits::TimerMsg(CTimerMsg *msg) {
+	stopGlobalSound(true, -1);
+	setVisible(true);
+	loadSound("a#16.wav");
+	loadSound("a#24.wav");
+	
+	playCutscene(0, 18);
+	playGlobalSound("a#16.wav", -1, false, false, 0);
+	playCutscene(19, 642);
+	playSound("a#24.wav");
+	playCutscene(643, 750);
+
+	COpeningCreditsMsg creditsMsg;
+	creditsMsg.execute("Service Elevator Entity");
+	changeView("EmbLobby.Node 6.S");
+
+	setVisible(false);
+	petShow();
+	enableMouse();
+	stopGlobalSound(true, -1);
+	return true;
 }
 
 } // End of namespace Titanic

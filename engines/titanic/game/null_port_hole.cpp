@@ -27,22 +27,22 @@ namespace Titanic {
 EMPTY_MESSAGE_MAP(CNullPortHole, CClickResponder);
 
 CNullPortHole::CNullPortHole() : CClickResponder() {
-	_string1 = "For a better view, why not visit the Promenade Deck?";
-	_string2 = "b#48.wav";
+	_message = "For a better view, why not visit the Promenade Deck?";
+	_soundName = "b#48.wav";
 }
 
 void CNullPortHole::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_soundName, indent);
+	file->writeQuotedLine(_message, indent);
 
 	CClickResponder::save(file, indent);
 }
 
 void CNullPortHole::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
-	_string1 = file->readString();
+	_soundName = file->readString();
+	_message = file->readString();
 
 	CClickResponder::load(file);
 }
