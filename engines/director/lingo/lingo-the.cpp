@@ -170,9 +170,11 @@ TheEntityField fields[] = {
 	{ kTheCast,		"picture",		kThePicture },
 
 	// TextCast fields
-	{ kTheCast,		"hilite",		kTheHilite },
+	{ kTheCast,		"hilite",		kTheHilite },		// D2 p
+	{ kTheCast,		"selEnd",		kTheSelEnd },		// D2 p
+	{ kTheCast,		"selStart",		kTheSelStart },		// D2 p
 	{ kTheCast,		"size",			kTheSize },
-	{ kTheCast,		"text",			kTheText },
+	{ kTheCast,		"text",			kTheText },			// D2 p
 
 	{ kTheWindow,	"drawRect",		kTheDrawRect },
 	{ kTheWindow,	"filename",		kTheFilename },

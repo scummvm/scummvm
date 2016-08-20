@@ -157,6 +157,8 @@ enum TheFieldType {
 	kTheScript,
 	kTheScriptNum,
 	kTheScriptText,
+	kTheSelEnd,
+	kTheSelStart,
 	kTheSize,
 	kTheStrech,
 	kTheSound,
