@@ -180,11 +180,6 @@ public:
 		: _commandTypeToIssue(k0_CommandNone), _hitbox(0, 1, 0, 1), _button(k0_NoneMouseButton) {}
 }; // @ MOUSE_INPUT
 
-extern MouseInput g453_MouseInput_ActionAreaIcons[5]; // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
-extern MouseInput g454_MouseInput_SpellArea[9]; // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
-extern MouseInput g455_MouseInput_ChampionNamesHands[13]; // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
-extern MouseInput g456_MouseInput_PanelChest[9]; // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
-extern MouseInput g457_MouseInput_PanelResurrectReincarnateCancel[4]; // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
 extern MouseInput g471_PrimaryMouseInput_ViewportDialog1Choice[2]; // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
 extern MouseInput g472_PrimaryMouseInput_ViewportDialog2Choices[3]; // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
 extern MouseInput g473_PrimaryMouseInput_ViewportDialog3Choices[4]; // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
@@ -323,6 +318,11 @@ public:
 	MouseInput _primaryMouseInputPartySleeping[3]; // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
 	MouseInput _primaryMouseInputFrozenGame[3]; // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
 	MouseInput _mouseInputActionAreaNames[5]; // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
+	MouseInput _mouseInputActionAreaIcons[5]; // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
+	MouseInput _mouseInputSpellArea[9]; // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
+	MouseInput _mouseInputChampionNamesHands[13]; // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
+	MouseInput _mouseInputPanelChest[9]; // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
+	MouseInput _mouseInputPanelResurrectReincarnateCancel[4]; // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
 
 	MouseInput *_primaryMouseInputDialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
 

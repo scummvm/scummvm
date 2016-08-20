@@ -44,58 +44,6 @@
 
 namespace DM {
 
-MouseInput g453_MouseInput_ActionAreaIcons[5] = { // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
-												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k116_CommandClickInActionAreaChampion_0_Action, 233, 252, 86, 120, k1_LeftMouseButton),
-	MouseInput(k117_CommandClickInActionAreaChampion_1_Action, 255, 274, 86, 120, k1_LeftMouseButton),
-	MouseInput(k118_CommandClickInActionAreaChampion_2_Action, 277, 296, 86, 120, k1_LeftMouseButton),
-	MouseInput(k119_CommandClickInActionAreaChampion_3_Action, 299, 318, 86, 120, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g454_MouseInput_SpellArea[9] = { // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
-											/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k101_CommandClickInSpellAreaSymbol_1,      235, 247, 51, 61, k1_LeftMouseButton),
-	MouseInput(k102_CommandClickInSpellAreaSymbol_2,      249, 261, 51, 61, k1_LeftMouseButton),
-	MouseInput(k103_CommandClickInSpellAreaSymbol_3,      263, 275, 51, 61, k1_LeftMouseButton),
-	MouseInput(k104_CommandClickInSpellAreaSymbol_4,      277, 289, 51, 61, k1_LeftMouseButton),
-	MouseInput(k105_CommandClickInSpellAreaSymbol_5,      291, 303, 51, 61, k1_LeftMouseButton),
-	MouseInput(k106_CommandClickInSpellAreaSymbol_6,      305, 317, 51, 61, k1_LeftMouseButton),
-	MouseInput(k108_CommandClickInSpeallAreaCastSpell,    234, 303, 63, 73, k1_LeftMouseButton),
-	MouseInput(k107_CommandClickInSpellAreaRecantSymbol, 305, 318, 63, 73, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g455_MouseInput_ChampionNamesHands[13] = { // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
-													  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k16_CommandSetLeaderChampion_0,                                    0,  42,  0,  6, k1_LeftMouseButton),
-	MouseInput(k17_CommandSetLeaderChampion_1,                                   69, 111,  0,  6, k1_LeftMouseButton),
-	MouseInput(k18_CommandSetLeaderChampion_2,                                  138, 180,  0,  6, k1_LeftMouseButton),
-	MouseInput(k19_CommandSetLeaderChampion_3,                                  207, 249,  0,  6, k1_LeftMouseButton),
-	MouseInput(k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand,    4,  19, 10, 25, k1_LeftMouseButton),
-	MouseInput(k21_CommandClickOnSlotBoxChampion_0_StatusBoxActionHand,  24,  39, 10, 25, k1_LeftMouseButton),
-	MouseInput(k22_CommandClickOnSlotBoxChampion_1_StatusBoxReadyHand,   73,  88, 10, 25, k1_LeftMouseButton),
-	MouseInput(k23_CommandClickOnSlotBoxChampion_1_StatusBoxActionHand,  93, 108, 10, 25, k1_LeftMouseButton),
-	MouseInput(k24_CommandClickOnSlotBoxChampion_2_StatusBoxReadyHand,  142, 157, 10, 25, k1_LeftMouseButton),
-	MouseInput(k25_CommandClickOnSlotBoxChampion_2_StatusBoxActionHand, 162, 177, 10, 25, k1_LeftMouseButton),
-	MouseInput(k26_CommandClickOnSlotBoxChampion_3_StatusBoxReadyHand,  211, 226, 10, 25, k1_LeftMouseButton),
-	MouseInput(k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand, 231, 246, 10, 25, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g456_MouseInput_PanelChest[9] = { // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
-											 /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k58_CommandClickOnSlotBoxChest_1, 117, 132,  92, 107, k1_LeftMouseButton),
-	MouseInput(k59_CommandClickOnSlotBoxChest_2, 106, 121, 109, 124, k1_LeftMouseButton),
-	MouseInput(k60_CommandClickOnSlotBoxChest_3, 111, 126, 126, 141, k1_LeftMouseButton),
-	MouseInput(k61_CommandClickOnSlotBoxChest_4, 128, 143, 131, 146, k1_LeftMouseButton),
-	MouseInput(k62_CommandClickOnSlotBoxChest_5, 145, 160, 134, 149, k1_LeftMouseButton),
-	MouseInput(k63_CommandClickOnSlotBoxChest_6, 162, 177, 136, 151, k1_LeftMouseButton),
-	MouseInput(k64_CommandClickOnSlotBoxChest_7, 179, 194, 137, 152, k1_LeftMouseButton),
-	MouseInput(k65_CommandClickOnSlotBoxChest_8, 196, 211, 138, 153, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g457_MouseInput_PanelResurrectReincarnateCancel[4] = { // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
-																  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k160_CommandClickInPanelResurrect,   108, 158,  90, 138, k1_LeftMouseButton), /* Atari ST: Box = 104, 158,  86, 142 */
-	MouseInput(k161_CommandClickInPanelReincarnate, 161, 211,  90, 138, k1_LeftMouseButton), /* Atari ST: Box = 163, 217,  86, 142 */
-	MouseInput(k162_CommandClickInPanelCancel,      108, 211, 141, 153, k1_LeftMouseButton), /* Atari ST: Box = 104, 217, 146, 156 */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-
-
 MouseInput g471_PrimaryMouseInput_ViewportDialog1Choice[2] = { // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
 	MouseInput(k210_CommandClickOnDialogChoice_1, 16, 207, 138, 152, k1_LeftMouseButton), /* Bottom button */
 	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
@@ -287,6 +235,62 @@ void EventManager::initArrays() {
 		MouseInput(k115_CommandClickInActionAreaAction_2, 234, 318, 110, 120, k1_LeftMouseButton),
 		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
 	};
+	MouseInput mouseInputActionAreaIcons[5] = { // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k116_CommandClickInActionAreaChampion_0_Action, 233, 252, 86, 120, k1_LeftMouseButton),
+		MouseInput(k117_CommandClickInActionAreaChampion_1_Action, 255, 274, 86, 120, k1_LeftMouseButton),
+		MouseInput(k118_CommandClickInActionAreaChampion_2_Action, 277, 296, 86, 120, k1_LeftMouseButton),
+		MouseInput(k119_CommandClickInActionAreaChampion_3_Action, 299, 318, 86, 120, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput mouseInputSpellArea[9] = { // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k101_CommandClickInSpellAreaSymbol_1,      235, 247, 51, 61, k1_LeftMouseButton),
+		MouseInput(k102_CommandClickInSpellAreaSymbol_2,      249, 261, 51, 61, k1_LeftMouseButton),
+		MouseInput(k103_CommandClickInSpellAreaSymbol_3,      263, 275, 51, 61, k1_LeftMouseButton),
+		MouseInput(k104_CommandClickInSpellAreaSymbol_4,      277, 289, 51, 61, k1_LeftMouseButton),
+		MouseInput(k105_CommandClickInSpellAreaSymbol_5,      291, 303, 51, 61, k1_LeftMouseButton),
+		MouseInput(k106_CommandClickInSpellAreaSymbol_6,      305, 317, 51, 61, k1_LeftMouseButton),
+		MouseInput(k108_CommandClickInSpeallAreaCastSpell,    234, 303, 63, 73, k1_LeftMouseButton),
+		MouseInput(k107_CommandClickInSpellAreaRecantSymbol, 305, 318, 63, 73, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput mouseInputChampionNamesHands[13] = { // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k16_CommandSetLeaderChampion_0,                                    0,  42,  0,  6, k1_LeftMouseButton),
+		MouseInput(k17_CommandSetLeaderChampion_1,                                   69, 111,  0,  6, k1_LeftMouseButton),
+		MouseInput(k18_CommandSetLeaderChampion_2,                                  138, 180,  0,  6, k1_LeftMouseButton),
+		MouseInput(k19_CommandSetLeaderChampion_3,                                  207, 249,  0,  6, k1_LeftMouseButton),
+		MouseInput(k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand,    4,  19, 10, 25, k1_LeftMouseButton),
+		MouseInput(k21_CommandClickOnSlotBoxChampion_0_StatusBoxActionHand,  24,  39, 10, 25, k1_LeftMouseButton),
+		MouseInput(k22_CommandClickOnSlotBoxChampion_1_StatusBoxReadyHand,   73,  88, 10, 25, k1_LeftMouseButton),
+		MouseInput(k23_CommandClickOnSlotBoxChampion_1_StatusBoxActionHand,  93, 108, 10, 25, k1_LeftMouseButton),
+		MouseInput(k24_CommandClickOnSlotBoxChampion_2_StatusBoxReadyHand,  142, 157, 10, 25, k1_LeftMouseButton),
+		MouseInput(k25_CommandClickOnSlotBoxChampion_2_StatusBoxActionHand, 162, 177, 10, 25, k1_LeftMouseButton),
+		MouseInput(k26_CommandClickOnSlotBoxChampion_3_StatusBoxReadyHand,  211, 226, 10, 25, k1_LeftMouseButton),
+		MouseInput(k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand, 231, 246, 10, 25, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput mouseInputPanelChest[9] = { // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k58_CommandClickOnSlotBoxChest_1, 117, 132,  92, 107, k1_LeftMouseButton),
+		MouseInput(k59_CommandClickOnSlotBoxChest_2, 106, 121, 109, 124, k1_LeftMouseButton),
+		MouseInput(k60_CommandClickOnSlotBoxChest_3, 111, 126, 126, 141, k1_LeftMouseButton),
+		MouseInput(k61_CommandClickOnSlotBoxChest_4, 128, 143, 131, 146, k1_LeftMouseButton),
+		MouseInput(k62_CommandClickOnSlotBoxChest_5, 145, 160, 134, 149, k1_LeftMouseButton),
+		MouseInput(k63_CommandClickOnSlotBoxChest_6, 162, 177, 136, 151, k1_LeftMouseButton),
+		MouseInput(k64_CommandClickOnSlotBoxChest_7, 179, 194, 137, 152, k1_LeftMouseButton),
+		MouseInput(k65_CommandClickOnSlotBoxChest_8, 196, 211, 138, 153, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput mouseInputPanelResurrectReincarnateCancel[4] = { // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k160_CommandClickInPanelResurrect,   108, 158,  90, 138, k1_LeftMouseButton), /* Atari ST: Box = 104, 158,  86, 142 */
+		MouseInput(k161_CommandClickInPanelReincarnate, 161, 211,  90, 138, k1_LeftMouseButton), /* Atari ST: Box = 163, 217,  86, 142 */
+		MouseInput(k162_CommandClickInPanelCancel,      108, 211, 141, 153, k1_LeftMouseButton), /* Atari ST: Box = 104, 217, 146, 156 */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+
 	MouseInput *primaryMouseInputDialogSets[2][4] = { // @ G0480_aaps_PrimaryMouseInput_DialogSets
 		{
 			g471_PrimaryMouseInput_ViewportDialog1Choice,
@@ -315,17 +319,27 @@ void EventManager::initArrays() {
 		_primaryMouseInputFrozenGame[i] = primaryMouseInputFrozenGame[i];
 	}
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++) {
 		_primaryMouseInputEntrance[i] = primaryMouseInputEntrance[i];
+		_mouseInputPanelResurrectReincarnateCancel[i] = mouseInputPanelResurrectReincarnateCancel[i];
+	}
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++) {
 		_mouseInputActionAreaNames[i] = mouseInputActionAreaNames[i];
+		_mouseInputActionAreaIcons[i] = mouseInputActionAreaIcons[i];
+	}
 
 	for (int i = 0; i < 7; i++)
 		_primaryKeyboardInputInterface[i] = primaryKeyboardInputInterface[i];
 
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 9; i++) {
 		_secondaryMouseInputMovement[i] = secondaryMouseInputMovement[i];
+		_mouseInputSpellArea[i] = mouseInputSpellArea[i];
+		_mouseInputPanelChest[i] = mouseInputPanelChest[i];
+	}
+
+	for (int i = 0; i < 13; i++)
+		_mouseInputChampionNamesHands[13] = mouseInputChampionNamesHands[i];
 
 	for (int i = 0; i < 19; i++)
 		_secondaryKeyboardInputMovement[i] = secondaryKeyboardInputMovement[i];
@@ -1283,14 +1297,14 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 	case k4_PanelContentChest:
 		if (champMan._g411_leaderIndex == kM1_ChampionNone) // if no leader
 			return;
-		commandType = f358_getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = f358_getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
 			_vm->_championMan->f302_processCommands28to65_clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)
 			break;
-		commandType = f358_getCommandTypeFromMouseInput(g457_MouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = f358_getCommandTypeFromMouseInput(_mouseInputPanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
 			f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
 		break;
@@ -1399,7 +1413,7 @@ void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint1
 	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		f368_commandSetLeader((ChampionIndex)champIndex);
 	} else {
-		uint16 commandType = f358_getCommandTypeFromMouseInput(g455_MouseInput_ChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 commandType = f358_getCommandTypeFromMouseInput(_mouseInputChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
 		if ((commandType >= k16_CommandSetLeaderChampion_0) && (commandType <= k19_CommandSetLeaderChampion_3))
 			f368_commandSetLeader((ChampionIndex)(commandType - k16_CommandSetLeaderChampion_0));
 		else if ((commandType >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (commandType <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand))
@@ -1504,7 +1518,7 @@ void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint
 		return;
 	}
 
-	CommandType newCommand = f358_getCommandTypeFromMouseInput(g454_MouseInput_SpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
+	CommandType newCommand = f358_getCommandTypeFromMouseInput(_mouseInputSpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
 	if (newCommand != k0_CommandNone)
 		f369_commandProcessTypes101To108_clickInSpellSymbolsArea(newCommand);
 }
@@ -1560,7 +1574,7 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 			}
 		}
 	} else if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
-		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(g453_MouseInput_ActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(_mouseInputActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (mouseCommand != k0_CommandNone) {
 			mouseCommand -= k116_CommandClickInActionAreaChampion_0_Action;
 			if (mouseCommand < _vm->_championMan->_g305_partyChampionCount)
