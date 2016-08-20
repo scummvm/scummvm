@@ -38,120 +38,10 @@
 
 namespace DM {
 
-ArmourInfo g239_ArmourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
-/* { Weight, Defense, Attributes, Unreferenced } */
-	ArmourInfo(3,   5, 0x01),   /* CAPE */
-	ArmourInfo(4,  10, 0x01),   /* CLOAK OF NIGHT */
-	ArmourInfo(3,   4, 0x01),   /* BARBARIAN HIDE */
-	ArmourInfo(6,   5, 0x02),   /* SANDALS */
-	ArmourInfo(16,  25, 0x04),   /* LEATHER BOOTS */
-	ArmourInfo(4,   5, 0x00),   /* ROBE */
-	ArmourInfo(4,   5, 0x00),   /* ROBE */
-	ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
-	ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
-	ArmourInfo(4,   6, 0x01),   /* KIRTLE */
-	ArmourInfo(2,   4, 0x00),   /* SILK SHIRT */
-	ArmourInfo(4,   5, 0x01),   /* TABARD */
-	ArmourInfo(5,   7, 0x01),   /* GUNNA */
-	ArmourInfo(3,  11, 0x02),   /* ELVEN DOUBLET */
-	ArmourInfo(3,  13, 0x02),   /* ELVEN HUKE */
-	ArmourInfo(4,  13, 0x02),   /* ELVEN BOOTS */
-	ArmourInfo(6,  17, 0x03),   /* LEATHER JERKIN */
-	ArmourInfo(8,  20, 0x03),   /* LEATHER PANTS */
-	ArmourInfo(14,  20, 0x03),   /* SUEDE BOOTS */
-	ArmourInfo(6,  12, 0x02),   /* BLUE PANTS */
-	ArmourInfo(5,   9, 0x01),   /* TUNIC */
-	ArmourInfo(5,   8, 0x01),   /* GHI */
-	ArmourInfo(5,   9, 0x01),   /* GHI TROUSERS */
-	ArmourInfo(4,   1, 0x04),   /* CALISTA */
-	ArmourInfo(6,   5, 0x04),   /* CROWN OF NERRA */
-	ArmourInfo(11,  12, 0x05),   /* BEZERKER HELM */
-	ArmourInfo(14,  17, 0x05),   /* HELMET */
-	ArmourInfo(15,  20, 0x05),   /* BASINET */
-	ArmourInfo(11,  22, 0x85),   /* BUCKLER */
-	ArmourInfo(10,  16, 0x82),   /* HIDE SHIELD */
-	ArmourInfo(14,  20, 0x83),   /* WOODEN SHIELD */
-	ArmourInfo(21,  35, 0x84),   /* SMALL SHIELD */
-	ArmourInfo(65,  35, 0x05),   /* MAIL AKETON */
-	ArmourInfo(53,  35, 0x05),   /* LEG MAIL */
-	ArmourInfo(52,  70, 0x07),   /* MITHRAL AKETON */
-	ArmourInfo(41,  55, 0x07),   /* MITHRAL MAIL */
-	ArmourInfo(16,  25, 0x06),   /* CASQUE 'N COIF */
-	ArmourInfo(16,  30, 0x06),   /* HOSEN */
-	ArmourInfo(19,  40, 0x07),   /* ARMET */
-	ArmourInfo(120,  65, 0x04),   /* TORSO PLATE */
-	ArmourInfo(80,  56, 0x04),   /* LEG PLATE */
-	ArmourInfo(28,  37, 0x05),   /* FOOT PLATE */
-	ArmourInfo(34,  56, 0x84),   /* LARGE SHIELD */
-	ArmourInfo(17,  62, 0x05),   /* HELM OF LYTE */
-	ArmourInfo(108, 125, 0x04),   /* PLATE OF LYTE */
-	ArmourInfo(72,  90, 0x04),   /* POLEYN OF LYTE */
-	ArmourInfo(24,  50, 0x05),   /* GREAVE OF LYTE */
-	ArmourInfo(30,  85, 0x84),   /* SHIELD OF LYTE */
-	ArmourInfo(35,  76, 0x04),   /* HELM OF DARC */
-	ArmourInfo(141, 160, 0x04),   /* PLATE OF DARC */
-	ArmourInfo(90, 101, 0x04),   /* POLEYN OF DARC */
-	ArmourInfo(31,  60, 0x05),   /* GREAVE OF DARC */
-	ArmourInfo(40, 100, 0x84),   /* SHIELD OF DARC */
-	ArmourInfo(14,  54, 0x06),   /* DEXHELM */
-	ArmourInfo(57,  60, 0x07),   /* FLAMEBAIN */
-	ArmourInfo(81,  88, 0x04),   /* POWERTOWERS */
-	ArmourInfo(3,  16, 0x02),   /* BOOTS OF SPEED */
-	ArmourInfo(2,   3, 0x03)}; /* HALTER */
-
-WeaponInfo g238_WeaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
-							   /* { Weight, Class, Strength, KineticEnergy, Attributes } */
-	WeaponInfo(1, 130,   2,   0, 0x2000),   /* EYE OF TIME */
-	WeaponInfo(1, 131,   2,   0, 0x2000),   /* STORMRING */
-	WeaponInfo(11, 0,   8,   2, 0x2000),   /* TORCH */
-	WeaponInfo(12, 112,  10,  80, 0x2028),   /* FLAMITT */
-	WeaponInfo(9, 129,  16,   7, 0x2000),   /* STAFF OF CLAWS */
-	WeaponInfo(30, 113,  49, 110, 0x0942),   /* BOLT BLADE */
-	WeaponInfo(47, 0,  55,  20, 0x0900),   /* FURY */
-	WeaponInfo(24, 255,  25,  10, 0x20FF),   /* THE FIRESTAFF */
-	WeaponInfo(5, 2,  10,  19, 0x0200),   /* DAGGER */
-	WeaponInfo(33, 0,  30,   8, 0x0900),   /* FALCHION */
-	WeaponInfo(32, 0,  34,  10, 0x0900),   /* SWORD */
-	WeaponInfo(26, 0,  38,  10, 0x0900),   /* RAPIER */
-	WeaponInfo(35, 0,  42,  11, 0x0900),   /* SABRE */
-	WeaponInfo(36, 0,  46,  12, 0x0900),   /* SAMURAI SWORD */
-	WeaponInfo(33, 0,  50,  14, 0x0900),   /* DELTA */
-	WeaponInfo(37, 0,  62,  14, 0x0900),   /* DIAMOND EDGE */
-	WeaponInfo(30, 0,  48,  13, 0x0000),   /* VORPAL BLADE */
-	WeaponInfo(39, 0,  58,  15, 0x0900),   /* THE INQUISITOR */
-	WeaponInfo(43, 2,  49,  33, 0x0300),   /* AXE */
-	WeaponInfo(65, 2,  70,  44, 0x0300),   /* HARDCLEAVE */
-	WeaponInfo(31, 0,  32,  10, 0x2000),   /* MACE */
-	WeaponInfo(41, 0,  42,  13, 0x2000),   /* MACE OF ORDER */
-	WeaponInfo(50, 0,  60,  15, 0x2000),   /* MORNINGSTAR */
-	WeaponInfo(36, 0,  19,  10, 0x2700),   /* CLUB */
-	WeaponInfo(110, 0,  44,  22, 0x2600),   /* STONE CLUB */
-	WeaponInfo(10, 20,   1,  50, 0x2032),   /* BOW */
-	WeaponInfo(28, 30,   1, 180, 0x2078),   /* CROSSBOW */
-	WeaponInfo(2, 10,   2,  10, 0x0100),   /* ARROW */
-	WeaponInfo(2, 10,   2,  28, 0x0500),   /* SLAYER */
-	WeaponInfo(19, 39,   5,  20, 0x2032),   /* SLING */
-	WeaponInfo(10, 11,   6,  18, 0x2000),   /* ROCK */
-	WeaponInfo(3, 12,   7,  23, 0x0800),   /* POISON DART */
-	WeaponInfo(1, 1,   3,  19, 0x0A00),   /* THROWING STAR */
-	WeaponInfo(8, 0,   4,   4, 0x2000),   /* STICK */
-	WeaponInfo(26, 129,  12,   4, 0x2000),   /* STAFF */
-	WeaponInfo(1, 130,   0,   0, 0x2000),   /* WAND */
-	WeaponInfo(2, 140,   1,  20, 0x2000),   /* TEOWAND */
-	WeaponInfo(35, 128,  18,   6, 0x2000),   /* YEW STAFF */
-	WeaponInfo(29, 159,   0,   4, 0x2000),   /* STAFF OF MANAR */
-	WeaponInfo(21, 131,   0,   3, 0x2000),   /* SNAKE STAFF */
-	WeaponInfo(33, 136,   0,   7, 0x2000),   /* THE CONDUIT */
-	WeaponInfo(8, 132,   3,   1, 0x2000),   /* DRAGON SPIT */
-	WeaponInfo(18, 131,   9,   4, 0x2000),   /* SCEPTRE OF LYF */
-	WeaponInfo(8, 192,   1,   1, 0x2000),   /* HORN OF FEAR */
-	WeaponInfo(30, 26,   1, 220, 0x207D),   /* SPEEDBOW */
-	WeaponInfo(36, 255, 100,  50, 0x20FF)}; /* THE FIRESTAFF */
-
 CreatureInfo g243_CreatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
-												   /* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
-												   MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
-												   Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
+	/* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
+		MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
+		Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
 	{0,  4, 0x0482, 0x623D,   8, 20,  55, 150, 150, 240,  55, 0x1153, 0x299B, 0x0876, 0x0254, 0xFD40, 4},
 	{1,  0, 0x0480, 0xA625,  15, 32,  20, 110,  80,  15,  20, 0x3132, 0x33A9, 0x0E42, 0x0384, 0xFC41, 3},
 	{2,  6, 0x0510, 0x6198,   3,  5,  50,  10,  10,   0, 110, 0x1376, 0x710A, 0x0235, 0x0222, 0xFD20, 0},
@@ -370,10 +260,129 @@ void DungeonMan::setupArrays() {
 		ObjectInfo(192, 77,  0, 0x0500),   /* IRON KEY       Pouch/Chest */
 		ObjectInfo(193, 78,  0, 0x0500),   /* KEY OF B       Pouch/Chest */
 		ObjectInfo(197, 74,  0, 0x0000),   /* SOLID KEY */
-		ObjectInfo(198, 41,  0, 0x0400)}; /* SQUARE KEY     Chest */
+		ObjectInfo(198, 41,  0, 0x0400)    /* SQUARE KEY     Chest */
+	};
+	ArmourInfo armourInfo[58] = { // G0239_as_Graphic559_ArmourInfo
+		/* { Weight, Defense, Attributes, Unreferenced } */
+		ArmourInfo(3,   5, 0x01),   /* CAPE */
+		ArmourInfo(4,  10, 0x01),   /* CLOAK OF NIGHT */
+		ArmourInfo(3,   4, 0x01),   /* BARBARIAN HIDE */
+		ArmourInfo(6,   5, 0x02),   /* SANDALS */
+		ArmourInfo(16,  25, 0x04),   /* LEATHER BOOTS */
+		ArmourInfo(4,   5, 0x00),   /* ROBE */
+		ArmourInfo(4,   5, 0x00),   /* ROBE */
+		ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
+		ArmourInfo(3,   7, 0x01),   /* FINE ROBE */
+		ArmourInfo(4,   6, 0x01),   /* KIRTLE */
+		ArmourInfo(2,   4, 0x00),   /* SILK SHIRT */
+		ArmourInfo(4,   5, 0x01),   /* TABARD */
+		ArmourInfo(5,   7, 0x01),   /* GUNNA */
+		ArmourInfo(3,  11, 0x02),   /* ELVEN DOUBLET */
+		ArmourInfo(3,  13, 0x02),   /* ELVEN HUKE */
+		ArmourInfo(4,  13, 0x02),   /* ELVEN BOOTS */
+		ArmourInfo(6,  17, 0x03),   /* LEATHER JERKIN */
+		ArmourInfo(8,  20, 0x03),   /* LEATHER PANTS */
+		ArmourInfo(14,  20, 0x03),   /* SUEDE BOOTS */
+		ArmourInfo(6,  12, 0x02),   /* BLUE PANTS */
+		ArmourInfo(5,   9, 0x01),   /* TUNIC */
+		ArmourInfo(5,   8, 0x01),   /* GHI */
+		ArmourInfo(5,   9, 0x01),   /* GHI TROUSERS */
+		ArmourInfo(4,   1, 0x04),   /* CALISTA */
+		ArmourInfo(6,   5, 0x04),   /* CROWN OF NERRA */
+		ArmourInfo(11,  12, 0x05),   /* BEZERKER HELM */
+		ArmourInfo(14,  17, 0x05),   /* HELMET */
+		ArmourInfo(15,  20, 0x05),   /* BASINET */
+		ArmourInfo(11,  22, 0x85),   /* BUCKLER */
+		ArmourInfo(10,  16, 0x82),   /* HIDE SHIELD */
+		ArmourInfo(14,  20, 0x83),   /* WOODEN SHIELD */
+		ArmourInfo(21,  35, 0x84),   /* SMALL SHIELD */
+		ArmourInfo(65,  35, 0x05),   /* MAIL AKETON */
+		ArmourInfo(53,  35, 0x05),   /* LEG MAIL */
+		ArmourInfo(52,  70, 0x07),   /* MITHRAL AKETON */
+		ArmourInfo(41,  55, 0x07),   /* MITHRAL MAIL */
+		ArmourInfo(16,  25, 0x06),   /* CASQUE 'N COIF */
+		ArmourInfo(16,  30, 0x06),   /* HOSEN */
+		ArmourInfo(19,  40, 0x07),   /* ARMET */
+		ArmourInfo(120,  65, 0x04),   /* TORSO PLATE */
+		ArmourInfo(80,  56, 0x04),   /* LEG PLATE */
+		ArmourInfo(28,  37, 0x05),   /* FOOT PLATE */
+		ArmourInfo(34,  56, 0x84),   /* LARGE SHIELD */
+		ArmourInfo(17,  62, 0x05),   /* HELM OF LYTE */
+		ArmourInfo(108, 125, 0x04),   /* PLATE OF LYTE */
+		ArmourInfo(72,  90, 0x04),   /* POLEYN OF LYTE */
+		ArmourInfo(24,  50, 0x05),   /* GREAVE OF LYTE */
+		ArmourInfo(30,  85, 0x84),   /* SHIELD OF LYTE */
+		ArmourInfo(35,  76, 0x04),   /* HELM OF DARC */
+		ArmourInfo(141, 160, 0x04),   /* PLATE OF DARC */
+		ArmourInfo(90, 101, 0x04),   /* POLEYN OF DARC */
+		ArmourInfo(31,  60, 0x05),   /* GREAVE OF DARC */
+		ArmourInfo(40, 100, 0x84),   /* SHIELD OF DARC */
+		ArmourInfo(14,  54, 0x06),   /* DEXHELM */
+		ArmourInfo(57,  60, 0x07),   /* FLAMEBAIN */
+		ArmourInfo(81,  88, 0x04),   /* POWERTOWERS */
+		ArmourInfo(3,  16, 0x02),   /* BOOTS OF SPEED */
+		ArmourInfo(2,   3, 0x03)    /* HALTER */
+	};
 
-		for (int i = 0; i < 180; i++)
-			g237_ObjectInfo[i] = objectInfo[i];
+	WeaponInfo weaponInfo[46] = { // @ G0238_as_Graphic559_WeaponInfo
+		/* { Weight, Class, Strength, KineticEnergy, Attributes } */
+		WeaponInfo(1, 130,   2,   0, 0x2000),   /* EYE OF TIME */
+		WeaponInfo(1, 131,   2,   0, 0x2000),   /* STORMRING */
+		WeaponInfo(11, 0,   8,   2, 0x2000),   /* TORCH */
+		WeaponInfo(12, 112,  10,  80, 0x2028),   /* FLAMITT */
+		WeaponInfo(9, 129,  16,   7, 0x2000),   /* STAFF OF CLAWS */
+		WeaponInfo(30, 113,  49, 110, 0x0942),   /* BOLT BLADE */
+		WeaponInfo(47, 0,  55,  20, 0x0900),   /* FURY */
+		WeaponInfo(24, 255,  25,  10, 0x20FF),   /* THE FIRESTAFF */
+		WeaponInfo(5, 2,  10,  19, 0x0200),   /* DAGGER */
+		WeaponInfo(33, 0,  30,   8, 0x0900),   /* FALCHION */
+		WeaponInfo(32, 0,  34,  10, 0x0900),   /* SWORD */
+		WeaponInfo(26, 0,  38,  10, 0x0900),   /* RAPIER */
+		WeaponInfo(35, 0,  42,  11, 0x0900),   /* SABRE */
+		WeaponInfo(36, 0,  46,  12, 0x0900),   /* SAMURAI SWORD */
+		WeaponInfo(33, 0,  50,  14, 0x0900),   /* DELTA */
+		WeaponInfo(37, 0,  62,  14, 0x0900),   /* DIAMOND EDGE */
+		WeaponInfo(30, 0,  48,  13, 0x0000),   /* VORPAL BLADE */
+		WeaponInfo(39, 0,  58,  15, 0x0900),   /* THE INQUISITOR */
+		WeaponInfo(43, 2,  49,  33, 0x0300),   /* AXE */
+		WeaponInfo(65, 2,  70,  44, 0x0300),   /* HARDCLEAVE */
+		WeaponInfo(31, 0,  32,  10, 0x2000),   /* MACE */
+		WeaponInfo(41, 0,  42,  13, 0x2000),   /* MACE OF ORDER */
+		WeaponInfo(50, 0,  60,  15, 0x2000),   /* MORNINGSTAR */
+		WeaponInfo(36, 0,  19,  10, 0x2700),   /* CLUB */
+		WeaponInfo(110, 0,  44,  22, 0x2600),   /* STONE CLUB */
+		WeaponInfo(10, 20,   1,  50, 0x2032),   /* BOW */
+		WeaponInfo(28, 30,   1, 180, 0x2078),   /* CROSSBOW */
+		WeaponInfo(2, 10,   2,  10, 0x0100),   /* ARROW */
+		WeaponInfo(2, 10,   2,  28, 0x0500),   /* SLAYER */
+		WeaponInfo(19, 39,   5,  20, 0x2032),   /* SLING */
+		WeaponInfo(10, 11,   6,  18, 0x2000),   /* ROCK */
+		WeaponInfo(3, 12,   7,  23, 0x0800),   /* POISON DART */
+		WeaponInfo(1, 1,   3,  19, 0x0A00),   /* THROWING STAR */
+		WeaponInfo(8, 0,   4,   4, 0x2000),   /* STICK */
+		WeaponInfo(26, 129,  12,   4, 0x2000),   /* STAFF */
+		WeaponInfo(1, 130,   0,   0, 0x2000),   /* WAND */
+		WeaponInfo(2, 140,   1,  20, 0x2000),   /* TEOWAND */
+		WeaponInfo(35, 128,  18,   6, 0x2000),   /* YEW STAFF */
+		WeaponInfo(29, 159,   0,   4, 0x2000),   /* STAFF OF MANAR */
+		WeaponInfo(21, 131,   0,   3, 0x2000),   /* SNAKE STAFF */
+		WeaponInfo(33, 136,   0,   7, 0x2000),   /* THE CONDUIT */
+		WeaponInfo(8, 132,   3,   1, 0x2000),   /* DRAGON SPIT */
+		WeaponInfo(18, 131,   9,   4, 0x2000),   /* SCEPTRE OF LYF */
+		WeaponInfo(8, 192,   1,   1, 0x2000),   /* HORN OF FEAR */
+		WeaponInfo(30, 26,   1, 220, 0x207D),   /* SPEEDBOW */
+		WeaponInfo(36, 255, 100,  50, 0x20FF)   /* THE FIRESTAFF */
+	};
+
+	for (int i = 0; i < 180; i++)
+		_objectInfo[i] = objectInfo[i];
+
+	for (int i = 0; i < 58; i++)
+		_armourInfo[i] = armourInfo[i];
+
+	for (int i = 0; i < 46; i++)
+		_weaponInfo[i] = weaponInfo[i];
+
 }
 
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
@@ -1234,10 +1243,10 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
-		weight = g238_WeaponInfo[((Weapon *)junk)->getType()]._weight;
+		weight = _weaponInfo[((Weapon *)junk)->getType()]._weight;
 		break;
 	case k6_ArmourThingType:
-		weight = g239_ArmourInfo[((Armour *)junk)->getType()]._weight;
+		weight = _armourInfo[((Armour *)junk)->getType()]._weight;
 		break;
 	case k10_JunkThingType:
 		weight = junkInfo[junk->getType()];
@@ -1331,7 +1340,7 @@ void DungeonMan::f163_linkThingToList(Thing thingToLink, Thing thingInList, int1
 
 WeaponInfo* DungeonMan::f158_getWeaponInfo(Thing thing) {
 	Weapon* weapon = (Weapon*)f156_getThingData(thing);
-	return &g238_WeaponInfo[weapon->getType()];
+	return &_weaponInfo[weapon->getType()];
 }
 
 int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
@@ -1354,7 +1363,7 @@ int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
 			return -projAspOrd;
 	}
 
-	return g237_ObjectInfo[f141_getObjectInfoIndex(thing)]._objectAspectIndex;
+	return _objectInfo[f141_getObjectInfoIndex(thing)]._objectAspectIndex;
 }
 
 int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {

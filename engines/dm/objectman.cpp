@@ -130,7 +130,7 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 
 	int16 objectInfoIndex = _vm->_dungeonMan->f141_getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1) {
-		objectInfoIndex = _vm->_dungeonMan->g237_ObjectInfo[objectInfoIndex]._type;
+		objectInfoIndex = _vm->_dungeonMan->_objectInfo[objectInfoIndex]._type;
 	}
 	return (IconIndice)objectInfoIndex;
 }

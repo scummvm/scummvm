@@ -587,7 +587,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case k8_PotionThingType: {
 			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
-			actualAttribMask = _vm->_dungeonMan->g237_ObjectInfo[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			actualAttribMask = _vm->_dungeonMan->_objectInfo[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
 		case k10_JunkThingType: {
@@ -630,7 +630,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				f335_drawPanelObjectDescriptionString(str);
 			} else {
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
-				actualAttribMask = _vm->_dungeonMan->g237_ObjectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+				actualAttribMask = _vm->_dungeonMan->_objectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}
@@ -937,7 +937,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
 		return;
 	}
-	if (!getFlag(_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_g414_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
+	if (!getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_g414_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
 		return;
 	}
 	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);

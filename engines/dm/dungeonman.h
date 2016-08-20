@@ -106,14 +106,14 @@ public:
 	uint16 _weight;
 	uint16 _defense;
 	uint16 _attributes;
+
 	ArmourInfo(uint16 weight, uint16 defense, uint16 attributes)
 		:_weight(weight), _defense(defense), _attributes(attributes) {}
+	ArmourInfo() :_weight(0), _defense(0), _attributes(0) {}
 
 	uint16 getAttribute(ArmourAttribute attribute) { return _attributes & attribute; }
 	void setAttribute(ArmourAttribute attribute) { _attributes |= attribute; }
 }; // @ ARMOUR_INFO
-
-extern ArmourInfo g239_ArmourInfo[58]; // G0239_as_Graphic559_ArmourInfo
 
 #define kM1_WeaponClassNone					-1
 /* Class 0: SWING weapons */
@@ -143,12 +143,11 @@ private:
 public:
 	WeaponInfo(uint16 weight, uint16 wClass, uint16 strength, uint16 kineticEnergy, uint16 attributes)
 		: _weight(weight), _class(wClass), _strength(strength), _kineticEnergy(kineticEnergy), _attributes(attributes) {}
+	WeaponInfo() : _weight(0), _class(0), _strength(0), _kineticEnergy(0), _attributes(0) {}
 
 	uint16 getShootAttack() { return _attributes & 0xFF; } // @ M65_SHOOT_ATTACK
 	uint16 getProjectileAspectOrdinal() { return (_attributes >> 8) & 0x1F; } // @ M66_PROJECTILE_ASPECT_ORDINAL
 }; // @ WEAPON_INFO
-
-extern WeaponInfo g238_WeaponInfo[46]; // @ G0238_as_Graphic559_WeaponInfo;
 
 enum TextType {
 	/* Used for text on walls */
@@ -747,7 +746,9 @@ public:
 	Thing _g292_pileTopObject[5]; // @ G0292_aT_PileTopObject
 	DoorInfo _g275_currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
 	
-	ObjectInfo g237_ObjectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
+	ObjectInfo _objectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
+	ArmourInfo _armourInfo[58]; // @ G0239_as_Graphic559_ArmourInfo
+	WeaponInfo _weaponInfo[46]; // @ G0238_as_Graphic559_WeaponInfo
 
 	void setupArrays();
 };

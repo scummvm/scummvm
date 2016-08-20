@@ -159,7 +159,7 @@ T0217004:
 			((L0510_i_ProjectileAssociatedThingType == k15_ExplosionThingType) ?
 			 (L0486_T_ProjectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) :
 			 ((L0490_ps_Projectile->_attack > _vm->getRandomNumber(128)) &&
-			  getFlag(_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0486_T_ProjectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
+			  getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0486_T_ProjectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
 			  && ((L0510_i_ProjectileAssociatedThingType != k10_JunkThingType) ||
 			  ((AL0487_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0486_T_ProjectileAssociatedThing)) < 0) ||
 				  (!((AL0487_i_IconIndex >= k176_IconIndiceJunkIronKey) && (AL0487_i_IconIndex <= k191_IconIndiceJunkMasterKey))))

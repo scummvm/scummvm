@@ -153,7 +153,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = k201_IconIndiceActionEmptyHand;
-	} else if (_vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thing)]._actionSetIndex) {
+	} else if (_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
 	} else {
 		dm.f134_fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
@@ -1038,7 +1038,7 @@ bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	int16 L1245_i_Multiple;
 #define AL1245_T_ExplosionThing  L1245_i_Multiple
 #define AL1245_B_ActionPerformed L1245_i_Multiple
-	int16 L1246_i_Multiple;
+	int16 L1246_i_Multiple = 0;
 #define AL1246_i_RequiredManaAmount    L1246_i_Multiple
 #define AL1246_i_ActionHandWeaponClass L1246_i_Multiple
 #define AL1246_i_StepEnergy            L1246_i_Multiple
@@ -1156,7 +1156,7 @@ T0407014:
 	case k32_ChampionActionShoot:
 		if (Thing(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType)
 			goto T0407032;
-		L1256_ps_WeaponInfoActionHand = &g238_WeaponInfo[L1248_ps_Weapon->getType()];
+		L1256_ps_WeaponInfoActionHand = &_vm->_dungeonMan->_weaponInfo[L1248_ps_Weapon->getType()];
 		L1257_ps_WeaponInfoReadyHand = _vm->_dungeonMan->f158_getWeaponInfo(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]);
 		AL1246_i_ActionHandWeaponClass = L1256_ps_WeaponInfoActionHand->_class;
 		AL1250_i_ReadyHandWeaponClass = L1257_ps_WeaponInfoReadyHand->_class;
@@ -1627,7 +1627,7 @@ void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) 
 	}
 	if ((L1189_T_Thing = L1190_ps_Champion->_slots[k1_ChampionSlotActionHand]) == Thing::_none) {
 		L1188_ui_ActionSetIndex = 2; /* Actions Punch, Kick and War Cry */
-	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
+	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
 		return;
 	}
 	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
