@@ -339,10 +339,10 @@ void DMEngine::f462_startGame() {
 	_menuMan->_g509_actionAreaContainsIcons = true;
 	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = M0_indexToOrdinal(kM1_ChampionNone);
 
-	_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
+	_eventMan->_g441_primaryMouseInput = _eventMan->_primaryMouseInputInterface;
 	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
-	_eventMan->_g443_primaryKeyboardInput = _eventMan->g458_primaryKeyboardInput_interface;
-	_eventMan->_g444_secondaryKeyboardInput = _eventMan->g459_secondaryKeyboardInput_movement;
+	_eventMan->_g443_primaryKeyboardInput = _eventMan->_primaryKeyboardInputInterface;
+	_eventMan->_g444_secondaryKeyboardInput = _eventMan->_secondaryKeyboardInputMovement;
 
 	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
@@ -538,7 +538,7 @@ int16 DMEngine::M0_indexToOrdinal(int16 val) {
 }
 
 void DMEngine::f441_processEntrance() {
-	_eventMan->_g441_primaryMouseInput = g445_PrimaryMouseInput_Entrance;
+	_eventMan->_g441_primaryMouseInput = _eventMan->_primaryMouseInputEntrance;
 	_eventMan->_g442_secondaryMouseInput = nullptr;
 	_eventMan->_g443_primaryKeyboardInput = nullptr;
 	_eventMan->_g444_secondaryKeyboardInput = nullptr;
@@ -723,7 +723,7 @@ T0444017:
 
 			curPalette[1] = D03_RGB_PINK;
 			curPalette[4] = D09_RGB_WHITE;
-			_eventMan->_g441_primaryMouseInput = g446_PrimaryMouseInput_RestartGame;
+			_eventMan->_g441_primaryMouseInput = _eventMan->_primaryMouseInputRestartGame;
 			_eventMan->f357_discardAllInput();
 			_eventMan->f77_hideMouse();
 			_displayMan->f436_STARTEND_FadeToPalette(curPalette);

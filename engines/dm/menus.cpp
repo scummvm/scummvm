@@ -550,12 +550,12 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
 			AL1267_ui_LightPower++;
 T0412019:
-			_vm->_championMan->_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[AL1267_ui_LightPower];
+			_vm->_championMan->_g407_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
 			f404_createEvent70_light(-AL1267_ui_LightPower, AL1269_ui_Ticks);
 			break;
 		case k1_spellType_otherDarkness:
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
-			_vm->_championMan->_g407_party._magicalLightAmount -= g39_LightPowerToLightAmount[AL1267_ui_LightPower];
+			_vm->_championMan->_g407_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
 			f404_createEvent70_light(AL1267_ui_LightPower, 98);
 			break;
 		case k2_spellType_otherThievesEye:
@@ -1295,7 +1295,7 @@ T0407071:
 		_vm->_championMan->_g407_party._freezeLifeTicks = MIN(200, _vm->_championMan->_g407_party._freezeLifeTicks + AL1246_i_Ticks);
 		break;
 	case k38_ChampionActionLight:
-		_vm->_championMan->_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[2];
+		_vm->_championMan->_g407_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
 		f404_createEvent70_light(-2, 2500);
 T0407076:
 		f405_decrementCharges(L1247_ps_Champion);

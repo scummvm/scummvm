@@ -44,39 +44,6 @@
 
 namespace DM {
 
-MouseInput g445_PrimaryMouseInput_Entrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
-												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k200_CommandEntranceEnterDungeon, 244, 298,  45,  58, k1_LeftMouseButton),
-	// Strangerke - C201_COMMAND_ENTRANCE_RESUME isn't present in the demo
-	MouseInput(k201_CommandEntranceResume,        244, 298,  76,  93, k1_LeftMouseButton),
-	MouseInput(k202_CommandEntranceDrawCredits,  248, 293, 187, 199, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g446_PrimaryMouseInput_RestartGame[2] = { // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
-													 /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k215_CommandRestartGame, 103, 217, 145, 159, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g447_PrimaryMouseInput_Interface[20] = { // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
-													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k12_CommandClickInChampion_0_StatusBox,       0,  42,   0,  28, k1_LeftMouseButton),
-	MouseInput(k13_CommandClickInChampion_1_StatusBox,      69, 111,   0,  28, k1_LeftMouseButton),
-	MouseInput(k14_CommandClickInChampion_2_StatusBox,     138, 180,   0,  28, k1_LeftMouseButton),
-	MouseInput(k15_CommandClickInChampion_3_StatusBox,     207, 249,   0,  28, k1_LeftMouseButton),
-	MouseInput(k125_CommandClickOnChamptionIcon_Top_Left,    274, 299,   0,  13, k1_LeftMouseButton),
-	MouseInput(k126_CommandClickOnChamptionIcon_Top_Right,   301, 319,   0,  13, k1_LeftMouseButton),
-	MouseInput(k127_CommandClickOnChamptionIcon_Lower_Right, 301, 319,  15,  28, k1_LeftMouseButton),
-	MouseInput(k128_CommandClickOnChamptionIcon_Lower_Left,  274, 299,  15,  28, k1_LeftMouseButton),
-	MouseInput(k7_CommandToggleInventoryChampion_0,         43,  66,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 =  44. swapped with 4 next entries */
-	MouseInput(k8_CommandToggleInventoryChampion_1,        112, 135,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 113. swapped with 4 next entries */
-	MouseInput(k9_CommandToggleInventoryChampion_2,        181, 204,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 182. swapped with 4 next entries */
-	MouseInput(k10_CommandToggleInventoryChampion_3,        250, 273,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 251. swapped with 4 next entries */
-	MouseInput(k7_CommandToggleInventoryChampion_0,          0,  66,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
-	MouseInput(k8_CommandToggleInventoryChampion_1,         69, 135,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
-	MouseInput(k9_CommandToggleInventoryChampion_2,        138, 204,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
-	MouseInput(k10_CommandToggleInventoryChampion_3,        207, 273,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
-	MouseInput(k100_CommandClickInSpellArea,                233, 319,  42,  73, k1_LeftMouseButton),
-	MouseInput(k111_CommandClickInActionArea,               233, 319,  77, 121, k1_LeftMouseButton),
-	MouseInput(k147_CommandFreezeGame,                          0,   1, 198, 199, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
 MouseInput g448_SecondaryMouseInput_Movement[9] = { // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
 													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 	MouseInput(k1_CommandTurnLeft,             234, 261, 125, 145, k1_LeftMouseButton),
@@ -289,19 +256,61 @@ void EventManager::initArrays() {
 		KeyboardInput(k148_CommandUnfreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
 		KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)
 	};
+	MouseInput _primaryMouseInputEntrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k200_CommandEntranceEnterDungeon, 244, 298,  45,  58, k1_LeftMouseButton),
+		// Strangerke - C201_COMMAND_ENTRANCE_RESUME isn't present in the demo
+		MouseInput(k201_CommandEntranceResume,        244, 298,  76,  93, k1_LeftMouseButton),
+		MouseInput(k202_CommandEntranceDrawCredits,  248, 293, 187, 199, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput _primaryMouseInputRestartGame[2] = { // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k215_CommandRestartGame, 103, 217, 145, 159, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput _primaryMouseInputInterface[20] = { // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k12_CommandClickInChampion_0_StatusBox,       0,  42,   0,  28, k1_LeftMouseButton),
+		MouseInput(k13_CommandClickInChampion_1_StatusBox,      69, 111,   0,  28, k1_LeftMouseButton),
+		MouseInput(k14_CommandClickInChampion_2_StatusBox,     138, 180,   0,  28, k1_LeftMouseButton),
+		MouseInput(k15_CommandClickInChampion_3_StatusBox,     207, 249,   0,  28, k1_LeftMouseButton),
+		MouseInput(k125_CommandClickOnChamptionIcon_Top_Left,    274, 299,   0,  13, k1_LeftMouseButton),
+		MouseInput(k126_CommandClickOnChamptionIcon_Top_Right,   301, 319,   0,  13, k1_LeftMouseButton),
+		MouseInput(k127_CommandClickOnChamptionIcon_Lower_Right, 301, 319,  15,  28, k1_LeftMouseButton),
+		MouseInput(k128_CommandClickOnChamptionIcon_Lower_Left,  274, 299,  15,  28, k1_LeftMouseButton),
+		MouseInput(k7_CommandToggleInventoryChampion_0,         43,  66,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 =  44. swapped with 4 next entries */
+		MouseInput(k8_CommandToggleInventoryChampion_1,        112, 135,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 113. swapped with 4 next entries */
+		MouseInput(k9_CommandToggleInventoryChampion_2,        181, 204,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 182. swapped with 4 next entries */
+		MouseInput(k10_CommandToggleInventoryChampion_3,        250, 273,   0,  28, k1_LeftMouseButton), /* Atari ST: Only present in CSB 2.x and with Box.X1 = 251. swapped with 4 next entries */
+		MouseInput(k7_CommandToggleInventoryChampion_0,          0,  66,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
+		MouseInput(k8_CommandToggleInventoryChampion_1,         69, 135,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
+		MouseInput(k9_CommandToggleInventoryChampion_2,        138, 204,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
+		MouseInput(k10_CommandToggleInventoryChampion_3,        207, 273,   0,  28, k2_RightMouseButton), /* Atari ST: swapped with 4 previous entries */
+		MouseInput(k100_CommandClickInSpellArea,                233, 319,  42,  73, k1_LeftMouseButton),
+		MouseInput(k111_CommandClickInActionArea,               233, 319,  77, 121, k1_LeftMouseButton),
+		MouseInput(k147_CommandFreezeGame,                          0,   1, 198, 199, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
 
 	for (int i = 0; i < 7; i++)
-		g458_primaryKeyboardInput_interface[i] = primaryKeyboardInputInterface[i];
+		_primaryKeyboardInputInterface[i] = primaryKeyboardInputInterface[i];
 
 	for (int i = 0; i < 19; i++)
-		g459_secondaryKeyboardInput_movement[i] = secondaryKeyboardInputMovement[i];
+		_secondaryKeyboardInputMovement[i] = secondaryKeyboardInputMovement[i];
 
 	for (int i = 0; i < 3 ; i++)
-		g460_primaryKeyboardInput_partySleeping[i] = primaryKeyboardInputPartySleeping[i];
+		_primaryKeyboardInputPartySleeping[i] = primaryKeyboardInputPartySleeping[i];
 
-	for (int i = 0; i < 2; i++)
-		g461_primaryKeyboardInput_frozenGame[i] = primaryKeyboardInputFrozenGame[i];
+	for (int i = 0; i < 2; i++) {
+		_primaryKeyboardInputFrozenGame[i] = primaryKeyboardInputFrozenGame[i];
+		_primaryMouseInputRestartGame[i] = _primaryMouseInputRestartGame[i];
+	}
+	for (int i = 0; i < 4; i++)
+		_primaryMouseInputEntrance[i] = _primaryMouseInputEntrance[i];
 
+	for (int i = 0; i < 20; i++)
+		_primaryMouseInputInterface[i] = _primaryMouseInputInterface[i];
 }
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_mousePos = Common::Point(0, 0);
@@ -769,7 +778,7 @@ void EventManager::f380_processCommandQueue() {
 			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
 			_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
 			_g442_secondaryMouseInput = 0;
-			_g443_primaryKeyboardInput = g460_primaryKeyboardInput_partySleeping;
+			_g443_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
 			_g444_secondaryKeyboardInput = nullptr;
 			f357_discardAllInput();
 		}
@@ -815,7 +824,7 @@ void EventManager::f380_processCommandQueue() {
 		secondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
 		_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
 		_g442_secondaryMouseInput = 0;
-		_g443_primaryKeyboardInput = g461_primaryKeyboardInput_frozenGame;
+		_g443_primaryKeyboardInput = _primaryKeyboardInputFrozenGame;
 		_g444_secondaryKeyboardInput = nullptr;
 		f357_discardAllInput();
 		return;

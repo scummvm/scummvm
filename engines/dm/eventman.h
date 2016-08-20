@@ -176,11 +176,10 @@ public:
 
 	MouseInput(CommandType type, uint16 x1, uint16 x2, uint16 y1, uint16 y2, MouseButton mouseButton)
 		: _commandTypeToIssue(type), _hitbox(x1, x2 + 1, y1, y2 + 1), _button(mouseButton) {}
+	MouseInput()
+		: _commandTypeToIssue(k0_CommandNone), _hitbox(0, 1, 0, 1), _button(k0_NoneMouseButton) {}
 }; // @ MOUSE_INPUT
 
-extern MouseInput g445_PrimaryMouseInput_Entrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
-extern MouseInput g446_PrimaryMouseInput_RestartGame[2]; // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
-extern MouseInput g447_PrimaryMouseInput_Interface[20]; // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
 extern MouseInput g448_SecondaryMouseInput_Movement[9]; // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
 extern MouseInput g449_SecondaryMouseInput_ChampionInventory[38]; // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
 extern MouseInput g450_PrimaryMouseInput_PartySleeping[3]; // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
@@ -318,10 +317,13 @@ public:
 	void f6_highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f6_highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
 
 
-	KeyboardInput g458_primaryKeyboardInput_interface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
-	KeyboardInput g459_secondaryKeyboardInput_movement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
-	KeyboardInput g460_primaryKeyboardInput_partySleeping[3]; // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
-	KeyboardInput g461_primaryKeyboardInput_frozenGame[2]; // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
+	KeyboardInput _primaryKeyboardInputInterface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
+	KeyboardInput _secondaryKeyboardInputMovement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
+	KeyboardInput _primaryKeyboardInputPartySleeping[3]; // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
+	KeyboardInput _primaryKeyboardInputFrozenGame[2]; // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
+	MouseInput _primaryMouseInputEntrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
+	MouseInput _primaryMouseInputRestartGame[2]; // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
+	MouseInput _primaryMouseInputInterface[20]; // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
 
 	void initArrays();
 };

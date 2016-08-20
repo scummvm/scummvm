@@ -38,8 +38,6 @@ namespace DM {
 #define k0x4000_IgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
 #define k0x8000_IgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
 
-extern int16 g39_LightPowerToLightAmount[16]; // @ G0039_ai_Graphic562_LightPowerToLightAmount
-
 class Scent {
 	uint16 _scent;
 public:
@@ -591,6 +589,7 @@ public:
 
 	Box _boxChampionIcons[4];
 	Color _championColor[4];
+	int16 _lightPowerToLightAmount[16]; // g039_LightPowerToLightAmount
 };
 
 }

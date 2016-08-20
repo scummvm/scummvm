@@ -41,8 +41,6 @@
 
 namespace DM {
 
-int16 g39_LightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
-
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 						   /* 30 for champion inventory, 8 for chest */
 	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
@@ -100,6 +98,7 @@ void ChampionMan::initConstants() {
 	};
 
 	static Color championColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
+	int16 lightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
 
 	const char **g417_byLanguage;
 	switch (_vm->getGameLanguage()) { // localized
@@ -121,6 +120,10 @@ void ChampionMan::initConstants() {
 		_championColor[i] = championColor[i];
 		_boxChampionIcons[i] = boxChampionIcons[i];
 	}
+
+	for (int i = 0; i < 16; i++)
+		_lightPowerToLightAmount[i] = lightPowerToLightAmount[i];
+
 }
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
@@ -530,7 +533,7 @@ void ChampionMan::f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, Ch
 	} else if (slotIndex == k10_ChampionSlotNeck) {
 		if ((iconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (iconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
-			_g407_party._magicalLightAmount += g39_LightPowerToLightAmount[2];
+			_g407_party._magicalLightAmount += _lightPowerToLightAmount[2];
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 			iconIndex = (IconIndice)(iconIndex + 1);
 		} else if ((iconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (iconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
@@ -647,7 +650,7 @@ Thing ChampionMan::f300_getObjectRemovedFromSlot(uint16 champIndex, uint16 slotI
 	if (slotIndex == k10_ChampionSlotNeck) {
 		if ((curIconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (curIconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
 			((Junk *)curWeapon)->setChargeCount(0);
-			_g407_party._magicalLightAmount -= g39_LightPowerToLightAmount[2];
+			_g407_party._magicalLightAmount -= _lightPowerToLightAmount[2];
 			_vm->_inventoryMan->f337_setDungeonViewPalette();
 		} else if ((curIconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (curIconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
 			((Junk *)curWeapon)->setChargeCount(0);
@@ -865,10 +868,10 @@ void ChampionMan::f314_wakeUp() {
 	_vm->_g318_waitForInputMaxVerticalBlankCount = 10;
 	_vm->f22_delay(10);
 	_vm->_displayMan->f98_drawFloorAndCeiling();
-	_vm->_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
+	_vm->_eventMan->_g441_primaryMouseInput = _vm->_eventMan->_primaryMouseInputInterface;
 	_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
-	_vm->_eventMan->_g443_primaryKeyboardInput = _vm->_eventMan->g458_primaryKeyboardInput_interface;
-	_vm->_eventMan->_g444_secondaryKeyboardInput = _vm->_eventMan->g459_secondaryKeyboardInput_movement;
+	_vm->_eventMan->_g443_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
+	_vm->_eventMan->_g444_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
 	_vm->_eventMan->f357_discardAllInput();
 	_vm->_menuMan->f457_drawEnabledMenus();
 }
