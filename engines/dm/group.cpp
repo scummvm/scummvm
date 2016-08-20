@@ -63,6 +63,7 @@ GroupMan::GroupMan(DMEngine *vm) : _vm(vm) {
 	_g376_maxActiveGroupCount = 60;
 	_g375_activeGroups = nullptr;
 	_g377_currActiveGroupCount = 0;
+	_g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = 0;
 }
 
 GroupMan::~GroupMan() {
@@ -1342,11 +1343,9 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 
 void GroupMan::f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures) {
 	uint16 L0435_ui_GroupDirections;
-	static int32 G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime; /* These two variables are used to prevent setting direction of half square sized creatures twice at the same game time */
 	static ActiveGroup *G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup;
 
-	warning(false, "TODO: Move G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime to GroupMan so it's properly initialized");
-	if (twoHalfSquareSizedCreatures && (_vm->_g313_gameTime == G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
+	if (twoHalfSquareSizedCreatures && (_vm->_g313_gameTime == _g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
 		return;
 	}
 	if (M21_normalizeModulo4(M50_getCreatureValue(L0435_ui_GroupDirections = activeGroup->_directions, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
@@ -1356,7 +1355,7 @@ void GroupMan::f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 	}
 	if (twoHalfSquareSizedCreatures) {
 		L0435_ui_GroupDirections = f178_getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex ^ 1, dir); /* Set direction of the second half square sized creature */
-		G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_g313_gameTime;
+		_g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_g313_gameTime;
 		G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup = activeGroup;
 	}
 	activeGroup->_directions = (Direction)L0435_ui_GroupDirections;

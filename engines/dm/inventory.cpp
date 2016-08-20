@@ -303,7 +303,6 @@ void InventoryMan::f334_closeChest() {
 }
 
 void InventoryMan::f340_drawPanelScrollTextLine(int16 yPos, char* text) {
-	warning(false, "CHANGE5_03_IMPROVEMENT");
 	for (char* iter = text; *iter != '\0'; ++iter) {
 		if ((*iter >= 'A') && (*iter <= 'Z')) {
 			*iter -= 64;
@@ -330,7 +329,6 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
 	while (*charGreen) {
-		warning(false, "BUG0_47");
 		/* BUG0_47 Graphical glitch when you open a scroll. If there is a single line of text in a scroll
 		(with no carriage return) then charGreen points to undefined data. This may result in a graphical
 		glitch and also corrupt other memory. This is not an issue in the original dungeons where all
@@ -369,7 +367,6 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 	if (_g426_openChest == thingToOpen)
 		return;
 
-	warning(false, "CHANGE8_09_FIX");
 	if (_g426_openChest != Thing::_none)
 		f334_closeChest(); // CHANGE8_09_FIX
 
@@ -383,7 +380,6 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
 	while (thing != Thing::_endOfList) {
-		warning(false, "CHANGE8_08_FIX");
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 

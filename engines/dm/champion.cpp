@@ -1449,7 +1449,6 @@ void ChampionMan::f319_championKill(uint16 champIndex) {
 	if (_vm->M0_indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
 		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
 		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-		warning(false, "IGNORED CODE:G0592_B_BuildMousePointerScreenAreaRequested = true");
 	}
 
 	if (curChampion->_poisonEventCount)
@@ -2052,7 +2051,6 @@ uint16 ChampionMan::f306_getStaminaAdjustedValue(Champion *champ, int16 val) {
 	int16 currStamina = champ->_currStamina;
 	int16 halfMaxStamina = champ->_maxStamina / 2;
 	if (currStamina < halfMaxStamina) {
-		warning(false, "Possible undefined behavior in the original code");
 		val /= 2;
 		return val + ((uint32)val * (uint32)currStamina) / halfMaxStamina;
 	}

@@ -399,14 +399,6 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
 
-
-	/*
-	warning(false, "TODO - Call f129_blitToBitmapShrinkWithPalChange");
-	// dummy code
-	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
-	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
-	*/
-
 	_gK100_preventBuildPointerScreenArea = false;
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
@@ -463,9 +455,6 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 		0x7F, 0xFE, 0x00, 0x00, 0x7F, 0xFE, 0x00, 0x00, 0x3F, 0xFF, 0x00, 0x00, 0x1F, 0xFF, 0x00, 0x00,
 		0x07, 0xFF, 0x00, 0x00, 0x01, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-
-	// if (_gK100_preventBuildPointerScreenArea)
-	//	return;
 
 	_gK100_preventBuildPointerScreenArea = true;
 	if (_g599_useChampionIconOrdinalAsMousePointerBitmap) {

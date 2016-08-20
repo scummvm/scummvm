@@ -2738,13 +2738,15 @@ bool DisplayMan::f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWall
 void DisplayMan::f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 													  int16 srcPixelWidth, int16 srcHeight,
 													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
+	warning(false, "DUMMY CODE: f129_blitToBitmapShrinkWithPalChange");
+	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
+
+
 	if (destPixelWidth % 8)
 		destPixelWidth = (destPixelWidth / 8) * 8 + 8;
 
 	uint32 scaleX = (kScaleThreshold * srcPixelWidth) / destPixelWidth;
 	uint32 scaleY = (kScaleThreshold * srcHeight) / destHeight;
-
-	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
 
 	// Loop through drawing output lines
 	for (uint32 destY = 0, scaleYCtr = 0; destY < (uint32)destHeight; ++destY, scaleYCtr += scaleY) {

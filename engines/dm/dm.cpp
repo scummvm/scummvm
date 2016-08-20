@@ -147,16 +147,6 @@ int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
 }
 
 DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc) {
-// Do not load data files
-// Do not initialize graphics here
-// Do not initialize audio devices here
-// Do these from run
-
-//Specify all default directories
-//const Common::FSNode gameDataDir(ConfMan.get("example"));
-//SearchMan.addSubDirectoryMatching(gameDataDir, "example2");
-	DebugMan.addDebugChannel(kDMDebugExample, "example", "example desc");
-
 	// register random source
 	_rnd = new Common::RandomSource("dm");
 

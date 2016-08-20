@@ -166,14 +166,6 @@ enum Cell {
 #define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
 
 
-enum {
-	// engine debug channels
-	kDMDebugExample = 1 << 0,
-	kDMDebugUselessCode = 1 << 1,
-	kDMDebugOftenCalledWarning = 2 << 2
-};
-
-
 
 //TODO: Directly use CLIP
 template<typename T>

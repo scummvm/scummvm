@@ -79,18 +79,10 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_championMan->_g414_leaderHandObject = Thing::_none;
 		_g525_gameId = ((int32)getRandomNumber(65536)) * getRandomNumber(65536);
 	} else {
-		warning(false, "MISSING CODE: missing check for matching _g525_gameId in f435_loadgame");
-		/*if (_vm->_g523_restartGameRequest && (L1372_s_SaveHeader.GameID != _vm->_g525_gameId)) {
-			L1367_pc_Message = G0546_pc_THATSNOTTHESAMEGAME;
-			goto T0435004;
-		}*/
-
-
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
 
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
-
 
 		dmSaveHeader._saveFormat = file->readSint16BE();
 		dmSaveHeader._saveAndPlayChoice = file->readSint16BE();

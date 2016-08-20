@@ -880,7 +880,6 @@ bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
 
 	L1199_ps_Champion = &_vm->_championMan->_gK71_champions[L1196_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)];
 	if (actionListIndex == -1) {
-		warning(false, "possible bug in f391_didClickTriggerAction");
 		// L1198_B_ClickTriggeredAction is set to -1 since booleans are stored in int16 in the original
 		L1198_B_ClickTriggeredAction = true;
 	} else {

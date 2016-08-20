@@ -171,6 +171,7 @@ class GroupMan {
 	bool _g389_groupMovementBlockedByDoor; // @ G0389_B_GroupMovementBlockedByDoor
 	bool _g390_groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
 	bool _g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
+	int32 _g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime; // @ G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime
 public:
 	uint16 _g376_maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
 	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
