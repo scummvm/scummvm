@@ -208,15 +208,8 @@ public:
 	byte _modifiers;
 
 	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
+	KeyboardInput() : _commandToIssue(k0_CommandNone), _key(Common::KEYCODE_ESCAPE), _modifiers(0) {}
 }; // @ KEYBOARD_INPUT
-
-
-
-extern KeyboardInput g458_primaryKeyboardInput_interface[7];
-extern KeyboardInput g459_secondaryKeyboardInput_movement[19];
-extern KeyboardInput g460_primaryKeyboardInput_partySleeping[3];
-extern KeyboardInput g461_primaryKeyboardInput_frozenGame[2];
-
 
 class DMEngine;
 
@@ -323,6 +316,14 @@ public:
 	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
 	void f363_highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
 	void f6_highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f6_highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
+
+
+	KeyboardInput g458_primaryKeyboardInput_interface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
+	KeyboardInput g459_secondaryKeyboardInput_movement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
+	KeyboardInput g460_primaryKeyboardInput_partySleeping[3]; // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
+	KeyboardInput g461_primaryKeyboardInput_frozenGame[2]; // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
+
+	void initArrays();
 };
 
 }
