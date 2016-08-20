@@ -180,15 +180,6 @@ public:
 		: _commandTypeToIssue(k0_CommandNone), _hitbox(0, 1, 0, 1), _button(k0_NoneMouseButton) {}
 }; // @ MOUSE_INPUT
 
-extern MouseInput g471_PrimaryMouseInput_ViewportDialog1Choice[2]; // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
-extern MouseInput g472_PrimaryMouseInput_ViewportDialog2Choices[3]; // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
-extern MouseInput g473_PrimaryMouseInput_ViewportDialog3Choices[4]; // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
-extern MouseInput g474_PrimaryMouseInput_ViewportDialog4Choices[5]; // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
-extern MouseInput g475_PrimaryMouseInput_ScreenDialog1Choice[2]; // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
-extern MouseInput g476_PrimaryMouseInput_ScreenDialog2Choices[3]; // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
-extern MouseInput g477_PrimaryMouseInput_ScreenDialog3Choices[4]; // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
-extern MouseInput g478_PrimaryMouseInput_ScreenDialog4Choices[5]; // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
-
 class KeyboardInput {
 public:
 	CommandType _commandToIssue;
@@ -323,6 +314,14 @@ public:
 	MouseInput _mouseInputChampionNamesHands[13]; // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
 	MouseInput _mouseInputPanelChest[9]; // @ G0456_as_Graphic561_MouseInput_PanelChest[9]
 	MouseInput _mouseInputPanelResurrectReincarnateCancel[4]; // @ G0457_as_Graphic561_MouseInput_PanelResurrectReincarnateCancel[4]
+	MouseInput _primaryMouseInputViewportDialog1Choice[2]; // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
+	MouseInput _primaryMouseInputScreenDialog1Choice[2]; // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
+	MouseInput _primaryMouseInputViewportDialog2Choices[3]; // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
+	MouseInput _primaryMouseInputScreenDialog2Choices[3]; // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
+	MouseInput _primaryMouseInputViewportDialog3Choices[4]; // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
+	MouseInput _primaryMouseInputScreenDialog3Choices[4]; // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
+	MouseInput _primaryMouseInputViewportDialog4Choices[5]; // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
+	MouseInput _primaryMouseInputScreenDialog4Choices[5]; // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
 
 	MouseInput *_primaryMouseInputDialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
 

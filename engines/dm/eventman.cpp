@@ -44,43 +44,6 @@
 
 namespace DM {
 
-MouseInput g471_PrimaryMouseInput_ViewportDialog1Choice[2] = { // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
-	MouseInput(k210_CommandClickOnDialogChoice_1, 16, 207, 138, 152, k1_LeftMouseButton), /* Bottom button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g472_PrimaryMouseInput_ViewportDialog2Choices[3] = { // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
-	MouseInput(k210_CommandClickOnDialogChoice_1, 16, 207, 101, 115, k1_LeftMouseButton), /* Top button */
-	MouseInput(k211_CommandClickOnDialogChoice_2, 16, 207, 138, 152, k1_LeftMouseButton), /* Bottom button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g473_PrimaryMouseInput_ViewportDialog3Choices[4] = { // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
-	MouseInput(k210_CommandClickOnDialogChoice_1,  16, 207, 101, 115, k1_LeftMouseButton), /* Top button */
-	MouseInput(k211_CommandClickOnDialogChoice_2,  16, 101, 138, 152, k1_LeftMouseButton), /* Lower left button */
-	MouseInput(k212_CommandClickOnDialogChoice_3, 123, 207, 138, 152, k1_LeftMouseButton), /* Lower right button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g474_PrimaryMouseInput_ViewportDialog4Choices[5] = { // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
-	MouseInput(k210_CommandClickOnDialogChoice_1,  16, 101, 101, 115, k1_LeftMouseButton), /* Top left button */
-	MouseInput(k211_CommandClickOnDialogChoice_2, 123, 207, 101, 115, k1_LeftMouseButton), /* Top right button */
-	MouseInput(k212_CommandClickOnDialogChoice_3,  16, 101, 138, 152, k1_LeftMouseButton), /* Lower left button */
-	MouseInput(k213_CommandClickOnDialogChoice_4, 123, 207, 138, 152, k1_LeftMouseButton), /* Lower right button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g475_PrimaryMouseInput_ScreenDialog1Choice[2] = { // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
-	MouseInput(k210_CommandClickOnDialogChoice_1, 63, 254, 138, 152, k1_LeftMouseButton), /* Bottom button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g476_PrimaryMouseInput_ScreenDialog2Choices[3] = { // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
-	MouseInput(k210_CommandClickOnDialogChoice_1, 63, 254, 101, 115, k1_LeftMouseButton), /* Top button */
-	MouseInput(k211_CommandClickOnDialogChoice_2, 63, 254, 138, 152, k1_LeftMouseButton), /* Bottom button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g477_PrimaryMouseInput_ScreenDialog3Choices[4] = { // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
-	MouseInput(k210_CommandClickOnDialogChoice_1,  63, 254, 101, 115, k1_LeftMouseButton), /* Top button */
-	MouseInput(k211_CommandClickOnDialogChoice_2,  63, 148, 138, 152, k1_LeftMouseButton), /* Lower left button */
-	MouseInput(k212_CommandClickOnDialogChoice_3, 170, 254, 138, 152, k1_LeftMouseButton), /* Lower right button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g478_PrimaryMouseInput_ScreenDialog4Choices[5] = { // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
-	MouseInput(k210_CommandClickOnDialogChoice_1,  63, 148, 101, 115, k1_LeftMouseButton), /* Top left button */
-	MouseInput(k211_CommandClickOnDialogChoice_2, 170, 254, 101, 115, k1_LeftMouseButton), /* Top right button */
-	MouseInput(k212_CommandClickOnDialogChoice_3,  63, 148, 138, 152, k1_LeftMouseButton), /* Lower left button */
-	MouseInput(k213_CommandClickOnDialogChoice_4, 170, 254, 138, 152, k1_LeftMouseButton), /* Lower right button */
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-
 void EventManager::initArrays() {
 	KeyboardInput primaryKeyboardInputInterface[7] = { // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 		/* { Command, Code } */
@@ -290,25 +253,71 @@ void EventManager::initArrays() {
 		MouseInput(k162_CommandClickInPanelCancel,      108, 211, 141, 153, k1_LeftMouseButton), /* Atari ST: Box = 104, 217, 146, 156 */
 		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
 	};
+	MouseInput primaryMouseInputViewportDialog1Choice[2] = { // @ G0471_as_Graphic561_PrimaryMouseInput_ViewportDialog1Choice[2]
+		MouseInput(k210_CommandClickOnDialogChoice_1, 16, 207, 138, 152, k1_LeftMouseButton), /* Bottom button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputViewportDialog2Choices[3] = { // @ G0472_as_Graphic561_PrimaryMouseInput_ViewportDialog2Choices[3]
+		MouseInput(k210_CommandClickOnDialogChoice_1, 16, 207, 101, 115, k1_LeftMouseButton), /* Top button */
+		MouseInput(k211_CommandClickOnDialogChoice_2, 16, 207, 138, 152, k1_LeftMouseButton), /* Bottom button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputViewportDialog3Choices[4] = { // @ G0473_as_Graphic561_PrimaryMouseInput_ViewportDialog3Choices[4]
+		MouseInput(k210_CommandClickOnDialogChoice_1,  16, 207, 101, 115, k1_LeftMouseButton), /* Top button */
+		MouseInput(k211_CommandClickOnDialogChoice_2,  16, 101, 138, 152, k1_LeftMouseButton), /* Lower left button */
+		MouseInput(k212_CommandClickOnDialogChoice_3, 123, 207, 138, 152, k1_LeftMouseButton), /* Lower right button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputViewportDialog4Choices[5] = { // @ G0474_as_Graphic561_PrimaryMouseInput_ViewportDialog4Choices[5]
+		MouseInput(k210_CommandClickOnDialogChoice_1,  16, 101, 101, 115, k1_LeftMouseButton), /* Top left button */
+		MouseInput(k211_CommandClickOnDialogChoice_2, 123, 207, 101, 115, k1_LeftMouseButton), /* Top right button */
+		MouseInput(k212_CommandClickOnDialogChoice_3,  16, 101, 138, 152, k1_LeftMouseButton), /* Lower left button */
+		MouseInput(k213_CommandClickOnDialogChoice_4, 123, 207, 138, 152, k1_LeftMouseButton), /* Lower right button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputScreenDialog1Choice[2] = { // @ G0475_as_Graphic561_PrimaryMouseInput_ScreenDialog1Choice[2]
+		MouseInput(k210_CommandClickOnDialogChoice_1, 63, 254, 138, 152, k1_LeftMouseButton), /* Bottom button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputScreenDialog2Choices[3] = { // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
+		MouseInput(k210_CommandClickOnDialogChoice_1, 63, 254, 101, 115, k1_LeftMouseButton), /* Top button */
+		MouseInput(k211_CommandClickOnDialogChoice_2, 63, 254, 138, 152, k1_LeftMouseButton), /* Bottom button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputScreenDialog3Choices[4] = { // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
+		MouseInput(k210_CommandClickOnDialogChoice_1,  63, 254, 101, 115, k1_LeftMouseButton), /* Top button */
+		MouseInput(k211_CommandClickOnDialogChoice_2,  63, 148, 138, 152, k1_LeftMouseButton), /* Lower left button */
+		MouseInput(k212_CommandClickOnDialogChoice_3, 170, 254, 138, 152, k1_LeftMouseButton), /* Lower right button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputScreenDialog4Choices[5] = { // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
+		MouseInput(k210_CommandClickOnDialogChoice_1,  63, 148, 101, 115, k1_LeftMouseButton), /* Top left button */
+		MouseInput(k211_CommandClickOnDialogChoice_2, 170, 254, 101, 115, k1_LeftMouseButton), /* Top right button */
+		MouseInput(k212_CommandClickOnDialogChoice_3,  63, 148, 138, 152, k1_LeftMouseButton), /* Lower left button */
+		MouseInput(k213_CommandClickOnDialogChoice_4, 170, 254, 138, 152, k1_LeftMouseButton), /* Lower right button */
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
 
 	MouseInput *primaryMouseInputDialogSets[2][4] = { // @ G0480_aaps_PrimaryMouseInput_DialogSets
 		{
-			g471_PrimaryMouseInput_ViewportDialog1Choice,
-			g472_PrimaryMouseInput_ViewportDialog2Choices,
-			g473_PrimaryMouseInput_ViewportDialog3Choices,
-			g474_PrimaryMouseInput_ViewportDialog4Choices
+			_primaryMouseInputViewportDialog1Choice,
+			_primaryMouseInputViewportDialog2Choices,
+			_primaryMouseInputViewportDialog3Choices,
+			_primaryMouseInputViewportDialog4Choices
 		},
 		{
-			g475_PrimaryMouseInput_ScreenDialog1Choice,
-			g476_PrimaryMouseInput_ScreenDialog2Choices,
-			g477_PrimaryMouseInput_ScreenDialog3Choices,
-			g478_PrimaryMouseInput_ScreenDialog4Choices
+			_primaryMouseInputScreenDialog1Choice,
+			_primaryMouseInputScreenDialog2Choices,
+			_primaryMouseInputScreenDialog3Choices,
+			_primaryMouseInputScreenDialog4Choices
 		}
 	};
 
 	for (int i = 0; i < 2; i++) {
 		_primaryKeyboardInputFrozenGame[i] = primaryKeyboardInputFrozenGame[i];
 		_primaryMouseInputRestartGame[i] = primaryMouseInputRestartGame[i];
+		_primaryMouseInputViewportDialog1Choice[i] = primaryMouseInputViewportDialog1Choice[i];
+		_primaryMouseInputScreenDialog1Choice[i] = primaryMouseInputScreenDialog1Choice[i];
 		for (int j = 0; j < 4; j++)
 			_primaryMouseInputDialogSets[i][j] = primaryMouseInputDialogSets[i][j];
 	}
@@ -317,16 +326,22 @@ void EventManager::initArrays() {
 		_primaryKeyboardInputPartySleeping[i] = primaryKeyboardInputPartySleeping[i];
 		_primaryMouseInputPartySleeping[i] = primaryMouseInputPartySleeping[i];
 		_primaryMouseInputFrozenGame[i] = primaryMouseInputFrozenGame[i];
+		_primaryMouseInputViewportDialog2Choices[i] = primaryMouseInputViewportDialog2Choices[i];
+		_primaryMouseInputScreenDialog2Choices[i] = primaryMouseInputScreenDialog2Choices[i];
 	}
 
 	for (int i = 0; i < 4; i++) {
 		_primaryMouseInputEntrance[i] = primaryMouseInputEntrance[i];
 		_mouseInputPanelResurrectReincarnateCancel[i] = mouseInputPanelResurrectReincarnateCancel[i];
+		_primaryMouseInputViewportDialog3Choices[i] = primaryMouseInputViewportDialog3Choices[i];
+		_primaryMouseInputScreenDialog3Choices[i] = primaryMouseInputScreenDialog3Choices[i];
 	}
 
 	for (int i = 0; i < 5; i++) {
 		_mouseInputActionAreaNames[i] = mouseInputActionAreaNames[i];
 		_mouseInputActionAreaIcons[i] = mouseInputActionAreaIcons[i];
+		_primaryMouseInputViewportDialog4Choices[i] = primaryMouseInputViewportDialog4Choices[i];
+		_primaryMouseInputScreenDialog4Choices[i] = primaryMouseInputScreenDialog4Choices[i];
 	}
 
 	for (int i = 0; i < 7; i++)
@@ -349,7 +364,6 @@ void EventManager::initArrays() {
 
 	for (int i = 0; i < 38; i++)
 		_secondaryMouseInputChampionInventory[i] = secondaryMouseInputChampionInventory[i];
-
 }
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_mousePos = Common::Point(0, 0);
