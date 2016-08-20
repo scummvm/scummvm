@@ -28,18 +28,20 @@
 namespace Titanic {
 
 class CEditControl : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EditControlMsg(CEditControlMsg *msg);
 protected:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
+	bool _fieldBC;
+	int _editLeft;
+	int _editBottom;
+	int _editHeight;
+	uint _maxTextChars;
+	int _fontNumber;
 	int _fieldD4;
-	int _fieldD8;
-	int _fieldDC;
-	int _fieldE0;
-	CString _string1;
+	byte _textR;
+	byte _textG;
+	byte _textB;
+	CString _text;
 	int _fieldF0;
 	int _fieldF4;
 public:

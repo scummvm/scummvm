@@ -149,16 +149,15 @@ public:
 
 class CEditControlMsg : public CMessage {
 public:
-	int _field4;
-	int _field8;
-	CString _string1;
-	int _field18;
-	int _field1C;
-	int _field20;
+	int _mode;
+	int _param;
+	CString _text;
+	byte _textR;
+	byte _textG;
+	byte _textB;
 public:
 	CLASSDEF;
-	CEditControlMsg() : _field4(0), _field8(0), _field18(0),
-		_field1C(0), _field20(0) {}
+	CEditControlMsg() : _mode(0), _param(0), _textR(0), _textG(0), _textB(0) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {
 		return CMessage::supports(item, _type);
