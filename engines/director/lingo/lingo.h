@@ -431,6 +431,8 @@ public:
 
 private:
 	int parse(const char *code);
+	void parseMenu(const char *code);
+
 	void push(Datum d);
 	Datum pop(void);
 

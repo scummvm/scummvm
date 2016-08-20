@@ -160,6 +160,13 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 	const char *begin, *end;
 
+	if (!strncmp(code, "menu:", 5)) {
+		debugC(2, kDebugLingoCompile, "Parsing menu");
+		parseMenu(code);
+
+		return;
+	}
+
 	// macros and factories have conflicting grammar. Thus we ease life for the parser.
 	if ((begin = findNextDefinition(code))) {
 		bool first = true;
@@ -390,6 +397,10 @@ Common::String *Lingo::toLowercaseMac(Common::String *s) {
 	}
 
 	return res;
+}
+
+void Lingo::parseMenu(const char *code) {
+	warning("STUB: parseMenu");
 }
 
 void Lingo::runTests() {
