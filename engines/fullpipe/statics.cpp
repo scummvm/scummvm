@@ -69,7 +69,8 @@ Common::Point *StepArray::getCurrPoint(Common::Point *point) {
 		point->x = 0;
 		point->y = 0;
 	} else {
-		point = _points[_currPointIndex];
+		point->x = _points[_currPointIndex]->x;
+		point->y = _points[_currPointIndex]->y;
 	}
 	return point;
 }
