@@ -240,7 +240,10 @@ void DMEngine::f433_processCommand140_saveGame() {
 				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load -= champHandObjWeight;
 			}
 
-			writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice);
+			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
+				_dialog->f427_dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
+				_dialog->f424_dialogGetChoice(1, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+			}
 
 			if (!_championMan->_g415_leaderEmptyHanded) {
 				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;
@@ -296,13 +299,14 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::Strin
 	out->writeUint32BE(playTime);
 }
 
-void DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
+bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
 	Common::String savefileName = getSavefileName(saveSlot);
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
 
-	if (!file)
-		return; // TODO: silent fail
+	if (!file) {
+		return false;
+	}
 
 	writeSaveGameHeader(file, saveDescription);
 
@@ -409,6 +413,8 @@ void DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->flush();
 	file->finalize();
 	delete file;
+	
+	return true;
 }
 
 bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {

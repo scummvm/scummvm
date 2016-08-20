@@ -209,7 +209,7 @@ class DMEngine : public Engine {
 	void initArrays();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	void writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
+	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
