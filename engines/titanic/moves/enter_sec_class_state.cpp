@@ -21,23 +21,88 @@
  */
 
 #include "titanic/moves/enter_sec_class_state.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEnterSecClassState, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CEnterSecClassState::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_mode, indent);
+	file->writeNumberLine(_soundHandle, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CEnterSecClassState::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_mode = file->readNumber();
+	_soundHandle = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CEnterSecClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (getPassengerClass() > 2) {
+		playSound("b#105.wav");
+		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2)  {
+		CActMsg actMsg(getFullViewName().deleteRight(3) + ".S");
+		actMsg.execute("SecClassRoomLeaver");
+		changeView("secClassState.Node 01.N");
+	}
+
+	return true;
+}
+
+bool CEnterSecClassState::StatusChangeMsg(CStatusChangeMsg *msg) {
+	stopSound(_soundHandle);
+
+	if (msg->_newStatus == _mode || (_mode == 2 && msg->_newStatus == 3)) {
+		if (_mode == 2) {
+			_soundHandle = queueSound("b#36.wav", _soundHandle);
+		} else {
+			_soundHandle = queueSound("b#31.wav", _soundHandle);
+		}
+		if (msg->_newStatus == 3)
+			msg->_newStatus == 2;
+	} else {
+		changeView("SecClassLittleLift.Node 1.N");
+		if (msg->_newStatus == 1) {
+			_soundHandle = queueSound("b#32.wav", _soundHandle);
+		} else if (msg->_newStatus == 2) {
+			_soundHandle = queueSound("b#25.wav", _soundHandle);
+		} else if (msg->_newStatus == 3) {
+			_soundHandle = queueSound("b#33.wav", _soundHandle);
+			msg->_newStatus = 2;
+		}
+	}
+
+	if (msg->_newStatus != 3) {
+		if (msg->_newStatus == 2 && _mode == 1)
+			playMovie(0, 10, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		else if (msg->_newStatus == 1)
+			playMovie(11, 21, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	}
+
+	_cursorId = msg->_newStatus == 2 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
+	_mode = msg->_newStatus;
+	return true;
+}
+
+bool CEnterSecClassState::MovieEndMsg(CMovieEndMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		pet->setRooms1CC(_mode);
+		pet->resetRoomsHighlight();
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

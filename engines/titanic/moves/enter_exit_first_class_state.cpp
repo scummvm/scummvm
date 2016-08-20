@@ -24,26 +24,44 @@
 
 namespace Titanic {
 
-CString *CEnterExitFirstClassState::_v1;
-
-void CEnterExitFirstClassState::init() {
-	_v1 = new CString();
-}
-
-void CEnterExitFirstClassState::deinit() {
-	delete _v1;
-}
+BEGIN_MESSAGE_MAP(CEnterExitFirstClassState, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
 
 void CEnterExitFirstClassState::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(*_v1, indent);
+	file->writeQuotedLine(_viewName, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEnterExitFirstClassState::load(SimpleFile *file) {
 	file->readNumber();
-	*_v1 = file->readString();
+	_viewName = file->readString();
 	CGameObject::load(file);
+}
+
+bool CEnterExitFirstClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	switch (getPassengerClass()) {
+	case 1:
+		if (compareRoomNameTo("1stClassLobby")) {
+			_viewName = getRoomNodeName() + ".E";
+			changeView(_viewName);
+		} else if (compareRoomNameTo("1stClassState")) {
+			changeView(_viewName);
+		}
+		break;
+
+	case 2:
+		petDisplayMessage(1, "This room is reserved for the exclusive use of first class passengeres."
+			" That does not currently include you");
+		break;
+
+	default:
+		petDisplayMessage("No losers.");
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

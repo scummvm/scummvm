@@ -28,12 +28,16 @@
 namespace Titanic {
 
 class CEnterExitView : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
+	int _leaveEndFrame;
+	int _leaveStartFrame;
+	int _enterEndFrame;
+	int _enterStartFrame;
+	bool _visibleAfterMovie;
 public:
 	CLASSDEF;
 	CEnterExitView();

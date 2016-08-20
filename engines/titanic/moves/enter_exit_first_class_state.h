@@ -28,18 +28,10 @@
 namespace Titanic {
 
 class CEnterExitFirstClassState : public CGameObject {
-public:
-	static CString *_v1;
-
-	/**
-	 * Initialize static data
-	 */
-	static void init();
-
-	/**
-	 * De-initialize static data
-	 */
-	static void deinit();
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+private:
+	CString _viewName;
 public:
 	CLASSDEF;
 

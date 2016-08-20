@@ -75,6 +75,12 @@ public:
 	CString mid(uint start) const;
 
 	/**
+	 * Returns a substring consisting of the entire string
+	 * except for a specified number of characters at the end
+	 */
+	CString deleteRight(uint count) const;
+
+	/**
 	 * Returns the index of the first occurance of a given character
 	 */
 	int indexOf(char c) const;

@@ -21,23 +21,52 @@
  */
 
 #include "titanic/moves/enter_exit_mini_lift.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CEnterExitMiniLift, CSGTNavigation)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
 
 void CEnterExitMiniLift::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	
+	file->writeNumberLine(_destRoomNum, indent);
+
 	CSGTNavigation::save(file, indent);
 }
 
 void CEnterExitMiniLift::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	_destRoomNum = file->readNumber();
 
 	CSGTNavigation::load(file);
+}
+
+bool CEnterExitMiniLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (compareRoomNameTo("SgtLobby")) {
+		_statics->_destView = getRoomNodeName() + ".S";
+		_statics->_destRoom = "SgtLobby";
+		changeView("SGTLittleLift.Node 1.E");
+
+		CPetControl *pet = getPetControl();
+		if (pet)
+			pet->setRoomsRoomNum(_destRoomNum);
+	} else if (compareRoomNameTo("SGTLittleLift")) {
+		if (_statics->_changeViewFlag) {
+			changeView(_statics->_destView);
+		}
+	}
+
+	return true;
+}
+
+bool CEnterExitMiniLift::EnterViewMsg(CEnterViewMsg *msg) {
+	_cursorId = _statics->_changeViewFlag ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
+	return true;
 }
 
 } // End of namespace Titanic

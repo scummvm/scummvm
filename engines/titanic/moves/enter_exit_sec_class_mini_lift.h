@@ -28,19 +28,22 @@
 namespace Titanic {
 
 struct CEnterExitSecClassMiniLiftStatics {
-	CString _v1;
-	int _v2;
+	CString _viewName;
+	int _state;
 
-	CEnterExitSecClassMiniLiftStatics() : _v2(1) {}
+	CEnterExitSecClassMiniLiftStatics() : _state(1) {}
 };
 
 class CEnterExitSecClassMiniLift : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 private:
 	static CEnterExitSecClassMiniLiftStatics *_statics;
-	int _value;
+	int _roomNum;
 public:
 	CLASSDEF;
-	CEnterExitSecClassMiniLift() : CGameObject(), _value(0) {}
+	CEnterExitSecClassMiniLift() : CGameObject(), _roomNum(0) {}
 	static void init();
 	static void deinit();
 	

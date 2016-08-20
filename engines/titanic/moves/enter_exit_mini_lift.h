@@ -28,12 +28,15 @@
 namespace Titanic {
 
 class CEnterExitMiniLift : public CSGTNavigation {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _fieldBC;
-	int _fieldC0;
+	int _destRoomNum;
 public:
 	CLASSDEF;
-	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _fieldC0(1) {}
+	CEnterExitMiniLift() : CSGTNavigation(), _fieldBC(0), _destRoomNum(1) {}
 
 	/**
 	 * Save the data for the class to file

@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CEnterSecClassState : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	int _value1, _value2;
+	int _mode, _soundHandle;
 public:
 	CLASSDEF;
-	CEnterSecClassState() : CGameObject(), _value1(0), _value2(0) {}
+	CEnterSecClassState() : CGameObject(), _mode(1), _soundHandle(0) {}
 
 	/**
 	 * Save the data for the class to file

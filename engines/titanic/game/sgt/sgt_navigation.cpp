@@ -36,18 +36,18 @@ void CSGTNavigation::deinit() {
 
 void CSGTNavigation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
-	file->writeQuotedLine(_statics->_v3, indent);
+	file->writeNumberLine(_statics->_changeViewFlag, indent);
+	file->writeQuotedLine(_statics->_destView, indent);
+	file->writeQuotedLine(_statics->_destRoom, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CSGTNavigation::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_v1 = file->readNumber();
-	_statics->_v2 = file->readString();
-	_statics->_v3 = file->readString();
+	_statics->_changeViewFlag = file->readNumber();
+	_statics->_destView = file->readString();
+	_statics->_destRoom = file->readString();
 
 	CGameObject::load(file);
 }

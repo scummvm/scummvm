@@ -24,30 +24,55 @@
 
 namespace Titanic {
 
-CEnterExitView::CEnterExitView() : CGameObject(), _fieldBC(0),
-	_fieldC0(0), _fieldC4(0), _fieldC8(0), _fieldCC(0) {
+BEGIN_MESSAGE_MAP(CEnterExitView, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
+CEnterExitView::CEnterExitView() : CGameObject(), _leaveEndFrame(0),
+	_leaveStartFrame(0), _enterEndFrame(0), _enterStartFrame(0), 
+	_visibleAfterMovie(true) {
 }
 
 void CEnterExitView::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_leaveEndFrame, indent);
+	file->writeNumberLine(_leaveStartFrame, indent);
+	file->writeNumberLine(_enterEndFrame, indent);
+	file->writeNumberLine(_enterStartFrame, indent);
+	file->writeNumberLine(_visibleAfterMovie, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CEnterExitView::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
+	_leaveEndFrame = file->readNumber();
+	_leaveStartFrame = file->readNumber();
+	_enterEndFrame = file->readNumber();
+	_enterStartFrame = file->readNumber();
+	_visibleAfterMovie = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CEnterExitView::EnterViewMsg(CEnterViewMsg *msg) {
+	setVisible(true);
+	playMovie(_enterStartFrame, _enterEndFrame, MOVIE_NOTIFY_OBJECT);
+	return true;
+}
+
+bool CEnterExitView::LeaveViewMsg(CLeaveViewMsg *msg) {
+	setVisible(true);
+	playMovie(_leaveStartFrame, _leaveEndFrame, MOVIE_NOTIFY_OBJECT);
+	return true;
+}
+
+bool CEnterExitView::MovieEndMsg(CMovieEndMsg *msg) {
+	if (!_visibleAfterMovie)
+		setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic

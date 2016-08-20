@@ -58,6 +58,10 @@ CString CString::mid(uint start) const {
 	return mid(start, strSize - start);
 }
 
+CString CString::deleteRight(uint count) const {
+	return (count >= size()) ? CString() : left(size() - count);
+}
+
 int CString::indexOf(char c) const {
 	const char *charP = strchr(c_str(), c);
 	return charP ? charP - c_str() : -1;
