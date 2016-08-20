@@ -125,7 +125,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 			_vm->_eventMan->_g326_refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->f395_drawMovementArrows();
 			_vm->_eventMan->f77_hideMouse();
-			_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
+			_vm->_eventMan->_g442_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
 			_vm->_eventMan->_g444_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
 			_vm->_eventMan->f357_discardAllInput();
 			_vm->_displayMan->f98_drawFloorAndCeiling();
@@ -167,7 +167,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	_vm->_championMan->f292_drawChampionState(championIndex);
 	_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
 	_vm->_eventMan->f77_hideMouse();
-	_vm->_eventMan->_g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
+	_vm->_eventMan->_g442_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputChampionInventory;
 	_vm->_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	_vm->_eventMan->f357_discardAllInput();
 }

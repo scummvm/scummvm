@@ -44,74 +44,6 @@
 
 namespace DM {
 
-MouseInput g448_SecondaryMouseInput_Movement[9] = { // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
-													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k1_CommandTurnLeft,             234, 261, 125, 145, k1_LeftMouseButton),
-	MouseInput(k3_CommandMoveForward,          263, 289, 125, 145, k1_LeftMouseButton),
-	MouseInput(k2_CommandTurnRight,            291, 318, 125, 145, k1_LeftMouseButton),
-	MouseInput(k6_CommandMoveLeft,             234, 261, 147, 167, k1_LeftMouseButton),
-	MouseInput(k5_CommandMoveBackward,         263, 289, 147, 167, k1_LeftMouseButton),
-	MouseInput(k4_CommandMoveRight,            291, 318, 147, 167, k1_LeftMouseButton),
-	MouseInput(k80_CommandClickInDungeonView,   0, 223,  33, 168, k1_LeftMouseButton),
-	MouseInput(k83_CommandToggleInventoryLeader, 0, 319,  33, 199, k2_RightMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g449_SecondaryMouseInput_ChampionInventory[38] = { // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
-															  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k11_CommandCloseInventory,                                   0, 319,   0, 199, k2_RightMouseButton),
-	MouseInput(k140_CommandSaveGame,                                       174, 182,  36,  44, k1_LeftMouseButton),
-	MouseInput(k145_CommandSleep,                                           188, 204,  36,  44, k1_LeftMouseButton),
-	MouseInput(k11_CommandCloseInventory,                                 210, 218,  36,  44, k1_LeftMouseButton),
-	MouseInput(k28_CommandClickOnSlotBoxInventoryReadyHand ,        6,  21,  86, 101, k1_LeftMouseButton),
-	MouseInput(k29_CommandClickOnSlotBoxInventoryActionHand,       62,  77,  86, 101, k1_LeftMouseButton),
-	MouseInput(k30_CommandClickOnSlotBoxInventoryHead,              34,  49,  59,  74, k1_LeftMouseButton),
-	MouseInput(k31_CommandClickOnSlotBoxInventoryTorso,             34,  49,  79,  94, k1_LeftMouseButton),
-	MouseInput(k32_CommandClickOnSlotBoxInventoryLegs,              34,  49,  99, 114, k1_LeftMouseButton),
-	MouseInput(k33_CommandClickOnSlotBoxInventoryFeet,              34,  49, 119, 134, k1_LeftMouseButton),
-	MouseInput(k34_CommandClickOnSlotBoxInventoryPouch_2,            6,  21, 123, 138, k1_LeftMouseButton),
-	MouseInput(k70_CommandClickOnMouth,                                   56,  71,  46,  61, k1_LeftMouseButton),
-	MouseInput(k71_CommandClickOnEye,                                     12,  27,  46,  61, k1_LeftMouseButton),
-	MouseInput(k35_CommandClickOnSlotBoxInventoryQuiverLine_2_1,    79,  94, 106, 121, k1_LeftMouseButton),
-	MouseInput(k36_CommandClickOnSlotBoxInventoryQuiverLine_1_2,    62,  77, 123, 138, k1_LeftMouseButton),
-	MouseInput(k37_CommandClickOnSlotBoxInventoryQuiverLine_2_2,    79,  94, 123, 138, k1_LeftMouseButton),
-	MouseInput(k38_CommandClickOnSlotBoxInventoryNeck,               6,  21,  66,  81, k1_LeftMouseButton),
-	MouseInput(k39_CommandClickOnSlotBoxInventoryPouch_1,            6,  21, 106, 121, k1_LeftMouseButton),
-	MouseInput(k40_CommandClickOnSlotBoxInventoryQuiverLine_1_1,    62,  77, 106, 121, k1_LeftMouseButton),
-	MouseInput(k41_CommandClickOnSlotBoxInventoryBackpackLine_1_1,  66,  81,  66,  81, k1_LeftMouseButton),
-	MouseInput(k42_CommandClickOnSlotBoxInventoryBackpackLine_2_2,  83,  98,  49,  64, k1_LeftMouseButton),
-	MouseInput(k43_CommandClickOnSlotBoxInventoryBackpackLine_2_3, 100, 115,  49,  64, k1_LeftMouseButton),
-	MouseInput(k44_CommandClickOnSlotBoxInventoryBackpackLine_2_4, 117, 132,  49,  64, k1_LeftMouseButton),
-	MouseInput(k45_CommandClickOnSlotBoxInventoryBackpackLine_2_5, 134, 149,  49,  64, k1_LeftMouseButton),
-	MouseInput(k46_CommandClickOnSlotBoxInventoryBackpackLine_2_6, 151, 166,  49,  64, k1_LeftMouseButton),
-	MouseInput(k47_CommandClickOnSlotBoxInventoryBackpackLine_2_7, 168, 183,  49,  64, k1_LeftMouseButton),
-	MouseInput(k48_CommandClickOnSlotBoxInventoryBackpackLine_2_8, 185, 200,  49,  64, k1_LeftMouseButton),
-	MouseInput(k49_CommandClickOnSlotBoxInventoryBackpackLine_2_9, 202, 217,  49,  64, k1_LeftMouseButton),
-	MouseInput(k50_CommandClickOnSlotBoxInventoryBackpackLine_1_2,  83,  98,  66,  81, k1_LeftMouseButton),
-	MouseInput(k51_CommandClickOnSlotBoxInventoryBackpackLine_1_3, 100, 115,  66,  81, k1_LeftMouseButton),
-	MouseInput(k52_CommandClickOnSlotBoxInventoryBackpackLine_1_4, 117, 132,  66,  81, k1_LeftMouseButton),
-	MouseInput(k53_CommandClickOnSlotBoxInventoryBackpackLine_1_5, 134, 149,  66,  81, k1_LeftMouseButton),
-	MouseInput(k54_CommandClickOnSlotBoxInventoryBackpackLine_1_6, 151, 166,  66,  81, k1_LeftMouseButton),
-	MouseInput(k55_CommandClickOnSlotBoxInventoryBackpackLine_1_7, 168, 183,  66,  81, k1_LeftMouseButton),
-	MouseInput(k56_CommandClickOnSlotBoxInventoryBackpackLine_1_8, 185, 200,  66,  81, k1_LeftMouseButton),
-	MouseInput(k57_CommandClickOnSlotBoxInventoryBackpackLine_1_9, 202, 217,  66,  81, k1_LeftMouseButton),
-	MouseInput(k81_CommandClickInPanel,                                   96, 223,  83, 167, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g450_PrimaryMouseInput_PartySleeping[3] = { // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
-													   /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k146_CommandWakeUp, 0, 223, 33, 168, k1_LeftMouseButton),
-	MouseInput(k146_CommandWakeUp, 0, 223, 33, 168, k2_RightMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g451_PrimaryMouseInput_FrozenGame[3] = { // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
-													/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k148_CommandUnfreezeGame, 0, 319, 0, 199, k1_LeftMouseButton),
-	MouseInput(k148_CommandUnfreezeGame, 0, 319, 0, 199, k2_RightMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
-MouseInput g452_MouseInput_ActionAreaNames[5] = { // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
-												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
-	MouseInput(k112_CommandClickInActionAreaPass,     285, 318,  77,  83, k1_LeftMouseButton),
-	MouseInput(k113_CommandClickInActionAreaAction_0, 234, 318,  86,  96, k1_LeftMouseButton),
-	MouseInput(k114_CommandClickInActionAreaAction_1, 234, 318,  98, 108, k1_LeftMouseButton),
-	MouseInput(k115_CommandClickInActionAreaAction_2, 234, 318, 110, 120, k1_LeftMouseButton),
-	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
 MouseInput g453_MouseInput_ActionAreaIcons[5] = { // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
 												  /* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 	MouseInput(k116_CommandClickInActionAreaChampion_0_Action, 233, 252, 86, 120, k1_LeftMouseButton),
@@ -201,16 +133,6 @@ MouseInput g478_PrimaryMouseInput_ScreenDialog4Choices[5] = { // @ G0478_as_Grap
 	MouseInput(k213_CommandClickOnDialogChoice_4, 170, 254, 138, 152, k1_LeftMouseButton), /* Lower right button */
 	MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)};
 
-MouseInput* g480_PrimaryMouseInput_DialogSets[2][4] = { // @ G0480_aaps_PrimaryMouseInput_DialogSets
-	{g471_PrimaryMouseInput_ViewportDialog1Choice,
-	g472_PrimaryMouseInput_ViewportDialog2Choices,
-	g473_PrimaryMouseInput_ViewportDialog3Choices,
-	g474_PrimaryMouseInput_ViewportDialog4Choices},
-	{g475_PrimaryMouseInput_ScreenDialog1Choice,
-	g476_PrimaryMouseInput_ScreenDialog2Choices,
-	g477_PrimaryMouseInput_ScreenDialog3Choices,
-	g478_PrimaryMouseInput_ScreenDialog4Choices},};
-
 void EventManager::initArrays() {
 	KeyboardInput primaryKeyboardInputInterface[7] = { // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 		/* { Command, Code } */
@@ -256,7 +178,7 @@ void EventManager::initArrays() {
 		KeyboardInput(k148_CommandUnfreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
 		KeyboardInput(k0_CommandNone, Common::KEYCODE_INVALID, 0)
 	};
-	MouseInput _primaryMouseInputEntrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
+	MouseInput primaryMouseInputEntrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 		MouseInput(k200_CommandEntranceEnterDungeon, 244, 298,  45,  58, k1_LeftMouseButton),
 		// Strangerke - C201_COMMAND_ENTRANCE_RESUME isn't present in the demo
@@ -264,12 +186,12 @@ void EventManager::initArrays() {
 		MouseInput(k202_CommandEntranceDrawCredits,  248, 293, 187, 199, k1_LeftMouseButton),
 		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
 	};
-	MouseInput _primaryMouseInputRestartGame[2] = { // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
+	MouseInput primaryMouseInputRestartGame[2] = { // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
 		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 		MouseInput(k215_CommandRestartGame, 103, 217, 145, 159, k1_LeftMouseButton),
 		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
 	};
-	MouseInput _primaryMouseInputInterface[20] = { // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
+	MouseInput primaryMouseInputInterface[20] = { // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
 		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
 		MouseInput(k12_CommandClickInChampion_0_StatusBox,       0,  42,   0,  28, k1_LeftMouseButton),
 		MouseInput(k13_CommandClickInChampion_1_StatusBox,      69, 111,   0,  28, k1_LeftMouseButton),
@@ -292,25 +214,128 @@ void EventManager::initArrays() {
 		MouseInput(k147_CommandFreezeGame,                          0,   1, 198, 199, k1_LeftMouseButton),
 		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
 	};
+	MouseInput secondaryMouseInputMovement[9] = { // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k1_CommandTurnLeft,             234, 261, 125, 145, k1_LeftMouseButton),
+		MouseInput(k3_CommandMoveForward,          263, 289, 125, 145, k1_LeftMouseButton),
+		MouseInput(k2_CommandTurnRight,            291, 318, 125, 145, k1_LeftMouseButton),
+		MouseInput(k6_CommandMoveLeft,             234, 261, 147, 167, k1_LeftMouseButton),
+		MouseInput(k5_CommandMoveBackward,         263, 289, 147, 167, k1_LeftMouseButton),
+		MouseInput(k4_CommandMoveRight,            291, 318, 147, 167, k1_LeftMouseButton),
+		MouseInput(k80_CommandClickInDungeonView,   0, 223,  33, 168, k1_LeftMouseButton),
+		MouseInput(k83_CommandToggleInventoryLeader, 0, 319,  33, 199, k2_RightMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput secondaryMouseInputChampionInventory[38] = { // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k11_CommandCloseInventory,                                   0, 319,   0, 199, k2_RightMouseButton),
+		MouseInput(k140_CommandSaveGame,                                       174, 182,  36,  44, k1_LeftMouseButton),
+		MouseInput(k145_CommandSleep,                                           188, 204,  36,  44, k1_LeftMouseButton),
+		MouseInput(k11_CommandCloseInventory,                                 210, 218,  36,  44, k1_LeftMouseButton),
+		MouseInput(k28_CommandClickOnSlotBoxInventoryReadyHand ,        6,  21,  86, 101, k1_LeftMouseButton),
+		MouseInput(k29_CommandClickOnSlotBoxInventoryActionHand,       62,  77,  86, 101, k1_LeftMouseButton),
+		MouseInput(k30_CommandClickOnSlotBoxInventoryHead,              34,  49,  59,  74, k1_LeftMouseButton),
+		MouseInput(k31_CommandClickOnSlotBoxInventoryTorso,             34,  49,  79,  94, k1_LeftMouseButton),
+		MouseInput(k32_CommandClickOnSlotBoxInventoryLegs,              34,  49,  99, 114, k1_LeftMouseButton),
+		MouseInput(k33_CommandClickOnSlotBoxInventoryFeet,              34,  49, 119, 134, k1_LeftMouseButton),
+		MouseInput(k34_CommandClickOnSlotBoxInventoryPouch_2,            6,  21, 123, 138, k1_LeftMouseButton),
+		MouseInput(k70_CommandClickOnMouth,                                   56,  71,  46,  61, k1_LeftMouseButton),
+		MouseInput(k71_CommandClickOnEye,                                     12,  27,  46,  61, k1_LeftMouseButton),
+		MouseInput(k35_CommandClickOnSlotBoxInventoryQuiverLine_2_1,    79,  94, 106, 121, k1_LeftMouseButton),
+		MouseInput(k36_CommandClickOnSlotBoxInventoryQuiverLine_1_2,    62,  77, 123, 138, k1_LeftMouseButton),
+		MouseInput(k37_CommandClickOnSlotBoxInventoryQuiverLine_2_2,    79,  94, 123, 138, k1_LeftMouseButton),
+		MouseInput(k38_CommandClickOnSlotBoxInventoryNeck,               6,  21,  66,  81, k1_LeftMouseButton),
+		MouseInput(k39_CommandClickOnSlotBoxInventoryPouch_1,            6,  21, 106, 121, k1_LeftMouseButton),
+		MouseInput(k40_CommandClickOnSlotBoxInventoryQuiverLine_1_1,    62,  77, 106, 121, k1_LeftMouseButton),
+		MouseInput(k41_CommandClickOnSlotBoxInventoryBackpackLine_1_1,  66,  81,  66,  81, k1_LeftMouseButton),
+		MouseInput(k42_CommandClickOnSlotBoxInventoryBackpackLine_2_2,  83,  98,  49,  64, k1_LeftMouseButton),
+		MouseInput(k43_CommandClickOnSlotBoxInventoryBackpackLine_2_3, 100, 115,  49,  64, k1_LeftMouseButton),
+		MouseInput(k44_CommandClickOnSlotBoxInventoryBackpackLine_2_4, 117, 132,  49,  64, k1_LeftMouseButton),
+		MouseInput(k45_CommandClickOnSlotBoxInventoryBackpackLine_2_5, 134, 149,  49,  64, k1_LeftMouseButton),
+		MouseInput(k46_CommandClickOnSlotBoxInventoryBackpackLine_2_6, 151, 166,  49,  64, k1_LeftMouseButton),
+		MouseInput(k47_CommandClickOnSlotBoxInventoryBackpackLine_2_7, 168, 183,  49,  64, k1_LeftMouseButton),
+		MouseInput(k48_CommandClickOnSlotBoxInventoryBackpackLine_2_8, 185, 200,  49,  64, k1_LeftMouseButton),
+		MouseInput(k49_CommandClickOnSlotBoxInventoryBackpackLine_2_9, 202, 217,  49,  64, k1_LeftMouseButton),
+		MouseInput(k50_CommandClickOnSlotBoxInventoryBackpackLine_1_2,  83,  98,  66,  81, k1_LeftMouseButton),
+		MouseInput(k51_CommandClickOnSlotBoxInventoryBackpackLine_1_3, 100, 115,  66,  81, k1_LeftMouseButton),
+		MouseInput(k52_CommandClickOnSlotBoxInventoryBackpackLine_1_4, 117, 132,  66,  81, k1_LeftMouseButton),
+		MouseInput(k53_CommandClickOnSlotBoxInventoryBackpackLine_1_5, 134, 149,  66,  81, k1_LeftMouseButton),
+		MouseInput(k54_CommandClickOnSlotBoxInventoryBackpackLine_1_6, 151, 166,  66,  81, k1_LeftMouseButton),
+		MouseInput(k55_CommandClickOnSlotBoxInventoryBackpackLine_1_7, 168, 183,  66,  81, k1_LeftMouseButton),
+		MouseInput(k56_CommandClickOnSlotBoxInventoryBackpackLine_1_8, 185, 200,  66,  81, k1_LeftMouseButton),
+		MouseInput(k57_CommandClickOnSlotBoxInventoryBackpackLine_1_9, 202, 217,  66,  81, k1_LeftMouseButton),
+		MouseInput(k81_CommandClickInPanel,                                   96, 223,  83, 167, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputPartySleeping[3] = { // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k146_CommandWakeUp, 0, 223, 33, 168, k1_LeftMouseButton),
+		MouseInput(k146_CommandWakeUp, 0, 223, 33, 168, k2_RightMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput primaryMouseInputFrozenGame[3] = { // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k148_CommandUnfreezeGame, 0, 319, 0, 199, k1_LeftMouseButton),
+		MouseInput(k148_CommandUnfreezeGame, 0, 319, 0, 199, k2_RightMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput mouseInputActionAreaNames[5] = { // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
+		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
+		MouseInput(k112_CommandClickInActionAreaPass,     285, 318,  77,  83, k1_LeftMouseButton),
+		MouseInput(k113_CommandClickInActionAreaAction_0, 234, 318,  86,  96, k1_LeftMouseButton),
+		MouseInput(k114_CommandClickInActionAreaAction_1, 234, 318,  98, 108, k1_LeftMouseButton),
+		MouseInput(k115_CommandClickInActionAreaAction_2, 234, 318, 110, 120, k1_LeftMouseButton),
+		MouseInput(k0_CommandNone, 0, 0, 0, 0, k0_NoneMouseButton)
+	};
+	MouseInput *primaryMouseInputDialogSets[2][4] = { // @ G0480_aaps_PrimaryMouseInput_DialogSets
+		{
+			g471_PrimaryMouseInput_ViewportDialog1Choice,
+			g472_PrimaryMouseInput_ViewportDialog2Choices,
+			g473_PrimaryMouseInput_ViewportDialog3Choices,
+			g474_PrimaryMouseInput_ViewportDialog4Choices
+		},
+		{
+			g475_PrimaryMouseInput_ScreenDialog1Choice,
+			g476_PrimaryMouseInput_ScreenDialog2Choices,
+			g477_PrimaryMouseInput_ScreenDialog3Choices,
+			g478_PrimaryMouseInput_ScreenDialog4Choices
+		}
+	};
+
+	for (int i = 0; i < 2; i++) {
+		_primaryKeyboardInputFrozenGame[i] = primaryKeyboardInputFrozenGame[i];
+		_primaryMouseInputRestartGame[i] = primaryMouseInputRestartGame[i];
+		for (int j = 0; j < 4; j++)
+			_primaryMouseInputDialogSets[i][j] = primaryMouseInputDialogSets[i][j];
+	}
+
+	for (int i = 0; i < 3 ; i++) {
+		_primaryKeyboardInputPartySleeping[i] = primaryKeyboardInputPartySleeping[i];
+		_primaryMouseInputPartySleeping[i] = primaryMouseInputPartySleeping[i];
+		_primaryMouseInputFrozenGame[i] = primaryMouseInputFrozenGame[i];
+	}
+
+	for (int i = 0; i < 4; i++)
+		_primaryMouseInputEntrance[i] = primaryMouseInputEntrance[i];
+
+	for (int i = 0; i < 5; i++)
+		_mouseInputActionAreaNames[i] = mouseInputActionAreaNames[i];
 
 	for (int i = 0; i < 7; i++)
 		_primaryKeyboardInputInterface[i] = primaryKeyboardInputInterface[i];
 
+	for (int i = 0; i < 9; i++)
+		_secondaryMouseInputMovement[i] = secondaryMouseInputMovement[i];
+
 	for (int i = 0; i < 19; i++)
 		_secondaryKeyboardInputMovement[i] = secondaryKeyboardInputMovement[i];
 
-	for (int i = 0; i < 3 ; i++)
-		_primaryKeyboardInputPartySleeping[i] = primaryKeyboardInputPartySleeping[i];
-
-	for (int i = 0; i < 2; i++) {
-		_primaryKeyboardInputFrozenGame[i] = primaryKeyboardInputFrozenGame[i];
-		_primaryMouseInputRestartGame[i] = _primaryMouseInputRestartGame[i];
-	}
-	for (int i = 0; i < 4; i++)
-		_primaryMouseInputEntrance[i] = _primaryMouseInputEntrance[i];
-
 	for (int i = 0; i < 20; i++)
-		_primaryMouseInputInterface[i] = _primaryMouseInputInterface[i];
+		_primaryMouseInputInterface[i] = primaryMouseInputInterface[i];
+
+	for (int i = 0; i < 38; i++)
+		_secondaryMouseInputChampionInventory[i] = secondaryMouseInputChampionInventory[i];
+
 }
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_mousePos = Common::Point(0, 0);
@@ -776,7 +801,7 @@ void EventManager::f380_processCommandQueue() {
 			f379_drawSleepScreen();
 			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
-			_g441_primaryMouseInput = g450_PrimaryMouseInput_PartySleeping;
+			_g441_primaryMouseInput = _primaryMouseInputPartySleeping;
 			_g442_secondaryMouseInput = 0;
 			_g443_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
 			_g444_secondaryKeyboardInput = nullptr;
@@ -822,7 +847,7 @@ void EventManager::f380_processCommandQueue() {
 		secondaryMouseInputBackup = _g442_secondaryMouseInput;
 		primaryKeyboardInputBackup = _g443_primaryKeyboardInput;
 		secondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
-		_g441_primaryMouseInput = g451_PrimaryMouseInput_FrozenGame;
+		_g441_primaryMouseInput = _primaryMouseInputFrozenGame;
 		_g442_secondaryMouseInput = 0;
 		_g443_primaryKeyboardInput = _primaryKeyboardInputFrozenGame;
 		_g444_secondaryKeyboardInput = nullptr;
@@ -1518,7 +1543,7 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 
 void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
 	if (_vm->_championMan->_g506_actingChampionOrdinal) {
-		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(g452_MouseInput_ActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(_mouseInputActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (mouseCommand != k0_CommandNone) {
 			if (mouseCommand == k112_CommandClickInActionAreaPass) {
 				f362_commandHighlightBoxEnable(285, 319, 77, 83);

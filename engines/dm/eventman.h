@@ -180,11 +180,6 @@ public:
 		: _commandTypeToIssue(k0_CommandNone), _hitbox(0, 1, 0, 1), _button(k0_NoneMouseButton) {}
 }; // @ MOUSE_INPUT
 
-extern MouseInput g448_SecondaryMouseInput_Movement[9]; // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
-extern MouseInput g449_SecondaryMouseInput_ChampionInventory[38]; // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
-extern MouseInput g450_PrimaryMouseInput_PartySleeping[3]; // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
-extern MouseInput g451_PrimaryMouseInput_FrozenGame[3]; // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
-extern MouseInput g452_MouseInput_ActionAreaNames[5]; // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
 extern MouseInput g453_MouseInput_ActionAreaIcons[5]; // @ G0453_as_Graphic561_MouseInput_ActionAreaIcons[5]
 extern MouseInput g454_MouseInput_SpellArea[9]; // @ G0454_as_Graphic561_MouseInput_SpellArea[9]
 extern MouseInput g455_MouseInput_ChampionNamesHands[13]; // @ G0455_as_Graphic561_MouseInput_ChampionNamesHands[13]
@@ -198,7 +193,6 @@ extern MouseInput g475_PrimaryMouseInput_ScreenDialog1Choice[2]; // @ G0475_as_G
 extern MouseInput g476_PrimaryMouseInput_ScreenDialog2Choices[3]; // @ G0476_as_Graphic561_PrimaryMouseInput_ScreenDialog2Choices[3]
 extern MouseInput g477_PrimaryMouseInput_ScreenDialog3Choices[4]; // @ G0477_as_Graphic561_PrimaryMouseInput_ScreenDialog3Choices[4]
 extern MouseInput g478_PrimaryMouseInput_ScreenDialog4Choices[5]; // @ G0478_as_Graphic561_PrimaryMouseInput_ScreenDialog4Choices[5]
-extern MouseInput* g480_PrimaryMouseInput_DialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
 
 class KeyboardInput {
 public:
@@ -324,6 +318,13 @@ public:
 	MouseInput _primaryMouseInputEntrance[4]; // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 	MouseInput _primaryMouseInputRestartGame[2]; // @ G0446_as_Graphic561_PrimaryMouseInput_RestartGame[2]
 	MouseInput _primaryMouseInputInterface[20]; // @ G0447_as_Graphic561_PrimaryMouseInput_Interface[20]
+	MouseInput _secondaryMouseInputMovement[9]; // @ G0448_as_Graphic561_SecondaryMouseInput_Movement[9]
+	MouseInput _secondaryMouseInputChampionInventory[38]; // @ G0449_as_Graphic561_SecondaryMouseInput_ChampionInventory[38]
+	MouseInput _primaryMouseInputPartySleeping[3]; // @ G0450_as_Graphic561_PrimaryMouseInput_PartySleeping[3]
+	MouseInput _primaryMouseInputFrozenGame[3]; // @ G0451_as_Graphic561_PrimaryMouseInput_FrozenGame[3]
+	MouseInput _mouseInputActionAreaNames[5]; // @ G0452_as_Graphic561_MouseInput_ActionAreaNames[5]
+
+	MouseInput *_primaryMouseInputDialogSets[2][4]; // @ G0480_aaps_PrimaryMouseInput_DialogSets
 
 	void initArrays();
 };

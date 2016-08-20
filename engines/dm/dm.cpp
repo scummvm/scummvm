@@ -340,7 +340,7 @@ void DMEngine::f462_startGame() {
 	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = M0_indexToOrdinal(kM1_ChampionNone);
 
 	_eventMan->_g441_primaryMouseInput = _eventMan->_primaryMouseInputInterface;
-	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
+	_eventMan->_g442_secondaryMouseInput = _eventMan->_secondaryMouseInputMovement;
 	_eventMan->_g443_primaryKeyboardInput = _eventMan->_primaryKeyboardInputInterface;
 	_eventMan->_g444_secondaryKeyboardInput = _eventMan->_secondaryKeyboardInputMovement;
 

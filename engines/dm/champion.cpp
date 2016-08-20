@@ -869,7 +869,7 @@ void ChampionMan::f314_wakeUp() {
 	_vm->f22_delay(10);
 	_vm->_displayMan->f98_drawFloorAndCeiling();
 	_vm->_eventMan->_g441_primaryMouseInput = _vm->_eventMan->_primaryMouseInputInterface;
-	_vm->_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
+	_vm->_eventMan->_g442_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
 	_vm->_eventMan->_g443_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
 	_vm->_eventMan->_g444_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
 	_vm->_eventMan->f357_discardAllInput();
