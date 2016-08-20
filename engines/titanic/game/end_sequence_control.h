@@ -29,7 +29,11 @@
 namespace Titanic {
 
 class CEndSequenceControl : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool TimerMsg(CTimerMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
 	CLASSDEF;
 

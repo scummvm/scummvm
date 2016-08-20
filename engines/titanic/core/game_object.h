@@ -52,7 +52,6 @@ class CGameObject : public CNamedItem {
 	friend class OSMovie;
 	DECLARE_MESSAGE_MAP;
 private:
-	static CCreditText *_credits;
 	static int _soundHandles[4];
 private:
 	/**
@@ -70,6 +69,8 @@ private:
 	 * a common intersection
 	 */
 	bool clipRect(const Rect &rect1, Rect &rect2) const;
+protected:
+	static CCreditText *_credits;
 protected:
 	double _field34;
 	double _field38;

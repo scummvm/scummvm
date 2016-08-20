@@ -28,9 +28,14 @@
 namespace Titanic {
 
 class CEndGameCredits : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 private:
-	int _fieldBC;
-	Point _pos1;
+	bool _flag;
+	Point _frameRange;
 public:
 	CLASSDEF;
 	CEndGameCredits();

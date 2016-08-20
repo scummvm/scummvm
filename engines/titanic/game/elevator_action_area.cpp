@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/elevator_action_area.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CElevatorActionArea, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
 
 void CElevatorActionArea::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -34,6 +39,12 @@ void CElevatorActionArea::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CElevatorActionArea::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CServiceElevatorMsg elevMsg(_value);
+	elevMsg.execute(findRoom()->findByName("Service Elevator Entity"));
+	return true;
 }
 
 } // End of namespace Titanic

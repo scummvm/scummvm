@@ -24,20 +24,31 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEnterBridge, CGameObject)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 void CEnterBridge::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEnterBridge::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
 }
 
 bool CEnterBridge::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CEnterBridge::handlEvent");
+	if (_flag) {
+		CActMsg actMsg("Disable");
+		actMsg.execute("ShipAnnouncements");
+
+		setState1C(false);
+		_flag = false;
+	}
+
 	return true;
 }
 

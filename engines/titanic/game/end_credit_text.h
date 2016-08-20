@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CEndCreditText : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 private:
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CEndCreditText() : CGameObject(), _value(0) {}
+	CEndCreditText() : CGameObject(), _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

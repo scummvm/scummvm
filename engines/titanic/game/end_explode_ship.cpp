@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEndExplodeShip, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(MovieFrameMsg)
+END_MESSAGE_MAP()
+
 void CEndExplodeShip::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
@@ -38,6 +45,63 @@ void CEndExplodeShip::load(SimpleFile *file) {
 	_value2 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CEndExplodeShip::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Arm Bomb") {
+		_value1 = 1;
+	} else if (msg->_action == "Disarm Bomb") {
+		_value1 = 0;
+	} else if (msg->_action == "TakeOff") {
+		loadSound("a#31.wav");
+		loadSound("a#14.wav");
+		playGlobalSound("a#13.wav", -1, true, true, 0);
+		addTimer(1, 10212, 0);
+	}
+
+	return true;
+}
+
+bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
+	if (msg->_actionVal == 1) {
+		setVisible(true);
+		playMovie(0, 449, 0);
+		movieEvent(58);
+		playMovie(516, _value1 ? 550 : 551, MOVIE_NOTIFY_OBJECT);
+	}
+
+	if (msg->_actionVal == 3) {
+		setGlobalSoundVolume(-4, 2, -1);
+		CActMsg actMsg(_value1 ? "ExplodeCredits" : "Credits");
+		actMsg.execute("EndGameCredits");
+	}
+
+	if (msg->_action == "Room") {
+		playMovie(550, 583, MOVIE_NOTIFY_OBJECT);
+		movieEvent(551);
+	}
+
+	return true;
+}
+
+bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
+	if (getMovieFrame() == 550) {
+		playSound("z#399.wav");
+		startAnimTimer("Boom", 4200, 0);
+	} else {
+		addTimer(3, 8000, 0);
+	}
+
+	return true;
+}
+
+bool CEndExplodeShip::MovieFrameMsg(CMovieFrameMsg *msg) {
+	if (getMovieFrame() == 58)
+		playSound("a#31.wav", 70);
+	else if (getMovieFrame() == 551)
+		playSound("a#14.wav");
+
+	return true;
 }
 
 } // End of namespace Titanic

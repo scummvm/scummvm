@@ -24,16 +24,49 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEndCreditText, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
 void CEndCreditText::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEndCreditText::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CEndCreditText::ActMsg(CActMsg *msg) {
+	playGlobalSound("z#41.wav", -1, false, false, 0);
+	createCredits();
+	_flag = true;
+	return true;
+}
+
+bool CEndCreditText::FrameMsg(CFrameMsg *msg) {
+	if (_flag) {
+		if (_credits) {
+			makeDirty();
+		} else {
+			addTimer(5000);
+			_flag = false;
+		}
+	}
+
+	return true;
+}
+
+bool CEndCreditText::TimerMsg(CTimerMsg *msg) {
+	setGlobalSoundVolume(-4, 2, -1);
+	sleep(1000);
+	quitGame();
+	return true;
 }
 
 } // End of namespace Titanic

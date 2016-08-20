@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CEndExplodeShip : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
 public:
 	int _value1, _value2;
 public:

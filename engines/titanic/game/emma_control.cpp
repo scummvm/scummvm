@@ -21,27 +21,46 @@
  */
 
 #include "titanic/game/emma_control.h"
+#include "titanic/core/room_item.h"
+#include "titanic/sound/auto_music_player.h"
 
 namespace Titanic {
 
-int CEmmaControl::_v1;
+BEGIN_MESSAGE_MAP(CEmmaControl, CBackground)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(StatusChangeMsg)
+END_MESSAGE_MAP()
 
 void CEmmaControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeQuotedLine(_wavFile1, indent);
-	file->writeQuotedLine(_wavFile2, indent);
+	file->writeNumberLine(_flag, indent);
+	file->writeQuotedLine(_hiddenSoundName, indent);
+	file->writeQuotedLine(_visibleSoundName, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CEmmaControl::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
-	_wavFile1 = file->readString();
-	_wavFile2 = file->readString();
+	_flag = file->readNumber();
+	_hiddenSoundName = file->readString();
+	_visibleSoundName = file->readString();
 
 	CBackground::load(file);
+}
+
+bool CEmmaControl::EnterViewMsg(CEnterViewMsg *msg) {
+	setVisible(_flag);
+	return true;
+}
+
+bool CEmmaControl::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_flag = !_flag;
+	setVisible(_flag);
+	CChangeMusicMsg changeMsg(_flag ? _visibleSoundName : _hiddenSoundName, 0);
+	changeMsg.execute(findRoom(), CAutoMusicPlayer::_type,
+		MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF);
+	return true;
 }
 
 } // End of namespace Titanic

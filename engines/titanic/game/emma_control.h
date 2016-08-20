@@ -28,13 +28,18 @@
 namespace Titanic {
 
 class CEmmaControl : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
 private:
-	static int _v1;
+	bool _flag;
 
-	CString _wavFile1, _wavFile2;
+	CString _hiddenSoundName;
+	CString _visibleSoundName;
 public:
 	CLASSDEF;
-	CEmmaControl() : CBackground(), _wavFile1("b#39.wav"), _wavFile2("b#38.wav") {}
+	CEmmaControl() : CBackground(), _flag(false),
+		_hiddenSoundName("b#39.wav"), _visibleSoundName("b#38.wav") {}
 
 	/**
 	 * Save the data for the class to file

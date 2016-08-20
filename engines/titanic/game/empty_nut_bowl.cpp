@@ -21,19 +21,58 @@
  */
 
 #include "titanic/game/empty_nut_bowl.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEmptyNutBowl, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+	ON_MESSAGE(NutPuzzleMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 void CEmptyNutBowl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CEmptyNutBowl::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CEmptyNutBowl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_flag) {
+		CNutPuzzleMsg nutMsg("UnlockBowl");
+		nutMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
+		_flag = false;
+	}
+
+	return true;
+}
+
+bool CEmptyNutBowl::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(false);
+	_flag = true;
+	return true;
+}
+
+bool CEmptyNutBowl::NutPuzzleMsg(CNutPuzzleMsg *msg) {
+	if (msg->_value == "NutsGone")
+		setVisible(true);
+	return true;
+}
+
+bool CEmptyNutBowl::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!_flag) {
+		msg->execute("Ear1");
+		setVisible(false);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

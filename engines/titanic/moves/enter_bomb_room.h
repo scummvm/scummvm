@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CEnterBombRoom : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 protected:
 	int _fieldC8;
 public:

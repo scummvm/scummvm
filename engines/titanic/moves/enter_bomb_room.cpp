@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEnterBombRoom, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CEnterBombRoom::CEnterBombRoom() : CMovePlayerTo(), _fieldC8(0) {
 }
 
@@ -35,6 +39,12 @@ void CEnterBombRoom::save(SimpleFile *file, int indent) {
 void CEnterBombRoom::load(SimpleFile *file) {
 	file->readNumber();
 	CMovePlayerTo::load(file);
+}
+
+bool CEnterBombRoom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	changeView("Titania.Node 2.SE");
+	changeView(_destination);
+	return true;
 }
 
 } // End of namespace Titanic

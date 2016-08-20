@@ -24,6 +24,13 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEndSequenceControl, CGameObject)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 void CEndSequenceControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -34,8 +41,43 @@ void CEndSequenceControl::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CEndSequenceControl::TimerMsg(CTimerMsg *msg) {
+	switch (msg->_actionVal) {
+	case 1:
+		changeView("TheEnd.Node 2.N");
+		break;
+	case 2: {
+		playSound("ShipFlyingMusic.wav");
+		CActMsg actMsg("TakeOff");
+		actMsg.execute("EndExplodeShip");
+		break;
+	}
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+bool CEndSequenceControl::MovieEndMsg(CMovieEndMsg *msg) {
+	setGlobalSoundVolume(-4, 2, -1);
+	changeView("TheEnd.Node 3.N");
+	addTimer(2, 1000, 0);
+	return true;
+}
+
 bool CEndSequenceControl::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("TODO: CEndSequenceControl::handleEvent");
+	petHide();
+	disableMouse();
+	addTimer(1, 1000, 0);
+	playGlobalSound("a#15.wav", -1, true, true, 0);
+	return true;
+}
+
+bool CEndSequenceControl::EnterViewMsg(CEnterViewMsg *msg) {
+	movieSetAudioTiming(true);
+	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	return true;
 }
 

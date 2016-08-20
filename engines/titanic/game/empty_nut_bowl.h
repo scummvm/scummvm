@@ -28,11 +28,16 @@
 namespace Titanic {
 
 class CEmptyNutBowl : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CEmptyNutBowl() : CGameObject(), _value(1) {}
+	CEmptyNutBowl() : CGameObject(), _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

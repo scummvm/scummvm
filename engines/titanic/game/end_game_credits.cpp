@@ -24,23 +24,64 @@
 
 namespace Titanic {
 
-CEndGameCredits::CEndGameCredits() : CGameObject(), _fieldBC(0) {
+BEGIN_MESSAGE_MAP(CEndGameCredits, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(TimerMsg)
+END_MESSAGE_MAP()
+
+CEndGameCredits::CEndGameCredits() : CGameObject(), _flag(0),
+	_frameRange(0, 28) {
 }
 
 void CEndGameCredits::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writePoint(_pos1, indent);
+	file->writeNumberLine(_flag, indent);
+	file->writePoint(_frameRange, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CEndGameCredits::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_pos1 = file->readPoint();
+	_flag = file->readNumber();
+	_frameRange = file->readPoint();
 
 	CGameObject::load(file);
+}
+
+bool CEndGameCredits::ActMsg(CActMsg *msg) {
+	if (!_flag) {
+		if (msg->_action == "ExplodeCredits")
+			_frameRange = Point(0, 27);
+		if (msg->_action == "Credits")
+			_frameRange = Point(28, 46);
+
+		changeView("TheEnd.Node 4.N");
+	}
+
+	return true;
+}
+
+bool CEndGameCredits::EnterViewMsg(CEnterViewMsg *msg) {
+	playMovie(_frameRange.x, _frameRange.y, MOVIE_NOTIFY_OBJECT);
+	return true;
+}
+
+bool CEndGameCredits::MovieEndMsg(CMovieEndMsg *msg) {
+	if (getMovieFrame() == 46) {
+		CVisibleMsg visibleMsg;
+		visibleMsg.execute("CreditsBackdrop");
+	}
+
+	return true;
+}
+
+bool CEndGameCredits::TimerMsg(CTimerMsg *msg) {
+	CActMsg actMsg;
+	actMsg.execute("EndCreditsText");
+	return true;
 }
 
 } // End of namespace Titanic
