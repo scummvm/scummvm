@@ -154,7 +154,7 @@ bool DialogMan::f426_isMessageOnTwoLines(char* str, char* part1, char* part2) {
 
 	strcpy(part1, str);
 	uint16 splitPosition = strLength >> 1;
-	while ((part1[splitPosition] != ' ') && (splitPosition < strLength))
+	while ((splitPosition < strLength) && (part1[splitPosition] != ' '))
 		splitPosition++;
 
 	part1[splitPosition] = '\0';

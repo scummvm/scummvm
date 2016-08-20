@@ -721,7 +721,6 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 	if (!curChampion->_currHealth)
 		return 0;
 
-	bool skipScaling = false;
 	if (attackType != k0_attackType_NORMAL) {
 		uint16 defense = 0;
 		uint16 woundCount = 0;
@@ -734,6 +733,7 @@ int16 ChampionMan::f321_addPendingDamageAndWounds_getDamage(int16 champIndex, in
 		if (woundCount)
 			defense /= woundCount;
 
+		bool skipScaling = false;
 		switch (attackType) {
 		case k6_attackType_PSYCHIC:
 		{
