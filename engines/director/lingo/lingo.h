@@ -288,6 +288,7 @@ public:
 	static void c_gotonext();
 	static void c_gotoprevious();
 	static void c_global();
+	static void c_instance();
 
 	static void c_play();
 	static void c_playdone();

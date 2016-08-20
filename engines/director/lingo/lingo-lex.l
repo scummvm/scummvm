@@ -87,6 +87,7 @@ whitespace [\t ]
 (?i:global)			{ count(); return tGLOBAL; }
 (?i:go[\t ]+to)		{ count(); return tGO; }
 (?i:go)				{ count(); return tGO; }
+(?i:instance)		{ count(); return tINSTANCE; }
 (?i:intersects)		{ count(); return tINTERSECTS; }
 (?i:into)			{ count(); return tINTO; }
 (?i:loop)			{ count(); return tLOOP; }

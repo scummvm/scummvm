@@ -85,7 +85,7 @@ void yyerror(char *s) {
 %token<s> ID STRING HANDLER
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
-%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL
+%token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
 %token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
@@ -412,6 +412,7 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist
+	| tINSTANCE instancelist
 	| BLTINONEARG expr		{
 		g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
 		delete $1; }
@@ -428,6 +429,10 @@ func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 
 globallist: ID				{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($1->c_str()); delete $1; }
 	| globallist ',' ID		{ g_lingo->code1(g_lingo->c_global); g_lingo->codeString($3->c_str()); delete $3; }
+	;
+
+instancelist: ID				{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($1->c_str()); delete $1; }
+	| instancelist ',' ID		{ g_lingo->code1(g_lingo->c_instance); g_lingo->codeString($3->c_str()); delete $3; }
 	;
 
 // go {to} {frame} whichFrame {of movie whichMovie}
