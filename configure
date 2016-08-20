@@ -2814,6 +2814,7 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_keymapper=yes
 			_vorbis=no
+			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
