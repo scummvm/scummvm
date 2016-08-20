@@ -88,7 +88,7 @@ bool CChevPanel::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 }
 
 bool CChevPanel::SetChevPanelBitMsg(CSetChevPanelBitMsg *msg) {
-	_chevCode = _chevCode & ~(1 << msg->_value1) | (msg->_value2 << msg->_value1);
+	_chevCode = (_chevCode & ~(1 << msg->_value1)) | (msg->_value2 << msg->_value1);
 	return true;
 }
 

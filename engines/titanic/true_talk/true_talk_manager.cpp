@@ -114,7 +114,7 @@ void CTrueTalkManager::loadStatics(SimpleFile *file) {
 	_v9 = file->readNumber();
 	_v10 = file->readNumber() != 0;
 
-	for (int idx = count; count > 10; --idx)
+	for (int idx = count; idx > 10; --idx)
 		file->readNumber();
 
 	int count2 = file->readNumber();

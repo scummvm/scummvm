@@ -70,7 +70,7 @@ bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 	int index = (msg->_floorNum + 4) % 10;
 	_chevCode &= ~0xFF00;
 	
-	int val;
+	int val = 0;
 	switch (section) {
 	case 0:
 		val = 144;
@@ -101,7 +101,7 @@ bool CChevCode::SetChevRoomBits(CSetChevRoomBits *msg) {
 }
 
 bool CChevCode::GetChevLiftNum(CGetChevLiftNum *msg) {
-	msg->_liftNum = (_chevCode >> 18) & 3 + 1;
+	msg->_liftNum = ((_chevCode >> 18) & 3) + 1;
 	return true;
 }
 
@@ -112,7 +112,7 @@ bool CChevCode::GetChevClassNum(CGetChevClassNum *msg) {
 
 bool CChevCode::GetChevFloorNum(CGetChevFloorNum *msg) {
 	int val1 = (_chevCode >> 8) & 0xF;
-	int val2 = (_chevCode >> 12) & 0xF - 9;
+	int val2 = ((_chevCode >> 12) & 0xF) - 9;
 
 	switch (val2) {
 	case 0:
@@ -148,7 +148,7 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 	CGetChevRoomNum getRoomMsg;
 	CString roomName;
 	int classNum = 0;
-	uint bits;
+	uint bits = 0;
 
 	if (_chevCode & 1) {
 		switch (_chevCode) {
@@ -252,7 +252,6 @@ bool CChevCode::CheckChevCode(CCheckChevCode *msg) {
 				break;
 			}
 		}
-		// TODO
 	}
 
 	msg->_classNum = classNum;
