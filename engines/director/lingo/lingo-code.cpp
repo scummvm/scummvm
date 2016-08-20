@@ -73,6 +73,7 @@ static struct FuncDescr {
 	{ Lingo::c_sub,			"c_sub",		"" },
 	{ Lingo::c_mul,			"c_mul",		"" },
 	{ Lingo::c_div,			"c_div",		"" },
+	{ Lingo::c_mod,			"c_mod",		"" },
 	{ Lingo::c_negate,		"c_negate",		"" },
 	{ Lingo::c_ampersand,	"c_ampersand",	"" },
 	{ Lingo::c_concat,		"c_concat",		"" },
@@ -411,6 +412,21 @@ void Lingo::c_div() {
 	} else {
 		d1.u.i /= d2.u.i;
 	}
+	g_lingo->push(d1);
+}
+
+void Lingo::c_mod() {
+	Datum d2 = g_lingo->pop();
+	d2.toInt();
+
+	if (d2.u.i == 0)
+		error("division by zero");
+
+	Datum d1 = g_lingo->pop();
+	d1.toInt();
+
+	d1.u.i %= d2.u.i;
+
 	g_lingo->push(d1);
 }
 

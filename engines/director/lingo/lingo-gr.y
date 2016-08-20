@@ -86,7 +86,7 @@ void yyerror(char *s) {
 %token tDOWN tELSE tNLELSIF tEND tEXIT tFRAME tGLOBAL tGO tIF tINTO tLOOP tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tNLELSE tFACTORY tMETHOD tOPEN tPLAY tDONE tPLAYACCEL tINSTANCE
-%token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT
+%token tGE tLE tGT tLT tEQ tNEQ tAND tOR tNOT tMOD
 %token tCONCAT tCONTAINS tSTARTS
 %token tSPRITE tINTERSECTS tWITHIN
 
@@ -94,8 +94,10 @@ void yyerror(char *s) {
 %type<narg> argdef arglist
 
 %right '='
+%left tLT tLE tGT tGE tNEQ tCONTAINS tSTARTS
+%left '&'
 %left '+' '-'
-%left '*' '/' '%'
+%left '*' '/' '%' tAND tOR tMOD
 %right UNARY
 
 %%
@@ -386,6 +388,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 	| expr '-' expr				{ g_lingo->code1(g_lingo->c_sub); }
 	| expr '*' expr				{ g_lingo->code1(g_lingo->c_mul); }
 	| expr '/' expr				{ g_lingo->code1(g_lingo->c_div); }
+	| expr tMOD expr			{ g_lingo->code1(g_lingo->c_mod); }
 	| expr '>' expr				{ g_lingo->code1(g_lingo->c_gt); }
 	| expr '<' expr				{ g_lingo->code1(g_lingo->c_lt); }
 	| expr tNEQ expr			{ g_lingo->code1(g_lingo->c_neq); }

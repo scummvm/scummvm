@@ -101,12 +101,13 @@
      tAND = 317,
      tOR = 318,
      tNOT = 319,
-     tCONCAT = 320,
-     tCONTAINS = 321,
-     tSTARTS = 322,
-     tSPRITE = 323,
-     tINTERSECTS = 324,
-     tWITHIN = 325
+     tMOD = 320,
+     tCONCAT = 321,
+     tCONTAINS = 322,
+     tSTARTS = 323,
+     tSPRITE = 324,
+     tINTERSECTS = 325,
+     tWITHIN = 326
    };
 #endif
 /* Tokens.  */
@@ -172,12 +173,13 @@
 #define tAND 317
 #define tOR 318
 #define tNOT 319
-#define tCONCAT 320
-#define tCONTAINS 321
-#define tSTARTS 322
-#define tSPRITE 323
-#define tINTERSECTS 324
-#define tWITHIN 325
+#define tMOD 320
+#define tCONCAT 321
+#define tCONTAINS 322
+#define tSTARTS 323
+#define tSPRITE 324
+#define tINTERSECTS 325
+#define tWITHIN 326
 
 
 
@@ -195,7 +197,7 @@ typedef union YYSTYPE
 	Common::Array<double> *arr;
 }
 /* Line 1529 of yacc.c.  */
-#line 199 "engines/director/lingo/lingo-gr.hpp"
+#line 201 "engines/director/lingo/lingo-gr.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
