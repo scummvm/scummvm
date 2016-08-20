@@ -27,21 +27,30 @@ namespace Director {
 class Sprite;
 
 TheEntity entities[] = {
+	{ kTheBeepOn,			"beepOn",			false },	// D2 property
+	{ kTheButtonStyle,		"buttonStyle",		false },	// D2 p
 	{ kTheCast,				"cast",				true  },
+	{ kTheCenterStage,		"centerStage",		false },	// D2 p
+	{ kTheCheckBoxAccess,	"checkBoxAccess",	false },	// D2 p
+	{ kTheCheckBoxType,		"checkBoxType",		false },	// D2 p
 	{ kTheClickOn,			"clickOn",			false },	// D2 function
-	{ kTheColorDepth,		"colorDepth",		false },
+	{ kTheColorDepth,		"colorDepth",		false },	// D2 p
 	{ kTheColorQD,			"colorQD",			false },	// D2 f
 	{ kTheCommandDown,		"commandDown",		false },	// D2 f
 	{ kTheControlDown,		"controlDown",		false },	// D2 f
 	{ kTheDoubleClick,		"doubleClick",		false },	// D2 f
-	{ kTheExitLock,			"exitlock",			false },
+	{ kTheExitLock,			"exitLock",			false },	// D2 p
+	{ kTheFixStageSize,		"fixStageSize",		false },	// D2 p
 	{ kTheFloatPrecision,	"floatPrecision",	false },
 	{ kTheFrame,			"frame",			false },	// D2 f
 	{ kTheFreeBlock,		"freeBlock",		false },	// D2 f
 	{ kTheFreeBytes,		"freeBytes",		false },	// D2 f
+	{ kTheFullColorPermit,	"fullColorPermit",	false },	// D2 p
+	{ kTheImageDirect,		"imageDirect",		false },	// D2 p
 	{ kTheItemDelimiter,	"itemDelimiter",	false },
 	{ kTheKey,				"key",				false },	// D2 f
 	{ kTheKeyCode,			"keyCode",			false },	// D2 f
+	{ kTheKeyDownScript,	"keyDownScript",	false },	// D2 p
 	{ kTheLastClick,		"lastClick",		false },	// D2 f
 	{ kTheLastEvent,		"lastEvent",		false },	// D2 f
 	{ kTheLastFrame,		"lastFrame",		false },
@@ -54,17 +63,17 @@ TheEntity entities[] = {
 	{ kTheMenuItem,			"menuitem",			true  },
 	{ kTheMenuItems,		"menuitems",		false },
 	{ kTheMouseDown,		"mouseDown",		false },	// D2 f
-	{ kTheMouseDownScript,  "mouseDownScript",	false },
+	{ kTheMouseDownScript,  "mouseDownScript",	false },	// D2 p
 	{ kTheMouseH,			"mouseH",			false },	// D2 f
 	{ kTheMouseUp,			"mouseUp",			false },	// D2 f
-	{ kTheMouseUpScript,  	"mouseUpScript",	false },
+	{ kTheMouseUpScript,  	"mouseUpScript",	false },	// D2 p
 	{ kTheMouseV,			"mouseV",			false },	// D2 f
 	{ kTheMovie,			"movie",			false },	// D2 f
 	{ kTheMultiSound,		"multiSound",		false },
 	{ kTheOptionDown,		"optionDown",		false },	// D2 f
 	{ kThePathName,			"pathName",			false },	// D2 f
 	{ kThePauseState,		"pauseState",		false },	// D2 f
-	{ kThePerFrameHook,		"perframehook",		false },
+	{ kThePerFrameHook,		"perFrameHook",		false },	// D2 p
 	{ kThePreloadEventAbort,"preloadEventAbort",false },
 	{ kTheResult,			"result",			false },	// D2 f
 	{ kTheRightMouseDown,	"rightMouseDown",	false },
@@ -72,6 +81,8 @@ TheEntity entities[] = {
 	{ kTheRomanLingo,		"romanLingo",		false },
 	{ kTheSelection,		"selection",		false },	// D2 f
 	{ kTheShiftDown,		"shiftDown",		false },	// D2 f
+	{ kTheSoundEnabled,		"soundEnabled",		false },	// D2 p
+	{ kTheSoundLevel,		"soundLevel",		false },	// D2 p
 	{ kTheSprite,			"sprite",			true  },
 	{ kTheSqrt,				"sqrt",				false },	// D2 f
 	{ kTheStage,			"stage",			false },
@@ -80,9 +91,15 @@ TheEntity entities[] = {
 	{ kTheStageRight,		"stageRight",		false },	// D2 f
 	{ kTheStageTop,			"stageTop",			false },	// D2 f
 	{ kTheStillDown,		"stillDown",		false },	// D2 f
+	{ kTheSwitchColorDepth,	"switchColorDepth",	false },	// D2 p
 	{ kTheTicks,			"ticks",			false },	// D2 f
-	{ kTheTimeoutLength,	"timeoutlength",	false },
-	{ kTheTimer,			"timer",			false },
+	{ kTheTimeoutKeydown,	"timeoutKeydown",	false },	// D2 p
+	{ kTheTimeoutLapsed,	"timeoutLapsed",	false },	// D2 p
+	{ kTheTimeoutLength,	"timeoutLength",	false },	// D2 p
+	{ kTheTimeoutMouse,		"timeoutMouse",		false },	// D2 p
+	{ kTheTimeoutPlay,		"timeoutPlay",		false },	// D2 p
+	{ kTheTimeoutScript,	"timeoutScript",	false },	// D2 p
+	{ kTheTimer,			"timer",			false },	// D2 p
 	{ kTheWindow,			"window",			false },
 	{ kTheNOEntity, NULL, false }
 };
