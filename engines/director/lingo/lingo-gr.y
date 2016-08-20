@@ -408,6 +408,7 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 func: tPUT expr				{ g_lingo->code1(g_lingo->c_printtop); }
 	| gotofunc
 	| playfunc
+	| tEXIT tREPEAT			{ g_lingo->code1(g_lingo->c_exitRepeat); }
 	| tEXIT					{ g_lingo->codeConst(0); // Push fake value on stack
 							  g_lingo->code1(g_lingo->c_procret); }
 	| tGLOBAL globallist

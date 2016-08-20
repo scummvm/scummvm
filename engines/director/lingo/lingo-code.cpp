@@ -91,6 +91,7 @@ static struct FuncDescr {
 	{ Lingo::c_le,			"c_le",			"" },
 	{ Lingo::c_repeatwhilecode,"c_repeatwhilecode","oo" },
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
+	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
@@ -644,6 +645,11 @@ void Lingo::c_repeatwhilecode(void) {
 		if (g_lingo->_returning)
 			break;
 
+		if (g_lingo->_exitRepeat) {
+			g_lingo->_exitRepeat = false;
+			break;
+		}
+
 		g_lingo->execute(savepc + 2);	/* condition */
 		d = g_lingo->pop();
 		d.toInt();
@@ -680,6 +686,11 @@ void Lingo::c_repeatwithcode(void) {
 		if (g_lingo->_returning)
 			break;
 
+		if (g_lingo->_exitRepeat) {
+			g_lingo->_exitRepeat = false;
+			break;
+		}
+
 		counter->u.i += inc;
 		g_lingo->execute(finish);	/* condition */
 		d = g_lingo->pop();
@@ -691,6 +702,10 @@ void Lingo::c_repeatwithcode(void) {
 
 	if (!g_lingo->_returning)
 		g_lingo->_pc = end; /* next stmt */
+}
+
+void Lingo::c_exitRepeat(void) {
+	g_lingo->_exitRepeat = true;
 }
 
 void Lingo::c_ifcode() {

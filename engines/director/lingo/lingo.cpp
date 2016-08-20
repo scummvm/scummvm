@@ -104,6 +104,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
+	_exitRepeat = false;
+
 	warning("Lingo Inited");
 }
 

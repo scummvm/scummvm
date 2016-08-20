@@ -268,6 +268,7 @@ public:
 	static void c_repeatwithcode();
 	static void c_ifcode();
 	static void c_whencode();
+	static void c_exitRepeat();
 	static void c_eq();
 	static void c_neq();
 	static void c_gt();
@@ -424,6 +425,8 @@ public:
 
 	bool _inFactory;
 	Common::String _currentFactory;
+
+	bool _exitRepeat;
 
 private:
 	int parse(const char *code);
