@@ -265,19 +265,19 @@ void CTreeItem::attach(CTreeItem *item) {
 		item->_parent->_firstChild = this;
 }
 
-CNamedItem *CTreeItem::findByName(const CString &name, int maxLen) {
+CNamedItem *CTreeItem::findByName(const CString &name, bool subMatch) {
 	CString nameLower = name;
 	nameLower.toLowercase();
 
 	for (CTreeItem *treeItem = this; treeItem; treeItem = treeItem->scan(this)) {
-		CString nodeName = treeItem->getName();
-		nodeName.toLowercase();
+		CString itemName = treeItem->getName();
+		itemName.toLowercase();
 
-		if (maxLen) {
-			if (nodeName.left(maxLen).compareTo(nameLower))
+		if (subMatch) {
+			if (itemName.left(name.size()).compareTo(nameLower))
 				return dynamic_cast<CNamedItem *>(treeItem);
 		} else {
-			if (!nodeName.compareTo(nameLower))
+			if (!itemName.compareTo(nameLower))
 				return dynamic_cast<CNamedItem *>(treeItem);
 		}
 	}

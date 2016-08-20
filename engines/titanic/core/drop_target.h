@@ -28,21 +28,27 @@
 namespace Titanic {
 
 class CDropTarget : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool DropObjectMsg(CDropObjectMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
 private:
 	Point _pos1;
-	int _fieldC4;
-	CString _string1;
-	int _fieldD4;
-	CString _string2;
-	int _fieldE4;
-	CString _string3;
+	int _itemFrame;
+	CString _itemMatchName;
+	int _itemMatchSize;
+	CString _soundName;
+	bool _showItem;
+	CString _itemName;
 	int _fieldF4;
-	int _fieldF8;
-	int _fieldFC;
-	CString _string4;
-	int _field10C;
-	int _field110;
-	int _field114;
+	int _dropFrame;
+	int _dragFrame;
+	CString _clipName;
+	CursorId _dragCursorId;
+	CursorId _dropCursorId;
+	uint _clipFlags;
 public:
 	CLASSDEF;
 	CDropTarget();

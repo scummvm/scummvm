@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDrawer, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 CDrawer::CDrawer() : CSGTStateRoom(), _fieldF4(0) {
 }
 
@@ -37,6 +43,41 @@ void CDrawer::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldF4 = file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CDrawer::TurnOn(CTurnOn *msg) {
+	if (_statics->_v7 == "Closed" && _statics->_v6 == "Open") {
+		_statics->_v7 = "Open";
+		_fieldE0 = false;
+		_startFrame = 50;
+		_endFrame = 75;
+		setVisible(true);
+		_statics->_v7 = "Open";
+		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playSound("b#10.wav");
+	}
+
+	return true;
+}
+
+bool CDrawer::TurnOff(CTurnOff *msg) {
+	if (_statics->_v7 == "Open") {
+		_statics->_v7 = "Closed";
+		_startFrame = 75;
+		_endFrame = 100;
+		_fieldE0 = true;
+		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playSound("b#10.wav");
+	}
+
+	return true;
+}
+
+bool CDrawer::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_statics->_v7 == "Closed")
+		setVisible(false);
+
+	return true;
 }
 
 } // End of namespace Titanic

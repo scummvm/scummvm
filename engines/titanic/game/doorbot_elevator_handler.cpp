@@ -24,24 +24,32 @@
 
 namespace Titanic {
 
-int CDoorbotElevatorHandler::_v1;
+BEGIN_MESSAGE_MAP(CDoorbotElevatorHandler, CGameObject)
+	ON_MESSAGE(EnterNodeMsg)
+END_MESSAGE_MAP()
 
 void CDoorbotElevatorHandler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_called, indent);
 	CGameObject::save(file, indent);
 }
 
 void CDoorbotElevatorHandler::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
-	_v1 = file->readNumber();
+	_called = file->readNumber();
 	CGameObject::load(file);
 }
 
 bool CDoorbotElevatorHandler::EnterNodeMsg(CEnterNodeMsg *msg) {
-	warning("CDoorbotElevatorHandler::handleEvent");
+	if (!_called) {
+		CDoorbotNeededInElevatorMsg elevatorMsg;
+		elevatorMsg._value = 0;
+		elevatorMsg.execute("Doorbot");
+		_called = true;
+	}
+
 	return true;
 }
 

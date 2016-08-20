@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CDoorbotHomeHandler, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 CDoorbotHomeHandler::CDoorbotHomeHandler() {
 }
 
@@ -35,6 +39,12 @@ void CDoorbotHomeHandler::save(SimpleFile *file, int indent) {
 void CDoorbotHomeHandler::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CDoorbotHomeHandler::EnterViewMsg(CEnterViewMsg *msg) {
+	CDoorbotNeededInHomeMsg neededMsg;
+	neededMsg.execute("Doorbot");
+	return true;
 }
 
 } // End of namespace Titanic

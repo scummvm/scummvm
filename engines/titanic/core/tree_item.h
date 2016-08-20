@@ -253,8 +253,11 @@ public:
 
 	/**
 	 * Finds a tree item by name
+	 * @param name		Name to find
+	 * @param subMatch	If false, does an exact name match.
+	 *		If false, matches any item that starts with the given name
 	 */
-	CNamedItem *findByName(const CString &name, int maxLen = 0);
+	CNamedItem *findByName(const CString &name, bool subMatch = false);
 };
 
 } // End of namespace Titanic

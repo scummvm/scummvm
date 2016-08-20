@@ -28,14 +28,17 @@
 namespace Titanic {
 
 class CEjectPhonographButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool CylinderHolderReadyMsg(CCylinderHolderReadyMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	CString _string3;
-	CString _string4;
+	bool _ejected;
+	bool _readyFlag;
+	CString _soundName;
+	CString _readySoundName;
 public:
 	CLASSDEF;
-	CEjectPhonographButton() : CBackground(), _fieldE0(0), _fieldE4(0) {}
+	CEjectPhonographButton() : CBackground(), _ejected(false), _readyFlag(false) {}
 
 	/**
 	 * Save the data for the class to file

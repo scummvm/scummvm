@@ -21,8 +21,15 @@
  */
 
 #include "titanic/game/ear_sweet_bowl.h"
+#include "titanic/core/room_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CEarSweetBowl, CSweetBowl)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+END_MESSAGE_MAP()
 
 void CEarSweetBowl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +39,32 @@ void CEarSweetBowl::save(SimpleFile *file, int indent) {
 void CEarSweetBowl::load(SimpleFile *file) {
 	file->readNumber();
 	CSweetBowl::load(file);
+}
+
+bool CEarSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
+	CIsEarBowlPuzzleDone doneMsg;
+	doneMsg.execute(findRoom());
+
+	if (!doneMsg._value) {
+		CPetControl *pet = getPetControl();
+		if (pet)
+			pet->hasRoomFlags();
+
+		CIsParrotPresentMsg parrotMsg;
+		parrotMsg.execute(findRoom());
+
+		if (parrotMsg._value) {
+			CNutPuzzleMsg nutMsg("Jiggle");
+			nutMsg.execute("NutsParrotPlayer");
+		}
+	}
+
+	return true;
+}
+
+bool CEarSweetBowl::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic

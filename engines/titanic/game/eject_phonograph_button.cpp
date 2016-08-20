@@ -24,24 +24,57 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CEjectPhonographButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(CylinderHolderReadyMsg)
+END_MESSAGE_MAP()
+
 void CEjectPhonographButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
+	file->writeNumberLine(_ejected, indent);
+	file->writeNumberLine(_readyFlag, indent);
+	file->writeQuotedLine(_soundName, indent);
+	file->writeQuotedLine(_readySoundName, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CEjectPhonographButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_string3 = file->readString();
-	_string4 = file->readString();
+	_ejected = file->readNumber();
+	_readyFlag = file->readNumber();
+	_soundName = file->readString();
+	_readySoundName = file->readString();
 
 	CBackground::load(file);
+}
+
+bool CEjectPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CQueryPhonographState queryMsg;
+	queryMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
+
+	if (!_ejected && !queryMsg._value) {
+		loadFrame(1);
+		playSound(_soundName);
+		_readyFlag = true;
+
+		CEjectCylinderMsg ejectMsg;
+		ejectMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
+		_ejected = true;
+	}
+
+	return true;
+}
+
+bool CEjectPhonographButton::CylinderHolderReadyMsg(CCylinderHolderReadyMsg *msg) {
+	if (_readyFlag) {
+		loadFrame(0);
+		playSound(_readySoundName);
+		_readyFlag = 0;
+	}
+
+	_ejected = false;
+	return true;
 }
 
 } // End of namespace Titanic
