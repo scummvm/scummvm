@@ -926,7 +926,7 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 		f362_commandHighlightBoxEnable(291, 318, 125, 145);
 
 	uint16 partySquare = _vm->_dungeonMan->f151_getSquare(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY).toByte();
-	if (Square(partySquare).getType() == k3_ElementTypeStairs) {
+	if (Square(partySquare).getType() == k3_StairsElemType) {
 		f364_commandTakeStairs(getFlag(partySquare, k0x0004_StairsUp));
 		return;
 	}
@@ -971,7 +971,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	int16 partyMapX = _vm->_dungeonMan->_g306_partyMapX;
 	int16 partyMapY = _vm->_dungeonMan->_g307_partyMapY;
 	uint16 AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(partyMapX, partyMapY).toByte();
-	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_ElementTypeStairs);
+	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_StairsElemType);
 	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
 		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
@@ -1006,8 +1006,11 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 
 			if (damage)
 				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
-		} else if (isMovementBlocked = (_vm->_groupMan->f175_groupGetThing(partyMapX, partyMapY) != Thing::_endOfList))
-			_vm->_groupMan->f209_processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+		} else {
+			isMovementBlocked = (_vm->_groupMan->f175_groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
+			if (isMovementBlocked)
+				_vm->_groupMan->f209_processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+		}
 	}
 
 	// DEBUG CODE: check for Console flag
@@ -1043,7 +1046,7 @@ bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int
 
 	bool objectThrownFl;
 	if (posX <= 111) {
-		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_ElementTypeDoorFront) {
 			if (posX < 64)
 				return false;
 		} else if (posX < 32)
@@ -1052,7 +1055,7 @@ bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int
 		// Strangerke: Only present in CSB2.1... But it fixes a bug so we keep it
 		objectThrownFl = _vm->_championMan->f329_isLeaderHandObjectThrown(k0_sideLeft);
 	} else {
-		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+		if (_vm->_dungeonMan->_g285_squareAheadElement == k17_ElementTypeDoorFront) {
 			if (posX > 163)
 				return false;
 		} else if (posX > 191)
@@ -1137,7 +1140,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 		Box(40, 111, 122, 147)    /* Back left */
 	};
 
-	if (_vm->_dungeonMan->_g285_squareAheadElement == k17_DoorFrontElemType) {
+	if (_vm->_dungeonMan->_g285_squareAheadElement == k17_ElementTypeDoorFront) {
 		if (_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone)
 			return;
 
@@ -1522,7 +1525,8 @@ void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint
 				championIndex = 2;
 			else if (posX <= 244)
 				championIndex = 0;
-
+			break;
+		default:
 			break;
 		}
 
@@ -1620,6 +1624,8 @@ void EventManager::f541_waitForMouseOrKeyActivity() {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 				return;
+			default:
+				break;
 			}
 		}
 		_vm->f22_delay(1);
