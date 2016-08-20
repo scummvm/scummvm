@@ -105,34 +105,37 @@ TheEntity entities[] = {
 };
 
 TheEntityField fields[] = {
-	{ kTheSprite,	"backColor",	kTheBackColor },
+	{ kTheSprite,	"backColor",	kTheBackColor },	// D2 p
 	{ kTheSprite,	"blend",		kTheBlend },
-	{ kTheSprite,	"bottom",		kTheBottom },
-	{ kTheSprite,	"castnum",		kTheCastNum },
-	{ kTheSprite,	"constraint",	kTheConstraint },
-	{ kTheSprite,	"cursor",		kTheCursor },
+	{ kTheSprite,	"bottom",		kTheBottom },		// D2 p
+	{ kTheSprite,	"castNum",		kTheCastNum },		// D2 p
+	{ kTheSprite,	"constraint",	kTheConstraint },	// D2 p
+	{ kTheSprite,	"cursor",		kTheCursor },		// D2 p
 	{ kTheSprite,	"editableText", kTheEditableText },
-	{ kTheSprite,	"foreColor",	kTheForeColor },
-	{ kTheSprite,	"height",		kTheHeight },
-	{ kTheSprite,	"ink",			kTheInk },
-	{ kTheSprite,	"left",			kTheLeft },
-	{ kTheSprite,	"lineSize",		kTheLineSize },
-	{ kTheSprite,	"loch",			kTheLocH },
-	{ kTheSprite,	"locv",			kTheLocV },
+	{ kTheSprite,	"foreColor",	kTheForeColor },	// D2 p
+	{ kTheSprite,	"height",		kTheHeight },		// D2 p
+	{ kTheSprite,	"immediate",	kTheImmediate },	// D2 p
+	{ kTheSprite,	"ink",			kTheInk },			// D2 p
+	{ kTheSprite,	"left",			kTheLeft },			// D2 p
+	{ kTheSprite,	"lineSize",		kTheLineSize },		// D2 p
+	{ kTheSprite,	"locH",			kTheLocH },			// D2 p
+	{ kTheSprite,	"locV",			kTheLocV },			// D2 p
 	{ kTheSprite,	"moveable",		kTheMoveable },
 	{ kTheSprite,	"movieRate",	kTheMovieRate },
 	{ kTheSprite,	"movieTime",	kTheMovieTime },
-	{ kTheSprite,	"right",		kTheRight },
+	{ kTheSprite,	"pattern",		kThePattern },		// D2 p
+	{ kTheSprite,	"puppet",		kThePuppet },		// D2 p
+	{ kTheSprite,	"right",		kTheRight },		// D2 p
 	{ kTheSprite,	"scriptNum",	kTheScriptNum },
 	{ kTheSprite,	"startTime",	kTheStartTime },
-	{ kTheSprite,	"stretch",		kTheStrech },
+	{ kTheSprite,	"stretch",		kTheStrech },		// D2 p
 	{ kTheSprite,	"stopTime",		kTheStopTime },
-	{ kTheSprite,	"top",			kTheTop },
+	{ kTheSprite,	"top",			kTheTop },			// D2 p
 	{ kTheSprite,	"trails",		kTheTrails },
-	{ kTheSprite,	"type",			kTheType },
+	{ kTheSprite,	"type",			kTheType },			// D2 p
 	{ kTheSprite,	"visible",		kTheVisible },
 	{ kTheSprite,	"volume",		kTheVolume },
-	{ kTheSprite,	"width",		kTheWidth },
+	{ kTheSprite,	"width",		kTheWidth },		// D2 p
 
 	// Common cast fields
 	{ kTheCast,		"castType",		kTheCastType },
