@@ -109,7 +109,7 @@ Obj *WageEngine::getObjByOffset(int offset, int objBaseOffset) const {
 		objIndex = (offset - objBaseOffset) / CHR_SIZE;
 	}
 
-	if (objIndex >= 0 && objIndex < _world->_orderedObjs.size()) {
+	if (objIndex >= 0 && (uint)objIndex < _world->_orderedObjs.size()) {
 		return _world->_orderedObjs[objIndex];
 	}
 
@@ -133,7 +133,7 @@ Chr *WageEngine::getChrByOffset(int offset, int chrBaseOffset) const {
 		chrIndex = (offset - chrBaseOffset) / CHR_SIZE;
 	}
 
-	if (chrIndex >= 0 && chrIndex < _world->_orderedChrs.size()) {
+	if (chrIndex >= 0 && (uint)chrIndex < _world->_orderedChrs.size()) {
 		return _world->_orderedChrs[chrIndex];
 	}
 
@@ -160,7 +160,7 @@ Scene *WageEngine::getSceneByOffset(int offset) const {
 			sceneIndex = 1 + (offset - SCENES_INDEX) / SCENE_SIZE;
 	}
 
-	if (sceneIndex >= 0 && sceneIndex < _world->_orderedScenes.size()) {
+	if (sceneIndex >= 0 && (uint)sceneIndex < _world->_orderedScenes.size()) {
 		if (sceneIndex == 0) return _world->_storageScene;
 		return _world->_orderedScenes[sceneIndex];
 	}
@@ -224,10 +224,10 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	out->writeSint32LE(GET_HEX_OBJ_OFFSET(player->_armor[Chr::MAGIC_ARMOR])); //sprtArmIndex
 
 	// TODO:
-	out->writeSint16LE(0xffff);	// ???? - always FFFF
-	out->writeSint16LE(0xffff);	// ???? - always FFFF
-	out->writeSint16LE(0xffff);	// ???? - always FFFF
-	out->writeSint16LE(0xffff);	// ???? - always FFFF
+	out->writeUint16LE(0xffff);	// ???? - always FFFF
+	out->writeUint16LE(0xffff);	// ???? - always FFFF
+	out->writeUint16LE(0xffff);	// ???? - always FFFF
+	out->writeUint16LE(0xffff);	// ???? - always FFFF
 
 	// did a character just escape?
 	out->writeSint32LE(GET_HEX_CHR_OFFSET(_running)); //getRunCharHexOffset() == getHexOffsetForChr(running)
@@ -260,7 +260,7 @@ int WageEngine::saveGame(const Common::String &fileName, const Common::String &d
 	// write user vars
 	for (uint32 i = 0; i < 26 * 9; ++i)
 		out->writeSint16LE(playerContext._userVariables[i]);
-	
+
 	// write updated info for all scenes
 	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
 	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
@@ -520,12 +520,12 @@ int WageEngine::loadGame(int slotId) {
 
 	// set all user variables
 	for (uint32 i = 0; i < 26 * 9; ++i) {
-		playerContext._userVariables[i] = data->readSint16LE();	
+		playerContext._userVariables[i] = data->readSint16LE();
 	}
 
 	// update all scene stats
 	Common::Array<Scene *> &orderedScenes = _world->_orderedScenes;
-	if (numScenes != orderedScenes.size()) {
+	if ((uint)numScenes != orderedScenes.size()) {
 		warning("scenes number in file (%d) differs from the one in world (%d)", numScenes, orderedScenes.size());
 	}
 	for (uint32 i = 0; i < orderedScenes.size(); ++i) {
@@ -559,7 +559,7 @@ int WageEngine::loadGame(int slotId) {
 
 	// update all char locations and stats
 	Common::Array<Chr *> &orderedChrs = _world->_orderedChrs;
-	if (numChars != orderedChrs.size()) {
+	if ((uint)numChars != orderedChrs.size()) {
 		warning("characters number in file (%d) differs from the one in world (%d)", numChars, orderedChrs.size());
 	}
 	for (uint32 i = 0; i < orderedChrs.size(); ++i) {
@@ -613,7 +613,7 @@ int WageEngine::loadGame(int slotId) {
 
 	// update all object locations and stats
 	Common::Array<Obj *> &orderedObjs = _world->_orderedObjs;
-	if (numObjs != orderedObjs.size()) {
+	if ((uint)numObjs != orderedObjs.size()) {
 		warning("objects number in file (%d) differs from the one in world (%d)", numObjs, orderedObjs.size());
 	}
 	for (uint32 i = 0; i < orderedObjs.size(); ++i) {
@@ -727,7 +727,7 @@ Common::String WageEngine::getSavegameFilename(int16 slotId) const {
 	return saveLoadSlot;
 }
 
-Common::Error WageEngine::loadGameState(int slot) {	
+Common::Error WageEngine::loadGameState(int slot) {
 	if (loadGame(slot) == 0)
 		return Common::kNoError;
 	else
