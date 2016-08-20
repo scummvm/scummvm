@@ -461,7 +461,7 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt
 	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
-	cp /usr/local/bin/SDL.dll $(WIN32PATH)
+	cp /usr/local/bin/SDL2.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)

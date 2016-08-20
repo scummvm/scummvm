@@ -105,7 +105,7 @@ Source: doc/de/LIESMICH.txt; DestDir: {app}; Flags: ignoreversion isreadme; Lang
 Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Languages: se
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
-Source: SDL.dll; DestDir: {app}; Flags: replacesameversion
+Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
 ;Mirgration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
