@@ -3740,6 +3740,7 @@ byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
 void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {}
 
 void DisplayMan::f480_releaseBlock(uint16 index) {
+	index &= ~0x8000;
 	delete[] _g638_derivedBitmaps[index];
 	_g638_derivedBitmaps[index] = nullptr;
 }
