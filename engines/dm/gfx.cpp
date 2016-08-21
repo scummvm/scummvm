@@ -1951,12 +1951,19 @@ void DisplayMan::f125_drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElementAspect]) {
+	case k0_WallElemType:
+		f100_drawWallSetBitmap(_g701_bitmapWallSet_Wall_D0L, _frameWalls163[k10_ViewSquare_D0L]);
+		break;
+	case k1_CorridorElemType:
+	case k5_TeleporterElemType:
+	case k16_DoorSideElemType:
+		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k10_ViewSquare_D0L, k0x0002_CellOrder_BackRight);
+		break;
+	case k2_PitElemType:
+		f104_drawFloorPitOrStairsBitmap(squareAspect[k2_PitInvisibleAspect] ? k61_floorPitInvisibleD0L_GraphicIndice : k55_FloorPit_D0L_GraphicIndice, frameFloorPitD0L);
 	case k18_StairsSideElemType:
 		if (squareAspect[k2_StairsUpAspect])
 			f104_drawFloorPitOrStairsBitmap(_g692_stairsNativeBitmapIndex_Side_D0L, frameStairsSideD0L);
-		break;
-	case k0_WallElemType:
-		f100_drawWallSetBitmap(_g701_bitmapWallSet_Wall_D0L, _frameWalls163[k10_ViewSquare_D0L]);
 		break;
 	default:
 		break;
