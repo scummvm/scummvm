@@ -131,10 +131,12 @@ void BITDDecoder::destroy() {
 }
 
 void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
-	_palette = new byte[2 * 3];
+	_palette = new byte[255 * 3];
 
 	_palette[0] = _palette[1] = _palette[2] = 0;
-	_palette[3] = _palette[4] = _palette[5] = 0xff;
+	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
+
+	_paletteColorCount = 2;
 }
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
@@ -143,6 +145,34 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	_surface = new Graphics::Surface();
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	int x = 0, y = 0;
+	byte *p = (byte *)_surface->getBasePtr(x, y);
+
+	while (true) {
+		byte in = stream.readByte();
+
+		if (stream.eos())
+			break;
+
+		for (int i = 0; i < 8; i++) {
+			*p++ = (in & 0x80) ? 0xff : 0;
+			in <<= 1;
+			x++;
+
+			if (x >= width) {
+				x = 0;
+				y++;
+
+				p = (byte *)_surface->getBasePtr(x, y);
+				break;
+			}
+		}
+
+		if (y >= height) {
+			break;
+		}
+	}
 
 	return true;
 }
