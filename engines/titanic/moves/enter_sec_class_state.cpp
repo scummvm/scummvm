@@ -70,7 +70,7 @@ bool CEnterSecClassState::StatusChangeMsg(CStatusChangeMsg *msg) {
 			_soundHandle = queueSound("b#31.wav", _soundHandle);
 		}
 		if (msg->_newStatus == 3)
-			msg->_newStatus == 2;
+			msg->_newStatus = 2;
 	} else {
 		changeView("SecClassLittleLift.Node 1.N");
 		if (msg->_newStatus == 1) {

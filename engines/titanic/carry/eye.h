@@ -28,8 +28,14 @@
 namespace Titanic {
 
 class CEye : public CHeadPiece {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool PETGainedObjectMsg(CPETGainedObjectMsg *msg);
+	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
 private:
-	int _eyeNum;
+	bool _eyeFlag;
 public:
 	CLASSDEF;
 	CEye();

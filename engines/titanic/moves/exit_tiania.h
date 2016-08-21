@@ -28,11 +28,11 @@
 namespace Titanic {
 
 class CExitTiania : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 private:
 	int _fieldC8;
-	CString _string1;
-	CString _string2;
-	CString _string3;
+	CString _viewNames[3];
 public:
 	CLASSDEF;
 	CExitTiania();

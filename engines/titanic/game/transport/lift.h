@@ -31,7 +31,7 @@ namespace Titanic {
 class CLift : public CTransport {
 	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
-private:
+public:
 	static int _v1;
 	static int _v2;
 	static int _v3;

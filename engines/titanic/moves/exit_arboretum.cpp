@@ -21,29 +21,85 @@
  */
 
 #include "titanic/moves/exit_arboretum.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CExitArboretum, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+END_MESSAGE_MAP()
+
 CExitArboretum::CExitArboretum() : CMovePlayerTo(), 
-		_fieldC8(0), _fieldCC(0), _fieldD0(1) {
+		_seasonNum(0), _fieldCC(0), _enabled(true) {
 }
 
 void CExitArboretum::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_seasonNum, indent);
 	file->writeNumberLine(_fieldCC, indent);
-	file->writeNumberLine(_fieldD0, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CExitArboretum::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
+	_seasonNum = file->readNumber();
 	_fieldCC = file->readNumber();
-	_fieldD0 = file->readNumber();
+	_enabled = file->readNumber();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CExitArboretum::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_enabled) {
+		CActMsg actMsg;
+		if (_seasonNum == AUTUMN) {
+			switch (_fieldCC) {
+			case 0:
+				actMsg._action = "ExitLFrozen";
+				break;
+			case 1:
+				actMsg._action = "ExitRFrozen";
+				break;
+			default:
+				break;
+			}
+		} else {
+			switch (_fieldCC) {
+			case 0:
+				actMsg._action = "ExitLNormal";
+				break;
+			case 1:
+				actMsg._action = "ExitRNormal";
+				break;
+			default:
+				break;
+			}
+		}
+
+		actMsg.execute("ArbGate");
+	}
+
+	return true;
+}
+
+bool CExitArboretum::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_seasonNum = (_seasonNum + 1) % 4;
+	return true;
+}
+
+bool CExitArboretum::TurnOn(CTurnOn *msg) {
+	_enabled = false;
+	return true;
+}
+
+bool CExitArboretum::TurnOff(CTurnOff *msg) {
+	_enabled = true;
+	return true;
 }
 
 } // End of namespace Titanic

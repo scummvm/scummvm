@@ -24,21 +24,35 @@
 
 namespace Titanic {
 
-CExitBridge::CExitBridge() : CMovePlayerTo() {
+BEGIN_MESSAGE_MAP(CExitBridge, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CExitBridge::CExitBridge() : CMovePlayerTo(), _viewName("Titania.Node 1.S") {
 }
 
 void CExitBridge::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_viewName, indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CExitBridge::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
+	_viewName = file->readString();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CExitBridge::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (getGameManager()) {
+		changeView(_destination);
+		playSound("a#53.wav");
+		changeView(_viewName);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

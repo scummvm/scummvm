@@ -24,16 +24,20 @@
 
 namespace Titanic {
 
-CExitTiania::CExitTiania() : CMovePlayerTo(), _fieldC8(0),
-		_string1("NULL"), _string2("NULL"), _string3("NULL") {
+BEGIN_MESSAGE_MAP(CExitTiania, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CExitTiania::CExitTiania() : CMovePlayerTo(), _fieldC8(0) {
+	_viewNames[0] = _viewNames[1] = _viewNames[2] = "NULL";
 }
 
 void CExitTiania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldC8, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
+	file->writeQuotedLine(_viewNames[0], indent);
+	file->writeQuotedLine(_viewNames[1], indent);
+	file->writeQuotedLine(_viewNames[2], indent);
 
 	CMovePlayerTo::save(file, indent);
 }
@@ -41,11 +45,29 @@ void CExitTiania::save(SimpleFile *file, int indent) {
 void CExitTiania::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldC8 = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
-	_string3 = file->readString();
+	_viewNames[0] = file->readString();
+	_viewNames[1] = file->readString();
+	_viewNames[2] = file->readString();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CExitTiania::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (getPassengerClass() == 4) {
+		petDisplayMessage(1, "For mysterious and unknowable reasons, "
+			"this transport is temporarily out of order.");
+	} else {
+		lockMouse();
+		for (int idx = 0; idx < 3; ++idx)
+			changeView(_viewNames[idx]);
+		changeView("Titania.Node 16.N");
+		changeView("Dome.Node 4.N");
+		changeView("Dome.Node 3.N");
+		changeView("Dome.Node 3.S");
+		unlockMouse();
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

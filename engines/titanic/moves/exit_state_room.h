@@ -28,8 +28,8 @@
 namespace Titanic {
 
 class CExitStateRoom : public CMovePlayerTo {
-protected:
-	int _fieldC8;
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	CLASSDEF;
 	CExitStateRoom();

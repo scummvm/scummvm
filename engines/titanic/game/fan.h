@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CFan : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
-	int _value1, _value2;
+	int _state, _value2;
 public:
 	CLASSDEF;
-	CFan() : CGameObject(), _value1(0), _value2(0) {}
+	CFan() : CGameObject(), _state(0), _value2(0) {}
 
 	/**
 	 * Save the data for the class to file

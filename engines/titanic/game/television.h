@@ -45,18 +45,18 @@ class CTelevision : public CBackground {
 	bool TurnOn(CTurnOn *msg);
 	bool LightsMsg(CLightsMsg *msg);
 private:
+	int _fieldE0;
+	int _fieldE4;
+	bool _isOn;
+	int _fieldEC;
+	int _soundHandle;
+public:
 	static int _v1;
 	static bool _turnOn;
 	static int _v3;
 	static int _v4;
 	static int _v5;
 	static int _v6;
-private:
-	int _fieldE0;
-	int _fieldE4;
-	bool _isOn;
-	int _fieldEC;
-	int _soundHandle;
 public:
 	CLASSDEF;
 	CTelevision();

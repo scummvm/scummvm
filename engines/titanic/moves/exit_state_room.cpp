@@ -24,7 +24,11 @@
 
 namespace Titanic {
 
-CExitStateRoom::CExitStateRoom() : CMovePlayerTo(), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CExitStateRoom, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CExitStateRoom::CExitStateRoom() : CMovePlayerTo() {
 }
 
 void CExitStateRoom::save(SimpleFile *file, int indent) {
@@ -35,6 +39,11 @@ void CExitStateRoom::save(SimpleFile *file, int indent) {
 void CExitStateRoom::load(SimpleFile *file) {
 	file->readNumber();
 	CMovePlayerTo::load(file);
+}
+
+bool CExitStateRoom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	changeView(_destination);
+	return true;
 }
 
 } // End of namespace Titanic

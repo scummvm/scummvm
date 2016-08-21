@@ -28,10 +28,15 @@
 namespace Titanic {
 
 class CExitArboretum : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 protected:
-	int _fieldC8;
+	int _seasonNum;
 	int _fieldCC;
-	int _fieldD0;
+	bool _enabled;
 public:
 	CLASSDEF;
 	CExitArboretum();

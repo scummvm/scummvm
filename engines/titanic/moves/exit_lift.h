@@ -28,10 +28,13 @@
 namespace Titanic {
 
 class CExitLift : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
-	CString _value;
+	CString _viewName;
 public:
 	CLASSDEF;
+	CExitLift();
 
 	/**
 	 * Save the data for the class to file
