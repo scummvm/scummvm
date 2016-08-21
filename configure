@@ -161,7 +161,6 @@ _build_hq_scalers=no
 _enable_prof=no
 _global_constructors=no
 _bink=yes
-_safedisc=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
@@ -906,7 +905,6 @@ Optional Features:
   --enable-verbose-build   enable regular echoing of commands during build
                            process
   --disable-bink           don't build with Bink video support
-  --enable-safedisc        enable SafeDisc decryption for Myst III
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -1056,8 +1054,6 @@ for ac_option in $@; do
 	--force-opengles2)        _opengles2=yes  ;; #ResidualVM specific option
 	--enable-bink)            _bink=yes       ;;
 	--disable-bink)           _bink=no        ;;
-	--enable-safedisc)        _safedisc=yes   ;; #ResidualVM specific option
-	--disable-safedisc)       _safedisc=no    ;; #ResidualVM specific option
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -4512,14 +4508,6 @@ define_in_config_if_yes $_taskbar 'USE_TASKBAR'
 echo_n "Building Bink video support... "
 define_in_config_if_yes $_bink 'USE_BINK'
 echo "$_bink"
-
-#
-# ResidualVM specific:
-# Check whether to build Safedisc decryption support
-#
-echo_n "Building SafeDisc decryption support... "
-define_in_config_if_yes $_safedisc 'USE_SAFEDISC'
-echo "$_safedisc"
 
 #
 # Check whether to build updates support
