@@ -21,6 +21,7 @@
  */
 
 #include "common/file.h"
+#include "common/memstream.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 
@@ -51,7 +52,7 @@ void CFilesManager::loadResourceIndex() {
 	for (;;) {
 		offset = _datFile.readUint32LE();
 		size = _datFile.readUint32LE();
-		if (size == 0)
+		if (offset == 0 && size == 0)
 			break;
 
 		Common::String resName;
@@ -126,7 +127,8 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 	ResourceEntry resEntry = _resources[str];
 	_datFile.seek(resEntry._offset);
 
-	return _datFile.readStream(resEntry._size);
+	return (resEntry._size > 0) ? _datFile.readStream(resEntry._size) :
+		new Common::MemoryReadStream(nullptr, 0);
 }
 
 } // End of namespace Titanic
