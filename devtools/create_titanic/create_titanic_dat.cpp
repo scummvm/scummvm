@@ -61,9 +61,20 @@ Common::File inputFile, outputFile;
 Common::PEResources res;
 uint headerOffset = 6;
 uint dataOffset = HEADER_SIZE;
-#define SEGMENT_OFFSET 0x401C00
 
-const int FILE_DIFF = 0x401C00;
+#define ENGLISH_GOG_FILESIZE 4099072
+#define ENGLISH_ORIG_FILESIZE 4095488
+enum {
+	ENGLISH_ORIG_DIFF = 0x401400,
+	ENGLISH_GOG_DIFF = 0x401C00
+};
+enum Version {
+	ENGLISH_GOG = 0,
+	ENGLISH_ORIG = 1
+};
+Version _version;
+
+const int FILE_DIFF[2] = { ENGLISH_GOG_DIFF, ENGLISH_ORIG_DIFF };
 
 static const char *const ITEM_NAMES[46] = {
 	"LeftArmWith", "LeftArmWithout", "RightArmWith", "RightArmWithout", "BridgeRed",
@@ -302,7 +313,7 @@ void writeStringArray(const char *name, uint offset, int count) {
 	// Iterate through reading each string
 	for (int idx = 0; idx < count; ++idx) {
 		if (offsets[idx]) {
-			inputFile.seek(offsets[idx] - SEGMENT_OFFSET);
+			inputFile.seek(offsets[idx] - FILE_DIFF[_version]);
 			outputFile.writeString(inputFile);
 		} else {
 			outputFile.writeString("");
@@ -378,7 +389,7 @@ void writeBitmap(const char *name, Common::File *file) {
 	outputFile.writeLong(0);					// res1 & res2
 	outputFile.writeLong(0x436);				// image offset
 
-	outputFile.write(*file, file->size() + 14);
+	outputFile.write(*file, file->size());
 
 	writeEntryHeader(name, dataOffset, file->size() + 14);
 	dataOffset += file->size() + 14;
@@ -421,7 +432,7 @@ void writeNumbers() {
 }
 
 void writeString(uint offset) {
-	inputFile.seek(offset - FILE_DIFF);
+	inputFile.seek(offset - FILE_DIFF[_version]);
 	char c;
 	do {
 		c = inputFile.readByte();
@@ -432,26 +443,19 @@ void writeString(uint offset) {
 void writeResponseTree() {
 	outputFile.seek(dataOffset);
 	
-	inputFile.seek(0x619500 - FILE_DIFF);
-	char buffer[32];
-	inputFile.read(buffer, 32);
-	if (strcmp(buffer, "ReadInt(): No number to read")) {
-		printf("Could not find tree data at expected position\n");
-		exit(1);
-	}
-
+	const int OFFSETS[2] = { 0x619520, 0x618340 };
 	for (int idx = 0; idx < 1022; ++idx) {
-		inputFile.seek(0x619520 - FILE_DIFF + idx * 8);
+		inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version] + idx * 8);
 		uint id = inputFile.readLong();
 		uint offset = inputFile.readLong();
 
 		outputFile.writeLong(id);
 		if (!id) {
 			// An end of list id
-		} else if (offset >= 0x619520 && offset <= 0x61B510) {
+		} else if (offset >= OFFSETS[_version] && offset <= (OFFSETS[_version] + 0x1FF0)) {
 			// Offset to another table
 			outputFile.writeByte(0);
-			outputFile.writeLong((offset - 0x619520) / 8);
+			outputFile.writeLong((offset - OFFSETS[_version]) / 8);
 		} else {
 			// Offset to ASCIIZ string
 			outputFile.writeByte(1);
@@ -471,7 +475,7 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 	uint offset3, offset5, offset6, offset7, offset8, offset10;
 
 	for (uint idx = 0; ; ++idx) {
-		inputFile.seek(tableOffset - FILE_DIFF + idx * 0x34);
+		inputFile.seek(tableOffset - FILE_DIFF[_version] + idx * 0x34);
 		v1 = inputFile.readLong();
 		if (!v1)
 			// Reached end of list
@@ -517,7 +521,7 @@ void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
 
 	uint val, strOffset;
 	for (uint idx = 0; ; ++idx) {
-		inputFile.seek(tableOffset - FILE_DIFF + idx * recordSize);
+		inputFile.seek(tableOffset - FILE_DIFF[_version] + idx * recordSize);
 		val = inputFile.readLong();
 		strOffset = inputFile.readLong();
 
@@ -535,7 +539,7 @@ void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
 }
 
 void writeSentenceMappings(const char *name, uint offset, int numValues) {
-	inputFile.seek(offset - FILE_DIFF);
+	inputFile.seek(offset - FILE_DIFF[_version]);
 	outputFile.seek(dataOffset);
 
 	uint id;
@@ -554,7 +558,8 @@ void writeSentenceMappings(const char *name, uint offset, int numValues) {
 void writeStarfieldPoints() {
 	outputFile.seek(dataOffset);
 
-	inputFile.seek(0x59DE4C - FILE_DIFF);
+	const int OFFSETS[2] = { 0x59DE4C, 0x59DBEC };
+	inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version]);
 	uint size = 876 * 12;
 
 	outputFile.write(inputFile, size);
@@ -565,13 +570,14 @@ void writeStarfieldPoints() {
 void writeStarfieldPoints2() {
 	outputFile.seek(dataOffset);
 
+	const int OFFSETS[2] = { 0x5A2F28, 0x5A2CC8 };
 	for (int rootCtr = 0; rootCtr < 80; ++rootCtr) {
-		inputFile.seek(0x5A2F28 - FILE_DIFF + rootCtr * 8);
+		inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version] + rootCtr * 8);
 		uint offset = inputFile.readUint32LE();
 		uint count = inputFile.readUint32LE();
 
 		outputFile.writeLong(count);
-		inputFile.seek(offset - FILE_DIFF);
+		inputFile.seek(offset - FILE_DIFF[_version]);
 		outputFile.write(inputFile, count * 4 * 4);
 	}
 
@@ -649,71 +655,113 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
 
-	writeStringArray("TEXT/PHRASES", 0x21B7C8, 376);
-	writeStringArray("TEXT/REPLACEMENTS1", 0x21BDB0, 218);
-	writeStringArray("TEXT/REPLACEMENTS2", 0x21C120, 1576);
-	writeStringArray("TEXT/REPLACEMENTS3", 0x21D9C8, 82);
-	writeStringArray("TEXT/PRONOUNS", 0x22F718, 15);
+	const int TEXT_PHRASES[2] = { 0x21B7C8, 0x21ADA0 };
+	const int TEXT_REPLACEMENTS1[2] = { 0x21BDB0, 0x21B388 };
+	const int TEXT_REPLACEMENTS2[2] = { 0x21C120, 0x21B6F8 };
+	const int TEXT_REPLACEMENTS3[2] = { 0x21D9C8, 0x21CFA0 };
+	const int TEXT_PRONOUNS[2] = { 0x22F718, 0x22ECF8 };
+	writeStringArray("TEXT/PHRASES", TEXT_PHRASES[_version], 376);
+	writeStringArray("TEXT/REPLACEMENTS1", TEXT_REPLACEMENTS1[_version], 218);
+	writeStringArray("TEXT/REPLACEMENTS2", TEXT_REPLACEMENTS2[_version], 1576);
+	writeStringArray("TEXT/REPLACEMENTS3", TEXT_REPLACEMENTS3[_version], 82);
+	writeStringArray("TEXT/PRONOUNS", TEXT_PRONOUNS[_version], 15);
 
-	writeSentenceEntries("Sentences/Default", 0x5C0130);
-	writeSentenceEntries("Sentences/Barbot", 0x5ABE60);
-	writeSentenceEntries("Sentences/Barbot2", 0x5BD4E8);
-	writeSentenceEntries("Sentences/Bellbot", 0x5C2230);
-	writeSentenceEntries("Sentences/Bellbot/1", 0x5D1670);
-	writeSentenceEntries("Sentences/Bellbot/2", 0x5D1A80);
-	writeSentenceEntries("Sentences/Bellbot/3", 0x5D1AE8);
-	writeSentenceEntries("Sentences/Bellbot/4", 0x5D1B88);
-	writeSentenceEntries("Sentences/Bellbot/5", 0x5D2A60);
-	writeSentenceEntries("Sentences/Bellbot/6", 0x5D2CD0);
-	writeSentenceEntries("Sentences/Bellbot/7", 0x5D3488);
-	writeSentenceEntries("Sentences/Bellbot/8", 0x5D3900);
-	writeSentenceEntries("Sentences/Bellbot/9", 0x5D3968);
-	writeSentenceEntries("Sentences/Bellbot/10", 0x5D4668);
-	writeSentenceEntries("Sentences/Bellbot/11", 0x5D47A0);
-	writeSentenceEntries("Sentences/Bellbot/12", 0x5D4EC0);
-	writeSentenceEntries("Sentences/Bellbot/13", 0x5D5100);
-	writeSentenceEntries("Sentences/Bellbot/14", 0x5D5370);
-	writeSentenceEntries("Sentences/Bellbot/15", 0x5D5548);
-	writeSentenceEntries("Sentences/Bellbot/16", 0x5D56B8);
-	writeSentenceEntries("Sentences/Bellbot/17", 0x5D57C0);
-	writeSentenceEntries("Sentences/Bellbot/18", 0x5D5B38);
-	writeSentenceEntries("Sentences/Bellbot/19", 0x5D61B8);
+	const int SENTENCES_DEFAULT[2] = { 0x5C0130, 0x5BEFC8 };
+	const int SENTENCES_BARBOT[2][2] = { { 0x5ABE60, 0x5AACF8 }, { 0x5BD4E8, 0x5BC380 } };
+	const int SENTENCES_BELLBOT[21][2] = {
+		{ 0x5C2230, 0x5C10C8 }, { 0x5D1670, 0x5D0508 }, { 0x5D1A80, 0x5D0918 },
+		{ 0x5D1AE8, 0x5D0980 }, { 0x5D1B88, 0x5D0A20 }, { 0x5D2A60, 0x5D18F8 },
+		{ 0x5D2CD0, 0x5D1B68 }, { 0x5D3488, 0x5D2320 }, { 0x5D3900, 0x5D2798 },
+		{ 0x5D3968, 0x5D2800 }, { 0x5D4668, 0x5D3500 }, { 0x5D47A0, 0x5D3638 },
+		{ 0x5D4EC0, 0x5D3D58 }, { 0x5D5100, 0x5D3F98 }, { 0x5D5370, 0x5D4208 },
+		{ 0x5D5548, 0x5D43E0 }, { 0x5D56B8, 0x5D4550 }, { 0x5D57C0, 0x5D4658 },
+		{ 0x5D5B38, 0x5D49D0 }, { 0x5D61B8, 0x5D5050 }
+	};
+	writeSentenceEntries("Sentences/Default", SENTENCES_DEFAULT[_version]);
+	writeSentenceEntries("Sentences/Barbot", SENTENCES_BARBOT[0][_version]);
+	writeSentenceEntries("Sentences/Barbot2", SENTENCES_BARBOT[1][_version]);
+	writeSentenceEntries("Sentences/Bellbot", SENTENCES_BELLBOT[0][_version]);
+	writeSentenceEntries("Sentences/Bellbot/1", SENTENCES_BELLBOT[1][_version]);
+	writeSentenceEntries("Sentences/Bellbot/2", SENTENCES_BELLBOT[2][_version]);
+	writeSentenceEntries("Sentences/Bellbot/3", SENTENCES_BELLBOT[3][_version]);
+	writeSentenceEntries("Sentences/Bellbot/4", SENTENCES_BELLBOT[4][_version]);
+	writeSentenceEntries("Sentences/Bellbot/5", SENTENCES_BELLBOT[5][_version]);
+	writeSentenceEntries("Sentences/Bellbot/6", SENTENCES_BELLBOT[6][_version]);
+	writeSentenceEntries("Sentences/Bellbot/7", SENTENCES_BELLBOT[7][_version]);
+	writeSentenceEntries("Sentences/Bellbot/8", SENTENCES_BELLBOT[8][_version]);
+	writeSentenceEntries("Sentences/Bellbot/9", SENTENCES_BELLBOT[9][_version]);
+	writeSentenceEntries("Sentences/Bellbot/10", SENTENCES_BELLBOT[10][_version]);
+	writeSentenceEntries("Sentences/Bellbot/11", SENTENCES_BELLBOT[11][_version]);
+	writeSentenceEntries("Sentences/Bellbot/12", SENTENCES_BELLBOT[12][_version]);
+	writeSentenceEntries("Sentences/Bellbot/13", SENTENCES_BELLBOT[13][_version]);
+	writeSentenceEntries("Sentences/Bellbot/14", SENTENCES_BELLBOT[14][_version]);
+	writeSentenceEntries("Sentences/Bellbot/15", SENTENCES_BELLBOT[15][_version]);
+	writeSentenceEntries("Sentences/Bellbot/16", SENTENCES_BELLBOT[16][_version]);
+	writeSentenceEntries("Sentences/Bellbot/17", SENTENCES_BELLBOT[17][_version]);
+	writeSentenceEntries("Sentences/Bellbot/18", SENTENCES_BELLBOT[18][_version]);
+	writeSentenceEntries("Sentences/Bellbot/19", SENTENCES_BELLBOT[19][_version]);
 
-	writeSentenceEntries("Sentences/Deskbot", 0x5DCD10);
-	writeSentenceEntries("Sentences/Deskbot/2", 0x5E8E18);
-	writeSentenceEntries("Sentences/Deskbot/3", 0x5E8BA8);
+	const int SENTENCES_DESKBOT[3][2] = {
+		{ 0x5DCD10, 0x5DBBA8 }, { 0x5E8E18, 0x5E7CB0 }, { 0x5E8BA8, 0x5E7A40 }
+	};
+	writeSentenceEntries("Sentences/Deskbot", SENTENCES_DESKBOT[0][_version]);
+	writeSentenceEntries("Sentences/Deskbot/2", SENTENCES_DESKBOT[1][_version]);
+	writeSentenceEntries("Sentences/Deskbot/3", SENTENCES_DESKBOT[2][_version]);
 	
-	writeSentenceEntries("Sentences/Doorbot", 0x5EC110);
-	writeSentenceEntries("Sentences/Doorbot/2", 0x5FD930);
-	writeSentenceEntries("Sentences/Doorbot/100", 0x5FD930);
-	writeSentenceEntries("Sentences/Doorbot/101", 0x5FE668);
-	writeSentenceEntries("Sentences/Doorbot/102", 0x5FDD40);
-	writeSentenceEntries("Sentences/Doorbot/107", 0x5FFF08);
-	writeSentenceEntries("Sentences/Doorbot/110", 0x5FE3C0);
-	writeSentenceEntries("Sentences/Doorbot/111", 0x5FF0C8);
-	writeSentenceEntries("Sentences/Doorbot/124", 0x5FF780);
-	writeSentenceEntries("Sentences/Doorbot/129", 0x5FFAC0);
-	writeSentenceEntries("Sentences/Doorbot/131", 0x5FFC30);
-	writeSentenceEntries("Sentences/Doorbot/132", 0x6000E0);
+	const int SENTENCES_DOORBOT[12][2] = {
+		{ 0x5EC110, 0x5EAFA8 }, { 0x5FD930, 0x5FC7C8 }, { 0x5FDD0C, 0x5FCBA4 },
+		{ 0x5FE668, 0x5FD500 }, { 0x5FDD40, 0x5FCBD8 }, { 0x5FFF08, 0x5FEDA0 },
+		{ 0x5FE3C0, 0x5FD258 }, { 0x5FF0C8, 0x5FDF60 }, { 0x5FF780, 0x5FE618 },
+		{ 0x5FFAC0, 0x5FE958 }, { 0x5FFC30, 0x5FEAC8 }, { 0x6000E0, 0x5FEF78 }
+	};
+	writeSentenceEntries("Sentences/Doorbot", SENTENCES_DOORBOT[0][_version]);
+	writeSentenceEntries("Sentences/Doorbot/2", SENTENCES_DOORBOT[1][_version]);
+	writeSentenceEntries("Sentences/Doorbot/100", SENTENCES_DOORBOT[2][_version]);
+	writeSentenceEntries("Sentences/Doorbot/101", SENTENCES_DOORBOT[3][_version]);
+	writeSentenceEntries("Sentences/Doorbot/102", SENTENCES_DOORBOT[4][_version]);
+	writeSentenceEntries("Sentences/Doorbot/107", SENTENCES_DOORBOT[5][_version]);
+	writeSentenceEntries("Sentences/Doorbot/110", SENTENCES_DOORBOT[6][_version]);
+	writeSentenceEntries("Sentences/Doorbot/111", SENTENCES_DOORBOT[7][_version]);
+	writeSentenceEntries("Sentences/Doorbot/124", SENTENCES_DOORBOT[8][_version]);
+	writeSentenceEntries("Sentences/Doorbot/129", SENTENCES_DOORBOT[9][_version]);
+	writeSentenceEntries("Sentences/Doorbot/131", SENTENCES_DOORBOT[10][_version]);
+	writeSentenceEntries("Sentences/Doorbot/132", SENTENCES_DOORBOT[11][_version]);
 
-	writeSentenceEntries("Sentences/Liftbot", 0x6026B0);
-	writeSentenceEntries("Sentences/MaitreD", 0x60CFD8);
-	writeSentenceEntries("Sentences/MaitreD/1", 0x614288);
-	writeSentenceEntries("Sentences/Parrot", 0x615858);
-	writeSentenceEntries("Sentences/SuccUBus", 0x616698);
-	writeSentenceMappings("Mappings/Barbot", 0x5B28A0, 8);
-	writeSentenceMappings("Mappings/Bellbot", 0x5CD830, 1);
-	writeSentenceMappings("Mappings/Deskbot", 0x5E2BB8, 4);
-	writeSentenceMappings("Mappings/Doorbot", 0x5F7950, 4);
-	writeSentenceMappings("Mappings/Liftbot", 0x608660, 4);
-	writeSentenceMappings("Mappings/MaitreD", 0x6125C8, 1);
-	writeSentenceMappings("Mappings/Parrot", 0x615B68, 1);
-	writeSentenceMappings("Mappings/SuccUBus", 0x6189F0, 1);
-	writeWords("Words/Barbot", 0x5BE2E0);
-	writeWords("Words/Bellbot", 0x5D8230);
-	writeWords("Words/Deskbot", 0x5EAAA8);
-	writeWords("Words/Doorbot", 0x601098, 3);
-	writeWords("Words/Liftbot", 0x60C788);
+	const int SENTENCES_LIFTBOT[2] = { 0x6026B0, 0x601548 };
+	const int SENTENCES_MAITRED[2][2] = { { 0x60CFD8, 0x60BE70 }, { 0x614288, 0x613120 } };
+	const int SENTENCES_PARROT[2] = { 0x615858, 0x6146F0 };
+	const int SENTENCES_SUCCUBUS[2] = { 0x616698, 0x615530 };
+	const int MAPPINGS_BARBOT[2] = { 0x5B28A0, 0x5B173E };
+	const int MAPPINGS_BELLBOT[2] = { 0x5CD830, 0x5CC6C8 };
+	const int MAPPINGS_DESKBOT[2] = { 0x5E2BB8, 0x5E1A50 };
+	const int MAPPINGS_DOORBOT[2] = { 0x5F7950, 0x5F67E8 };
+	const int MAPPINGS_LIFTBOT[2] = { 0x608660, 0x6074F8 };
+	const int MAPPINGS_MAITRED[2] = { 0x6125C8, 0x611460 };
+	const int MAPPINGS_PARROT[2] = { 0x615B68, 0x614A00 };
+	const int MAPPINGS_SUCCUBUS[2] = { 0x6189F0, 0x617888 };
+	const int WORDS_BARBOT[2] = { 0x5BE2E0, 0x5BD178 };
+	const int WORDS_BELLBOT[2] = { 0x5D8230, 0x5D70C8 };
+	const int WORDS_DESKBOT[2] = { 0x5EAAA8, 0x5E9940 };
+	const int WORDS_DOORBOT[2] = { 0x601098, 0x5FFF30 };
+	const int WORDS_LIFTBOT[2] = { 0x60C788, 0x60B620 };
+	writeSentenceEntries("Sentences/Liftbot", SENTENCES_LIFTBOT[_version]);
+	writeSentenceEntries("Sentences/MaitreD", SENTENCES_MAITRED[0][_version]);
+	writeSentenceEntries("Sentences/MaitreD/1", SENTENCES_MAITRED[1][_version]);
+	writeSentenceEntries("Sentences/Parrot", SENTENCES_PARROT[_version]);
+	writeSentenceEntries("Sentences/SuccUBus", SENTENCES_SUCCUBUS[_version]);
+	writeSentenceMappings("Mappings/Barbot", MAPPINGS_BARBOT[_version], 8);
+	writeSentenceMappings("Mappings/Bellbot", MAPPINGS_BELLBOT[_version], 1);
+	writeSentenceMappings("Mappings/Deskbot", MAPPINGS_DESKBOT[_version], 4);
+	writeSentenceMappings("Mappings/Doorbot", MAPPINGS_DOORBOT[_version], 4);
+	writeSentenceMappings("Mappings/Liftbot", MAPPINGS_LIFTBOT[_version], 4);
+	writeSentenceMappings("Mappings/MaitreD", MAPPINGS_MAITRED[_version], 1);
+	writeSentenceMappings("Mappings/Parrot", MAPPINGS_PARROT[_version], 1);
+	writeSentenceMappings("Mappings/SuccUBus", MAPPINGS_SUCCUBUS[_version], 1);
+	writeWords("Words/Barbot", WORDS_BARBOT[_version]);
+	writeWords("Words/Bellbot", WORDS_BELLBOT[_version]);
+	writeWords("Words/Deskbot", WORDS_DESKBOT[_version]);
+	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
+	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
 	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
 
 	writeResponseTree();
@@ -721,6 +769,7 @@ void writeData() {
 	writeAllScriptQuotes();
 	writeAllScriptResponses();
 	writeAllScriptRanges();
+
 	writeAllTagMappings();
 	writeAllUpdateStates();
 	writeAllScriptPreResponses();
@@ -777,6 +826,15 @@ int main(int argc, char *argv[]) {
 		error("Could not open input file");
 	}
 	res.loadFromEXE(argv[1]);
+
+	if (inputFile.size() == ENGLISH_GOG_FILESIZE)
+		_version = ENGLISH_GOG;
+	else if (inputFile.size() == ENGLISH_ORIG_FILESIZE)
+		_version = ENGLISH_ORIG;
+	else {
+		printf("Unknown version of ST.exe specified");
+		exit(0);
+	}
 
 	if (!outputFile.open(argv[2], Common::kFileWriteMode)) {
 		error("Could not open output file");
