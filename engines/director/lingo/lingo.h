@@ -35,11 +35,6 @@
 
 namespace Director {
 
-enum {
-	kDebugLingoExec		= 1 << 0,
-	kDebugLingoCompile	= 1 << 1
-};
-
 enum LEvent {
 	kEventPrepareMovie,
 	kEventStartMovie,

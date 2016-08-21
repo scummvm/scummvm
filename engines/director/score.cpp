@@ -1340,6 +1340,14 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		img = new Image::BitmapDecoder();
+
+		if (debugChannelSet(8, kDebugLoading)) {
+			Common::SeekableReadStream *s = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+			byte buf[1024];
+			int n = s->read(buf, 1024);
+			Common::hexdump(buf, n);
+		}
+
 		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId));
 		return img;
 	}

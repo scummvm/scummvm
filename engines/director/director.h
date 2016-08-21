@@ -53,6 +53,13 @@ class Lingo;
 class Score;
 struct Cast;
 
+enum {
+	kDebugLingoExec		= 1 << 0,
+	kDebugLingoCompile	= 1 << 1,
+	kDebugLoading		= 1 << 2
+};
+
+
 class DirectorEngine : public ::Engine {
 public:
 	DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc);
