@@ -2,8 +2,8 @@ MODULE := engines/director
 
 MODULE_OBJS = \
 	detection.o \
-	dib.o \
 	director.o \
+	images.o \
 	movie.o \
 	resource.o \
 	score.o \

@@ -20,8 +20,6 @@
  *
  */
 
-#include "director/dib.h"
-
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -33,6 +31,8 @@
 #include "common/debug.h"
 #include "image/codecs/bmp_raw.h"
 #include "common/system.h"
+
+#include "director/images.h"
 
 namespace Director {
 
@@ -104,6 +104,45 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 		return false;
 
 	_surface = _codec->decodeFrame(subStream);
+
+	return true;
+}
+
+BITDDecoder::BITDDecoder() {
+	_surface = 0;
+	_palette = 0;
+	_paletteColorCount = 0;
+	_codec = 0;
+}
+
+BITDDecoder::~BITDDecoder() {
+	destroy();
+}
+
+void BITDDecoder::destroy() {
+	_surface = 0;
+
+	delete[] _palette;
+	_palette = 0;
+	_paletteColorCount = 0;
+
+	delete _codec;
+	_codec = 0;
+}
+
+void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
+	_palette = new byte[2 * 3];
+
+	_palette[0] = _palette[1] = _palette[2] = 0;
+	_palette[3] = _palette[4] = _palette[5] = 0xff;
+}
+
+bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
+	uint32 width = 512; // Should come from the Cast
+	uint32 height = 342;
+
+	_surface = new Graphics::Surface();
+	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	return true;
 }

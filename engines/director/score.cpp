@@ -20,19 +20,12 @@
  *
  */
 
-#include "director/score.h"
 #include "common/stream.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/unzip.h"
-
-#include "common/system.h"
-#include "director/dib.h"
-#include "director/resource.h"
-#include "director/lingo/lingo.h"
-#include "director/sound.h"
 
 #include "graphics/palette.h"
 #include "common/events.h"
@@ -42,6 +35,12 @@
 #include "image/bmp.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/bdf.h"
+
+#include "director/score.h"
+#include "director/images.h"
+#include "director/resource.h"
+#include "director/lingo/lingo.h"
+#include "director/sound.h"
 
 namespace Director {
 
@@ -1339,7 +1338,11 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	}
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
-		img = new Image::BitmapDecoder();
+		if (_vm->getVersion() < 4) {
+			img = new BITDDecoder();
+		} else {
+			img = new Image::BitmapDecoder();
+		}
 
 		if (debugChannelSet(8, kDebugLoading)) {
 			Common::SeekableReadStream *s = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);

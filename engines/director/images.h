@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DIRECTOR_DIB_H
-#define DIRECTOR_DIB_H
+#ifndef DIRECTOR_IMAGES_H
+#define DIRECTOR_IMAGES_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -58,6 +58,26 @@ public:
 private:
 	Image::Codec *_codec;
 	const Graphics::Surface *_surface;
+	byte *_palette;
+	uint8 _paletteColorCount;
+};
+
+class BITDDecoder : public Image::ImageDecoder {
+public:
+	BITDDecoder();
+	virtual ~BITDDecoder();
+
+	// ImageDecoder API
+	void destroy();
+	virtual bool loadStream(Common::SeekableReadStream &stream);
+	virtual const Graphics::Surface *getSurface() const { return _surface; }
+	const byte *getPalette() const { return _palette; }
+	void loadPalette(Common::SeekableReadStream &stream);
+	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+
+private:
+	Image::Codec *_codec;
+	Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;
 };
