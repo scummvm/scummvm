@@ -59,7 +59,11 @@ bool Archive::openFile(const Common::String &fileName) {
 
 void Archive::close() {
 	_types.clear();
-	delete _stream; _stream = 0;
+
+	if (_stream)
+		delete _stream;
+
+	_stream = 0;
 }
 
 bool Archive::hasResource(uint32 tag, uint16 id) const {
