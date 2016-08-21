@@ -64,6 +64,8 @@ protected:
 	int o2_isCarryingSomething(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
+	int o2_setCurPic(ScriptEnv &e);
+	int o2_setPic(ScriptEnv &e);
 	int o2_moveAllItems(ScriptEnv &e);
 	int o2_save(ScriptEnv &e);
 	int o2_restore(ScriptEnv &e);

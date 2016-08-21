@@ -661,6 +661,11 @@ Common::Error AdlEngine::loadGameState(int slot) {
 		_state.rooms[i].isFirstTime = inFile->readByte();
 	}
 
+	// NOTE: _state.curPicture is part of the save state in the original engine. We
+	// reconstruct it instead. This is believed to be safe for at least hires 0-2, but
+	// this may need to be re-evaluated for later games.
+	_state.curPicture = _state.rooms[_state.room].curPicture;
+
 	size = inFile->readUint32BE();
 	if (size != _state.items.size())
 		error("Item count mismatch (expected %i; found %i)", _state.items.size(), size);
@@ -951,7 +956,7 @@ int AdlEngine::o1_isVarEQ(ScriptEnv &e) {
 int AdlEngine::o1_isCurPicEQ(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& GET_CURPIC() == %d", e.arg(1));
 
-	if (getCurRoom().curPicture == e.arg(1))
+	if (_state.curPicture == e.arg(1))
 		return 1;
 
 	return -1;

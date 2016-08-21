@@ -317,6 +317,8 @@ void HiRes6Engine::initGameState() {
 }
 
 void HiRes6Engine::showRoom() {
+	_state.curPicture = getCurRoom().curPicture;
+
 	bool redrawPic = false;
 
 	if (getVar(26) == 0xfe)

@@ -165,11 +165,12 @@ struct State {
 	Common::Array<byte> vars;
 
 	byte room;
+	byte curPicture;
 	uint16 moves;
 	bool isDark;
 	Time time;
 
-	State() : room(1), moves(1), isDark(false) { }
+	State() : room(1), curPicture(0), moves(1), isDark(false) { }
 };
 
 typedef Common::List<Command> Commands;

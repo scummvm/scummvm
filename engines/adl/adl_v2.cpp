@@ -79,9 +79,9 @@ void AdlEngine_v2::setupOpcodeTables() {
 	Opcode(o1_listInv);
 	Opcode(o2_moveItem);
 	Opcode(o1_setRoom);
-	Opcode(o1_setCurPic);
+	Opcode(o2_setCurPic);
 	// 0x08
-	Opcode(o1_setPic);
+	Opcode(o2_setPic);
 	Opcode(o1_printMsg);
 	Opcode(o1_setLight);
 	Opcode(o1_setDark);
@@ -250,6 +250,8 @@ void AdlEngine_v2::loadRoom(byte roomNr) {
 void AdlEngine_v2::showRoom() {
 	bool redrawPic = false;
 
+	_state.curPicture = getCurRoom().curPicture;
+
 	if (_state.room != _roomOnScreen) {
 		loadRoom(_state.room);
 		clearScreen();
@@ -257,15 +259,15 @@ void AdlEngine_v2::showRoom() {
 		if (!_state.isDark)
 			redrawPic = true;
 	} else {
-		if (getCurRoom().curPicture != _picOnScreen || _itemRemoved)
+		if (_state.curPicture != _picOnScreen || _itemRemoved)
 			redrawPic = true;
 	}
 
 	if (redrawPic) {
 		_roomOnScreen = _state.room;
-		_picOnScreen = getCurRoom().curPicture;
+		_picOnScreen = _state.curPicture;
 
-		drawPic(getCurRoom().curPicture);
+		drawPic(_state.curPicture);
 		_itemRemoved = false;
 		_itemsOnScreen = 0;
 
@@ -336,7 +338,7 @@ void AdlEngine_v2::drawItems() {
 			Common::Array<byte>::const_iterator pic;
 
 			for (pic = item->roomPictures.begin(); pic != item->roomPictures.end(); ++pic) {
-				if (*pic == getCurRoom().curPicture || *pic == IDI_ANY) {
+				if (*pic == _state.curPicture || *pic == IDI_ANY) {
 					drawItem(*item, item->position);
 					break;
 				}
@@ -423,6 +425,20 @@ int AdlEngine_v2::o2_moveItem(ScriptEnv &e) {
 
 	item.room = room;
 	return 2;
+}
+
+int AdlEngine_v2::o2_setCurPic(ScriptEnv &e) {
+	OP_DEBUG_1("\tSET_CURPIC(%d)", e.arg(1));
+
+	getCurRoom().curPicture = _state.curPicture = e.arg(1);
+	return 1;
+}
+
+int AdlEngine_v2::o2_setPic(ScriptEnv &e) {
+	OP_DEBUG_1("\tSET_PIC(%d)", e.arg(1));
+
+	getCurRoom().picture = getCurRoom().curPicture = _state.curPicture = e.arg(1);
+	return 1;
 }
 
 int AdlEngine_v2::o2_moveAllItems(ScriptEnv &e) {

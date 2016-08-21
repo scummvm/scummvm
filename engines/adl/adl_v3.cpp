@@ -110,9 +110,9 @@ void AdlEngine_v3::setupOpcodeTables() {
 	Opcode(o1_listInv);
 	Opcode(o3_moveItem);
 	Opcode(o1_setRoom);
-	Opcode(o1_setCurPic);
+	Opcode(o2_setCurPic);
 	// 0x08
-	Opcode(o1_setPic);
+	Opcode(o2_setPic);
 	Opcode(o1_printMsg);
 	Opcode(o3_dummy);
 	Opcode(o3_setTextMode);
