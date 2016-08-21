@@ -483,6 +483,7 @@ reg_t kShowMovieWinGetDuration(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv);
 
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 

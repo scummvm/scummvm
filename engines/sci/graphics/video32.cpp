@@ -485,13 +485,6 @@ AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
 				break;
 			}
 		}
-
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
-			stopFlag = kEventFlagHotRectangle;
-			break;
-		}
 	}
 
 	return stopFlag;
@@ -655,19 +648,17 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 }
 
 VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
-	// Flushing all the keyboard and mouse events out of the event manager to
-	// avoid letting any events queued from before the video started from
-	// accidentally activating an event callback
+	// Flushing all the keyboard and mouse events out of the event manager
+	// keeps events queued from before the start of playback from accidentally
+	// activating a video stop flag
 	for (;;) {
-		const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_MOUSE_PRESS | SCI_EVENT_MOUSE_RELEASE | SCI_EVENT_QUIT);
+		const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_MOUSE_PRESS | SCI_EVENT_MOUSE_RELEASE | SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_QUIT);
 		if (event.type == SCI_EVENT_NONE) {
 			break;
 		} else if (event.type == SCI_EVENT_QUIT) {
 			return kEventFlagEnd;
 		}
 	}
-
-	_decoder->pauseVideo(false);
 
 	if (flags & kEventFlagReverse) {
 		// NOTE: This flag may not work properly since SSCI does not care
@@ -748,6 +739,14 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 
+		// HACK: When VMD playback is allowed to yield back to the VM, this
+		// causes the VMD decoder to freak out for some reason and video output
+		// starts jittering horribly. This problem does not happen if audio sync
+		// is disabled, but this causes some audible clicking between frames
+		// of audio (and, presumably, will cause some AV sync problems). Still,
+		// that's better than really bad jitter.
+		_decoder->setAudioSync(!(flags & kEventFlagYieldToVM));
+
 		_decoder->start();
 	}
 
@@ -758,9 +757,11 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			break;
 		}
 
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		// Sleeping any more than 1/60th of a second will make the mouse feel
+		// very sluggish during VMD action sequences because the frame rate of
+		// VMDs is usually only 15fps
+		g_sci->sleep(MIN<uint32>(10, _decoder->getTimeToNextFrame()));
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 
@@ -802,15 +803,13 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			}
 		}
 
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
+		event = _eventMan->getSciEvent(SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_PEEK);
+		if ((flags & kEventFlagHotRectangle) && event.type == SCI_EVENT_HOT_RECTANGLE) {
 			stopFlag = kEventFlagHotRectangle;
 			break;
 		}
 	}
 
-	_decoder->pauseVideo(true);
 	return stopFlag;
 }
 
@@ -859,7 +858,6 @@ void VMDPlayer::renderFrame() const {
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
 		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->_gfxFrameout->throttle();
 	}
 }
 
