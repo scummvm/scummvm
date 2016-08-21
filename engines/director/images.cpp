@@ -147,30 +147,43 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	int x = 0, y = 0;
-	byte *p = (byte *)_surface->getBasePtr(x, y);
 
-	while (true) {
-		byte in = stream.readByte();
+	while (y < height) {
+		int n = stream.readSByte();
+		int count;
+		int b = 0;
+		int state = 0;
 
 		if (stream.eos())
 			break;
 
-		for (int i = 0; i < 8; i++) {
-			*p++ = (in & 0x80) ? 0xff : 0;
-			in <<= 1;
-			x++;
-
-			if (x >= width) {
-				x = 0;
-				y++;
-
-				p = (byte *)_surface->getBasePtr(x, y);
-				break;
-			}
+		if ((n >= 0) && (n <= 127)) { // If n is between 0 and 127 inclusive, copy the next n+1 bytes literally.
+			count = n + 1;
+			state = 1;
+		} else if ((n >= -127) && (n <= -1)) { // Else if n is between -127 and -1 inclusive, copy the next byte -n+1 times.
+			b = stream.readByte();
+			count = -n + 1;
+			state = 2;
+		} else { // Else if n is -128, noop.
+			count = 0;
 		}
 
-		if (y >= height) {
-			break;
+		for (int i = 0; i < count && y < height; i++) {
+			byte color = 0;
+			if (state == 1) {
+				color = stream.readByte();
+			} else if (state == 2)
+				color = b;
+
+			for (int c = 0; c < 8; c++) {
+				*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? 0 : 0xff;
+				x++;
+				if (x == width) {
+					y++;
+					x = 0;
+					break;
+				}
+			}
 		}
 	}
 
