@@ -369,6 +369,30 @@ reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv) {
 
 	return make_reg(0, visible);
 }
+
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 1) {
+		g_sci->getEventManager()->setHotRectanglesActive((bool)argv[0].toUint16());
+		return s->r_acc;
+	}
+
+	const int16 numRects = argv[0].toSint16();
+	SciArray &hotRects = *s->_segMan->lookupArray(argv[1]);
+
+	Common::Array<Common::Rect> rects;
+	rects.resize(numRects);
+
+	for (int16 i = 0; i < numRects; ++i) {
+		rects[i].left   = hotRects.int16At(i * 4);
+		rects[i].top    = hotRects.int16At(i * 4 + 1);
+		rects[i].right  = hotRects.int16At(i * 4 + 2) + 1;
+		rects[i].bottom = hotRects.int16At(i * 4 + 3) + 1;
+	}
+
+	g_sci->getEventManager()->setHotRectanglesActive(true);
+	g_sci->getEventManager()->setHotRectangles(rects);
+	return s->r_acc;
+}
 #endif
 
 } // End of namespace Sci

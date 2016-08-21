@@ -50,6 +50,8 @@ struct SciEvent {
 	 * in script coordinates.
 	 */
 	Common::Point mousePosSci;
+
+	int16 hotRectangleIndex;
 #endif
 };
 
@@ -60,6 +62,9 @@ struct SciEvent {
 #define SCI_EVENT_KEYBOARD        (1 << 2)
 #define SCI_EVENT_DIRECTION       (1 << 6)
 #define SCI_EVENT_SAID            (1 << 7)
+#ifdef ENABLE_SCI32
+#define SCI_EVENT_HOT_RECTANGLE   (1 << 8)
+#endif
 /*Fake values for other events*/
 #define SCI_EVENT_QUIT            (1 << 11)
 #define SCI_EVENT_PEEK            (1 << 15)
@@ -138,6 +143,17 @@ private:
 
 	const bool _fontIsExtended;
 	Common::List<SciEvent> _events;
+#ifdef ENABLE_SCI32
+public:
+	void setHotRectanglesActive(const bool active);
+	void setHotRectangles(const Common::Array<Common::Rect> &rects);
+	void checkHotRectangles(const Common::Point &mousePosition);
+
+private:
+	bool _hotRectanglesActive;
+	Common::Array<Common::Rect> _hotRects;
+	int16 _activeRectIndex;
+#endif
 };
 
 } // End of namespace Sci
