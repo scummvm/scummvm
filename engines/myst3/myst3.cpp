@@ -60,12 +60,13 @@
 namespace Myst3 {
 
 enum MystLanguage {
-	kEnglish,
-	kDutch,
-	kFrench,
-	kGerman,
-	kItalian,
-	kSpanish
+	kEnglish = 0,
+	kOther   = 1, // Dutch, Japanese or Polish
+	kDutch   = 1,
+	kFrench  = 2,
+	kGerman  = 3,
+	kItalian = 4,
+	kSpanish = 5
 };
 
 Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
@@ -163,8 +164,8 @@ Common::Error Myst3Engine::run() {
 	_rnd = new Common::RandomSource("sprint");
 	_console = new Console(this);
 	_scriptEngine = new Script(this);
-	_db = new Database(this);
 	_state = new GameState(this);
+	_db = new Database(this);
 	_scene = new Scene(this);
 	if (getPlatform() == Common::kPlatformXbox) {
 		_menu = new AlbumMenu(this);
@@ -249,7 +250,7 @@ void Myst3Engine::openArchives() {
 	Common::String menuLanguage;
 	Common::String textLanguage;
 
-	switch (getDefaultLanguage()) {
+	switch (getGameLanguage()) {
 	case Common::NL_NLD:
 		menuLanguage = "DUTCH";
 		break;
@@ -278,7 +279,7 @@ void Myst3Engine::openArchives() {
 		break;
 	}
 
-	if (getExecutableVersion()->flags & kFlagDVD) {
+	if (isDVDVersion()) {
 		switch (ConfMan.getInt("text_language")) {
 		case kDutch:
 			textLanguage = "DUTCH";
@@ -322,7 +323,7 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if ((getExecutableVersion()->flags & kFlagDVD) || !isMonolingual())
+	if (isDVDVersion() || !isMonolingual())
 		if (!addArchive("language.m3u", false))
 			addArchive(menuLanguage + ".m3u", true);
 
@@ -337,26 +338,7 @@ void Myst3Engine::closeArchives() {
 }
 
 bool Myst3Engine::checkDatafiles() {
-#ifndef USE_SAFEDISC
-	if (getExecutableVersion()->safeDiskKey) {
-		static const char *safediscMessage =
-				_("This version of Myst III is encrypted with a copy-protection\n"
-				"preventing ResidualVM from reading required data.\n"
-				"Please replace your 'M3.exe' file with the one from the official update\n"
-				"corresponding to your game's language and redetect the game.\n"
-				"These updates don't contain the copy-protection and can be downloaded from\n"
-				"http://www.residualvm.org/downloads/");
-		warning("%s", safediscMessage);
-		GUI::displayErrorDialog(safediscMessage);
-		return false;
-	}
-#endif // USE_SAFEDISC
 	return true;
-}
-
-bool Myst3Engine::isMonolingual() const {
-	return getDefaultLanguage() == Common::EN_ANY
-			|| getDefaultLanguage() == Common::RU_RUS;
 }
 
 HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {
@@ -1644,36 +1626,13 @@ SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
 }
 
 void Myst3Engine::settingsInitDefaults() {
-	Common::Language executableLanguage = getDefaultLanguage();
-	int defaultLanguage;
-
-	switch (executableLanguage) {
-	case Common::NL_NLD:
-		defaultLanguage = kDutch;
-		break;
-	case Common::FR_FRA:
-		defaultLanguage = kFrench;
-		break;
-	case Common::DE_DEU:
-		defaultLanguage = kGerman;
-		break;
-	case Common::IT_ITA:
-		defaultLanguage = kItalian;
-		break;
-	case Common::ES_ESP:
-		defaultLanguage = kSpanish;
-		break;
-	case Common::EN_ANY:
-	default:
-		defaultLanguage = kEnglish;
-		break;
-	}
+	int defaultLanguage = getGameLanguageCode();
 
 	int defaultTextLanguage;
-	if (getExecutableVersion()->flags & kFlagDVD)
+	if (isDVDVersion())
 		defaultTextLanguage = defaultLanguage;
 	else
-		defaultTextLanguage = executableLanguage != Common::EN_ANY;
+		defaultTextLanguage = getGameLanguage() != Common::EN_ANY;
 
 	ConfMan.registerDefault("overall_volume", Audio::Mixer::kMaxMixerVolume);
 	ConfMan.registerDefault("music_volume", Audio::Mixer::kMaxMixerVolume / 2);
@@ -1686,6 +1645,23 @@ void Myst3Engine::settingsInitDefaults() {
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("vibrations", true); // Xbox specific
+}
+
+int16 Myst3Engine::getGameLanguageCode() const {
+	switch (getGameLanguage()) {
+	case Common::FR_FRA:
+		return kFrench;
+	case Common::DE_DEU:
+		return kGerman;
+	case Common::IT_ITA:
+		return kItalian;
+	case Common::ES_ESP:
+		return kSpanish;
+	case Common::EN_ANY:
+		return kEnglish;
+	default:
+		return kOther;
+	}
 }
 
 void Myst3Engine::settingsLoadToVars() {
