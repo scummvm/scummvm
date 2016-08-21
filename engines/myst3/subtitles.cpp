@@ -363,6 +363,14 @@ void Subtitles::loadFontSettings(int32 id) {
 	_surfaceTop = fontNums->getMiscData(6) + Renderer::kTopBorderHeight + Renderer::kFrameHeight;
 	_fontCharsetCode = fontNums->getMiscData(7);
 
+	if (_fontCharsetCode > 0) {
+		_fontCharsetCode = 128; // The Japanese subtitles are encoded in CP 932 / Shift JIS
+	}
+
+	if (_fontCharsetCode < 0) {
+		_fontCharsetCode = -_fontCharsetCode; // Negative values are GDI charset codes
+	}
+
 	const DirectorySubEntry *fontText = _vm->getFileDescription("TEXT", id, 0, DirectorySubEntry::kTextMetadata);
 
 	if (!fontText)
