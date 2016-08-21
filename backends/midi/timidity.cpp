@@ -52,23 +52,17 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/param.h>
-#include <netdb.h>		/* for gethostbyname */
+#include <netdb.h>  /* for getaddrinfo */
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <errno.h>
 
-// WORKAROUND bug #1870304: Solaris does not provide INADDR_NONE.
-#ifndef INADDR_NONE
-#define INADDR_NONE 0xffffffff
-#endif
-
 // BeOS BONE uses snooze (x/1000) in place of usleep(x)
 #ifdef __BEOS__
 #define usleep(v) snooze(v/1000)
 #endif
-
 
 #define SEQ_MIDIPUTC 5
 
@@ -84,7 +78,7 @@
 
 /* default host & port */
 #define DEFAULT_TIMIDITY_HOST "127.0.0.1"
-#define DEFAULT_TIMIDITY_PORT 7777
+#define DEFAULT_TIMIDITY_PORT "7777"
 
 class MidiDriver_TIMIDITY : public MidiDriver_MPU401 {
 public:
@@ -97,11 +91,8 @@ public:
 	void sysEx(const byte *msg, uint16 length);
 
 private:
-	/* standart routine to extract ip address from a string */
-	in_addr_t host_to_addr(const char* address);
-
 	/* creates a tcp connection to TiMidity server, returns filedesc (like open()) */
-	int connect_to_server(const char* hostname, unsigned short tcp_port);
+	int connect_to_server(const char* hostname, const char* tcp_port);
 
 	/* send command to the server; printf-like; returns reply string */
 	char *timidity_ctl_command(const char *fmt, ...) GCC_PRINTF(2, 3);
@@ -150,7 +141,8 @@ MidiDriver_TIMIDITY::MidiDriver_TIMIDITY() {
 int MidiDriver_TIMIDITY::open() {
 	char *res;
 	char timidity_host[NI_MAXHOST];
-	int timidity_port, data_port, i;
+	char timidity_port[6], data_port[6];
+	int num;
 
 	/* count ourselves open */
 	if (_isOpen)
@@ -166,16 +158,16 @@ int MidiDriver_TIMIDITY::open() {
 	/* extract control port */
 	if ((res = strrchr(timidity_host, ':')) != NULL) {
 		*res++ = '\0';
-		timidity_port = atoi(res);
+		Common::strlcpy(timidity_port, res, sizeof(timidity_port));
 	} else {
-		timidity_port = DEFAULT_TIMIDITY_PORT;
+		Common::strlcpy(timidity_port, DEFAULT_TIMIDITY_PORT, sizeof(timidity_port));
 	}
 
 	/*
 	 * create control connection to the server
 	 */
 	if ((_control_fd = connect_to_server(timidity_host, timidity_port)) < 0) {
-		warning("TiMidity: can't open control connection (host=%s, port=%d)", timidity_host, timidity_port);
+		warning("TiMidity: can't open control connection (host=%s, port=%s)", timidity_host, timidity_port);
 		return -1;
 	}
 
@@ -183,7 +175,7 @@ int MidiDriver_TIMIDITY::open() {
 	 * "220 TiMidity++ v2.13.2 ready)" */
 	res = timidity_ctl_command(NULL);
 	if (atoi(res) != 220) {
-		warning("TiMidity: bad response from server (host=%s, port=%d): %s", timidity_host, timidity_port, res);
+		warning("TiMidity: bad response from server (host=%s, port=%s): %s", timidity_host, timidity_port, res);
 		close_all();
 		return -1;
 	}
@@ -198,13 +190,11 @@ int MidiDriver_TIMIDITY::open() {
 
 	/* should read something like "200 63017 is ready acceptable",
 	 * where 63017 is port for data connection */
-	// FIXME: The following looks like a cheap endian test. If this is true, then
-	// it should be replaced by suitable #ifdef SCUMM_LITTLE_ENDIAN.
-	i = 1;
-	if (*(char *)&i == 1)
-		res = timidity_ctl_command("OPEN lsb");
-	else
-		res = timidity_ctl_command("OPEN msb");
+#ifdef SCUMM_LITTLE_ENDIAN
+	res = timidity_ctl_command("OPEN lsb");
+#else
+	res = timidity_ctl_command("OPEN msb");
+#endif
 
 	if (atoi(res) != 200) {
 		warning("TiMidity: bad reply for OPEN command: %s", res);
@@ -215,9 +205,15 @@ int MidiDriver_TIMIDITY::open() {
 	/*
 	 * open data connection
 	 */
-	data_port = atoi(res + 4);
+	num = atoi(res + 4);
+	if (num > 65535) {
+		warning("TiMidity: Invalid port %d given.\n", num);
+		close_all();
+		return -1;
+	}
+	snprintf(data_port, sizeof(data_port), "%d", num);
 	if ((_data_fd = connect_to_server(timidity_host, data_port)) < 0) {
-		warning("TiMidity: can't open data connection (host=%s, port=%d)", timidity_host, data_port);
+		warning("TiMidity: can't open data connection (host=%s, port=%s)", timidity_host, data_port);
 		close_all();
 		return -1;
 	}
@@ -226,7 +222,7 @@ int MidiDriver_TIMIDITY::open() {
 	 * "200 Ready data connection" */
 	res = timidity_ctl_command(NULL);
 	if (atoi(res) != 200) {
-		warning("Can't connect timidity: %s\t(host=%s, port=%d)", res, timidity_host, data_port);
+		warning("Can't connect timidity: %s\t(host=%s, port=%s)", res, timidity_host, data_port);
 		close_all();
 		return -1;
 	}
@@ -277,46 +273,33 @@ void MidiDriver_TIMIDITY::teardown() {
 	close_all();
 }
 
-in_addr_t MidiDriver_TIMIDITY::host_to_addr(const char* address) {
-	in_addr_t addr;
-	struct hostent *hp;
-
-	/* first check if IP address is given (like 127.0.0.1)*/
-	if ((addr = inet_addr(address)) != INADDR_NONE)
-		return addr;
-
-	/* if not, try to resolve a hostname */
-	if ((hp = gethostbyname(address)) == NULL) {
-		warning("TiMidity: unknown hostname: %s", address);
-		return INADDR_NONE;
-	}
-
-	memcpy(&addr, hp->h_addr, (int)sizeof(in_addr_t) <= hp->h_length ? sizeof(in_addr_t) : hp->h_length);
-
-	return addr;
-}
-
-int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, unsigned short tcp_port) {
+int MidiDriver_TIMIDITY::connect_to_server(const char* hostname, const char* tcp_port) {
 	int fd;
-	struct sockaddr_in in;
-	unsigned int addr;
+	struct addrinfo  hints;
+	struct addrinfo *result, *rp;
 
-	/* create socket */
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		warning("TiMidity: socket(): %s", strerror(errno));
+	/* get all address(es) matching host and port */
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_family   = AF_UNSPEC; /* Allow IPv4 or IPv6 */
+	if (getaddrinfo(hostname, tcp_port, &hints, &result) != 0) {
+		warning("TiMidity: getaddrinfo: %s\n", strerror(errno));
 		return -1;
 	}
 
-	/* connect */
-	memset(&in, 0, sizeof(in));
-	in.sin_family = AF_INET;
-	in.sin_port   = htons(tcp_port);
-	addr = host_to_addr(hostname);
-	memcpy(&in.sin_addr, &addr, 4);
-
-	if (connect(fd, (struct sockaddr *)&in, sizeof(in)) < 0) {
-		warning("TiMidity: connect(): %s", strerror(errno));
+	/* Try all address structures we have got previously */
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		if ((fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol)) == -1)
+			continue;
+		if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
+			break;
 		::close(fd);
+	}
+
+	freeaddrinfo(result);
+
+	if (rp == NULL) {
+		warning("TiMidity: Could not connect\n");
 		return -1;
 	}
 
