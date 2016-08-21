@@ -26,16 +26,19 @@
 #include "common/savefile.h"
 #include "engines/savestate.h"
 #include "gui/saveload.h"
+#include "graphics/thumbnail.h"
 
 namespace MacVenture {
 
 #define MACVENTURE_SAVE_HEADER MKTAG('M', 'V', 'S', 'S') // (M)ac(V)enture (S)cummVM (S)ave (0x4d565353, uint32)
 #define MACVENTURE_SAVE_VERSION 1 //1 BYTE
-#define MACVENTURE_DESC_LENGTH 1 //1 BYTE for the description length
+#define MACVENTURE_DESC_LENGTH 4 //4 BYTE for the metadata length
 
 SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 	// Metadata is stored at the end of the file
-	// |DESCRIPTION						|
+	// |THUMBNAIL						|
+	// |								|
+	// |DESCSIZE| DESCRIPTION			|
 	// |HEADER			|VERSION|DESCLEN|
 	s->seek(-(5 + MACVENTURE_DESC_LENGTH), SEEK_END);
 	uint32 sig = s->readUint32BE();
@@ -49,12 +52,18 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 	// Save is valid, set its slot number
 	desc.setSaveSlot(slot);
 
+	// Depends on MACVENTURE_DESC_LENGTH
+	uint32 metaSize = s->readUint32BE();
+	s->seek(-(5 + MACVENTURE_DESC_LENGTH + metaSize), SEEK_END);
+
+	// Load the thumbnail
+	Graphics::Surface *thumb = Graphics::loadThumbnail(*s);
+	desc.setThumbnail(thumb);
+
 	// Load the description
 	Common::String name;
-	// Depends on MACVENTURE_DESC_LENGTH
-	byte descSize = s->readByte();
-	s->seek(-(5 + MACVENTURE_DESC_LENGTH + descSize), SEEK_END);
-	for (int i = 0; i < descSize; ++i) {
+	uint32 descSize = s->readUint32BE();
+	for (uint32 i = 0; i < descSize; ++i) {
 		name += s->readByte();
 	}
 	desc.setDescription(name);
@@ -63,13 +72,15 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 }
 
 void writeMetaData(Common::OutSaveFile *file, Common::String desc) {
-	if (desc.size() >= (1 << (MACVENTURE_DESC_LENGTH * 8))) {
-		desc.erase((1 << (MACVENTURE_DESC_LENGTH * 8)) - 1);
-	}
+	uint thumbSize = file->pos();
+	Graphics::saveThumbnail(*file);
+	thumbSize = file->pos() - thumbSize;
+
+	file->writeUint32BE(desc.size());
 	file->writeString(desc);
 	file->writeUint32BE(MACVENTURE_SAVE_HEADER);
 	file->writeByte(MACVENTURE_SAVE_VERSION);
-	file->writeByte(desc.size());
+	file->writeUint32BE(4 + desc.size() + thumbSize);
 }
 
 Common::Error MacVentureEngine::loadGameState(int slot) {
@@ -121,9 +132,10 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 		desc = dialog.createDefaultSaveDescription(slot);
 	}
 
+	/*
 	if (desc.size() > (1 << MACVENTURE_DESC_LENGTH * 8) - 1)
 		desc = Common::String(desc.c_str(), (1 << MACVENTURE_DESC_LENGTH * 8) - 1);
-
+	*/
 	if (slot < 0)
 		return true;
 

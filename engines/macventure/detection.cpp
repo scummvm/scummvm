@@ -75,13 +75,16 @@ public:
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
@@ -139,6 +142,30 @@ bool MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const 
 
 void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(Common::String::format("%s.%03d", target, slot));
+}
+
+
+SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateDescriptor desc;
+	Common::String saveFileName;
+	Common::String pattern = target;
+	pattern += ".###";
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		if (slotNum == slot) {
+			saveFileName = *file;
+		}
+	}
+
+	Common::InSaveFile *in = saveFileMan->openForLoading(saveFileName);
+	if (in) {
+		desc = loadMetaData(in, slot);
+		delete in;
+		return desc;
+	}
+	return SaveStateDescriptor(-1, "");
 }
 
 } // End of namespace MacVenture
