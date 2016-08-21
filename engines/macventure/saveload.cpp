@@ -68,19 +68,63 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 	}
 	desc.setDescription(name);
 
+	// Load date
+	uint32 saveDate = s->readUint32LE();
+	int day = (saveDate >> 24) & 0xFF;
+	int month = (saveDate >> 16) & 0xFF;
+	int year = saveDate & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+
+	uint16 saveTime = s->readUint16LE();
+	int hour = (saveTime >> 8) & 0xFF;
+	int minutes = saveTime & 0xFF;
+	desc.setSaveTime(hour, minutes);
+
+	// Load playtime
+	uint32 playTime = s->readUint32LE();
+	desc.setPlayTime(playTime * 1000);
+
 	return desc;
 }
 
+uint saveCurrentDate(Common::OutSaveFile *file) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+
+	file->writeUint32LE(saveDate);
+	file->writeUint16LE(saveTime);
+
+	// Return the number of bytes occupied
+	return 6;
+}
+
+uint savePlayTime(Common::OutSaveFile *file) {
+	uint32 playTime = g_engine->getTotalPlayTime() / 1000;
+	file->writeUint32LE(playTime);
+	// Return the number of bytes occupied
+	return 4;
+}
+
 void writeMetaData(Common::OutSaveFile *file, Common::String desc) {
+
+	// Write thumbnail
 	uint thumbSize = file->pos();
 	Graphics::saveThumbnail(*file);
 	thumbSize = file->pos() - thumbSize;
 
+	// Write description
 	file->writeUint32BE(desc.size());
 	file->writeString(desc);
+
+	uint dateSize = saveCurrentDate(file);
+	uint playTimeSize = savePlayTime(file);
+
 	file->writeUint32BE(MACVENTURE_SAVE_HEADER);
 	file->writeByte(MACVENTURE_SAVE_VERSION);
-	file->writeUint32BE(4 + desc.size() + thumbSize);
+	file->writeUint32BE(4 + desc.size() + dateSize + playTimeSize + thumbSize);
 }
 
 Common::Error MacVentureEngine::loadGameState(int slot) {
