@@ -955,6 +955,25 @@ int SciEngine::inQfGImportRoom() const {
 	return 0;
 }
 
+void SciEngine::sleep(uint32 msecs) {
+	uint32 time;
+	const uint32 wakeUpTime = g_system->getMillis() + msecs;
+
+	for (;;) {
+		// let backend process events and update the screen
+		_eventMan->getSciEvent(SCI_EVENT_PEEK);
+		time = g_system->getMillis();
+		if (time + 10 < wakeUpTime) {
+			g_system->delayMillis(10);
+		} else {
+			if (time < wakeUpTime)
+				g_system->delayMillis(wakeUpTime - time);
+			break;
+		}
+
+	}
+}
+
 void SciEngine::setLauncherLanguage() {
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// If game is multilingual
