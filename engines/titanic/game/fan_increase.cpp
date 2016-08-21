@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CFanIncrease, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CFanIncrease::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +36,13 @@ void CFanIncrease::save(SimpleFile *file, int indent) {
 void CFanIncrease::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CFanIncrease::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CStatusChangeMsg statusMsg;
+	statusMsg._newStatus = 1;
+	statusMsg.execute("FanController");
+	return true;
 }
 
 } // End of namespace Titanic

@@ -29,15 +29,20 @@
 namespace Titanic {
 
 class CFanNoises : public CGameObject {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool SetVolumeMsg(CSetVolumeMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
-	int _fieldD4;
+	int _state;
+	int _soundHandle;
+	int _soundPercent;
+	int _soundV3;
+	int _soundSeconds;
+	int _stopSeconds;
+	bool _startFlag;
 public:
 	CLASSDEF;
 	CFanNoises();

@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CFanIncrease : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	CLASSDEF;
 
