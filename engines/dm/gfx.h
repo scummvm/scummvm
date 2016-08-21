@@ -483,8 +483,19 @@ public:
 class CreatureReplColorSet {
 public:
 	uint16 _RGBColor[6];
-	byte _D2ReplacementColor;
-	byte _D3ReplacementColor;
+	byte _d2ReplacementColor;
+	byte _d3ReplacementColor;
+
+	CreatureReplColorSet(uint16 col1, uint16 col2, uint16 col3, uint16 col4, uint16 col5, uint16 col6, byte d2Rep, byte d3Rep) {
+		_RGBColor[0] = col1;
+		_RGBColor[1] = col2;
+		_RGBColor[2] = col3;
+		_RGBColor[3] = col4;
+		_RGBColor[4] = col5;
+		_RGBColor[5] = col6;
+		_d2ReplacementColor = d2Rep;
+		_d3ReplacementColor = d3Rep;
+	}
 }; // @ CREATURE_REPLACEMENT_COLOR_SET
 
 

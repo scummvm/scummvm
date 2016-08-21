@@ -2061,7 +2061,8 @@ void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 	for (uint16 i = 0; i < 6; ++i)
 		_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[i]._x1 = 255;
 
-	if (_g76_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1) {
+	_g76_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1;
+	if (_g76_useFlippedWallAndFootprintsBitmap) {
 		f100_drawWallSetBitmap(_g85_bitmapCeiling, ceilingFrame);
 		f99_copyBitmapAndFlipHorizontal(_g84_bitmapFloor, _g74_tmpBitmap, k112_byteWidthViewport, 70);
 		f100_drawWallSetBitmap(_g74_tmpBitmap, floorFrame);
@@ -2077,10 +2078,10 @@ void DisplayMan::f128_drawDungeon(Direction dir, int16 posX, int16 posY) {
 		f100_drawWallSetBitmap(_g84_bitmapFloor, floorFrame);
 	}
 
-	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, -2, posX, posY) == k0_ElementTypeWall)
+	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, -2, posX, posY) == k0_WallElemType)
 		f100_drawWallSetBitmap(_g697_bitmapWallSet_Wall_D3L2, frameWallD3L2);
 
-	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, 2, posX, posY) == k0_ElementTypeWall)
+	if (_vm->_dungeonMan->f153_getRelSquareType(dir, 3, 2, posX, posY) == k0_WallElemType)
 		f100_drawWallSetBitmap(_g696_bitmapWallSet_Wall_D3R2, _frameWallD3R2);
 
 	int16 tmpPosX = posX;
@@ -2421,26 +2422,26 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 void DisplayMan::f93_applyCreatureReplColors(int replacedColor, int replacementColor) {
 	CreatureReplColorSet creatureReplColorSets[13] = { // @ G0220_as_Graphic558_CreatureReplacementColorSets
 		/* { Color, Color, Color, Color, Color, Color, D2 replacement color index (x10), D3 replacement color index (x10) } */
-		{0x0CA0, 0x0A80, 0x0860, 0x0640, 0x0420, 0x0200,  90,  90},    /* Atari ST: { 0x0650, 0x0540, 0x0430, 0x0320, 0x0210, 0x0100,  90,  90 }, RGB colors are different */
-		{0x0060, 0x0040, 0x0020, 0x0000, 0x0000, 0x0000,   0,   0},    /* Atari ST: { 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0000,   0,   0 }, */
-		{0x0860, 0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 100, 100},    /* Atari ST: { 0x0430, 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 100, 100 }, */
-		{0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 0x0000,  90,   0},    /* Atari ST: { 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 0x0000,  90,   0 }, */
-		{0x000A, 0x0008, 0x0006, 0x0004, 0x0002, 0x0000,  90, 100},    /* Atari ST: { 0x0005, 0x0004, 0x0003, 0x0002, 0x0001, 0x0000,  90, 100 }, */
-		{0x0008, 0x0006, 0x0004, 0x0002, 0x0000, 0x0000, 100,   0},    /* Atari ST: { 0x0004, 0x0003, 0x0002, 0x0001, 0x0000, 0x0000, 100,   0 }, */
-		{0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 0x0000,  90,   0},    /* Atari ST: { 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 0x0000,  90,   0 }, */
-		{0x0A0A, 0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 100,  90},    /* Atari ST: { 0x0505, 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 100,  90 }, */
-		{0x0FA0, 0x0C80, 0x0A60, 0x0840, 0x0620, 0x0400, 100,  50},    /* Atari ST: { 0x0750, 0x0640, 0x0530, 0x0420, 0x0310, 0x0200, 100,  50 }, */
-		{0x0F80, 0x0C60, 0x0A40, 0x0820, 0x0600, 0x0200,  50,  70},    /* Atari ST: { 0x0740, 0x0630, 0x0520, 0x0410, 0x0300, 0x0100,  50,  30 }, D3 replacement color index is different */
-		{0x0800, 0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 100, 120},    /* Atari ST: { 0x0400, 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 100, 100 }, D3 replacement color index is different */
-		{0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 0x0000, 120,   0},    /* Atari ST: { 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 0x0000, 120,   0 }, */
-		{0x0C86, 0x0A64, 0x0842, 0x0620, 0x0400, 0x0200, 100,  50}     /* Atari ST: { 0x0643, 0x0532, 0x0421, 0x0310, 0x0200, 0x0100, 100,  50 } }; */
+		CreatureReplColorSet(0x0CA0, 0x0A80, 0x0860, 0x0640, 0x0420, 0x0200,  90,  90),    /* Atari ST: { 0x0650, 0x0540, 0x0430, 0x0320, 0x0210, 0x0100,  90,  90 }, RGB colors are different */
+		CreatureReplColorSet(0x0060, 0x0040, 0x0020, 0x0000, 0x0000, 0x0000,   0,   0),    /* Atari ST: { 0x0030, 0x0020, 0x0010, 0x0000, 0x0000, 0x0000,   0,   0 }, */
+		CreatureReplColorSet(0x0860, 0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 100, 100),    /* Atari ST: { 0x0430, 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 100, 100 }, */
+		CreatureReplColorSet(0x0640, 0x0420, 0x0200, 0x0000, 0x0000, 0x0000,  90,   0),    /* Atari ST: { 0x0320, 0x0210, 0x0100, 0x0000, 0x0000, 0x0000,  90,   0 }, */
+		CreatureReplColorSet(0x000A, 0x0008, 0x0006, 0x0004, 0x0002, 0x0000,  90, 100),    /* Atari ST: { 0x0005, 0x0004, 0x0003, 0x0002, 0x0001, 0x0000,  90, 100 }, */
+		CreatureReplColorSet(0x0008, 0x0006, 0x0004, 0x0002, 0x0000, 0x0000, 100,   0),    /* Atari ST: { 0x0004, 0x0003, 0x0002, 0x0001, 0x0000, 0x0000, 100,   0 }, */
+		CreatureReplColorSet(0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 0x0000,  90,   0),    /* Atari ST: { 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 0x0000,  90,   0 }, */
+		CreatureReplColorSet(0x0A0A, 0x0808, 0x0606, 0x0404, 0x0202, 0x0000, 100,  90),    /* Atari ST: { 0x0505, 0x0404, 0x0303, 0x0202, 0x0101, 0x0000, 100,  90 }, */
+		CreatureReplColorSet(0x0FA0, 0x0C80, 0x0A60, 0x0840, 0x0620, 0x0400, 100,  50),    /* Atari ST: { 0x0750, 0x0640, 0x0530, 0x0420, 0x0310, 0x0200, 100,  50 }, */
+		CreatureReplColorSet(0x0F80, 0x0C60, 0x0A40, 0x0820, 0x0600, 0x0200,  50,  70),    /* Atari ST: { 0x0740, 0x0630, 0x0520, 0x0410, 0x0300, 0x0100,  50,  30 }, D3 replacement color index is different */
+		CreatureReplColorSet(0x0800, 0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 100, 120),    /* Atari ST: { 0x0400, 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 100, 100 }, D3 replacement color index is different */
+		CreatureReplColorSet(0x0600, 0x0400, 0x0200, 0x0000, 0x0000, 0x0000, 120,   0),    /* Atari ST: { 0x0300, 0x0200, 0x0100, 0x0000, 0x0000, 0x0000, 120,   0 }, */
+		CreatureReplColorSet(0x0C86, 0x0A64, 0x0842, 0x0620, 0x0400, 0x0200, 100,  50)     /* Atari ST: { 0x0643, 0x0532, 0x0421, 0x0310, 0x0200, 0x0100, 100,  50 } }; */
 	};
 
 	for (int16 i = 0; i < 6; ++i)
 		_palDungeonView[i][replacedColor] = creatureReplColorSets[replacementColor]._RGBColor[i];
 
-	_palChangesCreatureD2[replacedColor] = creatureReplColorSets[replacementColor]._D2ReplacementColor;
-	_palChangesCreatureD3[replacedColor] = creatureReplColorSets[replacementColor]._D3ReplacementColor;
+	_palChangesCreatureD2[replacedColor] = creatureReplColorSets[replacementColor]._d2ReplacementColor;
+	_palChangesCreatureD3[replacedColor] = creatureReplColorSets[replacementColor]._d3ReplacementColor;
 }
 
 void DisplayMan::f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
@@ -3113,7 +3114,8 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 			if ((viewSquareIndex >= k0_ViewSquare_D3C) && (viewSquareIndex <= k9_ViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
 				objectAspect = &(_objectAspects209[_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = k360_FirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
-				if (useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane))
+				useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane);
+				if (useAlcoveObjectImage)
 					AL_4_nativeBitmapIndex++;
 
 				coordinateSet = objectCoordinateSets[objectAspect->_coordinateSet][viewSquareIndex][AL_2_viewCell];
@@ -3186,7 +3188,8 @@ T0115015_DrawProjectileAsObject:
 					boxByteGreen._y2 = 135;
 
 				boxByteGreen._x2 = MIN(223, AL_4_xPos + byteWidth);
-				if (boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1)) {
+				boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1);
+				if (boxByteGreen._x1) {
 					if (flipHorizontal)
 						AL_4_xPos = paddingPixelCount;
 					else
@@ -3240,7 +3243,9 @@ T0115015_DrawProjectileAsObject:
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
 		objectAspect = (ObjectAspect*)creatureAspectStruct;
-		if (AL_0_creatureIndexRed = _vm->_groupMan->f176_getCreatureOrdinalInCell(group, cellYellowBear)) { /* If there is a creature on the cell being processed */
+		AL_0_creatureIndexRed = _vm->_groupMan->f176_getCreatureOrdinalInCell(group, cellYellowBear);
+
+		if (AL_0_creatureIndexRed) { /* If there is a creature on the cell being processed */
 			AL_0_creatureIndexRed--; /* Convert ordinal to index */
 			creatureIndexGreen = AL_0_creatureIndexRed;
 		} else if (creatureSize == k1_MaskCreatureSizeHalf) {
@@ -3301,7 +3306,8 @@ T0115077_DrawSecondHalfSquareCreature:
 		derivedBitmapIndex = ((CreatureAspect*)objectAspect)->_firstDerivedBitmapIndex;
 		int16 sourceByteWidth;
 		int16 sourceHeight;
-		if (useCreatureSideBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001)) {
+		useCreatureSideBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001);
+		if (useCreatureSideBitmap) {
 			useCreatureAttackBitmap = useFlippedHorizontallyCreatureFrontImage = useCreatureBackBitmap = false;
 			AL_4_nativeBitmapIndex++; /* Skip the front image. Side image is right after the front image */
 			derivedBitmapIndex += 2;
