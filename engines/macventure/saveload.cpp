@@ -63,8 +63,8 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 }
 
 void writeMetaData(Common::OutSaveFile *file, Common::String desc) {
-	if (desc.size() >= (1 << (MACVENTURE_DESC_LENGTH * 4))) {
-		desc.erase((1 << (MACVENTURE_DESC_LENGTH * 4)) - 1);
+	if (desc.size() >= (1 << (MACVENTURE_DESC_LENGTH * 8))) {
+		desc.erase((1 << (MACVENTURE_DESC_LENGTH * 8)) - 1);
 	}
 	file->writeString(desc);
 	file->writeUint32BE(MACVENTURE_SAVE_HEADER);
@@ -121,8 +121,8 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 		desc = dialog.createDefaultSaveDescription(slot);
 	}
 
-	if (desc.size() > (1 << MACVENTURE_DESC_LENGTH * 4) - 1)
-		desc = Common::String(desc.c_str(), (1 << MACVENTURE_DESC_LENGTH * 4) - 1);
+	if (desc.size() > (1 << MACVENTURE_DESC_LENGTH * 8) - 1)
+		desc = Common::String(desc.c_str(), (1 << MACVENTURE_DESC_LENGTH * 8) - 1);
 
 	if (slot < 0)
 		return true;
