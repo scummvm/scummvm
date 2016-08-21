@@ -57,8 +57,7 @@ void DMEngine::initArrays() {
 }
 
 void DMEngine::f19_displayErrorAndStop(int16 errorIndex) {
-	debug("Stuff hit the fun: ");
-	debug(Common::String::format("%d", errorIndex).c_str());
+	debug("Stuff hit the fun: %d", errorIndex);
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event) || true)
 		;

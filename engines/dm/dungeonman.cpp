@@ -797,19 +797,19 @@ Square DungeonMan::f151_getSquare(int16 mapX, int16 mapY) {
 
 	if (isMapYInBounds) {
 		SquareType squareType = Square(_g271_currMapData[0][mapY]).getType();
-		if (((mapX == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+		if (((mapX == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0004_WallEastRandOrnAllowed);
 
 		squareType = Square(_g271_currMapData[_g273_currMapWidth - 1][mapY]).getType();
-		if (((mapX == _g273_currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+		if (((mapX == _g273_currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0001_WallWestRandOrnAllowed);
 	} else if (isMapXInBounds) {
 		SquareType squareType = Square(_g271_currMapData[mapX][0]).getType();
-		if (((mapY == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+		if (((mapY == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0002_WallSouthRandOrnAllowed);
 
 		squareType = Square(_g271_currMapData[mapX][_g274_currMapHeight - 1]).getType();
-		if (((mapY == _g274_currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_ElementTypePit))
+		if (((mapY == _g274_currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0008_WallNorthRandOrnAllowed);
 	}
 	return Square(k0_ElementTypeWall, 0);
@@ -941,7 +941,7 @@ T0172010_ClosedFakeWall:
 			AL0307_uc_FootprintsAllowed = true;
 		}
 
-		while ((curThing != Thing::_endOfList) && ((Direction)curThing.getType() <= k3_SensorThingType)) {
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
 			if (curThing.getType() == k3_SensorThingType) {
 				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
 				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getOrnOrdinal();
@@ -1270,6 +1270,8 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		break;
 	case k7_ScrollThingType:
 		weight = 1;
+		break;
+	default:
 		break;
 	}
 

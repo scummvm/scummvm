@@ -825,10 +825,10 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		case Common::DE_DEU: // english and german versions are the same
 			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
 			strcat(L1097_ac_String, " ");
-			strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
+			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
 			break;
 		case Common::FR_FRA:
-			strcat(L1097_ac_String, g417_baseSkillName[AL1090_ui_SkillIndex]);
+			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
 			strcat(L1097_ac_String, " ");
 			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
 			break;

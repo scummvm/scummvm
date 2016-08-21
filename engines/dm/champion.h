@@ -448,7 +448,6 @@ public:
 #define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
 
 #define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
-extern const char *g417_baseSkillName[4]; // @ G0417_apc_BaseSkillNames
 
 #define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
 #define k1_spellCastSuccess 1 // @ C1_SPELL_CAST_SUCCESS             
@@ -590,6 +589,9 @@ public:
 	Box _boxChampionIcons[4];
 	Color _championColor[4];
 	int16 _lightPowerToLightAmount[16]; // g039_LightPowerToLightAmount
+	Box _boxChampionPortrait;
+	uint16 _slotMasks[38];
+	const char *_baseSkillName[4];
 };
 
 }

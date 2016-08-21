@@ -72,13 +72,13 @@ void warning(bool repeat, const char* s, ...) {
 	va_end(va);
 
 	if (repeat) {
-		::warning(output.c_str());
+		::warning("%s", output.c_str());
 	} else {
 		static Common::Array<Common::String> stringsPrinted;
 
 		if (Common::find(stringsPrinted.begin(), stringsPrinted.end(), s) == stringsPrinted.end()) {
 			stringsPrinted.push_back(output);
-			::warning(output.c_str());
+			::warning("%s", output.c_str());
 		}
 	}
 }
@@ -683,7 +683,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 					char displStr[20];
 					strcpy(displStr, G0428_apc_SkillLevelNames[skillLevel - 2]);
 					strcat(displStr, " ");
-					strcat(displStr, g417_baseSkillName[idx]);
+					strcat(displStr, _championMan->_baseSkillName[idx]);
 					_textMan->f443_endgamePrintString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
 				}
 				championMirrorBox._y1 += 48;

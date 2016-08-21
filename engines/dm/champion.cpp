@@ -41,51 +41,6 @@
 
 namespace DM {
 
-uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
-						   /* 30 for champion inventory, 8 for chest */
-	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0x0002,   /* Head             Head */
-	0x0008,   /* Torso            Torso */
-	0x0010,   /* Legs             Legs */
-	0x0020,   /* Feet             Feet */
-	0x0100,   /* Pouch 2          Pouch */
-	0x0080,   /* Quiver Line2 1   Quiver 2 */
-	0x0080,   /* Quiver Line1 2   Quiver 2 */
-	0x0080,   /* Quiver Line2 2   Quiver 2 */
-	0x0004,   /* Neck             Neck */
-	0x0100,   /* Pouch 1          Pouch */
-	0x0040,   /* Quiver Line1 1   Quiver 1 */
-	0xFFFF,   /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0xFFFF,   /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
-	0x0400,   /* Chest 1          Chest */
-	0x0400,   /* Chest 2          Chest */
-	0x0400,   /* Chest 3          Chest */
-	0x0400,   /* Chest 4          Chest */
-	0x0400,   /* Chest 5          Chest */
-	0x0400,   /* Chest 6          Chest */
-	0x0400,   /* Chest 7          Chest */
-	0x0400}; /* Chest 8          Chest */
-
-Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
-
-const char *g417_baseSkillName[4];
-
 void ChampionMan::initConstants() {
 	static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
 	static const char *g417_baseSkillName_DE_DEU[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
@@ -99,6 +54,49 @@ void ChampionMan::initConstants() {
 
 	static Color championColor[4] = {(Color)7, (Color)11, (Color)8, (Color)14};
 	int16 lightPowerToLightAmount[16] = {0, 5, 12, 24, 33, 40, 46, 51, 59, 68, 76, 82, 89, 94, 97, 100};
+	uint16 slotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
+		/* 30 for champion inventory, 8 for chest */
+		0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Action Hand      Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0x0002,   /* Head             Head */
+		0x0008,   /* Torso            Torso */
+		0x0010,   /* Legs             Legs */
+		0x0020,   /* Feet             Feet */
+		0x0100,   /* Pouch 2          Pouch */
+		0x0080,   /* Quiver Line2 1   Quiver 2 */
+		0x0080,   /* Quiver Line1 2   Quiver 2 */
+		0x0080,   /* Quiver Line2 2   Quiver 2 */
+		0x0004,   /* Neck             Neck */
+		0x0100,   /* Pouch 1          Pouch */
+		0x0040,   /* Quiver Line1 1   Quiver 1 */
+		0xFFFF,   /* Backpack Line1 1 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line2 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 2 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 3 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 4 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 5 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 6 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 7 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 8 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0xFFFF,   /* Backpack Line1 9 Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
+		0x0400,   /* Chest 1          Chest */
+		0x0400,   /* Chest 2          Chest */
+		0x0400,   /* Chest 3          Chest */
+		0x0400,   /* Chest 4          Chest */
+		0x0400,   /* Chest 5          Chest */
+		0x0400,   /* Chest 6          Chest */
+		0x0400,   /* Chest 7          Chest */
+		0x0400    /* Chest 8          Chest */
+	};
+
+	_boxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
 
 	const char **g417_byLanguage;
 	switch (_vm->getGameLanguage()) { // localized
@@ -116,7 +114,7 @@ void ChampionMan::initConstants() {
 	}
 
 	for (int i = 0; i < 4; ++i) {
-		g417_baseSkillName[i] = g417_byLanguage[i];
+		_baseSkillName[i] = g417_byLanguage[i];
 		_championColor[i] = championColor[i];
 		_boxChampionIcons[i] = boxChampionIcons[i];
 	}
@@ -124,6 +122,8 @@ void ChampionMan::initConstants() {
 	for (int i = 0; i < 16; i++)
 		_lightPowerToLightAmount[i] = lightPowerToLightAmount[i];
 
+	for (int i = 0; i < 38; i++)
+		_slotMasks[i] = slotMasks[i];
 }
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
@@ -1008,7 +1008,7 @@ void ChampionMan::f304_addSkillExperience(uint16 champIndex, uint16 skillIndex, 
 			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " VIENT DE DEVENIR "); break;
 			}
 
-			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, g417_baseSkillName[baseSkillIndex]);
+			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, _baseSkillName[baseSkillIndex]);
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
@@ -1285,7 +1285,7 @@ void ChampionMan::f302_processCommands28to65_clickOnSlotBox(uint16 slotBoxIndex)
 	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & gSlotMasks[slotIndex])))
+	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
 	_vm->_eventMan->f78_showMouse();
@@ -1838,7 +1838,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 	championPtr->resetToZero();
 	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portraits could be missing in the data)
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, gBoxChampionPortrait, M27_getChampionPortraitX(championPortraitIndex), M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency, 87, 29);
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, _boxChampionPortrait, M27_getChampionPortraitX(championPortraitIndex), M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency, 87, 29);
 	championPtr->_actionIndex = k255_ChampionActionNone;
 	championPtr->_enableActionEventIndex = -1;
 	championPtr->_hideDamageReceivedIndex = -1;
@@ -1931,12 +1931,12 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 		ThingType thingType = curThing.getType();
 		if ((thingType > k3_SensorThingType) && (curThing.getCell() == championObjectsCell)) {
 			int16 objectAllowedSlots = _vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(curThing)]._allowedSlots;
-			uint16 curSlotIndex;
+			uint16 curSlotIndex = k0_ChampionSlotReadyHand;
 			switch (thingType) {
 			case k6_ArmourThingType: {
 				bool skipCheck = false;
 				for (curSlotIndex = k2_ChampionSlotHead; curSlotIndex <= k5_ChampionSlotFeet; curSlotIndex++) {
-					if (objectAllowedSlots & gSlotMasks[curSlotIndex]) {
+					if (objectAllowedSlots & _slotMasks[curSlotIndex]) {
 						skipCheck = true;
 						break;
 					}
@@ -1945,7 +1945,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 				if (skipCheck)
 					break;
 
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+				if ((objectAllowedSlots & _slotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -1955,7 +1955,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 			case k5_WeaponThingType:
 				if (championPtr->_slots[k1_ChampionSlotActionHand] == Thing::_none)
 					curSlotIndex = k1_ChampionSlotActionHand;
-				else if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+				else if ((objectAllowedSlots & _slotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -1966,14 +1966,14 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 					curSlotIndex = k11_ChampionSlotPouch_1;
 				else if (championPtr->_slots[k6_ChampionSlotPouch_2] == Thing::_none)
 					curSlotIndex = k6_ChampionSlotPouch_2;
-				else if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+				else if ((objectAllowedSlots & _slotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
 				break;
 			case k9_ContainerThingType:
 			case k10_JunkThingType:
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+				if ((objectAllowedSlots & _slotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
 				else
 					curSlotIndex = slotIdx++;
@@ -1984,7 +1984,7 @@ void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex)
 			}
 
 			while (championPtr->_slots[curSlotIndex] != Thing::_none) {
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
+				if ((objectAllowedSlots & _slotMasks[k10_ChampionSlotNeck]) && (championPtr->_slots[k10_ChampionSlotNeck] == Thing::_none))
 					curSlotIndex = k10_ChampionSlotNeck;
 				else
 					curSlotIndex = slotIdx++;

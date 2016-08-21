@@ -679,9 +679,9 @@ Spell* MenuMan::f409_getSpellFromSymbols(byte* symbols) {
 void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failureType, uint16 skillIndex) {
 	char* L1264_pc_Message = nullptr;
 
-	if (skillIndex > k3_ChampionSkillWizard) {
+	if (skillIndex > k3_ChampionSkillWizard)
 		skillIndex = (skillIndex - 4) / 4;
-	}
+
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
 
@@ -704,12 +704,12 @@ void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failure
 	switch (failureType) {
 	case k0_failureNeedsMorePractice:
 		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, messages[0]);
-		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, g417_baseSkillName[skillIndex]);
-		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == k3_ChampionSkillWizard) {
+		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
+		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == k3_ChampionSkillWizard)
 			L1264_pc_Message = messages[1];
-		} else {
+		else
 			L1264_pc_Message = messages[4];
-		}
+
 		break;
 	case k1_failureMeaninglessSpell:
 		L1264_pc_Message = messages[2];
