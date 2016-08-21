@@ -28,11 +28,17 @@
 namespace Titanic {
 
 class CFanControl : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
-	int _fieldBC;
-	int _fieldC0;
+	int _state;
+	bool _enabled;
 	int _fieldC4;
-	int _fieldC8;
+	bool _fieldC8;
 	int _fieldCC;
 public:
 	CLASSDEF;
