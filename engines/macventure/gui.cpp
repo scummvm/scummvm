@@ -78,15 +78,15 @@ static const Graphics::MenuData menuSubItems[] = {
 	{ kMenuFile,		NULL,				0, 0, false },
 	{ kMenuFile,		"Quit",				kMenuActionQuit, 0, true },
 
-	{ kMenuEdit,		"Undo",				kMenuActionUndo, 'Z', true },
+	{ kMenuEdit,		"Undo",				kMenuActionUndo, 'Z', false },
 	{ kMenuEdit,		NULL,				0, 0, false },
-	{ kMenuEdit,		"Cut",				kMenuActionCut, 'K', true },
-	{ kMenuEdit,		"Copy",				kMenuActionCopy, 'C', true },
-	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', true },
-	{ kMenuEdit,		"Clear",			kMenuActionClear, 'B', true },
+	{ kMenuEdit,		"Cut",				kMenuActionCut, 'K', false },
+	{ kMenuEdit,		"Copy",				kMenuActionCopy, 'C', false },
+	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', false },
+	{ kMenuEdit,		"Clear",			kMenuActionClear, 'B', false },
 
-	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, true },
-	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, true },
+	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, false },
+	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, false },
 
 	{ 0,				NULL,				0, 0, false }
 };
@@ -1142,7 +1142,7 @@ void Gui::handleMenuAction(MenuAction action) {
 		warning("Unimplemented MacVenture Menu Action: About");
 		break;
 	case MacVenture::kMenuActionNew:
-		warning("Unimplemented MacVenture Menu Action: New");
+		_engine->newGame();
 		break;
 	case MacVenture::kMenuActionOpen:
 		loadGame();
