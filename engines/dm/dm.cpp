@@ -166,8 +166,7 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 	_sound = nullptr;
 
 	_engineShouldQuit = false;
-	_g528_saveFormat = 0;
-	_g527_platform = 0;
+	_g528_saveFormat = k_FORMAT_NONE;
 	_g526_dungeonId = 0;
 
 	_g298_newGame = 0;

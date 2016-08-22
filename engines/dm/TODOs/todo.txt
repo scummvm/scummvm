@@ -14,10 +14,8 @@ Todo:
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
 Code stuff todo:
-	Complete stub methods(blitShrink, blitmask, scroller, etc.)
-	Save file f433_processCommand140_saveGame fails silently, add error checking
-	
-	Add loading from dungeon
+	Complete stub methods(blitShrink, blitmask, scroller)
+	Add proper save header, add error handling to it
 	Fix incorrect thumbnail	
 	Add translations to f433_processCommand140_saveGame 'LOAD'
 	

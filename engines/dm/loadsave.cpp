@@ -42,9 +42,6 @@
 
 
 namespace DM {
-#define C2_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST 2
-#define C3_PLATFORM_AMIGA 3
-#define C10_DUNGEON_DM 10
 
 LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	if (slot == -1 && _g298_newGame == k0_modeLoadSavedGame)
@@ -56,10 +53,9 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::InSaveFile *file = nullptr;
 
 	struct {
-		int16 _saveFormat;
-		int16 _saveAndPlayChoice;
+		SaveFormat _saveFormat;
+		int32 _saveVersion;
 		int32 _gameId;
-		int16 _platform;
 		uint16 _dungeonId;
 	} dmSaveHeader;
 
@@ -69,9 +65,8 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		file = saveFileManager->openForLoading(fileName);
 	}
 
-	_g528_saveFormat = C2_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST;
-	_g527_platform = C3_PLATFORM_AMIGA;
-	_g526_dungeonId = C10_DUNGEON_DM;
+	dmSaveHeader._saveFormat = k_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST;
+
 	if (_g298_newGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_g524_restartGameAllowed = false;
@@ -84,10 +79,9 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
-		dmSaveHeader._saveFormat = file->readSint16BE();
-		dmSaveHeader._saveAndPlayChoice = file->readSint16BE();
+		dmSaveHeader._saveFormat = (SaveFormat)file->readSint32BE();
+		dmSaveHeader._saveVersion = file->readSint32BE();
 		dmSaveHeader._gameId = file->readSint32BE();
-		dmSaveHeader._platform = file->readSint16BE();
 		dmSaveHeader._dungeonId = file->readUint16BE();
 
 		_g525_gameId = dmSaveHeader._gameId;
@@ -142,7 +136,6 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		}
 	} else {
 		_g528_saveFormat = dmSaveHeader._saveFormat;
-		_g527_platform = dmSaveHeader._platform;
 		_g526_dungeonId = dmSaveHeader._dungeonId;
 
 		_g524_restartGameAllowed = true;
@@ -302,10 +295,9 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 
 	writeSaveGameHeader(file, saveDescription);
 
-	file->writeSint16BE(_g528_saveFormat);
-	file->writeSint16BE(saveAndPlayChoice);
+	file->writeSint32BE(_g528_saveFormat);
+	file->writeSint32BE(1); // save version
 	file->writeSint32BE(_g525_gameId);
-	file->writeSint16BE(_g527_platform);
 	file->writeUint16BE(_g526_dungeonId);
 
 	// write C0_SAVE_PART_GLOBAL_DATA part

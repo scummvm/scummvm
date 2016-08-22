@@ -36,6 +36,7 @@
 
 #include "console.h"
 #include <common/memstream.h>
+#include <advancedDetector.h>
 
 
 struct ADGameDescription;
@@ -57,6 +58,13 @@ class ProjExpl;
 class DialogMan;
 class SoundMan;
 
+enum SaveFormat {
+	k_FORMAT_NONE = 0,
+	k_FORMAT_DM_ATARI_ST = 1,
+	k_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST = 2,
+	k_FORMAT_DM_APPLE_IIGS = 3,
+	k_FORMAT_DM_AMIGA_36_PC_CSB_AMIGA_PC98_X68000_FM_TOWNS = 5,
+};
 
 void warning(bool repeat, const char *s, ...);
 
@@ -233,8 +241,7 @@ public:
 	Common::Language getGameLanguage();
 
 private:
-	int16 _g528_saveFormat; // @ G0528_i_Format
-	int16 _g527_platform; // @ G0527_i_Platform
+	SaveFormat _g528_saveFormat; // @ G0528_i_Format
 	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
