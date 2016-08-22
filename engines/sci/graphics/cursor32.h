@@ -109,6 +109,8 @@ public:
 	 */
 	void clearRestrictedArea();
 
+	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
@@ -202,6 +204,9 @@ private:
 	 * cursor.
 	 */
 	bool _writeToVMAP;
+
+	// Mac versions of games use a remap list to remap their cursors
+	Common::Array<uint16> _macCursorRemap;
 
 	/**
 	 * Reads data from the output buffer or hardware
