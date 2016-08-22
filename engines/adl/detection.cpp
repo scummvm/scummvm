@@ -296,6 +296,7 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd);
+Engine *HiRes0Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd);
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -310,6 +311,9 @@ bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		break;
 	case GAME_TYPE_HIRES2:
 		*engine = HiRes2Engine_create(syst, adlGd);
+		break;
+	case GAME_TYPE_HIRES0:
+		*engine = HiRes0Engine_create(syst, adlGd);
 		break;
 	case GAME_TYPE_HIRES6:
 		*engine = HiRes6Engine_create(syst, adlGd);

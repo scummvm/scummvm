@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	graphics.o \
 	graphics_v1.o \
 	graphics_v2.o \
+	hires0.o \
 	hires1.o \
 	hires2.o \
 	hires6.o \

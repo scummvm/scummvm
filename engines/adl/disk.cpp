@@ -112,14 +112,6 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 			if ((volNo ^ track ^ sector) != checksum)
 				error("invalid NIB checksum");
 
-			// FIXME: This is a hires0/hires2-specific hack.
-			if (volNo == 0xfe) {
-				if (track == 1)
-					track = 2;
-				else if (track == 2)
-					track = 1;
-			}
-
 			// Epilogue is de/aa plus a gap, but we don't care.
 			continue;
 		}
