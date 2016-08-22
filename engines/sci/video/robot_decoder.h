@@ -38,6 +38,11 @@ namespace Sci {
 class Plane;
 class SegManager;
 
+// There were 3 different Robot video versions, used in the following games:
+// - v4: PQ:SWAT demo
+// - v5: KQ7 DOS, Phantasmagoria, PQ:SWAT, Lighthouse
+// - v6: RAMA
+//
 // Notes on Robot v5/v6 format:
 //
 // Robot is a packetized streaming AV format that encodes multiple bitmaps +
