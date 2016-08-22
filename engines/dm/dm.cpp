@@ -875,7 +875,8 @@ void DMEngine::f437_STARTEND_drawTittle() {
 
 	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
 	_displayMan->fillScreen(k0_ColorBlack);
-	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
+	// uncomment this to draw 'Presents'
+	//_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
 	L1392_aui_Palette[15] = D09_RGB_WHITE;
 	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
 	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, L1389_puc_Bitmap_Master_StrikesBack = L1383_l_Bitmap_TitleSteps, G0004_s_Graphic562_Box_Title_StrikesBack_Source, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
@@ -890,7 +891,7 @@ void DMEngine::f437_STARTEND_drawTittle() {
 		_displayMan->f129_blitToBitmapShrinkWithPalChange(L1384_puc_Bitmap_Title, L1383_l_Bitmap_TitleSteps, 320, 80, L1382_i_DestinationPixelWidth, L1381_ui_DestinationHeight, _displayMan->_palChangesNoChanges);
 		L1391_aai_Coordinates[L1380_i_Counter][1] = (L1391_aai_Coordinates[L1380_i_Counter][0] = (320 - L1382_i_DestinationPixelWidth) / 2) + L1382_i_DestinationPixelWidth - 1;
 		L1391_aai_Coordinates[L1380_i_Counter][3] = (L1391_aai_Coordinates[L1380_i_Counter][2] = ((int)(160 - L1381_ui_DestinationHeight)) / 2) + L1381_ui_DestinationHeight - 1;
-		L1383_l_Bitmap_TitleSteps += (L1391_aai_Coordinates[L1380_i_Counter][4] = ((L1382_i_DestinationPixelWidth + 15) / 16) * 8) * L1381_ui_DestinationHeight;
+		L1383_l_Bitmap_TitleSteps += (L1391_aai_Coordinates[L1380_i_Counter][4] = ((L1382_i_DestinationPixelWidth + 15) / 16) * 8) * L1381_ui_DestinationHeight * 2;
 		L1381_ui_DestinationHeight += 4;
 		L1382_i_DestinationPixelWidth += 16;
 	}
