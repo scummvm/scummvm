@@ -361,7 +361,6 @@ expr: INT		{ $$ = g_lingo->codeConst($1); }
 		g_lingo->codeString($1->c_str()); }
 	| BLTINNOARGS 	{
 		$$ = g_lingo->code1(g_lingo->_handlers[*$1]->u.func);
-		g_lingo->codeConst(0); // Put dummy value
 		delete $1; }
 	| ID '(' arglist ')'	{
 		$$ = g_lingo->codeFunc($1, $3);
