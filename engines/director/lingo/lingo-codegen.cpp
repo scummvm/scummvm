@@ -55,20 +55,28 @@ void Lingo::execute(int pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		Common::String instr = decodeInstruction(_pc);
 
+		if (debugChannelSet(5, kDebugLingoExec))
+			printStack("Stack before: ");
+
 		debugC(1, kDebugLingoExec, "[%3d]: %s", _pc, instr.c_str());
-
-		Common::String stack("Stack: ");
-
-		for (uint i = 0; i < _stack.size(); i++) {
-			Datum d = _stack[i];
-			d.toString();
-			stack += Common::String::format("<%s> ", d.u.s->c_str());
-		}
-		debugC(5, kDebugLingoExec, "%s", stack.c_str());
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
+
+		if (debugChannelSet(5, kDebugLingoExec))
+			printStack("Stack after: ");
 	}
+}
+
+void Lingo::printStack(const char *s) {
+	Common::String stack(s);
+
+	for (uint i = 0; i < _stack.size(); i++) {
+		Datum d = _stack[i];
+		d.toString();
+		stack += Common::String::format("<%s> ", d.u.s->c_str());
+	}
+	debugC(5, kDebugLingoExec, "%s", stack.c_str());
 }
 
 Common::String Lingo::decodeInstruction(int pc, int *newPc) {
