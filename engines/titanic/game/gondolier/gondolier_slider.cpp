@@ -24,11 +24,24 @@
 
 namespace Titanic {
 
+static const int ARRAY[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
+
+BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MouseDragEndMsg)
+	ON_MESSAGE(IsHookedOnMsg)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(SignalObject)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
 CGondolierSlider::CGondolierSlider() : CGondolierBase(),
 	_fieldBC(0), _fieldC0(0), _fieldC4(0), _fieldC8(0),
-	_fieldCC(0), _fieldD0(0), _fieldD4(0), _fieldD8(0),
-	_fieldDC(0), _fieldE0(0), _fieldE4(0), _fieldE8(0),
-	_fieldEC(0), _string1("NULL"), _fieldFC(0), _field118(0) {
+	_arrayIndex(0), _string1("NULL"), _fieldFC(0), _field118(0) {
 }
 
 void CGondolierSlider::save(SimpleFile *file, int indent) {
@@ -37,15 +50,15 @@ void CGondolierSlider::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldC0, indent);
 	file->writeNumberLine(_fieldC4, indent);
 	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
-	file->writeNumberLine(_fieldD0, indent);
-	file->writeNumberLine(_fieldD4, indent);
-	file->writeNumberLine(_fieldD8, indent);
-	file->writeNumberLine(_fieldDC, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeNumberLine(_sliderRect1.left, indent);
+	file->writeNumberLine(_sliderRect1.top, indent);
+	file->writeNumberLine(_sliderRect1.right, indent);
+	file->writeNumberLine(_sliderRect1.bottom, indent);
+	file->writeNumberLine(_sliderRect2.left, indent);
+	file->writeNumberLine(_sliderRect2.top, indent);
+	file->writeNumberLine(_sliderRect2.right, indent);
+	file->writeNumberLine(_sliderRect2.bottom, indent);
+	file->writeNumberLine(_sliderRect1.left, indent);
 	file->writeQuotedLine(_string1, indent);
 	file->writeNumberLine(_fieldFC, indent);
 	file->writeQuotedLine(_string2, indent);
@@ -61,15 +74,15 @@ void CGondolierSlider::load(SimpleFile *file) {
 	_fieldC0 = file->readNumber();
 	_fieldC4 = file->readNumber();
 	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
-	_fieldD0 = file->readNumber();
-	_fieldD4 = file->readNumber();
-	_fieldD8 = file->readNumber();
-	_fieldDC = file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
+	_sliderRect1.left = file->readNumber();
+	_sliderRect1.top = file->readNumber();
+	_sliderRect1.right = file->readNumber();
+	_sliderRect1.bottom = file->readNumber();
+	_sliderRect2.left = file->readNumber();
+	_sliderRect2.top = file->readNumber();
+	_sliderRect2.right = file->readNumber();
+	_sliderRect2.bottom = file->readNumber();
+	_arrayIndex = file->readNumber();
 	_string1 = file->readString();
 	_fieldFC = file->readNumber();
 	_string2 = file->readString();
@@ -77,6 +90,150 @@ void CGondolierSlider::load(SimpleFile *file) {
 	_field118 = file->readNumber();
 
 	CGondolierBase::load(file);
+}
+
+bool CGondolierSlider::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_v1)
+		return false;
+	if (_fieldFC ? _v5 : _v8)
+		return false;
+
+	return _sliderRect1.contains(msg->_mousePos);
+}
+
+bool CGondolierSlider::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	if (!(_fieldFC ? _v5 : _v8)) {
+		int minVal = 0x7FFFFFFF;
+		int foundIndex = -1;
+		int yp = (_sliderRect2.top + _sliderRect2.bottom) / 2
+			+ _bounds.top - msg->_mousePos.y;
+
+		for (int idx = 0; idx < 11; ++idx) {
+			int yv = yp + ARRAY[idx];
+			if (yv < 0)
+				yv = -yv;
+			if (yv < minVal) {
+				minVal = yv;
+				foundIndex = idx;
+			}
+		}
+
+		if (foundIndex >= 0) {
+			_arrayIndex = foundIndex;
+			CSignalObject signalMsg;
+			signalMsg.execute(this);
+		}
+	}
+
+	return true;
+}
+
+bool CGondolierSlider::EnterViewMsg(CEnterViewMsg *msg) {
+	CSignalObject signalMsg;
+	signalMsg.execute(this);
+	return true;
+}
+
+bool CGondolierSlider::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!_v1)
+		return false;
+	if (_fieldFC ? _v5 : _v8)
+		return false;
+
+	_field118 = checkStartDragging(msg);
+	return _field118;
+}
+
+bool CGondolierSlider::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_arrayIndex = CLIP(10 - msg->_newStatus, 0, 10);
+	_sliderRect1 = _sliderRect2;
+	_sliderRect1.translate(_bounds.left, _bounds.top);
+	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
+
+	loadFrame(_arrayIndex);
+	return true;
+}
+
+bool CGondolierSlider::MouseDragEndMsg(CMouseDragEndMsg *msg) {
+	_field118 = false;
+	return true;
+}
+
+bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
+	if (_fieldFC ? _v5 : _v8)
+		return false;
+
+	if (!_sliderRect1.intersects(msg->_rect)) {
+		_string2 = CString();
+		msg->_result = false;
+	} else {
+		_string2 = _string1;
+		if (_fieldFC) {
+			_v5 = _v9 = 1;
+		} else {
+			_v8 = _v10 = 1;
+		}
+
+		msg->_result = true;
+	}
+
+	return true;
+}
+
+bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
+	if (_fieldFC ? _v5 : _v8) {
+		if (_arrayIndex < 10) {
+			++_arrayIndex;
+			CSignalObject signalMsg;
+			signalMsg.execute(this);
+
+			int yp = 0;
+			if (_arrayIndex > 0)
+				yp = ARRAY[_arrayIndex] - ARRAY[_arrayIndex - 1];
+			
+			if (!_string2.empty()) {
+				CTranslateObjectMsg transMsg;
+				transMsg._delta = Point(0, yp);
+				transMsg.execute(_string2);
+			}
+		}
+	} else if (_fieldFC ? _v10 : _v9) {
+		if (!_field118 && !_puzzleSolved && _arrayIndex > 0) {
+			CSignalObject signalMsg;
+			signalMsg.execute(this);
+		}
+	}
+
+	return true;
+}
+
+bool CGondolierSlider::SignalObject(CSignalObject *msg) {
+	_arrayIndex = CLIP(_arrayIndex, 0, 10);
+	_sliderRect1 = _sliderRect2;
+	_sliderRect1.translate(_bounds.left, _bounds.top);
+	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
+	loadFrame(_arrayIndex);
+
+	CSignalObject signalMsg;
+	signalMsg._numValue = 10 - _arrayIndex;
+	signalMsg._strValue = _fieldFC ? "Fly" : "Tos";
+	signalMsg.execute(_string3);
+
+	return true;
+}
+
+bool CGondolierSlider::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Unhook") {
+		if (_fieldFC) {
+			_v5 = _v9 = 0;
+			_v10 = _v8;
+		} else {
+			_v8 = _v10 = 0;
+			_v9 = _v5;
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -28,25 +28,30 @@
 namespace Titanic {
 
 class CGondolierSlider : public CGondolierBase {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool IsHookedOnMsg(CIsHookedOnMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool SignalObject(CSignalObject *msg);
+	bool ActMsg(CActMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;
 	int _fieldC4;
 	int _fieldC8;
-	int _fieldCC;
-	int _fieldD0;
-	int _fieldD4;
-	int _fieldD8;
-	int _fieldDC;
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
+	Rect _sliderRect1;
+	Rect _sliderRect2;
+	int _arrayIndex;
 	CString _string1;
 	int _fieldFC;
 	CString _string2;
 	CString _string3;
-	int _field118;
+	bool _field118;
 public:
 	CLASSDEF;
 	CGondolierSlider();

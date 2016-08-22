@@ -1012,13 +1012,13 @@ Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) 
 void CGameObject::moveToView() {
 	CViewItem *view = getGameManager()->getView();
 	detach();
-	view->addUnder(this);
+	addUnder(view);
 }
 
 void CGameObject::moveToView(const CString &name) {
 	CViewItem *view = parseView(name);
 	detach();
-	view->addUnder(this);
+	addUnder(view);
 }
 
 void CGameObject::stateInc14() {

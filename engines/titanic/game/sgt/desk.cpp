@@ -41,8 +41,8 @@ void CDesk::load(SimpleFile *file) {
 }
 
 bool CDesk::TurnOn(CTurnOn *msg) {
-	if (_statics->_v5 == "Closed" && _statics->_v1 == "RestingG"
-			&& _statics->_v1 == "OpenWrong") {
+	if (_statics->_v5 == "Closed" && _statics->_v1 != "RestingG"
+			&& _statics->_v1 != "OpenWrong") {
 		_statics->_v5 = "Open";
 		_fieldE0 = false;
 		_startFrame = 1;

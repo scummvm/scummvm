@@ -115,7 +115,7 @@ bool CDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 bool CDropTarget::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!checkStartDragging(msg))
 		return false;
-	msg->_dragItem = msg->_dragItem;
+	//msg->_dragItem = msg->_dragItem;
 
 	CGameObject *obj = dynamic_cast<CGameObject *>(findByName(_itemName));
 	if (_itemName.empty() || _fieldF4 || !obj)
