@@ -113,6 +113,10 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
  ****************************/
 
 BITDDecoder::BITDDecoder(int w, int h) {
+	int oldw = w;
+	w += 8 - (w + 7) % 8;
+
+	warning("W: %d -> %d, %d", oldw, w, h);
 	_surface = new Graphics::Surface();
 	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
