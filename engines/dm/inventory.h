@@ -37,17 +37,12 @@ namespace DM {
 #define k69_ChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
 #define k38_SlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
 
-
-extern Box g32_BoxPanel; // @ G0032_s_Graphic562_Box_Panel
-
 enum PanelContent {
 	k0_PanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
 	k2_PanelContentScroll = 2, // @ C02_PANEL_SCROLL
 	k4_PanelContentChest = 4, // @ C04_PANEL_CHEST
 	k5_PanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
 };
-
-extern const char* G0428_apc_SkillLevelNames[15]; // @ G0428_apc_SkillLevelNames  
 
 class InventoryMan {
 	DMEngine *_vm;
@@ -63,6 +58,8 @@ public:
 	Thing _g426_openChest; // @ G0426_T_OpenChest
 	int16 _g421_objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
 	int16 _g422_objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
+	Box g32_BoxPanel;
+	const char* G0428_apc_SkillLevelNames[15];
 
 	void f355_toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
 	void f354_drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait

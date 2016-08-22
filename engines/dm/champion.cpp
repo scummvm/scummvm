@@ -2354,7 +2354,7 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 	displayBox._x2 = displayBox._x1 + 167;
 
 	_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, displayBox, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
-	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
+	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
 	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	_vm->_eventMan->f78_showMouse();

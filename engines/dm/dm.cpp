@@ -681,7 +681,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 						continue;
 
 					char displStr[20];
-					strcpy(displStr, G0428_apc_SkillLevelNames[skillLevel - 2]);
+					strcpy(displStr, _inventoryMan->G0428_apc_SkillLevelNames[skillLevel - 2]);
 					strcat(displStr, " ");
 					strcat(displStr, _championMan->_baseSkillName[idx]);
 					_textMan->f443_endgamePrintString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);

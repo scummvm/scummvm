@@ -42,32 +42,30 @@
 
 namespace DM {
 
-Box g41_BoxFloppyZzzCross = Box(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
-Box g32_BoxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
-Box g35_BoxFood = Box(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
-Box g36_BoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
-Box g37_BoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
-
-const char* G0428_apc_SkillLevelNames[15];
-
 void InventoryMan::initConstants() {
-	{
-		static const char* G0428_apc_SkillLevelNames_EN_ANY[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
-			"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
-		static const char* G0428_apc_SkillLevelNames_DE_DEU[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
-			"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
-		static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
-			"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
-		const char **g428_byLanguage;
-		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY: g428_byLanguage = G0428_apc_SkillLevelNames_EN_ANY; break;
-		case Common::DE_DEU: g428_byLanguage = G0428_apc_SkillLevelNames_DE_DEU; break;
-		case Common::FR_FRA: g428_byLanguage = G0428_apc_SkillLevelNames_FR_FRA; break;
-		}
-		for (int i = 0; i < 15; ++i)
-			G0428_apc_SkillLevelNames[i] = g428_byLanguage[i];
+	static const char* G0428_apc_SkillLevelNames_EN_ANY[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
+		"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
+	static const char* G0428_apc_SkillLevelNames_DE_DEU[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
+		"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
+	static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
+		"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
+	const char **g428_byLanguage;
+	switch (_vm->getGameLanguage()) { // localized
+	default:
+	case Common::EN_ANY:
+		g428_byLanguage = G0428_apc_SkillLevelNames_EN_ANY;
+		break;
+	case Common::DE_DEU:
+		g428_byLanguage = G0428_apc_SkillLevelNames_DE_DEU;
+		break;
+	case Common::FR_FRA:
+		g428_byLanguage = G0428_apc_SkillLevelNames_FR_FRA;
+		break;
 	}
+	for (int i = 0; i < 15; ++i)
+		G0428_apc_SkillLevelNames[i] = g428_byLanguage[i];
+
+	g32_BoxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
 }
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
@@ -79,10 +77,15 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_g421_objDescTextXpos = 0;
 	_g422_objDescTextYpos = 0;
 
+	for (int i = 0; i < 15; i++)
+		G0428_apc_SkillLevelNames[i] = nullptr;
+
 	initConstants();
 }
 
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
+	static Box g41_BoxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
+
 	if (championIndex == kM1_ChampionNone) {
 		delete _vm->_saveThumbnail;
 		_vm->_saveThumbnail = nullptr;
@@ -210,6 +213,10 @@ void InventoryMan::f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color col
 }
 
 void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
+	static Box g35_BoxFood(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
+	static Box g36_BoxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
+	static Box g37_BoxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
+
 	Champion &champ = _vm->_championMan->_gK71_champions[_g432_inventoryChampionOrdinal];
 	f334_closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
