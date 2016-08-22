@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CHammerClip : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	int _value;
 public:

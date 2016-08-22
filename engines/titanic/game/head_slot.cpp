@@ -21,14 +21,27 @@
  */
 
 #include "titanic/game/head_slot.h"
+#include "titanic/core/project_item.h"
+#include "titanic/game/brain_slot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CHeadSlot, CGameObject)
+	ON_MESSAGE(AddHeadPieceMsg)
+	ON_MESSAGE(SenseWorkingMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 int CHeadSlot::_v1;
 
 CHeadSlot::CHeadSlot() : CGameObject(), _string1("NotWorking"), _string2("NULL"),
 	_fieldBC(0), _fieldD8(0), _fieldDC(27), _fieldE0(56),
-	_fieldE4(82), _fieldE8(112), _fieldEC(0) {
+	_fieldE4(82), _fieldE8(112), _fieldEC(false) {
 }
 
 void CHeadSlot::save(SimpleFile *file, int indent) {
@@ -61,6 +74,111 @@ void CHeadSlot::load(SimpleFile *file) {
 	_fieldEC = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CHeadSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
+	setVisible(true);
+	_fieldBC = 1;
+	_string2 = msg->_value;
+	playMovie(_fieldDC, _fieldE8, 0);
+	_cursorId = CURSOR_HAND;
+	msg->execute("TitaniaControl");
+	return true;
+}
+
+bool CHeadSlot::SenseWorkingMsg(CSenseWorkingMsg *msg) {
+	if (_fieldEC) 
+		playMovie(_fieldE4, _fieldE8, 0);
+	
+	_string1 = msg->_value;
+	_fieldEC = false;
+	return true;
+}
+
+bool CHeadSlot::EnterViewMsg(CEnterViewMsg *msg) {
+	setVisible(true);
+	if (_v1)
+		_cursorId = CURSOR_ARROW;
+
+	if (_v1 == 1 || _string1 == "Working") {
+		playMovie(_fieldE0, _fieldE4, MOVIE_GAMESTATE);
+		_fieldEC = true;
+	} else if (_fieldBC) {
+		playMovie(_fieldE0, _fieldE8, MOVIE_GAMESTATE);
+		_fieldEC = false;
+	} else {
+		playMovie(0, _fieldDC, MOVIE_GAMESTATE);
+	}
+
+	addTimer(5000 + getRandomNumber(3000));
+	return true;
+}
+
+bool CHeadSlot::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (getName() == "YepItsASlot") {
+		stopMovie();
+
+		if (_fieldBC) {
+			loadFrame(_fieldE0);
+			playMovie(_fieldE0, _fieldE8, MOVIE_GAMESTATE);
+			_fieldEC = false;
+		} else {
+			loadFrame(_fieldDC);
+			playMovie(_fieldDC, _fieldE0, MOVIE_GAMESTATE);
+		}
+
+		_fieldEC = false;
+	}
+
+	return true;
+}
+
+bool CHeadSlot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	return true;
+}
+
+bool CHeadSlot::TimerMsg(CTimerMsg *msg) {
+	if (compareViewNameTo("Titania.Node 15.S") && CBrainSlot::_added == 5
+			&& _fieldBC == 1) {
+		if (_string1 == "Working" && !_fieldEC) {
+			playMovie(_fieldE0, _fieldE4, 0);
+			_fieldEC = true;
+		} else if (_string1 == "Random") {
+			playMovie(_fieldE0, _fieldE8, 0);
+		}
+	}
+
+	if (compareViewNameTo("Titania.Node 15.S")) {
+		_fieldD8 = 7000 + getRandomNumber(5000);
+		addTimer(_fieldD8);
+	}
+
+	return true;
+}
+
+bool CHeadSlot::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Woken")
+		_v1 = 1;
+	return true;
+}
+
+bool CHeadSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (_fieldBC && !_v1 && checkPoint(msg->_mousePos, false, true)) {
+		CPassOnDragStartMsg passMsg;
+		passMsg._mousePos = msg->_mousePos;
+		passMsg.execute(_string2);
+
+		msg->_dragItem = getRoot()->findByName(_string2);
+		_cursorId = CURSOR_ARROW;
+		_fieldBC = 0;
+		_fieldEC = false;
+		_string2 = "NULL";
+		stopMovie();
+		loadFrame(0);
+		playMovie(0, _fieldDC, 0);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

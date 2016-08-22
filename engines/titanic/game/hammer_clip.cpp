@@ -21,8 +21,15 @@
  */
 
 #include "titanic/game/hammer_clip.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CHammerClip, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 void CHammerClip::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -34,6 +41,43 @@ void CHammerClip::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CHammerClip::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CHammerClip::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_value = msg->_newStatus == 1;
+	if (_value) {
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("BigHammer");
+		_cursorId = CURSOR_HAND;
+	}
+
+	return true;
+}
+
+bool CHammerClip::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg))
+		return false;
+
+	if (_value) {
+		CVisibleMsg visibleMsg(true);
+		visibleMsg.execute("BigHammer");
+		CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
+		passMsg.execute("BigHammer");
+
+		msg->_dragItem = getRoot()->findByName("BigHammer");
+
+		CActMsg actMsg("HammerTaken");
+		actMsg.execute("HammerDispensor");
+		actMsg.execute("HammerDispensorButton");
+		_cursorId = CURSOR_ARROW;
+		_value = 0;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

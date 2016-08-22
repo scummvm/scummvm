@@ -28,10 +28,15 @@
 namespace Titanic {
 
 class CHammerDispensor : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
+	bool _fieldE0;
+	bool _fieldE4;
+	int _state;
 public:
 	CLASSDEF;
 	CHammerDispensor();

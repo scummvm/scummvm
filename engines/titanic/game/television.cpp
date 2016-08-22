@@ -121,16 +121,16 @@ bool CTelevision::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
-	if (msg->_season.compareTo("Autumn")) {
+	if (msg->_season == "Autumn") {
 		_v1 = 545;
 		_v3 = 0;
-	} else if (msg->_season.compareTo("Winter")) {
+	} else if (msg->_season == "Winter") {
 		_v1 = 503;
 		_v3 = 0;
-	} else if (msg->_season.compareTo("Spring")) {
+	} else if (msg->_season == "Spring") {
 		_v1 = 517;
 		_v3 = 0;
-	} else if (msg->_season.compareTo("Winter")) {
+	} else if (msg->_season == "Summer") {
 		_v1 = 531;
 		_v3 = 0;
 	}

@@ -77,12 +77,12 @@ bool CBottomOfWellMonitor::ActMsg(CActMsg *msg) {
 }
 
 bool CBottomOfWellMonitor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!compareTo("BOWTelevisionMonitor")) {
-		if (_v2)
-			changeView("BottomOfWell.Node 8.N", "");
-	} else {
+	if (isEquals("BOWTelevisionMonitor")) {
 		if (_v1)
 			changeView("BottomOfWell.Node 7.N", "");
+	} else {
+		if (_v2)
+			changeView("BottomOfWell.Node 8.N", "");
 	}
 
 	return true;
@@ -90,14 +90,14 @@ bool CBottomOfWellMonitor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CBottomOfWellMonitor::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_flag) {
-		if (!compareTo("BOWTelevisionMonitor")) {
-			if (_v2) {
-				changeView("BottomOfWell.Node 8.N", "");
+		if (isEquals("BOWTelevisionMonitor")) {
+			if (_v1) {
+				changeView("BottomOfWell.Node 7.N", "");
 				_flag = false;
 			}
 		} else {
-			if (_v1) {
-				changeView("BottomOfWell.Node 7.N", "");
+			if (_v2) {
+				changeView("BottomOfWell.Node 8.N", "");
 				_flag = false;
 			}
 		}

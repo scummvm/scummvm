@@ -123,7 +123,7 @@ bool CLiftBot::TurnOff(CTurnOff *msg) {
 bool CLiftBot::TurnOn(CTurnOn *msg) {
 	_enabled = true;
 	if (!_flag) {
-		if (compareTo("LiftBotTalking", 0)) {
+		if (isEquals("LiftBotTalking")) {
 			endTalking(this, MOVIE_REPEAT, findView());
 			petSetArea(PET_CONVERSATION);
 			_flag = true;

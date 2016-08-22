@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CHammer, CCarry)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
+
 CHammer::CHammer() : CCarry() {
 }
 
@@ -35,6 +40,24 @@ void CHammer::save(SimpleFile *file, int indent) {
 void CHammer::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
+}
+
+bool CHammer::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	_fieldE0 = 1;
+	return true;
+}
+
+bool CHammer::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CString name = msg->_other->getName();
+	if (name == "LongStickDispenser") {
+		CPuzzleSolvedMsg solvedMsg;
+		solvedMsg.execute("LongStickDispenser");
+	} else if (name == "Bomb") {
+		CActMsg actMsg("Hit");
+		actMsg.execute("Bomb");
+	}
+
+	return CCarry::UseWithOtherMsg(msg);
 }
 
 } // End of namespace Titanic

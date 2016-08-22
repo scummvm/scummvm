@@ -28,6 +28,15 @@
 namespace Titanic {
 
 class CHeadSlot : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool AddHeadPieceMsg(CAddHeadPieceMsg *msg);
+	bool SenseWorkingMsg(CSenseWorkingMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	static int _v1;
 public:
@@ -39,7 +48,7 @@ public:
 	int _fieldE0;
 	int _fieldE4;
 	int _fieldE8;
-	int _fieldEC;
+	bool _fieldEC;
 public:
 	CLASSDEF;
 	CHeadSlot();

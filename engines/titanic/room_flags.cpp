@@ -339,12 +339,12 @@ bool CRoomFlags::getBit0() const {
 
 uint CRoomFlags::getSpecialRoomFlags(const CString &roomName) {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
-		if (!roomName.compareTo(SUCCUBUS_ROOMS[idx]._roomName))
+		if (roomName == SUCCUBUS_ROOMS[idx]._roomName)
 			return SUCCUBUS_ROOMS[idx]._roomFlags;
 	}
 
 	for (int idx = 0; idx < TRANSPORT_ROOMS_SIZE; ++idx) {
-		if (!roomName.compareTo(TRANSPORT_ROOMS[idx]._roomName))
+		if (roomName == TRANSPORT_ROOMS[idx]._roomName)
 			return TRANSPORT_ROOMS[idx]._roomFlags;
 	}
 
@@ -353,7 +353,7 @@ uint CRoomFlags::getSpecialRoomFlags(const CString &roomName) {
 
 uint CRoomFlags::getSuccUBusNum(const CString &roomName) const {
 	for (int idx = 0; idx < SUCCUBUS_ROOMS_SIZE; ++idx) {
-		if (!roomName.compareTo(SUCCUBUS_ROOMS[idx]._roomName))
+		if (roomName == SUCCUBUS_ROOMS[idx]._roomName)
 			return SUCCUBUS_ROOMS[idx]._succubusNum;
 	}
 

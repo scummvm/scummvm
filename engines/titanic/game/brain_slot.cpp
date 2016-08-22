@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(CBrainSlot, CGameObject)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-bool CBrainSlot::_added;
+int CBrainSlot::_added;
 bool CBrainSlot::_woken;
 
 void CBrainSlot::save(SimpleFile *file, int indent) {
@@ -63,7 +63,7 @@ bool CBrainSlot::SetFrameMsg(CSetFrameMsg *msg) {
 }
 
 bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
-	_added = true;
+	_added = 1;
 	_cursorId = CURSOR_HAND;
 	CAddHeadPieceMsg addMsg("NULL");
 
@@ -141,7 +141,7 @@ bool CBrainSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	passMsg.execute(_target);
 
 	msg->_dragItem = getRoot()->findByName(_target);
-	_added = false;
+	_added = 0;
 
 	return true;
 }

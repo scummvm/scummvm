@@ -28,13 +28,19 @@
 namespace Titanic {
 
 class CHammerDispensorButton : public CStartAction {
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _fieldF8;
 	int _fieldFC;
 	int _field100;
-	int _field104;
-	int _field108;
-	int _field10C;
+	Point _btnPos;
+	CGameObject *_field10C;
 	int _field110;
 public:
 	CLASSDEF;

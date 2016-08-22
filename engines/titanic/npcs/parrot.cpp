@@ -421,7 +421,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 
 	// Check for rooms not to speak in
 	for (const char *const *s = &ROOM_NAMES[0]; *s; ++s) {
-		if (compareTo(*s))
+		if (isEquals(*s))
 			return true;
 	}
 
@@ -588,7 +588,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		}
 	}
 
-	bool chickenFlag = dragObject && dragObject->compareTo("Chicken");
+	bool chickenFlag = dragObject && dragObject->isEquals("Chicken");
 
 	if (_npcFlags & NPCFLAG_1000000) {
 		if (!chickenFlag || pt.x > 70 || pt.y < 90 || pt.y > 280) {
