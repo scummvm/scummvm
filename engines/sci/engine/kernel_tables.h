@@ -294,16 +294,16 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 	{ SIG_SCI16,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
 	{ SIG_SCI16,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
 	{ SIG_SCI16,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
-#ifdef ENABLE_SCI32
-	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
-	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
-	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
-#endif
 	{ SIG_SCI16,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
 	{ SIG_SCI16,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
 	{ SIG_SCI16,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
 	{ SIG_SCI16,          7, MAP_CALL(PaletteSave),               "",                     NULL },
 	{ SIG_SCI16,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
+#ifdef ENABLE_SCI32
+	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
+	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
+	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
+#endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
