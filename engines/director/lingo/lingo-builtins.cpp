@@ -183,6 +183,14 @@ void Lingo::dropStack(int nargs) {
 		pop();
 }
 
+void Lingo::drop(int num) {
+	if (num > _stack.size() - 1) {
+		warning("Incorrect number of elements to drop from stack: %d > %d", num, _stack.size() - 1);
+		return;
+	}
+	_stack.remove_at(_stack.size() - 1 - num);
+}
+
 
 ///////////////////
 // Math
@@ -794,9 +802,11 @@ void Lingo::factoryCall(Common::String &name, int nargs) {
 
 	Datum method = _stack[_stack.size() - nargs + 0];
 
+	drop(nargs - 1);
+
 	s = name + "-" + *method.u.s;
 
-	debugC(3, kDebugLingoExec, "Stack size before call: %d", _stack.size());
+	debugC(3, kDebugLingoExec, "Stack size before call: %d, nargs: %d", _stack.size(), nargs);
 	call(s, nargs);
 	debugC(3, kDebugLingoExec, "Stack size after call: %d", _stack.size());
 

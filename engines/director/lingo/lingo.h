@@ -295,6 +295,7 @@ public:
 	void printStubWithArglist(const char *funcname, int nargs);
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
+	void drop(int num);
 
 	static void b_abs(int nargs);
 	static void b_atan(int nargs);
