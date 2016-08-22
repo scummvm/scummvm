@@ -28,9 +28,13 @@
 namespace Titanic {
 
 class CGetLiftEye2 : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
-	static CString *_v1;
+	static CString *_destObject;
 public:
 	CLASSDEF;
 	static void init();

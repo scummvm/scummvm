@@ -29,15 +29,22 @@
 namespace Titanic {
 
 class CGondolierMixer : public CGondolierBase {
+	DECLARE_MESSAGE_MAP;
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool SetVolumeMsg(CSetVolumeMsg *msg);
+	bool SignalObject(CSignalObject *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
+	int _soundHandle1;
+	int _soundHandle2;
 	int _fieldC4;
 	int _fieldC8;
-	CString _string1;
-	CString _string2;
-	int _fieldE4;
+	CString _soundName1;
+	CString _soundName2;
+	bool _fieldE4;
 public:
 	CLASSDEF;
 	CGondolierMixer();

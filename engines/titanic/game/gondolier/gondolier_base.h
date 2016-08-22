@@ -28,13 +28,15 @@
 namespace Titanic {
 
 class CGondolierBase : public CGameObject {
-private:
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+protected:
 	static int _v1;
-	static int _v2;
-	static int _v3;
+	static bool _puzzleSolved;
+	static int _volume1;
 	static int _v4;
 	static int _v5;
-	static int _v6;
+	static int _volume2;
 	static int _v7;
 	static int _v8;
 	static int _v9;

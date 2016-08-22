@@ -21,34 +21,80 @@
  */
 
 #include "titanic/game/get_lift_eye2.h"
+#include "titanic/game/transport/lift.h"
+#include "titanic/core/project_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-CString *CGetLiftEye2::_v1;
+BEGIN_MESSAGE_MAP(CGetLiftEye2, CGameObject)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
+CString *CGetLiftEye2::_destObject;
 
 void CGetLiftEye2::init() {
-	_v1 = new CString();
+	_destObject = new CString();
 }
 
 void CGetLiftEye2::deinit() {
-	delete _v1;
+	delete _destObject;
 }
 
 void CGetLiftEye2::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(*_v1, indent);
+	file->writeQuotedLine(*_destObject, indent);
 	CGameObject::save(file, indent);
 }
 
 void CGetLiftEye2::load(SimpleFile *file) {
 	file->readNumber();
-	*_v1 = file->readString();
+	*_destObject = file->readString();
 	CGameObject::load(file);
 }
 
-bool CGetLiftEye2::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CGetLiftEye2::handleEvent");
+bool CGetLiftEye2::ActMsg(CActMsg *msg) {
+	*_destObject = msg->_action;
+	setVisible(true);
 	return true;
+}
+
+bool CGetLiftEye2::EnterRoomMsg(CEnterRoomMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet->getRoomsElevatorNum() == 4 && CLift::_v1 == 1 && !CLift::_v6) {
+		_cursorId = CURSOR_HAND;
+		setVisible(true);
+	} else {
+		_cursorId = CURSOR_ARROW;
+		setVisible(false);
+	}
+
+	return true;
+}
+
+bool CGetLiftEye2::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(true);
+	_cursorId = CURSOR_HAND;
+	return true;
+}
+
+bool CGetLiftEye2::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (checkPoint(msg->_mousePos, false, true)) {
+		_cursorId = CURSOR_ARROW;
+		setVisible(false);
+		CActMsg actMsg("EyeNotHead");
+		actMsg.execute(*_destObject);
+		CPassOnDragStartMsg dragMsg(msg->_mousePos, 1);
+		dragMsg.execute(*_destObject);
+
+		msg->_dragItem = getRoot()->findByName(*_destObject);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } // End of namespace Titanic

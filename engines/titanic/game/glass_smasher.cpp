@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGlassSmasher, CGameObject)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CGlassSmasher::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +37,20 @@ void CGlassSmasher::save(SimpleFile *file, int indent) {
 void CGlassSmasher::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CGlassSmasher::StatusChangeMsg(CStatusChangeMsg *msg) {
+	setVisible(true);
+	playSound("b#40.wav");
+	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	return true;
+}
+
+bool CGlassSmasher::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
+	CVisibleMsg visibleMsg(true);
+	visibleMsg.execute("LongStickDispenser");
+	return true;
 }
 
 } // End of namespace Titanic

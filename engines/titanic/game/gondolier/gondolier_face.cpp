@@ -24,16 +24,35 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGondolierFace, CGondolierBase)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(StatusChangeMsg)
+END_MESSAGE_MAP()
+
 void CGondolierFace::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_flag, indent);
 	CGondolierBase::save(file, indent);
 }
 
 void CGondolierFace::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_flag = file->readNumber();
 	CGondolierBase::load(file);
+}
+
+bool CGondolierFace::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_flag)
+		playMovie(MOVIE_REPEAT);
+	else
+		setVisible(false);
+	return true;
+}
+
+bool CGondolierFace::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_flag = msg->_newStatus != 1;
+	setVisible(_flag);
+	return true;
 }
 
 } // End of namespace Titanic

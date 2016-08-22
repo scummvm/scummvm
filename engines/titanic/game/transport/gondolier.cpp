@@ -24,14 +24,31 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGondolier, CTransport)
+	ON_MESSAGE(StatusChangeMsg)
+END_MESSAGE_MAP()
+
+int CGondolier::_v1;
+int CGondolier::_v2;
+
 void CGondolier::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_v2, indent);
 	CTransport::save(file, indent);
 }
 
 void CGondolier::load(SimpleFile *file) {
 	file->readNumber();
+	_v1 = file->readNumber();
+	_v2 = file->readNumber();
 	CTransport::load(file);
+}
+
+bool CGondolier::StatusChangeMsg(CStatusChangeMsg *msg) {
+	CShowTextMsg textMsg("Only First Class passengers are allowed to use the Gondoliers.");
+	textMsg.execute("PET");
+	return true;
 }
 
 } // End of namespace Titanic

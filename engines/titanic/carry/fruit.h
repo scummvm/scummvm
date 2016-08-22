@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CFruit : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool LemonFallsFromTreeMsg(CLemonFallsFromTreeMsg *msg);
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
 private:
 	int _field12C;
 	int _field130;

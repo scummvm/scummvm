@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGondolierChest, CGondolierBase)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 void CGondolierChest::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGondolierBase::save(file, indent);
@@ -32,6 +38,29 @@ void CGondolierChest::save(SimpleFile *file, int indent) {
 void CGondolierChest::load(SimpleFile *file) {
 	file->readNumber();
 	CGondolierBase::load(file);
+}
+
+bool CGondolierChest::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_v1)
+		playMovie(0, 14, MOVIE_NOTIFY_OBJECT);
+	else if (msg->_mousePos.y < 330)
+		return false;
+	else if (!_v8 && !_v5) {
+		playMovie(14, 29, 0);
+		_v1 = 0;
+	}
+
+	return true;
+}
+
+bool CGondolierChest::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_endFrame == 14)
+		_v1 = 1;
+	return true;
+}
+
+bool CGondolierChest::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	return false;
 }
 
 } // End of namespace Titanic

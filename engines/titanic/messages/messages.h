@@ -236,7 +236,7 @@ MESSAGE2(CEnterRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nul
 MESSAGE2(CEnterViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
 MESSAGE0(CErasePhonographCylinderMsg);
 MESSAGE1(CFrameMsg, uint, ticks, 0);
-MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CFreshenCookieMsg, int, value1, 0, int, value2, 1);
 MESSAGE1(CGetChevClassBits, int, classBits, 0);
 MESSAGE1(CGetChevClassNum, int, classNum, 0);
 MESSAGE2(CGetChevCodeFromRoomNameMsg, CString, roomName, "", uint, chevCode, 0);
@@ -255,7 +255,7 @@ MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
 MESSAGE2(CLeaveViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
-MESSAGE2(CLemonFallsFromTreeMsg, int, value1, 0, int, value2, 0);
+MESSAGE1(CLemonFallsFromTreeMsg, Point, pt, Point());
 MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);
 MESSAGE0(CMaitreDDefeatedMsg);

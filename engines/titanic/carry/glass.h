@@ -28,6 +28,13 @@
 namespace Titanic {
 
 class CGlass : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool MouseDragEndMsg(CMouseDragEndMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 private:
 	CString _string6;
 public:

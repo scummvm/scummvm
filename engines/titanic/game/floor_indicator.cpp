@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/floor_indicator.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CFloorIndicator, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
 
 void CFloorIndicator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +37,12 @@ void CFloorIndicator::save(SimpleFile *file, int indent) {
 void CFloorIndicator::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CFloorIndicator::EnterViewMsg(CEnterViewMsg *msg) {
+	int floorNum = MAX(1, getPetControl()->getRoomsFloorNum());
+	loadFrame(floorNum - 1);
+	return true;
 }
 
 } // End of namespace Titanic

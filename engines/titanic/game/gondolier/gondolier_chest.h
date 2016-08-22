@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CGondolierChest : public CGondolierBase {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	CLASSDEF;
 

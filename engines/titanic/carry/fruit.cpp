@@ -21,8 +21,16 @@
  */
 
 #include "titanic/carry/fruit.h"
+#include "titanic/npcs/character.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CFruit, CCarry)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(LemonFallsFromTreeMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
 
 CFruit::CFruit() : CCarry(), _field12C(0),
 		_field130(0), _field134(0), _field138(0) {
@@ -46,6 +54,45 @@ void CFruit::load(SimpleFile *file) {
 	_field138 = file->readNumber();
 
 	CCarry::load(file);
+}
+
+bool CFruit::UseWithCharMsg(CUseWithCharMsg *msg) {
+	if (msg->_character->isEquals("Barbot") && msg->_character->_visible) {
+		CActMsg actMsg("Fruit");
+		actMsg.execute(msg->_character);
+		_fieldE0 = 0;
+		setVisible(false);
+		return true;
+	} else {
+		return CCarry::UseWithCharMsg(msg);
+	}
+}
+
+bool CFruit::LemonFallsFromTreeMsg(CLemonFallsFromTreeMsg *msg) {
+	setVisible(true);
+	dragMove(msg->_pt);
+	_field130 = 1;
+	return true;
+}
+
+bool CFruit::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	petAddToInventory();
+	return true;
+}
+
+bool CFruit::FrameMsg(CFrameMsg *msg) {
+	if (_field130) {
+		if (_bounds.top > 240) {
+			_field130 = 0;
+			_field134 = 1;
+		}
+
+		makeDirty();
+		_bounds.top += 3;
+		makeDirty();
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

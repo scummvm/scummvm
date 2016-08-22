@@ -24,16 +24,42 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CGamesConsole, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CGamesConsole::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_active, indent);
 	CBackground::save(file, indent);
 }
 
 void CGamesConsole::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_active = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CGamesConsole::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_active) {
+		playMovie(23, 44, 0);
+		_active = false;
+	} else {
+		playMovie(0, 23, 0);
+		_active = true;
+	}
+
+	return true;
+}
+
+bool CGamesConsole::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_active) {
+		_active = false;
+		playMovie(23, 44, MOVIE_GAMESTATE);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
