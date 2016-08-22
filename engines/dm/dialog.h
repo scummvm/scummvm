@@ -47,10 +47,10 @@ class DialogMan {
 public:
 	uint16 _g335_selectedDialogChoice; // @ G0335_ui_SelectedDialogChoice
 	explicit DialogMan(DMEngine *vm);
-	void f427_dialogDraw(char *msg1, char *msg2, char *choice1, char *choice2,
-						 char *choice3, char *choice4, bool screenDialog, bool clearScreen, bool fading); // @ F0427_DIALOG_Draw
-	void f425_printCenteredChoice(byte *bitmap, char *str, int16 posX, int16 posY); // @ F0425_DIALOG_PrintCenteredChoice
-	bool f426_isMessageOnTwoLines(char *str, char *part1, char *part2); // @ F0426_DIALOG_IsMessageOnTwoLines
+	void f427_dialogDraw(const char *msg1, const char *msg2, const char *choice1, const char *choice2,
+						 const char *choice3, const char *choice4, bool screenDialog, bool clearScreen, bool fading); // @ F0427_DIALOG_Draw
+	void f425_printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY); // @ F0425_DIALOG_PrintCenteredChoice
+	bool f426_isMessageOnTwoLines(const char *str, char *part1, char *part2); // @ F0426_DIALOG_IsMessageOnTwoLines
 	int16 f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driveType, int16 automaticChoiceIfFlopyInDrive); // @ F0424_DIALOG_GetChoice
 };
 

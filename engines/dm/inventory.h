@@ -73,9 +73,9 @@ public:
 	void f341_drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
 	void f333_openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
 	void f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
-	void f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char ** attribStrings,
-									char *destString, char *prefixString, char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
-	void f335_drawPanelObjectDescriptionString(char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
+	void f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char ** attribStrings,
+									char *destString, const char *prefixString, const char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
+	void f335_drawPanelObjectDescriptionString(const char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
 	void f339_drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
 	void f342_drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
 	void f337_setDungeonViewPalette(); // @ F0337_INVENTORY_SetDungeonViewPalette

@@ -110,7 +110,7 @@ public:
 	bool f402_isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX,
 									 int16 targetMapY, int16 skillIndex); // @ F0402_MENUS_IsMeleeActionPerformed
 	bool  f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY); // @ F0401_MENUS_IsGroupFrightenedByAction
-	void f381_printMessageAfterReplacements(char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
+	void f381_printMessageAfterReplacements(const char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
 	void f389_processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion
 	void f383_setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
 	int16 f382_getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount

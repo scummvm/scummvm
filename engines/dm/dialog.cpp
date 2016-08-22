@@ -37,7 +37,7 @@ DialogMan::DialogMan(DMEngine *vm) : _vm(vm) {
 	_g335_selectedDialogChoice = 0;
 }
 
-void DialogMan::f427_dialogDraw(char *msg1, char *msg2, char *choice1, char *choice2, char *choice3, char *choice4, bool screenDialog, bool clearScreen, bool fading) {
+void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *choice1, const char *choice2, const char *choice3, const char *choice4, bool screenDialog, bool clearScreen, bool fading) {
 	static Box constBox1 = Box(0, 223, 101, 125);
 	static Box constBox2 = Box(0, 223, 76, 100);
 	static Box constBox3 = Box(0, 223, 51, 75);
@@ -140,14 +140,14 @@ void DialogMan::f427_dialogDraw(char *msg1, char *msg2, char *choice1, char *cho
 	_vm->_displayMan->updateScreen();
 }
 
-void DialogMan::f425_printCenteredChoice(byte *bitmap, char *str, int16 posX, int16 posY) {
+void DialogMan::f425_printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY) {
 	if (str) {
 		posX -= (strlen(str) * 6) >> 1;
 		_vm->_textMan->f40_printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, k9_ColorGold, k5_ColorLightBrown, str, k136_heightViewport);
 	}
 }
 
-bool DialogMan::f426_isMessageOnTwoLines(char *str, char *part1, char *part2) {
+bool DialogMan::f426_isMessageOnTwoLines(const char *str, char *part1, char *part2) {
 	uint16 strLength = strlen(str);
 	if (strLength <= 30)
 		return false;

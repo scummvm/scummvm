@@ -402,7 +402,7 @@ void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int
 	_vm->_displayMan->f20_blitToViewport(iconBitmap, box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 
-void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
+void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char** attribStrings, char* destString, const char* prefixString, const char* suffixString) {
 	uint16 identicalBitCount = 0;
 	int16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
@@ -440,7 +440,7 @@ void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, in
 	strcat(destString, suffixString);
 }
 
-void InventoryMan::f335_drawPanelObjectDescriptionString(char *descString) {
+void InventoryMan::f335_drawPanelObjectDescriptionString(const char *descString) {
 	if (descString[0] == '\f') { // form feed
 		descString++;
 		_g421_objDescTextXpos = 108;
@@ -516,7 +516,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
 								   boxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
 
-		char *descString = nullptr;
+		const char *descString = nullptr;
 		char str[40];
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
 			switch (_vm->getGameLanguage()) { // localized
@@ -624,9 +624,9 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				}
 
 
-				static char* directionName_EN_ANY[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
-				static char* directionName_DE_DEU[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
-				static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
+				const static char* directionName_EN_ANY[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
+				const static char* directionName_DE_DEU[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
+				const static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
 				switch (_vm->getGameLanguage()) { // localized
 				default:
 				case Common::EN_ANY: strcat(str, directionName_EN_ANY[iconIndex]); break;
@@ -647,10 +647,10 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} // end of switch 
 
 		if (potentialAttribMask) {
-			char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
-			char *attribString_DE_DEU[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
-			char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
-			char **attribString = nullptr;
+			static const char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
+			static const char *attribString_DE_DEU[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
+			static const char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
+			static const char **attribString = nullptr;
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
@@ -813,10 +813,10 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 	uint16 L1096_ui_StatisticMaximumValue;
 	char L1097_ac_String[20];
 
-	static char* G0431_apc_StatisticNames_EN_ANY[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
-	static char* G0431_apc_StatisticNames_DE_DEU[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
-	static char* G0431_apc_StatisticNames_FR_FRA[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
-	char **G0431_apc_StatisticNames;
+	static const char* G0431_apc_StatisticNames_EN_ANY[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
+	static const char* G0431_apc_StatisticNames_DE_DEU[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
+	static const char* G0431_apc_StatisticNames_FR_FRA[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
+	const char **G0431_apc_StatisticNames;
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY: G0431_apc_StatisticNames = G0431_apc_StatisticNames_EN_ANY; break;

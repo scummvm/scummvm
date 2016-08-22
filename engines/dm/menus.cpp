@@ -686,7 +686,7 @@ Spell* MenuMan::f409_getSpellFromSymbols(byte* symbols) {
 }
 
 void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failureType, uint16 skillIndex) {
-	char* L1264_pc_Message = nullptr;
+	const char *L1264_pc_Message = nullptr;
 
 	if (skillIndex > k3_ChampionSkillWizard)
 		skillIndex = (skillIndex - 4) / 4;
@@ -694,12 +694,12 @@ void MenuMan::f410_menusPrintSpellFailureMessage(Champion* champ, uint16 failure
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
 
-	char *messages_EN_ANY[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
-	char *messages_DE_DEU[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
+	const char *messages_EN_ANY[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
+	const char *messages_DE_DEU[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
 		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.", " MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."};
-	char *messages_FR_FRA[5] = {" DOIT PRATIQUER DAVANTAGE SON ", "ENVOUTEMENT.", " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
+	const char *messages_FR_FRA[5] = {" DOIT PRATIQUER DAVANTAGE SON ", "ENVOUTEMENT.", " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
 		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.", "EXORCISME."};
-	char **messages;
+	const char **messages;
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
@@ -1192,10 +1192,10 @@ T0407032:
 		}
 		break;
 	case k5_ChampionActionFlip: {
-		char *messages_EN_ANY[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
-		char *messages_DE_DEU[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
-		char *messages_FR_FRA[2] = {"C'EST FACE.", "C'EST PILE."};
-		char **message;
+		const char *messages_EN_ANY[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
+		const char *messages_DE_DEU[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
+		const char *messages_FR_FRA[2] = {"C'EST FACE.", "C'EST PILE."};
+		const char **message;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY: message = messages_EN_ANY; break;
@@ -1544,7 +1544,7 @@ T0401016:
 	return L1232_B_IsGroupFrightenedByAction;
 }
 
-void MenuMan::f381_printMessageAfterReplacements(char* str) {
+void MenuMan::f381_printMessageAfterReplacements(const char* str) {
 	char* L1164_pc_Character;
 	char* L1165_pc_ReplacementString;
 	char L1166_ac_OutputString[128];
@@ -1719,13 +1719,13 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (damage < 0) {
-		static char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
-		static char *messages_DE_DEU[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
-		static char *messages_FR_FRA[2] = {"TROP LOIN", "SANS MUNITION"};
+		static const char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
+		static const char *messages_DE_DEU[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
+		static const char *messages_FR_FRA[2] = {"TROP LOIN", "SANS MUNITION"};
 		static int16  pos_EN_ANY[2] = {242, 248};
 		static int16  pos_DE_DEU[2] = {242, 236};
 		static int16  pos_FR_FRA[2] = {248, 236};
-		char **message;
+		const char **message;
 		int16 *pos;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
