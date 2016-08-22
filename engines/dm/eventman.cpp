@@ -40,6 +40,7 @@
 #include "group.h"
 #include "dialog.h"
 #include "sounds.h"
+#include <mortevielle/saveload.h>
 
 
 namespace DM {
@@ -769,6 +770,14 @@ void EventManager::f380_processCommandQueue() {
 	}
 
 	if ((cmdType >= k7_CommandToggleInventoryChampion_0) && (cmdType <= k11_CommandCloseInventory)) {
+		if (cmdType == k11_CommandCloseInventory) {
+			delete _vm->_saveThumbnail;
+			_vm->_saveThumbnail = nullptr;
+		} else if (!_vm->_saveThumbnail) {
+			_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic();
+			Graphics::saveThumbnail(*_vm->_saveThumbnail);
+		}
+
 		int16 championIndex = cmdType - k7_CommandToggleInventoryChampion_0;
 		if (((championIndex == k4_ChampionCloseInventory) || (championIndex < _vm->_championMan->_g305_partyChampionCount)) && !_vm->_championMan->_g299_candidateChampionOrdinal)
 			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)championIndex);

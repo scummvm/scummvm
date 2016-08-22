@@ -16,6 +16,5 @@ Todo:
 Code stuff todo:
 	Complete stub methods(blitShrink, blitmask, scroller)
 	Add proper save header, add error handling to it
-	Fix incorrect thumbnail	
 	Add translations to f433_processCommand140_saveGame 'LOAD'
 	

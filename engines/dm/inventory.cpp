@@ -86,13 +86,6 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	static Box g41_BoxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
-	if (championIndex == kM1_ChampionNone) {
-		delete _vm->_saveThumbnail;
-		_vm->_saveThumbnail = nullptr;
-	} else if (!_vm->_saveThumbnail) {
-		_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic();
-		Graphics::saveThumbnail(*_vm->_saveThumbnail);
-	}
 
 	uint16 L1102_ui_Multiple;
 #define AL1102_ui_InventoryChampionOrdinal L1102_ui_Multiple
