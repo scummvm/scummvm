@@ -284,8 +284,8 @@ int main(int argc, char *argv[]) {
 			setup.devTools = true;
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
-		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			setup.useSDL2 = true;
+		} else if (!std::strcmp(argv[i], "--sdl1")) {
+			setup.useSDL2 = false;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -700,7 +700,7 @@ void displayHelp(const char *exe) {
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
+	        " --sdl1                   link to SDL 1.2, instead of SDL 2.0\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";
