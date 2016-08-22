@@ -1932,7 +1932,7 @@ void MctlGraph::generateList(MctlMQ *movinfo, Common::Array<MovGraphLink *> *lin
 
 			movinfo->items.push_back(elem);
 
-			if (i == linkList->size()) {
+			if (i == linkList->size() - 1) {
 				elem = new MctlMQSub;
 				elem->subIndex = prevSubIndex;
 				elem->x = movinfo->pt2.x;
