@@ -2400,13 +2400,13 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 	return mq;
 }
 
-MovGraphNode *MctlGraph::getHitNode(int x, int y, int fuzzyMatch) {
+MovGraphNode *MctlGraph::getHitNode(int x, int y, int strictMatch) {
 	for (ObList::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		assert(((CObject *)*i)->_objtype == kObjTypeMovGraphNode);
 
 		MovGraphNode *node = (MovGraphNode *)*i;
 
-		if (fuzzyMatch) {
+		if (!strictMatch) {
 			if (abs(node->_x - x) < 15 && abs(node->_y - y) < 15)
 				return node;
 		} else {

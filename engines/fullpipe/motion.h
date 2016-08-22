@@ -392,7 +392,7 @@ public:
 	void generateList(MctlMQ *movinfo, Common::Array<MovGraphLink *> *linkList, LinkInfo *lnkSrc, LinkInfo *lnkDst);
 	MessageQueue *makeWholeQueue(MctlMQ *mctlMQ);
 
-	MovGraphNode *getHitNode(int x, int y, int fuzzyMatch);
+	MovGraphNode *getHitNode(int x, int y, int strictMatch);
 	MovGraphLink *getHitLink(int x, int y, int idx, int fuzzyMatch);
 	MovGraphLink *getNearestLink(int x, int y);
 	double iterate(LinkInfo *linkInfoSource, LinkInfo *linkInfoDest, Common::Array<MovGraphLink *> *listObj);
