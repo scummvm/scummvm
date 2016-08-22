@@ -108,11 +108,20 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-BITDDecoder::BITDDecoder() {
-	_surface = 0;
-	_palette = 0;
-	_paletteColorCount = 0;
-	_codec = 0;
+/****************************
+ * BITD
+ ****************************/
+
+BITDDecoder::BITDDecoder(int w, int h) {
+	_surface = new Graphics::Surface();
+	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	_palette = new byte[255 * 3];
+
+	_palette[0] = _palette[1] = _palette[2] = 0;
+	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
+
+	_paletteColorCount = 2;
 }
 
 BITDDecoder::~BITDDecoder() {
@@ -125,30 +134,16 @@ void BITDDecoder::destroy() {
 	delete[] _palette;
 	_palette = 0;
 	_paletteColorCount = 0;
-
-	delete _codec;
-	_codec = 0;
 }
 
 void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
-	_palette = new byte[255 * 3];
-
-	_palette[0] = _palette[1] = _palette[2] = 0;
-	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
-
-	_paletteColorCount = 2;
+	// no op
 }
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
-	uint32 width = 512; // Should come from the Cast
-	uint32 height = 342;
-
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-
 	int x = 0, y = 0;
 
-	while (y < height) {
+	while (y < _surface->h) {
 		int n = stream.readSByte();
 		int count;
 		int b = 0;
@@ -168,7 +163,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			count = 0;
 		}
 
-		for (int i = 0; i < count && y < height; i++) {
+		for (int i = 0; i < count && y < _surface->h; i++) {
 			byte color = 0;
 			if (state == 1) {
 				color = stream.readByte();
@@ -178,7 +173,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			for (int c = 0; c < 8; c++) {
 				*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? 0 : 0xff;
 				x++;
-				if (x == width) {
+				if (x == _surface->w) {
 					y++;
 					x = 0;
 					break;

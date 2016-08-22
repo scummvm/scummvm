@@ -64,7 +64,7 @@ private:
 
 class BITDDecoder : public Image::ImageDecoder {
 public:
-	BITDDecoder();
+	BITDDecoder(int w, int h);
 	virtual ~BITDDecoder();
 
 	// ImageDecoder API
@@ -76,7 +76,6 @@ public:
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 
 private:
-	Image::Codec *_codec;
 	Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;

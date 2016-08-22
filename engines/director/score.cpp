@@ -1240,7 +1240,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 			}
 
-			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
+			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId, _sprites[i]->_width, _sprites[i]->_height);
 
 			if (!img) {
 				warning("Image with id %d not found", _sprites[i]->_castId);
@@ -1321,7 +1321,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 }
 
-Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
+Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
 
@@ -1339,7 +1339,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		if (_vm->getVersion() < 4) {
-			img = new BITDDecoder();
+			img = new BITDDecoder(w, h);
 		} else {
 			img = new Image::BitmapDecoder();
 		}
