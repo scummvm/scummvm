@@ -144,7 +144,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	}
 
 	// add new script
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine* debuggableEngine;
 	debuggableEngine = dynamic_cast<DebuggableScEngine*>(this);
 	// TODO: Not pretty

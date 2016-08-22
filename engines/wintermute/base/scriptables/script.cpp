@@ -32,7 +32,7 @@
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/memstream.h"
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
 #endif
 namespace Wintermute {
@@ -1320,7 +1320,7 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 	if (!pos) {
 		return nullptr;
 	}
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 	// TODO: Not pretty
 	DebuggableScEngine* debuggableEngine;
 	debuggableEngine = dynamic_cast<DebuggableScEngine*>(_engine);
