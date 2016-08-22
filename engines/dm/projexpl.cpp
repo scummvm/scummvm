@@ -129,6 +129,9 @@ T0217004:
 			L0509_B_RemovePotion = true;
 			L0508_i_PotionPower = ((Potion *)L0491_ps_Group)->getPower();
 			L0492_ps_Potion = (Potion *)L0491_ps_Group;
+			break;
+		default:
+			break;
 		}
 	}
 	L0505_B_CreateExplosionOnImpact = (L0510_i_ProjectileAssociatedThingType == k15_ExplosionThingType) && (L0486_T_ProjectileAssociatedThing != Thing::_explSlime) && (L0486_T_ProjectileAssociatedThing != Thing::_explPoisonBolt);
@@ -190,7 +193,8 @@ T0217004:
 		if (getFlag(L0493_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) && (L0486_T_ProjectileAssociatedThing != Thing::_explHarmNonMaterial)) {
 			return false;
 		}
-		if (L0488_i_Attack = (uint16)((unsigned long)f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) << 6) / L0493_ps_CreatureInfo->_defense) {
+		L0488_i_Attack = (uint16)((unsigned long)f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) << 6) / L0493_ps_CreatureInfo->_defense;
+		if (L0488_i_Attack) {
 			if ((AL0487_i_Outcome = _vm->_groupMan->f190_groupGetDamageCreatureOutcome(L0491_ps_Group, L0512_ui_CreatureIndex, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->_groupMan->f192_groupGetResistanceAdjustedPoisonAttack(L0511_ui_CreatureType, _g366_projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup) {
 				_vm->_groupMan->f209_processEvents29to41(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
 			}
@@ -466,8 +470,8 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		L0526_i_SourceMapY = L0524_i_DestinationMapY;
 		L0523_i_DestinationMapX += _vm->_dirIntoStepCountEast[L0517_ui_ProjectileDirection], L0524_i_DestinationMapY += _vm->_dirIntoStepCountNorth[L0517_ui_ProjectileDirection];
 		if ((Square(AL0516_ui_Square = _vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY).toByte()).getType() == k0_ElementTypeWall) ||
-			((Square(AL0516_ui_Square).getType() == k6_ElementTypeFakeWall) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
-			((Square(AL0516_ui_Square).getType() == k3_ElementTypeStairs) && (Square(_vm->_dungeonMan->_g271_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_ElementTypeStairs))) {
+			((Square(AL0516_ui_Square).getType() == k6_FakeWallElemType) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
+			((Square(AL0516_ui_Square).getType() == k3_StairsElemType) && (Square(_vm->_dungeonMan->_g271_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_ElementTypeStairs))) {
 			if (f217_projectileHasImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
 				return;
 			}

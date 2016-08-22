@@ -218,11 +218,13 @@ void TextMan::f443_endgamePrintString(int16 x, int16 y, Color textColor, char* t
 	char L1408_ac_ModifiedString[50];
 
 	L1407_pc_Character = L1408_ac_ModifiedString;
-	while (*L1407_pc_Character = *text++) {
+	*L1407_pc_Character = *text++;
+	while (*L1407_pc_Character) {
 		if ((*L1407_pc_Character >= 'A') && (*L1407_pc_Character <= 'Z')) {
 			*L1407_pc_Character -= 64; /* Use the same font as the one used for scrolls */
 		}
 		L1407_pc_Character++;
+		*L1407_pc_Character = *text++;
 	}
 	f53_printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
 }

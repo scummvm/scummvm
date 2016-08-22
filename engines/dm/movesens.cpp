@@ -587,10 +587,14 @@ bool MovesensMan::f266_moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMa
 		AL0700_i_SecondaryDirection = returnNextVal(AL0699_ui_PrimaryDirection);
 		for (int16 i = 0; i < 4; ++i)
 			L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[i] = 0;
-		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection]) {
+
+		L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection];
+		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)]) {
 			L0703_B_CheckDestinationSquareProjectileImpacts = true;
 		}
-		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0700_i_SecondaryDirection]) {
+
+		L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0700_i_SecondaryDirection];
+		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)]) {
 			L0703_B_CheckDestinationSquareProjectileImpacts = true;
 		}
 		if (!L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection]) {
@@ -700,19 +704,25 @@ int16 MovesensMan::f262_getTeleporterRotatedGroupResult(Teleporter* teleporter, 
 	L0686_ps_Group = (Group *)_vm->_dungeonMan->f156_getThingData(thing);
 	L0683_i_Rotation = teleporter->getRotation();
 	L0684_ui_GroupDirections = _vm->_groupMan->f147_getGroupDirections(L0686_ps_Group, mapIndex);
-	if (L0689_B_AbsoluteRotation = teleporter->getAbsoluteRotation()) {
+
+	L0689_B_AbsoluteRotation = teleporter->getAbsoluteRotation();
+	if (L0689_B_AbsoluteRotation) {
 		L0685_ui_UpdatedGroupDirections = L0683_i_Rotation;
 	} else {
 		L0685_ui_UpdatedGroupDirections = M21_normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation);
 	}
-	if ((L0687_ui_UpdatedGroupCells = _vm->_groupMan->f145_getGroupCells(L0686_ps_Group, mapIndex)) != k255_CreatureTypeSingleCenteredCreature) {
+
+	L0687_ui_UpdatedGroupCells = _vm->_groupMan->f145_getGroupCells(L0686_ps_Group, mapIndex);
+	if (L0687_ui_UpdatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
 		L0690_ui_GroupCells = L0687_ui_UpdatedGroupCells;
 		L0691_i_CreatureSize = getFlag(g243_CreatureInfo[L0686_ps_Group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
 		L0692_i_RelativeRotation = M21_normalizeModulo4(4 + L0685_ui_UpdatedGroupDirections - L0684_ui_GroupDirections);
 		for (L0688_i_CreatureIndex = 0; L0688_i_CreatureIndex <= L0686_ps_Group->getCount(); L0688_i_CreatureIndex++) {
 			L0685_ui_UpdatedGroupDirections = _vm->_groupMan->f178_getGroupValueUpdatedWithCreatureValue(L0685_ui_UpdatedGroupDirections, L0688_i_CreatureIndex, L0689_B_AbsoluteRotation ? L0683_i_Rotation : M21_normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation));
-			if ((L0691_i_CreatureSize == k0_MaskCreatureSizeQuarter) && (L0692_i_RelativeRotation = !L0689_B_AbsoluteRotation)) {
-				L0692_i_RelativeRotation = L0683_i_Rotation;
+			if (L0691_i_CreatureSize == k0_MaskCreatureSizeQuarter) {
+				L0692_i_RelativeRotation = !L0689_B_AbsoluteRotation;
+				if (L0692_i_RelativeRotation) 
+					L0692_i_RelativeRotation = L0683_i_Rotation;
 			}
 			if (L0692_i_RelativeRotation) {
 				L0687_ui_UpdatedGroupCells = _vm->_groupMan->f178_getGroupValueUpdatedWithCreatureValue(L0687_ui_UpdatedGroupCells, L0688_i_CreatureIndex, M21_normalizeModulo4(L0690_ui_GroupCells + L0692_i_RelativeRotation));
@@ -732,7 +742,6 @@ int16 MovesensMan::f262_getTeleporterRotatedGroupResult(Teleporter* teleporter, 
 Thing MovesensMan::f263_getTeleporterRotatedProjectileThing(Teleporter* teleporter, Thing projectileThing) {
 	int16 L0693_i_UpdatedDirection;
 	int16 L0694_i_Rotation;
-
 
 	L0693_i_UpdatedDirection = _g400_moveResultDir;
 	L0694_i_Rotation = teleporter->getRotation();

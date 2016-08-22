@@ -1013,9 +1013,12 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 	if ((AL0674_i_LightPower = event->_B._lightPower) == 0) {
 		return;
 	}
-	if (L0675_B_NegativeLightPower = (AL0674_i_LightPower < 0)) {
+
+	L0675_B_NegativeLightPower = (AL0674_i_LightPower < 0);
+	if (L0675_B_NegativeLightPower) {
 		AL0674_i_LightPower = -AL0674_i_LightPower;
 	}
+
 	L0673_i_WeakerLightPower = AL0674_i_LightPower - 1;
 	AL0674_i_LightAmount = _vm->_championMan->_lightPowerToLightAmount[AL0674_i_LightPower] - _vm->_championMan->_lightPowerToLightAmount[L0673_i_WeakerLightPower];
 	if (L0675_B_NegativeLightPower) {

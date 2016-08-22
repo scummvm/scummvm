@@ -48,6 +48,7 @@ public:
 	byte _softDistance;
 	Sound(int16 index, byte period, byte priority, byte loudDist, byte softDist) :
 		_graphicIndex(index), _period(period), _priority(priority), _loudDistance(loudDist), _softDistance(softDist) {}
+	Sound() : _graphicIndex(0), _period(0), _priority(0), _loudDistance(0), _softDistance(0) {}
 }; // @ Sound
 
 class PendingSound {
@@ -78,6 +79,9 @@ public:
 	virtual void f060_SOUND_Play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
 	void f65_playPendingSound(); // @ F0065_SOUND_PlayPendingSound_CPSD
 	bool f505_soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume); // @ F0505_SOUND_GetVolume
+
+	Sound g60_sounds[k34_D13_soundCount];
+	void initConstants();
 };
 
 class SoundMan_Atari: public SoundMan {
