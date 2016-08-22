@@ -440,7 +440,7 @@ void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, in
 	strcat(destString, suffixString);
 }
 
-void InventoryMan::f335_drawPanelObjectDescriptionString(char* descString) {
+void InventoryMan::f335_drawPanelObjectDescriptionString(char *descString) {
 	if (descString[0] == '\f') { // form feed
 		descString++;
 		_g421_objDescTextXpos = 108;
@@ -476,16 +476,13 @@ void InventoryMan::f335_drawPanelObjectDescriptionString(char* descString) {
 	}
 }
 
-Box g33_BoxArrowOrEye = Box(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
-
 void InventoryMan::f339_drawPanelArrowOrEye(bool pressingEye) {
+	static Box boxArrowOrEye(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
+
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
-							   g33_BoxArrowOrEye, k8_byteWidth, k8_ColorRed, 9);
+							   boxArrowOrEye, k8_byteWidth, k8_ColorRed, 9);
 }
-
-
-Box g34_BoxObjectDescCircle = Box(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
 
 #define k0x0001_DescriptionMaskConsumable 0x0001 // @ MASK0x0001_DESCRIPTION_CONSUMABLE
 #define k0x0002_DescriptionMaskPoisoned 0x0002 // @ MASK0x0002_DESCRIPTION_POISONED  
@@ -493,6 +490,8 @@ Box g34_BoxObjectDescCircle = Box(105, 136, 53, 79); // @ G0034_s_Graphic562_Box
 #define k0x0008_DescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
 
 void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
+	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
+
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
@@ -515,7 +514,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
 								   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
 		dispMan.f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
-								   g34_BoxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
+								   boxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
 
 		char *descString = nullptr;
 		char str[40];
@@ -587,18 +586,24 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			break;
 		}
 		case k10_JunkThingType: {
-			Junk *junk = (Junk *)rawThingPtr;
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
 				char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
 				char *descString_DE_DEU[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
 				char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
 
+				Junk *junk = (Junk *)rawThingPtr;
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: descString = descString_EN_ANY[junk->getChargeCount()]; break;
-				case Common::DE_DEU: descString = descString_DE_DEU[junk->getChargeCount()]; break;
-				case Common::FR_FRA: descString = descString_FR_FRA[junk->getChargeCount()]; break;
+				case Common::EN_ANY:
+					descString = descString_EN_ANY[junk->getChargeCount()];
+					break;
+				case Common::DE_DEU:
+					descString = descString_DE_DEU[junk->getChargeCount()];
+					break;
+				case Common::FR_FRA:
+					descString = descString_FR_FRA[junk->getChargeCount()];
+					break;
 				}
 
 				f335_drawPanelObjectDescriptionString(descString);
@@ -607,9 +612,15 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: strcpy(str, "PARTY FACING "); break;
-				case Common::DE_DEU: strcpy(str, "GRUPPE BLICKT NACH "); break;
-				case Common::FR_FRA: strcpy(str, "GROUPE FACE "); break;
+				case Common::EN_ANY:
+					strcpy(str, "PARTY FACING ");
+					break;
+				case Common::DE_DEU:
+					strcpy(str, "GRUPPE BLICKT NACH ");
+					break;
+				case Common::FR_FRA:
+					strcpy(str, "GROUPE FACE ");
+					break;
 				}
 
 
@@ -625,11 +636,14 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 				f335_drawPanelObjectDescriptionString(str);
 			} else {
+				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 				actualAttribMask = _vm->_dungeonMan->_objectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}
+		default:
+			break;
 		} // end of switch 
 
 		if (potentialAttribMask) {
@@ -1006,7 +1020,8 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		case k14_PotionTypeVi:
 			AL1088_ui_HealWoundIterationCount = MAX(1, (((Potion*)L1082_ps_Junk)->getPower() / 42));
 			L1083_ps_Champion->_currHealth += L1083_ps_Champion->_maxHealth / L1086_ui_Counter;
-			if (L1087_i_Wounds = L1083_ps_Champion->_wounds) { /* If the champion is wounded */
+			L1087_i_Wounds = L1083_ps_Champion->_wounds;
+			if (L1087_i_Wounds) { /* If the champion is wounded */
 				L1086_ui_Counter = 10;
 				do {
 					for (AL1085_ui_Counter = 0; AL1085_ui_Counter < AL1088_ui_HealWoundIterationCount; AL1085_ui_Counter++) {
@@ -1019,19 +1034,21 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 			break;
 		case k15_PotionTypeWaterFlask:
 			L1083_ps_Champion->_water = MIN(L1083_ps_Champion->_water + 1600, 2048);
+			break;
+		default:
+			break;
 		}
 		((Potion*)L1082_ps_Junk)->setType(k20_PotionTypeEmptyFlask);
-	} else {
-		if ((L1079_ui_IconIndex >= k168_IconIndiceJunkApple) && (L1079_ui_IconIndex < k176_IconIndiceJunkIronKey)) {
-			L1083_ps_Champion->_food = MIN(L1083_ps_Champion->_food + G0242_ai_Graphic559_FoodAmounts[L1079_ui_IconIndex - k168_IconIndiceJunkApple], 2048);
-		}
+	} else if ((L1079_ui_IconIndex >= k168_IconIndiceJunkApple) && (L1079_ui_IconIndex < k176_IconIndiceJunkIronKey)) {
+		L1083_ps_Champion->_food = MIN(L1083_ps_Champion->_food + G0242_ai_Graphic559_FoodAmounts[L1079_ui_IconIndex - k168_IconIndiceJunkApple], 2048);
 	}
-	if (L1083_ps_Champion->_currStamina > L1083_ps_Champion->_maxStamina) {
+
+	if (L1083_ps_Champion->_currStamina > L1083_ps_Champion->_maxStamina)
 		L1083_ps_Champion->_currStamina = L1083_ps_Champion->_maxStamina;
-	}
-	if (L1083_ps_Champion->_currHealth > L1083_ps_Champion->_maxHealth) {
+
+	if (L1083_ps_Champion->_currHealth > L1083_ps_Champion->_maxHealth)
 		L1083_ps_Champion->_currHealth = L1083_ps_Champion->_maxHealth;
-	}
+
 	if (L1081_B_RemoveObjectFromLeaderHand) {
 		for (L1086_ui_Counter = 5; --L1086_ui_Counter; _vm->f22_delay(8)) { /* Animate mouth icon */
 			_vm->_objectMan->f37_drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);

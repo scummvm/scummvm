@@ -39,9 +39,6 @@ namespace DM {
 
 #define k0x8000_hitNonMaterialCreatures 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
 
-extern Box g1_BoxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
-extern Box g0_BoxSpellArea; // @ G0000_s_Graphic562_Box_SpellArea
-
 class ActionList {
 public:
 	byte _minimumSkillLevel[3]; /* Bit 7: requires charge, Bit 6-0: minimum skill level. */
@@ -118,6 +115,15 @@ public:
 	void f383_setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
 	int16 f382_getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount
 	void f385_drawActionDamage(int16 damage); // @ F0385_MENUS_DrawActionDamage
+
+	Box boxActionArea3ActionMenu; // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
+	Box boxActionArea2ActionMenu; // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
+	Box boxActionArea1ActionMenu; // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
+	Box boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea 
+	Box boxSpellArea;
+	unsigned char g496_ActionSkillIndex[44]; // @ G0496_auc_Graphic560_ActionSkillIndex
+
+	void initConstants();
 };
 
 }

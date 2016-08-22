@@ -256,9 +256,9 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 		return;
 	}
 
-	uint16 currFixedPossession;
+	uint16 currFixedPossession = *fixedPossessions++;
 	bool weaponDropped = false;
-	while (currFixedPossession = *fixedPossessions++) {
+	while (currFixedPossession) {
 		if (getFlag(currFixedPossession, k0x8000_randomDrop) && _vm->getRandomNumber(2))
 			continue;
 
@@ -285,6 +285,7 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 		currWeapon->setCursed(cursedPossessions);
 		nextUnusedThing = M15_thingWithNewCell(nextUnusedThing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
 		_vm->_moveSens->f267_getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+		currFixedPossession = *fixedPossessions++;
 	}
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 }
