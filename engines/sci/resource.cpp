@@ -666,6 +666,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 #ifdef ENABLE_SCI32
 	ResourceSource *sci21PatchMap = 0;
 	const Common::FSNode *sci21PatchRes = 0;
+	_multiDiscAudio = false;
 #endif
 
 	// First, find resource.map
