@@ -583,6 +583,7 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv);

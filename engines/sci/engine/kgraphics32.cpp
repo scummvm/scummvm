@@ -901,6 +901,19 @@ reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxPalette32->matchColor(r, g, b));
 }
 
+/*
+ * Used in SCI3. SCI3 contains 6 gamma look-up tables, with the first
+ * table (gamma = 0) being the default one.
+ */
+reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
+	const uint8 gamma = argv[0].toUint16();
+	assert(gamma >= 0 && gamma <= 6);
+
+	warning("TODO: kPaletteSetGamma(%d)", gamma);
+
+	return s->r_acc;
+}
+
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
 	uint16 fromColor = argv[0].toUint16();
 	uint16 toColor = argv[1].toUint16();

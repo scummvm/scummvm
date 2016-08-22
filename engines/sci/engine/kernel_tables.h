@@ -303,6 +303,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
 	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
 	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
+	{ SIG_SCI3,           4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -465,6 +466,7 @@ static const SciKernelMapSubEntry kPlayVMD_subops[] = {
 	{ SIG_SINCE_SCI21,    18, MAP_DUMMY(PlayVMDStopBlobs),         "",                     NULL },
 	{ SIG_SINCE_SCI21,    21, MAP_CALL(PlayVMDSetBlackoutArea),    "iiii",                 NULL },
 	{ SIG_SINCE_SCI21,    23, MAP_CALL(PlayVMDRestrictPalette),    "ii",                   NULL },
+	{ SIG_SCI3,           28, MAP_EMPTY(PlayVMDSetPreload),        "i",                    NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
