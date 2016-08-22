@@ -536,6 +536,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 }
 
 enum kSciPlatforms {
+	kSciPlatformMacintosh = 0,
 	kSciPlatformDOS = 1,
 	kSciPlatformWindows = 2
 };
@@ -574,7 +575,12 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 			return kMacPlatform(s, argc - 1, argv + 1);
 		// Otherwise, fall through
 	case kPlatformGetPlatform:
-		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
+		if (isWindows)
+			return make_reg(0, kSciPlatformWindows);
+		else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+			return make_reg(0, kSciPlatformMacintosh);
+		else
+			return make_reg(0, kSciPlatformDOS);
 	case kPlatformUnknown5:
 		// This case needs to return the opposite of case 6 to get hires graphics
 		return make_reg(0, !isWindows);
@@ -606,6 +612,8 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, kSciPlatformDOS);
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
+		case Common::kPlatformMacintosh:
+			return make_reg(0, kSciPlatformMacintosh);
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
 		}
