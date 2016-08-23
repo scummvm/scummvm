@@ -2476,7 +2476,7 @@ int MctlGraph::getLinkDir(Common::Array<MovGraphLink *> *linkList, int idx, Comm
 	}
 
 	if (abs(node3->_x - node2->_x) <= abs(node3->_y - node2->_y))
-		return (node3->_y < node2->_x) + 2;
+		return (node3->_y < node2->_y) + 2;
 	else
 		return node3->_x >= node2->_x;
 }
