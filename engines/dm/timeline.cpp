@@ -343,37 +343,37 @@ void Timeline::f261_processTimeline() {
 				_vm->_inventoryMan->f337_setDungeonViewPalette();
 				break;
 			case k71_TMEventTypeInvisibility:
-				_vm->_championMan->_g407_party._event71Count_Invisibility--;
+				_vm->_championMan->_party._event71Count_Invisibility--;
 				break;
 			case k72_TMEventTypeChampionShield:
-				_vm->_championMan->_gK71_champions[L0682_s_Event._priority]._shieldDefense -= L0682_s_Event._B._defense;
-				setFlag(_vm->_championMan->_gK71_champions[L0682_s_Event._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
+				_vm->_championMan->_champions[L0682_s_Event._priority]._shieldDefense -= L0682_s_Event._B._defense;
+				setFlag(_vm->_championMan->_champions[L0682_s_Event._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
 T0261048:
-				_vm->_championMan->f292_drawChampionState((ChampionIndex)L0682_s_Event._priority);
+				_vm->_championMan->drawChampionState((ChampionIndex)L0682_s_Event._priority);
 				break;
 			case k73_TMEventTypeThievesEye:
-				_vm->_championMan->_g407_party._event73Count_ThievesEye--;
+				_vm->_championMan->_party._event73Count_ThievesEye--;
 				break;
 			case k74_TMEventTypePartyShield:
-				_vm->_championMan->_g407_party._shieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._shieldDefense -= L0682_s_Event._B._defense;
 T0261053:
 				f260_timelineRefreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
-				_vm->_championMan->_g407_party._spellShieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._spellShieldDefense -= L0682_s_Event._B._defense;
 				goto T0261053;
 			case k78_TMEventTypeFireShield:
-				_vm->_championMan->_g407_party._fireShieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._fireShieldDefense -= L0682_s_Event._B._defense;
 				goto T0261053;
 			case k75_TMEventTypePoisonChampion:
-				_vm->_championMan->_gK71_champions[AL0680_ui_ChampionIndex = L0682_s_Event._priority]._poisonEventCount--;
-				_vm->_championMan->f322_championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
+				_vm->_championMan->_champions[AL0680_ui_ChampionIndex = L0682_s_Event._priority]._poisonEventCount--;
+				_vm->_championMan->championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
 				break;
 			case k13_TMEventTypeViAltarRebirth:
 				f255_timelineProcessEvent13_ViAltarRebirth(L0681_ps_Event);
 				break;
 			case k79_TMEventTypeFootprints:
-				_vm->_championMan->_g407_party._event79Count_Footprints--;
+				_vm->_championMan->_party._event79Count_Footprints--;
 			}
 		}
 		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
@@ -414,13 +414,13 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 		L0598_ps_Door = (Door*)_vm->_dungeonMan->f157_getSquareFirstThingData(L0593_ui_MapX, L0594_ui_MapY);
 		AL0602_ui_VerticalDoor = L0598_ps_Door->opensVertically();
 		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0593_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0594_ui_MapY == _vm->_dungeonMan->_g307_partyMapY) && (L0596_i_DoorState != k0_doorState_OPEN)) {
-			if (_vm->_championMan->_g305_partyChampionCount > 0) {
+			if (_vm->_championMan->_partyChampionCount > 0) {
 				L0597_puc_Square->setDoorState(k0_doorState_OPEN);
 
 				// Strangerke
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
-				if (_vm->_championMan->f324_damageAll_getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
+				if (_vm->_championMan->getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
 					_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				}
 			}
@@ -555,7 +555,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 
 	if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX == _vm->_dungeonMan->_g306_partyMapX) && (mapY == _vm->_dungeonMan->_g307_partyMapY)) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
-		_vm->_championMan->f296_drawChangedObjectIcons();
+		_vm->_championMan->drawChangedObjectIcons();
 	}
 	if ((L0645_T_Thing = _vm->_groupMan->f175_groupGetThing(mapX, mapY)) != Thing::_endOfList) {
 		_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
@@ -932,7 +932,7 @@ void Timeline::f253_timelineProcessEvent11Part1_enableChampionAction(uint16 cham
 	int16 L0661_i_QuiverSlotIndex;
 	Champion* L0662_ps_Champion;
 
-	L0662_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0662_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	L0662_ps_Champion->_enableActionEventIndex = -1;
 	clearFlag(L0662_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction);
 	if (L0662_ps_Champion->_actionIndex != k255_ChampionActionNone) {
@@ -940,18 +940,18 @@ void Timeline::f253_timelineProcessEvent11Part1_enableChampionAction(uint16 cham
 	}
 	if (L0662_ps_Champion->_currHealth) {
 		if ((L0662_ps_Champion->_actionIndex == k32_ChampionActionShoot) && (L0662_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
-			if (_vm->_championMan->f294_isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = k12_ChampionSlotQuiverLine_1_1)) {
+			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = k12_ChampionSlotQuiverLine_1_1)) {
 T0253002:
-				_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, L0660_i_SlotIndex), k0_ChampionSlotReadyHand);
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, L0660_i_SlotIndex), k0_ChampionSlotReadyHand);
 			} else {
 				for (L0661_i_QuiverSlotIndex = 0; L0661_i_QuiverSlotIndex < 3; L0661_i_QuiverSlotIndex++) {
-					if (_vm->_championMan->f294_isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = L0661_i_QuiverSlotIndex + k7_ChampionSlotQuiverLine_2_1))
+					if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = L0661_i_QuiverSlotIndex + k7_ChampionSlotQuiverLine_2_1))
 						goto T0253002;
 				}
 			}
 		}
 		setFlag(L0662_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
-		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
 	L0662_ps_Champion->_actionIndex = k255_ChampionActionNone;
 }
@@ -960,7 +960,7 @@ void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint1
 	uint16 L0677_ui_SlotIndex;
 	Champion* L0678_ps_Champion;
 
-	L0678_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0678_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	if (L0678_ps_Champion->_slots[slotIndex] != Thing::_none) {
 		return;
 	}
@@ -975,7 +975,7 @@ void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint1
 
 bool Timeline::f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
 	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
-		_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
+		_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
 			(ChampionSlot)destSlotIndex);
 		return true;
 	}
@@ -986,7 +986,7 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 	Champion* L0663_ps_Champion;
 
 
-	L0663_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0663_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	L0663_ps_Champion->_hideDamageReceivedIndex = -1;
 	if (!L0663_ps_Champion->_currHealth) {
 		return;
@@ -997,7 +997,7 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 		_vm->_eventMan->f77_hideMouse();
 	} else {
 		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);
-		_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
 }
 
@@ -1025,7 +1025,7 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 		AL0674_i_LightAmount = -AL0674_i_LightAmount;
 		L0673_i_WeakerLightPower = -L0673_i_WeakerLightPower;
 	}
-	_vm->_championMan->_g407_party._magicalLightAmount += AL0674_i_LightAmount;
+	_vm->_championMan->_party._magicalLightAmount += AL0674_i_LightAmount;
 	if (L0673_i_WeakerLightPower) {
 		L0676_s_Event._type = k70_TMEventTypeLight;
 		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
@@ -1038,10 +1038,10 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 void Timeline::f260_timelineRefreshAllChampionStatusBoxes() {
 	uint16 L0679_ui_ChampionIndex;
 
-	for (L0679_ui_ChampionIndex = k0_ChampionFirst; L0679_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0679_ui_ChampionIndex++) {
-		setFlag(_vm->_championMan->_gK71_champions[L0679_ui_ChampionIndex]._attributes, k0x1000_ChampionAttributeStatusBox);
+	for (L0679_ui_ChampionIndex = k0_ChampionFirst; L0679_ui_ChampionIndex < _vm->_championMan->_partyChampionCount; L0679_ui_ChampionIndex++) {
+		setFlag(_vm->_championMan->_champions[L0679_ui_ChampionIndex]._attributes, k0x1000_ChampionAttributeStatusBox);
 	}
-	_vm->_championMan->f293_drawAllChampionStates();
+	_vm->_championMan->drawAllChampionStates();
 }
 
 void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) {
@@ -1088,7 +1088,7 @@ T0255002:
 		}
 		break;
 	case 0:
-		_vm->_championMan->f283_viAltarRebirth(event->_priority);
+		_vm->_championMan->viAltarRebirth(event->_priority);
 	}
 }
 

@@ -184,7 +184,7 @@ bool Console::Cmd_map(int argc, const char** argv) {
 		if (_vm->_g327_newPartyMapIndex == -1)
 			_vm->_g327_newPartyMapIndex = index;
 		_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
-		_vm->_championMan->f284_setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
+		_vm->_championMan->setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
 		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
 	} else
 		goto argumentError;
@@ -268,7 +268,7 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 						newThingData[thingCount * thingTypeSize + i] = newThingData[thingIndex * thingTypeSize + i];
 					_vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[thingType]++;
 					_vm->_dungeonMan->_g284_thingData[thingType] = newThingData;
-					_vm->_championMan->f301_addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
+					_vm->_championMan->addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
 					debugPrintf("Item gimmed to the first champion, last slot\n");
 					return true;
 				}

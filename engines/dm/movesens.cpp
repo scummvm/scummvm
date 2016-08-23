@@ -73,7 +73,7 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 
 
 	L0759_B_AtLeastOneSensorWasTriggered = false;
-	L0761_T_LeaderHandObject = _vm->_championMan->_g414_leaderHandObject;
+	L0761_T_LeaderHandObject = _vm->_championMan->_leaderHandObject;
 	for (L0752_ui_Cell = k0_CellNorthWest; L0752_ui_Cell < k3_CellSouthWest + 1; L0752_ui_Cell++) {
 		L0760_ai_SensorCountToProcessPerCell[L0752_ui_Cell] = 0;
 	}
@@ -94,7 +94,7 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 			L0755_ps_Sensor = (Sensor *)_vm->_dungeonMan->f156_getThingData(L0750_T_ThingBeingProcessed);
 			if ((L0757_ui_SensorType = (L0755_ps_Sensor)->getType()) == k0_SensorDisabled)
 				goto T0275058_ProceedToNextThing;
-			if ((_vm->_championMan->_g411_leaderIndex == kM1_ChampionNone) && (L0757_ui_SensorType != k127_SensorWallChampionPortrait))
+			if ((_vm->_championMan->_leaderIndex == kM1_ChampionNone) && (L0757_ui_SensorType != k127_SensorWallChampionPortrait))
 				goto T0275058_ProceedToNextThing;
 			if (L0752_ui_Cell != cellParam)
 				goto T0275058_ProceedToNextThing;
@@ -108,7 +108,7 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 				}
 				break;
 			case k2_SensorWallOrnClickWithAnyObj:
-				L0753_B_DoNotTriggerSensor = (_vm->_championMan->_g415_leaderEmptyHanded != L0755_ps_Sensor->getRevertEffectA());
+				L0753_B_DoNotTriggerSensor = (_vm->_championMan->_leaderEmptyHanded != L0755_ps_Sensor->getRevertEffectA());
 				break;
 			case k17_SensorWallOrnClickWithSpecObjRemovedSensor:
 			case k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors:
@@ -132,26 +132,26 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 			case k12_SensorWallObjGeneratorRotateSensors:
 				if (L0760_ai_SensorCountToProcessPerCell[L0752_ui_Cell]) /* If the sensor is not the last one of its type on the cell */
 					goto T0275058_ProceedToNextThing;
-				L0753_B_DoNotTriggerSensor = !_vm->_championMan->_g415_leaderEmptyHanded;
+				L0753_B_DoNotTriggerSensor = !_vm->_championMan->_leaderEmptyHanded;
 				if (!L0753_B_DoNotTriggerSensor) {
 					f270_sensorTriggetLocalEffect(k2_SensorEffToggle, mapX, mapY, L0752_ui_Cell); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
 				}
 				break;
 			case k13_SensorWallSingleObjStorageRotateSensors:
-				if (_vm->_championMan->_g415_leaderEmptyHanded) {
+				if (_vm->_championMan->_leaderEmptyHanded) {
 					if ((L0761_T_LeaderHandObject = f273_sensorGetObjectOfTypeInCell(mapX, mapY, L0752_ui_Cell, L0758_i_SensorData)) == Thing::_none)
 						goto T0275058_ProceedToNextThing;
 					_vm->_dungeonMan->f164_unlinkThingFromList(L0761_T_LeaderHandObject, Thing(0), mapX, mapY);
-					_vm->_championMan->f297_putObjectInLeaderHand(L0761_T_LeaderHandObject, true);
+					_vm->_championMan->putObjectInLeaderHand(L0761_T_LeaderHandObject, true);
 				} else {
 					if ((_vm->_objectMan->f32_getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (f273_sensorGetObjectOfTypeInCell(mapX, mapY, L0752_ui_Cell, L0758_i_SensorData) != Thing::_none))
 						goto T0275058_ProceedToNextThing;
-					_vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					_vm->_dungeonMan->f163_linkThingToList(M15_thingWithNewCell(L0761_T_LeaderHandObject, L0752_ui_Cell), Thing(0), mapX, mapY);
 					L0761_T_LeaderHandObject = Thing::_none;
 				}
 				f270_sensorTriggetLocalEffect(k2_SensorEffToggle, mapX, mapY, L0752_ui_Cell); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
-				if ((L0756_i_SensorEffect == k3_SensorEffHold) && !_vm->_championMan->_g415_leaderEmptyHanded) {
+				if ((L0756_i_SensorEffect == k3_SensorEffHold) && !_vm->_championMan->_leaderEmptyHanded) {
 					L0753_B_DoNotTriggerSensor = true;
 				} else {
 					L0753_B_DoNotTriggerSensor = false;
@@ -164,13 +164,13 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 				if ((_vm->_objectMan->f32_getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (L0762_T_ThingOnSquare == Thing::_none))
 					goto T0275058_ProceedToNextThing;
 				_vm->_dungeonMan->f164_unlinkThingFromList(L0762_T_ThingOnSquare, Thing(0), mapX, mapY);
-				_vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+				_vm->_championMan->getObjectRemovedFromLeaderHand();
 				_vm->_dungeonMan->f163_linkThingToList(M15_thingWithNewCell(L0761_T_LeaderHandObject, L0752_ui_Cell), Thing(0), mapX, mapY);
-				_vm->_championMan->f297_putObjectInLeaderHand(L0762_T_ThingOnSquare, true);
+				_vm->_championMan->putObjectInLeaderHand(L0762_T_ThingOnSquare, true);
 				L0753_B_DoNotTriggerSensor = false;
 				break;
 			case k127_SensorWallChampionPortrait:
-				_vm->_championMan->f280_addCandidateChampionToParty(L0758_i_SensorData);
+				_vm->_championMan->addCandidateChampionToParty(L0758_i_SensorData);
 				goto T0275058_ProceedToNextThing;
 			default:
 				goto T0275058_ProceedToNextThing;
@@ -184,16 +184,16 @@ bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, ui
 				if (L0755_ps_Sensor->getAudibleA()) {
 					_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 				}
-				if (!_vm->_championMan->_g415_leaderEmptyHanded && ((L0757_ui_SensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (L0757_ui_SensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (L0757_ui_SensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
+				if (!_vm->_championMan->_leaderEmptyHanded && ((L0757_ui_SensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (L0757_ui_SensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (L0757_ui_SensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
 					L0754_ps_Generic = (Thing *)_vm->_dungeonMan->f156_getThingData(L0761_T_LeaderHandObject);
 					*L0754_ps_Generic = Thing::_none;
-					_vm->_championMan->f298_getObjectRemovedFromLeaderHand();
+					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					L0761_T_LeaderHandObject = Thing::_none;
 				} else {
-					if (_vm->_championMan->_g415_leaderEmptyHanded &&
+					if (_vm->_championMan->_leaderEmptyHanded &&
 						(L0757_ui_SensorType == k12_SensorWallObjGeneratorRotateSensors) &&
 						((L0761_T_LeaderHandObject = _vm->_dungeonMan->f167_getObjForProjectileLaucherOrObjGen(L0758_i_SensorData)) != Thing::_none)) {
-						_vm->_championMan->f297_putObjectInLeaderHand(L0761_T_LeaderHandObject, true);
+						_vm->_championMan->putObjectInLeaderHand(L0761_T_LeaderHandObject, true);
 					}
 				}
 				f272_sensorTriggerEffect(L0755_ps_Sensor, L0756_i_SensorEffect, mapX, mapY, L0752_ui_Cell);
@@ -268,7 +268,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 			_vm->_dungeonMan->_g306_partyMapX = destMapX;
 			_vm->_dungeonMan->_g307_partyMapY = destMapY;
 			L0718_i_RequiredTeleporterScope = k0x0002_TelepScopeObjOrParty;
-			L0723_B_DrawDungeonViewWhileFalling = !_vm->_inventoryMan->_g432_inventoryChampionOrdinal && !_vm->_championMan->_g300_partyIsSleeping;
+			L0723_B_DrawDungeonViewWhileFalling = !_vm->_inventoryMan->_g432_inventoryChampionOrdinal && !_vm->_championMan->_partyIsSleeping;
 			L0716_ui_Direction = _vm->_dungeonMan->_g308_partyDir;
 		} else {
 			if (L0710_i_ThingType == k4_GroupThingType) {
@@ -304,9 +304,9 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					}
 					L0723_B_DrawDungeonViewWhileFalling = true;
 					if (L0712_ps_Teleporter->getAbsoluteRotation()) {
-						_vm->_championMan->f284_setPartyDirection(L0712_ps_Teleporter->getRotation());
+						_vm->_championMan->setPartyDirection(L0712_ps_Teleporter->getRotation());
 					} else {
-						_vm->_championMan->f284_setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + L0712_ps_Teleporter->getRotation()));
+						_vm->_championMan->setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + L0712_ps_Teleporter->getRotation()));
 					}
 				} else {
 					if (L0710_i_ThingType == k4_GroupThingType) {
@@ -344,15 +344,15 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					if (thing == Thing::_party) {
 						_vm->_dungeonMan->_g306_partyMapX = destMapX;
 						_vm->_dungeonMan->_g307_partyMapY = destMapY;
-						if (_vm->_championMan->_g305_partyChampionCount > 0) {
+						if (_vm->_championMan->_partyChampionCount > 0) {
 							if (_g402_useRopeToClimbDownPit) {
-								for (AL0709_i_ChampionIndex = k0_ChampionFirst, L0711_ps_Champion = _vm->_championMan->_gK71_champions; AL0709_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL0709_i_ChampionIndex++, L0711_ps_Champion++) {
+								for (AL0709_i_ChampionIndex = k0_ChampionFirst, L0711_ps_Champion = _vm->_championMan->_champions; AL0709_i_ChampionIndex < _vm->_championMan->_partyChampionCount; AL0709_i_ChampionIndex++, L0711_ps_Champion++) {
 									if (L0711_ps_Champion->_currHealth) {
-										_vm->_championMan->f325_decrementStamina(AL0709_i_ChampionIndex, ((L0711_ps_Champion->_load * 25) / _vm->_championMan->f309_getMaximumLoad(L0711_ps_Champion)) + 1);
+										_vm->_championMan->decrementStamina(AL0709_i_ChampionIndex, ((L0711_ps_Champion->_load * 25) / _vm->_championMan->getMaximumLoad(L0711_ps_Champion)) + 1);
 									}
 								}
 							} else {
-								if (_vm->_championMan->f324_damageAll_getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF)) {
+								if (_vm->_championMan->getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF)) {
 									_vm->_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
 								}
 							}
@@ -412,26 +412,26 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 				}
 			}
 		} else {
-			if ((thing == Thing::_party) && _vm->_championMan->_g305_partyChampionCount) {
+			if ((thing == Thing::_party) && _vm->_championMan->_partyChampionCount) {
 				AL0727_ui_Backup = AL0708_i_DestinationSquare;
-				AL0708_i_ScentIndex = _vm->_championMan->_g407_party._scentCount;
+				AL0708_i_ScentIndex = _vm->_championMan->_party._scentCount;
 				while (AL0708_i_ScentIndex >= 24) {
-					_vm->_championMan->f316_deleteScent(0);
+					_vm->_championMan->deleteScent(0);
 					AL0708_i_ScentIndex--;
 				}
 				if (AL0708_i_ScentIndex) {
-					_vm->_championMan->f317_addScentStrength(mapX, mapY, (int)(_vm->_g313_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime));
+					_vm->_championMan->addScentStrength(mapX, mapY, (int)(_vm->_g313_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime));
 				}
 				_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_g313_gameTime;
-				_vm->_championMan->_g407_party._scentCount++;
-				if (_vm->_championMan->_g407_party._event79Count_Footprints) {
-					_vm->_championMan->_g407_party._lastScentIndex = _vm->_championMan->_g407_party._scentCount;
+				_vm->_championMan->_party._scentCount++;
+				if (_vm->_championMan->_party._event79Count_Footprints) {
+					_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._scentCount;
 				}
-				_vm->_championMan->_g407_party._scents[AL0708_i_ScentIndex].setMapX(destMapX);
-				_vm->_championMan->_g407_party._scents[AL0708_i_ScentIndex].setMapY(destMapY);
-				_vm->_championMan->_g407_party._scents[AL0708_i_ScentIndex].setMapIndex(L0715_ui_MapIndexDestination);
-				_vm->_championMan->_g407_party._scentStrengths[AL0708_i_ScentIndex] = 0;
-				_vm->_championMan->f317_addScentStrength(destMapX, destMapY, k0x8000_mergeCycles | 24);
+				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapX(destMapX);
+				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapY(destMapY);
+				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapIndex(L0715_ui_MapIndexDestination);
+				_vm->_championMan->_party._scentStrengths[AL0708_i_ScentIndex] = 0;
+				_vm->_championMan->addScentStrength(destMapX, destMapY, k0x8000_mergeCycles | 24);
 				AL0708_i_DestinationSquare = AL0727_ui_Backup;
 			}
 			if (L0715_ui_MapIndexDestination != L0714_ui_MapIndexSource) {
@@ -565,7 +565,7 @@ bool MovesensMan::f266_moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMa
 	if (thing == Thing::_party) {
 		L0702_i_ImpactType = kM2_ChampionElemType;
 		for (AL0699_ui_Cell = k0_CellNorthWest; AL0699_ui_Cell < k3_CellSouthWest + 1; AL0699_ui_Cell++) {
-			if (_vm->_championMan->f285_getIndexInCell((ViewCell)AL0699_ui_Cell) >= 0) {
+			if (_vm->_championMan->getIndexInCell((ViewCell)AL0699_ui_Cell) >= 0) {
 				L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_Cell] = _vm->M0_indexToOrdinal(AL0699_ui_Cell);
 			}
 		}
@@ -645,7 +645,7 @@ void MovesensMan::f268_addEvent(byte type, byte mapX, byte mapY, byte cell, byte
 }
 
 int16 MovesensMan::f514_getSound(byte creatureType) {
-	if (_vm->_championMan->_g300_partyIsSleeping) {
+	if (_vm->_championMan->_partyIsSleeping) {
 		return 35;
 	}
 
@@ -839,7 +839,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 						goto T0276079;
 					break;
 				case k3_SensorFloorParty:
-					if ((L0767_i_ThingType != kM1_PartyThingType) || (_vm->_championMan->_g305_partyChampionCount == 0))
+					if ((L0767_i_ThingType != kM1_PartyThingType) || (_vm->_championMan->_partyChampionCount == 0))
 						goto T0276079;
 					if (L0779_i_SensorData == 0) {
 						if (partySquare)
@@ -933,7 +933,7 @@ bool MovesensMan::f274_sensorIsObjcetInPartyPossession(int16 objectType) {
 
 
 	L0748_B_LeaderHandObjectProcessed = false;
-	for (L0742_i_ChampionIndex = k0_ChampionFirst, L0745_ps_Champion = _vm->_championMan->_gK71_champions; L0742_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0742_i_ChampionIndex++, L0745_ps_Champion++) {
+	for (L0742_i_ChampionIndex = k0_ChampionFirst, L0745_ps_Champion = _vm->_championMan->_champions; L0742_i_ChampionIndex < _vm->_championMan->_partyChampionCount; L0742_i_ChampionIndex++, L0745_ps_Champion++) {
 		if (L0745_ps_Champion->_currHealth) {
 			L0746_pT_Thing = L0745_ps_Champion->_slots;
 			for (L0743_ui_SlotIndex = k0_ChampionSlotReadyHand; (L0743_ui_SlotIndex < k30_ChampionSlotChest_1) && !L0748_B_LeaderHandObjectProcessed; L0743_ui_SlotIndex++) {
@@ -957,7 +957,7 @@ T0274003:
 	}
 	if (!L0748_B_LeaderHandObjectProcessed) {
 		L0748_B_LeaderHandObjectProcessed = true;
-		L0744_T_Thing = _vm->_championMan->_g414_leaderHandObject;
+		L0744_T_Thing = _vm->_championMan->_leaderHandObject;
 		goto T0274003;
 	}
 	return false;
@@ -1013,15 +1013,15 @@ void MovesensMan::f270_sensorTriggetLocalEffect(int16 localEffect, int16 effX, i
 void MovesensMan::f269_sensorAddSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly) {
 
 	if (leaderOnly) {
-		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
-			_vm->_championMan->f304_addSkillExperience(_vm->_championMan->_g411_leaderIndex, skillIndex, exp);
+		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone) {
+			_vm->_championMan->addSkillExperience(_vm->_championMan->_leaderIndex, skillIndex, exp);
 		}
 	} else {
-		exp /= _vm->_championMan->_g305_partyChampionCount;
-		Champion *L0731_ps_Champion = _vm->_championMan->_gK71_champions;
-		for (int16 L0730_i_ChampionIndex = k0_ChampionFirst; L0730_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0730_i_ChampionIndex++, L0731_ps_Champion++) {
+		exp /= _vm->_championMan->_partyChampionCount;
+		Champion *L0731_ps_Champion = _vm->_championMan->_champions;
+		for (int16 L0730_i_ChampionIndex = k0_ChampionFirst; L0730_i_ChampionIndex < _vm->_championMan->_partyChampionCount; L0730_i_ChampionIndex++, L0731_ps_Champion++) {
 			if (L0731_ps_Champion->_currHealth) {
-				_vm->_championMan->f304_addSkillExperience(L0730_i_ChampionIndex, skillIndex, exp);
+				_vm->_championMan->addSkillExperience(L0730_i_ChampionIndex, skillIndex, exp);
 			}
 		}
 	}

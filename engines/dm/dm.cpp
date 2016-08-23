@@ -332,8 +332,8 @@ void DMEngine::f462_startGame() {
 	_g334_stopPressingMouth = false;
 	_g340_highlightBoxInversionRequested = false;
 	_eventMan->_g341_highlightBoxEnabled = false;
-	_championMan->_g300_partyIsSleeping = false;
-	_championMan->_g506_actingChampionOrdinal = M0_indexToOrdinal(kM1_ChampionNone);
+	_championMan->_partyIsSleeping = false;
+	_championMan->_actingChampionOrdinal = M0_indexToOrdinal(kM1_ChampionNone);
 	_menuMan->_g509_actionAreaContainsIcons = true;
 	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = M0_indexToOrdinal(kM1_ChampionNone);
 
@@ -360,7 +360,7 @@ void DMEngine::f462_startGame() {
 
 	_displayMan->f508_buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_g347_paletteTopAndBottomScreen);
 	_menuMan->f395_drawMovementArrows();
-	_championMan->f278_resetDataToStartGame();
+	_championMan->resetDataToStartGame();
 	_g301_gameTimeTicking = true;
 }
 
@@ -402,7 +402,7 @@ Common::Error DMEngine::run() {
 			return Common::kNoError;
 
 		if (_loadSaveSlotAtRuntime == -1)
-			f444_endGame(_championMan->_g303_partyDead);
+			f444_endGame(_championMan->_partyDead);
 		else {
 			loadGameState(_loadSaveSlotAtRuntime);
 			_menuMan->f457_drawEnabledMenus();
@@ -424,8 +424,8 @@ void DMEngine::f2_gameloop() {
 		}
 
 		// DEBUG CODE
-		for (int16 i = 0; i < _championMan->_g305_partyChampionCount; ++i) {
-			Champion &champ = _championMan->_gK71_champions[i];
+		for (int16 i = 0; i < _championMan->_partyChampionCount; ++i) {
+			Champion &champ = _championMan->_champions[i];
 			if (_console->_debugGodmodeHP)
 				champ._currHealth = champ._maxHealth;
 			if (_console->_debugGodmodeMana)
@@ -449,7 +449,7 @@ void DMEngine::f2_gameloop() {
 				break;
 		}
 
-		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
+		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
 			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
 			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
@@ -469,8 +469,8 @@ void DMEngine::f2_gameloop() {
 		}
 		_eventMan->f363_highlightBoxDisable();
 		_sound->f65_playPendingSound();
-		_championMan->f320_applyAndDrawPendingDamageAndWounds();
-		if (_championMan->_g303_partyDead)
+		_championMan->applyAndDrawPendingDamageAndWounds();
+		if (_championMan->_partyDead)
 			break;
 
 		_g313_gameTime++;
@@ -478,13 +478,13 @@ void DMEngine::f2_gameloop() {
 		if (!(_g313_gameTime & 511))
 			_inventoryMan->f338_decreaseTorchesLightPower();
 
-		if (_championMan->_g407_party._freezeLifeTicks)
-			_championMan->_g407_party._freezeLifeTicks -= 1;
+		if (_championMan->_party._freezeLifeTicks)
+			_championMan->_party._freezeLifeTicks -= 1;
 
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
-		if (!(_g313_gameTime & (_championMan->_g300_partyIsSleeping ? 15 : 63)))
-			_championMan->f331_applyTimeEffects();
+		if (!(_g313_gameTime & (_championMan->_partyIsSleeping ? 15 : 63)))
+			_championMan->applyTimeEffects();
 
 		if (_g310_disabledMovementTicks)
 			_g310_disabledMovementTicks--;
@@ -661,9 +661,9 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 		if (_g302_gameWon) {
 			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
 			_displayMan->fillScreen(k12_ColorDarkestGray);
-			for (int16 championIndex = k0_ChampionFirst; championIndex < _championMan->_g305_partyChampionCount; championIndex++) {
+			for (int16 championIndex = k0_ChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
 				int16 textPosY = championIndex * 48;
-				Champion *curChampion = &_championMan->_gK71_champions[championIndex];
+				Champion *curChampion = &_championMan->_champions[championIndex];
 				_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
 				_displayMan->f21_blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
 				_textMan->f443_endgamePrintString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
@@ -674,7 +674,7 @@ void DMEngine::f444_endGame(bool doNotDrawCreditsOnly) {
 
 				_textMan->f443_endgamePrintString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
 				for (int16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
-					uint16 skillLevel = MIN<uint16>(16, _championMan->f303_getSkillLevel(championIndex, idx | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
+					uint16 skillLevel = MIN<uint16>(16, _championMan->getSkillLevel(championIndex, idx | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
 					if (skillLevel == 1)
 						continue;
 
@@ -964,9 +964,9 @@ void DMEngine::f446_STARTEND_fuseSequnce() {
 		_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
 	}
 	_eventMan->f363_highlightBoxDisable();
-	_championMan->_g407_party._magicalLightAmount = 200;
+	_championMan->_party._magicalLightAmount = 200;
 	_inventoryMan->f337_setDungeonViewPalette();
-	_championMan->_g407_party._fireShieldDefense = _championMan->_g407_party._spellShieldDefense = _championMan->_g407_party._shieldDefense = 100;
+	_championMan->_party._fireShieldDefense = _championMan->_party._spellShieldDefense = _championMan->_party._shieldDefense = 100;
 	_timeline->f260_timelineRefreshAllChampionStatusBoxes();
 	f445_STARTEND_fuseSequenceUpdate();
 	L1431_i_LordChaosMapX = _dungeonMan->_g306_partyMapX;

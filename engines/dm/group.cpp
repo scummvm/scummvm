@@ -686,7 +686,7 @@ T0209005_AddEventAndReturn:
 	if (L0461_i_MovementTicks == k255_immobile)
 		L0461_i_MovementTicks = 100;
 
-	if (_vm->_championMan->_g407_party._freezeLifeTicks && !L0463_B_Archenemy) { /* If life is frozen and the creature is not Lord Chaos (Lord Chaos is immune to Freeze Life) then reschedule the event later (except for reactions which are ignored when life if frozen) */
+	if (_vm->_championMan->_party._freezeLifeTicks && !L0463_B_Archenemy) { /* If life is frozen and the creature is not Lord Chaos (Lord Chaos is immune to Freeze Life) then reschedule the event later (except for reactions which are ignored when life if frozen) */
 		if (eventType < 0)
 			goto T0209139_Return;
 		L0465_s_NextEvent._type = eventType;
@@ -1180,7 +1180,7 @@ int16 GroupMan::f200_groupGetDistanceToVisibleParty(Group *group, int16 creature
 
 
 	L0424_ps_CreatureInfo = &g243_CreatureInfo[group->_type];
-	if (_vm->_championMan->_g407_party._event71Count_Invisibility && !getFlag(L0424_ps_CreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
+	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(L0424_ps_CreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
 		return 0;
 	}
 	if (getFlag(L0424_ps_CreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) /* If creature can see in all directions */
@@ -1402,8 +1402,8 @@ int16 GroupMan::f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo
 		_vm->_projexpl->_g363_secondaryDirToOrFromParty = _g383_currGroupSecondaryDirToParty;
 		return _vm->M0_indexToOrdinal(_g382_currGroupPrimaryDirToParty);
 	}
-	if ((L0427_i_ScentOrdinal = _vm->_championMan->f315_getScentOrdinal(mapY, mapX)) && ((_vm->_championMan->_g407_party._scentStrengths[_vm->M1_ordinalToIndex(L0427_i_ScentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (L0426_ui_SmellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
-		return _vm->M0_indexToOrdinal(f228_getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_g407_party._scents[L0427_i_ScentOrdinal].getMapX(), _vm->_championMan->_g407_party._scents[L0427_i_ScentOrdinal].getMapY()));
+	if ((L0427_i_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX)) && ((_vm->_championMan->_party._scentStrengths[_vm->M1_ordinalToIndex(L0427_i_ScentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (L0426_ui_SmellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
+		return _vm->M0_indexToOrdinal(f228_getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapX(), _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapY()));
 	}
 	return 0;
 }
@@ -1531,14 +1531,14 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
 			AL0439_i_ChampionIndex = _vm->getRandomNumber(4);
-			for (AL0440_i_Counter = 0; (AL0440_i_Counter < 4) && !_vm->_championMan->_gK71_champions[AL0439_i_ChampionIndex]._currHealth; AL0440_i_Counter++) {
+			for (AL0440_i_Counter = 0; (AL0440_i_Counter < 4) && !_vm->_championMan->_champions[AL0439_i_ChampionIndex]._currHealth; AL0440_i_Counter++) {
 				AL0439_i_ChampionIndex = returnNextVal(AL0439_i_ChampionIndex);
 			}
 			if (AL0440_i_Counter == 4) {
 				return false;
 			}
 		} else {
-			if ((AL0439_i_ChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(mapX, mapY, AL0439_i_TargetCell)) < 0) {
+			if ((AL0439_i_ChampionIndex = _vm->_championMan->getTargetChampionIndex(mapX, mapY, AL0439_i_TargetCell)) < 0) {
 				return false;
 			}
 		}
@@ -1546,7 +1546,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 			f193_stealFromChampion(group, AL0439_i_ChampionIndex);
 		} else {
 			AL0440_i_Damage = f230_getChampionDamage(group, AL0439_i_ChampionIndex) + 1;
-			Champion *L0442_ps_Champion = &_vm->_championMan->_gK71_champions[AL0439_i_ChampionIndex];
+			Champion *L0442_ps_Champion = &_vm->_championMan->_champions[AL0439_i_ChampionIndex];
 			if (AL0440_i_Damage > L0442_ps_Champion->_maximumDamageReceived) {
 				L0442_ps_Champion->_maximumDamageReceived = AL0440_i_Damage;
 				L0442_ps_Champion->_directionMaximumDamageReceived = returnOppositeDir((Direction)L0438_ui_PrimaryDirectionToParty);
@@ -1592,15 +1592,15 @@ void GroupMan::f193_stealFromChampion(Group *group, uint16 championIndex) {
 
 
 	L0396_B_ObjectStolen = false;
-	L0391_i_Percentage = 100 - _vm->_championMan->f311_getDexterity(L0395_ps_Champion = &_vm->_championMan->_gK71_champions[championIndex]);
+	L0391_i_Percentage = 100 - _vm->_championMan->getDexterity(L0395_ps_Champion = &_vm->_championMan->_champions[championIndex]);
 	L0393_ui_Counter = _vm->getRandomNumber(8);
-	while ((L0391_i_Percentage > 0) && !_vm->_championMan->f308_isLucky(L0395_ps_Champion, L0391_i_Percentage)) {
+	while ((L0391_i_Percentage > 0) && !_vm->_championMan->isLucky(L0395_ps_Champion, L0391_i_Percentage)) {
 		if ((L0392_ui_StealFromSlotIndex = G0394_auc_StealFromSlotIndices[L0393_ui_Counter]) == k13_ChampionSlotBackpackLine_1_1) {
 			L0392_ui_StealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
 		}
 		if (((L0394_T_Thing = L0395_ps_Champion->_slots[L0392_ui_StealFromSlotIndex]) != Thing::_none)) {
 			L0396_B_ObjectStolen = true;
-			L0394_T_Thing = _vm->_championMan->f300_getObjectRemovedFromSlot(championIndex, L0392_ui_StealFromSlotIndex);
+			L0394_T_Thing = _vm->_championMan->getObjectRemovedFromSlot(championIndex, L0392_ui_StealFromSlotIndex);
 			if (group->_slot == Thing::_endOfList) {
 				group->_slot = L0394_T_Thing; /* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
 											 The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
@@ -1608,7 +1608,7 @@ void GroupMan::f193_stealFromChampion(Group *group, uint16 championIndex) {
 			} else {
 				_vm->_dungeonMan->f163_linkThingToList(L0394_T_Thing, group->_slot, kM1_MapXNotOnASquare, 0);
 			}
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)championIndex);
+			_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 		}
 		++L0393_ui_Counter;
 		L0393_ui_Counter &= 0x0007;
@@ -1639,20 +1639,20 @@ int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
 	CreatureInfo L0564_s_CreatureInfo;
 
 
-	L0562_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
-	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+	L0562_ps_Champion = &_vm->_championMan->_champions[champIndex];
+	if (champIndex >= _vm->_championMan->_partyChampionCount) {
 		return 0;
 	}
 	if (!L0562_ps_Champion->_currHealth) {
 		return 0;
 	}
-	if (_vm->_championMan->_g300_partyIsSleeping) {
-		_vm->_championMan->f314_wakeUp();
+	if (_vm->_championMan->_partyIsSleeping) {
+		_vm->_championMan->wakeUp();
 	}
 	L0563_i_DoubledMapDifficulty = _vm->_dungeonMan->_g269_currMap->_difficulty << 1;
 	L0564_s_CreatureInfo = g243_CreatureInfo[group->_type];
-	_vm->_championMan->f304_addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.M58_getExperience());
-	if (_vm->_championMan->_g300_partyIsSleeping || (((_vm->_championMan->f311_getDexterity(L0562_ps_Champion) < (_vm->getRandomNumber(32) + L0564_s_CreatureInfo._dexterity + L0563_i_DoubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->f308_isLucky(L0562_ps_Champion, 60))) {
+	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.M58_getExperience());
+	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(L0562_ps_Champion) < (_vm->getRandomNumber(32) + L0564_s_CreatureInfo._dexterity + L0563_i_DoubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(L0562_ps_Champion, 60))) {
 		if ((AL0559_ui_WoundTest = _vm->getRandomNumber(65536)) & 0x0070) {
 			AL0559_ui_WoundTest &= 0x000F;
 			L0560_ui_WoundProbabilities = L0564_s_CreatureInfo._woundProbabilities;
@@ -1663,7 +1663,7 @@ int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
 		} else {
 			AL0561_ui_AllowedWound = AL0559_ui_WoundTest & 0x0001; /* 0 (Ready hand) or 1 (action hand) */
 		}
-		if ((AL0558_i_Attack = (_vm->getRandomNumber(16) + L0564_s_CreatureInfo._attack + L0563_i_DoubledMapDifficulty) - (_vm->_championMan->f303_getSkillLevel(champIndex, k7_ChampionSkillParry) << 1)) <= 1) {
+		if ((AL0558_i_Attack = (_vm->getRandomNumber(16) + L0564_s_CreatureInfo._attack + L0563_i_DoubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, k7_ChampionSkillParry) << 1)) <= 1) {
 			if (_vm->getRandomNumber(2)) {
 				goto T0230014;
 			}
@@ -1677,15 +1677,15 @@ int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
 		if (_vm->getRandomNumber(2))
 			AL0558_i_Attack -= _vm->getRandomNumber((AL0558_i_Attack >> 1) + 1) - 1;
 
-		AL0558_i_Damage = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(champIndex, AL0558_i_Attack, AL0561_ui_AllowedWound, L0564_s_CreatureInfo._attackType);
+		AL0558_i_Damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, AL0558_i_Attack, AL0561_ui_AllowedWound, L0564_s_CreatureInfo._attackType);
 		if (AL0558_i_Damage) {
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k2_soundModePlayOneTickLater);
 
 			AL0559_ui_PoisonAttack = L0564_s_CreatureInfo._poisonAttack;
 			if (AL0559_ui_PoisonAttack && _vm->getRandomNumber(2)) {
-				AL0559_ui_PoisonAttack = _vm->_championMan->f307_getStatisticAdjustedAttack(L0562_ps_Champion, k4_ChampionStatVitality, AL0559_ui_PoisonAttack);
+				AL0559_ui_PoisonAttack = _vm->_championMan->getStatisticAdjustedAttack(L0562_ps_Champion, k4_ChampionStatVitality, AL0559_ui_PoisonAttack);
 				if (AL0559_ui_PoisonAttack >= 0)
-					_vm->_championMan->f322_championPoison(champIndex, AL0559_ui_PoisonAttack);
+					_vm->_championMan->championPoison(champIndex, AL0559_ui_PoisonAttack);
 			}
 			return AL0558_i_Damage;
 		}
@@ -1897,7 +1897,7 @@ int16 GroupMan::f231_getMeleeActionDamage(Champion* champ, int16 champIndex, Gro
 	int16 L0571_i_ActionHandObjectIconIndex;
 	CreatureInfo* L0572_ps_CreatureInfo;
 
-	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+	if (champIndex >= _vm->_championMan->_partyChampionCount) {
 		return 0;
 	}
 	if (!champ->_currHealth) {
@@ -1911,11 +1911,11 @@ int16 GroupMan::f231_getMeleeActionDamage(Champion* champ, int16 champIndex, Gro
 		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 
 	if ((!getFlag(L0572_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) || L0570_B_ActionHitsNonMaterialCreatures) &&
-		((_vm->_championMan->f311_getDexterity(champ) > (_vm->getRandomNumber(32) + L0572_ps_CreatureInfo->_dexterity + L0567_i_DoubledMapDifficulty - 16)) ||
+		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + L0572_ps_CreatureInfo->_dexterity + L0567_i_DoubledMapDifficulty - 16)) ||
 		(!_vm->getRandomNumber(4)) ||
-		 (_vm->_championMan->f308_isLucky(champ, 75 - actionHitProbability)))) {
+		 (_vm->_championMan->isLucky(champ, 75 - actionHitProbability)))) {
 
-		L0565_i_Damage = _vm->_championMan->f312_getStrength(champIndex, k1_ChampionSlotActionHand);
+		L0565_i_Damage = _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand);
 		if (!(L0565_i_Damage))
 			goto T0231009;
 
@@ -1950,20 +1950,20 @@ T0231009:
 		L0565_i_Damage += _vm->getRandomNumber(4) + 1;
 		if ((L0571_i_ActionHandObjectIconIndex == k40_IconIndiceWeaponVorpalBlade) && !getFlag(L0572_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) && !(L0565_i_Damage >>= 1))
 			goto T0231015;
-		if (_vm->getRandomNumber(64) < _vm->_championMan->f303_getSkillLevel(champIndex, skillIndex)) {
+		if (_vm->getRandomNumber(64) < _vm->_championMan->getSkillLevel(champIndex, skillIndex)) {
 			L0565_i_Damage += L0565_i_Damage + 10;
 		}
 		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
-		_vm->_championMan->f304_addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->M58_getExperience() >> 4) + 3);
-		_vm->_championMan->f325_decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
+		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->M58_getExperience() >> 4) + 3);
+		_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
 	}
 T0231015:
 	L0565_i_Damage = 0;
 	L0569_i_Outcome = k0_outcomeKilledNoCreaturesInGroup;
-	_vm->_championMan->f325_decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
+	_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
 T0231016:
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != k2_outcomeKilledAllCreaturesInGroup) {
 		f209_processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}

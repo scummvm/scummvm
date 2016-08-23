@@ -125,11 +125,11 @@ void MenuMan::f395_drawMovementArrows() {
 }
 void MenuMan::f388_clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
-	if (cm._g506_actingChampionOrdinal) {
-		cm._g506_actingChampionOrdinal--;
-		cm._gK71_champions[cm._g506_actingChampionOrdinal].setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
-		cm.f292_drawChampionState((ChampionIndex)cm._g506_actingChampionOrdinal);
-		cm._g506_actingChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+	if (cm._actingChampionOrdinal) {
+		cm._actingChampionOrdinal--;
+		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
+		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
+		cm._actingChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 		_g508_refreshActionArea = true;
 	}
 }
@@ -140,7 +140,7 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	if (!_g509_actionAreaContainsIcons)
 		return;
 	DisplayMan &dm = *_vm->_displayMan;
-	Champion &champion = _vm->_championMan->_gK71_champions[championIndex];
+	Champion &champion = _vm->_championMan->_champions[championIndex];
 
 	Box box;
 	box._x1 = championIndex * 22 + 233;
@@ -173,13 +173,13 @@ T0386006:
 	box2._y1 = 95;
 	box2._y2 = 110;
 	dm.f21_blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
-	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
+	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
 		_vm->_displayMan->f136_shadeScreenBox(&box, k0_ColorBlack);
 	}
 }
 
 void MenuMan::f456_drawDisabledMenu() {
-	if (!_vm->_championMan->_g300_partyIsSleeping) {
+	if (!_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->f363_highlightBoxDisable();
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
@@ -198,39 +198,39 @@ void MenuMan::f456_drawDisabledMenu() {
 void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 	ChampionMan &champMan = *_vm->_championMan;
 
-	if (!champMan._g305_partyChampionCount)
+	if (!champMan._partyChampionCount)
 		return;
 
 	Champion *champ = nullptr;
-	if (champMan._g300_partyIsSleeping || champMan._g299_candidateChampionOrdinal) {
-		if (champMan._g506_actingChampionOrdinal) {
+	if (champMan._partyIsSleeping || champMan._candidateChampionOrdinal) {
+		if (champMan._actingChampionOrdinal) {
 			f388_clearActingChampion();
 			return;
 		}
-		if (!champMan._g299_candidateChampionOrdinal)
+		if (!champMan._candidateChampionOrdinal)
 			return;
 	} else {
-		champ = champMan._gK71_champions;
+		champ = champMan._champions;
 		int16 champIndex = k0_ChampionFirst;
 
 		do {
-			if ((champIndex != champMan._g411_leaderIndex)
-				&& (_vm->M0_indexToOrdinal(champIndex) != champMan._g506_actingChampionOrdinal)
+			if ((champIndex != champMan._leaderIndex)
+				&& (_vm->M0_indexToOrdinal(champIndex) != champMan._actingChampionOrdinal)
 				&& (champ->_maximumDamageReceived)
 				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
 
 				champ->_dir = (Direction)champ->_directionMaximumDamageReceived;
 				champ->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
-				champMan.f292_drawChampionState((ChampionIndex)champIndex);
+				champMan.drawChampionState((ChampionIndex)champIndex);
 			}
 			champ->_maximumDamageReceived = 0;
 			champ++;
 			champIndex++;
-		} while (champIndex < champMan._g305_partyChampionCount);
+		} while (champIndex < champMan._partyChampionCount);
 	}
 
 	if (_g508_refreshActionArea) {
-		if (!champMan._g506_actingChampionOrdinal) {
+		if (!champMan._actingChampionOrdinal) {
 			if (_g513_actionDamage) {
 				f385_drawActionDamage(_g513_actionDamage);
 				_g513_actionDamage = 0;
@@ -241,7 +241,7 @@ void MenuMan::f390_refreshActionAreaAndSetChampDirMaxDamageReceived() {
 		} else {
 			_g509_actionAreaContainsIcons = false;
 			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
-			champMan.f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(champMan._g506_actingChampionOrdinal));
+			champMan.drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(champMan._actingChampionOrdinal));
 			f387_drawActionArea();
 		}
 	}
@@ -259,9 +259,9 @@ void MenuMan::f387_drawActionArea() {
 	dispMan._g578_useByteBoxCoordinates = false;
 	dispMan.D24_fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
-		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._g305_partyChampionCount; ++champIndex)
+		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
 			f386_drawActionIcon((ChampionIndex)champIndex);
-	} else if (champMan._g506_actingChampionOrdinal) {
+	} else if (champMan._actingChampionOrdinal) {
 		Box box = boxActionArea3ActionMenu;
 		if (_g713_actionList._actionIndices[2] == k255_ChampionActionNone)
 			box = boxActionArea2ActionMenu;
@@ -270,7 +270,7 @@ void MenuMan::f387_drawActionArea() {
 		dispMan.f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
 								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
 		textMan.f41_printWithTrailingSpaces(dispMan._g348_bitmapScreen, k160_byteWidthScreen,
-											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._gK71_champions[_vm->M1_ordinalToIndex(champMan._g506_actingChampionOrdinal)]._name,
+											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->M1_ordinalToIndex(champMan._actingChampionOrdinal)]._name,
 											k7_ChampionNameMaximumLength, k200_heightScreen);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
 			textMan.f41_printWithTrailingSpaces(dispMan._g348_bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
@@ -302,29 +302,29 @@ Box g504_BoxSpellAreaControls = Box(233, 319, 42, 49); // @ G0504_s_Graphic560_B
 void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 
 
-	Champion *champ = &_vm->_championMan->_gK71_champions[champIndex];
+	Champion *champ = &_vm->_championMan->_champions[champIndex];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	int16 champHP0 = _vm->_championMan->_gK71_champions[0]._currHealth;
-	int16 champHP1 = _vm->_championMan->_gK71_champions[1]._currHealth;
-	int16 champHP2 = _vm->_championMan->_gK71_champions[2]._currHealth;
-	int16 champHP3 = _vm->_championMan->_gK71_champions[3]._currHealth;
+	int16 champHP0 = _vm->_championMan->_champions[0]._currHealth;
+	int16 champHP1 = _vm->_championMan->_champions[1]._currHealth;
+	int16 champHP2 = _vm->_championMan->_champions[2]._currHealth;
+	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
 	_vm->_eventMan->f78_showMouse();
 	_vm->_displayMan->D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->f6_highlightScreenBox(233, 277, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
-		if (_vm->_championMan->_g305_partyChampionCount > 1) {
+		if (_vm->_championMan->_partyChampionCount > 1) {
 			if (champHP1) {
 				_vm->_eventMan->f6_highlightScreenBox(280, 291, 42, 48);
 			}
 T0393002:
-			if (_vm->_championMan->_g305_partyChampionCount > 2) {
+			if (_vm->_championMan->_partyChampionCount > 2) {
 				if (champHP2) {
 					_vm->_eventMan->f6_highlightScreenBox(294, 305, 42, 48);
 				}
 T0393003:
-				if (_vm->_championMan->_g305_partyChampionCount > 3) {
+				if (_vm->_championMan->_partyChampionCount > 3) {
 					if (champHP3) {
 						_vm->_eventMan->f6_highlightScreenBox(308, 319, 42, 48);
 					}
@@ -372,7 +372,7 @@ void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
 	static Box boxSpellAreaLine(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine 
 
 	char L1204_ac_SpellSymbolString[2] = {'\0', '\0'};
-	Champion *L1203_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	Champion *L1203_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		_vm->_displayMan->f132_blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
@@ -400,23 +400,23 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 
 	Champion* L1213_ps_Champion;
 
-	if ((champIndex == _vm->_championMan->_g514_magicCasterChampionIndex) || ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_gK71_champions[champIndex]._currHealth)) {
+	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex) || ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth)) {
 		return;
 	}
-	if (_vm->_championMan->_g514_magicCasterChampionIndex == kM1_ChampionNone) {
+	if (_vm->_championMan->_magicCasterChampionIndex == kM1_ChampionNone) {
 		_vm->_eventMan->f78_showMouse();
 		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
 		_vm->_eventMan->f77_hideMouse();
 	}
 	if (champIndex == kM1_ChampionNone) {
-		_vm->_championMan->_g514_magicCasterChampionIndex = kM1_ChampionNone;
+		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone;
 		_vm->_eventMan->f78_showMouse();
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		_vm->_displayMan->D24_fillScreenBox(boxSpellArea, k0_ColorBlack);
 		_vm->_eventMan->f77_hideMouse();
 		return;
 	}
-	L1213_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex = (ChampionIndex)champIndex];
+	L1213_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex = (ChampionIndex)champIndex];
 	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->f78_showMouse();
 	f393_drawSpellAreaControls((ChampionIndex)champIndex);
@@ -432,14 +432,14 @@ void MenuMan::f457_drawEnabledMenus() {
 #define AL1462_i_InventoryChampionOrdinal L1462_i_Multiple
 
 
-	if (_vm->_championMan->_g300_partyIsSleeping) {
+	if (_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->f379_drawSleepScreen();
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	} else {
-		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_g514_magicCasterChampionIndex;
-		_vm->_championMan->_g514_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
+		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
+		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
 		f394_setMagicCasterAndDrawSpellArea(AL1462_i_MagicCasterChampionIndex);
-		if (!_vm->_championMan->_g506_actingChampionOrdinal) {
+		if (!_vm->_championMan->_actingChampionOrdinal) {
 			_g509_actionAreaContainsIcons = true;
 		}
 		f387_drawActionArea();
@@ -459,10 +459,10 @@ int16 MenuMan::f408_getClickOnSpellCastResult() {
 	Champion* L1260_ps_Champion;
 
 
-	L1260_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	L1260_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	_vm->_eventMan->f78_showMouse();
 	_vm->_eventMan->f363_highlightBoxDisable();
-	if ((L1259_i_SpellCastResult = f412_getChampionSpellCastResult(_vm->_championMan->_g514_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
+	if ((L1259_i_SpellCastResult = f412_getChampionSpellCastResult(_vm->_championMan->_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
 		L1260_ps_Champion->_symbols[0] = '\0';
 		f397_drawAvailableSymbols(L1260_ps_Champion->_symbolStep = 0);
 		f398_drawChampionSymbols(L1260_ps_Champion);
@@ -494,10 +494,10 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 	Junk* L1277_ps_Junk;
 
 
-	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+	if (champIndex >= _vm->_championMan->_partyChampionCount) {
 		return k0_spellCastFailure;
 	}
-	L1270_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L1270_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	if (!(L1270_ps_Champion->_currHealth)) {
 		return k0_spellCastFailure;
 	}
@@ -507,48 +507,48 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 	}
 	L1268_i_PowerSymbolOrdinal = L1270_ps_Champion->_symbols[0] - '_'; /* Values 1 to 6 */
 	L1273_ui_Experience = _vm->getRandomNumber(8) + ((AL1269_ui_RequiredSkillLevel = L1271_ps_Spell->_baseRequiredSkillLevel + L1268_i_PowerSymbolOrdinal) << 4) + ((_vm->M1_ordinalToIndex(L1268_i_PowerSymbolOrdinal) * L1271_ps_Spell->_baseRequiredSkillLevel) << 3) + (AL1269_ui_RequiredSkillLevel * AL1269_ui_RequiredSkillLevel);
-	AL1267_ui_SkillLevel = _vm->_championMan->f303_getSkillLevel(champIndex, L1271_ps_Spell->_skillIndex);
+	AL1267_ui_SkillLevel = _vm->_championMan->getSkillLevel(champIndex, L1271_ps_Spell->_skillIndex);
 	if (AL1267_ui_SkillLevel < AL1269_ui_RequiredSkillLevel) {
 		L1274_i_MissingSkillLevelCount = AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel;
 		while (L1274_i_MissingSkillLevelCount--) {
 			if (_vm->getRandomNumber(128) > MIN(L1270_ps_Champion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
-				_vm->_championMan->f304_addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience >> (AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel));
+				_vm->_championMan->addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience >> (AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel));
 				f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k0_failureNeedsMorePractice, L1271_ps_Spell->_skillIndex);
 				return k0_spellCastFailure;
 			}
 		}
 	}
-	switch (L1271_ps_Spell->M67_spellKind()) {
+	switch (L1271_ps_Spell->getKind()) {
 	case k1_spellKindPotion:
 		if ((L1275_ps_Potion = f411_getEmptyFlaskInHand(L1270_ps_Champion, &L1272_T_Object)) == NULL) {
 			f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k10_failureNeedsFlaskInHand, 0);
 			return k3_spellCastFailureNeedsFlask;
 		}
 		AL1269_ui_EmptyFlaskWeight = _vm->_dungeonMan->f140_getObjectWeight(L1272_T_Object);
-		L1275_ps_Potion->setType((PotionType)L1271_ps_Spell->M68_spellType());
+		L1275_ps_Potion->setType((PotionType)L1271_ps_Spell->getType());
 		L1275_ps_Potion->setPower(_vm->getRandomNumber(16) + (L1268_i_PowerSymbolOrdinal * 40));
 		L1270_ps_Champion->_load += _vm->_dungeonMan->f140_getObjectWeight(L1272_T_Object) - AL1269_ui_EmptyFlaskWeight;
-		_vm->_championMan->f296_drawChangedObjectIcons();
+		_vm->_championMan->drawChangedObjectIcons();
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->M0_indexToOrdinal(champIndex)) {
 			setFlag(L1270_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad);
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
 		break;
 	case k2_spellKindProjectile:
 		if (L1270_ps_Champion->_dir != _vm->_dungeonMan->_g308_partyDir) {
 			L1270_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 			setFlag(L1270_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);
-			_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
-		if (L1271_ps_Spell->M68_spellType() == k4_spellType_projectileOpenDoor) {
+		if (L1271_ps_Spell->getType() == k4_spellType_projectileOpenDoor) {
 			AL1267_ui_SkillLevel <<= 1;
 		}
-		_vm->_championMan->f327_isProjectileSpellCast(champIndex, Thing(L1271_ps_Spell->M68_spellType() + Thing::_firstExplosion.toUint16()), f26_getBoundedValue(21, (L1268_i_PowerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
+		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(L1271_ps_Spell->getType() + Thing::_firstExplosion.toUint16()), f26_getBoundedValue(21, (L1268_i_PowerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
 		break;
 	case k3_spellKindOther:
 		L1276_s_Event._priority = 0;
 		AL1267_ui_SpellPower = (L1268_i_PowerSymbolOrdinal + 1) << 2;
-		switch (L1271_ps_Spell->M68_spellType()) {
+		switch (L1271_ps_Spell->getType()) {
 		case k0_spellType_otherLight:
 			AL1269_ui_Ticks = 10000 + ((AL1267_ui_SpellPower - 8) << 9);
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 1);
@@ -559,40 +559,40 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
 			AL1267_ui_LightPower++;
 T0412019:
-			_vm->_championMan->_g407_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
+			_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
 			f404_createEvent70_light(-AL1267_ui_LightPower, AL1269_ui_Ticks);
 			break;
 		case k1_spellType_otherDarkness:
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
-			_vm->_championMan->_g407_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
+			_vm->_championMan->_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
 			f404_createEvent70_light(AL1267_ui_LightPower, 98);
 			break;
 		case k2_spellType_otherThievesEye:
 			L1276_s_Event._type = k73_TMEventTypeThievesEye;
-			_vm->_championMan->_g407_party._event73Count_ThievesEye++;
+			_vm->_championMan->_party._event73Count_ThievesEye++;
 			AL1267_ui_SpellPower = (AL1267_ui_SpellPower >> 1);
 			goto T0412032;
 		case k3_spellType_otherInvisibility:
 			L1276_s_Event._type = k71_TMEventTypeInvisibility;
-			_vm->_championMan->_g407_party._event71Count_Invisibility++;
+			_vm->_championMan->_party._event71Count_Invisibility++;
 			goto T0412033;
 		case k4_spellType_otherPartyShield:
 			L1276_s_Event._type = k74_TMEventTypePartyShield;
 			L1276_s_Event._B._defense = AL1267_ui_SpellPower;
-			if (_vm->_championMan->_g407_party._shieldDefense > 50) {
+			if (_vm->_championMan->_party._shieldDefense > 50) {
 				L1276_s_Event._B._defense >>= 2;
 			}
-			_vm->_championMan->_g407_party._shieldDefense += L1276_s_Event._B._defense;
+			_vm->_championMan->_party._shieldDefense += L1276_s_Event._B._defense;
 			_vm->_timeline->f260_timelineRefreshAllChampionStatusBoxes();
 			goto T0412032;
 		case k6_spellType_otherFootprints:
 			L1276_s_Event._type = k79_TMEventTypeFootprints;
-			_vm->_championMan->_g407_party._event79Count_Footprints++;
-			_vm->_championMan->_g407_party._firstScentIndex = _vm->_championMan->_g407_party._scentCount;
+			_vm->_championMan->_party._event79Count_Footprints++;
+			_vm->_championMan->_party._firstScentIndex = _vm->_championMan->_party._scentCount;
 			if (L1268_i_PowerSymbolOrdinal < 3) {
-				_vm->_championMan->_g407_party._lastScentIndex = _vm->_championMan->_g407_party._firstScentIndex;
+				_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._firstScentIndex;
 			} else {
-				_vm->_championMan->_g407_party._lastScentIndex = 0;
+				_vm->_championMan->_party._lastScentIndex = 0;
 			}
 T0412032:
 			AL1267_ui_Ticks = AL1267_ui_SpellPower * AL1267_ui_SpellPower;
@@ -616,8 +616,8 @@ T0412033:
 				}
 			}
 			if ((AL1267_ui_SlotIndex == k0_ChampionSlotReadyHand) || (AL1267_ui_SlotIndex == k1_ChampionSlotActionHand)) {
-				_vm->_championMan->f301_addObjectInSlot((ChampionIndex)champIndex, L1272_T_Object, AL1267_ui_SlotIndex);
-				_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, L1272_T_Object, AL1267_ui_SlotIndex);
+				_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 			} else {
 				_vm->_moveSens->f267_getMoveResult(L1272_T_Object, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
 			}
@@ -626,8 +626,8 @@ T0412033:
 			f403_isPartySpellOrFireShieldSuccessful(L1270_ps_Champion, false, (AL1267_ui_SpellPower * AL1267_ui_SpellPower) + 100, false);
 		}
 	}
-	_vm->_championMan->f304_addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience);
-	_vm->_championMan->f330_disableAction(champIndex, L1271_ps_Spell->M69_spellDurration());
+	_vm->_championMan->addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience);
+	_vm->_championMan->disableAction(champIndex, L1271_ps_Spell->getDuration());
 	return k1_spellCastSuccess;
 }
 
@@ -775,16 +775,16 @@ bool MenuMan::f403_isPartySpellOrFireShieldSuccessful(Champion* champ, bool spel
 	L1240_s_Event._B._defense = ticks >> 5;
 	if (spellShield) {
 		L1240_s_Event._type = k77_TMEventTypeSpellShield;
-		if (_vm->_championMan->_g407_party._spellShieldDefense > 50) {
+		if (_vm->_championMan->_party._spellShieldDefense > 50) {
 			L1240_s_Event._B._defense >>= 2;
 		}
-		_vm->_championMan->_g407_party._spellShieldDefense += L1240_s_Event._B._defense;
+		_vm->_championMan->_party._spellShieldDefense += L1240_s_Event._B._defense;
 	} else {
 		L1240_s_Event._type = k78_TMEventTypeFireShield;
-		if (_vm->_championMan->_g407_party._fireShieldDefense > 50) {
+		if (_vm->_championMan->_party._fireShieldDefense > 50) {
 			L1240_s_Event._B._defense >>= 2;
 		}
-		_vm->_championMan->_g407_party._fireShieldDefense += L1240_s_Event._B._defense;
+		_vm->_championMan->_party._fireShieldDefense += L1240_s_Event._B._defense;
 	}
 	L1240_s_Event._priority = 0;
 	M33_setMapAndTime(L1240_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + ticks);
@@ -841,7 +841,7 @@ void MenuMan::f399_addChampionSymbol(int16 symbolIndex) {
 	uint16 L1224_ui_SymbolIndex;
 	Champion* L1225_ps_Champion;
 
-	L1225_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	L1225_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	L1222_ui_SymbolStep = L1225_ps_Champion->_symbolStep;
 	L1223_ui_ManaCost = G0485_aauc_Graphic560_SymbolBaseManaCost[L1222_ui_SymbolStep][symbolIndex];
 	if (L1222_ui_SymbolStep) {
@@ -856,7 +856,7 @@ void MenuMan::f399_addChampionSymbol(int16 symbolIndex) {
 		_vm->_eventMan->f78_showMouse();
 		f397_drawAvailableSymbols(L1222_ui_SymbolStep);
 		f398_drawChampionSymbols(L1225_ps_Champion);
-		_vm->_championMan->f292_drawChampionState(_vm->_championMan->_g514_magicCasterChampionIndex);
+		_vm->_championMan->drawChampionState(_vm->_championMan->_magicCasterChampionIndex);
 		_vm->_eventMan->f77_hideMouse();
 	}
 }
@@ -865,7 +865,7 @@ void MenuMan::f400_deleteChampionSymbol() {
 	int16 L1226_ui_SymbolStep;
 	Champion* L1228_ps_Champion;
 
-	L1228_ps_Champion = &_vm->_championMan->_gK71_champions[_vm->_championMan->_g514_magicCasterChampionIndex];
+	L1228_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (!strlen(L1228_ps_Champion->_symbols)) {
 		return;
 	}
@@ -884,10 +884,10 @@ bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
 	Champion* L1199_ps_Champion;
 
 
-	if (!_vm->_championMan->_g506_actingChampionOrdinal || (actionListIndex != -1 && (_g713_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
+	if (!_vm->_championMan->_actingChampionOrdinal || (actionListIndex != -1 && (_g713_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
 		return false;
 
-	L1199_ps_Champion = &_vm->_championMan->_gK71_champions[L1196_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)];
+	L1199_ps_Champion = &_vm->_championMan->_champions[L1196_ui_ChampionIndex = _vm->M1_ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)];
 	if (actionListIndex == -1) {
 		// L1198_B_ClickTriggeredAction is set to -1 since booleans are stored in int16 in the original
 		L1198_B_ClickTriggeredAction = true;
@@ -1070,10 +1070,10 @@ bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	TimelineEvent L1258_s_Event;
 
 
-	if (champIndex >= _vm->_championMan->_g305_partyChampionCount) {
+	if (champIndex >= _vm->_championMan->_partyChampionCount) {
 		return false;
 	}
-	L1247_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L1247_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	L1248_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(L1247_ps_Champion->_slots[k1_ChampionSlotActionHand]);
 	if (!L1247_ps_Champion->_currHealth) {
 		return false;
@@ -1089,7 +1089,7 @@ bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	AL1244_ui_TargetSquare = _vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).toByte();
 	AL1245_B_ActionPerformed = true;
 	if (((L1254_i_ActionSkillIndex >= k16_ChampionSkillFire) && (L1254_i_ActionSkillIndex <= k19_ChampionSkillWater)) || (L1254_i_ActionSkillIndex == k3_ChampionSkillWizard)) {
-		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->f303_getSkillLevel(champIndex, L1254_i_ActionSkillIndex));
+		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->getSkillLevel(champIndex, L1254_i_ActionSkillIndex));
 	}
 	switch (actionIndex) {
 	case k23_ChampionActionLightning:
@@ -1113,7 +1113,7 @@ T0407014:
 			AL1250_i_KineticEnergy = MAX(2, L1247_ps_Champion->_currMana * AL1250_i_KineticEnergy / AL1246_i_RequiredManaAmount);
 			AL1246_i_RequiredManaAmount = L1247_ps_Champion->_currMana;
 		}
-		if (!(AL1245_B_ActionPerformed = _vm->_championMan->f327_isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount))) {
+		if (!(AL1245_B_ActionPerformed = _vm->_championMan->isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount))) {
 			L1255_i_ActionExperienceGain >>= 1;
 		}
 		f405_decrementCharges(L1247_ps_Champion);
@@ -1127,7 +1127,7 @@ T0407014:
 		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 			L1249_ui_ActionDisabledTicks = 6;
-			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->f312_getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
+			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
@@ -1186,9 +1186,9 @@ T0407032:
 		}
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
 		{ // so gotos won't skip init
-			Thing AL1250_T_Object = _vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
+			Thing AL1250_T_Object = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
-			_vm->_championMan->f326_championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->f303_getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
+			_vm->_championMan->championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
 		}
 		break;
 	case k5_ChampionActionFlip: {
@@ -1251,7 +1251,7 @@ T0407032:
 		Mana cost is 2 * heal cycle count
 		Experience gain is 2 + 2 * heal cycle count */
 		if (((AL1250_i_MissingHealth = L1247_ps_Champion->_maxHealth - L1247_ps_Champion->_currHealth) > 0) && L1247_ps_Champion->_currMana) {
-			AL1246_i_HealingCapability = MIN((uint16)10, _vm->_championMan->f303_getSkillLevel(champIndex, k13_ChampionSkillHeal));
+			AL1246_i_HealingCapability = MIN((uint16)10, _vm->_championMan->getSkillLevel(champIndex, k13_ChampionSkillHeal));
 			L1255_i_ActionExperienceGain = 2;
 			do {
 				AL1244_ui_HealingAmount = MIN(AL1250_i_MissingHealth, AL1246_i_HealingCapability);
@@ -1266,12 +1266,12 @@ T0407032:
 		}
 		break;
 	case k39_ChampionActionWindow:
-		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->f303_getSkillLevel(champIndex, L1254_i_ActionSkillIndex) + 8) + 5;
+		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, L1254_i_ActionSkillIndex) + 8) + 5;
 		L1258_s_Event._priority = 0;
 		L1258_s_Event._type = k73_TMEventTypeThievesEye;
 		M33_setMapAndTime(L1258_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + AL1246_i_Ticks);
 		_vm->_timeline->f238_addEventGetEventIndex(&L1258_s_Event);
-		_vm->_championMan->_g407_party._event73Count_ThievesEye++;
+		_vm->_championMan->_party._event73Count_ThievesEye++;
 		goto T0407076;
 	case k10_ChampionActionClimbDown:
 		L1251_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
@@ -1295,36 +1295,36 @@ T0407032:
 		if (L1248_ps_Weapon->getType() == k43_JunkTypeMagicalBoxGreen) {
 			AL1246_i_Ticks = 125;
 T0407071:
-			_vm->_championMan->f300_getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
+			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
 			L1248_ps_Weapon->setNextThing(Thing::_none);
 		} else {
 			AL1246_i_Ticks = 70;
 			f405_decrementCharges(L1247_ps_Champion);
 		}
-		_vm->_championMan->_g407_party._freezeLifeTicks = MIN(200, _vm->_championMan->_g407_party._freezeLifeTicks + AL1246_i_Ticks);
+		_vm->_championMan->_party._freezeLifeTicks = MIN(200, _vm->_championMan->_party._freezeLifeTicks + AL1246_i_Ticks);
 		break;
 	case k38_ChampionActionLight:
-		_vm->_championMan->_g407_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
+		_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
 		f404_createEvent70_light(-2, 2500);
 T0407076:
 		f405_decrementCharges(L1247_ps_Champion);
 		break;
 	case k42_ChampionActionThrow:
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		if (AL1245_B_ActionPerformed = _vm->_championMan->f328_isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_g308_partyDir)) || (L1247_ps_Champion->_cell == returnOppositeDir(_vm->_dungeonMan->_g308_partyDir)))) {
+		if (AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_g308_partyDir)) || (L1247_ps_Champion->_cell == returnOppositeDir(_vm->_dungeonMan->_g308_partyDir)))) {
 			_vm->_timeline->_g370_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->M0_indexToOrdinal(k1_ChampionSlotActionHand);
 		}
 	}
 	if (L1249_ui_ActionDisabledTicks) {
-		_vm->_championMan->f330_disableAction(champIndex, L1249_ui_ActionDisabledTicks);
+		_vm->_championMan->disableAction(champIndex, L1249_ui_ActionDisabledTicks);
 	}
 	if (L1253_i_ActionStamina) {
-		_vm->_championMan->f325_decrementStamina(champIndex, L1253_i_ActionStamina);
+		_vm->_championMan->decrementStamina(champIndex, L1253_i_ActionStamina);
 	}
 	if (L1255_i_ActionExperienceGain) {
-		_vm->_championMan->f304_addSkillExperience(champIndex, L1254_i_ActionSkillIndex, L1255_i_ActionExperienceGain);
+		_vm->_championMan->addSkillExperience(champIndex, L1254_i_ActionSkillIndex, L1255_i_ActionExperienceGain);
 	}
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	return AL1245_B_ActionPerformed;
 }
 
@@ -1356,7 +1356,7 @@ void MenuMan::f405_decrementCharges(Champion* champ) {
 			L1243_ps_Junk->setChargeCount(L1243_ps_Junk->getChargeCount() - 1);
 		}
 	}
-	_vm->_championMan->f296_drawChangedObjectIcons();
+	_vm->_championMan->drawChangedObjectIcons();
 }
 
 bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
@@ -1471,7 +1471,7 @@ bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int
 		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
 			AL1237_ui_CellDelta = 1;
 T0402005: /* Check if there is another champion in front */
-			if (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(AL1236_ui_ChampionCell + AL1237_ui_CellDelta)) != kM1_ChampionNone) {
+			if (_vm->_championMan->getIndexInCell(M21_normalizeModulo4(AL1236_ui_ChampionCell + AL1237_ui_CellDelta)) != kM1_ChampionNone) {
 				_g513_actionDamage = kM1_damageCantReach;
 				goto T0402010;
 			}
@@ -1524,7 +1524,7 @@ bool MenuMan::f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionInde
 		L1229_i_FrightAmount = 12;
 		L1231_ui_Experience = 45;
 	}
-	L1229_i_FrightAmount += _vm->_championMan->f303_getSkillLevel(champIndex, k14_ChampionSkillInfluence);
+	L1229_i_FrightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
 	L1233_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing);
 	L1234_ps_CreatureInfo = &g243_CreatureInfo[L1233_ps_Group->_type];
 	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->M57_getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
@@ -1539,7 +1539,7 @@ bool MenuMan::f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionInde
 		L1235_ps_ActiveGroup->_delayFleeingFromTarget = ((16 - L1230_ui_FearResistance) << 2) / L1234_ps_CreatureInfo->_movementTicks;
 		L1232_B_IsGroupFrightenedByAction = true;
 	}
-	_vm->_championMan->f304_addSkillExperience(champIndex, k14_ChampionSkillInfluence, L1231_ui_Experience);
+	_vm->_championMan->addSkillExperience(champIndex, k14_ChampionSkillInfluence, L1231_ui_Experience);
 T0401016:
 	return L1232_B_IsGroupFrightenedByAction;
 }
@@ -1560,7 +1560,7 @@ void MenuMan::f381_printMessageAfterReplacements(const char* str) {
 			}
 			switch (*str) {
 			case 'p': /* '@p' in the source string is replaced by the champion name followed by a space */
-				L1165_pc_ReplacementString = _vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)]._name;
+				L1165_pc_ReplacementString = _vm->_championMan->_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._name;
 			}
 			*L1164_pc_Character = '\0';
 			strcat(L1166_ac_OutputString, L1165_pc_ReplacementString);
@@ -1629,7 +1629,7 @@ void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) 
 	ActionSet* L1191_ps_ActionSet;
 
 
-	L1190_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L1190_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	if (getFlag(L1190_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction) || !L1190_ps_Champion->_currHealth) {
 		return;
 	}
@@ -1639,11 +1639,11 @@ void MenuMan::f389_processCommands116To119_setActingChampion(uint16 champIndex) 
 		return;
 	}
 	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
-	_vm->_championMan->_g506_actingChampionOrdinal = _vm->M0_indexToOrdinal(champIndex);
+	_vm->_championMan->_actingChampionOrdinal = _vm->M0_indexToOrdinal(champIndex);
 	f383_setActionList(L1191_ps_ActionSet);
 	_g509_actionAreaContainsIcons = false;
 	setFlag(L1190_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
-	_vm->_championMan->f292_drawChampionState((ChampionIndex)champIndex);
+	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	f387_drawActionArea();
 	f387_drawActionArea();
 }
@@ -1666,7 +1666,7 @@ void MenuMan::f383_setActionList(ActionSet* actionSet) {
 		if (getFlag(L1172_ui_MinimumSkillLevel = actionSet->_actionProperties[L1169_ui_ActionListIndex - 1], k0x0080_actionRequiresCharge) && !f382_getActionObjectChargeCount())
 			continue;
 		clearFlag(L1172_ui_MinimumSkillLevel, k0x0080_actionRequiresCharge);
-		if (_vm->_championMan->f303_getSkillLevel(_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal), g496_ActionSkillIndex[L1171_ui_ActionIndex]) >= L1172_ui_MinimumSkillLevel) {
+		if (_vm->_championMan->getSkillLevel(_vm->M1_ordinalToIndex(_vm->_championMan->_actingChampionOrdinal), g496_ActionSkillIndex[L1171_ui_ActionIndex]) >= L1172_ui_MinimumSkillLevel) {
 			_g713_actionList._actionIndices[L1170_ui_NextAvailableActionListIndex] = (ChampionAction)L1171_ui_ActionIndex;
 			_g713_actionList._minimumSkillLevel[L1170_ui_NextAvailableActionListIndex] = L1172_ui_MinimumSkillLevel;
 			L1170_ui_NextAvailableActionListIndex++;
@@ -1683,7 +1683,7 @@ int16 MenuMan::f382_getActionObjectChargeCount() {
 	Junk* L1168_ps_Junk;
 
 
-	L1168_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1167_T_Thing = _vm->_championMan->_gK71_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_g506_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
+	L1168_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1167_T_Thing = _vm->_championMan->_champions[_vm->M1_ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
 	switch (L1167_T_Thing.getType()) {
 	case k5_WeaponThingType:
 		return ((Weapon*)L1168_ps_Junk)->getChargeCount();

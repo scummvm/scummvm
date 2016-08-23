@@ -1068,7 +1068,7 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 			f131_flipVertical(_g74_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 	}
 
-	if ((doorFramesTemp == _doorFrameD1C) && _vm->_championMan->_g407_party._event73Count_ThievesEye)
+	if ((doorFramesTemp == _doorFrameD1C) && _vm->_championMan->_party._event73Count_ThievesEye)
 		f109_drawDoorOrnament(_vm->M0_indexToOrdinal(k16_DoorOrnThivesEyeMask), k2_ViewDoorOrnament_D1LCR);
 
 	if (doorState == k4_doorState_CLOSED)
@@ -1887,7 +1887,7 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_g286_isFacingAlcove = false;
 		_vm->_dungeonMan->_g287_isFacingViAltar = false;
 		_vm->_dungeonMan->_g288_isFacingFountain = false;
-		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			f491_isDerivedBitmapInCache(k1_DerivedBitmapThievesEyeVisibleArea);
 			f132_blitToBitmap(_g296_bitmapViewport, f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
 							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._x1, _boxThievesEyeViewPortVisibleArea._y1,
@@ -1900,7 +1900,7 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		if (f107_isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k12_ViewWall_D1C_FRONT))
 			f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k6_ViewSquare_D1C, k0x0000_CellOrder_Alcove);
 
-		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			f132_blitToBitmap(f492_getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
 							  _g296_bitmapViewport, _boxThievesEyeViewPortVisibleArea, 0, 0,
 							  48, k112_byteWidthViewport, k9_ColorGold, 95, k136_heightViewport); /* BUG0_74 */
@@ -2018,7 +2018,7 @@ void DisplayMan::f127_drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	_vm->_dungeonMan->f172_setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[k0_ElementAspect]) {
 	case k16_DoorSideElemType:
-		if (_vm->_championMan->_g407_party._event73Count_ThievesEye) {
+		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			memmove(_g74_tmpBitmap, _g709_bitmapWallSet_DoorFrameFront, 32 * 123);
 			f132_blitToBitmap(f489_getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
 							  _g74_tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._x1 - _boxThievesEyeViewPortVisibleArea._x1,

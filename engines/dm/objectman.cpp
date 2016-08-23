@@ -246,12 +246,12 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 		default:
 		case Common::EN_ANY:
 		case Common::DE_DEU: // english and german version are the same
-			strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
+			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
 			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
 			break;
 		case Common::FR_FRA:
 			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
-			strcpy(champBonesName, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
+			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
 			break;
 		}
 

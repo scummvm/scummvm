@@ -71,8 +71,8 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	if (_g298_newGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_g524_restartGameAllowed = false;
-		_championMan->_g305_partyChampionCount = 0;
-		_championMan->_g414_leaderHandObject = Thing::_none;
+		_championMan->_partyChampionCount = 0;
+		_championMan->_leaderHandObject = Thing::_none;
 		_g525_gameId = ((int32)getRandomNumber(65536)) * getRandomNumber(65536);
 	} else {
 		SaveGameHeader header;
@@ -92,13 +92,13 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 
 		_g313_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
-		_championMan->_g305_partyChampionCount = file->readUint16BE();
+		_championMan->_partyChampionCount = file->readUint16BE();
 		_dungeonMan->_g306_partyMapX = file->readSint16BE();
 		_dungeonMan->_g307_partyMapY = file->readSint16BE();
 		_dungeonMan->_g308_partyDir = (Direction)file->readUint16BE();
 		_dungeonMan->_g309_partyMapIndex = file->readByte();
-		_championMan->_g411_leaderIndex = (ChampionIndex)file->readSint16BE();
-		_championMan->_g514_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
+		_championMan->_leaderIndex = (ChampionIndex)file->readSint16BE();
+		_championMan->_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
 		_timeline->_g372_eventCount = file->readUint16BE();
 		_timeline->_g373_firstUnusedEventIndex = file->readUint16BE();
 		_timeline->_g369_eventMaxCount = file->readUint16BE();
@@ -108,7 +108,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_g310_disabledMovementTicks = file->readSint16BE();
 		_g311_projectileDisableMovementTicks = file->readSint16BE();
 		_g312_lastProjectileDisabledMovementDirection = file->readSint16BE();
-		_championMan->_g414_leaderHandObject = Thing(file->readUint16BE());
+		_championMan->_leaderHandObject = Thing(file->readUint16BE());
 		_groupMan->_g376_maxActiveGroupCount = file->readUint16BE();
 		if (!_g523_restartGameRequest) {
 			_timeline->f233_initTimeline();
@@ -116,7 +116,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		}
 
 		_groupMan->load1_ActiveGroupPart(file);
-		_championMan->load2_PartyPart(file);
+		_championMan->loadPartyPart2(file);
 		_timeline->load3_eventsPart(file);
 		_timeline->load4_timelinePart(file);
 
@@ -157,7 +157,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		}
 
 	}
-	_championMan->_g303_partyDead = false;
+	_championMan->_partyDead = false;
 
 	return k1_LoadgameSuccess;
 }
@@ -223,9 +223,9 @@ void DMEngine::f433_processCommand140_saveGame() {
 			}
 
 			uint16 champHandObjWeight = 0;
-			if (!_championMan->_g415_leaderEmptyHanded) {
-				champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_g414_leaderHandObject);
-				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load -= champHandObjWeight;
+			if (!_championMan->_leaderEmptyHanded) {
+				champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_leaderHandObject);
+				_championMan->_champions[_championMan->_leaderIndex]._load -= champHandObjWeight;
 			}
 
 			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
@@ -233,8 +233,8 @@ void DMEngine::f433_processCommand140_saveGame() {
 				_dialog->f424_dialogGetChoice(1, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 			}
 
-			if (!_championMan->_g415_leaderEmptyHanded) {
-				_championMan->_gK71_champions[_championMan->_g411_leaderIndex]._load += champHandObjWeight;
+			if (!_championMan->_leaderEmptyHanded) {
+				_championMan->_champions[_championMan->_leaderIndex]._load += champHandObjWeight;
 			}
 		} else
 			saveAndPlayChoice = kCancel;
@@ -308,13 +308,13 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	// write C0_SAVE_PART_GLOBAL_DATA part
 	file->writeSint32BE(_g313_gameTime);
 	//L1348_s_GlobalData.LastRandomNumber = G0349_ul_LastRandomNumber;
-	file->writeUint16BE(_championMan->_g305_partyChampionCount);
+	file->writeUint16BE(_championMan->_partyChampionCount);
 	file->writeSint16BE(_dungeonMan->_g306_partyMapX);
 	file->writeSint16BE(_dungeonMan->_g307_partyMapY);
 	file->writeUint16BE(_dungeonMan->_g308_partyDir);
 	file->writeByte(_dungeonMan->_g309_partyMapIndex);
-	file->writeSint16BE(_championMan->_g411_leaderIndex);
-	file->writeSint16BE(_championMan->_g514_magicCasterChampionIndex);
+	file->writeSint16BE(_championMan->_leaderIndex);
+	file->writeSint16BE(_championMan->_magicCasterChampionIndex);
 	file->writeUint16BE(_timeline->_g372_eventCount);
 	file->writeUint16BE(_timeline->_g373_firstUnusedEventIndex);
 	file->writeUint16BE(_timeline->_g369_eventMaxCount);
@@ -324,13 +324,13 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeSint16BE(_g310_disabledMovementTicks);
 	file->writeSint16BE(_g311_projectileDisableMovementTicks);
 	file->writeSint16BE(_g312_lastProjectileDisabledMovementDirection);
-	file->writeUint16BE(_championMan->_g414_leaderHandObject.toUint16());
+	file->writeUint16BE(_championMan->_leaderHandObject.toUint16());
 	file->writeUint16BE(_groupMan->_g376_maxActiveGroupCount);
 
 	// write C1_SAVE_PART_ACTIVE_GROUP part
 	_groupMan->save1_ActiveGroupPart(file);
 	// write C2_SAVE_PART_PARTY part
-	_championMan->save2_PartyPart(file);
+	_championMan->savePartyPart2(file);
 	// write C3_SAVE_PART_EVENTS part
 	_timeline->save3_eventsPart(file);
 	// write C4_SAVE_PART_TIMELINE part
