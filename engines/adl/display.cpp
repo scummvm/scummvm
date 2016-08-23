@@ -55,6 +55,9 @@ static const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0xf2, 0x5e, 0x00
 };
 
+// Opacity of the optional scanlines (percentage)
+#define SCANLINE_OPACITY 75
+
 // Corresponding color in second palette
 #define PAL2(X) ((X) | 0x04)
 
@@ -334,14 +337,16 @@ void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
 }
 
 void Display::showScanlines(bool enable) {
-	byte pal[COLOR_PALETTE_ENTRIES * 3] = { };
+	byte pal[COLOR_PALETTE_ENTRIES * 3];
 
-	if (enable)
-		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
-	else {
-		g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
-		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
+	g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
+
+	if (enable) {
+		for (uint i = 0; i < ARRAYSIZE(pal); ++i)
+			pal[i] = pal[i] * (100 - SCANLINE_OPACITY) / 100;
 	}
+
+	g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
 }
 
 static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
