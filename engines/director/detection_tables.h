@@ -40,6 +40,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 		3
 	},
 
+	{ // Generic D3 entry
+		{
+			"director",
+			"",
+			AD_ENTRY1("D3", 0),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GID_GENERIC,
+		3
+	},
 	{
 		{
 			"theapartment",
