@@ -30,13 +30,13 @@ BEGIN_MESSAGE_MAP(CCharacter, CGameObject)
 	ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CCharacter::CCharacter() : CGameObject(), _fieldBC(0), _fieldC0(0), _fieldC4(1) {
+CCharacter::CCharacter() : CGameObject(), _startFrame(0), _endFrame(0), _fieldC4(1) {
 }
 
 void CCharacter::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
+	file->writeNumberLine(_startFrame, indent);
+	file->writeNumberLine(_endFrame, indent);
 	file->writeNumberLine(_fieldC4, indent);
 	file->writeQuotedLine(_charName, indent);
 
@@ -45,8 +45,8 @@ void CCharacter::save(SimpleFile *file, int indent) {
 
 void CCharacter::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
+	_startFrame = file->readNumber();
+	_endFrame = file->readNumber();
 	_fieldC4 = file->readNumber();
 	_charName = file->readString();
 

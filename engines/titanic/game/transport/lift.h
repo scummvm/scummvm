@@ -30,13 +30,18 @@ namespace Titanic {
 
 class CLift : public CTransport {
 	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool ActMsg(CActMsg *msg);
 public:
 	static int _v1;
-	static int _v2;
-	static int _v3;
-	static int _v4;
-	static int _v5;
+	static int _elevator1Floor;
+	static int _elevator2Floor;
+	static int _elevator3Floor;
+	static int _elevator4Floor;
 	static int _v6;
 
 	int _fieldF8;

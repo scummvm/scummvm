@@ -33,8 +33,8 @@ class CCharacter : public CGameObject {
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
 protected:
-	int _fieldBC;
-	int _fieldC0;
+	int _startFrame;
+	int _endFrame;
 	int _fieldC4;
 	CString _charName;
 public:
