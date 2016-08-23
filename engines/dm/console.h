@@ -35,26 +35,24 @@ namespace DM {
 class DMEngine;
 
 class Console : public GUI::Debugger {
+private:
 	DMEngine *_vm;
+
+	bool Cmd_godmode(int argc, const char **argv);
+	bool Cmd_noclip(int argc, const char **argv);
+	bool Cmd_pos(int argc, const char **argv);
+	bool Cmd_map(int argc, const char **argv);
+	bool Cmd_listItems(int argc, const char **argv);
+	bool Cmd_gimme(int argc, const char **argv);
 
 public:
 	explicit Console(DM::DMEngine *vm);
 	virtual ~Console(void) {}
 
-	// Cmd_godmode
 	bool _debugGodmodeMana;
 	bool _debugGodmodeHP;
 	bool _debugGodmodeStamina;
-	bool Cmd_godmode(int argc, const char **argv);
-
-	// Cmd_noclip
 	bool _debugNoclip;
-	bool Cmd_noclip(int argc, const char **argv);
-
-	bool Cmd_pos(int argc, const char **argv);
-	bool Cmd_map(int argc, const char **argv);
-	bool Cmd_listItems(int argc, const char **argv);
-	bool Cmd_gimme(int argc, const char **argv);
 };
 }
 
