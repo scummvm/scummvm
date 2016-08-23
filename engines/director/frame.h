@@ -24,7 +24,10 @@
 #define DIRECTOR_FRAME_H
 
 #include "graphics/managed_surface.h"
-#include "image/image_decoder.h"
+
+namespace Image {
+	class ImageDecoder;
+}
 
 namespace Director {
 

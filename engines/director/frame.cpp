@@ -21,12 +21,14 @@
  */
 
 #include "common/system.h"
+#include "graphics/font.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 
 #include "director/director.h"
 #include "director/frame.h"
 #include "director/images.h"
+#include "director/resource.h"
 #include "director/score.h"
 #include "director/sprite.h"
 

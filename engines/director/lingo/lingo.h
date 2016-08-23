@@ -23,13 +23,10 @@
 #ifndef DIRECTOR_LINGO_LINGO_H
 #define DIRECTOR_LINGO_LINGO_H
 
-#include "common/debug.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
 #include "audio/audiostream.h"
-#include "common/str.h"
-#include "engines/director/director.h"
-#include "engines/director/score.h"
+#include "common/hash-str.h"
+#include "director/director.h"
+#include "director/score.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
 

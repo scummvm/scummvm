@@ -23,14 +23,11 @@
 #ifndef DIRECTOR_DIRECTOR_H
 #define DIRECTOR_DIRECTOR_H
 
-#include "common/scummsys.h"
 #include "common/random.h"
 #include "common/substream.h"
 
-#include "common/str.h"
 #include "common/hashmap.h"
 #include "engines/engine.h"
-#include "engines/director/sound.h"
 
 namespace Common {
 class MacResManager;
@@ -49,6 +46,7 @@ enum DirectorGameID {
 
 class Archive;
 struct DirectorGameDescription;
+class DirectorSound;
 class Lingo;
 class Score;
 struct Cast;

@@ -20,28 +20,20 @@
  *
  */
 
-#include "common/stream.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/unzip.h"
 
+#include "engines/util.h"
+#include "graphics/font.h"
 #include "graphics/palette.h"
 #include "common/events.h"
-#include "engines/util.h"
-#include "graphics/managed_surface.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/fontman.h"
-#include "graphics/fonts/bdf.h"
+#include "common/system.h"
 
 #include "director/score.h"
 #include "director/frame.h"
-#include "director/sprite.h"
-#include "director/images.h"
 #include "director/resource.h"
-#include "director/lingo/lingo.h"
 #include "director/sound.h"
+#include "director/sprite.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 

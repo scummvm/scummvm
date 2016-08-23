@@ -43,7 +43,7 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "engines/director/lingo/lingo.h"
+#include "director/lingo/lingo.h"
 #include "common/file.h"
 #include "audio/decoders/wave.h"
 
