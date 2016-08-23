@@ -21,6 +21,8 @@
  */
 
 #include "titanic/support/exe_resources.h"
+#include "titanic/true_talk/script_handler.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
