@@ -785,7 +785,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 	}
 
 	L0777_ui_Square = _vm->_dungeonMan->_g271_currMapData[mapX][mapY];
-	if (Square(L0777_ui_Square).getType() == k0_ElementTypeWall) {
+	if (Square(L0777_ui_Square).getType() == k0_WallElemType) {
 		L0770_ui_SensorTriggeredCell = thing.getCell();
 	} else {
 		L0770_ui_SensorTriggeredCell = kM1_CellAny; // this will wrap around

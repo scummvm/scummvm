@@ -509,7 +509,8 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 		return k0_spellCastFailure;
 	}
 	L1268_i_PowerSymbolOrdinal = L1270_ps_Champion->_symbols[0] - '_'; /* Values 1 to 6 */
-	L1273_ui_Experience = _vm->getRandomNumber(8) + ((AL1269_ui_RequiredSkillLevel = L1271_ps_Spell->_baseRequiredSkillLevel + L1268_i_PowerSymbolOrdinal) << 4) + ((_vm->M1_ordinalToIndex(L1268_i_PowerSymbolOrdinal) * L1271_ps_Spell->_baseRequiredSkillLevel) << 3) + (AL1269_ui_RequiredSkillLevel * AL1269_ui_RequiredSkillLevel);
+	AL1269_ui_RequiredSkillLevel = L1271_ps_Spell->_baseRequiredSkillLevel + L1268_i_PowerSymbolOrdinal;
+	L1273_ui_Experience = _vm->getRandomNumber(8) + (AL1269_ui_RequiredSkillLevel << 4) + ((_vm->M1_ordinalToIndex(L1268_i_PowerSymbolOrdinal) * L1271_ps_Spell->_baseRequiredSkillLevel) << 3) + (AL1269_ui_RequiredSkillLevel * AL1269_ui_RequiredSkillLevel);
 	AL1267_ui_SkillLevel = _vm->_championMan->getSkillLevel(champIndex, L1271_ps_Spell->_skillIndex);
 	if (AL1267_ui_SkillLevel < AL1269_ui_RequiredSkillLevel) {
 		L1274_i_MissingSkillLevelCount = AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel;
