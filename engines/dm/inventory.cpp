@@ -553,8 +553,8 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 		_g422_objDescTextYpos = 87;
 
-		uint16 potentialAttribMask;
-		uint16 actualAttribMask;
+		uint16 potentialAttribMask = 0;
+		uint16 actualAttribMask = 0;
 		switch (thingType) {
 		case k5_WeaponThingType: {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0002_DescriptionMaskPoisoned | k0x0004_DescriptionMaskBroken;
@@ -588,9 +588,9 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case k10_JunkThingType: {
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
-				char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
-				char *descString_DE_DEU[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
-				char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
+				const char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
+				const char *descString_DE_DEU[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
+				const char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
 
 				Junk *junk = (Junk *)rawThingPtr;
 				switch (_vm->getGameLanguage()) { // localized

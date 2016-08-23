@@ -465,13 +465,18 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 			L0520_ps_Projectile->_attack -= AL0516_ui_StepEnergy;
 		}
 	}
-	if (L0522_B_ProjectileMovesToOtherSquare = ((L0517_ui_ProjectileDirection = L0519_ps_Event->_C._projectile.getDir()) == (L0518_ui_Cell = (L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot)).getCell())) || (returnNextVal(L0517_ui_ProjectileDirection) == L0518_ui_Cell)) {
+	L0517_ui_ProjectileDirection = L0519_ps_Event->_C._projectile.getDir();
+	L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot);
+	L0518_ui_Cell = L0515_T_ProjectileThingNewCell.getCell();
+	L0522_B_ProjectileMovesToOtherSquare = (L0517_ui_ProjectileDirection == L0518_ui_Cell) || (returnNextVal(L0517_ui_ProjectileDirection) == L0518_ui_Cell);
+	if (L0522_B_ProjectileMovesToOtherSquare) {
 		L0525_i_SourceMapX = L0523_i_DestinationMapX;
 		L0526_i_SourceMapY = L0524_i_DestinationMapY;
 		L0523_i_DestinationMapX += _vm->_dirIntoStepCountEast[L0517_ui_ProjectileDirection], L0524_i_DestinationMapY += _vm->_dirIntoStepCountNorth[L0517_ui_ProjectileDirection];
-		if ((Square(AL0516_ui_Square = _vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY).toByte()).getType() == k0_ElementTypeWall) ||
+		AL0516_ui_Square = _vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY).toByte();
+		if ((Square(AL0516_ui_Square).getType() == k0_WallElemType) ||
 			((Square(AL0516_ui_Square).getType() == k6_FakeWallElemType) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
-			((Square(AL0516_ui_Square).getType() == k3_StairsElemType) && (Square(_vm->_dungeonMan->_g271_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_ElementTypeStairs))) {
+			((Square(AL0516_ui_Square).getType() == k3_StairsElemType) && (Square(_vm->_dungeonMan->_g271_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_StairsElemType))) {
 			if (f217_projectileHasImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
 				return;
 			}

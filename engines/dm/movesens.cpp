@@ -363,7 +363,8 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 							_vm->_dungeonMan->f173_setCurrentMap(L0714_ui_MapIndexSource);
 							AL0727_ui_Outcome = _vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->f156_getThingData(thing), mapX, mapY, 20, false);
 							_vm->_dungeonMan->f173_setCurrentMap(L0715_ui_MapIndexDestination);
-							if (L0722_B_FallKilledGroup = (AL0727_ui_Outcome == k2_outcomeKilledAllCreaturesInGroup))
+							L0722_B_FallKilledGroup = (AL0727_ui_Outcome == k2_outcomeKilledAllCreaturesInGroup);
+							if (L0722_B_FallKilledGroup)
 								break;
 							if (AL0727_ui_Outcome == k1_outcomeKilledSomeCreaturesInGroup) {
 								_vm->_groupMan->f187_dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
@@ -782,7 +783,9 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 	if ((!addThing) && (L0767_i_ThingType != kM1_PartyThingType)) {
 		_vm->_dungeonMan->f164_unlinkThingFromList(thing, Thing(0), mapX, mapY);
 	}
-	if (Square(L0777_ui_Square = _vm->_dungeonMan->_g271_currMapData[mapX][mapY]).getType() == k0_ElementTypeWall) {
+
+	L0777_ui_Square = _vm->_dungeonMan->_g271_currMapData[mapX][mapY];
+	if (Square(L0777_ui_Square).getType() == k0_ElementTypeWall) {
 		L0770_ui_SensorTriggeredCell = thing.getCell();
 	} else {
 		L0770_ui_SensorTriggeredCell = kM1_CellAny; // this will wrap around
@@ -822,7 +825,8 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 	}
 	L0766_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(mapX, mapY);
 	while (L0766_T_Thing != Thing::_endOfList) {
-		if ((L0771_ui_ThingType = (L0766_T_Thing).getType()) == k3_SensorThingType) {
+		L0771_ui_ThingType = (L0766_T_Thing).getType();
+		if (L0771_ui_ThingType == k3_SensorThingType) {
 			L0769_ps_Sensor = (Sensor *)_vm->_dungeonMan->f156_getThingData(L0766_T_Thing);
 			if ((L0769_ps_Sensor)->getType() == k0_SensorDisabled)
 				goto T0276079;
@@ -857,7 +861,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 						goto T0276079;
 					break;
 				case k5_SensorFloorPartyOnStairs:
-					if ((L0767_i_ThingType != kM1_PartyThingType) || (Square(L0777_ui_Square).getType() != k3_ElementTypeStairs))
+					if ((L0767_i_ThingType != kM1_PartyThingType) || (Square(L0777_ui_Square).getType() != k3_StairsElemType))
 						goto T0276079;
 					break;
 				case k6_SensorFloorGroupGenerator:
@@ -874,7 +878,7 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 				case k9_SensorFloorVersionChecker:
 					if ((L0767_i_ThingType != kM1_PartyThingType) || !addThing || partySquare)
 						goto T0276079;
-					// Strangerke: 20 is a harcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
+					// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
 					L0768_B_TriggerSensor = (L0779_i_SensorData <= 20);
 					break;
 				default:
@@ -901,15 +905,15 @@ void MovesensMan::f276_sensorProcessThingAdditionOrRemoval(uint16 mapX, uint16 m
 				}
 			}
 			L0768_B_TriggerSensor ^= L0769_ps_Sensor->getRevertEffectA();
-			if ((L0778_i_Effect = L0769_ps_Sensor->getEffectA()) == k3_SensorEffHold) {
+			L0778_i_Effect = L0769_ps_Sensor->getEffectA();
+			if (L0778_i_Effect == k3_SensorEffHold) {
 				L0778_i_Effect = L0768_B_TriggerSensor ? k0_SensorEffSet : k1_SensorEffClear;
-			} else {
-				if (!L0768_B_TriggerSensor)
-					goto T0276079;
-			}
-			if (L0769_ps_Sensor->getAudibleA()) {
+			} else if (!L0768_B_TriggerSensor)
+				goto T0276079;
+
+			if (L0769_ps_Sensor->getAudibleA())
 				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
-			}
+
 			f272_sensorTriggerEffect(L0769_ps_Sensor, L0778_i_Effect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
 			goto T0276079;
 		}
@@ -939,7 +943,8 @@ bool MovesensMan::f274_sensorIsObjcetInPartyPossession(int16 objectType) {
 			for (L0743_ui_SlotIndex = k0_ChampionSlotReadyHand; (L0743_ui_SlotIndex < k30_ChampionSlotChest_1) && !L0748_B_LeaderHandObjectProcessed; L0743_ui_SlotIndex++) {
 				L0744_T_Thing = *L0746_pT_Thing++;
 T0274003:
-				if ((L0747_i_ObjectType = _vm->_objectMan->f32_getObjectType(L0744_T_Thing)) == objectType) {
+				L0747_i_ObjectType = _vm->_objectMan->f32_getObjectType(L0744_T_Thing);
+				if (L0747_i_ObjectType == objectType) {
 					return true;
 				}
 				if (L0747_i_ObjectType == k144_IconIndiceContainerChestClosed) {

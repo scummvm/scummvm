@@ -282,25 +282,23 @@ void MenuMan::f387_drawActionArea() {
 	_g508_refreshActionArea = false;
 }
 
-const char *g490_ChampionActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
-	"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
-	"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
-	"HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
-	"BERZERK", "FIREBALL", "DISPELL", "CONFUSE", "LIGHTNING",
-	"DISRUPT", "MELEE", "X", "INVOKE", "SLASH", "CLEAVE",
-	"BASH", "STUN", "SHOOT", "SPELLSHIELD", "FIRESHIELD",
-	"FLUXCAGE", "HEAL", "CALM", "LIGHT", "WINDOW", "SPIT",
-	"BRANDISH", "THROW", "FUSE"};
-
 const char* MenuMan::f384_getActionName(ChampionAction actionIndex) {
+	const char *g490_ChampionActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
+		"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
+		"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
+		"HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
+		"BERZERK", "FIREBALL", "DISPELL", "CONFUSE", "LIGHTNING",
+		"DISRUPT", "MELEE", "X", "INVOKE", "SLASH", "CLEAVE",
+		"BASH", "STUN", "SHOOT", "SPELLSHIELD", "FIRESHIELD",
+		"FLUXCAGE", "HEAL", "CALM", "LIGHT", "WINDOW", "SPIT",
+		"BRANDISH", "THROW", "FUSE"
+	};
+
 	return (actionIndex == k255_ChampionActionNone) ? "" : g490_ChampionActionNames[actionIndex];
 }
 
-
-Box g504_BoxSpellAreaControls = Box(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
-
 void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
-
+	static Box boxSpellAreaControls(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
 
 	Champion *champ = &_vm->_championMan->_champions[champIndex];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
@@ -309,7 +307,7 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP2 = _vm->_championMan->_champions[2]._currHealth;
 	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
 	_vm->_eventMan->f78_showMouse();
-	_vm->_displayMan->D24_fillScreenBox(g504_BoxSpellAreaControls, k0_ColorBlack);
+	_vm->_displayMan->D24_fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->f6_highlightScreenBox(233, 277, 42, 49);
@@ -361,6 +359,9 @@ T0393003:
 		}
 		_vm->_eventMan->f6_highlightScreenBox(275, 319, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		break;
+	default:
+		break;
 	}
 	_vm->_eventMan->f77_hideMouse();
 }
@@ -443,7 +444,8 @@ void MenuMan::f457_drawEnabledMenus() {
 			_g509_actionAreaContainsIcons = true;
 		}
 		f387_drawActionArea();
-		if (AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+		AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal;
+		if (AL1462_i_InventoryChampionOrdinal) {
 			_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)_vm->M1_ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
 		} else {
@@ -501,7 +503,8 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 	if (!(L1270_ps_Champion->_currHealth)) {
 		return k0_spellCastFailure;
 	}
-	if ((L1271_ps_Spell = f409_getSpellFromSymbols((unsigned char *)L1270_ps_Champion->_symbols)) == 0) {
+	L1271_ps_Spell = f409_getSpellFromSymbols((unsigned char *)L1270_ps_Champion->_symbols);
+	if (L1271_ps_Spell == 0) {
 		f410_menusPrintSpellFailureMessage(L1270_ps_Champion, k1_spellCastSuccess, 0);
 		return k0_spellCastFailure;
 	}
@@ -1276,9 +1279,10 @@ T0407032:
 	case k10_ChampionActionClimbDown:
 		L1251_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
 		L1252_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
-		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir];
+		L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((_vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_ElementTypePit) && (_vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
+		if ((_vm->_dungeonMan->f151_getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_PitElemType) && (_vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_g402_useRopeToClimbDownPit = true;
 			_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1251_i_MapX, L1252_i_MapY);
@@ -1311,7 +1315,8 @@ T0407076:
 		break;
 	case k42_ChampionActionThrow:
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		if (AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_g308_partyDir)) || (L1247_ps_Champion->_cell == returnOppositeDir(_vm->_dungeonMan->_g308_partyDir)))) {
+		AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_g308_partyDir)) || (L1247_ps_Champion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_g308_partyDir)));
+		if (AL1245_B_ActionPerformed) {
 			_vm->_timeline->_g370_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->M0_indexToOrdinal(k1_ChampionSlotActionHand);
 		}
 	}
@@ -1355,6 +1360,9 @@ void MenuMan::f405_decrementCharges(Champion* champ) {
 		if (L1243_ps_Junk->getChargeCount()) {
 			L1243_ps_Junk->setChargeCount(L1243_ps_Junk->getChargeCount() - 1);
 		}
+		break;
+	default:
+		break;
 	}
 	_vm->_championMan->drawChangedObjectIcons();
 }
@@ -1463,7 +1471,8 @@ bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
 	if (_g517_actionTargetGroupThing == Thing::_endOfList)
 		goto T0402010;
-	if (L1238_i_CreatureOrdinal = _vm->_groupMan->f177_getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, AL1236_ui_ChampionCell = champ->_cell)) {
+	L1238_i_CreatureOrdinal = _vm->_groupMan->f177_getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, AL1236_ui_ChampionCell = champ->_cell);
+	if (L1238_i_CreatureOrdinal) {
 		switch (M21_normalizeModulo4(AL1236_ui_ChampionCell + 4 - champ->_dir)) {
 		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
 			AL1237_ui_CellDelta = 3;
