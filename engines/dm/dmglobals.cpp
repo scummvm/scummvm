@@ -42,7 +42,7 @@
 
 namespace DM {
 
-void DMEngine::initArrays() {
+void DMEngine::initConstants() {
 	// G0233_ai_Graphic559_DirectionToStepEastCount
 	_dirIntoStepCountEast[0] = 0;  // North
 	_dirIntoStepCountEast[1] = 1;  // East
@@ -56,7 +56,7 @@ void DMEngine::initArrays() {
 	_dirIntoStepCountNorth[3] = 0;  // South
 }
 
-void DMEngine::f19_displayErrorAndStop(int16 errorIndex) {
+void DMEngine::displayErrorAndStop(int16 errorIndex) {
 	debug("Stuff hit the fun: %d", errorIndex);
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event) || true)

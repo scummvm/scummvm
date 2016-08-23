@@ -1048,7 +1048,7 @@ void DisplayMan::f108_drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloor
 	}
 
 	if (drawFootprints)
-		f108_drawFloorOrnament(_vm->M0_indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
+		f108_drawFloorOrnament(_vm->indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
 }
 
 void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* doorNativeBitmapIndices, int16 byteCount, int16 viewDoorOrnIndex, DoorFrames* doorFrames) {
@@ -1069,12 +1069,12 @@ void DisplayMan::f111_drawDoor(uint16 doorThingIndex, uint16 doorState, int16* d
 	}
 
 	if ((doorFramesTemp == _doorFrameD1C) && _vm->_championMan->_party._event73Count_ThievesEye)
-		f109_drawDoorOrnament(_vm->M0_indexToOrdinal(k16_DoorOrnThivesEyeMask), k2_ViewDoorOrnament_D1LCR);
+		f109_drawDoorOrnament(_vm->indexToOrdinal(k16_DoorOrnThivesEyeMask), k2_ViewDoorOrnament_D1LCR);
 
 	if (doorState == k4_doorState_CLOSED)
 		f102_drawDoorBitmap(&doorFramesTemp->_closedOrDestroyed);
 	else if (doorState == k5_doorState_DESTROYED) {
-		f109_drawDoorOrnament(_vm->M0_indexToOrdinal(k15_DoorOrnDestroyedMask), viewDoorOrnIndex);
+		f109_drawDoorOrnament(_vm->indexToOrdinal(k15_DoorOrnDestroyedMask), viewDoorOrnIndex);
 		f102_drawDoorBitmap(&doorFramesTemp->_closedOrDestroyed);
 	} else {
 		doorState--;
@@ -1253,7 +1253,7 @@ void DisplayMan::f116_drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		f100_drawWallSetBitmap(_g705_bitmapWallSet_DoorFrameLeft_D3L, doorFrameLeftD3L);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g693_doorNativeBitmapIndex_Front_D3LCR, M75_bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3L);
+					  _g693_doorNativeBitmapIndex_Front_D3LCR, bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3L);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1333,11 +1333,11 @@ void DisplayMan::f117_drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		memmove(_g74_tmpBitmap, _g705_bitmapWallSet_DoorFrameLeft_D3L, 32 * 44);
 		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &doorFrameRightD3R);
 		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
-			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k0_viewDoorButton_D3R);
+			f110_drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k0_viewDoorButton_D3R);
 
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect],
 					  squareAspect[k2_DoorStateAspect], _g693_doorNativeBitmapIndex_Front_D3LCR,
-					  M75_bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3R);
+					  bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3R);
 		break;;
 	case k2_ElementTypePit:
 		if (!squareAspect[k2_PitInvisibleAspect])
@@ -1411,10 +1411,10 @@ void DisplayMan::f118_drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		memmove(_g74_tmpBitmap, _g706_bitmapWallSet_DoorFrameLeft_D3C, 32 * 44);
 		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &doorFrameRightD3C);
 		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
-			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k1_ViewDoorOrnament_D2LCR);
+			f110_drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k1_ViewDoorOrnament_D2LCR);
 
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g693_doorNativeBitmapIndex_Front_D3LCR, M75_bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3C);
+					  _g693_doorNativeBitmapIndex_Front_D3LCR, bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1494,7 +1494,7 @@ void DisplayMan::f119_drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		f100_drawWallSetBitmap(_g703_bitmapWallSet_DoorFrameTop_D2LCR, doorFrameTopD2L);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect], _g694_doorNativeBitmapIndex_Front_D2LCR,
-					  M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2L);
+					  bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2L);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1581,7 +1581,7 @@ void DisplayMan::f120_drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		f100_drawWallSetBitmap(_g703_bitmapWallSet_DoorFrameTop_D2LCR, doorFrameTopD2R);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g694_doorNativeBitmapIndex_Front_D2LCR, M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2R);
+					  _g694_doorNativeBitmapIndex_Front_D2LCR, bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2R);
 		order = k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft;
 		break;
 	case k2_ElementTypePit:
@@ -1661,10 +1661,10 @@ void DisplayMan::f121_drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		memcpy(_g74_tmpBitmap, _g707_bitmapWallSet_DoorFrameLeft_D2C, 48 * 65);
 		f103_drawDoorFrameBitmapFlippedHorizontally(_g74_tmpBitmap, &doorFrameRightD2C);
 		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
-			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k2_viewDoorButton_D2C);
+			f110_drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k2_viewDoorButton_D2C);
 
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g694_doorNativeBitmapIndex_Front_D2LCR, M75_bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2C);
+					  _g694_doorNativeBitmapIndex_Front_D2LCR, bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1749,7 +1749,7 @@ void DisplayMan::f122_drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, k0x0028_CellOrder_DoorPass1_BackRight);
 		f100_drawWallSetBitmap(_g704_bitmapWallSet_DoorFrameTop_D1LCR, doorFrameTopD1L);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1L);
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1L);
 		order = k0x0039_CellOrder_DoorPass2_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1833,7 +1833,7 @@ void DisplayMan::f123_drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		f115_cthulhu(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, k0x0018_CellOrder_DoorPass1_BackLeft);
 		f100_drawWallSetBitmap(_g704_bitmapWallSet_DoorFrameTop_D1LCR, doorFrameTopD1R);
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1R);
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1R);
 		order = k0x0049_CellOrder_DoorPass2_FrontLeft;
 		break;
 	case k2_ElementTypePit:
@@ -1915,10 +1915,10 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		f100_drawWallSetBitmap(_g708_bitmapWallSet_DoorFrameLeft_D1C, _doorFrameLeftD1C);
 		f100_drawWallSetBitmap(_g710_bitmapWallSet_DoorFrameRight_D1C, _doorFrameRightD1C);
 		if (((Door *)_vm->_dungeonMan->_g284_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
-			f110_drawDoorButton(_vm->M0_indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
+			f110_drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
 
 		f111_drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _g695_doorNativeBitmapIndex_Front_D1LCR, M75_bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, _doorFrameD1C);
+					  _g695_doorNativeBitmapIndex_Front_D1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, _doorFrameD1C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -2181,7 +2181,7 @@ void DisplayMan::f94_loadFloorSet(FloorSet set) {
 }
 
 void DisplayMan::f95_loadWallSet(WallSet set) {
-	if ((_g231_currentWallSet == set) && !_vm->_g523_restartGameRequest)
+	if ((_g231_currentWallSet == set) && !_vm->_restartGameRequest)
 		return;
 
 	_g231_currentWallSet = set;
@@ -2408,11 +2408,11 @@ void DisplayMan::f96_loadCurrentMapGraphics() {
 		CreatureAspect &aspect = _creatureAspects219[_g264_currMapAllowedCreatureTypes[creatureType]];
 		uint16 replColorOrdinal = aspect.getReplColour9();
 		if (replColorOrdinal)
-			f93_applyCreatureReplColors(9, _vm->M1_ordinalToIndex(replColorOrdinal));
+			f93_applyCreatureReplColors(9, _vm->ordinalToIndex(replColorOrdinal));
 
 		replColorOrdinal = aspect.getReplColour10();
 		if (replColorOrdinal)
-			f93_applyCreatureReplColors(10, _vm->M1_ordinalToIndex(replColorOrdinal));
+			f93_applyCreatureReplColors(10, _vm->ordinalToIndex(replColorOrdinal));
 	}
 
 	_g297_drawFloorAndCeilingRequested = true;
@@ -3082,11 +3082,11 @@ void DisplayMan::f115_cthulhu(Thing thingParam, Direction directionParam, int16 
 			cellYellowBear = returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
 			objectShiftIndex = 2;
 		} else {
-			AL_2_viewCell = _vm->M1_ordinalToIndex((int16)remainingViewCellOrdinalsToProcess & 0x000F); /* View cell is the index of coordinates to draw object */
+			AL_2_viewCell = _vm->ordinalToIndex((int16)remainingViewCellOrdinalsToProcess & 0x000F); /* View cell is the index of coordinates to draw object */
 			currentViewCellToDraw = AL_2_viewCell;
 			remainingViewCellOrdinalsToProcess >>= 4; /* Proceed to the next cell ordinal */
 			cellCounter++;
-			cellYellowBear = M21_normalizeModulo4(AL_2_viewCell + directionParam); /* Convert view cell to absolute cell */
+			cellYellowBear = normalizeModulo4(AL_2_viewCell + directionParam); /* Convert view cell to absolute cell */
 			thingParam = firstThingToDraw;
 			viewSquareIndex = AL_10_viewSquareIndexBackup; /* Restore value as it may have been modified while drawing a creature */
 			objectShiftIndex = 0;
@@ -3252,7 +3252,7 @@ T0115015_DrawProjectileAsObject:
 		} else
 			goto T0115129_DrawProjectiles; /* No creature to draw at cell, skip to projectiles */
 
-		creatureDirectionDelta = M21_normalizeModulo4(directionParam - _vm->_groupMan->M50_getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
+		creatureDirectionDelta = normalizeModulo4(directionParam - _vm->_groupMan->M50_getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
 		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
@@ -3442,12 +3442,12 @@ T0115077_DrawSecondHalfSquareCreature:
 		else if (viewLane) /* Lane right */
 			AL_4_xPos += 100;
 
-		boxByteGreen._x2 = f26_getBoundedValue(0, AL_4_xPos + byteWidth, 223);
+		boxByteGreen._x2 = getBoundedValue(0, AL_4_xPos + byteWidth, 223);
 
 		if (!boxByteGreen._x2)
 			goto T0115126_CreatureNotVisible;
 		int16 AL_0_creaturePosX;
-		boxByteGreen._x1 = f26_getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
+		boxByteGreen._x1 = getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
 		if (boxByteGreen._x1) {
 			if (boxByteGreen._x1 == 223)
 				goto T0115126_CreatureNotVisible;
@@ -3485,7 +3485,7 @@ T0115129_DrawProjectiles:
 			if ((thingParam.getType() == k14_ProjectileThingType) && (thingParam.getCell() == cellYellowBear)) {
 				Projectile *projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(thingParam);
 				if ((AL_4_projectileAspect = _vm->_dungeonMan->f142_getProjectileAspect(projectile->_slot)) < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
-					objectAspect = (ObjectAspect*)&_projectileAspect[_vm->M1_ordinalToIndex(-AL_4_projectileAspect)];
+					objectAspect = (ObjectAspect*)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
 					AL_4_nativeBitmapIndex = ((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + k316_FirstProjectileGraphicIndice;
 					projectileAspectType = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
 
@@ -3628,7 +3628,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						AL_4_explosionAspectIndex = k3_ExplosionAspectSmoke;
 					} else {
 						if (AL_4_explosionType == k100_ExplosionType_RebirthStep1) {
-							objectAspect = (ObjectAspect*)&_projectileAspect[_vm->M1_ordinalToIndex(-_vm->_dungeonMan->f142_getProjectileAspect(Thing::_explLightningBolt))];
+							objectAspect = (ObjectAspect*)&_projectileAspect[_vm->ordinalToIndex(-_vm->_dungeonMan->f142_getProjectileAspect(Thing::_explLightningBolt))];
 							bitmapRedBanana = f489_getNativeBitmapOrGraphic(((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + (k316_FirstProjectileGraphicIndice + 1));
 							explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 							byteWidth = M78_getScaledDimension((((ProjectileAspect*)objectAspect)->_byteWidth), explosionCoordinates[2]);
@@ -3706,7 +3706,7 @@ T0115200_DrawExplosion:
 					continue;
 				boxByteGreen._x2 = AL_4_xPos;
 				AL_4_xPos = explosionCoordinates[0];
-				boxByteGreen._x1 = f26_getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
+				boxByteGreen._x1 = getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
 
 				if (boxByteGreen._x1)
 					AL_4_xPos = paddingPixelCount;
@@ -3841,7 +3841,7 @@ void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 					*paletteRegister += 256;
 			}
 		}
-		_vm->f22_delay(1);
+		_vm->delay(1);
 		_vm->_eventMan->f357_discardAllInput();
 		f508_buildPaletteChangeCopperList(_gK16_paletteFadeTemporary, _gK16_paletteFadeTemporary);
 	}

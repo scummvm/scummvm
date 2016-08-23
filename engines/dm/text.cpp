@@ -165,7 +165,7 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 			f560_SCROLLER_setCommand(&_gK60_s_TextScroller, 1);
 	}
 	_g359_messageAreaCursorColumn += L0030_i_StringLength;
-	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;
+	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_gameTime + 200;
 
 }
 
@@ -204,7 +204,7 @@ void TextMan::f44_messageAreaClearExpiredRows() {
 	L0028_s_Box._x2 = 319;
 	for (L0026_ui_RowIndex = 0; L0026_ui_RowIndex < 4; L0026_ui_RowIndex++) {
 		L0027_l_ExpirationTime = _g360_messageAreaRowExpirationTime[L0026_ui_RowIndex];
-		if ((L0027_l_ExpirationTime == -1) || (L0027_l_ExpirationTime > _vm->_g313_gameTime))
+		if ((L0027_l_ExpirationTime == -1) || (L0027_l_ExpirationTime > _vm->_gameTime))
 			continue;
 		L0028_s_Box._y2 = (L0028_s_Box._y1 = 172 + (L0026_ui_RowIndex * 7)) + 6;
 		f561_isTextScrolling(&_gK60_s_TextScroller, true);

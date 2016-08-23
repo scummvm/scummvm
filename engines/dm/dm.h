@@ -109,9 +109,8 @@ enum Direction {
 	kDirSouth = 2,
 	kDirWest = 3
 };
+
 const char *debugGetDirectionName(Direction dir);
-
-
 
 enum ThingType {
 	kM1_PartyThingType = -1,  // @ CM1_THING_TYPE_PARTY
@@ -173,8 +172,6 @@ public:
 	bool operator!=(const Thing &rhs) const { return _data != rhs._data; }
 }; // @ THING
 
-
-
 void turnDirRight(Direction &dir);
 void turnDirLeft(Direction &dir);
 Direction returnOppositeDir(Direction dir);	// @ M18_OPPOSITE
@@ -182,20 +179,18 @@ uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
 uint16 returnNextVal(uint16 val); // @ M17_NEXT
 bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
-
 #define setFlag(val, mask) ((val) |= (mask))
 #define getFlag(val, mask) ((val) & (mask))
 #define clearFlag(val, mask) ((val) &= (~(mask))) // @ M09_CLEAR
 
 uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
-uint16 M75_bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
-uint16 M21_normalizeModulo4(uint16 val); // @ M21_NORMALIZE
-int32 M30_time(int32 map_time); // @ M30_TIME
-int32 M33_setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
-uint16 M29_map(int32 map_time); // @ M29_MAP
-Thing M15_thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
-int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
-
+uint16 bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
+uint16 normalizeModulo4(uint16 val); // @ M21_NORMALIZE
+int32 filterTime(int32 map_time); // @ M30_TIME
+int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
+uint16 getMap(int32 map_time); // @ M29_MAP
+Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
+int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
 
 enum Cell {
 	kM1_CellAny = -1, // @ CM1_CELL_ANY      
@@ -208,11 +203,9 @@ enum Cell {
 #define kM1_mapIndexNone -1 // @ CM1_MAP_INDEX_NONE       
 #define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
 
-
-
 //TODO: Directly use CLIP
 template<typename T>
-inline T f26_getBoundedValue(T min, T val, T max) {
+inline T getBoundedValue(T min, T val, T max) {
 	return CLIP<T>(min, val, max);
 } // @ F0026_MAIN_GetBoundedValue
 
@@ -228,24 +221,22 @@ enum LoadgameResponse {
 	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
 };
 
-
 struct SaveGameHeader {
 	byte _version;
 	SaveStateDescriptor _descr;
 };
 
-
 class DMEngine : public Engine {
-	void f462_startGame(); // @ F0462_START_StartGame_CPSF
-	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
-	void f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
-	void f448_initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
-	void f2_gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
-	void initArrays();
+	void startGame(); // @ F0462_START_StartGame_CPSF
+	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
+	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	void initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
+	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
+	void initConstants();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
-	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
+	void drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
 	explicit DMEngine(OSystem *syst, const DMADGameDescription *gameDesc);
 	~DMEngine();
@@ -256,29 +247,29 @@ public:
 
 	GUI::Debugger *getDebugger() { return _console; }
 
-	void f22_delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
-	uint16 f30_getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
+	void delay(uint16 verticalBlank); // @ F0022_MAIN_Delay
+	uint16 getScaledProduct(uint16 val, uint16 scale, uint16 vale2); // @ F0030_MAIN_GetScaledProduct
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
-	int16 M1_ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
-	int16 M0_indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-	void f19_displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
+	int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
+	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
+	void displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
-	void f433_processCommand140_saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
-	LoadgameResponse f435_loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
-	void f441_processEntrance(); // @ F0441_STARTEND_ProcessEntrance
-	void f444_endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
+	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
+	LoadgameResponse loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
+	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
+	void endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
-	void f438_STARTEND_OpenEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
-	void f437_STARTEND_drawTittle(); // @ F0437_STARTEND_DrawTitle
-	void f442_SARTEND_processCommand202_entranceDrawCredits();
-	void f446_STARTEND_fuseSequnce(); // @ F0446_STARTEND_FuseSequence
-	void f445_STARTEND_fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
+	void openEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
+	void drawTittle(); // @ F0437_STARTEND_DrawTitle
+	void entranceDrawCredits();
+	void fuseSequnce(); // @ F0446_STARTEND_FuseSequence
+	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	Common::Language getGameLanguage();
 
 private:
-	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
-	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
-	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
+	uint16 _dungeonId; // @ G0526_ui_DungeonID
+	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
+	byte *_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
 	
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
@@ -306,30 +297,30 @@ public:
 	bool _engineShouldQuit;
 	int _loadSaveSlotAtRuntime;
 
-	int16 _g298_newGame; // @ G0298_B_NewGame
-	bool _g523_restartGameRequest; // @ G0523_B_RestartGameRequested
+	int16 _newGameFl; // @ G0298_B_NewGame
+	bool _restartGameRequest; // @ G0523_B_RestartGameRequested
 
-	bool _g321_stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput
-	bool _g301_gameTimeTicking; // @ G0301_B_GameTimeTicking
-	bool _g524_restartGameAllowed; // @ G0524_B_RestartGameAllowed
-	int32 _g525_gameId; // @ G0525_l_GameID, probably useless here
-	bool _g331_pressingEye; // @ G0331_B_PressingEye
-	bool _g332_stopPressingEye; // @ G0332_B_StopPressingEye
-	bool _g333_pressingMouth; // @ G0333_B_PressingMouth
-	bool _g334_stopPressingMouth; // @ G0334_B_StopPressingMouth
-	bool _g340_highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
-	int16 _g311_projectileDisableMovementTicks; // @ G0311_i_ProjectileDisabledMovementTicks
-	int16 _g312_lastProjectileDisabledMovementDirection; // @ G0312_i_LastProjectileDisabledMovementDirection
-	bool _g302_gameWon; // @ G0302_B_GameWon
-	int16 _g327_newPartyMapIndex; // @ G0327_i_NewPartyMapIndex
-	bool _g325_setMousePointerToObjectInMainLoop; // @ G0325_B_SetMousePointerToObjectInMainLoop
-	int16 _g310_disabledMovementTicks; // @ G0310_i_DisabledMovementTicks
+	bool _stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput
+	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
+	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
+	int32 _gameId; // @ G0525_l_GameID, probably useless here
+	bool _pressingEye; // @ G0331_B_PressingEye
+	bool _stopPressingEye; // @ G0332_B_StopPressingEye
+	bool _pressingMouth; // @ G0333_B_PressingMouth
+	bool _stopPressingMouth; // @ G0334_B_StopPressingMouth
+	bool _highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
+	int16 _projectileDisableMovementTicks; // @ G0311_i_ProjectileDisabledMovementTicks
+	int16 _lastProjectileDisabledMovementDirection; // @ G0312_i_LastProjectileDisabledMovementDirection
+	bool _gameWon; // @ G0302_B_GameWon
+	int16 _newPartyMapIndex; // @ G0327_i_NewPartyMapIndex
+	bool _setMousePointerToObjectInMainLoop; // @ G0325_B_SetMousePointerToObjectInMainLoop
+	int16 _disabledMovementTicks; // @ G0310_i_DisabledMovementTicks
 
 	int8 _dirIntoStepCountEast[4]; // @ G0233_ai_Graphic559_DirectionToStepEastCount
 	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
-	int32 _g313_gameTime; // @ G0313_ul_GameTime
-	char _g353_stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
-	int16 _g318_waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
+	int32 _gameTime; // @ G0313_ul_GameTime
+	char _stringBuildBuffer[128]; // @ G0353_ac_StringBuildBuffer
+	int16 _waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 };
 
 bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header);

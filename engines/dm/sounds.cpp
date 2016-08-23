@@ -203,7 +203,7 @@ void SoundMan::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 
 	sound = &g60_sounds[soundIndex];
 	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent event;
-		M33_setMapAndTime(event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + mode - 1);
+		setMapAndTime(event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + mode - 1);
 		event._type = k20_TMEventTypePlaySound;
 		event._priority = sound->_priority;
 		event._C._soundIndex = soundIndex;

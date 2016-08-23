@@ -43,8 +43,8 @@
 
 namespace DM {
 
-LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
-	if (slot == -1 && _g298_newGame == k0_modeLoadSavedGame)
+LoadgameResponse DMEngine::loadgame(int16 slot) {
+	if (slot == -1 && _newGameFl == k0_modeLoadSavedGame)
 		return kM1_LoadgameFailure;
 
 	bool L1366_B_FadePalette = true;
@@ -62,18 +62,18 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		uint16 _dungeonId;
 	} dmSaveHeader;
 
-	if (!_g298_newGame) {
+	if (!_newGameFl) {
 		fileName = getSavefileName(slot);
 		saveFileManager = _system->getSavefileManager();
 		file = saveFileManager->openForLoading(fileName);
 	}
 
-	if (_g298_newGame) {
+	if (_newGameFl) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
-		_g524_restartGameAllowed = false;
+		_restartGameAllowed = false;
 		_championMan->_partyChampionCount = 0;
 		_championMan->_leaderHandObject = Thing::_none;
-		_g525_gameId = ((int32)getRandomNumber(65536)) * getRandomNumber(65536);
+		_gameId = ((int32)getRandomNumber(65536)) * getRandomNumber(65536);
 	} else {
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
@@ -88,9 +88,9 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		dmSaveHeader._gameId = file->readSint32BE();
 		dmSaveHeader._dungeonId = file->readUint16BE();
 
-		_g525_gameId = dmSaveHeader._gameId;
+		_gameId = dmSaveHeader._gameId;
 
-		_g313_gameTime = file->readSint32BE();
+		_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
 		_championMan->_partyChampionCount = file->readUint16BE();
 		_dungeonMan->_g306_partyMapX = file->readSint16BE();
@@ -105,12 +105,12 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_groupMan->_g377_currActiveGroupCount = file->readUint16BE();
 		_projexpl->_g361_lastCreatureAttackTime = file->readSint32BE();
 		_projexpl->_g362_lastPartyMovementTime = file->readSint32BE();
-		_g310_disabledMovementTicks = file->readSint16BE();
-		_g311_projectileDisableMovementTicks = file->readSint16BE();
-		_g312_lastProjectileDisabledMovementDirection = file->readSint16BE();
+		_disabledMovementTicks = file->readSint16BE();
+		_projectileDisableMovementTicks = file->readSint16BE();
+		_lastProjectileDisabledMovementDirection = file->readSint16BE();
 		_championMan->_leaderHandObject = Thing(file->readUint16BE());
 		_groupMan->_g376_maxActiveGroupCount = file->readUint16BE();
-		if (!_g523_restartGameRequest) {
+		if (!_restartGameRequest) {
 			_timeline->f233_initTimeline();
 			_groupMan->f196_initActiveGroups();
 		}
@@ -128,31 +128,31 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	_dungeonMan->f434_loadDungeonFile(file);
 	delete file;
 
-	if (_g298_newGame) {
+	if (_newGameFl) {
 		_timeline->f233_initTimeline();
 		_groupMan->f196_initActiveGroups();
 
 		if (L1366_B_FadePalette) {
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
-			f22_delay(1);
+			delay(1);
 			_displayMan->fillScreen(k0_ColorBlack);
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 		}
 	} else {
-		_g526_dungeonId = dmSaveHeader._dungeonId;
+		_dungeonId = dmSaveHeader._dungeonId;
 
-		_g524_restartGameAllowed = true;
+		_restartGameAllowed = true;
 
 		switch (getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY:
-			_dialog->f427_dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			_dialog->dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		case Common::DE_DEU:
-			_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GELADEN . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			_dialog->dialogDraw(nullptr, "SPIEL WIRD GELADEN . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		case Common::FR_FRA:
-			_dialog->f427_dialogDraw(nullptr, "CHARGEMENT DU JEU . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			_dialog->dialogDraw(nullptr, "CHARGEMENT DU JEU . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		}
 
@@ -163,20 +163,20 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 }
 
 
-void DMEngine::f433_processCommand140_saveGame() {
+void DMEngine::saveGame() {
 	_menuMan->f456_drawDisabledMenu();
 	_eventMan->f78_showMouse();
 
 	switch (getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", "LOAD", false, false, false);
+		_dialog->dialogDraw(nullptr, nullptr, "SAVE AND PLAY", "SAVE AND QUIT", "CANCEL", "LOAD", false, false, false);
 		break;
 	case Common::DE_DEU:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", "LOAD", false, false, false);
+		_dialog->dialogDraw(nullptr, nullptr, "SICHERN/SPIEL", "SICHERN/ENDEN", "WIDERRUFEN", "LOAD", false, false, false);
 		break;
 	case Common::FR_FRA:
-		_dialog->f427_dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", "LOAD", false, false, false);
+		_dialog->dialogDraw(nullptr, nullptr, "GARDER/JOUER", "GARDER/SORTIR", "ANNULLER", "LOAD", false, false, false);
 		break;
 	}
 
@@ -187,7 +187,7 @@ void DMEngine::f433_processCommand140_saveGame() {
 		kLoad = 4
 	};
 
-	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->f424_dialogGetChoice(4, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->getChoice(4, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 
 	if (saveAndPlayChoice == kLoad) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
@@ -212,13 +212,13 @@ void DMEngine::f433_processCommand140_saveGame() {
 			switch (getGameLanguage()) { // localized
 			default:
 			case Common::EN_ANY:
-				_dialog->f427_dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				_dialog->dialogDraw(nullptr, "SAVING GAME . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 				break;
 			case Common::DE_DEU:
-				_dialog->f427_dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				_dialog->dialogDraw(nullptr, "SPIEL WIRD GESICHERT . . .", nullptr, nullptr, nullptr, nullptr, false, false, false);
 				break;
 			case Common::FR_FRA:
-				_dialog->f427_dialogDraw(nullptr, "UN MOMENT A SAUVEGARDER DU JEU...", nullptr, nullptr, nullptr, nullptr, false, false, false);
+				_dialog->dialogDraw(nullptr, "UN MOMENT A SAUVEGARDER DU JEU...", nullptr, nullptr, nullptr, nullptr, false, false, false);
 				break;
 			}
 
@@ -229,8 +229,8 @@ void DMEngine::f433_processCommand140_saveGame() {
 			}
 
 			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
-				_dialog->f427_dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
-				_dialog->f424_dialogGetChoice(1, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+				_dialog->dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
+				_dialog->getChoice(1, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
 			}
 
 			if (!_championMan->_leaderEmptyHanded) {
@@ -243,10 +243,10 @@ void DMEngine::f433_processCommand140_saveGame() {
 
 	if (saveAndPlayChoice == kSaveAndQuit) {
 		_eventMan->f77_hideMouse();
-		f444_endGame(false);
+		endGame(false);
 	}
 
-	_g524_restartGameAllowed = true;
+	_restartGameAllowed = true;
 	_menuMan->f457_drawEnabledMenus();
 	_eventMan->f77_hideMouse();
 }
@@ -302,11 +302,11 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeSint32BE(1); // save version
 	file->writeSint32BE(_gameVersion->_origSaveFormatToWrite);
 	file->writeSint32BE(_gameVersion->_origPlatformToWrite);
-	file->writeSint32BE(_g525_gameId);
-	file->writeUint16BE(_g526_dungeonId);
+	file->writeSint32BE(_gameId);
+	file->writeUint16BE(_dungeonId);
 
 	// write C0_SAVE_PART_GLOBAL_DATA part
-	file->writeSint32BE(_g313_gameTime);
+	file->writeSint32BE(_gameTime);
 	//L1348_s_GlobalData.LastRandomNumber = G0349_ul_LastRandomNumber;
 	file->writeUint16BE(_championMan->_partyChampionCount);
 	file->writeSint16BE(_dungeonMan->_g306_partyMapX);
@@ -321,9 +321,9 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeUint16BE(_groupMan->_g377_currActiveGroupCount);
 	file->writeSint32BE(_projexpl->_g361_lastCreatureAttackTime);
 	file->writeSint32BE(_projexpl->_g362_lastPartyMovementTime);
-	file->writeSint16BE(_g310_disabledMovementTicks);
-	file->writeSint16BE(_g311_projectileDisableMovementTicks);
-	file->writeSint16BE(_g312_lastProjectileDisabledMovementDirection);
+	file->writeSint16BE(_disabledMovementTicks);
+	file->writeSint16BE(_projectileDisableMovementTicks);
+	file->writeSint16BE(_lastProjectileDisabledMovementDirection);
 	file->writeUint16BE(_championMan->_leaderHandObject.toUint16());
 	file->writeUint16BE(_groupMan->_g376_maxActiveGroupCount);
 

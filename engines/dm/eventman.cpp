@@ -468,8 +468,8 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 
 void EventManager::f71_mouseDropChampionIcon() {
 	_gK100_preventBuildPointerScreenArea = true;
-	uint16 championIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
-	_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+	uint16 championIconIndex = _vm->ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
+	_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
 	_g598_mousePointerBitmapUpdated = true;
 	bool useByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
 	_vm->_displayMan->f21_blitToScreen(_g613_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, k12_ColorDarkestGray, 18);
@@ -728,7 +728,7 @@ void EventManager::f380_processCommandQueue() {
 
 	Command cmd = _commandQueue.pop();
 	CommandType cmdType = cmd._type;
-	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_g310_disabledMovementTicks || (_vm->_g311_projectileDisableMovementTicks && (_vm->_g312_lastProjectileDisabledMovementDirection == (M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
+	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_disabledMovementTicks || (_vm->_projectileDisableMovementTicks && (_vm->_lastProjectileDisabledMovementDirection == (normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
 		_g435_isCommandQueueLocked = false;
 		f360_processPendingClick();
 		return;
@@ -825,7 +825,7 @@ void EventManager::f380_processCommandQueue() {
 		return;
 	}
 
-	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth)
+	if (_vm->_pressingEye || _vm->_pressingMouth)
 		return;
 
 	if (cmdType == k145_CommandSleep) {
@@ -837,7 +837,7 @@ void EventManager::f380_processCommandQueue() {
 			_vm->_championMan->_partyIsSleeping = true;
 			f379_drawSleepScreen();
 			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
-			_vm->_g318_waitForInputMaxVerticalBlankCount = 0;
+			_vm->_waitForInputMaxVerticalBlankCount = 0;
 			_g441_primaryMouseInput = _primaryMouseInputPartySleeping;
 			_g442_secondaryMouseInput = 0;
 			_g443_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
@@ -854,13 +854,13 @@ void EventManager::f380_processCommandQueue() {
 
 	if (cmdType == k140_CommandSaveGame) {
 		if ((_vm->_championMan->_partyChampionCount > 0) && !_vm->_championMan->_candidateChampionOrdinal)
-			_vm->f433_processCommand140_saveGame();
+			_vm->saveGame();
 
 		return;
 	}
 
 	if (cmdType == k147_CommandFreezeGame) {
-		_vm->_g301_gameTimeTicking = false;
+		_vm->_gameTimeTicking = false;
 		_vm->_menuMan->f456_drawDisabledMenu();
 		_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136);
 
@@ -893,7 +893,7 @@ void EventManager::f380_processCommandQueue() {
 	}
 
 	if (cmdType == k148_CommandUnfreezeGame) {
-		_vm->_g301_gameTimeTicking = true;
+		_vm->_gameTimeTicking = true;
 		_vm->_menuMan->f457_drawEnabledMenus();
 		_g441_primaryMouseInput = primaryMouseInputBackup;
 		_g442_secondaryMouseInput = secondaryMouseInputBackup;
@@ -904,31 +904,31 @@ void EventManager::f380_processCommandQueue() {
 	}
 
 	if (cmdType == k200_CommandEntranceEnterDungeon) {
-		_vm->_g298_newGame = k1_modeLoadDungeon;
+		_vm->_newGameFl = k1_modeLoadDungeon;
 		return;
 	}
 
 	if (cmdType == k201_CommandEntranceResume) {
-		_vm->_g298_newGame = k0_modeLoadSavedGame;
+		_vm->_newGameFl = k0_modeLoadSavedGame;
 		return;
 	}
 
 	if (cmdType == k202_CommandEntranceDrawCredits) {
-		_vm->f442_SARTEND_processCommand202_entranceDrawCredits();
+		_vm->entranceDrawCredits();
 		return;
 	}
 
 	if ((cmdType >= k210_CommandClickOnDialogChoice_1) && (cmdType <= k213_CommandClickOnDialogChoice_4)) {
-		_vm->_dialog->_g335_selectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);
+		_vm->_dialog->_selectedDialogChoice = cmdType - (k210_CommandClickOnDialogChoice_1 - 1);
 		return;
 	}
 
 	if (cmdType == k215_CommandRestartGame)
-		_vm->_g523_restartGameRequest = true;
+		_vm->_restartGameRequest = true;
 }
 
 void EventManager::f365_commandTurnParty(CommandType cmdType) {
-	_vm->_g321_stopWaitingForPlayerInput = true;
+	_vm->_stopWaitingForPlayerInput = true;
 	if (cmdType == k1_CommandTurnLeft)
 		f362_commandHighlightBoxEnable(234, 261, 125, 145);
 	else
@@ -941,7 +941,7 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 	}
 
 	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, false);
-	_vm->_championMan->setPartyDirection(M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + ((cmdType == k2_CommandTurnRight) ? 1 : 3)));
+	_vm->_championMan->setPartyDirection(normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + ((cmdType == k2_CommandTurnRight) ? 1 : 3)));
 	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, Thing::_party, true, true);
 }
 
@@ -968,7 +968,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 		-1    /* Left */
 	};
 
-	_vm->_g321_stopWaitingForPlayerInput = true;
+	_vm->_stopWaitingForPlayerInput = true;
 	Champion *championsPtr = _vm->_championMan->_champions;
 	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++) {
 		_vm->_championMan->decrementStamina(idx, ((championsPtr->_load * 3) / _vm->_championMan->getMaximumLoad(championsPtr)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
@@ -1007,7 +1007,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	if (_vm->_championMan->_partyChampionCount) {
 		if (isMovementBlocked) {
 			movementArrowIdx += (_vm->_dungeonMan->_g308_partyDir + 2);
-			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, M21_normalizeModulo4(movementArrowIdx));
+			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, normalizeModulo4(movementArrowIdx));
 			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, returnNextVal(movementArrowIdx));
 			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
 			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
@@ -1025,7 +1025,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	// DEBUG CODE: check for Console flag
 	if (isMovementBlocked && !_vm->_console->_debugNoclip) {
 		f357_discardAllInput();
-		_vm->_g321_stopWaitingForPlayerInput = false;
+		_vm->_stopWaitingForPlayerInput = false;
 		return;
 	}
 
@@ -1042,8 +1042,8 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 
 		championsPtr++;
 	}
-	_vm->_g310_disabledMovementTicks = disabledMovtTicks;
-	_vm->_g311_projectileDisableMovementTicks = 0;
+	_vm->_disabledMovementTicks = disabledMovtTicks;
+	_vm->_projectileDisableMovementTicks = 0;
 }
 
 bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY) {
@@ -1074,7 +1074,7 @@ bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int
 	}
 
 	if (objectThrownFl)
-		_vm->_g321_stopWaitingForPlayerInput = true;
+		_vm->_stopWaitingForPlayerInput = true;
 
 	return objectThrownFl;
 }
@@ -1124,7 +1124,7 @@ void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 	Champion *champion = &cm._champions[cm._leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_g308_partyDir;
 	cm._champions[champIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(cm._leaderHandObject);
-	if (_vm->M0_indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
 		champion->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
 		champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
 		cm.drawChampionState(champIndex);
@@ -1137,7 +1137,7 @@ void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 
 	if ((mapX >= 0) && (mapX < _vm->_dungeonMan->_g273_currMapWidth)
 		&& (mapY >= 0) && (mapY < _vm->_dungeonMan->_g274_currMapHeight))
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
+		_vm->_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
 }
 
 void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
@@ -1159,9 +1159,9 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 		if (_vm->_championMan->_leaderEmptyHanded) {
 			Junk *junkPtr = (Junk*)_vm->_dungeonMan->f157_getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
-				_vm->_g321_stopWaitingForPlayerInput = true;
+				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k1_soundModePlayIfPrioritized);
-				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
+				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
 				return;
 			}
 		} else if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY))
@@ -1235,7 +1235,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	Champion *champ = &champMan._champions[championIndex];
 	if (commandType == k162_CommandClickInPanelCancel) {
 		invMan.f355_toggleInventory(k4_ChampionCloseInventory);
-		champMan._candidateChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		if (champMan._partyChampionCount == 1) {
 			f368_commandSetLeader(kM1_ChampionNone);
 		}
@@ -1253,7 +1253,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		return;
 	}
 
-	champMan._candidateChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
 	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 
@@ -1286,7 +1286,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 	}
 
 	if (champMan._partyChampionCount == 1) {
-		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_g313_gameTime;
+		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_gameTime;
 		f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else
@@ -1350,7 +1350,7 @@ void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(ui
 		Thing groupThing = _vm->_groupMan->f175_groupGetThing(mapX, mapY);
 		if ((groupThing != Thing::_endOfList) &&
 			!_vm->_moveSens->f264_isLevitating(groupThing) &&
-			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(groupThing), M21_normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
+			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->f156_getThingData(groupThing), normalizeModulo4(viewCell + _vm->_dungeonMan->_g308_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}
@@ -1361,7 +1361,7 @@ void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(ui
 		_vm->_championMan->putObjectInLeaderHand(topPileThing, true);
 	}
 
-	_vm->_g321_stopWaitingForPlayerInput = true;
+	_vm->_stopWaitingForPlayerInput = true;
 }
 
 void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
@@ -1377,13 +1377,13 @@ void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uin
 	if (viewCell > k1_ViewCellFrontRight)
 		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
 
-	uint16 currCell = M21_normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
+	uint16 currCell = normalizeModulo4(_vm->_dungeonMan->_g308_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
-	_vm->_moveSens->f267_getMoveResult(M15_thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
+	_vm->_moveSens->f267_getMoveResult(thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
 	if (droppingIntoAnAlcove && _vm->_dungeonMan->_g287_isFacingViAltar && (_vm->_objectMan->f33_getIconIndex(removedThing) == k147_IconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->f156_getThingData(removedThing);
 		TimelineEvent newEvent;
-		M33_setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 1);
+		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_gameTime + 1);
 		newEvent._type = k13_TMEventTypeViAltarRebirth;
 		newEvent._priority = removedJunk->getChargeCount();
 		newEvent._B._location._mapX = mapX;
@@ -1392,7 +1392,7 @@ void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uin
 		newEvent._C.A._effect = k2_SensorEffToggle;
 		_vm->_timeline->f238_addEventGetEventIndex(&newEvent);
 	}
-	_vm->_g321_stopWaitingForPlayerInput = true;
+	_vm->_stopWaitingForPlayerInput = true;
 }
 
 bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button) {
@@ -1429,14 +1429,14 @@ void EventManager::f357_discardAllInput() {
 
 void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
 	_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
-	_vm->_g327_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g309_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
-	_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
+	_vm->_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g309_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
+	_vm->_dungeonMan->f173_setCurrentMap(_vm->_newPartyMapIndex);
 	_vm->_championMan->setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
 	_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
 }
 
 void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
-	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		f368_commandSetLeader((ChampionIndex)champIndex);
 	} else {
 		uint16 commandType = f358_getCommandTypeFromMouseInput(_mouseInputChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
@@ -1454,7 +1454,7 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 
 	_gK100_preventBuildPointerScreenArea = true;
 	if (!_g599_useChampionIconOrdinalAsMousePointerBitmap) {
-		if (_vm->_championMan->getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir)) == kM1_ChampionNone) {
+		if (_vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir)) == kM1_ChampionNone) {
 			_gK100_preventBuildPointerScreenArea = false;
 			return;
 		}
@@ -1469,25 +1469,25 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(tmpBitmap, _g613_mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
 		_vm->_displayMan->D24_fillScreenBox(*curChampionIconBox, k0_ColorBlack);
-		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(champIconIndex);
+		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(champIconIndex);
 	} else {
 		_g598_mousePointerBitmapUpdated = true;
-		uint16 championIconIndex = _vm->M1_ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
-		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
-		int16 championCellIndex = _vm->_championMan->getIndexInCell(M21_normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir));
+		uint16 championIconIndex = _vm->ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
+		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+		int16 championCellIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir));
 		if (championIconIndex == champIconIndex) {
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		} else {
-			int16 championIndex = _vm->_championMan->getIndexInCell(M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir));
+			int16 championIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir));
 			if (championIndex >= 0) {
-				_vm->_championMan->_champions[championIndex]._cell = (ViewCell)M21_normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir);
+				_vm->_championMan->_champions[championIndex]._cell = (ViewCell)normalizeModulo4(championIconIndex + _vm->_dungeonMan->_g308_partyDir);
 				setFlag(_vm->_championMan->_champions[championIndex]._attributes, k0x0400_ChampionAttributeIcon);
 				_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 			} else
 				_vm->_displayMan->D24_fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], k0_ColorBlack);
 
-			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)M21_normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir);
+			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)normalizeModulo4(champIconIndex + _vm->_dungeonMan->_g308_partyDir);
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		}
@@ -1566,14 +1566,14 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 			return;
 
 		f362_commandHighlightBoxEnable(234, 303, 63, 73);
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
+		_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
 		return;
 	}
 
 	uint16 symbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
 	Box *highlightBox = &spellSymbolsAndDelete[symbolIndex];
 	f362_commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
-	_vm->f22_delay(1);
+	_vm->delay(1);
 	f363_highlightBoxDisable();
 
 	if (symbolIndex < 6)
@@ -1597,7 +1597,7 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 				else
 					f362_commandHighlightBoxEnable(234, 318, 110, 120);
 
-				_vm->_g321_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
+				_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
 			}
 		}
 	} else if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
@@ -1611,13 +1611,13 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 }
 
 void EventManager::f544_resetPressingEyeOrMouth() {
-	if (_vm->_g331_pressingEye) {
+	if (_vm->_pressingEye) {
 		_g597_ignoreMouseMovements = false;
-		_vm->_g332_stopPressingEye = true;
+		_vm->_stopPressingEye = true;
 	}
-	if (_vm->_g333_pressingMouth) {
+	if (_vm->_pressingMouth) {
 		_g597_ignoreMouseMovements = false;
-		_vm->_g334_stopPressingMouth = true;
+		_vm->_stopPressingMouth = true;
 	}
 }
 
@@ -1637,7 +1637,7 @@ void EventManager::f541_waitForMouseOrKeyActivity() {
 				break;
 			}
 		}
-		_vm->f22_delay(1);
+		_vm->delay(1);
 		_vm->_displayMan->updateScreen();
 	}
 }

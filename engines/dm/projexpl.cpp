@@ -55,13 +55,13 @@ void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16
 	if ((L0466_T_ProjectileThing = _vm->_dungeonMan->f166_getUnusedThing(k14_ProjectileThingType)) == Thing::_none) { /* BUG0_16 If the game cannot create a projectile thing because it has run out of such things (60 maximum) then the object being thrown/shot/launched is orphaned. If the game has run out of projectile things it will try to remove a projectile from elsewhere in the dungeon, except in an area of 11x11 squares centered around the party (to make sure the player cannot actually see the thing disappear on screen) */
 		return;
 	}
-	L0466_T_ProjectileThing = M15_thingWithNewCell(L0466_T_ProjectileThing, cell);
+	L0466_T_ProjectileThing = thingWithNewCell(L0466_T_ProjectileThing, cell);
 	L0467_ps_Projectile = (Projectile *)_vm->_dungeonMan->f156_getThingData(L0466_T_ProjectileThing);
 	L0467_ps_Projectile->_slot = thing;
 	L0467_ps_Projectile->_kineticEnergy = MIN((int16)kineticEnergy, (int16)255);
 	L0467_ps_Projectile->_attack = attack;
 	_vm->_dungeonMan->f163_linkThingToList(L0466_T_ProjectileThing, Thing(0), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
-	M33_setMapAndTime(L0468_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + 1);
+	setMapAndTime(L0468_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + 1);
 	if (_g365_createLanucherProjectile) {
 		L0468_s_Event._type = k49_TMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
 	} else {
@@ -152,7 +152,7 @@ T0217004:
 		L0494_ps_Door = (Door *)_vm->_dungeonMan->f157_getSquareFirstThingData(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY);
 		if ((AL0487_i_DoorState != k5_doorState_DESTROYED) && (L0486_T_ProjectileAssociatedThing == Thing::_explOpenDoor)) {
 			if (L0494_ps_Door->hasButton()) {
-				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, 0, k2_SensorEffToggle, _vm->_g313_gameTime + 1);
+				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
 			}
 			break;
 		}
@@ -321,7 +321,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 		L0470_ps_Explosion->setCentered(true);
 	} else {
 		L0470_ps_Explosion->setCentered(false);
-		L0473_T_Thing = M15_thingWithNewCell(L0473_T_Thing, cell);
+		L0473_T_Thing = thingWithNewCell(L0473_T_Thing, cell);
 	}
 	L0470_ps_Explosion->setType(explThing.toUint16() - Thing::_firstExplosion.toUint16());
 	L0470_ps_Explosion->setAttack(attack);
@@ -334,7 +334,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 	}
 	_vm->_dungeonMan->f163_linkThingToList(L0473_T_Thing, Thing(0), AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY);
 	TimelineEvent L0476_s_Event;
-	M33_setMapAndTime(L0476_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
+	setMapAndTime(L0476_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	L0476_s_Event._type = k25_TMEventTypeExplosion;
 	L0476_s_Event._priority = 0;
 	L0476_s_Event._C._slot = L0473_T_Thing.toUint16();
@@ -487,13 +487,13 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 	} else {
 		L0518_ui_Cell++;
 	}
-	L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, L0518_ui_Cell &= 0x0003);
+	L0515_T_ProjectileThingNewCell = thingWithNewCell(L0515_T_ProjectileThingNewCell, L0518_ui_Cell &= 0x0003);
 	if (L0522_B_ProjectileMovesToOtherSquare) {
 		_vm->_moveSens->f267_getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
 		L0519_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
 		L0519_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
 		L0519_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_g400_moveResultDir);
-		L0515_T_ProjectileThingNewCell = M15_thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_moveSens->_g401_moveResultCell);
+		L0515_T_ProjectileThingNewCell = thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_moveSens->_g401_moveResultCell);
 		M31_setMap(L0519_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 	} else {
 		if ((Square(_vm->_dungeonMan->f151_getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && f217_projectileHasImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {

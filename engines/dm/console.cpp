@@ -178,12 +178,12 @@ bool Console::Cmd_map(int argc, const char** argv) {
 		debugPrintf("Map set to %d\n", index);
 
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
-		_vm->_g327_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(
+		_vm->_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(
 			_vm->_dungeonMan->_g309_partyMapIndex, index - _vm->_dungeonMan->_g309_partyMapIndex,
 			&_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
-		if (_vm->_g327_newPartyMapIndex == -1)
-			_vm->_g327_newPartyMapIndex = index;
-		_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
+		if (_vm->_newPartyMapIndex == -1)
+			_vm->_newPartyMapIndex = index;
+		_vm->_dungeonMan->f173_setCurrentMap(_vm->_newPartyMapIndex);
 		_vm->_championMan->setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
 		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
 	} else

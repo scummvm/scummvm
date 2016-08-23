@@ -102,7 +102,7 @@ Timeline::~Timeline() {
 void Timeline::f233_initTimeline() {
 	_g370_events = new TimelineEvent[_g369_eventMaxCount];
 	_g371_timeline = new uint16[_g369_eventMaxCount];
-	if (_vm->_g298_newGame) {
+	if (_vm->_newGameFl) {
 		for (int16 i = 0; i < _g369_eventMaxCount; ++i)
 			_g370_events[i]._type = k0_TMEventTypeNone;
 		_g372_eventCount = 0;
@@ -177,8 +177,8 @@ T0236011:
 bool Timeline::f234_isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
 	bool L0578_B_Simultaneous;
 
-	return (M30_time(eventA->_mapTime) < M30_time(eventB->_mapTime)) ||
-		((L0578_B_Simultaneous = (M30_time(eventA->_mapTime) == M30_time(eventB->_mapTime))) && (eventA->getTypePriority() > eventB->getTypePriority())) ||
+	return (filterTime(eventA->_mapTime) < filterTime(eventB->_mapTime)) ||
+		((L0578_B_Simultaneous = (filterTime(eventA->_mapTime) == filterTime(eventB->_mapTime))) && (eventA->getTypePriority() > eventB->getTypePriority())) ||
 		(L0578_B_Simultaneous && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
 }
 
@@ -204,7 +204,7 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 
 
 	if (_g372_eventCount == _g369_eventMaxCount) {
-		_vm->f19_displayErrorAndStop(45);
+		_vm->displayErrorAndStop(45);
 	}
 	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
 		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
@@ -243,7 +243,7 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 		} else {
 			if (event->_type == k2_TMEventTypeDoorDestruction) {
 				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
-					if ((event->getMapXY() == L0591_ps_Event->getMapXY()) && (M29_map(event->_mapTime) == M29_map(L0591_ps_Event->_mapTime))) {
+					if ((event->getMapXY() == L0591_ps_Event->getMapXY()) && (getMap(event->_mapTime) == getMap(L0591_ps_Event->_mapTime))) {
 						if ((L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) || (L0591_ps_Event->_type == k10_TMEventTypeDoor)) {
 							f237_deleteEvent(L0588_ui_EventIndex);
 						}
@@ -274,7 +274,7 @@ void Timeline::f261_processTimeline() {
 	while (f240_isFirstEventExpiered()) {
 		L0681_ps_Event = &L0682_s_Event;
 		f239_timelineExtractFirstEvent(L0681_ps_Event);
-		_vm->_dungeonMan->f173_setCurrentMap(M29_map(L0682_s_Event._mapTime));
+		_vm->_dungeonMan->f173_setCurrentMap(getMap(L0682_s_Event._mapTime));
 		AL0680_ui_EventType = L0682_s_Event._type;
 		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
 			_vm->_groupMan->f209_processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
@@ -322,7 +322,7 @@ void Timeline::f261_processTimeline() {
 				_vm->_sound->f064_SOUND_RequestPlay_CPSD(L0682_s_Event._C._soundIndex, L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
-				if (!_vm->_g302_gameWon) {
+				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->f164_unlinkThingFromList(Thing(L0682_s_Event._C._slot), Thing(0), L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY);
 					L0681_ps_Event = (TimelineEvent*)_vm->_dungeonMan->f156_getThingData(Thing(L0682_s_Event._C._slot));
 					((Explosion*)L0681_ps_Event)->setNextThing(Thing::_none);
@@ -331,7 +331,7 @@ void Timeline::f261_processTimeline() {
 			case k11_TMEventTypeEnableChampionAction:
 				f253_timelineProcessEvent11Part1_enableChampionAction(L0682_s_Event._priority);
 				if (L0682_s_Event._B._slotOrdinal) {
-					f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->M1_ordinalToIndex(L0682_s_Event._B._slotOrdinal));
+					f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->ordinalToIndex(L0682_s_Event._B._slotOrdinal));
 				}
 				goto T0261048;
 			case k12_TMEventTypeHideDamageReceived:
@@ -381,7 +381,7 @@ T0261053:
 }
 
 bool Timeline::f240_isFirstEventExpiered() {
-	return (_g372_eventCount && (M30_time(_g370_events[_g371_timeline[0]]._mapTime) <= _vm->_g313_gameTime));
+	return (_g372_eventCount && (filterTime(_g370_events[_g371_timeline[0]]._mapTime) <= _vm->_gameTime));
 }
 
 void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
@@ -583,7 +583,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
 			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
 			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_g400_moveResultDir);
-			L0647_ps_Event->_B._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
+			L0647_ps_Event->_B._slot = thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
 			M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 		} else {
 			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
@@ -591,7 +591,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 						L0647_ps_Event->_B._location._mapX = _vm->_moveSens->_g397_moveResultMapX;
 						L0647_ps_Event->_B._location._mapY = _vm->_moveSens->_g398_moveResultMapY;
-						L0647_ps_Event->_C._slot = M15_thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
+						L0647_ps_Event->_C._slot = thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_g401_moveResultCell).toUint16();
 						M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_g399_moveResultMapIndex);
 					}
 				}
@@ -701,10 +701,10 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 							}
 						} else {
 							if (L0640_ui_SensorType == k18_SensorWallEndGame) {
-								_vm->f22_delay(60 * L0638_ps_Sensor->getValue());
-								_vm->_g524_restartGameAllowed = false;
-								_vm->_g302_gameWon = true;
-								_vm->f444_endGame(true);
+								_vm->delay(60 * L0638_ps_Sensor->getValue());
+								_vm->_restartGameAllowed = false;
+								_vm->_gameWon = true;
+								_vm->endGame(true);
 							}
 						}
 					}
@@ -781,7 +781,7 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 		}
 	}
 	if (L0632_B_LaunchSingleProjectile) {
-		L0628_ui_ProjectileCell = M21_normalizeModulo4(L0628_ui_ProjectileCell + _vm->getRandomNumber(2));
+		L0628_ui_ProjectileCell = normalizeModulo4(L0628_ui_ProjectileCell + _vm->getRandomNumber(2));
 	}
 	L0626_i_MapX += _vm->_dirIntoStepCountEast[L0624_ui_Cell], L0627_i_MapY += _vm->_dirIntoStepCountNorth[L0624_ui_Cell]; /* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
 	_vm->_projexpl->_g365_createLanucherProjectile = true;
@@ -821,8 +821,8 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 				L0615_ps_TextString->setVisible((event->_C.A._effect == k0_SensorEffSet));
 			}
 			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
-				_vm->_dungeonMan->f168_decodeText(_vm->_g353_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
-				_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_g353_stringBuildBuffer);
+				_vm->_dungeonMan->f168_decodeText(_vm->_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
+				_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else {
 			if (L0610_i_ThingType == k3_SensorThingType) {
@@ -850,7 +850,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 								AL0618_ui_Ticks = (AL0618_ui_Ticks - 126) << 6;
 							}
 							L0619_s_Event._type = k65_TMEventTypeEnableGroupGenerator;
-							M33_setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_g313_gameTime + AL0618_ui_Ticks);
+							setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + AL0618_ui_Ticks);
 							L0619_s_Event._priority = 0;
 							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
@@ -991,7 +991,7 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 	if (!L0663_ps_Champion->_currHealth) {
 		return;
 	}
-	if (_vm->M0_indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		_vm->_eventMan->f78_showMouse();
 		_vm->_inventoryMan->f354_drawStatusBoxPortrait((ChampionIndex)champIndex);
 		_vm->_eventMan->f77_hideMouse();
@@ -1029,7 +1029,7 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 	if (L0673_i_WeakerLightPower) {
 		L0676_s_Event._type = k70_TMEventTypeLight;
 		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
-		M33_setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_g313_gameTime + 4);
+		setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_gameTime + 4);
 		L0676_s_Event._priority = 0;
 		f238_addEventGetEventIndex(&L0676_s_Event);
 	}

@@ -34,10 +34,10 @@
 namespace DM {
 
 DialogMan::DialogMan(DMEngine *vm) : _vm(vm) {
-	_g335_selectedDialogChoice = 0;
+	_selectedDialogChoice = 0;
 }
 
-void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *choice1, const char *choice2, const char *choice3, const char *choice4, bool screenDialog, bool clearScreen, bool fading) {
+void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choice1, const char *choice2, const char *choice3, const char *choice4, bool screenDialog, bool clearScreen, bool fading) {
 	static Box constBox1 = Box(0, 223, 101, 125);
 	static Box constBox2 = Box(0, 223, 76, 100);
 	static Box constBox3 = Box(0, 223, 51, 75);
@@ -69,21 +69,21 @@ void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox1, 0, 64, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox2, 0, 39, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, constBox3, 0, 14, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 114);
 	} else if (choiceCount == 2) {
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, dialog2ChoicesPatch, 102, 52, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 112, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 112, 114);
 	} else if (choiceCount == 3) {
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 59, 114);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 166, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 112, 77);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 59, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 166, 114);
 	} else if (choiceCount == 4) {
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g296_bitmapViewport, dialog4ChoicesPatch, 102, 99, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 59, 77);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 166, 77);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 59, 114);
-		f425_printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice4, 166, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice1, 59, 77);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice2, 166, 77);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice3, 59, 114);
+		printCenteredChoice(_vm->_displayMan->_g296_bitmapViewport, choice4, 166, 114);
 	}
 
 	int16 textPosX;
@@ -91,7 +91,7 @@ void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *
 	if (msg1) {
 		char L1312_ac_StringPart1[70];
 		char L1313_ac_StringPart2[70];
-		if (f426_isMessageOnTwoLines(msg1, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
+		if (isMessageOnTwoLines(msg1, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosY = 21;
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
 			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
@@ -108,7 +108,7 @@ void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *
 	if (msg2) {
 		char L1312_ac_StringPart1[70];
 		char L1313_ac_StringPart2[70];
-		if (f426_isMessageOnTwoLines(msg2, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
+		if (isMessageOnTwoLines(msg2, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
 			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
 			textPosY += 8;
@@ -130,7 +130,7 @@ void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *
 		_vm->_eventMan->f77_hideMouse();
 	} else {
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
-		_vm->f22_delay(1);
+		_vm->delay(1);
 	}
 
 	if (fading)
@@ -140,14 +140,14 @@ void DialogMan::f427_dialogDraw(const char *msg1, const char *msg2, const char *
 	_vm->_displayMan->updateScreen();
 }
 
-void DialogMan::f425_printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY) {
+void DialogMan::printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY) {
 	if (str) {
 		posX -= (strlen(str) * 6) >> 1;
 		_vm->_textMan->f40_printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, k9_ColorGold, k5_ColorLightBrown, str, k136_heightViewport);
 	}
 }
 
-bool DialogMan::f426_isMessageOnTwoLines(const char *str, char *part1, char *part2) {
+bool DialogMan::isMessageOnTwoLines(const char *str, char *part1, char *part2) {
 	uint16 strLength = strlen(str);
 	if (strLength <= 30)
 		return false;
@@ -162,7 +162,7 @@ bool DialogMan::f426_isMessageOnTwoLines(const char *str, char *part1, char *par
 	return true;
 }
 
-int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driveType, int16 automaticChoiceIfFlopyInDrive) {
+int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driveType, int16 automaticChoiceIfFlopyInDrive) {
 	MouseInput *L1298_ps_PrimaryMouseInputBackup;
 	MouseInput *L1299_ps_SecondaryMouseInputBackup;
 	KeyboardInput *L1300_ps_PrimaryKeyboardInputBackup;
@@ -180,21 +180,21 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	_vm->_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	_vm->_eventMan->_g441_primaryMouseInput = _vm->_eventMan->_primaryMouseInputDialogSets[dialogSetIndex][choiceCount - 1];
 	_vm->_eventMan->f357_discardAllInput();
-	_g335_selectedDialogChoice = 99;
+	_selectedDialogChoice = 99;
 	do {
 		Common::Event key;
 		Common::EventType eventType = _vm->_eventMan->processInput(&key);
 		_vm->_eventMan->f380_processCommandQueue();
-		_vm->f22_delay(1);
+		_vm->delay(1);
 		_vm->_displayMan->updateScreen();
-		if ((_g335_selectedDialogChoice == 99) && (choiceCount == 1) 
+		if ((_selectedDialogChoice == 99) && (choiceCount == 1) 
 			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
 			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
-			_g335_selectedDialogChoice = k1_DIALOG_CHOICE_1;
+			_selectedDialogChoice = k1_DIALOG_CHOICE_1;
 		}
-	} while (_g335_selectedDialogChoice == 99);
+	} while (_selectedDialogChoice == 99);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	L1304_s_BoxA = _vm->_eventMan->_g441_primaryMouseInput[_g335_selectedDialogChoice - 1]._hitbox;
+	L1304_s_BoxA = _vm->_eventMan->_g441_primaryMouseInput[_selectedDialogChoice - 1]._hitbox;
 	L1304_s_BoxA._x1 -= 3;
 	L1304_s_BoxA._x2 += 3;
 	L1304_s_BoxA._y1 -= 3;
@@ -207,7 +207,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1303_s_BoxB._x2 = L1304_s_BoxA._x2 - L1304_s_BoxA._x1 + 3;
 	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _vm->_displayMan->_g296_bitmapViewport,
 										L1303_s_BoxB, L1304_s_BoxA._x1, L1304_s_BoxA._y1, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 25);
-	_vm->f22_delay(1);
+	_vm->delay(1);
 	L1303_s_BoxB = L1304_s_BoxA;
 	L1303_s_BoxB._y2 = L1303_s_BoxB._y1;
 	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k5_ColorLightBrown);
@@ -223,7 +223,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1303_s_BoxB = L1304_s_BoxA;
 	L1303_s_BoxB._x1 = L1303_s_BoxB._x2;
 	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k0_ColorBlack);
-	_vm->f22_delay(2);
+	_vm->delay(2);
 	L1303_s_BoxB = L1304_s_BoxA;
 	L1303_s_BoxB._y1++;
 	L1303_s_BoxB._y2 = L1303_s_BoxB._y1;
@@ -251,7 +251,7 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	L1303_s_BoxB._x1 = L1303_s_BoxB._x2 = L1303_s_BoxB._x2 + 3;
 	L1303_s_BoxB._y2 += 2;
 	_vm->_displayMan->D24_fillScreenBox(L1303_s_BoxB, k13_ColorLightestGray);
-	_vm->f22_delay(2);
+	_vm->delay(2);
 	L1304_s_BoxA._x2 += 3;
 	L1304_s_BoxA._y2 += 3;
 	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g348_bitmapScreen,
@@ -263,6 +263,6 @@ int16 DialogMan::f424_dialogGetChoice(uint16 choiceCount, uint16 dialogSetIndex,
 	_vm->_eventMan->_g444_secondaryKeyboardInput = L1301_ps_SecondaryKeyboardInputBackup;
 	_vm->_eventMan->f357_discardAllInput();
 	_vm->_eventMan->f78_showMouse();
-	return _g335_selectedDialogChoice;
+	return _selectedDialogChoice;
 }
 }
