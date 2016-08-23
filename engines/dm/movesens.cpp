@@ -583,7 +583,7 @@ bool MovesensMan::f266_moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMa
 			return false;
 		}
 	}
-	if ((destMapX >= 0) && (((((AL0700_i_Distance = srcMapX - destMapX) < 0) ? -AL0700_i_Distance : AL0700_i_Distance) + (((AL0700_i_Distance = srcMapY - destMapY) < 0) ? -AL0700_i_Distance : AL0700_i_Distance)) == 1)) { /* If source and destination squares are adjacent (if party or group is not being teleported) */
+	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) { /* If source and destination squares are adjacent (if party or group is not being teleported) */
 		AL0699_ui_PrimaryDirection = _vm->_groupMan->f228_getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
 		AL0700_i_SecondaryDirection = returnNextVal(AL0699_ui_PrimaryDirection);
 		for (int16 i = 0; i < 4; ++i)
