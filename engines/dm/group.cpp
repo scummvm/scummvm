@@ -466,7 +466,7 @@ int16 GroupMan::f190_groupGetDamageCreatureOutcome(Group *group, uint16 creature
 					}
 					L0377_ps_Event++;
 				}
-				if (L0383_B_CurrentMapIsPartyMap && ((AL0380_ui_FearResistance = L0376_ps_CreatureInfo->M57_getFearResistance()) != k15_immuneToFear) && ((AL0380_ui_FearResistance += L0379_ui_CreatureCount - 1) < (_vm->getRandomNumber(16)))) { /* Test if the death of a creature frigthens the remaining creatures in the group */
+				if (L0383_B_CurrentMapIsPartyMap && ((AL0380_ui_FearResistance = L0376_ps_CreatureInfo->getFearResistance()) != k15_immuneToFear) && ((AL0380_ui_FearResistance += L0379_ui_CreatureCount - 1) < (_vm->getRandomNumber(16)))) { /* Test if the death of a creature frigthens the remaining creatures in the group */
 					L0378_ps_ActiveGroup->_delayFleeingFromTarget = _vm->getRandomNumber(100 - (AL0380_ui_FearResistance << 2)) + 20;
 					group->setBehaviour(k5_behavior_FLEE);
 				}
@@ -583,7 +583,7 @@ int16 GroupMan::f192_groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, 
 	int16 L0390_i_PoisonResistance;
 
 
-	if (!poisonAttack || ((L0390_i_PoisonResistance = g243_CreatureInfo[creatreType].M61_poisonResistance()) == k15_immuneToPoison)) {
+	if (!poisonAttack || ((L0390_i_PoisonResistance = g243_CreatureInfo[creatreType].getPoisonResistance()) == k15_immuneToPoison)) {
 		return 0;
 	}
 	return ((poisonAttack + _vm->getRandomNumber(4)) << 3) / ++L0390_i_PoisonResistance;
@@ -775,7 +775,7 @@ T0209005_AddEventAndReturn:
 			if ((AL0447_i_Behavior == k0_behavior_WANDER) || (AL0447_i_Behavior == k2_behavior_USELESS) || (AL0447_i_Behavior == k3_behavior_USELESS)) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
 				L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
 				if (L0452_i_DistanceToVisibleParty) {
-					if ((L0452_i_DistanceToVisibleParty <= (L0448_s_CreatureInfo.M56_getAttackRange())) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) { /* If the creature is in range for attack and on the same row or column as the party on the map */
+					if ((L0452_i_DistanceToVisibleParty <= (L0448_s_CreatureInfo.getAttackRange())) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) { /* If the creature is in range for attack and on the same row or column as the party on the map */
 T0209044_SetBehavior6_Attack:
 						if (eventType == kM2_TMEventTypeCreateReactionEvent30HitByProjectile) {
 							f181_groupDeleteEvents(eventMapX, eventMapY);
@@ -865,7 +865,7 @@ T0209061_MoveGroup:
 							_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal(L0454_i_PrimaryDirectionToOrFromParty = _vm->getRandomNumber(4));
 							goto T0209089_DoubleSquareMove; /* BUG0_69 Memory corruption when you close a door on Lord Chaos. The local variable (L0454_i_PrimaryDirectionToOrFromParty) containing the direction where Lord Chaos tries to move may be used as an array index without being initialized and cause memory corruption */
 						}
-						if (L0453_B_NewGroupDirectionFound || ((!_vm->getRandomNumber(4) || (L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.M55_getSmellRange())) && (eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare))) {
+						if (L0453_B_NewGroupDirectionFound || ((!_vm->getRandomNumber(4) || (L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.getSmellRange())) && (eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare))) {
 T0209073_SetDirectionGroup:
 							if (!L0453_B_NewGroupDirectionFound && (L0462_i_TicksSinceLastMove >= 0)) { /* If direction is not found yet then look around in a random direction */
 								AL0446_i_Direction = _vm->getRandomNumber(4);
@@ -887,7 +887,7 @@ T0209073_SetDirectionGroup:
 				if (AL0447_i_Behavior == k7_behavior_APPROACH) {
 					L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
 					if (L0452_i_DistanceToVisibleParty) {
-						if ((L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.M56_getAttackRange()) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) /* If the creature is in range for attack and on the same row or column as the party on the map */
+						if ((L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.getAttackRange()) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) /* If the creature is in range for attack and on the same row or column as the party on the map */
 							goto T0209044_SetBehavior6_Attack;
 T0209081_RunTowardParty:
 						L0461_i_MovementTicks++;
@@ -1017,7 +1017,7 @@ T0209096_SetBehavior0_Wander:
 					(getFlag(L0448_s_CreatureInfo._attributes, k0x0004_MaskCreatureInfo_sideAttack) ||
 					 M50_getCreatureValue(L0445_ps_ActiveGroup->_directions, AL0447_i_CreatureIndex) == L0454_i_PrimaryDirectionToOrFromParty)) {
 					/* If the creature is in range to attack the party and random test succeeds */
-					if ((L0452_i_DistanceToVisibleParty <= (AL0446_i_Range = L0448_s_CreatureInfo.M56_getAttackRange())) &&
+					if ((L0452_i_DistanceToVisibleParty <= (AL0446_i_Range = L0448_s_CreatureInfo.getAttackRange())) &&
 						(!AL0450_i_DistanceXToParty || !AL0451_i_DistanceYToParty) &&
 						(AL0446_i_Range <= (_vm->getRandomNumber(16) + 1))) {
 						if ((AL0446_i_Range == 1) &&
@@ -1141,7 +1141,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 			L0433_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0433_T_Thing);
 		}
 	}
-	if ((L0431_i_SquareType == k5_ElementTypeTeleporter) && getFlag(L0430_ui_Square, k0x0008_TeleporterOpen) && (creatureInfo->M59_getWariness() >= 10)) {
+	if ((L0431_i_SquareType == k5_ElementTypeTeleporter) && getFlag(L0430_ui_Square, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
 		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->f157_getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
 		if (getFlag(L0432_ps_Teleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->f139_isCreatureAllowedOnMap(_g380_currGroupThing, L0432_ps_Teleporter->getTargetMapIndex())) {
 			_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
@@ -1155,7 +1155,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 
 	if (L0431_i_SquareType == k4_DoorElemType) {
 		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->f157_getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
-		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? CreatureInfo::M51_height(creatureInfo->_attributes) : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			_g389_groupMovementBlockedByDoor = true;
 			return false;
 		}
@@ -1206,7 +1206,7 @@ T0200006:
 	while (L0421_i_CreatureViewDirectionCount--) {
 		if (f227_isDestVisibleFromSource(L0425_ai_CreatureViewDirections[L0421_i_CreatureViewDirectionCount], mapX, mapY, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY)) {
 T0200011:
-			AL0422_i_SightRange = L0424_ps_CreatureInfo->M54_getSightRange();
+			AL0422_i_SightRange = L0424_ps_CreatureInfo->getSightRange();
 			if (!getFlag(L0424_ps_CreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision)) {
 				AL0422_i_SightRange -= _vm->_displayMan->_g304_dungeonViewPaletteIndex >> 1;
 			}
@@ -1395,7 +1395,7 @@ int16 GroupMan::f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo
 	int16 L0427_i_ScentOrdinal;
 
 
-	if (!(L0426_ui_SmellRange = creatureInfo->M55_getSmellRange())) {
+	if (!(L0426_ui_SmellRange = creatureInfo->getSmellRange())) {
 		return 0;
 	}
 	if ((((L0426_ui_SmellRange + 1) >> 1) >= _g381_currGroupDistanceToParty) && f199_getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, &GroupMan::f198_isSmellPartyBlocked)) {
@@ -1482,7 +1482,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 	}
 	AL0439_i_TargetCell += L0438_ui_PrimaryDirectionToParty;
 	AL0439_i_TargetCell &= 0x0003;
-	if ((L0441_ps_CreatureInfo->M56_getAttackRange() > 1) && ((_g381_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
+	if ((L0441_ps_CreatureInfo->getAttackRange() > 1) && ((_g381_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
 		switch (AL0437_ui_CreatureType) {
 		case k14_CreatureTypeVexirk:
 		case k23_CreatureTypeLordChaos:
@@ -1651,7 +1651,7 @@ int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
 	}
 	L0563_i_DoubledMapDifficulty = _vm->_dungeonMan->_g269_currMap->_difficulty << 1;
 	L0564_s_CreatureInfo = g243_CreatureInfo[group->_type];
-	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.M58_getExperience());
+	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.getExperience());
 	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(L0562_ps_Champion) < (_vm->getRandomNumber(32) + L0564_s_CreatureInfo._dexterity + L0563_i_DoubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(L0562_ps_Champion, 60))) {
 		if ((AL0559_ui_WoundTest = _vm->getRandomNumber(65536)) & 0x0070) {
 			AL0559_ui_WoundTest &= 0x000F;
@@ -1954,7 +1954,7 @@ T0231009:
 			L0565_i_Damage += L0565_i_Damage + 10;
 		}
 		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
-		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->M58_getExperience() >> 4) + 3);
+		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->getExperience() >> 4) + 3);
 		_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
 	}

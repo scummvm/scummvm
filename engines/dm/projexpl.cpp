@@ -353,7 +353,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 				if ((L0473_T_Thing = _vm->_groupMan->f175_groupGetThing(AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY)) != Thing::_endOfList) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
 					Group *L0472_ps_Group = (Group *)_vm->_dungeonMan->f156_getThingData(L0473_T_Thing);
 					CreatureInfo *L0471_ps_CreatureInfo = &g243_CreatureInfo[L0472_ps_Group->_type];
-					int16 L0469_i_CreatureFireResistance = L0471_ps_CreatureInfo->M60_getFireResistance();
+					int16 L0469_i_CreatureFireResistance = L0471_ps_CreatureInfo->getFireResistance();
 					if (L0469_i_CreatureFireResistance != k15_immuneToFire) {
 						if (getFlag(L0471_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 							attack >>= 2;

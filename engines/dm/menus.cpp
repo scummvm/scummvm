@@ -1537,7 +1537,7 @@ bool MenuMan::f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionInde
 	L1229_i_FrightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
 	L1233_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(_g517_actionTargetGroupThing);
 	L1234_ps_CreatureInfo = &g243_CreatureInfo[L1233_ps_Group->_type];
-	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->M57_getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
+	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
 		L1231_ui_Experience >>= 1;
 	} else {
 		L1235_ps_ActiveGroup = &_vm->_groupMan->_g375_activeGroups[L1233_ps_Group->getActiveGroupIndex()];

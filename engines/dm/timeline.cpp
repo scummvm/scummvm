@@ -429,7 +429,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 			return;
 		}
 		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->f144_getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
-			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::M51_height(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
+			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::getHeight(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
 				if (_vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->f156_getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
 					_vm->_groupMan->f209_processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 				}
@@ -834,7 +834,8 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					} else {
 						L0612_i_CreatureCount--;
 					}
-					if ((AL0618_ui_HealthMultiplier = L0614_ps_Sensor->M45_healthMultiplier()) == 0) {
+					AL0618_ui_HealthMultiplier = L0614_ps_Sensor->getHealthMultiplier();
+					if (AL0618_ui_HealthMultiplier == 0) {
 						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_g269_currMap->_difficulty;
 					}
 					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
@@ -844,7 +845,8 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					if (L0614_ps_Sensor->getOnlyOnce()) {
 						L0614_ps_Sensor->setTypeDisabled();
 					} else {
-						if ((AL0618_ui_Ticks = L0614_ps_Sensor->M46_ticks()) != 0) {
+						AL0618_ui_Ticks = L0614_ps_Sensor->M46_ticks();
+						if (AL0618_ui_Ticks != 0) {
 							L0614_ps_Sensor->setTypeDisabled();
 							if (AL0618_ui_Ticks > 127) {
 								AL0618_ui_Ticks = (AL0618_ui_Ticks - 126) << 6;
@@ -870,7 +872,6 @@ void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) 
 	uint16 L0657_ui_MapY;
 	Group* L0658_ps_Group;
 	bool L0659_B_RandomDirectionMoveRetried;
-
 
 	L0659_B_RandomDirectionMoveRetried = false;
 	L0656_ui_MapX = event->_B._location._mapX;

@@ -173,8 +173,6 @@ enum SquareAspectIndice {
 	k0x8000_FootprintsAspect = 0x8000 // @ MASK0x8000_FOOTPRINTS             
 };
 
-
-
 #define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE   
 #define k15_immuneToPoison 15 // @ C15_IMMUNE_TO_POISON 
 
@@ -198,15 +196,15 @@ public:
 	uint16 _woundProbabilities; /* Contains 4 probabilities to wound a champion's Head (Bits 15-12), Legs (Bits 11-8), Torso (Bits 7-4) and Feet (Bits 3-0) */
 	byte _attackType;
 
-	uint16 M57_getFearResistance() { return (_properties >> 4) & 0xF; }
-	uint16 M58_getExperience() { return (_properties >> 8) & 0xF; }
-	uint16 M59_getWariness() { return (_properties >> 12) & 0xF; }
-	uint16 M60_getFireResistance() { return (_resistances >> 4) & 0xF; }
-	uint16 M61_poisonResistance() { return (_resistances >> 8) & 0xF; }
-	static uint16 M51_height(uint16 attrib) { return (attrib >> 7) & 0x3; }
-	uint16 M54_getSightRange() { return (_ranges) & 0xF; }
-	uint16 M55_getSmellRange() { return  (_ranges >> 8) & 0xF; }
-	uint16 M56_getAttackRange() { return (_ranges >> 12) & 0xF; }
+	uint16 getFearResistance() { return (_properties >> 4) & 0xF; }
+	uint16 getExperience() { return (_properties >> 8) & 0xF; }
+	uint16 getWariness() { return (_properties >> 12) & 0xF; }
+	uint16 getFireResistance() { return (_resistances >> 4) & 0xF; }
+	uint16 getPoisonResistance() { return (_resistances >> 8) & 0xF; }
+	static uint16 getHeight(uint16 attrib) { return (attrib >> 7) & 0x3; }
+	uint16 getSightRange() { return (_ranges) & 0xF; }
+	uint16 getSmellRange() { return  (_ranges >> 8) & 0xF; }
+	uint16 getAttackRange() { return (_ranges >> 12) & 0xF; }
 }; // @ CREATURE_INFO
 
 
@@ -231,7 +229,6 @@ enum TeleporterScope {
 	k0x0002_TelepScopeObjOrParty = 2 // @ MASK0x0002_SCOPE_OBJECTS_OR_PARTY
 };
 
-
 class Teleporter {
 	Thing _nextThing;
 	uint16 _attributes;
@@ -247,8 +244,6 @@ public:
 	byte getTargetMapX() { return _attributes & 0xF; }
 	uint16 getTargetMapIndex() { return _destMapIndex >> 8; }
 }; // @ TELEPORTER
-
-
 
 class TextString {
 	Thing _nextThing;
@@ -320,8 +315,6 @@ public:
 	void setData(uint16 dat) { _datAndType = dat; } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
-
-
 	bool getOnlyOnce() { return (_attributes >> 2) & 1; }
 	uint16 getEffectA() { return (_attributes >> 3) & 0x3; }
 	bool getRevertEffectA() { return (_attributes >> 5) & 0x1; }
@@ -333,7 +326,7 @@ public:
 	uint16 getTargetMapY() { return (_action >> 11); }
 	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
 	Direction getTargetCell() { return (Direction)((_action >> 4) & 3); }
-	uint16 M45_healthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
+	uint16 getHealthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
 	uint16 M46_ticks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
 	uint16 M47_kineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
 	uint16 M48_stepEnergy() { return ((_action >> 4) >> 8) & 0xFF; }// @ M48_STEP_ENERGY
