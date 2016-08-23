@@ -21,6 +21,7 @@
  */
 
 #include "engines/director/lingo/lingo.h"
+#include "director/sprite.h"
 
 namespace Director {
 

@@ -36,10 +36,10 @@ namespace Director {
 
 class Lingo;
 class DirectorSound;
+class Frame;
+class Sprite;
 class Score;
 class DirectorEngine;
-
-#define CHANNEL_COUNT 24
 
 enum CastType {
 	kCastBitmap = 1,
@@ -55,132 +55,11 @@ enum CastType {
 	kCastScript
 };
 
-//Director v4
-enum SpriteType {
-	kInactiveSprite, //turns the sprite off
-	kBitmapSprite,
-	kRectangleSprite,
-	kRoundedRectangleSprite,
-	kOvalSprite,
-	kLineTopBottomSprite, //line from top left to bottom right
-	kLineBottomTopSprite, //line from bottom left to top right
-	kTextSprite,
-	kButtonSprite,
-	kCheckboxSprite,
-	kRadioButtonSprite,
-	kUndeterminedSprite = 16 //use castType property to examine the type of cast member associated with sprite
-};
-
-enum SpritePosition {
-	kSpritePositionUnk1 = 0,
-	kSpritePositionEnabled,
-	kSpritePositionUnk2,
-	kSpritePositionFlags = 4,
-	kSpritePositionCastId = 6,
-	kSpritePositionY = 8,
-	kSpritePositionX = 10,
-	kSpritePositionHeight = 12,
-	kSpritePositionWidth = 14
-};
-
-enum MainChannelsPosition {
-	kScriptIdPosition = 0,
-	kSoundType1Position,
-	kTransFlagsPosition,
-	kTransChunkSizePosition,
-	kTempoPosition,
-	kTransTypePosition,
-	kSound1Position,
-	kSkipFrameFlagsPosition = 8,
-	kBlendPosition,
-	kSound2Position,
-	kSound2TypePosition = 11,
-	kPaletePosition = 15
-};
-
-enum InkType {
-	kInkTypeCopy,
-	kInkTypeTransparent,
-	kInkTypeReverse,
-	kInkTypeGhost,
-	kInkTypeNotCopy,
-	kInkTypeNotTrans,
-	kInkTypeNotReverse,
-	kInkTypeNotGhost,
-	kInkTypeMatte,
-	kInkTypeMask,
-	//10-31 Not used (Lingo in a Nutshell)
-	kInkTypeBlend = 32,
-	kInkTypeAddPin,
-	kInkTypeAdd,
-	kInkTypeSubPin,
-	kInkTypeBackgndTrans,
-	kInkTypeLight,
-	kInkTypeSub,
-	kInkTypeDark
-};
-
 enum ScriptType {
 	kMovieScript = 0,
 	kSpriteScript = 1,
 	kFrameScript = 2,
 	kMaxScriptType = 2
-};
-
-enum TransitionType {
-	kTransNone,
-	kTransWipeRight,
-	kTransWipeLeft,
-	kTransWipeDown,
-	kTransWipeUp,
-	kTransCenterOutHorizontal,
-	kTransEdgesInHorizontal,
-	kTransCenterOutVertical,
-	kTransEdgesInVertical,
-	kTransCenterOutSquare,
-	kTransEdgesInSquare,
-	kTransPushLeft,
-	kTransPushRight,
-	kTransPushDown,
-	kTransPushUp,
-	kTransRevealUp,
-	kTransRevealUpRight,
-	kTransRevealRight,
-	kTransRevealDown,
-	kTransRevealDownRight,
-	kTransRevealDownLeft,
-	kTransRevealLeft,
-	kTransRevealUpLeft,
-	kTransDissolvePixelsFast,
-	kTransDissolveBoxyRects,
-	kTransDissolveBoxySquares,
-	kTransDissolvePatterns,
-	kTransRandomRows,
-	kTransRandomColumns,
-	kTransCoverDown,
-	kTransCoverDownLeft,
-	kTransCoverDownRight,
-	kTransCoverLeft,
-	kTransCoverRight,
-	kTransCoverUp,
-	kTransCoverUpLeft,
-	kTransCoverUpRight,
-	kTransTypeVenitianBlind,
-	kTransTypeCheckerboard,
-	kTransTypeStripsBottomBuildLeft,
-	kTransTypeStripsBottomBuildRight,
-	kTransTypeStripsLeftBuildDown,
-	kTransTypeStripsLeftBuildUp,
-	kTransTypeStripsRightBuildDown,
-	kTransTypeStripsRightBuildUp,
-	kTransTypeStripsTopBuildLeft,
-	kTransTypeStripsTopBuildRight,
-	kTransZoomOpen,
-	kTransZoomClose,
-	kTransVerticalBinds,
-	kTransDissolveBitsTrans,
-	kTransDissolvePixels,
-	kTransDissolveBits
 };
 
 struct Cast {
@@ -279,98 +158,6 @@ struct CastInfo {
 	Common::String directory;
 	Common::String fileName;
 	Common::String type;
-};
-
-struct PaletteInfo {
-	uint8 firstColor;
-	uint8 lastColor;
-	uint8 flags;
-	uint8 speed;
-	uint16 frameCount;
-};
-
-class Sprite {
-public:
-	Sprite();
-	Sprite(const Sprite &sprite);
-	~Sprite();
-	bool _enabled;
-	byte _castId;
-	InkType _ink;
-	uint16 _trails;
-	Cast *_cast;
-	uint16 _flags;
-	Common::Point _startPoint;
-	uint16 _width;
-	uint16 _height;
-	//TODO: default constraint = 0, if turned on, sprite is constrainted to the bounding rect
-	//As i know, constrainted != 0 only if sprite moveable
-	byte _constraint;
-	byte _moveable;
-	byte _backColor;
-	byte _foreColor;
-	uint16 _left;
-	uint16 _right;
-	uint16 _top;
-	uint16 _bottom;
-	byte _blend;
-	bool _visible;
-	SpriteType _type;
-	//Using in digital movie sprites
-	byte _movieRate;
-	uint16 _movieTime;
-	uint16 _startTime;
-	uint16 _stopTime;
-	byte _volume;
-	byte _stretch;
-	//Using in shape sprites
-	byte _lineSize;
-	//Using in text sprites
-	Common::String _editableText;
-};
-
-class Frame {
-public:
-	Frame(DirectorEngine *vm);
-	Frame(const Frame &frame);
-	~Frame();
-	void readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void prepareFrame(Score *score);
-	uint16 getSpriteIDFromPos(Common::Point pos);
-
-private:
-	void playTransition(Score *score);
-	void playSoundChannel();
-	void renderSprites(Graphics::ManagedSurface &surface, bool renderTrail);
-	void renderText(Graphics::ManagedSurface &surface, uint16 spriteId);
-	void renderButton(Graphics::ManagedSurface &surface, uint16 spriteId);
-	void readPaletteInfo(Common::SeekableSubReadStreamEndian &stream);
-	void readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	void readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16 offset, uint16 size);
-	Image::ImageDecoder *getImageFrom(uint16 spriteID, int w, int h);
-	void drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-	void drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect);
-public:
-	uint8 _actionId;
-	uint8 _transDuration;
-	uint8 _transArea; //1 - Whole Stage, 0 - Changing Area
-	uint8 _transChunkSize;
-	TransitionType _transType;
-	PaletteInfo *_palette;
-	uint8 _tempo;
-
-	uint16 _sound1;
-	uint8 _soundType1;
-	uint16 _sound2;
-	uint8 _soundType2;
-
-	uint8 _skipFrameFlag;
-	uint8 _blend;
-	Common::Array<Sprite *> _sprites;
-	Common::Array<Common::Rect > _drawRects;
-	DirectorEngine *_vm;
 };
 
 struct Label {

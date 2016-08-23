@@ -3,11 +3,13 @@ MODULE := engines/director
 MODULE_OBJS = \
 	detection.o \
 	director.o \
+	frame.o \
 	images.o \
 	movie.o \
 	resource.o \
 	score.o \
 	sound.o \
+	sprite.o \
 	lingo/lingo-gr.o \
 	lingo/lingo.o \
 	lingo/lingo-builtins.o \
