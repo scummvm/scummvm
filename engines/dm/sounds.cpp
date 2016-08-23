@@ -39,8 +39,8 @@
 
 namespace DM {
 
-SoundMan* SoundMan::getSoundMan(DMEngine* vm, const ADGameDescription* gameVersion) {
-	switch (gameVersion->platform) {
+SoundMan* SoundMan::getSoundMan(DMEngine* vm, const DMADGameDescription* gameVersion) {
+	switch (gameVersion->_desc.platform) {
 	default: warning(false, "Unknown platform, using default Amiga SoundMan");
 	case Common::kPlatformAmiga: return new SoundMan(vm);
 	case Common::kPlatformAtariST: return new SoundMan_Atari(vm);

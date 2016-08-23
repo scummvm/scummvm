@@ -40,7 +40,7 @@ static const PlainGameDescriptor DMGames[] = {
 	{0, 0}
 };
 
-static const ADGameDescription gameDescriptions[] = {
+static const DMADGameDescription gameDescriptions[] = {
 	{
 		"dm", "Amiga 2.0v English",
 		{
@@ -48,7 +48,11 @@ static const ADGameDescription gameDescriptions[] = {
 			{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
 		AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_amiga,
+		{ k_saveTarget_DM21, k_saveTarget_endOfList },
+		{ k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
+		{ k_savePlatform_accept_any}
 	},
 	{
 		"dm", "Atari ???v English",
@@ -57,20 +61,14 @@ static const ADGameDescription gameDescriptions[] = {
 			{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
 			AD_LISTEND
 		},
-	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
+	    Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_atari_st,
+	    { k_saveTarget_DM21, k_saveTarget_endOfList},
+	    { k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
+	    { k_savePlatform_accept_any }
 	},
 
 	AD_TABLE_END_MARKER
-};
-
-static ADGameDescription fallbackDesc = {
-	"dm",
-	"Unknown version",
-	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-	Common::UNK_LANG,
-	Common::kPlatformDOS,
-	ADGF_NO_FLAGS,
-	GUIO1(GUIO_NONE)
 };
 
 
@@ -81,7 +79,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class DMMetaEngine : public AdvancedMetaEngine {
 public:
-	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(ADGameDescription), DMGames, optionsList) {
+	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
 		_singleId = "dm";
 	}
 
@@ -93,11 +91,9 @@ public:
 		return "Dummy";
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const { return gameDescriptions; }
-
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc)
-			*engine = new DM::DMEngine(syst, desc);
+			*engine = new DM::DMEngine(syst, (DMADGameDescription*)desc);
 		return desc != nullptr;
 	}
 

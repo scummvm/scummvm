@@ -146,7 +146,7 @@ int16 M38_distance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
-DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc) {
+DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst), _console(nullptr), _gameVersion(desc) {
 	// register random source
 	_rnd = new Common::RandomSource("dm");
 
@@ -166,7 +166,6 @@ DMEngine::DMEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst),
 	_sound = nullptr;
 
 	_engineShouldQuit = false;
-	_g528_saveFormat = k_FORMAT_NONE;
 	_g526_dungeonId = 0;
 
 	_g298_newGame = 0;
@@ -520,7 +519,7 @@ void DMEngine::f2_gameloop() {
 			}
 
 			_system->delayMillis(2);
-			if (++vblankCounter >= _g318_waitForInputMaxVerticalBlankCount * 5)
+			if (++vblankCounter >= _g318_waitForInputMaxVerticalBlankCount * 4)
 				_g321_stopWaitingForPlayerInput = true;
 
 		} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
@@ -1082,5 +1081,5 @@ void DMEngine::f445_STARTEND_fuseSequenceUpdate() {
 					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
 }
 
-Common::Language DMEngine::getGameLanguage() { return _gameVersion->language; }
+Common::Language DMEngine::getGameLanguage() { return _gameVersion->_desc.language; }
 } // End of namespace DM

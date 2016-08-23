@@ -53,8 +53,11 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 	Common::InSaveFile *file = nullptr;
 
 	struct {
-		SaveFormat _saveFormat;
+		SaveTarget _saveTarget;
 		int32 _saveVersion;
+		OriginalSaveFormat _saveFormat;
+		OriginalSavePlatform _savePlatform;
+
 		int32 _gameId;
 		uint16 _dungeonId;
 	} dmSaveHeader;
@@ -64,8 +67,6 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		saveFileManager = _system->getSavefileManager();
 		file = saveFileManager->openForLoading(fileName);
 	}
-
-	dmSaveHeader._saveFormat = k_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST;
 
 	if (_g298_newGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
@@ -79,8 +80,11 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 
 		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
-		dmSaveHeader._saveFormat = (SaveFormat)file->readSint32BE();
+
+		dmSaveHeader._saveTarget = (SaveTarget)file->readSint32BE();
 		dmSaveHeader._saveVersion = file->readSint32BE();
+		dmSaveHeader._saveFormat = (OriginalSaveFormat)file->readSint32BE();
+		dmSaveHeader._savePlatform = (OriginalSavePlatform)file->readSint32BE();
 		dmSaveHeader._gameId = file->readSint32BE();
 		dmSaveHeader._dungeonId = file->readUint16BE();
 
@@ -135,7 +139,6 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
 		}
 	} else {
-		_g528_saveFormat = dmSaveHeader._saveFormat;
 		_g526_dungeonId = dmSaveHeader._dungeonId;
 
 		_g524_restartGameAllowed = true;
@@ -295,8 +298,10 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 
 	writeSaveGameHeader(file, saveDescription);
 
-	file->writeSint32BE(_g528_saveFormat);
+	file->writeSint32BE(_gameVersion->_saveTargetToWrite);
 	file->writeSint32BE(1); // save version
+	file->writeSint32BE(_gameVersion->_origSaveFormatToWrite);
+	file->writeSint32BE(_gameVersion->_origPlatformToWrite);
 	file->writeSint32BE(_g525_gameId);
 	file->writeUint16BE(_g526_dungeonId);
 

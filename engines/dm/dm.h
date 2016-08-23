@@ -58,12 +58,47 @@ class ProjExpl;
 class DialogMan;
 class SoundMan;
 
-enum SaveFormat {
-	k_FORMAT_NONE = 0,
-	k_FORMAT_DM_ATARI_ST = 1,
-	k_FORMAT_DM_AMIGA_2X_PC98_X68000_FM_TOWNS_CSB_ATARI_ST = 2,
-	k_FORMAT_DM_APPLE_IIGS = 3,
-	k_FORMAT_DM_AMIGA_36_PC_CSB_AMIGA_PC98_X68000_FM_TOWNS = 5,
+enum OriginalSaveFormat {
+	k_saveFormat_accept_any = -1,
+	k_saveFormat_endOfList = 0,
+	k_saveFormat_dm_atari_st = 1,
+	k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st = 2,
+	k_saveFormat_dm_apple_iigs = 3,
+	k_saveFormat_dm_amiga_36_pc_csb_amiga_pc98_x68000_fm_towns = 5,
+	k_saveFormat_total
+};
+
+enum OriginalSavePlatform {
+	k_savePlatform_accept_any = -1,
+	k_savePlatform_endOfList = 0,
+	k_savePlatform_atari_st = 1, // @ C1_PLATFORM_ATARI_ST   
+	k_savePlatform_apple_iigs = 2, // @ C2_PLATFORM_APPLE_IIGS 
+	k_savePlatform_amiga = 3, // @ C3_PLATFORM_AMIGA      
+	k_savePlatform_pc98 = 5, // @ C5_PLATFORM_PC98       
+	k_savePlatform_x68000 = 6, // @ C6_PLATFORM_X68000     
+	k_savePlatform_fm_towns_en = 7, // @ C7_PLATFORM_FM_TOWNS_EN
+	k_savePlatform_fm_towns_jp = 8, // @ C8_PLATFORM_FM_TOWNS_JP
+	k_savePlatform_pc = 9, // @ C9_PLATFORM_PC
+	k_savePlatform_total
+};
+
+enum SaveTarget {
+	k_saveTarget_accept_any = -1,
+	k_saveTarget_endOfList = 0,
+	k_saveTarget_DM21 = 1,
+	k_saveTarget_total
+};
+
+struct DMADGameDescription {
+	ADGameDescription _desc;
+
+	SaveTarget _saveTargetToWrite;
+	OriginalSaveFormat _origSaveFormatToWrite;
+	OriginalSavePlatform _origPlatformToWrite;
+
+	SaveTarget _saveTargetToAccept[k_saveTarget_total + 1];
+	OriginalSaveFormat _saveFormatToAccept[k_saveFormat_total + 1];
+	OriginalSavePlatform _origPlatformToAccept[k_savePlatform_total + 1];
 };
 
 void warning(bool repeat, const char *s, ...);
@@ -212,7 +247,7 @@ class DMEngine : public Engine {
 	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
 	void f439_drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 public:
-	explicit DMEngine(OSystem *syst, const ADGameDescription *gameDesc);
+	explicit DMEngine(OSystem *syst, const DMADGameDescription *gameDesc);
 	~DMEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
@@ -241,14 +276,13 @@ public:
 	Common::Language getGameLanguage();
 
 private:
-	SaveFormat _g528_saveFormat; // @ G0528_i_Format
 	uint16 _g526_dungeonId; // @ G0526_ui_DungeonID
 	byte *_g562_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_g564_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
 	
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
-	const ADGameDescription *_gameVersion;
+	const DMADGameDescription *_gameVersion;
 	bool _canLoadFromGMM;
 public:
 	Console *_console;

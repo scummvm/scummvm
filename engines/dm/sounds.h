@@ -68,7 +68,7 @@ protected:
 public:
 	virtual ~SoundMan();
 
-	static SoundMan *getSoundMan(DMEngine *vm, const ADGameDescription *gameVersion);
+	static SoundMan *getSoundMan(DMEngine *vm, const DMADGameDescription *gameVersion);
 
 	SoundData _gK24_soundData[k34_D13_soundCount]; // @ K0024_as_SoundData
 	Common::Queue<PendingSound> _pendingSounds;
