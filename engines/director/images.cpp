@@ -87,7 +87,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.readUint16LE(); // planes
 	uint16 bitsPerPixel = stream.readUint16LE();
 	uint32 compression = stream.readUint32BE();
-	uint32 imageSize = stream.readUint32LE();
+	/* uint32 imageSize = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
 	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
 	_paletteColorCount = stream.readUint32LE();
@@ -95,7 +95,6 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	_paletteColorCount = (_paletteColorCount == 0) ? 255: _paletteColorCount;
 
-	uint16 imageRawSize = stream.size() - 40;
 	Common::SeekableSubReadStream subStream(&stream, 40, stream.size());
 
 	_codec = Image::createBitmapCodec(compression, width, height, bitsPerPixel);
@@ -120,7 +119,7 @@ BITDDecoder::BITDDecoder(int w, int h) {
 	_surface = new Graphics::Surface();
 	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
-	_palette = new byte[255 * 3];
+	_palette = new byte[256 * 3];
 
 	_palette[0] = _palette[1] = _palette[2] = 0;
 	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
@@ -175,7 +174,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 				color = b;
 
 			for (int c = 0; c < 8; c++) {
-				*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c % 8))) ? 0 : 0xff;
+				*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
 				x++;
 				if (x == _surface->w) {
 					y++;
