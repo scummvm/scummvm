@@ -24,7 +24,6 @@
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
 #include "titanic/game_manager.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 

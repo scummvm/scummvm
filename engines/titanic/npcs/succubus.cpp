@@ -25,7 +25,6 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -324,7 +323,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 }
 
 bool CSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
-	if (g_vm->getRandomNumber(4) == 0 && compareRoomNameTo("PromenadeDeck")) {
+	if (getRandomNumber(4) == 0 && compareRoomNameTo("PromenadeDeck")) {
 		CParrotSpeakMsg speakMsg("SuccUBus", "EnterView");
 		speakMsg.execute("PerchedParrot");
 	}
@@ -381,7 +380,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 
 	CGameObject *mailObject = findMail(pet->getRoomFlags());
 	if (!mailObject) {
-		switch (g_vm->getRandomNumber(2)) {
+		switch (getRandomNumber(2)) {
 		case 0:
 			startTalking(this, 70111, findView());
 			break;
@@ -465,7 +464,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 	uint petRoomFlags = pet->getRoomFlags();
 	if (mailExists(petRoomFlags)) {
-		switch (g_vm->getRandomNumber(2)) {
+		switch (getRandomNumber(2)) {
 		case 0:
 			startTalking(this, 70080, findView());
 			break;
@@ -482,7 +481,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 		CGameObject *mailObject = findMailByFlags(compareRoomNameTo("Titania")
 			? 3 : _field140, petRoomFlags);
 		if (!mailObject) {
-			if (g_vm->getRandomNumber(1) == 0) {
+			if (getRandomNumber(1) == 0) {
 				startTalking(this, 70104, findView());
 			} else {
 				startTalking(this, 70105, findView());
@@ -532,7 +531,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 				findMailByFlags(_field140, petRoomFlags);
 
 			if (mailObject) {
-				switch (g_vm->getRandomNumber(4)) {
+				switch (getRandomNumber(4)) {
 				case 0:
 					startTalking(this, 70094, findView());
 					break;
@@ -647,7 +646,7 @@ bool CSuccUBus::SignalObject(CSignalObject *msg) {
 }
 
 bool CSuccUBus::TurnOn(CTurnOn *msg) {
-	if (g_vm->getRandomNumber(9) == 0) {
+	if (getRandomNumber(9) == 0) {
 		CParrotSpeakMsg speakMsg("SuccUBus", "TurnOn");
 		speakMsg.execute("PerchedParrot");
 	}

@@ -24,25 +24,78 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CHeadSmashLever, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+END_MESSAGE_MAP()
+
 CHeadSmashLever::CHeadSmashLever() : CBackground(),
-		_fieldE0(0), _fieldE4(0), _fieldE8(0) {}
+		_enabled(false), _fieldE4(false), _ticksCount(0) {}
 
 void CHeadSmashLever::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_enabled, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_ticksCount, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CHeadSmashLever::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_enabled = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_ticksCount = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CHeadSmashLever::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_enabled) {
+		playMovie(0, 14, 0);
+		playSound("z#54.wav");
+		int soundHandle = playSound("z#45.wav");
+		queueSound("z#49.wav", soundHandle);
+		_ticksCount = getTicksCount();
+		_fieldE4 = true;
+	} else {
+		playMovie(0);
+		playSound("z#56.wav");
+	}
+
+	return true;
+}
+
+bool CHeadSmashLever::ActMsg(CActMsg *msg) {
+	if (msg->_action == "EnableObject")
+		_enabled = true;
+	else if (msg->_action == "DisableObject")
+		_enabled = false;
+
+	return true;
+}
+
+bool CHeadSmashLever::FrameMsg(CFrameMsg *msg) {
+	if (_fieldE4 && msg->_ticks > (_ticksCount + 750)) {
+		CActMsg actMsg1("CreatorsChamber.Node 1.S");
+		actMsg1.execute("MoveToCreators");
+		CActMsg actMsg2("PlayToEnd");
+		actMsg2.execute("SmashingStatue");
+
+		playSound("b#16.wav");
+		_fieldE4 = false;
+	}
+
+	return true;
+}
+
+bool CHeadSmashLever::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	if (_fieldE4)
+		_ticksCount = getTicksCount();
+
+	return true;
 }
 
 } // End of namespace Titanic

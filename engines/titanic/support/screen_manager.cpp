@@ -21,8 +21,8 @@
  */
 
 #include "titanic/support/screen_manager.h"
-#include "titanic/titanic.h"
 #include "titanic/support/video_surface.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -38,7 +38,6 @@ CScreenManager::CScreenManager(TitanicEngine *vm): _vm(vm) {
 	_textCursor = nullptr;
 	_inputHandler = nullptr;
 	_fontNumber = 0;
-	// TODO: Further initialization
 
 	_screenManagerPtr = this;
 }

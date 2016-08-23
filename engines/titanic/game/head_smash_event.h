@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CHeadSmashEvent : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF;
 

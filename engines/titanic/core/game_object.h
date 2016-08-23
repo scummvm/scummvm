@@ -23,6 +23,7 @@
 #ifndef TITANIC_GAME_OBJECT_H
 #define TITANIC_GAME_OBJECT_H
 
+#include "common/stream.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
@@ -442,7 +443,12 @@ protected:
 	/**
 	 * Returns the current system tick count
 	 */
-	uint32 getTickCount();
+	uint32 getTicksCount();
+
+	/**
+	 * Gets a resource from the DAT file
+	 */
+	Common::SeekableReadStream *getResource(const CString &name);
 
 	/**
 	 * Returns true if a mail with a specified Id exists

@@ -28,10 +28,15 @@
 namespace Titanic {
 
 class CHeadSmashLever : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
+	bool _enabled;
+	bool _fieldE4;
+	int _ticksCount;
 public:
 	CLASSDEF;
 	CHeadSmashLever();

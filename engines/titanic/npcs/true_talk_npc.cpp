@@ -23,7 +23,7 @@
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -103,7 +103,7 @@ bool CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMs
 			stopTimer(_speechTimerId);
 
 		_soundId = msg->_soundId;
-		_fieldF0 = g_vm->_events->getTicksCount();
+		_fieldF0 = getTicksCount();
 
 		if (hasActiveMovie() || (_npcFlags & NPCFLAG_2)) {
 			_npcFlags &= ~NPCFLAG_2;
@@ -147,7 +147,7 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 		return false;
 	}
 
-	int diff = g_vm->_events->getTicksCount() - _fieldF0;
+	int diff = getTicksCount() - _fieldF0;
 	int ticks = MAX((int)_soundId - diff, 0);
 	CNPCPlayTalkingAnimationMsg msg1(ticks, ticks > 1000 ? 2 : 1, 0);
 	msg1.execute(this);
@@ -161,7 +161,7 @@ bool CTrueTalkNPC::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CTrueTalkNPC::NPCQueueIdleAnimMsg(CNPCQueueIdleAnimMsg *msg) {
-	int rndVal = g_vm->getRandomNumber(_fieldF8 - 1) - (_fieldF8 / 2);
+	int rndVal = getRandomNumber(_fieldF8 - 1) - (_fieldF8 / 2);
 	_speechTimerId = startAnimTimer("NPCIdleAnim", _fieldF4 + rndVal, 0);
 
 	return true;

@@ -26,9 +26,9 @@
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/screen_manager.h"
-#include "titanic/titanic.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 

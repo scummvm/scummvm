@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CHeadSmashEvent, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CHeadSmashEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
@@ -32,6 +37,20 @@ void CHeadSmashEvent::save(SimpleFile *file, int indent) {
 void CHeadSmashEvent::load(SimpleFile *file) {
 	file->readNumber();
 	CBackground::load(file);
+}
+
+bool CHeadSmashEvent::ActMsg(CActMsg *msg) {
+	if (msg->_action == "PlayToEnd") {
+		setVisible(true);
+		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CHeadSmashEvent::MovieEndMsg(CMovieEndMsg *msg) {
+	changeView("CreatorsChamber.Node 1.W");
+	return true;
 }
 
 } // End of namespace Titanic

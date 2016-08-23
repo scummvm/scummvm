@@ -21,7 +21,6 @@
  */
 
 #include "titanic/game/desk_click_responder.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -51,7 +50,7 @@ bool CDeskClickResponder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_fieldD4)
 		return CClickResponder::MouseButtonDownMsg(msg);
 
-	uint ticks = g_vm->_events->getTicksCount();
+	uint ticks = getTicksCount();
 	if (!_ticks || ticks > (_ticks + 4000)) {
 		playSound("a#22.wav");
 		_ticks = ticks;

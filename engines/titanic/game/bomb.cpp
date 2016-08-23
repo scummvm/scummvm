@@ -21,7 +21,6 @@
  */
 
 #include "titanic/game/bomb.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -211,7 +210,7 @@ bool CBomb::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_fieldE8 = 17;
 	_fieldEC = 9;
 	_fieldF0 = 0;
-	_startingTicks = g_vm->_events->getTicksCount();
+	_startingTicks = getTicksCount();
 	return true;
 }
 

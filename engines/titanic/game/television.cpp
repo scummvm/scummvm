@@ -20,10 +20,10 @@
  *
  */
 
-#include "titanic/titanic.h"
 #include "titanic/game/television.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/game/get_lift_eye2.h"
+#include "titanic/core/project_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -229,7 +229,7 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 }
 
 bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
-	if (g_vm->getRandomNumber(6) == 0) {
+	if (getRandomNumber(6) == 0) {
 		CParrotSpeakMsg parrotMsg("Television", "");
 		parrotMsg.execute("PerchedParrot");
 	}

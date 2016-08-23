@@ -21,7 +21,6 @@
  */
 
 #include "titanic/game/announce.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -76,7 +75,7 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 			"", "", "", "", "", "", ""
 		};
 
-		int randVal = _nameIndex ? g_vm->getRandomNumber(2) : 0;
+		int randVal = _nameIndex ? getRandomNumber(2) : 0;
 		switch (randVal) {
 		case 0:
 		case 1:
@@ -85,21 +84,21 @@ bool CAnnounce::TimerMsg(CTimerMsg *msg) {
 				queueSound(waveNames1[_nameIndex], _soundHandle);
 				++_nameIndex;
 			} else {
-				queueSound(waveNames1[1 + g_vm->getRandomNumber(17)], _soundHandle);
+				queueSound(waveNames1[1 + getRandomNumber(17)], _soundHandle);
 			}
 			break;
 
 		case 2:
 			_soundHandle = playSound("z#189.wav");
-			queueSound(waveNames2[1 + g_vm->getRandomNumber(35)], _soundHandle);
+			queueSound(waveNames2[1 + getRandomNumber(35)], _soundHandle);
 			break;
 
 		default:
 			break;
 		}
 
-		addTimer(1, 300000 + g_vm->getRandomNumber(30000), 0);
-		if (g_vm->getRandomNumber(3) == 0)
+		addTimer(1, 300000 + getRandomNumber(30000), 0);
+		if (getRandomNumber(3) == 0)
 			addTimer(2, 4000, 0);
 
 	} else if (msg->_timerCtr == 2) {

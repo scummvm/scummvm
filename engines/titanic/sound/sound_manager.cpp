@@ -22,6 +22,7 @@
 
 #include "titanic/sound/sound_manager.h"
 #include "titanic/titanic.h"
+
 namespace Titanic {
 
 const uint SAMPLING_RATE = 22050;

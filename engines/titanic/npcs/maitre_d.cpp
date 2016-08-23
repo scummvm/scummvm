@@ -23,7 +23,6 @@
 #include "titanic/npcs/maitre_d.h"
 #include "titanic/core/room_item.h"
 #include "titanic/sound/music_room.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -192,7 +191,7 @@ bool CMaitreD::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 bool CMaitreD::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	if (_field12C) {
 		stopAnimTimer(_timerId);
-		_timerId = startAnimTimer("MD Fight", 3000 + g_vm->getRandomNumber(3000));
+		_timerId = startAnimTimer("MD Fight", 3000 + getRandomNumber(3000));
 	}
 
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
@@ -201,7 +200,7 @@ bool CMaitreD::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 bool CMaitreD::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_field12C) {
-		_timerId = startAnimTimer("MD Fight", 3000 + g_vm->getRandomNumber(3000));
+		_timerId = startAnimTimer("MD Fight", 3000 + getRandomNumber(3000));
 	}
 
 	return true;

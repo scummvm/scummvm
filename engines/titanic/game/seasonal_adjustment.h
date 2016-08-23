@@ -27,6 +27,13 @@
 
 namespace Titanic {
 
+enum Season {
+	SPRING = 0,
+	SUMMER = 1,
+	AUTUMN = 2,
+	WINTER = 3
+};
+
 class CSeasonalAdjustment : public CBackground {
 public:
 	int _fieldE0;

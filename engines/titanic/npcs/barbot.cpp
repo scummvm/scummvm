@@ -380,12 +380,12 @@ bool CBarbot::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _frameNum) {
 		_frameNum = -1;
-		_field14C = g_vm->_events->getTicksCount();
+		_field14C = getTicksCount();
 	}
 
 	if (msg->_endFrame == _field148) {
 		_field148 = -1;
-		_field150 = g_vm->_events->getTicksCount();
+		_field150 = getTicksCount();
 	}
 
 	if (msg->_endFrame == _field13C) {
@@ -678,7 +678,7 @@ bool CBarbot::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CBarbot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
-	_field14C = _field150 = g_vm->_events->getTicksCount();
+	_field14C = _field150 = getTicksCount();
 	_frameNum = -1;
 	_field148 = -1;
 
@@ -720,7 +720,7 @@ bool CBarbot::TimerMsg(CTimerMsg *msg) {
 	if (!_fieldC4 && compareRoomNameTo("Bar")) {
 		CParrotSpeakMsg speakMsg("Barbot", "AskForDrink");
 		speakMsg.execute("PerchedParrot");
-		addTimer(10000 + g_vm->getRandomNumber(20000));
+		addTimer(10000 + getRandomNumber(20000));
 	}
 
 	return true;

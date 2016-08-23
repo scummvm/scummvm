@@ -23,7 +23,6 @@
 #include "titanic/npcs/parrot.h"
 #include "titanic/core/project_item.h"
 #include "titanic/carry/carry.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -426,7 +425,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 	}
 
 	// Don't have the parrot speak too often
-	if ((g_vm->_events->getTicksCount() - _field120) < 20000 || _field100)
+	if ((getTicksCount() - _field120) < 20000 || _field100)
 		return true;
 
 	playSound("z#475.wav", 50);
@@ -446,8 +445,8 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 		else if (msg->_action == "EnterView")
 			startTalking("PerchedParrot", 80159);
 	} else if (msg->_target == "Cellpoints") {
-		if (g_vm->getRandomNumber(2) == 0) {
-			switch (g_vm->getRandomNumber(2)) {
+		if (getRandomNumber(2) == 0) {
+			switch (getRandomNumber(2)) {
 			case 0:
 				startTalking("PerchedParrot", 80193);
 				break;
@@ -473,7 +472,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 		}
 	}
 
-	_field120 = g_vm->_events->getTicksCount();
+	_field120 = getTicksCount();
 	return true;
 }
 
@@ -502,8 +501,8 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 			&& _visible && !_v4 && !compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
-			if (!_v5 || g_vm->getRandomNumber(3) != 0) {
-				if (g_vm->getRandomNumber(1)) {
+			if (!_v5 ||getRandomNumber(3) != 0) {
+				if (getRandomNumber(1)) {
 					startTalking(this, 280267, findView());
 				} else {
 					msg->_names = NAMES;

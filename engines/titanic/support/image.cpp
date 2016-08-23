@@ -21,8 +21,8 @@
  */
 
 #include "titanic/support/image.h"
-#include "titanic/titanic.h"
 #include "image/bmp.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 

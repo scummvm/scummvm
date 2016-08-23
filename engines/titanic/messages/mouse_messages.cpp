@@ -23,7 +23,6 @@
 #include "titanic/messages/mouse_messages.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/screen_manager.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 

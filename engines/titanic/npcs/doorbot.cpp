@@ -21,7 +21,7 @@
  */
 
 #include "titanic/npcs/doorbot.h"
-#include "titanic/titanic.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
@@ -180,7 +180,7 @@ bool CDoorbot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 		sleep(2000);
 	}
 
-	playClip(g_vm->getRandomNumber(1) ? "Whizz On Left" : "Whizz On Right",
+	playClip(getRandomNumber(1) ? "Whizz On Left" : "Whizz On Right",
 		MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 	movieEvent();
 	_npcFlags |= NPCFLAG_400000;
@@ -371,7 +371,7 @@ bool CDoorbot::PutBotBackInHisBoxMsg(CPutBotBackInHisBoxMsg *msg) {
 
 bool CDoorbot::DismissBotMsg(CDismissBotMsg *msg) {
 	if (_npcFlags & NPCFLAG_400000) {
-		playClip(g_vm->getRandomNumber(1) ? "Whizz Off Left" : "Whizz Off Right",
+		playClip(getRandomNumber(1) ? "Whizz Off Left" : "Whizz Off Right",
 			MOVIE_STOP_PREVIOUS | MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
 		movieEvent();
 
@@ -440,7 +440,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 		case 10562:
 			if (_field108 == 1) {
 				stopAnimTimer(_timerId);
-				_timerId = addTimer(2, g_vm->getRandomNumber(5000), 0);
+				_timerId = addTimer(2, getRandomNumber(5000), 0);
 			}
 			break;
 

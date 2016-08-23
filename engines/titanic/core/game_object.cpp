@@ -782,24 +782,24 @@ void CGameObject::stopSound(int handle, uint seconds) {
 }
 
 int CGameObject::addTimer(int endVal, uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		repeatDuration != 0, firstDuration, repeatDuration, this, endVal, CString());
+	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
+		firstDuration, repeatDuration, this, endVal, CString());
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;
 }
 
 int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		repeatDuration != 0, firstDuration, repeatDuration, this, 0, CString());
+	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
+		firstDuration, repeatDuration, this, 0, CString());
 
 	getGameManager()->addTimer(timer);
 	return timer->_id;
 }
 
 int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(g_vm->_events->getTicksCount(),
-		repeatDuration > 0, firstDuration, repeatDuration, this, 0, action);
+	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
+		firstDuration, repeatDuration, this, 0, action);
 	getGameManager()->addTimer(timer);
 
 	return timer->_id;
@@ -1381,8 +1381,12 @@ int CGameObject::getClipDuration(const CString &name, int frameRate) const {
 	return clip ? (clip->_endFrame - clip->_startFrame) * 1000 / frameRate : 0;
 }
 
-uint32 CGameObject::getTickCount() {
+uint32 CGameObject::getTicksCount() {
 	return g_vm->_events->getTicksCount();
+}
+
+Common::SeekableReadStream *CGameObject::getResource(const CString &name) {
+	return g_vm->_filesManager->getResource(name);
 }
 
 bool CGameObject::compareRoomFlags(int mode, uint flags1, uint flags2) {

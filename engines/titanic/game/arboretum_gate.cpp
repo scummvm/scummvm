@@ -21,7 +21,7 @@
  */
 
 #include "titanic/game/arboretum_gate.h"
-#include "titanic/titanic.h"
+#include "titanic/game/seasonal_adjustment.h"
 
 namespace Titanic {
 

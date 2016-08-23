@@ -21,7 +21,6 @@
  */
 
 #include "titanic/star_control/star_control_sub13.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 
