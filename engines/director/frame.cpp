@@ -516,6 +516,21 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 }
 
+static const int corrections[] = {
+	1026, 27, 27, // Macro
+	1027, 164, 170, // House
+	1028, 154, 154, // Macromind Director
+	1029, 158, 158, // Upper inscription
+	1030, 54, 54, // lift
+	1031, 116, 116, // Lower inscription
+	1032, 113, 113, // Lower inscription 2
+	1039, 50, 50,
+	1041, 110, 110, // descr
+	1042, 120, 121, // descr 2
+	1065, 27, 27, // car
+	0, 0, 0
+};
+
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
@@ -534,6 +549,16 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
 		if (_vm->getVersion() < 4) {
+			bool c = false;
+			for (int i = 0; corrections[i]; i += 3)
+				if (corrections[i] == imgId) {
+					w = corrections[i + 2];
+					c = true;
+					break;
+				}
+
+			if (!c)
+				warning("%d, %d, %d,", imgId, w, w);
 			img = new BITDDecoder(w, h);
 		} else {
 			img = new Image::BitmapDecoder();
