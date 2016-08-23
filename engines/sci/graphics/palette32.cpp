@@ -282,10 +282,16 @@ void GfxPalette32::updateHardware(const bool updateScreen) {
 		bpal[i * 3 + 2] = _currentPalette.colors[i].b;
 	}
 
-	// The last color must always be white
-	bpal[255 * 3    ] = 255;
-	bpal[255 * 3 + 1] = 255;
-	bpal[255 * 3 + 2] = 255;
+	if (g_sci->getPlatform() != Common::kPlatformMacintosh) {
+		// The last color must always be white
+		bpal[255 * 3    ] = 255;
+		bpal[255 * 3 + 1] = 255;
+		bpal[255 * 3 + 2] = 255;
+	} else {
+		bpal[255 * 3    ] = 0;
+		bpal[255 * 3 + 1] = 0;
+		bpal[255 * 3 + 2] = 0;
+	}
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 	if (updateScreen) {
