@@ -257,11 +257,14 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	// by opening it. Since we don't use .cat files, we instead check
 	// for autosave.000 or autosave.001.
 	//
+	// The same logic is being followed for torinsg.cat - this shows
+	// the "Open..." button when continuing a game.
+	//
 	// This has the added benefit of not detecting an SSCI autosave.cat
 	// accompanying SSCI autosave files that we wouldn't be able to load.
-	if (g_sci->getGameId() == GID_TORIN && name == "autosave.cat") {
-		Common::String pattern = g_sci->wrapFilename("autosave.###");
+	if (g_sci->getGameId() == GID_TORIN && (name == "autosave.cat" || name == "torinsg.cat")) {
 		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+		const Common::String pattern = (name == "autosave.cat") ? g_sci->wrapFilename("autosave.###") : g_sci->getSavegamePattern();
 		bool exists = !saveFileMan->listSavefiles(pattern).empty();
 		if (exists) {
 			// Dummy handle. Torin only checks if this is SIGNAL_REG,
