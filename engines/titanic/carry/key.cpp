@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CKey, CCarry)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
+
 CKey::CKey() : CCarry() {
 }
 
@@ -35,6 +40,21 @@ void CKey::save(SimpleFile *file, int indent) {
 void CKey::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
+}
+
+bool CKey::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	_fieldE0 = 1;
+	setVisible(true);
+	return true;
+}
+
+bool CKey::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	if (msg->_other->getName() == "1stClassPhono") {
+		CActMsg actMsg("Unlock");
+		actMsg.execute(msg->_other);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

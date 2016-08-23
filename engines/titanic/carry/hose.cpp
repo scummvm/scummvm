@@ -21,8 +21,17 @@
  */
 
 #include "titanic/carry/hose.h"
+#include "titanic/npcs/succubus.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CHose, CCarry)
+	ON_MESSAGE(DropZoneGotObjectMsg)
+	ON_MESSAGE(PumpingMsg)
+	ON_MESSAGE(UseWithCharMsg)
+	ON_MESSAGE(HoseConnectedMsg)
+	ON_MESSAGE(DropZoneLostObjectMsg)
+END_MESSAGE_MAP()
 
 CHoseStatics *CHose::_statics;
 
@@ -40,18 +49,72 @@ CHose::CHose() : CCarry(),
 
 void CHose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_v1, indent);
-	file->writeQuotedLine(_statics->_v2, indent);
+	file->writeNumberLine(_statics->_actionVal, indent);
+	file->writeQuotedLine(_statics->_actionTarget, indent);
 	file->writeQuotedLine(_string6, indent);
 	CCarry::save(file, indent);
 }
 
 void CHose::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_v1 = file->readNumber();
-	_statics->_v2 = file->readString();
+	_statics->_actionVal = file->readNumber();
+	_statics->_actionTarget = file->readString();
 	_string6 = file->readString();
 	CCarry::load(file);
+}
+
+bool CHose::DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg) {
+	_statics->_actionTarget = msg->_object->getName();
+	CPumpingMsg pumpingMsg;
+	pumpingMsg._value = _statics->_actionVal;
+	pumpingMsg.execute(_statics->_actionTarget);
+	CHoseConnectedMsg connectedMsg;
+	connectedMsg._value = 1;
+	connectedMsg.execute(this);
+
+	return true;
+}
+
+bool CHose::PumpingMsg(CPumpingMsg *msg) {
+	_statics->_actionVal = msg->_value;
+	if (!_statics->_actionTarget.empty()) {
+		CPumpingMsg pumpingMsg;
+		pumpingMsg._value = _statics->_actionVal;
+		pumpingMsg.execute(_statics->_actionTarget);
+	}
+
+	return true;
+}
+
+bool CHose::UseWithCharMsg(CUseWithCharMsg *msg) {
+	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_character);
+	if (!_statics->_actionVal && succubus) {
+		CHoseConnectedMsg connectedMsg(1, this);
+		if (connectedMsg.execute(succubus))
+			return true;
+	}
+
+	return CCarry::UseWithCharMsg(msg);
+}
+
+bool CHose::HoseConnectedMsg(CHoseConnectedMsg *msg) {
+	if (msg->_value) {
+		CHose *hose = dynamic_cast<CHose *>(findChildInstanceOf(CHose::_type));
+		if (hose) {
+			setVisible(true);
+			petAddToInventory();
+		}
+	}
+
+	return true;
+}
+
+bool CHose::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
+	CPumpingMsg pumpingMsg;
+	pumpingMsg._value = 0;
+	pumpingMsg.execute(msg->_object);
+
+	return true;
 }
 
 } // End of namespace Titanic

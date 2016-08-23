@@ -28,11 +28,18 @@
 namespace Titanic {
 
 struct CHoseStatics {
-	int _v1;
-	CString _v2;
+	int _actionVal;
+	CString _actionTarget;
+	CHoseStatics() : _actionVal(0) {}
 };
 
 class CHose : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg);
+	bool PumpingMsg(CPumpingMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool HoseConnectedMsg(CHoseConnectedMsg *msg);
+	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
 protected:
 	CString _string6;
 public:

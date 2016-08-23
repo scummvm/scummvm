@@ -261,14 +261,19 @@ protected:
 	int addTimer(uint firstDuration, uint repeatDuration = 0);
 
 	/**
+	 * Stops a timer
+	 */
+	void stopTimer(int id);
+
+	/**
 	 * Start an animation timer
 	 */
 	int startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration = 0);
 
 	/**
-	 * Stops a timer
+	 * Stop an animation timer
 	 */
-	void stopTimer(int id);
+	void stopAnimTimer(int id);
 
 	/**
 	 * Causes the game to sleep for the specified time

@@ -33,6 +33,7 @@
 #include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
 #include "titanic/game/get_lift_eye2.h"
+#include "titanic/game/lemon_dispensor.h"
 #include "titanic/game/television.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/sgt/sgt_navigation.h"
@@ -91,6 +92,7 @@ void TitanicEngine::initialize() {
 	CGameObject::init();
 	CGetLiftEye2::init();
 	CHose::init();
+	CLemonDispensor::init();
 	CMovie::init();
 	CParrotLobbyObject::init();
 	CSGTNavigation::init();

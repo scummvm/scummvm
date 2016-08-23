@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CIdleSummoner : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool ActMsg(CActMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 public:
 	int _fieldBC;
 	int _fieldC0;
@@ -37,7 +42,7 @@ public:
 	int _fieldD0;
 	int _fieldD4;
 	int _fieldD8;
-	int _fieldDC;
+	uint _ticks;
 public:
 	CIdleSummoner();
 	CLASSDEF;

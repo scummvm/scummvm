@@ -24,16 +24,29 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CLemonOnBar, CPlaceHolderItem)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
 void CLemonOnBar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
+	file->writePoint(_lemonPos, indent);
 	CPlaceHolderItem::save(file, indent);
 }
 
 void CLemonOnBar::load(SimpleFile *file) {
 	file->readNumber();
-	_pos1 = file->readPoint();
+	_lemonPos = file->readPoint();
 	CPlaceHolderItem::load(file);
+}
+
+bool CLemonOnBar::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	if (msg->_visible)
+		setPosition(_lemonPos);
+	else
+		setPosition(Point(0, 0));
+	return true;
 }
 
 } // End of namespace Titanic

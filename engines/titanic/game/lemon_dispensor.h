@@ -28,18 +28,27 @@
 namespace Titanic {
 
 class CLemonDispensor : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool FrameMsg(CFrameMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
-	static int _v1;
+	static bool _isSummer;
 	static int _v2;
 	static int _v3;
+	static CGameObject *_draggingObject;
 
 	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
+	Point _origPt;
 	int _fieldEC;
 public:
 	CLASSDEF;
 	CLemonDispensor();
+
+	/**
+	 * Initialize statics
+	 */
+	static void init();
 
 	/**
 	 * Save the data for the class to file

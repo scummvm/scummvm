@@ -797,6 +797,10 @@ int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	return timer->_id;
 }
 
+void CGameObject::stopTimer(int id) {
+	getGameManager()->stopTimer(id);
+}
+
 int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
 		firstDuration, repeatDuration, this, 0, action);
@@ -805,7 +809,7 @@ int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint 
 	return timer->_id;
 }
 
-void CGameObject::stopTimer(int id) {
+void CGameObject::stopAnimTimer(int id) {
 	getGameManager()->stopTimer(id);
 }
 

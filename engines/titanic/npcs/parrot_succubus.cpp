@@ -138,7 +138,7 @@ bool CParrotSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CParrotSuccUBus::LeaveNodeMsg(CLeaveNodeMsg *msg) {
 	if (_field1DC) {
 		getHiddenObject(_string3);
-		if (CHose::_statics->_v2.empty()) {
+		if (CHose::_statics->_actionTarget.empty()) {
 			playSound("z#51.wav");
 			CHoseConnectedMsg hoseMsg;
 			hoseMsg._value = 0;
