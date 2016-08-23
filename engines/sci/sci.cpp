@@ -1035,17 +1035,19 @@ void SciEngine::syncIngameAudioOptions() {
 			case GID_SQ6: // SCI2.1
 			case GID_TORIN: // SCI2.1
 			case GID_QFG4: // SCI2.1
+			case GID_PQ4:	// SCI2
+			case GID_PHANTASMAGORIA:	// SCI2.1
+			case GID_MOTHERGOOSEHIRES:	// SCI2.1
 				useGlobal90 = true;
 				break;
 			case GID_LSL6: // SCI2.1
 				// TODO: Uses gameFlags array
 				break;
+			// Shivers does not use global 90
+			// Police Quest: SWAT does not use global 90
+			//
 			// TODO: Unknown at the moment:
-			// Shivers - seems not to use global 90
-			// Police Quest: SWAT - unable to check
-			// Police Quest 4 - unable to check
-			// Mixed Up Mother Goose - unable to check
-			// Phantasmagoria - seems to use global 90, unable to check for subtitles atm
+			// LSL7, Lighthouse, RAMA, Phantasmagoria 2
 			default:
 				return;
 			}
@@ -1079,6 +1081,9 @@ void SciEngine::syncIngameAudioOptions() {
 				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
 				case GID_TORIN: // SCI2.1
 				case GID_QFG4: // SCI2.1
+				case GID_PQ4:	// SCI2
+				// Phantasmagoria does not support simultaneous speech + subtitles
+				// Mixed Up Mother Goose Deluxe does not support simultaneous speech + subtitles
 #endif // ENABLE_SCI32
 					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
 					break;
