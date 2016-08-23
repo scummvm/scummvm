@@ -24,9 +24,6 @@
 
 #include "common/debug.h"
 #include "common/macresman.h"
-#include "common/substream.h"
-#include "common/util.h"
-#include "common/textconsole.h"
 
 namespace Director {
 

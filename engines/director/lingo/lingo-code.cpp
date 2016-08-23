@@ -44,9 +44,6 @@
 // THIS SOFTWARE.
 
 #include "director/lingo/lingo.h"
-#include "common/file.h"
-#include "audio/decoders/wave.h"
-
 #include "director/lingo/lingo-gr.h"
 
 namespace Director {

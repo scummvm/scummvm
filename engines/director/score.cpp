@@ -20,13 +20,13 @@
  *
  */
 
+#include "common/system.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 
 #include "engines/util.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"
-#include "common/events.h"
-#include "common/system.h"
 
 #include "director/score.h"
 #include "director/frame.h"

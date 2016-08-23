@@ -20,17 +20,8 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
-#include "graphics/pixelformat.h"
-#include "graphics/surface.h"
-#include "graphics/palette.h"
-#include "image/codecs/codec.h"
-#include "common/util.h"
-#include "common/debug.h"
-#include "image/codecs/bmp_raw.h"
-#include "common/system.h"
 
 #include "director/images.h"
 

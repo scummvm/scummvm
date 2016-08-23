@@ -21,11 +21,12 @@
  *
  */
 
+#include "common/system.h"
 #include "video/qt_decoder.h"
+
 #include "director/movie.h"
 #include "director/score.h"
-#include "common/debug.h"
-#include "common/system.h"
+
 namespace Director {
 
 Movie::Movie(Common::String fileName, DirectorEngine *vm) {

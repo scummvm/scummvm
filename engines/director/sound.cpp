@@ -20,12 +20,12 @@
 *
 */
 
-#include "director/sound.h"
 #include "audio/decoders/wave.h"
 #include "common/file.h"
 #include "audio/decoders/aiff.h"
 #include "common/system.h"
-#include "common/debug.h"
+
+#include "director/sound.h"
 
 namespace Director {
 

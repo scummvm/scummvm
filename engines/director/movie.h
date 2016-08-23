@@ -24,9 +24,8 @@
 #ifndef DIRECTOR_MOVIE_H
 #define DIRECTOR_MOVIE_H
 
-#include "common/str.h"
-#include "common/rect.h"
 #include "graphics/managed_surface.h"
+
 #include "director/director.h"
 
 namespace Video {

@@ -20,31 +20,19 @@
  *
  */
 
-#include "audio/mixer.h"
-
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
-#include "common/scummsys.h"
 #include "common/error.h"
-#include "common/events.h"
 #include "common/macresman.h"
-#include "common/stream.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "common/fs.h"
 
-#include "engines/util.h"
-
-#include "graphics/surface.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/images.h"
 #include "director/resource.h"
 #include "director/score.h"
-#include "director/lingo/lingo.h"
 #include "director/sound.h"
+#include "director/lingo/lingo.h"
 
 namespace Director {
 

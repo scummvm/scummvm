@@ -23,12 +23,7 @@
 #ifndef DIRECTOR_RESOURCE_H
 #define DIRECTOR_RESOURCE_H
 
-#include "common/scummsys.h"
-#include "common/endian.h"
-#include "common/func.h"
-#include "common/hashmap.h"
 #include "common/file.h"
-#include "common/str.h"
 #include "common/substream.h"
 
 namespace Common {

@@ -25,6 +25,7 @@
 
 #include "audio/audiostream.h"
 #include "common/hash-str.h"
+
 #include "director/director.h"
 #include "director/score.h"
 #include "director/lingo/lingo-gr.h"
