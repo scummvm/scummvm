@@ -576,6 +576,10 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 			}
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
+			// Check if the list has been invalidated after the call above
+			// (e.g. when restoring in Torin)
+			if (s->_segMan->getSegmentType(argv[0].getSegment()) != SEG_TYPE_LISTS)
+				return s->r_acc;
 		}
 
 		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
