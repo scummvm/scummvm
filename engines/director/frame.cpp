@@ -528,6 +528,9 @@ static const int corrections[] = {
 	1041, 110, 110, // descr
 	1042, 120, 121, // descr 2
 	1065, 27, 27, // car
+	1109, 104, 112, // taxi
+	1110, 90, 96, // taxi
+	1111, 74, 80, // taxi
 	0, 0, 0
 };
 
