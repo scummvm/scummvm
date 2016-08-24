@@ -916,8 +916,17 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		_info.celNo = celCount - 1;
 	}
 
-	if (_info.celNo < 0) {
-		error("Cel is less than 0!");
+	// A celNo can be negative and still valid. At least PQ4CD uses this strange
+	// arrangement to load its high-resolution main menu resource. In PQ4CD, the
+	// low-resolution menu is at view 23, loop 9, cel 0, and the high-resolution
+	// menu is at view 2300, loop 0, cel 0. View 2300 is specially crafted to
+	// have 2 loops, with the second loop having 0 cels. When in high-resolution
+	// mode, the game scripts only change the view resource ID from 23 to 2300,
+	// leaving loop 9 and cel 0 the same. The code in CelObjView constructor
+	// auto-corrects loop 9 to loop 1, and then auto-corrects the cel number
+	// from 0 to -1, which effectively causes loop 0, cel 0 to be read.
+	if (_info.celNo < 0 && _info.loopNo == 0) {
+		error("Cel is less than 0 on loop 0");
 	}
 
 	_hunkPaletteOffset = READ_SCI11ENDIAN_UINT32(data + 8);
