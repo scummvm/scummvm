@@ -872,7 +872,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	_scaledWidth = READ_SCI11ENDIAN_UINT16(data + 14);
 	_scaledHeight = READ_SCI11ENDIAN_UINT16(data + 16);
 
-	if (_scaledWidth == 0 || _scaledHeight == 0) {
+	if (_scaledWidth == 0 && _scaledHeight == 0) {
 		byte sizeFlag = data[5];
 		if (sizeFlag == 0) {
 			_scaledWidth = kLowResX;
