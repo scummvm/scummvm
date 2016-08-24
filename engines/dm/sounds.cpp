@@ -161,22 +161,22 @@ bool SoundMan::f505_soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, ui
 	int16 L1680_i_LeftVolumeColumnIndex = 0;
 
 
-	switch (_vm->_dungeonMan->_g308_partyDir) {
+	switch (_vm->_dungeonMan->_partyDir) {
 	case kDirNorth:
-		L1678_i_RightVolumeColumnIndex = mapX - _vm->_dungeonMan->_g306_partyMapX;
-		L1679_i_LineIndex = mapY - _vm->_dungeonMan->_g307_partyMapY;
+		L1678_i_RightVolumeColumnIndex = mapX - _vm->_dungeonMan->_partyMapX;
+		L1679_i_LineIndex = mapY - _vm->_dungeonMan->_partyMapY;
 		break;
 	case kDirEast:
-		L1678_i_RightVolumeColumnIndex = mapY - _vm->_dungeonMan->_g307_partyMapY;
-		L1679_i_LineIndex = -(mapX - _vm->_dungeonMan->_g306_partyMapX);
+		L1678_i_RightVolumeColumnIndex = mapY - _vm->_dungeonMan->_partyMapY;
+		L1679_i_LineIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
 		break;
 	case kDirSouth:
-		L1678_i_RightVolumeColumnIndex = -(mapX - _vm->_dungeonMan->_g306_partyMapX);
-		L1679_i_LineIndex = -(mapY - _vm->_dungeonMan->_g307_partyMapY);
+		L1678_i_RightVolumeColumnIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
+		L1679_i_LineIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
 		break;
 	case kDirWest:
-		L1678_i_RightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_g307_partyMapY);
-		L1679_i_LineIndex = mapX - _vm->_dungeonMan->_g306_partyMapX;
+		L1678_i_RightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
+		L1679_i_LineIndex = mapX - _vm->_dungeonMan->_partyMapX;
 		break;
 	}
 	if ((L1678_i_RightVolumeColumnIndex < -12) || (L1678_i_RightVolumeColumnIndex > 12)) { /* Sound is not audible if source is more than 12 squares away from the party */
@@ -197,13 +197,13 @@ void SoundMan::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 
 	Sound* sound;
 	uint8 leftVolume, rightVolume;
 
-	if (mode && (_vm->_dungeonMan->_g272_currMapIndex != _vm->_dungeonMan->_g309_partyMapIndex))
+	if (mode && (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex))
 		return;
 
 	sound = &g60_sounds[soundIndex];
 	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent event;
-		setMapAndTime(event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + mode - 1);
+		setMapAndTime(event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
 		event._type = k20_TMEventTypePlaySound;
 		event._priority = sound->_priority;
 		event._C._soundIndex = soundIndex;

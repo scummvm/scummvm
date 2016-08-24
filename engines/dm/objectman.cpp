@@ -128,7 +128,7 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 	if (thing == Thing::_none)
 		return kM1_IconIndiceNone;
 
-	int16 objectInfoIndex = _vm->_dungeonMan->f141_getObjectInfoIndex(thing);
+	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1) {
 		objectInfoIndex = _vm->_dungeonMan->_objectInfo[objectInfoIndex]._type;
 	}
@@ -143,10 +143,10 @@ IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
 		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
 			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
 			(L0005_i_IconIndex == k195_IconIndicePotionEmptyFlask)) {
-			Junk *L0006_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
+			Junk *L0006_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 			switch (L0005_i_IconIndex) {
 			case k0_IconIndiceJunkCompassNorth:
-				L0005_i_IconIndex += _vm->_dungeonMan->_g308_partyDir;
+				L0005_i_IconIndex += _vm->_dungeonMan->_partyDir;
 				break;
 			case k4_IconIndiceWeaponTorchUnlit:
 				if (((Weapon*)L0006_ps_Junk)->isLit()) {
@@ -239,7 +239,7 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 	char* objectName = nullptr;
 	int16 L0007_i_IconIndex = f33_getIconIndex(thing);
 	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
-		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
+		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		char champBonesName[16];
 
 		switch (_vm->getGameLanguage()) { // localized

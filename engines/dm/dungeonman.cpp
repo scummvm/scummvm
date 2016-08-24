@@ -70,7 +70,7 @@ CreatureInfo g243_CreatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic5
 	{25,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
 	{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}};
 
-void DungeonMan::f150_mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
+void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsForward;
 	turnDirRight(dir);
@@ -388,59 +388,59 @@ void DungeonMan::setupArrays() {
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_rawDunFileDataSize = 0;
 	_rawDunFileData = nullptr;
-	_g282_dungeonColumCount = 0;
-	_g281_dungeonMapsFirstColumnIndex = nullptr;
+	_dungeonColumCount = 0;
+	_dungeonMapsFirstColumnIndex = nullptr;
 
-	_g282_dungeonColumCount = 0;
-	_g280_dungeonColumnsCumulativeSquareThingCount = nullptr;
-	_g283_squareFirstThings = nullptr;
-	_g260_dungeonTextData = nullptr;
+	_dungeonColumCount = 0;
+	_dungeonColumnsCumulativeSquareThingCount = nullptr;
+	_squareFirstThings = nullptr;
+	_dungeonTextData = nullptr;
 	for (uint16 i = 0; i < 16; ++i)
-		_g284_thingData[i] = nullptr;
+		_thingData[i] = nullptr;
 
-	_g279_dungeonMapData = nullptr;
-	_g308_partyDir = (Direction)0;
-	_g306_partyMapX = 0;
-	_g307_partyMapY = 0;
-	_g309_partyMapIndex = 0;
-	_g272_currMapIndex = kM1_mapIndexNone;
-	_g271_currMapData = nullptr;
-	_g269_currMap = nullptr;
-	_g273_currMapWidth = 0;
-	_g274_currMapHeight = 0;
-	_g270_currMapColCumulativeSquareFirstThingCount = nullptr;
-	_g277_dungeonMaps = nullptr;
-	_g276_dungeonRawMapData = nullptr;
-	_g265_currMapInscriptionWallOrnIndex = 0;
+	_dungeonMapData = nullptr;
+	_partyDir = (Direction)0;
+	_partyMapX = 0;
+	_partyMapY = 0;
+	_partyMapIndex = 0;
+	_currMapIndex = kM1_mapIndexNone;
+	_currMapData = nullptr;
+	_currMap = nullptr;
+	_currMapWidth = 0;
+	_currMapHeight = 0;
+	_currMapColCumulativeSquareFirstThingCount = nullptr;
+	_dungeonMaps = nullptr;
+	_dungeonRawMapData = nullptr;
+	_currMapInscriptionWallOrnIndex = 0;
 	for (uint16 i = 0; i < 6; ++i)
-		_g291_dungeonViewClickableBoxes[i].setToZero();
-	_g286_isFacingAlcove = false;
-	_g287_isFacingViAltar = false;
-	_g288_isFacingFountain = false;
-	_g285_squareAheadElement = (ElementType)0;
+		_dungeonViewClickableBoxes[i].setToZero();
+	_isFacingAlcove = false;
+	_isFacingViAltar = false;
+	_isFacingFountain = false;
+	_squareAheadElement = (ElementType)0;
 	for (uint16 i = 0; i < 5; ++i)
-		_g292_pileTopObject[i] = Thing(0);
+		_pileTopObject[i] = Thing(0);
 	for (uint16 i = 0; i < 2; ++i)
-		_g275_currMapDoorInfo[i].resetToZero();
+		_currMapDoorInfo[i].resetToZero();
 
 	setupArrays();
 }
 
 DungeonMan::~DungeonMan() {
 	delete[] _rawDunFileData;
-	delete[] _g277_dungeonMaps;
-	delete[] _g281_dungeonMapsFirstColumnIndex;
-	delete[] _g280_dungeonColumnsCumulativeSquareThingCount;
-	delete[] _g283_squareFirstThings;
-	delete[] _g260_dungeonTextData;
-	delete[] _g279_dungeonMapData;
+	delete[] _dungeonMaps;
+	delete[] _dungeonMapsFirstColumnIndex;
+	delete[] _dungeonColumnsCumulativeSquareThingCount;
+	delete[] _squareFirstThings;
+	delete[] _dungeonTextData;
+	delete[] _dungeonMapData;
 	for (uint16 i = 0; i < 16; ++i)
-		delete[] _g284_thingData[i];
+		delete[] _thingData[i];
 
-	delete[] _g276_dungeonRawMapData;
+	delete[] _dungeonRawMapData;
 }
 
-void DungeonMan::f455_decompressDungeonFile() {
+void DungeonMan::decompressDungeonFile() {
 	Common::File f;
 	f.open("Dungeon.dat");
 	if (f.readUint16BE() == 0x8104) { // if dungeon is compressed
@@ -537,7 +537,7 @@ const Thing Thing::_explRebirthStep1(0xFFE4); // @ C0xFFE4_THING_EXPLOSION_REBIR
 const Thing Thing::_explRebirthStep2(0xFFE5); // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2    
 const Thing Thing::_party(0xFFFF); // @ C0xFFFF_THING_PARTY          
 
-void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
+void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	static const byte additionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
 		0,    /* Door */
 		0,    /* Teleporter */
@@ -558,7 +558,7 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 	};
 
 	if (_vm->_newGameFl)
-		f455_decompressDungeonFile();
+		decompressDungeonFile();
 
 	Common::ReadStream *dunDataStream = nullptr;
 	if (file) {
@@ -571,114 +571,114 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 	}
 
 	// initialize _g278_dungeonFileHeader
-	_g278_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16BE();
-	_g278_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16BE();
-	_g278_dungeonFileHeader._mapCount = dunDataStream->readByte();
+	_dungeonFileHeader._ornamentRandomSeed = dunDataStream->readUint16BE();
+	_dungeonFileHeader._rawMapDataSize = dunDataStream->readUint16BE();
+	_dungeonFileHeader._mapCount = dunDataStream->readByte();
 	dunDataStream->readByte(); // discard 1 byte
-	_g278_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
-	_g278_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
-	_g278_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
+	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
+	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
+	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
 	for (uint16 i = 0; i < k16_ThingTypeTotal; ++i)
-		_g278_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
+		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
 
 	// init party position and mapindex
 	if (_vm->_newGameFl) {
-		uint16 startLoc = _g278_dungeonFileHeader._partyStartLocation;
-		_g308_partyDir = (Direction)((startLoc >> 10) & 3);
-		_g306_partyMapX = startLoc & 0x1F;
-		_g307_partyMapY = (startLoc >> 5) & 0x1F;
-		_g309_partyMapIndex = 0;
+		uint16 startLoc = _dungeonFileHeader._partyStartLocation;
+		_partyDir = (Direction)((startLoc >> 10) & 3);
+		_partyMapX = startLoc & 0x1F;
+		_partyMapY = (startLoc >> 5) & 0x1F;
+		_partyMapIndex = 0;
 	}
 
 	// load map data
 	if (!_vm->_restartGameRequest) {
-		delete[] _g277_dungeonMaps;
-		_g277_dungeonMaps = new Map[_g278_dungeonFileHeader._mapCount];
+		delete[] _dungeonMaps;
+		_dungeonMaps = new Map[_dungeonFileHeader._mapCount];
 	}
 
-	for (uint16 i = 0; i < _g278_dungeonFileHeader._mapCount; ++i) {
-		_g277_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16BE();
+	for (uint16 i = 0; i < _dungeonFileHeader._mapCount; ++i) {
+		_dungeonMaps[i]._rawDunDataOffset = dunDataStream->readUint16BE();
 		dunDataStream->readUint32BE(); // discard 4 bytes
-		_g277_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
-		_g277_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
+		_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
+		_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
 		
 		uint16 tmp = dunDataStream->readUint16BE();
-		_g277_dungeonMaps[i]._height = tmp >> 11;
-		_g277_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
-		_g277_dungeonMaps[i]._level = tmp & 0x3F; // Only used in DMII
+		_dungeonMaps[i]._height = tmp >> 11;
+		_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
+		_dungeonMaps[i]._level = tmp & 0x3F; // Only used in DMII
 
 		tmp = dunDataStream->readUint16BE();
-		_g277_dungeonMaps[i]._randFloorOrnCount = tmp >> 12;
-		_g277_dungeonMaps[i]._floorOrnCount = (tmp >> 8) & 0xF;
-		_g277_dungeonMaps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
-		_g277_dungeonMaps[i]._wallOrnCount = tmp & 0xF;
+		_dungeonMaps[i]._randFloorOrnCount = tmp >> 12;
+		_dungeonMaps[i]._floorOrnCount = (tmp >> 8) & 0xF;
+		_dungeonMaps[i]._randWallOrnCount = (tmp >> 4) & 0xF;
+		_dungeonMaps[i]._wallOrnCount = tmp & 0xF;
 
 		tmp = dunDataStream->readUint16BE();
-		_g277_dungeonMaps[i]._difficulty = tmp >> 12;
-		_g277_dungeonMaps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
-		_g277_dungeonMaps[i]._doorOrnCount = tmp & 0xF;
+		_dungeonMaps[i]._difficulty = tmp >> 12;
+		_dungeonMaps[i]._creatureTypeCount = (tmp >> 4) & 0xF;
+		_dungeonMaps[i]._doorOrnCount = tmp & 0xF;
 
 		tmp = dunDataStream->readUint16BE();
-		_g277_dungeonMaps[i]._doorSet1 = (tmp >> 12) & 0xF;
-		_g277_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
-		_g277_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
-		_g277_dungeonMaps[i]._floorSet = (FloorSet)(tmp & 0xF);
+		_dungeonMaps[i]._doorSet1 = (tmp >> 12) & 0xF;
+		_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
+		_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
+		_dungeonMaps[i]._floorSet = (FloorSet)(tmp & 0xF);
 	}
 
 	// load column stuff thingy
 	if (!_vm->_restartGameRequest) {
-		delete[] _g281_dungeonMapsFirstColumnIndex;
-		_g281_dungeonMapsFirstColumnIndex = new uint16[_g278_dungeonFileHeader._mapCount];
+		delete[] _dungeonMapsFirstColumnIndex;
+		_dungeonMapsFirstColumnIndex = new uint16[_dungeonFileHeader._mapCount];
 	}
 	uint16 columCount = 0;
-	for (uint16 i = 0; i < _g278_dungeonFileHeader._mapCount; ++i) {
-		_g281_dungeonMapsFirstColumnIndex[i] = columCount;
-		columCount += _g277_dungeonMaps[i]._width + 1;
+	for (uint16 i = 0; i < _dungeonFileHeader._mapCount; ++i) {
+		_dungeonMapsFirstColumnIndex[i] = columCount;
+		columCount += _dungeonMaps[i]._width + 1;
 	}
-	_g282_dungeonColumCount = columCount;
+	_dungeonColumCount = columCount;
 
-	uint32 actualSquareFirstThingCount = _g278_dungeonFileHeader._squareFirstThingCount;
+	uint32 actualSquareFirstThingCount = _dungeonFileHeader._squareFirstThingCount;
 	if (_vm->_newGameFl)
-		_g278_dungeonFileHeader._squareFirstThingCount += 300;
+		_dungeonFileHeader._squareFirstThingCount += 300;
 
 	if (!_vm->_restartGameRequest) {
-		delete[] _g280_dungeonColumnsCumulativeSquareThingCount;
-		_g280_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
+		delete[] _dungeonColumnsCumulativeSquareThingCount;
+		_dungeonColumnsCumulativeSquareThingCount = new uint16[columCount];
 	}
 	for (uint16 i = 0; i < columCount; ++i)
-		_g280_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16BE();
+		_dungeonColumnsCumulativeSquareThingCount[i] = dunDataStream->readUint16BE();
 
 	// load square first things
 	if (!_vm->_restartGameRequest) {
-		delete[] _g283_squareFirstThings;
-		_g283_squareFirstThings = new Thing[_g278_dungeonFileHeader._squareFirstThingCount];
+		delete[] _squareFirstThings;
+		_squareFirstThings = new Thing[_dungeonFileHeader._squareFirstThingCount];
 	}
 
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
-		_g283_squareFirstThings[i].set(dunDataStream->readUint16BE());
+		_squareFirstThings[i].set(dunDataStream->readUint16BE());
 
 	if (_vm->_newGameFl) {
 		for (uint16 i = 0; i < 300; ++i)
-			_g283_squareFirstThings[actualSquareFirstThingCount + i] = Thing::_none;
+			_squareFirstThings[actualSquareFirstThingCount + i] = Thing::_none;
 	}
 
 	// load text data
 	if (!_vm->_restartGameRequest) {
-		delete[] _g260_dungeonTextData;
-		_g260_dungeonTextData = new uint16[_g278_dungeonFileHeader._textDataWordCount];
+		delete[] _dungeonTextData;
+		_dungeonTextData = new uint16[_dungeonFileHeader._textDataWordCount];
 	}
 
-	for (uint16 i = 0; i < _g278_dungeonFileHeader._textDataWordCount; ++i)
-		_g260_dungeonTextData[i] = dunDataStream->readUint16BE();
+	for (uint16 i = 0; i < _dungeonFileHeader._textDataWordCount; ++i)
+		_dungeonTextData[i] = dunDataStream->readUint16BE();
 
 	if (_vm->_newGameFl)
 		_vm->_timeline->_g369_eventMaxCount = 100;
 
 	// load things
 	for (uint16 thingType = k0_DoorThingType; thingType < k16_ThingTypeTotal; ++thingType) {
-		uint16 thingCount = _g278_dungeonFileHeader._thingCounts[thingType];
+		uint16 thingCount = _dungeonFileHeader._thingCounts[thingType];
 		if (_vm->_newGameFl)
-			_g278_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
+			_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
 
 		uint16 thingStoreWordCount = g235_ThingDataWordCount[thingType];
 
@@ -686,13 +686,13 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 			continue;
 
 		if (!_vm->_restartGameRequest) {
-			delete[] _g284_thingData[thingType];
-			_g284_thingData[thingType] = new uint16[_g278_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
+			delete[] _thingData[thingType];
+			_thingData[thingType] = new uint16[_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
 		}
 
 		if ((thingType == k4_GroupThingType || thingType == k14_ProjectileThingType) && !file) { // !file because save files have diff. structure than dungeon.dat 
 			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _g284_thingData[thingType] + i *thingStoreWordCount;
+				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
 					if (j == 2 || j == 3)
 						nextSlot[j] = dunDataStream->readByte();
@@ -702,7 +702,7 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 			}
 		} else {
 			for (uint16 i = 0; i < thingCount; ++i) {
-				uint16 *nextSlot = _g284_thingData[thingType] + i *thingStoreWordCount;
+				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j)
 					nextSlot[j] = dunDataStream->readUint16BE();
 			}
@@ -710,33 +710,33 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 
 		if (_vm->_newGameFl) {
 			if ((thingType == k4_GroupThingType) || thingType >= k14_ProjectileThingType)
-				_vm->_timeline->_g369_eventMaxCount += _g278_dungeonFileHeader._thingCounts[thingType];
+				_vm->_timeline->_g369_eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
 
 			for (uint16 i = 0; i < additionalThingCounts[thingType]; ++i)
-				(_g284_thingData[thingType] + (thingCount + i) * thingStoreWordCount)[0] = Thing::_none.toUint16();
+				(_thingData[thingType] + (thingCount + i) * thingStoreWordCount)[0] = Thing::_none.toUint16();
 		}
 	}
 
 	// load map data
 	if (!_vm->_restartGameRequest) {
-		delete[] _g276_dungeonRawMapData;
-		_g276_dungeonRawMapData = new byte[_g278_dungeonFileHeader._rawMapDataSize];
+		delete[] _dungeonRawMapData;
+		_dungeonRawMapData = new byte[_dungeonFileHeader._rawMapDataSize];
 	}
 
-	for (uint32 i = 0; i < _g278_dungeonFileHeader._rawMapDataSize; ++i)
-		_g276_dungeonRawMapData[i] = dunDataStream->readByte();
+	for (uint32 i = 0; i < _dungeonFileHeader._rawMapDataSize; ++i)
+		_dungeonRawMapData[i] = dunDataStream->readByte();
 
 	if (!_vm->_restartGameRequest) {
-		uint8 mapCount = _g278_dungeonFileHeader._mapCount;
-		delete[] _g279_dungeonMapData;
-		_g279_dungeonMapData = new byte**[_g282_dungeonColumCount + mapCount];
-		byte **colFirstSquares = (byte**)_g279_dungeonMapData + mapCount;
+		uint8 mapCount = _dungeonFileHeader._mapCount;
+		delete[] _dungeonMapData;
+		_dungeonMapData = new byte**[_dungeonColumCount + mapCount];
+		byte **colFirstSquares = (byte**)_dungeonMapData + mapCount;
 		for (uint8 i = 0; i < mapCount; ++i) {
-			_g279_dungeonMapData[i] = colFirstSquares;
-			byte *square = _g276_dungeonRawMapData + _g277_dungeonMaps[i]._rawDunDataOffset;
+			_dungeonMapData[i] = colFirstSquares;
+			byte *square = _dungeonRawMapData + _dungeonMaps[i]._rawDunDataOffset;
 			*colFirstSquares++ = square;
-			for (uint16 w = 1; w <= _g277_dungeonMaps[i]._width; ++w) {
-				square += _g277_dungeonMaps[i]._height + 1;
+			for (uint16 w = 1; w <= _dungeonMaps[i]._width; ++w) {
+				square += _dungeonMaps[i]._height + 1;
 				*colFirstSquares++ = square;
 			}
 		}
@@ -747,7 +747,7 @@ void DungeonMan::f434_loadDungeonFile(Common::InSaveFile *file) {
 	} // the deletion of the function parameter 'file' happens elsewhere
 }
 
-void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
+void DungeonMan::setCurrentMap(uint16 mapIndex) {
 	static const DoorInfo doorInfo[4] = { // @ G0254_as_Graphic559_DoorInfo
 		/* { Attributes, Defense } */
 		DoorInfo(3, 110),   /* Door type 0 Portcullis */
@@ -757,76 +757,76 @@ void DungeonMan::f173_setCurrentMap(uint16 mapIndex) {
 	};
 
 
-	_g272_currMapIndex = mapIndex;
-	_g271_currMapData = _g279_dungeonMapData[mapIndex];
-	_g269_currMap = _g277_dungeonMaps + mapIndex;
-	_g273_currMapWidth = _g277_dungeonMaps[mapIndex]._width + 1;
-	_g274_currMapHeight = _g277_dungeonMaps[mapIndex]._height + 1;
-	_g275_currMapDoorInfo[0] = doorInfo[_g269_currMap->_doorSet0];
-	_g275_currMapDoorInfo[1] = doorInfo[_g269_currMap->_doorSet1];
-	_g270_currMapColCumulativeSquareFirstThingCount = &_g280_dungeonColumnsCumulativeSquareThingCount[_g281_dungeonMapsFirstColumnIndex[mapIndex]];
+	_currMapIndex = mapIndex;
+	_currMapData = _dungeonMapData[mapIndex];
+	_currMap = _dungeonMaps + mapIndex;
+	_currMapWidth = _dungeonMaps[mapIndex]._width + 1;
+	_currMapHeight = _dungeonMaps[mapIndex]._height + 1;
+	_currMapDoorInfo[0] = doorInfo[_currMap->_doorSet0];
+	_currMapDoorInfo[1] = doorInfo[_currMap->_doorSet1];
+	_currMapColCumulativeSquareFirstThingCount = &_dungeonColumnsCumulativeSquareThingCount[_dungeonMapsFirstColumnIndex[mapIndex]];
 }
 
-void DungeonMan::f174_setCurrentMapAndPartyMap(uint16 mapIndex) {
-	f173_setCurrentMap(_g309_partyMapIndex = mapIndex);
+void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
+	setCurrentMap(_partyMapIndex = mapIndex);
 
-	byte *metaMapData = _g271_currMapData[_g273_currMapWidth - 1] + _g274_currMapHeight;
+	byte *metaMapData = _currMapData[_currMapWidth - 1] + _currMapHeight;
 
 	_vm->_displayMan->_g264_currMapAllowedCreatureTypes = metaMapData;
-	metaMapData += _g269_currMap->_creatureTypeCount;
+	metaMapData += _currMap->_creatureTypeCount;
 
-	memcpy(_vm->_displayMan->_g261_currMapWallOrnIndices, metaMapData, _g269_currMap->_wallOrnCount);
-	metaMapData += _g269_currMap->_wallOrnCount;
+	memcpy(_vm->_displayMan->_g261_currMapWallOrnIndices, metaMapData, _currMap->_wallOrnCount);
+	metaMapData += _currMap->_wallOrnCount;
 
-	memcpy(_vm->_displayMan->_g262_currMapFloorOrnIndices, metaMapData, _g269_currMap->_floorOrnCount);
-	metaMapData += _g269_currMap->_floorOrnCount;
+	memcpy(_vm->_displayMan->_g262_currMapFloorOrnIndices, metaMapData, _currMap->_floorOrnCount);
+	metaMapData += _currMap->_floorOrnCount;
 
-	memcpy(_vm->_displayMan->_g263_currMapDoorOrnIndices, metaMapData, _g269_currMap->_doorOrnCount);
+	memcpy(_vm->_displayMan->_g263_currMapDoorOrnIndices, metaMapData, _currMap->_doorOrnCount);
 
-	_g265_currMapInscriptionWallOrnIndex = _g269_currMap->_wallOrnCount;
-	_vm->_displayMan->_g261_currMapWallOrnIndices[_g265_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
+	_currMapInscriptionWallOrnIndex = _currMap->_wallOrnCount;
+	_vm->_displayMan->_g261_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
 }
 
 
-Square DungeonMan::f151_getSquare(int16 mapX, int16 mapY) {
-	bool isMapYInBounds = (mapY >= 0) && (mapY < _g274_currMapHeight);
-	bool isMapXInBounds = (mapX >= 0) && (mapX < _g273_currMapWidth);
+Square DungeonMan::getSquare(int16 mapX, int16 mapY) {
+	bool isMapYInBounds = (mapY >= 0) && (mapY < _currMapHeight);
+	bool isMapXInBounds = (mapX >= 0) && (mapX < _currMapWidth);
 
 	if (isMapXInBounds && isMapYInBounds)
-		return Square(_g271_currMapData[mapX][mapY]);
+		return Square(_currMapData[mapX][mapY]);
 
 	if (isMapYInBounds) {
-		SquareType squareType = Square(_g271_currMapData[0][mapY]).getType();
+		SquareType squareType = Square(_currMapData[0][mapY]).getType();
 		if (((mapX == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0004_WallEastRandOrnAllowed);
 
-		squareType = Square(_g271_currMapData[_g273_currMapWidth - 1][mapY]).getType();
-		if (((mapX == _g273_currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
+		squareType = Square(_currMapData[_currMapWidth - 1][mapY]).getType();
+		if (((mapX == _currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0001_WallWestRandOrnAllowed);
 	} else if (isMapXInBounds) {
-		SquareType squareType = Square(_g271_currMapData[mapX][0]).getType();
+		SquareType squareType = Square(_currMapData[mapX][0]).getType();
 		if (((mapY == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0002_WallSouthRandOrnAllowed);
 
-		squareType = Square(_g271_currMapData[mapX][_g274_currMapHeight - 1]).getType();
-		if (((mapY == _g274_currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
+		squareType = Square(_currMapData[mapX][_currMapHeight - 1]).getType();
+		if (((mapY == _currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
 			return Square(k0_ElementTypeWall, k0x0008_WallNorthRandOrnAllowed);
 	}
 	return Square(k0_ElementTypeWall, 0);
 }
 
-Square DungeonMan::f152_getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
-	f150_mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
-	return f151_getSquare(posX, posY);
+Square DungeonMan::getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+	mapCoordsAfterRelMovement(dir, stepsForward, stepsForward, posX, posY);
+	return getSquare(posX, posY);
 }
 
-int16 DungeonMan::f160_getSquareFirstThingIndex(int16 mapX, int16 mapY) {
-	unsigned char *curSquare = _g271_currMapData[mapX];
-	if ((mapX < 0) || (mapX >= _g273_currMapWidth) || (mapY < 0) || (mapY >= _g274_currMapHeight) || !getFlag(curSquare[mapY], k0x0010_ThingListPresent))
+int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
+	unsigned char *curSquare = _currMapData[mapX];
+	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight) || !getFlag(curSquare[mapY], k0x0010_ThingListPresent))
 		return -1;
 
 	int16 curMapY = 0;
-	uint16 thingIndex = _g270_currMapColCumulativeSquareFirstThingCount[mapX];
+	uint16 thingIndex = _currMapColCumulativeSquareFirstThingCount[mapX];
 	while (curMapY++ != mapY) {
 		if (getFlag(*curSquare++, k0x0010_ThingListPresent))
 			thingIndex++;
@@ -834,14 +834,14 @@ int16 DungeonMan::f160_getSquareFirstThingIndex(int16 mapX, int16 mapY) {
 	return thingIndex;
 }
 
-Thing DungeonMan::f161_getSquareFirstThing(int16 mapX, int16 mapY) {
-	int16 index = f160_getSquareFirstThingIndex(mapX, mapY);
+Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
+	int16 index = getSquareFirstThingIndex(mapX, mapY);
 	if (index == -1)
 		return Thing::_endOfList;
-	return _g283_squareFirstThings[index];
+	return _squareFirstThings[index];
 }
 
-void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	
+void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	
 	unsigned char L0307_uc_Multiple;
 #define AL0307_uc_Square            L0307_uc_Multiple
 #define AL0307_uc_FootprintsAllowed L0307_uc_Multiple
@@ -850,8 +850,8 @@ void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
 
-	Thing curThing = f161_getSquareFirstThing(mapX, mapY);
-	AL0307_uc_Square = f151_getSquare(mapX, mapY).toByte();
+	Thing curThing = getSquareFirstThing(mapX, mapY);
+	AL0307_uc_Square = getSquare(mapX, mapY).toByte();
 	bool leftRandomWallOrnamentAllowed = false;
 	bool rightRandomWallOrnamentAllowed = false;
 	bool frontRandomWallOrnamentAllowed = false;
@@ -887,27 +887,27 @@ void DungeonMan::f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 
 		_vm->_displayMan->_g289_championPortraitOrdinal = 0; 
 		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
-		f171_setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
+		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
 			ThingType curThingType = curThing.getType();
 			int16 AL0310_i_SideIndex = normalizeModulo4(curThing.getCell() - dir);
 			if (AL0310_i_SideIndex) { /* Invisible on the back wall if 0 */
-				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
+				Sensor *curSensor = (Sensor*)getThingData(curThing);
 				if (curThingType == k2_TextstringType) {
 					if (((TextString*)curSensor)->isVisible()) {
-						aspectArray[AL0310_i_SideIndex + 1] = _g265_currMapInscriptionWallOrnIndex + 1;
+						aspectArray[AL0310_i_SideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
 						_vm->_displayMan->_g290_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
 					}
 				} else {
-					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getOrnOrdinal();
+					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getAttrOrnOrdinal();
 					if (curSensor->getType() == k127_SensorWallChampionPortrait) {
 						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
 					}
 				}
 			}
-			curThing = f159_getNextThing(curThing);
+			curThing = getNextThing(curThing);
 		}
-		if (squareIsFakeWall && (_g306_partyMapX != mapX) && (_g307_partyMapY != mapY)) {
+		if (squareIsFakeWall && (_partyMapX != mapX) && (_partyMapY != mapY)) {
 			aspectArray[k1_FirstGroupOrObjectAspect] = Thing::_endOfList.toUint16();
 			return;
 		}
@@ -926,7 +926,7 @@ T0172010_ClosedFakeWall:
 	case k2_ElementTypePit:
 	case k5_ElementTypeTeleporter:
 		if (aspectArray[k0_ElementAspect] == k1_CorridorElemType) {
-			aspectArray[k4_FloorOrnOrdAspect] = f170_getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _g269_currMap->_randFloorOrnCount, mapX, mapY, 30);
+			aspectArray[k4_FloorOrnOrdAspect] = getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _currMap->_randFloorOrnCount, mapX, mapY, 30);
 			AL0307_uc_FootprintsAllowed = true;
 		} else if (aspectArray[k0_ElementAspect] == k2_ElementTypePit) {
 			if (getFlag(AL0307_uc_Square, k0x0008_PitOpen)) {
@@ -943,10 +943,10 @@ T0172010_ClosedFakeWall:
 
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
 			if (curThing.getType() == k3_SensorThingType) {
-				Sensor *curSensor = (Sensor*)f156_getThingData(curThing);
-				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getOrnOrdinal();
+				Sensor *curSensor = (Sensor*)getThingData(curThing);
+				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getAttrOrnOrdinal();
 			}
-			curThing = f159_getNextThing(curThing);
+			curThing = getNextThing(curThing);
 		}
 
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
@@ -958,7 +958,7 @@ T0172010_ClosedFakeWall:
 		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
 		AL0307_uc_FootprintsAllowed = false;
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
-			curThing = f159_getNextThing(curThing);
+			curThing = getNextThing(curThing);
 		break;
 	case k4_DoorElemType:
 		if (bool((getFlag(AL0307_uc_Square, k0x0008_DoorNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) {
@@ -966,12 +966,12 @@ T0172010_ClosedFakeWall:
 		} else {
 			aspectArray[k0_ElementAspect] = k17_DoorFrontElemType;
 			aspectArray[k2_DoorStateAspect] = Square(AL0307_uc_Square).getDoorState();
-			aspectArray[k3_DoorThingIndexAspect] = f161_getSquareFirstThing(mapX, mapY).getIndex();
+			aspectArray[k3_DoorThingIndexAspect] = getSquareFirstThing(mapX, mapY).getIndex();
 		}
 		AL0307_uc_FootprintsAllowed = true;
 
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
-			curThing = f159_getNextThing(curThing);
+			curThing = getNextThing(curThing);
 
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
@@ -980,23 +980,23 @@ T0172010_ClosedFakeWall:
 	aspectArray[k1_FirstGroupOrObjectAspect] = curThing.toUint16();
 }
 
-void DungeonMan::f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
+void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
 												 int16 mapX, int16 mapY, bool isFakeWall) {
 
-	int16 randomWallOrnamentCount = _g269_currMap->_randWallOrnCount;
-	aspectArray[k2_RightWallOrnOrdAspect] = f170_getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k3_FrontWallOrnOrdAspect] = f170_getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k4_LeftWallOrnOrdAspect] = f170_getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (normalizeModulo4(++dir) + 1), 30);
-	if (isFakeWall || (mapX < 0) || (mapX >= _g273_currMapWidth) || (mapY < 0) || (mapY >= _g274_currMapHeight)) { /* If square is a fake wall or is out of map bounds */
+	int16 randomWallOrnamentCount = _currMap->_randWallOrnCount;
+	aspectArray[k2_RightWallOrnOrdAspect] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (normalizeModulo4(++dir) + 1), 30);
+	aspectArray[k3_FrontWallOrnOrdAspect] = getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (normalizeModulo4(++dir) + 1), 30);
+	aspectArray[k4_LeftWallOrnOrdAspect] = getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (normalizeModulo4(++dir) + 1), 30);
+	if (isFakeWall || (mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight)) { /* If square is a fake wall or is out of map bounds */
 		for (int16 sideIndex = k2_RightWallOrnOrdAspect; sideIndex <= k4_LeftWallOrnOrdAspect; sideIndex++) { /* Loop to remove any random ornament that is an alcove */
-			if (f149_isWallOrnAnAlcove(_vm->ordinalToIndex(aspectArray[sideIndex])))
+			if (isWallOrnAnAlcove(_vm->ordinalToIndex(aspectArray[sideIndex])))
 				aspectArray[sideIndex] = 0;
 		}
 	}
 }
 
-int16 DungeonMan::f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo) {
-	int16 randomOrnamentIndex = f169_getRandomOrnamentIndex((int16)2000 + (mapX << 5) + mapY, (int16)3000 + (_g272_currMapIndex << (int16)6) + _g273_currMapWidth + _g274_currMapHeight, modulo);
+int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo) {
+	int16 randomOrnamentIndex = getRandomOrnamentIndex((int16)2000 + (mapX << 5) + mapY, (int16)3000 + (_currMapIndex << (int16)6) + _currMapWidth + _currMapHeight, modulo);
 
 	if (allowed && (randomOrnamentIndex < count))
 		return _vm->indexToOrdinal(randomOrnamentIndex);
@@ -1005,7 +1005,7 @@ int16 DungeonMan::f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX
 }
 
 
-bool DungeonMan::f149_isWallOrnAnAlcove(int16 wallOrnIndex) {
+bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	if (wallOrnIndex >= 0) {
 		for (uint16 i = 0; i < k3_AlcoveOrnCount; ++i) {
 			if (_vm->_displayMan->_g267_currMapAlcoveOrnIndices[i] == wallOrnIndex)
@@ -1016,19 +1016,19 @@ bool DungeonMan::f149_isWallOrnAnAlcove(int16 wallOrnIndex) {
 	return false;
 }
 
-uint16 *DungeonMan::f156_getThingData(Thing thing) {
-	return _g284_thingData[thing.getType()] + thing.getIndex() * g235_ThingDataWordCount[thing.getType()];
+uint16 *DungeonMan::getThingData(Thing thing) {
+	return _thingData[thing.getType()] + thing.getIndex() * g235_ThingDataWordCount[thing.getType()];
 }
 
-uint16* DungeonMan::f157_getSquareFirstThingData(int16 mapX, int16 mapY) {
-	return f156_getThingData(f161_getSquareFirstThing(mapX, mapY));
+uint16* DungeonMan::getSquareFirstThingData(int16 mapX, int16 mapY) {
+	return getThingData(getSquareFirstThing(mapX, mapY));
 }
 
-Thing DungeonMan::f159_getNextThing(Thing thing) {
-	return Thing(f156_getThingData(thing)[0]);
+Thing DungeonMan::getNextThing(Thing thing) {
+	return Thing(getThingData(thing)[0]);
 }
 
-void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
+void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 	static char messageAndScrollEscReplacementStrings[32][8] = { // @ G0255_aac_Graphic559_MessageAndScrollEscapeReplacementStrings
 		{'x',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '?',  0,  0,  0, 0, 0, 0, 0 }, */
 		{'y',   0,   0,   0, 0, 0, 0, 0}, /* Atari ST Version 1.0 1987-12-08 1987-12-11 1.1 1.2EN 1.2GE: { '!',  0,  0,  0, 0, 0, 0, 0 }, */
@@ -1110,7 +1110,7 @@ void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
 		{0,   0,  0,  0, 0, 0, 0, 0}
 	};
 
-	TextString textString(_g284_thingData[k2_TextstringType] + thing.getIndex() * g235_ThingDataWordCount[k2_TextstringType]);
+	TextString textString(_thingData[k2_TextstringType] + thing.getIndex() * g235_ThingDataWordCount[k2_TextstringType]);
 	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
 		char sepChar;
@@ -1124,7 +1124,7 @@ void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
 		}
 		uint16 codeCounter = 0;
 		int16 escChar = 0;
-		uint16 *codeWord = _g260_dungeonTextData + textString.getWordOffset();
+		uint16 *codeWord = _dungeonTextData + textString.getWordOffset();
 		uint16 code = 0, codes = 0;
 		char *escReplString = nullptr;
 		for (;;) { /*infinite loop*/
@@ -1173,8 +1173,8 @@ void DungeonMan::f168_decodeText(char *destString, Thing thing, TextType type) {
 	*destString = ((type == k0_TextTypeInscription) ? 0x81 : '\0');
 }
 
-Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
-	int16 thingCount = _g278_dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
+Thing DungeonMan::getUnusedThing(uint16 thingType) {
+	int16 thingCount = _dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
 	if (thingType == (k0x8000_championBones | k10_JunkThingType)) {
 		thingType = k10_JunkThingType;
 	} else if (thingType == k10_JunkThingType)
@@ -1182,7 +1182,7 @@ Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
 
 	int16 thingIdx = thingCount;
 	int16 thingDataByteCount = g235_ThingDataWordCount[thingType] >> 1;
-	Thing *thingPtr = (Thing *)_g284_thingData[thingType];
+	Thing *thingPtr = (Thing *)_thingData[thingType];
 
 	Thing curThing;
 	for (;;) { /*_Infinite loop_*/
@@ -1193,11 +1193,11 @@ Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
 		if (--thingIdx) { /* If there are thing data left to process */
 			thingPtr += thingDataByteCount; /* Proceed to the next thing data */
 		} else {
-			curThing = f165_getDiscardThing(thingType);
+			curThing = getDiscardThing(thingType);
 			if (curThing == Thing::_none)
 				return Thing::_none;
 
-			thingPtr = (Thing *)f156_getThingData(curThing);
+			thingPtr = (Thing *)getThingData(curThing);
 			break;
 		}
 	}
@@ -1207,7 +1207,7 @@ Thing DungeonMan::f166_getUnusedThing(uint16 thingType) {
 	return curThing;
 }
 
-uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
+uint16 DungeonMan::getObjectWeight(Thing thing) {
 	static const uint16 junkInfo[] = { // @ G0241_auc_Graphic559_JunkInfo
 		// COMPASS - WATERSKIN - JEWEL SYMAL - ILLUMULET - ASHES
 		1, 3, 2, 2, 4,
@@ -1239,7 +1239,7 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 	// Initialization is not present in original
 	// Set to 0 by default as it's the default value used for Thing::_none
 	uint16 weight = 0;
-	Junk *junk = (Junk *)f156_getThingData(thing);
+	Junk *junk = (Junk *)getThingData(thing);
 
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
@@ -1258,8 +1258,8 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 		weight = 50;
 		thing = ((Container*)junk)->getSlot();
 		while (thing != Thing::_endOfList) {
-			weight += f140_getObjectWeight(thing);
-			thing = f159_getNextThing(thing);
+			weight += getObjectWeight(thing);
+			thing = getNextThing(thing);
 		}
 		break;
 	case k8_PotionThingType:
@@ -1278,8 +1278,8 @@ uint16 DungeonMan::f140_getObjectWeight(Thing thing) {
 	return weight; // this is garbage if none of the branches were taken
 }
 
-int16 DungeonMan::f141_getObjectInfoIndex(Thing thing) {
-	uint16 *rawType = f156_getThingData(thing);
+int16 DungeonMan::getObjectInfoIndex(Thing thing) {
+	uint16 *rawType = getThingData(thing);
 	switch (thing.getType()) {
 	case k7_ScrollThingType:
 		return k0_ObjectInfoIndexFirstScroll;
@@ -1298,54 +1298,54 @@ int16 DungeonMan::f141_getObjectInfoIndex(Thing thing) {
 	}
 }
 
-void DungeonMan::f163_linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY) {
+void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY) {
 	if (thingToLink == Thing::_endOfList)
 		return;
 
-	Thing *thingPtr = (Thing *)f156_getThingData(thingToLink);
+	Thing *thingPtr = (Thing *)getThingData(thingToLink);
 	*thingPtr = Thing::_endOfList;
 	/* If mapX >= 0 then the thing is linked to the list of things on the specified square else it is linked at the end of the specified thing list */
 	if (mapX >= 0) {
-		byte *currSquare = &_g271_currMapData[mapX][mapY];
+		byte *currSquare = &_currMapData[mapX][mapY];
 		if (getFlag(*currSquare, k0x0010_ThingListPresent)) {
-			thingInList = f161_getSquareFirstThing(mapX, mapY);
+			thingInList = getSquareFirstThing(mapX, mapY);
 		} else {
 			setFlag(*currSquare, k0x0010_ThingListPresent);
-			uint16 * tmp = _g270_currMapColCumulativeSquareFirstThingCount + mapX + 1;
-			uint16 currColumn = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
+			uint16 * tmp = _currMapColCumulativeSquareFirstThingCount + mapX + 1;
+			uint16 currColumn = _dungeonColumCount - (_dungeonMapsFirstColumnIndex[_currMapIndex] + mapX) - 1;
 			while (currColumn--) { /* For each column starting from and after the column containing the square where the thing is added */
 				(*tmp++)++; /* Increment the cumulative first thing count */
 			}
 			uint16 currMapY = 0;
 			currSquare -= mapY;
-			uint16 currSquareFirstThingIndex = _g270_currMapColCumulativeSquareFirstThingCount[mapX];
+			uint16 currSquareFirstThingIndex = _currMapColCumulativeSquareFirstThingCount[mapX];
 			while (currMapY++ != mapY) {
 				if (getFlag(*currSquare++, k0x0010_ThingListPresent))
 					currSquareFirstThingIndex++;
 			}
-			Thing *currThing = &_g283_squareFirstThings[currSquareFirstThingIndex];
+			Thing *currThing = &_squareFirstThings[currSquareFirstThingIndex];
 			// the second '- 1' is for the loop initialization, > 0 is because we are copying from one behind
-			for (int16 i = _g278_dungeonFileHeader._squareFirstThingCount - currSquareFirstThingIndex - 1 - 1; i > 0; --i)
+			for (int16 i = _dungeonFileHeader._squareFirstThingCount - currSquareFirstThingIndex - 1 - 1; i > 0; --i)
 				currThing[i] = currThing[i - 1];
 
 			*currThing = thingToLink;
 			return;
 		}
 	}
-	Thing nextThing = f159_getNextThing(thingInList);
+	Thing nextThing = getNextThing(thingInList);
 	while (nextThing != Thing::_endOfList)
-		nextThing = f159_getNextThing(thingInList = nextThing);
+		nextThing = getNextThing(thingInList = nextThing);
 
-	thingPtr = (Thing *)f156_getThingData(thingInList);
+	thingPtr = (Thing *)getThingData(thingInList);
 	*thingPtr = thingToLink;
 }
 
-WeaponInfo* DungeonMan::f158_getWeaponInfo(Thing thing) {
-	Weapon* weapon = (Weapon*)f156_getThingData(thing);
+WeaponInfo* DungeonMan::getWeaponInfo(Thing thing) {
+	Weapon* weapon = (Weapon*)getThingData(thing);
 	return &_weaponInfo[weapon->getType()];
 }
 
-int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
+int16 DungeonMan::getProjectileAspect(Thing thing) {
 	ThingType thingType = thing.getType();
 	if (thingType == k15_ExplosionThingType) {
 		if (thing == Thing::_explFireBall)
@@ -1359,26 +1359,26 @@ int16 DungeonMan::f142_getProjectileAspect(Thing thing) {
 
 		return -_vm->indexToOrdinal(k11_ProjectileAspectExplosionDefault);
 	} else if (thingType == k5_WeaponThingType) {
-		WeaponInfo *weaponInfo = f158_getWeaponInfo(thing);
+		WeaponInfo *weaponInfo = getWeaponInfo(thing);
 		int16 projAspOrd = weaponInfo->getProjectileAspectOrdinal();
 		if (projAspOrd)
 			return -projAspOrd;
 	}
 
-	return _objectInfo[f141_getObjectInfoIndex(thing)]._objectAspectIndex;
+	return _objectInfo[getObjectInfoIndex(thing)]._objectAspectIndex;
 }
 
-int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {
-	if (_g309_partyMapIndex == k255_mapIndexEntrance)
+int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {
+	if (_partyMapIndex == k255_mapIndexEntrance)
 		return kM1_mapIndexNone;
 
-	Map *map = _g277_dungeonMaps + mapIndex;
+	Map *map = _dungeonMaps + mapIndex;
 	int16 newMapX = map->_offsetMapX + *mapX;
 	int16 newMapY = map->_offsetMapY + *mapY;
 	int16 newLevel = map->_level + levelDelta;
-	map = _g277_dungeonMaps;
+	map = _dungeonMaps;
 
-	for (int16 targetMapIndex = 0; targetMapIndex < _g278_dungeonFileHeader._mapCount; targetMapIndex++) {
+	for (int16 targetMapIndex = 0; targetMapIndex < _dungeonFileHeader._mapCount; targetMapIndex++) {
 		if ((map->_level == newLevel)
 		&& (newMapX >= map->_offsetMapX) && (newMapX <= map->_offsetMapX + map->_width)
 		&& (newMapY >= map->_offsetMapY) && (newMapY <= map->_offsetMapY + map->_height)) {
@@ -1391,15 +1391,15 @@ int16 DungeonMan::f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDe
 	return kM1_mapIndexNone;
 }
 
-Thing DungeonMan::f162_getSquareFirstObject(int16 mapX, int16 mapY) {
-	Thing thing = f161_getSquareFirstThing(mapX, mapY);
+Thing DungeonMan::getSquareFirstObject(int16 mapX, int16 mapY) {
+	Thing thing = getSquareFirstThing(mapX, mapY);
 	while ((thing != Thing::_endOfList) && (thing.getType() < k4_GroupThingType))
-		thing = f159_getNextThing(thing);
+		thing = getNextThing(thing);
 
 	return thing;
 }
 
-uint16 DungeonMan::f143_getArmourDefense(ArmourInfo* armourInfo, bool useSharpDefense) {
+uint16 DungeonMan::getArmourDefense(ArmourInfo* armourInfo, bool useSharpDefense) {
 	uint16 defense = armourInfo->_defense;
 	if (useSharpDefense)
 		defense = _vm->getScaledProduct(defense, 3, getFlag(armourInfo->_attributes, k0x0007_ArmourAttributeSharpDefense) + 4);
@@ -1407,52 +1407,52 @@ uint16 DungeonMan::f143_getArmourDefense(ArmourInfo* armourInfo, bool useSharpDe
 	return defense;
 }
 
-Thing DungeonMan::f165_getDiscardThing(uint16 thingType) {
+Thing DungeonMan::getDiscardThing(uint16 thingType) {
 	// CHECKME: Shouldn't it be saved in the savegames?
 	static unsigned char lastDiscardedThingMapIndex[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	if (thingType == k15_ExplosionThingType)
 		return Thing::_none;
 
-	int16 currentMapIdx = _g272_currMapIndex;
+	int16 currentMapIdx = _currMapIndex;
 	uint16 mapIndex = lastDiscardedThingMapIndex[thingType];
-	if ((mapIndex == _g309_partyMapIndex) && (++mapIndex >= _g278_dungeonFileHeader._mapCount))
+	if ((mapIndex == _partyMapIndex) && (++mapIndex >= _dungeonFileHeader._mapCount))
 		mapIndex = 0;
 
 	uint16 discardThingMapIndex = mapIndex;
 	for (;;) { /*_Infinite loop_*/
-		uint16 mapWidth = _g277_dungeonMaps[mapIndex]._width;
-		uint16 mapHeight = _g277_dungeonMaps[mapIndex]._height;
-		byte *currSquare = _g279_dungeonMapData[mapIndex][0];
-		Thing *squareFirstThing = &_g283_squareFirstThings[_g280_dungeonColumnsCumulativeSquareThingCount[_g281_dungeonMapsFirstColumnIndex[mapIndex]]];
+		uint16 mapWidth = _dungeonMaps[mapIndex]._width;
+		uint16 mapHeight = _dungeonMaps[mapIndex]._height;
+		byte *currSquare = _dungeonMapData[mapIndex][0];
+		Thing *squareFirstThing = &_squareFirstThings[_dungeonColumnsCumulativeSquareThingCount[_dungeonMapsFirstColumnIndex[mapIndex]]];
 		
 		for (int16 currMapX = 0; currMapX <= mapWidth; currMapX++) {
 			for (int16 currMapY = 0; currMapY <= mapHeight; currMapY++) {
 				if (getFlag(*currSquare++, k0x0010_ThingListPresent)) {
 					Thing squareThing = *squareFirstThing++;
-					if ((mapIndex == _g309_partyMapIndex) && ((currMapX - _g306_partyMapX + 5) <= 10) && ((currMapY - _g307_partyMapY + 5) <= 10)) /* If square is too close to the party */
+					if ((mapIndex == _partyMapIndex) && ((currMapX - _partyMapX + 5) <= 10) && ((currMapY - _partyMapY + 5) <= 10)) /* If square is too close to the party */
 						continue;
 
 					do {
 						ThingType squareThingType = squareThing.getType();
 						if (squareThingType == k3_SensorThingType) {
-							Thing *squareThingData = (Thing*)f156_getThingData(squareThing);
+							Thing *squareThingData = (Thing*)getThingData(squareThing);
 							if (((Sensor*)squareThingData)->getType()) /* If sensor is not disabled */
 								break;
 						} else if (squareThingType == thingType) {
-							Thing *squareThingData = (Thing*)f156_getThingData(squareThing);
+							Thing *squareThingData = (Thing*)getThingData(squareThing);
 							switch (thingType) {
 							case k4_GroupThingType:
 								if (((Group*)squareThingData)->getDoNotDiscard())
 									continue;
 							case k14_ProjectileThingType:
-								f173_setCurrentMap(mapIndex);
+								setCurrentMap(mapIndex);
 								if (thingType == k4_GroupThingType) {
 									_vm->_groupMan->f188_dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
 									_vm->_groupMan->f189_delete(currMapX, currMapY);
 								} else {
 									_vm->_projexpl->f214_projectileDeleteEvent(squareThing);
-									f164_unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
+									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
 									_vm->_projexpl->f215_projectileDelete(squareThing, 0, currMapX, currMapY);
 								}
 								break;
@@ -1460,77 +1460,77 @@ Thing DungeonMan::f165_getDiscardThing(uint16 thingType) {
 								if (((Armour*)squareThingData)->getDoNotDiscard())
 									continue;
 
-								f173_setCurrentMap(mapIndex);
+								setCurrentMap(mapIndex);
 								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k5_WeaponThingType:
 								if (((Weapon*)squareThingData)->getDoNotDiscard())
 									continue;
 
-								f173_setCurrentMap(mapIndex);
+								setCurrentMap(mapIndex);
 								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k10_JunkThingType:
 								if (((Junk*)squareThingData)->getDoNotDiscard())
 									continue;
 
-								f173_setCurrentMap(mapIndex);
+								setCurrentMap(mapIndex);
 								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k8_PotionThingType:
 								if (((Potion*)squareThingData)->getDoNotDiscard())
 									continue;
 
-								f173_setCurrentMap(mapIndex);
+								setCurrentMap(mapIndex);
 								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							}
-							f173_setCurrentMap(currentMapIdx);
+							setCurrentMap(currentMapIdx);
 							lastDiscardedThingMapIndex[thingType] = mapIndex;
 							return Thing(squareThing.getTypeAndIndex());
 						}
-					} while ((squareThing = f159_getNextThing(squareThing)) != Thing::_endOfList);
+					} while ((squareThing = getNextThing(squareThing)) != Thing::_endOfList);
 				}
 			}
 		}
-		if ((mapIndex == _g309_partyMapIndex) || (_g278_dungeonFileHeader._mapCount <= 1)) {
+		if ((mapIndex == _partyMapIndex) || (_dungeonFileHeader._mapCount <= 1)) {
 			lastDiscardedThingMapIndex[thingType] = mapIndex;
 			return Thing::_none;
 		}
 
 		do {
-			if (++mapIndex >= _g278_dungeonFileHeader._mapCount)
+			if (++mapIndex >= _dungeonFileHeader._mapCount)
 				mapIndex = 0;
-		} while (mapIndex == _g309_partyMapIndex);
+		} while (mapIndex == _partyMapIndex);
 
 		if (mapIndex == discardThingMapIndex)
-			mapIndex = _g309_partyMapIndex;
+			mapIndex = _partyMapIndex;
 	}
 }
 
-uint16 DungeonMan::f144_getCreatureAttributes(Thing thing) {
-	Group *currGroup = (Group *)f156_getThingData(thing);
+uint16 DungeonMan::getCreatureAttributes(Thing thing) {
+	Group *currGroup = (Group *)getThingData(thing);
 	return g243_CreatureInfo[currGroup->_type]._attributes;
 }
 
-void DungeonMan::f146_setGroupCells(Group* group, uint16 cells, uint16 mapIndex) {
-	if (mapIndex == _g309_partyMapIndex)
+void DungeonMan::setGroupCells(Group* group, uint16 cells, uint16 mapIndex) {
+	if (mapIndex == _partyMapIndex)
 		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._cells = cells;
 	else
 		group->_cells = cells;
 }
 
-void DungeonMan::f148_setGroupDirections(Group* group, int16 dir, uint16 mapIndex) {
-	if (mapIndex == _g309_partyMapIndex)
+void DungeonMan::setGroupDirections(Group* group, int16 dir, uint16 mapIndex) {
+	if (mapIndex == _partyMapIndex)
 		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
 	else
 		group->setDir(normalizeModulo4(dir));
 }
 
-bool DungeonMan::f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
-	int16 creatureType = ((Group*)f156_getThingData(thing))->_type;
-	Map *map = &_g277_dungeonMaps[mapIndex];
-	byte *allowedCreatureType = _g279_dungeonMapData[mapIndex][map->_width] + map->_height + 1;
+bool DungeonMan::isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
+	int16 creatureType = ((Group*)getThingData(thing))->_type;
+	Map *map = &_dungeonMaps[mapIndex];
+	byte *allowedCreatureType = _dungeonMapData[mapIndex][map->_width] + map->_height + 1;
 	for (int16 L0234_i_Counter = map->_creatureTypeCount; L0234_i_Counter > 0; L0234_i_Counter--) {
 		if (*allowedCreatureType++ == creatureType)
 			return true;
@@ -1538,7 +1538,7 @@ bool DungeonMan::f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
 	return false;
 }
 
-void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY) {
+void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY) {
 	if (thingToUnlink == Thing::_endOfList)
 		return;
 
@@ -1548,18 +1548,18 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 
 	Thing *thingPtr = nullptr;
 	if (mapX >= 0) {
-		thingPtr = (Thing*)f156_getThingData(thingToUnlink);
-		uint16 firstThingIndex = f160_getSquareFirstThingIndex(mapX, mapY);
-		Thing *currThing = &_g283_squareFirstThings[firstThingIndex]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
+		thingPtr = (Thing*)getThingData(thingToUnlink);
+		uint16 firstThingIndex = getSquareFirstThingIndex(mapX, mapY);
+		Thing *currThing = &_squareFirstThings[firstThingIndex]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
 		if ((*thingPtr == Thing::_endOfList) && (((Thing*)currThing)->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
-			clearFlag(_g271_currMapData[mapX][mapY], k0x0010_ThingListPresent);
-			uint16 squareFirstThingIdx = _g278_dungeonFileHeader._squareFirstThingCount - 1;
+			clearFlag(_currMapData[mapX][mapY], k0x0010_ThingListPresent);
+			uint16 squareFirstThingIdx = _dungeonFileHeader._squareFirstThingCount - 1;
 			for (uint16 i = 0; i < squareFirstThingIdx - firstThingIndex; ++i)
 				currThing[i] = currThing[i + 1];
 
-			_g283_squareFirstThings[squareFirstThingIdx] = Thing::_none;
-			uint16 *cumulativeFirstThingCount = _g270_currMapColCumulativeSquareFirstThingCount + mapX + 1;
-			uint16 currColumn = _g282_dungeonColumCount - (_g281_dungeonMapsFirstColumnIndex[_g272_currMapIndex] + mapX) - 1;
+			_squareFirstThings[squareFirstThingIdx] = Thing::_none;
+			uint16 *cumulativeFirstThingCount = _currMapColCumulativeSquareFirstThingCount + mapX + 1;
+			uint16 currColumn = _dungeonColumCount - (_dungeonMapsFirstColumnIndex[_currMapIndex] + mapX) - 1;
 			while (currColumn--) { /* For each column starting from and after the column containing the square where the thing is unlinked */
 				(*cumulativeFirstThingCount++)--; /* Decrement the cumulative first thing count */
 			}
@@ -1574,22 +1574,22 @@ void DungeonMan::f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList
 		thingInList = *currThing;
 	}
 
-	Thing currThing = f159_getNextThing(thingInList);
+	Thing currThing = getNextThing(thingInList);
 	while (currThing.getTypeAndIndex() != thingToUnlink.toUint16()) {
 		if ((currThing == Thing::_endOfList) || (currThing == Thing::_none)) {
 			*thingPtr = Thing::_endOfList;
 			return;
 		}
-		currThing = f159_getNextThing(thingInList = currThing);
+		currThing = getNextThing(thingInList = currThing);
 	}
-	thingPtr = (Thing*)f156_getThingData(thingInList);
-	*thingPtr = f159_getNextThing(currThing);
-	thingPtr = (Thing*)f156_getThingData(thingToUnlink);
+	thingPtr = (Thing*)getThingData(thingInList);
+	*thingPtr = getNextThing(currThing);
+	thingPtr = (Thing*)getThingData(thingToUnlink);
 	*thingPtr = Thing::_endOfList;
 }
 
-int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
-	bool northSouthOrientedStairs = !getFlag(f151_getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient);
+int16 DungeonMan::getStairsExitDirection(int16 mapX, int16 mapY) {
+	bool northSouthOrientedStairs = !getFlag(getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient);
 
 	if (northSouthOrientedStairs) {
 		mapX = mapX + _vm->_dirIntoStepCountEast[kDirEast];
@@ -1598,7 +1598,7 @@ int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
 		mapX = mapX + _vm->_dirIntoStepCountEast[kDirNorth];
 		mapY = mapY + _vm->_dirIntoStepCountNorth[kDirNorth];
 	}
-	int16 squareType = Square(f151_getSquare(mapX, mapY)).getType();
+	int16 squareType = Square(getSquare(mapX, mapY)).getType();
 
 	int16 retval = ((squareType == k0_ElementTypeWall) || (squareType == k3_ElementTypeStairs)) ? 1 : 0;
 	retval <<= 1;
@@ -1607,7 +1607,7 @@ int16 DungeonMan::f155_getStairsExitDirection(int16 mapX, int16 mapY) {
 	return retval;
 }
 
-Thing DungeonMan::f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
+Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 	int16 thingType = k5_WeaponThingType;
 	if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit))
 		iconIndex = k4_IconIndiceWeaponTorchUnlit;
@@ -1644,11 +1644,11 @@ Thing DungeonMan::f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 		return Thing::_none;
 	}
 
-	Thing unusedThing = f166_getUnusedThing(thingType);
+	Thing unusedThing = getUnusedThing(thingType);
 	if (unusedThing == Thing::_none)
 		return Thing::_none;
 
-	Junk *junkPtr = (Junk*)f156_getThingData(unusedThing);
+	Junk *junkPtr = (Junk*)getThingData(unusedThing);
 	junkPtr->setType(junkType); /* Also works for WEAPON in cases other than Boulder */
 	if ((iconIndex == k4_IconIndiceWeaponTorchUnlit) && ((Weapon*)junkPtr)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
 		((Weapon*)junkPtr)->setChargeCount(15);
@@ -1656,10 +1656,10 @@ Thing DungeonMan::f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 	return unusedThing;
 }
 
-int16 DungeonMan::f169_getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo) {
+int16 DungeonMan::getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo) {
 	// TODO: Use ScummVM random number generator
 	return ((((((val1 * 31417) & 0xFFFF) >> 1) + ((val2 * 11) & 0xFFFF)
-			  + _g278_dungeonFileHeader._ornamentRandomSeed) & 0xFFFF) >> 2) % modulo; /* Pseudorandom number generator */
+			  + _dungeonFileHeader._ornamentRandomSeed) & 0xFFFF) >> 2) % modulo; /* Pseudorandom number generator */
 }
 
 }

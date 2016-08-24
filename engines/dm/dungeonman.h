@@ -315,22 +315,22 @@ public:
 	void setData(uint16 dat) { _datAndType = dat; } // @ M41_SET_DATA
 	void setTypeDisabled() { _datAndType &= 0xFF80; } // @ M44_SET_TYPE_DISABLED
 
-	bool getOnlyOnce() { return (_attributes >> 2) & 1; }
-	uint16 getEffectA() { return (_attributes >> 3) & 0x3; }
-	bool getRevertEffectA() { return (_attributes >> 5) & 0x1; }
-	bool getAudibleA() { return (_attributes >> 6) & 0x1; }
-	uint16 getValue() { return (_attributes >> 7) & 0xF; }
-	bool getLocalEffect() { return (_attributes >> 11) & 1; }
-	uint16 getOrnOrdinal() { return _attributes >> 12; }
+	bool getAttrOnlyOnce() { return (_attributes >> 2) & 1; }
+	uint16 getAttrEffectA() { return (_attributes >> 3) & 0x3; }
+	bool getAttrRevertEffectA() { return (_attributes >> 5) & 0x1; }
+	bool getAttrAudibleA() { return (_attributes >> 6) & 0x1; }
+	uint16 getAttrValue() { return (_attributes >> 7) & 0xF; }
+	bool getAttrLocalEffect() { return (_attributes >> 11) & 1; }
+	uint16 getAttrOrnOrdinal() { return _attributes >> 12; }
 
-	uint16 getTargetMapY() { return (_action >> 11); }
-	uint16 getTargetMapX() { return (_action >> 6) & 0x1F; }
-	Direction getTargetCell() { return (Direction)((_action >> 4) & 3); }
-	uint16 getHealthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
-	uint16 M46_ticks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
-	uint16 M47_kineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
-	uint16 M48_stepEnergy() { return ((_action >> 4) >> 8) & 0xFF; }// @ M48_STEP_ENERGY
-	uint16 M49_localEffect() { return (_action >> 4); } // @ M49_LOCAL_EFFECT
+	uint16 getActionTargetMapY() { return (_action >> 11); }
+	uint16 getActionTargetMapX() { return (_action >> 6) & 0x1F; }
+	Direction getActionTargetCell() { return (Direction)((_action >> 4) & 3); }
+	uint16 getActionHealthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
+	uint16 getActionTicks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
+	uint16 getActionKineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
+	uint16 getActionStepEnergy() { return ((_action >> 4) >> 8) & 0xFF; }// @ M48_STEP_ENERGY
+	uint16 getActionLocalEffect() { return (_action >> 4); } // @ M49_LOCAL_EFFECT
 
 	void setDatAndTypeWithOr(uint16 val) { _datAndType |= val;  }
 
@@ -338,7 +338,6 @@ public:
 
 
 #define k0x8000_randomDrop 0x8000 // @ MASK0x8000_RANDOM_DROP 
-
 
 enum WeaponType {
 	k2_WeaponTypeTorch = 2, // @ C02_WEAPON_TORCH
@@ -646,98 +645,92 @@ class DungeonMan {
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
-	Square f152_getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
+	Square getRelSquare(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
 
-	void f455_decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
+	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 
-	int16 f160_getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
+	int16 getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
 
-	int16 f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
-	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
+	int16 getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
+	void setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
 										 int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
-
 
 public:
 	explicit DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
-	Square f151_getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
-	void f173_setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
-	Thing f161_getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
-	Thing f159_getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
-	uint16 *f156_getThingData(Thing thing); // @ F0156_DUNGEON_GetThingData
-	uint16 *f157_getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
+	Square getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
+	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
+	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
+	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
+	uint16 *getThingData(Thing thing); // @ F0156_DUNGEON_GetThingData
+	uint16 *getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
 
 	// TODO: this does stuff other than load the file!
-	void f434_loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
-	void f174_setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
+	void loadDungeonFile(Common::InSaveFile *file);	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
-	bool f149_isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
-	void f150_mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
-	SquareType f153_getRelSquareType(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
-		return Square(f152_getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
+	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
+	void mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
+	SquareType getRelSquareType(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
-	void f172_setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
-	void f168_decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
-	Thing f166_getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
+	void setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
+	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+	Thing getUnusedThing(uint16 thingType); // @ F0166_DUNGEON_GetUnusedThing
 
-
-	uint16 f140_getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
-	int16 f141_getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
-	void f163_linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
-	WeaponInfo *f158_getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
-	int16 f142_getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
-	int16 f154_getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY); // @ F0154_DUNGEON_GetLocationAfterLevelChange
-	Thing f162_getSquareFirstObject(int16 mapX, int16 mapY); // @ F0162_DUNGEON_GetSquareFirstObject
-	uint16 f143_getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense); // @ F0143_DUNGEON_GetArmourDefense
-	Thing f165_getDiscardThing(uint16 thingType); // @ F0165_DUNGEON_GetDiscardedThing
-	uint16 f144_getCreatureAttributes(Thing thing); // @ F0144_DUNGEON_GetCreatureAttributes
-	void f146_setGroupCells(Group *group, uint16 cells, uint16 mapIndex); // @ F0146_DUNGEON_SetGroupCells
-	void f148_setGroupDirections(Group *group, int16 dir, uint16 mapIndex); // @ F0148_DUNGEON_SetGroupDirections
-	bool f139_isCreatureAllowedOnMap(Thing thing, uint16 mapIndex); // @ F0139_DUNGEON_IsCreatureAllowedOnMap
-	void f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY); // @ F0164_DUNGEON_UnlinkThingFromList
-	int16 f155_getStairsExitDirection(int16 mapX, int16 mapY); // @ F0155_DUNGEON_GetStairsExitDirection
-	Thing f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex); // @ F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator
-	int16 f169_getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo); // @ F0169_DUNGEON_GetRandomOrnamentIndex
-
+	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
+	int16 getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
+	void linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
+	WeaponInfo *getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
+	int16 getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
+	int16 getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY); // @ F0154_DUNGEON_GetLocationAfterLevelChange
+	Thing getSquareFirstObject(int16 mapX, int16 mapY); // @ F0162_DUNGEON_GetSquareFirstObject
+	uint16 getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense); // @ F0143_DUNGEON_GetArmourDefense
+	Thing getDiscardThing(uint16 thingType); // @ F0165_DUNGEON_GetDiscardedThing
+	uint16 getCreatureAttributes(Thing thing); // @ F0144_DUNGEON_GetCreatureAttributes
+	void setGroupCells(Group *group, uint16 cells, uint16 mapIndex); // @ F0146_DUNGEON_SetGroupCells
+	void setGroupDirections(Group *group, int16 dir, uint16 mapIndex); // @ F0148_DUNGEON_SetGroupDirections
+	bool isCreatureAllowedOnMap(Thing thing, uint16 mapIndex); // @ F0139_DUNGEON_IsCreatureAllowedOnMap
+	void unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY); // @ F0164_DUNGEON_UnlinkThingFromList
+	int16 getStairsExitDirection(int16 mapX, int16 mapY); // @ F0155_DUNGEON_GetStairsExitDirection
+	Thing getObjForProjectileLaucherOrObjGen(uint16 iconIndex); // @ F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator
+	int16 getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo); // @ F0169_DUNGEON_GetRandomOrnamentIndex
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???
-	DungeonFileHeader _g278_dungeonFileHeader; // @ G0278_ps_DungeonHeader
+	DungeonFileHeader _dungeonFileHeader; // @ G0278_ps_DungeonHeader
 
+	uint16 *_dungeonMapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
+	uint16 _dungeonColumCount; // @ G0282_ui_DungeonColumnCount
+	uint16 *_dungeonColumnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
+	Thing *_squareFirstThings; // @ G0283_pT_SquareFirstThings
+	uint16 *_dungeonTextData; // @ G0260_pui_DungeonTextData
+	uint16 *_thingData[16]; // @ G0284_apuc_ThingData
+	byte ***_dungeonMapData; // @ G0279_pppuc_DungeonMapData
 
-	uint16 *_g281_dungeonMapsFirstColumnIndex; // @ G0281_pui_DungeonMapsFirstColumnIndex
-	uint16 _g282_dungeonColumCount; // @ G0282_ui_DungeonColumnCount
-	uint16 *_g280_dungeonColumnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
-	Thing *_g283_squareFirstThings; // @ G0283_pT_SquareFirstThings
-	uint16 *_g260_dungeonTextData; // @ G0260_pui_DungeonTextData
-	uint16 *_g284_thingData[16]; // @ G0284_apuc_ThingData
-	byte ***_g279_dungeonMapData; // @ G0279_pppuc_DungeonMapData
+	Direction _partyDir; // @ G0308_i_PartyDirection
+	int16 _partyMapX; // @ G0306_i_PartyMapX
+	int16 _partyMapY; // @ G0307_i_PartyMapY
+	uint8 _partyMapIndex; // @ G0309_i_PartyMapIndex
+	int16 _currMapIndex; // @ G0272_i_CurrentMapIndex
+	byte **_currMapData; // @ G0271_ppuc_CurrentMapData
+	Map *_currMap; // @ G0269_ps_CurrentMap
+	uint16 _currMapWidth; // @ G0273_i_CurrentMapWidth
+	uint16 _currMapHeight; // @ G0274_i_CurrentMapHeight
+	uint16 *_currMapColCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
 
+	Map *_dungeonMaps; // @ G0277_ps_DungeonMaps
+	byte *_dungeonRawMapData; // @ G0276_puc_DungeonRawMapData
 
-	Direction _g308_partyDir; // @ G0308_i_PartyDirection
-	int16 _g306_partyMapX; // @ G0306_i_PartyMapX
-	int16 _g307_partyMapY; // @ G0307_i_PartyMapY
-	uint8 _g309_partyMapIndex; // @ G0309_i_PartyMapIndex
-	int16 _g272_currMapIndex; // @ G0272_i_CurrentMapIndex
-	byte **_g271_currMapData; // @ G0271_ppuc_CurrentMapData
-	Map *_g269_currMap; // @ G0269_ps_CurrentMap
-	uint16 _g273_currMapWidth; // @ G0273_i_CurrentMapWidth
-	uint16 _g274_currMapHeight; // @ G0274_i_CurrentMapHeight
-	uint16 *_g270_currMapColCumulativeSquareFirstThingCount; // @G0270_pui_CurrentMapColumnsCumulativeSquareFirstThingCount
-
-
-	Map *_g277_dungeonMaps; // @ G0277_ps_DungeonMaps
-	byte *_g276_dungeonRawMapData; // @ G0276_puc_DungeonRawMapData
-
-	int16 _g265_currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
-	Box _g291_dungeonViewClickableBoxes[6]; // G0291_aauc_DungeonViewClickableBoxes
-	bool _g286_isFacingAlcove; // @ G0286_B_FacingAlcove
-	bool _g287_isFacingViAltar; // @ G0287_B_FacingViAltar
-	bool _g288_isFacingFountain; // @ G0288_B_FacingFountain
-	ElementType _g285_squareAheadElement; // @ G0285_i_SquareAheadElement 
-	Thing _g292_pileTopObject[5]; // @ G0292_aT_PileTopObject
-	DoorInfo _g275_currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
+	int16 _currMapInscriptionWallOrnIndex; // @ G0265_i_CurrentMapInscriptionWallOrnamentIndex
+	Box _dungeonViewClickableBoxes[6]; // G0291_aauc_DungeonViewClickableBoxes
+	bool _isFacingAlcove; // @ G0286_B_FacingAlcove
+	bool _isFacingViAltar; // @ G0287_B_FacingViAltar
+	bool _isFacingFountain; // @ G0288_B_FacingFountain
+	ElementType _squareAheadElement; // @ G0285_i_SquareAheadElement 
+	Thing _pileTopObject[5]; // @ G0292_aT_PileTopObject
+	DoorInfo _currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
 	
 	ObjectInfo _objectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
 	ArmourInfo _armourInfo[58]; // @ G0239_as_Graphic559_ArmourInfo

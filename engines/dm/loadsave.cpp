@@ -93,10 +93,10 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
 		_championMan->_partyChampionCount = file->readUint16BE();
-		_dungeonMan->_g306_partyMapX = file->readSint16BE();
-		_dungeonMan->_g307_partyMapY = file->readSint16BE();
-		_dungeonMan->_g308_partyDir = (Direction)file->readUint16BE();
-		_dungeonMan->_g309_partyMapIndex = file->readByte();
+		_dungeonMan->_partyMapX = file->readSint16BE();
+		_dungeonMan->_partyMapY = file->readSint16BE();
+		_dungeonMan->_partyDir = (Direction)file->readUint16BE();
+		_dungeonMan->_partyMapIndex = file->readByte();
 		_championMan->_leaderIndex = (ChampionIndex)file->readSint16BE();
 		_championMan->_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
 		_timeline->_g372_eventCount = file->readUint16BE();
@@ -125,7 +125,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		assert(sentinel == 0x6f85e3d3);
 	}
 
-	_dungeonMan->f434_loadDungeonFile(file);
+	_dungeonMan->loadDungeonFile(file);
 	delete file;
 
 	if (_newGameFl) {
@@ -224,7 +224,7 @@ void DMEngine::saveGame() {
 
 			uint16 champHandObjWeight = 0;
 			if (!_championMan->_leaderEmptyHanded) {
-				champHandObjWeight = _dungeonMan->f140_getObjectWeight(_championMan->_leaderHandObject);
+				champHandObjWeight = _dungeonMan->getObjectWeight(_championMan->_leaderHandObject);
 				_championMan->_champions[_championMan->_leaderIndex]._load -= champHandObjWeight;
 			}
 
@@ -309,10 +309,10 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeSint32BE(_gameTime);
 	//L1348_s_GlobalData.LastRandomNumber = G0349_ul_LastRandomNumber;
 	file->writeUint16BE(_championMan->_partyChampionCount);
-	file->writeSint16BE(_dungeonMan->_g306_partyMapX);
-	file->writeSint16BE(_dungeonMan->_g307_partyMapY);
-	file->writeUint16BE(_dungeonMan->_g308_partyDir);
-	file->writeByte(_dungeonMan->_g309_partyMapIndex);
+	file->writeSint16BE(_dungeonMan->_partyMapX);
+	file->writeSint16BE(_dungeonMan->_partyMapY);
+	file->writeUint16BE(_dungeonMan->_partyDir);
+	file->writeByte(_dungeonMan->_partyMapIndex);
 	file->writeSint16BE(_championMan->_leaderIndex);
 	file->writeSint16BE(_championMan->_magicCasterChampionIndex);
 	file->writeUint16BE(_timeline->_g372_eventCount);
@@ -341,7 +341,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 
 	// save _g278_dungeonFileHeader
 	{
-		DungeonFileHeader &header = _dungeonMan->_g278_dungeonFileHeader;
+		DungeonFileHeader &header = _dungeonMan->_dungeonFileHeader;
 		file->writeUint16BE(header._ornamentRandomSeed);
 		file->writeUint16BE(header._rawMapDataSize);
 		file->writeByte(header._mapCount);
@@ -354,8 +354,8 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	}
 
 	// save _g277_dungeonMaps
-	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._mapCount; ++i) {
-		Map &map = _dungeonMan->_g277_dungeonMaps[i];
+	for (uint16 i = 0; i < _dungeonMan->_dungeonFileHeader._mapCount; ++i) {
+		Map &map = _dungeonMan->_dungeonMaps[i];
 		uint16 tmp;
 
 		file->writeUint16BE(map._rawDunDataOffset);
@@ -379,25 +379,25 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	}
 
 	// save _g280_dungeonColumnsCumulativeSquareThingCount
-	for (uint16 i = 0; i < _dungeonMan->_g282_dungeonColumCount; ++i)
-		file->writeUint16BE(_dungeonMan->_g280_dungeonColumnsCumulativeSquareThingCount[i]);
+	for (uint16 i = 0; i < _dungeonMan->_dungeonColumCount; ++i)
+		file->writeUint16BE(_dungeonMan->_dungeonColumnsCumulativeSquareThingCount[i]);
 
 	// save _g283_squareFirstThings
-	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._squareFirstThingCount; ++i)
-		file->writeUint16BE(_dungeonMan->_g283_squareFirstThings[i].toUint16());
+	for (uint16 i = 0; i < _dungeonMan->_dungeonFileHeader._squareFirstThingCount; ++i)
+		file->writeUint16BE(_dungeonMan->_squareFirstThings[i].toUint16());
 
 	// save _g260_dungeonTextData
-	for (uint16 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._textDataWordCount; ++i)
-		file->writeUint16BE(_dungeonMan->_g260_dungeonTextData[i]);
+	for (uint16 i = 0; i < _dungeonMan->_dungeonFileHeader._textDataWordCount; ++i)
+		file->writeUint16BE(_dungeonMan->_dungeonTextData[i]);
 
 	// save _g284_thingData
 	for (uint16 thingIndex = 0; thingIndex < 16; ++thingIndex)
-		for (uint16 i = 0; i < g235_ThingDataWordCount[thingIndex] * _dungeonMan->_g278_dungeonFileHeader._thingCounts[thingIndex]; ++i)
-			file->writeUint16BE(_dungeonMan->_g284_thingData[thingIndex][i]);
+		for (uint16 i = 0; i < g235_ThingDataWordCount[thingIndex] * _dungeonMan->_dungeonFileHeader._thingCounts[thingIndex]; ++i)
+			file->writeUint16BE(_dungeonMan->_thingData[thingIndex][i]);
 
 	// save _g276_dungeonRawMapData
-	for (uint32 i = 0; i < _dungeonMan->_g278_dungeonFileHeader._rawMapDataSize; ++i)
-		file->writeByte(_dungeonMan->_g276_dungeonRawMapData[i]);
+	for (uint32 i = 0; i < _dungeonMan->_dungeonFileHeader._rawMapDataSize; ++i)
+		file->writeByte(_dungeonMan->_dungeonRawMapData[i]);
 
 	file->flush();
 	file->finalize();

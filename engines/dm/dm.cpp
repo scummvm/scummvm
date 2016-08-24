@@ -306,7 +306,7 @@ void DMEngine::initializeGame() {
 
 	startGame();
 	if (_newGameFl)
-		_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+		_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_eventMan->f78_showMouse();
 	_eventMan->f357_discardAllInput();
 }
@@ -342,7 +342,7 @@ void DMEngine::startGame() {
 	_eventMan->_g443_primaryKeyboardInput = _eventMan->_primaryKeyboardInputInterface;
 	_eventMan->_g444_secondaryKeyboardInput = _eventMan->_secondaryKeyboardInputMovement;
 
-	processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
+	processNewPartyMap(_dungeonMan->_partyMapIndex);
 
 	if (!_newGameFl) {
 		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
@@ -366,7 +366,7 @@ void DMEngine::startGame() {
 
 void DMEngine::processNewPartyMap(uint16 mapIndex) {
 	_groupMan->f194_removeAllActiveGroups();
-	_dungeonMan->f174_setCurrentMapAndPartyMap(mapIndex);
+	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
 	_displayMan->f96_loadCurrentMapGraphics();
 	_groupMan->f195_addAllActiveGroups();
 	_inventoryMan->f337_setDungeonViewPalette();
@@ -439,7 +439,7 @@ void DMEngine::gameloop() {
 
 			if (_newPartyMapIndex != kM1_mapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
-				_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+				_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 				_newPartyMapIndex = kM1_mapIndexNone;
 				_eventMan->f357_discardAllInput();
 			}
@@ -452,7 +452,7 @@ void DMEngine::gameloop() {
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
 			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
-			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+			_displayMan->f128_drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 			if (_setMousePointerToObjectInMainLoop) {
 				_setMousePointerToObjectInMainLoop = false;
 				_eventMan->f78_showMouse();
@@ -634,7 +634,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 	_eventMan->_g443_primaryKeyboardInput = nullptr;
 	_eventMan->_g444_secondaryKeyboardInput = nullptr;
 	if (doNotDrawCreditsOnly && !_gameWon) {
-		_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+		_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 		delay(240);
 	}
 
@@ -775,14 +775,14 @@ void DMEngine::drawEntrance() {
 
 	byte *microDungeonCurrentMapData[32];
 
-	_dungeonMan->_g309_partyMapIndex = k255_mapIndexEntrance;
+	_dungeonMan->_partyMapIndex = k255_mapIndexEntrance;
 	_displayMan->_g297_drawFloorAndCeilingRequested = true;
-	_dungeonMan->_g273_currMapWidth = 5;
-	_dungeonMan->_g274_currMapHeight = 5;
-	_dungeonMan->_g271_currMapData = microDungeonCurrentMapData;
+	_dungeonMan->_currMapWidth = 5;
+	_dungeonMan->_currMapHeight = 5;
+	_dungeonMan->_currMapData = microDungeonCurrentMapData;
 
 	Map map; // uninitialized, won't be used
-	_dungeonMan->_g269_currMap = &map;
+	_dungeonMan->_currMap = &map;
 	Square microDungeonSquares[25];
 	for (uint16 i = 0; i < 25; ++i)
 		microDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
@@ -969,29 +969,29 @@ void DMEngine::fuseSequnce() {
 	_championMan->_party._fireShieldDefense = _championMan->_party._spellShieldDefense = _championMan->_party._shieldDefense = 100;
 	_timeline->f260_timelineRefreshAllChampionStatusBoxes();
 	fuseSequenceUpdate();
-	L1431_i_LordChaosMapX = _dungeonMan->_g306_partyMapX;
-	L1432_i_LordChaosMapY = _dungeonMan->_g307_partyMapY;
-	L1431_i_LordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_g308_partyDir], L1432_i_LordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_g308_partyDir];
-	L1428_ps_Group = (Group*)_dungeonMan->f156_getThingData(L1433_T_LordChaosThing = _groupMan->f175_groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
+	L1431_i_LordChaosMapX = _dungeonMan->_partyMapX;
+	L1432_i_LordChaosMapY = _dungeonMan->_partyMapY;
+	L1431_i_LordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir], L1432_i_LordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
+	L1428_ps_Group = (Group*)_dungeonMan->getThingData(L1433_T_LordChaosThing = _groupMan->f175_groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
 	L1428_ps_Group->_health[0] = 10000;
-	_dungeonMan->f146_setGroupCells(L1428_ps_Group, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_g309_partyMapIndex);
-	_dungeonMan->f148_setGroupDirections(L1428_ps_Group, returnOppositeDir(_dungeonMan->_g308_partyDir), _dungeonMan->_g309_partyMapIndex);
+	_dungeonMan->setGroupCells(L1428_ps_Group, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
+	_dungeonMan->setGroupDirections(L1428_ps_Group, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
 
 	AL1424_B_RemoveFluxcagesFromLoadChaosSquare = true;
-	AL1425_i_FluxcageMapX = _dungeonMan->_g306_partyMapX;
-	AL1426_i_FluxcageMapY = _dungeonMan->_g307_partyMapY;
+	AL1425_i_FluxcageMapX = _dungeonMan->_partyMapX;
+	AL1426_i_FluxcageMapY = _dungeonMan->_partyMapY;
 T0446002:
-	L1427_T_Thing = _dungeonMan->f162_getSquareFirstObject(AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
+	L1427_T_Thing = _dungeonMan->getSquareFirstObject(AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
 	while (L1427_T_Thing != Thing::_endOfList) {
 		if (L1427_T_Thing.getType() == k15_ExplosionThingType) {
-			L1429_ps_Explosion = (Explosion*)_dungeonMan->f156_getThingData(L1427_T_Thing);
+			L1429_ps_Explosion = (Explosion*)_dungeonMan->getThingData(L1427_T_Thing);
 			if (L1429_ps_Explosion->getType() == k50_ExplosionType_Fluxcage) {
-				_dungeonMan->f164_unlinkThingFromList(L1427_T_Thing, Thing(0), AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
+				_dungeonMan->unlinkThingFromList(L1427_T_Thing, Thing(0), AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
 				L1429_ps_Explosion->setNextThing(Thing::_none);
 				goto T0446002;
 			}
 		}
-		L1427_T_Thing = _dungeonMan->f159_getNextThing(L1427_T_Thing);
+		L1427_T_Thing = _dungeonMan->getNextThing(L1427_T_Thing);
 	}
 	if (AL1424_B_RemoveFluxcagesFromLoadChaosSquare) {
 		AL1424_B_RemoveFluxcagesFromLoadChaosSquare = false;
@@ -1026,8 +1026,8 @@ T0446002:
 	fuseSequenceUpdate();
 	_displayMan->_g77_doNotDrawFluxcagesDuringEndgame = true;
 	fuseSequenceUpdate();
-	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_g273_currMapWidth; AL1424_i_MapX++) {
-		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_g274_currMapHeight; AL1425_i_MapY++) {
+	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_currMapWidth; AL1424_i_MapX++) {
+		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_currMapHeight; AL1425_i_MapY++) {
 			if (((L1427_T_Thing = _groupMan->f175_groupGetThing(AL1424_i_MapX, AL1425_i_MapY)) != Thing::_endOfList) && ((AL1424_i_MapX != L1431_i_LordChaosMapX) || (AL1425_i_MapY != L1432_i_LordChaosMapY))) {
 				_groupMan->f189_delete(AL1424_i_MapX, AL1425_i_MapY);
 			}
@@ -1035,19 +1035,19 @@ T0446002:
 	}
 	fuseSequenceUpdate();
 	/* Count and get list of text things located at 0, 0 in the current map. Their text is then printed as messages in the order specified by their first letter (which is not printed) */
-	L1427_T_Thing = _dungeonMan->f161_getSquareFirstThing(0, 0);
+	L1427_T_Thing = _dungeonMan->getSquareFirstThing(0, 0);
 	AL1424_i_TextStringThingCount = 0;
 	while (L1427_T_Thing != Thing::_endOfList) {
 		if (L1427_T_Thing.getType() == k2_TextstringType) {
 			L1435_aT_TextStringThings[AL1424_i_TextStringThingCount++] = L1427_T_Thing;
 		}
-		L1427_T_Thing = _dungeonMan->f159_getNextThing(L1427_T_Thing);
+		L1427_T_Thing = _dungeonMan->getNextThing(L1427_T_Thing);
 	}
 	L1434_c_TextFirstCharacter = 'A';
 	AL1426_i_TextStringThingCount = AL1424_i_TextStringThingCount;
 	while (AL1424_i_TextStringThingCount--) {
 		for (AL1425_i_TextStringThingIndex = 0; AL1425_i_TextStringThingIndex < AL1426_i_TextStringThingCount; AL1425_i_TextStringThingIndex++) {
-			_dungeonMan->f168_decodeText(L1436_ac_String, L1435_aT_TextStringThings[AL1425_i_TextStringThingIndex], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
+			_dungeonMan->decodeText(L1436_ac_String, L1435_aT_TextStringThings[AL1425_i_TextStringThingIndex], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
 			if (L1436_ac_String[1] == L1434_c_TextFirstCharacter) {
 				_textMan->f43_messageAreaClearAllRows();
 				L1436_ac_String[1] = '\n'; /* New line */
@@ -1072,7 +1072,7 @@ T0446002:
 
 void DMEngine::fuseSequenceUpdate() {
 	_timeline->f261_processTimeline();
-	_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+	_displayMan->f128_drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_sound->f65_playPendingSound();
 	_eventMan->f357_discardAllInput();
 	_displayMan->updateScreen();

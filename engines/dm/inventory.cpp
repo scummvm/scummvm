@@ -281,7 +281,7 @@ void InventoryMan::f334_closeChest() {
 	bool processFirstChestSlot = true;
 	if (_g426_openChest == Thing::_none)
 		return;
-	Container *container = (Container*)dunMan.f156_getThingData(_g426_openChest);
+	Container *container = (Container*)dunMan.getThingData(_g426_openChest);
 	_g426_openChest = Thing::_none;
 	container->getSlot() = Thing::_endOfList;
 	Thing prevThing;
@@ -292,10 +292,10 @@ void InventoryMan::f334_closeChest() {
 
 			if (processFirstChestSlot) {
 				processFirstChestSlot = false;
-				*dunMan.f156_getThingData(thing) = Thing::_endOfList.toUint16();
+				*dunMan.getThingData(thing) = Thing::_endOfList.toUint16();
 				container->getSlot() = prevThing = thing;
 			} else {
-				dunMan.f163_linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
+				dunMan.linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
 				prevThing = thing;
 			}
 		}
@@ -317,7 +317,7 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
-	_vm->_dungeonMan->f168_decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n')) {
 		charRed++;
@@ -385,7 +385,7 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 
 		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.f33_getIconIndex(thing));
 		_g425_chestSlots[chestSlotIndex++] = thing;
-		thing = _vm->_dungeonMan->f159_getNextThing(thing);
+		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
 		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
@@ -502,7 +502,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		f334_closeChest();
 	}
 
-	uint16 *rawThingPtr = dunMan.f156_getThingData(thingToDraw);
+	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
 	f335_drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == k7_ScrollThingType) {
@@ -671,7 +671,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 
 
-		uint16 weight = dunMan.f140_getObjectWeight(thingToDraw);
+		uint16 weight = dunMan.getObjectWeight(thingToDraw);
 		strcat(str, champMan.getStringFromInteger(weight / 10, false, 3).c_str());
 
 		switch (_vm->getGameLanguage()) { // localized
@@ -699,7 +699,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 void InventoryMan::f337_setDungeonViewPalette() {
 	static const int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 
-	if (_vm->_dungeonMan->_g269_currMap->_difficulty == 0) {
+	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
 		_vm->_displayMan->_g304_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
@@ -713,7 +713,7 @@ void InventoryMan::f337_setDungeonViewPalette() {
 				uint16 AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16();
 				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) >= k4_IconIndiceWeaponTorchUnlit) &&
 					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) <= k7_IconIndiceWeaponTorchLit)) {
-					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(Thing(AL1044_T_Thing));
+					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->getThingData(Thing(AL1044_T_Thing));
 					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
 				} else {
 					*AL1040_pi_TorchLightPower = 0;
@@ -781,7 +781,7 @@ void InventoryMan::f338_decreaseTorchesLightPower() {
 		while (L1047_i_SlotIndex--) {
 			int16 L1049_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 			if ((L1049_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L1049_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
-				Weapon *L1051_ps_Weapon = (Weapon *)_vm->_dungeonMan->f156_getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+				Weapon *L1051_ps_Weapon = (Weapon *)_vm->_dungeonMan->getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 				if (L1051_ps_Weapon->getChargeCount()) {
 					if (L1051_ps_Weapon->setChargeCount(L1051_ps_Weapon->getChargeCount() - 1) == 0) {
 						L1051_ps_Weapon->setDoNotDiscard(false);
@@ -947,14 +947,14 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	if (_vm->_championMan->_candidateChampionOrdinal) {
 		return;
 	}
-	if (!getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
+	if (!getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
 		return;
 	}
 	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
-	L1089_ui_Weight = _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing);
+	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
 	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex = _vm->ordinalToIndex(_g432_inventoryChampionOrdinal)];
-	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L1078_T_Thing);
+	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1078_T_Thing);
 	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
 		if (!(L1082_ps_Junk->getChargeCount())) {
 			return;
@@ -1004,7 +1004,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 			}
 			L1083_ps_Champion->_shieldDefense += AL1085_ui_AdjustedPotionPower;
 			L1084_s_Event._type = k72_TMEventTypeChampionShield;
-			setMapAndTime(L1084_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_gameTime + (AL1085_ui_AdjustedPotionPower * AL1085_ui_AdjustedPotionPower));
+			setMapAndTime(L1084_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (AL1085_ui_AdjustedPotionPower * AL1085_ui_AdjustedPotionPower));
 			L1084_s_Event._priority = L1080_ui_ChampionIndex;
 			L1084_s_Event._B._defense = AL1085_ui_AdjustedPotionPower;
 			_vm->_timeline->f238_addEventGetEventIndex(&L1084_s_Event);
@@ -1059,10 +1059,10 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		}
 	} else {
 		_vm->_championMan->drawChangedObjectIcons();
-		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
+		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
 		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
 	}
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, k0_soundModePlayImmediately);
+	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
 	if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
 		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);

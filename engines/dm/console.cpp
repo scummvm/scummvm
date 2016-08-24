@@ -120,8 +120,8 @@ argumentError:
 bool Console::Cmd_pos(int argc, const char** argv) {
 	DungeonMan &dm = *_vm->_dungeonMan;
 	if (argc == 2 && cstrEquals("get", argv[1])) {
-		debugPrintf("Position: (%d, %d)  Direction: %s\n", dm._g306_partyMapX + dm._g269_currMap->_offsetMapX,
-					dm._g307_partyMapY + dm._g269_currMap->_offsetMapY, debugGetDirectionName(_vm->_dungeonMan->_g308_partyDir));
+		debugPrintf("Position: (%d, %d)  Direction: %s\n", dm._partyMapX + dm._currMap->_offsetMapX,
+					dm._partyMapY + dm._currMap->_offsetMapY, debugGetDirectionName(_vm->_dungeonMan->_partyDir));
 	} else if (argc == 4 && cstrEquals("set", argv[1])) {
 		int x = atoi(argv[2]);
 		int y = atoi(argv[3]);
@@ -130,7 +130,7 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 			return true;
 		}
 
-		Map &currMap = *_vm->_dungeonMan->_g269_currMap;
+		Map &currMap = *_vm->_dungeonMan->_currMap;
 		// not >= because dimensions are inslucsive
 		if (x < currMap._offsetMapX || x > currMap._width + currMap._offsetMapX 
 			|| y < currMap._offsetMapY || y > currMap._height + currMap._offsetMapY) {
@@ -143,7 +143,7 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 		if (haventWarned.check())
 			debugPrintf("Setting position directly can cause glitches and crashes.\n");
 		debugPrintf("Position set to (%d, %d)\n", x, y);
-		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY,
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
 										   x - currMap._offsetMapX, y - currMap._offsetMapY);
 	} else
 		goto argumentError;
@@ -158,7 +158,7 @@ argumentError:
 
 bool Console::Cmd_map(int argc, const char** argv) {
 	if (argc == 2 && cstrEquals("get", argv[1])) {
-		debugPrintf("Map index: %d\n", _vm->_dungeonMan->_g309_partyMapIndex);
+		debugPrintf("Map index: %d\n", _vm->_dungeonMan->_partyMapIndex);
 	} else if (argc == 3 && cstrEquals("set", argv[1])) {
 		int index = atoi(argv[2]);
 		if (index == 0 && !cstrEquals("0", argv[2])) {
@@ -167,8 +167,8 @@ bool Console::Cmd_map(int argc, const char** argv) {
 		}
 
 		// not >= because dimensions are inslucsive
-		if (index < 0 || index >= _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount) {
-			debugPrintf("Map index %d is out of bounds, possible values [0, %d]\n", index, _vm->_dungeonMan->_g278_dungeonFileHeader._mapCount - 1);
+		if (index < 0 || index >= _vm->_dungeonMan->_dungeonFileHeader._mapCount) {
+			debugPrintf("Map index %d is out of bounds, possible values [0, %d]\n", index, _vm->_dungeonMan->_dungeonFileHeader._mapCount - 1);
 			return true;
 		}
 
@@ -177,15 +177,15 @@ bool Console::Cmd_map(int argc, const char** argv) {
 			debugPrintf("Setting map directly can cause glitches and crashes.\n");
 		debugPrintf("Map set to %d\n", index);
 
-		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
-		_vm->_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(
-			_vm->_dungeonMan->_g309_partyMapIndex, index - _vm->_dungeonMan->_g309_partyMapIndex,
-			&_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
+		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
+		_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(
+			_vm->_dungeonMan->_partyMapIndex, index - _vm->_dungeonMan->_partyMapIndex,
+			&_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
 		if (_vm->_newPartyMapIndex == -1)
 			_vm->_newPartyMapIndex = index;
-		_vm->_dungeonMan->f173_setCurrentMap(_vm->_newPartyMapIndex);
-		_vm->_championMan->setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
-		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+		_vm->_dungeonMan->setCurrentMap(_vm->_newPartyMapIndex);
+		_vm->_championMan->setPartyDirection(_vm->_dungeonMan->getStairsExitDirection(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY));
+		_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 	} else
 		goto argumentError;
 
@@ -249,9 +249,9 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 	requestedItemName.deleteLastChar();
 
 	for (int16 thingType = 0; thingType < 16; ++thingType) { // 16 number of item types
-		uint16 *thingDataArray = _vm->_dungeonMan->_g284_thingData[thingType];
+		uint16 *thingDataArray = _vm->_dungeonMan->_thingData[thingType];
 		uint16 thingTypeSize = g235_ThingDataWordCount[thingType];
-		uint16 thingCount = _vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[thingType];
+		uint16 thingCount = _vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType];
 
 		Thing dummyThing(0);
 		dummyThing.setType(thingType);
@@ -266,8 +266,8 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 					delete[] thingDataArray;
 					for (uint16 i = 0; i < thingTypeSize; ++i)
 						newThingData[thingCount * thingTypeSize + i] = newThingData[thingIndex * thingTypeSize + i];
-					_vm->_dungeonMan->_g278_dungeonFileHeader._thingCounts[thingType]++;
-					_vm->_dungeonMan->_g284_thingData[thingType] = newThingData;
+					_vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType]++;
+					_vm->_dungeonMan->_thingData[thingType] = newThingData;
 					_vm->_championMan->addObjectInSlot((ChampionIndex)0, dummyThing, (ChampionSlot)29);
 					debugPrintf("Item gimmed to the first champion, last slot\n");
 					return true;

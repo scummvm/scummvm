@@ -274,7 +274,7 @@ void Timeline::f261_processTimeline() {
 	while (f240_isFirstEventExpiered()) {
 		L0681_ps_Event = &L0682_s_Event;
 		f239_timelineExtractFirstEvent(L0681_ps_Event);
-		_vm->_dungeonMan->f173_setCurrentMap(getMap(L0682_s_Event._mapTime));
+		_vm->_dungeonMan->setCurrentMap(getMap(L0682_s_Event._mapTime));
 		AL0680_ui_EventType = L0682_s_Event._type;
 		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
 			_vm->_groupMan->f209_processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
@@ -323,8 +323,8 @@ void Timeline::f261_processTimeline() {
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->f164_unlinkThingFromList(Thing(L0682_s_Event._C._slot), Thing(0), L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY);
-					L0681_ps_Event = (TimelineEvent*)_vm->_dungeonMan->f156_getThingData(Thing(L0682_s_Event._C._slot));
+					_vm->_dungeonMan->unlinkThingFromList(Thing(L0682_s_Event._C._slot), Thing(0), L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY);
+					L0681_ps_Event = (TimelineEvent*)_vm->_dungeonMan->getThingData(Thing(L0682_s_Event._C._slot));
 					((Explosion*)L0681_ps_Event)->setNextThing(Thing::_none);
 				}
 				break;
@@ -338,7 +338,7 @@ void Timeline::f261_processTimeline() {
 				f254_timelineProcessEvent12_hideDamageReceived(L0682_s_Event._priority);
 				break;
 			case k70_TMEventTypeLight:
-				_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+				_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 				f257_timelineProcessEvent70_light(L0681_ps_Event);
 				_vm->_inventoryMan->f337_setDungeonViewPalette();
 				break;
@@ -376,7 +376,7 @@ T0261053:
 				_vm->_championMan->_party._event79Count_Footprints--;
 			}
 		}
-		_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+		_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 	}
 }
 
@@ -404,16 +404,16 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 #define AL0602_ui_VerticalDoor L0602_ui_Multiple
 #define AL0602_ui_Height       L0602_ui_Multiple
 
-	L0597_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[L0593_ui_MapX = event->_B._location._mapX][L0594_ui_MapY = event->_B._location._mapY];
+	L0597_puc_Square = (Square*)&_vm->_dungeonMan->_currMapData[L0593_ui_MapX = event->_B._location._mapX][L0594_ui_MapY = event->_B._location._mapY];
 	if ((L0596_i_DoorState = Square(*L0597_puc_Square).getDoorState()) == k5_doorState_DESTROYED) {
 		return;
 	}
 	event->_mapTime++;
 	L0595_i_Effect = event->_C.A._effect;
 	if (L0595_i_Effect == k1_SensorEffClear) {
-		L0598_ps_Door = (Door*)_vm->_dungeonMan->f157_getSquareFirstThingData(L0593_ui_MapX, L0594_ui_MapY);
+		L0598_ps_Door = (Door*)_vm->_dungeonMan->getSquareFirstThingData(L0593_ui_MapX, L0594_ui_MapY);
 		AL0602_ui_VerticalDoor = L0598_ps_Door->opensVertically();
-		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0593_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0594_ui_MapY == _vm->_dungeonMan->_g307_partyMapY) && (L0596_i_DoorState != k0_doorState_OPEN)) {
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0593_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0594_ui_MapY == _vm->_dungeonMan->_partyMapY) && (L0596_i_DoorState != k0_doorState_OPEN)) {
 			if (_vm->_championMan->_partyChampionCount > 0) {
 				L0597_puc_Square->setDoorState(k0_doorState_OPEN);
 
@@ -428,9 +428,9 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 			f238_addEventGetEventIndex(event);
 			return;
 		}
-		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->f144_getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::getHeight(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->f156_getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
+				if (_vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
 					_vm->_groupMan->f209_processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 				}
 				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
@@ -471,17 +471,17 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	byte* L0607_puc_Square;
 
 
-	L0607_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
+	L0607_puc_Square = &_vm->_dungeonMan->_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
 	L0605_i_Effect = event->_C.A._effect;
 	if (L0605_i_Effect == k2_SensorEffToggle) {
 		L0605_i_Effect = getFlag(*L0607_puc_Square, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 	}
 	if (L0605_i_Effect == k1_SensorEffClear) {
-		if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
 			event->_mapTime++;
 			f238_addEventGetEventIndex(event);
 		} else {
-			if (((L0606_T_Thing = _vm->_groupMan->f175_groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->f144_getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if (((L0606_T_Thing = _vm->_groupMan->f175_groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 				event->_mapTime++;
 				f238_addEventGetEventIndex(event);
 			} else {
@@ -496,7 +496,7 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 void Timeline::f243_timelineProcessEvent2_doorDestruction(TimelineEvent* event) {
 	Square* L0608_puc_Square;
 
-	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY];
+	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
 	L0608_puc_Square->setDoorState(k5_doorState_DESTROYED);
 }
 
@@ -504,7 +504,7 @@ void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
 	int16 L0609_i_DoorState;
 
 
-	if ((L0609_i_DoorState = Square(_vm->_dungeonMan->_g271_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState()) == k5_doorState_DESTROYED) {
+	if ((L0609_i_DoorState = Square(_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState()) == k5_doorState_DESTROYED) {
 		return;
 	}
 	if (event->_C.A._effect == k2_SensorEffToggle) {
@@ -530,7 +530,7 @@ void Timeline::f251_timelineProcessEvent9_squarePit(TimelineEvent* event) {
 	byte* L0655_puc_Square;
 
 
-	L0655_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0653_ui_MapX = event->_B._location._mapX][L0654_ui_MapY = event->_B._location._mapY];
+	L0655_puc_Square = &_vm->_dungeonMan->_currMapData[L0653_ui_MapX = event->_B._location._mapX][L0654_ui_MapY = event->_B._location._mapY];
 	if (event->_C.A._effect == k2_SensorEffToggle) {
 		event->_C.A._effect = getFlag(*L0655_puc_Square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 	}
@@ -553,32 +553,32 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	int16 L0649_i_ThingsToMoveCount;
 
 
-	if ((_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (mapX == _vm->_dungeonMan->_g306_partyMapX) && (mapY == _vm->_dungeonMan->_g307_partyMapY)) {
+	if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
 		_vm->_championMan->drawChangedObjectIcons();
 	}
 	if ((L0645_T_Thing = _vm->_groupMan->f175_groupGetThing(mapX, mapY)) != Thing::_endOfList) {
 		_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
 	}
-	L0645_T_Thing = _vm->_dungeonMan->f162_getSquareFirstObject(mapX, mapY);
+	L0645_T_Thing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
 	L0648_T_NextThing = L0645_T_Thing;
 	L0649_i_ThingsToMoveCount = 0;
 	while (L0645_T_Thing != Thing::_endOfList) {
 		if (L0645_T_Thing.getType() > k4_GroupThingType) {
 			L0649_i_ThingsToMoveCount++;
 		}
-		L0645_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0645_T_Thing);
+		L0645_T_Thing = _vm->_dungeonMan->getNextThing(L0645_T_Thing);
 	}
 	L0645_T_Thing = L0648_T_NextThing;
 	while ((L0645_T_Thing != Thing::_endOfList) && L0649_i_ThingsToMoveCount) {
 		L0649_i_ThingsToMoveCount--;
-		L0648_T_NextThing = _vm->_dungeonMan->f159_getNextThing(L0645_T_Thing);
+		L0648_T_NextThing = _vm->_dungeonMan->getNextThing(L0645_T_Thing);
 		AL0644_ui_ThingType = L0645_T_Thing.getType();
 		if (AL0644_ui_ThingType > k4_GroupThingType) {
 			_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
 		}
 		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
-			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->f156_getThingData(L0645_T_Thing);
+			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->getThingData(L0645_T_Thing);
 			L0647_ps_Event = &_g370_events[L0646_ps_Projectile->_eventIndex];
 			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_g397_moveResultMapX);
 			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_g398_moveResultMapY);
@@ -607,7 +607,7 @@ void Timeline::f250_timelineProcessEvent8_squareTeleporter(TimelineEvent* event)
 	byte* L0652_puc_Square;
 
 
-	L0652_puc_Square = &_vm->_dungeonMan->_g271_currMapData[L0650_ui_MapX = event->_B._location._mapX][L0651_ui_MapY = event->_B._location._mapY];
+	L0652_puc_Square = &_vm->_dungeonMan->_currMapData[L0650_ui_MapX = event->_B._location._mapX][L0651_ui_MapY = event->_B._location._mapY];
 	if (event->_C.A._effect == k2_SensorEffToggle) {
 		event->_C.A._effect = getFlag(*L0652_puc_Square, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 	}
@@ -634,11 +634,11 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 	uint16 L0643_ui_Cell;
 
 
-	L0634_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0641_i_MapX = event->_B._location._mapX, L0642_i_MapY = event->_B._location._mapY);
+	L0634_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0641_i_MapX = event->_B._location._mapX, L0642_i_MapY = event->_B._location._mapY);
 	L0643_ui_Cell = event->_C.A._cell;
 	while (L0634_T_Thing != Thing::_endOfList) {
 		if (((L0635_i_ThingType = L0634_T_Thing.getType()) == k2_TextstringType) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
-			L0639_ps_TextString = (TextString*)_vm->_dungeonMan->f156_getThingData(L0634_T_Thing);
+			L0639_ps_TextString = (TextString*)_vm->_dungeonMan->getThingData(L0634_T_Thing);
 			if (event->_C.A._effect == k2_SensorEffToggle) {
 				L0639_ps_TextString->setVisible(!L0639_ps_TextString->isVisible());
 			} else {
@@ -646,7 +646,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 			}
 		} else {
 			if (L0635_i_ThingType == k3_SensorThingType) {
-				L0638_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0634_T_Thing);
+				L0638_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0634_T_Thing);
 				L0640_ui_SensorType = L0638_ps_Sensor->getType();
 				L0637_ui_SensorData = L0638_ps_Sensor->getData();
 				if (L0640_ui_SensorType == k6_SensorWallCountdown) {
@@ -659,12 +659,12 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 							L0637_ui_SensorData--;
 						}
 						L0638_ps_Sensor->setData(L0637_ui_SensorData);
-						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
-							AL0636_B_TriggerSetEffect = ((L0637_ui_SensorData == 0) != L0638_ps_Sensor->getRevertEffectA());
+						if (L0638_ps_Sensor->getAttrEffectA() == k3_SensorEffHold) {
+							AL0636_B_TriggerSetEffect = ((L0637_ui_SensorData == 0) != L0638_ps_Sensor->getAttrRevertEffectA());
 							_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 						} else {
 							if (L0637_ui_SensorData == 0) {
-								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getAttrEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 							}
 						}
 					}
@@ -685,23 +685,23 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 							}
 						}
 						L0638_ps_Sensor->setData(L0637_ui_SensorData);
-						AL0636_B_TriggerSetEffect = (Sensor::getDataMask1(L0637_ui_SensorData) == Sensor::getDataMask2(L0637_ui_SensorData)) != L0638_ps_Sensor->getRevertEffectA();
-						if (L0638_ps_Sensor->getEffectA() == k3_SensorEffHold) {
+						AL0636_B_TriggerSetEffect = (Sensor::getDataMask1(L0637_ui_SensorData) == Sensor::getDataMask2(L0637_ui_SensorData)) != L0638_ps_Sensor->getAttrRevertEffectA();
+						if (L0638_ps_Sensor->getAttrEffectA() == k3_SensorEffHold) {
 							_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 						} else {
 							if (AL0636_B_TriggerSetEffect) {
-								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
+								_vm->_moveSens->f272_sensorTriggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getAttrEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
 							}
 						}
 					} else {
 						if ((((L0640_ui_SensorType >= k7_SensorWallSingleProjLauncherNewObj) && (L0640_ui_SensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (L0640_ui_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0640_ui_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
 							f247_triggerProjectileLauncher(L0638_ps_Sensor, event);
-							if (L0638_ps_Sensor->getOnlyOnce()) {
+							if (L0638_ps_Sensor->getAttrOnlyOnce()) {
 								L0638_ps_Sensor->setTypeDisabled();
 							}
 						} else {
 							if (L0640_ui_SensorType == k18_SensorWallEndGame) {
-								_vm->delay(60 * L0638_ps_Sensor->getValue());
+								_vm->delay(60 * L0638_ps_Sensor->getAttrValue());
 								_vm->_restartGameAllowed = false;
 								_vm->_gameWon = true;
 								_vm->endGame(true);
@@ -711,7 +711,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 				}
 			}
 		}
-		L0634_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0634_T_Thing);
+		L0634_T_Thing = _vm->_dungeonMan->getNextThing(L0634_T_Thing);
 	}
 	_vm->_moveSens->f271_processRotationEffect();
 }
@@ -737,8 +737,8 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 	L0628_ui_ProjectileCell = returnOppositeDir((Direction)L0624_ui_Cell);
 	L0625_i_SensorType = sensor->getType();
 	L0629_i_SensorData = sensor->getData();
-	L0630_i_KineticEnergy = sensor->M47_kineticEnergy();
-	L0631_i_StepEnergy = sensor->M48_stepEnergy();
+	L0630_i_KineticEnergy = sensor->getActionKineticEnergy();
+	L0631_i_StepEnergy = sensor->getActionStepEnergy();
 	L0632_B_LaunchSingleProjectile = (L0625_i_SensorType == k7_SensorWallSingleProjLauncherNewObj) ||
 		(L0625_i_SensorType == k8_SensorWallSingleProjLauncherExplosion) ||
 		(L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj);
@@ -746,36 +746,36 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 		L0622_T_FirstProjectileAssociatedThing = L0623_T_SecondProjectileAssociatedThing = Thing(L0629_i_SensorData + Thing::_firstExplosion.toUint16());
 	} else {
 		if ((L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0625_i_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) {
-			L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f161_getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
+			L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
 			while (L0622_T_FirstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 				L0633_ui_ThingCell = L0622_T_FirstProjectileAssociatedThing.getCell();
 				if ((L0622_T_FirstProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
 					break;
-				L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f159_getNextThing(L0622_T_FirstProjectileAssociatedThing);
+				L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(L0622_T_FirstProjectileAssociatedThing);
 			}
 			if (L0622_T_FirstProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
 				return;
 			}
-			_vm->_dungeonMan->f164_unlinkThingFromList(L0622_T_FirstProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
+			_vm->_dungeonMan->unlinkThingFromList(L0622_T_FirstProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
 			if (!L0632_B_LaunchSingleProjectile) {
-				L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f161_getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
+				L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
 				while (L0623_T_SecondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
 					L0633_ui_ThingCell = L0623_T_SecondProjectileAssociatedThing.getCell();
 					if ((L0623_T_SecondProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
 						break;
-					L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f159_getNextThing(L0623_T_SecondProjectileAssociatedThing);
+					L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(L0623_T_SecondProjectileAssociatedThing);
 				}
 				if (L0623_T_SecondProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
 					L0632_B_LaunchSingleProjectile = true;
 				} else {
-					_vm->_dungeonMan->f164_unlinkThingFromList(L0623_T_SecondProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
+					_vm->_dungeonMan->unlinkThingFromList(L0623_T_SecondProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
 				}
 			}
 		} else {
-			if ((L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->f167_getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none) {
+			if ((L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none) {
 				return;
 			}
-			if (!L0632_B_LaunchSingleProjectile && ((L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->f167_getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none)) {
+			if (!L0632_B_LaunchSingleProjectile && ((L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none)) {
 				L0632_B_LaunchSingleProjectile = true;
 			}
 		}
@@ -810,49 +810,49 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 	TimelineEvent L0619_s_Event;
 
 
-	L0613_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0616_ui_MapX = event->_B._location._mapX, L0617_ui_MapY = event->_B._location._mapY);
+	L0613_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0616_ui_MapX = event->_B._location._mapX, L0617_ui_MapY = event->_B._location._mapY);
 	while (L0613_T_Thing != Thing::_endOfList) {
 		if ((L0610_i_ThingType = L0613_T_Thing.getType()) == k2_TextstringType) {
-			L0615_ps_TextString = (TextString*)_vm->_dungeonMan->f156_getThingData(L0613_T_Thing);
+			L0615_ps_TextString = (TextString*)_vm->_dungeonMan->getThingData(L0613_T_Thing);
 			L0611_B_TextCurrentlyVisible = L0615_ps_TextString->isVisible();
 			if (event->_C.A._effect == k2_SensorEffToggle) {
 				L0615_ps_TextString->setVisible(!L0611_B_TextCurrentlyVisible);
 			} else {
 				L0615_ps_TextString->setVisible((event->_C.A._effect == k0_SensorEffSet));
 			}
-			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_g272_currMapIndex == _vm->_dungeonMan->_g309_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_g306_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_g307_partyMapY)) {
-				_vm->_dungeonMan->f168_decodeText(_vm->_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
+			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
+				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
 				_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else {
 			if (L0610_i_ThingType == k3_SensorThingType) {
-				L0614_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0613_T_Thing);
+				L0614_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0613_T_Thing);
 				if (L0614_ps_Sensor->getType() == k6_SensorFloorGroupGenerator) {
-					L0612_i_CreatureCount = L0614_ps_Sensor->getValue();
+					L0612_i_CreatureCount = L0614_ps_Sensor->getAttrValue();
 					if (getFlag(L0612_i_CreatureCount, k0x0008_randomizeGeneratedCreatureCount)) {
 						L0612_i_CreatureCount = _vm->getRandomNumber(getFlag(L0612_i_CreatureCount, k0x0007_generatedCreatureCount));
 					} else {
 						L0612_i_CreatureCount--;
 					}
-					AL0618_ui_HealthMultiplier = L0614_ps_Sensor->getHealthMultiplier();
+					AL0618_ui_HealthMultiplier = L0614_ps_Sensor->getActionHealthMultiplier();
 					if (AL0618_ui_HealthMultiplier == 0) {
-						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_g269_currMap->_difficulty;
+						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
 					}
 					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
-					if (L0614_ps_Sensor->getAudibleA()) {
+					if (L0614_ps_Sensor->getAttrAudibleA()) {
 						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
 					}
-					if (L0614_ps_Sensor->getOnlyOnce()) {
+					if (L0614_ps_Sensor->getAttrOnlyOnce()) {
 						L0614_ps_Sensor->setTypeDisabled();
 					} else {
-						AL0618_ui_Ticks = L0614_ps_Sensor->M46_ticks();
+						AL0618_ui_Ticks = L0614_ps_Sensor->getActionTicks();
 						if (AL0618_ui_Ticks != 0) {
 							L0614_ps_Sensor->setTypeDisabled();
 							if (AL0618_ui_Ticks > 127) {
 								AL0618_ui_Ticks = (AL0618_ui_Ticks - 126) << 6;
 							}
 							L0619_s_Event._type = k65_TMEventTypeEnableGroupGenerator;
-							setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_g272_currMapIndex, _vm->_gameTime + AL0618_ui_Ticks);
+							setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + AL0618_ui_Ticks);
 							L0619_s_Event._priority = 0;
 							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
@@ -863,7 +863,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 				}
 			}
 		}
-		L0613_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0613_T_Thing);
+		L0613_T_Thing = _vm->_dungeonMan->getNextThing(L0613_T_Thing);
 	}
 }
 
@@ -878,7 +878,7 @@ void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) 
 	L0657_ui_MapY = event->_B._location._mapY;
 	L0657_ui_MapY = event->_B._location._mapY;
 T0252001:
-	if (((_vm->_dungeonMan->_g272_currMapIndex != _vm->_dungeonMan->_g309_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_g306_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_g307_partyMapY)) && (_vm->_groupMan->f175_groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
+	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->f175_groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
 		}
@@ -886,7 +886,7 @@ T0252001:
 	} else {
 		if (!L0659_B_RandomDirectionMoveRetried) {
 			L0659_B_RandomDirectionMoveRetried = true;
-			L0658_ps_Group = (Group*)_vm->_dungeonMan->f156_getThingData(Thing(event->_C._slot));
+			L0658_ps_Group = (Group*)_vm->_dungeonMan->getThingData(Thing(event->_C._slot));
 			if ((L0658_ps_Group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
@@ -914,17 +914,17 @@ void Timeline::f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent* ev
 	Thing L0620_T_Thing;
 	Sensor* L0621_ps_Sensor;
 
-	L0620_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
-	L0620_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
 	while (L0620_T_Thing != Thing::_none) {
 		if ((L0620_T_Thing.getType()) == k3_SensorThingType) {
-			L0621_ps_Sensor = (Sensor*)_vm->_dungeonMan->f156_getThingData(L0620_T_Thing);
+			L0621_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0620_T_Thing);
 			if (L0621_ps_Sensor->getType() == k0_SensorDisabled) {
 				L0621_ps_Sensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
 				return;
 			}
 		}
-		L0620_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0620_T_Thing);
+		L0620_T_Thing = _vm->_dungeonMan->getNextThing(L0620_T_Thing);
 	}
 }
 
@@ -1030,7 +1030,7 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 	if (L0673_i_WeakerLightPower) {
 		L0676_s_Event._type = k70_TMEventTypeLight;
 		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
-		setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_g309_partyMapIndex, _vm->_gameTime + 4);
+		setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		L0676_s_Event._priority = 0;
 		f238_addEventGetEventIndex(&L0676_s_Event);
 	}
@@ -1071,21 +1071,21 @@ T0255002:
 		f238_addEventGetEventIndex(event);
 		break;
 	case 1:
-		L0667_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
+		L0667_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
 		while (L0667_T_Thing != Thing::_endOfList) {
 			if ((L0667_T_Thing.getCell() == L0666_ui_Cell) && (L0667_T_Thing.getType() == k10_JunkThingType)) {
 				L0669_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0667_T_Thing);
 				if (L0669_i_IconIndex == k147_IconIndiceJunkChampionBones) {
-					L0668_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(L0667_T_Thing);
+					L0668_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L0667_T_Thing);
 					if (L0668_ps_Junk->getChargeCount() == L0671_ui_ChampionIndex) {
-						_vm->_dungeonMan->f164_unlinkThingFromList(L0667_T_Thing, Thing(0), L0664_i_MapX, L0665_i_MapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
+						_vm->_dungeonMan->unlinkThingFromList(L0667_T_Thing, Thing(0), L0664_i_MapX, L0665_i_MapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
 						L0668_ps_Junk->setNextThing(Thing::_none);
 						event->_mapTime += 1;
 						goto T0255002;
 					}
 				}
 			}
-			L0667_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0667_T_Thing);
+			L0667_T_Thing = _vm->_dungeonMan->getNextThing(L0667_T_Thing);
 		}
 		break;
 	case 0:
