@@ -142,8 +142,8 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->w; x++) {
 				byte color = stream.readByte();
-				for (int c = 0; c < 8; c++, x++)
-					*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
+				for (int c = 0; c < 8; c++)
+					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
 			}
 		}
 
