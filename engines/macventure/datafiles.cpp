@@ -30,7 +30,7 @@
 
 namespace MacVenture {
 
-#define MACVENTURE_DATA_BUNDLE Common::String("macventure.zip")
+#define MACVENTURE_DATA_BUNDLE Common::String("macventure.dat")
 
 struct BorderName {
 	MVWindowType type;
