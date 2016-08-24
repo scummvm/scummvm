@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMaitreDArmHolder, CDropTarget)
+	ON_MESSAGE(MaitreDArmHolder)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
 void CMaitreDArmHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CDropTarget::save(file, indent);
@@ -32,6 +37,20 @@ void CMaitreDArmHolder::save(SimpleFile *file, int indent) {
 void CMaitreDArmHolder::load(SimpleFile *file) {
 	file->readNumber();
 	CDropTarget::load(file);
+}
+
+bool CMaitreDArmHolder::MaitreDArmHolder(CMaitreDArmHolder *msg) {
+	_fieldF4 = 0;
+	return true;
+}
+
+bool CMaitreDArmHolder::ActMsg(CActMsg *msg) {
+	if (msg->_action == "LoseArm") {
+		_bounds = Rect();
+		setVisible(false);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

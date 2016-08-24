@@ -34,7 +34,7 @@ class CDropTarget : public CGameObject {
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool VisibleMsg(CVisibleMsg *msg);
 	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
-private:
+protected:
 	Point _pos1;
 	int _itemFrame;
 	CString _itemMatchName;

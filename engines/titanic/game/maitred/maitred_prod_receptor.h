@@ -28,14 +28,19 @@
 namespace Titanic {
 
 class CMaitreDProdReceptor : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseMoveMsg(CMouseMoveMsg *msg);
+	bool ProdMaitreDMsg(CProdMaitreDMsg *msg);
+	bool DisableMaitreDProdReceptor(CDisableMaitreDProdReceptor *msg);
 protected:
 	int _fieldBC;
-	int _fieldC0;
+	int _counter;
 	int _fieldC4;
 public:
 	CLASSDEF;
 	CMaitreDProdReceptor() : CGameObject(),
-		_fieldBC(0), _fieldC0(0), _fieldC4(1) {}
+		_fieldBC(0), _counter(0), _fieldC4(1) {}
 
 	/**
 	 * Save the data for the class to file

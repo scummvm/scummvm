@@ -20,20 +20,56 @@
  *
  */
 
-#include "titanic/game/maitred/maitred_legs.h"
+#include "titanic/game/maitred/maitred_body.h"
 
 namespace Titanic {
 
-void CMaitreDLegs::save(SimpleFile *file, int indent) {
+BEGIN_MESSAGE_MAP(CMaitreDBody, CMaitreDProdReceptor)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(AnimateMaitreDMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
+void CMaitreDBody::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_armed, indent);
 	CMaitreDProdReceptor::save(file, indent);
 }
 
-void CMaitreDLegs::load(SimpleFile *file) {
+void CMaitreDBody::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
+	_armed = file->readNumber();
 	CMaitreDProdReceptor::load(file);
+}
+
+bool CMaitreDBody::EnterViewMsg(CEnterViewMsg *msg) {
+	return true;
+}
+
+bool CMaitreDBody::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
+	static const char *const ARMED_CLIPS[5] = {
+		"Talking 1", "Talking 2", "Talking 3", "Talking 4", nullptr
+	};
+	static const char *const UNARMED_CLIPS[5] = {
+		"Armless Talking 1", "Armless Talking 2", "Armless Talking 3",
+		"Armless Talking 4", nullptr
+	};
+
+	if (!hasActiveMovie()) {
+		playRandomClip(_armed ? ARMED_CLIPS : UNARMED_CLIPS);
+	}
+
+	return true;
+}
+
+bool CMaitreDBody::ActMsg(CActMsg *msg) {
+	if (msg->_action == "LoseArm") {
+		_armed = false;
+		loadFrame(262);
+		playSound("c#75.wav");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

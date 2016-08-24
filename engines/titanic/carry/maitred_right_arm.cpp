@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMaitreDRightArm, CArm)
+	ON_MESSAGE(DropZoneLostObjectMsg)
+END_MESSAGE_MAP()
+
 void CMaitreDRightArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CArm::save(file, indent);
@@ -32,6 +36,14 @@ void CMaitreDRightArm::save(SimpleFile *file, int indent) {
 void CMaitreDRightArm::load(SimpleFile *file) {
 	file->readNumber();
 	CArm::load(file);
+}
+
+bool CMaitreDRightArm::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
+	CActMsg actMsg("LoseArm");
+	actMsg.execute("MaitreDBody");
+	actMsg.execute("MaitreD Arm Holder");
+	_fieldE0 = 1;
+	return true;
 }
 
 } // End of namespace Titanic

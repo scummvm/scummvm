@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CMaitreDBody : public CMaitreDProdReceptor {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool AnimateMaitreDMsg(CAnimateMaitreDMsg *msg);
+	bool ActMsg(CActMsg *msg);
 private:
-	int _fieldC8;
+	bool _armed;
 public:
 	CLASSDEF;
-	CMaitreDBody() : CMaitreDProdReceptor(), _fieldC8(1) {}
+	CMaitreDBody() : CMaitreDProdReceptor(), _armed(true) {}
 
 	/**
 	 * Save the data for the class to file

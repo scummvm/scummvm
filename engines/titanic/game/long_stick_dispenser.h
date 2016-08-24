@@ -29,7 +29,15 @@
 namespace Titanic {
 
 class CLongStickDispenser : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 private:
 	int _fieldBC;
 	int _fieldC0;

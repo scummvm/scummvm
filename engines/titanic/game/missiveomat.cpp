@@ -24,6 +24,14 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMissiveOMat, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(KeyCharMsg)
+	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(MissiveOMatActionMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 CMissiveOMat::CMissiveOMat() : CGameObject(), _fieldBC(1),
 	_fieldC0(0), _fieldC4(0), _fieldE0(-1) {
 }
@@ -50,6 +58,35 @@ void CMissiveOMat::load(SimpleFile *file) {
 	_fieldE0 = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CMissiveOMat::EnterViewMsg(CEnterViewMsg *msg) {
+	CMissiveOMatActionMsg actionMsg(9);
+	actionMsg.execute(this);
+	return true;
+}
+
+bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
+	if (_fieldBC == 3) {
+		// TODO
+	}
+
+	return true;
+}
+
+bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
+	// TODO
+	return true;
+}
+
+bool CMissiveOMat::LeaveViewMsg(CLeaveViewMsg *msg) {
+	// TODO
+	return true;
 }
 
 } // End of namespace Titanic

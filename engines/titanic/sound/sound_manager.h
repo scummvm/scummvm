@@ -214,7 +214,7 @@ public:
 	/**
 	 * Gets the volume for a given mode? value
 	 */
-	double getModeVolume(int mode);
+	uint getModeVolume(int mode);
 };
 
 class QSoundManagerSound : public ListItem {

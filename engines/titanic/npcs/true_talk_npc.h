@@ -62,7 +62,6 @@ protected:
 	int _fieldF4;
 	int _fieldF8;
 	int _speechTimerId;
-	int _field100;
 	int _field104;
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
@@ -71,6 +70,8 @@ protected:
 	 * Perform an action
 	 */
 	void performAction(bool startTalking, CViewItem *view = nullptr);
+public:
+	int _field100;
 public:
 	CLASSDEF;
 	CTrueTalkNPC();

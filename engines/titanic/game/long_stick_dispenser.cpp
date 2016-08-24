@@ -21,8 +21,20 @@
  */
 
 #include "titanic/game/long_stick_dispenser.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CLongStickDispenser, CGameObject)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 void CLongStickDispenser::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -42,9 +54,96 @@ void CLongStickDispenser::load(SimpleFile *file) {
 	CGameObject::load(file);
 }
 
+bool CLongStickDispenser::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	if (!_fieldBC && !_fieldC4 && !_fieldC0) {
+		CStatusChangeMsg statusMsg;
+		statusMsg.execute("ShatterGlass");
+		_fieldC0 = 1;
+		loadFrame(19);
+	} else if (_fieldC0) {
+		playSound("z#63.wav");
+		petDisplayMessage(1, "'This glass is totally and utterly unbreakable.");
+	}
+
+	return true;
+}
+
+bool CLongStickDispenser::MovieEndMsg(CMovieEndMsg *msg) {
+	CPuzzleSolvedMsg puzzleMsg;
+	puzzleMsg.execute("LongStick");
+	_fieldC0 = 1;
+	return true;
+}
+
+bool CLongStickDispenser::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	return true;
+}
+
 bool CLongStickDispenser::EnterRoomMsg(CEnterRoomMsg *msg) {
 	_fieldC0 = 0;
 	_fieldC4 = 1;
+	return true;
+}
+
+bool CLongStickDispenser::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_fieldC0) {
+		playSound("z#62.wav");
+
+		switch (_fieldBC) {
+		case 0:
+			petDisplayMessage(1, "For emergency long stick, smash glass.");
+			break;
+		case 1:
+			petDisplayMessage(1, "This dispenser has suddenly been fitted with unbreakable glass "
+				"to prevent unseemly hoarding of sticks.");
+			break;
+		default:
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool CLongStickDispenser::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_fieldC0 == 1) {
+		if (_fieldC4) {
+			playMovie(19, 38, MOVIE_GAMESTATE);
+		} else {
+			playMovie(0, 18, MOVIE_GAMESTATE);
+			_fieldBC = 1;
+		}
+
+		_fieldC4 = 1;
+		_fieldC0 = 0;
+	}
+
+	return true;
+}
+
+bool CLongStickDispenser::EnterViewMsg(CEnterViewMsg *msg) {
+	setVisible(true);
+	loadFrame(38);
+	_cursorId = CURSOR_HAND;
+	return true;
+}
+
+bool CLongStickDispenser::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg)) {
+		return false;
+	} else if (_fieldC0 == 1 && _fieldC4 == 1) {
+		CVisibleMsg visibleMsg(true);
+		visibleMsg.execute("LongStick");
+		CPassOnDragStartMsg dragMsg(msg->_mousePos, 1);
+		dragMsg.execute("LongStick");
+
+		msg->_dragItem = getRoot()->findByName("LongStick");
+		loadFrame(0);
+		_fieldC4 = 0;
+		_cursorId = CURSOR_ARROW;
+	}
+
 	return true;
 }
 

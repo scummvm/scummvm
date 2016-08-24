@@ -21,19 +21,48 @@
  */
 
 #include "titanic/carry/maitred_left_arm.h"
+#include "titanic/npcs/true_talk_npc.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMaitreDLeftArm, CArm)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 void CMaitreDLeftArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field174, indent);
+	file->writeNumberLine(_flag, indent);
 	CArm::save(file, indent);
 }
 
 void CMaitreDLeftArm::load(SimpleFile *file) {
 	file->readNumber();
-	_field174 = file->readNumber();
+	_flag = file->readNumber();
 	CArm::load(file);
+}
+
+bool CMaitreDLeftArm::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_flag) {
+		CTrueTalkNPC *maitreD = dynamic_cast<CTrueTalkNPC *>(findRoomObject("MaitreD"));
+		startTalking(maitreD, 126);
+		startTalking(maitreD, 127);
+	}
+
+	return true;
+}
+
+bool CMaitreDLeftArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (checkPoint(msg->_mousePos) && !_flag) {
+		CVisibleMsg visibleMsg;
+		visibleMsg.execute("MD left arm background image");
+		_flag = true;
+
+		CArmPickedUpFromTableMsg takenMsg;
+		takenMsg.execute("Restaurant Table Pan Handler", nullptr, MSGFLAG_SCAN);
+	}
+
+	return CArm::MouseDragStartMsg(msg);
 }
 
 } // End of namespace Titanic

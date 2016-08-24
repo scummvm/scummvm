@@ -349,7 +349,7 @@ protected:
 	/**
 	 * Play an arbitrary clip
 	 */
-	void playClip(const CString &name, uint flags);
+	void playClip(const CString &name, uint flags = 0);
 
 	/**
 	 * Play a clip
@@ -364,7 +364,7 @@ protected:
 	/**
 	 * Play a clip randomly from a passed list of names
 	 */
-	void playRandomClip(const char *const *names, uint flags);
+	void playRandomClip(const char *const *names, uint flags = 0);
 
 	/**
 	 * Return the current view/node/room as a single string

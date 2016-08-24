@@ -93,14 +93,14 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		case 1:
 		case 2:
 			setPosition(Point(_bounds.left, _indicatorPos.y +
-				multiplier * CLift::_elevator1Floor));
+				(int)(multiplier * CLift::_elevator1Floor)));
 			_startFrame = CLift::_elevator1Floor;
 			break;
 
 		case 3:
 		case 4:
 			setPosition(Point(_bounds.left, _indicatorPos.y +
-				multiplier * CLift::_elevator3Floor));
+				(int)(multiplier * CLift::_elevator3Floor)));
 			_startFrame = CLift::_elevator3Floor;
 			break;
 
@@ -115,14 +115,14 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		case 1:
 		case 2:
 			setPosition(Point(_bounds.left, _indicatorPos.y +
-				multiplier * CLift::_elevator2Floor));
+				(int)(multiplier * CLift::_elevator2Floor)));
 			_startFrame = CLift::_elevator2Floor;
 			break;
 
 		case 3:
 		case 4:
 			setPosition(Point(_bounds.left, _indicatorPos.y +
-				multiplier * CLift::_elevator4Floor));
+				(int)(multiplier * CLift::_elevator4Floor)));
 			_startFrame = CLift::_elevator4Floor;
 			break;
 
@@ -158,8 +158,8 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
 				petDisplayMessage(1, "This elevator is currently in an advanced state of non-functionality.");
 			} else {
-				_start = _indicatorPos.y + _startFrame * multiplier;
-				_end = _indicatorPos.y + _endFrame * multiplier;
+				_start = _indicatorPos.y + (int)(_startFrame * multiplier);
+				_end = _indicatorPos.y + (int)(_endFrame * multiplier);
 				lockMouse();
 				addTimer(100);
 

@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CMaitreDRightArm : public CArm {
+	DECLARE_MESSAGE_MAP;
+	bool DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg);
 public:
 	CLASSDEF;
 

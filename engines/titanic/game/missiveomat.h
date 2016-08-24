@@ -28,6 +28,12 @@
 namespace Titanic {
 
 class CMissiveOMat : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool KeyCharMsg(CKeyCharMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool MissiveOMatActionMsg(CMissiveOMatActionMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
 	int _fieldBC;
 	int _fieldC0;

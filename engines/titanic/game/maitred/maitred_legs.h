@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CMaitreDLegs : public CMaitreDProdReceptor {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool AnimateMaitreDMsg(CAnimateMaitreDMsg *msg);
 private:
-	int _fieldC8;
+	bool _flag;
 public:
 	CLASSDEF;
-	CMaitreDLegs() : CMaitreDProdReceptor(), _fieldC8(1) {}
+	CMaitreDLegs() : CMaitreDProdReceptor(), _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

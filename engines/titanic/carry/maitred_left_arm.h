@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CMaitreDLeftArm : public CArm {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 private:
-	int _field174;
+	bool _flag;
 public:
 	CLASSDEF;
-	CMaitreDLeftArm() : CArm(), _field174(0) {}
+	CMaitreDLeftArm() : CArm(), _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

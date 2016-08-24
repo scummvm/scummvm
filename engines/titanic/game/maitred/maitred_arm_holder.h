@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CMaitreDArmHolder : public CDropTarget {
+	DECLARE_MESSAGE_MAP;
+	bool MaitreDArmHolder(CMaitreDArmHolder *msg);
+	bool ActMsg(CActMsg *msg);
 public:
 	CLASSDEF;
 

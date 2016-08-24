@@ -33,14 +33,14 @@ CSoundManager::CSoundManager() : _musicPercent(75.0), _speechPercent(75.0),
 	_masterPercent(75.0), _parrotPercent(75.0), _handleCtr(1) {
 }
 
-double CSoundManager::getModeVolume(int mode) {
+uint CSoundManager::getModeVolume(int mode) {
 	switch (mode) {
 	case -1:
-		return _masterPercent;
+		return (uint)_masterPercent;
 	case -2:
-		return _masterPercent * 30 / 100;
+		return (uint)(_masterPercent * 30 / 100);
 	case -3:
-		return _masterPercent * 15 / 100;
+		return (uint)(_masterPercent * 15 / 100);
 	default:
 		return 0;
 	}
