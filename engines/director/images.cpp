@@ -21,8 +21,10 @@
  */
 
 #include "common/substream.h"
+#include "common/debug.h"
 #include "common/textconsole.h"
 
+#include "director/director.h"
 #include "director/images.h"
 
 namespace Director {
@@ -102,11 +104,7 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
  * BITD
  ****************************/
 
-BITDDecoder::BITDDecoder(int w, int h) {
-	int oldw = w;
-	//w += 8 - (w + 7) % 8;
-
-	//warning("W: %d -> %d, %d", oldw, w, h);
+BITDDecoder::BITDDecoder(int w, int h, bool comp) {
 	_surface = new Graphics::Surface();
 	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -116,6 +114,8 @@ BITDDecoder::BITDDecoder(int w, int h) {
 	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
 
 	_paletteColorCount = 2;
+
+	_comp = comp;
 }
 
 BITDDecoder::~BITDDecoder() {
@@ -136,6 +136,19 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
+
+	if (!_comp) {
+		debugC(3, kDebugImages, "Skipping compression");
+		for (y = 0; y < _surface->h; y++) {
+			for (x = 0; x < _surface->w; x++) {
+				byte color = stream.readByte();
+				for (int c = 0; c < 8; c++, x++)
+					*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
+			}
+		}
+
+		return true;
+	}
 
 	while (y < _surface->h) {
 		int n = stream.readSByte();

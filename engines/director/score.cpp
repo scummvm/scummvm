@@ -642,16 +642,17 @@ void Score::loadFontMap(Common::SeekableSubReadStreamEndian &stream) {
 }
 
 BitmapCast::BitmapCast(Common::SeekableSubReadStreamEndian &stream) {
-	/*byte flags = */ stream.readByte();
-	uint16 someFlaggyThing = stream.readUint16();
+	flags = stream.readByte();
+	someFlaggyThing = stream.readUint16();
 	initialRect = Score::readRect(stream);
 	boundingRect = Score::readRect(stream);
 	regY = stream.readUint16();
 	regX = stream.readUint16();
+	unk1 = unk2 = 0;
 
 	if (someFlaggyThing & 0x8000) {
-		/*uint16 unk1 =*/ stream.readUint16();
-		/*uint16 unk2 =*/ stream.readUint16();
+		unk1 = stream.readUint16();
+		unk2 = stream.readUint16();
 	}
 	modified = 0;
 }

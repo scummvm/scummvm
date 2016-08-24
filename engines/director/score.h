@@ -74,6 +74,8 @@ struct BitmapCast : Cast {
 	uint16 regX;
 	uint16 regY;
 	uint8 flags;
+	uint16 someFlaggyThing;
+	uint16 unk1, unk2;
 };
 
 enum ShapeType {

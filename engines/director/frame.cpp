@@ -435,7 +435,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				continue;
 			}
 
-			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId, _sprites[i]->_width, _sprites[i]->_height);
+			Image::ImageDecoder *img = getImageFrom(_sprites[i]->_castId);
 
 			if (!img) {
 				warning("Image with id %d not found", _sprites[i]->_castId);
@@ -534,7 +534,7 @@ static const int corrections[] = {
 	0, 0, 0
 };
 
-Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
+Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
 
@@ -551,7 +551,15 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
 	}
 
 	if (_vm->_currentScore->getArchive()->hasResource(MKTAG('B', 'I', 'T', 'D'), imgId)) {
+		Common::SeekableReadStream *pic = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+
 		if (_vm->getVersion() < 4) {
+			BitmapCast *bc = static_cast<BitmapCast *>(_vm->_currentScore->_casts[spriteId]);
+			int w = bc->initialRect.width(), h = bc->initialRect.height();
+
+			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
+				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
+
 			bool c = false;
 			for (int i = 0; corrections[i]; i += 3)
 				if (corrections[i] == imgId) {
@@ -561,20 +569,28 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId, int w, int h) {
 				}
 
 			if (!c)
-				warning("%d, %d, %d,", imgId, w, w);
-			img = new BITDDecoder(w, h);
+				debugC(4, kDebugImages, "%d, %d, %d", imgId, w, h);
+
+			if (bc->flags & 0x20) {
+				int w1 = w + 8 - w % 8 + 8;
+				debugC(3, kDebugImages, "Disabling compression for %d: %d x %d", imgId, w1, h);
+
+				img = new BITDDecoder(w1, h, false);
+			} else {
+				img = new BITDDecoder(w, h, true);
+			}
 		} else {
 			img = new Image::BitmapDecoder();
 		}
 
 		if (debugChannelSet(8, kDebugLoading)) {
-			Common::SeekableReadStream *s = _vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId);
+			Common::SeekableReadStream *s = pic;
 			byte buf[1024];
 			int n = s->read(buf, 1024);
 			Common::hexdump(buf, n);
 		}
 
-		img->loadStream(*_vm->_currentScore->getArchive()->getResource(MKTAG('B', 'I', 'T', 'D'), imgId));
+		img->loadStream(*pic);
 		return img;
 	}
 

@@ -41,6 +41,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
+	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 
 	if (!_mixer->isReady())
 		error("Sound initialization failed");
