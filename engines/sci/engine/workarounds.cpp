@@ -88,6 +88,7 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 	{ GID_QFG2,           200,  200,  0,              "astro", "messages",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_lsi: when getting asked for your name by the astrologer - bug #5152
 	{ GID_QFG3,           780,  999,  0,                   "", "export 6",                        NULL,     0, { WORKAROUND_FAKE,   0 } }, // op_add: trying to talk to yourself at the top of the giant tree - bug #6692
 	{ GID_QFG4,           710,64941,  0,          "RandCycle", "doit",                            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_gt: when the tentacle appears in the third room of the caves
+	{ GID_TORIN,        51400,64928,  0,              "Blink", "init",                            NULL,     0, { WORKAROUND_FAKE,   1 } }, // op_div: when Lycentia knocks Torin out after he removes her collar
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -673,6 +674,14 @@ const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 	{ GID_GK1,           370,   370,  0,        "graceComeOut", "changeState",              NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // there's an extra parameter in GK1, when changing chapters. This extra parameter seems to be a bug or just unimplemented functionality, as there's no visible change from the original in the chapter change room
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kRandom_workarounds[] = {
+	{ GID_TORIN,        51400,64928,  0,               "Blink", "init",                     NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
+	{ GID_TORIN,        51400,64928,  0,               "Blink", "cycleDone",                NULL,     0, { WORKAROUND_STILLCALL,  0 } }, // when Lycentia knocks Torin out after he removes her collar
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kReadNumber_workarounds[] = {
