@@ -42,33 +42,38 @@ static const PlainGameDescriptor DMGames[] = {
 
 static const DMADGameDescription gameDescriptions[] = {
 	{
-		"dm", "Amiga 2.0v English",
-		{
-			{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960},
-			{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
-		AD_LISTEND
+		{"dm", "Amiga 2.0v English",
+			{
+				{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960},
+				{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
+				AD_LISTEND
+			},
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 		},
-		Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
 	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_amiga,
 		{ k_saveTarget_DM21, k_saveTarget_endOfList },
 		{ k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
 		{ k_savePlatform_accept_any}
 	},
 	{
-		"dm", "Atari ???v English",
-		{
-			{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
-			{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
-			AD_LISTEND
-		},
-	    Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+		{"dm", "Atari ???v English",
+			{
+				{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
+				{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
+				AD_LISTEND
+			},
+	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+	    },
 	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_atari_st,
 	    { k_saveTarget_DM21, k_saveTarget_endOfList},
 	    { k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
 	    { k_savePlatform_accept_any }
 	},
 
-	AD_TABLE_END_MARKER
+	{	
+		AD_TABLE_END_MARKER, k_saveTarget_none, k_saveFormat_none, k_savePlatform_none,
+		{k_saveTarget_none}, {k_saveFormat_none}, {k_savePlatform_none}
+	}
 };
 
 
@@ -93,7 +98,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc)
-			*engine = new DM::DMEngine(syst, (DMADGameDescription*)desc);
+			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
 		return desc != nullptr;
 	}
 

@@ -61,6 +61,7 @@ class SoundMan;
 enum OriginalSaveFormat {
 	k_saveFormat_accept_any = -1,
 	k_saveFormat_endOfList = 0,
+	k_saveFormat_none = 0,
 	k_saveFormat_dm_atari_st = 1,
 	k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st = 2,
 	k_saveFormat_dm_apple_iigs = 3,
@@ -71,6 +72,7 @@ enum OriginalSaveFormat {
 enum OriginalSavePlatform {
 	k_savePlatform_accept_any = -1,
 	k_savePlatform_endOfList = 0,
+	k_savePlatform_none = 0,
 	k_savePlatform_atari_st = 1, // @ C1_PLATFORM_ATARI_ST   
 	k_savePlatform_apple_iigs = 2, // @ C2_PLATFORM_APPLE_IIGS 
 	k_savePlatform_amiga = 3, // @ C3_PLATFORM_AMIGA      
@@ -85,6 +87,7 @@ enum OriginalSavePlatform {
 enum SaveTarget {
 	k_saveTarget_accept_any = -1,
 	k_saveTarget_endOfList = 0,
+	k_saveTarget_none = 0,
 	k_saveTarget_DM21 = 1,
 	k_saveTarget_total
 };
