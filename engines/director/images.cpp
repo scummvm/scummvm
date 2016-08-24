@@ -140,7 +140,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (!_comp) {
 		debugC(3, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->w; x++) {
+			for (x = 0; x < _surface->w;) {
 				byte color = stream.readByte();
 				for (int c = 0; c < 8; c++)
 					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;

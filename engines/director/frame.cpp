@@ -527,7 +527,7 @@ static const int corrections[] = {
 	1039, 50, 50,
 	1041, 110, 110, // descr
 	1042, 120, 121, // descr 2
-	1065, 27, 27, // car
+	1065, 27, 19, // car
 	1109, 104, 112, // taxi
 	1110, 90, 96, // taxi
 	1111, 74, 80, // taxi
@@ -563,7 +563,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 			bool c = false;
 			for (int i = 0; corrections[i]; i += 3)
 				if (corrections[i] == imgId) {
-					w = corrections[i + 2];
+					//w = corrections[i + 2];
 					c = true;
 					break;
 				}
@@ -571,11 +571,16 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 			if (!c)
 				debugC(4, kDebugImages, "%d, %d, %d", imgId, w, h);
 
-			if (bc->flags & 0x20) {
+			if (true || bc->flags & 0x20) {
 				int w1 = w + 8 - w % 8 + 8;
 				debugC(3, kDebugImages, "Disabling compression for %d: %d x %d", imgId, w1, h);
 
-				img = new BITDDecoder(w1, h, false);
+				if (pic->size() * 8 == w1 * h)
+					img = new BITDDecoder(w1, h, false);
+				else if (pic->size() * 8 == (w1 + 8) * h)
+					img = new BITDDecoder(w1 + 8, h, false);
+				else
+					img = new BITDDecoder(w /*+ 8*/, h, true);
 			} else {
 				img = new BITDDecoder(w, h, true);
 			}
