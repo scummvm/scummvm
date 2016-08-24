@@ -49,7 +49,7 @@ void CLift::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_elevator2Floor, indent);
 	file->writeNumberLine(_elevator3Floor, indent);
 	file->writeNumberLine(_elevator4Floor, indent);
-	file->writeNumberLine(_fieldF8, indent);
+	file->writeNumberLine(_liftNum, indent);
 	file->writeNumberLine(_v6, indent);
 
 	CTransport::save(file, indent);
@@ -62,7 +62,7 @@ void CLift::load(SimpleFile *file) {
 	_elevator2Floor = file->readNumber();
 	_elevator3Floor = file->readNumber();
 	_elevator4Floor = file->readNumber();
-	_fieldF8 = file->readNumber();
+	_liftNum = file->readNumber();
 	_v6 = file->readNumber();
 
 	CTransport::load(file);

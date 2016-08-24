@@ -21,10 +21,24 @@
  */
 
 #include "titanic/game/light_switch.h"
+#include "titanic/game/light.h"
+#include "titanic/game/television.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-int CLightSwitch::_v1;
+BEGIN_MESSAGE_MAP(CLightSwitch, CBackground)
+	ON_MESSAGE(PETUpMsg)
+	ON_MESSAGE(PETDownMsg)
+	ON_MESSAGE(PETLeftMsg)
+	ON_MESSAGE(PETRightMsg)
+	ON_MESSAGE(PETActivateMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
+bool CLightSwitch::_flag;
 
 CLightSwitch::CLightSwitch() : CBackground(), 
 		_fieldE0(0), _fieldE4(0), _fieldE8(0) {
@@ -34,7 +48,7 @@ void CLightSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_flag, indent);
 	file->writeNumberLine(_fieldE8, indent);
 
 	CBackground::save(file, indent);
@@ -44,14 +58,94 @@ void CLightSwitch::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_v1 = file->readNumber();
+	_flag = file->readNumber();
 	_fieldE8 = file->readNumber();
 
 	CBackground::load(file);
 }
 
+bool CLightSwitch::PETUpMsg(CPETUpMsg *msg) {
+	if (msg->_name == "Light") {
+		CLightsMsg lightsMsg(true, true, false, false);
+		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
+
+		if (_fieldE8)
+			CTelevision::_turnOn = true;
+	}
+
+	return true;
+}
+
+bool CLightSwitch::PETDownMsg(CPETDownMsg *msg) {
+	if (msg->_name == "Light") {
+		CLightsMsg lightsMsg(false, false, true, true);
+		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
+
+		if (_fieldE8)
+			CTelevision::_turnOn = true;
+	}
+
+	return true;
+}
+
+bool CLightSwitch::PETLeftMsg(CPETLeftMsg *msg) {
+	if (msg->_name == "Light") {
+		CLightsMsg lightsMsg(false, true, true, false);
+		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
+
+		if (_fieldE8)
+			CTelevision::_turnOn = true;
+	}
+
+	return true;
+}
+
+bool CLightSwitch::PETRightMsg(CPETRightMsg *msg) {
+	if (msg->_name == "Light") {
+		CLightsMsg lightsMsg(true, false, false, true);
+		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
+
+		if (_fieldE8)
+			CTelevision::_turnOn = true;
+	}
+
+	return true;
+}
+
+bool CLightSwitch::PETActivateMsg(CPETActivateMsg *msg) {
+	if (msg->_name == "Light") {
+		if (_flag) {
+			CTurnOff offMsg;
+			offMsg.execute("1stClassState", CLight::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+
+		} else {
+			CTurnOn onMsg;
+			onMsg.execute("1stClassState", CLight::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+			_flag = false;
+			if (_fieldE8)
+				CTelevision::_turnOn = false;
+		}
+	}
+
+	return true;
+}
+
+bool CLightSwitch::EnterViewMsg(CEnterViewMsg *msg) {
+	petSetRemoteTarget();
+	return true;
+}
+
+bool CLightSwitch::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petClear();
+	return true;
+}
+
 bool CLightSwitch::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CLightSwitch::handleEvent");
+	_flag = true;
+	CPetControl *pet = getPetControl();
+	if (pet)
+		_fieldE8 = pet->isRoom59706();
+
 	return true;
 }
 

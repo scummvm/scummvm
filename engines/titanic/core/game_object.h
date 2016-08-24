@@ -466,11 +466,6 @@ protected:
 	CGameObject *findMail(int id) const;
 
 	/**
-	 * Remove an object from the mail list
-	 */
-	void removeMail(int id, int v);
-
-	/**
 	 * Resets the Mail Man value
 	 */
 	void resetMail();
@@ -704,11 +699,6 @@ public:
 	int getPriorClass() const;
 
 	/**
-	 * Adds an object to the mail list
-	 */
-	void addMail(int mailId);
-
-	/**
 	 * Sets the mail identifier for an object
 	 */
 	void setMailId(int mailId);
@@ -772,6 +762,16 @@ public:
 	 * Get the current node and room in the form "room.node"
 	 */
 	CString getRoomNodeName() const;
+
+	/**
+	 * Adds an object to the mail list
+	 */
+	void addMail(int mailId);
+
+	/**
+	 * Remove an object from the mail list
+	 */
+	void removeMail(int id, int v);
 
 	/**
 	 * Return the full Id of the current view in a

@@ -28,8 +28,12 @@
 namespace Titanic {
 
 class CLiftbotHead : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool UseWithCharMsg(CUseWithCharMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 private:
-	int _field12C;
+	bool _flag;
 public:
 	CLASSDEF;
 	CLiftbotHead();

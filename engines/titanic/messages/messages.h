@@ -164,22 +164,6 @@ public:
 	}
 };
 
-class CLightsMsg : public CMessage {
-public:
-	int _field4;
-	int _field8;
-	int _fieldC;
-	int _field10;
-public:
-	CLASSDEF;
-	CLightsMsg() : CMessage(), _field4(0), _field8(0),
-		_fieldC(0), _field10(0) {}
-
-	static bool isSupportedBy(const CTreeItem *item) {
-		return supports(item, _type);
-	}
-};
-
 MESSAGE1(CTimeMsg, uint, _ticks, 0);
 
 class CTimerMsg : public CTimeMsg {
@@ -256,6 +240,7 @@ MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nul
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
 MESSAGE2(CLeaveViewMsg, CViewItem *, oldView, nullptr, CViewItem *, newView, nullptr);
 MESSAGE1(CLemonFallsFromTreeMsg, Point, pt, Point());
+MESSAGE4(CLightsMsg, bool, flag1, false, bool, flag2, false, bool, flag3, false, bool, flag4, false);
 MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);
 MESSAGE0(CMaitreDDefeatedMsg);

@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CLongStick, CCarry)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 CLongStick::CLongStick() : CCarry() {
 }
 
@@ -35,6 +41,32 @@ void CLongStick::save(SimpleFile *file, int indent) {
 void CLongStick::load(SimpleFile *file) {
 	file->readNumber();
 	CCarry::load(file);
+}
+
+bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	if (msg->_other->isEquals("SpeechCentre")) {
+		CPuzzleSolvedMsg puzzleMsg;
+		puzzleMsg.execute(msg->_other);
+	} else if (msg->_other->isEquals("LongStickDispensor")) {
+		petDisplayMessage(1, "You already have one.");
+	} else if (msg->_other->isEquals("Bomb")) {
+		CActMsg actMsg("Hit");
+		actMsg.execute("Bomb");
+	} else {
+		return CCarry::UseWithOtherMsg(msg);
+	}
+
+	return true;
+}
+
+bool CLongStick::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	_fieldE0 = 1;
+	return true;
+}
+
+bool CLongStick::LeaveViewMsg(CLeaveViewMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic

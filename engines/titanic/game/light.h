@@ -29,6 +29,14 @@
 namespace Titanic {
 
 class CLight : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOff(CTurnOff *msg);
+	bool LightsMsg(CLightsMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ActMsg(CActMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
 	int _fieldE0;

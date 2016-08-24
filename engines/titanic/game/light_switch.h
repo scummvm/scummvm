@@ -25,13 +25,22 @@
 
 #include "titanic/core/background.h"
 #include "titanic/messages/messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CLightSwitch : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool PETUpMsg(CPETUpMsg *msg);
+	bool PETDownMsg(CPETDownMsg *msg);
+	bool PETLeftMsg(CPETLeftMsg *msg);
+	bool PETRightMsg(CPETRightMsg *msg);
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
-	static int _v1;
+	static bool _flag;
 private:
 	int _fieldE0;
 	int _fieldE4;

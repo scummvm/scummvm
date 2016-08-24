@@ -44,10 +44,10 @@ public:
 	static int _elevator4Floor;
 	static int _v6;
 
-	int _fieldF8;
+	int _liftNum;
 public:
 	CLASSDEF;
-	CLift() : CTransport(), _fieldF8(1) {}
+	CLift() : CTransport(), _liftNum(1) {}
 
 	/**
 	 * Save the data for the class to file

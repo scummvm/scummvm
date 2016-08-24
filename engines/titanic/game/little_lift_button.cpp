@@ -21,8 +21,14 @@
  */
 
 #include "titanic/game/little_lift_button.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CLittleLiftButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
 
 void CLittleLiftButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -34,6 +40,25 @@ void CLittleLiftButton::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CLittleLiftButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	playMovie(MOVIE_NOTIFY_OBJECT);
+	playSound("z#60.wav");
+	return true;
+}
+
+bool CLittleLiftButton::MovieEndMsg(CMovieEndMsg *msg) {
+	changeView("SecClassLittleLift.Node 1.N");
+
+	CRoomItem *room = getRoom();
+	if (room) {
+		CStatusChangeMsg statusMsg;
+		statusMsg._newStatus = _value;
+		statusMsg.execute(room, nullptr, MSGFLAG_SCAN);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

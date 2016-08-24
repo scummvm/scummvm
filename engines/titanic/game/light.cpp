@@ -21,8 +21,21 @@
  */
 
 #include "titanic/game/light.h"
+#include "titanic/game/television.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CLight, CBackground)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(LightsMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
 
 CLight::CLight() : CBackground(), _fieldE0(0), _fieldE4(0),
 	_fieldE8(0), _fieldEC(0), _fieldF0(0), _fieldF4(0),
@@ -57,8 +70,82 @@ void CLight::load(SimpleFile *file) {
 	CBackground::load(file);
 }
 
+bool CLight::TurnOff(CTurnOff *msg) {
+	setVisible(false);
+	return true;
+}
+
+bool CLight::LightsMsg(CLightsMsg *msg) {
+	if ((msg->_flag2 && _fieldE8) || (msg->_flag3 && _fieldEC)
+			|| (msg->_flag1 && _fieldE4) || (msg->_flag4 && _fieldF0)) {
+		setVisible(true);
+	} else {
+		setVisible(false);
+	}
+
+	return true;
+}
+
+bool CLight::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	// WORKAROUND: Original code doesn't seem to do anything
+	return true;
+}
+
+bool CLight::TurnOn(CTurnOn *msg) {
+	setVisible(true);
+	return true;
+}
+
+bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
+	CPetControl *pet = getPetControl();
+	bool flag = pet ? pet->isRoom59706() : false;
+
+	if (_fieldFC == 1 && flag) {
+		petDisplayMessage(1, "That light appears to be loose.");
+		playSound("z#144.wav", 70);
+	} else {
+		petDisplayMessage(1, "Lumi-Glow(tm) Lights.  They glow in the dark!");
+		playSound("z#62.wav", 70);
+	}
+
+	return true;
+}
+
+bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CPetControl *pet = getPetControl();
+	bool flag = pet ? pet->isRoom59706() : false;
+
+	if (_fieldFC == 1 && flag) {
+		petDisplayMessage(1, "That light appears to be loose.");
+		playSound("z#144.wav", 70);
+	} else {
+		petDisplayMessage(1, "Lumi-Glow(tm) Lights.  They glow in the dark!");
+		playSound("z#62.wav", 70);
+	}
+
+	return true;
+}
+
+bool CLight::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Eye Removed")
+		_fieldFC = 0;
+
+	return true;
+}
+
 bool CLight::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CLight::handleEvent");
+	CPetControl *pet = getPetControl();
+	setVisible(true);
+
+	if (isEquals("6WTL")) {
+		CLightsMsg lightsMsg(1, 1, 1, 1);
+		lightsMsg.execute("1stClassState", CLight::_type, MSGFLAG_SCAN);
+
+		bool flag = pet ? pet->isRoom59706() : false;
+		if (flag)
+			CTelevision::_turnOn = true;
+	}
+
 	return true;
 }
 

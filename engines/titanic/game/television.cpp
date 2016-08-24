@@ -23,7 +23,9 @@
 #include "titanic/game/television.h"
 #include "titanic/game/get_lift_eye2.h"
 #include "titanic/core/project_item.h"
+#include "titanic/carry/magazine.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -237,10 +239,15 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
 		playSound("z#47.wav", 100, 0, 0);
 		_soundHandle = playSound("b#20.wav", 100, 0, 0);
-		CTreeItem *magazine = getRoot()->findByName("Magazine");
+		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
 
 		if (magazine) {
-			warning("TODO: CTelevision::MovieEndMsg");
+			CPetControl *pet = getPetControl();
+			uint roomFlags = pet->getRoomFlags();
+
+			debugC(kDebugScripts, "Assigned room - %d", roomFlags);
+			magazine->addMail(roomFlags);
+			magazine->removeMail(roomFlags, roomFlags);
 		}
 
 		loadFrame(561);
@@ -282,7 +289,7 @@ bool CTelevision::LightsMsg(CLightsMsg *msg) {
 	if (pet)
 		flag = pet->isRoom59706();
 
-	if (msg->_field8 || !flag)
+	if (msg->_flag2 || !flag)
 		_turnOn = true;
 
 	return true;

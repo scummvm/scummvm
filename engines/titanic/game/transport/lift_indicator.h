@@ -25,17 +25,24 @@
 
 #include "titanic/game/transport/lift.h"
 #include "titanic/messages/messages.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CLiftindicator : public CLift {
 	DECLARE_MESSAGE_MAP;
-	bool EnterRoomMsg(CEnterRoomMsg *msg) { return true; }
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 private:
 	int _fieldFC;
-	Point _pos2;
-	int _field108;
-	int _field10C;
+	Point _indicatorPos;
+	int _start;
+	int _end;
 public:
 	CLASSDEF;
 	CLiftindicator();

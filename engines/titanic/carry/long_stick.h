@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CLongStick : public CCarry {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
 	CLASSDEF;
 	CLongStick();

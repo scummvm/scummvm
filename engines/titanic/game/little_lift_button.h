@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CLittleLiftButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
 	int _value;
 public:
