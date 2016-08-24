@@ -894,7 +894,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	// NOTE: This is the actual check, in the actual location,
 	// from SCI engine.
 	if (loopNo < 0) {
-		error("Loop is less than 0!");
+		error("Loop is less than 0");
 	}
 
 	const uint16 viewHeaderSize = READ_SCI11ENDIAN_UINT16(data);
