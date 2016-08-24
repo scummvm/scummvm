@@ -286,7 +286,7 @@ public:
 		return dataSize;
 	}
 
-	uint32 pos() const { return _pos - _length; } //'read' position in the stream
+	int32 pos() const { return _pos - _length; } //'read' position in the stream
 	uint32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
 
 	byte *getData() { return _data; }

@@ -50,6 +50,10 @@ uint32 OutSaveFile::write(const void *dataPtr, uint32 dataSize) {
 	return _wrapped->write(dataPtr, dataSize);
 }
 
+int32 OutSaveFile::pos() const {
+	return _wrapped->pos();
+}
+
 bool SaveFileManager::copySavefile(const String &oldFilename, const String &newFilename) {
 	InSaveFile *inFile = 0;
 	OutSaveFile *outFile = 0;

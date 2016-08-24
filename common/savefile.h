@@ -58,6 +58,7 @@ public:
 	virtual void finalize();
 	virtual bool flush();
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual int32 pos() const;
 };
 
 /**
