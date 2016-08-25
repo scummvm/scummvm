@@ -230,24 +230,27 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 		if (!palette)
 			warning("Trying to blit into a surface with 1bpp, you need the palette.");
 
-		Surface srf;
-		srf.create(target.w, target.h, _bmp->format);
+		Surface *srf = new Surface();
+		srf->create(target.w, target.h, _bmp->format);
 
-		drawRegions(srf, dx, dy, dw, dh);
+		drawRegions(*srf, dx, dy, dw, dh);
 
 		//TODO: This can be further optimized by keeping the data between draws,
 		// and using a unique identifier for each palette, so that it only gets
 		// recalculated when the palette changes.
 		_cached_colors.clear();
 
-		for (uint i = 0; i < srf.w; ++i) {
-			for (uint j = 0; j < srf.h; ++j) {
-				uint32 color = *(uint32*)srf.getBasePtr(i, j);
+		for (uint i = 0; i < srf->w; ++i) {
+			for (uint j = 0; j < srf->h; ++j) {
+				uint32 color = *(uint32*)srf->getBasePtr(i, j);
 				if (color > 0) {
 					*((byte *)target.getBasePtr(i, j)) = closestGrayscale(color, palette, numColors);
 				}
 			}
 		}
+
+		srf->free();
+		delete srf;
 
 		return;
 	}

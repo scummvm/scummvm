@@ -112,6 +112,7 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active) {
 
 	src->blit(srf, 0, 0, srf.w, srf.h, palette, kColorCount);
 	destination.transBlitFrom(srf, kColorGreen2);
+	srf.free();
 }
 
 } // End of namespace Graphics

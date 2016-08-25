@@ -336,7 +336,6 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 		_macBorder.setOffsets(lo, ro, to, bo);
 
 	updateInnerDims();
-	source.free();
 }
 
 void MacWindow::setCloseable(bool closeable) {
