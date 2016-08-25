@@ -165,7 +165,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 
 void DMEngine::saveGame() {
 	_menuMan->f456_drawDisabledMenu();
-	_eventMan->f78_showMouse();
+	_eventMan->showMouse();
 
 	switch (getGameLanguage()) { // localized
 	default:
@@ -242,13 +242,13 @@ void DMEngine::saveGame() {
 
 
 	if (saveAndPlayChoice == kSaveAndQuit) {
-		_eventMan->f77_hideMouse();
+		_eventMan->hideMouse();
 		endGame(false);
 	}
 
 	_restartGameAllowed = true;
 	_menuMan->f457_drawEnabledMenus();
-	_eventMan->f77_hideMouse();
+	_eventMan->hideMouse();
 }
 
 Common::String DMEngine::getSavefileName(uint16 slot) {

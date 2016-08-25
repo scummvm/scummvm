@@ -442,7 +442,7 @@ bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing)
 		if (newIconIndex != currIconIndex) {
 			if ((slotBoxIndex < k8_SlotBoxInventoryFirstSlot) && !_mousePointerHiddenToDrawChangedObjIconOnScreen) {
 				_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
-				_vm->_eventMan->f77_hideMouse();
+				_vm->_eventMan->hideMouse();
 			}
 			objMan.f38_drawIconInSlotBox(slotBoxIndex, newIconIndex);
 			return true;
@@ -470,9 +470,9 @@ void ChampionMan::drawChangedObjectIcons() {
 		IconIndice iconIndex = objMan.f33_getIconIndex(_leaderHandObject);
 		if (iconIndex != leaderHandObjIconIndex) {
 			_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->hideMouse();
 			objMan.f36_extractIconFromBitmap(iconIndex, objMan._g412_objectIconForMousePointer);
-			_vm->_eventMan->f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
+			_vm->_eventMan->setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
 			_leaderHandObjectIconIndex = iconIndex;
 			objMan.f34_drawLeaderObjectName(_leaderHandObject);
 		}
@@ -517,7 +517,7 @@ void ChampionMan::drawChangedObjectIcons() {
 	}
 
 	if (_mousePointerHiddenToDrawChangedObjIconOnScreen)
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 }
 
 void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex) {
@@ -607,10 +607,10 @@ Thing ChampionMan::getObjectRemovedFromLeaderHand() {
 	if (leaderHandObject != Thing::_none) {
 		_leaderHandObject = Thing::_none;
 		_leaderHandObjectIconIndex = kM1_IconIndiceNone;
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		_vm->_objectMan->f35_clearLeaderObjectName();
-		_vm->_eventMan->f69_setMousePointer();
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->setMousePointer();
+		_vm->_eventMan->hideMouse();
 		if (_leaderIndex != kM1_ChampionNone) {
 			_champions[_leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(leaderHandObject);
 			setFlag(_champions[_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
@@ -902,11 +902,11 @@ void ChampionMan::wakeUp() {
 	_vm->_waitForInputMaxVerticalBlankCount = 10;
 	_vm->delay(10);
 	_vm->_displayMan->f98_drawFloorAndCeiling();
-	_vm->_eventMan->_g441_primaryMouseInput = _vm->_eventMan->_primaryMouseInputInterface;
-	_vm->_eventMan->_g442_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
-	_vm->_eventMan->_g443_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
-	_vm->_eventMan->_g444_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
-	_vm->_eventMan->f357_discardAllInput();
+	_vm->_eventMan->_primaryMouseInput = _vm->_eventMan->_primaryMouseInputInterface;
+	_vm->_eventMan->_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
+	_vm->_eventMan->_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
+	_vm->_eventMan->_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
+	_vm->_eventMan->discardAllInput();
 	_vm->_menuMan->f457_drawEnabledMenus();
 }
 
@@ -1197,15 +1197,15 @@ void ChampionMan::putObjectInLeaderHand(Thing thing, bool setMousePointer) {
 
 	_leaderEmptyHanded = false;
 	_vm->_objectMan->f36_extractIconFromBitmap(_leaderHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(_leaderHandObject = thing), _vm->_objectMan->_g412_objectIconForMousePointer);
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_objectMan->f34_drawLeaderObjectName(thing);
 
 	if (setMousePointer)
 		_vm->_setMousePointerToObjectInMainLoop = true;
 	else
-		_vm->_eventMan->f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
+		_vm->_eventMan->setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
 
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 	if (_leaderIndex != kM1_ChampionNone) {
 		_champions[_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(thing);
 		setFlag(_champions[_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
@@ -1322,7 +1322,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	if (leaderHandObject != Thing::_none)
 		getObjectRemovedFromLeaderHand();
 
@@ -1335,7 +1335,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 		addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot)slotIndex);
 
 	drawChampionState((ChampionIndex)champIndex);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount) {
@@ -1395,7 +1395,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 			Box blitBox;
 			blitBox._y1 = 0;
-			_vm->_eventMan->f78_showMouse();
+			_vm->_eventMan->showMouse();
 
 			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 				blitBox._y2 = 28;
@@ -1441,7 +1441,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 				_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(eventIndex));
 			}
 			drawChampionState((ChampionIndex)championIndex);
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->hideMouse();
 		}
 	}
 }
@@ -1453,17 +1453,17 @@ void ChampionMan::championKill(uint16 champIndex) {
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 		if (_vm->_pressingEye) {
 			_vm->_pressingEye = false;
-			_vm->_eventMan->_g597_ignoreMouseMovements = false;
+			_vm->_eventMan->_ignoreMouseMovements = false;
 			if (!_leaderEmptyHanded) {
 				_vm->_objectMan->f34_drawLeaderObjectName(_leaderHandObject);
 			}
-			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->_hideMousePointerRequestCount = 1;
+			_vm->_eventMan->hideMouse();
 		} else if (_vm->_pressingMouth) {
 			_vm->_pressingMouth = false;
-			_vm->_eventMan->_g597_ignoreMouseMovements = false;
-			_vm->_eventMan->_g587_hideMousePointerRequestCount = 1;
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->_ignoreMouseMovements = false;
+			_vm->_eventMan->_hideMousePointerRequestCount = 1;
+			_vm->_eventMan->hideMouse();
 		}
 		_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
 	}
@@ -1483,9 +1483,9 @@ void ChampionMan::championKill(uint16 champIndex) {
 	curChampion->_dir = _vm->_dungeonMan->_partyDir;
 	curChampion->_maximumDamageReceived = 0;
 	uint16 curChampionIconIndex = getChampionIconIndex(curCell, _vm->_dungeonMan->_partyDir);
-	if (_vm->indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
-		_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
-		_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+	if (_vm->indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap) {
+		_vm->_eventMan->_mousePointerBitmapUpdated = true;
+		_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
 	}
 
 	if (curChampion->_poisonEventCount)
@@ -1507,7 +1507,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	}
 
 	if (champIndex == _leaderIndex)
-		_vm->_eventMan->f368_commandSetLeader((ChampionIndex)aliveChampionIndex);
+		_vm->_eventMan->commandSetLeader((ChampionIndex)aliveChampionIndex);
 
 	if (champIndex == _magicCasterChampionIndex)
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(aliveChampionIndex);
@@ -1833,7 +1833,7 @@ void ChampionMan::resetDataToStartGame() {
 		if ((L0787_T_Thing = _leaderHandObject) == Thing::_none) {
 			_leaderEmptyHanded = true;
 			_leaderHandObjectIconIndex = kM1_IconIndiceNone;
-			_vm->_eventMan->f69_setMousePointer();
+			_vm->_eventMan->setMousePointer();
 		} else {
 			putObjectInLeaderHand(L0787_T_Thing, true); /* This call will add the weight of the leader hand object to the Load of the leader a first time */
 		}
@@ -1846,7 +1846,7 @@ void ChampionMan::resetDataToStartGame() {
 		drawAllChampionStates();
 		if ((L0785_i_ChampionIndex = _leaderIndex) != kM1_ChampionNone) {
 			_leaderIndex = kM1_ChampionNone;
-			_vm->_eventMan->f368_commandSetLeader((ChampionIndex)L0785_i_ChampionIndex);
+			_vm->_eventMan->commandSetLeader((ChampionIndex)L0785_i_ChampionIndex);
 		}
 		if ((L0785_i_ChampionIndex = _magicCasterChampionIndex) != kM1_ChampionNone) {
 			_magicCasterChampionIndex = kM1_ChampionNone;
@@ -1948,7 +1948,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	}
 	_candidateChampionOrdinal = previousPartyChampionCount + 1;
 	if (++_partyChampionCount == 1) {
-		_vm->_eventMan->f368_commandSetLeader(k0_ChampionFirst);
+		_vm->_eventMan->commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->_g508_refreshActionArea = true;
 	} else {
 		_vm->_menuMan->f388_clearActingChampion();
@@ -2057,7 +2057,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	} else {
 		barGraphHeights[barGraphIdx] = 0;
 	}
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 
 	// Strangerke - TO CHECK: if portraits, maybe the old (assembly) code is required for older versions
 	Box box;
@@ -2080,7 +2080,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 		box._x1 += 7;
 		box._x2 += 7;
 	}
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 
@@ -2121,7 +2121,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	if (getFlag(championAttributes, k0x1000_ChampionAttributeStatusBox)) {
 		Box box;
 		box._y1 = 0;
@@ -2158,13 +2158,13 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			_vm->_menuMan->f386_drawActionIcon(champIndex);
 
 			clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->hideMouse();
 			return;
 		}
 	}
 	if (!(curChampion->_currHealth)) {
 		clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 		return;
 	}
 
@@ -2256,7 +2256,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
 	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, _vm->_dungeonMan->_partyDir);
-	if (getFlag(championAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
+	if (getFlag(championAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
 		_vm->_displayMan->D24_fillScreenBox(_boxChampionIcons[championIconIndex], _championColor[champIndex]);
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, _boxChampionIcons[championIconIndex], getChampionIconIndex(curChampion->_dir, _vm->_dungeonMan->_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
@@ -2281,7 +2281,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 
 	clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 uint16 ChampionMan::getChampionIconIndex(int16 val, Direction dir) {
@@ -2322,7 +2322,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 	box._y2 = box._y1 + 17;
 
 	if (!isInventoryChamp)
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 
 	int16 iconIndex;
 	if (thing == Thing::_none) {
@@ -2371,7 +2371,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 	_vm->_objectMan->f38_drawIconInSlotBox(slotBoxIndex, iconIndex);
 
 	if (!isInventoryChamp)
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 }
 
 void ChampionMan::renameChampion(Champion* champ) {
@@ -2391,10 +2391,10 @@ void ChampionMan::renameChampion(Champion* champ) {
 	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
 	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
-	_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
+	_vm->_eventMan->hideMouse();
 	uint16 curCharacterIndex = 0;
 	champ->_name[curCharacterIndex] = '\0';
 	champ->_title[0] = '\0';
@@ -2406,9 +2406,9 @@ void ChampionMan::renameChampion(Champion* champ) {
 	for (;;) { /*_Infinite loop_*/
 		bool championTitleIsFull = ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE) && (curCharacterIndex == 19));
 		if (!championTitleIsFull) {
-			_vm->_eventMan->f78_showMouse();
+			_vm->_eventMan->showMouse();
 			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k9_ColorGold, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-			_vm->_eventMan->f77_hideMouse();
+			_vm->_eventMan->hideMouse();
 		}
 
 		int16 curCharacter = 256;
@@ -2491,9 +2491,9 @@ void ChampionMan::renameChampion(Champion* champ) {
 			if ((curCharacter != ' ') || curCharacterIndex != 0) {
 				if (!championTitleIsFull) {
 					renameChampionInputCharacterString[0] = curCharacter;
-					_vm->_eventMan->f78_showMouse();
+					_vm->_eventMan->showMouse();
 					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
-					_vm->_eventMan->f77_hideMouse();
+					_vm->_eventMan->hideMouse();
 					renamedChampionString[curCharacterIndex++] = curCharacter;
 					renamedChampionString[curCharacterIndex] = '\0';
 					textPosX += 6;
@@ -2508,9 +2508,9 @@ void ChampionMan::renameChampion(Champion* champ) {
 			}
 		} else if (curCharacter == '\r') { // Carriage return
 			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex > 0)) {
-				_vm->_eventMan->f78_showMouse();
+				_vm->_eventMan->showMouse();
 				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-				_vm->_eventMan->f77_hideMouse();
+				_vm->_eventMan->hideMouse();
 				renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
 				renamedChampionString = champ->_title;
 				textPosX = 105;
@@ -2522,9 +2522,9 @@ void ChampionMan::renameChampion(Champion* champ) {
 				continue;
 
 			if (!championTitleIsFull) {
-				_vm->_eventMan->f78_showMouse();
+				_vm->_eventMan->showMouse();
 				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-				_vm->_eventMan->f77_hideMouse();
+				_vm->_eventMan->hideMouse();
 			}
 			if (curCharacterIndex == 0) {
 				renamedChampionString = champ->_name;

@@ -125,9 +125,9 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		displayBox._y2 = 168;
 		displayBox._x1 = 47;
 		displayBox._x2 = 270;
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->_g296_bitmapViewport, &displayBox, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 	} else {
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 		_vm->delay(1);
@@ -170,21 +170,21 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	Box L1303_s_BoxB;
 	Box L1304_s_BoxA;
 
-	_vm->_eventMan->f77_hideMouse();
-	L1298_ps_PrimaryMouseInputBackup = _vm->_eventMan->_g441_primaryMouseInput;
-	L1299_ps_SecondaryMouseInputBackup = _vm->_eventMan->_g442_secondaryMouseInput;
-	L1300_ps_PrimaryKeyboardInputBackup = _vm->_eventMan->_g443_primaryKeyboardInput;
-	L1301_ps_SecondaryKeyboardInputBackup = _vm->_eventMan->_g444_secondaryKeyboardInput;
-	_vm->_eventMan->_g442_secondaryMouseInput = nullptr;
-	_vm->_eventMan->_g443_primaryKeyboardInput = nullptr;
-	_vm->_eventMan->_g444_secondaryKeyboardInput = nullptr;
-	_vm->_eventMan->_g441_primaryMouseInput = _vm->_eventMan->_primaryMouseInputDialogSets[dialogSetIndex][choiceCount - 1];
-	_vm->_eventMan->f357_discardAllInput();
+	_vm->_eventMan->hideMouse();
+	L1298_ps_PrimaryMouseInputBackup = _vm->_eventMan->_primaryMouseInput;
+	L1299_ps_SecondaryMouseInputBackup = _vm->_eventMan->_secondaryMouseInput;
+	L1300_ps_PrimaryKeyboardInputBackup = _vm->_eventMan->_primaryKeyboardInput;
+	L1301_ps_SecondaryKeyboardInputBackup = _vm->_eventMan->_secondaryKeyboardInput;
+	_vm->_eventMan->_secondaryMouseInput = nullptr;
+	_vm->_eventMan->_primaryKeyboardInput = nullptr;
+	_vm->_eventMan->_secondaryKeyboardInput = nullptr;
+	_vm->_eventMan->_primaryMouseInput = _vm->_eventMan->_primaryMouseInputDialogSets[dialogSetIndex][choiceCount - 1];
+	_vm->_eventMan->discardAllInput();
 	_selectedDialogChoice = 99;
 	do {
 		Common::Event key;
 		Common::EventType eventType = _vm->_eventMan->processInput(&key);
-		_vm->_eventMan->f380_processCommandQueue();
+		_vm->_eventMan->processCommandQueue();
 		_vm->delay(1);
 		_vm->_displayMan->updateScreen();
 		if ((_selectedDialogChoice == 99) && (choiceCount == 1) 
@@ -194,12 +194,12 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 		}
 	} while (_selectedDialogChoice == 99);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	L1304_s_BoxA = _vm->_eventMan->_g441_primaryMouseInput[_selectedDialogChoice - 1]._hitbox;
+	L1304_s_BoxA = _vm->_eventMan->_primaryMouseInput[_selectedDialogChoice - 1]._hitbox;
 	L1304_s_BoxA._x1 -= 3;
 	L1304_s_BoxA._x2 += 3;
 	L1304_s_BoxA._y1 -= 3;
 	L1304_s_BoxA._y2 += 4;
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_displayMan->_g297_drawFloorAndCeilingRequested = true;
 	L1303_s_BoxB._x1 = 0;
 	L1303_s_BoxB._y1 = 0;
@@ -256,13 +256,13 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	L1304_s_BoxA._y2 += 3;
 	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g296_bitmapViewport, _vm->_displayMan->_g348_bitmapScreen,
 										L1304_s_BoxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 25, k200_heightScreen);
-	_vm->_eventMan->f77_hideMouse();
-	_vm->_eventMan->_g441_primaryMouseInput = L1298_ps_PrimaryMouseInputBackup;
-	_vm->_eventMan->_g442_secondaryMouseInput = L1299_ps_SecondaryMouseInputBackup;
-	_vm->_eventMan->_g443_primaryKeyboardInput = L1300_ps_PrimaryKeyboardInputBackup;
-	_vm->_eventMan->_g444_secondaryKeyboardInput = L1301_ps_SecondaryKeyboardInputBackup;
-	_vm->_eventMan->f357_discardAllInput();
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->hideMouse();
+	_vm->_eventMan->_primaryMouseInput = L1298_ps_PrimaryMouseInputBackup;
+	_vm->_eventMan->_secondaryMouseInput = L1299_ps_SecondaryMouseInputBackup;
+	_vm->_eventMan->_primaryKeyboardInput = L1300_ps_PrimaryKeyboardInputBackup;
+	_vm->_eventMan->_secondaryKeyboardInput = L1301_ps_SecondaryKeyboardInputBackup;
+	_vm->_eventMan->discardAllInput();
+	_vm->_eventMan->showMouse();
 	return _selectedDialogChoice;
 }
 }

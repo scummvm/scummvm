@@ -36,10 +36,7 @@
 #include "gfx.h"
 #include "champion.h"
 
-
 namespace DM {
-
-
 
 enum MouseButton {
 	k0_NoneMouseButton = 0, // present only because of typesafety
@@ -201,35 +198,32 @@ class DMEngine;
 #define k3_pointerTypeHand 3 // @ C3_POINTER_TYPE_HAND          
 #define k4_pointerTypeAutoselect 4 // @ C4_POINTER_TYPE_AUTOSELECT    
 
-
-
-
 class EventManager {
 	DMEngine *_vm;
 
 	Common::Point _mousePos;
 	uint16 _dummyMapIndex;
 
-	bool _g436_pendingClickPresent; // G0436_B_PendingClickPresent
-	Common::Point _g437_pendingClickPos; // @ G0437_i_PendingClickX, G0438_i_PendingClickY
-	MouseButton _g439_pendingClickButton; // @ G0439_i_PendingClickButtonsStatus
-	bool _g600_useObjectAsMousePointerBitmap; // @ G0600_B_UseObjectAsMousePointerBitmap
-	bool _g601_useHandAsMousePointerBitmap; // @ G0601_B_UseHandAsMousePointerBitmap
-	bool _gK100_preventBuildPointerScreenArea; // @ K0100_B_PreventBuildPointerScreenArea
-	byte *_g615_mousePointerOriginalColorsObject; // @ G0615_puc_Bitmap_MousePointerOriginalColorsObject
-	byte *_g613_mousePointerOriginalColorsChampionIcon; // @ G0613_puc_Bitmap_MousePointerOriginalColorsChampionIcon
-	byte *_gK190_mousePointerTempBuffer; // @ K0190_puc_Bitmap_MousePointerTemporaryBuffer
-	int16 _gK104_mousePointerType; // @ K0104_i_MousePointerType
-	int16 _gK105_previousMousePointerType; // @ K0105_i_PreviousMousePointerType
-	uint16 _g558_mouseButtonStatus;// @ G0588_i_MouseButtonsStatus
+	bool _pendingClickPresent; // G0436_B_PendingClickPresent
+	Common::Point _pendingClickPos; // @ G0437_i_PendingClickX, G0438_i_PendingClickY
+	MouseButton _pendingClickButton; // @ G0439_i_PendingClickButtonsStatus
+	bool _useObjectAsMousePointerBitmap; // @ G0600_B_UseObjectAsMousePointerBitmap
+	bool _useHandAsMousePointerBitmap; // @ G0601_B_UseHandAsMousePointerBitmap
+	bool _preventBuildPointerScreenArea; // @ K0100_B_PreventBuildPointerScreenArea
+	byte *_mousePointerOriginalColorsObject; // @ G0615_puc_Bitmap_MousePointerOriginalColorsObject
+	byte *_mousePointerOriginalColorsChampionIcon; // @ G0613_puc_Bitmap_MousePointerOriginalColorsChampionIcon
+	byte *_mousePointerTempBuffer; // @ K0190_puc_Bitmap_MousePointerTemporaryBuffer
+	int16 _mousePointerType; // @ K0104_i_MousePointerType
+	int16 _previousMousePointerType; // @ K0105_i_PreviousMousePointerType
+	uint16 _mouseButtonStatus;// @ G0588_i_MouseButtonsStatus
 
 // this doesn't seem to be used anywhere at all
-	bool _g435_isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
+	bool _isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
 	Common::Queue<Command> _commandQueue;
 
-	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
-	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
-	bool f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
+	void commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
+	void commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
+	bool isLeaderHandObjThrown(int16 posX, int16 posY); // @ F0375_COMMAND_ProcessType80_ClickInDungeonView_IsLeaderHandObjectThrown
 	void setMousePointerFromSpriteData(byte* mouseSprite);
 
 	Box _highlightScreenBox; // @ G0336_i_HighlightBoxX1
@@ -237,25 +231,25 @@ public:
 	explicit EventManager(DMEngine *vm);
 	~EventManager();
 
-	MouseInput* _g441_primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
-	MouseInput* _g442_secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
-	bool _g598_mousePointerBitmapUpdated; // @ G0598_B_MousePointerBitmapUpdated
-	bool _g326_refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
-	bool _g341_highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
-	uint16 _g599_useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
-	KeyboardInput *_g443_primaryKeyboardInput; // @ G0443_ps_PrimaryKeyboardInput
-	KeyboardInput *_g444_secondaryKeyboardInput; // @ G0444_ps_SecondaryKeyboardInput
-	bool _g597_ignoreMouseMovements;// @ G0597_B_IgnoreMouseMovements
-	int16 _g587_hideMousePointerRequestCount; // @ G0587_i_HideMousePointerRequestCount
+	MouseInput* _primaryMouseInput;// @ G0441_ps_PrimaryMouseInput
+	MouseInput* _secondaryMouseInput;// @ G0442_ps_SecondaryMouseInput
+	bool _mousePointerBitmapUpdated; // @ G0598_B_MousePointerBitmapUpdated
+	bool _refreshMousePointerInMainLoop; // @ G0326_B_RefreshMousePointerInMainLoop
+	bool _highlightBoxEnabled; // @ G0341_B_HighlightBoxEnabled
+	uint16 _useChampionIconOrdinalAsMousePointerBitmap; // @ G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap
+	KeyboardInput *_primaryKeyboardInput; // @ G0443_ps_PrimaryKeyboardInput
+	KeyboardInput *_secondaryKeyboardInput; // @ G0444_ps_SecondaryKeyboardInput
+	bool _ignoreMouseMovements;// @ G0597_B_IgnoreMouseMovements
+	int16 _hideMousePointerRequestCount; // @ G0587_i_HideMousePointerRequestCount
 
 	void initMouse();
-	void f67_setMousePointerToNormal(int16 mousePointer); // @ F0067_MOUSE_SetPointerToNormal
-	void f68_setPointerToObject(byte *bitmap); // @ F0068_MOUSE_SetPointerToObject
-	void f71_mouseDropChampionIcon(); // @ F0071_MOUSE_DropChampionIcon
-	void f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY); // @ F0073_MOUSE_BuildPointerScreenArea
-	void f69_setMousePointer(); // @ F0069_MOUSE_SetPointer
-	void f78_showMouse(); // @ F0077_MOUSE_HidePointer_CPSE
-	void f77_hideMouse(); // @ F0078_MOUSE_ShowPointer
+	void setMousePointerToNormal(int16 mousePointer); // @ F0067_MOUSE_SetPointerToNormal
+	void setPointerToObject(byte *bitmap); // @ F0068_MOUSE_SetPointerToObject
+	void mouseDropChampionIcon(); // @ F0071_MOUSE_DropChampionIcon
+	void buildpointerScreenArea(int16 mousePosX, int16 mousePosY); // @ F0073_MOUSE_BuildPointerScreenArea
+	void setMousePointer(); // @ F0069_MOUSE_SetPointer
+	void showMouse(); // @ F0077_MOUSE_HidePointer_CPSE
+	void hideMouse(); // @ F0078_MOUSE_ShowPointer
 	bool isMouseButtonDown(MouseButton button);
 
 	void setMousePos(Common::Point pos);
@@ -267,35 +261,34 @@ public:
 	* If there are no more events, it returns with Common::EVENT_INVALID.
 	*/
 	Common::EventType processInput(Common::Event *grabKey = nullptr, Common::Event *grabMouseClick = nullptr);
-	void f360_processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
-	void f359_processClick(Common::Point mousePos, MouseButton button); // @ F0359_COMMAND_ProcessClick_CPSC
-	CommandType f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
-	void f380_processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
+	void processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
+	void processClick(Common::Point mousePos, MouseButton button); // @ F0359_COMMAND_ProcessClick_CPSC
+	CommandType getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
+	void processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
 
-	void f368_commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
-	void f372_commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
-	void f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
-	void f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
-	void f378_commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
-	void f373_processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell); // @ F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject
-	void f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell); // @ F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject
+	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
+	void commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
+	void commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
+	void commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
+	void commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
+	void processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell); // @ F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject
+	void processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell); // @ F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject
 
-	bool f360_hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
-	void f379_drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
-	void f357_discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
-	void f364_commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
-	void f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX,
+	bool hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
+	void drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
+	void discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
+	void commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
+	void commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX,
 																 int16 posY); // @ F0367_COMMAND_ProcessTypes12To27_ClickInChampionStatusBox
-	void f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex); // @ F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon
-	void f370_commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY); // @ F0370_COMMAND_ProcessType100_ClickInSpellArea
-	void f369_commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType); // @ F0369_COMMAND_ProcessTypes101To108_ClickInSpellSymbolsArea_CPSE
-	void f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY); // @ F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE
-	void f544_resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
-	void f541_waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
-	void f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
-	void f363_highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
-	void f6_highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: f6_highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
-
+	void mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex); // @ F0070_MOUSE_ProcessCommands125To128_ClickOnChampionIcon
+	void commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY); // @ F0370_COMMAND_ProcessType100_ClickInSpellArea
+	void commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType); // @ F0369_COMMAND_ProcessTypes101To108_ClickInSpellSymbolsArea_CPSE
+	void commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY); // @ F0371_COMMAND_ProcessType111To115_ClickInActionArea_CPSE
+	void resetPressingEyeOrMouth(); // @ F0544_INPUT_ResetPressingEyeOrMouth
+	void waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
+	void commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
+	void highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
+	void highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
 
 	KeyboardInput _primaryKeyboardInputInterface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 	KeyboardInput _secondaryKeyboardInputMovement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement

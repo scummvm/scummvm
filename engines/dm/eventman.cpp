@@ -369,53 +369,53 @@ void EventManager::initArrays() {
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_mousePos = Common::Point(0, 0);
 	_dummyMapIndex = 0;
-	_g436_pendingClickPresent = false;
-	_g437_pendingClickPos = Common::Point(0, 0);
-	_g615_mousePointerOriginalColorsObject = nullptr;
-	_g613_mousePointerOriginalColorsChampionIcon = nullptr;
-	_gK190_mousePointerTempBuffer = nullptr;
-	_g435_isCommandQueueLocked = true;
-	_gK104_mousePointerType = 0;
-	_gK105_previousMousePointerType = 0;
-	_g441_primaryMouseInput = nullptr;
-	_g442_secondaryMouseInput = nullptr;
-	_g598_mousePointerBitmapUpdated = true;
-	_g326_refreshMousePointerInMainLoop = false;
-	_g341_highlightBoxEnabled = false;
-	_g599_useChampionIconOrdinalAsMousePointerBitmap = 0;
-	_g439_pendingClickButton = k0_NoneMouseButton;
-	_g600_useObjectAsMousePointerBitmap = false;
-	_g601_useHandAsMousePointerBitmap = false;
-	_gK100_preventBuildPointerScreenArea = false;
-	_g443_primaryKeyboardInput = nullptr;
-	_g444_secondaryKeyboardInput = nullptr;
-	_g597_ignoreMouseMovements = false;
+	_pendingClickPresent = false;
+	_pendingClickPos = Common::Point(0, 0);
+	_mousePointerOriginalColorsObject = nullptr;
+	_mousePointerOriginalColorsChampionIcon = nullptr;
+	_mousePointerTempBuffer = nullptr;
+	_isCommandQueueLocked = true;
+	_mousePointerType = 0;
+	_previousMousePointerType = 0;
+	_primaryMouseInput = nullptr;
+	_secondaryMouseInput = nullptr;
+	_mousePointerBitmapUpdated = true;
+	_refreshMousePointerInMainLoop = false;
+	_highlightBoxEnabled = false;
+	_useChampionIconOrdinalAsMousePointerBitmap = 0;
+	_pendingClickButton = k0_NoneMouseButton;
+	_useObjectAsMousePointerBitmap = false;
+	_useHandAsMousePointerBitmap = false;
+	_preventBuildPointerScreenArea = false;
+	_primaryKeyboardInput = nullptr;
+	_secondaryKeyboardInput = nullptr;
+	_ignoreMouseMovements = false;
 	warning(false, "_g587_hideMousePointerRequestCount should start with value 1");
-	_g587_hideMousePointerRequestCount = 0;
-	_g558_mouseButtonStatus = 0;
+	_hideMousePointerRequestCount = 0;
+	_mouseButtonStatus = 0;
 	_highlightScreenBox.setToZero();
 
 	initArrays();
 }
 
 EventManager::~EventManager() {
-	delete[] _g615_mousePointerOriginalColorsObject;
-	delete[] _gK190_mousePointerTempBuffer;
-	delete[] _g613_mousePointerOriginalColorsChampionIcon;
+	delete[] _mousePointerOriginalColorsObject;
+	delete[] _mousePointerTempBuffer;
+	delete[] _mousePointerOriginalColorsChampionIcon;
 }
 
 void EventManager::initMouse() {
 	static uint16 gK150_PalMousePointer[16] = {0x000, 0x666, 0x888, 0x620, 0x0CC, 0x840, 0x080, 0x0C0, 0xF00, 0xFA0, 0xC86, 0xFF0, 0x000, 0xAAA, 0x00F, 0xFFF}; // @ K0150_aui_Palette_MousePointer
 
-	if (!_g615_mousePointerOriginalColorsObject)
-		_g615_mousePointerOriginalColorsObject = new byte[32 * 18];
-	if (!_gK190_mousePointerTempBuffer)
-		_gK190_mousePointerTempBuffer = new byte[32 * 18];
-	if (!_g613_mousePointerOriginalColorsChampionIcon)
-		_g613_mousePointerOriginalColorsChampionIcon = new byte[32 * 18];
+	if (!_mousePointerOriginalColorsObject)
+		_mousePointerOriginalColorsObject = new byte[32 * 18];
+	if (!_mousePointerTempBuffer)
+		_mousePointerTempBuffer = new byte[32 * 18];
+	if (!_mousePointerOriginalColorsChampionIcon)
+		_mousePointerOriginalColorsChampionIcon = new byte[32 * 18];
 
-	_gK104_mousePointerType = k0_pointerArrow;
-	_gK105_previousMousePointerType = k1_pointerHand;
+	_mousePointerType = k0_pointerArrow;
+	_previousMousePointerType = k1_pointerHand;
 
 	byte mousePalette[16 * 3];
 	for (int i = 0; i < 16; ++i) {
@@ -426,22 +426,22 @@ void EventManager::initMouse() {
 	CursorMan.pushCursorPalette(mousePalette, 0, 16);
 
 	_mousePos = Common::Point(0, 0);
-	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 	CursorMan.showMouse(false);
 
 	setMousePos(Common::Point(320 / 2, 200 / 2));
 }
 
-void EventManager::f67_setMousePointerToNormal(int16 mousePointer) {
-	_gK100_preventBuildPointerScreenArea = true;
-	_g600_useObjectAsMousePointerBitmap = false;
-	_g601_useHandAsMousePointerBitmap = (mousePointer == k1_pointerHand);
-	_g598_mousePointerBitmapUpdated = true;
-	_gK100_preventBuildPointerScreenArea = false;
-	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+void EventManager::setMousePointerToNormal(int16 mousePointer) {
+	_preventBuildPointerScreenArea = true;
+	_useObjectAsMousePointerBitmap = false;
+	_useHandAsMousePointerBitmap = (mousePointer == k1_pointerHand);
+	_mousePointerBitmapUpdated = true;
+	_preventBuildPointerScreenArea = false;
+	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 
-void EventManager::f68_setPointerToObject(byte* bitmap) {
+void EventManager::setPointerToObject(byte* bitmap) {
 	static byte palChangesMousepointerOjbectIconShadow[16] = {120, 120, 120, 120, 120, 120, 120, 120,
 		120, 120, 120, 120, 0, 120, 120, 120}; // @ K0027_auc_PaletteChanges_MousePointerObjectIconShadow
 	static byte palChangesMousePointerIcon[16] = {120, 10, 20, 30, 40, 50, 60, 70, 80, 90,
@@ -449,35 +449,35 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	static Box boxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow 
 	static Box boxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object 
 
-	_gK100_preventBuildPointerScreenArea = true;
-	_g600_useObjectAsMousePointerBitmap = true;
-	_g601_useHandAsMousePointerBitmap = false;
-	_g598_mousePointerBitmapUpdated = true;
+	_preventBuildPointerScreenArea = true;
+	_useObjectAsMousePointerBitmap = true;
+	_useHandAsMousePointerBitmap = false;
+	_mousePointerBitmapUpdated = true;
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	byte *L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
+	byte *L0051_puc_Bitmap = _mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
 
-	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousepointerOjbectIconShadow);
-	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
-	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
-	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
+	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousepointerOjbectIconShadow);
+	_vm->_displayMan->f132_blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
+	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
+	_vm->_displayMan->f132_blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
 
-	_gK100_preventBuildPointerScreenArea = false;
-	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+	_preventBuildPointerScreenArea = false;
+	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 
-void EventManager::f71_mouseDropChampionIcon() {
-	_gK100_preventBuildPointerScreenArea = true;
-	uint16 championIconIndex = _vm->ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
-	_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
-	_g598_mousePointerBitmapUpdated = true;
+void EventManager::mouseDropChampionIcon() {
+	_preventBuildPointerScreenArea = true;
+	uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
+	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+	_mousePointerBitmapUpdated = true;
 	bool useByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
-	_vm->_displayMan->f21_blitToScreen(_g613_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, k12_ColorDarkestGray, 18);
+	_vm->_displayMan->f21_blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, k12_ColorDarkestGray, 18);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = useByteBoxCoordinatesBackup;
-	_gK100_preventBuildPointerScreenArea = false;
+	_preventBuildPointerScreenArea = false;
 }
 
-void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
+void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 	static unsigned char bitmapArrowPointer[288] = { // @ G0042_auc_Graphic562_Bitmap_ArrowPointer
 		0x00, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x00, 0x70, 0x00, 0x00, 0x00,
 		0x78, 0x00, 0x00, 0x00, 0x7C, 0x00, 0x00, 0x00, 0x7E, 0x00, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00,
@@ -519,81 +519,81 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 		0x07, 0xFF, 0x00, 0x00, 0x01, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
 
-	_gK100_preventBuildPointerScreenArea = true;
-	if (_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+	_preventBuildPointerScreenArea = true;
+	if (_useChampionIconOrdinalAsMousePointerBitmap) {
 		if ((mousePosY > 28) || (mousePosX < 274)) {
-			_gK104_mousePointerType = k4_pointerTypeAutoselect;
-			f71_mouseDropChampionIcon();
+			_mousePointerType = k4_pointerTypeAutoselect;
+			mouseDropChampionIcon();
 		} else
-			_gK104_mousePointerType = k2_pointerTypeChampionIcon;
+			_mousePointerType = k2_pointerTypeChampionIcon;
 	} else if (mousePosY >= 169)
-		_gK104_mousePointerType = k0_pointerTypeArrow;
+		_mousePointerType = k0_pointerTypeArrow;
 	else if (mousePosX >= 274)
-		_gK104_mousePointerType = k0_pointerTypeArrow;
+		_mousePointerType = k0_pointerTypeArrow;
 	else if (mousePosY <= 28) {
 		uint16 championIdx = mousePosX / 69;
 		uint16 xOverChampionStatusBox = mousePosX % 69;
 		if (championIdx >= _vm->_championMan->_partyChampionCount)
-			_gK104_mousePointerType = k4_pointerTypeAutoselect;
+			_mousePointerType = k4_pointerTypeAutoselect;
 		else if (xOverChampionStatusBox > 42)
-			_gK104_mousePointerType = k4_pointerTypeAutoselect;
+			_mousePointerType = k4_pointerTypeAutoselect;
 		else {
 			championIdx++;
 			if (championIdx == _vm->_inventoryMan->_g432_inventoryChampionOrdinal)
-				_gK104_mousePointerType = k0_pointerTypeArrow;
+				_mousePointerType = k0_pointerTypeArrow;
 			else if (mousePosY <= 6)
-				_gK104_mousePointerType = k0_pointerTypeArrow;
+				_mousePointerType = k0_pointerTypeArrow;
 			else
-				_gK104_mousePointerType = k4_pointerTypeAutoselect;
+				_mousePointerType = k4_pointerTypeAutoselect;
 		}
 	} else if (mousePosX >= 224)
-		_gK104_mousePointerType = k0_pointerTypeArrow;
+		_mousePointerType = k0_pointerTypeArrow;
 	else
-		_gK104_mousePointerType = k4_pointerTypeAutoselect;
+		_mousePointerType = k4_pointerTypeAutoselect;
 
-	if (_gK104_mousePointerType == k4_pointerTypeAutoselect)
-		_gK104_mousePointerType = (_g600_useObjectAsMousePointerBitmap) ? k1_pointerTypeObjectIcon : (_g601_useHandAsMousePointerBitmap) ? k3_pointerTypeHand : k0_pointerTypeArrow;
+	if (_mousePointerType == k4_pointerTypeAutoselect)
+		_mousePointerType = (_useObjectAsMousePointerBitmap) ? k1_pointerTypeObjectIcon : (_useHandAsMousePointerBitmap) ? k3_pointerTypeHand : k0_pointerTypeArrow;
 
-	if (_g598_mousePointerBitmapUpdated || (_gK104_mousePointerType != _gK105_previousMousePointerType)) {
-		_g598_mousePointerBitmapUpdated = false;
-		switch (_gK104_mousePointerType) {
+	if (_mousePointerBitmapUpdated || (_mousePointerType != _previousMousePointerType)) {
+		_mousePointerBitmapUpdated = false;
+		switch (_mousePointerType) {
 		case k0_pointerTypeArrow:
 			setMousePointerFromSpriteData(bitmapArrowPointer);
 			break;
 		case k1_pointerTypeObjectIcon:
-			CursorMan.replaceCursor(_g615_mousePointerOriginalColorsObject, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(_mousePointerOriginalColorsObject, 32, 18, 0, 0, 0);
 			break;
 		case k2_pointerTypeChampionIcon:
-			CursorMan.replaceCursor(_g613_mousePointerOriginalColorsChampionIcon, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(_mousePointerOriginalColorsChampionIcon, 32, 18, 0, 0, 0);
 			break;
 		case k3_pointerTypeHand:
 			setMousePointerFromSpriteData(bitmapHanPointer);
 			break;
 		}
 	}
-	_gK105_previousMousePointerType = _gK104_mousePointerType;
-	_gK100_preventBuildPointerScreenArea = false;
+	_previousMousePointerType = _mousePointerType;
+	_preventBuildPointerScreenArea = false;
 }
 
-void EventManager::f69_setMousePointer() {
+void EventManager::setMousePointer() {
 	if (_vm->_championMan->_leaderEmptyHanded)
-		f67_setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+		setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 	else
-		f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
+		setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
 }
 
-void EventManager::f78_showMouse() {
-	if (_g587_hideMousePointerRequestCount++ == 0)
+void EventManager::showMouse() {
+	if (_hideMousePointerRequestCount++ == 0)
 		CursorMan.showMouse(true);
 }
 
-void EventManager::f77_hideMouse() {
-	if (_g587_hideMousePointerRequestCount-- == 1)
+void EventManager::hideMouse() {
+	if (_hideMousePointerRequestCount-- == 1)
 		CursorMan.showMouse(false);
 }
 
 bool EventManager::isMouseButtonDown(MouseButton button) {
-	return (button != k0_NoneMouseButton) ? (_g558_mouseButtonStatus & button) : (_g558_mouseButtonStatus == 0);
+	return (button != k0_NoneMouseButton) ? (_mouseButtonStatus & button) : (_mouseButtonStatus == 0);
 }
 
 void EventManager::setMousePos(Common::Point pos) {
@@ -618,11 +618,11 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 				return event.type;
 			}
 
-			if (_g443_primaryKeyboardInput) {
-				KeyboardInput *input = _g443_primaryKeyboardInput;
+			if (_primaryKeyboardInput) {
+				KeyboardInput *input = _primaryKeyboardInput;
 				while (input->_commandToIssue != k0_CommandNone) {
 					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
-						f360_processPendingClick(); // possible fix to BUG0_73
+						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;
 					}
@@ -630,11 +630,11 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 				}
 			}
 
-			if (_g444_secondaryKeyboardInput) {
-				KeyboardInput *input = _g444_secondaryKeyboardInput;
+			if (_secondaryKeyboardInput) {
+				KeyboardInput *input = _secondaryKeyboardInput;
 				while (input->_commandToIssue != k0_CommandNone) {
 					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
-						f360_processPendingClick(); // possible fix to BUG0_73
+						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;
 					}
@@ -644,27 +644,27 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			break;
 		}
 		case Common::EVENT_MOUSEMOVE:
-			if (!_g597_ignoreMouseMovements)
+			if (!_ignoreMouseMovements)
 				_mousePos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN: {
 			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
-			_g558_mouseButtonStatus |= button;
+			_mouseButtonStatus |= button;
 			if (grabMouseClick) {
 				*grabMouseClick = event;
 				return event.type;
 			}
-			_g436_pendingClickPresent = true;
-			_g437_pendingClickPos = _mousePos;
-			_g439_pendingClickButton = button;
+			_pendingClickPresent = true;
+			_pendingClickPos = _mousePos;
+			_pendingClickButton = button;
 			break;
 		}
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP: {
 			MouseButton button = (event.type == Common::EVENT_LBUTTONDOWN) ? k1_LeftMouseButton : k2_RightMouseButton;
-			_g558_mouseButtonStatus &= ~button;
-			f544_resetPressingEyeOrMouth();
+			_mouseButtonStatus &= ~button;
+			resetPressingEyeOrMouth();
 			break;
 		}
 		case Common::EVENT_QUIT:
@@ -674,33 +674,33 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			break;
 		}
 	}
-	if (_g597_ignoreMouseMovements)
+	if (_ignoreMouseMovements)
 		setMousePos(_mousePos);
 	return Common::EVENT_INVALID;
 }
 
 
-void EventManager::f360_processPendingClick() {
-	if (_g436_pendingClickPresent) {
-		_g436_pendingClickPresent = false;
-		f359_processClick(_g437_pendingClickPos, _g439_pendingClickButton);
+void EventManager::processPendingClick() {
+	if (_pendingClickPresent) {
+		_pendingClickPresent = false;
+		processClick(_pendingClickPos, _pendingClickButton);
 	}
 }
 
-void EventManager::f359_processClick(Common::Point mousePos, MouseButton button) {
+void EventManager::processClick(Common::Point mousePos, MouseButton button) {
 	CommandType commandType;
 
-	commandType = f358_getCommandTypeFromMouseInput(_g441_primaryMouseInput, mousePos, button);
+	commandType = getCommandTypeFromMouseInput(_primaryMouseInput, mousePos, button);
 	if (commandType == k0_CommandNone)
-		commandType = f358_getCommandTypeFromMouseInput(_g442_secondaryMouseInput, mousePos, button);
+		commandType = getCommandTypeFromMouseInput(_secondaryMouseInput, mousePos, button);
 
 	if (commandType != k0_CommandNone)
 		_commandQueue.push(Command(mousePos, commandType));
 
-	_g435_isCommandQueueLocked = false;
+	_isCommandQueueLocked = false;
 }
 
-CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button) {
+CommandType EventManager::getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button) {
 	if (!input)
 		return k0_CommandNone;
 
@@ -713,51 +713,51 @@ CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, C
 	return commandType;
 }
 
-void EventManager::f380_processCommandQueue() {
+void EventManager::processCommandQueue() {
 	static KeyboardInput *primaryKeyboardInputBackup;
 	static KeyboardInput *secondaryKeyboardInputBackup;
 	static MouseInput *primaryMouseInputBackup;
 	static MouseInput *secondaryMouseInputBackup;
 
-	_g435_isCommandQueueLocked = true;
+	_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) { /* If the command queue is empty */
-		_g435_isCommandQueueLocked = false;
-		f360_processPendingClick();
+		_isCommandQueueLocked = false;
+		processPendingClick();
 		return;
 	}
 
 	Command cmd = _commandQueue.pop();
 	CommandType cmdType = cmd._type;
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft) && (_vm->_disabledMovementTicks || (_vm->_projectileDisableMovementTicks && (_vm->_lastProjectileDisabledMovementDirection == (normalizeModulo4(_vm->_dungeonMan->_partyDir + cmdType - k3_CommandMoveForward)))))) { /* If movement is disabled */
-		_g435_isCommandQueueLocked = false;
-		f360_processPendingClick();
+		_isCommandQueueLocked = false;
+		processPendingClick();
 		return;
 	}
 
 	int16 commandX = cmd._pos.x;
 	int16 commandY = cmd._pos.y;
-	_g435_isCommandQueueLocked = false;
-	f360_processPendingClick();
+	_isCommandQueueLocked = false;
+	processPendingClick();
 	if ((cmdType == k2_CommandTurnRight) || (cmdType == k1_CommandTurnLeft)) {
-		f365_commandTurnParty(cmdType);
+		commandTurnParty(cmdType);
 		return;
 	}
 
 	if ((cmdType >= k3_CommandMoveForward) && (cmdType <= k6_CommandMoveLeft)) {
-		f366_commandMoveParty(cmdType);
+		commandMoveParty(cmdType);
 		return;
 	}
 
 	if ((cmdType >= k12_CommandClickInChampion_0_StatusBox) && (cmdType <= k15_CommandClickInChampion_3_StatusBox)) {
 		int16 championIdx = cmdType - k12_CommandClickInChampion_0_StatusBox;
 		if ((championIdx < _vm->_championMan->_partyChampionCount) && !_vm->_championMan->_candidateChampionOrdinal)
-			f367_commandProcessTypes12to27_clickInChampionStatusBox(championIdx, commandX, commandY);
+			commandProcessTypes12to27_clickInChampionStatusBox(championIdx, commandX, commandY);
 
 		return;
 	}
 
 	if ((cmdType >= k125_CommandClickOnChamptionIcon_Top_Left) && (cmdType <= k128_CommandClickOnChamptionIcon_Lower_Left)) {
-		f70_mouseProcessCommands125To128_clickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);
+		mouseProcessCommands125To128_clickOnChampionIcon(cmdType - k125_CommandClickOnChamptionIcon_Top_Left);
 
 		return;
 	}
@@ -794,14 +794,14 @@ void EventManager::f380_processCommandQueue() {
 
 	if (cmdType == k100_CommandClickInSpellArea) {
 		if ((!_vm->_championMan->_candidateChampionOrdinal) && (_vm->_championMan->_magicCasterChampionIndex != kM1_ChampionNone))
-			f370_commandProcessType100_clickInSpellArea(commandX, commandY);
+			commandProcessType100_clickInSpellArea(commandX, commandY);
 
 		return;
 	}
 
 	if (cmdType == k111_CommandClickInActionArea) {
 		if (!_vm->_championMan->_candidateChampionOrdinal)
-			f371_commandProcessType111To115_ClickInActionArea(commandX, commandY);
+			commandProcessType111To115_ClickInActionArea(commandX, commandY);
 
 		return;
 	}
@@ -817,11 +817,11 @@ void EventManager::f380_processCommandQueue() {
 	}
 
 	if (cmdType == k80_CommandClickInDungeonView) {
-		f377_commandProcessType80ClickInDungeonView(commandX, commandY);
+		commandProcessType80ClickInDungeonView(commandX, commandY);
 		return;
 	}
 	if (cmdType == k81_CommandClickInPanel) {
-		f378_commandProcess81ClickInPanel(commandX, commandY);
+		commandProcess81ClickInPanel(commandX, commandY);
 		return;
 	}
 
@@ -835,14 +835,14 @@ void EventManager::f380_processCommandQueue() {
 
 			_vm->_menuMan->f456_drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;
-			f379_drawSleepScreen();
+			drawSleepScreen();
 			_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_waitForInputMaxVerticalBlankCount = 0;
-			_g441_primaryMouseInput = _primaryMouseInputPartySleeping;
-			_g442_secondaryMouseInput = 0;
-			_g443_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
-			_g444_secondaryKeyboardInput = nullptr;
-			f357_discardAllInput();
+			_primaryMouseInput = _primaryMouseInputPartySleeping;
+			_secondaryMouseInput = 0;
+			_primaryKeyboardInput = _primaryKeyboardInputPartySleeping;
+			_secondaryKeyboardInput = nullptr;
+			discardAllInput();
 		}
 		return;
 	}
@@ -880,26 +880,26 @@ void EventManager::f380_processCommandQueue() {
 			break;
 		}
 		_vm->_displayMan->f97_drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
-		primaryMouseInputBackup = _g441_primaryMouseInput;
-		secondaryMouseInputBackup = _g442_secondaryMouseInput;
-		primaryKeyboardInputBackup = _g443_primaryKeyboardInput;
-		secondaryKeyboardInputBackup = _g444_secondaryKeyboardInput;
-		_g441_primaryMouseInput = _primaryMouseInputFrozenGame;
-		_g442_secondaryMouseInput = 0;
-		_g443_primaryKeyboardInput = _primaryKeyboardInputFrozenGame;
-		_g444_secondaryKeyboardInput = nullptr;
-		f357_discardAllInput();
+		primaryMouseInputBackup = _primaryMouseInput;
+		secondaryMouseInputBackup = _secondaryMouseInput;
+		primaryKeyboardInputBackup = _primaryKeyboardInput;
+		secondaryKeyboardInputBackup = _secondaryKeyboardInput;
+		_primaryMouseInput = _primaryMouseInputFrozenGame;
+		_secondaryMouseInput = 0;
+		_primaryKeyboardInput = _primaryKeyboardInputFrozenGame;
+		_secondaryKeyboardInput = nullptr;
+		discardAllInput();
 		return;
 	}
 
 	if (cmdType == k148_CommandUnfreezeGame) {
 		_vm->_gameTimeTicking = true;
 		_vm->_menuMan->f457_drawEnabledMenus();
-		_g441_primaryMouseInput = primaryMouseInputBackup;
-		_g442_secondaryMouseInput = secondaryMouseInputBackup;
-		_g443_primaryKeyboardInput = primaryKeyboardInputBackup;
-		_g444_secondaryKeyboardInput = secondaryKeyboardInputBackup;
-		f357_discardAllInput();
+		_primaryMouseInput = primaryMouseInputBackup;
+		_secondaryMouseInput = secondaryMouseInputBackup;
+		_primaryKeyboardInput = primaryKeyboardInputBackup;
+		_secondaryKeyboardInput = secondaryKeyboardInputBackup;
+		discardAllInput();
 		return;
 	}
 
@@ -927,16 +927,16 @@ void EventManager::f380_processCommandQueue() {
 		_vm->_restartGameRequest = true;
 }
 
-void EventManager::f365_commandTurnParty(CommandType cmdType) {
+void EventManager::commandTurnParty(CommandType cmdType) {
 	_vm->_stopWaitingForPlayerInput = true;
 	if (cmdType == k1_CommandTurnLeft)
-		f362_commandHighlightBoxEnable(234, 261, 125, 145);
+		commandHighlightBoxEnable(234, 261, 125, 145);
 	else
-		f362_commandHighlightBoxEnable(291, 318, 125, 145);
+		commandHighlightBoxEnable(291, 318, 125, 145);
 
 	uint16 partySquare = _vm->_dungeonMan->getSquare(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY).toByte();
 	if (Square(partySquare).getType() == k3_StairsElemType) {
-		f364_commandTakeStairs(getFlag(partySquare, k0x0004_StairsUp));
+		commandTakeStairs(getFlag(partySquare, k0x0004_StairsUp));
 		return;
 	}
 
@@ -945,7 +945,7 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 	_vm->_moveSens->f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, true, true);
 }
 
-void EventManager::f366_commandMoveParty(CommandType cmdType) {
+void EventManager::commandMoveParty(CommandType cmdType) {
 	static Box boxMovementArrows[4] = { // @ G0463_as_Graphic561_Box_MovementArrows
 		/* { X1, X2, Y1, Y2 } */
 		Box(263, 289, 125, 145),   /* Forward */
@@ -976,13 +976,13 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	}
 	uint16 movementArrowIdx = cmdType - k3_CommandMoveForward;
 	Box *highlightBox = &boxMovementArrows[movementArrowIdx];
-	f362_commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
+	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
 	int16 partyMapX = _vm->_dungeonMan->_partyMapX;
 	int16 partyMapY = _vm->_dungeonMan->_partyMapY;
 	uint16 AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte();
 	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_StairsElemType);
 	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
-		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(_vm->_dungeonMan->_partyDir, movementArrowToStepForwardCount[movementArrowIdx], movementArrowToSepRightCount[movementArrowIdx], partyMapX, partyMapY);
@@ -991,7 +991,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
-		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
 
@@ -1024,7 +1024,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 
 	// DEBUG CODE: check for Console flag
 	if (isMovementBlocked && !_vm->_console->_debugNoclip) {
-		f357_discardAllInput();
+		discardAllInput();
 		_vm->_stopWaitingForPlayerInput = false;
 		return;
 	}
@@ -1046,7 +1046,7 @@ void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	_vm->_projectileDisableMovementTicks = 0;
 }
 
-bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY) {
+bool EventManager::isLeaderHandObjThrown(int16 posX, int16 posY) {
 #define k0_sideLeft 0 // @ C0_SIDE_LEFT 
 #define k1_sideRight 1 // @ C0_SIDE_LEFT 
 
@@ -1101,7 +1101,7 @@ void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
 	CursorMan.replaceCursor(bitmap, 16, 18, 0, 0, 0);
 }
 
-void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
+void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
 
@@ -1131,7 +1131,7 @@ void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 	}
 }
 
-void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
+void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	uint16 mapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
 	uint16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 
@@ -1140,7 +1140,7 @@ void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 		_vm->_stopWaitingForPlayerInput = _vm->_moveSens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(_vm->_dungeonMan->_partyDir));
 }
 
-void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
+void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
 	Box boxObjectPiles[4] = { // @ G0462_as_Graphic561_Box_ObjectPiles
 		/* { X1, X2, Y1, Y2 } */
 		Box(24, 111, 148, 168),   /* Front left */
@@ -1164,7 +1164,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 				_vm->_moveSens->f268_addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
 				return;
 			}
-		} else if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY))
+		} else if (isLeaderHandObjThrown(posX, posY))
 			return;
 	}
 
@@ -1173,9 +1173,9 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 			if (_vm->_dungeonMan->_dungeonViewClickableBoxes[currViewCell].isPointInside(posX, posY - 33)) {
 				if (currViewCell == k5_ViewCellDoorButtonOrWallOrn) {
 					if (!_vm->_dungeonMan->_isFacingAlcove)
-						f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
+						commandProcessType80ClickInDungeonViewTouchFrontWall();
 				} else
-					f373_processType80_clickInDungeonView_grabLeaderHandObject(currViewCell);
+					processType80_clickInDungeonView_grabLeaderHandObject(currViewCell);
 
 				return;
 			}
@@ -1186,13 +1186,13 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 		if (_vm->_dungeonMan->_squareAheadElement == k0_ElementTypeWall) {
 			for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k1_ViewCellFrontRight + 1; currViewCell++) {
 				if (boxObjectPiles[currViewCell].isPointInside(posX, posY)) {
-					f374_processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
+					processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
 					return;
 				}
 			}
 			if (_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				if (_vm->_dungeonMan->_isFacingAlcove)
-					f374_processType80_clickInDungeonViewDropLeaderHandObject(k4_ViewCellAlcove);
+					processType80_clickInDungeonViewDropLeaderHandObject(k4_ViewCellAlcove);
 				else {
 					if (_vm->_dungeonMan->_isFacingFountain) {
 						uint16 iconIdx = _vm->_objectMan->f33_getIconIndex(thingHandObject);
@@ -1202,22 +1202,22 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 						else if (iconIdx == k195_IconIndicePotionEmptyFlask)
 							((Potion*)junkPtr)->setType(k15_PotionTypeWaterFlask);
 						else {
-							f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
+							commandProcessType80ClickInDungeonViewTouchFrontWall();
 							return;
 						}
 						_vm->_championMan->drawChangedObjectIcons();
 						_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(thingHandObject) - weight;
 					}
-					f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
+					commandProcessType80ClickInDungeonViewTouchFrontWall();
 				}
 			}
 		} else {
-			if (f375_processType80_clickDungeonView_isLeaderHandObjThrown(posX, posY))
+			if (isLeaderHandObjThrown(posX, posY))
 				return;
 
 			for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k3_ViewCellBackLeft + 1; currViewCell++) {
 				if (boxObjectPiles[currViewCell].isPointInside(posX, posY)) {
-					f374_processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
+					processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
 					return;
 				}
 			}
@@ -1225,7 +1225,7 @@ void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16
 	}
 }
 
-void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType) {
+void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType) {
 	ChampionMan &champMan = *_vm->_championMan;
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
@@ -1237,7 +1237,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		invMan.f355_toggleInventory(k4_ChampionCloseInventory);
 		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		if (champMan._partyChampionCount == 1) {
-			f368_commandSetLeader(kM1_ChampionNone);
+			commandSetLeader(kM1_ChampionNone);
 		}
 		champMan._partyChampionCount--;
 		Box box;
@@ -1249,7 +1249,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 		dispMan.D24_fillScreenBox(box, k0_ColorBlack);
 		dispMan.D24_fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir) * 2], k0_ColorBlack);
 		_vm->_menuMan->f457_drawEnabledMenus();
-		f78_showMouse();
+		showMouse();
 		return;
 	}
 
@@ -1287,7 +1287,7 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 
 	if (champMan._partyChampionCount == 1) {
 		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_gameTime;
-		f368_commandSetLeader(k0_ChampionFirst);
+		commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else
 		_vm->_menuMan->f393_drawSpellAreaControls(champMan._magicCasterChampionIndex);
@@ -1311,10 +1311,10 @@ void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnat
 
 	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
 	_vm->_menuMan->f457_drawEnabledMenus();
-	f67_setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+	setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
 
-void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
+void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	ChampionMan &champMan = *_vm->_championMan;
 	InventoryMan &invMan = *_vm->_inventoryMan;
 
@@ -1323,23 +1323,23 @@ void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 	case k4_PanelContentChest:
 		if (champMan._leaderIndex == kM1_ChampionNone) // if no leader
 			return;
-		commandType = f358_getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
 			_vm->_championMan->clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._leaderEmptyHanded)
 			break;
-		commandType = f358_getCommandTypeFromMouseInput(_mouseInputPanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = getCommandTypeFromMouseInput(_mouseInputPanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
-			f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
+			commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
 		break;
 	default:
 		break;
 	}
 }
 
-void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell) {
+void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell) {
 	if (_vm->_championMan->_leaderIndex == kM1_ChampionNone)
 		return;
 
@@ -1364,7 +1364,7 @@ void EventManager::f373_processType80_clickInDungeonView_grabLeaderHandObject(ui
 	_vm->_stopWaitingForPlayerInput = true;
 }
 
-void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
+void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 	if (_vm->_championMan->_leaderIndex == kM1_ChampionNone)
 		return;
 
@@ -1395,14 +1395,14 @@ void EventManager::f374_processType80_clickInDungeonViewDropLeaderHandObject(uin
 	_vm->_stopWaitingForPlayerInput = true;
 }
 
-bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button) {
-	if (_g439_pendingClickButton && button == _g439_pendingClickButton)
-		point = _g437_pendingClickPos;
+bool EventManager::hasPendingClick(Common::Point& point, MouseButton button) {
+	if (_pendingClickButton && button == _pendingClickButton)
+		point = _pendingClickPos;
 
-	return _g436_pendingClickPresent;
+	return _pendingClickPresent;
 }
 
-void EventManager::f379_drawSleepScreen() {
+void EventManager::drawSleepScreen() {
 	_vm->_displayMan->f134_fillBitmap(_vm->_displayMan->_g296_bitmapViewport, k0_ColorBlack, 112, 136);
 	switch (_vm->getGameLanguage()) { // localized
 	default:
@@ -1418,7 +1418,7 @@ void EventManager::f379_drawSleepScreen() {
 	}
 }
 
-void EventManager::f357_discardAllInput() {
+void EventManager::discardAllInput() {
 	Common::Event event;
 	while (_vm->_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
 		if (event.type == Common::EVENT_QUIT)
@@ -1427,7 +1427,7 @@ void EventManager::f357_discardAllInput() {
 	_commandQueue.clear();
 }
 
-void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
+void EventManager::commandTakeStairs(bool stairsGoDown) {
 	_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
 	_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(_vm->_dungeonMan->_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
 	_vm->_dungeonMan->setCurrentMap(_vm->_newPartyMapIndex);
@@ -1435,45 +1435,45 @@ void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
 	_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 }
 
-void EventManager::f367_commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
+void EventManager::commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-		f368_commandSetLeader((ChampionIndex)champIndex);
+		commandSetLeader((ChampionIndex)champIndex);
 	} else {
-		uint16 commandType = f358_getCommandTypeFromMouseInput(_mouseInputChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 commandType = getCommandTypeFromMouseInput(_mouseInputChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);
 		if ((commandType >= k16_CommandSetLeaderChampion_0) && (commandType <= k19_CommandSetLeaderChampion_3))
-			f368_commandSetLeader((ChampionIndex)(commandType - k16_CommandSetLeaderChampion_0));
+			commandSetLeader((ChampionIndex)(commandType - k16_CommandSetLeaderChampion_0));
 		else if ((commandType >= k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand) && (commandType <= k27_CommandClickOnSlotBoxChampion_3_StatusBoxActionHand))
 			_vm->_championMan->clickOnSlotBox(commandType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 	}
 }
 
-void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex) {
+void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champIconIndex) {
 	static Box championIconShadowBox = Box(2, 20, 2, 15);
 	static Box championIconBox = Box(0, 18, 0, 13);
 	static byte mousePointerIconShadowBox[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
 
-	_gK100_preventBuildPointerScreenArea = true;
-	if (!_g599_useChampionIconOrdinalAsMousePointerBitmap) {
+	_preventBuildPointerScreenArea = true;
+	if (!_useChampionIconOrdinalAsMousePointerBitmap) {
 		if (_vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir)) == kM1_ChampionNone) {
-			_gK100_preventBuildPointerScreenArea = false;
+			_preventBuildPointerScreenArea = false;
 			return;
 		}
-		_g598_mousePointerBitmapUpdated = true;
-		_g599_useChampionIconOrdinalAsMousePointerBitmap = true;
+		_mousePointerBitmapUpdated = true;
+		_useChampionIconOrdinalAsMousePointerBitmap = true;
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		byte *tmpBitmap = _gK190_mousePointerTempBuffer;
+		byte *tmpBitmap = _mousePointerTempBuffer;
 		memset(tmpBitmap, 0, 32 * 18);
 		Box *curChampionIconBox = &_vm->_championMan->_boxChampionIcons[champIconIndex];
 
 		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
-		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(tmpBitmap, _g613_mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _g613_mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
+		_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(tmpBitmap, _mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->_g348_bitmapScreen, _mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, k0_ColorBlack, 200, 18);
 		_vm->_displayMan->D24_fillScreenBox(*curChampionIconBox, k0_ColorBlack);
-		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(champIconIndex);
+		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(champIconIndex);
 	} else {
-		_g598_mousePointerBitmapUpdated = true;
-		uint16 championIconIndex = _vm->ordinalToIndex(_g599_useChampionIconOrdinalAsMousePointerBitmap);
-		_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+		_mousePointerBitmapUpdated = true;
+		uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
+		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
 		int16 championCellIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir));
 		if (championIconIndex == champIconIndex) {
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
@@ -1492,11 +1492,11 @@ void EventManager::f70_mouseProcessCommands125To128_clickOnChampionIcon(uint16 c
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		}
 	}
-	_gK100_preventBuildPointerScreenArea = false;
-	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
+	_preventBuildPointerScreenArea = false;
+	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 
-void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
+void EventManager::commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
 	int16 championIndex = kM1_ChampionNone;
 	if (posY <= 48) {
 		switch (_vm->_championMan->_magicCasterChampionIndex) {
@@ -1545,12 +1545,12 @@ void EventManager::f370_commandProcessType100_clickInSpellArea(uint16 posX, uint
 		return;
 	}
 
-	CommandType newCommand = f358_getCommandTypeFromMouseInput(_mouseInputSpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
+	CommandType newCommand = getCommandTypeFromMouseInput(_mouseInputSpellArea, Common::Point(posX, posY), k1_LeftMouseButton);
 	if (newCommand != k0_CommandNone)
-		f369_commandProcessTypes101To108_clickInSpellSymbolsArea(newCommand);
+		commandProcessTypes101To108_clickInSpellSymbolsArea(newCommand);
 }
 
-void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType) {
+void EventManager::commandProcessTypes101To108_clickInSpellSymbolsArea(CommandType cmdType) {
 	static Box spellSymbolsAndDelete[7] = {
 		/* { X1, X2, Y1, Y2 } */
 		Box(235, 247, 51, 61),   /* Symbol 1 */
@@ -1565,16 +1565,16 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 		if (_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex]._symbols[0] == '\0')
 			return;
 
-		f362_commandHighlightBoxEnable(234, 303, 63, 73);
+		commandHighlightBoxEnable(234, 303, 63, 73);
 		_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
 		return;
 	}
 
 	uint16 symbolIndex = cmdType - k101_CommandClickInSpellAreaSymbol_1;
 	Box *highlightBox = &spellSymbolsAndDelete[symbolIndex];
-	f362_commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
+	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
 	_vm->delay(1);
-	f363_highlightBoxDisable();
+	highlightBoxDisable();
 
 	if (symbolIndex < 6)
 		_vm->_menuMan->f399_addChampionSymbol(symbolIndex);
@@ -1582,26 +1582,26 @@ void EventManager::f369_commandProcessTypes101To108_clickInSpellSymbolsArea(Comm
 		_vm->_menuMan->f400_deleteChampionSymbol();
 }
 
-void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
+void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
 	if (_vm->_championMan->_actingChampionOrdinal) {
-		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(_mouseInputActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 mouseCommand = getCommandTypeFromMouseInput(_mouseInputActionAreaNames, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (mouseCommand != k0_CommandNone) {
 			if (mouseCommand == k112_CommandClickInActionAreaPass) {
-				f362_commandHighlightBoxEnable(285, 319, 77, 83);
+				commandHighlightBoxEnable(285, 319, 77, 83);
 				_vm->_menuMan->f391_didClickTriggerAction(-1);
 			} else if ((mouseCommand - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
 				if (mouseCommand == k113_CommandClickInActionAreaAction_0)
-					f362_commandHighlightBoxEnable(234, 318, 86, 96);
+					commandHighlightBoxEnable(234, 318, 86, 96);
 				else if (mouseCommand == k114_CommandClickInActionAreaAction_1)
-					f362_commandHighlightBoxEnable(234, 318, 98, 108);
+					commandHighlightBoxEnable(234, 318, 98, 108);
 				else
-					f362_commandHighlightBoxEnable(234, 318, 110, 120);
+					commandHighlightBoxEnable(234, 318, 110, 120);
 
 				_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
 			}
 		}
 	} else if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
-		uint16 mouseCommand = f358_getCommandTypeFromMouseInput(_mouseInputActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
+		uint16 mouseCommand = getCommandTypeFromMouseInput(_mouseInputActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (mouseCommand != k0_CommandNone) {
 			mouseCommand -= k116_CommandClickInActionAreaChampion_0_Action;
 			if (mouseCommand < _vm->_championMan->_partyChampionCount)
@@ -1610,19 +1610,19 @@ void EventManager::f371_commandProcessType111To115_ClickInActionArea(int16 posX,
 	}
 }
 
-void EventManager::f544_resetPressingEyeOrMouth() {
+void EventManager::resetPressingEyeOrMouth() {
 	if (_vm->_pressingEye) {
-		_g597_ignoreMouseMovements = false;
+		_ignoreMouseMovements = false;
 		_vm->_stopPressingEye = true;
 	}
 	if (_vm->_pressingMouth) {
-		_g597_ignoreMouseMovements = false;
+		_ignoreMouseMovements = false;
 		_vm->_stopPressingMouth = true;
 	}
 }
 
-void EventManager::f541_waitForMouseOrKeyActivity() {
-	f357_discardAllInput();
+void EventManager::waitForMouseOrKeyActivity() {
+	discardAllInput();
 	Common::Event event;
 	while (true) {
 		if (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -1642,16 +1642,16 @@ void EventManager::f541_waitForMouseOrKeyActivity() {
 	}
 }
 
-void EventManager::f362_commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) {
+void EventManager::commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2) {
 	_highlightScreenBox = Box(x1, x2, y1, y2);
-	f6_highlightScreenBox(x1, x2, y1, y2);
-	_g341_highlightBoxEnabled = true;
+	highlightScreenBox(x1, x2, y1, y2);
+	_highlightBoxEnabled = true;
 }
 
-void EventManager::f363_highlightBoxDisable() {
-	if (_g341_highlightBoxEnabled == true) {
-		f6_highlightScreenBox(_highlightScreenBox._x1, _highlightScreenBox._x2, _highlightScreenBox._y1, _highlightScreenBox._y2);
-		_g341_highlightBoxEnabled = false;
+void EventManager::highlightBoxDisable() {
+	if (_highlightBoxEnabled == true) {
+		highlightScreenBox(_highlightScreenBox._x1, _highlightScreenBox._x2, _highlightScreenBox._y1, _highlightScreenBox._y2);
+		_highlightBoxEnabled = false;
 	}
 }
 

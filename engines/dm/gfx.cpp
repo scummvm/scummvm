@@ -3842,7 +3842,7 @@ void DisplayMan::f436_STARTEND_FadeToPalette(uint16* P0849_pui_Palette) {
 			}
 		}
 		_vm->delay(1);
-		_vm->_eventMan->f357_discardAllInput();
+		_vm->_eventMan->discardAllInput();
 		f508_buildPaletteChangeCopperList(_gK16_paletteFadeTemporary, _gK16_paletteFadeTemporary);
 	}
 }

@@ -118,10 +118,10 @@ MenuMan::~MenuMan() {
 }
 
 void MenuMan::f395_drawMovementArrows() {
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
 									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 void MenuMan::f388_clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
@@ -180,7 +180,7 @@ T0386006:
 
 void MenuMan::f456_drawDisabledMenu() {
 	if (!_vm->_championMan->_partyIsSleeping) {
-		_vm->_eventMan->f363_highlightBoxDisable();
+		_vm->_eventMan->highlightBoxDisable();
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 			if (_vm->_inventoryMan->_g424_panelContent == k4_PanelContentChest) {
@@ -191,7 +191,7 @@ void MenuMan::f456_drawDisabledMenu() {
 		}
 		_vm->_displayMan->f136_shadeScreenBox(&boxSpellArea, k0_ColorBlack);
 		_vm->_displayMan->f136_shadeScreenBox(&boxActionArea, k0_ColorBlack);
-		_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
+		_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
 	}
 }
 
@@ -255,7 +255,7 @@ void MenuMan::f387_drawActionArea() {
 	ChampionMan &champMan = *_vm->_championMan;
 	TextMan &textMan = *_vm->_textMan;
 
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 	dispMan._g578_useByteBoxCoordinates = false;
 	dispMan.D24_fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
@@ -278,7 +278,7 @@ void MenuMan::f387_drawActionArea() {
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
 	}
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_g508_refreshActionArea = false;
 }
 
@@ -306,25 +306,25 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP1 = _vm->_championMan->_champions[1]._currHealth;
 	int16 champHP2 = _vm->_championMan->_champions[2]._currHealth;
 	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_displayMan->D24_fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
 	switch (champIndex) {
 	case 0:
-		_vm->_eventMan->f6_highlightScreenBox(233, 277, 42, 49);
+		_vm->_eventMan->highlightScreenBox(233, 277, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		if (_vm->_championMan->_partyChampionCount > 1) {
 			if (champHP1) {
-				_vm->_eventMan->f6_highlightScreenBox(280, 291, 42, 48);
+				_vm->_eventMan->highlightScreenBox(280, 291, 42, 48);
 			}
 T0393002:
 			if (_vm->_championMan->_partyChampionCount > 2) {
 				if (champHP2) {
-					_vm->_eventMan->f6_highlightScreenBox(294, 305, 42, 48);
+					_vm->_eventMan->highlightScreenBox(294, 305, 42, 48);
 				}
 T0393003:
 				if (_vm->_championMan->_partyChampionCount > 3) {
 					if (champHP3) {
-						_vm->_eventMan->f6_highlightScreenBox(308, 319, 42, 48);
+						_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
 					}
 				}
 			}
@@ -332,38 +332,38 @@ T0393003:
 		break;
 	case 1:
 		if (champHP0) {
-			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
+			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
 		}
-		_vm->_eventMan->f6_highlightScreenBox(247, 291, 42, 49);
+		_vm->_eventMan->highlightScreenBox(247, 291, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		goto T0393002;
 	case 2:
 		if (champHP0) {
-			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
+			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
 		}
 		if (champHP1) {
-			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
+			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
 		}
-		_vm->_eventMan->f6_highlightScreenBox(261, 305, 42, 49);
+		_vm->_eventMan->highlightScreenBox(261, 305, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		goto T0393003;
 	case 3:
 		if (champHP0) {
-			_vm->_eventMan->f6_highlightScreenBox(233, 244, 42, 48);
+			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
 		}
 		if (champHP1) {
-			_vm->_eventMan->f6_highlightScreenBox(247, 258, 42, 48);
+			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
 		}
 		if (champHP2) {
-			_vm->_eventMan->f6_highlightScreenBox(261, 272, 42, 48);
+			_vm->_eventMan->highlightScreenBox(261, 272, 42, 48);
 		}
-		_vm->_eventMan->f6_highlightScreenBox(275, 319, 42, 49);
+		_vm->_eventMan->highlightScreenBox(275, 319, 42, 49);
 		_vm->_textMan->f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		break;
 	default:
 		break;
 	}
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 #define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
@@ -405,26 +405,26 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		return;
 	}
 	if (_vm->_championMan->_magicCasterChampionIndex == kM1_ChampionNone) {
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 	}
 	if (champIndex == kM1_ChampionNone) {
 		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone;
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 		_vm->_displayMan->D24_fillScreenBox(boxSpellArea, k0_ColorBlack);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 		return;
 	}
 	L1213_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex = (ChampionIndex)champIndex];
 	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	f393_drawSpellAreaControls((ChampionIndex)champIndex);
 	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
 	f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
 	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 void MenuMan::f457_drawEnabledMenus() {
@@ -434,7 +434,7 @@ void MenuMan::f457_drawEnabledMenus() {
 
 
 	if (_vm->_championMan->_partyIsSleeping) {
-		_vm->_eventMan->f379_drawSleepScreen();
+		_vm->_eventMan->drawSleepScreen();
 		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	} else {
 		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
@@ -452,7 +452,7 @@ void MenuMan::f457_drawEnabledMenus() {
 			_vm->_displayMan->f98_drawFloorAndCeiling();
 			f395_drawMovementArrows();
 		}
-		_vm->_eventMan->f69_setMousePointer();
+		_vm->_eventMan->setMousePointer();
 	}
 }
 
@@ -462,8 +462,8 @@ int16 MenuMan::f408_getClickOnSpellCastResult() {
 
 
 	L1260_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
-	_vm->_eventMan->f78_showMouse();
-	_vm->_eventMan->f363_highlightBoxDisable();
+	_vm->_eventMan->showMouse();
+	_vm->_eventMan->highlightBoxDisable();
 	if ((L1259_i_SpellCastResult = f412_getChampionSpellCastResult(_vm->_championMan->_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
 		L1260_ps_Champion->_symbols[0] = '\0';
 		f397_drawAvailableSymbols(L1260_ps_Champion->_symbolStep = 0);
@@ -471,7 +471,7 @@ int16 MenuMan::f408_getClickOnSpellCastResult() {
 	} else {
 		L1259_i_SpellCastResult = k0_spellCastFailure;
 	}
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 	return L1259_i_SpellCastResult;
 }
 
@@ -857,11 +857,11 @@ void MenuMan::f399_addChampionSymbol(int16 symbolIndex) {
 		L1225_ps_Champion->_symbols[L1222_ui_SymbolStep] = 96 + (L1222_ui_SymbolStep * 6) + symbolIndex;
 		L1225_ps_Champion->_symbols[L1222_ui_SymbolStep + 1] = '\0';
 		L1225_ps_Champion->_symbolStep = L1222_ui_SymbolStep = returnNextVal(L1222_ui_SymbolStep);
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		f397_drawAvailableSymbols(L1222_ui_SymbolStep);
 		f398_drawChampionSymbols(L1225_ps_Champion);
 		_vm->_championMan->drawChampionState(_vm->_championMan->_magicCasterChampionIndex);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 	}
 }
 
@@ -875,10 +875,10 @@ void MenuMan::f400_deleteChampionSymbol() {
 	}
 	L1228_ps_Champion->_symbolStep = L1226_ui_SymbolStep = returnPrevVal(L1228_ps_Champion->_symbolStep);
 	L1228_ps_Champion->_symbols[L1226_ui_SymbolStep] = '\0';
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	f397_drawAvailableSymbols(L1226_ui_SymbolStep);
 	f398_drawChampionSymbols(L1228_ps_Champion);
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 
 bool MenuMan::f391_didClickTriggerAction(int16 actionListIndex) {
@@ -1725,7 +1725,7 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	const Box* L1180_ps_Box;
 	int16 L1643_i_Width;
 
-	_vm->_eventMan->f78_showMouse();
+	_vm->_eventMan->showMouse();
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_vm->_displayMan->D24_fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (damage < 0) {
@@ -1791,6 +1791,6 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 		} while (damage /= 10);
 		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, &L1179_ac_String[AL1174_ui_CharacterIndex]);
 	}
-	_vm->_eventMan->f77_hideMouse();
+	_vm->_eventMan->hideMouse();
 }
 }

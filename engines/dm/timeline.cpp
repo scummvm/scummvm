@@ -993,9 +993,9 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 		return;
 	}
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-		_vm->_eventMan->f78_showMouse();
+		_vm->_eventMan->showMouse();
 		_vm->_inventoryMan->f354_drawStatusBoxPortrait((ChampionIndex)champIndex);
-		_vm->_eventMan->f77_hideMouse();
+		_vm->_eventMan->hideMouse();
 	} else {
 		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
