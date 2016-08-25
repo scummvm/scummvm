@@ -285,7 +285,7 @@ static const FrameRange BARBOT_FRAME_RANGES[60] = {
 	{ 202, 281 }, { 182, 202 }, { 165, 182 }, { 96, 165 }, { 0, 95 }
 };
 
-const char *const MISSIVEOMAT_MESSAGES[3] = {
+static const char *const MISSIVEOMAT_MESSAGES[3] = {
 	"Welcome, Leovinus.\n"
 	"\n"
 	"This is your Missive-O-Mat.\n"
@@ -362,6 +362,58 @@ const char *const MISSIVEOMAT_MESSAGES[3] = {
 	"ve dealt with and deleted.  All Missives from Mr Scraliontis and "
 	"His Loftiness Leovinus are here."
 };
+
+struct BedheadEntry {
+	const char *_name1;
+	const char *_name2;
+	const char *_name3;
+	const char *_name4;
+	int _startFrame;
+	int _endFrame;
+};
+
+static const BedheadEntry ON_CLOSED[4] = {
+	{ "Closed", "Closed", "Open", "Open", 0, 12 },
+	{ "Open", "Any", "Any", "RestingUTV", 0, 4 },
+	{ "Closed", "Open", "Any", "RestingV", 0, 6 },
+	{ "Closed", "Closed", "Closed", "RestingG", 0, 21 }
+};
+static const BedheadEntry ON_RESTING_TV[2] = {
+	{ "Any", "Closed", "Open", "Open", 6, 12 },
+	{ "Any", "Closed", "Closed", "RestingG", 6, 21 }
+};
+static const BedheadEntry ON_RESTING_UV[2] = {
+	{ "Any", "Any", "Open", "Open", 8, 12 },
+	{ "Any", "Any", "Closed", "RestingG", 8, 21 }
+};
+static const BedheadEntry ON_CLOSED_WRONG[2] = {
+	{ "Any", "Any", "Closed", "OpenWrong", 42, 56 },
+	{ "Any", "Any", "Open", "RestingDWrong", 42, 52 }
+};
+
+static const BedheadEntry OFF_OPEN[3] = {
+	{ "Closed", "Closed", "Open", "Closed", 27, 41 },
+	{ "Any", "Open", "Any", "RestingUV", 27, 29 },
+	{ "Open", "Closed", "Any", "RestingTV", 27, 33 }
+};
+static const BedheadEntry OFF_RESTING_UTV[1] = {
+	{ "Any", "Any", "Any", "Closed", 36, 41 }
+};
+static const BedheadEntry OFF_RESTING_V[1] = {
+	{ "Closed", "Any", "Any", "Closed", 32, 41 }
+};
+static const BedheadEntry OFF_RESTING_G[3] = {
+	{ "Closed", "Closed", "Closed", "Closed", 21, 41 },
+	{ "Any", "Open", "Closed", "RestingUV", 21, 29 },
+	{ "Open", "Closed", "Closed", "RestingTV", 21, 33 }
+};
+static const BedheadEntry OFF_OPEN_WRONG[1] = {
+	{ "Any", "Any", "Any", "ClosedWrong", 56, 70 }
+};
+static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
+	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
+};
+
 
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
@@ -715,6 +767,36 @@ void writeMissiveOMatMessages() {
 	writeStringArray("TEXT/MISSIVEOMAT/TO", TO[_version], 58);
 }
 
+void writeBedheadGroup(const BedheadEntry *data, int count) {
+	for (int idx = 0; idx < count; ++idx, ++data) {
+		outputFile.writeString(data->_name1);
+		outputFile.writeString(data->_name2);
+		outputFile.writeString(data->_name3);
+		outputFile.writeString(data->_name4);
+		outputFile.writeLong(data->_startFrame);
+		outputFile.writeLong(data->_endFrame);
+	}
+}
+
+void writeBedheadData() {
+	outputFile.seek(dataOffset);
+
+	writeBedheadGroup(ON_CLOSED, 4);
+	writeBedheadGroup(ON_RESTING_TV, 2);
+	writeBedheadGroup(ON_RESTING_UV, 2);
+	writeBedheadGroup(ON_CLOSED_WRONG, 2);
+	writeBedheadGroup(OFF_OPEN, 3);
+	writeBedheadGroup(OFF_RESTING_UTV, 1);
+	writeBedheadGroup(OFF_RESTING_V, 1);
+	writeBedheadGroup(OFF_RESTING_G, 3);
+	writeBedheadGroup(OFF_OPEN_WRONG, 1);
+	writeBedheadGroup(OFF_RESTING_D_WRONG, 1);
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("DATA/BEDHEAD", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -886,6 +968,7 @@ void writeData() {
 	writeAllScriptPreResponses();
 	writeBarbotFrameRanges();
 	writeMissiveOMatMessages();
+	writeBedheadData();
 }
 
 void createScriptMap() {
