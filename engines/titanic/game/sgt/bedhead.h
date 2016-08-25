@@ -40,7 +40,7 @@ struct BedheadEntry {
 };
 class BedheadEntries : public Common::Array<BedheadEntry> {
 public:
-	void load(Common::SeekableReadStream *s);
+	void load(Common::SeekableReadStream *s, int count);
 };
 
 struct TurnOnEntries {

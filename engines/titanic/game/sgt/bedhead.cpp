@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/bedhead.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -30,41 +31,49 @@ BEGIN_MESSAGE_MAP(CBedhead, CSGTStateRoom)
 END_MESSAGE_MAP()
 
 void BedheadEntry::load(Common::SeekableReadStream *s) {
-	// TODO
+	_name1 = readStringFromStream(s);
+	_name2 = readStringFromStream(s);
+	_name3 = readStringFromStream(s);
+	_name4 = readStringFromStream(s);
+	_startFrame = s->readUint32LE();
+	_endFrame = s->readUint32LE();
 }
 
 /*------------------------------------------------------------------------*/
 
-void BedheadEntries::load(Common::SeekableReadStream *s) {
-	resize(s->readUint32LE());
-	for (uint idx = 0; idx < size(); ++idx)
+void BedheadEntries::load(Common::SeekableReadStream *s, int count) {
+	resize(count);
+	for (uint idx = 0; idx < count; ++idx)
 		(*this)[idx].load(s);
 }
 
 /*------------------------------------------------------------------------*/
 
 void TurnOnEntries::load(Common::SeekableReadStream *s) {
-	_closed.load(s);
-	_restingTV.load(s);
-	_restingUV.load(s);
-	_closedWrong.load(s);
+	_closed.load(s, 4);
+	_restingTV.load(s, 2);
+	_restingUV.load(s, 2);
+	_closedWrong.load(s, 2);
 }
 
 /*------------------------------------------------------------------------*/
 
 void TurnOffEntries::load(Common::SeekableReadStream *s) {
-	_open.load(s);
-	_restingUTV.load(s);
-	_restingV.load(s);
-	_restingG.load(s);
-	_openWrong.load(s);
-	_restingDWrong.load(s);
+	_open.load(s, 3);
+	_restingUTV.load(s, 1);
+	_restingV.load(s, 1);
+	_restingG.load(s, 3);
+	_openWrong.load(s, 1);
+	_restingDWrong.load(s, 1);
 }
 
 /*------------------------------------------------------------------------*/
 
 CBedhead::CBedhead() : CSGTStateRoom() {
-	// TODO: Load data for turn on/off methods
+	Common::SeekableReadStream *s = g_vm->_filesManager->getResource("DATA/BEDHEAD");
+	_on.load(s);
+	_off.load(s);
+	delete s;
 }
 
 void CBedhead::save(SimpleFile *file, int indent) {
