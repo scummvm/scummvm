@@ -164,7 +164,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 
 
 void DMEngine::saveGame() {
-	_menuMan->f456_drawDisabledMenu();
+	_menuMan->drawDisabledMenu();
 	_eventMan->showMouse();
 
 	switch (getGameLanguage()) { // localized
@@ -247,7 +247,7 @@ void DMEngine::saveGame() {
 	}
 
 	_restartGameAllowed = true;
-	_menuMan->f457_drawEnabledMenus();
+	_menuMan->drawEnabledMenus();
 	_eventMan->hideMouse();
 }
 

@@ -299,7 +299,7 @@ void DMEngine::initializeGame() {
 		}
 	} while (loadgame(saveSlot) != k1_LoadgameSuccess);
 
-	_displayMan->loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_gK73_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
+	_displayMan->loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->allocateFlippedWallBitmaps();
@@ -334,7 +334,7 @@ void DMEngine::startGame() {
 	_eventMan->_highlightBoxEnabled = false;
 	_championMan->_partyIsSleeping = false;
 	_championMan->_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
-	_menuMan->_g509_actionAreaContainsIcons = true;
+	_menuMan->_actionAreaContainsIcons = true;
 	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
 
 	_eventMan->_primaryMouseInput = _eventMan->_primaryMouseInputInterface;
@@ -359,7 +359,7 @@ void DMEngine::startGame() {
 	}
 
 	_displayMan->buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_paletteTopAndBottomScreen);
-	_menuMan->f395_drawMovementArrows();
+	_menuMan->drawMovementArrows();
 	_championMan->resetDataToStartGame();
 	_gameTimeTicking = true;
 }
@@ -405,7 +405,7 @@ Common::Error DMEngine::run() {
 			endGame(_championMan->_partyDead);
 		else {
 			loadGameState(_loadSaveSlotAtRuntime);
-			_menuMan->f457_drawEnabledMenus();
+			_menuMan->drawEnabledMenus();
 			_displayMan->updateScreen();
 			_loadSaveSlotAtRuntime = -1;
 		}
@@ -481,7 +481,7 @@ void DMEngine::gameloop() {
 		if (_championMan->_party._freezeLifeTicks)
 			_championMan->_party._freezeLifeTicks -= 1;
 
-		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
+		_menuMan->refreshActionAreaAndSetChampDirMaxDamageReceived();
 
 		if (!(_gameTime & (_championMan->_partyIsSleeping ? 15 : 63)))
 			_championMan->applyTimeEffects();

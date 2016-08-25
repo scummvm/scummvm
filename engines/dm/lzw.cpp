@@ -104,7 +104,7 @@ int16 LZWdecompressor::getNextInputCode(Common::MemoryReadStream &inputStream, i
 	return nextInputCode;
 }
 
-void LZWdecompressor::F0496_LZW_OutputCharacter(byte character, byte **out) {
+void LZWdecompressor::outputCharacter(byte character, byte **out) {
 	byte *L1558_pc_Output = *out;
 
 	if (false == _repetitionEnabled) {
@@ -147,7 +147,7 @@ int32 LZWdecompressor::decompress(Common::MemoryReadStream &inStream, int32 inpu
 	if (oldCode == -1) {
 		return -1L;
 	}
-	F0496_LZW_OutputCharacter(character, &out);
+	outputCharacter(character, &out);
 	int16 code;
 	while ((code = getNextInputCode(inStream, &inputByteCount)) > -1) {
 		if (code == 256) { /* This code is used to flush the dictionary */
@@ -174,7 +174,7 @@ int32 LZWdecompressor::decompress(Common::MemoryReadStream &inStream, int32 inpu
 		*reversedDecodedStringEnd++ = (character = _appendCharacter[code]);
 		/* Output the decoded string in reverse order */
 		do {
-			F0496_LZW_OutputCharacter(*(--reversedDecodedStringEnd), &out);
+			outputCharacter(*(--reversedDecodedStringEnd), &out);
 		} while (reversedDecodedStringEnd > reversedDecodedStringStart);
 		/* If possible, add a new code to the string table */
 		if ((code = _dictNextAvailableCode) < _absoluteMaximumCode) {

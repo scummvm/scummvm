@@ -833,7 +833,7 @@ void EventManager::processCommandQueue() {
 			if (_vm->_inventoryMan->_inventoryChampionOrdinal)
 				_vm->_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
 
-			_vm->_menuMan->f456_drawDisabledMenu();
+			_vm->_menuMan->drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;
 			drawSleepScreen();
 			_vm->_displayMan->drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
@@ -861,7 +861,7 @@ void EventManager::processCommandQueue() {
 
 	if (cmdType == k147_CommandFreezeGame) {
 		_vm->_gameTimeTicking = false;
-		_vm->_menuMan->f456_drawDisabledMenu();
+		_vm->_menuMan->drawDisabledMenu();
 		_vm->_displayMan->fillBitmap(_vm->_displayMan->_bitmapViewport, k0_ColorBlack, 112, 136);
 
 		switch (_vm->getGameLanguage()) { // localized
@@ -894,7 +894,7 @@ void EventManager::processCommandQueue() {
 
 	if (cmdType == k148_CommandUnfreezeGame) {
 		_vm->_gameTimeTicking = true;
-		_vm->_menuMan->f457_drawEnabledMenus();
+		_vm->_menuMan->drawEnabledMenus();
 		_primaryMouseInput = primaryMouseInputBackup;
 		_secondaryMouseInput = secondaryMouseInputBackup;
 		_primaryKeyboardInput = primaryKeyboardInputBackup;
@@ -1248,7 +1248,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		dispMan._useByteBoxCoordinates = false;
 		dispMan.fillScreenBox(box, k0_ColorBlack);
 		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir) * 2], k0_ColorBlack);
-		_vm->_menuMan->f457_drawEnabledMenus();
+		_vm->_menuMan->drawEnabledMenus();
 		showMouse();
 		return;
 	}
@@ -1288,9 +1288,9 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	if (champMan._partyChampionCount == 1) {
 		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_gameTime;
 		commandSetLeader(k0_ChampionFirst);
-		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
+		_vm->_menuMan->setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else
-		_vm->_menuMan->f393_drawSpellAreaControls(champMan._magicCasterChampionIndex);
+		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 
 	_vm->_textMan->f51_messageAreaPrintLineFeed();
 	Color champColor = _vm->_championMan->_championColor[championIndex];
@@ -1310,7 +1310,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 
 	invMan.toggleInventory(k4_ChampionCloseInventory);
-	_vm->_menuMan->f457_drawEnabledMenus();
+	_vm->_menuMan->drawEnabledMenus();
 	setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
 
@@ -1540,7 +1540,7 @@ void EventManager::commandProcessType100_clickInSpellArea(uint16 posX, uint16 po
 		}
 
 		if ((championIndex != kM1_ChampionNone) && (championIndex < _vm->_championMan->_partyChampionCount))
-			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(championIndex);
+			_vm->_menuMan->setMagicCasterAndDrawSpellArea(championIndex);
 
 		return;
 	}
@@ -1566,7 +1566,7 @@ void EventManager::commandProcessTypes101To108_clickInSpellSymbolsArea(CommandTy
 			return;
 
 		commandHighlightBoxEnable(234, 303, 63, 73);
-		_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f408_getClickOnSpellCastResult();
+		_vm->_stopWaitingForPlayerInput = _vm->_menuMan->getClickOnSpellCastResult();
 		return;
 	}
 
@@ -1577,9 +1577,9 @@ void EventManager::commandProcessTypes101To108_clickInSpellSymbolsArea(CommandTy
 	highlightBoxDisable();
 
 	if (symbolIndex < 6)
-		_vm->_menuMan->f399_addChampionSymbol(symbolIndex);
+		_vm->_menuMan->addChampionSymbol(symbolIndex);
 	else
-		_vm->_menuMan->f400_deleteChampionSymbol();
+		_vm->_menuMan->deleteChampionSymbol();
 }
 
 void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int16 posY) {
@@ -1588,8 +1588,8 @@ void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int1
 		if (mouseCommand != k0_CommandNone) {
 			if (mouseCommand == k112_CommandClickInActionAreaPass) {
 				commandHighlightBoxEnable(285, 319, 77, 83);
-				_vm->_menuMan->f391_didClickTriggerAction(-1);
-			} else if ((mouseCommand - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_g507_actionCount) {
+				_vm->_menuMan->didClickTriggerAction(-1);
+			} else if ((mouseCommand - k112_CommandClickInActionAreaPass) <= _vm->_menuMan->_actionCount) {
 				if (mouseCommand == k113_CommandClickInActionAreaAction_0)
 					commandHighlightBoxEnable(234, 318, 86, 96);
 				else if (mouseCommand == k114_CommandClickInActionAreaAction_1)
@@ -1597,15 +1597,15 @@ void EventManager::commandProcessType111To115_ClickInActionArea(int16 posX, int1
 				else
 					commandHighlightBoxEnable(234, 318, 110, 120);
 
-				_vm->_stopWaitingForPlayerInput = _vm->_menuMan->f391_didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
+				_vm->_stopWaitingForPlayerInput = _vm->_menuMan->didClickTriggerAction(mouseCommand - k113_CommandClickInActionAreaAction_0);
 			}
 		}
-	} else if (_vm->_menuMan->_g509_actionAreaContainsIcons) {
+	} else if (_vm->_menuMan->_actionAreaContainsIcons) {
 		uint16 mouseCommand = getCommandTypeFromMouseInput(_mouseInputActionAreaIcons, Common::Point(posX, posY), k1_LeftMouseButton);
 		if (mouseCommand != k0_CommandNone) {
 			mouseCommand -= k116_CommandClickInActionAreaChampion_0_Action;
 			if (mouseCommand < _vm->_championMan->_partyChampionCount)
-				_vm->_menuMan->f389_processCommands116To119_setActingChampion(mouseCommand);
+				_vm->_menuMan->processCommands116To119_setActingChampion(mouseCommand);
 		}
 	}
 }

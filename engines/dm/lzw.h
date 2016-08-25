@@ -53,7 +53,7 @@ class LZWdecompressor {
 	byte *_appendCharacter;
 
 	int16 getNextInputCode(Common::MemoryReadStream &stream, int32 *inputByteCount);
-	void F0496_LZW_OutputCharacter(byte character, byte **out);
+	void outputCharacter(byte character, byte **out);
 	void operator=(const LZWdecompressor&); // deleted
 public:
 	LZWdecompressor();

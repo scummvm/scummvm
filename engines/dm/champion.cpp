@@ -486,7 +486,7 @@ void ChampionMan::drawChangedObjectIcons() {
 		if (hasObjectIconInSlotBoxChanged(slotBoxIndex, _champions[champIndex].getSlot((ChampionSlot)getHandSlotIndex(slotBoxIndex)))
 			&& (getHandSlotIndex(slotBoxIndex) == k1_ChampionSlotActionHand)) {
 
-			menuMan.f386_drawActionIcon((ChampionIndex)champIndex);
+			menuMan.drawActionIcon((ChampionIndex)champIndex);
 		}
 	}
 
@@ -499,7 +499,7 @@ void ChampionMan::drawChangedObjectIcons() {
 			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + k8_SlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
 			drawViewport |= objIconChanged;
 			if (objIconChanged && (slotIndex == k1_ChampionSlotActionHand)) {
-				menuMan.f386_drawActionIcon((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
+				menuMan.drawActionIcon((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
 			}
 		}
 
@@ -548,7 +548,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 		if (slotIndex == k1_ChampionSlotActionHand) {
 			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
 			if (_actingChampionOrdinal == _vm->indexToOrdinal(champIndex))
-				menuMan.f388_clearActingChampion();
+				menuMan.clearActingChampion();
 
 			if ((iconIndex >= k30_IconIndiceScrollOpen) && (iconIndex <= k31_IconIndiceScrollClosed)) {
 				((Scroll *)rawObjPtr)->setClosed(false);
@@ -699,7 +699,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 		if (slotIndex == k1_ChampionSlotActionHand) {
 			setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
 			if (_actingChampionOrdinal == _vm->indexToOrdinal(champIndex))
-				_vm->_menuMan->f388_clearActingChampion();
+				_vm->_menuMan->clearActingChampion();
 
 			if ((curIconIndex >= k30_IconIndiceScrollOpen) && (curIconIndex <= k31_IconIndiceScrollClosed)) {
 				((Scroll *)curWeapon)->setClosed(true);
@@ -907,7 +907,7 @@ void ChampionMan::wakeUp() {
 	_vm->_eventMan->_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
 	_vm->_eventMan->_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
 	_vm->_eventMan->discardAllInput();
-	_vm->_menuMan->f457_drawEnabledMenus();
+	_vm->_menuMan->drawEnabledMenus();
 }
 
 int16 ChampionMan::getThrowingStaminaCost(Thing thing) {
@@ -1284,7 +1284,7 @@ void ChampionMan::viAltarRebirth(uint16 champIndex) {
 	uint16 maximumHealth = curChampion->_maxHealth;
 	curChampion->_maxHealth = MAX(25, maximumHealth - (maximumHealth >> 6) - 1);
 	curChampion->_currHealth = curChampion->_maxHealth >> 1;
-	_vm->_menuMan->f393_drawSpellAreaControls(_magicCasterChampionIndex);
+	_vm->_menuMan->drawSpellAreaControls(_magicCasterChampionIndex);
 	curChampion->_dir = _vm->_dungeonMan->_partyDir;
 	setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
 	drawChampionState((ChampionIndex)champIndex);
@@ -1510,9 +1510,9 @@ void ChampionMan::championKill(uint16 champIndex) {
 		_vm->_eventMan->commandSetLeader((ChampionIndex)aliveChampionIndex);
 
 	if (champIndex == _magicCasterChampionIndex)
-		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(aliveChampionIndex);
+		_vm->_menuMan->setMagicCasterAndDrawSpellArea(aliveChampionIndex);
 	else
-		_vm->_menuMan->f393_drawSpellAreaControls(_magicCasterChampionIndex);
+		_vm->_menuMan->drawSpellAreaControls(_magicCasterChampionIndex);
 }
 
 void ChampionMan::dropAllObjects(uint16 champIndex) {
@@ -1850,7 +1850,7 @@ void ChampionMan::resetDataToStartGame() {
 		}
 		if ((L0785_i_ChampionIndex = _magicCasterChampionIndex) != kM1_ChampionNone) {
 			_magicCasterChampionIndex = kM1_ChampionNone;
-			_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(L0785_i_ChampionIndex);
+			_vm->_menuMan->setMagicCasterAndDrawSpellArea(L0785_i_ChampionIndex);
 		}
 		return;
 	}
@@ -1949,10 +1949,10 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	_candidateChampionOrdinal = previousPartyChampionCount + 1;
 	if (++_partyChampionCount == 1) {
 		_vm->_eventMan->commandSetLeader(k0_ChampionFirst);
-		_vm->_menuMan->_g508_refreshActionArea = true;
+		_vm->_menuMan->_refreshActionArea = true;
 	} else {
-		_vm->_menuMan->f388_clearActingChampion();
-		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_partyChampionCount - 1));
+		_vm->_menuMan->clearActingChampion();
+		_vm->_menuMan->drawActionIcon((ChampionIndex)(_partyChampionCount - 1));
 	}
 
 	int16 curMapX = _vm->_dungeonMan->_partyMapX;
@@ -2028,7 +2028,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	_vm->_inventoryMan->toggleInventory((ChampionIndex)previousPartyChampionCount);
-	_vm->_menuMan->f456_drawDisabledMenu();;
+	_vm->_menuMan->drawDisabledMenu();;
 }
 
 void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
@@ -2155,7 +2155,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		} else {
 			_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k8_StatusBoxDeadChampion), &box, k40_byteWidth, kM1_ColorNoTransparency, 29);
 			_vm->_textMan->f53_printToLogicalScreen(championStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, curChampion->_name);
-			_vm->_menuMan->f386_drawActionIcon(champIndex);
+			_vm->_menuMan->drawActionIcon(champIndex);
 
 			clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
 			_vm->_eventMan->hideMouse();
@@ -2273,7 +2273,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	}
 	if (getFlag(championAttributes, k0x8000_ChampionAttributeActionHand)) {
 		drawSlot(champIndex, k1_ChampionSlotActionHand);
-		_vm->_menuMan->f386_drawActionIcon(champIndex);
+		_vm->_menuMan->drawActionIcon(champIndex);
 		if (isInventoryChampion)
 			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}

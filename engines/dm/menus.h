@@ -22,7 +22,7 @@
 
 /*
 * Based on the Reverse Engineering work of Christophe Fontanel,
-* maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
+-* maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
 #ifndef DM_MENUS_H
@@ -71,61 +71,61 @@ public:
 	explicit MenuMan(DMEngine *vm);
 	~MenuMan();
 
-	bool _g508_refreshActionArea; // @ G0508_B_RefreshActionArea
-	bool _g509_actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
-	int16 _g513_actionDamage; // @ G0513_i_ActionDamage
-	ActionList _g713_actionList; // @ G0713_s_ActionList
-	byte *_gK72_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
-	byte *_gK73_bitmapSpellAreaLines; // @ K0073_puc_Bitmap_SpellAreaLines
-	Thing _g517_actionTargetGroupThing; // @ G0517_T_ActionTargetGroupThing
-	uint16 _g507_actionCount; // @ G0507_ui_ActionCount
+	bool _refreshActionArea; // @ G0508_B_RefreshActionArea
+	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
+	int16 _actionDamage; // @ G0513_i_ActionDamage
+	ActionList _actionList; // @ G0713_s_ActionList
+	byte *_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
+	byte *_bitmapSpellAreaLines; // @ K0073_puc_Bitmap_SpellAreaLines
+	Thing _actionTargetGroupThing; // @ G0517_T_ActionTargetGroupThing
+	uint16 _actionCount; // @ G0507_ui_ActionCount
 
-	void f388_clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
-	void f386_drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
+	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
+	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
 
-	void f395_drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
-	void f456_drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
-	void f390_refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
-	void f387_drawActionArea(); // @ F0387_MENUS_DrawActionArea
-	const char* f384_getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
-	void f393_drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
-	void f392_buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
-	void f394_setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
-	void f457_drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
-	int16 f408_getClickOnSpellCastResult(); // @ F0408_MENUS_GetClickOnSpellCastResult
-	int16 f412_getChampionSpellCastResult(uint16 champIndex); // @ F0412_MENUS_GetChampionSpellCastResult
-	Spell *f409_getSpellFromSymbols(byte *symbols); // @ F0409_MENUS_GetSpellFromSymbols
-	void f410_menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex); // @ F0410_MENUS_PrintSpellFailureMessage
-	Potion *f411_getEmptyFlaskInHand(Champion *champ, Thing *potionThing); // @ F0411_MENUS_GetEmptyFlaskInHand
-	void f404_createEvent70_light(int16 lightPower, int16 ticks); // @ F0404_MENUS_CreateEvent70_Light
-	bool f403_isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShield, uint16 ticks, bool useMana); // @ F0403_MENUS_IsPartySpellOrFireShieldSuccessful
-	void f397_drawAvailableSymbols(uint16 symbolStep); // @ F0397_MENUS_DrawAvailableSymbols
-	void f398_drawChampionSymbols(Champion *champ); // @ F0398_MENUS_DrawChampionSymbols
-	void f399_addChampionSymbol(int16 symbolIndex); // @ F0399_MENUS_AddChampionSymbol
-	void f400_deleteChampionSymbol(); // @ F0400_MENUS_DeleteChampionSymbol
-	bool f391_didClickTriggerAction(int16 actionListIndex); // @ F0391_MENUS_DidClickTriggerAction
-	bool f407_isActionPerformed(uint16 champIndex, int16 actionIndex); // @ F0407_MENUS_IsActionPerformed
-	void f406_setChampionDirectionToPartyDirection(Champion *champ); // @ F0406_MENUS_SetChampionDirectionToPartyDirection
-	void f405_decrementCharges(Champion *champ); // @ F0405_MENUS_DecrementCharges
-	bool f402_isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX,
+	void drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
+	void drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
+	void refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
+	void drawActionArea(); // @ F0387_MENUS_DrawActionArea
+	const char *getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
+	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
+	void buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
+	void setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
+	void drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
+	int16 getClickOnSpellCastResult(); // @ F0408_MENUS_GetClickOnSpellCastResult
+	int16 getChampionSpellCastResult(uint16 champIndex); // @ F0412_MENUS_GetChampionSpellCastResult
+	Spell *getSpellFromSymbols(byte *symbols); // @ F0409_MENUS_GetSpellFromSymbols
+	void menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex); // @ F0410_MENUS_PrintSpellFailureMessage
+	Potion *getEmptyFlaskInHand(Champion *champ, Thing *potionThing); // @ F0411_MENUS_GetEmptyFlaskInHand
+	void createEvent70_light(int16 lightPower, int16 ticks); // @ F0404_MENUS_CreateEvent70_Light
+	bool isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShield, uint16 ticks, bool useMana); // @ F0403_MENUS_IsPartySpellOrFireShieldSuccessful
+	void drawAvailableSymbols(uint16 symbolStep); // @ F0397_MENUS_DrawAvailableSymbols
+	void drawChampionSymbols(Champion *champ); // @ F0398_MENUS_DrawChampionSymbols
+	void addChampionSymbol(int16 symbolIndex); // @ F0399_MENUS_AddChampionSymbol
+	void deleteChampionSymbol(); // @ F0400_MENUS_DeleteChampionSymbol
+	bool didClickTriggerAction(int16 actionListIndex); // @ F0391_MENUS_DidClickTriggerAction
+	bool isActionPerformed(uint16 champIndex, int16 actionIndex); // @ F0407_MENUS_IsActionPerformed
+	void setChampionDirectionToPartyDirection(Champion *champ); // @ F0406_MENUS_SetChampionDirectionToPartyDirection
+	void decrementCharges(Champion *champ); // @ F0405_MENUS_DecrementCharges
+	bool isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX,
 									 int16 targetMapY, int16 skillIndex); // @ F0402_MENUS_IsMeleeActionPerformed
-	bool  f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY); // @ F0401_MENUS_IsGroupFrightenedByAction
-	void f381_printMessageAfterReplacements(const char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
-	void f389_processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion
-	void f383_setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
-	int16 f382_getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount
-	void f385_drawActionDamage(int16 damage); // @ F0385_MENUS_DrawActionDamage
+	bool isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY); // @ F0401_MENUS_IsGroupFrightenedByAction
+	void printMessageAfterReplacements(const char *str); // @ F0381_MENUS_PrintMessageAfterReplacements
+	void processCommands116To119_setActingChampion(uint16 champIndex); // @ F0389_MENUS_ProcessCommands116To119_SetActingChampion
+	void setActionList(ActionSet *actionSet); // @ F0383_MENUS_SetActionList
+	int16 getActionObjectChargeCount(); // @ F0382_MENUS_GetActionObjectChargeCount
+	void drawActionDamage(int16 damage); // @ F0385_MENUS_DrawActionDamage
 
-	Box boxActionArea3ActionMenu; // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
-	Box boxActionArea2ActionMenu; // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
-	Box boxActionArea1ActionMenu; // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
-	Box boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea 
-	Box boxSpellArea;
-	unsigned char g496_ActionSkillIndex[44]; // @ G0496_auc_Graphic560_ActionSkillIndex
+	Box _boxActionArea3ActionMenu; // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
+	Box _boxActionArea2ActionMenu; // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
+	Box _boxActionArea1ActionMenu; // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
+	Box _boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea 
+	Box _boxSpellArea;
+	unsigned char _actionSkillIndex[44]; // @ G0496_auc_Graphic560_ActionSkillIndex
 
 	void initConstants();
 };
 
 }
 
-#endif // !DM_MENUS_H
+#endif // DM_MENUS_H

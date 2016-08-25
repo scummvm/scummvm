@@ -119,7 +119,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 		}
 		if (championIndex == k4_ChampionCloseInventory) {
 			_vm->_eventMan->_refreshMousePointerInMainLoop = true;
-			_vm->_menuMan->f395_drawMovementArrows();
+			_vm->_menuMan->drawMovementArrows();
 			_vm->_eventMan->hideMouse();
 			_vm->_eventMan->_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
 			_vm->_eventMan->_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
