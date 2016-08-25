@@ -2157,8 +2157,11 @@ void Movement::gotoLastFrame() {
 		while ((uint)_currDynamicPhaseIndex != _currMovement->_dynamicPhases.size() - 1)
 			gotoNextFrame(0, 0);
 	} else {
-		while ((uint)_currDynamicPhaseIndex != _dynamicPhases.size() - 1)
-			gotoNextFrame(0, 0);
+		if ((uint)_currDynamicPhaseIndex != _dynamicPhases.size() - 1) {
+			do {
+				gotoNextFrame(0, 0);
+			} while ((uint)_currDynamicPhaseIndex != _dynamicPhases.size() - 1);
+		}
 	}
 }
 
