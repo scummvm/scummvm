@@ -968,7 +968,7 @@ void StaticANIObject::stopAnim_maybe() {
 
 		if (_flags & 0x40) {
 			if (!_movement->_currMovement) {
-				if (!_movement->_currDynamicPhaseIndex)
+				if (_movement->_currDynamicPhaseIndex)
 					goto L11;
 L8:
 				_statics = _movement->_staticsObj1;
