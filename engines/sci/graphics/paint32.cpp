@@ -38,7 +38,6 @@ reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &st
 
 	Common::Rect gameRect;
 	reg_t bitmapId = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
-	SciBitmap &bitmap = *_segMan->lookupBitmap(bitmapId);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
@@ -48,7 +47,7 @@ reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &st
 	// `kUpdateLine` can get the originally used color
 	celInfo.color = color;
 
-	ScreenItem *screenItem = new ScreenItem(planeObject, celInfo, Common::Rect(startPoint.x, startPoint.y, startPoint.x + bitmap.getWidth(), startPoint.y + bitmap.getHeight()));
+	ScreenItem *screenItem = new ScreenItem(planeObject, celInfo, gameRect);
 	screenItem->_priority = priority;
 	screenItem->_fixedPriority = true;
 
@@ -89,9 +88,13 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	LineProperties &properties = *static_cast<LineProperties *>(data);
 	byte *pixels = properties.bitmap->getPixels();
 
-	const uint32 index = properties.bitmap->getWidth() * y + x;
-
-	if (index < properties.bitmap->getDataSize()) {
+	const uint16 bitmapWidth  = properties.bitmap->getWidth();
+	const uint16 bitmapHeight = properties.bitmap->getHeight();
+	const uint32 index = bitmapWidth * y + x;
+	
+	// Only draw the points in the bitmap, and ignore the rest. SSCI scripts
+	// can draw lines ending outside the visible area (e.g. negative coordinates)
+	if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight) {
 		if (properties.solid) {
 			pixels[index] = (uint8)color;
 			return;
@@ -112,25 +115,29 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 		if (properties.patternIndex == ARRAYSIZE(properties.pattern)) {
 			properties.patternIndex = 0;
 		}
-	} else {
-		warning("GfxPaint32::plotter: Attempted to write out of bounds (%u >= %u)", index, properties.bitmap->getDataSize());
 	}
 }
 
 reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
 	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
-	// Thickness is expected to be 2n+1
-	thickness = ((MAX((uint8)1, thickness) - 1) | 1);
-	const uint8 halfThickness = thickness >> 1;
+	// Line thickness is expected to be 2 * thickness + 1
+	thickness = (MAX<uint8>(1, thickness) - 1) | 1;
+	uint8 halfThickness = thickness >> 1;
 
-	outRect.left = (startPoint.x < endPoint.x ? startPoint.x : endPoint.x) - halfThickness;
-	outRect.top = (startPoint.y < endPoint.y ? startPoint.y : endPoint.y) - halfThickness;
-	outRect.right = (startPoint.x > endPoint.x ? startPoint.x : endPoint.x) + halfThickness + 1;
-	outRect.bottom = (startPoint.y > endPoint.y ? startPoint.y : endPoint.y) + halfThickness + 1;
+	const uint16 scriptWidth  = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+
+	outRect.left   = MIN<int16>(startPoint.x, endPoint.x);
+	outRect.top    = MIN<int16>(startPoint.y, endPoint.y);
+	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1 + 1;	// rect lower edge + thickness offset
+	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1 + 1;	// rect lower edge + thickness offset
+
+	outRect.grow(halfThickness);
+	outRect.clip(Common::Rect(0, 0, scriptWidth, scriptHeight));
 
 	reg_t bitmapId;
-	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, outRect.width(), outRect.height(), skipColor, 0, 0, g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, 0, false, true);
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, outRect.width(), outRect.height(), skipColor, 0, 0, scriptWidth, scriptHeight, 0, false, true);
 
 	byte *pixels = bitmap.getPixels();
 	memset(pixels, skipColor, bitmap.getWidth() * bitmap.getHeight());
@@ -152,12 +159,11 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 		break;
 	}
 
-	const Common::Rect drawRect(
-		startPoint.x - outRect.left,
-		startPoint.y - outRect.top,
-		endPoint.x - outRect.left,
-		endPoint.y - outRect.top
-	);
+	// Change coordinates to be relative to the bitmap
+	const int16 x1 = startPoint.x - outRect.left;
+	const int16 y1 = startPoint.y - outRect.top;
+	const int16 x2 =   endPoint.x - outRect.left;
+	const int16 y2 =   endPoint.y - outRect.top;
 
 	if (!properties.solid) {
 		for (int i = 0; i < ARRAYSIZE(properties.pattern); ++i) {
@@ -166,14 +172,14 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 		}
 
 		properties.patternIndex = 0;
-		properties.horizontal = ABS(drawRect.right - drawRect.left) > ABS(drawRect.bottom - drawRect.top);
-		properties.lastAddress = properties.horizontal ? drawRect.left : drawRect.top;
+		properties.horizontal = ABS(x2 - x1) > ABS(y2 - y1);
+		properties.lastAddress = properties.horizontal ? x1 : y1;
 	}
 
 	if (thickness <= 1) {
-		Graphics::drawLine(drawRect.left, drawRect.top, drawRect.right, drawRect.bottom, color, plotter, &properties);
+		Graphics::drawLine(x1, y1, x2, y2, color, plotter, &properties);
 	} else {
-		Graphics::drawThickLine2(drawRect.left, drawRect.top, drawRect.right, drawRect.bottom, thickness, color, plotter, &properties);
+		Graphics::drawThickLine2(x1, y1, x2, y2, thickness, color, plotter, &properties);
 	}
 
 	return bitmapId;
