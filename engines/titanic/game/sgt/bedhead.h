@@ -23,16 +23,56 @@
 #ifndef TITANIC_BEDHEAD_H
 #define TITANIC_BEDHEAD_H
 
+#include "common/array.h"
 #include "titanic/game/sgt/sgt_state_room.h"
 
 namespace Titanic {
+
+struct BedheadEntry {
+	CString _name1;
+	CString _name2;
+	CString _name3;
+	CString _name4;
+	int _startFrame;
+	int _endFrame;
+
+	void load(Common::SeekableReadStream *s);
+};
+class BedheadEntries : public Common::Array<BedheadEntry> {
+public:
+	void load(Common::SeekableReadStream *s);
+};
+
+struct TurnOnEntries {
+	BedheadEntries _closed;
+	BedheadEntries _restingTV;
+	BedheadEntries _restingUV;
+	BedheadEntries _closedWrong;
+
+	void load(Common::SeekableReadStream *s);
+};
+
+struct TurnOffEntries {
+	BedheadEntries _open;
+	BedheadEntries _restingUTV;
+	BedheadEntries _restingV;
+	BedheadEntries _restingG;
+	BedheadEntries _openWrong;
+	BedheadEntries _restingDWrong;
+
+	void load(Common::SeekableReadStream *s);
+};
 
 class CBedhead : public CSGTStateRoom {
 	DECLARE_MESSAGE_MAP;
 	bool TurnOn(CTurnOn *msg);
 	bool TurnOff(CTurnOff *msg);
+private:
+	TurnOnEntries _on;
+	TurnOffEntries _off;
 public:
 	CLASSDEF;
+	CBedhead();
 
 	/**
 	 * Save the data for the class to file
