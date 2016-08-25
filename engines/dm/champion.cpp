@@ -457,7 +457,7 @@ void ChampionMan::drawChangedObjectIcons() {
 	ObjectMan &objMan = *_vm->_objectMan;
 	MenuMan &menuMan = *_vm->_menuMan;
 
-	uint16 invChampOrdinal = invMan._g432_inventoryChampionOrdinal;
+	uint16 invChampOrdinal = invMan._inventoryChampionOrdinal;
 	if (_candidateChampionOrdinal && !invChampOrdinal)
 		return;
 
@@ -503,8 +503,8 @@ void ChampionMan::drawChangedObjectIcons() {
 			}
 		}
 
-		if (invMan._g424_panelContent == k4_PanelContentChest) {
-			thing = invMan._g425_chestSlots;
+		if (invMan._panelContent == k4_PanelContentChest) {
+			thing = invMan._chestSlots;
 			for (int16 slotIndex = 0; slotIndex < 8; ++slotIndex, thing++) {
 				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + k38_SlotBoxChestFirstSlot, *thing) ? 1 : 0);
 			}
@@ -532,7 +532,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	Champion *champ = &_champions[champIndex];
 
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		invMan._g425_chestSlots[slotIndex - k30_ChampionSlotChest_1] = thing;
+		invMan._chestSlots[slotIndex - k30_ChampionSlotChest_1] = thing;
 	} else {
 		champ->setSlot(slotIndex, thing);
 	}
@@ -540,7 +540,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	champ->_load += dunMan.getObjectWeight(thing);
 	champ->setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
 	IconIndice iconIndex = objMan.f33_getIconIndex(thing);
-	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._g432_inventoryChampionOrdinal);
+	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
 	applyModifiersToStatistics(champ, slotIndex, iconIndex, 1, thing);
 	uint16 *rawObjPtr = dunMan.getThingData(thing);
 
@@ -558,7 +558,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 
 		if (iconIndex == k4_IconIndiceWeaponTorchUnlit) {
 			((Weapon *)rawObjPtr)->setLit(true);
-			_vm->_inventoryMan->f337_setDungeonViewPalette();
+			_vm->_inventoryMan->setDungeonViewPalette();
 			drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == k1_ChampionSlotActionHand) &&
 			((iconIndex == k144_IconIndiceContainerChestClosed) || ((iconIndex >= k30_IconIndiceScrollOpen) && (iconIndex <= k31_IconIndiceScrollClosed)))) {
@@ -568,7 +568,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 		if ((iconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (iconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
 			_party._magicalLightAmount += _lightPowerToLightAmount[2];
-			_vm->_inventoryMan->f337_setDungeonViewPalette();
+			_vm->_inventoryMan->setDungeonViewPalette();
 			iconIndex = (IconIndice)(iconIndex + 1);
 		} else if ((iconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (iconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
@@ -665,8 +665,8 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 	Thing curThing;
 
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		curThing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
-		_vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1] = Thing::_none;
+		curThing = _vm->_inventoryMan->_chestSlots[slotIndex - k30_ChampionSlotChest_1];
+		_vm->_inventoryMan->_chestSlots[slotIndex - k30_ChampionSlotChest_1] = Thing::_none;
 	} else {
 		curThing = curChampion->_slots[slotIndex];
 		curChampion->_slots[slotIndex] = Thing::_none;
@@ -675,7 +675,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 	if (curThing == Thing::_none)
 		return Thing::_none;
 
-	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal);
 	int16 curIconIndex = _vm->_objectMan->f33_getIconIndex(curThing);
 	// Remove object modifiers
 	applyModifiersToStatistics(curChampion, slotIndex, curIconIndex, -1, curThing);
@@ -685,7 +685,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 		if ((curIconIndex >= k12_IconIndiceJunkIllumuletUnequipped) && (curIconIndex <= k13_IconIndiceJunkIllumuletEquipped)) {
 			((Junk *)curWeapon)->setChargeCount(0);
 			_party._magicalLightAmount -= _lightPowerToLightAmount[2];
-			_vm->_inventoryMan->f337_setDungeonViewPalette();
+			_vm->_inventoryMan->setDungeonViewPalette();
 		} else if ((curIconIndex >= k10_IconIndiceJunkJewelSymalUnequipped) && (curIconIndex <= k11_IconIndiceJunkJewelSymalEquipped)) {
 			((Junk *)curWeapon)->setChargeCount(0);
 		}
@@ -709,14 +709,14 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 
 		if ((curIconIndex >= k4_IconIndiceWeaponTorchUnlit) && (curIconIndex <= k7_IconIndiceWeaponTorchLit)) {
 			curWeapon->setLit(false);
-			_vm->_inventoryMan->f337_setDungeonViewPalette();
+			_vm->_inventoryMan->setDungeonViewPalette();
 			drawChangedObjectIcons();
 		}
 
 		if (isInventoryChampion && (slotIndex == k1_ChampionSlotActionHand)) {
 			switch (curIconIndex) {
 			case k144_IconIndiceContainerChestClosed:
-				_vm->_inventoryMan->f334_closeChest();
+				_vm->_inventoryMan->closeChest();
 			// No break on purpose
 			case k30_IconIndiceScrollOpen:
 			case k31_IconIndiceScrollClosed:
@@ -1108,7 +1108,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 	Champion *curChampion = &_champions[champIndex];
 	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
 	setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
-	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) && (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned)) {
+	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) && (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
 		setFlag(curChampion->_attributes, k0x0800_ChampionAttributePanel);
 	}
 
@@ -1299,19 +1299,19 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 			return;
 
 		champIndex = slotBoxIndex >> 1;
-		if ((champIndex >= _partyChampionCount) || (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) || !_champions[champIndex]._currHealth)
+		if ((champIndex >= _partyChampionCount) || (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) || !_champions[champIndex]._currHealth)
 			return;
 
 		slotIndex = getHandSlotIndex(slotBoxIndex);
 	} else {
-		champIndex = _vm->ordinalToIndex(_vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+		champIndex = _vm->ordinalToIndex(_vm->_inventoryMan->_inventoryChampionOrdinal);
 		slotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
 	}
 
 	Thing leaderHandObject = _leaderHandObject;
 	Thing slotThing;
 	if (slotIndex >= k30_ChampionSlotChest_1) {
-		slotThing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
+		slotThing = _vm->_inventoryMan->_chestSlots[slotIndex - k30_ChampionSlotChest_1];
 	} else {
 		slotThing = _champions[champIndex]._slots[slotIndex];
 	}
@@ -1397,7 +1397,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			blitBox._y1 = 0;
 			_vm->_eventMan->showMouse();
 
-			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 				blitBox._y2 = 28;
 				blitBox._x1 = textPosX + 7;
 				blitBox._x2 = blitBox._x1 + 31; /* Box is over the champion portrait in the status box */
@@ -1450,7 +1450,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	Champion *curChampion = &_champions[champIndex];
 	curChampion->_currHealth = 0;
 	setFlag(curChampion->_attributes, k0x1000_ChampionAttributeStatusBox);
-	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		if (_vm->_pressingEye) {
 			_vm->_pressingEye = false;
 			_vm->_eventMan->_ignoreMouseMovements = false;
@@ -1465,7 +1465,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 			_vm->_eventMan->_hideMousePointerRequestCount = 1;
 			_vm->_eventMan->hideMouse();
 		}
-		_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
+		_vm->_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
 	}
 	dropAllObjects(champIndex);
 	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(k0x8000_championBones | k10_JunkThingType);
@@ -1684,8 +1684,8 @@ void ChampionMan::applyTimeEffects() {
 				setFlag(championPtr->_attributes, k0x0400_ChampionAttributeIcon);
 			}
 			setFlag(championPtr->_attributes, k0x0100_ChampionAttributeStatistics);
-			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-				if (_vm->_pressingMouth || _vm->_pressingEye || (_vm->_inventoryMan->_g424_panelContent == k0_PanelContentFoodWaterPoisoned)) {
+			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
+				if (_vm->_pressingMouth || _vm->_pressingEye || (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
 					setFlag(championPtr->_attributes, k0x0800_ChampionAttributePanel);
 				}
 			}
@@ -2027,7 +2027,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		}
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
-	_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)previousPartyChampionCount);
+	_vm->_inventoryMan->toggleInventory((ChampionIndex)previousPartyChampionCount);
 	_vm->_menuMan->f456_drawDisabledMenu();;
 }
 
@@ -2119,7 +2119,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	if (!getFlag(championAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand))
 		return;
 
-	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal);
+	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal);
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	_vm->_eventMan->showMouse();
 	if (getFlag(championAttributes, k0x1000_ChampionAttributeStatusBox)) {
@@ -2148,7 +2148,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(nativeBitmapIndices[borderCount]), &box, k40_byteWidth, k10_ColorFlesh, 29);
 
 			if (isInventoryChampion) {
-				_vm->_inventoryMan->f354_drawStatusBoxPortrait(champIndex);
+				_vm->_inventoryMan->drawStatusBoxPortrait(champIndex);
 				setFlag(championAttributes, k0x0100_ChampionAttributeStatistics);
 			} else
 				setFlag(championAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x2000_ChampionAttributeWounds | k0x8000_ChampionAttributeActionHand);
@@ -2262,12 +2262,12 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	}
 	if (getFlag(championAttributes, k0x0800_ChampionAttributePanel) && isInventoryChampion) {
 		if (_vm->_pressingMouth)
-			_vm->_inventoryMan->f345_drawPanelFoodWaterPoisoned();
+			_vm->_inventoryMan->drawPanelFoodWaterPoisoned();
 		else if (_vm->_pressingEye) {
 			if (_leaderEmptyHanded)
-				_vm->_inventoryMan->f351_drawChampionSkillsAndStatistics();
+				_vm->_inventoryMan->drawChampionSkillsAndStatistics();
 		} else
-			_vm->_inventoryMan->f347_drawPanel();
+			_vm->_inventoryMan->drawPanel();
 
 		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
@@ -2297,7 +2297,7 @@ void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
 void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 	int16 nativeBitmapIndex = -1;
 	Champion *champ = &_champions[champIndex];
-	bool isInventoryChamp = (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
+	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
 
 	uint16 slotBoxIndex;
 	if (!isInventoryChamp) {
@@ -2310,7 +2310,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 
 	Thing thing;
 	if (slotIndex >= k30_ChampionSlotChest_1)
-		thing = _vm->_inventoryMan->_g425_chestSlots[slotIndex - k30_ChampionSlotChest_1];
+		thing = _vm->_inventoryMan->_chestSlots[slotIndex - k30_ChampionSlotChest_1];
 	else
 		thing = champ->getSlot((ChampionSlot)slotIndex);
 
@@ -2388,7 +2388,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 	displayBox._x2 = displayBox._x1 + 167;
 
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, displayBox, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
-	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
+	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->_boxPanel, k72_byteWidth, k4_ColorCyan, 73);
 	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	_vm->_eventMan->showMouse();

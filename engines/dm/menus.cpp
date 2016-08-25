@@ -182,9 +182,9 @@ void MenuMan::f456_drawDisabledMenu() {
 	if (!_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->highlightBoxDisable();
 		_vm->_displayMan->_useByteBoxCoordinates = false;
-		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
-			if (_vm->_inventoryMan->_g424_panelContent == k4_PanelContentChest) {
-				_vm->_inventoryMan->f334_closeChest();
+		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {
+			if (_vm->_inventoryMan->_panelContent == k4_PanelContentChest) {
+				_vm->_inventoryMan->closeChest();
 			}
 		} else {
 			_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
@@ -444,10 +444,10 @@ void MenuMan::f457_drawEnabledMenus() {
 			_g509_actionAreaContainsIcons = true;
 		}
 		f387_drawActionArea();
-		AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_g432_inventoryChampionOrdinal;
+		AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_inventoryChampionOrdinal;
 		if (AL1462_i_InventoryChampionOrdinal) {
-			_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
-			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)_vm->ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
+			_vm->_inventoryMan->_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+			_vm->_inventoryMan->toggleInventory((ChampionIndex)_vm->ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
 		} else {
 			_vm->_displayMan->drawFloorAndCeiling();
 			f395_drawMovementArrows();
@@ -533,7 +533,7 @@ int16 MenuMan::f412_getChampionSpellCastResult(uint16 champIndex) {
 		L1275_ps_Potion->setPower(_vm->getRandomNumber(16) + (L1268_i_PowerSymbolOrdinal * 40));
 		L1270_ps_Champion->_load += _vm->_dungeonMan->getObjectWeight(L1272_T_Object) - AL1269_ui_EmptyFlaskWeight;
 		_vm->_championMan->drawChangedObjectIcons();
-		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex)) {
+		if (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex)) {
 			setFlag(L1270_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
@@ -755,7 +755,7 @@ void MenuMan::f404_createEvent70_light(int16 lightPower, int16 ticks) {
 	setMapAndTime(L1241_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	L1241_s_Event._priority = 0;
 	_vm->_timeline->f238_addEventGetEventIndex(&L1241_s_Event);
-	_vm->_inventoryMan->f337_setDungeonViewPalette();
+	_vm->_inventoryMan->setDungeonViewPalette();
 }
 
 bool MenuMan::f403_isPartySpellOrFireShieldSuccessful(Champion* champ, bool spellShield, uint16 ticks, bool useMana) {

@@ -52,41 +52,40 @@ class InventoryMan {
 public:
 	explicit InventoryMan(DMEngine *vm);
 
-	int16 _g432_inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
-	PanelContent _g424_panelContent; // @ G0424_i_PanelContent 
-	Thing _g425_chestSlots[8]; // @ G0425_aT_ChestSlots
-	Thing _g426_openChest; // @ G0426_T_OpenChest
-	int16 _g421_objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
-	int16 _g422_objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
-	Box g32_BoxPanel;
-	const char* G0428_apc_SkillLevelNames[15];
+	int16 _inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
+	PanelContent _panelContent; // @ G0424_i_PanelContent 
+	Thing _chestSlots[8]; // @ G0425_aT_ChestSlots
+	Thing _openChest; // @ G0426_T_OpenChest
+	int16 _objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
+	int16 _objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
+	Box _boxPanel;
+	const char *_skillLevelNames[15];
 
-	void f355_toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
-	void f354_drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
-	void f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color); // @ F0343_INVENTORY_DrawPanel_HorizontalBar
-	void f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar 
-	void f345_drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
-	void f346_drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
-	void f347_drawPanel(); // @ F0347_INVENTORY_DrawPanel
-	void f334_closeChest(); // @ F0334_INVENTORY_CloseChest
-	void f340_drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
-	void f341_drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
-	void f333_openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
-	void f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
-	void f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char ** attribStrings,
+	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
+	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
+	void drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color); // @ F0343_INVENTORY_DrawPanel_HorizontalBar
+	void drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar 
+	void drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
+	void drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
+	void drawPanel(); // @ F0347_INVENTORY_DrawPanel
+	void closeChest(); // @ F0334_INVENTORY_CloseChest
+	void drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
+	void drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
+	void openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
+	void drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
+	void buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char ** attribStrings,
 									char *destString, const char *prefixString, const char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
-	void f335_drawPanelObjectDescriptionString(const char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
-	void f339_drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
-	void f342_drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
-	void f337_setDungeonViewPalette(); // @ F0337_INVENTORY_SetDungeonViewPalette
-	void f338_decreaseTorchesLightPower(); // @ F0338_INVENTORY_DecreaseTorchesLightPower_CPSE
-	void f351_drawChampionSkillsAndStatistics(); // @ F0351_INVENTORY_DrawChampionSkillsAndStatistics
-	void f350_drawStopPressingMouth(); // @ F0350_INVENTORY_DrawStopPressingMouth
-	void f353_drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
-	void f349_processCommand70_clickOnMouth(); // @ F0349_INVENTORY_ProcessCommand70_ClickOnMouth
-	void f348_adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
-	void f352_processCommand71_clickOnEye(); // @ F0352_INVENTORY_ProcessCommand71_ClickOnEye
-
+	void drawPanelObjectDescriptionString(const char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
+	void drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
+	void drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
+	void setDungeonViewPalette(); // @ F0337_INVENTORY_SetDungeonViewPalette
+	void decreaseTorchesLightPower(); // @ F0338_INVENTORY_DecreaseTorchesLightPower_CPSE
+	void drawChampionSkillsAndStatistics(); // @ F0351_INVENTORY_DrawChampionSkillsAndStatistics
+	void drawStopPressingMouth(); // @ F0350_INVENTORY_DrawStopPressingMouth
+	void drawStopPressingEye();// @ F0353_INVENTORY_DrawStopPressingEye
+	void clickOnMouth(); // @ F0349_INVENTORY_ProcessCommand70_ClickOnMouth
+	void adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
+	void clickOnEye(); // @ F0352_INVENTORY_ProcessCommand71_ClickOnEye
 };
 
 }

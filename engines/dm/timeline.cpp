@@ -340,7 +340,7 @@ void Timeline::f261_processTimeline() {
 			case k70_TMEventTypeLight:
 				_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 				f257_timelineProcessEvent70_light(L0681_ps_Event);
-				_vm->_inventoryMan->f337_setDungeonViewPalette();
+				_vm->_inventoryMan->setDungeonViewPalette();
 				break;
 			case k71_TMEventTypeInvisibility:
 				_vm->_championMan->_party._event71Count_Invisibility--;
@@ -992,9 +992,9 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 	if (!L0663_ps_Champion->_currHealth) {
 		return;
 	}
-	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		_vm->_eventMan->showMouse();
-		_vm->_inventoryMan->f354_drawStatusBoxPortrait((ChampionIndex)champIndex);
+		_vm->_inventoryMan->drawStatusBoxPortrait((ChampionIndex)champIndex);
 		_vm->_eventMan->hideMouse();
 	} else {
 		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);

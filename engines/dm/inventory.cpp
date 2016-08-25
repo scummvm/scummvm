@@ -63,27 +63,27 @@ void InventoryMan::initConstants() {
 		break;
 	}
 	for (int i = 0; i < 15; ++i)
-		G0428_apc_SkillLevelNames[i] = g428_byLanguage[i];
+		_skillLevelNames[i] = g428_byLanguage[i];
 
-	g32_BoxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
+	_boxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
 }
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
-	_g432_inventoryChampionOrdinal = 0;
-	_g424_panelContent = k0_PanelContentFoodWaterPoisoned;
+	_inventoryChampionOrdinal = 0;
+	_panelContent = k0_PanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
-		_g425_chestSlots[i] = Thing(0);
-	_g426_openChest = Thing::_none;
-	_g421_objDescTextXpos = 0;
-	_g422_objDescTextYpos = 0;
+		_chestSlots[i] = Thing(0);
+	_openChest = Thing::_none;
+	_objDescTextXpos = 0;
+	_objDescTextYpos = 0;
 
 	for (int i = 0; i < 15; i++)
-		G0428_apc_SkillLevelNames[i] = nullptr;
+		_skillLevelNames[i] = nullptr;
 
 	initConstants();
 }
 
-void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
+void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	static Box g41_BoxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
 
@@ -100,14 +100,14 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 		return;
 	}
 	_vm->_stopWaitingForPlayerInput = true;
-	AL1102_ui_InventoryChampionOrdinal = _g432_inventoryChampionOrdinal;
+	AL1102_ui_InventoryChampionOrdinal = _inventoryChampionOrdinal;
 	if (_vm->indexToOrdinal(championIndex) == AL1102_ui_InventoryChampionOrdinal) {
 		championIndex = k4_ChampionCloseInventory;
 	}
 	_vm->_eventMan->showMouse();
 	if (AL1102_ui_InventoryChampionOrdinal) {
-		_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
-		f334_closeChest();
+		_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		closeChest();
 		L1103_ps_Champion = &_vm->_championMan->_champions[_vm->ordinalToIndex(AL1102_ui_InventoryChampionOrdinal)];
 		if (L1103_ps_Champion->_currHealth && !_vm->_championMan->_candidateChampionOrdinal) {
 			setFlag(L1103_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
@@ -129,7 +129,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 		}
 	}
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
+	_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
 	if (!AL1102_ui_InventoryChampionOrdinal) {
 		_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
 	}
@@ -168,7 +168,7 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	_vm->_eventMan->discardAllInput();
 }
 
-void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
+void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan._useByteBoxCoordinates = false;
 	Box box;
@@ -179,7 +179,7 @@ void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
 	dispMan.blitToScreen(_vm->_championMan->_champions[championIndex]._portrait, &box, k16_byteWidth, kM1_ColorNoTransparency, 29);
 }
 
-void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
+void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
 	Box box;
 	box._x1 = x;
 	box._x2 = box._x1 + pixelWidth;
@@ -189,7 +189,7 @@ void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidt
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, box, color, k112_byteWidthViewport, k136_heightViewport);
 }
 
-void InventoryMan::f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
+void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 	if (amount < -512) {
 		color = k8_ColorRed;
 	} else if (amount < 0) {
@@ -201,19 +201,19 @@ void InventoryMan::f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color col
 		pixelWidth = 3071;
 	}
 	pixelWidth /= 32;
-	f343_drawPanelHorizontalBar(115, y + 2, pixelWidth, k0_ColorBlack);
-	f343_drawPanelHorizontalBar(113, y, pixelWidth, color);
+	drawPanelHorizontalBar(115, y + 2, pixelWidth, k0_ColorBlack);
+	drawPanelHorizontalBar(113, y, pixelWidth, color);
 }
 
-void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
+void InventoryMan::drawPanelFoodWaterPoisoned() {
 	static Box g35_BoxFood(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
 	static Box g36_BoxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 	static Box g37_BoxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
-	Champion &champ = _vm->_championMan->_champions[_g432_inventoryChampionOrdinal];
-	f334_closeChest();
+	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
+	closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
@@ -235,60 +235,60 @@ void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k32_PoisionedLabelIndice),
 								   g37_BoxPoisoned, k48_byteWidth, k12_ColorDarkestGray, 15);
 	}
-	f344_drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
-	f344_drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
+	drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
+	drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
 }
 
-void InventoryMan::f346_drawPanelResurrectReincarnate() {
-	_g424_panelContent = k5_PanelContentResurrectReincarnate;
+void InventoryMan::drawPanelResurrectReincarnate() {
+	_panelContent = k5_PanelContentResurrectReincarnate;
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k40_PanelResurectReincaranteIndice),
-										 g32_BoxPanel, k72_byteWidth, k6_ColorDarkGreen, 73);
+										 _boxPanel, k72_byteWidth, k6_ColorDarkGreen, 73);
 }
 
-void InventoryMan::f347_drawPanel() {
-	f334_closeChest();
+void InventoryMan::drawPanel() {
+	closeChest();
 
 	ChampionMan &cm = *_vm->_championMan;
 	if (cm._candidateChampionOrdinal) {
-		f346_drawPanelResurrectReincarnate();
+		drawPanelResurrectReincarnate();
 		return;
 	}
 
-	Thing thing = cm._champions[_vm->ordinalToIndex(_g432_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
+	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
 
-	_g424_panelContent = k0_PanelContentFoodWaterPoisoned;
+	_panelContent = k0_PanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
 	case k9_ContainerThingType:
-		_g424_panelContent = k4_PanelContentChest;
+		_panelContent = k4_PanelContentChest;
 		break;
 	case k7_ScrollThingType:
-		_g424_panelContent = k2_PanelContentScroll;
+		_panelContent = k2_PanelContentScroll;
 		break;
 	default:
 		thing = Thing::_none;
 		break;
 	}
 	if (thing == Thing::_none) {
-		f345_drawPanelFoodWaterPoisoned();
+		drawPanelFoodWaterPoisoned();
 	} else {
-		f342_drawPanelObject(thing, false);
+		drawPanelObject(thing, false);
 	}
 }
 
-void InventoryMan::f334_closeChest() {
+void InventoryMan::closeChest() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
 	bool processFirstChestSlot = true;
-	if (_g426_openChest == Thing::_none)
+	if (_openChest == Thing::_none)
 		return;
-	Container *container = (Container*)dunMan.getThingData(_g426_openChest);
-	_g426_openChest = Thing::_none;
+	Container *container = (Container*)dunMan.getThingData(_openChest);
+	_openChest = Thing::_none;
 	container->getSlot() = Thing::_endOfList;
 	Thing prevThing;
 	for (int16 chestSlotIndex = 0; chestSlotIndex < 8; ++chestSlotIndex) {
-		Thing thing = _g425_chestSlots[chestSlotIndex];
+		Thing thing = _chestSlots[chestSlotIndex];
 		if (thing != Thing::_none) {
-			_g425_chestSlots[chestSlotIndex] = Thing::_none; // CHANGE8_09_FIX
+			_chestSlots[chestSlotIndex] = Thing::_none; // CHANGE8_09_FIX
 
 			if (processFirstChestSlot) {
 				processFirstChestSlot = false;
@@ -302,7 +302,7 @@ void InventoryMan::f334_closeChest() {
 	}
 }
 
-void InventoryMan::f340_drawPanelScrollTextLine(int16 yPos, char* text) {
+void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 	for (char* iter = text; *iter != '\0'; ++iter) {
 		if ((*iter >= 'A') && (*iter <= 'Z')) {
 			*iter -= 64;
@@ -313,7 +313,7 @@ void InventoryMan::f340_drawPanelScrollTextLine(int16 yPos, char* text) {
 	_vm->_textMan->f52_printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
 }
 
-void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
+void InventoryMan::drawPanelScroll(Scroll* scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
@@ -324,7 +324,7 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 	}
 	*charRed = '\0';
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k23_PanelOpenScrollIndice),
-							   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+							   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 	int16 lineCount = 1;
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
@@ -344,7 +344,7 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 		lineCount--;
 	}
 	int16 yPos = 92 - (7 * lineCount) / 2; // center the text vertically
-	f340_drawPanelScrollTextLine(yPos, stringFirstLine);
+	drawPanelScrollTextLine(yPos, stringFirstLine);
 	charGreen = charRed;
 	while (*charGreen) {
 		yPos += 7;
@@ -355,27 +355,27 @@ void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 			charRed[1] = '\0';
 		}
 		*charRed++ = '\0';
-		f340_drawPanelScrollTextLine(yPos, charGreen);
+		drawPanelScrollTextLine(yPos, charGreen);
 		charGreen = charRed;
 	}
 }
 
-void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
+void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 
-	if (_g426_openChest == thingToOpen)
+	if (_openChest == thingToOpen)
 		return;
 
-	if (_g426_openChest != Thing::_none)
-		f334_closeChest(); // CHANGE8_09_FIX
+	if (_openChest != Thing::_none)
+		closeChest(); // CHANGE8_09_FIX
 
-	_g426_openChest = thingToOpen;
+	_openChest = thingToOpen;
 	if (!isPressingEye) {
 		objMan.f38_drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
 	}
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k25_PanelOpenChestIndice),
-							   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+							   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
@@ -384,16 +384,16 @@ void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bo
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
 		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.f33_getIconIndex(thing));
-		_g425_chestSlots[chestSlotIndex++] = thing;
+		_chestSlots[chestSlotIndex++] = thing;
 		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
 		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
-		_g425_chestSlots[chestSlotIndex++] = Thing::_none;
+		_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
 
-void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
+void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
 	static byte iconBitmap[16 * 16];
 	Box box;
 	box._x2 = (box._x1 = xPos) + 15;
@@ -402,7 +402,7 @@ void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int
 	_vm->_displayMan->blitToViewport(iconBitmap, box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 
-void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char** attribStrings, char* destString, const char* prefixString, const char* suffixString) {
+void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char** attribStrings, char* destString, const char* prefixString, const char* suffixString) {
 	uint16 identicalBitCount = 0;
 	int16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
@@ -440,11 +440,11 @@ void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, in
 	strcat(destString, suffixString);
 }
 
-void InventoryMan::f335_drawPanelObjectDescriptionString(const char *descString) {
+void InventoryMan::drawPanelObjectDescriptionString(const char *descString) {
 	if (descString[0] == '\f') { // form feed
 		descString++;
-		_g421_objDescTextXpos = 108;
-		_g422_objDescTextYpos = 59;
+		_objDescTextXpos = 108;
+		_objDescTextYpos = 59;
 	}
 
 	if (descString[0]) {
@@ -464,8 +464,8 @@ void InventoryMan::f335_drawPanelObjectDescriptionString(const char *descString)
 				severalLines = true;
 			}
 
-			_vm->_textMan->f52_printToViewport(_g421_objDescTextXpos, _g422_objDescTextYpos, k13_ColorLightestGray, stringLine);
-			_g422_objDescTextYpos += 7;
+			_vm->_textMan->f52_printToViewport(_objDescTextXpos, _objDescTextYpos, k13_ColorLightestGray, stringLine);
+			_objDescTextYpos += 7;
 			if (severalLines) {
 				severalLines = false;
 				stringLine = ++string;
@@ -476,7 +476,7 @@ void InventoryMan::f335_drawPanelObjectDescriptionString(const char *descString)
 	}
 }
 
-void InventoryMan::f339_drawPanelArrowOrEye(bool pressingEye) {
+void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 	static Box boxArrowOrEye(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
 
 	DisplayMan &dispMan = *_vm->_displayMan;
@@ -489,7 +489,7 @@ void InventoryMan::f339_drawPanelArrowOrEye(bool pressingEye) {
 #define k0x0004_DescriptionMaskBroken 0x0004 // @ MASK0x0004_DESCRIPTION_BROKEN    
 #define k0x0008_DescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
 
-void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
+void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
 
 	DungeonMan &dunMan = *_vm->_dungeonMan;
@@ -499,20 +499,20 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	TextMan &textMan = *_vm->_textMan;
 
 	if (_vm->_pressingEye || _vm->_pressingMouth) {
-		f334_closeChest();
+		closeChest();
 	}
 
 	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
-	f335_drawPanelObjectDescriptionString("\f"); // form feed
+	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == k7_ScrollThingType) {
-		f341_drawPanelScroll((Scroll*)rawThingPtr);
+		drawPanelScroll((Scroll*)rawThingPtr);
 	} else if (thingType == k9_ContainerThingType) {
-		f333_openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
+		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	} else {
 		IconIndice iconIndex = objMan.f33_getIconIndex(thingToDraw);
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
-								   g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+								   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
 								   boxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
 
@@ -537,7 +537,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			descString = str;
 		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
-				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_g432_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
+				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
 			str[0] = '_' + ((Potion *)rawThingPtr)->getPower() / 40;
 			str[1] = ' ';
 			str[2] = '\0';
@@ -548,10 +548,10 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 
 		textMan.f52_printToViewport(134, 68, k13_ColorLightestGray, descString);
-		f332_drawIconToViewport(iconIndex, 111, 59);
+		drawIconToViewport(iconIndex, 111, 59);
 
 
-		_g422_objDescTextYpos = 87;
+		_objDescTextYpos = 87;
 
 		uint16 potentialAttribMask = 0;
 		uint16 actualAttribMask = 0;
@@ -566,9 +566,9 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: f335_drawPanelObjectDescriptionString("(BURNT OUT)"); break;
-				case Common::DE_DEU: f335_drawPanelObjectDescriptionString("(AUSGEBRANNT)"); break;
-				case Common::FR_FRA: f335_drawPanelObjectDescriptionString("(CONSUME)"); break;
+				case Common::EN_ANY: drawPanelObjectDescriptionString("(BURNT OUT)"); break;
+				case Common::DE_DEU: drawPanelObjectDescriptionString("(AUSGEBRANNT)"); break;
+				case Common::FR_FRA: drawPanelObjectDescriptionString("(CONSUME)"); break;
 				}
 			}
 			break;
@@ -606,7 +606,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 					break;
 				}
 
-				f335_drawPanelObjectDescriptionString(descString);
+				drawPanelObjectDescriptionString(descString);
 			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
 				potentialAttribMask = 0;
 
@@ -634,7 +634,7 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				case Common::FR_FRA: strcat(str, directionName_FR_FRA[iconIndex]); break;
 				}
 
-				f335_drawPanelObjectDescriptionString(str);
+				drawPanelObjectDescriptionString(str);
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
@@ -659,8 +659,8 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			case Common::FR_FRA: attribString = attribString_FR_FRA; break;
 			}
 
-			f336_buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
-			f335_drawPanelObjectDescriptionString(str);
+			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
+			drawPanelObjectDescriptionString(str);
 		}
 
 		switch (_vm->getGameLanguage()) { // localized
@@ -691,12 +691,12 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case Common::FR_FRA: strcat(str, "."); break;
 		}
 
-		f335_drawPanelObjectDescriptionString(str);
+		drawPanelObjectDescriptionString(str);
 	}
-	f339_drawPanelArrowOrEye(pressingEye);
+	drawPanelArrowOrEye(pressingEye);
 }
 
-void InventoryMan::f337_setDungeonViewPalette() {
+void InventoryMan::setDungeonViewPalette() {
 	static const int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 
 	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
@@ -769,7 +769,7 @@ void InventoryMan::f337_setDungeonViewPalette() {
 	_vm->_displayMan->_refreshDungeonViewPaleteRequested = true;
 }
 
-void InventoryMan::f338_decreaseTorchesLightPower() {
+void InventoryMan::decreaseTorchesLightPower() {
 	bool L1048_B_TorchChargeCountChanged = false;
 	int16 L1046_i_ChampionCount = _vm->_championMan->_partyChampionCount;
 	if (_vm->_championMan->_candidateChampionOrdinal) {
@@ -793,12 +793,12 @@ void InventoryMan::f338_decreaseTorchesLightPower() {
 		L1050_ps_Champion++;
 	}
 	if (L1048_B_TorchChargeCountChanged) {
-		f337_setDungeonViewPalette();
+		setDungeonViewPalette();
 		_vm->_championMan->drawChangedObjectIcons();
 	}
 }
 
-void InventoryMan::f351_drawChampionSkillsAndStatistics() {
+void InventoryMan::drawChampionSkillsAndStatistics() {
 
 	uint16 L1090_ui_Multiple;
 #define AL1090_ui_SkillIndex     L1090_ui_Multiple
@@ -824,9 +824,9 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 	case Common::FR_FRA: G0431_apc_StatisticNames = G0431_apc_StatisticNames_FR_FRA; break;
 	}
 
-	f334_closeChest();
-	L1094_ps_Champion = &_vm->_championMan->_champions[L1093_ui_ChampionIndex = _vm->ordinalToIndex(_g432_inventoryChampionOrdinal)];
-	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), g32_BoxPanel, k72_byteWidth, k8_ColorRed, 73);
+	closeChest();
+	L1094_ps_Champion = &_vm->_championMan->_champions[L1093_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal)];
+	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 	L1091_i_Y = 58;
 	for (AL1090_ui_SkillIndex = k0_ChampionSkillFighter; AL1090_ui_SkillIndex <= k3_ChampionSkillWizard; AL1090_ui_SkillIndex++) {
 		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
@@ -837,14 +837,14 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 		default:
 		case Common::EN_ANY:
 		case Common::DE_DEU: // english and german versions are the same
-			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+			strcpy(L1097_ac_String, _skillLevelNames[AL1092_i_SkillLevel - 2]);
 			strcat(L1097_ac_String, " ");
 			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
 			break;
 		case Common::FR_FRA:
 			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
 			strcat(L1097_ac_String, " ");
-			strcpy(L1097_ac_String, G0428_apc_SkillLevelNames[AL1092_i_SkillLevel - 2]);
+			strcpy(L1097_ac_String, _skillLevelNames[AL1092_i_SkillLevel - 2]);
 			break;
 		}
 		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
@@ -872,8 +872,8 @@ void InventoryMan::f351_drawChampionSkillsAndStatistics() {
 	}
 }
 
-void InventoryMan::f350_drawStopPressingMouth() {
-	f347_drawPanel();
+void InventoryMan::drawStopPressingMouth() {
+	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	_vm->_eventMan->_hideMousePointerRequestCount = 1;
 	_vm->_eventMan->showMouse();
@@ -881,11 +881,11 @@ void InventoryMan::f350_drawStopPressingMouth() {
 	_vm->_eventMan->showMouse();
 }
 
-void InventoryMan::f353_drawStopPressingEye() {
+void InventoryMan::drawStopPressingEye() {
 	Thing L1100_T_LeaderHandObject;
 
-	f332_drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
-	f347_drawPanel();
+	drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
+	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	if ((L1100_T_LeaderHandObject = _vm->_championMan->_leaderHandObject) != Thing::_none) {
 		_vm->_objectMan->f34_drawLeaderObjectName(L1100_T_LeaderHandObject);
@@ -895,7 +895,7 @@ void InventoryMan::f353_drawStopPressingEye() {
 	_vm->_eventMan->showMouse();
 }
 
-void InventoryMan::f349_processCommand70_clickOnMouth() {
+void InventoryMan::clickOnMouth() {
 	static int16 G0242_ai_Graphic559_FoodAmounts[8] = {
 		500,    /* Apple */
 		600,    /* Corn */
@@ -927,7 +927,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 
 
 	if (_vm->_championMan->_leaderEmptyHanded) {
-		if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+		if (_panelContent == k0_PanelContentFoodWaterPoisoned) {
 			return;
 		}
 		_vm->_eventMan->_ignoreMouseMovements = true;
@@ -939,7 +939,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		} else {
 			_vm->_eventMan->showMouse();
 			_vm->_eventMan->_hideMousePointerRequestCount = 1;
-			f345_drawPanelFoodWaterPoisoned();
+			drawPanelFoodWaterPoisoned();
 			_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 		}
 		return;
@@ -953,7 +953,7 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
 	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
-	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex = _vm->ordinalToIndex(_g432_inventoryChampionOrdinal)];
+	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal)];
 	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1078_T_Thing);
 	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
 		if (!(L1082_ps_Junk->getChargeCount())) {
@@ -980,16 +980,16 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 		AL1085_ui_AdjustedPotionPower = (AL1085_ui_PotionPower / 25) + 8; /* Value between 8 and 18 */
 		switch (((Potion*)L1082_ps_Junk)->getType()) {
 		case k6_PotionTypeRos:
-			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k2_ChampionStatDexterity, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(L1083_ps_Champion, k2_ChampionStatDexterity, AL1085_ui_AdjustedPotionPower);
 			break;
 		case k7_PotionTypeKu:
-			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k1_ChampionStatStrength, (((Potion*)L1082_ps_Junk)->getPower() / 35) + 5); /* Value between 5 and 12 */
+			adjustStatisticCurrentValue(L1083_ps_Champion, k1_ChampionStatStrength, (((Potion*)L1082_ps_Junk)->getPower() / 35) + 5); /* Value between 5 and 12 */
 			break;
 		case k8_PotionTypeDane:
-			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k3_ChampionStatWisdom, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(L1083_ps_Champion, k3_ChampionStatWisdom, AL1085_ui_AdjustedPotionPower);
 			break;
 		case k9_PotionTypeNeta:
-			f348_adjustStatisticCurrentValue(L1083_ps_Champion, k4_ChampionStatVitality, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(L1083_ps_Champion, k4_ChampionStatVitality, AL1085_ui_AdjustedPotionPower);
 			break;
 		case k10_PotionTypeAntivenin:
 			_vm->_championMan->unpoison(L1080_ui_ChampionIndex);
@@ -1064,14 +1064,14 @@ void InventoryMan::f349_processCommand70_clickOnMouth() {
 	}
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-	if (_g424_panelContent == k0_PanelContentFoodWaterPoisoned) {
+	if (_panelContent == k0_PanelContentFoodWaterPoisoned) {
 		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
 	}
 	_vm->_championMan->drawChampionState((ChampionIndex)L1080_ui_ChampionIndex);
 	_vm->_eventMan->hideMouse();
 }
 
-void InventoryMan::f348_adjustStatisticCurrentValue(Champion* champ, uint16 statIndex, int16 valueDelta) {
+void InventoryMan::adjustStatisticCurrentValue(Champion* champ, uint16 statIndex, int16 valueDelta) {
 	int16 L1077_i_Multiple;
 #define AL1077_i_CurrentValue L1077_i_Multiple
 #define AL1077_i_Delta        L1077_i_Multiple
@@ -1091,7 +1091,7 @@ void InventoryMan::f348_adjustStatisticCurrentValue(Champion* champ, uint16 stat
 	champ->_statistics[statIndex][k1_ChampionStatCurrent] += AL1077_i_Delta;
 }
 
-void InventoryMan::f352_processCommand71_clickOnEye() {
+void InventoryMan::clickOnEye() {
 	_vm->_eventMan->_ignoreMouseMovements = true;
 	_vm->_pressingEye = true;
 	if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
@@ -1105,12 +1105,12 @@ void InventoryMan::f352_processCommand71_clickOnEye() {
 	_vm->_eventMan->hideMouse();
 	_vm->_eventMan->hideMouse();
 	_vm->delay(8);
-	f332_drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
+	drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
 	if (_vm->_championMan->_leaderEmptyHanded) {
-		f351_drawChampionSkillsAndStatistics();
+		drawChampionSkillsAndStatistics();
 	} else {
 		_vm->_objectMan->f35_clearLeaderObjectName();
-		f342_drawPanelObject(_vm->_championMan->_leaderHandObject, true);
+		drawPanelObject(_vm->_championMan->_leaderHandObject, true);
 	}
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 

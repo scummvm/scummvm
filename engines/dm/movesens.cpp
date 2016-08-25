@@ -268,7 +268,7 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 			_vm->_dungeonMan->_partyMapX = destMapX;
 			_vm->_dungeonMan->_partyMapY = destMapY;
 			L0718_i_RequiredTeleporterScope = k0x0002_TelepScopeObjOrParty;
-			L0723_B_DrawDungeonViewWhileFalling = !_vm->_inventoryMan->_g432_inventoryChampionOrdinal && !_vm->_championMan->_partyIsSleeping;
+			L0723_B_DrawDungeonViewWhileFalling = !_vm->_inventoryMan->_inventoryChampionOrdinal && !_vm->_championMan->_partyIsSleeping;
 			L0716_ui_Direction = _vm->_dungeonMan->_partyDir;
 		} else {
 			if (L0710_i_ThingType == k4_GroupThingType) {

@@ -539,7 +539,7 @@ void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 			_mousePointerType = k4_pointerTypeAutoselect;
 		else {
 			championIdx++;
-			if (championIdx == _vm->_inventoryMan->_g432_inventoryChampionOrdinal)
+			if (championIdx == _vm->_inventoryMan->_inventoryChampionOrdinal)
 				_mousePointerType = k0_pointerTypeArrow;
 			else if (mousePosY <= 6)
 				_mousePointerType = k0_pointerTypeArrow;
@@ -780,14 +780,14 @@ void EventManager::processCommandQueue() {
 
 		int16 championIndex = cmdType - k7_CommandToggleInventoryChampion_0;
 		if (((championIndex == k4_ChampionCloseInventory) || (championIndex < _vm->_championMan->_partyChampionCount)) && !_vm->_championMan->_candidateChampionOrdinal)
-			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)championIndex);
+			_vm->_inventoryMan->toggleInventory((ChampionIndex)championIndex);
 
 		return;
 	}
 
 	if (cmdType == k83_CommandToggleInventoryLeader) {
 		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone)
-			_vm->_inventoryMan->f355_toggleInventory(_vm->_championMan->_leaderIndex);
+			_vm->_inventoryMan->toggleInventory(_vm->_championMan->_leaderIndex);
 
 		return;
 	}
@@ -807,12 +807,12 @@ void EventManager::processCommandQueue() {
 	}
 
 	if (cmdType == k70_CommandClickOnMouth) {
-		_vm->_inventoryMan->f349_processCommand70_clickOnMouth();
+		_vm->_inventoryMan->clickOnMouth();
 		return;
 	}
 
 	if (cmdType == k71_CommandClickOnEye) {
-		_vm->_inventoryMan->f352_processCommand71_clickOnEye();
+		_vm->_inventoryMan->clickOnEye();
 		return;
 	}
 
@@ -830,8 +830,8 @@ void EventManager::processCommandQueue() {
 
 	if (cmdType == k145_CommandSleep) {
 		if (!_vm->_championMan->_candidateChampionOrdinal) {
-			if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal)
-				_vm->_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
+			if (_vm->_inventoryMan->_inventoryChampionOrdinal)
+				_vm->_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
 
 			_vm->_menuMan->f456_drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;
@@ -1234,7 +1234,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	uint16 championIndex = champMan._partyChampionCount - 1;
 	Champion *champ = &champMan._champions[championIndex];
 	if (commandType == k162_CommandClickInPanelCancel) {
-		invMan.f355_toggleInventory(k4_ChampionCloseInventory);
+		invMan.toggleInventory(k4_ChampionCloseInventory);
 		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		if (champMan._partyChampionCount == 1) {
 			commandSetLeader(kM1_ChampionNone);
@@ -1309,7 +1309,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		break;
 	}
 
-	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
+	invMan.toggleInventory(k4_ChampionCloseInventory);
 	_vm->_menuMan->f457_drawEnabledMenus();
 	setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
@@ -1319,7 +1319,7 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	InventoryMan &invMan = *_vm->_inventoryMan;
 
 	CommandType commandType;
-	switch (invMan._g424_panelContent) {
+	switch (invMan._panelContent) {
 	case k4_PanelContentChest:
 		if (champMan._leaderIndex == kM1_ChampionNone) // if no leader
 			return;
@@ -1436,7 +1436,7 @@ void EventManager::commandTakeStairs(bool stairsGoDown) {
 }
 
 void EventManager::commandProcessTypes12to27_clickInChampionStatusBox(uint16 champIndex, int16 posX, int16 posY) {
-	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		commandSetLeader((ChampionIndex)champIndex);
 	} else {
 		uint16 commandType = getCommandTypeFromMouseInput(_mouseInputChampionNamesHands, Common::Point(posX, posY), k1_LeftMouseButton);

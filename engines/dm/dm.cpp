@@ -369,7 +369,7 @@ void DMEngine::processNewPartyMap(uint16 mapIndex) {
 	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
 	_displayMan->loadCurrentMapGraphics();
 	_groupMan->addAllActiveGroups();
-	_inventoryMan->f337_setDungeonViewPalette();
+	_inventoryMan->setDungeonViewPalette();
 }
 
 Common::Error DMEngine::run() {
@@ -449,7 +449,7 @@ void DMEngine::gameloop() {
 				break;
 		}
 
-		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
+		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
 			_displayMan->fillBoxBitmap(_displayMan->_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
 			_displayMan->drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
@@ -476,7 +476,7 @@ void DMEngine::gameloop() {
 		_gameTime++;
 
 		if (!(_gameTime & 511))
-			_inventoryMan->f338_decreaseTorchesLightPower();
+			_inventoryMan->decreaseTorchesLightPower();
 
 		if (_championMan->_party._freezeLifeTicks)
 			_championMan->_party._freezeLifeTicks -= 1;
@@ -501,11 +501,11 @@ void DMEngine::gameloop() {
 			if (_stopPressingEye) {
 				_pressingEye = false;
 				_stopPressingEye = false;
-				_inventoryMan->f353_drawStopPressingEye();
+				_inventoryMan->drawStopPressingEye();
 			} else if (_stopPressingMouth) {
 				_pressingMouth = false;
 				_stopPressingMouth = false;
-				_inventoryMan->f350_drawStopPressingMouth();
+				_inventoryMan->drawStopPressingMouth();
 			}
 
 			_eventMan->processCommandQueue();
@@ -679,7 +679,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 						continue;
 
 					char displStr[20];
-					strcpy(displStr, _inventoryMan->G0428_apc_SkillLevelNames[skillLevel - 2]);
+					strcpy(displStr, _inventoryMan->_skillLevelNames[skillLevel - 2]);
 					strcat(displStr, " ");
 					strcat(displStr, _championMan->_baseSkillName[idx]);
 					_textMan->f443_endgamePrintString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
@@ -960,12 +960,12 @@ void DMEngine::fuseSequnce() {
 
 
 	_gameWon = true;
-	if (_inventoryMan->_g432_inventoryChampionOrdinal) {
-		_inventoryMan->f355_toggleInventory(k4_ChampionCloseInventory);
+	if (_inventoryMan->_inventoryChampionOrdinal) {
+		_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
 	}
 	_eventMan->highlightBoxDisable();
 	_championMan->_party._magicalLightAmount = 200;
-	_inventoryMan->f337_setDungeonViewPalette();
+	_inventoryMan->setDungeonViewPalette();
 	_championMan->_party._fireShieldDefense = _championMan->_party._spellShieldDefense = _championMan->_party._shieldDefense = 100;
 	_timeline->f260_timelineRefreshAllChampionStatusBoxes();
 	fuseSequenceUpdate();
