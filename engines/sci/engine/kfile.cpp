@@ -632,6 +632,15 @@ reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
 	Common::String oldName = s->_segMan->getString(argv[0]);
 	Common::String newName = s->_segMan->getString(argv[1]);
 
+	// We don't fully implement all cases that could occur here, and
+	// assume the file to be renamed is a wrapped filename.
+	// Known usage: In Phant1 and KQ7 while deleting savegames.
+	// The scripts rewrite the dir file as a temporary file, and then
+	// rename it to the actual dir file.
+
+	oldName = g_sci->wrapFilename(oldName);
+	newName = g_sci->wrapFilename(newName);
+
 	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
 	// returns -1 on fail. We just return -1 for all versions.
 	if (g_sci->getSaveFileManager()->renameSavefile(oldName, newName))
