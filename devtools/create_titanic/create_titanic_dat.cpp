@@ -285,6 +285,84 @@ static const FrameRange BARBOT_FRAME_RANGES[60] = {
 	{ 202, 281 }, { 182, 202 }, { 165, 182 }, { 96, 165 }, { 0, 95 }
 };
 
+const char *const MISSIVEOMAT_MESSAGES[3] = {
+	"Welcome, Leovinus.\n"
+	"\n"
+	"This is your Missive-O-Mat.\n"
+	"\n"
+	"You have received 1827 Electric Missives.\n"
+	"\n"
+	"For your convenience I have deleted:\n"
+	" 453 things that people you don't know thought it would be "
+	"terribly witty to forward to you,\n"
+	" 63 Missives containing double or triple exclamation marks,\n"
+	" 846 Missives from mailing-lists you once thought might be quite "
+	"interesting and now can't figure out how to cancel,\n"
+	" 962 Chain Missives,\n"
+	" 1034 instructions on how to become a millionaire using butter,\n"
+	" 3 Yassaccan Death Threats (slightly down on last week which is"
+	" pleasing news),\n"
+	" and a Missive from your Mother which I have answered reassuringly.\n"
+	"\n"
+	"I have selected the following Missives for your particular attention. "
+	"You will not need to run Fib-Finder to see why.  Something Is Up and I "
+	"suspect those two slippery urchins Brobostigon and Scraliontis are behind it.",
+
+	"Hello Droot.  I have evaluated your recent missives.\n"
+	"Contents break down as follows:\n"
+	"\n"
+	"Good news 49%\n"
+	"Bad news 48%\n"
+	"Indifferent news 4%\n"
+	"Petty mailings and Family Missives 5%\n"
+	"Special Offers from the Blerontin Sand Society 1% (note - there's"
+	" a rather pretty dune for hire on p4)\n"
+	"\n"
+	"In general terms you Thrive.  You continue to Prosper.   Your shares are"
+	" Secure.  Your hair, as always, looks Good.  Carpet 14 needs cleaning.  \n"
+	"\n"
+	"I am pleased to report there have been no further comments about "
+	"foot odor.\n"
+	"\n"
+	"Recommend urgently you sell all fish paste shares as Market jittery.\n"
+	"\n"
+	"As your Great Scheme nears completion I have taken the liberty of"
+	" replying to all non-urgent Missives and list below only communic"
+	"ations with Manager Brobostigon and His Pain in the Ass Loftiness"
+	" Leovinus.  \n"
+	"\n"
+	"Beware - Leovinus grows suspicious.  Don't take your eye off B"
+	"robostigon.  \n"
+	"\n"
+	"Weather for the Launch tomorrow is bright and sunny.  Hazy clouds"
+	" will be turned on at eleven.  I suggest the red suit with the st"
+	"reamers.\n"
+	"\n"
+	"All money transfers will be completed through alias accounts by m"
+	"oonsup.\n"
+	"\n"
+	"Eat well.  Your fish levels are down and you may suffer indecisio"
+	"n flutters mid-morning.\n"
+	"\n"
+	"Here are your Missives...",
+
+	"Hello Antar, this is your Missive-o-Mat.\n"
+	"Not that you need reminding but today is the Glorious Dawning of "
+	"a New Age in Luxury Space Travel.\n"
+	"\n"
+	"Generally my assessment of your position this morning is that you"
+	" are well, albeit not as rich as you would like to be.  I hope yo"
+	"ur interesting collaboration with Mr Scraliontis will soon bear f"
+	"ruit. \n"
+	"\n"
+	"I trust your flatulence has eased during the night.  Such a distr"
+	"essing condition for a man in your position.\n"
+	"\n"
+	"Most of your Missives are routine construction matters which I ha"
+	"ve dealt with and deleted.  All Missives from Mr Scraliontis and "
+	"His Loftiness Leovinus are here."
+};
+
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
@@ -619,6 +697,24 @@ void writeBarbotFrameRanges() {
 	dataOffset += size;
 }
 
+void writeMissiveOMatMessages() {
+	outputFile.seek(dataOffset);
+
+	for (int idx = 0; idx < 3; ++idx)
+		outputFile.writeString(MISSIVEOMAT_MESSAGES[idx]);
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/MISSIVEOMAT/WELCOME", dataOffset, size);
+	dataOffset += size;
+
+	static const int MESSAGES[3] = { 0x5A63C0, 0x5A5BA8, 0x5A4A18 };
+	writeStringArray("TEXT/MISSIVEOMAT/MESSAGES", MESSAGES[_version], 58);
+	static const int FROM[3] = { 0x5A61F0, 0x5A59D8, 0x5A4BE8 };
+	writeStringArray("TEXT/MISSIVEOMAT/FROM", FROM[_version], 58);
+	static const int TO[3] = { 0x5A62D8, 0x5A5AC0, 0x5A4B00 };
+	writeStringArray("TEXT/MISSIVEOMAT/TO", TO[_version], 58);
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -789,6 +885,7 @@ void writeData() {
 	writeAllUpdateStates();
 	writeAllScriptPreResponses();
 	writeBarbotFrameRanges();
+	writeMissiveOMatMessages();
 }
 
 void createScriptMap() {
