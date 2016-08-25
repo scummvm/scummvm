@@ -248,11 +248,31 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	cleanLocalVars();
 }
 
+ScriptType Lingo::event2script(LEvent ev) {
+	if (_vm->getVersion() < 4) {
+		switch (ev) {
+		//case kEventStartMovie: // We are precompiling it now
+		//	return kMovieScript;
+		case kEventEnterFrame:
+			return kFrameScript;
+		default:
+			return kNoneScript;
+		}
+	}
+
+	return kNoneScript;
+}
+
 void Lingo::processEvent(LEvent event, int entityId) {
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d for entity %d", event, entityId);
 
-	debug(2, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+	ScriptType st = event2script(event);
+
+	if (st != kNoneScript)
+		executeScript(st, entityId + 1);
+	else
+		debug(2, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {

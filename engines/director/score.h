@@ -58,6 +58,7 @@ enum ScriptType {
 	kMovieScript = 0,
 	kSpriteScript = 1,
 	kFrameScript = 2,
+	kNoneScript = -1,
 	kMaxScriptType = 2
 };
 

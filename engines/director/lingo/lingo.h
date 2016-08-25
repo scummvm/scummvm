@@ -176,6 +176,8 @@ public:
 	void printStack(const char *s);
 	Common::String decodeInstruction(int pc, int *newPC = NULL);
 
+	ScriptType event2script(LEvent ev);
+
 	void processEvent(LEvent event, int entityId);
 
 	void initBuiltIns();
