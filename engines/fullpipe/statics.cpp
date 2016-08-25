@@ -952,7 +952,7 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 }
 
 void StaticANIObject::stopAnim_maybe() {
-	debugC(6, kDebugAnimation, "StaticANIObject::stopAnim_maybe()");
+	debugC(2, kDebugAnimation, "StaticANIObject::stopAnim_maybe()");
 
 	if (!(_flags & 1))
 		return;
@@ -967,7 +967,10 @@ void StaticANIObject::stopAnim_maybe() {
 		setOXY(_movement->_ox, _movement->_oy);
 
 		if (_flags & 0x40) {
-			if (!_movement->_currMovement && !_movement->_currDynamicPhaseIndex) {
+			if (!_movement->_currMovement) {
+				if (!_movement->_currDynamicPhaseIndex)
+					goto L11;
+L8:
 				_statics = _movement->_staticsObj1;
 				_movement->getCurrDynamicPhaseXY(point);
 				_ox -= point.x;
@@ -985,13 +988,14 @@ void StaticANIObject::stopAnim_maybe() {
 					_ox += point.x;
 					_oy += point.y;
 				}
-			} else {
-			  _statics = _movement->_staticsObj2;
+				goto L12;
 			}
-		} else {
-			_statics = _movement->_staticsObj2;
+			if (!_movement->_currDynamicPhaseIndex)
+				goto L8;
 		}
-
+L11:
+		_statics = _movement->_staticsObj2;
+L12:
 		_statics->getSomeXY(point);
 
 		_statics->_x = _ox - point.x;
