@@ -97,6 +97,7 @@ Score::Score(DirectorEngine *vm) {
 	_lingo->processEvent(kEventPrepareMovie, 0);
 	_movieScriptCount = 0;
 	_labels = NULL;
+	_font = NULL;
 
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
@@ -181,8 +182,6 @@ Score::~Score() {
 		_movieArchive->close();
 
 	delete _font;
-	delete _movieArchive;
-
 	delete _labels;
 }
 

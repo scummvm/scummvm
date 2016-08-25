@@ -73,14 +73,12 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedBMP;
 	delete _sharedSTXT;
 	delete _sharedDIB;
-	delete _movies;
 
+	delete _currentScore;
 	delete _mainArchive;
 	delete _macBinary;
 	delete _soundManager;
 	delete _lingo;
-	delete _currentScore;
-	delete _currentPalette;
 }
 
 Common::Error DirectorEngine::run() {
