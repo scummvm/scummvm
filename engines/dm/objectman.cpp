@@ -189,14 +189,14 @@ void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 		if (g26_IconGraphicFirstIndex[L0011_ui_Counter] > iconIndex)
 			break;
 	}
-	L0012_pl_Bitmap_Icon = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + --L0011_ui_Counter);
+	L0012_pl_Bitmap_Icon = _vm->_displayMan->getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + --L0011_ui_Counter);
 	iconIndex -= g26_IconGraphicFirstIndex[L0011_ui_Counter];
-	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
+	_vm->_displayMan->_useByteBoxCoordinates = true;
 	L1568_s_Box._y1 = 0;
 	L1568_s_Box._x1 = 0;
 	L1568_s_Box._y2 = 15;
 	L1568_s_Box._x2 = 15;
-	_vm->_displayMan->f132_blitToBitmap(L0012_pl_Bitmap_Icon, destBitmap, L1568_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0011_ui_Counter], 16);
+	_vm->_displayMan->blitToBitmap(L0012_pl_Bitmap_Icon, destBitmap, L1568_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0011_ui_Counter], 16);
 }
 
 void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
@@ -219,18 +219,18 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 			break;
 	}
 	L0015_ui_IconGraphicIndex--;
-	L0018_puc_Bitmap_Icons = _vm->_displayMan->f489_getNativeBitmapOrGraphic(L0015_ui_IconGraphicIndex + k42_ObjectIcons_000_TO_031);
+	L0018_puc_Bitmap_Icons = _vm->_displayMan->getNativeBitmapOrGraphic(L0015_ui_IconGraphicIndex + k42_ObjectIcons_000_TO_031);
 	iconIndex -= g26_IconGraphicFirstIndex[L0015_ui_IconGraphicIndex];
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		L0020_puc_Bitmap_Destination = _vm->_displayMan->_g296_bitmapViewport;
+		L0020_puc_Bitmap_Destination = _vm->_displayMan->_bitmapViewport;
 		L0016_i_ByteWidth = k112_byteWidthViewport;
 		L1569_i_Width = 136;
 	} else {
-		L0020_puc_Bitmap_Destination = (unsigned char*)_vm->_displayMan->_g348_bitmapScreen;
+		L0020_puc_Bitmap_Destination = (unsigned char*)_vm->_displayMan->_bitmapScreen;
 		L0016_i_ByteWidth = k160_byteWidthScreen;
 		L1569_i_Width = 200;
 	}
-	_vm->_displayMan->_g578_useByteBoxCoordinates = false, _vm->_displayMan->f132_blitToBitmap(L0018_puc_Bitmap_Icons, L0020_puc_Bitmap_Destination, L0019_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, L0016_i_ByteWidth, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0015_ui_IconGraphicIndex], L1569_i_Width);
+	_vm->_displayMan->_useByteBoxCoordinates = false, _vm->_displayMan->blitToBitmap(L0018_puc_Bitmap_Icons, L0020_puc_Bitmap_Destination, L0019_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, L0016_i_ByteWidth, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0015_ui_IconGraphicIndex], L1569_i_Width);
 }
 
 #define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
@@ -259,7 +259,7 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 	} else {
 		objectName = _g352_objectNames[L0007_i_IconIndex];
 	}
-	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
+	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {
@@ -268,7 +268,7 @@ IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {
 
 void ObjectMan::f35_clearLeaderObjectName() {
 	static Box g28_BoxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
-	_vm->_displayMan->D24_fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
 }
 
 void ObjectMan::f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
@@ -278,6 +278,6 @@ void ObjectMan::f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
 	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
 	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
 	f36_extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
-	_vm->_displayMan->f21_blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	_vm->_displayMan->blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 }

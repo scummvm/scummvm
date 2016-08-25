@@ -133,10 +133,10 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_groupMan->f196_initActiveGroups();
 
 		if (L1366_B_FadePalette) {
-			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
+			_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 			delay(1);
 			_displayMan->fillScreen(k0_ColorBlack);
-			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
+			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 		}
 	} else {
 		_dungeonId = dmSaveHeader._dungeonId;

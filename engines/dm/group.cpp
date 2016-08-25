@@ -1208,7 +1208,7 @@ T0200006:
 T0200011:
 			AL0422_i_SightRange = L0424_ps_CreatureInfo->getSightRange();
 			if (!getFlag(L0424_ps_CreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision)) {
-				AL0422_i_SightRange -= _vm->_displayMan->_g304_dungeonViewPaletteIndex >> 1;
+				AL0422_i_SightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
 			}
 			if (_g381_currGroupDistanceToParty > MAX((int16)1, AL0422_i_SightRange)) {
 				return 0;

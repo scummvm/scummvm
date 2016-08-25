@@ -236,7 +236,7 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 Common::Error DMEngine::loadGameState(int slot) {
 	if (loadgame(slot) != kM1_LoadgameFailure) {
 		_displayMan->fillScreen(k0_ColorBlack);
-		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palDungeonView[0]);
+		_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 		_newGameFl = k0_modeLoadSavedGame;
 
 		startGame();
@@ -267,10 +267,10 @@ uint16 DMEngine::getScaledProduct(uint16 val, uint16 scale, uint16 vale2) {
 
 void DMEngine::initializeGame() {
 	initMemoryManager();
-	_displayMan->f479_loadGraphics();
-	_displayMan->f460_initializeGraphicData();
-	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
-	_displayMan->f95_loadWallSet(k0_WallSetStone);
+	_displayMan->loadGraphics();
+	_displayMan->initializeGraphicData();
+	_displayMan->loadFloorSet(k0_FloorSetStone);
+	_displayMan->loadWallSet(k0_WallSetStone);
 
 	_sound->f503_loadSounds(); // @ F0506_AMIGA_AllocateData
 
@@ -299,10 +299,10 @@ void DMEngine::initializeGame() {
 		}
 	} while (loadgame(saveSlot) != k1_LoadgameSuccess);
 
-	_displayMan->f466_loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_gK73_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
+	_displayMan->loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_gK73_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
-	_displayMan->f461_allocateFlippedWallBitmaps();
+	_displayMan->allocateFlippedWallBitmaps();
 
 	startGame();
 	if (_newGameFl)
@@ -314,10 +314,10 @@ void DMEngine::initializeGame() {
 void DMEngine::initMemoryManager() {
 	static uint16 palSwoosh[16] = {0x000, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0xFFF, 0x000, 0xFFF, 0xAAA, 0xFFF, 0xAAA, 0x444, 0xFF0, 0xFF0}; // @ K0057_aui_Palette_Swoosh
 
-	_displayMan->f508_buildPaletteChangeCopperList(palSwoosh, palSwoosh);
+	_displayMan->buildPaletteChangeCopperList(palSwoosh, palSwoosh);
 	for (uint16 i = 0; i < 16; ++i) {
-		_displayMan->_g347_paletteTopAndBottomScreen[i] = _displayMan->_palDungeonView[0][i];
-		_displayMan->_g346_paletteMiddleScreen[i] = _displayMan->_palDungeonView[0][i];
+		_displayMan->_paletteTopAndBottomScreen[i] = _displayMan->_palDungeonView[0][i];
+		_displayMan->_paletteMiddleScreen[i] = _displayMan->_palDungeonView[0][i];
 	}
 }
 
@@ -345,20 +345,20 @@ void DMEngine::startGame() {
 	processNewPartyMap(_dungeonMan->_partyMapIndex);
 
 	if (!_newGameFl) {
-		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
-		_displayMan->_g578_useByteBoxCoordinates = false;
+		_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
+		_displayMan->_useByteBoxCoordinates = false;
 		delay(1);
-		_displayMan->D24_fillScreenBox(boxScreenTop, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(boxScreenRight, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenTop, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenRight, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	} else {
-		_displayMan->_g578_useByteBoxCoordinates = false;
-		_displayMan->D24_fillScreenBox(boxScreenTop, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(boxScreenRight, k0_ColorBlack);
-		_displayMan->D24_fillScreenBox(boxScreenBottom, k0_ColorBlack);
+		_displayMan->_useByteBoxCoordinates = false;
+		_displayMan->fillScreenBox(boxScreenTop, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenRight, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenBottom, k0_ColorBlack);
 	}
 
-	_displayMan->f508_buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_g347_paletteTopAndBottomScreen);
+	_displayMan->buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_paletteTopAndBottomScreen);
 	_menuMan->f395_drawMovementArrows();
 	_championMan->resetDataToStartGame();
 	_gameTimeTicking = true;
@@ -367,7 +367,7 @@ void DMEngine::startGame() {
 void DMEngine::processNewPartyMap(uint16 mapIndex) {
 	_groupMan->f194_removeAllActiveGroups();
 	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
-	_displayMan->f96_loadCurrentMapGraphics();
+	_displayMan->loadCurrentMapGraphics();
 	_groupMan->f195_addAllActiveGroups();
 	_inventoryMan->f337_setDungeonViewPalette();
 }
@@ -451,8 +451,8 @@ void DMEngine::gameloop() {
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
-			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
-			_displayMan->f128_drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+			_displayMan->fillBoxBitmap(_displayMan->_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
+			_displayMan->drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 			if (_setMousePointerToObjectInMainLoop) {
 				_setMousePointerToObjectInMainLoop = false;
 				_eventMan->showMouse();
@@ -547,23 +547,23 @@ void DMEngine::processEntrance() {
 	_entranceDoorAnimSteps[8] = _entranceDoorAnimSteps[7] + 128 * 161;
 	_entranceDoorAnimSteps[9] = _entranceDoorAnimSteps[8] + 128 * 161 * 2;
 
-	_displayMan->f466_loadIntoBitmap(k3_entranceRightDoorGraphicIndice, _entranceDoorAnimSteps[4]);
-	_displayMan->f466_loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _entranceDoorAnimSteps[0]);
-	_interfaceCredits = _displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
-	_displayMan->_g578_useByteBoxCoordinates = false;
+	_displayMan->loadIntoBitmap(k3_entranceRightDoorGraphicIndice, _entranceDoorAnimSteps[4]);
+	_displayMan->loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _entranceDoorAnimSteps[0]);
+	_interfaceCredits = _displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
+	_displayMan->_useByteBoxCoordinates = false;
 	Box displayBox;
 	displayBox._x1 = 0;
 	displayBox._x2 = 100;
 	displayBox._y1 = 0;
 	displayBox._y2 = 160;
 	for (uint16 idx = 1; idx < 4; idx++) {
-		_displayMan->f132_blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		_displayMan->blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
 		displayBox._x2 -= 4;
 	}
 	displayBox._x2 = 127;
 	for (uint16 idx = 5; idx < 8; idx++) {
 		displayBox._x1 += 4;
-		_displayMan->f132_blitToBitmap(_entranceDoorAnimSteps[4], _entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		_displayMan->blitToBitmap(_entranceDoorAnimSteps[4], _entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
 	}
 
 	do {
@@ -638,23 +638,23 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 		delay(240);
 	}
 
-	if (_displayMan->_g322_paletteSwitchingEnabled) {
+	if (_displayMan->_paletteSwitchingEnabled) {
 		uint16 oldPalTopAndBottomScreen[16];
 		for (uint16 i = 0; i < 16; ++i)
-			oldPalTopAndBottomScreen[i] = _displayMan->_g347_paletteTopAndBottomScreen[i];
+			oldPalTopAndBottomScreen[i] = _displayMan->_paletteTopAndBottomScreen[i];
 		for (int i = 0; i <= 7; i++) {
 			delay(1);
 			for (int colIdx = 0; colIdx < 16; colIdx++) {
-				_displayMan->_g346_paletteMiddleScreen[colIdx] = _displayMan->f431_getDarkenedColor(_displayMan->_g346_paletteMiddleScreen[colIdx]);
-				_displayMan->_g347_paletteTopAndBottomScreen[colIdx] = _displayMan->f431_getDarkenedColor(_displayMan->_g347_paletteTopAndBottomScreen[colIdx]);
+				_displayMan->_paletteMiddleScreen[colIdx] = _displayMan->getDarkenedColor(_displayMan->_paletteMiddleScreen[colIdx]);
+				_displayMan->_paletteTopAndBottomScreen[colIdx] = _displayMan->getDarkenedColor(_displayMan->_paletteTopAndBottomScreen[colIdx]);
 			}
 		}
-		_displayMan->_g322_paletteSwitchingEnabled = false;
+		_displayMan->_paletteSwitchingEnabled = false;
 		delay(1);
 		for (uint16 i = 0; i < 16; ++i)
-			_displayMan->_g347_paletteTopAndBottomScreen[i] = oldPalTopAndBottomScreen[i];
+			_displayMan->_paletteTopAndBottomScreen[i] = oldPalTopAndBottomScreen[i];
 	} else
-		_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
+		_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 
 	uint16 darkBluePalette[16];
 	if (doNotDrawCreditsOnly) {
@@ -664,8 +664,8 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 			for (int16 championIndex = k0_ChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
 				int16 textPosY = championIndex * 48;
 				Champion *curChampion = &_championMan->_champions[championIndex];
-				_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
-				_displayMan->f21_blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
+				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
+				_displayMan->blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
 				_textMan->f443_endgamePrintString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
 				int textPosX = (6 * strlen(curChampion->_name)) + 87;
 				char championTitleFirstCharacter = curChampion->_title[0];
@@ -689,28 +689,28 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 				championPortraitBox._y1 += 48;
 				championPortraitBox._y1 += 48;
 			}
-			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g347_paletteTopAndBottomScreen);
+			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 			_engineShouldQuit = true;
 			return;
 		}
 T0444017:
 		_displayMan->fillScreen(k0_ColorBlack);
-		_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kM1_ColorNoTransparency, 14);
+		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kM1_ColorNoTransparency, 14);
 		for (uint16 i = 0; i < 16; ++i)
 			darkBluePalette[i] = D01_RGB_DARK_BLUE;
 		uint16 curPalette[16];
 		for (uint16 i = 0; i < 15; ++i)
 			curPalette[i] = darkBluePalette[i];
 		curPalette[15] = D09_RGB_WHITE;
-		_displayMan->f436_STARTEND_FadeToPalette(curPalette);
+		_displayMan->startEndFadeToPalette(curPalette);
 		_displayMan->updateScreen();
 		if (waitBeforeDrawingRestart)
 			delay(300);
 
 		if (_restartGameAllowed) {
-			_displayMan->_g578_useByteBoxCoordinates = false;
-			_displayMan->D24_fillScreenBox(restartOuterBox, k12_ColorDarkestGray);
-			_displayMan->D24_fillScreenBox(restartInnerBox, k0_ColorBlack);
+			_displayMan->_useByteBoxCoordinates = false;
+			_displayMan->fillScreenBox(restartOuterBox, k12_ColorDarkestGray);
+			_displayMan->fillScreenBox(restartInnerBox, k0_ColorBlack);
 
 			switch (getGameLanguage()) { // localized
 			default:
@@ -724,15 +724,15 @@ T0444017:
 			_eventMan->_primaryMouseInput = _eventMan->_primaryMouseInputRestartGame;
 			_eventMan->discardAllInput();
 			_eventMan->hideMouse();
-			_displayMan->f436_STARTEND_FadeToPalette(curPalette);
+			_displayMan->startEndFadeToPalette(curPalette);
 			for (int16 verticalBlankCount = 900; --verticalBlankCount && !_restartGameRequest; delay(1))
 				_eventMan->processCommandQueue();
 
 			_eventMan->showMouse();
 			if (_restartGameRequest) {
-				_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
+				_displayMan->startEndFadeToPalette(darkBluePalette);
 				_displayMan->fillScreen(k0_ColorBlack);
-				_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palDungeonView[0]);
+				_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 				_newGameFl = k0_modeLoadSavedGame;
 				if (loadgame(1) != kM1_LoadgameFailure) {
 					startGame();
@@ -744,19 +744,19 @@ T0444017:
 			}
 		}
 
-		_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
+		_displayMan->startEndFadeToPalette(darkBluePalette);
 	}
 	Box box(0, 319, 0, 199);
-	_displayMan->f21_blitToScreen(_displayMan->f489_getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen);
+	_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen);
 
-	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palCredits);
+	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	_eventMan->waitForMouseOrKeyActivity();
 	if (_engineShouldQuit)
 		return;
 
 	if (_restartGameAllowed && doNotDrawCreditsOnly) {
 		waitBeforeDrawingRestart = false;
-		_displayMan->f436_STARTEND_FadeToPalette(darkBluePalette);
+		_displayMan->startEndFadeToPalette(darkBluePalette);
 		goto T0444017;
 	}
 
@@ -776,7 +776,7 @@ void DMEngine::drawEntrance() {
 	byte *microDungeonCurrentMapData[32];
 
 	_dungeonMan->_partyMapIndex = k255_mapIndexEntrance;
-	_displayMan->_g297_drawFloorAndCeilingRequested = true;
+	_displayMan->_drawFloorAndCeilingRequested = true;
 	_dungeonMan->_currMapWidth = 5;
 	_dungeonMan->_currMapHeight = 5;
 	_dungeonMan->_currMapData = microDungeonCurrentMapData;
@@ -792,30 +792,30 @@ void DMEngine::drawEntrance() {
 		microDungeonSquares[idx + 10] = Square(k1_CorridorElemType, 0);
 	}
 	microDungeonSquares[7] = Square(k1_CorridorElemType, 0);
-	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
+	_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 
 	// note, a global variable is used here in the original
-	_displayMan->f466_loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_g348_bitmapScreen);
-	_displayMan->f128_drawDungeon(kDirSouth, 2, 0);
+	_displayMan->loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_bitmapScreen);
+	_displayMan->drawDungeon(kDirSouth, 2, 0);
 
 	if (!_savedScreenForOpenEntranceDoors)
 		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];
-	memcpy(_savedScreenForOpenEntranceDoors, _displayMan->_g348_bitmapScreen, 320 * 200);
+	memcpy(_savedScreenForOpenEntranceDoors, _displayMan->_bitmapScreen, 320 * 200);
 
-	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
-	_displayMan->_g578_useByteBoxCoordinates = false, _displayMan->f132_blitToBitmap(_displayMan->_g348_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
 
-	_displayMan->f21_blitToScreen(_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	_displayMan->f21_blitToScreen(_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	_displayMan->f436_STARTEND_FadeToPalette(palEntrance);
+	_displayMan->blitToScreen(_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->blitToScreen(_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->startEndFadeToPalette(palEntrance);
 }
 
 void DMEngine::openEntranceDoors() {
 	Box rightDoorBox(109, 231, 30, 193);
-	byte *rightDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
+	byte *rightDoorBitmap = _displayMan->getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
 	Box leftDoorBox(0, 100, 30, 193);
 	uint16 leftDoorBlitFrom = 0;
-	byte *leftDoorBitmap = _displayMan->f489_getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
+	byte *leftDoorBitmap = _displayMan->getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
 
 	Box screenBox(0, 319, 0, 199);
 
@@ -825,10 +825,10 @@ void DMEngine::openEntranceDoors() {
 			_sound->f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
 		}
 
-		_displayMan->f21_blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
-		_displayMan->f132_blitToBitmap(leftDoorBitmap, _displayMan->_g348_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
+		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
+		_displayMan->blitToBitmap(leftDoorBitmap, _displayMan->_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
 									   kM1_ColorNoTransparency, 161, k200_heightScreen);
-		_displayMan->f132_blitToBitmap(rightDoorBitmap, _displayMan->_g348_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
+		_displayMan->blitToBitmap(rightDoorBitmap, _displayMan->_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
 									   kM1_ColorNoTransparency, 161, k200_heightScreen);
 		_eventMan->discardAllInput();
 		_displayMan->updateScreen();
@@ -861,33 +861,33 @@ void DMEngine::drawTittle() {
 	uint16 L1392_aui_Palette[16];
 
 
-	_displayMan->_g578_useByteBoxCoordinates = false;
+	_displayMan->_useByteBoxCoordinates = false;
 
 	byte *alloactedMem = L1383_l_Bitmap_TitleSteps = new byte[145600 * 2];
 
 	L1384_puc_Bitmap_Title = L1383_l_Bitmap_TitleSteps;
-	_displayMan->f466_loadIntoBitmap(k1_titleGraphicsIndice, L1383_l_Bitmap_TitleSteps);
+	_displayMan->loadIntoBitmap(k1_titleGraphicsIndice, L1383_l_Bitmap_TitleSteps);
 
 	L1383_l_Bitmap_TitleSteps += 320 * 200;
 	for (uint16 i = 0; i < 16; ++i)
 		L1392_aui_Palette[i] = D01_RGB_DARK_BLUE;
 
-	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
 	_displayMan->fillScreen(k0_ColorBlack);
 	// uncomment this to draw 'Presents'
 	//_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
 	L1392_aui_Palette[15] = D09_RGB_WHITE;
-	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
-	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, L1389_puc_Bitmap_Master_StrikesBack = L1383_l_Bitmap_TitleSteps, G0004_s_Graphic562_Box_Title_StrikesBack_Source, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
+	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
+	_displayMan->blitToBitmap(L1384_puc_Bitmap_Title, L1389_puc_Bitmap_Master_StrikesBack = L1383_l_Bitmap_TitleSteps, G0004_s_Graphic562_Box_Title_StrikesBack_Source, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
 	L1383_l_Bitmap_TitleSteps += 320 * 57;
-	_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, L1761_puc_Bitmap_Dungeon_Chaos = L1383_l_Bitmap_TitleSteps, K0078_s_Box_Title_Dungeon_Chaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
+	_displayMan->blitToBitmap(L1384_puc_Bitmap_Title, L1761_puc_Bitmap_Dungeon_Chaos = L1383_l_Bitmap_TitleSteps, K0078_s_Box_Title_Dungeon_Chaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
 	L1383_l_Bitmap_TitleSteps += 320 * 80;
 	L1384_puc_Bitmap_Title = L1761_puc_Bitmap_Dungeon_Chaos;
 	L1381_ui_DestinationHeight = 12;
 	L1382_i_DestinationPixelWidth = 48;
 	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
 		L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter] = L1383_l_Bitmap_TitleSteps;
-		_displayMan->f129_blitToBitmapShrinkWithPalChange(L1384_puc_Bitmap_Title, L1383_l_Bitmap_TitleSteps, 320, 80, L1382_i_DestinationPixelWidth, L1381_ui_DestinationHeight, _displayMan->_palChangesNoChanges);
+		_displayMan->blitToBitmapShrinkWithPalChange(L1384_puc_Bitmap_Title, L1383_l_Bitmap_TitleSteps, 320, 80, L1382_i_DestinationPixelWidth, L1381_ui_DestinationHeight, _displayMan->_palChangesNoChanges);
 		L1391_aai_Coordinates[L1380_i_Counter][1] = (L1391_aai_Coordinates[L1380_i_Counter][0] = (320 - L1382_i_DestinationPixelWidth) / 2) + L1382_i_DestinationPixelWidth - 1;
 		L1391_aai_Coordinates[L1380_i_Counter][3] = (L1391_aai_Coordinates[L1380_i_Counter][2] = ((int)(160 - L1381_ui_DestinationHeight)) / 2) + L1381_ui_DestinationHeight - 1;
 		L1383_l_Bitmap_TitleSteps += (L1391_aai_Coordinates[L1380_i_Counter][4] = ((L1382_i_DestinationPixelWidth + 15) / 16) * 8) * L1381_ui_DestinationHeight * 2;
@@ -895,7 +895,7 @@ void DMEngine::drawTittle() {
 		L1382_i_DestinationPixelWidth += 16;
 	}
 	L1392_aui_Palette[15] = D01_RGB_DARK_BLUE;
-	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
 	_displayMan->fillScreen(k0_ColorBlack);
 	L1392_aui_Palette[3] = D05_RGB_DARK_GOLD;
 	L1392_aui_Palette[4] = D02_RGB_LIGHT_BROWN;
@@ -905,27 +905,27 @@ void DMEngine::drawTittle() {
 	L1392_aui_Palette[15] = D07_RGB_RED;
 	L1392_aui_Palette[10] = D01_RGB_DARK_BLUE;
 	L1392_aui_Palette[12] = D01_RGB_DARK_BLUE;
-	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
 	delay(1);
 	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
 		delay(2);
 		Box box(L1391_aai_Coordinates[L1380_i_Counter]);
-		_displayMan->f132_blitToBitmap(L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter], _displayMan->_g348_bitmapScreen, box, 0, 0, L1391_aai_Coordinates[L1380_i_Counter][4], k160_byteWidthScreen, kM1_ColorNoTransparency, L1391_aai_Coordinates[L1380_i_Counter][3] - L1391_aai_Coordinates[L1380_i_Counter][2] + 1, k200_heightScreen);
+		_displayMan->blitToBitmap(L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter], _displayMan->_bitmapScreen, box, 0, 0, L1391_aai_Coordinates[L1380_i_Counter][4], k160_byteWidthScreen, kM1_ColorNoTransparency, L1391_aai_Coordinates[L1380_i_Counter][3] - L1391_aai_Coordinates[L1380_i_Counter][2] + 1, k200_heightScreen);
 	}
 	delay(25L);
-	_displayMan->f132_blitToBitmap(L1389_puc_Bitmap_Master_StrikesBack, _displayMan->_g348_bitmapScreen, G0003_s_Graphic562_Box_Title_StrikesBack_Destination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
+	_displayMan->blitToBitmap(L1389_puc_Bitmap_Master_StrikesBack, _displayMan->_bitmapScreen, G0003_s_Graphic562_Box_Title_StrikesBack_Destination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
 	L1392_aui_Palette[10] = D00_RGB_BLACK;
 	L1392_aui_Palette[12] = D07_RGB_RED;
-	_displayMan->f436_STARTEND_FadeToPalette(L1392_aui_Palette);
+	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
 	delete[] alloactedMem;
 	delay(75L);
 }
 
 void DMEngine::entranceDrawCredits() {
 	_eventMan->showMouse();
-	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
-	_displayMan->f466_loadIntoBitmap(k5_creditsGraphicIndice, _displayMan->_g348_bitmapScreen);
-	_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_palCredits);
+	_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
+	_displayMan->loadIntoBitmap(k5_creditsGraphicIndice, _displayMan->_bitmapScreen);
+	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	delay(50);
 	_eventMan->waitForMouseOrKeyActivity();
 	_newGameFl = k202_modeEntranceDrawCredits;
@@ -1024,7 +1024,7 @@ T0446002:
 	fuseSequenceUpdate();
 	L1428_ps_Group->_type = k26_CreatureTypeGreyLord;
 	fuseSequenceUpdate();
-	_displayMan->_g77_doNotDrawFluxcagesDuringEndgame = true;
+	_displayMan->_doNotDrawFluxcagesDuringEndgame = true;
 	fuseSequenceUpdate();
 	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_currMapWidth; AL1424_i_MapX++) {
 		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_currMapHeight; AL1425_i_MapY++) {
@@ -1072,7 +1072,7 @@ T0446002:
 
 void DMEngine::fuseSequenceUpdate() {
 	_timeline->f261_processTimeline();
-	_displayMan->f128_drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+	_displayMan->drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_sound->f65_playPendingSound();
 	_eventMan->discardAllInput();
 	_displayMan->updateScreen();

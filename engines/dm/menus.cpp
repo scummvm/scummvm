@@ -119,7 +119,7 @@ MenuMan::~MenuMan() {
 
 void MenuMan::f395_drawMovementArrows() {
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
+	_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
 									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
 	_vm->_eventMan->hideMouse();
 }
@@ -147,12 +147,12 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	box._x2 = box._x1 + 19;
 	box._y1 = 86;
 	box._y2 = 120;
-	dm._g578_useByteBoxCoordinates = false;
+	dm._useByteBoxCoordinates = false;
 	if (!champion._currHealth) {
-		dm.D24_fillScreenBox(box, k0_ColorBlack);
+		dm.fillScreenBox(box, k0_ColorBlack);
 		return;
 	}
-	byte *bitmapIcon = dm._g74_tmpBitmap;
+	byte *bitmapIcon = dm._tmpBitmap;
 	Thing thing = champion.getSlot(k1_ChampionSlotActionHand);
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
@@ -160,37 +160,37 @@ void MenuMan::f386_drawActionIcon(ChampionIndex championIndex) {
 	} else if (_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
 	} else {
-		dm.f134_fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
+		dm.fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
 		goto T0386006;
 	}
 	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, bitmapIcon);
-	dm.f129_blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, palChangesActionAreaObjectIcon);
+	dm.blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, palChangesActionAreaObjectIcon);
 T0386006:
-	dm.D24_fillScreenBox(box, k4_ColorCyan);
+	dm.fillScreenBox(box, k4_ColorCyan);
 	Box box2;
 	box2._x1 = box._x1 + 2;
 	box2._x2 = box._x2 - 2;
 	box2._y1 = 95;
 	box2._y2 = 110;
-	dm.f21_blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	dm.blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
-		_vm->_displayMan->f136_shadeScreenBox(&box, k0_ColorBlack);
+		_vm->_displayMan->shadeScreenBox(&box, k0_ColorBlack);
 	}
 }
 
 void MenuMan::f456_drawDisabledMenu() {
 	if (!_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->highlightBoxDisable();
-		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+		_vm->_displayMan->_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_g432_inventoryChampionOrdinal) {
 			if (_vm->_inventoryMan->_g424_panelContent == k4_PanelContentChest) {
 				_vm->_inventoryMan->f334_closeChest();
 			}
 		} else {
-			_vm->_displayMan->f136_shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
+			_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
 		}
-		_vm->_displayMan->f136_shadeScreenBox(&boxSpellArea, k0_ColorBlack);
-		_vm->_displayMan->f136_shadeScreenBox(&boxActionArea, k0_ColorBlack);
+		_vm->_displayMan->shadeScreenBox(&boxSpellArea, k0_ColorBlack);
+		_vm->_displayMan->shadeScreenBox(&boxActionArea, k0_ColorBlack);
 		_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
 	}
 }
@@ -256,8 +256,8 @@ void MenuMan::f387_drawActionArea() {
 	TextMan &textMan = *_vm->_textMan;
 
 	_vm->_eventMan->hideMouse();
-	dispMan._g578_useByteBoxCoordinates = false;
-	dispMan.D24_fillScreenBox(boxActionArea, k0_ColorBlack);
+	dispMan._useByteBoxCoordinates = false;
+	dispMan.fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (_g509_actionAreaContainsIcons) {
 		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
 			f386_drawActionIcon((ChampionIndex)champIndex);
@@ -267,13 +267,13 @@ void MenuMan::f387_drawActionArea() {
 			box = boxActionArea2ActionMenu;
 		if (_g713_actionList._actionIndices[1] == k255_ChampionActionNone)
 			box = boxActionArea1ActionMenu;
-		dispMan.f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
+		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
 								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
-		textMan.f41_printWithTrailingSpaces(dispMan._g348_bitmapScreen, k160_byteWidthScreen,
+		textMan.f41_printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
 											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
 											k7_ChampionNameMaximumLength, k200_heightScreen);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
-			textMan.f41_printWithTrailingSpaces(dispMan._g348_bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
+			textMan.f41_printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
 												f384_getActionName(_g713_actionList._actionIndices[actionListIndex]),
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
@@ -301,13 +301,13 @@ void MenuMan::f393_drawSpellAreaControls(ChampionIndex champIndex) {
 	static Box boxSpellAreaControls(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
 
 	Champion *champ = &_vm->_championMan->_champions[champIndex];
-	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	_vm->_displayMan->_useByteBoxCoordinates = false;
 	int16 champHP0 = _vm->_championMan->_champions[0]._currHealth;
 	int16 champHP1 = _vm->_championMan->_champions[1]._currHealth;
 	int16 champHP2 = _vm->_championMan->_champions[2]._currHealth;
 	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->D24_fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->highlightScreenBox(233, 277, 42, 49);
@@ -375,8 +375,8 @@ void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
 	char L1204_ac_SpellSymbolString[2] = {'\0', '\0'};
 	Champion *L1203_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
-		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		_vm->_displayMan->f132_blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
+		_vm->_displayMan->_useByteBoxCoordinates = false;
+		_vm->_displayMan->blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 1;
 		char character = 96 + (6 * L1203_ps_Champion->_symbolStep);
 		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
@@ -384,8 +384,8 @@ void MenuMan::f392_buildSpellAreaLine(int16 spellAreaBitmapLine) {
 			_vm->_textMan->f40_printTextToBitmap(_gK72_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
-		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		_vm->_displayMan->f132_blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
+		_vm->_displayMan->_useByteBoxCoordinates = false;
+		_vm->_displayMan->blitToBitmap(_gK73_bitmapSpellAreaLines, _gK72_bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 8;
 		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
 			if ((L1204_ac_SpellSymbolString[0] = L1203_ps_Champion->_symbols[symbolIndex]) == '\0')
@@ -406,14 +406,14 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	}
 	if (_vm->_championMan->_magicCasterChampionIndex == kM1_ChampionNone) {
 		_vm->_eventMan->showMouse();
-		_vm->_displayMan->f21_blitToScreen(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
 		_vm->_eventMan->hideMouse();
 	}
 	if (champIndex == kM1_ChampionNone) {
 		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone;
 		_vm->_eventMan->showMouse();
-		_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-		_vm->_displayMan->D24_fillScreenBox(boxSpellArea, k0_ColorBlack);
+		_vm->_displayMan->_useByteBoxCoordinates = false;
+		_vm->_displayMan->fillScreenBox(boxSpellArea, k0_ColorBlack);
 		_vm->_eventMan->hideMouse();
 		return;
 	}
@@ -421,9 +421,9 @@ void MenuMan::f394_setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	f392_buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	f393_drawSpellAreaControls((ChampionIndex)champIndex);
-	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_displayMan->blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
 	f392_buildSpellAreaLine(k3_SpellAreaChampionSymbols);
-	_vm->_displayMan->f21_blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_displayMan->blitToScreen(_gK72_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
 	_vm->_eventMan->hideMouse();
 }
 
@@ -435,7 +435,7 @@ void MenuMan::f457_drawEnabledMenus() {
 
 	if (_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->drawSleepScreen();
-		_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
+		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	} else {
 		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
 		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
@@ -449,7 +449,7 @@ void MenuMan::f457_drawEnabledMenus() {
 			_vm->_inventoryMan->_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 			_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)_vm->ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
 		} else {
-			_vm->_displayMan->f98_drawFloorAndCeiling();
+			_vm->_displayMan->drawFloorAndCeiling();
 			f395_drawMovementArrows();
 		}
 		_vm->_eventMan->setMousePointer();
@@ -1726,8 +1726,8 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	int16 L1643_i_Width;
 
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->D24_fillScreenBox(boxActionArea, k0_ColorBlack);
+	_vm->_displayMan->_useByteBoxCoordinates = false;
+	_vm->_displayMan->fillScreenBox(boxActionArea, k0_ColorBlack);
 	if (damage < 0) {
 		static const char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
 		static const char *messages_DE_DEU[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
@@ -1755,7 +1755,7 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 	} else {
 		if (damage > 40) {
 			L1180_ps_Box = &boxActionArea3ActionMenu;
-			L1177_puc_Bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+			L1177_puc_Bitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
 			L1175_i_ByteWidth = k48_byteWidth;
 			L1643_i_Width = 45;
 		} else {
@@ -1771,16 +1771,16 @@ void MenuMan::f385_drawActionDamage(int16 damage) {
 				L1180_ps_Box = &G0503_s_Graphic560_Box_ActionAreaSmallDamage;
 			}
 			L1643_i_Width = 37;
-			if (!_vm->_displayMan->f491_isDerivedBitmapInCache(AL1174_ui_DerivedBitmapIndex)) {
-				AL1178_puc_Bitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
-				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
-				_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap, 96, 45, AL1176_i_PixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
-				_vm->_displayMan->f493_addDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+			if (!_vm->_displayMan->isDerivedBitmapInCache(AL1174_ui_DerivedBitmapIndex)) {
+				AL1178_puc_Bitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+				L1177_puc_Bitmap = _vm->_displayMan->getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+				_vm->_displayMan->blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap, 96, 45, AL1176_i_PixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
+				_vm->_displayMan->addDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
 			} else {
-				L1177_puc_Bitmap = _vm->_displayMan->f492_getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+				L1177_puc_Bitmap = _vm->_displayMan->getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
 			}
 		}
-		_vm->_displayMan->f21_blitToScreen(L1177_puc_Bitmap, (int16 *)L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
+		_vm->_displayMan->blitToScreen(L1177_puc_Bitmap, (int16 *)L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
 		/* Convert damage value to string */
 		AL1174_ui_CharacterIndex = 5;
 		AL1176_i_X = 274;

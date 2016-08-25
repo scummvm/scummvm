@@ -772,19 +772,19 @@ void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
 
 	byte *metaMapData = _currMapData[_currMapWidth - 1] + _currMapHeight;
 
-	_vm->_displayMan->_g264_currMapAllowedCreatureTypes = metaMapData;
+	_vm->_displayMan->_currMapAllowedCreatureTypes = metaMapData;
 	metaMapData += _currMap->_creatureTypeCount;
 
-	memcpy(_vm->_displayMan->_g261_currMapWallOrnIndices, metaMapData, _currMap->_wallOrnCount);
+	memcpy(_vm->_displayMan->_currMapWallOrnIndices, metaMapData, _currMap->_wallOrnCount);
 	metaMapData += _currMap->_wallOrnCount;
 
-	memcpy(_vm->_displayMan->_g262_currMapFloorOrnIndices, metaMapData, _currMap->_floorOrnCount);
+	memcpy(_vm->_displayMan->_currMapFloorOrnIndices, metaMapData, _currMap->_floorOrnCount);
 	metaMapData += _currMap->_floorOrnCount;
 
-	memcpy(_vm->_displayMan->_g263_currMapDoorOrnIndices, metaMapData, _currMap->_doorOrnCount);
+	memcpy(_vm->_displayMan->_currMapDoorOrnIndices, metaMapData, _currMap->_doorOrnCount);
 
 	_currMapInscriptionWallOrnIndex = _currMap->_wallOrnCount;
-	_vm->_displayMan->_g261_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
+	_vm->_displayMan->_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
 }
 
 
@@ -884,7 +884,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 		default:
 			assert(false);
 		}
-		_vm->_displayMan->_g289_championPortraitOrdinal = 0; 
+		_vm->_displayMan->_championPortraitOrdinal = 0; 
 		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
@@ -896,12 +896,12 @@ T0172010_ClosedFakeWall:
 				if (curThingType == k2_TextstringType) {
 					if (((TextString*)curSensor)->isVisible()) {
 						aspectArray[AL0310_i_SideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
-						_vm->_displayMan->_g290_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
+						_vm->_displayMan->_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
 					}
 				} else {
 					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getAttrOrnOrdinal();
 					if (curSensor->getType() == k127_SensorWallChampionPortrait) {
-						_vm->_displayMan->_g289_championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
+						_vm->_displayMan->_championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
 					}
 				}
 			}
@@ -1008,7 +1008,7 @@ int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int
 bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	if (wallOrnIndex >= 0) {
 		for (uint16 i = 0; i < k3_AlcoveOrnCount; ++i) {
-			if (_vm->_displayMan->_g267_currMapAlcoveOrnIndices[i] == wallOrnIndex)
+			if (_vm->_displayMan->_currMapAlcoveOrnIndices[i] == wallOrnIndex)
 				return true;
 		}
 	}
