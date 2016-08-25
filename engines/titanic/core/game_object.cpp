@@ -1066,7 +1066,7 @@ void CGameObject::setMovieFrameRate(double rate) {
 		_surface->setMovieFrameRate(rate);
 }
 
-void CGameObject::setTextBorder(const CString &str, int border, int borderRight) {
+void CGameObject::setText(const CString &str, int border, int borderRight) {
 	if (!_text)
 		_text = new CPetText();
 	_textBorder = border;

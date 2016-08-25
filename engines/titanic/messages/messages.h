@@ -245,7 +245,7 @@ MESSAGE1(CLoadSuccessMsg, int, ticks, 0);
 MESSAGE1(CLockPhonographMsg, int, value, 0);
 MESSAGE0(CMaitreDDefeatedMsg);
 MESSAGE0(CMaitreDHappyMsg);
-MESSAGE1(CMissiveOMatActionMsg, int, value, 0);
+MESSAGE1(CMissiveOMatActionMsg, int, action, 0);
 MESSAGE0(CMoveToStartPosMsg);
 MESSAGE2(CMovieEndMsg, int, startFrame, 0, int, endFrame, 0);
 MESSAGE2(CMovieFrameMsg, int, frameNumber, 0, int, value2, 0);

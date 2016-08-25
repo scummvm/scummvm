@@ -491,9 +491,9 @@ protected:
 	void setMovieFrameRate(double rate);
 
 	/**
-	 * Set up the text borders for the object
+	 * Set up the text and borders for the object
 	 */
-	void setTextBorder(const CString &str, int border = 0, int borderRight = 0);
+	void setText(const CString &str, int border = 0, int borderRight = 0);
 
 	/**
 	 * Sets whether the text will use borders

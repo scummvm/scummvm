@@ -190,8 +190,8 @@ bool CEditControl::EditControlMsg(CEditControlMsg *msg) {
 
 	case 14: {
 		makeDirty();
-		CString borderName = _fieldF4 ? CString('*', _text.size()) : _text;
-		setTextBorder(borderName);
+		CString str = _fieldF4 ? CString('*', _text.size()) : _text;
+		setText(str);
 
 		int textWidth = getTextWidth();
 		if (_fieldF0 == 2) {

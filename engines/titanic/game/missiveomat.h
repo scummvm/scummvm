@@ -27,6 +27,12 @@
 
 namespace Titanic {
 
+enum MissiveOMatAction {
+	MESSAGE_NONE = 1, MESSAGE_SHOW = 2, NEXT_MESSAGE = 3, PRIOR_MESSAGE = 4,
+	MESSAGE_5 = 5, MESSAGE_DOWN = 6, MESSAGE_UP = 7, REDRAW_MESSAGE = 8,
+	MESSAGE_9 = 9
+};
+
 class CMissiveOMat : public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
@@ -34,13 +40,20 @@ class CMissiveOMat : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool MissiveOMatActionMsg(CMissiveOMatActionMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
+private:
+	CString _welcomeMessages[3];
+	CString _messages[58];
+	CString _from[58];
+	CString _to[58];
+private:
+	void loadArray(CString *arr, const CString &resName, int count);
 public:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
+	int _mode;
+	int _totalMessages;
+	int _messageNum;
 	CString _string1;
 	CString _string2;
-	int _fieldE0;
+	int _personIndex;
 public:
 	CLASSDEF;
 	CMissiveOMat();
