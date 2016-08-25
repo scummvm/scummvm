@@ -106,7 +106,14 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 BITDDecoder::BITDDecoder(int w, int h, bool comp) {
 	_surface = new Graphics::Surface();
-	_surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	int pitch = w;
+	if (w % 16)
+		pitch += 16 - (w % 16);
+
+	// HACK: Create a padded surface by adjusting w after create()
+	_surface->create(pitch, h, Graphics::PixelFormat::createFormatCLUT8());
+	_surface->w = w;
 
 	_palette = new byte[256 * 3];
 
@@ -140,7 +147,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (!_comp) {
 		debugC(3, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
-			for (x = 0; x < _surface->w;) {
+			for (x = 0; x < _surface->pitch; ) {
 				byte color = stream.readByte();
 				for (int c = 0; c < 8; c++)
 					*((byte *)_surface->getBasePtr(x++, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
@@ -180,7 +187,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 			for (int c = 0; c < 8; c++) {
 				*((byte *)_surface->getBasePtr(x, y)) = (color & (1 << (7 - c))) ? 0 : 0xff;
 				x++;
-				if (x == _surface->w) {
+				if (x == _surface->pitch) {
 					y++;
 					x = 0;
 					break;

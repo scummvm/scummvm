@@ -571,18 +571,13 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 			if (!c)
 				debugC(4, kDebugImages, "%d, %d, %d", imgId, w, h);
 
-			if (true || bc->flags & 0x20) {
-				int w1 = w + 16 - w % 16;
+			int w1 = w;
+			if (w % 16)
+				w1 += 16 - w % 16;
 
-				if (pic->size() * 8 == w1 * h) {
-					debugC(3, kDebugImages, "Disabling compression for %d: %d x %d", imgId, w1, h);
-					img = new BITDDecoder(w1, h, false);
-				} else if (w % 16 <= 8) {
-					// FIXME: This shouldn't actually increase the width of the surface, probably, but only affect the decoder
-					img = new BITDDecoder(w + 8, h, true);
-				} else {
-					img = new BITDDecoder(w, h, true);
-				}
+			if (pic->size() * 8 == w1 * h) {
+				debugC(3, kDebugImages, "Disabling compression for %d: %d x %d", imgId, w1, h);
+				img = new BITDDecoder(w, h, false);
 			} else {
 				img = new BITDDecoder(w, h, true);
 			}
