@@ -269,11 +269,11 @@ void MenuMan::drawActionArea() {
 			box = _boxActionArea1ActionMenu;
 		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
 								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
-		textMan.f41_printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
+		textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
 											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
 											k7_ChampionNameMaximumLength, k200_heightScreen);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
-			textMan.f41_printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
+			textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
 												getActionName(_actionList._actionIndices[actionListIndex]),
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
@@ -311,7 +311,7 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->highlightScreenBox(233, 277, 42, 49);
-		_vm->_textMan->f53_printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		if (_vm->_championMan->_partyChampionCount > 1) {
 			if (champHP1) {
 				_vm->_eventMan->highlightScreenBox(280, 291, 42, 48);
@@ -335,7 +335,7 @@ T0393003:
 			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
 		}
 		_vm->_eventMan->highlightScreenBox(247, 291, 42, 49);
-		_vm->_textMan->f53_printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		goto T0393002;
 	case 2:
 		if (champHP0) {
@@ -345,7 +345,7 @@ T0393003:
 			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
 		}
 		_vm->_eventMan->highlightScreenBox(261, 305, 42, 49);
-		_vm->_textMan->f53_printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		goto T0393003;
 	case 3:
 		if (champHP0) {
@@ -358,7 +358,7 @@ T0393003:
 			_vm->_eventMan->highlightScreenBox(261, 272, 42, 48);
 		}
 		_vm->_eventMan->highlightScreenBox(275, 319, 42, 49);
-		_vm->_textMan->f53_printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		break;
 	default:
 		break;
@@ -381,7 +381,7 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 		char character = 96 + (6 * L1203_ps_Champion->_symbolStep);
 		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
 			L1204_ac_SpellSymbolString[0] = character++;
-			_vm->_textMan->f40_printTextToBitmap(_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
@@ -390,7 +390,7 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
 			if ((L1204_ac_SpellSymbolString[0] = L1203_ps_Champion->_symbols[symbolIndex]) == '\0')
 				break;
-			_vm->_textMan->f40_printTextToBitmap(_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
 		}
 	}
 }
@@ -587,7 +587,7 @@ T0412019:
 				L1276_s_Event._B._defense >>= 2;
 			}
 			_vm->_championMan->_party._shieldDefense += L1276_s_Event._B._defense;
-			_vm->_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+			_vm->_timeline->refreshAllChampionStatusBoxes();
 			goto T0412032;
 		case k6_spellType_otherFootprints:
 			L1276_s_Event._type = k79_TMEventTypeFootprints;
@@ -602,7 +602,7 @@ T0412032:
 			AL1267_ui_Ticks = AL1267_ui_SpellPower * AL1267_ui_SpellPower;
 T0412033:
 			setMapAndTime(L1276_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1267_ui_Ticks);
-			_vm->_timeline->f238_addEventGetEventIndex(&L1276_s_Event);
+			_vm->_timeline->addEventGetEventIndex(&L1276_s_Event);
 			break;
 		case k7_spellType_otherZokathra:
 			if ((L1272_T_Object = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType)) == Thing::_none)
@@ -695,8 +695,8 @@ void MenuMan::menusPrintSpellFailureMessage(Champion* champ, uint16 failureType,
 	if (skillIndex > k3_ChampionSkillWizard)
 		skillIndex = (skillIndex - 4) / 4;
 
-	_vm->_textMan->f51_messageAreaPrintLineFeed();
-	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, champ->_name);
+	_vm->_textMan->printLineFeed();
+	_vm->_textMan->printMessage(k4_ColorCyan, champ->_name);
 
 	const char *messages_EN_ANY[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
 	const char *messages_DE_DEU[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
@@ -716,8 +716,8 @@ void MenuMan::menusPrintSpellFailureMessage(Champion* champ, uint16 failureType,
 
 	switch (failureType) {
 	case k0_failureNeedsMorePractice:
-		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, messages[0]);
-		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
+		_vm->_textMan->printMessage(k4_ColorCyan, messages[0]);
+		_vm->_textMan->printMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
 		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == k3_ChampionSkillWizard)
 			L1264_pc_Message = messages[1];
 		else
@@ -731,7 +731,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion* champ, uint16 failureType,
 		L1264_pc_Message = messages[3];
 		break;
 	}
-	_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, L1264_pc_Message);
+	_vm->_textMan->printMessage(k4_ColorCyan, L1264_pc_Message);
 }
 
 Potion* MenuMan::getEmptyFlaskInHand(Champion* champ, Thing* potionThing) {
@@ -754,7 +754,7 @@ void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	L1241_s_Event._B._lightPower = lightPower;
 	setMapAndTime(L1241_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	L1241_s_Event._priority = 0;
-	_vm->_timeline->f238_addEventGetEventIndex(&L1241_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L1241_s_Event);
 	_vm->_inventoryMan->setDungeonViewPalette();
 }
 
@@ -792,8 +792,8 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion* champ, bool spellShie
 	}
 	L1240_s_Event._priority = 0;
 	setMapAndTime(L1240_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
-	_vm->_timeline->f238_addEventGetEventIndex(&L1240_s_Event);
-	_vm->_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+	_vm->_timeline->addEventGetEventIndex(&L1240_s_Event);
+	_vm->_timeline->refreshAllChampionStatusBoxes();
 	return L1239_B_IsPartySpellOrFireShieldSuccessful;
 }
 
@@ -808,7 +808,7 @@ void MenuMan::drawAvailableSymbols(uint16 symbolStep) {
 	L1215_i_X = 225;
 	for (L1214_ui_Counter = 0; L1214_ui_Counter < 6; L1214_ui_Counter++) {
 		L1217_ac_String[0] = L1216_c_Character++;
-		_vm->_textMan->f53_printToLogicalScreen(L1215_i_X += 14, 58, k4_ColorCyan, k0_ColorBlack, L1217_ac_String);
+		_vm->_textMan->printToLogicalScreen(L1215_i_X += 14, 58, k4_ColorCyan, k0_ColorBlack, L1217_ac_String);
 	}
 }
 
@@ -828,7 +828,7 @@ void MenuMan::drawChampionSymbols(Champion* champ) {
 		} else {
 			L1221_ac_String[0] = champ->_symbols[L1218_ui_SymbolIndex];
 		}
-		_vm->_textMan->f53_printToLogicalScreen(L1219_i_X += 9, 70, k4_ColorCyan, k0_ColorBlack, L1221_ac_String);
+		_vm->_textMan->printToLogicalScreen(L1219_i_X += 9, 70, k4_ColorCyan, k0_ColorBlack, L1221_ac_String);
 	}
 }
 
@@ -897,7 +897,7 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 		L1198_B_ClickTriggeredAction = true;
 	} else {
 		L1197_ui_ActionIndex = _actionList._actionIndices[actionListIndex];
-		L1199_ps_Champion->_actionDefense += g495_actionDefense[L1197_ui_ActionIndex]; /* BUG0_54 The defense modifier of an action is permanent.
+		L1199_ps_Champion->_actionDefense += _actionDefense[L1197_ui_ActionIndex]; /* BUG0_54 The defense modifier of an action is permanent.
 																									 Each action has an associated defense modifier value and a number of ticks while the champion cannot perform another action because the action icon is grayed out. If an action has a non zero defense modifier and a zero value for the number of ticks then the defense modifier is applied but it is never removed. This causes no issue in the original games because there are no actions in this case but it may occur in a version where data is customized. This statement should only be executed if the value for the action in G0491_auc_Graphic560_ActionDisabledTicks is not 0 otherwise the action is not disabled at the end of F0407_MENUS_IsActionPerformed and thus not enabled later in F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction where the defense modifier is also removed */
 		setFlag(L1199_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
 		L1198_B_ClickTriggeredAction = isActionPerformed(L1196_ui_ChampionIndex, L1197_ui_ActionIndex);
@@ -1129,10 +1129,10 @@ T0407014:
 	case k13_ChampionActionSwing:
 	case k2_ChampionActionChop:
 		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 			L1249_ui_ActionDisabledTicks = 6;
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
+			_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
 	case k24_ChampionActionDisrupt:
@@ -1158,10 +1158,10 @@ T0407014:
 	case k41_ChampionActionBrandish:
 	case k4_ChampionActionBlowHorn:
 		if (actionIndex == k8_ChampionActionWarCry) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k28_soundWAR_CRY, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
+			_vm->_sound->requestPlay(k28_soundWAR_CRY, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
 		}
 		if (actionIndex == k4_ChampionActionBlowHorn) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k25_soundBLOW_HORN, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
+			_vm->_sound->requestPlay(k25_soundBLOW_HORN, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
 		}
 		AL1245_B_ActionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, L1251_i_MapX, L1252_i_MapY);
 		break;
@@ -1191,7 +1191,7 @@ T0407032:
 		setChampionDirectionToPartyDirection(L1247_ps_Champion);
 		{ // so gotos won't skip init
 			Thing AL1250_T_Object = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 			_vm->_championMan->championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
 		}
 		break;
@@ -1274,7 +1274,7 @@ T0407032:
 		L1258_s_Event._priority = 0;
 		L1258_s_Event._type = k73_TMEventTypeThievesEye;
 		setMapAndTime(L1258_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1246_i_Ticks);
-		_vm->_timeline->f238_addEventGetEventIndex(&L1258_s_Event);
+		_vm->_timeline->addEventGetEventIndex(&L1258_s_Event);
 		_vm->_championMan->_party._event73Count_ThievesEye++;
 		goto T0407076;
 	case k10_ChampionActionClimbDown:
@@ -1318,7 +1318,7 @@ T0407076:
 		setChampionDirectionToPartyDirection(L1247_ps_Champion);
 		AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (L1247_ps_Champion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (AL1245_B_ActionPerformed) {
-			_vm->_timeline->_g370_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
+			_vm->_timeline->_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
 		}
 	}
 	if (L1249_ui_ActionDisabledTicks) {
@@ -1469,7 +1469,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 ac
 #define AL1237_ui_ActionHitProbability L1237_ui_Multiple
 	int16 L1238_i_CreatureOrdinal;
 
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 	if (_actionTargetGroupThing == Thing::_endOfList)
 		goto T0402010;
 	L1238_i_CreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, AL1236_ui_ChampionCell = champ->_cell);
@@ -1582,7 +1582,7 @@ void MenuMan::printMessageAfterReplacements(const char* str) {
 	} while (*str++);
 	*L1164_pc_Character = '\0';
 	if (L1166_ac_OutputString[1]) { /* If the string is not empty (the first character is a new line \n) */
-		_vm->_textMan->f47_messageAreaPrintMessage(k4_ColorCyan, L1166_ac_OutputString);
+		_vm->_textMan->printMessage(k4_ColorCyan, L1166_ac_OutputString);
 	}
 }
 
@@ -1751,7 +1751,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 			AL1176_i_X = pos[1];
 			AL1178_puc_String = (byte*)message[1];
 		}
-		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
+		_vm->_textMan->printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
 	} else {
 		if (damage > 40) {
 			L1180_ps_Box = &_boxActionArea3ActionMenu;
@@ -1789,7 +1789,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 			L1179_ac_String[--AL1174_ui_CharacterIndex] = '0' + (damage % 10);
 			AL1176_i_X -= 3;
 		} while (damage /= 10);
-		_vm->_textMan->f53_printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, &L1179_ac_String[AL1174_ui_CharacterIndex]);
+		_vm->_textMan->printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, &L1179_ac_String[AL1174_ui_CharacterIndex]);
 	}
 	_vm->_eventMan->hideMouse();
 }

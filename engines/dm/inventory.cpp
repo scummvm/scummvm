@@ -142,20 +142,20 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
-		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
+		_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
+		_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
 		break;
 	case Common::DE_DEU:
-		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "GESUND");
-		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "KRAFT");
+		_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "GESUND");
+		_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "KRAFT");
 		break;
 	case Common::FR_FRA:
-		_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "SANTE");
-		_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "VIGUEUR");
+		_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "SANTE");
+		_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "VIGUEUR");
 		break;
 	}
 
-	_vm->_textMan->f52_printToViewport(5, 132, k13_ColorLightestGray, "MANA");
+	_vm->_textMan->printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 	for (AL1102_ui_SlotIndex = k0_ChampionSlotReadyHand; AL1102_ui_SlotIndex < k30_ChampionSlotChest_1; AL1102_ui_SlotIndex++) {
 		_vm->_championMan->drawSlot(championIndex, AL1102_ui_SlotIndex);
 	}
@@ -310,7 +310,7 @@ void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 			*iter -= 96;
 		}
 	}
-	_vm->_textMan->f52_printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
+	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
 }
 
 void InventoryMan::drawPanelScroll(Scroll* scroll) {
@@ -464,7 +464,7 @@ void InventoryMan::drawPanelObjectDescriptionString(const char *descString) {
 				severalLines = true;
 			}
 
-			_vm->_textMan->f52_printToViewport(_objDescTextXpos, _objDescTextYpos, k13_ColorLightestGray, stringLine);
+			_vm->_textMan->printToViewport(_objDescTextXpos, _objDescTextYpos, k13_ColorLightestGray, stringLine);
 			_objDescTextYpos += 7;
 			if (severalLines) {
 				severalLines = false;
@@ -547,7 +547,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			descString = objMan._objectNames[iconIndex];
 		}
 
-		textMan.f52_printToViewport(134, 68, k13_ColorLightestGray, descString);
+		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString);
 		drawIconToViewport(iconIndex, 111, 59);
 
 
@@ -847,12 +847,12 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 			strcpy(L1097_ac_String, _skillLevelNames[AL1092_i_SkillLevel - 2]);
 			break;
 		}
-		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
+		_vm->_textMan->printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
 		L1091_i_Y += 7;
 	}
 	L1091_i_Y = 86;
 	for (AL1090_ui_StatisticIndex = k1_ChampionStatStrength; AL1090_ui_StatisticIndex <= k6_ChampionStatAntifire; AL1090_ui_StatisticIndex++) {
-		_vm->_textMan->f52_printToViewport(108, L1091_i_Y, k13_ColorLightestGray, G0431_apc_StatisticNames[AL1090_ui_StatisticIndex]);
+		_vm->_textMan->printToViewport(108, L1091_i_Y, k13_ColorLightestGray, G0431_apc_StatisticNames[AL1090_ui_StatisticIndex]);
 		AL1092_i_StatisticCurrentValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k1_ChampionStatCurrent];
 		L1096_ui_StatisticMaximumValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k0_ChampionStatMaximum];
 		if (AL1092_i_StatisticCurrentValue < L1096_ui_StatisticMaximumValue) {
@@ -864,10 +864,10 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 				L1095_i_StatisticColor = k13_ColorLightestGray;
 			}
 		}
-		_vm->_textMan->f52_printToViewport(174, L1091_i_Y, (Color)L1095_i_StatisticColor, _vm->_championMan->getStringFromInteger(AL1092_i_StatisticCurrentValue, true, 3).c_str());
+		_vm->_textMan->printToViewport(174, L1091_i_Y, (Color)L1095_i_StatisticColor, _vm->_championMan->getStringFromInteger(AL1092_i_StatisticCurrentValue, true, 3).c_str());
 		strcpy(L1097_ac_String, "/");
 		strcat(L1097_ac_String, _vm->_championMan->getStringFromInteger(L1096_ui_StatisticMaximumValue, true, 3).c_str());
-		_vm->_textMan->f52_printToViewport(192, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
+		_vm->_textMan->printToViewport(192, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
 		L1091_i_Y += 7;
 	}
 }
@@ -1007,7 +1007,7 @@ void InventoryMan::clickOnMouth() {
 			setMapAndTime(L1084_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (AL1085_ui_AdjustedPotionPower * AL1085_ui_AdjustedPotionPower));
 			L1084_s_Event._priority = L1080_ui_ChampionIndex;
 			L1084_s_Event._B._defense = AL1085_ui_AdjustedPotionPower;
-			_vm->_timeline->f238_addEventGetEventIndex(&L1084_s_Event);
+			_vm->_timeline->addEventGetEventIndex(&L1084_s_Event);
 			setFlag(L1083_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
 			break;
 		case k13_PotionTypeEe:
@@ -1062,7 +1062,7 @@ void InventoryMan::clickOnMouth() {
 		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
 		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
 	}
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
 	if (_panelContent == k0_PanelContentFoodWaterPoisoned) {
 		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);

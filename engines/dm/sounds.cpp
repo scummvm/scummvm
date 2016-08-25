@@ -85,7 +85,7 @@ void SoundMan::initConstants() {
 		Sound(574, 150,  22, 0, 4)  /* k33_soundMOVE_SKELETON 33 Atari ST: not present */
 	};
 	for (int i = 0; i < k34_D13_soundCount; i++)
-		g60_sounds[i] = sounds[i];
+		_sounds[i] = sounds[i];
 }
 
 SoundMan::SoundMan(DMEngine* vm) : _vm(vm) {
@@ -94,14 +94,14 @@ SoundMan::SoundMan(DMEngine* vm) : _vm(vm) {
 
 SoundMan::~SoundMan() {
 	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
-		delete[] _gK24_soundData[i]._firstSample;
+		delete[] _soundData[i]._firstSample;
 }
 
-void SoundMan::f503_loadSounds() {
+void SoundMan::loadSounds() {
 	for (uint16 soundIndex = 0; soundIndex < k34_D13_soundCount; ++soundIndex) {
-		SoundData *soundData = _gK24_soundData + soundIndex;
+		SoundData *soundData = _soundData + soundIndex;
 
-		uint16 graphicIndex = g60_sounds[soundIndex]._graphicIndex;
+		uint16 graphicIndex = _sounds[soundIndex]._graphicIndex;
 		soundData->_byteCount = _vm->_displayMan->getCompressedDataSize(graphicIndex) - 2; // the header is 2 bytes long
 		soundData->_firstSample = new byte[soundData->_byteCount];
 
@@ -111,8 +111,8 @@ void SoundMan::f503_loadSounds() {
 	}
 }
 
-void SoundMan::f060_SOUND_Play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) {
-	SoundData *sound = &_gK24_soundData[soundIndex];
+void SoundMan::play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) {
+	SoundData *sound = &_soundData[soundIndex];
 	Audio::AudioStream *stream = Audio::makeRawStream(sound->_firstSample, sound->_byteCount, (72800 / period) * 8, 0, DisposeAfterUse::NO);
 
 	signed char balance = ((int16)rightVolume - (int16)leftVolume) / 2;
@@ -121,14 +121,14 @@ void SoundMan::f060_SOUND_Play(uint16 soundIndex, uint16 period, uint8 leftVolum
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, stream, -1, 127, balance);
 }
 
-void SoundMan::f65_playPendingSound() {
+void SoundMan::playPendingSound() {
 	while (!_pendingSounds.empty()) {
 		PendingSound pendingSound = _pendingSounds.pop();
-		f060_SOUND_Play(pendingSound._soundIndex, g60_sounds[pendingSound._soundIndex]._period, pendingSound._leftVolume, pendingSound._rightVolume);
+		play(pendingSound._soundIndex, _sounds[pendingSound._soundIndex]._period, pendingSound._leftVolume, pendingSound._rightVolume);
 	}
 }
 
-bool SoundMan::f505_soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, uint8* rightVolume) {
+bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, uint8* rightVolume) {
 	static byte K0030_aauc_DistanceToSoundVolume[25][25] = {
 		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4,  5,  5,  5,  5,  5,  5,  5, 5, 4, 4, 4, 4, 4},
 		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 5,  6,  6,  6,  6,  5,  5,  5, 5, 5, 5, 4, 4, 4},
@@ -193,14 +193,14 @@ bool SoundMan::f505_soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, ui
 	return true;
 }
 
-void SoundMan::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mode) {
+void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mode) {
 	Sound* sound;
 	uint8 leftVolume, rightVolume;
 
 	if (mode && (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex))
 		return;
 
-	sound = &g60_sounds[soundIndex];
+	sound = &_sounds[soundIndex];
 	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent event;
 		setMapAndTime(event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
@@ -209,15 +209,15 @@ void SoundMan::f064_SOUND_RequestPlay_CPSD(uint16 soundIndex, int16 mapX, int16 
 		event._C._soundIndex = soundIndex;
 		event._B._location._mapX = mapX;
 		event._B._location._mapY = mapY;
-		_vm->_timeline->f238_addEventGetEventIndex(&event);
+		_vm->_timeline->addEventGetEventIndex(&event);
 		return;
 	}
 
-	if (!f505_soundGetVolume(mapX, mapY, &leftVolume, &rightVolume)) {
+	if (!soundGetVolume(mapX, mapY, &leftVolume, &rightVolume)) {
 		return;
 	}
 	if (!mode) { /* Play the sound immediately */
-		f060_SOUND_Play(soundIndex, sound->_period, leftVolume, rightVolume);
+		play(soundIndex, sound->_period, leftVolume, rightVolume);
 		return;
 	}
 	_pendingSounds.push(PendingSound(leftVolume, rightVolume, soundIndex));

@@ -99,9 +99,9 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_dungeonMan->_partyMapIndex = file->readByte();
 		_championMan->_leaderIndex = (ChampionIndex)file->readSint16BE();
 		_championMan->_magicCasterChampionIndex = (ChampionIndex)file->readSint16BE();
-		_timeline->_g372_eventCount = file->readUint16BE();
-		_timeline->_g373_firstUnusedEventIndex = file->readUint16BE();
-		_timeline->_g369_eventMaxCount = file->readUint16BE();
+		_timeline->_eventCount = file->readUint16BE();
+		_timeline->_firstUnusedEventIndex = file->readUint16BE();
+		_timeline->_eventMaxCount = file->readUint16BE();
 		_groupMan->_currActiveGroupCount = file->readUint16BE();
 		_projexpl->_lastCreatureAttackTime = file->readSint32BE();
 		_projexpl->_lastPartyMovementTime = file->readSint32BE();
@@ -111,14 +111,14 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_championMan->_leaderHandObject = Thing(file->readUint16BE());
 		_groupMan->_maxActiveGroupCount = file->readUint16BE();
 		if (!_restartGameRequest) {
-			_timeline->f233_initTimeline();
+			_timeline->initTimeline();
 			_groupMan->initActiveGroups();
 		}
 
 		_groupMan->loadActiveGroupPart(file);
 		_championMan->loadPartyPart2(file);
-		_timeline->load3_eventsPart(file);
-		_timeline->load4_timelinePart(file);
+		_timeline->loadEventsPart(file);
+		_timeline->loadTimelinePart(file);
 
 		// read sentinel
 		uint32 sentinel = file->readUint32BE();
@@ -129,7 +129,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 	delete file;
 
 	if (_newGameFl) {
-		_timeline->f233_initTimeline();
+		_timeline->initTimeline();
 		_groupMan->initActiveGroups();
 
 		if (L1366_B_FadePalette) {
@@ -315,9 +315,9 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeByte(_dungeonMan->_partyMapIndex);
 	file->writeSint16BE(_championMan->_leaderIndex);
 	file->writeSint16BE(_championMan->_magicCasterChampionIndex);
-	file->writeUint16BE(_timeline->_g372_eventCount);
-	file->writeUint16BE(_timeline->_g373_firstUnusedEventIndex);
-	file->writeUint16BE(_timeline->_g369_eventMaxCount);
+	file->writeUint16BE(_timeline->_eventCount);
+	file->writeUint16BE(_timeline->_firstUnusedEventIndex);
+	file->writeUint16BE(_timeline->_eventMaxCount);
 	file->writeUint16BE(_groupMan->_currActiveGroupCount);
 	file->writeSint32BE(_projexpl->_lastCreatureAttackTime);
 	file->writeSint32BE(_projexpl->_lastPartyMovementTime);
@@ -332,9 +332,9 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	// write C2_SAVE_PART_PARTY part
 	_championMan->savePartyPart2(file);
 	// write C3_SAVE_PART_EVENTS part
-	_timeline->save3_eventsPart(file);
+	_timeline->saveEventsPart(file);
 	// write C4_SAVE_PART_TIMELINE part
-	_timeline->save4_timelinePart(file);
+	_timeline->saveTimelinePart(file);
 
 	// write sentinel
 	file->writeUint32BE(0x6f85e3d3);

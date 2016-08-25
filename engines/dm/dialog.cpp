@@ -47,7 +47,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 	_vm->_displayMan->loadIntoBitmap(k0_dialogBoxGraphicIndice, _vm->_displayMan->_bitmapViewport);
 	//Strangerke: the version should be replaced by a ScummVM/RogueVM (?) string
 	// TODO: replace with ScummVM version string
-	_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 192, 7, k2_ColorLightGray, k1_ColorDarkGary, "V2.2", k136_heightViewport);
+	_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 192, 7, k2_ColorLightGray, k1_ColorDarkGary, "V2.2", k136_heightViewport);
 	int16 choiceCount = 1;
 	if (choice2)
 		choiceCount++;
@@ -94,14 +94,14 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		if (isMessageOnTwoLines(msg1, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosY = 21;
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
 			textPosY += 8;
 			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
 			textPosY += 8;
 		} else {
 			textPosX = 113 - ((strlen(msg1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, msg1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, msg1, k136_heightViewport);
 			textPosY += 8;
 		}
 	}
@@ -110,13 +110,13 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		char L1313_ac_StringPart2[70];
 		if (isMessageOnTwoLines(msg2, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
 			textPosY += 8;
 			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
 		} else {
 			textPosX = 113 - ((strlen(msg2) * 6) >> 1);
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, msg2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, msg2, k136_heightViewport);
 		}
 	}
 	if (screenDialog) {
@@ -143,7 +143,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 void DialogMan::printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY) {
 	if (str) {
 		posX -= (strlen(str) * 6) >> 1;
-		_vm->_textMan->f40_printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, k9_ColorGold, k5_ColorLightBrown, str, k136_heightViewport);
+		_vm->_textMan->printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, k9_ColorGold, k5_ColorLightBrown, str, k136_heightViewport);
 	}
 }
 

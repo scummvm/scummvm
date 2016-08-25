@@ -867,15 +867,15 @@ void EventManager::processCommandQueue() {
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY:
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 81, 69, k4_ColorCyan, k0_ColorBlack,
 												 "GAME FROZEN", k136_heightViewport);
 			break;
 		case Common::DE_DEU:
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 66, 69, k4_ColorCyan, k0_ColorBlack,
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 66, 69, k4_ColorCyan, k0_ColorBlack,
 												 "SPIEL ANGEHALTEN", k136_heightViewport);
 			break;
 		case Common::FR_FRA:
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 84, 69, k4_ColorCyan, k0_ColorBlack,
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 84, 69, k4_ColorCyan, k0_ColorBlack,
 												 "JEU BLOQUE", k136_heightViewport);
 			break;
 		}
@@ -1014,7 +1014,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
 
 			if (damage)
-				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
+				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
 		} else {
 			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
 			if (isMovementBlocked)
@@ -1160,7 +1160,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
-				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
 				return;
 			}
@@ -1292,20 +1292,20 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	} else
 		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 
-	_vm->_textMan->f51_messageAreaPrintLineFeed();
+	_vm->_textMan->printLineFeed();
 	Color champColor = _vm->_championMan->_championColor[championIndex];
-	_vm->_textMan->f47_messageAreaPrintMessage(champColor, champ->_name);
+	_vm->_textMan->printMessage(champColor, champ->_name);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
+		_vm->_textMan->printMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
 		break;
 	case Common::DE_DEU:
-		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
+		_vm->_textMan->printMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
 		break;
 	case Common::FR_FRA:
-		_vm->_textMan->f47_messageAreaPrintMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESSUSCITE." : " REINCARNE.");
+		_vm->_textMan->printMessage(champColor, (commandType == k160_CommandClickInPanelResurrect) ? " RESSUSCITE." : " REINCARNE.");
 		break;
 	}
 
@@ -1390,7 +1390,7 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 		newEvent._B._location._mapY = mapY;
 		newEvent._C.A._cell = currCell;
 		newEvent._C.A._effect = k2_SensorEffToggle;
-		_vm->_timeline->f238_addEventGetEventIndex(&newEvent);
+		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
 	_vm->_stopWaitingForPlayerInput = true;
 }
@@ -1407,13 +1407,13 @@ void EventManager::drawSleepScreen() {
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 93, 69, k4_ColorCyan, k0_ColorBlack, "WAKE UP", k136_heightViewport);
+		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 93, 69, k4_ColorCyan, k0_ColorBlack, "WAKE UP", k136_heightViewport);
 		break;
 	case Common::DE_DEU:
-		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 96, 69, k4_ColorCyan, k0_ColorBlack, "WECKEN", k136_heightViewport);
+		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 96, 69, k4_ColorCyan, k0_ColorBlack, "WECKEN", k136_heightViewport);
 		break;
 	case Common::FR_FRA:
-		_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 72, 69, k4_ColorCyan, k0_ColorBlack, "REVEILLEZ-VOUS", k136_heightViewport);
+		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 72, 69, k4_ColorCyan, k0_ColorBlack, "REVEILLEZ-VOUS", k136_heightViewport);
 		break;
 	}
 }

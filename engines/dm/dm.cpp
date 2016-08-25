@@ -272,12 +272,12 @@ void DMEngine::initializeGame() {
 	_displayMan->loadFloorSet(k0_FloorSetStone);
 	_displayMan->loadWallSet(k0_WallSetStone);
 
-	_sound->f503_loadSounds(); // @ F0506_AMIGA_AllocateData
+	_sound->loadSounds(); // @ F0506_AMIGA_AllocateData
 
 	if (!ConfMan.hasKey("save_slot")) // skip drawing title if loading from launcher
 		drawTittle();
 
-	_textMan->f54_textInitialize();
+	_textMan->initialize();
 	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
 
@@ -443,7 +443,7 @@ void DMEngine::gameloop() {
 				_newPartyMapIndex = kM1_mapIndexNone;
 				_eventMan->discardAllInput();
 			}
-			_timeline->f261_processTimeline();
+			_timeline->processTimeline();
 
 			if (_newPartyMapIndex == kM1_mapIndexNone)
 				break;
@@ -468,7 +468,7 @@ void DMEngine::gameloop() {
 			}
 		}
 		_eventMan->highlightBoxDisable();
-		_sound->f65_playPendingSound();
+		_sound->playPendingSound();
 		_championMan->applyAndDrawPendingDamageAndWounds();
 		if (_championMan->_partyDead)
 			break;
@@ -492,7 +492,7 @@ void DMEngine::gameloop() {
 		if (_projectileDisableMovementTicks)
 			_projectileDisableMovementTicks--;
 
-		_textMan->f44_messageAreaClearExpiredRows();
+		_textMan->clearExpiredRows();
 		_stopWaitingForPlayerInput = false;
 		uint16 vblankCounter = 0;
 		do {
@@ -581,7 +581,7 @@ void DMEngine::processEntrance() {
 	} while (_newGameFl == k202_CommandEntranceDrawCredits);
 
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
-	_sound->f060_SOUND_Play(k01_soundSWITCH, 112, 0x40, 0x40);
+	_sound->play(k01_soundSWITCH, 112, 0x40, 0x40);
 	delay(20);
 	_eventMan->showMouse();
 	if (_newGameFl)
@@ -634,7 +634,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 	_eventMan->_primaryKeyboardInput = nullptr;
 	_eventMan->_secondaryKeyboardInput = nullptr;
 	if (doNotDrawCreditsOnly && !_gameWon) {
-		_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+		_sound->requestPlay(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 		delay(240);
 	}
 
@@ -666,13 +666,13 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 				Champion *curChampion = &_championMan->_champions[championIndex];
 				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
 				_displayMan->blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
-				_textMan->f443_endgamePrintString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
+				_textMan->printEndGameString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
 				int textPosX = (6 * strlen(curChampion->_name)) + 87;
 				char championTitleFirstCharacter = curChampion->_title[0];
 				if ((championTitleFirstCharacter != ',') && (championTitleFirstCharacter != ';') && (championTitleFirstCharacter != '-'))
 					textPosX += 6;
 
-				_textMan->f443_endgamePrintString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
+				_textMan->printEndGameString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
 				for (int16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
 					uint16 skillLevel = MIN<uint16>(16, _championMan->getSkillLevel(championIndex, idx | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
 					if (skillLevel == 1)
@@ -682,7 +682,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 					strcpy(displStr, _inventoryMan->_skillLevelNames[skillLevel - 2]);
 					strcat(displStr, " ");
 					strcat(displStr, _championMan->_baseSkillName[idx]);
-					_textMan->f443_endgamePrintString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
+					_textMan->printEndGameString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
 				}
 				championMirrorBox._y1 += 48;
 				championMirrorBox._y2 += 48;
@@ -714,9 +714,9 @@ T0444017:
 
 			switch (getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME"); break;
-			case Common::DE_DEU: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN"); break;
-			case Common::FR_FRA: _textMan->f53_printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU"); break;
+			case Common::EN_ANY: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME"); break;
+			case Common::DE_DEU: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN"); break;
+			case Common::FR_FRA: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU"); break;
 			}
 
 			curPalette[1] = D03_RGB_PINK;
@@ -822,7 +822,7 @@ void DMEngine::openEntranceDoors() {
 	for (uint16 animStep = 1; animStep < 32; ++animStep) {
 		if ((animStep % 3) == 1) {
 			// Strangerke: CHECKME: Earlier versions of the game were using G0565_puc_Graphic535_Sound02DoorRattle instead of k02_soundDOOR_RATTLE 2
-			_sound->f060_SOUND_Play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
+			_sound->play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
 		}
 
 		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
@@ -967,7 +967,7 @@ void DMEngine::fuseSequnce() {
 	_championMan->_party._magicalLightAmount = 200;
 	_inventoryMan->setDungeonViewPalette();
 	_championMan->_party._fireShieldDefense = _championMan->_party._spellShieldDefense = _championMan->_party._shieldDefense = 100;
-	_timeline->f260_timelineRefreshAllChampionStatusBoxes();
+	_timeline->refreshAllChampionStatusBoxes();
 	fuseSequenceUpdate();
 	L1431_i_LordChaosMapX = _dungeonMan->_partyMapX;
 	L1432_i_LordChaosMapY = _dungeonMan->_partyMapY;
@@ -1005,7 +1005,7 @@ T0446002:
 		_projexpl->createExplosion(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+	_sound->requestPlay(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
 	L1428_ps_Group->_type = k25_CreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
@@ -1014,7 +1014,7 @@ T0446002:
 	}
 	for (AL1425_i_CycleCount = 4; --AL1425_i_CycleCount; ) {
 		for (AL1424_i_CreatureTypeSwitchCount = 5; --AL1424_i_CreatureTypeSwitchCount; ) {
-			_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
+			_sound->requestPlay(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
 			L1428_ps_Group->_type = (AL1424_i_CreatureTypeSwitchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
 			for (AL1426_i_FuseSequenceUpdateCount = AL1425_i_CycleCount; AL1426_i_FuseSequenceUpdateCount--; fuseSequenceUpdate());
 		}
@@ -1049,9 +1049,9 @@ T0446002:
 		for (AL1425_i_TextStringThingIndex = 0; AL1425_i_TextStringThingIndex < AL1426_i_TextStringThingCount; AL1425_i_TextStringThingIndex++) {
 			_dungeonMan->decodeText(L1436_ac_String, L1435_aT_TextStringThings[AL1425_i_TextStringThingIndex], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
 			if (L1436_ac_String[1] == L1434_c_TextFirstCharacter) {
-				_textMan->f43_messageAreaClearAllRows();
+				_textMan->clearAllRows();
 				L1436_ac_String[1] = '\n'; /* New line */
-				_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, &L1436_ac_String[1]);
+				_textMan->printMessage(k15_ColorWhite, &L1436_ac_String[1]);
 				fuseSequenceUpdate();
 				delay(780);
 				L1434_c_TextFirstCharacter++;
@@ -1071,9 +1071,9 @@ T0446002:
 }
 
 void DMEngine::fuseSequenceUpdate() {
-	_timeline->f261_processTimeline();
+	_timeline->processTimeline();
 	_displayMan->drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
-	_sound->f65_playPendingSound();
+	_sound->playPendingSound();
 	_eventMan->discardAllInput();
 	_displayMan->updateScreen();
 	delay(2);

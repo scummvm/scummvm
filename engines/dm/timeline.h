@@ -95,7 +95,7 @@ k82_TMEventTypeMagicMap_C82 = 82, // @ C82_EVENT_MAGIC_MAP
 k83_TMEventTypeMagicMap_C83 = 83  // @ C83_EVENT_MAGIC_MAP    
 };
 
-extern signed char g495_actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
+extern signed char _actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
 
 class TimelineEvent {
 public:
@@ -149,50 +149,49 @@ public:
 class Timeline {
 	DMEngine *_vm;
 public:
-	uint16 _g369_eventMaxCount; // @ G0369_ui_EventMaximumCount
-	TimelineEvent *_g370_events; // @ G0370_ps_Events
-	uint16 _g372_eventCount; // @ G0372_ui_EventCount 
-	uint16 *_g371_timeline; // @ G0371_pui_Timeline
-	uint16 _g373_firstUnusedEventIndex; // @ G0373_ui_FirstUnusedEventIndex
+	uint16 _eventMaxCount; // @ G0369_ui_EventMaximumCount
+	TimelineEvent *_events; // @ G0370_ps_Events
+	uint16 _eventCount; // @ G0372_ui_EventCount 
+	uint16 *_timeline; // @ G0371_pui_Timeline
+	uint16 _firstUnusedEventIndex; // @ G0373_ui_FirstUnusedEventIndex
 
 	explicit Timeline(DMEngine *vm);
 	~Timeline();
-	void f233_initTimeline(); // @ F0233_TIMELINE_Initialize
-	void f237_deleteEvent(uint16 eventIndex);// @ F0237_TIMELINE_DeleteEvent
-	void f236_fixChronology(uint16 timelineIndex); // @ F0236_TIMELINE_FixChronology
-	bool f234_isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB); // @ F0234_TIMELINE_IsEventABeforeEventB
-	uint16 f235_getIndex(uint16 eventIndex); // @ F0235_TIMELINE_GetIndex
-	uint16 f238_addEventGetEventIndex(TimelineEvent *event); // @ F0238_TIMELINE_AddEvent_GetEventIndex_CPSE
-	void f261_processTimeline(); // @ F0261_TIMELINE_Process_CPSEF
-	bool f240_isFirstEventExpiered(); // @ F0240_TIMELINE_IsFirstEventExpired_CPSE
-	void f239_timelineExtractFirstEvent(TimelineEvent *event); // @ F0239_TIMELINE_ExtractFirstEvent
-	void f241_timelineProcessEvent1_doorAnimation(TimelineEvent *event); // @ F0241_TIMELINE_ProcessEvent1_DoorAnimation
-	void f242_timelineProcessEvent7_squareFakewall(TimelineEvent *event); // @ F0242_TIMELINE_ProcessEvent7_Square_FakeWall
-	void f243_timelineProcessEvent2_doorDestruction(TimelineEvent *event); // @ F0243_TIMELINE_ProcessEvent2_DoorDestruction
-	void f244_timelineProcessEvent10_squareDoor(TimelineEvent *event); // @ F0244_TIMELINE_ProcessEvent10_Square_Door
-	void f251_timelineProcessEvent9_squarePit(TimelineEvent *event); // @ F0251_TIMELINE_ProcessEvent9_Square_Pit
-	void f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY); // @ F0249_TIMELINE_MoveTeleporterOrPitSquareThings
-	void f250_timelineProcessEvent8_squareTeleporter(TimelineEvent *event); // @ F0250_TIMELINE_ProcessEvent8_Square_Teleporter
-	void f248_timelineProcessEvent6_squareWall(TimelineEvent *event); // @ F0248_TIMELINE_ProcessEvent6_Square_Wall
-	void f247_triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
-	void f245_timlineProcessEvent5_squareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
-	void f252_timelineProcessEvents60to61_moveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
-	void f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
-	void f253_timelineProcessEvent11Part1_enableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
-	void f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint16 champIndex,
+	void initTimeline(); // @ F0233_TIMELINE_Initialize
+	void deleteEvent(uint16 eventIndex);// @ F0237_TIMELINE_DeleteEvent
+	void fixChronology(uint16 timelineIndex); // @ F0236_TIMELINE_FixChronology
+	bool isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB); // @ F0234_TIMELINE_IsEventABeforeEventB
+	uint16 getIndex(uint16 eventIndex); // @ F0235_TIMELINE_GetIndex
+	uint16 addEventGetEventIndex(TimelineEvent *event); // @ F0238_TIMELINE_AddEvent_GetEventIndex_CPSE
+	void processTimeline(); // @ F0261_TIMELINE_Process_CPSEF
+	bool isFirstEventExpiered(); // @ F0240_TIMELINE_IsFirstEventExpired_CPSE
+	void extractFirstEvent(TimelineEvent *event); // @ F0239_TIMELINE_ExtractFirstEvent
+	void processEventDoorAnimation(TimelineEvent *event); // @ F0241_TIMELINE_ProcessEvent1_DoorAnimation
+	void processEventSquareFakewall(TimelineEvent *event); // @ F0242_TIMELINE_ProcessEvent7_Square_FakeWall
+	void processEventDoorDestruction(TimelineEvent *event); // @ F0243_TIMELINE_ProcessEvent2_DoorDestruction
+	void processEventSquareDoor(TimelineEvent *event); // @ F0244_TIMELINE_ProcessEvent10_Square_Door
+	void processEventSquarePit(TimelineEvent *event); // @ F0251_TIMELINE_ProcessEvent9_Square_Pit
+	void moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY); // @ F0249_TIMELINE_MoveTeleporterOrPitSquareThings
+	void processEventSquareTeleporter(TimelineEvent *event); // @ F0250_TIMELINE_ProcessEvent8_Square_Teleporter
+	void processEventSquareWall(TimelineEvent *event); // @ F0248_TIMELINE_ProcessEvent6_Square_Wall
+	void triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event); // @ F0247_TIMELINE_TriggerProjectileLauncher
+	void processEventSquareCorridor(TimelineEvent *event); // @ F0245_TIMELINE_ProcessEvent5_Square_Corridor
+	void processEventsMoveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
+	void procesEventEnableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
+	void processEventEnableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
+	void processEventMoveWeaponFromQuiverToSlot(uint16 champIndex,
 																	 uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
-	bool f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion *champ,
+	bool hasWeaponMovedSlot(int16 champIndex, Champion *champ,
 										 uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
-	void f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
-	void f257_timelineProcessEvent70_light(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
-	void f260_timelineRefreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes
-	void f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
-	void save3_eventsPart(Common::OutSaveFile *file);
-	void save4_timelinePart(Common::OutSaveFile *file);
-	void load3_eventsPart(Common::InSaveFile* file);
-	void load4_timelinePart(Common::InSaveFile* file);
+	void processEventHideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
+	void processEventLight(TimelineEvent *event); // @ F0257_TIMELINE_ProcessEvent70_Light
+	void refreshAllChampionStatusBoxes(); // @ F0260_TIMELINE_RefreshAllChampionStatusBoxes
+	void processEventViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
+	void saveEventsPart(Common::OutSaveFile *file);
+	void saveTimelinePart(Common::OutSaveFile *file);
+	void loadEventsPart(Common::InSaveFile* file);
+	void loadTimelinePart(Common::InSaveFile* file);
 };
-
 
 }
 

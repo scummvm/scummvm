@@ -182,7 +182,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			if (!L0753_B_DoNotTriggerSensor) {
 				L0759_B_AtLeastOneSensorWasTriggered = true;
 				if (L0755_ps_Sensor->getAttrAudibleA()) {
-					_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 				}
 				if (!_vm->_championMan->_leaderEmptyHanded && ((L0757_ui_SensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (L0757_ui_SensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (L0757_ui_SensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
 					L0754_ps_Generic = (Thing *)_vm->_dungeonMan->getThingData(L0761_T_LeaderHandObject);
@@ -279,7 +279,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 		}
 		if (L0710_i_ThingType == k14_ProjectileThingType) {
 			L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
-			_moveResultDir = (_vm->_timeline->_g370_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._C._projectile.getDir();
+			_moveResultDir = (_vm->_timeline->_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._C._projectile.getDir();
 		}
 		for (L0728_i_ChainedMoveCount = 1000; --L0728_i_ChainedMoveCount; ) { /* No more than 1000 chained moves at once (in a chain of teleporters and pits for example) */
 			AL0708_i_DestinationSquare = _vm->_dungeonMan->_currMapData[destMapX][destMapY];
@@ -300,7 +300,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					_vm->_dungeonMan->_partyMapX = destMapX;
 					_vm->_dungeonMan->_partyMapY = destMapY;
 					if (L0712_ps_Teleporter->isAudible()) {
-						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+						_vm->_sound->requestPlay(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 					}
 					L0723_B_DrawDungeonViewWhileFalling = true;
 					if (L0712_ps_Teleporter->getAbsoluteRotation()) {
@@ -311,7 +311,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				} else {
 					if (L0710_i_ThingType == k4_GroupThingType) {
 						if (L0712_ps_Teleporter->isAudible()) {
-							_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
 						}
 						L0720_ui_MoveGroupResult = getTeleporterRotatedGroupResult(L0712_ps_Teleporter, thing, L0714_ui_MapIndexSource);
 					} else {
@@ -353,7 +353,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 								}
 							} else {
 								if (_vm->_championMan->getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF)) {
-									_vm->_sound->f064_SOUND_RequestPlay_CPSD(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+									_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 								}
 							}
 						}
@@ -482,7 +482,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				}
 				L1638_ui_MovementSoundIndex = getSound(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[thing.getIndex()]._type);
 				if (L1638_ui_MovementSoundIndex < k34_D13_soundCount) {
-					_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
 				}
 				if (L0721_B_GroupOnPartyMap && (L0715_ui_MapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
 					_vm->_groupMan->removeActiveGroup(AL0708_i_ActiveGroupIndex);
@@ -611,7 +611,7 @@ T0266017_CheckProjectileImpacts:
 	L0697_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0704_ui_ProjectileMapX, L0705_ui_ProjectileMapY);
 	while (L0697_T_Thing != Thing::_endOfList) {
 		if (((L0697_T_Thing).getType() == k14_ProjectileThingType) &&
-			(_vm->_timeline->_g370_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(L0697_T_Thing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts) && (AL0699_ui_ChampionOrCreatureOrdinal = L0707_auc_ChampionOrCreatureOrdinalInCell[(L0697_T_Thing).getCell()]) &&
+			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(L0697_T_Thing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts) && (AL0699_ui_ChampionOrCreatureOrdinal = L0707_auc_ChampionOrCreatureOrdinalInCell[(L0697_T_Thing).getCell()]) &&
 			_vm->_projexpl->hasProjectileImpactOccurred(L0702_i_ImpactType, srcMapX, srcMapY, _vm->ordinalToIndex(AL0699_ui_ChampionOrCreatureOrdinal), L0697_T_Thing)) {
 			_vm->_projexpl->projectileDeleteEvent(L0697_T_Thing);
 			if (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup) {
@@ -642,7 +642,7 @@ void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effe
 	L0729_s_Event._B._location._mapY = mapY;
 	L0729_s_Event._C.A._cell = cell;
 	L0729_s_Event._C.A._effect = effect;
-	_vm->_timeline->f238_addEventGetEventIndex(&L0729_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L0729_s_Event);
 }
 
 int16 MovesensMan::getSound(byte creatureType) {
@@ -799,7 +799,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 			} else {
 				if ((L0771_ui_ThingType == k2_TextstringType) && (L0767_i_ThingType == kM1_PartyThingType) && addThing && !partySquare) {
 					_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, L0766_T_Thing, k1_TextTypeMessage);
-					_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
+					_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 				} else {
 					if ((L0771_ui_ThingType > k4_GroupThingType) && (L0771_ui_ThingType < k14_ProjectileThingType)) {
 						L0772_B_SquareContainsObject = true;
@@ -912,7 +912,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				goto T0276079;
 
 			if (L0769_ps_Sensor->getAttrAudibleA())
-				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
 
 			triggerEffect(L0769_ps_Sensor, L0778_i_Effect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
 			goto T0276079;
@@ -1080,7 +1080,7 @@ void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY,
 	L0696_s_Event._B._location._mapX = mapX;
 	L0696_s_Event._B._location._mapY = mapY;
 	L0696_s_Event._C._slot = groupThing.toUint16();
-	_vm->_timeline->f238_addEventGetEventIndex(&L0696_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L0696_s_Event);
 }
 
 Thing MovesensMan::getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int16 objectType) {

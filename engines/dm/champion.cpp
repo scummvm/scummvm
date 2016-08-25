@@ -217,7 +217,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 			return false;
 	}
 
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 	decrementStamina(champIndex, getThrowingStaminaCost(curThing));
 	disableAction(champIndex, 4);
 	int16 experience = 8;
@@ -263,10 +263,10 @@ int16 ChampionMan::getDecodedValue(char *string, uint16 characterCount) {
 
 void ChampionMan::drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int16 maxVal) {
 	Common::String tmp = getStringFromInteger(currVal, true, 3);
-	_vm->_textMan->f52_printToViewport(55, posY, k13_ColorLightestGray, tmp.c_str());
-	_vm->_textMan->f52_printToViewport(73, posY, k13_ColorLightestGray, "/");
+	_vm->_textMan->printToViewport(55, posY, k13_ColorLightestGray, tmp.c_str());
+	_vm->_textMan->printToViewport(73, posY, k13_ColorLightestGray, "/");
 	tmp = getStringFromInteger(maxVal, true, 3);
-	_vm->_textMan->f52_printToViewport(79, posY, k13_ColorLightestGray, tmp.c_str());
+	_vm->_textMan->printToViewport(79, posY, k13_ColorLightestGray, tmp.c_str());
 }
 
 uint16 ChampionMan::getHandSlotIndex(uint16 slotBoxIndex) {
@@ -931,19 +931,19 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 
 	int16 eventIndex = curChampion->_enableActionEventIndex;
 	if (eventIndex >= 0) {
-		int32 currentEnableActionEventTime = filterTime(_vm->_timeline->_g370_events[eventIndex]._mapTime);
+		int32 currentEnableActionEventTime = filterTime(_vm->_timeline->_events[eventIndex]._mapTime);
 		if (updatedEnableActionEventTime >= currentEnableActionEventTime) {
 			updatedEnableActionEventTime += (currentEnableActionEventTime - _vm->_gameTime) >> 1;
 		} else {
 			updatedEnableActionEventTime = currentEnableActionEventTime + (ticks >> 1);
 		}
-		_vm->_timeline->f237_deleteEvent(eventIndex);
+		_vm->_timeline->deleteEvent(eventIndex);
 	} else {
 		setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x0008_ChampionAttributeDisableAction);
 		drawChampionState((ChampionIndex)champIndex);
 	}
 	setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
-	curChampion->_enableActionEventIndex = _vm->_timeline->f238_addEventGetEventIndex(&curEvent);
+	curChampion->_enableActionEventIndex = _vm->_timeline->addEventGetEventIndex(&curEvent);
 }
 
 void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
@@ -1031,24 +1031,24 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 
 			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 			drawChampionState((ChampionIndex)champIndex);
-			_vm->_textMan->f51_messageAreaPrintLineFeed();
+			_vm->_textMan->printLineFeed();
 			Color curChampionColor = _championColor[champIndex];
-			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, curChampion->_name);
+			_vm->_textMan->printMessage(curChampionColor, curChampion->_name);
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " JUST GAINED A "); break;
-			case Common::DE_DEU: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
-			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " VIENT DE DEVENIR "); break;
+			case Common::EN_ANY: _vm->_textMan->printMessage(curChampionColor, " JUST GAINED A "); break;
+			case Common::DE_DEU: _vm->_textMan->printMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
+			case Common::FR_FRA: _vm->_textMan->printMessage(curChampionColor, " VIENT DE DEVENIR "); break;
 			}
 
-			_vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, _baseSkillName[baseSkillIndex]);
+			_vm->_textMan->printMessage(curChampionColor, _baseSkillName[baseSkillIndex]);
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, "!"); break;
-			case Common::DE_DEU: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " LEVEL!"); break;
-			case Common::FR_FRA: _vm->_textMan->f47_messageAreaPrintMessage(curChampionColor, " ERREICHT!"); break;
+			case Common::EN_ANY: _vm->_textMan->printMessage(curChampionColor, "!"); break;
+			case Common::DE_DEU: _vm->_textMan->printMessage(curChampionColor, " LEVEL!"); break;
+			case Common::FR_FRA: _vm->_textMan->printMessage(curChampionColor, " ERREICHT!"); break;
 			}
 		}
 	}
@@ -1119,7 +1119,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		newEvent._priority = champIndex;
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
 		newEvent._B._attack = attack;
-		_vm->_timeline->f238_addEventGetEventIndex(&newEvent);
+		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
 
 	drawChampionState((ChampionIndex)champIndex);
@@ -1426,7 +1426,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 				textPosY = 5;
 			}
-			_vm->_textMan->f53_printToLogicalScreen(textPosX, textPosY, k15_ColorWhite, k8_ColorRed, getStringFromInteger(pendingDamage, false, 3).c_str());
+			_vm->_textMan->printToLogicalScreen(textPosX, textPosY, k15_ColorWhite, k8_ColorRed, getStringFromInteger(pendingDamage, false, 3).c_str());
 
 			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
 			if (eventIndex == -1) {
@@ -1434,11 +1434,11 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 				newEvent._type = k12_TMEventTypeHideDamageReceived;
 				setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				newEvent._priority = championIndex;
-				championPtr->_hideDamageReceivedIndex = _vm->_timeline->f238_addEventGetEventIndex(&newEvent);
+				championPtr->_hideDamageReceivedIndex = _vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
-				TimelineEvent *curEvent = &_vm->_timeline->_g370_events[eventIndex];
+				TimelineEvent *curEvent = &_vm->_timeline->_events[eventIndex];
 				setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
-				_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(eventIndex));
+				_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 			}
 			drawChampionState((ChampionIndex)championIndex);
 			_vm->_eventMan->hideMouse();
@@ -1561,10 +1561,10 @@ void ChampionMan::unpoison(int16 champIndex) {
 	if (champIndex == kM1_ChampionNone)
 		return;
 
-	TimelineEvent *eventPtr = _vm->_timeline->_g370_events;
-	for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_g369_eventMaxCount; eventPtr++, eventIndex++) {
+	TimelineEvent *eventPtr = _vm->_timeline->_events;
+	for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventPtr++, eventIndex++) {
 		if ((eventPtr->_type == k75_TMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
-			_vm->_timeline->f237_deleteEvent(eventIndex);
+			_vm->_timeline->deleteEvent(eventIndex);
 	}
 	_champions[champIndex]._poisonEventCount = 0;
 }
@@ -2154,7 +2154,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				setFlag(championAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x2000_ChampionAttributeWounds | k0x8000_ChampionAttributeActionHand);
 		} else {
 			_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k8_StatusBoxDeadChampion), &box, k40_byteWidth, kM1_ColorNoTransparency, 29);
-			_vm->_textMan->f53_printToLogicalScreen(championStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, curChampion->_name);
+			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, curChampion->_name);
 			_vm->_menuMan->drawActionIcon(champIndex);
 
 			clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
@@ -2172,13 +2172,13 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		Color nameColor = (champIndex == _leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
 		if (isInventoryChampion) {
 			char *championName = curChampion->_name;
-			_vm->_textMan->f52_printToViewport(3, 7, nameColor, championName);
+			_vm->_textMan->printToViewport(3, 7, nameColor, championName);
 			int16 championTitleX = 6 * strlen(championName) + 3;
 			char titleFirstCharacter = curChampion->_title[0];
 			if ((titleFirstCharacter != ',') && (titleFirstCharacter != ';') && (titleFirstCharacter != '-'))
 				championTitleX += 6;
 
-			_vm->_textMan->f52_printToViewport(championTitleX, 7, nameColor, curChampion->_title);
+			_vm->_textMan->printToViewport(championTitleX, 7, nameColor, curChampion->_title);
 			setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 		} else {
 			Box box;
@@ -2187,7 +2187,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			box._x1 = championStatusBoxX;
 			box._x2 = box._x1 + 42;
 			_vm->_displayMan->fillScreenBox(box, k1_ColorDarkGary);
-			_vm->_textMan->f53_printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, k1_ColorDarkGary, curChampion->_name);
+			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, k1_ColorDarkGary, curChampion->_name);
 		}
 	}
 	if (getFlag(championAttributes, k0x0100_ChampionAttributeStatistics)) {
@@ -2231,9 +2231,9 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LOAD "); break;
-		case Common::DE_DEU: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "LAST "); break;
-		case Common::FR_FRA: _vm->_textMan->f52_printToViewport(104, 132, loadColor, "CHARGE "); break;
+		case Common::EN_ANY: _vm->_textMan->printToViewport(104, 132, loadColor, "LOAD "); break;
+		case Common::DE_DEU: _vm->_textMan->printToViewport(104, 132, loadColor, "LAST "); break;
+		case Common::FR_FRA: _vm->_textMan->printToViewport(104, 132, loadColor, "CHARGE "); break;
 		}
 
 		maxLoad = curChampion->_load / 10;
@@ -2252,7 +2252,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		maxLoad = (getMaximumLoad(curChampion) + 5) / 10;
 		strcat(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
 		strcat(_vm->_stringBuildBuffer, " KG");
-		_vm->_textMan->f52_printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
+		_vm->_textMan->printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
 		setFlag(championAttributes, k0x4000_ChampionAttributeViewport);
 	}
 	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, _vm->_dungeonMan->_partyDir);
@@ -2389,8 +2389,8 @@ void ChampionMan::renameChampion(Champion* champ) {
 
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, displayBox, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->_boxPanel, k72_byteWidth, k4_ColorCyan, 73);
-	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
-	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
+	_vm->_textMan->printToViewport(177, 58, k13_ColorLightestGray, "_______");
+	_vm->_textMan->printToViewport(105, 76, k13_ColorLightestGray, "___________________");
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
@@ -2407,7 +2407,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 		bool championTitleIsFull = ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE) && (curCharacterIndex == 19));
 		if (!championTitleIsFull) {
 			_vm->_eventMan->showMouse();
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k9_ColorGold, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k9_ColorGold, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
 			_vm->_eventMan->hideMouse();
 		}
 
@@ -2492,7 +2492,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 				if (!championTitleIsFull) {
 					renameChampionInputCharacterString[0] = curCharacter;
 					_vm->_eventMan->showMouse();
-					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
+					_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
 					_vm->_eventMan->hideMouse();
 					renamedChampionString[curCharacterIndex++] = curCharacter;
 					renamedChampionString[curCharacterIndex] = '\0';
@@ -2509,7 +2509,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 		} else if (curCharacter == '\r') { // Carriage return
 			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex > 0)) {
 				_vm->_eventMan->showMouse();
-				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
 				_vm->_eventMan->hideMouse();
 				renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
 				renamedChampionString = champ->_title;
@@ -2523,7 +2523,7 @@ void ChampionMan::renameChampion(Champion* champ) {
 
 			if (!championTitleIsFull) {
 				_vm->_eventMan->showMouse();
-				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
 				_vm->_eventMan->hideMouse();
 			}
 			if (curCharacterIndex == 0) {

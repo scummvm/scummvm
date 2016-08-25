@@ -40,7 +40,7 @@
 
 namespace DM {
 
-signed char g495_actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
+signed char _actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
 	0,   /* N */
 	36,  /* BLOCK */
 	0,   /* CHOP */
@@ -87,51 +87,51 @@ signed char g495_actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
 	8};  /* FUSE */
 
 Timeline::Timeline(DMEngine* vm) : _vm(vm) {
-	_g369_eventMaxCount = 0;
-	_g370_events = nullptr;
-	_g372_eventCount = 0;
-	_g371_timeline = nullptr;
-	_g373_firstUnusedEventIndex = 0;
+	_eventMaxCount = 0;
+	_events = nullptr;
+	_eventCount = 0;
+	_timeline = nullptr;
+	_firstUnusedEventIndex = 0;
 }
 
 Timeline::~Timeline() {
-	delete[] _g370_events;
-	delete[] _g371_timeline;
+	delete[] _events;
+	delete[] _timeline;
 }
 
-void Timeline::f233_initTimeline() {
-	_g370_events = new TimelineEvent[_g369_eventMaxCount];
-	_g371_timeline = new uint16[_g369_eventMaxCount];
+void Timeline::initTimeline() {
+	_events = new TimelineEvent[_eventMaxCount];
+	_timeline = new uint16[_eventMaxCount];
 	if (_vm->_newGameFl) {
-		for (int16 i = 0; i < _g369_eventMaxCount; ++i)
-			_g370_events[i]._type = k0_TMEventTypeNone;
-		_g372_eventCount = 0;
-		_g373_firstUnusedEventIndex = 0;
+		for (int16 i = 0; i < _eventMaxCount; ++i)
+			_events[i]._type = k0_TMEventTypeNone;
+		_eventCount = 0;
+		_firstUnusedEventIndex = 0;
 	}
 }
 
-void Timeline::f237_deleteEvent(uint16 eventIndex) {
+void Timeline::deleteEvent(uint16 eventIndex) {
 	uint16 L0586_ui_TimelineIndex;
 	uint16 L0587_ui_EventCount;
 
 
-	_g370_events[eventIndex]._type = k0_TMEventTypeNone;
-	if (eventIndex < _g373_firstUnusedEventIndex) {
-		_g373_firstUnusedEventIndex = eventIndex;
+	_events[eventIndex]._type = k0_TMEventTypeNone;
+	if (eventIndex < _firstUnusedEventIndex) {
+		_firstUnusedEventIndex = eventIndex;
 	}
-	_g372_eventCount--;
-	if ((L0587_ui_EventCount = _g372_eventCount) == 0) {
+	_eventCount--;
+	if ((L0587_ui_EventCount = _eventCount) == 0) {
 		return;
 	}
-	L0586_ui_TimelineIndex = f235_getIndex(eventIndex);
+	L0586_ui_TimelineIndex = getIndex(eventIndex);
 	if (L0586_ui_TimelineIndex == L0587_ui_EventCount) {
 		return;
 	}
-	_g371_timeline[L0586_ui_TimelineIndex] = _g371_timeline[L0587_ui_EventCount];
-	f236_fixChronology(L0586_ui_TimelineIndex);
+	_timeline[L0586_ui_TimelineIndex] = _timeline[L0587_ui_EventCount];
+	fixChronology(L0586_ui_TimelineIndex);
 }
 
-void Timeline::f236_fixChronology(uint16 timelineIndex) {
+void Timeline::fixChronology(uint16 timelineIndex) {
 	uint16 L0581_ui_TimelineIndex;
 	uint16 L0582_ui_EventIndex;
 	uint16 L0583_ui_EventCount;
@@ -139,16 +139,16 @@ void Timeline::f236_fixChronology(uint16 timelineIndex) {
 	bool L0585_B_ChronologyFixed;
 
 
-	if ((L0583_ui_EventCount = _g372_eventCount) == 1) {
+	if ((L0583_ui_EventCount = _eventCount) == 1) {
 		return;
 	}
 
-	L0584_ps_Event = &_g370_events[L0582_ui_EventIndex = _g371_timeline[timelineIndex]];
+	L0584_ps_Event = &_events[L0582_ui_EventIndex = _timeline[timelineIndex]];
 	L0585_B_ChronologyFixed = false;
 	while (timelineIndex > 0) { /* Check if the event should be moved earlier in the timeline */
 		L0581_ui_TimelineIndex = (timelineIndex - 1) >> 1;
-		if (f234_isEventABeforeB(L0584_ps_Event, &_g370_events[_g371_timeline[L0581_ui_TimelineIndex]])) {
-			_g371_timeline[timelineIndex] = _g371_timeline[L0581_ui_TimelineIndex];
+		if (isEventABeforeB(L0584_ps_Event, &_events[_timeline[L0581_ui_TimelineIndex]])) {
+			_timeline[timelineIndex] = _timeline[L0581_ui_TimelineIndex];
 			timelineIndex = L0581_ui_TimelineIndex;
 			L0585_B_ChronologyFixed = true;
 		} else {
@@ -160,21 +160,21 @@ void Timeline::f236_fixChronology(uint16 timelineIndex) {
 	L0583_ui_EventCount = ((L0583_ui_EventCount - 1) - 1) >> 1;
 	while (timelineIndex <= L0583_ui_EventCount) { /* Check if the event should be moved later in the timeline */
 		L0581_ui_TimelineIndex = (timelineIndex << 1) + 1;
-		if (((L0581_ui_TimelineIndex + 1) < _g372_eventCount) && (f234_isEventABeforeB(&_g370_events[_g371_timeline[L0581_ui_TimelineIndex + 1]], &_g370_events[_g371_timeline[L0581_ui_TimelineIndex]]))) {
+		if (((L0581_ui_TimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[L0581_ui_TimelineIndex + 1]], &_events[_timeline[L0581_ui_TimelineIndex]]))) {
 			L0581_ui_TimelineIndex++;
 		}
-		if (f234_isEventABeforeB(&_g370_events[_g371_timeline[L0581_ui_TimelineIndex]], L0584_ps_Event)) {
-			_g371_timeline[timelineIndex] = _g371_timeline[L0581_ui_TimelineIndex];
+		if (isEventABeforeB(&_events[_timeline[L0581_ui_TimelineIndex]], L0584_ps_Event)) {
+			_timeline[timelineIndex] = _timeline[L0581_ui_TimelineIndex];
 			timelineIndex = L0581_ui_TimelineIndex;
 		} else {
 			break;
 		}
 	}
 T0236011:
-	_g371_timeline[timelineIndex] = L0582_ui_EventIndex;
+	_timeline[timelineIndex] = L0582_ui_EventIndex;
 }
 
-bool Timeline::f234_isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
+bool Timeline::isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
 	bool L0578_B_Simultaneous;
 
 	return (filterTime(eventA->_mapTime) < filterTime(eventB->_mapTime)) ||
@@ -182,32 +182,32 @@ bool Timeline::f234_isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB
 		(L0578_B_Simultaneous && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
 }
 
-uint16 Timeline::f235_getIndex(uint16 eventIndex) {
+uint16 Timeline::getIndex(uint16 eventIndex) {
 	uint16 L0579_ui_TimelineIndex;
 	uint16* L0580_pui_TimelineEntry;
 
 
-	for (L0579_ui_TimelineIndex = 0, L0580_pui_TimelineEntry = _g371_timeline; L0579_ui_TimelineIndex < _g369_eventMaxCount; L0579_ui_TimelineIndex++) {
+	for (L0579_ui_TimelineIndex = 0, L0580_pui_TimelineEntry = _timeline; L0579_ui_TimelineIndex < _eventMaxCount; L0579_ui_TimelineIndex++) {
 		if (*L0580_pui_TimelineEntry++ == eventIndex)
 			break;
 	}
-	if (L0579_ui_TimelineIndex >= _g369_eventMaxCount) { /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
+	if (L0579_ui_TimelineIndex >= _eventMaxCount) { /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
 		L0579_ui_TimelineIndex = 0; /* BUG0_01 Coding error without consequence. Wrong return value. If the specified event index is not found in the timeline the function returns 0 which is the same value that is returned if the event index is found in the first timeline entry. No consequence because this code is never executed */
 	}
 	return L0579_ui_TimelineIndex;
 }
 
-uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
+uint16 Timeline::addEventGetEventIndex(TimelineEvent* event) {
 	uint16 L0588_ui_EventIndex;
 	uint16 L0590_ui_NewEventIndex;
 	TimelineEvent* L0591_ps_Event;
 
 
-	if (_g372_eventCount == _g369_eventMaxCount) {
+	if (_eventCount == _eventMaxCount) {
 		_vm->displayErrorAndStop(45);
 	}
 	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
-		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 			if ((L0591_ps_Event->_type >= k5_TMEventTypeCorridor) && (L0591_ps_Event->_type <= k10_TMEventTypeDoor)) {
 				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY()) && ((L0591_ps_Event->_type != k6_TMEventTypeWall) || (L0591_ps_Event->_C.A._cell == event->_C.A._cell))) {
 					L0591_ps_Event->_C.A._effect = event->_C.A._effect;
@@ -219,14 +219,14 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 					if (event->_C.A._effect == k2_SensorEffToggle) {
 						event->_C.A._effect = 1 - L0591_ps_Event->_C.A._effect;
 					}
-					f237_deleteEvent(L0588_ui_EventIndex);
+					deleteEvent(L0588_ui_EventIndex);
 					break;
 				}
 			}
 		}
 	} else {
 		if (event->_type == k1_TMEventTypeDoorAnimation) {
-			for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+			for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY())) {
 					if (L0591_ps_Event->_type == k10_TMEventTypeDoor) {
 						if (L0591_ps_Event->_C.A._effect == k2_SensorEffToggle) {
@@ -242,28 +242,28 @@ uint16 Timeline::f238_addEventGetEventIndex(TimelineEvent* event) {
 			}
 		} else {
 			if (event->_type == k2_TMEventTypeDoorDestruction) {
-				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _g370_events; L0588_ui_EventIndex < _g369_eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
+				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 					if ((event->getMapXY() == L0591_ps_Event->getMapXY()) && (getMap(event->_mapTime) == getMap(L0591_ps_Event->_mapTime))) {
 						if ((L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) || (L0591_ps_Event->_type == k10_TMEventTypeDoor)) {
-							f237_deleteEvent(L0588_ui_EventIndex);
+							deleteEvent(L0588_ui_EventIndex);
 						}
 					}
 				}
 			}
 		}
 	}
-	_g370_events[L0590_ui_NewEventIndex = _g373_firstUnusedEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
+	_events[L0590_ui_NewEventIndex = _firstUnusedEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
 	do {
-		if (_g373_firstUnusedEventIndex == _g369_eventMaxCount)
+		if (_firstUnusedEventIndex == _eventMaxCount)
 			break;
-		_g373_firstUnusedEventIndex++;
-	} while ((_g370_events[_g373_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
-	_g371_timeline[_g372_eventCount] = L0590_ui_NewEventIndex;
-	f236_fixChronology(_g372_eventCount++);
+		_firstUnusedEventIndex++;
+	} while ((_events[_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
+	_timeline[_eventCount] = L0590_ui_NewEventIndex;
+	fixChronology(_eventCount++);
 	return L0590_ui_NewEventIndex;
 }
 
-void Timeline::f261_processTimeline() {
+void Timeline::processTimeline() {
 	uint16 L0680_ui_Multiple;
 #define AL0680_ui_EventType     L0680_ui_Multiple
 #define AL0680_ui_ChampionIndex L0680_ui_Multiple
@@ -271,9 +271,9 @@ void Timeline::f261_processTimeline() {
 	TimelineEvent L0682_s_Event;
 
 
-	while (f240_isFirstEventExpiered()) {
+	while (isFirstEventExpiered()) {
 		L0681_ps_Event = &L0682_s_Event;
-		f239_timelineExtractFirstEvent(L0681_ps_Event);
+		extractFirstEvent(L0681_ps_Event);
 		_vm->_dungeonMan->setCurrentMap(getMap(L0682_s_Event._mapTime));
 		AL0680_ui_EventType = L0682_s_Event._type;
 		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
@@ -285,41 +285,41 @@ void Timeline::f261_processTimeline() {
 				_vm->_projexpl->processEvents48To49(L0681_ps_Event);
 				break;
 			case k1_TMEventTypeDoorAnimation:
-				f241_timelineProcessEvent1_doorAnimation(L0681_ps_Event);
+				processEventDoorAnimation(L0681_ps_Event);
 				break;
 			case k25_TMEventTypeExplosion:
 				_vm->_projexpl->processEvent25(L0681_ps_Event);
 				break;
 			case k7_TMEventTypeFakeWall:
-				f242_timelineProcessEvent7_squareFakewall(L0681_ps_Event);
+				processEventSquareFakewall(L0681_ps_Event);
 				break;
 			case k2_TMEventTypeDoorDestruction:
-				f243_timelineProcessEvent2_doorDestruction(L0681_ps_Event);
+				processEventDoorDestruction(L0681_ps_Event);
 				break;
 			case k10_TMEventTypeDoor:
-				f244_timelineProcessEvent10_squareDoor(L0681_ps_Event);
+				processEventSquareDoor(L0681_ps_Event);
 				break;
 			case k9_TMEventTypePit:
-				f251_timelineProcessEvent9_squarePit(L0681_ps_Event);
+				processEventSquarePit(L0681_ps_Event);
 				break;
 			case k8_TMEventTypeTeleporter:
-				f250_timelineProcessEvent8_squareTeleporter(L0681_ps_Event);
+				processEventSquareTeleporter(L0681_ps_Event);
 				break;
 			case k6_TMEventTypeWall:
-				f248_timelineProcessEvent6_squareWall(L0681_ps_Event);
+				processEventSquareWall(L0681_ps_Event);
 				break;
 			case k5_TMEventTypeCorridor:
-				f245_timlineProcessEvent5_squareCorridor(L0681_ps_Event);
+				processEventSquareCorridor(L0681_ps_Event);
 				break;
 			case k60_TMEventTypeMoveGroupSilent:
 			case k61_TMEventTypeMoveGroupAudible:
-				f252_timelineProcessEvents60to61_moveGroup(L0681_ps_Event);
+				processEventsMoveGroup(L0681_ps_Event);
 				break;
 			case k65_TMEventTypeEnableGroupGenerator:
-				f246_timelineProcesEvent65_enableGroupGenerator(L0681_ps_Event);
+				procesEventEnableGroupGenerator(L0681_ps_Event);
 				break;
 			case k20_TMEventTypePlaySound:
-				_vm->_sound->f064_SOUND_RequestPlay_CPSD(L0682_s_Event._C._soundIndex, L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(L0682_s_Event._C._soundIndex, L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
@@ -329,17 +329,17 @@ void Timeline::f261_processTimeline() {
 				}
 				break;
 			case k11_TMEventTypeEnableChampionAction:
-				f253_timelineProcessEvent11Part1_enableChampionAction(L0682_s_Event._priority);
+				processEventEnableChampionAction(L0682_s_Event._priority);
 				if (L0682_s_Event._B._slotOrdinal) {
-					f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->ordinalToIndex(L0682_s_Event._B._slotOrdinal));
+					processEventMoveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->ordinalToIndex(L0682_s_Event._B._slotOrdinal));
 				}
 				goto T0261048;
 			case k12_TMEventTypeHideDamageReceived:
-				f254_timelineProcessEvent12_hideDamageReceived(L0682_s_Event._priority);
+				processEventHideDamageReceived(L0682_s_Event._priority);
 				break;
 			case k70_TMEventTypeLight:
 				_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
-				f257_timelineProcessEvent70_light(L0681_ps_Event);
+				processEventLight(L0681_ps_Event);
 				_vm->_inventoryMan->setDungeonViewPalette();
 				break;
 			case k71_TMEventTypeInvisibility:
@@ -357,7 +357,7 @@ T0261048:
 			case k74_TMEventTypePartyShield:
 				_vm->_championMan->_party._shieldDefense -= L0682_s_Event._B._defense;
 T0261053:
-				f260_timelineRefreshAllChampionStatusBoxes();
+				refreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
 				_vm->_championMan->_party._spellShieldDefense -= L0682_s_Event._B._defense;
@@ -370,7 +370,7 @@ T0261053:
 				_vm->_championMan->championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
 				break;
 			case k13_TMEventTypeViAltarRebirth:
-				f255_timelineProcessEvent13_ViAltarRebirth(L0681_ps_Event);
+				processEventViAltarRebirth(L0681_ps_Event);
 				break;
 			case k79_TMEventTypeFootprints:
 				_vm->_championMan->_party._event79Count_Footprints--;
@@ -380,18 +380,18 @@ T0261053:
 	}
 }
 
-bool Timeline::f240_isFirstEventExpiered() {
-	return (_g372_eventCount && (filterTime(_g370_events[_g371_timeline[0]]._mapTime) <= _vm->_gameTime));
+bool Timeline::isFirstEventExpiered() {
+	return (_eventCount && (filterTime(_events[_timeline[0]]._mapTime) <= _vm->_gameTime));
 }
 
-void Timeline::f239_timelineExtractFirstEvent(TimelineEvent* event) {
+void Timeline::extractFirstEvent(TimelineEvent* event) {
 	uint16 L0592_ui_EventIndex;
 
-	*event = _g370_events[L0592_ui_EventIndex = _g371_timeline[0]];
-	f237_deleteEvent(L0592_ui_EventIndex);
+	*event = _events[L0592_ui_EventIndex = _timeline[0]];
+	deleteEvent(L0592_ui_EventIndex);
 }
 
-void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
+void Timeline::processEventDoorAnimation(TimelineEvent* event) {
 	uint16 L0593_ui_MapX;
 	uint16 L0594_ui_MapY;
 	int16 L0595_i_Effect;
@@ -421,11 +421,11 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
 				if (_vm->_championMan->getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
-					_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				}
 			}
 			event->_mapTime++;
-			f238_addEventGetEventIndex(event);
+			addEventGetEventIndex(event);
 			return;
 		}
 		if (((L0599_T_GroupThing = _vm->_groupMan->groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
@@ -435,9 +435,9 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 				}
 				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
 				L0597_puc_Square->setDoorState(L0596_i_DoorState);
-				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 				event->_mapTime++;
-				f238_addEventGetEventIndex(event);
+				addEventGetEventIndex(event);
 				return;
 			}
 		}
@@ -447,7 +447,7 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 	}
 	L0596_i_DoorState += (L0595_i_Effect == k0_SensorEffSet) ? -1 : 1;
 	L0597_puc_Square->setDoorState(L0596_i_DoorState);
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k02_soundDOOR_RATTLE, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
 
 	if (L0595_i_Effect == k0_SensorEffSet) {
 		if (L0596_i_DoorState == k0_doorState_OPEN) {
@@ -458,12 +458,12 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 			return;
 		}
 	}
-	f238_addEventGetEventIndex(event);
+	addEventGetEventIndex(event);
 T0241020_Return:
 	;
 }
 
-void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
+void Timeline::processEventSquareFakewall(TimelineEvent* event) {
 	uint16 L0603_ui_MapX;
 	uint16 L0604_ui_MapY;
 	int16 L0605_i_Effect;
@@ -479,11 +479,11 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	if (L0605_i_Effect == k1_SensorEffClear) {
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
 			event->_mapTime++;
-			f238_addEventGetEventIndex(event);
+			addEventGetEventIndex(event);
 		} else {
 			if (((L0606_T_Thing = _vm->_groupMan->groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 				event->_mapTime++;
-				f238_addEventGetEventIndex(event);
+				addEventGetEventIndex(event);
 			} else {
 				clearFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
 			}
@@ -493,14 +493,14 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 	}
 }
 
-void Timeline::f243_timelineProcessEvent2_doorDestruction(TimelineEvent* event) {
+void Timeline::processEventDoorDestruction(TimelineEvent* event) {
 	Square* L0608_puc_Square;
 
 	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
 	L0608_puc_Square->setDoorState(k5_doorState_DESTROYED);
 }
 
-void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
+void Timeline::processEventSquareDoor(TimelineEvent* event) {
 	int16 L0609_i_DoorState;
 
 
@@ -521,10 +521,10 @@ void Timeline::f244_timelineProcessEvent10_squareDoor(TimelineEvent* event) {
 		}
 	}
 	event->_type = k1_TMEventTypeDoorAnimation;
-	f238_addEventGetEventIndex(event);
+	addEventGetEventIndex(event);
 }
 
-void Timeline::f251_timelineProcessEvent9_squarePit(TimelineEvent* event) {
+void Timeline::processEventSquarePit(TimelineEvent* event) {
 	uint16 L0653_ui_MapX;
 	uint16 L0654_ui_MapY;
 	byte* L0655_puc_Square;
@@ -536,13 +536,13 @@ void Timeline::f251_timelineProcessEvent9_squarePit(TimelineEvent* event) {
 	}
 	if (event->_C.A._effect == k0_SensorEffSet) {
 		setFlag(*L0655_puc_Square, k0x0008_PitOpen);
-		f249_moveTeleporterOrPitSquareThings(L0653_ui_MapX, L0654_ui_MapY);
+		moveTeleporterOrPitSquareThings(L0653_ui_MapX, L0654_ui_MapY);
 	} else {
 		clearFlag(*L0655_puc_Square, k0x0008_PitOpen);
 	}
 }
 
-void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
+void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	uint16 L0644_ui_Multiple;
 #define AL0644_ui_ThingType  L0644_ui_Multiple
 #define AL0644_ui_EventIndex L0644_ui_Multiple
@@ -579,7 +579,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		}
 		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
 			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->getThingData(L0645_T_Thing);
-			L0647_ps_Event = &_g370_events[L0646_ps_Projectile->_eventIndex];
+			L0647_ps_Event = &_events[L0646_ps_Projectile->_eventIndex];
 			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
 			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
@@ -587,7 +587,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 		} else {
 			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
-				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _g370_events; AL0644_ui_EventIndex < _g369_eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
+				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _events; AL0644_ui_EventIndex < _eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
 					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 						L0647_ps_Event->_B._location._mapX = _vm->_moveSens->_moveResultMapX;
 						L0647_ps_Event->_B._location._mapY = _vm->_moveSens->_moveResultMapY;
@@ -601,7 +601,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	}
 }
 
-void Timeline::f250_timelineProcessEvent8_squareTeleporter(TimelineEvent* event) {
+void Timeline::processEventSquareTeleporter(TimelineEvent* event) {
 	uint16 L0650_ui_MapX;
 	uint16 L0651_ui_MapY;
 	byte* L0652_puc_Square;
@@ -613,13 +613,13 @@ void Timeline::f250_timelineProcessEvent8_squareTeleporter(TimelineEvent* event)
 	}
 	if (event->_C.A._effect == k0_SensorEffSet) {
 		setFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
-		f249_moveTeleporterOrPitSquareThings(L0650_ui_MapX, L0651_ui_MapY);
+		moveTeleporterOrPitSquareThings(L0650_ui_MapX, L0651_ui_MapY);
 	} else {
 		clearFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
 	}
 }
 
-void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
+void Timeline::processEventSquareWall(TimelineEvent* event) {
 	Thing L0634_T_Thing;
 	int16 L0635_i_ThingType;
 	int16 L0636_i_Multiple;
@@ -695,7 +695,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 						}
 					} else {
 						if ((((L0640_ui_SensorType >= k7_SensorWallSingleProjLauncherNewObj) && (L0640_ui_SensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (L0640_ui_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0640_ui_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
-							f247_triggerProjectileLauncher(L0638_ps_Sensor, event);
+							triggerProjectileLauncher(L0638_ps_Sensor, event);
 							if (L0638_ps_Sensor->getAttrOnlyOnce()) {
 								L0638_ps_Sensor->setTypeDisabled();
 							}
@@ -716,7 +716,7 @@ void Timeline::f248_timelineProcessEvent6_squareWall(TimelineEvent* event) {
 	_vm->_moveSens->processRotationEffect();
 }
 
-void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* event) {
+void Timeline::triggerProjectileLauncher(Sensor* sensor, TimelineEvent* event) {
 	Thing L0622_T_FirstProjectileAssociatedThing;
 	Thing L0623_T_SecondProjectileAssociatedThing;
 	uint16 L0624_ui_Cell;
@@ -792,7 +792,7 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 	_vm->_projexpl->_createLauncherProjectile = false;
 }
 
-void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
+void Timeline::processEventSquareCorridor(TimelineEvent* event) {
 #define k0x0008_randomizeGeneratedCreatureCount 0x0008 // @ MASK0x0008_RANDOMIZE_GENERATED_CREATURE_COUNT
 #define k0x0007_generatedCreatureCount 0x0007	// @ MASK0x0007_GENERATED_CREATURE_COUNT
 
@@ -822,7 +822,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 			}
 			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
 				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
-				_vm->_textMan->f47_messageAreaPrintMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
+				_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else {
 			if (L0610_i_ThingType == k3_SensorThingType) {
@@ -840,7 +840,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					}
 					_vm->_groupMan->groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
 					if (L0614_ps_Sensor->getAttrAudibleA()) {
-						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
+						_vm->_sound->requestPlay(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
 					}
 					if (L0614_ps_Sensor->getAttrOnlyOnce()) {
 						L0614_ps_Sensor->setTypeDisabled();
@@ -857,7 +857,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
 							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
-							f238_addEventGetEventIndex(&L0619_s_Event);
+							addEventGetEventIndex(&L0619_s_Event);
 						}
 					}
 				}
@@ -867,7 +867,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 	}
 }
 
-void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) {
+void Timeline::processEventsMoveGroup(TimelineEvent* event) {
 	uint16 L0656_ui_MapX;
 	uint16 L0657_ui_MapY;
 	Group* L0658_ps_Group;
@@ -880,7 +880,7 @@ void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) 
 T0252001:
 	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
 		}
 		_vm->_moveSens->getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
 	} else {
@@ -906,11 +906,11 @@ T0252001:
 			}
 		}
 		event->_mapTime += 5;
-		f238_addEventGetEventIndex(event);
+		addEventGetEventIndex(event);
 	}
 }
 
-void Timeline::f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent* event) {
+void Timeline::procesEventEnableGroupGenerator(TimelineEvent* event) {
 	Thing L0620_T_Thing;
 	Sensor* L0621_ps_Sensor;
 
@@ -928,7 +928,7 @@ void Timeline::f246_timelineProcesEvent65_enableGroupGenerator(TimelineEvent* ev
 	}
 }
 
-void Timeline::f253_timelineProcessEvent11Part1_enableChampionAction(uint16 champIndex) {
+void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	int16 L0660_i_SlotIndex;
 	int16 L0661_i_QuiverSlotIndex;
 	Champion* L0662_ps_Champion;
@@ -937,7 +937,7 @@ void Timeline::f253_timelineProcessEvent11Part1_enableChampionAction(uint16 cham
 	L0662_ps_Champion->_enableActionEventIndex = -1;
 	clearFlag(L0662_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction);
 	if (L0662_ps_Champion->_actionIndex != k255_ChampionActionNone) {
-		L0662_ps_Champion->_actionDefense -= g495_actionDefense[L0662_ps_Champion->_actionDefense];
+		L0662_ps_Champion->_actionDefense -= _actionDefense[L0662_ps_Champion->_actionDefense];
 	}
 	if (L0662_ps_Champion->_currHealth) {
 		if ((L0662_ps_Champion->_actionIndex == k32_ChampionActionShoot) && (L0662_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
@@ -957,7 +957,7 @@ T0253002:
 	L0662_ps_Champion->_actionIndex = k255_ChampionActionNone;
 }
 
-void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
+void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
 	uint16 L0677_ui_SlotIndex;
 	Champion* L0678_ps_Champion;
 
@@ -965,16 +965,16 @@ void Timeline::f259_timelineProcessEvent11Part2_moveWeaponFromQuiverToSlot(uint1
 	if (L0678_ps_Champion->_slots[slotIndex] != Thing::_none) {
 		return;
 	}
-	if (f258_timelineHasWeaponMovedSlot(champIndex, L0678_ps_Champion, k12_ChampionSlotQuiverLine_1_1, slotIndex)) {
+	if (hasWeaponMovedSlot(champIndex, L0678_ps_Champion, k12_ChampionSlotQuiverLine_1_1, slotIndex)) {
 		return;
 	}
 	for (L0677_ui_SlotIndex = k7_ChampionSlotQuiverLine_2_1; L0677_ui_SlotIndex <= k9_ChampionSlotQuiverLine_2_2; L0677_ui_SlotIndex++) {
-		if (f258_timelineHasWeaponMovedSlot(champIndex, L0678_ps_Champion, L0677_ui_SlotIndex, slotIndex))
+		if (hasWeaponMovedSlot(champIndex, L0678_ps_Champion, L0677_ui_SlotIndex, slotIndex))
 			break;
 	}
 }
 
-bool Timeline::f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
+bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
 	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
 		_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
 			(ChampionSlot)destSlotIndex);
@@ -983,7 +983,7 @@ bool Timeline::f258_timelineHasWeaponMovedSlot(int16 champIndex, Champion* champ
 	return false;
 }
 
-void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex) {
+void Timeline::processEventHideDamageReceived(uint16 champIndex) {
 	Champion* L0663_ps_Champion;
 
 
@@ -1002,7 +1002,7 @@ void Timeline::f254_timelineProcessEvent12_hideDamageReceived(uint16 champIndex)
 	}
 }
 
-void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
+void Timeline::processEventLight(TimelineEvent* event) {
 	int16 L0673_i_WeakerLightPower;
 	int16 L0674_i_Multiple;
 #define AL0674_i_LightPower  L0674_i_Multiple
@@ -1032,11 +1032,11 @@ void Timeline::f257_timelineProcessEvent70_light(TimelineEvent* event) {
 		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
 		setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		L0676_s_Event._priority = 0;
-		f238_addEventGetEventIndex(&L0676_s_Event);
+		addEventGetEventIndex(&L0676_s_Event);
 	}
 }
 
-void Timeline::f260_timelineRefreshAllChampionStatusBoxes() {
+void Timeline::refreshAllChampionStatusBoxes() {
 	uint16 L0679_ui_ChampionIndex;
 
 	for (L0679_ui_ChampionIndex = k0_ChampionFirst; L0679_ui_ChampionIndex < _vm->_championMan->_partyChampionCount; L0679_ui_ChampionIndex++) {
@@ -1045,7 +1045,7 @@ void Timeline::f260_timelineRefreshAllChampionStatusBoxes() {
 	_vm->_championMan->drawAllChampionStates();
 }
 
-void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) {
+void Timeline::processEventViAltarRebirth(TimelineEvent* event) {
 	int16 L0664_i_MapX;
 	int16 L0665_i_MapY;
 	uint16 L0666_ui_Cell;
@@ -1068,7 +1068,7 @@ void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) 
 T0255002:
 		L0670_ui_Step--;
 		event->_C.A._effect = L0670_ui_Step;
-		f238_addEventGetEventIndex(event);
+		addEventGetEventIndex(event);
 		break;
 	case 1:
 		L0667_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
@@ -1093,9 +1093,9 @@ T0255002:
 	}
 }
 
-void Timeline::save3_eventsPart(Common::OutSaveFile* file) {
-	for (uint16 i = 0; i < _g369_eventMaxCount; ++i) {
-		TimelineEvent *event = &_g370_events[i];
+void Timeline::saveEventsPart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _eventMaxCount; ++i) {
+		TimelineEvent *event = &_events[i];
 		file->writeSint32BE(event->_mapTime);
 		file->writeByte(event->_type);
 		file->writeByte(event->_priority);
@@ -1106,14 +1106,14 @@ void Timeline::save3_eventsPart(Common::OutSaveFile* file) {
 	}
 }
 
-void Timeline::save4_timelinePart(Common::OutSaveFile* file) {
-	for (uint16 i = 0; i < _g369_eventMaxCount; ++i)
-		file->writeUint16BE(_g371_timeline[i]);
+void Timeline::saveTimelinePart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _eventMaxCount; ++i)
+		file->writeUint16BE(_timeline[i]);
 }
 
-void Timeline::load3_eventsPart(Common::InSaveFile* file) {
-	for (uint16 i = 0; i < _g369_eventMaxCount; ++i) {
-		TimelineEvent *event = &_g370_events[i];
+void Timeline::loadEventsPart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _eventMaxCount; ++i) {
+		TimelineEvent *event = &_events[i];
 		event->_mapTime = file->readSint32BE();
 		event->_type = file->readByte();
 		event->_priority = file->readByte();
@@ -1124,9 +1124,9 @@ void Timeline::load3_eventsPart(Common::InSaveFile* file) {
 	}
 }
 
-void Timeline::load4_timelinePart(Common::InSaveFile* file) {
-	for (uint16 i = 0; i < _g369_eventMaxCount; ++i)
-		_g371_timeline[i] = file->readUint16BE();
+void Timeline::loadTimelinePart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _eventMaxCount; ++i)
+		_timeline[i] = file->readUint16BE();
 }
 
 }

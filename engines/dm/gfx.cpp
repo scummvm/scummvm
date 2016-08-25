@@ -3511,7 +3511,7 @@ T0115129_DrawProjectiles:
 					if (projectileAspectType == k3_ProjectileAspectHasNone) {
 						projectileBitmapIndexDelta = 0;
 						flipVertical = flipHorizontal = false;
-					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_g370_events[projectile->_eventIndex]._C._projectile.getDir())) != isOrientedWestEast(directionParam)) {
+					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_events[projectile->_eventIndex]._C._projectile.getDir())) != isOrientedWestEast(directionParam)) {
 						if (projectileAspectType == k2_ProjectileAspectHasRotation)
 							projectileBitmapIndexDelta = 1;
 						else

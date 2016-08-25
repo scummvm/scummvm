@@ -73,7 +73,7 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	L0468_s_Event._C._projectile.setMapY(mapY);
 	L0468_s_Event._C._projectile.setStepEnergy(stepEnergy);
 	L0468_s_Event._C._projectile.setDir(dir);
-	L0467_ps_Projectile->_eventIndex = _vm->_timeline->f238_addEventGetEventIndex(&L0468_s_Event);
+	L0467_ps_Projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(&L0468_s_Event);
 }
 
 bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo, int16 cell, Thing projectileThing) {
@@ -235,7 +235,7 @@ T0217004:
 				AL0507_ui_SoundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
 			}
 		}
-		_vm->_sound->f064_SOUND_RequestPlay_CPSD(AL0507_ui_SoundIndex, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(AL0507_ui_SoundIndex, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY, k1_soundModePlayIfPrioritized);
 	}
 T0217044:
 	if (L0509_B_RemovePotion) {
@@ -326,10 +326,10 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	L0470_ps_Explosion->setType(explThing.toUint16() - Thing::_firstExplosion.toUint16());
 	L0470_ps_Explosion->setAttack(attack);
 	if (explThing.toUint16() < Thing::_explHarmNonMaterial.toUint16()) {
-		_vm->_sound->f064_SOUND_RequestPlay_CPSD((attack > 80) ? k05_soundSTRONG_EXPLOSION : k20_soundWEAK_EXPLOSION, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay((attack > 80) ? k05_soundSTRONG_EXPLOSION : k20_soundWEAK_EXPLOSION, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
 	} else {
 		if (explThing != Thing::_explSmoke) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(k13_soundSPELL, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, k1_soundModePlayIfPrioritized);
 		}
 	}
 	_vm->_dungeonMan->linkThingToList(L0473_T_Thing, Thing(0), AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY);
@@ -340,7 +340,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	L0476_s_Event._C._slot = L0473_T_Thing.toUint16();
 	L0476_s_Event._B._location._mapX = AP0443_ui_ProjectileMapX;
 	L0476_s_Event._B._location._mapY = AP0444_ui_ProjectileMapY;
-	_vm->_timeline->f238_addEventGetEventIndex(&L0476_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L0476_s_Event);
 	if ((explThing == Thing::_explLightningBolt) || (explThing == Thing::_explFireBall)) {
 		AP0443_ui_ProjectileMapX = L0474_i_ProjectileTargetMapX;
 		AP0444_ui_ProjectileMapY = L0475_i_ProjectileTargetMapY;
@@ -397,7 +397,7 @@ void ProjExpl::projectileDeleteEvent(Thing thing) {
 
 
 	L0477_ps_Projectile = (Projectile *)_vm->_dungeonMan->getThingData(thing);
-	_vm->_timeline->f237_deleteEvent(L0477_ps_Projectile->_eventIndex);
+	_vm->_timeline->deleteEvent(L0477_ps_Projectile->_eventIndex);
 }
 
 void ProjExpl::projectileDelete(Thing projectileThing, Thing* groupSlot, int16 mapX, int16 mapY) {
@@ -508,7 +508,7 @@ void ProjExpl::processEvents48To49(TimelineEvent* event) {
 	L0519_ps_Event->Map_Time++;
 #endif
 	L0519_ps_Event->_B._slot = L0515_T_ProjectileThingNewCell.toUint16();
-	L0520_ps_Projectile->_eventIndex = _vm->_timeline->f238_addEventGetEventIndex(L0519_ps_Event);
+	L0520_ps_Projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(L0519_ps_Event);
 }
 
 void ProjExpl::processEvent25(TimelineEvent* event) {
@@ -574,7 +574,7 @@ void ProjExpl::processEvent25(TimelineEvent* event) {
 		break;
 	case 0xFFE4:
 		L0532_ps_Explosion->setType(L0532_ps_Explosion->getType() + 1);
-		_vm->_sound->f064_SOUND_RequestPlay_CPSD(k05_soundSTRONG_EXPLOSION, L0528_ui_MapX, L0529_ui_MapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, L0528_ui_MapX, L0529_ui_MapY, k1_soundModePlayIfPrioritized);
 		goto T0220026;
 	case 0xFFA8:
 		if (L0532_ps_Explosion->getAttack() > 55) {
@@ -595,7 +595,7 @@ void ProjExpl::processEvent25(TimelineEvent* event) {
 T0220026:
 			L0539_s_Event = *event;
 			L0539_s_Event._mapTime++;
-			_vm->_timeline->f238_addEventGetEventIndex(&L0539_s_Event);
+			_vm->_timeline->addEventGetEventIndex(&L0539_s_Event);
 			return;
 		}
 	}

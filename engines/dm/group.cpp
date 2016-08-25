@@ -159,7 +159,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 		} while ((currentThing = nextThing) != Thing::_endOfList);
 
 		if (mode >= k0_soundModePlayImmediately)
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(L0371_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
+			_vm->_sound->requestPlay(L0371_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 	}
 }
 
@@ -287,7 +287,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		_vm->_moveSens->getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 		currFixedPossession = *fixedPossessions++;
 	}
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
+	_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 }
 
 int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
@@ -374,7 +374,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 				L0575_s_Event._priority = 0;
 				L0575_s_Event._B._location._mapX = mapX;
 				L0575_s_Event._B._location._mapY = mapY;
-				_vm->_timeline->f238_addEventGetEventIndex(&L0575_s_Event);
+				_vm->_timeline->addEventGetEventIndex(&L0575_s_Event);
 			} else {
 				((Square *)L0574_puc_Square)->setDoorState(k5_doorState_DESTROYED);
 			}
@@ -443,8 +443,8 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 				L0378_ps_ActiveGroup = &_activeGroups[group->getActiveGroupIndex()];
 
 			if (group->getBehaviour() == k6_behavior_ATTACK) {
-				L0377_ps_Event = _vm->_timeline->_g370_events;
-				for (AL0374_ui_EventIndex = 0; AL0374_ui_EventIndex < _vm->_timeline->_g369_eventMaxCount; AL0374_ui_EventIndex++) {
+				L0377_ps_Event = _vm->_timeline->_events;
+				for (AL0374_ui_EventIndex = 0; AL0374_ui_EventIndex < _vm->_timeline->_eventMaxCount; AL0374_ui_EventIndex++) {
 					if ((getMap(L0377_ps_Event->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
 						(L0377_ps_Event->_B._location._mapX == mapX) &&
 						(L0377_ps_Event->_B._location._mapY == mapY) &&
@@ -456,11 +456,11 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 							AL0375_ui_EventType -= k38_TMEventTypeUpdateBehaviour_0; /* Get creature index for events 38 to 41 */
 						}
 						if (AL0375_ui_NextCreatureIndex == creatureIndex) {
-							_vm->_timeline->f237_deleteEvent(AL0374_ui_EventIndex);
+							_vm->_timeline->deleteEvent(AL0374_ui_EventIndex);
 						} else {
 							if (AL0375_ui_NextCreatureIndex > creatureIndex) {
 								L0377_ps_Event->_type -= 1;
-								_vm->_timeline->f236_fixChronology(_vm->_timeline->f235_getIndex(AL0374_ui_EventIndex));
+								_vm->_timeline->fixChronology(_vm->_timeline->getIndex(AL0374_ui_EventIndex));
 							}
 						}
 					}
@@ -531,12 +531,12 @@ void GroupMan::groupDeleteEvents(int16 mapX, int16 mapY) {
 	TimelineEvent *L0336_ps_Event;
 
 
-	L0336_ps_Event = _vm->_timeline->_g370_events;
-	for (L0334_i_EventIndex = 0; L0334_i_EventIndex < _vm->_timeline->_g369_eventMaxCount; L0334_i_EventIndex++) {
+	L0336_ps_Event = _vm->_timeline->_events;
+	for (L0334_i_EventIndex = 0; L0334_i_EventIndex < _vm->_timeline->_eventMaxCount; L0334_i_EventIndex++) {
 		if ((getMap(L0336_ps_Event->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
 			((L0335_ui_EventType = L0336_ps_Event->_type) > k29_TMEventTypeGroupReactionDangerOnSquare - 1) && (L0335_ui_EventType < k41_TMEventTypeUpdateBehaviour_3 + 1) &&
 			(L0336_ps_Event->_B._location._mapX == mapX) && (L0336_ps_Event->_B._location._mapY == mapY)) {
-			_vm->_timeline->f237_deleteEvent(L0334_i_EventIndex);
+			_vm->_timeline->deleteEvent(L0334_i_EventIndex);
 		}
 		L0336_ps_Event++;
 	}
@@ -664,7 +664,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 		/* BUG0_68 A group moves or acts with a wrong timing. Event is added below but L0465_s_NextEvent.C.Ticks has not been initialized. No consequence while the group is not on the party map. When the party enters the group map the first group event may have a wrong timing */
 T0209005_AddEventAndReturn:
 		L0465_s_NextEvent._mapTime += AL0446_i_Ticks;
-		_vm->_timeline->f238_addEventGetEventIndex(&L0465_s_NextEvent);
+		_vm->_timeline->addEventGetEventIndex(&L0465_s_NextEvent);
 		goto T0209139_Return;
 	}
 	/* If the creature is Lord Chaos then ignore the event if the game is won. Initialize data to analyze Fluxcages */
@@ -928,7 +928,7 @@ T0209089_DoubleSquareMove:
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
-							_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, k1_soundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
 					}
@@ -1319,7 +1319,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 				if (getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) && (L0331_ui_CreatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
+						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (!getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(L0327_ui_CreatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
@@ -1338,7 +1338,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						L1635_ui_SoundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
 						if (L1635_ui_SoundIndex <= k34_D13_soundCount)
-							_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1635_ui_SoundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(L1635_ui_SoundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
 					setFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
@@ -1386,7 +1386,7 @@ void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 	} else {
 		event->_C._ticks = time - filterTime(event->_mapTime);
 	}
-	_vm->_timeline->f238_addEventGetEventIndex(event);
+	_vm->_timeline->addEventGetEventIndex(event);
 }
 
 int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX) {
@@ -1526,7 +1526,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		AL0440_i_KineticEnergy = (L0441_ps_CreatureInfo->_attack >> 2) + 1;
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
-		_vm->_sound->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
+		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
 		_vm->_projexpl->createProjectile(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
@@ -1555,7 +1555,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 	}
 	AL0440_i_AttackSoundOrdinal = L0441_ps_CreatureInfo->_attackSoundOrdinal;
 	if (AL0440_i_AttackSoundOrdinal)
-		_vm->_sound->f064_SOUND_RequestPlay_CPSD(G0244_auc_Graphic559_CreatureAttackSounds[--AL0440_i_AttackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(G0244_auc_Graphic559_CreatureAttackSounds[--AL0440_i_AttackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
 
 	return true;
 }
@@ -1679,7 +1679,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 		AL0558_i_Damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, AL0558_i_Attack, AL0561_ui_AllowedWound, L0564_s_CreatureInfo._attackType);
 		if (AL0558_i_Damage) {
-			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
+			_vm->_sound->requestPlay(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 
 			AL0559_ui_PoisonAttack = L0564_s_CreatureInfo._poisonAttack;
 			if (AL0559_ui_PoisonAttack && _vm->getRandomNumber(2)) {
@@ -1723,7 +1723,7 @@ void GroupMan::startWanedring(int16 mapX, int16 mapY) {
 	L0333_s_Event._C._ticks = 0;
 	L0333_s_Event._B._location._mapX = mapX;
 	L0333_s_Event._B._location._mapY = mapY;
-	_vm->_timeline->f238_addEventGetEventIndex(&L0333_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L0333_s_Event);
 }
 
 void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
@@ -1853,7 +1853,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 	if (_vm->_moveSens->getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
-	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
 	return L0349_T_GroupThing;
 }
 
@@ -1995,7 +1995,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	L0547_s_Event._B._location._mapX = mapX;
 	L0547_s_Event._B._location._mapY = mapY;
 	L0547_s_Event._B._location._mapY = mapY;
-	_vm->_timeline->f238_addEventGetEventIndex(&L0547_s_Event);
+	_vm->_timeline->addEventGetEventIndex(&L0547_s_Event);
 	if (isLordChaosOnSquare(mapX, mapY - 1)) {
 		mapY--;
 		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX + 1, mapY);
