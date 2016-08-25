@@ -516,24 +516,6 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 	}
 }
 
-static const int corrections[] = {
-	1026, 27, 27, // Macro
-	1027, 164, 170, // House
-	1028, 154, 154, // Macromind Director
-	1029, 158, 158, // Upper inscription
-	1030, 54, 54, // lift
-	1031, 116, 116, // Lower inscription
-	1032, 113, 113, // Lower inscription 2
-	1039, 50, 50,
-	1041, 110, 110, // descr
-	1042, 120, 121, // descr 2
-	1065, 27, 19, // car
-	1109, 104, 112, // taxi
-	1110, 90, 96, // taxi
-	1111, 74, 80, // taxi
-	0, 0, 0
-};
-
 Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 	uint16 imgId = spriteId + 1024;
 	Image::ImageDecoder *img = NULL;
@@ -559,17 +541,6 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
-
-			bool c = false;
-			for (int i = 0; corrections[i]; i += 3)
-				if (corrections[i] == imgId) {
-					//w = corrections[i + 2];
-					c = true;
-					break;
-				}
-
-			if (!c)
-				debugC(4, kDebugImages, "%d, %d, %d", imgId, w, h);
 
 			int w1 = w;
 			if (w % 16)
