@@ -533,7 +533,6 @@ void RobotDecoder::initRecordAndCuePositions() {
 
 void RobotDecoder::open(const GuiResourceId robotId, const reg_t plane, const int16 priority, const int16 x, const int16 y, const int16 scale) {
 	if (_status != kRobotStatusUninitialized) {
-		warning("Last robot was not closed");
 		close();
 	}
 
