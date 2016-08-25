@@ -505,7 +505,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
 	{ SIG_SCI32,           1, MAP_CALL(StringSize),                "[or]",                 NULL },
 	{ SIG_SCI32,           2, MAP_CALL(StringAt),                  "[or]i",                NULL },
-	{ SIG_SCI32,           3, MAP_CALL(StringPutAt),               "[or]i(i*)",            NULL },
+	{ SIG_SCI32,           3, MAP_CALL(StringPutAt),               "[or]i(i*)",            kStringPutAt_workarounds },
 	// StringFree accepts invalid references
 	{ SIG_SCI32,           4, MAP_CALL(StringFree),                "[or0!]",               NULL },
 	{ SIG_SCI32,           5, MAP_CALL(StringFill),                "[or]ii",               NULL },

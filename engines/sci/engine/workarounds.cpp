@@ -767,6 +767,11 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
+const SciWorkaroundEntry kStringPutAt_workarounds[] = {
+	{ GID_PHANTASMAGORIA,902, 64918, 0,                 "Str", "callKernel",                 NULL,     0, { WORKAROUND_IGNORE, 0 } }, // When starting a new game from after chapter 1, the game tries to save ego's object in a string
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
 const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 	{ GID_PHANTASMAGORIA, 45, 64907,  0,   "ScrollableWindow", "addString",                  NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // ScrollWindow interface passes the last two parameters twice
 };
