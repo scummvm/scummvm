@@ -439,6 +439,8 @@ void Score::dumpScript(const char *script, ScriptType type, uint16 id) {
 	char buf[256];
 
 	switch (type) {
+	case kNoneScript:
+		error("Incorrect dumpScript() call");
 	case kFrameScript:
 		typeName = "frame";
 		break;
