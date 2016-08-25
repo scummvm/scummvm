@@ -37,16 +37,16 @@
 namespace DM {
 
 ProjExpl::ProjExpl(DMEngine* vm) : _vm(vm) {
-	_g364_creatureDamageOutcome = 0;
-	_g363_secondaryDirToOrFromParty = 0;
-	_g361_lastCreatureAttackTime = -200;
-	_g365_createLanucherProjectile = false;
-	_g366_projectilePoisonAttack = 0;
-	_g367_projectileAttackType = 0;
-	_g362_lastPartyMovementTime = 0;
+	_creatureDamageOutcome = 0;
+	_secondaryDirToOrFromParty = 0;
+	_lastCreatureAttackTime = -200;
+	_createLauncherProjectile = false;
+	_projectilePoisonAttack = 0;
+	_projectileAttackType = 0;
+	_lastPartyMovementTime = 0;
 }
 
-void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
+void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
 	Thing L0466_T_ProjectileThing;
 	Projectile* L0467_ps_Projectile;
 	TimelineEvent L0468_s_Event;
@@ -62,7 +62,7 @@ void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16
 	L0467_ps_Projectile->_attack = attack;
 	_vm->_dungeonMan->linkThingToList(L0466_T_ProjectileThing, Thing(0), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
 	setMapAndTime(L0468_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
-	if (_g365_createLanucherProjectile) {
+	if (_createLauncherProjectile) {
 		L0468_s_Event._type = k49_TMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
 	} else {
 		L0468_s_Event._type = k48_TMEventTypeMoveProjectileIgnoreImpacts; /* Projectiles created by champions or creatures ignore impacts on their first movement */
@@ -76,7 +76,7 @@ void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16
 	L0467_ps_Projectile->_eventIndex = _vm->_timeline->f238_addEventGetEventIndex(&L0468_s_Event);
 }
 
-bool ProjExpl::f217_projectileHasImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo, int16 cell, Thing projectileThing) {
+bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo, int16 cell, Thing projectileThing) {
 #define AP0454_i_ProjectileTargetMapX mapXCombo
 #define AP0455_i_ProjectileTargetMapY mapYCombo
 #define AP0456_i_ChampionIndex cell
@@ -116,7 +116,7 @@ bool ProjExpl::f217_projectileHasImpactOccurred(int16 impactType, int16 mapXComb
 	L0501_i_MapXCombo = mapXCombo;
 	L0502_i_MapYCombo = mapYCombo;
 	L0509_B_RemovePotion = false;
-	_g364_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
+	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
 	if ((L0510_i_ProjectileAssociatedThingType = (L0486_T_ProjectileAssociatedThing = L0490_ps_Projectile->_slot).getType()) == k8_PotionThingType) {
 		L0491_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0486_T_ProjectileAssociatedThing);
 		switch (((Potion *)L0491_ps_Group)->getType()) {
@@ -164,19 +164,19 @@ T0217004:
 			 ((L0490_ps_Projectile->_attack > _vm->getRandomNumber(128)) &&
 			  getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L0486_T_ProjectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
 			  && ((L0510_i_ProjectileAssociatedThingType != k10_JunkThingType) ||
-			  ((AL0487_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0486_T_ProjectileAssociatedThing)) < 0) ||
+			  ((AL0487_i_IconIndex = _vm->_objectMan->getIconIndex(L0486_T_ProjectileAssociatedThing)) < 0) ||
 				  (!((AL0487_i_IconIndex >= k176_IconIndiceJunkIronKey) && (AL0487_i_IconIndex <= k191_IconIndiceJunkMasterKey))))
 			  )))) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
 			return false;
 		}
-		L0488_i_Attack = f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) + 1;
+		L0488_i_Attack = getProjectileImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) + 1;
 		_vm->_groupMan->groupIsDoorDestoryedByAttack(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->getRandomNumber(L0488_i_Attack), false, 0);
 		break;
 	case kM2_ChampionElemType:
 		if ((AP0456_i_ChampionIndex = _vm->_championMan->getIndexInCell(cell)) < 0) {
 			return false;
 		}
-		L0489_i_ChampionAttack = L0488_i_Attack = f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing);
+		L0489_i_ChampionAttack = L0488_i_Attack = getProjectileImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing);
 		break;
 	case kM1_CreatureElemType:
 		L0491_ps_Group = (Group *)_vm->_dungeonMan->getThingData(_vm->_groupMan->groupGetThing(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY));
@@ -187,18 +187,18 @@ T0217004:
 		L0493_ps_CreatureInfo = &g243_CreatureInfo[L0511_ui_CreatureType = L0491_ps_Group->_type];
 		if ((L0486_T_ProjectileAssociatedThing == Thing::_explFireBall) && (L0511_ui_CreatureType == k11_CreatureTypeBlackFlame)) {
 			L0496_pui_CreatureHealth = &L0491_ps_Group->_health[L0512_ui_CreatureIndex];
-			*L0496_pui_CreatureHealth = MIN(1000, *L0496_pui_CreatureHealth + f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing));
+			*L0496_pui_CreatureHealth = MIN(1000, *L0496_pui_CreatureHealth + getProjectileImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing));
 			goto T0217044;
 		}
 		if (getFlag(L0493_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) && (L0486_T_ProjectileAssociatedThing != Thing::_explHarmNonMaterial)) {
 			return false;
 		}
-		L0488_i_Attack = (uint16)((unsigned long)f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) << 6) / L0493_ps_CreatureInfo->_defense;
+		L0488_i_Attack = (uint16)((unsigned long)getProjectileImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) << 6) / L0493_ps_CreatureInfo->_defense;
 		if (L0488_i_Attack) {
-			if ((AL0487_i_Outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(L0491_ps_Group, L0512_ui_CreatureIndex, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(L0511_ui_CreatureType, _g366_projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup) {
+			if ((AL0487_i_Outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(L0491_ps_Group, L0512_ui_CreatureIndex, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(L0511_ui_CreatureType, _projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup) {
 				_vm->_groupMan->processEvents29to41(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
 			}
-			_g364_creatureDamageOutcome = AL0487_i_Outcome;
+			_creatureDamageOutcome = AL0487_i_Outcome;
 			if (!L0505_B_CreateExplosionOnImpact &&
 				(AL0487_i_Outcome == k0_outcomeKilledNoCreaturesInGroup) &&
 				(L0510_i_ProjectileAssociatedThingType == k5_WeaponThingType) &&
@@ -211,8 +211,8 @@ T0217004:
 			}
 		}
 	}
-	if (L0489_i_ChampionAttack && _vm->_championMan->addPendingDamageAndWounds_getDamage(AP0456_i_ChampionIndex, L0488_i_Attack, k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso, _g367_projectileAttackType) && _g366_projectilePoisonAttack && _vm->getRandomNumber(2)) {
-		_vm->_championMan->championPoison(AP0456_i_ChampionIndex, _g366_projectilePoisonAttack);
+	if (L0489_i_ChampionAttack && _vm->_championMan->addPendingDamageAndWounds_getDamage(AP0456_i_ChampionIndex, L0488_i_Attack, k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso, _projectileAttackType) && _projectilePoisonAttack && _vm->getRandomNumber(2)) {
+		_vm->_championMan->championPoison(AP0456_i_ChampionIndex, _projectilePoisonAttack);
 	}
 	if (L0505_B_CreateExplosionOnImpact || L0509_B_RemovePotion
 		) {
@@ -224,7 +224,7 @@ T0217004:
 		}
 		if ((L0486_T_ProjectileAssociatedThing == Thing::_explLightningBolt) && !(AL0507_ui_ExplosionAttack >>= 1))
 			goto T0217044;
-		f213_explosionCreate(L0486_T_ProjectileAssociatedThing, AL0507_ui_ExplosionAttack, L0501_i_MapXCombo, L0502_i_MapYCombo, (L0486_T_ProjectileAssociatedThing == Thing::_explPoisonCloud) ? k255_CreatureTypeSingleCenteredCreature : cell);
+		createExplosion(L0486_T_ProjectileAssociatedThing, AL0507_ui_ExplosionAttack, L0501_i_MapXCombo, L0502_i_MapYCombo, (L0486_T_ProjectileAssociatedThing == Thing::_explPoisonCloud) ? k255_CreatureTypeSingleCenteredCreature : cell);
 	} else {
 		if ((L0486_T_ProjectileAssociatedThing).getType() == k5_WeaponThingType) {
 			AL0507_ui_SoundIndex = k00_soundMETALLIC_THUD;
@@ -243,11 +243,11 @@ T0217044:
 		L0490_ps_Projectile->_slot = L0498_T_ExplosionThing;
 	}
 	_vm->_dungeonMan->unlinkThingFromList(projectileThing, Thing(0), L0499_i_ProjectileMapX, L0500_i_ProjectileMapY);
-	f215_projectileDelete(projectileThing, L0497_pT_GroupSlot, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY);
+	projectileDelete(projectileThing, L0497_pT_GroupSlot, L0499_i_ProjectileMapX, L0500_i_ProjectileMapY);
 	return true;
 }
 
-uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing thing) {
+uint16 ProjExpl::getProjectileImpactAttack(Projectile* projectile, Thing thing) {
 	WeaponInfo* L0485_ps_WeaponInfo;
 	uint16 L0483_ui_Multiple;
 #define AL0483_ui_ThingType L0483_ui_Multiple
@@ -255,15 +255,15 @@ uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing th
 	uint16 L0484_ui_KineticEnergy;
 
 
-	_g366_projectilePoisonAttack = 0;
-	_g367_projectileAttackType = k3_attackType_BLUNT;
+	_projectilePoisonAttack = 0;
+	_projectileAttackType = k3_attackType_BLUNT;
 
 	L0484_ui_KineticEnergy = projectile->_kineticEnergy;
 	if ((AL0483_ui_ThingType = thing.getType()) != k15_ExplosionThingType) {
 		if (AL0483_ui_ThingType == k5_WeaponThingType) {
 			L0485_ps_WeaponInfo = _vm->_dungeonMan->getWeaponInfo(thing);
 			AL0483_ui_Attack = L0485_ps_WeaponInfo->_kineticEnergy;
-			_g367_projectileAttackType = k3_attackType_BLUNT;
+			_projectileAttackType = k3_attackType_BLUNT;
 		} else {
 			AL0483_ui_Attack = _vm->getRandomNumber(4);
 		}
@@ -271,21 +271,21 @@ uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing th
 	} else {
 		if (thing == Thing::_explSlime) {
 			AL0483_ui_Attack = _vm->getRandomNumber(16);
-			_g366_projectilePoisonAttack = AL0483_ui_Attack + 10;
+			_projectilePoisonAttack = AL0483_ui_Attack + 10;
 			AL0483_ui_Attack += _vm->getRandomNumber(32);
 		} else {
 			if (thing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) {
-				_g367_projectileAttackType = k5_attackType_MAGIC;
+				_projectileAttackType = k5_attackType_MAGIC;
 				if (thing == Thing::_explPoisonBolt) {
-					_g366_projectilePoisonAttack = L0484_ui_KineticEnergy;
+					_projectilePoisonAttack = L0484_ui_KineticEnergy;
 					return 1;
 				}
 				return 0;
 			}
-			_g367_projectileAttackType = k1_attackType_FIRE;
+			_projectileAttackType = k1_attackType_FIRE;
 			AL0483_ui_Attack = _vm->getRandomNumber(16) + _vm->getRandomNumber(16) + 10;
 			if (thing == Thing::_explLightningBolt) {
-				_g367_projectileAttackType = k7_attackType_LIGHTNING;
+				_projectileAttackType = k7_attackType_LIGHTNING;
 				AL0483_ui_Attack *= 5;
 			}
 		}
@@ -296,7 +296,7 @@ uint16 ProjExpl::f216_projectileGetImpactAttack(Projectile* projectile, Thing th
 	return AL0483_ui_Attack;
 }
 
-void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXCombo, uint16 mapYCombo, uint16 cell) {
+void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo, uint16 mapYCombo, uint16 cell) {
 #define AP0443_ui_ProjectileMapX mapXCombo
 #define AP0444_ui_ProjectileMapY mapYCombo
 	Thing L0473_T_Thing = _vm->_dungeonMan->getUnusedThing(k15_ExplosionThingType);
@@ -359,7 +359,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 							attack >>= 2;
 						}
 						if ((attack -= _vm->getRandomNumber((L0469_i_CreatureFireResistance << 1) + 1)) > 0) {
-							_g364_creatureDamageOutcome = _vm->_groupMan->getDamageAllCreaturesOutcome(L0472_ps_Group, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, attack, true);
+							_creatureDamageOutcome = _vm->_groupMan->getDamageAllCreaturesOutcome(L0472_ps_Group, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, attack, true);
 						}
 					}
 				}
@@ -368,22 +368,22 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 	}
 }
 
-int16 ProjExpl::f218_projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell) {
+int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell) {
 	Thing L0513_T_Thing;
 	int16 L0514_i_ImpactCount;
 
 
 	L0514_i_ImpactCount = 0;
-	_g364_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
+	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
 T0218001:
 	L0513_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (L0513_T_Thing != Thing::_endOfList) {
 		if (((L0513_T_Thing).getType() == k14_ProjectileThingType) &&
 			((L0513_T_Thing).getCell() == cell) &&
-			f217_projectileHasImpactOccurred(impactType, mapX, mapY, cell, L0513_T_Thing)) {
-			f214_projectileDeleteEvent(L0513_T_Thing);
+			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, L0513_T_Thing)) {
+			projectileDeleteEvent(L0513_T_Thing);
 			L0514_i_ImpactCount++;
-			if ((impactType == kM1_CreatureElemType) && (_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
+			if ((impactType == kM1_CreatureElemType) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
 				break;
 			goto T0218001;
 		}
@@ -392,7 +392,7 @@ T0218001:
 	return L0514_i_ImpactCount;
 }
 
-void ProjExpl::f214_projectileDeleteEvent(Thing thing) {
+void ProjExpl::projectileDeleteEvent(Thing thing) {
 	Projectile* L0477_ps_Projectile;
 
 
@@ -400,7 +400,7 @@ void ProjExpl::f214_projectileDeleteEvent(Thing thing) {
 	_vm->_timeline->f237_deleteEvent(L0477_ps_Projectile->_eventIndex);
 }
 
-void ProjExpl::f215_projectileDelete(Thing projectileThing, Thing* groupSlot, int16 mapX, int16 mapY) {
+void ProjExpl::projectileDelete(Thing projectileThing, Thing* groupSlot, int16 mapX, int16 mapY) {
 	Projectile *L0480_ps_Projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	Thing L0479_T_Thing = L0480_ps_Projectile->_slot;
 	if (L0479_T_Thing.getType() != k15_ExplosionThingType) {
@@ -420,7 +420,7 @@ void ProjExpl::f215_projectileDelete(Thing projectileThing, Thing* groupSlot, in
 	L0480_ps_Projectile->_nextThing = Thing::_none;
 }
 
-void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
+void ProjExpl::processEvents48To49(TimelineEvent* event) {
 	TimelineEvent* L0519_ps_Event;
 	Projectile* L0520_ps_Projectile;
 	Thing L0515_T_ProjectileThingNewCell;
@@ -447,15 +447,15 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		L0519_ps_Event->_type = k49_TMEventTypeMoveProjectile;
 	} else {
 		L0518_ui_Cell = (L0515_T_ProjectileThingNewCell).getCell();
-		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0523_i_DestinationMapX == _vm->_dungeonMan->_partyMapX) && (L0524_i_DestinationMapY == _vm->_dungeonMan->_partyMapY) && f217_projectileHasImpactOccurred(kM2_ChampionElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0523_i_DestinationMapX == _vm->_dungeonMan->_partyMapX) && (L0524_i_DestinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kM2_ChampionElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
 			return;
 		}
-		if ((_vm->_groupMan->groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && f217_projectileHasImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+		if ((_vm->_groupMan->groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
 			return;
 		}
 		if (L0520_ps_Projectile->_kineticEnergy <= (AL0516_ui_StepEnergy = L0519_ps_Event->_C._projectile.getStepEnergy())) {
 			_vm->_dungeonMan->unlinkThingFromList(L0515_T_ProjectileThingNewCell = L0521_T_ProjectileThing, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-			f215_projectileDelete(L0515_T_ProjectileThingNewCell, NULL, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+			projectileDelete(L0515_T_ProjectileThingNewCell, NULL, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
 			return;
 		}
 		L0520_ps_Projectile->_kineticEnergy -= AL0516_ui_StepEnergy;
@@ -477,7 +477,7 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		if ((Square(AL0516_ui_Square).getType() == k0_WallElemType) ||
 			((Square(AL0516_ui_Square).getType() == k6_FakeWallElemType) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
 			((Square(AL0516_ui_Square).getType() == k3_StairsElemType) && (Square(_vm->_dungeonMan->_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_StairsElemType))) {
-			if (f217_projectileHasImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+			if (hasProjectileImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
 				return;
 			}
 		}
@@ -496,7 +496,7 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		L0515_T_ProjectileThingNewCell = thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_moveSens->_moveResultCell);
 		M31_setMap(L0519_ps_Event->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
-		if ((Square(_vm->_dungeonMan->getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && f217_projectileHasImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+		if ((Square(_vm->_dungeonMan->getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && hasProjectileImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
 			return;
 		}
 		_vm->_dungeonMan->unlinkThingFromList(L0515_T_ProjectileThingNewCell, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
@@ -511,7 +511,7 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 	L0520_ps_Projectile->_eventIndex = _vm->_timeline->f238_addEventGetEventIndex(L0519_ps_Event);
 }
 
-void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
+void ProjExpl::processEvent25(TimelineEvent* event) {
 	Explosion* L0532_ps_Explosion;
 	Group* L0533_ps_Group = nullptr;
 	CreatureInfo* L0534_ps_CreatureInfo = nullptr;

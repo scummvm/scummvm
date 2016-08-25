@@ -208,12 +208,12 @@ bool Console::Cmd_listItems(int argc, const char** argv) {
 	bool atleastOneFound = false;
 	int16 namesPrintedInLine = 0;
 
-	if(strstr(_vm->_objectMan->_g352_objectNames[0], searchedString.c_str()) != nullptr)
-		debugPrintf("| %s", _vm->_objectMan->_g352_objectNames[0]);
+	if(strstr(_vm->_objectMan->_objectNames[0], searchedString.c_str()) != nullptr)
+		debugPrintf("| %s", _vm->_objectMan->_objectNames[0]);
 
 	for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
-		const char *name = _vm->_objectMan->_g352_objectNames[i - 1];
-		const char *prevName = _vm->_objectMan->_g352_objectNames[i];
+		const char *name = _vm->_objectMan->_objectNames[i - 1];
+		const char *prevName = _vm->_objectMan->_objectNames[i];
 
 		if (!cstrEquals(name, prevName) && (strstr(name, searchedString.c_str()) != nullptr)) {
 			debugPrintf(" | %s", name);
@@ -257,9 +257,9 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 		dummyThing.setType(thingType);
 		for (int16 thingIndex = 0; thingIndex < thingCount; ++thingIndex) {
 			dummyThing.setIndex(thingIndex);
-			int16 iconIndex = _vm->_objectMan->f33_getIconIndex(dummyThing);
+			int16 iconIndex = _vm->_objectMan->getIconIndex(dummyThing);
 			if (iconIndex != -1) {
-				const char *displayName = _vm->_objectMan->_g352_objectNames[iconIndex];
+				const char *displayName = _vm->_objectMan->_objectNames[iconIndex];
 				if (cstrEquals(displayName, requestedItemName.c_str())) {
 					uint16 *newThingData = new uint16[(thingCount + 1) * thingTypeSize];
 					memcpy(newThingData, thingDataArray, sizeof(uint16) * thingTypeSize * thingCount);

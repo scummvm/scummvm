@@ -282,13 +282,13 @@ void Timeline::f261_processTimeline() {
 			switch (AL0680_ui_EventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
 			case k49_TMEventTypeMoveProjectile:
-				_vm->_projexpl->f219_processEvents48To49_projectile(L0681_ps_Event);
+				_vm->_projexpl->processEvents48To49(L0681_ps_Event);
 				break;
 			case k1_TMEventTypeDoorAnimation:
 				f241_timelineProcessEvent1_doorAnimation(L0681_ps_Event);
 				break;
 			case k25_TMEventTypeExplosion:
-				_vm->_projexpl->f220_explosionProcessEvent25_explosion(L0681_ps_Event);
+				_vm->_projexpl->processEvent25(L0681_ps_Event);
 				break;
 			case k7_TMEventTypeFakeWall:
 				f242_timelineProcessEvent7_squareFakewall(L0681_ps_Event);
@@ -784,12 +784,12 @@ void Timeline::f247_triggerProjectileLauncher(Sensor* sensor, TimelineEvent* eve
 		L0628_ui_ProjectileCell = normalizeModulo4(L0628_ui_ProjectileCell + _vm->getRandomNumber(2));
 	}
 	L0626_i_MapX += _vm->_dirIntoStepCountEast[L0624_ui_Cell], L0627_i_MapY += _vm->_dirIntoStepCountNorth[L0624_ui_Cell]; /* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
-	_vm->_projexpl->_g365_createLanucherProjectile = true;
-	_vm->_projexpl->f212_projectileCreate(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+	_vm->_projexpl->_createLauncherProjectile = true;
+	_vm->_projexpl->createProjectile(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
 	if (!L0632_B_LaunchSingleProjectile) {
-		_vm->_projexpl->f212_projectileCreate(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
+		_vm->_projexpl->createProjectile(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
 	}
-	_vm->_projexpl->_g365_createLanucherProjectile = false;
+	_vm->_projexpl->_createLauncherProjectile = false;
 }
 
 void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
@@ -1063,7 +1063,7 @@ void Timeline::f255_timelineProcessEvent13_ViAltarRebirth(TimelineEvent* event) 
 	L0671_ui_ChampionIndex = event->_priority;
 	switch (L0670_ui_Step = event->_C.A._effect) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
 	case 2:
-		_vm->_projexpl->f213_explosionCreate(Thing::_explRebirthStep1, 0, L0664_i_MapX, L0665_i_MapY, L0666_ui_Cell);
+		_vm->_projexpl->createExplosion(Thing::_explRebirthStep1, 0, L0664_i_MapX, L0665_i_MapY, L0666_ui_Cell);
 		event->_mapTime += 5;
 T0255002:
 		L0670_ui_Step--;
@@ -1074,7 +1074,7 @@ T0255002:
 		L0667_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
 		while (L0667_T_Thing != Thing::_endOfList) {
 			if ((L0667_T_Thing.getCell() == L0666_ui_Cell) && (L0667_T_Thing.getType() == k10_JunkThingType)) {
-				L0669_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L0667_T_Thing);
+				L0669_i_IconIndex = _vm->_objectMan->getIconIndex(L0667_T_Thing);
 				if (L0669_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 					L0668_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L0667_T_Thing);
 					if (L0668_ps_Junk->getChargeCount() == L0671_ui_ChampionIndex) {

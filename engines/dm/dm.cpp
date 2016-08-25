@@ -456,7 +456,7 @@ void DMEngine::gameloop() {
 			if (_setMousePointerToObjectInMainLoop) {
 				_setMousePointerToObjectInMainLoop = false;
 				_eventMan->showMouse();
-				_eventMan->setPointerToObject(_objectMan->_g412_objectIconForMousePointer);
+				_eventMan->setPointerToObject(_objectMan->_objectIconForMousePointer);
 				_eventMan->hideMouse();
 
 			}
@@ -1002,14 +1002,14 @@ T0446002:
 
 	fuseSequenceUpdate();
 	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->f213_explosionCreate(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
 	L1428_ps_Group->_type = k25_CreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	for (AL1425_i_CycleCount = 4; --AL1425_i_CycleCount; ) {
@@ -1019,8 +1019,8 @@ T0446002:
 			for (AL1426_i_FuseSequenceUpdateCount = AL1425_i_CycleCount; AL1426_i_FuseSequenceUpdateCount--; fuseSequenceUpdate());
 		}
 	}
-	_projexpl->f213_explosionCreate(Thing::_explFireBall, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
-	_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explFireBall, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 	fuseSequenceUpdate();
 	L1428_ps_Group->_type = k26_CreatureTypeGreyLord;
 	fuseSequenceUpdate();
@@ -1061,7 +1061,7 @@ T0446002:
 	}
 
 	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 

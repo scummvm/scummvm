@@ -103,8 +103,8 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_timeline->_g373_firstUnusedEventIndex = file->readUint16BE();
 		_timeline->_g369_eventMaxCount = file->readUint16BE();
 		_groupMan->_currActiveGroupCount = file->readUint16BE();
-		_projexpl->_g361_lastCreatureAttackTime = file->readSint32BE();
-		_projexpl->_g362_lastPartyMovementTime = file->readSint32BE();
+		_projexpl->_lastCreatureAttackTime = file->readSint32BE();
+		_projexpl->_lastPartyMovementTime = file->readSint32BE();
 		_disabledMovementTicks = file->readSint16BE();
 		_projectileDisableMovementTicks = file->readSint16BE();
 		_lastProjectileDisabledMovementDirection = file->readSint16BE();
@@ -319,8 +319,8 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeUint16BE(_timeline->_g373_firstUnusedEventIndex);
 	file->writeUint16BE(_timeline->_g369_eventMaxCount);
 	file->writeUint16BE(_groupMan->_currActiveGroupCount);
-	file->writeSint32BE(_projexpl->_g361_lastCreatureAttackTime);
-	file->writeSint32BE(_projexpl->_g362_lastPartyMovementTime);
+	file->writeSint32BE(_projexpl->_lastCreatureAttackTime);
+	file->writeSint32BE(_projexpl->_lastPartyMovementTime);
 	file->writeSint16BE(_disabledMovementTicks);
 	file->writeSint16BE(_projectileDisableMovementTicks);
 	file->writeSint16BE(_lastProjectileDisabledMovementDirection);

@@ -158,12 +158,12 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	if (thing == Thing::_none) {
 		iconIndex = k201_IconIndiceActionEmptyHand;
 	} else if (_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
-		iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
+		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
 		dm.fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
 		goto T0386006;
 	}
-	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, bitmapIcon);
+	_vm->_objectMan->extractIconFromBitmap(iconIndex, bitmapIcon);
 	dm.blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, palChangesActionAreaObjectIcon);
 T0386006:
 	dm.fillScreenBox(box, k4_ColorCyan);
@@ -739,7 +739,7 @@ Potion* MenuMan::getEmptyFlaskInHand(Champion* champ, Thing* potionThing) {
 	int16 L1266_i_SlotIndex;
 
 	for (L1266_i_SlotIndex = k2_ChampionSlotHead; --L1266_i_SlotIndex >= k0_ChampionSlotReadyHand; ) {
-		if (((L1265_T_Thing = champ->_slots[L1266_i_SlotIndex]) != Thing::_none) && (_vm->_objectMan->f33_getIconIndex(L1265_T_Thing) == k195_IconIndicePotionEmptyFlask)) {
+		if (((L1265_T_Thing = champ->_slots[L1266_i_SlotIndex]) != Thing::_none) && (_vm->_objectMan->getIconIndex(L1265_T_Thing) == k195_IconIndicePotionEmptyFlask)) {
 			*potionThing = L1265_T_Thing;
 			return (Potion*)_vm->_dungeonMan->getThingData(L1265_T_Thing);
 		}
@@ -1490,7 +1490,7 @@ T0402005: /* Check if there is another champion in front */
 			goto T0402010;
 		AL1237_ui_ActionHitProbability = G0493_auc_Graphic560_ActionHitProbability[actionIndex];
 		AL1236_ui_ActionDamageFactor = G0492_auc_Graphic560_ActionDamageFactor[actionIndex];
-		if ((_vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
+		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
 		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);

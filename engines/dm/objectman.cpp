@@ -44,62 +44,62 @@ int16 g26_IconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIc
 
 ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	/* 8 for champion hands in status boxes, 30 for champion inventory, 8 for chest */
-	_g30_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
-	_g30_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
-	_g30_slotBoxes[2] = SlotBox(73, 10, 0);   /* Champion Status Box 1 Ready Hand */
-	_g30_slotBoxes[3] = SlotBox(93, 10, 0);   /* Champion Status Box 1 Action Hand */
-	_g30_slotBoxes[4] = SlotBox(142, 10, 0);  /* Champion Status Box 2 Ready Hand */
-	_g30_slotBoxes[5] = SlotBox(162, 10, 0);  /* Champion Status Box 2 Action Hand */
-	_g30_slotBoxes[6] = SlotBox(211, 10, 0);  /* Champion Status Box 3 Ready Hand */
-	_g30_slotBoxes[7] = SlotBox(231, 10, 0);  /* Champion Status Box 3 Action Hand */
-	_g30_slotBoxes[8] = SlotBox(6, 53, 0);    /* Ready Hand */
-	_g30_slotBoxes[9] = SlotBox(62, 53, 0);   /* Action Hand */
-	_g30_slotBoxes[10] = SlotBox(34, 26, 0);  /* Head */
-	_g30_slotBoxes[11] = SlotBox(34, 46, 0);  /* Torso */
-	_g30_slotBoxes[12] = SlotBox(34, 66, 0);  /* Legs */
-	_g30_slotBoxes[13] = SlotBox(34, 86, 0);  /* Feet */
-	_g30_slotBoxes[14] = SlotBox(6, 90, 0);   /* Pouch 2 */
-	_g30_slotBoxes[15] = SlotBox(79, 73, 0);  /* Quiver Line2 1 */
-	_g30_slotBoxes[16] = SlotBox(62, 90, 0);  /* Quiver Line1 2 */
-	_g30_slotBoxes[17] = SlotBox(79, 90, 0);  /* Quiver Line2 2 */
-	_g30_slotBoxes[18] = SlotBox(6, 33, 0);   /* Neck */
-	_g30_slotBoxes[19] = SlotBox(6, 73, 0);   /* Pouch 1 */
-	_g30_slotBoxes[20] = SlotBox(62, 73, 0);  /* Quiver Line1 1 */
-	_g30_slotBoxes[21] = SlotBox(66, 33, 0);  /* Backpack Line1 1 */
-	_g30_slotBoxes[22] = SlotBox(83, 16, 0);  /* Backpack Line2 2 */
-	_g30_slotBoxes[23] = SlotBox(100, 16, 0); /* Backpack Line2 3 */
-	_g30_slotBoxes[24] = SlotBox(117, 16, 0); /* Backpack Line2 4 */
-	_g30_slotBoxes[25] = SlotBox(134, 16, 0); /* Backpack Line2 5 */
-	_g30_slotBoxes[26] = SlotBox(151, 16, 0); /* Backpack Line2 6 */
-	_g30_slotBoxes[27] = SlotBox(168, 16, 0); /* Backpack Line2 7 */
-	_g30_slotBoxes[28] = SlotBox(185, 16, 0); /* Backpack Line2 8 */
-	_g30_slotBoxes[29] = SlotBox(202, 16, 0); /* Backpack Line2 9 */
-	_g30_slotBoxes[30] = SlotBox(83, 33, 0);  /* Backpack Line1 2 */
-	_g30_slotBoxes[31] = SlotBox(100, 33, 0); /* Backpack Line1 3 */
-	_g30_slotBoxes[32] = SlotBox(117, 33, 0); /* Backpack Line1 4 */
-	_g30_slotBoxes[33] = SlotBox(134, 33, 0); /* Backpack Line1 5 */
-	_g30_slotBoxes[34] = SlotBox(151, 33, 0); /* Backpack Line1 6 */
-	_g30_slotBoxes[35] = SlotBox(168, 33, 0); /* Backpack Line1 7 */
-	_g30_slotBoxes[36] = SlotBox(185, 33, 0); /* Backpack Line1 8 */
-	_g30_slotBoxes[37] = SlotBox(202, 33, 0); /* Backpack Line1 9 */
-	_g30_slotBoxes[38] = SlotBox(117, 59, 0); /* Chest 1 */
-	_g30_slotBoxes[39] = SlotBox(106, 76, 0); /* Chest 2 */
-	_g30_slotBoxes[40] = SlotBox(111, 93, 0); /* Chest 3 */
-	_g30_slotBoxes[41] = SlotBox(128, 98, 0); /* Chest 4 */
-	_g30_slotBoxes[42] = SlotBox(145, 101, 0); /* Chest 5 */
-	_g30_slotBoxes[43] = SlotBox(162, 103, 0); /* Chest 6 */
-	_g30_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
-	_g30_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
+	_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
+	_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
+	_slotBoxes[2] = SlotBox(73, 10, 0);   /* Champion Status Box 1 Ready Hand */
+	_slotBoxes[3] = SlotBox(93, 10, 0);   /* Champion Status Box 1 Action Hand */
+	_slotBoxes[4] = SlotBox(142, 10, 0);  /* Champion Status Box 2 Ready Hand */
+	_slotBoxes[5] = SlotBox(162, 10, 0);  /* Champion Status Box 2 Action Hand */
+	_slotBoxes[6] = SlotBox(211, 10, 0);  /* Champion Status Box 3 Ready Hand */
+	_slotBoxes[7] = SlotBox(231, 10, 0);  /* Champion Status Box 3 Action Hand */
+	_slotBoxes[8] = SlotBox(6, 53, 0);    /* Ready Hand */
+	_slotBoxes[9] = SlotBox(62, 53, 0);   /* Action Hand */
+	_slotBoxes[10] = SlotBox(34, 26, 0);  /* Head */
+	_slotBoxes[11] = SlotBox(34, 46, 0);  /* Torso */
+	_slotBoxes[12] = SlotBox(34, 66, 0);  /* Legs */
+	_slotBoxes[13] = SlotBox(34, 86, 0);  /* Feet */
+	_slotBoxes[14] = SlotBox(6, 90, 0);   /* Pouch 2 */
+	_slotBoxes[15] = SlotBox(79, 73, 0);  /* Quiver Line2 1 */
+	_slotBoxes[16] = SlotBox(62, 90, 0);  /* Quiver Line1 2 */
+	_slotBoxes[17] = SlotBox(79, 90, 0);  /* Quiver Line2 2 */
+	_slotBoxes[18] = SlotBox(6, 33, 0);   /* Neck */
+	_slotBoxes[19] = SlotBox(6, 73, 0);   /* Pouch 1 */
+	_slotBoxes[20] = SlotBox(62, 73, 0);  /* Quiver Line1 1 */
+	_slotBoxes[21] = SlotBox(66, 33, 0);  /* Backpack Line1 1 */
+	_slotBoxes[22] = SlotBox(83, 16, 0);  /* Backpack Line2 2 */
+	_slotBoxes[23] = SlotBox(100, 16, 0); /* Backpack Line2 3 */
+	_slotBoxes[24] = SlotBox(117, 16, 0); /* Backpack Line2 4 */
+	_slotBoxes[25] = SlotBox(134, 16, 0); /* Backpack Line2 5 */
+	_slotBoxes[26] = SlotBox(151, 16, 0); /* Backpack Line2 6 */
+	_slotBoxes[27] = SlotBox(168, 16, 0); /* Backpack Line2 7 */
+	_slotBoxes[28] = SlotBox(185, 16, 0); /* Backpack Line2 8 */
+	_slotBoxes[29] = SlotBox(202, 16, 0); /* Backpack Line2 9 */
+	_slotBoxes[30] = SlotBox(83, 33, 0);  /* Backpack Line1 2 */
+	_slotBoxes[31] = SlotBox(100, 33, 0); /* Backpack Line1 3 */
+	_slotBoxes[32] = SlotBox(117, 33, 0); /* Backpack Line1 4 */
+	_slotBoxes[33] = SlotBox(134, 33, 0); /* Backpack Line1 5 */
+	_slotBoxes[34] = SlotBox(151, 33, 0); /* Backpack Line1 6 */
+	_slotBoxes[35] = SlotBox(168, 33, 0); /* Backpack Line1 7 */
+	_slotBoxes[36] = SlotBox(185, 33, 0); /* Backpack Line1 8 */
+	_slotBoxes[37] = SlotBox(202, 33, 0); /* Backpack Line1 9 */
+	_slotBoxes[38] = SlotBox(117, 59, 0); /* Chest 1 */
+	_slotBoxes[39] = SlotBox(106, 76, 0); /* Chest 2 */
+	_slotBoxes[40] = SlotBox(111, 93, 0); /* Chest 3 */
+	_slotBoxes[41] = SlotBox(128, 98, 0); /* Chest 4 */
+	_slotBoxes[42] = SlotBox(145, 101, 0); /* Chest 5 */
+	_slotBoxes[43] = SlotBox(162, 103, 0); /* Chest 6 */
+	_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
+	_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
 
 	for (uint16 i = 0; i < k199_ObjectNameCount; ++i)
-		_g352_objectNames[i] = nullptr;
+		_objectNames[i] = nullptr;
 
-	_g412_objectIconForMousePointer = nullptr;
+	_objectIconForMousePointer = nullptr;
 }
 
 ObjectMan::~ObjectMan() {
-	delete[] _g412_objectIconForMousePointer;
-	delete[] _g352_objectNames[0];
+	delete[] _objectIconForMousePointer;
+	delete[] _objectNames[0];
 }
 
 #define k556_ObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
@@ -107,13 +107,13 @@ ObjectMan::~ObjectMan() {
 void ObjectMan::loadObjectNames() {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
-	_g412_objectIconForMousePointer = new byte[16 * 16];
+	_objectIconForMousePointer = new byte[16 * 16];
 
 	char *objectNames = new char[dispMan.getCompressedDataSize(k556_ObjectNamesGraphicIndice) + k199_ObjectNameCount];
 	Common::MemoryReadStream stream = dispMan.getCompressedData(k556_ObjectNamesGraphicIndice);
 
 	for (uint16 objNameIndex = 0; objNameIndex < k199_ObjectNameCount; ++objNameIndex) {
-		_g352_objectNames[objNameIndex] = objectNames;
+		_objectNames[objNameIndex] = objectNames;
 
 		byte tmpByte;
 		for (tmpByte = stream.readByte(); !(tmpByte & 0x80); tmpByte = stream.readByte()) // last char of object name has 7th bit on
@@ -124,7 +124,7 @@ void ObjectMan::loadObjectNames() {
 	}
 }
 
-IconIndice ObjectMan::f32_getObjectType(Thing thing) {
+IconIndice ObjectMan::getObjectType(Thing thing) {
 	if (thing == Thing::_none)
 		return kM1_IconIndiceNone;
 
@@ -137,8 +137,8 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 
 byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
-IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
-	int16 L0005_i_IconIndex = f32_getObjectType(thing);
+IconIndice ObjectMan::getIconIndex(Thing thing) {
+	int16 L0005_i_IconIndex = getObjectType(thing);
 	if (L0005_i_IconIndex != kM1_IconIndiceNone) {
 		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
 			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
@@ -180,7 +180,7 @@ IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
 	return (IconIndice)L0005_i_IconIndex;
 }
 
-void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
+void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	uint16 L0011_ui_Counter;
 	byte* L0012_pl_Bitmap_Icon;
 	Box L1568_s_Box;
@@ -199,7 +199,7 @@ void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	_vm->_displayMan->blitToBitmap(L0012_pl_Bitmap_Icon, destBitmap, L1568_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0011_ui_Counter], 16);
 }
 
-void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
+void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	uint16 L0015_ui_IconGraphicIndex;
 	int16 L0016_i_ByteWidth;
 	SlotBox* L0017_ps_SlotBox;
@@ -208,7 +208,7 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	byte* L0020_puc_Bitmap_Destination;
 	int16 L1569_i_Width;
 
-	L0017_ps_SlotBox = &_g30_slotBoxes[slotBoxIndex];
+	L0017_ps_SlotBox = &_slotBoxes[slotBoxIndex];
 	if ((L0017_ps_SlotBox->_iconIndex = iconIndex) == kM1_IconIndiceNone) {
 		return;
 	}
@@ -235,9 +235,9 @@ void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 #define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
-void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
+void ObjectMan::drawLeaderObjectName(Thing thing) {
 	char* objectName = nullptr;
-	int16 L0007_i_IconIndex = f33_getIconIndex(thing);
+	int16 L0007_i_IconIndex = getIconIndex(thing);
 	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		char champBonesName[16];
@@ -247,37 +247,37 @@ void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
 		case Common::EN_ANY:
 		case Common::DE_DEU: // english and german version are the same
 			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
-			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
+			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
 			break;
 		case Common::FR_FRA:
-			strcat(champBonesName, _g352_objectNames[L0007_i_IconIndex]);
+			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
 			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
 			break;
 		}
 
 		objectName = champBonesName;
 	} else {
-		objectName = _g352_objectNames[L0007_i_IconIndex];
+		objectName = _objectNames[L0007_i_IconIndex];
 	}
 	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
-IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {
-	return (IconIndice)_g30_slotBoxes[slotBoxIndex]._iconIndex;
+IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
+	return (IconIndice)_slotBoxes[slotBoxIndex]._iconIndex;
 }
 
-void ObjectMan::f35_clearLeaderObjectName() {
+void ObjectMan::clearLeaderObjectName() {
 	static Box g28_BoxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
 	_vm->_displayMan->fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
 }
 
-void ObjectMan::f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
+void ObjectMan::drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
 	static byte L0013_puc_Bitmap_Icon[16 * 16];
 	Box L0014_s_Box;
 
 	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
 	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
-	f36_extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
+	extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
 	_vm->_displayMan->blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 }

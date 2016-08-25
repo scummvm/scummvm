@@ -372,7 +372,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 
 	_openChest = thingToOpen;
 	if (!isPressingEye) {
-		objMan.f38_drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
+		objMan.drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
 	}
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k25_PanelOpenChestIndice),
 							   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
@@ -383,12 +383,12 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
-		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.f33_getIconIndex(thing));
+		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.getIconIndex(thing));
 		_chestSlots[chestSlotIndex++] = thing;
 		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
-		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
+		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
 		_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
@@ -398,7 +398,7 @@ void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yP
 	Box box;
 	box._x2 = (box._x1 = xPos) + 15;
 	box._y2 = (box._y1 = yPos) + 15;
-	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, iconBitmap);
+	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
 	_vm->_displayMan->blitToViewport(iconBitmap, box, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 
@@ -510,7 +510,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	} else if (thingType == k9_ContainerThingType) {
 		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	} else {
-		IconIndice iconIndex = objMan.f33_getIconIndex(thingToDraw);
+		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
 								   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
@@ -525,10 +525,10 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			case Common::DE_DEU: // german and english versions are the same
 				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
 				strcat(str, " ");
-				strcat(str, objMan._g352_objectNames[iconIndex]);
+				strcat(str, objMan._objectNames[iconIndex]);
 				break;
 			case Common::FR_FRA:
-				strcat(str, objMan._g352_objectNames[iconIndex]);
+				strcat(str, objMan._objectNames[iconIndex]);
 				strcat(str, " ");
 				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
 				break;
@@ -541,10 +541,10 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			str[0] = '_' + ((Potion *)rawThingPtr)->getPower() / 40;
 			str[1] = ' ';
 			str[2] = '\0';
-			strcat(str, objMan._g352_objectNames[iconIndex]);
+			strcat(str, objMan._objectNames[iconIndex]);
 			descString = str;
 		} else {
-			descString = objMan._g352_objectNames[iconIndex];
+			descString = objMan._objectNames[iconIndex];
 		}
 
 		textMan.f52_printToViewport(134, 68, k13_ColorLightestGray, descString);
@@ -711,8 +711,8 @@ void InventoryMan::setDungeonViewPalette() {
 			uint16 AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
 			while (AL1039_ui_SlotIndex--) {
 				uint16 AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16();
-				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) >= k4_IconIndiceWeaponTorchUnlit) &&
-					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing)) <= k7_IconIndiceWeaponTorchLit)) {
+				if ((_vm->_objectMan->getObjectType(Thing(AL1044_T_Thing)) >= k4_IconIndiceWeaponTorchUnlit) &&
+					(_vm->_objectMan->getObjectType(Thing(AL1044_T_Thing)) <= k7_IconIndiceWeaponTorchLit)) {
 					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->getThingData(Thing(AL1044_T_Thing));
 					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
 				} else {
@@ -779,7 +779,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 	while (L1046_i_ChampionCount--) {
 		int16 L1047_i_SlotIndex = k1_ChampionSlotActionHand + 1;
 		while (L1047_i_SlotIndex--) {
-			int16 L1049_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+			int16 L1049_i_IconIndex = _vm->_objectMan->getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 			if ((L1049_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L1049_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
 				Weapon *L1051_ps_Weapon = (Weapon *)_vm->_dungeonMan->getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
 				if (L1051_ps_Weapon->getChargeCount()) {
@@ -888,7 +888,7 @@ void InventoryMan::drawStopPressingEye() {
 	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	if ((L1100_T_LeaderHandObject = _vm->_championMan->_leaderHandObject) != Thing::_none) {
-		_vm->_objectMan->f34_drawLeaderObjectName(L1100_T_LeaderHandObject);
+		_vm->_objectMan->drawLeaderObjectName(L1100_T_LeaderHandObject);
 	}
 	_vm->_eventMan->showMouse();
 	_vm->_eventMan->showMouse();
@@ -950,7 +950,7 @@ void InventoryMan::clickOnMouth() {
 	if (!getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
 		return;
 	}
-	L1079_ui_IconIndex = _vm->_objectMan->f33_getIconIndex(L1078_T_Thing);
+	L1079_ui_IconIndex = _vm->_objectMan->getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
 	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
 	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal)];
@@ -1051,7 +1051,7 @@ void InventoryMan::clickOnMouth() {
 
 	if (L1081_B_RemoveObjectFromLeaderHand) {
 		for (L1086_ui_Counter = 5; --L1086_ui_Counter; _vm->delay(8)) { /* Animate mouth icon */
-			_vm->_objectMan->f37_drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);
+			_vm->_objectMan->drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);
 			_vm->_eventMan->discardAllInput();
 			if (_vm->_engineShouldQuit)
 				return;
@@ -1109,7 +1109,7 @@ void InventoryMan::clickOnEye() {
 	if (_vm->_championMan->_leaderEmptyHanded) {
 		drawChampionSkillsAndStatistics();
 	} else {
-		_vm->_objectMan->f35_clearLeaderObjectName();
+		_vm->_objectMan->clearLeaderObjectName();
 		drawPanelObject(_vm->_championMan->_leaderHandObject, true);
 	}
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);

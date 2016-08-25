@@ -54,18 +54,18 @@ public:
 	~ObjectMan();
 	void loadObjectNames();	// @ F0031_OBJECT_LoadNames
 
-	SlotBox _g30_slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
-	char *_g352_objectNames[k199_ObjectNameCount]; // @ G0352_apc_ObjectNames
-	byte *_g412_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
+	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
+	char *_objectNames[k199_ObjectNameCount]; // @ G0352_apc_ObjectNames
+	byte *_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
 
-	IconIndice f32_getObjectType(Thing thing); // @ F0032_OBJECT_GetType
-	IconIndice f33_getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
-	void f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // @ F0036_OBJECT_ExtractIconFromBitmap
-	void f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
-	void f34_drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
-	IconIndice f39_getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
-	void f35_clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
-	void f37_drawIconToScreen(int16 iconIndex, int16 posX, int16 posY); // @ F0037_OBJECT_DrawIconToScreen
+	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
+	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
+	void extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // @ F0036_OBJECT_ExtractIconFromBitmap
+	void drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
+	void drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
+	IconIndice getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
+	void clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
+	void drawIconToScreen(int16 iconIndex, int16 posX, int16 posY); // @ F0037_OBJECT_DrawIconToScreen
 };
 
 }

@@ -116,7 +116,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					goto T0275058_ProceedToNextThing;
 			case k3_SensorWallOrnClickWithSpecObj:
 			case k4_SensorWallOrnClickWithSpecObjRemoved:
-				L0753_B_DoNotTriggerSensor = ((L0758_i_SensorData == _vm->_objectMan->f32_getObjectType(L0761_T_LeaderHandObject)) == L0755_ps_Sensor->getAttrRevertEffectA());
+				L0753_B_DoNotTriggerSensor = ((L0758_i_SensorData == _vm->_objectMan->getObjectType(L0761_T_LeaderHandObject)) == L0755_ps_Sensor->getAttrRevertEffectA());
 				if (!L0753_B_DoNotTriggerSensor && (L0757_ui_SensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor)) {
 					if (L0763_T_LastProcessedThing == L0750_T_ThingBeingProcessed) /* If the sensor is the only one of its type on the cell */
 						break;
@@ -144,7 +144,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					_vm->_dungeonMan->unlinkThingFromList(L0761_T_LeaderHandObject, Thing(0), mapX, mapY);
 					_vm->_championMan->putObjectInLeaderHand(L0761_T_LeaderHandObject, true);
 				} else {
-					if ((_vm->_objectMan->f32_getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (getObjectOfTypeInCell(mapX, mapY, L0752_ui_Cell, L0758_i_SensorData) != Thing::_none))
+					if ((_vm->_objectMan->getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (getObjectOfTypeInCell(mapX, mapY, L0752_ui_Cell, L0758_i_SensorData) != Thing::_none))
 						goto T0275058_ProceedToNextThing;
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					_vm->_dungeonMan->linkThingToList(thingWithNewCell(L0761_T_LeaderHandObject, L0752_ui_Cell), Thing(0), mapX, mapY);
@@ -161,7 +161,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				if (L0760_ai_SensorCountToProcessPerCell[L0752_ui_Cell]) /* If the sensor is not the last one of its type on the cell */
 					goto T0275058_ProceedToNextThing;
 				L0762_T_ThingOnSquare = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
-				if ((_vm->_objectMan->f32_getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (L0762_T_ThingOnSquare == Thing::_none))
+				if ((_vm->_objectMan->getObjectType(L0761_T_LeaderHandObject) != L0758_i_SensorData) || (L0762_T_ThingOnSquare == Thing::_none))
 					goto T0275058_ProceedToNextThing;
 				_vm->_dungeonMan->unlinkThingFromList(L0762_T_ThingOnSquare, Thing(0), mapX, mapY);
 				_vm->_championMan->getObjectRemovedFromLeaderHand();
@@ -421,9 +421,9 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					AL0708_i_ScentIndex--;
 				}
 				if (AL0708_i_ScentIndex) {
-					_vm->_championMan->addScentStrength(mapX, mapY, (int)(_vm->_gameTime - _vm->_projexpl->_g362_lastPartyMovementTime));
+					_vm->_championMan->addScentStrength(mapX, mapY, (int)(_vm->_gameTime - _vm->_projexpl->_lastPartyMovementTime));
 				}
-				_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_gameTime;
+				_vm->_projexpl->_lastPartyMovementTime = _vm->_gameTime;
 				_vm->_championMan->_party._scentCount++;
 				if (_vm->_championMan->_party._event79Count_Footprints) {
 					_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._scentCount;
@@ -612,9 +612,9 @@ T0266017_CheckProjectileImpacts:
 	while (L0697_T_Thing != Thing::_endOfList) {
 		if (((L0697_T_Thing).getType() == k14_ProjectileThingType) &&
 			(_vm->_timeline->_g370_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(L0697_T_Thing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts) && (AL0699_ui_ChampionOrCreatureOrdinal = L0707_auc_ChampionOrCreatureOrdinalInCell[(L0697_T_Thing).getCell()]) &&
-			_vm->_projexpl->f217_projectileHasImpactOccurred(L0702_i_ImpactType, srcMapX, srcMapY, _vm->ordinalToIndex(AL0699_ui_ChampionOrCreatureOrdinal), L0697_T_Thing)) {
-			_vm->_projexpl->f214_projectileDeleteEvent(L0697_T_Thing);
-			if (_vm->_projexpl->_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup) {
+			_vm->_projexpl->hasProjectileImpactOccurred(L0702_i_ImpactType, srcMapX, srcMapY, _vm->ordinalToIndex(AL0699_ui_ChampionOrCreatureOrdinal), L0697_T_Thing)) {
+			_vm->_projexpl->projectileDeleteEvent(L0697_T_Thing);
+			if (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup) {
 				return true;
 			}
 			goto T0266017_CheckProjectileImpacts;
@@ -775,7 +775,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 
 	if (thing != Thing::_party) {
 		L0767_i_ThingType = thing.getType();
-		L0774_i_ObjectType = _vm->_objectMan->f32_getObjectType(thing);
+		L0774_i_ObjectType = _vm->_objectMan->getObjectType(thing);
 	} else {
 		L0767_i_ThingType = kM1_PartyThingType;
 		L0774_i_ObjectType = kM1_IconIndiceNone;
@@ -803,8 +803,8 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				} else {
 					if ((L0771_ui_ThingType > k4_GroupThingType) && (L0771_ui_ThingType < k14_ProjectileThingType)) {
 						L0772_B_SquareContainsObject = true;
-						L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->f32_getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
-						L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->f32_getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
+						L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
+						L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
 					}
 				}
 			}
@@ -814,8 +814,8 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 		while (L0766_T_Thing != Thing::_endOfList) {
 			if ((L0770_ui_SensorTriggeredCell == (L0766_T_Thing).getCell()) && ((L0766_T_Thing).getType() > k4_GroupThingType)) {
 				L0772_B_SquareContainsObject = true;
-				L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->f32_getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
-				L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->f32_getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
+				L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
+				L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
 			}
 			L0766_T_Thing = _vm->_dungeonMan->getNextThing(L0766_T_Thing);
 		}
@@ -857,7 +857,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 					}
 					break;
 				case k4_SensorFloorObj:
-					if ((L0779_i_SensorData != _vm->_objectMan->f32_getObjectType(thing)) || L0775_B_SquareContainsThingOfSameType)
+					if ((L0779_i_SensorData != _vm->_objectMan->getObjectType(thing)) || L0775_B_SquareContainsThingOfSameType)
 						goto T0276079;
 					break;
 				case k5_SensorFloorPartyOnStairs:
@@ -893,11 +893,11 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 						goto T0276079;
 					break;
 				case k2_SensorWallOrnClickWithAnyObj:
-					if (L0775_B_SquareContainsThingOfSameType || (L0769_ps_Sensor->getData() != _vm->_objectMan->f32_getObjectType(thing)))
+					if (L0775_B_SquareContainsThingOfSameType || (L0769_ps_Sensor->getData() != _vm->_objectMan->getObjectType(thing)))
 						goto T0276079;
 					break;
 				case k3_SensorWallOrnClickWithSpecObj:
-					if (L0776_B_SquareContainsThingOfDifferentType || (L0769_ps_Sensor->getData() == _vm->_objectMan->f32_getObjectType(thing)))
+					if (L0776_B_SquareContainsThingOfDifferentType || (L0769_ps_Sensor->getData() == _vm->_objectMan->getObjectType(thing)))
 						goto T0276079;
 					break;
 				default:
@@ -943,7 +943,7 @@ bool MovesensMan::isObjcetInPartyPossession(int16 objectType) {
 			for (L0743_ui_SlotIndex = k0_ChampionSlotReadyHand; (L0743_ui_SlotIndex < k30_ChampionSlotChest_1) && !L0748_B_LeaderHandObjectProcessed; L0743_ui_SlotIndex++) {
 				L0744_T_Thing = *L0746_pT_Thing++;
 T0274003:
-				L0747_i_ObjectType = _vm->_objectMan->f32_getObjectType(L0744_T_Thing);
+				L0747_i_ObjectType = _vm->_objectMan->getObjectType(L0744_T_Thing);
 				if (L0747_i_ObjectType == objectType) {
 					return true;
 				}
@@ -951,7 +951,7 @@ T0274003:
 					L0749_ps_Container = (Container *)_vm->_dungeonMan->getThingData(L0744_T_Thing);
 					L0744_T_Thing = L0749_ps_Container->getSlot();
 					while (L0744_T_Thing != Thing::_endOfList) {
-						if (_vm->_objectMan->f32_getObjectType(L0744_T_Thing) == objectType) {
+						if (_vm->_objectMan->getObjectType(L0744_T_Thing) == objectType) {
 							return true;
 						}
 						L0744_T_Thing = _vm->_dungeonMan->getNextThing(L0744_T_Thing);
@@ -1089,7 +1089,7 @@ Thing MovesensMan::getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int
 
 	L0741_T_Thing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
 	while (L0741_T_Thing != Thing::_endOfList) {
-		if (_vm->_objectMan->f32_getObjectType(L0741_T_Thing) == objectType) {
+		if (_vm->_objectMan->getObjectType(L0741_T_Thing) == objectType) {
 			if ((cell == kM1_CellAny) || ((L0741_T_Thing.getCell()) == cell)) {
 				return L0741_T_Thing;
 			}

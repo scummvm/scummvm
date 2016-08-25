@@ -579,7 +579,7 @@ void EventManager::setMousePointer() {
 	if (_vm->_championMan->_leaderEmptyHanded)
 		setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
 	else
-		setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
+		setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
 }
 
 void EventManager::showMouse() {
@@ -1195,7 +1195,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 					processType80_clickInDungeonViewDropLeaderHandObject(k4_ViewCellAlcove);
 				else {
 					if (_vm->_dungeonMan->_isFacingFountain) {
-						uint16 iconIdx = _vm->_objectMan->f33_getIconIndex(thingHandObject);
+						uint16 iconIdx = _vm->_objectMan->getIconIndex(thingHandObject);
 						uint16 weight = _vm->_dungeonMan->getObjectWeight(thingHandObject);
 						if ((iconIdx >= k8_IconIndiceJunkWater) && (iconIdx <= k9_IconIndiceJunkWaterSkin))
 							junkPtr->setChargeCount(3); /* Full */
@@ -1286,7 +1286,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 
 	if (champMan._partyChampionCount == 1) {
-		_vm->_projexpl->_g362_lastPartyMovementTime = _vm->_gameTime;
+		_vm->_projexpl->_lastPartyMovementTime = _vm->_gameTime;
 		commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else
@@ -1356,7 +1356,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 	}
 
 	Thing topPileThing = _vm->_dungeonMan->_pileTopObject[viewCell];
-	if (_vm->_objectMan->f33_getIconIndex(topPileThing) != kM1_IconIndiceNone) {
+	if (_vm->_objectMan->getIconIndex(topPileThing) != kM1_IconIndiceNone) {
 		_vm->_moveSens->getMoveResult(topPileThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
 		_vm->_championMan->putObjectInLeaderHand(topPileThing, true);
 	}
@@ -1380,7 +1380,7 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 	uint16 currCell = normalizeModulo4(_vm->_dungeonMan->_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
 	_vm->_moveSens->getMoveResult(thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
-	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->f33_getIconIndex(removedThing) == k147_IconIndiceJunkChampionBones)) {
+	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == k147_IconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
 		TimelineEvent newEvent;
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);

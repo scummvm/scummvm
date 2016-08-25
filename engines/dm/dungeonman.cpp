@@ -1451,9 +1451,9 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
 									_vm->_groupMan->groupDelete(currMapX, currMapY);
 								} else {
-									_vm->_projexpl->f214_projectileDeleteEvent(squareThing);
+									_vm->_projexpl->projectileDeleteEvent(squareThing);
 									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
-									_vm->_projexpl->f215_projectileDelete(squareThing, 0, currMapX, currMapY);
+									_vm->_projexpl->projectileDelete(squareThing, 0, currMapX, currMapY);
 								}
 								break;
 							case k6_ArmourThingType:

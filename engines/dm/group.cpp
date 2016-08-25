@@ -295,14 +295,14 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 	int16 L0556_i_Direction;
 
 	if (srcMapX == destMapX) {
-		_vm->_projexpl->_g363_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
+		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
 		if (srcMapY > destMapY) {
 			return kDirNorth;
 		}
 		return kDirSouth;
 	}
 	if (srcMapY == destMapY) {
-		_vm->_projexpl->_g363_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 0; /* Resulting direction may be 0 or 2 (North or South) */
+		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 0; /* Resulting direction may be 0 or 2 (North or South) */
 		if (srcMapX > destMapX) {
 			return kDirWest;
 		}
@@ -311,15 +311,15 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 	L0556_i_Direction = kDirNorth;
 	for (;;) {
 		if (isDestVisibleFromSource(L0556_i_Direction, srcMapX, srcMapY, destMapX, destMapY)) {
-			if (!isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
-				if ((L0556_i_Direction != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnPrevVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
-					_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + L0556_i_Direction);
+			if (!isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
+				if ((L0556_i_Direction != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty = returnPrevVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
+					_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + L0556_i_Direction);
 					return L0556_i_Direction;
 				}
 			}
 			if (_vm->getRandomNumber(2)) {
-				AP0483_i_PrimaryDirection = _vm->_projexpl->_g363_secondaryDirToOrFromParty;
-				_vm->_projexpl->_g363_secondaryDirToOrFromParty = L0556_i_Direction;
+				AP0483_i_PrimaryDirection = _vm->_projexpl->_secondaryDirToOrFromParty;
+				_vm->_projexpl->_secondaryDirToOrFromParty = L0556_i_Direction;
 				return AP0483_i_PrimaryDirection;
 			}
 			return L0556_i_Direction;
@@ -495,7 +495,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 				AL0374_ui_Attack = 255;
 			}
 		}
-		_vm->_projexpl->f213_explosionCreate(Thing::_explSmoke, AL0374_ui_Attack, mapX, mapY, L0384_ui_Cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
+		_vm->_projexpl->createExplosion(Thing::_explSmoke, AL0374_ui_Attack, mapX, mapY, L0384_ui_Cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
 		return AL0375_ui_Outcome;
 	}
 	if (damage > 0) {
@@ -715,7 +715,7 @@ T0209005_AddEventAndReturn:
 	_groupMovementTestedDirections[0] = 0;
 	_currGroupDistanceToParty = getDistanceBetweenSquares(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 	_currGroupPrimaryDirToParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
-	_currGroupSecondaryDirToParty = _vm->_projexpl->_g363_secondaryDirToOrFromParty;
+	_currGroupSecondaryDirToParty = _vm->_projexpl->_secondaryDirToOrFromParty;
 	L0464_l_NextAspectUpdateTime = 0;
 	L0455_B_CurrentEventTypeIsNotUpdateBehavior = true;
 	if (eventType <= k31_TMEventTypeGroupReactionPartyIsAdjecent) { /* Process Reaction events 29 to 31 */
@@ -862,7 +862,7 @@ T0209061_MoveGroup:
 							(L0462_i_TicksSinceLastMove != -1) &&
 							L0463_B_Archenemy &&
 							((eventType == kM3_TMEventTypeCreateReactionEvent29DangerOnSquare) || !_vm->getRandomNumber(4))) { /* BUG0_15 The game hangs when you close a door on Lord Chaos. A condition is missing in the code to manage creatures and this may create an infinite loop between two parts in the code */
-							_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal(L0454_i_PrimaryDirectionToOrFromParty = _vm->getRandomNumber(4));
+							_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal(L0454_i_PrimaryDirectionToOrFromParty = _vm->getRandomNumber(4));
 							goto T0209089_DoubleSquareMove; /* BUG0_69 Memory corruption when you close a door on Lord Chaos. The local variable (L0454_i_PrimaryDirectionToOrFromParty) containing the direction where Lord Chaos tries to move may be used as an array index without being initialized and cause memory corruption */
 						}
 						if (L0453_B_NewGroupDirectionFound || ((!_vm->getRandomNumber(4) || (L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.getSmellRange())) && (eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare))) {
@@ -910,7 +910,7 @@ T0209084_SingleSquareMoveTowardParty:
 					L0454_i_PrimaryDirectionToOrFromParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY);
 T0209085_SingleSquareMove:
 					if (isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls) ||
-						isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls && _vm->getRandomNumber(2)) ||
+						isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_secondaryDirToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls && _vm->getRandomNumber(2)) ||
 						isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction), false) ||
 						(!_vm->getRandomNumber(4) && isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty), false))) {
 						AL0450_i_DestinationMapX = eventMapX;
@@ -922,7 +922,7 @@ T0209085_SingleSquareMove:
 T0209089_DoubleSquareMove:
 						getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false); /* BUG0_00 Useless code. Returned value is ignored. When Lord Chaos teleports two squares away the ability to move to the first square is ignored which means Lord Chaos can teleport through walls or any other obstacle */
 						if (isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty) ||
-							isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty) ||
+							isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_secondaryDirToOrFromParty) ||
 							(_fluxCageCount && isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction))) ||
 							((_fluxCageCount >= 2) && isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty)))) {
 							AL0450_i_DestinationMapX = eventMapX;
@@ -965,7 +965,7 @@ T0209096_SetBehavior0_Wander:
 						}
 						/* Try and flee from the party (opposite direction) */
 						L0454_i_PrimaryDirectionToOrFromParty = returnOppositeDir((Direction)getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY));
-						_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnOppositeDir((Direction)_vm->_projexpl->_g363_secondaryDirToOrFromParty);
+						_vm->_projexpl->_secondaryDirToOrFromParty = returnOppositeDir((Direction)_vm->_projexpl->_secondaryDirToOrFromParty);
 						L0461_i_MovementTicks -= (L0461_i_MovementTicks >> 2);
 						goto T0209085_SingleSquareMove;
 					}
@@ -1007,7 +1007,7 @@ T0209096_SetBehavior0_Wander:
 					}
 					/* If 1/8 chance and the creature is not adjacent to the party and is a quarter square sized creature then process projectile impacts and update the creature cell if still alive. When the creature is not in front of the party, it has 7/8 chances of dodging a projectile by moving to another cell or staying in the center of the square */
 					if (!(AL0446_i_GroupCellsCriteria & 0x0038) && (L0452_i_DistanceToVisibleParty != 1) && (L0459_i_CreatureSize == k0_MaskCreatureSizeQuarter)) {
-						if (_vm->_projexpl->f218_projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
+						if (_vm->_projexpl->projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
 							goto T0209139_Return;
 						L0445_ps_ActiveGroup->_cells = normalizeModulo4(AL0446_i_GroupCellsCriteria);
 					}
@@ -1036,9 +1036,9 @@ T0209096_SetBehavior0_Wander:
 								}
 								if (!getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = normalizeModulo4(AL0446_i_Cell)) ||
 									(_vm->getRandomNumber(2) && !getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
-									if (_vm->_projexpl->f218_projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
+									if (_vm->_projexpl->projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
 										goto T0209139_Return;
-									if (_vm->_projexpl->_g364_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
+									if (_vm->_projexpl->_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
 										L0445_ps_ActiveGroup->_cells = getGroupValueUpdatedWithCreatureValue(L0445_ps_ActiveGroup->_cells, AL0447_i_CreatureIndex, AL0446_i_Cell);
 									}
 								}
@@ -1399,7 +1399,7 @@ int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int
 		return 0;
 	}
 	if ((((L0426_ui_SmellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
-		_vm->_projexpl->_g363_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
+		_vm->_projexpl->_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
 		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
 	if ((L0427_i_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX)) && ((_vm->_championMan->_party._scentStrengths[_vm->ordinalToIndex(L0427_i_ScentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (L0426_ui_SmellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
@@ -1471,7 +1471,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 #define AL0440_i_Damage             L0440_i_Multiple
 #define AL0440_i_AttackSoundOrdinal L0440_i_Multiple
 
-	_vm->_projexpl->_g361_lastCreatureAttackTime = _vm->_gameTime;
+	_vm->_projexpl->_lastCreatureAttackTime = _vm->_gameTime;
 	ActiveGroup L0443_s_ActiveGroup = _activeGroups[group->getActiveGroupIndex()];
 	CreatureInfo *L0441_ps_CreatureInfo = &g243_CreatureInfo[AL0437_ui_CreatureType = group->_type];
 	uint16 L0438_ui_PrimaryDirectionToParty = _currGroupPrimaryDirToParty;
@@ -1527,7 +1527,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		_vm->_sound->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
-		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
+		_vm->_projexpl->createProjectile(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
 			AL0439_i_ChampionIndex = _vm->getRandomNumber(4);
@@ -1905,7 +1905,7 @@ int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* g
 	}
 	L0567_i_DoubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
 	L0572_ps_CreatureInfo = &g243_CreatureInfo[group->_type];
-	L0571_i_ActionHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
+	L0571_i_ActionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
 	L0570_B_ActionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 	if (L0570_B_ActionHitsNonMaterialCreatures)
 		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
@@ -2072,7 +2072,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 		return;
 	}
 
-	_vm->_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, 255, mapX, mapY, k255_CreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
+	_vm->_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, mapX, mapY, k255_CreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
 	L0555_T_LordChaosThing = Thing(isLordChaosOnSquare(mapX, mapY));
 	if (L0555_T_LordChaosThing.toUint16()) {
 		L0551_ui_FluxcageCount = (L0554_aB_Fluxcages[0] = isFluxcageOnSquare(mapX - 1, mapY)) +
