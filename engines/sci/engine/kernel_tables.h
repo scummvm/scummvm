@@ -910,6 +910,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// an integer and not an object, although it is an object reference.
 	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "ioiiii(iiiii)",         NULL,            NULL },
 	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "io",                    NULL,            NULL },
+	// Used by SQ6 to scroll through the inventory via the up/down buttons
+	{ MAP_CALL(MovePlaneItems),    SIG_SINCE_SCI21, SIGFOR_ALL, "oii(i)",             NULL,            NULL },
+	{ MAP_CALL(SetPalStyleRange),  SIG_EVERYWHERE,            "ii",                   NULL,            NULL },
+	{ MAP_CALL(MorphOn),           SIG_EVERYWHERE,            "",                     NULL,            NULL },
+	{ MAP_CALL(SetHotRectangles),  SIG_EVERYWHERE,            "i(r)",                 NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -951,19 +956,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(CheckCDisc),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-
-	// SCI2.1 unmapped functions - TODO!
-
-	// SetHotRectangles - used by Phantasmagoria 1, script 64981 (used in the chase scene)
-	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
-	//     of a special HotRect type continuously when the mouse is on that rectangle
-
-	// Used by SQ6 to scroll through the inventory via the up/down buttons
-	{ MAP_CALL(MovePlaneItems),     SIG_SINCE_SCI21, SIGFOR_ALL, "oii(i)",            NULL,            NULL },
-
-	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-
-	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
 	{ MAP_CALL(PlayDuck),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },

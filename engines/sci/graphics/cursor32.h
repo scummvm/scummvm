@@ -109,6 +109,28 @@ public:
 	 */
 	void clearRestrictedArea();
 
+	/**
+	 * Hot rectangle status, used for special click events in VMD videos
+	 */
+	void setHotRectangleStatus(bool status) {
+		_hotRectanglesEnabled = status;
+	}
+
+	/**
+	 * Hot rectangles, used for special click events in VMD videos
+	 */
+	void setupHotRectangles(uint16 rectCount, reg_t hotRects);
+
+	/**
+	 * Returns true if a hot rectangle event occured. SSCI also held
+	 * the hot rectangle index, but this was never actually used
+	 */
+	bool haveHotRectangleEvent() {
+		bool ev = _hotRectangleEvent;
+		_hotRectangleEvent = false;
+		return ev;
+	}
+
 	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -205,8 +227,19 @@ private:
 	 */
 	bool _writeToVMAP;
 
-	// Mac versions of games use a remap list to remap their cursors
+	/**
+	 * Mac versions of games use a remap list to remap their cursors
+	 */
 	Common::Array<uint16> _macCursorRemap;
+
+	/**
+	 * Hot rectangle status, used for special click events in VMD videos
+	 */
+	bool _hotRectanglesEnabled;
+	int _curHotRectIndex;
+	bool _hotRectangleEvent;
+
+	Common::List<Common::Rect> _hotRectangles;
 
 	/**
 	 * Reads data from the output buffer or hardware
@@ -249,6 +282,11 @@ private:
 	 * Renders the cursor at its new location.
 	 */
 	void move();
+
+	/**
+	 * Checks for hot rectangle clicks and emits relevant events
+	 */
+	void checkHotRectangles();
 };
 
 } // End of namespace Sci

@@ -486,9 +486,7 @@ AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
 			}
 		}
 
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
+		if ((flags & kEventFlagHotRectangle) && g_sci->_gfxCursor32->haveHotRectangleEvent()) {
 			stopFlag = kEventFlagHotRectangle;
 			break;
 		}
@@ -802,9 +800,7 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			}
 		}
 
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
+		if ((flags & kEventFlagHotRectangle) && g_sci->_gfxCursor32->haveHotRectangleEvent()) {
 			stopFlag = kEventFlagHotRectangle;
 			break;
 		}

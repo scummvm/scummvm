@@ -637,6 +637,17 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 }
 #endif
 
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 1) {
+		g_sci->_gfxCursor32->setHotRectangleStatus(argv[0].toUint16());
+	} else {
+		g_sci->_gfxCursor32->setHotRectangleStatus(true);
+		g_sci->_gfxCursor32->setupHotRectangles(argv[0].toUint16(), argv[1]);
+	}
+
+	return s->r_acc;
+}
+
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the
 	// engine scripts (like the empty kSetSynonyms function in SCI1.1). This
