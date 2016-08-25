@@ -324,19 +324,19 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 	source = *(bmpDecoder.getSurface());
 
 	source.convertToInPlace(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
-	surface->create(source.w, source.h, source.format);
 	surface->copyFrom(source);
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
-		_macBorder.addActiveBorder(*surface);
+		_macBorder.addActiveBorder(surface);
 	else
-		_macBorder.addInactiveBorder(*surface);
+		_macBorder.addInactiveBorder(surface);
 
 	if (!_macBorder.hasOffsets())
 		_macBorder.setOffsets(lo, ro, to, bo);
 
 	updateInnerDims();
+	source.free();
 }
 
 void MacWindow::setCloseable(bool closeable) {
