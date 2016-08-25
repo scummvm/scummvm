@@ -1085,7 +1085,7 @@ bool MenuMan::f407_isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	L1251_i_MapX = _vm->_dungeonMan->_partyMapX;
 	L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
 	L1251_i_MapX += _vm->_dirIntoStepCountEast[L1247_ps_Champion->_dir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[L1247_ps_Champion->_dir];
-	_g517_actionTargetGroupThing = _vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY);
+	_g517_actionTargetGroupThing = _vm->_groupMan->groupGetThing(L1251_i_MapX, L1252_i_MapY);
 	L1249_ui_ActionDisabledTicks = G0491_auc_Graphic560_ActionDisabledTicks[actionIndex];
 	L1254_i_ActionSkillIndex = g496_ActionSkillIndex[actionIndex];
 	L1253_i_ActionStamina = G0494_auc_Graphic560_ActionStamina[actionIndex] + _vm->getRandomNumber(2);
@@ -1131,7 +1131,7 @@ T0407014:
 		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 			L1249_ui_ActionDisabledTicks = 6;
-			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
+			_vm->_groupMan->groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
@@ -1239,14 +1239,14 @@ T0407032:
 		}
 	case k35_ChampionActionFluxcage:
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		_vm->_groupMan->f224_fluxCageAction(L1251_i_MapX, L1252_i_MapY);
+		_vm->_groupMan->fluxCageAction(L1251_i_MapX, L1252_i_MapY);
 		break;
 	case k43_ChampionActionFuse:
 		f406_setChampionDirectionToPartyDirection(L1247_ps_Champion);
 		L1251_i_MapX = _vm->_dungeonMan->_partyMapX;
 		L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
 		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
-		_vm->_groupMan->f225_fuseAction(L1251_i_MapX, L1252_i_MapY);
+		_vm->_groupMan->fuseAction(L1251_i_MapX, L1252_i_MapY);
 		break;
 	case k36_ChampionActionHeal:
 		/* CHANGE2_17_IMPROVEMENT Heal action is much more effective
@@ -1283,7 +1283,7 @@ T0407032:
 		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
 		L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((_vm->_dungeonMan->getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_PitElemType) && (_vm->_groupMan->f175_groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
+		if ((_vm->_dungeonMan->getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_PitElemType) && (_vm->_groupMan->groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_g402_useRopeToClimbDownPit = true;
 			_vm->_moveSens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, L1251_i_MapX, L1252_i_MapY);
@@ -1472,7 +1472,7 @@ bool MenuMan::f402_isMeleeActionPerformed(int16 champIndex, Champion* champ, int
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 	if (_g517_actionTargetGroupThing == Thing::_endOfList)
 		goto T0402010;
-	L1238_i_CreatureOrdinal = _vm->_groupMan->f177_getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, AL1236_ui_ChampionCell = champ->_cell);
+	L1238_i_CreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, AL1236_ui_ChampionCell = champ->_cell);
 	if (L1238_i_CreatureOrdinal) {
 		switch (normalizeModulo4(AL1236_ui_ChampionCell + 4 - champ->_dir)) {
 		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
@@ -1493,7 +1493,7 @@ T0402005: /* Check if there is another champion in front */
 		if ((_vm->_objectMan->f33_getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
-		_g513_actionDamage = _vm->_groupMan->f231_getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->getThingData(_g517_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
+		_g513_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->getThingData(_g517_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
 		return true;
 	}
 T0402010:
@@ -1540,10 +1540,10 @@ bool MenuMan::f401_isGroupFrightenedByAction(int16 champIndex, uint16 actionInde
 	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
 		L1231_ui_Experience >>= 1;
 	} else {
-		L1235_ps_ActiveGroup = &_vm->_groupMan->_g375_activeGroups[L1233_ps_Group->getActiveGroupIndex()];
+		L1235_ps_ActiveGroup = &_vm->_groupMan->_activeGroups[L1233_ps_Group->getActiveGroupIndex()];
 		if (L1233_ps_Group->getBehaviour() == k6_behavior_ATTACK) {
-			_vm->_groupMan->f182_stopAttacking(L1235_ps_ActiveGroup, mapX, mapY);
-			_vm->_groupMan->f180_startWanedring(mapX, mapY);
+			_vm->_groupMan->stopAttacking(L1235_ps_ActiveGroup, mapX, mapY);
+			_vm->_groupMan->startWanedring(mapX, mapY);
 		}
 		L1233_ps_Group->setBehaviour(k5_behavior_FLEE);
 		L1235_ps_ActiveGroup->_delayFleeingFromTarget = ((16 - L1230_ui_FearResistance) << 2) / L1234_ps_CreatureInfo->_movementTicks;

@@ -102,20 +102,20 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_timeline->_g372_eventCount = file->readUint16BE();
 		_timeline->_g373_firstUnusedEventIndex = file->readUint16BE();
 		_timeline->_g369_eventMaxCount = file->readUint16BE();
-		_groupMan->_g377_currActiveGroupCount = file->readUint16BE();
+		_groupMan->_currActiveGroupCount = file->readUint16BE();
 		_projexpl->_g361_lastCreatureAttackTime = file->readSint32BE();
 		_projexpl->_g362_lastPartyMovementTime = file->readSint32BE();
 		_disabledMovementTicks = file->readSint16BE();
 		_projectileDisableMovementTicks = file->readSint16BE();
 		_lastProjectileDisabledMovementDirection = file->readSint16BE();
 		_championMan->_leaderHandObject = Thing(file->readUint16BE());
-		_groupMan->_g376_maxActiveGroupCount = file->readUint16BE();
+		_groupMan->_maxActiveGroupCount = file->readUint16BE();
 		if (!_restartGameRequest) {
 			_timeline->f233_initTimeline();
-			_groupMan->f196_initActiveGroups();
+			_groupMan->initActiveGroups();
 		}
 
-		_groupMan->load1_ActiveGroupPart(file);
+		_groupMan->loadActiveGroupPart(file);
 		_championMan->loadPartyPart2(file);
 		_timeline->load3_eventsPart(file);
 		_timeline->load4_timelinePart(file);
@@ -130,7 +130,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 
 	if (_newGameFl) {
 		_timeline->f233_initTimeline();
-		_groupMan->f196_initActiveGroups();
+		_groupMan->initActiveGroups();
 
 		if (L1366_B_FadePalette) {
 			_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
@@ -318,17 +318,17 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeUint16BE(_timeline->_g372_eventCount);
 	file->writeUint16BE(_timeline->_g373_firstUnusedEventIndex);
 	file->writeUint16BE(_timeline->_g369_eventMaxCount);
-	file->writeUint16BE(_groupMan->_g377_currActiveGroupCount);
+	file->writeUint16BE(_groupMan->_currActiveGroupCount);
 	file->writeSint32BE(_projexpl->_g361_lastCreatureAttackTime);
 	file->writeSint32BE(_projexpl->_g362_lastPartyMovementTime);
 	file->writeSint16BE(_disabledMovementTicks);
 	file->writeSint16BE(_projectileDisableMovementTicks);
 	file->writeSint16BE(_lastProjectileDisabledMovementDirection);
 	file->writeUint16BE(_championMan->_leaderHandObject.toUint16());
-	file->writeUint16BE(_groupMan->_g376_maxActiveGroupCount);
+	file->writeUint16BE(_groupMan->_maxActiveGroupCount);
 
 	// write C1_SAVE_PART_ACTIVE_GROUP part
-	_groupMan->save1_ActiveGroupPart(file);
+	_groupMan->saveActiveGroupPart(file);
 	// write C2_SAVE_PART_PARTY part
 	_championMan->savePartyPart2(file);
 	// write C3_SAVE_PART_EVENTS part

@@ -277,7 +277,7 @@ void Timeline::f261_processTimeline() {
 		_vm->_dungeonMan->setCurrentMap(getMap(L0682_s_Event._mapTime));
 		AL0680_ui_EventType = L0682_s_Event._type;
 		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
-			_vm->_groupMan->f209_processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
+			_vm->_groupMan->processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
 		} else {
 			switch (AL0680_ui_EventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
@@ -428,10 +428,10 @@ void Timeline::f241_timelineProcessEvent1_doorAnimation(TimelineEvent* event) {
 			f238_addEventGetEventIndex(event);
 			return;
 		}
-		if (((L0599_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((L0599_T_GroupThing = _vm->_groupMan->groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::getHeight(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
-					_vm->_groupMan->f209_processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
+					_vm->_groupMan->processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 				}
 				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
 				L0597_puc_Square->setDoorState(L0596_i_DoorState);
@@ -481,7 +481,7 @@ void Timeline::f242_timelineProcessEvent7_squareFakewall(TimelineEvent* event) {
 			event->_mapTime++;
 			f238_addEventGetEventIndex(event);
 		} else {
-			if (((L0606_T_Thing = _vm->_groupMan->f175_groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if (((L0606_T_Thing = _vm->_groupMan->groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
 				event->_mapTime++;
 				f238_addEventGetEventIndex(event);
 			} else {
@@ -557,7 +557,7 @@ void Timeline::f249_moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		_vm->_moveSens->f267_getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
 		_vm->_championMan->drawChangedObjectIcons();
 	}
-	if ((L0645_T_Thing = _vm->_groupMan->f175_groupGetThing(mapX, mapY)) != Thing::_endOfList) {
+	if ((L0645_T_Thing = _vm->_groupMan->groupGetThing(mapX, mapY)) != Thing::_endOfList) {
 		_vm->_moveSens->f267_getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
 	}
 	L0645_T_Thing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
@@ -838,7 +838,7 @@ void Timeline::f245_timlineProcessEvent5_squareCorridor(TimelineEvent* event) {
 					if (AL0618_ui_HealthMultiplier == 0) {
 						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
 					}
-					_vm->_groupMan->f185_groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
+					_vm->_groupMan->groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
 					if (L0614_ps_Sensor->getAttrAudibleA()) {
 						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
 					}
@@ -878,7 +878,7 @@ void Timeline::f252_timelineProcessEvents60to61_moveGroup(TimelineEvent* event) 
 	L0657_ui_MapY = event->_B._location._mapY;
 	L0657_ui_MapY = event->_B._location._mapY;
 T0252001:
-	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->f175_groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
+	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
 			_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
 		}
@@ -901,7 +901,7 @@ T0252001:
 				case 3:
 					L0657_ui_MapY++;
 				}
-				if (_vm->_groupMan->f223_isSquareACorridorTeleporterPitOrDoor(L0656_ui_MapX, L0657_ui_MapY))
+				if (_vm->_groupMan->isSquareACorridorTeleporterPitOrDoor(L0656_ui_MapX, L0657_ui_MapY))
 					goto T0252001;
 			}
 		}

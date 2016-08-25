@@ -25,7 +25,6 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-
 #ifndef DM_GROUP_H
 #define DM_GROUP_H
 
@@ -155,100 +154,98 @@ int32 M32_setTime(int32 &map_time, int32 time); // @ M32_SET_TIME
 
 class GroupMan {
 	DMEngine *_vm;
-	byte _g392_dropMovingCreatureFixedPossessionsCell[4]; // @ G0392_auc_DropMovingCreatureFixedPossessionsCells
-	uint16 _g391_dropMovingCreatureFixedPossCellCount; // @ G0391_ui_DropMovingCreatureFixedPossessionsCellCount
-	uint16 _g386_fluxCageCount; // @ G0386_ui_FluxCageCount
-	int16 _g385_fluxCages[4]; // @ G0385_ac_FluxCages
-	int16 _g378_currentGroupMapX; // @ G0378_i_CurrentGroupMapX
-	int16 _g379_currentGroupMapY; // @ G0379_i_CurrentGroupMapY
-	Thing _g380_currGroupThing; // @ G0380_T_CurrentGroupThing
-	int16 _g384_groupMovementTestedDirections[4]; // @ G0384_auc_GroupMovementTestedDirections
-	uint16 _g381_currGroupDistanceToParty; // @ G0381_ui_CurrentGroupDistanceToParty
-	int16 _g382_currGroupPrimaryDirToParty; // @ G0382_i_CurrentGroupPrimaryDirectionToParty
-	int16 _g383_currGroupSecondaryDirToParty; // @ G0383_i_CurrentGroupSecondaryDirectionToParty
+	byte _dropMovingCreatureFixedPossessionsCell[4]; // @ G0392_auc_DropMovingCreatureFixedPossessionsCells
+	uint16 _dropMovingCreatureFixedPossCellCount; // @ G0391_ui_DropMovingCreatureFixedPossessionsCellCount
+	uint16 _fluxCageCount; // @ G0386_ui_FluxCageCount
+	int16 _fluxCages[4]; // @ G0385_ac_FluxCages
+	int16 _currentGroupMapX; // @ G0378_i_CurrentGroupMapX
+	int16 _currentGroupMapY; // @ G0379_i_CurrentGroupMapY
+	Thing _currGroupThing; // @ G0380_T_CurrentGroupThing
+	int16 _groupMovementTestedDirections[4]; // @ G0384_auc_GroupMovementTestedDirections
+	uint16 _currGroupDistanceToParty; // @ G0381_ui_CurrentGroupDistanceToParty
+	int16 _currGroupPrimaryDirToParty; // @ G0382_i_CurrentGroupPrimaryDirectionToParty
+	int16 _currGroupSecondaryDirToParty; // @ G0383_i_CurrentGroupSecondaryDirectionToParty
 
-	Thing _g388_groupMovementBlockedByGroupThing; // @ G0388_T_GroupMovementBlockedByGroupThing
-	bool _g389_groupMovementBlockedByDoor; // @ G0389_B_GroupMovementBlockedByDoor
-	bool _g390_groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
-	bool _g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
-	int32 _g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime; // @ G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime
+	Thing _groupMovementBlockedByGroupThing; // @ G0388_T_GroupMovementBlockedByGroupThing
+	bool _groupMovementBlockedByDoor; // @ G0389_B_GroupMovementBlockedByDoor
+	bool _groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
+	bool _groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
+	int32 twoHalfSquareSizedCreaturesGroupLastDirectionSetTime; // @ G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime
 public:
-	uint16 _g376_maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
-	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
-	uint16 _g377_currActiveGroupCount; // @ G0377_ui_CurrentActiveGroupCount
+	uint16 _maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
+	ActiveGroup *_activeGroups; // @ G0375_ps_ActiveGroups
+	uint16 _currActiveGroupCount; // @ G0377_ui_CurrentActiveGroupCount
 	explicit GroupMan(DMEngine *vm);
 	~GroupMan();
 
-	void f196_initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
-	uint16 f145_getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
-	uint16 f147_getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
-	int16 f176_getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
-	uint16 M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
-	void f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode); // @ F0188_GROUP_DropGroupPossessions
-	void f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell,
+	void initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
+	uint16 getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
+	uint16 getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
+	int16 getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
+	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
+	void dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode); // @ F0188_GROUP_DropGroupPossessions
+	void dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell,
 										   int16 mode); // @ F0186_GROUP_DropCreatureFixedPossessions
-	int16 f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
+	int16 getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
 												   int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
-	bool f227_isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX,
+	bool isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX,
 									  int16 destMapY); // @ F0227_GROUP_IsDestinationVisibleFromSource
-	bool f232_groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack,
+	bool groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack,
 										   bool magicAttack, int16 ticks); // @ F0232_GROUP_IsDoorDestroyedByAttack
-	Thing f175_groupGetThing(int16 mapX, int16 mapY); // @ F0175_GROUP_GetThing
-	int16 f190_groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex,
+	Thing groupGetThing(int16 mapX, int16 mapY); // @ F0175_GROUP_GetThing
+	int16 groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex,
 											 int16 mapX, int16 mapY, int16 damage, bool notMoving); // @ F0190_GROUP_GetDamageCreatureOutcome
-	void f189_delete(int16 mapX, int16 mapY); // @ F0189_GROUP_Delete
-	void f181_groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
-	uint16 f178_getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
-	int16 f191_getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
-	int16 f192_groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
-	void f209_processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
-	bool f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
+	void groupDelete(int16 mapX, int16 mapY); // @ F0189_GROUP_Delete
+	void groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
+	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
+	int16 getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
+	int16 groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
+	void processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
+	bool isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
 								 uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
-	int16 f226_getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX,
+	int16 getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX,
 										 int16 destMapY); // @ F0226_GROUP_GetDistanceBetweenSquares
 
-	int16 f200_groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY); // @ F0200_GROUP_GetDistanceToVisibleParty
-	int16 f199_getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
+	int16 groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY); // @ F0200_GROUP_GetDistanceToVisibleParty
+	int16 getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 												  int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)); // @ F0199_GROUP_GetDistanceBetweenUnblockedSquares
-	bool f197_isViewPartyBlocked(uint16 mapX, uint16 mapY); // @ F0197_GROUP_IsViewPartyBlocked
-	int32 f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex,
+	bool isViewPartyBlocked(uint16 mapX, uint16 mapY); // @ F0197_GROUP_IsViewPartyBlocked
+	int32 getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex,
 										   bool isAttacking); // @ F0179_GROUP_GetCreatureAspectUpdateTime
-	void f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures); // @ F0205_GROUP_SetDirection
-	void f208_groupAddEvent(TimelineEvent *event, uint32 time); // @ F0208_GROUP_AddEvent
-	int16 f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
-	bool f198_isSmellPartyBlocked(uint16 mapX, uint16 mapY); // @ F0198_GROUP_IsSmellPartyBlocked
-	int16 f203_getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY,
+	void setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures); // @ F0205_GROUP_SetDirection
+	void addGroupEvent(TimelineEvent *event, uint32 time); // @ F0208_GROUP_AddEvent
+	int16 getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX); // @ F0201_GROUP_GetSmelledPartyPrimaryDirectionOrdinal
+	bool isSmellPartyBlocked(uint16 mapX, uint16 mapY); // @ F0198_GROUP_IsSmellPartyBlocked
+	int16 getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY,
 												  bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0203_GROUP_GetFirstPossibleMovementDirectionOrdinal
-	void f206_groupSetDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex,
+	void setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex,
 							   int16 creatureSize); // @ F0206_GROUP_SetDirectionGroup
-	void f182_stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY);// @ F0182_GROUP_StopAttacking
-	bool f204_isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir); // @ F0204_GROUP_IsArchenemyDoubleMovementPossible
-	bool f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex); // @ F0207_GROUP_IsCreatureAttacking
-	void f229_setOrderedCellsToAttack(signed char * orderedCellsToAttack, int16 targetMapX,
+	void stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY);// @ F0182_GROUP_StopAttacking
+	bool isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir); // @ F0204_GROUP_IsArchenemyDoubleMovementPossible
+	bool isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex); // @ F0207_GROUP_IsCreatureAttacking
+	void setOrderedCellsToAttack(signed char * orderedCellsToAttack, int16 targetMapX,
 	                                  int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource); // @ F0229_GROUP_SetOrderedCellsToAttack
-	void f193_stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
-	int16 f230_getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
-	void f187_dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY); // @ F0187_GROUP_DropMovingCreatureFixedPossessions
-	void f180_startWanedring(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
-	void f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY); // @ F0183_GROUP_AddActiveGroup
-	void f184_removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
-	void f194_removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
-	void f195_addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
-	Thing f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
-	bool f223_isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
-	int16 f177_getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 paryY,
+	void stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
+	int16 getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
+	void dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY); // @ F0187_GROUP_DropMovingCreatureFixedPossessions
+	void startWanedring(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
+	void addActiveGroup(Thing thing, int16 mapX, int16 mapY); // @ F0183_GROUP_AddActiveGroup
+	void removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
+	void removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
+	void addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
+	Thing groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
+	bool isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
+	int16 getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 paryY,
 											 uint16 champCell); // @ F0177_GROUP_GetMeleeTargetCreatureOrdinal
-	int16 f231_getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex,
+	int16 getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex,
 									int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex); // @ F0231_GROUP_GetMeleeActionDamage
-	void f224_fluxCageAction(int16 mapX, int16 mapY); // @ F0224_GROUP_FluxCageAction
-	uint16 f222_isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
-	bool f221_isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
-	void f225_fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
-	void save1_ActiveGroupPart(Common::OutSaveFile *file);
-	void load1_ActiveGroupPart(Common::InSaveFile* file);
+	void fluxCageAction(int16 mapX, int16 mapY); // @ F0224_GROUP_FluxCageAction
+	uint16 isLordChaosOnSquare(int16 mapX, int16 mapY); // @ F0222_GROUP_IsLordChaosOnSquare
+	bool isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
+	void fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
+	void saveActiveGroupPart(Common::OutSaveFile *file);
+	void loadActiveGroupPart(Common::InSaveFile* file);
 };
-
-
 
 }
 

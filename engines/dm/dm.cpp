@@ -365,10 +365,10 @@ void DMEngine::startGame() {
 }
 
 void DMEngine::processNewPartyMap(uint16 mapIndex) {
-	_groupMan->f194_removeAllActiveGroups();
+	_groupMan->removeAllActiveGroups();
 	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
 	_displayMan->loadCurrentMapGraphics();
-	_groupMan->f195_addAllActiveGroups();
+	_groupMan->addAllActiveGroups();
 	_inventoryMan->f337_setDungeonViewPalette();
 }
 
@@ -972,7 +972,7 @@ void DMEngine::fuseSequnce() {
 	L1431_i_LordChaosMapX = _dungeonMan->_partyMapX;
 	L1432_i_LordChaosMapY = _dungeonMan->_partyMapY;
 	L1431_i_LordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir], L1432_i_LordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
-	L1428_ps_Group = (Group*)_dungeonMan->getThingData(L1433_T_LordChaosThing = _groupMan->f175_groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
+	L1428_ps_Group = (Group*)_dungeonMan->getThingData(L1433_T_LordChaosThing = _groupMan->groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
 	L1428_ps_Group->_health[0] = 10000;
 	_dungeonMan->setGroupCells(L1428_ps_Group, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
 	_dungeonMan->setGroupDirections(L1428_ps_Group, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
@@ -1028,8 +1028,8 @@ T0446002:
 	fuseSequenceUpdate();
 	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_currMapWidth; AL1424_i_MapX++) {
 		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_currMapHeight; AL1425_i_MapY++) {
-			if (((L1427_T_Thing = _groupMan->f175_groupGetThing(AL1424_i_MapX, AL1425_i_MapY)) != Thing::_endOfList) && ((AL1424_i_MapX != L1431_i_LordChaosMapX) || (AL1425_i_MapY != L1432_i_LordChaosMapY))) {
-				_groupMan->f189_delete(AL1424_i_MapX, AL1425_i_MapY);
+			if (((L1427_T_Thing = _groupMan->groupGetThing(AL1424_i_MapX, AL1425_i_MapY)) != Thing::_endOfList) && ((AL1424_i_MapX != L1431_i_LordChaosMapX) || (AL1425_i_MapY != L1432_i_LordChaosMapY))) {
+				_groupMan->groupDelete(AL1424_i_MapX, AL1425_i_MapY);
 			}
 		}
 	}

@@ -361,13 +361,13 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					} else {
 						if (L0710_i_ThingType == k4_GroupThingType) {
 							_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-							AL0727_ui_Outcome = _vm->_groupMan->f191_getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(thing), mapX, mapY, 20, false);
+							AL0727_ui_Outcome = _vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(thing), mapX, mapY, 20, false);
 							_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
 							L0722_B_FallKilledGroup = (AL0727_ui_Outcome == k2_outcomeKilledAllCreaturesInGroup);
 							if (L0722_B_FallKilledGroup)
 								break;
 							if (AL0727_ui_Outcome == k1_outcomeKilledSomeCreaturesInGroup) {
-								_vm->_groupMan->f187_dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
+								_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
 							}
 						}
 					}
@@ -389,11 +389,11 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 			}
 		}
 		if ((L0710_i_ThingType == k4_GroupThingType) && (L0722_B_FallKilledGroup || !_vm->_dungeonMan->isCreatureAllowedOnMap(thing, L0715_ui_MapIndexDestination))) {
-			_vm->_groupMan->f187_dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
-			_vm->_groupMan->f188_dropGroupPossessions(destMapX, destMapY, thing, k2_soundModePlayOneTickLater);
+			_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
+			_vm->_groupMan->dropGroupPossessions(destMapX, destMapY, thing, k2_soundModePlayOneTickLater);
 			_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
 			if (mapX >= 0) {
-				_vm->_groupMan->f189_delete(mapX, mapY);
+				_vm->_groupMan->groupDelete(mapX, mapY);
 			}
 			return true; /* The specified group thing cannot be moved because it was killed by a fall or because it is not allowed on the destination map */
 		}
@@ -454,9 +454,9 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 	if (destMapX >= 0) {
 		if (thing == Thing::_party) {
 			_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
-			if ((thing = _vm->_groupMan->f175_groupGetThing(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) != Thing::_endOfList) { /* Delete group if party moves onto its square */
-				_vm->_groupMan->f188_dropGroupPossessions(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, thing, k1_soundModePlayIfPrioritized);
-				_vm->_groupMan->f189_delete(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+			if ((thing = _vm->_groupMan->groupGetThing(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) != Thing::_endOfList) { /* Delete group if party moves onto its square */
+				_vm->_groupMan->dropGroupPossessions(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, thing, k1_soundModePlayIfPrioritized);
+				_vm->_groupMan->groupDelete(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 			}
 			if (L0715_ui_MapIndexDestination == L0714_ui_MapIndexSource) {
 				f276_sensorProcessThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, L0725_B_PartySquare, true);
@@ -469,13 +469,13 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 				_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
 				L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
 				AL0708_i_ActiveGroupIndex = ((Group *)L0712_ps_Teleporter)->getActiveGroupIndex();
-				if (((L0715_ui_MapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (destMapX == _vm->_dungeonMan->_partyMapX) && (destMapY == _vm->_dungeonMan->_partyMapY)) || (_vm->_groupMan->f175_groupGetThing(destMapX, destMapY) != Thing::_endOfList)) { /* If a group tries to move to the party square or over another group then create an event to move the group later */
+				if (((L0715_ui_MapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (destMapX == _vm->_dungeonMan->_partyMapX) && (destMapY == _vm->_dungeonMan->_partyMapY)) || (_vm->_groupMan->groupGetThing(destMapX, destMapY) != Thing::_endOfList)) { /* If a group tries to move to the party square or over another group then create an event to move the group later */
 					_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
 					if (mapX >= 0) {
-						_vm->_groupMan->f181_groupDeleteEvents(mapX, mapY);
+						_vm->_groupMan->groupDeleteEvents(mapX, mapY);
 					}
 					if (L0721_B_GroupOnPartyMap) {
-						_vm->_groupMan->f184_removeActiveGroup(AL0708_i_ActiveGroupIndex);
+						_vm->_groupMan->removeActiveGroup(AL0708_i_ActiveGroupIndex);
 					}
 					f265_createEvent60to61_moveGroup(thing, destMapX, destMapY, L0715_ui_MapIndexDestination, L0726_B_Audible);
 					return true; /* The specified group thing cannot be moved because the party or another group is on the destination square */
@@ -485,11 +485,11 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
 				}
 				if (L0721_B_GroupOnPartyMap && (L0715_ui_MapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
-					_vm->_groupMan->f184_removeActiveGroup(AL0708_i_ActiveGroupIndex);
+					_vm->_groupMan->removeActiveGroup(AL0708_i_ActiveGroupIndex);
 					L0720_ui_MoveGroupResult = true;
 				} else {
 					if ((L0715_ui_MapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (!L0721_B_GroupOnPartyMap)) { /* If the group arrives on the party map */
-						_vm->_groupMan->f183_addActiveGroup(thing, destMapX, destMapY);
+						_vm->_groupMan->addActiveGroup(thing, destMapX, destMapY);
 						L0720_ui_MoveGroupResult = true;
 					}
 				}
@@ -499,15 +499,15 @@ bool MovesensMan::f267_getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 
 					f276_sensorProcessThingAdditionOrRemoval(destMapX, destMapY, thing, false, true);
 				}
 				if (L0720_ui_MoveGroupResult || (mapX < 0)) { /* If group moved from one map to another or if it was just placed on a square */
-					_vm->_groupMan->f180_startWanedring(destMapX, destMapY);
+					_vm->_groupMan->startWanedring(destMapX, destMapY);
 				}
 				_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
 				if (mapX >= 0) {
 					if (L0720_ui_MoveGroupResult > 1) { /* If the group behavior was C6_BEHAVIOR_ATTACK before being teleported from and to the party map */
-						_vm->_groupMan->f182_stopAttacking(&_vm->_groupMan->_g375_activeGroups[L0720_ui_MoveGroupResult - 2], mapX, mapY);
+						_vm->_groupMan->stopAttacking(&_vm->_groupMan->_activeGroups[L0720_ui_MoveGroupResult - 2], mapX, mapY);
 					} else {
 						if (L0720_ui_MoveGroupResult) { /* If the group was teleported or leaved the party map or entered the party map */
-							_vm->_groupMan->f181_groupDeleteEvents(mapX, mapY);
+							_vm->_groupMan->groupDeleteEvents(mapX, mapY);
 						}
 					}
 				}
@@ -575,7 +575,7 @@ bool MovesensMan::f266_moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMa
 		L0701_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
 		for (AL0699_ui_Cell = k0_CellNorthWest, AL0700_B_CreatureAlive = false; AL0699_ui_Cell < k3_CellSouthWest + 1; AL0699_ui_Cell++) {
 			AL0700_B_CreatureAlive |= L0701_ps_Group->_health[AL0699_ui_Cell];
-			if (_vm->_groupMan->f176_getCreatureOrdinalInCell(L0701_ps_Group, AL0699_ui_Cell)) {
+			if (_vm->_groupMan->getCreatureOrdinalInCell(L0701_ps_Group, AL0699_ui_Cell)) {
 				L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_Cell] = _vm->indexToOrdinal(AL0699_ui_Cell);
 			}
 		}
@@ -584,7 +584,7 @@ bool MovesensMan::f266_moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMa
 		}
 	}
 	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) { /* If source and destination squares are adjacent (if party or group is not being teleported) */
-		AL0699_ui_PrimaryDirection = _vm->_groupMan->f228_getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
+		AL0699_ui_PrimaryDirection = _vm->_groupMan->getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
 		AL0700_i_SecondaryDirection = returnNextVal(AL0699_ui_PrimaryDirection);
 		for (int16 i = 0; i < 4; ++i)
 			L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[i] = 0;
@@ -704,7 +704,7 @@ int16 MovesensMan::f262_getTeleporterRotatedGroupResult(Teleporter* teleporter, 
 
 	L0686_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
 	L0683_i_Rotation = teleporter->getRotation();
-	L0684_ui_GroupDirections = _vm->_groupMan->f147_getGroupDirections(L0686_ps_Group, mapIndex);
+	L0684_ui_GroupDirections = _vm->_groupMan->getGroupDirections(L0686_ps_Group, mapIndex);
 
 	L0689_B_AbsoluteRotation = teleporter->getAbsoluteRotation();
 	if (L0689_B_AbsoluteRotation) {
@@ -713,20 +713,20 @@ int16 MovesensMan::f262_getTeleporterRotatedGroupResult(Teleporter* teleporter, 
 		L0685_ui_UpdatedGroupDirections = normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation);
 	}
 
-	L0687_ui_UpdatedGroupCells = _vm->_groupMan->f145_getGroupCells(L0686_ps_Group, mapIndex);
+	L0687_ui_UpdatedGroupCells = _vm->_groupMan->getGroupCells(L0686_ps_Group, mapIndex);
 	if (L0687_ui_UpdatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
 		L0690_ui_GroupCells = L0687_ui_UpdatedGroupCells;
 		L0691_i_CreatureSize = getFlag(g243_CreatureInfo[L0686_ps_Group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
 		L0692_i_RelativeRotation = normalizeModulo4(4 + L0685_ui_UpdatedGroupDirections - L0684_ui_GroupDirections);
 		for (L0688_i_CreatureIndex = 0; L0688_i_CreatureIndex <= L0686_ps_Group->getCount(); L0688_i_CreatureIndex++) {
-			L0685_ui_UpdatedGroupDirections = _vm->_groupMan->f178_getGroupValueUpdatedWithCreatureValue(L0685_ui_UpdatedGroupDirections, L0688_i_CreatureIndex, L0689_B_AbsoluteRotation ? L0683_i_Rotation : normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation));
+			L0685_ui_UpdatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(L0685_ui_UpdatedGroupDirections, L0688_i_CreatureIndex, L0689_B_AbsoluteRotation ? L0683_i_Rotation : normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation));
 			if (L0691_i_CreatureSize == k0_MaskCreatureSizeQuarter) {
 				L0692_i_RelativeRotation = !L0689_B_AbsoluteRotation;
 				if (L0692_i_RelativeRotation) 
 					L0692_i_RelativeRotation = L0683_i_Rotation;
 			}
 			if (L0692_i_RelativeRotation) {
-				L0687_ui_UpdatedGroupCells = _vm->_groupMan->f178_getGroupValueUpdatedWithCreatureValue(L0687_ui_UpdatedGroupCells, L0688_i_CreatureIndex, normalizeModulo4(L0690_ui_GroupCells + L0692_i_RelativeRotation));
+				L0687_ui_UpdatedGroupCells = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(L0687_ui_UpdatedGroupCells, L0688_i_CreatureIndex, normalizeModulo4(L0690_ui_GroupCells + L0692_i_RelativeRotation));
 			}
 			L0684_ui_GroupDirections >>= 2;
 			L0690_ui_GroupCells >>= 2;

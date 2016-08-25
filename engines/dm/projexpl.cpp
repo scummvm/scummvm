@@ -170,7 +170,7 @@ T0217004:
 			return false;
 		}
 		L0488_i_Attack = f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) + 1;
-		_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->getRandomNumber(L0488_i_Attack), false, 0);
+		_vm->_groupMan->groupIsDoorDestoryedByAttack(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->getRandomNumber(L0488_i_Attack), false, 0);
 		break;
 	case kM2_ChampionElemType:
 		if ((AP0456_i_ChampionIndex = _vm->_championMan->getIndexInCell(cell)) < 0) {
@@ -179,8 +179,8 @@ T0217004:
 		L0489_i_ChampionAttack = L0488_i_Attack = f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing);
 		break;
 	case kM1_CreatureElemType:
-		L0491_ps_Group = (Group *)_vm->_dungeonMan->getThingData(_vm->_groupMan->f175_groupGetThing(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY));
-		if (!(L0512_ui_CreatureIndex = _vm->_groupMan->f176_getCreatureOrdinalInCell(L0491_ps_Group, cell))) {
+		L0491_ps_Group = (Group *)_vm->_dungeonMan->getThingData(_vm->_groupMan->groupGetThing(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY));
+		if (!(L0512_ui_CreatureIndex = _vm->_groupMan->getCreatureOrdinalInCell(L0491_ps_Group, cell))) {
 			return false;
 		}
 		L0512_ui_CreatureIndex--;
@@ -195,8 +195,8 @@ T0217004:
 		}
 		L0488_i_Attack = (uint16)((unsigned long)f216_projectileGetImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing) << 6) / L0493_ps_CreatureInfo->_defense;
 		if (L0488_i_Attack) {
-			if ((AL0487_i_Outcome = _vm->_groupMan->f190_groupGetDamageCreatureOutcome(L0491_ps_Group, L0512_ui_CreatureIndex, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->_groupMan->f192_groupGetResistanceAdjustedPoisonAttack(L0511_ui_CreatureType, _g366_projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup) {
-				_vm->_groupMan->f209_processEvents29to41(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
+			if ((AL0487_i_Outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(L0491_ps_Group, L0512_ui_CreatureIndex, AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, L0488_i_Attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(L0511_ui_CreatureType, _g366_projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup) {
+				_vm->_groupMan->processEvents29to41(AP0454_i_ProjectileTargetMapX, AP0455_i_ProjectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
 			}
 			_g364_creatureDamageOutcome = AL0487_i_Outcome;
 			if (!L0505_B_CreateExplosionOnImpact &&
@@ -350,7 +350,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 			if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (AP0443_ui_ProjectileMapX == _vm->_dungeonMan->_partyMapX) && (AP0444_ui_ProjectileMapY == _vm->_dungeonMan->_partyMapY)) {
 				_vm->_championMan->getDamagedChampionCount(attack, k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand | k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k1_attackType_FIRE);
 			} else {
-				if ((L0473_T_Thing = _vm->_groupMan->f175_groupGetThing(AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY)) != Thing::_endOfList) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
+				if ((L0473_T_Thing = _vm->_groupMan->groupGetThing(AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY)) != Thing::_endOfList) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
 					Group *L0472_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0473_T_Thing);
 					CreatureInfo *L0471_ps_CreatureInfo = &g243_CreatureInfo[L0472_ps_Group->_type];
 					int16 L0469_i_CreatureFireResistance = L0471_ps_CreatureInfo->getFireResistance();
@@ -359,7 +359,7 @@ void ProjExpl::f213_explosionCreate(Thing explThing, uint16 attack, uint16 mapXC
 							attack >>= 2;
 						}
 						if ((attack -= _vm->getRandomNumber((L0469_i_CreatureFireResistance << 1) + 1)) > 0) {
-							_g364_creatureDamageOutcome = _vm->_groupMan->f191_getDamageAllCreaturesOutcome(L0472_ps_Group, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, attack, true);
+							_g364_creatureDamageOutcome = _vm->_groupMan->getDamageAllCreaturesOutcome(L0472_ps_Group, AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY, attack, true);
 						}
 					}
 				}
@@ -450,7 +450,7 @@ void ProjExpl::f219_processEvents48To49_projectile(TimelineEvent* event) {
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0523_i_DestinationMapX == _vm->_dungeonMan->_partyMapX) && (L0524_i_DestinationMapY == _vm->_dungeonMan->_partyMapY) && f217_projectileHasImpactOccurred(kM2_ChampionElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
 			return;
 		}
-		if ((_vm->_groupMan->f175_groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && f217_projectileHasImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+		if ((_vm->_groupMan->groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && f217_projectileHasImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
 			return;
 		}
 		if (L0520_ps_Projectile->_kineticEnergy <= (AL0516_ui_StepEnergy = L0519_ps_Event->_C._projectile.getStepEnergy())) {
@@ -534,7 +534,7 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 	L0532_ps_Explosion = &((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
 	AL0531_i_SquareType = Square(_vm->_dungeonMan->_currMapData[L0528_ui_MapX][L0529_ui_MapY]).getType();
 	L0538_B_ExplosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0528_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0529_ui_MapY == _vm->_dungeonMan->_partyMapY);
-	if ((L0535_T_GroupThing = _vm->_groupMan->f175_groupGetThing(L0528_ui_MapX, L0529_ui_MapY)) != Thing::_endOfList) {
+	if ((L0535_T_GroupThing = _vm->_groupMan->groupGetThing(L0528_ui_MapX, L0529_ui_MapY)) != Thing::_endOfList) {
 		L0533_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0535_T_GroupThing);
 		L0534_ps_CreatureInfo = &g243_CreatureInfo[AL0537_ui_CreatureType = L0533_ps_Group->_type];
 	}
@@ -552,7 +552,7 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 			break;
 	case 0xFF80:
 		if (AL0531_i_SquareType == k4_DoorElemType) {
-			_vm->_groupMan->f232_groupIsDoorDestoryedByAttack(L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true, 0);
+			_vm->_groupMan->groupIsDoorDestoryedByAttack(L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true, 0);
 		}
 		break;
 	case 0xFF83:
@@ -563,12 +563,12 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 				AL0537_ui_NonMaterialAdditionalAttack++;
 				AL0531_i_CreatureCount = L0533_ps_Group->getCount();
 				do {
-					if (getFlag(_vm->_groupMan->_g375_activeGroups[L0533_ps_Group->getActiveGroupIndex()]._aspect[AL0531_i_CreatureCount], k0x0080_MaskActiveGroupIsAttacking)) { /* Materializer / Zytaz can only be damaged while they are attacking */
-						_vm->_groupMan->f190_groupGetDamageCreatureOutcome(L0533_ps_Group, AL0531_i_CreatureCount, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack + _vm->getRandomNumber(AL0537_ui_NonMaterialAdditionalAttack) + _vm->getRandomNumber(4), true);
+					if (getFlag(_vm->_groupMan->_activeGroups[L0533_ps_Group->getActiveGroupIndex()]._aspect[AL0531_i_CreatureCount], k0x0080_MaskActiveGroupIsAttacking)) { /* Materializer / Zytaz can only be damaged while they are attacking */
+						_vm->_groupMan->groupGetDamageCreatureOutcome(L0533_ps_Group, AL0531_i_CreatureCount, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack + _vm->getRandomNumber(AL0537_ui_NonMaterialAdditionalAttack) + _vm->getRandomNumber(4), true);
 					}
 				} while (--AL0531_i_CreatureCount >= 0);
 			} else {
-				_vm->_groupMan->f191_getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true);
+				_vm->_groupMan->getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true);
 			}
 		}
 		break;
@@ -586,8 +586,8 @@ void ProjExpl::f220_explosionProcessEvent25_explosion(TimelineEvent* event) {
 		if (L0538_B_ExplosionOnPartySquare) {
 			_vm->_championMan->getDamagedChampionCount(L0530_i_Attack, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
 		} else {
-			if ((L0535_T_GroupThing != Thing::_endOfList) && (L0530_i_Attack = _vm->_groupMan->f192_groupGetResistanceAdjustedPoisonAttack(AL0537_ui_CreatureType, L0530_i_Attack)) && (_vm->_groupMan->f191_getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true) != k2_outcomeKilledAllCreaturesInGroup) && (L0530_i_Attack > 2)) {
-				_vm->_groupMan->f209_processEvents29to41(L0528_ui_MapX, L0529_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+			if ((L0535_T_GroupThing != Thing::_endOfList) && (L0530_i_Attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(AL0537_ui_CreatureType, L0530_i_Attack)) && (_vm->_groupMan->getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true) != k2_outcomeKilledAllCreaturesInGroup) && (L0530_i_Attack > 2)) {
+				_vm->_groupMan->processEvents29to41(L0528_ui_MapX, L0529_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 			}
 		}
 		if (L0532_ps_Explosion->getAttack() >= 6) {

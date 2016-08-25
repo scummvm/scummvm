@@ -1448,8 +1448,8 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 							case k14_ProjectileThingType:
 								setCurrentMap(mapIndex);
 								if (thingType == k4_GroupThingType) {
-									_vm->_groupMan->f188_dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
-									_vm->_groupMan->f189_delete(currMapX, currMapY);
+									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
+									_vm->_groupMan->groupDelete(currMapX, currMapY);
 								} else {
 									_vm->_projexpl->f214_projectileDeleteEvent(squareThing);
 									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
@@ -1515,14 +1515,14 @@ uint16 DungeonMan::getCreatureAttributes(Thing thing) {
 
 void DungeonMan::setGroupCells(Group* group, uint16 cells, uint16 mapIndex) {
 	if (mapIndex == _partyMapIndex)
-		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._cells = cells;
+		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._cells = cells;
 	else
 		group->_cells = cells;
 }
 
 void DungeonMan::setGroupDirections(Group* group, int16 dir, uint16 mapIndex) {
 	if (mapIndex == _partyMapIndex)
-		_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
+		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
 	else
 		group->setDir(normalizeModulo4(dir));
 }

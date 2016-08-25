@@ -1072,7 +1072,7 @@ int16 ChampionMan::getDamagedChampionCount(uint16 attack, int16 wounds, int16 at
 int16 ChampionMan::getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
 	if (_partyChampionCount && (getDistance(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)) {
 		signed char orderedCellsToAttack[4];
-		_vm->_groupMan->f229_setOrderedCellsToAttack(orderedCellsToAttack, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, mapX, mapY, cell);
+		_vm->_groupMan->setOrderedCellsToAttack(orderedCellsToAttack, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, mapX, mapY, cell);
 		for (uint16 i = 0; i < 4; i++) {
 			int16 championIndex = getIndexInCell(orderedCellsToAttack[i]);
 			if (championIndex >= 0)

@@ -1016,9 +1016,9 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			if (damage)
 				_vm->_sound->f064_SOUND_RequestPlay_CPSD(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
 		} else {
-			isMovementBlocked = (_vm->_groupMan->f175_groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
+			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
 			if (isMovementBlocked)
-				_vm->_groupMan->f209_processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+				_vm->_groupMan->processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 		}
 	}
 
@@ -1347,10 +1347,10 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 	int16 mapY = _vm->_dungeonMan->_partyMapY;
 	if (viewCell >= k2_ViewCellBackRight) {
 		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
-		Thing groupThing = _vm->_groupMan->f175_groupGetThing(mapX, mapY);
+		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		if ((groupThing != Thing::_endOfList) &&
 			!_vm->_moveSens->f264_isLevitating(groupThing) &&
-			_vm->_groupMan->f176_getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->getThingData(groupThing), normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
+			_vm->_groupMan->getCreatureOrdinalInCell((Group*)_vm->_dungeonMan->getThingData(groupThing), normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir))) {
 			return; /* It is not possible to grab an object on floor if there is a non levitating creature on its cell */
 		}
 	}

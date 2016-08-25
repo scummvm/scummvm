@@ -3234,14 +3234,14 @@ T0115015_DrawProjectileAsObject:
 		ActiveGroup *activeGroup;
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
-			activeGroup = &_vm->_groupMan->_g375_activeGroups[group->getActiveGroupIndex()];
+			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
 			CreatureInfo *creatureInfo = &g243_CreatureInfo[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
 		objectAspect = (ObjectAspect*)creatureAspectStruct;
-		AL_0_creatureIndexRed = _vm->_groupMan->f176_getCreatureOrdinalInCell(group, cellYellowBear);
+		AL_0_creatureIndexRed = _vm->_groupMan->getCreatureOrdinalInCell(group, cellYellowBear);
 
 		if (AL_0_creatureIndexRed) { /* If there is a creature on the cell being processed */
 			AL_0_creatureIndexRed--; /* Convert ordinal to index */
@@ -3252,7 +3252,7 @@ T0115015_DrawProjectileAsObject:
 		} else
 			goto T0115129_DrawProjectiles; /* No creature to draw at cell, skip to projectiles */
 
-		creatureDirectionDelta = normalizeModulo4(directionParam - _vm->_groupMan->M50_getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
+		creatureDirectionDelta = normalizeModulo4(directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
 		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
@@ -3281,7 +3281,7 @@ T0115015_DrawProjectileAsObject:
 						creatureIndexGreen = 0;
 
 					twoHalfSquareCreaturesFrontView = group->getCount();
-					if (((AL_4_groupCells = _vm->_groupMan->M50_getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == returnPrevVal(directionParam)))
+					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == returnPrevVal(directionParam)))
 						AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
 					else
 						AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;

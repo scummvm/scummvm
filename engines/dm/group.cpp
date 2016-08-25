@@ -43,75 +43,75 @@ int32 M32_setTime(int32 &map_time, int32 time) {
 
 GroupMan::GroupMan(DMEngine *vm) : _vm(vm) {
 	for (uint16 i = 0; i < 4; ++i)
-		_g392_dropMovingCreatureFixedPossessionsCell[i] = 0;
-	_g391_dropMovingCreatureFixedPossCellCount = 0;
-	_g386_fluxCageCount = 0;
+		_dropMovingCreatureFixedPossessionsCell[i] = 0;
+	_dropMovingCreatureFixedPossCellCount = 0;
+	_fluxCageCount = 0;
 	for (uint16 i = 0; i < 4; ++i)
-		_g385_fluxCages[i] = 0;
-	_g378_currentGroupMapX = 0;
-	_g379_currentGroupMapY = 0;
-	_g380_currGroupThing = Thing(0);
+		_fluxCages[i] = 0;
+	_currentGroupMapX = 0;
+	_currentGroupMapY = 0;
+	_currGroupThing = Thing(0);
 	for (uint16 i = 0; i < 4; ++i)
-		_g384_groupMovementTestedDirections[i] = 0;
-	_g381_currGroupDistanceToParty = 0;
-	_g382_currGroupPrimaryDirToParty = 0;
-	_g383_currGroupSecondaryDirToParty = 0;
-	_g388_groupMovementBlockedByGroupThing = Thing(0);
-	_g389_groupMovementBlockedByDoor = false;
-	_g390_groupMovementBlockedByParty = false;
-	_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = false;
-	_g376_maxActiveGroupCount = 60;
-	_g375_activeGroups = nullptr;
-	_g377_currActiveGroupCount = 0;
-	_g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = 0;
+		_groupMovementTestedDirections[i] = 0;
+	_currGroupDistanceToParty = 0;
+	_currGroupPrimaryDirToParty = 0;
+	_currGroupSecondaryDirToParty = 0;
+	_groupMovementBlockedByGroupThing = Thing(0);
+	_groupMovementBlockedByDoor = false;
+	_groupMovementBlockedByParty = false;
+	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = false;
+	_maxActiveGroupCount = 60;
+	_activeGroups = nullptr;
+	_currActiveGroupCount = 0;
+	twoHalfSquareSizedCreaturesGroupLastDirectionSetTime = 0;
 }
 
 GroupMan::~GroupMan() {
-	delete[] _g375_activeGroups;
+	delete[] _activeGroups;
 }
 
-void GroupMan::f196_initActiveGroups() {
+void GroupMan::initActiveGroups() {
 	if (_vm->_newGameFl)
-		_g376_maxActiveGroupCount = 60;
+		_maxActiveGroupCount = 60;
 
-	if (_g375_activeGroups)
-		delete[] _g375_activeGroups;
+	if (_activeGroups)
+		delete[] _activeGroups;
 
-	_g375_activeGroups = new ActiveGroup[_g376_maxActiveGroupCount];
-	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i)
-		_g375_activeGroups[i]._groupThingIndex = -1;
+	_activeGroups = new ActiveGroup[_maxActiveGroupCount];
+	for (uint16 i = 0; i < _maxActiveGroupCount; ++i)
+		_activeGroups[i]._groupThingIndex = -1;
 }
 
-uint16 GroupMan::f145_getGroupCells(Group *group, int16 mapIndex) {
+uint16 GroupMan::getGroupCells(Group *group, int16 mapIndex) {
 	byte cells = group->_cells;
 	if (mapIndex == _vm->_dungeonMan->_partyMapIndex)
-		cells = _g375_activeGroups[cells]._cells;
+		cells = _activeGroups[cells]._cells;
 	return cells;
 }
 
-uint16 GroupMan::f147_getGroupDirections(Group *group, int16 mapIndex) {
+uint16 GroupMan::getGroupDirections(Group *group, int16 mapIndex) {
 	static byte groupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
 
 	if (mapIndex == _vm->_dungeonMan->_partyMapIndex)
-		return _g375_activeGroups[group->getActiveGroupIndex()]._directions;
+		return _activeGroups[group->getActiveGroupIndex()]._directions;
 
 	return groupDirections[group->getDir()];
 }
 
-int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
+int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
 	uint16 currMapIndex = _vm->_dungeonMan->_currMapIndex;
-	byte groupCells = f145_getGroupCells(group, currMapIndex);
+	byte groupCells = getGroupCells(group, currMapIndex);
 	if (groupCells == k255_CreatureTypeSingleCenteredCreature)
 		return _vm->indexToOrdinal(0);
 
 	int retval = 0;
 	byte creatureIndex = group->getCount();
 	if (getFlag(g243_CreatureInfo[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
-		if ((f147_getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
+		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = returnPrevVal(cell);
 
 		do {
-			byte creatureCell = M50_getCreatureValue(groupCells, creatureIndex);
+			byte creatureCell = getCreatureValue(groupCells, creatureIndex);
 			if (creatureCell == cell || creatureCell == returnNextVal(cell)) {
 				retval = _vm->indexToOrdinal(creatureIndex);
 				break;
@@ -119,7 +119,7 @@ int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
 		} while (creatureIndex--);
 	} else {
 		do {
-			if (M50_getCreatureValue(groupCells, creatureIndex) == cell) {
+			if (getCreatureValue(groupCells, creatureIndex) == cell) {
 				retval = _vm->indexToOrdinal(creatureIndex);
 				break;
 			}
@@ -129,19 +129,19 @@ int16 GroupMan::f176_getCreatureOrdinalInCell(Group *group, uint16 cell) {
 	return retval;
 }
 
-uint16 GroupMan::M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
+uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 	return (groupVal >> (creatureIndex << 1)) & 0x3;
 }
 
-void GroupMan::f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode) {
+void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	uint16 creatureType = group->_type;
 	if ((mode >= k0_soundModePlayImmediately) && getFlag(g243_CreatureInfo[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
-		uint16 groupCells = f145_getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
+		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
 		do {
-			f186_dropCreatureFixedPossessions(creatureType, mapX, mapY,
-				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : M50_getCreatureValue(groupCells, creatureIndex), mode);
+			dropCreatureFixedPossessions(creatureType, mapX, mapY,
+				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), mode);
 		} while (creatureIndex--);
 	}
 
@@ -163,7 +163,7 @@ void GroupMan::f188_dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThin
 	}
 }
 
-void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
+void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
 	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
 		k23_ObjectInfoIndexFirstWeapon + k9_WeaponTypeFalchion,
 		k69_ObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield,
@@ -290,7 +290,7 @@ void GroupMan::f186_dropCreatureFixedPossessions(uint16 creatureType, int16 mapX
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
 }
 
-int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
+int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
 #define AP0483_i_PrimaryDirection srcMapX
 	int16 L0556_i_Direction;
 
@@ -310,9 +310,9 @@ int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 sr
 	}
 	L0556_i_Direction = kDirNorth;
 	for (;;) {
-		if (f227_isDestVisibleFromSource(L0556_i_Direction, srcMapX, srcMapY, destMapX, destMapY)) {
-			if (!f227_isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
-				if ((L0556_i_Direction != kDirNorth) || !f227_isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnPrevVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
+		if (isDestVisibleFromSource(L0556_i_Direction, srcMapX, srcMapY, destMapX, destMapY)) {
+			if (!isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
+				if ((L0556_i_Direction != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnPrevVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
 					_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + L0556_i_Direction);
 					return L0556_i_Direction;
 				}
@@ -328,7 +328,7 @@ int16 GroupMan::f228_getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 sr
 	}
 }
 
-bool GroupMan::f227_isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
+bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
 	int L1637_i_Temp;
 
 	switch (dir) { /* If direction is not 'West' then swap variables so that the same test as for west can be applied */
@@ -359,7 +359,7 @@ bool GroupMan::f227_isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 src
 	return ((srcMapX -= (destMapX - 1)) > 0) && ((((srcMapY -= destMapY) < 0) ? -srcMapY : srcMapY) <= srcMapX);
 }
 
-bool GroupMan::f232_groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack, bool magicAttack, int16 ticks) {
+bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack, bool magicAttack, int16 ticks) {
 	Door *L0573_ps_Door = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 	if ((magicAttack && !L0573_ps_Door->isMagicDestructible()) || (!magicAttack && !L0573_ps_Door->isMeleeDestructible())) {
 		return false;
@@ -384,7 +384,7 @@ bool GroupMan::f232_groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16
 	return false;
 }
 
-Thing GroupMan::f175_groupGetThing(int16 mapX, int16 mapY) {
+Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 	Thing L0317_T_Thing;
 
 	L0317_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
@@ -394,7 +394,7 @@ Thing GroupMan::f175_groupGetThing(int16 mapX, int16 mapY) {
 	return L0317_T_Thing;
 }
 
-int16 GroupMan::f190_groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
+int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
 	uint16 L0374_ui_Multiple;
 #define AL0374_ui_EventIndex    L0374_ui_Multiple
 #define AL0374_ui_CreatureIndex L0374_ui_Multiple
@@ -421,26 +421,26 @@ int16 GroupMan::f190_groupGetDamageCreatureOutcome(Group *group, uint16 creature
 	if (getFlag(L0376_ps_CreatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
 		goto T0190024;
 	if (group->_health[creatureIndex] <= damage) {
-		L0381_ui_GroupCells = f145_getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
-		L0384_ui_Cell = (L0381_ui_GroupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : M50_getCreatureValue(L0381_ui_GroupCells, creatureIndex);
+		L0381_ui_GroupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
+		L0384_ui_Cell = (L0381_ui_GroupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(L0381_ui_GroupCells, creatureIndex);
 		if (!(L0379_ui_CreatureCount = group->getCount())) { /* If there is a single creature in the group */
 			if (notMoving) {
-				f188_dropGroupPossessions(mapX, mapY, f175_groupGetThing(mapX, mapY), k2_soundModePlayOneTickLater);
-				f189_delete(mapX, mapY);
+				dropGroupPossessions(mapX, mapY, groupGetThing(mapX, mapY), k2_soundModePlayOneTickLater);
+				groupDelete(mapX, mapY);
 			}
 			AL0375_ui_Outcome = k2_outcomeKilledAllCreaturesInGroup;
 		} else { /* If there are several creatures in the group */
-			L0382_ui_GroupDirections = f147_getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
+			L0382_ui_GroupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
 			if (getFlag(L0376_ps_CreatureInfo->_attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 				if (notMoving) {
-					f186_dropCreatureFixedPossessions(AL0380_ui_CreatureType, mapX, mapY, L0384_ui_Cell, k2_soundModePlayOneTickLater);
+					dropCreatureFixedPossessions(AL0380_ui_CreatureType, mapX, mapY, L0384_ui_Cell, k2_soundModePlayOneTickLater);
 				} else {
-					_g392_dropMovingCreatureFixedPossessionsCell[_g391_dropMovingCreatureFixedPossCellCount++] = L0384_ui_Cell;
+					_dropMovingCreatureFixedPossessionsCell[_dropMovingCreatureFixedPossCellCount++] = L0384_ui_Cell;
 				}
 			}
 			L0383_B_CurrentMapIsPartyMap = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex);
 			if (L0383_B_CurrentMapIsPartyMap)
-				L0378_ps_ActiveGroup = &_g375_activeGroups[group->getActiveGroupIndex()];
+				L0378_ps_ActiveGroup = &_activeGroups[group->getActiveGroupIndex()];
 
 			if (group->getBehaviour() == k6_behavior_ATTACK) {
 				L0377_ps_Event = _vm->_timeline->_g370_events;
@@ -474,8 +474,8 @@ int16 GroupMan::f190_groupGetDamageCreatureOutcome(Group *group, uint16 creature
 			for (AL0375_ui_NextCreatureIndex = AL0374_ui_CreatureIndex = creatureIndex; AL0374_ui_CreatureIndex < L0379_ui_CreatureCount; AL0374_ui_CreatureIndex++) {
 				AL0375_ui_NextCreatureIndex++;
 				group->_health[AL0374_ui_CreatureIndex] = group->_health[AL0375_ui_NextCreatureIndex];
-				L0382_ui_GroupDirections = f178_getGroupValueUpdatedWithCreatureValue(L0382_ui_GroupDirections, AL0374_ui_CreatureIndex, M50_getCreatureValue(L0382_ui_GroupDirections, AL0375_ui_NextCreatureIndex));
-				L0381_ui_GroupCells = f178_getGroupValueUpdatedWithCreatureValue(L0381_ui_GroupCells, AL0374_ui_CreatureIndex, M50_getCreatureValue(L0381_ui_GroupCells, AL0375_ui_NextCreatureIndex));
+				L0382_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0382_ui_GroupDirections, AL0374_ui_CreatureIndex, getCreatureValue(L0382_ui_GroupDirections, AL0375_ui_NextCreatureIndex));
+				L0381_ui_GroupCells = getGroupValueUpdatedWithCreatureValue(L0381_ui_GroupCells, AL0374_ui_CreatureIndex, getCreatureValue(L0381_ui_GroupCells, AL0375_ui_NextCreatureIndex));
 				if (L0383_B_CurrentMapIsPartyMap) {
 					L0378_ps_ActiveGroup->_aspect[AL0374_ui_CreatureIndex] = L0378_ps_ActiveGroup->_aspect[AL0375_ui_NextCreatureIndex];
 				}
@@ -505,12 +505,12 @@ T0190024:
 	return k0_outcomeKilledNoCreaturesInGroup;
 }
 
-void GroupMan::f189_delete(int16 mapX, int16 mapY) {
+void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	Thing L0372_T_GroupThing;
 	Group *L0373_ps_Group;
 
 
-	if ((L0372_T_GroupThing = f175_groupGetThing(mapX, mapY)) == Thing::_endOfList) {
+	if ((L0372_T_GroupThing = groupGetThing(mapX, mapY)) == Thing::_endOfList) {
 		return;
 	}
 	L0373_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0372_T_GroupThing);
@@ -519,13 +519,13 @@ void GroupMan::f189_delete(int16 mapX, int16 mapY) {
 	_vm->_moveSens->f267_getMoveResult(L0372_T_GroupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
 	L0373_ps_Group->_nextThing = Thing::_none;
 	if (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) {
-		_g375_activeGroups[L0373_ps_Group->getActiveGroupIndex()]._groupThingIndex = -1;
-		_g377_currActiveGroupCount--;
+		_activeGroups[L0373_ps_Group->getActiveGroupIndex()]._groupThingIndex = -1;
+		_currActiveGroupCount--;
 	}
-	f181_groupDeleteEvents(mapX, mapY);
+	groupDeleteEvents(mapX, mapY);
 }
 
-void GroupMan::f181_groupDeleteEvents(int16 mapX, int16 mapY) {
+void GroupMan::groupDeleteEvents(int16 mapX, int16 mapY) {
 	int16 L0334_i_EventIndex;
 	uint16 L0335_ui_EventType;
 	TimelineEvent *L0336_ps_Event;
@@ -542,13 +542,13 @@ void GroupMan::f181_groupDeleteEvents(int16 mapX, int16 mapY) {
 	}
 }
 
-uint16 GroupMan::f178_getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal) {
+uint16 GroupMan::getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal) {
 	creatreVal &= 0x0003;
 	creatreVal <<= (creatureIndex <<= 1);
 	return creatreVal | (groupVal & ~(3 << creatreVal));
 }
 
-int16 GroupMan::f191_getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving) {
+int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving) {
 	uint16 L0385_ui_RandomAttack;
 	int16 L0386_i_CreatureIndex;
 	int16 L0387_i_Outcome;
@@ -558,13 +558,13 @@ int16 GroupMan::f191_getDamageAllCreaturesOutcome(Group *group, int16 mapX, int1
 
 	L0388_B_KilledSomeCreatures = false;
 	L0389_B_KilledAllCreatures = true;
-	_g391_dropMovingCreatureFixedPossCellCount = 0;
+	_dropMovingCreatureFixedPossCellCount = 0;
 	if (attack > 0) {
 		L0386_i_CreatureIndex = group->getCount();
 		attack -= (L0385_ui_RandomAttack = (attack >> 3) + 1);
 		L0385_ui_RandomAttack <<= 1;
 		do {
-			L0389_B_KilledAllCreatures = (L0387_i_Outcome = f190_groupGetDamageCreatureOutcome(group, L0386_i_CreatureIndex, mapX, mapY, attack + _vm->getRandomNumber(L0385_ui_RandomAttack), notMoving)) && L0389_B_KilledAllCreatures;
+			L0389_B_KilledAllCreatures = (L0387_i_Outcome = groupGetDamageCreatureOutcome(group, L0386_i_CreatureIndex, mapX, mapY, attack + _vm->getRandomNumber(L0385_ui_RandomAttack), notMoving)) && L0389_B_KilledAllCreatures;
 			L0388_B_KilledSomeCreatures = L0388_B_KilledSomeCreatures || L0387_i_Outcome;
 		} while (L0386_i_CreatureIndex--);
 		if (L0389_B_KilledAllCreatures) {
@@ -579,7 +579,7 @@ int16 GroupMan::f191_getDamageAllCreaturesOutcome(Group *group, int16 mapX, int1
 	}
 }
 
-int16 GroupMan::f192_groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack) {
+int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack) {
 	int16 L0390_i_PoisonResistance;
 
 
@@ -589,7 +589,7 @@ int16 GroupMan::f192_groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, 
 	return ((poisonAttack + _vm->getRandomNumber(4)) << 3) / ++L0390_i_PoisonResistance;
 }
 
-void GroupMan::f209_processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks) {
+void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks) {
 	Group *L0444_ps_Group;
 	ActiveGroup *L0445_ps_ActiveGroup;
 	int16 L0446_i_Multiple;
@@ -638,7 +638,7 @@ void GroupMan::f209_processEvents29to41(int16 eventMapX, int16 eventMapY, int16 
 	if ((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) && ((AL0446_i_EventType = eventType) != k37_TMEventTypeUpdateBehaviourGroup) && (AL0446_i_EventType != k32_TMEventTypeUpdateAspectGroup) && (AL0446_i_EventType != k38_TMEventTypeUpdateBehaviour_0) && (AL0446_i_EventType != k33_TMEventTypeUpdateAspectCreature_0))
 		goto T0209139_Return;
 	/* If there is no creature at the location specified in the event then the event is ignored */
-	if ((L0449_T_GroupThing = f175_groupGetThing(eventMapX, eventMapY)) == Thing::_endOfList) {
+	if ((L0449_T_GroupThing = groupGetThing(eventMapX, eventMapY)) == Thing::_endOfList) {
 		goto T0209139_Return;
 	}
 	L0444_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0449_T_GroupThing);
@@ -650,7 +650,7 @@ void GroupMan::f209_processEvents29to41(int16 eventMapX, int16 eventMapY, int16 
 	L0465_s_NextEvent._B._location._mapY = eventMapY;
 	/* If the creature is not on the party map then try and move the creature in a random direction and place a new event 37 in the timeline for the next creature movement */
 	if (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) {
-		if (f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->getRandomNumber(4), false)) { /* BUG0_67 A group that is not on the party map may wrongly move or not move into a teleporter. Normally, a creature type with Wariness >= 10 (Vexirk, Materializer / Zytaz, Demon, Lord Chaos, Red Dragon / Dragon) would only move into a teleporter if the creature type is allowed on the destination map. However, the variable G0380_T_CurrentGroupThing identifying the group is not set before being used by F0139_DUNGEON_IsCreatureAllowedOnMap called by f202_isMovementPossible so the check to see if the creature type is allowed may operate on another creature type and thus return an incorrect result, causing the creature to teleport while it should not, or not to teleport while it should */
+		if (isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->getRandomNumber(4), false)) { /* BUG0_67 A group that is not on the party map may wrongly move or not move into a teleporter. Normally, a creature type with Wariness >= 10 (Vexirk, Materializer / Zytaz, Demon, Lord Chaos, Red Dragon / Dragon) would only move into a teleporter if the creature type is allowed on the destination map. However, the variable G0380_T_CurrentGroupThing identifying the group is not set before being used by F0139_DUNGEON_IsCreatureAllowedOnMap called by f202_isMovementPossible so the check to see if the creature type is allowed may operate on another creature type and thus return an incorrect result, causing the creature to teleport while it should not, or not to teleport while it should */
 			AL0450_i_DestinationMapX = eventMapX;
 			AL0451_i_DestinationMapY = eventMapY;
 			AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
@@ -673,10 +673,10 @@ T0209005_AddEventAndReturn:
 		if (_vm->_gameWon) {
 			goto T0209139_Return;
 		}
-		_g386_fluxCageCount = 0;
-		_g385_fluxCages[0] = 0;
+		_fluxCageCount = 0;
+		_fluxCages[0] = 0;
 	}
-	L0445_ps_ActiveGroup = &_g375_activeGroups[L0444_ps_Group->getActiveGroupIndex()];
+	L0445_ps_ActiveGroup = &_activeGroups[L0444_ps_Group->getActiveGroupIndex()];
 
 	L0462_i_TicksSinceLastMove = (unsigned char)_vm->_gameTime - L0445_ps_ActiveGroup->_lastMoveTime;
 	if (L0462_i_TicksSinceLastMove < 0)
@@ -709,20 +709,20 @@ T0209005_AddEventAndReturn:
 	L0459_i_CreatureSize = getFlag(L0448_s_CreatureInfo._attributes, k0x0003_MaskCreatureInfo_size);
 	AL0450_i_DistanceXToParty = ((AL0446_i_Distance = eventMapX - _vm->_dungeonMan->_partyMapX) < 0) ? -AL0446_i_Distance : AL0446_i_Distance;
 	AL0451_i_DistanceYToParty = ((AL0446_i_Distance = eventMapY - _vm->_dungeonMan->_partyMapY) < 0) ? -AL0446_i_Distance : AL0446_i_Distance;
-	_g378_currentGroupMapX = eventMapX;
-	_g379_currentGroupMapY = eventMapY;
-	_g380_currGroupThing = L0449_T_GroupThing;
-	_g384_groupMovementTestedDirections[0] = 0;
-	_g381_currGroupDistanceToParty = f226_getDistanceBetweenSquares(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
-	_g382_currGroupPrimaryDirToParty = f228_getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
-	_g383_currGroupSecondaryDirToParty = _vm->_projexpl->_g363_secondaryDirToOrFromParty;
+	_currentGroupMapX = eventMapX;
+	_currentGroupMapY = eventMapY;
+	_currGroupThing = L0449_T_GroupThing;
+	_groupMovementTestedDirections[0] = 0;
+	_currGroupDistanceToParty = getDistanceBetweenSquares(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+	_currGroupPrimaryDirToParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+	_currGroupSecondaryDirToParty = _vm->_projexpl->_g363_secondaryDirToOrFromParty;
 	L0464_l_NextAspectUpdateTime = 0;
 	L0455_B_CurrentEventTypeIsNotUpdateBehavior = true;
 	if (eventType <= k31_TMEventTypeGroupReactionPartyIsAdjecent) { /* Process Reaction events 29 to 31 */
 		switch (eventType = eventType - k32_TMEventTypeUpdateAspectGroup) {
 		case kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent: /* This event is used when the party bumps into a group or attacks a group physically (not with a spell). It causes the creature behavior to change to attack if it is not already attacking the party or fleeing from target */
 			if ((AL0447_i_Behavior != k6_behavior_ATTACK) && (AL0447_i_Behavior != k5_behavior_FLEE)) {
-				f181_groupDeleteEvents(eventMapX, eventMapY);
+				groupDeleteEvents(eventMapX, eventMapY);
 				goto T0209044_SetBehavior6_Attack;
 			}
 			L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
@@ -732,7 +732,7 @@ T0209005_AddEventAndReturn:
 			if ((AL0447_i_Behavior == k6_behavior_ATTACK) || (AL0447_i_Behavior == k5_behavior_FLEE)) /* If the creature is attacking the party or fleeing from the target then there is no reaction */
 				goto T0209139_Return;
 			if ((AL0446_i_Behavior2Or3 = ((AL0447_i_Behavior == k3_behavior_USELESS) || (AL0447_i_Behavior == k2_behavior_USELESS))) || (_vm->getRandomNumber(4))) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is thus: if 3/4 chances */
-				if (!f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) { /* If the group cannot see the party then look in a random direction to try and search for the party */
+				if (!groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) { /* If the group cannot see the party then look in a random direction to try and search for the party */
 					L0458_B_SetBehavior7_ApproachAfterReaction = L0453_B_NewGroupDirectionFound = false;
 					goto T0209073_SetDirectionGroup;
 				}
@@ -747,7 +747,7 @@ T0209005_AddEventAndReturn:
 	}
 	if (eventType < k37_TMEventTypeUpdateBehaviourGroup) { /* Process Update Aspect events 32 to 36 */
 		L0465_s_NextEvent._type = eventType + 5;
-		if (f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) {
+		if (groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) {
 			if ((AL0447_i_Behavior != k6_behavior_ATTACK) && (AL0447_i_Behavior != k5_behavior_FLEE)) {
 				if (getDistance(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, eventMapX, eventMapY) <= 1)
 					goto T0209044_SetBehavior6_Attack;
@@ -759,7 +759,7 @@ T0209005_AddEventAndReturn:
 		}
 		if (AL0447_i_Behavior == k6_behavior_ATTACK) {
 			AL0446_i_CreatureAspectIndex = eventType - k33_TMEventTypeUpdateAspectCreature_0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
-			L0464_l_NextAspectUpdateTime = f179_getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0446_i_CreatureAspectIndex, getFlag(L0445_ps_ActiveGroup->_aspect[AL0446_i_CreatureAspectIndex], k0x0080_MaskActiveGroupIsAttacking));
+			L0464_l_NextAspectUpdateTime = getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0446_i_CreatureAspectIndex, getFlag(L0445_ps_ActiveGroup->_aspect[AL0446_i_CreatureAspectIndex], k0x0080_MaskActiveGroupIsAttacking));
 			goto T0209136;
 		}
 		if ((AL0450_i_DistanceXToParty > 3) || (AL0451_i_DistanceYToParty > 3)) {
@@ -773,21 +773,21 @@ T0209005_AddEventAndReturn:
 
 		if (eventType == k37_TMEventTypeUpdateBehaviourGroup) { /* Process event 37, Update Group Behavior */
 			if ((AL0447_i_Behavior == k0_behavior_WANDER) || (AL0447_i_Behavior == k2_behavior_USELESS) || (AL0447_i_Behavior == k3_behavior_USELESS)) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
-				L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
+				L0452_i_DistanceToVisibleParty = groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
 				if (L0452_i_DistanceToVisibleParty) {
 					if ((L0452_i_DistanceToVisibleParty <= (L0448_s_CreatureInfo.getAttackRange())) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) { /* If the creature is in range for attack and on the same row or column as the party on the map */
 T0209044_SetBehavior6_Attack:
 						if (eventType == kM2_TMEventTypeCreateReactionEvent30HitByProjectile) {
-							f181_groupDeleteEvents(eventMapX, eventMapY);
+							groupDeleteEvents(eventMapX, eventMapY);
 						}
 						L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 						L0445_ps_ActiveGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 						L0444_ps_Group->setBehaviour(k6_behavior_ATTACK);
-						AL0446_i_Direction = _g382_currGroupPrimaryDirToParty;
+						AL0446_i_Direction = _currGroupPrimaryDirToParty;
 						for (AL0447_i_CreatureIndex = L0460_ui_CreatureCount; AL0447_i_CreatureIndex >= 0; AL0447_i_CreatureIndex--) {
-							if ((M50_getCreatureValue(L0445_ps_ActiveGroup->_directions, AL0447_i_CreatureIndex) != AL0446_i_Direction) &&
+							if ((getCreatureValue(L0445_ps_ActiveGroup->_directions, AL0447_i_CreatureIndex) != AL0446_i_Direction) &&
 								((!AL0447_i_CreatureIndex) || (!_vm->getRandomNumber(2)))) {
-								f205_setDirection(L0445_ps_ActiveGroup, AL0446_i_Direction, AL0447_i_CreatureIndex, L0460_ui_CreatureCount && (L0459_i_CreatureSize == k1_MaskCreatureSizeHalf));
+								setGroupDirection(L0445_ps_ActiveGroup, AL0446_i_Direction, AL0447_i_CreatureIndex, L0460_ui_CreatureCount && (L0459_i_CreatureSize == k1_MaskCreatureSizeHalf));
 								M32_setTime(L0465_s_NextEvent._mapTime, _vm->_gameTime + _vm->getRandomNumber(4) + 2); /* Random delay represents the time for the creature to turn */
 							} else {
 								M32_setTime(L0465_s_NextEvent._mapTime, _vm->_gameTime + 1);
@@ -796,7 +796,7 @@ T0209044_SetBehavior6_Attack:
 								L0465_s_NextEvent._mapTime += MIN((uint16)((L0448_s_CreatureInfo._attackTicks >> 1) + _vm->getRandomNumber(4)), ticks);
 							}
 							L0465_s_NextEvent._type = k38_TMEventTypeUpdateBehaviour_0 + AL0447_i_CreatureIndex;
-							f208_groupAddEvent(&L0465_s_NextEvent, f179_getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, false));
+							addGroupEvent(&L0465_s_NextEvent, getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, false));
 						}
 						goto T0209139_Return;
 					}
@@ -810,7 +810,7 @@ T0209054_SetBehavior7_Approach:
 					}
 				} else {
 					if (AL0447_i_Behavior == k0_behavior_WANDER) {
-						L0454_i_PrimaryDirectionToOrFromParty = f201_getSmelledPartyPrimaryDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY);
+						L0454_i_PrimaryDirectionToOrFromParty = getSmelledPartyPrimaryDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY);
 						if (L0454_i_PrimaryDirectionToOrFromParty) {
 							L0454_i_PrimaryDirectionToOrFromParty--;
 							L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls = false;
@@ -829,7 +829,7 @@ T0209058_MoveInRandomDirection:
 								if (((L0445_ps_ActiveGroup->_priorMapX != AL0450_i_DestinationMapX) ||
 									(L0445_ps_ActiveGroup->_priorMapY != AL0451_i_DestinationMapY) ||
 									 (L0457_B_MoveToPriorLocation = !_vm->getRandomNumber(4))) /* 1/4 chance of moving back to the square that the creature comes from */
-									&& f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction, false)) {
+									&& isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction, false)) {
 T0209061_MoveGroup:
 									AL0447_i_Ticks = (L0461_i_MovementTicks >> 1) - L0462_i_TicksSinceLastMove;
 									L0453_B_NewGroupDirectionFound = (AL0447_i_Ticks <= 0);
@@ -847,10 +847,10 @@ T0209061_MoveGroup:
 									}
 									break;
 								}
-								if (_g390_groupMovementBlockedByParty) {
+								if (_groupMovementBlockedByParty) {
 									if ((eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare) &&
 										((L0444_ps_Group->getBehaviour() != k5_behavior_FLEE) ||
-										 !f203_getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false) ||
+										 !getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false) ||
 										 _vm->getRandomNumber(2)))
 										goto T0209044_SetBehavior6_Attack;
 									L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
@@ -870,7 +870,7 @@ T0209073_SetDirectionGroup:
 							if (!L0453_B_NewGroupDirectionFound && (L0462_i_TicksSinceLastMove >= 0)) { /* If direction is not found yet then look around in a random direction */
 								AL0446_i_Direction = _vm->getRandomNumber(4);
 							}
-							f206_groupSetDirGroup(L0445_ps_ActiveGroup, AL0446_i_Direction, L0460_ui_CreatureCount, L0459_i_CreatureSize);
+							setDirGroup(L0445_ps_ActiveGroup, AL0446_i_Direction, L0460_ui_CreatureCount, L0459_i_CreatureSize);
 						}
 						/* If event is kM3_TMEventTypeCreateReactionEvent29DangerOnSquare or kM2_TMEventTypeCreateReactionEvent30HitByProjectile */
 						if (eventType < kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent) {
@@ -879,13 +879,13 @@ T0209073_SetDirectionGroup:
 							if (L0458_B_SetBehavior7_ApproachAfterReaction)
 								L0444_ps_Group->setBehaviour(k7_behavior_APPROACH);
 
-							f182_stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
+							stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
 						}
 					}
 				}
 			} else {
 				if (AL0447_i_Behavior == k7_behavior_APPROACH) {
-					L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
+					L0452_i_DistanceToVisibleParty = groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
 					if (L0452_i_DistanceToVisibleParty) {
 						if ((L0452_i_DistanceToVisibleParty <= L0448_s_CreatureInfo.getAttackRange()) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) /* If the creature is in range for attack and on the same row or column as the party on the map */
 							goto T0209044_SetBehavior6_Attack;
@@ -907,12 +907,12 @@ T0209082_WalkTowardTarget:
 					}
 					L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls = true;
 T0209084_SingleSquareMoveTowardParty:
-					L0454_i_PrimaryDirectionToOrFromParty = f228_getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY);
+					L0454_i_PrimaryDirectionToOrFromParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY);
 T0209085_SingleSquareMove:
-					if (f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls) ||
-						f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls && _vm->getRandomNumber(2)) ||
-						f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction), false) ||
-						(!_vm->getRandomNumber(4) && f202_isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty), false))) {
+					if (isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls) ||
+						isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty, L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls && _vm->getRandomNumber(2)) ||
+						isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction), false) ||
+						(!_vm->getRandomNumber(4) && isMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty), false))) {
 						AL0450_i_DestinationMapX = eventMapX;
 						AL0451_i_DestinationMapY = eventMapY;
 						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
@@ -920,11 +920,11 @@ T0209085_SingleSquareMove:
 					}
 					if (L0463_B_Archenemy) {
 T0209089_DoubleSquareMove:
-						f203_getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false); /* BUG0_00 Useless code. Returned value is ignored. When Lord Chaos teleports two squares away the ability to move to the first square is ignored which means Lord Chaos can teleport through walls or any other obstacle */
-						if (f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty) ||
-							f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty) ||
-							(_g386_fluxCageCount && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction))) ||
-							((_g386_fluxCageCount >= 2) && f204_isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty)))) {
+						getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false); /* BUG0_00 Useless code. Returned value is ignored. When Lord Chaos teleports two squares away the ability to move to the first square is ignored which means Lord Chaos can teleport through walls or any other obstacle */
+						if (isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = L0454_i_PrimaryDirectionToOrFromParty) ||
+							isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->_projexpl->_g363_secondaryDirToOrFromParty) ||
+							(_fluxCageCount && isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)AL0446_i_Direction))) ||
+							((_fluxCageCount >= 2) && isArchenemyDoubleMovementPossible(&L0448_s_CreatureInfo, eventMapX, eventMapY, AL0446_i_Direction = returnOppositeDir((Direction)L0454_i_PrimaryDirectionToOrFromParty)))) {
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
@@ -932,13 +932,13 @@ T0209089_DoubleSquareMove:
 							goto T0209061_MoveGroup;
 						}
 					}
-					f206_groupSetDirGroup(L0445_ps_ActiveGroup, L0454_i_PrimaryDirectionToOrFromParty, L0460_ui_CreatureCount, L0459_i_CreatureSize);
+					setDirGroup(L0445_ps_ActiveGroup, L0454_i_PrimaryDirectionToOrFromParty, L0460_ui_CreatureCount, L0459_i_CreatureSize);
 				} else {
 					if (AL0447_i_Behavior == k5_behavior_FLEE) {
 T0209094_FleeFromTarget:
 						L0456_B_AllowMovementOverImaginaryPitsAndFakeWalls = true;
 						/* If the creature can see the party then update target coordinates */
-						L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
+						L0452_i_DistanceToVisibleParty = groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY);
 						if (L0452_i_DistanceToVisibleParty) {
 							AL0450_i_TargetMapX = (L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX);
 							AL0451_i_TargetMapY = (L0445_ps_ActiveGroup->_targetMapY = _vm->_dungeonMan->_partyMapY);
@@ -951,7 +951,7 @@ T0209096_SetBehavior0_Wander:
 							}
 							if (_vm->getRandomNumber(2)) {
 								/* If the creature cannot move and the party is adjacent then stop fleeing */
-								if (!f203_getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false)) {
+								if (!getFirstPossibleMovementDirOrdinal(&L0448_s_CreatureInfo, eventMapX, eventMapY, false)) {
 									if (getDistance(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)
 										goto T0209096_SetBehavior0_Wander;
 								}
@@ -964,7 +964,7 @@ T0209096_SetBehavior0_Wander:
 							AL0451_i_TargetMapY = L0445_ps_ActiveGroup->_targetMapY;
 						}
 						/* Try and flee from the party (opposite direction) */
-						L0454_i_PrimaryDirectionToOrFromParty = returnOppositeDir((Direction)f228_getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY));
+						L0454_i_PrimaryDirectionToOrFromParty = returnOppositeDir((Direction)getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, AL0450_i_TargetMapX, AL0451_i_TargetMapY));
 						_vm->_projexpl->_g363_secondaryDirToOrFromParty = returnOppositeDir((Direction)_vm->_projexpl->_g363_secondaryDirToOrFromParty);
 						L0461_i_MovementTicks -= (L0461_i_MovementTicks >> 2);
 						goto T0209085_SingleSquareMove;
@@ -974,13 +974,13 @@ T0209096_SetBehavior0_Wander:
 		} else { /* Process events 38 to 41, Update Creature Behavior */
 			if (AL0447_i_Behavior == k5_behavior_FLEE) {
 				if (L0460_ui_CreatureCount) {
-					f182_stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
+					stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
 				}
 				goto T0209094_FleeFromTarget;
 			}
 			/* If the creature is attacking, then compute the next aspect update time and the next attack time */
 			if (getFlag(L0445_ps_ActiveGroup->_aspect[AL0447_i_CreatureIndex = eventType - k38_TMEventTypeUpdateBehaviour_0], k0x0080_MaskActiveGroupIsAttacking)) {
-				L0464_l_NextAspectUpdateTime = f179_getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, false);
+				L0464_l_NextAspectUpdateTime = getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, false);
 				L0465_s_NextEvent._mapTime += ((AL0447_i_Ticks = L0448_s_CreatureInfo._attackTicks) + _vm->getRandomNumber(4) - 1);
 				if (AL0447_i_Ticks > 15)
 					L0465_s_NextEvent._mapTime += _vm->getRandomNumber(8) - 2;
@@ -988,8 +988,8 @@ T0209096_SetBehavior0_Wander:
 				if (AL0447_i_CreatureIndex > L0460_ui_CreatureCount) /* Ignore event if it is for a creature that is not in the group */
 					goto T0209139_Return;
 
-				L0454_i_PrimaryDirectionToOrFromParty = _g382_currGroupPrimaryDirToParty;
-				L0452_i_DistanceToVisibleParty = f200_groupGetDistanceToVisibleParty(L0444_ps_Group, AL0447_i_CreatureIndex, eventMapX, eventMapY);
+				L0454_i_PrimaryDirectionToOrFromParty = _currGroupPrimaryDirToParty;
+				L0452_i_DistanceToVisibleParty = groupGetDistanceToVisibleParty(L0444_ps_Group, AL0447_i_CreatureIndex, eventMapX, eventMapY);
 				/* If the party is visible, update the target coordinates */
 				if (L0452_i_DistanceToVisibleParty) {
 					L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
@@ -1015,7 +1015,7 @@ T0209096_SetBehavior0_Wander:
 				/* If the creature can see the party and is looking in the party direction or can attack in all direction */
 				if (L0452_i_DistanceToVisibleParty &&
 					(getFlag(L0448_s_CreatureInfo._attributes, k0x0004_MaskCreatureInfo_sideAttack) ||
-					 M50_getCreatureValue(L0445_ps_ActiveGroup->_directions, AL0447_i_CreatureIndex) == L0454_i_PrimaryDirectionToOrFromParty)) {
+					 getCreatureValue(L0445_ps_ActiveGroup->_directions, AL0447_i_CreatureIndex) == L0454_i_PrimaryDirectionToOrFromParty)) {
 					/* If the creature is in range to attack the party and random test succeeds */
 					if ((L0452_i_DistanceToVisibleParty <= (AL0446_i_Range = L0448_s_CreatureInfo.getAttackRange())) &&
 						(!AL0450_i_DistanceXToParty || !AL0451_i_DistanceYToParty) &&
@@ -1024,7 +1024,7 @@ T0209096_SetBehavior0_Wander:
 							(!getFlag(AL0446_i_CreatureAttributes = L0448_s_CreatureInfo._attributes, k0x0008_MaskCreatureInfo_preferBackRow) || !_vm->getRandomNumber(4) || !getFlag(AL0446_i_CreatureAttributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) &&
 							(L0459_i_CreatureSize == k0_MaskCreatureSizeQuarter) &&
 							(L0445_ps_ActiveGroup->_cells != k255_CreatureTypeSingleCenteredCreature) &&
-							((AL0446_i_Cell = M50_getCreatureValue(L0445_ps_ActiveGroup->_cells, AL0447_i_CreatureIndex)) != L0454_i_PrimaryDirectionToOrFromParty) &&
+							((AL0446_i_Cell = getCreatureValue(L0445_ps_ActiveGroup->_cells, AL0447_i_CreatureIndex)) != L0454_i_PrimaryDirectionToOrFromParty) &&
 							(AL0446_i_Cell != returnNextVal(L0454_i_PrimaryDirectionToOrFromParty))) { /* If the creature cannot cast spells (range = 1) and is not on a cell where it can attack the party directly and is a quarter square sized creature not in the center of the square then the creature moves to another cell and attack does not occur immediately */
 							if (!L0460_ui_CreatureCount && _vm->getRandomNumber(2)) {
 								L0445_ps_ActiveGroup->_cells = k255_CreatureTypeSingleCenteredCreature;
@@ -1034,12 +1034,12 @@ T0209096_SetBehavior0_Wander:
 								} else {
 									AL0446_i_Cell++;
 								}
-								if (!f176_getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = normalizeModulo4(AL0446_i_Cell)) ||
-									(_vm->getRandomNumber(2) && !f176_getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
+								if (!getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = normalizeModulo4(AL0446_i_Cell)) ||
+									(_vm->getRandomNumber(2) && !getCreatureOrdinalInCell(L0444_ps_Group, AL0446_i_Cell = returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
 									if (_vm->_projexpl->f218_projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, L0445_ps_ActiveGroup->_cells) && (_vm->_projexpl->_g364_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
 										goto T0209139_Return;
 									if (_vm->_projexpl->_g364_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
-										L0445_ps_ActiveGroup->_cells = f178_getGroupValueUpdatedWithCreatureValue(L0445_ps_ActiveGroup->_cells, AL0447_i_CreatureIndex, AL0446_i_Cell);
+										L0445_ps_ActiveGroup->_cells = getGroupValueUpdatedWithCreatureValue(L0445_ps_ActiveGroup->_cells, AL0447_i_CreatureIndex, AL0446_i_Cell);
 									}
 								}
 							}
@@ -1047,27 +1047,27 @@ T0209096_SetBehavior0_Wander:
 							L0465_s_NextEvent._type = eventType;
 							goto T0209135;
 						}
-						L0464_l_NextAspectUpdateTime = f179_getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, f207_isCreatureAttacking(L0444_ps_Group, eventMapX, eventMapY, AL0447_i_CreatureIndex));
+						L0464_l_NextAspectUpdateTime = getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, AL0447_i_CreatureIndex, isCreatureAttacking(L0444_ps_Group, eventMapX, eventMapY, AL0447_i_CreatureIndex));
 						L0465_s_NextEvent._mapTime += (L0448_s_CreatureInfo._animationTicks & 0xF) + _vm->getRandomNumber(2);
 					} else {
 						L0444_ps_Group->setBehaviour(k7_behavior_APPROACH);
 						if (L0460_ui_CreatureCount) {
-							f182_stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
+							stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
 						}
 						goto T0209081_RunTowardParty;
 					}
 				} else {
 					/* If the party is visible, update target coordinates */
-					if (f200_groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) {
+					if (groupGetDistanceToVisibleParty(L0444_ps_Group, kM1_wholeCreatureGroup, eventMapX, eventMapY)) {
 						L0445_ps_ActiveGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 						L0445_ps_ActiveGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
-						f205_setDirection(L0445_ps_ActiveGroup, L0454_i_PrimaryDirectionToOrFromParty, AL0447_i_CreatureIndex, L0460_ui_CreatureCount && (L0459_i_CreatureSize == k1_MaskCreatureSizeHalf));
+						setGroupDirection(L0445_ps_ActiveGroup, L0454_i_PrimaryDirectionToOrFromParty, AL0447_i_CreatureIndex, L0460_ui_CreatureCount && (L0459_i_CreatureSize == k1_MaskCreatureSizeHalf));
 						L0465_s_NextEvent._mapTime += 2;
 						L0464_l_NextAspectUpdateTime = filterTime(L0465_s_NextEvent._mapTime);
 					} else { /* If the party is not visible, move to the target (last known party location) */
 						L0444_ps_Group->setBehaviour(k7_behavior_APPROACH);
 						if (L0460_ui_CreatureCount) {
-							f182_stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
+							stopAttacking(L0445_ps_ActiveGroup, eventMapX, eventMapY);
 						}
 						goto T0209082_WalkTowardTarget;
 					}
@@ -1082,7 +1082,7 @@ T0209134_SetEvent37:
 	}
 T0209135:
 	if (!L0464_l_NextAspectUpdateTime) {
-		L0464_l_NextAspectUpdateTime = f179_getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
+		L0464_l_NextAspectUpdateTime = getCreatureAspectUpdateTime(L0445_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
 	}
 T0209136:
 	if (L0455_B_CurrentEventTypeIsNotUpdateBehavior) {
@@ -1090,12 +1090,12 @@ T0209136:
 	} else {
 		L0464_l_NextAspectUpdateTime += ticks;
 	}
-	f208_groupAddEvent(&L0465_s_NextEvent, L0464_l_NextAspectUpdateTime);
+	addGroupEvent(&L0465_s_NextEvent, L0464_l_NextAspectUpdateTime);
 T0209139_Return:
 	;
 }
 
-bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY, uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls) {
+bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY, uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls) {
 	int16 L0428_i_MapX;
 	int16 L0429_i_MapY;
 	uint16 L0430_ui_Square = 0;
@@ -1103,10 +1103,10 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 	Teleporter *L0432_ps_Teleporter;
 	Thing L0433_T_Thing;
 
-	_g384_groupMovementTestedDirections[dir] = true;
-	_g388_groupMovementBlockedByGroupThing = Thing::_endOfList;
-	_g389_groupMovementBlockedByDoor = false;
-	_g390_groupMovementBlockedByParty = false;
+	_groupMovementTestedDirections[dir] = true;
+	_groupMovementBlockedByGroupThing = Thing::_endOfList;
+	_groupMovementBlockedByDoor = false;
+	_groupMovementBlockedByParty = false;
 	if (creatureInfo->_movementTicks == k255_immobile) {
 		return false;
 	}
@@ -1115,7 +1115,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 	L0429_i_MapY = mapY;
 	L0430_ui_Square = _vm->_dungeonMan->_currMapData[L0428_i_MapX][L0429_i_MapY];
 	L0431_i_SquareType = Square(L0430_ui_Square).getType();
-	_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
+	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
 		!(((L0428_i_MapX >= 0) && (L0428_i_MapX < _vm->_dungeonMan->_currMapWidth)) &&
 		 ((L0429_i_MapY >= 0) && (L0429_i_MapY < _vm->_dungeonMan->_currMapHeight)) &&
 		  (L0431_i_SquareType != k0_ElementTypeWall) &&
@@ -1123,7 +1123,7 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 		 ((L0431_i_SquareType != k2_ElementTypePit) || (getFlag(L0430_ui_Square, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(L0430_ui_Square, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
 		 ((L0431_i_SquareType != k6_ElementTypeFakeWall) || getFlag(L0430_ui_Square, k0x0004_FakeWallOpen) || (getFlag(L0430_ui_Square, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
 
-	if (_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
+	if (_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
 		return false;
 
 	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) {
@@ -1132,9 +1132,9 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 			if ((L0433_T_Thing).getType() == k15_ExplosionThingType) {
 				L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(L0433_T_Thing);
 				if (((Explosion *)L0432_ps_Teleporter)->setType(k50_ExplosionType_Fluxcage)) {
-					_g385_fluxCages[dir] = true;
-					_g386_fluxCageCount++;
-					_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
+					_fluxCages[dir] = true;
+					_fluxCageCount++;
+					_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 					return false;
 				}
 			}
@@ -1143,32 +1143,32 @@ bool GroupMan::f202_isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, i
 	}
 	if ((L0431_i_SquareType == k5_ElementTypeTeleporter) && getFlag(L0430_ui_Square, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
 		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
-		if (getFlag(L0432_ps_Teleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_g380_currGroupThing, L0432_ps_Teleporter->getTargetMapIndex())) {
-			_g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
+		if (getFlag(L0432_ps_Teleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, L0432_ps_Teleporter->getTargetMapIndex())) {
+			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 			return false;
 		}
 	}
 
-	_g390_groupMovementBlockedByParty = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0428_i_MapX == _vm->_dungeonMan->_partyMapX) && (L0429_i_MapY == _vm->_dungeonMan->_partyMapY);
-	if (_g390_groupMovementBlockedByParty)
+	_groupMovementBlockedByParty = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0428_i_MapX == _vm->_dungeonMan->_partyMapX) && (L0429_i_MapY == _vm->_dungeonMan->_partyMapY);
+	if (_groupMovementBlockedByParty)
 		return false;
 
 	if (L0431_i_SquareType == k4_DoorElemType) {
 		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
 		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
-			_g389_groupMovementBlockedByDoor = true;
+			_groupMovementBlockedByDoor = true;
 			return false;
 		}
 	}
-	return (_g388_groupMovementBlockedByGroupThing = f175_groupGetThing(L0428_i_MapX, L0429_i_MapY)) == Thing::_endOfList;
+	return (_groupMovementBlockedByGroupThing = groupGetThing(L0428_i_MapX, L0429_i_MapY)) == Thing::_endOfList;
 }
 
-int16 GroupMan::f226_getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
+int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
 	return ((((srcMapX -= destMapX) < 0) ? -srcMapX : srcMapX) +
 		(((srcMapY -= destMapY) < 0) ? -srcMapY : srcMapY));
 }
 
-int16 GroupMan::f200_groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
+int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
 	int16 L0420_i_CreatureDirection;
 	int16 L0421_i_CreatureViewDirectionCount; /* Count of directions to test in L0425_ai_CreatureViewDirections */
 	int16 L0422_i_Multiple;
@@ -1185,7 +1185,7 @@ int16 GroupMan::f200_groupGetDistanceToVisibleParty(Group *group, int16 creature
 	}
 	if (getFlag(L0424_ps_CreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) /* If creature can see in all directions */
 		goto T0200011;
-	L0423_ui_GroupDirections = _g375_activeGroups[group->getActiveGroupIndex()]._directions;
+	L0423_ui_GroupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
 	if (creatureIndex < 0) { /* Negative index means test if each creature in the group can see the party in their respective direction */
 		L0421_i_CreatureViewDirectionCount = 0;
 		for (creatureIndex = group->getCount(); creatureIndex >= 0; creatureIndex--) {
@@ -1200,26 +1200,26 @@ T0200006:
 			;
 		}
 	} else { /* Positive index means test only if the specified creature in the group can see the party in its direction */
-		L0425_ai_CreatureViewDirections[0] = M50_getCreatureValue(L0423_ui_GroupDirections, creatureIndex);
+		L0425_ai_CreatureViewDirections[0] = getCreatureValue(L0423_ui_GroupDirections, creatureIndex);
 		L0421_i_CreatureViewDirectionCount = 1;
 	}
 	while (L0421_i_CreatureViewDirectionCount--) {
-		if (f227_isDestVisibleFromSource(L0425_ai_CreatureViewDirections[L0421_i_CreatureViewDirectionCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
+		if (isDestVisibleFromSource(L0425_ai_CreatureViewDirections[L0421_i_CreatureViewDirectionCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
 T0200011:
 			AL0422_i_SightRange = L0424_ps_CreatureInfo->getSightRange();
 			if (!getFlag(L0424_ps_CreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision)) {
 				AL0422_i_SightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
 			}
-			if (_g381_currGroupDistanceToParty > MAX((int16)1, AL0422_i_SightRange)) {
+			if (_currGroupDistanceToParty > MAX((int16)1, AL0422_i_SightRange)) {
 				return 0;
 			}
-			return f199_getDistanceBetweenUnblockedSquares(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::f197_isViewPartyBlocked);
+			return getDistanceBetweenUnblockedSquares(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isViewPartyBlocked);
 		}
 	}
 	return 0;
 }
 
-int16 GroupMan::f199_getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
+int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 														int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)) {
 	int16 L0410_i_XAxisStep;
 	int16 L0411_i_YAxisStep;
@@ -1263,10 +1263,10 @@ int16 GroupMan::f199_getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 src
 			}
 		}
 	} while (getDistance(AL0412_i_PathMapX, AL0413_i_PathMapY, srcMapX, srcMapY) > 1);
-	return f226_getDistanceBetweenSquares(srcMapX, srcMapY, destMapX, destMapY);
+	return getDistanceBetweenSquares(srcMapX, srcMapY, destMapX, destMapY);
 }
 
-bool GroupMan::f197_isViewPartyBlocked(uint16 mapX, uint16 mapY) {
+bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 	uint16 L0404_ui_Square = _vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 L0405_i_SquareType = Square(L0404_ui_Square).getType();
 	if (L0405_i_SquareType == k4_DoorElemType) {
@@ -1277,7 +1277,7 @@ bool GroupMan::f197_isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 	return (L0405_i_SquareType == k0_ElementTypeWall) || ((L0405_i_SquareType == k6_ElementTypeFakeWall) && !getFlag(L0404_ui_Square, k0x0004_FakeWallOpen));
 }
 
-int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
+int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
 	uint16 L0326_ui_Multiple;
 #define AL0326_ui_Aspect         L0326_ui_Multiple
 #define AL0326_ui_AnimationTicks L0326_ui_Multiple
@@ -1319,7 +1319,7 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 				if (getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) && (L0331_ui_CreatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _g378_currentGroupMapX, _g379_currentGroupMapY, k1_soundModePlayIfPrioritized);
+						_vm->_sound->f064_SOUND_RequestPlay_CPSD(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (!getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(L0327_ui_CreatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
@@ -1338,7 +1338,7 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						L1635_ui_SoundIndex = _vm->_moveSens->f514_getSound(k13_CreatureTypeCouatl);
 						if (L1635_ui_SoundIndex <= k34_D13_soundCount)
-							_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1635_ui_SoundIndex, _g378_currentGroupMapX, _g379_currentGroupMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1635_ui_SoundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
 					setFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
@@ -1355,29 +1355,29 @@ int32 GroupMan::f179_getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16
 	return _vm->_gameTime + (isAttacking ? ((AL0326_ui_AnimationTicks >> 8) & 0xF) : ((AL0326_ui_AnimationTicks >> 4) & 0xF)) + _vm->getRandomNumber(2);
 }
 
-void GroupMan::f205_setDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures) {
+void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures) {
 	uint16 L0435_ui_GroupDirections;
 	static ActiveGroup *G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup;
 
-	if (twoHalfSquareSizedCreatures && (_vm->_gameTime == _g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
+	if (twoHalfSquareSizedCreatures && (_vm->_gameTime == twoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
 		return;
 	}
 	L0435_ui_GroupDirections = activeGroup->_directions;
-	if (normalizeModulo4(M50_getCreatureValue(L0435_ui_GroupDirections, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
+	if (normalizeModulo4(getCreatureValue(L0435_ui_GroupDirections, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
 		dir = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + dir);
-		L0435_ui_GroupDirections = f178_getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
+		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
 	} else {
-		L0435_ui_GroupDirections = f178_getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
+		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
 	}
 	if (twoHalfSquareSizedCreatures) {
-		L0435_ui_GroupDirections = f178_getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex ^ 1, dir); /* Set direction of the second half square sized creature */
-		_g395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_gameTime;
+		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex ^ 1, dir); /* Set direction of the second half square sized creature */
+		twoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_gameTime;
 		G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup = activeGroup;
 	}
 	activeGroup->_directions = (Direction)L0435_ui_GroupDirections;
 }
 
-void GroupMan::f208_groupAddEvent(TimelineEvent *event, uint32 time) {
+void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 	warning(false, "potentially dangerous cast to uint32 below");
 	if (time < (uint32)filterTime(event->_mapTime)) {
 		event->_type -= 5;
@@ -1389,7 +1389,7 @@ void GroupMan::f208_groupAddEvent(TimelineEvent *event, uint32 time) {
 	_vm->_timeline->f238_addEventGetEventIndex(event);
 }
 
-int16 GroupMan::f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX) {
+int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX) {
 
 	uint16 L0426_ui_SmellRange;
 	int16 L0427_i_ScentOrdinal;
@@ -1398,36 +1398,36 @@ int16 GroupMan::f201_getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo
 	if (!(L0426_ui_SmellRange = creatureInfo->getSmellRange())) {
 		return 0;
 	}
-	if ((((L0426_ui_SmellRange + 1) >> 1) >= _g381_currGroupDistanceToParty) && f199_getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::f198_isSmellPartyBlocked)) {
-		_vm->_projexpl->_g363_secondaryDirToOrFromParty = _g383_currGroupSecondaryDirToParty;
-		return _vm->indexToOrdinal(_g382_currGroupPrimaryDirToParty);
+	if ((((L0426_ui_SmellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
+		_vm->_projexpl->_g363_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
+		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
 	if ((L0427_i_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX)) && ((_vm->_championMan->_party._scentStrengths[_vm->ordinalToIndex(L0427_i_ScentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (L0426_ui_SmellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
-		return _vm->indexToOrdinal(f228_getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapX(), _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapY()));
+		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapX(), _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapY()));
 	}
 	return 0;
 }
 
-bool GroupMan::f198_isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
+bool GroupMan::isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
 	uint16 L0408_ui_Square;
 	int16 L0409_i_SquareType;
 
 	return ((L0409_i_SquareType = Square(L0408_ui_Square = _vm->_dungeonMan->_currMapData[mapX][mapY]).getType()) == k0_ElementTypeWall) || ((L0409_i_SquareType == k6_ElementTypeFakeWall) && !getFlag(L0408_ui_Square, k0x0004_FakeWallOpen));
 }
 
-int16 GroupMan::f203_getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY, bool allowMovementOverImaginaryPitsAndFakeWalls) {
+int16 GroupMan::getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY, bool allowMovementOverImaginaryPitsAndFakeWalls) {
 	int16 L0434_i_Direction;
 
 
 	for (L0434_i_Direction = kDirNorth; L0434_i_Direction <= kDirWest; L0434_i_Direction++) {
-		if ((!_g384_groupMovementTestedDirections[L0434_i_Direction]) && f202_isMovementPossible(info, mapX, mapY, L0434_i_Direction, allowMovementOverImaginaryPitsAndFakeWalls)) {
+		if ((!_groupMovementTestedDirections[L0434_i_Direction]) && isMovementPossible(info, mapX, mapY, L0434_i_Direction, allowMovementOverImaginaryPitsAndFakeWalls)) {
 			return _vm->indexToOrdinal(L0434_i_Direction);
 		}
 	}
 	return 0;
 }
 
-void GroupMan::f206_groupSetDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, int16 creatureSize) {
+void GroupMan::setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, int16 creatureSize) {
 	bool L0436_B_TwoHalfSquareSizedCreatures = creatureIndex && (creatureSize == k1_MaskCreatureSizeHalf);
 
 	if (L0436_B_TwoHalfSquareSizedCreatures)
@@ -1435,27 +1435,27 @@ void GroupMan::f206_groupSetDirGroup(ActiveGroup *activeGroup, int16 dir, int16 
 
 	do {
 		if (!creatureIndex || _vm->getRandomNumber(2))
-			f205_setDirection(activeGroup, dir, creatureIndex, L0436_B_TwoHalfSquareSizedCreatures);
+			setGroupDirection(activeGroup, dir, creatureIndex, L0436_B_TwoHalfSquareSizedCreatures);
 	} while (creatureIndex--);
 }
 
-void GroupMan::f182_stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY) {
+void GroupMan::stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY) {
 	int16 L0337_i_CreatureIndex;
 
 	for (L0337_i_CreatureIndex = 0; L0337_i_CreatureIndex < 4; clearFlag(group->_aspect[L0337_i_CreatureIndex++], k0x0080_MaskActiveGroupIsAttacking));
-	f181_groupDeleteEvents(mapX, mapY);
+	groupDeleteEvents(mapX, mapY);
 
 }
 
-bool GroupMan::f204_isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir) {
-	if (_g385_fluxCages[dir]) {
+bool GroupMan::isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir) {
+	if (_fluxCages[dir]) {
 		return false;
 	}
 	mapX += _vm->_dirIntoStepCountEast[dir], mapY += _vm->_dirIntoStepCountNorth[dir];
-	return f202_isMovementPossible(info, mapX, mapY, dir, false);
+	return isMovementPossible(info, mapX, mapY, dir, false);
 }
 
-bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex) {
+bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex) {
 	static const uint8 G0244_auc_Graphic559_CreatureAttackSounds[11] = { 3, 7, 14, 15, 19, 21, 29, 30, 31, 4, 16 }; /* Atari ST: { 3, 7, 14, 15, 19, 21, 4, 16 } */
 
 	uint16 L0437_ui_Multiple;
@@ -1472,17 +1472,17 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 #define AL0440_i_AttackSoundOrdinal L0440_i_Multiple
 
 	_vm->_projexpl->_g361_lastCreatureAttackTime = _vm->_gameTime;
-	ActiveGroup L0443_s_ActiveGroup = _g375_activeGroups[group->getActiveGroupIndex()];
+	ActiveGroup L0443_s_ActiveGroup = _activeGroups[group->getActiveGroupIndex()];
 	CreatureInfo *L0441_ps_CreatureInfo = &g243_CreatureInfo[AL0437_ui_CreatureType = group->_type];
-	uint16 L0438_ui_PrimaryDirectionToParty = _g382_currGroupPrimaryDirToParty;
+	uint16 L0438_ui_PrimaryDirectionToParty = _currGroupPrimaryDirToParty;
 	if ((AL0439_i_GroupCells = L0443_s_ActiveGroup._cells) == k255_CreatureTypeSingleCenteredCreature) {
 		AL0439_i_TargetCell = _vm->getRandomNumber(2);
 	} else {
-		AL0439_i_TargetCell = ((M50_getCreatureValue(AL0439_i_GroupCells, creatureIndex) + 5 - L0438_ui_PrimaryDirectionToParty) & 0x0002) >> 1;
+		AL0439_i_TargetCell = ((getCreatureValue(AL0439_i_GroupCells, creatureIndex) + 5 - L0438_ui_PrimaryDirectionToParty) & 0x0002) >> 1;
 	}
 	AL0439_i_TargetCell += L0438_ui_PrimaryDirectionToParty;
 	AL0439_i_TargetCell &= 0x0003;
-	if ((L0441_ps_CreatureInfo->getAttackRange() > 1) && ((_g381_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
+	if ((L0441_ps_CreatureInfo->getAttackRange() > 1) && ((_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
 		switch (AL0437_ui_CreatureType) {
 		case k14_CreatureTypeVexirk:
 		case k23_CreatureTypeLordChaos:
@@ -1527,7 +1527,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
 		_vm->_sound->f064_SOUND_RequestPlay_CPSD(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
-		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_g382_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
+		_vm->_projexpl->f212_projectileCreate(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
 	} else {
 		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
 			AL0439_i_ChampionIndex = _vm->getRandomNumber(4);
@@ -1543,9 +1543,9 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 			}
 		}
 		if (AL0437_ui_CreatureType == k2_CreatureTypeGiggler) {
-			f193_stealFromChampion(group, AL0439_i_ChampionIndex);
+			stealFromChampion(group, AL0439_i_ChampionIndex);
 		} else {
-			AL0440_i_Damage = f230_getChampionDamage(group, AL0439_i_ChampionIndex) + 1;
+			AL0440_i_Damage = getChampionDamage(group, AL0439_i_ChampionIndex) + 1;
 			Champion *L0442_ps_Champion = &_vm->_championMan->_champions[AL0439_i_ChampionIndex];
 			if (AL0440_i_Damage > L0442_ps_Champion->_maximumDamageReceived) {
 				L0442_ps_Champion->_maximumDamageReceived = AL0440_i_Damage;
@@ -1560,7 +1560,7 @@ bool GroupMan::f207_isCreatureAttacking(Group *group, int16 mapX, int16 mapY, ui
 	return true;
 }
 
-void GroupMan::f229_setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 targetMapX, int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource) {
+void GroupMan::setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 targetMapX, int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource) {
 	static signed char g23_orderedCellsToAttack[8][4] = { // @ G0023_aac_Graphic562_OrderedCellsToAttack
 		{0, 1, 3, 2},   /* Attack South from position Northwest or Southwest */
 		{1, 0, 2, 3},   /* Attack South from position Northeast or Southeast */
@@ -1573,7 +1573,7 @@ void GroupMan::f229_setOrderedCellsToAttack(signed char *orderedCellsToAttack, i
 	uint16 L0557_ui_OrderedCellsToAttackIndex;
 
 
-	if (!((L0557_ui_OrderedCellsToAttackIndex = f228_getDirsWhereDestIsVisibleFromSource(targetMapX, targetMapY, attackerMapX, attackerMapY) << 1) & 0x0002)) {
+	if (!((L0557_ui_OrderedCellsToAttackIndex = getDirsWhereDestIsVisibleFromSource(targetMapX, targetMapY, attackerMapX, attackerMapY) << 1) & 0x0002)) {
 		cellSource++;
 	}
 	L0557_ui_OrderedCellsToAttackIndex += (cellSource >> 1) & 0x0001;
@@ -1581,7 +1581,7 @@ void GroupMan::f229_setOrderedCellsToAttack(signed char *orderedCellsToAttack, i
 		orderedCellsToAttack[i] = g23_orderedCellsToAttack[L0557_ui_OrderedCellsToAttackIndex][i];
 }
 
-void GroupMan::f193_stealFromChampion(Group *group, uint16 championIndex) {
+void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 	int16 L0391_i_Percentage;
 	uint16 L0392_ui_StealFromSlotIndex;
 	uint16 L0393_ui_Counter;
@@ -1615,12 +1615,12 @@ void GroupMan::f193_stealFromChampion(Group *group, uint16 championIndex) {
 		L0391_i_Percentage -= 20;
 	}
 	if (!_vm->getRandomNumber(8) || (L0396_B_ObjectStolen && _vm->getRandomNumber(2))) {
-		_g375_activeGroups[group->getActiveGroupIndex()]._delayFleeingFromTarget = _vm->getRandomNumber(64) + 20;
+		_activeGroups[group->getActiveGroupIndex()]._delayFleeingFromTarget = _vm->getRandomNumber(64) + 20;
 		group->setBehaviour(k5_behavior_FLEE);
 	}
 }
 
-int16 GroupMan::f230_getChampionDamage(Group *group, uint16 champIndex) {
+int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 	unsigned char g24_woundProbabilityIndexToWoundMask[4] = {32, 16, 8, 4}; // @ G0024_auc_Graphic562_WoundProbabilityIndexToWoundMask
 
 	Champion *L0562_ps_Champion;
@@ -1694,26 +1694,26 @@ T0230014:
 	return 0;
 }
 
-void GroupMan::f187_dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY) {
+void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY) {
 	Group *L0363_ps_Group;
 	int16 L0364_i_CreatureType;
 
 
-	if (_g391_dropMovingCreatureFixedPossCellCount) {
+	if (_dropMovingCreatureFixedPossCellCount) {
 		L0363_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
 		L0364_i_CreatureType = L0363_ps_Group->_type;
-		while (_g391_dropMovingCreatureFixedPossCellCount) {
-			f186_dropCreatureFixedPossessions(L0364_i_CreatureType, mapX, mapY, _g392_dropMovingCreatureFixedPossessionsCell[--_g391_dropMovingCreatureFixedPossCellCount], k2_soundModePlayOneTickLater);
+		while (_dropMovingCreatureFixedPossCellCount) {
+			dropCreatureFixedPossessions(L0364_i_CreatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], k2_soundModePlayOneTickLater);
 		}
 	}
 }
 
-void GroupMan::f180_startWanedring(int16 mapX, int16 mapY) {
+void GroupMan::startWanedring(int16 mapX, int16 mapY) {
 	Group *L0332_ps_Group;
 	TimelineEvent L0333_s_Event;
 
 
-	L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(f175_groupGetThing(mapX, mapY));
+	L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(groupGetThing(mapX, mapY));
 	if (L0332_ps_Group->getBehaviour() >= k4_behavior_USELESS) {
 		L0332_ps_Group->setBehaviour(k0_behavior_WANDER);
 	}
@@ -1726,22 +1726,22 @@ void GroupMan::f180_startWanedring(int16 mapX, int16 mapY) {
 	_vm->_timeline->f238_addEventGetEventIndex(&L0333_s_Event);
 }
 
-void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
+void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	uint16 L0339_ui_CreatureIndex;
 	Group *L0340_ps_Group;
 	ActiveGroup *L0341_ps_ActiveGroup;
 	int16 L0344_i_ActiveGroupIndex;
 
 
-	L0341_ps_ActiveGroup = _g375_activeGroups;
+	L0341_ps_ActiveGroup = _activeGroups;
 	L0344_i_ActiveGroupIndex = 0;
 	while (L0341_ps_ActiveGroup->_groupThingIndex >= 0) {
-		if (++L0344_i_ActiveGroupIndex >= _g376_maxActiveGroupCount) {
+		if (++L0344_i_ActiveGroupIndex >= _maxActiveGroupCount) {
 			return;
 		}
 		L0341_ps_ActiveGroup++;
 	}
-	_g377_currActiveGroupCount++;
+	_currActiveGroupCount++;
 
 	L0340_ps_Group = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] + 
 		g235_ThingDataWordCount[k4_GroupThingType] * (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getIndex()));
@@ -1753,23 +1753,23 @@ void GroupMan::f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	L0341_ps_ActiveGroup->_lastMoveTime = _vm->_gameTime - 127;
 	L0339_ui_CreatureIndex = L0340_ps_Group->getCount();
 	do {
-		L0341_ps_ActiveGroup->_directions = (Direction)f178_getGroupValueUpdatedWithCreatureValue(L0341_ps_ActiveGroup->_directions, L0339_ui_CreatureIndex, L0340_ps_Group->getDir());
+		L0341_ps_ActiveGroup->_directions = (Direction)getGroupValueUpdatedWithCreatureValue(L0341_ps_ActiveGroup->_directions, L0339_ui_CreatureIndex, L0340_ps_Group->getDir());
 		L0341_ps_ActiveGroup->_aspect[L0339_ui_CreatureIndex] = 0;
 	} while (L0339_ui_CreatureIndex--);
-	f179_getCreatureAspectUpdateTime(L0341_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
+	getCreatureAspectUpdateTime(L0341_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
 }
 
-void GroupMan::f184_removeActiveGroup(uint16 activeGroupIndex) {
+void GroupMan::removeActiveGroup(uint16 activeGroupIndex) {
 	ActiveGroup *L0347_ps_ActiveGroup;
 	Group *L0348_ps_Group;
 
 
-	if ((activeGroupIndex > _g376_maxActiveGroupCount) || (_g375_activeGroups[activeGroupIndex]._groupThingIndex < 0)) {
+	if ((activeGroupIndex > _maxActiveGroupCount) || (_activeGroups[activeGroupIndex]._groupThingIndex < 0)) {
 		return;
 	}
-	L0347_ps_ActiveGroup = &_g375_activeGroups[activeGroupIndex];
+	L0347_ps_ActiveGroup = &_activeGroups[activeGroupIndex];
 	L0348_ps_Group = &((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[L0347_ps_ActiveGroup->_groupThingIndex];
-	_g377_currActiveGroupCount--;
+	_currActiveGroupCount--;
 	L0348_ps_Group->_cells = L0347_ps_ActiveGroup->_cells;
 	L0348_ps_Group->setDir(normalizeModulo4(L0347_ps_ActiveGroup->_directions));
 	if (L0348_ps_Group->getBehaviour() >= k4_behavior_USELESS) {
@@ -1778,15 +1778,15 @@ void GroupMan::f184_removeActiveGroup(uint16 activeGroupIndex) {
 	L0347_ps_ActiveGroup->_groupThingIndex = -1;
 }
 
-void GroupMan::f194_removeAllActiveGroups() {
-	for (int16 L0397_ui_ActiveGroupIndex = 0; _g377_currActiveGroupCount > 0; L0397_ui_ActiveGroupIndex++) {
-		if (_g375_activeGroups[L0397_ui_ActiveGroupIndex]._groupThingIndex >= 0) {
-			f184_removeActiveGroup(L0397_ui_ActiveGroupIndex);
+void GroupMan::removeAllActiveGroups() {
+	for (int16 L0397_ui_ActiveGroupIndex = 0; _currActiveGroupCount > 0; L0397_ui_ActiveGroupIndex++) {
+		if (_activeGroups[L0397_ui_ActiveGroupIndex]._groupThingIndex >= 0) {
+			removeActiveGroup(L0397_ui_ActiveGroupIndex);
 		}
 	}
 }
 
-void GroupMan::f195_addAllActiveGroups() {
+void GroupMan::addAllActiveGroups() {
 	uint16 L0398_ui_MapX;
 	uint16 L0399_ui_MapY;
 	Thing L0400_T_Thing;
@@ -1802,9 +1802,9 @@ void GroupMan::f195_addAllActiveGroups() {
 				L0400_T_Thing = *L0402_pT_SquareFirstThing++;
 				do {
 					if (L0400_T_Thing.getType() == k4_GroupThingType) {
-						f181_groupDeleteEvents(L0398_ui_MapX, L0399_ui_MapY);
-						f183_addActiveGroup(L0400_T_Thing, L0398_ui_MapX, L0399_ui_MapY);
-						f180_startWanedring(L0398_ui_MapX, L0399_ui_MapY);
+						groupDeleteEvents(L0398_ui_MapX, L0399_ui_MapY);
+						addActiveGroup(L0400_T_Thing, L0398_ui_MapX, L0399_ui_MapY);
+						startWanedring(L0398_ui_MapX, L0399_ui_MapY);
 						break;
 					}
 				} while ((L0400_T_Thing = _vm->_dungeonMan->getNextThing(L0400_T_Thing)) != Thing::_endOfList);
@@ -1813,7 +1813,7 @@ void GroupMan::f195_addAllActiveGroups() {
 	}
 }
 
-Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
+Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
 	Thing L0349_T_GroupThing;
 	uint16 L0350_ui_BaseHealth;
 	uint16 L0351_ui_Cell = 0;
@@ -1823,7 +1823,7 @@ Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplie
 	bool L0355_B_SeveralCreaturesInGroup;
 
 
-	if (((_g377_currActiveGroupCount >= (_g376_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) || ((L0349_T_GroupThing = _vm->_dungeonMan->getUnusedThing(k4_GroupThingType)) == Thing::_none)) {
+	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) || ((L0349_T_GroupThing = _vm->_dungeonMan->getUnusedThing(k4_GroupThingType)) == Thing::_none)) {
 		return Thing::_none;
 	}
 	L0353_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0349_T_GroupThing);
@@ -1842,7 +1842,7 @@ Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplie
 	do {
 		L0353_ps_Group->_health[creatureCount] = (L0350_ui_BaseHealth * healthMultiplier) + _vm->getRandomNumber((L0350_ui_BaseHealth >> 2) + 1);
 		if (L0355_B_SeveralCreaturesInGroup) {
-			L0352_ui_GroupCells = f178_getGroupValueUpdatedWithCreatureValue(L0352_ui_GroupCells, creatureCount, L0351_ui_Cell++);
+			L0352_ui_GroupCells = getGroupValueUpdatedWithCreatureValue(L0352_ui_GroupCells, creatureCount, L0351_ui_Cell++);
 			if (getFlag(L0354_ps_CreatureInfo->_attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
 				L0351_ui_Cell++;
 			}
@@ -1857,29 +1857,29 @@ Thing GroupMan::f185_groupGetGenerated(int16 creatureType, int16 healthMultiplie
 	return L0349_T_GroupThing;
 }
 
-bool GroupMan::f223_isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
+bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
 	int16 L0544_i_SquareType;
 
 	return (((L0544_i_SquareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType()) == k1_CorridorElemType)
 			|| (L0544_i_SquareType == k5_ElementTypeTeleporter) || (L0544_i_SquareType == k2_ElementTypePit) || (L0544_i_SquareType == k4_DoorElemType));
 }
 
-int16 GroupMan::f177_getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {
+int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {
 	uint16 L0321_ui_Counter;
 	int16 L0322_i_CreatureOrdinal;
 	Thing L0323_T_GroupThing;
 	Group* L0324_ps_Group;
 	signed char L0325_auc_OrderedCellsToAttack[4];
 
-	L0323_T_GroupThing = f175_groupGetThing(groupX, groupY);
+	L0323_T_GroupThing = groupGetThing(groupX, groupY);
 	if (L0323_T_GroupThing == Thing::_endOfList)
 		return 0;
 
 	L0324_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0323_T_GroupThing);
-	f229_setOrderedCellsToAttack(L0325_auc_OrderedCellsToAttack, groupX, groupY, partyX, partyY, champCell);
+	setOrderedCellsToAttack(L0325_auc_OrderedCellsToAttack, groupX, groupY, partyX, partyY, champCell);
 	L0321_ui_Counter = 0;
 	for (;;) { /*_Infinite loop_*/
-		L0322_i_CreatureOrdinal = f176_getCreatureOrdinalInCell(L0324_ps_Group, L0325_auc_OrderedCellsToAttack[L0321_ui_Counter]);
+		L0322_i_CreatureOrdinal = getCreatureOrdinalInCell(L0324_ps_Group, L0325_auc_OrderedCellsToAttack[L0321_ui_Counter]);
 		if (L0322_i_CreatureOrdinal)
 			return L0322_i_CreatureOrdinal;
 
@@ -1887,7 +1887,7 @@ int16 GroupMan::f177_getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, i
 	}
 }
 
-int16 GroupMan::f231_getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
+int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
 	int16 L0565_i_Damage = 0;
 	int16 L0566_i_Damage = 0;
 	int16 L0567_i_DoubledMapDifficulty;
@@ -1953,7 +1953,7 @@ T0231009:
 		if (_vm->getRandomNumber(64) < _vm->_championMan->getSkillLevel(champIndex, skillIndex)) {
 			L0565_i_Damage += L0565_i_Damage + 10;
 		}
-		L0569_i_Outcome = f190_groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
+		L0569_i_Outcome = groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
 		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->getExperience() >> 4) + 3);
 		_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
@@ -1965,12 +1965,12 @@ T0231015:
 T0231016:
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != k2_outcomeKilledAllCreaturesInGroup) {
-		f209_processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+		processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
 	return L0565_i_Damage;
 }
 
-void GroupMan::f224_fluxCageAction(int16 mapX, int16 mapY) {
+void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	Thing L0545_T_Thing;
 	int16 L0546_i_Multiple;
 #define AL0546_i_SquareType    L0546_i_Multiple
@@ -1996,41 +1996,41 @@ void GroupMan::f224_fluxCageAction(int16 mapX, int16 mapY) {
 	L0547_s_Event._B._location._mapY = mapY;
 	L0547_s_Event._B._location._mapY = mapY;
 	_vm->_timeline->f238_addEventGetEventIndex(&L0547_s_Event);
-	if (f222_isLordChaosOnSquare(mapX, mapY - 1)) {
+	if (isLordChaosOnSquare(mapX, mapY - 1)) {
 		mapY--;
-		AL0546_i_FluxcageCount = f221_isFluxcageOnSquare(mapX + 1, mapY);
+		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX + 1, mapY);
 		goto T0224005;
 	}
-	if (f222_isLordChaosOnSquare(mapX - 1, mapY)) {
+	if (isLordChaosOnSquare(mapX - 1, mapY)) {
 		mapX--;
-		AL0546_i_FluxcageCount = f221_isFluxcageOnSquare(mapX, mapY + 1);
+		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX, mapY + 1);
 T0224005:
-		AL0546_i_FluxcageCount += f221_isFluxcageOnSquare(mapX, mapY - 1) + f221_isFluxcageOnSquare(mapX - 1, mapY);
+		AL0546_i_FluxcageCount += isFluxcageOnSquare(mapX, mapY - 1) + isFluxcageOnSquare(mapX - 1, mapY);
 	} else {
-		if (f222_isLordChaosOnSquare(mapX + 1, mapY)) {
+		if (isLordChaosOnSquare(mapX + 1, mapY)) {
 			mapX++;
-			AL0546_i_FluxcageCount = f221_isFluxcageOnSquare(mapX, mapY - 1);
+			AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX, mapY - 1);
 			goto T0224008;
 		}
-		if (f222_isLordChaosOnSquare(mapX, mapY + 1)) {
+		if (isLordChaosOnSquare(mapX, mapY + 1)) {
 			mapY++;
-			AL0546_i_FluxcageCount = f221_isFluxcageOnSquare(mapX - 1, mapY);
+			AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX - 1, mapY);
 T0224008:
-			AL0546_i_FluxcageCount += f221_isFluxcageOnSquare(mapX, mapY + 1) + f221_isFluxcageOnSquare(mapX + 1, mapY);
+			AL0546_i_FluxcageCount += isFluxcageOnSquare(mapX, mapY + 1) + isFluxcageOnSquare(mapX + 1, mapY);
 		} else {
 			AL0546_i_FluxcageCount = 0;
 		}
 	}
 	if (AL0546_i_FluxcageCount == 2) {
-		f209_processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+		processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 	}
 }
 
-uint16 GroupMan::f222_isLordChaosOnSquare(int16 mapX, int16 mapY) {
+uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
 	Thing L0542_T_Thing;
 	Group* L0543_ps_Group;
 
-	L0542_T_Thing = f175_groupGetThing(mapX, mapY);
+	L0542_T_Thing = groupGetThing(mapX, mapY);
 	if (L0542_T_Thing == Thing::_endOfList)
 		return 0;
 
@@ -2041,7 +2041,7 @@ uint16 GroupMan::f222_isLordChaosOnSquare(int16 mapX, int16 mapY) {
 	return 0;
 }
 
-bool GroupMan::f221_isFluxcageOnSquare(int16 mapX, int16 mapY) {
+bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 	Thing L0540_T_Thing;
 	int16 L0541_i_SquareType;
 
@@ -2059,7 +2059,7 @@ bool GroupMan::f221_isFluxcageOnSquare(int16 mapX, int16 mapY) {
 	return false;
 }
 
-void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
+void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 	int16 L0548_i_MapX;
 	int16 L0549_i_MapY;
 	uint16 L0551_ui_FluxcageCount;
@@ -2073,12 +2073,12 @@ void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
 	}
 
 	_vm->_projexpl->f213_explosionCreate(Thing::_explHarmNonMaterial, 255, mapX, mapY, k255_CreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
-	L0555_T_LordChaosThing = Thing(f222_isLordChaosOnSquare(mapX, mapY));
+	L0555_T_LordChaosThing = Thing(isLordChaosOnSquare(mapX, mapY));
 	if (L0555_T_LordChaosThing.toUint16()) {
-		L0551_ui_FluxcageCount = (L0554_aB_Fluxcages[0] = f221_isFluxcageOnSquare(mapX - 1, mapY)) +
-			(L0554_aB_Fluxcages[1] = f221_isFluxcageOnSquare(mapX + 1, mapY)) +
-			(L0554_aB_Fluxcages[2] = f221_isFluxcageOnSquare(mapX, mapY - 1)) +
-			(L0554_aB_Fluxcages[3] = f221_isFluxcageOnSquare(mapX, mapY + 1));
+		L0551_ui_FluxcageCount = (L0554_aB_Fluxcages[0] = isFluxcageOnSquare(mapX - 1, mapY)) +
+			(L0554_aB_Fluxcages[1] = isFluxcageOnSquare(mapX + 1, mapY)) +
+			(L0554_aB_Fluxcages[2] = isFluxcageOnSquare(mapX, mapY - 1)) +
+			(L0554_aB_Fluxcages[3] = isFluxcageOnSquare(mapX, mapY + 1));
 		while (L0551_ui_FluxcageCount++ < 4) {
 			L0548_i_MapX = mapX;
 			L0549_i_MapY = mapY;
@@ -2102,9 +2102,9 @@ void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
 					break;
 				}
 			}
-			if (f223_isSquareACorridorTeleporterPitOrDoor(L0548_i_MapX, L0549_i_MapY)) {
+			if (isSquareACorridorTeleporterPitOrDoor(L0548_i_MapX, L0549_i_MapY)) {
 				if (!_vm->_moveSens->f267_getMoveResult(L0555_T_LordChaosThing, mapX, mapY, L0548_i_MapX, L0549_i_MapY)) {
-					f180_startWanedring(L0548_i_MapX, L0549_i_MapY);
+					startWanedring(L0548_i_MapX, L0549_i_MapY);
 				}
 				return;
 			}
@@ -2113,9 +2113,9 @@ void GroupMan::f225_fuseAction(uint16 mapX, uint16 mapY) {
 	}
 }
 
-void GroupMan::save1_ActiveGroupPart(Common::OutSaveFile* file) {
-	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i) {
-		ActiveGroup *group = &_g375_activeGroups[i];
+void GroupMan::saveActiveGroupPart(Common::OutSaveFile* file) {
+	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
+		ActiveGroup *group = &_activeGroups[i];
 		file->writeUint16BE(group->_groupThingIndex);
 		file->writeUint16BE(group->_directions);
 		file->writeByte(group->_cells);
@@ -2132,9 +2132,9 @@ void GroupMan::save1_ActiveGroupPart(Common::OutSaveFile* file) {
 	}
 }
 
-void GroupMan::load1_ActiveGroupPart(Common::InSaveFile* file) {
-	for (uint16 i = 0; i < _g376_maxActiveGroupCount; ++i) {
-		ActiveGroup *group = &_g375_activeGroups[i];
+void GroupMan::loadActiveGroupPart(Common::InSaveFile* file) {
+	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
+		ActiveGroup *group = &_activeGroups[i];
 		group->_groupThingIndex = file->readUint16BE();
 		group->_directions = (Direction)file->readUint16BE();
 		group->_cells = file->readByte();
