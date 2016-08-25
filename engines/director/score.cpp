@@ -160,11 +160,7 @@ void Score::loadArchive() {
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
 
 	if (stxt.size() > 0) {
-		Common::Array<uint16>::iterator iterator;
-
-		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-			loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *iterator));
-		}
+		loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
 	}
 }
 
