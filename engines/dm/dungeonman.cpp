@@ -1461,28 +1461,28 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 									continue;
 
 								setCurrentMap(mapIndex);
-								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k5_WeaponThingType:
 								if (((Weapon*)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
-								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k10_JunkThingType:
 								if (((Junk*)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
-								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							case k8_PotionThingType:
 								if (((Potion*)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
-								_vm->_moveSens->f267_getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
+								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
 							}
 							setCurrentMap(currentMapIdx);

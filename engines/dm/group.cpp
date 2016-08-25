@@ -155,7 +155,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 			if ((currentThing).getType() == k5_WeaponThingType) {
 				L0371_B_WeaponDropped = true;
 			}
-			_vm->_moveSens->f267_getMoveResult(currentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+			_vm->_moveSens->getMoveResult(currentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 		} while ((currentThing = nextThing) != Thing::_endOfList);
 
 		if (mode >= k0_soundModePlayImmediately)
@@ -284,7 +284,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		currWeapon->setType(currFixedPossession);
 		currWeapon->setCursed(cursedPossessions);
 		nextUnusedThing = thingWithNewCell(nextUnusedThing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
-		_vm->_moveSens->f267_getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+		_vm->_moveSens->getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
 		currFixedPossession = *fixedPossessions++;
 	}
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
@@ -516,7 +516,7 @@ void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	L0373_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0372_T_GroupThing);
 	for (uint16 i = 0; i < 4; ++i)
 		L0373_ps_Group->_health[i] = 0;
-	_vm->_moveSens->f267_getMoveResult(L0372_T_GroupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
+	_vm->_moveSens->getMoveResult(L0372_T_GroupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
 	L0373_ps_Group->_nextThing = Thing::_none;
 	if (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) {
 		_activeGroups[L0373_ps_Group->getActiveGroupIndex()]._groupThingIndex = -1;
@@ -654,10 +654,10 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 			AL0450_i_DestinationMapX = eventMapX;
 			AL0451_i_DestinationMapY = eventMapY;
 			AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
-			if (_vm->_moveSens->f267_getMoveResult(L0449_T_GroupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
+			if (_vm->_moveSens->getMoveResult(L0449_T_GroupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
 				goto T0209139_Return;
-			L0465_s_NextEvent._B._location._mapX = _vm->_moveSens->_g397_moveResultMapX;
-			L0465_s_NextEvent._B._location._mapY = _vm->_moveSens->_g398_moveResultMapY;
+			L0465_s_NextEvent._B._location._mapX = _vm->_moveSens->_moveResultMapX;
+			L0465_s_NextEvent._B._location._mapY = _vm->_moveSens->_moveResultMapY;
 		}
 		L0465_s_NextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
 		AL0446_i_Ticks = MAX(ABS(_vm->_dungeonMan->_currMapIndex - _vm->_dungeonMan->_partyMapIndex) << 4, L0448_s_CreatureInfo._movementTicks << 1);
@@ -834,10 +834,10 @@ T0209061_MoveGroup:
 									AL0447_i_Ticks = (L0461_i_MovementTicks >> 1) - L0462_i_TicksSinceLastMove;
 									L0453_B_NewGroupDirectionFound = (AL0447_i_Ticks <= 0);
 									if (L0453_B_NewGroupDirectionFound) {
-										if (_vm->_moveSens->f267_getMoveResult(L0449_T_GroupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
+										if (_vm->_moveSens->getMoveResult(L0449_T_GroupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
 											goto T0209139_Return;
-										L0465_s_NextEvent._B._location._mapX = _vm->_moveSens->_g397_moveResultMapX;
-										L0465_s_NextEvent._B._location._mapY = _vm->_moveSens->_g398_moveResultMapY;;
+										L0465_s_NextEvent._B._location._mapX = _vm->_moveSens->_moveResultMapX;
+										L0465_s_NextEvent._B._location._mapY = _vm->_moveSens->_moveResultMapY;;
 										L0445_ps_ActiveGroup->_priorMapX = eventMapX;
 										L0445_ps_ActiveGroup->_priorMapY = eventMapY;
 										L0445_ps_ActiveGroup->_lastMoveTime = _vm->_gameTime;
@@ -1336,7 +1336,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 				if (L0331_ui_CreatureType == k13_CreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						L1635_ui_SoundIndex = _vm->_moveSens->f514_getSound(k13_CreatureTypeCouatl);
+						L1635_ui_SoundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
 						if (L1635_ui_SoundIndex <= k34_D13_soundCount)
 							_vm->_sound->f064_SOUND_RequestPlay_CPSD(L1635_ui_SoundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
@@ -1850,7 +1850,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 		}
 	} while (creatureCount--);
 	L0353_ps_Group->_cells = L0352_ui_GroupCells;
-	if (_vm->_moveSens->f267_getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
+	if (_vm->_moveSens->getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
 	_vm->_sound->f064_SOUND_RequestPlay_CPSD(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
@@ -2103,7 +2103,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 				}
 			}
 			if (isSquareACorridorTeleporterPitOrDoor(L0548_i_MapX, L0549_i_MapY)) {
-				if (!_vm->_moveSens->f267_getMoveResult(L0555_T_LordChaosThing, mapX, mapY, L0548_i_MapX, L0549_i_MapY)) {
+				if (!_vm->_moveSens->getMoveResult(L0555_T_LordChaosThing, mapX, mapY, L0548_i_MapX, L0549_i_MapY)) {
 					startWanedring(L0548_i_MapX, L0549_i_MapY);
 				}
 				return;

@@ -306,7 +306,7 @@ void DMEngine::initializeGame() {
 
 	startGame();
 	if (_newGameFl)
-		_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+		_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_eventMan->showMouse();
 	_eventMan->discardAllInput();
 }
@@ -439,7 +439,7 @@ void DMEngine::gameloop() {
 
 			if (_newPartyMapIndex != kM1_mapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
-				_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+				_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 				_newPartyMapIndex = kM1_mapIndexNone;
 				_eventMan->discardAllInput();
 			}
