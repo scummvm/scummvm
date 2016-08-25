@@ -664,8 +664,9 @@ TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 	textType = static_cast<TextType>(stream.readByte());
 	textAlign = static_cast<TextAlignType>(stream.readUint16());
 	stream.skip(6); //palinfo
-	//for now, just supposition
-	fontId = stream.readUint32();
+
+	int t = stream.readUint32();
+	assert(t == 0); // So far we saw only 0 here
 
 	initialRect = Score::readRect(stream);
 	textShadow = static_cast<SizeType>(stream.readByte());
@@ -676,8 +677,11 @@ TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 		textFlags.push_back(kTextFlagAutoTab);
 	if (flags & 0x4)
 		textFlags.push_back(kTextFlagDoNotWrap);
-	//again supposition
-	fontSize = stream.readUint16();
+
+	//TODO: FIXME: guesswork
+	fontId = stream.readByte();
+	fontSize = stream.readByte();
+
 	modified = 0;
 }
 
