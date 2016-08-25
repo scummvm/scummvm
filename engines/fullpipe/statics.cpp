@@ -108,20 +108,22 @@ bool StepArray::gotoNextPoint() {
 
 void StepArray::insertPoints(Common::Point **points, int pointsCount) {
 	if (_currPointIndex + pointsCount >= _pointsCount) {
-		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_currPointIndex + pointsCount));
+		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_pointsCount + pointsCount));
 
 		if (!_points) {
 			error("Out of memory at StepArray::insertPoints()");
 		}
+
+		for(int i = 0; i < pointsCount; i++)
+			_points[_pointsCount + i] = new Common::Point;
+
+		_pointsCount += pointsCount;
 	}
 
 	_maxPointIndex = _currPointIndex + pointsCount;
 
-	for (int i = 0; i < pointsCount; i++) {
-		_points[_currPointIndex + i] = new Common::Point;
-
+	for (int i = 0; i < pointsCount; i++)
 		*_points[_currPointIndex + i] = *points[i];
-	}
 }
 
 StaticANIObject::StaticANIObject() {
