@@ -183,8 +183,8 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 };
 
 #ifdef ENABLE_SCI32
-// NOTE: In SSCI, some 'unused' kDoAudio subops are actually
-// called indirectly by kDoSound:
+// NOTE: In SSCI, some 'unused' kDoAudio subops are actually called indirectly
+// by kDoSound:
 //
 // kDoSoundGetAudioCapability -> kDoAudioGetCapability
 // kDoSoundPlay       -> kDoAudioPlay, kDoAudioStop
@@ -194,23 +194,26 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 // kDoSoundSetLoop    -> kDoAudioSetLoop
 // kDoSoundUpdateCues -> kDoAudioPosition
 //
-// In ScummVM, logic inside these kernel functions has been
-// moved to methods of Audio32, and direct calls to Audio32
-// are made from kDoSound instead.
+// In ScummVM, logic inside these kernel functions has been moved to methods of
+// Audio32, and direct calls to Audio32 are made from kDoSound instead.
 //
-// Some kDoAudio methods are esoteric and appear to be used
-// only by one or two games:
+// Some kDoAudio methods are esoteric and appear to be used only by one or two
+// games:
 //
-// kDoAudioMixing: Phantasmagoria (other games call this
-// function, but only to disable the feature)
-// kDoAudioHasSignal: SQ6 TalkRandCycle
-// kDoAudioPan: Rama RegionSFX::pan method
+// - kDoAudioMixing:    Phantasmagoria (other games call this function, but only
+//                      to disable the feature)
+// - kDoAudioHasSignal: SQ6 TalkRandCycle
+// - kDoAudioPan:       Rama RegionSFX::pan method
+// - kDoAudioCritical:  Phantasmagoria, chapter 3, nursery (room 14200), during
+//                      the "ghost lullaby" event. It is used to make the
+//                      lullaby sound exclusive, but it really doesn't make any
+//                      major difference. Returning 0 means "non-critical", i.e.
+//                      normal audio behavior.
 //
-// Finally, there is a split in SCI2.1mid audio code.
-// QFG4CD & SQ6 do not have opcodes 18 and 19, but they
-// exist in GK2, KQ7 2.00b, Phantasmagoria 1, PQ:SWAT, and
-// Torin. (It is unknown if they exist in MUMG Deluxe or
-// Shivers 1; they are not used in either of these games.)
+// Finally, there is a split in SCI2.1mid audio code. QFG4CD & SQ6 do not have
+// opcodes 18 and 19, but they exist in GK2, KQ7 2.00b, Phantasmagoria 1,
+// PQ:SWAT, and Torin. It is unknown if they exist in MUMG Deluxe or Shivers 1;
+// they are not used in either of these games.
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kDoAudio_subops[] = {
@@ -235,7 +238,7 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(DoAudioFade),               "(iiii)(i)(i)",         NULL },
 	{ SIG_SINCE_SCI21MID, 16, MAP_DUMMY(DoAudioFade36),            "iiiii(iii)(i)",        NULL },
 	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
-	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "(i)",                  NULL },
 	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
 	{ SIG_SCI3,           20, MAP_DUMMY(DoAudioPan),               "",                     NULL },
 	{ SIG_SCI3,           21, MAP_DUMMY(DoAudioPanOff),            "",                     NULL },
