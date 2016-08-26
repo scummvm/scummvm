@@ -52,6 +52,7 @@ MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 	_g508_refreshActionArea = false;
 	_g509_actionAreaContainsIcons = false;
 	_g513_actionDamage = 0;
+	_g713_actionList.resetToZero();
 	_gK72_bitmapSpellAreaLine = new byte[96 * 12];
 }
 

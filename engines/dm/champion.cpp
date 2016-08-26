@@ -96,18 +96,22 @@ uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
-	_g411_leaderIndex = kM1_ChampionNone;
-
-	_g303_partyDead = false;
-	_g300_partyIsSleeping = false;
-	_g413_leaderHandObjectIconIndex = kM1_IconIndiceNone;
-	_g415_leaderEmptyHanded = true;
-	_g514_magicCasterChampionIndex = kM1_ChampionNone;
 	for (uint16 i = 0; i < 4; ++i) {
 		_g409_championPendingDamage[i] = 0;
 		_g410_championPendingWounds[i] = 0;
+		_gK71_champions[i].resetToZero();
 	}
-
+	_g305_partyChampionCount = 0;
+	_g303_partyDead = false;
+	_g414_leaderHandObject = Thing(0);
+	_g411_leaderIndex = kM1_ChampionNone;
+	_g300_partyIsSleeping = false;
+	_g506_actingChampionOrdinal = 0;
+	_g413_leaderHandObjectIconIndex = (IconIndice)0;
+	_g415_leaderEmptyHanded = false;
+	_g407_party.resetToZero();
+	_g514_magicCasterChampionIndex = kM1_ChampionNone;
+	_g420_mousePointerHiddenToDrawChangedObjIconOnScreen = false;
 }
 
 bool ChampionMan::f329_isLeaderHandObjectThrown(int16 side) {

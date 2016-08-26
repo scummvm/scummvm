@@ -52,6 +52,9 @@ public:
 	void f47_messageAreaPrintMessage(Color color, const char *string); // @ F0047_TEXT_MESSAGEAREA_PrintMessage
 	void f45_messageAreaCreateNewRow(); // @ F0045_TEXT_MESSAGEAREA_CreateNewRow
 	void f46_messageAreaPrintString(Color color, const char* string);// @ F0046_TEXT_MESSAGEAREA_PrintString
+	void f54_textInitialize(); // @ F0054_TEXT_Initialize
+	void f42_messageAreaMoveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
+
 
 
 };

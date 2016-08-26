@@ -231,7 +231,8 @@ public:
 	void f180_startWanedring(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
 	void f183_addActiveGroup(Thing thing, int16 mapX, int16 mapY); // @ F0183_GROUP_AddActiveGroup
 	void f184_removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
-
+	void f194_removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
+	void f195_addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
 
 
 

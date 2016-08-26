@@ -32,8 +32,11 @@
 namespace DM {
 
 Timeline::Timeline(DMEngine* vm) : _vm(vm) {
+	_g369_eventMaxCount = 0;
 	_g370_events = nullptr;
+	_g372_eventCount = 0;
 	_g371_timeline = nullptr;
+	_g373_firstUnusedEventIndex = 0;
 }
 
 Timeline::~Timeline() {

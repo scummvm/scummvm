@@ -91,6 +91,9 @@ ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	_g30_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
 	_g30_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
 
+	for (uint16 i = 0; i < k199_ObjectNameCount; ++i)
+		_g352_objectNames[i] = nullptr;
+
 	_g412_objectIconForMousePointer = nullptr;
 }
 

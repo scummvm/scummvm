@@ -180,7 +180,6 @@ class DMEngine : public Engine {
 	void f448_initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
 	void f2_gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initArrays();
-
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
@@ -218,7 +217,7 @@ public:
 	bool _g321_stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput
 	bool _g301_gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _g524_restartGameAllowed; // @ G0524_B_RestartGameAllowed
-	uint32 _g525_gameId; // @ G0525_l_GameID, probably useless here
+	int32 _g525_gameId; // @ G0525_l_GameID, probably useless here
 	bool _g331_pressingEye; // @ G0331_B_PressingEye
 	bool _g332_stopPressingEye; // @ G0332_B_StopPressingEye
 	bool _g333_pressingMouth; // @ G0333_B_PressingMouth
@@ -229,8 +228,8 @@ public:
 	bool _g302_gameWon; // @ G0302_B_GameWon
 	int16 _g327_newPartyMapIndex; // @ G0327_i_NewPartyMapIndex
 	bool _g325_setMousePointerToObjectInMainLoop; // @ G0325_B_SetMousePointerToObjectInMainLoop
+	int16 _g310_disabledMovementTicks; // @ G0310_i_DisabledMovementTicks
 
-	// TODO: refactor direction into a class
 	int8 _dirIntoStepCountEast[4]; // @ G0233_ai_Graphic559_DirectionToStepEastCount
 	int8 _dirIntoStepCountNorth[4]; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
 	uint32 _g313_gameTime; // @ G0313_ul_GameTime

@@ -290,20 +290,22 @@ MouseInput* g480_PrimaryMouseInput_DialogSets[2][4] = { // @ G0480_aaps_PrimaryM
 
 
 EventManager::EventManager(DMEngine *vm) : _vm(vm) {
-	_g441_primaryMouseInput = nullptr;
-	_g442_secondaryMouseInput = nullptr;
-
-	_g436_pendingClickPresent = false;
-	_g435_isCommandQueueLocked = true;
-	_g598_mousePointerBitmapUpdated = false;
-	_g326_refreshMousePointerInMainLoop = false;
-	_g341_highlightBoxEnabled = false;
-
+	_mousePos = Common::Point(0, 0);
 	_dummyMapIndex = 0;
-	_g439_pendingClickButton = k0_NoneMouseButton;
+	_g436_pendingClickPresent = false;
+	_g437_pendingClickPos = Common::Point(0, 0);
 	_g615_mousePointerOriginalColorsObject = nullptr;
 	_g613_mousePointerOriginalColorsChampionIcon = nullptr;
 	_gK190_mousePointerTempBuffer = nullptr;
+	_g435_isCommandQueueLocked = true;
+	_gK104_mousePointerType = 0;
+	_gK105_previousMousePointerType = 0;
+	_g441_primaryMouseInput = nullptr;
+	_g442_secondaryMouseInput = nullptr;
+	_g598_mousePointerBitmapUpdated = true;
+	_g326_refreshMousePointerInMainLoop = false;
+	_g341_highlightBoxEnabled = false;
+	_g599_useChampionIconOrdinalAsMousePointerBitmap = 0;
 }
 
 EventManager::~EventManager() {
@@ -324,7 +326,7 @@ void EventManager::initMouse() {
 	_gK105_previousMousePointerType = k1_pointerHand;
 
 	_mousePos = Common::Point(0, 0);
-	CursorMan.pushCursor(g42_bitmapArrowPointer, 32, 18, 0, 0, 0);
+	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 	CursorMan.showMouse(false);
 
 

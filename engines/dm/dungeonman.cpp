@@ -369,59 +369,43 @@ void DungeonMan::f150_mapCoordsAfterRelMovement(direction dir, int16 stepsForwar
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsRight;
 }
 
-DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _g277_dungeonMaps(NULL), _g276_dungeonRawMapData(NULL) {
+DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
+	_rawDunFileDataSize = 0;
+	_rawDunFileData = nullptr;
 	_g282_dungeonColumCount = 0;
-
 	_g281_dungeonMapsFirstColumnIndex = nullptr;
+
+
+	_g282_dungeonColumCount = 0;
 	_g280_dungeonColumnsCumulativeSquareThingCount = nullptr;
 	_g283_squareFirstThings = nullptr;
 	_g260_dungeonTextData = nullptr;
-	_g279_dungeonMapData = nullptr;
-
-	for (int i = 0; i < 16; i++)
+	for (uint16 i = 0; i < 16; ++i)
 		_g284_thingData[i] = nullptr;
-
-	_g308_partyDir = kDirNorth;
+	_g279_dungeonMapData = nullptr;
+	_g308_partyDir = (direction)0;
 	_g306_partyMapX = 0;
 	_g307_partyMapY = 0;
 	_g309_partyMapIndex = 0;
 	_g272_currMapIndex = kM1_mapIndexNone;
-	_g273_currMapWidth = 0;
-	_g274_currMapHeight = 0;
-
 	_g271_currMapData = nullptr;
 	_g269_currMap = nullptr;
+	_g273_currMapWidth = 0;
+	_g274_currMapHeight = 0;
 	_g270_currMapColCumulativeSquareFirstThingCount = nullptr;
-
-	_vm->_g298_newGame = true;
-	_vm->_g523_restartGameRequest = false;
-
-	_rawDunFileDataSize = 0;
-	_rawDunFileData = nullptr;
-
-	_g278_dungeonFileHeader._dungeonId = 0;
-	_g278_dungeonFileHeader._ornamentRandomSeed = 0;
-	_g278_dungeonFileHeader._rawMapDataSize = 0;
-	_g278_dungeonFileHeader._mapCount = 0;
-	_g278_dungeonFileHeader._textDataWordCount = 0;
-	_g278_dungeonFileHeader._partyStartDir = kDirNorth;
-	_g278_dungeonFileHeader._partyStartPosX = 0;
-	_g278_dungeonFileHeader._partyStartPosY = 0;
-	_g278_dungeonFileHeader._squareFirstThingCount = 0;
-
-	for (int i = 0; i < 16; i++)
-		_g278_dungeonFileHeader._thingCounts[i] = 0;
-
 	_g277_dungeonMaps = nullptr;
 	_g276_dungeonRawMapData = nullptr;
-
 	_g265_currMapInscriptionWallOrnIndex = 0;
+	for (uint16 i = 0; i < 6; ++i)
+		_g291_dungeonViewClickableBoxes[i].setToZero();
 	_g286_isFacingAlcove = false;
 	_g287_isFacingViAltar = false;
 	_g288_isFacingFountain = false;
-
-	for (int j = 0; j < 6; j++)
-		_g291_dungeonViewClickableBoxes[j].setToZero();
+	_g285_squareAheadElement = (ElementType)0;
+	for (uint16 i = 0; i < 5; ++i)
+		_g292_pileTopObject[i] = Thing(0);
+	for (uint16 i = 0; i < 2; ++i)
+		_g275_currMapDoorInfo[i].resetToZero();
 }
 
 DungeonMan::~DungeonMan() {

@@ -39,7 +39,18 @@
 
 namespace DM {
 
-MovesensMan::MovesensMan(DMEngine* vm) : _vm(vm) {}
+MovesensMan::MovesensMan(DMEngine* vm) : _vm(vm) {
+	_g397_moveResultMapX = 0;
+	_g398_moveResultMapY = 0;
+	_g399_moveResultMapIndex = 0;
+	_g400_moveResultDir = 0;
+	_g401_moveResultCell = 0;
+	_g402_useRopeToClimbDownPit = false;
+	_g403_sensorRotationEffect = 0;
+	_g404_sensorRotationEffMapX = 0;
+	_g405_sensorRotationEffMapY = 0;
+	_g406_sensorRotationEffCell = 0;
+}
 
 bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 cellParam) {
 	Thing L0750_T_ThingBeingProcessed;

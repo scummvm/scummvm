@@ -51,6 +51,7 @@ enum ElementType {
 	k1_ElementTypeCorridor = 1, // @ C01_ELEMENT_CORRIDOR
 	k2_ElementTypePit = 2, // @ C02_ELEMENT_PIT
 	k3_ElementTypeStairs = 3, // @ C03_ELEMENT_STAIRS
+	// TODO: refactor direction into a class
 	k4_ElementTypeDoor = 4, // @ C04_ELEMENT_DOOR
 	k5_ElementTypeTeleporter = 5, // @ C05_ELEMENT_TELEPORTER
 	k6_ElementTypeFakeWall = 6, // @ C06_ELEMENT_FAKEWALL
@@ -374,13 +375,14 @@ public:
 			_desc &= (~(1 << 15));
 	}
 	uint16 getChargeCount() { return (_desc >> 10) & 0xF; }
-	void setChargeCount(uint16 val) { _desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10); }
+	uint16 setChargeCount(uint16 val) { _desc = (_desc & ~(0xF << 10)) | ((val & 0xF) << 10); return (val & 0xF); }
 	Thing getNextThing() { return _nextThing; }
 	uint16 getCursed() { return (_desc >> 8) & 1; }
 	void setCursed(uint16 val) { _desc = (_desc & ~(1 << 8)) | ((val & 1) << 8); }
 	uint16 getPoisoned() { return (_desc >> 9) & 1; }
 	uint16 getBroken() { return (_desc >> 14) & 1; }
 	uint16 getDoNotDiscard() { return (_desc >> 7) & 1; }
+	void setDoNotDiscard(uint16 val) { _desc = (_desc & ~(1 << 7)) | ((val & 1) << 7); }
 }; // @ WEAPON
 
 enum ArmourType {
@@ -631,7 +633,8 @@ public:
 	byte _attributes;
 	byte _defense;
 	DoorInfo(byte b1, byte b2) : _attributes(b1), _defense(b2) {}
-	DoorInfo() {}
+	DoorInfo() { resetToZero(); }
+	void resetToZero() { _attributes = _defense = 0; }
 }; // @ DOOR_INFO
 
 class Group;

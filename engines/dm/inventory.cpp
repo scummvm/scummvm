@@ -43,11 +43,13 @@ Box g36_BoxWater = Box(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
 Box g37_BoxPoisoned = Box(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
+	_g432_inventoryChampionOrdinal = 0;
 	_g424_panelContent = k0_PanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
-		_g425_chestSlots[i] = Thing::_none;
+		_g425_chestSlots[i] = Thing(0);
 	_g426_openChest = Thing::_none;
-	_g426_openChest = Thing::_none;
+	_g421_objDescTextXpos = 0;
+	_g422_objDescTextYpos = 0;
 }
 
 void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
@@ -642,5 +644,42 @@ void InventoryMan::f337_setDungeonViewPalette() {
 	}
 
 	_vm->_displayMan->_g342_refreshDungeonViewPaleteRequested = true;
+}
+
+void InventoryMan::f338_decreaseTorchesLightPower() {
+	int16 L1046_i_ChampionCount;
+	int16 L1047_i_SlotIndex;
+	bool L1048_B_TorchChargeCountChanged;
+	int16 L1049_i_IconIndex;
+	Champion* L1050_ps_Champion;
+	Weapon* L1051_ps_Weapon;
+
+
+	L1048_B_TorchChargeCountChanged = false;
+	L1046_i_ChampionCount = _vm->_championMan->_g305_partyChampionCount;
+	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
+		L1046_i_ChampionCount--;
+	}
+	L1050_ps_Champion = _vm->_championMan->_gK71_champions;
+	while (L1046_i_ChampionCount--) {
+		L1047_i_SlotIndex = k1_ChampionSlotActionHand + 1;
+		while (L1047_i_SlotIndex--) {
+			L1049_i_IconIndex = _vm->_objectMan->f33_getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+			if ((L1049_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L1049_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
+				L1051_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
+				if (L1051_ps_Weapon->getChargeCount()) {
+					if (L1051_ps_Weapon->setChargeCount(L1051_ps_Weapon->getChargeCount() - 1) == 0) {
+						L1051_ps_Weapon->setDoNotDiscard(false);
+					}
+					L1048_B_TorchChargeCountChanged = true;
+				}
+			}
+		}
+		L1050_ps_Champion++;
+	}
+	if (L1048_B_TorchChargeCountChanged) {
+		f337_setDungeonViewPalette();
+		_vm->_championMan->f296_drawChangedObjectIcons();
+	}
 }
 }

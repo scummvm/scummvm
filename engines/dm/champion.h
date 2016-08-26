@@ -62,11 +62,7 @@ public:
 class Party {
 public:
 	Party() {
-		_magicalLightAmount = _event73Count_ThievesEye = _event79Count_Footprints = _shieldDefense = 0;
-		_fireShieldDefense = _spellShieldDefense = _scentCount = _freezeLifeTicks = _firstScentIndex = 0;
-		_lastScentIndex = _event71Count_Invisibility = 0;
-		for (int16 i = 0; i < 24; ++i)
-			_scentStrengths[i] = 0;
+		resetToZero();
 	}
 	int16 _magicalLightAmount;
 	byte _event73Count_ThievesEye;
@@ -83,6 +79,21 @@ public:
 	Scent _scents[24]; // if I remember correctly, user defined default constructors are always called
 	byte _scentStrengths[24];
 	byte _event71Count_Invisibility;
+	void resetToZero() {
+		_magicalLightAmount = 0;
+		_event73Count_ThievesEye = 0;
+		_event79Count_Footprints = 0;
+		_shieldDefense = 0;
+
+		_fireShieldDefense = 0;
+		_spellShieldDefense = 0;
+		_scentCount = 0;
+		_freezeLifeTicks = 0;
+		_firstScentIndex = 0;
+		for (int16 i = 0; i < 24; ++i)
+			_scentStrengths[i] = 0;
+		_event71Count_Invisibility = 0;
+	}
 }; // @  PARTY
 
 enum IconIndice {

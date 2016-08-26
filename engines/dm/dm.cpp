@@ -133,19 +133,31 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_groupMan = nullptr;
 	_timeline = nullptr;
 	_projexpl = nullptr;
-	_g321_stopWaitingForPlayerInput = false;
+
+	_g298_newGame = false;
+	_g523_restartGameRequest = false;
+	_g321_stopWaitingForPlayerInput = true;
 	_g301_gameTimeTicking = false;
 	_g524_restartGameAllowed = false;
+	_g525_gameId = 0;
 	_g331_pressingEye = false;
-	_g333_pressingMouth = false;
 	_g332_stopPressingEye = false;
+	_g333_pressingMouth = false;
 	_g334_stopPressingMouth = false;
 	_g340_highlightBoxInversionRequested = false;
-	_g313_gameTime = 0;
+	_g311_projectileDisableMovementTicks = 0;
+	_g312_lastProjectileDisabledMovementDirection = 0;
 	_g302_gameWon = false;
 	_g327_newPartyMapIndex = kM1_mapIndexNone;
-
+	_g325_setMousePointerToObjectInMainLoop = false;
+	_g310_disabledMovementTicks = 0;
+	_g313_gameTime = 0;
+	_g353_stringBuildBuffer[0] = '\0';
 	debug("DMEngine::DMEngine");
+
+
+	warning("DUMMY CODE: setting _g298_newGame to true, should be in processEntrance");
+	_g298_newGame = true;
 }
 
 DMEngine::~DMEngine() {
@@ -184,23 +196,26 @@ void DMEngine::f463_initializeGame() {
 	_displayMan->f479_loadGraphics();
 	_displayMan->f460_initializeGraphicData();
 	// DUMMY CODE: next line
-	_displayMan->loadPalette(g19_PalCredits);
+	_displayMan->loadPalette(g21_PalDungeonView[0]);
+	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
+	_displayMan->f95_loadWallSet(k0_WallSetStone);
 
+	_textMan->f54_textInitialize();
+	_objectMan->loadObjectNames();
 	_eventMan->initMouse();
-
+	//F0441_STARTEND_ProcessEntrance();
 	while (_loadsaveMan->f435_loadgame() != k1_LoadgameSuccess) {
 		warning("TODO: F0441_STARTEND_ProcessEntrance");
 	}
+	//F0396_MENUS_LoadSpellAreaLinesBitmap() is not needed, every bitmap has been loaded
 
-	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
-	_displayMan->f95_loadWallSet(k0_WallSetStone);
-	_objectMan->loadObjectNames();
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->f461_allocateFlippedWallBitmaps();
 
 	f462_startGame();
-	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");
+	if (_g298_newGame)
+		_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 	_eventMan->f78_showMouse();
 	_eventMan->f357_discardAllInput();
 }
@@ -212,6 +227,11 @@ void DMEngine::f448_initMemoryManager() {
 }
 
 void DMEngine::f462_startGame() {
+	static Box g61_boxScreenTop(0, 319, 0, 32); // @ G0061_s_Graphic562_Box_ScreenTop
+	static Box g62_boxScreenRight(224, 319, 33, 169); // @ G0062_s_Graphic562_Box_ScreenRight
+	static Box g63_boxScreenBottom(0, 319, 169, 199); // @ G0063_s_Graphic562_Box_ScreenBottom
+
+
 	_g331_pressingEye = false;
 	_g332_stopPressingEye = false;
 	_g333_pressingMouth = false;
@@ -231,9 +251,12 @@ void DMEngine::f462_startGame() {
 
 	if (!_g298_newGame) {
 		warning("TODO: loading game");
+		assert(false);
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
-		warning("TODO: clear screen");
+		_displayMan->D24_fillScreenBox(g61_boxScreenTop, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(g62_boxScreenRight, k0_ColorBlack);
+		_displayMan->D24_fillScreenBox(g63_boxScreenBottom, k0_ColorBlack);
 	}
 
 	warning("TODO: build copper");
@@ -243,10 +266,10 @@ void DMEngine::f462_startGame() {
 }
 
 void DMEngine::f3_processNewPartyMap(uint16 mapIndex) {
-	warning("MISSING CODE: F0194_GROUP_RemoveAllActiveGroups");
+	_groupMan->f194_removeAllActiveGroups();
 	_dungeonMan->f174_setCurrentMapAndPartyMap(mapIndex);
 	_displayMan->f96_loadCurrentMapGraphics();
-	warning("MISSING CODE: F0195_GROUP_AddAllActiveGroups");
+	_groupMan->f195_addAllActiveGroups();
 	_inventoryMan->f337_setDungeonViewPalette();
 }
 
@@ -290,8 +313,31 @@ void DMEngine::f2_gameloop() {
 	warning("DUMMY CODE: clearing screen to black"); // in loop below
 
 	while (true) {
+		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
+			T0002002:
+			f3_processNewPartyMap(_g327_newPartyMapIndex);
+			_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+			_g327_newPartyMapIndex = kM1_mapIndexNone;
+			_eventMan->f357_discardAllInput();
+		}
 
+		// MISSING: F0261_TIMELINE_Process_CPSEF
+
+		if (_g327_newPartyMapIndex != kM1_mapIndexNone)
+			goto T0002002;
+
+		if (_championMan->_g303_partyDead)
+			break;
 		_g313_gameTime++;
+
+		if (!(_g313_gameTime & 511))
+			_inventoryMan->f338_decreaseTorchesLightPower();
+		if (_g310_disabledMovementTicks) {
+			_g310_disabledMovementTicks--;
+		}
+		if (_championMan->_g407_party._freezeLifeTicks) {
+			_championMan->_g407_party._freezeLifeTicks -= 1;
+		}
 		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
 		if (_g311_projectileDisableMovementTicks)
@@ -299,9 +345,9 @@ void DMEngine::f2_gameloop() {
 
 		_g321_stopWaitingForPlayerInput = false;
 		//do {
-		_eventMan->processInput();
-		_eventMan->f380_processCommandQueue();
-		//} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
+			_eventMan->processInput();
+			_eventMan->f380_processCommandQueue();
+		//} while (!_g321_stopWaitingForPlayerInput /*|| !_g301_gameTimeTicking */);
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 223, 0, 135);

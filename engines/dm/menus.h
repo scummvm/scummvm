@@ -40,10 +40,11 @@ class ActionList {
 public:
 	byte _minimumSkillLevel[3]; /* Bit 7: requires charge, Bit 6-0: minimum skill level. */
 	ChampionAction _actionIndices[3];
-	ActionList() {
+	ActionList() { resetToZero(); }
+	void resetToZero() {
 		for (uint16 i = 0; i < 3; ++i) {
 			_minimumSkillLevel[i] = 0;
-			_actionIndices[i] = k255_ChampionActionNone;
+			_actionIndices[i] = (ChampionAction)0;
 		}
 	}
 }; // @ ACTION_LIST

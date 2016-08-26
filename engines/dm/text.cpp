@@ -31,6 +31,10 @@
 namespace DM {
 
 TextMan::TextMan(DMEngine* vm) : _vm(vm) {
+	_g359_messageAreaCursorColumn = 0;
+	_g358_messageAreaCursorRow = 0;
+	for (uint16 i = 0; i < 4; ++i)
+		_g360_messageAreaRowExpirationTime[i] = 0;
 	_g356_bitmapMessageAreaNewRow = new byte[320 * 7];
 }
 
@@ -161,4 +165,28 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;
 }
 
+void TextMan::f54_textInitialize() {
+	f42_messageAreaMoveCursor(0, 3);
+	for (uint16 i = 0; i < 4; ++i)
+		_g360_messageAreaRowExpirationTime[i] = -1;
+}
+
+void TextMan::f42_messageAreaMoveCursor(int16 column, int16 row) {
+	if (column < 0) {
+		column = 0;
+	} else {
+		if (column >= 53) {
+			column = 52;
+		}
+	}
+	_g359_messageAreaCursorColumn = column;
+	if (row < 0) {
+		row = 0;
+	} else {
+		if (row >= 4) {
+			row = 3;
+		}
+	}
+	_g358_messageAreaCursorRow = row;
+}
 }

@@ -36,7 +36,13 @@
 namespace DM {
 
 ProjExpl::ProjExpl(DMEngine* vm) : _vm(vm) {
+	_g364_creatureDamageOutcome = 0;
+	_g363_secondaryDirToOrFromParty = 0;
 	_g361_lastCreatureAttackTime = -200;
+	_g365_createLanucherProjectile = false;
+	_g366_projectilePoisonAttack = 0;
+	_g367_projectileAttackType = 0;
+	_g362_lastPartyMovementTime = 0;
 }
 
 void ProjExpl::f212_projectileCreate(Thing thing, int16 mapX, int16 mapY, uint16 cell, direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
