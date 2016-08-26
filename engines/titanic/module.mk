@@ -157,6 +157,8 @@ MODULE_OBJS := \
 	game/music_system_lock.o \
 	game/musical_instrument.o \
 	game/nav_helmet.o \
+	game/nav_helmet_off.o \
+	game/nav_helmet_on.o \
 	game/navigation_computer.o \
 	game/no_nut_bowl.o \
 	game/nose_holder.o \

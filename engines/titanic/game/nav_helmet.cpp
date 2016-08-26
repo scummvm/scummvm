@@ -21,19 +21,114 @@
  */
 
 #include "titanic/game/nav_helmet.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CNavHelmet, CGameObject)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(PETHelmetOnOffMsg)
+	ON_MESSAGE(PETPhotoOnOffMsg)
+	ON_MESSAGE(PETStarFieldLockMsg)
+	ON_MESSAGE(PETSetStarDestinationMsg)
+END_MESSAGE_MAP()
+
 void CNavHelmet::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CNavHelmet::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_flag) {
+		setVisible(false);
+
+		CPetControl *pet = getPetControl();
+		if (pet) {
+			pet->setArea(PET_STARFIELD);
+			petDisplayMessage(1, "Now would be an excellent opportunity to adjust your viewing apparatus.");
+			pet->incAreaLocks();
+		}
+
+		starFn1(0);
+		starFn1(12);
+	}
+
+	return true;
+}
+
+bool CNavHelmet::EnterViewMsg(CEnterViewMsg *msg) {
+	petSetRemoteTarget();
+	return true;
+}
+
+bool CNavHelmet::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petClear();
+	return true;
+}
+
+bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
+	CPetControl *pet = getPetControl();
+
+	if (_flag) {
+		_flag = false;
+		setVisible(true);
+		starFn1(1);
+		playMovie(61, 120, MOVIE_NOTIFY_OBJECT);
+		playSound("a#47.wav");
+		playSound("a#48.wav");
+
+		if (pet) {
+			pet->decAreaLocks();
+			pet->setArea(PET_REMOTE);
+		}
+
+		dec54();
+	} else {
+		inc54();
+		_flag = true;
+		setVisible(true);
+		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);
+		playSound("a#48.wav");
+		playSound("a#47.wav");
+	}
+	
+	return true;
+}
+
+bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
+	if (_flag)
+		starFn1(9);
+
+	return true;
+}
+
+bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
+	if (_flag) {
+		if (msg->_value) {
+			playSound("a#6.wav");
+			starFn1(17);
+		} else {
+			playSound("a#5.wav");
+			starFn1(18);
+		}
+	}
+
+	return true;
+}
+
+bool CNavHelmet::PETSetStarDestinationMsg(CPETSetStarDestinationMsg *msg) {
+	CActMsg actMsg("SetDestin");
+	actMsg.execute("CaptainsWheel");
+	return true;
 }
 
 } // End of namespace Titanic

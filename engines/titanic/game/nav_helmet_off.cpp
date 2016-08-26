@@ -20,40 +20,30 @@
  *
  */
 
-#ifndef TITANIC_NAV_HELMET_H
-#define TITANIC_NAV_HELMET_H
-
-#include "titanic/core/game_object.h"
+#include "titanic/game/nav_helmet_off.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
-class CNavHelmet : public CGameObject {
-	DECLARE_MESSAGE_MAP;
-	bool MovieEndMsg(CMovieEndMsg *msg);
-	bool EnterViewMsg(CEnterViewMsg *msg);
-	bool LeaveViewMsg(CLeaveViewMsg *msg);
-	bool PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg);
-	bool PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg);
-	bool PETStarFieldLockMsg(CPETStarFieldLockMsg *msg);
-	bool PETSetStarDestinationMsg(CPETSetStarDestinationMsg *msg);
-private:
-	bool _flag;
-public:
-	CLASSDEF;
-	CNavHelmet() : CGameObject(), _flag(false) {}
+BEGIN_MESSAGE_MAP(CNavHelmetOff, CNavHelmet)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
 
-	/**
-	 * Save the data for the class to file
-	 */
-	virtual void save(SimpleFile *file, int indent);
+void CNavHelmetOff::save(SimpleFile *file, int indent) {
+	file->writeNumberLine(1, indent);
+	file->writeQuotedLine(_target, indent);
+}
 
-	/**
-	 * Load the data for the class from file
-	 */
-	virtual void load(SimpleFile *file);
-};
+void CNavHelmetOff::load(SimpleFile *file) {
+	file->readNumber();
+	_target = file->readString();
+}
+
+bool CNavHelmetOff::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	CDoffNavHelmet doffMsg;
+	doffMsg.execute(_target);
+	return true;
+}
 
 } // End of namespace Titanic
-
-#endif /* TITANIC_NAV_HELMET_H */

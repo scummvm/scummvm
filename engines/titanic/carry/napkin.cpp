@@ -57,5 +57,4 @@ bool CNapkin::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	return CCarry::UseWithOtherMsg(msg);
 }
 
-
 } // End of namespace Titanic

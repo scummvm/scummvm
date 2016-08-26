@@ -20,28 +20,22 @@
  *
  */
 
-#ifndef TITANIC_NAV_HELMET_H
-#define TITANIC_NAV_HELMET_H
+#ifndef TITANIC_NAV_HELMET_ON_H
+#define TITANIC_NAV_HELMET_ON_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/game/nav_helmet.h"
 #include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
-class CNavHelmet : public CGameObject {
+class CNavHelmetOn : public CNavHelmet {
 	DECLARE_MESSAGE_MAP;
-	bool MovieEndMsg(CMovieEndMsg *msg);
-	bool EnterViewMsg(CEnterViewMsg *msg);
-	bool LeaveViewMsg(CLeaveViewMsg *msg);
-	bool PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg);
-	bool PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg);
-	bool PETStarFieldLockMsg(CPETStarFieldLockMsg *msg);
-	bool PETSetStarDestinationMsg(CPETSetStarDestinationMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 private:
-	bool _flag;
+	CString _target;
 public:
 	CLASSDEF;
-	CNavHelmet() : CGameObject(), _flag(false) {}
+	CNavHelmetOn() : CNavHelmet(), _target("NULL") {}
 
 	/**
 	 * Save the data for the class to file
@@ -56,4 +50,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_NAV_HELMET_H */
+#endif /* TITANIC_NAV_HELMET_ON_H */
