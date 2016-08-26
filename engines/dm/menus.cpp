@@ -68,4 +68,24 @@ T0386006:
 	box2._y1 = 95;
 	box2._y2 = 110 + 1;
 	dm.blitToScreen(bitmapIcon, 16, 0, 0, box2._x1, box2._x2, box2._y1, box2._y2);
-	if (champion.getAttributes(kChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");	}}void MenuMan::drawDisabledMenu() {	if (!_vm->_championMan->_partyIsSleeping) {		warning("MISSING CODE: F0363_COMMAND_HighlightBoxDisable");		_vm->_displayMan->_useByteBoxCoordinates = false;		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {			warning("MISSING CODE: F0334_INVENTORY_CloseChest");		} else {			warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");		}		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");		warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");	}}}
+	if (champion.getAttributes(kChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
+		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+	}
+}
+
+void MenuMan::drawDisabledMenu() {
+	if (!_vm->_championMan->_partyIsSleeping) {
+		warning("MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
+		_vm->_displayMan->_useByteBoxCoordinates = false;
+		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {
+			warning("MISSING CODE: F0334_INVENTORY_CloseChest");
+		} else {
+			warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		}
+		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
+	}
+}
+
+}

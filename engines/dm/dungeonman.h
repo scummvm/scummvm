@@ -33,6 +33,7 @@ public:
 	ObjectInfo(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
 		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
 	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
+	uint16 getAllowedSlots() { return _allowedSlots; }
 	void setAllowedSlot(ObjectAllowedSlot slot, bool val) {
 		if (val) {
 			_allowedSlots |= slot;
@@ -566,7 +567,6 @@ class DungeonMan {
 	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 
 	int16 getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
-	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 
 	int16 getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
 	void setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
@@ -579,6 +579,7 @@ public:
 	DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
+	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
 	uint16 *getThingData(Thing thing); // @ unsigned char* F0156_DUNGEON_GetThingData(register THING P0276_T_Thing)
 

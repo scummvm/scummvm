@@ -28,6 +28,7 @@ int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /
 
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
+direction returnOppositeDir(direction dir) { return (direction)((dir + 2) & 3); }
 bool isOrientedWestEast(direction dir) { return dir & 1; }
 
 

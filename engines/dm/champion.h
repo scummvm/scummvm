@@ -251,8 +251,9 @@ enum ChampionAction {
 
 
 class Skill {
-	int _temporaryExperience;
-	long _experience;
+public:
+	int16 _temporaryExperience;
+	int32 _experience;
 }; // @ SKILL
 
 class Champion {
@@ -291,7 +292,8 @@ public:
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }
 
 	Skill getSkill(ChampionSkill skill) { return _skills[skill]; }
-	void setSkill(ChampionSkill skill, Skill val) { _skills[skill] = val; }
+	void setSkillExp(ChampionSkill skill,  int32 val) { _skills[skill]._experience = val; }
+	void setSkillTempExp(ChampionSkill skill,  int16 val) { _skills[skill]._temporaryExperience= val; }
 
 	byte getStatistic(ChampionStatisticType type, ChampionStatisticValue valType) { return _statistics[type][valType]; }
 	void setStatistic(ChampionStatisticType type, ChampionStatisticValue valType, byte newVal) { _statistics[type][valType] = newVal; }
@@ -305,7 +307,7 @@ public:
 			_attributes &= ~flag;
 		}
 	}
-	void clearAttributes() { _attributes = kChampionAttributNone; }
+	void clearAttributes(ChampionAttribute attribute = kChampionAttributNone) { _attributes = attribute; }
 
 	uint16 getWounds() { return _wounds; }
 	void setWoundsFlag(ChampionWound flag, bool value) {
@@ -340,7 +342,9 @@ public:
 
 	ChampionMan(DMEngine *vm);
 	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
+	void addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
 };
+
 
 }
 

@@ -32,6 +32,7 @@ extern int8 dirIntoStepCountNorth[4];
 
 void turnDirRight(direction &dir);
 void turnDirLeft(direction &dir);
+direction returnOppositeDir(direction dir);
 bool isOrientedWestEast(direction dir);
 
 
