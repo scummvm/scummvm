@@ -172,11 +172,12 @@ class GroupMan {
 	bool _g390_groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
 	bool _g387_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
 public:
-	uint16 _g376_maxActiveGroupCount = 60; // @ G0376_ui_MaximumActiveGroupCount
+	uint16 _g376_maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
 	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
 	uint16 _g377_currActiveGroupCount; // @ G0377_ui_CurrentActiveGroupCount
 	GroupMan(DMEngine *vm);
 	~GroupMan();
+
 	void f196_initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
 	uint16 f145_getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
 	uint16 f147_getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
