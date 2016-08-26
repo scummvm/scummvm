@@ -34,6 +34,8 @@
 
 namespace DM {
 
+#define kMapXNotOnASquare -1 // @ CM1_MAPX_NOT_ON_A_SQUARE
+
 enum ElementType {
 	kElementTypeChampion = -2, // @ CM2_ELEMENT_CHAMPION /* Values -2 and -1 are only used as projectile impact types */
 	kElementTypeCreature = -1, // @ CM1_ELEMENT_CREATURE
@@ -417,14 +419,14 @@ public:
 
 class Container {
 	Thing _nextThing;
-	Thing _nextContainedThing;
+	Thing _slot;
 	uint16 _type;
 public:
-	explicit Container(uint16 *rawDat) : _nextThing(rawDat[0]), _nextContainedThing(rawDat[1]), _type(rawDat[2]) {}
+	explicit Container(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _type(rawDat[2]) {}
 
 	uint16 getType() { return (_type >> 1) & 0x3; }
-	Thing getNextContainedThing() { return _nextContainedThing; }
-	Thing getNextThing() { return _nextThing; }
+	Thing &getSlot() { return _slot; }
+	Thing &getNextThing() { return _nextThing; }
 }; // @ CONTAINER
 
 enum JunkType {

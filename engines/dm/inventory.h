@@ -55,6 +55,7 @@ public:
 	int16 _inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
 	PanelContent _panelContent; // @ G0424_i_PanelContent 
 	Thing _chestSlots[8]; // @ G0425_aT_ChestSlots
+	Thing _openChest; // @ G0426_T_OpenChest
 
 	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
 	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
@@ -63,6 +64,7 @@ public:
 	void drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
 	void drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
 	void drawPanel(); // @ F0347_INVENTORY_DrawPanel
+	void closeChest(); // @ F0334_INVENTORY_CloseChest
 
 };
 

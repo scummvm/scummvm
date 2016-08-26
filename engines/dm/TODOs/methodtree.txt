@@ -104,10 +104,10 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		G0407_s_Party
 	F0355_INVENTORY_Toggle_CPSE // done
 		F0292_CHAMPION_DrawState // done
-		F0334_INVENTORY_CloseChest
-			F0163_DUNGEON_LinkThingToList
-			G0426_T_OpenChest
-			G0425_aT_ChestSlots
+		F0334_INVENTORY_CloseChest // done
+			F0163_DUNGEON_LinkThingToList // done
+			G0426_T_OpenChest // done
+			G0425_aT_ChestSlots // done
 
 
 		F0395_MENUS_DrawMovementArrows // done

@@ -124,7 +124,9 @@ void MenuMan::drawDisabledMenu() {
 		warning("MISSING CODE: F0363_COMMAND_HighlightBoxDisable");
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {
-			warning("MISSING CODE: F0334_INVENTORY_CloseChest");
+			if (_vm->_inventoryMan->_panelContent == kPanelContentChest) {
+				_vm->_inventoryMan->closeChest();
+			}
 		} else {
 			warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 		}

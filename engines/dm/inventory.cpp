@@ -46,6 +46,8 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_panelContent = kPanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
 		_chestSlots[i] = Thing::_thingNone;
+	_openChest = Thing::_thingNone;
+	_openChest = Thing::_thingNone;
 }
 
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
@@ -66,7 +68,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	Champion *champion;
 	if (invChampOrdinal) {
 		_inventoryChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
-		warning("MISSING CODE: F0334_INVENTORY_CloseChest");
+		closeChest();
 		champion = &cm._champions[_vm->ordinalToIndex(invChampOrdinal)];
 		if (champion->_currHealth && !cm._candidateChampionOrdinal) {
 			champion->setAttributeFlag(kChampionAttributeStatusBox, true);
@@ -159,7 +161,7 @@ void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 
 void InventoryMan::drawPanelFoodWaterPoisoned() {
 	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
-	warning("MISSING CODE: F0334_INVENTORY_CloseChest");
+	closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan.blitToScreen(dispMan.getBitmap(kPanelEmptyIndice), 144, 0, 0, gBoxPanel, kColorRed);
 	dispMan.blitToScreen(dispMan.getBitmap(kFoodLabelIndice), 48, 0, 0, gBoxFood, kColorDarkestGray);
@@ -177,7 +179,8 @@ void InventoryMan::drawPanelResurrectReincarnate() {
 }
 
 void InventoryMan::drawPanel() {
-	warning("MISSING CODE: F0334_INVENTORY_CloseChest, altho adding it may reintroduce BUG0_48");
+	warning("possible reintroduction of BUG0_48");
+	closeChest(); // possibility of BUG0_48
 
 	ChampionMan &cm = *_vm->_championMan;
 	if (cm._candidateChampionOrdinal) {
@@ -205,4 +208,32 @@ void InventoryMan::drawPanel() {
 		warning("MISSING CODE: F0342_INVENTORY_DrawPanel_Object(L1075_T_Thing, C0_FALSE);");
 	}
 }
+
+void InventoryMan::closeChest() {
+	DungeonMan &dunMan = *_vm->_dungeonMan;
+
+	bool processFirstChestSlot = true;
+	if (_openChest == Thing::_thingNone)
+		return;
+	Container *container = (Container*)dunMan.getThingData(_openChest);
+	_openChest = Thing::_thingNone;
+	container->getSlot() = Thing::_thingEndOfList;
+	Thing prevThing;
+	for (int16 chestSlotIndex = 0; chestSlotIndex < 8; ++chestSlotIndex) {
+		Thing thing = _chestSlots[chestSlotIndex];
+		if (thing != Thing::_thingNone) {
+			_chestSlots[chestSlotIndex] = Thing::_thingNone; // CHANGE8_09_FIX
+
+			if (processFirstChestSlot) {
+				processFirstChestSlot = false;
+				*dunMan.getThingData(thing) = Thing::_thingEndOfList.toUint16();
+				container->getSlot() = prevThing = thing;
+			} else {
+				dunMan.linkThingToList(thing, prevThing, kMapXNotOnASquare, 0);
+				prevThing = thing;
+			}
+		}
+	}
+}
+
 }
