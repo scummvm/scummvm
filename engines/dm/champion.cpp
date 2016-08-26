@@ -132,23 +132,23 @@ void ChampionMan::initConstants() {
 
 	_boxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
 
-	const char **g417_byLanguage;
+	const char **baseSkillName;
 	switch (_vm->getGameLanguage()) { // localized
 	case Common::EN_ANY: 
-		g417_byLanguage = g417_baseSkillName_EN_ANY;
+		baseSkillName = g417_baseSkillName_EN_ANY;
 		break;
 	case Common::DE_DEU:
-		g417_byLanguage = g417_baseSkillName_DE_DEU;
+		baseSkillName = g417_baseSkillName_DE_DEU;
 		break;
 	case Common::FR_FRA:
-		g417_byLanguage = g417_baseSkillName_FR_FRA;
+		baseSkillName = g417_baseSkillName_FR_FRA;
 		break;
 	default:
 		error("Unexpected language used");
 	}
 
 	for (int i = 0; i < 4; ++i) {
-		_baseSkillName[i] = g417_byLanguage[i];
+		_baseSkillName[i] = baseSkillName[i];
 		_championColor[i] = championColor[i];
 		_boxChampionIcons[i] = boxChampionIcons[i];
 	}
