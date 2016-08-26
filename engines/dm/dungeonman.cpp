@@ -391,11 +391,11 @@ int16 DM::indexToOrdinal(int16 val) { return val + 1; }
 
 
 void DungeonMan::mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
-	posX += gDirIntoStepCountEast[dir] * stepsForward;
-	posY += gDirIntoStepCountNorth[dir] * stepsForward;
+	posX += _dirIntoStepCountEast[dir] * stepsForward;
+	posY += _dirIntoStepCountNorth[dir] * stepsForward;
 	turnDirRight(dir);
-	posX += gDirIntoStepCountEast[dir] * stepsRight;
-	posY += gDirIntoStepCountNorth[dir] * stepsRight;
+	posX += _dirIntoStepCountEast[dir] * stepsRight;
+	posY += _dirIntoStepCountNorth[dir] * stepsRight;
 }
 
 DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine), _rawDunFileData(NULL), _maps(NULL), _rawMapData(NULL) {

@@ -27,14 +27,13 @@ enum direction {
 };
 
 // TODO: refactor direction into a class
-extern int8 gDirIntoStepCountEast[4];
-extern int8 gDirIntoStepCountNorth[4];
+extern int8 _dirIntoStepCountEast[4];
+extern int8 _dirIntoStepCountNorth[4];
 
 void turnDirRight(direction &dir);
 void turnDirLeft(direction &dir);
 direction returnOppositeDir(direction dir);
 bool isOrientedWestEast(direction dir);
-
 
 enum ThingType {
 	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value

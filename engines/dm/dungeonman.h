@@ -176,19 +176,19 @@ enum TeleporterScope {
 
 
 class Teleporter {
-	Thing nextThing;
-	uint16 attributes;
-	uint16 destMapIndex;
+	Thing _nextThing;
+	uint16 _attributes;
+	uint16 _destMapIndex;
 public:
-	Teleporter(uint16 *rawDat) : nextThing(rawDat[0]), attributes(rawDat[1]), destMapIndex(rawDat[2]) {}
-	Thing getNextThing() { return nextThing; }
-	bool makesSound() { return (attributes >> 15) & 1; }
-	TeleporterScope getScope() { return (TeleporterScope)((attributes >> 13) & 1); }
-	bool absRotation() { return (attributes >> 12) & 1; }
-	direction getRotationDir() { return (direction)((attributes >> 10) & 1); }
-	byte getDestY() { return (attributes >> 5) & 0xF; }
-	byte getDestX() { return attributes & 0xF; }
-	uint16 getDestMapIndex() { return destMapIndex >> 8; }
+	Teleporter(uint16 *rawDat) : _nextThing(rawDat[0]), _attributes(rawDat[1]), _destMapIndex(rawDat[2]) {}
+	Thing getNextThing() { return _nextThing; }
+	bool makesSound() { return (_attributes >> 15) & 1; }
+	TeleporterScope getScope() { return (TeleporterScope)((_attributes >> 13) & 1); }
+	bool absRotation() { return (_attributes >> 12) & 1; }
+	direction getRotationDir() { return (direction)((_attributes >> 10) & 1); }
+	byte getDestY() { return (_attributes >> 5) & 0xF; }
+	byte getDestX() { return _attributes & 0xF; }
+	uint16 getDestMapIndex() { return _destMapIndex >> 8; }
 }; // @ TELEPORTER
 
 
