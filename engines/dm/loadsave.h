@@ -42,7 +42,7 @@ class LoadsaveMan {
 public:
 	explicit LoadsaveMan(DMEngine *vm);
 
-	LoadgameResponse loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
+	LoadgameResponse f435_loadgame(); // @ F0435_STARTEND_LoadGame_CPSF
 };
 
 }

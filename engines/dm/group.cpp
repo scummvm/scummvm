@@ -42,7 +42,7 @@ GroupMan::~GroupMan() {
 	delete[] _g375_activeGroups;
 }
 
-void GroupMan::initActiveGroups() {
+void GroupMan::f196_initActiveGroups() {
 	if (_vm->_g298_newGame)
 		_g376_maxActiveGroupCount = 60;
 	if (_g375_activeGroups)
@@ -52,7 +52,7 @@ void GroupMan::initActiveGroups() {
 		_g375_activeGroups[i]._groupThingIndex = -1;
 }
 
-uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
+uint16 GroupMan::f145_getGroupCells(Group* group, int16 mapIndex) {
 	byte cells;
 	cells = group->_cells;
 	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
@@ -62,39 +62,39 @@ uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
 
 byte gGroupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
 
-uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
+uint16 GroupMan::f147_getGroupDirections(Group* group, int16 mapIndex) {
 	if (mapIndex == _vm->_dungeonMan->_g309_partyMapIndex)
 		return _g375_activeGroups[group->getActiveGroupIndex()]._directions;
 
 	return gGroupDirections[group->getDir()];
 }
 
-int16 GroupMan::getCreatureOrdinalInCell(Group* group, uint16 cell) {
+int16 GroupMan::f176_getCreatureOrdinalInCell(Group* group, uint16 cell) {
 	uint16 currMapIndex = _vm->_dungeonMan->_g272_currMapIndex;
-	byte groupCells = getGroupCells(group, currMapIndex);
+	byte groupCells = f145_getGroupCells(group, currMapIndex);
 	if (groupCells == k255_CreatureTypeSingleCenteredCreature)
-		return _vm->indexToOrdinal(0);
+		return _vm->M0_indexToOrdinal(0);
 
 	byte creatureIndex = group->getCount();
 	if (getFlag(g243_CreatureInfo[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
-		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
+		if ((f147_getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = returnPrevVal(cell);
 
 		do {
-			byte creatureCell = getCreatureValue(groupCells, creatureIndex);
+			byte creatureCell = M50_getCreatureValue(groupCells, creatureIndex);
 			if (creatureCell == cell || creatureCell == returnNextVal(cell))
-				return _vm->indexToOrdinal(creatureIndex);
+				return _vm->M0_indexToOrdinal(creatureIndex);
 		} while (creatureIndex--);
 	} else {
 		do {
-			if (getCreatureValue(groupCells, creatureIndex) == cell)
-				return _vm->indexToOrdinal(creatureIndex);
+			if (M50_getCreatureValue(groupCells, creatureIndex) == cell)
+				return _vm->M0_indexToOrdinal(creatureIndex);
 		} while (creatureIndex--);
 	}
 	return 0;
 }
 
-uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
+uint16 GroupMan::M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 	return (groupVal >> (creatureIndex << 1)) & 0x3;
 }
 }

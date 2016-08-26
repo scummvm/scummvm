@@ -316,16 +316,16 @@ void EventManager::processInput() {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_w:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_a:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_s:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_d:
-				dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+				dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 				break;
 			case Common::KEYCODE_q:
 				turnDirLeft(dungeonMan._g308_partyDir);
@@ -335,11 +335,11 @@ void EventManager::processInput() {
 				break;
 			case Common::KEYCODE_UP:
 				if (_dummyMapIndex < 13)
-					dungeonMan.setCurrentMapAndPartyMap(++_dummyMapIndex);
+					dungeonMan.f174_setCurrentMapAndPartyMap(++_dummyMapIndex);
 				break;
 			case Common::KEYCODE_DOWN:
 				if (_dummyMapIndex > 0)
-					dungeonMan.setCurrentMapAndPartyMap(--_dummyMapIndex);
+					dungeonMan.f174_setCurrentMapAndPartyMap(--_dummyMapIndex);
 				break;
 			default:
 				break;
@@ -359,19 +359,19 @@ void EventManager::processInput() {
 	}
 }
 
-void EventManager::processPendingClick() {
+void EventManager::f360_processPendingClick() {
 	if (_g436_pendingClickPresent) {
 		_g436_pendingClickPresent = false;
-		processClick(_g437_pendingClickPos, _g439_pendingClickButton);
+		f359_processClick(_g437_pendingClickPos, _g439_pendingClickButton);
 	}
 }
 
-void EventManager::processClick(Common::Point mousePos, MouseButton button) {
+void EventManager::f359_processClick(Common::Point mousePos, MouseButton button) {
 	CommandType commandType;
 
-	commandType = getCommandTypeFromMouseInput(_g441_primaryMouseInput, mousePos, button);
+	commandType = f358_getCommandTypeFromMouseInput(_g441_primaryMouseInput, mousePos, button);
 	if (commandType == k0_CommandNone)
-		commandType = getCommandTypeFromMouseInput(_g442_secondaryMouseInput, mousePos, button);
+		commandType = f358_getCommandTypeFromMouseInput(_g442_secondaryMouseInput, mousePos, button);
 
 	if (commandType != k0_CommandNone)
 		_commandQueue.push(Command(mousePos, commandType));
@@ -379,7 +379,7 @@ void EventManager::processClick(Common::Point mousePos, MouseButton button) {
 	_g435_isCommandQueueLocked = false;
 }
 
-CommandType EventManager::getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button) {
+CommandType EventManager::f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button) {
 	if (!input)
 		return k0_CommandNone;
 	CommandType commandType = k0_CommandNone;
@@ -393,11 +393,11 @@ CommandType EventManager::getCommandTypeFromMouseInput(MouseInput *input, Common
 }
 
 
-void EventManager::processCommandQueue() {
+void EventManager::f380_processCommandQueue() {
 	_g435_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) {
 		_g435_isCommandQueueLocked = false;
-		processPendingClick();
+		f360_processPendingClick();
 		return;
 	}
 
@@ -407,29 +407,29 @@ void EventManager::processCommandQueue() {
 	int16 commandY = cmd._pos.y;
 
 	_g435_isCommandQueueLocked = false;
-	processPendingClick();
+	f360_processPendingClick();
 
 	if ((cmd._type == k2_CommandTurnRight) || (cmd._type == k1_CommandTurnLeft)) {
-		commandTurnParty(cmd._type);
+		f365_commandTurnParty(cmd._type);
 		return;
 	}
 
 	if ((cmd._type >= k3_CommandMoveForward) && (cmd._type <= k6_CommandMoveLeft)) {
-		commandMoveParty(cmd._type);
+		f366_commandMoveParty(cmd._type);
 		return;
 	}
 
 	if (cmd._type == k80_CommandClickInDungeonView) {
-		commandProcessType80ClickInDungeonView(commandX, commandY);
+		f377_commandProcessType80ClickInDungeonView(commandX, commandY);
 	}
 	if (cmd._type == k81_CommandClickInPanel) {
-		commandProcess81ClickInPanel(commandX, commandY);
+		f378_commandProcess81ClickInPanel(commandX, commandY);
 	}
 
 	// MISSING CODE: the rest of the function
 }
 
-void EventManager::commandTurnParty(CommandType cmdType) {
+void EventManager::f365_commandTurnParty(CommandType cmdType) {
 	_vm->_g321_stopWaitingForPlayerInput = true;
 
 	// MISSING CODE: highlight turn left/right buttons
@@ -445,7 +445,7 @@ void EventManager::commandTurnParty(CommandType cmdType) {
 	// MISSING CODE: process sensors
 }
 
-void EventManager::commandMoveParty(CommandType cmdType) {
+void EventManager::f366_commandMoveParty(CommandType cmdType) {
 	_vm->_g321_stopWaitingForPlayerInput = true;
 
 	// MISSING CODE: Lots of code
@@ -455,16 +455,16 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	switch (cmdType) {
 	case k3_CommandMoveForward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k6_CommandMoveLeft:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k5_CommandMoveBackward:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	case k4_CommandMoveRight:
-		dungeonMan.mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
+		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
 		break;
 	default:
 		break;
@@ -473,46 +473,46 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	// MISSING CODE: Lots of code
 }
 
-void EventManager::commandSetLeader(ChampionIndex champIndex) {
+void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
 
-	if ((cm._g411_leaderIndex == champIndex) || ((champIndex != kM1_ChampionNone) && !cm._champions[champIndex]._currHealth))
+	if ((cm._g411_leaderIndex == champIndex) || ((champIndex != kM1_ChampionNone) && !cm._gK71_champions[champIndex]._currHealth))
 		return;
 
 	if (cm._g411_leaderIndex != kM1_ChampionNone) {
 		leaderIndex = cm._g411_leaderIndex;
-		cm._champions[leaderIndex].setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
-		cm._champions[leaderIndex].setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
-		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._414_leaderHandObject);
+		cm._gK71_champions[leaderIndex].setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
+		cm._gK71_champions[leaderIndex].setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
+		cm._gK71_champions[leaderIndex]._load -= _vm->_dungeonMan->f140_getObjectWeight(cm._g414_leaderHandObject);
 		cm._g411_leaderIndex = kM1_ChampionNone;
-		cm.drawChampionState(leaderIndex);
+		cm.f292_drawChampionState(leaderIndex);
 	}
 	if (champIndex == kM1_ChampionNone) {
 		cm._g411_leaderIndex = kM1_ChampionNone;
 		return;
 	}
 	cm._g411_leaderIndex = champIndex;
-	Champion *champion = &cm._champions[cm._g411_leaderIndex];
+	Champion *champion = &cm._gK71_champions[cm._g411_leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_g308_partyDir;
-	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._414_leaderHandObject);
-	if (_vm->indexToOrdinal(champIndex) != cm._g299_candidateChampionOrdinal) {
+	cm._gK71_champions[champIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(cm._g414_leaderHandObject);
+	if (_vm->M0_indexToOrdinal(champIndex) != cm._g299_candidateChampionOrdinal) {
 		champion->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
 		champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
-		cm.drawChampionState(champIndex);
+		cm.f292_drawChampionState(champIndex);
 	}
 }
 
-void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
+void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
 	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 	if ((mapX >= 0) && (mapX < dunMan._g273_currMapWidth) && (mapY >= 0) && (mapY < dunMan._g274_currMapHeight)) {
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(dunMan._g308_partyDir));
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(dunMan._g308_partyDir));
 	}
 }
 
-void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
+void EventManager::f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY) {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ChampionMan &champMan = *_vm->_championMan;
 
@@ -524,7 +524,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
 			int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 
-			if (Door(dunMan.getSquareFirstThingData(mapX, mapY)).hasButton() &&
+			if (Door(dunMan.f157_getSquareFirstThingData(mapX, mapY)).hasButton() &&
 				dunMan._g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(Common::Point(posX, posY - 33))) {
 				_vm->_g321_stopWaitingForPlayerInput = true;
 				warning("MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
@@ -541,7 +541,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			if (dunMan._g291_dungeonViewClickableBoxes[viewCell].isPointInside(Common::Point(posX, posY - 33))) {
 				if (viewCell == k5_ViewCellDoorButtonOrWallOrn) {
 					if (!dunMan._g286_isFacingAlcove) {
-						commandProcessType80ClickInDungeonViewTouchFrontWall();
+						f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
 					}
 				} else {
 					warning("MISSING CODE: F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject");
@@ -550,8 +550,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			}
 		}
 	} else {
-		Thing thing = champMan._414_leaderHandObject;
-		uint16 *rawThingPointer = dunMan.getThingData(thing);
+		Thing thing = champMan._g414_leaderHandObject;
+		uint16 *rawThingPointer = dunMan.f156_getThingData(thing);
 		if (dunMan._g285_squareAheadElement == k0_ElementTypeWall) {
 			for (int16 viewCell = k0_ViewCellFronLeft; viewCell <= k1_ViewCellFrontRight; ++viewCell) {
 				if (g462_BoxObjectPiles[viewCell].isPointInside(Common::Point(posX, posY))) {
@@ -565,8 +565,8 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 					warning("MISSING CODE: F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject");
 				} else {
 					if (dunMan._g288_isFacingFountain) {
-						uint16 iconIndex = _vm->_objectMan->getIconIndex(thing);
-						int16 weight = dunMan.getObjectWeight(thing);
+						uint16 iconIndex = _vm->_objectMan->f33_getIconIndex(thing);
+						int16 weight = dunMan.f140_getObjectWeight(thing);
 						if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 							((Junk*)rawThingPointer)->setChargeCount(3);
 						} else if (iconIndex == k195_IconIndicePotionEmptyFlask) {
@@ -574,11 +574,11 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 						} else {
 							goto T0377019;
 						}
-						champMan.drawChangedObjectIcons();
-						champMan._champions[champMan._g411_leaderIndex]._load += dunMan.getObjectWeight(thing) - weight;
+						champMan.f296_drawChangedObjectIcons();
+						champMan._gK71_champions[champMan._g411_leaderIndex]._load += dunMan.f140_getObjectWeight(thing) - weight;
 					}
 T0377019:
-					commandProcessType80ClickInDungeonViewTouchFrontWall();
+					f372_commandProcessType80ClickInDungeonViewTouchFrontWall();
 				}
 			}
 		} else {
@@ -593,19 +593,19 @@ T0377019:
 	}
 }
 
-void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType) {
+void EventManager::f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType) {
 	ChampionMan &champMan = *_vm->_championMan;
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
 	uint16 championIndex = champMan._g305_partyChampionCount - 1;
-	Champion *champ = &champMan._champions[championIndex];
+	Champion *champ = &champMan._gK71_champions[championIndex];
 	if (commandType == k162_CommandClickInPanelCancel) {
-		invMan.toggleInventory(k4_ChampionCloseInventory);
-		champMan._g299_candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		invMan.f355_toggleInventory(k4_ChampionCloseInventory);
+		champMan._g299_candidateChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 		if (champMan._g305_partyChampionCount == 1) {
-			commandSetLeader(kM1_ChampionNone);
+			f368_commandSetLeader(kM1_ChampionNone);
 		}
 		champMan._g305_partyChampionCount--;
 		Box box;
@@ -614,14 +614,14 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		box._x1 = championIndex * k69_ChampionStatusBoxSpacing;
 		box._x2 = box._x1 + 66 + 1;
 		dispMan._g578_useByteBoxCoordinates = false;
-		dispMan.clearScreenBox(k0_ColorBlack, box);
-		dispMan.clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2]);
+		dispMan.D24_clearScreenBox(k0_ColorBlack, box);
+		dispMan.D24_clearScreenBox(k0_ColorBlack, g54_BoxChampionIcons[champMan.M26_championIconIndex(champ->_cell, dunMan._g308_partyDir) * 2]);
 		warning("F0457_START_DrawEnabledMenus_CPSF");
 		warning("F0078_MOUSE_ShowPointer");
 		return;
 	}
 
-	champMan._g299_candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+	champMan._g299_candidateChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
 	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
 
@@ -631,17 +631,17 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 			warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
 		}
 	}
-	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);
+	Thing thing = dunMan.f161_getSquareFirstThing(mapX, mapY);
 	for (;;) { // infinite
 		if (thing.getType() == k3_SensorThingType) {
-			((Sensor*)dunMan.getThingData(thing))->setTypeDisabled();
+			((Sensor*)dunMan.f156_getThingData(thing))->setTypeDisabled();
 			break;
 		}
-		thing = dunMan.getNextThing(thing);
+		thing = dunMan.f159_getNextThing(thing);
 	}
 
 	if (commandType == k161_CommandClickInPanelReincarnate) {
-		champMan.renameChampion(champ);
+		champMan.f281_renameChampion(champ);
 		champ->resetSkillsToZero();
 
 		for (uint16 i = 0; i < 12; i++) {
@@ -653,10 +653,10 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 	if (champMan._g305_partyChampionCount == 1) {
 		warning("MISSING CODE: setting time, G0362_l_LastPartyMovementTime , G0313_ul_GameTime");
-		commandSetLeader(k0_ChampionFirst);
-		_vm->_menuMan->setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
+		f368_commandSetLeader(k0_ChampionFirst);
+		_vm->_menuMan->f394_setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
 	} else {
-		_vm->_menuMan->drawSpellAreaControls(champMan._g514_magicCasterChampionIndex);
+		_vm->_menuMan->f393_drawSpellAreaControls(champMan._g514_magicCasterChampionIndex);
 	}
 
 	warning("MISSING CODE: F0051_TEXT_MESSAGEAREA_PrintLineFeed");
@@ -664,12 +664,12 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
 	warning("MISSING CODE: F0047_TEXT_MESSAGEAREA_PrintMessage");
 
-	invMan.toggleInventory(k4_ChampionCloseInventory);
+	invMan.f355_toggleInventory(k4_ChampionCloseInventory);
 	warning("MISSING CODE: F0457_START_DrawEnabledMenus_CPSF");
 	warning("MISSING CODE: F0067_MOUSE_SetPointerToNormal");
 }
 
-void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
+void EventManager::f378_commandProcess81ClickInPanel(int16 x, int16 y) {
 	ChampionMan &champMan = *_vm->_championMan;
 	InventoryMan &invMan = *_vm->_inventoryMan;
 
@@ -678,23 +678,23 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	case k4_PanelContentChest:
 		if (champMan._g411_leaderIndex == kM1_ChampionNone) // if no leader
 			return;
-		commandType = getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = f358_getCommandTypeFromMouseInput(g456_MouseInput_PanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
 			warning("MISSING CODE: F0302_CHAMPION_ProcessCommands28To65_ClickOnSlotBox");
 		break;
 	case k5_PanelContentResurrectReincarnate:
 		if (!champMan._g415_leaderEmptyHanded)
 			break;
-		commandType = getCommandTypeFromMouseInput(g457_MouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
+		commandType = f358_getCommandTypeFromMouseInput(g457_MouseInput_PanelResurrectReincarnateCancel, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
-			commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
+			f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(commandType);
 		break;
 	default:
 		break;
 	}
 }
 
-bool EventManager::hasPendingClick(Common::Point& point, MouseButton button) {
+bool EventManager::f360_hasPendingClick(Common::Point& point, MouseButton button) {
 	if (_g439_pendingClickButton && button == _g439_pendingClickButton)
 		point = _g437_pendingClickPos;
 

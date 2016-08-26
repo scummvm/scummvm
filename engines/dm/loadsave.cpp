@@ -38,30 +38,30 @@ namespace DM {
 LoadsaveMan::LoadsaveMan(DMEngine *vm) : _vm(vm) {}
 
 
-LoadgameResponse LoadsaveMan::loadgame() {
+LoadgameResponse LoadsaveMan::f435_loadgame() {
 	bool newGame = _vm->_g298_newGame;
 	ChampionMan &cm = *_vm->_championMan;
 
 	if (newGame) {
 		_vm->_g524_restartGameAllowed = false;
 		cm._g305_partyChampionCount = 0;
-		cm._414_leaderHandObject = Thing::_none;
+		cm._g414_leaderHandObject = Thing::_none;
 		_vm->_g525_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
 	} else {
 		assert(false);
 		// MISSING CODE: load game
 	}
-	_vm->_dungeonMan->loadDungeonFile();
+	_vm->_dungeonMan->f434_loadDungeonFile();
 
 
 	if (newGame) {
-		_vm->_timeline->initTimeline();
-		_vm->_groupMan->initActiveGroups();
+		_vm->_timeline->f233_initTimeline();
+		_vm->_groupMan->f196_initActiveGroups();
 	} else {
 		assert(false);
 		// MISSING CODE: load game
 	}
-	cm._303_partyDead = false;
+	cm._g303_partyDead = false;
 	return k1_LoadgameSuccess;
 }
 

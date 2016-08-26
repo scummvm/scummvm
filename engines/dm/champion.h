@@ -426,18 +426,18 @@ public:
 class ChampionMan {
 	DMEngine *_vm;
 
-	uint16 getChampionPortraitX(uint16 index); // @ M27_PORTRAIT_X
-	uint16 getChampionPortraitY(uint16 index); // @ M28_PORTRAIT_Y
+	uint16 M27_getChampionPortraitX(uint16 index); // @ M27_PORTRAIT_X
+	uint16 M28_getChampionPortraitY(uint16 index); // @ M28_PORTRAIT_Y
 
-	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
-	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
-	void drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
-	uint16 handSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
+	ChampionIndex f285_getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
+	int16 f279_getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
+	void f289_drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
+	uint16 M70_handSlotIndex(uint16 slotBoxIndex);// @ M70_HAND_SLOT_INDEX
 public:
-	Champion _champions[4];
+	Champion _gK71_champions[4]; // @ K0071_as_Champions
 	uint16 _g305_partyChampionCount;	// @ G0305_ui_PartyChampionCount
-	bool _303_partyDead; // @ G0303_B_PartyDead
-	Thing _414_leaderHandObject; // @ G0414_T_LeaderHandObject
+	bool _g303_partyDead; // @ G0303_B_PartyDead
+	Thing _g414_leaderHandObject; // @ G0414_T_LeaderHandObject
 	ChampionIndex _g411_leaderIndex;	// @ G0411_i_LeaderIndex
 	uint16 _g299_candidateChampionOrdinal; // @ G0299_ui_CandidateChampionOrdinal
 	bool _g300_partyIsSleeping; // @ G0300_B_PartyIsSleeping
@@ -449,23 +449,23 @@ public:
 	bool _g420_mousePointerHiddenToDrawChangedObjIconOnScreen; // @ G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen
 
 	explicit ChampionMan(DMEngine *vm);
-	void resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
-	void addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
-	void drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
-	uint16 getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
-	uint16 getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
-	void drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
-	uint16 championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
-	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
-	void drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
-	void renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
-	uint16 getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
-	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
-	void applyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
+	void f278_resetDataToStartGame(); // @ F0278_CHAMPION_ResetDataToStartGame
+	void f280_addCandidateChampionToParty(uint16 championPortraitIndex); // @ F0280_CHAMPION_AddCandidateChampionToParty
+	void f287_drawChampionBarGraphs(ChampionIndex champIndex); // @ F0287_CHAMPION_DrawBarGraphs
+	uint16 f306_getStaminaAdjustedValue(Champion *champ, int16 val); // @ F0306_CHAMPION_GetStaminaAdjustedValue
+	uint16 f309_getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
+	void f292_drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
+	uint16 M26_championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
+	void f290_drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
+	void f291_drawSlot(uint16 champIndex, ChampionSlot slotIndex); // @ F0291_CHAMPION_DrawSlot
+	void f281_renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
+	uint16 f303_getSkillLevel(ChampionIndex champIndex, ChampionSkill skillIndex);// @ F0303_CHAMPION_GetSkillLevel
+	Common::String f288_getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
+	void f299_pplyModifiersToStatistics(Champion *champ, ChampionSlot slotIndex, IconIndice iconIndex,
 									int16 modifierFactor, Thing thing); // @ F0299_CHAMPION_ApplyObjectModifiersToStatistics
-	bool hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
-	void drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
-	void addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
+	bool f295_hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing); // @ F0295_CHAMPION_HasObjectIconInSlotBoxChanged
+	void f296_drawChangedObjectIcons(); // @ F0296_CHAMPION_DrawChangedObjectIcons
+	void f301_addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
 };
 
 

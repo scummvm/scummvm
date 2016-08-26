@@ -41,7 +41,7 @@ Timeline::~Timeline() {
 	delete[] _g371_timeline;
 }
 
-void Timeline::initTimeline() {
+void Timeline::f233_initTimeline() {
 	_g370_events = new TimelineEvent[_g369_eventMaxCount];
 	_g371_timeline = new uint16[_g369_eventMaxCount];
 	if (_vm->_g298_newGame) {

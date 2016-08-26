@@ -153,7 +153,7 @@ public:
 
 	Timeline(DMEngine *vm);
 	~Timeline();
-	void initTimeline(); // @ F0233_TIMELINE_Initialize
+	void f233_initTimeline(); // @ F0233_TIMELINE_Initialize
 };
 
 

@@ -225,8 +225,8 @@ class EventManager {
 	bool _g435_isCommandQueueLocked; // @ G0435_B_CommandQueueLocked
 	Common::Queue<Command> _commandQueue;
 
-	void commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
-	void commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
+	void f365_commandTurnParty(CommandType cmdType); // @ F0365_COMMAND_ProcessTypes1To2_TurnParty
+	void f366_commandMoveParty(CommandType cmdType); // @ F0366_COMMAND_ProcessTypes3To6_MoveParty
 public:
 	explicit EventManager(DMEngine *vm);
 
@@ -242,18 +242,18 @@ public:
 
 	void setMousePos(Common::Point pos);
 	void processInput(); // acknowledges mouse and keyboard input
-	void processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
-	void processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
-	CommandType getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
-	void processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
+	void f360_processPendingClick(); // @ F0360_COMMAND_ProcessPendingClick
+	void f359_processClick(Common::Point mousePos, MouseButton button); // @	F0359_COMMAND_ProcessClick_CPSC
+	CommandType f358_getCommandTypeFromMouseInput(MouseInput *input, Common::Point mousePos, MouseButton button); // @ F0358_COMMAND_GetCommandFromMouseInput_CPSC
+	void f380_processCommandQueue(); // @ F0380_COMMAND_ProcessQueue_CPSC
 
-	void commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
-	void commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
-	void commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
-	void commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
-	void commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
+	void f368_commandSetLeader(ChampionIndex index); // @ F0368_COMMAND_SetLeader
+	void f372_commandProcessType80ClickInDungeonViewTouchFrontWall(); // @ F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall
+	void f377_commandProcessType80ClickInDungeonView(int16 posX, int16 posY); // @ F0377_COMMAND_ProcessType80_ClickInDungeonView
+	void f282_commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
+	void f378_commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
 
-	bool hasPendingClick(Common::Point &point, MouseButton button);
+	bool f360_hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
 };
 
 }

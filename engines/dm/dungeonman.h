@@ -601,45 +601,45 @@ class DungeonMan {
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
-	Square getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
-	Square getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
+	Square f151_getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
+	Square f152_getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
 
-	void decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
+	void f455_decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
 
-	int16 getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
+	int16 f160_getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
 
-	int16 getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
-	void setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
+	int16 f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
+	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
 									int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
 
-	void setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
+	void f173_setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 
 public:
 	explicit DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
-	Thing getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
-	Thing getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
-	uint16 *getThingData(Thing thing); // @ unsigned char* F0156_DUNGEON_GetThingData(register THING P0276_T_Thing)
-	uint16 *getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
+	Thing f161_getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
+	Thing f159_getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)
+	uint16 *f156_getThingData(Thing thing); // @ F0156_DUNGEON_GetThingData
+	uint16 *f157_getSquareFirstThingData(int16 mapX, int16 mapY); // @ F0157_DUNGEON_GetSquareFirstThingData
 
 	// TODO: this does stuff other than load the file!
-	void loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
-	void setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
+	void f434_loadDungeonFile();	// @ F0434_STARTEND_IsLoadDungeonSuccessful_CPSC
+	void f174_setCurrentMapAndPartyMap(uint16 mapIndex); // @ F0174_DUNGEON_SetCurrentMapAndPartyMap
 
-	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
-	void mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
-	SquareType getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
-		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
+	bool f149_isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
+	void f150_mapCoordsAfterRelMovement(direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
+	SquareType f153_getRelSquareType(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+		return Square(f152_getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
-	void setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
-	void decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
+	void f172_setSquareAspect(uint16 *aspectArray, direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect
+	void f168_decodeText(char *destString, Thing thing, TextType type); // F0168_DUNGEON_DecodeText
 
-	uint16 getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
-	int16 getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
-	void linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
-	WeaponInfo *getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
-	int16 getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
+	uint16 f140_getObjectWeight(Thing thing); // @ F0140_DUNGEON_GetObjectWeight
+	int16 f141_getObjectInfoIndex(Thing thing); // @ F0141_DUNGEON_GetObjectInfoIndex
+	void f163_linkThingToList(Thing thingToLink, Thing thingInList, int16 mapX, int16 mapY); // @ F0163_DUNGEON_LinkThingToList
+	WeaponInfo *f158_getWeaponInfo(Thing thing); // @ F0158_DUNGEON_GetWeaponInfo
+	int16 f142_getProjectileAspect(Thing thing); // @ F0142_DUNGEON_GetProjectileAspect
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
 	byte *_rawDunFileData; // @ ???

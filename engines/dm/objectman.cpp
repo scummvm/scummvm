@@ -121,11 +121,11 @@ void ObjectMan::loadObjectNames() {
 	}
 }
 
-IconIndice ObjectMan::getObjectType(Thing thing) {
+IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 	if (thing == Thing::_none)
 		return kM1_IconIndiceNone;
 
-	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
+	int16 objectInfoIndex = _vm->_dungeonMan->f141_getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1) {
 		objectInfoIndex = g237_ObjectInfo[objectInfoIndex]._type;
 	}
@@ -134,15 +134,15 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 
 byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
-IconIndice ObjectMan::getIconIndex(Thing thing) {
-	IconIndice iconIndex = getObjectType(thing);
+IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
+	IconIndice iconIndex = f32_getObjectType(thing);
 
 	if ((iconIndex != kM1_IconIndiceNone) &&
 		(((iconIndex < k32_IconIndiceWeaponDagger) && (iconIndex >= k0_IconIndiceJunkCompassNorth)) || // < instead of <= is no error
 		((iconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (iconIndex <= k163_IconIndicePotionWaterFlask)) ||
 		 (iconIndex == k195_IconIndicePotionEmptyFlask))
 		) {
-		uint16 *rawType = _vm->_dungeonMan->getThingData(thing);
+		uint16 *rawType = _vm->_dungeonMan->f156_getThingData(thing);
 		switch (iconIndex) {
 		case k0_IconIndiceJunkCompassNorth:
 			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_g308_partyDir);
@@ -184,7 +184,7 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 	return iconIndex;
 }
 
-void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
+void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	int16 i;
 	for (i = 0; i < 7; ++i) {
 		if (g26_IconGraphicFirstIndex[i] > iconIndex)
@@ -192,14 +192,14 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	}
 
 	--i;
-	byte *srcBitmap = _vm->_displayMan->getBitmap(k42_ObjectIcons_000_TO_031 + i);
+	byte *srcBitmap = _vm->_displayMan->f489_getBitmap(k42_ObjectIcons_000_TO_031 + i);
 	iconIndex -= g26_IconGraphicFirstIndex[i];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
 	Box box(0, 0, 15, 15);
-	_vm->_displayMan->blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, box, k255_ColorNoTransparency);
+	_vm->_displayMan->f132_blitToBitmap(srcBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, destBitmap, 16, box, k255_ColorNoTransparency);
 }
 
-void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
+void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	SlotBox *slotBox = &_g30_slotBoxes[slotBoxIndex];
 	slotBox->_iconIndex = iconIndex; // yes, this modifies the global array
 	if (slotBox->_iconIndex == kM1_IconIndiceNone) {
@@ -219,39 +219,39 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		}
 	}
 	iconGraphicIndex--;
-	byte *iconsBitmap = _vm->_displayMan->getBitmap(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
+	byte *iconsBitmap = _vm->_displayMan->f489_getBitmap(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
 	iconIndex -= g26_IconGraphicFirstIndex[iconGraphicIndex];
 
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		_vm->_displayMan->blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
 									   _vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, box, k255_ColorNoTransparency);
 
 	} else {
-		_vm->_displayMan->blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
+		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, 256, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0,
 									   _vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
 	}
 }
 
 #define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 
-void ObjectMan::drawLeaderObjectName(Thing thing) {
-	IconIndice iconIndex = getIconIndex(thing);
+void ObjectMan::f34_drawLeaderObjectName(Thing thing) {
+	IconIndice iconIndex = f33_getIconIndex(thing);
 	char *objName;
 	char objectNameBuffer[16];
 	if (iconIndex == k147_IconIndiceJunkChampionBones) {
-		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
-		strcpy(objectNameBuffer, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+		Junk *junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
+		strcpy(objectNameBuffer, _vm->_championMan->_gK71_champions[junk->getChargeCount()]._name);
 		strcat(objectNameBuffer, _g352_objectNames[iconIndex]);
 		objName = objectNameBuffer;
 	} else {
 		objName = _g352_objectNames[iconIndex];
 	}
-	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, 233, 37,
+	_vm->_textMan->f41_printWithTrailingSpaces(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen * 2, 233, 37,
 										   k4_ColorCyan, k0_ColorBlack, objName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
-IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
+IconIndice ObjectMan::f39_getIconIndexInSlotBox(uint16 slotBoxIndex) {
 	return (IconIndice)_g30_slotBoxes[slotBoxIndex]._iconIndex;
 }
 }

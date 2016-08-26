@@ -142,19 +142,19 @@ enum {
 };
 
 class DMEngine : public Engine {
-	void startGame(); // @ F0462_START_StartGame_CPSF
-	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
-	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	void f462_startGame(); // @ F0462_START_StartGame_CPSF
+	void f3_processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
+	void f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	void f448_initMemoryManager(); // @ F0448_STARTUP1_InitializeMemoryManager_CPSADEF
-	void gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
+	void f2_gameloop(); // @ F0002_MAIN_GameLoop_CPSDF
 	void initArrays();
 
 public:
 	explicit DMEngine(OSystem *syst);
 	~DMEngine();
 
-	int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
-	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
+	int16 M1_ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
+	int16 M0_indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 	virtual Common::Error run(); // @ main
 
 private:

@@ -137,11 +137,11 @@ public:
 	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
 	GroupMan(DMEngine *vm);
 	~GroupMan();
-	void initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
-	uint16 getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
-	uint16 getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
-	int16 getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
-	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
+	void f196_initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups
+	uint16 f145_getGroupCells(Group *group, int16 mapIndex); // @ F0145_DUNGEON_GetGroupCells
+	uint16 f147_getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
+	int16 f176_getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
+	uint16 M50_getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
 };
 
 

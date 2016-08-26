@@ -37,21 +37,21 @@ namespace DM {
 
 MovesensMan::MovesensMan(DMEngine* vm) : _vm(vm) {}
 
-bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 cellParam) {
+bool MovesensMan::f275_sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 cellParam) {
 	ChampionMan &champMan = *_vm->_championMan;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 
 
 	bool atLeastOneSensorWasTriggered = false;
-	Thing leaderHandObject = champMan._414_leaderHandObject;
+	Thing leaderHandObject = champMan._g414_leaderHandObject;
 	int16 sensorCountToProcessPerCell[4];
 	uint16 cell;
 	for (cell = k0_CellNorthWest; cell < k3_CellSouthWest; ++cell) {
 		sensorCountToProcessPerCell[cell] = 0;
 	}
 	Thing squareFirstThing;
-	Thing thingBeingProcessed = squareFirstThing = dunMan.getSquareFirstThing(mapX, mapY);
+	Thing thingBeingProcessed = squareFirstThing = dunMan.f161_getSquareFirstThing(mapX, mapY);
 	ThingType thingType;
 	while (thingBeingProcessed != Thing::_endOfList) {
 		thingType = thingBeingProcessed.getType();
@@ -60,7 +60,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 		} else if (thingType >= k4_GroupThingType) {
 			break;
 		}
-		thingBeingProcessed = dunMan.getNextThing(thingBeingProcessed);
+		thingBeingProcessed = dunMan.f159_getNextThing(thingBeingProcessed);
 	}
 	Thing lastProcessedThing = thingBeingProcessed = squareFirstThing;
 
@@ -69,7 +69,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 		if (thingType == k3_SensorThingType) {
 			cell = thingBeingProcessed.getCell();
 			sensorCountToProcessPerCell[cell]--;
-			Sensor *sensor = (Sensor*)dunMan.getThingData(thingBeingProcessed); // IF YOU CHECK ME, I'LL CALL THE COPS!
+			Sensor *sensor = (Sensor*)dunMan.f156_getThingData(thingBeingProcessed); // IF YOU CHECK ME, I'LL CALL THE COPS!
 			SensorType sensorType = sensor->getType();
 			if (sensorType == k0_SensorDisabled)
 				goto T0275058_ProceedToNextThing;
@@ -96,11 +96,11 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					goto T0275058_ProceedToNextThing;
 			case k3_SensorWallOrnClickWithSpecObj:
 			case k4_SensorWallOrnClickWithSpecObjRemoved:
-				doNotTriggerSensor = ((sensorData == objMan.getObjectType(leaderHandObject)) == sensor->getRevertEffectA());
+				doNotTriggerSensor = ((sensorData == objMan.f32_getObjectType(leaderHandObject)) == sensor->getRevertEffectA());
 				if (!doNotTriggerSensor && (sensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor)) {
 					if (lastProcessedThing == thingBeingProcessed)
 						break;
-					((Sensor*)dunMan.getThingData(lastProcessedThing))->setNextThing(sensor->getNextThing());
+					((Sensor*)dunMan.f156_getThingData(lastProcessedThing))->setNextThing(sensor->getNextThing());
 					sensor->setNextThing(Thing::_none);
 					thingBeingProcessed = lastProcessedThing;
 				}
@@ -137,8 +137,8 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			case k16_SensorWallObjExchanger: {
 				if (sensorCountToProcessPerCell[cell])
 					goto T0275058_ProceedToNextThing;
-				Thing thingOnSquare = dunMan.getSquareFirstThing(mapX, mapY);
-				if ((objMan.getObjectType(leaderHandObject) != sensorData) || (thingOnSquare == Thing::_none))
+				Thing thingOnSquare = dunMan.f161_getSquareFirstThing(mapX, mapY);
+				if ((objMan.f32_getObjectType(leaderHandObject) != sensorData) || (thingOnSquare == Thing::_none))
 					goto T0275058_ProceedToNextThing;
 				warning("MISSING CODE: F0164_DUNGEON_UnlinkThingFromList");
 				warning("MISSING CODE: F0298_CHAMPION_GetObjectRemovedFromLeaderHand");
@@ -148,7 +148,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				break;
 			}
 			case k127_SensorWallChampionPortrait:
-				champMan.addCandidateChampionToParty(sensorData);
+				champMan.f280_addCandidateChampionToParty(sensorData);
 				goto T0275058_ProceedToNextThing;
 			default:
 				goto T0275058_ProceedToNextThing;
@@ -169,7 +169,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 					(sensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) ||
 					 (sensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
 
-					*((Thing*)dunMan.getThingData(leaderHandObject)) = Thing::_none;
+					*((Thing*)dunMan.f156_getThingData(leaderHandObject)) = Thing::_none;
 					warning("MISSING CODE: F0298_CHAMPION_GetObjectRemovedFromLeaderHand");
 					leaderHandObject = Thing::_none;
 				} else {
@@ -186,7 +186,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			break;
 T0275058_ProceedToNextThing:
 		lastProcessedThing = thingBeingProcessed;
-		thingBeingProcessed = dunMan.getNextThing(thingBeingProcessed);
+		thingBeingProcessed = dunMan.f159_getNextThing(thingBeingProcessed);
 	}
 	warning("MISSING CODE: F0271_SENSOR_ProcessRotationEffect");
 	return atLeastOneSensorWasTriggered;

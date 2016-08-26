@@ -141,26 +141,26 @@ DMEngine::~DMEngine() {
 	DebugMan.clearAllDebugChannels();
 }
 
-void DMEngine::initializeGame() {
-	_displayMan->loadGraphics();
-	_displayMan->initializeGraphicData();
+void DMEngine::f463_initializeGame() {
+	_displayMan->f479_loadGraphics();
+	_displayMan->f460_initializeGraphicData();
 	// DUMMY CODE: next line
 	_displayMan->loadPalette(g19_PalCredits);
 	
 	_eventMan->initMouse();
 
-	while (_loadsaveMan->loadgame() != k1_LoadgameSuccess) {
+	while (_loadsaveMan->f435_loadgame() != k1_LoadgameSuccess) {
 		warning("TODO: F0441_STARTEND_ProcessEntrance");
 	}
 
-	_displayMan->loadFloorSet(k0_FloorSetStone);
-	_displayMan->loadWallSet(k0_WallSetStone);
+	_displayMan->f94_loadFloorSet(k0_FloorSetStone);
+	_displayMan->f95_loadWallSet(k0_WallSetStone);
 	_objectMan->loadObjectNames();
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->f461_allocateFlippedWallBitmaps();
 
-	startGame();
+	f462_startGame();
 	warning("MISSING CODE: F0267_MOVE_GetMoveResult_CPSCE (if newGame)");
 	_eventMan->showMouse(true);
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
@@ -173,7 +173,7 @@ void DMEngine::initializeGame() {
 			_displayMan->_g347_paletteTopAndBottomScreen[i] = g21_PalDungeonView[0][i];
 	}
 
-	void DMEngine::startGame() {
+	void DMEngine::f462_startGame() {
 	_g331_pressingEye = false;
 	_g332_stopPressingEye = false;
 	_g333_pressingMouth = false;
@@ -181,15 +181,15 @@ void DMEngine::initializeGame() {
 	_g340_highlightBoxInversionRequested = false;
 	_eventMan->_g341_highlightBoxEnabled = false;
 	_championMan->_g300_partyIsSleeping = false;
-	_championMan->_g506_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
+	_championMan->_g506_actingChampionOrdinal = M0_indexToOrdinal(kM1_ChampionNone);
 	_menuMan->_g509_actionAreaContainsIcons = true;
-	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
+	_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = M0_indexToOrdinal(kM1_ChampionNone);
 
 	_eventMan->_g441_primaryMouseInput = g447_PrimaryMouseInput_Interface;
 	_eventMan->_g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 	warning("MISSING CODE: set primary/secondary keyboard input");
 
-	processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
+	f3_processNewPartyMap(_dungeonMan->_g309_partyMapIndex);
 
 	if (!_g298_newGame) {
 		warning("TODO: loading game");
@@ -199,15 +199,15 @@ void DMEngine::initializeGame() {
 	}
 
 	warning("TODO: build copper");
-	_menuMan->drawMovementArrows();
-	_championMan->resetDataToStartGame();
+	_menuMan->f395_drawMovementArrows();
+	_championMan->f278_resetDataToStartGame();
 	_g301_gameTimeTicking = true;
 }
 
-void DMEngine::processNewPartyMap(uint16 mapIndex) {
+void DMEngine::f3_processNewPartyMap(uint16 mapIndex) {
 	warning("MISSING CODE: F0194_GROUP_RemoveAllActiveGroups");
-	_dungeonMan->setCurrentMapAndPartyMap(mapIndex);
-	_displayMan->loadCurrentMapGraphics();
+	_dungeonMan->f174_setCurrentMapAndPartyMap(mapIndex);
+	_displayMan->f96_loadCurrentMapGraphics();
 	warning("MISSING CODE: F0195_GROUP_AddAllActiveGroups");
 	warning("MISSING CODE: F0337_INVENTORY_SetDungeonViewPalette");
 }
@@ -232,16 +232,16 @@ Common::Error DMEngine::run() {
 	_timeline = new Timeline(this);
 	_displayMan->setUpScreens(320, 200);
 
-	initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
+	f463_initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
 	while (true) {
-		gameloop();
+		f2_gameloop();
 		warning("TODO: F0444_STARTEND_Endgame(G0303_B_PartyDead);");
 	}
 
 	return Common::kNoError;
 }
 
-void DMEngine::gameloop() {
+void DMEngine::f2_gameloop() {
 	warning("DUMMY CODE SETTING PARTY POS AND DIRECTION");
 	_dungeonMan->_g306_partyMapX = 10;
 	_dungeonMan->_g307_partyMapY = 4;
@@ -254,21 +254,21 @@ void DMEngine::gameloop() {
 	while (true) {
 		_g321_stopWaitingForPlayerInput = false;
 
-		_menuMan->refreshActionAreaAndSetChampDirMaxDamageReceived();
+		_menuMan->f390_refreshActionAreaAndSetChampDirMaxDamageReceived();
 
 		//do {
 		_eventMan->processInput();
-		_eventMan->processCommandQueue();
+		_eventMan->f380_processCommandQueue();
 		//} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
 			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport * 2, k136_heightViewport); // dummy code
-			_displayMan->drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 		}
 
 		// DUMMY CODE: next 2 lines
-		_menuMan->drawMovementArrows();
+		_menuMan->f395_drawMovementArrows();
 		_displayMan->f97_drawViewport(k1_viewportDungeonView);
 
 		_displayMan->updateScreen();
@@ -276,11 +276,11 @@ void DMEngine::gameloop() {
 	}
 }
 
-int16 DMEngine::ordinalToIndex(int16 val) {
+int16 DMEngine::M1_ordinalToIndex(int16 val) {
 	return val - 1;
 }
 
-int16 DMEngine::indexToOrdinal(int16 val) {
+int16 DMEngine::M0_indexToOrdinal(int16 val) {
 	return val + 1;
 }
 

@@ -433,27 +433,27 @@ class DisplayMan {
 	void f565_viewportSetPalette(uint16 * middleScreenPalette, uint16 * topAndBottomScreen); // @ F0565_VIEWPORT_SetPalette
 	void f566_viewportBlitToScreen(); // @ F0566_VIEWPORT_BlitToScreen
 
-	void drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
-	void drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
-	void drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
-	void drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
-	void drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
-	void drawSquareD3R(direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
-	void drawSquareD3C(direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
-	void drawSquareD2L(direction dir, int16 posX, int16 posY); // @ F0119_DUNGEONVIEW_DrawSquareD2L
-	void drawSquareD2R(direction dir, int16 posX, int16 posY); // @ F0120_DUNGEONVIEW_DrawSquareD2R_CPSF
-	void drawSquareD2C(direction dir, int16 posX, int16 posY); // @ F0121_DUNGEONVIEW_DrawSquareD2C
-	void drawSquareD1L(direction dir, int16 posX, int16 posY); // @ F0122_DUNGEONVIEW_DrawSquareD1L
-	void drawSquareD1R(direction dir, int16 posX, int16 posY); // @ F0122_DUNGEONVIEW_DrawSquareD1R
-	void drawSquareD1C(direction dir, int16 posX, int16 posY); // @ F0124_DUNGEONVIEW_DrawSquareD1C
-	void drawSquareD0L(direction dir, int16 posX, int16 posY); // @ F0125_DUNGEONVIEW_DrawSquareD0L
-	void drawSquareD0R(direction dir, int16 posX, int16 posY); // @ F0126_DUNGEONVIEW_DrawSquareD0R
-	void drawSquareD0C(direction dir, int16 posX, int16 posY); // @ F0127_DUNGEONVIEW_DrawSquareD0C
+	void f105_drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &frame); // @ F0105_DUNGEONVIEW_DrawFloorPitOrStairsBitmapFlippedHorizontally
+	void f104_drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &frame); // @ F0104_DUNGEONVIEW_DrawFloorPitOrStairsBitmap
+	void f100_drawWallSetBitmap(byte *bitmap, Frame &f); // @ F0100_DUNGEONVIEW_DrawWallSetBitmap
+	void f101_drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f); // @ F0101_DUNGEONVIEW_DrawWallSetBitmapWithoutTransparency
+	void f116_drawSquareD3L(direction dir, int16 posX, int16 posY); // @ F0116_DUNGEONVIEW_DrawSquareD3L
+	void f117_drawSquareD3R(direction dir, int16 posX, int16 posY); // @ F0117_DUNGEONVIEW_DrawSquareD3R
+	void f118_drawSquareD3C(direction dir, int16 posX, int16 posY); // @ F0118_DUNGEONVIEW_DrawSquareD3C_CPSF
+	void f119_drawSquareD2L(direction dir, int16 posX, int16 posY); // @ F0119_DUNGEONVIEW_DrawSquareD2L
+	void f120_drawSquareD2R(direction dir, int16 posX, int16 posY); // @ F0120_DUNGEONVIEW_DrawSquareD2R_CPSF
+	void f121_drawSquareD2C(direction dir, int16 posX, int16 posY); // @ F0121_DUNGEONVIEW_DrawSquareD2C
+	void f122_drawSquareD1L(direction dir, int16 posX, int16 posY); // @ F0122_DUNGEONVIEW_DrawSquareD1L
+	void f123_drawSquareD1R(direction dir, int16 posX, int16 posY); // @ F0123_DUNGEONVIEW_DrawSquareD1R
+	void f124_drawSquareD1C(direction dir, int16 posX, int16 posY); // @ F0124_DUNGEONVIEW_DrawSquareD1C
+	void f125_drawSquareD0L(direction dir, int16 posX, int16 posY); // @ F0125_DUNGEONVIEW_DrawSquareD0L
+	void f126_drawSquareD0R(direction dir, int16 posX, int16 posY); // @ F0126_DUNGEONVIEW_DrawSquareD0R
+	void f127_drawSquareD0C(direction dir, int16 posX, int16 posY); // @ F0127_DUNGEONVIEW_DrawSquareD0C
 
 
-	void applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
+	void f93_applyCreatureReplColors(int replacedColor, int replacementColor); // @ F0093_DUNGEONVIEW_ApplyCreatureReplacementColors
 
-	bool isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
+	bool f107_isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex); // @ F0107_DUNGEONVIEW_IsDrawnWallOrnamentAnAlcove_CPSF
 
 	uint16 *_g639_derivedBitmapByteCount; // @ G0639_pui_DerivedBitmapByteCount
 	byte **_g638_derivedBitmaps; // @ G0638_pui_DerivedBitmapBlockIndices
@@ -527,14 +527,14 @@ public:
 	explicit DisplayMan(DMEngine *dmEngine);
 	~DisplayMan();
 
-	void loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
-	void loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
+	void f95_loadWallSet(WallSet set); // @ F0095_DUNGEONVIEW_LoadWallSet
+	void f94_loadFloorSet(FloorSet set); // @ F0094_DUNGEONVIEW_LoadFloorSet
 
-	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
+	void f466_loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void setUpScreens(uint16 width, uint16 height);
-	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader, F0460_START_InitializeGraphicData
-	void initializeGraphicData(); // @ F0460_START_InitializeGraphicData
-	void loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
+	void f479_loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader	
+	void f460_initializeGraphicData(); // @ F0460_START_InitializeGraphicData
+	void f96_loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void loadPalette(uint16 *palette);
 	void f461_allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 
@@ -547,40 +547,40 @@ public:
 	void f99_copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height);
 
 
-	void blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
-					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency);
+	void f132_blitToBitmap(byte *srcBitmap, uint16 srcWidth, uint16 srcX, uint16 srcY,
+					  byte *destBitmap, uint16 destWidth, Box &box, Color transparent = k255_ColorNoTransparency); // @ F0132_VIDEO_Blit
 
-	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
+	void f133_blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,
 									   int16 firstUnitIndex, int16 destPixelWidth, Color transparent,
 									   int16 xPos, int16 yPos, int16 destHeight, int16 height2); // @ F0133_VIDEO_BlitBoxFilledWithMaskedBitmap
-	void blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
+	void f129_blitToBitmapShrinkWithPalChange(byte *srcBitmap, int16 srcWidth, int16 srcHight,
 										 byte *destBitmap, int16 destWidth, int16 destHeight, byte *palChange); // @ F0129_VIDEO_BlitShrinkWithPaletteChanges
 
-	void flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
+	void f103_flipBitmapHorizontal(byte *bitmap, uint16 width, uint16 height); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
 	void flipBitmapVertical(byte *bitmap, uint16 width, uint16 height);
-	byte *getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
+	byte *f114_getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int16 &returnPixelWidth, int16 &returnHeight); // @ F0114_DUNGEONVIEW_GetExplosionBitmap
 
 	void f134_fillBitmap(byte *bitmap, uint16 width, uint16 height, Color color); // @ F0134_VIDEO_FillBitmap
 	void clearScreen(Color color);
-	void clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
+	void D24_clearScreenBox(Color color, Box &box); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
 	void f135_fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 pixelWidth, int16 height);
-	void drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
+	void f128_drawDungeon(direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void updateScreen();
 	void f97_drawViewport(int16 palSwitchingRequestedState); // @ F0097_DUNGEONVIEW_DrawViewport
 
-	byte* getBitmap(uint16 index);
+	byte* f489_getBitmap(uint16 index); // @ F0489_MEMORY_GetNativeBitmapOrGraphic
 	Common::MemoryReadStream getCompressedData(uint16 index);
 	uint32 getCompressedDataSize(uint16 index);
-	void drawField(FieldAspect *fieldAspect, Box &box); // @ F0113_DUNGEONVIEW_DrawField
+	void f113_drawField(FieldAspect *fieldAspect, Box &box); // @ F0113_DUNGEONVIEW_DrawField
 
-	int16 getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
-	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
-	void cthulhu(Thing thingParam, direction directionParam,
+	int16 f459_getScaledBitmapPixelCount(int16 pixelWidth, int16 pixelHeight, int16 scale); // @ F0459_START_GetScaledBitmapByteCount
+	int16 M78_getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
+	void f115_cthulhu(Thing thingParam, direction directionParam,
 				 int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
 				 uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
-	uint16 getNormalizedByteWidthM77(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
-	uint16 getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
-	uint16 getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
+	uint16 M77_getNormalizedByteWidth(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
+	uint16 M23_getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
+	uint16 M22_getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
 
 	int16 _g289_championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _g267_currMapAlcoveOrnIndices[k3_AlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
@@ -602,8 +602,8 @@ public:
 	bool _g578_useByteBoxCoordinates; // @ G0578_B_UseByteBoxCoordinates
 	bool _g77_doNotDrawFluxcagesDuringEndgame; // @ G0077_B_DoNotDrawFluxcagesDuringEndgame
 
-	bool isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
-	byte *getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
+	bool f491_isDerivedBitmapInCache(int16 derivedBitmapIndex); // @  F0491_CACHE_IsDerivedBitmapInCache
+	byte *f492_getDerivedBitmap(int16 derivedBitmapIndex); // @ F0492_CACHE_GetDerivedBitmap
 
 
 

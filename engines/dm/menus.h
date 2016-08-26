@@ -60,17 +60,17 @@ public:
 	ActionList _g713_actionList; // @ G0713_s_ActionList
 	byte *_gK72_bitmapSpellAreaLine; // @ K0072_puc_Bitmap_SpellAreaLine
 
-	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
-	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
+	void f388_clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
+	void f386_drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
 
-	void drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
-	void drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
-	void refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
-	void drawActionArea(); // @ F0387_MENUS_DrawActionArea
-	const char* getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
-	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
-	void buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
-	void setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
+	void f395_drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
+	void f456_drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
+	void f390_refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
+	void f387_drawActionArea(); // @ F0387_MENUS_DrawActionArea
+	const char* f384_getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
+	void f393_drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
+	void f392_buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
+	void f394_setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
 };
 
 }

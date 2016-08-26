@@ -61,23 +61,23 @@ public:
 	int16 _g421_objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
 	int16 _g422_objDescTextYpos; // @ G0422_i_ObjectDescriptionTextY
 
-	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
-	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
-	void drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color); // @ F0343_INVENTORY_DrawPanel_HorizontalBar
-	void drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar 
-	void drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
-	void drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
-	void drawPanel(); // @ F0347_INVENTORY_DrawPanel
-	void closeChest(); // @ F0334_INVENTORY_CloseChest
-	void drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
-	void drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
-	void openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
-	void drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
-	void buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char ** attribStrings,
+	void f355_toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
+	void f354_drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
+	void f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color); // @ F0343_INVENTORY_DrawPanel_HorizontalBar
+	void f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar 
+	void f345_drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
+	void f346_drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
+	void f347_drawPanel(); // @ F0347_INVENTORY_DrawPanel
+	void f334_closeChest(); // @ F0334_INVENTORY_CloseChest
+	void f340_drawPanelScrollTextLine(int16 yPos, char *text); // @ F0340_INVENTORY_DrawPanel_ScrollTextLine
+	void f341_drawPanelScroll(Scroll *scoll); // @ F0341_INVENTORY_DrawPanel_Scroll
+	void f333_openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye); // @ F0333_INVENTORY_OpenAndDrawChest
+	void f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos); // @ F0332_INVENTORY_DrawIconToViewport
+	void f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char ** attribStrings,
 									char *destString, char *prefixString, char *suffixString); // @ F0336_INVENTORY_DrawPanel_BuildObjectAttributesString
-	void drawPanelObjectDescriptionString(char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
-	void drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
-	void drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
+	void f335_drawPanelObjectDescriptionString(char *descString); // @ F0335_INVENTORY_DrawPanel_ObjectDescriptionString
+	void f339_drawPanelArrowOrEye(bool pressingEye); // @ F0339_INVENTORY_DrawPanel_ArrowOrEye
+	void f342_drawPanelObject(Thing thingToDraw, bool pressingEye); // @ F0342_INVENTORY_DrawPanel_Object
 
 };
 

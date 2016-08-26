@@ -58,12 +58,12 @@ public:
 	char *_g352_objectNames[k199_ObjectNameCount]; // @ G0352_apc_ObjectNames
 	byte *_g412_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
 
-	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
-	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
-	void extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // @ F0036_OBJECT_ExtractIconFromBitmap
-	void drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
-	void drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
-	IconIndice getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
+	IconIndice f32_getObjectType(Thing thing); // @ F0032_OBJECT_GetType
+	IconIndice f33_getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
+	void f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap); // @ F0036_OBJECT_ExtractIconFromBitmap
+	void f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex); // @ F0038_OBJECT_DrawIconInSlotBox
+	void f34_drawLeaderObjectName(Thing thing); // @ F0034_OBJECT_DrawLeaderHandObjectName
+	IconIndice f39_getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
 
 
 };

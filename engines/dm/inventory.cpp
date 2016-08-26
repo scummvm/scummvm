@@ -50,36 +50,36 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_g426_openChest = Thing::_none;
 }
 
-void InventoryMan::toggleInventory(ChampionIndex championIndex) {
+void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	EventManager &em = *_vm->_eventMan;
 	DisplayMan &dm = *_vm->_displayMan;
 
-	if ((championIndex != k4_ChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
+	if ((championIndex != k4_ChampionCloseInventory) && !cm._gK71_champions[championIndex]._currHealth)
 		return;
 	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth)
 		return;
 	_vm->_g321_stopWaitingForPlayerInput = true;
 	int16 invChampOrdinal = _g432_inventoryChampionOrdinal; // copy, as the original will be edited
-	if (_vm->indexToOrdinal(championIndex) == invChampOrdinal) {
+	if (_vm->M0_indexToOrdinal(championIndex) == invChampOrdinal) {
 		championIndex = k4_ChampionCloseInventory;
 	}
 
 	Champion *champion;
 	if (invChampOrdinal) {
-		_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
-		closeChest();
-		champion = &cm._champions[_vm->ordinalToIndex(invChampOrdinal)];
+		_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(kM1_ChampionNone);
+		f334_closeChest();
+		champion = &cm._gK71_champions[_vm->M1_ordinalToIndex(invChampOrdinal)];
 		if (champion->_currHealth && !cm._g299_candidateChampionOrdinal) {
 			champion->setAttributeFlag(k0x1000_ChampionAttributeStatusBox, true);
-			cm.drawChampionState((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
+			cm.f292_drawChampionState((ChampionIndex)_vm->M1_ordinalToIndex(invChampOrdinal));
 		}
 		if (cm._g300_partyIsSleeping) {
 			return;
 		}
 		if (championIndex == k4_ChampionCloseInventory) {
 			em._g326_refreshMousePointerInMainLoop = true;
-			_vm->_menuMan->drawMovementArrows();
+			_vm->_menuMan->f395_drawMovementArrows();
 			em._g442_secondaryMouseInput = g448_SecondaryMouseInput_Movement;
 			warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
 			warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
@@ -88,22 +88,22 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	}
 
 	dm._g578_useByteBoxCoordinates = false;
-	_g432_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
+	_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
 	if (!invChampOrdinal) {
 		warning("MISSING CODE: F0136_VIDEO_ShadeScreenBox");
 	}
 
-	champion = &cm._champions[championIndex];
-	dm.loadIntoBitmap(k17_InventoryGraphicIndice, dm._g296_bitmapViewport);
+	champion = &cm._gK71_champions[championIndex];
+	dm.f466_loadIntoBitmap(k17_InventoryGraphicIndice, dm._g296_bitmapViewport);
 	if (cm._g299_candidateChampionOrdinal) {
 		dm.f135_fillBoxBitmap(dm._g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport * 2, k136_heightViewport);
 	}
-	_vm->_textMan->printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
-	_vm->_textMan->printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
-	_vm->_textMan->printToViewport(5, 132, k13_ColorLightestGray, "MANA");
+	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
+	_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
+	_vm->_textMan->f52_printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 
 	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
-		_vm->_championMan->drawSlot(championIndex, (ChampionSlot)slotIndex);
+		_vm->_championMan->f291_drawSlot(championIndex, (ChampionSlot)slotIndex);
 	}
 
 	champion->setAttributeFlag(k0x4000_ChampionAttributeViewport, true);
@@ -113,14 +113,14 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	champion->setAttributeFlag(k0x0100_ChampionAttributeStatistics, true);
 	champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
 
-	cm.drawChampionState(championIndex);
+	cm.f292_drawChampionState(championIndex);
 	em._g598_mousePointerBitmapUpdated = true;
 	em._g442_secondaryMouseInput = g449_SecondaryMouseInput_ChampionInventory;
 	warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");
 	warning("MISSING CODE: F0357_COMMAND_DiscardAllInput");
 }
 
-void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
+void InventoryMan::f354_drawStatusBoxPortrait(ChampionIndex championIndex) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan._g578_useByteBoxCoordinates = false;
 	Box box;
@@ -128,21 +128,21 @@ void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	box._y2 = 28 + 1;
 	box._x1 = championIndex * k69_ChampionStatusBoxSpacing + 7;
 	box._x2 = box._x1 + 31 + 1;
-	dispMan.blitToBitmap(_vm->_championMan->_champions[championIndex]._portrait, 32, 0, 0,
+	dispMan.f132_blitToBitmap(_vm->_championMan->_gK71_champions[championIndex]._portrait, 32, 0, 0,
 						 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, box, k255_ColorNoTransparency);
 }
 
-void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
+void InventoryMan::f343_drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
 	Box box;
 	box._x1 = x;
 	box._x2 = box._x1 + pixelWidth + 1;
 	box._y1 = y;
 	box._y2 = box._y1 + 6 + 1;
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
-	_vm->_displayMan->clearScreenBox(color, box);
+	_vm->_displayMan->D24_clearScreenBox(color, box);
 }
 
-void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
+void InventoryMan::f344_drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 	if (amount < -512) {
 		color = k8_ColorRed;
 	} else if (amount < 0) {
@@ -154,45 +154,45 @@ void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
 		pixelWidth = 3071;
 	}
 	pixelWidth /= 32;
-	drawPanelHorizontalBar(115, y + 2, pixelWidth, k0_ColorBlack);
-	drawPanelHorizontalBar(113, y, pixelWidth, color);
+	f343_drawPanelHorizontalBar(115, y + 2, pixelWidth, k0_ColorBlack);
+	f343_drawPanelHorizontalBar(113, y, pixelWidth, color);
 }
 
-void InventoryMan::drawPanelFoodWaterPoisoned() {
-	Champion &champ = _vm->_championMan->_champions[_g432_inventoryChampionOrdinal];
-	closeChest();
+void InventoryMan::f345_drawPanelFoodWaterPoisoned() {
+	Champion &champ = _vm->_championMan->_gK71_champions[_g432_inventoryChampionOrdinal];
+	f334_closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.blitToBitmap(dispMan.getBitmap(k20_PanelEmptyIndice), 144, 0, 0,
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k20_PanelEmptyIndice), 144, 0, 0,
 						 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g32_BoxPanel, k8_ColorRed);
-	dispMan.blitToBitmap(dispMan.getBitmap(k30_FoodLabelIndice), 48, 0, 0,
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k30_FoodLabelIndice), 48, 0, 0,
 						 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g35_BoxFood, k12_ColorDarkestGray);
-	dispMan.blitToBitmap(dispMan.getBitmap(k31_WaterLabelIndice), 48, 0, 0,
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k31_WaterLabelIndice), 48, 0, 0,
 						 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g36_BoxWater, k12_ColorDarkestGray);
 	if (champ._poisonEventCount) {
-		dispMan.blitToBitmap(dispMan.getBitmap(k32_PoisionedLabelIndice), 96, 0, 0,
+		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k32_PoisionedLabelIndice), 96, 0, 0,
 							 dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g37_BoxPoisoned, k12_ColorDarkestGray);
 	}
-	drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
-	drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
+	f344_drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
+	f344_drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
 }
 
-void InventoryMan::drawPanelResurrectReincarnate() {
+void InventoryMan::f346_drawPanelResurrectReincarnate() {
 	_g424_panelContent = k5_PanelContentResurrectReincarnate;
-	_vm->_displayMan->blitToBitmap(_vm->_displayMan->getBitmap(k40_PanelResurectReincaranteIndice), 144, 0, 0,
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getBitmap(k40_PanelResurectReincaranteIndice), 144, 0, 0,
 								   _vm->_displayMan->_g296_bitmapViewport, k112_byteWidthViewport * 2, g32_BoxPanel, k6_ColorDarkGreen);
 }
 
-void InventoryMan::drawPanel() {
+void InventoryMan::f347_drawPanel() {
 	warning("possible reintroduction of BUG0_48");
-	closeChest(); // possibility of BUG0_48
+	f334_closeChest(); // possibility of BUG0_48
 
 	ChampionMan &cm = *_vm->_championMan;
 	if (cm._g299_candidateChampionOrdinal) {
-		drawPanelResurrectReincarnate();
+		f346_drawPanelResurrectReincarnate();
 		return;
 	}
 
-	Thing thing = cm._champions[_vm->ordinalToIndex(_g432_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
+	Thing thing = cm._gK71_champions[_vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
 
 	_g424_panelContent = k0_PanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
@@ -207,19 +207,19 @@ void InventoryMan::drawPanel() {
 		break;
 	}
 	if (thing == Thing::_none) {
-		drawPanelFoodWaterPoisoned();
+		f345_drawPanelFoodWaterPoisoned();
 	} else {
-		drawPanelObject(thing, false);
+		f342_drawPanelObject(thing, false);
 	}
 }
 
-void InventoryMan::closeChest() {
+void InventoryMan::f334_closeChest() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
 	bool processFirstChestSlot = true;
 	if (_g426_openChest == Thing::_none)
 		return;
-	Container *container = (Container*)dunMan.getThingData(_g426_openChest);
+	Container *container = (Container*)dunMan.f156_getThingData(_g426_openChest);
 	_g426_openChest = Thing::_none;
 	container->getSlot() = Thing::_endOfList;
 	Thing prevThing;
@@ -230,17 +230,17 @@ void InventoryMan::closeChest() {
 
 			if (processFirstChestSlot) {
 				processFirstChestSlot = false;
-				*dunMan.getThingData(thing) = Thing::_endOfList.toUint16();
+				*dunMan.f156_getThingData(thing) = Thing::_endOfList.toUint16();
 				container->getSlot() = prevThing = thing;
 			} else {
-				dunMan.linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
+				dunMan.f163_linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
 				prevThing = thing;
 			}
 		}
 	}
 }
 
-void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
+void InventoryMan::f340_drawPanelScrollTextLine(int16 yPos, char* text) {
 	warning("CHANGE5_03_IMPROVEMENT");
 	for (char* iter = text; *iter != '\0'; ++iter) {
 		if ((*iter >= 'A') && (*iter <= 'Z')) {
@@ -249,20 +249,20 @@ void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 			*iter -= 96;
 		}
 	}
-	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
+	_vm->_textMan->f52_printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
 }
 
-void InventoryMan::drawPanelScroll(Scroll* scroll) {
+void InventoryMan::f341_drawPanelScroll(Scroll* scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
-	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	_vm->_dungeonMan->f168_decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n')) {
 		charRed++;
 	}
 	*charRed = '\0';
-	dispMan.blitToBitmap(dispMan.getBitmap(k23_PanelOpenScrollIndice), 144, 0, 0, dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g32_BoxPanel, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k23_PanelOpenScrollIndice), 144, 0, 0, dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g32_BoxPanel, k8_ColorRed);
 	int16 lineCount = 1;
 	charRed++;
 	char *charGreen = charRed; // first char of the second line
@@ -283,7 +283,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 		lineCount--;
 	}
 	int16 yPos = 92 - (7 * lineCount) / 2; // center the text vertically
-	drawPanelScrollTextLine(yPos, stringFirstLine);
+	f340_drawPanelScrollTextLine(yPos, stringFirstLine);
 	charGreen = charRed;
 	while (*charGreen) {
 		yPos += 7;
@@ -294,12 +294,12 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 			charRed[1] = '\0';
 		}
 		*charRed++ = '\0';
-		drawPanelScrollTextLine(yPos, charGreen);
+		f340_drawPanelScrollTextLine(yPos, charGreen);
 		charGreen = charRed;
 	}
 }
 
-void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
+void InventoryMan::f333_openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 
@@ -308,13 +308,13 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 
 	warning("CHANGE8_09_FIX");
 	if (_g426_openChest != Thing::_none)
-		closeChest(); // CHANGE8_09_FIX
+		f334_closeChest(); // CHANGE8_09_FIX
 
 	_g426_openChest = thingToOpen;
 	if (!isPressingEye) {
-		objMan.drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
+		objMan.f38_drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
 	}
-	dispMan.blitToBitmap(dispMan.getBitmap(k25_PanelOpenChestIndice), 144, 0, 0, dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g32_BoxPanel, k8_ColorRed);
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k25_PanelOpenChestIndice), 144, 0, 0, dispMan._g348_bitmapScreen, k160_byteWidthScreen * 2, g32_BoxPanel, k8_ColorRed);
 
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
@@ -324,27 +324,27 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
-		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.getIconIndex(thing));
+		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.f33_getIconIndex(thing));
 		_g425_chestSlots[chestSlotIndex++] = thing;
-		thing = _vm->_dungeonMan->getNextThing(thing);
+		thing = _vm->_dungeonMan->f159_getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
-		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
+		objMan.f38_drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
 		_g425_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
 
-void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
+void InventoryMan::f332_drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
 	static byte iconBitmap[16 * 16];
 	Box box;
 	box._x2 = (box._x1 = xPos) + 15 + 1;
 	box._y2 = (box._y1 = yPos) + 15 + 1;
-	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->blitToBitmap(iconBitmap, 16, 0, 0, _vm->_displayMan->_g296_bitmapViewport,
+	_vm->_objectMan->f36_extractIconFromBitmap(iconIndex, iconBitmap);
+	_vm->_displayMan->f132_blitToBitmap(iconBitmap, 16, 0, 0, _vm->_displayMan->_g296_bitmapViewport,
 								   k112_byteWidthViewport * 2, box, k255_ColorNoTransparency);
 }
 
-void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
+void InventoryMan::f336_buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, char** attribStrings, char* destString, char* prefixString, char* suffixString) {
 	uint16 identicalBitCount = 0;
 	int16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
@@ -375,7 +375,7 @@ void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 a
 	strcat(destString, suffixString);
 }
 
-void InventoryMan::drawPanelObjectDescriptionString(char* descString) {
+void InventoryMan::f335_drawPanelObjectDescriptionString(char* descString) {
 	if (descString[0] == '\f') { // form feed
 		descString++;
 		_g421_objDescTextXpos = 108;
@@ -399,7 +399,7 @@ void InventoryMan::drawPanelObjectDescriptionString(char* descString) {
 				severalLines = true;
 			}
 
-			_vm->_textMan->printToViewport(_g421_objDescTextXpos, _g422_objDescTextYpos, k13_ColorLightestGray, stringLine);
+			_vm->_textMan->f52_printToViewport(_g421_objDescTextXpos, _g422_objDescTextYpos, k13_ColorLightestGray, stringLine);
 			_g422_objDescTextYpos += 7;
 			if (severalLines) {
 				severalLines = false;
@@ -413,9 +413,9 @@ void InventoryMan::drawPanelObjectDescriptionString(char* descString) {
 
 Box g33_BoxArrowOrEye = Box(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
 
-void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
+void InventoryMan::f339_drawPanelArrowOrEye(bool pressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.blitToBitmap(dispMan.getBitmap(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
+	dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
 						 16, 0, 0, dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g33_BoxArrowOrEye, k8_ColorRed);
 }
 
@@ -427,7 +427,7 @@ Box g34_BoxObjectDescCircle = Box(105, 136, 53, 79); // @ G0034_s_Graphic562_Box
 #define k0x0004_DescriptionMaskBroken 0x0004 // @ MASK0x0004_DESCRIPTION_BROKEN    
 #define k0x0008_DescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
 
-void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
+void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
@@ -436,34 +436,34 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
 		warning("BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
-		closeChest();
+		f334_closeChest();
 	}
 
-	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
-	drawPanelObjectDescriptionString("\f"); // form feed
+	uint16 *rawThingPtr = dunMan.f156_getThingData(thingToDraw);
+	f335_drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == k7_ScrollThingType) {
-		drawPanelScroll((Scroll*)rawThingPtr);
+		f341_drawPanelScroll((Scroll*)rawThingPtr);
 	} else if (thingType == k9_ContainerThingType) {
-		openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
+		f333_openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
 	} else {
-		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
-		dispMan.blitToBitmap(dispMan.getBitmap(k20_PanelEmptyIndice), 144, 0, 0,
+		IconIndice iconIndex = objMan.f33_getIconIndex(thingToDraw);
+		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k20_PanelEmptyIndice), 144, 0, 0,
 							 dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g32_BoxPanel, k8_ColorRed);
-		dispMan.blitToBitmap(dispMan.getBitmap(k29_ObjectDescCircleIndice), 32, 0, 0,
+		dispMan.f132_blitToBitmap(dispMan.f489_getBitmap(k29_ObjectDescCircleIndice), 32, 0, 0,
 							 dispMan._g296_bitmapViewport, k112_byteWidthViewport * 2, g34_BoxObjectDescCircle, k12_ColorDarkestGray);
 
 		char *descString = nullptr;
 		char str[40];
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
-			strcpy(str, champMan._champions[((Junk*)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
+			strcpy(str, champMan._gK71_champions[((Junk*)rawThingPtr)->getChargeCount()]._name);  // TODO: localization
 			strcat(str, " "); // TODO: localization
 			strcat(str, objMan._g352_objectNames[iconIndex]);  // TODO: localization
 
 			descString = str;
 		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
-				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_g432_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
+				   && (champMan.f303_getSkillLevel((ChampionIndex)_vm->M1_ordinalToIndex(_g432_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
 			str[0] = '_' + ((Potion*)rawThingPtr)->getPower() / 40;
 			str[1] = ' ';
 			str[2] = '\0';
@@ -473,8 +473,8 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			descString = objMan._g352_objectNames[iconIndex];
 		}
 
-		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString);
-		drawIconToViewport(iconIndex, 111, 59);
+		textMan.f52_printToViewport(134, 68, k13_ColorLightestGray, descString);
+		f332_drawIconToViewport(iconIndex, 111, 59);
 
 		char *attribString[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"}; // TODO: localization
 
@@ -490,7 +490,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit)
 				&& (iconIndex <= k7_IconIndiceWeaponTorchLit)
 				&& (weapon->getChargeCount() == 0)) {
-				drawPanelObjectDescriptionString("(BURNT OUT)"); // TODO: localization
+				f335_drawPanelObjectDescriptionString("(BURNT OUT)"); // TODO: localization
 			}
 			break;
 		}
@@ -524,13 +524,13 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 					descString = "(FULL)"; // TODO: localization
 					break;
 				}
-				drawPanelObjectDescriptionString(descString);
+				f335_drawPanelObjectDescriptionString(descString);
 			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
 				potentialAttribMask = 0;
 				strcpy(str, "PARTY FACING "); // TODO: localization
 				static char* directionName[4] = {"NORTH", "EAST", "SOUTH", "WEST"}; // G0430_apc_DirectionNames // TODO: localization
 				strcat(str, directionName[iconIndex]);
-				drawPanelObjectDescriptionString(str);
+				f335_drawPanelObjectDescriptionString(str);
 			} else {
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 				actualAttribMask = g237_ObjectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
@@ -540,25 +540,25 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} // end of switch 
 
 		if (potentialAttribMask) {
-			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
-			drawPanelObjectDescriptionString(str);
+			f336_buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
+			f335_drawPanelObjectDescriptionString(str);
 		}
 
 		strcpy(str, "WEIGHS "); // TODO: localization
 
-		uint16 weight = dunMan.getObjectWeight(thingToDraw);
-		strcat(str, champMan.getStringFromInteger(weight / 10, false, 3).c_str());
+		uint16 weight = dunMan.f140_getObjectWeight(thingToDraw);
+		strcat(str, champMan.f288_getStringFromInteger(weight / 10, false, 3).c_str());
 
 		strcat(str, "."); // TODO: localization
 
 		weight -= (weight / 10) * 10;
-		strcat(str, champMan.getStringFromInteger(weight, false, 1).c_str()); 
+		strcat(str, champMan.f288_getStringFromInteger(weight, false, 1).c_str()); 
 
 		strcat(str, " KG."); // TODO: localization
 
-		drawPanelObjectDescriptionString(str);
+		f335_drawPanelObjectDescriptionString(str);
 	}
-	drawPanelArrowOrEye(pressingEye);
+	f339_drawPanelArrowOrEye(pressingEye);
 
 }
 }
