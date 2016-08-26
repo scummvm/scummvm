@@ -923,14 +923,19 @@ Common::String SciEngine::getFilePrefix() const {
 }
 
 Common::String SciEngine::wrapFilename(const Common::String &name) const {
-	return getFilePrefix() + "-" + name;
+	Common::String prefix = getFilePrefix() + "-";
+	if (name.hasPrefix(prefix.c_str()))
+		return name;
+	else
+		return prefix + name;
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	Common::String prefix = getFilePrefix() + "-";
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
-	return name;
+	else
+		return name;
 }
 
 const char *SciEngine::getGameObjectName() {
