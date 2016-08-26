@@ -7,6 +7,15 @@
 
 namespace DM {
 
+Box gBoxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
+Box gBoxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
+Box gBoxChampionIcons[4] = { // @ G0054_ai_Graphic562_Box_ChampionIcons
+	Box(281, 299,  0, 13),
+	Box(301, 319,  0, 13),
+	Box(301, 319, 15, 28),
+	Box(281, 299, 15, 28) };
+byte gChampionColor[4] = {7, 11, 8, 14}; // @ G0046_auc_Graphic562_ChampionColor
+
 uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	/* 30 for champion inventory, 8 for chest */
 	0xFFFF,   /* Ready Hand       Mouth/Head/Neck/Torso/Legs/Feet/Quiver 1/Quiver 2/Pouch/Hands/Chest */
