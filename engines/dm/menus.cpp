@@ -98,7 +98,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = k201_IconIndiceActionEmptyHand;
-	} else if (gObjectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
+	} else if (g237_ObjectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
 		dm.clearBitmap(bitmapIcon, 16, 16, k4_ColorCyan);

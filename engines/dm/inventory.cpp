@@ -57,9 +57,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 
 	if ((championIndex != k4_ChampionCloseInventory) && !cm._champions[championIndex]._currHealth)
 		return;
-	if (_vm->_pressingEye || _vm->_pressingMouth)
+	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth)
 		return;
-	_vm->_stopWaitingForPlayerInput = true;
+	_vm->_g321_stopWaitingForPlayerInput = true;
 	int16 invChampOrdinal = _inventoryChampionOrdinal; // copy, as the original will be edited
 	if (_vm->indexToOrdinal(championIndex) == invChampOrdinal) {
 		championIndex = k4_ChampionCloseInventory;
@@ -192,10 +192,10 @@ void InventoryMan::drawPanel() {
 
 	_panelContent = kPanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
-	case kContainerThingType:
+	case k9_ContainerThingType:
 		_panelContent = kPanelContentChest;
 		break;
-	case kScrollThingType:
+	case k7_ScrollThingType:
 		_panelContent = kPanelContentScroll;
 		break;
 	default:
@@ -229,7 +229,7 @@ void InventoryMan::closeChest() {
 				*dunMan.getThingData(thing) = Thing::_endOfList.toUint16();
 				container->getSlot() = prevThing = thing;
 			} else {
-				dunMan.linkThingToList(thing, prevThing, kMapXNotOnASquare, 0);
+				dunMan.linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
 				prevThing = thing;
 			}
 		}
@@ -252,7 +252,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
-	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(kTextTypeScroll | kDecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n')) {
 		charRed++;
@@ -429,7 +429,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	ChampionMan &champMan = *_vm->_championMan;
 	TextMan &textMan = *_vm->_textMan;
 
-	if (_vm->_pressingEye || _vm->_pressingMouth) {
+	if (_vm->_g331_pressingEye || _vm->_g333_pressingMouth) {
 		warning("BUG0_48 The contents of a chest are reorganized when an object with a statistic modifier is placed or removed on a champion");
 		closeChest();
 	}
@@ -437,9 +437,9 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
-	if (thingType == kScrollThingType) {
+	if (thingType == k7_ScrollThingType) {
 		drawPanelScroll((Scroll*)rawThingPtr);
-	} else if (thingType == kContainerThingType) {
+	} else if (thingType == k9_ContainerThingType) {
 		openAndDrawChest(thingToDraw, (Container*)rawThingPtr, pressingEye);
 	} else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
@@ -454,7 +454,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			strcat(str, objMan._objectNames[iconIndex]);  // TODO: localization
 
 			descString = str;
-		} else if ((thingType == kPotionThingType)
+		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
 			str[0] = '_' + ((Potion*)rawThingPtr)->getPower() / 40;
@@ -476,7 +476,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		uint16 potentialAttribMask;
 		uint16 actualAttribMask;
 		switch (thingType) {
-		case kWeaponThingType: {
+		case k5_WeaponThingType: {
 			potentialAttribMask = kDescriptionMaskCursed | kDescriptionMaskPoisoned | kDescriptionMaskBroken;
 			Weapon *weapon = (Weapon*)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
@@ -487,19 +487,19 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			}
 			break;
 		}
-		case kArmourThingType: {
+		case k6_ArmourThingType: {
 			potentialAttribMask = kDescriptionMaskCursed | kDescriptionMaskBroken;
 			Armour *armour = (Armour*)rawThingPtr;
 			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
 			break;
 		}
-		case kPotionThingType: {
+		case k8_PotionThingType: {
 			actualAttribMask = kDescriptionMaskConsumable;
 			Potion *potion = (Potion*)rawThingPtr;
-			actualAttribMask = gObjectInfo[kObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			actualAttribMask = g237_ObjectInfo[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
-		case kJunkThingType: {
+		case k10_JunkThingType: {
 			Junk *junk = (Junk*)rawThingPtr;
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
@@ -526,7 +526,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				drawPanelObjectDescriptionString(str);
 			} else {
 				potentialAttribMask = kDescriptionMaskConsumable;
-				actualAttribMask = gObjectInfo[kObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+				actualAttribMask = g237_ObjectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}

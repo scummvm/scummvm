@@ -44,7 +44,7 @@ Timeline::~Timeline() {
 void Timeline::initTimeline() {
 	_events = new TimelineEvent[_eventMaxCount];
 	_timeline = new uint16[_eventMaxCount];
-	if (_vm->_dungeonMan->_messages._newGame) {
+	if (_vm->_dungeonMan->_messages._g298_newGame) {
 		for (int16 i = 0; i < _eventMaxCount; ++i)
 			_events->_type = kTMEventTypeNone;
 		_eventCount = 0;

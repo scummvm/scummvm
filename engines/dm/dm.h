@@ -71,29 +71,29 @@ void clearFlag(uint16 &val, uint16 mask);
 
 
 enum ThingType {
-	kPartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
-	kDoorThingType = 0,
-	kTeleporterThingType = 1,
-	kTextstringType = 2,
-	kSensorThingType = 3,
-	kGroupThingType = 4,
-	kWeaponThingType = 5,
-	kArmourThingType = 6,
-	kScrollThingType = 7,
-	kPotionThingType = 8,
-	kContainerThingType = 9,
-	kJunkThingType = 10,
-	kProjectileThingType = 14,
-	kExplosionThingType = 15,
-	kThingTypeTotal = 16 // +1 than the last (explosionThingType)
+	kM1_PartyThingType = -1, // @ CM1_THING_TYPE_PARTY, special value
+	k0_DoorThingType = 0,
+	k1_TeleporterThingType = 1,
+	k2_TextstringType = 2,
+	k3_SensorThingType = 3,
+	k4_GroupThingType = 4,
+	k5_WeaponThingType = 5,
+	k6_ArmourThingType = 6,
+	k7_ScrollThingType = 7,
+	k8_PotionThingType = 8,
+	k9_ContainerThingType = 9,
+	k10_JunkThingType = 10,
+	k14_ProjectileThingType = 14,
+	k15_ExplosionThingType = 15,
+	k16_ThingTypeTotal = 16 // +1 than the last (explosionThingType)
 }; // @ C[00..15]_THING_TYPE_...
 
 enum Cell {
-	kCellAny = -1, // @ CM1_CELL_ANY      
-	kCellNorthWest = 0, // @ C00_CELL_NORTHWEST 
-	kCellNorthEast = 1, // @ C01_CELL_NORTHEAST 
-	kCellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
-	kCellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
+	kM1_CellAny = -1, // @ CM1_CELL_ANY      
+	k0_CellNorthWest = 0, // @ C00_CELL_NORTHWEST 
+	k1_CellNorthEast = 1, // @ C01_CELL_NORTHEAST 
+	k2_CellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
+	k3_CellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
 };
 
 class Thing {
@@ -168,15 +168,15 @@ public:
 	GroupMan *_groupMan;
 	Timeline *_timeline;
 
-	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
-	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
-	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
-	uint32 _gameId; // @ G0525_l_GameID, probably useless here
-	bool _pressingEye; // @ G0331_B_PressingEye
-	bool _stopPressingEye; // @ G0332_B_StopPressingEye
-	bool _pressingMouth; // @ G0333_B_PressingMouth
-	bool _stopPressingMouth; // @ G0334_B_StopPressingMouth
-	bool _highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
+	bool _g321_stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
+	bool _g301_gameTimeTicking; // @ G0301_B_GameTimeTicking
+	bool _g524_restartGameAllowed; // @ G0524_B_RestartGameAllowed
+	uint32 _g525_gameId; // @ G0525_l_GameID, probably useless here
+	bool _g331_pressingEye; // @ G0331_B_PressingEye
+	bool _g332_stopPressingEye; // @ G0332_B_StopPressingEye
+	bool _g333_pressingMouth; // @ G0333_B_PressingMouth
+	bool _g334_stopPressingMouth; // @ G0334_B_StopPressingMouth
+	bool _g340_highlightBoxInversionRequested; // @ G0340_B_HighlightBoxInversionRequested
 
 	// TODO: refactor direction into a class
 	int8 _dirIntoStepCountEast[4];

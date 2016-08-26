@@ -43,7 +43,7 @@ GroupMan::~GroupMan() {
 }
 
 void GroupMan::initActiveGroups() {
-	if (_vm->_dungeonMan->_messages._newGame)
+	if (_vm->_dungeonMan->_messages._g298_newGame)
 		_maxActiveGroupCount = 60;
 	if (_activeGroups)
 		delete[] _activeGroups;
@@ -55,7 +55,7 @@ void GroupMan::initActiveGroups() {
 uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
 	byte cells;
 	cells = group->_cells;
-	if (mapIndex == _vm->_dungeonMan->_currMap._currPartyMapIndex)
+	if (mapIndex == _vm->_dungeonMan->_currMap._g309_currPartyMapIndex)
 		cells = _activeGroups[cells]._cells;
 	return cells;
 }
@@ -63,20 +63,20 @@ uint16 GroupMan::getGroupCells(Group* group, int16 mapIndex) {
 byte gGroupDirections[4] = {0x00, 0x55, 0xAA, 0xFF}; // @ G0258_auc_Graphic559_GroupDirections
 
 uint16 GroupMan::getGroupDirections(Group* group, int16 mapIndex) {
-	if (mapIndex == _vm->_dungeonMan->_currMap._currPartyMapIndex)
+	if (mapIndex == _vm->_dungeonMan->_currMap._g309_currPartyMapIndex)
 		return _activeGroups[group->getActiveGroupIndex()]._directions;
 
 	return gGroupDirections[group->getDir()];
 }
 
 int16 GroupMan::getCreatureOrdinalInCell(Group* group, uint16 cell) {
-	uint16 currMapIndex = _vm->_dungeonMan->_currMap._index;
+	uint16 currMapIndex = _vm->_dungeonMan->_currMap._g272_index;
 	byte groupCells = getGroupCells(group, currMapIndex);
 	if (groupCells == kCreatureTypeSingleCenteredCreature)
 		return _vm->indexToOrdinal(0);
 
 	byte creatureIndex = group->getCount();
-	if (getFlag(gCreatureInfo[group->_type]._attributes, kMaskCreatureInfo_size) == kMaskCreatureSizeHalf) {
+	if (getFlag(g243_CreatureInfo[group->_type]._attributes, kMaskCreatureInfo_size) == kMaskCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = returnPrevVal(cell);
 

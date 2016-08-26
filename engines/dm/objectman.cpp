@@ -127,7 +127,7 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1) {
-		objectInfoIndex = gObjectInfo[objectInfoIndex]._type;
+		objectInfoIndex = g237_ObjectInfo[objectInfoIndex]._type;
 	}
 	return (IconIndice)objectInfoIndex;
 }
@@ -145,7 +145,7 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 		uint16 *rawType = _vm->_dungeonMan->getThingData(thing);
 		switch (iconIndex) {
 		case k0_IconIndiceJunkCompassNorth:
-			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_currMap._partyDir);
+			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_currMap._g308_partyDir);
 			break;
 		case k4_IconIndiceWeaponTorchUnlit: {
 			Weapon weapon(rawType);

@@ -106,14 +106,14 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_movsens = nullptr;
 	_groupMan = nullptr;
 	_timeline = nullptr;
-	_stopWaitingForPlayerInput = false;
-	_gameTimeTicking = false;
-	_restartGameAllowed = false;
-	_pressingEye = false;
-	_pressingMouth = false;
-	_stopPressingEye = false;
-	_stopPressingMouth = false;
-	_highlightBoxInversionRequested = false;
+	_g321_stopWaitingForPlayerInput = false;
+	_g301_gameTimeTicking = false;
+	_g524_restartGameAllowed = false;
+	_g331_pressingEye = false;
+	_g333_pressingMouth = false;
+	_g332_stopPressingEye = false;
+	_g334_stopPressingMouth = false;
+	_g340_highlightBoxInversionRequested = false;
 
 	debug("DMEngine::DMEngine");
 }
@@ -164,11 +164,11 @@ void DMEngine::initializeGame() {
 
 
 void DMEngine::startGame() {
-	_pressingEye = false;
-	_stopPressingEye = false;
-	_pressingMouth = false;
-	_stopPressingMouth = false;
-	_highlightBoxInversionRequested = false;
+	_g331_pressingEye = false;
+	_g332_stopPressingEye = false;
+	_g333_pressingMouth = false;
+	_g334_stopPressingMouth = false;
+	_g340_highlightBoxInversionRequested = false;
 	_eventMan->_highlightBoxEnabled = false;
 	_championMan->_g300_partyIsSleeping = false;
 	_championMan->_g506_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
@@ -179,9 +179,9 @@ void DMEngine::startGame() {
 	_eventMan->_secondaryMouseInput = gSecondaryMouseInput_Movement;
 	warning("MISSING CODE: set primary/secondary keyboard input");
 
-	processNewPartyMap(_dungeonMan->_currMap._currPartyMapIndex);
+	processNewPartyMap(_dungeonMan->_currMap._g309_currPartyMapIndex);
 
-	if (!_dungeonMan->_messages._newGame) {
+	if (!_dungeonMan->_messages._g298_newGame) {
 		warning("TODO: loading game");
 	} else {
 		_displayMan->_g578_useByteBoxCoordinates = false;
@@ -191,7 +191,7 @@ void DMEngine::startGame() {
 	warning("TODO: build copper");
 	_menuMan->drawMovementArrows();
 	_championMan->resetDataToStartGame();
-	_gameTimeTicking = true;
+	_g301_gameTimeTicking = true;
 }
 
 void DMEngine::processNewPartyMap(uint16 mapIndex) {
@@ -233,28 +233,28 @@ Common::Error DMEngine::run() {
 
 void DMEngine::gameloop() {
 	warning("DUMMY CODE SETTING PARTY POS AND DIRECTION");
-	_dungeonMan->_currMap._partyPosX = 10;
-	_dungeonMan->_currMap._partyPosY = 4;
-	_dungeonMan->_currMap._partyDir = kDirNorth;
+	_dungeonMan->_currMap._g306_partyPosX = 10;
+	_dungeonMan->_currMap._g307_partyPosY = 4;
+	_dungeonMan->_currMap._g308_partyDir = kDirNorth;
 
 
 	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
 	_inventoryMan->_inventoryChampionOrdinal = 0;
 	warning("DUMMY CODE: clearing screen to black"); // in loop below
 	while (true) {
-		_stopWaitingForPlayerInput = false;
+		_g321_stopWaitingForPlayerInput = false;
 
 		_menuMan->refreshActionAreaAndSetChampDirMaxDamageReceived();
 
 		//do {
 		_eventMan->processInput();
 		_eventMan->processCommandQueue();
-		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
+		//} while (!_g321_stopWaitingForPlayerInput || !_g301_gameTimeTicking);
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 224, 0, 126);
 			_displayMan->clearScreenBox(k0_ColorBlack, box, g296_DungeonViewport); // dummy code
-			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
+			_displayMan->drawDungeon(_dungeonMan->_currMap._g308_partyDir, _dungeonMan->_currMap._g306_partyPosX, _dungeonMan->_currMap._g307_partyPosY);
 		}
 		// DUMMY CODE: next line
 		_menuMan->drawMovementArrows();

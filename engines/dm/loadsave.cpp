@@ -39,14 +39,14 @@ LoadsaveMan::LoadsaveMan(DMEngine *vm) : _vm(vm) {}
 
 
 LoadgameResponse LoadsaveMan::loadgame() {
-	bool newGame = _vm->_dungeonMan->_messages._newGame;
+	bool newGame = _vm->_dungeonMan->_messages._g298_newGame;
 	ChampionMan &cm = *_vm->_championMan;
 
 	if (newGame) {
-		_vm->_restartGameAllowed = false;
+		_vm->_g524_restartGameAllowed = false;
 		cm._g305_partyChampionCount = 0;
 		cm._414_leaderHandObject = Thing::_none;
-		_vm->_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
+		_vm->_g525_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
 	} else {
 		assert(false);
 		// MISSING CODE: load game
