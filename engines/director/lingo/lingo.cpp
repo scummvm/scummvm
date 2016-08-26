@@ -108,6 +108,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_exitRepeat = false;
 
+	_localvars = NULL;
+
 	warning("Lingo Inited");
 }
 

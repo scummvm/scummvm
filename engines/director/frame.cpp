@@ -51,6 +51,8 @@ Frame::Frame(DirectorEngine *vm) {
 	_skipFrameFlag = 0;
 	_blend = 0;
 
+	_palette = NULL;
+
 	_sprites.resize(CHANNEL_COUNT);
 
 	for (uint16 i = 0; i < _sprites.size(); i++) {

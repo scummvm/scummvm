@@ -51,6 +51,10 @@ Sprite::Sprite() {
 	_volume = 0;
 	_stretch = 0;
 	_type = kInactiveSprite;
+
+	_cast = nullptr;
+	_blend = 0;
+	_lineSize = 1;
 }
 
 Sprite::Sprite(const Sprite &sprite) {
@@ -76,6 +80,13 @@ Sprite::Sprite(const Sprite &sprite) {
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
 	_type = sprite._type;
+
+	_cast = sprite._cast;
+	_constraint = sprite._constraint;
+	_moveable = sprite._moveable;
+	_blend = sprite._blend;
+	_startTime = sprite._startTime;
+	_lineSize = sprite._lineSize;
 }
 
 Sprite::~Sprite() {

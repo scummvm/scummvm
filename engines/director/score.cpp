@@ -99,6 +99,15 @@ Score::Score(DirectorEngine *vm) {
 	_labels = NULL;
 	_font = NULL;
 
+	_versionMinor = _versionMajor = 0;
+	_currentFrameRate = 20;
+	_castArrayStart = _castArrayEnd = 0;
+	_currentFrame = 0;
+	_nextFrameTime = 0;
+	_flags = 0;
+	_stopPlay = false;
+	_stageColor = 0;
+
 	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
 		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
 	}
