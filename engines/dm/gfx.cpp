@@ -155,11 +155,12 @@ Box g2_BoxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_
 byte g212_PalChangeSmoke[16] = {0, 10, 20, 30, 40, 50, 120, 10, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0212_auc_Graphic558_PaletteChanges_Smoke
 
 ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
-	/* { ByteWidth, Height } */
-	ExplosionAspect(80, 111),   /* Fire   */
-ExplosionAspect(64,  97),   /* Spell  */
-ExplosionAspect(80,  91),   /* Poison */
-ExplosionAspect(80,  91)}; /* Death  */
+	// ByteWidth, Height 
+	ExplosionAspect(80, 111),   // Fire
+	ExplosionAspect(64,  97),   // Spell
+	ExplosionAspect(80,  91),   // Poison
+	ExplosionAspect(80,  91)    // Death
+};
 
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
@@ -708,21 +709,20 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 
 	g186_doorFrame_D1C = new DoorFrames( // @ G0186_s_Graphic558_Frames_Door_D1C
 		/* { X1, X2, Y1, Y2, ByteWidth, Height, X, Y } */
-										Frame(64, 159, 17, 102, 48, 88, 0, 0),	/* Closed Or Destroyed */
-										Frame(64, 159, 17, 38, 48, 88, 0, 66),	/* Vertical Closed one fourth */
-										Frame(64, 159, 17, 60, 48, 88, 0, 44),	/* Vertical Closed half */
-										Frame(64, 159, 17, 82, 48, 88, 0, 22),	/* Vertical Closed three fourth */
-										Frame(64, 75, 17, 102, 48, 88, 36, 0),	/* Left Horizontal Closed one fourth */
-										Frame(64, 87, 17, 102, 48, 88, 24, 0),	/* Left Horizontal Closed half */
-										Frame(64, 99, 17, 102, 48, 88, 12, 0),	/* Left Horizontal Closed three fourth */
-										Frame(148, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
-										Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
-										Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
+		Frame(64, 159, 17, 102, 48, 88, 0, 0),	/* Closed Or Destroyed */
+		Frame(64, 159, 17, 38, 48, 88, 0, 66),	/* Vertical Closed one fourth */
+		Frame(64, 159, 17, 60, 48, 88, 0, 44),	/* Vertical Closed half */
+		Frame(64, 159, 17, 82, 48, 88, 0, 22),	/* Vertical Closed three fourth */
+		Frame(64, 75, 17, 102, 48, 88, 36, 0),	/* Left Horizontal Closed one fourth */
+		Frame(64, 87, 17, 102, 48, 88, 24, 0),	/* Left Horizontal Closed half */
+		Frame(64, 99, 17, 102, 48, 88, 12, 0),	/* Left Horizontal Closed three fourth */
+		Frame(148, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed one fourth */
+		Frame(136, 159, 17, 102, 48, 88, 48, 0),	/* Right Horizontal Closed half */
+		Frame(124, 159, 17, 102, 48, 88, 48, 0)	/* Right Horizontal Closed three fourth */
 	);
-	for (uint16 i = 0; i < 16; ++i) {
-		_g347_paletteTopAndBottomScreen[i] = 0;
-		_g346_paletteMiddleScreen[i] = 0;
-	}
+
+	for (uint16 i = 0; i < 32; i++)
+		_g345_aui_BlankBuffer[i] = 0;
 }
 
 DisplayMan::~DisplayMan() {
@@ -3693,19 +3693,6 @@ byte* DisplayMan::f492_getDerivedBitmap(int16 derivedBitmapIndex) {
 
 void DisplayMan::f493_addDerivedBitmap(int16 derivedBitmapIndex) {
 	warning(false, "f493_addDerivedBitmap DOES NOTHING");
-}
-
-uint16 DisplayMan::f431_getDarkenedColor(uint16 RGBcolor) {
-	if (getFlag(RGBcolor, D12_MASK_BLUE_COMPONENT)) {
-		RGBcolor--;
-	}
-	if (getFlag(RGBcolor, D11_MASK_GREEN_COMPONENT)) {
-		RGBcolor -= 16;
-	}
-	if (getFlag(RGBcolor, D10_MASK_RED_COMPONENT)) {
-		RGBcolor -= 256;
-	}
-	return RGBcolor;
 }
 
 }
