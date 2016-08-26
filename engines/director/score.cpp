@@ -752,8 +752,8 @@ void Score::update() {
 	_surface->copyFrom(*_trailSurface);
 
 	//Enter and exit from previous frame (Director 4)
-	_lingo->processEvent(kEventEnterFrame, _currentFrame);
-	_lingo->processEvent(kEventExitFrame, _currentFrame);
+	_lingo->processEvent(kEventEnterFrame, _frames[_currentFrame]->_actionId);
+	_lingo->processEvent(kEventExitFrame, _frames[_currentFrame]->_actionId);
 	//TODO Director 6 - another order
 
 

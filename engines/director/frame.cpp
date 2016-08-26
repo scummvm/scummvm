@@ -77,6 +77,8 @@ Frame::Frame(const Frame &frame) {
 	_blend = frame._blend;
 	_palette = new PaletteInfo();
 
+	debugC(1, kDebugLoading, "Frame. action: %d transType: %d transDuration: %d", _actionId, _transType, _transDuration);
+
 	_sprites.resize(CHANNEL_COUNT);
 
 	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
