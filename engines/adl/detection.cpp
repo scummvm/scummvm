@@ -76,6 +76,7 @@ static const PlainGameDescriptor adlGames[] = {
 	{ "hires0", "Hi-Res Adventure #0: Mission Asteroid" },
 	{ "hires1", "Hi-Res Adventure #1: Mystery House" },
 	{ "hires2", "Hi-Res Adventure #2: Wizard and the Princess" },
+	{ "hires4", "Hi-Res Adventure #4: Ulysses and the Golden Fleece" },
 	{ "hires6", "Hi-Res Adventure #6: The Dark Crystal" },
 	{ 0, 0 }
 };
@@ -138,6 +139,21 @@ static const AdlGameDescription gameDescriptions[] = {
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
 		GAME_TYPE_HIRES0
+	},
+	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
+		{
+			"hires4", 0,
+			{
+				{ "ULYS1A.XFD", 0, "26365d2b06509fd21e7a7919e33f7199", 92160 },
+				// FIXME: Add sides 1B and 2C
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformAtariST, // FIXME
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES4
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology
 		{
@@ -297,6 +313,7 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes2Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes0Engine_create(OSystem *syst, const AdlGameDescription *gd);
+Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd);
 Engine *HiRes6Engine_create(OSystem *syst, const AdlGameDescription *gd);
 
 bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
@@ -314,6 +331,9 @@ bool AdlMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		break;
 	case GAME_TYPE_HIRES0:
 		*engine = HiRes0Engine_create(syst, adlGd);
+		break;
+	case GAME_TYPE_HIRES4:
+		*engine = HiRes4Engine_create(syst, adlGd);
 		break;
 	case GAME_TYPE_HIRES6:
 		*engine = HiRes6Engine_create(syst, adlGd);

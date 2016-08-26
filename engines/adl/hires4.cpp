@@ -20,30 +20,31 @@
  *
  */
 
-#ifndef ADL_DETECTION_H
-#define ADL_DETECTION_H
+#include "common/system.h"
+#include "common/debug.h"
+#include "common/error.h"
+#include "common/file.h"
+#include "common/stream.h"
 
-#include "engines/advancedDetector.h"
+#include "adl/hires4.h"
+#include "adl/display.h"
+#include "adl/graphics.h"
+#include "adl/disk.h"
 
 namespace Adl {
 
-#define SAVEGAME_VERSION 0
-#define SAVEGAME_NAME_LEN 32
+void HiRes4Engine::runIntro() const {
+}
 
-enum GameType {
-	GAME_TYPE_NONE,
-	GAME_TYPE_HIRES0,
-	GAME_TYPE_HIRES1,
-	GAME_TYPE_HIRES2,
-	GAME_TYPE_HIRES4,
-	GAME_TYPE_HIRES6
-};
+void HiRes4Engine::init() {
+	_graphics = new Graphics_v2(*_display);
+}
 
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
-};
+void HiRes4Engine::initGameState() {
+}
+
+Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {
+	return new HiRes4Engine(syst, gd);
+}
 
 } // End of namespace Adl
-
-#endif

@@ -20,28 +20,24 @@
  *
  */
 
-#ifndef ADL_DETECTION_H
-#define ADL_DETECTION_H
+#ifndef ADL_HIRES4_H
+#define ADL_HIRES4_H
 
-#include "engines/advancedDetector.h"
+#include "common/str.h"
+
+#include "adl/adl_v3.h"
 
 namespace Adl {
 
-#define SAVEGAME_VERSION 0
-#define SAVEGAME_NAME_LEN 32
+class HiRes4Engine : public AdlEngine_v3 {
+public:
+	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
 
-enum GameType {
-	GAME_TYPE_NONE,
-	GAME_TYPE_HIRES0,
-	GAME_TYPE_HIRES1,
-	GAME_TYPE_HIRES2,
-	GAME_TYPE_HIRES4,
-	GAME_TYPE_HIRES6
-};
-
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
+private:
+	// AdlEngine
+	void runIntro() const;
+	void init();
+	void initGameState();
 };
 
 } // End of namespace Adl
