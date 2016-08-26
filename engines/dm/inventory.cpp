@@ -37,10 +37,10 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	if (invChampOrdinal) {
 		_inventoryChampionOrdinal = indexToOrdinal(kChampionNone);
 		warning("MISSING CODE: F0334_INVENTORY_CloseChest");
-		champion = &cm._champions[ordinalToIndex(_inventoryChampionOrdinal)];
+		champion = &cm._champions[ordinalToIndex(invChampOrdinal)];
 		if (champion->_currHealth && !cm._candidateChampionOrdinal) {
 			champion->setAttributeFlag(kChampionAttributeStatusBox, true);
-			warning("MISSING CODE: F0292_CHAMPION_DrawState");
+			cm.drawChampionState((ChampionIndex)ordinalToIndex(invChampOrdinal));
 		}
 		if (cm._partyIsSleeping) {
 			return;
@@ -81,7 +81,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	champion->setAttributeFlag(kChampionAttributeStatistics, true);
 	champion->setAttributeFlag(kChampionAttributeNameTitle, true);
 
-	warning("MISSING CODE: F0292_CHAMPION_DrawState");
+	cm.drawChampionState(championIndex);
 	em._mousePointerBitmapUpdated = true;
 	em._secondaryMouseInput = gSecondaryMouseInput_ChampionInventory;
 	warning("MISSING CODE: set G0444_ps_SecondaryKeyboardInput");

@@ -25,7 +25,7 @@ void MenuMan::clearActingChampion() {
 	if (cm._actingChampionOrdinal) {
 		cm._actingChampionOrdinal--;
 		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(kChampionAttributeActionHand, true);
-		warning("MISSING CODE: F0292_CHAMPION_DrawState");
+		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
 		cm._actingChampionOrdinal = indexToOrdinal(kChampionNone);
 		_shouldRefreshActionArea = true;
 	}

@@ -435,11 +435,11 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	// MISSING CODE: Lots of code
 }
 
-void EventManager::commandSetLeader(ChampionIndex index) {
+void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
 
-	if ((cm._leaderIndex == index) || ((index != kChampionNone) && !cm._champions[index]._currHealth))
+	if ((cm._leaderIndex == champIndex) || ((champIndex != kChampionNone) && !cm._champions[champIndex]._currHealth))
 		return;
 
 	if (cm._leaderIndex != kChampionNone) {
@@ -448,20 +448,20 @@ void EventManager::commandSetLeader(ChampionIndex index) {
 		cm._champions[leaderIndex].setAttributeFlag(kChampionAttributeNameTitle, true);
 		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
 		cm._leaderIndex = kChampionNone;
-		warning("MISSING CODE: F0292_CHAMPION_DrawState");
+		cm.drawChampionState(leaderIndex);
 	}
-	if (index == kChampionNone) {
+	if (champIndex == kChampionNone) {
 		cm._leaderIndex = kChampionNone;
 		return;
 	}
-	cm._leaderIndex = index;
+	cm._leaderIndex = champIndex;
 	Champion *champion = &cm._champions[cm._leaderIndex];
 	champion->_dir = _vm->_dungeonMan->_currMap._partyDir;
-	cm._champions[index]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
-	if (indexToOrdinal(index) != cm._candidateChampionOrdinal) {
+	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHand);
+	if (indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
 		champion->setAttributeFlag(kChampionAttributeIcon, true);
 		champion->setAttributeFlag(kChampionAttributeNameTitle, true);
-		warning("MISSING CODE: F0292_CHAMPION_DrawState");
+		cm.drawChampionState(champIndex);
 	}
 }
 
