@@ -1008,8 +1008,6 @@ void MovesensMan::f270_sensorTriggetLocalEffect(int16 localEffect, int16 effX, i
 }
 
 void MovesensMan::f269_sensorAddSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly) {
-	int16 L0730_i_ChampionIndex;
-	Champion* L0731_ps_Champion;
 
 	if (leaderOnly) {
 		if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
@@ -1017,7 +1015,8 @@ void MovesensMan::f269_sensorAddSkillExperience(int16 skillIndex, uint16 exp, bo
 		}
 	} else {
 		exp /= _vm->_championMan->_g305_partyChampionCount;
-		for (L0730_i_ChampionIndex = k0_ChampionFirst, L0731_ps_Champion = _vm->_championMan->_gK71_champions; L0730_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0730_i_ChampionIndex++, L0731_ps_Champion++) {
+		Champion *L0731_ps_Champion = _vm->_championMan->_gK71_champions;
+		for (int16 L0730_i_ChampionIndex = k0_ChampionFirst; L0730_i_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; L0730_i_ChampionIndex++, L0731_ps_Champion++) {
 			if (L0731_ps_Champion->_currHealth) {
 				_vm->_championMan->f304_addSkillExperience(L0730_i_ChampionIndex, skillIndex, exp);
 			}

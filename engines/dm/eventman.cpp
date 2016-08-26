@@ -351,14 +351,13 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 		100, 110, 0, 130, 140, 150}; // @ G0044_auc_Graphic562_PaletteChanges_MousePointerIcon
 	static Box g619_BoxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow 
 	static Box g620_BoxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object 
-	byte* L0051_puc_Bitmap;
 
 	_gK100_preventBuildPointerScreenArea = true;
 	_g600_useObjectAsMousePointerBitmap = true;
 	_g601_useHandAsMousePointerBitmap = false;
 	_g598_mousePointerBitmapUpdated = true;
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
+	byte *L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
 
 	/*
@@ -367,6 +366,7 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, g44_palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
 	*/
+	warning("TODO - Call f129_blitToBitmapShrinkWithPalChange");
 	// dummy code
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
@@ -376,15 +376,11 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 }
 
 void EventManager::f71_mouseDropChampionIcon() {
-	bool L0057_B_UseByteBoxCoordinatesBackup;
-	uint16 L0058_ui_ChampionIconIndex;
-
-
 	_gK100_preventBuildPointerScreenArea = true;
-	L0058_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
+	uint16 L0058_ui_ChampionIconIndex = _vm->M1_ordinalToIndex(_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap);
 	_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap = _vm->M0_indexToOrdinal(kM1_ChampionNone);
 	_vm->_eventMan->_g598_mousePointerBitmapUpdated = true;
-	L0057_B_UseByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
+	bool L0057_B_UseByteBoxCoordinatesBackup = _vm->_displayMan->_g578_useByteBoxCoordinates;
 	_vm->_displayMan->f21_blitToScreen(_g613_mousePointerOriginalColorsChampionIcon, &g54_BoxChampionIcons[L0058_ui_ChampionIconIndex << 2], 16, k12_ColorDarkestGray, 18);
 	_vm->_displayMan->_g578_useByteBoxCoordinates = L0057_B_UseByteBoxCoordinatesBackup;
 	_gK100_preventBuildPointerScreenArea = false;
@@ -393,7 +389,6 @@ void EventManager::f71_mouseDropChampionIcon() {
 void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 	uint16 L1577_i_ChampionIndex;
 	int16 L1578_i_XOverChampionStatusBox;
-
 
 	// if (_gK100_preventBuildPointerScreenArea)
 	//	return;

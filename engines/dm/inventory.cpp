@@ -556,9 +556,6 @@ void InventoryMan::f342_drawPanelObject(Thing thingToDraw, bool pressingEye) {
 }
 
 void InventoryMan::f337_setDungeonViewPalette() {
-	int16 L1036_i_TotalLightAmount;
-	uint16 L1037_ui_TorchLightAmountMultiplier;
-	int16 L1038_i_Counter;
 	uint16 L1039_ui_Multiple;
 #define AL1039_ui_SlotIndex    L1039_ui_Multiple
 #define AL1039_ui_PaletteIndex L1039_ui_Multiple
@@ -566,9 +563,6 @@ void InventoryMan::f337_setDungeonViewPalette() {
 	int16* L1040_pi_Multiple;
 #define AL1040_pi_TorchLightPower L1040_pi_Multiple
 #define AL1040_pi_LightAmount     L1040_pi_Multiple
-	int16* L1041_pi_TorchLightPower;
-	Weapon* L1042_ps_Weapon;
-	Champion* L1043_ps_Champion;
 	uint16 L1044_ui_Multiple;
 #define AL1044_T_Thing            L1044_ui_Multiple
 #define AL1044_ui_TorchLightPower L1044_ui_Multiple
@@ -580,15 +574,15 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		_vm->_displayMan->_g304_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
-		L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
-		L1043_ps_Champion = _vm->_championMan->_gK71_champions;
+		int16 L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
+		Champion *L1043_ps_Champion = _vm->_championMan->_gK71_champions;
 		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
 		while (L1038_i_Counter--) {
 			AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
 			while (AL1039_ui_SlotIndex--) {
 				if ((_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) >= k4_IconIndiceWeaponTorchUnlit) &&
 					(_vm->_objectMan->f32_getObjectType(Thing(AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16())) <= k7_IconIndiceWeaponTorchLit)) {
-					L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(Thing(AL1044_T_Thing));
+					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->f156_getThingData(Thing(AL1044_T_Thing));
 					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
 				} else {
 					*AL1040_pi_TorchLightPower = 0;
@@ -602,7 +596,7 @@ void InventoryMan::f337_setDungeonViewPalette() {
 		AL1039_ui_Counter = 0;
 		while (AL1039_ui_Counter != 4) {
 			L1038_i_Counter = 7 - AL1039_ui_Counter;
-			L1041_pi_TorchLightPower = &L1045_ai_TorchesLightPower[AL1039_ui_Counter + 1];
+			int16 *L1041_pi_TorchLightPower = &L1045_ai_TorchesLightPower[AL1039_ui_Counter + 1];
 			while (L1038_i_Counter--) {
 				if (*L1041_pi_TorchLightPower > *AL1040_pi_TorchLightPower) {
 					AL1044_ui_TorchLightPower = *L1041_pi_TorchLightPower;
@@ -615,9 +609,9 @@ void InventoryMan::f337_setDungeonViewPalette() {
 			AL1039_ui_Counter++;
 		}
 		/* Get total light amount provided by the four torches with the highest light power values and by the fifth torch in the array which may be any one of the four torches with the smallest ligh power values */
-		L1037_ui_TorchLightAmountMultiplier = 6;
+		uint16 L1037_ui_TorchLightAmountMultiplier = 6;
 		AL1039_ui_Counter = 5;
-		L1036_i_TotalLightAmount = 0;
+		int16 L1036_i_TotalLightAmount = 0;
 		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
 		while (AL1039_ui_Counter--) {
 			if (*AL1040_pi_TorchLightPower) {
