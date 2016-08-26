@@ -81,9 +81,7 @@ public:
 	int16 _type;
 	uint16 _objectAspectIndex;
 	uint16 _actionSetIndex;
-private:
 	uint16 _allowedSlots;
-public:
 	ObjectInfo(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
 		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
 	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
@@ -583,6 +581,7 @@ class Square {
 public:
 	explicit Square(byte dat = 0) : _data(dat) {}
 	explicit Square(SquareType type) { setType(type); }
+	explicit Square(byte element, byte mask) : _data((element << 5) | mask) {}
 	Square &set(byte dat) { this->_data = dat; return *this; }
 	Square &set(SquareMask mask) { _data |= mask; return *this; }
 	byte get(SquareMask mask) { return _data & mask; }
@@ -653,8 +652,8 @@ class DungeonMan {
 	int16 f160_getSquareFirstThingIndex(int16 mapX, int16 mapY); // @ F0160_DUNGEON_GetSquareFirstThingIndex
 
 	int16 f170_getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int16 mapY, int16 modulo); // @ F0170_DUNGEON_GetRandomOrnamentOrdinal
-	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, direction dir,
-										 int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
+	void f171_setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
+	                                     int16 mapX, int16 mapY, bool isFakeWall); // @ F0171_DUNGEON_SetSquareAspectRandomWallOrnamentOrdinals
 
 
 public:
@@ -697,6 +696,7 @@ public:
 	void f164_unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int16 mapX, int16 mapY); // @ F0164_DUNGEON_UnlinkThingFromList
 	int16 f155_getStairsExitDirection(int16 mapX, int16 mapY); // @ F0155_DUNGEON_GetStairsExitDirection
 	Thing f167_getObjForProjectileLaucherOrObjGen(uint16 iconIndex); // @ F0167_DUNGEON_GetObjectForProjectileLauncherOrObjectGenerator
+	int16 f169_getRandomOrnamentIndex(uint16 val1, uint16 val2, int16 modulo); // @ F0169_DUNGEON_GetRandomOrnamentIndex
 
 
 	uint32 _rawDunFileDataSize;	 // @ probably NONE
@@ -709,7 +709,7 @@ public:
 	uint16 *_g280_dungeonColumnsCumulativeSquareThingCount; // @ G0280_pui_DungeonColumnsCumulativeSquareThingCount
 	Thing *_g283_squareFirstThings; // @ G0283_pT_SquareFirstThings
 	uint16 *_g260_dungeonTextData; // @ G0260_pui_DungeonTextData
-	uint16 **_g284_thingData[16]; // @ G0284_apuc_ThingData
+	uint16 *_g284_thingData[16]; // @ G0284_apuc_ThingData
 	byte ***_g279_dungeonMapData; // @ G0279_pppuc_DungeonMapData
 
 

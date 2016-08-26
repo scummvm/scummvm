@@ -41,7 +41,6 @@
 
 
 namespace DM {
-
 byte g42_bitmapArrowPointer[576] = { // @ G0042_auc_Graphic562_Bitmap_ArrowPointer
 	0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x6, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
 	0x7, 0x8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xC, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xE, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0xF, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -329,7 +328,6 @@ void EventManager::initMouse() {
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 	CursorMan.showMouse(false);
 
-
 	setMousePos(Common::Point(320 / 2, 200 / 2));
 }
 
@@ -358,10 +356,17 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
 	L0051_puc_Bitmap = _g615_mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
+
+	/*
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, gK27_palChangesMousepointerOjbectIconShadow);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f129_blitToBitmapShrinkWithPalChange(bitmap, _gK190_mousePointerTempBuffer, 16, 16, 16, 16, g44_palChangesMousePointerIcon);
 	_vm->_displayMan->f132_blitToBitmap(_gK190_mousePointerTempBuffer, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
+	*/
+	// dummy code
+	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
+	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
+	
 	_gK100_preventBuildPointerScreenArea = false;
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
@@ -386,8 +391,8 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 	int16 L1578_i_XOverChampionStatusBox;
 
 
-	if (_gK100_preventBuildPointerScreenArea)
-		return;
+	// if (_gK100_preventBuildPointerScreenArea)
+	//	return;
 
 	_gK100_preventBuildPointerScreenArea = true;
 	if (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap) {
@@ -442,16 +447,16 @@ void EventManager::f73_buildpointerScreenArea(int16 mousePosX, int16 mousePosY) 
 		_vm->_eventMan->_g598_mousePointerBitmapUpdated = false;
 		switch (_gK104_mousePointerType) {
 		case k0_pointerTypeArrow:
-			CursorMan.pushCursor(g42_bitmapArrowPointer, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(g42_bitmapArrowPointer, 32, 18, 0, 0, 0);
 			break;
 		case k1_pointerTypeObjectIcon:
-			CursorMan.pushCursor(_g615_mousePointerOriginalColorsObject, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(_g615_mousePointerOriginalColorsObject, 32, 18, 0, 0, 0);
 			break;
 		case k2_pointerTypeChampionIcon:
-			CursorMan.pushCursor(_g613_mousePointerOriginalColorsChampionIcon, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(_g613_mousePointerOriginalColorsChampionIcon, 32, 18, 0, 0, 0);
 			break;
 		case k3_pointerTypeHand:
-			CursorMan.pushCursor(g43_bitmapHanPointer, 32, 18, 0, 0, 0);
+			CursorMan.replaceCursor(g43_bitmapHanPointer, 32, 18, 0, 0, 0);
 			break;
 		}
 	}
@@ -724,11 +729,15 @@ void EventManager::f368_commandSetLeader(ChampionIndex champIndex) {
 }
 
 void EventManager::f372_commandProcessType80ClickInDungeonViewTouchFrontWall() {
-	DungeonMan &dunMan = *_vm->_dungeonMan;
-	int16 mapX = dunMan._g306_partyMapX + _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
-	int16 mapY = dunMan._g307_partyMapY + _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
-	if ((mapX >= 0) && (mapX < dunMan._g273_currMapWidth) && (mapY >= 0) && (mapY < dunMan._g274_currMapHeight)) {
-		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->f275_sensorIsTriggeredByClickOnWall(mapX, mapY, returnOppositeDir(dunMan._g308_partyDir));
+	uint16 L1135_ui_MapX;
+	uint16 L1136_ui_MapY;
+
+
+	L1135_ui_MapX = _vm->_dungeonMan->_g306_partyMapX;
+	L1136_ui_MapY = _vm->_dungeonMan->_g307_partyMapY;
+	L1135_ui_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L1136_ui_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+	if ((L1135_ui_MapX >= 0) && (L1135_ui_MapX < _vm->_dungeonMan->_g273_currMapWidth) && (L1136_ui_MapY >= 0) && (L1136_ui_MapY < _vm->_dungeonMan->_g274_currMapHeight)) {
+		_vm->_g321_stopWaitingForPlayerInput = _vm->_movsens->f275_sensorIsTriggeredByClickOnWall(L1135_ui_MapX, L1136_ui_MapY, returnOppositeDir(_vm->_dungeonMan->_g308_partyDir));
 	}
 }
 

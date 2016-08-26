@@ -125,7 +125,7 @@ uint16 returnNextVal(uint16 val); // @ M17_NEXT
 bool isOrientedWestEast(direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
 
 
-uint16 setFlag(uint16 &val, uint16 mask); // @ M08_SET
+#define setFlag(val, mask) ((val) |= (mask))
 
 
 #define getFlag(val, mask) ((val) & (mask))

@@ -2,12 +2,11 @@ Bugs:
 	Display:
 		Broken colour palette
 		Portraits, alcoves etc. look broken from afar
-		Ornaments are not displayed if looked at from certain angles
-		Ornaments are displayed where they should not be, probably error in the pseudo RNG
-		Command gui is broken
+		Arrow and hand display is messed up
+
 	Logic:
-		Game crashes when reincaranting a fourth champion and trying to copy his portrait
-e
+		When object are put on the right side of the current square, they disappear
+
 
 
 Todo:
@@ -20,9 +19,4 @@ Todo:
 	Double check strcat, strstr usages, I might have messed them up in many places
 	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
 
-	Missing functions:
-		 Add missing  F0163_DUNGEON_LinkThingToList in MovesensMan::sensorIsTriggeredByClickOnWall (I don't think it's safe yet)
-	
-Refactoring
-	Add constructor to CreatureInfo
 

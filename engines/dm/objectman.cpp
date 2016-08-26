@@ -138,100 +138,102 @@ IconIndice ObjectMan::f32_getObjectType(Thing thing) {
 byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 IconIndice ObjectMan::f33_getIconIndex(Thing thing) {
-	IconIndice iconIndex = f32_getObjectType(thing);
+	int16 L0005_i_IconIndex;
+	Junk* L0006_ps_Junk;
 
-	if ((iconIndex != kM1_IconIndiceNone) &&
-		(((iconIndex < k32_IconIndiceWeaponDagger) && (iconIndex >= k0_IconIndiceJunkCompassNorth)) || // < instead of <= is no error
-		((iconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (iconIndex <= k163_IconIndicePotionWaterFlask)) ||
-		 (iconIndex == k195_IconIndicePotionEmptyFlask))
-		) {
-		uint16 *rawType = _vm->_dungeonMan->f156_getThingData(thing);
-		switch (iconIndex) {
-		case k0_IconIndiceJunkCompassNorth:
-			iconIndex = (IconIndice)(iconIndex + _vm->_dungeonMan->_g308_partyDir);
-			break;
-		case k4_IconIndiceWeaponTorchUnlit: {
-			Weapon weapon(rawType);
-			if (weapon.isLit()) {
-				iconIndex = (IconIndice)(iconIndex + g29_ChargeCountToTorchType[weapon.getChargeCount()]);
+
+	if ((L0005_i_IconIndex = _vm->_objectMan->f32_getObjectType(thing)) != kM1_IconIndiceNone) {
+		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
+			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
+			(L0005_i_IconIndex == k195_IconIndicePotionEmptyFlask)) {
+			L0006_ps_Junk = (Junk*)_vm->_dungeonMan->f156_getThingData(thing);
+			switch (L0005_i_IconIndex) {
+			case k0_IconIndiceJunkCompassNorth:
+				L0005_i_IconIndex += _vm->_dungeonMan->_g308_partyDir;
+				break;
+			case k4_IconIndiceWeaponTorchUnlit:
+				if (((Weapon*)L0006_ps_Junk)->isLit()) {
+					L0005_i_IconIndex += g29_ChargeCountToTorchType[((Weapon*)L0006_ps_Junk)->getChargeCount()];
+				}
+				break;
+			case k30_IconIndiceScrollOpen:
+				if (((Scroll*)L0006_ps_Junk)->getClosed()) {
+					L0005_i_IconIndex++;
+				}
+				break;
+			case k8_IconIndiceJunkWater:
+			case k12_IconIndiceJunkIllumuletUnequipped:
+			case k10_IconIndiceJunkJewelSymalUnequipped:
+				if (L0006_ps_Junk->getChargeCount()) {
+					L0005_i_IconIndex++;
+				}
+				break;
+			case k23_IconIndiceWeaponBoltBladeStormEmpty:
+			case k14_IconIndiceWeaponFlamittEmpty:
+			case k18_IconIndiceWeaponStormringEmpty:
+			case k25_IconIndiceWeaponFuryRaBladeEmpty:
+			case k16_IconIndiceWeaponEyeOfTimeEmpty:
+			case k20_IconIndiceWeaponStaffOfClawsEmpty:
+				if (((Weapon*)L0006_ps_Junk)->getChargeCount()) {
+					L0005_i_IconIndex++;
+				}
 			}
-			break;
-		}
-		case k30_IconIndiceScrollOpen:
-			if (Scroll(rawType).getClosed()) {
-				iconIndex = (IconIndice)(iconIndex + 1);
-			}
-			break;
-		case k8_IconIndiceJunkWater:
-		case k12_IconIndiceJunkIllumuletUnequipped:
-		case k10_IconIndiceJunkJewelSymalUnequipped:
-			if (Junk(rawType).getChargeCount()) {
-				iconIndex = (IconIndice)(iconIndex + 1);
-			}
-			break;
-		case k23_IconIndiceWeaponBoltBladeStormEmpty:
-		case k14_IconIndiceWeaponFlamittEmpty:
-		case k18_IconIndiceWeaponStormringEmpty:
-		case k25_IconIndiceWeaponFuryRaBladeEmpty:
-		case k16_IconIndiceWeaponEyeOfTimeEmpty:
-		case k20_IconIndiceWeaponStaffOfClawsEmpty:
-			if (Weapon(rawType).getChargeCount()) {
-				iconIndex = (IconIndice)(iconIndex + 1);
-			}
-			break;
-		default:
-			break;
 		}
 	}
-
-	return iconIndex;
+	return (IconIndice)L0005_i_IconIndex;
 }
 
 void ObjectMan::f36_extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
-	int16 i;
-	for (i = 0; i < 7; ++i) {
-		if (g26_IconGraphicFirstIndex[i] > iconIndex)
+	uint16 L0011_ui_Counter;
+	byte* L0012_pl_Bitmap_Icon;
+	Box L1568_s_Box;
+
+	for (L0011_ui_Counter = 0; L0011_ui_Counter < 7; L0011_ui_Counter++) {
+		if (g26_IconGraphicFirstIndex[L0011_ui_Counter] > iconIndex)
 			break;
 	}
-
-	--i;
-	byte *srcBitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + i);
-	iconIndex -= g26_IconGraphicFirstIndex[i];
+	L0012_pl_Bitmap_Icon = _vm->_displayMan->f489_getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + --L0011_ui_Counter);
+	iconIndex -= g26_IconGraphicFirstIndex[L0011_ui_Counter];
 	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
-	Box box(0, 0, 15, 15);
-	_vm->_displayMan->f132_blitToBitmap(srcBitmap, destBitmap, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency);
+	L1568_s_Box._y1 = 0;
+	L1568_s_Box._x1 = 0;
+	L1568_s_Box._y2 = 15;
+	L1568_s_Box._x2 = 15;
+	_vm->_displayMan->f132_blitToBitmap(L0012_pl_Bitmap_Icon, destBitmap, L1568_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0011_ui_Counter], 16);
 }
 
 void ObjectMan::f38_drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
-	SlotBox *slotBox = &_g30_slotBoxes[slotBoxIndex];
-	slotBox->_iconIndex = iconIndex; // yes, this modifies the global array
-	if (slotBox->_iconIndex == kM1_IconIndiceNone) {
+	uint16 L0015_ui_IconGraphicIndex;
+	int16 L0016_i_ByteWidth;
+	SlotBox* L0017_ps_SlotBox;
+	byte* L0018_puc_Bitmap_Icons;
+	Box L0019_s_Box;
+	byte* L0020_puc_Bitmap_Destination;
+	int16 L1569_i_Width;
+
+	L0017_ps_SlotBox = &_vm->_objectMan->_g30_slotBoxes[slotBoxIndex];
+	if ((L0017_ps_SlotBox->_iconIndex = iconIndex) == kM1_IconIndiceNone) {
 		return;
 	}
-
-	Box box;
-	box._x1 = slotBox->_x;
-	box._y1 = slotBox->_y;
-	box._x2 = box._x1 + 15;
-	box._y2 = box._y1 + 15;
-
-	uint16 iconGraphicIndex;
-	for (iconGraphicIndex = 0; iconGraphicIndex < 7; ++iconGraphicIndex) {
-		if (g26_IconGraphicFirstIndex[iconGraphicIndex] > iconIndex) {
+	L0019_s_Box._x2 = (L0019_s_Box._x1 = L0017_ps_SlotBox->_x) + 15;
+	L0019_s_Box._y2 = (L0019_s_Box._y1 = L0017_ps_SlotBox->_y) + 15;
+	for (L0015_ui_IconGraphicIndex = 0; L0015_ui_IconGraphicIndex < 7; L0015_ui_IconGraphicIndex++) {
+		if (g26_IconGraphicFirstIndex[L0015_ui_IconGraphicIndex] > iconIndex)
 			break;
-		}
 	}
-	iconGraphicIndex--;
-	byte *iconsBitmap = _vm->_displayMan->f489_getNativeBitmapOrGraphic(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
-	iconIndex -= g26_IconGraphicFirstIndex[iconGraphicIndex];
-
-	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
+	L0015_ui_IconGraphicIndex--;
+	L0018_puc_Bitmap_Icons = _vm->_displayMan->f489_getNativeBitmapOrGraphic(L0015_ui_IconGraphicIndex + k42_ObjectIcons_000_TO_031);
+	iconIndex -= g26_IconGraphicFirstIndex[L0015_ui_IconGraphicIndex];
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, _vm->_displayMan->_g296_bitmapViewport, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, k112_byteWidthViewport, kM1_ColorNoTransparency);
-
+		L0020_puc_Bitmap_Destination = _vm->_displayMan->_g296_bitmapViewport;
+		L0016_i_ByteWidth = k112_byteWidthViewport;
+		L1569_i_Width = 136;
 	} else {
-		_vm->_displayMan->f132_blitToBitmap(iconsBitmap, _vm->_displayMan->_g348_bitmapScreen, box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, k160_byteWidthScreen, kM1_ColorNoTransparency);
+		L0020_puc_Bitmap_Destination = (unsigned char*)_vm->_displayMan->_g348_bitmapScreen;
+		L0016_i_ByteWidth = k160_byteWidthScreen;
+		L1569_i_Width = 200;
 	}
+	_vm->_displayMan->_g578_useByteBoxCoordinates = false, _vm->_displayMan->f132_blitToBitmap(L0018_puc_Bitmap_Icons, L0020_puc_Bitmap_Destination, L0019_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, L0016_i_ByteWidth, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0015_ui_IconGraphicIndex], L1569_i_Width);
 }
 
 #define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH

@@ -69,11 +69,6 @@ uint16 returnNextVal(uint16 val) {
 
 bool isOrientedWestEast(direction dir) { return dir & 1; }
 
-
-uint16 setFlag(uint16 &val, uint16 mask) {
-	return val |= mask;
-}
-
 uint16 toggleFlag(uint16& val, uint16 mask) {
 	return val ^= mask;
 }
@@ -314,7 +309,7 @@ void DMEngine::f2_gameloop() {
 
 	while (true) {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
-			T0002002:
+T0002002:
 			f3_processNewPartyMap(_g327_newPartyMapIndex);
 			_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 			_g327_newPartyMapIndex = kM1_mapIndexNone;
@@ -326,15 +321,34 @@ void DMEngine::f2_gameloop() {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone)
 			goto T0002002;
 
+		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
+			Box box(0, 223, 0, 135);
+			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // dummy code
+			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
+			if (_g325_setMousePointerToObjectInMainLoop) {
+				_g325_setMousePointerToObjectInMainLoop = false;
+				_eventMan->f78_showMouse();
+				_eventMan->f68_setPointerToObject(_objectMan->_g412_objectIconForMousePointer);
+				_eventMan->f77_hideMouse();
+				
+			}
+			if (_eventMan->_g326_refreshMousePointerInMainLoop) {
+				_eventMan->_g326_refreshMousePointerInMainLoop = false;
+				_eventMan->_g598_mousePointerBitmapUpdated = true;
+				_eventMan->f78_showMouse();
+				_eventMan->f77_hideMouse();
+			}
+		}
+
 		if (_championMan->_g303_partyDead)
 			break;
 		_g313_gameTime++;
 
 		if (!(_g313_gameTime & 511))
-			_inventoryMan->f338_decreaseTorchesLightPower();
-		if (_g310_disabledMovementTicks) {
-			_g310_disabledMovementTicks--;
-		}
+			//_inventoryMan->f338_decreaseTorchesLightPower();
+			if (_g310_disabledMovementTicks) {
+				_g310_disabledMovementTicks--;
+			}
 		if (_championMan->_g407_party._freezeLifeTicks) {
 			_championMan->_g407_party._freezeLifeTicks -= 1;
 		}
@@ -345,15 +359,10 @@ void DMEngine::f2_gameloop() {
 
 		_g321_stopWaitingForPlayerInput = false;
 		//do {
-			_eventMan->processInput();
-			_eventMan->f380_processCommandQueue();
-		//} while (!_g321_stopWaitingForPlayerInput /*|| !_g301_gameTimeTicking */);
+		_eventMan->processInput();
+		_eventMan->f380_processCommandQueue();
+	//} while (!_g321_stopWaitingForPlayerInput /*|| !_g301_gameTimeTicking */);
 
-		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
-			Box box(0, 223, 0, 135);
-			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // dummy code
-			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
-		}
 
 		_displayMan->updateScreen();
 		_system->delayMillis(18);

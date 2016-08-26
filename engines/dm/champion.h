@@ -386,7 +386,7 @@ public:
 	int16 _water;
 	uint16 _load;
 	int16 _shieldDefense;
-	byte _portrait[464]; // 32 x 29 pixel portrait
+	byte _portrait[928]; // 32 x 29 pixel portrait
 
 	Thing &getSlot(ChampionSlot slot) { return _slots[slot]; }
 	void setSlot(ChampionSlot slot, Thing val) { _slots[slot] = val; }

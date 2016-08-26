@@ -1106,26 +1106,26 @@ void ChampionMan::f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount
 	Scent L0958_s_Scent; /* BUG0_00 Useless code */
 
 
-	if (L0954_i_ScentIndex = _vm->_championMan->_g407_party._scentCount) {
+	if (L0954_i_ScentIndex = _g407_party._scentCount) {
 		if (L0955_B_Merge = getFlag(cycleCount, k0x8000_mergeCycles)) {
 			clearFlag(cycleCount, k0x8000_mergeCycles);
 		}
 		L0958_s_Scent.setMapX(mapX); /* BUG0_00 Useless code */
 		L0958_s_Scent.setMapY(mapY); /* BUG0_00 Useless code */
 		L0958_s_Scent.setMapIndex(_vm->_dungeonMan->_g272_currMapIndex); /* BUG0_00 Useless code */
-		L0957_ps_Scent = _vm->_championMan->_g407_party._scents; /* BUG0_00 Useless code */
+		L0957_ps_Scent = _g407_party._scents; /* BUG0_00 Useless code */
 		L0956_B_CycleCountDefined = false;
 		while (L0954_i_ScentIndex--) {
 			if (&*L0957_ps_Scent++ == &L0958_s_Scent) {
 				if (!L0956_B_CycleCountDefined) {
 					L0956_B_CycleCountDefined = true;
 					if (L0955_B_Merge) {
-						cycleCount = MAX((int32)_vm->_championMan->_g407_party._scentStrengths[L0954_i_ScentIndex], cycleCount);
+						cycleCount = MAX((int32)_g407_party._scentStrengths[L0954_i_ScentIndex], cycleCount);
 					} else {
-						cycleCount = MIN(80, _vm->_championMan->_g407_party._scentStrengths[L0954_i_ScentIndex] + cycleCount);
+						cycleCount = MIN(80, _g407_party._scentStrengths[L0954_i_ScentIndex] + cycleCount);
 					}
 				}
-				_vm->_championMan->_g407_party._scentStrengths[L0954_i_ScentIndex] = cycleCount;
+				_g407_party._scentStrengths[L0954_i_ScentIndex] = cycleCount;
 			}
 		}
 	}
@@ -1135,8 +1135,10 @@ void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) 
 	if (thing == Thing::_none) {
 		return;
 	}
-	_vm->_championMan->_g415_leaderEmptyHanded = false;
-	_vm->_objectMan->f36_extractIconFromBitmap(_vm->_championMan->_g413_leaderHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(_vm->_championMan->_g414_leaderHandObject = thing), _vm->_objectMan->_g412_objectIconForMousePointer);
+	_g415_leaderEmptyHanded = false;
+	_vm->_objectMan->f36_extractIconFromBitmap(_g413_leaderHandObjectIconIndex = _vm->_objectMan->f33_getIconIndex(_g414_leaderHandObject = thing), _vm->_objectMan->_g412_objectIconForMousePointer);
+
+	
 	_vm->_eventMan->f78_showMouse();
 	_vm->_objectMan->f34_drawLeaderObjectName(thing);
 	if (setMousePointer) {
@@ -1145,10 +1147,10 @@ void ChampionMan::f297_putObjectInLeaderHand(Thing thing, bool setMousePointer) 
 		_vm->_eventMan->f68_setPointerToObject(_vm->_objectMan->_g412_objectIconForMousePointer);
 	}
 	_vm->_eventMan->f77_hideMouse();
-	if (_vm->_championMan->_g411_leaderIndex != kM1_ChampionNone) {
-		_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(thing);
-		setFlag(_vm->_championMan->_gK71_champions[_vm->_championMan->_g411_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
-		_vm->_championMan->f292_drawChampionState(_vm->_championMan->_g411_leaderIndex);
+	if (_g411_leaderIndex != kM1_ChampionNone) {
+		_gK71_champions[_g411_leaderIndex]._load += _vm->_dungeonMan->f140_getObjectWeight(thing);
+		setFlag(_gK71_champions[_g411_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
+		f292_drawChampionState(_g411_leaderIndex);
 	}
 }
 
@@ -1174,180 +1176,180 @@ void ChampionMan::f278_resetDataToStartGame() {
 
 
 void ChampionMan::f280_addCandidateChampionToParty(uint16 championPortraitIndex) {
-	DisplayMan &dispMan = *_vm->_displayMan;
-	DungeonMan &dunMan = *_vm->_dungeonMan;
+	Thing L0793_T_Thing;
+	uint16 L0794_ui_Multiple;
+#define AL0794_ui_ViewCell       L0794_ui_Multiple
+#define AL0794_ui_SlotIndex      L0794_ui_Multiple
+#define AL0794_ui_CharacterIndex L0794_ui_Multiple
+#define AL0794_ui_StatisticIndex L0794_ui_Multiple
+#define AL0794_ui_SkillIndex     L0794_ui_Multiple
+	int16 L0795_i_HiddenSkillIndex;
+	uint16 L0796_ui_Multiple;
+#define AL0796_ui_Character  L0796_ui_Multiple
+#define AL0796_ui_SkillValue L0796_ui_Multiple
+#define AL0796_ui_ThingType  L0796_ui_Multiple
+	Champion* L0797_ps_Champion;
+	char* L0798_pc_Character;
+	uint16 L0799_ui_PreviousPartyChampionCount;
+	uint16 L0800_ui_Multiple;
+#define AL0800_B_ChampionTitleCopied L0800_ui_Multiple
+#define AL0800_ui_HiddenSkillCounter L0800_ui_Multiple
+	uint16 L0801_ui_SlotIndex;
+	int16 L0802_i_MapX;
+	int16 L0803_i_MapY;
+	uint16 L0804_ui_ChampionObjectsCell;
+	int16 L0805_i_ObjectAllowedSlots;
+	int32 L0806_l_BaseSkillExperience;
+	char L0807_ac_DecodedChampionText[77];
 
-	if (!_g415_leaderEmptyHanded || _g305_partyChampionCount == 4)
+	if (!_vm->_championMan->_g415_leaderEmptyHanded) {
 		return;
-
-	uint16 prevChampCount = _g305_partyChampionCount;
-	Champion *champ = &_gK71_champions[prevChampCount];
-	champ->resetToZero();
-	dispMan._g578_useByteBoxCoordinates = true;
-	{ // limit destBox scope
-		Box &destBox = gBoxChampionPortrait;
-		dispMan.f132_blitToBitmap(dispMan.f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), champ->_portrait,
-								  destBox, M27_getChampionPortraitX(championPortraitIndex), M28_getChampionPortraitY(championPortraitIndex), 128, 16, kM1_ColorNoTransparency);
 	}
-
-	champ->_actionIndex = k255_ChampionActionNone;
-	champ->_enableActionEventIndex = -1;
-	champ->_hideDamageReceivedIndex = -1;
-	champ->_dir = dunMan._g308_partyDir;
-	ViewCell AL_0_viewCell = k0_ViewCellFronLeft;
-	while (f285_getIndexInCell((ViewCell)((AL_0_viewCell + dunMan._g308_partyDir) & 3)) != kM1_ChampionNone)
-		AL_0_viewCell = (ViewCell)(AL_0_viewCell + 1);
-	champ->_cell = (ViewCell)((AL_0_viewCell + dunMan._g308_partyDir) & 3);
-	champ->clearAttributes(k0x0400_ChampionAttributeIcon);
-	champ->_directionMaximumDamageReceived = dunMan._g308_partyDir;
-	champ->_food = 1500 + _vm->_rnd->getRandomNumber(256);
-	champ->_water = 1500 + _vm->_rnd->getRandomNumber(256);
-	int16 AL_0_slotIndex_Red;
-	for (AL_0_slotIndex_Red = k0_ChampionSlotReadyHand; AL_0_slotIndex_Red < k30_ChampionSlotChest_1; ++AL_0_slotIndex_Red) {
-		champ->setSlot((ChampionSlot)AL_0_slotIndex_Red, Thing::_none);
+	if (_vm->_championMan->_g305_partyChampionCount == 4) {
+		return;
 	}
-	Thing thing = dunMan.f161_getSquareFirstThing(dunMan._g306_partyMapX, dunMan._g307_partyMapY);
-	while (thing.getType() != k2_TextstringType) {
-		thing = dunMan.f159_getNextThing(thing);
+	L0797_ps_Champion = &_vm->_championMan->_gK71_champions[L0799_ui_PreviousPartyChampionCount = _vm->_championMan->_g305_partyChampionCount];
+	L0797_ps_Champion->resetToZero();
+	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portaits could be missing in the data)
+	_vm->_displayMan->_g578_useByteBoxCoordinates = true;
+	_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), L0797_ps_Champion->_portrait, gBoxChampionPortrait, _vm->_championMan->M27_getChampionPortraitX(championPortraitIndex), _vm->_championMan->M28_getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency);
+	L0797_ps_Champion->_actionIndex = k255_ChampionActionNone;
+	L0797_ps_Champion->_enableActionEventIndex = -1;
+	L0797_ps_Champion->_hideDamageReceivedIndex = -1;
+	L0797_ps_Champion->_dir = _vm->_dungeonMan->_g308_partyDir;
+	AL0794_ui_ViewCell = k0_ViewCellFronLeft;
+	while (_vm->_championMan->f285_getIndexInCell(M21_normalizeModulo4(AL0794_ui_ViewCell + _vm->_dungeonMan->_g308_partyDir)) != kM1_ChampionNone) {
+		AL0794_ui_ViewCell++;
 	}
-	char decodedChampionText[77];
-	char* character_Green = decodedChampionText;
-	dunMan.f168_decodeText(character_Green, thing, (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
-	int16 AL_0_characterIndex = 0;
-	uint16 AL_2_character;
-	while ((AL_2_character = *character_Green++) != '\n') {
-		champ->_name[AL_0_characterIndex++] = AL_2_character;
+	L0797_ps_Champion->_cell = (ViewCell)M21_normalizeModulo4(AL0794_ui_ViewCell + _vm->_dungeonMan->_g308_partyDir);
+	L0797_ps_Champion->_attributes = k0x0400_ChampionAttributeIcon;
+	L0797_ps_Champion->_directionMaximumDamageReceived = _vm->_dungeonMan->_g308_partyDir;
+	L0797_ps_Champion->_food = 1500 + _vm->getRandomNumber(256);
+	L0797_ps_Champion->_water = 1500 + _vm->getRandomNumber(256);
+	for (AL0794_ui_SlotIndex = k0_ChampionSlotReadyHand; AL0794_ui_SlotIndex < k30_ChampionSlotChest_1; AL0794_ui_SlotIndex++) {
+		L0797_ps_Champion->_slots[AL0794_ui_SlotIndex] = Thing::_none;
 	}
-	champ->_name[AL_0_characterIndex] = '\0';
-	AL_0_characterIndex = 0;
-	bool AL_4_champTitleCopied = false;
-	for (;;) { // infinite
-		AL_2_character = *character_Green++;
-		if (AL_2_character == '\n') {
-			if (AL_4_champTitleCopied)
+	L0793_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY);
+	while ((L0793_T_Thing.getType()) != k2_TextstringType) {
+		L0793_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0793_T_Thing);
+	}
+	_vm->_dungeonMan->f168_decodeText(L0798_pc_Character = L0807_ac_DecodedChampionText, L0793_T_Thing, (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	AL0794_ui_CharacterIndex = 0;
+	while ((AL0796_ui_Character = *L0798_pc_Character++) != '\n') { /* New line */
+		L0797_ps_Champion->_name[AL0794_ui_CharacterIndex++] = AL0796_ui_Character;
+	}
+	L0797_ps_Champion->_name[AL0794_ui_CharacterIndex] = '\0';
+	AL0794_ui_CharacterIndex = 0;
+	AL0800_B_ChampionTitleCopied = false;
+	for (;;) { /*_Infinite loop_*/
+		AL0796_ui_Character = *L0798_pc_Character++;
+		if (AL0796_ui_Character == '\n') { /* New line */
+			if (AL0800_B_ChampionTitleCopied)
 				break;
-			AL_4_champTitleCopied = true;
+			AL0800_B_ChampionTitleCopied = true;
 		} else {
-			champ->_title[AL_0_characterIndex++] = AL_2_character;
+			L0797_ps_Champion->_title[AL0794_ui_CharacterIndex++] = AL0796_ui_Character;
 		}
 	}
-	champ->_title[AL_0_characterIndex] = '\0';
-	if (*character_Green++ == 'M') {
-		champ->setAttributeFlag(k0x0010_ChampionAttributeMale, true);
+	L0797_ps_Champion->_title[AL0794_ui_CharacterIndex] = '\0';
+	if (*L0798_pc_Character++ == 'M') {
+		setFlag(L0797_ps_Champion->_attributes, k0x0010_ChampionAttributeMale);
 	}
-	character_Green++;
-	champ->_currHealth = champ->_maxHealth = f279_getDecodedValue(character_Green, 4);
-	character_Green += 4;
-	champ->_currStamina = champ->_maxStamina = f279_getDecodedValue(character_Green, 4);
-	character_Green += 4;
-	champ->_currMana = champ->_maxMana = f279_getDecodedValue(character_Green, 4);
-	character_Green += 4;
-	character_Green++;
-
-	int16 AL_0_statisticIndex;
-	for (AL_0_statisticIndex = k0_ChampionStatLuck; AL_0_statisticIndex <= k6_ChampionStatAntifire; ++AL_0_statisticIndex) {
-		champ->setStatistic((ChampionStatisticType)AL_0_statisticIndex, k2_ChampionStatMinimum, 30);
-		uint16 currMaxVal = f279_getDecodedValue(character_Green, 2);
-		champ->setStatistic((ChampionStatisticType)AL_0_statisticIndex, k1_ChampionStatCurrent, currMaxVal);
-		champ->setStatistic((ChampionStatisticType)AL_0_statisticIndex, k0_ChampionStatMaximum, currMaxVal);
-		character_Green += 2;
+	L0798_pc_Character++;
+	L0797_ps_Champion->_currHealth = L0797_ps_Champion->_maxHealth = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
+	L0798_pc_Character += 4;
+	L0797_ps_Champion->_currStamina = L0797_ps_Champion->_maxStamina = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
+	L0798_pc_Character += 4;
+	L0797_ps_Champion->_currMana = L0797_ps_Champion->_maxMana = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 4);
+	L0798_pc_Character += 4;
+	L0798_pc_Character++;
+	for (AL0794_ui_StatisticIndex = k0_ChampionStatLuck; AL0794_ui_StatisticIndex <= k6_ChampionStatAntifire; AL0794_ui_StatisticIndex++) {
+		L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k2_ChampionStatMinimum] = 30;
+		L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k1_ChampionStatCurrent] = L0797_ps_Champion->_statistics[AL0794_ui_StatisticIndex][k0_ChampionStatMaximum] = _vm->_championMan->f279_getDecodedValue(L0798_pc_Character, 2);
+		L0798_pc_Character += 2;
 	}
-
-	champ->setStatistic(k0_ChampionStatLuck, k2_ChampionStatMinimum, 10);
-	character_Green++;
-
-	int16 AL_0_skillIndex;
-	int16 AL_2_skillValue;
-	for (AL_0_skillIndex = k4_ChampionSkillSwing; AL_0_skillIndex <= k19_ChampionSkillWater; AL_0_skillIndex++) {
-		if ((AL_2_skillValue = *character_Green++ - 'A') > 0) {
-			champ->setSkillExp((ChampionSkill)AL_0_skillIndex, 125L << AL_2_skillValue);
+	L0797_ps_Champion->_statistics[k0_ChampionStatLuck][k2_ChampionStatMinimum] = 10;
+	L0798_pc_Character++;
+	for (AL0794_ui_SkillIndex = k4_ChampionSkillSwing; AL0794_ui_SkillIndex <= k19_ChampionSkillWater; AL0794_ui_SkillIndex++) {
+		if ((AL0796_ui_SkillValue = *L0798_pc_Character++ - 'A') > 0) {
+			L0797_ps_Champion->_skills[AL0794_ui_SkillIndex]._experience = 125L << AL0796_ui_SkillValue;
 		}
 	}
-
-	for (AL_0_skillIndex = k0_ChampionSkillFighter; AL_0_skillIndex <= k3_ChampionSkillWizard; ++AL_0_skillIndex) {
-		int32 baseSkillExp = 0;
-		int16 hiddenSkillIndex = (AL_0_skillIndex + 1) << 2;
-		for (uint16 AL_4_hiddenSkillCounter = 0; AL_4_hiddenSkillCounter < 4; ++AL_4_hiddenSkillCounter) {
-			baseSkillExp += champ->getSkill((ChampionSkill)(hiddenSkillIndex + AL_4_hiddenSkillCounter))._experience;
+	for (AL0794_ui_SkillIndex = k0_ChampionSkillFighter; AL0794_ui_SkillIndex <= k3_ChampionSkillWizard; AL0794_ui_SkillIndex++) {
+		L0806_l_BaseSkillExperience = 0;
+		L0795_i_HiddenSkillIndex = (AL0794_ui_SkillIndex + 1) << 2;
+		for (AL0800_ui_HiddenSkillCounter = 0; AL0800_ui_HiddenSkillCounter < 4; AL0800_ui_HiddenSkillCounter++) {
+			L0806_l_BaseSkillExperience += L0797_ps_Champion->_skills[L0795_i_HiddenSkillIndex + AL0800_ui_HiddenSkillCounter]._experience;
 		}
-		champ->setSkillExp((ChampionSkill)AL_0_skillIndex, baseSkillExp);
+		L0797_ps_Champion->_skills[AL0794_ui_SkillIndex]._experience = L0806_l_BaseSkillExperience;
 	}
-
-	_g299_candidateChampionOrdinal = prevChampCount + 1;
-	if (++_g305_partyChampionCount == 1) {
+	_vm->_championMan->_g299_candidateChampionOrdinal = L0799_ui_PreviousPartyChampionCount + 1;
+	if (++_vm->_championMan->_g305_partyChampionCount == 1) {
 		_vm->_eventMan->f368_commandSetLeader(k0_ChampionFirst);
 		_vm->_menuMan->_g508_refreshActionArea = true;
-	} else {
+	} else { 
 		_vm->_menuMan->f388_clearActingChampion();
-		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_g305_partyChampionCount - 1));
+		_vm->_menuMan->f386_drawActionIcon((ChampionIndex)(_vm->_championMan->_g305_partyChampionCount - 1)); 
 	}
-
-	int16 mapX = _vm->_dungeonMan->_g306_partyMapX;
-	int16 mapY = _vm->_dungeonMan->_g307_partyMapY;
-
-	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._g308_partyDir));
-	mapX += _vm->_dirIntoStepCountEast[dunMan._g308_partyDir];
-	mapY += _vm->_dirIntoStepCountNorth[dunMan._g308_partyDir];
-	thing = dunMan.f161_getSquareFirstThing(mapX, mapY);
-	AL_0_slotIndex_Red = k13_ChampionSlotBackpackLine_1_1;
-	uint16 slotIndex_Green;
-	while (thing != Thing::_endOfList) {
-		ThingType AL_2_thingType = thing.getType();
-		if ((AL_2_thingType > k3_SensorThingType) && (thing.getCell() == championObjectsCell)) {
-			int16 objectAllowedSlots = g237_ObjectInfo[dunMan.f141_getObjectInfoIndex(thing)].getAllowedSlots();
-			switch (AL_2_thingType) {
+	L0802_i_MapX = _vm->_dungeonMan->_g306_partyMapX;
+	L0803_i_MapY = _vm->_dungeonMan->_g307_partyMapY;
+	L0804_ui_ChampionObjectsCell = returnOppositeDir(_vm->_dungeonMan->_g308_partyDir);
+	L0802_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_g308_partyDir], L0803_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_g308_partyDir];
+	L0793_T_Thing = _vm->_dungeonMan->f161_getSquareFirstThing(L0802_i_MapX, L0803_i_MapY);
+	AL0794_ui_SlotIndex = k13_ChampionSlotBackpackLine_1_1;
+	while (L0793_T_Thing != Thing::_endOfList) {
+		if (((AL0796_ui_ThingType = (L0793_T_Thing.getType())) > k3_SensorThingType) && ((L0793_T_Thing.getCell()) == L0804_ui_ChampionObjectsCell)) {
+			L0805_i_ObjectAllowedSlots = g237_ObjectInfo[_vm->_dungeonMan->f141_getObjectInfoIndex(L0793_T_Thing)]._allowedSlots;
+			switch (AL0796_ui_ThingType) {
 			case k6_ArmourThingType:
-				for (slotIndex_Green = k2_ChampionSlotHead; slotIndex_Green <= k5_ChampionSlotFeet; slotIndex_Green++) {
-					if (objectAllowedSlots & gSlotMasks[slotIndex_Green])
+				for (L0801_ui_SlotIndex = k2_ChampionSlotHead; L0801_ui_SlotIndex <= k5_ChampionSlotFeet; L0801_ui_SlotIndex++) {
+					if (L0805_i_ObjectAllowedSlots & gSlotMasks[L0801_ui_SlotIndex])
 						goto T0280048;
 				}
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (champ->getSlot(k10_ChampionSlotNeck) == Thing::_none)) {
-					slotIndex_Green = k10_ChampionSlotNeck;
+				if ((L0805_i_ObjectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (L0797_ps_Champion->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+					L0801_ui_SlotIndex = k10_ChampionSlotNeck;
 				} else {
 					goto T0280046;
 				}
 				break;
 			case k5_WeaponThingType:
-				if (champ->getSlot(k1_ChampionSlotActionHand) == Thing::_none) {
-					slotIndex_Green = k1_ChampionSlotActionHand;
+				if (L0797_ps_Champion->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
+					L0801_ui_SlotIndex = k1_ChampionSlotActionHand;
 				} else {
 					goto T0280046;
 				}
 				break;
 			case k7_ScrollThingType:
 			case k8_PotionThingType:
-				if (champ->getSlot(k11_ChampionSlotPouch_1) == Thing::_none) {
-					slotIndex_Green = k11_ChampionSlotPouch_1;
-				} else if (champ->getSlot(k6_ChampionSlotPouch_2) == Thing::_none) {
-					slotIndex_Green = k6_ChampionSlotPouch_2;
+				if (L0797_ps_Champion->_slots[k11_ChampionSlotPouch_1] == Thing::_none) {
+					L0801_ui_SlotIndex = k11_ChampionSlotPouch_1;
 				} else {
-					goto T0280046;
+					if (L0797_ps_Champion->_slots[k6_ChampionSlotPouch_2] == Thing::_none) {
+						L0801_ui_SlotIndex = k6_ChampionSlotPouch_2;
+					} else {
+						goto T0280046;
+					}
 				}
 				break;
 			case k9_ContainerThingType:
 			case k10_JunkThingType:
 T0280046:
-				if ((objectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (champ->getSlot(k10_ChampionSlotNeck) == Thing::_none)) {
-					slotIndex_Green = k10_ChampionSlotNeck;
+				if ((L0805_i_ObjectAllowedSlots & gSlotMasks[k10_ChampionSlotNeck]) && (L0797_ps_Champion->_slots[k10_ChampionSlotNeck] == Thing::_none)) {
+					L0801_ui_SlotIndex = k10_ChampionSlotNeck;
 				} else {
-					slotIndex_Green = AL_0_slotIndex_Red++;
+					L0801_ui_SlotIndex = AL0794_ui_SlotIndex++;
 				}
-				break;
-
-			default:
-				break;
 			}
 T0280048:
-			if (champ->getSlot((ChampionSlot)slotIndex_Green) != Thing::_none) {
+			if (L0797_ps_Champion->_slots[L0801_ui_SlotIndex] != Thing::_none) {
 				goto T0280046;
 			}
-			f301_addObjectInSlot((ChampionIndex)prevChampCount, thing, (ChampionSlot)slotIndex_Green);
+			_vm->_championMan->f301_addObjectInSlot((ChampionIndex)L0799_ui_PreviousPartyChampionCount, L0793_T_Thing, (ChampionSlot)L0801_ui_SlotIndex);
 		}
-		thing = dunMan.f159_getNextThing(thing);
+		L0793_T_Thing = _vm->_dungeonMan->f159_getNextThing(L0793_T_Thing);
 	}
-
-	_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)prevChampCount);
-	_vm->_menuMan->f456_drawDisabledMenu();
+	_vm->_inventoryMan->f355_toggleInventory((ChampionIndex)L0799_ui_PreviousPartyChampionCount);
+	_vm->_menuMan->f456_drawDisabledMenu();;
 }
 
 void ChampionMan::f287_drawChampionBarGraphs(ChampionIndex champIndex) {
@@ -1464,7 +1466,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 
 
 	L0868_i_ChampionStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
-	L0865_ps_Champion = &_vm->_championMan->_gK71_champions[champIndex];
+	L0865_ps_Champion = &_gK71_champions[champIndex];
 	L0862_ui_ChampionAttributes = L0865_ps_Champion->_attributes;
 	if (!getFlag(L0862_ui_ChampionAttributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand)) {
 		return;
@@ -1481,13 +1483,13 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 			for (uint16 i = 0; i < 3; ++i)
 				L0872_ai_NativeBitmapIndices[i] = 0;
 			AL0864_i_BorderCount = 0;
-			if (_vm->_championMan->_g407_party._fireShieldDefense > 0) {
+			if (_g407_party._fireShieldDefense > 0) {
 				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k38_BorderPartyFireshieldIndice;
 			}
-			if (_vm->_championMan->_g407_party._spellShieldDefense > 0) {
+			if (_g407_party._spellShieldDefense > 0) {
 				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k39_BorderPartySpellshieldIndice;
 			}
-			if ((_vm->_championMan->_g407_party._shieldDefense > 0) || L0865_ps_Champion->_shieldDefense) {
+			if ((_g407_party._shieldDefense > 0) || L0865_ps_Champion->_shieldDefense) {
 				L0872_ai_NativeBitmapIndices[AL0864_i_BorderCount++] = k37_BorderPartyShieldIndice;
 			}
 			while (AL0864_i_BorderCount--) {
@@ -1509,7 +1511,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	if (!(L0865_ps_Champion->_currHealth))
 		goto T0292042;
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0080_ChampionAttributeNameTitle)) {
-		AL0864_i_ColorIndex = (champIndex == _vm->_championMan->_g411_leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
+		AL0864_i_ColorIndex = (champIndex == _g411_leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
 		if (L0863_B_IsInventoryChampion) {
 			_vm->_textMan->f52_printToViewport(3, 7, (Color)AL0864_i_ColorIndex, L0866_pc_ChampionName = L0865_ps_Champion->_name);
 			L0869_i_ChampionTitleX = 6 * strlen(L0866_pc_ChampionName) + 3;
@@ -1528,9 +1530,9 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		}
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0100_ChampionAttributeStatistics)) {
-		_vm->_championMan->f287_drawChampionBarGraphs(champIndex);
+		f287_drawChampionBarGraphs(champIndex);
 		if (L0863_B_IsInventoryChampion) {
-			_vm->_championMan->f290_drawHealthStaminaManaValues(L0865_ps_Champion);
+			f290_drawHealthStaminaManaValues(L0865_ps_Champion);
 			if ((L0865_ps_Champion->_food < 0) || (L0865_ps_Champion->_water < 0) || (L0865_ps_Champion->_poisonEventCount)) {
 				AL0870_i_NativeBitmapIndex = k34_SlotBoxWoundedIndice;
 			} else {
@@ -1550,14 +1552,14 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x2000_ChampionAttributeWounds)) {
 		for (AL0864_i_SlotIndex = L0863_B_IsInventoryChampion ? k5_ChampionSlotFeet : k1_ChampionSlotActionHand; AL0864_i_SlotIndex >= k0_ChampionSlotReadyHand; AL0864_i_SlotIndex--) {
-			_vm->_championMan->f291_drawSlot(champIndex, AL0864_i_SlotIndex);
+			f291_drawSlot(champIndex, AL0864_i_SlotIndex);
 		}
 		if (L0863_B_IsInventoryChampion) {
 			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
 		}
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0200_ChampionAttributeLoad) && L0863_B_IsInventoryChampion) {
-		if (L0865_ps_Champion->_load > (AL0864_i_Load = _vm->_championMan->f309_getMaximumLoad(L0865_ps_Champion))) {
+		if (L0865_ps_Champion->_load > (AL0864_i_Load = f309_getMaximumLoad(L0865_ps_Champion))) {
 			AL0870_i_Color = k8_ColorRed;
 		} else {
 			if (((long)L0865_ps_Champion->_load << 3) > ((long)AL0864_i_Load * 5)) {
@@ -1568,28 +1570,28 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		}
 		_vm->_textMan->f52_printToViewport(104, 132, (Color)AL0870_i_Color, "LOAD ");
 		AL0864_i_Load = L0865_ps_Champion->_load / 10;
-		strcpy(_vm->_g353_stringBuildBuffer, _vm->_championMan->f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
+		strcpy(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, ".");
 		AL0864_i_Load = L0865_ps_Champion->_load - (AL0864_i_Load * 10);
-		strcat(_vm->_g353_stringBuildBuffer, _vm->_championMan->f288_getStringFromInteger(AL0864_i_Load, false, 1).c_str());
+		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, false, 1).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, "/");
-		AL0864_i_Load = (_vm->_championMan->f309_getMaximumLoad(L0865_ps_Champion) + 5) / 10;
-		strcat(_vm->_g353_stringBuildBuffer, _vm->_championMan->f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
+		AL0864_i_Load = (f309_getMaximumLoad(L0865_ps_Champion) + 5) / 10;
+		strcat(_vm->_g353_stringBuildBuffer, f288_getStringFromInteger(AL0864_i_Load, true, 3).c_str());
 		strcat(_vm->_g353_stringBuildBuffer, " KG");
 		_vm->_textMan->f52_printToViewport(148, 132, (Color)AL0870_i_Color, _vm->_g353_stringBuildBuffer);
 		setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
 	}
-	AL0864_i_ChampionIconIndex = _vm->_championMan->M26_championIconIndex(L0865_ps_Champion->_cell, _vm->_dungeonMan->_g308_partyDir);
+	AL0864_i_ChampionIconIndex = M26_championIconIndex(L0865_ps_Champion->_cell, _vm->_dungeonMan->_g308_partyDir);
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0400_ChampionAttributeIcon) && (_vm->_eventMan->_g599_useChampionIconOrdinalAsMousePointerBitmap != _vm->M0_indexToOrdinal(AL0864_i_ChampionIconIndex))) {
 		_vm->_displayMan->D24_fillScreenBox(g54_BoxChampionIcons[AL0864_i_ChampionIconIndex << 2], g46_ChampionColor[champIndex]);
-		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[AL0864_i_ChampionIconIndex << 2], _vm->_championMan->M26_championIconIndex(L0865_ps_Champion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
+		_vm->_displayMan->f132_blitToBitmap(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_g348_bitmapScreen, g54_BoxChampionIcons[AL0864_i_ChampionIconIndex << 2], M26_championIconIndex(L0865_ps_Champion->_dir, _vm->_dungeonMan->_g308_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x0800_ChampionAttributePanel) && L0863_B_IsInventoryChampion) {
 		if (_vm->_g333_pressingMouth) {
 			_vm->_inventoryMan->f345_drawPanelFoodWaterPoisoned();
 		} else {
 			if (_vm->_g331_pressingEye) {
-				if (_vm->_championMan->_g415_leaderEmptyHanded) {
+				if (_g415_leaderEmptyHanded) {
 					_vm->_inventoryMan->f351_drawChampionSkillsAndStatistics();
 				}
 			} else {
@@ -1599,7 +1601,7 @@ void ChampionMan::f292_drawChampionState(ChampionIndex champIndex) {
 		setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
 	}
 	if (getFlag(L0862_ui_ChampionAttributes, k0x8000_ChampionAttributeActionHand)) {
-		_vm->_championMan->f291_drawSlot(champIndex, k1_ChampionSlotActionHand);
+		f291_drawSlot(champIndex, k1_ChampionSlotActionHand);
 		_vm->_menuMan->f386_drawActionIcon(champIndex);
 		if (L0863_B_IsInventoryChampion) {
 			setFlag(L0862_ui_ChampionAttributes, k0x4000_ChampionAttributeViewport);
