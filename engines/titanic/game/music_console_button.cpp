@@ -21,8 +21,17 @@
  */
 
 #include "titanic/game/music_console_button.h"
+#include "titanic/core/room_item.h"
+#include "titanic/sound/music_handler.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CMusicConsoleButton, CMusicPlayer)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(SetMusicControlsMsg)
+END_MESSAGE_MAP()
 
 void CMusicConsoleButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +41,93 @@ void CMusicConsoleButton::save(SimpleFile *file, int indent) {
 void CMusicConsoleButton::load(SimpleFile *file) {
 	file->readNumber();
 	CMusicPlayer::load(file);
+}
+
+bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_isActive) {
+		CStopMusicMsg stopMsg(this);
+		stopMsg.execute(this);
+		stopMovie();
+		loadFrame(0);
+	} else {
+		CStartMusicMsg startMsg(this);
+		startMsg.execute(this);
+		playMovie(MOVIE_REPEAT);
+
+		CMusicHasStartedMsg startedMsg;
+		startedMsg.execute("Music Room Phonograph");
+	
+		if (CMusicRoom::_musicHandler->checkSound(1)
+				&& CMusicRoom::_musicHandler->checkSound(2)
+				&& CMusicRoom::_musicHandler->checkSound(3)) {
+			CCorrectMusicPlayedMsg correctMsg;
+			correctMsg.execute(findRoom());
+		}
+	}
+
+	return true;
+}
+
+bool CMusicConsoleButton::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_isActive) {
+		CStopMusicMsg stopMsg(this);
+		stopMsg.execute(this);
+		stopMovie();
+		loadFrame(0);
+	}
+
+	return true;
+}
+
+bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
+	CMusicRoom *musicRoom = getMusicRoom();
+	CQueryMusicControlSettingMsg queryMsg;
+	
+	queryMsg.execute("Bells Mute Control");
+	musicRoom->setItem5(BELLS, queryMsg._value == 1 ? 1 : 0);
+	queryMsg.execute("Bells Pitch Control");
+	musicRoom->setItem2(BELLS, queryMsg._value);
+	queryMsg.execute("Bells Speed Control");
+	musicRoom->setItem1(BELLS, queryMsg._value);
+	queryMsg.execute("Bells Inversion Control");
+	musicRoom->setItem4(BELLS, queryMsg._value == 0 ? 1 : 0);
+	queryMsg.execute("Bells Direction Control");
+	musicRoom->setItem3(BELLS, queryMsg._value == 0 ? 1 : 0);
+
+	queryMsg.execute("Snake Mute Control");
+	musicRoom->setItem5(SNAKE, queryMsg._value == 1 ? 1 : 0);
+	queryMsg.execute("Snake Pitch Control");
+	musicRoom->setItem2(SNAKE, queryMsg._value);
+	queryMsg.execute("Snake Speed Control");
+	musicRoom->setItem1(SNAKE, queryMsg._value);
+	queryMsg.execute("Snake Inversion Control");
+	musicRoom->setItem4(SNAKE, queryMsg._value == 0 ? 1 : 0);
+	queryMsg.execute("Snake Direction Control");
+	musicRoom->setItem3(SNAKE, queryMsg._value == 0 ? 1 : 0);
+
+	queryMsg.execute("Piano Mute Control");
+	musicRoom->setItem5(PIANO, queryMsg._value == 1 ? 1 : 0);
+	queryMsg.execute("Piano Pitch Control");
+	musicRoom->setItem2(PIANO, queryMsg._value);
+	queryMsg.execute("Piano Speed Control");
+	musicRoom->setItem1(PIANO, queryMsg._value);
+	queryMsg.execute("Piano Inversion Control");
+	musicRoom->setItem4(PIANO, queryMsg._value == 0 ? 1 : 0);
+	queryMsg.execute("Piano Direction Control");
+	musicRoom->setItem3(PIANO, queryMsg._value == 0 ? 1 : 0);
+
+	queryMsg.execute("Bass Mute Control");
+	musicRoom->setItem5(BASS, queryMsg._value == 1 ? 1 : 0);
+	queryMsg.execute("Bass Pitch Control");
+	musicRoom->setItem2(BASS, queryMsg._value);
+	queryMsg.execute("Bass Speed Control");
+	musicRoom->setItem1(BASS, queryMsg._value);
+	queryMsg.execute("Bass Inversion Control");
+	musicRoom->setItem4(BASS, queryMsg._value == 0 ? 1 : 0);
+	queryMsg.execute("Bass Direction Control");
+	musicRoom->setItem3(BASS, queryMsg._value == 0 ? 1 : 0);
+
+	return true;
 }
 
 } // End of namespace Titanic

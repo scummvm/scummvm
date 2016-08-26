@@ -20,47 +20,39 @@
  *
  */
 
-#include "titanic/game/music_system_lock.h"
-#include "titanic/core/room_item.h"
-#include "titanic/carry/carry.h"
+#include "titanic/gfx/music_voice_mute.h"
+#include "titanic/sound/music_room.h"
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CMusicSystemLock, CDropTarget)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(MovieEndMsg)
+BEGIN_MESSAGE_MAP(CMusicVoiceMute, CMusicControl)
+	ON_MESSAGE(MusicSettingChangedMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(QueryMusicControlSettingMsg)
 END_MESSAGE_MAP()
 
-void CMusicSystemLock::save(SimpleFile *file, int indent) {
-	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
-	CDropTarget::save(file, indent);
-}
+bool CMusicVoiceMute::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
+	if (++_controlVal > _controlMax)
+		_controlVal = 0;
 
-void CMusicSystemLock::load(SimpleFile *file) {
-	file->readNumber();
-	_value = file->readNumber();
-	CDropTarget::load(file);
-}
-
-bool CMusicSystemLock::DropObjectMsg(CDropObjectMsg *msg) {
-	CTreeItem *key = msg->_item->findByName("Music System Key");
-	if (key) {
-		setVisible(true);
-		playMovie(MOVIE_NOTIFY_OBJECT);
-	}
+	CMusicRoom *musicRoom = getMusicRoom();
+	musicRoom->setItem5(_controlArea, _controlVal == 1 ? 1 : 0);
+	loadFrame(1 - _controlVal);
+	playSound("z#55.wav", 50);
 
 	return true;
 }
 
-bool CMusicSystemLock::MovieEndMsg(CMovieEndMsg *msg) {
-	CTreeItem *phonograph = findRoom()->findByName("Restaurant Phonograph");
-	CQueryPhonographState queryMsg;
-	queryMsg.execute(phonograph);
-	CLockPhonographMsg lockMsg(queryMsg._value);
-	lockMsg.execute(phonograph, nullptr, MSGFLAG_SCAN);
+bool CMusicVoiceMute::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(1 - _controlVal);
+	CMusicRoom *musicRoom = getMusicRoom();
+	musicRoom->setItem5(_controlArea, _controlVal == 1 ? 1 : 0);
 
-	setVisible(false);
+	return true;
+}
+
+bool CMusicVoiceMute::QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg) {
+	msg->_value = _controlVal;
 	return true;
 }
 

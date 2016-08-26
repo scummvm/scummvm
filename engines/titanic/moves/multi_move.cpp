@@ -24,29 +24,37 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMultiMove, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CMultiMove::CMultiMove() : CMovePlayerTo() {
 }
 
 void CMultiMove::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writeQuotedLine(_string5, indent);
+	for (int idx = 0; idx < 5; ++idx)
+		file->writeQuotedLine(_viewNames[idx], indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CMultiMove::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
-	_string3 = file->readString();
-	_string5 = file->readString();
-	_string4 = file->readString();
+	for (int idx = 0; idx < 5; ++idx)
+		_viewNames[idx] = file->readString();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CMultiMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	lockMouse();
+
+	for (int idx = 0; idx < 5 && _viewNames[idx] != "NULL"; ++idx)
+		changeView(_viewNames[idx]);
+
+	unlockMouse();
+	return true;
 }
 
 } // End of namespace Titanic

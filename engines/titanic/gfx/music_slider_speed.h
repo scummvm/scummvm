@@ -27,26 +27,24 @@
 
 namespace Titanic {
 
-	class CMusicSliderSpeed : public CMusicSlider {
-	public:
-		CLASSDEF;
+class CMusicSliderSpeed : public CMusicSlider {
+	DECLARE_MESSAGE_MAP;
+	bool MusicSettingChangedMsg(CMusicSettingChangedMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg);
+public:
+	CLASSDEF;
 
-		/**
-		* Save the data for the class to file
-		*/
-		virtual void save(SimpleFile *file, int indent) {
-			file->writeNumberLine(1, indent);
-			CMusicSlider::save(file, indent);
-		}
+	/**
+	* Save the data for the class to file
+	*/
+	virtual void save(SimpleFile *file, int indent);
 
-		/**
-		* Load the data for the class from file
-		*/
-		virtual void load(SimpleFile *file) {
-			file->readNumber();
-			CMusicSlider::load(file);
-		}
-	};
+	/**
+	* Load the data for the class from file
+	*/
+	virtual void load(SimpleFile *file);
+};
 
 } // End of namespace Titanic
 

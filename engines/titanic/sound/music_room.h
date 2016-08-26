@@ -31,6 +31,8 @@ namespace Titanic {
 class CGameManager;
 class CSound;
 
+enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+
 class CMusicRoom {
 	struct Entry {
 		uint _val1;
@@ -62,11 +64,11 @@ public:
 	 */
 	void destroyMusicHandler();
 
-	void setItem1(int index, int val) { _items[index]._val1 = val; }
-	void setItem2(int index, int val) { _items[index]._val2 = val; }
-	void setItem3(int index, int val) { _items[index]._val3 = val; }
-	void setItem4(int index, int val) { _items[index]._val4 = val; }
-	void setItem5(int index, int val) { _items[index]._val5 = val; }
+	void setItem1(MusicControlArea index, int val) { _items[index]._val1 = val; }
+	void setItem2(MusicControlArea index, int val) { _items[index]._val2 = val; }
+	void setItem3(MusicControlArea index, int val) { _items[index]._val3 = val; }
+	void setItem4(MusicControlArea index, int val) { _items[index]._val4 = val; }
+	void setItem5(MusicControlArea index, int val) { _items[index]._val5 = val; }
 
 	/**
 	 * Start playing a given music number

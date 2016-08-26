@@ -20,47 +20,47 @@
  *
  */
 
-#include "titanic/game/music_system_lock.h"
-#include "titanic/core/room_item.h"
-#include "titanic/carry/carry.h"
+#include "titanic/gfx/music_switch_inversion.h"
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CMusicSystemLock, CDropTarget)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(MovieEndMsg)
+BEGIN_MESSAGE_MAP(CMusicSwitchInversion, CMusicSwitch)
+	ON_MESSAGE(MusicSettingChangedMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(QueryMusicControlSettingMsg)
 END_MESSAGE_MAP()
 
-void CMusicSystemLock::save(SimpleFile *file, int indent) {
+void CMusicSwitchInversion::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
-	CDropTarget::save(file, indent);
+	CMusicSwitch::save(file, indent);
 }
 
-void CMusicSystemLock::load(SimpleFile *file) {
+void CMusicSwitchInversion::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
-	CDropTarget::load(file);
+	CMusicSwitch::load(file);
 }
 
-bool CMusicSystemLock::DropObjectMsg(CDropObjectMsg *msg) {
-	CTreeItem *key = msg->_item->findByName("Music System Key");
-	if (key) {
-		setVisible(true);
-		playMovie(MOVIE_NOTIFY_OBJECT);
+bool CMusicSwitchInversion::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
+	if (_fieldEC) {
+		if (++_controlVal > _controlMax)
+			_controlVal = 0;
+
+		loadFrame(_controlVal);
+		playSound("z#59.wav", 50);
+	} else {
+		playSound("z#46.wav");
 	}
 
 	return true;
 }
 
-bool CMusicSystemLock::MovieEndMsg(CMovieEndMsg *msg) {
-	CTreeItem *phonograph = findRoom()->findByName("Restaurant Phonograph");
-	CQueryPhonographState queryMsg;
-	queryMsg.execute(phonograph);
-	CLockPhonographMsg lockMsg(queryMsg._value);
-	lockMsg.execute(phonograph, nullptr, MSGFLAG_SCAN);
+bool CMusicSwitchInversion::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(_controlVal);
+	return true;
+}
 
-	setVisible(false);
+bool CMusicSwitchInversion::QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg) {
+	msg->_value = _controlVal;
 	return true;
 }
 

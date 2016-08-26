@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CMusicVoiceMute : public CMusicControl {
+	DECLARE_MESSAGE_MAP;
+	bool MusicSettingChangedMsg(CMusicSettingChangedMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg);
 public:
 	CLASSDEF;
 

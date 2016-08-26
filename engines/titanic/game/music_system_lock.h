@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CMusicSystemLock : public CDropTarget {
+	DECLARE_MESSAGE_MAP;
+	bool DropObjectMsg(CDropObjectMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
 	int _value;
 public:

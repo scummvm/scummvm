@@ -294,7 +294,12 @@ MODULE_OBJS := \
 	gfx/move_object_button.o \
 	gfx/music_control.o \
 	gfx/music_slider.o \
+	gfx/music_slider_pitch.o \
+	gfx/music_slider_speed.o \
 	gfx/music_switch.o \
+	gfx/music_switch_inversion.o \
+	gfx/music_switch_reverse.o \
+	gfx/music_voice_mute.o \
 	gfx/send_to_succ.o \
 	gfx/sgt_selector.o \
 	gfx/slider_button.o \

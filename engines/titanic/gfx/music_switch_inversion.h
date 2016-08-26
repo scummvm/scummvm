@@ -28,24 +28,22 @@
 namespace Titanic {
 
 class CMusicSwitchInversion : public CMusicSwitch {
+	DECLARE_MESSAGE_MAP;
+	bool MusicSettingChangedMsg(CMusicSettingChangedMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg);
 public:
 	CLASSDEF;
 
 	/**
 	 * Save the data for the class to file
 	 */
-	virtual void save(SimpleFile *file, int indent) {
-		file->writeNumberLine(1, indent);
-		CMusicSwitch::save(file, indent);
-	}
+	virtual void save(SimpleFile *file, int indent);
 
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file) {
-		file->readNumber();
-		CMusicSwitch::load(file);
-	}
+	virtual void load(SimpleFile *file);
 };
 
 } // End of namespace Titanic

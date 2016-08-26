@@ -24,15 +24,20 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMusicControl, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDoubleClickMsg)
+END_MESSAGE_MAP()
+
 CMusicControl::CMusicControl() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(1), _fieldEC(1) {
+	_controlArea(BELLS), _controlVal(0), _controlMax(1), _fieldEC(1) {
 }
 
 void CMusicControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_controlArea, indent);
+	file->writeNumberLine(_controlVal, indent);
+	file->writeNumberLine(_controlMax, indent);
 	file->writeNumberLine(_fieldEC, indent);
 
 	CBackground::save(file, indent);
@@ -40,12 +45,24 @@ void CMusicControl::save(SimpleFile *file, int indent) {
 
 void CMusicControl::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_controlArea = (MusicControlArea)file->readNumber();
+	_controlVal = file->readNumber();
+	_controlMax = file->readNumber();
 	_fieldEC = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CMusicControl::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CMusicSettingChangedMsg changedMsg;
+	changedMsg.execute(this);
+	return true;
+}
+
+bool CMusicControl::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	CMusicSettingChangedMsg changedMsg;
+	changedMsg.execute(this);
+	return true;
 }
 
 } // End of namespace Titanic

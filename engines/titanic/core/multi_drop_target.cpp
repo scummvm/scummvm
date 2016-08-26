@@ -49,7 +49,6 @@ bool CMultiDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
 	CStringParser parser1(_string5);
 	CStringParser parser2(_string6);
 	CString seperatorChars = ",";
-	int dropFrame =  _dropFrame;
 
 	while (parser2.parse(_itemMatchName, seperatorChars)) {
 		_dropFrame = parser1.readInt();

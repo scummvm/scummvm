@@ -24,14 +24,18 @@
 #define TITANIC_MUSIC_CONTROL_H
 
 #include "titanic/core/background.h"
+#include "titanic/sound/music_room.h"
 
 namespace Titanic {
 
 class CMusicControl : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
+	MusicControlArea _controlArea;
+	int _controlVal;
+	int _controlMax;
 	int _fieldEC;
 public:
 	CLASSDEF;

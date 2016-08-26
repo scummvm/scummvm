@@ -20,47 +20,47 @@
  *
  */
 
-#include "titanic/game/music_system_lock.h"
-#include "titanic/core/room_item.h"
-#include "titanic/carry/carry.h"
+#include "titanic/gfx/music_slider_speed.h"
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CMusicSystemLock, CDropTarget)
-	ON_MESSAGE(DropObjectMsg)
-	ON_MESSAGE(MovieEndMsg)
+BEGIN_MESSAGE_MAP(CMusicSliderSpeed, CMusicSlider)
+	ON_MESSAGE(MusicSettingChangedMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(QueryMusicControlSettingMsg)
 END_MESSAGE_MAP()
 
-void CMusicSystemLock::save(SimpleFile *file, int indent) {
+void CMusicSliderSpeed::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
-	CDropTarget::save(file, indent);
+	CMusicSlider::save(file, indent);
 }
 
-void CMusicSystemLock::load(SimpleFile *file) {
+void CMusicSliderSpeed::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
-	CDropTarget::load(file);
+	CMusicSlider::load(file);
 }
 
-bool CMusicSystemLock::DropObjectMsg(CDropObjectMsg *msg) {
-	CTreeItem *key = msg->_item->findByName("Music System Key");
-	if (key) {
-		setVisible(true);
-		playMovie(MOVIE_NOTIFY_OBJECT);
+bool CMusicSliderSpeed::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
+	if (_fieldEC) {
+		if (++_controlVal > _controlMax)
+			_controlVal = 0;
+
+		loadFrame(3 - _controlVal);
+		playSound("z#54.wav", 50);
+	} else {
+		playSound("z#46.wav");
 	}
 
 	return true;
 }
 
-bool CMusicSystemLock::MovieEndMsg(CMovieEndMsg *msg) {
-	CTreeItem *phonograph = findRoom()->findByName("Restaurant Phonograph");
-	CQueryPhonographState queryMsg;
-	queryMsg.execute(phonograph);
-	CLockPhonographMsg lockMsg(queryMsg._value);
-	lockMsg.execute(phonograph, nullptr, MSGFLAG_SCAN);
+bool CMusicSliderSpeed::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(3 - _controlVal);
+	return true;
+}
 
-	setVisible(false);
+bool CMusicSliderSpeed::QueryMusicControlSettingMsg(CQueryMusicControlSettingMsg *msg) {
+	msg->_value = _controlVal - 1;
 	return true;
 }
 

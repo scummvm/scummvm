@@ -24,16 +24,52 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMusicRoomStopPhonographButton, CEjectPhonographButton)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
+
 void CMusicRoomStopPhonographButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_field100, indent);
+	file->writeNumberLine(_ticks, indent);
 	CEjectPhonographButton::save(file, indent);
 }
 
 void CMusicRoomStopPhonographButton::load(SimpleFile *file) {
 	file->readNumber();
-	_field100 = file->readNumber();
+	_ticks = file->readNumber();
 	CEjectPhonographButton::load(file);
+}
+
+bool CMusicRoomStopPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_ejected) {
+		loadFrame(1);
+		playSound(_soundName);
+		_readyFlag = true;
+
+		CPhonographStopMsg stopMsg;
+		stopMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
+		if (stopMsg._value2) {
+			_ticks = getTicksCount();
+		} else {
+			CEjectCylinderMsg ejectMsg;
+			ejectMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
+			_ejected = true;
+		}
+	}
+
+	return true;
+}
+
+bool CMusicRoomStopPhonographButton::FrameMsg(CFrameMsg *msg) {
+	if (_readyFlag && _ticks && msg->_ticks >= (_ticks + 100)) {
+		loadFrame(0);
+		playSound(_readySoundName);
+		_ticks = 0;
+		_readyFlag = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
