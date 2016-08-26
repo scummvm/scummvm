@@ -372,6 +372,21 @@ void EventManager::processCommandQueue() {
 	if ((cmd._type >= kCommandMoveForward) && (cmd._type <= kCommandMoveLeft)) {
 		commandMoveParty(cmd._type);
 		return;
+	}		 
+	
+	if (cmd._type == kCommandClickInDungeonView) {
+		warning("DUMMY CODE, all of this");
+		DungeonMan &dunMan = *_vm->_dungeonMan;
+		CurrMapData &currMap = dunMan._currMap;
+		uint16 mapX = currMap._partyPosX;
+		uint16 mapY = currMap._partyPosY;
+		mapX += gDirIntoStepCountEast[currMap._partyDir];
+		mapY += gDirIntoStepCountNorth[currMap._partyDir];
+		Thing squareFirstThing = dunMan.getSquareFirstThing(mapX, mapY);
+		Sensor sensor(dunMan.getThingData(squareFirstThing));
+		if (sensor.getType() == kSensorWallChampionPortrait) {
+			_vm->_championMan->addCandidateChampionToParty(sensor.getData());
+		}
 	}
 
 	// MISSING CODE: the rest of the function

@@ -23,8 +23,8 @@
 
 namespace DM {
 
-int8 dirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */}; // @ G0233_ai_Graphic559_DirectionToStepEastCount
-int8 dirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */}; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
+int8 gDirIntoStepCountEast[4] = {0 /* North */, 1 /* East */, 0 /* West */, -1 /* South */}; // @ G0233_ai_Graphic559_DirectionToStepEastCount
+int8 gDirIntoStepCountNorth[4] = {-1 /* North */, 0 /* East */, 1 /* West */, 0 /* South */}; // @ G0234_ai_Graphic559_DirectionToStepNorthCount
 
 void turnDirRight(direction &dir) { dir = (direction)((dir + 1) & 3); }
 void turnDirLeft(direction &dir) { dir = (direction)((dir - 1) & 3); }
@@ -163,6 +163,11 @@ Common::Error DMEngine::run() {
 }
 
 void DMEngine::gameloop() {
+	warning("DUMMY CODE SETTING PARTY POS AND DIRECTION");
+	_dungeonMan->_currMap._partyPosX = 10;
+	_dungeonMan->_currMap._partyPosY = 4;
+	_dungeonMan->_currMap._partyDir = kDirNorth;
+	
 	while (true) {
 		_stopWaitingForPlayerInput = false;
 		//do {

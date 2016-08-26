@@ -48,7 +48,7 @@ uint16 gSlotMasks[38] = {  // @ G0038_ai_Graphic562_SlotMasks
 	0x0400,   /* Chest 7          Chest */
 	0x0400}; /* Chest 8          Chest */
 
-Box gBoxChampionPortrait = {0, 31, 0, 28}; // @ G0047_s_Graphic562_Box_ChampionPortrait 
+Box gBoxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
 
 ChampionMan::ChampionMan(DMEngine *vm) : _vm(vm) {
 	_leaderIndex = kChampionNone;
@@ -81,7 +81,7 @@ ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
 
 void ChampionMan::resetDataToStartGame() {
 	if (!_vm->_dungeonMan->_messages._newGame) {
-		warning("MISSING CODE: stuff for reeseting for loaded games");
+		warning("MISSING CODE: stuff for resetting for loaded games");
 		assert(false);
 	}
 
@@ -202,8 +202,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	int16 mapY = _vm->_dungeonMan->_currMap._partyPosY;
 
 	uint16 championObjectsCell = returnOppositeDir((direction)(dunMan._currMap._partyDir));
-	mapX += dirIntoStepCountEast[dunMan._currMap._partyDir];
-	mapY += dirIntoStepCountNorth[dunMan._currMap._partyDir];
+	mapX += gDirIntoStepCountEast[dunMan._currMap._partyDir];
+	mapY += gDirIntoStepCountNorth[dunMan._currMap._partyDir];
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = kChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;
