@@ -104,9 +104,10 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
  * BITD
  ****************************/
 
-BITDDecoder::BITDDecoder(int w, int h, bool comp) {
+BITDDecoder::BITDDecoder(int w, int h) {
 	_surface = new Graphics::Surface();
 
+	// We make the surface pitch a multiple of 16.
 	int pitch = w;
 	if (w % 16)
 		pitch += 16 - (w % 16);
@@ -121,8 +122,6 @@ BITDDecoder::BITDDecoder(int w, int h, bool comp) {
 	_palette[255 * 3 + 0] = _palette[255 * 3 + 1] = _palette[255 * 3 + 2] = 0xff;
 
 	_paletteColorCount = 2;
-
-	_comp = comp;
 }
 
 BITDDecoder::~BITDDecoder() {
@@ -144,7 +143,9 @@ void BITDDecoder::loadPalette(Common::SeekableReadStream &stream) {
 bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x = 0, y = 0;
 
-	if (!_comp) {
+	// If the stream has exactly the required number of bits for this image,
+	// we assume it is uncompressed.
+	if (stream.size() * 8 == _surface->pitch * _surface->h) {
 		debugC(3, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->pitch; ) {

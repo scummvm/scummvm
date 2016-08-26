@@ -545,17 +545,7 @@ Image::ImageDecoder *Frame::getImageFrom(uint16 spriteId) {
 
 			debugC(2, kDebugImages, "id: %d, w: %d, h: %d, flags: %x, some: %x, unk1: %d, unk2: %d",
 				imgId, w, h, bc->flags, bc->someFlaggyThing, bc->unk1, bc->unk2);
-
-			int w1 = w;
-			if (w % 16)
-				w1 += 16 - w % 16;
-
-			if (pic->size() * 8 == w1 * h) {
-				debugC(3, kDebugImages, "Disabling compression for %d: %d x %d", imgId, w1, h);
-				img = new BITDDecoder(w, h, false);
-			} else {
-				img = new BITDDecoder(w, h, true);
-			}
+			img = new BITDDecoder(w, h);
 		} else {
 			img = new Image::BitmapDecoder();
 		}

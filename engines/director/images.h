@@ -64,7 +64,7 @@ private:
 
 class BITDDecoder : public Image::ImageDecoder {
 public:
-	BITDDecoder(int w, int h, bool comp);
+	BITDDecoder(int w, int h);
 	virtual ~BITDDecoder();
 
 	// ImageDecoder API
@@ -79,7 +79,6 @@ private:
 	Graphics::Surface *_surface;
 	byte *_palette;
 	uint8 _paletteColorCount;
-	bool _comp;
 };
 
 } // End of namespace Director
