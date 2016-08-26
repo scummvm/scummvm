@@ -36,8 +36,12 @@ protected:
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
+	Common::String getItemDescription(const Item &item) const;
 
 	int o3_isNounNotInRoom(ScriptEnv &e);
+	int o3_listInv(ScriptEnv &e);
+
+	Common::Array<Common::String> _itemDesc;
 };
 
 } // End of namespace Adl

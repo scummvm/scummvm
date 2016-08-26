@@ -57,13 +57,13 @@ protected:
 	int o4_isItemInRoom(ScriptEnv &e);
 	int o4_isNounNotInRoom(ScriptEnv &e);
 	int o4_skipOneCommand(ScriptEnv &e);
+	int o4_listInv(ScriptEnv &e);
 	int o4_moveItem(ScriptEnv &e);
 	int o4_dummy(ScriptEnv &e);
 	int o4_setTextMode(ScriptEnv &e);
 	int o4_setDisk(ScriptEnv &e);
 	int o4_sound(ScriptEnv &e);
 
-	Common::Array<Common::String> _itemDesc;
 	byte _curDisk;
 	Common::Array<DiskOffset> _diskOffsets;
 };
