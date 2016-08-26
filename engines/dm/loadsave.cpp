@@ -36,6 +36,7 @@
 #include "menus.h"
 #include "eventman.h"
 #include "projexpl.h"
+#include "dialog.h"
 
 
 namespace DM {
@@ -141,8 +142,8 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_timeline->f233_initTimeline();
 		_groupMan->f196_initActiveGroups();
 
+		warning(false, "Disabled code in f435_loadgame");
 #if 0
-		// always false?
 		if (L1366_B_FadePalette) {
 			_displayMan->f436_STARTEND_FadeToPalette(_displayMan->_g345_aui_BlankBuffer);
 			D26_WaitForVerticalBlank();
@@ -156,7 +157,7 @@ LoadgameResponse DMEngine::f435_loadgame(int16 slot) {
 		_g526_dungeonId = dmSaveHeader._dungeonId;
 
 		_g524_restartGameAllowed = true;
-		warning(false, "MISSING CDOE: F0427_DIALOG_Draw in f435_loadgame");
+		_dialog->f427_dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true); // TODO: localization
 	}
 	_championMan->_g303_partyDead = false;
 

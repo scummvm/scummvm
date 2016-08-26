@@ -1056,7 +1056,7 @@ void DisplayMan::f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButt
 
 void DisplayMan::f565_viewportSetPalette(uint16* middleScreenPalette, uint16* topAndBottomScreen) {
 	if (middleScreenPalette && topAndBottomScreen)
-		debugC(kDMDebugOftenCalledWarning, "MISSING CODE: F0508_AMIGA_BuildPaletteChangeCopperList");
+		f508_buildPaletteChangeCopperList(middleScreenPalette, topAndBottomScreen);
 
 	f566_viewportBlitToScreen();
 }
@@ -2045,7 +2045,7 @@ void DisplayMan::f124_drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 							  _g296_bitmapViewport, g106_BoxThievesEye_ViewPortVisibleArea, 0, 0,
 							  48, k112_byteWidthViewport, k9_ColorGold, 95, k136_heightViewport); /* BUG0_74 */
 			f493_addDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea);
-			warning(false, "MISSING CODE: F0480_CACHE_ReleaseBlock");
+			f480_releaseBlock(k1_DerivedBitmapThievesEyeVisibleArea | 0x8000);
 		}
 		return;
 	case k17_DoorFrontElemType:
@@ -2692,6 +2692,7 @@ uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 #define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK            
 
 void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
+	warning(false, "STUB METHOD: f113_drawField");
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	byte *bitmapMask;
@@ -2705,11 +2706,6 @@ void DisplayMan::f113_drawField(FieldAspect* fieldAspect, Box& box) {
 			dispMan.f130_flipBitmapHorizontal(bitmapMask, fieldAspect->_byteWidth, fieldAspect->_height);
 		}
 	}
-
-	// byte *bitmap = dispMan.f489_getNativeBitmapOrGraphic(k73_FieldTeleporterGraphicIndice + fieldAspect->_nativeBitmapRelativeIndex);
-	warning(false, "MISSING CODE: F0133_VIDEO_BlitBoxFilledWithMaskedBitmap");
-
-	warning(false, "IGNORED CODE: F0491_CACHE_IsDerivedBitmapInCache, F0493_CACHE_AddDerivedBitmap, F0480_CACHE_ReleaseBlock");
 }
 
 int16 DisplayMan::f459_getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale) {

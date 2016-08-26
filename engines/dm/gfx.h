@@ -750,7 +750,9 @@ public:
 	void f493_addDerivedBitmap(int16 derivedBitmapIndex); // @ F0493_CACHE_AddDerivedBitmap
 	void f480_releaseBlock(uint16 index); // @ F0480_CACHE_ReleaseBlock
 	uint16 f431_getDarkenedColor(uint16 RGBcolor);
-	void f436_STARTEND_FadeToPalette(uint16 *P0849_pui_Palette) { warning(false, "STUB: f436_STARTEND_FadeToPalette"); }
+	void f436_STARTEND_FadeToPalette(uint16 *P0849_pui_Palette) { warning(false, "STUB METHOD: f436_STARTEND_FadeToPalette"); }
+	void f508_buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom) { warning(false, "STUB METHOD: f508_buildPaletteChangeCopperList"); }// @ F0508_AMIGA_BuildPaletteChangeCopperList
+	void f136_shadeScreenBox(Box* box, Color color) { warning(false, "STUB METHOD: f136_shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
 };
 
 }

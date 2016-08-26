@@ -33,6 +33,10 @@
 
 namespace DM {
 
+struct TextScroller {
+	// Placeholder, empty for now
+}; // @ Text_Scroller
+
 class TextMan {
 	DMEngine *_vm;
 	int16 _g359_messageAreaCursorColumn; // @ G0359_i_MessageAreaCursorColumn
@@ -40,14 +44,16 @@ class TextMan {
 	int32 _g360_messageAreaRowExpirationTime[4]; // @ G0360_al_MessageAreaRowExpirationTime
 	byte *_g356_bitmapMessageAreaNewRow; // @ G0356_puc_Bitmap_MessageAreaNewRow
 public:
+	TextScroller _gK60_s_TextScroller;
+
 	explicit TextMan(DMEngine *vm);
 	~TextMan();
 	void f40_printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 destX, int16 destY,
-						   Color textColor, Color bgColor, const char *text, uint16 destHeight); // @ F0040_TEXT_Print
+							   Color textColor, Color bgColor, const char *text, uint16 destHeight); // @ F0040_TEXT_Print
 	void f53_printToLogicalScreen(uint16 destX, uint16 destY, Color textColor, Color bgColor, const char *text); // @ F0053_TEXT_PrintToLogicalScreen
 	void f52_printToViewport(int16 posX, int16 posY, Color textColor, const char *text, Color bgColor = k12_ColorDarkestGray); // @ F0052_TEXT_PrintToViewport
 	void f41_printWithTrailingSpaces(byte *destBitmap, int16 destByteWidth, int16 destX, int16 destY, Color textColor, Color bgColor,
-								 const char *text, int16 strLenght, int16 destHeight); // @ F0041_TEXT_PrintWithTrailingSpaces
+									 const char *text, int16 strLenght, int16 destHeight); // @ F0041_TEXT_PrintWithTrailingSpaces
 	void f51_messageAreaPrintLineFeed(); // @ F0051_TEXT_MESSAGEAREA_PrintLineFeed
 	void f47_messageAreaPrintMessage(Color color, const char *string); // @ F0047_TEXT_MESSAGEAREA_PrintMessage
 	void f45_messageAreaCreateNewRow(); // @ F0045_TEXT_MESSAGEAREA_CreateNewRow
@@ -56,7 +62,10 @@ public:
 	void f42_messageAreaMoveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
 	void f44_messageAreaClearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
 	void f443_endgamePrintString(int16 x, int16 y, Color textColor, char *text); // @ F0443_STARTEND_EndgamePrintString
-
+	bool f561_isTextScrolling(TextScroller *scroller, bool waitEndOfScrolling) {
+		warning(false, "STUB METHOD: f561_isTextScrolling"); return true;
+	} // @ F0561_SCROLLER_IsTextScrolling
+	void f560_SCROLLER_setCommand(TextScroller *scroller, int16 command) { warning(false, "STUB METHOD: f560_SCROLLER_setCommand");  } // @ F0560_SCROLLER_SetCommand
 };
 
 }

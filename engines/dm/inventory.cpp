@@ -117,14 +117,14 @@ void InventoryMan::f355_toggleInventory(ChampionIndex championIndex) {
 	_vm->_displayMan->_g578_useByteBoxCoordinates = false;
 	_g432_inventoryChampionOrdinal = _vm->M0_indexToOrdinal(championIndex);
 	if (!AL1102_ui_InventoryChampionOrdinal) {
-		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		_vm->_displayMan->f136_shadeScreenBox(&g2_BoxMovementArrows, k0_ColorBlack);
 	}
 	L1103_ps_Champion = &_vm->_championMan->_gK71_champions[championIndex];
 	_vm->_displayMan->f466_loadIntoBitmap(k17_InventoryGraphicIndice, _vm->_displayMan->_g296_bitmapViewport);
 	if (_vm->_championMan->_g299_candidateChampionOrdinal) {
 		_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	}
-	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH");
+	_vm->_textMan->f52_printToViewport(5, 116, k13_ColorLightestGray, "HEALTH"); // TODO: localization
 	_vm->_textMan->f52_printToViewport(5, 124, k13_ColorLightestGray, "STAMINA");
 	_vm->_textMan->f52_printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 	for (AL1102_ui_SlotIndex = k0_ChampionSlotReadyHand; AL1102_ui_SlotIndex < k30_ChampionSlotChest_1; AL1102_ui_SlotIndex++) {

@@ -139,9 +139,10 @@ void TextMan::f45_messageAreaCreateNewRow() {
 	uint16 L0029_ui_RowIndex;
 
 	if (_g358_messageAreaCursorRow == 3) {
-		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
+		f561_isTextScrolling(&_gK60_s_TextScroller, true);
 		memset(_g356_bitmapMessageAreaNewRow, k0_ColorBlack, 320 * 7);
-		warning(false, "MISSING CODE: F0560_SCROLLER_SetCommand");
+		f560_SCROLLER_setCommand(&_gK60_s_TextScroller, 1);
+
 		for (L0029_ui_RowIndex = 0; L0029_ui_RowIndex < 3; L0029_ui_RowIndex++) {
 			_g360_messageAreaRowExpirationTime[L0029_ui_RowIndex] = _g360_messageAreaRowExpirationTime[L0029_ui_RowIndex + 1];
 		}
@@ -155,13 +156,12 @@ void TextMan::f46_messageAreaPrintString(Color color, const char* string) {
 	int16 L0030_i_StringLength;
 
 	L0030_i_StringLength = strlen(string);
-	warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
-	if (true) { // there is a test here with F0561_SCROLLER_IsTextScrolling
+	if (f561_isTextScrolling(&_gK60_s_TextScroller, false)) {
 		f53_printToLogicalScreen(_g359_messageAreaCursorColumn * 6, (_g358_messageAreaCursorRow * 7 - 6) + 177, color, k0_ColorBlack, string);
 	} else {
 		f40_printTextToBitmap(_g356_bitmapMessageAreaNewRow, k160_byteWidthScreen, _g359_messageAreaCursorColumn * 6, 5, color, k0_ColorBlack, string, 7);
-		warning(false, "MISSING CODE: F0561_SCROLLER_IsTextScrolling");
-		warning(false, "MISSING CODE: F0560_SCROLLER_SetCommand");
+		if(f561_isTextScrolling(&_gK60_s_TextScroller, false))
+			f560_SCROLLER_setCommand(&_gK60_s_TextScroller, 1);
 	}
 	_g359_messageAreaCursorColumn += L0030_i_StringLength;
 	_g360_messageAreaRowExpirationTime[_g358_messageAreaCursorRow] = _vm->_g313_gameTime + 200;
@@ -206,7 +206,7 @@ void TextMan::f44_messageAreaClearExpiredRows() {
 		if ((L0027_l_ExpirationTime == -1) || (L0027_l_ExpirationTime > _vm->_g313_gameTime))
 			continue;
 		L0028_s_Box._y2 = (L0028_s_Box._y1 = 172 + (L0026_ui_RowIndex * 7)) + 6;
-		warning(false, "MISSING CODE:F0561_SCROLLER_IsTextScrolling(&K0060_s_TextScroller, true);");
+		f561_isTextScrolling(&_gK60_s_TextScroller, true);
 		_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g348_bitmapScreen, L0028_s_Box, k0_ColorBlack, k160_byteWidthScreen, k200_heightScreen);
 		_g360_messageAreaRowExpirationTime[L0026_ui_RowIndex] = -1;
 	}

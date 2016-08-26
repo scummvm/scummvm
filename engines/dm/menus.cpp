@@ -170,7 +170,7 @@ T0386006:
 	box2._y2 = 110;
 	dm.f132_blitToBitmap(bitmapIcon, dm._g348_bitmapScreen, box2, 0, 0, 8, k160_byteWidthScreen, kM1_ColorNoTransparency);
 	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_g299_candidateChampionOrdinal || _vm->_championMan->_g300_partyIsSleeping) {
-		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		_vm->_displayMan->f136_shadeScreenBox(&box, k0_ColorBlack);
 	}
 }
 
@@ -183,10 +183,10 @@ void MenuMan::f456_drawDisabledMenu() {
 				_vm->_inventoryMan->f334_closeChest();
 			}
 		} else {
-			warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+			_vm->_displayMan->f136_shadeScreenBox(&g2_BoxMovementArrows, k0_ColorBlack);
 		}
-		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
-		warning(false, "MISSING CODE: F0136_VIDEO_ShadeScreenBox");
+		_vm->_displayMan->f136_shadeScreenBox(&g0_BoxSpellArea, k0_ColorBlack);
+		_vm->_displayMan->f136_shadeScreenBox(&g1_BoxActionArea, k0_ColorBlack);
 		_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
 	}
 }
