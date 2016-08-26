@@ -38,8 +38,9 @@ namespace DM {
 byte gPalChangesActionAreaObjectIcon[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0}; // @ G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon
 
 MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
-	_shouldRefreshActionArea = false;
+	_refreshActionArea = false;
 	_actionAreaContainsIcons = false;
+	_actionDamage = 0;
 }
 
 void MenuMan::drawMovementArrows() {
@@ -57,7 +58,7 @@ void MenuMan::clearActingChampion() {
 		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(kChampionAttributeActionHand, true);
 		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
 		cm._actingChampionOrdinal = _vm->indexToOrdinal(kChampionNone);
-		_shouldRefreshActionArea = true;
+		_refreshActionArea = true;
 	}
 }
 
@@ -118,4 +119,55 @@ void MenuMan::drawDisabledMenu() {
 	}
 }
 
+void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
+	ChampionMan &champMan = *_vm->_championMan;
+
+	if (!champMan._partyChampionCount)
+		return;
+
+	Champion *champ = nullptr;
+	if (champMan._partyIsSleeping || champMan._candidateChampionOrdinal) {
+		if (champMan._actingChampionOrdinal) {
+			clearActingChampion();
+			return;
+		}
+		if (!champMan._candidateChampionOrdinal)
+			return;
+	} else {
+		champ = champMan._champions;
+		int16 champIndex = kChampionFirst;
+
+		do {
+			if ((champIndex != champMan._leaderIndex)
+				&& (_vm->indexToOrdinal(champIndex) != champMan._actingChampionOrdinal)
+				&& (champ->_maximumDamageReceived)
+				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
+
+				champ->_dir = (direction)champ->_directionMaximumDamageReceived;
+				champ->setAttributeFlag(kChampionAttributeIcon, true);
+				champMan.drawChampionState((ChampionIndex)champIndex);
+			}
+			champ->_maximumDamageReceived = 0;
+			champ++;
+			champIndex++;
+		} while (champIndex < champMan._partyChampionCount);
+	}
+
+	if (_refreshActionArea) {
+		if (!champMan._actingChampionOrdinal) {
+			if (_actionDamage) {
+				warning("MISSING CODE: F0385_MENUS_DrawActionDamage");
+				_actionDamage = 0;
+			} else {
+				_actionAreaContainsIcons = true;
+				warning("MISSING CODE: F0387_MENUS_DrawActionArea");
+			}
+		} else {
+			_actionAreaContainsIcons = false;
+			champ->setAttributeFlag(kChampionAttributeActionHand, true);
+			champMan.drawChampionState((ChampionIndex)_vm->ordinalToIndex(champMan._actingChampionOrdinal));
+			warning("MISSING CODE: F0387_MENUS_DrawActionArea");
+		}
+	}
+}
 }

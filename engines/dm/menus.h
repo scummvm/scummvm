@@ -38,14 +38,16 @@ class MenuMan {
 public:
 	explicit MenuMan(DMEngine *vm);
 
-	bool _shouldRefreshActionArea; // @ G0508_B_RefreshActionArea
+	bool _refreshActionArea; // @ G0508_B_RefreshActionArea
 	bool _actionAreaContainsIcons; // @ G0509_B_ActionAreaContainsIcons
+	int16 _actionDamage;
 
 	void clearActingChampion(); // @ F0388_MENUS_ClearActingChampion
 	void drawActionIcon(ChampionIndex championIndex); // @ F0386_MENUS_DrawActionIcon
 
 	void drawMovementArrows(); // @ F0395_MENUS_DrawMovementArrows
 	void drawDisabledMenu(); // @ F0456_START_DrawDisabledMenus
+	void refreshActionAreaAndSetChampDirMaxDamageReceived(); // @ F0390_MENUS_RefreshActionAreaAndSetChampionDirectionMaximumDamageReceived
 };
 
 }

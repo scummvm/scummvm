@@ -213,16 +213,20 @@ void DMEngine::gameloop() {
 
 	warning("DUMMY CODE: setting InventoryMan::_inventoryChampionOrdinal to zero");
 	_inventoryMan->_inventoryChampionOrdinal = 0;
-	warning("DUMMY CODE: clearing screen to black");
+	warning("DUMMY CODE: clearing screen to black"); // in loop below
 	while (true) {
 		_stopWaitingForPlayerInput = false;
+
+		_menuMan->refreshActionAreaAndSetChampDirMaxDamageReceived();
+
 		//do {
 		_eventMan->processInput();
 		_eventMan->processCommandQueue();
 		//} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
-			_displayMan->clearScreen(kColorBlack); // dummy code
+			Box box(0, 0 + 224 + 1, 33, 33 + 126 + 1);
+			_displayMan->clearScreenBox(kColorBlack, box); // dummy code
 			_displayMan->drawDungeon(_dungeonMan->_currMap._partyDir, _dungeonMan->_currMap._partyPosX, _dungeonMan->_currMap._partyPosY);
 		}
 		// DUMMY CODE: next line

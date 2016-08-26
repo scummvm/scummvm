@@ -255,7 +255,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	_candidateChampionOrdinal = prevChampCount + 1;
 	if (++_partyChampionCount == 1) {
 		_vm->_eventMan->commandSetLeader(kChampionFirst);
-		_vm->_menuMan->_shouldRefreshActionArea = true;
+		_vm->_menuMan->_refreshActionArea = true;
 	} else {
 		_vm->_menuMan->clearActingChampion();
 		_vm->_menuMan->drawActionIcon((ChampionIndex)(_partyChampionCount - 1));
