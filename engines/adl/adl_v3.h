@@ -25,9 +25,6 @@
 
 #include "adl/adl_v2.h"
 
-// Note: this version of ADL redraws only when necessary, but
-// this is not currently implemented.
-
 namespace Common {
 class RandomSource;
 }
