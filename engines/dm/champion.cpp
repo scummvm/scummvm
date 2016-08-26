@@ -2278,28 +2278,17 @@ void ChampionMan::f291_drawSlot(uint16 champIndex, int16 slotIndex) {
 void ChampionMan::f281_renameChampion(Champion* champ) {
 #define k1_RENAME_CHAMPION_NAME 1
 #define k2_RENAME_CHAMPION_TITLE 2
-	static char G0051_ac_Graphic562_UnderscoreCharacterString[2] = "_";
-	static char G0052_ac_Graphic562_RenameChampionInputCharacterString[2] = " ";
-	static char G0053_ac_Graphic562_ReincarnateSpecialCharacters[6] = {',', '.', ';', ':', ' '};
+	static const char underscoreCharacterString[2] = "_";
+	static char renameChampionInputCharacterString[2] = " ";
+	static const char reincarnateSpecialCharacters[6] = {',', '.', ';', ':', ' '};
 
-	uint16 L0808_ui_Multiple;
-#define AL0808_ui_CharacterIndex L0808_ui_Multiple
-#define AL0808_ui_ChampionIndex  L0808_ui_Multiple
-	int16 L0809_i_RenamedChampionString;
-	int16 L0810_i_Character;
-	bool L0811_B_ChampionTitleIsFull;
-	char* L0812_pc_RenamedChampionString;
-	int16 L0813_i_X;
-	int16 L0814_i_Y;
-	Box L0815_s_Box;
-	int16 L0820_i_CharacterIndexBackup;
-	char L0821_ac_ChampionNameBackupString[8];
+	Box displayBox;
+	displayBox._y1 = 3;
+	displayBox._y2 = 8;
+	displayBox._x1 = 3;
+	displayBox._x2 = displayBox._x1 + 167;
 
-
-	L0815_s_Box._y1 = 3;
-	L0815_s_Box._y2 = 8;
-	L0815_s_Box._x2 = (L0815_s_Box._x1 = 3) + 167;
-	_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, L0815_s_Box, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
+	_vm->_displayMan->f135_fillBoxBitmap(_vm->_displayMan->_g296_bitmapViewport, displayBox, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	_vm->_displayMan->f20_blitToViewport(_vm->_displayMan->f489_getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), g32_BoxPanel, k72_byteWidth, k4_ColorCyan, 73);
 	_vm->_textMan->f52_printToViewport(177, 58, k13_ColorLightestGray, "_______");
 	_vm->_textMan->f52_printToViewport(105, 76, k13_ColorLightestGray, "___________________");
@@ -2307,53 +2296,60 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 	_vm->_displayMan->f97_drawViewport(k0_viewportNotDungeonView);
 	_vm->_eventMan->f67_setMousePointerToNormal(k0_pointerArrow);
 	_vm->_eventMan->f77_hideMouse();
-	champ->_name[AL0808_ui_CharacterIndex = 0] = '\0';
+	uint16 curCharacterIndex = 0;
+	champ->_name[curCharacterIndex] = '\0';
 	champ->_title[0] = '\0';
-	L0809_i_RenamedChampionString = k1_RENAME_CHAMPION_NAME;
-	L0812_pc_RenamedChampionString = champ->_name;
-	L0813_i_X = 177;
-	L0814_i_Y = 91;
+	int16 renamedChampionStringMode = k1_RENAME_CHAMPION_NAME;
+	char *renamedChampionString = champ->_name;
+	int16 textPosX = 177;
+	int16 textPosY = 91;
 
 	for (;;) { /*_Infinite loop_*/
-		if (!(L0811_B_ChampionTitleIsFull = ((L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE) && (AL0808_ui_CharacterIndex == 19)))) {
+		bool championTitleIsFull = ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE) && (curCharacterIndex == 19));
+		if (!championTitleIsFull) {
 			_vm->_eventMan->f78_showMouse();
-			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k9_ColorGold, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
+			_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k9_ColorGold, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
 			_vm->_eventMan->f77_hideMouse();
 		}
-		L0810_i_Character = 256;
-		while (L0810_i_Character == 256) {
+
+		int16 curCharacter = 256;
+		while (curCharacter == 256) {
 			Common::Event event;
-			Common::EventType eventType;
-			{
-				eventType = _vm->_eventMan->processInput(&event, &event);
-				if (_vm->_engineShouldQuit)
-					return;
-				_vm->_displayMan->updateScreen();
-				//_vm->f22_delay(1);
-			}
+			Common::EventType eventType = _vm->_eventMan->processInput(&event, &event);
+			_vm->_displayMan->updateScreen();
+			_vm->f22_delay(1);
+
 			if (eventType == Common::EVENT_LBUTTONDOWN) { /* If left mouse button status has changed */
 				Common::Point mousePos = _vm->_eventMan->getMousePos();
-				if ((L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE || (AL0808_ui_CharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
-					L0820_i_CharacterIndexBackup = AL0808_ui_CharacterIndex;
-					strcpy(L0821_ac_ChampionNameBackupString, L0812_pc_RenamedChampionString = champ->_name);
-					AL0808_ui_CharacterIndex = strlen(L0812_pc_RenamedChampionString);
-					while (L0812_pc_RenamedChampionString[--AL0808_ui_CharacterIndex] == ' ') { /* Replace space characters on the right of the champion name by '\0' characters */
-						L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
+				if ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
+					int16 characterIndexBackup = curCharacterIndex;
+					char L0821_ac_ChampionNameBackupString[8];
+					renamedChampionString = champ->_name;
+					strcpy(L0821_ac_ChampionNameBackupString, renamedChampionString);
+					curCharacterIndex = strlen(renamedChampionString);
+					while (renamedChampionString[--curCharacterIndex] == ' ')
+					// Replace space characters on the right of the champion name by '\0' characters
+						renamedChampionString[curCharacterIndex] = '\0';
+
+					bool found = false;
+					for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_g305_partyChampionCount - 1; idx++) {
+						if (!strcmp(_vm->_championMan->_gK71_champions[idx]._name, renamedChampionString)) {
+						// If an existing champion already has the specified name for the new champion
+							found = true;
+							break;
+						}
 					}
-					for (AL0808_ui_ChampionIndex = k0_ChampionFirst; AL0808_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount - 1; AL0808_ui_ChampionIndex++) {
-						if (!strcmp(_vm->_championMan->_gK71_champions[AL0808_ui_ChampionIndex]._name, L0812_pc_RenamedChampionString)) /* If an existing champion already has the specified name for the new champion */
-							goto T0281011_ContinueRename;
-					}
-					return;
-T0281011_ContinueRename:
-					if (L0809_i_RenamedChampionString == k2_RENAME_CHAMPION_TITLE) {
-						L0812_pc_RenamedChampionString = champ->_title;
-					}
-					strcpy(L0812_pc_RenamedChampionString = champ->_name, L0821_ac_ChampionNameBackupString);
-					AL0808_ui_CharacterIndex = L0820_i_CharacterIndexBackup;
+					if (!found)
+						return;
+
+					if (renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE)
+						renamedChampionString = champ->_title;
+
+					strcpy(renamedChampionString = champ->_name, L0821_ac_ChampionNameBackupString);
+					curCharacterIndex = characterIndexBackup;
 				} else {
 					if ((mousePos.x >= 107) && (mousePos.x <= 175) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'BACKSPACE' button */
-						L0810_i_Character = '\b';
+						curCharacter = '\b';
 						break;
 					}
 					if ((mousePos.x < 107) || (mousePos.x > 215) || (mousePos.y < 116) || (mousePos.y > 144)) {/* Coordinates of table of all other characters */
@@ -2362,77 +2358,76 @@ T0281011_ContinueRename:
 					if (!((mousePos.x + 4) % 10) || (!((mousePos.y + 5) % 10) && ((mousePos.x < 207) || (mousePos.y != 135)))) {
 						//goto T0281023;
 					}
-					L0810_i_Character = 'A' + (11 * ((mousePos.y - 116) / 10)) + ((mousePos.x - 107) / 10);
-					if ((L0810_i_Character == 86) || (L0810_i_Character == 97)) { /* The 'Return' button occupies two cells in the table */
-						L0810_i_Character = '\r'; /* Carriage return */
+					curCharacter = 'A' + (11 * ((mousePos.y - 116) / 10)) + ((mousePos.x - 107) / 10);
+					if ((curCharacter == 86) || (curCharacter == 97)) { /* The 'Return' button occupies two cells in the table */
+						curCharacter = '\r'; /* Carriage return */
 						break;
 					}
-					if (L0810_i_Character >= 87) { /* Compensate for the first cell occupied by 'Return' button */
-						L0810_i_Character--;
-					}
-					if (L0810_i_Character > 'Z') {
-						L0810_i_Character = G0053_ac_Graphic562_ReincarnateSpecialCharacters[(L0810_i_Character - 'Z') - 1];
-					}
+					if (curCharacter >= 87) // Compensate for the first cell occupied by 'Return' button
+						curCharacter--;
+
+					if (curCharacter > 'Z')
+						curCharacter = reincarnateSpecialCharacters[(curCharacter - 'Z') - 1];
+
 					break;
 				}
-			} else if (eventType == Common::EVENT_KEYDOWN) {
-				L0810_i_Character = event.kbd.ascii;
-			}
+			} else if (eventType == Common::EVENT_KEYDOWN)
+				curCharacter = event.kbd.ascii;
 		}
 
-		if ((L0810_i_Character >= 'a') && (L0810_i_Character <= 'z')) {
-			L0810_i_Character -= 32; /* Convert to uppercase */
-		}
-		if (((L0810_i_Character >= 'A') && (L0810_i_Character <= 'Z')) || (L0810_i_Character == '.') || (L0810_i_Character == ',') || (L0810_i_Character == ';') || (L0810_i_Character == ':') || (L0810_i_Character == ' ')) {
-			if ((L0810_i_Character == ' ') && AL0808_ui_CharacterIndex == 0) {
-			} else {
-				if (!L0811_B_ChampionTitleIsFull) {
-					G0052_ac_Graphic562_RenameChampionInputCharacterString[0] = L0810_i_Character;
+		if ((curCharacter >= 'a') && (curCharacter <= 'z'))
+			curCharacter -= 32; // Convert to uppercase
+
+		if (((curCharacter >= 'A') && (curCharacter <= 'Z')) || (curCharacter == '.') || (curCharacter == ',') || (curCharacter == ';') || (curCharacter == ':') || (curCharacter == ' ')) {
+			if ((curCharacter != ' ') || curCharacterIndex != 0) {
+				if (!championTitleIsFull) {
+					renameChampionInputCharacterString[0] = curCharacter;
 					_vm->_eventMan->f78_showMouse();
-					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0052_ac_Graphic562_RenameChampionInputCharacterString, k200_heightScreen);
+					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
 					_vm->_eventMan->f77_hideMouse();
-					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex++] = L0810_i_Character;
-					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
-					L0813_i_X += 6;
-					if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex == 7))
-						goto T0281033_ProceedToTitle;
+					renamedChampionString[curCharacterIndex++] = curCharacter;
+					renamedChampionString[curCharacterIndex] = '\0';
+					textPosX += 6;
+					if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex == 7)) {
+						renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
+						renamedChampionString = champ->_title;
+						textPosX = 105;
+						textPosY = 109;
+						curCharacterIndex = 0;
+					}
 				}
 			}
-		} else {
-			if (L0810_i_Character == '\r') { /* Carriage return */
-				if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex > 0)) {
-					_vm->_eventMan->f78_showMouse();
-					_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
-					_vm->_eventMan->f77_hideMouse();
-T0281033_ProceedToTitle:
-					L0809_i_RenamedChampionString = k2_RENAME_CHAMPION_TITLE;
-					L0812_pc_RenamedChampionString = champ->_title;
-					L0813_i_X = 105;
-					L0814_i_Y = 109;
-					AL0808_ui_CharacterIndex = 0;
-				}
-			} else {
-				if (L0810_i_Character == '\b') { /* Backspace */
-					if ((L0809_i_RenamedChampionString == k1_RENAME_CHAMPION_NAME) && (AL0808_ui_CharacterIndex == 0))
-						continue;
-					if (!L0811_B_ChampionTitleIsFull) {
-						_vm->_eventMan->f78_showMouse();
-						_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, L0813_i_X, L0814_i_Y, k13_ColorLightestGray, k12_ColorDarkestGray, G0051_ac_Graphic562_UnderscoreCharacterString, k200_heightScreen);
-						_vm->_eventMan->f77_hideMouse();
-					}
-					if (AL0808_ui_CharacterIndex == 0) {
-						L0812_pc_RenamedChampionString = champ->_name;
-						AL0808_ui_CharacterIndex = strlen(L0812_pc_RenamedChampionString) - 1;
-						L0809_i_RenamedChampionString = k1_RENAME_CHAMPION_NAME;
-						L0813_i_X = 177 + (AL0808_ui_CharacterIndex * 6);
-						L0814_i_Y = 91;
-					} else {
-						AL0808_ui_CharacterIndex--;
-						L0813_i_X -= 6;
-					}
-					L0812_pc_RenamedChampionString[AL0808_ui_CharacterIndex] = '\0';
-				}
+		} else if (curCharacter == '\r') { /* Carriage return */
+			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex > 0)) {
+				_vm->_eventMan->f78_showMouse();
+				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				_vm->_eventMan->f77_hideMouse();
+				renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
+				renamedChampionString = champ->_title;
+				textPosX = 105;
+				textPosY = 109;
+				curCharacterIndex = 0;
 			}
+		} else if (curCharacter == '\b') { /* Backspace */
+			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex == 0))
+				continue;
+
+			if (!championTitleIsFull) {
+				_vm->_eventMan->f78_showMouse();
+				_vm->_textMan->f40_printTextToBitmap(_vm->_displayMan->_g348_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, k13_ColorLightestGray, k12_ColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				_vm->_eventMan->f77_hideMouse();
+			}
+			if (curCharacterIndex == 0) {
+				renamedChampionString = champ->_name;
+				curCharacterIndex = strlen(renamedChampionString) - 1;
+				renamedChampionStringMode = k1_RENAME_CHAMPION_NAME;
+				textPosX = 177 + (curCharacterIndex * 6);
+				textPosY = 91;
+			} else {
+				curCharacterIndex--;
+				textPosX -= 6;
+			}
+			renamedChampionString[curCharacterIndex] = '\0';
 		}
 	}
 }
