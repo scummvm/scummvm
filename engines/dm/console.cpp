@@ -30,6 +30,44 @@
 
 namespace DM {
 
-Console::Console(DM::DMEngine* vm) : _vm(vm) {}
+Console::Console(DM::DMEngine* vm) : _vm(vm) {
+	_debugGodmodeMana = false;
+	_debugGodmodeHP = false;
+	_debugGodmodeStamina = false;
+
+	registerCmd("godmode", WRAP_METHOD(Console, Cmd_godmode));
+}
+
+bool Console::Cmd_godmode(int argc, const char** argv) {
+	if (argc < 3)
+		goto argumentError;
+
+	bool setFlagTo;
+
+	if (strcmp("on", argv[2]) == 0) {
+		setFlagTo = true;
+	} else if (strcmp("off", argv[2]) == 0) {
+		setFlagTo = false;
+	} else
+		goto argumentError;
+
+	if (strcmp("all", argv[1]) == 0) {
+		_debugGodmodeHP = _debugGodmodeMana = _debugGodmodeStamina = setFlagTo;
+	} else if (strcmp("mana", argv[1]) == 0) {
+		_debugGodmodeMana = setFlagTo;
+	} else if (strcmp("hp", argv[1]) == 0) {
+		_debugGodmodeHP = setFlagTo;
+	} else if (strcmp("stamina", argv[1]) == 0) {
+		_debugGodmodeStamina = setFlagTo;
+	} else
+		goto argumentError;
+
+	debugPrintf("God mode set for %s to %s\n", argv[1], argv[2]);
+	return true;
+
+argumentError:
+	debugPrintf("Usage: %s <all/mana/hp/stamina> <on/off>\n", argv[0]);
+	return true;
+}
 
 }

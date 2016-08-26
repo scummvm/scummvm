@@ -513,6 +513,7 @@ class ChampionMan {
 	int16 _g410_championPendingWounds[4]; // @ G0410_ai_ChampionPendingWounds
 	int16 _g409_championPendingDamage[4]; // @ G0409_ai_ChampionPendingDamage
 public:
+
 	Champion _gK71_champions[4]; // @ K0071_as_Champions
 	uint16 _g305_partyChampionCount;	// @ G0305_ui_PartyChampionCount
 	bool _g303_partyDead; // @ G0303_B_PartyDead

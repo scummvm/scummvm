@@ -367,8 +367,21 @@ void DMEngine::f2_gameloop() {
 	while (true) {
 		if (_engineShouldQuit)
 			return;
+		
+		// DEBUG CODE
+		for (int16 i = 0; i < _championMan->_g305_partyChampionCount; ++i) {
+			Champion &champ = _championMan->_gK71_champions[i];
+			if (_console->_debugGodmodeHP)
+				champ._currHealth = champ._maxHealth;
+			if (_console->_debugGodmodeMana)
+				champ._currMana = champ._maxMana;
+			if (_console->_debugGodmodeStamina)
+				champ._currStamina = champ._maxStamina;
+		}
 
 		for (;;) {
+			
+
 			if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
 				f3_processNewPartyMap(_g327_newPartyMapIndex);
 				_moveSens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);

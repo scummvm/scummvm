@@ -1298,7 +1298,10 @@ void ChampionMan::f320_applyAndDrawPendingDamageAndWounds() {
 		if (!curHealth)
 			continue;
 
-		curHealth -= pendingDamage;
+		// DEBUG CODE
+		if (_vm->_console->_debugGodmodeHP == false)
+			curHealth -= pendingDamage;
+
 		if (curHealth <= 0) {
 			f319_championKill(championIndex);
 		} else {
@@ -2317,10 +2320,14 @@ void ChampionMan::f281_renameChampion(Champion* champ) {
 			Common::Event event;
 			Common::EventType eventType = _vm->_eventMan->processInput(&event, &event);
 			_vm->_displayMan->updateScreen();
-			_vm->f22_delay(1);
+			if (_vm->_engineShouldQuit)
+				return;
+			_vm->_displayMan->updateScreen();
+				//_vm->f22_delay(1);
 
 			if (eventType == Common::EVENT_LBUTTONDOWN) {
 				// If left mouse button status has changed
+
 				Common::Point mousePos = _vm->_eventMan->getMousePos();
 				if ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
 					int16 characterIndexBackup = curCharacterIndex;
@@ -2480,7 +2487,7 @@ uint16 ChampionMan::f303_getSkillLevel(int16 champIndex, uint16 skillIndex) {
 			break;
 		case k13_ChampionSkillHeal:
 			// The skill modifiers of these two objects are not cumulative
-			if ((neckIconIndex == k120_IconIndiceJunkGemOfAges) || (actionHandIconIndex == k66_IconIndiceWeaponSceptreOfLyf)) 
+			if ((neckIconIndex == k120_IconIndiceJunkGemOfAges) || (actionHandIconIndex == k66_IconIndiceWeaponSceptreOfLyf))
 				skillLevel += 1;
 			break;
 		case k14_ChampionSkillInfluence:
