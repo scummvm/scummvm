@@ -326,7 +326,6 @@ void DMEngine::f2_gameloop() {
 	_dungeonMan->_g308_partyDir = kDirNorth;
 	warning(false, "DUMMY CODE: setting InventoryMan::_g432_inventoryChampionOrdinal to zero");
 	_inventoryMan->_g432_inventoryChampionOrdinal = 0;
-	warning(false, "DUMMY CODE: clearing screen to black"); // in loop below
 
 	while (true) {
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone) {
@@ -337,13 +336,14 @@ T0002002:
 			_eventMan->f357_discardAllInput();
 		}
 
-		// MISSING: F0261_TIMELINE_Process_CPSEF
+		warning(false, "MISSING CODE: F0261_TIMELINE_Process_CPSEF");
 
 		if (_g327_newPartyMapIndex != kM1_mapIndexNone)
 			goto T0002002;
 
 		if (!_inventoryMan->_g432_inventoryChampionOrdinal && !_championMan->_g300_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
+			warning(false, "DUMMY CODE: clearing screen to black");
 			_displayMan->f135_fillBoxBitmap(_displayMan->_g296_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // dummy code
 			_displayMan->f128_drawDungeon(_dungeonMan->_g308_partyDir, _dungeonMan->_g306_partyMapX, _dungeonMan->_g307_partyMapY);
 			if (_g325_setMousePointerToObjectInMainLoop) {

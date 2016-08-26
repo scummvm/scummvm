@@ -296,6 +296,8 @@ public:
 	bool f360_hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
 	void f379_drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen
 	void f357_discardAllInput(); // @ F0357_COMMAND_DiscardAllInput
+	void f364_commandTakeStairs(bool stairsGoDown);// @ F0364_COMMAND_TakeStairs
+
 };
 
 }

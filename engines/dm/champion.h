@@ -520,6 +520,7 @@ public:
 	void f316_deleteScent(uint16 scentIndex); // @ F0316_CHAMPION_DeleteScent
 	void f317_addScentStrength(int16 mapX, int16 mapY, int32 cycleCount); // @ F0317_CHAMPION_AddScentStrength
 	void f297_putObjectInLeaderHand(Thing thing, bool setMousePointer); // @ F0297_CHAMPION_PutObjectInLeaderHand
+	int16 f310_getMovementTicks(Champion *champ); // @ F0310_CHAMPION_GetMovementTicks
 
 
 

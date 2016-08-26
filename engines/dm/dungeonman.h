@@ -644,7 +644,6 @@ class DungeonMan {
 	DungeonMan(const DungeonMan &other); // no implementation on purpose
 	void operator=(const DungeonMan &rhs); // no implementation on purpose
 
-	Square f151_getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
 	Square f152_getRelSquare(direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY); // @ F0152_DUNGEON_GetRelativeSquare
 
 	void f455_decompressDungeonFile(); // @ F0455_FLOPPY_DecompressDungeon
@@ -660,6 +659,7 @@ public:
 	explicit DungeonMan(DMEngine *dmEngine);
 	~DungeonMan();
 
+	Square f151_getSquare(int16 mapX, int16 mapY); // @ F0151_DUNGEON_GetSquare
 	void f173_setCurrentMap(uint16 mapIndex); // @ F0173_DUNGEON_SetCurrentMap
 	Thing f161_getSquareFirstThing(int16 mapX, int16 mapY); // @ F0161_DUNGEON_GetSquareFirstThing
 	Thing f159_getNextThing(Thing thing); // @ F0159_DUNGEON_GetNextThing(THING P0280_T_Thing)

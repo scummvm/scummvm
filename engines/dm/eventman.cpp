@@ -416,7 +416,7 @@ void EventManager::f68_setPointerToObject(byte* bitmap) {
 	// dummy code
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g619_BoxMousePointerObjectShadow, 0, 0, 8, 16, kM1_ColorNoTransparency, 16, 18);
 	_vm->_displayMan->f132_blitToBitmap(bitmap, L0051_puc_Bitmap, g620_BoxMousePointerObject, 0, 0, 8, 16, k0_ColorBlack, 16, 18);
-	
+
 	_gK100_preventBuildPointerScreenArea = false;
 	f73_buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
@@ -549,7 +549,7 @@ void EventManager::processInput() {
 					input++;
 				}
 			}
-			
+
 			if (_g444_secondaryKeyboardInput) {
 				KeyboardInput *input = _g444_secondaryKeyboardInput;
 				while (input->_commandToIssue != k0_CommandNone) {
@@ -561,8 +561,8 @@ void EventManager::processInput() {
 					input++;
 				}
 			}
-			
-			}
+
+		}
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
@@ -665,31 +665,114 @@ void EventManager::f365_commandTurnParty(CommandType cmdType) {
 }
 
 void EventManager::f366_commandMoveParty(CommandType cmdType) {
+	static Box g463_BoxMovementArrows[4] = { // @ G0463_as_Graphic561_Box_MovementArrows
+		/* { X1, X2, Y1, Y2 } */
+		Box(263, 289, 125, 145),   /* Forward */
+		Box(291, 318, 147, 167),   /* Right */
+		Box(263, 289, 147, 167),   /* Backward */
+		Box(234, 261, 147, 167)}; /* Left */
+
+	static int16 g465_movementArrowToStepForwardCount[4] = { // @ G0465_ai_Graphic561_MovementArrowToStepForwardCount
+		1,   /* Forward */
+		0,   /* Right */
+		-1,  /* Backward */
+		0}; /* Left */
+	static int16 g466_movementArrowToSepRightCount[4] = { // @ G0466_ai_Graphic561_MovementArrowToStepRightCount
+		0,    /* Forward */
+		1,    /* Right */
+		0,    /* Backward */
+		-1}; /* Left */
+
+	uint16 L1115_ui_Multiple;
+#define AL1115_ui_Square L1115_ui_Multiple
+#define AL1115_ui_Ticks  L1115_ui_Multiple
+	int16 L1116_i_SquareType;
+	int16 L1117_B_MovementBlocked;
+	uint16 L1118_ui_Multiple;
+#define AL1118_ui_ChampionIndex      L1118_ui_Multiple
+#define AL1118_ui_MovementArrowIndex L1118_ui_Multiple
+	Champion* L1119_ps_Champion;
+	Box* L1120_ps_Box;
+	int16 L1121_i_MapX;
+	int16 L1122_i_MapY;
+	bool L1123_B_StairsSquare;
+	int16 L1124_i_FirstDamagedChampionIndex;
+	int16 L1125_i_SecondDamagedChampionIndex;
+
+
 	_vm->_g321_stopWaitingForPlayerInput = true;
-
-	// MISSING CODE: Lots of code
-
-	// DUMMY CODE:
-	DungeonMan &dungeonMan = *_vm->_dungeonMan;
-
-	switch (cmdType) {
-	case k3_CommandMoveForward:
-		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-		break;
-	case k6_CommandMoveLeft:
-		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, -1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-		break;
-	case k5_CommandMoveBackward:
-		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, -1, 0, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-		break;
-	case k4_CommandMoveRight:
-		dungeonMan.f150_mapCoordsAfterRelMovement(dungeonMan._g308_partyDir, 0, 1, dungeonMan._g306_partyMapX, dungeonMan._g307_partyMapY);
-		break;
-	default:
-		break;
+	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
+	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
+		_vm->_championMan->f325_decrementStamine(AL1118_ui_ChampionIndex, ((L1119_ps_Champion->_load * 3) / _vm->_championMan->f309_getMaximumLoad(L1119_ps_Champion)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
+		L1119_ps_Champion++;
 	}
-
-	// MISSING CODE: Lots of code
+	AL1118_ui_MovementArrowIndex = cmdType - k3_CommandMoveForward;
+	L1120_ps_Box = &g463_BoxMovementArrows[AL1118_ui_MovementArrowIndex];
+	warning(false, "MISSING CODE: F0362_COMMAND_HighlightBoxEnable");
+	L1123_B_StairsSquare = (Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX = _vm->_dungeonMan->_g306_partyMapX, L1122_i_MapY = _vm->_dungeonMan->_g307_partyMapY).toByte()).getType() == k3_ElementTypeStairs);
+	if (L1123_B_StairsSquare && (AL1118_ui_MovementArrowIndex == 2)) { /* If moving backward while in stairs */
+		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		return;
+	}
+	_vm->_dungeonMan->f150_mapCoordsAfterRelMovement(_vm->_dungeonMan->_g308_partyDir, g465_movementArrowToStepForwardCount[AL1118_ui_MovementArrowIndex], g466_movementArrowToSepRightCount[AL1118_ui_MovementArrowIndex], L1121_i_MapX, L1122_i_MapY);
+	L1116_i_SquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->f151_getSquare(L1121_i_MapX, L1122_i_MapY).toByte()).getType();
+	if (L1116_i_SquareType == k3_ElementTypeStairs) {
+		_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
+		_vm->_dungeonMan->_g306_partyMapX = L1121_i_MapX;
+		_vm->_dungeonMan->_g307_partyMapY = L1122_i_MapY;
+		f364_commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		return;
+	}
+	L1117_B_MovementBlocked = false;
+	if (L1116_i_SquareType == k0_ElementTypeWall) {
+		L1117_B_MovementBlocked = true;
+	} else {
+		if (L1116_i_SquareType == k4_DoorElemType) {
+			L1117_B_MovementBlocked = Square(AL1115_ui_Square).getDoorState();
+			L1117_B_MovementBlocked = (L1117_B_MovementBlocked != k0_doorState_OPEN) && (L1117_B_MovementBlocked != k1_doorState_FOURTH) && (L1117_B_MovementBlocked != k5_doorState_DESTROYED);
+		} else {
+			if (L1116_i_SquareType == k6_ElementTypeFakeWall) {
+				L1117_B_MovementBlocked = (!getFlag(AL1115_ui_Square, k0x0004_FakeWallOpen) && !getFlag(AL1115_ui_Square, k0x0001_FakeWallImaginary));
+			}
+		}
+	}
+	if (_vm->_championMan->_g305_partyChampionCount == 0) {
+	} else {
+		if (L1117_B_MovementBlocked) {
+			L1117_B_MovementBlocked = _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, M21_normalizeModulo4(AL1118_ui_MovementArrowIndex += (_vm->_dungeonMan->_g308_partyDir + 2))), 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+			if (L1124_i_FirstDamagedChampionIndex != (L1125_i_SecondDamagedChampionIndex = _vm->_championMan->f286_getTargetChampionIndex(L1121_i_MapX, L1122_i_MapY, returnNextVal(AL1118_ui_MovementArrowIndex)))) {
+				L1117_B_MovementBlocked |= _vm->_championMan->f321_addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+			}
+			if (L1117_B_MovementBlocked) {
+				warning(false, "MISSING CODE: F0064_SOUND_RequestPlay_CPSD");
+			}
+		} else {
+			if (L1117_B_MovementBlocked = (_vm->_groupMan->f175_groupGetThing(L1121_i_MapX, L1122_i_MapY) != Thing::_endOfList)) {
+				_vm->_groupMan->f209_processEvents29to41(L1121_i_MapX, L1122_i_MapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+			}
+		}
+	}
+	if (L1117_B_MovementBlocked) {
+		f357_discardAllInput();
+		_vm->_g321_stopWaitingForPlayerInput = false;
+		return;
+	}
+	if (L1123_B_StairsSquare) {
+		_vm->_movsens->f267_getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, L1121_i_MapX, L1122_i_MapY);
+	} else {
+		_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, L1121_i_MapX, L1122_i_MapY);
+	}
+	AL1115_ui_Ticks = 1;
+	L1119_ps_Champion = _vm->_championMan->_gK71_champions;
+	for (AL1118_ui_ChampionIndex = k0_ChampionFirst; AL1118_ui_ChampionIndex < _vm->_championMan->_g305_partyChampionCount; AL1118_ui_ChampionIndex++) {
+		if (L1119_ps_Champion->_currHealth) {
+			warning(false, "possibly dangerous cast to uint16");
+			AL1115_ui_Ticks = MAX(AL1115_ui_Ticks, (uint16)_vm->_championMan->f310_getMovementTicks(L1119_ps_Champion));
+		}
+		L1119_ps_Champion++;
+	}
+	_vm->_g310_disabledMovementTicks = AL1115_ui_Ticks;
+	_vm->_g311_projectileDisableMovementTicks = 0;
 }
 
 bool EventManager::f375_processType80_clickDungeonView_isLeaderHandObjThrown(int16 posX, int16 posY) {
@@ -1052,4 +1135,11 @@ void EventManager::f357_discardAllInput() {
 	_commandQueue.clear();
 }
 
+void EventManager::f364_commandTakeStairs(bool stairsGoDown) {
+	_vm->_movsens->f267_getMoveResult(Thing::_party, _vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY, kM1_MapXNotOnASquare, 0);
+	_vm->_g327_newPartyMapIndex = _vm->_dungeonMan->f154_getLocationAfterLevelChange(_vm->_dungeonMan->_g309_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_g306_partyMapX, &_vm->_dungeonMan->_g307_partyMapY);
+	_vm->_dungeonMan->f173_setCurrentMap(_vm->_g327_newPartyMapIndex);
+	_vm->_championMan->f284_setPartyDirection(_vm->_dungeonMan->f155_getStairsExitDirection(_vm->_dungeonMan->_g306_partyMapX, _vm->_dungeonMan->_g307_partyMapY));
+	_vm->_dungeonMan->f173_setCurrentMap(_vm->_dungeonMan->_g309_partyMapIndex);
+}
 } // end of namespace DM
