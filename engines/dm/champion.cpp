@@ -609,7 +609,7 @@ void ChampionMan::drawSlot(uint16 champIndex, ChampionSlot slotIndex) {
 		thing = champ->getSlot(slotIndex);
 	}
 
-	SlotBox *slotBox = &gSlotBoxes[slotBoxIndex];
+	SlotBox *slotBox = &_vm->_objectMan->_slotBoxes[slotBoxIndex];
 	Box box;
 	box._x1 = slotBox->_x - 1;
 	box._y1 = slotBox->_y - 1;

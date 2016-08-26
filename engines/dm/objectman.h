@@ -41,14 +41,16 @@ public:
 	int16 _y;
 	int16 _iconIndex;
 	SlotBox(int16 x, int16 y, int16 iconIndex): _x(x), _y(y), _iconIndex(iconIndex) {}
+	SlotBox(): _x(-1), _y(-1), _iconIndex(-1) {}
 }; // @ SLOT_BOX
-
-extern SlotBox gSlotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes
 
 class ObjectMan {
 	DMEngine *_vm;
+
 public:
 	explicit ObjectMan(DMEngine *vm);
+
+	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
 
 	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
 	IconIndice getIconIndex(Thing thing); // @ F0033_OBJECT_GetIconIndex
