@@ -28,24 +28,13 @@
 
 namespace Adl {
 
-#define TRACKS 35
-// The Apple II uses either 13- or 16-sector disks. We currently pad out
-// 13-sector disks, so we set SECTORS_PER_TRACK to 16 here.
-#define SECTORS_PER_TRACK 16
-#define BYTES_PER_SECTOR 256
-#define RAW_IMAGE_SIZE(S) (TRACKS * (S) * BYTES_PER_SECTOR)
-#define NIB_IMAGE_SIZE (RAW_IMAGE_SIZE(13) * 2)
-
-static Common::SeekableReadStream *readImage_DSK(const Common::String &filename) {
+static Common::SeekableReadStream *readImage(const Common::String &filename) {
 	Common::File *f = new Common::File;
 
 	if (!f->open(filename)) {
 		delete f;
 		return nullptr;
 	}
-
-	if (f->size() != RAW_IMAGE_SIZE(16))
-		error("Unrecognized DSK image '%s' of size %d bytes", filename.c_str(), f->size());
 
 	return f;
 }
@@ -63,7 +52,7 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 	if (!f.open(filename))
 		return nullptr;
 
-	if (f.size() != NIB_IMAGE_SIZE)
+	if (f.size() != 232960)
 		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), f.size());
 
 	// starting at 0xaa, 32 is invalid (see below)
@@ -73,7 +62,9 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 
 	// we always pad it out
 	const uint sectorsPerTrack = 16;
-	byte *diskImage = (byte *)calloc(RAW_IMAGE_SIZE(sectorsPerTrack), 1);
+	const uint bytesPerSector = 256;
+	const uint imageSize = 35 * sectorsPerTrack * bytesPerSector;
+	byte *const diskImage = (byte *)calloc(imageSize, 1);
 
 	bool sawAddress = false;
 	uint8 volNo, track, sector;
@@ -120,13 +111,13 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 
 		// We should always find the data field after an address field.
 		// TODO: we ignore volNo?
-		byte *output = diskImage + (track * sectorsPerTrack + sector) * BYTES_PER_SECTOR;
+		byte *output = diskImage + (track * sectorsPerTrack + sector) * bytesPerSector;
 
 		if (newStyle) {
 			// We hardcode the DOS 3.3 mapping here. TODO: Do we also need raw/prodos?
 			int raw2dos[16] = { 0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15 };
 			sector = raw2dos[sector];
-			output = diskImage + (track * sectorsPerTrack + sector) * BYTES_PER_SECTOR;
+			output = diskImage + (track * sectorsPerTrack + sector) * bytesPerSector;
 
 			// 6-and-2 uses 342 on-disk bytes
 			byte inbuffer[342];
@@ -216,36 +207,59 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 		}
 	}
 
-	return new Common::MemoryReadStream(diskImage, RAW_IMAGE_SIZE(sectorsPerTrack), DisposeAfterUse::YES);
+	return new Common::MemoryReadStream(diskImage, imageSize, DisposeAfterUse::YES);
 }
 
 bool DiskImage::open(const Common::String &filename) {
 	Common::String lcName(filename);
 	lcName.toLowercase();
 
-	if (lcName.hasSuffix(".dsk"))
-		_stream = readImage_DSK(filename);
-	else if (lcName.hasSuffix(".nib"))
+	if (lcName.hasSuffix(".dsk")) {
+		_stream = readImage(filename);
+		_tracks = 35;
+		_sectorsPerTrack = 16;
+		_bytesPerSector = 256;
+	} else if (lcName.hasSuffix(".nib")) {
 		_stream = readImage_NIB(filename);
+		_tracks = 35;
+		_sectorsPerTrack = 16;
+		_bytesPerSector = 256;
+	} else if (lcName.hasSuffix(".xfd")) {
+		_stream = readImage(filename);
+		_tracks = 40;
+		_sectorsPerTrack = 18;
+		_bytesPerSector = 128;
+	}
 
-	return _stream != nullptr;
+	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
+
+	if (!_stream)
+		return false;
+
+	if (_stream->size() != expectedSize)
+		error("Unrecognized disk image '%s' of size %d bytes (expected %d bytes)", filename.c_str(), _stream->size(), expectedSize);
+
+	return true;
 }
 
 const DataBlockPtr DiskImage::getDataBlock(uint track, uint sector, uint offset, uint size) const {
-	return DataBlockPtr(new DiskImage::DataBlock(this, track, sector, offset, size, _mode13));
+	return DataBlockPtr(new DiskImage::DataBlock(this, track, sector, offset, size, _sectorLimit));
 }
 
-Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector, uint offset, uint size, uint sectorsPerTrackToRead) const {
-	const uint bytesToRead = size * BYTES_PER_SECTOR + BYTES_PER_SECTOR - offset;
+Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector, uint offset, uint size, uint sectorLimit) const {
+	const uint bytesToRead = size * _bytesPerSector + _bytesPerSector - offset;
 	byte *const data = (byte *)malloc(bytesToRead);
 	uint dataOffset = 0;
 
-	if (sector > sectorsPerTrackToRead - 1)
-		error("Sector %i is out of bounds for %i-sector reading", sector, sectorsPerTrackToRead);
+	if (sectorLimit == 0)
+		sectorLimit = _sectorsPerTrack;
+
+	if (sector >= sectorLimit)
+		error("Sector %i is out of bounds for %i-sector reading", sector, sectorLimit);
 
 	while (dataOffset < bytesToRead) {
-		uint bytesRemInTrack = (sectorsPerTrackToRead - 1 - sector) * BYTES_PER_SECTOR + BYTES_PER_SECTOR - offset;
-		_stream->seek((track * SECTORS_PER_TRACK + sector) * BYTES_PER_SECTOR + offset);
+		uint bytesRemInTrack = (sectorLimit - 1 - sector) * _bytesPerSector + _bytesPerSector - offset;
+		_stream->seek((track * _sectorsPerTrack + sector) * _bytesPerSector + offset);
 
 		if (bytesToRead - dataOffset < bytesRemInTrack)
 			bytesRemInTrack = bytesToRead - dataOffset;

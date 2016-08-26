@@ -37,7 +37,7 @@ void HiRes2Engine::runIntro() const {
 	// This only works for the 16-sector re-release. The original
 	// release is not supported at this time, because we don't have
 	// access to it.
-	_disk->setMode13(false);
+	_disk->setSectorLimit(0);
 	StreamPtr stream(_disk->createReadStream(0x00, 0xd, 0x17, 1));
 
 	_display->setMode(DISPLAY_MODE_TEXT);
@@ -50,7 +50,7 @@ void HiRes2Engine::runIntro() const {
 	_display->printString(str);
 	delay(2000);
 
-	_disk->setMode13(true);
+	_disk->setSectorLimit(13);
 }
 
 void HiRes2Engine::init() {
@@ -60,7 +60,7 @@ void HiRes2Engine::init() {
 	if (!_disk->open(IDS_HR2_DISK_IMAGE))
 		error("Failed to open disk image '" IDS_HR2_DISK_IMAGE "'");
 
-	_disk->setMode13(true);
+	_disk->setSectorLimit(13);
 
 	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
 

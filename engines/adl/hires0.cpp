@@ -35,7 +35,7 @@ void HiRes0Engine::init() {
 	if (!_disk->open(IDS_HR0_DISK_IMAGE))
 		error("Failed to open disk image '" IDS_HR0_DISK_IMAGE "'");
 
-	_disk->setMode13(true);
+	_disk->setSectorLimit(13);
 
 	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 2));
 
