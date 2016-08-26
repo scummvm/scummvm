@@ -551,11 +551,7 @@ void DMEngine::processEntrance() {
 	_displayMan->loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _entranceDoorAnimSteps[0]);
 	_interfaceCredits = _displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
 	_displayMan->_useByteBoxCoordinates = false;
-	Box displayBox;
-	displayBox._x1 = 0;
-	displayBox._x2 = 100;
-	displayBox._y1 = 0;
-	displayBox._y2 = 160;
+	Box displayBox(0, 100, 0, 160);
 	for (uint16 idx = 1; idx < 4; idx++) {
 		_displayMan->blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
 		displayBox._x2 -= 4;
@@ -714,9 +710,15 @@ T0444017:
 
 			switch (getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME"); break;
-			case Common::DE_DEU: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN"); break;
-			case Common::FR_FRA: _textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU"); break;
+			case Common::EN_ANY:
+				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME");
+				break;
+			case Common::DE_DEU:
+				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN");
+				break;
+			case Common::FR_FRA:
+				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU");
+				break;
 			}
 
 			curPalette[1] = D03_RGB_PINK;
@@ -844,81 +846,76 @@ void DMEngine::openEntranceDoors() {
 }
 
 void DMEngine::drawTittle() {
-	static Box G0003_s_Graphic562_Box_Title_StrikesBack_Destination(0, 319, 118, 174);
-	static Box G0004_s_Graphic562_Box_Title_StrikesBack_Source(0, 319, 0, 56);
-	static Box G0005_s_Graphic562_Box_Title_Presents(0, 319, 90, 105);
-	static Box K0078_s_Box_Title_Dungeon_Chaos(0, 319, 0, 79);
-
-	int16 L1380_i_Counter;
-	uint16 L1381_ui_DestinationHeight;
-	int16 L1382_i_DestinationPixelWidth;
-	byte *L1383_l_Bitmap_TitleSteps;
-	byte* L1384_puc_Bitmap_Title;
-	byte* L1387_apuc_Bitmap_ShrinkedTitle[20]; /* Only the first 18 entries are actually used */
-	byte* L1389_puc_Bitmap_Master_StrikesBack;
-	byte* L1761_puc_Bitmap_Dungeon_Chaos; /* Unreferenced on Atari ST */
-	int16 L1391_aai_Coordinates[20][5]; /* Only the first 18 entries are actually used */
-	uint16 L1392_aui_Palette[16];
-
+	static Box boxTitleStrikesBackDestination(0, 319, 118, 174);
+	static Box boxTitleStrikesBackSource(0, 319, 0, 56);
+	static Box boxTitlePresents(0, 319, 90, 105);
+	static Box boxTitleDungeonChaos(0, 319, 0, 79);
 
 	_displayMan->_useByteBoxCoordinates = false;
 
-	byte *alloactedMem = L1383_l_Bitmap_TitleSteps = new byte[145600 * 2];
+	byte *allocatedMem = new byte[145600 * 2];
+	byte *titleSteps = allocatedMem;
+	byte *bitmapTitle = titleSteps;
+	_displayMan->loadIntoBitmap(k1_titleGraphicsIndice, titleSteps);
 
-	L1384_puc_Bitmap_Title = L1383_l_Bitmap_TitleSteps;
-	_displayMan->loadIntoBitmap(k1_titleGraphicsIndice, L1383_l_Bitmap_TitleSteps);
-
-	L1383_l_Bitmap_TitleSteps += 320 * 200;
+	titleSteps += 320 * 200;
+	uint16 blitPalette[16];
 	for (uint16 i = 0; i < 16; ++i)
-		L1392_aui_Palette[i] = D01_RGB_DARK_BLUE;
+		blitPalette[i] = D01_RGB_DARK_BLUE;
 
-	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
+	_displayMan->startEndFadeToPalette(blitPalette);
 	_displayMan->fillScreen(k0_ColorBlack);
 	// uncomment this to draw 'Presents'
 	//_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
-	L1392_aui_Palette[15] = D09_RGB_WHITE;
-	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
-	_displayMan->blitToBitmap(L1384_puc_Bitmap_Title, L1389_puc_Bitmap_Master_StrikesBack = L1383_l_Bitmap_TitleSteps, G0004_s_Graphic562_Box_Title_StrikesBack_Source, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
-	L1383_l_Bitmap_TitleSteps += 320 * 57;
-	_displayMan->blitToBitmap(L1384_puc_Bitmap_Title, L1761_puc_Bitmap_Dungeon_Chaos = L1383_l_Bitmap_TitleSteps, K0078_s_Box_Title_Dungeon_Chaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
-	L1383_l_Bitmap_TitleSteps += 320 * 80;
-	L1384_puc_Bitmap_Title = L1761_puc_Bitmap_Dungeon_Chaos;
-	L1381_ui_DestinationHeight = 12;
-	L1382_i_DestinationPixelWidth = 48;
-	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
-		L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter] = L1383_l_Bitmap_TitleSteps;
-		_displayMan->blitToBitmapShrinkWithPalChange(L1384_puc_Bitmap_Title, L1383_l_Bitmap_TitleSteps, 320, 80, L1382_i_DestinationPixelWidth, L1381_ui_DestinationHeight, _displayMan->_palChangesNoChanges);
-		L1391_aai_Coordinates[L1380_i_Counter][1] = (L1391_aai_Coordinates[L1380_i_Counter][0] = (320 - L1382_i_DestinationPixelWidth) / 2) + L1382_i_DestinationPixelWidth - 1;
-		L1391_aai_Coordinates[L1380_i_Counter][3] = (L1391_aai_Coordinates[L1380_i_Counter][2] = ((int)(160 - L1381_ui_DestinationHeight)) / 2) + L1381_ui_DestinationHeight - 1;
-		L1383_l_Bitmap_TitleSteps += (L1391_aai_Coordinates[L1380_i_Counter][4] = ((L1382_i_DestinationPixelWidth + 15) / 16) * 8) * L1381_ui_DestinationHeight * 2;
-		L1381_ui_DestinationHeight += 4;
-		L1382_i_DestinationPixelWidth += 16;
+	blitPalette[15] = D09_RGB_WHITE;
+	_displayMan->startEndFadeToPalette(blitPalette);
+	byte *masterStrikesBack = titleSteps;
+	_displayMan->blitToBitmap(bitmapTitle, masterStrikesBack, boxTitleStrikesBackSource, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
+	titleSteps += 320 * 57;
+	byte *bitmapDungeonChaos = titleSteps; /* Unreferenced on Atari ST */
+	_displayMan->blitToBitmap(bitmapTitle, bitmapDungeonChaos, boxTitleDungeonChaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
+	titleSteps += 320 * 80;
+	bitmapTitle = bitmapDungeonChaos;
+	uint16 destinationHeight = 12;
+	int16 destinationPixelWidth = 48;
+	byte *shrinkedTitle[20]; /* Only the first 18 entries are actually used */
+	int16 blitCoordinates[20][5]; /* Only the first 18 entries are actually used */
+	for (int16 i = 0; i < 18; i++) {
+		shrinkedTitle[i] = titleSteps;
+		_displayMan->blitToBitmapShrinkWithPalChange(bitmapTitle, titleSteps, 320, 80, destinationPixelWidth, destinationHeight, _displayMan->_palChangesNoChanges);
+		blitCoordinates[i][0] = (320 - destinationPixelWidth) / 2;
+		blitCoordinates[i][1] = blitCoordinates[i][0] + destinationPixelWidth - 1;
+		blitCoordinates[i][2] = (160 - destinationHeight) / 2;
+		blitCoordinates[i][3] = blitCoordinates[i][2] + destinationHeight - 1;
+		titleSteps += (blitCoordinates[i][4] = ((destinationPixelWidth + 15) / 16) * 8) * destinationHeight * 2;
+		destinationHeight += 4;
+		destinationPixelWidth += 16;
 	}
-	L1392_aui_Palette[15] = D01_RGB_DARK_BLUE;
-	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
+	blitPalette[15] = D01_RGB_DARK_BLUE;
+	_displayMan->startEndFadeToPalette(blitPalette);
 	_displayMan->fillScreen(k0_ColorBlack);
-	L1392_aui_Palette[3] = D05_RGB_DARK_GOLD;
-	L1392_aui_Palette[4] = D02_RGB_LIGHT_BROWN;
-	L1392_aui_Palette[5] = D06_RGB_GOLD;
-	L1392_aui_Palette[6] = D04_RGB_LIGHTER_BROWN;
-	L1392_aui_Palette[8] = D08_RGB_YELLOW;
-	L1392_aui_Palette[15] = D07_RGB_RED;
-	L1392_aui_Palette[10] = D01_RGB_DARK_BLUE;
-	L1392_aui_Palette[12] = D01_RGB_DARK_BLUE;
-	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
+	blitPalette[3] = D05_RGB_DARK_GOLD;
+	blitPalette[4] = D02_RGB_LIGHT_BROWN;
+	blitPalette[5] = D06_RGB_GOLD;
+	blitPalette[6] = D04_RGB_LIGHTER_BROWN;
+	blitPalette[8] = D08_RGB_YELLOW;
+	blitPalette[15] = D07_RGB_RED;
+	blitPalette[10] = D01_RGB_DARK_BLUE;
+	blitPalette[12] = D01_RGB_DARK_BLUE;
+	_displayMan->startEndFadeToPalette(blitPalette);
 	delay(1);
-	for (L1380_i_Counter = 0; L1380_i_Counter < 18; L1380_i_Counter++) {
+	for (int16 i = 0; i < 18; i++) {
 		delay(2);
-		Box box(L1391_aai_Coordinates[L1380_i_Counter]);
-		_displayMan->blitToBitmap(L1387_apuc_Bitmap_ShrinkedTitle[L1380_i_Counter], _displayMan->_bitmapScreen, box, 0, 0, L1391_aai_Coordinates[L1380_i_Counter][4], k160_byteWidthScreen, kM1_ColorNoTransparency, L1391_aai_Coordinates[L1380_i_Counter][3] - L1391_aai_Coordinates[L1380_i_Counter][2] + 1, k200_heightScreen);
+		Box box(blitCoordinates[i]);
+		_displayMan->blitToBitmap(shrinkedTitle[i], _displayMan->_bitmapScreen, box, 0, 0, blitCoordinates[i][4], k160_byteWidthScreen, kM1_ColorNoTransparency, blitCoordinates[i][3] - blitCoordinates[i][2] + 1, k200_heightScreen);
 	}
-	delay(25L);
-	_displayMan->blitToBitmap(L1389_puc_Bitmap_Master_StrikesBack, _displayMan->_bitmapScreen, G0003_s_Graphic562_Box_Title_StrikesBack_Destination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
-	L1392_aui_Palette[10] = D00_RGB_BLACK;
-	L1392_aui_Palette[12] = D07_RGB_RED;
-	_displayMan->startEndFadeToPalette(L1392_aui_Palette);
-	delete[] alloactedMem;
-	delay(75L);
+	delay(25);
+	_displayMan->blitToBitmap(masterStrikesBack, _displayMan->_bitmapScreen, boxTitleStrikesBackDestination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
+	blitPalette[10] = D00_RGB_BLACK;
+	blitPalette[12] = D07_RGB_RED;
+	_displayMan->startEndFadeToPalette(blitPalette);
+	delete[] allocatedMem;
+	delay(75);
 }
 
 void DMEngine::entranceDrawCredits() {
