@@ -254,6 +254,8 @@ class Skill {
 public:
 	int16 _temporaryExperience;
 	int32 _experience;
+	
+	void resetToZero() { _temporaryExperience = _experience = 0; }
 }; // @ SKILL
 
 class Champion {
@@ -318,6 +320,25 @@ public:
 		}
 	}
 	void clearWounds() { _wounds = kChampionWoundNone; }
+	void resetToZero() { // oh boy > . <
+		for (int16 i = 0; i < 30; ++i)
+			_slots[i] = Thing::_thingNone;
+		for (int16 i = 0; i < 20; ++i)
+			_skills[i].resetToZero();
+		_attributes = _wounds = 0;
+		memset(_statistics, 0, 7 * 3);
+		memset(_name, '\0', 8);
+		memset(_title, '\0', 20);
+		_dir = kDirNorth;
+		_cell = kViewCellFronLeft;
+		_actionIndex = kChampionActionN;
+		_symbolStep = 0;
+		memset(_symbols, '\0', 5);
+		_directionMaximumDamageReceived = _maximumDamageReceived = _poisonEventCount = _enableActionEventIndex = 0;
+		_hideDamageReceivedIndex = _currHealth = _maxHealth = _currStamina = _maxStamina = _currMana = _maxMana = 0;
+		_actionDefense = _food = _water = _load = _shieldDefense = 0;
+		memset(_portrait, 0, 464);
+	}
 }; // @ CHAMPION_INCLUDING_PORTRAIT
 
 class ChampionMan {

@@ -100,9 +100,9 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 
 	uint16 prevChampCount = _partyChampionCount;
 	Champion *champ = &_champions[prevChampCount];
-	warning("MISSING CODE: Fill champ memory with zero bytes");
+	champ->resetToZero();
 	dispMan._useByteBoxCoordinates = true;
-	{ // block on purpose
+	{ // limit destBox scope
 		Box &destBox = gBoxChampionPortrait;
 		dispMan.blitToBitmap(dispMan.getBitmap(kChampionPortraitsIndice), 256, getChampionPortraitX(championPortraitIndex), getChampionPortraitY(championPortraitIndex),
 							 champ->_portrait, 32, destBox._x1, destBox._x2, destBox._y1, destBox._y2, kColorNoTransparency);
@@ -207,7 +207,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	thing = dunMan.getSquareFirstThing(mapX, mapY);
 	AL_0_slotIndex_Red = kChampionSlotBackpackLine_1_1;
 	uint16 slotIndex_Green;
-	while (thing != Thing::_thingNone) {
+	while (thing != Thing::_thingEndOfList) {
 		ThingType AL_2_thingType = thing.getType();
 		if ((AL_2_thingType > kSensorThingType) && (thing.getCell() == championObjectsCell)) {
 			int16 objectAllowedSlots = gObjectInfo[dunMan.getObjectInfoIndex(thing)].getAllowedSlots();
