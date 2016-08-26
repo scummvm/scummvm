@@ -317,14 +317,14 @@ void MacWindow::setScroll(float scrollPos, float scrollSize) {
 
 void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo) {
 	Image::BitmapDecoder bmpDecoder;
-	Graphics::Surface source;
+	Graphics::Surface *source;
 	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
 
 	bmpDecoder.loadStream(file);
-	source = *(bmpDecoder.getSurface());
+	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
 
-	source.convertToInPlace(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
-	surface->copyFrom(source);
+	surface->create(source->w, source->h, surface->getSupportedPixelFormat());
+	surface->copyFrom(*source);
 	surface->applyColorKey(255, 0, 255, false);
 
 	if (active)
@@ -336,6 +336,8 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo
 		_macBorder.setOffsets(lo, ro, to, bo);
 
 	updateInnerDims();
+	source->free();
+	delete source;
 }
 
 void MacWindow::setCloseable(bool closeable) {

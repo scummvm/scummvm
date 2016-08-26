@@ -260,8 +260,10 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 }
 
 NinePatchBitmap::~NinePatchBitmap() {
-	if (_destroy_bmp)
+	if (_destroy_bmp) {
+		_bmp->free();
 		delete _bmp;
+	}
 }
 
 void NinePatchBitmap::drawRegions(Graphics::Surface &target, int dx, int dy, int dw, int dh) {
