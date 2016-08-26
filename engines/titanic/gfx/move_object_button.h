@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CMoveObjectButton : public CSTButton {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
 private:
 	Point _pos1;
 	int _field11C;

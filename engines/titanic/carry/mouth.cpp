@@ -21,8 +21,15 @@
  */
 
 #include "titanic/carry/mouth.h"
+#include "titanic/game/head_slot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CMouth, CHeadPiece)
+	ON_MESSAGE(UseWithOtherMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(PETGainedObjectMsg)
+END_MESSAGE_MAP()
 
 CMouth::CMouth() : CHeadPiece() {
 }
@@ -35,6 +42,39 @@ void CMouth::save(SimpleFile *file, int indent) {
 void CMouth::load(SimpleFile *file) {
 	file->readNumber();
 	CHeadPiece::load(file);
+}
+
+bool CMouth::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CHeadSlot *slot = dynamic_cast<CHeadSlot *>(msg->_other);
+	if (!slot)
+		return CHeadPiece::UseWithOtherMsg(msg);
+
+	_flag = true;
+	setVisible(false);
+	setPosition(Point(0, 0));
+	petMoveToHiddenRoom();
+
+	CAddHeadPieceMsg addMsg(getName());
+	if (addMsg._value != "NULL")
+		addMsg.execute("MouthSlot");
+
+	return true;
+}
+
+bool CMouth::MovieEndMsg(CMovieEndMsg *msg) {
+	return true;
+}
+
+bool CMouth::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
+	_visibleFrame = 2;
+	loadFrame(2);
+	setVisible(true);
+	if (!_field13C) {
+		stateInc38();
+		_field13C = true;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

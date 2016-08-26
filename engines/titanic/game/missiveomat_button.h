@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CMissiveOMatButton : public CEditControl {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool VisibleMsg(CVisibleMsg *msg);
+	bool MouseDoubleClickMsg(CMouseDoubleClickMsg *msg);
 public:
-	int _fieldFC;
+	int _buttonId;
 public:
 	CLASSDEF;
-	CMissiveOMatButton() : CEditControl(), _fieldFC(2) {}
+	CMissiveOMatButton() : CEditControl(), _buttonId(2) {}
 
 	/**
 	 * Save the data for the class to file

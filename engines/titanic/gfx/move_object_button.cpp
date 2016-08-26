@@ -21,8 +21,13 @@
  */
 
 #include "titanic/gfx/move_object_button.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CMoveObjectButton, CSTButton)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
 
 CMoveObjectButton::CMoveObjectButton() : CSTButton(), _field11C(1) {
 }
@@ -41,6 +46,16 @@ void CMoveObjectButton::load(SimpleFile *file) {
 	_field11C = file->readNumber();
 
 	CSTButton::load(file);
+}
+
+bool CMoveObjectButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	CGameObject *obj = dynamic_cast<CGameObject *>(getRoot()->findByName(_actionTarget));
+	if (obj) {
+		obj->petAddToInventory();
+		obj->setVisible(_field11C);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

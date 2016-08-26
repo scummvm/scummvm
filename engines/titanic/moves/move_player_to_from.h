@@ -23,11 +23,13 @@
 #ifndef TITANIC_MOVE_PLAYER_TO_FROM_H
 #define TITANIC_MOVE_PLAYER_TO_FROM_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/moves/move_player_to.h"
 
 namespace Titanic {
 
-class CMovePlayerToFrom : public CGameObject {
+class CMovePlayerToFrom : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 private:
 	CString _string2;
 public:

@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMovePlayerInParrotRoom, CMovePlayerTo)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CMovePlayerInParrotRoom::CMovePlayerInParrotRoom() : CMovePlayerTo() {
 }
 
@@ -35,6 +40,22 @@ void CMovePlayerInParrotRoom::save(SimpleFile *file, int indent) {
 void CMovePlayerInParrotRoom::load(SimpleFile *file) {
 	file->readNumber();
 	CMovePlayerTo::load(file);
+}
+
+bool CMovePlayerInParrotRoom::ActMsg(CActMsg *msg) {
+	if (msg->_action == "PanAwayFromParrot") {
+		unlockMouse();
+		changeView(_destination);
+	}
+
+	return true;
+}
+
+bool CMovePlayerInParrotRoom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	lockMouse();
+	CPanningAwayFromParrotMsg awayMsg(this);
+	awayMsg.execute("PerchedParrot");
+	return true;
 }
 
 } // End of namespace Titanic

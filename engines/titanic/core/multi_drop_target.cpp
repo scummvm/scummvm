@@ -21,8 +21,13 @@
  */
 
 #include "titanic/core/multi_drop_target.h"
+#include "titanic/support/string_parser.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CMultiDropTarget, CDropTarget)
+	ON_MESSAGE(DropObjectMsg)
+END_MESSAGE_MAP()
 
 void CMultiDropTarget::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -38,6 +43,23 @@ void CMultiDropTarget::load(SimpleFile *file) {
 	_string6 = file->readString();
 
 	CDropTarget::load(file);
+}
+
+bool CMultiDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
+	CStringParser parser1(_string5);
+	CStringParser parser2(_string6);
+	CString seperatorChars = ",";
+	int dropFrame =  _dropFrame;
+
+	while (parser2.parse(_itemMatchName, seperatorChars)) {
+		_dropFrame = parser1.readInt();
+		CDropTarget::DropObjectMsg(msg);
+
+		parser1.skipSeperators(seperatorChars);
+		parser2.skipSeperators(seperatorChars);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -21,10 +21,16 @@
  */
 
 #include "titanic/moves/move_player_to_from.h"
+#include "titanic/core/view_item.h"
+#include "titanic/core/link_item.h"
 
 namespace Titanic {
 
-CMovePlayerToFrom::CMovePlayerToFrom() : CGameObject() {
+BEGIN_MESSAGE_MAP(CMovePlayerToFrom, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CMovePlayerToFrom::CMovePlayerToFrom() : CMovePlayerTo() {
 }
 
 void CMovePlayerToFrom::save(SimpleFile *file, int indent) {
@@ -39,6 +45,19 @@ void CMovePlayerToFrom::load(SimpleFile *file) {
 	_string2 = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CMovePlayerToFrom::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_string2.empty()) {
+		changeView(_destination);
+	} else {
+		CViewItem *view = parseView(_string2);
+		CViewItem *destView = parseView(_destination);
+		CLinkItem *link = view->findLink(destView);
+		changeView(_destination, link->getName());
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

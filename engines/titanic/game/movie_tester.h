@@ -28,11 +28,13 @@
 namespace Titanic {
 
 class CMovieTester : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
-	int _value1, _value2;
+	int _movieNumFrames, _movieFrameNum;
 public:
 	CLASSDEF;
-	CMovieTester() : CGameObject(), _value1(0), _value2(0) {}
+	CMovieTester() : CGameObject(), _movieNumFrames(0), _movieFrameNum(0) {}
 
 	/**
 	 * Save the data for the class to file

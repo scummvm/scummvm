@@ -21,21 +21,47 @@
  */
 
 #include "titanic/game/missiveomat_button.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMissiveOMatButton, CEditControl)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(VisibleMsg)
+	ON_MESSAGE(MouseDoubleClickMsg)
+END_MESSAGE_MAP()
+
 void CMissiveOMatButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_buttonId, indent);
 
 	CEditControl::save(file, indent);
 }
 
 void CMissiveOMatButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldFC = file->readNumber();
+	_buttonId = file->readNumber();
 
 	CEditControl::load(file);
+}
+
+bool CMissiveOMatButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CMissiveOMatActionMsg actionMsg;
+	actionMsg._action = _buttonId;
+	actionMsg.execute(findRoom()->findByName("MissiveOMat"));
+	return true;
+}
+
+bool CMissiveOMatButton::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	return true;
+}
+
+bool CMissiveOMatButton::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
+	CMissiveOMatActionMsg actionMsg;
+	actionMsg._action = _buttonId;
+	actionMsg.execute(findRoom()->findByName("MissiveOMat"));
+	return true;
 }
 
 } // End of namespace Titanic

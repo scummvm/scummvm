@@ -21,8 +21,14 @@
  */
 
 #include "titanic/moves/move_player_to.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CMovePlayerTo, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 CMovePlayerTo::CMovePlayerTo() : CGameObject() {
 }
@@ -39,6 +45,19 @@ void CMovePlayerTo::load(SimpleFile *file) {
 	_destination = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CMovePlayerTo::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CGameManager *gameManager = getGameManager();
+	if (gameManager)
+		changeView(_destination);
+
+	return true;
+}
+
+bool CMovePlayerTo::ActMsg(CActMsg *msg) {
+	_destination = msg->_action;
+	return true;
 }
 
 } // End of namespace Titanic

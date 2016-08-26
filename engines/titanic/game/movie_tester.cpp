@@ -24,18 +24,36 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CMovieTester, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CMovieTester::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_movieNumFrames, indent);
+	file->writeNumberLine(_movieFrameNum, indent);
 	CGameObject::save(file, indent);
 }
 
 void CMovieTester::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_movieNumFrames = file->readNumber();
+	_movieFrameNum = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CMovieTester::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (msg->_buttons == MB_RIGHT) {
+		if (--_movieFrameNum < 0) {
+			_movieFrameNum = _movieNumFrames - 1;
+		}
+	} else {
+		if (++_movieFrameNum >= _movieNumFrames)
+			_movieFrameNum = 0;
+	}
+
+	loadFrame(_movieFrameNum);
+	return true;
 }
 
 } // End of namespace Titanic
