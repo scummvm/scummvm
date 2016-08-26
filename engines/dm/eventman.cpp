@@ -216,6 +216,9 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 
 	_pendingClickPresent = false;
 	_isCommandQueueLocked = true;
+	_mousePointerBitmapUpdated = false;
+	_refreshMousePointerInMainLoop = false;
+	_highlightBoxEnabled = false;
 
 	_dummyMapIndex = 0;
 	_pendingClickButton = kNoneMouseButton;

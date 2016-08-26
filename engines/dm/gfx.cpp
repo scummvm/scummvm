@@ -12,8 +12,6 @@ namespace DM {
 
 Box gBoxMovementArrows = Box(224, 319, 124, 168);
 
-
-
 enum StairFrameIndex {
 	kFrameStairsUpFront_D3L = 0, // @ G0110_s_Graphic558_Frame_StairsUpFront_D3L 
 	kFrameStairsUpFront_D3C = 1, // @ G0111_s_Graphic558_Frame_StairsUpFront_D3C 
@@ -614,6 +612,7 @@ DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 		_currMapDoorOrnIndices[i] = 0;
 
 	_inscriptionThing = Thing::_thingNone;
+	_useByteBoxCoordinates = false;
 }
 
 DisplayMan::~DisplayMan() {

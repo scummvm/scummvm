@@ -56,8 +56,15 @@ DMEngine::DMEngine(OSystem *syst) : Engine(syst), _console(nullptr) {
 	_objectMan = nullptr;
 	_inventoryMan = nullptr;
 	_textMan = nullptr;
+
 	_stopWaitingForPlayerInput = false;
 	_gameTimeTicking = false;
+	_restartGameAllowed = false;
+	_pressingEye = false;
+	_pressingMouth = false;
+	_stopPressingEye = false;
+	_stopPressingMouth = false;
+	_highlightBoxInversionRequested = false;
 
 	debug("DMEngine::DMEngine");
 }
