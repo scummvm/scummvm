@@ -272,7 +272,7 @@ void Lingo::processEvent(LEvent event, int entityId) {
 	if (st != kNoneScript)
 		executeScript(st, entityId + 1);
 	else
-		debug(2, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {

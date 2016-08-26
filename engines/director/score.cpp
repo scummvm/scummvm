@@ -726,11 +726,12 @@ void Score::startLoop() {
 	_frames[_currentFrame]->prepareFrame(this);
 
 	while (!_stopPlay && _currentFrame < _frames.size() - 2) {
+		debugC(1, kDebugImages, "Current frame: %d", _currentFrame);
 		update();
 		processEvents();
 
 		g_system->updateScreen();
-		g_system->delayMillis(10);
+		g_system->delayMillis(200);
 	}
 }
 
