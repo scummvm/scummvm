@@ -305,6 +305,10 @@ EventManager::EventManager(DMEngine *vm) : _vm(vm) {
 	_g326_refreshMousePointerInMainLoop = false;
 	_g341_highlightBoxEnabled = false;
 	_g599_useChampionIconOrdinalAsMousePointerBitmap = 0;
+	_g439_pendingClickButton = k0_NoneMouseButton;
+	_g600_useObjectAsMousePointerBitmap = false;
+	_g601_useHandAsMousePointerBitmap = false;
+	_gK100_preventBuildPointerScreenArea = false;
 }
 
 EventManager::~EventManager() {

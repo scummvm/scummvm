@@ -1009,16 +1009,13 @@ void DisplayMan::f103_drawDoorFrameBitmapFlippedHorizontally(byte* bitmap, Frame
 }
 
 void DisplayMan::f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButtonIndex) {
-	int16 nativeBitmapIndex;
-	int coordSet;
-	uint16* coordSetRedEagle;
-	byte* bitmap;
-	byte* bitmapNative;
-
 	if (doorButtonOrdinal) {
 		doorButtonOrdinal--;
-		nativeBitmapIndex = doorButtonOrdinal + k315_firstDoorButton_GraphicIndice;
-		coordSetRedEagle = g208_doorButtonCoordSets[coordSet = g197_doorButtonCoordSet[doorButtonOrdinal]][viewDoorButtonIndex];
+		int16 nativeBitmapIndex = doorButtonOrdinal + k315_firstDoorButton_GraphicIndice;
+		int coordSet = g197_doorButtonCoordSet[doorButtonOrdinal];
+		uint16 *coordSetRedEagle = g208_doorButtonCoordSets[coordSet][viewDoorButtonIndex];
+
+		byte* bitmap = nullptr;
 		if (viewDoorButtonIndex == k3_viewDoorButton_D1C) {
 			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 
@@ -1028,8 +1025,8 @@ void DisplayMan::f110_drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButt
 			_vm->_dungeonMan->_g291_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
 		} else {
 			if (!f491_isDerivedBitmapInCache(doorButtonOrdinal = k102_DerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((!viewDoorButtonIndex) ? 0 : viewDoorButtonIndex - 1))) {
-				uint16* coordSetBlueGoat = g208_doorButtonCoordSets[coordSet][k3_viewDoorButton_D1C];
-				bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+				uint16 *coordSetBlueGoat = g208_doorButtonCoordSets[coordSet][k3_viewDoorButton_D1C];
+				byte *bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 				f129_blitToBitmapShrinkWithPalChange(bitmapNative, f492_getDerivedBitmap(doorButtonOrdinal),
 													 coordSetBlueGoat[4] << 1, coordSetBlueGoat[5],
 													 coordSetRedEagle[1] - coordSetRedEagle[0] + 1,
@@ -1383,18 +1380,13 @@ void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIn
 
 #define height doorOrnOrdinal
 #define byteWidth viewDoorOrnIndex
-	int16 nativeBitmapIndex;
-	int16 coordSetGreenToad;
-	uint16* coordSetOrangeElk;
-	byte* L0107_puc_Multiple;
-#define bitmap        L0107_puc_Multiple
-	byte* bitmapNative;
-
 
 	if (doorOrnOrdinal) {
 		doorOrnOrdinal--;
-		nativeBitmapIndex = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k0_NativeBitmapIndex];
-		coordSetOrangeElk = g207_doorOrnCoordSets[coordSetGreenToad = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k1_CoordinateSet]][viewDoorOrnIndex];
+		int16 nativeBitmapIndex = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k0_NativeBitmapIndex];
+		int16 coordSetGreenToad = _g103_currMapDoorOrnInfo[doorOrnOrdinal][k1_CoordinateSet];
+		uint16 *coordSetOrangeElk = g207_doorOrnCoordSets[coordSetGreenToad][viewDoorOrnIndex];
+		byte *bitmap = nullptr;
 		if (viewDoorOrnIndex == k2_ViewDoorOrnament_D1LCR) {
 			bitmap = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 			byteWidth = 48;
@@ -1402,7 +1394,7 @@ void DisplayMan::f109_drawDoorOrnament(int16 doorOrnOrdinal, int16 viewDoorOrnIn
 		} else {
 			if (!f491_isDerivedBitmapInCache(doorOrnOrdinal = k68_DerivedBitmapFirstDoorOrnament_D3 + (doorOrnOrdinal * 2) + viewDoorOrnIndex)) {
 				uint16 *coordSetRedEagle = g207_doorOrnCoordSets[coordSetGreenToad][k2_ViewDoorOrnament_D1LCR];
-				bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
+				byte* bitmapNative = f489_getNativeBitmapOrGraphic(nativeBitmapIndex);
 				f129_blitToBitmapShrinkWithPalChange(bitmapNative,
 													 f492_getDerivedBitmap(doorOrnOrdinal),
 													 coordSetRedEagle[4] << 1, coordSetRedEagle[5],

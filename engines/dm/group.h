@@ -175,7 +175,7 @@ public:
 	uint16 _g376_maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
 	ActiveGroup *_g375_activeGroups; // @ G0375_ps_ActiveGroups
 	uint16 _g377_currActiveGroupCount; // @ G0377_ui_CurrentActiveGroupCount
-	GroupMan(DMEngine *vm);
+	explicit GroupMan(DMEngine *vm);
 	~GroupMan();
 
 	void f196_initActiveGroups(); // @ F0196_GROUP_InitializeActiveGroups

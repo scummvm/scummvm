@@ -151,7 +151,7 @@ public:
 	uint16 *_g371_timeline; // @ G0371_pui_Timeline
 	uint16 _g373_firstUnusedEventIndex; // @ G0373_ui_FirstUnusedEventIndex
 
-	Timeline(DMEngine *vm);
+	explicit Timeline(DMEngine *vm);
 	~Timeline();
 	void f233_initTimeline(); // @ F0233_TIMELINE_Initialize
 	void f237_deleteEvent(uint16 eventIndex);// @ F0237_TIMELINE_DeleteEvent
