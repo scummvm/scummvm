@@ -392,7 +392,8 @@ void FullpipeEngine::lift_clickButton() {
 		lift_walkAndGo();
 }
 
-void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
+void FullpipeEngine::lift_goAnimation() {
+	if (_lastLiftButton) {
 		int parentId = _currentScene->_sceneId;
 		int buttonId = lift_getButtonIdN(_lastLiftButton->_statics->_staticsId);
 
@@ -428,6 +429,8 @@ void FullpipeEngine::lift_goAnimation() {	if (_lastLiftButton) {
 					delete mq;
 
 				_aniMan->_flags |= 1;
+
+				return;
 			}
 		}
 	}
