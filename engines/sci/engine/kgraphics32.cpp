@@ -907,7 +907,7 @@ reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
  */
 reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
 	const uint8 gamma = argv[0].toUint16();
-	assert(gamma >= 0 && gamma <= 6);
+	assert(gamma <= 6);
 
 	warning("TODO: kPaletteSetGamma(%d)", gamma);
 
