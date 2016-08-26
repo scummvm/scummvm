@@ -738,9 +738,6 @@ void Score::startLoop() {
 		debugC(1, kDebugImages, "Current frame: %d", _currentFrame);
 		update();
 		processEvents();
-
-		g_system->updateScreen();
-		g_system->delayMillis(200);
 	}
 }
 
@@ -797,13 +794,11 @@ void Score::update() {
 			//Wait for sound channel 1
 			while (_soundManager->isChannelActive(1)) {
 				processEvents();
-				g_system->delayMillis(10);
 			}
 		} else if (tempo == 134) {
 			//Wait for sound channel 2
 			while (_soundManager->isChannelActive(2)) {
 				processEvents();
-				g_system->delayMillis(10);
 			}
 		}
 	}
@@ -816,22 +811,29 @@ void Score::processEvents() {
 
 	Common::Event event;
 
-	while (g_system->getEventManager()->pollEvent(event)) {
-		if (event.type == Common::EVENT_QUIT)
-			_stopPlay = true;
+	int endTime = g_system->getMillis() + 200;
 
-		if (event.type == Common::EVENT_LBUTTONDOWN) {
-			Common::Point pos = g_system->getEventManager()->getMousePos();
+	while (g_system->getMillis() < endTime) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT)
+				_stopPlay = true;
 
-			//TODO there is dont send frame id
-			_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+			if (event.type == Common::EVENT_LBUTTONDOWN) {
+				Common::Point pos = g_system->getEventManager()->getMousePos();
+
+				//TODO there is dont send frame id
+				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+			}
+
+			if (event.type == Common::EVENT_LBUTTONUP) {
+				Common::Point pos = g_system->getEventManager()->getMousePos();
+
+				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
+			}
 		}
 
-		if (event.type == Common::EVENT_LBUTTONUP) {
-			Common::Point pos = g_system->getEventManager()->getMousePos();
-
-			_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
-		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 }
 
