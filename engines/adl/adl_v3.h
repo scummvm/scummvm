@@ -20,52 +20,24 @@
  *
  */
 
-#ifndef ADL_ADL_V4_H
-#define ADL_ADL_V4_H
+#ifndef ADL_ADL_V3_H
+#define ADL_ADL_V3_H
 
-#include "adl/adl_v3.h"
-
-namespace Common {
-class RandomSource;
-}
-
-struct DiskOffset {
-	byte track;
-	byte sector;
-};
+#include "adl/adl_v2.h"
 
 namespace Adl {
 
-class AdlEngine_v4 : public AdlEngine_v3 {
+class AdlEngine_v3 : public AdlEngine_v2 {
 public:
-	virtual ~AdlEngine_v4() { }
+	virtual ~AdlEngine_v3() { }
 
 protected:
-	AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd);
+	AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd);
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
-	virtual Common::String loadMessage(uint idx) const;
-	Common::String getItemDescription(const Item &item) const;
 
-	// AdlEngine_v2
-	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
-
-	void applyDiskOffset(byte &track, byte &sector) const;
-
-	int o4_isVarGT(ScriptEnv &e);
-	int o4_isItemInRoom(ScriptEnv &e);
-	int o4_isNounNotInRoom(ScriptEnv &e);
-	int o4_skipOneCommand(ScriptEnv &e);
-	int o4_moveItem(ScriptEnv &e);
-	int o4_dummy(ScriptEnv &e);
-	int o4_setTextMode(ScriptEnv &e);
-	int o4_setDisk(ScriptEnv &e);
-	int o4_sound(ScriptEnv &e);
-
-	Common::Array<Common::String> _itemDesc;
-	byte _curDisk;
-	Common::Array<DiskOffset> _diskOffsets;
+	int o3_isNounNotInRoom(ScriptEnv &e);
 };
 
 } // End of namespace Adl

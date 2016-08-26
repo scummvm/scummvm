@@ -30,7 +30,7 @@
 namespace Adl {
 
 AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v2(syst, gd),
+		AdlEngine_v3(syst, gd),
 		_curDisk(0) {
 }
 
