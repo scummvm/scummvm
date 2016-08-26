@@ -28,9 +28,14 @@
 namespace Titanic {
 
 class CodeWheel : public CBomb {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
 	int _field108;
-	int _field10C;
+	int _state;
 	int _field110;
 public:
 	CLASSDEF;

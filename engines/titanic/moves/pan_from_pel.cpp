@@ -24,23 +24,33 @@
 
 namespace Titanic {
 
-CPanFromPel::CPanFromPel() : CMovePlayerTo(), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CPanFromPel, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CPanFromPel::CPanFromPel() : CMovePlayerTo(), _closeLeft(false) {
 }
 
 void CPanFromPel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeNumberLine(_closeLeft, indent);
+	file->writeQuotedLine(_target, indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CPanFromPel::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
-	_string1 = file->readString();
+	_closeLeft = file->readNumber();
+	_target = file->readString();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CPanFromPel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CActMsg actMsg(_closeLeft ? "CloseLeft" : "CloseRight");
+	actMsg.execute(_target);
+	return true;
 }
 
 } // End of namespace Titanic

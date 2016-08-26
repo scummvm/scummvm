@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CNutReplacer : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF;
 

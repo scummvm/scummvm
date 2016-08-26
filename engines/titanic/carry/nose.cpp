@@ -21,8 +21,14 @@
  */
 
 #include "titanic/carry/nose.h"
+#include "titanic/game/head_slot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CNose, CHeadPiece)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
 
 CNose::CNose() : CHeadPiece() {
 }
@@ -35,6 +41,25 @@ void CNose::save(SimpleFile *file, int indent) {
 void CNose::load(SimpleFile *file) {
 	file->readNumber();
 	CHeadPiece::load(file);
+}
+
+bool CNose::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	// WORKAROUND: Redundant code in original skipped
+	return true;
+}
+
+bool CNose::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	CHeadSlot *slot = dynamic_cast<CHeadSlot *>(msg->_other);
+	if (!slot)
+		return CCarry::UseWithOtherMsg(msg);
+
+	petMoveToHiddenRoom();
+	_flag = false;
+	CAddHeadPieceMsg addMsg(getName());
+	if (addMsg._value != "NULL")
+		addMsg.execute("NoseSlot");
+
+	return true;
 }
 
 } // End of namespace Titanic

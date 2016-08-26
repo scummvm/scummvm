@@ -165,6 +165,8 @@
 #include "titanic/game/music_room_stop_phonograph_button.h"
 #include "titanic/game/music_system_lock.h"
 #include "titanic/game/nav_helmet.h"
+#include "titanic/game/nav_helmet_on.h"
+#include "titanic/game/nav_helmet_off.h"
 #include "titanic/game/navigation_computer.h"
 #include "titanic/game/no_nut_bowl.h"
 #include "titanic/game/nose_holder.h"
@@ -575,6 +577,8 @@ DEFFN(CMusicRoomPhonograph);
 DEFFN(CMusicRoomStopPhonographButton);
 DEFFN(CMusicSystemLock);
 DEFFN(CNavHelmet);
+DEFFN(CNavHelmetOn);
+DEFFN(CNavHelmetOff);
 DEFFN(CNavigationComputer);
 DEFFN(CNoNutBowl);
 DEFFN(CNoseHolder);
@@ -1162,6 +1166,8 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMusicRoomStopPhonographButton, CEjectPhonographButton);
 	ADDFN(CMusicSystemLock, CDropTarget);
 	ADDFN(CNavHelmet, CGameObject);
+	ADDFN(CNavHelmetOn, CGameObject);
+	ADDFN(CNavHelmetOff, CGameObject);
 	ADDFN(CNavigationComputer, CGameObject);
 	ADDFN(CNoNutBowl, CBackground);
 	ADDFN(CNoseHolder, CDropTarget);

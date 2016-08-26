@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CNoNutBowl, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+	ON_MESSAGE(NutPuzzleMsg)
+END_MESSAGE_MAP()
+
 void CNoNutBowl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
@@ -32,6 +38,21 @@ void CNoNutBowl::save(SimpleFile *file, int indent) {
 void CNoNutBowl::load(SimpleFile *file) {
 	file->readNumber();
 	CBackground::load(file);
+}
+
+bool CNoNutBowl::ActMsg(CActMsg *msg) {
+	return true;
+}
+
+bool CNoNutBowl::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(false);
+	return true;
+}
+
+bool CNoNutBowl::NutPuzzleMsg(CNutPuzzleMsg *msg) {
+	if (msg->_value == "NutsGone")
+		setVisible(true);
+	return true;
 }
 
 } // End of namespace Titanic

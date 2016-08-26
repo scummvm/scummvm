@@ -28,8 +28,14 @@
 namespace Titanic {
 
 class CNoseHolder : public CDropTarget {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	int _field118;
+	CGameObject *_dragObject;
 	int _field11C;
 public:
 	CLASSDEF;

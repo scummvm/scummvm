@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CNose : public CHeadPiece {
+	DECLARE_MESSAGE_MAP;
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 public:
 	CLASSDEF;
 	CNose();

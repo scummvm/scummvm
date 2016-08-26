@@ -28,9 +28,11 @@
 namespace Titanic {
 
 class CPanFromPel : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 protected:
-	int _fieldC8;
-	CString _string1;
+	bool _closeLeft;
+	CString _target;
 public:
 	CLASSDEF;
 	CPanFromPel();

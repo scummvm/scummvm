@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CNutReplacer, CGameObject)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CNutReplacer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +37,17 @@ void CNutReplacer::save(SimpleFile *file, int indent) {
 void CNutReplacer::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CNutReplacer::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(true);
+	playMovie(MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+	return true;
+}
+
+bool CNutReplacer::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic
