@@ -25,43 +25,30 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "loadsave.h"
-#include "dungeonman.h"
-#include "champion.h"
 #include "group.h"
+#include "dungeonman.h"
 
 
 
 namespace DM {
 
-LoadsaveMan::LoadsaveMan(DMEngine *vm) : _vm(vm) {}
 
+GroupMan::GroupMan(DMEngine* vm) : _vm(vm) {
+	_activeGroups = nullptr;
+}
 
-LoadgameResponse LoadsaveMan::loadgame() {
-	bool newGame = _vm->_dungeonMan->_messages._newGame;
-	ChampionMan &cm = *_vm->_championMan;
+GroupMan::~GroupMan() {
+	delete[] _activeGroups;
+}
 
-	if (newGame) {
-		_vm->_restartGameAllowed = false;
-		cm._partyChampionCount = 0;
-		cm._leaderHandObject = Thing::_none;
-		_vm->_gameId = _vm->_rnd->getRandomNumber(65536) * _vm->_rnd->getRandomNumber(65536);
-	} else {
-		assert(false);
-		// MISSING CODE: load game
-	}
-	_vm->_dungeonMan->loadDungeonFile();
-
-
-	if (newGame) {
-		warning("MISSING CODE: Timline init");
-		_vm->_groupMan->initActiveGroups();
-	} else {
-		assert(false);
-		// MISSING CODE: load game
-	}
-	cm._partyDead = false;
-	return kLoadgameSuccess;
+void GroupMan::initActiveGroups() {
+	if (_vm->_dungeonMan->_messages._newGame)
+		_maxActiveGroupCount = 60;
+	if (_activeGroups)
+		delete[] _activeGroups;
+	_activeGroups = new ActiveGroup[_maxActiveGroupCount];
+	for (uint16 i = 0; i < _maxActiveGroupCount; ++i)
+		_activeGroups[i]._groupThingIndex = -1;
 }
 
 }

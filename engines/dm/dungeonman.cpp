@@ -1305,7 +1305,7 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 	int16 projAspOrd;
 	WeaponInfo *weaponInfo;
 
-	if ((thingType == thing.getType()) == kExplosionThingType) {
+	if ((thingType = thing.getType()) == kExplosionThingType) {
 		if (thing == Thing::_explFireBall)
 			return -_vm->indexToOrdinal(kProjectileAspectExplosionFireBall);
 		if (thing == Thing::_explSlime)

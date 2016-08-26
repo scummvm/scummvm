@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	dungeonman.o \
 	eventman.o \
 	gfx.o \
+	group.o \
 	inventory.o \
 	loadsave.o \
 	menus.o \

@@ -46,6 +46,7 @@ class ObjectMan;
 class InventoryMan;
 class TextMan;
 class MovesensMan;
+class GroupMan;
 
 
 enum direction {
@@ -161,6 +162,7 @@ public:
 	InventoryMan *_inventoryMan;
 	TextMan *_textMan;
 	MovesensMan *_movsens;
+	GroupMan *_groupMan;
 
 	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking

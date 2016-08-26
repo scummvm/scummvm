@@ -326,23 +326,6 @@ public:
 	// some macros missing, i got bored
 }; // @ SENSOR
 
-class Group {
-	Thing _nextThing;
-	Thing _possessionID;
-	byte _type;
-	byte _position;
-	uint16 _health[4];
-	uint16 _attributes;
-public:
-	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _possessionID(rawDat[1]), _type(rawDat[2]),
-		_position(rawDat[3]), _attributes(rawDat[8]) {
-		_health[0] = rawDat[4];
-		_health[1] = rawDat[5];
-		_health[2] = rawDat[6];
-		_health[3] = rawDat[7];
-	}
-	Thing getNextThing() { return _nextThing; }
-}; // @ GROUP
 
 enum WeaponType {
 	kWeaponTypeTorch = 2, // @ C02_WEAPON_TORCH
