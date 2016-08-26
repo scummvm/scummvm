@@ -45,6 +45,7 @@ class LoadsaveMan;
 class ObjectMan;
 class InventoryMan;
 class TextMan;
+class MovesensMan;
 
 
 enum direction {
@@ -133,6 +134,7 @@ public:
 	ObjectMan *_objectMan;
 	InventoryMan *_inventoryMan;
 	TextMan *_textMan;
+	MovesensMan *_movsens;
 
 	bool _stopWaitingForPlayerInput; // G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking

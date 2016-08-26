@@ -39,7 +39,8 @@ MODULE_OBJS := \
 	loadsave.o \
 	objectman.o \
 	inventory.o \
-	text.o
+	text.o \
+	movesens.o
 
 MODULE_DIRS += \
 	engines/dm
