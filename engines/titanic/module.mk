@@ -468,6 +468,7 @@ MODULE_OBJS := \
 	support/screen_manager.o \
 	support/simple_file.o \
 	support/string.o \
+	support/string_parser.o \
 	support/text_cursor.o \
 	support/time_event_info.o \
 	support/video_surface.o \
