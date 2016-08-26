@@ -25,7 +25,7 @@
 
 #include "common/str.h"
 
-#include "adl/adl_v3.h"
+#include "adl/adl_v4.h"
 #include "adl/disk.h"
 
 namespace Common {
@@ -56,10 +56,10 @@ struct DiskDataDesc {
 	byte volume;
 };
 
-class HiRes6Engine : public AdlEngine_v3 {
+class HiRes6Engine : public AdlEngine_v4 {
 public:
 	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v3(syst, gd),
+			AdlEngine_v4(syst, gd),
 			_boot(nullptr),
 			_currVerb(0),
 			_currNoun(0) {

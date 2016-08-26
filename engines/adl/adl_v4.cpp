@@ -23,18 +23,18 @@
 #include "common/random.h"
 #include "common/error.h"
 
-#include "adl/adl_v3.h"
+#include "adl/adl_v4.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
 
 namespace Adl {
 
-AdlEngine_v3::AdlEngine_v3(OSystem *syst, const AdlGameDescription *gd) :
+AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine_v2(syst, gd),
 		_curDisk(0) {
 }
 
-Common::String AdlEngine_v3::loadMessage(uint idx) const {
+Common::String AdlEngine_v4::loadMessage(uint idx) const {
 	Common::String str = AdlEngine_v2::loadMessage(idx);
 
 	for (uint i = 0; i < str.size(); ++i) {
@@ -45,11 +45,11 @@ Common::String AdlEngine_v3::loadMessage(uint idx) const {
 	return str;
 }
 
-Common::String AdlEngine_v3::getItemDescription(const Item &item) const {
+Common::String AdlEngine_v4::getItemDescription(const Item &item) const {
 	return _itemDesc[item.id - 1];
 }
 
-void AdlEngine_v3::applyDiskOffset(byte &track, byte &sector) const {
+void AdlEngine_v4::applyDiskOffset(byte &track, byte &sector) const {
 	sector += _diskOffsets[_curDisk].sector;
 	if (sector >= 16) {
 		sector -= 16;
@@ -59,7 +59,7 @@ void AdlEngine_v3::applyDiskOffset(byte &track, byte &sector) const {
 	track += _diskOffsets[_curDisk].track;
 }
 
-DataBlockPtr AdlEngine_v3::readDataBlockPtr(Common::ReadStream &f) const {
+DataBlockPtr AdlEngine_v4::readDataBlockPtr(Common::ReadStream &f) const {
 	byte track = f.readByte();
 	byte sector = f.readByte();
 	byte offset = f.readByte();
@@ -76,12 +76,12 @@ DataBlockPtr AdlEngine_v3::readDataBlockPtr(Common::ReadStream &f) const {
 	return _disk->getDataBlock(track, sector, offset, size);
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v3> OpcodeV3;
+typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v4> OpcodeV4;
 #define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV3(this, &AdlEngine_v3::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV3(this, 0))
+#define Opcode(x) table->push_back(new OpcodeV4(this, &AdlEngine_v4::x))
+#define OpcodeUnImpl() table->push_back(new OpcodeV4(this, 0))
 
-void AdlEngine_v3::setupOpcodeTables() {
+void AdlEngine_v4::setupOpcodeTables() {
 	Common::Array<const Opcode *> *table = 0;
 
 	SetOpcodeTable(_condOpcodes);
@@ -89,16 +89,16 @@ void AdlEngine_v3::setupOpcodeTables() {
 	OpcodeUnImpl();
 	Opcode(o2_isFirstTime);
 	Opcode(o2_isRandomGT);
-	Opcode(o3_isItemInRoom);
+	Opcode(o4_isItemInRoom);
 	// 0x04
-	Opcode(o3_isNounNotInRoom);
+	Opcode(o4_isNounNotInRoom);
 	Opcode(o1_isMovesGT);
 	Opcode(o1_isVarEQ);
 	Opcode(o2_isCarryingSomething);
 	// 0x08
-	Opcode(o3_isVarGT);
+	Opcode(o4_isVarGT);
 	Opcode(o1_isCurPicEQ);
-	Opcode(o3_skipOneCommand);
+	Opcode(o4_skipOneCommand);
 
 	SetOpcodeTable(_actOpcodes);
 	// 0x00
@@ -108,24 +108,24 @@ void AdlEngine_v3::setupOpcodeTables() {
 	Opcode(o1_varSet);
 	// 0x04
 	Opcode(o1_listInv);
-	Opcode(o3_moveItem);
+	Opcode(o4_moveItem);
 	Opcode(o1_setRoom);
 	Opcode(o2_setCurPic);
 	// 0x08
 	Opcode(o2_setPic);
 	Opcode(o1_printMsg);
-	Opcode(o3_dummy);
-	Opcode(o3_setTextMode);
+	Opcode(o4_dummy);
+	Opcode(o4_setTextMode);
 	// 0x0c
 	Opcode(o2_moveAllItems);
 	Opcode(o1_quit);
-	Opcode(o3_dummy);
+	Opcode(o4_dummy);
 	Opcode(o2_save);
 	// 0x10
 	Opcode(o2_restore);
 	Opcode(o1_restart);
-	Opcode(o3_setDisk);
-	Opcode(o3_dummy);
+	Opcode(o4_setDisk);
+	Opcode(o4_dummy);
 	// 0x14
 	Opcode(o1_resetPic);
 	Opcode(o1_goDirection<IDI_DIR_NORTH>);
@@ -139,13 +139,13 @@ void AdlEngine_v3::setupOpcodeTables() {
 	// 0x1c
 	Opcode(o1_dropItem);
 	Opcode(o1_setRoomPic);
-	Opcode(o3_sound);
+	Opcode(o4_sound);
 	OpcodeUnImpl();
 	// 0x20
 	Opcode(o2_initDisk);
 }
 
-int AdlEngine_v3::o3_isVarGT(ScriptEnv &e) {
+int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
 
 	if (getVar(e.arg(1)) > e.arg(2))
@@ -154,7 +154,7 @@ int AdlEngine_v3::o3_isVarGT(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v3::o3_skipOneCommand(ScriptEnv &e) {
+int AdlEngine_v4::o4_skipOneCommand(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
 
 	_skipOneCommand = true;
@@ -164,7 +164,7 @@ int AdlEngine_v3::o3_skipOneCommand(ScriptEnv &e) {
 }
 
 // FIXME: Rename "isLineArt" and look at code duplication
-int AdlEngine_v3::o3_isItemInRoom(ScriptEnv &e) {
+int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	const Item &item = getItem(e.arg(1));
@@ -178,7 +178,7 @@ int AdlEngine_v3::o3_isItemInRoom(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
+int AdlEngine_v4::o4_isNounNotInRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
 
 	Common::List<Item>::const_iterator item;
@@ -196,7 +196,7 @@ int AdlEngine_v3::o3_isNounNotInRoom(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v3::o3_moveItem(ScriptEnv &e) {
+int AdlEngine_v4::o4_moveItem(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	byte room = roomArg(e.arg(2));
@@ -215,13 +215,13 @@ int AdlEngine_v3::o3_moveItem(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v3::o3_dummy(ScriptEnv &e) {
+int AdlEngine_v4::o4_dummy(ScriptEnv &e) {
 	OP_DEBUG_0("\tDUMMY()");
 
 	return 0;
 }
 
-int AdlEngine_v3::o3_setTextMode(ScriptEnv &e) {
+int AdlEngine_v4::o4_setTextMode(ScriptEnv &e) {
 	OP_DEBUG_1("\tSET_TEXT_MODE(%d)", e.arg(1));
 
 	// TODO
@@ -238,7 +238,7 @@ int AdlEngine_v3::o3_setTextMode(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v3::o3_setDisk(ScriptEnv &e) {
+int AdlEngine_v4::o4_setDisk(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_DISK(%d, %d)", e.arg(1), e.arg(2));
 
 	// TODO
@@ -248,7 +248,7 @@ int AdlEngine_v3::o3_setDisk(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v3::o3_sound(ScriptEnv &e) {
+int AdlEngine_v4::o4_sound(ScriptEnv &e) {
 	OP_DEBUG_0("\tSOUND()");
 
 	// TODO
