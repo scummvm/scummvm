@@ -3,6 +3,7 @@
 #include "eventman.h"
 #include "menus.h"
 #include "gfx.h"
+#include "text.h"
 
 
 
@@ -68,9 +69,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	if (cm._candidateChampionOrdinal) {
 		dm.clearScreenBox(kColorDarkestGray, gBoxFloppyZzzCross, gDungeonViewport);
 	}
-	warning("MISSING CODE: F0052_TEXT_PrintToViewport -> HEALTH");
-	warning("MISSING CODE: F0052_TEXT_PrintToViewport -> STAMINA");
-	warning("MISSING CODE: F0052_TEXT_PrintToViewport -> MANA");
+	_vm->_textMan->printToViewport(5, 116, kColorLightestGray, "HEALTH");
+	_vm->_textMan->printToViewport(5, 124, kColorLightestGray, "STAMINA");
+	_vm->_textMan->printToViewport(5, 132, kColorLightestGray, "MANA");
 
 	warning("MISSING CODE: F0291_CHAMPION_DrawSlot in LOOOOOOOOOOOOP");
 

@@ -4,6 +4,7 @@
 #include "menus.h"
 #include "inventory.h"
 #include "objectman.h"
+#include "text.h"
 
 
 namespace DM {
@@ -83,6 +84,24 @@ int16 ChampionMan::getDecodedValue(char *string, uint16 characterCount) {
 		val = (val << 4) + (string[i] - 'A');
 	}
 	return val;
+}
+
+void ChampionMan::drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int16 maxVal) {
+	Common::String tmp = getStringFromInteger(currVal, true, 3).c_str();
+	_vm->_textMan->printToViewport(55, posY, kColorLightestGray, tmp.c_str());
+	_vm->_textMan->printToViewport(73, posY, kColorLightestGray, "/");
+	tmp = getStringFromInteger(maxVal, true, 3);
+	_vm->_textMan->printToViewport(79, posY, kColorLightestGray, tmp.c_str());
+}
+
+Common::String ChampionMan::getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount) {
+	using namespace Common;
+	String valToStr = String::format("%d", val);
+	String result;
+	for (int16 i = 0, end = paddingCharCount - valToStr.size(); i < end; ++i)
+		result += ' ';
+
+	return result += valToStr;
 }
 
 ChampionIndex ChampionMan::getIndexInCell(ViewCell cell) {
@@ -382,8 +401,8 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	Champion *champ = &_champions[champIndex];
 	uint16 champAttributes = champ->getAttributes();
 	if (!((champAttributes) & (kChampionAttributeNameTitle | kChampionAttributeStatistics | kChampionAttributeLoad | kChampionAttributeIcon |
-												  kChampionAttributePanel | kChampionAttributeStatusBox | kChampionAttributeWounds | kChampionAttributeViewport |
-												  kChampionAttributeActionHand))) {
+							   kChampionAttributePanel | kChampionAttributeStatusBox | kChampionAttributeWounds | kChampionAttributeViewport |
+							   kChampionAttributeActionHand))) {
 		return;
 	}
 	bool isInventoryChamp = (indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
@@ -416,7 +435,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			}
 		} else {
 			dispMan.blitToScreen(dispMan.getBitmap(kStatusBoxDeadChampion), 80, 0, 0, box, kColorNoTransparency);
-			warning("MISSING CODE: F0053_TEXT_PrintToLogicalScreen");
+			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, kColorLightestGray, kColorDarkGary, champ->_name);
 			menuMan.drawActionIcon(champIndex);
 			goto T0292042_green;
 		}
@@ -425,17 +444,17 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	if (!champ->_currHealth)
 		goto T0292042_green;
 
-	if(champAttributes & kChampionAttributeNameTitle) {
-		int16 AL_0_colorIndex = (champIndex == _leaderIndex) ? kColorGold : kColorLightestGray; // unused because of missing functions
-		if(isInventoryChamp) {
+	if (champAttributes & kChampionAttributeNameTitle) {
+		Color AL_0_colorIndex = (champIndex == _leaderIndex) ? kColorGold : kColorLightestGray; // unused because of missing functions
+		if (isInventoryChamp) {
 			char *champName = champ->_name;
-			warning("MISSING CODE: F0052_TEXT_PrintToViewport");
+			_vm->_textMan->printToViewport(3, 7, AL_0_colorIndex, champName);
 			int16 champTitleX = 6 * strlen(champName) + 3;
 			char champTitleFirstChar = champ->_title[0];
 			if ((champTitleFirstChar != ',') && (champTitleFirstChar != ';') && (champTitleFirstChar != '-')) {
 				champTitleX += 6;
 			}
-			warning("MISSING CODE: F0052_TEXT_PrintToViewport");
+			_vm->_textMan->printToViewport(champTitleX, 7, AL_0_colorIndex, champ->_title);
 			champAttributes |= kChampionAttributeViewport;
 		} else {
 			box._y1 = 0;
@@ -443,14 +462,14 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			box._x1 = champStatusBoxX;
 			box._x2 = box._x1 + 42 + 1;
 			dispMan.clearScreenBox(kColorDarkGary, box);
-			warning("MISSING CODE: F0053_TEXT_PrintToLogicalScreen");
+			_vm->_textMan->printTextToScreen(champStatusBoxX + 1, 5, AL_0_colorIndex, kColorDarkGary, champ->_name);
 		}
 	}
 
 	if (champAttributes & kChampionAttributeStatistics) {
 		drawChampionBarGraphs(champIndex);
 		if (isInventoryChamp) {
-			warning("MISSING CODE: F0290_CHAMPION_DrawHealthStaminaManaValues");
+			drawHealthStaminaManaValues(champ);
 			int16 AL_2_nativeBitmapIndex;
 			if ((champ->_food < 0) || (champ->_water < 0) || (champ->_poisonEventCount)) {
 				AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
@@ -460,7 +479,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			dispMan.blitToScreen(dispMan.getBitmap(AL_2_nativeBitmapIndex), 32, 0, 0, gBoxMouth, kColorDarkestGray, gDungeonViewport);
 			AL_2_nativeBitmapIndex = kSlotBoxNormalIndice;
 			for (int16 AL_0_statisticIndex = kChampionStatStrength; AL_0_statisticIndex <= kChampionStatAntifire; AL_0_statisticIndex++) {
-				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatCurrent) 
+				if (champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatCurrent)
 					< champ->getStatistic((ChampionStatisticType)AL_0_statisticIndex, kChampionStatMaximum)) {
 					AL_2_nativeBitmapIndex = kSlotBoxWoundedIndice;
 					break;
@@ -533,6 +552,12 @@ T0292042_green:
 
 uint16 ChampionMan::championIconIndex(int16 val, direction dir) {
 	return ((val + 4 - dir) & 0x3);
+}
+
+void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
+	drawHealthOrStaminaOrManaValue(116, champ->_currHealth, champ->_maxHealth);
+	drawHealthOrStaminaOrManaValue(124, champ->_currStamina, champ->_maxStamina);
+	drawHealthOrStaminaOrManaValue(132, champ->_currMana, champ->_maxMana);
 }
 
 }

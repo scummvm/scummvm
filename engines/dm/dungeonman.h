@@ -2,7 +2,6 @@
 #define DUNGEONMAN_H
 
 #include "dm.h"
-#include "dungeonman.h"
 #include "gfx.h"
 
 

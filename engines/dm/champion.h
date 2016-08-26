@@ -1,6 +1,8 @@
 #ifndef DM_CHAMPION_H
 #define DM_CHAMPION_H
 
+#include "common/str.h"
+
 #include "dm.h"
 #include "gfx.h"
 
@@ -390,6 +392,8 @@ class ChampionMan {
 
 	ChampionIndex getIndexInCell(ViewCell cell); // @ F0285_CHAMPION_GetIndexInCell
 	int16 getDecodedValue(char *string, uint16 characterCount); // @ F0279_CHAMPION_GetDecodedValue
+	void drawHealthOrStaminaOrManaValue(int16 posy, int16 currVal, int16 maxVal); // @ F0289_CHAMPION_DrawHealthOrStaminaOrManaValue
+	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 public:
 	Champion _champions[4];
 	uint16 _partyChampionCount;	// @ G0305_ui_PartyChampionCount
@@ -411,6 +415,7 @@ public:
 	uint16 getMaximumLoad(Champion *champ); // @ F0309_CHAMPION_GetMaximumLoad
 	void drawChampionState(ChampionIndex champIndex); // @ F0292_CHAMPION_DrawState
 	uint16 championIconIndex(int16 val, direction dir); // @ M26_CHAMPION_ICON_INDEX
+	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 };
 
 

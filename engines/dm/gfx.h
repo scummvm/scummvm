@@ -7,6 +7,7 @@
 
 namespace DM {
 
+
 enum ViewCell {
 	kViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
 	kViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
@@ -144,9 +145,10 @@ enum Color {
 	kColorWhite = 15
 };
 
+
 struct Viewport {
-	// TODO: should probably add width and height, seems redundant right meow
 	uint16 _posX, _posY;
+	uint16 _width, _height;
 };
 
 struct CreatureAspect {

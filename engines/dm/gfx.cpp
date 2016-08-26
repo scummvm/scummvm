@@ -544,9 +544,9 @@ byte gPalChangesCreature_D2[16] = {0, 10, 20, 30, 40, 30, 60, 70, 50, 0, 0, 110,
 
 
 
-Viewport gDefultViewPort = {0, 0};
+Viewport gDefultViewPort = {0, 0, 320, 200};
 // TODO: I guessed the numbers
-Viewport gDungeonViewport = {0, 33}; // @ G0296_puc_Bitmap_Viewport
+Viewport gDungeonViewport = {0, 33, 224, 126}; // @ G0296_puc_Bitmap_Viewport
 
 byte gPalChangesNoChanges[16] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150}; // @ G0017_auc_Graphic562_PaletteChanges_NoChanges
 
@@ -684,7 +684,7 @@ void DisplayMan::unpackGraphics() {
 		unpackedBitmapsSize += getWidth(i) * getHeight(i);
 	for (uint16 i = 22; i <= 532; ++i)
 		unpackedBitmapsSize += getWidth(i) * getHeight(i);
-	unpackedBitmapsSize += (5 + 1) * (6 + 1) * 128; // 5 x 6 characters, 128 of them, +1 for convenience padding
+	unpackedBitmapsSize += (5 + 1) * 6 * 128; // 5 x 6 characters, 128 of them, +1 for convenience padding
 	// graphics items go from 0-20 and 22-532 inclusive, _unpackedItemPos 21 and 22 are there for indexing convenience
 	if (_bitmaps) {
 		delete[] _bitmaps[0];
@@ -719,8 +719,6 @@ void DisplayMan::loadFNT1intoBitmap(uint16 index, byte* destBitmap)
 			}
 		}
 	}
-	memset(data, 0, 128);
-	data += 128;
 }
 
 void DisplayMan::loadPalette(uint16 *palette) {
