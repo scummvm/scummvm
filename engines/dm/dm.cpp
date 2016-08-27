@@ -932,26 +932,27 @@ void DMEngine::fuseSequence() {
 	bool removeFluxcagesFromLordChaosSquare = true;
 	int16 fluxCageMapX = _dungeonMan->_partyMapX;
 	int16 fluxcageMapY = _dungeonMan->_partyMapY;
-T0446002:
-	Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
-	while (curThing != Thing::_endOfList) {
-		if (curThing.getType() == k15_ExplosionThingType) {
-			Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
-			if (curExplosion->getType() == k50_ExplosionType_Fluxcage) {
-				_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
-				curExplosion->setNextThing(Thing::_none);
-				goto T0446002;
-			}
-		}
-		curThing = _dungeonMan->getNextThing(curThing);
-	}
-	if (removeFluxcagesFromLordChaosSquare) {
-		removeFluxcagesFromLordChaosSquare = false;
-		fluxCageMapX = lordChaosMapX;
-		fluxcageMapY = lordChaosMapY;
-		goto T0446002;
-	}
 
+	for(;;) {
+		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
+		while (curThing != Thing::_endOfList) {
+			if (curThing.getType() == k15_ExplosionThingType) {
+				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
+				if (curExplosion->getType() == k50_ExplosionType_Fluxcage) {
+					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
+					curExplosion->setNextThing(Thing::_none);
+					continue;
+				}
+			}
+			curThing = _dungeonMan->getNextThing(curThing);
+		}
+		if (removeFluxcagesFromLordChaosSquare) {
+			removeFluxcagesFromLordChaosSquare = false;
+			fluxCageMapX = lordChaosMapX;
+			fluxcageMapY = lordChaosMapY;
+		} else
+			break;
+	}
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
 		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
@@ -981,7 +982,7 @@ T0446002:
 	fuseSequenceUpdate();
 	for (int16 curMapX = 0; curMapX < _dungeonMan->_currMapWidth; curMapX++) {
 		for (int curMapY = 0; curMapY < _dungeonMan->_currMapHeight; curMapY++) {
-			curThing = _groupMan->groupGetThing(curMapX, curMapY);
+			Thing curThing = _groupMan->groupGetThing(curMapX, curMapY);
 			if ((curThing != Thing::_endOfList) && ((curMapX != lordChaosMapX) || (curMapY != lordChaosMapY))) {
 				_groupMan->groupDelete(curMapX, curMapY);
 			}
@@ -989,7 +990,7 @@ T0446002:
 	}
 	fuseSequenceUpdate();
 	/* Count and get list of text things located at 0, 0 in the current map. Their text is then printed as messages in the order specified by their first letter (which is not printed) */
-	curThing = _dungeonMan->getSquareFirstThing(0, 0);
+	Thing curThing = _dungeonMan->getSquareFirstThing(0, 0);
 	int16 textStringThingCount = 0;
 	Thing textStringThings[8];
 	while (curThing != Thing::_endOfList) {
