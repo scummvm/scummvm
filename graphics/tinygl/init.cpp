@@ -28,6 +28,7 @@
 
 #include "graphics/tinygl/zgl.h"
 #include "graphics/tinygl/zblit.h"
+#include "graphics/tinygl/zdirtyrect.h"
 
 namespace TinyGL {
 
@@ -109,15 +110,18 @@ void glInit(void *zbuffer1, int textureSize) {
 			l->has_specular = false;
 		}
 		l->position = Vector4(0, 0, 1, 0);
-		l->norm_position = Vector3(0, 0, 1);
 		l->spot_direction = Vector3(0, 0, -1);
-		l->norm_spot_direction = Vector3(0, 0, -1);
 		l->spot_exponent = 0;
 		l->spot_cutoff = 180;
 		l->attenuation[0] = 1;
 		l->attenuation[1] = 0;
 		l->attenuation[2] = 0;
+		l->cos_spot_cutoff = -1.0f;
+		l->norm_spot_direction = Vector3(0, 0, -1);
+		l->norm_position = Vector3(0, 0, 1);
 		l->enabled = 0;
+		l->next = NULL;
+		l->prev = NULL;
 	}
 	c->first_light = NULL;
 	c->ambient_light_model = Vector4(0.2f, 0.2f, 0.2f, 1);
@@ -240,7 +244,8 @@ void glInit(void *zbuffer1, int textureSize) {
 void glClose() {
 	GLContext *c = gl_get_context();
 
-	Graphics::Internal::tglCleanupImages();
+	tglDisposeDrawCallLists(c);
+	tglDisposeResources(c);
 
 	specbuf_cleanup(c);
 	for (int i = 0; i < 3; i++)
