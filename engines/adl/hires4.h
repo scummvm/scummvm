@@ -29,15 +29,36 @@
 
 namespace Adl {
 
+#define IDI_HR4_NUM_ITEM_DESCS 44
+
 class HiRes4Engine : public AdlEngine_v3 {
 public:
+	~HiRes4Engine();
+
+protected:
 	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
 
-private:
 	// AdlEngine
-	void runIntro() const;
 	void init();
 	void initGameState();
+
+	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
+	virtual const char *const *getDiskImageNames() const = 0;
+
+	// FIXME: use an array?
+	DiskImage *_disk2, *_disk3;
+};
+
+class HiRes4Engine_Atari : public HiRes4Engine {
+public:
+	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) : HiRes4Engine(syst, gd) { }
+
+private:
+	// AdlEngine_v2
+	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+
+	// HiRes4Engine
+	virtual const char *const *getDiskImageNames() const;
 };
 
 } // End of namespace Adl

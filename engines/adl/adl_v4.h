@@ -49,7 +49,7 @@ protected:
 	Common::String getItemDescription(const Item &item) const;
 
 	// AdlEngine_v2
-	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
+	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
 
 	void applyDiskOffset(byte &track, byte &sector) const;
 

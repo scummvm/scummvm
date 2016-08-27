@@ -52,6 +52,8 @@ protected:
 	void takeItem(byte noun);
 
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
+	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
+	void loadItems(Common::SeekableReadStream &stream);
 
 	void checkTextOverflow(char c);
 

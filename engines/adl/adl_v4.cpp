@@ -59,21 +59,8 @@ void AdlEngine_v4::applyDiskOffset(byte &track, byte &sector) const {
 	track += _diskOffsets[_curDisk].track;
 }
 
-DataBlockPtr AdlEngine_v4::readDataBlockPtr(Common::ReadStream &f) const {
-	byte track = f.readByte();
-	byte sector = f.readByte();
-	byte offset = f.readByte();
-	byte size = f.readByte();
-
-	if (f.eos() || f.err())
-		error("Error reading DataBlockPtr");
-
-	if (track == 0 && sector == 0 && offset == 0 && size == 0)
-		return DataBlockPtr();
-
+void AdlEngine_v4::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const {
 	applyDiskOffset(track, sector);
-
-	return _disk->getDataBlock(track, sector, offset, size);
 }
 
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v4> OpcodeV4;

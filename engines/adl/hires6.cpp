@@ -141,9 +141,8 @@ void HiRes6Engine::init() {
 
 	// Item descriptions
 	stream.reset(loadSectors(_boot, 0x6, 0xb, 2));
-	stream->seek(0x34);
-	for (uint i = 0; i < IDI_HR6_NUM_ITEM_DESCS; ++i)
-		_itemDesc.push_back(readString(*stream, 0xff));
+	stream->seek(0x16);
+	loadItemDescriptions(*stream, IDI_HR6_NUM_ITEM_DESCS);
 
 	// Load dropped item offsets
 	stream.reset(_boot->createReadStream(0x8, 0x9, 0x16));
@@ -287,31 +286,7 @@ void HiRes6Engine::initGameState() {
 
 	StreamPtr stream(_boot->createReadStream(0x3, 0xe, 0x03));
 
-	byte id;
-	while ((id = stream->readByte()) != 0xff) {
-		Item item = Item();
-		item.id = id;
-		item.noun = stream->readByte();
-		item.room = stream->readByte();
-		item.picture = stream->readByte();
-		item.isLineArt = stream->readByte(); // Now seems to be disk number
-		item.position.x = stream->readByte();
-		item.position.y = stream->readByte();
-		item.state = stream->readByte();
-		item.description = stream->readByte();
-
-		stream->readByte(); // Struct size
-
-		byte picListSize = stream->readByte();
-
-		// Flag to keep track of what has been drawn on the screen
-		stream->readByte();
-
-		for (uint i = 0; i < picListSize; ++i)
-			item.roomPictures.push_back(stream->readByte());
-
-		_state.items.push_back(item);
-	}
+	loadItems(*stream);
 
 	_currVerb = _currNoun = 0;
 }

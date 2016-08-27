@@ -359,7 +359,40 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 	if (track == 0 && sector == 0 && offset == 0 && size == 0)
 		return DataBlockPtr();
 
+	adjustDataBlockPtr(track, sector, offset, size);
+
 	return _disk->getDataBlock(track, sector, offset, size);
+}
+
+void AdlEngine_v2::loadItems(Common::SeekableReadStream &stream) {
+	byte id;
+	while ((id = stream.readByte()) != 0xff && !stream.eos() && !stream.err()) {
+		Item item = Item();
+		item.id = id;
+		item.noun = stream.readByte();
+		item.room = stream.readByte();
+		item.picture = stream.readByte();
+		item.isLineArt = stream.readByte(); // Disk number in later games
+		item.position.x = stream.readByte();
+		item.position.y = stream.readByte();
+		item.state = stream.readByte();
+		item.description = stream.readByte();
+
+		stream.readByte(); // Struct size
+
+		byte picListSize = stream.readByte();
+
+		// Flag to keep track of what has been drawn on the screen
+		stream.readByte();
+
+		for (uint i = 0; i < picListSize; ++i)
+			item.roomPictures.push_back(stream.readByte());
+
+		_state.items.push_back(item);
+	}
+
+	if (stream.eos() || stream.err())
+		error("Error loading items");
 }
 
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {

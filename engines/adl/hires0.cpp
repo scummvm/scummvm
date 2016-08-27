@@ -134,31 +134,7 @@ void HiRes0Engine::initGameState() {
 
 	stream.reset(_disk->createReadStream(0x21, 0x0));
 
-	byte id;
-	while ((id = stream->readByte()) != 0xff) {
-		Item item = Item();
-		item.id = id;
-		item.noun = stream->readByte();
-		item.room = stream->readByte();
-		item.picture = stream->readByte();
-		item.isLineArt = stream->readByte();
-		item.position.x = stream->readByte();
-		item.position.y = stream->readByte();
-		item.state = stream->readByte();
-		item.description = stream->readByte();
-
-		stream->readByte(); // Struct size
-
-		byte picListSize = stream->readByte();
-
-		// Flag to keep track of what has been drawn on the screen
-		stream->readByte();
-
-		for (uint i = 0; i < picListSize; ++i)
-			item.roomPictures.push_back(stream->readByte());
-
-		_state.items.push_back(item);
-	}
+	loadItems(*stream);
 }
 
 Engine *HiRes0Engine_create(OSystem *syst, const AdlGameDescription *gd) {

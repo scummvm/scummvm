@@ -32,6 +32,30 @@ Common::String AdlEngine_v3::getItemDescription(const Item &item) const {
 	return _itemDesc[item.description - 1];
 }
 
+void AdlEngine_v3::loadItemDescriptions(Common::SeekableReadStream &stream, byte count) {
+	int32 startPos = stream.pos();
+	uint16 baseAddr = stream.readUint16LE();
+debug("%04x", baseAddr);
+	// This code assumes that the first pointer points to a string that
+	// directly follows the pointer table
+	assert(baseAddr != 0);
+	baseAddr -= count * 2;
+
+	for (uint i = 0; i < count; ++i) {
+		stream.seek(startPos + i * 2);
+		uint16 offset = stream.readUint16LE();
+
+		if (offset > 0) {
+			stream.seek(startPos + offset - baseAddr);
+			_itemDesc.push_back(readString(stream, 0xff));
+		} else
+			_itemDesc.push_back(Common::String());
+	}
+
+	if (stream.eos() || stream.err())
+		error("Error loading item descriptions");
+}
+
 typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v3> OpcodeV3;
 
 void AdlEngine_v3::setupOpcodeTables() {
