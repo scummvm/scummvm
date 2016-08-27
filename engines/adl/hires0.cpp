@@ -119,21 +119,9 @@ void HiRes0Engine::initGameState() {
 	_state.vars.resize(IDI_HR0_NUM_VARS);
 
 	StreamPtr stream(_disk->createReadStream(0x21, 0x5, 0x0e, 2));
-
-	for (uint i = 0; i < IDI_HR0_NUM_ROOMS; ++i) {
-		Room room;
-		stream->readByte(); // number
-		for (uint j = 0; j < 6; ++j)
-			room.connections[j] = stream->readByte();
-		room.data = readDataBlockPtr(*stream);
-		room.picture = stream->readByte();
-		room.curPicture = stream->readByte();
-		room.isFirstTime = stream->readByte();
-		_state.rooms.push_back(room);
-	}
+	loadRooms(*stream, IDI_HR0_NUM_ROOMS);
 
 	stream.reset(_disk->createReadStream(0x21, 0x0));
-
 	loadItems(*stream);
 }
 

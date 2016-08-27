@@ -35,7 +35,7 @@ Common::String AdlEngine_v3::getItemDescription(const Item &item) const {
 void AdlEngine_v3::loadItemDescriptions(Common::SeekableReadStream &stream, byte count) {
 	int32 startPos = stream.pos();
 	uint16 baseAddr = stream.readUint16LE();
-debug("%04x", baseAddr);
+
 	// This code assumes that the first pointer points to a string that
 	// directly follows the pointer table
 	assert(baseAddr != 0);

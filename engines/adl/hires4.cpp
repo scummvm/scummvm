@@ -35,40 +35,57 @@
 namespace Adl {
 
 HiRes4Engine::~HiRes4Engine() {
-	delete _disk2;
-	delete _disk3;
+	delete _boot;
 }
 
 void HiRes4Engine::init() {
 	_graphics = new Graphics_v2(*_display);
 
-	const char *const *names = getDiskImageNames();
+	_boot = new DiskImage();
+	if (!_boot->open(getDiskImageName(0)))
+		error("Failed to open disk image '%s'", getDiskImageName(0));
 
-	_disk = new DiskImage();
-	if (!_disk->open(names[0]))
-		error("Failed to open disk image '%s'", names[0]);
-
-	_disk2 = new DiskImage();
-	if (!_disk2->open(names[1]))
-		error("Failed to open disk image '%s'", names[1]);
-
-	_disk3 = new DiskImage();
-	if (!_disk3->open(names[2]))
-		error("Failed to open disk image '%s'", names[2]);
-
-	StreamPtr stream(createReadStream(_disk, 0x06, 0xd, 0x12, 2));
+	StreamPtr stream(createReadStream(_boot, 0x06, 0xd, 0x12, 2));
 	loadItemDescriptions(*stream, IDI_HR4_NUM_ITEM_DESCS);
 
-	stream.reset(createReadStream(_disk, 0x05, 0x4, 0x00, 3));
+	stream.reset(createReadStream(_boot, 0x05, 0x4, 0x00, 3));
 	loadWords(*stream, _verbs, _priVerbs);
 
-	stream.reset(createReadStream(_disk, 0x03, 0xb, 0x00, 6));
+	stream.reset(createReadStream(_boot, 0x03, 0xb, 0x00, 6));
 	loadWords(*stream, _nouns, _priNouns);
 }
 
+void HiRes4Engine::goToSideC() {
+	delete _disk;
+
+	_disk = new DiskImage();
+	if (!_disk->open(getDiskImageName(2)))
+		error("Failed to open disk image '%s'", getDiskImageName(2));
+
+	// As room.data is bound to the DiskImage, we need to rebind them here
+	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 17));
+	for (uint i = 0; i < IDI_HR4_NUM_ROOMS; ++i) {
+		stream->skip(7);
+		_state.rooms[i].data = readDataBlockPtr(*stream);
+		stream->skip(3);
+	}
+}
+
 void HiRes4Engine::initGameState() {
-	StreamPtr stream(createReadStream(_disk, 0x02, 0xc, 0x00, 12));
+	_disk = new DiskImage();
+	if (!_disk->open(getDiskImageName(1)))
+		error("Failed to open disk image '%s'", getDiskImageName(1));
+
+	_state.vars.resize(IDI_HR4_NUM_VARS);
+
+	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
+	loadRooms(*stream, IDI_HR4_NUM_ROOMS);
+
+	stream.reset(createReadStream(_boot, 0x02, 0xc, 0x00, 12));
 	loadItems(*stream);
+
+	// FIXME
+	_display->moveCursorTo(Common::Point(0, 23));
 }
 
 Common::SeekableReadStream *HiRes4Engine::createReadStream(DiskImage *disk, byte track, byte sector, byte offset, byte size) const {
@@ -98,9 +115,9 @@ void HiRes4Engine_Atari::adjustDataBlockPtr(byte &track, byte &sector, byte &off
 	sector = (sectorIndex - 1) % 18;
 }
 
-const char *const *HiRes4Engine_Atari::getDiskImageNames() const {
+const char *HiRes4Engine_Atari::getDiskImageName(byte index) const {
 	static const char *const disks[] = { "ULYS1A.XFD", "ULYS1B.XFD", "ULYS2C.XFD" };
-	return disks;
+	return disks[index];
 }
 
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {

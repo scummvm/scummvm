@@ -395,6 +395,25 @@ void AdlEngine_v2::loadItems(Common::SeekableReadStream &stream) {
 		error("Error loading items");
 }
 
+void AdlEngine_v2::loadRooms(Common::SeekableReadStream &stream, byte count) {
+	for (uint i = 0; i < count; ++i) {
+		Room room;
+
+		stream.readByte(); // number
+		for (uint j = 0; j < 6; ++j)
+			room.connections[j] = stream.readByte();
+		room.data = readDataBlockPtr(stream);
+		room.picture = stream.readByte();
+		room.curPicture = stream.readByte();
+		room.isFirstTime = stream.readByte();
+
+		_state.rooms.push_back(room);
+	}
+
+	if (stream.eos() || stream.err())
+		error("Error loading rooms");
+}
+
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
 

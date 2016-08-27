@@ -242,17 +242,7 @@ void HiRes6Engine::loadDisk(byte disk) {
 			stream->skip(14); // Skip invalid room 0
 
 			_state.rooms.clear();
-			for (uint i = 0; i < count; ++i) {
-				Room room;
-				stream->readByte(); // number
-				for (uint j = 0; j < 6; ++j)
-					room.connections[j] = stream->readByte();
-				room.data = readDataBlockPtr(*stream);
-				room.picture = stream->readByte();
-				room.curPicture = stream->readByte();
-				room.isFirstTime = stream->readByte();
-				_state.rooms.push_back(room);
-			}
+			loadRooms(*stream, count);
 			break;
 		}
 		case 0x7b00:
