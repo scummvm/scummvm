@@ -47,6 +47,9 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 	_mainScreen = new Graphics::Surface();
 	_mainScreen->create(608, 392, _pixelFormat);
 
+	_effectScreen = new Graphics::Surface();
+	_effectScreen->create(608, 392, _pixelFormat);
+
 	_screenUpdateNesting = 0;
 	_screenUpdateRunning = false;
 	_scheduledTransition = -1;	// no transition
@@ -60,6 +63,8 @@ RivenGraphics::RivenGraphics(MohawkEngine_Riven* vm) : GraphicsManager(), _vm(vm
 }
 
 RivenGraphics::~RivenGraphics() {
+	_effectScreen->free();
+	delete _effectScreen;
 	_mainScreen->free();
 	delete _mainScreen;
 	delete _bitmapDecoder;
@@ -90,10 +95,13 @@ void RivenGraphics::copyImageToScreen(uint16 image, uint32 left, uint32 top, uin
 void RivenGraphics::updateScreen(Common::Rect updateRect) {
 	if (_dirtyScreen) {
 		// Copy to screen if there's no transition. Otherwise transition. ;)
-		if (_scheduledTransition < 0)
-			_vm->_system->copyRectToScreen(_mainScreen->getBasePtr(updateRect.left, updateRect.top), _mainScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
-		else
+		if (_scheduledTransition < 0) {
+			// mainScreen -> effectScreen -> systemScreen
+			_effectScreen->copyRectToSurface(*_mainScreen, updateRect.left, updateRect.top, updateRect);
+			_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(updateRect.left, updateRect.top), _effectScreen->pitch, updateRect.left, updateRect.top, updateRect.width(), updateRect.height());
+		} else {
 			runScheduledTransition();
+		}
 
 		// Finally, update the screen.
 		_vm->_system->updateScreen();
@@ -230,7 +238,8 @@ void RivenGraphics::runScheduledTransition() {
 	}
 
 	// For now, just copy the image to screen without doing any transition.
-	_vm->_system->copyRectToScreen(_mainScreen->getPixels(), _mainScreen->pitch, 0, 0, _mainScreen->w, _mainScreen->h);
+	_effectScreen->copyRectToSurface(*_mainScreen, 0, 0, Common::Rect(_mainScreen->w, _mainScreen->h));
+	_vm->_system->copyRectToScreen(_effectScreen->getBasePtr(0, 0), _effectScreen->pitch, 0, 0, _effectScreen->w, _effectScreen->h);
 	_vm->_system->updateScreen();
 
 	_scheduledTransition = -1; // Clear scheduled transition
