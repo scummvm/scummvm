@@ -28,9 +28,17 @@
 namespace Titanic {
 
 class CRestaurantPhonograph : public CPhonograph {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool PhonographPlayMsg(CPhonographPlayMsg *msg);
+	bool PhonographStopMsg(CPhonographStopMsg *msg);
+	bool PhonographReadyToPlayMsg(CPhonographReadyToPlayMsg *msg);
+	bool EjectCylinderMsg(CEjectCylinderMsg *msg);
+	bool QueryPhonographState(CQueryPhonographState *msg);
+	bool LockPhonographMsg(CLockPhonographMsg *msg);
 private:
 	int _fieldF8;
-	CString _string2;
+	CString _ejectSoundName;
 	CString _string3;
 	int _field114;
 public:

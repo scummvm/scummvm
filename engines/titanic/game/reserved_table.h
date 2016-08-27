@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CReservedTable : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool PlayerTriesRestaurantTableMsg(CPlayerTriesRestaurantTableMsg *msg);
 public:
-	int _value1, _value2;
+	bool _flag;
+	int _tableId;
 public:
 	CLASSDEF;
-	CReservedTable() : CGameObject(), _value1(0), _value2(0) {}
+	CReservedTable() : CGameObject(), _flag(false), _tableId(0) {}
 
 	/**
 	 * Save the data for the class to file

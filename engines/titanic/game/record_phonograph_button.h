@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CRecordPhonographButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool PhonographStopMsg(CPhonographStopMsg *msg);
 public:
-	int _value;
+	bool _active;
 public:
 	CLASSDEF;
-	CRecordPhonographButton() : CBackground(), _value(0) {}
+	CRecordPhonographButton() : CBackground(), _active(false) {}
 
 	/**
 	 * Save the data for the class to file

@@ -24,16 +24,44 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CRecordPhonographButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(PhonographStopMsg)
+END_MESSAGE_MAP()
+
 void CRecordPhonographButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_active, indent);
 	CBackground::save(file, indent);
 }
 
 void CRecordPhonographButton::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_active = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CRecordPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CPhonographRecordMsg recordMsg;
+	recordMsg.execute(getParent());
+
+	if (recordMsg._value) {
+		playSound("z#58.wav");
+		loadFrame(1);
+		_active = true;
+	}
+
+	return true;
+}
+
+bool CRecordPhonographButton::PhonographStopMsg(CPhonographStopMsg *msg) {
+	if (_active) {
+		playSound("z#57.wav");
+		loadFrame(0);
+		_active = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

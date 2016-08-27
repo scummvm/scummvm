@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CReplacementEar, CBackground)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
 void CReplacementEar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
@@ -32,6 +36,13 @@ void CReplacementEar::save(SimpleFile *file, int indent) {
 void CReplacementEar::load(SimpleFile *file) {
 	file->readNumber();
 	CBackground::load(file);
+}
+
+bool CReplacementEar::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(true);
+	playMovie(MOVIE_GAMESTATE);
+	playSound("z#64.wav");
+	return true;
 }
 
 } // End of namespace Titanic

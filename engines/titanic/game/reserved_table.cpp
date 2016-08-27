@@ -21,22 +21,55 @@
  */
 
 #include "titanic/game/reserved_table.h"
+#include "titanic/core/room_item.h"
+#include "titanic/core/view_item.h"
+#include "titanic/npcs/maitre_d.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CReservedTable, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(PlayerTriesRestaurantTableMsg)
+END_MESSAGE_MAP()
+
 void CReservedTable::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_flag, indent);
+	file->writeNumberLine(_tableId, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CReservedTable::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_flag = file->readNumber();
+	_tableId = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CReservedTable::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (!_flag) {
+		CPlayerTriesRestaurantTableMsg tryMsg(_tableId, 0);
+		tryMsg.execute(findRoom(), CReservedTable::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+	}
+
+	return true;
+}
+
+bool CReservedTable::PlayerTriesRestaurantTableMsg(CPlayerTriesRestaurantTableMsg *msg) {
+	if (msg->_tableId == _tableId) {
+		if (!msg->_result) {
+			CMaitreD *maitreD = dynamic_cast<CMaitreD *>(findRoomObject("MaitreD"));
+			startTalking(maitreD, 118, maitreD->findView());
+			msg->_result = true;
+		}
+
+		_cursorId = CURSOR_INVALID;
+		_flag = true;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } // End of namespace Titanic

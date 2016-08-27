@@ -267,7 +267,7 @@ MESSAGE0(CPhonographReadyToPlayMsg);
 MESSAGE1(CPhonographRecordMsg, int, value, 0);
 MESSAGE3(CPhonographStopMsg, int, value1, 0, int, value2, 0, int, value3, 0);
 MESSAGE2(CPlayRangeMsg, int, value1, 0, int, value2, 0);
-MESSAGE2(CPlayerTriesRestaurantTableMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CPlayerTriesRestaurantTableMsg, int, tableId, 0, bool, result, false);
 MESSAGE1(CPreSaveMsg, int, value, 0);
 MESSAGE1(CProdMaitreDMsg, int, value, 0);
 MESSAGE2(CPumpingMsg, int, value, 0, CGameObject *, object, nullptr);

@@ -24,24 +24,40 @@
 
 namespace Titanic {
 
-int CRestaurantPanHandler::_v1;
+BEGIN_MESSAGE_MAP(CRestaurantPanHandler, CMovePlayerTo)
+	ON_MESSAGE(ArmPickedUpFromTableMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+bool CRestaurantPanHandler::_armPickedUp;
 
 void CRestaurantPanHandler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_armPickedUp, indent);
+	file->writeQuotedLine(_armlessDestination, indent);
+	file->writeQuotedLine(_armDestination, indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CRestaurantPanHandler::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
+	_armPickedUp = file->readNumber();
+	_armlessDestination = file->readString();
+	_armDestination = file->readString();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CRestaurantPanHandler::ArmPickedUpFromTableMsg(CArmPickedUpFromTableMsg *msg) {
+	_armPickedUp = true;
+	return true;
+}
+
+bool CRestaurantPanHandler::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	_destination = _armPickedUp ? _armDestination : _armlessDestination;
+	changeView(_destination);
+	return true;
 }
 
 } // End of namespace Titanic
