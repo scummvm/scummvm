@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CParrotLobbyController : public CParrotLobbyObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
 public:
 	CLASSDEF;
 

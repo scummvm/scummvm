@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/parrot/parrot_lobby_controller.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CParrotLobbyController, CParrotLobbyObject)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 void CParrotLobbyController::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +37,36 @@ void CParrotLobbyController::save(SimpleFile *file, int indent) {
 void CParrotLobbyController::load(SimpleFile *file) {
 	file->readNumber();
 	CParrotLobbyObject::load(file);
+}
+
+bool CParrotLobbyController::ActMsg(CActMsg *msg) {
+	if (msg->_action == "Refresh")
+		return false;
+	else if (msg->_action == "GainParrot")
+		_haveParrot = true;
+	else if (msg->_action == "LoseParrot")
+		_haveParrot = false;
+	else if (msg->_action == "GainPerch")
+		_havePerch = true;
+	else if (msg->_action == "LosePerch")
+		_havePerch = false;
+	else if (msg->_action == "GainStick")
+		_haveStick = true;
+	else if (msg->_action == "LoseStick")
+		_haveStick = false;
+
+	_flags = 0;
+	if (_haveParrot)
+		_flags = 4;
+	if (_havePerch)
+		_flags |= 2;
+	if (_haveStick)
+		_flags |= 1;
+
+	CActMsg actMsg("Refresh");
+	actMsg.execute(findRoom(), CParrotLobbyObject::_type, MSGFLAG_CLASS_DEF | MSGFLAG_SCAN);
+	actMsg.execute("ParrotLobbyUpdater_TOW");
+	return true;
 }
 
 } // End of namespace Titanic

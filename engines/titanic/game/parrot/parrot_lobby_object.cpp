@@ -26,34 +26,34 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CParrotLobbyObject, CGameObject);
 
-int CParrotLobbyObject::_v1;
-int CParrotLobbyObject::_v2;
-int CParrotLobbyObject::_v3;
-int CParrotLobbyObject::_v4;
+bool CParrotLobbyObject::_haveParrot;
+bool CParrotLobbyObject::_havePerch;
+bool CParrotLobbyObject::_haveStick;
+int CParrotLobbyObject::_flags;
 
 void CParrotLobbyObject::init() {
-	_v1 = 1;
-	_v2 = 1;
-	_v3 = 1;
-	_v4 = 7;
+	_haveParrot = true;
+	_havePerch = true;
+	_haveStick = true;
+	_flags = 7;
 }
 
 void CParrotLobbyObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_v3, indent);
-	file->writeNumberLine(_v4, indent);
+	file->writeNumberLine(_haveParrot, indent);
+	file->writeNumberLine(_havePerch, indent);
+	file->writeNumberLine(_haveStick, indent);
+	file->writeNumberLine(_flags, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CParrotLobbyObject::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
-	_v2 = file->readNumber();
-	_v3 = file->readNumber();
-	_v4 = file->readNumber();
+	_haveParrot = file->readNumber();
+	_havePerch = file->readNumber();
+	_haveStick = file->readNumber();
+	_flags = file->readNumber();
 
 	CGameObject::load(file);
 }

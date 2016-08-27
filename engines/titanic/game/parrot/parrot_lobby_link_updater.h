@@ -23,16 +23,34 @@
 #ifndef TITANIC_PARROT_LOBBY_LINK_UPDATER_H
 #define TITANIC_PARROT_LOBBY_LINK_UPDATER_H
 
+#include "common/stream.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 
 namespace Titanic {
 
+struct LinkUpdatorEntry {
+	CString _linkStr;
+	int _vals[8];
+
+	LinkUpdatorEntry();
+	void load(Common::SeekableReadStream *s);
+};
+
+class LinkUpdatorEntries : public Common::Array<LinkUpdatorEntry> {
+public:
+	void load(Common::SeekableReadStream *s, int count);
+};
+
 class CParrotLobbyLinkUpdater : public CParrotLobbyObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+private:
+	LinkUpdatorEntries _entries[5];
 public:
 	int _fieldBC;
 public:
 	CLASSDEF;
-	CParrotLobbyLinkUpdater() : CParrotLobbyObject(), _fieldBC(1) {}
+	CParrotLobbyLinkUpdater();
 
 	/**
 	 * Save the data for the class to file
