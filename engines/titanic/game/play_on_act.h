@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CPlayOnAct : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
 	CLASSDEF;
 

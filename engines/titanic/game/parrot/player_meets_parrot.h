@@ -29,6 +29,7 @@
 namespace Titanic {
 
 class CPlayerMeetsParrot : public CGameObject {
+	DECLARE_MESSAGE_MAP;
 protected:
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:

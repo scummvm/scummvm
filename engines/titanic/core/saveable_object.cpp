@@ -252,7 +252,7 @@
 #include "titanic/game/pickup/pick_up_vis_centre.h"
 #include "titanic/game/placeholder/bar_shelf_vis_centre.h"
 #include "titanic/game/placeholder/lemon_on_bar.h"
-#include "titanic/game/placeholder/place_holder_item.h"
+#include "titanic/game/placeholder/place_holder.h"
 #include "titanic/game/placeholder/tv_on_bar.h"
 #include "titanic/game/sgt/armchair.h"
 #include "titanic/game/sgt/basin.h"
@@ -669,7 +669,7 @@ DEFFN(CPickUpSpeechCentre);
 DEFFN(CPickUpVisCentre);
 DEFFN(CBarShelfVisCentre);
 DEFFN(CLemonOnBar);
-DEFFN(CPlaceHolderItem);
+DEFFN(CPlaceHolder);
 DEFFN(CTVOnBar);
 DEFFN(CArmchair);
 DEFFN(CBasin);
@@ -1251,10 +1251,10 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPickUpLemon, CPickUp);
 	ADDFN(CPickUpSpeechCentre, CPickUp);
 	ADDFN(CPickUpVisCentre, CPickUp);
-	ADDFN(CBarShelfVisCentre, CPlaceHolderItem);
-	ADDFN(CLemonOnBar, CPlaceHolderItem);
-	ADDFN(CPlaceHolderItem, CGameObject);
-	ADDFN(CTVOnBar, CPlaceHolderItem);
+	ADDFN(CBarShelfVisCentre, CPlaceHolder);
+	ADDFN(CLemonOnBar, CPlaceHolder);
+	ADDFN(CPlaceHolder, CGameObject);
+	ADDFN(CTVOnBar, CPlaceHolder);
 	ADDFN(CArmchair, CSGTStateRoom);
 	ADDFN(CBasin, CSGTStateRoom);
 	ADDFN(CBedfoot, CSGTStateRoom);

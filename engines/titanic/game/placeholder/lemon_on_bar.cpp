@@ -24,20 +24,20 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CLemonOnBar, CPlaceHolderItem)
+BEGIN_MESSAGE_MAP(CLemonOnBar, CPlaceHolder)
 	ON_MESSAGE(VisibleMsg)
 END_MESSAGE_MAP()
 
 void CLemonOnBar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_lemonPos, indent);
-	CPlaceHolderItem::save(file, indent);
+	CPlaceHolder::save(file, indent);
 }
 
 void CLemonOnBar::load(SimpleFile *file) {
 	file->readNumber();
 	_lemonPos = file->readPoint();
-	CPlaceHolderItem::load(file);
+	CPlaceHolder::load(file);
 }
 
 bool CLemonOnBar::VisibleMsg(CVisibleMsg *msg) {

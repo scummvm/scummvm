@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPlayOnAct, CBackground)
+	ON_MESSAGE(ActMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CPlayOnAct::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
@@ -32,6 +37,22 @@ void CPlayOnAct::save(SimpleFile *file, int indent) {
 void CPlayOnAct::load(SimpleFile *file) {
 	file->readNumber();
 	CBackground::load(file);
+}
+
+bool CPlayOnAct::ActMsg(CActMsg *msg) {
+	if (msg->_action == "PlayMovie") {
+		setVisible(true);
+		playMovie(0);
+	} else if (msg->_action == "PlayToEnd") {
+		setVisible(true);
+		playMovie(MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CPlayOnAct::LeaveViewMsg(CLeaveViewMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

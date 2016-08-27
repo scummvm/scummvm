@@ -20,18 +20,27 @@
  *
  */
 
-#include "titanic/game/placeholder/place_holder_item.h"
+#include "titanic/game/placeholder/place_holder.h"
 
 namespace Titanic {
 
-void CPlaceHolderItem::save(SimpleFile *file, int indent) {
+BEGIN_MESSAGE_MAP(CPlaceHolder, CGameObject)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
+void CPlaceHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }
 
-void CPlaceHolderItem::load(SimpleFile *file) {
+void CPlaceHolder::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPlaceHolder::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	return true;
 }
 
 } // End of namespace Titanic

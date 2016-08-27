@@ -23,11 +23,11 @@
 #ifndef TITANIC_BAR_SHELF_VIS_CENTRE_H
 #define TITANIC_BAR_SHELF_VIS_CENTRE_H
 
-#include "titanic/game/placeholder/place_holder_item.h"
+#include "titanic/game/placeholder/place_holder.h"
 
 namespace Titanic {
 
-class CBarShelfVisCentre : public CPlaceHolderItem {
+class CBarShelfVisCentre : public CPlaceHolder {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
@@ -36,7 +36,7 @@ private:
 	bool _flag;
 public:
 	CLASSDEF;
-	CBarShelfVisCentre() : CPlaceHolderItem(), _flag(false) {}
+	CBarShelfVisCentre() : CPlaceHolder(), _flag(false) {}
 	
 	/**
 	 * Save the data for the class to file

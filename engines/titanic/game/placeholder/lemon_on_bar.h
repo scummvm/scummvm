@@ -23,11 +23,11 @@
 #ifndef TITANIC_LEMON_ON_BAR_H
 #define TITANIC_LEMON_ON_BAR_H
 
-#include "titanic/game/placeholder/place_holder_item.h"
+#include "titanic/game/placeholder/place_holder.h"
 
 namespace Titanic {
 
-class CLemonOnBar : public CPlaceHolderItem {
+class CLemonOnBar : public CPlaceHolder {
 	DECLARE_MESSAGE_MAP;
 	bool VisibleMsg(CVisibleMsg *msg);
 private:

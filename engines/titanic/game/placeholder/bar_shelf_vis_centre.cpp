@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CBarShelfVisCentre, CPlaceHolderItem)
+BEGIN_MESSAGE_MAP(CBarShelfVisCentre, CPlaceHolder)
 	ON_MESSAGE(MouseButtonDownMsg)
 	ON_MESSAGE(TimerMsg)
 	ON_MESSAGE(EnterViewMsg)
@@ -33,13 +33,13 @@ END_MESSAGE_MAP()
 void CBarShelfVisCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_flag, indent);
-	CPlaceHolderItem::save(file, indent);
+	CPlaceHolder::save(file, indent);
 }
 
 void CBarShelfVisCentre::load(SimpleFile *file) {
 	file->readNumber();
 	_flag = file->readNumber();
-	CPlaceHolderItem::load(file);
+	CPlaceHolder::load(file);
 }
 
 bool CBarShelfVisCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {

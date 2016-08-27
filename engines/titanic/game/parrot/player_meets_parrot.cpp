@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPlayerMeetsParrot, CGameObject)
+	ON_MESSAGE(EnterRoomMsg)
+END_MESSAGE_MAP()
+
 void CPlayerMeetsParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -35,7 +39,7 @@ void CPlayerMeetsParrot::load(SimpleFile *file) {
 }
 
 bool CPlayerMeetsParrot::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CPlayerMeetsParrot::handleEvent");
+	stateSet24();
 	return true;
 }
 

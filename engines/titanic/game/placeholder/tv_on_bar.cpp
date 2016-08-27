@@ -27,13 +27,13 @@ namespace Titanic {
 void CTVOnBar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
-	CPlaceHolderItem::save(file, indent);
+	CPlaceHolder::save(file, indent);
 }
 
 void CTVOnBar::load(SimpleFile *file) {
 	file->readNumber();
 	_pos1 = file->readPoint();
-	CPlaceHolderItem::load(file);
+	CPlaceHolder::load(file);
 }
 
 } // End of namespace Titanic

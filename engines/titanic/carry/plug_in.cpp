@@ -47,19 +47,13 @@ bool CPlugIn::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 
 	if (otherName == "PET") {
 		return CCarry::UseWithOtherMsg(msg);
-	} else if (otherName == "DatasideTransporter") {
-		CString name = getName();
-		if (name == "DatasideTransporter") {
-			// TODO
-			if (name != "SendYourself") {
-				// TODO
-			}
-		} else {
-			// TODO	
-		}
-	} else {
+	} else if (isEquals("DatasideTransporter")) {
 		CShowTextMsg textMsg("This item is incorrectly calibrated.");
 		textMsg.execute("PET");
+	} else if (isEquals("DatasideTransporter")) {
+		error("TODO: Set msg->_other->fieldC4 = 2");
+	} else if (isEquals("SendYourself")) {
+		error("TODO: Set msg->_other->fieldC8 = 1");
 	}
 
 	return true;

@@ -63,7 +63,7 @@ bool CPickUpSpeechCentre::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 			CActMsg actMsg("PlayerGetsSpeechCentre");
 			actMsg.execute("SeasonalAdjust");
 		} else {
-			petDisplayMessage("You can',27h,'t pick this up on account of it being stuck to the branch.");
+			petDisplayMessage("You can't pick this up on account of it being stuck to the branch.");
 		}
 	}
 

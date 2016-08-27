@@ -28,12 +28,15 @@
 namespace Titanic {
 
 class CPlayMusicButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
+	bool _flag;
+	uint _ticks;
 public:
 	CLASSDEF;
-	CPlayMusicButton() : CBackground(), _fieldE0(0), _fieldE4(0) {}
+	CPlayMusicButton() : CBackground(), _flag(false), _ticks(0) {}
 
 	/**
 	 * Save the data for the class to file

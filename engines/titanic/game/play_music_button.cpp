@@ -21,23 +21,58 @@
  */
 
 #include "titanic/game/play_music_button.h"
+#include "titanic/sound/music_room.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPlayMusicButton, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
+
 void CPlayMusicButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_flag, indent);
+	file->writeNumberLine(_ticks, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CPlayMusicButton::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_flag = file->readNumber();
+	_ticks = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CPlayMusicButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CMusicRoom *musicRoom = getMusicRoom();
+	if (_flag) {
+		musicRoom->stopMusic();
+		stopMovie();
+		loadFrame(0);
+		_flag = false;
+	} else {
+		musicRoom->startMusic(100);
+		playMovie(MOVIE_REPEAT);
+		_ticks = getTicksCount();
+		_flag = true;
+	}
+
+	return true;
+}
+
+bool CPlayMusicButton::FrameMsg(CFrameMsg *msg) {
+	if (_flag && !CMusicRoom::_musicHandler->isBusy()) {
+		CMusicRoom *musicRoom = getMusicRoom();
+		musicRoom->stopMusic();
+		stopMovie();
+		loadFrame(0);
+		_flag = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

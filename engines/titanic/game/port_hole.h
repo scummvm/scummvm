@@ -28,9 +28,14 @@
 namespace Titanic {
 
 class CPortHole : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	int _fieldBC;
-	CString _string1, _string2;
+	bool _open;
+	CString _closeSoundName, _openSoundName;
 public:
 	CLASSDEF;
 	CPortHole();
