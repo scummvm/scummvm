@@ -28,13 +28,13 @@
 
 namespace GUI {
 
-EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd) {
+EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint maxLength)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss), _cmd(cmd), _maxLength(maxLength) {
 	init();
 }
 
-EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd)
-	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd) {
+EditableWidget::EditableWidget(GuiObject *boss, const String &name, const char *tooltip, uint32 cmd, uint maxLength)
+	: Widget(boss, name, tooltip), CommandSender(boss), _cmd(cmd), _maxLength(maxLength) {
 	init();
 }
 
@@ -63,18 +63,31 @@ void EditableWidget::reflowLayout() {
 }
 
 void EditableWidget::setEditString(const String &str) {
-	// TODO: We probably should filter the input string here,
-	// e.g. using tryInsertChar.
-	_editString = str;
+	_editString.clear();
+
+	// Copy string char by char, ensuring each char is valid
+	uint len = 0;
+	for (uint i = 0; i < str.size() && len < _maxLength; i++) {
+		if (isCharValid((byte)str[i])) {
+			_editString += str[i];
+			len++;
+		}
+	}
+
 	_caretPos = 0;
 }
 
 bool EditableWidget::tryInsertChar(byte c, int pos) {
-	if ((c >= 32 && c <= 127) || c >= 160) {
+	if (_maxLength == 0 || _editString.size() < _maxLength) {
 		_editString.insertChar(c, pos);
 		return true;
 	}
+
 	return false;
+}
+
+bool EditableWidget::isCharValid(byte c) const {
+	return (c >= 32 && c <= 127) || c >= 160;
 }
 
 void EditableWidget::handleTickle() {
@@ -229,10 +242,15 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
-		_caretPos++;
-		dirty = true;
-		forcecaret = true;
+	if (state.ascii < 256 && isCharValid((byte)state.ascii)) {
+		if (tryInsertChar((byte)state.ascii, _caretPos)) {
+			_caretPos++;
+			dirty = true;
+			forcecaret = true;
+		}
+		else {
+			// TODO: Give some feedback to user about having exceeded maxLength. Maybe a beep?
+		}
 
 		sendCommand(_cmd, 0);
 	} else {

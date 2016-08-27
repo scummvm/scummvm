@@ -55,19 +55,21 @@ protected:
 
 	int			_editScrollOffset;
 
+	uint		_maxLength;
+
 	ThemeEngine::FontStyle  _font;
 
 	ThemeEngine::TextInversionState  _inversion;
 
 public:
-	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
-	EditableWidget(GuiObject *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
+	EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0, uint maxLength = 0);
+	EditableWidget(GuiObject *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0, uint maxLength = 0);
 	virtual ~EditableWidget();
 
 	void init();
 
 	virtual void setEditString(const String &str);
-	virtual const String &getEditString() const		{ return _editString; }
+	virtual const String &getEditString() const	{ return _editString; }
 
 	virtual void handleTickle();
 	virtual bool handleKeyDown(Common::KeyState state);
@@ -94,7 +96,9 @@ protected:
 
 	void setFontStyle(ThemeEngine::FontStyle font) { _font = font; }
 
-	virtual bool tryInsertChar(byte c, int pos);
+	bool tryInsertChar(byte c, int pos);
+
+	virtual bool isCharValid(byte c) const;
 };
 
 } // End of namespace GUI
