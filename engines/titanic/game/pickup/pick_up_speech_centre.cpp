@@ -21,8 +21,15 @@
  */
 
 #include "titanic/game/pickup/pick_up_speech_centre.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPickUpSpeechCentre, CPickUp)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 void CPickUpSpeechCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +39,35 @@ void CPickUpSpeechCentre::save(SimpleFile *file, int indent) {
 void CPickUpSpeechCentre::load(SimpleFile *file) {
 	file->readNumber();
 	CPickUp::load(file);
+}
+
+bool CPickUpSpeechCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CPickUpSpeechCentre::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_enabled = msg->_newStatus == 1;
+	return true;
+}
+
+bool CPickUpSpeechCentre::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (checkStartDragging(msg)) {
+		if (_enabled) {
+			CVisibleMsg visibleMsg;
+			visibleMsg.execute("SpeechCentre");
+			CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
+			passMsg.execute("SpeechCentre");
+
+			msg->_dragItem = getRoot()->findByName("SpeechCentre");
+
+			CActMsg actMsg("PlayerGetsSpeechCentre");
+			actMsg.execute("SeasonalAdjust");
+		} else {
+			petDisplayMessage("You can',27h,'t pick this up on account of it being stuck to the branch.");
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -21,8 +21,14 @@
  */
 
 #include "titanic/game/pickup/pick_up_lemon.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPickUpLemon, CPickUp)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
 
 void CPickUpLemon::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +38,25 @@ void CPickUpLemon::save(SimpleFile *file, int indent) {
 void CPickUpLemon::load(SimpleFile *file) {
 	file->readNumber();
 	CPickUp::load(file);
+}
+
+bool CPickUpLemon::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CPickUpLemon::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg))
+		return true;
+	if (!_enabled)
+		return false;
+
+	CVisibleMsg visibleMsg;
+	visibleMsg.execute("Lemon");
+	CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
+	passMsg.execute("Lemon");
+
+	msg->_dragItem = getRoot()->findByName("Lemon");
+	return true;
 }
 
 } // End of namespace Titanic

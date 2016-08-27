@@ -24,16 +24,26 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPickUp, CGameObject)
+	ON_MESSAGE(StatusChangeMsg)
+END_MESSAGE_MAP()
+
 void CPickUp::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_enabled, indent);
 	CGameObject::save(file, indent);
 }
 
 void CPickUp::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_enabled = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPickUp::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_enabled = msg->_newStatus == 1;
+	setVisible(_enabled);
+	return true;
 }
 
 } // End of namespace Titanic

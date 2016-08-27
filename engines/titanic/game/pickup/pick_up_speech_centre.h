@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CPickUpSpeechCentre : public CPickUp {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	CLASSDEF;
 

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/carry/photograph.h"
+#include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/room_item.h"
 
 namespace Titanic {
@@ -59,8 +60,12 @@ bool CPhotograph::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	_v1 = 0;
 	CGameObject *target = msg->_dropTarget;
 
-	if (target && target->getName() != "NavigationComputer") {
-		warning("TODO: CPhotograph::MouseDragEndMsg");
+	if (target && target->isEquals("NavigationComputer")) {
+		moveUnder(getDontSave());
+		makeDirty();
+		playSound("a#46.wav");
+		starFn1(14);
+		showMouse();
 		return true;
 	} else {
 		return CCarry::MouseDragEndMsg(msg);
@@ -78,7 +83,7 @@ bool CPhotograph::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CPhotograph::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
-	if (getRoom()->getName() == "Home") {
+	if (getRoom()->isEquals("Home")) {
 		CActMsg actMsg("PlayerPutsPhotoInPET");
 		actMsg.execute("Doorbot");
 	}

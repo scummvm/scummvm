@@ -21,14 +21,24 @@
  */
 
 #include "titanic/game/pickup/pick_up_hose.h"
+#include "titanic/core/project_item.h"
+#include "titanic/core/room_item.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
 
-int CPickUpHose::_v1;
+BEGIN_MESSAGE_MAP(CPickUpHose, CPickUp)
+	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+bool CPickUpHose::_v1;
 
 void CPickUpHose::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_target, indent);
 	file->writeNumberLine(_v1, indent);
 
 	CPickUp::save(file, indent);
@@ -36,10 +46,61 @@ void CPickUpHose::save(SimpleFile *file, int indent) {
 
 void CPickUpHose::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
+	_target = file->readString();
 	_v1 = file->readNumber();
 
 	CPickUp::load(file);
+}
+
+bool CPickUpHose::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg))
+		return true;
+	if (_v1 || !_enabled)
+		return false;
+
+	CViewItem *view = getView();
+	if (view) {
+		_v1 = true;
+		CRoomItem *room = locateRoom("Arboretum");
+		CTreeItem *hose = room ? room->findByName("Hose") : nullptr;
+
+		if (!hose) {
+			room = locateRoom("FrozenArboretum");
+			if (room)
+				hose = room->findByName("Hose");
+		}
+
+		if (hose) {
+			CVisibleMsg visibleMsg;
+			visibleMsg.execute(this);
+			moveUnder(view);
+
+			CPassOnDragStartMsg passMsg(msg->_mousePos, 1);
+			passMsg.execute("Hose");
+
+			msg->_dragItem = getRoot()->findByName("Hose");
+			_cursorId = CURSOR_IGNORE;
+
+			CActMsg actMsg("PlayerGetsHose");
+			actMsg.execute(_target);
+		}
+	}
+
+	return true;
+}
+
+bool CPickUpHose::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_cursorId = msg->_newStatus == 1 ? CURSOR_HAND : CURSOR_IGNORE;
+	return true;
+}
+
+bool CPickUpHose::EnterViewMsg(CEnterViewMsg *msg) {
+	_cursorId = CURSOR_IGNORE;
+	return true;
+}
+
+bool CPickUpHose::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return _enabled;
 }
 
 } // End of namespace Titanic

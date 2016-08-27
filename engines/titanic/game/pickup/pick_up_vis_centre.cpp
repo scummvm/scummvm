@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPickUpVisCentre, CPickUp)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragStartMsg)
+END_MESSAGE_MAP()
+
 void CPickUpVisCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPickUp::save(file, indent);
@@ -32,6 +37,24 @@ void CPickUpVisCentre::save(SimpleFile *file, int indent) {
 void CPickUpVisCentre::load(SimpleFile *file) {
 	file->readNumber();
 	CPickUp::load(file);
+}
+
+
+bool CPickUpVisCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CPickUpVisCentre::MouseDragStartMsg(CMouseDragStartMsg *msg) {
+	if (!checkStartDragging(msg) || !_enabled)
+		return false;
+
+	setVisible(false);
+	CVisibleMsg visibleMsg;
+	visibleMsg.execute("VisionCentre");
+	msg->execute("VisionCentre");
+	CActMsg actMsg("PlayerTakesVisCentre");
+	actMsg.execute("Barbot");
+	return true;
 }
 
 } // End of namespace Titanic

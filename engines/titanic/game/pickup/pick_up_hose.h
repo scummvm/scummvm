@@ -28,10 +28,15 @@
 namespace Titanic {
 
 class CPickUpHose : public CPickUp {
+	DECLARE_MESSAGE_MAP;
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 private:
-	static int _v1;
+	static bool _v1;
 
-	CString _string1;
+	CString _target;
 public:
 	CLASSDEF;
 
