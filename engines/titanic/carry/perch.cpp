@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPerch, CCentralCore)
+	ON_MESSAGE(UseWithOtherMsg)
+END_MESSAGE_MAP()
+
 void CPerch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CCentralCore::save(file, indent);
@@ -32,6 +36,15 @@ void CPerch::save(SimpleFile *file, int indent) {
 void CPerch::load(SimpleFile *file) {
 	file->readNumber();
 	CCentralCore::load(file);
+}
+
+bool CPerch::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	if (msg->_other->isEquals("SpeechCentre")) {
+		CShowTextMsg textMsg("This does not reach.");
+		textMsg.execute("PET");
+	}
+
+	return CCentralCore::UseWithOtherMsg(msg);
 }
 
 } // End of namespace Titanic

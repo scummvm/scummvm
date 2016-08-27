@@ -21,8 +21,16 @@
  */
 
 #include "titanic/game/parrot/parrot_nut_eater.h"
+#include "titanic/core/room_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CParrotNutEater, CGameObject)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(ReplaceBowlAndNutsMsg)
+	ON_MESSAGE(NutPuzzleMsg)
+	ON_MESSAGE(MovieFrameMsg)
+END_MESSAGE_MAP()
 
 CParrotNutEater::CParrotNutEater() : CGameObject(), _fieldBC(0),
 		_fieldC0(69), _fieldC4(132), _fieldC8(0), _fieldCC(68) {
@@ -40,6 +48,50 @@ void CParrotNutEater::load(SimpleFile *file) {
 	_fieldBC = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CParrotNutEater::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
+	CNutPuzzleMsg nutMsg("NutsGone");
+	nutMsg.execute(getRoom(), nullptr, MSGFLAG_SCAN);
+
+	playSound("z#47.wav");
+	return true;
+}
+
+bool CParrotNutEater::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
+	setVisible(false);
+	return true;
+}
+
+bool CParrotNutEater::NutPuzzleMsg(CNutPuzzleMsg *msg) {
+	if (msg->_value == "Jiggle") {
+		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		movieEvent(68);
+		movieEvent(132);
+		playSound("z#215.wav");
+
+		CTrueTalkTriggerActionMsg triggerMsg;
+		triggerMsg._param1 = triggerMsg._param2 = 0;
+		triggerMsg.execute("PerchedParrot");
+	}
+
+	return true;
+}
+
+bool CParrotNutEater::MovieFrameMsg(CMovieFrameMsg *msg) {
+	switch (msg->_frameNumber) {
+	case 68:
+		playSound("z#214.wav");
+		break;
+	case 132:
+		playSound("z#216.wav");
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

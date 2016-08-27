@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CParrotLoser : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 public:
 	CLASSDEF;
 

@@ -189,7 +189,7 @@ MESSAGE1(CAnimateMaitreDMsg, int, value, 0);
 MESSAGE1(CArboretumGateMsg, int, value, 0);
 MESSAGE0(CArmPickedUpFromTableMsg);
 MESSAGE0(CBodyInBilgeRoomMsg);
-MESSAGE1(CBowlStateChangeMsg, int, value, 0);
+MESSAGE1(CBowlStateChangeMsg, int, state, 0);
 MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
 MESSAGE2(CChangeMusicMsg, CString, filename, "", int, flags, 0);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");

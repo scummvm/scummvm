@@ -28,11 +28,13 @@
 namespace Titanic {
 
 class CParrotLobbyViewObject : public CParrotLobbyObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
 public:
-	int _fieldBC;
+	bool _flag;
 public:
 	CLASSDEF;
-	CParrotLobbyViewObject() : CParrotLobbyObject(), _fieldBC(1) {}
+	CParrotLobbyViewObject() : CParrotLobbyObject(), _flag(true) {}
 
 	/**
 	 * Save the data for the class to file

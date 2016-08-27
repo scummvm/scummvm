@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CParrotPerchHolder : public CMultiDropTarget {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool DropObjectMsg(CDropObjectMsg *msg);
+	bool ActMsg(CActMsg *msg);
 public:
 	CLASSDEF;
 

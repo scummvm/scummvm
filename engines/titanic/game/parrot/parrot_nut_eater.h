@@ -28,6 +28,11 @@
 namespace Titanic {
 
 class CParrotNutEater : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
 public:
 	int _fieldBC;
 	int _fieldC0;

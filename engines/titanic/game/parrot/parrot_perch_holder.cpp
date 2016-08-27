@@ -21,8 +21,18 @@
  */
 
 #include "titanic/game/parrot/parrot_perch_holder.h"
+#include "titanic/game/cage.h"
+#include "titanic/core/project_item.h"
+#include "titanic/npcs/parrot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CParrotPerchHolder, CMultiDropTarget)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(DropObjectMsg)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 void CParrotPerchHolder::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +42,41 @@ void CParrotPerchHolder::save(SimpleFile *file, int indent) {
 void CParrotPerchHolder::load(SimpleFile *file) {
 	file->readNumber();
 	CMultiDropTarget::load(file);
+}
+
+bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (CParrot::_v1) {
+		if (CCage::_open) {
+			petDisplayMessage("You cannot take this because the cage is locked shut.");
+		} else if (!CParrot::_v4) {
+			CTrueTalkTriggerActionMsg triggerMsg(280252, 0, 0);
+			triggerMsg.execute(getRoot(), CParrot::_type,
+				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
+		}
+	}
+
+	return true;
+}
+
+bool CParrotPerchHolder::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_fieldF4 = msg->_newStatus;
+	return true;
+}
+
+bool CParrotPerchHolder::DropObjectMsg(CDropObjectMsg *msg) {
+	if (CCage::_open)
+		return false;
+	else
+		return CMultiDropTarget::DropObjectMsg(msg);
+}
+
+bool CParrotPerchHolder::ActMsg(CActMsg *msg) {
+	if (msg->_action == "FlashCore") {
+		playMovie(2, 2, 0);
+		playMovie(1, 1, 0);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

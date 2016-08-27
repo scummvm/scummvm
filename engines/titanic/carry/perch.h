@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CPerch : public CCentralCore {
+	DECLARE_MESSAGE_MAP;
+	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 public:
 	CLASSDEF;
 

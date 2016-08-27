@@ -24,16 +24,28 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CParrotLobbyViewObject, CParrotLobbyObject)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
+
 void CParrotLobbyViewObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);	
+	file->writeNumberLine(_flag, indent);
 	CParrotLobbyObject::save(file, indent);
 }
 
 void CParrotLobbyViewObject::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_flag = file->readNumber();
 	CParrotLobbyObject::load(file);
+}
+
+bool CParrotLobbyViewObject::ActMsg(CActMsg *msg) {
+	if (msg->_action != "Refresh")
+		return false;
+
+	setVisible(_flag ? _haveParrot : _haveStick);
+	return true;
 }
 
 } // End of namespace Titanic

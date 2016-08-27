@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CParrotLoser, CGameObject)
+	ON_MESSAGE(LeaveRoomMsg)
+END_MESSAGE_MAP()
+
 void CParrotLoser::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +36,12 @@ void CParrotLoser::save(SimpleFile *file, int indent) {
 void CParrotLoser::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CParrotLoser::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	CActMsg actMsg("FreeParrot");
+	actMsg.execute("CarryParrot");
+	return true;
 }
 
 } // End of namespace Titanic

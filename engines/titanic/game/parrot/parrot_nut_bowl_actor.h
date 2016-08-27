@@ -28,8 +28,17 @@
 namespace Titanic {
 
 class CParrotNutBowlActor : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool BowlStateChangeMsg(CBowlStateChangeMsg *msg);
+	bool IsEarBowlPuzzleDone(CIsEarBowlPuzzleDone *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool NutPuzzleMsg(CNutPuzzleMsg *msg);
 public:
-	int _value1, _value2;
+	bool _puzzleDone;
+	int _state;
 public:
 	CLASSDEF;
 	CParrotNutBowlActor();
