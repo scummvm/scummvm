@@ -635,7 +635,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 	const int32 maxFrameNo = (int32)(_decoder->getFrameCount() - 1);
 
 	if ((flags & kEventFlagToFrame) && lastFrameNo > 0) {
-		_decoder->setEndFrame(MIN((int32)lastFrameNo, maxFrameNo));
+		_decoder->setEndFrame(MIN<int32>(lastFrameNo, maxFrameNo));
 	} else {
 		_decoder->setEndFrame(maxFrameNo);
 	}
@@ -645,7 +645,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 		if (yieldInterval == -1 && !(flags & kEventFlagToFrame)) {
 			_yieldInterval = lastFrameNo;
 		} else if (yieldInterval != -1) {
-			_yieldInterval = MIN((int32)yieldInterval, maxFrameNo);
+			_yieldInterval = MIN<int32>(yieldInterval, maxFrameNo);
 		}
 	} else {
 		_yieldInterval = maxFrameNo;
@@ -891,7 +891,7 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 	// At least GK2 sends 256 as the end color, which is wrong,
 	// but works in the original engine as the storage size is 4 bytes
 	// and used values are clamped to 0-255
-	_endColor = MIN((int16)255, endColor);
+	_endColor = MIN<int16>(255, endColor);
 }
 
 } // End of namespace Sci
