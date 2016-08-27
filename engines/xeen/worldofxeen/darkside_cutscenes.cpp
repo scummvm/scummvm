@@ -66,7 +66,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 		switch (idx) {
 		case 17:
-			sound.playSound(voc[0]);
+			voc[0].play();
 			break;
 		case 34:
 		case 44:
@@ -74,7 +74,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			nwcFrame = 0;
 			break;
 		case 35:
-			sound.playSound(voc[1]);
+			voc[1].play();
 			break;
 		default:
 			++nwcFrame;

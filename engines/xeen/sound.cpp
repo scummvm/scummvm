@@ -20,27 +20,51 @@
  *
  */
 
+#include "audio/decoders/voc.h"
 #include "xeen/sound.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-void VOC::stop() {
-	warning("TODO: VOC::stop");
+SoundManager *VOC::_sound;
+
+void VOC::init(XeenEngine *vm) {
+	_sound = vm->_sound;
 }
 
-SoundManager::SoundManager(XeenEngine *vm): _vm(vm) {
+void VOC::play() {
+	_sound->playSound(this, _soundHandle);
+}
+
+void VOC::stop() {
+	_sound->stopSound(_soundHandle);
+}
+
+/*------------------------------------------------------------------------*/
+
+SoundManager::SoundManager(XeenEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
 }
 
 void SoundManager::proc2(Common::SeekableReadStream &f) {
-
+	// TODO
 }
 
 void SoundManager::startMusic(int v1) {
-
+	// TODO
 }
 
 void SoundManager::stopMusic(int id) {
+	// TODO
 }
 
+void SoundManager::playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle) {
+	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(s, 0);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundHandle, stream);
+		
+}
+
+void SoundManager::stopSound(Audio::SoundHandle &soundHandle) {
+	_mixer->stopHandle(soundHandle);
+}
 
 } // End of namespace Xeen

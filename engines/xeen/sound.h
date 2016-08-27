@@ -23,6 +23,8 @@
 #ifndef XEEN_SOUND_H
 #define XEEN_SOUND_H
 
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "xeen/files.h"
@@ -32,12 +34,18 @@ namespace Xeen {
 class SoundManager;
 
 class VOC: public Common::File {
-	friend class SoundManager;
 private:
-	SoundManager *_sound;
+	static SoundManager *_sound;
+	Audio::SoundHandle _soundHandle;
 public:
-	VOC() : _sound(nullptr) {}
+	VOC() {}
 	virtual ~VOC() { stop(); }
+	static void init(XeenEngine *vm);
+
+	/**
+	 * Start playing the sound
+	 */
+	void play();
 
 	/**
 	 * Stop playing the sound
@@ -48,8 +56,9 @@ public:
 class SoundManager {
 private:
 	XeenEngine *_vm;
+	Audio::Mixer *_mixer;
 public:
-	SoundManager(XeenEngine *vm);
+	SoundManager(XeenEngine *vm, Audio::Mixer *mixer);
 
 	void proc2(Common::SeekableReadStream &f);
 
@@ -61,7 +70,15 @@ public:
 
 	void playSong(Common::SeekableReadStream &f) {}
 
-	void playSound(VOC &voc) {}
+	/**
+	 * Play a given sound
+	 */
+	void playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle);
+
+	/**
+	 * Stop playing a sound
+	 */
+	void stopSound(Audio::SoundHandle &soundHandle);
 
 	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
 

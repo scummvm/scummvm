@@ -263,6 +263,8 @@ int Choose123::execute(int numOptions) {
 
 	_vm->_mode = oldMode;
 	intf.mainIconsPrint();
+
+	return result;
 }
 
 void Choose123::loadButtons(int numOptions) {

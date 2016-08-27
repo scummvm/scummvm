@@ -81,7 +81,7 @@ void InfoDialog::execute() {
 
 void InfoDialog::protectionText() {
 	Party &party = *_vm->_party;
-	Common::StringArray _lines;
+//	Common::StringArray _lines;
 	const char *const AA_L024 = "\x3l\n\x9""024";
 	const char *const AA_R124 = "\x3r\x9""124";
 
