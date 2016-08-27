@@ -64,7 +64,7 @@
 #include <gui/saveload.h>
 
 namespace DM {
-void warning(bool repeat, const char* s, ...) {
+void warning(bool repeat, const char *s, ...) {
 	va_list va;
 
 	va_start(va, s);
@@ -83,8 +83,8 @@ void warning(bool repeat, const char* s, ...) {
 	}
 }
 
-const char* debugGetDirectionName(Direction dir) {
-	static const char* directionNames[] = {"North", "East", "South", "West"};
+const char *debugGetDirectionName(Direction dir) {
+	static const char *directionNames[] = {"North", "East", "South", "West"};
 	if (dir < 0 || dir > 3)
 		return "Invalid direction";
 	return directionNames[dir];
@@ -945,8 +945,8 @@ void DMEngine::fuseSequnce() {
 #define AL1426_i_FuseSequenceUpdateCount L1426_i_Multiple
 #define AL1426_i_TextStringThingCount    L1426_i_Multiple
 	Thing L1427_T_Thing;
-	Group* L1428_ps_Group;
-	Explosion* L1429_ps_Explosion;
+	Group *L1428_ps_Group;
+	Explosion *L1429_ps_Explosion;
 	Thing L1430_T_NextThing;
 	int16 L1431_i_LordChaosMapX;
 	int16 L1432_i_LordChaosMapY;

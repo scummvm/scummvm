@@ -1082,7 +1082,7 @@ int16 ChampionMan::getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
 	return kM1_ChampionNone;
 }
 
-int16 ChampionMan::getDexterity(Champion* champ) {
+int16 ChampionMan::getDexterity(Champion *champ) {
 	int16 dexterity = _vm->getRandomNumber(8) + champ->_statistics[k2_ChampionStatDexterity][k1_ChampionStatCurrent];
 	dexterity -= ((int32)(dexterity >> 1) * (int32)champ->_load) / getMaximumLoad(champ);
 	if (_partyIsSleeping)
@@ -1091,7 +1091,7 @@ int16 ChampionMan::getDexterity(Champion* champ) {
 	return getBoundedValue(1 + _vm->getRandomNumber(8), dexterity >> 1, 100 - _vm->getRandomNumber(8));
 }
 
-bool ChampionMan::isLucky(Champion* champ, uint16 percentage) {
+bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
 	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage))
 		return true;
 
@@ -1355,7 +1355,7 @@ bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 ki
 	return true; // fix BUG_01
 }
 
-void ChampionMan::championShootProjectile(Champion* champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
+void ChampionMan::championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
 	Direction newDirection = champ->_dir;
 	_vm->_projexpl->createProjectile(thing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
@@ -1694,7 +1694,7 @@ void ChampionMan::applyTimeEffects() {
 	drawAllChampionStates();
 }
 
-void ChampionMan::savePartyPart2(Common::OutSaveFile* file) {
+void ChampionMan::savePartyPart2(Common::OutSaveFile *file) {
 	for (uint16 i = 0; i < 4; ++i) {
 		Champion *champ = &_champions[i];
 		file->writeUint16BE(champ->_attributes);
@@ -1756,7 +1756,7 @@ void ChampionMan::savePartyPart2(Common::OutSaveFile* file) {
 	file->writeByte(party._event71Count_Invisibility);
 }
 
-void ChampionMan::loadPartyPart2(Common::InSaveFile* file) {
+void ChampionMan::loadPartyPart2(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < 4; ++i) {
 		Champion *champ = &_champions[i];
 		champ->_attributes = file->readUint16BE();
@@ -2288,7 +2288,7 @@ uint16 ChampionMan::getChampionIconIndex(int16 val, Direction dir) {
 	return ((val + 4 - dir) & 0x3);
 }
 
-void ChampionMan::drawHealthStaminaManaValues(Champion* champ) {
+void ChampionMan::drawHealthStaminaManaValues(Champion *champ) {
 	drawHealthOrStaminaOrManaValue(116, champ->_currHealth, champ->_maxHealth);
 	drawHealthOrStaminaOrManaValue(124, champ->_currStamina, champ->_maxStamina);
 	drawHealthOrStaminaOrManaValue(132, champ->_currMana, champ->_maxMana);
@@ -2374,7 +2374,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 		_vm->_eventMan->showMouse();
 }
 
-void ChampionMan::renameChampion(Champion* champ) {
+void ChampionMan::renameChampion(Champion *champ) {
 #define k1_RENAME_CHAMPION_NAME 1
 #define k2_RENAME_CHAMPION_TITLE 2
 	static const char underscoreCharacterString[2] = "_";

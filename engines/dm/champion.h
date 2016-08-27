@@ -508,7 +508,7 @@ public:
 	uint16 getChampionIconIndex(int16 val, Direction dir); // @ M26_CHAMPION_ICON_INDEX
 	void drawHealthStaminaManaValues(Champion *champ); // @ F0290_CHAMPION_DrawHealthStaminaManaValues
 	void drawSlot(uint16 champIndex, int16 slotIndex); // @ F0291_CHAMPION_DrawSlot
-	void renameChampion(Champion* champ); // @ F0281_CHAMPION_Rename
+	void renameChampion(Champion *champ); // @ F0281_CHAMPION_Rename
 	uint16 getSkillLevel(int16 champIndex, uint16 skillIndex);// @ F0303_CHAMPION_GetSkillLevel
 	Common::String getStringFromInteger(uint16 val, bool padding, uint16 paddingCharCount); // @ F0288_CHAMPION_GetStringFromInteger
 	void applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex,
@@ -554,7 +554,7 @@ public:
 	void unpoison(int16 champIndex); // @ F0323_CHAMPION_Unpoison
 	void applyTimeEffects(); // @ F0331_CHAMPION_ApplyTimeEffects_CPSF
 	void savePartyPart2(Common::OutSaveFile *file);
-	void loadPartyPart2(Common::InSaveFile* file);
+	void loadPartyPart2(Common::InSaveFile *file);
 
 	Box _boxChampionIcons[4];
 	Color _championColor[4];
