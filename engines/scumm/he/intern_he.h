@@ -56,9 +56,11 @@ public:
 	Common::Rect _actorClipOverride;	// HE specific
 
 	int _heTimers[16];
+	uint32 _pauseStartTime;
 
 	int getHETimer(int timer);
 	void setHETimer(int timer);
+	void pauseHETimers(bool pause);
 
 public:
 	ScummEngine_v60he(OSystem *syst, const DetectorResult &dr);
@@ -94,6 +96,7 @@ protected:
 	Common::WriteStream *openSaveFileForAppending(const byte *fileName);
 	void deleteSaveFile(const byte *fileName);
 	void renameSaveFile(const byte *from, const byte *to);
+	void pauseEngineIntern(bool pause);
 
 	Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
