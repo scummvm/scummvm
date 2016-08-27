@@ -28,11 +28,16 @@
 namespace Titanic {
 
 class CPhonographLid : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool LockPhonographMsg(CLockPhonographMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
-	int _value;
+	bool _open;
 public:
 	CLASSDEF;
-	CPhonographLid() : CGameObject(), _value(0) {}
+	CPhonographLid() : CGameObject(), _open(false) {}
 
 	/**
 	 * Save the data for the class to file

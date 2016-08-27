@@ -24,9 +24,18 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPhonograph, CMusicPlayer)
+	ON_MESSAGE(PhonographPlayMsg)
+	ON_MESSAGE(PhonographStopMsg)
+	ON_MESSAGE(PhonographRecordMsg)
+	ON_MESSAGE(EnterRoomMsg)
+	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(MusicHasStartedMsg)
+END_MESSAGE_MAP()
+
 CPhonograph::CPhonograph() : CMusicPlayer(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0),
-	_fieldF0(0), _fieldF4(0) {
+		_fieldE0(false), _fieldE4(0), _fieldE8(0), _fieldEC(0),
+		_fieldF0(0), _fieldF4(0) {
 }
 
 void CPhonograph::save(SimpleFile *file, int indent) {
@@ -55,8 +64,113 @@ void CPhonograph::load(SimpleFile *file) {
 	CMusicPlayer::load(file);
 }
 
+bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
+	CQueryCylinderHolderMsg holderMsg;
+	holderMsg.execute(this);
+	if (!holderMsg._value2) {
+		_fieldE0 = false;
+		return true;
+	}
+
+	CQueryCylinderMsg cylinderMsg;
+	cylinderMsg.execute(holderMsg._target);
+
+	if (cylinderMsg._name.empty()) {
+		_fieldE0 = false;
+	} else if (cylinderMsg._name.hasPrefix("STMusic")) {
+		CStartMusicMsg startMsg(this);
+		startMsg.execute(this);
+		_fieldE0 = true;
+		msg->_value = 1;
+	} else {
+		stopGlobalSound(0, -1);
+		playGlobalSound(cylinderMsg._name, -2, true, true, 0);
+		_fieldE0 = true;
+		msg->_value = 1;
+	}
+
+	return true;
+}
+
+bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
+	CQueryCylinderHolderMsg holderMsg;
+	holderMsg.execute(this);
+	if (!holderMsg._value2)
+		return true;
+
+	_fieldE0 = false;
+	CQueryCylinderMsg cylinderMsg;
+	cylinderMsg.execute(holderMsg._target);
+
+	if (_fieldE0) {
+		if (!cylinderMsg._name.empty()) {
+			if (cylinderMsg._name.hasPrefix("STMusic")) {
+				CStopMusicMsg stopMsg;
+				stopMsg.execute(this);
+			} else {
+				stopGlobalSound(msg->_value1, -1);
+			}
+			msg->_value2 = 1;
+		}
+
+		if (!msg->_value3)
+			_fieldE0 = false;
+	} else if (_fieldE4) {
+		_fieldE4 = false;
+		msg->_value2 = 1;
+	}
+
+	return true;
+}
+
+bool CPhonograph::PhonographRecordMsg(CPhonographRecordMsg *msg) {
+	if (!_fieldE0 && !_fieldE4 && !_fieldE8) {
+		CQueryCylinderHolderMsg holderMsg;
+		holderMsg.execute(this);
+
+		if (holderMsg._value2) {
+			_fieldE4 = true;
+			CErasePhonographCylinderMsg eraseMsg;
+			eraseMsg.execute(holderMsg._target);
+		} else {
+			_fieldE4 = false;
+		}
+	}
+
+	return true;
+}
+
 bool CPhonograph::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CPhonograph::handleEvent");
+	if (_fieldE0) {
+		CPhonographPlayMsg playMsg;
+		playMsg.execute(this);
+	}
+
+	return true;
+}
+
+bool CPhonograph::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	if (_fieldE0) {
+		CPhonographStopMsg stopMsg;
+		stopMsg._value1 = 1;
+		stopMsg.execute(this);
+	}
+
+	return true;
+}
+
+bool CPhonograph::MusicHasStartedMsg(CMusicHasStartedMsg *msg) {
+	if (_fieldE4) {
+		CQueryCylinderHolderMsg holderMsg;
+		holderMsg.execute(this);
+		if (holderMsg._value2) {
+			CRecordOntoCylinderMsg recordMsg;
+			recordMsg.execute(holderMsg._target);
+		} else {
+			_fieldE4 = false;
+		}
+	}
+
 	return true;
 }
 

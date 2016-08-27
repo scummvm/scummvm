@@ -24,16 +24,63 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPhonographLid, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(LockPhonographMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CPhonographLid::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_open, indent);
 	CGameObject::save(file, indent);
 }
 
 void CPhonographLid::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_open = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPhonographLid::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CQueryPhonographState stateMsg;
+	stateMsg.execute(getParent(), nullptr, MSGFLAG_SCAN);
+	if (stateMsg._value) {
+		if (_open) {
+			CGameObject *lock = dynamic_cast<CGameObject *>(findByName("Music System Lock"));
+			if (lock)
+				lock->setVisible(false);
+			playMovie(0, 27, 0);
+		} else {
+			playMovie(27, 55, 0);
+		}
+
+		_open = !_open;
+	} else {
+		petDisplayMessage(0, "This is the restaurant music system.  It appears to be locked.");
+	}
+
+	return true;
+}
+
+bool CPhonographLid::MovieEndMsg(CMovieEndMsg *msg) {
+	// WORKAROUND: Redundant code in original not included
+	return true;
+}
+
+bool CPhonographLid::LockPhonographMsg(CLockPhonographMsg *msg) {
+	_cursorId = msg->_value ? CURSOR_INVALID : CURSOR_ARROW;
+	return true;
+}
+
+bool CPhonographLid::LeaveViewMsg(CLeaveViewMsg *msg) {
+	if (_open) {
+		playMovie(27, 55, MOVIE_GAMESTATE);
+		_open = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

@@ -22,6 +22,7 @@
 
 #include "titanic/carry/phonograph_cylinder.h"
 #include "titanic/game/phonograph.h"
+#include "titanic/sound/music_room.h"
 
 namespace Titanic {
 
@@ -162,10 +163,33 @@ bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
 }
 
 bool CPhonographCylinder::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
-	if (_itemName.left(7) == "STMusic") {
-		//todo
-		warning("TODO");
-	}
+	if (!_itemName.hasPrefix("STMusic"))
+		return true;
+
+	CMusicRoom *musicRoom = getMusicRoom();
+	musicRoom->setItem5(BELLS, _bellsMuteControl);
+	musicRoom->setItem2(BELLS, _bellsPitchControl);
+	musicRoom->setItem1(BELLS, _bellsSpeedControl);
+	musicRoom->setItem4(BELLS, _bellsInversionControl);
+	musicRoom->setItem3(BELLS, _bellsDirectionControl);
+
+	musicRoom->setItem5(SNAKE, _snakeMuteControl);
+	musicRoom->setItem2(SNAKE, _snakePitchControl);
+	musicRoom->setItem1(SNAKE, _snakeSpeedControl);
+	musicRoom->setItem4(SNAKE, _snakeInversionControl);
+	musicRoom->setItem3(SNAKE, _snakeDirectionControl);
+
+	musicRoom->setItem5(PIANO, _pianoMuteControl);
+	musicRoom->setItem2(PIANO, _pianoPitchControl);
+	musicRoom->setItem1(PIANO, _pianoSpeedControl);
+	musicRoom->setItem4(PIANO, _pianoInversionControl);
+	musicRoom->setItem3(PIANO, _pianoDirectionControl);
+
+	musicRoom->setItem5(BASS, _bassMuteControl);
+	musicRoom->setItem2(BASS, _bassPitchControl);
+	musicRoom->setItem1(BASS, _bassSpeedControl);
+	musicRoom->setItem4(BASS, _bassInversionControl);
+	musicRoom->setItem3(BASS, _bassDirectionControl);
 
 	return true;
 }

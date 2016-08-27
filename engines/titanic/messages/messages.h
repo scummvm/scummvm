@@ -274,7 +274,7 @@ MESSAGE2(CPumpingMsg, int, value, 0, CGameObject *, object, nullptr);
 MESSAGE1(CPutBotBackInHisBoxMsg, int, value, 0);
 MESSAGE1(CPutParrotBackMsg, int, value, 0);
 MESSAGE0(CPuzzleSolvedMsg);
-MESSAGE3(CQueryCylinderHolderMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE3(CQueryCylinderHolderMsg, int, value1, 0, int, value2, 0, CTreeItem *, target, (CTreeItem *)nullptr);
 MESSAGE1(CQueryCylinderMsg, CString, name, "");
 MESSAGE1(CQueryCylinderNameMsg, CString, name, "");
 MESSAGE3(CQueryCylinderTypeMsg, int, value1, 0, int, value2, 0, int, value3, 0);
