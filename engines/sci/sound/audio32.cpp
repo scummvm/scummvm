@@ -1027,7 +1027,7 @@ int16 Audio32::getVolume(const int16 channelIndex) const {
 }
 
 void Audio32::setVolume(const int16 channelIndex, int16 volume) {
-	volume = MIN((int16)kMaxVolume, volume);
+	volume = MIN<int16>(kMaxVolume, volume);
 	if (channelIndex == kAllChannels) {
 		ConfMan.setInt("sfx_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
 		ConfMan.setInt("speech_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);

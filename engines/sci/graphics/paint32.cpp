@@ -121,7 +121,7 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
 	// Thickness is expected to be 2n+1
-	thickness = ((MAX((uint8)1, thickness) - 1) | 1);
+	thickness = ((MAX<uint8>(1, thickness) - 1) | 1);
 	const uint8 halfThickness = thickness >> 1;
 
 	outRect.left = (startPoint.x < endPoint.x ? startPoint.x : endPoint.x) - halfThickness;

@@ -446,10 +446,10 @@ reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
 	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
 	Common::Rect blackoutArea;
-	blackoutArea.left = MAX((int16)0, argv[0].toSint16());
-	blackoutArea.top = MAX((int16)0, argv[1].toSint16());
-	blackoutArea.right = MIN(scriptWidth, (int16)(argv[2].toSint16() + 1));
-	blackoutArea.bottom = MIN(scriptHeight, (int16)(argv[3].toSint16() + 1));
+	blackoutArea.left = MAX<int16>(0, argv[0].toSint16());
+	blackoutArea.top = MAX<int16>(0, argv[1].toSint16());
+	blackoutArea.right = MIN<int16>(scriptWidth, argv[2].toSint16() + 1);
+	blackoutArea.bottom = MIN<int16>(scriptHeight, argv[3].toSint16() + 1);
 	g_sci->_video32->getVMDPlayer().setBlackoutArea(blackoutArea);
 	return s->r_acc;
 }
