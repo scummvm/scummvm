@@ -295,7 +295,7 @@ void GfxPalette32::updateHardware(const bool updateScreen) {
 
 	g_system->getPaletteManager()->setPalette(bpal, 0, 256);
 	if (updateScreen) {
-		g_sci->getEventManager()->updateScreen();
+		g_system->updateScreen();
 	}
 }
 

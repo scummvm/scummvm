@@ -370,7 +370,9 @@ SciEvent EventManager::getSciEvent(uint32 mask) {
 	SciEvent event = { SCI_EVENT_NONE, 0, 0, Common::Point() };
 #endif
 
-	EventManager::updateScreen();
+	if (getSciVersion() < SCI_VERSION_2) {
+		updateScreen();
+	}
 
 	// Get all queued events from graphics driver
 	do {
