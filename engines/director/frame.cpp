@@ -734,31 +734,38 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 	}
 
 	if (whiteColor == -1) {
-		warning("No white color for Matte image");
-		whiteColor = *(byte *)tmp.getBasePtr(0, 0);
-	}
+		debugC(1, kDebugImages, "No white color for Matte image");
 
-	Graphics::FloodFill ff(&tmp, whiteColor, 0, true);
+		for (int yy = 0; yy < tmp.h; yy++) {
+			const byte *src = (const byte *)tmp.getBasePtr(0, yy);
+			byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
 
-	for (int yy = 0; yy < tmp.h; yy++) {
-		ff.addSeed(0, yy);
-		ff.addSeed(tmp.w - 1, yy);
-	}
-
-	for (int xx = 0; xx < tmp.w; xx++) {
-		ff.addSeed(xx, 0);
-		ff.addSeed(xx, tmp.h - 1);
-	}
-	ff.fillMask();
-
-	for (int yy = 0; yy < tmp.h; yy++) {
-		const byte *src = (const byte *)tmp.getBasePtr(0, yy);
-		const byte *mask = (const byte *)ff.getMask()->getBasePtr(0, yy);
-		byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
-
-		for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
-			if (*mask == 0)
+			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++)
 				*dst = *src;
+		}
+	} else {
+		Graphics::FloodFill ff(&tmp, whiteColor, 0, true);
+
+		for (int yy = 0; yy < tmp.h; yy++) {
+			ff.addSeed(0, yy);
+			ff.addSeed(tmp.w - 1, yy);
+		}
+
+		for (int xx = 0; xx < tmp.w; xx++) {
+			ff.addSeed(xx, 0);
+			ff.addSeed(xx, tmp.h - 1);
+		}
+		ff.fillMask();
+
+		for (int yy = 0; yy < tmp.h; yy++) {
+			const byte *src = (const byte *)tmp.getBasePtr(0, yy);
+			const byte *mask = (const byte *)ff.getMask()->getBasePtr(0, yy);
+			byte *dst = (byte *)target.getBasePtr(drawRect.left, drawRect.top + yy);
+
+			for (int xx = 0; xx < drawRect.width(); xx++, src++, dst++, mask++)
+				if (*mask == 0)
+					*dst = *src;
+		}
 	}
 
 	tmp.free();
