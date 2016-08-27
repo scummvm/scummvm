@@ -106,7 +106,7 @@ int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
 
 	int retval = 0;
 	byte creatureIndex = group->getCount();
-	if (getFlag(g243_CreatureInfo[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
+	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = returnPrevVal(cell);
 
@@ -136,7 +136,7 @@ uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	uint16 creatureType = group->_type;
-	if ((mode >= k0_soundModePlayImmediately) && getFlag(g243_CreatureInfo[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+	if ((mode >= k0_soundModePlayImmediately) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
 		do {
@@ -417,7 +417,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 	uint16 L0384_ui_Cell;
 
 
-	L0376_ps_CreatureInfo = &g243_CreatureInfo[AL0380_ui_CreatureType = group->_type];
+	L0376_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0380_ui_CreatureType = group->_type];
 	if (getFlag(L0376_ps_CreatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
 		goto T0190024;
 	if (group->_health[creatureIndex] <= damage) {
@@ -582,8 +582,7 @@ int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 map
 int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack) {
 	int16 L0390_i_PoisonResistance;
 
-
-	if (!poisonAttack || ((L0390_i_PoisonResistance = g243_CreatureInfo[creatreType].getPoisonResistance()) == k15_immuneToPoison)) {
+	if (!poisonAttack || ((L0390_i_PoisonResistance = _vm->_dungeonMan->_creatureInfos[creatreType].getPoisonResistance()) == k15_immuneToPoison)) {
 		return 0;
 	}
 	return ((poisonAttack + _vm->getRandomNumber(4)) << 3) / ++L0390_i_PoisonResistance;
@@ -642,7 +641,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 		goto T0209139_Return;
 	}
 	L0444_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0449_T_GroupThing);
-	L0448_s_CreatureInfo = g243_CreatureInfo[L0444_ps_Group->_type];
+	L0448_s_CreatureInfo = _vm->_dungeonMan->_creatureInfos[L0444_ps_Group->_type];
 	/* Update the event */
 	setMapAndTime(L0465_s_NextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime);
 	L0465_s_NextEvent._priority = 255 - L0448_s_CreatureInfo._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
@@ -1179,7 +1178,7 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 	int16 L0425_ai_CreatureViewDirections[4]; /* List of directions to test */
 
 
-	L0424_ps_CreatureInfo = &g243_CreatureInfo[group->_type];
+	L0424_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(L0424_ps_CreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
 		return 0;
 	}
@@ -1289,7 +1288,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 	uint16 L1635_ui_SoundIndex;
 
 	L0329_ps_Group = &(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex]);
-	L0327_ui_CreatureGraphicInfo = g243_CreatureInfo[L0331_ui_CreatureType = L0329_ps_Group->_type]._graphicInfo;
+	L0327_ui_CreatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[L0331_ui_CreatureType = L0329_ps_Group->_type]._graphicInfo;
 	L0330_B_ProcessGroup = (creatureIndex < 0);
 	if (L0330_B_ProcessGroup) /* If the creature index is negative then all creatures in the group are processed */
 		creatureIndex = L0329_ps_Group->getCount();
@@ -1351,7 +1350,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 		}
 		activeGroup->_aspect[creatureIndex] = AL0326_ui_Aspect;
 	} while (L0330_B_ProcessGroup && (creatureIndex--));
-	AL0326_ui_AnimationTicks = g243_CreatureInfo[L0329_ps_Group->_type]._animationTicks;
+	AL0326_ui_AnimationTicks = _vm->_dungeonMan->_creatureInfos[L0329_ps_Group->_type]._animationTicks;
 	return _vm->_gameTime + (isAttacking ? ((AL0326_ui_AnimationTicks >> 8) & 0xF) : ((AL0326_ui_AnimationTicks >> 4) & 0xF)) + _vm->getRandomNumber(2);
 }
 
@@ -1473,7 +1472,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 
 	_vm->_projexpl->_lastCreatureAttackTime = _vm->_gameTime;
 	ActiveGroup L0443_s_ActiveGroup = _activeGroups[group->getActiveGroupIndex()];
-	CreatureInfo *L0441_ps_CreatureInfo = &g243_CreatureInfo[AL0437_ui_CreatureType = group->_type];
+	CreatureInfo *L0441_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0437_ui_CreatureType = group->_type];
 	uint16 L0438_ui_PrimaryDirectionToParty = _currGroupPrimaryDirToParty;
 	if ((AL0439_i_GroupCells = L0443_s_ActiveGroup._cells) == k255_CreatureTypeSingleCenteredCreature) {
 		AL0439_i_TargetCell = _vm->getRandomNumber(2);
@@ -1650,7 +1649,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 		_vm->_championMan->wakeUp();
 	}
 	L0563_i_DoubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	L0564_s_CreatureInfo = g243_CreatureInfo[group->_type];
+	L0564_s_CreatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
 	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.getExperience());
 	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(L0562_ps_Champion) < (_vm->getRandomNumber(32) + L0564_s_CreatureInfo._dexterity + L0563_i_DoubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(L0562_ps_Champion, 60))) {
 		if ((AL0559_ui_WoundTest = _vm->getRandomNumber(65536)) & 0x0070) {
@@ -1719,7 +1718,7 @@ void GroupMan::startWanedring(int16 mapX, int16 mapY) {
 	}
 	setMapAndTime(L0333_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
 	L0333_s_Event._type = k37_TMEventTypeUpdateBehaviourGroup;
-	L0333_s_Event._priority = 255 - g243_CreatureInfo[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
+	L0333_s_Event._priority = 255 - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	L0333_s_Event._C._ticks = 0;
 	L0333_s_Event._B._location._mapX = mapX;
 	L0333_s_Event._B._location._mapY = mapY;
@@ -1744,7 +1743,7 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	_currActiveGroupCount++;
 
 	L0340_ps_Group = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] + 
-		g235_ThingDataWordCount[k4_GroupThingType] * (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getIndex()));
+		_vm->_dungeonMan->_thingDataWordCount[k4_GroupThingType] * (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getIndex()));
 
 	L0341_ps_ActiveGroup->_cells = L0340_ps_Group->_cells;
 	L0340_ps_Group->getActiveGroupIndex() = L0344_i_ActiveGroupIndex;
@@ -1837,7 +1836,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 	else
 		L0352_ui_GroupCells = k255_CreatureTypeSingleCenteredCreature;
 
-	L0354_ps_CreatureInfo = &g243_CreatureInfo[L0353_ps_Group->_type = creatureType];
+	L0354_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L0353_ps_Group->_type = creatureType];
 	L0350_ui_BaseHealth = L0354_ps_CreatureInfo->_baseHealth;
 	do {
 		L0353_ps_Group->_health[creatureCount] = (L0350_ui_BaseHealth * healthMultiplier) + _vm->getRandomNumber((L0350_ui_BaseHealth >> 2) + 1);
@@ -1904,7 +1903,7 @@ int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* g
 		return 0;
 	}
 	L0567_i_DoubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	L0572_ps_CreatureInfo = &g243_CreatureInfo[group->_type];
+	L0572_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 	L0571_i_ActionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
 	L0570_B_ActionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 	if (L0570_B_ActionHitsNonMaterialCreatures)

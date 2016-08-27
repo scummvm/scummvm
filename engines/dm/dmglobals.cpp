@@ -39,7 +39,6 @@
 #include "movesens.h"
 #include "string.h"
 
-
 namespace DM {
 
 void DMEngine::initConstants() {
@@ -56,10 +55,4 @@ void DMEngine::initConstants() {
 	_dirIntoStepCountNorth[3] = 0;  // South
 }
 
-void DMEngine::displayErrorAndStop(int16 errorIndex) {
-	debug("Stuff hit the fun: %d", errorIndex);
-	Common::Event event;
-	while (_system->getEventManager()->pollEvent(event) || true)
-		;
-}
 } // End of namespace DM

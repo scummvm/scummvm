@@ -250,7 +250,7 @@ bool Console::Cmd_gimme(int argc, const char** argv) {
 
 	for (int16 thingType = 0; thingType < 16; ++thingType) { // 16 number of item types
 		uint16 *thingDataArray = _vm->_dungeonMan->_thingData[thingType];
-		uint16 thingTypeSize = g235_ThingDataWordCount[thingType];
+		uint16 thingTypeSize = _vm->_dungeonMan->_thingDataWordCount[thingType];
 		uint16 thingCount = _vm->_dungeonMan->_dungeonFileHeader._thingCounts[thingType];
 
 		Thing dummyThing(0);

@@ -35,40 +35,7 @@
 #include "movesens.h"
 #include "projexpl.h"
 
-
 namespace DM {
-
-CreatureInfo g243_CreatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
-	/* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
-		MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
-		Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
-	{0,  4, 0x0482, 0x623D,   8, 20,  55, 150, 150, 240,  55, 0x1153, 0x299B, 0x0876, 0x0254, 0xFD40, 4},
-	{1,  0, 0x0480, 0xA625,  15, 32,  20, 110,  80,  15,  20, 0x3132, 0x33A9, 0x0E42, 0x0384, 0xFC41, 3},
-	{2,  6, 0x0510, 0x6198,   3,  5,  50,  10,  10,   0, 110, 0x1376, 0x710A, 0x0235, 0x0222, 0xFD20, 0},
-	{3,  0, 0x04B4, 0xB225,  10, 21,  30,  40,  58,   0,  80, 0x320A, 0x96AA, 0x0B3C, 0x0113, 0xF910, 5},
-	{4,  1, 0x0701, 0xA3B8,   9,  8,  45, 101,  90,   0,  65, 0x1554, 0x58FF, 0x0A34, 0x0143, 0xFE93, 4},
-	{5,  0, 0x0581, 0x539D,  20, 18, 100,  60,  30,   0,  30, 0x1232, 0x4338, 0x0583, 0x0265, 0xFFD6, 3},
-	{6,  3, 0x070C, 0x0020, 120, 10,   5, 165,   5,   0,   5, 0x1111, 0x10F1, 0x0764, 0x02F2, 0xFC84, 6},
-	{7,  7, 0x0300, 0x0220, 185, 15, 170,  50,  40,   5,  10, 0x1463, 0x25C4, 0x06E3, 0x01F4, 0xFD93, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
-	{8,  2, 0x1864, 0x5225,  11, 16,  15,  30,  55,   0,  80, 0x1423, 0x4664, 0x0FC8, 0x0116, 0xFB30, 6},
-	{9, 10, 0x0282, 0x71B8,  21, 14, 240, 120, 219,   0,  35, 0x1023, 0x3BFF, 0x0FF7, 0x04F3, 0xF920, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
-	{10,  2, 0x1480, 0x11B8,  17, 12,  25,  33,  20,   0,  40, 0x1224, 0x5497, 0x0F15, 0x0483, 0xFB20, 3},
-	{11,  0, 0x18C6, 0x0225, 255,  8,  45,  80, 105,   0,  60, 0x1314, 0x55A5, 0x0FF9, 0x0114, 0xFD95, 1},
-	{12, 11, 0x1280, 0x6038,   7,  7,  22,  20,  22,   0,  80, 0x1013, 0x6596, 0x0F63, 0x0132, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
-	{13,  9, 0x14A2, 0xB23D,   5, 10,  42,  39,  90, 100,  88, 0x1343, 0x5734, 0x0638, 0x0112, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
-	{14,  0, 0x05B8, 0x1638,  10, 20,  47,  44,  75,   0,  90, 0x4335, 0xD952, 0x035B, 0x0664, 0xFD60, 5},
-	{15,  5, 0x0381, 0x523D,  18, 19,  72,  70,  45,  35,  35, 0x1AA1, 0x15AB, 0x0B93, 0x0253, 0xFFC5, 4},
-	{16, 10, 0x0680, 0xA038,  13,  8,  28,  20,  25,   0,  41, 0x1343, 0x2148, 0x0321, 0x0332, 0xFC30, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
-	{17,  0, 0x04A0, 0xF23D,   1, 16, 180,   8,  28,  20, 150, 0x1432, 0x19FD, 0x0004, 0x0112, 0xF710, 4},
-	{18, 11, 0x0280, 0xA3BD,  14,  6, 140,  60, 105,   0,  70, 0x1005, 0x7AFF, 0x0FFA, 0x0143, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
-	{19,  0, 0x0060, 0xE23D,   5, 18,  15,  33,  61,   0,  65, 0x3258, 0xAC77, 0x0F56, 0x0117, 0xFC40, 5},
-	{20,  8, 0x10DE, 0x0225,  25, 25,  75, 144,  66,   0,  50, 0x1381, 0x7679, 0x0EA7, 0x0345, 0xFD93, 3}, /* Atari ST: AttackSoundOrdinal = 0 */
-	{21,  3, 0x0082, 0xA3BD,   7, 15,  33,  77, 130,   0,  60, 0x1592, 0x696A, 0x0859, 0x0224, 0xFC30, 4},
-	{22,  0, 0x1480, 0x53BD,  10, 14,  68, 100, 100,   0,  75, 0x4344, 0xBDF9, 0x0A5D, 0x0124, 0xF920, 3},
-	{23,  0, 0x38AA, 0x0038,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
-	{24,  1, 0x068A, 0x97BD,  13, 28, 110, 255, 255,   0,  70, 0x3645, 0xBF7C, 0x06CD, 0x0445, 0xFC30, 4}, /* Atari ST Version 1.0 1987-12-08 1987-12-11: Ranges = 0x2645 */
-	{25,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
-	{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}};
 
 void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
@@ -78,7 +45,7 @@ void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, in
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsRight;
 }
 
-void DungeonMan::setupArrays() {
+void DungeonMan::setupConstants() {
 	ObjectInfo objectInfo[180] = { // @ G0237_as_Graphic559_ObjectInfo
 		/* { Type, ObjectAspectIndex, ActionSetIndex, AllowedSlots } */
 		ObjectInfo(30,  1,  0, 0x0500),   /* COMPASS        Pouch/Chest */
@@ -374,14 +341,72 @@ void DungeonMan::setupArrays() {
 		WeaponInfo(36, 255, 100,  50, 0x20FF)   /* THE FIRESTAFF */
 	};
 
+	CreatureInfo creatureInfo[k27_CreatureTypeCount] = { // @ G0243_as_Graphic559_CreatureInfo
+	/* { CreatureAspectIndex, AttackSoundOrdinal, Attributes, GraphicInfo,
+		MovementTicks, AttackTicks, Defense, BaseHealth, Attack, PoisonAttack,
+		Dexterity, Ranges, Properties, Resistances, AnimationTicks, WoundProbabilities, AttackType } */
+		{0,  4, 0x0482, 0x623D,   8, 20,  55, 150, 150, 240,  55, 0x1153, 0x299B, 0x0876, 0x0254, 0xFD40, 4},
+		{1,  0, 0x0480, 0xA625,  15, 32,  20, 110,  80,  15,  20, 0x3132, 0x33A9, 0x0E42, 0x0384, 0xFC41, 3},
+		{2,  6, 0x0510, 0x6198,   3,  5,  50,  10,  10,   0, 110, 0x1376, 0x710A, 0x0235, 0x0222, 0xFD20, 0},
+		{3,  0, 0x04B4, 0xB225,  10, 21,  30,  40,  58,   0,  80, 0x320A, 0x96AA, 0x0B3C, 0x0113, 0xF910, 5},
+		{4,  1, 0x0701, 0xA3B8,   9,  8,  45, 101,  90,   0,  65, 0x1554, 0x58FF, 0x0A34, 0x0143, 0xFE93, 4},
+		{5,  0, 0x0581, 0x539D,  20, 18, 100,  60,  30,   0,  30, 0x1232, 0x4338, 0x0583, 0x0265, 0xFFD6, 3},
+		{6,  3, 0x070C, 0x0020, 120, 10,   5, 165,   5,   0,   5, 0x1111, 0x10F1, 0x0764, 0x02F2, 0xFC84, 6},
+		{7,  7, 0x0300, 0x0220, 185, 15, 170,  50,  40,   5,  10, 0x1463, 0x25C4, 0x06E3, 0x01F4, 0xFD93, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
+		{8,  2, 0x1864, 0x5225,  11, 16,  15,  30,  55,   0,  80, 0x1423, 0x4664, 0x0FC8, 0x0116, 0xFB30, 6},
+		{9, 10, 0x0282, 0x71B8,  21, 14, 240, 120, 219,   0,  35, 0x1023, 0x3BFF, 0x0FF7, 0x04F3, 0xF920, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
+		{10,  2, 0x1480, 0x11B8,  17, 12,  25,  33,  20,   0,  40, 0x1224, 0x5497, 0x0F15, 0x0483, 0xFB20, 3},
+		{11,  0, 0x18C6, 0x0225, 255,  8,  45,  80, 105,   0,  60, 0x1314, 0x55A5, 0x0FF9, 0x0114, 0xFD95, 1},
+		{12, 11, 0x1280, 0x6038,   7,  7,  22,  20,  22,   0,  80, 0x1013, 0x6596, 0x0F63, 0x0132, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
+		{13,  9, 0x14A2, 0xB23D,   5, 10,  42,  39,  90, 100,  88, 0x1343, 0x5734, 0x0638, 0x0112, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 0 */
+		{14,  0, 0x05B8, 0x1638,  10, 20,  47,  44,  75,   0,  90, 0x4335, 0xD952, 0x035B, 0x0664, 0xFD60, 5},
+		{15,  5, 0x0381, 0x523D,  18, 19,  72,  70,  45,  35,  35, 0x1AA1, 0x15AB, 0x0B93, 0x0253, 0xFFC5, 4},
+		{16, 10, 0x0680, 0xA038,  13,  8,  28,  20,  25,   0,  41, 0x1343, 0x2148, 0x0321, 0x0332, 0xFC30, 3}, /* Atari ST: AttackSoundOrdinal = 7 */
+		{17,  0, 0x04A0, 0xF23D,   1, 16, 180,   8,  28,  20, 150, 0x1432, 0x19FD, 0x0004, 0x0112, 0xF710, 4},
+		{18, 11, 0x0280, 0xA3BD,  14,  6, 140,  60, 105,   0,  70, 0x1005, 0x7AFF, 0x0FFA, 0x0143, 0xFA30, 4}, /* Atari ST: AttackSoundOrdinal = 8 */
+		{19,  0, 0x0060, 0xE23D,   5, 18,  15,  33,  61,   0,  65, 0x3258, 0xAC77, 0x0F56, 0x0117, 0xFC40, 5},
+		{20,  8, 0x10DE, 0x0225,  25, 25,  75, 144,  66,   0,  50, 0x1381, 0x7679, 0x0EA7, 0x0345, 0xFD93, 3}, /* Atari ST: AttackSoundOrdinal = 0 */
+		{21,  3, 0x0082, 0xA3BD,   7, 15,  33,  77, 130,   0,  60, 0x1592, 0x696A, 0x0859, 0x0224, 0xFC30, 4},
+		{22,  0, 0x1480, 0x53BD,  10, 14,  68, 100, 100,   0,  75, 0x4344, 0xBDF9, 0x0A5D, 0x0124, 0xF920, 3},
+		{23,  0, 0x38AA, 0x0038,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
+		{24,  1, 0x068A, 0x97BD,  13, 28, 110, 255, 255,   0,  70, 0x3645, 0xBF7C, 0x06CD, 0x0445, 0xFC30, 4}, /* Atari ST Version 1.0 1987-12-08 1987-12-11: Ranges = 0x2645 */
+		{25,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5},
+		{26,  0, 0x38AA, 0x0000,  12, 22, 255, 180, 210,   0, 130, 0x6369, 0xFF37, 0x0FBF, 0x0564, 0xFB52, 5}
+	};
+	// this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
+	byte thingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCount
+		2,   /* Door */
+		3,   /* Teleporter */
+		2,   /* Text String */
+		4,   /* Sensor */
+		9,   /* Group */
+		2,   /* Weapon */
+		2,   /* Armour */
+		2,   /* Scroll */
+		2,   /* Potion */
+		4,   /* Container */
+		2,   /* Junk */
+		0,   /* Unused */
+		0,   /* Unused */
+		0,   /* Unused */
+		5,   /* Projectile */
+		2    /* Explosion */
+	};
+
 	for (int i = 0; i < 180; i++)
-		_objectInfo[i] = objectInfo[i];
+		_objectInfos[i] = objectInfo[i];
 
 	for (int i = 0; i < 58; i++)
-		_armourInfo[i] = armourInfo[i];
+		_armourInfos[i] = armourInfo[i];
 
 	for (int i = 0; i < 46; i++)
-		_weaponInfo[i] = weaponInfo[i];
+		_weaponInfos[i] = weaponInfo[i];
+
+	for (int i = 0; i < k27_CreatureTypeCount; i++)
+		_creatureInfos[i] = creatureInfo[i];
+
+	for (int i = 0; i < 16; i++)
+		_thingDataWordCount[i] = thingDataWordCount[i];
 
 }
 
@@ -423,7 +448,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	for (uint16 i = 0; i < 2; ++i)
 		_currMapDoorInfo[i].resetToZero();
 
-	setupArrays();
+	setupConstants();
 }
 
 DungeonMan::~DungeonMan() {
@@ -500,26 +525,6 @@ void DungeonMan::decompressDungeonFile() {
 	}
 	f.close();
 }
-
-// this is the number of uint16s the data has to be stored, not the length of the data in dungeon.dat!
-byte g235_ThingDataWordCount[16] = { // @ G0235_auc_Graphic559_ThingDataByteCount
-	2,   /* Door */
-	3,   /* Teleporter */
-	2,   /* Text String */
-	4,   /* Sensor */
-	9,   /* Group */
-	2,   /* Weapon */
-	2,   /* Armour */
-	2,   /* Scroll */
-	2,   /* Potion */
-	4,   /* Container */
-	2,   /* Junk */
-	0,   /* Unused */
-	0,   /* Unused */
-	0,   /* Unused */
-	5,   /* Projectile */
-	2    /* Explosion */
-};
 
 const Thing Thing::_none(0); // @ C0xFFFF_THING_NONE
 const Thing Thing::_endOfList(0xFFFE); // @ C0xFFFE_THING_ENDOFLIST
@@ -680,7 +685,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		if (_vm->_newGameFl)
 			_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
 
-		uint16 thingStoreWordCount = g235_ThingDataWordCount[thingType];
+		uint16 thingStoreWordCount = _thingDataWordCount[thingType];
 
 		if (thingStoreWordCount == 0)
 			continue;
@@ -1017,7 +1022,7 @@ bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 }
 
 uint16 *DungeonMan::getThingData(Thing thing) {
-	return _thingData[thing.getType()] + thing.getIndex() * g235_ThingDataWordCount[thing.getType()];
+	return _thingData[thing.getType()] + thing.getIndex() * _thingDataWordCount[thing.getType()];
 }
 
 uint16* DungeonMan::getSquareFirstThingData(int16 mapX, int16 mapY) {
@@ -1110,7 +1115,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		{0,   0,  0,  0, 0, 0, 0, 0}
 	};
 
-	TextString textString(_thingData[k2_TextstringType] + thing.getIndex() * g235_ThingDataWordCount[k2_TextstringType]);
+	TextString textString(_thingData[k2_TextstringType] + thing.getIndex() * _thingDataWordCount[k2_TextstringType]);
 	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
 		char sepChar;
@@ -1181,7 +1186,7 @@ Thing DungeonMan::getUnusedThing(uint16 thingType) {
 		thingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
 
 	int16 thingIdx = thingCount;
-	int16 thingDataByteCount = g235_ThingDataWordCount[thingType] >> 1;
+	int16 thingDataByteCount = _thingDataWordCount[thingType] >> 1;
 	Thing *thingPtr = (Thing *)_thingData[thingType];
 
 	Thing curThing;
@@ -1243,10 +1248,10 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 
 	switch (thing.getType()) {
 	case k5_WeaponThingType:
-		weight = _weaponInfo[((Weapon *)junk)->getType()]._weight;
+		weight = _weaponInfos[((Weapon *)junk)->getType()]._weight;
 		break;
 	case k6_ArmourThingType:
-		weight = _armourInfo[((Armour *)junk)->getType()]._weight;
+		weight = _armourInfos[((Armour *)junk)->getType()]._weight;
 		break;
 	case k10_JunkThingType:
 		weight = junkInfo[junk->getType()];
@@ -1342,7 +1347,7 @@ void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 map
 
 WeaponInfo* DungeonMan::getWeaponInfo(Thing thing) {
 	Weapon* weapon = (Weapon*)getThingData(thing);
-	return &_weaponInfo[weapon->getType()];
+	return &_weaponInfos[weapon->getType()];
 }
 
 int16 DungeonMan::getProjectileAspect(Thing thing) {
@@ -1365,7 +1370,7 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 			return -projAspOrd;
 	}
 
-	return _objectInfo[getObjectInfoIndex(thing)]._objectAspectIndex;
+	return _objectInfos[getObjectInfoIndex(thing)]._objectAspectIndex;
 }
 
 int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16* mapX, int16* mapY) {
@@ -1510,7 +1515,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 
 uint16 DungeonMan::getCreatureAttributes(Thing thing) {
 	Group *currGroup = (Group *)getThingData(thing);
-	return g243_CreatureInfo[currGroup->_type]._attributes;
+	return _creatureInfos[currGroup->_type]._attributes;
 }
 
 void DungeonMan::setGroupCells(Group* group, uint16 cells, uint16 mapIndex) {

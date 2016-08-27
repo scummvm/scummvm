@@ -157,7 +157,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = k201_IconIndiceActionEmptyHand;
-	} else if (_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
+	} else if (_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
 		dm.fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
@@ -1168,7 +1168,7 @@ T0407014:
 	case k32_ChampionActionShoot:
 		if (Thing(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType)
 			goto T0407032;
-		L1256_ps_WeaponInfoActionHand = &_vm->_dungeonMan->_weaponInfo[L1248_ps_Weapon->getType()];
+		L1256_ps_WeaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[L1248_ps_Weapon->getType()];
 		L1257_ps_WeaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]);
 		AL1246_i_ActionHandWeaponClass = L1256_ps_WeaponInfoActionHand->_class;
 		AL1250_i_ReadyHandWeaponClass = L1257_ps_WeaponInfoReadyHand->_class;
@@ -1536,7 +1536,7 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	}
 	L1229_i_FrightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
 	L1233_ps_Group = (Group*)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
-	L1234_ps_CreatureInfo = &g243_CreatureInfo[L1233_ps_Group->_type];
+	L1234_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L1233_ps_Group->_type];
 	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
 		L1231_ui_Experience >>= 1;
 	} else {
@@ -1645,7 +1645,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	}
 	if ((L1189_T_Thing = L1190_ps_Champion->_slots[k1_ChampionSlotActionHand]) == Thing::_none) {
 		L1188_ui_ActionSetIndex = 2; /* Actions Punch, Kick and War Cry */
-	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
+	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
 		return;
 	}
 	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];

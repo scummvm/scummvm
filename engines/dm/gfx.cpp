@@ -576,7 +576,7 @@ void DisplayMan::initializeGraphicData() {
 	for (int16 creatureIndex = 0; creatureIndex < k27_CreatureTypeCount; creatureIndex++) {
 		creatureAsp = &_creatureAspects219[creatureIndex];
 
-		int16 creatureGraphicInfo = g243_CreatureInfo[creatureIndex]._graphicInfo;
+		int16 creatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[creatureIndex]._graphicInfo;
 		creatureAsp->_firstDerivedBitmapIndex = derivedBitmapIndex;
 
 		int16 creatureFrontBitmapD3PixelCount = getScaledBitmapByteCount(creatureAsp->_byteWidthFront, creatureAsp->_heightFront, k16_Scale_D3);
@@ -3110,7 +3110,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 			}
 
 			if ((viewSquareIndex >= k0_ViewSquare_D3C) && (viewSquareIndex <= k9_ViewSquare_D0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
-				objectAspect = &(_objectAspects209[_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(thingParam)]._objectAspectIndex]);
+				objectAspect = &(_objectAspects209[_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = k360_FirstObjectGraphicIndice + objectAspect->_firstNativeBitmapRelativeIndex;
 				useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && !viewLane);
 				if (useAlcoveObjectImage)
@@ -3235,7 +3235,7 @@ T0115015_DrawProjectileAsObject:
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
 			group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
-			CreatureInfo *creatureInfo = &g243_CreatureInfo[group->_type];
+			CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;

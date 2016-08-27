@@ -203,9 +203,9 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent* event) {
 	TimelineEvent* L0591_ps_Event;
 
 
-	if (_eventCount == _eventMaxCount) {
-		_vm->displayErrorAndStop(45);
-	}
+	if (_eventCount == _eventMaxCount)
+		error("Too many events");
+
 	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
 		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
 			if ((L0591_ps_Event->_type >= k5_TMEventTypeCorridor) && (L0591_ps_Event->_type <= k10_TMEventTypeDoor)) {

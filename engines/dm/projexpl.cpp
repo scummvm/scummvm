@@ -162,7 +162,7 @@ T0217004:
 			((L0510_i_ProjectileAssociatedThingType == k15_ExplosionThingType) ?
 			 (L0486_T_ProjectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) :
 			 ((L0490_ps_Projectile->_attack > _vm->getRandomNumber(128)) &&
-			  getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L0486_T_ProjectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
+			  getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L0486_T_ProjectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
 			  && ((L0510_i_ProjectileAssociatedThingType != k10_JunkThingType) ||
 			  ((AL0487_i_IconIndex = _vm->_objectMan->getIconIndex(L0486_T_ProjectileAssociatedThing)) < 0) ||
 				  (!((AL0487_i_IconIndex >= k176_IconIndiceJunkIronKey) && (AL0487_i_IconIndex <= k191_IconIndiceJunkMasterKey))))
@@ -184,7 +184,7 @@ T0217004:
 			return false;
 		}
 		L0512_ui_CreatureIndex--;
-		L0493_ps_CreatureInfo = &g243_CreatureInfo[L0511_ui_CreatureType = L0491_ps_Group->_type];
+		L0493_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L0511_ui_CreatureType = L0491_ps_Group->_type];
 		if ((L0486_T_ProjectileAssociatedThing == Thing::_explFireBall) && (L0511_ui_CreatureType == k11_CreatureTypeBlackFlame)) {
 			L0496_pui_CreatureHealth = &L0491_ps_Group->_health[L0512_ui_CreatureIndex];
 			*L0496_pui_CreatureHealth = MIN(1000, *L0496_pui_CreatureHealth + getProjectileImpactAttack(L0490_ps_Projectile, L0486_T_ProjectileAssociatedThing));
@@ -352,7 +352,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 			} else {
 				if ((L0473_T_Thing = _vm->_groupMan->groupGetThing(AP0443_ui_ProjectileMapX, AP0444_ui_ProjectileMapY)) != Thing::_endOfList) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
 					Group *L0472_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0473_T_Thing);
-					CreatureInfo *L0471_ps_CreatureInfo = &g243_CreatureInfo[L0472_ps_Group->_type];
+					CreatureInfo *L0471_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L0472_ps_Group->_type];
 					int16 L0469_i_CreatureFireResistance = L0471_ps_CreatureInfo->getFireResistance();
 					if (L0469_i_CreatureFireResistance != k15_immuneToFire) {
 						if (getFlag(L0471_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
@@ -536,7 +536,7 @@ void ProjExpl::processEvent25(TimelineEvent* event) {
 	L0538_B_ExplosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0528_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0529_ui_MapY == _vm->_dungeonMan->_partyMapY);
 	if ((L0535_T_GroupThing = _vm->_groupMan->groupGetThing(L0528_ui_MapX, L0529_ui_MapY)) != Thing::_endOfList) {
 		L0533_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0535_T_GroupThing);
-		L0534_ps_CreatureInfo = &g243_CreatureInfo[AL0537_ui_CreatureType = L0533_ps_Group->_type];
+		L0534_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0537_ui_CreatureType = L0533_ps_Group->_type];
 	}
 	if ((L0536_T_ExplosionThing = Thing(Thing::_firstExplosion.toUint16() + L0532_ps_Explosion->getType())) == Thing::_explPoisonCloud) {
 		L0530_i_Attack = MAX(1, MIN(L0532_ps_Explosion->getAttack() >> 5, 4) + _vm->getRandomNumber(2)); /* Value between 1 and 5 */

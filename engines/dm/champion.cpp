@@ -852,7 +852,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		Thing curThing = curChampion->_slots[slotIndex];
 		if (curThing.getType() == k6_ArmourThingType) {
 			ArmourInfo *armorInfo = (ArmourInfo *)_vm->_dungeonMan->getThingData(curThing);
-			armorInfo = &_vm->_dungeonMan->_armourInfo[((Armour *)armorInfo)->getType()];
+			armorInfo = &_vm->_dungeonMan->_armourInfos[((Armour *)armorInfo)->getType()];
 			if (getFlag(armorInfo->_attributes, k0x0080_ArmourAttributeIsAShield))
 				armorShieldDefense += ((getStrength(champIndex, slotIndex) + _vm->_dungeonMan->getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
 		}
@@ -867,7 +867,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		Thing curThing = curChampion->_slots[woundIndex];
 		if (curThing.getType() == k6_ArmourThingType) {
 			ArmourInfo *armourInfo = (ArmourInfo *)_vm->_dungeonMan->getThingData(curThing);
-			woundDefense += _vm->_dungeonMan->getArmourDefense(&_vm->_dungeonMan->_armourInfo[((Armour *)armourInfo)->getType()], useSharpDefense);
+			woundDefense += _vm->_dungeonMan->getArmourDefense(&_vm->_dungeonMan->_armourInfos[((Armour *)armourInfo)->getType()], useSharpDefense);
 		}
 	}
 
@@ -1319,7 +1319,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
+	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
 	_vm->_eventMan->showMouse();
@@ -1964,7 +1964,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	while (curThing != Thing::_endOfList) {
 		ThingType thingType = curThing.getType();
 		if ((thingType > k3_SensorThingType) && (curThing.getCell() == championObjectsCell)) {
-			int16 objectAllowedSlots = _vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(curThing)]._allowedSlots;
+			int16 objectAllowedSlots = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(curThing)]._allowedSlots;
 			uint16 curSlotIndex = k0_ChampionSlotReadyHand;
 			switch (thingType) {
 			case k6_ArmourThingType: {

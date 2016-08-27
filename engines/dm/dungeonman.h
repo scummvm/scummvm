@@ -31,7 +31,6 @@
 #include "dm.h"
 #include "gfx.h"
 
-
 namespace DM {
 
 /* Object info */
@@ -206,9 +205,6 @@ public:
 	uint16 getSmellRange() { return  (_ranges >> 8) & 0xF; }
 	uint16 getAttackRange() { return (_ranges >> 12) & 0xF; }
 }; // @ CREATURE_INFO
-
-
-extern CreatureInfo g243_CreatureInfo[k27_CreatureTypeCount]; // @ G0243_as_Graphic559_CreatureInfo
 
 class Door {
 	Thing _nextThing;
@@ -637,8 +633,6 @@ public:
 
 class Group;
 
-extern byte g235_ThingDataWordCount[16];
-
 class DungeonMan {
 	DMEngine *_vm;
 
@@ -732,11 +726,13 @@ public:
 	Thing _pileTopObject[5]; // @ G0292_aT_PileTopObject
 	DoorInfo _currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
 	
-	ObjectInfo _objectInfo[180]; // @ G0237_as_Graphic559_ObjectInfo
-	ArmourInfo _armourInfo[58]; // @ G0239_as_Graphic559_ArmourInfo
-	WeaponInfo _weaponInfo[46]; // @ G0238_as_Graphic559_WeaponInfo
+	ObjectInfo _objectInfos[180]; // @ G0237_as_Graphic559_ObjectInfo
+	ArmourInfo _armourInfos[58]; // @ G0239_as_Graphic559_ArmourInfo
+	WeaponInfo _weaponInfos[46]; // @ G0238_as_Graphic559_WeaponInfo
+	CreatureInfo _creatureInfos[k27_CreatureTypeCount]; // @ G0243_as_Graphic559_CreatureInfo
+	byte _thingDataWordCount[16]; // @ G0235_auc_Graphic559_ThingDataByteCount
 
-	void setupArrays();
+	void setupConstants();
 };
 
 }

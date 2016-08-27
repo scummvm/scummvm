@@ -582,7 +582,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case k8_PotionThingType: {
 			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
-			actualAttribMask = _vm->_dungeonMan->_objectInfo[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			actualAttribMask = _vm->_dungeonMan->_objectInfos[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
 		case k10_JunkThingType: {
@@ -638,7 +638,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
-				actualAttribMask = _vm->_dungeonMan->_objectInfo[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+				actualAttribMask = _vm->_dungeonMan->_objectInfos[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}
@@ -947,13 +947,16 @@ void InventoryMan::clickOnMouth() {
 	if (_vm->_championMan->_candidateChampionOrdinal) {
 		return;
 	}
-	if (!getFlag(_vm->_dungeonMan->_objectInfo[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing = _vm->_championMan->_leaderHandObject)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
+
+	L1078_T_Thing = _vm->_championMan->_leaderHandObject;
+	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
 		return;
 	}
 	L1079_ui_IconIndex = _vm->_objectMan->getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
 	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
-	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal)];
+	L1080_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
+	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex];
 	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1078_T_Thing);
 	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
 		if (!(L1082_ps_Junk->getChargeCount())) {

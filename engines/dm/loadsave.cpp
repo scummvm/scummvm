@@ -391,7 +391,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 
 	// save _g284_thingData
 	for (uint16 thingIndex = 0; thingIndex < 16; ++thingIndex)
-		for (uint16 i = 0; i < g235_ThingDataWordCount[thingIndex] * _dungeonMan->_dungeonFileHeader._thingCounts[thingIndex]; ++i)
+		for (uint16 i = 0; i < _dungeonMan->_thingDataWordCount[thingIndex] * _dungeonMan->_dungeonFileHeader._thingCounts[thingIndex]; ++i)
 			file->writeUint16BE(_dungeonMan->_thingData[thingIndex][i]);
 
 	// save _g276_dungeonRawMapData

@@ -1038,5 +1038,8 @@ void DMEngine::fuseSequenceUpdate() {
 					  The ending animation when Lord Chaos is fused plays too quickly because the execution speed is not limited */
 }
 
-Common::Language DMEngine::getGameLanguage() { return _gameVersion->_desc.language; }
+Common::Language DMEngine::getGameLanguage() {
+	return _gameVersion->_desc.language;
+}
+
 } // End of namespace DM

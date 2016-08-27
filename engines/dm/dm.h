@@ -253,7 +253,6 @@ public:
 	uint16 getRandomNumber(uint32 max) { return _rnd->getRandomNumber(max - 1); }
 	int16 ordinalToIndex(int16 val); // @ M01_ORDINAL_TO_INDEX
 	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
-	void displayErrorAndStop(int16 errorIndex); // @ F0019_MAIN_DisplayErrorAndStop
 	virtual Common::Error run(); // @ main
 	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResponse loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
