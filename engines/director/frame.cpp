@@ -471,6 +471,10 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			case kInkTypeCopy:
 				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
 				break;
+			case kInkTypeTransparent:
+				//FIXME: is it always white (last entry in pallette)?
+				surface.transBlitFrom(*img->getSurface(), Common::Point(x, y), _vm->getPaletteColorCount() - 1);
+				break;
 			case kInkTypeBackgndTrans:
 				drawBackgndTransSprite(surface, *img->getSurface(), drawRect);
 				break;
@@ -708,7 +712,7 @@ void Frame::drawReverseSprite(Graphics::ManagedSurface &target, const Graphics::
 }
 
 void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	//Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
+	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels are transparent
 	Graphics::Surface tmp;
 	tmp.copyFrom(sprite);
 
