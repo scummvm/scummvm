@@ -24,10 +24,13 @@
 #define TITANIC_PET_PELLERATOR_H
 
 #include "titanic/game/pet/pet_transport.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CPETPellerator : public CPETTransport {
+	DECLARE_MESSAGE_MAP;
+	bool PETActivateMsg(CPETActivateMsg *msg);
 public:
 	CLASSDEF;
 

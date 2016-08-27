@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/pet/pet_lift.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPETLift, CPETTransport)
+	ON_MESSAGE(TransportMsg)
+END_MESSAGE_MAP()
 
 void CPETLift::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +37,38 @@ void CPETLift::save(SimpleFile *file, int indent) {
 void CPETLift::load(SimpleFile *file) {
 	file->readNumber();
 	CPETTransport::load(file);
+}
+
+bool CPETLift::TransportMsg(CTransportMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (msg->_value1 != 1)
+		return false;
+
+	int floorNum = -1;
+	if (msg->_roomName == "TopOfWell") {
+		floorNum = 1;
+	} else if (msg->_roomName == "BottomOfWell") {
+		floorNum = 39;
+	} else if (msg->_roomName == "PlayersRoom" && pet) {
+		int assignedFloor = pet->getAssignedFloorNum();
+		if (assignedFloor < 1 || assignedFloor > 39) {
+			pet->petDisplayMessage("You have not assigned a room to go to.");
+			floorNum = -1;
+		}
+	}
+
+	if (floorNum != -1) {
+		int elevatorNum = pet ? pet->getRoomsElevatorNum() : 0;
+
+		if ((elevatorNum == 2 || elevatorNum == 4) && floorNum > 27) {
+			petDisplayMessage("Sorry, this elevator does not go below floor 27.");
+		} else {
+			CTrueTalkTriggerActionMsg triggerMsg(2, floorNum, 0);
+			triggerMsg.execute("Liftbot");
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

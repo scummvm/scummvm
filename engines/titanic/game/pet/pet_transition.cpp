@@ -21,8 +21,14 @@
  */
 
 #include "titanic/game/pet/pet_transition.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/core/view_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPETTransition, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
 
 void CPETTransition::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +38,23 @@ void CPETTransition::save(SimpleFile *file, int indent) {
 void CPETTransition::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPETTransition::EnterViewMsg(CEnterViewMsg *msg) {
+	CPetControl *pet = getPetControl();
+
+	if (compareRoomNameTo("1stClassLobby") && pet) {
+		int elevatorNum = pet->getRoomsElevatorNum();
+		CString nodeView = msg->_newView->getNodeViewName();
+
+		if (nodeView == "Node 1.E") {
+			pet->setRoomsElevatorNum((elevatorNum == 1 || elevatorNum == 2) ? 1 : 3);
+		} else if (nodeView == "Node 1.W") {
+			pet->setRoomsElevatorNum((elevatorNum == 1 || elevatorNum == 2) ? 2 : 4);
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

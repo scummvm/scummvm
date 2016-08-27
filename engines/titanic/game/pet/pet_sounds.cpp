@@ -24,16 +24,40 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPETSounds, CGameObject)
+	ON_MESSAGE(PETPlaySoundMsg)
+	ON_MESSAGE(LoadSuccessMsg)
+END_MESSAGE_MAP()
+
 void CPETSounds::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_ticks, indent);
 	CGameObject::save(file, indent);
 }
 
 void CPETSounds::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_ticks = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPETSounds::PETPlaySoundMsg(CPETPlaySoundMsg *msg) {
+	if (msg->_soundNum == 1) {
+		playSound("z#65.wav");
+	} else if (msg->_soundNum == 2 && stateGet24()) {
+		uint ticks = getTicksCount();
+		if (!_ticks || ticks > (_ticks + 12000)) {
+			playSound("z#36.wav");
+			_ticks = ticks;
+		}
+	}
+
+	return true;
+}
+
+bool CPETSounds::LoadSuccessMsg(CLoadSuccessMsg *msg) {
+	_ticks = 0;
+	return true;
 }
 
 } // End of namespace Titanic

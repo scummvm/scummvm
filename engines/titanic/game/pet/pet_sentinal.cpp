@@ -21,17 +21,46 @@
  */
 
 #include "titanic/game/pet/pet_sentinal.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPETSentinal, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
+CPETSentinal::CPETSentinal() : CGameObject(), _elevatorNum(0),
+		_wellEntry(0), _resetHighlight(0) {
+}
+
 void CPETSentinal::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_elevatorNum, indent);
+	file->writeNumberLine(_wellEntry, indent);
+	file->writeNumberLine(_resetHighlight, indent);
 	CGameObject::save(file, indent);
 }
 
 void CPETSentinal::load(SimpleFile *file) {
 	file->readNumber();
+	_elevatorNum = file->readNumber();
+	_wellEntry = file->readNumber();
+	_resetHighlight = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CPETSentinal::EnterViewMsg(CEnterViewMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		if (_elevatorNum != -1)
+			pet->setRoomsElevatorNum(_elevatorNum);
+		if (_wellEntry)
+			pet->setRoomsWellEntry(_wellEntry);
+		if (_resetHighlight)
+			pet->resetRoomsHighlight();
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

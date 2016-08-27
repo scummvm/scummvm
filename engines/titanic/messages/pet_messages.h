@@ -35,7 +35,7 @@ MESSAGE0(CPETLostObjectMsg);
 MESSAGE0(CPETObjectSelectedMsg);
 MESSAGE1(CPETObjectStateMsg, int, value, 0);
 MESSAGE0(CPETPhotoOnOffMsg);
-MESSAGE1(CPETPlaySoundMsg, int, value, 0);
+MESSAGE1(CPETPlaySoundMsg, int, soundNum, 0);
 MESSAGE0(CPETReceiveMsg);
 MESSAGE0(CPETSetStarDestinationMsg);
 MESSAGE1(CPETStarFieldLockMsg, int, value, 0);

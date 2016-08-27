@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPETPellerator, CPETTransport)
+	ON_MESSAGE(PETActivateMsg)
+END_MESSAGE_MAP()
+
 void CPETPellerator::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CPETTransport::save(file, indent);
@@ -32,6 +36,26 @@ void CPETPellerator::save(SimpleFile *file, int indent) {
 void CPETPellerator::load(SimpleFile *file) {
 	file->readNumber();
 	CPETTransport::load(file);
+}
+
+bool CPETPellerator::PETActivateMsg(CPETActivateMsg *msg) {
+	CStatusChangeMsg statusMsg;
+
+	if (msg->_name == "PromenadeDeck")
+		statusMsg._newStatus = 0;
+	else if (msg->_name == "MusicRoom")
+		statusMsg._newStatus = 1;
+	else if (msg->_name == "Bar")
+		statusMsg._newStatus = 2;
+	else if (msg->_name == "TopOfWell")
+		statusMsg._newStatus = 4;
+	else if (msg->_name == "1stClassRestaurant")
+		statusMsg._newStatus = 5;
+	else if (msg->_name == "Arboretum")
+		statusMsg._newStatus = 6;
+
+	statusMsg.execute("PelleratorObject");
+	return true;
 }
 
 } // End of namespace Titanic

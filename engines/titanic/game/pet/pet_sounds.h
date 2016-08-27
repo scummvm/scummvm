@@ -24,15 +24,19 @@
 #define TITANIC_PET_SOUNDS_H
 
 #include "titanic/core/game_object.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CPETSounds : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool PETPlaySoundMsg(CPETPlaySoundMsg *msg);
+	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 public:
-	int _value;
+	uint _ticks;
 public:
 	CLASSDEF;
-	CPETSounds() : CGameObject(), _value(0) {}
+	CPETSounds() : CGameObject(), _ticks(0) {}
 
 	/**
 	 * Save the data for the class to file

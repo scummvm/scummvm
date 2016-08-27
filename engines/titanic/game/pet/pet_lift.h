@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CPETLift : public CPETTransport {
+	DECLARE_MESSAGE_MAP;
+	bool TransportMsg(CTransportMsg *msg);
 public:
 	CLASSDEF;
 

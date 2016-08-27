@@ -39,7 +39,7 @@ void CPETTransport::load(SimpleFile *file) {
 }
 
 bool CPETTransport::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CPETTransport::handleEvent");
+	petClear();
 	return true;
 }
 

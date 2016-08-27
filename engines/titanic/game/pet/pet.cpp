@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/pet/pet.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CPET, CGameObject)
+	ON_MESSAGE(ShowTextMsg)
+END_MESSAGE_MAP()
 
 CPET::CPET() : CGameObject(), _fieldBC(0), _fieldC0(3),
 	_fieldC4(0), _fieldC8(0), _fieldD8(0), _fieldDC(0) {
@@ -52,6 +57,13 @@ void CPET::load(SimpleFile *file) {
 	_fieldDC = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CPET::ShowTextMsg(CShowTextMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->petDisplayMessage(1, msg->_value);
+	return true;
 }
 
 } // End of namespace Titanic

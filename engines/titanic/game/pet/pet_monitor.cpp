@@ -21,6 +21,8 @@
  */
 
 #include "titanic/game/pet/pet_monitor.h"
+#include "titanic/core/room_item.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -39,7 +41,23 @@ void CPETMonitor::load(SimpleFile *file) {
 }
 
 bool CPETMonitor::EnterRoomMsg(CEnterRoomMsg *msg) {
-	warning("CPETMonitor::handleEvent");
+	bool flag = true;
+	if (msg->_newRoom && msg->_oldRoom) {
+		CString oldRoomName = msg->_oldRoom->getName();
+		CString newRoomName = msg->_newRoom->getName();
+
+		if (newRoomName == "SgtLobby" && oldRoomName == "SGTState")
+			flag = false;
+	}
+
+	if (flag) {
+		CPetControl *pet = getPetControl();
+		if (pet) {
+			pet->setRoomsRoomNum(0);
+			pet->resetRoomsHighlight();
+		}
+	}
+
 	return true;
 }
 

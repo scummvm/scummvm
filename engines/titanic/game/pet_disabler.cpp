@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CPetDisabler, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CPetDisabler::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_value, indent);
@@ -34,6 +39,16 @@ void CPetDisabler::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readString();
 	CGameObject::load(file);
+}
+
+bool CPetDisabler::EnterViewMsg(CEnterViewMsg *msg) {
+	petLockInput();
+	return true;
+}
+
+bool CPetDisabler::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petUnlockInput();
+	return true;
 }
 
 } // End of namespace Titanic

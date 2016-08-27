@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CPET : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ShowTextMsg(CShowTextMsg *msg);
 public:
 	int _fieldBC;
 	int _fieldC0;
