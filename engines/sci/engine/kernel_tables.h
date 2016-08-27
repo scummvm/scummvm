@@ -380,7 +380,7 @@ static const SciKernelMapSubEntry kText_subops[] = {
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kBitmap_subops[] = {
 	{ SIG_SINCE_SCI21,     0, MAP_CALL(BitmapCreate),              "iiii(i)(i)(i)",        NULL },
-	{ SIG_SINCE_SCI21,     1, MAP_CALL(BitmapDestroy),             "r",                    NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(BitmapDestroy),             "[r!]",                 NULL },
 	{ SIG_SINCE_SCI21,     2, MAP_CALL(BitmapDrawLine),            "riiiii(i)(i)",         NULL },
 	{ SIG_SINCE_SCI21,     3, MAP_CALL(BitmapDrawView),            "riii(i)(i)(0)(i)(i)",  NULL },
 	{ SIG_SINCE_SCI21,     4, MAP_CALL(BitmapDrawText),            "rriiiiiiiiiii",        NULL },
@@ -815,7 +815,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "r",                 NULL,            NULL },
+	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "[r!]",              NULL,            NULL },
 	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
