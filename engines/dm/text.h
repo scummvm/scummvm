@@ -64,9 +64,9 @@ public:
 	void clearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
 	void printEndGameString(int16 x, int16 y, Color textColor, char *text); // @ F0443_STARTEND_EndgamePrintString
 	bool isTextScrolling(TextScroller *scroller, bool waitEndOfScrolling) {
-		warning(false, "STUB METHOD: isTextScrolling"); return true;
+		warning("STUB METHOD: isTextScrolling"); return true;
 	} // @ F0561_SCROLLER_IsTextScrolling
-	void setScrollerCommand(TextScroller *scroller, int16 command) { warning(false, "STUB METHOD: f560_SCROLLER_setCommand");  } // @ F0560_SCROLLER_SetCommand
+	void setScrollerCommand(TextScroller *scroller, int16 command) { warning("STUB METHOD: f560_SCROLLER_setCommand");  } // @ F0560_SCROLLER_SetCommand
 	void clearAllRows(); // @ F0043_TEXT_MESSAGEAREA_ClearAllRows
 };
 

@@ -78,8 +78,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
 
-		warning(false, "MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
-
+		warning("MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
 		dmSaveHeader._saveTarget = (SaveTarget)file->readSint32BE();
 		dmSaveHeader._saveVersion = file->readSint32BE();

@@ -104,8 +104,6 @@ struct DMADGameDescription {
 	OriginalSavePlatform _origPlatformToAccept[k_savePlatform_total + 1];
 };
 
-void warning(bool repeat, const char *s, ...);
-
 enum Direction {
 	kDirNorth = 0,
 	kDirEast = 1,

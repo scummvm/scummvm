@@ -64,25 +64,6 @@
 #include <gui/saveload.h>
 
 namespace DM {
-void warning(bool repeat, const char *s, ...) {
-	va_list va;
-
-	va_start(va, s);
-	Common::String output = Common::String::vformat(s, va);
-	va_end(va);
-
-	if (repeat) {
-		::warning("%s", output.c_str());
-	} else {
-		static Common::Array<Common::String> stringsPrinted;
-
-		if (Common::find(stringsPrinted.begin(), stringsPrinted.end(), s) == stringsPrinted.end()) {
-			stringsPrinted.push_back(output);
-			::warning("%s", output.c_str());
-		}
-	}
-}
-
 const char *debugGetDirectionName(Direction dir) {
 	static const char *directionNames[] = {"North", "East", "South", "West"};
 	if (dir < 0 || dir > 3)

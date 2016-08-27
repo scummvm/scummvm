@@ -1378,7 +1378,7 @@ void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 }
 
 void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
-	warning(false, "potentially dangerous cast to uint32 below");
+	warning("potentially dangerous cast to uint32 below");
 	if (time < (uint32)filterTime(event->_mapTime)) {
 		event->_type -= 5;
 		event->_C._ticks = filterTime(event->_mapTime) - time;

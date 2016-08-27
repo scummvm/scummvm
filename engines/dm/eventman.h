@@ -288,7 +288,7 @@ public:
 	void waitForMouseOrKeyActivity(); // @ F0541_INPUT_WaitForMouseOrKeyboardActivity
 	void commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16 y2); // @ F0362_COMMAND_HighlightBoxEnable
 	void highlightBoxDisable(); // @ F0363_COMMAND_HighlightBoxDisable
-	void highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning(false, "STUB METHOD: highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
+	void highlightScreenBox(int16 x1, int16 x2, int16 y1, int16 y2) { warning("STUB METHOD: highlightScreenBox"); } // @  F0006_MAIN_HighlightScreenBox
 
 	KeyboardInput _primaryKeyboardInputInterface[7]; // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 	KeyboardInput _secondaryKeyboardInputMovement[19]; // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement

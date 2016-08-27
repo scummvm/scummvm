@@ -821,7 +821,7 @@ public:
 	uint16 getDarkenedColor(uint16 RGBcolor);
 	void startEndFadeToPalette(uint16 *P0849_pui_Palette); // @ F0436_STARTEND_FadeToPalette
 	void buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom); // @ F0508_AMIGA_BuildPaletteChangeCopperList
-	void shadeScreenBox(Box* box, Color color) { warning(false, "STUB METHOD: shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
+	void shadeScreenBox(Box* box, Color color) { warning("STUB METHOD: shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
 
 private:
 	void initConstants();

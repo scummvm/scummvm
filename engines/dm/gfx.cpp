@@ -863,7 +863,7 @@ void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask
 													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 	// make sure to take care of inclusive boundaries, color can have 0x8000 flag to not use mask
-	warning(false, "STUB: f133_blitBoxFilledWithMaskedBitmap");
+	warning("STUB: f133_blitBoxFilledWithMaskedBitmap");
 }
 
 
@@ -2746,8 +2746,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 void DisplayMan::blitToBitmapShrinkWithPalChange(byte *srcBitmap, byte *destBitmap,
 													  int16 srcPixelWidth, int16 srcHeight,
 													  int16 destPixelWidth, int16 destHeight, byte *palChange) {
-	warning(false, "DUMMY CODE: f129_blitToBitmapShrinkWithPalChange");
-	warning(false, "MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
+	warning("DUMMY CODE: f129_blitToBitmapShrinkWithPalChange");
+	warning("MISSING CODE: No palette change takes place in f129_blitToBitmapShrinkWithPalChange");
 
 
 	destPixelWidth = (destPixelWidth + 1) & 0xFFFE;
@@ -3668,7 +3668,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 				}
 				blitBoxFilledWithMaskedBitmap(bitmapRedBanana, _bitmapViewport, 0, getDerivedBitmap(k0_DerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
 				addDerivedBitmap(k0_DerivedBitmapViewport);
-				warning(false, "DISABLED CODE: f480_releaseBlock in f115_cthulhu");
+				warning("DISABLED CODE: f480_releaseBlock in drawObjectsCreaturesProjectilesExplosions");
 				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 			} else {
 				int16 explosionScale;
