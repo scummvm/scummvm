@@ -911,9 +911,9 @@ void DMEngine::entranceDrawCredits() {
 
 void DMEngine::fuseSequence() {
 	_gameWon = true;
-	if (_inventoryMan->_inventoryChampionOrdinal) {
+	if (_inventoryMan->_inventoryChampionOrdinal)
 		_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
-	}
+
 	_eventMan->highlightBoxDisable();
 	_championMan->_party._magicalLightAmount = 200;
 	_inventoryMan->setDungeonViewPalette();
@@ -964,11 +964,11 @@ T0446002:
 		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	for (int16 cycleCount = 4; --cycleCount; ) {
-		for (int16 switchCount = 5; --switchCount; ) {
+	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
+		for (int16 switchCount = 4; switchCount > 0; switchCount--) {
 			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, k1_soundModePlayIfPrioritized);
 			lordGroup->_type = (switchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
-			for (int16 fuseSequenceUpdateCount = cycleCount; fuseSequenceUpdateCount--; )
+			for (int16 fuseSequenceUpdateCount = cycleCount - 1; fuseSequenceUpdateCount >= 0; fuseSequenceUpdateCount--)
 				fuseSequenceUpdate();
 		}
 	}
@@ -993,9 +993,9 @@ T0446002:
 	int16 textStringThingCount = 0;
 	Thing textStringThings[8];
 	while (curThing != Thing::_endOfList) {
-		if (curThing.getType() == k2_TextstringType) {
+		if (curThing.getType() == k2_TextstringType)
 			textStringThings[textStringThingCount++] = curThing;
-		}
+
 		curThing = _dungeonMan->getNextThing(curThing);
 	}
 	char textFirstChar = 'A';
