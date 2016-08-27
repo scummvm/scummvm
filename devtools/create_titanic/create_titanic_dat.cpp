@@ -797,6 +797,38 @@ void writeBedheadData() {
 	dataOffset += size;
 }
 
+void writeParrotLobbyLinkUpdaterEntries() {
+	static const int OFFSETS[3] = { 0x5A5B38, 0x5A5320, 0x5A4360 };
+	static const int COUNTS[5] = { 7, 5, 6, 9, 1 };
+	static const int SKIP[5] = { 36, 36, 40, 36, 0 };
+	uint recordOffset = OFFSETS[_version], linkOffset;
+	byte vals[8];
+
+	outputFile.seek(dataOffset);
+
+	for (int groupNum = 0; groupNum < 4; ++groupNum) {
+		for (int entryNum = 0; entryNum < COUNTS[groupNum];
+				++entryNum, recordOffset += 36) {
+			inputFile.seek(recordOffset - FILE_DIFF[_version]);
+			linkOffset = inputFile.readUint32LE();
+			for (int idx = 0; idx < 8; ++idx)
+				vals[idx] = inputFile.readUint32LE();
+		
+			// Write out the entry
+			inputFile.seek(linkOffset - FILE_DIFF[_version]);
+			outputFile.writeString(inputFile);
+			outputFile.write(vals, 8);
+		}
+
+		// Skip space between groups
+		recordOffset += SKIP[groupNum];
+	}
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("DATA/PARROT_LOBBY_LINK_UPDATOR", dataOffset, size);
+	dataOffset += size;
+}
+
 void writeHeader() {
 	// Write out magic string
 	const char *MAGIC_STR = "SVTN";
@@ -969,6 +1001,7 @@ void writeData() {
 	writeBarbotFrameRanges();
 	writeMissiveOMatMessages();
 	writeBedheadData();
+	writeParrotLobbyLinkUpdaterEntries();
 }
 
 void createScriptMap() {
