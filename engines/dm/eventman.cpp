@@ -1559,7 +1559,8 @@ void EventManager::commandProcessTypes101To108_clickInSpellSymbolsArea(CommandTy
 		Box(277, 289, 51, 61),   /* Symbol 4 */
 		Box(291, 303, 51, 61),   /* Symbol 5 */
 		Box(305, 317, 51, 61),   /* Symbol 6 */
-		Box(305, 318, 63, 73)}; /* Delete */
+		Box(305, 318, 63, 73)    /* Delete */
+	};
 
 	if (cmdType == k108_CommandClickInSpeallAreaCastSpell) {
 		if (_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex]._symbols[0] == '\0')

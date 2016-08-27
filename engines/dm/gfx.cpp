@@ -749,7 +749,8 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButtonInd
 			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordSetRedEagle[2];
 			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
 		} else {
-			if (!isDerivedBitmapInCache(doorButtonOrdinal = k102_DerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((!viewDoorButtonIndex) ? 0 : viewDoorButtonIndex - 1))) {
+			doorButtonOrdinal = k102_DerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((!viewDoorButtonIndex) ? 0 : viewDoorButtonIndex - 1);
+			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
 				uint16 *coordSetBlueGoat = doorButtonCoordSets[coordSet][k3_viewDoorButton_D1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
 				blitToBitmapShrinkWithPalChange(bitmapNative, getDerivedBitmap(doorButtonOrdinal),
@@ -776,7 +777,7 @@ void DisplayMan::viewportSetPalette(uint16* middleScreenPalette, uint16* topAndB
 }
 
 void DisplayMan::viewportBlitToScreen() {
-	Box box(0, 223, 33, 33 + 135);
+	Box box(0, 223, 33, 168);
 
 	blitToBitmap(_bitmapViewport, _bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency,
 					  k136_heightViewport, k200_heightScreen);
@@ -863,10 +864,8 @@ void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask
 													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
 	// make sure to take care of inclusive boundaries, color can have 0x8000 flag to not use mask
-	warning("STUB: f133_blitBoxFilledWithMaskedBitmap");
+	warning("STUB: blitBoxFilledWithMaskedBitmap");
 }
-
-
 
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height) {
 	uint16 width = byteWidth * 2;
@@ -2208,8 +2207,8 @@ void DisplayMan::loadWallSet(WallSet set) {
 }
 
 void DisplayMan::loadCurrentMapGraphics() {
-	static Box BoxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
-	static Box BoxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
+	static Box boxWallD3LCR = Box(0, 115, 0, 50); // @ G0161_s_Graphic558_Box_WallBitmap_D3LCR
+	static Box boxWallD2LCR = Box(0, 135, 0, 70); // @ G0162_s_Graphic558_Box_WallBitmap_D2LCR
 	static byte doorOrnCoordIndices[12] = { // @ G0196_auc_Graphic558_DoorOrnamentCoordinateSetIndices
 		0,   /* Door Ornament #00 Square Grid */
 		1,   /* Door Ornament #01 Iron Bars */
@@ -2311,12 +2310,12 @@ void DisplayMan::loadCurrentMapGraphics() {
 	copyBitmapAndFlipHorizontal(_bitmapWallD3LCRNative = _bitmapWallSetD3LCR, _tmpBitmap,
 									_frameWalls163[k0_ViewSquare_D3C]._srcByteWidth, _frameWalls163[k0_ViewSquare_D3C]._srcHeight);
 	fillBitmap(_bitmapWallD3LCRFlipped, k10_ColorFlesh, 64, 51);
-	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, BoxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency, 51, 51);
+	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency, 51, 51);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD2LCRNative = _bitmapWallSetD2LCR, _tmpBitmap,
 									_frameWalls163[k3_ViewSquare_D2C]._srcByteWidth, _frameWalls163[k3_ViewSquare_D2C]._srcHeight);
 	fillBitmap(_bitmapWallD2LCRFlipped, k10_ColorFlesh, 72, 71);
-	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, BoxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency, 71, 71);
+	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency, 71, 71);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD1LCRNative = _bitmapWallSetD1LCR, _bitmapWallD1LCRFlipped,
 									_frameWalls163[k6_ViewSquare_D1C]._srcByteWidth, _frameWalls163[k6_ViewSquare_D1C]._srcHeight);

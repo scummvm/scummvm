@@ -954,7 +954,8 @@ T0172010_ClosedFakeWall:
 			curThing = getNextThing(curThing);
 		}
 
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
+		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
 
 		break;
@@ -978,7 +979,8 @@ T0172010_ClosedFakeWall:
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
 			curThing = getNextThing(curThing);
 
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY)) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
+		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
 			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
 		break;
 	}

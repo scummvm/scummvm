@@ -291,9 +291,6 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 }
 
 int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
-#define AP0483_i_PrimaryDirection srcMapX
-	int16 L0556_i_Direction;
-
 	if (srcMapX == destMapX) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
 		if (srcMapY > destMapY) {
@@ -308,75 +305,65 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 		}
 		return kDirEast;
 	}
-	L0556_i_Direction = kDirNorth;
+
+	int16 curDirection = kDirNorth;
 	for (;;) {
-		if (isDestVisibleFromSource(L0556_i_Direction, srcMapX, srcMapY, destMapX, destMapY)) {
-			if (!isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
-				if ((L0556_i_Direction != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty = returnPrevVal(L0556_i_Direction), srcMapX, srcMapY, destMapX, destMapY)) {
-					_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + L0556_i_Direction);
-					return L0556_i_Direction;
+		if (isDestVisibleFromSource(curDirection, srcMapX, srcMapY, destMapX, destMapY)) {
+			_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal(curDirection);
+			if (!isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
+				_vm->_projexpl->_secondaryDirToOrFromParty = returnPrevVal(curDirection);
+				if ((curDirection != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
+					_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + curDirection);
+					return curDirection;
 				}
 			}
 			if (_vm->getRandomNumber(2)) {
-				AP0483_i_PrimaryDirection = _vm->_projexpl->_secondaryDirToOrFromParty;
-				_vm->_projexpl->_secondaryDirToOrFromParty = L0556_i_Direction;
-				return AP0483_i_PrimaryDirection;
+				int16 primaryDirection = _vm->_projexpl->_secondaryDirToOrFromParty;
+				_vm->_projexpl->_secondaryDirToOrFromParty = curDirection;
+				return primaryDirection;
 			}
-			return L0556_i_Direction;
+			return curDirection;
 		}
-		L0556_i_Direction++;
+		curDirection++;
 	}
 }
 
 bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
-	int L1637_i_Temp;
-
 	switch (dir) { /* If direction is not 'West' then swap variables so that the same test as for west can be applied */
 	case kDirSouth:
-		L1637_i_Temp = srcMapX;
-		srcMapX = destMapY;
-		destMapY = L1637_i_Temp;
-		L1637_i_Temp = destMapX;
-		destMapX = srcMapY;
-		srcMapY = L1637_i_Temp;
+		SWAP(srcMapX, destMapY);
+		SWAP(destMapX, srcMapY);
 		break;
 	case kDirEast:
-		L1637_i_Temp = srcMapX;
-		srcMapX = destMapX;
-		destMapX = L1637_i_Temp;
-		L1637_i_Temp = destMapY;
-		destMapY = srcMapY;
-		srcMapY = L1637_i_Temp;
+		SWAP(srcMapX, destMapX);
+		SWAP(destMapY, srcMapY);
 		break;
 	case kDirNorth:
-		L1637_i_Temp = srcMapX;
-		srcMapX = srcMapY;
-		srcMapY = L1637_i_Temp;
-		L1637_i_Temp = destMapX;
-		destMapX = destMapY;
-		destMapY = L1637_i_Temp;
+		SWAP(srcMapX, srcMapY);
+		SWAP(destMapX, destMapY);
+		break;
 	}
 	return ((srcMapX -= (destMapX - 1)) > 0) && ((((srcMapY -= destMapY) < 0) ? -srcMapY : srcMapY) <= srcMapX);
 }
 
 bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack, bool magicAttack, int16 ticks) {
-	Door *L0573_ps_Door = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-	if ((magicAttack && !L0573_ps_Door->isMagicDestructible()) || (!magicAttack && !L0573_ps_Door->isMeleeDestructible())) {
+	Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+	if ((magicAttack && !curDoor->isMagicDestructible()) || (!magicAttack && !curDoor->isMeleeDestructible())) {
 		return false;
 	}
-	if (attack >= _vm->_dungeonMan->_currMapDoorInfo[L0573_ps_Door->getType()]._defense) {
-		byte *L0574_puc_Square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-		if (Square(*L0574_puc_Square).getDoorState() == k4_doorState_CLOSED) {
+	if (attack >= _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._defense) {
+		byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
+		if (Square(*curSquare).getDoorState() == k4_doorState_CLOSED) {
 			if (ticks) {
-				TimelineEvent L0575_s_Event;
-				setMapAndTime(L0575_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
-				L0575_s_Event._type = k2_TMEventTypeDoorDestruction;
-				L0575_s_Event._priority = 0;
-				L0575_s_Event._B._location._mapX = mapX;
-				L0575_s_Event._B._location._mapY = mapY;
-				_vm->_timeline->addEventGetEventIndex(&L0575_s_Event);
+				TimelineEvent newEvent;
+				setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
+				newEvent._type = k2_TMEventTypeDoorDestruction;
+				newEvent._priority = 0;
+				newEvent._B._location._mapX = mapX;
+				newEvent._B._location._mapY = mapY;
+				_vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
-				((Square *)L0574_puc_Square)->setDoorState(k5_doorState_DESTROYED);
+				((Square *)curSquare)->setDoorState(k5_doorState_DESTROYED);
 			}
 			return true;
 		}
@@ -385,13 +372,11 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 }
 
 Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
-	Thing L0317_T_Thing;
-
-	L0317_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while ((L0317_T_Thing != Thing::_endOfList) && ((L0317_T_Thing).getType() != k4_GroupThingType)) {
-		L0317_T_Thing = _vm->_dungeonMan->getNextThing(L0317_T_Thing);
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	while ((curThing != Thing::_endOfList) && ((curThing).getType() != k4_GroupThingType)) {
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
-	return L0317_T_Thing;
+	return curThing;
 }
 
 int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
