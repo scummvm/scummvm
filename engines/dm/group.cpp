@@ -2109,7 +2109,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 				return;
 			}
 		}
-		_vm->fuseSequnce();
+		_vm->fuseSequence();
 	}
 }
 

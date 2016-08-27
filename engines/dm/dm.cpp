@@ -909,34 +909,7 @@ void DMEngine::entranceDrawCredits() {
 	_newGameFl = k202_modeEntranceDrawCredits;
 }
 
-void DMEngine::fuseSequnce() {
-	int16 L1424_i_Multiple;
-#define AL1424_B_RemoveFluxcagesFromLoadChaosSquare L1424_i_Multiple
-#define AL1424_i_Attack                             L1424_i_Multiple
-#define AL1424_i_CreatureTypeSwitchCount            L1424_i_Multiple
-#define AL1424_i_MapX                               L1424_i_Multiple
-#define AL1424_i_TextStringThingCount               L1424_i_Multiple
-	int16 L1425_i_Multiple;
-#define AL1425_i_FluxcageMapX         L1425_i_Multiple
-#define AL1425_i_MapY                 L1425_i_Multiple
-#define AL1425_i_CycleCount           L1425_i_Multiple
-#define AL1425_i_TextStringThingIndex L1425_i_Multiple
-	int16 L1426_i_Multiple;
-#define AL1426_i_FluxcageMapY            L1426_i_Multiple
-#define AL1426_i_FuseSequenceUpdateCount L1426_i_Multiple
-#define AL1426_i_TextStringThingCount    L1426_i_Multiple
-	Thing L1427_T_Thing;
-	Group *L1428_ps_Group;
-	Explosion *L1429_ps_Explosion;
-	Thing L1430_T_NextThing;
-	int16 L1431_i_LordChaosMapX;
-	int16 L1432_i_LordChaosMapY;
-	Thing L1433_T_LordChaosThing;
-	char L1434_c_TextFirstCharacter;
-	Thing L1435_aT_TextStringThings[8];
-	char L1436_ac_String[200];
-
-
+void DMEngine::fuseSequence() {
 	_gameWon = true;
 	if (_inventoryMan->_inventoryChampionOrdinal) {
 		_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
@@ -947,99 +920,104 @@ void DMEngine::fuseSequnce() {
 	_championMan->_party._fireShieldDefense = _championMan->_party._spellShieldDefense = _championMan->_party._shieldDefense = 100;
 	_timeline->refreshAllChampionStatusBoxes();
 	fuseSequenceUpdate();
-	L1431_i_LordChaosMapX = _dungeonMan->_partyMapX;
-	L1432_i_LordChaosMapY = _dungeonMan->_partyMapY;
-	L1431_i_LordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir], L1432_i_LordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
-	L1428_ps_Group = (Group*)_dungeonMan->getThingData(L1433_T_LordChaosThing = _groupMan->groupGetThing(L1431_i_LordChaosMapX, L1432_i_LordChaosMapY));
-	L1428_ps_Group->_health[0] = 10000;
-	_dungeonMan->setGroupCells(L1428_ps_Group, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
-	_dungeonMan->setGroupDirections(L1428_ps_Group, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
+	int16 lordChaosMapX = _dungeonMan->_partyMapX;
+	int16 lordChaosMapY = _dungeonMan->_partyMapY;
+	lordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir], lordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
+	Thing lordChaosThing = _groupMan->groupGetThing(lordChaosMapX, lordChaosMapY);
+	Group *lordGroup = (Group*)_dungeonMan->getThingData(lordChaosThing);
+	lordGroup->_health[0] = 10000;
+	_dungeonMan->setGroupCells(lordGroup, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
+	_dungeonMan->setGroupDirections(lordGroup, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
 
-	AL1424_B_RemoveFluxcagesFromLoadChaosSquare = true;
-	AL1425_i_FluxcageMapX = _dungeonMan->_partyMapX;
-	AL1426_i_FluxcageMapY = _dungeonMan->_partyMapY;
+	bool removeFluxcagesFromLordChaosSquare = true;
+	int16 fluxCageMapX = _dungeonMan->_partyMapX;
+	int16 fluxcageMapY = _dungeonMan->_partyMapY;
 T0446002:
-	L1427_T_Thing = _dungeonMan->getSquareFirstObject(AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
-	while (L1427_T_Thing != Thing::_endOfList) {
-		if (L1427_T_Thing.getType() == k15_ExplosionThingType) {
-			L1429_ps_Explosion = (Explosion*)_dungeonMan->getThingData(L1427_T_Thing);
-			if (L1429_ps_Explosion->getType() == k50_ExplosionType_Fluxcage) {
-				_dungeonMan->unlinkThingFromList(L1427_T_Thing, Thing(0), AL1425_i_FluxcageMapX, AL1426_i_FluxcageMapY);
-				L1429_ps_Explosion->setNextThing(Thing::_none);
+	Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
+	while (curThing != Thing::_endOfList) {
+		if (curThing.getType() == k15_ExplosionThingType) {
+			Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
+			if (curExplosion->getType() == k50_ExplosionType_Fluxcage) {
+				_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
+				curExplosion->setNextThing(Thing::_none);
 				goto T0446002;
 			}
 		}
-		L1427_T_Thing = _dungeonMan->getNextThing(L1427_T_Thing);
+		curThing = _dungeonMan->getNextThing(curThing);
 	}
-	if (AL1424_B_RemoveFluxcagesFromLoadChaosSquare) {
-		AL1424_B_RemoveFluxcagesFromLoadChaosSquare = false;
-		AL1425_i_FluxcageMapX = L1431_i_LordChaosMapX;
-		AL1426_i_FluxcageMapY = L1432_i_LordChaosMapY;
+	if (removeFluxcagesFromLordChaosSquare) {
+		removeFluxcagesFromLordChaosSquare = false;
+		fluxCageMapX = lordChaosMapX;
+		fluxcageMapY = lordChaosMapY;
 		goto T0446002;
 	}
 
 	fuseSequenceUpdate();
-	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->createExplosion(Thing::_explFireBall, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
+		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	_sound->requestPlay(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
-	L1428_ps_Group->_type = k25_CreatureTypeLordOrder;
+	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, k1_soundModePlayIfPrioritized);
+	lordGroup->_type = k25_CreatureTypeLordOrder;
 	fuseSequenceUpdate();
-	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	for (AL1425_i_CycleCount = 4; --AL1425_i_CycleCount; ) {
-		for (AL1424_i_CreatureTypeSwitchCount = 5; --AL1424_i_CreatureTypeSwitchCount; ) {
-			_sound->requestPlay(k17_soundBUZZ, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k1_soundModePlayIfPrioritized);
-			L1428_ps_Group->_type = (AL1424_i_CreatureTypeSwitchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
-			for (AL1426_i_FuseSequenceUpdateCount = AL1425_i_CycleCount; AL1426_i_FuseSequenceUpdateCount--; fuseSequenceUpdate());
+	for (int16 cycleCount = 4; --cycleCount; ) {
+		for (int16 switchCount = 5; --switchCount; ) {
+			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, k1_soundModePlayIfPrioritized);
+			lordGroup->_type = (switchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
+			for (int16 fuseSequenceUpdateCount = cycleCount; fuseSequenceUpdateCount--; )
+				fuseSequenceUpdate();
 		}
 	}
-	_projexpl->createExplosion(Thing::_explFireBall, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
-	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explFireBall, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 	fuseSequenceUpdate();
-	L1428_ps_Group->_type = k26_CreatureTypeGreyLord;
+	lordGroup->_type = k26_CreatureTypeGreyLord;
 	fuseSequenceUpdate();
 	_displayMan->_doNotDrawFluxcagesDuringEndgame = true;
 	fuseSequenceUpdate();
-	for (AL1424_i_MapX = 0; AL1424_i_MapX < _dungeonMan->_currMapWidth; AL1424_i_MapX++) {
-		for (AL1425_i_MapY = 0; AL1425_i_MapY < _dungeonMan->_currMapHeight; AL1425_i_MapY++) {
-			if (((L1427_T_Thing = _groupMan->groupGetThing(AL1424_i_MapX, AL1425_i_MapY)) != Thing::_endOfList) && ((AL1424_i_MapX != L1431_i_LordChaosMapX) || (AL1425_i_MapY != L1432_i_LordChaosMapY))) {
-				_groupMan->groupDelete(AL1424_i_MapX, AL1425_i_MapY);
+	for (int16 curMapX = 0; curMapX < _dungeonMan->_currMapWidth; curMapX++) {
+		for (int curMapY = 0; curMapY < _dungeonMan->_currMapHeight; curMapY++) {
+			curThing = _groupMan->groupGetThing(curMapX, curMapY);
+			if ((curThing != Thing::_endOfList) && ((curMapX != lordChaosMapX) || (curMapY != lordChaosMapY))) {
+				_groupMan->groupDelete(curMapX, curMapY);
 			}
 		}
 	}
 	fuseSequenceUpdate();
 	/* Count and get list of text things located at 0, 0 in the current map. Their text is then printed as messages in the order specified by their first letter (which is not printed) */
-	L1427_T_Thing = _dungeonMan->getSquareFirstThing(0, 0);
-	AL1424_i_TextStringThingCount = 0;
-	while (L1427_T_Thing != Thing::_endOfList) {
-		if (L1427_T_Thing.getType() == k2_TextstringType) {
-			L1435_aT_TextStringThings[AL1424_i_TextStringThingCount++] = L1427_T_Thing;
+	curThing = _dungeonMan->getSquareFirstThing(0, 0);
+	int16 textStringThingCount = 0;
+	Thing textStringThings[8];
+	while (curThing != Thing::_endOfList) {
+		if (curThing.getType() == k2_TextstringType) {
+			textStringThings[textStringThingCount++] = curThing;
 		}
-		L1427_T_Thing = _dungeonMan->getNextThing(L1427_T_Thing);
+		curThing = _dungeonMan->getNextThing(curThing);
 	}
-	L1434_c_TextFirstCharacter = 'A';
-	AL1426_i_TextStringThingCount = AL1424_i_TextStringThingCount;
-	while (AL1424_i_TextStringThingCount--) {
-		for (AL1425_i_TextStringThingIndex = 0; AL1425_i_TextStringThingIndex < AL1426_i_TextStringThingCount; AL1425_i_TextStringThingIndex++) {
-			_dungeonMan->decodeText(L1436_ac_String, L1435_aT_TextStringThings[AL1425_i_TextStringThingIndex], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
-			if (L1436_ac_String[1] == L1434_c_TextFirstCharacter) {
+	char textFirstChar = 'A';
+	int16 maxCount = textStringThingCount;
+	while (textStringThingCount--) {
+		for (int16 idx = 0; idx < maxCount; idx++) {
+			char decodedString[200];
+			_dungeonMan->decodeText(decodedString, textStringThings[idx], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
+			if (decodedString[1] == textFirstChar) {
 				_textMan->clearAllRows();
-				L1436_ac_String[1] = '\n'; /* New line */
-				_textMan->printMessage(k15_ColorWhite, &L1436_ac_String[1]);
+				decodedString[1] = '\n'; /* New line */
+				_textMan->printMessage(k15_ColorWhite, &decodedString[1]);
 				fuseSequenceUpdate();
 				delay(780);
-				L1434_c_TextFirstCharacter++;
+				textFirstChar++;
 				break;
 			}
 		}
 	}
 
-	for (AL1424_i_Attack = 55; AL1424_i_Attack <= 255; AL1424_i_Attack += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, AL1424_i_Attack, L1431_i_LordChaosMapX, L1432_i_LordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 

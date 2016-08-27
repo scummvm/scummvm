@@ -263,7 +263,7 @@ public:
 	void openEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
 	void drawTittle(); // @ F0437_STARTEND_DrawTitle
 	void entranceDrawCredits();
-	void fuseSequnce(); // @ F0446_STARTEND_FuseSequence
+	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
 	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	Common::Language getGameLanguage();
 
