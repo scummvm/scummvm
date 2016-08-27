@@ -122,6 +122,7 @@ void GfxCursor32::drawToHardware(const DrawRegion &source) {
 	byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
 
 	g_system->copyRectToScreen(sourcePixel, source.rect.width(), drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
+	g_system->updateScreen();
 }
 
 void GfxCursor32::unhide() {

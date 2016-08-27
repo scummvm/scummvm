@@ -1108,6 +1108,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 
 void GfxFrameout::showBits() {
 	if (!_showList.size()) {
+		g_system->updateScreen();
 		return;
 	}
 
@@ -1146,6 +1147,7 @@ void GfxFrameout::showBits() {
 	_cursor->donePainting();
 
 	_showList.clear();
+	g_system->updateScreen();
 }
 
 void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges) {
