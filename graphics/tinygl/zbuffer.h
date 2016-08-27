@@ -415,10 +415,7 @@ struct FrameBuffer {
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled, bool kRGB565Target>
-	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
-
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool enableBlending>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor>
