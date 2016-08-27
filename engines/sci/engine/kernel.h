@@ -421,6 +421,14 @@ reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
+reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv);
+reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv);
+reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv);
+reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv);
+reg_t kPlatform32(EngineState *s, int argc, reg_t *argv);
+reg_t kGlobalToLocal32(EngineState *s, int argc, reg_t *argv);
+reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv);
+
 reg_t kDoAudio32(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioInit(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioWaitForPlay(EngineState *s, int argc, reg_t *argv);
@@ -441,14 +449,39 @@ reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
 
+reg_t kRobot(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotShowFrame(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetIsFinished(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetIsPlaying(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotClose(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetCue(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotPause(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotGetFrameNo(EngineState *s, int argc, reg_t *argv);
+reg_t kRobotSetPriority(EngineState *s, int argc, reg_t *argv);
+
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDOpen(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDInit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDClose(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMDRestrictPalette(EngineState *s, int argc, reg_t *argv);
+
+reg_t kShowMovie32(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWin(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinPlay(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinClose(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinCue(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinGetDuration(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
+reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv);
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kArray(EngineState *s, int argc, reg_t *argv);
@@ -550,6 +583,7 @@ reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
 reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv);
@@ -576,9 +610,9 @@ reg_t kTextWidth(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
-reg_t kRobot(EngineState *s, int argc, reg_t *argv);
-reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
+reg_t kCheckCD(EngineState *s, int argc, reg_t *argv);
+reg_t kGetSavedCD(EngineState *s, int argc, reg_t *argv);
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
 reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);

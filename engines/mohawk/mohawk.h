@@ -100,7 +100,6 @@ public:
 
 	bool hasFeature(EngineFeature f) const;
 
-	Sound *_sound;
 	VideoManager *_video;
 	CursorManager *_cursor;
 

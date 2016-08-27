@@ -112,7 +112,7 @@ GameProject::GameProject() {
 }
 
 bool GameProject::load(MfcArchive &file) {
-	debug(5, "GameProject::load()");
+	debugC(5, kDebugLoading, "GameProject::load()");
 
 	_field_4 = 0;
 	_headerFilename = 0;
@@ -124,10 +124,10 @@ bool GameProject::load(MfcArchive &file) {
 
 	_headerFilename = file.readPascalString();
 
-	debug(1, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
-	debug(1, "_pictureScale = %d", g_fp->_pictureScale);
-	debug(1, "_scrollSpeed = %d", g_fp->_scrollSpeed);
-	debug(1, "_headerFilename = %s", _headerFilename);
+	debugC(1, kDebugLoading, "_gameProjectVersion = %d", g_fp->_gameProjectVersion);
+	debugC(1, kDebugLoading, "_pictureScale = %d", g_fp->_pictureScale);
+	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
+	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename);
 
 	_sceneTagList = new SceneTagList();
 
@@ -205,24 +205,24 @@ bool GameVar::load(MfcArchive &file) {
 	_varName = file.readPascalString();
 	_varType = file.readUint32LE();
 
-	debugN(6, "[%03d] ", file.getLevel());
+	debugCN(6, kDebugLoading, "[%03d] ", file.getLevel());
 	for (int i = 0; i < file.getLevel(); i++)
-		debugN(6, " ");
+		debugCN(6, kDebugLoading, " ");
 
-	debugN(6, "<%s>: ", transCyrillic((byte *)_varName));
+	debugCN(6, kDebugLoading, "<%s>: ", transCyrillic((byte *)_varName));
 
 	switch (_varType) {
 	case 0:
 		_value.intValue = file.readUint32LE();
-		debug(6, "d --> %d", _value.intValue);
+		debugC(6, kDebugLoading, "d --> %d", _value.intValue);
 		break;
 	case 1:
 		_value.intValue = file.readUint32LE(); // FIXME
-		debug(6, "f --> %f", _value.floatValue);
+		debugC(6, kDebugLoading, "f --> %f", _value.floatValue);
 		break;
 	case 2:
 		_value.stringValue = file.readPascalString();
-		debug(6, "s --> %s", _value.stringValue);
+		debugC(6, kDebugLoading, "s --> %s", _value.stringValue);
 		break;
 	default:
 		error("Unknown var type: %d (0x%x)", _varType, _varType);
@@ -342,7 +342,7 @@ GameVar *GameVar::getSubVarByIndex(int idx) {
 }
 
 bool PicAniInfo::load(MfcArchive &file) {
-	debug(5, "PicAniInfo::load()");
+	debugC(5, kDebugLoading, "PicAniInfo::load()");
 
 	type = file.readUint32LE();
 	objectId = file.readUint16LE();

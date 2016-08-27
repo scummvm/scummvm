@@ -30,6 +30,11 @@ namespace Sherlock {
 
 SherlockEngine::SherlockEngine(OSystem *syst, const SherlockGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _randomSource("Sherlock") {
+	DebugMan.addDebugChannel(kDebugLevelScript,      "scripts", "Script debug level");
+	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib",   "AdLib driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
+
 	_animation = nullptr;
 	_debugger = nullptr;
 	_events = nullptr;
@@ -74,11 +79,6 @@ SherlockEngine::~SherlockEngine() {
 }
 
 void SherlockEngine::initialize() {
-	DebugMan.addDebugChannel(kDebugLevelScript,      "scripts", "Script debug level");
-	DebugMan.addDebugChannel(kDebugLevelAdLibDriver, "AdLib",   "AdLib driver debugging");
-	DebugMan.addDebugChannel(kDebugLevelMT32Driver,  "MT32",    "MT32 driver debugging");
-	DebugMan.addDebugChannel(kDebugLevelMusic,       "Music",   "Music debugging");
-
 	Fonts::setVm(this);
 	ImageFile::setVm(this);
 	ImageFile3DO::setVm(this);

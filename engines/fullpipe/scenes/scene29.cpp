@@ -487,23 +487,23 @@ bool sceneHandler29_checkGreenBallHit(StaticANIObject *ani, int maxx) {
 }
 
 void sceneHandler29_manHit() {
-	MGMInfo mgminfo;
+	MakeQueueStruct mkQueue;
 
 	g_vars->scene29_manIsHit = true;
 
 	g_fp->_aniMan->changeStatics2(ST_MAN29_RUNR);
 	g_fp->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
 
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN29_SITR;
-	mgminfo.y1 = 463;
-	mgminfo.x1 = g_vars->scene29_manX <= 638 ? 351 : 0;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = (g_vars->scene29_manX <= 638 ? 2 : 0) | 0x44;
-	mgminfo.movementId = MV_MAN29_HIT;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN29_SITR;
+	mkQueue.y1 = 463;
+	mkQueue.x1 = g_vars->scene29_manX <= 638 ? 351 : 0;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = (g_vars->scene29_manX <= 638 ? 2 : 0) | 0x44;
+	mkQueue.movementId = MV_MAN29_HIT;
 
-	MessageQueue *mq = g_vars->scene29_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene29_aniHandler.makeRunQueue(&mkQueue);
 	ExCommand *ex;
 
 	if (mq) {
@@ -728,7 +728,7 @@ void sceneHandler29_manToL() {
 
 	g_vars->scene29_arcadeIsOn = true;
 
-	g_vars->scene29_mgm.addItem(g_fp->_aniMan->_id);
+	g_vars->scene29_aniHandler.attachObject(g_fp->_aniMan->_id);
 
 	g_fp->_updateScreenCallback = sceneHandler29_updateScreenCallback;
 

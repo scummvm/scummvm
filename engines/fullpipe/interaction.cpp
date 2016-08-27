@@ -62,7 +62,7 @@ InteractionController::~InteractionController() {
 }
 
 bool InteractionController::load(MfcArchive &file) {
-	debug(5, "InteractionController::load()");
+	debugC(5, kDebugLoading, "InteractionController::load()");
 
 	return _interactions.load(file);
 }
@@ -143,7 +143,8 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			obj->setPicAniInfo(&aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
-				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
+				debugC(0, kDebugPathfinding, "Calling makeQueue() at [%d, %d]", xpos, ypos);
+				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->makeQueue(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
 					dur = mq->calcDuration(subj);
 					delete mq;
@@ -304,7 +305,7 @@ LABEL_38:
 			ani->changeStatics2(inter->_staticsId1);
 		}
 
-		int xpos = inter->_yOffs + obj->_ox;
+		int xpos = inter->_xOffs + obj->_ox;
 		int ypos = inter->_yOffs + obj->_oy;
 
 		obj->setPicAniInfo(&aniInfo);
@@ -440,7 +441,7 @@ Interaction::~Interaction() {
 }
 
 bool Interaction::load(MfcArchive &file) {
-	debug(5, "Interaction::load()");
+	debugC(5, kDebugLoading, "Interaction::load()");
 
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
@@ -531,7 +532,7 @@ bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
-	debug(5, "EntranceInfo::load()");
+	debugC(5, kDebugLoading, "EntranceInfo::load()");
 
 	_sceneId = file.readUint32LE();
 	_field_4 = file.readUint32LE();

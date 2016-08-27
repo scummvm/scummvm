@@ -3,7 +3,7 @@ Section: games
 Priority: optional
 Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
 Uploaders: David Weinehall <tao@debian.org>, Moritz Muehlenhoff <jmm@debian.org>
-Build-Depends: debhelper (>= 7.0.50~), nasm [i386], libsdl1.2-dev, libmad0-dev, libasound2-dev [linux-any], libvorbis-dev, libmpeg2-4-dev, libflac-dev, libz-dev, libfluidsynth-dev, python
+Build-Depends: debhelper (>= 7.0.50~), nasm [i386], libsdl2-dev, libmad0-dev, libasound2-dev [linux-any], libvorbis-dev, libmpeg2-4-dev, libflac-dev, libz-dev, libfluidsynth-dev, python
 Standards-Version: 3.9.2
 Homepage: http://www.scummvm.org
 

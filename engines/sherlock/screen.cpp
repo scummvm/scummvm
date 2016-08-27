@@ -48,7 +48,7 @@ Screen::Screen(SherlockEngine *vm) : BaseSurface(), _vm(vm),
 	Common::fill(&_cMap[0], &_cMap[PALETTE_SIZE], 0);
 	Common::fill(&_sMap[0], &_sMap[PALETTE_SIZE], 0);
 	Common::fill(&_tMap[0], &_tMap[PALETTE_SIZE], 0);
-	
+
 	// Set up the initial font
 	setFont(IS_SERRATED_SCALPEL ? 1 : 4);
 
@@ -172,8 +172,8 @@ void Screen::restoreBackground(const Common::Rect &r) {
 		_backBuffer.SHblitFrom(_backBuffer2, Common::Point(r.left, r.top), r);
 }
 
-void Screen::slamArea(int16 xp, int16 yp, int16 width, int16 height) {
-	slamRect(Common::Rect(xp, yp, xp + width, yp + height));
+void Screen::slamArea(int16 xp, int16 yp, int16 width_, int16 height_) {
+	slamRect(Common::Rect(xp, yp, xp + width_, yp + height_));
 }
 
 void Screen::slamRect(const Common::Rect &r) {
@@ -204,11 +204,11 @@ void Screen::slamRect(const Common::Rect &r) {
 	}
 }
 
-void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp, 
-		int16 *width, int16 *height) {
+void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
+		int16 *width_, int16 *height_) {
 	Common::Point imgPos = pt + frame->_offset;
 	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->_frame.w, imgPos.y + frame->_frame.h);
-	Common::Rect oldBounds(*xp, *yp, *xp + *width, *yp + *height);
+	Common::Rect oldBounds(*xp, *yp, *xp + *width_, *yp + *height_);
 
 	if (!_flushScreen) {
 		// See if the areas of the old and new overlap, and if so combine the areas
@@ -228,16 +228,16 @@ void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, i
 
 	*xp = newBounds.left;
 	*yp = newBounds.top;
-	*width = newBounds.width();
-	*height = newBounds.height();
+	*width_ = newBounds.width();
+	*height_ = newBounds.height();
 }
 
 void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *xp, int16 *yp,
-		int16 *width, int16 *height, int scaleVal) {
+		int16 *width_, int16 *height_, int scaleVal) {
 	Common::Point imgPos(pt.x + frame->sDrawXOffset(scaleVal), pt.y + frame->sDrawYOffset(scaleVal));
-	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->sDrawXSize(scaleVal), 
+	Common::Rect newBounds(imgPos.x, imgPos.y, imgPos.x + frame->sDrawXSize(scaleVal),
 		imgPos.y + frame->sDrawYSize(scaleVal));
-	Common::Rect oldBounds(*xp, *yp, *xp + *width, *yp + *height);
+	Common::Rect oldBounds(*xp, *yp, *xp + *width_, *yp + *height_);
 
 	if (!_flushScreen) {
 		// See if the areas of the old and new overlap, and if so combine the areas
@@ -257,8 +257,8 @@ void Screen::flushScaleImage(ImageFrame *frame, const Common::Point &pt, int16 *
 
 	*xp = newBounds.left;
 	*yp = newBounds.top;
-	*width = newBounds.width();
-	*height = newBounds.height();
+	*width_ = newBounds.width();
+	*height_ = newBounds.height();
 }
 
 void Screen::flushImage(ImageFrame *frame, const Common::Point &pt, Common::Rect &newBounds, int scaleVal) {
@@ -292,15 +292,15 @@ void Screen::print(const Common::Point &pt, uint color, const char *formatStr, .
 
 	// Figure out area to draw text in
 	Common::Point pos = pt;
-	int width = stringWidth(str);
+	int width_ = stringWidth(str);
 	pos.y--;		// Font is always drawing one line higher
 	if (!pos.x)
 		// Center text horizontally
-		pos.x = (this->width() - width) / 2;
+		pos.x = (this->width() - width_) / 2;
 
-	Common::Rect textBounds(pos.x, pos.y, pos.x + width, pos.y + _fontHeight);
+	Common::Rect textBounds(pos.x, pos.y, pos.x + width_, pos.y + _fontHeight);
 	if (textBounds.right > this->width())
-		textBounds.moveTo(this->width() - width, textBounds.top);
+		textBounds.moveTo(this->width() - width_, textBounds.top);
 	if (textBounds.bottom > this->height())
 		textBounds.moveTo(textBounds.left, this->height() - _fontHeight);
 

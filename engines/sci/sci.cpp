@@ -65,22 +65,19 @@
 
 #ifdef ENABLE_SCI32
 #include "sci/graphics/controls32.h"
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/graphics/transitions32.h"
 #include "sci/graphics/video32.h"
 #include "sci/sound/audio32.h"
-// TODO: Move this to video32
-#include "sci/video/robot_decoder.h"
 #endif
 
 namespace Sci {
 
 SciEngine *g_sci = 0;
-
-
-class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
 		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
@@ -95,6 +92,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 #ifdef ENABLE_SCI32
 	_audio32 = nullptr;
 	_video32 = nullptr;
+	_gfxCursor32 = nullptr;
 #endif
 	_features = 0;
 	_resMan = 0;
@@ -129,6 +127,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	DebugMan.addDebugChannel(kDebugLevelScriptPatcher, "ScriptPatcher", "Notifies when scripts are patched");
 	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
+	DebugMan.addDebugChannel(kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
@@ -170,12 +169,13 @@ SciEngine::~SciEngine() {
 	delete _gfxControls32;
 	delete _gfxPaint32;
 	delete _gfxText32;
-	delete _robotDecoder;
 	// GfxFrameout and GfxPalette32 must be deleted after Video32 since
 	// destruction of screen items in the Video32 destructor relies on these
 	// components
 	delete _video32;
+	delete _gfxCursor32;
 	delete _gfxPalette32;
+	delete _gfxTransitions32;
 	delete _gfxFrameout;
 	delete _gfxRemap32;
 	delete _audio32;
@@ -242,35 +242,31 @@ Common::Error SciEngine::run() {
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
 
-	// Read user option for hires graphics
+	// Read user option for forcing hires graphics
 	// Only show/selectable for:
 	//  - King's Quest 6 CD
 	//  - King's Quest 6 CD demo
 	//  - Gabriel Knight 1 CD
 	//  - Police Quest 4 CD
 	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
-	// TODO: Check, if Gabriel Knight 1 on Mac supports high resolution
-	switch (getPlatform()) {
-	case Common::kPlatformDOS:
-	case Common::kPlatformWindows:
-		// Only DOS+Windows
-		switch (_gameId) {
-		case GID_KQ6:
-		case GID_GK1:
-		case GID_PQ4:
-			if (isCD())
-				_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
-			break;
-		default:
-			break;
-		}
-	default:
-		break;
-	};
+	//
+	// Gabriel Knight 1 on Mac is hi-res only, so it should NOT get this option.
+	// Confirmed by [md5] and originally by clone2727.
+	if (Common::checkGameGUIOption(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, ConfMan.get("guioptions"))) {
+		// GAMEOPTION_HIGH_RESOLUTION_GRAPHICS is available for the currently detected game,
+		// so read the user option now.
+		// We need to do this, because the option's default is "true", but we don't want "true"
+		// for any game that does not have this option.
+		_forceHiresGraphics = ConfMan.getBool("enable_high_resolution_graphics");
+	}
 
-	// Initialize the game screen
-	_gfxScreen = new GfxScreen(_resMan);
-	_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+	if (getSciVersion() < SCI_VERSION_2) {
+		// Initialize the game screen
+		_gfxScreen = new GfxScreen(_resMan);
+		_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
+	} else {
+		_gfxScreen = nullptr;
+	}
 
 	_kernel = new Kernel(_resMan, segMan);
 	_kernel->init();
@@ -707,11 +703,12 @@ void SciEngine::initGraphics() {
 #ifdef ENABLE_SCI32
 	_gfxControls32 = 0;
 	_gfxText32 = 0;
-	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
 	_gfxPalette32 = 0;
 	_gfxRemap32 = 0;
+	_gfxTransitions32 = 0;
+	_gfxCursor32 = 0;
 #endif
 
 	if (hasMacIconBar())
@@ -731,23 +728,23 @@ void SciEngine::initGraphics() {
 #endif
 
 	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette16);
-	_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		// SCI32 graphic objects creation
-		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
-		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxCursor32 = new GfxCursor32();
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, nullptr, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_gamestate->_segMan);
-		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
-		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette32);
+		_gfxTransitions32 = new GfxTransitions32(_gamestate->_segMan);
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _gfxPalette32, _gfxTransitions32, _gfxCursor32);
+		_gfxCursor32->init(_gfxFrameout->getCurrentBuffer());
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache);
 		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_gfxFrameout->run();
 	} else {
 #endif
 		// SCI0-SCI1.1 graphic objects creation
+		_gfxCursor = new GfxCursor(_resMan, _gfxPalette16, _gfxScreen);
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
@@ -926,14 +923,19 @@ Common::String SciEngine::getFilePrefix() const {
 }
 
 Common::String SciEngine::wrapFilename(const Common::String &name) const {
-	return getFilePrefix() + "-" + name;
+	Common::String prefix = getFilePrefix() + "-";
+	if (name.hasPrefix(prefix.c_str()))
+		return name;
+	else
+		return prefix + name;
 }
 
 Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 	Common::String prefix = getFilePrefix() + "-";
 	if (name.hasPrefix(prefix.c_str()))
 		return Common::String(name.c_str() + prefix.size());
-	return name;
+	else
+		return name;
 }
 
 const char *SciEngine::getGameObjectName() {
@@ -1038,17 +1040,19 @@ void SciEngine::syncIngameAudioOptions() {
 			case GID_SQ6: // SCI2.1
 			case GID_TORIN: // SCI2.1
 			case GID_QFG4: // SCI2.1
+			case GID_PQ4:	// SCI2
+			case GID_PHANTASMAGORIA:	// SCI2.1
+			case GID_MOTHERGOOSEHIRES:	// SCI2.1
 				useGlobal90 = true;
 				break;
 			case GID_LSL6: // SCI2.1
 				// TODO: Uses gameFlags array
 				break;
+			// Shivers does not use global 90
+			// Police Quest: SWAT does not use global 90
+			//
 			// TODO: Unknown at the moment:
-			// Shivers - seems not to use global 90
-			// Police Quest: SWAT - unable to check
-			// Police Quest 4 - unable to check
-			// Mixed Up Mother Goose - unable to check
-			// Phantasmagoria - seems to use global 90, unable to check for subtitles atm
+			// LSL7, Lighthouse, RAMA, Phantasmagoria 2
 			default:
 				return;
 			}
@@ -1082,6 +1086,9 @@ void SciEngine::syncIngameAudioOptions() {
 				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
 				case GID_TORIN: // SCI2.1
 				case GID_QFG4: // SCI2.1
+				case GID_PQ4:	// SCI2
+				// Phantasmagoria does not support simultaneous speech + subtitles
+				// Mixed Up Mother Goose Deluxe does not support simultaneous speech + subtitles
 #endif // ENABLE_SCI32
 					_gamestate->variables[VAR_GLOBAL][90] = make_reg(0, 3);	// speech + subtitles
 					break;

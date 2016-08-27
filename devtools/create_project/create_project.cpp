@@ -284,8 +284,8 @@ int main(int argc, char *argv[]) {
 			setup.devTools = true;
 		} else if (!std::strcmp(argv[i], "--tests")) {
 			setup.tests = true;
-		} else if (!std::strcmp(argv[i], "--sdl2")) {
-			setup.useSDL2 = true;
+		} else if (!std::strcmp(argv[i], "--sdl1")) {
+			setup.useSDL2 = false;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -524,6 +524,8 @@ int main(int argc, char *argv[]) {
 		// 4355 ('this' : used in base member initializer list)
 		//   only disabled for specific engines where it is used in a safe way
 		//
+		// 4373 (previous versions of the compiler did not override when parameters only differed by const/volatile qualifiers)
+		//
 		// 4510 ('class' : default constructor could not be generated)
 		//
 		// 4511 ('class' : copy constructor could not be generated)
@@ -572,6 +574,8 @@ int main(int argc, char *argv[]) {
 		projectWarnings["kyra"].push_back("4610");
 
 		projectWarnings["m4"].push_back("4355");
+
+		projectWarnings["sci"].push_back("4373");
 
 		if (msvcVersion == 9)
 			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
@@ -696,7 +700,7 @@ void displayHelp(const char *exe) {
 	        " --disable-<name>         disable inclusion of the feature \"name\"\n"
 	        "\n"
 	        "SDL settings:\n"
-	        " --sdl2                   link to SDL 2.0, instead of SDL 1.2\n"
+	        " --sdl1                   link to SDL 1.2, instead of SDL 2.0\n"
 	        "\n"
 	        " There are the following features available:\n"
 	        "\n";

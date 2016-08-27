@@ -121,9 +121,6 @@ void EngineState::reset(bool isRestoring) {
 
 	_videoState.reset();
 	_syncedAudioOptions = false;
-
-	_vmdPalStart = 0;
-	_vmdPalEnd = 256;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {

@@ -164,7 +164,7 @@ Audio32::~Audio32() {
 #pragma mark -
 #pragma mark AudioStream implementation
 
-int Audio32::writeAudioInternal(Audio::RewindableAudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop) {
+int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop) {
 	int samplesToRead = numSamples;
 
 	// The parent rate converter will request N * 2
@@ -182,7 +182,8 @@ int Audio32::writeAudioInternal(Audio::RewindableAudioStream *const sourceStream
 
 	do {
 		if (loop && sourceStream->endOfStream()) {
-			sourceStream->rewind();
+			Audio::RewindableAudioStream *rewindableStream = dynamic_cast<Audio::RewindableAudioStream *>(sourceStream);
+			rewindableStream->rewind();
 		}
 
 		const int loopSamplesWritten = converter->flow(*sourceStream, targetBuffer, samplesToRead, leftVolume, rightVolume);
@@ -305,12 +306,14 @@ int Audio32::readBuffer(Audio::st_sample_t *buffer, const int numSamples) {
 		}
 
 		if (channel.robot) {
-			// TODO: Robot audio into output buffer
-			continue;
-		}
-
-		if (channel.vmd) {
-			// TODO: VMD audio into output buffer
+			if (channel.stream->endOfStream()) {
+				stop(channelIndex--);
+			} else {
+				const int channelSamplesWritten = writeAudioInternal(channel.stream, channel.converter, buffer, numSamples, kMaxVolume, kMaxVolume, channel.loop);
+				if (channelSamplesWritten > maxSamplesWritten) {
+					maxSamplesWritten = channelSamplesWritten;
+				}
+			}
 			continue;
 		}
 
@@ -448,9 +451,9 @@ void Audio32::freeUnusedChannels() {
 	Common::StackLock lock(_mutex);
 	for (int channelIndex = 0; channelIndex < _numActiveChannels; ++channelIndex) {
 		const AudioChannel &channel = getChannel(channelIndex);
-		if (channel.stream->endOfStream()) {
+		if (!channel.robot && channel.stream->endOfStream()) {
 			if (channel.loop) {
-				channel.stream->rewind();
+				dynamic_cast<Audio::SeekableAudioStream *>(channel.stream)->rewind();
 			} else {
 				stop(channelIndex--);
 			}
@@ -471,21 +474,29 @@ void Audio32::freeChannel(const int16 channelIndex) {
 	Common::StackLock lock(_mutex);
 	AudioChannel &channel = getChannel(channelIndex);
 
-	// We cannot unlock resources from the audio thread
-	// because ResourceManager is not thread-safe; instead,
-	// we just record that the resource needs unlocking and
-	// unlock it whenever we are on the main thread again
-	if (_inAudioThread) {
-		_resourcesToUnlock.push_back(channel.resource);
+	// Robots have no corresponding resource to free
+	if (channel.robot) {
+		delete channel.stream;
+		channel.stream = nullptr;
+		channel.robot = false;
 	} else {
-		_resMan->unlockResource(channel.resource);
+		// We cannot unlock resources from the audio thread
+		// because ResourceManager is not thread-safe; instead,
+		// we just record that the resource needs unlocking and
+		// unlock it whenever we are on the main thread again
+		if (_inAudioThread) {
+			_resourcesToUnlock.push_back(channel.resource);
+		} else {
+			_resMan->unlockResource(channel.resource);
+		}
+
+		channel.resource = nullptr;
+		delete channel.stream;
+		channel.stream = nullptr;
+		delete channel.resourceStream;
+		channel.resourceStream = nullptr;
 	}
 
-	channel.resource = nullptr;
-	delete channel.stream;
-	channel.stream = nullptr;
-	delete channel.resourceStream;
-	channel.resourceStream = nullptr;
 	delete channel.converter;
 	channel.converter = nullptr;
 
@@ -532,6 +543,111 @@ void Audio32::setNumOutputChannels(int16 numChannels) {
 }
 
 #pragma mark -
+#pragma mark Robot
+
+int16 Audio32::findRobotChannel() const {
+	Common::StackLock lock(_mutex);
+	for (int16 i = 0; i < _numActiveChannels; ++i) {
+		if (_channels[i].robot) {
+			return i;
+		}
+	}
+
+	return kNoExistingChannel;
+}
+
+bool Audio32::playRobotAudio(const RobotAudioStream::RobotAudioPacket &packet) {
+	// Stop immediately
+	if (packet.dataSize == 0) {
+		warning("Stopping robot stream by zero-length packet");
+		return stopRobotAudio();
+	}
+
+	// Flush and then stop
+	if (packet.dataSize == -1) {
+		warning("Stopping robot stream by negative-length packet");
+		return finishRobotAudio();
+	}
+
+	Common::StackLock lock(_mutex);
+	int16 channelIndex = findRobotChannel();
+
+	bool isNewChannel = false;
+	if (channelIndex == kNoExistingChannel) {
+		if (_numActiveChannels == _channels.size()) {
+			return false;
+		}
+
+		channelIndex = _numActiveChannels++;
+		isNewChannel = true;
+	}
+
+	AudioChannel &channel = getChannel(channelIndex);
+
+	if (isNewChannel) {
+		channel.id = ResourceId();
+		channel.resource = nullptr;
+		channel.loop = false;
+		channel.robot = true;
+		channel.fadeStartTick = 0;
+		channel.pausedAtTick = 0;
+		channel.soundNode = NULL_REG;
+		channel.volume = kMaxVolume;
+		// TODO: SCI3 introduces stereo audio
+		channel.pan = -1;
+		channel.converter = Audio::makeRateConverter(RobotAudioStream::kRobotSampleRate, getRate(), false);
+		// The RobotAudioStream buffer size is
+		// ((bytesPerSample * channels * sampleRate * 2000ms) / 1000ms) & ~3
+		// where bytesPerSample = 2, channels = 1, and sampleRate = 22050
+		channel.stream = new RobotAudioStream(88200);
+		_robotAudioPaused = false;
+
+		if (_numActiveChannels == 1) {
+			_startedAtTick = g_sci->getTickCount();
+		}
+	}
+
+	return static_cast<RobotAudioStream *>(channel.stream)->addPacket(packet);
+}
+
+bool Audio32::queryRobotAudio(RobotAudioStream::StreamState &status) const {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findRobotChannel();
+	if (channelIndex == kNoExistingChannel) {
+		status.bytesPlaying = 0;
+		return false;
+	}
+
+	status = static_cast<RobotAudioStream *>(getChannel(channelIndex).stream)->getStatus();
+	return true;
+}
+
+bool Audio32::finishRobotAudio() {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findRobotChannel();
+	if (channelIndex == kNoExistingChannel) {
+		return false;
+	}
+
+	static_cast<RobotAudioStream *>(getChannel(channelIndex).stream)->finish();
+	return true;
+}
+
+bool Audio32::stopRobotAudio() {
+	Common::StackLock lock(_mutex);
+
+	const int16 channelIndex = findRobotChannel();
+	if (channelIndex == kNoExistingChannel) {
+		return false;
+	}
+
+	stop(channelIndex);
+	return true;
+}
+
+#pragma mark -
 #pragma mark Playback
 
 uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor) {
@@ -541,14 +657,15 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 
 	if (channelIndex != kNoExistingChannel) {
 		AudioChannel &channel = getChannel(channelIndex);
+		Audio::SeekableAudioStream *stream = dynamic_cast<Audio::SeekableAudioStream *>(channel.stream);
 
 		if (channel.pausedAtTick) {
 			resume(channelIndex);
-			return MIN(65534, 1 + channel.stream->getLength().msecs() * 60 / 1000);
+			return MIN(65534, 1 + stream->getLength().msecs() * 60 / 1000);
 		}
 
 		warning("Tried to resume channel %s that was not paused", channel.id.toString().c_str());
-		return MIN(65534, 1 + channel.stream->getLength().msecs() * 60 / 1000);
+		return MIN(65534, 1 + stream->getLength().msecs() * 60 / 1000);
 	}
 
 	if (_numActiveChannels == _channels.size()) {
@@ -605,7 +722,6 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	channel.resource = resource;
 	channel.loop = loop;
 	channel.robot = false;
-	channel.vmd = false;
 	channel.fadeStartTick = 0;
 	channel.soundNode = soundNode;
 	channel.volume = volume < 0 || volume > kMaxVolume ? (int)kMaxVolume : volume;
@@ -648,7 +764,7 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	// use audio streams, and allocate and fill the monitoring buffer
 	// when reading audio data from the stream.
 
-	channel.duration = /* round up */ 1 + (channel.stream->getLength().msecs() * 60 / 1000);
+	channel.duration = /* round up */ 1 + (dynamic_cast<Audio::SeekableAudioStream *>(channel.stream)->getLength().msecs() * 60 / 1000);
 
 	const uint32 now = g_sci->getTickCount();
 	channel.pausedAtTick = autoPlay ? 0 : now;
@@ -693,8 +809,6 @@ bool Audio32::resume(const int16 channelIndex) {
 			if (channel.robot) {
 				channel.startedAtTick += now - channel.pausedAtTick;
 				channel.pausedAtTick = 0;
-				// TODO: Robot
-				// StartRobot();
 				return true;
 			}
 		}

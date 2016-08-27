@@ -55,7 +55,7 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
-	void init(GfxCoordAdjuster *coordAdjuster, EventManager *event);
+	void init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event);
 
 	void kernelShow();
 	void kernelHide();
@@ -95,15 +95,13 @@ public:
 	void kernelSetPos(Common::Point pos);
 	void kernelMoveCursor(Common::Point pos);
 
-	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
-
 private:
 	void purgeCache();
 
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	EventManager *_event;
 
 	int _upscaledHires;
@@ -136,9 +134,6 @@ private:
 	// these instead and replace the game's gold cursors with their silver
 	// equivalents.
 	bool _useSilverSQ4CDCursors;
-
-	// Mac versions of games use a remap list to remap their cursors
-	Common::Array<uint16> _macCursorRemap;
 };
 
 } // End of namespace Sci

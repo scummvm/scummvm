@@ -136,6 +136,7 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	Sound *_sound;
 	CSTimeGraphics *_gfx;
 	bool _needsUpdate;
 

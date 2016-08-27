@@ -43,6 +43,7 @@ SegManager::SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher)
 #ifdef ENABLE_SCI32
 	_arraysSegId = 0;
 	_stringSegId = 0;
+	_bitmapSegId = 0;
 #endif
 
 	createClassTable();
@@ -72,6 +73,7 @@ void SegManager::resetSegMan() {
 #ifdef ENABLE_SCI32
 	_arraysSegId = 0;
 	_stringSegId = 0;
+	_bitmapSegId = 0;
 #endif
 
 	// Reinitialize class table
@@ -940,6 +942,55 @@ void SegManager::freeString(reg_t addr) {
 	stringTable[addr.getOffset()].destroy();
 	stringTable.freeEntry(addr.getOffset());
 }
+
+#pragma mark -
+#pragma mark Bitmaps
+
+SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+	BitmapTable *table;
+	int offset;
+
+	if (!_bitmapSegId) {
+		table = (BitmapTable *)allocSegment(new BitmapTable(), &(_bitmapSegId));
+	} else {
+		table = (BitmapTable *)_heap[_bitmapSegId];
+	}
+
+	offset = table->allocEntry();
+
+	*addr = make_reg(_bitmapSegId, offset);
+	SciBitmap &bitmap = table->at(offset);
+
+	bitmap.create(width, height, skipColor, displaceX, displaceY, scaledWidth, scaledHeight, paletteSize, remap, gc);
+
+	return &bitmap;
+}
+
+SciBitmap *SegManager::lookupBitmap(const reg_t addr) {
+	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_BITMAP)
+		error("Attempt to use non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
+
+	BitmapTable &bitmapTable = *(BitmapTable *)_heap[addr.getSegment()];
+
+	if (!bitmapTable.isValidEntry(addr.getOffset()))
+		error("Attempt to use invalid entry %04x:%04x as bitmap", PRINT_REG(addr));
+
+	return &(bitmapTable.at(addr.getOffset()));
+}
+
+void SegManager::freeBitmap(const reg_t addr) {
+	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_BITMAP)
+		error("Attempt to free non-bitmap %04x:%04x as bitmap", PRINT_REG(addr));
+
+	BitmapTable &bitmapTable = *(BitmapTable *)_heap[addr.getSegment()];
+
+	if (!bitmapTable.isValidEntry(addr.getOffset()))
+		error("Attempt to free invalid entry %04x:%04x as bitmap", PRINT_REG(addr));
+
+	bitmapTable.freeEntry(addr.getOffset());
+}
+
+#pragma mark -
 
 #endif
 

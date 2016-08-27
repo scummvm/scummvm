@@ -70,6 +70,9 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_STRING:
 		mem = new StringTable();
 		break;
+	case SEG_TYPE_BITMAP:
+		mem = new BitmapTable();
+		break;
 #endif
 	default:
 		error("Unknown SegmentObj type %d", type);

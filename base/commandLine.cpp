@@ -97,6 +97,7 @@ static const char HELP_STRING[] =
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
 	"                           (separated by commas)\n"
+	"  --debug-channels-only    Show only the specified debug channels\n"
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
@@ -424,6 +425,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("debugflags")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("debug-channels-only")
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")

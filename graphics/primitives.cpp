@@ -108,15 +108,13 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 	int dy = abs(y2 - y1);
 
 	if (dx == 0) {
-		if (y1 > y2)
-			SWAP(y1, y2);
-		Common::Rect r(x1, y1, x1 + thick - 1, y2);
+		int xn = x1 - thick / 2;
+		Common::Rect r(xn, MIN(y1, y2), xn + thick - 1, MAX(y1, y2));
 		drawFilledRect(r, color, plotProc, data);
 		return;
 	} else if (dy == 0) {
-		if (x1 > x2)
-			SWAP(x1, x2);
-		Common::Rect r(x1, y1, x2, y1 + thick - 1);
+		int yn = y1 - thick / 2;
+		Common::Rect r(MIN(x1, x2), yn, MAX(x1, x2), yn + thick - 1);
 		drawFilledRect(r, color, plotProc, data);
 		return;
 	}

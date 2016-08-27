@@ -202,4 +202,6 @@ bool DumpFile::flush() {
 	return _handle->flush();
 }
 
+int32 DumpFile::pos() const { return _handle->pos(); }
+
 } // End of namespace Common

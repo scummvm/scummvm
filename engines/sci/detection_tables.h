@@ -22,15 +22,7 @@
 
 namespace Sci {
 
-#define GAMEOPTION_PREFER_DIGITAL_SFX       GUIO_GAMEOPTIONS1
-#define GAMEOPTION_ORIGINAL_SAVELOAD        GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FB01_MIDI                GUIO_GAMEOPTIONS3
-#define GAMEOPTION_JONES_CDAUDIO            GUIO_GAMEOPTIONS4
-#define GAMEOPTION_KQ6_WINDOWS_CURSORS      GUIO_GAMEOPTIONS5
-#define GAMEOPTION_SQ4_SILVER_CURSORS       GUIO_GAMEOPTIONS6
-#define GAMEOPTION_EGA_UNDITHER             GUIO_GAMEOPTIONS7
-#define GAMEOPTION_HIGH_RESOLUTION_GRAPHICS GUIO_GAMEOPTIONS8
-#define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
+#include "sci/sci.h"
 
 // SCI3 games have a different script format (in CSC files) and are currently unsupported
 #define ENABLE_SCI3_GAMES
@@ -734,8 +726,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
                               GAMEOPTION_PREFER_DIGITAL_SFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
                               GAMEOPTION_FB01_MIDI)
-#define GUIO_GK1_CD     GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, \
+#define GUIO_GK1_CD     GUIO4(GAMEOPTION_PREFER_DIGITAL_SFX, \
                               GAMEOPTION_ORIGINAL_SAVELOAD, \
+                              GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
                               GAMEOPTION_FB01_MIDI)
 #define GUIO_GK1_MAC    GUIO_GK1_FLOPPY
 
@@ -835,7 +828,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_GK1_CD },
 
-	// Gabriel Knight - English Macintosh
+	// Gabriel Knight - English Macintosh (Floppy!)
+	// This version is hi-res ONLY, so it should NOT get GAMEOPTION_HIGH_RESOLUTION_GRAPHICS
+	// (which is meant for enforcing hi-res graphics), but instead hi-res mode should be enabled all the time.
+	// Confirmed by [md5] and originally by clone2727.
 	{"gk1", "", {
 		{"Data1", 0, "044d3bcd7e5b5bb0393d954ade8053fe", 5814918},
 		{"Data2", 0, "99a0c63febf9e44e12a00f99c00eae0f", 6685352},
@@ -3771,6 +3767,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
+
+	// Quest for Glory 4 CD - English DOS/Windows (from jvprat)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{"qfg4", "CD", {
+		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
+		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD | ADGF_UNSTABLE, GUIO_QFG4_CD	},
 
 #define GUIO_RAMA_DEMO GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, \
                              GUIO_NOASPECT, \

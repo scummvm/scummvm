@@ -34,8 +34,8 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_saveload.h"
+#include "mohawk/riven_sound.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 #include "mohawk/console.h"
 
@@ -59,6 +59,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_curStack = kStackUnknown;
 	_hotspots = nullptr;
 	_gfx = nullptr;
+	_sound = nullptr;
 	_externalScriptHandler = nullptr;
 	_rnd = nullptr;
 	_scriptMan = nullptr;
@@ -92,6 +93,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
+	delete _sound;
 	delete _gfx;
 	delete _console;
 	delete _externalScriptHandler;
@@ -123,6 +125,7 @@ Common::Error MohawkEngine_Riven::run() {
 		SearchMan.add("arcriven.z", &_installerArchive, 0, false);
 
 	_gfx = new RivenGraphics(this);
+	_sound = new RivenSoundManager(this);
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
@@ -199,6 +202,7 @@ Common::Error MohawkEngine_Riven::run() {
 void MohawkEngine_Riven::handleEvents() {
 	// Update background running things
 	checkTimer();
+	_sound->updateSLST();
 	bool needsUpdate = _gfx->runScheduledWaterEffects();
 	needsUpdate |= _video->updateMovies();
 
@@ -258,6 +262,8 @@ void MohawkEngine_Riven::handleEvents() {
 				break;
 			case Common::KEYCODE_F5:
 				runDialog(*_optionsDialog);
+				if (_optionsDialog->getLoadSlot() >= 0)
+					loadGameState(_optionsDialog->getLoadSlot());
 				updateZipMode();
 				break;
 			case Common::KEYCODE_r:
@@ -708,6 +714,7 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
 	while (_system->getMillis() < startTime + ms && !shouldQuit()) {
+		_sound->updateSLST();
 		bool needsUpdate = _gfx->runScheduledWaterEffects();
 		needsUpdate |= _video->updateMovies();
 

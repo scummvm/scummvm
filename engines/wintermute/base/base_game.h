@@ -36,7 +36,7 @@
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/debugger.h"
 #include "common/events.h"
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
 
@@ -152,7 +152,7 @@ public:
 
 	BaseRenderer *_renderer;
 	BaseSoundMgr *_soundMgr;
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine *_scEngine;
 #else
 	ScEngine *_scEngine;

@@ -106,9 +106,9 @@ bool targetIsIOS(const std::string &targetName) {
 bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targetName, const std::string &fileName) {
 	// Rules:
 	// - if the parent directory is "backends/platform/ios7", the file belongs to the iOS target.
-	// - if the parent directory is "/sdl", the file belongs to the OS X target.
+	// - if the parent directory is "/sdl", the file belongs to the macOS target.
 	// - if the file has a suffix, like "_osx", or "_ios", the file belongs to one of the target.
-	// - if the file is an OS X icon file (icns), it belongs to the OS X target.
+	// - if the file is an macOS icon file (icns), it belongs to the macOS target.
 	std::string name, ext;
 	splitFilename(fileName, name, ext);
 	if (targetIsIOS(targetName)) {
@@ -136,8 +136,12 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		if (fileID.length() > 12 && fileID.substr(fileID.length() - 12) == "/browser.cpp") {
 			return true;
 		}
-		// OS X target: we skip all files with the "_ios" suffix
+		// macOS target: we skip all files with the "_ios" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_ios") {
+			return true;
+		}
+		// macOS target: we skip all files with the "ios7_" prefix
+		if (name.length() > 5 && name.substr(0, 5) == "ios7_") {
 			return true;
 		}
 		// parent directory
@@ -293,7 +297,7 @@ void XcodeProvider::createWorkspace(const BuildSetup &setup) {
 	// Setup global objects
 	setupDefines(setup);
 	_targets.push_back(PROJECT_DESCRIPTION "-iOS");
-	_targets.push_back(PROJECT_DESCRIPTION "-OS X");
+	_targets.push_back(PROJECT_DESCRIPTION "-macOS");
 	setupCopyFilesBuildPhase();
 	setupFrameworksBuildPhase(setup);
 	setupNativeTarget();
@@ -407,7 +411,7 @@ void XcodeProvider::setupCopyFilesBuildPhase() {
 #define DEF_LOCALLIB_STATIC_PATH(path,lib,absolute) properties[lib".a"] = FileProperty("archive.ar", lib ".a", path, (absolute ? "\"<absolute>\"" : "\"<group>\"")); \
 	ADD_SETTING_ORDER_NOVALUE(children, getHash(lib".a"), lib".a", fwOrder++);
 
-#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/opt/local/lib/" lib ".a", lib, true)
+#define DEF_LOCALLIB_STATIC(lib) DEF_LOCALLIB_STATIC_PATH("/usr/local/lib/" lib ".a", lib, true)
 
 
 /**
@@ -443,7 +447,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	DEF_SYSFRAMEWORK("IOKit");
 	DEF_SYSFRAMEWORK("OpenGLES");
 	DEF_SYSFRAMEWORK("QuartzCore");
-	DEF_SYSFRAMEWORK("QuickTime");
 	DEF_SYSFRAMEWORK("UIKit");
 	DEF_SYSTBD("libiconv");
 
@@ -543,7 +546,7 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	_frameworksBuildPhase.add(framework_iPhone);
 
 	//////////////////////////////////////////////////////////////////////////
-	// ScummVM-OS X
+	// ScummVM-macOS
 	Object *framework_OSX = new Object(this, "PBXFrameworksBuildPhase_" + _targets[OSX_TARGET], "PBXFrameworksBuildPhase", "PBXFrameworksBuildPhase", "", "Frameworks");
 
 	framework_OSX->addProperty("buildActionMask", "2147483647", "", kSettingsNoValue);
@@ -558,7 +561,6 @@ void XcodeProvider::setupFrameworksBuildPhase(const BuildSetup &setup) {
 	frameworks_osx.push_back("CoreFoundation.framework");
 	frameworks_osx.push_back("Foundation.framework");
 	frameworks_osx.push_back("AudioToolbox.framework");
-	frameworks_osx.push_back("QuickTime.framework");
 	frameworks_osx.push_back("CoreMIDI.framework");
 	frameworks_osx.push_back("CoreAudio.framework");
 	frameworks_osx.push_back("QuartzCore.framework");
@@ -776,14 +778,16 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	Property scummvm_Debug;
 	ADD_SETTING(scummvm_Debug, "ALWAYS_SEARCH_USER_PATHS", "NO");
 	ADD_SETTING_QUOTE(scummvm_Debug, "USER_HEADER_SEARCH_PATHS", "$(SRCROOT) $(SRCROOT)/engines");
-	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "Don't Code Sign");
-	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "Don't Code Sign");
+	ADD_SETTING_QUOTE(scummvm_Debug, "CODE_SIGN_IDENTITY", "");
+	ADD_SETTING_QUOTE_VAR(scummvm_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "");
 	ADD_SETTING_QUOTE(scummvm_Debug, "FRAMEWORK_SEARCH_PATHS", "");
 	ADD_SETTING(scummvm_Debug, "GCC_C_LANGUAGE_STANDARD", "c99");
 	ADD_SETTING(scummvm_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_ENABLE_CPP_RTTI", "YES");
 	ADD_SETTING(scummvm_Debug, "GCC_INPUT_FILETYPE", "automatic");
 	ADD_SETTING(scummvm_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
+	ADD_SETTING(scummvm_Debug, "GCC_WARN_SIGN_COMPARE", "YES");
+	ADD_SETTING(scummvm_Debug, "WARNING_CFLAGS", "-Wno-multichar");
 	ValueList scummvm_defines(_defines);
 	REMOVE_DEFINE(scummvm_defines, "MACOSX");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE");
@@ -791,8 +795,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_DEFINE(scummvm_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, kSettingsNoQuote | kSettingsAsList, 5);
-	ADD_SETTING(scummvm_Debug, "GCC_THUMB_SUPPORT", "NO");
-	ADD_SETTING(scummvm_Debug, "GCC_USE_GCC3_PFE_SUPPORT", "NO");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_UNUSED_VARIABLE", "YES");
 	ValueList scummvm_HeaderPaths;
@@ -804,7 +806,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvm_Debug, "ONLY_ACTIVE_ARCH", "YES");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_CFLAGS", "");
 	ADD_SETTING_QUOTE(scummvm_Debug, "OTHER_LDFLAGS", "-lz");
-	ADD_SETTING(scummvm_Debug, "PREBINDING", "NO");
 	ADD_SETTING(scummvm_Debug, "ENABLE_TESTABILITY", "YES");
 
 	scummvm_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
@@ -834,7 +835,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	Property iPhone_Debug;
 	ADD_SETTING_QUOTE(iPhone_Debug, "CODE_SIGN_IDENTITY", "iPhone Developer");
 	ADD_SETTING_QUOTE_VAR(iPhone_Debug, "CODE_SIGN_IDENTITY[sdk=iphoneos*]", "iPhone Developer");
-	ADD_SETTING(iPhone_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(iPhone_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(iPhone_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ValueList iPhone_FrameworkSearchPaths;
@@ -843,13 +843,10 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_LIST(iPhone_Debug, "FRAMEWORK_SEARCH_PATHS", iPhone_FrameworkSearchPaths, kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
-	ADD_SETTING(iPhone_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(iPhone_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_WARN_64_TO_32_BIT_CONVERSION", "NO");
-	ADD_SETTING(iPhone_Debug, "WARNING_CFLAGS", "-Wno-multichar");
 	ADD_SETTING_QUOTE(iPhone_Debug, "GCC_PREFIX_HEADER", "");
-	ADD_SETTING(iPhone_Debug, "GCC_THUMB_SUPPORT", "NO");
 	ADD_SETTING(iPhone_Debug, "GCC_UNROLL_LOOPS", "YES");
 	ValueList iPhone_HeaderSearchPaths;
 	iPhone_HeaderSearchPaths.push_back("$(SRCROOT)/engines/");
@@ -863,7 +860,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	iPhone_LibPaths.push_back("\"" + projectOutputDirectory + "/lib\"");
 	ADD_SETTING_LIST(iPhone_Debug, "LIBRARY_SEARCH_PATHS", iPhone_LibPaths, kSettingsAsList, 5);
 	ADD_SETTING(iPhone_Debug, "ONLY_ACTIVE_ARCH", "YES");
-	ADD_SETTING(iPhone_Debug, "PREBINDING", "NO");
 	ADD_SETTING(iPhone_Debug, "PRODUCT_NAME", PROJECT_NAME);
 	ADD_SETTING(iPhone_Debug, "PRODUCT_BUNDLE_IDENTIFIER", "\"org.scummvm.${PRODUCT_NAME}\"");
 	ADD_SETTING(iPhone_Debug, "IPHONEOS_DEPLOYMENT_TARGET", "7.1");
@@ -900,15 +896,14 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	_buildConfiguration.add(iPhone_Release_Object);
 
 	/****************************************
-	 * ScummVM - OS X Target
+	 * ScummVM - macOS Target
 	 ****************************************/
 
 	// Debug
-	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
+	Object *scummvmOSX_Debug_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Debug", _targets[OSX_TARGET] /* ScummVM-macOS */, "XCBuildConfiguration", "PBXNativeTarget", "Debug");
 	Property scummvmOSX_Debug;
 	ADD_SETTING(scummvmOSX_Debug, "COMBINE_HIDPI_IMAGES", "YES");
 	ADD_SETTING(scummvmOSX_Debug, "SDKROOT", "macosx");
-	ADD_SETTING(scummvmOSX_Debug, "COMPRESS_PNG_FILES", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "COPY_PHASE_STRIP", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "DEBUG_INFORMATION_FORMAT", "dwarf");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "FRAMEWORK_SEARCH_PATHS", "");
@@ -916,7 +911,6 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_EXCEPTIONS", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_CPP_RTTI", "YES");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_DYNAMIC_NO_PIC", "NO");
-	ADD_SETTING(scummvmOSX_Debug, "GCC_ENABLE_FIX_AND_CONTINUE", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_OPTIMIZATION_LEVEL", "0");
 	ADD_SETTING(scummvmOSX_Debug, "GCC_PRECOMPILE_PREFIX_HEADER", "NO");
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_PREFIX_HEADER", "");
@@ -928,22 +922,21 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "GCC_VERSION", "");
 	ValueList scummvmOSX_HeaderPaths;
 	if (setup.useSDL2) {
-		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL2");
+		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL2");
 	} else {
-		scummvmOSX_HeaderPaths.push_back("/opt/local/include/SDL");
+		scummvmOSX_HeaderPaths.push_back("/usr/local/include/SDL");
 	}
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
-	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2");
+	scummvmOSX_HeaderPaths.push_back("/usr/local/include");
+	scummvmOSX_HeaderPaths.push_back("/usr/local/include/freetype2");
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)/engines/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "HEADER_SEARCH_PATHS", scummvmOSX_HeaderPaths, kSettingsQuoteVariable | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "INFOPLIST_FILE", "$(SRCROOT)/dists/macosx/Info.plist");
 	ValueList scummvmOSX_LibPaths;
-	scummvmOSX_LibPaths.push_back("/sw/lib");
-	scummvmOSX_LibPaths.push_back("/opt/local/lib");
+	scummvmOSX_LibPaths.push_back("/usr/local/lib");
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
-	scummvmOSX_LibPaths.push_back("\"\\\\\\\"$(SRCROOT)/lib\\\\\\\"\"");  // mmmh, all those slashes, it's almost Christmas \o/
+	scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "LIBRARY_SEARCH_PATHS", scummvmOSX_LibPaths, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING_QUOTE(scummvmOSX_Debug, "OTHER_CFLAGS", "");
 	ValueList scummvmOSX_LdFlags;
@@ -965,14 +958,13 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	}
 	scummvmOSX_LdFlags.push_back("-lz");
 	ADD_SETTING_LIST(scummvmOSX_Debug, "OTHER_LDFLAGS", scummvmOSX_LdFlags, kSettingsAsList, 5);
-	ADD_SETTING(scummvmOSX_Debug, "PREBINDING", "NO");
 	ADD_SETTING(scummvmOSX_Debug, "PRODUCT_NAME", PROJECT_NAME);
 
 	scummvmOSX_Debug_Object->addProperty("name", "Debug", "", kSettingsNoValue);
 	scummvmOSX_Debug_Object->_properties["buildSettings"] = scummvmOSX_Debug;
 
 	// Release
-	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Release", _targets[OSX_TARGET] /* ScummVM-OS X */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
+	Object *scummvmOSX_Release_Object = new Object(this, "XCBuildConfiguration_" PROJECT_DESCRIPTION "-OSX_Release", _targets[OSX_TARGET] /* ScummVM-macOS */, "XCBuildConfiguration", "PBXNativeTarget", "Release");
 	Property scummvmOSX_Release(scummvmOSX_Debug);
 	ADD_SETTING(scummvmOSX_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
@@ -1031,7 +1023,7 @@ void XcodeProvider::setupAdditionalSources(std::string targetName, Property &fil
 void XcodeProvider::setupDefines(const BuildSetup &setup) {
 
 	for (StringList::const_iterator i = setup.defines.begin(); i != setup.defines.end(); ++i) {
-		if (*i == "HAVE_NASM")  // Not supported on Mac (TODO: change how it's handled in main class or add it only in MSVC/CodeBlocks providers?)
+		if (*i == "USE_NASM" || *i == "USE_FLUIDSYNTH")  // Not supported on Mac
 			continue;
 
 		ADD_DEFINE(_defines, *i);
@@ -1042,6 +1034,7 @@ void XcodeProvider::setupDefines(const BuildSetup &setup) {
 	REMOVE_DEFINE(_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(_defines, "SDL_BACKEND");
+	ADD_DEFINE(_defines, "USE_TEXT_CONSOLE_FOR_DEBUGGER");
 	ADD_DEFINE(_defines, "CONFIG_H");
 	ADD_DEFINE(_defines, "UNIX");
 	ADD_DEFINE(_defines, "SCUMMVM");

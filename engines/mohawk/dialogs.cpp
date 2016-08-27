@@ -92,7 +92,7 @@ enum {
 
 MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
 		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm) {
+		_vm(vm), _loadSlot(-1) {
 	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
 	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
 	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
@@ -112,6 +112,7 @@ MohawkOptionsDialog::~MohawkOptionsDialog() {
 void MohawkOptionsDialog::open() {
 	GUI::Dialog::open();
 
+	_loadSlot = -1;
 	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
 	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 }
@@ -133,12 +134,14 @@ void MohawkOptionsDialog::save() {
 }
 
 void MohawkOptionsDialog::load() {
-	int slot = _loadDialog->runModalWithCurrentTarget();
+	// Do not load the game state from insite the dialog loop to
+	// avoid mouse cursor glitches (see bug #7164). Instead store
+	// the slot to load and let the code exectuting the dialog do
+	// the load after the dialog finished running.
+	_loadSlot = _loadDialog->runModalWithCurrentTarget();
 
-	if (slot >= 0) {
-		_vm->loadGameState(slot);
+	if (_loadSlot >= 0)
 		close();
-	}
 }
 
 void MohawkOptionsDialog::reflowLayout() {

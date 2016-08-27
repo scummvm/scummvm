@@ -48,6 +48,7 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
@@ -158,6 +159,7 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 			obj.setValue(i, value);
 	}
 }
+
 #endif
 
 #pragma mark -
@@ -165,7 +167,7 @@ void syncWithSerializer(Common::Serializer &s, SciString &obj) {
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
 template<typename T>
 struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
-	void operator()(Common::Serializer &s, T &obj) const {
+	void operator()(Common::Serializer &s, T &obj, int) const {
 		syncWithSerializer(s, obj);
 	}
 };
@@ -173,10 +175,31 @@ struct DefaultSyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 // Syncer for entries in a segment obj table
 template<typename T>
 struct SegmentObjTableEntrySyncer : Common::BinaryFunction<Common::Serializer, typename T::Entry &, void> {
-	void operator()(Common::Serializer &s, typename T::Entry &entry) const {
+	void operator()(Common::Serializer &s, typename T::Entry &entry, int index) const {
 		s.syncAsSint32LE(entry.next_free);
 
-		syncWithSerializer(s, entry.data);
+		bool hasData;
+		if (s.getVersion() >= 37) {
+			if (s.isSaving()) {
+				hasData = entry.data != nullptr;
+			}
+			s.syncAsByte(hasData);
+		} else {
+			hasData = (entry.next_free == index);
+		}
+
+		if (hasData) {
+			if (s.isLoading()) {
+				entry.data = new typename T::value_type;
+			}
+			syncWithSerializer(s, *entry.data);
+		} else if (s.isLoading()) {
+			if (s.getVersion() < 37) {
+				typename T::value_type dummy;
+				syncWithSerializer(s, dummy);
+			}
+			entry.data = nullptr;
+		}
 	}
 };
 
@@ -204,9 +227,8 @@ struct ArraySyncer : Common::BinaryFunction<Common::Serializer, T, void> {
 		if (s.isLoading())
 			arr.resize(len);
 
-		typename Common::Array<T>::iterator i;
-		for (i = arr.begin(); i != arr.end(); ++i) {
-			sync(s, *i);
+		for (uint i = 0; i < len; ++i) {
+			sync(s, arr[i], i);
 		}
 	}
 };
@@ -273,6 +295,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (type == SEG_TYPE_STRING) {
 			// Set the correct segment for SCI32 strings
 			_stringSegId = i;
+		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
+			_bitmapSegId = i;
 #endif
 		}
 
@@ -402,6 +426,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
+		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 	} else
 #endif
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
@@ -687,6 +712,31 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 
 	sync_Table<StringTable>(ser, *this);
 }
+
+void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
+	if (ser.getVersion() < 36) {
+		return;
+	}
+
+	sync_Table(ser, *this);
+}
+
+void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 36) {
+		return;
+	}
+
+	s.syncAsByte(_gc);
+	s.syncAsUint32LE(_dataSize);
+	if (s.isLoading()) {
+		_data = (byte *)malloc(_dataSize);
+	}
+	s.syncBytes(_data, _dataSize);
+
+	if (s.isLoading()) {
+		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+	}
+}
 #endif
 
 void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette) {
@@ -838,6 +888,29 @@ void GfxRemap32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		_needsUpdate = true;
+	}
+}
+
+void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 37) {
+		return;
+	}
+
+	s.syncAsSint32LE(_hideCount);
+	s.syncAsSint16LE(_restrictedArea.left);
+	s.syncAsSint16LE(_restrictedArea.top);
+	s.syncAsSint16LE(_restrictedArea.right);
+	s.syncAsSint16LE(_restrictedArea.bottom);
+	s.syncAsUint16LE(_cursorInfo.resourceId);
+	s.syncAsUint16LE(_cursorInfo.loopNo);
+	s.syncAsUint16LE(_cursorInfo.celNo);
+
+	if (s.isLoading()) {
+		hide();
+		setView(_cursorInfo.resourceId, _cursorInfo.loopNo, _cursorInfo.celNo);
+		if (!_hideCount) {
+			show();
+		}
 	}
 }
 #endif

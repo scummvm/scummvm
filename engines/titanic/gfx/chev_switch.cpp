@@ -1,0 +1,78 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "titanic/gfx/chev_switch.h"
+
+namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CChevSwitch, CToggleSwitch)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(SetChevButtonImageMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
+CChevSwitch::CChevSwitch() : CToggleSwitch(), _value(0) {
+}
+
+void CChevSwitch::save(SimpleFile *file, int indent) {
+	file->writeNumberLine(1, indent);
+	CToggleSwitch::save(file, indent);
+}
+
+void CChevSwitch::load(SimpleFile *file) {
+	file->readNumber();
+	CToggleSwitch::load(file);
+}
+
+bool CChevSwitch::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	return true;
+}
+
+bool CChevSwitch::SetChevButtonImageMsg(CSetChevButtonImageMsg *msg) {
+	if (msg->_value2 && getParent()) {
+		error("TODO: Don't know parent type");
+	}
+
+	_fieldBC = msg->_value1;
+	if (_fieldBC) {
+		loadImage((_value & 1) ? "on_odd.tga" : "on_even.tga");
+	} else {
+		loadImage((_value & 1) ? "off_odd.tga" : "off_even.tga");
+	}
+
+	return true;
+}
+
+bool CChevSwitch::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	_fieldBC ^= 1;
+	if (getParent()) {
+		CSetChevPanelBitMsg bitMsg(_value, _fieldBC);
+		bitMsg.execute(getParent());
+	}
+
+	CSetChevButtonImageMsg chevMsg(_fieldBC, 0);
+	chevMsg.execute(this);
+
+	return true;
+}
+
+} // End of namespace Titanic

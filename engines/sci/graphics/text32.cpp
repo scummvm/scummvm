@@ -59,7 +59,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 		}
 	}
 
-reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling) {
+reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect &rect, const Common::String &text, const uint8 foreColor, const uint8 backColor, const uint8 skipColor, const GuiResourceId fontId, const TextAlign alignment, const int16 borderColor, const bool dimmed, const bool doScaling, const bool gc) {
 
 	_borderColor = borderColor;
 	_text = text;
@@ -96,8 +96,7 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		_textRect = Common::Rect();
 	}
 
-	BitmapResource bitmap(_segMan, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
-	_bitmap = bitmap.getObject();
+	_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false, gc);
 
 	erase(bitmapRect, false);
 
@@ -109,7 +108,7 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 	return _bitmap;
 }
 
-reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed) {
+reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &rect, const Common::String &text, const int16 foreColor, const int16 backColor, const GuiResourceId fontId, const int16 skipColor, const int16 borderColor, const bool dimmed, const bool gc) {
 	_borderColor = borderColor;
 	_text = text;
 	_textRect = rect;
@@ -135,8 +134,7 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 		_textRect = Common::Rect();
 	}
 
-	BitmapResource bitmap(_segMan, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false);
-	_bitmap = bitmap.getObject();
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false, gc);
 
 	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
 	// because then it just erased the bitmap using the skip color. So we don't
@@ -180,8 +178,8 @@ void GfxText32::setFont(const GuiResourceId fontId) {
 void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint8 color, const bool doScaling) {
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28) + rect.top * _width + rect.left;
+	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
+	byte *pixels = bitmap.getPixels() + rect.top * _width + rect.left;
 
 	// NOTE: Not fully disassembled, but this should be right
 	int16 rectWidth = targetRect.width();
@@ -210,8 +208,8 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 }
 
 void GfxText32::drawChar(const char charIndex) {
-	byte *bitmap = _segMan->getHunkPointer(_bitmap);
-	byte *pixels = bitmap + READ_SCI11ENDIAN_UINT32(bitmap + 28);
+	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
+	byte *pixels = bitmap.getPixels();
 
 	_font->drawToBuffer(charIndex, _drawPosition.y, _drawPosition.x, _foreColor, _dimmed, pixels, _width, _height);
 	_drawPosition.x += _font->getCharWidth(charIndex);
@@ -328,14 +326,14 @@ void GfxText32::drawText(const uint index, uint length) {
 	}
 }
 
-void GfxText32::invertRect(const reg_t bitmap, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
+void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
 	Common::Rect targetRect = rect;
 	if (doScaling) {
 		bitmapStride = bitmapStride * _scaledWidth / g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		targetRect = scaleRect(rect);
 	}
 
-	byte *bitmapData = _segMan->getHunkPointer(bitmap);
+	SciBitmap &bitmap = *_segMan->lookupBitmap(bitmapId);
 
 	// NOTE: SCI code is super weird here; it seems to be trying to look at the
 	// entire size of the bitmap including the header, instead of just the pixel
@@ -345,14 +343,14 @@ void GfxText32::invertRect(const reg_t bitmap, int16 bitmapStride, const Common:
 	// function was never updated to match? Or maybe they exploit the
 	// configurable stride length somewhere else to do stair stepping inverts...
 	uint32 invertSize = targetRect.height() * bitmapStride + targetRect.width();
-	uint32 bitmapSize = READ_SCI11ENDIAN_UINT32(bitmapData + 12);
+	uint32 bitmapSize = bitmap.getDataSize();
 
 	if (invertSize >= bitmapSize) {
 		error("InvertRect too big: %u >= %u", invertSize, bitmapSize);
 	}
 
 	// NOTE: Actual engine just added the bitmap header size hardcoded here
-	byte *pixel = bitmapData + READ_SCI11ENDIAN_UINT32(bitmapData + 28) + bitmapStride * targetRect.top + targetRect.left;
+	byte *pixel = bitmap.getPixels() + bitmapStride * targetRect.top + targetRect.left;
 
 	int16 stride = bitmapStride - targetRect.width();
 	int16 targetHeight = targetRect.height();
@@ -615,7 +613,7 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 void GfxText32::erase(const Common::Rect &rect, const bool doScaling) {
 	Common::Rect targetRect = doScaling ? scaleRect(rect) : rect;
 
-	BitmapResource bitmap(_bitmap);
+	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	bitmap.getBuffer().fillRect(targetRect, _backColor);
 }
 
@@ -652,7 +650,7 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 }
 
 void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 color, TextAlign align, GuiResourceId fontId, ScrollDirection dir) {
-	BitmapResource bmr(_bitmap);
+	SciBitmap &bmr = *_segMan->lookupBitmap(_bitmap);
 	byte *pixels = bmr.getPixels();
 
 	int h = _font->getHeight();

@@ -30,8 +30,10 @@
 #include "common/scummsys.h"       // for int16, uint8, uint32, uint16
 #include "engines/sci/resource.h"  // for ResourceId
 #include "sci/engine/vm_types.h"   // for reg_t, NULL_REG
+#include "sci/video/robot_decoder.h" // for RobotAudioStream
 
 namespace Sci {
+#pragma mark AudioChannel
 
 /**
  * An audio channel used by the software SCI mixer.
@@ -53,14 +55,11 @@ struct AudioChannel {
 	Common::SeekableReadStream *resourceStream;
 
 	/**
-	 * The audio stream loaded into this channel.
-	 * `SeekableAudioStream` is used here instead of
-	 * `RewindableAudioStream` because
-	 * `RewindableAudioStream` does not include the
-	 * `getLength` function, which is needed to tell the
-	 * game engine the duration of audio streams.
+	 * The audio stream loaded into this channel. Can cast
+	 * to `SeekableAudioStream` for normal channels and
+	 * `RobotAudioStream` for robot channels.
 	 */
-	Audio::SeekableAudioStream *stream;
+	Audio::AudioStream *stream;
 
 	/**
 	 * The converter used to transform and merge the input
@@ -121,12 +120,6 @@ struct AudioChannel {
 	 * audio block.
 	 */
 	bool robot;
-
-	/**
-	 * Whether or not this channel contains a VMD audio
-	 * track.
-	 */
-	bool vmd;
 
 	/**
 	 * For digital sound effects, the related VM
@@ -194,7 +187,7 @@ private:
 	 * Mixes audio from the given source stream into the
 	 * target buffer using the given rate converter.
 	 */
-	int writeAudioInternal(Audio::RewindableAudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop);
+	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop);
 
 #pragma mark -
 #pragma mark Channel management
@@ -401,8 +394,17 @@ private:
 #pragma mark -
 #pragma mark Robot
 public:
+	bool playRobotAudio(const RobotAudioStream::RobotAudioPacket &packet);
+	bool queryRobotAudio(RobotAudioStream::StreamState &outStatus) const;
+	bool finishRobotAudio();
+	bool stopRobotAudio();
 
 private:
+	/**
+	 * Finds a channel that is configured for robot playback.
+	 */
+	int16 findRobotChannel() const;
+
 	/**
 	 * When true, channels marked as robot audio will not be
 	 * played.

@@ -75,6 +75,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_curResource = -1;
 	_hoverResource = nullptr;
 
+	_sound = nullptr;
 	_gfx = nullptr;
 	_console = nullptr;
 	_scriptParser = nullptr;
@@ -88,6 +89,7 @@ MohawkEngine_Myst::~MohawkEngine_Myst() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _gfx;
+	delete _sound;
 	delete _console;
 	delete _scriptParser;
 	delete _gameState;
@@ -220,6 +222,7 @@ Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
 	_gfx = new MystGraphics(this);
+	_sound = new Sound(this);
 	_console = new MystConsole(this);
 	_gameState = new MystGameState(this, _saveFileMan);
 	_optionsDialog = new MystOptionsDialog(this);
@@ -309,6 +312,8 @@ Common::Error MohawkEngine_Myst::run() {
 
 					_canSafelySaveLoad = true;
 					runDialog(*_optionsDialog);
+					if (_optionsDialog->getLoadSlot() >= 0)
+						loadGameState(_optionsDialog->getLoadSlot());
 					_canSafelySaveLoad = false;
 
 					if (_needsPageDrop) {

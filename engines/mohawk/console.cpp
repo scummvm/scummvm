@@ -42,6 +42,7 @@
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
+#include "mohawk/riven_sound.h"
 #endif
 
 namespace Mohawk {

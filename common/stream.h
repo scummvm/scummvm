@@ -103,6 +103,14 @@ public:
 		flush();
 	}
 
+	/**
+	* Obtains the current value of the stream position indicator of the
+	* stream.
+	*
+	* @return the current position indicator, or -1 if an error occurred.
+	 */
+	virtual int32 pos() const = 0;
+
 
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.

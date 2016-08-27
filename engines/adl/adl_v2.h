@@ -25,9 +25,6 @@
 
 #include "adl/adl.h"
 
-// Note: this version of ADL redraws only when necessary, but
-// this is not currently implemented.
-
 namespace Common {
 class RandomSource;
 }
@@ -64,6 +61,8 @@ protected:
 	int o2_isCarryingSomething(ScriptEnv &e);
 
 	int o2_moveItem(ScriptEnv &e);
+	int o2_setCurPic(ScriptEnv &e);
+	int o2_setPic(ScriptEnv &e);
 	int o2_moveAllItems(ScriptEnv &e);
 	int o2_save(ScriptEnv &e);
 	int o2_restore(ScriptEnv &e);

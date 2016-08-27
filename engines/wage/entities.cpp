@@ -48,6 +48,7 @@
 #include "wage/wage.h"
 #include "wage/entities.h"
 #include "wage/design.h"
+#include "wage/gui.h"
 #include "wage/script.h"
 #include "wage/world.h"
 
@@ -80,6 +81,8 @@ Context::Context() {
 }
 
 Scene::Scene() {
+	_resourceId = 0;
+
 	_script = NULL;
 	_design = NULL;
 	_textBounds = NULL;
@@ -103,6 +106,8 @@ Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
 	_name = name;
 	_classType = SCENE;
 	_design = new Design(data);
+
+	_resourceId = 0;
 
 	_script = NULL;
 	_textBounds = NULL;
@@ -142,65 +147,23 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 	_design->paint(surface, *((WageEngine *)g_engine)->_world->_patterns, x, y);
 
 	for (ObjList::const_iterator it = _objs.begin(); it != _objs.end(); ++it) {
-		debug(2, "paining Obj: %s, index: %d, type: %d", (*it)->_name.c_str(), (*it)->_index, (*it)->_type);
+		debug(2, "painting Obj: %s, index: %d, type: %d", (*it)->_name.c_str(), (*it)->_index, (*it)->_type);
 		(*it)->_design->paint(surface, *((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 
 	for (ChrList::const_iterator it = _chrs.begin(); it != _chrs.end(); ++it) {
-		debug(2, "paining Chr: %s", (*it)->_name.c_str());
+		debug(2, "painting Chr: %s", (*it)->_name.c_str());
 		(*it)->_design->paint(surface, *((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
 }
 
-// Source: Apple IIGS Technical Note #41, "Font Family Numbers"
-// http://apple2.boldt.ca/?page=til/tn.iigs.041
-static const char *const fontNames[] = {
-	"Chicago",	// system font
-	"Geneva",	// application font
-	"New York",
-	"Geneva",
-
-	"Monaco",
-	"Venice",
-	"London",
-	"Athens",
-
-	"San Francisco",
-	"Toronto",
-	NULL,
-	"Cairo",
-	"Los Angeles", // 12
-
-	"Zapf Dingbats",
-	"Bookman",
-	"Helvetica Narrow",
-	"Palatino",
-	NULL,
-	"Zapf Chancery",
-	NULL,
-
-	"Times", // 20
-	"Helvetica",
-	"Courier",
-	"Symbol",
-	"Taliesin", // mobile?
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, // 30
-	NULL,
-	NULL,
-	"Avant Garde",
-	"New Century Schoolbook"
-};
-
 const char *Scene::getFontName() {
-	if (_fontType >= 0 && _fontType < ARRAYSIZE(fontNames) && fontNames[_fontType] != NULL) {
-		return fontNames[_fontType];
-	}
-	return "Unknown";
+	const char *name = ((WageEngine *)g_engine)->_gui->_wm.getFontName(_fontType, _fontSize);
+
+	if (!name)
+		return "Unknown";
+
+	return name;
 }
 
 Designed *Scene::lookUpEntity(int x, int y) {
@@ -221,6 +184,7 @@ Designed *Scene::lookUpEntity(int x, int y) {
 
 Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
 	_index = 0;
+	_resourceId = 0;
 	_namePlural = false;
 	_value = 0;
 	_attackType = 0;
@@ -231,7 +195,9 @@ Obj::Obj() : _currentOwner(NULL), _currentScene(NULL) {
 	_damage = 0;
 }
 
-Obj::Obj(Common::String name, Common::SeekableReadStream *data) {
+Obj::Obj(Common::String name, Common::SeekableReadStream *data, int resourceId) {
+	_resourceId = resourceId;
+
 	_name = name;
 	_classType = OBJ;
 	_currentOwner = NULL;
@@ -322,6 +288,7 @@ Chr::Chr(Common::String name, Common::SeekableReadStream *data) {
 	_design = new Design(data);
 
 	_index = 0;
+	_resourceId = 0;
 	_currentScene = NULL;
 
 	setDesignBounds(readRect(data));

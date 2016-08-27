@@ -100,7 +100,7 @@ void global_messageHandler_KickMetal() {
 }
 
 int global_messageHandler1(ExCommand *cmd) {
-	debug(5, "global_messageHandler1: %d %d", cmd->_messageKind, cmd->_messageNum);
+	debugC(5, kDebugEvents, "global_messageHandler1: %d %d", cmd->_messageKind, cmd->_messageNum);
 
 	if (cmd->_excFlags & 0x10000) {
 		if (cmd->_messageNum == MV_MAN_TOLADDER)
@@ -364,7 +364,7 @@ int global_messageHandler3(ExCommand *cmd) {
 	case 17:
 		switch (cmd->_messageNum) {
 		case 61:
-			debug(0, "preload: { %d, %d },", cmd->_parentId, cmd->_keyCode);
+			debugC(0, kDebugEvents, "preload: { %d, %d },", cmd->_parentId, cmd->_keyCode);
 			return g_fp->_gameLoader->preloadScene(cmd->_parentId, cmd->_keyCode);
 		case 62:
 			return g_fp->_gameLoader->gotoScene(cmd->_parentId, cmd->_keyCode);
@@ -425,7 +425,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				if (g_fp->_msgX != cmd->_sceneClickX || g_fp->_msgY != cmd->_sceneClickY) {
 					ani = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 					if (!ani || (ani->isIdle() && !(ani->_flags & 0x80) && !(ani->_flags & 0x100))) {
-						warning("WWW 1");
+						debugC(0, kDebugPathfinding, "WWW 1");
 						result = startWalkTo(g_fp->_gameLoader->_field_FA, -1, cmd->_sceneClickX, cmd->_sceneClickY, 0);
 						if (result) {
 							ExCommand *ex = new ExCommand(g_fp->_gameLoader->_field_FA, 17, 64, 0, 0, 0, 1, 0, 0, 0);

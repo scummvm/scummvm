@@ -336,14 +336,6 @@ private:
 
 	/**
 	 * Marks all screen items to be deleted that are within
-	 * this plane and match the given picture ID, then sets
-	 * the picture ID of the plane to the new picture ID
-	 * without adding any screen items.
-	 */
-	void deletePic(const GuiResourceId oldPictureId, const GuiResourceId newPictureId);
-
-	/**
-	 * Marks all screen items to be deleted that are within
 	 * this plane and are picture cels.
 	 */
 	void deleteAllPics();
@@ -355,7 +347,7 @@ public:
 	 * new picture resource to the plane at the given
 	 * position.
 	 */
-	void addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX);
+	GuiResourceId addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate = true);
 
 	/**
 	 * If the plane is a picture plane, re-adds all cels
@@ -363,6 +355,14 @@ public:
 	 * just clears the _pictureChanged flag.
 	 */
 	void changePic();
+
+	/**
+	 * Marks all screen items to be deleted that are within
+	 * this plane and match the given picture ID, then sets
+	 * the picture ID of the plane to the new picture ID
+	 * without adding any screen items.
+	 */
+	void deletePic(const GuiResourceId oldPictureId, const GuiResourceId newPictureId);
 
 #pragma mark -
 #pragma mark Plane - Rendering

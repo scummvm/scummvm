@@ -80,7 +80,7 @@ GfxCursor::~GfxCursor() {
 	kernelClearZoomZone();
 }
 
-void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
+void GfxCursor::init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event) {
 	_coordAdjuster = coordAdjuster;
 	_event = event;
 }
@@ -512,32 +512,18 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// automatically. The view resources may exist, but none of the games actually
 	// use them.
 
-	if (_macCursorRemap.empty()) {
-		// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
-		// KQ6 uses this mapping for its cursors
-		if (g_sci->getGameId() == GID_KQ6) {
-			if (viewNum == 990)      // Inventory Cursors
-				viewNum = loopNum * 16 + celNum + 2000;
-			else if (viewNum == 998) // Regular Cursors
-				viewNum = celNum + 1000;
-			else                     // Unknown cursor, ignored
-				return;
-		}
-		if (g_sci->hasMacIconBar())
-			g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
-	} else {
-		// If we do have the list, we'll be using a remap based on what the
-		// scripts have given us.
-		for (uint32 i = 0; i < _macCursorRemap.size(); i++) {
-			if (viewNum == _macCursorRemap[i]) {
-				viewNum = (i + 1) * 0x100 + loopNum * 0x10 + celNum;
-				break;
-			}
-
-			if (i == _macCursorRemap.size())
-				error("Unmatched Mac cursor %d", viewNum);
-		}
+	// QFG1/Freddy/Hoyle4 use a straight viewNum->cursor ID mapping
+	// KQ6 uses this mapping for its cursors
+	if (g_sci->getGameId() == GID_KQ6) {
+		if (viewNum == 990)      // Inventory Cursors
+			viewNum = loopNum * 16 + celNum + 2000;
+		else if (viewNum == 998) // Regular Cursors
+			viewNum = celNum + 1000;
+		else                     // Unknown cursor, ignored
+			return;
 	}
+	if (g_sci->hasMacIconBar())
+		g_sci->_gfxMacIconBar->setInventoryIcon(viewNum);
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, viewNum), false);
 
@@ -566,11 +552,6 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	delete macCursor;
 	kernelShow();
-}
-
-void GfxCursor::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
-	for (int i = 0; i < cursorCount; i++)
-		_macCursorRemap.push_back(cursors[i].toUint16());
 }
 
 } // End of namespace Sci

@@ -147,7 +147,7 @@ struct CelScalerTable {
 	 * the correct column to read from the source bitmap
 	 * when drawing a scaled version of the source bitmap.
 	 */
-	int valuesX[1024];
+	int valuesX[4096];
 
 	/**
 	 * The ratio used to generate the x-values.
@@ -159,7 +159,7 @@ struct CelScalerTable {
 	 * the correct row to read from a source bitmap when
 	 * drawing a scaled version of the source bitmap.
 	 */
-	int valuesY[1024];
+	int valuesY[4096];
 
 	/**
 	 * The ratio used to generate the y-values.
@@ -400,7 +400,7 @@ public:
 	 * Reads the pixel at the given coordinates. This method
 	 * is valid only for CelObjView and CelObjPic.
 	 */
-	virtual uint8 readPixel(uint16 x, uint16 y, bool mirrorX) const;
+	virtual uint8 readPixel(const uint16 x, const uint16 y, const bool mirrorX) const;
 
 	/**
 	 * Submits the palette from this cel to the palette
@@ -504,6 +504,9 @@ public:
 	virtual ~CelObjView() override {};
 
 	using CelObj::draw;
+
+	static int16 getNumLoops(const GuiResourceId viewId);
+	static int16 getNumCels(const GuiResourceId viewId, const int16 loopNo);
 
 	/**
 	 * Draws the cel to the target buffer using the

@@ -374,13 +374,21 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, 2, argv);
-	Node *n;
 	List *list = s->_segMan->lookupList(argv[0]);
 
 	if (node_pos.isNull())
 		return NULL_REG; // Signal failure
 
-	n = s->_segMan->lookupNode(node_pos);
+	Node *n = s->_segMan->lookupNode(node_pos);
+
+#ifdef ENABLE_SCI32
+	for (int i = 1; i <= list->numRecursions; ++i) {
+		if (list->nextNodes[i] == node_pos) {
+			list->nextNodes[i] = n->succ;
+		}
+	}
+#endif
+
 	if (list->first == node_pos)
 		list->first = n->succ;
 	if (list->last == node_pos)
@@ -486,7 +494,7 @@ reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 	List *list = s->_segMan->lookupList(argv[0]);
 	reg_t curAddress = list->first;
 	if (list->first.isNull()) {
-		error("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
+		// Happens in Torin when examining Di's locket in chapter 3
 		return NULL_REG;
 	}
 	Node *curNode = s->_segMan->lookupNode(curAddress);
@@ -544,9 +552,18 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 
 	ObjVarRef address;
 
+	++list->numRecursions;
+
+	if (list->numRecursions > ARRAYSIZE(list->nextNodes)) {
+		error("Too much recursion in kListEachElementDo");
+	}
+
 	while (curNode) {
-		// We get the next node here as the current node might be gone after the invoke
-		reg_t nextNode = curNode->succ;
+		// We get the next node here as the current node might be deleted by the
+		// invoke. In the case that the next node is also deleted, kDeleteKey
+		// needs to be able to adjust the location of the next node, which is
+		// why it is stored on the list instead of on the stack
+		list->nextNodes[list->numRecursions] = curNode->succ;
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
@@ -559,10 +576,17 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 			}
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
+			// Check if the call above leads to a game restore, in which case
+			// the segment manager will be reset, and the original list will
+			// be invalidated
+			if (s->abortScriptProcessing == kAbortLoadGame)
+				return s->r_acc;
 		}
 
-		curNode = s->_segMan->lookupNode(nextNode);
+		curNode = s->_segMan->lookupNode(list->nextNodes[list->numRecursions]);
 	}
+
+	--list->numRecursions;
 
 	return s->r_acc;
 }

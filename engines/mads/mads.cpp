@@ -38,6 +38,11 @@ namespace MADS {
 MADSEngine::MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _randomSource("MADS") {
 
+	// Set up debug channels
+	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
+
 	// Initialize game/engine options
 	_easyMouse = true;
 	_invObjectsAnimated = true;
@@ -78,11 +83,6 @@ MADSEngine::~MADSEngine() {
 }
 
 void MADSEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-
 	// Initial sub-system engine references
 	MSurface::setVm(this);
 	MSprite::setVm(this);

@@ -325,7 +325,12 @@ public:
 	 */
 	inline bool remapEnabled(uint8 color) const {
 		const uint8 index = _remapEndColor - color;
-		assert(index < _remaps.size());
+		// At least KQ7 DOS uses remap colors that are outside the valid remap
+		// range; in these cases, just treat those pixels as skip pixels (which
+		// is how they would be treated in SSCI)
+		if (index >= _remaps.size()) {
+			return false;
+		}
 		return (_remaps[index]._type != kRemapNone);
 	}
 

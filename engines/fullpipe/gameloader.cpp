@@ -110,10 +110,10 @@ GameLoader::~GameLoader() {
 }
 
 bool GameLoader::load(MfcArchive &file) {
-	debug(1, "GameLoader::load()");
+	debugC(1, kDebugLoading, "GameLoader::load()");
 
 	_gameName = file.readPascalString();
-	debug(1, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName);
 
 	_gameProject = new GameProject();
 
@@ -126,13 +126,13 @@ bool GameLoader::load(MfcArchive &file) {
 	}
 
 	_gameName = file.readPascalString();
-	debug(1, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName);
 
 	_inventory.load(file);
 
 	_interactionController->load(file);
 
-	debug(1, "sceneTag count: %d", _gameProject->_sceneTagList->size());
+	debugC(1, kDebugLoading, "sceneTag count: %d", _gameProject->_sceneTagList->size());
 
 	_sc2array.resize(_gameProject->_sceneTagList->size());
 
@@ -142,7 +142,7 @@ bool GameLoader::load(MfcArchive &file) {
 
 		snprintf(tmp, 11, "%04d.sc2", it->_sceneId);
 
-		debug(1, "sc: %s", tmp);
+		debugC(1, kDebugLoading, "sc: %s", tmp);
 
 		_sc2array[i].loadFile((const char *)tmp);
 	}
@@ -152,7 +152,7 @@ bool GameLoader::load(MfcArchive &file) {
 	_field_FA = file.readUint16LE();
 	_field_F8 = file.readUint16LE();
 
-	debug(1, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
+	debugC(1, kDebugLoading, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
 
 	_gameVar = (GameVar *)file.readClass();
 
@@ -357,7 +357,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 }
 
 bool GameLoader::preloadScene(int sceneId, int entranceId) {
-	debug(0, "preloadScene(%d, %d), ", sceneId, entranceId);
+	debugC(0, kDebugLoading, "preloadScene(%d, %d), ", sceneId, entranceId);
 
 	if (_preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
 		_preloadSceneId = sceneId;
@@ -455,13 +455,13 @@ void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAni
 	if (picAniInfoCount <= 0)
 		return;
 
-	debug(0, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfoCount);
+	debugC(0, kDebugAnimation, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfoCount);
 
 	PictureObject *pict;
 	StaticANIObject *ani;
 
 	for (int i = 0; i < picAniInfoCount; i++) {
-		debug(7, "PicAniInfo: id: %d type: %d", picAniInfo[i]->objectId, picAniInfo[i]->type);
+		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", picAniInfo[i]->objectId, picAniInfo[i]->type);
 		if (picAniInfo[i]->type & 2) {
 			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
 			if (pict) {
@@ -551,14 +551,14 @@ Sc2::Sc2() {
 }
 
 bool Sc2::load(MfcArchive &file) {
-	debug(5, "Sc2::load()");
+	debugC(5, kDebugLoading, "Sc2::load()");
 
 	_sceneId = file.readUint16LE();
 
 	_motionController = (MotionController *)file.readClass();
 
 	_count1 = file.readUint32LE();
-	debug(4, "count1: %d", _count1);
+	debugC(4, kDebugLoading, "count1: %d", _count1);
 	if (_count1 > 0) {
 		_data1 = (int32 *)malloc(_count1 * sizeof(int32));
 
@@ -570,7 +570,7 @@ bool Sc2::load(MfcArchive &file) {
 	}
 
 	_defPicAniInfosCount = file.readUint32LE();
-	debug(4, "defPicAniInfos: %d", _defPicAniInfosCount);
+	debugC(4, kDebugLoading, "defPicAniInfos: %d", _defPicAniInfosCount);
 	if (_defPicAniInfosCount > 0) {
 		_defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
 
@@ -587,7 +587,7 @@ bool Sc2::load(MfcArchive &file) {
 	_picAniInfosCount = 0;
 
 	_entranceDataCount = file.readUint32LE();
-	debug(4, "_entranceData: %d", _entranceDataCount);
+	debugC(4, kDebugLoading, "_entranceData: %d", _entranceDataCount);
 
 	if (_entranceDataCount > 0) {
 		_entranceData = (EntranceInfo **)malloc(_entranceDataCount * sizeof(EntranceInfo *));
@@ -607,7 +607,7 @@ bool Sc2::load(MfcArchive &file) {
 }
 
 bool PreloadItems::load(MfcArchive &file) {
-	debug(5, "PreloadItems::load()");
+	debugC(5, kDebugLoading, "PreloadItems::load()");
 
 	int count = file.readCount();
 

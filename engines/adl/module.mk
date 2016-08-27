@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	adl.o \
 	adl_v2.o \
 	adl_v3.o \
+	adl_v4.o \
 	console.o \
 	detection.o \
 	disk.o \
@@ -11,8 +12,10 @@ MODULE_OBJS := \
 	graphics.o \
 	graphics_v1.o \
 	graphics_v2.o \
+	hires0.o \
 	hires1.o \
 	hires2.o \
+	hires4.o \
 	hires6.o \
 	speaker.o
 

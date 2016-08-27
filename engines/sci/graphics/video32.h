@@ -23,16 +23,216 @@
 #ifndef SCI_GRAPHICS_VIDEO32_H
 #define SCI_GRAPHICS_VIDEO32_H
 
-namespace Video { class AdvancedVMDDecoder; }
+#include "common/rect.h"          // for Rect
+#include "common/scummsys.h"      // for int16, uint8, uint16, int32
+#include "common/str.h"           // for String
+#include "sci/engine/vm_types.h"  // for reg_t
+#include "sci/video/robot_decoder.h" // for RobotDecoder
+
+namespace Video {
+class AdvancedVMDDecoder;
+class AVIDecoder;
+}
 namespace Sci {
+class EventManager;
 class Plane;
 class ScreenItem;
 class SegManager;
+class SEQDecoder;
+struct Palette;
 
+#pragma mark SEQPlayer
+
+/**
+ * SEQPlayer is used to play SEQ animations.
+ * Used by DOS versions of GK1 and QFG4CD.
+ */
+class SEQPlayer {
+public:
+	SEQPlayer(SegManager *segMan);
+
+	/**
+	 * Plays a SEQ animation with the given
+	 * file name, with each frame being displayed
+	 * for `numTicks` ticks.
+	 */
+	void play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y);
+
+private:
+	SegManager *_segMan;
+	SEQDecoder *_decoder;
+
+	/**
+	 * The plane where the SEQ will be drawn.
+	 */
+	Plane *_plane;
+
+	/**
+	 * The screen item representing the SEQ surface.
+	 */
+	ScreenItem *_screenItem;
+
+	/**
+	 * The bitmap used to render video output.
+	 */
+	reg_t _bitmap;
+
+	/**
+	 * Renders a single frame of video.
+	 */
+	void renderFrame() const;
+};
+
+#pragma mark -
+#pragma mark AVIPlayer
+
+/**
+ * AVIPlayer is used to play AVI videos. Used by
+ * Windows versions of GK1CD, KQ7, and QFG4CD.
+ */
+class AVIPlayer {
+public:
+	enum IOStatus {
+		kIOSuccess      = 0,
+		kIOFileNotFound = 2,
+		kIOSeekFailed   = 12
+	};
+
+	enum AVIStatus {
+		kAVINotOpen  = 0,
+		kAVIOpen     = 1,
+		kAVIPlaying  = 2,
+		kAVIPaused   = 3
+	};
+
+	enum EventFlags {
+		kEventFlagNone         = 0,
+		kEventFlagEnd          = 1,
+		kEventFlagEscapeKey    = 2,
+		kEventFlagMouseDown    = 4,
+		kEventFlagHotRectangle = 8
+	};
+
+	AVIPlayer(SegManager *segMan, EventManager *eventMan);
+	~AVIPlayer();
+
+	/**
+	 * Opens a stream to an AVI resource.
+	 */
+	IOStatus open(const Common::String &fileName);
+
+	/**
+	 * Initializes the AVI rendering parameters for the
+	 * current AVI. This must be called after `open`.
+	 */
+	IOStatus init1x(const int16 x, const int16 y, const int16 width, const int16 height);
+
+	/**
+	 * Initializes the AVI rendering parameters for the
+	 * current AVI, in pixel-doubling mode. This must
+	 * be called after `open`.
+	 */
+	IOStatus init2x(const int16 x, const int16 y);
+
+	/**
+	 * Begins playback of the current AVI.
+	 */
+	IOStatus play(const int16 from, const int16 to, const int16 showStyle, const bool cue);
+
+	/**
+	 * Stops playback and closes the currently open AVI stream.
+	 */
+	IOStatus close();
+
+	/**
+	 * Seeks the currently open AVI stream to the given frame.
+	 */
+	IOStatus cue(const uint16 frameNo);
+
+	/**
+	 * Returns the duration of the current video.
+	 */
+	uint16 getDuration() const;
+
+	/**
+	 * Plays the AVI until an event occurs (e.g. user
+	 * presses escape, clicks, etc.).
+	 */
+	EventFlags playUntilEvent(const EventFlags flags);
+
+private:
+	typedef Common::HashMap<uint16, AVIStatus> StatusMap;
+
+	SegManager *_segMan;
+	EventManager *_eventMan;
+	Video::AVIDecoder *_decoder;
+
+	/**
+	 * Playback status of the player.
+	 */
+	AVIStatus _status;
+
+	/**
+	 * The plane where the AVI will be drawn.
+	 */
+	Plane *_plane;
+
+	/**
+	 * The screen item representing the AVI surface,
+	 * in 8bpp mode. In 24bpp mode, video is drawn
+	 * directly to the screen.
+	 */
+	ScreenItem *_screenItem;
+
+	/**
+	 * The bitmap used to render video output in
+	 * 8bpp mode.
+	 */
+	reg_t _bitmap;
+
+	/**
+	 * The rectangle where the video will be drawn,
+	 * in game script coordinates.
+	 */
+	Common::Rect _drawRect;
+
+	/**
+	 * The scale buffer for pixel-doubled videos
+	 * drawn in 24bpp mode.
+	 */
+	void *_scaleBuffer;
+
+	/**
+	 * In SCI2.1, whether or not the video should
+	 * be pixel doubled for playback.
+	 */
+	bool _pixelDouble;
+
+	/**
+	 * Performs common initialisation for both
+	 * scaled and unscaled videos.
+	 */
+	void init();
+
+	/**
+	 * Renders video without event input until the
+	 * video is complete.
+	 */
+	void renderVideo() const;
+
+	/**
+	 * Renders a single frame of video.
+	 */
+	void renderFrame() const;
+};
+
+#pragma mark -
 #pragma mark VMDPlayer
 
 /**
  * VMDPlayer is used to play VMD videos.
+ * Used by Phant1, GK2, PQ:SWAT, Shivers, SQ6,
+ * Torin, and Lighthouse.
  */
 class VMDPlayer {
 public:
@@ -68,6 +268,15 @@ public:
 		kEventFlagReverse      = 0x80
 	};
 
+	enum VMDStatus {
+		kVMDNotOpen  = 0,
+		kVMDOpen     = 1,
+		kVMDPlaying  = 2,
+		kVMDPaused   = 3,
+		kVMDStopped  = 4,
+		kVMDFinished = 5
+	};
+
 	VMDPlayer(SegManager *segMan, EventManager *eventMan);
 	~VMDPlayer();
 
@@ -94,6 +303,11 @@ public:
 	 * Stops playback and closes the currently open VMD stream.
 	 */
 	IOStatus close();
+
+	/**
+	 * Gets the playback status of the VMD player.
+	 */
+	VMDStatus getStatus() const;
 
 	// NOTE: Was WaitForEvent in SSCI
 	EventFlags kernelPlayUntilEvent(const EventFlags flags, const int16 lastFrameNo, const int16 yieldInterval);
@@ -297,15 +511,28 @@ private:
 	bool _showCursor;
 };
 
+/**
+ * Video32 provides facilities for playing back
+ * video in SCI engine.
+ */
 class Video32 {
 public:
 	Video32(SegManager *segMan, EventManager *eventMan) :
-	_VMDPlayer(segMan, eventMan) {}
+	_SEQPlayer(segMan),
+	_AVIPlayer(segMan, eventMan),
+	_VMDPlayer(segMan, eventMan),
+	_robotPlayer(segMan) {}
 
+	SEQPlayer &getSEQPlayer() { return _SEQPlayer; }
+	AVIPlayer &getAVIPlayer() { return _AVIPlayer; }
 	VMDPlayer &getVMDPlayer() { return _VMDPlayer; }
+	RobotDecoder &getRobotPlayer() { return _robotPlayer; }
 
 private:
+	SEQPlayer _SEQPlayer;
+	AVIPlayer _AVIPlayer;
 	VMDPlayer _VMDPlayer;
+	RobotDecoder _robotPlayer;
 };
 } // End of namespace Sci
 

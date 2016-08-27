@@ -102,6 +102,7 @@ private:
 	Graphics::Surface *_font;
 	uint _cursorPos;
 	bool _showCursor;
+	uint32 _startMillis;
 };
 
 } // End of namespace Adl

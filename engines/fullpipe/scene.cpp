@@ -55,7 +55,7 @@ Scene *FullpipeEngine::accessScene(int sceneId) {
 }
 
 bool SceneTagList::load(MfcArchive &file) {
-	debug(5, "SceneTagList::load()");
+	debugC(5, kDebugLoading, "SceneTagList::load()");
 
 	int numEntries = file.readUint16LE();
 
@@ -76,7 +76,7 @@ SceneTag::SceneTag() {
 }
 
 bool SceneTag::load(MfcArchive &file) {
-	debug(5, "SceneTag::load()");
+	debugC(5, kDebugLoading, "SceneTag::load()");
 
 	_field_4 = 0;
 	_scene = 0;
@@ -85,7 +85,7 @@ bool SceneTag::load(MfcArchive &file) {
 
 	_tag = file.readPascalString();
 
-	debug(6, "sceneId: %d  tag: %s", _sceneId, _tag);
+	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag);
 
 	return true;
 }
@@ -157,7 +157,7 @@ Scene::~Scene() {
 }
 
 bool Scene::load(MfcArchive &file) {
-	debug(5, "Scene::load()");
+	debugC(5, kDebugLoading, "Scene::load()");
 
 	Background::load(file);
 
@@ -167,7 +167,7 @@ bool Scene::load(MfcArchive &file) {
 	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
 
 	int count = file.readUint16LE();
-	debug(7, "scene.ani: %d", count);
+	debugC(7, kDebugLoading, "scene.ani: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
@@ -189,7 +189,7 @@ bool Scene::load(MfcArchive &file) {
 	}
 
 	count = file.readUint16LE();
-	debug(7, "scene.mq: %d", count);
+	debugC(7, kDebugLoading, "scene.mq: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int qNum = file.readUint16LE();
@@ -211,7 +211,7 @@ bool Scene::load(MfcArchive &file) {
 	}
 
 	count = file.readUint16LE();
-	debug(7, "scene.fa: %d", count);
+	debugC(7, kDebugLoading, "scene.fa: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		// There are no .FA files
@@ -497,7 +497,7 @@ void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool
 }
 
 void Scene::draw() {
-	debug(6, ">>>>> Scene::draw()");
+	debugC(6, kDebugDrawing, ">>>>> Scene::draw()");
 	updateScrolling();
 
 	// Clean previous stuff
@@ -640,7 +640,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 }
 
 void Scene::update(int counterdiff) {
-	debug(6, "Scene::update(%d)", counterdiff);
+	debugC(6, kDebugDrawing, "Scene::update(%d)", counterdiff);
 
 	for (uint i = 0; i < _staticANIObjectList2.size(); i++)
 		_staticANIObjectList2[i]->update(counterdiff);
@@ -654,7 +654,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		g_fp->_globalPalette = _palette->_data;
 	}
 
-	debug(1, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList, true);
@@ -666,11 +666,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 	if (maxPri == -1)
 		maxPri = 60000;
 
-	debug(1, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
+	debugC(1, kDebugDrawing, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
 	Common::Point point;
 
-	debug(1, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
 
 	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
 
@@ -679,11 +679,11 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int width = point.x;
 		int height = point.y;
 
-		debug(8, "w: %d h:%d", width, height);
+		debugC(8, kDebugDrawing, "w: %d h:%d", width, height);
 
 		((PictureObject *)_picObjList[0])->getDimensions(&point);
 
-		debug(8, "w2: %d h2:%d", point.x, point.y);
+		debugC(8, kDebugDrawing, "w2: %d h2:%d", point.x, point.y);
 
 		int bgStX = g_fp->_sceneRect.left % point.x;
 
@@ -744,7 +744,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int objX = obj->_ox;
 		int objY = obj->_oy;
 
-		debug(8, "obj: %d %d", objX, objY);
+		debugC(8, kDebugDrawing, "obj: %d %d", objX, objY);
 
 		obj->getDimensions(&point);
 

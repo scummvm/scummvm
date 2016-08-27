@@ -200,6 +200,7 @@ public:
 
 	bool _showResourceRects;
 
+	Sound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;

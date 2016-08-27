@@ -48,6 +48,10 @@ MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
 		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
+	// Set debug channels
+	DebugMan.addDebugChannel(kMortevielleCore, "core", "Core debugging");
+	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
+
 	g_vm = this;
 	_debugger = new Debugger(this);
 	_dialogManager = new DialogManager(this);
@@ -243,10 +247,6 @@ void MortevielleEngine::pauseEngineIntern(bool pause) {
 Common::ErrorCode MortevielleEngine::initialize() {
 	// Initialize graphics mode
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
-
-	// Set debug channels
-	DebugMan.addDebugChannel(kMortevielleCore, "core", "Core debugging");
-	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	// Set up an intermediate screen surface
 	_screenSurface->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());

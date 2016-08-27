@@ -500,6 +500,8 @@ public:
 
 	virtual bool flush() { return flushBuffer(); }
 
+	virtual int32 pos() const { return _pos; }
+
 };
 
 } // End of anonymous namespace

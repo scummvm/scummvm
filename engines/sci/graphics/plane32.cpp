@@ -194,11 +194,12 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 	_type = transparent ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
 
-void Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX) {
-	deletePic(pictureId);
+GuiResourceId Plane::addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate) {
+	if (deleteDuplicate) {
+		deletePic(pictureId);
+	}
 	addPicInternal(pictureId, &position, mirrorX);
-	// NOTE: In SCI engine this method returned the pictureId of the
-	// plane, but this return value was never used
+	return _pictureId;
 }
 
 void Plane::changePic() {
@@ -246,6 +247,8 @@ void Plane::deleteAllPics() {
 
 #pragma mark -
 #pragma mark Plane - Rendering
+
+extern int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]);
 
 void Plane::breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const {
 	const int nextPlaneIndex = planeList.findIndexByObject(_object) + 1;

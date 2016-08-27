@@ -48,6 +48,16 @@ namespace Fullpipe {
 enum FullpipeGameFeatures {
 };
 
+enum {
+	kDebugPathfinding	= 1 << 0,
+	kDebugDrawing		= 1 << 1,
+	kDebugLoading		= 1 << 2,
+	kDebugAnimation		= 1 << 3,
+	kDebugMemory		= 1 << 4,
+	kDebugEvents		= 1 << 5,
+	kDebugBehavior		= 1 << 6
+};
+
 class BehaviorManager;
 class BaseModalObject;
 class GameLoader;
@@ -64,7 +74,7 @@ class GlobalMessageQueueList;
 struct MessageHandler;
 class MessageQueue;
 struct MovTable;
-class MGM;
+class AniHandler;
 class NGIArchive;
 class PictureObject;
 struct PreloadItem;
@@ -200,7 +210,7 @@ public:
 	MovTable *_movTable;
 
 	Floaters *_floaters;
-	MGM *_mgm;
+	AniHandler *_aniHandler;
 
 	Common::Array<Common::Point *> _arcadeKeys;
 

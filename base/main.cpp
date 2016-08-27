@@ -391,6 +391,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	} else if (ConfMan.hasKey("debugflags"))
 		specialDebug = ConfMan.get("debugflags");
 
+	if (settings.contains("debug-channels-only"))
+		gDebugChannelsOnly = true;
+
+
 	PluginManager::instance().init();
  	PluginManager::instance().loadAllPlugins(); // load plugins for cached plugin manager
 

@@ -40,8 +40,10 @@ namespace Sci {
 #define MAX_CACHED_FONTS 20
 #define MAX_CACHED_VIEWS 50
 
-#define SCI_SHAKE_DIRECTION_VERTICAL 1
-#define SCI_SHAKE_DIRECTION_HORIZONTAL 2
+enum ShakeDirection {
+	kShakeVertical   = 1,
+	kShakeHorizontal = 2
+};
 
 typedef int GuiResourceId; // is a resource-number and -1 means no parameter given
 

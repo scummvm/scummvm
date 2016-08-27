@@ -54,18 +54,6 @@ GfxControls32::~GfxControls32() {
 }
 
 #pragma mark -
-#pragma mark Garbage collection
-
-Common::Array<reg_t> GfxControls32::listObjectReferences() {
-	Common::Array<reg_t> ret;
-	ScrollWindowMap::const_iterator it;
-	for (it = _scrollWindows.begin(); it != _scrollWindows.end(); ++it)
-		ret.push_back(it->_value->getBitmap());
-
-	return ret;
-}
-
-#pragma mark -
 #pragma mark Text input control
 
 reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
@@ -115,7 +103,10 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	reg_t planeObj = readSelector(_segMan, controlObject, SELECTOR(plane));
 	Plane *sourcePlane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
 	if (sourcePlane == nullptr) {
-		error("Could not find plane %04x:%04x", PRINT_REG(planeObj));
+		sourcePlane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		if (sourcePlane == nullptr) {
+			error("Could not find plane %04x:%04x", PRINT_REG(planeObj));
+		}
 	}
 	editorPlaneRect.translate(sourcePlane->_gameRect.left, sourcePlane->_gameRect.top);
 
@@ -127,7 +118,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 		if (titleObject.isNull()) {
 			bool dimmed = readSelectorValue(_segMan, controlObject, SELECTOR(dimmed));
-			editor.bitmap = _gfxText32->createFontBitmap(width, height, editor.textRect, editor.text, editor.foreColor, editor.backColor, editor.skipColor, editor.fontId, alignment, editor.borderColor, dimmed, true);
+			editor.bitmap = _gfxText32->createFontBitmap(width, height, editor.textRect, editor.text, editor.foreColor, editor.backColor, editor.skipColor, editor.fontId, alignment, editor.borderColor, dimmed, true, false);
 		} else {
 			error("Titled bitmaps are not known to be used by any game. Please submit a bug report with details about the game you were playing and what you were doing that triggered this error. Thanks!");
 		}
@@ -318,7 +309,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	_segMan->freeHunkEntry(editor.bitmap);
+	_segMan->freeBitmap(editor.bitmap);
 
 	if (textChanged) {
 		editor.text.trim();
@@ -380,6 +371,7 @@ void GfxControls32::flashCursor(TextEditor &editor) {
 #pragma mark Scrollable window control
 
 ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, const Common::Point &position, const reg_t plane, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries) :
+	_segMan(segMan),
 	_gfxText32(segMan, g_sci->_gfxCache),
 	_maxNumEntries(maxNumEntries),
 	_firstVisibleChar(0),
@@ -421,13 +413,13 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 	}
 
 	assert(bitmapRect.width() > 0 && bitmapRect.height() > 0);
-	_bitmap = _gfxText32.createFontBitmap(bitmapRect.width(), bitmapRect.height(), _textRect, "", _foreColor, _backColor, skipColor, _fontId, _alignment, _borderColor, false, false);
+	_bitmap = _gfxText32.createFontBitmap(bitmapRect.width(), bitmapRect.height(), _textRect, "", _foreColor, _backColor, skipColor, _fontId, _alignment, _borderColor, false, false, false);
 
 	debugC(1, kDebugLevelGraphics, "New ScrollWindow: textRect size: %d x %d, bitmap: %04x:%04x", _textRect.width(), _textRect.height(), PRINT_REG(_bitmap));
 }
 
 ScrollWindow::~ScrollWindow() {
-	// _gfxText32._bitmap will get GCed once ScrollWindow is gone.
+	_segMan->freeBitmap(_bitmap);
 	// _screenItem will be deleted by GfxFrameout
 }
 

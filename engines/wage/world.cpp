@@ -69,12 +69,13 @@ World::World(WageEngine *engine) {
 
 	_globalScript = nullptr;
 	_player = nullptr;
+	_signature = 0;
 
 	_weaponMenuDisabled = true;
 
 	_engine = engine;
 
-	_patterns = new Patterns;
+	_patterns = new Graphics::MacPatterns;
 }
 
 World::~World() {
@@ -146,7 +147,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('V','E','R','S'), resArray[0]);
 
-		res->skip(10);
+		_signature = res->readSint32LE();
+		res->skip(6);
 		byte b = res->readByte();
 		_weaponMenuDisabled = (b != 0);
 		if (b != 0 && b != 1)
@@ -215,6 +217,8 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 			delete res;
 		}
+
+		scene->_resourceId = *iter;
 		addScene(scene);
 	}
 
@@ -224,7 +228,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','O','B','J'), *iter);
-		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res));
+		addObj(new Obj(resMan->getResName(MKTAG('A','O','B','J'), *iter), res, *iter));
 	}
 
 	// Load Characters
@@ -234,7 +238,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	for (iter = resArray.begin(); iter != resArray.end(); ++iter) {
 		res = resMan->getResource(MKTAG('A','C','H','R'), *iter);
 		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
-
+		chr->_resourceId = *iter;
 		addChr(chr);
 		// TODO: What if there's more than one player character?
 		if (chr->_playerCharacter)

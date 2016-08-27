@@ -30,9 +30,6 @@
 #include "common/taskbar.h"
 #include "common/updates.h"
 #include "common/textconsole.h"
-#ifdef ENABLE_EVENTRECORDER
-#include "gui/EventRecorder.h"
-#endif
 
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/fs/fs-factory.h"
@@ -161,9 +158,5 @@ Common::TimerManager *OSystem::getTimerManager() {
 }
 
 Common::SaveFileManager *OSystem::getSavefileManager() {
-#ifdef ENABLE_EVENTRECORDER
-	return g_eventRec.getSaveManager(_savefileManager);
-#else
 	return _savefileManager;
-#endif
 }

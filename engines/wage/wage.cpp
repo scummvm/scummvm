@@ -45,6 +45,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
@@ -126,6 +127,12 @@ Common::Error WageEngine::run() {
 
 	_temporarilyHidden = true;
 	performInitialSetup();
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		loadGame(saveSlot);
+		_gui->regenCommandsMenu();
+		_gui->regenWeaponsMenu();
+	}
 	Common::String input("look");
 	processTurn(&input, NULL);
 	_temporarilyHidden = false;
@@ -305,6 +312,11 @@ void WageEngine::performInitialSetup() {
 	if (!playerPlaced) {
 		_world->move(_world->_player, _world->getRandomScene());
 	}
+}
+
+void WageEngine::wearObjs(Chr* chr) {
+	if (chr != nullptr)
+		chr->wearObjs();
 }
 
 void WageEngine::doClose() {

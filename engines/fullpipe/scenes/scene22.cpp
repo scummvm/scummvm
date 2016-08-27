@@ -239,23 +239,23 @@ void sceneHandler22_stoolLogic(ExCommand *cmd) {
 					goto LABEL_31;
 				}
 
-				MGM mgm;
-				MGMInfo mgminfo;
+				AniHandler mgm;
+				MakeQueueStruct mkQueue;
 
-				mgm.addItem(ANI_MAN);
-				mgminfo.ani = g_fp->_aniMan;
-				mgminfo.staticsId2 = ST_MAN_RIGHT;
-				mgminfo.x1 = 934;
-				mgminfo.y1 = 391;
-				mgminfo.field_1C = 10;
-				mgminfo.staticsId1 = 0x4145;
-				mgminfo.x2 = 981;
-				mgminfo.y2 = 390;
-				mgminfo.field_10 = 1;
-				mgminfo.flags = 127;
-				mgminfo.movementId = rMV_MAN_TURN_SRL;
+				mgm.attachObject(ANI_MAN);
+				mkQueue.ani = g_fp->_aniMan;
+				mkQueue.staticsId2 = ST_MAN_RIGHT;
+				mkQueue.x1 = 934;
+				mkQueue.y1 = 391;
+				mkQueue.field_1C = 10;
+				mkQueue.staticsId1 = 0x4145;
+				mkQueue.x2 = 981;
+				mkQueue.y2 = 390;
+				mkQueue.field_10 = 1;
+				mkQueue.flags = 127;
+				mkQueue.movementId = rMV_MAN_TURN_SRL;
 
-				mq = mgm.genMovement(&mgminfo);
+				mq = mgm.makeRunQueue(&mkQueue);
 
 				ExCommand *ex = mq->getExCommandByIndex(0);
 

@@ -239,7 +239,7 @@ struct BuildSetup {
 		tests           = false;
 		runBuildEvents  = false;
 		createInstaller = false;
-		useSDL2         = false;
+		useSDL2         = true;
 	}
 };
 

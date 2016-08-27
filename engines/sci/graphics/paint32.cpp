@@ -37,11 +37,12 @@ reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &st
 	}
 
 	Common::Rect gameRect;
-	BitmapResource bitmap = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
+	reg_t bitmapId = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
+	SciBitmap &bitmap = *_segMan->lookupBitmap(bitmapId);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
-	celInfo.bitmap = bitmap.getObject();
+	celInfo.bitmap = bitmapId;
 	// SSCI stores the line color on `celInfo`, even though
 	// this is not a `kCelTypeColor`, as a hack so that
 	// `kUpdateLine` can get the originally used color
@@ -59,10 +60,10 @@ reg_t GfxPaint32::kernelAddLine(const reg_t planeObject, const Common::Point &st
 void GfxPaint32::kernelUpdateLine(ScreenItem *screenItem, Plane *plane, const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness) {
 
 	Common::Rect gameRect;
-	BitmapResource bitmap = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
+	reg_t bitmapId = makeLineBitmap(startPoint, endPoint, priority, color, style, pattern, thickness, gameRect);
 
-	_segMan->freeHunkEntry(screenItem->_celInfo.bitmap);
-	screenItem->_celInfo.bitmap = bitmap.getObject();
+	_segMan->freeBitmap(screenItem->_celInfo.bitmap);
+	screenItem->_celInfo.bitmap = bitmapId;
 	screenItem->_celInfo.color = color;
 	screenItem->_position = startPoint;
 	screenItem->_priority = priority;
@@ -80,7 +81,7 @@ void GfxPaint32::kernelDeleteLine(const reg_t screenItemObject, const reg_t plan
 		return;
 	}
 
-	_segMan->freeHunkEntry(screenItem->_celInfo.bitmap);
+	_segMan->freeBitmap(screenItem->_celInfo.bitmap);
 	g_sci->_gfxFrameout->deleteScreenItem(*screenItem, *plane);
 }
 
@@ -116,8 +117,8 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	}
 }
 
-BitmapResource GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
-	const uint8 skipColor = color != 250 ? 250 : 0;
+reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
+	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
 	// Thickness is expected to be 2n+1
 	thickness = ((MAX((uint8)1, thickness) - 1) | 1);
@@ -128,7 +129,8 @@ BitmapResource GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const
 	outRect.right = (startPoint.x > endPoint.x ? startPoint.x : endPoint.x) + halfThickness + 1;
 	outRect.bottom = (startPoint.y > endPoint.y ? startPoint.y : endPoint.y) + halfThickness + 1;
 
-	BitmapResource bitmap(_segMan, outRect.width(), outRect.height(), skipColor, 0, 0, g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, 0, false);
+	reg_t bitmapId;
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&bitmapId, outRect.width(), outRect.height(), skipColor, 0, 0, g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, 0, false, true);
 
 	byte *pixels = bitmap.getPixels();
 	memset(pixels, skipColor, bitmap.getWidth() * bitmap.getHeight());
@@ -174,7 +176,7 @@ BitmapResource GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const
 		Graphics::drawThickLine2(drawRect.left, drawRect.top, drawRect.right, drawRect.bottom, thickness, color, plotter, &properties);
 	}
 
-	return bitmap;
+	return bitmapId;
 }
 
 

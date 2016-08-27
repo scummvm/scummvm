@@ -38,6 +38,7 @@
  *  - sherlock
  *  - sword1
  *  - sword2
+ *	- titanic
  *  - tony
  *  - tucker
  *  - wintermute

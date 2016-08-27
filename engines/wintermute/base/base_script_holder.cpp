@@ -466,7 +466,7 @@ void BaseScriptHolder::makeFreezable(bool freezable) {
 ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 	for (int i = _scripts.size() - 1; i >= 0; i--) {
 		if (_scripts[i]->canHandleMethod(methodName)) {
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 			DebuggableScEngine* debuggableEngine;
 			debuggableEngine = dynamic_cast<DebuggableScEngine*>(_scripts[i]->_engine);
 			// TODO: Not pretty

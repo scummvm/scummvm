@@ -45,6 +45,7 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	if (!ConfMan.getBool("use_cdaudio"))
 		_usesCdTrack = false;
 	_forceDOSTracks = false;
+	_pseudoMouseAbility = kPseudoMouseAbilityUninitialized;
 }
 
 reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc, int methodNum) {
@@ -603,6 +604,52 @@ bool GameFeatures::useAltWinGMSound() {
 	} else {
 		return false;
 	}
+}
+
+// PseudoMouse was added during SCI1
+// PseudoMouseAbility is about a tiny difference in the keyboard driver, which sets the event type to either
+// 40h (old behaviour) or 44h (the keyboard driver actually added 40h to the existing value).
+// See engine/kevent.cpp, kMapKeyToDir - also script 933
+
+// SCI1EGA:
+// Quest for Glory 2 still used the old way.
+//
+// SCI1EARLY:
+// King's Quest 5 0.000.062 uses the old way.
+// Leisure Suit Larry 1 demo uses the new way, but no PseudoMouse class.
+// Fairy Tales uses the new way.
+// X-Mas 1990 uses the old way, no PseudoMouse class.
+// Space Quest 4 floppy (1.1) uses the new way.
+// Mixed Up Mother Goose uses the old way, no PseudoMouse class.
+//
+// SCI1MIDDLE:
+// Leisure Suit Larry 5 demo uses the new way.
+// Conquests of the Longbow demo uses the new way.
+// Leisure Suit Larry 1 (2.0) uses the new way.
+// Astro Chicken II uses the new way.
+PseudoMouseAbilityType GameFeatures::detectPseudoMouseAbility() {
+	if (_pseudoMouseAbility == kPseudoMouseAbilityUninitialized) {
+		if (getSciVersion() < SCI_VERSION_1_EARLY) {
+			// SCI1 EGA or earlier -> pseudo mouse ability is always disabled
+			_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+
+		} else if (getSciVersion() == SCI_VERSION_1_EARLY) {
+			// For SCI1 early some games had it enabled, some others didn't.
+			// We try to find an object called "PseudoMouse". If it's found, we enable the ability otherwise we don't.
+			reg_t pseudoMouseAddr = _segMan->findObjectByName("PseudoMouse", 0);
+
+			if (pseudoMouseAddr != NULL_REG) {
+				_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+			} else {
+				_pseudoMouseAbility = kPseudoMouseAbilityFalse;
+			}
+
+		} else {
+			// SCI1 middle or later -> pseudo mouse ability is always enabled
+			_pseudoMouseAbility = kPseudoMouseAbilityTrue;
+		}
+	}
+	return _pseudoMouseAbility;
 }
 
 } // End of namespace Sci

@@ -134,8 +134,9 @@ public:
 
 class IntMapResourceSource : public ResourceSource {
 public:
-	IntMapResourceSource(const Common::String &name, int volNum)
-		: ResourceSource(kSourceIntMap, name, volNum) {
+	uint16 _mapNumber;
+	IntMapResourceSource(const Common::String &name, int volNum, int mapNum)
+		: ResourceSource(kSourceIntMap, name, volNum), _mapNumber(mapNum) {
 	}
 
 	virtual void scanSource(ResourceManager *resMan);

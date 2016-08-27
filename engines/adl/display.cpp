@@ -55,6 +55,9 @@ static const byte colorPalette[COLOR_PALETTE_ENTRIES * 3] = {
 	0xf2, 0x5e, 0x00
 };
 
+// Opacity of the optional scanlines (percentage)
+#define SCANLINE_OPACITY 75
+
 // Corresponding color in second palette
 #define PAL2(X) ((X) | 0x04)
 
@@ -109,8 +112,6 @@ Display::Display() :
 		_cursorPos(0),
 		_showCursor(false) {
 
-	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
-
 	_monochrome = !ConfMan.getBool("color");
 	_scanlines = ConfMan.getBool("scanlines");
 
@@ -135,6 +136,8 @@ Display::Display() :
 	_textBufSurface->create(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, Graphics::PixelFormat::createFormatCLUT8());
 
 	createFont();
+
+	_startMillis = g_system->getMillis();
 }
 
 Display::~Display() {
@@ -334,14 +337,16 @@ void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
 }
 
 void Display::showScanlines(bool enable) {
-	byte pal[COLOR_PALETTE_ENTRIES * 3] = { };
+	byte pal[COLOR_PALETTE_ENTRIES * 3];
 
-	if (enable)
-		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
-	else {
-		g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
-		g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
+	g_system->getPaletteManager()->grabPalette(pal, 0, COLOR_PALETTE_ENTRIES);
+
+	if (enable) {
+		for (uint i = 0; i < ARRAYSIZE(pal); ++i)
+			pal[i] = pal[i] * (100 - SCANLINE_OPACITY) / 100;
 	}
+
+	g_system->getPaletteManager()->setPalette(pal, COLOR_PALETTE_ENTRIES, COLOR_PALETTE_ENTRIES);
 }
 
 static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
@@ -489,7 +494,11 @@ void Display::updateTextSurface() {
 			r.translate(((c & 0x3f) % 16) * 7 * 2, (c & 0x3f) / 16 * 8 * 2);
 
 			if (!(c & 0x80)) {
-				if (!(c & 0x40) || ((g_system->getMillis() / 270) & 1))
+				// Blink text. We subtract _startMillis to make this compatible
+				// with the event recorder, which returns offsetted values on
+				// playback.
+				const uint32 millisPassed = g_system->getMillis() - _startMillis;
+				if (!(c & 0x40) || ((millisPassed / 270) & 1))
 					r.translate(0, 4 * 8 * 2);
 			}
 

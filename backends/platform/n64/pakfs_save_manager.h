@@ -72,6 +72,10 @@ private:
 public:
 	uint32 write(const void *buf, uint32 cnt);
 
+	virtual int32 pos() const {
+		return pakfs_tell(fd);
+	}
+
 	OutPAKSave(const char *_filename) : fd(NULL) {
 		fd = pakfs_open(_filename, "w");
 	}

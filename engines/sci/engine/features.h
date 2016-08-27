@@ -34,6 +34,12 @@ enum MoveCountType {
 	kIncrementMoveCount
 };
 
+enum PseudoMouseAbilityType {
+	kPseudoMouseAbilityUninitialized,
+	kPseudoMouseAbilityFalse,
+	kPseudoMouseAbilityTrue
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -110,6 +116,12 @@ public:
 	 */
 	void forceDOSTracks() { _forceDOSTracks = true; }
 
+	/**
+	 * Autodetects, if Pseudo Mouse ability is enabled (different behavior in keyboard driver)
+	 * @return kPseudoMouseAbilityTrue or kPseudoMouseAbilityFalse
+	 */
+	PseudoMouseAbilityType detectPseudoMouseAbility();
+
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
 
@@ -129,6 +141,8 @@ private:
 	MoveCountType _moveCountType;
 	bool _usesCdTrack;
 	bool _forceDOSTracks;
+
+	PseudoMouseAbilityType _pseudoMouseAbility;
 
 	SegManager *_segMan;
 	Kernel *_kernel;

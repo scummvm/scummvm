@@ -184,7 +184,7 @@ _amigaospath="Games:ScummVM"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
-_sdlconfig=sdl-config
+_sdlconfig=sdl2-config
 _freetypeconfig=freetype-config
 _sdlpath="$PATH"
 _freetypepath="$PATH"
@@ -368,7 +368,7 @@ define_in_config_if_yes() {
 # TODO: small bit of code to test sdl usability
 find_sdlconfig() {
 	echo_n "Looking for sdl-config... "
-	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
+	sdlconfigs="$SDL_CONFIG:$_sdlconfig:sdl2-config:sdl12-config:sdl11-config:sdl-config"
 	_sdlconfig=
 
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
@@ -2814,6 +2814,7 @@ if test -n "$_host"; then
 			_vkeybd=yes
 			_keymapper=yes
 			_vorbis=no
+			_sdlconfig=sdl-config
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		gp2x)
@@ -3122,7 +3123,7 @@ case $_backend in
 		append_var INCLUDES "-I$ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
-		;;		
+		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
 		append_var INCLUDES '-isystem $(ronindir)/include'

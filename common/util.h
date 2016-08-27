@@ -177,6 +177,17 @@ bool isUpper(int c);
  * @return		true if the character is printable, false otherwise.
  */
 bool isPrint(int c);
+
+
+/**
+ * Test whether the given character is a punctuation character, 
+ * (i.e not alphanumeric.
+ *
+ * @param c		the character to test
+ * @return		true if the character is punctuation, false otherwise.
+ */
+bool isPunct(int c);
+
 } // End of namespace Common
 
 #endif

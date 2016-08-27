@@ -178,7 +178,9 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 			const uint8 loopCount = view->data[2];
 			const uint8 loopSize = view->data[12];
 
-			if (_celInfo.loopNo >= loopCount) {
+			// loopNo is set to be an unsigned integer in SSCI, so if it's a
+			// negative value, it'll be fixed accordingly
+			if ((uint16)_celInfo.loopNo >= loopCount) {
 				const int maxLoopNo = loopCount - 1;
 				_celInfo.loopNo = maxLoopNo;
 				writeSelectorValue(segMan, object, SELECTOR(loop), maxLoopNo);
@@ -189,8 +191,11 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 			if (seekEntry != -1) {
 				loopData = view->data + headerSize + (seekEntry * loopSize);
 			}
+
+			// celNo is set to be an unsigned integer in SSCI, so if it's a
+			// negative value, it'll be fixed accordingly
 			const uint8 celCount = loopData[2];
-			if (_celInfo.celNo >= celCount) {
+			if ((uint16)_celInfo.celNo >= celCount) {
 				const int maxCelNo = celCount - 1;
 				_celInfo.celNo = maxCelNo;
 				writeSelectorValue(segMan, object, SELECTOR(cel), maxCelNo);

@@ -71,7 +71,7 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
 #endif
 
@@ -402,7 +402,7 @@ bool BaseGame::initialize1() {
 			break;
 		}
 
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 		_scEngine = new DebuggableScEngine(this);
 #else
 		_scEngine = new ScEngine(this);

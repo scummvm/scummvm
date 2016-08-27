@@ -142,7 +142,7 @@ class MessageQueue : public CObject {
 	ExCommand *getExCommandByIndex(uint idx);
 	void deleteExCommandByIndex(uint idx, bool doFree);
 
-	void transferExCommands(MessageQueue *mq);
+	void mergeQueue(MessageQueue *mq);
 
 	void replaceKeyCode(int key1, int key2);
 

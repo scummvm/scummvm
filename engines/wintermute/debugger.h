@@ -23,11 +23,11 @@
 #ifndef WINTERMUTE_DEBUGGER_H
 #define WINTERMUTE_DEBUGGER_H
 
-#define EXTENDED_DEBUGGER_ENABLED true
+#define EXTENDED_DEBUGGER_ENABLED 1
 
 #include "gui/debugger.h"
 
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script.h"
 #else
 #include "engines/wintermute/base/scriptables/script.h"
@@ -71,7 +71,7 @@ public:
 	bool Cmd_ShowFps(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
 
-#if EXTENDED_DEBUGGER_ENABLED == true
+#if EXTENDED_DEBUGGER_ENABLED
 	/**
 	 * Step - break again on next line
 	 */

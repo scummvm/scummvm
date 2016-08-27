@@ -25,18 +25,6 @@
 
 #include "adl/adl_v2.h"
 
-// Note: this version of ADL redraws only when necessary, but
-// this is not currently implemented.
-
-namespace Common {
-class RandomSource;
-}
-
-struct DiskOffset {
-	byte track;
-	byte sector;
-};
-
 namespace Adl {
 
 class AdlEngine_v3 : public AdlEngine_v2 {
@@ -48,27 +36,12 @@ protected:
 
 	// AdlEngine
 	virtual void setupOpcodeTables();
-	virtual Common::String loadMessage(uint idx) const;
 	Common::String getItemDescription(const Item &item) const;
 
-	// AdlEngine_v2
-	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
-
-	void applyDiskOffset(byte &track, byte &sector) const;
-
-	int o3_isVarGT(ScriptEnv &e);
-	int o3_isItemInRoom(ScriptEnv &e);
 	int o3_isNounNotInRoom(ScriptEnv &e);
-	int o3_skipOneCommand(ScriptEnv &e);
-	int o3_moveItem(ScriptEnv &e);
-	int o3_dummy(ScriptEnv &e);
-	int o3_setTextMode(ScriptEnv &e);
-	int o3_setDisk(ScriptEnv &e);
-	int o3_sound(ScriptEnv &e);
+	int o3_listInv(ScriptEnv &e);
 
 	Common::Array<Common::String> _itemDesc;
-	byte _curDisk;
-	Common::Array<DiskOffset> _diskOffsets;
 };
 
 } // End of namespace Adl

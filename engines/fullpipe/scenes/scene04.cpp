@@ -395,21 +395,21 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->_flags |= 1;
 
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.attachObject(ANI_MAN);
 
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN_ONPLANK;
-	mgminfo.x1 = 938;
-	mgminfo.y1 = 442;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN_JUMPONPLANK;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN_ONPLANK;
+	mkQueue.x1 = 938;
+	mkQueue.y1 = 442;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN_JUMPONPLANK;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->_flags |= 1;
@@ -460,21 +460,21 @@ void sceneHandler04_dropBottle() {
 }
 
 void sceneHandler04_gotoLadder(ExCommand *ex) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_MAN);
+	aniHandler.attachObject(ANI_MAN);
 
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN_UP;
-	mgminfo.x1 = 1095;
-	mgminfo.y1 = 434;
-	mgminfo.field_1C = 12;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN_PLANKTOLADDER;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN_UP;
+	mkQueue.x1 = 1095;
+	mkQueue.y1 = 434;
+	mkQueue.field_1C = 12;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN_PLANKTOLADDER;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -550,21 +550,21 @@ void sceneHandler04_raisePlank() {
 }
 
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x1 = (int)(723.0 - phase * 185.0);
-	mgminfo.y1 = 486;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMP;
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x1 = (int)(723.0 - phase * 185.0);
+	mkQueue.y1 = 486;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMP;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
@@ -599,35 +599,35 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_JUMPOUT;
-	mgminfo.x1 = 525;
-	mgminfo.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPHIT;
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_JUMPOUT;
+	mkQueue.x1 = 525;
+	mkQueue.y1 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPHIT;
 
-	MessageQueue *mq1 = mgm.genMovement(&mgminfo);
+	MessageQueue *mq1 = aniHandler.makeRunQueue(&mkQueue);
 
-	memset(&mgminfo, 0, sizeof(mgminfo));
-	mgminfo.ani = ani;
-	mgminfo.staticsId1 = ST_KZW_JUMPOUT;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x2 = 525;
-	mgminfo.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
-	mgminfo.y1 = 486;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 117;
-	mgminfo.movementId = MV_KZW_JUMPOUT;
+	memset(&mkQueue, 0, sizeof(mkQueue));
+	mkQueue.ani = ani;
+	mkQueue.staticsId1 = ST_KZW_JUMPOUT;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x2 = 525;
+	mkQueue.y2 = (int)(344.0 - (double)(320 - g_vars->scene04_bottle->_oy) * phase);
+	mkQueue.y1 = 486;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 117;
+	mkQueue.movementId = MV_KZW_JUMPOUT;
 
-	MessageQueue *mq2 = mgm.genMovement(&mgminfo);
+	MessageQueue *mq2 = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq1 && mq2) {
 		mq1->addExCommandToEnd(mq2->getExCommandByIndex(0)->createClone());
@@ -670,21 +670,21 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 }
 
 MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = ST_KZW_SIT;
-	mgminfo.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
-	mgminfo.field_1C = ani->_priority;
-	mgminfo.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPROTATE;
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = ST_KZW_SIT;
+	mkQueue.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
+	mkQueue.field_1C = ani->_priority;
+	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPROTATE;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		mq->deleteExCommandByIndex(mq->getCount() - 1, 1);
@@ -728,21 +728,21 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 }
 
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
-	MGM mgm;
-	MGMInfo mgminfo;
+	AniHandler aniHandler;
+	MakeQueueStruct mkQueue;
 
-	mgm.addItem(ANI_KOZAWKA);
+	aniHandler.attachObject(ANI_KOZAWKA);
 
-	mgminfo.ani = ani;
-	mgminfo.staticsId2 = 560;
-	mgminfo.x1 = (int)(250.0 - phase * 100.0);
-	mgminfo.y1 = 455;
-	mgminfo.field_1C = 10;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_KZW_JUMPROTATE;
+	mkQueue.ani = ani;
+	mkQueue.staticsId2 = 560;
+	mkQueue.x1 = (int)(250.0 - phase * 100.0);
+	mkQueue.y1 = 455;
+	mkQueue.field_1C = 10;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_KZW_JUMPROTATE;
 
-	MessageQueue *mq = mgm.genMovement(&mgminfo);
+	MessageQueue *mq = aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		sceneHandler04_kozMove(ani->getMovementById(MV_KZW_JUMPROTATE), 1, 9, g_vars->scene04_jumpRotateKozyawki, phase * 0.5 + 1.5);

@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/engine.h"
+#include "engines/util.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -39,80 +40,52 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
-#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/compare.h"
+#include "sci/graphics/cursor32.h"
 #include "sci/graphics/font.h"
-#include "sci/graphics/screen.h"
+#include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/plane32.h"
 #include "sci/graphics/remap32.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/screen_item32.h"
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
-#include "sci/video/robot_decoder.h"
+#include "sci/graphics/transitions32.h"
+#include "sci/graphics/video32.h"
 
 namespace Sci {
 
-static int dissolveSequences[2][20] = {
-	/* SCI2.1early- */ { 3, 6, 12, 20, 48, 96, 184, 272, 576, 1280, 3232, 6912, 13568, 24576, 46080 },
-	/* SCI2.1mid+ */ { 0, 0, 3, 6, 12, 20, 48, 96, 184, 272, 576, 1280, 3232, 6912, 13568, 24576, 46080, 73728, 132096, 466944 }
-};
-static int16 divisionsDefaults[2][16] = {
-	/* SCI2.1early- */ { 1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 40, 40, 101, 101 },
-	/* SCI2.1mid+ */   { 1, 20, 20, 20, 20, 10, 10, 10, 10, 20, 20,  6, 10, 101, 101, 2 }
-};
-static int16 unknownCDefaults[2][16] = {
-	/* SCI2.1early- */ { 0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  0,  0,   0,   0 },
-	/* SCI2.1mid+ */   { 0,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  0,  0,   7,   7, 0 }
-};
-
-GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette32 *palette) :
-	_isHiRes(false),
+GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
+	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
 	_palette(palette),
-	_resMan(resMan),
-	_screen(screen),
+	_cursor(cursor),
 	_segMan(segMan),
+	_transitions(transitions),
 	_benchmarkingFinished(false),
 	_throttleFrameOut(true),
-	_showStyles(nullptr),
 	_throttleState(0),
-	// TODO: Stop using _gfxScreen
-	_currentBuffer(screen->getDisplayWidth(), screen->getDisplayHeight(), nullptr),
 	_remapOccurred(false),
 	_frameNowVisible(false),
-	_screenRect(screen->getDisplayWidth(), screen->getDisplayHeight()),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
 
-	_currentBuffer.setPixels(calloc(1, screen->getDisplayWidth() * screen->getDisplayHeight()));
-
-	for (int i = 0; i < 236; i += 2) {
-		_styleRanges[i] = 0;
-		_styleRanges[i + 1] = -1;
-	}
-	for (int i = 236; i < ARRAYSIZE(_styleRanges); ++i) {
-		_styleRanges[i] = 0;
+	// QFG4 is the only SCI32 game that doesn't have a high-resolution version
+	if (g_sci->getGameId() == GID_QFG4) {
+		_isHiRes = false;
 	}
 
-	// TODO: Make hires detection work uniformly across all SCI engine
-	// versions (this flag is normally passed by SCI::MakeGraphicsMgr
-	// to the GraphicsMgr constructor depending upon video configuration,
-	// so should be handled upstream based on game configuration instead
-	// of here)
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY && _resMan->detectHires()) {
-		_isHiRes = true;
-	}
-
-	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
-		_dissolveSequenceSeeds = dissolveSequences[0];
-		_defaultDivisions = divisionsDefaults[0];
-		_defaultUnknownC = unknownCDefaults[0];
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
+		_currentBuffer = Buffer(630, 450, nullptr);
+	} else if (_isHiRes) {
+		_currentBuffer = Buffer(640, 480, nullptr);
 	} else {
-		_dissolveSequenceSeeds = dissolveSequences[1];
-		_defaultDivisions = divisionsDefaults[1];
-		_defaultUnknownC = unknownCDefaults[1];
+		_currentBuffer = Buffer(320, 200, nullptr);
 	}
+	_currentBuffer.setPixels(calloc(1, _currentBuffer.screenWidth * _currentBuffer.screenHeight));
+	_screenRect = Common::Rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
+	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
@@ -130,20 +103,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 		// default script width for other games is 320x200
 		break;
 	}
-
-	// TODO: Nothing in the renderer really uses this. Currently,
-	// the cursor renderer does, and kLocalToGlobal/kGlobalToLocal
-	// do, but in the real engine (1) the cursor is handled in
-	// frameOut, and (2) functions do a very simple lookup of the
-	// plane and arithmetic with the plane's gameRect. In
-	// principle, CoordAdjuster could be reused for
-	// convertGameRectToPlaneRect, but it is not super clear yet
-	// what the benefit would be to do that.
-	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
-
-	// TODO: Script resolution is hard-coded per game;
-	// also this must be set or else the engine will crash
-	_coordAdjuster->setScriptsResolution(_currentBuffer.scriptWidth, _currentBuffer.scriptHeight);
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -515,22 +474,24 @@ void GfxFrameout::updatePlane(Plane &plane) {
 #pragma mark -
 #pragma mark Pics
 
-void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX) {
+void GfxFrameout::kernelAddPicAt(const reg_t planeObject, const GuiResourceId pictureId, const int16 x, const int16 y, const bool mirrorX, const bool deleteDuplicate) {
 	Plane *plane = _planes.findByObject(planeObject);
 	if (plane == nullptr) {
 		error("kAddPicAt: Plane %04x:%04x not found", PRINT_REG(planeObject));
 	}
-	plane->addPic(pictureId, Common::Point(x, y), mirrorX);
+	plane->addPic(pictureId, Common::Point(x, y), mirrorX, deleteDuplicate);
 }
 
 #pragma mark -
 #pragma mark Rendering
 
 void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseRect) {
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		_robot.doRobot();
-//	}
+	RobotDecoder &robotPlayer = g_sci->_video32->getRobotPlayer();
+	const bool robotIsActive = robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
+
+	if (robotIsActive) {
+		robotPlayer.doRobot();
+	}
 
 	// NOTE: The original engine allocated these as static arrays of 100
 	// pointers to ScreenItemList / RectList
@@ -568,10 +529,9 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 		drawScreenItemList(screenItemLists[i]);
 	}
 
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		_robot->frameAlmostVisible();
-//	}
+	if (robotIsActive) {
+		robotPlayer.frameAlmostVisible();
+	}
 
 	_palette->updateHardware(!shouldShowBits);
 
@@ -581,10 +541,118 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 
 	_frameNowVisible = true;
 
-// TODO: Robot
-//	if (_robot != nullptr) {
-//		robot->frameNowVisible();
-//	}
+	if (robotIsActive) {
+		robotPlayer.frameNowVisible();
+	}
+}
+
+void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *showStyle) {
+	Palette sourcePalette(_palette->getNextPalette());
+	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
+
+	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
+
+	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
+	_showList.add(rect);
+	showBits();
+
+	// NOTE: The original engine allocated these as static arrays of 100
+	// pointers to ScreenItemList / RectList
+	ScreenItemListList screenItemLists;
+	EraseListList eraseLists;
+
+	screenItemLists.resize(_planes.size());
+	eraseLists.resize(_planes.size());
+
+	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
+		remapMarkRedraw();
+	}
+
+	calcLists(screenItemLists, eraseLists);
+	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+		list->sort();
+	}
+
+	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+		for (DrawList::iterator drawItem = list->begin(); drawItem != list->end(); ++drawItem) {
+			(*drawItem)->screenItem->getCelObj().submitPalette();
+		}
+	}
+
+	_remapOccurred = _palette->updateForFrame();
+	_frameNowVisible = false;
+
+	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
+		drawEraseList(eraseLists[i], *_planes[i]);
+		drawScreenItemList(screenItemLists[i]);
+	}
+
+	Palette nextPalette(_palette->getNextPalette());
+
+	if (prevRoom < 1000) {
+		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
+			if (styleRanges[i] == -1 || styleRanges[i] == 0) {
+				sourcePalette.colors[i] = nextPalette.colors[i];
+				sourcePalette.colors[i].used = true;
+			}
+		}
+	} else {
+		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
+			if (styleRanges[i] == -1 || validZeroStyle(styleRanges[i], i)) {
+				sourcePalette.colors[i] = nextPalette.colors[i];
+				sourcePalette.colors[i].used = true;
+			}
+		}
+	}
+
+	_palette->submit(sourcePalette);
+	_palette->updateFFrame();
+	_palette->updateHardware();
+	alterVmap(nextPalette, sourcePalette, 1, _transitions->_styleRanges);
+
+	if (showStyle && showStyle->type != kShowStyleMorph) {
+		_transitions->processEffects(*showStyle);
+	} else {
+		showBits();
+	}
+
+	_frameNowVisible = true;
+
+	for (PlaneList::iterator plane = _planes.begin(); plane != _planes.end(); ++plane) {
+		(*plane)->_redrawAllCount = getScreenCount();
+	}
+
+	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
+		remapMarkRedraw();
+	}
+
+	calcLists(screenItemLists, eraseLists);
+	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+		list->sort();
+	}
+
+	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
+		for (DrawList::iterator drawItem = list->begin(); drawItem != list->end(); ++drawItem) {
+			(*drawItem)->screenItem->getCelObj().submitPalette();
+		}
+	}
+
+	_remapOccurred = _palette->updateForFrame();
+	// NOTE: During this second loop, `_frameNowVisible = false` is
+	// inside the next loop in SCI2.1mid
+	_frameNowVisible = false;
+
+	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
+		drawEraseList(eraseLists[i], *_planes[i]);
+		drawScreenItemList(screenItemLists[i]);
+	}
+
+	_palette->submit(nextPalette);
+	_palette->updateFFrame();
+	_palette->updateHardware(false);
+	showBits();
+
+	_frameNowVisible = true;
 }
 
 /**
@@ -1038,119 +1106,11 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 	}
 }
 
-void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, const ShowStyleEntry *showStyle) {
-	Palette sourcePalette(_palette->getNextPalette());
-	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
-
-	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
-
-	Common::Rect rect(_screen->getDisplayWidth(), _screen->getDisplayHeight());
-	_showList.add(rect);
-	showBits();
-
-	// NOTE: The original engine allocated these as static arrays of 100
-	// pointers to ScreenItemList / RectList
-	ScreenItemListList screenItemLists;
-	EraseListList eraseLists;
-
-	screenItemLists.resize(_planes.size());
-	eraseLists.resize(_planes.size());
-
-	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
-		remapMarkRedraw();
-	}
-
-	calcLists(screenItemLists, eraseLists);
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
-		list->sort();
-	}
-
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
-		for (DrawList::iterator drawItem = list->begin(); drawItem != list->end(); ++drawItem) {
-			(*drawItem)->screenItem->getCelObj().submitPalette();
-		}
-	}
-
-	_remapOccurred = _palette->updateForFrame();
-	_frameNowVisible = false;
-
-	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
-		drawEraseList(eraseLists[i], *_planes[i]);
-		drawScreenItemList(screenItemLists[i]);
-	}
-
-	Palette nextPalette(_palette->getNextPalette());
-
-	if (prevRoom < 1000) {
-		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
-			if (styleRanges[i] == -1 || styleRanges[i] == 0) {
-				sourcePalette.colors[i] = nextPalette.colors[i];
-				sourcePalette.colors[i].used = true;
-			}
-		}
-	} else {
-		for (int i = 0; i < ARRAYSIZE(sourcePalette.colors); ++i) {
-			// TODO: Limiting range 72 to 103 is NOT present in every game
-			if (styleRanges[i] == -1 || (styleRanges[i] == 0 && i > 71 && i < 104)) {
-				sourcePalette.colors[i] = nextPalette.colors[i];
-				sourcePalette.colors[i].used = true;
-			}
-		}
-	}
-
-	_palette->submit(sourcePalette);
-	_palette->updateFFrame();
-	_palette->updateHardware();
-	alterVmap(nextPalette, sourcePalette, 1, _styleRanges);
-
-	if (showStyle && showStyle->type != kShowStyleUnknown) {
-// TODO: SCI2.1mid transition effects
-//		processEffects();
-		warning("Transition %d not implemented!", showStyle->type);
-	} else {
-		showBits();
-	}
-
-	_frameNowVisible = true;
-
-	for (PlaneList::iterator plane = _planes.begin(); plane != _planes.end(); ++plane) {
-		(*plane)->_redrawAllCount = getScreenCount();
-	}
-
-	if (g_sci->_gfxRemap32->getRemapCount() > 0 && _remapOccurred) {
-		remapMarkRedraw();
-	}
-
-	calcLists(screenItemLists, eraseLists);
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
-		list->sort();
-	}
-
-	for (ScreenItemListList::iterator list = screenItemLists.begin(); list != screenItemLists.end(); ++list) {
-		for (DrawList::iterator drawItem = list->begin(); drawItem != list->end(); ++drawItem) {
-			(*drawItem)->screenItem->getCelObj().submitPalette();
-		}
-	}
-
-	_remapOccurred = _palette->updateForFrame();
-	// NOTE: During this second loop, `_frameNowVisible = false` is
-	// inside the next loop in SCI2.1mid
-	_frameNowVisible = false;
-
-	for (PlaneList::size_type i = 0; i < _planes.size(); ++i) {
-		drawEraseList(eraseLists[i], *_planes[i]);
-		drawScreenItemList(screenItemLists[i]);
-	}
-
-	_palette->submit(nextPalette);
-	_palette->updateFFrame();
-	_palette->updateHardware(false);
-	showBits();
-
-	_frameNowVisible = true;
-}
-
 void GfxFrameout::showBits() {
+	if (!_showList.size()) {
+		return;
+	}
+
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
 		// NOTE: SCI engine used BR-inclusive rects so used slightly
@@ -1158,13 +1118,10 @@ void GfxFrameout::showBits() {
 		// was always even.
 		rounded.left &= ~1;
 		rounded.right = (rounded.right + 1) & ~1;
-
-		// TODO:
-		// _cursor->GonnaPaint(rounded);
+		_cursor->gonnaPaint(rounded);
 	}
 
-	// TODO:
-	// _cursor->PaintStarting();
+	_cursor->paintStarting();
 
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
@@ -1176,11 +1133,17 @@ void GfxFrameout::showBits() {
 
 		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
 
+		// TODO: Sometimes transition screen items generate zero-dimension
+		// show rectangles. Is this a bug?
+		if (rounded.width() == 0 || rounded.height() == 0) {
+			warning("Zero-dimension show rectangle ignored");
+			continue;
+		}
+
 		g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
 	}
 
-	// TODO:
-	// _cursor->DonePainting();
+	_cursor->donePainting();
 
 	_showList.clear();
 }
@@ -1233,7 +1196,6 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 		}
 	}
 
-	// NOTE: This is currBuffer->ptr in SCI engine
 	byte *pixels = (byte *)_currentBuffer.getPixels();
 
 	for (int pixelIndex = 0, numPixels = _currentBuffer.screenWidth * _currentBuffer.screenHeight; pixelIndex < numPixels; ++pixelIndex) {
@@ -1256,348 +1218,16 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 	}
 }
 
-void GfxFrameout::kernelSetPalStyleRange(const uint8 fromColor, const uint8 toColor) {
-	if (toColor > fromColor) {
-		return;
-	}
-
-	for (int i = fromColor; i < toColor; ++i) {
-		_styleRanges[i] = 0;
-	}
-}
-
-inline ShowStyleEntry * GfxFrameout::findShowStyleForPlane(const reg_t planeObj) const {
-	ShowStyleEntry *entry = _showStyles;
-	while (entry != nullptr) {
-		if (entry->plane == planeObj) {
-			break;
-		}
-		entry = entry->next;
-	}
-
-	return entry;
-}
-
-inline ShowStyleEntry *GfxFrameout::deleteShowStyleInternal(ShowStyleEntry *const showStyle) {
-	ShowStyleEntry *lastEntry = nullptr;
-
-	for (ShowStyleEntry *testEntry = _showStyles; testEntry != nullptr; testEntry = testEntry->next) {
-		if (testEntry == showStyle) {
-			break;
-		}
-		lastEntry = testEntry;
-	}
-
-	if (lastEntry == nullptr) {
-		_showStyles = showStyle->next;
-		lastEntry = _showStyles;
-	} else {
-		lastEntry->next = showStyle->next;
-	}
-
-	delete[] showStyle->fadeColorRanges;
-	delete showStyle;
-
-	// TODO: Verify that this is the correct entry to return
-	// for the loop in processShowStyles to work correctly
-	return lastEntry;
-}
-
-// TODO: 10-argument version is only in SCI3; argc checks are currently wrong for this version
-// and need to be fixed in future
-// TODO: SQ6 does not use 'priority' (exists since SCI2) or 'blackScreen' (exists since SCI3);
-// check to see if other versions use or if they are just always ignored
-void GfxFrameout::kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 back, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen) {
-
-	bool hasDivisions = false;
-	bool hasFadeArray = false;
-
-	// KQ7 2.0b uses a mismatched version of the Styler script (SCI2.1early script
-	// for SCI2.1mid engine), so the calls it makes to kSetShowStyle are wrong and
-	// put `divisions` where `pFadeArray` is supposed to be
-	if (getSciVersion() == SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() == GID_KQ7) {
-		hasDivisions = argc > 7;
-		hasFadeArray = false;
-		divisions = argc > 7 ? pFadeArray.toSint16() : -1;
-		pFadeArray = NULL_REG;
-	} else if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
-		hasDivisions = argc > 7;
-		hasFadeArray = false;
-	} else if (getSciVersion() < SCI_VERSION_3) {
-		hasDivisions = argc > 8;
-		hasFadeArray = argc > 7;
-	} else {
-		hasDivisions = argc > 9;
-		hasFadeArray = argc > 8;
-	}
-
-	bool isFadeUp;
-	int16 color;
-	if (back != -1) {
-		isFadeUp = false;
-		color = back;
-	} else {
-		isFadeUp = true;
-		color = 0;
-	}
-
-	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && type == 15) || type > 15) {
-		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
-	}
-
-	Plane *plane = _planes.findByObject(planeObj);
-	if (plane == nullptr) {
-		error("Plane %04x:%04x is not present in active planes list", PRINT_REG(planeObj));
-	}
-
-	bool createNewEntry = true;
-	ShowStyleEntry *entry = findShowStyleForPlane(planeObj);
-	if (entry != nullptr) {
-		// TODO: SCI2.1early has different criteria for show style reuse
-		bool useExisting = true;
-
-		if (useExisting) {
-			useExisting = entry->divisions == (hasDivisions ? divisions : _defaultDivisions[type]) && entry->unknownC == _defaultUnknownC[type];
-		}
-
-		if (useExisting) {
-			createNewEntry = false;
-			isFadeUp = true;
-			entry->currentStep = 0;
-		} else {
-			isFadeUp = true;
-			color = entry->color;
-			deleteShowStyleInternal(entry/*, true*/);
-			entry = nullptr;
-		}
-	}
-
-	if (type > 0) {
-		if (createNewEntry) {
-			entry = new ShowStyleEntry;
-			// NOTE: SCI2.1 engine tests if allocation returned a null pointer
-			// but then only avoids setting currentStep if this is so. Since
-			// this is a nonsensical approach, we do not do that here
-			entry->currentStep = 0;
-			entry->unknownC = _defaultUnknownC[type];
-			entry->processed = false;
-			entry->divisions = hasDivisions ? divisions : _defaultDivisions[type];
-			entry->plane = planeObj;
-
-			entry->fadeColorRanges = nullptr;
-			if (hasFadeArray) {
-				// NOTE: SCI2.1mid engine does no check to verify that an array is
-				// successfully retrieved, and SegMan will cause a fatal error
-				// if we try to use a memory segment that is not an array
-				SciArray<reg_t> *table = _segMan->lookupArray(pFadeArray);
-
-				uint32 rangeCount = table->getSize();
-				entry->fadeColorRangesCount = rangeCount;
-
-				// NOTE: SCI engine code always allocates memory even if the range
-				// table has no entries, but this does not really make sense, so
-				// we avoid the allocation call in this case
-				if (rangeCount > 0) {
-					entry->fadeColorRanges = new uint16[rangeCount];
-					for (size_t i = 0; i < rangeCount; ++i) {
-						entry->fadeColorRanges[i] = table->getValue(i).toUint16();
-					}
-				}
-			} else {
-				entry->fadeColorRangesCount = 0;
-			}
-		}
-
-		// NOTE: The original engine had no nullptr check and would just crash
-		// if it got to here
-		if (entry == nullptr) {
-			error("Cannot edit non-existing ShowStyle entry");
-		}
-
-		entry->fadeUp = isFadeUp;
-		entry->color = color;
-		entry->nextTick = g_sci->getTickCount();
-		entry->type = type;
-		entry->animate = animate;
-		entry->delay = (seconds * 60 + entry->divisions - 1) / entry->divisions;
-
-		if (entry->delay == 0) {
-			if (entry->fadeColorRanges != nullptr) {
-				delete[] entry->fadeColorRanges;
-			}
-			delete entry;
-			error("ShowStyle has no duration");
-		}
-
-		if (frameOutNow) {
-			Common::Rect frameOutRect(0, 0);
-			frameOut(false, frameOutRect);
-		}
-
-		if (createNewEntry) {
-			// TODO: Implement SCI2.1early and SCI3
-			entry->next = _showStyles;
-			_showStyles = entry;
-		}
-	}
-}
-
-// NOTE: Different version of SCI engine support different show styles
-// SCI2 implements 0, 1/3/5/7/9, 2/4/6/8/10, 11, 12, 13, 14
-// SCI2.1 implements 0, 1/2/3/4/5/6/7/8/9/10/11/12/15, 13, 14
-// SCI3 implements 0, 1/3/5/7/9, 2/4/6/8/10, 11, 12/15, 13, 14
-// TODO: Sierra code needs to be replaced with code that uses the
-// computed entry->delay property instead of just counting divisors,
-// as the latter is machine-speed-dependent and leads to wrong
-// transition speeds
-void GfxFrameout::processShowStyles() {
-	uint32 now = g_sci->getTickCount();
-
-	bool continueProcessing;
-
-	// TODO: Change to bool? Engine uses inc to set the value to true,
-	// but there does not seem to be any reason to actually count how
-	// many times it was set
-	int doFrameOut;
-	do {
-		continueProcessing = false;
-		doFrameOut = 0;
-		ShowStyleEntry *showStyle = _showStyles;
-		while (showStyle != nullptr) {
-			bool retval = false;
-
-			if (!showStyle->animate) {
-				++doFrameOut;
-			}
-
-			if (showStyle->nextTick < now || !showStyle->animate) {
-				// TODO: Different versions of SCI use different processors!
-				// This is the SQ6/KQ7/SCI2.1mid table.
-				switch (showStyle->type) {
-					case kShowStyleNone: {
-						retval = processShowStyleNone(showStyle);
-						break;
-					}
-					case kShowStyleHShutterOut:
-					case kShowStyleVShutterOut:
-					case kShowStyleWipeLeft:
-					case kShowStyleWipeUp:
-					case kShowStyleIrisOut:
-					case kShowStyleHShutterIn:
-					case kShowStyleVShutterIn:
-					case kShowStyleWipeRight:
-					case kShowStyleWipeDown:
-					case kShowStyleIrisIn:
-					case kShowStyle11:
-					case kShowStyle12:
-					case kShowStyleUnknown: {
-						retval = processShowStyleMorph(showStyle);
-						break;
-					}
-					case kShowStyleFadeOut: {
-						retval = processShowStyleFade(-1, showStyle);
-						break;
-					}
-					case kShowStyleFadeIn: {
-						retval = processShowStyleFade(1, showStyle);
-						break;
-					}
-				}
-			}
-
-			if (!retval) {
-				continueProcessing = true;
-			}
-
-			if (retval && showStyle->processed) {
-				showStyle = deleteShowStyleInternal(showStyle);
-			} else {
-				showStyle = showStyle->next;
-			}
-		}
-
-		if (g_engine->shouldQuit()) {
-			return;
-		}
-
-		if (doFrameOut) {
-			frameOut(true);
-
-			// TODO: Transitions without the “animate” flag are too
-			// fast, but the throttle value is arbitrary. Someone on
-			// real hardware probably needs to test what the actual
-			// speed of these transitions should be
-			throttle();
-		}
-	} while(continueProcessing && doFrameOut);
-}
-
-bool GfxFrameout::processShowStyleNone(ShowStyleEntry *const showStyle) {
-	if (showStyle->fadeUp) {
-		_palette->setFade(100, 0, 255);
-	} else {
-		_palette->setFade(0, 0, 255);
-	}
-
-	showStyle->processed = true;
-	return true;
-}
-
-bool GfxFrameout::processShowStyleMorph(ShowStyleEntry *const showStyle) {
-	palMorphFrameOut(_styleRanges, showStyle);
-	showStyle->processed = true;
-	return true;
-}
-
-// TODO: Normalise use of 'entry' vs 'showStyle'
-bool GfxFrameout::processShowStyleFade(const int direction, ShowStyleEntry *const showStyle) {
-	bool unchanged = true;
-	if (showStyle->currentStep < showStyle->divisions) {
-		int percent;
-		if (direction <= 0) {
-			percent = showStyle->divisions - showStyle->currentStep - 1;
-		} else {
-			percent = showStyle->currentStep;
-		}
-
-		percent *= 100;
-		percent /= showStyle->divisions - 1;
-
-		if (showStyle->fadeColorRangesCount > 0) {
-			for (int i = 0, len = showStyle->fadeColorRangesCount; i < len; i += 2) {
-				_palette->setFade(percent, showStyle->fadeColorRanges[i], showStyle->fadeColorRanges[i + 1]);
-			}
-		} else {
-			_palette->setFade(percent, 0, 255);
-		}
-
-		++showStyle->currentStep;
-		showStyle->nextTick += showStyle->delay;
-		unchanged = false;
-	}
-
-	if (showStyle->currentStep >= showStyle->divisions && unchanged) {
-		if (direction > 0) {
-			showStyle->processed = true;
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
 void GfxFrameout::kernelFrameOut(const bool shouldShowBits) {
-	if (_showStyles != nullptr) {
-		processShowStyles();
+	if (_transitions->hasShowStyles()) {
+		_transitions->processShowStyles();
 	} else if (_palMorphIsOn) {
-		palMorphFrameOut(_styleRanges, nullptr);
+		palMorphFrameOut(_transitions->_styleRanges, nullptr);
 		_palMorphIsOn = false;
 	} else {
-// TODO: Window scroll
-//		if (g_PlaneScroll) {
-//			processScrolls();
-//		}
+		if (_transitions->hasScrolls()) {
+			_transitions->processScrolls();
+		}
 
 		frameOut(shouldShowBits);
 	}
@@ -1609,15 +1239,47 @@ void GfxFrameout::throttle() {
 	if (_throttleFrameOut) {
 		uint8 throttleTime;
 		if (_throttleState == 2) {
-			throttleTime = 17;
+			throttleTime = 16;
 			_throttleState = 0;
 		} else {
-			throttleTime = 16;
+			throttleTime = 17;
 			++_throttleState;
 		}
 
 		g_sci->getEngineState()->speedThrottler(throttleTime);
 		g_sci->getEngineState()->_throttleTrigger = true;
+	}
+}
+
+void GfxFrameout::showRect(const Common::Rect &rect) {
+	if (!rect.isEmpty()) {
+		_showList.clear();
+		_showList.add(rect);
+		showBits();
+	}
+}
+
+void GfxFrameout::shakeScreen(int16 numShakes, const ShakeDirection direction) {
+	if (direction & kShakeHorizontal) {
+		// Used by QFG4 room 750
+		warning("TODO: Horizontal shake not implemented");
+		return;
+	}
+
+	while (numShakes--) {
+		if (direction & kShakeVertical) {
+			g_system->setShakePos(_isHiRes ? 8 : 4);
+		}
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+
+		if (direction & kShakeVertical) {
+			g_system->setShakePos(0);
+		}
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
 	}
 }
 
@@ -1679,7 +1341,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 	return true;
 }
 
-void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
+bool GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	const reg_t planeObject = readSelector(_segMan, screenItemObject, SELECTOR(plane));
 
 	Plane *plane = _planes.findByObject(planeObject);
@@ -1689,7 +1351,7 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 
 	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
-		error("kSetNowSeen: Screen item %04x:%04x not found in plane %04x:%04x", PRINT_REG(screenItemObject), PRINT_REG(planeObject));
+		return false;
 	}
 
 	Common::Rect result = screenItem->getNowSeenRect(*plane);
@@ -1697,6 +1359,7 @@ void GfxFrameout::kernelSetNowSeen(const reg_t screenItemObject) const {
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsTop), result.top);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsRight), result.right - 1);
 	writeSelectorValue(_segMan, screenItemObject, SELECTOR(nsBottom), result.bottom - 1);
+	return true;
 }
 
 void GfxFrameout::remapMarkRedraw() {

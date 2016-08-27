@@ -24,6 +24,7 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "audio/mixer.h"
 
 #include "engines/util.h"
@@ -47,6 +48,14 @@ FullpipeEngine *g_fp = 0;
 Vars *g_vars = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
+	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
+	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
+	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
+	DebugMan.addDebugChannel(kDebugBehavior, "behavior", "Behavior");
+	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
+	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -131,7 +140,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_scene3 = 0;
 	_movTable = 0;
 	_floaters = 0;
-	_mgm = 0;
+	_aniHandler = 0;
 
 	_globalMessageQueueList = 0;
 	_messageHandlers = 0;
@@ -208,7 +217,7 @@ void FullpipeEngine::initialize() {
 	_sceneRect.bottom = 599;
 
 	_floaters = new Floaters;
-	_mgm = new MGM;
+	_aniHandler = new AniHandler;
 }
 
 void FullpipeEngine::restartGame() {
@@ -452,7 +461,7 @@ void FullpipeEngine::cleanup() {
 }
 
 void FullpipeEngine::updateScreen() {
-	debug(4, "FullpipeEngine::updateScreen()");
+	debugC(4, kDebugDrawing, "FullpipeEngine::updateScreen()");
 
 	_mouseVirtX = _mouseScreenPos.x + _sceneRect.left;
 	_mouseVirtY = _mouseScreenPos.y + _sceneRect.top;

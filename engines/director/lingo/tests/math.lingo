@@ -1,0 +1,24 @@
+if random(4) > 2 then put 1000
+set z = 5.5
+set z1 = 2
+set z2 = z / z1
+put z
+put z1
+put z2
+put integer(z2)
+put cos(z2)
+
+set x = 2 + 3 * (4 / 2)
+put x
+
+put power(2, 8)
+put power(2, 8, 0)
+put power(2)
+updatestage
+
+-- Type conversion
+put (1024/4096)*100         -- 0
+put (1024/4096)*100.0       -- 0.0
+put ((1024*1.0)/4096)*100.0 -- 25.0
+
+put the sqrt of 9

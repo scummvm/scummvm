@@ -200,7 +200,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 
 #ifdef ENABLE_SCI32
 	if (mode != _K_FILE_MODE_OPEN_OR_FAIL && (
-	    (g_sci->getGameId() == GID_PHANTASMAGORIA && filename == "phantsg.dir") ||
+	    (g_sci->getGameId() == GID_PHANTASMAGORIA && (filename == "phantsg.dir" || filename == "chase.dat")) ||
 	    (g_sci->getGameId() == GID_PQSWAT && filename == "swat.dat"))) {
 		debugC(kDebugLevelFile, "  -> file_open opening %s for rewriting", wrappedName.c_str());
 

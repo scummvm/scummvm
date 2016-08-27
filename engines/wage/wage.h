@@ -208,6 +208,23 @@ public:
 	void redrawScene();
 	void saveGame();
 
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	bool scummVMSaveLoadDialog(bool isSave);
+
+private:
+	int getSceneIndex(Scene *scene) const;
+	Obj *getObjByOffset(int offset, int objBaseOffset) const;
+	Chr *getChrById(int resId) const;
+	Chr *getChrByOffset(int offset, int chrBaseOffset) const;
+	Scene *getSceneById(int id) const;
+	Scene *getSceneByOffset(int offset) const;
+	int saveGame(const Common::String &fileName, const Common::String &descriptionString);
+	int loadGame(int slotId);
+	Common::String getSavegameFilename(int16 slotId) const;
+
+public:
+
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 private:

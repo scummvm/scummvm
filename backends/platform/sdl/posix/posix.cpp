@@ -141,6 +141,24 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	return configFile;
 }
 
+void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+#ifdef DATA_PATH
+	const char *snap = getenv("SNAP");
+	if (snap) {
+		Common::String dataPath = Common::String(snap) + DATA_PATH;
+		Common::FSNode dataNode(dataPath);
+		if (dataNode.exists() && dataNode.isDirectory()) {
+			// This is the same priority which is used for the data path (below),
+			// but we insert this one first, so it will be searched first.
+			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+		}
+	}
+#endif
+
+	// For now, we always add the data path, just in case SNAP doesn't make sense.
+	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
+}
+
 Common::WriteStream *OSystem_POSIX::createLogFile() {
 	// Start out by resetting _logFilePath, so that in case
 	// of a failure, we know that no log file is open.
