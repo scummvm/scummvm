@@ -20,17 +20,27 @@
  *
  */
 
-#include "xeen/worldofxeen/clouds_ending.h"
+#include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/clouds_cutscenes.h"
 #include "xeen/sound.h"
 
 namespace Xeen {
 
-bool showCloudsEnding(XeenEngine &vm) {
-	EventsManager &events = *vm._events;
-	Screen &screen = *vm._screen;
-	SoundManager &sound = *vm._sound;
+WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
+		: XeenEngine(syst, gameDesc), CloudsCutscenes(this), 
+		DarkSideCutscenes(this) {
+	_seenDarkSideIntro = false;
+}
 
-	return true;
+void WorldOfXeenEngine::showIntro() {
+	// **DEBUG**
+	if (gDebugLevel == 0)
+		return;
+
+	bool completed = showDarkSideTitle();
+	if (!_seenDarkSideIntro && completed)
+		showDarkSideIntro();
 }
 
 } // End of namespace Xeen

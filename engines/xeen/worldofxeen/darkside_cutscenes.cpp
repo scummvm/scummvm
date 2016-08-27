@@ -20,15 +20,17 @@
  *
  */
 
-#include "xeen/worldofxeen/darkside_intro.h"
+#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen.h"
 #include "xeen/sound.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-bool showDarkSideTitle(XeenEngine &vm) {
-	EventsManager &events = *vm._events;
-	Screen &screen = *vm._screen;
-	SoundManager &sound = *vm._sound;
+bool DarkSideCutscenes::showDarkSideTitle() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
 	
 	// TODO: Starting method, and sound
 	//sub_28F40
@@ -55,7 +57,7 @@ bool showDarkSideTitle(XeenEngine &vm) {
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
-	for (int idx = 0; idx < 55 && !vm.shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
 		// Render the next frame
 		events.updateGameCounter();
 		screen.vertMerge(0);
@@ -83,7 +85,7 @@ bool showDarkSideTitle(XeenEngine &vm) {
 	}
 
 	// Loop for dragon using flyspray
-	for (int idx = 0; idx < 42 && !vm.shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 42 && !_vm->shouldQuit(); ++idx) {
 		events.updateGameCounter();
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(screen, idx);
@@ -132,10 +134,10 @@ bool showDarkSideTitle(XeenEngine &vm) {
 	return true;
 }
 
-bool showDarkSideIntro(XeenEngine &vm) {
-	EventsManager &events = *vm._events;
-	Screen &screen = *vm._screen;
-	SoundManager &sound = *vm._sound;
+bool DarkSideCutscenes::showDarkSideIntro() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
 	const int XLIST1[] = {
 		0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62
 	};
@@ -228,6 +230,11 @@ bool showDarkSideIntro(XeenEngine &vm) {
 	sound.playSong(voc[0]);
 	sound.playSong(voc[1]);
 
+	return true;
+}
+
+bool DarkSideCutscenes::showDarkSideEnding() {
+	// TODO
 	return true;
 }
 

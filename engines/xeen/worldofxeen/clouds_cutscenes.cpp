@@ -20,17 +20,24 @@
  *
  */
 
-#ifndef XEEN_CLOUDS_INTRO_H
-#define XEEN_CLOUDS_INTRO_H
-
-#include "xeen/xeen.h"
+#include "xeen/worldofxeen/clouds_cutscenes.h"
+#include "xeen/sound.h"
 
 namespace Xeen {
 
-bool showCloudsTitle(XeenEngine &vm);
+bool CloudsCutscenes::showCloudsTitle() {
+	// TODO
+	return true;
+}
 
-bool showCloudsIntro(XeenEngine &vm);
+bool CloudsCutscenes::showCloudsIntro() {
+	// TODO
+	return true;
+}
+
+bool CloudsCutscenes::showCloudsEnding() {
+	// TODO
+	return true;
+}
 
 } // End of namespace Xeen
-
-#endif /* XEEN_CLOUDS_INTRO_H */

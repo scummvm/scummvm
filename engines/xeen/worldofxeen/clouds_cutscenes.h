@@ -20,17 +20,36 @@
  *
  */
 
-#include "xeen/worldofxeen/clouds_intro.h"
-#include "xeen/sound.h"
+#ifndef XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
+#define XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
+
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
-bool showCloudsTitle(XeenEngine &vm) {
-	return true;
-}
+class XeenEngine;
 
-bool showCloudsIntro(XeenEngine &vm) {
-	return true;
-}
+class CloudsCutscenes {
+private:
+	XeenEngine *_vm;
+public:
+	CloudsCutscenes(XeenEngine *vm) : _vm(vm) {}
 
+	/**
+	 * Shows the Clouds of Xeen title screen
+	 */
+	bool showCloudsTitle();
+
+	/**
+	 * Shows the Clouds of Xeen intro sequence
+	 */
+	bool showCloudsIntro();
+
+	/**
+	 * Shows the Clouds of Xeen ending sequence
+	 */
+	bool showCloudsEnding();
+};
 } // End of namespace Xeen
+
+#endif /* XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H */

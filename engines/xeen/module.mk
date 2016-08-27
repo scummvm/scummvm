@@ -1,11 +1,9 @@
 MODULE := engines/xeen
 
 MODULE_OBJS := \
-	worldofxeen/clouds_ending.o \
-	worldofxeen/clouds_intro.o \
-	worldofxeen/darkside_ending.o \
-	worldofxeen/darkside_intro.o \
-	worldofxeen/worldofxeen_game.o \
+	worldofxeen/clouds_cutscenes.o \
+	worldofxeen/darkside_cutscenes.o \
+	worldofxeen/worldofxeen.o \
 	character.o \
 	combat.o \
 	debugger.o \

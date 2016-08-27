@@ -20,13 +20,35 @@
  *
  */
 
-#include "xeen/worldofxeen/darkside_ending.h"
-#include "xeen/sound.h"
+#ifndef XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H
+#define XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H
 
 namespace Xeen {
 
-bool showDarkSideEnding(XeenEngine &vm) {
-	return true;
-}
+class XeenEngine;
+
+class DarkSideCutscenes {
+private:
+	XeenEngine *_vm;
+public:
+	DarkSideCutscenes(XeenEngine *vm) : _vm(vm) {}
+
+	/**
+	 * Shows the Dark Side of Xeen title screen
+	 */
+	bool showDarkSideTitle();
+
+	/**
+	 * Shows the Dark Side of Xeen intro sequence
+	 */
+	bool showDarkSideIntro();
+
+	/**
+	 * Shows the Dark Side of Xeen ending sequence
+	 */
+	bool showDarkSideEnding();
+};
 
 } // End of namespace Xeen
+
+#endif /* XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H */

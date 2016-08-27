@@ -21,7 +21,7 @@
  */
 
 #include "xeen/xeen.h"
-#include "xeen/worldofxeen/worldofxeen_game.h"
+#include "xeen/worldofxeen/worldofxeen.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"

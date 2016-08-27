@@ -20,15 +20,31 @@
  *
  */
 
-#ifndef XEEN_DARKSIDE_ENDING_H
-#define XEEN_DARKSIDE_ENDING_H
+#ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_H
+#define XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 
 #include "xeen/xeen.h"
+#include "xeen/worldofxeen/clouds_cutscenes.h"
+#include "xeen/worldofxeen/darkside_cutscenes.h"
 
 namespace Xeen {
 
-bool showDarkSideEnding(XeenEngine &vm);
+/**
+ * Implements a descendant of the base Xeen engine to handle 
+ * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
+ * game code
+ */
+class WorldOfXeenEngine: public XeenEngine, public CloudsCutscenes, 
+		public DarkSideCutscenes {
+protected:
+	virtual void showIntro();
+public:
+	bool _seenDarkSideIntro;
+public:
+	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
+	virtual ~WorldOfXeenEngine() {}
+};
 
 } // End of namespace Xeen
 
-#endif /* XEEN_DARKSIDE_ENDING_H */
+#endif /* XEEN_WORLDOFXEEN_WORLDOFXEEN_H */
