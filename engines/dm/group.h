@@ -197,7 +197,7 @@ public:
 											 int16 mapX, int16 mapY, int16 damage, bool notMoving); // @ F0190_GROUP_GetDamageCreatureOutcome
 	void groupDelete(int16 mapX, int16 mapY); // @ F0189_GROUP_Delete
 	void groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
-	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatreVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
+	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatureVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
 	int16 getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
 	int16 groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
 	void processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
