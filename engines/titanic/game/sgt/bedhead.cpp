@@ -43,7 +43,7 @@ void BedheadEntry::load(Common::SeekableReadStream *s) {
 
 void BedheadEntries::load(Common::SeekableReadStream *s, int count) {
 	resize(count);
-	for (uint idx = 0; idx < count; ++idx)
+	for (int idx = 0; idx < count; ++idx)
 		(*this)[idx].load(s);
 }
 

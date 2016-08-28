@@ -579,14 +579,14 @@ int TTnpcScript::getValue(int testNum) const {
 
 	case 4:
 		if (g_vm->_trueTalkManager) {
-			switch (g_vm->_trueTalkManager->getState14()) {
-			case 1:
+			switch (g_vm->_trueTalkManager->getCurrentSeason()) {
+			case SEASON_AUTUMN:
 				CTrueTalkManager::_v6 = 3;
 				break;
-			case 2:
+			case SEASON_WINTER:
 				CTrueTalkManager::_v6 = 0;
 				break;
-			case 3:
+			case SEASON_SPRING:
 				CTrueTalkManager::_v6 = 1;
 				break;
 			default:

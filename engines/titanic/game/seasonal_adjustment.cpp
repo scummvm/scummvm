@@ -21,8 +21,19 @@
  */
 
 #include "titanic/game/seasonal_adjustment.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CSeasonalAdjustment, CBackground)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(ActMsg)
+END_MESSAGE_MAP()
 
 void CSeasonalAdjustment::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -38,6 +49,88 @@ void CSeasonalAdjustment::load(SimpleFile *file) {
 	_fieldE4 = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CSeasonalAdjustment::StatusChangeMsg(CStatusChangeMsg *msg) {
+	CChangeSeasonMsg changeMsg;
+	switch (stateGetSeason()) {
+	case SEASON_SUMMER:
+		changeMsg._season = "Summer";
+		break;
+	case SEASON_AUTUMN:
+		changeMsg._season = "Autumn";
+		break;
+	case SEASON_WINTER:
+		changeMsg._season = "Winter";
+		break;
+	case SEASON_SPRING:
+		changeMsg._season = "Spring";
+		break;
+	default:
+		break;
+	}
+
+	changeMsg.execute(getRoot(), nullptr, MSGFLAG_SCAN);
+	return true;
+}
+
+bool CSeasonalAdjustment::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CSeasonalAdjustment::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	playSound("z#42.wav");
+	if (!_fieldE4) {
+		petDisplayMessage(1, "The Seasonal Adjustment switch is not operational at the present time.");
+	} else if (!_fieldE0) {
+		playMovie(0, 6, MOVIE_NOTIFY_OBJECT);
+		playMovie(6, 18, 0);
+	}
+
+	return true;
+}
+
+bool CSeasonalAdjustment::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_endFrame == 6) {
+		stateChangeSeason();
+		CStatusChangeMsg changeMsg;
+		changeMsg.execute(this);
+		CTurnOff offMsg;
+		offMsg.execute(this);
+		offMsg.execute("LeftPanExit");
+		offMsg.execute("RightPanExit");
+	}
+
+	return true;
+}
+
+bool CSeasonalAdjustment::TurnOn(CTurnOn *msg) {
+	if (_fieldE0) {
+		_fieldE0 = false;
+		CTurnOn onMsg;
+		onMsg.execute("LeftPanExit");
+		onMsg.execute("RightPanExit");
+	}
+
+	return true;
+}
+
+bool CSeasonalAdjustment::TurnOff(CTurnOff *msg) {
+	_fieldE0 = true;
+	return true;
+}
+
+bool CSeasonalAdjustment::ActMsg(CActMsg *msg) {
+	if (msg->_action == "PlayerGetsSpeechCentre") {
+		msg->execute("SeasonBackground");
+		msg->execute("ArbGate");
+	} else if (msg->_action == "EnableObject") {
+		_fieldE4 = true;
+	} else if (msg->_action == "DisableObject") {
+		_fieldE4 = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

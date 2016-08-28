@@ -57,7 +57,7 @@ void CExitArboretum::load(SimpleFile *file) {
 bool CExitArboretum::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_enabled) {
 		CActMsg actMsg;
-		if (_seasonNum == AUTUMN) {
+		if (_seasonNum == SEASON_WINTER) {
 			switch (_fieldCC) {
 			case 0:
 				actMsg._action = "ExitLFrozen";

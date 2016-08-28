@@ -38,6 +38,13 @@ enum GameStateMode {
 	GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_5 = 5, GSMODE_PENDING_LOAD = 6
 };
 
+enum Season {
+	SEASON_SUMMER = 0,
+	SEASON_AUTUMN = 1,
+	SEASON_WINTER = 2,
+	SEASON_SPRING = 3
+};
+
 PTR_LIST_ITEM(CMovie);
 class CGameStateMovieList : public List<CMovieListItem> {
 public:
@@ -60,7 +67,7 @@ public:
 	int _passengerClass;
 	int _priorClass;
 	GameStateMode _mode;
-	int _field14;
+	Season _seasonNum;
 	bool _petActive;
 	bool _field1C;
 	bool _quitGame;
@@ -127,7 +134,13 @@ public:
 	 */
 	void addMovie(CMovie *movie);
 
-	void inc14() { _field14 = (_field14 + 1) & 3; }
+	/**
+	 * Change to the next season
+	 */
+	void changeSeason() {
+		_seasonNum = (Season)(((int)_seasonNum + 1) & 3);
+	}
+
 	void set24(int v) { _field24 = v; }
 	int get24() const { return _field24; }
 	int getNodeChangedCtr() const { return _nodeChangeCtr; }

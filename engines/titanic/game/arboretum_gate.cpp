@@ -21,7 +21,6 @@
  */
 
 #include "titanic/game/arboretum_gate.h"
-#include "titanic/game/seasonal_adjustment.h"
 
 namespace Titanic {
 
@@ -45,30 +44,30 @@ CArboretumGate::CArboretumGate() : CBackground() {
 	_viewName2 = "NULL";
 	_seasonNum = 0;
 	_fieldF0 = 0;
-	_winterOffStartFrame = 244;
-	_winterOffEndFrame = 304;
-	_springOffStartFrame = 122;
-	_springOffEndFrame = 182;
-	_summerOffStartFrame1 = 183;
-	_summerOffEndFrame1 = 243;
-	_summerOffStartFrame2 = 665;
-	_summerOffEndFrame2 = 724;
-	_autumnOffStartFrame1 = 61;
-	_autumnOffEndFrame1 = 121;
-	_autumnOffStartFrame2 = 0;
-	_autumnOffEndFrame2 = 60;
-	_winterOnStartFrame = 485;
-	_winterOnEndFrame = 544;
-	_springOnStartFrame = 425;
-	_springOnEndFrame = 484;
-	_summerOnStartFrame1 = 545;
-	_summerOnEndFrame1 = 604;
-	_summerOnStartFrame2 = 605;
-	_summerOnEndFrame2 = 664;
-	_autumnOnStartFrame1 = 305;
-	_autumnOnEndFrame1 = 364;
-	_autumnOnStartFrame2 = 365;
-	_autumnOnEndFrame2 = 424;
+	_startFrameSpringOff = 244;
+	_endFrameSpringOff = 304;
+	_startFrameSummerOff = 122;
+	_endFrameSummerOff = 182;
+	_startFrameAutumnOff1 = 183;
+	_endFrameAutumnOff1 = 243;
+	_startFrameAutumnOff2 = 665;
+	_endFrameAutumnOff2 = 724;
+	_startFrameWinterOff1 = 61;
+	_endFrameWinterOff1 = 121;
+	_startFrameWinterOff2 = 0;
+	_endFrameWinterOff2 = 60;
+	_startFrameSpringOn = 485;
+	_endFrameSpringOn = 544;
+	_startFrameSummerOn = 425;
+	_endFrameSummerOn = 484;
+	_startFrameAutumnOn1 = 545;
+	_endFrameAutumnOn1 = 604;
+	_startFrameAutumnOn2 = 605;
+	_endFrameAutumnOn2 = 664;
+	_startFrameWinterOn1 = 305;
+	_endFrameWinterOn1 = 364;
+	_startFrameWinterOn2 = 365;
+	_endFrameWinterOn2 = 424;
 }
 
 void CArboretumGate::save(SimpleFile *file, int indent) {
@@ -79,30 +78,30 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_v3, indent);
 	file->writeQuotedLine(_viewName1, indent);
 	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_winterOffStartFrame, indent);
-	file->writeNumberLine(_winterOffEndFrame, indent);
-	file->writeNumberLine(_springOffStartFrame, indent);
-	file->writeNumberLine(_springOffEndFrame, indent);
-	file->writeNumberLine(_summerOffStartFrame1, indent);
-	file->writeNumberLine(_summerOffEndFrame1, indent);
-	file->writeNumberLine(_summerOffStartFrame2, indent);
-	file->writeNumberLine(_summerOffEndFrame2, indent);
-	file->writeNumberLine(_autumnOffStartFrame1, indent);
-	file->writeNumberLine(_autumnOffEndFrame1, indent);
-	file->writeNumberLine(_autumnOffStartFrame2, indent);
-	file->writeNumberLine(_autumnOffEndFrame2, indent);
-	file->writeNumberLine(_winterOnStartFrame, indent);
-	file->writeNumberLine(_winterOnEndFrame, indent);
-	file->writeNumberLine(_springOnStartFrame, indent);
-	file->writeNumberLine(_springOnEndFrame, indent);
-	file->writeNumberLine(_summerOnStartFrame1, indent);
-	file->writeNumberLine(_summerOnEndFrame1, indent);
-	file->writeNumberLine(_summerOnStartFrame2, indent);
-	file->writeNumberLine(_summerOnEndFrame2, indent);
-	file->writeNumberLine(_autumnOnStartFrame1, indent);
-	file->writeNumberLine(_autumnOnEndFrame1, indent);
-	file->writeNumberLine(_autumnOnStartFrame2, indent);
-	file->writeNumberLine(_autumnOnEndFrame2, indent);
+	file->writeNumberLine(_startFrameSpringOff, indent);
+	file->writeNumberLine(_endFrameSpringOff, indent);
+	file->writeNumberLine(_startFrameSummerOff, indent);
+	file->writeNumberLine(_endFrameSummerOff, indent);
+	file->writeNumberLine(_startFrameAutumnOff1, indent);
+	file->writeNumberLine(_endFrameAutumnOff1, indent);
+	file->writeNumberLine(_startFrameAutumnOff2, indent);
+	file->writeNumberLine(_endFrameAutumnOff2, indent);
+	file->writeNumberLine(_startFrameWinterOff1, indent);
+	file->writeNumberLine(_endFrameWinterOff1, indent);
+	file->writeNumberLine(_startFrameWinterOff2, indent);
+	file->writeNumberLine(_endFrameWinterOff2, indent);
+	file->writeNumberLine(_startFrameSpringOn, indent);
+	file->writeNumberLine(_endFrameSpringOn, indent);
+	file->writeNumberLine(_startFrameSummerOn, indent);
+	file->writeNumberLine(_endFrameSummerOn, indent);
+	file->writeNumberLine(_startFrameAutumnOn1, indent);
+	file->writeNumberLine(_endFrameAutumnOn1, indent);
+	file->writeNumberLine(_startFrameAutumnOn2, indent);
+	file->writeNumberLine(_endFrameAutumnOn2, indent);
+	file->writeNumberLine(_startFrameWinterOn1, indent);
+	file->writeNumberLine(_endFrameWinterOn1, indent);
+	file->writeNumberLine(_startFrameWinterOn2, indent);
+	file->writeNumberLine(_endFrameWinterOn2, indent);
 	file->writeQuotedLine(_viewName2, indent);
 
 	CBackground::save(file, indent);
@@ -116,30 +115,30 @@ void CArboretumGate::load(SimpleFile *file) {
 	_v3 = file->readNumber();
 	_viewName1 = file->readString();
 	_fieldF0 = file->readNumber();
-	_winterOffStartFrame = file->readNumber();
-	_winterOffEndFrame = file->readNumber();
-	_springOffStartFrame = file->readNumber();
-	_springOffEndFrame = file->readNumber();
-	_summerOffStartFrame1 = file->readNumber();
-	_summerOffEndFrame1 = file->readNumber();
-	_summerOffStartFrame2 = file->readNumber();
-	_summerOffEndFrame2 = file->readNumber();
-	_autumnOffStartFrame1 = file->readNumber();
-	_autumnOffEndFrame1 = file->readNumber();
-	_autumnOffStartFrame2 = file->readNumber();
-	_autumnOffEndFrame2 = file->readNumber();
-	_winterOnStartFrame = file->readNumber();
-	_winterOnEndFrame = file->readNumber();
-	_springOnStartFrame = file->readNumber();
-	_springOnEndFrame = file->readNumber();
-	_summerOnStartFrame1 = file->readNumber();
-	_summerOnEndFrame1 = file->readNumber();
-	_summerOnStartFrame2 = file->readNumber();
-	_summerOnEndFrame2 = file->readNumber();
-	_autumnOnStartFrame1 = file->readNumber();
-	_autumnOnEndFrame1 = file->readNumber();
-	_autumnOnStartFrame2 = file->readNumber();
-	_autumnOnEndFrame2 = file->readNumber();
+	_startFrameSpringOff = file->readNumber();
+	_endFrameSpringOff = file->readNumber();
+	_startFrameSummerOff = file->readNumber();
+	_endFrameSummerOff = file->readNumber();
+	_startFrameAutumnOff1 = file->readNumber();
+	_endFrameAutumnOff1 = file->readNumber();
+	_startFrameAutumnOff2 = file->readNumber();
+	_endFrameAutumnOff2 = file->readNumber();
+	_startFrameWinterOff1 = file->readNumber();
+	_endFrameWinterOff1 = file->readNumber();
+	_startFrameWinterOff2 = file->readNumber();
+	_endFrameWinterOff2 = file->readNumber();
+	_startFrameSpringOn = file->readNumber();
+	_endFrameSpringOn = file->readNumber();
+	_startFrameSummerOn = file->readNumber();
+	_endFrameSummerOn = file->readNumber();
+	_startFrameAutumnOn1 = file->readNumber();
+	_endFrameAutumnOn1 = file->readNumber();
+	_startFrameAutumnOn2 = file->readNumber();
+	_endFrameAutumnOn2 = file->readNumber();
+	_startFrameWinterOn1 = file->readNumber();
+	_endFrameWinterOn1 = file->readNumber();
+	_startFrameWinterOn2 = file->readNumber();
+	_endFrameWinterOn2 = file->readNumber();
 	_viewName2 = file->readString();
 
 	CBackground::load(file);
@@ -213,28 +212,28 @@ bool CArboretumGate::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CArboretumGate::TurnOff(CTurnOff *msg) {
 	if (!_v3) {
 		switch (_seasonNum) {
-		case SPRING:
-			playMovie(_springOffStartFrame, _springOffEndFrame, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+		case SEASON_SUMMER:
+			playMovie(_startFrameSummerOff, _endFrameSummerOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			break;
 
-		case SUMMER:
+		case SEASON_AUTUMN:
 			if (_v1) {
-				playMovie(_summerOffStartFrame2, _summerOffEndFrame2, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOff2, _endFrameAutumnOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_summerOffStartFrame1, _summerOffEndFrame1, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOff1, _endFrameAutumnOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
-		case AUTUMN:
+		case SEASON_WINTER:
 			if (_v1) {
-				playMovie(_autumnOffStartFrame2, _autumnOffEndFrame2, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOff2, _endFrameWinterOff2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_autumnOffStartFrame1, _autumnOffEndFrame1, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOff1, _endFrameWinterOff1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
-		case WINTER:
-			playMovie(_winterOffStartFrame, _winterOffEndFrame, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+		case SEASON_SPRING:
+			playMovie(_startFrameSpringOff, _endFrameSpringOff, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		default:
@@ -256,28 +255,28 @@ bool CArboretumGate::TurnOn(CTurnOn *msg) {
 		setVisible(true);
 
 		switch (_seasonNum) {
-		case SPRING:
-			playMovie(_springOnStartFrame, _springOnEndFrame, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+		case SEASON_SUMMER:
+			playMovie(_startFrameSummerOn, _endFrameSummerOn, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			break;
 
-		case SUMMER:
+		case SEASON_AUTUMN:
 			if (_v1) {
-				playMovie(_summerOnStartFrame2, _summerOnEndFrame2, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOn2, _endFrameAutumnOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_summerOnStartFrame1, _summerOnEndFrame1, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameAutumnOn1, _endFrameAutumnOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
-		case AUTUMN:
+		case SEASON_WINTER:
 			if (_v1) {
-				playMovie(_autumnOnStartFrame2, _autumnOnEndFrame2, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOn2, _endFrameWinterOn2, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			} else {
-				playMovie(_autumnOnStartFrame1, _autumnOnEndFrame1, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+				playMovie(_startFrameWinterOn1, _endFrameWinterOn1, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			}
 			break;
 
-		case WINTER:
-			playMovie(_winterOnStartFrame, _winterOnEndFrame, MOVIE_GAMESTATE || MOVIE_NOTIFY_OBJECT);
+		case SEASON_SPRING:
+			playMovie(_startFrameSpringOn, _endFrameSpringOn, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 			break;
 
 		default:
@@ -302,20 +301,20 @@ bool CArboretumGate::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CArboretumGate::EnterViewMsg(CEnterViewMsg *msg) {
 	if (!_v3) {
 		switch (_seasonNum) {
-		case SPRING:
-			_initialFrame = _springOffStartFrame;
+		case SEASON_SUMMER:
+			_initialFrame = _startFrameSummerOff;
 			break;
 
-		case SUMMER:
-			_initialFrame = _v1 ? _summerOffStartFrame2 : _summerOffStartFrame1;
+		case SEASON_AUTUMN:
+			_initialFrame = _v1 ? _startFrameAutumnOff2 : _startFrameAutumnOff1;
 			break;
 
-		case AUTUMN:
-			_initialFrame = _v1 ? _autumnOffStartFrame1 : _autumnOffStartFrame2;
+		case SEASON_WINTER:
+			_initialFrame = _v1 ? _startFrameWinterOff1 : _startFrameWinterOff2;
 			break;
 
-		case WINTER:
-			_initialFrame = _winterOffStartFrame;
+		case SEASON_SPRING:
+			_initialFrame = _startFrameSpringOff;
 			break;
 
 		default:

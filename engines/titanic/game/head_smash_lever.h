@@ -36,7 +36,7 @@ class CHeadSmashLever : public CBackground {
 public:
 	bool _enabled;
 	bool _fieldE4;
-	int _ticksCount;
+	uint _ticks;
 public:
 	CLASSDEF;
 	CHeadSmashLever();

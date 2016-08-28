@@ -32,13 +32,13 @@ BEGIN_MESSAGE_MAP(CHeadSmashLever, CBackground)
 END_MESSAGE_MAP()
 
 CHeadSmashLever::CHeadSmashLever() : CBackground(),
-		_enabled(false), _fieldE4(false), _ticksCount(0) {}
+		_enabled(false), _fieldE4(false), _ticks(0) {}
 
 void CHeadSmashLever::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_enabled, indent);
 	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_ticksCount, indent);
+	file->writeNumberLine(_ticks, indent);
 
 	CBackground::save(file, indent);
 }
@@ -47,7 +47,7 @@ void CHeadSmashLever::load(SimpleFile *file) {
 	file->readNumber();
 	_enabled = file->readNumber();
 	_fieldE4 = file->readNumber();
-	_ticksCount = file->readNumber();
+	_ticks = file->readNumber();
 
 	CBackground::load(file);
 }
@@ -58,7 +58,7 @@ bool CHeadSmashLever::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		playSound("z#54.wav");
 		int soundHandle = playSound("z#45.wav");
 		queueSound("z#49.wav", soundHandle);
-		_ticksCount = getTicksCount();
+		_ticks = getTicksCount();
 		_fieldE4 = true;
 	} else {
 		playMovie(0);
@@ -78,7 +78,7 @@ bool CHeadSmashLever::ActMsg(CActMsg *msg) {
 }
 
 bool CHeadSmashLever::FrameMsg(CFrameMsg *msg) {
-	if (_fieldE4 && msg->_ticks > (_ticksCount + 750)) {
+	if (_fieldE4 && msg->_ticks > (_ticks + 750)) {
 		CActMsg actMsg1("CreatorsChamber.Node 1.S");
 		actMsg1.execute("MoveToCreators");
 		CActMsg actMsg2("PlayToEnd");
@@ -93,7 +93,7 @@ bool CHeadSmashLever::FrameMsg(CFrameMsg *msg) {
 
 bool CHeadSmashLever::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_fieldE4)
-		_ticksCount = getTicksCount();
+		_ticks = getTicksCount();
 
 	return true;
 }

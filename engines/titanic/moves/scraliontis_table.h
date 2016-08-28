@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CScraliontisTable : public CRestaurantPanHandler {
+	DECLARE_MESSAGE_MAP;
+	bool MouseMoveMsg(CMouseMoveMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MaitreDDefeatedMsg(CMaitreDDefeatedMsg *msg);
 private:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
+	bool _fieldE0;
+	int _counter;
+	uint _ticks;
+	bool _fieldEC;
 public:
 	CLASSDEF;
 	CScraliontisTable();

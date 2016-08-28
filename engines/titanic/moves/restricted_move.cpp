@@ -24,21 +24,59 @@
 
 namespace Titanic {
 
-CRestrictedMove::CRestrictedMove() : CMovePlayerTo(), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CRestrictedMove, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
+CRestrictedMove::CRestrictedMove() : CMovePlayerTo(), _classNum(0) {
 }
 
 void CRestrictedMove::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
+	file->writeNumberLine(_classNum, indent);
 
 	CMovePlayerTo::save(file, indent);
 }
 
 void CRestrictedMove::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
+	_classNum = file->readNumber();
 
 	CMovePlayerTo::load(file);
+}
+
+bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	int classNum = getPassengerClass();
+	if (classNum <= _classNum) {
+		// Okay to change to the given destination
+		changeView(_destination);
+	} else if (classNum != 4) {
+		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+	} else if (compareRoomNameTo("EmbLobby")) {
+		playSound("a#17.wav");
+		petDisplayMessage(1, "Please check in at the reception desk.");
+	} else if (compareViewNameTo("Titania.Node 1.S")) {
+		playSound("z#226.wav");
+		changeView(_destination);
+	}
+
+	return true;
+}
+
+bool CRestrictedMove::EnterViewMsg(CEnterViewMsg *msg) {
+	int classNum = getPassengerClass();
+	bool flag = classNum > _classNum;
+
+	if (classNum == 4) {
+		if (compareRoomNameTo("EmbLobby"))
+			flag = false;
+		else if (compareViewNameTo("Titania.Node 1.S"))
+			flag = true;
+	}
+
+	_cursorId = flag ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
+	return true;
 }
 
 } // End of namespace Titanic

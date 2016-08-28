@@ -24,15 +24,21 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CScraliontisTable, CRestaurantPanHandler)
+	ON_MESSAGE(MouseMoveMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MaitreDDefeatedMsg)
+END_MESSAGE_MAP()
+
 CScraliontisTable::CScraliontisTable() : CRestaurantPanHandler(),
-		_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0) {
+		_fieldE0(false), _counter(0), _ticks(0), _fieldEC(false) {
 }
 
 void CScraliontisTable::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
+	file->writeNumberLine(_counter, indent);
+	file->writeNumberLine(_ticks, indent);
 	file->writeNumberLine(_fieldEC, indent);
 
 	CRestaurantPanHandler::save(file, indent);
@@ -41,11 +47,42 @@ void CScraliontisTable::save(SimpleFile *file, int indent) {
 void CScraliontisTable::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
+	_counter = file->readNumber();
+	_ticks = file->readNumber();
 	_fieldEC = file->readNumber();
 
 	CRestaurantPanHandler::load(file);
+}
+
+bool CScraliontisTable::MouseMoveMsg(CMouseMoveMsg *msg) {
+	if (!_fieldEC && !_fieldE0) {
+		if (++_counter > 20) {
+			CTriggerNPCEvent triggerMsg;
+			triggerMsg.execute("MaitreD");
+			_fieldE0 = true;
+		}
+	}
+
+	return true;
+}
+
+bool CScraliontisTable::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_fieldEC) {
+		changeView(_destination, _armPickedUp ? _armDestination : _armlessDestination);
+	}
+	else if (!_ticks || (getTicksCount() - _ticks) >= 5000) {
+		CTriggerNPCEvent triggerMsg(119);
+		triggerMsg.execute("MaitreD");
+		_ticks = getTicksCount();
+	}
+
+	return true;
+}
+
+bool CScraliontisTable::MaitreDDefeatedMsg(CMaitreDDefeatedMsg *msg) {
+	_cursorId = CURSOR_MOVE_FORWARD;
+	_fieldEC = true;
+	return true;
 }
 
 } // End of namespace Titanic

@@ -31,6 +31,7 @@
 #include "titanic/true_talk/tt_quotes_tree.h"
 #include "titanic/true_talk/tt_scripts.h"
 #include "titanic/true_talk/tt_talker.h"
+#include "titanic/game_state.h"
 
 namespace Titanic {
 
@@ -237,7 +238,7 @@ public:
 	 */
 	int getPassengerClass() const;
 
-	int getState14() const;
+	Season getCurrentSeason() const;
 };
 
 } // End of namespace Titanic

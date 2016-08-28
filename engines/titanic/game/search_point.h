@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CSearchPoint : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	int _value;
 public:

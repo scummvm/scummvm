@@ -28,8 +28,11 @@
 namespace Titanic {
 
 class CRestrictedMove : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 protected:
-	int _fieldC8;
+	int _classNum;
 public:
 	CLASSDEF;
 	CRestrictedMove();

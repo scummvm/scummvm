@@ -589,9 +589,9 @@ int CTrueTalkManager::getPassengerClass() const {
 	return gameState ? gameState->_passengerClass : 4;
 }
 
-int CTrueTalkManager::getState14() const {
+Season CTrueTalkManager::getCurrentSeason() const {
 	CGameState *gameState = getGameState();
-	return gameState ? gameState->_field14 : 0;
+	return gameState ? gameState->_seasonNum : SEASON_SUMMER;
 }
 
 } // End of namespace Titanic

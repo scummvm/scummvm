@@ -47,7 +47,7 @@ bool CGameStateMovieList::clear() {
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this),
 		_passengerClass(0), _priorClass(0), _mode(GSMODE_NONE),
-		_field14(0), _petActive(false), _field1C(false), _quitGame(false),
+		_seasonNum(SEASON_SUMMER), _petActive(false), _field1C(false), _quitGame(false),
 		_field24(0), _nodeChangeCtr(0), _nodeEnterTicks(0), _field38(0) {
 }
 
@@ -55,7 +55,7 @@ void CGameState::save(SimpleFile *file) const {
 	file->writeNumber(_petActive);
 	file->writeNumber(_passengerClass);
 	file->writeNumber(_priorClass);
-	file->writeNumber(_field14);
+	file->writeNumber(_seasonNum);
 	file->writeNumber(_field24);
 	file->writeNumber(_field38);
 	_gameLocation.save(file);
@@ -66,7 +66,7 @@ void CGameState::load(SimpleFile *file) {
 	_petActive = file->readNumber() != 0;
 	_passengerClass = file->readNumber();
 	_priorClass = file->readNumber();
-	_field14 = file->readNumber();
+	_seasonNum = (Season)file->readNumber();
 	_field24 = file->readNumber();
 	_field38 = file->readNumber();
 	_gameLocation.load(file);

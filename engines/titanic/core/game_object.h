@@ -33,6 +33,7 @@
 #include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
+#include "titanic/game_state.h"
 
 namespace Titanic {
 
@@ -941,8 +942,17 @@ public:
 	/*--- CGameState Methods ---*/
 
 	void setState1C(bool flag);
-	void stateInc14();
-	int stateGet14() const;
+	
+	/**
+	 * Change to the next season
+	 */
+	void stateChangeSeason();
+	
+	/**
+	 * Returns the currently active season
+	 */
+	Season stateGetSeason() const;
+	
 	void stateSet24();
 	int stateGet24() const;
 	void stateInc38();

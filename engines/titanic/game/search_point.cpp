@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSearchPoint, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CSearchPoint::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value, indent);
@@ -34,6 +38,23 @@ void CSearchPoint::load(SimpleFile *file) {
 	file->readNumber();
 	_value = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CSearchPoint::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_value > 0) {
+		CGameObject *child = dynamic_cast<CGameObject *>(getFirstChild());
+		if (child) {
+			child->petAddToInventory();
+			CVisibleMsg visibleMsg(true);
+			visibleMsg.execute(child->getName());
+			playSound("z#47.wav");
+		}
+
+		if (--_value == 0)
+			_cursorId = CURSOR_ARROW;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

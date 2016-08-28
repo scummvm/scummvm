@@ -1025,12 +1025,12 @@ void CGameObject::moveToView(const CString &name) {
 	addUnder(view);
 }
 
-void CGameObject::stateInc14() {
-	getGameManager()->_gameState.inc14();
+void CGameObject::stateChangeSeason() {
+	getGameManager()->_gameState.changeSeason();
 }
 
-int CGameObject::stateGet14() const {
-	return getGameManager()->_gameState._field14;
+Season CGameObject::stateGetSeason() const {
+	return getGameManager()->_gameState._seasonNum;
 }
 
 void CGameObject::stateSet24() {
