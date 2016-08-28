@@ -259,10 +259,6 @@ void Interface::setMainButtons(bool combatMode) {
 	}
 }
 
-/**
- * Waits for a keypress or click, whilst still allowing the game scene to
- * be animated.
- */
 void Interface::perform() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
@@ -621,9 +617,6 @@ void Interface::chargeStep() {
 	}
 }
 
-/**
- * Handles incrementing game time
- */
 void Interface::stepTime() {
 	Party &party = *_vm->_party;
 	SoundManager &sound = *_vm->_sound;
@@ -714,9 +707,6 @@ void Interface::doStepCode() {
 	}
 }
 
-/**
- * Start the party falling
- */
 void Interface::startFalling(bool flag) {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
@@ -931,9 +921,6 @@ void Interface::startFalling(bool flag) {
 	_flipGround ^= 1;
 }
 
-/**
- * Check movement in the given direction
- */
 bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1316,9 +1303,6 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 		events.wait(2);
 }
 
-/**
- * Handle doing the falling
- */
 void Interface::handleFalling() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
@@ -1375,19 +1359,13 @@ void Interface::saveFall() {
 }
 
 void Interface::fall(int v) {
-
+	// TODO
 }
 
-/**
- * Shake the screen
- */
 void Interface::shake(int time) {
-
+	// TODO
 }
 
-/**
- * Draw the minimap
- */
 void Interface::drawMiniMap() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1765,9 +1743,6 @@ void Interface::drawMiniMap() {
 	party._wizardEyeActive = eyeActive;
 }
 
-/**
- * Draw the display borders
- */
 void Interface::assembleBorder() {
 	Combat &combat = *_vm->_combat;
 	Resources &res = *_vm->_resources;
@@ -2186,9 +2161,6 @@ void Interface::doCombat() {
 	combat._combatMode = COMBATMODE_1;
 }
 
-/**
- * Select next character or monster to be attacking
- */
 void Interface::nextChar() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;

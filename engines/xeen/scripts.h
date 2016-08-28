@@ -155,30 +155,99 @@ private:
 	Common::String _message;
 	Common::String _displayMessage;
 
+	/**
+	 * Handles executing a given script command
+	 */
 	void doOpcode(MazeEvent &event);
+
+	/**
+	 * Display a msesage on-screen
+	 */
 	void cmdDisplay1(Common::Array<byte> &params);
+
+	/**
+	 * Displays a door text message using the small font
+	 */
 	void cmdDoorTextSml(Common::Array<byte> &params);
+
+	/**
+	 * Displays a door text message using the large font
+	 */
 	void cmdDoorTextLrg(Common::Array<byte> &params);
+	
+	/**
+	 * Show a sign text on-screen
+	 */
 	void cmdSignText(Common::Array<byte> &params);
 	void cmdNPC(Common::Array<byte> &params);
+
+	/**
+	 * Play a sound FX
+	 */
 	void cmdPlayFX(Common::Array<byte> &params);
 	void cmdTeleport(Common::Array<byte> &params);
+
+	/**
+	 * Do a conditional check
+	 */
 	void cmdIf(Common::Array<byte> &params);
+
+	/**
+	 * Moves the position of an object
+	 */
 	void cmdMoveObj(Common::Array<byte> &params);
 	void cmdTakeOrGive(Common::Array<byte> &params);
+
+	/**
+	 * Move to the next line of the script
+	 */
 	void cmdNoAction(Common::Array<byte> &params);
 	void cmdRemove(Common::Array<byte> &params);
+
+	/**
+	 * Set the currently active character for other script operations
+	 */
 	void cmdSetChar(Common::Array<byte> &params);
+
+	/**
+	 * Spawn a monster
+	 */
 	void cmdSpawn(Common::Array<byte> &params);
 	void cmdDoTownEvent(Common::Array<byte> &params);
+
+	/**
+	 * Stop executing the script
+	 */
 	void cmdExit(Common::Array<byte> &params);
+
+	/**
+	 * Changes the value for the wall on a given cell
+	 */
 	void cmdAlterMap(Common::Array<byte> &params);
 	void cmdGiveExtended(Common::Array<byte> &params);
 	void cmdConfirmWord(Common::Array<byte> &params);
 	void cmdDamage(Common::Array<byte> &params);
+
+	/**
+	 * Jump if a random number matches a given value
+	 */
 	void cmdJumpRnd(Common::Array<byte> &params);
+
+	/**
+	 * Alter an existing event
+	 */
 	void cmdAlterEvent(Common::Array<byte> &params);
+
+	/**
+	 * Stores the current location and line for later resuming, and set up to execute
+	 * a script at a given location
+	 */
 	void cmdCallEvent(Common::Array<byte> &params);
+
+	/**
+	 * Return from executing a script to the script location that previously
+	 * called the script
+	 */
 	void cmdReturn(Common::Array<byte> &params);
 	void cmdSetVar(Common::Array<byte> &params);
 	void cmdCutsceneEndClouds(Common::Array<byte> &params);
@@ -195,15 +264,38 @@ private:
 	void cmdSelRndChar(Common::Array<byte> &params);
 	void cmdGiveEnchanted(Common::Array<byte> &params);
 	void cmdItemType(Common::Array<byte> &params);
+
+	/**
+	 * Disable all the scripts at the party's current position
+	 */
 	void cmdMakeNothingHere(Common::Array<byte> &params);
 	void cmdCheckProtection(Common::Array<byte> &params);
+
+	/**
+	 * Given a number of options, and a list of line numbers associated with
+	 * those options, jumps to whichever line for the option the user selects
+	 */
 	void cmdChooseNumeric(Common::Array<byte> &params);
 	void cmdDisplayBottomTwoLines(Common::Array<byte> &params);
 	void cmdDisplayLarge(Common::Array<byte> &params);
+
+	/**
+	 * Exchange the positions of two objects in the maze
+	 */
 	void cmdExchObj(Common::Array<byte> &params);
 	void cmdFallToMap(Common::Array<byte> &params);
 	void cmdDisplayMain(Common::Array<byte> &params);
+
+	/**
+	 * Jumps to a given line number if the surface at relative cell position 1 matches
+	 * a specified surface.
+	 * @remarks		This opcode is apparently never actually used
+	 */
 	void cmdGoto(Common::Array<byte> &params);
+
+	/**
+	 * Pick a random value from the parameter list and jump to that line number
+	 */
 	void cmdGotoRandom(Common::Array<byte> &params);
 	void cmdCutsceneEndDarkside(Common::Array<byte> &params);
 	void cmdCutsceneEdWorld(Common::Array<byte> &params);
@@ -220,6 +312,9 @@ private:
 
 	void doEnding(const Common::String &endStr, int v2);
 
+	/**
+	 * This monstrosity handles doing the various types of If checks on various data
+	 */
 	bool ifProc(int action, uint32 mask, int mode, int charIndex);
 
 	bool copyProtectionCheck();

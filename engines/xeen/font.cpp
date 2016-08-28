@@ -37,10 +37,6 @@ FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr),
 	setTextColor(0);
 }
 
-/**
- * Draws a symbol to the surface.
- * @param symbolId	Symbol number from 0 to 19
- */
 void FontSurface::writeSymbol(int symbolId) {
 	const byte *srcP = &SYMBOLS[symbolId][0];
 
@@ -57,14 +53,6 @@ void FontSurface::writeSymbol(int symbolId) {
 	_writePos.x += 8;
 }
 
-/**
- * Write a string to the surface
- * @param s			String to display
- * @param clipRect	Window bounds to display string within
- * @returns			Any string remainder that couldn't be displayed
- * @remarks		Note that bounds is just used for wrapping purposes. Unless
- *		justification is set, the message will be written at _writePos
- */
 const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
 	_displayString = s.c_str();
 	assert(_fontData);
@@ -253,16 +241,10 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	return _displayString;
 }
 
-/**
- * Return the next pending character to display
- */
 char FontSurface::getNextChar() {
 	return  *_displayString++ & 0x7f;
 }
 
-/**
-* Return the width of a given character
-*/
 bool FontSurface::getNextCharWidth(int &total) {
 	char c = getNextChar();
 
@@ -292,9 +274,6 @@ bool FontSurface::getNextCharWidth(int &total) {
 	}
 }
 
-/**
- * Handles moving to the next line of the given bounded area
- */
 bool FontSurface::newLine(const Common::Rect &bounds) {
 	// Move past any spaces currently being pointed to
 	while ((*_displayString & 0x7f) == ' ')
@@ -309,9 +288,6 @@ bool FontSurface::newLine(const Common::Rect &bounds) {
 	return ((_writePos.y + hv - 1) > bounds.bottom);
 }
 
-/**
- * Extract a number of a given maximum length from the string
- */
 int FontSurface::fontAtoi(int len) {
 	int total = 0;
 	for (int i = 0; i < len; ++i) {
@@ -329,17 +305,11 @@ int FontSurface::fontAtoi(int len) {
 	return total;
 }
 
-/**
- * Set the text colors based on the specified index in the master text colors list
- */
 void FontSurface::setTextColor(int idx) {
 	const byte *colP = &TEXT_COLORS[idx][0];
 	Common::copy(colP, colP + 4, &_textColors[0]);
 }
 
-/**
- * Wrie a character to the surface
- */
 void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	// Get y position, handling kerning
 	int y = _writePos.y;

@@ -95,6 +95,10 @@ private:
 
 	void initDrawStructs();
 
+	/**
+	 * Helper method for setIndoorsMonsters to set a draw structure
+	 * with the deatils for a given monster
+	 */
 	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
 		SpriteResource *sprites, int frame, int defaultY);
 protected:
@@ -109,6 +113,10 @@ protected:
 
 	void setMazeBits();
 
+	/**
+	 * Handles animation of monsters, wall items, and combat within the 3d
+	 * view by cycling the appropriate frame numbers
+	 */
 	void animate3d();
 
 	void drawMap();
@@ -126,18 +134,39 @@ public:
 
 	virtual ~InterfaceMap() {}
 
+	/**
+	 * Set up draw structures for displaying on-screen monsters
+	 */
 	void setIndoorsMonsters();
 
+	/**
+	 * Set up draw structures for displaying on-screen objects
+	 */
 	void setIndoorsObjects();
 
+	/**
+	 * Set up draw structures for displaying on-screen wall items
+	 */
 	void setIndoorsWallPics();
 
+	/**
+	 * Draw the contents of the current 3d view of an indoor map
+	 */
 	void drawIndoors();
 
+	/**
+	 * Set up the draw structures for displaying monsters on outdoor maps
+	 */
 	void setOutdoorsMonsters();
 
+	/**
+	 * Set up the draw structures for displaying objects on outdoor maps
+	 */
 	void setOutdoorsObjects();
 
+	/**
+	 * Draw the contents of the current 3d view of an outdoor map
+	 */
 	void drawOutdoors();
 };
 

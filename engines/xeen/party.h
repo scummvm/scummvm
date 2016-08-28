@@ -78,6 +78,9 @@ class Party {
 private:
 	static XeenEngine *_vm;
 
+	/**
+	 * Give a treasure item to the given character's inventory
+	 */
 	void giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex);
 public:
 	// Dynamic data that's saved
@@ -153,8 +156,15 @@ public:
 
 	bool isInParty(int charId);
 
+	/**
+	 * Copy the currently active party characters' data back to the roster
+	 */
 	void copyPartyToRoster();
 
+	/**
+	 * Adds time to the party's playtime, taking into account the effect of any
+	 * stat modifier changes
+	 */
 	void changeTime(int numMinutes);
 
 	void addTime(int numMinutes);
@@ -169,10 +179,19 @@ public:
 
 	void checkPartyDead();
 
+	/**
+	 * Move party position to the run destination on the current map
+	 */
 	void moveToRunLocation();
 
+	/**
+	 * Give treasure to the party
+	 */
 	void giveTreasure();
 
+	/**
+	 * Returns true if all the packs for all the characters are full
+	 */
 	bool arePacksFull() const;
 
 	bool canShoot() const;

@@ -78,9 +78,6 @@ void InventoryItems::clear() {
 		operator[](idx).clear();
 }
 
-/**
-* Return whether a given item passes class-based usage restrictions
-*/
 bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 	CharacterClass charClass = _character->_class;
 
@@ -117,9 +114,6 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 	return false;
 }
 
-/**
- * Return the bare name of a given inventory item
- */
 Common::String InventoryItems::getName(int itemIndex) {
 	int id = operator[](itemIndex)._id;
 	return _names[id];
@@ -143,9 +137,6 @@ Common::String InventoryItems::getIdentifiedDetails(int itemIndex) {
 	return getAttributes(item, classes);
 }
 
-/**
- * Discard an item from the inventory
- */
 bool InventoryItems::discardItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 	XeenEngine *vm = Party::_vm;
@@ -167,9 +158,6 @@ bool InventoryItems::discardItem(int itemIndex) {
 	return true;
 }
 
-/**
- * Sorts the items list, removing any empty item slots to the end of the array
- */
 void InventoryItems::sort() {
 	for (uint idx = 0; idx < size(); ++idx) {
 		if (operator[](idx)._id == 0) {
@@ -189,9 +177,6 @@ void InventoryItems::sort() {
 	}
 }
 
-/**
- * Un-equips the given item
- */
 void InventoryItems::removeItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 	XeenEngine *vm = Party::_vm;
@@ -228,19 +213,12 @@ void InventoryItems::enchantItem(int itemIndex, int amount) {
 	ErrorScroll::show(vm, Common::String::format(NOT_ENCHANTABLE, SPELL_FAILED));
 }
 
-/**
- * Return if the given inventory items list is full
- */
 bool InventoryItems::isFull() const {
 	return operator[](size() - 1)._id != 0;
 }
 
-
 /*------------------------------------------------------------------------*/
 
-/**
- * Equip a given weapon
- */
 void WeaponItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
@@ -291,10 +269,6 @@ void WeaponItems::equipItem(int itemIndex) {
 	}
 }
 
-/**
- * Assembles a full lines description for a specified item for use in
- * the Items dialog
- */
 Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
@@ -377,9 +351,6 @@ Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Equip a given piece of armor
- */
 void ArmorItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
@@ -458,10 +429,6 @@ void ArmorItems::equipItem(int itemIndex) {
 	}
 }
 
-/**
- * Assembles a full lines description for a specified item for use in
- * the Items dialog
- */
 Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
@@ -531,9 +498,6 @@ Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &c
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Equip a given accessory
- */
 void AccessoryItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
@@ -582,10 +546,6 @@ void AccessoryItems::equipItem(int itemIndex) {
 	}
 }
 
-/**
- * Assembles a full lines description for a specified item for use in
- * the Items dialog
- */
 Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
@@ -632,10 +592,6 @@ Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::Strin
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Assembles a full lines description for a specified item for use in
- * the Items dialog
- */
 Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
@@ -681,9 +637,6 @@ InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) {
 	return *_itemSets[category];
 }
 
-/**
- * Breaks all the items in a given character's inventory
- */
 void InventoryItemsGroup::breakAllItems() {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		if ((*_itemSets[0])[idx]._id != 34) {
@@ -848,9 +801,6 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_currentCombatSpell);
 }
 
-/**
- * Returns the worst condition the character is suffering from
- */
 Condition Character::worstCondition() const {
 	for (int cond = ERADICATED; cond >= CURSED; --cond) {
 		if (_conditions[cond])
@@ -860,9 +810,6 @@ Condition Character::worstCondition() const {
 	return NO_CONDITION;
 }
 
-/**
- * Returns whether the given character has a disabling condition, but still alive
- */
 bool Character::isDisabled() const {
 	Condition condition = worstCondition();
 
@@ -870,27 +817,18 @@ bool Character::isDisabled() const {
 		|| condition == STONED || condition == ERADICATED;
 }
 
-/**
-* Returns whether the given character has a disabling condition, or is dead
-*/
 bool Character::isDisabledOrDead() const {
 	Condition condition = worstCondition();
 
 	return condition == ASLEEP || (condition >= PARALYZED && condition <= ERADICATED);
 }
 
-/**
- * Returns whether the given character has a dead condition
- */
 bool Character::isDead() const {
 	Condition condition = worstCondition();
 
 	return condition >= DEAD && condition <= ERADICATED;
 }
 
-/**
- * Get the character's age
- */
 int Character::getAge(bool ignoreTemp) const {
 	int year = MIN(Party::_vm->_party->_year - _birthYear, (uint)254);
 
@@ -967,9 +905,6 @@ int Character::getMaxSP() const {
 	return result;
 }
 
-/**
- * Get the effective value of a given stat for the character
- */
 uint Character::getStat(Attribute attrib, bool baseOnly) const {
 	AttributePair attr;
 	int mode = 0;
@@ -1024,10 +959,6 @@ uint Character::getStat(Attribute attrib, bool baseOnly) const {
 	return MAX(attr._permanent, (uint)0);
 }
 
-/**
- * Return the color number to use for a given stat value in the character
- * info or quick reference dialogs
- */
 int Character::statColor(int amount, int threshold) {
 	if (amount < 1)
 		return 6;
@@ -1136,9 +1067,6 @@ int Character::getArmorClass(bool baseOnly) const {
 	return MAX(result, 0);
 }
 
-/**
- * Returns the thievery skill level, adjusted by class and race
- */
 int Character::getThievery() const {
 	int result = getCurrentLevel() * 2;
 
@@ -1258,9 +1186,6 @@ int Character::itemScan(int itemId) const {
 	return result;
 }
 
-/**
- * Modifies a passed attribute value based on player's condition
- */
 int Character::conditionMod(Attribute attrib) const {
 	if (_conditions[DEAD] || _conditions[STONED] || _conditions[ERADICATED])
 		return 0;
@@ -1829,9 +1754,6 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 	return category;
 }
 
-/**
- * Add hit points to a character
- */
 void Character::addHitPoints(int amount) {
 	Interface &intf = *Party::_vm->_interface;
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
@@ -1852,9 +1774,6 @@ void Character::addHitPoints(int amount) {
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
 }
 
-/**
- * Remove hit points fromo the character
- */
 void Character::subtractHitPoints(int amount) {
 	SoundManager &sound = *Party::_vm->_sound;
 	_currentHp -= amount;

@@ -88,6 +88,9 @@ private:
 
 	int getMonsterResistence(RangeType rangeType);
 
+	/**
+	 * Distribute experience between active party members
+	 */
 	void giveExperience(int experience);
 public:
 	Common::Array<Character *> _combatParty;
@@ -136,35 +139,65 @@ public:
 
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 
+	/**
+	 * Do damage to a specific character
+	 */
 	void doCharDamage(Character &c, int charNum, int monsterDataIndex);
 
 	void moveMonsters();
 
+	/**
+	 * Setup the combat party with a copy of the currently active party
+	 */
 	void setupCombatParty();
 
 	void setSpeedTable();
 
+	/**
+	 * Returns true if all participants in the combat are disabled
+	 */
 	bool allHaveGone() const;
 
+	/**
+	 * Returns true if all the characters of the party are disabled
+	 */
 	bool charsCantAct() const;
 
+	/**
+	 * Return a description of the monsters being faced
+	 */
 	Common::String getMonsterDescriptions();
 
 	void attack(Character &c, RangeType rangeType);
 
+	/**
+	 * Flag the currently active character as blocking/defending
+	 */
 	void block();
 
+	/**
+	 * Perform whatever the current combat character's quick action is
+	 */
 	void quickFight();
 
+	/**
+	 * Current selected character is trying to run away
+	 */
 	void run();
 
 	void monstersAttack();
 
 	void setupMonsterAttack(int monsterDataIndex, const Common::Point &pt);
 
+	/**
+	 * Determines whether a given monster can move
+	 */
 	bool monsterCanMove(const Common::Point &pt, int wallShift,
 		int v1, int v2, int monsterId);
 
+	/**
+	 * Moves a monster by a given delta amount if it's a valid move
+	 */
 	void moveMonster(int monsterId, const Common::Point &moveDelta);
 
 	void doMonsterTurn(int monsterId);
@@ -177,6 +210,9 @@ public:
 
 	void multiAttack(int powNum);
 
+	/**
+	 * Fires off a ranged attack at all oncoming monsters
+	 */
 	void shootRangedWeapon();
 };
 

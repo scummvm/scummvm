@@ -115,21 +115,21 @@ protected:
 	virtual void showIntro() = 0;
 
 	/**
-	* Play the game
-	*/
+	 * Play the game
+	 */
 	virtual void playGame();
 private:
 	void initialize();
 
 	/**
-	* Synchronize savegame data
-	*/
+	 * Synchronize savegame data
+	 */
 	void synchronize(Common::Serializer &s);
 
 	/**
-	* Support method that generates a savegame name
-	* @param slot		Slot number
-	*/
+	 * Support method that generates a savegame name
+	 * @param slot		Slot number
+	 */
 	Common::String generateSaveName(int slot);
 
 	// Engine APIs

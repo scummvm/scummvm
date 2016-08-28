@@ -51,9 +51,6 @@ SpriteResource::~SpriteResource() {
 	clear();
 }
 
-/**
- * Copy operator for duplicating a sprite resource
- */
 SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	delete[] _data;
 	_index.clear();
@@ -69,25 +66,16 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	return *this;
 }
 
-/**
- * Load a sprite resource from a given file
- */
 void SpriteResource::load(const Common::String &filename) {
 	File f(filename);
 	load(f);
 }
 
-/**
- * Load a sprite resource from a given file and archive
- */
 void SpriteResource::load(const Common::String &filename, Common::Archive &archive) {
 	File f(filename, archive);
 	load(f);
 }
 
-/**
- * Load a sprite resource from a stream
- */
 void SpriteResource::load(Common::SeekableReadStream &f) {
 	// Read in a copy of the file
 	_filesize = f.size();
@@ -106,18 +94,12 @@ void SpriteResource::load(Common::SeekableReadStream &f) {
 	}
 }
 
-/**
- * Clears the sprite resource
- */
 void SpriteResource::clear() {
 	delete[] _data;
 	_data = nullptr;
 	_filesize = 0;
 }
 
-/**
- * Draws a frame using data at a specific offset in the sprite resource
- */
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
 		const Common::Rect &bounds, int flags, int scale) {
 	static const uint SCALE_TABLE[] = { 

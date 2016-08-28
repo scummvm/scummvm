@@ -53,12 +53,18 @@ protected:
 	Common::Array<UIButton> _buttons;
 	int _buttonValue;
 
+	/**
+	 * Draws the scroll in the background
+	 */
 	void doScroll(XeenEngine *vm, bool drawFlag, bool doFade);
 
 	bool checkEvents(XeenEngine *vm);
 public:
 	ButtonContainer() : _buttonValue(0) {}
 
+	/**
+	 * Saves the current list of buttons
+	 */
 	void saveButtons();
 
 	void clearButtons();
@@ -71,6 +77,9 @@ public:
 
 	void addPartyButtons(XeenEngine *vm);
 
+	/**
+	 * Draws the buttons onto the passed surface
+	 */
 	void drawButtons(XSurface *surface);
 };
 

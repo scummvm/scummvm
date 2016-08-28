@@ -603,9 +603,6 @@ void MazeData::synchronize(Common::SeekableReadStream &s) {
 		SavesManager::syncBitFlags(ser, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
 }
 
-/**
- * Flags all tiles for the map as having been stepped on
- */
 void MazeData::setAllTilesStepped() {
 	for (int y = 0; y < MAP_HEIGHT; ++y)
 		Common::fill(&_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH], true);
@@ -663,10 +660,6 @@ MazeMonster::MazeMonster() {
 	_monsterData = nullptr;
 }
 
-/**
- * Return the text color to use when displaying the monster's name in combat
- * to indicate how damaged they are
- */
 int MazeMonster::getTextColor() const {
 	if (_hp == _monsterData->_hp)
 		return 15;
@@ -843,9 +836,6 @@ void HeadData::synchronize(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Synchronize data for an animation entry
- */
 void AnimationEntry::synchronize(Common::SeekableReadStream &s) {
 	for (int i = 0; i < 4; ++i)
 		_frame1._frames[i] = s.readByte();
@@ -855,9 +845,6 @@ void AnimationEntry::synchronize(Common::SeekableReadStream &s) {
 		_frame2._frames[i] = s.readByte();
 }
 
-/**
- * Synchronize data for object animations within the game
- */
 void AnimationInfo::synchronize(Common::SeekableReadStream &s) {
 	AnimationEntry entry;
 
@@ -868,9 +855,6 @@ void AnimationInfo::synchronize(Common::SeekableReadStream &s) {
 	}
 }
 
-/**
- * Load the animation info objects in the game
- */
 void AnimationInfo::load(const Common::String &name) {
 	File f(name);
 	synchronize(f);
@@ -1301,9 +1285,6 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	}
 }
 
-/**
- * Load the events for a new map
- */
 void Map::loadEvents(int mapId) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",

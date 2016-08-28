@@ -90,22 +90,40 @@ private:
 
 	void chargeStep();
 
+	/**
+	 * Handles incrementing game time
+	 */
 	void stepTime();
 
 	void doStepCode();
 
+	/**
+	 * Check movement in the given direction
+	 */
 	bool checkMoveDirection(int key);
 
+	/**
+	 * Handle doing the falling
+	 */
 	void handleFalling();
 
 	void saveFall();
 
 	void fall(int v);
 
+	/**
+	 * Shake the screen
+	 */
 	void shake(int time);
 
+	/**
+	 * Draw the minimap
+	 */
 	void drawMiniMap();
 
+	/**
+	 * Select next character or monster to be attacking
+	 */
 	void nextChar();
 public:
 	int _intrIndex1;
@@ -133,8 +151,15 @@ public:
 
 	void mainIconsPrint();
 
+	/**
+	 * Start the party falling
+	 */
 	void startFalling(bool v);
 
+	/**
+	 * Waits for a keypress or click, whilst still allowing the game scene to
+	 * be animated.
+	 */
 	void perform();
 
 	void rest();
@@ -143,6 +168,9 @@ public:
 
 	void draw3d(bool updateFlag, bool skipDelay = false);
 
+	/**
+	 * Draw the display borders
+	 */
 	void assembleBorder();
 
 	void doCombat();

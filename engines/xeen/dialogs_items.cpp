@@ -513,9 +513,6 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	return c;
 }
 
-/**
- * Load the buttons for the dialog
- */
 void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 	_iconSprites.load(Common::String::format("%s.icn",
 		(mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
@@ -580,11 +577,6 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 	}
 }
 
-/**
- * Loads the temporary _itemsCharacter character with the item set
- * the given blacksmith has available, so the user can "view" the
- * set as if it were a standard character's inventory
- */
 void ItemsDialog::blackData2CharData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -602,10 +594,6 @@ void ItemsDialog::blackData2CharData() {
 	}
 }
 
-/**
-* Saves the inventory from the temporary _itemsCharacter character back into the
-* blacksmith storage, so changes in blacksmith inventory remain persistent
-*/
 void ItemsDialog::charData2BlackData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
@@ -623,9 +611,6 @@ void ItemsDialog::charData2BlackData() {
 	}
 }
 
-/**
- * Sets the equipment icon to use for each item for display
- */
 void ItemsDialog::setEquipmentIcons() {
 	for (int typeIndex = 0; typeIndex < 4; ++typeIndex) {
 		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
@@ -676,9 +661,6 @@ void ItemsDialog::setEquipmentIcons() {
 	}
 }
 
-/**
- * Calculate the cost of an item
- */
 int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		int skillLevel, ItemCategory category) {
 	int amount1 = 0, amount2 = 0, amount3 = 0, amount4 = 0;

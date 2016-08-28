@@ -57,9 +57,6 @@ SavesManager::~SavesManager() {
 	delete[] _data;
 }
 
-/**
- * Synchronizes a boolean array as a bitfield set
- */
 void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
 	byte data = 0;
 
@@ -122,9 +119,6 @@ void SavesManager::load(Common::SeekableReadStream *stream) {
 	delete pty;
 }
 
-/**
- * Sets up the dynamic data for the game for a new game
- */
 void SavesManager::reset() {
 	Common::String prefix = _vm->getGameID() != GType_DarkSide ? "xeen|" : "dark|";
 	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);

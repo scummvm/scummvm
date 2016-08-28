@@ -256,9 +256,6 @@ loop:
 	}
 }
 
-/**
- * Do damage to a specific character
- */
 void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
@@ -664,9 +661,6 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	}
 }
 
-/**
- * Determines whether a given monster can move
- */
 bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 		int xDiff, int yDiff, int monsterId) {
 	Map &map = *_vm->_map;
@@ -709,9 +703,6 @@ bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 	}
 }
 
-/**
- * Moves a monster by a given delta amount if it's a valid move
- */
 void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
@@ -1062,9 +1053,6 @@ int Combat::stopAttack(const Common::Point &diffPt) {
 	}
 }
 
-/**
- * Setup the combat party with a copy of the currently active party
- */
 void Combat::setupCombatParty() {
 	Party &party = *_vm->_party;
 
@@ -1123,9 +1111,6 @@ void Combat::setSpeedTable() {
 	}
 }
 
-/**
- * Returns true if all participants in the combat are disabled
- */
 bool Combat::allHaveGone() const {
 	for (uint idx = 0; idx < _charsGone.size(); ++idx) {
 		if (!_charsGone[idx]) {
@@ -1142,9 +1127,6 @@ bool Combat::allHaveGone() const {
 	return true;
 }
 
-/**
- * Returns true if all the characters of the party are disabled
- */
 bool Combat::charsCantAct() const {
 	for (uint idx = 0; idx < _combatParty.size(); ++idx) {
 		if (!_combatParty[idx]->isDisabledOrDead())
@@ -1154,9 +1136,6 @@ bool Combat::charsCantAct() const {
 	return true;
 }
 
-/**
- * Return a description of the monsters being faced
- */
 Common::String Combat::getMonsterDescriptions() {
 	Map &map = *_vm->_map;
 	Common::String lines[3];
@@ -1583,16 +1562,10 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	}
 }
 
-/**
- * Flag the currently active character as blocking/defending
- */
 void Combat::block() {
 	_charsBlocked[_whosTurn] = true;
 }
 
-/**
- * Perform whatever the current combat character's quick action is
- */
 void Combat::quickFight() {
 	Spells &spells = *_vm->_spells;
 	Character *c = _combatParty[_whosTurn];
@@ -1617,9 +1590,6 @@ void Combat::quickFight() {
 	}
 }
 
-/**
- * Current selected character is trying to run away
- */
 void Combat::run() {
 	Map &map = *_vm->_map;
 	SoundManager &sound = *_vm->_sound;
@@ -1803,9 +1773,6 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	return damage;
 }
 
-/**
- * Distribute experience between active party members
- */
 void Combat::giveExperience(int experience) {
 	Party &party = *_vm->_party;
 	bool inCombat = _vm->_mode == MODE_COMBAT;
@@ -2089,9 +2056,6 @@ done:
 	party.giveTreasure();
 }
 
-/**
- * Fires off a ranged attack at all oncoming monsters
- */
 void Combat::shootRangedWeapon() {
 	_rangeType = RT_ALL;
 	_damageType = DT_PHYSICAL;

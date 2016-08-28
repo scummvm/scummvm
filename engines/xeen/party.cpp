@@ -264,19 +264,12 @@ bool Party::isInParty(int charId) {
 	return false;
 }
 
-/**
- * Copy the currently active party characters' data back to the roster
- */
 void Party::copyPartyToRoster() {
 	for (uint i = 0; i < _activeParty.size(); ++i) {
 		_roster[_activeParty[i]._rosterId] = _activeParty[i];
 	}
 }
 
-/**
- * Adds time to the party's playtime, taking into account the effect of any
- * stat modifier changes
- */
 void Party::changeTime(int numMinutes) {
 	bool killed = false;
 
@@ -557,16 +550,10 @@ void Party::checkPartyDead() {
 	_dead = true;
 }
 
-/**
- * Move party position to the run destination on the current map
- */
 void Party::moveToRunLocation() {
 	_mazePosition = _vm->_map->mazeData()._runPosition;
 }
 
-/**
- * Give treasure to the party
- */
 void Party::giveTreasure() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
@@ -691,9 +678,6 @@ void Party::giveTreasure() {
 	scripts._v2 = 1;
 }
 
-/**
- * Returns true if all the packs for all the characters are full
- */
 bool Party::arePacksFull() const {
 	uint total = 0;
 	for (uint idx = 0; idx < _activeParty.size(); ++idx) {
@@ -707,9 +691,6 @@ bool Party::arePacksFull() const {
 	return total == (_activeParty.size() * NUM_ITEM_CATEGORIES);
 }
 
-/**
- * Give a treasure item to the given character's inventory
- */
 void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;

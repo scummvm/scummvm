@@ -40,12 +40,24 @@ private:
 
 	void execute(int charIndex);
 
+	/**
+	 * Load the draw structure list with frame numbers and positions
+	 */
 	void loadDrawStructs();
 
+	/**
+	 * Set up the button list for the dialog
+	 */
 	void addButtons();
 
+	/**
+	 * Return a string containing the details of the character
+	 */
 	Common::String loadCharacterDetails(const Character &c);
 
+	/**
+	 * Cursor display handling
+	 */
 	void showCursor(bool flag);
 
 	bool expandStat(int attrib, const Character &c);

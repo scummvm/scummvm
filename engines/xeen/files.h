@@ -56,6 +56,9 @@ public:
 	bool _isDarkCc;
 	CCArchive *_sideArchives[2];
 public:
+	/**
+	 * Instantiates the resource manager
+	 */
 	FileManager(XeenEngine *vm);
 
 	void setGameCc(bool isDarkCc) { _isDarkCc = isDarkCc; }
@@ -73,7 +76,14 @@ public:
 	}
 	virtual ~File() {}
 
+	/**
+	 * Opens the given file, throwing an error if it can't be opened
+	 */
 	void openFile(const Common::String &filename);
+
+	/**
+	 * Opens the given file, throwing an error if it can't be opened
+	 */
 	void openFile(const Common::String &filename, Common::Archive &archive);
 
 	Common::String readString();
@@ -112,10 +122,20 @@ class BaseCCArchive : public Common::Archive {
 protected:
 	Common::Array<CCEntry> _index;
 
+	/**
+	 * Load the index of a given CC file
+	 */
 	void loadIndex(Common::SeekableReadStream *stream);
 
+	/**
+	 * Given a resource name, returns whether an entry exists, and returns
+	 * the header index data for that entry
+	 */
 	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
 public:
+	/**
+	 * Hash a given filename to produce the Id that represents it
+	 */
 	static uint16 convertNameToId(const Common::String &resourceName);
 public:
 	BaseCCArchive() {}

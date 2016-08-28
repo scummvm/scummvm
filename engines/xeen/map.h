@@ -210,6 +210,9 @@ public:
 
 	void synchronize(Common::SeekableReadStream &s);
 
+	/**
+	 * Flags all tiles for the map as having been stepped on
+	 */
 	void setAllTilesStepped();
 
 	void clearCellSurfaces();
@@ -257,6 +260,10 @@ struct MazeMonster {
 
 	MazeMonster();
 
+	/**
+	 * Return the text color to use when displaying the monster's name in combat
+	 * to indicate how damaged they are
+	 */
 	int getTextColor() const;
 };
 
@@ -341,13 +348,22 @@ struct AnimationEntry {
 		int _frames[4];
 	} _frame2;
 
+	/**
+	 * Synchronize data for an animation entry
+	 */
 	void synchronize(Common::SeekableReadStream &s);
 };
 
 class AnimationInfo : public Common::Array<AnimationEntry> {
 public:
+	/**
+	 * Synchronize data for object animations within the game
+	 */
 	void synchronize(Common::SeekableReadStream &s);
 
+	/**
+	 * Load the animation info objects in the game
+	 */
 	void load(const Common::String &name);
 };
 
@@ -361,6 +377,9 @@ private:
 	int _sideMonsters;
 	int _mazeDataIndex;
 
+	/**
+	 * Load the events for a new map
+	 */
 	void loadEvents(int mapId);
 public:
 	Common::String _mazeName;

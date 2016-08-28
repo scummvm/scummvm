@@ -295,9 +295,6 @@ void PartyDialog::setupBackground() {
 	_vm->_interface->assembleBorder();
 }
 
-/**
- * Sets up the faces from the avaialble roster for display in the party dialog
- */
 void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	Party &party = *_vm->_party;
 	Common::String charNames[4];
@@ -765,10 +762,6 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	return result == -1 ? 0 : result;
 }
 
-/**
- * Roll up some random values for the attributes, and return both them as
- * well as a list of classes that the attributes meet the requirements for
- */
 void PartyDialog::throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]) {
 	bool repeat = true;
 	do {
@@ -793,10 +786,6 @@ void PartyDialog::throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[
 	} while (repeat);
 }
 
-/**
- * Set a list of flags for which classes the passed attribute set meet the
- * minimum requirements of
- */
 void PartyDialog::checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]) {
 	allowedClasses[CLASS_KNIGHT] = attribs[MIGHT] >= 15;
 	allowedClasses[CLASS_PALADIN] = attribs[MIGHT] >= 13
@@ -812,9 +801,6 @@ void PartyDialog::checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedC
 		&& attribs[ENDURANCE] >= 12 && attribs[SPEED] >= 12;
 }
 
-/**
- * Return details of the generated character
- */
 int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId, 
 		int selectedClass, Common::String &msg) {
@@ -863,9 +849,6 @@ int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 	return classId == -1 ? foundClass : selectedClass;
 }
 
-/**
- * Print the selection arrow to indicate the selected class
- */
 void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) {
 	Window &w = _vm->_screen->_windows[0];
 	icons.draw(w, 61, Common::Point(220, 19));
@@ -873,9 +856,6 @@ void PartyDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) 
 	w.update();
 }
 
-/**
- * Print the dice animation
- */
 void PartyDialog::drawDice(SpriteResource &dice) {
 	EventsManager &events = *_vm->_events;
 	Window &w = _vm->_screen->_windows[32];
@@ -911,9 +891,6 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 	checkEvents(_vm);
 }
 
-/**
- * Exchanging two attributes for the character being rolled
- */
 int PartyDialog::exchangeAttribute(int srcAttr) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -989,9 +966,6 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 	return result;
 }
 
-/**
- * Saves the rolled character into the roster
- */
 bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
 		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
 	if (classId == -1) {

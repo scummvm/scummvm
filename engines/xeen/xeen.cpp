@@ -271,9 +271,6 @@ void XeenEngine::showMainMenu() {
 	//OptionsMenu::show(this);
 }
 
-/**
- * Main method for playing the game
- */
 void XeenEngine::playGame() {
 	_saves->reset();
 	play();

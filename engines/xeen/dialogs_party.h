@@ -52,6 +52,9 @@ private:
 
 	void setupBackground();
 
+	/**
+	 * Sets up the faces from the avaialble roster for display in the party dialog
+	 */
 	void setupFaces(int firstDisplayChar, bool updateFlag);
 
 	void startingCharChanged(int firstDisplayChar);
@@ -60,20 +63,43 @@ private:
 
 	int selectCharacter(bool isDelete, int firstDisplayChar);
 
+	/**
+	 * Roll up some random values for the attributes, and return both them as
+	 * well as a list of classes that the attributes meet the requirements for
+	 */
 	void throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
 
+	/**
+	 * Set a list of flags for which classes the passed attribute set meet the
+	 * minimum requirements of
+	 */
 	void checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
 
+	/**
+	 * Return details of the generated character
+	 */
 	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES], 
 		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
 		int selectedClass, Common::String &msg);
 
+	/**
+	 * Print the selection arrow to indicate the selected class
+	 */
 	void printSelectionArrow(SpriteResource &icons, int selectedClass);
 
+	/**
+	 * Print the dice animation
+	 */
 	void drawDice(SpriteResource &dice);
 
+	/**
+	 * Exchanging two attributes for the character being rolled
+	 */
 	int exchangeAttribute(int srcAttr);
 
+	/**
+	 * Saves the rolled character into the roster
+	 */
 	bool saveCharacter(Character &c, CharacterClass classId, Race race,
 		Sex sex, uint attribs[TOTAL_ATTRIBUTES]);
 public:

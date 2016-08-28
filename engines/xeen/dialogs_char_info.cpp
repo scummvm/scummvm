@@ -213,9 +213,6 @@ exit:
 	_vm->_combat->_itemFlag = false;
 }
 
-/**
- * Load the draw structure list with frame numbers and positions
- */
 void CharacterInfo::loadDrawStructs() {
 	_drawList[0] = DrawStruct(0, 2, 16);
 	_drawList[1] = DrawStruct(2, 2, 39);
@@ -247,9 +244,6 @@ void CharacterInfo::loadDrawStructs() {
 		_drawList[idx]._sprites = &_iconSprites;
 }
 
-/**
- * Set up the button list for the dialog
- */
 void CharacterInfo::addButtons() {
 	addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
 	addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
@@ -278,9 +272,6 @@ void CharacterInfo::addButtons() {
 	addPartyButtons(_vm);
 }
 
-/**
- * Return a string containing the details of the character
- */
 Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	Condition condition = c.worstCondition();
 	Party &party = *_vm->_party;
@@ -324,9 +315,6 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 	);
 }
 
-/**
- * Cursor display handling
- */
 void CharacterInfo::showCursor(bool flag) {
 	Screen &screen = *_vm->_screen;
 	const int CURSOR_X[5] = { 9, 60, 111, 176, 0 };

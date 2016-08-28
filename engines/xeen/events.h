@@ -44,6 +44,9 @@ private:
 	Common::KeyCode _keyCode;
 	SpriteResource _sprites;
 
+	/**
+	 * Handles moving to the next game frame
+	 */
 	void nextFrame();
 public:
 	bool _leftButton, _rightButton;
@@ -53,12 +56,24 @@ public:
 
 	~EventsManager();
 
+	/*
+	 * Set the cursor
+	 */
 	void setCursor(int cursorId);
 
+	/**
+	 * Show the mouse cursor
+	 */
 	void showCursor();
 
+	/**
+	 * Hide the mouse cursor
+	 */
 	void hideCursor();
 
+	/**
+	 * Returns if the mouse cursor is visible
+	 */
 	bool isCursorVisible();
 
 	void pollEvents();
@@ -73,6 +88,9 @@ public:
 
 	bool isKeyPending() const;
 
+	/**
+	 * Returns true if a key or mouse press is pending
+	 */
 	bool isKeyMousePressed();
 
 	void updateGameCounter() { _gameCounter = _frameCounter; }

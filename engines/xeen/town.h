@@ -104,6 +104,9 @@ public:
 
 	void drawTownAnim(bool flag);
 
+	/**
+	 * Returns true if a town location (bank, blacksmith, etc.) is currently active
+	 */
 	bool isActive() const;
 
 	void clearSprites();

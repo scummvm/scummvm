@@ -161,24 +161,15 @@ void Window::close() {
 	}
 }
 
-/**
- * Update the window
- */
 void Window::update() {
 	// Since all window drawing is done on the screen surface anyway,
 	// there's nothing that needs to be updated here
 }
 
-/**
- * Adds an area that requires redrawing on the next frame update
- */
 void Window::addDirtyRect(const Common::Rect &r) {
 	_vm->_screen->addDirtyRect(r);
 }
 
-/**
- * Fill the content area of a window with the current background color 
- */
 void Window::fill() {
 	fillRect(_innerBounds, _vm->_screen->_bgColor);
 }
@@ -202,9 +193,6 @@ void Window::drawList(DrawStruct *items, int count) {
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Constructor
- */
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
 	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -337,18 +325,12 @@ bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, co
 	return !destRect.isEmpty();
 }
 
-/**
- * Load a palette resource into the temporary palette
- */
 void Screen::loadPalette(const Common::String &name) {
 	File f(name);
 	for (int i = 0; i < PALETTE_SIZE; ++i)
 		_tempPalette[i] = f.readByte() << 2;
 }
 
-/**
- * Load a background resource into memory
- */
 void Screen::loadBackground(const Common::String &name) {
 	File f(name);
 
@@ -357,9 +339,6 @@ void Screen::loadBackground(const Common::String &name) {
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
 
-/**
- * Copy a loaded background into a display page
- */
 void Screen::loadPage(int pageNum) {
 	assert(pageNum == 0 || pageNum == 1);
 	if (_pages[0].empty()) {
@@ -375,9 +354,6 @@ void Screen::freePages() {
 	_pages[1].free();
 }
 
-/**
- * Merge the two pages along a horizontal split point
- */
 void Screen::horizMerge(int xp) {
 	if (_pages[0].empty())
 		return;
@@ -394,9 +370,6 @@ void Screen::horizMerge(int xp) {
 	}
 }
 
-/**
- * Merge the two pages along a vertical split point
- */
 void Screen::vertMerge(int yp) {
 	if (_pages[0].empty())
 		return;
@@ -420,9 +393,6 @@ void Screen::draw(void *data) {
 	drawScreen();
 }
 
-/**
- * Mark the entire screen for drawing
- */
 void Screen::drawScreen() {
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }

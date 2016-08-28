@@ -48,6 +48,9 @@ private:
 	bool _lineDist[320];
 	int _scaledWidth, _scaledHeight;
 
+	/**
+	 * Load a sprite resource from a stream
+	 */
 	void load(Common::SeekableReadStream &f);
 
 	/**
@@ -72,12 +75,24 @@ public:
 
 	virtual ~SpriteResource();
 
+	/**
+	 * Copy operator for duplicating a sprite resource
+	 */
 	SpriteResource &operator=(const SpriteResource &src);
 
+	/**
+	 * Load a sprite resource from a given file
+	 */
 	void load(const Common::String &filename);
 
+	/**
+	 * Load a sprite resource from a given file and archive
+	 */
 	void load(const Common::String &filename, Common::Archive &archive);
 
+	/**
+	 * Clears the sprite resource
+	 */
 	void clear();
 
 	void draw(XSurface &dest, int frame, const Common::Point &destPos, 

@@ -35,9 +35,6 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 	return result;
 }
 
-/**
- * Allows the user to enter a string
- */
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
 	_vm->_noDirectionSense = true;
 	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x0""c", maxWidth);
@@ -75,9 +72,6 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	return line.size();
 }
 
-/**
- * Draws the cursor and waits until the user presses a key
- */
 Common::KeyCode Input::doCursor(const Common::String &msg) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;

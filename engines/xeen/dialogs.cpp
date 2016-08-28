@@ -29,9 +29,6 @@
 
 namespace Xeen {
 
-/**
- * Saves the current list of buttons
- */
 void ButtonContainer::saveButtons() {
 	_savedButtons.push(_buttons);
 	clearButtons();
@@ -100,10 +97,6 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	return false;
 }
 
-
-/**
-* Draws the scroll in the background
-*/
 void ButtonContainer::doScroll(XeenEngine *vm, bool drawFlag, bool doFade) {
 	Screen &screen = *vm->_screen;
 	EventsManager &events = *vm->_events;
@@ -205,9 +198,6 @@ void ButtonContainer::doScroll(XeenEngine *vm, bool drawFlag, bool doFade) {
 		delete hand[i];
 }
 
-/**
- * Draws the buttons onto the passed surface
- */
 void ButtonContainer::drawButtons(XSurface *surface) {
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		UIButton &btn = _buttons[btnIndex];

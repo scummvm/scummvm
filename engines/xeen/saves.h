@@ -64,6 +64,9 @@ private:
 
 	void load(Common::SeekableReadStream *stream);
 public:
+	/**
+	 * Synchronizes a boolean array as a bitfield set
+	 */
 	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
 public:
 	bool _wonWorld;
@@ -73,6 +76,9 @@ public:
 
 	~SavesManager();
 
+	/**
+	 * Sets up the dynamic data for the game for a new game
+	 */
 	void reset();
 
 	void readCharFile();

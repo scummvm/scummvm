@@ -38,16 +38,34 @@ private:
 	const char *_displayString;
 	bool _msgWraps;
 
+	/**
+	 * Return the next pending character to display
+	 */
 	char getNextChar();
 
+	/**
+	 * Return the width of a given character
+	 */
 	bool getNextCharWidth(int &total);
 
+	/**
+	 * Handles moving to the next line of the given bounded area
+	 */
 	bool newLine(const Common::Rect &bounds);
 
+	/**
+	 * Extract a number of a given maximum length from the string
+	 */
 	int fontAtoi(int len = 3);
 
+	/**
+	 * Set the text colors based on the specified index in the master text colors list
+	 */
 	void setTextColor(int idx);
 
+	/**
+	 * Wrie a character to the surface
+	 */
 	void writeChar(char c, const Common::Rect &clipRect);
 public:
 	const byte *_fontData;
@@ -61,8 +79,20 @@ public:
 	FontSurface(int wv, int hv);
 	virtual ~FontSurface() {}
 
+	/**
+	 * Draws a symbol to the surface.
+	 * @param symbolId	Symbol number from 0 to 19
+	 */
 	void writeSymbol(int symbolId);
 
+	/**
+	 * Write a string to the surface
+	 * @param s			String to display
+	 * @param clipRect	Window bounds to display string within
+	 * @returns			Any string remainder that couldn't be displayed
+	 * @remarks		Note that bounds is just used for wrapping purposes. Unless
+	 *		justification is set, the message will be written at _writePos
+	 */
 	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
 };
 

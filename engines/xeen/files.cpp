@@ -29,9 +29,6 @@
 
 namespace Xeen {
 
-/**
-* Hash a given filename to produce the Id that represents it
-*/
 uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
 	if (resourceName.empty())
 		return 0xffff;
@@ -57,9 +54,6 @@ uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
 	return total;
 }
 
-/**
-* Load the index of a given CC file
-*/
 void BaseCCArchive::loadIndex(Common::SeekableReadStream *stream) {
 	int count = stream->readUint16LE();
 
@@ -95,10 +89,6 @@ bool BaseCCArchive::hasFile(const Common::String &name) const {
 	return getHeaderEntry(name, ccEntry);
 }
 
-/**
-* Given a resource name, returns whether an entry exists, and returns
-* the header index data for that entry
-*/
 bool BaseCCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
 	uint16 id = convertNameToId(resourceName);
 
@@ -193,9 +183,6 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Instantiates the resource manager
- */
 FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 	int sideNum = 0;
@@ -219,9 +206,6 @@ FileManager::FileManager(XeenEngine *vm) {
 
 /*------------------------------------------------------------------------*/
 
-/**
- * Opens the given file, throwing an error if it can't be opened
- */
 void File::openFile(const Common::String &filename) {
 	if (!Common::File::open(filename))
 		error("Could not open file - %s", filename.c_str());

@@ -69,6 +69,9 @@ private:
 
 	void executeSpell(MagicSpell spellId);
 
+	/**
+	 * Spell being cast failed
+	 */
 	void spellFailed();
 
 	// Spell list
@@ -160,12 +163,26 @@ public:
 
 	int calcSpellPoints(int spellId, int expenseFactor) const;
 
+	/**
+	 * Cast a spell associated with an item
+	 */
 	void castItemSpell(int itemSpellId);
 
+	/**
+	 * Cast a given spell
+	 */
 	int castSpell(Character *c, MagicSpell spellId);
 
+	/**
+	 * Subtract the requirements for a given spell if available, returning
+	 * true if there was sufficient
+	 */
 	int subSpellCost(Character &c, int spellId);
 
+	/**
+	 * Add the SP and gem requirements for a given spell to the given
+	 * character and party
+	 */
 	void addSpellCost(Character &c, int spellId);
 };
 

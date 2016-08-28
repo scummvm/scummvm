@@ -31,9 +31,6 @@
 
 namespace Xeen {
 
-/**
- * Constructor
- */
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
 		_priorGameCounterTime(0), _keyCode(Common::KEYCODE_INVALID),
@@ -42,15 +39,9 @@ EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 
-/**
- * Destructor
- */
 EventsManager::~EventsManager() {
 }
 
-/*
- * Set the cursor
- */
 void EventsManager::setCursor(int cursorId) {
 	XSurface cursor;
 	_sprites.draw(cursor, cursorId);
@@ -59,23 +50,14 @@ void EventsManager::setCursor(int cursorId) {
 	showCursor();
 }
 
-/**
- * Show the mouse cursor
- */
 void EventsManager::showCursor() {
 	CursorMan.showMouse(true);
 }
 
-/**
- * Hide the mouse cursor
- */
 void EventsManager::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-/**
- * Returns if the mouse cursor is visible
- */
 bool EventsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
@@ -154,9 +136,6 @@ bool EventsManager::isKeyPending() const {
 	return _keyCode != Common::KEYCODE_INVALID;
 }
 
-/**
- * Returns true if a key or mouse press is pending
- */
 bool EventsManager::isKeyMousePressed() {
 	bool result = _leftButton || _rightButton || isKeyPending();
 	debounceMouse();
@@ -183,9 +162,6 @@ void EventsManager::ipause(uint amount) {
 	} while (!_vm->shouldQuit() && timeElapsed() < amount);
 }
 
-/**
- * Handles moving to the next game frame
- */
 void EventsManager::nextFrame() {
 	++_frameCounter;
 

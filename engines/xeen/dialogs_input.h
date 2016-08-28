@@ -31,11 +31,17 @@ namespace Xeen {
 
 class Input : public ButtonContainer {
 private:
+	/**
+	 * Draws the cursor and waits until the user presses a key
+	 */
 	Common::KeyCode doCursor(const Common::String &msg);
 protected:
 	XeenEngine *_vm;
 	Window *_window;
 
+	/**
+	 * Allows the user to enter a string
+	 */
 	int getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric);
 
 	Input(XeenEngine *vm, Window *window) : _vm(vm), _window(window) {}

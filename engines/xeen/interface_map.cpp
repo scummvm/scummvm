@@ -690,10 +690,6 @@ void InterfaceMap::drawMap() {
 	animate3d();
 }
 
-/**
- * Handles animation of monsters, wall items, and combat within the 3d
- * view by cycling the appropriate frame numbers
- */
 void InterfaceMap::animate3d() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
@@ -2304,9 +2300,6 @@ void InterfaceMap::setMazeBits() {
 	}
 }
 
-/**
- * Set up draw structures for displaying on-screen monsters
- */
 void InterfaceMap::setIndoorsMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
@@ -2616,10 +2609,6 @@ void InterfaceMap::setIndoorsMonsters() {
 	}
 }
 
-/**
- * Helper method for setIndoorsMonsters to set a draw structure
- * with the deatils for a given monster
- */
 void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites, 
 		int frame, int defaultY) {
 	MonsterStruct &monsterData = *monster._monsterData;
@@ -2641,9 +2630,6 @@ void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster
 		drawStruct._flags = MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 }
 
-/**
- * Set up draw structures for displaying on-screen objects
- */
 void InterfaceMap::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
@@ -2869,9 +2855,6 @@ void InterfaceMap::setIndoorsObjects() {
 	}
 }
 
-/**
- * Set up draw structures for displaying on-screen wall items
- */
 void InterfaceMap::setIndoorsWallPics() {
 	Map &map = *_vm->_map;
 	const Common::Point &mazePos = _vm->_party->_mazePosition;
@@ -3098,9 +3081,6 @@ void InterfaceMap::setIndoorsWallPics() {
 	}
 }
 
-/**
- * Set up the draw structures for displaying monsters on outdoor maps
- */
 void InterfaceMap::setOutdoorsMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
@@ -3354,9 +3334,6 @@ void InterfaceMap::setOutdoorsMonsters() {
 	// TODO
 }
 
-/**
- * Set up the draw structures for displaying objects on outdoor maps
- */
 void InterfaceMap::setOutdoorsObjects() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -3544,9 +3521,6 @@ void InterfaceMap::setOutdoorsObjects() {
 	}
 }
 
-/**
- * Draw the contents of the current 3d view of an indoor map
- */
 void InterfaceMap::drawIndoors() {
 	Map &map = *_vm->_map;
 	int surfaceId;
@@ -4393,9 +4367,6 @@ void InterfaceMap::drawIndoors() {
 	_charsShooting = _isAttacking;
 }
 
-/**
- * Draw the contents of the current 3d view of an outdoor map
- */
 void InterfaceMap::drawOutdoors() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;

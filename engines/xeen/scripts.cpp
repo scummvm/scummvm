@@ -316,9 +316,6 @@ void Scripts::openGrate(int wallVal, int action) {
 
 typedef void(Scripts::*ScriptMethodPtr)(Common::Array<byte> &);
 
-/**
- * Handles executing a given script command
- */
 void Scripts::doOpcode(MazeEvent &event) {
 	static const ScriptMethodPtr COMMAND_LIST[] = {
 		nullptr, &Scripts::cmdDisplay1, &Scripts::cmdDoorTextSml,
@@ -349,9 +346,6 @@ void Scripts::doOpcode(MazeEvent &event) {
 	(this->*COMMAND_LIST[event._opcode])(event._parameters);
 }
 
-/**
- * Display a msesage on-screen
- */
 void Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	Screen &screen = *_vm->_screen;
 	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
@@ -366,9 +360,6 @@ void Scripts::cmdDisplay1(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Displays a door text message using the small font
- */
 void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
@@ -381,9 +372,6 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Displays a door text message using the large font
- */
 void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
@@ -396,9 +384,6 @@ void Scripts::cmdDoorTextLrg(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Show a sign text on-screen
- */
 void Scripts::cmdSignText(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
@@ -421,9 +406,6 @@ void Scripts::cmdNPC(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Play a sound FX
- */
 void Scripts::cmdPlayFX(Common::Array<byte> &params) {
 	_vm->_sound->playFX(params[0]);
 
@@ -496,9 +478,6 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
 	}
 }
 
-/**
- * Do a conditional check
- */
 void Scripts::cmdIf(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
 	uint32 mask;
@@ -542,9 +521,6 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Moves the position of an object
- */
 void Scripts::cmdMoveObj(Common::Array<byte> &params) { 
 	MazeObject &mazeObj = _vm->_map->_mobData._objects[params[0]];
 
@@ -765,9 +741,6 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Move to the next line of the script
- */
 void Scripts::cmdNoAction(Common::Array<byte> &params) {
 	// Move to next line
 	_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
@@ -786,9 +759,6 @@ void Scripts::cmdRemove(Common::Array<byte> &params) {
 	cmdMakeNothingHere(params);
 }
 
-/**
- * Set the currently active character for other script operations
- */
 void Scripts::cmdSetChar(Common::Array<byte> &params) { 
 	if (params[0] != 7) {
 		_charIndex = WhoWill::show(_vm, 22, 3, false);
@@ -804,9 +774,6 @@ void Scripts::cmdSetChar(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Spawn a monster
- */
 void Scripts::cmdSpawn(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	if (params[0] >= map._mobData._monsters.size())
@@ -833,16 +800,10 @@ void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
 	cmdExit(params);
 }
 
-/**
- * Stop executing the script
- */
 void Scripts::cmdExit(Common::Array<byte> &params) { 
 	_lineNum = -1;
 }
 
-/**
- * Changes the value for the wall on a given cell
- */
 void Scripts::cmdAlterMap(Common::Array<byte> &params) { 
 	Map &map = *_vm->_map;
 
@@ -970,9 +931,6 @@ void Scripts::cmdDamage(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Jump if a random number matches a given value
- */
 void Scripts::cmdJumpRnd(Common::Array<byte> &params) {
 	int v = _vm->getRandomNumber(1, params[0]);
 	if (v == params[1])
@@ -981,9 +939,6 @@ void Scripts::cmdJumpRnd(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Alter an existing event
- */
 void Scripts::cmdAlterEvent(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1000,10 +955,6 @@ void Scripts::cmdAlterEvent(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Stores the current location and line for later resuming, and set up to execute
- * a script at a given location
- */
 void Scripts::cmdCallEvent(Common::Array<byte> &params) { 
 	_stack.push(StackEntry(_currentPos, _lineNum));
 	_currentPos = Common::Point(params[0], params[1]);
@@ -1012,10 +963,6 @@ void Scripts::cmdCallEvent(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Return from executing a script to the script location that previously 
- * called the script
- */
 void Scripts::cmdReturn(Common::Array<byte> &params) {
 	StackEntry &se = _stack.top();
 	_currentPos = se;
@@ -1245,9 +1192,6 @@ void Scripts::cmdItemType(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Disable all the scripts at the party's current position
- */
 void Scripts::cmdMakeNothingHere(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1270,10 +1214,6 @@ void Scripts::cmdCheckProtection(Common::Array<byte> &params) {
 		cmdExit(params);
 }
 
-/**
- * Given a number of options, and a list of line numbers associated with
- * those options, jumps to whichever line for the option the user selects
- */
 void Scripts::cmdChooseNumeric(Common::Array<byte> &params) {
 	int choice = Choose123::show(_vm, params[0]);
 	if (choice) {
@@ -1305,9 +1245,6 @@ void Scripts::cmdDisplayLarge(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Exchange the positions of two objects in the maze
- */
 void Scripts::cmdExchObj(Common::Array<byte> &params) {
 	MazeObject &obj1 = _vm->_map->_mobData._objects[params[0]];
 	MazeObject &obj2 = _vm->_map->_mobData._objects[params[1]];
@@ -1335,11 +1272,6 @@ void Scripts::cmdDisplayMain(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Jumps to a given line number if the surface at relative cell position 1 matches
- * a specified surface.
- * @remarks		This opcode is apparently never actually used
- */
 void Scripts::cmdGoto(Common::Array<byte> &params) { 
 	Map &map = *_vm->_map;
 	map.getCell(1);
@@ -1349,9 +1281,6 @@ void Scripts::cmdGoto(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-/**
- * Pick a random value from the parameter list and jump to that line number
- */
 void Scripts::cmdGotoRandom(Common::Array<byte> &params) { 
 	_lineNum = params[_vm->getRandomNumber(1, params[0])] - 1;
 	cmdNoAction(params);
@@ -1414,9 +1343,6 @@ void Scripts::doEnding(const Common::String &endStr, int v2) {
 	warning("TODO: doEnding");
 }
 
-/**
- * This monstrosity handles doing the various types of If checks on various data
- */
 bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 	Party &party = *_vm->_party;
 	Character &ps = party._activeParty[charIndex];

@@ -88,16 +88,10 @@ void Spells::executeSpell(MagicSpell spellId) {
 	(this->*SPELL_LIST[spellId])();
 }
 
-/**
- * Spell being cast failed
- */
 void Spells::spellFailed() {
 	ErrorScroll::show(_vm, SPELL_FAILED, WT_NONFREEZED_WAIT);
 }
 
-/**
- * Cast a spell associated with an item
- */
 void Spells::castItemSpell(int itemSpellId) {
 	switch (itemSpellId) {
 	case 15:
@@ -170,9 +164,6 @@ void Spells::castItemSpell(int itemSpellId) {
 	executeSpell(spells[itemSpellId]);
 }
 
-/**
- * Cast a given spell
- */
 int Spells::castSpell(Character *c, MagicSpell spellId) {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
@@ -217,10 +208,6 @@ int Spells::castSpell(Character *c, MagicSpell spellId) {
 	return result;
 }
 
-/**
- * Subtract the requirements for a given spell if available, returning
- * true if there was sufficient
- */
 int Spells::subSpellCost(Character &c, int spellId) {
 	Party &party = *_vm->_party;
 	int gemCost = SPELL_GEM_COST[spellId];
@@ -243,10 +230,6 @@ int Spells::subSpellCost(Character &c, int spellId) {
 	return 0;
 }
 
-/**
- * Add the SP and gem requirements for a given spell to the given 
- * character and party
- */
 void Spells::addSpellCost(Character &c, int spellId) {
 	Party &party = *_vm->_party;
 	int gemCost = SPELL_GEM_COST[spellId];

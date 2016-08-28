@@ -124,24 +124,42 @@ public:
 
 	void clear();
 
+	/**
+	 * Return whether a given item passes class-based usage restrictions
+	 */
 	bool passRestrictions(int itemId, bool showError) const;
 
+	/**
+	 * Return the bare name of a given inventory item
+	 */
 	Common::String getName(int itemIndex);
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum = 15) = 0;
 
 	Common::String getIdentifiedDetails(int itemIndex);
 
+	/**
+	 * Discard an item from the inventory
+	 */
 	bool discardItem(int itemIndex);
 
 	virtual void equipItem(int itemIndex) {}
 
+	/**
+	 * Un-equips the given item
+	 */
 	void removeItem(int itemIndex);
 
+	/**
+	 * Sorts the items list, removing any empty item slots to the end of the array
+	 */
 	void sort();
 
 	virtual void enchantItem(int itemIndex, int amount);
 
+	/**
+	 * Return if the given inventory items list is full
+	 */
 	bool isFull() const;
 };
 
@@ -152,8 +170,15 @@ public:
 	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
 	virtual ~WeaponItems() {}
 
+	/**
+	 * Equip a given weapon
+	 */
 	virtual void equipItem(int itemIndex);
 
+	/**
+	 * Assembles a full lines description for a specified item for use in
+	 * the Items dialog
+	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 
 	virtual void enchantItem(int itemIndex, int amount);
@@ -166,8 +191,15 @@ public:
 	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
 	virtual ~ArmorItems() {}
 
+	/**
+	 * Equip a given piece of armor
+	 */
 	virtual void equipItem(int itemIndex);
 
+	/**
+	 * Assembles a full lines description for a specified item for use in
+	 * the Items dialog
+	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 
 	virtual void enchantItem(int itemIndex, int amount);
@@ -179,8 +211,15 @@ protected:
 public:
 	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
 
+	/**
+	 * Equip a given accessory
+	 */
 	virtual void equipItem(int itemIndex);
 
+	/**
+	 * Assembles a full lines description for a specified item for use in
+	 * the Items dialog
+	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
@@ -191,6 +230,10 @@ public:
 	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
 	virtual ~MiscItems() {}
 
+	/**
+	 * Assembles a full lines description for a specified item for use in
+	 * the Items dialog
+	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };
 
@@ -203,6 +246,9 @@ public:
 
 	InventoryItems &operator[](ItemCategory category);
 
+	/**
+	 * Breaks all the items in a given character's inventory
+	 */
 	void breakAllItems();
 };
 
@@ -218,6 +264,9 @@ public:
 
 class Character {
 private:
+	/**
+	 * Modifies a passed attribute value based on player's condition
+	 */
 	int conditionMod(Attribute attrib) const;
 public:
 	Common::String _name;
@@ -275,22 +324,44 @@ public:
 
 	void synchronize(Common::Serializer &s);
 
+	/**
+	 * Returns the worst condition the character is suffering from
+	 */
 	Condition worstCondition() const;
 
+	/**
+	 * Returns whether the given character has a disabling condition, but still alive
+	 */
 	bool isDisabled() const;
 
+	/**
+	 * Returns whether the given character has a disabling condition, or is dead
+	 */
 	bool isDisabledOrDead() const;
 
+	/**
+	 * Returns whether the given character has a dead condition
+	 */
 	bool isDead() const;
 
+	/**
+	 * Get the character's age
+	 */
 	int getAge(bool ignoreTemp = false) const;
 
 	int getMaxHP() const;
 
 	int getMaxSP() const;
 
+	/**
+	 * Get the effective value of a given stat for the character
+	 */
 	uint getStat(Attribute attrib, bool baseOnly = false) const;
 
+	/**
+	 * Return the color number to use for a given stat value in the character
+	 * info or quick reference dialogs
+	 */
 	static int statColor(int amount, int threshold);
 
 	int statBonus(uint statValue) const;
@@ -305,6 +376,9 @@ public:
 
 	int getArmorClass(bool baseOnly = false) const;
 
+	/**
+	 * Returns the thievery skill level, adjusted by class and race
+	 */
 	int getThievery() const;
 
 	uint getCurrentLevel() const;
@@ -327,8 +401,14 @@ public:
 
 	int makeItem(int p1, int itemIndex, int p3);
 
+	/**
+	 * Add hit points to a character
+	 */
 	void addHitPoints(int amount);
 
+	/**
+	 * Remove hit points fromo the character
+	 */
 	void subtractHitPoints(int amount);
 
 	bool hasSpecialItem() const;

@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	dialogs.o \
-	automap.o \
 	dialogs_automap.o \
 	dialogs_char_info.o \
 	dialogs_control_panel.o \

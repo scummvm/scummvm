@@ -86,10 +86,16 @@ public:
 
 	void close();
 
+	/**
+	 * Update the window
+	 */
 	void update();
 
 	void frame();
 
+	/**
+	 * Fill the content area of a window with the current background color 
+	 */
 	void fill();
 
 	const char *writeString(const Common::String &s);
@@ -113,6 +119,9 @@ private:
 
 	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 
+	/**
+	 * Mark the entire screen for drawing
+	 */
 	void drawScreen();
 
 	void fadeInner(int step);
@@ -121,6 +130,9 @@ private:
 
 	void updatePalette(const byte *pal, int start, int count16);
 public:
+	/**
+	 * Adds an area that requires redrawing on the next frame update
+	 */
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Common::Array<Window> _windows;
@@ -137,16 +149,31 @@ public:
 
 	void update();
 
+	/**
+	 * Load a palette resource into the temporary palette
+	 */
 	void loadPalette(const Common::String &name);
 
+	/**
+	 * Load a background resource into memory
+	 */
 	void loadBackground(const Common::String &name);
 
+	/**
+	 * Copy a loaded background into a display page
+	 */
 	void loadPage(int pageNum);
 
 	void freePages();
 
+	/**
+	 * Merge the two pages along a horizontal split point
+	 */
 	void horizMerge(int xp);
 
+	/**
+	 * Merge the two pages along a vertical split point
+	 */
 	void vertMerge(int yp);
 
 	void draw(void *data = nullptr);
