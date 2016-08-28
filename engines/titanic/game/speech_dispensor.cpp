@@ -24,15 +24,26 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSpeechDispensor, CBackground)
+	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(ChangeSeasonMsg)
+END_MESSAGE_MAP()
+
+CSpeechDispensor::CSpeechDispensor() : CBackground(), _dragItem(nullptr),
+		_fieldE0(0), _state(0), _fieldEC(0), _fieldF8(0), _seasonNum(SEASON_SUMMER) {
+}
+
 void CSpeechDispensor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
-	file->writeNumberLine(_fieldF4, indent);
+	file->writeNumberLine(_itemPos.x, indent);
+	file->writeNumberLine(_itemPos.y, indent);
 	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_seasonNum, indent);
 
 	CBackground::save(file, indent);
 }
@@ -40,14 +51,92 @@ void CSpeechDispensor::save(SimpleFile *file, int indent) {
 void CSpeechDispensor::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_state = file->readNumber();
 	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
-	_fieldF4 = file->readNumber();
+	_itemPos.x = file->readNumber();
+	_itemPos.y = file->readNumber();
 	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
+	_seasonNum = (Season)file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
+	if (_fieldEC || _seasonNum == 0 || _seasonNum == 3)
+		return true;
+
+	CGameObject *dragObject = getDraggingObject();
+	if (!_dragItem && dragObject && getView() == findView()) {
+		if (dragObject->isEquals("Perch")) {
+			petDisplayMessage(1, "This stick is too short to reach the branches.");
+			return true;
+		}
+
+		if (dragObject->isEquals("LongStick"))
+			_dragItem = dragObject;
+	}
+
+	if (_dragItem) {
+		Point pt(_itemPos.x + _dragItem->_bounds.left,
+			_itemPos.y + _dragItem->_bounds.top);
+		bool flag = checkPoint(pt, true);
+
+		switch (_state) {
+		case 0:
+			playSound("z#93.wav");
+			if (_seasonNum == SEASON_WINTER) {
+				petDisplayMessage(1, "You cannot get this, it is frozen to the branch.");
+				_fieldE0 = false;
+				_state = 1;
+			} else {
+				if (++_fieldE0 >= 5) {
+					CActMsg actMsg("PlayerGetsSpeechCentre");
+					actMsg.execute("SeasonalAdjust");
+					CSpeechFallsFromTreeMsg fallMsg(pt);
+					fallMsg.execute("SpeechCentre");
+
+					_fieldEC = true;
+					_fieldE0 = false;
+				}
+
+				_state = 1;
+			}
+			break;
+
+		case 2:
+			_state = 0;
+			++_fieldE0;
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool CSpeechDispensor::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (!_fieldEC) {
+		playSound("z#93.wav");
+		if (_fieldF8) {
+			petDisplayMessage(1, "Sadly, this is out of your reach.");
+		} else {
+			petDisplayMessage(1, "You can't pick this up on account of it being stuck to the branch.");
+		}
+	}
+
+	return true;
+}
+
+bool CSpeechDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_fieldF8 = msg->_newStatus == 1;
+	return true;
+}
+
+bool CSpeechDispensor::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_seasonNum = (Season)(((int)_seasonNum + 1) % 4);
+	return true;
 }
 
 } // End of namespace Titanic

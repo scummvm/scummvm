@@ -24,25 +24,69 @@
 
 namespace Titanic {
 
-CShipSettingButton::CShipSettingButton() : CGameObject(), _fieldC8(0), _fieldCC(0) {
+BEGIN_MESSAGE_MAP(CShipSettingButton, CGameObject)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
+CShipSettingButton::CShipSettingButton() : CGameObject(), _pressed(false), _enabled(false) {
 }
 
 void CShipSettingButton::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
+	file->writeQuotedLine(_target, indent);
+	file->writeNumberLine(_pressed, indent);
+	file->writeNumberLine(_enabled, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CShipSettingButton::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
+	_target = file->readString();
+	_pressed = file->readNumber();
+	_enabled = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CShipSettingButton::TurnOn(CTurnOn *msg) {
+	_pressed = true;
+	return true;
+}
+
+bool CShipSettingButton::TurnOff(CTurnOff *msg) {
+	_pressed = false;
+	return true;
+}
+
+bool CShipSettingButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_pressed) {
+		if (_enabled)
+			playMovie(8, 16, 0);
+		else
+			playMovie(0, 8, 0);
+
+		_enabled = !_enabled;
+		CActMsg actMsg(_enabled ? "EnableObject" : "DisableObject");
+		actMsg.execute(_target);
+	} else {
+		if (_enabled) {
+			playMovie(8, 16, 0);
+			playMovie(0, 8, 0);
+		} else {
+			playMovie(0, 16, 0);
+		}
+	}
+
+	return true;
+}
+
+bool CShipSettingButton::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(_enabled ? 8 : 16);
+	return true;
 }
 
 } // End of namespace Titanic

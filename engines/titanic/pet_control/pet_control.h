@@ -358,9 +358,7 @@ public:
 	/**
 	 * Sets the active NPC
 	 */
-	void setActiveNPC(const CString &name) {
-		_conversations.setActiveNPC(name);
-	}
+	void setActiveNPC(const CString &name);
 
 	/**
 	 * Sets the actie NPC
@@ -387,7 +385,7 @@ public:
 	/**
 	 * Resets the conversation dials back to 0 position
 	 */
-	void resetDials0() { _conversations.resetDials0(); }
+	void resetDials0();
 
 	/**
 	 * Resets the dial display in the conversation tab to reflect new values

@@ -28,6 +28,12 @@
 namespace Titanic {
 
 class CSliderButton : public CSTButton {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
 	int _field114;
 	int _field118;

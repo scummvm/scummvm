@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CSUBWrapper : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool SignalObject(CSignalObject *msg);
 public:
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CSUBWrapper() : CGameObject(), _value(0) {}
+	CSUBWrapper() : CGameObject(), _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

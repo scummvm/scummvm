@@ -24,10 +24,17 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSpeechCentre, CBrain)
+	ON_MESSAGE(PuzzleSolvedMsg)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(SpeechFallsFromTreeMsg)
+	ON_MESSAGE(FrameMsg)
+END_MESSAGE_MAP()
+
 void CSpeechCentre::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_field13C, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_season, indent);
 	file->writeNumberLine(_field14C, indent);
 
 	CBrain::save(file, indent);
@@ -36,10 +43,41 @@ void CSpeechCentre::save(SimpleFile *file, int indent) {
 void CSpeechCentre::load(SimpleFile *file) {
 	file->readNumber();
 	_field13C = file->readNumber();
-	_string1 = file->readString();
+	_season = file->readString();
 	_field14C = file->readNumber();
 
 	CBrain::load(file);
+}
+
+bool CSpeechCentre::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
+	if (_field13C == 1 && _season == "Autumn")
+		_fieldE0 = true;
+	return true;
+}
+
+bool CSpeechCentre::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	_season = msg->_season;
+	return true;
+}
+
+bool CSpeechCentre::SpeechFallsFromTreeMsg(CSpeechFallsFromTreeMsg *msg) {
+	setVisible(true);
+	dragMove(msg->_pos);
+	_field14C = true;
+	return true;
+}
+
+bool CSpeechCentre::FrameMsg(CFrameMsg *msg) {
+	if (_field14C) {
+		if (_bounds.top > 200)
+			_field14C = false;
+
+		makeDirty();
+		_bounds.top += 3;
+		makeDirty();
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

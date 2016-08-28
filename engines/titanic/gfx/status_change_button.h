@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CStatusChangeButton : public CSTButton {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	CLASSDEF;
 	CStatusChangeButton();

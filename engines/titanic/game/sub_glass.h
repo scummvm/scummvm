@@ -28,13 +28,19 @@
 namespace Titanic {
 
 class CSUBGlass : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool SignalObject(CSignalObject *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
 	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	int _fieldCC;
-	CString _string;
+	int _startFrame;
+	int _endFrame;
+	int _signalStartFrame;
+	int _signalEndFrame;
+	CString _target;
 public:
 	CLASSDEF;
 	CSUBGlass();

@@ -100,16 +100,6 @@ private:
 	void summonBot(const CString &name);
 
 	/**
-	 * Starts the NPC timer
-	 */
-	void startNPCTimer();
-
-	/**
-	 * Stops the NPC timer
-	 */
-	void stopNPCTimer();
-
-	/**
 	 * Get the TrueTalk script associated with a given NPC
 	 */
 	TTnpcScript *getNPCScript(const CString &name) const;
@@ -260,6 +250,16 @@ public:
 	 * Adds a line to the log
 	 */
 	void addLine(const CString &line);
+
+	/**
+	 * Starts the NPC timer
+	 */
+	void startNPCTimer();
+
+	/**
+	 * Stops the NPC timer
+	 */
+	void stopNPCTimer();
 };
 
 } // End of namespace Titanic

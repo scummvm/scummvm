@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CSweetBowl : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ActMsg(CActMsg *msg);
 public:
 	CLASSDEF;
 

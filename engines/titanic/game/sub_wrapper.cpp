@@ -24,16 +24,56 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSUBWrapper, CGameObject)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(SignalObject)
+END_MESSAGE_MAP()
+
 void CSUBWrapper::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CSUBWrapper::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CSUBWrapper::MovieEndMsg(CMovieEndMsg *msg) {
+	if (_flag) {
+		stopMovie();
+		setVisible(false);
+		_flag = false;
+	}
+
+	return true;
+}
+
+bool CSUBWrapper::SignalObject(CSignalObject *msg) {
+	switch (msg->_numValue) {
+	case 1:
+		if (!_flag) {
+			loadFrame(0);
+			setVisible(true);
+			playMovie(MOVIE_NOTIFY_OBJECT);
+			_flag = true;
+		}
+		break;
+
+	case 2:
+		if (!_flag) {
+			setVisible(true);
+			_flag = true;
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

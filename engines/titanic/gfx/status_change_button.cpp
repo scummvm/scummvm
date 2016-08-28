@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CStatusChangeButton, CSTButton)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CStatusChangeButton::CStatusChangeButton() : CSTButton() {
 }
 
@@ -35,6 +39,13 @@ void CStatusChangeButton::save(SimpleFile *file, int indent) {
 void CStatusChangeButton::load(SimpleFile *file) {
 	file->readNumber();
 	CSTButton::load(file);
+}
+
+bool CStatusChangeButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CStatusChangeMsg changeMsg;
+	changeMsg._newStatus = _statusInc;
+	changeMsg.execute(_actionTarget);
+	return true;
 }
 
 } // End of namespace Titanic

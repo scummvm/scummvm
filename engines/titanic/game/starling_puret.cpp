@@ -24,16 +24,56 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CStarlingPuret, CGameObject)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CStarlingPuret::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CStarlingPuret::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CStarlingPuret::StatusChangeMsg(CStatusChangeMsg *msg) {
+	_flag = msg->_newStatus == 1;
+	if (_flag) {
+		CStatusChangeMsg changeMsg;
+		changeMsg._newStatus = 1;
+		changeMsg.execute("StarlingLoop01");
+	}
+
+	return true;
+}
+
+bool CStarlingPuret::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_flag) {
+		CStatusChangeMsg changeMsg;
+		changeMsg._newStatus = 1;
+		changeMsg.execute("PromDeckStarlings");
+
+		playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		CSignalObject signalMsg;
+		signalMsg._numValue = 4;
+		signalMsg.execute("PromDeckStarlings");
+		_flag = false;
+	}
+
+	return true;
+}
+
+bool CStarlingPuret::MovieEndMsg(CMovieEndMsg *msg) {
+	CActMsg actMsg("StarlingsDead");
+	actMsg.execute("FanController");
+	actMsg.execute("BirdSauceDisp");
+	return true;
 }
 
 } // End of namespace Titanic

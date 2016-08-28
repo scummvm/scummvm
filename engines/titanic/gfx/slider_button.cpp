@@ -24,6 +24,14 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSliderButton, CSTButton)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseDragMoveMsg)
+	ON_MESSAGE(StatusChangeMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 CSliderButton::CSliderButton() : CSTButton(), _field114(0),
 		_field118(0), _field11C(0) {
 }
@@ -46,6 +54,41 @@ void CSliderButton::load(SimpleFile *file) {
 	_pos1 = file->readPoint();
 
 	CSTButton::load(file);
+}
+
+bool CSliderButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	_pos1 = msg->_mousePos;
+	CStatusChangeMsg changeMsg;
+	changeMsg.execute(this);
+	return true;
+}
+
+bool CSliderButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	_pos1 = msg->_mousePos;
+	return true;
+}
+
+bool CSliderButton::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
+	_pos1 = msg->_mousePos;
+	if (_field118) {
+		CStatusChangeMsg changeMsg;
+		changeMsg.execute(this);
+	}
+
+	return true;
+}
+
+bool CSliderButton::StatusChangeMsg(CStatusChangeMsg *msg) {
+	CStatusChangeMsg changeMsg;
+	changeMsg._oldStatus = _currentStatus;
+	_currentStatus = (_pos1.y - _bounds.top) / _field11C;
+	changeMsg._newStatus = _currentStatus;
+	changeMsg.execute(_actionTarget);
+	return true;
+}
+
+bool CSliderButton::EnterViewMsg(CEnterViewMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

@@ -194,6 +194,10 @@ void CPetControl::setActiveNPC(CTrueTalkNPC *npc) {
 	}
 }
 
+void CPetControl::setActiveNPC(const CString &name) {
+	_conversations.setActiveNPC(name);
+}
+
 void CPetControl::refreshNPC() {
 	_conversations.setNPC(_activeNPCName);
 }
@@ -658,6 +662,10 @@ bool CPetControl::isSuccUBusActive() const {
 void CPetControl::convResetDials(int flag) {
 	if (flag == 1)
 		_conversations.resetDials(_activeNPCName);
+}
+
+void CPetControl::resetDials0() {
+	_conversations.resetDials0();
 }
 
 int CPetControl::getMailDest(const CRoomFlags &roomFlags) const {

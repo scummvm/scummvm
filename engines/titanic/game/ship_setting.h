@@ -29,12 +29,16 @@
 namespace Titanic {
 
 class CShipSetting : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool AddHeadPieceMsg(CAddHeadPieceMsg *msg);
+	bool SetFrameMsg(CSetFrameMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
-	CString _string3;
+	CString _target;
 	Point _pos1;
-	CString _string4;
-	CString _string5;
+	CString _itemName;
+	CString _frameTarget;
 public:
 	CLASSDEF;
 	CShipSetting();

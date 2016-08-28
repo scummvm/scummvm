@@ -28,11 +28,15 @@
 namespace Titanic {
 
 class CStarlingPuret : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 private:
-	int _value;
+	bool _flag;
 public:
 	CLASSDEF;
-	CStarlingPuret() : CGameObject(), _value(0) {}
+	CStarlingPuret() : CGameObject(), _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

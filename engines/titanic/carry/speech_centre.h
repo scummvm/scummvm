@@ -28,13 +28,18 @@
 namespace Titanic {
 
 class CSpeechCentre : public CBrain {
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool SpeechFallsFromTreeMsg(CSpeechFallsFromTreeMsg *msg);
+	bool FrameMsg(CFrameMsg *msg);
 private:
 	int _field13C;
-	CString _string1;
+	CString _season;
 	int _field14C;
 public:
 	CLASSDEF;
-	CSpeechCentre() : CBrain(), _string1("Summer"),
+	CSpeechCentre() : CBrain(), _season("Summer"),
 		_field13C(1), _field14C(0) {}
 
 	/**

@@ -24,17 +24,25 @@
 
 namespace Titanic {
 
-CSUBGlass::CSUBGlass() : _fieldBC(0), _fieldC0(0), _fieldC4(1), _fieldC8(0) {
+BEGIN_MESSAGE_MAP(CSUBGlass, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(SignalObject)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
+CSUBGlass::CSUBGlass() : _fieldBC(0), _startFrame(0), _endFrame(1), _signalStartFrame(0) {
 }
 
 void CSUBGlass::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
-	file->writeQuotedLine(_string, indent);
+	file->writeNumberLine(_startFrame, indent);
+	file->writeNumberLine(_endFrame, indent);
+	file->writeNumberLine(_signalStartFrame, indent);
+	file->writeNumberLine(_signalEndFrame, indent);
+	file->writeQuotedLine(_target, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -42,13 +50,58 @@ void CSUBGlass::save(SimpleFile *file, int indent) {
 void CSUBGlass::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
-	_string = file->readString();
+	_startFrame = file->readNumber();
+	_endFrame = file->readNumber();
+	_signalStartFrame = file->readNumber();
+	_signalEndFrame = file->readNumber();
+	_target = file->readString();
 
 	CGameObject::load(file);
+}
+
+bool CSUBGlass::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	return true;
+}
+
+bool CSUBGlass::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (!_fieldBC && _startFrame >= 0) {
+		_fieldBC = true;
+		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT);
+		playSound("z#30.wav");
+	}
+
+	return true;
+}
+
+bool CSUBGlass::MovieEndMsg(CMovieEndMsg *msg) {
+	if (msg->_endFrame == _endFrame) {
+		_fieldBC = true;
+		CSignalObject signalMsg(getName(), 1);
+		signalMsg.execute(_target);
+	}
+
+	return true;
+}
+
+bool CSUBGlass::SignalObject(CSignalObject *msg) {
+	if (msg->_numValue == 1) {
+		setVisible(true);
+
+		if (_signalStartFrame >= 0) {
+			playMovie(_signalStartFrame, _signalEndFrame, MOVIE_GAMESTATE);
+			playSound("z#30.wav");
+			_fieldBC = false;
+		}
+	}
+
+	return true;
+}
+
+bool CSUBGlass::LeaveViewMsg(CLeaveViewMsg *msg) {
+	_fieldBC = false;
+	setVisible(true);
+	loadFrame(0);
+	return true;
 }
 
 } // End of namespace Titanic

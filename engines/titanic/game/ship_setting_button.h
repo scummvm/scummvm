@@ -28,10 +28,15 @@
 namespace Titanic {
 
 class CShipSettingButton : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 private:
-	CString _string1;
-	int _fieldC8;
-	int _fieldCC;
+	CString _target;
+	bool _pressed;
+	bool _enabled;
 public:
 	CLASSDEF;
 	CShipSettingButton();

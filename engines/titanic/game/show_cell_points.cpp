@@ -21,21 +21,50 @@
  */
 
 #include "titanic/game/show_cell_points.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CShowCellpoints, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CShowCellpoints::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_strValue, indent);
-	file->writeNumberLine(_numValue, indent);
+	file->writeQuotedLine(_npcName, indent);
+	file->writeNumberLine(_flag, indent);
 	CGameObject::save(file, indent);
 }
 
 void CShowCellpoints::load(SimpleFile *file) {
 	file->readNumber();
-	_strValue = file->readString();
-	_numValue = file->readNumber();
+	_npcName = file->readString();
+	_flag = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CShowCellpoints::EnterViewMsg(CEnterViewMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		petSetArea(PET_CONVERSATION);
+		pet->setActiveNPC(_npcName);
+		pet->incAreaLocks();
+		_flag = true;
+	}
+
+	return true;
+}
+
+bool CShowCellpoints::LeaveViewMsg(CLeaveViewMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet && _flag) {
+		pet->resetDials0();
+		pet->decAreaLocks();
+		_flag = false;
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
