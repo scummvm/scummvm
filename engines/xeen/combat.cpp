@@ -496,11 +496,12 @@ void Combat::moveMonsters() {
 									if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
-										idx))
-									if (arrIndex >= 21 && arrIndex <= 27) {
-										moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
-									} else {
-										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
+										idx)) {
+										if (arrIndex >= 21 && arrIndex <= 27) {
+											moveMonster(idx, Common::Point(MONSTER_GRID3[arrIndex], 0));
+										} else {
+											moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
+										}
 									}
 								}
 								break;
@@ -520,6 +521,9 @@ void Combat::moveMonsters() {
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								}
+
+							default:
+								break;
 							}
 						}
 					}

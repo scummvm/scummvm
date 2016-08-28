@@ -303,6 +303,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		displayNum,
 		WEAPON_NAMES[i._id],
 		!i._bonusFlags ? "" : BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
@@ -593,6 +594,7 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		displayNum,
 		ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
@@ -642,6 +644,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		displayNum,
 		ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._id ? "\b " : ""
@@ -1721,6 +1724,9 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 
 	case CATEGORY_MISC:
 		v8 = 4;
+		break;
+
+	default:
 		break;
 	}
 
