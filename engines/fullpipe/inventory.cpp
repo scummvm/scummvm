@@ -35,7 +35,7 @@ Inventory::~Inventory() {
 }
 
 bool Inventory::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "Inventory::load()");
+	debugC(5, kDebugLoading | kDebugInventory, "Inventory::load()");
 
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
@@ -119,11 +119,35 @@ void Inventory2::addItem2(StaticANIObject *obj) {
 }
 
 void Inventory2::removeItem(int itemId, int count) {
-	warning("STUB: Inventory2::removeItem(%d, %d)", itemId, count);
+	debugC(2, kDebugInventory, "Inventory2::removeItem(%d, %d)", itemId, count);
+
+	while (count) {
+		int i;
+		for (i = _inventoryItems.size() - 1; i >= 0; i--) {
+			if (_inventoryItems[i]->itemId == itemId) {
+				if (_selectedId == itemId)
+					unselectItem(false);
+
+				if (_inventoryItems[i]->count > count) {
+					_inventoryItems[i]->count -= count;
+				} else {
+					count -= _inventoryItems[i]->count;
+					_inventoryItems.remove_at(i);
+				}
+
+				if (getCountItemsWithId(itemId) < 0)
+					getInventoryPoolItemFieldCById(itemId);
+
+				break;
+			}
+		}
+	}
 }
 
 void Inventory2::removeItem2(Scene *sceneObj, int itemId, int x, int y, int priority) {
 	int idx = getInventoryItemIndexById(itemId);
+
+	debugC(2, kDebugInventory, "removeItem2(*, %d, %d, %d, %d)", itemId, x, y, priority);
 
 	if (idx >= 0) {
 		if (_inventoryItems[idx]->count) {

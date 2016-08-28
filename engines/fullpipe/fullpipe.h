@@ -55,7 +55,8 @@ enum {
 	kDebugAnimation		= 1 << 3,
 	kDebugMemory		= 1 << 4,
 	kDebugEvents		= 1 << 5,
-	kDebugBehavior		= 1 << 6
+	kDebugBehavior		= 1 << 6,
+	kDebugInventory		= 1 << 7
 };
 
 class BehaviorManager;

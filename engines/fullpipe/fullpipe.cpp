@@ -55,6 +55,7 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	DebugMan.addDebugChannel(kDebugBehavior, "behavior", "Behavior");
 	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
 	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
+	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
