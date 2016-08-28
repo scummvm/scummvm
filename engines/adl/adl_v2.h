@@ -53,11 +53,11 @@ protected:
 
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
-	void loadItems(Common::SeekableReadStream &stream);
-	void loadRooms(Common::SeekableReadStream &stream, byte count);
-	void loadMessages(Common::SeekableReadStream &stream, byte count);
-	void loadPictures(Common::SeekableReadStream &stream);
-	void loadItemPictures(Common::SeekableReadStream &stream, byte count);
+	void loadItems(Common::ReadStream &stream);
+	void loadRooms(Common::ReadStream &stream, byte count);
+	void loadMessages(Common::ReadStream &stream, byte count);
+	void loadPictures(Common::ReadStream &stream);
+	void loadItemPictures(Common::ReadStream &stream, byte count);
 
 	void checkTextOverflow(char c);
 

@@ -364,7 +364,7 @@ DataBlockPtr AdlEngine_v2::readDataBlockPtr(Common::ReadStream &f) const {
 	return _disk->getDataBlock(track, sector, offset, size);
 }
 
-void AdlEngine_v2::loadItems(Common::SeekableReadStream &stream) {
+void AdlEngine_v2::loadItems(Common::ReadStream &stream) {
 	byte id;
 	while ((id = stream.readByte()) != 0xff && !stream.eos() && !stream.err()) {
 		Item item = Item();
@@ -395,7 +395,7 @@ void AdlEngine_v2::loadItems(Common::SeekableReadStream &stream) {
 		error("Error loading items");
 }
 
-void AdlEngine_v2::loadRooms(Common::SeekableReadStream &stream, byte count) {
+void AdlEngine_v2::loadRooms(Common::ReadStream &stream, byte count) {
 	for (uint i = 0; i < count; ++i) {
 		Room room;
 
@@ -414,12 +414,12 @@ void AdlEngine_v2::loadRooms(Common::SeekableReadStream &stream, byte count) {
 		error("Error loading rooms");
 }
 
-void AdlEngine_v2::loadMessages(Common::SeekableReadStream &stream, byte count) {
+void AdlEngine_v2::loadMessages(Common::ReadStream &stream, byte count) {
 	for (uint i = 0; i < count; ++i)
 		_messages.push_back(readDataBlockPtr(stream));
 }
 
-void AdlEngine_v2::loadPictures(Common::SeekableReadStream &stream) {
+void AdlEngine_v2::loadPictures(Common::ReadStream &stream) {
 	byte picNr;
 	while ((picNr = stream.readByte()) != 0xff) {
 		if (stream.eos() || stream.err())
@@ -429,7 +429,7 @@ void AdlEngine_v2::loadPictures(Common::SeekableReadStream &stream) {
 	}
 }
 
-void AdlEngine_v2::loadItemPictures(Common::SeekableReadStream &stream, byte count) {
+void AdlEngine_v2::loadItemPictures(Common::ReadStream &stream, byte count) {
 	for (uint i = 0; i < count; ++i) {
 		stream.readByte(); // number
 		_itemPics.push_back(readDataBlockPtr(stream));
