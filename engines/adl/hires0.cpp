@@ -37,12 +37,10 @@ void HiRes0Engine::init() {
 
 	_disk->setSectorLimit(13);
 
-	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 2));
-
 	// TODO: all these strings/offsets/etc are the same as hires2
 
-	for (uint i = 0; i < IDI_HR0_NUM_MESSAGES; ++i)
-		_messages.push_back(readDataBlockPtr(*stream));
+	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 2));
+	loadMessages(*stream, IDI_HR0_NUM_MESSAGES);
 
 	// Read parser messages
 	stream.reset(_disk->createReadStream(0x1a, 0x1));

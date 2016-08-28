@@ -55,6 +55,7 @@ protected:
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
 	void loadItems(Common::SeekableReadStream &stream);
 	void loadRooms(Common::SeekableReadStream &stream, byte count);
+	void loadMessages(Common::SeekableReadStream &stream, byte count);
 
 	void checkTextOverflow(char c);
 

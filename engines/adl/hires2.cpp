@@ -63,9 +63,7 @@ void HiRes2Engine::init() {
 	_disk->setSectorLimit(13);
 
 	StreamPtr stream(_disk->createReadStream(0x1f, 0x2, 0x00, 4));
-
-	for (uint i = 0; i < IDI_HR2_NUM_MESSAGES; ++i)
-		_messages.push_back(readDataBlockPtr(*stream));
+	loadMessages(*stream, IDI_HR2_NUM_MESSAGES);
 
 	// Read parser messages
 	stream.reset(_disk->createReadStream(0x1a, 0x1));

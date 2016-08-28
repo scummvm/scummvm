@@ -30,8 +30,16 @@
 namespace Adl {
 
 #define IDI_HR4_NUM_ROOMS 164
+#define IDI_HR4_NUM_MESSAGES 255
 #define IDI_HR4_NUM_VARS 40
 #define IDI_HR4_NUM_ITEM_DESCS 44
+
+// Messages used outside of scripts
+#define IDI_HR4_MSG_CANT_GO_THERE      110
+#define IDI_HR4_MSG_DONT_UNDERSTAND    112
+#define IDI_HR4_MSG_ITEM_DOESNT_MOVE   114
+#define IDI_HR4_MSG_ITEM_NOT_HERE      115
+#define IDI_HR4_MSG_THANKS_FOR_PLAYING 113
 
 class HiRes4Engine : public AdlEngine_v3 {
 public:
@@ -43,8 +51,11 @@ protected:
 	// AdlEngine
 	void init();
 	void initGameState();
+	Common::String formatVerbError(const Common::String &verb) const;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 
 	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
+	void loadCommonData();
 	void goToSideC();
 	virtual const char *getDiskImageName(byte index) const = 0;
 

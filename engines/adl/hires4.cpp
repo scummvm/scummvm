@@ -45,7 +45,24 @@ void HiRes4Engine::init() {
 	if (!_boot->open(getDiskImageName(0)))
 		error("Failed to open disk image '%s'", getDiskImageName(0));
 
-	StreamPtr stream(createReadStream(_boot, 0x06, 0xd, 0x12, 2));
+	_disk = new DiskImage();
+	if (!_disk->open(getDiskImageName(1)))
+		error("Failed to open disk image '%s'", getDiskImageName(1));
+
+	loadCommonData();
+
+	StreamPtr stream(createReadStream(_boot, 0x06, 0x2));
+	_strings.verbError = readStringAt(*stream, 0x4f);
+	_strings.nounError = readStringAt(*stream, 0x83);
+	_strings.enterCommand = readStringAt(*stream, 0xa6);
+
+	_messageIds.cantGoThere = IDI_HR4_MSG_CANT_GO_THERE;
+	_messageIds.dontUnderstand = IDI_HR4_MSG_DONT_UNDERSTAND;
+	_messageIds.itemDoesntMove = IDI_HR4_MSG_ITEM_DOESNT_MOVE;
+	_messageIds.itemNotHere = IDI_HR4_MSG_ITEM_NOT_HERE;
+	_messageIds.thanksForPlaying = IDI_HR4_MSG_THANKS_FOR_PLAYING;
+
+	stream.reset(createReadStream(_boot, 0x06, 0xd, 0x12, 2));
 	loadItemDescriptions(*stream, IDI_HR4_NUM_ITEM_DESCS);
 
 	stream.reset(createReadStream(_boot, 0x05, 0x4, 0x00, 3));
@@ -53,6 +70,22 @@ void HiRes4Engine::init() {
 
 	stream.reset(createReadStream(_boot, 0x03, 0xb, 0x00, 6));
 	loadWords(*stream, _nouns, _priNouns);
+}
+
+Common::String HiRes4Engine::formatVerbError(const Common::String &verb) const {
+	Common::String err = _strings.verbError;
+	for (uint i = 0; i < verb.size(); ++i)
+		err.setChar(verb[i], i + 8);
+	return err;
+}
+
+Common::String HiRes4Engine::formatNounError(const Common::String &verb, const Common::String &noun) const {
+	Common::String err = _strings.nounError;
+	for (uint i = 0; i < verb.size(); ++i)
+		err.setChar(verb[i], i + 8);
+	for (uint i = 0; i < noun.size(); ++i)
+		err.setChar(noun[i], i + 19);
+	return err;
 }
 
 void HiRes4Engine::goToSideC() {
@@ -63,19 +96,24 @@ void HiRes4Engine::goToSideC() {
 		error("Failed to open disk image '%s'", getDiskImageName(2));
 
 	// As room.data is bound to the DiskImage, we need to rebind them here
-	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 17));
+	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
 	for (uint i = 0; i < IDI_HR4_NUM_ROOMS; ++i) {
 		stream->skip(7);
 		_state.rooms[i].data = readDataBlockPtr(*stream);
 		stream->skip(3);
 	}
+
+	// Rebind data that is on both side B and C
+	loadCommonData();
+}
+
+void HiRes4Engine::loadCommonData() {
+	_messages.clear();
+	StreamPtr stream(createReadStream(_boot, 0x0a, 0x4, 0x00, 3));
+	loadMessages(*stream, IDI_HR4_NUM_MESSAGES);
 }
 
 void HiRes4Engine::initGameState() {
-	_disk = new DiskImage();
-	if (!_disk->open(getDiskImageName(1)))
-		error("Failed to open disk image '%s'", getDiskImageName(1));
-
 	_state.vars.resize(IDI_HR4_NUM_VARS);
 
 	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));

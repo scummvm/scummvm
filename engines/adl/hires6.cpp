@@ -213,8 +213,7 @@ void HiRes6Engine::loadDisk(byte disk) {
 			// Messages
 			_messages.clear();
 			uint count = size / 4;
-			for (uint i = 0; i < count; ++i)
-				_messages.push_back(readDataBlockPtr(*stream));
+			loadMessages(*stream, count);
 			break;
 		}
 		case 0x4a80: {

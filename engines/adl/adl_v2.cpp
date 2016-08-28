@@ -414,6 +414,11 @@ void AdlEngine_v2::loadRooms(Common::SeekableReadStream &stream, byte count) {
 		error("Error loading rooms");
 }
 
+void AdlEngine_v2::loadMessages(Common::SeekableReadStream &stream, byte count) {
+	for (uint i = 0; i < count; ++i)
+		_messages.push_back(readDataBlockPtr(stream));
+}
+
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
 
