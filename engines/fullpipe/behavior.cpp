@@ -267,7 +267,8 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", transCyrillic((byte *)var->_varName), sc->_sceneId, transCyrillic((byte *)ani->_objectName));
+	Common::String s((char *)transCyrillic((byte *)var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", s.c_str(), sc->_sceneId, transCyrillic((byte *)ani->_objectName));
 
 	clear();
 
