@@ -111,12 +111,7 @@ void HiRes2Engine::init() {
 
 	// Load dropped item offsets
 	stream.reset(_disk->createReadStream(0x1b, 0x4, 0x15));
-	for (uint i = 0; i < IDI_HR2_NUM_ITEM_OFFSETS; ++i) {
-		Common::Point p;
-		p.x = stream->readByte();
-		p.y = stream->readByte();
-		_itemOffsets.push_back(p);
-	}
+	loadDroppedItemOffsets(*stream, IDI_HR2_NUM_ITEM_OFFSETS);
 
 	// Load verbs
 	stream.reset(_disk->createReadStream(0x19, 0x0, 0x00, 3));

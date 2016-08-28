@@ -32,8 +32,9 @@ namespace Adl {
 #define IDI_HR4_NUM_ROOMS 164
 #define IDI_HR4_NUM_MESSAGES 255
 #define IDI_HR4_NUM_VARS 40
-#define IDI_HR4_NUM_ITEM_PICS 41
 #define IDI_HR4_NUM_ITEM_DESCS 44
+#define IDI_HR4_NUM_ITEM_PICS 41
+#define IDI_HR4_NUM_ITEM_OFFSETS 40
 
 // Messages used outside of scripts
 #define IDI_HR4_MSG_CANT_GO_THERE      110

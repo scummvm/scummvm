@@ -146,12 +146,7 @@ void HiRes6Engine::init() {
 
 	// Load dropped item offsets
 	stream.reset(_boot->createReadStream(0x8, 0x9, 0x16));
-	for (uint i = 0; i < IDI_HR6_NUM_ITEM_OFFSETS; ++i) {
-		Common::Point p;
-		p.x = stream->readByte();
-		p.y = stream->readByte();
-		_itemOffsets.push_back(p);
-	}
+	loadDroppedItemOffsets(*stream, IDI_HR6_NUM_ITEM_OFFSETS);
 
 	// Location of game data for each disc
 	stream.reset(_boot->createReadStream(0x5, 0xa, 0x03));

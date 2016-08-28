@@ -183,12 +183,7 @@ void HiRes1Engine::init() {
 
 	// Load dropped item offsets
 	stream->seek(IDI_HR1_OFS_ITEM_OFFSETS);
-	for (uint i = 0; i < IDI_HR1_NUM_ITEM_OFFSETS; ++i) {
-		Common::Point p;
-		p.x = stream->readByte();
-		p.y = stream->readByte();
-		_itemOffsets.push_back(p);
-	}
+	loadDroppedItemOffsets(*stream, IDI_HR1_NUM_ITEM_OFFSETS);
 
 	// Load right-angle line art
 	stream->seek(IDI_HR1_OFS_CORNERS);

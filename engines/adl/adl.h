@@ -247,6 +247,7 @@ protected:
 	virtual void initState();
 	virtual byte roomArg(byte room) const;
 	virtual void advanceClock() { }
+	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
 
 	// Opcodes
 	int o1_isItemInRoom(ScriptEnv &e);

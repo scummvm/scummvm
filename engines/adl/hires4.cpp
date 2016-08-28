@@ -63,6 +63,9 @@ void HiRes4Engine::init() {
 	stream.reset(createReadStream(_boot, 0x06, 0xd, 0x12, 2));
 	loadItemDescriptions(*stream, IDI_HR4_NUM_ITEM_DESCS);
 
+	stream.reset(createReadStream(_boot, 0x07, 0x1, 0xf4));
+	loadDroppedItemOffsets(*stream, IDI_HR4_NUM_ITEM_OFFSETS);
+
 	stream.reset(createReadStream(_boot, 0x08, 0xe, 0xa5, 5));
 	readCommands(*stream, _roomCommands);
 

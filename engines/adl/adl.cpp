@@ -402,6 +402,15 @@ byte AdlEngine::roomArg(byte room) const {
 	return room;
 }
 
+void AdlEngine::loadDroppedItemOffsets(Common::ReadStream &stream, byte count) {
+	for (uint i = 0; i < count; ++i) {
+		Common::Point p;
+		p.x = stream.readByte();
+		p.y = stream.readByte();
+		_itemOffsets.push_back(p);
+	}
+}
+
 void AdlEngine::clearScreen() const {
 	_display->setMode(DISPLAY_MODE_MIXED);
 	_display->clear(0x00);
