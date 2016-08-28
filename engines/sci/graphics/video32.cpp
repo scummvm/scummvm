@@ -86,9 +86,8 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	_decoder->start();
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
 		renderFrame();
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
 	}
 
 	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
@@ -311,9 +310,8 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 void AVIPlayer::renderVideo() const {
 	_decoder->start();
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 	}
@@ -457,9 +455,8 @@ AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
 			break;
 		}
 
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 
