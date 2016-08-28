@@ -90,7 +90,7 @@ void BehaviorManager::updateBehaviors() {
 	if (!_isActive)
 		return;
 
-	debugC(4, kDebugBehavior, "BehaviorManager::updateBehaviors()");
+	debugC(6, kDebugBehavior, "BehaviorManager::updateBehaviors()");
 	for (uint i = 0; i < _behaviors.size(); i++) {
 		BehaviorInfo *beh = _behaviors[i];
 
@@ -129,7 +129,7 @@ void BehaviorManager::updateBehaviors() {
 }
 
 void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *entry) {
-	debugC(4, kDebugBehavior, "BehaviorManager::updateBehavior() %d", entry->_movesCount);
+	debugC(7, kDebugBehavior, "BehaviorManager::updateBehavior() moves: %d", entry->_movesCount);
 	for (int i = 0; i < entry->_movesCount; i++) {
 		BehaviorMove *bhi = entry->_behaviorMoves[i];
 		if (!(bhi->_flags & 1)) {
@@ -151,7 +151,7 @@ void BehaviorManager::updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *e
 }
 
 void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorAnim *bhe) {
-	debugC(4, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
+	debugC(6, kDebugBehavior, "BehaviorManager::updateStaticAniBehavior(%s)", transCyrillic((byte *)ani->_objectName));
 
 	MessageQueue *mq = 0;
 
@@ -231,7 +231,7 @@ BehaviorMove *BehaviorManager::getBehaviorMoveByMessageQueueDataId(StaticANIObje
 }
 
 void BehaviorInfo::clear() {
-	_ani = 0;
+	_ani = NULL;
 	_staticsId = 0;
 	_counter = 0;
 	_counterMax = 0;
