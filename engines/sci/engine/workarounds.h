@@ -24,6 +24,7 @@
 #define SCI_ENGINE_WORKAROUNDS_H
 
 #include "sci/engine/vm_types.h"
+#include "sci/engine/state.h"
 #include "sci/sci.h"
 
 namespace Sci {
@@ -33,13 +34,6 @@ enum SciWorkaroundType {
 	WORKAROUND_IGNORE,    // ignore kernel call
 	WORKAROUND_STILLCALL, // still do kernel call
 	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
-};
-
-struct SciTrackOriginReply {
-	int scriptNr;
-	Common::String objectName;
-	Common::String methodName;
-	int localCallOffset;
 };
 
 struct SciWorkaroundSolution {
@@ -103,7 +97,7 @@ extern const SciWorkaroundEntry kUnLoad_workarounds[];
 extern const SciWorkaroundEntry kStringPutAt_workarounds[];
 extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 
-extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
+extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin);
 
 } // End of namespace Sci
 

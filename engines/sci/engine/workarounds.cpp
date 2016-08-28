@@ -776,8 +776,7 @@ const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 	{ GID_PHANTASMAGORIA, 45, 64907,  0,   "ScrollableWindow", "addString",                  NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // ScrollWindow interface passes the last two parameters twice
 };
 
-
-SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
+SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin) {
 	// HACK for SCI3: Temporarily ignore this
 	if (getSciVersion() == SCI_VERSION_3) {
 		warning("SCI3 HACK: trackOriginAndFindWorkaround() called, ignoring");
@@ -789,37 +788,14 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 
 	const EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
-	const Script *localScript = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
-	int curScriptNr = localScript->getScriptNumber();
-	int curLocalCallOffset = lastCall->debugLocalCallOffset;
-
-	if (curLocalCallOffset != -1) {
-		// if lastcall was actually a local call search back for a real call
-		Common::List<ExecStack>::const_iterator callIterator = state->_executionStack.end();
-		while (callIterator != state->_executionStack.begin()) {
-			callIterator--;
-			const ExecStack &loopCall = *callIterator;
-			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
-				lastCall->debugSelector = loopCall.debugSelector;
-				lastCall->debugExportId = loopCall.debugExportId;
-				break;
-			}
-		}
-	}
-
-	Common::String curObjectName = state->_segMan->getObjectName(lastCall->sendp);
-	Common::String curMethodName;
 	const SciGameId gameId = g_sci->getGameId();
-	const int curRoomNumber = state->currentRoomNumber();
 
-	if (lastCall->type == EXEC_STACK_TYPE_CALL) {
-		if (lastCall->debugSelector != -1) {
-			curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
-		} else if (lastCall->debugExportId != -1) {
-			curObjectName = "";
-			curMethodName = Common::String::format("export %d", lastCall->debugExportId);
-		}
-	}
+	*trackOrigin = state->getCurrentCallOrigin();
+	const Common::String &curObjectName = trackOrigin->objectName;
+	const Common::String &curMethodName = trackOrigin->methodName;
+	const int &curRoomNumber = trackOrigin->roomNr;
+	const int &curScriptNr = trackOrigin->scriptNr;
+	const int &curLocalCallOffset = trackOrigin->localCallOffset;
 
 	if (workaroundList) {
 		// Search if there is a workaround for this one
@@ -894,12 +870,6 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 				searchObjectName = state->_segMan->getObjectName(searchObject);
 		} while (!searchObject.isNull()); // no parent left?
 	}
-
-	// give caller origin data
-	trackOrigin->objectName = curObjectName;
-	trackOrigin->methodName = curMethodName;
-	trackOrigin->scriptNr = curScriptNr;
-	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
 
 	SciWorkaroundSolution noneFound;
 	noneFound.type = WORKAROUND_NONE;
