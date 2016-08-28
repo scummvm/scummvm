@@ -806,7 +806,7 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	if (!_surface)
 		return false;
 
-	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff000000) != 0);
+	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
 void Bitmap::decode(int32 *palette) {
