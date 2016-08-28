@@ -704,7 +704,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 	case Common::KEYCODE_s: {
 		// Sign In
-		int idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
+		idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
 		party._mazePosition.x = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
 		party._mazePosition.y = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][1];
@@ -717,7 +717,7 @@ Character *Town::doTavernOptions(Character *c) {
 			party._mazeDirection = DIR_SOUTH;
 
 		party._priorMazeId = party._mazeId;
-		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			party._activeParty[idx]._savedMazeId = party._mazeId;
 			party._activeParty[idx]._xeenSide = map._loadDarkSide;
 		}
@@ -825,8 +825,8 @@ Character *Town::doTempleOptions(Character *c) {
 
 				intf.drawParty(true);
 				sound.playSample(nullptr, 0);
-				File f("ahh.voc");
-				sound.playSample(&f, 1);
+				VOC voc("ahh.voc");
+				voc.play();
 				_flag1 = true;
 				_donation = 0;
 			}
@@ -1030,7 +1030,6 @@ void Town::depositWithdrawl(int choice) {
 				}
 			}
 
-			uint gold, gems;
 			if (choice) {
 				gold = party._bankGold;
 				gems = party._bankGems;

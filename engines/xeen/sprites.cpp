@@ -185,7 +185,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			destPos.y++;
 		} else {
 			scaleMaskX = scaleMaskXCopy;
-			int xOffset = f.readByte();
+			xOffset = f.readByte();
 			
 			// Initialize the array to hold the temporary data for the line. We do this to make it simpler
 			// to handle both deciding which pixels to draw in a scaled image, as well as when images

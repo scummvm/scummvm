@@ -1006,7 +1006,7 @@ bool Interface::checkMoveDirection(int key) {
 			break;
 		}
 	} else {
-		int surfaceId = map.getCell(2);
+		surfaceId = map.getCell(2);
 		if (surfaceId >= map.mazeData()._difficulties._wallNoPass) {
 			party._mazeDirection = dir;
 			sound.playFX(46);

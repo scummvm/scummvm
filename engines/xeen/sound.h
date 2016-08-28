@@ -39,6 +39,7 @@ private:
 	Audio::SoundHandle _soundHandle;
 public:
 	VOC() {}
+	VOC(const Common::String &name);
 	virtual ~VOC() { stop(); }
 	static void init(XeenEngine *vm);
 

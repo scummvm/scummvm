@@ -913,8 +913,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			break;
 
 		case ITEMMODE_BLACKSMITH: {
-			InventoryItems &items = _oldCharacter->_items[category];
-			if (items[INV_ITEMS_TOTAL - 1]._id) {
+			InventoryItems &invItems = _oldCharacter->_items[category];
+			if (invItems[INV_ITEMS_TOTAL - 1]._id) {
 				// If the last slot is in use, it means the list is full
 				ErrorScroll::show(_vm, Common::String::format(BACKPACK_IS_FULL,
 					_oldCharacter->_name.c_str()));
@@ -1021,13 +1021,13 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
 				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
-				Common::String msg = Common::String::format(IDENTIFY_ITEM_MSG,
+				Common::String str = Common::String::format(IDENTIFY_ITEM_MSG,
 					desc.c_str(), details.c_str());
 
-				Window &w = screen._windows[14];
-				w.open();
-				w.writeString(msg);
-				w.update();
+				Window &win = screen._windows[14];
+				win.open();
+				win.writeString(str);
+				win.update();
 
 				saveButtons();
 				clearButtons();
@@ -1037,7 +1037,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				events.clearEvents();
 
 				restoreButtons();
-				w.close();
+				win.close();
 			}
 			break;
 		}

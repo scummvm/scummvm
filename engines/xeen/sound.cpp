@@ -28,6 +28,11 @@ namespace Xeen {
 
 SoundManager *VOC::_sound;
 
+VOC::VOC(const Common::String &name) {
+	if (!open(name))
+		error("Could not open - %s", name.c_str());
+}
+
 void VOC::init(XeenEngine *vm) {
 	_sound = vm->_sound;
 }

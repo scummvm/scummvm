@@ -40,8 +40,8 @@ XSurface::~XSurface() {
 		free();
 }
 
-void XSurface::create(uint16 w, uint16 h) {
-	Graphics::Surface::create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+void XSurface::create(uint16 w_, uint16 h_) {
+	Graphics::Surface::create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
 	_freeFlag = true;
 }
 

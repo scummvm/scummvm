@@ -50,8 +50,7 @@ enum Race { HUMAN = 0, ELF = 1, DWARF = 2, GNOME = 3, HALF_ORC = 4 };
 enum CharacterClass {
 	CLASS_KNIGHT = 0, CLASS_PALADIN = 1, CLASS_ARCHER = 2, CLASS_CLERIC = 3,
 	CLASS_SORCERER = 4, CLASS_ROBBER = 5, CLASS_NINJA = 6, CLASS_BARBARIAN = 7,
-	CLASS_DRUID = 8, CLASS_RANGER = 9, TOTAL_CLASSES = 10,
-	CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
+	CLASS_DRUID = 8, CLASS_RANGER = 9, TOTAL_CLASSES = 10, CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
 };
 
 enum Attribute {
@@ -114,13 +113,14 @@ protected:
 	ItemCategory _category;
 	const char *const *_names;
 
-	XeenEngine *vm();
+	XeenEngine *getVm();
 	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
 		ItemCategory category2);
 
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes) = 0;
 public:
 	InventoryItems(Character *character, ItemCategory category);
+	virtual ~InventoryItems() {}
 
 	void clear();
 
@@ -150,6 +150,7 @@ protected:
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
+	virtual ~WeaponItems() {}
 
 	virtual void equipItem(int itemIndex);
 
@@ -163,6 +164,7 @@ protected:
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
+	virtual ~ArmorItems() {}
 
 	virtual void equipItem(int itemIndex);
 
@@ -187,6 +189,7 @@ protected:
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
 	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
+	virtual ~MiscItems() {}
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 };

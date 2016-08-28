@@ -202,7 +202,7 @@ void InventoryItems::removeItem(int itemIndex) {
 		item._frame = 0;
 }
 
-XeenEngine *InventoryItems::vm() {
+XeenEngine *InventoryItems::getVm() {
 	return Party::_vm;
 }
 
@@ -297,7 +297,7 @@ void WeaponItems::equipItem(int itemIndex) {
  */
 Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *vm()->_resources;
+	Resources &res = *getVm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
 		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
@@ -311,7 +311,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 }
 
 void WeaponItems::enchantItem(int itemIndex, int amount) {
-	SoundManager &sound = *vm()->_sound;
+	SoundManager &sound = *getVm()->_sound;
 	XeenItem &item = operator[](itemIndex);
 	Character tempCharacter;
 
@@ -463,12 +463,13 @@ void ArmorItems::equipItem(int itemIndex) {
  */
 Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *vm()->_resources;
+	Resources &res = *getVm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		displayNum,
 		ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
@@ -476,7 +477,7 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 }
 
 void ArmorItems::enchantItem(int itemIndex, int amount) {
-	SoundManager &sound = *vm()->_sound;
+	SoundManager &sound = *getVm()->_sound;
 	XeenItem &item = operator[](itemIndex);
 	Character tempCharacter;
 
@@ -586,7 +587,7 @@ void AccessoryItems::equipItem(int itemIndex) {
  */
 Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *vm()->_resources;
+	Resources &res = *getVm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
@@ -635,7 +636,7 @@ Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::Strin
  */
 Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *vm()->_resources;
+	Resources &res = *getVm()->_resources;
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
@@ -653,7 +654,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 */
 Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &classes) {
 	Common::String specialPower = FIELD_NONE;
-	Spells &spells = *vm()->_spells;
+	Spells &spells = *getVm()->_spells;
 
 	if (item._id) {
 		specialPower = spells._spellNames[MISC_SPELL_INDEX[item._id]];
@@ -1813,6 +1814,9 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 	case CATEGORY_MISC:
 		newItem._id = miscId;
 		newItem._bonusFlags = miscBonus;
+		break;
+
+	default:
 		break;
 	}
 

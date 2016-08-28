@@ -638,9 +638,9 @@ void Party::giveTreasure() {
 
 				// Fall back on checking the entire conscious party
 				for (charIndex = 0; charIndex < (int)_activeParty.size(); ++charIndex) {
-					Character &c = _activeParty[charIndex];
-					if (!c._items[(ItemCategory)categoryNum].isFull() && !c.isDisabledOrDead()) {
-						giveTreasureToCharacter(c, (ItemCategory)categoryNum, itemNum);
+					Character &ch = _activeParty[charIndex];
+					if (!ch._items[(ItemCategory)categoryNum].isFull() && !ch.isDisabledOrDead()) {
+						giveTreasureToCharacter(ch, (ItemCategory)categoryNum, itemNum);
 						break;
 					}
 				}

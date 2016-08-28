@@ -40,7 +40,7 @@ public:
 	XSurface(int w, int h);
 	virtual ~XSurface();
 
-	void create(uint16 w, uint16 h);
+	void create(uint16 w_, uint16 h_);
 
 	void create(XSurface *s, const Common::Rect &bounds);
 

@@ -422,6 +422,9 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 			if (c._currentHp > 0)
 				c._currentHp = 0;
 			break;
+
+		default:
+			break;
 		}
 
 		c.subtractHitPoints(damage);
@@ -823,7 +826,7 @@ void Combat::doMonsterTurn(int monsterId) {
 				if (cond >= PARALYZED && cond <= ERADICATED)
 					continue;
 
-				bool isHated = false;
+				isHated = false;
 				switch (monsterData._hatesClass) {
 				case CLASS_KNIGHT:
 				case CLASS_PALADIN:
@@ -1277,10 +1280,10 @@ void Combat::attack(Character &c, RangeType rangeType) {
 			damage = 0;
 
 			for (uint charIndex = 0; charIndex < party._activeParty.size(); ++charIndex) {
-				Character &c = party._activeParty[charIndex];
+				Character &ch = party._activeParty[charIndex];
 
 				if (_shooting[charIndex] && !_missedShot[charIndex]) {
-					if (!hitMonster(c, rangeType)) {
+					if (!hitMonster(ch, rangeType)) {
 						++_missedShot[charIndex];
 					} else {
 						damage = _monsterDamage ? _monsterDamage : _weaponDamage;
@@ -1336,6 +1339,8 @@ void Combat::attack(Character &c, RangeType rangeType) {
 			break;
 		case CLASS_SORCERER:
 			divisor = 8;
+			break;
+		default:
 			break;
 		}
 
@@ -1650,6 +1655,8 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 		break;
 	case CLASS_SORCERER:
 		divisor = 4;
+		break;
+	default:
 		break;
 	}
 

@@ -240,8 +240,8 @@ void PartyDialog::execute() {
 								// Rebuild the character list
 								_charList.clear();
 								for (int idx = 0; idx < XEEN_TOTAL_CHARACTERS; ++idx) {
-									Character &c = party._roster[idx];
-									if (!c._name.empty() && c._savedMazeId == party._priorMazeId) {
+									Character &ch = party._roster[idx];
+									if (!ch._name.empty() && ch._savedMazeId == party._priorMazeId) {
 										_charList.push_back(idx);
 									}
 								}
@@ -339,7 +339,7 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 	drawParty(updateFlag);
 
 	// Set up the sprite set to use for each face
-	for (int posIndex = 0; posIndex < 4; ++posIndex) {
+	for (posIndex = 0; posIndex < 4; ++posIndex) {
 		if ((firstDisplayChar + posIndex) >= (int)_charList.size())
 			_faceDrawStructs[posIndex]._sprites = nullptr;
 		else
