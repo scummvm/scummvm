@@ -104,11 +104,6 @@ public:
 	virtual void keyUp(Common::KeyState keyState);
 
 	/**
-	 * Creates the window
-	 */
-	bool Create();
-
-	/**
 	 * Called when the application starts
 	 */
 	void applicationStarting();
