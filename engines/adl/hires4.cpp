@@ -96,6 +96,10 @@ void HiRes4Engine::goToSideC() {
 		error("Failed to open disk image '%s'", getDiskImageName(2));
 
 	// As room.data is bound to the DiskImage, we need to rebind them here
+	// We cannot simply reload the rooms as that would reset their state
+
+	// FIXME: Remove DataBlockPtr-DiskImage coupling?
+
 	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
 	for (uint i = 0; i < IDI_HR4_NUM_ROOMS; ++i) {
 		stream->skip(7);
@@ -111,6 +115,10 @@ void HiRes4Engine::loadCommonData() {
 	_messages.clear();
 	StreamPtr stream(createReadStream(_boot, 0x0a, 0x4, 0x00, 3));
 	loadMessages(*stream, IDI_HR4_NUM_MESSAGES);
+
+	_pictures.clear();
+	stream.reset(createReadStream(_boot, 0x05, 0xe, 0x80));
+	loadPictures(*stream);
 }
 
 void HiRes4Engine::initGameState() {

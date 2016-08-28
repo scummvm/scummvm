@@ -73,13 +73,7 @@ void HiRes0Engine::init() {
 
 	// Load global picture data
 	stream.reset(_disk->createReadStream(0x19, 0xa, 0x80, 0));
-	byte picNr;
-	while ((picNr = stream->readByte()) != 0xff) {
-		if (stream->eos() || stream->err())
-			error("Error reading global pic list");
-
-		_pictures[picNr] = readDataBlockPtr(*stream);
-	}
+	loadPictures(*stream);
 
 	// Load item picture data
 	stream.reset(_disk->createReadStream(0x1e, 0x9, 0x05));

@@ -219,12 +219,7 @@ void HiRes6Engine::loadDisk(byte disk) {
 		case 0x4a80: {
 			// Global pics
 			_pictures.clear();
-			byte picNr;
-			while ((picNr = stream->readByte()) != 0xff) {
-				if (stream->eos() || stream->err())
-					error("Error reading global pic list");
-				_pictures[picNr] = readDataBlockPtr(*stream);
-			}
+			loadPictures(*stream);
 			break;
 		}
 		case 0x4000:

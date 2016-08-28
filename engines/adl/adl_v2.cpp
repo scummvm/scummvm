@@ -419,6 +419,16 @@ void AdlEngine_v2::loadMessages(Common::SeekableReadStream &stream, byte count) 
 		_messages.push_back(readDataBlockPtr(stream));
 }
 
+void AdlEngine_v2::loadPictures(Common::SeekableReadStream &stream) {
+	byte picNr;
+	while ((picNr = stream.readByte()) != 0xff) {
+		if (stream.eos() || stream.err())
+			error("Error reading global pic list");
+
+		_pictures[picNr] = readDataBlockPtr(stream);
+	}
+}
+
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
 
