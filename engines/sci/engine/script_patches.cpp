@@ -746,12 +746,115 @@ static const uint16 gk1PatchInterrogationBug[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+// On day 10 nearly at the end of the game, Gabriel Knight dresses up and right after that
+// someone will be at the door. Gabriel turns around to see what's going on.
+//
+// In ScummVM Gabriel turning around plays endlessly. This is caused by the loop of Gabriel
+// being kept at 1, but view + cel were changed accordingly. The view used - which is view 859 -
+// does not have a loop 1. kNumCels is called on that, BUT kNumCels in SSCI is broken in that
+// regard. It checks for loop > count and not loop >= count and will return basically random data
+// in case loop == count.
+//
+// In SSCI this simply worked by accident. kNumCels returned 0x53 in this case, but later script code
+// fixed that up somehow, so it worked out in the end.
+//
+// The setup for this is done in SDJEnters::changeState(0). The cycler will never reach the goal
+// because the goal will be cel -1, so it loops endlessly.
+//
+// We fix this by adding a setLoop(0).
+//
+// Applies to at least: English PC-CD, German PC-CD
+// Responsible method: sDJEnters::changeState
+static const uint16 gk1SignatureDay10GabrielDressUp[] = {
+	0x87, 0x01,                         // lap param[1]
+	0x65, 0x14,                         // aTop state
+	0x36,                               // push
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 0
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x006f),           // bnt [next state 1]
+	SIG_ADDTOOFFSET(+84),
+	0x39, 0x0e,                         // pushi 0Eh (view)
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x035B),           // pushi 035Bh (859d)
+	0x38, SIG_UINT16(0x0141),           // pushi 0141h (setCel)
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, SIG_UINT16(0x00E9),           // pushi 00E9h (setCycle)
+	0x7a,                               // push2
+	0x51, 0x18,                         // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x14, 0x00,                   // send 14h
+										// GKEgo::view(859)
+										// GKEgo::setCel(0)
+										// GKEgo::setCycle(End, sDJEnters)
+	0x32, SIG_UINT16(0x0233),           // jmp [ret]
+	// next state
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x07,                         // bnt [next state 2]
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1a,                         // aTop cycles
+	0x32, SIG_UINT16(0x0226),           // jmp [ret]
+	// next state
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x2a,                         // bnt [next state 3]
+	0x78,                               // push1
+	SIG_ADDTOOFFSET(+34),
+	// part of state 2 code, delays for 1 cycle
+	0x35, 0x01,                         // ldi 1
+	0x65, 0x1a,                         // aTop cycles
+	SIG_END
+};
+
+static const uint16 gk1PatchDay10GabrielDressUp[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x30, SIG_UINT16(0x0073),           // bnt [next state 1] - offset adjusted
+	SIG_ADDTOOFFSET(+84 + 11),
+	// added by us: setting loop to 0 (5 bytes needed)
+	0x38, SIG_UINT16(0x00FB),           // pushi 00FBh (setLoop)
+	0x78,                               // push1
+	0x76,                               // push0
+	// original code, but offset changed
+	0x38, SIG_UINT16(0x00E9),           // pushi 00E9h (setCycle)
+	0x7a,                               // push2
+	0x51, 0x18,                         // class End
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x1a, 0x00,                   // send 1Ah - adjusted
+										// GKEgo::view(859)
+										// GKEgo::setCel(0)
+										// GKEgo::setLoop(0) <-- new, by us
+										// GKEgo::setCycle(End, sDJEnters)
+	// end of original code
+	0x3a,                               // toss
+	0x48,                               // ret (saves 1 byte)
+	// state 1 code
+	0x3c,                               // dup
+	0x34, SIG_UINT16(0x0001),           // ldi 0001 (waste 1 byte)
+	0x1a,                               // eq?
+	0x31, 2,                            // bnt [next state 2]
+	0x33, 41,                           // jmp to state 2 delay code
+	SIG_ADDTOOFFSET(+41),
+	// wait 2 cycles instead of only 1
+	0x35, 0x02,                         // ldi 2
+	PATCH_END
+};
+
+//          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
-	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug, gk1PatchInterrogationBug },
-	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze, gk1PatchDay5PhoneFreeze },
-	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet, gk1PatchDay6PoliceBeignet },
-	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep, gk1PatchDay6PoliceSleep },
+	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,    gk1PatchInterrogationBug },
+	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,     gk1PatchDay5PhoneFreeze },
+	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,   gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,     gk1PatchDay6PoliceSleep },
+	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp, gk1PatchDay10GabrielDressUp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
