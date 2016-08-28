@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_save.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/core/project_item.h"
 
 namespace Titanic {
 
@@ -58,15 +59,28 @@ void CPetSave::getTooltip(CPetText *text) {
 }
 
 void CPetSave::highlightSave(int index) {
-	warning("TODO: CPetSave::highlightSave");
+	if (index >= 0)
+		_slotNames[index].showCursor(-2);
 }
 
 void CPetSave::unhighlightSave(int index) {
-	warning("TODO: CPetSave::unhighlightSave");
+	if (index >= 0)
+		_slotNames[index].hideCursor();
 }
 
 void CPetSave::execute() {
-	warning("TODO: CPetSave::execute");
+	CPetControl *pet = getPetControl();
+	if (_savegameSlotNum >= 0) {
+		highlightSlot(-1);
+		CProjectItem *project = pet ? pet->getRoot() : nullptr;
+
+		if (project) {
+			project->saveGame(_savegameSlotNum, _slotNames[_savegameSlotNum].getText());
+			pet->displayMessage("");
+		}
+	} else if (pet) {
+		pet->displayMessage("You must select a game to save first.");
+	}
 }
 
 } // End of namespace Titanic

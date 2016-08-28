@@ -359,7 +359,8 @@ bool CPetControl::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
 }
 
 bool CPetControl::TimerMsg(CTimerMsg *msg) {
-	warning("TODO: CPetControl::CTimerMsg");
+	if (_timers[msg->_actionVal]._target)
+		_timers[msg->_actionVal]._target->timerExpired(msg->_actionVal);
 	return true;
 }
 

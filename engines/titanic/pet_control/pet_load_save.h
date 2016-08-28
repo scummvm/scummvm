@@ -38,11 +38,6 @@ private:
 	Rect getSlotBounds(int index);
 
 	/**
-	 * Highlight one of the slots
-	 */
-	void highlightSlot(int index);
-
-	/**
 	 * Called when savegame slot highlight changes or the view is reset
 	 */
 	void highlightChange();
@@ -67,6 +62,11 @@ protected:
 	 * Reset the slot names list
 	 */
 	void resetSlots();
+
+	/**
+	 * Highlight one of the slots
+	 */
+	void highlightSlot(int index);
 public:
 	/**
 	 * Setup the glyph

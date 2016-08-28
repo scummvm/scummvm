@@ -135,8 +135,7 @@ bool CBellBot::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CBellBot::Use(CUse *msg) {
-	error("TODO: Figure out what msg->_item points to");
-	//	msg->_item = "Bellbot";
+	dynamic_cast<CCarry *>(msg->_item)->_string1 = "Bellbot";
 	return true;
 }
 
