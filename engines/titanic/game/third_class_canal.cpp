@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CThirdClassCanal, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CThirdClassCanal::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CBackground::save(file, indent);
@@ -32,6 +36,11 @@ void CThirdClassCanal::save(SimpleFile *file, int indent) {
 void CThirdClassCanal::load(SimpleFile *file) {
 	file->readNumber();
 	CBackground::load(file);
+}
+
+bool CThirdClassCanal::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	petDisplayMessage("This area is off limits to passengers.");
+	return true;
 }
 
 } // End of namespace Titanic

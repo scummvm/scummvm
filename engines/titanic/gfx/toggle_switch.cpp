@@ -24,12 +24,18 @@
 
 namespace Titanic {
 
-CToggleSwitch::CToggleSwitch() : CGameObject(), _fieldBC(0) {
+BEGIN_MESSAGE_MAP(CToggleSwitch, CToggleSwitch)
+	ON_MESSAGE(MouseButtonUpMsg)
+	ON_MESSAGE(ChildDragStartMsg)
+	ON_MESSAGE(ChildDragMoveMsg)
+END_MESSAGE_MAP()
+
+CToggleSwitch::CToggleSwitch() : CGameObject(), _pressed(false) {
 }
 
 void CToggleSwitch::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_pressed, indent);
 	file->writePoint(_pos1, indent);
 
 	CGameObject::save(file, indent);
@@ -37,10 +43,30 @@ void CToggleSwitch::save(SimpleFile *file, int indent) {
 
 void CToggleSwitch::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_pressed = file->readNumber();
 	_pos1 = file->readPoint();
 
 	CGameObject::load(file);
+}
+
+bool CToggleSwitch::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	_pressed = !_pressed;
+	if (_pressed)
+		fn10(0, 0, 0);
+	else
+		fn10(0xff, 0xff, 0xff);
+	return true;
+}
+
+bool CToggleSwitch::ChildDragStartMsg(CChildDragStartMsg *msg) {
+	_pos1.x = msg->_mousePos.x - _bounds.left;
+	_pos1.y = msg->_mousePos.y - _bounds.top;
+	return true;
+}
+
+bool CToggleSwitch::ChildDragMoveMsg(CChildDragMoveMsg *msg) {
+	setPosition(Point(msg->_mousePos.x - _pos1.x, msg->_mousePos.y - _pos1.y));
+	return true;
 }
 
 } // End of namespace Titanic

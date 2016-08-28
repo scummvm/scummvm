@@ -28,8 +28,12 @@
 namespace Titanic {
 
 class CToggleSwitch : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonUpMsg(CMouseButtonUpMsg *msg);
+	bool ChildDragStartMsg(CChildDragStartMsg *msg);
+	bool ChildDragMoveMsg(CChildDragMoveMsg *msg);
 protected:
-	int _fieldBC;
+	bool _pressed;
 	Point _pos1;
 public:
 	CLASSDEF;

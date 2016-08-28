@@ -28,12 +28,18 @@
 namespace Titanic {
 
 class CThrowTVDownWell : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool ActMsg(CActMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool MovieFrameMsg(CMovieFrameMsg *msg);
 public:
-	CString _strValue;
-	int _numValue;
+	CString _viewName;
+	bool _flag;
 public:
 	CLASSDEF;
-	CThrowTVDownWell() : CGameObject(), _numValue(0) {}
+	CThrowTVDownWell() : CGameObject(), _flag(false) {}
 
 	/**
 	 * Save the data for the class to file

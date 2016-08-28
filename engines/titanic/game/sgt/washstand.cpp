@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CWashstand, CSGTStateRoom)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CWashstand::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +38,38 @@ void CWashstand::save(SimpleFile *file, int indent) {
 void CWashstand::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CWashstand::TurnOn(CTurnOn *msg) {
+	if (_statics->_v10 == "Closed" && _statics->_v2 == "NotOnWashstand") {
+		setVisible(true);
+		_statics->_v10 = "Open";
+		_fieldE0 = false;
+		_startFrame = 0;
+		_endFrame = 14;
+		playMovie(0, 14, MOVIE_GAMESTATE);
+		playSound("b#14.wav");
+	}
+
+	return true;
+}
+
+bool CWashstand::TurnOff(CTurnOff *msg) {
+	if (_statics->_v10 == "Open" && _statics->_v11 == "Closed"
+			&& _statics->_v12 == "Closed" && _statics->_v2 == "Open") {
+		_statics->_v10 = "Closed";
+		_fieldE0 = true;
+		_startFrame = 14;
+		_endFrame = 28;
+		playMovie(14, 28, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+		playSound("b#14.wav");
+	}
+
+	return true;
+}
+
+bool CWashstand::MovieEndMsg(CMovieEndMsg *msg) {
+	return true;
 }
 
 } // End of namespace Titanic

@@ -24,16 +24,36 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CWheelSpin, CBackground)
+	ON_MESSAGE(SignalObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CWheelSpin::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value, indent);
+	file->writeNumberLine(_active, indent);
 	CBackground::save(file, indent);
 }
 
 void CWheelSpin::load(SimpleFile *file) {
 	file->readNumber();
-	_value = file->readNumber();
+	_active = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CWheelSpin::SignalObject(CSignalObject *msg) {
+	_active = msg->_numValue != 0;
+	setVisible(_active);
+	return true;
+}
+
+bool CWheelSpin::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_active) {
+		CActMsg actMsg("Spin");
+		actMsg.execute("CaptainsWheel");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

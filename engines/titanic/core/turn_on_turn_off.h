@@ -28,12 +28,15 @@
 namespace Titanic {
 
 class CTurnOnTurnOff : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOn(CTurnOn *msg);
+	bool TurnOff(CTurnOff *msg);
 private:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
-	int _fieldF0;
+	int _startFrameOn;
+	int _endFrameOn;
+	int _startFrameOff;
+	int _endFrameOff;
+	bool _fieldF0;
 public:
 	CLASSDEF;
 	CTurnOnTurnOff();

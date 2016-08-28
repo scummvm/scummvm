@@ -28,11 +28,14 @@
 namespace Titanic {
 
 class CWheelSpin : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool SignalObject(CSignalObject *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
-	int _value;
+	bool _active;
 public:
 	CLASSDEF;
-	CWheelSpin() : CBackground(), _value(0) {}
+	CWheelSpin() : CBackground(), _active(false) {}
 
 	/**
 	 * Save the data for the class to file

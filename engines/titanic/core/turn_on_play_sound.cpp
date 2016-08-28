@@ -24,26 +24,37 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTurnOnPlaySound, CTurnOnObject)
+	ON_MESSAGE(MouseButtonUpMsg)
+END_MESSAGE_MAP()
+
 CTurnOnPlaySound::CTurnOnPlaySound() : CTurnOnObject(), 
-		_string3("NULL"), _fieldF8(80), _fieldFC(0) {
+		_soundName("NULL"), _soundVolume(80), _soundVal3(0) {
 }
 
 void CTurnOnPlaySound::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_fieldF8, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeQuotedLine(_soundName, indent);
+	file->writeNumberLine(_soundVolume, indent);
+	file->writeNumberLine(_soundVal3, indent);
 
 	CTurnOnObject::save(file, indent);
 }
 
 void CTurnOnPlaySound::load(SimpleFile *file) {
 	file->readNumber();
-	_string3 = file->readString();
-	_fieldF8 = file->readNumber();
-	_fieldFC = file->readNumber();
+	_soundName = file->readString();
+	_soundVolume = file->readNumber();
+	_soundVal3 = file->readNumber();
 
 	CTurnOnObject::load(file);
+}
+
+bool CTurnOnPlaySound::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
+	if (_soundName != "NULL")
+		playSound(_soundName, _soundVolume, _soundVal3);
+
+	return CTurnOnObject::MouseButtonUpMsg(msg);
 }
 
 } // End of namespace Titanic

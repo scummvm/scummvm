@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class SGTNav : public CSGTStateRoom {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseMoveMsg(CMouseMoveMsg *msg);
 public:
 	CLASSDEF;
 

@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CUselessLever, CToggleButton)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 void CUselessLever::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CToggleButton::save(file, indent);
@@ -32,6 +37,25 @@ void CUselessLever::save(SimpleFile *file, int indent) {
 void CUselessLever::load(SimpleFile *file) {
 	file->readNumber();
 	CToggleButton::load(file);
+}
+
+bool CUselessLever::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_fieldE0) {
+		playMovie(15, 30, 0);
+		playSound("z#56.wav");
+		_fieldE0 = false;
+	} else {
+		playMovie(0, 14, 0);
+		playSound("z#56.wav");
+		_fieldE0 = true;
+	}
+
+	return true;
+}
+
+bool CUselessLever::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(_fieldE0 ? 15 : 0);
+	return true;
 }
 
 } // End of namespace Titanic

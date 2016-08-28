@@ -252,7 +252,7 @@ MESSAGE2(CMovieFrameMsg, int, frameNumber, 0, int, value2, 0);
 MESSAGE0(CMusicHasStartedMsg);
 MESSAGE0(CMusicHasStoppedMsg);
 MESSAGE0(CMusicSettingChangedMsg);
-MESSAGE2(CNPCPlayAnimationMsg, const char *const *, names, nullptr, int, value2, 0);
+MESSAGE2(CNPCPlayAnimationMsg, const char *const *, names, nullptr, int, maxDuration, 0);
 MESSAGE1(CNPCPlayIdleAnimationMsg, const char *const *, names, 0);
 MESSAGE3(CNPCPlayTalkingAnimationMsg, int, value1, 0, int, value2, 0, const char *const *, names, nullptr);
 MESSAGE0(CNPCQueueIdleAnimMsg);

@@ -29,7 +29,7 @@ namespace Titanic {
 
 class CToggleButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
-private:
+protected:
 	int _fieldE0;
 public:
 	CLASSDEF;

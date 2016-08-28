@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CWheelHotSpot, CBackground)
+	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(SignalObject)
+END_MESSAGE_MAP()
+
 void CWheelHotSpot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldE0, indent);
@@ -38,6 +43,41 @@ void CWheelHotSpot::load(SimpleFile *file) {
 	_fieldE4 = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CWheelHotSpot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_fieldE0) {
+		CActMsg actMsg;
+
+		switch (_fieldE4) {
+		case 1:
+			actMsg._action = "Stop";
+			actMsg.execute("CaptainsWheel");
+			break;
+
+		case 2:
+			actMsg._action = "Cruise";
+			actMsg.execute("CaptainsWheel");
+			break;
+
+		case 3:
+			actMsg._action = "Go";
+			actMsg.execute("CaptainsWheel");
+			break;
+
+		default:
+			break;
+		}
+	} else if (_fieldE4 == 3) {
+		petDisplayMessage("Go where?");
+	}
+
+	return true;
+}
+
+bool CWheelHotSpot::SignalObject(CSignalObject *msg) {
+	_fieldE0 = msg->_numValue != 0;
+	return true;
 }
 
 } // End of namespace Titanic

@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CVisionCentre : public CBrain {
+	DECLARE_MESSAGE_MAP;
+	bool PuzzleSolvedMsg(CPuzzleSolvedMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
 	CLASSDEF;
 

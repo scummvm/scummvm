@@ -52,8 +52,8 @@ bool CChevSwitch::SetChevButtonImageMsg(CSetChevButtonImageMsg *msg) {
 		error("TODO: Don't know parent type");
 	}
 
-	_fieldBC = msg->_value1;
-	if (_fieldBC) {
+	_pressed = msg->_value1;
+	if (_pressed) {
 		loadImage((_value & 1) ? "on_odd.tga" : "on_even.tga");
 	} else {
 		loadImage((_value & 1) ? "off_odd.tga" : "off_even.tga");
@@ -63,13 +63,13 @@ bool CChevSwitch::SetChevButtonImageMsg(CSetChevButtonImageMsg *msg) {
 }
 
 bool CChevSwitch::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	_fieldBC ^= 1;
+	_pressed ^= 1;
 	if (getParent()) {
-		CSetChevPanelBitMsg bitMsg(_value, _fieldBC);
+		CSetChevPanelBitMsg bitMsg(_value, _pressed);
 		bitMsg.execute(getParent());
 	}
 
-	CSetChevButtonImageMsg chevMsg(_fieldBC, 0);
+	CSetChevButtonImageMsg chevMsg(_pressed, 0);
 	chevMsg.execute(this);
 
 	return true;

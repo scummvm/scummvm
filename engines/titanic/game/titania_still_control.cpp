@@ -24,6 +24,11 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTitaniaStillControl, CGameObject)
+	ON_MESSAGE(SetFrameMsg)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
 void CTitaniaStillControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
@@ -32,6 +37,17 @@ void CTitaniaStillControl::save(SimpleFile *file, int indent) {
 void CTitaniaStillControl::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CTitaniaStillControl::SetFrameMsg(CSetFrameMsg *msg) {
+	loadFrame(msg->_frameNumber);
+	setVisible(true);
+	return true;
+}
+
+bool CTitaniaStillControl::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic

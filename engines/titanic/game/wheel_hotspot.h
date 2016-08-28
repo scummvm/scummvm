@@ -28,6 +28,9 @@
 namespace Titanic {
 
 class CWheelHotSpot : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool SignalObject(CSignalObject *msg);
 public:
 	int _fieldE0;
 	int _fieldE4;

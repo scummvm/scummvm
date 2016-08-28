@@ -24,16 +24,30 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTVOnBar, CPlaceHolder)
+	ON_MESSAGE(VisibleMsg)
+END_MESSAGE_MAP()
+
 void CTVOnBar::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_pos1, indent);
+	file->writePoint(_tvPos, indent);
 	CPlaceHolder::save(file, indent);
 }
 
 void CTVOnBar::load(SimpleFile *file) {
 	file->readNumber();
-	_pos1 = file->readPoint();
+	_tvPos = file->readPoint();
 	CPlaceHolder::load(file);
+}
+
+bool CTVOnBar::VisibleMsg(CVisibleMsg *msg) {
+	setVisible(msg->_visible);
+	if (msg->_visible)
+		setPosition(_tvPos);
+	else
+		setPosition(Point(0, 0));
+
+	return true;
 }
 
 } // End of namespace Titanic

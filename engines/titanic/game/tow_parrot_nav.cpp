@@ -21,8 +21,13 @@
  */
 
 #include "titanic/game/tow_parrot_nav.h"
+#include "titanic/npcs/parrot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CTOWParrotNav, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
 
 void CTOWParrotNav::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
@@ -32,6 +37,18 @@ void CTOWParrotNav::save(SimpleFile *file, int indent) {
 void CTOWParrotNav::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CTOWParrotNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CActMsg actMsg("EnteringFromTOW");
+	actMsg.execute("PerchedParrot");
+
+	CString clipString = "_EXIT,36,1,N,9,3,N";
+	if (CParrot::_v4)
+		clipString += 'a';
+	changeView("ParrotLobby.Node 3.N", clipString);
+
+	return true;
 }
 
 } // End of namespace Titanic

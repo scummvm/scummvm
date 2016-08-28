@@ -28,9 +28,13 @@
 namespace Titanic {
 
 class CWheelButton : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool SignalObject(CSignalObject *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
 	int _fieldE0;
-	int _fieldE4;
+	int _timerId;
 	int _fieldE8;
 public:
 	CLASSDEF;

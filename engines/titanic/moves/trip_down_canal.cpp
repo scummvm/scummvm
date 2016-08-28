@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CTripDownCanal, CMovePlayerTo)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 CTripDownCanal::CTripDownCanal() : CMovePlayerTo() {
 }
 
@@ -35,6 +39,16 @@ void CTripDownCanal::save(SimpleFile *file, int indent) {
 void CTripDownCanal::load(SimpleFile *file) {
 	file->readNumber();
 	CMovePlayerTo::load(file);
+}
+
+bool CTripDownCanal::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (stateGetSeason() == SEASON_WINTER) {
+		petDisplayMessage("Sadly, the Grand Canal transport system is closed for the winter.");
+	} else if (getGameManager()) {
+		changeView(_destination);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

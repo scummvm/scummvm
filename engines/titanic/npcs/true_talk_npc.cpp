@@ -188,7 +188,34 @@ bool CTrueTalkNPC::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CTrueTalkNPC::NPCPlayAnimationMsg(CNPCPlayAnimationMsg *msg) {
-	warning("CTrueTalkNPC::NPCPlayAnimationMsg");
+//	const char *const *nameP = msg->_names;
+	int count;
+	for (count = 0; msg->_names[count]; ++count)
+		;
+
+	if (msg->_maxDuration) {
+		// Randomly pick a clip that's less than the allowed maximum
+		int tries = 10, index;
+		do {
+			index = getRandomNumber(count - 1);
+		} while (getClipDuration(msg->_names[index]) > msg->_maxDuration && --tries);
+
+		if (tries) {
+			// Sequentially go through the clips to find any below the maximum
+			index = 0;
+			for (int idx = 0; idx < count; ++idx) {
+				if (getClipDuration(msg->_names[idx]) < msg->_maxDuration) {
+					index = idx;
+					break;
+				}
+			}
+		}
+
+		playClip(msg->_names[index], MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+	} else {
+		playClip(msg->_names[getRandomNumber(count - 1)]);
+	}
+
 	return true;
 }
 

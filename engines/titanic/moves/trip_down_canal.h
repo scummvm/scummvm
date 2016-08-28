@@ -28,6 +28,8 @@
 namespace Titanic {
 
 class CTripDownCanal : public CMovePlayerTo {
+	DECLARE_MESSAGE_MAP;
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
 public:
 	CLASSDEF;
 	CTripDownCanal();
