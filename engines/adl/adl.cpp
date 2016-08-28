@@ -1263,16 +1263,17 @@ Common::String AdlEngine::toAscii(const Common::String &str) {
 }
 
 Common::String AdlEngine::itemStr(uint i) const {
-	byte desc = getItem(i).description;
-	byte noun = getItem(i).noun;
+	const Item &item(getItem(i));
+
 	Common::String name = Common::String::format("%d", i);
-	if (noun > 0) {
+	if (item.noun > 0) {
 		name += "/";
-		name += _priNouns[noun - 1];
+		name += _priNouns[item.noun - 1];
 	}
-	if (desc > 0) {
+	Common::String desc = getItemDescription(item);
+	if (!desc.empty()) {
 		name += "/";
-		name += toAscii(loadMessage(desc));
+		name += toAscii(desc);
 	}
 	return name;
 }
