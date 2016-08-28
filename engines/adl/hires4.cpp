@@ -54,6 +54,17 @@ void HiRes4Engine::init() {
 	_strings.nounError = readStringAt(*stream, 0x83);
 	_strings.enterCommand = readStringAt(*stream, 0xa6);
 
+	stream.reset(createReadStream(_boot, 0x05, 0xb, 0xd7));
+	_strings_v2.time = readString(*stream, 0xff);
+
+	stream.reset(createReadStream(_boot, 0x06, 0x7, 0x00, 2));
+	_strings_v2.saveInsert = readStringAt(*stream, 0x62);
+	_strings_v2.saveReplace = readStringAt(*stream, 0xdd);
+	_strings_v2.restoreInsert = readStringAt(*stream, 0x12a);
+	_strings_v2.restoreReplace = readStringAt(*stream, 0x1b8);
+	_strings.playAgain = readStringAt(*stream, 0x21b);
+	// TODO: restart sequence has "insert side a/b" strings
+
 	_messageIds.cantGoThere = IDI_HR4_MSG_CANT_GO_THERE;
 	_messageIds.dontUnderstand = IDI_HR4_MSG_DONT_UNDERSTAND;
 	_messageIds.itemDoesntMove = IDI_HR4_MSG_ITEM_DOESNT_MOVE;
