@@ -28,11 +28,17 @@
 namespace Titanic {
 
 class CSGTDoors : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
 public:
-	int _value1, _value2;
+	int _value1;
+	bool _open;
 public:
 	CLASSDEF;
-	CSGTDoors() : CGameObject(), _value1(0), _value2(0) {}
+	CSGTDoors() : CGameObject(), _value1(0), _open(false) {}
 
 	/**
 	 * Save the data for the class to file

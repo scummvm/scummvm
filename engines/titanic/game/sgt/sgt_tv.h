@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CSGTTV : public CSGTStateRoom {
+	DECLARE_MESSAGE_MAP;
+	bool TurnOff(CTurnOff *msg);
+	bool TurnOn(CTurnOn *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
 public:
 	CLASSDEF;
 

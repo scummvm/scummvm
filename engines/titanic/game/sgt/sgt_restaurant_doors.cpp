@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSGTRestaurantDoors, CGameObject)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CSGTRestaurantDoors::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
@@ -34,6 +38,12 @@ void CSGTRestaurantDoors::load(SimpleFile *file) {
 	file->readNumber();
 	_fieldBC = file->readNumber();
 	CGameObject::load(file);
+}
+
+bool CSGTRestaurantDoors::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	CTurnOff offMsg;
+	offMsg.execute("ChickenDispenser");
+	return true;
 }
 
 } // End of namespace Titanic

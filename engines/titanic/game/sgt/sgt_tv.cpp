@@ -24,6 +24,12 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSGTTV, CSGTStateRoom)
+	ON_MESSAGE(TurnOff)
+	ON_MESSAGE(TurnOn)
+	ON_MESSAGE(MovieEndMsg)
+END_MESSAGE_MAP()
+
 void CSGTTV::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CSGTStateRoom::save(file, indent);
@@ -32,6 +38,37 @@ void CSGTTV::save(SimpleFile *file, int indent) {
 void CSGTTV::load(SimpleFile *file) {
 	file->readNumber();
 	CSGTStateRoom::load(file);
+}
+
+bool CSGTTV::TurnOff(CTurnOff *msg) {
+	if (CSGTStateRoom::_statics->_v4 == "Open") {
+		CSGTStateRoom::_statics->_v4 = "Closed";
+		_fieldE0 = true;
+		_startFrame = 6;
+		_endFrame = 12;
+		playMovie(6, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CSGTTV::TurnOn(CTurnOn *msg) {
+	if (CSGTStateRoom::_statics->_v4 == "Closed" &&
+		CSGTStateRoom::_statics->_v2 == "Closed") {
+		CSGTStateRoom::_statics->_v4 = "Open";
+		setVisible(true);
+		_fieldE0 = false;
+		_startFrame = 1;
+		_endFrame = 6;
+		playMovie(1, 6, MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CSGTTV::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
+	return true;
 }
 
 } // End of namespace Titanic

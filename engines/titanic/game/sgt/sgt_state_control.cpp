@@ -24,16 +24,59 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSGTStateControl, CBackground)
+	ON_MESSAGE(PETUpMsg)
+	ON_MESSAGE(PETDownMsg)
+	ON_MESSAGE(PETActivateMsg)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+END_MESSAGE_MAP()
+
 void CSGTStateControl::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
+	file->writeNumberLine(_state, indent);
 	CBackground::save(file, indent);
 }
 
 void CSGTStateControl::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
+	_state = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CSGTStateControl::PETUpMsg(CPETUpMsg *msg) {
+	// WORKAROUND: Redundant code in original not included
+	return true;
+}
+
+bool CSGTStateControl::PETDownMsg(CPETDownMsg *msg) {
+	// WORKAROUND: Redundant code in original not included
+	return true;
+}
+
+bool CSGTStateControl::PETActivateMsg(CPETActivateMsg *msg) {
+	if (msg->_name == "SGTSelector") {
+		static const char *const TARGETS[] = {
+			"Vase", "Bedfoot", "Toilet", "Drawer", "SGTTV", "Armchair", "BedHead",
+			"WashStand", "Desk", "DeskChair", "Basin", "ChestOfDrawers"
+		};
+		_state = msg->_numValue;
+		CActMsg actMsg;
+		actMsg.execute(TARGETS[_state]);
+	}
+
+	return true;
+}
+
+bool CSGTStateControl::EnterViewMsg(CEnterViewMsg *msg) {
+	_state = 1;
+	petSetRemoteTarget();
+	return true;
+}
+
+bool CSGTStateControl::LeaveViewMsg(CLeaveViewMsg *msg) {
+	petClear();
+	return true;
 }
 
 } // End of namespace Titanic

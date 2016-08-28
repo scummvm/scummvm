@@ -28,12 +28,16 @@
 namespace Titanic {
 
 struct CSGTNavigationStatics {
-	bool _changeViewFlag;
+	int _changeViewNum;
 	CString _destView;
 	CString _destRoom;
 };
 
 class CSGTNavigation : public CGameObject {
+	DECLARE_MESSAGE_MAP;
+	bool StatusChangeMsg(CStatusChangeMsg *msg);
+	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 protected:
 	static CSGTNavigationStatics *_statics;
 public:

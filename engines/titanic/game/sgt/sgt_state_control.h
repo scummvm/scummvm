@@ -24,15 +24,22 @@
 #define TITANIC_SGT_STATE_CONTROL_H
 
 #include "titanic/core/background.h"
+#include "titanic/messages/pet_messages.h"
 
 namespace Titanic {
 
 class CSGTStateControl : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool PETUpMsg(CPETUpMsg *msg);
+	bool PETDownMsg(CPETDownMsg *msg);
+	bool PETActivateMsg(CPETActivateMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool LeaveViewMsg(CLeaveViewMsg *msg);
 private:
-	int _fieldE0;
+	int _state;
 public:
 	CLASSDEF;
-	CSGTStateControl() : CBackground(), _fieldE0(1) {}
+	CSGTStateControl() : CBackground(), _state(1) {}
 
 	/**
 	 * Save the data for the class to file

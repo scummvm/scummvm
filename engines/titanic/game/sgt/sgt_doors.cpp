@@ -21,13 +21,21 @@
  */
 
 #include "titanic/game/sgt/sgt_doors.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CSGTDoors, CGameObject)
+	ON_MESSAGE(EnterViewMsg)
+	ON_MESSAGE(LeaveViewMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(LeaveRoomMsg)
+END_MESSAGE_MAP()
 
 void CSGTDoors::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_open, indent);
 
 	CGameObject::save(file, indent);
 }
@@ -35,9 +43,58 @@ void CSGTDoors::save(SimpleFile *file, int indent) {
 void CSGTDoors::load(SimpleFile *file) {
 	file->readNumber();
 	_value1 = file->readNumber();
-	_value2 = file->readNumber();
+	_open = file->readNumber();
 
 	CGameObject::load(file);
+}
+
+bool CSGTDoors::EnterViewMsg(CEnterViewMsg *msg) {
+	setVisible(true);
+	_open = true;
+	CPetControl *pet = getPetControl();
+
+	if (pet) {
+		int roomNum = pet->getRoomsRoomNum();
+		static const int START_FRAMES[7] = { 0, 26, 30, 34, 38, 42, 46 };
+		static const int END_FRAMES[7] = { 12, 29, 33, 37, 41, 45, 49 };
+
+		if (pet->getRooms1CC() == 1)
+			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
+				MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		else
+			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	}
+
+	return true;
+}
+
+bool CSGTDoors::LeaveViewMsg(CLeaveViewMsg *msg) {
+	return true;
+}
+
+bool CSGTDoors::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(!_open);
+	return true;
+}
+
+bool CSGTDoors::LeaveRoomMsg(CLeaveRoomMsg *msg) {
+	setVisible(true);
+	_open = false;
+	CPetControl *pet = getPetControl();
+
+	if (pet) {
+		int roomNum = pet->getRoomsRoomNum();
+		static const int START_FRAMES[7] = { 12, 69, 65, 61, 57, 53, 49 };
+		static const int END_FRAMES[7] = { 25, 72, 68, 64, 60, 56, 52 };
+
+		if (pet->getRooms1CC() == 1)
+			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
+				MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		else
+			playMovie(12, 25, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic
