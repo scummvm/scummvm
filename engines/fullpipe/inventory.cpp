@@ -211,10 +211,14 @@ int Inventory2::getItemFlags(int itemId) {
 }
 
 void Inventory2::rebuildItemRects() {
+	debugC(2, kDebugInventory, "rebuildItemRects()");
+
 	_scene = g_fp->accessScene(_sceneId);
 
 	if (!_scene)
 		return;
+
+	_inventoryIcons.clear();
 
 	_picture = _scene->getBigPicture(0, 0);
 	_picture->setAlpha(50);
