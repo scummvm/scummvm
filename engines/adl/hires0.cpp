@@ -77,10 +77,7 @@ void HiRes0Engine::init() {
 
 	// Load item picture data
 	stream.reset(_disk->createReadStream(0x1e, 0x9, 0x05));
-	for (uint i = 0; i < IDI_HR0_NUM_ITEM_PICS; ++i) {
-		stream->readByte(); // number
-		_itemPics.push_back(readDataBlockPtr(*stream));
-	}
+	loadItemPictures(*stream, IDI_HR0_NUM_ITEM_PICS);
 
 	// Load commands from executable
 	stream.reset(_disk->createReadStream(0x1d, 0x7, 0x00, 2));

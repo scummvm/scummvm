@@ -32,6 +32,7 @@ namespace Adl {
 #define IDI_HR4_NUM_ROOMS 164
 #define IDI_HR4_NUM_MESSAGES 255
 #define IDI_HR4_NUM_VARS 40
+#define IDI_HR4_NUM_ITEM_PICS 41
 #define IDI_HR4_NUM_ITEM_DESCS 44
 
 // Messages used outside of scripts
@@ -46,20 +47,26 @@ public:
 	~HiRes4Engine();
 
 protected:
-	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v3(syst, gd) { }
+	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine_v3(syst, gd),
+			_boot(nullptr),
+			_curDisk(0) { }
 
 	// AdlEngine
 	void init();
 	void initGameState();
+	void loadRoom(byte roomNr);
 	Common::String formatVerbError(const Common::String &verb) const;
 	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 
 	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
 	void loadCommonData();
-	void goToSideC();
+	void insertDisk(byte diskNr);
+	void rebindDisk();
 	virtual const char *getDiskImageName(byte index) const = 0;
 
 	DiskImage *_boot;
+	byte _curDisk;
 };
 
 class HiRes4Engine_Atari : public HiRes4Engine {

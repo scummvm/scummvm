@@ -265,7 +265,7 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 			bytesRemInTrack = bytesToRead - dataOffset;
 
 		if (_stream->read(data + dataOffset, bytesRemInTrack) < bytesRemInTrack)
-			error("Error reading disk image");
+			error("Error reading disk image at track %d; sector %d", track, sector);
 
 		++track;
 

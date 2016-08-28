@@ -57,6 +57,7 @@ protected:
 	void loadRooms(Common::SeekableReadStream &stream, byte count);
 	void loadMessages(Common::SeekableReadStream &stream, byte count);
 	void loadPictures(Common::SeekableReadStream &stream);
+	void loadItemPictures(Common::SeekableReadStream &stream, byte count);
 
 	void checkTextOverflow(char c);
 

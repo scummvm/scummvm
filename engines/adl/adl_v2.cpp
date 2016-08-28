@@ -429,6 +429,13 @@ void AdlEngine_v2::loadPictures(Common::SeekableReadStream &stream) {
 	}
 }
 
+void AdlEngine_v2::loadItemPictures(Common::SeekableReadStream &stream, byte count) {
+	for (uint i = 0; i < count; ++i) {
+		stream.readByte(); // number
+		_itemPics.push_back(readDataBlockPtr(stream));
+	}
+}
+
 int AdlEngine_v2::o2_isFirstTime(ScriptEnv &e) {
 	OP_DEBUG_0("\t&& IS_FIRST_TIME()");
 

@@ -186,10 +186,7 @@ void HiRes6Engine::loadDisk(byte disk) {
 	// Load item picture data (indexed on boot disk)
 	StreamPtr stream(_boot->createReadStream(0xb, 0xd, 0x08));
 	_itemPics.clear();
-	for (uint i = 0; i < IDI_HR6_NUM_ITEM_PICS; ++i) {
-		stream->readByte();
-		_itemPics.push_back(readDataBlockPtr(*stream));
-	}
+	loadItemPictures(*stream, IDI_HR6_NUM_ITEM_PICS);
 
 	_curDisk = disk;
 

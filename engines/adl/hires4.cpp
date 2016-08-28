@@ -45,9 +45,7 @@ void HiRes4Engine::init() {
 	if (!_boot->open(getDiskImageName(0)))
 		error("Failed to open disk image '%s'", getDiskImageName(0));
 
-	_disk = new DiskImage();
-	if (!_disk->open(getDiskImageName(1)))
-		error("Failed to open disk image '%s'", getDiskImageName(1));
+	insertDisk(1);
 
 	loadCommonData();
 
@@ -65,11 +63,42 @@ void HiRes4Engine::init() {
 	stream.reset(createReadStream(_boot, 0x06, 0xd, 0x12, 2));
 	loadItemDescriptions(*stream, IDI_HR4_NUM_ITEM_DESCS);
 
+	stream.reset(createReadStream(_boot, 0x08, 0xe, 0xa5, 5));
+	readCommands(*stream, _roomCommands);
+
+	stream.reset(createReadStream(_boot, 0x0a, 0x9, 0x00, 3));
+	readCommands(*stream, _globalCommands);
+
 	stream.reset(createReadStream(_boot, 0x05, 0x4, 0x00, 3));
 	loadWords(*stream, _verbs, _priVerbs);
 
 	stream.reset(createReadStream(_boot, 0x03, 0xb, 0x00, 6));
 	loadWords(*stream, _nouns, _priNouns);
+}
+
+void HiRes4Engine::loadRoom(byte roomNr) {
+	if (roomNr >= 59 && roomNr < 113) {
+		insertDisk(2);
+		rebindDisk();
+	} else {
+		insertDisk(1);
+		rebindDisk();
+	}
+
+	if (roomNr == 121) {
+		// Room 121 is not present in the Atari version. This causes
+		// problems when we're dumping scripts with the debugger, so
+		// we intercept this room load here.
+		// FIXME: Find out if the Apple II version does have this room
+		// FIXME: Implement more generic handling of invalid rooms?
+		debug("Warning: attempt to load non-existent room 121");
+		_roomData.description.clear();
+		_roomData.pictures.clear();
+		_roomData.commands.clear();
+		return;
+	}
+
+	AdlEngine_v3::loadRoom(roomNr);
 }
 
 Common::String HiRes4Engine::formatVerbError(const Common::String &verb) const {
@@ -88,13 +117,20 @@ Common::String HiRes4Engine::formatNounError(const Common::String &verb, const C
 	return err;
 }
 
-void HiRes4Engine::goToSideC() {
+void HiRes4Engine::insertDisk(byte diskNr) {
+	if (_curDisk == diskNr)
+		return;
+
+	_curDisk = diskNr;
+
 	delete _disk;
 
 	_disk = new DiskImage();
-	if (!_disk->open(getDiskImageName(2)))
-		error("Failed to open disk image '%s'", getDiskImageName(2));
+	if (!_disk->open(getDiskImageName(diskNr)))
+		error("Failed to open disk image '%s'", getDiskImageName(diskNr));
+}
 
+void HiRes4Engine::rebindDisk() {
 	// As room.data is bound to the DiskImage, we need to rebind them here
 	// We cannot simply reload the rooms as that would reset their state
 
@@ -119,6 +155,10 @@ void HiRes4Engine::loadCommonData() {
 	_pictures.clear();
 	stream.reset(createReadStream(_boot, 0x05, 0xe, 0x80));
 	loadPictures(*stream);
+
+	_itemPics.clear();
+	stream.reset(createReadStream(_boot, 0x09, 0xe, 0x05));
+	loadItemPictures(*stream, IDI_HR4_NUM_ITEM_PICS);
 }
 
 void HiRes4Engine::initGameState() {
