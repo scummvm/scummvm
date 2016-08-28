@@ -427,6 +427,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	if (getSciVersion() >= SCI_VERSION_2) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
 		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
+		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
 	} else
 #endif
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
@@ -892,11 +893,15 @@ void GfxRemap32::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.getVersion() < 37) {
+	if (s.getVersion() < 38) {
 		return;
 	}
 
-	s.syncAsSint32LE(_hideCount);
+	int32 hideCount;
+	if (s.isSaving()) {
+		hideCount = _hideCount;
+	}
+	s.syncAsSint32LE(hideCount);
 	s.syncAsSint16LE(_restrictedArea.left);
 	s.syncAsSint16LE(_restrictedArea.top);
 	s.syncAsSint16LE(_restrictedArea.right);
@@ -908,8 +913,10 @@ void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading()) {
 		hide();
 		setView(_cursorInfo.resourceId, _cursorInfo.loopNo, _cursorInfo.celNo);
-		if (!_hideCount) {
+		if (!hideCount) {
 			show();
+		} else {
+			_hideCount = hideCount;
 		}
 	}
 }
