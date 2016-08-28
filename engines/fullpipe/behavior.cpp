@@ -49,6 +49,8 @@ void BehaviorManager::clear() {
 }
 
 void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
+	debugC(2, kDebugBehavior, "BehaviorManager::initBehavior(%d, %s)", sc->_sceneId, transCyrillic((byte *)var->_varName));
+
 	clear();
 	_scene = sc;
 
@@ -58,7 +60,10 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 	if (!behvar)
 		return;
 
+	debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. have Variable");
+
 	for (GameVar *subvar = behvar->_subVars; subvar; subvar = subvar->_nextVarObj) {
+		debugC(3, kDebugBehavior, "BehaviorManager::initBehavior. subVar %s", transCyrillic((byte *)subvar->_varName));
 		if (!strcmp(subvar->_varName, "AMBIENT")) {
 			behinfo = new BehaviorInfo;
 			behinfo->initAmbientBehavior(subvar, sc);
@@ -66,8 +71,8 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 			_behaviors.push_back(behinfo);
 		} else {
 			StaticANIObject *ani = sc->getStaticANIObject1ByName(subvar->_varName, -1);
-			if (ani)
-				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++)
+			if (ani) {
+				for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
 					if (((StaticANIObject *)sc->_staticANIObjectList1[i])->_id == ani->_id) {
 						behinfo = new BehaviorInfo;
 						behinfo->initObjectBehavior(subvar, sc, ani);
@@ -75,6 +80,8 @@ void BehaviorManager::initBehavior(Scene *sc, GameVar *var) {
 
 						_behaviors.push_back(behinfo);
 					}
+				}
+			}
 		}
 	}
 }
@@ -260,7 +267,7 @@ void BehaviorInfo::initAmbientBehavior(GameVar *var, Scene *sc) {
 }
 
 void BehaviorInfo::initObjectBehavior(GameVar *var, Scene *sc, StaticANIObject *ani) {
-	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s)", transCyrillic((byte *)var->_varName));
+	debugC(4, kDebugBehavior, "BehaviorInfo::initObjectBehavior(%s, %d, %s)", transCyrillic((byte *)var->_varName), sc->_sceneId, transCyrillic((byte *)ani->_objectName));
 
 	clear();
 
