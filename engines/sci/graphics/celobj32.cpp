@@ -812,7 +812,21 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
 	const byte *const data = resource->data;
 
 	const uint16 loopCount = data[2];
-	if (loopNo >= loopCount || loopNo < 0) {
+
+	// Every version of SCI32 has a logic error in this function that causes
+	// random memory to be read if a script requests the cel count for one
+	// past the maximum loop index. At least GK1 room 800 does this, and gets
+	// stuck in an infinite loop because the game script expects this method
+	// to return a non-zero value.
+	// The scope of this bug means it is likely to pop up in other games, so we
+	// explicitly trap the bad condition here and report it so that any other
+	// game scripts relying on this broken behavior can be fixed as well
+	if (loopNo == loopCount) {
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("[CelObjView::getNumCels]: loop number is equal to loop count in method %s::%s (room %d, script %d, localCall %x)", origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
+	}
+
+	if (loopNo > loopCount || loopNo < 0) {
 		return 0;
 	}
 
