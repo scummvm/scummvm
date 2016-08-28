@@ -601,7 +601,7 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->getPixelAtPos(x, y, &pixel) &&
-				(!res || res->_priority >= p->_priority))
+				(!res || res->_priority > p->_priority))
 			res = p;
 	}
 
