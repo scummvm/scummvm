@@ -293,16 +293,16 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
 	if (srcMapX == destMapX) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
-		if (srcMapY > destMapY) {
+		if (srcMapY > destMapY)
 			return kDirNorth;
-		}
+
 		return kDirSouth;
 	}
 	if (srcMapY == destMapY) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 0; /* Resulting direction may be 0 or 2 (North or South) */
-		if (srcMapX > destMapX) {
+		if (srcMapX > destMapX)
 			return kDirWest;
-		}
+
 		return kDirEast;
 	}
 
@@ -348,9 +348,9 @@ bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY,
 
 bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack, bool magicAttack, int16 ticks) {
 	Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-	if ((magicAttack && !curDoor->isMagicDestructible()) || (!magicAttack && !curDoor->isMeleeDestructible())) {
+	if ((magicAttack && !curDoor->isMagicDestructible()) || (!magicAttack && !curDoor->isMeleeDestructible()))
 		return false;
-	}
+
 	if (attack >= _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._defense) {
 		byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 		if (Square(*curSquare).getDoorState() == k4_doorState_CLOSED) {
@@ -373,138 +373,124 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 
 Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while ((curThing != Thing::_endOfList) && ((curThing).getType() != k4_GroupThingType)) {
+	while ((curThing != Thing::_endOfList) && (curThing.getType() != k4_GroupThingType))
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
-	}
+
 	return curThing;
 }
 
 int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
-	uint16 L0374_ui_Multiple;
-#define AL0374_ui_EventIndex    L0374_ui_Multiple
-#define AL0374_ui_CreatureIndex L0374_ui_Multiple
-#define AL0374_ui_CreatureSize  L0374_ui_Multiple
-#define AL0374_ui_Attack        L0374_ui_Multiple
-	uint16 L0375_ui_Multiple;
-#define AL0375_ui_Outcome           L0375_ui_Multiple
-#define AL0375_ui_EventType         L0375_ui_Multiple
-#define AL0375_ui_NextCreatureIndex L0375_ui_Multiple
-	CreatureInfo *L0376_ps_CreatureInfo;
-	TimelineEvent *L0377_ps_Event;
-	ActiveGroup *L0378_ps_ActiveGroup = nullptr;
-	uint16 L0379_ui_CreatureCount;
-	uint16 L0380_ui_Multiple = 0;
-#define AL0380_ui_CreatureType   L0380_ui_Multiple
-#define AL0380_ui_FearResistance L0380_ui_Multiple
-	uint16 L0381_ui_GroupCells;
-	uint16 L0382_ui_GroupDirections;
-	bool L0383_B_CurrentMapIsPartyMap;
-	uint16 L0384_ui_Cell;
+	uint16 creatureType = group->_type;
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
+	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
+		return k0_outcomeKilledNoCreaturesInGroup;
 
-
-	L0376_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0380_ui_CreatureType = group->_type];
-	if (getFlag(L0376_ps_CreatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
-		goto T0190024;
 	if (group->_health[creatureIndex] <= damage) {
-		L0381_ui_GroupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
-		L0384_ui_Cell = (L0381_ui_GroupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(L0381_ui_GroupCells, creatureIndex);
-		if (!(L0379_ui_CreatureCount = group->getCount())) { /* If there is a single creature in the group */
+		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
+		uint16 cell = (groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex);
+		uint16 creatureCount = group->getCount();
+		uint16 retVal;
+
+		if (!creatureCount) { /* If there is a single creature in the group */
 			if (notMoving) {
 				dropGroupPossessions(mapX, mapY, groupGetThing(mapX, mapY), k2_soundModePlayOneTickLater);
 				groupDelete(mapX, mapY);
 			}
-			AL0375_ui_Outcome = k2_outcomeKilledAllCreaturesInGroup;
+			retVal = k2_outcomeKilledAllCreaturesInGroup;
 		} else { /* If there are several creatures in the group */
-			L0382_ui_GroupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
-			if (getFlag(L0376_ps_CreatureInfo->_attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
-				if (notMoving) {
-					dropCreatureFixedPossessions(AL0380_ui_CreatureType, mapX, mapY, L0384_ui_Cell, k2_soundModePlayOneTickLater);
-				} else {
-					_dropMovingCreatureFixedPossessionsCell[_dropMovingCreatureFixedPossCellCount++] = L0384_ui_Cell;
-				}
+			uint16 groupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
+			if (getFlag(creatureInfo->_attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+				if (notMoving)
+					dropCreatureFixedPossessions(creatureType, mapX, mapY, cell, k2_soundModePlayOneTickLater);
+				else
+					_dropMovingCreatureFixedPossessionsCell[_dropMovingCreatureFixedPossCellCount++] = cell;
 			}
-			L0383_B_CurrentMapIsPartyMap = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex);
-			if (L0383_B_CurrentMapIsPartyMap)
-				L0378_ps_ActiveGroup = &_activeGroups[group->getActiveGroupIndex()];
+			bool currentMapIsPartyMap = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex);
+			ActiveGroup *activeGroup = nullptr;
+			if (currentMapIsPartyMap)
+				activeGroup = &_activeGroups[group->getActiveGroupIndex()];
 
 			if (group->getBehaviour() == k6_behavior_ATTACK) {
-				L0377_ps_Event = _vm->_timeline->_events;
-				for (AL0374_ui_EventIndex = 0; AL0374_ui_EventIndex < _vm->_timeline->_eventMaxCount; AL0374_ui_EventIndex++) {
-					if ((getMap(L0377_ps_Event->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
-						(L0377_ps_Event->_B._location._mapX == mapX) &&
-						(L0377_ps_Event->_B._location._mapY == mapY) &&
-						((AL0375_ui_EventType = L0377_ps_Event->_type) > k32_TMEventTypeUpdateAspectGroup) &&
-						(AL0375_ui_EventType < k41_TMEventTypeUpdateBehaviour_3 + 1)) {
-						if (AL0375_ui_EventType < k37_TMEventTypeUpdateBehaviourGroup) {
-							AL0375_ui_EventType -= k33_TMEventTypeUpdateAspectCreature_0; /* Get creature index for events 33 to 36 */
-						} else {
-							AL0375_ui_EventType -= k38_TMEventTypeUpdateBehaviour_0; /* Get creature index for events 38 to 41 */
-						}
-						if (AL0375_ui_NextCreatureIndex == creatureIndex) {
-							_vm->_timeline->deleteEvent(AL0374_ui_EventIndex);
-						} else {
-							if (AL0375_ui_NextCreatureIndex > creatureIndex) {
-								L0377_ps_Event->_type -= 1;
-								_vm->_timeline->fixChronology(_vm->_timeline->getIndex(AL0374_ui_EventIndex));
-							}
+				TimelineEvent *curEvent = _vm->_timeline->_events;
+				for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventIndex++) {
+					uint16 curEventType = curEvent->_type;
+					if ((getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
+						(curEvent->_B._location._mapX == mapX) &&
+						(curEvent->_B._location._mapY == mapY) &&
+						(curEventType > k32_TMEventTypeUpdateAspectGroup) &&
+						(curEventType < k41_TMEventTypeUpdateBehaviour_3 + 1)) {
+						uint16 nextCreatureIndex;
+						if (curEventType < k37_TMEventTypeUpdateBehaviourGroup)
+							nextCreatureIndex = curEventType - k33_TMEventTypeUpdateAspectCreature_0; /* Get creature index for events 33 to 36 */
+						else
+							nextCreatureIndex = curEventType - k38_TMEventTypeUpdateBehaviour_0; /* Get creature index for events 38 to 41 */
+
+						if (nextCreatureIndex == creatureIndex)
+							_vm->_timeline->deleteEvent(eventIndex);
+						else if (nextCreatureIndex > creatureIndex) {
+							curEvent->_type -= 1;
+							_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 						}
 					}
-					L0377_ps_Event++;
+					curEvent++;
 				}
-				if (L0383_B_CurrentMapIsPartyMap && ((AL0380_ui_FearResistance = L0376_ps_CreatureInfo->getFearResistance()) != k15_immuneToFear) && ((AL0380_ui_FearResistance += L0379_ui_CreatureCount - 1) < (_vm->getRandomNumber(16)))) { /* Test if the death of a creature frigthens the remaining creatures in the group */
-					L0378_ps_ActiveGroup->_delayFleeingFromTarget = _vm->getRandomNumber(100 - (AL0380_ui_FearResistance << 2)) + 20;
-					group->setBehaviour(k5_behavior_FLEE);
-				}
-			}
-			for (AL0375_ui_NextCreatureIndex = AL0374_ui_CreatureIndex = creatureIndex; AL0374_ui_CreatureIndex < L0379_ui_CreatureCount; AL0374_ui_CreatureIndex++) {
-				AL0375_ui_NextCreatureIndex++;
-				group->_health[AL0374_ui_CreatureIndex] = group->_health[AL0375_ui_NextCreatureIndex];
-				L0382_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0382_ui_GroupDirections, AL0374_ui_CreatureIndex, getCreatureValue(L0382_ui_GroupDirections, AL0375_ui_NextCreatureIndex));
-				L0381_ui_GroupCells = getGroupValueUpdatedWithCreatureValue(L0381_ui_GroupCells, AL0374_ui_CreatureIndex, getCreatureValue(L0381_ui_GroupCells, AL0375_ui_NextCreatureIndex));
-				if (L0383_B_CurrentMapIsPartyMap) {
-					L0378_ps_ActiveGroup->_aspect[AL0374_ui_CreatureIndex] = L0378_ps_ActiveGroup->_aspect[AL0375_ui_NextCreatureIndex];
+
+				uint16 fearResistance = creatureInfo->getFearResistance();
+				if (currentMapIsPartyMap && (fearResistance) != k15_immuneToFear) {
+					fearResistance += creatureCount - 1;
+					if (fearResistance < _vm->getRandomNumber(16)) { /* Test if the death of a creature frightens the remaining creatures in the group */
+						activeGroup->_delayFleeingFromTarget = _vm->getRandomNumber(100 - (fearResistance << 2)) + 20;
+						group->setBehaviour(k5_behavior_FLEE);
+					}
 				}
 			}
-			L0381_ui_GroupCells &= 0x003F;
-			_vm->_dungeonMan->setGroupCells(group, L0381_ui_GroupCells, _vm->_dungeonMan->_currMapIndex);
-			_vm->_dungeonMan->setGroupDirections(group, L0382_ui_GroupDirections, _vm->_dungeonMan->_currMapIndex);
+			uint16 nextCreatureIndex = creatureIndex;
+			for (uint16 curCreatureIndex = creatureIndex; curCreatureIndex < creatureCount; curCreatureIndex++) {
+				nextCreatureIndex++;
+				group->_health[curCreatureIndex] = group->_health[nextCreatureIndex];
+				groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, curCreatureIndex, getCreatureValue(groupDirections, nextCreatureIndex));
+				groupCells = getGroupValueUpdatedWithCreatureValue(groupCells, curCreatureIndex, getCreatureValue(groupCells, nextCreatureIndex));
+				if (currentMapIsPartyMap)
+					activeGroup->_aspect[curCreatureIndex] = activeGroup->_aspect[nextCreatureIndex];
+			}
+			groupCells &= 0x003F;
+			_vm->_dungeonMan->setGroupCells(group, groupCells, _vm->_dungeonMan->_currMapIndex);
+			_vm->_dungeonMan->setGroupDirections(group, groupDirections, _vm->_dungeonMan->_currMapIndex);
 			group->setCount(group->getCount() - 1);
-			AL0375_ui_Outcome = k1_outcomeKilledSomeCreaturesInGroup;
+			retVal = k1_outcomeKilledSomeCreaturesInGroup;
 		}
-		if ((AL0374_ui_CreatureSize = getFlag(L0376_ps_CreatureInfo->_attributes, k0x0003_MaskCreatureInfo_size)) == k0_MaskCreatureSizeQuarter) {
-			AL0374_ui_Attack = 110;
-		} else {
-			if (AL0374_ui_CreatureSize == k1_MaskCreatureSizeHalf) {
-				AL0374_ui_Attack = 190;
-			} else {
-				AL0374_ui_Attack = 255;
-			}
-		}
-		_vm->_projexpl->createExplosion(Thing::_explSmoke, AL0374_ui_Attack, mapX, mapY, L0384_ui_Cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
-		return AL0375_ui_Outcome;
+
+		uint16 creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
+		uint16 attack;
+		if (creatureSize == k0_MaskCreatureSizeQuarter)
+			attack = 110;
+		else if (creatureSize == k1_MaskCreatureSizeHalf)
+			attack = 190;
+		else
+			attack = 255;
+
+		_vm->_projexpl->createExplosion(Thing::_explSmoke, attack, mapX, mapY, cell); /* BUG0_66 Smoke is placed on the source map instead of the destination map when a creature dies by falling through a pit. The game has a special case to correctly drop the creature possessions on the destination map but there is no such special case for the smoke. Note that the death must be caused by the damage of the fall (there is no smoke if the creature is removed because its type is not allowed on the destination map). However this bug has no visible consequence because of BUG0_26: the smoke explosion falls in the pit right after being placed in the dungeon and before being drawn on screen so it is only visible on the destination square */
+		return retVal;
 	}
-	if (damage > 0) {
+
+	if (damage > 0)
 		group->_health[creatureIndex] -= damage;
-	}
-T0190024:
+
 	return k0_outcomeKilledNoCreaturesInGroup;
 }
 
 void GroupMan::groupDelete(int16 mapX, int16 mapY) {
-	Thing L0372_T_GroupThing;
-	Group *L0373_ps_Group;
-
-
-	if ((L0372_T_GroupThing = groupGetThing(mapX, mapY)) == Thing::_endOfList) {
+	Thing groupThing = groupGetThing(mapX, mapY);
+	if (groupThing == Thing::_endOfList)
 		return;
-	}
-	L0373_ps_Group = (Group *)_vm->_dungeonMan->getThingData(L0372_T_GroupThing);
+
+	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	for (uint16 i = 0; i < 4; ++i)
-		L0373_ps_Group->_health[i] = 0;
-	_vm->_moveSens->getMoveResult(L0372_T_GroupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
-	L0373_ps_Group->_nextThing = Thing::_none;
+		group->_health[i] = 0;
+	_vm->_moveSens->getMoveResult(groupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
+	group->_nextThing = Thing::_none;
 	if (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) {
-		_activeGroups[L0373_ps_Group->getActiveGroupIndex()]._groupThingIndex = -1;
+		_activeGroups[group->getActiveGroupIndex()]._groupThingIndex = -1;
 		_currActiveGroupCount--;
 	}
 	groupDeleteEvents(mapX, mapY);
