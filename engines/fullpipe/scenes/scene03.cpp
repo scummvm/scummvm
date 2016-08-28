@@ -48,6 +48,8 @@ void FullpipeEngine::setSwallowedEggsState() {
 }
 
 void scene03_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene03_initScene()");
+
 	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
 	g_vars->scene03_domino = sc->getStaticANIObject1ById(ANI_DOMINO_3, -1);
 
@@ -60,6 +62,9 @@ void scene03_initScene(Scene *sc) {
 	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
 	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+
+	debugC(2, kDebugSceneLogic, "scene03: egg1: %d egg2: %d egg3: %d", g_vars->swallowedEgg1->_value.intValue,
+		g_vars->swallowedEgg2->_value.intValue, g_vars->swallowedEgg3->_value.intValue);
 }
 
 void scene03_setEaterState() {
@@ -90,10 +95,13 @@ void sceneHandler03_eaterFat() {
 void sceneHandler03_swallowEgg(int item) {
 	if (!g_vars->swallowedEgg1->_value.intValue) {
 		g_vars->swallowedEgg1->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg1: %d", g_vars->swallowedEgg1->_value.intValue);
 	} else if (!g_vars->swallowedEgg2->_value.intValue) {
 		g_vars->swallowedEgg2->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg2: %d", g_vars->swallowedEgg2->_value.intValue);
 	} else if (!g_vars->swallowedEgg3->_value.intValue) {
 		g_vars->swallowedEgg3->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg3: %d", g_vars->swallowedEgg3->_value.intValue);
 
 		g_fp->setObjectState(sO_EggGulperGaveCoin, g_fp->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
 
