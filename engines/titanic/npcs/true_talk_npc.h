@@ -65,11 +65,6 @@ protected:
 	int _field104;
 protected:
 	void processInput(CTextInputMsg *msg, CViewItem *view);
-
-	/**
-	 * Perform an action
-	 */
-	void performAction(bool startTalking, CViewItem *view = nullptr);
 public:
 	int _field100;
 public:
@@ -95,6 +90,11 @@ public:
 	 * Start the talker in the given view
 	 */
 	void startTalker(CViewItem *view);
+
+	/**
+	 * Perform an action
+	 */
+	void performAction(bool startTalking, CViewItem *view = nullptr);
 };
 
 } // End of namespace Titanic

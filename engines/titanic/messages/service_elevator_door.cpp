@@ -24,6 +24,10 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CServiceElevatorDoor, CDoorAutoSoundEvent)
+	ON_MESSAGE(PreEnterNodeMsg)
+END_MESSAGE_MAP()
+
 CServiceElevatorDoor::CServiceElevatorDoor() : CDoorAutoSoundEvent() {
 	_string1 = "z#31.wav";
 	_string2 = "z#32.wav";
@@ -43,6 +47,12 @@ void CServiceElevatorDoor::load(SimpleFile *file) {
 	_string1 = file->readString();
 
 	CDoorAutoSoundEvent::load(file);
+}
+
+bool CServiceElevatorDoor::PreEnterNodeMsg(CPreEnterNodeMsg *msg) {
+	if (!findRoom()->isEquals("BilgeRoomWith"))
+		CDoorAutoSoundEvent::PreEnterNodeMsg(msg);
+	return true;
 }
 
 } // End of namespace Titanic

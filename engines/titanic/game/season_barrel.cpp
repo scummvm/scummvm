@@ -24,19 +24,38 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CSeasonBarrel, CBackground)
+	ON_MESSAGE(ChangeSeasonMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
 void CSeasonBarrel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_unused, indent);
+	file->writeNumberLine(_startFrame, indent);
 
 	CBackground::save(file, indent);
 }
 
 void CSeasonBarrel::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_unused = file->readNumber();
+	_startFrame = file->readNumber();
 	CBackground::load(file);
+}
+
+bool CSeasonBarrel::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	if (_startFrame >= 28)
+		_startFrame = 0;
+
+	playMovie(_startFrame, _startFrame + 7, 0);
+	_startFrame += 7;
+	return true;
+}
+
+bool CSeasonBarrel::EnterViewMsg(CEnterViewMsg *msg) {
+	loadFrame(_startFrame);
+	return true;
 }
 
 } // End of namespace Titanic

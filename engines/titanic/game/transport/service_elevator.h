@@ -28,15 +28,23 @@
 namespace Titanic {
 
 class CServiceElevator : public CTransport {
+	DECLARE_MESSAGE_MAP;
+	bool BodyInBilgeRoomMsg(CBodyInBilgeRoomMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ServiceElevatorMsg(CServiceElevatorMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
+	bool ServiceElevatorFloorRequestMsg(CServiceElevatorFloorRequestMsg *msg);
+	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool OpeningCreditsMsg(COpeningCreditsMsg *msg);
 private:
-	static int _v1;
+	static bool _v1;
 	static int _v2;
 	static int _v3;
 
 	int _fieldF8;
-	int _fieldFC;
-	int _field100;
-	int _field104;
+	int _soundHandle1;
+	int _timerId;
+	int _soundHandle2;
 public:
 	CLASSDEF;
 	CServiceElevator();

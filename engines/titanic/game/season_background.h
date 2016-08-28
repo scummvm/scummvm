@@ -28,11 +28,16 @@
 namespace Titanic {
 
 class CSeasonBackground : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool EnterViewMsg(CEnterViewMsg *msg);
+	bool ChangeSeasonMsg(CChangeSeasonMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool ActMsg(CActMsg *msg);
 public:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
+	Season _seasonNum;
+	bool _flag;
+	int _defaultFrame;
+	int _unused;
 public:
 	CLASSDEF;
 	CSeasonBackground();

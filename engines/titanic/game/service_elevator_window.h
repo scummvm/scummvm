@@ -28,6 +28,10 @@
 namespace Titanic {
 
 class CServiceElevatorWindow : public CBackground {
+	DECLARE_MESSAGE_MAP;
+	bool ServiceElevatorFloorChangeMsg(CServiceElevatorFloorChangeMsg *msg);
+	bool MovieEndMsg(CMovieEndMsg *msg);
+	bool EnterViewMsg(CEnterViewMsg *msg);
 public:
 	int _fieldE0;
 	int _fieldE4;

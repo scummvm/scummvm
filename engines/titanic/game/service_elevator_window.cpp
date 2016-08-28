@@ -21,8 +21,18 @@
  */
 
 #include "titanic/game/service_elevator_window.h"
+#include "titanic/core/room_item.h"
+#include "titanic/npcs/doorbot.h"
 
 namespace Titanic {
+
+BEGIN_MESSAGE_MAP(CServiceElevatorWindow, CBackground)
+	ON_MESSAGE(ServiceElevatorFloorChangeMsg)
+	ON_MESSAGE(MovieEndMsg)
+	ON_MESSAGE(EnterViewMsg)
+END_MESSAGE_MAP()
+
+static const int FACTORS[4] = { 0, 20, 100, 0 };
 
 CServiceElevatorWindow::CServiceElevatorWindow() : CBackground(),
 	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0) {
@@ -46,6 +56,59 @@ void CServiceElevatorWindow::load(SimpleFile *file) {
 	_fieldEC = file->readNumber();
 
 	CBackground::load(file);
+}
+
+bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloorChangeMsg *msg) {
+	if (getView() == findView()) {
+		CDoorbot *doorbot = dynamic_cast<CDoorbot *>(findRoom()->findByName("Doorbot"));
+		int val = (_fieldE8 && doorbot) ? 65 : 15;
+		CMovieClip *clip = _movieClips.findByName("Going Up");
+
+		if (!clip)
+			return true;
+
+		int count = _endFrame - _startFrame;
+		setMovieFrameRate(1.0 * count / val);
+			
+		int startFrame = clip->_startFrame + count * FACTORS[msg->_value1] / 100;
+		int endFrame = clip->_startFrame + count * FACTORS[msg->_value2] / 100;
+
+		if (_fieldE4) {
+			playMovie(startFrame, endFrame, MOVIE_NOTIFY_OBJECT);
+		} else {
+			playMovie(startFrame, endFrame, 0);
+			if (_fieldEC)
+				playClip("Into Space");
+		}
+	}
+
+	_fieldE0 = msg->_value2;
+	return true;
+}
+
+bool CServiceElevatorWindow::MovieEndMsg(CMovieEndMsg *msg) {
+	CServiceElevatorMsg elevMsg(5);
+	elevMsg.execute(findRoom()->findByName("Service Elevator Entity"));
+	return true;
+}
+
+bool CServiceElevatorWindow::EnterViewMsg(CEnterViewMsg *msg) {
+	if (_fieldEC) {
+		playClip("Fade Up");
+		playMovie(1, 2, 0);
+	} else {
+		CMovieClip *clip = _movieClips.findByName("Going Up");
+
+		if (clip) {
+			int frameNum = clip->_startFrame + (clip->_endFrame - clip->_startFrame)
+				* FACTORS[_fieldE0] / 100;
+			loadFrame(frameNum);
+		} else {
+			loadFrame(0);
+		}
+	}
+	
+	return true;
 }
 
 } // End of namespace Titanic
