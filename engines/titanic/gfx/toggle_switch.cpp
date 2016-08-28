@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CToggleSwitch, CToggleSwitch)
+BEGIN_MESSAGE_MAP(CToggleSwitch, CGameObject)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(ChildDragStartMsg)
 	ON_MESSAGE(ChildDragMoveMsg)
