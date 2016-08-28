@@ -304,6 +304,8 @@ void Scripts::openGrate(int wallVal, int action) {
 		case DIR_WEST:
 			pt.x--;
 			break;
+		default:
+			break;
 		}
 
 		map.setCellSurfaceFlags(pt, 0x80);
@@ -1084,7 +1086,7 @@ void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
 	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
-		_message);
+		_message.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
 
@@ -1227,7 +1229,9 @@ void Scripts::cmdDisplayBottomTwoLines(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	Window &w = _vm->_screen->_windows[12];
 
+	warning("TODO: cmdDisplayBottomTwoLines");
 	Common::String msg = Common::String::format("\r\x03c\t000\v007%s\n\n%s",
+		"",
 		map._events._text[params[1]].c_str());
 	w.close();
 	w.open();

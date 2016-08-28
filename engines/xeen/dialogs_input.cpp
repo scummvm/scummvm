@@ -37,7 +37,7 @@ int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 
 int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric) {
 	_vm->_noDirectionSense = true;
-	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x0""c", maxWidth);
+	Common::String msg = Common::String::format("\x3""l\t000\x4%03d\x3""c", maxWidth);
 	_window->writeString(msg);
 	_window->update();
 

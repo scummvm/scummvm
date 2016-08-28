@@ -912,6 +912,8 @@ int Teleport::execute() {
 	case DIR_WEST:
 		pt.x -= numSquares;
 		break;
+	default:
+		break;
 	}
 
 	v = map.mazeLookup(pt, map._isOutdoors ? 0xF : 0xFFFF, 0);

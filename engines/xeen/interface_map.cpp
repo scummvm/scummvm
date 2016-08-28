@@ -27,8 +27,6 @@
 
 namespace Xeen {
 
-static bool debugFlag = false;
-
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]), 
 	_groundSprite(_data[2]), _attackImgs1(&_data[124]), _attackImgs2(&_data[95]),
 	_attackImgs3(&_data[76]), _attackImgs4(&_data[53]), _groundTiles(&_data[3]) {

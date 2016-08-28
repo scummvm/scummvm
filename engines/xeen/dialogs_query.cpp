@@ -105,7 +105,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
 	SpriteResource confirmSprites;
-	int numFrames;
+	//int numFrames;
 	bool result = false;
 
 	Mode oldMode = _vm->_mode;
@@ -130,10 +130,10 @@ bool YesNo::execute(bool type, bool townFlag) {
 		
 		if (town.isActive()) {
 			town.drawTownAnim(townFlag);
-			numFrames = 3;
+			//numFrames = 3;
 		} else {
 			intf.draw3d(true);
-			numFrames = 1;
+			//numFrames = 1;
 		}
 
 		events.wait(3, true);

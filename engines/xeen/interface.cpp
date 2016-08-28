@@ -513,6 +513,8 @@ void Interface::perform() {
 			case DIR_WEST:
 				--party._mazePosition.x;
 				break;
+			default:
+				break;
 			}
 			chargeStep();
 			stepTime();
@@ -1229,6 +1231,8 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 					break;
 				case DIR_WEST:
 					map.setWall(Common::Point(pt.x - 1, pt.y), DIR_EAST, 3);
+					break;
+				default:
 					break;
 				}
 			}

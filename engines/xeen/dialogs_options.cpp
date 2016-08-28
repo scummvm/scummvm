@@ -110,7 +110,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed()) {
 		events.updateGameCounter();
 
-		frameNum = ++frameNum % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
+		frameNum = (frameNum + 1) % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
 		screen.restoreBackground();
 		sprites.draw(screen, frameNum);
 
@@ -211,7 +211,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	events.updateGameCounter();
 	
 	// Draw the background frame in a continous cycle
-	_bgFrame = ++_bgFrame % 5;
+	_bgFrame = (_bgFrame + 1) % 5;
 	title1.draw(screen._windows[0], _bgFrame);
 
 	// Draw the basic frame for the optitons menu and title text
