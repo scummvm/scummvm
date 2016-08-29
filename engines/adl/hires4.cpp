@@ -46,7 +46,6 @@ void HiRes4Engine::init() {
 		error("Failed to open disk image '%s'", getDiskImageName(0));
 
 	insertDisk(1);
-
 	loadCommonData();
 
 	StreamPtr stream(createReadStream(_boot, 0x06, 0x2));
@@ -92,9 +91,11 @@ void HiRes4Engine::init() {
 
 void HiRes4Engine::loadRoom(byte roomNr) {
 	if (roomNr >= 59 && roomNr < 113) {
-		insertDisk(2);
-		rebindDisk();
-	} else {
+		if (_curDisk != 2) {
+			insertDisk(2);
+			rebindDisk();
+		}
+	} else if (_curDisk != 1) {
 		insertDisk(1);
 		rebindDisk();
 	}
@@ -138,7 +139,6 @@ void HiRes4Engine::insertDisk(byte diskNr) {
 	_curDisk = diskNr;
 
 	delete _disk;
-
 	_disk = new DiskImage();
 	if (!_disk->open(getDiskImageName(diskNr)))
 		error("Failed to open disk image '%s'", getDiskImageName(diskNr));
