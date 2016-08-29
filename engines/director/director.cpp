@@ -90,9 +90,6 @@ DirectorEngine::~DirectorEngine() {
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
 
-	//FIXME
-	_sharedMMM = "SHARDCST.MMM";
-
 	_currentPalette = nullptr;
 
 	_macBinary = nullptr;
@@ -116,6 +113,8 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
+	loadMMMNames(ConfMan.get("path"));
+
 	if (getPlatform() == Common::kPlatformWindows)
 		loadEXE();
 	else
@@ -133,6 +132,13 @@ Common::Error DirectorEngine::run() {
 Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::String folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
+	const char *sharedMMMname;
+
+	if (getPlatform() == Common::kPlatformWindows)
+		sharedMMMname = "SHARDCST.MMM";
+	else
+		sharedMMMname = "Shared Cast*";
+
 
 	Common::HashMap<Common::String, Score *> nameMap;
 	if (!directory.getChildren(movies, Common::FSNode::kListFilesOnly))
@@ -140,12 +146,19 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 
 	if (!movies.empty()) {
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
-			if (i->getName() == _sharedMMM) {
+			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
 				loadSharedCastsFrom(i->getPath());
 				continue;
 			}
 
-			RIFFArchive *arc = new RIFFArchive();
+			Archive *arc;
+
+			if (getVersion() < 4) {
+				arc = new RIFFArchive();
+			} else {
+				arc = new RIFXArchive();
+			}
+
 			arc->openFile(i->getPath());
 			Score *sc = new Score(this);
 			nameMap[sc->getMacName()] = sc;

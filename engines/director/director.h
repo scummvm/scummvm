@@ -108,7 +108,6 @@ private:
 
 	Common::String readPascalString(Common::SeekableReadStream &stream);
 
-	Common::String _sharedMMM;
 	Common::HashMap<int, Cast *> *_sharedCasts;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
