@@ -87,8 +87,11 @@ void CCreditText::setup() {
 		}
 
 		_groups.push_back(group);
+		if (hasDots)
+			handleDots(group);
 	}
 
+	_screenManagerP->setFontNumber(oldFontNumber);
 	_groupIt = _groups.begin();
 	_lineIt = (*_groupIt)->_lines.begin();
 	_totalHeight = _objectP->getBounds().height() + _fontHeight * 2;
