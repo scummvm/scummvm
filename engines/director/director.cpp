@@ -146,18 +146,13 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 
 	if (!movies.empty()) {
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
+			debugC(2, kDebugLoading, "File: %s", i->getName().c_str());
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
 				loadSharedCastsFrom(i->getPath());
 				continue;
 			}
 
-			Archive *arc;
-
-			if (getVersion() < 4) {
-				arc = new RIFFArchive();
-			} else {
-				arc = new RIFXArchive();
-			}
+			Archive *arc = createArchive();
 
 			arc->openFile(i->getPath());
 			Score *sc = new Score(this);
@@ -166,6 +161,14 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 	}
 
 	return nameMap;
+}
+
+Archive *DirectorEngine::createArchive() {
+	if (getVersion() < 4) {
+		return new RIFFArchive();
+	} else {
+		return new RIFXArchive();
+	}
 }
 
 void DirectorEngine::loadEXE() {
@@ -207,8 +210,8 @@ void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
 	Common::String mmmFileName = readPascalString(*stream);
 	Common::String directoryName = readPascalString(*stream);
 
-	debug("Main MMM: '%s'", mmmFileName.c_str());
-	debug("Directory Name: '%s'", directoryName.c_str());
+	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
+	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
 
 	_mainArchive = new RIFFArchive();
 
@@ -322,13 +325,7 @@ void DirectorEngine::setPalette(byte *palette, uint16 count) {
 }
 
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	Archive *shardcst;
-
-	if (getVersion() < 4) {
-		shardcst = new RIFFArchive();
-	} else {
-		shardcst = new RIFXArchive();
-	}
+	Archive *shardcst = createArchive();
 
 	shardcst->openFile(filename);
 
@@ -343,7 +340,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (dib.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
-			debug(3, "Shared DIB %d", *iterator);
+			debugC(3, kDebugLoading, "Shared DIB %d", *iterator);
 			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
 		}
 	}
@@ -353,7 +350,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	if (stxt.size() != 0) {
 		Common::Array<uint16>::iterator iterator;
 		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-			debug(3, "Shared STXT %d", *iterator);
+			debugC(3, kDebugLoading, "Shared STXT %d", *iterator);
 			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
 	}
