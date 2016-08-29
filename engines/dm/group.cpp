@@ -1119,35 +1119,41 @@ int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 de
 int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
 	uint16 groupDirections;
 	CreatureInfo *groupCreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
+	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible))
 		return 0;
-	}
 
-	if (getFlag(groupCreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) /* If creature can see in all directions */
-		goto T0200011;
-	groupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
+	bool alwaysSee = false;
 	int16 checkDirectionsCount; /* Count of directions to test in L0425_ai_CreatureViewDirections */
 	int16 creatureViewDirections[4]; /* List of directions to test */
-	if (creatureIndex < 0) { /* Negative index means test if each creature in the group can see the party in their respective direction */
-		checkDirectionsCount = 0;
-		for (creatureIndex = group->getCount(); creatureIndex >= 0; creatureIndex--) {
-			int16 L0420_i_CreatureDirection = normalizeModulo4(groupDirections >> (creatureIndex << 1));
-			int16 counter = checkDirectionsCount;
-			while (counter--) {
-				if (creatureViewDirections[counter] == L0420_i_CreatureDirection) /* If the creature looks in the same direction as another one in the group */
-					goto T0200006;
-			}
-			creatureViewDirections[checkDirectionsCount++] = L0420_i_CreatureDirection;
-T0200006:
-			;
-		}
-	} else { /* Positive index means test only if the specified creature in the group can see the party in its direction */
-		creatureViewDirections[0] = getCreatureValue(groupDirections, creatureIndex);
+	if (getFlag(groupCreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) { /* If creature can see in all directions */
+		alwaysSee = true;
 		checkDirectionsCount = 1;
+		creatureViewDirections[0] = kDirNorth;
+	} else {
+		groupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
+		if (creatureIndex < 0) { /* Negative index means test if each creature in the group can see the party in their respective direction */
+			checkDirectionsCount = 0;
+			for (creatureIndex = group->getCount(); creatureIndex >= 0; creatureIndex--) {
+				int16 creatureDirection = normalizeModulo4(groupDirections >> (creatureIndex << 1));
+				int16 counter = checkDirectionsCount;
+				bool skipSet = false;
+				while (counter--) {
+					if (creatureViewDirections[counter] == creatureDirection) { /* If the creature looks in the same direction as another one in the group */
+						skipSet = true;
+						break;
+					}
+				}
+				if (!skipSet)
+					creatureViewDirections[checkDirectionsCount++] = creatureDirection;
+			}
+		} else { /* Positive index means test only if the specified creature in the group can see the party in its direction */
+			creatureViewDirections[0] = getCreatureValue(groupDirections, creatureIndex);
+			checkDirectionsCount = 1;
+		}
 	}
+
 	while (checkDirectionsCount--) {
-		if (isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
-T0200011:
+		if (alwaysSee || isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
 			int16 sightRange = groupCreatureInfo->getSightRange();
 			if (!getFlag(groupCreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision))
 				sightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
