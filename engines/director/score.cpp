@@ -87,11 +87,11 @@ static byte defaultPalette[768] = {
 	204,  51, 255, 204, 102, 255, 204, 153, 255, 204, 204, 255, 204, 255, 255, 255,
 	  0, 255, 255,  51, 255, 255, 102, 255, 255, 153, 255, 255, 204, 255, 255, 255 };
 
-Score::Score(DirectorEngine *vm) {
+Score::Score(DirectorEngine *vm, Archive *archive) {
 	_vm = vm;
 	_surface = new Graphics::ManagedSurface;
 	_trailSurface = new Graphics::ManagedSurface;
-	_movieArchive = _vm->getMainArchive();
+	_movieArchive = archive;
 	_lingo = _vm->getLingo();
 	_soundManager = _vm->getSoundManager();
 	_lingo->processEvent(kEventPrepareMovie, 0);

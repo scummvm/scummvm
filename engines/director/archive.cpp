@@ -191,7 +191,7 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 
 	shardcst->openFile(filename);
 
-	Score *castScore = new Score(this);
+	Score *castScore = new Score(this, shardcst);
 	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
 
 	castScore->loadCastData(*castStream);

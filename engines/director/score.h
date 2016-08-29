@@ -170,7 +170,7 @@ struct Label {
 
 class Score {
 public:
-	Score(DirectorEngine *vm);
+	Score(DirectorEngine *vm, Archive *);
 	~Score();
 
 	static Common::Rect readRect(Common::SeekableSubReadStreamEndian &stream);

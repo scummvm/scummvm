@@ -114,7 +114,7 @@ Common::Error DirectorEngine::run() {
 	loadMMMNames(ConfMan.get("path"));
 	loadMainArchive();
 
-	_currentScore = new Score(this);
+	_currentScore = new Score(this, _mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
 	_currentScore->loadArchive();
@@ -149,7 +149,7 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 			Archive *arc = createArchive();
 
 			arc->openFile(i->getPath());
-			Score *sc = new Score(this);
+			Score *sc = new Score(this, arc);
 			nameMap[sc->getMacName()] = sc;
 		}
 	}
