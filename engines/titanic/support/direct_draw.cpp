@@ -75,18 +75,6 @@ void DirectDrawManager::initVideo(int width, int height, int bpp, int numBackSur
 	}
 }
 
-void DirectDrawManager::setResolution() {
-	// TODO
-}
-
-void DirectDrawManager::proc2() {
-
-}
-
-void DirectDrawManager::proc3() {
-
-}
-
 void DirectDrawManager::initFullScreen() {
 	debugC(ERROR_BASIC, kDebugGraphics, "Creating surfaces");
 	_directDraw.setDisplayMode(_directDraw._width, _directDraw._height,

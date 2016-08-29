@@ -78,12 +78,6 @@ public:
 	 */
 	void initVideo(int width, int height, int bpp, int numBackSurfaces);
 
-	void setResolution();
-
-	void proc2();
-
-	void proc3();
-
 	/**
 	 * Initializes the surfaces in windowed mode
 	 */
