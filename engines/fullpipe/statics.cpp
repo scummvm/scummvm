@@ -833,7 +833,7 @@ void StaticANIObject::update(int counterdiff) {
 				}
 			}
 
-			if (dyn->_initialCountdown != dyn->_countdown || dyn->_field_68 == 0) {
+			if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 != 0) {
 				newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
 				newex->_excFlags = 2;
 				newex->_keyCode = _okeyCode;
