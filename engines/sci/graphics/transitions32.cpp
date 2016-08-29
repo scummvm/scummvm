@@ -953,7 +953,7 @@ bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
 
 	int deltaX = scroll.deltaX;
 	int deltaY = scroll.deltaY;
-	if (((scroll.x + deltaX) * scroll.y) <= 0) {
+	if (((scroll.x + deltaX) * scroll.x) <= 0) {
 		deltaX = -scroll.x;
 	}
 	if (((scroll.y + deltaY) * scroll.y) <= 0) {
