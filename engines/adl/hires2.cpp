@@ -26,12 +26,38 @@
 #include "common/file.h"
 #include "common/stream.h"
 
-#include "adl/hires2.h"
+#include "adl/adl_v2.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
 namespace Adl {
+
+#define IDS_HR2_DISK_IMAGE "WIZARD.DSK"
+
+#define IDI_HR2_NUM_ROOMS 135
+#define IDI_HR2_NUM_MESSAGES 255
+#define IDI_HR2_NUM_VARS 40
+#define IDI_HR2_NUM_ITEM_PICS 38
+#define IDI_HR2_NUM_ITEM_OFFSETS 16
+
+// Messages used outside of scripts
+#define IDI_HR2_MSG_CANT_GO_THERE      123
+#define IDI_HR2_MSG_DONT_UNDERSTAND     19
+#define IDI_HR2_MSG_ITEM_DOESNT_MOVE   242
+#define IDI_HR2_MSG_ITEM_NOT_HERE        4
+#define IDI_HR2_MSG_THANKS_FOR_PLAYING 239
+
+class HiRes2Engine : public AdlEngine_v2 {
+public:
+	HiRes2Engine(OSystem *syst, const AdlGameDescription *gd) : AdlEngine_v2(syst, gd) { }
+
+private:
+	// AdlEngine
+	void runIntro() const;
+	void init();
+	void initGameState();
+};
 
 void HiRes2Engine::runIntro() const {
 	// This only works for the 16-sector re-release. The original

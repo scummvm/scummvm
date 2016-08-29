@@ -22,11 +22,38 @@
 
 #include "common/textconsole.h"
 
-#include "adl/hires0.h"
+#include "adl/adl_v2.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
 namespace Adl {
+
+#define IDS_HR0_DISK_IMAGE "MISSION.NIB"
+
+#define IDI_HR0_NUM_ROOMS 43
+#define IDI_HR0_NUM_MESSAGES 142
+#define IDI_HR0_NUM_VARS 40
+#define IDI_HR0_NUM_ITEM_PICS 2
+#define IDI_HR0_NUM_ITEM_OFFSETS 16
+
+// Messages used outside of scripts
+#define IDI_HR0_MSG_CANT_GO_THERE      110
+#define IDI_HR0_MSG_DONT_UNDERSTAND    112
+#define IDI_HR0_MSG_ITEM_DOESNT_MOVE   114
+#define IDI_HR0_MSG_ITEM_NOT_HERE      115
+#define IDI_HR0_MSG_THANKS_FOR_PLAYING 113
+
+class HiRes0Engine : public AdlEngine_v2 {
+public:
+	HiRes0Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine_v2(syst, gd) { }
+	~HiRes0Engine() { }
+
+private:
+	// AdlEngine
+	void init();
+	void initGameState();
+};
 
 void HiRes0Engine::init() {
 	_graphics = new Graphics_v2(*_display);

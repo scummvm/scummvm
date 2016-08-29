@@ -27,12 +27,64 @@
 #include "common/stream.h"
 #include "common/memstream.h"
 
-#include "adl/hires6.h"
+#include "adl/adl_v4.h"
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/disk.h"
 
 namespace Adl {
+
+#define IDI_HR6_NUM_ROOMS 35
+#define IDI_HR6_NUM_MESSAGES 256
+#define IDI_HR6_NUM_VARS 40
+#define IDI_HR6_NUM_ITEM_DESCS 15
+#define IDI_HR6_NUM_ITEM_PICS 15
+#define IDI_HR6_NUM_ITEM_OFFSETS 16
+
+// Messages used outside of scripts
+#define IDI_HR6_MSG_CANT_GO_THERE      249
+#define IDI_HR6_MSG_DONT_UNDERSTAND    247
+#define IDI_HR6_MSG_ITEM_DOESNT_MOVE   253
+#define IDI_HR6_MSG_ITEM_NOT_HERE      254
+#define IDI_HR6_MSG_THANKS_FOR_PLAYING 252
+
+struct DiskDataDesc {
+	byte track;
+	byte sector;
+	byte offset;
+	byte volume;
+};
+
+class HiRes6Engine : public AdlEngine_v4 {
+public:
+	HiRes6Engine(OSystem *syst, const AdlGameDescription *gd) :
+			AdlEngine_v4(syst, gd),
+			_boot(nullptr),
+			_currVerb(0),
+			_currNoun(0) {
+	}
+
+	~HiRes6Engine() { delete _boot; }
+
+private:
+	// AdlEngine
+	void runIntro() const;
+	void init();
+	void initGameState();
+	void printRoomDescription();
+	void showRoom();
+	Common::String formatVerbError(const Common::String &verb) const;
+	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
+
+	// AdlEngine_v2
+	void printString(const Common::String &str);
+
+	void loadDisk(byte disk);
+
+	DiskImage *_boot;
+	byte _currVerb, _currNoun;
+	Common::Array<DiskDataDesc> _diskDataDesc;
+};
 
 static const char *disks[] = { "DARK1A.DSK", "DARK1B.NIB", "DARK2A.NIB", "DARK2B.NIB" };
 
