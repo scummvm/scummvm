@@ -58,7 +58,10 @@ SEQPlayer::SEQPlayer(SegManager *segMan) :
 void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y) {
 	delete _decoder;
 	_decoder = new SEQDecoder(numTicks);
-	_decoder->loadFile(fileName);
+	if (!_decoder->loadFile(fileName)) {
+		warning("[SEQPlayer::play]: Failed to load %s", fileName.c_str());
+		return;
+	}
 
 	// NOTE: In the original engine, video was output directly to the hardware,
 	// bypassing the game's rendering engine. Instead of doing this, we use a
