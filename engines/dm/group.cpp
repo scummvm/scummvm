@@ -550,7 +550,7 @@ int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16
 }
 
 void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks) {
-	int16 L0446_i_Multiple;
+	int16 L0446_i_Multiple = 0;
 #define AL0446_i_Direction           L0446_i_Multiple
 #define AL0446_i_Ticks               L0446_i_Multiple
 #define AL0446_i_Behavior2Or3        L0446_i_Multiple
@@ -645,8 +645,12 @@ T0209005_AddEventAndReturn:
 	For event kM2_TMEventTypeCreateReactionEvent30HitByProjectile and kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, the reaction time may be 1 tick or slower: slow moving creatures react more slowly. The more recent is the last creature move, the slower the reaction */
 	if (eventType < 0) {
 		nextEvent._type = eventType + k32_TMEventTypeUpdateAspectGroup;
-		if ((eventType == kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent) || ((AL0446_i_Ticks = ((movementTicks + 2) >> 2) - ticksSinceLastMove) < 1)) { /* AL0446_i_Ticks is the reaction time */
+		if (eventType == kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent) {
 			AL0446_i_Ticks = 1; /* Retry in 1 tick */
+		} else {
+			 AL0446_i_Ticks = ((movementTicks + 2) >> 2) - ticksSinceLastMove;
+			 if (AL0446_i_Ticks < 1) /* AL0446_i_Ticks is the reaction time */
+				 AL0446_i_Ticks = 1; /* Retry in 1 tick */
 		}
 		goto T0209005_AddEventAndReturn; /* BUG0_68 A group moves or acts with a wrong timing. Event is added but L0465_s_NextEvent.C.Ticks has not been initialized */
 	}
@@ -682,7 +686,8 @@ T0209005_AddEventAndReturn:
 		case kM2_TMEventTypeCreateReactionEvent30HitByProjectile: /* This event is used for the reaction of a group after a projectile impacted with one creature in the group (some creatures may have been killed) */
 			if ((AL0447_i_Behavior == k6_behavior_ATTACK) || (AL0447_i_Behavior == k5_behavior_FLEE)) /* If the creature is attacking the party or fleeing from the target then there is no reaction */
 				return;
-			if ((AL0446_i_Behavior2Or3 = ((AL0447_i_Behavior == k3_behavior_USELESS) || (AL0447_i_Behavior == k2_behavior_USELESS))) || (_vm->getRandomNumber(4))) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is thus: if 3/4 chances */
+			AL0446_i_Behavior2Or3 = ((AL0447_i_Behavior == k3_behavior_USELESS) || (AL0447_i_Behavior == k2_behavior_USELESS));
+			if (AL0446_i_Behavior2Or3 || (_vm->getRandomNumber(4))) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is thus: if 3/4 chances */
 				if (!groupGetDistanceToVisibleParty(curGroup, kM1_wholeCreatureGroup, eventMapX, eventMapY)) { /* If the group cannot see the party then look in a random direction to try and search for the party */
 					approachAfterReaction = newGroupDirectionFound = false;
 					goto T0209073_SetDirectionGroup;
@@ -808,7 +813,8 @@ T0209061_MoveGroup:
 									activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 									activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 								}
-							} while ((AL0446_i_Direction = returnNextVal(AL0446_i_Direction)) != AL0447_i_ReferenceDirection);
+								AL0446_i_Direction = returnNextVal(AL0446_i_Direction);
+							} while (AL0446_i_Direction != AL0447_i_ReferenceDirection);
 						}
 						if (!newGroupDirectionFound &&
 							(ticksSinceLastMove != -1) &&
@@ -1046,123 +1052,109 @@ T0209136:
 }
 
 bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY, uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls) {
-	int16 L0428_i_MapX;
-	int16 L0429_i_MapY;
-	uint16 L0430_ui_Square = 0;
-	int16 L0431_i_SquareType = 0;
-	Teleporter *L0432_ps_Teleporter;
-	Thing L0433_T_Thing;
-
 	_groupMovementTestedDirections[dir] = true;
 	_groupMovementBlockedByGroupThing = Thing::_endOfList;
 	_groupMovementBlockedByDoor = false;
 	_groupMovementBlockedByParty = false;
-	if (creatureInfo->_movementTicks == k255_immobile) {
+	if (creatureInfo->_movementTicks == k255_immobile)
 		return false;
-	}
+
 	_vm->_dungeonMan->mapCoordsAfterRelMovement((Direction)dir, 1, 0, mapX, mapY);
-	L0428_i_MapX = mapX;
-	L0429_i_MapY = mapY;
-	L0430_ui_Square = _vm->_dungeonMan->_currMapData[L0428_i_MapX][L0429_i_MapY];
-	L0431_i_SquareType = Square(L0430_ui_Square).getType();
+	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 curSquareType = Square(curSquare).getType();
 	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
-		!(((L0428_i_MapX >= 0) && (L0428_i_MapX < _vm->_dungeonMan->_currMapWidth)) &&
-		 ((L0429_i_MapY >= 0) && (L0429_i_MapY < _vm->_dungeonMan->_currMapHeight)) &&
-		  (L0431_i_SquareType != k0_ElementTypeWall) &&
-		  (L0431_i_SquareType != k3_ElementTypeStairs) &&
-		 ((L0431_i_SquareType != k2_ElementTypePit) || (getFlag(L0430_ui_Square, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(L0430_ui_Square, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
-		 ((L0431_i_SquareType != k6_ElementTypeFakeWall) || getFlag(L0430_ui_Square, k0x0004_FakeWallOpen) || (getFlag(L0430_ui_Square, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
+		!(((mapX >= 0) && (mapX < _vm->_dungeonMan->_currMapWidth)) &&
+		 ((mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight)) &&
+		  (curSquareType != k0_ElementTypeWall) &&
+		  (curSquareType != k3_ElementTypeStairs) &&
+		 ((curSquareType != k2_ElementTypePit) || (getFlag(curSquare, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
+		 ((curSquareType != k6_ElementTypeFakeWall) || getFlag(curSquare, k0x0004_FakeWallOpen) || (getFlag(curSquare, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
 
 	if (_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
 		return false;
 
 	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) {
-		L0433_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0428_i_MapX, L0429_i_MapY);
-		while (L0433_T_Thing != Thing::_endOfList) {
-			if ((L0433_T_Thing).getType() == k15_ExplosionThingType) {
-				L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(L0433_T_Thing);
-				if (((Explosion *)L0432_ps_Teleporter)->setType(k50_ExplosionType_Fluxcage)) {
+		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+		while (curThing != Thing::_endOfList) {
+			if ((curThing).getType() == k15_ExplosionThingType) {
+				Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getThingData(curThing);
+				if (((Explosion *)curTeleporter)->setType(k50_ExplosionType_Fluxcage)) {
 					_fluxCages[dir] = true;
 					_fluxCageCount++;
 					_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 					return false;
 				}
 			}
-			L0433_T_Thing = _vm->_dungeonMan->getNextThing(L0433_T_Thing);
+			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
 	}
-	if ((L0431_i_SquareType == k5_ElementTypeTeleporter) && getFlag(L0430_ui_Square, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
-		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
-		if (getFlag(L0432_ps_Teleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, L0432_ps_Teleporter->getTargetMapIndex())) {
+	if ((curSquareType == k5_ElementTypeTeleporter) && getFlag(curSquare, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
+		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		if (getFlag(curTeleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
 			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 			return false;
 		}
 	}
 
-	_groupMovementBlockedByParty = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0428_i_MapX == _vm->_dungeonMan->_partyMapX) && (L0429_i_MapY == _vm->_dungeonMan->_partyMapY);
+	_groupMovementBlockedByParty = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
 	if (_groupMovementBlockedByParty)
 		return false;
 
-	if (L0431_i_SquareType == k4_DoorElemType) {
-		L0432_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(L0428_i_MapX, L0429_i_MapY);
-		if (((Square(L0430_ui_Square).getDoorState()) > (((Door *)L0432_ps_Teleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(L0430_ui_Square).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+	if (curSquareType == k4_DoorElemType) {
+		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			_groupMovementBlockedByDoor = true;
 			return false;
 		}
 	}
-	return (_groupMovementBlockedByGroupThing = groupGetThing(L0428_i_MapX, L0429_i_MapY)) == Thing::_endOfList;
+
+	_groupMovementBlockedByGroupThing = groupGetThing(mapX, mapY);
+	return (_groupMovementBlockedByGroupThing == Thing::_endOfList);
 }
 
 int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
-	return ((((srcMapX -= destMapX) < 0) ? -srcMapX : srcMapX) +
-		(((srcMapY -= destMapY) < 0) ? -srcMapY : srcMapY));
+	return ABS(srcMapX - destMapX) + ABS(srcMapY - destMapY);
 }
 
 int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
-	int16 L0420_i_CreatureDirection;
-	int16 L0421_i_CreatureViewDirectionCount; /* Count of directions to test in L0425_ai_CreatureViewDirections */
-	int16 L0422_i_Multiple;
-#define AL0422_i_Counter    L0422_i_Multiple
-#define AL0422_i_SightRange L0422_i_Multiple
-	uint16 L0423_ui_GroupDirections;
-	CreatureInfo *L0424_ps_CreatureInfo;
-	int16 L0425_ai_CreatureViewDirections[4]; /* List of directions to test */
-
-
-	L0424_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(L0424_ps_CreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
+	uint16 groupDirections;
+	CreatureInfo *groupCreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
+	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible)) {
 		return 0;
 	}
-	if (getFlag(L0424_ps_CreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) /* If creature can see in all directions */
+
+	if (getFlag(groupCreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) /* If creature can see in all directions */
 		goto T0200011;
-	L0423_ui_GroupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
+	groupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
+	int16 checkDirectionsCount; /* Count of directions to test in L0425_ai_CreatureViewDirections */
+	int16 creatureViewDirections[4]; /* List of directions to test */
 	if (creatureIndex < 0) { /* Negative index means test if each creature in the group can see the party in their respective direction */
-		L0421_i_CreatureViewDirectionCount = 0;
+		checkDirectionsCount = 0;
 		for (creatureIndex = group->getCount(); creatureIndex >= 0; creatureIndex--) {
-			L0420_i_CreatureDirection = normalizeModulo4(L0423_ui_GroupDirections >> (creatureIndex << 1));
-			AL0422_i_Counter = L0421_i_CreatureViewDirectionCount;
-			while (AL0422_i_Counter--) {
-				if (L0425_ai_CreatureViewDirections[AL0422_i_Counter] == L0420_i_CreatureDirection) /* If the creature looks in the same direction as another one in the group */
+			int16 L0420_i_CreatureDirection = normalizeModulo4(groupDirections >> (creatureIndex << 1));
+			int16 counter = checkDirectionsCount;
+			while (counter--) {
+				if (creatureViewDirections[counter] == L0420_i_CreatureDirection) /* If the creature looks in the same direction as another one in the group */
 					goto T0200006;
 			}
-			L0425_ai_CreatureViewDirections[L0421_i_CreatureViewDirectionCount++] = L0420_i_CreatureDirection;
+			creatureViewDirections[checkDirectionsCount++] = L0420_i_CreatureDirection;
 T0200006:
 			;
 		}
 	} else { /* Positive index means test only if the specified creature in the group can see the party in its direction */
-		L0425_ai_CreatureViewDirections[0] = getCreatureValue(L0423_ui_GroupDirections, creatureIndex);
-		L0421_i_CreatureViewDirectionCount = 1;
+		creatureViewDirections[0] = getCreatureValue(groupDirections, creatureIndex);
+		checkDirectionsCount = 1;
 	}
-	while (L0421_i_CreatureViewDirectionCount--) {
-		if (isDestVisibleFromSource(L0425_ai_CreatureViewDirections[L0421_i_CreatureViewDirectionCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
+	while (checkDirectionsCount--) {
+		if (isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
 T0200011:
-			AL0422_i_SightRange = L0424_ps_CreatureInfo->getSightRange();
-			if (!getFlag(L0424_ps_CreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision)) {
-				AL0422_i_SightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
-			}
-			if (_currGroupDistanceToParty > MAX((int16)1, AL0422_i_SightRange)) {
+			int16 sightRange = groupCreatureInfo->getSightRange();
+			if (!getFlag(groupCreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision))
+				sightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
+
+			if (_currGroupDistanceToParty > MAX<int16>(1, sightRange))
 				return 0;
-			}
+
 			return getDistanceBetweenUnblockedSquares(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isViewPartyBlocked);
 		}
 	}
