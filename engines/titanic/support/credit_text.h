@@ -68,11 +68,11 @@ public:
 	int _field14;
 	CCreditLineGroups _groups;
 	uint _ticks;
-	uint _fontHeight;
+	int _fontHeight;
 	CGameObject *_objectP;
 	CCreditLineGroups::iterator _groupIt;
 	CCreditLines::iterator _lineIt;
-	uint _totalHeight;
+	int _totalHeight;
 	int _field40;
 	int _field44;
 	int _field48;
@@ -80,7 +80,7 @@ public:
 	int _field50;
 	int _field54;
 	int _field58;
-	int _field5C;
+	int _counter;
 public:
 	CCreditText();
 

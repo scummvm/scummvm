@@ -28,7 +28,7 @@ namespace Titanic {
 CCreditText::CCreditText() : _screenManagerP(nullptr), _field14(0),
 	_ticks(0), _fontHeight(1), _objectP(nullptr), _totalHeight(0),
 	_field40(0), _field44(0), _field48(0), _field4C(0), _field50(0),
-	_field54(0), _field58(0), _field5C(0) {
+	_field54(0), _field58(0), _counter(0) {
 }
 
 void CCreditText::clear() {
@@ -52,7 +52,7 @@ void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
 	_field50 = 0;
 	_field54 = 0;
 	_field58 = 0;
-	_field5C = 0;
+	_counter = 0;
 }
 
 void CCreditText::setup() {
@@ -150,6 +150,57 @@ void CCreditText::handleDots(CCreditLineGroup *group) {
 }
 
 bool CCreditText::draw() {
+	if (_groupIt == _groups.end())
+		return false;
+
+	if (++_counter > 200) {
+		_field44 += _field50;
+		_field48 += _field54;
+		_field4C += _field58;
+		_field50 = g_vm->getRandomNumber(63) + 192 - _field44;
+		_field54 = g_vm->getRandomNumber(63) + 192 - _field48;
+		_field58 = g_vm->getRandomNumber(63) + 192 - _field4C;
+		_counter = 0;
+	}
+
+	// Positioning adjustment, changing lines and/or group if necessary
+	int yDiff = (int)(g_vm->_events->getTicksCount() - _ticks) / 22 - _field40;
+	while (yDiff > 0) {
+		if (_totalHeight > 0) {
+			if (yDiff < _totalHeight) {
+				_totalHeight -= yDiff;
+				_field40 += yDiff;
+				yDiff = 0;
+			} else {
+				yDiff -= _totalHeight;
+				_field40 += _totalHeight;
+				_totalHeight = 0;
+			}
+		} else {
+			if (yDiff < _fontHeight)
+				break;
+
+			++_lineIt;
+			yDiff -= _fontHeight;
+			_field40 += _fontHeight;
+
+			if (_lineIt == (*_groupIt)->_lines.end()) {
+				// Move to next line group
+				++_groupIt;
+				if (_groupIt == _groups.end())
+					// Reached end of groups
+					return false;
+
+				_lineIt = (*_groupIt)->_lines.begin();
+				_totalHeight = _fontHeight * 3 / 2;
+			}
+		}
+	}
+
+	_screenManagerP->setFontNumber(3);
+
+	// TODO: Drawing loop
+
 	return false;
 }
 
