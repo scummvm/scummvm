@@ -43,17 +43,16 @@ bool AndroidSdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &
 	else if (ev.button.button == SDL_BUTTON_MIDDLE) {
 		event.type = Common::EVENT_MBUTTONDOWN;
 
-		static int show_onscreen=0;
-		if (show_onscreen==0) {
-		    SDL_ANDROID_SetScreenKeyboardShown(0);
-		    show_onscreen++;
+		static int show_onscreen = 0;
+		if (show_onscreen == 0) {
+			SDL_ANDROID_SetScreenKeyboardShown(0);
+			show_onscreen++;
+		} else if (show_onscreen==1) {
+			SDL_ANDROID_SetScreenKeyboardShown(1);
+			show_onscreen++;
 		}
-		else if (show_onscreen==1) {
-		    SDL_ANDROID_SetScreenKeyboardShown(1);
-		    show_onscreen++;
-		}
-		if (show_onscreen==2)
-		    show_onscreen=0;
+		if (show_onscreen == 2)
+			show_onscreen = 0;
 	}
 #endif
 	else
@@ -68,7 +67,9 @@ bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (false) {}
 
 	if (ev.key.keysym.sym == SDLK_LCTRL) {
-		ev.key.keysym.sym = SDLK_F5;
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = Common::KEYCODE_F5;
+		return true;
 	} else {
 		// Let the events fall through if we didn't change them, this may not be the best way to
 		// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
