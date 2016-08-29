@@ -140,13 +140,13 @@ public:
 	/**
 	 * Write a string
 	 * @param surfaceNum	Destination surface
-	 * @param srcRect		Drawing area
-	 * @param destRect		Bounds of dest surface
+	 * @param destPos		Position to start writing text at
+	 * @param clipRect		Clipping area to constrain text to
 	 * @param str			Line or lines to write
-	 * @param textCursor	Optional text cursor pointer
+	 * @param maxWidth		Maximum allowed line width
 	 */
-	virtual int writeString(int surfaceNum, const Rect &srcRect,
-		const Rect &destRect, const CString &str, CTextCursor *textCursor) = 0;
+	virtual void writeString(int surfaceNum, const Point &destPos,
+		const Rect &clipRect, const CString &str, int maxWidth) = 0;
 
 	/**
 	 * Set the font color
@@ -322,13 +322,13 @@ public:
 	/**
 	 * Write a string
 	 * @param surfaceNum	Destination surface
-	 * @param srcRect		Drawing area
-	 * @param destRect		Bounds of dest surface
+	 * @param destPos		Position to start writing text at
+	 * @param clipRect		Clipping area to constrain text to
 	 * @param str			Line or lines to write
-	 * @param textCursor	Optional text cursor pointer
+	 * @param maxWidth		Maximum allowed line width
 	 */
-	virtual int writeString(int surfaceNum, const Rect &srcRect,
-		const Rect &destRect, const CString &str, CTextCursor *textCursor);
+	virtual void writeString(int surfaceNum, const Point &destPos,
+		const Rect &clipRect, const CString &str, int maxWidth);
 
 	/**
 	 * Set the font color

@@ -239,10 +239,9 @@ int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
 		yOffset, str, textCursor);
 }
 
-int OSScreenManager::writeString(int surfaceNum, const Rect &srcRect,
-		const Rect &destRect, const CString &str, CTextCursor *textCursor) {
+void OSScreenManager::writeString(int surfaceNum, const Point &destPos,
+		const Rect &clipRect, const CString &str, int maxWidth) {
 	// TODO
-	return 0;
 }
 
 void OSScreenManager::setFontColor(byte r, byte g, byte b) {
