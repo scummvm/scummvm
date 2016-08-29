@@ -189,39 +189,42 @@ void DirectorEngine::loadMac() {
 void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	Archive *shardcst = createArchive();
 
+	debugC(1, kDebugLoading, "Loading Shared cast '%s'", filename.c_str());
+
 	shardcst->openFile(filename);
 
 	Score *castScore = new Score(this, shardcst);
-	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
+	Common::Array<uint16> cast = shardcst->getResourceIDList(MKTAG('V','W','C','R'));
 
-	castScore->loadCastData(*castStream);
-	*_sharedCasts = castScore->_casts;
+	if (cast.size() == 1) {
+		for (Common::Array<uint16>::iterator iterator = cast.begin(); iterator != cast.end(); ++iterator) {
+			debugC(3, kDebugLoading, "Shared VWCR %d", *iterator);
+			castScore->loadCastData(*shardcst->getResource(MKTAG('V','W','C','R'), *iterator));
+			*_sharedCasts = castScore->_casts;
+		}
+	} else {
+		error("Incorrect number of VWCR in shared cast '%s': %d", filename.c_str(), cast.size());
+	}
 
 	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
-
 	if (dib.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
+		for (Common::Array<uint16>::iterator iterator = dib.begin(); iterator != dib.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared DIB %d", *iterator);
 			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
 		}
 	}
 
 	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S','T','X','T'));
-
 	if (stxt.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
+		for (Common::Array<uint16>::iterator iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
 			debugC(3, kDebugLoading, "Shared STXT %d", *iterator);
 			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
 		}
 	}
 
 	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B','I','T','D'));
-
 	if (bmp.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
+		for (Common::Array<uint16>::iterator iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
 			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
 		}
 	}
