@@ -554,7 +554,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 
 	++list->numRecursions;
 
-	if (list->numRecursions > ARRAYSIZE(list->nextNodes)) {
+	if (list->numRecursions >= ARRAYSIZE(list->nextNodes)) {
 		error("Too much recursion in kListEachElementDo");
 	}
 
