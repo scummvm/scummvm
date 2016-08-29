@@ -211,12 +211,12 @@ void GfxText32::drawChar(const char charIndex) {
 	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	byte *pixels = bitmap.getPixels();
 
-	_font->drawToBuffer(charIndex, _drawPosition.y, _drawPosition.x, _foreColor, _dimmed, pixels, _width, _height);
-	_drawPosition.x += _font->getCharWidth(charIndex);
+	_font->drawToBuffer((unsigned char)charIndex, _drawPosition.y, _drawPosition.x, _foreColor, _dimmed, pixels, _width, _height);
+	_drawPosition.x += _font->getCharWidth((unsigned char)charIndex);
 }
 
 uint16 GfxText32::getCharWidth(const char charIndex, const bool doScaling) const {
-	uint16 width = _font->getCharWidth(charIndex);
+	uint16 width = _font->getCharWidth((unsigned char)charIndex);
 	if (doScaling) {
 		width = scaleUpWidth(width);
 	}
