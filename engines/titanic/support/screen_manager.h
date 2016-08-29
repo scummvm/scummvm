@@ -325,10 +325,10 @@ public:
 	 * @param destPos		Position to start writing text at
 	 * @param clipRect		Clipping area to constrain text to
 	 * @param str			Line or lines to write
-	 * @param maxWidth		Maximum allowed line width
+	 * @param lineWidth		Width in pixels of the string, if known.
 	 */
 	virtual void writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int maxWidth);
+		const Rect &clipRect, const CString &str, int lineWidth = 0);
 
 	/**
 	 * Set the font color

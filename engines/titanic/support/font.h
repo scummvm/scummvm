@@ -99,6 +99,12 @@ public:
 		int yOffset, const CString &str, CTextCursor *textCursor);
 
 	/**
+	 * Write a string to the specified surface
+	 */
+	void writeString(CVideoSurface *surface, const Point &destPos, Rect &clipRect,
+		const CString &str, int lineWidth = 0);
+
+	/**
 	 * Get the text area a string will fit into
 	 * @param str		String
 	 * @param maxWidth	Maximum width in pixels

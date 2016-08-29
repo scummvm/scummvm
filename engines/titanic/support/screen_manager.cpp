@@ -240,8 +240,24 @@ int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
 }
 
 void OSScreenManager::writeString(int surfaceNum, const Point &destPos,
-		const Rect &clipRect, const CString &str, int maxWidth) {
-	// TODO
+		const Rect &clipRect, const CString &str, int lineWidth) {
+	CVideoSurface *surface;
+	Rect bounds;
+
+	if (surfaceNum >= 0 && surfaceNum < (int)_backSurfaces.size()) {
+		surface = _backSurfaces[surfaceNum]._surface;
+		bounds = _backSurfaces[surfaceNum]._bounds;
+	} else if (surfaceNum == -1) {
+		surface = _frontRenderSurface;
+		bounds = Rect(0, 0, surface->getWidth(), surface->getHeight());
+	} else {
+		return;
+	}
+
+	Rect destRect = clipRect;
+	destRect.constrain(bounds);
+
+	_fonts[_fontNumber].writeString(surface, destPos, destRect, str, lineWidth);
 }
 
 void OSScreenManager::setFontColor(byte r, byte g, byte b) {

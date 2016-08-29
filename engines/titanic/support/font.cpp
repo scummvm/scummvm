@@ -179,6 +179,67 @@ int STFont::writeString(CVideoSurface *surface, const Rect &rect1, const Rect &d
 	return endP ? endP - str.c_str() : 0;
 }
 
+void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &clipRect,
+		const CString &str, int lineWidth) {
+	if (!_fontHeight || !_dataPtr || str.empty())
+		return;
+	if (!lineWidth)
+		// No line width specified, so get in the width
+		lineWidth = stringWidth(str);
+
+	Rect textRect(0, 0, lineWidth, _fontHeight);
+	Point textPt = destPos;
+
+	// Perform clipping as necessary if the text will fall outside clipping area
+	if (textPt.y > clipRect.bottom)
+		return;
+
+	if ((textPt.y + textRect.height()) > clipRect.bottom)
+		textRect.bottom = textRect.top - textPt.y + clipRect.bottom;
+
+	if (textPt.y < clipRect.top) {
+		if ((textPt.y + textRect.height()) < clipRect.top)
+			return;
+
+		textRect.top += clipRect.top - textPt.y;
+		textPt.y = clipRect.top;
+	}
+
+	// Iterate through each character of the string
+	for (const byte *srcP = (byte *)str.c_str(); *srcP; ++srcP) {
+		byte c = *srcP;
+		if (c == 0xE9)
+			c = '$';
+
+		// Form a rect of the area of the next character to draw
+		Rect charRect(_chars[c]._offset, textRect.top,
+			_chars[c]._offset + _chars[c]._width, textRect.bottom);
+
+		if (textPt.x < clipRect.left) {
+			// Character is either partially or entirely left off-screen
+			if ((textPt.x + charRect.width()) < clipRect.left) {
+				textPt.x += _chars[c]._width;
+				continue;
+			}
+
+			// Partially clipped on left-hand side
+			charRect.left = clipRect.left - textPt.x;
+			textPt.x = clipRect.left;
+		} else if ((textPt.x + charRect.width()) > clipRect.right) {
+			if (textPt.x > clipRect.right)
+				// Now entirely off right-hand side, so stop drawing
+				break;
+
+			// Partially clipped on right-hand side
+			charRect.right += clipRect.right - textPt.x - charRect.width();
+		}
+
+		// At this point, we know we've got to draw at least part of a character,
+		// and have figured out the area of the character to draw
+		copyRect(surface, textPt, charRect);
+	}
+}
+
 WriteCharacterResult STFont::writeChar(CVideoSurface *surface, unsigned char c, const Point &pt,
 	const Rect &destRect, const Rect *srcRect) {
 	if (c == 233)
