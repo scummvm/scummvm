@@ -441,6 +441,11 @@ void ScrollWindow::show() {
 	}
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(_plane);
+
+	if (plane == nullptr) {
+		error("[ScrollWindow::show]: Plane %04x:%04x not found", PRINT_REG(_plane));
+	}
+
 	plane->_screenItemList.add(_screenItem);
 
 	_visible = true;
