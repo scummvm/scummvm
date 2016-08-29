@@ -43,16 +43,15 @@ namespace Adl {
 #define IDI_HR4_MSG_ITEM_NOT_HERE      115
 #define IDI_HR4_MSG_THANKS_FOR_PLAYING 113
 
-class HiRes4Engine : public AdlEngine_v3 {
+class HiRes4Engine_Atari : public AdlEngine_v3 {
 public:
-	~HiRes4Engine();
-
-protected:
-	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
+	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr),
 			_curDisk(0) { }
+	~HiRes4Engine_Atari();
 
+private:
 	// AdlEngine
 	void init();
 	void initGameState();
@@ -60,26 +59,16 @@ protected:
 	Common::String formatVerbError(const Common::String &verb) const;
 	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 
+	// AdlEngine_v2
+	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
+
 	Common::SeekableReadStream *createReadStream(DiskImage *disk, byte track, byte sector, byte offset = 0, byte size = 0) const;
 	void loadCommonData();
 	void insertDisk(byte diskNr);
 	void rebindDisk();
-	virtual const char *getDiskImageName(byte index) const = 0;
 
 	DiskImage *_boot;
 	byte _curDisk;
-};
-
-class HiRes4Engine_Atari : public HiRes4Engine {
-public:
-	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) : HiRes4Engine(syst, gd) { }
-
-private:
-	// AdlEngine_v2
-	void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const;
-
-	// HiRes4Engine
-	const char *getDiskImageName(byte index) const;
 };
 
 } // End of namespace Adl

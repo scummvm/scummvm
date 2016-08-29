@@ -34,16 +34,18 @@
 
 namespace Adl {
 
-HiRes4Engine::~HiRes4Engine() {
+static const char *const atariDisks[] = { "ULYS1A.XFD", "ULYS1B.XFD", "ULYS2C.XFD" };
+
+HiRes4Engine_Atari::~HiRes4Engine_Atari() {
 	delete _boot;
 }
 
-void HiRes4Engine::init() {
+void HiRes4Engine_Atari::init() {
 	_graphics = new Graphics_v2(*_display);
 
 	_boot = new DiskImage();
-	if (!_boot->open(getDiskImageName(0)))
-		error("Failed to open disk image '%s'", getDiskImageName(0));
+	if (!_boot->open(atariDisks[0]))
+		error("Failed to open disk image '%s'", atariDisks[0]);
 
 	insertDisk(1);
 	loadCommonData();
@@ -89,7 +91,7 @@ void HiRes4Engine::init() {
 	loadWords(*stream, _nouns, _priNouns);
 }
 
-void HiRes4Engine::loadRoom(byte roomNr) {
+void HiRes4Engine_Atari::loadRoom(byte roomNr) {
 	if (roomNr >= 59 && roomNr < 113) {
 		if (_curDisk != 2) {
 			insertDisk(2);
@@ -116,14 +118,14 @@ void HiRes4Engine::loadRoom(byte roomNr) {
 	AdlEngine_v3::loadRoom(roomNr);
 }
 
-Common::String HiRes4Engine::formatVerbError(const Common::String &verb) const {
+Common::String HiRes4Engine_Atari::formatVerbError(const Common::String &verb) const {
 	Common::String err = _strings.verbError;
 	for (uint i = 0; i < verb.size(); ++i)
 		err.setChar(verb[i], i + 8);
 	return err;
 }
 
-Common::String HiRes4Engine::formatNounError(const Common::String &verb, const Common::String &noun) const {
+Common::String HiRes4Engine_Atari::formatNounError(const Common::String &verb, const Common::String &noun) const {
 	Common::String err = _strings.nounError;
 	for (uint i = 0; i < verb.size(); ++i)
 		err.setChar(verb[i], i + 8);
@@ -132,7 +134,7 @@ Common::String HiRes4Engine::formatNounError(const Common::String &verb, const C
 	return err;
 }
 
-void HiRes4Engine::insertDisk(byte diskNr) {
+void HiRes4Engine_Atari::insertDisk(byte diskNr) {
 	if (_curDisk == diskNr)
 		return;
 
@@ -140,11 +142,11 @@ void HiRes4Engine::insertDisk(byte diskNr) {
 
 	delete _disk;
 	_disk = new DiskImage();
-	if (!_disk->open(getDiskImageName(diskNr)))
-		error("Failed to open disk image '%s'", getDiskImageName(diskNr));
+	if (!_disk->open(atariDisks[diskNr]))
+		error("Failed to open disk image '%s'", atariDisks[diskNr]);
 }
 
-void HiRes4Engine::rebindDisk() {
+void HiRes4Engine_Atari::rebindDisk() {
 	// As room.data is bound to the DiskImage, we need to rebind them here
 	// We cannot simply reload the rooms as that would reset their state
 
@@ -161,7 +163,7 @@ void HiRes4Engine::rebindDisk() {
 	loadCommonData();
 }
 
-void HiRes4Engine::loadCommonData() {
+void HiRes4Engine_Atari::loadCommonData() {
 	_messages.clear();
 	StreamPtr stream(createReadStream(_boot, 0x0a, 0x4, 0x00, 3));
 	loadMessages(*stream, IDI_HR4_NUM_MESSAGES);
@@ -175,7 +177,7 @@ void HiRes4Engine::loadCommonData() {
 	loadItemPictures(*stream, IDI_HR4_NUM_ITEM_PICS);
 }
 
-void HiRes4Engine::initGameState() {
+void HiRes4Engine_Atari::initGameState() {
 	_state.vars.resize(IDI_HR4_NUM_VARS);
 
 	StreamPtr stream(createReadStream(_boot, 0x03, 0x1, 0x0e, 9));
@@ -188,7 +190,7 @@ void HiRes4Engine::initGameState() {
 	_display->moveCursorTo(Common::Point(0, 23));
 }
 
-Common::SeekableReadStream *HiRes4Engine::createReadStream(DiskImage *disk, byte track, byte sector, byte offset, byte size) const {
+Common::SeekableReadStream *HiRes4Engine_Atari::createReadStream(DiskImage *disk, byte track, byte sector, byte offset, byte size) const {
 	adjustDataBlockPtr(track, sector, offset, size);
 	return disk->createReadStream(track, sector, offset, size);
 }
@@ -213,11 +215,6 @@ void HiRes4Engine_Atari::adjustDataBlockPtr(byte &track, byte &sector, byte &off
 	// Compute track/sector for Atari's 18 sectors per track (sectorIndex is 1-based)
 	track = (sectorIndex - 1) / 18;
 	sector = (sectorIndex - 1) % 18;
-}
-
-const char *HiRes4Engine_Atari::getDiskImageName(byte index) const {
-	static const char *const disks[] = { "ULYS1A.XFD", "ULYS1B.XFD", "ULYS2C.XFD" };
-	return disks[index];
 }
 
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {
