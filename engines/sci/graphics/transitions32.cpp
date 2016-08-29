@@ -965,6 +965,10 @@ bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(scroll.plane);
 
+	if (plane == nullptr) {
+		error("[GfxTransitions32::processScroll]: Plane %04x:%04x not found", PRINT_REG(scroll.plane));
+	}
+
 	if ((scroll.x == 0) && (scroll.y == 0)) {
 		plane->deletePic(scroll.oldPictureId, scroll.newPictureId);
 		finished = true;
