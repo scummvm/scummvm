@@ -372,16 +372,16 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 	if (!v)
 		return false;
 
-	v = v->getSubVarByName("Test_Ladder");
+	GameVar *l = v->getSubVarByName("Test_Ladder");
 
-	if (!v)
+	if (!l)
 		return false;
 
 	movement->staticIdsSize = 6;
 	movement->movVars = new MctlLadderMovementVars;
 	movement->staticIds = new int[movement->staticIdsSize];
 
-	v = v->getSubVarByName("Up");
+	v = l->getSubVarByName("Up");
 
 	if (!v)
 		return false;
@@ -393,7 +393,7 @@ bool MctlLadder::initMovement(StaticANIObject *ani, MctlLadderMovement *movement
 	movement->staticIds[0] = ani->getMovementById(movement->movVars->varUpStart)->_staticsObj1->_staticsId;
 	movement->staticIds[2] = ani->getMovementById(movement->movVars->varUpGo)->_staticsObj1->_staticsId;
 
-	v = v->getSubVarByName("Down");
+	v = l->getSubVarByName("Down");
 
 	if (!v)
 		return false;
