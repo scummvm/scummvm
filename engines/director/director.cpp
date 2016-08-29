@@ -23,14 +23,11 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
-#include "common/macresman.h"
 
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
-#include "director/images.h"
 #include "director/resource.h"
-#include "director/score.h"
 #include "director/sound.h"
 #include "director/lingo/lingo.h"
 
@@ -81,8 +78,9 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedDIB;
 
 	delete _currentScore;
-	delete _mainArchive;
-	delete _macBinary;
+
+	cleanupMainArchive();
+
 	delete _soundManager;
 	delete _lingo;
 }
@@ -114,11 +112,7 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
 	loadMMMNames(ConfMan.get("path"));
-
-	if (getPlatform() == Common::kPlatformWindows)
-		loadEXE();
-	else
-		loadMac();
+	loadMainArchive();
 
 	_currentScore = new Score(this);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
@@ -163,152 +157,6 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 	return nameMap;
 }
 
-Archive *DirectorEngine::createArchive() {
-	if (getVersion() < 4) {
-		return new RIFFArchive();
-	} else {
-		return new RIFXArchive();
-	}
-}
-
-void DirectorEngine::loadEXE() {
-	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(getEXEName());
-	if (!exeStream)
-		error("Failed to open EXE '%s'", getEXEName().c_str());
-
-	_lingo->processEvent(kEventStart, 0);
-
-	exeStream->seek(-4, SEEK_END);
-	exeStream->seek(exeStream->readUint32LE());
-
-	switch (getVersion()) {
-	case 3:
-		loadEXEv3(exeStream);
-		break;
-	case 4:
-		loadEXEv4(exeStream);
-		break;
-	case 5:
-		loadEXEv5(exeStream);
-		break;
-	case 7:
-		loadEXEv7(exeStream);
-		break;
-	default:
-		error("Unhandled Windows EXE version %d", getVersion());
-	}
-}
-
-void DirectorEngine::loadEXEv3(Common::SeekableReadStream *stream) {
-	uint16 entryCount = stream->readUint16LE();
-	if (entryCount != 1)
-		error("Unhandled multiple entry v3 EXE");
-
-	stream->skip(5); // unknown
-
-	stream->readUint32LE(); // Main MMM size
-	Common::String mmmFileName = readPascalString(*stream);
-	Common::String directoryName = readPascalString(*stream);
-
-	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
-	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
-
-	_mainArchive = new RIFFArchive();
-
-	if (!_mainArchive->openFile(mmmFileName))
-		error("Could not open '%s'", mmmFileName.c_str());
-
-	delete stream;
-}
-
-void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
-	if (stream->readUint32BE() != MKTAG('P', 'J', '9', '3'))
-		error("Invalid projector tag found in v4 EXE");
-
-	uint32 rifxOffset = stream->readUint32LE();
-	/* uint32 fontMapOffset = */ stream->readUint32LE();
-	/* uint32 resourceForkOffset1 = */ stream->readUint32LE();
-	/* uint32 resourceForkOffset2 = */ stream->readUint32LE();
-	stream->readUint32LE(); // graphics DLL offset
-	stream->readUint32LE(); // sound DLL offset
-	/* uint32 rifxOffsetAlt = */ stream->readUint32LE(); // equivalent to rifxOffset
-
-	loadEXERIFX(stream, rifxOffset);
-}
-
-void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
-	if (stream->readUint32LE() != MKTAG('P', 'J', '9', '5'))
-		error("Invalid projector tag found in v5 EXE");
-
-	uint32 rifxOffset = stream->readUint32LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint16 screenWidth = */ stream->readUint16LE();
-	/* uint16 screenHeight = */ stream->readUint16LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	/* uint32 fontMapOffset = */ stream->readUint32LE();
-
-	loadEXERIFX(stream, rifxOffset);
-}
-
-void DirectorEngine::loadEXEv7(Common::SeekableReadStream *stream) {
-	if (stream->readUint32LE() != MKTAG('P', 'J', '0', '0'))
-		error("Invalid projector tag found in v7 EXE");
-
-	uint32 rifxOffset = stream->readUint32LE();
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // unknown
-	stream->readUint32LE(); // some DLL offset
-
-	loadEXERIFX(stream, rifxOffset);
-}
-
-void DirectorEngine::loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset) {
-	_mainArchive = new RIFXArchive();
-
-	if (!_mainArchive->openStream(stream, offset))
-		error("Failed to load RIFX from EXE");
-}
-
-void DirectorEngine::loadMac() {
-	if (getVersion() < 4) {
-		// The data is part of the resource fork of the executable
-		_mainArchive = new MacArchive();
-
-		if (!_mainArchive->openFile(getEXEName()))
-			error("Failed to open Mac binary '%s'", getEXEName().c_str());
-	} else {
-		// The RIFX is located in the data fork of the executable
-		_macBinary = new Common::MacResManager();
-
-		if (!_macBinary->open(getEXEName()) || !_macBinary->hasDataFork())
-			error("Failed to open Mac binary '%s'", getEXEName().c_str());
-
-		Common::SeekableReadStream *dataFork = _macBinary->getDataFork();
-		_mainArchive = new RIFXArchive();
-
-		// First we need to detect PPC vs. 68k
-
-		uint32 tag = dataFork->readUint32BE();
-		uint32 startOffset;
-
-		if (SWAP_BYTES_32(tag) == MKTAG('P', 'J', '9', '3') || tag == MKTAG('P', 'J', '9', '5') || tag == MKTAG('P', 'J', '0', '0')) {
-			// PPC: The RIFX shares the data fork with the binary
-			startOffset = dataFork->readUint32BE();
-		} else {
-			// 68k: The RIFX is the only thing in the data fork
-			startOffset = 0;
-		}
-
-		if (!_mainArchive->openStream(dataFork, startOffset))
-			error("Failed to load RIFX from Mac binary");
-	}
-}
-
 Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stream) {
 	byte length = stream.readByte();
 	Common::String x;
@@ -322,56 +170,6 @@ Common::String DirectorEngine::readPascalString(Common::SeekableReadStream &stre
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
 	_currentPalette = palette;
 	_currentPaletteLength = count;
-}
-
-void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
-	Archive *shardcst = createArchive();
-
-	shardcst->openFile(filename);
-
-	Score *castScore = new Score(this);
-	Common::SeekableSubReadStreamEndian *castStream = shardcst->getResource(MKTAG('V','W','C','R'), 1024);
-
-	castScore->loadCastData(*castStream);
-	*_sharedCasts = castScore->_casts;
-
-	Common::Array<uint16> dib = shardcst->getResourceIDList(MKTAG('D','I','B',' '));
-
-	if (dib.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = dib.begin(); iterator != dib.end(); ++iterator) {
-			debugC(3, kDebugLoading, "Shared DIB %d", *iterator);
-			_sharedDIB->setVal(*iterator, shardcst->getResource(MKTAG('D','I','B',' '), *iterator));
-		}
-	}
-
-	Common::Array<uint16> stxt = shardcst->getResourceIDList(MKTAG('S','T','X','T'));
-
-	if (stxt.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = stxt.begin(); iterator != stxt.end(); ++iterator) {
-			debugC(3, kDebugLoading, "Shared STXT %d", *iterator);
-			_sharedSTXT->setVal(*iterator, shardcst->getResource(MKTAG('S','T','X','T'), *iterator));
-		}
-	}
-
-	Common::Array<uint16> bmp = shardcst->getResourceIDList(MKTAG('B','I','T','D'));
-
-	if (bmp.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = bmp.begin(); iterator != bmp.end(); ++iterator) {
-			_sharedBMP->setVal(*iterator, shardcst->getResource(MKTAG('B','I','T','D'), *iterator));
-		}
-	}
-
-	Common::Array<uint16> sound = shardcst->getResourceIDList(MKTAG('S','N','D',' '));
-
-	if (stxt.size() != 0) {
-		Common::Array<uint16>::iterator iterator;
-		for (iterator = sound.begin(); iterator != sound.end(); ++iterator) {
-			_sharedSound->setVal(*iterator, shardcst->getResource(MKTAG('S','N','D',' '), *iterator));
-		}
-	}
 }
 
 } // End of namespace Director

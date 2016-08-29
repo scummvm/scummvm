@@ -1,6 +1,7 @@
 MODULE := engines/director
 
 MODULE_OBJS = \
+	archive.o \
 	detection.o \
 	director.o \
 	frame.o \
