@@ -309,7 +309,7 @@ bool ModalMap::init(int counterdiff) {
 		_rect2.right = _rect2.left + 800;
 		_rect2.bottom = _rect2.top + 600;
 
-		g_fp->_sceneRect =_rect2;
+		g_fp->_sceneRect = _rect2;
 
 		_mapScene->updateScrolling2();
 
@@ -346,17 +346,17 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		_mouseX = g_fp->_mouseScreenPos.x;
 		_mouseY = g_fp->_mouseScreenPos.x;
 
-		_field_3C = _rect2.top;
 		_field_38 = _rect2.left;
+		_field_3C = _rect2.top;
 
-		break;
+		return false;
 
 	case 30:
 		_flag = 0;
-		break;
+		return false;
 
 	case 36:
-		if (cmd->_keyCode != 9 && cmd->_keyCode != 27 )
+		if (cmd->_keyCode != 9 && cmd->_keyCode != 27)
 			return false;
 
 		break;
@@ -431,20 +431,20 @@ PictureObject *ModalMap::getScenePicture() {
 
 	switch (g_fp->_currentScene->_sceneId) {
 	case SC_1:
-        picId = PIC_MAP_S01;
-        break;
+		picId = PIC_MAP_S01;
+		break;
 	case SC_2:
-        picId = PIC_MAP_S02;
-        break;
+		picId = PIC_MAP_S02;
+		break;
 	case SC_3:
-        picId = PIC_MAP_S03;
-        break;
+		picId = PIC_MAP_S03;
+		break;
 	case SC_4:
-        picId = PIC_MAP_S04;
-        break;
+		picId = PIC_MAP_S04;
+		break;
 	case SC_5:
-        picId = PIC_MAP_S05;
-        break;
+		picId = PIC_MAP_S05;
+		break;
 	case SC_6:
 		picId = PIC_MAP_S06;
 		break;
@@ -489,7 +489,7 @@ PictureObject *ModalMap::getScenePicture() {
 		picId = PIC_MAP_S20;
 		break;
 	case SC_21:
-        picId = PIC_MAP_S21;
+		picId = PIC_MAP_S21;
 		break;
 	case SC_22:
 		picId = PIC_MAP_S22;

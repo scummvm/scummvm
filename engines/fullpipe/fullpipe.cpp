@@ -406,6 +406,7 @@ void FullpipeEngine::updateEvents() {
 				_lastInputTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			if (!_inputArFlag && (_updateTicks - _lastInputTicks) >= 2) {
@@ -418,6 +419,7 @@ void FullpipeEngine::updateEvents() {
 				_lastInputTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			if (!_inputArFlag && (_updateTicks - _lastButtonUpTicks) >= 2) {
@@ -426,6 +428,7 @@ void FullpipeEngine::updateEvents() {
 				_lastButtonUpTicks = _updateTicks;
 				ex->handle();
 			}
+			_mouseScreenPos = event.mouse;
 			break;
 		default:
 			break;
