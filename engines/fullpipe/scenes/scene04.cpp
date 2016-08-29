@@ -60,6 +60,10 @@ void scene04_speakerCallback(int *phase) {
 	}
 }
 
+void scene04_springCallback(int *phase) {
+	// do nothing
+}
+
 void scene04_initScene(Scene *sc) {
 	g_vars->scene04_dudeOnLadder = false;
 	g_vars->scene04_bottle = sc->getPictureObjectById(PIC_SC4_BOTTLE, 0);
@@ -127,7 +131,7 @@ void scene04_initScene(Scene *sc) {
 		StaticANIObject *spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
 
 		if (spring)
-			spring->_callback2 = 0;
+			spring->_callback2 = scene04_springCallback;
 
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_bottleObjList.push_back(sc->getPictureObjectById(PIC_SC4_BOTTLE, 0));
@@ -949,7 +953,8 @@ void sceneHandler04_springWobble() {
 	if (g_vars->scene04_bottleWeight < newdelta)
 		g_vars->scene04_springOffset--;
 
-	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight) || newdelta <= g_vars->scene04_bottleWeight) {
+	if ((oldDynIndex <= g_vars->scene04_bottleWeight && newdelta > g_vars->scene04_bottleWeight)
+		|| (oldDynIndex > g_vars->scene04_bottleWeight && newdelta <= g_vars->scene04_bottleWeight)) {
 		g_vars->scene04_springDelay++;
 
 		if (g_vars->scene04_springOffset && g_vars->scene04_springDelay > 1) {
