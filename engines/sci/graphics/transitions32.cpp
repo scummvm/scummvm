@@ -940,8 +940,9 @@ void GfxTransitions32::kernelSetScroll(const reg_t planeId, const int16 deltaX, 
 			g_sci->_gfxFrameout->frameOut(true);
 			throttle();
 		}
-		delete scroll;
 	}
+
+	delete scroll;
 }
 
 bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
