@@ -527,14 +527,8 @@ void Plane::decrementScreenItemArrayCounts(Plane *visiblePlane, const bool force
 
 		if (item != nullptr) {
 			// update item in visiblePlane if item is updated
-			if (
-				item->_updated ||
-				(
-					forceUpdate &&
-					visiblePlane != nullptr &&
-					visiblePlane->_screenItemList.findByObject(item->_object) != nullptr
-				)
-			) {
+			if (visiblePlane != nullptr && (
+				item->_updated || (forceUpdate && visiblePlane->_screenItemList.findByObject(item->_object) != nullptr))) {
 				*visiblePlane->_screenItemList[i] = *item;
 			}
 
