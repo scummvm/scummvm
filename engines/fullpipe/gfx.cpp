@@ -1138,13 +1138,14 @@ Bitmap *Bitmap::flipVertical() {
 }
 
 void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
-	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", type, x, y);
+	if (alpha != 255)
+		warning("STUB: Bitmap::drawShaded(%d, %d, %d, %d)", type, x, y, alpha);
 
 	putDib(x, y, (int32 *)palette, alpha);
 }
 
 void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
-	warning("STUB: Bitmap::drawShaded(%d, %d, %d)", x, y, angle);
+	warning("STUB: Bitmap::drawRotated(%d, %d, %d, %d)", x, y, angle, alpha);
 
 	putDib(x, y, (int32 *)palette, alpha);
 }
