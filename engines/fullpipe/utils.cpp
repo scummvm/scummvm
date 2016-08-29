@@ -84,7 +84,7 @@ bool DWordArray::load(MfcArchive &file) {
 	resize(count);
 
 	for (int i = 0; i < count; i++) {
-		int32 t = file.readUint32LE();
+		int32 t = file.readSint32LE();
 
 		push_back(t);
 	}

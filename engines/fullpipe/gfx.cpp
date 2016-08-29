@@ -290,8 +290,8 @@ bool GameObject::load(MfcArchive &file) {
 	_id = file.readUint16LE();
 
 	_objectName = file.readPascalString();
-	_ox = file.readUint32LE();
-	_oy = file.readUint32LE();
+	_ox = file.readSint32LE();
+	_oy = file.readSint32LE();
 	_priority = file.readUint16LE();
 
 	if (g_fp->_gameProjectVersion >= 11) {

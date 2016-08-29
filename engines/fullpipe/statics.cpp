@@ -1703,8 +1703,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_staticsObj1 = ani->addReverseStatics(s);
 		}
 
-		_mx = file.readUint32LE();
-		_my = file.readUint32LE();
+		_mx = file.readSint32LE();
+		_my = file.readSint32LE();
 
 		staticsid = file.readUint16LE();
 
@@ -1715,8 +1715,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_staticsObj2 = ani->addReverseStatics(s);
 		}
 
-		_m2x = file.readUint32LE();
-		_m2y = file.readUint32LE();
+		_m2x = file.readSint32LE();
+		_m2y = file.readSint32LE();
 
 		if (_staticsObj2) {
 			_dynamicPhases.push_back(_staticsObj2);
@@ -2273,17 +2273,17 @@ bool DynamicPhase::load(MfcArchive &file) {
 
 	_field_7C = file.readUint16LE();
 	_rect = new Common::Rect();
-	_rect->left = file.readUint32LE();
-	_rect->top = file.readUint32LE();
-	_rect->right = file.readUint32LE();
-	_rect->bottom = file.readUint32LE();
+	_rect->left = file.readSint32LE();
+	_rect->top = file.readSint32LE();
+	_rect->right = file.readSint32LE();
+	_rect->bottom = file.readSint32LE();
 
-	assert (g_fp->_gameProjectVersion >= 1);
+	assert(g_fp->_gameProjectVersion >= 1);
 
-	_someX = file.readUint32LE();
-	_someY = file.readUint32LE();
+	_someX = file.readSint32LE();
+	_someY = file.readSint32LE();
 
-	assert (g_fp->_gameProjectVersion >= 12);
+	assert(g_fp->_gameProjectVersion >= 12);
 
 	_dynFlags = file.readUint32LE();
 

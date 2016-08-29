@@ -450,8 +450,8 @@ bool Interaction::load(MfcArchive &file) {
 	_objectId3 = file.readUint16LE();
 	_objectState2 = file.readUint32LE();
 	_objectState1 = file.readUint32LE();
-	_xOffs = file.readUint32LE();
-	_yOffs = file.readUint32LE();
+	_xOffs = file.readSint32LE();
+	_yOffs = file.readSint32LE();
 	_sceneId = file.readUint32LE();
 	_flags = file.readUint32LE();
 	_actionName = file.readPascalString();
