@@ -1332,9 +1332,9 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 	int n2x = link->_graphDst->_x;
 	int n2y = link->_graphDst->_y;
 	double dist1x = (double)(point->x - n1x);
-	double dist1y = (double)(point->y - n1y);
+	double dist1y = (double)(n1y - point->y);
 	double dist2x = (double)(n2x - n1x);
-	double dist2y = (double)(n2y - n1y);
+	double dist2y = (double)(n1y - n2y);
 	double dist1 = sqrt(dist1x * dist1x + dist1y * dist1y);
 	double dist2 = (dist2y * dist1y + dist2x * dist1x) / link->_length / dist1;
 	double distm = dist2 * dist1;
@@ -1355,8 +1355,8 @@ double MovGraph::putToLink(Common::Point *point, MovGraphLink *link, int fuzzyMa
 			return -1.0;
 		}
 	} else {
-		point->x = (int)(n1x + (dist2x * distm / link->_length));
-		point->y = (int)(n1y + (dist2y * distm / link->_length));
+		point->x = n1x + (int)((double)(n2x - n1x) * distm / link->_length);
+		point->y = n1y + (int)((double)(n2y - n1y) * distm / link->_length);
 	}
 
 	return res;
