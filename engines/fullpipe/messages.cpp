@@ -61,8 +61,8 @@ bool ExCommand::load(MfcArchive &file) {
 
 	_parentId = file.readUint16LE();
 	_messageKind = file.readUint32LE();
-	_x = file.readUint32LE();
-	_y = file.readUint32LE();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
 	_field_14 = file.readUint32LE();
 	_sceneClickX = file.readUint32LE();
 	_sceneClickY = file.readUint32LE();

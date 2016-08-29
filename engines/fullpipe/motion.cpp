@@ -2918,9 +2918,9 @@ bool MovGraphNode::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MovGraphNode::load()");
 
 	_field_14 = file.readUint32LE();
-	_x = file.readUint32LE();
-	_y = file.readUint32LE();
-	_z = file.readUint32LE();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
+	_z = file.readSint32LE();
 
 	return true;
 }
@@ -2937,12 +2937,12 @@ ReactParallel::ReactParallel() {
 bool ReactParallel::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ReactParallel::load()");
 
-	_x1 = file.readUint32LE();
-	_y1 = file.readUint32LE();
-	_x2 = file.readUint32LE();
-	_y2 = file.readUint32LE();
-	_dx = file.readUint32LE();
-	_dy = file.readUint32LE();
+	_x1 = file.readSint32LE();
+	_y1 = file.readSint32LE();
+	_x2 = file.readSint32LE();
+	_y2 = file.readSint32LE();
+	_dx = file.readSint32LE();
+	_dy = file.readSint32LE();
 
 	createRegion();
 
@@ -2995,8 +2995,8 @@ ReactPolygonal::~ReactPolygonal() {
 bool ReactPolygonal::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ReactPolygonal::load()");
 
-	_centerX = file.readUint32LE();
-	_centerY = file.readUint32LE();
+	_centerX = file.readSint32LE();
+	_centerY = file.readSint32LE();
 	_pointCount = file.readUint32LE();
 
 	if (_pointCount > 0) {

@@ -350,8 +350,8 @@ bool PicAniInfo::load(MfcArchive &file) {
 	field_8 = file.readUint32LE();
 	sceneId = file.readUint16LE();
 	field_E = file.readUint16LE();
-	ox = file.readUint32LE();
-	oy = file.readUint32LE();
+	ox = file.readSint32LE();
+	oy = file.readSint32LE();
 	priority = file.readUint32LE();
 	staticsId = file.readUint16LE();
 	movementId = file.readUint16LE();

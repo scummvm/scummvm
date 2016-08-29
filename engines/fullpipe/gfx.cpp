@@ -494,8 +494,8 @@ bool Picture::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "Picture::load()");
 	MemoryObject::load(file);
 
-	_x = file.readUint32LE();
-	_y = file.readUint32LE();
+	_x = file.readSint32LE();
+	_y = file.readSint32LE();
 	_field_44 = file.readUint16LE();
 
 	assert(g_fp->_gameProjectVersion >= 2);
@@ -785,8 +785,8 @@ Bitmap::~Bitmap() {
 void Bitmap::load(Common::ReadStream *s) {
 	debugC(5, kDebugLoading, "Bitmap::load()");
 
-	_x = s->readUint32LE();
-	_y = s->readUint32LE();
+	_x = s->readSint32LE();
+	_y = s->readSint32LE();
 	_width = s->readUint32LE();
 	_height = s->readUint32LE();
 	s->readUint32LE(); // pixels
