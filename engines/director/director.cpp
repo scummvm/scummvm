@@ -142,13 +142,13 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
 			debugC(2, kDebugLoading, "File: %s", i->getName().c_str());
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
-				loadSharedCastsFrom(i->getPath());
+				loadSharedCastsFrom(i->getName());
 				continue;
 			}
 
 			Archive *arc = createArchive();
 
-			arc->openFile(i->getPath());
+			arc->openFile(i->getName());
 			Score *sc = new Score(this, arc);
 			nameMap[sc->getMacName()] = sc;
 		}

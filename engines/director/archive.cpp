@@ -29,10 +29,13 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getVersion() < 4) {
-		return new RIFFArchive();
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		if (getVersion() < 4)
+			return new MacArchive();
+		else
+			return new RIFXArchive();
 	} else {
-		return new RIFXArchive();
+		return new RIFFArchive();
 	}
 }
 
