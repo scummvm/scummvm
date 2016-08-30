@@ -108,7 +108,7 @@ Common::WriteStream *ChRootFilesystemNode::createWriteStream() {
 	return _realNode->createWriteStream();
 }
 
-bool ChRootFilesystemNode::create(bool isDirectory) {
+bool ChRootFilesystemNode::create(bool /*isDir*/) {
 	error("Not supported");
 	return false;
 }
