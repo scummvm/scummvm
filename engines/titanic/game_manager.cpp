@@ -164,7 +164,7 @@ void CGameManager::update() {
 	frameMessage(getRoom());
 	_timers.update(g_vm->_events->getTicksCount());
 	_trueTalkManager.removeCompleted();
-	_trueTalkManager.update2();
+
 	CScreenManager::_screenManagerPtr->_mouseCursor->update();
 
 	CViewItem *view = getView();

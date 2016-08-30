@@ -219,10 +219,6 @@ void CTrueTalkManager::removeCompleted() {
 	}
 }
 
-void CTrueTalkManager::update2() {
-	//warning("CTrueTalkManager::update2");
-}
-
 void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	TTnpcScript *npcScript = getNpcScript(npc);
 	TTroomScript *roomScript = getRoomScript();

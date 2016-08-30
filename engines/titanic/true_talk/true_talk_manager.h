@@ -201,8 +201,6 @@ public:
 	 */
 	CGameManager *getGameManager() const;
 
-	void update2();
-
 	/**
 	 * Start a TrueTalk conversation
 	 */
