@@ -259,7 +259,12 @@ bool POSIXFilesystemNode::create(bool isDirectory) {
 	if (isDirectory) {
 		success = mkdir(_path.c_str(), 0755) == 0;
 	} else {
-		success = creat(_path.c_str(), 0755) != -1;
+		int fd = open(_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0755);
+		success = fd >= 0;
+
+		if (fd >= 0) {
+			close(fd);
+		}
 	}
 
 	if (success) {		
