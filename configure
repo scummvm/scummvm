@@ -4185,11 +4185,16 @@ EOF
 
 			cc_check_no_clean $LIBCURL_CFLAGS $LIBCURL_LIBS
 			if test "$?" -eq 0; then
-				$TMPO$HOSTEXEEXT
-				if test "$?" -eq 0; then
+				if test -n "$_host"; then
+					# In cross-compiling mode, we cannot run the result, assume SSL is available
 					_libcurl=yes
 				else
-					_libcurl="no SSL support"
+					$TMPO$HOSTEXEEXT
+					if test "$?" -eq 0; then
+						_libcurl=yes
+					else
+						_libcurl="no SSL support"
+					fi
 				fi
 			fi
 			cc_check_clean
