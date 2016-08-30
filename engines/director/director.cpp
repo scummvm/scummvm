@@ -73,7 +73,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 }
 
 DirectorEngine::~DirectorEngine() {
-	delete _sharedCasts;
 	delete _sharedSound;
 	delete _sharedBMP;
 	delete _sharedSTXT;
