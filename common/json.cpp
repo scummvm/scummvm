@@ -1092,7 +1092,7 @@ String JSONValue::indent(size_t depth) {
 	const size_t indent_step = 2;
 	depth ? --depth : 0;
 	String indentStr;
-	for (int i = 0; i < depth * indent_step; ++i) indentStr += ' ';
+	for (size_t i = 0; i < depth * indent_step; ++i) indentStr += ' ';
 	return indentStr;
 }
 
