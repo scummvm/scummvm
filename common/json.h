@@ -21,7 +21,7 @@
 */
 
 /*
-* Files JSON.h and JSONValue.h part of the SimpleJSON Library - http://mjpa.in/json
+* Files JSON.h and JSONValue.h part of the SimpleJSON Library - https://github.com/MJPA/SimpleJSON
 *
 * Copyright (C) 2010 Mike Anchor
 *

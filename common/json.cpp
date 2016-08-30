@@ -21,7 +21,7 @@
 */
 
 /*
-* Files JSON.cpp and JSONValue.cpp part of the SimpleJSON Library - http://mjpa.in/json
+* Files JSON.cpp and JSONValue.cpp part of the SimpleJSON Library - https://github.com/MJPA/SimpleJSON
 *
 * Copyright (C) 2010 Mike Anchor
 *
