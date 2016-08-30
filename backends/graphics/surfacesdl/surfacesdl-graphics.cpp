@@ -2308,7 +2308,7 @@ void SurfaceSdlGraphicsManager::blitOSDMessage(SDL_Rect dstRect) {
 	Graphics::PixelFormat dstFormat = _osdFormat;
 	for (int y = 0; y < dstRect.h; y++) {
 		const byte *srcRow = (const byte *)((const byte *)(src->pixels) + y * src->pitch); //src (x, y) == (0, 0)
-		byte *dstRow = (byte *)((const byte *)(dst->pixels) + (dstRect.y + y) * dst->pitch + dstRect.x * dstFormat.bytesPerPixel);
+		byte *dstRow = (byte *)((byte *)(dst->pixels) + (dstRect.y + y) * dst->pitch + dstRect.x * dstFormat.bytesPerPixel);
 
 		for (int x = 0; x < dstRect.w; x++) {
 			uint32 srcColor;
