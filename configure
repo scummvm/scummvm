@@ -2305,7 +2305,7 @@ case $_host_os in
 				append_var CXXFLAGS "-mfloat-abi=softfp"
 				append_var CXXFLAGS "-mfpu=neon"
 				ABI="armeabi-v7a"
-				ANDROID_PLATFORM=4
+				ANDROID_PLATFORM=16
 				ANDROID_PLATFORM_ARCH="arm"
 				;;
 		esac
@@ -4140,7 +4140,7 @@ int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
 	cc_check $LIBS $INCLUDES $SDL_NET_CFLAGS $SDL_NET_LIBS -lSDL_net && _sdlnet=yes
 fi
-if test "$_sdlnet" = yes ; then	
+if test "$_sdlnet" = yes ; then
 	append_var LIBS "$SDL_NET_LIBS -lSDL_net"
 	append_var INCLUDES "$SDL_NET_CFLAGS"
 fi
