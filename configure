@@ -469,7 +469,6 @@ find_libcurlconfig() {
 
 	if test -z "$_libcurlconfig"; then
 		echo "none found!"
-		exit 1
 	fi
 }
 
