@@ -97,7 +97,8 @@ bool BbvsMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void BbvsMetaEngine::removeSaveState(const char *target, int slot) const {

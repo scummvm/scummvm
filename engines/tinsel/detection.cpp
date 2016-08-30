@@ -109,7 +109,8 @@ bool TinselMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {

@@ -173,7 +173,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail);
+	    (f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {

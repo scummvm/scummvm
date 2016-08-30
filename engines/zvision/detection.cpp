@@ -87,7 +87,8 @@ bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 		//(f == kSavesSupportPlayTime);
 }
 

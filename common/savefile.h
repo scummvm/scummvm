@@ -28,6 +28,7 @@
 #include "common/stream.h"
 #include "common/str-array.h"
 #include "common/error.h"
+#include "common/ptr.h"
 
 namespace Common {
 
@@ -44,8 +45,21 @@ typedef SeekableReadStream InSaveFile;
  * That typically means "save games", but also includes things like the
  * IQ points in Indy3.
  */
-typedef WriteStream OutSaveFile;
+class OutSaveFile: public WriteStream {
+protected:
+	ScopedPtr<WriteStream> _wrapped;
 
+public:
+	OutSaveFile(WriteStream *w);
+	virtual ~OutSaveFile();
+
+	virtual bool err() const;
+	virtual void clearErr();
+	virtual void finalize();
+	virtual bool flush();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual int32 pos() const;
+};
 
 /**
  * The SaveFileManager is serving as a factory for InSaveFile
@@ -137,6 +151,15 @@ public:
 	virtual InSaveFile *openForLoading(const String &name) = 0;
 
 	/**
+	* Open the file with the specified name in the given directory for loading.
+	* In contrast to openForLoading(), it returns raw file instead of unpacked.
+	*
+	* @param name  The name of the savefile.
+	* @return Pointer to an InSaveFile, or NULL if an error occurred.
+	*/
+	virtual InSaveFile *openRawFile(const String &name) = 0;
+
+	/**
 	 * Removes the given savefile from the system.
 	 *
 	 * @param name  The name of the savefile to be removed.
@@ -174,6 +197,13 @@ public:
 	 * @see Common::matchString()
 	 */
 	virtual StringArray listSavefiles(const String &pattern) = 0;
+
+	/**
+	 * Refreshes the save files list (because some new files could've been added)
+	 * and remembers the "locked" files list. These files could not be used
+	 * for saving or loading because they are being synced by CloudManager.
+	 */
+	virtual void updateSavefilesList(StringArray &lockedFiles) = 0;
 };
 
 } // End of namespace Common

@@ -53,6 +53,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);
 	abstract protected void displayMessageOnOSD(String msg);
+	abstract protected void openUrl(String url);
+	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected String[] getSysArchives();

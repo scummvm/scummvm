@@ -314,7 +314,15 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureDisplayLogFile
+		kFeatureDisplayLogFile,
+
+		/**
+		* The presence of this feature indicates whether the hasTextInClipboard()
+		* and getTextFromClipboard() calls are supported.
+		*
+		* This feature has no associated state.
+		*/
+		kFeatureClipboardSupport
 	};
 
 	/**
@@ -1086,6 +1094,45 @@ public:
 	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
+	* Blit a bitmap to the 'on screen display'.
+	*
+	* If the current pixel format has one byte per pixel, the graphics data
+	* uses 8 bits per pixel, using the palette specified via setPalette.
+	* If more than one byte per pixel is in use, the graphics data uses the
+	* pixel format returned by getScreenFormat.
+	*
+	* @param buf		the buffer containing the graphics data source
+	* @param pitch		the pitch of the buffer (number of bytes in a scanline)
+	* @param x			the x coordinate of the destination rectangle
+	* @param y			the y coordinate of the destination rectangle
+	* @param w			the width of the destination rectangle
+	* @param h			the height of the destination rectangle
+	*
+	* @note The specified destination rectangle must be completly contained
+	*       in the visible screen space, and must be non-empty. If not, a
+	*       backend may or may not perform clipping, trigger an assert or
+	*       silently corrupt memory.
+	*
+	* @see updateScreen
+	* @see getScreenFormat
+	* @see copyRectToScreen
+	*/
+
+	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/**
+	* Clears 'on screen display' from everything drawn on it.
+	*/
+
+	virtual void clearOSD() = 0;
+
+	/**
+	* Returns 'on screen display' pixel format.
+	*/
+
+	virtual Graphics::PixelFormat getOSDFormat() = 0;
+
+	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
@@ -1198,6 +1245,28 @@ public:
 	 * might for example require leaving fullscreen mode.
 	 */
 	virtual bool displayLogFile() { return false; }
+
+	/**
+	* Returns whether there is text available in the clipboard.
+	*
+	* The kFeatureClipboardSupport feature flag can be used to
+	* test whether this call has been implemented by the active
+	* backend.
+	*
+	* @return true if there is text in the clipboard, false otherwise
+	*/
+	virtual bool hasTextInClipboard() { return false; }
+
+	/**
+	* Returns clipboard contents as a String.
+	*
+	* The kFeatureClipboardSupport feature flag can be used to
+	* test whether this call has been implemented by the active
+	* backend.
+	*
+	* @return clipboard contents ("" if hasTextInClipboard() == false)
+	*/
+	virtual Common::String getTextFromClipboard() { return ""; }
 
 	/**
 	 * Returns the locale of the system.

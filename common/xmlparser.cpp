@@ -128,7 +128,7 @@ bool XMLParser::parserError(const String &errStr) {
 		while (currentPosition--)
 			errorMessage += (char)_stream->readByte();
 	}
-	
+
 	errorMessage += "\n\nParser error: ";
 	errorMessage += errStr;
 	errorMessage += "\n\n";

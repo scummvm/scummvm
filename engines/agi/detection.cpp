@@ -231,7 +231,8 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
 	    (f == kSavesSupportCreationDate) ||
-	    (f == kSavesSupportPlayTime);
+	    (f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {

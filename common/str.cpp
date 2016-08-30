@@ -335,6 +335,15 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
+uint64 String::asUint64() const {
+	uint64 result = 0;
+	for (uint32 i = 0; i < _size; ++i) {
+		if (_str[i] < '0' || _str[i] > '9') break;
+		result = result * 10L + (_str[i] - '0');
+	}
+	return result;
+}
+
 bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
 	return Common::matchString(c_str(), pat, ignoreCase, pathMode);
 }
@@ -826,6 +835,15 @@ bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMod
 			pat++;
 			str++;
 		}
+	}
+}
+
+void replace(Common::String &source, const Common::String &what, const Common::String &with) {
+	const char *cstr = source.c_str();
+	const char *position = strstr(cstr, what.c_str());
+	if (position) {
+		uint32 index = position - cstr;
+		source.replace(index, what.size(), with);
 	}
 }
 

@@ -37,9 +37,15 @@
 #include "gui/fluidsynth-dialog.h"
 #endif
 
+#ifdef USE_LIBCURL
+#include "backends/cloud/storage.h"
+#endif
+
 namespace GUI {
+class LauncherDialog;
 
 class CheckboxWidget;
+class EditTextWidget;
 class PopUpWidget;
 class SliderWidget;
 class StaticTextWidget;
@@ -200,16 +206,18 @@ protected:
 
 class GlobalOptionsDialog : public OptionsDialog {
 public:
-	GlobalOptionsDialog();
+	GlobalOptionsDialog(LauncherDialog *launcher);
 	~GlobalOptionsDialog();
 
 	void open();
 	void close();
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle();
 
 	virtual void reflowLayout();
 
 protected:
+	LauncherDialog *_launcher;
 #ifdef GUI_ENABLE_KEYSDIALOG
 	KeysDialog *_keysDialog;
 #endif
@@ -240,6 +248,43 @@ protected:
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;
 	PopUpWidget *_updatesPopUp;
+#endif
+
+#ifdef USE_CLOUD
+	//
+	// Cloud controls
+	//
+	uint32 _selectedStorageIndex;
+	StaticTextWidget *_storagePopUpDesc;
+	PopUpWidget *_storagePopUp;
+	StaticTextWidget *_storageUsernameDesc;
+	StaticTextWidget *_storageUsername;
+	StaticTextWidget *_storageUsedSpaceDesc;
+	StaticTextWidget *_storageUsedSpace;
+	StaticTextWidget *_storageLastSyncDesc;
+	StaticTextWidget *_storageLastSync;
+	ButtonWidget	 *_storageConnectButton;
+	ButtonWidget	 *_storageRefreshButton;
+	ButtonWidget	 *_storageDownloadButton;
+	ButtonWidget	 *_runServerButton;
+	StaticTextWidget *_serverInfoLabel;
+	ButtonWidget	 *_rootPathButton;
+	StaticTextWidget *_rootPath;
+	ButtonWidget	 *_rootPathClearButton;
+	StaticTextWidget *_serverPortDesc;
+	EditTextWidget *_serverPort;
+	ButtonWidget	 *_serverPortClearButton;
+	bool _redrawCloudTab;
+#ifdef USE_SDL_NET
+	bool _serverWasRunning;
+#endif
+
+	void setupCloudTab();
+#endif
+#ifdef USE_LIBCURL
+	void storageInfoCallback(Cloud::Storage::StorageInfoResponse response);
+	void storageListDirectoryCallback(Cloud::Storage::ListDirectoryResponse response);
+	void storageErrorCallback(Networking::ErrorResponse response);
 #endif
 };
 

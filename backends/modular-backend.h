@@ -127,6 +127,9 @@ public:
 
 	virtual void quit();
 	virtual void displayMessageOnOSD(const char *msg);
+	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h);
+	virtual void clearOSD();
+	virtual Graphics::PixelFormat getOSDFormat();
 
 	//@}
 

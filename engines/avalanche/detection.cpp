@@ -99,7 +99,8 @@ bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {

@@ -95,6 +95,7 @@ public:
 		case kSavesSupportThumbnail:
 		case kSavesSupportCreationDate:
 		case kSavesSupportPlayTime:
+		case kSimpleSavesNames:
 			return true;
 		default:
 			return false;

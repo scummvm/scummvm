@@ -751,6 +751,31 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #endif
 }
 
+void OpenGLGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
+#ifdef USE_OSD
+	warning("implement copyRectToOSD"); //TODO
+#endif
+}
+
+void OpenGLGraphicsManager::clearOSD() {
+#ifdef USE_OSD
+	// HACK: Actually no client code should use graphics functions from
+	// another thread. But the MT-32 emulator still does, thus we need to
+	// make sure this doesn't happen while a updateScreen call is done.
+	Common::StackLock lock(_osdMutex);
+
+	Graphics::Surface *dst = _osd->getSurface();
+	_osd->fill(0);
+	_osd->flagDirty();
+
+	// Init the OSD display parameters.
+	_osdAlpha = kOSDInitialAlpha;
+	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
+#endif
+}
+
+Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() { return Graphics::PixelFormat(); } //TODO
+
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
 

@@ -90,6 +90,7 @@ bool MortevielleMetaEngine::hasFeature(MetaEngineFeature f) const {
 	case kSavesSupportMetaInfo:
 	case kSavesSupportThumbnail:
 	case kSavesSupportCreationDate:
+	case kSimpleSavesNames:
 		return true;
 	default:
 		return false;

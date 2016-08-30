@@ -28,13 +28,13 @@
 
 namespace GUI {
 
-ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h) {
+ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd)
+	: Widget(boss, x, y, w, h), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
 }
 
-ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name)
-	: Widget(boss, name) {
+ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd)
+	: Widget(boss, name), CommandSender(nullptr), _reflowCmd(reflowCmd) {
 	init();
 }
 
@@ -52,14 +52,14 @@ void ScrollContainerWidget::init() {
 void ScrollContainerWidget::recalc() {
 	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
 	_limitH = _h;
-	
+
 	//calculate virtual height
 	const int spacing = g_gui.xmlEval()->getVar("Global.Font.Height", 16); //on the bottom
 	int h = 0;
 	int min = spacing, max = 0;
 	Widget *ptr = _firstWidget;
 	while (ptr) {
-		if (ptr != _verticalScroll) {
+		if (ptr != _verticalScroll && ptr->isVisible()) {
 			int y = ptr->getAbsY() - getChildY();
 			min = MIN(min, y - spacing);
 			max = MAX(max, y + ptr->getHeight() + spacing);
@@ -67,6 +67,8 @@ void ScrollContainerWidget::recalc() {
 		ptr = ptr->next();
 	}
 	h = max - min;
+
+	if (h <= _limitH) _scrolledY = 0;
 
 	_verticalScroll->_numEntries = h;
 	_verticalScroll->_currentPos = _scrolledY;
@@ -115,7 +117,10 @@ void ScrollContainerWidget::reflowLayout() {
 		ptr->reflowLayout();
 		ptr = ptr->next();
 	}
-	
+
+	//hide and move widgets, if needed
+	sendCommand(_reflowCmd, 0);
+
 	//recalculate height
 	recalc();
 
@@ -124,7 +129,7 @@ void ScrollContainerWidget::reflowLayout() {
 	while (ptr) {
 		int y = ptr->getAbsY() - getChildY();
 		int h = ptr->getHeight();
-		bool visible = true;
+		bool visible = ptr->isVisible();
 		if (y + h - _scrolledY < 0) visible = false;
 		if (y - _scrolledY > _limitH) visible = false;
 		ptr->setVisible(visible);
@@ -132,6 +137,7 @@ void ScrollContainerWidget::reflowLayout() {
 	}
 
 	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
+	_verticalScroll->recalc();
 }
 
 void ScrollContainerWidget::drawWidget() {

@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -79,8 +80,11 @@ struct DrawStep {
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
+	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
+
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::Surface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -281,7 +285,7 @@ public:
 	 *
 	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setSurface(Surface *surface) {
+	virtual void setSurface(TransparentSurface *surface) {
 		_activeSurface = surface;
 	}
 
@@ -420,7 +424,13 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmapClip(step.blitSrc, Common::Rect(x, y, x + w, y + h), clip);
+		blitKeyBitmapClip(step.blitSrc, Common::Rect(x, y, x + w, y + h), clip);
+	}
+
+	void drawCallback_ALPHABITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h), step.autoscale, step.xAlign, step.yAlign); //TODO
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
@@ -482,8 +492,14 @@ public:
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
 	virtual void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
-	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
-	virtual void blitAlphaBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
+	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
+
+	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
+			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+			int alpha = 255) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
@@ -507,7 +523,7 @@ public:
 	virtual void applyScreenShading(GUI::ThemeEngine::ShadingStyle) = 0;
 
 protected:
-	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
+	TransparentSurface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
 	ShadowFillMode _shadowFillMode;

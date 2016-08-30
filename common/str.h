@@ -162,6 +162,9 @@ public:
 	bool contains(const char *x) const;
 	bool contains(char x) const;
 
+	/** Return uint64 corrensponding to String's contents. */
+	uint64 asUint64() const;
+
 	/**
 	 * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
 	 * Taken from exult/files/listfiles.cc
@@ -233,12 +236,12 @@ public:
 	void trim();
 
 	uint hash() const;
-	 
+
 	/**@{
 	 * Functions to replace some amount of chars with chars from some other string.
 	 *
 	 * @note The implementation follows that of the STL's std::string:
-	 *       http://www.cplusplus.com/reference/string/string/replace/        
+	 *       http://www.cplusplus.com/reference/string/string/replace/
 	 *
 	 * @param pos Starting position for the replace in the original string.
 	 * @param count Number of chars to replace from the original string.
@@ -247,7 +250,7 @@ public:
 	 * @param countOri Same as count
 	 * @param posDest Initial position to read str from.
 	 * @param countDest Number of chars to read from str. npos by default.
-	 */ 
+	 */
 	// Replace 'count' bytes, starting from 'pos' with str.
 	void replace(uint32 pos, uint32 count, const String &str);
 	// The same as above, but accepts a C-like array of characters.
@@ -264,7 +267,7 @@ public:
 	// str[posDest, posDest + countDest)
 	void replace(uint32 posOri, uint32 countOri, const char *str,
 					uint32 posDest, uint32 countDest);
-	/**@}*/ 
+	/**@}*/
 
 	/**
 	 * Print formatted data into a String object. Similar to sprintf,
@@ -387,6 +390,15 @@ String normalizePath(const String &path, const char sep);
  */
 bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
 
+/**
+ * Function which replaces substring with the other. It happens in place.
+ * If there is no substring found, original string is not changed.
+ *
+ * @param source String to search and replace substring in.
+ * @param what Substring to replace.
+ * @param with String to replace with.
+ */
+void replace(Common::String &source, const Common::String &what, const Common::String &with);
 
 /**
  * Take a 32 bit value and turn it into a four character string, where each of

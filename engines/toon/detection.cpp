@@ -159,7 +159,8 @@ bool ToonMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void ToonMetaEngine::removeSaveState(const char *target, int slot) const {

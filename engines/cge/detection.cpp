@@ -180,7 +180,8 @@ bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void CGEMetaEngine::removeSaveState(const char *target, int slot) const {

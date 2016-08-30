@@ -27,12 +27,12 @@
 SaveStateDescriptor::SaveStateDescriptor()
 	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
 	: _slot(-1), _description(), _isDeletable(true), _isWriteProtected(false),
-	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _thumbnail() {
 }
 
 SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
 	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
-	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _thumbnail() {
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {

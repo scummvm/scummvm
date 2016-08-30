@@ -108,7 +108,7 @@ public:
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
 		OutPAKSave *s = new OutPAKSave(filename.c_str());
 		if (!s->err()) {
-			return compress ? Common::wrapCompressedWriteStream(s) : s;
+			return new OutSaveFile(compress ? Common::wrapCompressedWriteStream(s) : s);
 		} else {
 			delete s;
 			return NULL;

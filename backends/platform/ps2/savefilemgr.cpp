@@ -192,7 +192,7 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const Common::String &fil
 	}
 
 	_screen->wantAnim(false);
-	return compress ? Common::wrapCompressedWriteStream(sf) : sf;
+	return new OutSaveFile(compress ? Common::wrapCompressedWriteStream(sf) : sf);
 }
 
 bool Ps2SaveFileManager::removeSavefile(const Common::String &filename) {

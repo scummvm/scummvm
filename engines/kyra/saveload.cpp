@@ -184,7 +184,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	return in;
 }
 
-Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
+Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
 	if (shouldQuit())
 		return 0;
 
@@ -226,7 +226,7 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 		delete genThumbnail;
 	}
 
-	return out;
+	return new Common::OutSaveFile(out);
 }
 
 const char *KyraEngine_v1::getSavegameFilename(int num) {

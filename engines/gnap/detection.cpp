@@ -89,7 +89,8 @@ bool GnapMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Gnap::GnapEngine::hasFeature(EngineFeature f) const {

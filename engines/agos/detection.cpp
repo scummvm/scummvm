@@ -125,7 +125,8 @@ public:
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves);
+		(f == kSupportsListSaves) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
