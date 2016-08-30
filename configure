@@ -4216,7 +4216,7 @@ define_in_config_if_yes "$_libcurl" "USE_LIBCURL"
 #
 # Check whether to build cloud integration support
 #
-echo_n "Cloud integration..."
+echo_n "Cloud integration... "
 if test "$_cloud" = "no"; then
 	echo "no"
 else
