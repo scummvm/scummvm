@@ -67,7 +67,6 @@ CMouseCursor::~CMouseCursor() {
 
 void CMouseCursor::loadCursorImages() {
 	const CResourceKey key("ycursors.avi");
-	g_vm->_filesManager->fn4(key.getString());
 
 	// Iterate through getting each cursor
 	for (int idx = 0; idx < NUM_CURSORS; ++idx) {

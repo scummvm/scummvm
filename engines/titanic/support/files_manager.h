@@ -94,8 +94,6 @@ public:
 	 */
 	void resetView();
 
-	void fn4(const CString &name);
-
 	/**
 	 * Preloads and caches a file for access shortly
 	 */

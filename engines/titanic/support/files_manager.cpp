@@ -116,10 +116,6 @@ void CFilesManager::resetView() {
 	}
 }
 
-void CFilesManager::fn4(const CString &name) {
-	warning("TODO: CFilesManager::fn4");
-}
-
 void CFilesManager::preload(const CString &name) {
 	// We don't currently do any preloading of resources
 }
