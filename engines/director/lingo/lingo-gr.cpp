@@ -225,7 +225,7 @@ extern int yylex();
 extern int yyparse();
 
 using namespace Director;
-void yyerror(char *s) {
+void yyerror(const char *s) {
 	g_lingo->_hadError = true;
 	warning("%s at line %d col %d", s, g_lingo->_linenumber, g_lingo->_colnumber);
 }
