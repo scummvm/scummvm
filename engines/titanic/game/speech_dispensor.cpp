@@ -62,7 +62,7 @@ void CSpeechDispensor::load(SimpleFile *file) {
 }
 
 bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
-	if (_fieldEC || _seasonNum == 0 || _seasonNum == 3)
+	if (_fieldEC || _seasonNum == SEASON_SUMMER || _seasonNum == SEASON_SPRING)
 		return true;
 
 	CGameObject *dragObject = getDraggingObject();
@@ -79,7 +79,8 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 	if (_dragItem) {
 		Point pt(_itemPos.x + _dragItem->_bounds.left,
 			_itemPos.y + _dragItem->_bounds.top);
-		bool flag = checkPoint(pt, true);
+		if (!checkPoint(pt, true))
+			return true;
 
 		switch (_state) {
 		case 0:

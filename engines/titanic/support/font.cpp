@@ -206,7 +206,7 @@ void STFont::writeString(CVideoSurface *surface, const Point &destPos, Rect &cli
 	}
 
 	// Iterate through each character of the string
-	for (const byte *srcP = (byte *)str.c_str(); *srcP; ++srcP) {
+	for (const byte *srcP = (const byte *)str.c_str(); *srcP; ++srcP) {
 		byte c = *srcP;
 		if (c == 0xE9)
 			c = '$';
