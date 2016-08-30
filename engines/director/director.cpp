@@ -47,10 +47,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	syncSoundSettings();
 
 	_sharedCasts = nullptr;
-	_sharedSound = nullptr;
-	_sharedBMP = nullptr;
-	_sharedSTXT = nullptr;
-	_sharedDIB = nullptr;
 
 	_currentScore = nullptr;
 	_soundManager = nullptr;

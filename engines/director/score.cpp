@@ -272,6 +272,8 @@ void Score::readVersion(uint32 rid) {
 }
 
 void Score::loadCastData(Common::SeekableSubReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "Score::loadCastData(). start: %d, end: %d", _castArrayStart, _castArrayEnd);
+
 	for (uint16 id = _castArrayStart; id <= _castArrayEnd; id++) {
 		byte size = stream.readByte();
 		if (size == 0)

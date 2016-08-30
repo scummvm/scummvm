@@ -183,6 +183,7 @@ public:
 	void startLoop();
 	void processEvents();
 	Archive *getArchive() const { return _movieArchive; };
+	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadCastData(Common::SeekableSubReadStreamEndian &stream);
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	Common::String getMacName() const { return _macName; }
@@ -190,7 +191,6 @@ public:
 private:
 	void update();
 	void readVersion(uint32 rid);
-	void loadConfig(Common::SeekableSubReadStreamEndian &stream);
 	void loadPalette(Common::SeekableSubReadStreamEndian &stream);
 	void loadFrames(Common::SeekableSubReadStreamEndian &stream);
 	void loadLabels(Common::SeekableSubReadStreamEndian &stream);
