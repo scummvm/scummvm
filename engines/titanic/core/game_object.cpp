@@ -1160,8 +1160,8 @@ void CGameObject::mouseUnlockE4() {
 	CScreenManager::_screenManagerPtr->_mouseCursor->unlockE4();
 }
 
-void CGameObject::mouseSaveState(int v1, int v2, int v3) {
-	CScreenManager::_screenManagerPtr->_mouseCursor->saveState(v1, v2, v3);
+void CGameObject::mouseSetPosition(const Point &pt, double rate) {
+	CScreenManager::_screenManagerPtr->_mouseCursor->setPosition(pt, rate);
 }
 
 void CGameObject::lockInputHandler() {

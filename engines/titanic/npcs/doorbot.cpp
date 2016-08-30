@@ -288,7 +288,7 @@ bool CDoorbot::TimerMsg(CTimerMsg *msg) {
 
 		case 6:
 			CMouseButtonDownMsg::generate();
-			mouseSaveState(200, 430, 2500);
+			mouseSetPosition(Point(200, 430), 2500);
 			_timerId = addTimer(7, 2500, 0);
 			break;
 
@@ -476,7 +476,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 		case 10568:
 			mouseLockE4();
-			mouseSaveState(600, 250, 2500);
+			mouseSetPosition(Point(600, 250), 2500);
 			_timerId = addTimer(6, 2500, 0);
 			break;
 
@@ -488,7 +488,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 			break;
 
 		case 10570:
-			mouseSaveState(200, 430, 2500);
+			mouseSetPosition(Point(200, 430), 2500);
 			_timerId = addTimer(7, 3000, 0);
 			break;
 

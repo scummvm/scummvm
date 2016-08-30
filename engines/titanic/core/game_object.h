@@ -166,7 +166,10 @@ protected:
 	void mouseLockE4();
 	void mouseUnlockE4();
 
-	void mouseSaveState(int v1, int v2, int v3);
+	/**
+	 * Sets the mouse to a new position
+	 */
+	void mouseSetPosition(const Point &pt, double rate);
 
 	/**
 	 * Lock the input handler

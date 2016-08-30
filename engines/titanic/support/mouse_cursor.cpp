@@ -128,8 +128,11 @@ void CMouseCursor::unlockE4() {
 	CScreenManager::_screenManagerPtr->_inputHandler->decLockCount();
 }
 
-void CMouseCursor::saveState(int v1, int v2, int v3) {
-	// TODO
+void CMouseCursor::setPosition(const Point &pt, double rate) {
+	assert(rate >= 0.0 && rate <= 1.0);
+	
+	// TODO: Figure out use of the rate parameter
+	g_system->warpMouse(pt.x, pt.y);
 }
 
 } // End of namespace Titanic

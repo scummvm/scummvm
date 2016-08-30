@@ -24,8 +24,8 @@
 #define TITANIC_MOUSE_CURSOR_H
 
 #include "common/scummsys.h"
-#include "common/rect.h"
 #include "graphics/managed_surface.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 
@@ -105,7 +105,10 @@ public:
 	void lockE4();
 	void unlockE4();
 
-	void saveState(int v1, int v2, int v3);
+	/**
+	 * Sets the mouse to a new position
+	 */
+	void setPosition(const Point &pt, double rate);
 };
 
 
