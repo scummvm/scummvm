@@ -242,10 +242,12 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			code += subcode;
 			code.deleteLastChar();
 		}
-		code.erase(code.size() - 3);
-		CloudMan.connectStorage(_storageId, code);
-		setResult(1);
-		close();
+		if (code.size() > 3) {
+			code.erase(code.size() - 3);
+			CloudMan.connectStorage(_storageId, code);
+			setResult(1);
+			close();
+		}
 		break;
 	}
 #ifdef USE_SDL_NET
