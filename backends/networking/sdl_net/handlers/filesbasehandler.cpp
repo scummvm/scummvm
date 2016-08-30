@@ -69,8 +69,12 @@ bool FilesBaseHandler::transformPath(Common::String &path, Common::String &prefi
 		prefixToAdd = "/saves/";
 
 		// determine savepath (prefix to remove)
+#ifdef USE_LIBCURL
 		DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
 		prefixToRemove = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+#else
+		prefixToRemove = ConfMan.get("savepath");
+#endif
 		if (prefixToRemove.size() && prefixToRemove.lastChar() != '/' && prefixToRemove.lastChar() != '\\')
 			prefixToRemove += '/';
 

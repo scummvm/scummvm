@@ -159,8 +159,12 @@ bool HandlerUtils::hasPermittedPrefix(const Common::String &path) {
 	}
 
 	// prefix for /saves/
+#ifdef USE_LIBCURL
 	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
 	prefix = (manager ? manager->concatWithSavesPath("") : ConfMan.get("savepath"));
+#else
+	prefix = ConfMan.get("savepath");
+#endif
 	return (normalized.hasPrefix(normalizePath(prefix)));
 }
 
