@@ -38,6 +38,7 @@
 #include "champion.h"
 #include "eventman.h"
 #include "lzw.h"
+#include "text.h"
 
 namespace DM {
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
@@ -914,6 +915,7 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 }
 
 void DisplayMan::updateScreen() {
+	_vm->_textMan->updateMessageArea();
 	// apply copper
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_bitmapScreen[i] += 16;
