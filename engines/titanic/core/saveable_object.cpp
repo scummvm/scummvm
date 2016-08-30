@@ -286,7 +286,6 @@
 #include "titanic/gfx/chev_right_off.h"
 #include "titanic/gfx/chev_right_on.h"
 #include "titanic/gfx/chev_send_rec_switch.h"
-#include "titanic/gfx/chev_switch.h"
 #include "titanic/gfx/edit_control.h"
 #include "titanic/gfx/elevator_button.h"
 #include "titanic/gfx/get_from_succ.h"
@@ -705,7 +704,6 @@ DEFFN(CChevLeftOn);
 DEFFN(CChevRightOff);
 DEFFN(CChevRightOn);
 DEFFN(CChevSendRecSwitch);
-DEFFN(CChevSwitch);
 DEFFN(CEditControl);
 DEFFN(CElevatorButton);
 DEFFN(CGetFromSucc);
@@ -1289,7 +1287,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CChevRightOff, CToggleSwitch);
 	ADDFN(CChevRightOn, CToggleSwitch);
 	ADDFN(CChevSendRecSwitch, CToggleSwitch);
-	ADDFN(CChevSwitch, CToggleSwitch);
 	ADDFN(CEditControl, CGameObject);
 	ADDFN(CElevatorButton, CSTButton);
 	ADDFN(CGetFromSucc, CToggleSwitch);
