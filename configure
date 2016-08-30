@@ -2597,9 +2597,9 @@ case $_host_os in
 		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
-		_sdlconfig=sdl2-config
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 		_freetypepath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
+		_libcurlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		append_var DEFINES "-DPLAYSTATION3"
 		append_var CXXFLAGS "-mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
