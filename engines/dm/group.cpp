@@ -1168,61 +1168,64 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 }
 
 int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
-														int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)) {
-	int16 L0410_i_XAxisStep;
-	int16 L0411_i_YAxisStep;
-	int16 L0412_i_Multiple;
-#define AL0412_i_DistanceX L0412_i_Multiple
-#define AL0412_i_PathMapX  L0412_i_Multiple
-	int16 L0413_i_Multiple;
-#define AL0413_i_DistanceY L0413_i_Multiple
-#define AL0413_i_PathMapY  L0413_i_Multiple
-	int16 L0414_i_LargestAxisDistance;
-	bool L0415_B_DistanceXSmallerThanDistanceY;
-	int16 L0416_i_ValueA;
-	int16 L0417_i_ValueB;
-	bool L0418_B_DistanceXEqualsDistanceY;
-	int16 L0419_i_ValueC;
-
+													int16 destMapX, int16 destMapY, bool (GroupMan::*isBlocked)(uint16, uint16)) {
 
 	if (getDistance(srcMapX, srcMapY, destMapX, destMapY) <= 1) {
 		return 1;
 	}
-	L0415_B_DistanceXSmallerThanDistanceY = (AL0412_i_DistanceX = ((AL0412_i_DistanceX = destMapX - srcMapX) < 0) ? -AL0412_i_DistanceX : AL0412_i_DistanceX) < (AL0413_i_DistanceY = ((AL0413_i_DistanceY = destMapY - srcMapY) < 0) ? -AL0413_i_DistanceY : AL0413_i_DistanceY);
-	L0418_B_DistanceXEqualsDistanceY = (AL0412_i_DistanceX == AL0413_i_DistanceY);
-	L0410_i_XAxisStep = (((AL0412_i_PathMapX = destMapX) - srcMapX) > 0) ? -1 : 1;
-	L0411_i_YAxisStep = (((AL0413_i_PathMapY = destMapY) - srcMapY) > 0) ? -1 : 1;
-	L0419_i_ValueC = L0415_B_DistanceXSmallerThanDistanceY ? ((L0414_i_LargestAxisDistance = AL0413_i_PathMapY - srcMapY) ? ((AL0412_i_PathMapX - srcMapX) << 6) / L0414_i_LargestAxisDistance : 128)
-		: ((L0414_i_LargestAxisDistance = AL0412_i_PathMapX - srcMapX) ? ((AL0413_i_PathMapY - srcMapY) << 6) / L0414_i_LargestAxisDistance : 128);
+
+	int16 distanceX = ABS(destMapX - srcMapX);
+	int16 distanceY = ABS(destMapY - srcMapY);
+	bool isDistanceXSmallerThanDistanceY = (distanceX < distanceY);
+	bool isDistanceXEqualsDistanceY = (distanceX == distanceY);
+	int16 pathMapX = destMapX;
+	int16 pathMapY = destMapY;
+	int16 axisStepX = ((pathMapX - srcMapX) > 0) ? -1 : 1;
+	int16 axisStepY = ((pathMapY - srcMapY) > 0) ? -1 : 1;
+	int16 largestAxisDistance;
+
+	int16 valueA;
+	int16 valueB;
+	int16 valueC;
+
+	if (isDistanceXSmallerThanDistanceY) {
+		largestAxisDistance = pathMapY - srcMapY;
+		valueC = (largestAxisDistance ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128);
+	} else {
+		largestAxisDistance = pathMapX - srcMapX;
+		valueC = (largestAxisDistance ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128);
+	}
+
 	/* 128 when the creature is on the same row or column as the party */
 	do {
-		if (L0418_B_DistanceXEqualsDistanceY) {
-			if (((CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(AL0412_i_PathMapX + L0410_i_XAxisStep, AL0413_i_PathMapY) && (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(AL0412_i_PathMapX, AL0413_i_PathMapY + L0411_i_YAxisStep)) || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(AL0412_i_PathMapX = AL0412_i_PathMapX + L0410_i_XAxisStep, AL0413_i_PathMapY = AL0413_i_PathMapY + L0411_i_YAxisStep)) {
+		if (isDistanceXEqualsDistanceY) {
+			if ((   (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX + axisStepX, pathMapY) 
+				 && (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY + axisStepY)) 
+			 || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX = pathMapX + axisStepX, pathMapY = pathMapY + axisStepY))
 				return 0;
-			}
 		} else {
-			if ((L0416_i_ValueA = ((L0414_i_LargestAxisDistance = (L0415_B_DistanceXSmallerThanDistanceY ? ((L0414_i_LargestAxisDistance = AL0413_i_PathMapY - srcMapY) ? ((AL0412_i_PathMapX + L0410_i_XAxisStep - srcMapX) << 6) / L0414_i_LargestAxisDistance : 128) : ((L0414_i_LargestAxisDistance = AL0412_i_PathMapX + L0410_i_XAxisStep - srcMapX) ? ((AL0413_i_PathMapY - srcMapY) << 6) / L0414_i_LargestAxisDistance : 128)) - L0419_i_ValueC) < 0) ? -L0414_i_LargestAxisDistance : L0414_i_LargestAxisDistance) < (L0417_i_ValueB = ((L0414_i_LargestAxisDistance = (L0415_B_DistanceXSmallerThanDistanceY ? ((L0414_i_LargestAxisDistance = AL0413_i_PathMapY + L0411_i_YAxisStep - srcMapY) ? ((AL0412_i_PathMapX - srcMapX) << 6) / L0414_i_LargestAxisDistance : 128) : ((L0414_i_LargestAxisDistance = AL0412_i_PathMapX - srcMapX) ? ((AL0413_i_PathMapY + L0411_i_YAxisStep - srcMapY) << 6) / L0414_i_LargestAxisDistance : 128)) - L0419_i_ValueC) < 0) ? -L0414_i_LargestAxisDistance : L0414_i_LargestAxisDistance)) {
-				AL0412_i_PathMapX += L0410_i_XAxisStep;
+			if ((valueA = ((largestAxisDistance = (isDistanceXSmallerThanDistanceY ? ((largestAxisDistance = pathMapY - srcMapY) ? ((pathMapX + axisStepX - srcMapX) << 6) / largestAxisDistance : 128) : ((largestAxisDistance = pathMapX + axisStepX - srcMapX) ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128)) - valueC) < 0) ? -largestAxisDistance : largestAxisDistance) < (valueB = ((largestAxisDistance = (isDistanceXSmallerThanDistanceY ? ((largestAxisDistance = pathMapY + axisStepY - srcMapY) ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128) : ((largestAxisDistance = pathMapX - srcMapX) ? ((pathMapY + axisStepY - srcMapY) << 6) / largestAxisDistance : 128)) - valueC) < 0) ? -largestAxisDistance : largestAxisDistance)) {
+				pathMapX += axisStepX;
 			} else {
-				AL0413_i_PathMapY += L0411_i_YAxisStep;
+				pathMapY += axisStepY;
 			}
-			if ((CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(AL0412_i_PathMapX, AL0413_i_PathMapY) && ((L0416_i_ValueA != L0417_i_ValueB) || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(AL0412_i_PathMapX = AL0412_i_PathMapX + L0410_i_XAxisStep, AL0413_i_PathMapY = AL0413_i_PathMapY - L0411_i_YAxisStep))) {
+			if ((CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY) && ((valueA != valueB) || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX = pathMapX + axisStepX, pathMapY = pathMapY - axisStepY))) {
 				return 0;
 			}
 		}
-	} while (getDistance(AL0412_i_PathMapX, AL0413_i_PathMapY, srcMapX, srcMapY) > 1);
+	} while (getDistance(pathMapX, pathMapY, srcMapX, srcMapY) > 1);
 	return getDistanceBetweenSquares(srcMapX, srcMapY, destMapX, destMapY);
 }
 
 bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
-	uint16 L0404_ui_Square = _vm->_dungeonMan->_currMapData[mapX][mapY];
-	int16 L0405_i_SquareType = Square(L0404_ui_Square).getType();
-	if (L0405_i_SquareType == k4_DoorElemType) {
-		Door *L0407_ps_Door = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-		int16 L0406_i_DoorState = Square(L0404_ui_Square).getDoorState();
-		return ((L0406_i_DoorState == k3_doorState_FOURTH) || (L0406_i_DoorState == k4_doorState_CLOSED)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[L0407_ps_Door->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
+	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 curSquareType = Square(curSquare).getType();
+	if (curSquareType == k4_DoorElemType) {
+		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		int16 curDoorState = Square(curSquare).getDoorState();
+		return ((curDoorState == k3_doorState_FOURTH) || (curDoorState == k4_doorState_CLOSED)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
 	}
-	return (L0405_i_SquareType == k0_ElementTypeWall) || ((L0405_i_SquareType == k6_ElementTypeFakeWall) && !getFlag(L0404_ui_Square, k0x0004_FakeWallOpen));
+	return (curSquareType == k0_ElementTypeWall) || ((curSquareType == k6_ElementTypeFakeWall) && !getFlag(curSquare, k0x0004_FakeWallOpen));
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
