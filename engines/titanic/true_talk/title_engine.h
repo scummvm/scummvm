@@ -57,12 +57,6 @@ public:
 	 * Sets a conversation reponse
 	 */
 	virtual int setResponse(TTscriptBase *script, TTresponse *response) { return SS_4; }
-	
-	virtual int proc4(int unused) const = 0;
-	virtual int proc5(int64 unused) const = 0;
-	virtual int proc6(int64 unused) const = 0;
-	virtual int proc7(int64 unused) const = 0;
-	virtual int proc8() const = 0;
 
 	/**
 	 * Open a designated file
@@ -93,14 +87,6 @@ public:
 	 * Sets a conversation reponse
 	 */
 	virtual int setResponse(TTscriptBase *script, TTresponse *response);
-
-	virtual void dump(int val1, int val2);
-
-	virtual int proc4(int unused) const { return 0; }
-	virtual int proc5(int64 unused) const { return 0; }
-	virtual int proc6(int64 unused) const { return 0; }
-	virtual int proc7(int64 unused) const { return 0; }
-	virtual int proc8() const { return 0; }
 
 	/**
 	 * Open a designated file

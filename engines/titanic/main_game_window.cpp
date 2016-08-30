@@ -82,8 +82,6 @@ void CMainGameWindow::applicationStarting() {
 	_inputAllowed = true;
 	_gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 
-	// TODO: Cursor/image
-
 	// Generate starting messages for entering the view, node, and room.
 	// Note the old fields are nullptr, since there's no previous view/node/room
 	CViewItem *view = _gameManager->_gameState._gameLocation.getView();
@@ -162,8 +160,9 @@ void CMainGameWindow::draw() {
 			scrManager->drawCursors();
 			break;
 
-		case GSMODE_5:
-			g_vm->_filesManager->debug(scrManager);
+		case GSMODE_INSERT_CD:
+			scrManager->drawCursors();
+			_vm->_filesManager->insertCD(scrManager);
 			break;
 
 		case GSMODE_PENDING_LOAD:
@@ -221,7 +220,7 @@ void CMainGameWindow::drawViewContents(CScreenManager *screenManager) {
 }
 
 void CMainGameWindow::mouseChanged() {
-	if (_gameManager->_gameState._mode != GSMODE_5)
+	if (_gameManager->_gameState._mode != GSMODE_INSERT_CD)
 		_gameManager->update();
 }
 

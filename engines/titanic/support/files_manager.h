@@ -84,7 +84,10 @@ public:
 	 */
 	void loadDrive();
 
-	void debug(CScreenManager *screenManager);
+	/**
+	 * Shows a dialog for inserting a new CD
+	 */
+	void insertCD(CScreenManager *screenManager);
 
 	/**
 	 * Resets the view being displayed

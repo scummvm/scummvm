@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CWheelButton, CBackground)
 END_MESSAGE_MAP()
 
 CWheelButton::CWheelButton() : CBackground(),
-	_fieldE0(0), _timerId(0), _fieldE8(0) {
+	_fieldE0(false), _timerId(0), _fieldE8(0) {
 }
 
 void CWheelButton::save(SimpleFile *file, int indent) {

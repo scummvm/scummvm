@@ -66,10 +66,6 @@ int STtitleEngine::setResponse(TTscriptBase *script, TTresponse *response) {
 	return 0;
 }
 
-void STtitleEngine::dump(int val1, int val2) {
-	// TODO
-}
-
 SimpleFile *STtitleEngine::open(const CString &name) {
 	Common::SeekableReadStream *stream = g_vm->_filesManager->getResource(
 		CString::format("TEXT/%s", name.c_str()));

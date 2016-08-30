@@ -104,8 +104,9 @@ void CFilesManager::loadDrive() {
 	resetView();
 }
 
-void CFilesManager::debug(CScreenManager *screenManager) {
-	warning("TODO: CFilesManager::debug");
+void CFilesManager::insertCD(CScreenManager *screenManager) {
+	// We not support running game directly from the original CDs,
+	// so this method can remain stubbed
 }
 
 void CFilesManager::resetView() {
