@@ -457,9 +457,9 @@ find_libcurlconfig() {
 				# Save the prefix
 				_libcurlpath=$path_dir
 				if test `basename $path_dir` = bin ; then
-					_sdlpath=`dirname $path_dir`
+					_libcurlpath=`dirname $path_dir`
 				fi
-				# break at first sdl-config found in path
+				# break at first curl-config found in path
 				break 2
 			fi
 		done
