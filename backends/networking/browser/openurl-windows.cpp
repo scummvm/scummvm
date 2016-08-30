@@ -23,7 +23,7 @@
 #include "backends/networking/browser/openurl.h"
 #include "common/textconsole.h"
 #include <windows.h>
-#include <Shellapi.h>
+#include <shellapi.h>
 
 namespace Networking {
 namespace Browser {
@@ -40,4 +40,3 @@ bool openUrl(const Common::String &url) {
 
 } // End of namespace Browser
 } // End of namespace Networking
-
