@@ -163,7 +163,19 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 }
 
 void CVideoSurface::movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
-	// TODO
+	if (lock()) {
+		if (src->lock()) {
+			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
+			Graphics::ManagedSurface *destSurface = _rawSurface;
+			
+			// TODO: Handle the transparency mode correctly
+			destSurface->blitFrom(*srcSurface, srcRect, Point(srcRect.left, srcRect.top));
+
+			src->unlock();
+		}
+
+		unlock();
+	}
 }
 
 uint CVideoSurface::getTransparencyColor() {
