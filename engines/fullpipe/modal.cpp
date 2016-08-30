@@ -344,7 +344,7 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 	case 29:
 		_flag = 1;
 		_mouseX = g_fp->_mouseScreenPos.x;
-		_mouseY = g_fp->_mouseScreenPos.x;
+		_mouseY = g_fp->_mouseScreenPos.y;
 
 		_field_38 = _rect2.left;
 		_field_3C = _rect2.top;
