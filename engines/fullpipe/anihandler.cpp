@@ -639,7 +639,6 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 	int p1y = point.y;
 
 	int newmult = 0;
-	int oldlen = *len;
 
 	if (abs(p1y) > abs(p1x)) {
 		if (mov->calcSomeXY(point, 0, -1)->y)
@@ -685,13 +684,13 @@ Common::Point *AniHandler::getNumCycles(Common::Point *pRes, Movement *mov, int 
 	int p2x = 0;
 	int p2y = 0;
 
-	if (!oldlen)
-		oldlen = -1;
+	if (!*len)
+		*len = -1;
 
-	if (oldlen > 0) {
+	if (*len > 0) {
 		++*mult;
 
-		mov->calcSomeXY(point, 0, oldlen);
+		mov->calcSomeXY(point, 0, *len);
 		p2x = point.x;
 		p2y = point.y;
 
