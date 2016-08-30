@@ -29,9 +29,9 @@ namespace Titanic {
 CSurfaceFader::CSurfaceFader() : CSurfaceFaderBase() {
 	_dataP = new byte[_count];
 
-	for (int idx = 0; idx < _count; ++idx) {
-		// TODO: Setup data bytes
-	}
+	for (int idx = 0; idx < _count; ++idx)
+		_dataP[idx] = (byte)(pow((double)idx / (double)_count, 1.299999952316284)
+			* (double)_count + 0.5);
 }
 
 CSurfaceFader::~CSurfaceFader() {
