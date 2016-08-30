@@ -70,6 +70,9 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	_openUrlWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_pasteCodeWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
 	_connectWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ConnectButton", _("Connect"), 0, kConnectCmd);
+		
+	// Initialy the code is empty, so disable the connect button
+	_connectWidget->setEnabled(false);
 
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		// hide fields and even the button if local webserver is on
