@@ -32,6 +32,8 @@
 #include "common/util.h"
 #include "common/archive.h"
 
+#include <android/asset_manager.h>
+
 class AndroidAssetArchive : public Common::Archive {
 public:
 	AndroidAssetArchive(jobject am);
@@ -43,11 +45,9 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:
-	jmethodID MID_open;
-	jmethodID MID_openFd;
-	jmethodID MID_list;
-
-	jobject _am;
+	AAssetManager *_am;
+	mutable Common::ArchiveMemberList _cachedMembers;
+	mutable bool _hasCached;
 };
 
 #endif
