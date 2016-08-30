@@ -1204,13 +1204,24 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 			 || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX = pathMapX + axisStepX, pathMapY = pathMapY + axisStepY))
 				return 0;
 		} else {
-			if ((valueA = ((largestAxisDistance = (isDistanceXSmallerThanDistanceY ? ((largestAxisDistance = pathMapY - srcMapY) ? ((pathMapX + axisStepX - srcMapX) << 6) / largestAxisDistance : 128) : ((largestAxisDistance = pathMapX + axisStepX - srcMapX) ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128)) - valueC) < 0) ? -largestAxisDistance : largestAxisDistance) < (valueB = ((largestAxisDistance = (isDistanceXSmallerThanDistanceY ? ((largestAxisDistance = pathMapY + axisStepY - srcMapY) ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128) : ((largestAxisDistance = pathMapX - srcMapX) ? ((pathMapY + axisStepY - srcMapY) << 6) / largestAxisDistance : 128)) - valueC) < 0) ? -largestAxisDistance : largestAxisDistance)) {
-				pathMapX += axisStepX;
+			if (isDistanceXSmallerThanDistanceY) {
+				valueA = ABS(((pathMapY - srcMapY) ? ((pathMapX + axisStepX - srcMapX) << 6) / largestAxisDistance : 128) - valueC);
+				valueB = ABS(((pathMapY + axisStepY - srcMapY) ? ((pathMapX - srcMapX) << 6) / largestAxisDistance : 128) - valueC);
 			} else {
-				pathMapY += axisStepY;
+				valueA = ABS(((pathMapX + axisStepX - srcMapX) ? ((pathMapY - srcMapY) << 6) / largestAxisDistance : 128) - valueC);
+				valueB = ABS(((pathMapX - srcMapX) ? ((pathMapY + axisStepY - srcMapY) << 6) / largestAxisDistance : 128) - valueC);
 			}
-			if ((CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY) && ((valueA != valueB) || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX = pathMapX + axisStepX, pathMapY = pathMapY - axisStepY))) {
-				return 0;
+
+			if (valueA < valueB)
+				pathMapX += axisStepX;
+			else
+				pathMapY += axisStepY;
+
+			if ((CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY)) {
+				pathMapX += axisStepX;
+				pathMapY -= axisStepY;
+				if (((valueA != valueB) || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY)))
+					return 0;
 			}
 		}
 	} while (getDistance(pathMapX, pathMapY, srcMapX, srcMapY) > 1);
