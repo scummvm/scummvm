@@ -174,7 +174,7 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 		default:
 			offset++;
 			stream.readByte();
-			debug("Field Position %d, Finish Position %d", offset, finishPosition);
+			debugC(kDebugLoading, "Frame::readMainChannels: Field Position %d, Finish Position %d", offset, finishPosition);
 			break;
 		}
 	}

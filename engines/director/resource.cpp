@@ -51,6 +51,8 @@ bool Archive::openFile(const Common::String &fileName) {
 		return false;
 	}
 
+	_fileName = fileName;
+
 	return true;
 }
 
@@ -188,6 +190,12 @@ bool MacArchive::openFile(const Common::String &fileName) {
 	if (!_resFork->open(fileName) || !_resFork->hasResFork()) {
 		close();
 		return false;
+	}
+
+	_fileName = _resFork->getBaseFileName();
+	if (_fileName.hasSuffix(".bin")) {
+		for (int i = 0; i < 4; i++)
+			_fileName.deleteLastChar();
 	}
 
 	Common::MacResTagArray tagArray = _resFork->getResTagArray();

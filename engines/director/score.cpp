@@ -108,12 +108,14 @@ Score::Score(DirectorEngine *vm, Archive *archive) {
 	_stopPlay = false;
 	_stageColor = 0;
 
-	if (_movieArchive->hasResource(MKTAG('M','C','N','M'), 0)) {
-		_macName = _movieArchive->getName(MKTAG('M','C','N','M'), 0).c_str();
+	if (archive->hasResource(MKTAG('M','C','N','M'), 0)) {
+		_macName = archive->getName(MKTAG('M','C','N','M'), 0).c_str();
+	} else {
+		_macName = archive->getFileName();
 	}
 
-	if (_movieArchive->hasResource(MKTAG('V','W','L','B'), 1024)) {
-		loadLabels(*_movieArchive->getResource(MKTAG('V','W','L','B'), 1024));
+	if (archive->hasResource(MKTAG('V','W','L','B'), 1024)) {
+		loadLabels(*archive->getResource(MKTAG('V','W','L','B'), 1024));
 	}
 }
 
@@ -344,7 +346,7 @@ void Score::loadLabels(Common::SeekableSubReadStreamEndian &stream) {
 	Common::SortedArray<Label *>::iterator j;
 
 	for (j = _labels->begin(); j != _labels->end(); ++j) {
-		debug("Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
+		debugC(2, kDebugLoading, "Frame %d, Label %s", (*j)->number, (*j)->name.c_str());
 	}
 }
 

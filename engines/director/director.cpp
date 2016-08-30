@@ -152,6 +152,8 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 			arc->openFile(i->getName());
 			Score *sc = new Score(this, arc);
 			nameMap[sc->getMacName()] = sc;
+
+			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
 		}
 	}
 
