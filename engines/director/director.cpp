@@ -54,6 +54,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
 
+	_sharedCasts = nullptr;
+	_sharedSound = nullptr;
+	_sharedBMP = nullptr;
+	_sharedSTXT = nullptr;
+	_sharedDIB = nullptr;
+
 	_mainArchive = nullptr;
 	_macBinary = nullptr;
 
