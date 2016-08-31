@@ -28,12 +28,15 @@ namespace Titanic {
 
 CMusicHandler::CMusicHandler(CProjectItem *project, CSoundManager *soundManager) :
 		_project(project), _soundManager(soundManager), _stopWaves(false),
-		_soundHandle(-1), _waveFile(nullptr) {
+		_soundHandle(-1), _waveFile(nullptr), _soundVolume(100), _ticks(0),
+		_field108(0) {
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
 }
 
 CMusicHandler::~CMusicHandler() {
 	stop();
+	for (int idx = 0; idx < 4; ++idx)
+		delete _musicWaves[idx];
 }
 
 CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
@@ -58,7 +61,12 @@ CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
 	return _musicWaves[waveIndex];
 }
 
-bool CMusicHandler::isBusy() {
+void CMusicHandler::createWaveFile(int musicVolume) {
+	_soundVolume = musicVolume;
+//	_waveFile = _soundManager->loadMusic()
+}
+
+bool CMusicHandler::poll() {
 	// TODO
 	return false;
 }
@@ -80,6 +88,51 @@ void CMusicHandler::stop() {
 bool CMusicHandler::checkSound(int index) const {
 	// TODO
 	return false;
+}
+
+void CMusicHandler::setSpeedControl2(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array2[area]._speedControl = value;
+}
+
+void CMusicHandler::setPitchControl2(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array2[area]._pitchControl = value * 3;
+}
+
+void CMusicHandler::setInversionControl2(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array2[area]._inversionControl = value;
+}
+
+void CMusicHandler::setDirectionControl2(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array2[area]._directionControl = value;
+}
+
+void CMusicHandler::setPitchControl(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array1[area]._pitchControl = value;
+}
+
+void CMusicHandler::setSpeedControl(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array1[area]._speedControl = value;
+}
+
+void CMusicHandler::setDirectionControl(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array1[area]._directionControl = value;
+}
+
+void CMusicHandler::setInversionControl(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array1[area]._inversionControl = value;
+}
+
+void CMusicHandler::setMuteControl(MusicControlArea area, int value) {
+	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
+		_array1[area]._muteControl = value;
 }
 
 } // End of namespace Titanic

@@ -31,20 +31,19 @@ namespace Titanic {
 class CGameManager;
 class CSound;
 
-enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
-
 class CMusicRoom {
-	struct Entry {
-		uint _val1;
-		uint _val2;
-		uint _val3;
-		uint _val4;
-		uint _val5;
+	struct Controls {
+		int _speedControl;
+		int _pitchControl;
+		int _directionControl;
+		int _inversionControl;
+		int _muteControl;
 
-		Entry() : _val1(0), _val2(0), _val3(0), _val4(0), _val5(0) {}
+		Controls() : _speedControl(0), _pitchControl(0), _directionControl(0),
+			_inversionControl(0), _muteControl(0) {}
 	};
 private:
-	Common::Array<Entry> _items;
+	Common::Array<Controls> _controls;
 public:
 	static CMusicHandler *_musicHandler;
 public:
@@ -64,16 +63,16 @@ public:
 	 */
 	void destroyMusicHandler();
 
-	void setItem1(MusicControlArea index, int val) { _items[index]._val1 = val; }
-	void setItem2(MusicControlArea index, int val) { _items[index]._val2 = val; }
-	void setItem3(MusicControlArea index, int val) { _items[index]._val3 = val; }
-	void setItem4(MusicControlArea index, int val) { _items[index]._val4 = val; }
-	void setItem5(MusicControlArea index, int val) { _items[index]._val5 = val; }
+	void setSpeedControl(MusicControlArea index, int val) { _controls[index]._speedControl = val; }
+	void setPitchControl(MusicControlArea index, int val) { _controls[index]._pitchControl = val; }
+	void setDirectionControl(MusicControlArea index, int val) { _controls[index]._directionControl = val; }
+	void setInversionControl(MusicControlArea index, int val) { _controls[index]._inversionControl = val; }
+	void setMuteControl(MusicControlArea index, int val) { _controls[index]._muteControl = val; }
 
 	/**
 	 * Start playing a given music number
 	 */
-	void startMusic(int musicId);
+	void startMusic(int volume = 100);
 
 	/**
 	 * Stop playing music

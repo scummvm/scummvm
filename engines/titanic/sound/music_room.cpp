@@ -32,7 +32,7 @@ CMusicHandler *CMusicRoom::_musicHandler;
 CMusicRoom::CMusicRoom(CGameManager *gameManager) :
 		_gameManager(gameManager) {
 	_sound = &_gameManager->_sound;
-	_items.resize(4);
+	_controls.resize(4);
 }
 
 CMusicRoom::~CMusicRoom() {
@@ -52,8 +52,40 @@ void CMusicRoom::destroyMusicHandler() {
 	_musicHandler = nullptr;
 }
 
-void CMusicRoom::startMusic(int musicId) {
-	// TODO
+void CMusicRoom::startMusic(int volume) {
+	if (_musicHandler) {
+		_musicHandler->setSpeedControl2(BELLS, 0);
+		_musicHandler->setSpeedControl2(SNAKE, 1);
+		_musicHandler->setSpeedControl2(PIANO, -1);
+		_musicHandler->setSpeedControl2(BASS, -2);
+
+		_musicHandler->setPitchControl2(BELLS, 1);
+		_musicHandler->setPitchControl2(SNAKE, 2);
+		_musicHandler->setPitchControl2(PIANO, 0);
+		_musicHandler->setPitchControl2(BELLS, 1);
+
+		_musicHandler->setInversionControl2(BELLS, 1);
+		_musicHandler->setInversionControl2(SNAKE, 0);
+		_musicHandler->setInversionControl2(PIANO, 1);
+		_musicHandler->setInversionControl2(BASS, 0);
+
+		_musicHandler->setDirectionControl2(BELLS, 0);
+		_musicHandler->setDirectionControl2(SNAKE, 0);
+		_musicHandler->setDirectionControl2(PIANO, 1);
+		_musicHandler->setDirectionControl2(BASS, 1);
+
+		for (MusicControlArea idx = BELLS; idx <= BASS;
+				idx = (MusicControlArea)((int)idx + 1)) {
+			Controls &controls = _controls[idx];
+			_musicHandler->setSpeedControl(idx, controls._speedControl);
+			_musicHandler->setPitchControl(idx, controls._pitchControl);
+			_musicHandler->setDirectionControl(idx, controls._directionControl);
+			_musicHandler->setInversionControl(idx, controls._inversionControl);
+			_musicHandler->setMuteControl(idx, controls._muteControl);
+		}
+
+		_musicHandler->createWaveFile(volume);
+	}
 }
 
 void CMusicRoom::stopMusic() {

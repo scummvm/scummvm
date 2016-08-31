@@ -31,7 +31,7 @@ namespace Titanic {
 
 class CGameObjectDescItem : public CTreeItem {
 protected:
-	CString _string1;
+	CString _name;
 	CString _string2;
 	List<ListItem> _list1;
 	List<ListItem> _list2;
@@ -49,6 +49,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Gets the name of the item, if any
+	 */
+	virtual const CString getName() const { return _name; }
 };
 
 } // End of namespace Titanic

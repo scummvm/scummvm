@@ -30,7 +30,7 @@ CGameObjectDescItem::CGameObjectDescItem(): CTreeItem() {
 void CGameObjectDescItem::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	_clipList.save(file, indent);
-	file->writeQuotedLine(_string1, indent);
+	file->writeQuotedLine(_name, indent);
 	file->writeQuotedLine(_string2, indent);
 	_list1.save(file, indent);
 	_list2.save(file, indent);
@@ -45,7 +45,7 @@ void CGameObjectDescItem::load(SimpleFile *file) {
 		if (val)
 			_clipList.load(file);
 
-		_string1 = file->readString();
+		_name = file->readString();
 		_string2 = file->readString();
 		_list1.load(file);
 		_list1.load(file);

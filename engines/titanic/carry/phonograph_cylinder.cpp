@@ -167,29 +167,29 @@ bool CPhonographCylinder::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 		return true;
 
 	CMusicRoom *musicRoom = getMusicRoom();
-	musicRoom->setItem5(BELLS, _bellsMuteControl);
-	musicRoom->setItem2(BELLS, _bellsPitchControl);
-	musicRoom->setItem1(BELLS, _bellsSpeedControl);
-	musicRoom->setItem4(BELLS, _bellsInversionControl);
-	musicRoom->setItem3(BELLS, _bellsDirectionControl);
+	musicRoom->setMuteControl(BELLS, _bellsMuteControl);
+	musicRoom->setPitchControl(BELLS, _bellsPitchControl);
+	musicRoom->setSpeedControl(BELLS, _bellsSpeedControl);
+	musicRoom->setInversionControl(BELLS, _bellsInversionControl);
+	musicRoom->setDirectionControl(BELLS, _bellsDirectionControl);
 
-	musicRoom->setItem5(SNAKE, _snakeMuteControl);
-	musicRoom->setItem2(SNAKE, _snakePitchControl);
-	musicRoom->setItem1(SNAKE, _snakeSpeedControl);
-	musicRoom->setItem4(SNAKE, _snakeInversionControl);
-	musicRoom->setItem3(SNAKE, _snakeDirectionControl);
+	musicRoom->setMuteControl(SNAKE, _snakeMuteControl);
+	musicRoom->setPitchControl(SNAKE, _snakePitchControl);
+	musicRoom->setSpeedControl(SNAKE, _snakeSpeedControl);
+	musicRoom->setInversionControl(SNAKE, _snakeInversionControl);
+	musicRoom->setDirectionControl(SNAKE, _snakeDirectionControl);
 
-	musicRoom->setItem5(PIANO, _pianoMuteControl);
-	musicRoom->setItem2(PIANO, _pianoPitchControl);
-	musicRoom->setItem1(PIANO, _pianoSpeedControl);
-	musicRoom->setItem4(PIANO, _pianoInversionControl);
-	musicRoom->setItem3(PIANO, _pianoDirectionControl);
+	musicRoom->setMuteControl(PIANO, _pianoMuteControl);
+	musicRoom->setPitchControl(PIANO, _pianoPitchControl);
+	musicRoom->setSpeedControl(PIANO, _pianoSpeedControl);
+	musicRoom->setInversionControl(PIANO, _pianoInversionControl);
+	musicRoom->setDirectionControl(PIANO, _pianoDirectionControl);
 
-	musicRoom->setItem5(BASS, _bassMuteControl);
-	musicRoom->setItem2(BASS, _bassPitchControl);
-	musicRoom->setItem1(BASS, _bassSpeedControl);
-	musicRoom->setItem4(BASS, _bassInversionControl);
-	musicRoom->setItem3(BASS, _bassDirectionControl);
+	musicRoom->setMuteControl(BASS, _bassMuteControl);
+	musicRoom->setPitchControl(BASS, _bassPitchControl);
+	musicRoom->setSpeedControl(BASS, _bassSpeedControl);
+	musicRoom->setInversionControl(BASS, _bassInversionControl);
+	musicRoom->setDirectionControl(BASS, _bassDirectionControl);
 
 	return true;
 }

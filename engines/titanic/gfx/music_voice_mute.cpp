@@ -36,7 +36,7 @@ bool CMusicVoiceMute::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
 		_controlVal = 0;
 
 	CMusicRoom *musicRoom = getMusicRoom();
-	musicRoom->setItem5(_controlArea, _controlVal == 1 ? 1 : 0);
+	musicRoom->setMuteControl(_controlArea, _controlVal == 1 ? 1 : 0);
 	loadFrame(1 - _controlVal);
 	playSound("z#55.wav", 50);
 
@@ -46,7 +46,7 @@ bool CMusicVoiceMute::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
 bool CMusicVoiceMute::EnterViewMsg(CEnterViewMsg *msg) {
 	loadFrame(1 - _controlVal);
 	CMusicRoom *musicRoom = getMusicRoom();
-	musicRoom->setItem5(_controlArea, _controlVal == 1 ? 1 : 0);
+	musicRoom->setMuteControl(_controlArea, _controlVal == 1 ? 1 : 0);
 
 	return true;
 }

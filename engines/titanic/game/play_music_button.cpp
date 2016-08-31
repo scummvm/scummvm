@@ -64,7 +64,7 @@ bool CPlayMusicButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CPlayMusicButton::FrameMsg(CFrameMsg *msg) {
-	if (_flag && !CMusicRoom::_musicHandler->isBusy()) {
+	if (_flag && !CMusicRoom::_musicHandler->poll()) {
 		CMusicRoom *musicRoom = getMusicRoom();
 		musicRoom->stopMusic();
 		stopMovie();

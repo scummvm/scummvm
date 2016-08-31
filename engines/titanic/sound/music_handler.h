@@ -31,14 +31,36 @@ namespace Titanic {
 class CProjectItem;
 class CSoundManager;
 
+enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
+
 class CMusicHandler {
+	struct Controls {
+		int _pitchControl;
+		int _speedControl;
+		int _directionControl;
+		int _inversionControl;
+		int _muteControl;
+		Controls() : _pitchControl(0), _speedControl(0), _directionControl(0),
+			_inversionControl(0), _muteControl(0) {}
+	};
+	struct Array5Entry {
+		int _v1;
+		int _v2;
+		Array5Entry() : _v1(0), _v2(0) {}
+	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
 	CMusicWave *_musicWaves[4];
+	Controls _array1[4];
+	Controls _array2[4];
+	Array5Entry _array5[4];
 	bool _stopWaves;
 	CWaveFile *_waveFile;
 	int _soundHandle;
+	int _soundVolume;
+	uint _ticks;
+	int _field108;
 public:
 	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicHandler();
@@ -51,7 +73,12 @@ public:
 	 */
 	CMusicWave *createMusicWave(int waveIndex, int count);
 
-	bool isBusy();
+	void createWaveFile(int musicVolume);
+
+	/**
+	 * Handles regular polling the music handler
+	 */
+	bool poll();
 
 	/**
 	 * Flags whether the loaded music waves will be stopped when the
@@ -65,6 +92,32 @@ public:
 	void stop();
 
 	bool checkSound(int index) const;
+
+	/**
+	 * Set a setting
+	 */
+	void setSpeedControl2(MusicControlArea area, int value);
+
+	/**
+	 * Set a setting
+	 */
+	void setPitchControl2(MusicControlArea area, int value);
+
+	/**
+	 * Set a setting
+	 */
+	void setInversionControl2(MusicControlArea area, int value);
+
+	/**
+	 * Set a setting
+	 */
+	void setDirectionControl2(MusicControlArea area, int value);
+
+	void setPitchControl(MusicControlArea area, int value);
+	void setSpeedControl(MusicControlArea area, int value);
+	void setDirectionControl(MusicControlArea area, int value);
+	void setInversionControl(MusicControlArea area, int value);
+	void setMuteControl(MusicControlArea area, int value);
 };
 
 } // End of namespace Titanic

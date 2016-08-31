@@ -67,7 +67,8 @@ void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
 }
 
 void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
-	// Not currently implemented in ScummVM
+
+
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
@@ -170,4 +171,4 @@ void QMixer::qsWaveMixPump() {
 	}
 }
 
-} // End of namespace Titanic z
+} // End of namespace Titanic
