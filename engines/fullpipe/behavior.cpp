@@ -206,7 +206,7 @@ void BehaviorManager::setFlagByStaticAniObject(StaticANIObject *ani, int flag) {
 
 		if (ani == beh->_ani) {
 			if (flag)
-				beh->_flags &= 0xfe;
+				beh->_flags &= 0xfffffffe;
 			else
 				beh->_flags |= 1;
 		}
@@ -311,7 +311,7 @@ BehaviorAnim::BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *m
 	_staticsId = 0;
 	_movesCount = 0;
 
-	*minDelay = 100000000;
+	*minDelay = 0xffffffff;
 
 	int totalPercent = 0;
 	_flags = 0;

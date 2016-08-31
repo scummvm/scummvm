@@ -58,6 +58,7 @@ void scene03_initScene(Scene *sc) {
 	inv->addItem(ANI_INV_EGGCOIN, 1);
 	inv->addItem(ANI_INV_EGGBOOT, 1);
 	inv->addItem(ANI_INV_EGGGLS, 1);
+	inv->rebuildItemRects();
 #endif
 
 	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
