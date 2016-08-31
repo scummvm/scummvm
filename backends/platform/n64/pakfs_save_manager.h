@@ -65,7 +65,7 @@ public:
 	}
 };
 
-class OutPAKSave : public Common::OutSaveFile {
+class OutPAKSave : public Common::WriteStream {
 private:
 	PAKFILE *fd;
 

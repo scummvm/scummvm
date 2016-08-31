@@ -65,7 +65,7 @@ public:
 	}
 };
 
-class OutFRAMSave : public Common::OutSaveFile {
+class OutFRAMSave : public Common::WriteStream {
 private:
 	FRAMFILE *fd;
 
