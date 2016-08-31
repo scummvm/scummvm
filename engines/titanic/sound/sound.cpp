@@ -87,13 +87,16 @@ void CSound::stopChannel(int channel) {
 }
 
 void CSound::checkSounds() {
-	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
 		CSoundItem *soundItem = *i;
+
 		if (soundItem->_active && soundItem->_freeFlag) {
 			if (_soundManager.isActive(soundItem->_waveFile)) {
-				_sounds.remove(soundItem);
+				i = _sounds.erase(i);
 				delete soundItem;
 			}
+		} else {
+			++i;
 		}
 	}
 }
