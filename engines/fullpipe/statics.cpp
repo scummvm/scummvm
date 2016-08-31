@@ -859,15 +859,15 @@ void StaticANIObject::update(int counterdiff) {
 						}
 					}
 				}
-				if (!_movement)
-					return;
-
-				_stepArray.getCurrPoint(&point);
-				setOXY(point.x + _ox, point.y + _oy);
-				_stepArray.gotoNextPoint();
-				if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
-					adjustSomeXY();
 			}
+			if (!_movement)
+				return;
+
+			_stepArray.getCurrPoint(&point);
+			setOXY(point.x + _ox, point.y + _oy);
+			_stepArray.gotoNextPoint();
+			if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
+				adjustSomeXY();
 		} else if (_flags & 0x20) {
 			_flags ^= 0x20;
 			_flags |= 1;
