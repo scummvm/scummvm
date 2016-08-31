@@ -45,6 +45,17 @@ static Common::String getSavePath() {
 // GBAMP Save File Manager
 //////////////////////////
 
+void GBAMPSaveFileManager::updateSavefilesList(Common::StringArray &lockedFiles) {
+	// TODO: implement this
+	// in this method manager should remember lockedFiles
+	// these files must not be opened for loading or saving, or listed by listSavefiles()
+}
+
+Common::InSaveFile *GBAMPSaveFileManager::openRawFile(const Common::String &filename) {
+	// TODO: make sure it returns raw file, not uncompressed save contents
+	return openForLoading(filename);
+}
+
 Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &filename, bool compress) {
 	Common::String fileSpec = getSavePath();
 	if (fileSpec.lastChar() != '/')

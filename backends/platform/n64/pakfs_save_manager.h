@@ -104,6 +104,21 @@ public:
 
 class PAKSaveManager : public Common::SaveFileManager {
 public:
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles) {
+		// this method is used to lock saves while cloud syncing
+		// as there is no network on N64, this method wouldn't be used
+		// thus it's not implemtented
+	}
+
+	virtual Common::InSaveFile *openRawFile(const Common::String &filename) {
+		InPAKSave *s = new InPAKSave();
+		if (s->readSaveGame(filename.c_str())) {
+			return s;
+		} else {
+			delete s;
+			return NULL;
+		}
+	}
 
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
 		OutPAKSave *s = new OutPAKSave(filename.c_str());
