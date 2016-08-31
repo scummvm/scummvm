@@ -266,7 +266,7 @@ public:
   { return ::readSaveGame(buffer, _size, filename); }
 };
 
-class OutVMSave : public Common::OutSaveFile {
+class OutVMSave : public Common::WriteStream {
 private:
   char *buffer;
   int _pos, size, committed;
@@ -293,11 +293,24 @@ public:
 
 class VMSaveManager : public Common::SaveFileManager {
 public:
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles) {
+		// TODO: implement this (locks files, preventing them from being listed, saved or loaded)
+	}
 
-  virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
-	OutVMSave *s = new OutVMSave(filename.c_str());
-	return compress ? Common::wrapCompressedWriteStream(s) : s;
-  }
+	virtual Common::InSaveFile *openRawFile(const Common::String &filename) {
+		InVMSave *s = new InVMSave();
+		if (s->readSaveGame(filename.c_str())) {
+			return s;
+		} else {
+			delete s;
+			return NULL;
+		}
+	}
+
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
+		OutVMSave *s = new OutVMSave(filename.c_str());
+		return new Common::OutSaveFile(compress ? Common::wrapCompressedWriteStream(s) : s);
+	}
 
   virtual Common::InSaveFile *openForLoading(const Common::String &filename) {
 	InVMSave *s = new InVMSave();
