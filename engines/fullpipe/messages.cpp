@@ -682,7 +682,7 @@ int GlobalMessageQueueList::compact() {
 		useList[i] = 0;
 
 	for (uint i = 0; i < size();) {
-		if (((MessageQueue *)_storage[i])->_isFinished) {
+		if (_storage[i]->_isFinished) {
 			disableQueueById(_storage[i]->_id);
 			remove_at(i);
 		} else {
