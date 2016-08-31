@@ -32,18 +32,14 @@ namespace Titanic {
 class TitanicEngine;
 
 class DirectDraw {
-private:
-	TitanicEngine *_vm;
 public:
 	bool _windowed;
-	int _fieldC;
 	int _width;
 	int _height;
 	int _bpp;
 	int _numBackSurfaces;
-	int _field24;
 public:
-	DirectDraw(TitanicEngine *vm);
+	DirectDraw();
 
 	/**
 	 * Sets a new display mode

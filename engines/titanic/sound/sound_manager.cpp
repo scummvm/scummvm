@@ -426,7 +426,7 @@ void QSoundManager::soundFreed(Audio::SoundHandle &handle) {
 }
 
 void QSoundManager::updateVolume(int channel, uint panRate) {
-	uint volume = _channelsVolume[channel] * 327;
+	double volume = _channelsVolume[channel] * 327;
 
 	switch (_channelsMode[channel]) {
 	case 0:
@@ -451,7 +451,7 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 	
 	volume = (_musicPercent * volume) / 100;
 	qsWaveMixSetPanRate(channel, 0, panRate);
-	qsWaveMixSetVolume(channel, 0, volume);
+	qsWaveMixSetVolume(channel, 0, (uint)volume);
 }
 
 void QSoundManager::updateVolumes() {
