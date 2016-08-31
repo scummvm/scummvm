@@ -22,7 +22,7 @@
 
 #include "titanic/game/music_console_button.h"
 #include "titanic/core/room_item.h"
-#include "titanic/sound/music_handler.h"
+#include "titanic/sound/music_room_handler.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

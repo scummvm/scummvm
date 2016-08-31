@@ -24,7 +24,7 @@
 #define TITANIC_MUSIC_ROOM_H
 
 #include "common/array.h"
-#include "titanic/sound/music_handler.h"
+#include "titanic/sound/music_room_handler.h"
 
 namespace Titanic {
 
@@ -45,7 +45,7 @@ class CMusicRoom {
 private:
 	Common::Array<Controls> _controls;
 public:
-	static CMusicHandler *_musicHandler;
+	static CMusicRoomHandler *_musicHandler;
 public:
 	CGameManager *_gameManager;
 	CSound *_sound;
@@ -56,7 +56,7 @@ public:
 	/**
 	 * Creates a music handler
 	 */
-	CMusicHandler *createMusicHandler();
+	CMusicRoomHandler *createMusicHandler();
 
 	/**
 	 * Destroys and currently active music handler

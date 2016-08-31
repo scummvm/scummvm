@@ -124,7 +124,7 @@ bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 		return true;
 	}
 
-	CMusicHandler *musicHandler = getMusicRoom()->createMusicHandler();
+	CMusicRoomHandler *musicHandler = getMusicRoom()->createMusicHandler();
 	CMusicWave *wave;
 
 	if (musicHandler) {

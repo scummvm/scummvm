@@ -20,26 +20,26 @@
  *
  */
 
-#include "titanic/sound/music_handler.h"
+#include "titanic/sound/music_room_handler.h"
 #include "titanic/sound/sound_manager.h"
 #include "titanic/core/project_item.h"
 
 namespace Titanic {
 
-CMusicHandler::CMusicHandler(CProjectItem *project, CSoundManager *soundManager) :
+CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager) :
 		_project(project), _soundManager(soundManager), _stopWaves(false),
 		_soundHandle(-1), _waveFile(nullptr), _soundVolume(100), _ticks(0),
 		_field108(0) {
 	Common::fill(&_musicWaves[0], &_musicWaves[4], (CMusicWave *)nullptr);
 }
 
-CMusicHandler::~CMusicHandler() {
+CMusicRoomHandler::~CMusicRoomHandler() {
 	stop();
 	for (int idx = 0; idx < 4; ++idx)
 		delete _musicWaves[idx];
 }
 
-CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
+CMusicWave *CMusicRoomHandler::createMusicWave(int waveIndex, int count) {
 	switch (waveIndex) {
 	case 0:
 		_musicWaves[waveIndex] = new CMusicWave(_project, _soundManager, 2);
@@ -61,17 +61,17 @@ CMusicWave *CMusicHandler::createMusicWave(int waveIndex, int count) {
 	return _musicWaves[waveIndex];
 }
 
-void CMusicHandler::createWaveFile(int musicVolume) {
+void CMusicRoomHandler::createWaveFile(int musicVolume) {
 	_soundVolume = musicVolume;
 //	_waveFile = _soundManager->loadMusic()
 }
 
-bool CMusicHandler::poll() {
+bool CMusicRoomHandler::poll() {
 	// TODO
 	return false;
 }
 
-void CMusicHandler::stop() {
+void CMusicRoomHandler::stop() {
 	if (_waveFile) {
 		_soundManager->stopSound(_soundHandle);
 		delete _waveFile;
@@ -85,52 +85,52 @@ void CMusicHandler::stop() {
 	}
 }
 
-bool CMusicHandler::checkSound(int index) const {
+bool CMusicRoomHandler::checkSound(int index) const {
 	// TODO
 	return false;
 }
 
-void CMusicHandler::setSpeedControl2(MusicControlArea area, int value) {
+void CMusicRoomHandler::setSpeedControl2(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array2[area]._speedControl = value;
 }
 
-void CMusicHandler::setPitchControl2(MusicControlArea area, int value) {
+void CMusicRoomHandler::setPitchControl2(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array2[area]._pitchControl = value * 3;
 }
 
-void CMusicHandler::setInversionControl2(MusicControlArea area, int value) {
+void CMusicRoomHandler::setInversionControl2(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array2[area]._inversionControl = value;
 }
 
-void CMusicHandler::setDirectionControl2(MusicControlArea area, int value) {
+void CMusicRoomHandler::setDirectionControl2(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array2[area]._directionControl = value;
 }
 
-void CMusicHandler::setPitchControl(MusicControlArea area, int value) {
+void CMusicRoomHandler::setPitchControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._pitchControl = value;
 }
 
-void CMusicHandler::setSpeedControl(MusicControlArea area, int value) {
+void CMusicRoomHandler::setSpeedControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._speedControl = value;
 }
 
-void CMusicHandler::setDirectionControl(MusicControlArea area, int value) {
+void CMusicRoomHandler::setDirectionControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._directionControl = value;
 }
 
-void CMusicHandler::setInversionControl(MusicControlArea area, int value) {
+void CMusicRoomHandler::setInversionControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._inversionControl = value;
 }
 
-void CMusicHandler::setMuteControl(MusicControlArea area, int value) {
+void CMusicRoomHandler::setMuteControl(MusicControlArea area, int value) {
 	if (area >= 0 && area <= 3 && value >= -2 && value <= 2)
 		_array1[area]._muteControl = value;
 }

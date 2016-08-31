@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TITANIC_MUSIC_HANDLER_H
-#define TITANIC_MUSIC_HANDLER_H
+#ifndef TITANIC_MUSIC_ROOM_HANDLER_H
+#define TITANIC_MUSIC_ROOM_HANDLER_H
 
 #include "titanic/sound/music_wave.h"
 #include "titanic/sound/wave_file.h"
@@ -33,7 +33,7 @@ class CSoundManager;
 
 enum MusicControlArea { BELLS = 0, SNAKE = 1, PIANO = 2, BASS = 3 };
 
-class CMusicHandler {
+class CMusicRoomHandler {
 	struct Controls {
 		int _pitchControl;
 		int _speedControl;
@@ -62,8 +62,8 @@ private:
 	uint _ticks;
 	int _field108;
 public:
-	CMusicHandler(CProjectItem *project, CSoundManager *soundManager);
-	~CMusicHandler();
+	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
+	~CMusicRoomHandler();
 
 	/**
 	 * Creates a new music wave class instance, and assigns it to a slot
@@ -122,4 +122,4 @@ public:
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_MUSIC_HANDLER_H */
+#endif /* TITANIC_MUSIC_ROOM_HANDLER_H */

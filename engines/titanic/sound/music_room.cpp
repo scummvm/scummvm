@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-CMusicHandler *CMusicRoom::_musicHandler;
+CMusicRoomHandler *CMusicRoom::_musicHandler;
 
 CMusicRoom::CMusicRoom(CGameManager *gameManager) :
 		_gameManager(gameManager) {
@@ -39,11 +39,11 @@ CMusicRoom::~CMusicRoom() {
 	destroyMusicHandler();
 }
 
-CMusicHandler *CMusicRoom::createMusicHandler() {
+CMusicRoomHandler *CMusicRoom::createMusicHandler() {
 	if (_musicHandler)
 		destroyMusicHandler();
 
-	_musicHandler = new CMusicHandler(_gameManager->_project, &_sound->_soundManager);
+	_musicHandler = new CMusicRoomHandler(_gameManager->_project, &_sound->_soundManager);
 	return _musicHandler;
 }
 
