@@ -88,10 +88,10 @@ GameLoader::~GameLoader() {
 
 	for (uint i = 0; i < _sc2array.size(); i++) {
 		if (_sc2array[i]._defPicAniInfos)
-			delete _sc2array[i]._defPicAniInfos;
+			free(_sc2array[i]._defPicAniInfos);
 
 		if (_sc2array[i]._picAniInfos)
-			delete _sc2array[i]._picAniInfos;
+			free(_sc2array[i]._picAniInfos);
 
 		if (_sc2array[i]._motionController)
 			delete _sc2array[i]._motionController;
