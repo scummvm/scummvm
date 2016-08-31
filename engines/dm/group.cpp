@@ -1543,9 +1543,10 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 			objectStolen = true;
 			slotThing = _vm->_championMan->getObjectRemovedFromSlot(championIndex, stealFromSlotIndex);
 			if (group->_slot == Thing::_endOfList) {
-				group->_slot = slotThing; /* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
-											 The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
-											 This creates cloned things if L0394_T_Thing->Next is not Thing::_endOfList which is the case when the object comes from a chest in which it was not the last object */
+				group->_slot = slotThing;
+				/* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
+				The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
+				This creates cloned things if L0394_T_Thing->Next is not Thing::_endOfList which is the case when the object comes from a chest in which it was not the last object */
 			} else {
 				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kM1_MapXNotOnASquare, 0);
 			}
@@ -1562,142 +1563,118 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 }
 
 int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
-	unsigned char g24_woundProbabilityIndexToWoundMask[4] = {32, 16, 8, 4}; // @ G0024_auc_Graphic562_WoundProbabilityIndexToWoundMask
+	unsigned char allowedWoundMasks[4] = {32, 16, 8, 4}; // @ G0024_auc_Graphic562_WoundProbabilityIndexToWoundMask
 
-	Champion *L0562_ps_Champion;
-	int16 L0558_i_Multiple;
-#define AL0558_i_Attack L0558_i_Multiple
-#define AL0558_i_Damage L0558_i_Multiple
-	uint16 L0559_ui_Multiple;
-#define AL0559_ui_WoundTest          L0559_ui_Multiple
-#define AL0559_ui_PoisonAttack       L0559_ui_Multiple
-#define AL0559_ui_CreatureDifficulty L0559_ui_Multiple
-	uint16 L0560_ui_WoundProbabilities;
-	uint16 L0561_ui_Multiple;
-#define AL0561_ui_WoundProbabilityIndex L0561_ui_Multiple
-#define AL0561_ui_AllowedWound          L0561_ui_Multiple
-	int16 L0563_i_DoubledMapDifficulty;
-	CreatureInfo L0564_s_CreatureInfo;
-
-
-	L0562_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	if (champIndex >= _vm->_championMan->_partyChampionCount) {
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	if (champIndex >= _vm->_championMan->_partyChampionCount)
 		return 0;
-	}
-	if (!L0562_ps_Champion->_currHealth) {
+
+	if (!curChampion->_currHealth)
 		return 0;
-	}
-	if (_vm->_championMan->_partyIsSleeping) {
+
+	if (_vm->_championMan->_partyIsSleeping)
 		_vm->_championMan->wakeUp();
-	}
-	L0563_i_DoubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	L0564_s_CreatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
-	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, L0564_s_CreatureInfo.getExperience());
-	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(L0562_ps_Champion) < (_vm->getRandomNumber(32) + L0564_s_CreatureInfo._dexterity + L0563_i_DoubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(L0562_ps_Champion, 60))) {
-		if ((AL0559_ui_WoundTest = _vm->getRandomNumber(65536)) & 0x0070) {
-			AL0559_ui_WoundTest &= 0x000F;
-			L0560_ui_WoundProbabilities = L0564_s_CreatureInfo._woundProbabilities;
-			for (AL0561_ui_WoundProbabilityIndex = 0; AL0559_ui_WoundTest > (L0560_ui_WoundProbabilities & 0x000F); L0560_ui_WoundProbabilities >>= 4) {
-				AL0561_ui_WoundProbabilityIndex++;
-			}
-			AL0561_ui_AllowedWound = g24_woundProbabilityIndexToWoundMask[AL0561_ui_WoundProbabilityIndex];
-		} else {
-			AL0561_ui_AllowedWound = AL0559_ui_WoundTest & 0x0001; /* 0 (Ready hand) or 1 (action hand) */
-		}
-		if ((AL0558_i_Attack = (_vm->getRandomNumber(16) + L0564_s_CreatureInfo._attack + L0563_i_DoubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, k7_ChampionSkillParry) << 1)) <= 1) {
-			if (_vm->getRandomNumber(2)) {
-				goto T0230014;
-			}
-			AL0558_i_Attack = _vm->getRandomNumber(4) + 2;
-		}
-		AL0558_i_Attack >>= 1;
-		AL0558_i_Attack += _vm->getRandomNumber(AL0558_i_Attack) + _vm->getRandomNumber(4);
-		AL0558_i_Attack += _vm->getRandomNumber(AL0558_i_Attack);
-		AL0558_i_Attack >>= 2;
-		AL0558_i_Attack += _vm->getRandomNumber(4) + 1;
-		if (_vm->getRandomNumber(2))
-			AL0558_i_Attack -= _vm->getRandomNumber((AL0558_i_Attack >> 1) + 1) - 1;
 
-		AL0558_i_Damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, AL0558_i_Attack, AL0561_ui_AllowedWound, L0564_s_CreatureInfo._attackType);
-		if (AL0558_i_Damage) {
+	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
+	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
+	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, creatureInfo.getExperience());
+	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(curChampion) < (_vm->getRandomNumber(32) + creatureInfo._dexterity + doubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(curChampion, 60))) {
+		uint16 allowedWound;
+		uint16 woundTest = _vm->getRandomNumber(65536);
+		if (woundTest & 0x0070) {
+			woundTest &= 0x000F;
+			uint16 woundProbabilities = creatureInfo._woundProbabilities;
+			uint16 woundProbabilityIndex;
+			for (woundProbabilityIndex = 0; woundTest > (woundProbabilities & 0x000F); woundProbabilityIndex++) {
+				woundProbabilities >>= 4;
+			}
+			allowedWound = allowedWoundMasks[woundProbabilityIndex];
+		} else
+			allowedWound = woundTest & 0x0001; /* 0 (Ready hand) or 1 (action hand) */
+
+		int16 attack = (_vm->getRandomNumber(16) + creatureInfo._attack + doubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, k7_ChampionSkillParry) << 1);
+		if (attack <= 1) {
+			if (_vm->getRandomNumber(2))
+				return 0;
+
+			attack = _vm->getRandomNumber(4) + 2;
+		}
+		attack >>= 1;
+		attack += _vm->getRandomNumber(attack) + _vm->getRandomNumber(4);
+		attack += _vm->getRandomNumber(attack);
+		attack >>= 2;
+		attack += _vm->getRandomNumber(4) + 1;
+		if (_vm->getRandomNumber(2))
+			attack -= _vm->getRandomNumber((attack >> 1) + 1) - 1;
+
+		int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
+		if (damage) {
 			_vm->_sound->requestPlay(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 
-			AL0559_ui_PoisonAttack = L0564_s_CreatureInfo._poisonAttack;
-			if (AL0559_ui_PoisonAttack && _vm->getRandomNumber(2)) {
-				AL0559_ui_PoisonAttack = _vm->_championMan->getStatisticAdjustedAttack(L0562_ps_Champion, k4_ChampionStatVitality, AL0559_ui_PoisonAttack);
-				if (AL0559_ui_PoisonAttack >= 0)
-					_vm->_championMan->championPoison(champIndex, AL0559_ui_PoisonAttack);
+			uint16 poisonAttack = creatureInfo._poisonAttack;
+			if (poisonAttack && _vm->getRandomNumber(2)) {
+				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, k4_ChampionStatVitality, poisonAttack);
+				if (poisonAttack >= 0)
+					_vm->_championMan->championPoison(champIndex, poisonAttack);
 			}
-			return AL0558_i_Damage;
+			return damage;
 		}
 	}
-T0230014:
+
 	return 0;
 }
 
 void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY) {
-	Group *L0363_ps_Group;
-	int16 L0364_i_CreatureType;
-
-
 	if (_dropMovingCreatureFixedPossCellCount) {
-		L0363_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
-		L0364_i_CreatureType = L0363_ps_Group->_type;
+		Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
+		int16 creatureType = group->_type;
 		while (_dropMovingCreatureFixedPossCellCount) {
-			dropCreatureFixedPossessions(L0364_i_CreatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], k2_soundModePlayOneTickLater);
+			dropCreatureFixedPossessions(creatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], k2_soundModePlayOneTickLater);
 		}
 	}
 }
 
 void GroupMan::startWanedring(int16 mapX, int16 mapY) {
-	Group *L0332_ps_Group;
-	TimelineEvent L0333_s_Event;
-
-
-	L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(groupGetThing(mapX, mapY));
+	Group *L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(groupGetThing(mapX, mapY));
 	if (L0332_ps_Group->getBehaviour() >= k4_behavior_USELESS) {
 		L0332_ps_Group->setBehaviour(k0_behavior_WANDER);
 	}
-	setMapAndTime(L0333_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
-	L0333_s_Event._type = k37_TMEventTypeUpdateBehaviourGroup;
-	L0333_s_Event._priority = 255 - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
-	L0333_s_Event._C._ticks = 0;
-	L0333_s_Event._B._location._mapX = mapX;
-	L0333_s_Event._B._location._mapY = mapY;
-	_vm->_timeline->addEventGetEventIndex(&L0333_s_Event);
+	TimelineEvent nextEvent;
+	setMapAndTime(nextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
+	nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
+	nextEvent._priority = 255 - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
+	nextEvent._C._ticks = 0;
+	nextEvent._B._location._mapX = mapX;
+	nextEvent._B._location._mapY = mapY;
+	_vm->_timeline->addEventGetEventIndex(&nextEvent);
 }
 
 void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
-	uint16 L0339_ui_CreatureIndex;
-	Group *L0340_ps_Group;
-	ActiveGroup *L0341_ps_ActiveGroup;
-	int16 L0344_i_ActiveGroupIndex;
-
-
-	L0341_ps_ActiveGroup = _activeGroups;
-	L0344_i_ActiveGroupIndex = 0;
-	while (L0341_ps_ActiveGroup->_groupThingIndex >= 0) {
-		if (++L0344_i_ActiveGroupIndex >= _maxActiveGroupCount) {
+	ActiveGroup *activeGroup = _activeGroups;
+	int16 activeGroupIndex = 0;
+	while (activeGroup->_groupThingIndex >= 0) {
+		if (++activeGroupIndex >= _maxActiveGroupCount)
 			return;
-		}
-		L0341_ps_ActiveGroup++;
+
+		activeGroup++;
 	}
 	_currActiveGroupCount++;
 
-	L0340_ps_Group = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] + 
-		_vm->_dungeonMan->_thingDataWordCount[k4_GroupThingType] * (L0341_ps_ActiveGroup->_groupThingIndex = (thing).getIndex()));
+	activeGroup->_groupThingIndex = (thing).getIndex();
+	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] + 
+		_vm->_dungeonMan->_thingDataWordCount[k4_GroupThingType] * activeGroup->_groupThingIndex);
 
-	L0341_ps_ActiveGroup->_cells = L0340_ps_Group->_cells;
-	L0340_ps_Group->getActiveGroupIndex() = L0344_i_ActiveGroupIndex;
-	L0341_ps_ActiveGroup->_priorMapX = L0341_ps_ActiveGroup->_homeMapX = mapX;
-	L0341_ps_ActiveGroup->_priorMapY = L0341_ps_ActiveGroup->_homeMapY = mapY;
-	L0341_ps_ActiveGroup->_lastMoveTime = _vm->_gameTime - 127;
-	L0339_ui_CreatureIndex = L0340_ps_Group->getCount();
+	activeGroup->_cells = curGroup->_cells;
+	curGroup->getActiveGroupIndex() = activeGroupIndex;
+	activeGroup->_priorMapX = activeGroup->_homeMapX = mapX;
+	activeGroup->_priorMapY = activeGroup->_homeMapY = mapY;
+	activeGroup->_lastMoveTime = _vm->_gameTime - 127;
+	uint16 creatureIndex = curGroup->getCount();
 	do {
-		L0341_ps_ActiveGroup->_directions = (Direction)getGroupValueUpdatedWithCreatureValue(L0341_ps_ActiveGroup->_directions, L0339_ui_CreatureIndex, L0340_ps_Group->getDir());
-		L0341_ps_ActiveGroup->_aspect[L0339_ui_CreatureIndex] = 0;
-	} while (L0339_ui_CreatureIndex--);
-	getCreatureAspectUpdateTime(L0341_ps_ActiveGroup, kM1_wholeCreatureGroup, false);
+		activeGroup->_directions = (Direction)getGroupValueUpdatedWithCreatureValue(activeGroup->_directions, creatureIndex, curGroup->getDir());
+		activeGroup->_aspect[creatureIndex] = 0;
+	} while (creatureIndex--);
+	getCreatureAspectUpdateTime(activeGroup, kM1_wholeCreatureGroup, false);
 }
 
 void GroupMan::removeActiveGroup(uint16 activeGroupIndex) {
