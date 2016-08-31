@@ -50,9 +50,8 @@ void FullpipeEngine::setSwallowedEggsState() {
 void scene03_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene03_initScene()");
 
-	Inventory2 *inv = getGameLoaderInventory();
-
 #if 0
+	Inventory2 *inv = getGameLoaderInventory();
 	inv->addItem(ANI_INV_EGGAPL, 1);
 	inv->addItem(ANI_INV_EGGDOM, 1);
 	inv->addItem(ANI_INV_EGGCOIN, 1);
