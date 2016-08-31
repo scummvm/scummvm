@@ -1240,103 +1240,96 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
-	uint16 L0326_ui_Multiple;
-#define AL0326_ui_Aspect         L0326_ui_Multiple
-#define AL0326_ui_AnimationTicks L0326_ui_Multiple
-	uint16 L0327_ui_CreatureGraphicInfo;
-	int16 L0328_i_Offset;
-	Group *L0329_ps_Group;
-	bool L0330_B_ProcessGroup;
-	uint16 L0331_ui_CreatureType;
-	uint16 L1635_ui_SoundIndex;
-
-	L0329_ps_Group = &(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex]);
-	L0327_ui_CreatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[L0331_ui_CreatureType = L0329_ps_Group->_type]._graphicInfo;
-	L0330_B_ProcessGroup = (creatureIndex < 0);
-	if (L0330_B_ProcessGroup) /* If the creature index is negative then all creatures in the group are processed */
-		creatureIndex = L0329_ps_Group->getCount();
+	Group *group = &(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex]);
+	uint16 creatureType = group->_type;
+	uint16 creatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[creatureType]._graphicInfo;
+	bool processGroup = (creatureIndex < 0);
+	if (processGroup) /* If the creature index is negative then all creatures in the group are processed */
+		creatureIndex = group->getCount();
 
 	do {
-		AL0326_ui_Aspect = activeGroup->_aspect[creatureIndex];
-		AL0326_ui_Aspect &= k0x0080_MaskActiveGroupIsAttacking | k0x0040_MaskActiveGroupFlipBitmap;
-		L0328_i_Offset = ((L0327_ui_CreatureGraphicInfo >> 12) & 0x3);
-		if (L0328_i_Offset) {
-			L0328_i_Offset = _vm->getRandomNumber(L0328_i_Offset);
+		uint16 aspect = activeGroup->_aspect[creatureIndex];
+		aspect &= k0x0080_MaskActiveGroupIsAttacking | k0x0040_MaskActiveGroupFlipBitmap;
+		int16 offset = ((creatureGraphicInfo >> 12) & 0x3);
+		if (offset) {
+			offset = _vm->getRandomNumber(offset);
 			if (_vm->getRandomNumber(2))
-				L0328_i_Offset = (-L0328_i_Offset) & 0x0007;
+				offset = (-offset) & 0x0007;
 
-			AL0326_ui_Aspect |= L0328_i_Offset;
+			aspect |= offset;
 		}
 
-		L0328_i_Offset = ((L0327_ui_CreatureGraphicInfo >> 14) & 0x3);
-		if (L0328_i_Offset) {
-			L0328_i_Offset = _vm->getRandomNumber(L0328_i_Offset);
+		offset = ((creatureGraphicInfo >> 14) & 0x3);
+		if (offset) {
+			offset = _vm->getRandomNumber(offset);
 			if (_vm->getRandomNumber(2))
-				L0328_i_Offset = (-L0328_i_Offset) & 0x0007;
+				offset = (-offset) & 0x0007;
 
-			AL0326_ui_Aspect |= (L0328_i_Offset << 3);
+			aspect |= (offset << 3);
 		}
 		if (isAttacking) {
-			if (getFlag(L0327_ui_CreatureGraphicInfo, k0x0200_CreatureInfoGraphicMaskFlipAttack)) {
-				if (getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) && (L0331_ui_CreatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
+			if (getFlag(creatureGraphicInfo, k0x0200_CreatureInfoGraphicMaskFlipAttack)) {
+				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
-						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
-				} else if (!getFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(L0327_ui_CreatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
+				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
-						setFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 					else
-						clearFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 				}
 			} else
-				clearFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+				clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 
-			setFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking);
+			setFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
 		} else {
-			if (getFlag(L0327_ui_CreatureGraphicInfo, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
-				if (L0331_ui_CreatureType == k13_CreatureTypeCouatl) {
+			if (getFlag(creatureGraphicInfo, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
+				if (creatureType == k13_CreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
-						toggleFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						L1635_ui_SoundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
-						if (L1635_ui_SoundIndex <= k34_D13_soundCount)
-							_vm->_sound->requestPlay(L1635_ui_SoundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
+						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						uint16 soundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
+						if (soundIndex <= k34_D13_soundCount)
+							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
-					setFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+					setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 				else
-					clearFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+					clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 			} else
-				clearFlag(AL0326_ui_Aspect, k0x0040_MaskActiveGroupFlipBitmap);
+				clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 
-			clearFlag(AL0326_ui_Aspect, k0x0080_MaskActiveGroupIsAttacking);
+			clearFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
 		}
-		activeGroup->_aspect[creatureIndex] = AL0326_ui_Aspect;
-	} while (L0330_B_ProcessGroup && (creatureIndex--));
-	AL0326_ui_AnimationTicks = _vm->_dungeonMan->_creatureInfos[L0329_ps_Group->_type]._animationTicks;
-	return _vm->_gameTime + (isAttacking ? ((AL0326_ui_AnimationTicks >> 8) & 0xF) : ((AL0326_ui_AnimationTicks >> 4) & 0xF)) + _vm->getRandomNumber(2);
+		activeGroup->_aspect[creatureIndex] = aspect;
+	} while (processGroup && (creatureIndex--));
+	uint16 animationTicks = _vm->_dungeonMan->_creatureInfos[group->_type]._animationTicks;
+	return _vm->_gameTime + (isAttacking ? ((animationTicks >> 8) & 0xF) : ((animationTicks >> 4) & 0xF)) + _vm->getRandomNumber(2);
 }
 
 void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, bool twoHalfSquareSizedCreatures) {
-	uint16 L0435_ui_GroupDirections;
 	static ActiveGroup *G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup;
 
-	if (twoHalfSquareSizedCreatures && (_vm->_gameTime == twoHalfSquareSizedCreaturesGroupLastDirectionSetTime) && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup)) {
+	if (twoHalfSquareSizedCreatures
+	 && (_vm->_gameTime == twoHalfSquareSizedCreaturesGroupLastDirectionSetTime)
+	 && (activeGroup == G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup))
 		return;
-	}
-	L0435_ui_GroupDirections = activeGroup->_directions;
-	if (normalizeModulo4(getCreatureValue(L0435_ui_GroupDirections, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
+
+	uint16 groupDirections = activeGroup->_directions;
+	if (normalizeModulo4(getCreatureValue(groupDirections, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
 		dir = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + dir);
-		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
-	} else {
-		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex, dir);
-	}
+		groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, creatureIndex, dir);
+	} else
+		groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, creatureIndex, dir);
+
 	if (twoHalfSquareSizedCreatures) {
-		L0435_ui_GroupDirections = getGroupValueUpdatedWithCreatureValue(L0435_ui_GroupDirections, creatureIndex ^ 1, dir); /* Set direction of the second half square sized creature */
+		groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, creatureIndex ^ 1, dir); /* Set direction of the second half square sized creature */
 		twoHalfSquareSizedCreaturesGroupLastDirectionSetTime = _vm->_gameTime;
 		G0396_ps_TwoHalfSquareSizedCreaturesGroupLastDirectionSetActiveGroup = activeGroup;
 	}
-	activeGroup->_directions = (Direction)L0435_ui_GroupDirections;
+
+	activeGroup->_directions = (Direction)groupDirections;
 }
 
 void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
@@ -1352,178 +1345,168 @@ void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 }
 
 int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int16 mapY, int16 mapX) {
-
-	uint16 L0426_ui_SmellRange;
-	int16 L0427_i_ScentOrdinal;
-
-
-	if (!(L0426_ui_SmellRange = creatureInfo->getSmellRange())) {
+	uint16 smellRange = creatureInfo->getSmellRange();
+	if (!smellRange)
 		return 0;
-	}
-	if ((((L0426_ui_SmellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
+
+	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
 		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
-	if ((L0427_i_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX)) && ((_vm->_championMan->_party._scentStrengths[_vm->ordinalToIndex(L0427_i_ScentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (L0426_ui_SmellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
-		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapX(), _vm->_championMan->_party._scents[L0427_i_ScentOrdinal].getMapY()));
+
+	int16 scentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX);
+	if (scentOrdinal && ((_vm->_championMan->_party._scentStrengths[_vm->ordinalToIndex(scentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (smellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
+		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[scentOrdinal].getMapX(), _vm->_championMan->_party._scents[scentOrdinal].getMapY()));
 	}
 	return 0;
 }
 
 bool GroupMan::isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
-	uint16 L0408_ui_Square;
-	int16 L0409_i_SquareType;
+	uint16 square = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 squareType = Square(square).getType();
 
-	return ((L0409_i_SquareType = Square(L0408_ui_Square = _vm->_dungeonMan->_currMapData[mapX][mapY]).getType()) == k0_ElementTypeWall) || ((L0409_i_SquareType == k6_ElementTypeFakeWall) && !getFlag(L0408_ui_Square, k0x0004_FakeWallOpen));
+	return ( (squareType) == k0_ElementTypeWall) || ((squareType == k6_ElementTypeFakeWall)
+		  && !getFlag(square, k0x0004_FakeWallOpen));
 }
 
 int16 GroupMan::getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY, bool allowMovementOverImaginaryPitsAndFakeWalls) {
-	int16 L0434_i_Direction;
-
-
-	for (L0434_i_Direction = kDirNorth; L0434_i_Direction <= kDirWest; L0434_i_Direction++) {
-		if ((!_groupMovementTestedDirections[L0434_i_Direction]) && isMovementPossible(info, mapX, mapY, L0434_i_Direction, allowMovementOverImaginaryPitsAndFakeWalls)) {
-			return _vm->indexToOrdinal(L0434_i_Direction);
+	for (int16 direction = kDirNorth; direction <= kDirWest; direction++) {
+		if ((!_groupMovementTestedDirections[direction]) && isMovementPossible(info, mapX, mapY, direction, allowMovementOverImaginaryPitsAndFakeWalls)) {
+			return _vm->indexToOrdinal(direction);
 		}
 	}
 	return 0;
 }
 
 void GroupMan::setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, int16 creatureSize) {
-	bool L0436_B_TwoHalfSquareSizedCreatures = creatureIndex && (creatureSize == k1_MaskCreatureSizeHalf);
+	bool twoHalfSquareSizedCreatures = creatureIndex && (creatureSize == k1_MaskCreatureSizeHalf);
 
-	if (L0436_B_TwoHalfSquareSizedCreatures)
+	if (twoHalfSquareSizedCreatures)
 		creatureIndex--;
 
 	do {
 		if (!creatureIndex || _vm->getRandomNumber(2))
-			setGroupDirection(activeGroup, dir, creatureIndex, L0436_B_TwoHalfSquareSizedCreatures);
+			setGroupDirection(activeGroup, dir, creatureIndex, twoHalfSquareSizedCreatures);
 	} while (creatureIndex--);
 }
 
 void GroupMan::stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY) {
-	int16 L0337_i_CreatureIndex;
+	for (int16 creatureIndex = 0; creatureIndex < 4; creatureIndex++)
+		clearFlag(group->_aspect[creatureIndex++], k0x0080_MaskActiveGroupIsAttacking);
 
-	for (L0337_i_CreatureIndex = 0; L0337_i_CreatureIndex < 4; clearFlag(group->_aspect[L0337_i_CreatureIndex++], k0x0080_MaskActiveGroupIsAttacking));
 	groupDeleteEvents(mapX, mapY);
-
 }
 
 bool GroupMan::isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir) {
-	if (_fluxCages[dir]) {
+	if (_fluxCages[dir])
 		return false;
-	}
+
 	mapX += _vm->_dirIntoStepCountEast[dir], mapY += _vm->_dirIntoStepCountNorth[dir];
 	return isMovementPossible(info, mapX, mapY, dir, false);
 }
 
 bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex) {
-	static const uint8 G0244_auc_Graphic559_CreatureAttackSounds[11] = { 3, 7, 14, 15, 19, 21, 29, 30, 31, 4, 16 }; /* Atari ST: { 3, 7, 14, 15, 19, 21, 4, 16 } */
-
-	uint16 L0437_ui_Multiple;
-#define AL0437_ui_CreatureType L0437_ui_Multiple
-#define AL0437_T_Thing         L0437_ui_Multiple
-	int16 L0439_i_Multiple;
-#define AL0439_i_GroupCells    L0439_i_Multiple
-#define AL0439_i_TargetCell    L0439_i_Multiple
-#define AL0439_i_ChampionIndex L0439_i_Multiple
-	int16 L0440_i_Multiple;
-#define AL0440_i_KineticEnergy      L0440_i_Multiple
-#define AL0440_i_Counter            L0440_i_Multiple
-#define AL0440_i_Damage             L0440_i_Multiple
-#define AL0440_i_AttackSoundOrdinal L0440_i_Multiple
+	static const uint8 creatureAttackSounds[11] = { 3, 7, 14, 15, 19, 21, 29, 30, 31, 4, 16 }; /* Atari ST: { 3, 7, 14, 15, 19, 21, 4, 16 } */
 
 	_vm->_projexpl->_lastCreatureAttackTime = _vm->_gameTime;
-	ActiveGroup L0443_s_ActiveGroup = _activeGroups[group->getActiveGroupIndex()];
-	CreatureInfo *L0441_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0437_ui_CreatureType = group->_type];
-	uint16 L0438_ui_PrimaryDirectionToParty = _currGroupPrimaryDirToParty;
-	if ((AL0439_i_GroupCells = L0443_s_ActiveGroup._cells) == k255_CreatureTypeSingleCenteredCreature) {
-		AL0439_i_TargetCell = _vm->getRandomNumber(2);
-	} else {
-		AL0439_i_TargetCell = ((getCreatureValue(AL0439_i_GroupCells, creatureIndex) + 5 - L0438_ui_PrimaryDirectionToParty) & 0x0002) >> 1;
-	}
-	AL0439_i_TargetCell += L0438_ui_PrimaryDirectionToParty;
-	AL0439_i_TargetCell &= 0x0003;
-	if ((L0441_ps_CreatureInfo->getAttackRange() > 1) && ((_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
-		switch (AL0437_ui_CreatureType) {
+	ActiveGroup activeGroup = _activeGroups[group->getActiveGroupIndex()];
+	uint16 creatureType = group->_type;
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
+	uint16 primaryDirectionToParty = _currGroupPrimaryDirToParty;
+
+	int16 targetCell;
+	byte groupCells = activeGroup._cells;
+	if (groupCells == k255_CreatureTypeSingleCenteredCreature)
+		targetCell = _vm->getRandomNumber(2);
+	else
+		targetCell = ((getCreatureValue(groupCells, creatureIndex) + 5 - primaryDirectionToParty) & 0x0002) >> 1;
+
+	targetCell += primaryDirectionToParty;
+	targetCell &= 0x0003;
+	if ((creatureInfo->getAttackRange() > 1) && ((_currGroupDistanceToParty > 1) || _vm->getRandomNumber(2))) {
+		Thing projectileThing = Thing::_none;
+
+		switch (creatureType) {
 		case k14_CreatureTypeVexirk:
 		case k23_CreatureTypeLordChaos:
 			if (_vm->getRandomNumber(2)) {
-				AL0437_T_Thing = Thing::_explFireBall.toUint16();
+				projectileThing = Thing::_explFireBall;
 			} else {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
-					AL0437_T_Thing = Thing::_explHarmNonMaterial.toUint16();
+					projectileThing = Thing::_explHarmNonMaterial;
 					break;
 				case 1:
-					AL0437_T_Thing = Thing::_explLightningBolt.toUint16();
+					projectileThing = Thing::_explLightningBolt;
 					break;
 				case 2:
-					AL0437_T_Thing = Thing::_explPoisonCloud.toUint16();
+					projectileThing = Thing::_explPoisonCloud;
 					break;
 				case 3:
-					AL0437_T_Thing = Thing::_explOpenDoor.toUint16();
+					projectileThing = Thing::_explOpenDoor;
 				}
 			}
 			break;
 		case k1_CreatureTypeSwampSlimeSlime:
-			AL0437_T_Thing = Thing::_explSlime.toUint16();
+			projectileThing = Thing::_explSlime;
 			break;
 		case k3_CreatureTypeWizardEyeFlyingEye:
 			if (_vm->getRandomNumber(8)) {
-				AL0437_T_Thing = Thing::_explLightningBolt.toUint16();
+				projectileThing = Thing::_explLightningBolt;
 			} else {
-				AL0437_T_Thing = Thing::_explOpenDoor.toUint16();
+				projectileThing = Thing::_explOpenDoor;
 			}
 			break;
 		case k19_CreatureTypeMaterializerZytaz:
 			if (_vm->getRandomNumber(2)) {
-				AL0437_T_Thing = Thing::_explPoisonCloud.toUint16();
+				projectileThing = Thing::_explPoisonCloud;
 				break;
 			}
 		case k22_CreatureTypeDemon:
 		case k24_CreatureTypeRedDragon:
-			AL0437_T_Thing = Thing::_explFireBall.toUint16();
+			projectileThing = Thing::_explFireBall;
 		} /* BUG0_13 The game may crash when 'Lord Order' or 'Grey Lord' cast spells. This cannot happen with the original dungeons as they do not contain any groups of these types. 'Lord Order' and 'Grey Lord' creatures can cast spells (attack range > 1) but no projectile type is defined for them in the code. If these creatures are present in a dungeon they will cast projectiles containing undefined things because the variable is not initialized */
-		AL0440_i_KineticEnergy = (L0441_ps_CreatureInfo->_attack >> 2) + 1;
-		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
-		AL0440_i_KineticEnergy += _vm->getRandomNumber(AL0440_i_KineticEnergy);
+		int16 kineticEnergy = (creatureInfo->_attack >> 2) + 1;
+		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
+		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
 		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
-		_vm->_projexpl->createProjectile(Thing(AL0437_T_Thing), mapX, mapY, AL0439_i_TargetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, AL0440_i_KineticEnergy, (int16)255), L0441_ps_CreatureInfo->_dexterity, 8);
+		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, kineticEnergy, (int16)255), creatureInfo->_dexterity, 8);
 	} else {
-		if (getFlag(L0441_ps_CreatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
-			AL0439_i_ChampionIndex = _vm->getRandomNumber(4);
-			for (AL0440_i_Counter = 0; (AL0440_i_Counter < 4) && !_vm->_championMan->_champions[AL0439_i_ChampionIndex]._currHealth; AL0440_i_Counter++) {
-				AL0439_i_ChampionIndex = returnNextVal(AL0439_i_ChampionIndex);
-			}
-			if (AL0440_i_Counter == 4) {
+		int16 championIndex;
+		if (getFlag(creatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
+			championIndex = _vm->getRandomNumber(4);
+			int cpt;
+			for (cpt = 0; (cpt < 4) && !_vm->_championMan->_champions[championIndex]._currHealth; cpt++)
+				championIndex = returnNextVal(championIndex);
+
+			if (cpt == 4)
 				return false;
-			}
 		} else {
-			if ((AL0439_i_ChampionIndex = _vm->_championMan->getTargetChampionIndex(mapX, mapY, AL0439_i_TargetCell)) < 0) {
+			championIndex = _vm->_championMan->getTargetChampionIndex(mapX, mapY, targetCell);
+			if (championIndex < 0)
 				return false;
-			}
 		}
-		if (AL0437_ui_CreatureType == k2_CreatureTypeGiggler) {
-			stealFromChampion(group, AL0439_i_ChampionIndex);
-		} else {
-			AL0440_i_Damage = getChampionDamage(group, AL0439_i_ChampionIndex) + 1;
-			Champion *L0442_ps_Champion = &_vm->_championMan->_champions[AL0439_i_ChampionIndex];
-			if (AL0440_i_Damage > L0442_ps_Champion->_maximumDamageReceived) {
-				L0442_ps_Champion->_maximumDamageReceived = AL0440_i_Damage;
-				L0442_ps_Champion->_directionMaximumDamageReceived = returnOppositeDir((Direction)L0438_ui_PrimaryDirectionToParty);
+
+		if (creatureType == k2_CreatureTypeGiggler)
+			stealFromChampion(group, championIndex);
+		else {
+			int16 damage = getChampionDamage(group, championIndex) + 1;
+			Champion *damagedChampion = &_vm->_championMan->_champions[championIndex];
+			if (damage > damagedChampion->_maximumDamageReceived) {
+				damagedChampion->_maximumDamageReceived = damage;
+				damagedChampion->_directionMaximumDamageReceived = returnOppositeDir((Direction)primaryDirectionToParty);
 			}
 		}
 	}
-	AL0440_i_AttackSoundOrdinal = L0441_ps_CreatureInfo->_attackSoundOrdinal;
-	if (AL0440_i_AttackSoundOrdinal)
-		_vm->_sound->requestPlay(G0244_auc_Graphic559_CreatureAttackSounds[--AL0440_i_AttackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
+	int16 attackSoundOrdinal = creatureInfo->_attackSoundOrdinal;
+	if (attackSoundOrdinal)
+		_vm->_sound->requestPlay(creatureAttackSounds[--attackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
 
 	return true;
 }
 
 void GroupMan::setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 targetMapX, int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource) {
-	static signed char g23_orderedCellsToAttack[8][4] = { // @ G0023_aac_Graphic562_OrderedCellsToAttack
+	static signed char attackOrder[8][4] = { // @ G0023_aac_Graphic562_OrderedCellsToAttack
 		{0, 1, 3, 2},   /* Attack South from position Northwest or Southwest */
 		{1, 0, 2, 3},   /* Attack South from position Northeast or Southeast */
 		{1, 2, 0, 3},   /* Attack West from position Northwest or Northeast */
@@ -1531,52 +1514,48 @@ void GroupMan::setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 
 		{3, 2, 0, 1},   /* Attack North from position Northwest or Southwest */
 		{2, 3, 1, 0},   /* Attack North from position Southeast or Northeast */
 		{0, 3, 1, 2},   /* Attack East from position Northwest or Northeast */
-		{3, 0, 2, 1}}; /* Attack East from position Southeast or Southwest */
-	uint16 L0557_ui_OrderedCellsToAttackIndex;
+		{3, 0, 2, 1}    /* Attack East from position Southeast or Southwest */
+	};
 
-
-	if (!((L0557_ui_OrderedCellsToAttackIndex = getDirsWhereDestIsVisibleFromSource(targetMapX, targetMapY, attackerMapX, attackerMapY) << 1) & 0x0002)) {
+	uint16 orderedCellsToAttackIndex = getDirsWhereDestIsVisibleFromSource(targetMapX, targetMapY, attackerMapX, attackerMapY) << 1;
+	if (!(orderedCellsToAttackIndex & 0x0002))
 		cellSource++;
-	}
-	L0557_ui_OrderedCellsToAttackIndex += (cellSource >> 1) & 0x0001;
+
+	orderedCellsToAttackIndex += (cellSource >> 1) & 0x0001;
 	for (uint16 i = 0; i < 4; ++i)
-		orderedCellsToAttack[i] = g23_orderedCellsToAttack[L0557_ui_OrderedCellsToAttackIndex][i];
+		orderedCellsToAttack[i] = attackOrder[orderedCellsToAttackIndex][i];
 }
 
 void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
-	int16 L0391_i_Percentage;
-	uint16 L0392_ui_StealFromSlotIndex;
-	uint16 L0393_ui_Counter;
-	Thing L0394_T_Thing;
-	Champion *L0395_ps_Champion;
-	bool L0396_B_ObjectStolen;
 	static unsigned char G0394_auc_StealFromSlotIndices[8]; /* Initialized with 0 bytes by C loader */
 
+	bool objectStolen = false;
+	Champion *champion = &_vm->_championMan->_champions[championIndex];
+	int16 percentage = 100 - _vm->_championMan->getDexterity(champion);
+	uint16 slotIdx = _vm->getRandomNumber(8);
+	while ((percentage > 0) && !_vm->_championMan->isLucky(champion, percentage)) {
+		uint16 stealFromSlotIndex = G0394_auc_StealFromSlotIndices[slotIdx];
+		if (stealFromSlotIndex == k13_ChampionSlotBackpackLine_1_1)
+			stealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
 
-	L0396_B_ObjectStolen = false;
-	L0391_i_Percentage = 100 - _vm->_championMan->getDexterity(L0395_ps_Champion = &_vm->_championMan->_champions[championIndex]);
-	L0393_ui_Counter = _vm->getRandomNumber(8);
-	while ((L0391_i_Percentage > 0) && !_vm->_championMan->isLucky(L0395_ps_Champion, L0391_i_Percentage)) {
-		if ((L0392_ui_StealFromSlotIndex = G0394_auc_StealFromSlotIndices[L0393_ui_Counter]) == k13_ChampionSlotBackpackLine_1_1) {
-			L0392_ui_StealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
-		}
-		if (((L0394_T_Thing = L0395_ps_Champion->_slots[L0392_ui_StealFromSlotIndex]) != Thing::_none)) {
-			L0396_B_ObjectStolen = true;
-			L0394_T_Thing = _vm->_championMan->getObjectRemovedFromSlot(championIndex, L0392_ui_StealFromSlotIndex);
+		Thing slotThing = champion->_slots[stealFromSlotIndex];
+		if ((slotThing != Thing::_none)) {
+			objectStolen = true;
+			slotThing = _vm->_championMan->getObjectRemovedFromSlot(championIndex, stealFromSlotIndex);
 			if (group->_slot == Thing::_endOfList) {
-				group->_slot = L0394_T_Thing; /* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
+				group->_slot = slotThing; /* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
 											 The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
 											 This creates cloned things if L0394_T_Thing->Next is not Thing::_endOfList which is the case when the object comes from a chest in which it was not the last object */
 			} else {
-				_vm->_dungeonMan->linkThingToList(L0394_T_Thing, group->_slot, kM1_MapXNotOnASquare, 0);
+				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kM1_MapXNotOnASquare, 0);
 			}
 			_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 		}
-		++L0393_ui_Counter;
-		L0393_ui_Counter &= 0x0007;
-		L0391_i_Percentage -= 20;
+		++slotIdx;
+		slotIdx &= 0x0007;
+		percentage -= 20;
 	}
-	if (!_vm->getRandomNumber(8) || (L0396_B_ObjectStolen && _vm->getRandomNumber(2))) {
+	if (!_vm->getRandomNumber(8) || (objectStolen && _vm->getRandomNumber(2))) {
 		_activeGroups[group->getActiveGroupIndex()]._delayFleeingFromTarget = _vm->getRandomNumber(64) + 20;
 		group->setBehaviour(k5_behavior_FLEE);
 	}
