@@ -34,6 +34,9 @@ public:
 	Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen);
 	virtual ~Ps2SaveFileManager();
 
+	virtual void updateSavefilesList(Common::StringArray &lockedFiles);
+	virtual Common::InSaveFile *openRawFile(const Common::String &filename);
+
 	virtual Common::InSaveFile *openForLoading(const Common::String &filename);
 	virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true);
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
