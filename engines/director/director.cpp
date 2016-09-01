@@ -70,6 +70,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+
+	_colorDepth = 8;	// FIXME. Check if it is 8-bit
 }
 
 DirectorEngine::~DirectorEngine() {

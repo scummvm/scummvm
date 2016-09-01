@@ -428,7 +428,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					warning("Cast id %d not found", _sprites[i]->_castId);
 					continue;
 				} else {
-					warning("Getting cast id %d from shared cast");
+					warning("Getting cast id %d from shared cast", _sprites[i]->_castId);
 					cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
 				}
 			} else {

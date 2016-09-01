@@ -225,6 +225,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_floatPrecisionFormat = Common::String::format("%%.%df", _floatPrecision);
 		warning("set to %d: %s", _floatPrecision, _floatPrecisionFormat.c_str());
 		break;
+	case kTheColorDepth:
+		_vm->_colorDepth = d.toInt();
+		warning("STUB: Set color depth to %d", _vm->_colorDepth);
+		break;
 	default:
 		warning("Unprocessed setting field %d of entity %d", field, entity);
 	}
@@ -360,6 +364,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		id.toFloat();
 		d.type = FLOAT;
 		d.u.f = sqrt(id.u.f);
+		break;
+	case kTheColorQD:
+		push(Datum(1));
+		break;
+	case kTheColorDepth:
+		push(Datum(_vm->_colorDepth));
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);

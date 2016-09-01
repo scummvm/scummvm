@@ -96,6 +96,9 @@ public:
 	Common::RandomSource _rnd;
 	Graphics::MacWindowManager *_wm;
 
+public:
+	int _colorDepth;
+
 protected:
 	virtual Common::Error run();
 
