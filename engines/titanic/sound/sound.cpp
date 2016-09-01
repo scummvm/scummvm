@@ -158,6 +158,9 @@ int CSound::playSound(const CString &name, CProximity &prox) {
 		return -1;
 
 	prox._field6C = waveFile->fn1();
+	if (prox._soundType != Audio::Mixer::kPlainSoundType)
+		waveFile->_soundType = prox._soundType;
+
 	activateSound(waveFile, prox._freeSoundFlag);
 
 	return _soundManager.playSound(*waveFile, prox);

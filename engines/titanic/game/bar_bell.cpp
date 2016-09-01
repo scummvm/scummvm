@@ -116,7 +116,7 @@ bool CBarBell::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	}
 
 	++_fieldBC;
-	return 2;
+	return true;
 }
 
 bool CBarBell::ActMsg(CActMsg *msg) {

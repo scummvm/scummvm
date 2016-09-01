@@ -438,7 +438,8 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated, int handleIndex) {
+void CGameObject::playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+		int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
 	CGameManager *gameManager = getGameManager();
@@ -463,6 +464,7 @@ void CGameObject::playGlobalSound(const CString &resName, int mode, bool initial
 	CProximity prox;
 	prox._channelVolume = volume;
 	prox._repeated = repeated;
+	prox._soundType = soundType;
 
 	switch (handleIndex) {
 	case 0:

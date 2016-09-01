@@ -23,6 +23,7 @@
 #ifndef TITANIC_PROXIMITY_H
 #define TITANIC_PROXIMITY_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 
 namespace Titanic {
@@ -62,6 +63,7 @@ public:
 	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;
 	int _field6C;
+	Audio::Mixer::SoundType _soundType;
 public:
 	CProximity();
 };

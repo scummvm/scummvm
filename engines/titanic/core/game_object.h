@@ -23,6 +23,7 @@
 #ifndef TITANIC_GAME_OBJECT_H
 #define TITANIC_GAME_OBJECT_H
 
+#include "audio/mixer.h"
 #include "common/stream.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
@@ -234,8 +235,10 @@ protected:
 	 * @param initialMute	If set, sound transitions in from mute over 2 seconds
 	 * @param repeated		Flag for repeating sounds
 	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
+	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
-	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated, int handleIndex);
+	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
 	 * Stops a sound saved in the global sound handle list
