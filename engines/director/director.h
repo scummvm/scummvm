@@ -102,7 +102,7 @@ protected:
 private:
 	const DirectorGameDescription *_gameDescription;
 
-	Common::HashMap<Common::String, Score *> loadMMMNames(Common::String folder);
+	Common::HashMap<Common::String, Score *> scanMovies(const Common::String &folder);
 	void loadEXE();
 	void loadEXEv3(Common::SeekableReadStream *stream);
 	void loadEXEv4(Common::SeekableReadStream *stream);
@@ -125,6 +125,8 @@ private:
 	byte *_currentPalette;
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
+
+	Common::String _sharedCastFile;
 };
 
 } // End of namespace Director

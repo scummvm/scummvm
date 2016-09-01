@@ -160,7 +160,6 @@ void Score::loadArchive() {
 	}
 
 	Common::Array<uint16> vwci = _movieArchive->getResourceIDList(MKTAG('V','W','C','I'));
-
 	if (vwci.size() > 0) {
 		Common::Array<uint16>::iterator iterator;
 
@@ -169,7 +168,6 @@ void Score::loadArchive() {
 	}
 
 	Common::Array<uint16> stxt = _movieArchive->getResourceIDList(MKTAG('S','T','X','T'));
-
 	if (stxt.size() > 0) {
 		loadScriptText(*_movieArchive->getResource(MKTAG('S','T','X','T'), *stxt.begin()));
 	}
@@ -218,6 +216,8 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 
 	if (_vm->getVersion() > 3) {
 		stream.skip(16);
+
+		warning("STUB: Score::loadFrames. Skipping initial bytes");
 		//Unknown, some bytes - constant (refer to contuinity).
 	}
 
@@ -244,7 +244,6 @@ void Score::loadFrames(Common::SeekableSubReadStreamEndian &stream) {
 				frameSize -= channelSize + 4;
 			}
 			frame->readChannel(stream, channelOffset, channelSize);
-
 		}
 
 		_frames.push_back(frame);
@@ -409,10 +408,10 @@ void Score::loadScriptText(Common::SeekableSubReadStreamEndian &stream) {
 	for (uint32 i = 0; i < strLen; i++) {
 		byte ch = stream.readByte();
 
-		if (ch == 0x0d) {
-			//in old Mac systems \r was the code for end-of-line instead.
+		// Convert Mac line endings
+		if (ch == 0x0d)
 			ch = '\n';
-		}
+
 		script += ch;
 	}
 
@@ -496,8 +495,8 @@ void Score::loadCastInfo(Common::SeekableSubReadStreamEndian &stream, uint16 id)
 }
 
 void Score::gotoloop() {
-	//This command has the playback head contonuously return to the first marker to to the left and then loop back.
-	//If no marker are to the left of the playback head, the playback head continues to the right.
+	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
+	// If no marker are to the left of the playback head, the playback head continues to the right.
 	Common::SortedArray<Label *>::iterator i;
 
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
@@ -514,25 +513,25 @@ void Score::gotonext() {
 	for (i = _labels->begin(); i != _labels->end(); ++i) {
 		if ((*i)->name == _currentLabel) {
 			if (i != _labels->end()) {
-				//return to the first marker to to the right
+				// return to the first marker to to the right
 				++i;
 				_currentFrame = (*i)->number;
 				return;
 			} else {
-				//if no markers are to the right of the playback head,
-				//the playback head goes to the first marker to the left
+				// if no markers are to the right of the playback head,
+				// the playback head goes to the first marker to the left
 				_currentFrame = (*i)->number;
 				return;
 			}
 		}
 	}
-	//If there are not markers to the left,
-	//the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
+	// If there are not markers to the left,
+	// the playback head goes to frame 1, (Director frame array start from 1, engine from 0)
 	_currentFrame = 0;
 }
 
 void Score::gotoprevious() {
-	//One label
+	// One label
 	if (_labels->begin() == _labels->end()) {
 		_currentFrame = (*_labels->begin())->number;
 		return;
@@ -602,7 +601,7 @@ Common::Array<Common::String> Score::loadStrings(Common::SeekableSubReadStreamEn
 	}
 
 	uint16 count = stream.readUint16();
-	offset += (count + 1) * 4 + 2; //positions info + uint16 count
+	offset += (count + 1) * 4 + 2; // positions info + uint16 count
 	uint32 startPos = stream.readUint32() + offset;
 
 	for (uint16 i = 0; i < count; i++) {
@@ -689,7 +688,7 @@ TextCast::TextCast(Common::SeekableSubReadStreamEndian &stream) {
 	if (flags & 0x4)
 		textFlags.push_back(kTextFlagDoNotWrap);
 
-	//TODO: FIXME: guesswork
+	// TODO: FIXME: guesswork
 	fontId = stream.readByte();
 	fontSize = stream.readByte();
 
@@ -752,20 +751,24 @@ void Score::update() {
 	_surface->clear();
 	_surface->copyFrom(*_trailSurface);
 
-	//Enter and exit from previous frame (Director 4)
+	// Enter and exit from previous frame (Director 4)
 	_lingo->processEvent(kEventEnterFrame, _frames[_currentFrame]->_actionId);
 	_lingo->processEvent(kEventExitFrame, _frames[_currentFrame]->_actionId);
-	//TODO Director 6 - another order
+	// TODO Director 6 - another order
 
+	// TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
+	if (_vm->getVersion() >= 6) {
+		for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+			if (_frames[_currentFrame]->_sprites[i]->_enabled) {
+				_lingo->processEvent(kEventBeginSprite, i);
+			}
+		}
+	}
 
-	//TODO Director 6 step: send beginSprite event to any sprites whose span begin in the upcoming frame
-	//for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
-	//	if (_frames[_currentFrame]->_sprites[i]->_enabled)
-	//		_lingo->processEvent(kEventBeginSprite, i);
-	//}
+	// TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
+	if (_vm->getVersion() >= 6)
+		_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 
-	//TODO Director 6 step: send prepareFrame event to all sprites and the script channel in upcoming frame
-	//_lingo->processEvent(kEventPrepareFrame, _currentFrame);
 	_currentFrame++;
 
 	Common::SortedArray<Label *>::iterator i;
@@ -776,31 +779,33 @@ void Score::update() {
 	}
 
 	_frames[_currentFrame]->prepareFrame(this);
-	//Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
+	// Stage is drawn between the prepareFrame and enterFrame events (Lingo in a Nutshell)
 
 	byte tempo = _frames[_currentFrame]->_tempo;
 
 	if (tempo) {
 		if (tempo > 161) {
-			//Delay
+			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
 
 			return;
 		} else if (tempo <= 60) {
-			//FPS
+			// FPS
 			_nextFrameTime = g_system->getMillis() + (float)tempo / 60 * 1000;
 			_currentFrameRate = tempo;
 		} else if (tempo >= 136) {
-			//TODO Wait for channel tempo - 135
+			// TODO Wait for channel tempo - 135
+			warning("STUB: tempo >= 136");
 		} else if (tempo == 128) {
-			//TODO Wait for Click/Key
+			// TODO Wait for Click/Key
+			warning("STUB: tempo == 128");
 		} else if (tempo == 135) {
-			//Wait for sound channel 1
+			// Wait for sound channel 1
 			while (_soundManager->isChannelActive(1)) {
 				processEvents();
 			}
 		} else if (tempo == 134) {
-			//Wait for sound channel 2
+			// Wait for sound channel 2
 			while (_soundManager->isChannelActive(2)) {
 				processEvents();
 			}
@@ -825,7 +830,7 @@ void Score::processEvents() {
 			if (event.type == Common::EVENT_LBUTTONDOWN) {
 				Common::Point pos = g_system->getEventManager()->getMousePos();
 
-				//TODO there is dont send frame id
+				// TODO there is dont send frame id
 				_lingo->processEvent(kEventMouseDown, _frames[_currentFrame]->getSpriteIDFromPos(pos));
 			}
 

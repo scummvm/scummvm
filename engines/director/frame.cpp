@@ -95,7 +95,7 @@ void Frame::readChannel(Common::SeekableSubReadStreamEndian &stream, uint16 offs
 		if (size <= 16)
 			readSprite(stream, offset, size);
 		else {
-			//read > 1 sprites channel
+			// read > 1 sprites channel
 			while (size > 16) {
 				byte spritePosition = (offset - 32) / 16;
 				uint16 nextStart = (spritePosition + 1) * 16 + 32;
@@ -125,13 +125,13 @@ void Frame::readMainChannels(Common::SeekableSubReadStreamEndian &stream, uint16
 			offset++;
 			break;
 		case kTransFlagsPosition: {
-			uint8 transFlags = stream.readByte();
-			if (transFlags & 0x80)
-				_transArea = 1;
-			else
-				_transArea = 0;
-			_transDuration = transFlags & 0x7f;
-			offset++;
+				uint8 transFlags = stream.readByte();
+				if (transFlags & 0x80)
+					_transArea = 1;
+				else
+					_transArea = 0;
+				_transDuration = transFlags & 0x7f;
+				offset++;
 			}
 			break;
 		case kTransChunkSizePosition:
@@ -244,7 +244,7 @@ void Frame::readSprite(Common::SeekableSubReadStreamEndian &stream, uint16 offse
 			fieldPosition += 2;
 			break;
 		default:
-			//end cycle, go to next sprite channel
+			// end of channel, go to next sprite channel
 			readSprite(stream, spriteStart + 16, finishPosition - fieldPosition);
 			fieldPosition = finishPosition;
 			break;
@@ -257,7 +257,7 @@ void Frame::prepareFrame(Score *score) {
 	renderSprites(*score->_trailSurface, true);
 
 	if (_transType != 0)
-		//TODO Handle changing area case
+		//T ODO Handle changing area case
 		playTransition(score);
 
 	if (_sound1 != 0 || _sound2 != 0) {
@@ -268,16 +268,16 @@ void Frame::prepareFrame(Score *score) {
 }
 
 void Frame::playSoundChannel() {
-	debug(0, "Sound2 %d", _sound2);
 	debug(0, "Sound1 %d", _sound1);
+	debug(0, "Sound2 %d", _sound2);
 }
 
 void Frame::playTransition(Score *score) {
 	uint16 duration = _transDuration * 250; // _transDuration in 1/4 of sec
-	duration = (duration == 0 ? 250 : duration); // director support transition duration = 0, but animation play like value = 1, idk.
+	duration = (duration == 0 ? 250 : duration); // director supports transition duration = 0, but animation play like value = 1, idk.
 
 	if (_transChunkSize == 0)
-		_transChunkSize = 1; //equal 1 step
+		_transChunkSize = 1; // equal to 1 step
 
 	uint16 stepDuration = duration / _transChunkSize;
 	uint16 steps = duration / stepDuration;
@@ -428,6 +428,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 					warning("Cast id %d not found", _sprites[i]->_castId);
 					continue;
 				} else {
+					warning("Getting cast id %d from shared cast");
 					cast = _vm->getSharedCasts()->getVal(_sprites[i]->_castId);
 				}
 			} else {
@@ -447,10 +448,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 			}
 
 			if (!img->getSurface()) {
-				//TODO
-				//BMPDecoder doesnt cover all BITD resources (not all have first two bytes 'BM')
-				//Some BITD's first two bytes 0x6 0x0
-				warning("Can not load image %d", _sprites[i]->_castId);
+				warning("Frame::renderSprites: Could not load image %d", _sprites[i]->_castId);
 				continue;
 			}
 
@@ -472,7 +470,7 @@ void Frame::renderSprites(Graphics::ManagedSurface &surface, bool renderTrail) {
 				surface.blitFrom(*img->getSurface(), Common::Point(x, y));
 				break;
 			case kInkTypeTransparent:
-				//FIXME: is it always white (last entry in pallette)?
+				// FIXME: is it always white (last entry in pallette)?
 				surface.transBlitFrom(*img->getSurface(), Common::Point(x, y), _vm->getPaletteColorCount() - 1);
 				break;
 			case kInkTypeBackgndTrans:
@@ -512,7 +510,7 @@ void Frame::renderButton(Graphics::ManagedSurface &surface, uint16 spriteId) {
 
 	switch (button->buttonType) {
 	case kTypeCheckBox:
-		//Magic numbers: checkbox square need to move left about 5px from text and 12px side size (d4)
+		// Magic numbers: checkbox square need to move left about 5px from text and 12px side size (D4)
 		surface.frameRect(Common::Rect(x - 17, y, x + 12, y + 12), 0);
 		break;
 	case kTypeButton:
@@ -624,7 +622,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	if (textCast->borderSize != kSizeNone) {
 		uint16 size = textCast->borderSize;
 
-		//Indent from borders, measured in d4
+		// Indent from borders, measured in d4
 		x -= 1;
 		y -= 4;
 
@@ -662,7 +660,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 }
 
 void Frame::drawBackgndTransSprite(Graphics::ManagedSurface &target, const Graphics::Surface &sprite, Common::Rect &drawRect) {
-	uint8 skipColor = _vm->getPaletteColorCount() - 1; //FIXME is it always white (last entry in pallette) ?
+	uint8 skipColor = _vm->getPaletteColorCount() - 1; // FIXME is it always white (last entry in pallette) ?
 
 	for (int ii = 0; ii < sprite.h; ii++) {
 		const byte *src = (const byte *)sprite.getBasePtr(0, ii);
@@ -686,7 +684,7 @@ void Frame::drawGhostSprite(Graphics::ManagedSurface &target, const Graphics::Su
 
 		for (int j = 0; j < drawRect.width(); j++) {
 			if ((getSpriteIDFromPos(Common::Point(drawRect.left + j, drawRect.top + ii)) != 0) && (*src != skipColor))
-				*dst = (_vm->getPaletteColorCount() - 1) - *src; //Oposite color
+				*dst = (_vm->getPaletteColorCount() - 1) - *src; // Oposite color
 
 			src++;
 			dst++;
@@ -772,7 +770,7 @@ void Frame::drawMatteSprite(Graphics::ManagedSurface &target, const Graphics::Su
 }
 
 uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
-	//Find first from top to bottom
+	// Find first from top to bottom
 	for (uint16 i = _drawRects.size() - 1; i > 0; i--) {
 		if (_drawRects[i].contains(pos))
 			return i;
@@ -781,4 +779,4 @@ uint16 Frame::getSpriteIDFromPos(Common::Point pos) {
 	return 0;
 }
 
-} //End of namespace Director
+} // End of namespace Director

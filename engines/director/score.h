@@ -188,6 +188,7 @@ public:
 	void setCurrentFrame(uint16 frameId) { _currentFrame = frameId; }
 	Common::String getMacName() const { return _macName; }
 	Sprite *getSpriteById(uint16 id);
+
 private:
 	void update();
 	void readVersion(uint32 rid);

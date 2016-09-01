@@ -112,7 +112,9 @@ Common::Error DirectorEngine::run() {
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	loadMMMNames(ConfMan.get("path"));
+	scanMovies(ConfMan.get("path"));
+
+	loadSharedCastsFrom(_sharedCastFile);
 	loadMainArchive();
 
 	_currentScore = new Score(this, _mainArchive);
@@ -124,7 +126,7 @@ Common::Error DirectorEngine::run() {
 	return Common::kNoError;
 }
 
-Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::String folder) {
+Common::HashMap<Common::String, Score *> DirectorEngine::scanMovies(const Common::String &folder) {
 	Common::FSNode directory(folder);
 	Common::FSList movies;
 	const char *sharedMMMname;
@@ -142,8 +144,9 @@ Common::HashMap<Common::String, Score *> DirectorEngine::loadMMMNames(Common::St
 	if (!movies.empty()) {
 		for (Common::FSList::const_iterator i = movies.begin(); i != movies.end(); ++i) {
 			debugC(2, kDebugLoading, "File: %s", i->getName().c_str());
+
 			if (Common::matchString(i->getName().c_str(), sharedMMMname, true)) {
-				loadSharedCastsFrom(i->getName());
+				_sharedCastFile = i->getName();
 				continue;
 			}
 
