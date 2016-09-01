@@ -272,6 +272,7 @@ void QSoundManager::setVolume(int handle, uint volume, uint seconds) {
 	for (uint idx = 0; idx < _slots.size(); ++idx) {
 		Slot &slot = _slots[idx];
 		if (slot._handle == handle) {
+			assert(slot._channel >= 0);
 			_channelsVolume[slot._channel] = volume;
 			updateVolume(slot._channel, seconds * 1000);
 
