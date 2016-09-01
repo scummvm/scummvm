@@ -191,7 +191,7 @@ void Lingo::cleanLocalVars() {
 	delete g_lingo->_localvars;
 }
 
-void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix) {
+void Lingo::define(Common::String &name, int start, int nargs, Common::String *prefix, int end) {
 	Symbol *sym;
 
 	if (prefix)
@@ -214,7 +214,10 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 		delete sym->u.defn;
 	}
 
-	sym->u.defn = new ScriptData(&(*_currentScript)[start], _currentScript->size() - start + 1);
+	if (end == -1)
+		end = _currentScript->size();
+
+	sym->u.defn = new ScriptData(&(*_currentScript)[start], end - start + 1);
 	sym->nargs = nargs;
 }
 

@@ -760,7 +760,9 @@ void Lingo::c_whencode() {
 
 	start += g_lingo->calcStringAlignment(eventname.c_str());
 
-	warning("STUB: c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+	g_lingo->define(eventname, start, 0, NULL, end);
+
+	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
 
 	g_lingo->_pc = end;
 }

@@ -198,7 +198,7 @@ public:
 	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
 	void cleanLocalVars();
-	void define(Common::String &s, int start, int nargs, Common::String *prefix = NULL);
+	void define(Common::String &s, int start, int nargs, Common::String *prefix = NULL, int end = -1);
 	void processIf(int elselabel, int endlabel);
 
 	int alignTypes(Datum &d1, Datum &d2);
