@@ -366,10 +366,12 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.f = sqrt(id.u.f);
 		break;
 	case kTheColorQD:
-		push(Datum(1));
+		d.type = INT;
+		d.u.i = 1;
 		break;
 	case kTheColorDepth:
-		push(Datum(_vm->_colorDepth));
+		d.type = INT;
+		d.u.i = _vm->_colorDepth;
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);
