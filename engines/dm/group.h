@@ -228,7 +228,7 @@ public:
 	void stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
 	int16 getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
 	void dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY); // @ F0187_GROUP_DropMovingCreatureFixedPossessions
-	void startWanedring(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
+	void startWandering(int16 mapX, int16 mapY); // @ F0180_GROUP_StartWandering
 	void addActiveGroup(Thing thing, int16 mapX, int16 mapY); // @ F0183_GROUP_AddActiveGroup
 	void removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
 	void removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups

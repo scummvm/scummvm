@@ -499,7 +499,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					processThingAdditionOrRemoval(destMapX, destMapY, thing, false, true);
 				}
 				if (L0720_ui_MoveGroupResult || (mapX < 0)) { /* If group moved from one map to another or if it was just placed on a square */
-					_vm->_groupMan->startWanedring(destMapX, destMapY);
+					_vm->_groupMan->startWandering(destMapX, destMapY);
 				}
 				_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
 				if (mapX >= 0) {

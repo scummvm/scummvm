@@ -1543,7 +1543,7 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 		L1235_ps_ActiveGroup = &_vm->_groupMan->_activeGroups[L1233_ps_Group->getActiveGroupIndex()];
 		if (L1233_ps_Group->getBehaviour() == k6_behavior_ATTACK) {
 			_vm->_groupMan->stopAttacking(L1235_ps_ActiveGroup, mapX, mapY);
-			_vm->_groupMan->startWanedring(mapX, mapY);
+			_vm->_groupMan->startWandering(mapX, mapY);
 		}
 		L1233_ps_Group->setBehaviour(k5_behavior_FLEE);
 		L1235_ps_ActiveGroup->_delayFleeingFromTarget = ((16 - L1230_ui_FearResistance) << 2) / L1234_ps_CreatureInfo->_movementTicks;

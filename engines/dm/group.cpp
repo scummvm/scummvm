@@ -1634,7 +1634,7 @@ void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 
 	}
 }
 
-void GroupMan::startWanedring(int16 mapX, int16 mapY) {
+void GroupMan::startWandering(int16 mapX, int16 mapY) {
 	Group *L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(groupGetThing(mapX, mapY));
 	if (L0332_ps_Group->getBehaviour() >= k4_behavior_USELESS) {
 		L0332_ps_Group->setBehaviour(k0_behavior_WANDER);
@@ -1711,7 +1711,7 @@ void GroupMan::addAllActiveGroups() {
 					if (curThing.getType() == k4_GroupThingType) {
 						groupDeleteEvents(mapX, mapY);
 						addActiveGroup(curThing, mapX, mapY);
-						startWanedring(mapX, mapY);
+						startWandering(mapX, mapY);
 						break;
 					}
 					curThing = _vm->_dungeonMan->getNextThing(curThing);
@@ -1987,7 +1987,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 			}
 			if (isSquareACorridorTeleporterPitOrDoor(destMapX, destMapY)) {
 				if (!_vm->_moveSens->getMoveResult(lordChaosThing, mapX, mapY, destMapX, destMapY))
-					startWanedring(destMapX, destMapY);
+					startWandering(destMapX, destMapY);
 
 				return;
 			}
