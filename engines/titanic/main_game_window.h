@@ -131,7 +131,9 @@ public:
 	/*
 	 * Return whether a given special key is currently pressed
 	 */
-	bool isSpecialPressed(SpecialButtons btn) const { return _specialButtons; }
+	bool isSpecialPressed(SpecialButtons btn) const {
+		return (_specialButtons & btn) != 0;
+	}
 
 	/**
 	 * Returns the bitset of the currently pressed special buttons
