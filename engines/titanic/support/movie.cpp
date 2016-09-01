@@ -133,22 +133,8 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 		drawRect.top + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
 	);
 
-	uint timePerFrame = (uint)(1000.0 / _aviSurface._frameRate);
-
-	for (; startFrame < endFrame; ++startFrame) {
-		// Set the frame
-		_aviSurface.setFrame(startFrame);
-
-		// TODO: See if we need to do anything further here. The original had a bunch
-		// of calls and using of the _movieSurface; perhaps to allow scaling down
-		// videos to half-size
-		if (widthLess || heightLess)
-			warning("Not properly reducing clip size: %d %d", r.width(), r.height());
-
-		// Wait for the next frame, unless the user interrupts the clip
-		if (g_vm->_events->waitForPress(timePerFrame))
-			break;
-	}
+	_aviSurface.setFrame(startFrame);
+	_aviSurface.playCutscene(r, startFrame, endFrame);
 }
 
 void OSMovie::stop() {

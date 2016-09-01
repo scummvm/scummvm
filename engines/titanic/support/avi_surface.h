@@ -176,6 +176,11 @@ public:
 	 * Returns true if it's time for the next
 	 */
 	bool isNextFrame() const;
+
+	/**
+	 * Plays an interruptable cutscene
+	 */
+	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
 };
 
 } // End of namespace Titanic

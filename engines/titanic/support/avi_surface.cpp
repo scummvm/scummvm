@@ -20,12 +20,13 @@
  *
  */
 
-#include "titanic/support/avi_surface.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/support/video_surface.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 #include "video/avi_decoder.h"
+#include "titanic/support/avi_surface.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -355,6 +356,33 @@ Graphics::ManagedSurface *AVISurface::duplicateSecondaryFrame() const {
 			_movieFrameSurface[1]->h, _movieFrameSurface[1]->format);
 		dest->blitFrom(*_movieFrameSurface[1]);
 		return dest;
+	}
+}
+
+void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
+	bool isDifferent = _movieFrameSurface[0]->w != r.width() ||
+		_movieFrameSurface[0]->h != r.height();
+
+	startAtFrame(startFrame);
+	while (getFrame() <= (int)endFrame) {
+		if (isNextFrame()) {
+			renderFrame();
+			_currentFrame = _decoders[0]->getCurFrame();
+
+			if (isDifferent) {
+				// Clear the destination area, and use the transBlitFrom method,
+				// which supports arbitrary scaling, to reduce to the desired size
+				g_vm->_screen->fillRect(r, 0);
+				g_vm->_screen->transBlitFrom(*_movieFrameSurface[0],
+					Common::Rect(0, 0, _movieFrameSurface[0]->w, _movieFrameSurface[0]->h), r);
+			} else {
+				g_vm->_screen->blitFrom(*_movieFrameSurface[0], Common::Point(r.left, r.top));
+			}
+		}
+
+		// Brief wait, and check at the same time for clicks to abort the clip
+		if (g_vm->_events->waitForPress(10))
+			break;
 	}
 }
 
