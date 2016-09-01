@@ -273,11 +273,11 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 	// default way (might work everywhere, surely works on Windows)
 	const char *name = SDLNet_ResolveIP(ip);
 	if (name == NULL) {
-		warning("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+		warning("LocalWebserver: SDLNet_ResolveIP: %s", SDLNet_GetError());
 	} else {
 		IPaddress localIp;
 		if (SDLNet_ResolveHost(&localIp, name, _serverPort) == -1) {
-			warning("LocalWebserver: SDLNet_ResolveHost: %s\n", SDLNet_GetError());
+			warning("LocalWebserver: SDLNet_ResolveHost: %s", SDLNet_GetError());
 		} else {
 			_address = Common::String::format(
 				"http://%u.%u.%u.%u:%u/",
