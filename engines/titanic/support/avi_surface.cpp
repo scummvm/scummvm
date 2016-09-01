@@ -339,9 +339,9 @@ bool AVISurface::addEvent(int frameNumber, CGameObject *obj) {
 }
 
 void AVISurface::setFrameRate(double rate) {
-	_decoders[0]->setRate(Common::Rational(rate));
+	_decoders[0]->setRate(Common::Rational((int)rate));
 	if (_decoders[1])
-		_decoders[1]->setRate(Common::Rational(rate));
+		_decoders[1]->setRate(Common::Rational((int)rate));
 }
 
 Graphics::ManagedSurface *AVISurface::getSecondarySurface() {

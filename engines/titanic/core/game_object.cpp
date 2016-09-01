@@ -42,7 +42,7 @@ int CGameObject::_soundHandles[4];
 
 void CGameObject::init() {
 	_credits = nullptr;
-	_soundHandles[0] = _soundHandles[1] = 0;
+	_soundHandles[0] = _soundHandles[1] = -1;
 	_soundHandles[2] = _soundHandles[3] = -1;
 }
 
@@ -521,7 +521,6 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 		sound.stopSound(_soundHandles[handleIndex]);
 		_soundHandles[handleIndex] = -1;
 	}
-	warning("CGameObject::soundFn4");
 }
 
 void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) {

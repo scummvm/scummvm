@@ -94,10 +94,11 @@ void CSound::checkSounds() {
 			if (_soundManager.isActive(soundItem->_waveFile)) {
 				i = _sounds.erase(i);
 				delete soundItem;
+				continue;
 			}
-		} else {
-			++i;
 		}
+
+		++i;
 	}
 }
 
