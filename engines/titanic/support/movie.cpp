@@ -133,8 +133,13 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 		drawRect.top + (heightLess ? CLIP_HEIGHT_REDUCED : CLIP_HEIGHT)
 	);
 
+	CGameState &gameState = g_vm->_window->_gameManager->_gameState;
+	gameState.setMode(GSMODE_CLIP);
+
 	_aviSurface.setFrame(startFrame);
 	_aviSurface.playCutscene(r, startFrame, endFrame);
+
+	gameState.setMode(GSMODE_INTERACTIVE);
 }
 
 void OSMovie::stop() {

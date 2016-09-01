@@ -364,7 +364,7 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 		_movieFrameSurface[0]->h != r.height();
 
 	startAtFrame(startFrame);
-	while (getFrame() <= (int)endFrame) {
+	while (_currentFrame < (int)endFrame && !g_vm->shouldQuit()) {
 		if (isNextFrame()) {
 			renderFrame();
 			_currentFrame = _decoders[0]->getCurFrame();
@@ -378,12 +378,17 @@ void AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 			} else {
 				g_vm->_screen->blitFrom(*_movieFrameSurface[0], Common::Point(r.left, r.top));
 			}
+
+			g_vm->_screen->update();
+			g_vm->_events->pollEvents();
 		}
 
 		// Brief wait, and check at the same time for clicks to abort the clip
 		if (g_vm->_events->waitForPress(10))
 			break;
 	}
+
+	stop();
 }
 
 } // End of namespace Titanic
