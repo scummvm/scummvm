@@ -871,15 +871,15 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 		return nullptr;
 
 	// Find the designated node within the room
-	CNodeItem *node = static_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
+	CNodeItem *node = dynamic_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
 	while (node && node->getName() != nodeName)
-		node = static_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
+		node = dynamic_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
 	if (!node)
 		return nullptr;
 
-	CViewItem *view = static_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
+	CViewItem *view = dynamic_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
 	while (view && view->getName() != viewName)
-		view = static_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
+		view = dynamic_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
 	if (!view)
 		return nullptr;
 
@@ -964,12 +964,12 @@ CGameObject *CGameObject::getNextMail(CGameObject *prior) {
 }
 
 CGameObject *CGameObject::findRoomObject(const CString &name) const {
-	return static_cast<CGameObject *>(findRoom()->findByName(name));
+	return dynamic_cast<CGameObject *>(findRoom()->findByName(name));
 }
 
 CGameObject *CGameObject::findInRoom(const CString &name) {
 	CRoomItem *room = getRoom();
-	return room ? static_cast<CGameObject *>(room->findByName(name)) : nullptr;
+	return room ? dynamic_cast<CGameObject *>(room->findByName(name)) : nullptr;
 }
 
 Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) {
@@ -996,7 +996,7 @@ Found CGameObject::find(const CString &name, CGameObject **item, int findAreas) 
 	}
 
 	if (findAreas & FIND_GLOBAL) {
-		go = static_cast<CGameObject *>(getRoot()->findByName(name));
+		go = dynamic_cast<CGameObject *>(getRoot()->findByName(name));
 		if (go) {
 			*item = go;
 			return FOUND_GLOBAL;
@@ -1227,7 +1227,7 @@ void CGameObject::dragMove(const Point &pt) {
 
 CGameObject *CGameObject::getDraggingObject() const {
 	CTreeItem *item = getGameManager()->_dragItem;
-	return static_cast<CGameObject *>(item);
+	return dynamic_cast<CGameObject *>(item);
 }
 
 Point CGameObject::getControid() const {
@@ -1255,7 +1255,7 @@ CDontSaveFileItem *CGameObject::getDontSave() const {
 }
 
 CPetControl *CGameObject::getPetControl() const {
-	return static_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
+	return dynamic_cast<CPetControl *>(getDontSaveChild(CPetControl::_type));
 }
 
 CMailMan *CGameObject::getMailMan() const {
@@ -1294,7 +1294,7 @@ CRoomItem *CGameObject::locateRoom(const CString &name) const {
 
 CGameObject *CGameObject::getHiddenObject(const CString &name) const {
 	CRoomItem *room = getHiddenRoom();
-	return room ? static_cast<CGameObject *>(findUnder(room, name)) : nullptr;
+	return room ? dynamic_cast<CGameObject *>(findUnder(room, name)) : nullptr;
 }
 
 CTreeItem *CGameObject::findUnder(CTreeItem *parent, const CString &name) const {
@@ -1506,7 +1506,7 @@ CTreeItem *CGameObject::petContainerRemove(CGameObject *obj) {
 	if (!obj->compareRoomNameTo("CarryParcel"))
 		return obj;
 
-	CGameObject *item = static_cast<CGameObject *>(pet->getLastChild());
+	CGameObject *item = dynamic_cast<CGameObject *>(pet->getLastChild());
 	if (item)
 		item->detach();
 
@@ -1601,11 +1601,11 @@ void CGameObject::petUnlockInput() {
 /*------------------------------------------------------------------------*/
 
 CStarControl *CGameObject::getStarControl() const {
-	CStarControl *starControl = static_cast<CStarControl *>(getDontSaveChild(CStarControl::_type));
+	CStarControl *starControl = dynamic_cast<CStarControl *>(getDontSaveChild(CStarControl::_type));
 	if (!starControl) {
 		CViewItem *view = getGameManager()->getView();
 		if (view)
-			starControl = static_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
+			starControl = dynamic_cast<CStarControl *>(view->findChildInstanceOf(CStarControl::_type));
 	}
 
 	return starControl;
@@ -1625,7 +1625,7 @@ bool CGameObject::starFn2() {
 /*------------------------------------------------------------------------*/
 
 void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
-	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
+	CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
 	startTalking(npc, id, view);
 }
 

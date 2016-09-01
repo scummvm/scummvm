@@ -173,7 +173,7 @@ bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const
 	if (!_synP)
 		return false;
 
-	const TTsynonym *synP = static_cast<const TTsynonym *>(_synP->findByName(str, mode));
+	const TTsynonym *synP = dynamic_cast<const TTsynonym *>(_synP->findByName(str, mode));
 	if (synP) {
 		dest->copyFrom(synP);
 		dest->_priorP = nullptr;

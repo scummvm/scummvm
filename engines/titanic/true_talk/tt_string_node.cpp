@@ -55,7 +55,7 @@ void TTstringNode::initialize(TTstringNode *oldNode) {
 }
 
 TTstringNode *TTstringNode::findByName(const TTstring &str, int mode) {
-	for (TTstringNode *nodeP = this; nodeP; nodeP = static_cast<TTstringNode *>(nodeP->_nextP)) {
+	for (TTstringNode *nodeP = this; nodeP; nodeP = dynamic_cast<TTstringNode *>(nodeP->_nextP)) {
 		if (nodeP->_mode == mode || (mode == 3 && nodeP->_mode < 3)) {
 			if (nodeP->_string == str)
 				return nodeP;

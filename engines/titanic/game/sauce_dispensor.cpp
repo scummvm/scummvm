@@ -69,7 +69,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 	CVisibleMsg visibleMsg(true);
 	
 	if (msg->_item->isEquals("Chicken")) {
-		CChicken *chicken = static_cast<CChicken *>(msg->_item);
+		CChicken *chicken = dynamic_cast<CChicken *>(msg->_item);
 		_field104 = true;
 		if (_fieldF0) {
 			playSound("b#15.wav", 50);
@@ -98,7 +98,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 		petDisplayMessage(1, "Sadly, this dispenser is currently empty.");
 	} else if (msg->_item->isEquals("BeerGlass")) {
-		CGlass *glass = static_cast<CGlass *>(msg->_item);
+		CGlass *glass = dynamic_cast<CGlass *>(msg->_item);
 		_field108 = true;
 
 		if (_field104 || _fieldF0) {

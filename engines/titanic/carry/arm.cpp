@@ -163,7 +163,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 		if (!_field158)
 			playSound("z#47.wav", 100, 0, 0);
 		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
-			CGameObject *child = static_cast<CGameObject *>(getFirstChild());
+			CGameObject *child = dynamic_cast<CGameObject *>(getFirstChild());
 			if (child) {
 				child->setVisible(true);
 				petAddToInventory();
@@ -184,7 +184,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 	if (_field158) {
 		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
-			CCarry *child = static_cast<CCarry *>(getFirstChild());
+			CCarry *child = dynamic_cast<CCarry *>(getFirstChild());
 			if (child) {
 				_visibleFrame = _field170;
 				loadFrame(_visibleFrame);

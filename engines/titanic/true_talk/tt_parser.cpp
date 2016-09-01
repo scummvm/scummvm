@@ -575,7 +575,7 @@ int TTparser::loadRequests(TTword *word) {
 
 		if (_sentenceConcept) {
 			if (_sentenceConcept->get18() == 0 || _sentenceConcept->get18() == 2) {
-				TTaction *action = static_cast<TTaction *>(word);
+				TTaction *action = dynamic_cast<TTaction *>(word);
 				_sentenceConcept->set18(action->getVal());
 			}
 		}
@@ -1273,7 +1273,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 		}
 
-		TTparserNode *nextP = static_cast<TTparserNode *>(nodeP->_nextP);		
+		TTparserNode *nextP = dynamic_cast<TTparserNode *>(nodeP->_nextP);		
 		if (flag)
 			delete nodeP;
 		nodeP = nextP;
@@ -1375,7 +1375,7 @@ void TTparser::removeConcept(TTconcept *concept) {
 void TTparser::removeNode(TTparserNode *node) {
 	if (!node->_priorP)
 		// Node is the head of the chain, so reset parser's nodes pointer
-		_nodesP = static_cast<TTparserNode *>(node->_nextP);
+		_nodesP = dynamic_cast<TTparserNode *>(node->_nextP);
 
 	delete node;
 }
@@ -1525,7 +1525,7 @@ int TTparser::fn2(TTword *word) {
 
 	case 602:
 	case 607:
-		return checkReferent(static_cast<TTpronoun *>(word));
+		return checkReferent(dynamic_cast<TTpronoun *>(word));
 
 	case 608:
 		return 1;

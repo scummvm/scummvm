@@ -29,7 +29,7 @@
 namespace Titanic {
 
 CPetRemote *CPetRemoteGlyphs::getOwner() const {
-	return static_cast<CPetRemote *>(_owner);
+	return dynamic_cast<CPetRemote *>(_owner);
 }
 
 void CPetRemoteGlyphs::generateMessage(RemoteMessage msgNum, const CString &name, int num) {
@@ -44,11 +44,11 @@ void CPetRemoteGlyph::setDefaults(const CString &name, CPetControl *petControl) 
 }
 
 CPetRemoteGlyphs *CPetRemoteGlyph::getOwner() const {
-	return static_cast<CPetRemoteGlyphs *>(_owner);
+	return dynamic_cast<CPetRemoteGlyphs *>(_owner);
 }
 
 CPetGfxElement *CPetRemoteGlyph::getElement(uint id) const {
-	CPetRemote *remote = static_cast<CPetRemote *>(_owner->getOwner());
+	CPetRemote *remote = dynamic_cast<CPetRemote *>(_owner->getOwner());
 	return remote->getElement(id);
 }
 

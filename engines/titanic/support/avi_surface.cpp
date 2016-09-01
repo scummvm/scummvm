@@ -33,7 +33,7 @@ namespace Titanic {
 Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack() {
 	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
-			return *static_cast<AVIVideoTrack *>(*it);
+			return *dynamic_cast<AVIVideoTrack *>(*it);
 			
 	error("Could not find video track");
 }

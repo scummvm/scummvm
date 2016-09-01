@@ -55,7 +55,7 @@ void CBrain::load(SimpleFile *file) {
 }
 
 bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	CBrainSlot *slot = static_cast<CBrainSlot *>(msg->_other);
+	CBrainSlot *slot = dynamic_cast<CBrainSlot *>(msg->_other);
 	if (slot) {
 		if (slot->getName() == "CentralCore") {
 			setVisible(false);

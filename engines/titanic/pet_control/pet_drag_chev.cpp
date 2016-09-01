@@ -55,7 +55,7 @@ bool CPetDragChev::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
 
 bool CPetDragChev::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (msg->_dropTarget) {
-		CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_dropTarget);
+		CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_dropTarget);
 
 		if (succubus) {
 			CSetChevRoomBits chevMsg(_id);

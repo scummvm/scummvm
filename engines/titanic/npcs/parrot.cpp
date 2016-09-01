@@ -386,7 +386,7 @@ bool CParrot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		startTalking(this, 280129);
 		performAction(true);
 
-		CCarry *item = static_cast<CCarry *>(getRoot()->findByName(_string2));
+		CCarry *item = dynamic_cast<CCarry *>(getRoot()->findByName(_string2));
 		if (item) {
 			item->_fieldE0 = 1;
 			CPassOnDragStartMsg passMsg;

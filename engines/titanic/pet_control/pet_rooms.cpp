@@ -304,7 +304,7 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight_) {
 	// Do a preliminary scan of the glyph list for any glyph that is
 	// no longer valid, and thus can be removed
 	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
+		CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
 		if (!glyph->isAssigned()) {
 			_glyphs.erase(i);
 			break;
@@ -340,7 +340,7 @@ bool CPetRooms::changeLocationClass(int newClassNum) {
 
 bool CPetRooms::hasRoomFlags(uint roomFlags) const {
 	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
+		const CPetRoomsGlyph *glyph = dynamic_cast<const CPetRoomsGlyph *>(*i);
 		if (glyph->isAssigned() && glyph->getRoomFlags() == roomFlags)
 			return true;
 	}

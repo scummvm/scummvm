@@ -127,7 +127,7 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			return true;
 		}
 
-		CCharacter *npc = static_cast<CCharacter *>(msg->_dropTarget);
+		CCharacter *npc = dynamic_cast<CCharacter *>(msg->_dropTarget);
 		if (npc) {
 			CUseWithCharMsg charMsg(npc);
 			charMsg.execute(this, nullptr, 0);
@@ -157,7 +157,7 @@ bool CCarry::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CCarry::UseWithCharMsg(CUseWithCharMsg *msg) {
-	CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_character);
+	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_character);
 	if (succubus) {
 		CSubAcceptCCarryMsg carryMsg;
 		carryMsg._item = this;

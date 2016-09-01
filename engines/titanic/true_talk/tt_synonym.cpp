@@ -60,7 +60,7 @@ TTsynonym *TTsynonym::copyFrom(const TTsynonym *src) {
 }
 
 int TTsynonym::save(SimpleFile *file) {
-	for (TTstringNode *synP = this; synP; synP = static_cast<TTstringNode *>(synP->_nextP)) {
+	for (TTstringNode *synP = this; synP; synP = dynamic_cast<TTstringNode *>(synP->_nextP)) {
 		file->writeFormat("%s", " 0 ");
 		synP->_string.save(file);
 		file->writeFormat("%c", ' ');

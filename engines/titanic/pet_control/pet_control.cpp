@@ -152,7 +152,7 @@ void CPetControl::postLoad() {
 	if (!_activeNPCName.empty() && root)
 		_activeNPC = root->findByName(_activeNPCName);
 	if (!_remoteTargetName.empty() && root)
-		_remoteTarget = static_cast<CGameObject *>(root->findByName(_remoteTargetName));
+		_remoteTarget = dynamic_cast<CGameObject *>(root->findByName(_remoteTargetName));
 
 	setArea(_currentArea);
 	loaded();
@@ -255,7 +255,7 @@ CRoomItem *CPetControl::getHiddenRoom() {
 
 CGameObject *CPetControl::getHiddenObject(const CString &name) {
 	CRoomItem *room = getHiddenRoom();
-	return room ? static_cast<CGameObject *>(findUnder(room, name)) : nullptr;
+	return room ? dynamic_cast<CGameObject *>(findUnder(room, name)) : nullptr;
 }
 
 bool CPetControl::containsPt(const Common::Point &pt) const {
@@ -381,21 +381,21 @@ void CPetControl::displayMessage(const CString &msg) const {
 }
 
 CGameObject *CPetControl::getFirstObject() const {
-	return static_cast<CGameObject *>(getFirstChild());
+	return dynamic_cast<CGameObject *>(getFirstChild());
 }
 
 CGameObject *CPetControl::getNextObject(CGameObject *prior) const {
 	if (!prior || prior->getParent() != this)
 		return nullptr;
 
-	return static_cast<CGameObject *>(prior->getNextSibling());
+	return dynamic_cast<CGameObject *>(prior->getNextSibling());
 }
 
 void CPetControl::addToInventory(CGameObject *item) {
 	item->detach();
 
 	if (item->getName() == "CarryParcel") {
-		CCarry *child = static_cast<CCarry *>(getLastChild());
+		CCarry *child = dynamic_cast<CCarry *>(getLastChild());
 		if (child)
 			child->detach();
 
@@ -546,7 +546,7 @@ bool CPetControl::isBotInView(const CString &name) const {
 	
 	// Iterate to find NPC
 	for (CTreeItem *child = view->getFirstChild(); child; child = child->scan(view)) {
-		CGameObject *gameObject = static_cast<CGameObject *>(child);
+		CGameObject *gameObject = dynamic_cast<CGameObject *>(child);
 		if (gameObject) {
 			if (!gameObject->getName().compareToIgnoreCase(name))
 				return true;
@@ -614,7 +614,7 @@ bool CPetControl::isDoorOrBellbotPresent() const {
 	for (CTreeItem *treeItem = view->getFirstChild(); treeItem;
 			treeItem = treeItem->scan(view)) {
 		CString name = treeItem->getName();
-		if (static_cast<CGameObject *>(treeItem) &&
+		if (dynamic_cast<CGameObject *>(treeItem) &&
 				(name.contains("Doorbot") || name.contains("BellBot")))
 			return true;
 	}
@@ -643,7 +643,7 @@ void CPetControl::setTimerPersisent(int id, bool flag) {
 CGameObject *CPetControl::findBot(const CString &name, CTreeItem *root) {
 	for (CTreeItem *item = root; item; item = item->scan(root)) {
 		if (!item->getName().compareToIgnoreCase(name)) {
-			CGameObject *obj = static_cast<CGameObject *>(item);
+			CGameObject *obj = dynamic_cast<CGameObject *>(item);
 			if (obj)
 				return obj;
 		}

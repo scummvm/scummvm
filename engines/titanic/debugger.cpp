@@ -231,7 +231,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 		}
 
 		// Get the item
-		CCarry *item = static_cast<CCarry *>(
+		CCarry *item = dynamic_cast<CCarry *>(
 			g_vm->_window->_project->findByName(argv[1]));
 		assert(item);
 

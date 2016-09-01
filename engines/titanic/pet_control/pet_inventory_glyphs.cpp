@@ -165,7 +165,7 @@ void CPetInventoryGlyph::getTooltip(CPetText *text) {
 
 bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 	CInventoryGlyphAction *invAction = static_cast<CInventoryGlyphAction *>(action);
-	CPetInventoryGlyphs *owner = static_cast<CPetInventoryGlyphs *>(_owner);
+	CPetInventoryGlyphs *owner = dynamic_cast<CPetInventoryGlyphs *>(_owner);
 	if (!invAction)
 		return false;
 
@@ -203,8 +203,8 @@ void CPetInventoryGlyph::setItem(CGameObject *item, int val) {
 
 	if (_owner && item) {
 		int v1 = populateItem(item, val);
-		_background = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
-		_image = static_cast<CPetInventory *>(getPetSection())->getImage(v1);
+		_background = dynamic_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
+		_image = dynamic_cast<CPetInventory *>(getPetSection())->getImage(v1);
 	}
 }
 
@@ -293,7 +293,7 @@ int CPetInventoryGlyph::subMode(CGameObject *item, int val) {
 
 void CPetInventoryGlyph::startBackgroundMovie() {
 	if (_owner) {
-		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
 			section->playMovie(_background, 1);
 	}
@@ -301,7 +301,7 @@ void CPetInventoryGlyph::startBackgroundMovie() {
 
 void CPetInventoryGlyph::startForegroundMovie() {
 	if (_owner) {
-		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
 			section->playMovie(_image, 1);
 	}
@@ -309,7 +309,7 @@ void CPetInventoryGlyph::startForegroundMovie() {
 
 void CPetInventoryGlyph::stopMovie() {
 	if (_owner) {
-		CPetInventory *section = static_cast<CPetInventory *>(_owner->getOwner());
+		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
 			section->playMovie(nullptr, 1);
 	}

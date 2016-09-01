@@ -288,7 +288,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 		if (word) {
 			if (word->_wordClass == WC_ACTION) {
-				static_cast<TTaction *>(word)->setVal(1);
+				dynamic_cast<TTaction *>(word)->setVal(1);
 			}
 		} else {
 			tempStr = str;
@@ -311,7 +311,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 		if (word) {
 			if (word->_wordClass == WC_ADJECTIVE) {
-				TTadj *adj = static_cast<TTadj *>(word);
+				TTadj *adj = dynamic_cast<TTadj *>(word);
 				int val1 = word->proc15();
 				int val2 = word->proc15();
 
@@ -331,7 +331,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 			if (word) {
 				if (word->_wordClass == WC_ADJECTIVE) {
-					TTadj *adj = static_cast<TTadj *>(word);
+					TTadj *adj = dynamic_cast<TTadj *>(word);
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -350,7 +350,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				word = getPrimeWord(tempStr);
 
 				if (word && word->_wordClass == WC_ADJECTIVE) {
-					TTadj *adj = static_cast<TTadj *>(word);
+					TTadj *adj = dynamic_cast<TTadj *>(word);
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -373,7 +373,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 		if (word) {
 			if (word->_wordClass == WC_ADJECTIVE) {
-				TTadj *adj = static_cast<TTadj *>(word);
+				TTadj *adj = dynamic_cast<TTadj *>(word);
 				int val1 = word->proc15();
 				int val2 = word->proc15();
 
@@ -393,7 +393,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 			if (word) {
 				if (word->_wordClass == WC_ADJECTIVE) {
-					TTadj *adj = static_cast<TTadj *>(word);
+					TTadj *adj = dynamic_cast<TTadj *>(word);
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -412,7 +412,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				word = getPrimeWord(tempStr);
 
 				if (word) {
-					TTadj *adj = static_cast<TTadj *>(word);
+					TTadj *adj = dynamic_cast<TTadj *>(word);
 					int val1 = word->proc15();
 					int val2 = word->proc15();
 
@@ -529,7 +529,7 @@ TTword *TTvocab::getPrefixedWord(TTstring &str) const {
 		if (!word)
 			tempStr = str;
 		else if (word->_wordClass == WC_ADJECTIVE) {
-			TTadj *adj = static_cast<TTadj *>(word);
+			TTadj *adj = dynamic_cast<TTadj *>(word);
 			int val1 = word->proc15();
 			int val2 = word->proc15();
 

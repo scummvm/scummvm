@@ -133,7 +133,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			actMsg.execute("ParrotCage");
 		}
 	} else {
-		CCharacter *character = static_cast<CCharacter *>(msg->_dropTarget);
+		CCharacter *character = dynamic_cast<CCharacter *>(msg->_dropTarget);
 		if (character) {
 			CUseWithCharMsg charMsg(character);
 			charMsg.execute(this, nullptr, 0);
@@ -167,7 +167,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		return CCarry::PassOnDragStartMsg(msg);
 	}
 
-	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
+	CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
 	if (npc)
 		startTalking(npc, 0x446BF);
 
@@ -181,7 +181,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 
 bool CCarryParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	loadSurface();
-	CCarryParrot *parrot = static_cast<CCarryParrot *>(getRoot()->findByName("CarryParrot"));
+	CCarryParrot *parrot = dynamic_cast<CCarryParrot *>(getRoot()->findByName("CarryParrot"));
 	if (parrot)
 		parrot->_fieldE0 = 0;
 
@@ -189,7 +189,7 @@ bool CCarryParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 }
 
 bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
-	CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_character);
+	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_character);
 	if (succubus)
 		CParrot::_v4 = 3;
 
@@ -198,7 +198,7 @@ bool CCarryParrot::UseWithCharMsg(CUseWithCharMsg *msg) {
 
 bool CCarryParrot::ActMsg(CActMsg *msg) {
 	if (msg->_action == "FreeParrot" && (CParrot::_v4 == 4 || CParrot::_v4 == 1)) {
-		CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
+		CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(_string6));
 		if (npc)
 			startTalking(npc, 0x446BF);
 
@@ -212,7 +212,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 			playSound("z#475.wav", 100, 0, 0);
 
 			if (!_field140) {
-				CCarry *feathers = static_cast<CCarry *>(getRoot()->findByName("Feathers"));
+				CCarry *feathers = dynamic_cast<CCarry *>(getRoot()->findByName("Feathers"));
 				if (feathers) {
 					feathers->setVisible(true);
 					feathers->petAddToInventory();

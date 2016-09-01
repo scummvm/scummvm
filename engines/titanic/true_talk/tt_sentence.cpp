@@ -83,7 +83,7 @@ void TTsentence::copyFrom(const TTsentence &src) {
 	if (src._nodesP) {
 		// Source has processed nodes, so duplicate them
 		for (TTsentenceNode *node = src._nodesP; node;
-				node = static_cast<TTsentenceNode *>(node->_nextP)) {
+				node = dynamic_cast<TTsentenceNode *>(node->_nextP)) {
 			TTsentenceNode *newNode = new TTsentenceNode(node->_wordP);
 			if (_nodesP)
 				_nodesP->addToTail(newNode);
@@ -319,7 +319,7 @@ bool TTsentence::localWord(const char *str) const {
 	bool result = false;
 
 	for (TTsentenceNode *nodeP = _nodesP; nodeP && !result;
-			nodeP = static_cast<TTsentenceNode *>(nodeP->_nextP)) {
+			nodeP = dynamic_cast<TTsentenceNode *>(nodeP->_nextP)) {
 		TTsynonym syn;
 		if (!nodeP->_wordP)
 			continue;

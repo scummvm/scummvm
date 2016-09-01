@@ -52,7 +52,7 @@ void CBridgePiece::load(SimpleFile *file) {
 }
 
 bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	CShipSetting *shipSetting = static_cast<CShipSetting *>(msg->_other);
+	CShipSetting *shipSetting = dynamic_cast<CShipSetting *>(msg->_other);
 	if (!shipSetting) {
 		return CCarry::UseWithOtherMsg(msg);
 	} else if (shipSetting->_itemName != "NULL") {

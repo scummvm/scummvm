@@ -51,7 +51,7 @@ void CMaitreDProdReceptor::load(SimpleFile *file) {
 }
 
 bool CMaitreDProdReceptor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_fieldBC == 2 && static_cast<CGameObject *>(getParent())->hasActiveMovie()) {
+	if (_fieldBC == 2 && dynamic_cast<CGameObject *>(getParent())->hasActiveMovie()) {
 		return false;
 	} else {
 		CProdMaitreDMsg prodMsg(126);
@@ -61,7 +61,7 @@ bool CMaitreDProdReceptor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
-	if (_fieldBC == 2 && static_cast<CGameObject *>(getParent())->hasActiveMovie())
+	if (_fieldBC == 2 && dynamic_cast<CGameObject *>(getParent())->hasActiveMovie())
 		return false;
 	else if (++_counter < 20)
 		return true;
@@ -80,7 +80,7 @@ bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
 	else if (isEquals("Perch"))
 		prodMsg._value = 125;
 
-	CMaitreD *maitreD = static_cast<CMaitreD *>(findRoomObject("MaitreD"));
+	CMaitreD *maitreD = dynamic_cast<CMaitreD *>(findRoomObject("MaitreD"));
 	if (maitreD->_field100 <= 0)
 		prodMsg.execute(this);
 
@@ -89,7 +89,7 @@ bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
 
 bool CMaitreDProdReceptor::ProdMaitreDMsg(CProdMaitreDMsg *msg) {
 	if (_fieldC4) {
-		CMaitreD *maitreD = static_cast<CMaitreD *>(findRoomObject("MaitreD"));
+		CMaitreD *maitreD = dynamic_cast<CMaitreD *>(findRoomObject("MaitreD"));
 		if (maitreD->_field100 <= 0) {
 			CViewItem *view = findView();
 			startTalking(maitreD, msg->_value, view);

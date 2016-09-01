@@ -37,14 +37,14 @@ void CMailMan::load(SimpleFile *file) {
 }
 
 CGameObject *CMailMan::getFirstObject() const {
-	return static_cast<CGameObject *>(getFirstChild());
+	return dynamic_cast<CGameObject *>(getFirstChild());
 }
 
 CGameObject *CMailMan::getNextObject(CGameObject *prior) const {
 	if (!prior || prior->getParent() != this)
 		return nullptr;
 
-	return static_cast<CGameObject *>(prior->getNextSibling());
+	return dynamic_cast<CGameObject *>(prior->getNextSibling());
 }
 
 void CMailMan::addMail(CGameObject *obj, int id) {

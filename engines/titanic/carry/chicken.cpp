@@ -80,7 +80,7 @@ bool CChicken::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 
 		petAddToInventory();
 	} else {
-		CSauceDispensor *dispensor = static_cast<CSauceDispensor *>(msg->_other);
+		CSauceDispensor *dispensor = dynamic_cast<CSauceDispensor *>(msg->_other);
 		if (!dispensor || _string6 == "None") {
 			return CCarry::UseWithOtherMsg(msg);
 		} else {
@@ -94,7 +94,7 @@ bool CChicken::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 }
 
 bool CChicken::UseWithCharMsg(CUseWithCharMsg *msg) {
-	CSuccUBus *succubus = static_cast<CSuccUBus *>(msg->_character);
+	CSuccUBus *succubus = dynamic_cast<CSuccUBus *>(msg->_character);
 	if (succubus) {
 		setPosition(Point(330, 300));
 		CSubAcceptCCarryMsg acceptMsg;

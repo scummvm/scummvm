@@ -52,7 +52,7 @@ void CMagazine::load(SimpleFile *file) {
 }
 
 bool CMagazine::UseWithCharMsg(CUseWithCharMsg *msg) {
-	CDeskbot *deskbot = static_cast<CDeskbot *>(msg->_character);
+	CDeskbot *deskbot = dynamic_cast<CDeskbot *>(msg->_character);
 	if (deskbot) {
 		if (deskbot->_deskbotActive) {
 			setVisible(false);

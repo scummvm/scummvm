@@ -85,7 +85,7 @@ void CProjectItem::buildFilesList() {
 	CTreeItem *treeItem = getFirstChild();
 	while (treeItem) {
 		if (treeItem->isFileItem()) {
-			CString name = static_cast<CFileItem *>(treeItem)->getFilename();
+			CString name = dynamic_cast<CFileItem *>(treeItem)->getFilename();
 			_files.add()->_name = name;
 		}
 

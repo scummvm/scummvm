@@ -43,7 +43,7 @@ void CNapkin::load(SimpleFile *file) {
 }
 
 bool CNapkin::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	CChicken *chicken = static_cast<CChicken *>(msg->_other);
+	CChicken *chicken = dynamic_cast<CChicken *>(msg->_other);
 	if (chicken) {
 		if (chicken->_string6 == "None" || chicken->_field12C) {
 			CActMsg actMsg("Clean");

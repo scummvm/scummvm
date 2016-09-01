@@ -102,7 +102,7 @@ void CPhonographCylinder::load(SimpleFile *file) {
 }
 
 bool CPhonographCylinder::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	CPhonograph *phonograph = static_cast<CPhonograph *>(msg->_other);
+	CPhonograph *phonograph = dynamic_cast<CPhonograph *>(msg->_other);
 	if (phonograph) {
 		CSetVarMsg varMsg("m_RecordStatus", 1);
 		return true;
