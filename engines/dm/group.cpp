@@ -1678,158 +1678,138 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 }
 
 void GroupMan::removeActiveGroup(uint16 activeGroupIndex) {
-	ActiveGroup *L0347_ps_ActiveGroup;
-	Group *L0348_ps_Group;
-
-
-	if ((activeGroupIndex > _maxActiveGroupCount) || (_activeGroups[activeGroupIndex]._groupThingIndex < 0)) {
+	if ((activeGroupIndex > _maxActiveGroupCount) || (_activeGroups[activeGroupIndex]._groupThingIndex < 0))
 		return;
-	}
-	L0347_ps_ActiveGroup = &_activeGroups[activeGroupIndex];
-	L0348_ps_Group = &((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[L0347_ps_ActiveGroup->_groupThingIndex];
+
+	ActiveGroup *activeGroup = &_activeGroups[activeGroupIndex];
+	Group *group = &((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex];
 	_currActiveGroupCount--;
-	L0348_ps_Group->_cells = L0347_ps_ActiveGroup->_cells;
-	L0348_ps_Group->setDir(normalizeModulo4(L0347_ps_ActiveGroup->_directions));
-	if (L0348_ps_Group->getBehaviour() >= k4_behavior_USELESS) {
-		L0348_ps_Group->setBehaviour(k0_behavior_WANDER);
+	group->_cells = activeGroup->_cells;
+	group->setDir(normalizeModulo4(activeGroup->_directions));
+	if (group->getBehaviour() >= k4_behavior_USELESS) {
+		group->setBehaviour(k0_behavior_WANDER);
 	}
-	L0347_ps_ActiveGroup->_groupThingIndex = -1;
+	activeGroup->_groupThingIndex = -1;
 }
 
 void GroupMan::removeAllActiveGroups() {
-	for (int16 L0397_ui_ActiveGroupIndex = 0; _currActiveGroupCount > 0; L0397_ui_ActiveGroupIndex++) {
-		if (_activeGroups[L0397_ui_ActiveGroupIndex]._groupThingIndex >= 0) {
-			removeActiveGroup(L0397_ui_ActiveGroupIndex);
+	for (int16 idx = 0; _currActiveGroupCount > 0; idx++) {
+		if (_activeGroups[idx]._groupThingIndex >= 0) {
+			removeActiveGroup(idx);
 		}
 	}
 }
 
 void GroupMan::addAllActiveGroups() {
-	uint16 L0398_ui_MapX;
-	uint16 L0399_ui_MapY;
-	Thing L0400_T_Thing;
-	byte *L0401_puc_Square;
-	Thing *L0402_pT_SquareFirstThing;
-
-
-	L0401_puc_Square = _vm->_dungeonMan->_currMapData[0];
-	L0402_pT_SquareFirstThing = &_vm->_dungeonMan->_squareFirstThings[_vm->_dungeonMan->_currMapColCumulativeSquareFirstThingCount[0]];
-	for (L0398_ui_MapX = 0; L0398_ui_MapX < _vm->_dungeonMan->_currMapWidth; L0398_ui_MapX++) {
-		for (L0399_ui_MapY = 0; L0399_ui_MapY < _vm->_dungeonMan->_currMapHeight; L0399_ui_MapY++) {
-			if (getFlag(*L0401_puc_Square++, k0x0010_ThingListPresent)) {
-				L0400_T_Thing = *L0402_pT_SquareFirstThing++;
+	byte *curSquare = _vm->_dungeonMan->_currMapData[0];
+	Thing *squareCurThing = &_vm->_dungeonMan->_squareFirstThings[_vm->_dungeonMan->_currMapColCumulativeSquareFirstThingCount[0]];
+	for (uint16 mapX = 0; mapX < _vm->_dungeonMan->_currMapWidth; mapX++) {
+		for (uint16 mapY = 0; mapY < _vm->_dungeonMan->_currMapHeight; mapY++) {
+			if (getFlag(*curSquare++, k0x0010_ThingListPresent)) {
+				Thing curThing = *squareCurThing++;
 				do {
-					if (L0400_T_Thing.getType() == k4_GroupThingType) {
-						groupDeleteEvents(L0398_ui_MapX, L0399_ui_MapY);
-						addActiveGroup(L0400_T_Thing, L0398_ui_MapX, L0399_ui_MapY);
-						startWanedring(L0398_ui_MapX, L0399_ui_MapY);
+					if (curThing.getType() == k4_GroupThingType) {
+						groupDeleteEvents(mapX, mapY);
+						addActiveGroup(curThing, mapX, mapY);
+						startWanedring(mapX, mapY);
 						break;
 					}
-				} while ((L0400_T_Thing = _vm->_dungeonMan->getNextThing(L0400_T_Thing)) != Thing::_endOfList);
+					curThing = _vm->_dungeonMan->getNextThing(curThing);
+				} while (curThing != Thing::_endOfList);
 			}
 		}
 	}
 }
 
 Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
-	Thing L0349_T_GroupThing;
-	uint16 L0350_ui_BaseHealth;
-	uint16 L0351_ui_Cell = 0;
-	uint16 L0352_ui_GroupCells = 0;
-	Group* L0353_ps_Group;
-	CreatureInfo* L0354_ps_CreatureInfo;
-	bool L0355_B_SeveralCreaturesInGroup;
-
-
-	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) || ((L0349_T_GroupThing = _vm->_dungeonMan->getUnusedThing(k4_GroupThingType)) == Thing::_none)) {
+	Thing groupThing = _vm->_dungeonMan->getUnusedThing(k4_GroupThingType);
+	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex))
+		|| (groupThing == Thing::_none)) {
 		return Thing::_none;
 	}
-	L0353_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0349_T_GroupThing);
-	L0353_ps_Group->_slot = Thing::_endOfList;
-	L0353_ps_Group->setDoNotDiscard(false);
-	L0353_ps_Group->setDir(dir);
-	L0353_ps_Group->setCount(creatureCount);
-	L0355_B_SeveralCreaturesInGroup = creatureCount;
-	if (L0355_B_SeveralCreaturesInGroup)
-		L0351_ui_Cell = _vm->getRandomNumber(4);
+	Group *group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+	group->_slot = Thing::_endOfList;
+	group->setDoNotDiscard(false);
+	group->setDir(dir);
+	group->setCount(creatureCount);
+	bool severalCreaturesInGroup = creatureCount;
+	uint16 cell = 0;
+	uint16 groupCells = 0;
+	if (severalCreaturesInGroup)
+		cell = _vm->getRandomNumber(4);
 	else
-		L0352_ui_GroupCells = k255_CreatureTypeSingleCenteredCreature;
+		groupCells = k255_CreatureTypeSingleCenteredCreature;
 
-	L0354_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L0353_ps_Group->_type = creatureType];
-	L0350_ui_BaseHealth = L0354_ps_CreatureInfo->_baseHealth;
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type = creatureType];
+	uint16 baseHealth = creatureInfo->_baseHealth;
 	do {
-		L0353_ps_Group->_health[creatureCount] = (L0350_ui_BaseHealth * healthMultiplier) + _vm->getRandomNumber((L0350_ui_BaseHealth >> 2) + 1);
-		if (L0355_B_SeveralCreaturesInGroup) {
-			L0352_ui_GroupCells = getGroupValueUpdatedWithCreatureValue(L0352_ui_GroupCells, creatureCount, L0351_ui_Cell++);
-			if (getFlag(L0354_ps_CreatureInfo->_attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
-				L0351_ui_Cell++;
-			}
-			L0351_ui_Cell &= 0x0003;
+		group->_health[creatureCount] = (baseHealth * healthMultiplier) + _vm->getRandomNumber((baseHealth >> 2) + 1);
+		if (severalCreaturesInGroup) {
+			groupCells = getGroupValueUpdatedWithCreatureValue(groupCells, creatureCount, cell++);
+			if (getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf)
+				cell++;
+
+			cell &= 0x0003;
 		}
 	} while (creatureCount--);
-	L0353_ps_Group->_cells = L0352_ui_GroupCells;
-	if (_vm->_moveSens->getMoveResult(L0349_T_GroupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) { /* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile impact (in which case the thing data was marked as unused) or the party is on the destination square and an event is created to move the creature into the dungeon later (in which case the thing is referenced in the event) */
+	group->_cells = groupCells;
+	if (_vm->_moveSens->getMoveResult(groupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) {
+		/* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile
+		   impact (in which case the thing data was marked as unused) or the party is on the destination
+		   square and an event is created to move the creature into the dungeon later
+		   (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
 	_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
-	return L0349_T_GroupThing;
+	return groupThing;
 }
 
 bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
-	int16 L0544_i_SquareType;
+	int16 squareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType();
 
-	return (((L0544_i_SquareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType()) == k1_CorridorElemType)
-			|| (L0544_i_SquareType == k5_ElementTypeTeleporter) || (L0544_i_SquareType == k2_ElementTypePit) || (L0544_i_SquareType == k4_DoorElemType));
+	return ((squareType == k1_CorridorElemType) || (squareType == k5_ElementTypeTeleporter)
+		 || (squareType == k2_ElementTypePit) || (squareType == k4_DoorElemType));
 }
 
 int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {
-	uint16 L0321_ui_Counter;
-	int16 L0322_i_CreatureOrdinal;
-	Thing L0323_T_GroupThing;
-	Group* L0324_ps_Group;
-	signed char L0325_auc_OrderedCellsToAttack[4];
-
-	L0323_T_GroupThing = groupGetThing(groupX, groupY);
-	if (L0323_T_GroupThing == Thing::_endOfList)
+	Thing groupThing = groupGetThing(groupX, groupY);
+	if (groupThing == Thing::_endOfList)
 		return 0;
 
-	L0324_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0323_T_GroupThing);
-	setOrderedCellsToAttack(L0325_auc_OrderedCellsToAttack, groupX, groupY, partyX, partyY, champCell);
-	L0321_ui_Counter = 0;
+	Group *group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+	signed char orderedCellsToAttack[4];
+	setOrderedCellsToAttack(orderedCellsToAttack, groupX, groupY, partyX, partyY, champCell);
+	uint16 counter = 0;
 	for (;;) { /*_Infinite loop_*/
-		L0322_i_CreatureOrdinal = getCreatureOrdinalInCell(L0324_ps_Group, L0325_auc_OrderedCellsToAttack[L0321_ui_Counter]);
-		if (L0322_i_CreatureOrdinal)
-			return L0322_i_CreatureOrdinal;
+		int16 creatureOrdinal = getCreatureOrdinalInCell(group, orderedCellsToAttack[counter]);
+		if (creatureOrdinal)
+			return creatureOrdinal;
 
-		L0321_ui_Counter++;
+		counter++;
 	}
 }
 
 int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
 	int16 L0565_i_Damage = 0;
 	int16 L0566_i_Damage = 0;
-	int16 L0567_i_DoubledMapDifficulty;
 	int16 L0568_i_Defense;
 	int16 L0569_i_Outcome;
-	bool L0570_B_ActionHitsNonMaterialCreatures;
-	int16 L0571_i_ActionHandObjectIconIndex;
-	CreatureInfo* L0572_ps_CreatureInfo;
 
-	if (champIndex >= _vm->_championMan->_partyChampionCount) {
+	if (champIndex >= _vm->_championMan->_partyChampionCount)
 		return 0;
-	}
-	if (!champ->_currHealth) {
+
+	if (!champ->_currHealth)
 		return 0;
-	}
-	L0567_i_DoubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	L0572_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	L0571_i_ActionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
-	L0570_B_ActionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
-	if (L0570_B_ActionHitsNonMaterialCreatures)
+
+	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
+	int16 actionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
+	bool actionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
+	if (actionHitsNonMaterialCreatures)
 		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 
-	if ((!getFlag(L0572_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) || L0570_B_ActionHitsNonMaterialCreatures) &&
-		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + L0572_ps_CreatureInfo->_dexterity + L0567_i_DoubledMapDifficulty - 16)) ||
+	if ((!getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) || actionHitsNonMaterialCreatures) &&
+		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + creatureInfo->_dexterity + doubledMapDifficulty - 16)) ||
 		(!_vm->getRandomNumber(4)) ||
 		 (_vm->_championMan->isLucky(champ, 75 - actionHitProbability)))) {
 
@@ -1839,10 +1819,10 @@ int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* g
 
 		L0565_i_Damage += _vm->getRandomNumber((L0565_i_Damage >> 1) + 1);
 		L0565_i_Damage = ((long)L0565_i_Damage * (long)actionDamageFactor) >> 5;
-		L0568_i_Defense = _vm->getRandomNumber(32) + L0572_ps_CreatureInfo->_defense + L0567_i_DoubledMapDifficulty;
-		if (L0571_i_ActionHandObjectIconIndex == k39_IconIndiceWeaponDiamondEdge)
+		L0568_i_Defense = _vm->getRandomNumber(32) + creatureInfo->_defense + doubledMapDifficulty;
+		if (actionHandObjectIconIndex == k39_IconIndiceWeaponDiamondEdge)
 			L0568_i_Defense -= L0568_i_Defense >> 2;
-		else if (L0571_i_ActionHandObjectIconIndex == k43_IconIndiceWeaponHardcleaveExecutioner)
+		else if (actionHandObjectIconIndex == k43_IconIndiceWeaponHardcleaveExecutioner)
 			L0568_i_Defense -= L0568_i_Defense >> 3;
 
 		L0565_i_Damage += _vm->getRandomNumber(32) - L0568_i_Defense;
@@ -1854,11 +1834,12 @@ T0231009:
 				goto T0231015;
 
 			L0565_i_Damage++;
-			if (((L0566_i_Damage += _vm->getRandomNumber(16)) > 0) || (_vm->getRandomNumber(2))) {
+			L0566_i_Damage += _vm->getRandomNumber(16);
+
+			if ((L0566_i_Damage > 0) || (_vm->getRandomNumber(2))) {
 				L0565_i_Damage += _vm->getRandomNumber(4);
-				if (!_vm->getRandomNumber(4)) {
+				if (!_vm->getRandomNumber(4))
 					L0565_i_Damage += MAX(0, L0566_i_Damage + _vm->getRandomNumber(16));
-				}
 			}
 		}
 		L0565_i_Damage >>= 1;
@@ -1866,13 +1847,16 @@ T0231009:
 		L0565_i_Damage += _vm->getRandomNumber(L0565_i_Damage);
 		L0565_i_Damage >>= 2;
 		L0565_i_Damage += _vm->getRandomNumber(4) + 1;
-		if ((L0571_i_ActionHandObjectIconIndex == k40_IconIndiceWeaponVorpalBlade) && !getFlag(L0572_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) && !(L0565_i_Damage >>= 1))
+		if ((actionHandObjectIconIndex == k40_IconIndiceWeaponVorpalBlade)
+			&& !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)
+			&& !(L0565_i_Damage >>= 1))
 			goto T0231015;
-		if (_vm->getRandomNumber(64) < _vm->_championMan->getSkillLevel(champIndex, skillIndex)) {
+
+		if (_vm->getRandomNumber(64) < _vm->_championMan->getSkillLevel(champIndex, skillIndex))
 			L0565_i_Damage += L0565_i_Damage + 10;
-		}
+
 		L0569_i_Outcome = groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
-		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * L0572_ps_CreatureInfo->getExperience() >> 4) + 3);
+		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * creatureInfo->getExperience() >> 4) + 3);
 		_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
 	}
@@ -1889,31 +1873,26 @@ T0231016:
 }
 
 void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
-	Thing L0545_T_Thing;
-	int16 L0546_i_Multiple;
-#define AL0546_i_SquareType    L0546_i_Multiple
-#define AL0546_i_FluxcageCount L0546_i_Multiple
-	TimelineEvent L0547_s_Event;
-
-
-	AL0546_i_SquareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
-	if ((AL0546_i_SquareType == k0_ElementTypeWall) || (AL0546_i_SquareType == k3_ElementTypeStairs))
+	SquareType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	if ((squareType == k0_WallElemType) || (squareType == k3_StairsElemType))
 		return;
 
-	L0545_T_Thing = _vm->_dungeonMan->getUnusedThing(k15_ExplosionThingType);
-	if (L0545_T_Thing == Thing::_none)
+	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(k15_ExplosionThingType);
+	if (unusedThing == Thing::_none)
 		return;
 
-	_vm->_dungeonMan->linkThingToList(L0545_T_Thing, Thing(0), mapX, mapY);
-	(((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[L0545_T_Thing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
-	setMapAndTime(L0547_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
-	L0547_s_Event._type = k24_TMEventTypeRemoveFluxcage;
-	L0547_s_Event._priority = 0;
-	L0547_s_Event._C._slot = L0545_T_Thing.toUint16();
-	L0547_s_Event._B._location._mapX = mapX;
-	L0547_s_Event._B._location._mapY = mapY;
-	L0547_s_Event._B._location._mapY = mapY;
-	_vm->_timeline->addEventGetEventIndex(&L0547_s_Event);
+	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
+	(((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
+	TimelineEvent newEvent;
+	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
+	newEvent._type = k24_TMEventTypeRemoveFluxcage;
+	newEvent._priority = 0;
+	newEvent._C._slot = unusedThing.toUint16();
+	newEvent._B._location._mapX = mapX;
+	newEvent._B._location._mapY = mapY;
+	newEvent._B._location._mapY = mapY;
+	_vm->_timeline->addEventGetEventIndex(&newEvent);
+	int16 AL0546_i_FluxcageCount;
 	if (isLordChaosOnSquare(mapX, mapY - 1)) {
 		mapY--;
 		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX + 1, mapY);
@@ -1945,85 +1924,78 @@ T0224008:
 }
 
 uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
-	Thing L0542_T_Thing;
-	Group* L0543_ps_Group;
-
-	L0542_T_Thing = groupGetThing(mapX, mapY);
-	if (L0542_T_Thing == Thing::_endOfList)
+	Thing thing = groupGetThing(mapX, mapY);
+	if (thing == Thing::_endOfList)
 		return 0;
 
-	L0543_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0542_T_Thing);
-	if (L0543_ps_Group->_type == k23_CreatureTypeLordChaos)
-		return L0542_T_Thing.toUint16();
+	Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
+	if (group->_type == k23_CreatureTypeLordChaos)
+		return thing.toUint16();
 
 	return 0;
 }
 
 bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
-	Thing L0540_T_Thing;
-	int16 L0541_i_SquareType;
-
-	L0541_i_SquareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
-	if ((L0541_i_SquareType == k0_ElementTypeWall) || (L0541_i_SquareType == k3_ElementTypeStairs))
+	SquareType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	if ((squareType == k0_WallElemType) || (squareType == k3_StairsElemType))
 		return false;
 
-	L0540_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while (L0540_T_Thing != Thing::_endOfList) {
-		if ((L0540_T_Thing.getType() == k15_ExplosionThingType) && (((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[L0540_T_Thing.getIndex()].getType() == k50_ExplosionType_Fluxcage)) {
+	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	while (thing != Thing::_endOfList) {
+		if ((thing.getType() == k15_ExplosionThingType) && (((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
 			return true;
-		}
-		L0540_T_Thing = _vm->_dungeonMan->getNextThing(L0540_T_Thing);
+
+		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	return false;
 }
 
 void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
-	int16 L0548_i_MapX;
-	int16 L0549_i_MapY;
-	uint16 L0551_ui_FluxcageCount;
-	uint16 L0552_ui_FluxcageIndex;
-	uint16 L0553_ui_Counter;
-	bool L0554_aB_Fluxcages[4];
-	Thing L0555_T_LordChaosThing;
-
-	if ((mapX < 0) || (mapX >= _vm->_dungeonMan->_currMapWidth) || (mapY < 0) || (mapY >= _vm->_dungeonMan->_currMapHeight)) {
+	if ((mapX < 0) || (mapX >= _vm->_dungeonMan->_currMapWidth) || (mapY < 0) || (mapY >= _vm->_dungeonMan->_currMapHeight))
 		return;
-	}
 
 	_vm->_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, mapX, mapY, k255_CreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
-	L0555_T_LordChaosThing = Thing(isLordChaosOnSquare(mapX, mapY));
-	if (L0555_T_LordChaosThing.toUint16()) {
-		L0551_ui_FluxcageCount = (L0554_aB_Fluxcages[0] = isFluxcageOnSquare(mapX - 1, mapY)) +
-			(L0554_aB_Fluxcages[1] = isFluxcageOnSquare(mapX + 1, mapY)) +
-			(L0554_aB_Fluxcages[2] = isFluxcageOnSquare(mapX, mapY - 1)) +
-			(L0554_aB_Fluxcages[3] = isFluxcageOnSquare(mapX, mapY + 1));
-		while (L0551_ui_FluxcageCount++ < 4) {
-			L0548_i_MapX = mapX;
-			L0549_i_MapY = mapY;
-			L0552_ui_FluxcageIndex = _vm->getRandomNumber(4);
-			for (L0553_ui_Counter = 5; --L0553_ui_Counter; L0552_ui_FluxcageIndex = returnNextVal(L0552_ui_FluxcageIndex)) {
-				if (!L0554_aB_Fluxcages[L0552_ui_FluxcageIndex]) {
-					L0554_aB_Fluxcages[L0552_ui_FluxcageIndex] = true;
-					switch (L0552_ui_FluxcageIndex) {
+	Thing lordChaosThing = Thing(isLordChaosOnSquare(mapX, mapY));
+	if (lordChaosThing.toUint16()) {
+		bool isFluxcages[4];
+		isFluxcages[0] = isFluxcageOnSquare(mapX - 1, mapY);
+		isFluxcages[1] = isFluxcageOnSquare(mapX + 1, mapY);
+		isFluxcages[2] = isFluxcageOnSquare(mapX, mapY - 1);
+		isFluxcages[3] = isFluxcageOnSquare(mapX, mapY + 1);
+
+		uint16 fluxcageCount = 0;
+		for (int i = 0; i < 4; i++) {
+			if (isFluxcages[i])
+				fluxcageCount++;
+		}
+
+		while (fluxcageCount++ < 4) {
+			int16 destMapX = mapX;
+			int16 destMapY = mapY;
+			uint16 fluxcageIndex = _vm->getRandomNumber(4);
+			for (uint16 i = 5; --i; fluxcageIndex = returnNextVal(fluxcageIndex)) {
+				if (!isFluxcages[fluxcageIndex]) {
+					isFluxcages[fluxcageIndex] = true;
+					switch (fluxcageIndex) {
 					case 0:
-						L0548_i_MapX--;
+						destMapX--;
 						break;
 					case 1:
-						L0548_i_MapX++;
+						destMapX++;
 						break;
 					case 2:
-						L0549_i_MapY--;
+						destMapY--;
 						break;
 					case 3:
-						L0549_i_MapY++;
+						destMapY++;
 					}
 					break;
 				}
 			}
-			if (isSquareACorridorTeleporterPitOrDoor(L0548_i_MapX, L0549_i_MapY)) {
-				if (!_vm->_moveSens->getMoveResult(L0555_T_LordChaosThing, mapX, mapY, L0548_i_MapX, L0549_i_MapY)) {
-					startWanedring(L0548_i_MapX, L0549_i_MapY);
-				}
+			if (isSquareACorridorTeleporterPitOrDoor(destMapX, destMapY)) {
+				if (!_vm->_moveSens->getMoveResult(lordChaosThing, mapX, mapY, destMapX, destMapY))
+					startWanedring(destMapX, destMapY);
+
 				return;
 			}
 		}
