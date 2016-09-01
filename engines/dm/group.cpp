@@ -1892,35 +1892,28 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	newEvent._B._location._mapY = mapY;
 	newEvent._B._location._mapY = mapY;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
-	int16 AL0546_i_FluxcageCount;
+	int16 fluxcageCount;
 	if (isLordChaosOnSquare(mapX, mapY - 1)) {
 		mapY--;
-		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX + 1, mapY);
-		goto T0224005;
-	}
-	if (isLordChaosOnSquare(mapX - 1, mapY)) {
+		fluxcageCount = isFluxcageOnSquare(mapX + 1, mapY);
+		fluxcageCount += isFluxcageOnSquare(mapX, mapY - 1) + isFluxcageOnSquare(mapX - 1, mapY);
+	} else if (isLordChaosOnSquare(mapX - 1, mapY)) {
 		mapX--;
-		AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX, mapY + 1);
-T0224005:
-		AL0546_i_FluxcageCount += isFluxcageOnSquare(mapX, mapY - 1) + isFluxcageOnSquare(mapX - 1, mapY);
-	} else {
-		if (isLordChaosOnSquare(mapX + 1, mapY)) {
-			mapX++;
-			AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX, mapY - 1);
-			goto T0224008;
-		}
-		if (isLordChaosOnSquare(mapX, mapY + 1)) {
-			mapY++;
-			AL0546_i_FluxcageCount = isFluxcageOnSquare(mapX - 1, mapY);
-T0224008:
-			AL0546_i_FluxcageCount += isFluxcageOnSquare(mapX, mapY + 1) + isFluxcageOnSquare(mapX + 1, mapY);
-		} else {
-			AL0546_i_FluxcageCount = 0;
-		}
-	}
-	if (AL0546_i_FluxcageCount == 2) {
+		fluxcageCount = isFluxcageOnSquare(mapX, mapY + 1);
+		fluxcageCount += isFluxcageOnSquare(mapX, mapY - 1) + isFluxcageOnSquare(mapX - 1, mapY);
+	} else if (isLordChaosOnSquare(mapX + 1, mapY)) {
+		mapX++;
+		fluxcageCount = isFluxcageOnSquare(mapX, mapY - 1);
+		fluxcageCount += isFluxcageOnSquare(mapX, mapY + 1) + isFluxcageOnSquare(mapX + 1, mapY);
+	} else if (isLordChaosOnSquare(mapX, mapY + 1)) {
+		mapY++;
+		fluxcageCount = isFluxcageOnSquare(mapX - 1, mapY);
+		fluxcageCount += isFluxcageOnSquare(mapX, mapY + 1) + isFluxcageOnSquare(mapX + 1, mapY);
+	} else
+		fluxcageCount = 0;
+
+	if (fluxcageCount == 2)
 		processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
-	}
 }
 
 uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
