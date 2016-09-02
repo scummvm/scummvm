@@ -98,6 +98,7 @@ public:
 
 public:
 	int _colorDepth;
+	int _keyCode;
 
 protected:
 	virtual Common::Error run();

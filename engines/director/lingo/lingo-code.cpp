@@ -756,13 +756,13 @@ void Lingo::c_whencode() {
 	Datum d;
 	int start = g_lingo->_pc;
 	int end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
-	Common::String eventname((char *)&(*g_lingo->_currentScript)[start]);
+	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
 	start += g_lingo->calcStringAlignment(eventname.c_str());
 
-	g_lingo->define(eventname, start, 0, NULL, end);
-
 	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+
+	g_lingo->define(eventname, start, 0, NULL, end);
 
 	g_lingo->_pc = end;
 }
@@ -833,7 +833,7 @@ void Lingo::c_call() {
 	g_lingo->call(name, nargs);
 }
 
-void Lingo::call(Common::String &name, int nargs) {
+void Lingo::call(Common::String name, int nargs) {
 	bool drop = false;
 
 	Symbol *sym;

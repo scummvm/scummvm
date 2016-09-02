@@ -839,6 +839,11 @@ void Score::processEvents() {
 
 				_lingo->processEvent(kEventMouseUp, _frames[_currentFrame]->getSpriteIDFromPos(pos));
 			}
+
+			if (event.type == Common::EVENT_KEYDOWN) {
+				_vm->_keyCode = event.kbd.keycode;
+				_lingo->processEvent(kEventKeyDown, 0);
+			}
 		}
 
 		g_system->updateScreen();

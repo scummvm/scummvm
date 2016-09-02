@@ -72,6 +72,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
 	_colorDepth = 8;	// FIXME. Check if it is 8-bit
+	_keyCode = 0;
 }
 
 DirectorEngine::~DirectorEngine() {

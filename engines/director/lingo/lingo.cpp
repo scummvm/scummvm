@@ -273,10 +273,14 @@ void Lingo::processEvent(LEvent event, int entityId) {
 
 	ScriptType st = event2script(event);
 
-	if (st != kNoneScript)
+	if (st != kNoneScript) {
 		executeScript(st, entityId + 1);
-	else
+	} else if (_handlers.contains(_eventHandlerTypes[event])) {
+		call(_eventHandlerTypes[event], 0);
+	} else {
+		warning("---- Handler %s is not set", _eventHandlerTypes[event]);
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
+	}
 }
 
 int Lingo::alignTypes(Datum &d1, Datum &d2) {
