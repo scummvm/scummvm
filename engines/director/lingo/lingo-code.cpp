@@ -216,6 +216,15 @@ void Lingo::c_varpush() {
 	char *name = (char *)&(*g_lingo->_currentScript)[g_lingo->_pc];
 	Datum d;
 
+	g_lingo->_pc += g_lingo->calcStringAlignment(name);
+
+	if (g_lingo->_handlers.contains(name)) {
+		d.type = HANDLER;
+		d.u.s = new Common::String(name);
+		g_lingo->push(d);
+		return;
+	}
+
 	d.u.sym = g_lingo->lookupVar(name);
 	if (d.u.sym->type == CASTREF) {
 		d.type = INT;
@@ -227,8 +236,6 @@ void Lingo::c_varpush() {
 	} else {
 		d.type = VAR;
 	}
-
-	g_lingo->_pc += g_lingo->calcStringAlignment(name);
 
 	g_lingo->push(d);
 }
@@ -297,6 +304,12 @@ void Lingo::c_eval() {
 
 	Datum d;
 	d = g_lingo->pop();
+
+	if (d.type == HANDLER) {
+		g_lingo->call(*d.u.s, 0);
+		delete d.u.s;
+		return;
+	}
 
 	if (d.type != VAR) { // It could be cast ref
 		g_lingo->push(d);
