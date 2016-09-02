@@ -60,7 +60,7 @@ DialogueResource *CDialogueFile::addToCache(int index) {
 
 	// Scan cache for a free slot
 	uint cacheIndex = 0;
-	while (cacheIndex < _cache.size() && !_cache[cacheIndex]._active)
+	while (cacheIndex < _cache.size() && _cache[cacheIndex]._active)
 		++cacheIndex;
 	if (cacheIndex == _cache.size())
 		return nullptr;
