@@ -86,14 +86,14 @@ public:
 	 * Will fail if there is already an active border.
 	 * @param The surface that will be displayed.
 	 */
-	void addActiveBorder(TransparentSurface &source);
+	void addActiveBorder(TransparentSurface *source);
 
 	/**
 	 * Add the given surface as the display of the border in the inactive state.
 	 * Will fail if there is already an inactive border.
 	 * @param The surface that will be displayed.
 	 */
-	void addInactiveBorder(TransparentSurface &source);
+	void addInactiveBorder(TransparentSurface *source);
 
 	/**
 	 * Accessor function for the custom offsets.
