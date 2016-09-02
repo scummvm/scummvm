@@ -277,6 +277,7 @@ void Lingo::processEvent(LEvent event, int entityId) {
 		executeScript(st, entityId + 1);
 	} else if (_handlers.contains(_eventHandlerTypes[event])) {
 		call(_eventHandlerTypes[event], 0);
+		pop();
 	} else {
 		warning("---- Handler %s is not set", _eventHandlerTypes[event]);
 		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
