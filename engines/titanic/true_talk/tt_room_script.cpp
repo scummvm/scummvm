@@ -34,7 +34,7 @@ TTroomScriptBase::TTroomScriptBase(int scriptId,
 /*------------------------------------------------------------------------*/
 
 TTroomScript::TTroomScript(int scriptId) :
-	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0) {
+	TTroomScriptBase(scriptId, "", "", 0, -1, -1, -1, 0, 0), _field54(0) {
 }
 
 bool TTroomScript::proc8() const {
