@@ -43,27 +43,27 @@
 namespace DM {
 
 void InventoryMan::initConstants() {
-	static const char* G0428_apc_SkillLevelNames_EN_ANY[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
+	static const char* skillLevelNamesEN[15] = {"NEOPHYTE", "NOVICE", "APPRENTICE", "JOURNEYMAN", "CRAFTSMAN",
 		"ARTISAN", "ADEPT", "EXPERT", "` MASTER", "a MASTER","b MASTER", "c MASTER", "d MASTER", "e MASTER", "ARCHMASTER"};
-	static const char* G0428_apc_SkillLevelNames_DE_DEU[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
+	static const char* skillLevelNamesDE[15] = {"ANFAENGER", "NEULING", "LEHRLING", "ARBEITER", "GESELLE", "HANDWERKR", "FACHMANN",
 		"EXPERTE", "` MEISTER", "a MEISTER", "b MEISTER", "c MEISTER", "d MEISTER", "e MEISTER", "ERZMEISTR"};
-	static const char* G0428_apc_SkillLevelNames_FR_FRA[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
+	static const char* skillLevelNamesFR[15] = {"NEOPHYTE", "NOVICE", "APPRENTI", "COMPAGNON", "ARTISAN", "PATRON",
 		"ADEPTE", "EXPERT", "MAITRE '", "MAITRE a", "MAITRE b", "MAITRE c", "MAITRE d", "MAITRE e", "SUR-MAITRE"};
-	const char **g428_byLanguage;
+	const char **translatedSkillLevel;
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		g428_byLanguage = G0428_apc_SkillLevelNames_EN_ANY;
+		translatedSkillLevel = skillLevelNamesEN;
 		break;
 	case Common::DE_DEU:
-		g428_byLanguage = G0428_apc_SkillLevelNames_DE_DEU;
+		translatedSkillLevel = skillLevelNamesDE;
 		break;
 	case Common::FR_FRA:
-		g428_byLanguage = G0428_apc_SkillLevelNames_FR_FRA;
+		translatedSkillLevel = skillLevelNamesFR;
 		break;
 	}
 	for (int i = 0; i < 15; ++i)
-		_skillLevelNames[i] = g428_byLanguage[i];
+		_skillLevelNames[i] = translatedSkillLevel[i];
 
 	_boxPanel = Box(80, 223, 52, 124); // @ G0032_s_Graphic562_Box_Panel
 }
@@ -84,34 +84,27 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 }
 
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
-	static Box g41_BoxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
+	static Box boxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
-
-	uint16 L1102_ui_Multiple;
-#define AL1102_ui_InventoryChampionOrdinal L1102_ui_Multiple
-#define AL1102_ui_SlotIndex                L1102_ui_Multiple
-	Champion* L1103_ps_Champion;
-
-
-	if ((championIndex != k4_ChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth) {
+	if ((championIndex != k4_ChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth)
 		return;
-	}
-	if (_vm->_pressingMouth || _vm->_pressingEye) {
+
+	if (_vm->_pressingMouth || _vm->_pressingEye)
 		return;
-	}
+
 	_vm->_stopWaitingForPlayerInput = true;
-	AL1102_ui_InventoryChampionOrdinal = _inventoryChampionOrdinal;
-	if (_vm->indexToOrdinal(championIndex) == AL1102_ui_InventoryChampionOrdinal) {
+	uint16 inventoryChampionOrdinal = _inventoryChampionOrdinal;
+	if (_vm->indexToOrdinal(championIndex) == inventoryChampionOrdinal)
 		championIndex = k4_ChampionCloseInventory;
-	}
+
 	_vm->_eventMan->showMouse();
-	if (AL1102_ui_InventoryChampionOrdinal) {
+	if (inventoryChampionOrdinal) {
 		_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 		closeChest();
-		L1103_ps_Champion = &_vm->_championMan->_champions[_vm->ordinalToIndex(AL1102_ui_InventoryChampionOrdinal)];
-		if (L1103_ps_Champion->_currHealth && !_vm->_championMan->_candidateChampionOrdinal) {
-			setFlag(L1103_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
-			_vm->_championMan->drawChampionState((ChampionIndex)_vm->ordinalToIndex(AL1102_ui_InventoryChampionOrdinal));
+		Champion *champion = &_vm->_championMan->_champions[_vm->ordinalToIndex(inventoryChampionOrdinal)];
+		if (champion->_currHealth && !_vm->_championMan->_candidateChampionOrdinal) {
+			setFlag(champion->_attributes, k0x1000_ChampionAttributeStatusBox);
+			_vm->_championMan->drawChampionState((ChampionIndex)_vm->ordinalToIndex(inventoryChampionOrdinal));
 		}
 		if (_vm->_championMan->_partyIsSleeping) {
 			_vm->_eventMan->hideMouse();
@@ -130,14 +123,13 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	}
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
-	if (!AL1102_ui_InventoryChampionOrdinal) {
+	if (!inventoryChampionOrdinal)
 		_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
-	}
-	L1103_ps_Champion = &_vm->_championMan->_champions[championIndex];
+
+	Champion *champion = &_vm->_championMan->_champions[championIndex];
 	_vm->_displayMan->loadIntoBitmap(k17_InventoryGraphicIndice, _vm->_displayMan->_bitmapViewport);
-	if (_vm->_championMan->_candidateChampionOrdinal) {
-		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, g41_BoxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
-	}
+	if (_vm->_championMan->_candidateChampionOrdinal)
+		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, boxFloppyZzzCross, k12_ColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
@@ -156,10 +148,11 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	}
 
 	_vm->_textMan->printToViewport(5, 132, k13_ColorLightestGray, "MANA");
-	for (AL1102_ui_SlotIndex = k0_ChampionSlotReadyHand; AL1102_ui_SlotIndex < k30_ChampionSlotChest_1; AL1102_ui_SlotIndex++) {
-		_vm->_championMan->drawSlot(championIndex, AL1102_ui_SlotIndex);
-	}
-	setFlag(L1103_ps_Champion->_attributes, k0x4000_ChampionAttributeViewport | k0x1000_ChampionAttributeStatusBox | k0x0800_ChampionAttributePanel | k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics | k0x0080_ChampionAttributeNameTitle);
+
+	for (uint16 i = k0_ChampionSlotReadyHand; i < k30_ChampionSlotChest_1; i++)
+		_vm->_championMan->drawSlot(championIndex, i);
+
+	setFlag(champion->_attributes, k0x4000_ChampionAttributeViewport | k0x1000_ChampionAttributeStatusBox | k0x0800_ChampionAttributePanel | k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics | k0x0080_ChampionAttributeNameTitle);
 	_vm->_championMan->drawChampionState(championIndex);
 	_vm->_eventMan->_mousePointerBitmapUpdated = true;
 	_vm->_eventMan->hideMouse();
@@ -190,25 +183,24 @@ void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Co
 }
 
 void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
-	if (amount < -512) {
+	if (amount < -512)
 		color = k8_ColorRed;
-	} else if (amount < 0) {
+	else if (amount < 0)
 		color = k11_ColorYellow;
-	}
 
 	int16 pixelWidth = amount + 1024;
-	if (pixelWidth == 3072) {
+	if (pixelWidth == 3072)
 		pixelWidth = 3071;
-	}
+
 	pixelWidth /= 32;
 	drawPanelHorizontalBar(115, y + 2, pixelWidth, k0_ColorBlack);
 	drawPanelHorizontalBar(113, y, pixelWidth, color);
 }
 
 void InventoryMan::drawPanelFoodWaterPoisoned() {
-	static Box g35_BoxFood(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
-	static Box g36_BoxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
-	static Box g37_BoxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
+	static Box boxFood(112, 159, 60, 68); // @ G0035_s_Graphic562_Box_Food
+	static Box boxWater(112, 159, 83, 91); // @ G0036_s_Graphic562_Box_Water
+	static Box boxPoisoned(112, 207, 105, 119); // @ G0037_s_Graphic562_Box_Poisoned
 
 	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
 	closeChest();
@@ -218,23 +210,23 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k24_byteWidth, k12_ColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), boxFood, k24_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), boxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
 		break;
 	case Common::DE_DEU:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k32_byteWidth, k12_ColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k32_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), boxFood, k32_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), boxWater, k32_byteWidth, k12_ColorDarkestGray, 9);
 		break;
 	case Common::FR_FRA:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), g35_BoxFood, k48_byteWidth, k12_ColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), g36_BoxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k30_FoodLabelIndice), boxFood, k48_byteWidth, k12_ColorDarkestGray, 9);
+		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k31_WaterLabelIndice), boxWater, k24_byteWidth, k12_ColorDarkestGray, 9);
 		break;
 	}
 
-	if (champ._poisonEventCount) {
+	if (champ._poisonEventCount)
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k32_PoisionedLabelIndice),
-								   g37_BoxPoisoned, k48_byteWidth, k12_ColorDarkestGray, 15);
-	}
+								   boxPoisoned, k48_byteWidth, k12_ColorDarkestGray, 15);
+
 	drawPanelFoodOrWaterBar(champ._food, 69, k5_ColorLightBrown);
 	drawPanelFoodOrWaterBar(champ._water, 92, k14_ColorBlue);
 }
@@ -268,11 +260,11 @@ void InventoryMan::drawPanel() {
 		thing = Thing::_none;
 		break;
 	}
-	if (thing == Thing::_none) {
+
+	if (thing == Thing::_none)
 		drawPanelFoodWaterPoisoned();
-	} else {
+	else
 		drawPanelObject(thing, false);
-	}
 }
 
 void InventoryMan::closeChest() {
@@ -304,11 +296,10 @@ void InventoryMan::closeChest() {
 
 void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 	for (char* iter = text; *iter != '\0'; ++iter) {
-		if ((*iter >= 'A') && (*iter <= 'Z')) {
+		if ((*iter >= 'A') && (*iter <= 'Z'))
 			*iter -= 64;
-		} else if (*iter >= '{') { // this branch is CHANGE5_03_IMPROVEMENT
+		else if (*iter >= '{') // this branch is CHANGE5_03_IMPROVEMENT
 			*iter -= 96;
-		}
 	}
 	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
 }
@@ -319,9 +310,9 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 	char stringFirstLine[300];
 	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
-	while (*charRed && (*charRed != '\n')) {
+	while (*charRed && (*charRed != '\n'))
 		charRed++;
-	}
+
 	*charRed = '\0';
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k23_PanelOpenScrollIndice),
 							   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
@@ -333,27 +324,28 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 		(with no carriage return) then charGreen points to undefined data. This may result in a graphical
 		glitch and also corrupt other memory. This is not an issue in the original dungeons where all
 		scrolls contain at least one carriage return character */
-		if (*charGreen == '\n') {
+		if (*charGreen == '\n')
 			lineCount++;
-		}
+
 		charGreen++;
 	}
-	if (*(charGreen - 1) != '\n') {
+
+	if (*(charGreen - 1) != '\n')
 		lineCount++;
-	} else if (*(charGreen - 2) == '\n') {
+	else if (*(charGreen - 2) == '\n')
 		lineCount--;
-	}
+
 	int16 yPos = 92 - (7 * lineCount) / 2; // center the text vertically
 	drawPanelScrollTextLine(yPos, stringFirstLine);
 	charGreen = charRed;
 	while (*charGreen) {
 		yPos += 7;
-		while (*charRed && (*charRed != '\n')) {
+		while (*charRed && (*charRed != '\n'))
 			charRed++;
-		}
-		if (!(*charRed)) {
+
+		if (!(*charRed))
 			charRed[1] = '\0';
-		}
+
 		*charRed++ = '\0';
 		drawPanelScrollTextLine(yPos, charGreen);
 		charGreen = charRed;
@@ -395,20 +387,18 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool is
 
 void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yPos) {
 	static byte iconBitmap[16 * 16];
-	Box box;
-	box._x2 = (box._x1 = xPos) + 15;
-	box._y2 = (box._y1 = yPos) + 15;
+	Box boxIcon(xPos, xPos + 15, yPos, yPos + 15);
+
 	_vm->_objectMan->extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->blitToViewport(iconBitmap, box, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	_vm->_displayMan->blitToViewport(iconBitmap, boxIcon, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 
 void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char** attribStrings, char* destString, const char* prefixString, const char* suffixString) {
 	uint16 identicalBitCount = 0;
 	int16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
-		if (attribMask & potentialAttribMask & actualAttribMask) {
+		if (attribMask & potentialAttribMask & actualAttribMask)
 			identicalBitCount++;
-		}
 	}
 
 	if (identicalBitCount == 0) {
@@ -432,7 +422,6 @@ void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 a
 				case Common::DE_DEU: strcat(destString, " UND "); break;
 				case Common::FR_FRA: strcat(destString, " ET "); break;
 				}
-
 			}
 		}
 	}
@@ -484,11 +473,6 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 							   boxArrowOrEye, k8_byteWidth, k8_ColorRed, 9);
 }
 
-#define k0x0001_DescriptionMaskConsumable 0x0001 // @ MASK0x0001_DESCRIPTION_CONSUMABLE
-#define k0x0002_DescriptionMaskPoisoned 0x0002 // @ MASK0x0002_DESCRIPTION_POISONED  
-#define k0x0004_DescriptionMaskBroken 0x0004 // @ MASK0x0004_DESCRIPTION_BROKEN    
-#define k0x0008_DescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
-
 void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
 
@@ -498,18 +482,17 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	ChampionMan &champMan = *_vm->_championMan;
 	TextMan &textMan = *_vm->_textMan;
 
-	if (_vm->_pressingEye || _vm->_pressingMouth) {
+	if (_vm->_pressingEye || _vm->_pressingMouth)
 		closeChest();
-	}
 
 	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
-	if (thingType == k7_ScrollThingType) {
+	if (thingType == k7_ScrollThingType)
 		drawPanelScroll((Scroll*)rawThingPtr);
-	} else if (thingType == k9_ContainerThingType) {
+	else if (thingType == k9_ContainerThingType)
 		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
-	} else {
+	else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice),
 								   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
@@ -566,9 +549,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: drawPanelObjectDescriptionString("(BURNT OUT)"); break;
-				case Common::DE_DEU: drawPanelObjectDescriptionString("(AUSGEBRANNT)"); break;
-				case Common::FR_FRA: drawPanelObjectDescriptionString("(CONSUME)"); break;
+				case Common::EN_ANY:
+					drawPanelObjectDescriptionString("(BURNT OUT)");
+					break;
+				case Common::DE_DEU:
+					drawPanelObjectDescriptionString("(AUSGEBRANNT)");
+					break;
+				case Common::FR_FRA:
+					drawPanelObjectDescriptionString("(CONSUME)");
+					break;
 				}
 			}
 			break;
@@ -629,9 +618,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				const static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
 				switch (_vm->getGameLanguage()) { // localized
 				default:
-				case Common::EN_ANY: strcat(str, directionName_EN_ANY[iconIndex]); break;
-				case Common::DE_DEU: strcat(str, directionName_DE_DEU[iconIndex]); break;
-				case Common::FR_FRA: strcat(str, directionName_FR_FRA[iconIndex]); break;
+				case Common::EN_ANY:
+					strcat(str, directionName_EN_ANY[iconIndex]);
+					break;
+				case Common::DE_DEU:
+					strcat(str, directionName_DE_DEU[iconIndex]);
+					break;
+				case Common::FR_FRA:
+					strcat(str, directionName_FR_FRA[iconIndex]);
+					break;
 				}
 
 				drawPanelObjectDescriptionString(str);
@@ -650,13 +645,19 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			static const char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
 			static const char *attribString_DE_DEU[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
 			static const char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
-			static const char **attribString = nullptr;
+			const char **attribString = nullptr;
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: attribString = attribString_EN_ANY; break;
-			case Common::DE_DEU: attribString = attribString_DE_DEU; break;
-			case Common::FR_FRA: attribString = attribString_FR_FRA; break;
+			case Common::EN_ANY:
+				attribString = attribString_EN_ANY;
+				break;
+			case Common::DE_DEU:
+				attribString = attribString_DE_DEU;
+				break;
+			case Common::FR_FRA:
+				attribString = attribString_FR_FRA;
+				break;
 			}
 
 			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
@@ -665,9 +666,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: strcpy(str, "WEIGHS "); break;
-		case Common::DE_DEU: strcpy(str, "WIEGT "); break;
-		case Common::FR_FRA: strcpy(str, "PESE "); break;
+		case Common::EN_ANY:
+			strcpy(str, "WEIGHS ");
+			break;
+		case Common::DE_DEU:
+			strcpy(str, "WIEGT ");
+			break;
+		case Common::FR_FRA:
+			strcpy(str, "PESE ");
+			break;
 		}
 
 
@@ -676,9 +683,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: strcat(str, "."); break;
-		case Common::DE_DEU: strcat(str, ","); break;
-		case Common::FR_FRA: strcat(str, "KG,"); break;
+		case Common::EN_ANY:
+			strcat(str, ".");
+			break;
+		case Common::DE_DEU:
+			strcat(str, ",");
+			break;
+		case Common::FR_FRA:
+			strcat(str, "KG,");
+			break;
 		}
 
 		weight -= (weight / 10) * 10;
@@ -687,8 +700,12 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY:
-		case Common::DE_DEU: strcat(str, " KG."); break;
-		case Common::FR_FRA: strcat(str, "."); break;
+		case Common::DE_DEU:
+			strcat(str, " KG.");
+			break;
+		case Common::FR_FRA:
+			strcat(str, ".");
+			break;
 		}
 
 		drawPanelObjectDescriptionString(str);
@@ -697,73 +714,72 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 }
 
 void InventoryMan::setDungeonViewPalette() {
-	static const int16 g40_palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
+	static const int16 palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 
 	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
 		_vm->_displayMan->_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
-		int16 L1038_i_Counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
-		Champion *L1043_ps_Champion = _vm->_championMan->_champions;
-		int16 L1045_ai_TorchesLightPower[8];
-		int16 *AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
-		while (L1038_i_Counter--) {
-			uint16 AL1039_ui_SlotIndex = k1_ChampionSlotActionHand + 1;
-			while (AL1039_ui_SlotIndex--) {
-				uint16 AL1044_T_Thing = L1043_ps_Champion->_slots[AL1039_ui_SlotIndex].toUint16();
-				if ((_vm->_objectMan->getObjectType(Thing(AL1044_T_Thing)) >= k4_IconIndiceWeaponTorchUnlit) &&
-					(_vm->_objectMan->getObjectType(Thing(AL1044_T_Thing)) <= k7_IconIndiceWeaponTorchLit)) {
-					Weapon *L1042_ps_Weapon = (Weapon*)_vm->_dungeonMan->getThingData(Thing(AL1044_T_Thing));
-					*AL1040_pi_TorchLightPower = L1042_ps_Weapon->getChargeCount();
+		int16 counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
+		Champion *curChampion = _vm->_championMan->_champions;
+		int16 torchesLightPower[8];
+		int16 *curTorchLightPower = torchesLightPower;
+		while (counter--) {
+			uint16 slotIndex = k1_ChampionSlotActionHand + 1;
+			while (slotIndex--) {
+				Thing slotThing = curChampion->_slots[slotIndex];
+				if ((_vm->_objectMan->getObjectType(slotThing) >= k4_IconIndiceWeaponTorchUnlit) &&
+					(_vm->_objectMan->getObjectType(slotThing) <= k7_IconIndiceWeaponTorchLit)) {
+					Weapon *curWeapon = (Weapon*)_vm->_dungeonMan->getThingData(slotThing);
+					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
-					*AL1040_pi_TorchLightPower = 0;
+					*curTorchLightPower = 0;
 				}
-				AL1040_pi_TorchLightPower++;
+				curTorchLightPower++;
 			}
-			L1043_ps_Champion++;
+			curChampion++;
 		}
 		/* Sort torch light power values so that the four highest values are in the first four entries in the array L1045_ai_TorchesLightPower in decreasing order. The last four entries contain the smallest values but they are not sorted */
-		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
-		int16 AL1039_ui_Counter = 0;
-		while (AL1039_ui_Counter != 4) {
-			L1038_i_Counter = 7 - AL1039_ui_Counter;
-			int16 *L1041_pi_TorchLightPower = &L1045_ai_TorchesLightPower[AL1039_ui_Counter + 1];
-			while (L1038_i_Counter--) {
-				if (*L1041_pi_TorchLightPower > *AL1040_pi_TorchLightPower) {
+		curTorchLightPower = torchesLightPower;
+		int16 torchIndex = 0;
+		while (torchIndex != 4) {
+			counter = 7 - torchIndex;
+			int16 *L1041_pi_TorchLightPower = &torchesLightPower[torchIndex + 1];
+			while (counter--) {
+				if (*L1041_pi_TorchLightPower > *curTorchLightPower) {
 					int16 AL1044_ui_TorchLightPower = *L1041_pi_TorchLightPower;
-					*L1041_pi_TorchLightPower = *AL1040_pi_TorchLightPower;
-					*AL1040_pi_TorchLightPower = AL1044_ui_TorchLightPower;
+					*L1041_pi_TorchLightPower = *curTorchLightPower;
+					*curTorchLightPower = AL1044_ui_TorchLightPower;
 				}
 				L1041_pi_TorchLightPower++;
 			}
-			AL1040_pi_TorchLightPower++;
-			AL1039_ui_Counter++;
+			curTorchLightPower++;
+			torchIndex++;
 		}
 		/* Get total light amount provided by the four torches with the highest light power values and by the fifth torch in the array which may be any one of the four torches with the smallest ligh power values */
-		uint16 L1037_ui_TorchLightAmountMultiplier = 6;
-		AL1039_ui_Counter = 5;
-		int16 L1036_i_TotalLightAmount = 0;
-		AL1040_pi_TorchLightPower = L1045_ai_TorchesLightPower;
-		while (AL1039_ui_Counter--) {
-			if (*AL1040_pi_TorchLightPower) {
-				L1036_i_TotalLightAmount += (_vm->_championMan->_lightPowerToLightAmount[*AL1040_pi_TorchLightPower] << L1037_ui_TorchLightAmountMultiplier) >> 6;
-				L1037_ui_TorchLightAmountMultiplier = MAX(0, L1037_ui_TorchLightAmountMultiplier - 1);
+		uint16 torchLightAmountMultiplier = 6;
+		torchIndex = 5;
+		int16 totalLightAmount = 0;
+		curTorchLightPower = torchesLightPower;
+		while (torchIndex--) {
+			if (*curTorchLightPower) {
+				totalLightAmount += (_vm->_championMan->_lightPowerToLightAmount[*curTorchLightPower] << torchLightAmountMultiplier) >> 6;
+				torchLightAmountMultiplier = MAX(0, torchLightAmountMultiplier - 1);
 			}
-			AL1040_pi_TorchLightPower++;
+			curTorchLightPower++;
 		}
-		L1036_i_TotalLightAmount += _vm->_championMan->_party._magicalLightAmount;
+		totalLightAmount += _vm->_championMan->_party._magicalLightAmount;
 		/* Select palette corresponding to the total light amount */
-		const int16 *AL1040_pi_LightAmount = g40_palIndexToLightAmmount;
-		int16 AL1039_ui_PaletteIndex;
-		if (L1036_i_TotalLightAmount > 0) {
-			AL1039_ui_PaletteIndex = 0; /* Brightest color palette index */
-			while (*AL1040_pi_LightAmount++ > L1036_i_TotalLightAmount) {
-				AL1039_ui_PaletteIndex++;
-			}
+		const int16 *curLightAmount = palIndexToLightAmmount;
+		int16 paletteIndex;
+		if (totalLightAmount > 0) {
+			paletteIndex = 0; /* Brightest color palette index */
+			while (*curLightAmount++ > totalLightAmount)
+				paletteIndex++;
 		} else {
-			AL1039_ui_PaletteIndex = 5; /* Darkest color palette index */
+			paletteIndex = 5; /* Darkest color palette index */
 		}
-		_vm->_displayMan->_dungeonViewPaletteIndex = AL1039_ui_PaletteIndex;
+		_vm->_displayMan->_dungeonViewPaletteIndex = paletteIndex;
 	}
 
 	_vm->_displayMan->_refreshDungeonViewPaleteRequested = true;
