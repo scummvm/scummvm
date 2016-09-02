@@ -38,6 +38,7 @@ class String;
 enum Platform {
 	kPlatformDOS,
 	kPlatformAmiga,
+	kPlatformAtari8Bit,
 	kPlatformAtariST,
 	kPlatformMacintosh,
 	kPlatformFMTowns,
