@@ -681,7 +681,7 @@ Special thanks to
 *****************
    Daniel Balsom     - For the original Reinherit (SAGA) code
    Sander Buskens    - For his work on the initial reversing of Monkey2
-   Canadacow         - For the original MT-32 emulator
+   Dean Beeler       - For the original MT-32 emulator
    Kevin Carnes      - For Scumm16, the basis of ScummVM's older gfx codecs
    Curt Coder        - For the original TrollVM (preAGI) code
    Patrick Combet    - For the original Gobliiins ADL player
@@ -693,12 +693,12 @@ Special thanks to
    DOSBox Team       - For their awesome OPL2 and OPL3 emulator
    Yusuke Kamiyamane - For contributing some GUI icons
    Till Kresslein    - For design of modern ScummVM GUI
-   Jezar             - For his freeverb filter implementation
+   Jezar Wakefield   - For his freeverb filter implementation
    Jim Leiterman     - Various info on his FM-TOWNS/Marty SCUMM ports
-   lloyd             - For deep tech details about C64 Zak & MM
+   Lloyd Rosen       - For deep tech details about C64 Zak & MM
    Sarien Team       - Original AGI engine code
    Jimmi Thogersen   - For ScummRev, and much obscure code/documentation
-   Tristan           - For additional work on the original MT-32 emulator
+   Tristan Matthews  - For additional work on the original MT-32 emulator
    James Woodcock    - Soundtrack enhancements
    Anton Yartsev     - For the original re-implementation of the Z-Vision
                        engine
