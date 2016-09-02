@@ -332,7 +332,7 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 uint TTnpcScript::getRangeValue(uint id) {
 	TTscriptRange *range = findRange(id);
 	if (!range)
-		return 0;
+		return id;
 
 	switch (range->_mode) {
 	case SF_RANDOM: {
