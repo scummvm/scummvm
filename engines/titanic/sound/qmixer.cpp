@@ -66,7 +66,7 @@ void QMixer::qsWaveMixFlushChannel(int iChannel, uint flags) {
 void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
 	ChannelEntry &channel = _channels[iChannel];
 	channel._panRate = rate;
-	channel._volumeChangeEnd = channel._volumeChangeEnd = 0;
+	channel._volumeChangeStart = channel._volumeChangeEnd = 0;
 }
 
 void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
