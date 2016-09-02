@@ -898,7 +898,12 @@ CString CGameObject::getViewFullName() const {
 }
 
 void CGameObject::sleep(uint milli) {
-	g_vm->_events->sleep(milli);
+	// Use an empty event target so that standard scene drawing won't happen
+	Events &events = *g_vm->_events;
+	CEventTarget nullTarget;
+	events.addTarget(&nullTarget);
+	events.sleep(milli);
+	events.removeTarget();
 }
 
 Point CGameObject::getMousePos() const {
