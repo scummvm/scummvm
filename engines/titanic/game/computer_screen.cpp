@@ -111,7 +111,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		playSound("a#29.wav");
 		stopSound(handle);
 
-		playSound("y#662.wav");
+		handle = playSound("y#662.wav");
 		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);

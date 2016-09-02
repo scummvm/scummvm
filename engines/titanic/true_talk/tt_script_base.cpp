@@ -118,37 +118,41 @@ void TTscriptBase::applyResponse() {
 }
 
 void TTscriptBase::deleteResponses() {
-	while (_respTailP) {
-		_respHeadP = _respTailP;
-		_respTailP = _respHeadP->getLink();
-		delete _respHeadP;
+	while (_respHeadP) {
+		_respTailP = _respHeadP;
+		_respHeadP = _respTailP->getLink();
+		delete _respTailP;
 	}
 }
 
-void TTscriptBase::appendResponse(int val1, int *val2, int val3) {
-	if (!val2 || val1 <= *val2) {
-		if (_respHeadP) {
-			_respHeadP = new TTresponse(_respHeadP);
+void TTscriptBase::appendResponse(int index, int *maxP, int id) {
+	if (id && (!maxP || index <= *maxP)) {
+		if (_respTailP) {
+			// Prior fragments already exist, so append to end of chain
+			_respTailP = new TTresponse(_respTailP);
 		} else {
-			_respHeadP = new TTresponse(val3, 3);
-			if (_respTailP)
-				_respTailP->addLink(_respHeadP);
+			// Currently no tail
+			_respTailP = new TTresponse(id, 3);
+			if (_respHeadP)
+				_respHeadP->addLink(_respTailP);
 			else
-				_respTailP = _respHeadP;
+				_respHeadP = _respTailP;
 		}
 	}
 }
 
-void TTscriptBase::appendResponse(int val1, int *val2, const TTstring &str) {
-	if (!val2 || val1 <= *val2) {
-		if (_respHeadP) {
-			_respHeadP = new TTresponse(str);
+void TTscriptBase::appendResponse(int index, int *maxP, const TTstring &str) {
+	if (!maxP || index <= *maxP) {
+		if (_respTailP) {
+			// Prior fragments already exist, so append to end of chain
+			_respTailP = new TTresponse(str);
 		} else {
-			_respHeadP = new TTresponse(str);
-			if (_respTailP)
-				_respTailP->addLink(_respHeadP);
+			// Currently no tail
+			_respTailP = new TTresponse(str);
+			if (_respHeadP)
+				_respHeadP->addLink(_respTailP);
 			else
-				_respTailP = _respHeadP;
+				_respHeadP = _respTailP;
 		}
 	}
 }

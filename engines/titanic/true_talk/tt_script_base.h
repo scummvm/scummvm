@@ -51,8 +51,8 @@ protected:
 	int _state;
 	TThist *_hist2P;
 	int _field3C;
-	TTresponse *_respHeadP;
 	TTresponse *_respTailP;
+	TTresponse *_respHeadP;
 	TTresponse *_oldResponseP;
 	int _status;
 protected:
@@ -62,14 +62,21 @@ protected:
 	void deleteResponses();
 	
 	/**
-	 * Creates and appends a new response to the script
+	 * Creates and appends a new response fragment to the script specified by
+	 * the given conversation Id
 	 */
-	void appendResponse(int val1, int *val2, int val3);
+	void appendResponse(int index, int *maxP, int id);
 
-	void appendResponse(int val1, int *val2, const TTstring &str);
+	/**
+	 * Creates and appends a new response fragment string to the script
+	 */
+	void appendResponse(int index, int *maxP, const TTstring &str);
 
-	void appendResponse2(int val1, int *val2, const TTstring &str) {
-		appendResponse(val1, val2, str);
+	/**
+	 * Creates and appends a new response fragment string to the script
+	 */
+	void appendResponse2(int index, int *maxP, const TTstring &str) {
+		appendResponse(index, maxP, str);
 	}
 
 	/**
