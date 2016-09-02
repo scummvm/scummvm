@@ -2589,6 +2589,30 @@ void ScummEngine_v60he::setHETimer(int timer) {
 	_heTimers[timer] = _system->getMillis();
 }
 
+void ScummEngine_v60he::pauseHETimers(bool pause) {
+	// The HE timers rely on system time which of course doesn't pause when
+	// the engine does. By adding the elapsed time we compensate for this.
+	// Fixes bug #6352
+	if (pause) {
+		// Pauses can be layered, we only need the start of the first
+		if (!_pauseStartTime)
+			_pauseStartTime = _system->getMillis();
+	} else {
+		int elapsedTime = _system->getMillis() - _pauseStartTime;
+		for (int i = 0; i < ARRAYSIZE(_heTimers); i++) {
+			if (_heTimers[i] != 0)
+				_heTimers[i] += elapsedTime;
+		}
+		_pauseStartTime = 0;
+	}
+}
+
+void ScummEngine_v60he::pauseEngineIntern(bool pause) {
+	pauseHETimers(pause);
+
+	ScummEngine::pauseEngineIntern(pause);
+}
+
 void ScummEngine::pauseGame() {
 	pauseDialog();
 }

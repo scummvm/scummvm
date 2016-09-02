@@ -110,6 +110,16 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// This causes it to try to remove object 0 from the inventory.
 	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
 		return;
+
+	// WORKAROUND for bug #6802: assert() was triggered in freddi2.
+ 	// Bug is in room 39. Problem is script 10, in the localvar2==78 case;
+	// this only sets the obj id if var198 is non-zero, but in the asserting
+	// case, it is obj 0. That means two setOwnerOf calls are made with obj 0.
+	// The correct setOwnerOf calls are made afterwards, so just ignoring this
+	// seems to work just fine.
+	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && vm.slot[_currentScript].number == 10)
+		return;
+
 	assert(obj > 0);
 
 	if (owner == 0) {
