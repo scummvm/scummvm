@@ -634,13 +634,12 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 		}
 	}
 
-	uint oldTagId = tagId;
 	tagId = getRangeValue(tagId);
-	if (tagId != oldTagId)
+	if (tagId != origId)
 		tagId = getRangeValue(tagId);
 
-	oldTagId = getDialsBitset();
-	uint newId = updateState(origId, tagId, oldTagId);
+	uint dialBits = getDialsBitset();
+	uint newId = updateState(origId, tagId, dialBits);
 	if (!newId)
 		return 0;
 
@@ -654,7 +653,7 @@ uint TTnpcScript::getDialogueId(uint tagId) {
 		if (tableP->_id == newId)
 			break;
 	}
-	uint newVal = tableP->_values[oldTagId];
+	uint newVal = tableP->_values[dialBits];
 
 	// First slot dialogue Ids
 	idx = 0;

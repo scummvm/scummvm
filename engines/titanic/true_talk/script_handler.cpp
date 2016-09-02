@@ -60,19 +60,18 @@ ScriptChangedResult CScriptHandler::scriptChanged(TTroomScript *roomScript, TTnp
 	if (result == SCR_1)
 		result = npcScript->notifyScript(roomScript, dialogueId);
 
-	if (result != SCR_3 && result != SCR_4)
-		return result;
+	if (dialogueId == 3 || dialogueId == 4) {
+		delete _concept1P;
+		delete _concept2P;
+		delete _concept3P;
+		delete _concept4P;
+		_concept1P = nullptr;
+		_concept2P = nullptr;
+		_concept3P = nullptr;
+		_concept4P = nullptr;
+	}
 
 	++_inputCtr;
-	delete _concept1P;
-	delete _concept2P;
-	delete _concept3P;
-	delete _concept4P;
-	_concept1P = nullptr;
-	_concept2P = nullptr;
-	_concept3P = nullptr;
-	_concept4P = nullptr;
-
 	return result;
 }
 
