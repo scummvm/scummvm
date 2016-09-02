@@ -468,16 +468,16 @@ void CGameObject::playGlobalSound(const CString &resName, int mode, bool initial
 
 	switch (handleIndex) {
 	case 0:
-		prox._channel = 6;
+		prox._channelMode = 6;
 		break;
 	case 1:
-		prox._channel = 7;
+		prox._channelMode = 7;
 		break;
 	case 2:
-		prox._channel = 8;
+		prox._channelMode = 8;
 		break;
 	case 3:
-		prox._channel = 9;
+		prox._channelMode = 9;
 		break;
 	default:
 		break;

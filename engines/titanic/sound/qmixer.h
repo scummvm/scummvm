@@ -186,7 +186,20 @@ class QMixer {
 			_started(false), _waveFile(waveFile), _callback(callback), _loops(loops), _userData(userData) {}
 	};
 	struct ChannelEntry {
+		// Currently playing and any following queued sounds for the channel
 		Common::List<SoundEntry> _sounds;
+		// Current channel volume
+		byte _volume;				
+		// Current time in milliseconds for paning (volume) changes
+		uint _panRate;
+		// Fields used to transition between volume levels
+		uint _volumeChangeStart;
+		uint _volumeChangeEnd;
+		byte _volumeStart;
+		byte _volumeEnd;
+
+		ChannelEntry() : _volume(0), _panRate(0), _volumeChangeStart(0),
+			_volumeChangeEnd(0), _volumeStart(0), _volumeEnd(0) {}
 	};
 private:
 	Audio::Mixer *_mixer;

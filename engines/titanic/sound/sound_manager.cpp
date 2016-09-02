@@ -171,7 +171,7 @@ int QSoundManager::playSound(CWaveFile &waveFile, CProximity &prox) {
 		}
 	}
 
-	if (channel >= 0 || (channel = resetChannel(prox._channel)) != -1) {
+	if (channel >= 0 || (channel = resetChannel(prox._channelMode)) != -1) {
 		return playWave(&waveFile, channel, flags, prox);
 	}
 
@@ -376,6 +376,9 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 	int slotIndex = findFreeSlot();
 	if (slotIndex == -1)
 		return -1;
+
+	// Set the volume
+	setChannelVolume(iChannel, prox._channelVolume, prox._channelMode);
 
 	switch (prox._positioningMode) {
 	case POSMODE_POLAR:

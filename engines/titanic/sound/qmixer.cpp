@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "titanic/sound/qmixer.h"
 
 namespace Titanic {
@@ -63,12 +64,22 @@ void QMixer::qsWaveMixFlushChannel(int iChannel, uint flags) {
 }
 
 void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
-	// Not currently implemented in ScummVM
+	ChannelEntry &channel = _channels[iChannel];
+	channel._panRate = rate;
+	channel._volumeChangeEnd = channel._volumeChangeEnd = 0;
 }
 
 void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
+	ChannelEntry &channel = _channels[iChannel];
+	
+	// QMixer volumes go from 0-32767, but we need to convert to 0-255 for ScummVM
+	assert(volume <= 32767);
+	byte newVolume = (volume >= 32700) ? 255 : volume * 255 / 32767;
 
-
+	channel._volumeStart = newVolume;
+	channel._volumeEnd = volume * 255 / 100; // Convert from 0-100 (percent) to 0-255
+	channel._volumeChangeStart = g_system->getMillis();
+	channel._volumeChangeEnd = channel._volumeChangeStart + channel._panRate;
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
@@ -134,6 +145,28 @@ void QMixer::qsWaveMixPump() {
 	for (uint iChannel = 0; iChannel < _channels.size(); ++iChannel) {
 		ChannelEntry &channel = _channels[iChannel];
 
+		// If there's a transition in sound volume in progress, handle it
+		if (channel._volumeChangeEnd) {
+			byte oldVolume = channel._volume;
+			uint currentTicks = g_system->getMillis();
+			
+			if (currentTicks >= channel._volumeChangeEnd) {
+				// Reached end of transition period
+				channel._volume = channel._volumeEnd;
+				channel._volumeChangeStart = channel._volumeChangeEnd = 0;
+			} else {
+				// Transition in progress, so figure out new volume
+				channel._volume = (int)channel._volumeStart +
+					((int)channel._volumeEnd - (int)channel._volumeStart) *
+					(int)(currentTicks - channel._volumeChangeStart) / (int)channel._panRate;
+			}
+
+			if (channel._volume != oldVolume && !channel._sounds.empty()
+					&& channel._sounds.front()._started) {
+				_mixer->setChannelVolume(channel._sounds.front()._soundHandle, channel._volume);
+			}
+		}
+
 		// If the playing sound on the channel is finished, then call
 		// the callback registered for it, and remove it from the list
 		if (!channel._sounds.empty()) {
@@ -144,7 +177,7 @@ void QMixer::qsWaveMixPump() {
 					sound._waveFile->_stream->rewind();
 					_mixer->playStream(sound._waveFile->_soundType,
 						&sound._soundHandle, sound._waveFile->_stream,
-						-1, 0xff, 0, DisposeAfterUse::NO);
+						-1, channel._volume, 0, DisposeAfterUse::NO);
 				} else {
 					// Sound is finished
 					if (sound._callback)
@@ -164,7 +197,7 @@ void QMixer::qsWaveMixPump() {
 			if (!sound._started) {
 				_mixer->playStream(sound._waveFile->_soundType,
 					&sound._soundHandle, sound._waveFile->_stream,
-					-1, 0xff, 0, DisposeAfterUse::NO);
+					-1, channel._volume, 0, DisposeAfterUse::NO);
 				sound._started = true;
 			}
 		}

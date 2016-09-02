@@ -490,13 +490,13 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	// Setup proximities
 	CProximity p1, p2, p3;
 	if (isParrot) {
-		p1._channel = 3;
-		p2._channel = 5;
-		p3._channel = 4;
+		p1._channelMode = 3;
+		p2._channelMode = 5;
+		p3._channelMode = 4;
 	} else {
-		p1._channel = 0;
-		p2._channel = 1;
-		p3._channel = 2;
+		p1._channelMode = 0;
+		p2._channelMode = 1;
+		p3._channelMode = 2;
 	}
 
 	if (milli > 0) {
@@ -513,7 +513,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 		p2._elevation = 0;
 	}
 
-	_gameManager->_sound.stopChannel(p1._channel);
+	_gameManager->_sound.stopChannel(p1._channelMode);
 	if (view) {
 		p1._positioningMode = POSMODE_VECTOR;
 		view->getPosition(p1._posX, p1._posY, p1._posZ);
