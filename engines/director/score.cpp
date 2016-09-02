@@ -842,6 +842,23 @@ void Score::processEvents() {
 
 			if (event.type == Common::EVENT_KEYDOWN) {
 				_vm->_keyCode = event.kbd.keycode;
+				switch (_vm->_keyCode) {
+				case Common::KEYCODE_LEFT:
+					_vm->_keyCode = 123;
+					break;
+				case Common::KEYCODE_RIGHT:
+					_vm->_keyCode = 124;
+					break;
+				case Common::KEYCODE_DOWN:
+					_vm->_keyCode = 125;
+					break;
+				case Common::KEYCODE_UP:
+					_vm->_keyCode = 126;
+					break;
+				default:
+					warning("Keycode: %d", _vm->_keyCode);
+				}
+
 				_lingo->processEvent(kEventKeyDown, 0);
 			}
 		}
