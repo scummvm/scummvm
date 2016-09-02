@@ -101,7 +101,10 @@ void MSRLEDecoder::decode8(Common::SeekableReadStream &stream) {
 				// Copy data
 
 				if (output + value > output_end) {
-					stream.skip(value);
+					if (stream.pos() + value >= stream.size())
+						break;
+					else
+						stream.skip(value);
 					continue;
 				}
 
