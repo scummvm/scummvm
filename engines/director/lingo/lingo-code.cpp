@@ -758,11 +758,19 @@ void Lingo::c_whencode() {
 	int end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
-	start += g_lingo->calcStringAlignment(eventname.c_str());
+	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
 
 	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
 
 	g_lingo->define(eventname, start, 0, NULL, end);
+
+	if (debugChannelSet(3, kDebugLingoExec)) {
+		int pc = start;
+		while (pc <= end) {
+			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
+			debugC(3, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+		}
+	}
 
 	g_lingo->_pc = end;
 }
