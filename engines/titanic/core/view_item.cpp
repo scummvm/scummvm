@@ -168,7 +168,7 @@ void CViewItem::enterView(CViewItem *newView) {
 
 CLinkItem *CViewItem::findLink(CViewItem *newView) {
 	for (CTreeItem *treeItem = getFirstChild(); treeItem;
-			treeItem = scan(treeItem)) {
+			treeItem = treeItem->scan(this)) {
 		CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
 		if (link && link->connectsTo(newView))
 			return link;
