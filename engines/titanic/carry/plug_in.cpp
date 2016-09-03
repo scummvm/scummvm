@@ -28,16 +28,18 @@ BEGIN_MESSAGE_MAP(CPlugIn, CCarry)
 	ON_MESSAGE(UseWithOtherMsg)
 END_MESSAGE_MAP()
 
-CPlugIn::CPlugIn() : CCarry(), _field12C(0) {
+CPlugIn::CPlugIn() : CCarry(), _unused(0) {
 }
 
 void CPlugIn::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
+	file->writeNumberLine(_unused, indent);
 	CCarry::save(file, indent);
 }
 
 void CPlugIn::load(SimpleFile *file) {
 	file->readNumber();
+	_unused = file->readNumber();
 	CCarry::load(file);
 }
 

@@ -31,7 +31,7 @@ class CPlugIn : public CCarry {
 	DECLARE_MESSAGE_MAP;
 	bool UseWithOtherMsg(CUseWithOtherMsg *msg);
 private:
-	int _field12C;
+	int _unused;
 public:
 	CLASSDEF;
 	CPlugIn();
