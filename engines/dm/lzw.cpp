@@ -106,28 +106,25 @@ int16 LZWdecompressor::getNextInputCode(Common::MemoryReadStream &inputStream, i
 }
 
 void LZWdecompressor::outputCharacter(byte character, byte **out) {
-	byte *L1558_pc_Output = *out;
+	byte *output = *out;
 
 	if (false == _repetitionEnabled) {
-		if (character == 0x90) {
+		if (character == 0x90)
 			_repetitionEnabled = true;
-		} else {
-			*L1558_pc_Output++ = _charToRepeat = character;
-		}
-		*out = L1558_pc_Output;
-		return;
+		else
+			*output++ = _charToRepeat = character;
 	} else {
 		if (character) { /* If character following 0x90 is not 0x00 then it is the repeat count */
-			while (--character) {
-				*L1558_pc_Output++ = _charToRepeat;
-			}
-		} else { /* else output a 0x90 character */
-			*L1558_pc_Output++ = 0x90;
-		}
+			while (--character)
+				*output++ = _charToRepeat;
+		} else /* else output a 0x90 character */
+			*output++ = 0x90;
+
 		_repetitionEnabled = false;
-		*out = L1558_pc_Output;
-		return;
 	}
+
+	*out = output;
+	return;
 }
 
 int32 LZWdecompressor::decompress(Common::MemoryReadStream &inStream, int32 inputByteCount, byte *out) {
