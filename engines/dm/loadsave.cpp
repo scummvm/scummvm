@@ -252,7 +252,7 @@ Common::String DMEngine::getSavefileName(uint16 slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
 
-#define SAVEGAME_ID       MKTAG('D', 'M', 'D', 'M')
+#define SAVEGAME_ID       MKTAG('D', 'M', '2', '1')
 #define SAVEGAME_VERSION  1
 
 void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String& saveName) {
