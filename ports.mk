@@ -273,9 +273,20 @@ ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
 # Static libaries, used for the scummvm-static and iphone targets
 OSX_STATIC_LIBS := `$(SDLCONFIG) --static-libs`
+ifdef USE_SDL_NET
+ifdef USE_SDL2
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
+else
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL_net.a
+endif
+endif
 # With sdl2-config we don't always get the OpenGL framework
 OSX_STATIC_LIBS += -framework OpenGL
 endif
+endif
+
+ifdef USE_LIBCURL
+OSX_STATIC_LIBS += -lcurl
 endif
 
 ifdef USE_FREETYPE2
