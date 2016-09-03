@@ -2628,7 +2628,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	unsigned char inscriptionString[70];
 	bool isInscription = (wallOrnamentIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex);
 	if (isInscription)
-		_vm->_dungeonMan->decodeText((char*)inscriptionString, _inscriptionThing, k0_TextTypeInscription);
+		_vm->_dungeonMan->decodeText((char *)inscriptionString, _inscriptionThing, k0_TextTypeInscription);
 
 	int16 blitPosX;
 	byte *ornBlitBitmap;
@@ -3234,14 +3234,14 @@ T0115015_DrawProjectileAsObject:
 
 		ActiveGroup *activeGroup;
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
-			group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+			group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
 			CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
-		objectAspect = (ObjectAspect*)creatureAspectStruct;
+		objectAspect = (ObjectAspect *)creatureAspectStruct;
 		AL_0_creatureIndexRed = _vm->_groupMan->getCreatureOrdinalInCell(group, cellYellowBear);
 
 		if (AL_0_creatureIndexRed) { /* If there is a creature on the cell being processed */
@@ -3297,12 +3297,12 @@ T0115015_DrawProjectileAsObject:
 			viewSquareIndex--;
 
 T0115077_DrawSecondHalfSquareCreature:
-		coordinateSet = creatureCoordinateSets[((CreatureAspect*)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
+		coordinateSet = creatureCoordinateSets[((CreatureAspect *)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
 		if (!coordinateSet[1])
 			goto T0115126_CreatureNotVisible;
 		AL_0_creatureGraphicInfoRed = creatureGraphicInfoGreen;
-		AL_4_nativeBitmapIndex = k446_FirstCreatureGraphicIndice + ((CreatureAspect*)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
-		derivedBitmapIndex = ((CreatureAspect*)objectAspect)->_firstDerivedBitmapIndex;
+		AL_4_nativeBitmapIndex = k446_FirstCreatureGraphicIndice + ((CreatureAspect *)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
+		derivedBitmapIndex = ((CreatureAspect *)objectAspect)->_firstDerivedBitmapIndex;
 		int16 sourceByteWidth;
 		int16 sourceHeight;
 		useCreatureSideBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001);
@@ -3310,15 +3310,15 @@ T0115077_DrawSecondHalfSquareCreature:
 			useCreatureAttackBitmap = useFlippedHorizontallyCreatureFrontImage = useCreatureBackBitmap = false;
 			AL_4_nativeBitmapIndex++; /* Skip the front image. Side image is right after the front image */
 			derivedBitmapIndex += 2;
-			sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthSide;
-			sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightSide;
+			sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthSide;
+			sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightSide;
 		} else {
 			useCreatureBackBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
 			useCreatureAttackBitmap = !useCreatureBackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack);
 			if (useCreatureAttackBitmap) {
 				useFlippedHorizontallyCreatureFrontImage = false;
-				sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthAttack;
-				sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightAttack;
+				sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthAttack;
+				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightAttack;
 				AL_4_nativeBitmapIndex++; /* Skip the front image */
 				derivedBitmapIndex += 2;
 				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
@@ -3331,8 +3331,8 @@ T0115077_DrawSecondHalfSquareCreature:
 					derivedBitmapIndex += 2;
 				}
 			} else {
-				sourceByteWidth = byteWidth = ((CreatureAspect*)objectAspect)->_byteWidthFront;
-				sourceHeight = heightRedEagle = ((CreatureAspect*)objectAspect)->_heightFront;
+				sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthFront;
+				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightFront;
 				if (useCreatureBackBitmap) {
 					useFlippedHorizontallyCreatureFrontImage = false;
 					if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
@@ -3363,7 +3363,7 @@ T0115077_DrawSecondHalfSquareCreature:
 		if (viewSquareIndex >= k6_ViewSquare_D1C) { /* Creature is on D1 */
 			creaturePaddingPixelCount = 0;
 			AL_8_shiftSetIndex = k0_ShiftSet_D0BackD1Front;
-			transparentColor = ((CreatureAspect*)objectAspect)->getTranspColour();
+			transparentColor = ((CreatureAspect *)objectAspect)->getTranspColour();
 			if (useCreatureSideBitmap) {
 				bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
 				if (creatureDirectionDelta == 1) {
@@ -3405,7 +3405,7 @@ T0115077_DrawSecondHalfSquareCreature:
 
 			byteWidth = getScaledDimension(sourceByteWidth, scale);
 			heightRedEagle = getScaledDimension(sourceHeight, scale);
-			transparentColor = paletteChanges[((CreatureAspect*)objectAspect)->getTranspColour()] / 10;
+			transparentColor = paletteChanges[((CreatureAspect *)objectAspect)->getTranspColour()] / 10;
 
 			bool derivedBitmapInCache = isDerivedBitmapInCache(derivedBitmapIndex);
 			if (derivedBitmapInCache)
@@ -3484,25 +3484,25 @@ T0115129_DrawProjectiles:
 		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
 		do {
 			if ((thingParam.getType() == k14_ProjectileThingType) && (thingParam.getCell() == cellYellowBear)) {
-				Projectile *projectile = (Projectile*)_vm->_dungeonMan->getThingData(thingParam);
+				Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(thingParam);
 				if ((AL_4_projectileAspect = _vm->_dungeonMan->getProjectileAspect(projectile->_slot)) < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
-					objectAspect = (ObjectAspect*)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
-					AL_4_nativeBitmapIndex = ((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + k316_FirstProjectileGraphicIndice;
-					projectileAspectType = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
+					objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
+					AL_4_nativeBitmapIndex = ((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + k316_FirstProjectileGraphicIndice;
+					projectileAspectType = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
 
-					bool doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask);
+					bool doNotScaleWithKineticEnergy = !getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask);
 					if ((doNotScaleWithKineticEnergy || (projectile->_kineticEnergy == 255)) && (viewSquareIndex == k9_ViewSquare_D0C)) {
 						scale = 0; /* Use native bitmap without resizing */
-						byteWidth = ((ProjectileAspect*)objectAspect)->_byteWidth;
-						heightRedEagle = ((ProjectileAspect*)objectAspect)->_height;
+						byteWidth = ((ProjectileAspect *)objectAspect)->_byteWidth;
+						heightRedEagle = ((ProjectileAspect *)objectAspect)->_height;
 					} else {
 						AL_8_projectileScaleIndex = ((viewSquareIndex / 3) << 1) + (AL_2_viewCell >> 1);
 						scale = _projectileScales[AL_8_projectileScaleIndex];
 						if (!doNotScaleWithKineticEnergy) {
 							scale = (scale * MAX(96, projectile->_kineticEnergy + 1)) >> 8;
 						}
-						byteWidth = getScaledDimension(((ProjectileAspect*)objectAspect)->_byteWidth, scale);
-						heightRedEagle = getScaledDimension(((ProjectileAspect*)objectAspect)->_height, scale);
+						byteWidth = getScaledDimension(((ProjectileAspect *)objectAspect)->_byteWidth, scale);
+						heightRedEagle = getScaledDimension(((ProjectileAspect *)objectAspect)->_height, scale);
 					}
 					bool projectileAspectTypeHasBackGraphicAndRotation = (projectileAspectType == k0_ProjectileAspectHasBackGraphicRotation);
 					if (projectileAspectTypeHasBackGraphicAndRotation)
@@ -3533,7 +3533,7 @@ T0115129_DrawProjectiles:
 							projectileBitmapIndexDelta = 1;
 
 						flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < k2_ViewCellBackRight);
-						flipHorizontal = getFlag(((ProjectileAspect*)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == k2_ViewLaneRight) || (!viewLane && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
+						flipHorizontal = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == k2_ViewLaneRight) || (!viewLane && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
 					}
 
 					AL_4_nativeBitmapIndex += projectileBitmapIndexDelta;
@@ -3544,7 +3544,7 @@ T0115129_DrawProjectiles:
 						if (flipHorizontal)
 							paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
 
-						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex = k282_DerivedBitmapFirstProjectile + ((ProjectileAspect*)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex)) {
+						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex = k282_DerivedBitmapFirstProjectile + ((ProjectileAspect *)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex)) {
 							bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 						} else {
 							bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
@@ -3553,7 +3553,7 @@ T0115129_DrawProjectiles:
 							else
 								bitmapRedBanana = _tmpBitmap;
 
-							blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, ((ProjectileAspect*)objectAspect)->_byteWidth << 1, ((ProjectileAspect*)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
+							blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, ((ProjectileAspect *)objectAspect)->_byteWidth << 1, ((ProjectileAspect *)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesProjectile[AL_8_projectileScaleIndex >> 1]);
 							if (doNotScaleWithKineticEnergy) {
 								addDerivedBitmap(derivedBitmapIndex);
 							}
@@ -3613,7 +3613,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 	do {
 		if (thingParam.getType() == k15_ExplosionThingType) {
 			AL_2_cellPurpleMan = thingParam.getCell();
-			Explosion *explosion = (Explosion*)_vm->_dungeonMan->getThingData(thingParam);
+			Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(thingParam);
 			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1);
 			if (rebirthExplosion && ((AL_1_viewSquareExplosionIndex < k3_ViewSquare_D3C_Explosion) || (AL_1_viewSquareExplosionIndex > k9_ViewSquare_D1C_Explosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
 				continue;
@@ -3629,13 +3629,13 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						AL_4_explosionAspectIndex = k3_ExplosionAspectSmoke;
 					} else {
 						if (AL_4_explosionType == k100_ExplosionType_RebirthStep1) {
-							objectAspect = (ObjectAspect*)&_projectileAspect[_vm->ordinalToIndex(-_vm->_dungeonMan->getProjectileAspect(Thing::_explLightningBolt))];
-							bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect*)objectAspect)->_firstNativeBitmapRelativeIndex + (k316_FirstProjectileGraphicIndice + 1));
+							objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-_vm->_dungeonMan->getProjectileAspect(Thing::_explLightningBolt))];
+							bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (k316_FirstProjectileGraphicIndice + 1));
 							explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
-							byteWidth = getScaledDimension((((ProjectileAspect*)objectAspect)->_byteWidth), explosionCoordinates[2]);
-							heightRedEagle = getScaledDimension((((ProjectileAspect*)objectAspect)->_height), explosionCoordinates[2]);
+							byteWidth = getScaledDimension((((ProjectileAspect *)objectAspect)->_byteWidth), explosionCoordinates[2]);
+							heightRedEagle = getScaledDimension((((ProjectileAspect *)objectAspect)->_height), explosionCoordinates[2]);
 							if (AL_1_viewSquareExplosionIndex != k9_ViewSquare_D1C_Explosion) {
-								blitToBitmapShrinkWithPalChange(bitmapRedBanana, _tmpBitmap, ((ProjectileAspect*)objectAspect)->_byteWidth << 1, ((ProjectileAspect*)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesNoChanges);
+								blitToBitmapShrinkWithPalChange(bitmapRedBanana, _tmpBitmap, ((ProjectileAspect *)objectAspect)->_byteWidth << 1, ((ProjectileAspect *)objectAspect)->_height, byteWidth << 1, heightRedEagle, _palChangesNoChanges);
 								bitmapRedBanana = _tmpBitmap;
 							}
 							goto T0115200_DrawExplosion;

@@ -257,7 +257,7 @@ Common::String DMEngine::getSavefileName(uint16 slot) {
 #define SAVEGAME_ID       MKTAG('D', 'M', 'D', 'M')
 #define SAVEGAME_VERSION  1
 
-void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::String& saveName) {
+void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String& saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -405,7 +405,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	return true;
 }
 
-bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header) {
 	uint32 id = in->readUint32BE();
 
 	// Check if it's a valid ScummVM savegame

@@ -87,7 +87,7 @@ void MenuMan::initConstants() {
 		16, /* SPIT */
 		14, /* BRANDISH */
 		10, /* THROW */
-		3 /* FUSE */
+		3   /* FUSE */
 	};
 
 	_boxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
@@ -282,7 +282,7 @@ void MenuMan::drawActionArea() {
 	_refreshActionArea = false;
 }
 
-const char* MenuMan::getActionName(ChampionAction actionIndex) {
+const char *MenuMan::getActionName(ChampionAction actionIndex) {
 	const char *g490_ChampionActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
 		"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
 		"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
@@ -399,7 +399,7 @@ void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
 	static Box boxSpellAreaLine2(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2 
 	static Box boxSpellAreaLine3(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
 
-	Champion* L1213_ps_Champion;
+	Champion *L1213_ps_Champion;
 
 	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex) || ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth)) {
 		return;
@@ -458,7 +458,7 @@ void MenuMan::drawEnabledMenus() {
 
 int16 MenuMan::getClickOnSpellCastResult() {
 	int16 L1259_i_SpellCastResult;
-	Champion* L1260_ps_Champion;
+	Champion *L1260_ps_Champion;
 
 
 	L1260_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
@@ -486,14 +486,14 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 #define AL1269_ui_RequiredSkillLevel L1269_ui_Multiple
 #define AL1269_ui_EmptyFlaskWeight   L1269_ui_Multiple
 #define AL1269_ui_Ticks              L1269_ui_Multiple
-	Champion* L1270_ps_Champion;
-	Spell* L1271_ps_Spell;
+	Champion *L1270_ps_Champion;
+	Spell *L1271_ps_Spell;
 	Thing L1272_T_Object;
 	uint16 L1273_ui_Experience;
 	int16 L1274_i_MissingSkillLevelCount;
-	Potion* L1275_ps_Potion;
+	Potion *L1275_ps_Potion;
 	TimelineEvent L1276_s_Event;
-	Junk* L1277_ps_Junk;
+	Junk *L1277_ps_Junk;
 
 
 	if (champIndex >= _vm->_championMan->_partyChampionCount) {
@@ -607,7 +607,7 @@ T0412033:
 		case k7_spellType_otherZokathra:
 			if ((L1272_T_Object = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType)) == Thing::_none)
 				break;
-			L1277_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1272_T_Object);
+			L1277_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1272_T_Object);
 			L1277_ps_Junk->setType(k51_JunkTypeZokathra);
 			ChampionSlot AL1267_ui_SlotIndex;
 			if (L1270_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none) {
@@ -635,7 +635,7 @@ T0412033:
 	return k1_spellCastSuccess;
 }
 
-Spell* MenuMan::getSpellFromSymbols(byte* symbols) {
+Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 	static Spell G0487_as_Graphic560_Spells[25] = {
 		/* { Symbols, BaseRequiredSkillLevel, SkillIndex, Attributes } */
 		Spell(0x00666F00, 2, 15, 0x7843),
@@ -689,7 +689,7 @@ Spell* MenuMan::getSpellFromSymbols(byte* symbols) {
 	return NULL;
 }
 
-void MenuMan::menusPrintSpellFailureMessage(Champion* champ, uint16 failureType, uint16 skillIndex) {
+void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex) {
 	const char *L1264_pc_Message = nullptr;
 
 	if (skillIndex > k3_ChampionSkillWizard)
@@ -734,14 +734,14 @@ void MenuMan::menusPrintSpellFailureMessage(Champion* champ, uint16 failureType,
 	_vm->_textMan->printMessage(k4_ColorCyan, L1264_pc_Message);
 }
 
-Potion* MenuMan::getEmptyFlaskInHand(Champion* champ, Thing* potionThing) {
+Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 	Thing L1265_T_Thing;
 	int16 L1266_i_SlotIndex;
 
 	for (L1266_i_SlotIndex = k2_ChampionSlotHead; --L1266_i_SlotIndex >= k0_ChampionSlotReadyHand; ) {
 		if (((L1265_T_Thing = champ->_slots[L1266_i_SlotIndex]) != Thing::_none) && (_vm->_objectMan->getIconIndex(L1265_T_Thing) == k195_IconIndicePotionEmptyFlask)) {
 			*potionThing = L1265_T_Thing;
-			return (Potion*)_vm->_dungeonMan->getThingData(L1265_T_Thing);
+			return (Potion *)_vm->_dungeonMan->getThingData(L1265_T_Thing);
 		}
 	}
 	return nullptr;
@@ -758,7 +758,7 @@ void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	_vm->_inventoryMan->setDungeonViewPalette();
 }
 
-bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion* champ, bool spellShield, uint16 ticks, bool useMana) {
+bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShield, uint16 ticks, bool useMana) {
 	bool L1239_B_IsPartySpellOrFireShieldSuccessful;
 	TimelineEvent L1240_s_Event;
 
@@ -812,7 +812,7 @@ void MenuMan::drawAvailableSymbols(uint16 symbolStep) {
 	}
 }
 
-void MenuMan::drawChampionSymbols(Champion* champ) {
+void MenuMan::drawChampionSymbols(Champion *champ) {
 	uint16 L1218_ui_SymbolIndex;
 	int16 L1219_i_X;
 	uint16 L1220_ui_SymbolCount;
@@ -886,8 +886,7 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 	uint16 L1196_ui_ChampionIndex;
 	uint16 L1197_ui_ActionIndex;
 	bool L1198_B_ClickTriggeredAction;
-	Champion* L1199_ps_Champion;
-
+	Champion *L1199_ps_Champion;
 
 	if (!_vm->_championMan->_actingChampionOrdinal || (actionListIndex != -1 && (_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
 		return false;
@@ -953,7 +952,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		22, /* SPIT */
 		10, /* BRANDISH */
 		0,  /* THROW */
-		2}; /* FUSE */
+		2   /* FUSE */
+	};
 	static unsigned char G0494_auc_Graphic560_ActionStamina[44] = {
 		0,  /* N */
 		4,  /* BLOCK */
@@ -998,7 +998,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		3,  /* SPIT */
 		2,  /* BRANDISH */
 		0,  /* THROW */
-		2}; /* FUSE */
+		2   /* FUSE */
+	};
 	static unsigned char G0497_auc_Graphic560_ActionExperienceGain[44] = {
 		0,  /* N */
 		8,  /* BLOCK */
@@ -1043,7 +1044,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		25, /* SPIT */
 		0,  /* BRANDISH */
 		5,  /* THROW */
-		1}; /* FUSE */
+		1   /* FUSE */
+	};
 	uint16 L1244_ui_Multiple;
 #define AL1244_ui_TargetSquare  L1244_ui_Multiple
 #define AL1244_ui_HealingAmount L1244_ui_Multiple
@@ -1070,8 +1072,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	int16 L1253_i_ActionStamina;
 	int16 L1254_i_ActionSkillIndex;
 	int16 L1255_i_ActionExperienceGain;
-	WeaponInfo* L1256_ps_WeaponInfoActionHand;
-	WeaponInfo* L1257_ps_WeaponInfoReadyHand;
+	WeaponInfo *L1256_ps_WeaponInfoActionHand;
+	WeaponInfo *L1257_ps_WeaponInfoReadyHand;
 	TimelineEvent L1258_s_Event;
 
 
@@ -1079,7 +1081,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		return false;
 	}
 	L1247_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	L1248_ps_Weapon = (Weapon*)_vm->_dungeonMan->getThingData(L1247_ps_Champion->_slots[k1_ChampionSlotActionHand]);
+	L1248_ps_Weapon = (Weapon *)_vm->_dungeonMan->getThingData(L1247_ps_Champion->_slots[k1_ChampionSlotActionHand]);
 	if (!L1247_ps_Champion->_currHealth) {
 		return false;
 	}
@@ -1335,27 +1337,27 @@ T0407076:
 	return AL1245_B_ActionPerformed;
 }
 
-void MenuMan::setChampionDirectionToPartyDirection(Champion* champ) {
+void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
 	if (champ->_dir != _vm->_dungeonMan->_partyDir) {
 		champ->_dir = _vm->_dungeonMan->_partyDir;
 		setFlag(champ->_attributes, k0x0400_ChampionAttributeIcon);
 	}
 }
 
-void MenuMan::decrementCharges(Champion* champ) {
+void MenuMan::decrementCharges(Champion *champ) {
 	Thing L1242_T_Thing;
-	Junk* L1243_ps_Junk;
+	Junk *L1243_ps_Junk;
 
-	L1243_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1242_T_Thing = champ->_slots[k1_ChampionSlotActionHand]);
+	L1243_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1242_T_Thing = champ->_slots[k1_ChampionSlotActionHand]);
 	switch (L1242_T_Thing.getType()) {
 	case k5_WeaponThingType:
-		if (((Weapon*)L1243_ps_Junk)->getChargeCount()) {
-			((Weapon*)L1243_ps_Junk)->setChargeCount(((Weapon*)L1243_ps_Junk)->getChargeCount() - 1);
+		if (((Weapon *)L1243_ps_Junk)->getChargeCount()) {
+			((Weapon *)L1243_ps_Junk)->setChargeCount(((Weapon *)L1243_ps_Junk)->getChargeCount() - 1);
 		}
 		break;
 	case k6_ArmourThingType:
-		if (((Armour*)L1243_ps_Junk)->getChargeCount()) {
-			((Armour*)L1243_ps_Junk)->setChargeCount(((Armour*)L1243_ps_Junk)->getChargeCount() - 1);
+		if (((Armour *)L1243_ps_Junk)->getChargeCount()) {
+			((Armour *)L1243_ps_Junk)->setChargeCount(((Armour *)L1243_ps_Junk)->getChargeCount() - 1);
 		}
 		break;
 	case k10_JunkThingType:
@@ -1369,7 +1371,7 @@ void MenuMan::decrementCharges(Champion* champ) {
 	_vm->_championMan->drawChangedObjectIcons();
 }
 
-bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
+bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
 	static unsigned char G0492_auc_Graphic560_ActionDamageFactor[44] = {
 		0,  /* N */
 		15, /* BLOCK */
@@ -1414,7 +1416,8 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 ac
 		0,  /* SPIT */
 		0,  /* BRANDISH */
 		0,  /* THROW */
-		0}; /* FUSE */
+		0   /* FUSE */
+	};
 	static unsigned char G0493_auc_Graphic560_ActionHitProbability[44] = {
 		0,  /* N */
 		22, /* BLOCK */
@@ -1459,7 +1462,8 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion* champ, int16 ac
 		0,  /* SPIT */
 		0,  /* BRANDISH */
 		0,  /* THROW */
-		0}; /* FUSE */
+		0   /* FUSE */
+	};
 
 	uint16 L1236_ui_Multiple;
 #define AL1236_ui_ChampionCell       L1236_ui_Multiple
@@ -1494,7 +1498,7 @@ T0402005: /* Check if there is another champion in front */
 		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
-		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group*)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
+		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
 		return true;
 	}
 T0402010:
@@ -1506,9 +1510,9 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	uint16 L1230_ui_FearResistance;
 	uint16 L1231_ui_Experience = 0;
 	bool L1232_B_IsGroupFrightenedByAction;
-	Group* L1233_ps_Group;
-	CreatureInfo* L1234_ps_CreatureInfo;
-	ActiveGroup* L1235_ps_ActiveGroup;
+	Group *L1233_ps_Group;
+	CreatureInfo *L1234_ps_CreatureInfo;
+	ActiveGroup *L1235_ps_ActiveGroup;
 
 
 	L1232_B_IsGroupFrightenedByAction = false;
@@ -1536,7 +1540,7 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 		L1231_ui_Experience = 45;
 	}
 	L1229_i_FrightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
-	L1233_ps_Group = (Group*)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
+	L1233_ps_Group = (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
 	L1234_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L1233_ps_Group->_type];
 	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
 		L1231_ui_Experience >>= 1;
@@ -1555,9 +1559,9 @@ T0401016:
 	return L1232_B_IsGroupFrightenedByAction;
 }
 
-void MenuMan::printMessageAfterReplacements(const char* str) {
-	char* L1164_pc_Character;
-	char* L1165_pc_ReplacementString;
+void MenuMan::printMessageAfterReplacements(const char *str) {
+	char *L1164_pc_Character;
+	char *L1165_pc_ReplacementString;
 	char L1166_ac_OutputString[128];
 
 
@@ -1633,11 +1637,12 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 		ActionSet(42,   9, 255, 0x00, 0x00),
 		ActionSet(1,  12, 255, 0x02, 0x00),
 		ActionSet(42, 255, 255, 0x00, 0x00),
-		ActionSet(6,  11, 255, 0x80, 0x00)};
+		ActionSet(6,  11, 255, 0x80, 0x00)
+	};
 	uint16 L1188_ui_ActionSetIndex;
 	Thing L1189_T_Thing;
-	Champion* L1190_ps_Champion;
-	ActionSet* L1191_ps_ActionSet;
+	Champion *L1190_ps_Champion;
+	ActionSet *L1191_ps_ActionSet;
 
 
 	L1190_ps_Champion = &_vm->_championMan->_champions[champIndex];
@@ -1659,7 +1664,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	drawActionArea();
 }
 
-void MenuMan::setActionList(ActionSet* actionSet) {
+void MenuMan::setActionList(ActionSet *actionSet) {
 
 #define k0x0080_actionRequiresCharge 0x0080 // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
 
@@ -1691,15 +1696,15 @@ void MenuMan::setActionList(ActionSet* actionSet) {
 
 int16 MenuMan::getActionObjectChargeCount() {
 	Thing L1167_T_Thing;
-	Junk* L1168_ps_Junk;
+	Junk *L1168_ps_Junk;
 
 
-	L1168_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1167_T_Thing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
+	L1168_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1167_T_Thing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
 	switch (L1167_T_Thing.getType()) {
 	case k5_WeaponThingType:
-		return ((Weapon*)L1168_ps_Junk)->getChargeCount();
+		return ((Weapon *)L1168_ps_Junk)->getChargeCount();
 	case k6_ArmourThingType:
-		return ((Armour*)L1168_ps_Junk)->getChargeCount();
+		return ((Armour *)L1168_ps_Junk)->getChargeCount();
 	case k10_JunkThingType:
 		return L1168_ps_Junk->getChargeCount();
 	default:
@@ -1718,12 +1723,12 @@ void MenuMan::drawActionDamage(int16 damage) {
 	int16 L1176_i_Multiple;
 #define AL1176_i_X          L1176_i_Multiple
 #define AL1176_i_PixelWidth L1176_i_Multiple
-	byte* L1177_puc_Bitmap;
-	unsigned char* L1178_puc_Multiple;
+	byte *L1177_puc_Bitmap;
+	unsigned char *L1178_puc_Multiple;
 #define AL1178_puc_String L1178_puc_Multiple
 #define AL1178_puc_Bitmap L1178_puc_Multiple
 	char L1179_ac_String[6];
-	const Box* L1180_ps_Box;
+	const Box *L1180_ps_Box;
 	int16 L1643_i_Width;
 
 	_vm->_eventMan->showMouse();
@@ -1747,10 +1752,10 @@ void MenuMan::drawActionDamage(int16 damage) {
 
 		if (damage == kM1_damageCantReach) {
 			AL1176_i_X = pos[0];
-			AL1178_puc_String = (byte*)message[0];
+			AL1178_puc_String = (byte *)message[0];
 		} else {
 			AL1176_i_X = pos[1];
-			AL1178_puc_String = (byte*)message[1];
+			AL1178_puc_String = (byte *)message[1];
 		}
 		_vm->_textMan->printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
 	} else {
