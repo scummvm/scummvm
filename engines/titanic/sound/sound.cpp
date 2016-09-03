@@ -68,15 +68,16 @@ void CSound::setVolume(uint handle, uint volume, uint seconds) {
 	_soundManager.setVolume(handle, volume, seconds);
 }
 
-void CSound::activateSound(CWaveFile *waveFile, bool freeFlag) {	
+void CSound::activateSound(CWaveFile *waveFile, DisposeAfterUse::Flag disposeAfterUse) {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
 		CSoundItem *sound = *i;
 		if (sound->_waveFile == waveFile) {
 			sound->_active = true;
-			sound->_freeFlag = freeFlag;
+			sound->_disposeAfterUse = disposeAfterUse;
 
-			if (!freeFlag && waveFile->size() > 51200)
-				sound->_freeFlag = true;
+			// Anything bigger than 50Kb is automatically flagged to be free when finished
+			if (waveFile->size() > (50 * 1024))
+				sound->_disposeAfterUse = DisposeAfterUse::YES;
 			break;
 		}
 	}
@@ -90,8 +91,8 @@ void CSound::checkSounds() {
 	for (CSoundItemList::iterator i = _sounds.begin(); i != _sounds.end(); ) {
 		CSoundItem *soundItem = *i;
 
-		if (soundItem->_active && soundItem->_freeFlag) {
-			if (_soundManager.isActive(soundItem->_waveFile)) {
+		if (soundItem->_active && soundItem->_disposeAfterUse == DisposeAfterUse::YES) {
+			if (!_soundManager.isActive(soundItem->_waveFile)) {
 				i = _sounds.erase(i);
 				delete soundItem;
 				continue;
@@ -162,7 +163,8 @@ int CSound::playSound(const CString &name, CProximity &prox) {
 	if (prox._soundType != Audio::Mixer::kPlainSoundType)
 		waveFile->_soundType = prox._soundType;
 
-	activateSound(waveFile, prox._freeSoundFlag);
+	activateSound(waveFile, prox._freeSoundFlag ? DisposeAfterUse::YES :
+		DisposeAfterUse::NO);
 
 	return _soundManager.playSound(*waveFile, prox);
 }
@@ -209,7 +211,7 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 		return -1;
 
 	prox._soundDuration = waveFile->getDuration();
-	activateSound(waveFile, prox._freeSoundFlag);
+	activateSound(waveFile, prox._freeSoundFlag ? DisposeAfterUse::YES : DisposeAfterUse::NO);
 
 	return _soundManager.playSound(*waveFile, prox);
 }

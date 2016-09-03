@@ -41,15 +41,17 @@ public:
 	CWaveFile *_waveFile;
 	File *_dialogueFileHandle;
 	int _speechId;
-	bool _freeFlag;
+	DisposeAfterUse::Flag _disposeAfterUse;
 	bool _active;
 public:
 	CSoundItem() : ListItem(), _waveFile(nullptr), _dialogueFileHandle(nullptr),
-		_speechId(0), _freeFlag(false), _active(false) {}
+		_speechId(0), _disposeAfterUse(DisposeAfterUse::NO), _active(false) {}
 	CSoundItem(const CString &name) : ListItem(), _name(name), _waveFile(nullptr),
-		_dialogueFileHandle(nullptr), _speechId(0), _freeFlag(false), _active(false) {}
+		_dialogueFileHandle(nullptr), _disposeAfterUse(DisposeAfterUse::NO),
+		_speechId(0), _active(false) {}
 	CSoundItem(File *dialogueFile, int speechId) : ListItem(), _waveFile(nullptr),
-		_dialogueFileHandle(dialogueFile), _speechId(speechId), _freeFlag(false), _active(false) {}
+		_dialogueFileHandle(dialogueFile), _speechId(speechId), _active(false),
+		_disposeAfterUse(DisposeAfterUse::NO) {}
 };
 
 class CSoundItemList : public List<CSoundItem> {
@@ -126,7 +128,8 @@ public:
 	/**
 	 * Flags a sound about to be played as activated
 	 */
-	void activateSound(CWaveFile *waveFile, bool freeFlag);
+	void activateSound(CWaveFile *waveFile,
+		DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO);
 
 	/**
 	 * Stops any sounds attached to a given channel
