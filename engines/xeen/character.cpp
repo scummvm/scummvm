@@ -724,7 +724,7 @@ void Character::clear() {
 void Character::synchronize(Common::Serializer &s) {
 	char name[16];
 	Common::fill(&name[0], &name[16], '\0');
-	strncpy(name, _name.c_str(), 16);
+	Common::strlcpy(name, _name.c_str(), 16);
 	s.syncBytes((byte *)name, 16);
 
 	if (s.isLoading())
