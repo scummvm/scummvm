@@ -23,7 +23,7 @@
 #ifndef ADL_DISPLAY_H
 #define ADL_DISPLAY_H
 
-#include <common/types.h>
+#include "common/types.h"
 
 namespace Common {
 class ReadStream;

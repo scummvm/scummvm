@@ -24,7 +24,7 @@
 #define TESTBED_CLOUD_H
 
 #include "testbed/testsuite.h"
-#include <backends/cloud/storage.h>
+#include "backends/cloud/storage.h"
 
 // This file can be used as template for header files of other newer testsuites.
 

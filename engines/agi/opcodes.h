@@ -23,8 +23,6 @@
 #ifndef AGI_OPCODES_H
 #define AGI_OPCODES_H
 
-#include <string.h>
-
 namespace Agi {
 
 struct AgiInstruction {
