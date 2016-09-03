@@ -33,7 +33,7 @@
  *  - scumm
  *  - sword1
  *  - sword2
- *	- titanic
+ *  - titanic
  *  - touche
  *  - tucker
  */
