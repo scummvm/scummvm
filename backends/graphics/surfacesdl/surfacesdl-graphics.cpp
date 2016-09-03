@@ -1091,7 +1091,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dstRect.y = (_osdSurface->h - _osdMessageSurface->h) / 2;
 				dstRect.w = _osdMessageSurface->w;
 				dstRect.h = _osdMessageSurface->h;
-				blitOSDMessage(dstRect);				
+				blitOSDMessage(dstRect);
 			}
 		}
 	}
@@ -2178,13 +2178,13 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 		SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 		width, height, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
 	);
-	
+
 	// Lock the surface
 	if (SDL_LockSurface(_osdMessageSurface))
 		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
 
 	// Draw a dark gray rect
-	// TODO: Rounded corners ? Border?	
+	// TODO: Rounded corners ? Border?
 	SDL_FillRect(_osdMessageSurface, nullptr, SDL_MapRGB(_osdMessageSurface->format, 64, 64, 64));
 
 	Graphics::Surface dst;
@@ -2258,7 +2258,7 @@ void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x,
 }
 
 void SurfaceSdlGraphicsManager::clearOSD() {
-	assert(_transactionMode == kTransactionNone);	
+	assert(_transactionMode == kTransactionNone);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -2292,7 +2292,7 @@ void SurfaceSdlGraphicsManager::removeOSDMessage() {
 		osdRect.w = _osdMessageSurface->w;
 		osdRect.h = _osdMessageSurface->h;
 		SDL_FillRect(_osdSurface, &osdRect, kOSDColorKey);
-		SDL_FreeSurface(_osdMessageSurface);		
+		SDL_FreeSurface(_osdMessageSurface);
 	}
 
 	_osdMessageSurface = NULL;
