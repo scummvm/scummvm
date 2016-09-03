@@ -232,7 +232,7 @@ void PrinceEngine::init() {
 		error("Can't open sound/databank.ptc");
 
 	PtcArchive *translation = new PtcArchive();
-	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
+	if (getFeatures() & GF_TRANSLATED) {
 		if (!translation->openTranslation("all/prince_translation.dat"))
 			error("Can't open prince_translation.dat");
 	}
@@ -245,7 +245,7 @@ void PrinceEngine::init() {
 	SearchMan.add("_all", all);
 	SearchMan.add("_voices", voices);
 	SearchMan.add("_sound", sound);
-	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
+	if (getFeatures() & GF_TRANSLATED) {
 		SearchMan.add("translation", translation);
 	}
 
@@ -275,10 +275,10 @@ void PrinceEngine::init() {
 	_debugger = new Debugger(this, _flags);
 
 	_variaTxt = new VariaTxt();
-	if (getLanguage() == Common::PL_POL || getLanguage() == Common::DE_DEU) {
-		Resource::loadResource(_variaTxt, "variatxt.dat", true);
-	} else {
+	if (getFeatures() & GF_TRANSLATED) {
 		Resource::loadResource(_variaTxt, "variatxt_translate.dat", true);
+	} else {
+		Resource::loadResource(_variaTxt, "variatxt.dat", true);
 	}
 
 	_cursor1 = new Cursor();
@@ -288,10 +288,10 @@ void PrinceEngine::init() {
 	Resource::loadResource(_cursor3, "mouse2.cur", true);
 
 	Common::SeekableReadStream *talkTxtStream;
-	if (getLanguage() == Common::PL_POL || getLanguage() == Common::DE_DEU) {
-		talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
-	} else {
+	if (getFeatures() & GF_TRANSLATED) {
 		talkTxtStream = SearchMan.createReadStreamForMember("talktxt_translate.dat");
+	} else {
+		talkTxtStream = SearchMan.createReadStreamForMember("talktxt.dat");
 	}
 	if (!talkTxtStream) {
 		error("Can't load talkTxtStream");
@@ -304,10 +304,10 @@ void PrinceEngine::init() {
 	delete talkTxtStream;
 
 	Common::SeekableReadStream *invTxtStream;
-	if (getLanguage() == Common::PL_POL || getLanguage() == Common::DE_DEU) {
-		invTxtStream = SearchMan.createReadStreamForMember("invtxt.dat");
-	} else {
+	if (getFeatures() & GF_TRANSLATED) {
 		invTxtStream = SearchMan.createReadStreamForMember("invtxt_translate.dat");
+	} else {
+		invTxtStream = SearchMan.createReadStreamForMember("invtxt.dat");
 	}
 	if (!invTxtStream) {
 		error("Can't load invTxtStream");
@@ -384,10 +384,10 @@ void PrinceEngine::init() {
 	_shadowLine = (byte *)malloc(kShadowLineArraySize);
 
 	Common::SeekableReadStream *creditsDataStream;
-	if (getLanguage() == Common::PL_POL || getLanguage() == Common::DE_DEU) {
-		creditsDataStream = SearchMan.createReadStreamForMember("credits.dat");
-	} else {
+	if (getFeatures() & GF_TRANSLATED) {
 		creditsDataStream = SearchMan.createReadStreamForMember("credits_translate.dat");
+	} else {
+		creditsDataStream = SearchMan.createReadStreamForMember("credits.dat");
 	}
 	if (!creditsDataStream) {
 		error("Can't load creditsDataStream");
@@ -398,7 +398,7 @@ void PrinceEngine::init() {
 	creditsDataStream->read(_creditsData, _creditsDataSize);
 	delete creditsDataStream;
 
-	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
+	if (getFeatures() & GF_TRANSLATED) {
 		loadMobTranslationTexts();
 	}
 }
@@ -551,7 +551,7 @@ bool PrinceEngine::loadLocation(uint16 locationNr) {
 	} else if (getGameType() == kPrinceDataPL) {
 		Resource::loadResource(_mobList, "mob.lst", false);
 	}
-	if (getLanguage() != Common::PL_POL && getLanguage() != Common::DE_DEU) {
+	if (getFeatures() & GF_TRANSLATED) {
 		// update Mob texts for translated version
 		setMobTranslationTexts();
 	}

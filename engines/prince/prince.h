@@ -70,6 +70,10 @@ class Animation;
 class Room;
 class Pscr;
 
+enum {
+	GF_TRANSLATED = 1 << 0
+};
+
 struct Text {
 	const char *_str;
 	uint16 _x, _y;
