@@ -43,9 +43,8 @@ CWaveFile::~CWaveFile() {
 	}
 }
 
-int CWaveFile::fn1() {
-	// TODO
-	return 0;
+uint CWaveFile::getDuration() const {
+	return _stream ? _stream->getLength().secs() : 0;
 }
 
 bool CWaveFile::loadSound(const CString &name) {

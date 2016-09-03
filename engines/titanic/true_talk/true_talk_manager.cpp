@@ -347,14 +347,14 @@ void CTrueTalkManager::setDialogue(CTrueTalkNPC *npc, TTroomScript *roomScript, 
 	if (dialogueStr.empty())
 		return;
 
-	int soundId = readDialogSound();
+	uint speechDuration = readDialogueSpeech();
 	TTtalker *talker = new TTtalker(this, npc);
 	_talkers.push_back(talker);
 
 	bool isParrot = npc->getName().contains("parrot");
 	triggerNPC(npc);
 	playSpeech(talker, roomScript, view, isParrot);
-	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], soundId);
+	talker->speechStarted(dialogueStr, _titleEngine._indexes[0], speechDuration);
 }
 
 #define STRING_BUFFER_SIZE 2048
@@ -400,30 +400,30 @@ CString CTrueTalkManager::readDialogueString() {
 	return result;
 }
 
-int CTrueTalkManager::readDialogSound() {
-	_field18 = 0;
+uint CTrueTalkManager::readDialogueSpeech() {
+	_speechDuration = 0;
 
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
 		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
 		if (waveFile) {			
-			_field18 = waveFile->fn1();
+			_speechDuration += waveFile->getDuration();
 		}
 	}
 
-	return _field18;
+	return _speechDuration;
 }
 
 void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 	CTrueTalkSelfQueueAnimSetMsg queueSetMsg;
 	if (queueSetMsg.execute(npc)) {
-		if (_field18 > 300) {
-			CTrueTalkQueueUpAnimSetMsg upMsg(_field18);
+		if (_speechDuration > 300) {
+			CTrueTalkQueueUpAnimSetMsg upMsg(_speechDuration);
 			upMsg.execute(npc);
 		}
 	} else {
 		CTrueTalkGetAnimSetMsg getAnimMsg;
-		if (_field18 > 300) {
+		if (_speechDuration > 300) {
 			do {
 				getAnimMsg.execute(npc);
 				if (!getAnimMsg._endFrame)
@@ -435,10 +435,10 @@ void CTrueTalkManager::triggerNPC(CTrueTalkNPC *npc) {
 				uint numFrames = getAnimMsg._endFrame - getAnimMsg._startFrame;
 				int64 val = (numFrames * 1000) * 0x88888889;
 				uint diff = (val >> (32 + 5)) - 500;
-				_field18 += diff;
+				_speechDuration += diff;
 
 				getAnimMsg._index++;
-			} while (_field18 > 0);
+			} while (_speechDuration > 0);
 		}
 	}
 }

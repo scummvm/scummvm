@@ -158,7 +158,7 @@ int CSound::playSound(const CString &name, CProximity &prox) {
 	if (!waveFile)
 		return -1;
 
-	prox._field6C = waveFile->fn1();
+	prox._soundDuration = waveFile->getDuration();
 	if (prox._soundType != Audio::Mixer::kPlainSoundType)
 		waveFile->_soundType = prox._soundType;
 
@@ -208,7 +208,7 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 	if (!waveFile)
 		return -1;
 
-	prox._field6C = waveFile->fn1();
+	prox._soundDuration = waveFile->getDuration();
 	activateSound(waveFile, prox._freeSoundFlag);
 
 	return _soundManager.playSound(*waveFile, prox);

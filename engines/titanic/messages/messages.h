@@ -254,7 +254,7 @@ MESSAGE0(CMusicHasStoppedMsg);
 MESSAGE0(CMusicSettingChangedMsg);
 MESSAGE2(CNPCPlayAnimationMsg, const char *const *, names, nullptr, int, maxDuration, 0);
 MESSAGE1(CNPCPlayIdleAnimationMsg, const char *const *, names, 0);
-MESSAGE3(CNPCPlayTalkingAnimationMsg, int, value1, 0, int, value2, 0, const char *const *, names, nullptr);
+MESSAGE3(CNPCPlayTalkingAnimationMsg, uint, speechDuration, 0, int, value2, 0, const char *const *, names, nullptr);
 MESSAGE0(CNPCQueueIdleAnimMsg);
 MESSAGE1(CNutPuzzleMsg, CString, value, "");
 MESSAGE1(COnSummonBotMsg, int, value, 0);
@@ -328,7 +328,7 @@ MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, uint, index, 0, uint, startFram
 MESSAGE2(CTrueTalkGetAssetDetailsMsg, CString, filename, "", int, numValue, 0);
 MESSAGE2(CTrueTalkGetStateValueMsg, int, stateNum, 0, int, stateVal, -1000);
 MESSAGE2(CTrueTalkNotifySpeechEndedMsg, int, value1, 0, int, dialogueId, 0);
-MESSAGE3(CTrueTalkNotifySpeechStartedMsg, uint, soundId, 0, uint, dialogueId, 0, int, value, 0);
+MESSAGE3(CTrueTalkNotifySpeechStartedMsg, uint, speechDuration, 0, uint, dialogueId, 0, int, value, 0);
 MESSAGE1(CTrueTalkQueueUpAnimSetMsg, int, value, 0);
 MESSAGE0(CTrueTalkSelfQueueAnimSetMsg);
 MESSAGE3(CTrueTalkTriggerActionMsg, int, action, 0, int, param1, 0, int, param2, 0);

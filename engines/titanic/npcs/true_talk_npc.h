@@ -57,8 +57,8 @@ protected:
 	CString _assetName;
 	int _fieldE4;
 	uint _npcFlags;
-	uint _soundId;
-	int _fieldF0;
+	uint _speechDuration;
+	uint _startTicks;
 	int _fieldF4;
 	int _fieldF8;
 	int _speechTimerId;

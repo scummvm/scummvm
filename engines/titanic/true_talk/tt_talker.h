@@ -49,7 +49,7 @@ public:
 	/**
 	 * Start a new speech
 	 */
-	void speechStarted(const CString &dialogueStr, uint dialogueId, uint soundId);
+	void speechStarted(const CString &dialogueStr, uint dialogueId, uint speechHandle);
 
 	/**
 	 * End the speech

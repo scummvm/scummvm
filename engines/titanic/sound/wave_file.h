@@ -45,7 +45,10 @@ public:
 	CWaveFile(QSoundManager *owner);
 	~CWaveFile();
 
-	int fn1();
+	/**
+	 * Returns the duration of the wave file in seconds
+	 */
+	uint getDuration() const;
 
 	/**
 	 * Return the size of the wave file

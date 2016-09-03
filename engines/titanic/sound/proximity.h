@@ -62,7 +62,7 @@ public:
 	bool _freeSoundFlag;
 	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;
-	int _field6C;
+	uint _soundDuration;
 	Audio::Mixer::SoundType _soundType;
 public:
 	CProximity();

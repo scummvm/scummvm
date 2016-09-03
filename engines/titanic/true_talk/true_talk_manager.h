@@ -50,7 +50,7 @@ private:
 	int _currentCharId;
 	CDialogueFile *_dialogueFile;
 	int _dialogueId;
-	int _field18;
+	uint _speechDuration;
 	TTtalkerList _talkers;
 private:
 	/**
@@ -96,9 +96,10 @@ private:
 	CString readDialogueString();
 
 	/**
-	 * Read in the sound from the dialogue file
+	 * Read in the speech from the dialogue file
+	 * @returns		Duration of the speech in seconds
 	 */
-	int readDialogSound();
+	uint readDialogueSpeech();
 
 	/**
 	 * Triggers animation for the NPC
