@@ -44,7 +44,7 @@ class GameProject : public CObject {
 };
 
 struct PicAniInfo {
-	int32 type;
+	uint32 type;
 	int16 objectId;
 	int16 field_6;
 	int32 field_8;
