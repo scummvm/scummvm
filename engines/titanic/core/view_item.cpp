@@ -115,19 +115,19 @@ void CViewItem::preEnterView(CViewItem *newView) {
 	// Only do the processing if we've been passed a view, and it's not the same 
 	if (newView && newView != this) {
 		CPreEnterViewMsg viewMsg(this, newView);
-		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
+		viewMsg.execute(newView, nullptr, MSGFLAG_SCAN);
 
 		CNodeItem *oldNode = findNode();
 		CNodeItem *newNode = newView->findNode();
 		if (newNode != oldNode) {
 			CPreEnterNodeMsg nodeMsg(oldNode, newNode);
-			nodeMsg.execute(oldNode, nullptr, MSGFLAG_SCAN);
+			nodeMsg.execute(newNode, nullptr, MSGFLAG_SCAN);
 
 			CRoomItem *oldRoom = oldNode->findRoom();
 			CRoomItem *newRoom = newNode->findRoom();
 			if (newRoom != oldRoom) {
 				CPreEnterRoomMsg roomMsg(oldRoom, newRoom);
-				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+				roomMsg.execute(newRoom, nullptr, MSGFLAG_SCAN);
 			}
 		}
 	}
@@ -137,13 +137,13 @@ void CViewItem::enterView(CViewItem *newView) {
 	// Only do the processing if we've been passed a view, and it's not the same 
 	if (newView && newView != this) {
 		CEnterViewMsg viewMsg(this, newView);
-		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
+		viewMsg.execute(newView, nullptr, MSGFLAG_SCAN);
 
 		CNodeItem *oldNode = findNode();
 		CNodeItem *newNode = newView->findNode();
 		if (newNode != oldNode) {
 			CEnterNodeMsg nodeMsg(oldNode, newNode);
-			nodeMsg.execute(oldNode, nullptr, MSGFLAG_SCAN);
+			nodeMsg.execute(newNode, nullptr, MSGFLAG_SCAN);
 
 			CRoomItem *oldRoom = oldNode->findRoom();
 			CRoomItem *newRoom = newNode->findRoom();
@@ -157,7 +157,7 @@ void CViewItem::enterView(CViewItem *newView) {
 
 			if (newRoom != oldRoom) {
 				CEnterRoomMsg roomMsg(oldRoom, newRoom);
-				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
+				roomMsg.execute(newRoom, nullptr, MSGFLAG_SCAN);
 
 				if (petControl)
 					petControl->enterRoom(newRoom);
