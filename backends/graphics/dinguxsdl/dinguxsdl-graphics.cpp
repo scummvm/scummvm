@@ -259,20 +259,32 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_OSD
 	// OSD visible (i.e. non-transparent)?
-	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
+	if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT) {
 		// Updated alpha value
-		const int diff = SDL_GetTicks() - _osdFadeStartTime;
+		const int diff = SDL_GetTicks() - _osdMessageFadeStartTime;
 		if (diff > 0) {
 			if (diff >= kOSDFadeOutDuration) {
 				// Back to full transparency
-				_osdAlpha = SDL_ALPHA_TRANSPARENT;
+				_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
 			} else {
 				// Do a linear fade out...
 				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
+				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
-			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
 			_forceFull = true;
+		}
+
+		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
+			removeOSDMessage();
+		} else {
+			if (_osdMessageSurface && _osdSurface) {
+				SDL_Rect dstRect;
+				dstRect.x = (_osdSurface->w - _osdMessageSurface->w) / 2;
+				dstRect.y = (_osdSurface->h - _osdMessageSurface->h) / 2;
+				dstRect.w = _osdMessageSurface->w;
+				dstRect.h = _osdMessageSurface->h;
+				blitOSDMessage(dstRect);
+			}
 		}
 	}
 #endif
@@ -405,9 +417,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
-		}
+		SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 #endif
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
