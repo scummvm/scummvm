@@ -727,8 +727,8 @@ public:
 
 	void blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
-	void blitToScreen(byte *bitmap, int16* box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
-	void blitToScreen(byte* bitmap, Box* box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
+	void blitToScreen(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
+	void blitToScreen(byte *bitmap, Box *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which
@@ -752,7 +752,7 @@ public:
 	void fillScreen(Color color);
 	/* Expects inclusive boundaries in box */
 	void fillScreenBox(Box &box, Color color); // @ D24_FillScreenBox, F0550_VIDEO_FillScreenBox
-/* Expects inclusive boundaries in box */
+	/* Expects inclusive boundaries in box */
 	void fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height); // @ F0135_VIDEO_FillBox
 	void drawDungeon(Direction dir, int16 posX, int16 posY); // @ F0128_DUNGEONVIEW_Draw_CPSF
 	void drawFloorAndCeiling(); // @ F0098_DUNGEONVIEW_DrawFloorAndCeiling
@@ -821,8 +821,8 @@ public:
 	void releaseBlock(uint16 index); // @ F0480_CACHE_ReleaseBlock
 	uint16 getDarkenedColor(uint16 RGBcolor);
 	void startEndFadeToPalette(uint16 *P0849_pui_Palette); // @ F0436_STARTEND_FadeToPalette
-	void buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom); // @ F0508_AMIGA_BuildPaletteChangeCopperList
-	void shadeScreenBox(Box* box, Color color) { warning("STUB METHOD: shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
+	void buildPaletteChangeCopperList(uint16 *middleScreen, uint16 *topAndBottom); // @ F0508_AMIGA_BuildPaletteChangeCopperList
+	void shadeScreenBox(Box *box, Color color) { warning("STUB METHOD: shadeScreenBox"); } // @ F0136_VIDEO_ShadeScreenBox
 
 private:
 	void initConstants();

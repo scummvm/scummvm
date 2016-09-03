@@ -223,7 +223,7 @@ public:
 	void stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY);// @ F0182_GROUP_StopAttacking
 	bool isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX, int16 mapY, uint16 dir); // @ F0204_GROUP_IsArchenemyDoubleMovementPossible
 	bool isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex); // @ F0207_GROUP_IsCreatureAttacking
-	void setOrderedCellsToAttack(signed char * orderedCellsToAttack, int16 targetMapX,
+	void setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 targetMapX,
 	                                  int16 targetMapY, int16 attackerMapX, int16 attackerMapY, uint16 cellSource); // @ F0229_GROUP_SetOrderedCellsToAttack
 	void stealFromChampion(Group *group, uint16 championIndex); // @ F0193_GROUP_StealFromChampion
 	int16 getChampionDamage(Group *group, uint16 champIndex); // @ F0230_GROUP_GetChampionDamage
@@ -244,7 +244,7 @@ public:
 	bool isFluxcageOnSquare(int16 mapX, int16 mapY); // @ F0221_GROUP_IsFluxcageOnSquare
 	void fuseAction(uint16 mapX, uint16 mapY); // @ F0225_GROUP_FuseAction
 	void saveActiveGroupPart(Common::OutSaveFile *file);
-	void loadActiveGroupPart(Common::InSaveFile* file);
+	void loadActiveGroupPart(Common::InSaveFile *file);
 };
 
 }

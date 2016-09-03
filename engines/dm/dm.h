@@ -324,7 +324,7 @@ public:
 	int16 _waitForInputMaxVerticalBlankCount; // @ G0318_i_WaitForInputMaximumVerticalBlankCount
 };
 
-bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header);
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header);
 
 } // End of namespace DM
 

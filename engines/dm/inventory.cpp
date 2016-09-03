@@ -499,21 +499,16 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
 								   boxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
 
-		const char *descString = nullptr;
-		char str[40];
+		Common::String descString;
+		Common::String str;
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
 			switch (_vm->getGameLanguage()) { // localized
-			default:
-			case Common::EN_ANY:
-			case Common::DE_DEU: // german and english versions are the same
-				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
-				strcat(str, " ");
-				strcat(str, objMan._objectNames[iconIndex]);
-				break;
 			case Common::FR_FRA:
-				strcat(str, objMan._objectNames[iconIndex]);
-				strcat(str, " ");
-				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				// Fix original bug dur to a cut&paste error: string was concatenated then overwritten by the name
+				str = Common::String::format("%s %s", objMan._objectNames[iconIndex], champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				break;
+			default: // German and English versions are the same
+				str = Common::String::format("%s %s", champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name, objMan._objectNames[iconIndex]);
 				break;
 			}
 
@@ -521,16 +516,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
-			str[0] = '_' + ((Potion *)rawThingPtr)->getPower() / 40;
-			str[1] = ' ';
-			str[2] = '\0';
-			strcat(str, objMan._objectNames[iconIndex]);
+			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
+			str += " ";
+			str += objMan._objectNames[iconIndex];
 			descString = str;
 		} else {
 			descString = objMan._objectNames[iconIndex];
 		}
 
-		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString);
+		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString.c_str());
 		drawIconToViewport(iconIndex, 111, 59);
 
 
@@ -577,59 +571,47 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case k10_JunkThingType: {
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
-				const char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
-				const char *descString_DE_DEU[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
-				const char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
+				const char *descStringEN[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
+				const char *descStringDE[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
+				const char *descStringFR[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
 
 				Junk *junk = (Junk *)rawThingPtr;
 				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					descString = descString_EN_ANY[junk->getChargeCount()];
-					break;
 				case Common::DE_DEU:
-					descString = descString_DE_DEU[junk->getChargeCount()];
+					descString = descStringDE[junk->getChargeCount()];
 					break;
 				case Common::FR_FRA:
-					descString = descString_FR_FRA[junk->getChargeCount()];
+					descString = descStringFR[junk->getChargeCount()];
+					break;
+				default:
+					descString = descStringEN[junk->getChargeCount()];
 					break;
 				}
 
-				drawPanelObjectDescriptionString(descString);
+				drawPanelObjectDescriptionString(descString.c_str());
 			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
+				const static char *directionNameEN[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
+				const static char *directionNameDE[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
+				const static char *directionNameFR[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
+
 				potentialAttribMask = 0;
 
 				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					strcpy(str, "PARTY FACING ");
-					break;
 				case Common::DE_DEU:
-					strcpy(str, "GRUPPE BLICKT NACH ");
+					str = "GRUPPE BLICKT NACH ";
+					str += directionNameDE[iconIndex];
 					break;
 				case Common::FR_FRA:
-					strcpy(str, "GROUPE FACE ");
+					str = "GROUPE FACE ";
+					str += directionNameFR[iconIndex];
+					break;
+				default:
+					str = "PARTY FACING ";
+					str += directionNameEN[iconIndex];
 					break;
 				}
 
-
-				const static char* directionName_EN_ANY[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
-				const static char* directionName_DE_DEU[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
-				const static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
-				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					strcat(str, directionName_EN_ANY[iconIndex]);
-					break;
-				case Common::DE_DEU:
-					strcat(str, directionName_DE_DEU[iconIndex]);
-					break;
-				case Common::FR_FRA:
-					strcat(str, directionName_FR_FRA[iconIndex]);
-					break;
-				}
-
-				drawPanelObjectDescriptionString(str);
+				drawPanelObjectDescriptionString(str.c_str());
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
@@ -642,73 +624,54 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} // end of switch 
 
 		if (potentialAttribMask) {
-			static const char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
-			static const char *attribString_DE_DEU[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
-			static const char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
+			static const char *attribStringEN[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
+			static const char *attribStringDE[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
+			static const char *attribStringFR[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
 			const char **attribString = nullptr;
 
 			switch (_vm->getGameLanguage()) { // localized
-			default:
-			case Common::EN_ANY:
-				attribString = attribString_EN_ANY;
-				break;
 			case Common::DE_DEU:
-				attribString = attribString_DE_DEU;
+				attribString = attribStringDE;
 				break;
 			case Common::FR_FRA:
-				attribString = attribString_FR_FRA;
+				attribString = attribStringFR;
+				break;
+			default:
+				attribString = attribStringEN;
 				break;
 			}
 
-			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
-			drawPanelObjectDescriptionString(str);
+			char destString[40];
+			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, destString, "(", ")");
+			drawPanelObjectDescriptionString(destString);
 		}
-
-		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-			strcpy(str, "WEIGHS ");
-			break;
-		case Common::DE_DEU:
-			strcpy(str, "WIEGT ");
-			break;
-		case Common::FR_FRA:
-			strcpy(str, "PESE ");
-			break;
-		}
-
 
 		uint16 weight = dunMan.getObjectWeight(thingToDraw);
-		strcat(str, champMan.getStringFromInteger(weight / 10, false, 3).c_str());
-
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-			strcat(str, ".");
-			break;
 		case Common::DE_DEU:
-			strcat(str, ",");
+			str = "WIEGT " + champMan.getStringFromInteger(weight / 10, false, 3) + ",";
 			break;
 		case Common::FR_FRA:
-			strcat(str, "KG,");
+			str = "PESE " + champMan.getStringFromInteger(weight / 10, false, 3) + "KG,";
+			break;
+		default:
+			str = "WEIGHS " + champMan.getStringFromInteger(weight / 10, false, 3) + ".";
 			break;
 		}
 
 		weight -= (weight / 10) * 10;
-		strcat(str, champMan.getStringFromInteger(weight, false, 1).c_str());
+		str += champMan.getStringFromInteger(weight, false, 1);
 
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-		case Common::DE_DEU:
-			strcat(str, " KG.");
-			break;
 		case Common::FR_FRA:
-			strcat(str, ".");
+			str += ".";
+			break;
+		default:
+			str += " KG.";
 			break;
 		}
 
-		drawPanelObjectDescriptionString(str);
+		drawPanelObjectDescriptionString(str.c_str());
 	}
 	drawPanelArrowOrEye(pressingEye);
 }
@@ -786,105 +749,95 @@ void InventoryMan::setDungeonViewPalette() {
 }
 
 void InventoryMan::decreaseTorchesLightPower() {
-	bool L1048_B_TorchChargeCountChanged = false;
-	int16 L1046_i_ChampionCount = _vm->_championMan->_partyChampionCount;
-	if (_vm->_championMan->_candidateChampionOrdinal) {
-		L1046_i_ChampionCount--;
-	}
-	Champion *L1050_ps_Champion = _vm->_championMan->_champions;
-	while (L1046_i_ChampionCount--) {
-		int16 L1047_i_SlotIndex = k1_ChampionSlotActionHand + 1;
-		while (L1047_i_SlotIndex--) {
-			int16 L1049_i_IconIndex = _vm->_objectMan->getIconIndex(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
-			if ((L1049_i_IconIndex >= k4_IconIndiceWeaponTorchUnlit) && (L1049_i_IconIndex <= k7_IconIndiceWeaponTorchLit)) {
-				Weapon *L1051_ps_Weapon = (Weapon *)_vm->_dungeonMan->getThingData(L1050_ps_Champion->_slots[L1047_i_SlotIndex]);
-				if (L1051_ps_Weapon->getChargeCount()) {
-					if (L1051_ps_Weapon->setChargeCount(L1051_ps_Weapon->getChargeCount() - 1) == 0) {
-						L1051_ps_Weapon->setDoNotDiscard(false);
+	bool torchChargeCountChanged = false;
+	int16 championCount = _vm->_championMan->_partyChampionCount;
+	if (_vm->_championMan->_candidateChampionOrdinal)
+		championCount--;
+
+	Champion *curChampion = _vm->_championMan->_champions;
+	while (championCount--) {
+		int16 slotIndex = k1_ChampionSlotActionHand + 1;
+		while (slotIndex--) {
+			int16 iconIndex = _vm->_objectMan->getIconIndex(curChampion->_slots[slotIndex]);
+			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit)) {
+				Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[slotIndex]);
+				if (curWeapon->getChargeCount()) {
+					if (curWeapon->setChargeCount(curWeapon->getChargeCount() - 1) == 0) {
+						curWeapon->setDoNotDiscard(false);
 					}
-					L1048_B_TorchChargeCountChanged = true;
+					torchChargeCountChanged = true;
 				}
 			}
 		}
-		L1050_ps_Champion++;
+		curChampion++;
 	}
-	if (L1048_B_TorchChargeCountChanged) {
+
+	if (torchChargeCountChanged) {
 		setDungeonViewPalette();
 		_vm->_championMan->drawChangedObjectIcons();
 	}
 }
 
 void InventoryMan::drawChampionSkillsAndStatistics() {
+	static const char* statisticNamesEN[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
+	static const char* statisticNamesDE[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
+	static const char* statisticNamesFR[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
 
-	uint16 L1090_ui_Multiple;
-#define AL1090_ui_SkillIndex     L1090_ui_Multiple
-#define AL1090_ui_StatisticIndex L1090_ui_Multiple
-	int16 L1091_i_Y;
-	int16 L1092_i_Multiple;
-#define AL1092_i_SkillLevel            L1092_i_Multiple
-#define AL1092_i_StatisticCurrentValue L1092_i_Multiple
-	uint16 L1093_ui_ChampionIndex;
-	Champion* L1094_ps_Champion;
-	int16 L1095_i_StatisticColor;
-	uint16 L1096_ui_StatisticMaximumValue;
-	char L1097_ac_String[20];
+	const char **statisticNames;
 
-	static const char* G0431_apc_StatisticNames_EN_ANY[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
-	static const char* G0431_apc_StatisticNames_DE_DEU[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
-	static const char* G0431_apc_StatisticNames_FR_FRA[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
-	const char **G0431_apc_StatisticNames;
 	switch (_vm->getGameLanguage()) { // localized
+	case Common::DE_DEU:
+		statisticNames = statisticNamesDE;
+		break;
+	case Common::FR_FRA:
+		statisticNames = statisticNamesFR;
+		break;
 	default:
-	case Common::EN_ANY: G0431_apc_StatisticNames = G0431_apc_StatisticNames_EN_ANY; break;
-	case Common::DE_DEU: G0431_apc_StatisticNames = G0431_apc_StatisticNames_DE_DEU; break;
-	case Common::FR_FRA: G0431_apc_StatisticNames = G0431_apc_StatisticNames_FR_FRA; break;
+		statisticNames = statisticNamesEN;
+		break;
 	}
 
 	closeChest();
-	L1094_ps_Champion = &_vm->_championMan->_champions[L1093_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal)];
+	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
+	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), _boxPanel, k72_byteWidth, k8_ColorRed, 73);
-	L1091_i_Y = 58;
-	for (AL1090_ui_SkillIndex = k0_ChampionSkillFighter; AL1090_ui_SkillIndex <= k3_ChampionSkillWizard; AL1090_ui_SkillIndex++) {
-		AL1092_i_SkillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(L1093_ui_ChampionIndex, AL1090_ui_SkillIndex | k0x8000_IgnoreTemporaryExperience));
-		if (AL1092_i_SkillLevel == 1)
+	int16 textPosY = 58;
+	for (uint16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
+		int16 skillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(championIndex, idx | k0x8000_IgnoreTemporaryExperience));
+		if (skillLevel == 1)
 			continue;
 
+		Common::String displayString;
+
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-		case Common::DE_DEU: // english and german versions are the same
-			strcpy(L1097_ac_String, _skillLevelNames[AL1092_i_SkillLevel - 2]);
-			strcat(L1097_ac_String, " ");
-			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
-			break;
 		case Common::FR_FRA:
-			strcat(L1097_ac_String, _vm->_championMan->_baseSkillName[AL1090_ui_SkillIndex]);
-			strcat(L1097_ac_String, " ");
-			strcpy(L1097_ac_String, _skillLevelNames[AL1092_i_SkillLevel - 2]);
+			// Fix original bug: Due to a copy&paste error, the string was concatenate then overwritten be the last part
+			displayString = Common::String::format("%s %s", _vm->_championMan->_baseSkillName[idx], _skillLevelNames[skillLevel - 2]);
+			break;
+		default: // English and German versions are built the same way
+			displayString = Common::String::format("%s %s", _skillLevelNames[skillLevel - 2], _vm->_championMan->_baseSkillName[idx]);
 			break;
 		}
-		_vm->_textMan->printToViewport(108, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
-		L1091_i_Y += 7;
+		_vm->_textMan->printToViewport(108, textPosY, k13_ColorLightestGray, displayString.c_str());
+		textPosY += 7;
 	}
-	L1091_i_Y = 86;
-	for (AL1090_ui_StatisticIndex = k1_ChampionStatStrength; AL1090_ui_StatisticIndex <= k6_ChampionStatAntifire; AL1090_ui_StatisticIndex++) {
-		_vm->_textMan->printToViewport(108, L1091_i_Y, k13_ColorLightestGray, G0431_apc_StatisticNames[AL1090_ui_StatisticIndex]);
-		AL1092_i_StatisticCurrentValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k1_ChampionStatCurrent];
-		L1096_ui_StatisticMaximumValue = L1094_ps_Champion->_statistics[AL1090_ui_StatisticIndex][k0_ChampionStatMaximum];
-		if (AL1092_i_StatisticCurrentValue < L1096_ui_StatisticMaximumValue) {
-			L1095_i_StatisticColor = k8_ColorRed;
-		} else {
-			if (AL1092_i_StatisticCurrentValue > L1096_ui_StatisticMaximumValue) {
-				L1095_i_StatisticColor = k7_ColorLightGreen;
-			} else {
-				L1095_i_StatisticColor = k13_ColorLightestGray;
-			}
-		}
-		_vm->_textMan->printToViewport(174, L1091_i_Y, (Color)L1095_i_StatisticColor, _vm->_championMan->getStringFromInteger(AL1092_i_StatisticCurrentValue, true, 3).c_str());
-		strcpy(L1097_ac_String, "/");
-		strcat(L1097_ac_String, _vm->_championMan->getStringFromInteger(L1096_ui_StatisticMaximumValue, true, 3).c_str());
-		_vm->_textMan->printToViewport(192, L1091_i_Y, k13_ColorLightestGray, L1097_ac_String);
-		L1091_i_Y += 7;
+	textPosY = 86;
+	for (uint16 idx = k1_ChampionStatStrength; idx <= k6_ChampionStatAntifire; idx++) {
+		_vm->_textMan->printToViewport(108, textPosY, k13_ColorLightestGray, statisticNames[idx]);
+		int16 statisticCurrentValue = curChampion->_statistics[idx][k1_ChampionStatCurrent];
+		uint16 statisticMaximumValue = curChampion->_statistics[idx][k0_ChampionStatMaximum];
+		int16 statisticColor;
+		if (statisticCurrentValue < statisticMaximumValue)
+			statisticColor = k8_ColorRed;
+		else if (statisticCurrentValue > statisticMaximumValue)
+			statisticColor = k7_ColorLightGreen;
+		else
+			statisticColor = k13_ColorLightestGray;
+
+		_vm->_textMan->printToViewport(174, textPosY, (Color)statisticColor, _vm->_championMan->getStringFromInteger(statisticCurrentValue, true, 3).c_str());
+		Common::String displayString = "/" + _vm->_championMan->getStringFromInteger(statisticMaximumValue, true, 3);
+		_vm->_textMan->printToViewport(192, textPosY, k13_ColorLightestGray, displayString.c_str());
+		textPosY += 7;
 	}
 }
 
@@ -898,14 +851,13 @@ void InventoryMan::drawStopPressingMouth() {
 }
 
 void InventoryMan::drawStopPressingEye() {
-	Thing L1100_T_LeaderHandObject;
-
 	drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
 	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
-	if ((L1100_T_LeaderHandObject = _vm->_championMan->_leaderHandObject) != Thing::_none) {
-		_vm->_objectMan->drawLeaderObjectName(L1100_T_LeaderHandObject);
-	}
+	Thing leaderHandObject = _vm->_championMan->_leaderHandObject;
+	if (leaderHandObject != Thing::_none)
+		_vm->_objectMan->drawLeaderObjectName(leaderHandObject);
+
 	_vm->_eventMan->showMouse();
 	_vm->_eventMan->showMouse();
 	_vm->_eventMan->showMouse();
@@ -943,9 +895,9 @@ void InventoryMan::clickOnMouth() {
 
 
 	if (_vm->_championMan->_leaderEmptyHanded) {
-		if (_panelContent == k0_PanelContentFoodWaterPoisoned) {
+		if (_panelContent == k0_PanelContentFoodWaterPoisoned)
 			return;
-		}
+
 		_vm->_eventMan->_ignoreMouseMovements = true;
 		_vm->_pressingMouth = true;
 		if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
@@ -960,14 +912,14 @@ void InventoryMan::clickOnMouth() {
 		}
 		return;
 	}
-	if (_vm->_championMan->_candidateChampionOrdinal) {
+
+	if (_vm->_championMan->_candidateChampionOrdinal)
 		return;
-	}
 
 	L1078_T_Thing = _vm->_championMan->_leaderHandObject;
-	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth)) {
+	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth))
 		return;
-	}
+
 	L1079_ui_IconIndex = _vm->_objectMan->getIconIndex(L1078_T_Thing);
 	AL1088_ui_ThingType = L1078_T_Thing.getType();
 	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
