@@ -72,6 +72,18 @@ static const PrinceGameDescription gameDescriptions[] = {
 	{
 		{
 			"prince",
+			"Galador",
+			AD_ENTRY1s("talktxt.dat", "02bb2372f19aca3c65896ed81b2cefb3", 125702),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_TESTING,
+			GUIO1(GUIO_NONE)
+		},
+		kPrinceDataDE
+	},
+	{
+		{
+			"prince",
 			"The Prince and the Coward",
 			{
 				{"databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031},
