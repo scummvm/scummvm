@@ -44,8 +44,7 @@ static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
-		_field2D0(0), _field2D4(0), _field2D8(0), _field2DC(0),
-		_room107First(false) {
+		_responseFlag(false), _room107First(false) {
 	CTrueTalkManager::setFlags(25, 0);
 	CTrueTalkManager::setFlags(24, 0);
 	CTrueTalkManager::setFlags(40, 0);
@@ -72,7 +71,7 @@ void BellbotScript::setupSentences() {
 	for (int idx = 1; idx < 20; ++idx)
 		_sentences[idx].load(CString::format("Sentences/Bellbot/%d", idx));
 
-	_field2DC = 0;
+	_responseFlag = false;
 	_field68 = 0;
 	_entryCount = 0;
 }
@@ -370,7 +369,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 		break;
 
 	case 157:
-		_field2DC = 1;
+		_responseFlag = true;
 		break;
 
 	case 158:
@@ -378,7 +377,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 		break;
 
 	case 3:
-		if (_field2DC) {
+		if (_responseFlag) {
 			if (randomResponse0(roomScript, id))
 				return SCR_2;
 		} else {
@@ -386,7 +385,7 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 			applyResponse();
 		}
 
-		_field2DC = 0;
+		_responseFlag = false;
 		CTrueTalkManager::_v9 = 0;
 		// Deliberate fall-through
 	default:

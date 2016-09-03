@@ -28,7 +28,7 @@
 namespace Titanic {
 
 TTsentenceConcept *TTsentenceConcept::addSibling() {
-	if (this == nullptr || _nextP != nullptr)
+	if (_nextP != nullptr)
 		// This should never happen
 		return nullptr;
 

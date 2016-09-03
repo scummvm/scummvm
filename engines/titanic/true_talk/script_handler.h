@@ -39,9 +39,7 @@ class CScriptHandler {
 private:
 	CTitleEngine *_owner;
 	CExeResources &_resources;
-	int _field10;
 	int _inputCtr;
-	int _field30;
 private:
 	void handleWord1(const TTstring *str);
 	void handleWord2(const TTstring *str);

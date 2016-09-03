@@ -35,10 +35,7 @@ private:
 	TTsentenceEntries _sentences[20];
 	TTcommonPhraseArray _phrases;
 	int _array[150];
-	int _field2D0;
-	int _field2D4;
-	int _field2D8;
-	int _field2DC;
+	bool _responseFlag;
 	bool _room107First;
 private:
 	/**

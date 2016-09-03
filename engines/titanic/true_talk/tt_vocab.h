@@ -34,8 +34,6 @@ private:
 	TTword *_headP;
 	TTword *_tailP;
 	TTword *_word;
-	int _fieldC;
-	int _field10;
 	int _vocabMode;
 private:
 	/**
