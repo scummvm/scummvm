@@ -441,7 +441,7 @@ void EventManager::setMousePointerToNormal(int16 mousePointer) {
 	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 
-void EventManager::setPointerToObject(byte* bitmap) {
+void EventManager::setPointerToObject(byte *bitmap) {
 	static byte palChangesMousepointerOjbectIconShadow[16] = {120, 120, 120, 120, 120, 120, 120, 120,
 		120, 120, 120, 120, 0, 120, 120, 120}; // @ K0027_auc_PaletteChanges_MousePointerObjectIconShadow
 	static byte palChangesMousePointerIcon[16] = {120, 10, 20, 30, 40, 50, 60, 70, 80, 90,
@@ -1079,7 +1079,7 @@ bool EventManager::isLeaderHandObjThrown(int16 posX, int16 posY) {
 	return objectThrownFl;
 }
 
-void EventManager::setMousePointerFromSpriteData(byte* mouseSprite) {
+void EventManager::setMousePointerFromSpriteData(byte *mouseSprite) {
 	byte bitmap[16 * 18];
 	memset(bitmap, 0, sizeof(bitmap));
 	for (int16 imgPart = 1; imgPart < 3; ++imgPart) {

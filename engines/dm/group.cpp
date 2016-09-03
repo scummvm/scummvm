@@ -280,7 +280,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 			continue;
 
 		Weapon *currWeapon = (Weapon *)_vm->_dungeonMan->getThingData(nextUnusedThing);
-/* The same pointer type is used no matter the actual type k5_WeaponThingType, k6_ArmourThingType or k10_JunkThingType */
+		/* The same pointer type is used no matter the actual type k5_WeaponThingType, k6_ArmourThingType or k10_JunkThingType */
 		currWeapon->setType(currFixedPossession);
 		currWeapon->setCursed(cursedPossessions);
 		nextUnusedThing = thingWithNewCell(nextUnusedThing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
@@ -1789,7 +1789,7 @@ int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 
 	}
 }
 
-int16 GroupMan::getMeleeActionDamage(Champion* champ, int16 champIndex, Group* group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
+int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
 	int16 L0565_i_Damage = 0;
 	int16 L0566_i_Damage = 0;
 	int16 L0568_i_Defense;
@@ -1996,7 +1996,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 	}
 }
 
-void GroupMan::saveActiveGroupPart(Common::OutSaveFile* file) {
+void GroupMan::saveActiveGroupPart(Common::OutSaveFile *file) {
 	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_activeGroups[i];
 		file->writeUint16BE(group->_groupThingIndex);
@@ -2015,7 +2015,7 @@ void GroupMan::saveActiveGroupPart(Common::OutSaveFile* file) {
 	}
 }
 
-void GroupMan::loadActiveGroupPart(Common::InSaveFile* file) {
+void GroupMan::loadActiveGroupPart(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _maxActiveGroupCount; ++i) {
 		ActiveGroup *group = &_activeGroups[i];
 		group->_groupThingIndex = file->readUint16BE();
