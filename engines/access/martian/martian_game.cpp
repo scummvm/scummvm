@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -107,7 +107,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 
 	_screen->_maxChars = 40;
 	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
-	
+
 	setNoteParams();
 
 	Common::String lines = msg;
@@ -158,7 +158,7 @@ void MartianEngine::doSpecial5(int param1) {
 		msg += c;
 
 	displayNote(msg);
-	
+
 	_midi->stopSong();
 	_midi->freeMusic();
 
@@ -348,10 +348,10 @@ void MartianEngine::dead(int deathId) {
 	_screen->_maxChars = 50;
 	_screen->_printOrg = Common::Point(24, 18);
 	_screen->_printStart = Common::Point(24, 18);
-	
+
 	// Display death message
 	showDeathText(_deaths[deathId]._msg);
-	
+
 	_screen->forceFadeOut();
 	_room->clearRoom();
 	freeChar();

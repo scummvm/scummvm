@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,7 +50,7 @@ void MartianScripts::cmdSpecial0() {
 	_vm->_files->loadScreen("HOUSE.SC");
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(46, 30), "HVID.VID", 20);
-	
+
 	do {
 		_vm->_video->playVideo();
 		if (_vm->_video->_videoFrame == 4) {
@@ -77,7 +77,7 @@ void MartianScripts::cmdSpecial0() {
 
 void MartianScripts::cmdSpecial1(int param1) {
 	_vm->_events->hideCursor();
-	
+
 	if (param1 != -1) {
 		_vm->_files->loadScreen(49, param1);
 		_vm->_buffer2.copyBuffer(_vm->_screen);
@@ -185,7 +185,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_scripts->_sequence = 0;
 
 	_vm->_sound->playSound(0);
-	
+
 	do {
 		charLoop();
 	} while (_vm->_flags[134] != 1);
@@ -229,7 +229,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_events->hideCursor();
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(120, 16), FileIdent(40, 5), 10);
-	
+
 	while (!_vm->shouldQuit() && !_vm->_video->_videoEnd) {
 		_vm->_video->playVideo();
 		_vm->_events->pollEventsAndWait();
@@ -246,7 +246,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_screen->forceFadeOut();
 	_vm->_files->loadScreen(40, 7);
 	_vm->_destIn = _vm->_screen;
-	
+
 	_vm->_screen->plotImage(_game->_spec7Objects, 8, Common::Point(104, 176));
 	_vm->_screen->plotImage(_game->_spec7Objects, 7, Common::Point(102, 160));
 	_vm->_events->showCursor();
@@ -273,7 +273,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_events->_vbCount = 80;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
 		_vm->_events->pollEventsAndWait();
-	
+
 	_vm->_sound->playSound(2);
 	do {
 		_vm->_events->pollEvents();
