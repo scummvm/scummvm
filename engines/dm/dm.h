@@ -25,8 +25,8 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#ifndef DM_H
-#define DM_H
+#ifndef DM_DM_H
+#define DM_DM_H
 
 #include "engines/engine.h"
 #include "engines/savestate.h"

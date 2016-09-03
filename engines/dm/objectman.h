@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_OBJECTMAN_H
+#define DM_OBJECTMAN_H
+
 #include "dm/dm.h"
 #include "dm/champion.h"
 
@@ -69,3 +72,5 @@ public:
 };
 
 }
+
+#endif

@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_LZW_H
+#define DM_LZW_H
+
 #include "common/file.h"
 
 #include "dm/dm.h"
@@ -62,3 +65,5 @@ public:
 };
 
 }
+
+#endif

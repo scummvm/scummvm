@@ -25,8 +25,8 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#ifndef DUNGEONMAN_H
-#define DUNGEONMAN_H
+#ifndef DM_DUNGEONMAN_H
+#define DM_DUNGEONMAN_H
 
 #include "dm/dm.h"
 #include "dm/gfx.h"

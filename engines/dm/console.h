@@ -25,10 +25,10 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "gui/debugger.h"
-
 #ifndef DM_CONSOLE_H
 #define DM_CONSOLE_H
+
+#include "gui/debugger.h"
 
 namespace DM {
 

@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_INVENTORY_H
+#define DM_INVENTORY_H
+
 #include "dm/dm.h"
 #include "dm/gfx.h"
 #include "dm/champion.h"
@@ -92,3 +95,5 @@ public:
 };
 
 }
+
+#endif

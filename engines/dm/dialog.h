@@ -25,6 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#ifndef DM_DIALOG_H
+#define DM_DIALOG_H
+
 #include "dm/dm.h"
 
 namespace DM {
@@ -54,3 +57,5 @@ public:
 };
 
 }
+
+#endif

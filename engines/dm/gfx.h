@@ -25,8 +25,8 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#ifndef GFX_H
-#define GFX_H
+#ifndef DM_GFX_H
+#define DM_GFX_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"
