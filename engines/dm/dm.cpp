@@ -401,7 +401,7 @@ Common::Error DMEngine::run() {
 
 void DMEngine::gameloop() {
 	_canLoadFromGMM = true;
-	_waitForInputMaxVerticalBlankCount = 10;
+	_waitForInputMaxVerticalBlankCount = 15;
 	while (true) {
 		if (_engineShouldQuit) {
 			_canLoadFromGMM = false;
@@ -503,9 +503,10 @@ void DMEngine::gameloop() {
 				_eventMan->highlightBoxDisable();
 			}
 
-			_system->delayMillis(2);
-			if (++vblankCounter >= _waitForInputMaxVerticalBlankCount * 4)
+			if (++vblankCounter > _waitForInputMaxVerticalBlankCount)
 				_stopWaitingForPlayerInput = true;
+			else if (!_stopWaitingForPlayerInput)
+				_system->delayMillis(10);
 
 		} while (!_stopWaitingForPlayerInput || !_gameTimeTicking);
 	}

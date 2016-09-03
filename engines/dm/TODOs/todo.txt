@@ -5,6 +5,8 @@ Bugs:
 
 	Logic:
 		Items thrown on the right side end up on the left side 
+		Can't place torch in player's hand after loading, can do so only after brining up the inventory
+		Restarting the game after the party is dead segfaults
 
 Todo:
 	Add wiki entry for DM
