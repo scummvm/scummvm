@@ -1199,7 +1199,8 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
+		if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT)
+			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 #endif
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
