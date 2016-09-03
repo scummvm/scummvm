@@ -106,11 +106,18 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	debug("  bitsPerSample: %d", bitsPerSample);
 #endif
 
+	#ifdef USE_MAD
 	if (type == kWaveFormatMP3) {
 		bitsPerSample = 8;
 	} else {
+	#endif
 		if (type != kWaveFormatPCM && type != kWaveFormatMSADPCM && type != kWaveFormatMSIMAADPCM) {
+			#ifdef USE_MAD
 			warning("getWavInfo: only PCM, MS ADPCM, MP3, or IMA ADPCM data is supported (type %d)", type);
+			#else
+			warning("getWavInfo: only PCM, MS ADPCM, or IMA ADPCM data is supported (type %d)", type);
+			#endif
+
 			return false;
 		}
 
@@ -121,7 +128,9 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		if (avgBytesPerSec != samplesPerSec * blockAlign && type != kWaveFormatMSADPCM) {
 			debug(0, "getWavInfo: avgBytesPerSec is invalid");
 		}
+	#ifdef USE_MAD
 	}
+	#endif
 
 	// Prepare the return values.
 	rate = samplesPerSec;
@@ -187,8 +196,10 @@ SeekableAudioStream *makeWAVStream(Common::SeekableReadStream *stream, DisposeAf
 		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
 	else if (type == kWaveFormatMSADPCM) // MS ADPCM
 		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::FLAG_STEREO) ? 2 : 1, blockAlign);
+	#ifdef USE_MAD
 	else if (type == kWaveFormatMP3)
 		return makeMP3Stream(stream, disposeAfterUse);
+	#endif
 
 	// Raw PCM, make sure the last packet is complete
 	uint sampleSize = (flags & Audio::FLAG_16BITS ? 2 : 1) * (flags & Audio::FLAG_STEREO ? 2 : 1);
