@@ -67,8 +67,7 @@ public:
 class STtitleEngine : public CTitleEngine {
 private:
 	Common::SeekableReadStream *_stream;
-	TTresponse *_responseP;
-	int _field58;
+	const TTresponse *_responseP;
 public:
 	Common::Array<uint> _indexes;
 	Common::Array<byte> _data;

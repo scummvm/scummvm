@@ -40,8 +40,7 @@ void CTitleEngine::setup(int val1, int val2) {
 
 /*------------------------------------------------------------------------*/
 
-STtitleEngine::STtitleEngine(): CTitleEngine(),
-		_responseP(nullptr), _field58(0) {
+STtitleEngine::STtitleEngine(): CTitleEngine(), _responseP(nullptr) {
 }
 
 STtitleEngine::~STtitleEngine() {
@@ -49,7 +48,6 @@ STtitleEngine::~STtitleEngine() {
 }
 
 void STtitleEngine::reset() {
-	_field58 = 0;
 	_indexes.clear();
 }
 
@@ -58,6 +56,7 @@ void STtitleEngine::setup(int val1, int val2) {
 }
 
 int STtitleEngine::setResponse(TTscriptBase *script, TTresponse *response) {
+	_responseP = response;
 	_indexes.clear();
 	for (TTresponse *respP = response; respP; respP = respP->getNext()) {
 		_indexes.push_back(respP->getDialogueId());
