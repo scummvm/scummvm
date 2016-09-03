@@ -51,7 +51,9 @@ enum {
 	kPatternSolid = 1,
 	kPatternStripes = 2,
 	kPatternCheckers = 3,
-	kPatternCheckers2 = 4
+	kPatternCheckers2 = 4,
+	kPatternLightGray = 5,
+	kPatternDarkGray = 6
 };
 }
 using namespace MacGUIConstants;

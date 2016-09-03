@@ -216,6 +216,12 @@ public:
 	const Common::Rect &getInnerDimensions() { return _innerDims; }
 
 	/**
+	 * Set a background pattern for the window.
+	 * @param pattern
+	 */
+	void setBackgroundPattern(int pattern);
+
+	/**
 	 * Similar to that described in BaseMacWindow.
 	 * @param g See BaseMacWindow.
 	 * @param forceRedraw If true, the borders are guarranteed to redraw.
@@ -282,6 +288,7 @@ private:
 	void prepareBorderSurface(ManagedSurface *g);
 	void drawSimpleBorder(ManagedSurface *g);
 	void drawBorderFromSurface(ManagedSurface *g);
+	void drawPattern();
 	void drawBox(ManagedSurface *g, int x, int y, int w, int h);
 	void fillRect(ManagedSurface *g, int x, int y, int w, int h, int color);
 	const Font *getTitleFont();
@@ -297,6 +304,9 @@ private:
 	ManagedSurface _composeSurface;
 
 	MacWindowBorder _macBorder;
+
+	int _pattern;
+	bool _hasPattern;
 
 	bool _scrollable;
 	bool _resizable;

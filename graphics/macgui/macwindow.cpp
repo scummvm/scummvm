@@ -44,6 +44,9 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_active = false;
 	_borderIsDirty = true;
 
+	_pattern = 0;
+	_hasPattern = false;
+
 	_highlightedPart = kBorderNone;
 
 	_scrollPos = _scrollSize = 0.0;
@@ -83,6 +86,10 @@ void MacWindow::resize(int w, int h) {
 
 	_surface.free();
 	_surface.create(w, h, PixelFormat::createFormatCLUT8());
+
+	if (_hasPattern)
+		drawPattern();
+
 	_borderSurface.free();
 	_borderSurface.create(w, h, PixelFormat::createFormatCLUT8());
 	_composeSurface.free();
@@ -112,6 +119,13 @@ void MacWindow::setDimensions(const Common::Rect &r) {
 	_dims.moveTo(r.left, r.top);
 	updateInnerDims();
 
+	_contentIsDirty = true;
+}
+
+void MacWindow::setBackgroundPattern(int pattern) {
+	_pattern = pattern;
+	_hasPattern = true;
+	drawPattern();
 	_contentIsDirty = true;
 }
 
@@ -270,6 +284,19 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 			w = maxWidth;
 		drawBox(g, x + (width - w) / 2, y, w, size);
 		font->drawString(g, _title, x + (width - w) / 2 + 5, y + yOff, w, kColorBlack);
+	}
+}
+
+void MacWindow::drawPattern() {
+	byte *pat = _wm->getPatterns()[_pattern - 1];
+	for (int y = 0; y < _surface.h; y++) {
+		for (int x = 0; x < _surface.w; x++) {
+			byte *dst = (byte *)_surface.getBasePtr(x, y);
+			if (pat[y % 8] & (1 << (7 - (x % 8))))
+				*dst = kColorBlack;
+			else
+				*dst = kColorWhite;
+		}
 	}
 }
 
