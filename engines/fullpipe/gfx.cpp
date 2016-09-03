@@ -398,18 +398,23 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		return false;
 	}
 
-	if (picAniInfo->type & 3) {
+	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
 		_okeyCode = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
+
+		return true;
 	}
 
 	if (picAniInfo->type & 1) {
 		StaticANIObject *ani = (StaticANIObject *)this;
 
 		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
+		ani->_okeyCode = picAniInfo->field_8;
+		ani->setFlags(picAniInfo->flags);
+		ani->_field_8 = picAniInfo->field_24;
 
 		if (picAniInfo->staticsId) {
 			ani->_statics = ani->getStaticsById(picAniInfo->staticsId);
@@ -425,10 +430,15 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 			ani->_movement = 0;
 		}
 
+		ani->setOXY(picAniInfo->ox, picAniInfo->oy);
+		ani->_priority = picAniInfo->priority;
+
 		ani->setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 Picture::Picture() {
