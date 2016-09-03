@@ -30,8 +30,8 @@
 
 #include "common/str.h"
 
-#include "dm.h"
-#include "gfx.h"
+#include "dm/dm.h"
+#include "dm/gfx.h"
 
 namespace DM {
 

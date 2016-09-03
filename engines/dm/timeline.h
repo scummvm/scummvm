@@ -28,7 +28,7 @@
 #ifndef DM_TIMELINE_H
 #define DM_TIMELINE_H
 
-#include "dm.h"
+#include "dm/dm.h"
 
 namespace DM {
 	class Champion;

@@ -25,11 +25,10 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "dialog.h"
-#include "gfx.h"
-#include "text.h"
-#include "eventman.h"
-
+#include "dm/dialog.h"
+#include "dm/gfx.h"
+#include "dm/text.h"
+#include "dm/eventman.h"
 
 namespace DM {
 

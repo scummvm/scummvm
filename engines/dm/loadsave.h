@@ -28,7 +28,7 @@
 #ifndef DM_LOADSAVE_H
 #define DM_LOADSAVE_H
 
-#include "dm.h"
+#include "dm/dm.h"
 
 namespace DM {
 

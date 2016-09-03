@@ -28,7 +28,7 @@
 #ifndef DM_GROUP_H
 #define DM_GROUP_H
 
-#include "dm.h"
+#include "dm/dm.h"
 
 namespace DM {
 	class Champion;

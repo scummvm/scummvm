@@ -28,12 +28,12 @@
 #include "common/file.h"
 #include "common/memstream.h"
 
-#include "dungeonman.h"
-#include "timeline.h"
-#include "champion.h"
-#include "group.h"
-#include "movesens.h"
-#include "projexpl.h"
+#include "dm/dungeonman.h"
+#include "dm/timeline.h"
+#include "dm/champion.h"
+#include "dm/group.h"
+#include "dm/movesens.h"
+#include "dm/projexpl.h"
 
 namespace DM {
 

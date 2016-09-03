@@ -25,8 +25,8 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "dm.h"
-#include "champion.h"
+#include "dm/dm.h"
+#include "dm/champion.h"
 
 
 namespace DM {

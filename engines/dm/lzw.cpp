@@ -25,8 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "lzw.h"
-#include <common/memstream.h>
+#include "common/memstream.h"
+
+#include "dm/lzw.h"
 
 namespace DM {
 

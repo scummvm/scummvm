@@ -25,9 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "text.h"
-#include <common/system.h>
+#include "common/system.h"
 
+#include "dm/text.h"
 
 namespace DM {
 

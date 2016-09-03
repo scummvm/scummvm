@@ -28,17 +28,17 @@
 #include "engines/util.h"
 #include "common/system.h"
 #include "common/file.h"
-#include "graphics/palette.h"
 #include "common/endian.h"
+#include "graphics/palette.h"
 
-#include "gfx.h"
-#include "dungeonman.h"
-#include "group.h"
-#include "timeline.h"
-#include "champion.h"
-#include "eventman.h"
-#include "lzw.h"
-#include "text.h"
+#include "dm/gfx.h"
+#include "dm/dungeonman.h"
+#include "dm/group.h"
+#include "dm/timeline.h"
+#include "dm/champion.h"
+#include "dm/eventman.h"
+#include "dm/lzw.h"
+#include "dm/text.h"
 
 namespace DM {
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {

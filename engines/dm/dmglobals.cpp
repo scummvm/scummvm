@@ -26,18 +26,18 @@
 */
 
 #include "common/system.h"
+
 #include "dm/dm.h"
-#include "gfx.h"
-#include "dungeonman.h"
-#include "eventman.h"
-#include "menus.h"
-#include "champion.h"
-#include "loadsave.h"
-#include "objectman.h"
-#include "inventory.h"
-#include "text.h"
-#include "movesens.h"
-#include "string.h"
+#include "dm/gfx.h"
+#include "dm/dungeonman.h"
+#include "dm/eventman.h"
+#include "dm/menus.h"
+#include "dm/champion.h"
+#include "dm/loadsave.h"
+#include "dm/objectman.h"
+#include "dm/inventory.h"
+#include "dm/text.h"
+#include "dm/movesens.h"
 
 namespace DM {
 

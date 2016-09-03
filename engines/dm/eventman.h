@@ -32,9 +32,9 @@
 #include "common/queue.h"
 #include "common/array.h"
 
-#include "dm.h"
-#include "gfx.h"
-#include "champion.h"
+#include "dm/dm.h"
+#include "dm/gfx.h"
+#include "dm/champion.h"
 
 namespace DM {
 

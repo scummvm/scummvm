@@ -25,9 +25,9 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include <common/file.h>
+#include "common/file.h"
 
-#include "dm.h"
+#include "dm/dm.h"
 
 namespace Common {
 	class MemoryReadStream;

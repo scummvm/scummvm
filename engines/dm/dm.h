@@ -28,16 +28,17 @@
 #ifndef DM_H
 #define DM_H
 
-#include "common/random.h"
 #include "engines/engine.h"
-#include "common/savefile.h"
-#include "common/str.h"
 #include "engines/savestate.h"
 
-#include "console.h"
-#include <common/memstream.h>
-#include <advancedDetector.h>
+#include "common/random.h"
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/memstream.h"
 
+#include "advancedDetector.h"
+
+#include "dm/console.h"
 
 struct ADGameDescription;
 

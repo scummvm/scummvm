@@ -25,12 +25,12 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "console.h"
-#include "dm.h"
-#include "champion.h"
-#include "dungeonman.h"
-#include "movesens.h"
-#include "objectman.h"
+#include "dm/console.h"
+#include "dm/dm.h"
+#include "dm/champion.h"
+#include "dm/dungeonman.h"
+#include "dm/movesens.h"
+#include "dm/objectman.h"
 
 
 namespace DM {

@@ -26,19 +26,19 @@
 */
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 
-#include "dm.h"
-#include "dungeonman.h"
-#include "timeline.h"
-#include "group.h"
-#include "champion.h"
-#include "menus.h"
-#include "eventman.h"
-#include "projexpl.h"
-#include "dialog.h"
-#include <gui/saveload.h>
-#include <common/translation.h>
+#include "dm/dm.h"
+#include "dm/dungeonman.h"
+#include "dm/timeline.h"
+#include "dm/group.h"
+#include "dm/champion.h"
+#include "dm/menus.h"
+#include "dm/eventman.h"
+#include "dm/projexpl.h"
+#include "dm/dialog.h"
 
 
 namespace DM {

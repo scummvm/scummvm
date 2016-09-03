@@ -26,16 +26,16 @@
 */
 
 
-#include "movesens.h"
-#include "champion.h"
-#include "inventory.h"
-#include "dungeonman.h"
-#include "objectman.h"
-#include "timeline.h"
-#include "group.h"
-#include "projexpl.h"
-#include "text.h"
-#include "sounds.h"
+#include "dm/movesens.h"
+#include "dm/champion.h"
+#include "dm/inventory.h"
+#include "dm/dungeonman.h"
+#include "dm/objectman.h"
+#include "dm/timeline.h"
+#include "dm/group.h"
+#include "dm/projexpl.h"
+#include "dm/text.h"
+#include "dm/sounds.h"
 
 
 namespace DM {

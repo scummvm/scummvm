@@ -27,14 +27,14 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include <advancedDetector.h>
+#include "audio/mixer.h"
+#include "advancedDetector.h"
 
-#include "dm.h"
-#include "gfx.h"
-#include <audio/mixer.h>
-#include "timeline.h"
-#include "dungeonman.h"
-#include "sounds.h"
+#include "dm/dm.h"
+#include "dm/gfx.h"
+#include "dm/timeline.h"
+#include "dm/dungeonman.h"
+#include "dm/sounds.h"
 
 
 namespace DM {

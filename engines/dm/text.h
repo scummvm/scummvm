@@ -28,8 +28,8 @@
 #ifndef DM_TEXT_H
 #define DM_TEXT_H
 
-#include "dm.h"
-#include "gfx.h"
+#include "dm/dm.h"
+#include "dm/gfx.h"
 
 namespace DM {
 

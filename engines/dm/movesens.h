@@ -29,7 +29,7 @@
 #ifndef DM_MOVESENS_H
 #define DM_MOVESENS_H
 
-#include "dm.h"
+#include "dm/dm.h"
 
 namespace DM {
 	class Sensor;

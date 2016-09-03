@@ -25,6 +25,8 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
+#include "advancedDetector.h"
+
 #include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -33,35 +35,37 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 
-#include "engines/util.h"
-#include "engines/engine.h"
-#include "graphics/palette.h"
 #include "common/file.h"
 #include "common/events.h"
 #include "common/array.h"
 #include "common/algorithm.h"
+#include "common/translation.h"
+
+#include "engines/util.h"
+#include "engines/engine.h"
+
+#include "graphics/cursorman.h"
+#include "graphics/palette.h"
+#include "graphics/surface.h"
+
+#include "gui/saveload.h"
 
 #include "dm/dm.h"
-#include "gfx.h"
-#include "dungeonman.h"
-#include "eventman.h"
-#include "menus.h"
-#include "champion.h"
-#include "loadsave.h"
-#include "objectman.h"
-#include "inventory.h"
-#include "text.h"
-#include "movesens.h"
-#include "group.h"
-#include "timeline.h"
-#include "projexpl.h"
-#include "dialog.h"
-#include <graphics/cursorman.h>
-#include <advancedDetector.h>
-#include "sounds.h"
-#include <graphics/surface.h>
-#include <common/translation.h>
-#include <gui/saveload.h>
+#include "dm/gfx.h"
+#include "dm/dungeonman.h"
+#include "dm/eventman.h"
+#include "dm/menus.h"
+#include "dm/champion.h"
+#include "dm/loadsave.h"
+#include "dm/objectman.h"
+#include "dm/inventory.h"
+#include "dm/text.h"
+#include "dm/movesens.h"
+#include "dm/group.h"
+#include "dm/timeline.h"
+#include "dm/projexpl.h"
+#include "dm/dialog.h"
+#include "dm/sounds.h"
 
 namespace DM {
 const char *debugGetDirectionName(Direction dir) {

@@ -31,8 +31,9 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/memstream.h"
-#include "dm.h"
 #include "common/array.h"
+
+#include "dm/dm.h"
 
 namespace DM {
 

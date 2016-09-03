@@ -25,14 +25,15 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "dm/dm.h"
 
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/system.h"
 
 #include "engines/advancedDetector.h"
-#include <common/system.h>
+
+#include "dm/dm.h"
 
 namespace DM {
 static const PlainGameDescriptor DMGames[] = {

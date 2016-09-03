@@ -27,7 +27,7 @@
 #ifndef DM_PROJEXPL_H
 #define DM_PROJEXPL_H
 
-#include "dm.h"
+#include "dm/dm.h"
 
 
 namespace DM {

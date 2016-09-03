@@ -28,9 +28,9 @@
 #ifndef DM_MENUS_H
 #define DM_MENUS_H
 
-#include "dm.h"
-#include "champion.h"
-#include "dungeonman.h"
+#include "dm/dm.h"
+#include "dm/champion.h"
+#include "dm/dungeonman.h"
 
 namespace DM {
 

@@ -26,13 +26,13 @@
 */
 
 
-#include "projexpl.h"
-#include "dungeonman.h"
-#include "timeline.h"
-#include "group.h"
-#include "objectman.h"
-#include "movesens.h"
-#include "sounds.h"
+#include "dm/projexpl.h"
+#include "dm/dungeonman.h"
+#include "dm/timeline.h"
+#include "dm/group.h"
+#include "dm/objectman.h"
+#include "dm/movesens.h"
+#include "dm/sounds.h"
 
 namespace DM {
 

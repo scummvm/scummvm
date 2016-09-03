@@ -27,20 +27,20 @@
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/thumbnail.h"
 
-#include "eventman.h"
-#include "dungeonman.h"
-#include "movesens.h"
-#include "objectman.h"
-#include "inventory.h"
-#include "menus.h"
-#include "timeline.h"
-#include "projexpl.h"
-#include "text.h"
-#include "group.h"
-#include "dialog.h"
-#include "sounds.h"
-#include <mortevielle/saveload.h>
+#include "dm/eventman.h"
+#include "dm/dungeonman.h"
+#include "dm/movesens.h"
+#include "dm/objectman.h"
+#include "dm/inventory.h"
+#include "dm/menus.h"
+#include "dm/timeline.h"
+#include "dm/projexpl.h"
+#include "dm/text.h"
+#include "dm/group.h"
+#include "dm/dialog.h"
+#include "dm/sounds.h"
 
 
 namespace DM {

@@ -25,15 +25,15 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-#include "group.h"
-#include "dungeonman.h"
-#include "champion.h"
-#include "movesens.h"
-#include "projexpl.h"
-#include "timeline.h"
-#include "objectman.h"
-#include "menus.h"
-#include "sounds.h"
+#include "dm/group.h"
+#include "dm/dungeonman.h"
+#include "dm/champion.h"
+#include "dm/movesens.h"
+#include "dm/projexpl.h"
+#include "dm/timeline.h"
+#include "dm/objectman.h"
+#include "dm/menus.h"
+#include "dm/sounds.h"
 
 
 namespace DM {
