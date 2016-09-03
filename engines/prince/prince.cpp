@@ -219,33 +219,40 @@ void PrinceEngine::init() {
 
 	debugEngine("Adding all path: %s", gameDataDir.getPath().c_str());
 
-	PtcArchive *all = new PtcArchive();
-	if (!all->open("all/databank.ptc"))
-		error("Can't open all/databank.ptc");
+	if (getLanguage() != Common::RU_RUS) {
+		PtcArchive *all = new PtcArchive();
+		if (!all->open("all/databank.ptc"))
+			error("Can't open all/databank.ptc");
 
-	PtcArchive *voices = new PtcArchive();
-	if (!voices->open("voices/databank.ptc"))
-		error("Can't open voices/databank.ptc");
+		PtcArchive *voices = new PtcArchive();
+		if (!voices->open("voices/databank.ptc"))
+			error("Can't open voices/databank.ptc");
 
-	PtcArchive *sound = new PtcArchive();
-	if (!sound->open("sound/databank.ptc"))
-		error("Can't open sound/databank.ptc");
+		PtcArchive *sound = new PtcArchive();
+		if (!sound->open("sound/databank.ptc"))
+			error("Can't open sound/databank.ptc");
 
-	PtcArchive *translation = new PtcArchive();
-	if (getFeatures() & GF_TRANSLATED) {
-		if (!translation->openTranslation("all/prince_translation.dat"))
-			error("Can't open prince_translation.dat");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "all");
+
+		// Prefix the archive names, so that "all" doesn't conflict with the
+		// "all" directory, if that happens to be named in all lower case.
+		// It isn't on the CD, but we should try to stay case-insensitive.
+		SearchMan.add("_all", all);
+		SearchMan.add("_voices", voices);
+		SearchMan.add("_sound", sound);
+	} else {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "all");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 	}
 
-	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
-
-	// Prefix the archive names, so that "all" doesn't conflict with the
-	// "all" directory, if that happens to be named in all lower case.
-	// It isn't on the CD, but we should try to stay case-insensitive.
-	SearchMan.add("_all", all);
-	SearchMan.add("_voices", voices);
-	SearchMan.add("_sound", sound);
 	if (getFeatures() & GF_TRANSLATED) {
+		PtcArchive *translation = new PtcArchive();
+		if (getFeatures() & GF_TRANSLATED) {
+			if (!translation->openTranslation("all/prince_translation.dat"))
+				error("Can't open prince_translation.dat");
+		}
+
 		SearchMan.add("translation", translation);
 	}
 
