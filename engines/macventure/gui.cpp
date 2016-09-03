@@ -253,6 +253,11 @@ void Gui::initWindows() {
 	_exitsWindow->setDimensions(getWindowData(kExitsWindow).bounds);
 	_exitsWindow->setActive(false);
 	_exitsWindow->setCallback(exitsWindowCallback, this);
+
+	// TODO: In the original, the background is actually a clickable
+	// object that can be used to refer to the room itself. In that case,
+	// the background should be kPatternDarkGray.
+	_exitsWindow->setBackgroundPattern(kPatternLightGray);
 	loadBorders(_exitsWindow, findWindowData(kExitsWindow).type);
 }
 
@@ -654,18 +659,11 @@ void Gui::drawInventories() {
 void Gui::drawExitsWindow() {
 
 	Graphics::ManagedSurface *srf = _exitsWindow->getSurface();
-	BorderBounds border = borderBounds(getWindowData(kExitsWindow).type);
-
-	srf->fillRect(Common::Rect(
-		border.leftOffset,
-		border.topOffset,
-		srf->w + border.rightOffset,
-		srf->h + border.bottomOffset), kColorWhite);
 
 	Common::Array<CommandButton>::const_iterator it = _exitsData->begin();
 	for (; it != _exitsData->end(); ++it) {
 		CommandButton button = *it;
-		button.draw(*_exitsWindow->getSurface());
+		button.draw(*srf);
 	}
 
 	findWindow(kExitsWindow)->setDirty(true);
