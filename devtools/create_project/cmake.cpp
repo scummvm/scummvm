@@ -48,7 +48,9 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "vorbis",    0,              0,          0,                       0,                     "vorbisfile vorbis ogg" },
 		{ "theora",    0,              0,          0,                       0,                     "theoradec"  },
 		{ "fluidsynth",0,              0,          0,                       0,                     "fluidsynth" },
-		{ "faad",      0,              0,          0,                       0,                     "faad"       }
+		{ "faad",      0,              0,          0,                       0,                     "faad"       },
+		{ "libcurl",   "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
+		{ "sdlnet",    "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            }
 	};
 
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
