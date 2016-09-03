@@ -34,9 +34,9 @@ private:
 	/**
 	 * Populate the details for an item
 	 */
-	int populateItem(CGameObject *item, int val);
+	int populateItem(CGameObject *item, bool isLoading);
 
-	int subMode(CGameObject *item, int val);
+	int subMode(CGameObject *item, bool isLoading);
 
 	/**
 	 * Start any movie for the background
@@ -126,7 +126,7 @@ public:
 	/**
 	 * Set the inventory item
 	 */
-	void setItem(CGameObject *item, int val);
+	void setItem(CGameObject *item, bool isLoading);
 };
 
 class CInventoryGlyphAction : public CGlyphAction {

@@ -40,8 +40,7 @@ private:
 	CGameObject *_itemBackgrounds[46];
 	CGameObject *_itemGlyphs[46];
 	CGameObject *_movie;
-	bool _field290;
-	int _field294;
+	bool _isLoading;
 	int _field298;
 private:
 	/**

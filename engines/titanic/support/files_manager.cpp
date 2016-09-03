@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CFilesManager::CFilesManager() : _gameManager(nullptr), _assetsPath("Assets"),
-		_field0(0), _drive(-1), _field18(0), _field1C(0), _field3C(0) {
+		_drive(-1) {
 	loadResourceIndex();
 }
 

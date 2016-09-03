@@ -28,7 +28,7 @@
 namespace Titanic {
 
 CPetInventory::CPetInventory() : CPetSection(),
-		_movie(nullptr), _field290(false), _field294(0), _field298(0) {
+		_movie(nullptr), _isLoading(false), _field298(0) {
 	for (int idx = 0; idx < TOTAL_ITEMS; ++idx) {
 		_itemBackgrounds[idx] = _itemGlyphs[idx] = nullptr;
 	}
@@ -109,9 +109,9 @@ void CPetInventory::load(SimpleFile *file, int param) {
 
 void CPetInventory::postLoad() {
 	reset();
-	_field290 = 1;
+	_isLoading = true;
 	itemsChanged();
-	_field290 = 0;
+	_isLoading = false;
 }
 
 void CPetInventory::save(SimpleFile *file, int indent) {
@@ -179,7 +179,7 @@ void CPetInventory::itemsChanged() {
 	while (item) {
 		CPetInventoryGlyph *glyph = new CPetInventoryGlyph();
 		glyph->setup(_petControl, &_items);
-		glyph->setItem(item, _field290);
+		glyph->setItem(item, _isLoading);
 
 		_items.push_back(glyph);
 		item = _petControl->getNextObject(item);

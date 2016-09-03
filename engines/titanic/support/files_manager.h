@@ -48,13 +48,7 @@ private:
 	Common::File _datFile;
 	ResourceHash _resources;
 	CFilesManagerList _list;
-	CString _string1;
-	CString _string2;
-	int _field0;
 	int _drive;
-	int _field18;
-	int _field1C;
-	int _field3C;
 	const CString _assetsPath;
 private:
 	void loadResourceIndex();

@@ -40,7 +40,6 @@ private:
 	TitanicEngine *_vm;
 	int _pendingLoadSlot;
 	uint _specialButtons;
-	uint32 _priorFrameTime;
 	uint32 _priorLeftDownTime;
 	uint32 _priorMiddleDownTime;
 	uint32 _priorRightDownTime;
