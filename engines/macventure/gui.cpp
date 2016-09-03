@@ -31,8 +31,6 @@
 
 namespace MacVenture {
 
-enum MenuAction;
-
 enum {
 	kCursorWidth = 2,
 	kCursorHeight = 2
