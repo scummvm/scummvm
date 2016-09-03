@@ -254,10 +254,10 @@ void TextMan::clearAllRows() {
 void TextMan::updateMessageArea() {
 	if (_isScrolling) {
 		if (_startedScrollingAt == -1) {
-			_startedScrollingAt = _vm->_system->getMillis();
+			_startedScrollingAt = g_system->getMillis();
 			memcpy(_messageAreaCopy, _vm->_displayMan->_bitmapScreen + (200 - 7 * 4) * 320, 320 * 7 * 4);
 		}
-		int linesToCopy = (_vm->_system->getMillis() - _startedScrollingAt) / 50;
+		int linesToCopy = (g_system->getMillis() - _startedScrollingAt) / 50;
 		if (linesToCopy >= 7) {
 			linesToCopy = 7;
 			_startedScrollingAt = -1;

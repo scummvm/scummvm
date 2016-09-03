@@ -815,9 +815,9 @@ void DMEngine::openEntranceDoors() {
 
 		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
 		_displayMan->blitToBitmap(leftDoorBitmap, _displayMan->_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
-									   kM1_ColorNoTransparency, 161, k200_heightScreen);
+								  kM1_ColorNoTransparency, 161, k200_heightScreen);
 		_displayMan->blitToBitmap(rightDoorBitmap, _displayMan->_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
-									   kM1_ColorNoTransparency, 161, k200_heightScreen);
+								  kM1_ColorNoTransparency, 161, k200_heightScreen);
 		_eventMan->discardAllInput();
 		_displayMan->updateScreen();
 
@@ -938,7 +938,7 @@ void DMEngine::fuseSequence() {
 	int16 fluxCageMapX = _dungeonMan->_partyMapX;
 	int16 fluxcageMapY = _dungeonMan->_partyMapY;
 
-	for(;;) {
+	for (;;) {
 		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 		while (curThing != Thing::_endOfList) {
 			if (curThing.getType() == k15_ExplosionThingType) {

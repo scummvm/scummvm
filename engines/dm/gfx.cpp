@@ -919,9 +919,9 @@ void DisplayMan::updateScreen() {
 	// apply copper
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_bitmapScreen[i] += 16;
-	_vm->_system->copyRectToScreen(_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
+	g_system->copyRectToScreen(_bitmapScreen, _screenWidth, 0, 0, _screenWidth, _screenHeight);
 	_vm->_console->onFrame();
-	_vm->_system->updateScreen();
+	g_system->updateScreen();
 	for (uint32 i = 320 * 30; i < 320 * 170; ++i)
 		_bitmapScreen[i] -= 16;
 }
@@ -3861,7 +3861,7 @@ void DisplayMan::buildPaletteChangeCopperList(uint16* middleScreen, uint16* topA
 		colorPalette[i * 3 + 1] = (middleScreen[i - 16] >> 4) * (256 / 16);
 		colorPalette[i * 3 + 2] = middleScreen[i - 16] * (256 / 16);
 	}
-	_vm->_system->getPaletteManager()->setPalette(colorPalette, 0, 32);
+	g_system->getPaletteManager()->setPalette(colorPalette, 0, 32);
 }
 
 }

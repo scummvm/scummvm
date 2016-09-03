@@ -597,12 +597,12 @@ bool EventManager::isMouseButtonDown(MouseButton button) {
 }
 
 void EventManager::setMousePos(Common::Point pos) {
-	_vm->_system->warpMouse(pos.x, pos.y);
+	g_system->warpMouse(pos.x, pos.y);
 }
 
 Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Event *grabMouseClick) {
 	Common::Event event;
-	while (_vm->_system->getEventManager()->pollEvent(event)) {
+	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
 			if (event.synthetic)
@@ -1420,7 +1420,7 @@ void EventManager::drawSleepScreen() {
 
 void EventManager::discardAllInput() {
 	Common::Event event;
-	while (_vm->_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
+	while (g_system->getEventManager()->pollEvent(event) && !_vm->_engineShouldQuit) {
 		if (event.type == Common::EVENT_QUIT)
 			_vm->_engineShouldQuit = true;
 	}
@@ -1626,7 +1626,7 @@ void EventManager::waitForMouseOrKeyActivity() {
 	discardAllInput();
 	Common::Event event;
 	while (true) {
-		if (_vm->_system->getEventManager()->pollEvent(event)) {
+		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				_vm->_engineShouldQuit = true;
