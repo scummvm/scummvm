@@ -291,7 +291,7 @@ public:
 
 	virtual byte *getStringAddress(ResId idx);
 	virtual int setupStringArray(int size);
-	virtual int setupStringArrayFromString(char *cStr);
+	virtual int setupStringArrayFromString(const char *cStr);
 	virtual void getStringFromArray(int arrayNumber, char *buffer, int maxLength);
 
 protected:

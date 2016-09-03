@@ -230,7 +230,7 @@ int ScummEngine_v72he::setupStringArray(int size) {
 	return readVar(0);
 }
 
-int ScummEngine_v72he::setupStringArrayFromString(char *cStr) {
+int ScummEngine_v72he::setupStringArrayFromString(const char *cStr) {
 	// this is PUI_ScummStringArrayFromCString() found in PUSERMAC.cpp
 	// I can see how its done up there in setupStringArray()
 	// yet I'd note that 'SCUMMVAR_user_reserved' var was used instead of 0
