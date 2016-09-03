@@ -94,7 +94,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Dummy";
+		return "Dungeon Master (C) 1987 FTL Games";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
