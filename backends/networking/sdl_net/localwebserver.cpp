@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/translation.h"
-#include <SDL/SDL_net.h>
+#include <SDL_net.h>
 #include <common/config-manager.h>
 
 #ifdef POSIX
