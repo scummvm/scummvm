@@ -438,8 +438,9 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			}
 		}
 
-		// Is it a control character?
-		if (isPrintable(c)) {
+		if (c == '\r' || c == '\n') {
+			journalString += '\n';
+		} else if (isPrintable(c)) {
 			// Nope. Set flag for allowing control codes to insert spaces
 			ctrlSpace = true;
 			justChangedSpeaker = false;
