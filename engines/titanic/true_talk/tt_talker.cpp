@@ -40,13 +40,13 @@ TTtalker::~TTtalker() {
 		petControl->convAddLine(_line);
 
 	// Notify the end of the speech
-	CTrueTalkNotifySpeechEndedMsg endedMsg(_field24, _dialogueId);
+	CTrueTalkNotifySpeechEndedMsg endedMsg(_talkEndState, _dialogueId);
 	endedMsg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
 }
 
 void TTtalker::endSpeech(int val) {
 	_done = true;
-	_field24 = val;
+	_talkEndState = val;
 }
 
 } // End of namespace Titanic

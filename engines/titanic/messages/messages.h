@@ -327,7 +327,7 @@ MESSAGE1(CTriggerNPCEvent, int, value, 0);
 MESSAGE4(CTrueTalkGetAnimSetMsg, int, value1, 0, uint, index, 0, uint, startFrame, 0, uint, endFrame, 0);
 MESSAGE2(CTrueTalkGetAssetDetailsMsg, CString, filename, "", int, numValue, 0);
 MESSAGE2(CTrueTalkGetStateValueMsg, int, stateNum, 0, int, stateVal, -1000);
-MESSAGE2(CTrueTalkNotifySpeechEndedMsg, int, value1, 0, int, dialogueId, 0);
+MESSAGE2(CTrueTalkNotifySpeechEndedMsg, int, endState, 0, int, dialogueId, 0);
 MESSAGE3(CTrueTalkNotifySpeechStartedMsg, uint, speechDuration, 0, uint, dialogueId, 0, int, value, 0);
 MESSAGE1(CTrueTalkQueueUpAnimSetMsg, int, value, 0);
 MESSAGE0(CTrueTalkSelfQueueAnimSetMsg);

@@ -37,13 +37,13 @@ public:
 	CTrueTalkNPC *_npc;
 	CString _line;
 	int _dialogueId;
-	int _field24;
+	int _talkEndState;
 	int _done;
 public:
 	TTtalker() : _owner(nullptr), _npc(nullptr),
-		_dialogueId(0), _field24(0), _done(0) {}
+		_dialogueId(0), _talkEndState(0), _done(0) {}
 	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
-		_owner(owner), _npc(npc), _dialogueId(0), _field24(0), _done(0) {}
+		_owner(owner), _npc(npc), _dialogueId(0), _talkEndState(0), _done(0) {}
 	~TTtalker();
 
 	/**
