@@ -417,7 +417,8 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
+		if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT)
+			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
 #endif
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
