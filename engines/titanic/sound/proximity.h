@@ -54,7 +54,7 @@ public:
 	double _velocityX;
 	double _velocityY;
 	double _velocityZ;
-	bool _freeSoundFlag;
+	DisposeAfterUse::Flag _disposeAfterUse;
 	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;
 	uint _soundDuration;

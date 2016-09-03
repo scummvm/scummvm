@@ -419,7 +419,7 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 		return slot._handle;
 	} else {
 		_sounds.flushChannel(waveFile, iChannel);
-		if (prox._freeSoundFlag)
+		if (prox._disposeAfterUse == DisposeAfterUse::YES)
 			delete waveFile;
 		return 0;
 	}

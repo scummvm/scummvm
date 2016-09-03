@@ -31,7 +31,7 @@ CProximity::CProximity() : _channelVolume(100), _balance(0),
 		_azimuth(0.0), _range(0.5), _elevation(0), 
 		_posX(0.0), _posY(0.0), _posZ(0.0),
 		_hasVelocity(false), _velocityX(0), _velocityY(0), _velocityZ(0),
-		_freeSoundFlag(false), _endTalkerFn(nullptr), _talker(nullptr),
+		_disposeAfterUse(DisposeAfterUse::NO), _endTalkerFn(nullptr), _talker(nullptr),
 		_soundDuration(0), _soundType(Audio::Mixer::kPlainSoundType) {
 }
 
