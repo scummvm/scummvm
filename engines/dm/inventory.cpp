@@ -499,21 +499,16 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k29_ObjectDescCircleIndice),
 								   boxObjectDescCircle, k16_byteWidth, k12_ColorDarkestGray, 27);
 
-		const char *descString = nullptr;
-		char str[40];
+		Common::String descString;
+		Common::String str;
 		if (iconIndex == k147_IconIndiceJunkChampionBones) {
 			switch (_vm->getGameLanguage()) { // localized
-			default:
-			case Common::EN_ANY:
-			case Common::DE_DEU: // german and english versions are the same
-				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
-				strcat(str, " ");
-				strcat(str, objMan._objectNames[iconIndex]);
-				break;
 			case Common::FR_FRA:
-				strcat(str, objMan._objectNames[iconIndex]);
-				strcat(str, " ");
-				strcpy(str, champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				// Fix original bug dur to a cut&paste error: string was concatenated then overwritten by the name
+				str = Common::String::format("%s %s", objMan._objectNames[iconIndex], champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name);
+				break;
+			default: // German and English versions are the same
+				str = Common::String::format("%s %s", champMan._champions[((Junk *)rawThingPtr)->getChargeCount()]._name, objMan._objectNames[iconIndex]);
 				break;
 			}
 
@@ -521,16 +516,15 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} else if ((thingType == k8_PotionThingType)
 				   && (iconIndex != k163_IconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
-			str[0] = '_' + ((Potion *)rawThingPtr)->getPower() / 40;
-			str[1] = ' ';
-			str[2] = '\0';
-			strcat(str, objMan._objectNames[iconIndex]);
+			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
+			str += " ";
+			str += objMan._objectNames[iconIndex];
 			descString = str;
 		} else {
 			descString = objMan._objectNames[iconIndex];
 		}
 
-		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString);
+		textMan.printToViewport(134, 68, k13_ColorLightestGray, descString.c_str());
 		drawIconToViewport(iconIndex, 111, 59);
 
 
@@ -577,59 +571,47 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case k10_JunkThingType: {
 			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
-				const char *descString_EN_ANY[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
-				const char *descString_DE_DEU[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
-				const char *descString_FR_FRA[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
+				const char *descStringEN[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
+				const char *descStringDE[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
+				const char *descStringFR[4] = {"(VIDE)", "(PRESQUE VIDE)", "(PRESQUE PLEINE)", "(PLEINE)"};
 
 				Junk *junk = (Junk *)rawThingPtr;
 				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					descString = descString_EN_ANY[junk->getChargeCount()];
-					break;
 				case Common::DE_DEU:
-					descString = descString_DE_DEU[junk->getChargeCount()];
+					descString = descStringDE[junk->getChargeCount()];
 					break;
 				case Common::FR_FRA:
-					descString = descString_FR_FRA[junk->getChargeCount()];
+					descString = descStringFR[junk->getChargeCount()];
+					break;
+				default:
+					descString = descStringEN[junk->getChargeCount()];
 					break;
 				}
 
-				drawPanelObjectDescriptionString(descString);
+				drawPanelObjectDescriptionString(descString.c_str());
 			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
+				const static char *directionNameEN[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
+				const static char *directionNameDE[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
+				const static char *directionNameFR[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
+
 				potentialAttribMask = 0;
 
 				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					strcpy(str, "PARTY FACING ");
-					break;
 				case Common::DE_DEU:
-					strcpy(str, "GRUPPE BLICKT NACH ");
+					str = "GRUPPE BLICKT NACH ";
+					str += directionNameDE[iconIndex];
 					break;
 				case Common::FR_FRA:
-					strcpy(str, "GROUPE FACE ");
+					str = "GROUPE FACE ";
+					str += directionNameFR[iconIndex];
+					break;
+				default:
+					str = "PARTY FACING ";
+					str += directionNameEN[iconIndex];
 					break;
 				}
 
-
-				const static char* directionName_EN_ANY[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
-				const static char* directionName_DE_DEU[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
-				const static char* directionName_FR_FRA[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
-				switch (_vm->getGameLanguage()) { // localized
-				default:
-				case Common::EN_ANY:
-					strcat(str, directionName_EN_ANY[iconIndex]);
-					break;
-				case Common::DE_DEU:
-					strcat(str, directionName_DE_DEU[iconIndex]);
-					break;
-				case Common::FR_FRA:
-					strcat(str, directionName_FR_FRA[iconIndex]);
-					break;
-				}
-
-				drawPanelObjectDescriptionString(str);
+				drawPanelObjectDescriptionString(str.c_str());
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
@@ -642,73 +624,54 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		} // end of switch 
 
 		if (potentialAttribMask) {
-			static const char *attribString_EN_ANY[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
-			static const char *attribString_DE_DEU[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
-			static const char *attribString_FR_FRA[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
+			static const char *attribStringEN[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
+			static const char *attribStringDE[4] = {"ESSBAR", "VERGIFTET", "DEFEKT", "VERFLUCHT"};
+			static const char *attribStringFR[4] = {"COMESTIBLE", "EMPOISONNE", "BRISE", "MAUDIT"};
 			const char **attribString = nullptr;
 
 			switch (_vm->getGameLanguage()) { // localized
-			default:
-			case Common::EN_ANY:
-				attribString = attribString_EN_ANY;
-				break;
 			case Common::DE_DEU:
-				attribString = attribString_DE_DEU;
+				attribString = attribStringDE;
 				break;
 			case Common::FR_FRA:
-				attribString = attribString_FR_FRA;
+				attribString = attribStringFR;
+				break;
+			default:
+				attribString = attribStringEN;
 				break;
 			}
 
-			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, str, "(", ")");
-			drawPanelObjectDescriptionString(str);
+			char destString[40];
+			buildObjectAttributeString(potentialAttribMask, actualAttribMask, attribString, destString, "(", ")");
+			drawPanelObjectDescriptionString(destString);
 		}
-
-		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-			strcpy(str, "WEIGHS ");
-			break;
-		case Common::DE_DEU:
-			strcpy(str, "WIEGT ");
-			break;
-		case Common::FR_FRA:
-			strcpy(str, "PESE ");
-			break;
-		}
-
 
 		uint16 weight = dunMan.getObjectWeight(thingToDraw);
-		strcat(str, champMan.getStringFromInteger(weight / 10, false, 3).c_str());
-
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-			strcat(str, ".");
-			break;
 		case Common::DE_DEU:
-			strcat(str, ",");
+			str = "WIEGT " + champMan.getStringFromInteger(weight / 10, false, 3) + ",";
 			break;
 		case Common::FR_FRA:
-			strcat(str, "KG,");
+			str = "PESE " + champMan.getStringFromInteger(weight / 10, false, 3) + "KG,";
+			break;
+		default:
+			str = "WEIGHS " + champMan.getStringFromInteger(weight / 10, false, 3) + ".";
 			break;
 		}
 
 		weight -= (weight / 10) * 10;
-		strcat(str, champMan.getStringFromInteger(weight, false, 1).c_str());
+		str += champMan.getStringFromInteger(weight, false, 1);
 
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-		case Common::DE_DEU:
-			strcat(str, " KG.");
-			break;
 		case Common::FR_FRA:
-			strcat(str, ".");
+			str += ".";
+			break;
+		default:
+			str += " KG.";
 			break;
 		}
 
-		drawPanelObjectDescriptionString(str);
+		drawPanelObjectDescriptionString(str.c_str());
 	}
 	drawPanelArrowOrEye(pressingEye);
 }

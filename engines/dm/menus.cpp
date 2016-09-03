@@ -837,13 +837,14 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 		{1, 2, 3, 4, 5, 6},   /* Power 1 */
 		{2, 3, 4, 5, 6, 7},   /* Power 2 */
 		{4, 5, 6, 7, 7, 9},   /* Power 3 */
-		{2, 2, 3, 4, 6, 7}}; /* Power 4 */
+		{2, 2, 3, 4, 6, 7}    /* Power 4 */
+	};
 	static byte G0486_auc_Graphic560_SymbolManaCostMultiplier[6] = {8, 12, 16, 20, 24, 28};
 
 	uint16 L1222_ui_SymbolStep;
 	uint16 L1223_ui_ManaCost;
 	uint16 L1224_ui_SymbolIndex;
-	Champion* L1225_ps_Champion;
+	Champion *L1225_ps_Champion;
 
 	L1225_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	L1222_ui_SymbolStep = L1225_ps_Champion->_symbolStep;
@@ -867,7 +868,7 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 
 void MenuMan::deleteChampionSymbol() {
 	int16 L1226_ui_SymbolStep;
-	Champion* L1228_ps_Champion;
+	Champion *L1228_ps_Champion;
 
 	L1228_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (!strlen(L1228_ps_Champion->_symbols)) {
