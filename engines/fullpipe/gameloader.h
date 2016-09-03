@@ -96,6 +96,7 @@ class GameLoader : public CObject {
 	int getSceneTagBySceneId(int sceneId, SceneTag **st);
 	void applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount);
 	void saveScenePicAniInfos(int sceneId);
+	PicAniInfo **savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount);
 
 	void readSavegame(const char *fname);
 	void writeSavegame(Scene *sc, const char *fname);

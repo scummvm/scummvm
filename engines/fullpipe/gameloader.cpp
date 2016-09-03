@@ -504,7 +504,79 @@ void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAni
 }
 
 void GameLoader::saveScenePicAniInfos(int sceneId) {
-	warning("STUB: GameLoader::saveScenePicAniInfos(%d)", sceneId);
+	SceneTag *st;
+
+	int idx = getSceneTagBySceneId(sceneId, &st);
+
+	if (idx < 0)
+		return;
+
+	if (!_sc2array[idx]._isLoaded)
+		return;
+
+	if (!st->_scene)
+		return;
+
+	int picAniInfosCount;
+
+	PicAniInfo **pic = savePicAniInfos(st->_scene, 0, 128, &picAniInfosCount);
+
+	if (_sc2array[idx]._picAniInfos)
+		free(_sc2array[idx]._picAniInfos);
+
+	_sc2array[idx]._picAniInfos = pic;
+	_sc2array[idx]._picAniInfosCount = picAniInfosCount;
+}
+
+PicAniInfo **GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount) {
+	PicAniInfo **res;
+
+	*picAniInfoCount = 0;
+	if (!sc)
+		return NULL;
+
+	if (!sc->_picObjList.size())
+		return NULL;
+
+	int numInfos = sc->_staticANIObjectList1.size() + sc->_picObjList.size() - 1;
+	if (numInfos < 1)
+		return NULL;
+
+	res = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * numInfos);
+
+	int idx = 0;
+
+	for (uint i = 0; i < sc->_picObjList.size(); i++) {
+		PictureObject *obj = sc->_picObjList[i];
+
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+			res[idx] = new PicAniInfo();
+			obj->getPicAniInfo(res[idx]);
+			idx++;
+		}
+	}
+
+	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
+		StaticANIObject *obj = sc->_staticANIObjectList1[i];
+
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+			res[idx] = new PicAniInfo();
+			obj->getPicAniInfo(res[idx]);
+			res[idx]->type &= 0xFFFF;
+			idx++;
+		}
+	}
+
+	*picAniInfoCount = idx;
+
+	debugC(4, kDebugBehavior | kDebugAnimation, "savePicAniInfos: Stored %d infos", idx);
+
+	if (!idx) {
+		free(res);
+		return NULL;
+	}
+
+	return res;
 }
 
 void GameLoader::updateSystems(int counterdiff) {
