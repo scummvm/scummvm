@@ -38,7 +38,7 @@ public:
 	int _fieldBC;
 	CString _filename;
 	int _volume;
-	int _fieldD0;
+	int _balance;
 	bool _repeated;
 	int _soundHandle;
 	int _stopSeconds;

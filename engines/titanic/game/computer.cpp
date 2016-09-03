@@ -46,7 +46,7 @@ void CComputer::load(SimpleFile *file) {
 
 bool CComputer::ActMsg(CActMsg *msg) {
 	if (_state) {
-		playSound("a#35.wav", 100, 0, 0);
+		playSound("a#35.wav");
 		playMovie(32, 42, 0);
 
 		if (msg->_action == "CD1")
@@ -66,11 +66,11 @@ bool CComputer::ActMsg(CActMsg *msg) {
 bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_currentCD == "None") {
 		if (_state) {
-			playSound("a#35.wav", 100, 0, 0);
+			playSound("a#35.wav");
 			playMovie(11, 21, 0);
 			_state = 0;
 		} else {
-			playSound("a#34.wav", 100, 0, 0);
+			playSound("a#34.wav");
 			playMovie(0, 10, 0);
 			_state = 1;
 		}
@@ -81,7 +81,7 @@ bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			actMsg.execute(_currentCD);
 			_currentCD = "None";
 		} else {
-			playSound("a#34.wav", 100, 0, 0);
+			playSound("a#34.wav");
 			playMovie(21, 31, 0);
 			_state = 1;
 		}
@@ -92,10 +92,10 @@ bool CComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CComputer::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == 90) {
-		playSound("a#32.wav", 100, 0, 0);
-		playSound("a#33.wav", 100, 0, 0);
-		playSound("a#31.wav", 100, 0, 0);
-		playSound("a#0.wav", 100, 0, 0);
+		playSound("a#32.wav");
+		playSound("a#33.wav");
+		playSound("a#31.wav");
+		playSound("a#0.wav");
 
 		gotoView("Home.Node 4.E", "_TRACK,3,e-cu,4,E");
 	}

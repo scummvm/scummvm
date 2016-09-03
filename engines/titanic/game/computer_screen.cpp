@@ -57,7 +57,7 @@ bool CComputerScreen::ActMsg(CActMsg *msg) {
 }
 
 bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
-	playSound("z#47.wav", 100, 0, 0);
+	playSound("z#47.wav");
 	addTimer(0, 3000, 0);
 
 	for (int idx = 0; idx < 10; ++idx)

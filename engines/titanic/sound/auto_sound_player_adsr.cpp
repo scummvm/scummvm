@@ -48,12 +48,12 @@ void CAutoSoundPlayerADSR::load(SimpleFile *file) {
 bool CAutoSoundPlayerADSR::TurnOn(CTurnOn *msg) {
 	if (_soundHandle == -1) {
 		if (!_soundName1.empty()) {
-			_soundHandle = playSound(_soundName1, _volume, _fieldD0);
+			_soundHandle = playSound(_soundName1, _volume, _balance);
 
 			if (!_soundName2.empty())
-				_soundHandle = queueSound(_soundName2, _soundHandle, _volume, _fieldD0);
+				_soundHandle = queueSound(_soundName2, _soundHandle, _volume, _balance);
 
-			_soundHandle = queueSound(_filename, _soundHandle, _volume, _fieldD0);
+			_soundHandle = queueSound(_filename, _soundHandle, _volume, _balance);
 			_active = true;
 		}
 	}
@@ -64,7 +64,7 @@ bool CAutoSoundPlayerADSR::TurnOn(CTurnOn *msg) {
 bool CAutoSoundPlayerADSR::TurnOff(CTurnOff *msg) {
 	if (_soundHandle != -1) {
 		if (!_soundName3.empty())
-			queueSound(_soundName3, _soundHandle, _volume, _fieldD0);
+			queueSound(_soundName3, _soundHandle, _volume, _balance);
 
 		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle);

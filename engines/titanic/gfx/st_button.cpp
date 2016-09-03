@@ -68,7 +68,7 @@ void CSTButton::load(SimpleFile *file) {
 
 bool CSTButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	playMovie(0);
-	playSound(_soundName, 100, 0, 0);
+	playSound(_soundName);
 
 	return true;
 }

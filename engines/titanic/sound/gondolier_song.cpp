@@ -49,9 +49,9 @@ bool CGondolierSong::TurnOn(CTurnOn *msg) {
 			int volume = _value * _volume / 100;
 
 			if (_startSeconds == -1) {
-				_soundHandle = playSound(_filename, volume, _fieldD0, _repeated);
+				_soundHandle = playSound(_filename, volume, _balance, _repeated);
 			} else {
-				_soundHandle = playSound(_filename, 0, _fieldD0, _repeated);
+				_soundHandle = playSound(_filename, 0, _balance, _repeated);
 				setSoundVolume(_soundHandle, _volume, _startSeconds);
 			}
 

@@ -189,24 +189,30 @@ protected:
 
 	/**
 	 * Plays a sound
-	 * @param resName	Filename of sound to play
+	 * @param name		Filename of sound to play
 	 * @param volume	Volume level
+	 * @param balance	Sound balance (not actually used in original)
+	 * @param repeated	If true, sound will repeat indefinitely
 	 */
-	int playSound(const CString &name, uint volume = 100, int val3 = 0, bool repeated = false);
+	int playSound(const CString &name, uint volume = 100, int balance = 0, bool repeated = false);
 
 	/**
 	 * Plays a sound
-	 * @param resName	Filename of sound to play
+	 * @param name		Filename of sound to play
 	 * @param prox		Proximity object with the sound data
 	 */
 	int playSound(const CString &name, CProximity &prox);
 
 	/**
 	 * Queues a sound to play after a specified one finishes
-	 * @param resName	Filename of sound to play
-	 * @param volume	Volume level
+	 * @param name			Filename of sound to play
+	 * @param priorHandle	Sound to wait until finished before playing
+	 * @param volume		Volume level
+	 * @param balance		Sound balance (not actually used by original)
+	 * @param repeated		If true, sound will repeat indefinitely
 	 */
-	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int val3 = 0, bool repeated = false);
+	int queueSound(const CString &name, uint priorHandle, uint volume = 100,
+		int balance = 0, bool repeated = false);
 
 	/**
 	 * Stop a sound

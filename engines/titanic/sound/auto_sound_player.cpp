@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(CAutoSoundPlayer, CGameObject)
 END_MESSAGE_MAP()
 
 CAutoSoundPlayer::CAutoSoundPlayer() : CGameObject(),
-	_fieldBC(0), _volume(70), _fieldD0(0), _repeated(false), _soundHandle(-1),
+	_fieldBC(0), _volume(70), _balance(0), _repeated(false), _soundHandle(-1),
 	_stopSeconds(0), _startSeconds(-1), _active(false), _fieldE8(0) {
 }
 
@@ -42,7 +42,7 @@ void CAutoSoundPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeQuotedLine(_filename, indent);
 	file->writeNumberLine(_volume, indent);
-	file->writeNumberLine(_fieldD0, indent);
+	file->writeNumberLine(_balance, indent);
 	file->writeNumberLine(_repeated, indent);
 	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_stopSeconds, indent);
@@ -58,7 +58,7 @@ void CAutoSoundPlayer::load(SimpleFile *file) {
 	_fieldBC = file->readNumber();
 	_filename = file->readString();
 	_volume = file->readNumber();
-	_fieldD0 = file->readNumber();
+	_balance = file->readNumber();
 	_repeated = file->readNumber();
 	_soundHandle = file->readNumber();
 	_stopSeconds = file->readNumber();
@@ -72,7 +72,7 @@ void CAutoSoundPlayer::load(SimpleFile *file) {
 bool CAutoSoundPlayer::TurnOn(CTurnOn *msg) {
 	if (_soundHandle == -1) {
 		CProximity prox;
-		prox._fieldC = _fieldD0;
+		prox._balance = _balance;
 		prox._repeated = _repeated;
 		if (_fieldE8)
 			prox._positioningMode = POSMODE_VECTOR;

@@ -113,7 +113,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			petSetArea(PET_ROOMS);
 			dec54();
 			unlockMouse();
-			playSound("z#47.wav", 100, 0, 0);
+			playSound("z#47.wav");
 			_classNum = false;
 		}
 

@@ -237,8 +237,8 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (_fieldE0 == 3 && compareRoomNameTo("SGTState") && !getPassengerClass()) {
-		playSound("z#47.wav", 100, 0, 0);
-		_soundHandle = playSound("b#20.wav", 100, 0, 0);
+		playSound("z#47.wav");
+		_soundHandle = playSound("b#20.wav");
 		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
 
 		if (magazine) {

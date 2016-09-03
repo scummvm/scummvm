@@ -36,13 +36,11 @@ typedef void (*CEndTalkerFn)(TTtalker *talker);
 
 class CProximity {
 public:
-	int _field4;
 	int _channelVolume;
-	int _fieldC;
+	int _balance;
 	int _priorSoundHandle;
-	int _field14;
 	double _frequencyMultiplier;
-	double _field1C;
+	double _frequencyAdjust;
 	bool _repeated;
 	int _channelMode;
 	PositioningMode _positioningMode;
@@ -56,9 +54,6 @@ public:
 	double _velocityX;
 	double _velocityY;
 	double _velocityZ;
-	int _field54;
-	int _field58;
-	int _field5C;
 	bool _freeSoundFlag;
 	CEndTalkerFn _endTalkerFn;
 	TTtalker *_talker;

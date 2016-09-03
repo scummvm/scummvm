@@ -68,7 +68,7 @@ bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			petMoveToHiddenRoom();
 			CAddHeadPieceMsg headpieceMsg(getName());
 			headpieceMsg.execute(msg->_other);
-			playSound("z#116.wav", 100, 0, 0);
+			playSound("z#116.wav");
 			setPosition(Point(0, 0));
 			setVisible(false);
 			_field134 = 1;

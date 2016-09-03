@@ -161,7 +161,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 	CGameObject *petItem;
 	if (find(getName(), &petItem, FIND_PET)) {
 		if (!_field158)
-			playSound("z#47.wav", 100, 0, 0);
+			playSound("z#47.wav");
 		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
 			CGameObject *child = dynamic_cast<CGameObject *>(getFirstChild());
 			if (child) {

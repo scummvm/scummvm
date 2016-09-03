@@ -60,7 +60,7 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		return true;
 	} else {
 		setVisible(false);
-		playSound("z#54.wav", 100, 0, 0);
+		playSound("z#54.wav");
 		setPosition(shipSetting->_pos1);
 		shipSetting->_itemName = getName();
 		petMoveToHiddenRoom();

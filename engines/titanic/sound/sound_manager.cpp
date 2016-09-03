@@ -371,7 +371,7 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 		return 0;
 
 	prox._channelVolume = CLIP(prox._channelVolume, 0, 100);
-	prox._fieldC = CLIP(prox._fieldC, -100, 100);
+	prox._balance = CLIP(prox._balance, -100, 100);
 
 	int slotIndex = findFreeSlot();
 	if (slotIndex == -1)
@@ -399,7 +399,7 @@ int QSoundManager::playWave(CWaveFile *waveFile, int iChannel, uint flags, CProx
 		break;
 	}
 
-	if (prox._frequencyMultiplier || prox._field1C != 1.875) {
+	if (prox._frequencyMultiplier || prox._frequencyAdjust != 1.875) {
 		uint freq = (uint)(waveFile->getFrequency() * prox._frequencyMultiplier);
 		qsWaveMixSetFrequency(iChannel, 8, freq);
 	}

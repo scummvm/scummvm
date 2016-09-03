@@ -39,7 +39,7 @@ private:
 	int _state;
 	int _soundHandle;
 	int _soundPercent;
-	int _soundV3;
+	int _soundBalance;
 	int _soundSeconds;
 	int _stopSeconds;
 	bool _startFlag;

@@ -732,10 +732,10 @@ void CGameObject::loadSound(const CString &name) {
 	}
 }
 
-int CGameObject::playSound(const CString &name, uint volume, int val3, bool repeated) {
+int CGameObject::playSound(const CString &name, uint volume, int balance, bool repeated) {
 	CProximity prox;
 	prox._channelVolume = volume;
-	prox._fieldC = val3;
+	prox._balance = balance;
 	prox._repeated = repeated;
 	return playSound(name, prox);
 }
@@ -758,9 +758,9 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	return 0;
 }
 
-int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int val3, bool repeated) {
+int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated) {
 	CProximity prox;
-	prox._fieldC = val3;
+	prox._balance = balance;
 	prox._repeated = repeated;
 	prox._channelVolume = volume;
 	prox._priorSoundHandle = priorHandle;

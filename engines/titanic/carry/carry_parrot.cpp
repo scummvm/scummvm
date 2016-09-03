@@ -124,7 +124,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			setVisible(false);
 			_fieldE0 = 0;
 			CParrot::_v4 = 2;
-			playSound("z#475.wav", 100, 0, 0);
+			playSound("z#475.wav");
 			sound8(true);
 			moveUnder(findRoom());
 
@@ -139,7 +139,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		} else {
 			setVisible(false);
 			_fieldE0 = 0;
-			playSound("z#475.wav", 100, 0, 0);
+			playSound("z#475.wav");
 			sound8(true);
 			moveUnder(findRoom());
 		}
@@ -171,7 +171,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		startTalking(npc, 0x446BF);
 
 	_fieldE0 = 0;
-	playSound("z#475.wav", 100, 0, 0);
+	playSound("z#475.wav");
 	moveUnder(findRoom());
 	msg->_value4 = 1;
 
@@ -208,7 +208,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 			CActMsg actMsg("Shut");
 			actMsg.execute("ParrotCage");
 		} else {
-			playSound("z#475.wav", 100, 0, 0);
+			playSound("z#475.wav");
 
 			if (!_feathersFlag) {
 				CCarry *feathers = dynamic_cast<CCarry *>(getRoot()->findByName("Feathers"));
