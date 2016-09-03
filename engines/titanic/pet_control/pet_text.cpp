@@ -26,11 +26,11 @@ namespace Titanic {
 
 CPetText::CPetText(uint count) :
 		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
-		_linesStart(-1), _field3C(0), _field40(0), _field44(0),
+		_linesStart(-1), _unused1(0), _unused2(0), _unused3(0),
 		_backR(0xff), _backG(0xff), _backB(0xff), 
 		_textR(0), _textG(0), _textB(200),
-		_fontNumber(0), _field64(0), _field68(0), _field6C(0),
-		_hasBorder(true), _scrollTop(0), _textCursor(nullptr), _field7C(0) {
+		_fontNumber(0), _npcFlag(0), _npcId(0), _hasBorder(true),
+		_scrollTop(0), _textCursor(nullptr) {
 	setupArrays(count);
 }
 
@@ -86,9 +86,9 @@ void CPetText::load(SimpleFile *file, int param) {
 		uint charsPerLine = file->readNumber();
 		uint count = file->readNumber();
 		_bounds = file->readRect();
-		_field3C = file->readNumber();
-		_field40 = file->readNumber();
-		_field44 = file->readNumber();
+		_unused1 = file->readNumber();
+		_unused2 = file->readNumber();
+		_unused3 = file->readNumber();
 		_backR = file->readNumber();
 		_backG = file->readNumber();
 		_backB = file->readNumber();
@@ -118,9 +118,9 @@ void CPetText::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(numLines, indent);
 
 	file->writeRect(_bounds, indent);
-	file->writeNumberLine(_field3C, indent);
-	file->writeNumberLine(_field40, indent);
-	file->writeNumberLine(_field44, indent);
+	file->writeNumberLine(_unused1, indent);
+	file->writeNumberLine(_unused2, indent);
+	file->writeNumberLine(_unused3, indent);
 	file->writeNumberLine(_backR, indent);
 	file->writeNumberLine(_backG, indent);
 	file->writeNumberLine(_backB, indent);
@@ -266,16 +266,16 @@ void CPetText::setMaxCharsPerLine(int maxChars) {
 }
 
 void CPetText::updateStr3(int lineNum) {
-	if (_field64 > 0 && _field68 > 0) {
+	if (_npcFlag > 0 && _npcId > 0) {
 		char line[5];
 		line[0] = line[3] = TEXTCMD_NPC;
-		line[1] = _field64;
-		line[2] = _field68;
+		line[1] = _npcFlag;
+		line[2] = _npcId;
 		line[4] = '\0';
 		_array[lineNum]._string3 = CString(line);
 		
 		_stringsMerged = false;
-		_field64 = _field68 = 0;
+		_npcFlag = _npcId = 0;
 	}
 }
 
@@ -304,9 +304,9 @@ void CPetText::deleteLastChar() {
 	}
 }
 
-void CPetText::setNPC(int val1, int npcId) {
-	_field64 = val1;
-	_field68 = npcId;
+void CPetText::setNPC(int npcFlag, int npcId) {
+	_npcFlag = npcFlag;
+	_npcId = npcId;
 }
 
 void CPetText::scrollUp(CScreenManager *screenManager) {

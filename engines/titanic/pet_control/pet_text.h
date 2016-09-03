@@ -44,9 +44,9 @@ private:
 	int _maxCharsPerLine;
 	int _lineCount;
 	int _linesStart;
-	int _field3C;
-	int _field40;
-	int _field44;
+	int _unused1;
+	int _unused2;
+	int _unused3;
 	int _backR;
 	int _backG;
 	int _backB;
@@ -54,13 +54,11 @@ private:
 	int _textG;
 	int _textB;
 	int _fontNumber;
-	int _field64;
-	int _field68;
-	int _field6C;
+	int _npcFlag;
+	int _npcId;
 	bool _hasBorder;
 	int _scrollTop;
 	CTextCursor *_textCursor;
-	int _field7C;
 private:
 	void setupArrays(int count);
 
@@ -167,7 +165,10 @@ public:
 	 */
 	void deleteLastChar();
 
-	void setNPC(int val1, int npcId);
+	/**
+	 * Sets the current NPC text is being added for
+	 */
+	void setNPC(int npcFlag, int npcId);
 
 	/**
 	 * Get the index into _lines where on-screen text starts
