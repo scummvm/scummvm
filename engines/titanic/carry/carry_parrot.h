@@ -44,12 +44,8 @@ class CCarryParrot : public CCarry {
 private:
 	CString _string6;
 	int _timerId;
-	int _field13C;
-	bool _field140;
-	int _field144;
-	int _field148;
-	int _field14C;
-	int _field150;
+	int _freeCounter;
+	bool _feathersFlag;
 public:
 	CLASSDEF;
 	CCarryParrot();

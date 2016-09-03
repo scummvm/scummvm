@@ -43,16 +43,15 @@ BEGIN_MESSAGE_MAP(CCarryParrot, CCarry)
 END_MESSAGE_MAP()
 
 CCarryParrot::CCarryParrot() : CCarry(), _string6("PerchedParrot"),
-		_timerId(0), _field13C(0), _field140(false), _field144(10),
-		_field148(25), _field14C(0), _field150(8) {
+		_timerId(0), _freeCounter(0), _feathersFlag(false) {
 }
 
 void CCarryParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeQuotedLine(_string6, indent);
 	file->writeNumberLine(_timerId, indent);
-	file->writeNumberLine(_field13C, indent);
-	file->writeNumberLine(_field140, indent);
+	file->writeNumberLine(_freeCounter, indent);
+	file->writeNumberLine(_feathersFlag, indent);
 
 	CCarry::save(file, indent);
 }
@@ -61,8 +60,8 @@ void CCarryParrot::load(SimpleFile *file) {
 	file->readNumber();
 	_string6 = file->readString();
 	_timerId = file->readNumber();
-	_field13C = file->readNumber();
-	_field140 = file->readNumber();
+	_freeCounter = file->readNumber();
+	_feathersFlag = file->readNumber();
 
 	CCarry::load(file);
 }
@@ -77,7 +76,7 @@ bool CCarryParrot::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 
 bool CCarryParrot::TimerMsg(CTimerMsg *msg) {
 	if (CParrot::_v4 == 1 || CParrot::_v4 == 4) {
-		if (++_field13C >= 30) {
+		if (++_freeCounter >= 30) {
 			CActMsg actMsg("FreeParrot");
 			actMsg.execute(this);
 		}
@@ -160,7 +159,7 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		stopTimer(_timerId);
 		_timerId = addTimer(1000, 1000);
 
-		_field13C = 0;
+		_freeCounter = 0;
 		CParrot::_v4 = 1;
 		msg->_value3 = 1;
 
@@ -211,14 +210,14 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 		} else {
 			playSound("z#475.wav", 100, 0, 0);
 
-			if (!_field140) {
+			if (!_feathersFlag) {
 				CCarry *feathers = dynamic_cast<CCarry *>(getRoot()->findByName("Feathers"));
 				if (feathers) {
 					feathers->setVisible(true);
 					feathers->petAddToInventory();
 				}
 
-				_field140 = true;
+				_feathersFlag = true;
 			}
 
 			getPetControl()->removeFromInventory(this);
