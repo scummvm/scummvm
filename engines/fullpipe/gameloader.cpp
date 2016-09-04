@@ -307,7 +307,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.param);
 
 			g_vars->scene18_inScene18p1 = true;
 
@@ -318,9 +318,9 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			}
 		}
 
-		if (((pre.sceneId == SC_19 && pre.keyCode == TrubaRight) || (pre.sceneId == SC_18 && pre.keyCode == TrubaRight)) && !pre.preloadId2) {
+		if (((pre.sceneId == SC_19 && pre.param == TrubaRight) || (pre.sceneId == SC_18 && pre.param == TrubaRight)) && !pre.preloadId2) {
 			pre.sceneId = SC_18;
-			pre.keyCode = TrubaLeft;
+			pre.param = TrubaLeft;
 		}
 
 		if (!g_fp->_loaderScene) {
@@ -398,7 +398,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 
 	ExCommand *ex = new ExCommand(_preloadItems[idx]->sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
-	ex->_param = _preloadItems[idx]->keyCode;
+	ex->_param = _preloadItems[idx]->param;
 
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
@@ -690,7 +690,7 @@ bool PreloadItems::load(MfcArchive &file) {
 		t->preloadId1 = file.readUint32LE();
 		t->preloadId2 = file.readUint32LE();
 		t->sceneId = file.readUint32LE();
-		t->keyCode = file.readSint32LE();
+		t->param = file.readSint32LE();
 
 		push_back(t);
 	}

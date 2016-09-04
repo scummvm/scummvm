@@ -64,7 +64,7 @@ struct PreloadItem {
 	int preloadId1;
 	int preloadId2;
 	int sceneId;
-	int keyCode;
+	int param;
 };
 
 bool preloadCallback(PreloadItem &pre, int flag);

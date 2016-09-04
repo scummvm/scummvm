@@ -1124,17 +1124,17 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_1:
 		updateMapPiece(PIC_MAP_S01, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_P01, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A13, 1);
 		break;
 
 	case SC_2:
 		updateMapPiece(PIC_MAP_S02, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P01, 1);
 
 		break;
@@ -1146,7 +1146,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_4:
 		updateMapPiece(PIC_MAP_S04, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P04, 1);
 
 		break;
@@ -1154,11 +1154,11 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_5:
 		updateMapPiece(PIC_MAP_S05, 1);
 
-		if (pre->keyCode == TrubaLeft) {
+		if (pre->param == TrubaLeft) {
 			updateMapPiece(PIC_MAP_P04, 1);
 		}
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P05, 1);
 			updateMapPiece(PIC_MAP_A11, 1);
 		}
@@ -1168,7 +1168,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_6:
 		updateMapPiece(PIC_MAP_S06, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A12, 1);
 
 		break;
@@ -1176,7 +1176,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_7:
 		updateMapPiece(PIC_MAP_S07, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P18, 1);
 
 		break;
@@ -1184,10 +1184,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_8:
 		updateMapPiece(PIC_MAP_S08, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_P11, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P18, 1);
 
 		return;
@@ -1195,7 +1195,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_9:
 		updateMapPiece(PIC_MAP_S09, 1);
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_P11, 1);
 
 		return;
@@ -1203,7 +1203,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_10:
 		updateMapPiece(PIC_MAP_S10, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P02, 1);
 
 		break;
@@ -1211,7 +1211,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_11:
 		updateMapPiece(PIC_MAP_S11, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P02, 1);
 
 		break;
@@ -1223,7 +1223,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_13:
 		updateMapPiece(PIC_MAP_S13, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P06, 1);
 			updateMapPiece(PIC_MAP_A10, 1);
 		}
@@ -1236,7 +1236,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_15:
 		updateMapPiece(PIC_MAP_S15, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P08, 1);
 			updateMapPiece(PIC_MAP_A14, 1);
 		}
@@ -1254,7 +1254,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_18:
 		updateMapPiece(PIC_MAP_S1819, 1);
 
-		if (pre->keyCode == PIC_SC18_RTRUBA)
+		if (pre->param == PIC_SC18_RTRUBA)
 			updateMapPiece(PIC_MAP_P14, 1);
 
 		break;
@@ -1262,7 +1262,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_19:
 		updateMapPiece(PIC_MAP_S1819, 1);
 
-		if (pre->keyCode == PIC_SC19_RTRUBA3) {
+		if (pre->param == PIC_SC19_RTRUBA3) {
 			updateMapPiece(PIC_MAP_P15, 1);
 			updateMapPiece(PIC_MAP_A09, 1);
 		}
@@ -1276,12 +1276,12 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_21:
 		updateMapPiece(PIC_MAP_S21, 1);
 
-		if (pre->keyCode == TrubaLeft) {
+		if (pre->param == TrubaLeft) {
 			updateMapPiece(PIC_MAP_P15, 1);
 			updateMapPiece(PIC_MAP_A09, 1);
 		}
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_A08, 1);
 
 		break;
@@ -1304,10 +1304,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_24:
 		updateMapPiece(PIC_MAP_S24, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A08, 1);
 
-		if (pre->keyCode == TrubaDown) {
+		if (pre->param == TrubaDown) {
 			updateMapPiece(PIC_MAP_P13, 1);
 			updateMapPiece(PIC_MAP_A07, 1);
 		}
@@ -1320,10 +1320,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_26:
 		updateMapPiece(PIC_MAP_S26, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A06, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P13, 1);
 			updateMapPiece(PIC_MAP_A07, 1);
 		}
@@ -1337,7 +1337,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_28:
 		updateMapPiece(PIC_MAP_S28, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_A06, 1);
 
 		break;
@@ -1345,7 +1345,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_29:
 		updateMapPiece(PIC_MAP_S29, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A05, 1);
 
 		break;
@@ -1353,10 +1353,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_30:
 		updateMapPiece(PIC_MAP_S30, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P09, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_A04, 1);
 
 		break;
@@ -1367,7 +1367,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P09, 1);
 
 		break;
@@ -1387,7 +1387,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_34:
 		updateMapPiece(PIC_MAP_S34, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A03, 1);
 
 		break;
@@ -1395,10 +1395,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_35:
 		updateMapPiece(PIC_MAP_S35, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A02, 1);
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_A03, 1);
 
 		break;
