@@ -89,6 +89,52 @@ void MenuMan::initConstants() {
 		10, /* THROW */
 		3   /* FUSE */
 	};
+	static unsigned char actionDisabledTicks[44] = {
+		0,  /* N */
+		6,  /* BLOCK */
+		8,  /* CHOP */
+		0,  /* X */
+		6,  /* BLOW HORN */
+		3,  /* FLIP */
+		1,  /* PUNCH */
+		5,  /* KICK */
+		3,  /* WAR CRY */
+		5,  /* STAB */
+		35, /* CLIMB DOWN */
+		20, /* FREEZE LIFE */
+		4,  /* HIT */
+		6,  /* SWING */
+		10, /* STAB */
+		16, /* THRUST */
+		2,  /* JAB */
+		18, /* PARRY */
+		8,  /* HACK */
+		30, /* BERZERK */
+		42, /* FIREBALL */
+		31, /* DISPELL */
+		10, /* CONFUSE */
+		38, /* LIGHTNING */
+		9,  /* DISRUPT */
+		20, /* MELEE */
+		10, /* X */
+		16, /* INVOKE */
+		4,  /* SLASH */
+		12, /* CLEAVE */
+		20, /* BASH */
+		7,  /* STUN */
+		14, /* SHOOT */
+		30, /* SPELLSHIELD */
+		35, /* FIRESHIELD */
+		2,  /* FLUXCAGE */
+		19, /* HEAL */
+		9,  /* CALM */
+		10, /* LIGHT */
+		15, /* WINDOW */
+		22, /* SPIT */
+		10, /* BRANDISH */
+		0,  /* THROW */
+		2   /* FUSE */
+	};
 
 	_boxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
 	_boxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
@@ -96,8 +142,10 @@ void MenuMan::initConstants() {
 	_boxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea 
 	_boxSpellArea = Box(224, 319, 42, 74);
 
-	for (int i = 0; i < 40; i++)
+	for (int i = 0; i < 44; i++) {
 		_actionSkillIndex[i] = actionSkillIndex[i];
+		_actionDisabledTicks[i] = actionDisabledTicks[i];
+	}
 }
 
 MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
@@ -878,64 +926,21 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 	if (actionListIndex == -1)
 		retVal = true;
 	else {
-		uint16 L1197_ui_ActionIndex = _actionList._actionIndices[actionListIndex];
-		curChampion->_actionDefense += _actionDefense[L1197_ui_ActionIndex]; /* BUG0_54 The defense modifier of an action is permanent.
-																				Each action has an associated defense modifier value and a number of ticks while the champion cannot perform another action because the action icon is grayed out. If an action has a non zero defense modifier and a zero value for the number of ticks then the defense modifier is applied but it is never removed. This causes no issue in the original games because there are no actions in this case but it may occur in a version where data is customized. This statement should only be executed if the value for the action in G0491_auc_Graphic560_ActionDisabledTicks is not 0 otherwise the action is not disabled at the end of F0407_MENUS_IsActionPerformed and thus not enabled later in F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction where the defense modifier is also removed */
+		uint16 actionIndex = _actionList._actionIndices[actionListIndex];
+		// Fix original bug - When disabled ticks is equal to zero, increasing the defense leads
+		// to a permanent increment.
+		if (_actionDisabledTicks[actionIndex])
+			curChampion->_actionDefense += _actionDefense[actionIndex];
+
 		setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
-		retVal = isActionPerformed(championIndex, L1197_ui_ActionIndex);
-		curChampion->_actionIndex = (ChampionAction)L1197_ui_ActionIndex;
+		retVal = isActionPerformed(championIndex, actionIndex);
+		curChampion->_actionIndex = (ChampionAction)actionIndex;
 	}
 	clearActingChampion();
 	return retVal;
 }
 
 bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
-	static unsigned char G0491_auc_Graphic560_ActionDisabledTicks[44] = {
-		0,  /* N */
-		6,  /* BLOCK */
-		8,  /* CHOP */
-		0,  /* X */
-		6,  /* BLOW HORN */
-		3,  /* FLIP */
-		1,  /* PUNCH */
-		5,  /* KICK */
-		3,  /* WAR CRY */
-		5,  /* STAB */
-		35, /* CLIMB DOWN */
-		20, /* FREEZE LIFE */
-		4,  /* HIT */
-		6,  /* SWING */
-		10, /* STAB */
-		16, /* THRUST */
-		2,  /* JAB */
-		18, /* PARRY */
-		8,  /* HACK */
-		30, /* BERZERK */
-		42, /* FIREBALL */
-		31, /* DISPELL */
-		10, /* CONFUSE */
-		38, /* LIGHTNING */
-		9,  /* DISRUPT */
-		20, /* MELEE */
-		10, /* X */
-		16, /* INVOKE */
-		4,  /* SLASH */
-		12, /* CLEAVE */
-		20, /* BASH */
-		7,  /* STUN */
-		14, /* SHOOT */
-		30, /* SPELLSHIELD */
-		35, /* FIRESHIELD */
-		2,  /* FLUXCAGE */
-		19, /* HEAL */
-		9,  /* CALM */
-		10, /* LIGHT */
-		15, /* WINDOW */
-		22, /* SPIT */
-		10, /* BRANDISH */
-		0,  /* THROW */
-		2   /* FUSE */
-	};
 	static unsigned char G0494_auc_Graphic560_ActionStamina[44] = {
 		0,  /* N */
 		4,  /* BLOCK */
@@ -1071,7 +1076,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
 	L1251_i_MapX += _vm->_dirIntoStepCountEast[L1247_ps_Champion->_dir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[L1247_ps_Champion->_dir];
 	_actionTargetGroupThing = _vm->_groupMan->groupGetThing(L1251_i_MapX, L1252_i_MapY);
-	L1249_ui_ActionDisabledTicks = G0491_auc_Graphic560_ActionDisabledTicks[actionIndex];
+	L1249_ui_ActionDisabledTicks = _actionDisabledTicks[actionIndex];
 	L1254_i_ActionSkillIndex = _actionSkillIndex[actionIndex];
 	L1253_i_ActionStamina = G0494_auc_Graphic560_ActionStamina[actionIndex] + _vm->getRandomNumber(2);
 	L1255_i_ActionExperienceGain = G0497_auc_Graphic560_ActionExperienceGain[actionIndex];

@@ -124,6 +124,7 @@ public:
 	Box _boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea 
 	Box _boxSpellArea;
 	unsigned char _actionSkillIndex[44]; // @ G0496_auc_Graphic560_ActionSkillIndex
+	unsigned char _actionDisabledTicks[44];
 
 	void initConstants();
 };
