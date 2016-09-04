@@ -65,6 +65,14 @@ void scene04_springCallback(int *phase) {
 }
 
 void scene04_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene04_initScene()");
+
+#if 0
+	Inventory2 *inv = getGameLoaderInventory();
+	inv->addItem(ANI_INV_COIN, 1);
+	inv->rebuildItemRects();
+#endif
+
 	g_vars->scene04_dudeOnLadder = false;
 	g_vars->scene04_bottle = sc->getPictureObjectById(PIC_SC4_BOTTLE, 0);
 	g_vars->scene04_hand = sc->getStaticANIObject1ById(ANI_HAND, -1);
@@ -118,6 +126,8 @@ void scene04_initScene(Scene *sc) {
 		plank->_flags |= 8;
 
 	if (g_fp->getObjectState(sO_Jar_4) == g_fp->getObjectEnumState(sO_Jar_4, sO_UpsideDown)) {
+		debugC(2, kDebugSceneLogic, "scene04: Jar is upside down");
+
 		g_vars->scene04_bottleObjList.clear();
 		g_vars->scene04_kozyawkiObjList.clear();
 
@@ -128,6 +138,8 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_clockCanGo = false;
 		g_vars->scene04_objectIsTaken = false;
 	} else {
+		debugC(2, kDebugSceneLogic, "scene04: Jar is NOT upside down");
+
 		StaticANIObject *spring = sc->getStaticANIObject1ById(ANI_SPRING, -1);
 
 		if (spring)
@@ -140,6 +152,8 @@ void scene04_initScene(Scene *sc) {
 		g_vars->scene04_kozyawkiObjList.clear();
 
 		if (koz) {
+			debugC(2, kDebugSceneLogic, "scene04: We're in koz");
+
 			koz->loadMovementsPixelData();
 
 			koz->_statics = koz->getStaticsById(ST_KZW_EMPTY);
@@ -162,6 +176,8 @@ void scene04_initScene(Scene *sc) {
 
 		g_vars->scene04_clockCanGo = true;
 		g_vars->scene04_objectIsTaken = true;
+
+		debugC(2, kDebugSceneLogic, "scene04: kozObjList size: %d", g_vars->scene04_kozyawkiObjList.size());
 	}
 
 	g_vars->scene04_bottleIsTaken = false;
@@ -911,7 +927,11 @@ void sceneHandler04_animOutOfBottle(ExCommand *ex) {
 }
 
 void sceneHandler04_walkKozyawka() {
+	debugC(1, kDebugSceneLogic, "scene04: walkKozyawka");
+
 	if (g_vars->scene04_kozyawkiObjList.size()) {
+		debugC(1, kDebugSceneLogic, "scene04: walkKozyawka: getting one");
+
 		g_vars->scene04_walkingKozyawka = g_vars->scene04_kozyawkiObjList.front();
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
@@ -1338,6 +1358,8 @@ int sceneHandler04(ExCommand *ex) {
 		break;
 
 	case MSG_KOZAWRESTART:
+		debugC(1, kDebugSceneLogic, "scene04: kozawRestart");
+
 		if (g_vars->scene04_walkingKozyawka) {
 			g_vars->scene04_kozyawkiObjList.push_back(g_vars->scene04_walkingKozyawka);
 			g_vars->scene04_walkingKozyawka->hide();
