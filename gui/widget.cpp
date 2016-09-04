@@ -398,7 +398,7 @@ void ButtonWidget::setUnpressedState() {
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
-	  _alpha(255), _transparency(false), _showButton(true) {
+	  _alpha(255), _transparency(false), _showButton(true), _isAlpha(false) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
