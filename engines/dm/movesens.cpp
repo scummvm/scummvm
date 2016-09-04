@@ -223,331 +223,293 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 }
 
 bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destMapX, int16 destMapY) {
-	int16 L0708_i_Multiple = 0;
-#define AL0708_i_DestinationSquare L0708_i_Multiple
-#define AL0708_i_ScentIndex        L0708_i_Multiple
-#define AL0708_i_ActiveGroupIndex  L0708_i_Multiple
-	int16 L0709_i_Multiple;
-#define AL0709_i_DestinationSquareType L0709_i_Multiple
-#define AL0709_i_ChampionIndex         L0709_i_Multiple
-	int16 L0710_i_ThingType;
-	Champion *L0711_ps_Champion;
-	Teleporter *L0712_ps_Teleporter;
-	int16 L0718_i_RequiredTeleporterScope;
-	// Strangerke: Only present in v2.1, but it fixes a bug, so I propose to keep it
-	int16 L0719_i_TraversedPitCount;
-	uint16 L0720_ui_MoveGroupResult;
-	uint16 L0727_ui_Multiple;
-#define AL0727_ui_ThingCell L0727_ui_Multiple
-#define AL0727_ui_Outcome   L0727_ui_Multiple
-#define AL0727_ui_Backup    L0727_ui_Multiple
-	int16 L0728_i_ChainedMoveCount;
-	uint16 L1638_ui_MovementSoundIndex;
+	ThingType thingType = kM1_PartyThingType;
+	int16 traversedPitCount = 0;
+	uint16 moveGroupResult = 0;
+	uint16 thingCell = 0;
+	bool thingLevitates = false;
 
-	L0710_i_ThingType = kM1_PartyThingType;
-	L0719_i_TraversedPitCount = 0;
-	L0720_ui_MoveGroupResult = 0;
-
-	uint16 L0717_ui_ThingCell = 0;
-
-	bool L0713_B_ThingLevitates = false;
 	if (thing != Thing::_party) {
-		L0710_i_ThingType = thing.getType();
-		L0717_ui_ThingCell = thing.getCell();
-		L0713_B_ThingLevitates = isLevitating(thing);
+		thingType = thing.getType();
+		thingCell = thing.getCell();
+		thingLevitates = isLevitating(thing);
 	}
 	/* If moving the party or a creature on the party map from a dungeon square then check for a projectile impact */
-	if ((mapX >= 0) && ((thing == Thing::_party) || ((L0710_i_ThingType == k4_GroupThingType) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)))) {
-		if (moveIsKilledByProjectileImpact(mapX, mapY, destMapX, destMapY, thing)) {
+	if ((mapX >= 0) && ((thing == Thing::_party) || ((thingType == k4_GroupThingType) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)))) {
+		if (moveIsKilledByProjectileImpact(mapX, mapY, destMapX, destMapY, thing))
 			return true; /* The specified group thing cannot be moved because it was killed by a projectile impact */
-		}
 	}
 
-	uint16 L0714_ui_MapIndexSource = 0;
-	uint16 L0715_ui_MapIndexDestination = 0;
-	bool L0721_B_GroupOnPartyMap = false;
-	bool L0725_B_PartySquare = false;
-	bool L0726_B_Audible = false;
+	uint16 mapIndexSource = 0;
+	uint16 mapIndexDestination = 0;
+	bool groupOnPartyMap = false;
+	bool partySquare = false;
+	bool audibleTeleporter = false;
 
 	if (destMapX >= 0) {
-		L0714_ui_MapIndexSource = L0715_ui_MapIndexDestination = _vm->_dungeonMan->_currMapIndex;
-		L0721_B_GroupOnPartyMap = (L0714_ui_MapIndexSource == _vm->_dungeonMan->_partyMapIndex) && (mapX >= 0);
-		uint16 L0716_ui_Direction = 0;
-		bool L0722_B_FallKilledGroup = false;
-		bool L0723_B_DrawDungeonViewWhileFalling = false;
-		bool L0724_B_DestinationIsTeleporterTarget = false;
+		mapIndexSource = mapIndexDestination = _vm->_dungeonMan->_currMapIndex;
+		groupOnPartyMap = (mapIndexSource == _vm->_dungeonMan->_partyMapIndex) && (mapX >= 0);
+		uint16 direction = 0;
+		bool fallKilledGroup = false;
+		bool drawDungeonViewWhileFalling = false;
+		bool destinationIsTeleporterTarget = false;
+		int16 requiredTeleporterScope;
 		if (thing == Thing::_party) {
 			_vm->_dungeonMan->_partyMapX = destMapX;
 			_vm->_dungeonMan->_partyMapY = destMapY;
-			L0718_i_RequiredTeleporterScope = k0x0002_TelepScopeObjOrParty;
-			L0723_B_DrawDungeonViewWhileFalling = !_vm->_inventoryMan->_inventoryChampionOrdinal && !_vm->_championMan->_partyIsSleeping;
-			L0716_ui_Direction = _vm->_dungeonMan->_partyDir;
-		} else {
-			if (L0710_i_ThingType == k4_GroupThingType) {
-				L0718_i_RequiredTeleporterScope = k0x0001_TelepScopeCreatures;
-			} else {
-				L0718_i_RequiredTeleporterScope = (k0x0001_TelepScopeCreatures | k0x0002_TelepScopeObjOrParty);
-			}
-		}
-		if (L0710_i_ThingType == k14_ProjectileThingType) {
-			L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
+			requiredTeleporterScope = k0x0002_TelepScopeObjOrParty;
+			drawDungeonViewWhileFalling = !_vm->_inventoryMan->_inventoryChampionOrdinal && !_vm->_championMan->_partyIsSleeping;
+			direction = _vm->_dungeonMan->_partyDir;
+		} else if (thingType == k4_GroupThingType)
+			requiredTeleporterScope = k0x0001_TelepScopeCreatures;
+		else
+			requiredTeleporterScope = (k0x0001_TelepScopeCreatures | k0x0002_TelepScopeObjOrParty);
+
+		if (thingType == k14_ProjectileThingType) {
+			Teleporter *L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
 			_moveResultDir = (_vm->_timeline->_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._C._projectile.getDir();
 		}
-		for (L0728_i_ChainedMoveCount = 1000; --L0728_i_ChainedMoveCount; ) { /* No more than 1000 chained moves at once (in a chain of teleporters and pits for example) */
-			AL0708_i_DestinationSquare = _vm->_dungeonMan->_currMapData[destMapX][destMapY];
-			if ((AL0709_i_DestinationSquareType = Square(AL0708_i_DestinationSquare).getType()) == k5_ElementTypeTeleporter) {
-				if (!getFlag(AL0708_i_DestinationSquare, k0x0008_TeleporterOpen))
+
+		int16 destinationSquareData = 0;
+		/* No more than 1000 chained moves at once (in a chain of teleporters and pits for example) */
+		for (int16 chainedMoveCount = 1000; --chainedMoveCount; ) {
+			destinationSquareData = _vm->_dungeonMan->_currMapData[destMapX][destMapY];
+			SquareType destinationSquareType = Square(destinationSquareData).getType();
+			if (destinationSquareType == k5_ElementTypeTeleporter) {
+				if (!getFlag(destinationSquareData, k0x0008_TeleporterOpen))
 					break;
-				L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(destMapX, destMapY);
-				if ((L0712_ps_Teleporter->getScope() == k0x0001_TelepScopeCreatures) && (L0710_i_ThingType != k4_GroupThingType))
+
+				Teleporter *teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(destMapX, destMapY);
+				if ((teleporter->getScope() == k0x0001_TelepScopeCreatures) && (thingType != k4_GroupThingType))
 					break;
-				if ((L0718_i_RequiredTeleporterScope != (k0x0001_TelepScopeCreatures | k0x0002_TelepScopeObjOrParty)) && !getFlag(L0712_ps_Teleporter->getScope(), L0718_i_RequiredTeleporterScope))
+
+				if ((requiredTeleporterScope != (k0x0001_TelepScopeCreatures | k0x0002_TelepScopeObjOrParty)) && !getFlag(teleporter->getScope(), requiredTeleporterScope))
 					break;
-				L0724_B_DestinationIsTeleporterTarget = (destMapX == L0712_ps_Teleporter->getTargetMapX()) && (destMapY == L0712_ps_Teleporter->getTargetMapY()) && (L0715_ui_MapIndexDestination == L0712_ps_Teleporter->getTargetMapIndex());
-				destMapX = L0712_ps_Teleporter->getTargetMapX();
-				destMapY = L0712_ps_Teleporter->getTargetMapY();
-				L0726_B_Audible = L0712_ps_Teleporter->isAudible();
-				_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination = L0712_ps_Teleporter->getTargetMapIndex());
+
+				destinationIsTeleporterTarget = (destMapX == teleporter->getTargetMapX()) && (destMapY == teleporter->getTargetMapY()) && (mapIndexDestination == teleporter->getTargetMapIndex());
+				destMapX = teleporter->getTargetMapX();
+				destMapY = teleporter->getTargetMapY();
+				audibleTeleporter = teleporter->isAudible();
+				_vm->_dungeonMan->setCurrentMap(mapIndexDestination = teleporter->getTargetMapIndex());
 				if (thing == Thing::_party) {
 					_vm->_dungeonMan->_partyMapX = destMapX;
 					_vm->_dungeonMan->_partyMapY = destMapY;
-					if (L0712_ps_Teleporter->isAudible()) {
+					if (teleporter->isAudible())
 						_vm->_sound->requestPlay(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
-					}
-					L0723_B_DrawDungeonViewWhileFalling = true;
-					if (L0712_ps_Teleporter->getAbsoluteRotation()) {
-						_vm->_championMan->setPartyDirection(L0712_ps_Teleporter->getRotation());
-					} else {
-						_vm->_championMan->setPartyDirection(normalizeModulo4(_vm->_dungeonMan->_partyDir + L0712_ps_Teleporter->getRotation()));
-					}
+
+					drawDungeonViewWhileFalling = true;
+					if (teleporter->getAbsoluteRotation())
+						_vm->_championMan->setPartyDirection(teleporter->getRotation());
+					else
+						_vm->_championMan->setPartyDirection(normalizeModulo4(_vm->_dungeonMan->_partyDir + teleporter->getRotation()));
 				} else {
-					if (L0710_i_ThingType == k4_GroupThingType) {
-						if (L0712_ps_Teleporter->isAudible()) {
+					if (thingType == k4_GroupThingType) {
+						if (teleporter->isAudible())
 							_vm->_sound->requestPlay(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
-						}
-						L0720_ui_MoveGroupResult = getTeleporterRotatedGroupResult(L0712_ps_Teleporter, thing, L0714_ui_MapIndexSource);
+
+						moveGroupResult = getTeleporterRotatedGroupResult(teleporter, thing, mapIndexSource);
 					} else {
-						if (L0710_i_ThingType == k14_ProjectileThingType) {
-							thing = getTeleporterRotatedProjectileThing(L0712_ps_Teleporter, thing);
-						} else {
-							if (!(L0712_ps_Teleporter->getAbsoluteRotation()) && (mapX != -2)) {
-								thing = thingWithNewCell(thing, normalizeModulo4(thing.getCell() + L0712_ps_Teleporter->getRotation()));
-							}
-						}
+						if (thingType == k14_ProjectileThingType)
+							thing = getTeleporterRotatedProjectileThing(teleporter, thing);
+						else if (!(teleporter->getAbsoluteRotation()) && (mapX != -2))
+							thing = thingWithNewCell(thing, normalizeModulo4(thing.getCell() + teleporter->getRotation()));
 					}
 				}
-				if (L0724_B_DestinationIsTeleporterTarget)
+				if (destinationIsTeleporterTarget)
 					break;
 			} else {
-				if ((AL0709_i_DestinationSquareType == k2_ElementTypePit) && !L0713_B_ThingLevitates && getFlag(AL0708_i_DestinationSquare, k0x0008_PitOpen) && !getFlag(AL0708_i_DestinationSquare, k0x0001_PitImaginary)) {
-					if (L0723_B_DrawDungeonViewWhileFalling && !_useRopeToClimbDownPit) {
-						L0723_B_DrawDungeonViewWhileFalling = true;
-						if (L0719_i_TraversedPitCount) {
-							_vm->_dungeonMan->setCurrentMapAndPartyMap(L0715_ui_MapIndexDestination);
+				if ((destinationSquareType == k2_ElementTypePit) && !thingLevitates && getFlag(destinationSquareData, k0x0008_PitOpen) && !getFlag(destinationSquareData, k0x0001_PitImaginary)) {
+					if (drawDungeonViewWhileFalling && !_useRopeToClimbDownPit) {
+						drawDungeonViewWhileFalling = true;
+						if (traversedPitCount) {
+							_vm->_dungeonMan->setCurrentMapAndPartyMap(mapIndexDestination);
 							_vm->_displayMan->loadCurrentMapGraphics();
 						}
-						L0719_i_TraversedPitCount++;
+						traversedPitCount++;
 						_vm->_displayMan->drawDungeon(_vm->_dungeonMan->_partyDir, destMapX, destMapY); /* BUG0_28 When falling through multiple pits the dungeon view is updated to show each traversed map but the graphics used for creatures, wall and floor ornaments may not be correct. The dungeon view is drawn for each map by using the graphics loaded for the source map. Therefore the graphics for creatures, wall and floor ornaments may not look like what they should */
 																												  /* BUG0_71 Some timings are too short on fast computers. When the party falls in a series of pits, the dungeon view is refreshed too quickly because the execution speed is not limited */
 																												  /* BUG0_01 While drawing creatures the engine will read invalid ACTIVE_GROUP data in _vm->_groupMan->_g375_activeGroups because the data is for the creatures on the source map and not the map being drawn. The only consequence is that creatures may be drawn with incorrect bitmaps and/or directions */
 					}
-					L0715_ui_MapIndexDestination = _vm->_dungeonMan->getLocationAfterLevelChange(L0715_ui_MapIndexDestination, 1, &destMapX, &destMapY);
-					_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
+					mapIndexDestination = _vm->_dungeonMan->getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+					_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
 					if (thing == Thing::_party) {
 						_vm->_dungeonMan->_partyMapX = destMapX;
 						_vm->_dungeonMan->_partyMapY = destMapY;
 						if (_vm->_championMan->_partyChampionCount > 0) {
 							if (_useRopeToClimbDownPit) {
-								for (AL0709_i_ChampionIndex = k0_ChampionFirst, L0711_ps_Champion = _vm->_championMan->_champions; AL0709_i_ChampionIndex < _vm->_championMan->_partyChampionCount; AL0709_i_ChampionIndex++, L0711_ps_Champion++) {
-									if (L0711_ps_Champion->_currHealth) {
-										_vm->_championMan->decrementStamina(AL0709_i_ChampionIndex, ((L0711_ps_Champion->_load * 25) / _vm->_championMan->getMaximumLoad(L0711_ps_Champion)) + 1);
-									}
+								Champion *curChampion = _vm->_championMan->_champions;
+								for (int16 championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+									if (curChampion->_currHealth)
+										_vm->_championMan->decrementStamina(championIdx, ((curChampion->_load * 25) / _vm->_championMan->getMaximumLoad(curChampion)) + 1);
 								}
-							} else {
-								if (_vm->_championMan->getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF)) {
-									_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
-								}
-							}
+							} else if (_vm->_championMan->getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF))
+								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 						}
 						_useRopeToClimbDownPit = false;
-					} else {
-						if (L0710_i_ThingType == k4_GroupThingType) {
-							_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-							AL0727_ui_Outcome = _vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(thing), mapX, mapY, 20, false);
-							_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
-							L0722_B_FallKilledGroup = (AL0727_ui_Outcome == k2_outcomeKilledAllCreaturesInGroup);
-							if (L0722_B_FallKilledGroup)
-								break;
-							if (AL0727_ui_Outcome == k1_outcomeKilledSomeCreaturesInGroup) {
-								_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
-							}
-						}
+					} else if (thingType == k4_GroupThingType) {
+						_vm->_dungeonMan->setCurrentMap(mapIndexSource);
+						uint16 outcome = _vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(thing), mapX, mapY, 20, false);
+						_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
+						fallKilledGroup = (outcome == k2_outcomeKilledAllCreaturesInGroup);
+						if (fallKilledGroup)
+							break;
+
+						if (outcome == k1_outcomeKilledSomeCreaturesInGroup)
+							_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
 					}
-				} else {
-					if ((AL0709_i_DestinationSquareType == k3_ElementTypeStairs) && (thing != Thing::_party) && (L0710_i_ThingType != k14_ProjectileThingType)) {
-						if (!getFlag(AL0708_i_DestinationSquare, k0x0004_StairsUp)) {
-							L0715_ui_MapIndexDestination = _vm->_dungeonMan->getLocationAfterLevelChange(L0715_ui_MapIndexDestination, 1, &destMapX, &destMapY);
-							_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
-						}
-						L0716_ui_Direction = _vm->_dungeonMan->getStairsExitDirection(destMapX, destMapY);
-						destMapX += _vm->_dirIntoStepCountEast[L0716_ui_Direction], destMapY += _vm->_dirIntoStepCountNorth[L0716_ui_Direction];
-						L0716_ui_Direction = returnOppositeDir((Direction)L0716_ui_Direction);
-						AL0727_ui_ThingCell = thing.getCell();
-						AL0727_ui_ThingCell = normalizeModulo4((((AL0727_ui_ThingCell - L0716_ui_Direction + 1) & 0x0002) >> 1) + L0716_ui_Direction);
-						thing = thingWithNewCell(thing, AL0727_ui_ThingCell);
-					} else
-						break;
-				}
+				} else if ((destinationSquareType == k3_ElementTypeStairs) && (thing != Thing::_party) && (thingType != k14_ProjectileThingType)) {
+					if (!getFlag(destinationSquareData, k0x0004_StairsUp)) {
+						mapIndexDestination = _vm->_dungeonMan->getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
+						_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
+					}
+					direction = _vm->_dungeonMan->getStairsExitDirection(destMapX, destMapY);
+					destMapX += _vm->_dirIntoStepCountEast[direction], destMapY += _vm->_dirIntoStepCountNorth[direction];
+					direction = returnOppositeDir((Direction)direction);
+					uint16 thingCell = thing.getCell();
+					thingCell = normalizeModulo4((((thingCell - direction + 1) & 0x0002) >> 1) + direction);
+					thing = thingWithNewCell(thing, thingCell);
+				} else
+					break;
 			}
 		}
-		if ((L0710_i_ThingType == k4_GroupThingType) && (L0722_B_FallKilledGroup || !_vm->_dungeonMan->isCreatureAllowedOnMap(thing, L0715_ui_MapIndexDestination))) {
+		if ((thingType == k4_GroupThingType) && (fallKilledGroup || !_vm->_dungeonMan->isCreatureAllowedOnMap(thing, mapIndexDestination))) {
 			_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
 			_vm->_groupMan->dropGroupPossessions(destMapX, destMapY, thing, k2_soundModePlayOneTickLater);
-			_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-			if (mapX >= 0) {
+			_vm->_dungeonMan->setCurrentMap(mapIndexSource);
+			if (mapX >= 0)
 				_vm->_groupMan->groupDelete(mapX, mapY);
-			}
+
 			return true; /* The specified group thing cannot be moved because it was killed by a fall or because it is not allowed on the destination map */
 		}
 		_moveResultMapX = destMapX;
 		_moveResultMapY = destMapY;
-		_moveResultMapIndex = L0715_ui_MapIndexDestination;
+		_moveResultMapIndex = mapIndexDestination;
 		_moveResultCell = thing.getCell();
-		L0725_B_PartySquare = (L0715_ui_MapIndexDestination == L0714_ui_MapIndexSource) && (destMapX == mapX) && (destMapY == mapY);
-		if (L0725_B_PartySquare) {
+		partySquare = (mapIndexDestination == mapIndexSource) && (destMapX == mapX) && (destMapY == mapY);
+		if (partySquare) {
 			if (thing == Thing::_party) {
-				if (_vm->_dungeonMan->_partyDir == L0716_ui_Direction) {
+				if (_vm->_dungeonMan->_partyDir == direction)
 					return false;
-				}
-			} else {
-				if ((_moveResultCell == L0717_ui_ThingCell) && (L0710_i_ThingType != k14_ProjectileThingType)) {
-					return false;
-				}
-			}
+			} else if ((_moveResultCell == thingCell) && (thingType != k14_ProjectileThingType))
+				return false;
 		} else {
 			if ((thing == Thing::_party) && _vm->_championMan->_partyChampionCount) {
-				AL0727_ui_Backup = AL0708_i_DestinationSquare;
-				AL0708_i_ScentIndex = _vm->_championMan->_party._scentCount;
-				while (AL0708_i_ScentIndex >= 24) {
+				uint16 oldDestinationSquare = destinationSquareData;
+				int16 scentIndex = _vm->_championMan->_party._scentCount;
+				while (scentIndex >= 24) {
 					_vm->_championMan->deleteScent(0);
-					AL0708_i_ScentIndex--;
+					scentIndex--;
 				}
-				if (AL0708_i_ScentIndex) {
+
+				if (scentIndex)
 					_vm->_championMan->addScentStrength(mapX, mapY, (int)(_vm->_gameTime - _vm->_projexpl->_lastPartyMovementTime));
-				}
+
 				_vm->_projexpl->_lastPartyMovementTime = _vm->_gameTime;
 				_vm->_championMan->_party._scentCount++;
-				if (_vm->_championMan->_party._event79Count_Footprints) {
+				if (_vm->_championMan->_party._event79Count_Footprints)
 					_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._scentCount;
-				}
-				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapX(destMapX);
-				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapY(destMapY);
-				_vm->_championMan->_party._scents[AL0708_i_ScentIndex].setMapIndex(L0715_ui_MapIndexDestination);
-				_vm->_championMan->_party._scentStrengths[AL0708_i_ScentIndex] = 0;
+
+				_vm->_championMan->_party._scents[scentIndex].setMapX(destMapX);
+				_vm->_championMan->_party._scents[scentIndex].setMapY(destMapY);
+				_vm->_championMan->_party._scents[scentIndex].setMapIndex(mapIndexDestination);
+				_vm->_championMan->_party._scentStrengths[scentIndex] = 0;
 				_vm->_championMan->addScentStrength(destMapX, destMapY, k0x8000_mergeCycles | 24);
-				AL0708_i_DestinationSquare = AL0727_ui_Backup;
+				destinationSquareData = oldDestinationSquare;
 			}
-			if (L0715_ui_MapIndexDestination != L0714_ui_MapIndexSource) {
-				_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-			}
+			if (mapIndexDestination != mapIndexSource)
+				_vm->_dungeonMan->setCurrentMap(mapIndexSource);
 		}
 	}
 	if (mapX >= 0) {
-		if (thing == Thing::_party) {
-			processThingAdditionOrRemoval(mapX, mapY, Thing::_party, L0725_B_PartySquare, false);
-		} else {
-			if (L0713_B_ThingLevitates) {
-				_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
-			} else {
-				processThingAdditionOrRemoval(mapX, mapY, thing, (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY), false);
-			}
-		}
+		if (thing == Thing::_party)
+			processThingAdditionOrRemoval(mapX, mapY, Thing::_party, partySquare, false);
+		else if (thingLevitates)
+			_vm->_dungeonMan->unlinkThingFromList(thing, Thing::_none, mapX, mapY);
+		else
+			processThingAdditionOrRemoval(mapX, mapY, thing, (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY), false);
 	}
 	if (destMapX >= 0) {
 		if (thing == Thing::_party) {
-			_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
+			_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
 			if ((thing = _vm->_groupMan->groupGetThing(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) != Thing::_endOfList) { /* Delete group if party moves onto its square */
 				_vm->_groupMan->dropGroupPossessions(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, thing, k1_soundModePlayIfPrioritized);
 				_vm->_groupMan->groupDelete(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 			}
-			if (L0715_ui_MapIndexDestination == L0714_ui_MapIndexSource) {
-				processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, L0725_B_PartySquare, true);
-			} else {
-				_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-				_vm->_newPartyMapIndex = L0715_ui_MapIndexDestination;
+
+			if (mapIndexDestination == mapIndexSource)
+				processThingAdditionOrRemoval(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, Thing::_party, partySquare, true);
+			else {
+				_vm->_dungeonMan->setCurrentMap(mapIndexSource);
+				_vm->_newPartyMapIndex = mapIndexDestination;
 			}
 		} else {
-			if (L0710_i_ThingType == k4_GroupThingType) {
-				_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
-				L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
-				AL0708_i_ActiveGroupIndex = ((Group *)L0712_ps_Teleporter)->getActiveGroupIndex();
-				if (((L0715_ui_MapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (destMapX == _vm->_dungeonMan->_partyMapX) && (destMapY == _vm->_dungeonMan->_partyMapY)) || (_vm->_groupMan->groupGetThing(destMapX, destMapY) != Thing::_endOfList)) { /* If a group tries to move to the party square or over another group then create an event to move the group later */
-					_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
-					if (mapX >= 0) {
+			if (thingType == k4_GroupThingType) {
+				_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
+				Teleporter *L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
+				int16 activeGroupIndex = ((Group *)L0712_ps_Teleporter)->getActiveGroupIndex();
+				if (((mapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (destMapX == _vm->_dungeonMan->_partyMapX) && (destMapY == _vm->_dungeonMan->_partyMapY)) || (_vm->_groupMan->groupGetThing(destMapX, destMapY) != Thing::_endOfList)) { /* If a group tries to move to the party square or over another group then create an event to move the group later */
+					_vm->_dungeonMan->setCurrentMap(mapIndexSource);
+					if (mapX >= 0)
 						_vm->_groupMan->groupDeleteEvents(mapX, mapY);
-					}
-					if (L0721_B_GroupOnPartyMap) {
-						_vm->_groupMan->removeActiveGroup(AL0708_i_ActiveGroupIndex);
-					}
-					createEventMoveGroup(thing, destMapX, destMapY, L0715_ui_MapIndexDestination, L0726_B_Audible);
+
+					if (groupOnPartyMap)
+						_vm->_groupMan->removeActiveGroup(activeGroupIndex);
+
+					createEventMoveGroup(thing, destMapX, destMapY, mapIndexDestination, audibleTeleporter);
 					return true; /* The specified group thing cannot be moved because the party or another group is on the destination square */
 				}
-				L1638_ui_MovementSoundIndex = getSound(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[thing.getIndex()]._type);
-				if (L1638_ui_MovementSoundIndex < k34_D13_soundCount) {
-					_vm->_sound->requestPlay(L1638_ui_MovementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+				uint16 movementSoundIndex = getSound(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[thing.getIndex()]._type);
+				if (movementSoundIndex < k34_D13_soundCount)
+					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+
+				if (groupOnPartyMap && (mapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
+					_vm->_groupMan->removeActiveGroup(activeGroupIndex);
+					moveGroupResult = true;
+				} else if ((mapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (!groupOnPartyMap)) { /* If the group arrives on the party map */
+					_vm->_groupMan->addActiveGroup(thing, destMapX, destMapY);
+					moveGroupResult = true;
 				}
-				if (L0721_B_GroupOnPartyMap && (L0715_ui_MapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
-					_vm->_groupMan->removeActiveGroup(AL0708_i_ActiveGroupIndex);
-					L0720_ui_MoveGroupResult = true;
-				} else {
-					if ((L0715_ui_MapIndexDestination == _vm->_dungeonMan->_partyMapIndex) && (!L0721_B_GroupOnPartyMap)) { /* If the group arrives on the party map */
-						_vm->_groupMan->addActiveGroup(thing, destMapX, destMapY);
-						L0720_ui_MoveGroupResult = true;
-					}
-				}
-				if (L0713_B_ThingLevitates) {
+				if (thingLevitates)
 					_vm->_dungeonMan->linkThingToList(thing, Thing(0), destMapX, destMapY);
-				} else {
+				else
 					processThingAdditionOrRemoval(destMapX, destMapY, thing, false, true);
-				}
-				if (L0720_ui_MoveGroupResult || (mapX < 0)) { /* If group moved from one map to another or if it was just placed on a square */
+
+				if (moveGroupResult || (mapX < 0)) /* If group moved from one map to another or if it was just placed on a square */
 					_vm->_groupMan->startWandering(destMapX, destMapY);
-				}
-				_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
+
+				_vm->_dungeonMan->setCurrentMap(mapIndexSource);
 				if (mapX >= 0) {
-					if (L0720_ui_MoveGroupResult > 1) { /* If the group behavior was C6_BEHAVIOR_ATTACK before being teleported from and to the party map */
-						_vm->_groupMan->stopAttacking(&_vm->_groupMan->_activeGroups[L0720_ui_MoveGroupResult - 2], mapX, mapY);
-					} else {
-						if (L0720_ui_MoveGroupResult) { /* If the group was teleported or leaved the party map or entered the party map */
-							_vm->_groupMan->groupDeleteEvents(mapX, mapY);
-						}
-					}
+					if (moveGroupResult > 1) /* If the group behavior was C6_BEHAVIOR_ATTACK before being teleported from and to the party map */
+						_vm->_groupMan->stopAttacking(&_vm->_groupMan->_activeGroups[moveGroupResult - 2], mapX, mapY);
+					else if (moveGroupResult) /* If the group was teleported or leaved the party map or entered the party map */
+						_vm->_groupMan->groupDeleteEvents(mapX, mapY);
 				}
-				return L0720_ui_MoveGroupResult;
+				return moveGroupResult;
 			}
-			_vm->_dungeonMan->setCurrentMap(L0715_ui_MapIndexDestination);
-			if (L0710_i_ThingType == k14_ProjectileThingType) { /* BUG0_29 An explosion can trigger a floor sensor. Explosions do not trigger floor sensors on the square where they are created. However, if an explosion is moved by a teleporter (or by falling into a pit, see BUG0_26) after it was created, it can trigger floor sensors on the destination square. This is because explosions are not considered as levitating in the code, while projectiles are. The condition here should be (L0713_B_ThingLevitates) so that explosions would not start sensor processing on their destination square as they should be Levitating. This would work if F0264_MOVE_IsLevitating returned true for explosions (see BUG0_26) */
+			_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
+			if (thingType == k14_ProjectileThingType) /* BUG0_29 An explosion can trigger a floor sensor. Explosions do not trigger floor sensors on the square where they are created. However, if an explosion is moved by a teleporter (or by falling into a pit, see BUG0_26) after it was created, it can trigger floor sensors on the destination square. This is because explosions are not considered as levitating in the code, while projectiles are. The condition here should be (L0713_B_ThingLevitates) so that explosions would not start sensor processing on their destination square as they should be Levitating. This would work if F0264_MOVE_IsLevitating returned true for explosions (see BUG0_26) */
 				_vm->_dungeonMan->linkThingToList(thing, Thing(0), destMapX, destMapY);
-			} else {
+			else
 				processThingAdditionOrRemoval(destMapX, destMapY, thing, (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (destMapX == _vm->_dungeonMan->_partyMapX) && (destMapY == _vm->_dungeonMan->_partyMapY), true);
-			}
-			_vm->_dungeonMan->setCurrentMap(L0714_ui_MapIndexSource);
+
+			_vm->_dungeonMan->setCurrentMap(mapIndexSource);
 		}
 	}
 	return false;
 }
 
 bool MovesensMan::isLevitating(Thing thing) {
-	int16 L0695_i_ThingType;
+	ThingType thingType = thing.getType();
+	bool retVal = false;
+	if (thingType == k4_GroupThingType)
+		retVal = getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), k0x0020_MaskCreatureInfo_levitation);
+	else if (thingType == k14_ProjectileThingType)
+		/* BUG0_26 An explosion may fall in a pit. If a pit is opened while there is an explosion above then the explosion
+		falls into the pit in getMoveResult(). Explosions are not considered as levitating so they are moved when the pit
+		is opened. This function should return true for explosions */
+		retVal = true;
 
-
-	if ((L0695_i_ThingType = thing.getType()) == k4_GroupThingType) {
-		return getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), k0x0020_MaskCreatureInfo_levitation);
-	}
-	if (L0695_i_ThingType == k14_ProjectileThingType) { /* BUG0_26 An explosion may fall in a pit. If a pit is opened while there is an explosion above then the explosion falls into the pit in F0267_MOVE_GetMoveResult_CPSCE. Explosions are not considered as levitating so they are moved when the pit is opened. This function should return true for explosions */
-		return true;
-	}
-	return false;
+	return retVal;
 }
 
 bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY, Thing thing) {
