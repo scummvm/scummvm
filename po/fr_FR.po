@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-04 17:17+0200\n"
-"PO-Revision-Date: 2016-02-20 23:17+0000\n"
+"POT-Creation-Date: 2016-09-04 23:16+0100\n"
+"PO-Revision-Date: 2016-09-04 23:20+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
-"Language: Francais\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -77,9 +77,8 @@ msgid "Choose"
 msgstr "Choisir"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Sélectionner le répertoire contenant les données du jeu"
+msgstr "Sélectionner le répertoire dans lequel télécharger les données du jeu"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -87,30 +86,32 @@ msgstr "Sélectionner le répertoire contenant les données du jeu"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Depuis : "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Vers : "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Annuler le téléchargement"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Annuler"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Masquer"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Votre connexion semble limité. Voulez-vous vraiment télécharger des "
+"fichiers ?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -145,6 +146,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Impossible de créer un répertoire de téléchargement - un fichier portant le "
+"même nom existe déjà."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -172,11 +175,13 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"Le répertoire \"%s\" existe déjà localement.\n"
+"Êtes-vous sûr de vouloir télécharger dans ce répertoire?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Téléchargé %s %s / %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -405,6 +410,9 @@ msgid ""
 "Saves sync feature doesn't work with non-default directories. If you want "
 "your saves to sync, use default directory."
 msgstr ""
+"La fonctionnalité de synchronisation des sauvegardes ne fonctionne qu'avec "
+"les répertoires par défaut. Si vous souhaitez synchroniser vos sauvegardes, "
+"utilisez le répertoire par défaut."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -692,6 +700,8 @@ msgstr ""
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"Ce répertoire est en cours de téléchargement et ne peut pas encore être "
+"utilisé !"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -1145,24 +1155,24 @@ msgstr "Maintenant"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Nuage"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Nuage"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Stockage :"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Service de stockage actif"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<aucun>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1170,88 +1180,86 @@ msgstr "Nom d'utilisateur :"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Nom d'utilisateur pour ce service"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Espace utilisé"
 
 #: gui/options.cpp:1311
 msgid "Space used by ScummVM's saves on this storage"
-msgstr ""
+msgstr "Espace utilisé par les sauvegardes de ScummVM sur ce stockage."
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Dernière synchronisation :"
 
 #: gui/options.cpp:1314
-msgid "When this storage did saves sync last time"
-msgstr ""
+msgid "When the last saves sync for this storage occured"
+msgstr "Quand la dernière synchronisation des sauvegardes à eu lieu"
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
 msgid "Connect"
-msgstr ""
+msgstr "Se connecter"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Ouvre l'assistant de connexion au compte de stockage en ligne"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Rafraîchir"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
+"Rafraîchir les informations (nom d'utilisateur et espace utilisé) pour le "
+"service de stockage actif"
 
 #: gui/options.cpp:1319
-#, fuzzy
-msgid "Downloads"
-msgstr "Bas"
+msgid "Download"
+msgstr "Télécharger"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Ouvrir le gestionnaire de téléchargement"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Démarrer le serveur"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Démarre le serveur web local"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Erreur lors de l'éxécution du jeu : "
+msgstr "Arrêté"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Extra :"
+msgstr "Chemin /racine/:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
-msgid "Specifies where Files Manager can access to"
-msgstr "Définie l'emplacement où les fichiers de sauvegarde sont créés"
+msgid "Specifies which directory the Files Manager can access"
+msgstr "Indique le répertoire que le gestionnaire de fichier peut accéder"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Extra :"
+msgstr "/racine/:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Serveur:"
+msgstr "Port :"
 
 #: gui/options.cpp:1338
 msgid ""
-"Which port is used by server\n"
+"Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Port utilisé par le serveur\n"
+"Authentification avec le serveur n'est disponible qu'avec le port par défaut"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1259,13 +1267,12 @@ msgstr ""
 "Vous devez relancer ScummVM pour que le changement soit pris en compte."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Échec de la sauvegarde."
+msgstr "Echec du changement de service de stockage !"
 
 #: gui/options.cpp:1524
-msgid "Current cloud storage is working at the moment."
-msgstr ""
+msgid "Another cloud storage is already active."
+msgstr "Un autre service de stockage est déjà actif."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1286,9 +1293,8 @@ msgid "Select directory for plugins"
 msgstr "Sélectionner le répertoire des plugins"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Sélectionner le répertoire pour les fichiers suplémentaires"
+msgstr "Indique le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1301,31 +1307,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bytes"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<maintenant>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Jamais"
+msgstr "<jamais>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Serveur:"
+msgstr "Arrêter le serveur"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Arrêter le serveur"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"La demande à échouée.\n"
+"Vérifiez votre connexion internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1399,9 +1405,8 @@ msgid "Unknown Author"
 msgstr "Auteur inconnu"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
-msgid "ScummVM couldn't list the directory!"
-msgstr "ScummVM n'a pas pu ouvrir le répertoire sélectionné."
+msgid "ScummVM could not access the directory!"
+msgstr "ScummVM n'a pas pu accédé au répertoire !"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1471,73 +1476,74 @@ msgstr "Entrez une description pour l'emplacement %d:"
 #: gui/storagewizarddialog.cpp:56
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Assistant de Connexion pour %s"
 
 #: gui/storagewizarddialog.cpp:59
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Accédez à l'URL ci-après :"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Obtenez le code du service de stockage, entrez le dans"
 
 #: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "le champ de texte suivant et cliquez sur 'Se connecter' :"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Ouvrir l'URL"
 
 #: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Coller"
 
 #: gui/storagewizarddialog.cpp:71
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Colle le contenu du presse-papier dans les champs de texte"
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You would be navigated to ScummVM's page"
-msgstr ""
+msgid "You will be directed to ScummVM's page where"
+msgstr "Vous serez redirigé vers la page de ScummVM où"
 
 #: gui/storagewizarddialog.cpp:80
-msgid "when you'd allow it to use your storage."
-msgstr ""
+msgid "you should allow it to access your storage."
+msgstr "vous devrez l'autoriser à accéder à votre stockage."
 
 #: gui/storagewizarddialog.cpp:113
-msgid "The other Storage is working. Do you want to interrupt it?"
-msgstr ""
+msgid "Another Storage is active. Do you want to interrupt it?"
+msgstr "Un autre service de stockage est actif. Voulez-vous l'interrompre ?"
 
 #: gui/storagewizarddialog.cpp:122
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
+"Patientez jusqu'à ce que le Stockage actuel soit fermé et essayez de nouveau."
 
 #: gui/storagewizarddialog.cpp:183
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Il y a une erreur dans le champ %s."
 
 #: gui/storagewizarddialog.cpp:185
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Il y a des erreurs dans les champs %s."
 
 #: gui/storagewizarddialog.cpp:200
 msgid "All OK!"
-msgstr ""
+msgstr "Tous OK !"
 
 #: gui/storagewizarddialog.cpp:202
-#, fuzzy
 msgid "Invalid code"
-msgstr "Chemin Invalide"
+msgstr "Code invalide"
 
 #: gui/storagewizarddialog.cpp:210
 msgid ""
 "Failed to open URL!\n"
-"You should navigate there manually then."
+"Please navigate to this page manually."
 msgstr ""
+"Erreur à l'ouverture de l'URL !\n"
+"Veuillez naviguer vers cette page manuellement."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -2017,19 +2023,20 @@ msgid "C64 Audio Emulator"
 msgstr "Émulateur C64 Audio"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
 msgid "Saves sync complete."
-msgstr "Examen terminé !"
+msgstr "Synchronisation des sauvegardes terminé."
 
 #: backends/cloud/storage.cpp:221
 msgid "Saves sync was cancelled."
-msgstr ""
+msgstr "Synchronisation des sauvegardes annulée."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
 "Saves sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Erreur lors de la synchronisation des sauvegardes.\n"
+"Vérifiez votre connexion internet."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2037,16 +2044,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Téléchargement terminé.\n"
+"%u fichiers n'ont pu être téléchargés."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Examen terminé !"
+msgstr "Téléchargement terminé !"
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Charger une partie"
+msgstr "Erreur lors du téléchargement."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -3244,13 +3251,12 @@ msgid "Enable high resolution graphics/content"
 msgstr "Utiliser les graphiques haute résolution"
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Activer le mode Roland GS"
+msgstr "Activer les vidéos avec traits noirs"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Affiche des lignes noirs sur les vidéos pour les rendre plus nets."
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -4247,6 +4253,14 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Utiliser les vidéos MPEG du DVD à la place des vidéos AVI de plus basse "
 "résolution"
+
+#, fuzzy
+#~ msgid "Specifies where Files Manager can access to"
+#~ msgstr "Définie l'emplacement où les fichiers de sauvegarde sont créés"
+
+#~ msgid "When this storage did saves sync last time"
+#~ msgstr ""
+#~ "Date de la dernières synchronisation des sauvegardes avec ce stockage"
 
 #~ msgid "EGA undithering"
 #~ msgstr "Détramage EGA"
