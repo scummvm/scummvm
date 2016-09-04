@@ -424,7 +424,7 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 	_vm->_championMan->_magicCasterChampionIndex = champIndex;
 	buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
-	drawSpellAreaControls((ChampionIndex)champIndex);
+	drawSpellAreaControls(champIndex);
 	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
 	buildSpellAreaLine(k3_SpellAreaChampionSymbols);
 	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
@@ -478,90 +478,81 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 #define AL1267_ui_LightPower L1267_ui_Multiple
 #define AL1267_ui_SpellPower L1267_ui_Multiple
 #define AL1267_ui_Ticks      L1267_ui_Multiple
-	int16 L1268_i_PowerSymbolOrdinal;
-	uint16 L1269_ui_Multiple;
-#define AL1269_ui_RequiredSkillLevel L1269_ui_Multiple
-#define AL1269_ui_EmptyFlaskWeight   L1269_ui_Multiple
-#define AL1269_ui_Ticks              L1269_ui_Multiple
-	Champion *L1270_ps_Champion;
-	Spell *L1271_ps_Spell;
-	Thing L1272_T_Object;
-	uint16 L1273_ui_Experience;
-	int16 L1274_i_MissingSkillLevelCount;
-	Potion *L1275_ps_Potion;
-	TimelineEvent L1276_s_Event;
-	Junk *L1277_ps_Junk;
 
+	if (champIndex >= _vm->_championMan->_partyChampionCount)
+		return k0_spellCastFailure;
 
-	if (champIndex >= _vm->_championMan->_partyChampionCount) {
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	if (!curChampion->_currHealth)
+		return k0_spellCastFailure;
+
+	Spell *curSpell = getSpellFromSymbols((unsigned char *)curChampion->_symbols);
+	if (!curSpell) {
+		menusPrintSpellFailureMessage(curChampion, k1_spellCastSuccess, 0);
 		return k0_spellCastFailure;
 	}
-	L1270_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	if (!(L1270_ps_Champion->_currHealth)) {
-		return k0_spellCastFailure;
-	}
-	L1271_ps_Spell = getSpellFromSymbols((unsigned char *)L1270_ps_Champion->_symbols);
-	if (L1271_ps_Spell == 0) {
-		menusPrintSpellFailureMessage(L1270_ps_Champion, k1_spellCastSuccess, 0);
-		return k0_spellCastFailure;
-	}
-	L1268_i_PowerSymbolOrdinal = L1270_ps_Champion->_symbols[0] - '_'; /* Values 1 to 6 */
-	AL1269_ui_RequiredSkillLevel = L1271_ps_Spell->_baseRequiredSkillLevel + L1268_i_PowerSymbolOrdinal;
-	L1273_ui_Experience = _vm->getRandomNumber(8) + (AL1269_ui_RequiredSkillLevel << 4) + ((_vm->ordinalToIndex(L1268_i_PowerSymbolOrdinal) * L1271_ps_Spell->_baseRequiredSkillLevel) << 3) + (AL1269_ui_RequiredSkillLevel * AL1269_ui_RequiredSkillLevel);
-	AL1267_ui_SkillLevel = _vm->_championMan->getSkillLevel(champIndex, L1271_ps_Spell->_skillIndex);
-	if (AL1267_ui_SkillLevel < AL1269_ui_RequiredSkillLevel) {
-		L1274_i_MissingSkillLevelCount = AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel;
-		while (L1274_i_MissingSkillLevelCount--) {
-			if (_vm->getRandomNumber(128) > MIN(L1270_ps_Champion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
-				_vm->_championMan->addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience >> (AL1269_ui_RequiredSkillLevel - AL1267_ui_SkillLevel));
-				menusPrintSpellFailureMessage(L1270_ps_Champion, k0_failureNeedsMorePractice, L1271_ps_Spell->_skillIndex);
+	int16 powerSymbolOrdinal = curChampion->_symbols[0] - '_'; /* Values 1 to 6 */
+	uint16 requiredSkillLevel = curSpell->_baseRequiredSkillLevel + powerSymbolOrdinal;
+	uint16 experience = _vm->getRandomNumber(8) + (requiredSkillLevel << 4) + ((_vm->ordinalToIndex(powerSymbolOrdinal) * curSpell->_baseRequiredSkillLevel) << 3) + (requiredSkillLevel * requiredSkillLevel);
+	AL1267_ui_SkillLevel = _vm->_championMan->getSkillLevel(champIndex, curSpell->_skillIndex);
+	if (AL1267_ui_SkillLevel < requiredSkillLevel) {
+		int16 missingSkillLevelCount = requiredSkillLevel - AL1267_ui_SkillLevel;
+		while (missingSkillLevelCount--) {
+			if (_vm->getRandomNumber(128) > MIN(curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
+				_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience >> (requiredSkillLevel - AL1267_ui_SkillLevel));
+				menusPrintSpellFailureMessage(curChampion, k0_failureNeedsMorePractice, curSpell->_skillIndex);
 				return k0_spellCastFailure;
 			}
 		}
 	}
-	switch (L1271_ps_Spell->getKind()) {
-	case k1_spellKindPotion:
-		if ((L1275_ps_Potion = getEmptyFlaskInHand(L1270_ps_Champion, &L1272_T_Object)) == NULL) {
-			menusPrintSpellFailureMessage(L1270_ps_Champion, k10_failureNeedsFlaskInHand, 0);
+	switch (curSpell->getKind()) {
+	case k1_spellKindPotion: {
+		Thing newObject;
+		Potion *newPotion = getEmptyFlaskInHand(curChampion, &newObject);
+		if (!newPotion) {
+			menusPrintSpellFailureMessage(curChampion, k10_failureNeedsFlaskInHand, 0);
 			return k3_spellCastFailureNeedsFlask;
 		}
-		AL1269_ui_EmptyFlaskWeight = _vm->_dungeonMan->getObjectWeight(L1272_T_Object);
-		L1275_ps_Potion->setType((PotionType)L1271_ps_Spell->getType());
-		L1275_ps_Potion->setPower(_vm->getRandomNumber(16) + (L1268_i_PowerSymbolOrdinal * 40));
-		L1270_ps_Champion->_load += _vm->_dungeonMan->getObjectWeight(L1272_T_Object) - AL1269_ui_EmptyFlaskWeight;
+		uint16 emptyFlaskWeight = _vm->_dungeonMan->getObjectWeight(newObject);
+		newPotion->setType((PotionType)curSpell->getType());
+		newPotion->setPower(_vm->getRandomNumber(16) + (powerSymbolOrdinal * 40));
+		curChampion->_load += _vm->_dungeonMan->getObjectWeight(newObject) - emptyFlaskWeight;
 		_vm->_championMan->drawChangedObjectIcons();
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex)) {
-			setFlag(L1270_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad);
+			setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
+		}
 		}
 		break;
 	case k2_spellKindProjectile:
-		if (L1270_ps_Champion->_dir != _vm->_dungeonMan->_partyDir) {
-			L1270_ps_Champion->_dir = _vm->_dungeonMan->_partyDir;
-			setFlag(L1270_ps_Champion->_attributes, k0x0400_ChampionAttributeIcon);
+		if (curChampion->_dir != _vm->_dungeonMan->_partyDir) {
+			curChampion->_dir = _vm->_dungeonMan->_partyDir;
+			setFlag(curChampion->_attributes, k0x0400_ChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
-		if (L1271_ps_Spell->getType() == k4_spellType_projectileOpenDoor) {
+		if (curSpell->getType() == k4_spellType_projectileOpenDoor) {
 			AL1267_ui_SkillLevel <<= 1;
 		}
-		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(L1271_ps_Spell->getType() + Thing::_firstExplosion.toUint16()), getBoundedValue(21, (L1268_i_PowerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
+		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(curSpell->getType() + Thing::_firstExplosion.toUint16()), getBoundedValue(21, (powerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
 		break;
-	case k3_spellKindOther:
-		L1276_s_Event._priority = 0;
-		AL1267_ui_SpellPower = (L1268_i_PowerSymbolOrdinal + 1) << 2;
-		switch (L1271_ps_Spell->getType()) {
+	case k3_spellKindOther: {
+		TimelineEvent newEvent;
+		newEvent._priority = 0;
+		AL1267_ui_SpellPower = (powerSymbolOrdinal + 1) << 2;
+		uint16 ticks;
+		switch (curSpell->getType()) {
 		case k0_spellType_otherLight:
-			AL1269_ui_Ticks = 10000 + ((AL1267_ui_SpellPower - 8) << 9);
+			ticks = 10000 + ((AL1267_ui_SpellPower - 8) << 9);
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 1);
 			AL1267_ui_LightPower--;
 			goto T0412019;
 		case k5_spellType_otherMagicTorch:
-			AL1269_ui_Ticks = 2000 + ((AL1267_ui_SpellPower - 3) << 7);
+			ticks = 2000 + ((AL1267_ui_SpellPower - 3) << 7);
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
 			AL1267_ui_LightPower++;
 T0412019:
 			_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
-			createEvent70_light(-AL1267_ui_LightPower, AL1269_ui_Ticks);
+			createEvent70_light(-AL1267_ui_LightPower, ticks);
 			break;
 		case k1_spellType_otherDarkness:
 			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
@@ -569,28 +560,28 @@ T0412019:
 			createEvent70_light(AL1267_ui_LightPower, 98);
 			break;
 		case k2_spellType_otherThievesEye:
-			L1276_s_Event._type = k73_TMEventTypeThievesEye;
+			newEvent._type = k73_TMEventTypeThievesEye;
 			_vm->_championMan->_party._event73Count_ThievesEye++;
 			AL1267_ui_SpellPower = (AL1267_ui_SpellPower >> 1);
 			goto T0412032;
 		case k3_spellType_otherInvisibility:
-			L1276_s_Event._type = k71_TMEventTypeInvisibility;
+			newEvent._type = k71_TMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
 			goto T0412033;
 		case k4_spellType_otherPartyShield:
-			L1276_s_Event._type = k74_TMEventTypePartyShield;
-			L1276_s_Event._B._defense = AL1267_ui_SpellPower;
+			newEvent._type = k74_TMEventTypePartyShield;
+			newEvent._B._defense = AL1267_ui_SpellPower;
 			if (_vm->_championMan->_party._shieldDefense > 50) {
-				L1276_s_Event._B._defense >>= 2;
+				newEvent._B._defense >>= 2;
 			}
-			_vm->_championMan->_party._shieldDefense += L1276_s_Event._B._defense;
+			_vm->_championMan->_party._shieldDefense += newEvent._B._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
 			goto T0412032;
 		case k6_spellType_otherFootprints:
-			L1276_s_Event._type = k79_TMEventTypeFootprints;
+			newEvent._type = k79_TMEventTypeFootprints;
 			_vm->_championMan->_party._event79Count_Footprints++;
 			_vm->_championMan->_party._firstScentIndex = _vm->_championMan->_party._scentCount;
-			if (L1268_i_PowerSymbolOrdinal < 3) {
+			if (powerSymbolOrdinal < 3) {
 				_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._firstScentIndex;
 			} else {
 				_vm->_championMan->_party._lastScentIndex = 0;
@@ -598,37 +589,42 @@ T0412019:
 T0412032:
 			AL1267_ui_Ticks = AL1267_ui_SpellPower * AL1267_ui_SpellPower;
 T0412033:
-			setMapAndTime(L1276_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1267_ui_Ticks);
-			_vm->_timeline->addEventGetEventIndex(&L1276_s_Event);
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1267_ui_Ticks);
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			break;
-		case k7_spellType_otherZokathra:
-			if ((L1272_T_Object = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType)) == Thing::_none)
+		case k7_spellType_otherZokathra: {
+			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType);
+			if (unusedObject == Thing::_none)
 				break;
-			L1277_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1272_T_Object);
-			L1277_ps_Junk->setType(k51_JunkTypeZokathra);
+
+			Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(unusedObject);
+			junkData->setType(k51_JunkTypeZokathra);
 			ChampionSlot AL1267_ui_SlotIndex;
-			if (L1270_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none) {
+			if (curChampion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)
 				AL1267_ui_SlotIndex = k0_ChampionSlotReadyHand;
-			} else {
-				if (L1270_ps_Champion->_slots[k1_ChampionSlotActionHand] == Thing::_none) {
-					AL1267_ui_SlotIndex = k1_ChampionSlotActionHand;
-				} else {
-					AL1267_ui_SlotIndex = kM1_ChampionSlotLeaderHand;
-				}
-			}
+			else if (curChampion->_slots[k1_ChampionSlotActionHand] == Thing::_none)
+				AL1267_ui_SlotIndex = k1_ChampionSlotActionHand;
+			else
+				AL1267_ui_SlotIndex = kM1_ChampionSlotLeaderHand;
+
 			if ((AL1267_ui_SlotIndex == k0_ChampionSlotReadyHand) || (AL1267_ui_SlotIndex == k1_ChampionSlotActionHand)) {
-				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, L1272_T_Object, AL1267_ui_SlotIndex);
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, unusedObject, AL1267_ui_SlotIndex);
 				_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
-			} else {
-				_vm->_moveSens->getMoveResult(L1272_T_Object, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+			} else
+				_vm->_moveSens->getMoveResult(unusedObject, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+
 			}
 			break;
 		case k8_spellType_otherFireshield:
-			isPartySpellOrFireShieldSuccessful(L1270_ps_Champion, false, (AL1267_ui_SpellPower * AL1267_ui_SpellPower) + 100, false);
+			isPartySpellOrFireShieldSuccessful(curChampion, false, (AL1267_ui_SpellPower * AL1267_ui_SpellPower) + 100, false);
+			break;
+		default:
+			break;
+		}
 		}
 	}
-	_vm->_championMan->addSkillExperience(champIndex, L1271_ps_Spell->_skillIndex, L1273_ui_Experience);
-	_vm->_championMan->disableAction(champIndex, L1271_ps_Spell->getDuration());
+	_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience);
+	_vm->_championMan->disableAction(champIndex, curSpell->getDuration());
 	return k1_spellCastSuccess;
 }
 
