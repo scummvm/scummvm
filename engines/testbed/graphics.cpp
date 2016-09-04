@@ -650,9 +650,12 @@ TestExitStatus GFXtests::mouseMovements() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
+	Common::Event event;
+
 	for (int i = 0; i <= 100; i++) {
 		g_system->delayMillis(20);
 		g_system->warpMouse(i, i);
+		g_system->getEventManager()->pollEvent(event);
 		g_system->updateScreen();
 	}
 
