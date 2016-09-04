@@ -941,7 +941,7 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 }
 
 bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
-	static unsigned char G0494_auc_Graphic560_ActionStamina[44] = {
+	static unsigned char actionStaminaArray[44] = {
 		0,  /* N */
 		4,  /* BLOCK */
 		10, /* CHOP */
@@ -987,7 +987,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		0,  /* THROW */
 		2   /* FUSE */
 	};
-	static unsigned char G0497_auc_Graphic560_ActionExperienceGain[44] = {
+	static unsigned char actionExperienceGainArray[44] = {
 		0,  /* N */
 		8,  /* BLOCK */
 		10, /* CHOP */
@@ -1033,10 +1033,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		5,  /* THROW */
 		1   /* FUSE */
 	};
-	uint16 L1244_ui_Multiple;
-#define AL1244_ui_TargetSquare  L1244_ui_Multiple
-#define AL1244_ui_HealingAmount L1244_ui_Multiple
-#define AL1244_ui_ManaCost      L1244_ui_Multiple
+
 	int16 L1245_i_Multiple;
 #define AL1245_T_ExplosionThing  L1245_i_Multiple
 #define AL1245_B_ActionPerformed L1245_i_Multiple
@@ -1046,44 +1043,33 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 #define AL1246_i_StepEnergy            L1246_i_Multiple
 #define AL1246_i_HealingCapability     L1246_i_Multiple
 #define AL1246_i_Ticks                 L1246_i_Multiple
-	Champion* L1247_ps_Champion;
-	Weapon* L1248_ps_Weapon;
-	uint16 L1249_ui_ActionDisabledTicks;
 	int16 L1250_i_Multiple;
 #define AL1250_i_KineticEnergy        L1250_i_Multiple
 #define AL1250_i_ReadyHandWeaponClass L1250_i_Multiple
 #define AL1250_i_MissingHealth        L1250_i_Multiple
-#define AL1250_i_HealingAmount        L1250_i_Multiple
-	int16 L1251_i_MapX;
-	int16 L1252_i_MapY;
-	int16 L1253_i_ActionStamina;
-	int16 L1254_i_ActionSkillIndex;
-	int16 L1255_i_ActionExperienceGain;
-	WeaponInfo *L1256_ps_WeaponInfoActionHand;
-	WeaponInfo *L1257_ps_WeaponInfoReadyHand;
-	TimelineEvent L1258_s_Event;
 
+	if (champIndex >= _vm->_championMan->_partyChampionCount)
+		return false;
 
-	if (champIndex >= _vm->_championMan->_partyChampionCount) {
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	if (!curChampion->_currHealth)
 		return false;
-	}
-	L1247_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	L1248_ps_Weapon = (Weapon *)_vm->_dungeonMan->getThingData(L1247_ps_Champion->_slots[k1_ChampionSlotActionHand]);
-	if (!L1247_ps_Champion->_currHealth) {
-		return false;
-	}
-	L1251_i_MapX = _vm->_dungeonMan->_partyMapX;
-	L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
-	L1251_i_MapX += _vm->_dirIntoStepCountEast[L1247_ps_Champion->_dir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[L1247_ps_Champion->_dir];
-	_actionTargetGroupThing = _vm->_groupMan->groupGetThing(L1251_i_MapX, L1252_i_MapY);
-	L1249_ui_ActionDisabledTicks = _actionDisabledTicks[actionIndex];
-	L1254_i_ActionSkillIndex = _actionSkillIndex[actionIndex];
-	L1253_i_ActionStamina = G0494_auc_Graphic560_ActionStamina[actionIndex] + _vm->getRandomNumber(2);
-	L1255_i_ActionExperienceGain = G0497_auc_Graphic560_ActionExperienceGain[actionIndex];
-	AL1244_ui_TargetSquare = _vm->_dungeonMan->getSquare(L1251_i_MapX, L1252_i_MapY).toByte();
+
+	Weapon *weaponInHand = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[k1_ChampionSlotActionHand]);
+
+	int16 nextMapX = _vm->_dungeonMan->_partyMapX;
+	int16 nextMapY = _vm->_dungeonMan->_partyMapY;
+	nextMapX += _vm->_dirIntoStepCountEast[curChampion->_dir];
+	nextMapY += _vm->_dirIntoStepCountNorth[curChampion->_dir];
+	_actionTargetGroupThing = _vm->_groupMan->groupGetThing(nextMapX, nextMapY);
+	uint16 actionDisabledTicks = _actionDisabledTicks[actionIndex];
+	int16 actionSkillIndex = _actionSkillIndex[actionIndex];
+	int16 actionStamina = actionStaminaArray[actionIndex] + _vm->getRandomNumber(2);
+	int16 actionExperienceGain = actionExperienceGainArray[actionIndex];
+	uint16 targetSquare = _vm->_dungeonMan->getSquare(nextMapX, nextMapY).toByte();
 	AL1245_B_ActionPerformed = true;
-	if (((L1254_i_ActionSkillIndex >= k16_ChampionSkillFire) && (L1254_i_ActionSkillIndex <= k19_ChampionSkillWater)) || (L1254_i_ActionSkillIndex == k3_ChampionSkillWizard)) {
-		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->getSkillLevel(champIndex, L1254_i_ActionSkillIndex));
+	if (((actionSkillIndex >= k16_ChampionSkillFire) && (actionSkillIndex <= k19_ChampionSkillWater)) || (actionSkillIndex == k3_ChampionSkillWizard)) {
+		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->getSkillLevel(champIndex, actionSkillIndex));
 	}
 	switch (actionIndex) {
 	case k23_ChampionActionLightning:
@@ -1096,21 +1082,22 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		goto T0407014;
 	case k20_ChampionActionFireball:
 		AL1250_i_KineticEnergy = 150;
-		goto T0407013;
+		AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
+		goto T0407014;
 	case k40_ChampionActionSpit:
 		AL1250_i_KineticEnergy = 250;
-T0407013:
 		AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
 T0407014:
-		setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		if (L1247_ps_Champion->_currMana < AL1246_i_RequiredManaAmount) {
-			AL1250_i_KineticEnergy = MAX(2, L1247_ps_Champion->_currMana * AL1250_i_KineticEnergy / AL1246_i_RequiredManaAmount);
-			AL1246_i_RequiredManaAmount = L1247_ps_Champion->_currMana;
+		setChampionDirectionToPartyDirection(curChampion);
+		if (curChampion->_currMana < AL1246_i_RequiredManaAmount) {
+			AL1250_i_KineticEnergy = MAX(2, curChampion->_currMana * AL1250_i_KineticEnergy / AL1246_i_RequiredManaAmount);
+			AL1246_i_RequiredManaAmount = curChampion->_currMana;
 		}
-		if (!(AL1245_B_ActionPerformed = _vm->_championMan->isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount))) {
-			L1255_i_ActionExperienceGain >>= 1;
-		}
-		decrementCharges(L1247_ps_Champion);
+		AL1245_B_ActionPerformed = _vm->_championMan->isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount);
+		if (!AL1245_B_ActionPerformed)
+			actionExperienceGain >>= 1;
+
+		decrementCharges(curChampion);
 		break;
 	case k30_ChampionActionBash:
 	case k18_ChampionActionHack:
@@ -1118,10 +1105,10 @@ T0407014:
 	case k7_ChampionActionKick:
 	case k13_ChampionActionSwing:
 	case k2_ChampionActionChop:
-		if ((Square(AL1244_ui_TargetSquare).getType() == k4_DoorElemType) && (Square(AL1244_ui_TargetSquare).getDoorState() == k4_doorState_CLOSED)) {
+		if ((Square(targetSquare).getType() == k4_DoorElemType) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-			L1249_ui_ActionDisabledTicks = 6;
-			_vm->_groupMan->groupIsDoorDestoryedByAttack(L1251_i_MapX, L1252_i_MapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
+			actionDisabledTicks = 6;
+			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
 			_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
@@ -1136,80 +1123,92 @@ T0407014:
 	case k28_ChampionActionSlash:
 	case k29_ChampionActionCleave:
 	case k6_ChampionActionPunch:
-		if (!(AL1245_B_ActionPerformed = isMeleeActionPerformed(champIndex, L1247_ps_Champion, actionIndex, L1251_i_MapX, L1252_i_MapY, L1254_i_ActionSkillIndex))) {
-			L1255_i_ActionExperienceGain >>= 1;
-			L1249_ui_ActionDisabledTicks >>= 1;
+		if (!(AL1245_B_ActionPerformed = isMeleeActionPerformed(champIndex, curChampion, actionIndex, nextMapX, nextMapY, actionSkillIndex))) {
+			actionExperienceGain >>= 1;
+			actionDisabledTicks >>= 1;
 		}
 		break;
 	case k22_ChampionActionConfuse:
-		decrementCharges(L1247_ps_Champion);
+		decrementCharges(curChampion);
+		// No break on purpose
 	case k8_ChampionActionWarCry:
 	case k37_ChampionActionCalm:
 	case k41_ChampionActionBrandish:
 	case k4_ChampionActionBlowHorn:
-		if (actionIndex == k8_ChampionActionWarCry) {
-			_vm->_sound->requestPlay(k28_soundWAR_CRY, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
-		}
-		if (actionIndex == k4_ChampionActionBlowHorn) {
-			_vm->_sound->requestPlay(k25_soundBLOW_HORN, L1251_i_MapX, L1252_i_MapY, k0_soundModePlayImmediately);
-		}
-		AL1245_B_ActionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, L1251_i_MapX, L1252_i_MapY);
+		if (actionIndex == k8_ChampionActionWarCry)
+			_vm->_sound->requestPlay(k28_soundWAR_CRY, nextMapX, nextMapY, k0_soundModePlayImmediately);
+		else if (actionIndex == k4_ChampionActionBlowHorn)
+			_vm->_sound->requestPlay(k25_soundBLOW_HORN, nextMapX, nextMapY, k0_soundModePlayImmediately);
+
+		AL1245_B_ActionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
-	case k32_ChampionActionShoot:
-		if (Thing(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType)
-			goto T0407032;
-		L1256_ps_WeaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[L1248_ps_Weapon->getType()];
-		L1257_ps_WeaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(L1247_ps_Champion->_slots[k0_ChampionSlotReadyHand]);
-		AL1246_i_ActionHandWeaponClass = L1256_ps_WeaponInfoActionHand->_class;
-		AL1250_i_ReadyHandWeaponClass = L1257_ps_WeaponInfoReadyHand->_class;
-		if ((AL1246_i_ActionHandWeaponClass >= k16_WeaponClassFirstBow) && (AL1246_i_ActionHandWeaponClass <= k31_WeaponClassLastBow)) {
-			if (AL1250_i_ReadyHandWeaponClass != k10_WeaponClassBowAmmunition)
-				goto T0407032;
-			AL1246_i_StepEnergy -= k16_WeaponClassFirstBow;
-		} else {
-			if ((AL1246_i_ActionHandWeaponClass >= k32_WeaponClassFirstSling) && (AL1246_i_ActionHandWeaponClass <= k47_WeaponClassLastSling)) {
-				if (AL1250_i_ReadyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
-T0407032:
-					_actionDamage = kM2_damageNoAmmunition;
-					L1255_i_ActionExperienceGain = 0;
-					AL1245_B_ActionPerformed = false;
-					break;
-				}
-				AL1246_i_StepEnergy -= k32_WeaponClassFirstSling;
-			}
+	case k32_ChampionActionShoot: {
+		if (Thing(curChampion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType) {
+			_actionDamage = kM2_damageNoAmmunition;
+			actionExperienceGain = 0;
+			AL1245_B_ActionPerformed = false;
+			break;
 		}
-		setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		{ // so gotos won't skip init
-			Thing AL1250_T_Object = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
-			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-			_vm->_championMan->championShootProjectile(L1247_ps_Champion, AL1250_T_Object, L1256_ps_WeaponInfoActionHand->_kineticEnergy + L1257_ps_WeaponInfoReadyHand->_kineticEnergy, (L1256_ps_WeaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
+
+		WeaponInfo *weaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[weaponInHand->getType()];
+		WeaponInfo *weaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(curChampion->_slots[k0_ChampionSlotReadyHand]);
+		AL1246_i_ActionHandWeaponClass = weaponInfoActionHand->_class;
+		AL1250_i_ReadyHandWeaponClass = weaponInfoReadyHand->_class;
+		if ((AL1246_i_ActionHandWeaponClass >= k16_WeaponClassFirstBow) && (AL1246_i_ActionHandWeaponClass <= k31_WeaponClassLastBow)) {
+			if (AL1250_i_ReadyHandWeaponClass != k10_WeaponClassBowAmmunition) {
+				_actionDamage = kM2_damageNoAmmunition;
+				actionExperienceGain = 0;
+				AL1245_B_ActionPerformed = false;
+				break;
+			}
+			AL1246_i_StepEnergy -= k16_WeaponClassFirstBow;
+		} else if ((AL1246_i_ActionHandWeaponClass >= k32_WeaponClassFirstSling) && (AL1246_i_ActionHandWeaponClass <= k47_WeaponClassLastSling)) {
+			if (AL1250_i_ReadyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
+				_actionDamage = kM2_damageNoAmmunition;
+				actionExperienceGain = 0;
+				AL1245_B_ActionPerformed = false;
+				break;
+			}
+			AL1246_i_StepEnergy -= k32_WeaponClassFirstSling;
+		}
+
+		setChampionDirectionToPartyDirection(curChampion);
+		Thing removedObject = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
+		_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
 		}
 		break;
 	case k5_ChampionActionFlip: {
-		const char *messages_EN_ANY[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
-		const char *messages_DE_DEU[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
-		const char *messages_FR_FRA[2] = {"C'EST FACE.", "C'EST PILE."};
+		const char *messagesEN[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
+		const char *messagesDE[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
+		const char *messagesFR[2] = {"C'EST FACE.", "C'EST PILE."};
 		const char **message;
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: message = messages_EN_ANY; break;
-		case Common::DE_DEU: message = messages_DE_DEU; break;
-		case Common::FR_FRA: message = messages_FR_FRA; break;
+		case Common::EN_ANY:
+			message = messagesEN;
+			break;
+		case Common::DE_DEU:
+			message = messagesDE;
+			break;
+		case Common::FR_FRA:
+			message = messagesFR;
+			break;
 		}
-		if (_vm->getRandomNumber(2)) {
+		if (_vm->getRandomNumber(2))
 			printMessageAfterReplacements(message[0]);
-		} else {
+		else
 			printMessageAfterReplacements(message[1]);
+
 		}
-	}
-								break;
+		break;
 	case k33_ChampionActionSpellshield:
 	case k34_ChampionActionFireshield:
-		if (!isPartySpellOrFireShieldSuccessful(L1247_ps_Champion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
-			L1255_i_ActionExperienceGain >>= 2;
-			L1249_ui_ActionDisabledTicks >>= 1;
+		if (!isPartySpellOrFireShieldSuccessful(curChampion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
+			actionExperienceGain >>= 2;
+			actionDisabledTicks >>= 1;
 		} else {
-			decrementCharges(L1247_ps_Champion);
+			decrementCharges(curChampion);
 		}
 		break;
 	case k27_ChampionActionInvoke:
@@ -1217,26 +1216,29 @@ T0407032:
 		switch (_vm->getRandomNumber(6)) {
 		case 0:
 			AL1245_T_ExplosionThing = Thing::_explPoisonBolt.toUint16();
-			goto T0407014;
+			break;
 		case 1:
 			AL1245_T_ExplosionThing = Thing::_explPoisonCloud.toUint16();
-			goto T0407014;
+			break;
 		case 2:
 			AL1245_T_ExplosionThing = Thing::_explHarmNonMaterial.toUint16();
-			goto T0407014;
+			break;
 		default:
-			goto T0407013;
+			AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
+			break;
 		}
+		goto T0407014;
+
 	case k35_ChampionActionFluxcage:
-		setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		_vm->_groupMan->fluxCageAction(L1251_i_MapX, L1252_i_MapY);
+		setChampionDirectionToPartyDirection(curChampion);
+		_vm->_groupMan->fluxCageAction(nextMapX, nextMapY);
 		break;
 	case k43_ChampionActionFuse:
-		setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		L1251_i_MapX = _vm->_dungeonMan->_partyMapX;
-		L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
-		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
-		_vm->_groupMan->fuseAction(L1251_i_MapX, L1252_i_MapY);
+		setChampionDirectionToPartyDirection(curChampion);
+		nextMapX = _vm->_dungeonMan->_partyMapX;
+		nextMapY = _vm->_dungeonMan->_partyMapY;
+		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		_vm->_groupMan->fuseAction(nextMapX, nextMapY);
 		break;
 	case k36_ChampionActionHeal:
 		/* CHANGE2_17_IMPROVEMENT Heal action is much more effective
@@ -1244,57 +1246,64 @@ T0407032:
 		Healing amount is Min(Missing health, Min(10, Heal skill level)) * heal cycle count
 		Mana cost is 2 * heal cycle count
 		Experience gain is 2 + 2 * heal cycle count */
-		if (((AL1250_i_MissingHealth = L1247_ps_Champion->_maxHealth - L1247_ps_Champion->_currHealth) > 0) && L1247_ps_Champion->_currMana) {
+		AL1250_i_MissingHealth = curChampion->_maxHealth - curChampion->_currHealth;
+		if ((AL1250_i_MissingHealth > 0) && curChampion->_currMana) {
 			AL1246_i_HealingCapability = MIN((uint16)10, _vm->_championMan->getSkillLevel(champIndex, k13_ChampionSkillHeal));
-			L1255_i_ActionExperienceGain = 2;
+			actionExperienceGain = 2;
+			uint16 healingAmount;
 			do {
-				AL1244_ui_HealingAmount = MIN(AL1250_i_MissingHealth, AL1246_i_HealingCapability);
-				L1247_ps_Champion->_currHealth += AL1244_ui_HealingAmount;
-				L1255_i_ActionExperienceGain += 2;
-			} while (((L1247_ps_Champion->_currMana = L1247_ps_Champion->_currMana - 2) > 0) && (AL1250_i_MissingHealth = AL1250_i_MissingHealth - AL1244_ui_HealingAmount));
-			if (L1247_ps_Champion->_currMana < 0) {
-				L1247_ps_Champion->_currMana = 0;
-			}
-			setFlag(L1247_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
+				healingAmount = MIN(AL1250_i_MissingHealth, AL1246_i_HealingCapability);
+				curChampion->_currHealth += healingAmount;
+				actionExperienceGain += 2;
+				curChampion->_currMana = curChampion->_currMana - 2;
+				if (curChampion->_currMana > 0)
+					AL1250_i_MissingHealth -= healingAmount;
+			} while ((curChampion->_currMana > 0) && AL1250_i_MissingHealth);
+
+			if (curChampion->_currMana < 0)
+				curChampion->_currMana = 0;
+
+			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 			AL1245_B_ActionPerformed = true;
 		}
 		break;
-	case k39_ChampionActionWindow:
-		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, L1254_i_ActionSkillIndex) + 8) + 5;
-		L1258_s_Event._priority = 0;
-		L1258_s_Event._type = k73_TMEventTypeThievesEye;
-		setMapAndTime(L1258_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1246_i_Ticks);
-		_vm->_timeline->addEventGetEventIndex(&L1258_s_Event);
+	case k39_ChampionActionWindow: {
+		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
+		TimelineEvent newEvent;
+		newEvent._priority = 0;
+		newEvent._type = k73_TMEventTypeThievesEye;
+		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1246_i_Ticks);
+		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		_vm->_championMan->_party._event73Count_ThievesEye++;
+		}
 		goto T0407076;
 	case k10_ChampionActionClimbDown:
-		L1251_i_MapX = _vm->_dungeonMan->_partyMapX;
-		L1252_i_MapY = _vm->_dungeonMan->_partyMapY;
-		L1251_i_MapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
-		L1252_i_MapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		nextMapX = _vm->_dungeonMan->_partyMapX;
+		nextMapY = _vm->_dungeonMan->_partyMapY;
+		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
+		nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((_vm->_dungeonMan->getSquare(L1251_i_MapX, L1252_i_MapY).getType() == k2_PitElemType) && (_vm->_groupMan->groupGetThing(L1251_i_MapX, L1252_i_MapY) == Thing::_endOfList)) {
+		if ((_vm->_dungeonMan->getSquare(nextMapX, nextMapY).getType() == k2_PitElemType) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_useRopeToClimbDownPit = true;
-			_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, L1251_i_MapX, L1252_i_MapY);
+			_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, nextMapX, nextMapY);
 			_vm->_moveSens->_useRopeToClimbDownPit = false;
 		} else {
-			L1249_ui_ActionDisabledTicks = 0;
+			actionDisabledTicks = 0;
 		}
 		break;
 	case k11_ChampionActionFreezeLife:
-		if (L1248_ps_Weapon->getType() == k42_JunkTypeMagicalBoxBlue) {
+		if (weaponInHand->getType() == k42_JunkTypeMagicalBoxBlue) {
 			AL1246_i_Ticks = 30;
-			goto T0407071;
-		}
-		if (L1248_ps_Weapon->getType() == k43_JunkTypeMagicalBoxGreen) {
-			AL1246_i_Ticks = 125;
-T0407071:
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
-			L1248_ps_Weapon->setNextThing(Thing::_none);
+			weaponInHand->setNextThing(Thing::_none);
+		} else if (weaponInHand->getType() == k43_JunkTypeMagicalBoxGreen) {
+			AL1246_i_Ticks = 125;
+			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
+			weaponInHand->setNextThing(Thing::_none);
 		} else {
 			AL1246_i_Ticks = 70;
-			decrementCharges(L1247_ps_Champion);
+			decrementCharges(curChampion);
 		}
 		_vm->_championMan->_party._freezeLifeTicks = MIN(200, _vm->_championMan->_party._freezeLifeTicks + AL1246_i_Ticks);
 		break;
@@ -1302,23 +1311,23 @@ T0407071:
 		_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
 		createEvent70_light(-2, 2500);
 T0407076:
-		decrementCharges(L1247_ps_Champion);
+		decrementCharges(curChampion);
 		break;
 	case k42_ChampionActionThrow:
-		setChampionDirectionToPartyDirection(L1247_ps_Champion);
-		AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (L1247_ps_Champion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (L1247_ps_Champion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		setChampionDirectionToPartyDirection(curChampion);
+		AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (AL1245_B_ActionPerformed) {
-			_vm->_timeline->_events[L1247_ps_Champion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
+			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
 		}
 	}
-	if (L1249_ui_ActionDisabledTicks) {
-		_vm->_championMan->disableAction(champIndex, L1249_ui_ActionDisabledTicks);
+	if (actionDisabledTicks) {
+		_vm->_championMan->disableAction(champIndex, actionDisabledTicks);
 	}
-	if (L1253_i_ActionStamina) {
-		_vm->_championMan->decrementStamina(champIndex, L1253_i_ActionStamina);
+	if (actionStamina) {
+		_vm->_championMan->decrementStamina(champIndex, actionStamina);
 	}
-	if (L1255_i_ActionExperienceGain) {
-		_vm->_championMan->addSkillExperience(champIndex, L1254_i_ActionSkillIndex, L1255_i_ActionExperienceGain);
+	if (actionExperienceGain) {
+		_vm->_championMan->addSkillExperience(champIndex, actionSkillIndex, actionExperienceGain);
 	}
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	return AL1245_B_ActionPerformed;
