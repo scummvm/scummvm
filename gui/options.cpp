@@ -1311,22 +1311,22 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_storageUsedSpaceDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saves on this storage"));
 	_storageUsedSpace = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", "0 bytes");
 
-	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When this storage did saves sync last time"));
+	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When the last saves sync for this storage occured"));
 	_storageLastSync = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", "<never>");
 
 	_storageConnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);
 	_storageRefreshButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RefreshButton", _("Refresh"), _("Refresh current cloud storage information (username and usage)"), kRefreshStorageCmd);
-	_storageDownloadButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DownloadButton", _("Downloads"), _("Open downloads manager dialog"), kDownloadStorageCmd);
+	_storageDownloadButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.DownloadButton", _("Download"), _("Open downloads manager dialog"), kDownloadStorageCmd);
 
 	_runServerButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RunServerButton", _("Run server"), _("Run local webserver"), kRunServerCmd);
 	_serverInfoLabel = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerInfoLabel", _("Not running"));
 
 	// Root path
 	if (g_system->getOverlayWidth() > 320)
-		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _("/root/ Path:"), _("Specifies where Files Manager can access to"), kChooseRootDirCmd);
+		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _("/root/ Path:"), _("Specifies which directory the Files Manager can access"), kChooseRootDirCmd);
 	else
-		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _c("/root/ Path:", "lowres"), _("Specifies where Files Manager can access to"), kChooseRootDirCmd);
-	_rootPath = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.RootPath", "/foo/bar", _("Specifies where Files Manager can access to"));
+		_rootPathButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.RootPathButton", _c("/root/ Path:", "lowres"), _("Specifies which directory the Files Manager can access"), kChooseRootDirCmd);
+	_rootPath = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.RootPath", "/foo/bar", _("Specifies which directory the Files Manager can access"));
 
 	_rootPathClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.RootPathClearButton", kRootPathClearCmd);
 
@@ -1335,7 +1335,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 #else
 	uint32 port = 0; // the following widgets are hidden anyway
 #endif
-	_serverPortDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortDesc", _("Server's port:"), _("Which port is used by server\nAuth with server is not available with non-default port"));
+	_serverPortDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortDesc", _("Server's port:"), _("Which port is used by the server\nAuth with server is not available with non-default port"));
 	_serverPort = new EditTextWidget(container, "GlobalOptions_Cloud_Container.ServerPortEditText", Common::String::format("%u", port), 0);
 	_serverPortClearButton = addClearButton(container, "GlobalOptions_Cloud_Container.ServerPortClearButton", kServerPortClearCmd);
 
@@ -1521,7 +1521,7 @@ void GlobalOptionsDialog::close() {
 				Common::String message = _("Failed to change cloud storage!");
 				if (anotherStorageIsWorking) {
 					message += "\n";
-					message += _("Current cloud storage is working at the moment.");
+					message += _("Another cloud storage is already active.");
 				}
 				MessageDialog dialog(message);
 				dialog.runModal();

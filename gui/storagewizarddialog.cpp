@@ -76,8 +76,8 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		// hide fields and even the button if local webserver is on
-		_returnLine1->setLabel(_("You would be navigated to ScummVM's page"));
-		_returnLine2->setLabel(_("when you'd allow it to use your storage."));
+		_returnLine1->setLabel(_("You will be directed to ScummVM's page where"));
+		_returnLine2->setLabel(_("you should allow it to access your storage."));
 	}
         
 	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
@@ -110,7 +110,7 @@ void StorageWizardDialog::open() {
 	if (CloudMan.isWorking()) {
 		bool doClose = true;
 
-		MessageDialog alert(_("The other Storage is working. Do you want to interrupt it?"), _("Yes"), _("No"));
+		MessageDialog alert(_("Another Storage is active. Do you want to interrupt it?"), _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK) {
 			if (CloudMan.isDownloading())
 				CloudMan.cancelDownload();
@@ -207,7 +207,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 	case kOpenUrlCmd: {
 		if (!Networking::Browser::openUrl(getUrl())) {
-			MessageDialog alert(_("Failed to open URL!\nYou should navigate there manually then."));
+			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
 			alert.runModal();
 		}
 		break;
