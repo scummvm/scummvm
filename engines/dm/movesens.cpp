@@ -65,7 +65,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 	while (thingBeingProcessed != Thing::_endOfList) {
 		ThingType thingType = thingBeingProcessed.getType();
 		if (thingType == k3_SensorThingType)
-			sensorCountToProcessPerCell[(thingBeingProcessed).getCell()]++;
+			sensorCountToProcessPerCell[thingBeingProcessed.getCell()]++;
 		else if (thingType >= k4_GroupThingType)
 			break;
 
@@ -74,7 +74,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 	Thing lastProcessedThing = thingBeingProcessed = squareFirstThing;
 	while (thingBeingProcessed != Thing::_endOfList) {
 		bool skipToNextThing = false;
-		uint16 ProcessedThingType = (thingBeingProcessed).getType();
+		uint16 ProcessedThingType = thingBeingProcessed.getType();
 		if (ProcessedThingType == k3_SensorThingType) {
 			int16 cellIdx = thingBeingProcessed.getCell();
 			sensorCountToProcessPerCell[cellIdx]--;
@@ -574,8 +574,8 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 T0266017_CheckProjectileImpacts:
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(projectileMapX, projectileMapY);
 	while (curThing != Thing::_endOfList) {
-		if (((curThing).getType() == k14_ProjectileThingType) &&
-			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(curThing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts)) {
+		if ((curThing.getType() == k14_ProjectileThingType) &&
+			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[curThing.getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts)) {
 			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
 			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
 				_vm->_projexpl->projectileDeleteEvent(curThing);
@@ -701,7 +701,7 @@ Thing MovesensMan::getTeleporterRotatedProjectileThing(Teleporter *teleporter, T
 		updatedDirection = rotation;
 	else {
 		updatedDirection = normalizeModulo4(updatedDirection + rotation);
-		projectileThing = thingWithNewCell(projectileThing, normalizeModulo4((projectileThing).getCell() + rotation));
+		projectileThing = thingWithNewCell(projectileThing, normalizeModulo4(projectileThing.getCell() + rotation));
 	}
 	_moveResultDir = updatedDirection;
 	return projectileThing;
@@ -750,7 +750,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 		}
 	} else {
 		while (curThing != Thing::_endOfList) {
-			if ((sensorTriggeredCell == (curThing).getCell()) && ((curThing).getType() > k4_GroupThingType)) {
+			if ((sensorTriggeredCell == curThing.getCell()) && (curThing.getType() > k4_GroupThingType)) {
 				squareContainsObject = true;
 				squareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(curThing) == objectType);
 				squareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(curThing) != objectType);
@@ -821,7 +821,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 					goto T0276079;
 				}
 			} else {
-				if (sensorTriggeredCell != (curThing).getCell())
+				if (sensorTriggeredCell != curThing.getCell())
 					goto T0276079;
 				switch (curSensor->getType()) {
 				case k1_SensorWallOrnClick:
@@ -900,38 +900,33 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 }
 
 void MovesensMan::triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 mapY, uint16 cell) {
-	byte g59_squareTypeToEventType[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
+	TimelineEventType squareTypeToEventTypeArray[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
 		k6_TMEventTypeWall,
 		k5_TMEventTypeCorridor,
 		k9_TMEventTypePit,
 		k0_TMEventTypeNone,
 		k10_TMEventTypeDoor,
 		k8_TMEventTypeTeleporter,
-		k7_TMEventTypeFakeWall}; /* 1 byte of padding inserted by compiler */
+		k7_TMEventTypeFakeWall
+	};
 
-	int16 L0736_i_TargetMapX;
-	int16 L0737_i_TargetMapY;
-	int32 L0738_l_Time;
-	uint16 L0739_ui_SquareType;
-	uint16 L0740_ui_TargetCell;
-
-
-	if (sensor->getAttrOnlyOnce()) {
+	if (sensor->getAttrOnlyOnce())
 		sensor->setTypeDisabled();
-	}
-	L0738_l_Time = _vm->_gameTime + sensor->getAttrValue();
-	if (sensor->getAttrLocalEffect()) {
+
+	int32 endTime = _vm->_gameTime + sensor->getAttrValue();
+	if (sensor->getAttrLocalEffect())
 		triggerLocalEffect(sensor->getActionLocalEffect(), mapX, mapY, cell);
-	} else {
-		L0736_i_TargetMapX = sensor->getActionTargetMapX();
-		L0737_i_TargetMapY = sensor->getActionTargetMapY();
-		L0739_ui_SquareType = Square(_vm->_dungeonMan->_currMapData[L0736_i_TargetMapX][L0737_i_TargetMapY]).getType();
-		if (L0739_ui_SquareType == k0_ElementTypeWall) {
-			L0740_ui_TargetCell = sensor->getActionTargetCell();
-		} else {
-			L0740_ui_TargetCell = k0_CellNorthWest;
-		}
-		addEvent(g59_squareTypeToEventType[L0739_ui_SquareType], L0736_i_TargetMapX, L0737_i_TargetMapY, L0740_ui_TargetCell, effect, L0738_l_Time);
+	else {
+		int16 targetMapX = sensor->getActionTargetMapX();
+		int16 targetMapY = sensor->getActionTargetMapY();
+		SquareType curSquareType = Square(_vm->_dungeonMan->_currMapData[targetMapX][targetMapY]).getType();
+		uint16 targetCell;
+		if (curSquareType == k0_ElementTypeWall)
+			targetCell = sensor->getActionTargetCell();
+		else
+			targetCell = k0_CellNorthWest;
+
+		addEvent(squareTypeToEventTypeArray[curSquareType], targetMapX, targetMapY, targetCell, effect, endTime);
 	}
 }
 
@@ -947,85 +942,73 @@ void MovesensMan::triggerLocalEffect(int16 localEffect, int16 effX, int16 effY, 
 }
 
 void MovesensMan::addSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly) {
-
 	if (leaderOnly) {
-		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone) {
+		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone)
 			_vm->_championMan->addSkillExperience(_vm->_championMan->_leaderIndex, skillIndex, exp);
-		}
 	} else {
 		exp /= _vm->_championMan->_partyChampionCount;
-		Champion *L0731_ps_Champion = _vm->_championMan->_champions;
-		for (int16 L0730_i_ChampionIndex = k0_ChampionFirst; L0730_i_ChampionIndex < _vm->_championMan->_partyChampionCount; L0730_i_ChampionIndex++, L0731_ps_Champion++) {
-			if (L0731_ps_Champion->_currHealth) {
-				_vm->_championMan->addSkillExperience(L0730_i_ChampionIndex, skillIndex, exp);
-			}
+		Champion *curChampion = _vm->_championMan->_champions;
+		for (int16 championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+			if (curChampion->_currHealth)
+				_vm->_championMan->addSkillExperience(championIdx, skillIndex, exp);
 		}
 	}
 }
 
 void MovesensMan::processRotationEffect() {
-	Thing L0732_T_FirstSensorThing;
-	Thing L0733_T_LastSensorThing;
-	Sensor *L0734_ps_FirstSensor;
-	Sensor *L0735_ps_LastSensor;
-
-
-	if (_sensorRotationEffect == kM1_SensorEffNone) {
+	if (_sensorRotationEffect == kM1_SensorEffNone)
 		return;
-	}
+
 	switch (_sensorRotationEffect) {
 	case k1_SensorEffClear:
 	case k2_SensorEffToggle:
-		L0732_T_FirstSensorThing = _vm->_dungeonMan->getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
-		while (((L0732_T_FirstSensorThing).getType() != k3_SensorThingType) || ((_sensorRotationEffCell != kM1_CellAny) && ((L0732_T_FirstSensorThing).getCell() != _sensorRotationEffCell))) {
-			L0732_T_FirstSensorThing = _vm->_dungeonMan->getNextThing(L0732_T_FirstSensorThing);
+		Thing firstSensorThing = _vm->_dungeonMan->getSquareFirstThing(_sensorRotationEffMapX, _sensorRotationEffMapY);
+		while ((firstSensorThing.getType() != k3_SensorThingType)
+			|| ((_sensorRotationEffCell != kM1_CellAny) && (firstSensorThing.getCell() != _sensorRotationEffCell))) {
+			firstSensorThing = _vm->_dungeonMan->getNextThing(firstSensorThing);
 		}
-		L0734_ps_FirstSensor = (Sensor *)_vm->_dungeonMan->getThingData(L0732_T_FirstSensorThing);
-		L0733_T_LastSensorThing = L0734_ps_FirstSensor->getNextThing();
-		while ((L0733_T_LastSensorThing != Thing::_endOfList) && (((L0733_T_LastSensorThing).getType() != k3_SensorThingType) || ((_sensorRotationEffCell != kM1_CellAny) && ((L0733_T_LastSensorThing).getCell() != _sensorRotationEffCell)))) {
-			L0733_T_LastSensorThing = _vm->_dungeonMan->getNextThing(L0733_T_LastSensorThing);
+		Sensor *firstSensor = (Sensor *)_vm->_dungeonMan->getThingData(firstSensorThing);
+		Thing lastSensorThing = firstSensor->getNextThing();
+		while ((lastSensorThing != Thing::_endOfList)
+		    && ((lastSensorThing.getType() != k3_SensorThingType)
+				|| ((_sensorRotationEffCell != kM1_CellAny) && (lastSensorThing.getCell() != _sensorRotationEffCell)))) {
+			lastSensorThing = _vm->_dungeonMan->getNextThing(lastSensorThing);
 		}
-		if (L0733_T_LastSensorThing == Thing::_endOfList)
+		if (lastSensorThing == Thing::_endOfList)
 			break;
-		_vm->_dungeonMan->unlinkThingFromList(L0732_T_FirstSensorThing, Thing(0), _sensorRotationEffMapX, _sensorRotationEffMapY);
-		L0735_ps_LastSensor = (Sensor *)_vm->_dungeonMan->getThingData(L0733_T_LastSensorThing);
-		L0733_T_LastSensorThing = _vm->_dungeonMan->getNextThing(L0733_T_LastSensorThing);
-		while (((L0733_T_LastSensorThing != Thing::_endOfList) && ((L0733_T_LastSensorThing).getType() == k3_SensorThingType))) {
-			if ((_sensorRotationEffCell == kM1_CellAny) || ((L0733_T_LastSensorThing).getCell() == _sensorRotationEffCell)) {
-				L0735_ps_LastSensor = (Sensor *)_vm->_dungeonMan->getThingData(L0733_T_LastSensorThing);
-			}
-			L0733_T_LastSensorThing = _vm->_dungeonMan->getNextThing(L0733_T_LastSensorThing);
+		_vm->_dungeonMan->unlinkThingFromList(firstSensorThing, Thing(0), _sensorRotationEffMapX, _sensorRotationEffMapY);
+		Sensor *lastSensor = (Sensor *)_vm->_dungeonMan->getThingData(lastSensorThing);
+		lastSensorThing = _vm->_dungeonMan->getNextThing(lastSensorThing);
+		while (((lastSensorThing != Thing::_endOfList) && (lastSensorThing.getType() == k3_SensorThingType))) {
+			if ((_sensorRotationEffCell == kM1_CellAny) || (lastSensorThing.getCell() == _sensorRotationEffCell))
+				lastSensor = (Sensor *)_vm->_dungeonMan->getThingData(lastSensorThing);
+			lastSensorThing = _vm->_dungeonMan->getNextThing(lastSensorThing);
 		}
-		L0734_ps_FirstSensor->setNextThing(L0735_ps_LastSensor->getNextThing());
-		L0735_ps_LastSensor->setNextThing(L0732_T_FirstSensorThing);
+		firstSensor->setNextThing(lastSensor->getNextThing());
+		lastSensor->setNextThing(firstSensorThing);
 	}
 	_sensorRotationEffect = kM1_SensorEffNone;
 }
 
 void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible) {
-	TimelineEvent L0696_s_Event;
-
-	setMapAndTime(L0696_s_Event._mapTime, mapIndex, _vm->_gameTime + 5);
-	L0696_s_Event._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
-	L0696_s_Event._priority = 0;
-	L0696_s_Event._B._location._mapX = mapX;
-	L0696_s_Event._B._location._mapY = mapY;
-	L0696_s_Event._C._slot = groupThing.toUint16();
-	_vm->_timeline->addEventGetEventIndex(&L0696_s_Event);
+	TimelineEvent newEvent;
+	setMapAndTime(newEvent._mapTime, mapIndex, _vm->_gameTime + 5);
+	newEvent._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
+	newEvent._priority = 0;
+	newEvent._B._location._mapX = mapX;
+	newEvent._B._location._mapY = mapY;
+	newEvent._C._slot = groupThing.toUint16();
+	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 
 Thing MovesensMan::getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int16 objectType) {
-	Thing L0741_T_Thing;
-
-
-	L0741_T_Thing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
-	while (L0741_T_Thing != Thing::_endOfList) {
-		if (_vm->_objectMan->getObjectType(L0741_T_Thing) == objectType) {
-			if ((cell == kM1_CellAny) || ((L0741_T_Thing.getCell()) == cell)) {
-				return L0741_T_Thing;
-			}
+	Thing curThing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
+	while (curThing != Thing::_endOfList) {
+		if (_vm->_objectMan->getObjectType(curThing) == objectType) {
+			if ((cell == kM1_CellAny) || (curThing.getCell() == cell))
+				return curThing;
 		}
-		L0741_T_Thing = _vm->_dungeonMan->getNextThing(L0741_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	return Thing::_none;
 }
