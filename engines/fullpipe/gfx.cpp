@@ -1265,7 +1265,16 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 }
 
 void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
-	warning("STUB: FullpipeEngine::drawAlphaRectangle()");
+	for (int y = y1; y < y2; y++) {
+		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(0, y);
+
+		for (int x = x1; x < x2; x++) {
+			uint32 color = *ptr;
+			color = (color & 0xffffff00) | (alpha & 0xff);
+			*ptr = color;
+			ptr++;
+		}
+	}
 }
 
 void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
