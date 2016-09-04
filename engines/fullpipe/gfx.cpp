@@ -95,7 +95,7 @@ bool Background::load(MfcArchive &file) {
 }
 
 void Background::addPictureObject(PictureObject *pct) {
-	if (pct->_okeyCode)
+	if (pct->_odelay)
 		pct->renumPictures(&_picObjList);
 
 	bool inserted = false;
@@ -206,7 +206,7 @@ bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_okeyCode = picAniInfo->field_8;
+		_odelay = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
 
@@ -251,7 +251,7 @@ void PictureObject::setOXY2() {
 }
 
 GameObject::GameObject() {
-	_okeyCode = 0;
+	_odelay = 0;
 	_flags = 0;
 	_id = 0;
 	_ox = 0;
@@ -263,7 +263,7 @@ GameObject::GameObject() {
 }
 
 GameObject::GameObject(GameObject *src) {
-	_okeyCode = 1;
+	_odelay = 1;
 	_flags = 0;
 	_id = src->_id;
 
@@ -283,7 +283,7 @@ GameObject::~GameObject() {
 
 bool GameObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "GameObject::load()");
-	_okeyCode = 0;
+	_odelay = 0;
 	_flags = 0;
 	_field_20 = 0;
 
@@ -311,14 +311,14 @@ void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
+			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
 	}
 
-	if (buf[_okeyCode]) {
+	if (buf[_odelay]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_okeyCode = count;
+		_odelay = count;
 	}
 
 	free(buf);
@@ -329,14 +329,14 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 
 	for (uint i = 0; i < lst->size(); i++) {
 		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_okeyCode] = 1;
+			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
 	}
 
-	if (buf[_okeyCode]) {
+	if (buf[_odelay]) {
 		uint count;
 		for (count = 1; buf[count] && count < lst->size() + 2; count++)
 			;
-		_okeyCode = count;
+		_odelay = count;
 	}
 
 	free(buf);
@@ -347,7 +347,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 		info->type = 2;
 		info->objectId = _id;
 		info->sceneId = 0;
-		info->field_8 = _okeyCode;
+		info->field_8 = _odelay;
 		info->flags = _flags;
 		info->field_24 = _field_8;
 		info->ox = _ox;
@@ -362,7 +362,7 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 
 		info->type = (ani->_messageQueueId << 16) | 1;
 		info->objectId = ani->_id;
-		info->field_8 = ani->_okeyCode;
+		info->field_8 = ani->_odelay;
 		info->sceneId = ani->_sceneId;
 		info->flags = ani->_flags;
 		info->field_24 = ani->_field_8;
@@ -401,7 +401,7 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	if (picAniInfo->type & 2) {
 		setOXY(picAniInfo->ox, picAniInfo->oy);
 		_priority = picAniInfo->priority;
-		_okeyCode = picAniInfo->field_8;
+		_odelay = picAniInfo->field_8;
 		setFlags(picAniInfo->flags);
 		_field_8 = picAniInfo->field_24;
 
@@ -412,7 +412,7 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 		StaticANIObject *ani = (StaticANIObject *)this;
 
 		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
-		ani->_okeyCode = picAniInfo->field_8;
+		ani->_odelay = picAniInfo->field_8;
 		ani->setFlags(picAniInfo->flags);
 		ani->_field_8 = picAniInfo->field_24;
 

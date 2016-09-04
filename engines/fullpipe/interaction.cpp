@@ -188,8 +188,8 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 
 			ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
-			ex->_y = obj->_okeyCode;
-			ex->_param = subj ? subj->_okeyCode : 0;
+			ex->_y = obj->_odelay;
+			ex->_param = subj ? subj->_odelay : 0;
 			ex->_excFlags = 3;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 			ex->_field_20 = invId;
@@ -205,7 +205,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 LABEL_38:
 			if (inter->_messageQueue) {
 				mq = new MessageQueue(inter->_messageQueue, 0, 1);
-				mq->changeParam28ForObjectId(ani->_id, -1, ani->_okeyCode);
+				mq->changeParam28ForObjectId(ani->_id, -1, ani->_odelay);
 
 				if (!mq->chain(0))
 					return false;
@@ -253,12 +253,12 @@ LABEL_38:
 		subj->setOXY(inter->_xOffs + obj->_ox, inter->_yOffs + obj->_oy);
 
 		mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		mq->changeParam28ForObjectId(obj->_id, -1, obj->_okeyCode);
+		mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
 		mq->_flags |= 1;
 
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-			ex->_param = obj->_okeyCode;
+			ex->_param = obj->_odelay;
 			ex->_field_14 = 0x100;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
@@ -266,14 +266,14 @@ LABEL_38:
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = obj->_okeyCode;
+		ex->_param = obj->_odelay;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = subj->_okeyCode;
+		ex->_param = subj->_odelay;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
@@ -319,8 +319,8 @@ LABEL_38:
 
 			ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
-			ex->_y = obj->_okeyCode;
-			ex->_param = subj->_okeyCode;
+			ex->_y = obj->_odelay;
+			ex->_param = subj->_odelay;
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
@@ -334,7 +334,7 @@ LABEL_38:
 			ex->_excFlags |= 3;
 			ex->_param = 6;
 			ex->_field_14 = obj->_id;
-			ex->_field_20 = obj->_okeyCode;
+			ex->_field_20 = obj->_odelay;
 			ex->postMessage();
 		}
 
@@ -362,21 +362,21 @@ LABEL_38:
 					} else {
 						ex = new ExCommand(ani->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
 						ex->_field_14 = 0x80;
-						ex->_param = ani->_okeyCode;
+						ex->_param = ani->_odelay;
 						ex->_excFlags = 3;
 						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-				ex->_param = ani->_okeyCode;
+				ex->_param = ani->_odelay;
 				ex->_field_14 = 0x100;
 				ex->_excFlags = 3;
 				mq->addExCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
-				ex->_y = ani->_okeyCode;
-				ex->_param = subj->_okeyCode;
+				ex->_y = ani->_odelay;
+				ex->_param = subj->_odelay;
 				ex->_excFlags = 2;
 				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;

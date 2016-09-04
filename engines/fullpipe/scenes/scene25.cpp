@@ -234,7 +234,7 @@ void sceneHandler25_animateBearders() {
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_odelay);
 		mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 		mq->chain(0);
 
@@ -243,14 +243,14 @@ void sceneHandler25_animateBearders() {
 		if (g_fp->_rnd->getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_okeyCode);
+			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_odelay);
 			mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 			mq->chain(0);
 
 			if (g_fp->_rnd->getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
-				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_okeyCode);
+				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_odelay);
 				mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 				mq->chain(0);
 			}

@@ -123,7 +123,7 @@ class BigPicture : public Picture {
 
 class GameObject : public CObject {
   public:
-	int16 _okeyCode;
+	int16 _odelay;
 	int _field_8;
 	int16 _flags;
 	int16 _id;

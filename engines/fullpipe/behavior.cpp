@@ -181,7 +181,7 @@ void BehaviorManager::updateStaticAniBehavior(StaticANIObject *ani, int delay, B
 	}
 
 	if (mq) {
-		mq->setParamInt(-1, ani->_okeyCode);
+		mq->setParamInt(-1, ani->_odelay);
 		mq->chain(ani);
 	}
 }

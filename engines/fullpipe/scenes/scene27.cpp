@@ -191,7 +191,7 @@ void sceneHandler27_showNextBat() {
 	if (g_vars->scene27_bat) {
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC27_SHOWBET), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene27_bat->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene27_bat->_odelay);
 		mq->chain(0);
 	}
 

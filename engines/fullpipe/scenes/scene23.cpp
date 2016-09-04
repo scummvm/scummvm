@@ -351,7 +351,7 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
 	int msg = 0;
-	switch (ani->_okeyCode) {
+	switch (ani->_odelay) {
 	case 0:
 		msg = MSG_SC23_CLICKBTN1;
 		break;

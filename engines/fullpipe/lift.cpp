@@ -240,23 +240,23 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	if (!cmd) {
 		ex = new ExCommand(_aniMan->_id, 2, 40, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 	}
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_OPEN, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _lift->_okeyCode;
+	ex->_param = _lift->_odelay;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 1, MV_MAN_STARTD, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _aniMan->_okeyCode;
+	ex->_param = _aniMan->_odelay;
 	ex->_excFlags |= 2;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _aniMan->_okeyCode;
+	ex->_param = _aniMan->_odelay;
 	ex->_field_14 = 10;
 	ex->_x = -1;
 	ex->_y = -1;
@@ -274,7 +274,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(_lift->_id, 1, MV_LFT_CLOSE, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = _lift->_okeyCode;
+	ex->_param = _lift->_odelay;
 	ex->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex);
@@ -340,12 +340,12 @@ void FullpipeEngine::lift_walkAndGo() {
 		mq->setFlags(mq->getFlags() | 1);
 
 		ex = new ExCommand(_aniMan->_id, 2, 15, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_excFlags |= 2;
 		mq->addExCommand(ex);
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = _aniMan->_okeyCode;
+		ex->_param = _aniMan->_odelay;
 		ex->_field_14 = _lift->_priority + 1;
 		ex->_x = -1;
 		ex->_y = -1;

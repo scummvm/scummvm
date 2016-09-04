@@ -94,7 +94,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 			ex = new ExCommand(ani->_id, 1, _items[idx]->subItems[subidx]->movement->_id, 0, 0, 0, 1, 0, 0, 0);
 		}
 
-		ex->_param = ani->_okeyCode;
+		ex->_param = ani->_odelay;
 		ex->_field_3C = 1;
 		ex->_field_24 = 1;
 
@@ -350,7 +350,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_okeyCode;
+		ex2->_param = mkQueue->ani->_odelay;
 
 		mq->addExCommandToEnd(ex2);
 
@@ -367,7 +367,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(mov, mkQueue->ani->_id, x1, y1, &x2, &y2, plen);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_okeyCode;
+		ex2->_param = mkQueue->ani->_odelay;
 
 		mq->addExCommandToEnd(ex2);
 	}
@@ -377,7 +377,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 
 		ex2 = createCommand(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
-		ex2->_param = mkQueue->ani->_okeyCode;
+		ex2->_param = mkQueue->ani->_odelay;
 
 		mq->addExCommandToEnd(ex2);
 
@@ -387,7 +387,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	ExCommand *ex = new ExCommand(mkQueue->ani->_id, 5, -1, mkQueue->x1, mkQueue->y1, 0, 1, 0, 0, 0);
 
 	ex->_field_14 = mkQueue->field_1C;
-	ex->_param = mkQueue->ani->_okeyCode;
+	ex->_param = mkQueue->ani->_odelay;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 3;
 

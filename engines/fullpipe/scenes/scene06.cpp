@@ -266,7 +266,7 @@ void sceneHandler06_showNextBall() {
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene06_currentBall->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene06_currentBall->_odelay);
 		mq->chain(0);
 
 		++g_vars->scene06_numBallsGiven;
@@ -412,7 +412,7 @@ void sceneHandler06_fallBall() {
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
-	mq->setParamInt(-1, g_vars->scene06_flyingBall->_okeyCode);
+	mq->setParamInt(-1, g_vars->scene06_flyingBall->_odelay);
 	mq->chain(0);
 
 	g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);

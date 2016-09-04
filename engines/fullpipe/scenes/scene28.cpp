@@ -405,7 +405,7 @@ int sceneHandler28(ExCommand *cmd) {
 
 			if (ani)
 				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {
-					sceneHandler28_clickLift(ani->_okeyCode);
+					sceneHandler28_clickLift(ani->_odelay);
 
 					cmd->_messageKind = 0;
 					break;

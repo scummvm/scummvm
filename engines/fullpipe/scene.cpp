@@ -302,7 +302,7 @@ StaticANIObject *Scene::getAniMan() {
 
 StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (_staticANIObjectList1[i]->_id == obj && (a3 == -1 || _staticANIObjectList1[i]->_okeyCode == a3))
+		if (_staticANIObjectList1[i]->_id == obj && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -311,7 +311,7 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 
 StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (!strcmp(_staticANIObjectList1[i]->_objectName, name) && (a3 == -1 || _staticANIObjectList1[i]->_okeyCode == a3))
+		if (!strcmp(_staticANIObjectList1[i]->_objectName, name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -333,13 +333,13 @@ void Scene::deleteStaticANIObject(StaticANIObject *obj) {
 }
 
 void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
-	if (obj->_okeyCode)
+	if (obj->_odelay)
 		obj->renumPictures(&_staticANIObjectList1);
 
 	_staticANIObjectList1.push_back(obj);
 
 	if (addList2) {
-		if (!obj->_okeyCode)
+		if (!obj->_odelay)
 			obj->clearFlags();
 
 		_staticANIObjectList2.push_back(obj);
@@ -359,7 +359,7 @@ void Scene::stopAllSounds() {
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_okeyCode == flags)
+		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_odelay == flags)
 			return (PictureObject *)_picObjList[i];
 	}
 
@@ -368,7 +368,7 @@ PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 
 PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_okeyCode == flags || flags == -1))
+		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
 			return (PictureObject *)_picObjList[i];
 	}
 

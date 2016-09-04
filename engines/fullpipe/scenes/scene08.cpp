@@ -318,7 +318,7 @@ void sceneHandler08_badLuck() {
 
 	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 1, MV_MAN8_BADLUCK, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 2;
-	ex->_param = g_fp->_aniMan->_okeyCode;
+	ex->_param = g_fp->_aniMan->_odelay;
 	mq->addExCommandToEnd(ex);
 
 	mq->setFlags(mq->getFlags() | 1);

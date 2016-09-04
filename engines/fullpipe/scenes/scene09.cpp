@@ -486,7 +486,7 @@ void sceneHandler09_ballExplode(Ball *ball) {
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
-	mq->setParamInt(-1, ball->ani->_okeyCode);
+	mq->setParamInt(-1, ball->ani->_odelay);
 
 	if (!mq->chain(ball->ani))
 		delete mq;

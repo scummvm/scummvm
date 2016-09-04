@@ -231,7 +231,7 @@ void Inventory2::rebuildItemRects() {
 
 		for (uint j = 0; j < _itemsPool.size(); j++) {
 			if (_itemsPool[j]->pictureObjectNormal == pic->_id) {
-				if (pic->_okeyCode)
+				if (pic->_odelay)
 					_scene->deletePictureObject(pic);
 				else
 					pic->_flags &= 0xFFFB;

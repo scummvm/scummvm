@@ -181,7 +181,7 @@ void sceneHandler16_fillMug() {
 		if (g_vars->scene16_walkingBoy) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene16_walkingBoy->_okeyCode);
+			mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 			if (mq->chain(g_vars->scene16_walkingBoy))
 				return;
 		} else {
@@ -190,7 +190,7 @@ void sceneHandler16_fillMug() {
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-			mq->setParamInt(-1, g_vars->scene16_walkingGirl->_okeyCode);
+			mq->setParamInt(-1, g_vars->scene16_walkingGirl->_odelay);
 			if (mq->chain(g_vars->scene16_walkingGirl))
 				return;
 		}
@@ -208,7 +208,7 @@ void sceneHandler16_fillMug() {
 	if (g_vars->scene16_walkingBoy) {
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYOUT), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene16_walkingBoy->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 
 		ani = g_vars->scene16_walkingBoy;
 	} else {
@@ -217,7 +217,7 @@ void sceneHandler16_fillMug() {
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLOUT), 0, 1);
 
-		mq->setParamInt(-1, g_vars->scene16_walkingGirl->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene16_walkingGirl->_odelay);
 		ani = g_vars->scene16_walkingGirl;
 	}
 
@@ -232,7 +232,7 @@ void sceneHandler16_startLaugh() {
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GIRLLAUGH), 0, 1);
 
-	mq->setParamInt(-1, girl->_okeyCode);
+	mq->setParamInt(-1, girl->_odelay);
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
@@ -258,7 +258,7 @@ void sceneHandler16_drink() {
 
 							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_BOYKICK), 0, 1);
 
-							mq->setParamInt(-1, g_vars->scene16_walkingBoy->_okeyCode);
+							mq->setParamInt(-1, g_vars->scene16_walkingBoy->_odelay);
 
 							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
@@ -361,7 +361,7 @@ void sceneHandler16_putOnWheel() {
 		if (ani->_id == ANI_BOY) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOBOY), 0, 1);
 
-			mq->setParamInt(-1, ani->_okeyCode);
+			mq->setParamInt(-1, ani->_odelay);
 			mq->chain(0);
 
 			g_vars->scene16_walkingBoy = ani;
@@ -370,7 +370,7 @@ void sceneHandler16_putOnWheel() {
 			if (g_fp->getObjectState(sO_Girl) == g_fp->getObjectEnumState(sO_Girl, sO_IsSwinging)) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_GOGIRL), 0, 1);
 
-				mq->setParamInt(-1, ani->_okeyCode);
+				mq->setParamInt(-1, ani->_odelay);
 				mq->chain(0);
 
 				g_vars->scene16_walkingBoy = 0;

@@ -120,7 +120,7 @@ void sceneHandler26_testVent() {
 	if (!g_vars->scene26_activeVent)
 		return;
 
-	if (g_vars->scene26_activeVent->_okeyCode == 0) {
+	if (g_vars->scene26_activeVent->_odelay == 0) {
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
 			g_fp->stopAllSoundInstances(SND_26_018);
 		else
@@ -137,7 +137,7 @@ void sceneHandler26_testVent() {
 
 			g_fp->playSound(SND_26_020, 0);
 		}
-	} else if (g_vars->scene26_activeVent->_okeyCode == 1) {
+	} else if (g_vars->scene26_activeVent->_odelay == 1) {
 		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened))
 			g_fp->playSound(SND_26_020, 0);
 		else
@@ -152,7 +152,7 @@ void sceneHandler26_testVent() {
 
 			chainQueue(QU_SC26_AUTOCLOSE1, 0);
 		}
-	} else if (g_vars->scene26_activeVent->_okeyCode == 2) {
+	} else if (g_vars->scene26_activeVent->_odelay == 2) {
 		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened))
 			g_fp->playSound(SND_26_020, 0);
 		else
@@ -195,7 +195,7 @@ void sceneHandler26_hideVent() {
 void sceneHandler26_animateVents(StaticANIObject *ani) {
 	int qId = 0;
 
-	switch (ani->_okeyCode) {
+	switch (ani->_odelay) {
 	case 0:
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Closed))
 			qId = QU_SC26_OPEN1;
@@ -249,7 +249,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 }
 
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
-	if (ani->_okeyCode || g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+	if (ani->_odelay || g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
 
@@ -263,7 +263,7 @@ void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
 
 					ex->_excFlags |= 3;
-					ex->_param = ani->_okeyCode;
+					ex->_param = ani->_odelay;
 
 					mq->addExCommandToEnd(ex);
 

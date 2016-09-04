@@ -107,7 +107,7 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 	if (mv)
 		ani->startAnim(mv, 0, -1);
 
-	g_vars->scene33_ventsState[ani->_okeyCode] = !g_vars->scene33_ventsState[ani->_okeyCode];
+	g_vars->scene33_ventsState[ani->_odelay] = !g_vars->scene33_ventsState[ani->_odelay];
 }
 
 void sceneHandler33_processVents() {
@@ -169,7 +169,7 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 		StaticANIObject *vent1 = 0;
 		StaticANIObject *vent2 = 0;
 
-		switch (ani->_okeyCode) {
+		switch (ani->_odelay) {
 		case 0:
 			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 2);
 			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 3);

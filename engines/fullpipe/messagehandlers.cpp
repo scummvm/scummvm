@@ -221,7 +221,7 @@ int global_messageHandler1(ExCommand *cmd) {
 					}
 
 					if (newex) {
-						newex->_param = g_fp->_aniMan->_okeyCode;
+						newex->_param = g_fp->_aniMan->_odelay;
 						newex->_excFlags |= 3;
 						newex->postMessage();
 					}
@@ -397,7 +397,7 @@ int global_messageHandler3(ExCommand *cmd) {
 				ani2 = g_fp->_currentScene->getStaticANIObject1ById(g_fp->_gameLoader->_field_FA, -1);
 
 				if (ani) {
-					if (g_fp->_msgObjectId2 == ani->_id && g_fp->_msgId == ani->_okeyCode) {
+					if (g_fp->_msgObjectId2 == ani->_id && g_fp->_msgId == ani->_odelay) {
 						cmd->_messageKind = 0;
 						return result;
 					}
@@ -409,7 +409,7 @@ int global_messageHandler3(ExCommand *cmd) {
 					int id = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 					PictureObject *pic = g_fp->_currentScene->getPictureObjectById(id, 0);
 					if (pic) {
-						if (g_fp->_msgObjectId2 == pic->_id && g_fp->_msgId == pic->_okeyCode) {
+						if (g_fp->_msgObjectId2 == pic->_id && g_fp->_msgId == pic->_odelay) {
 							cmd->_messageKind = 0;
 							return result;
 						}

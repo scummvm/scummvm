@@ -143,13 +143,13 @@ void sceneHandler14_showBallGrandmaHit() {
 		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_odelay;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_odelay;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(0);
@@ -185,13 +185,13 @@ void sceneHandler14_showBallMan() {
 		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_odelay;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_odelay;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(0);
@@ -501,13 +501,13 @@ void sceneHandler14_passToGrandma() {
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+	ex->_param = g_vars->scene14_flyingBall->_odelay;
 	ex->_excFlags |= 2;
 	ex->_field_24 = 1;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-	ex->_param = g_vars->scene14_flyingBall->_okeyCode;
+	ex->_param = g_vars->scene14_flyingBall->_odelay;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
 	mq->chain(0);
