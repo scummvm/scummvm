@@ -1269,22 +1269,32 @@ void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alph
 }
 
 void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
-	warning("STUB: FullpipeEngine::sceneFade()");
-
-#if 0
 	for (int dim = 0; dim < 255; dim += 20) {
-		v5 = GetTickCount();
-		vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
+		int ticks = g_fp->_system->getMillis();
 		sc->draw();
-		drawAlphaRectangle(0, 0, 800, 600, direction ? 255 - dim : dim);
-		vrtFlush(*(_DWORD *)virt);
-		v7 = GetTickCount();
-		if ( v7 - v5 < 42 )
-			Sleep(v5 - v7 + 42);
-	}
-    vrtSetAlphaBlendMode(*(_DWORD *)virt, 0, 255);
-#endif
 
+		for (int y = 0; y < g_fp->_backgroundSurface.h; y++) {
+			uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(0, y);
+
+			for (int x = 0; x < g_fp->_backgroundSurface.w; x++) {
+				uint32 color = *ptr;
+				color = (((color >> 24) & 0xff) * dim / 0xff) << 24 |
+						(((color >> 16) & 0xff) * dim / 0xff) << 16 |
+						(((color >>  8) & 0xff) * dim / 0xff) <<  8 |
+						(color & 0xff);
+				*ptr = color;
+				ptr++;
+			}
+		}
+
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
+
+		g_fp->_system->updateScreen();
+		ticks = g_fp->_system->getMillis() - ticks;
+
+		if (ticks < 42)
+			g_fp->_system->delayMillis(42 - ticks);
+	}
 }
 
 } // End of namespace Fullpipe
