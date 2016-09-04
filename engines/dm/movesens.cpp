@@ -709,7 +709,7 @@ Thing MovesensMan::getTeleporterRotatedProjectileThing(Teleporter *teleporter, T
 
 void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing) {
 	int16 thingType;
-	int16 objectType;
+	IconIndice objectType;
 	if (thing != Thing::_party) {
 		thingType = thing.getType();
 		objectType = _vm->_objectMan->getObjectType(thing);
@@ -721,9 +721,9 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 	if ((!addThing) && (thingType != kM1_PartyThingType))
 		_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
 
-	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	Square curSquare = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]);
 	int16 sensorTriggeredCell;
-	if (Square(curSquare).getType() == k0_WallElemType)
+	if (curSquare.getType() == k0_WallElemType)
 		sensorTriggeredCell = thing.getCell();
 	else
 		sensorTriggeredCell = kM1_CellAny; // this will wrap around
@@ -797,7 +797,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 						goto T0276079;
 					break;
 				case k5_SensorFloorPartyOnStairs:
-					if ((thingType != kM1_PartyThingType) || (Square(curSquare).getType() != k3_StairsElemType))
+					if ((thingType != kM1_PartyThingType) || (curSquare.getType() != k3_StairsElemType))
 						goto T0276079;
 					break;
 				case k6_SensorFloorGroupGenerator:
