@@ -1270,7 +1270,10 @@ void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alph
 
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
-			color = (color & 0xffffff00) | (alpha & 0xff);
+			color = (((color >> 24) & 0xff) * alpha / 0xff) << 24 |
+					(((color >> 16) & 0xff) * alpha / 0xff) << 16 |
+					(((color >>  8) & 0xff) * alpha / 0xff) <<  8 |
+					(color & 0xff);
 			*ptr = color;
 			ptr++;
 		}
@@ -1282,20 +1285,7 @@ void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
 		int ticks = g_fp->_system->getMillis();
 		sc->draw();
 
-		for (int y = 0; y < g_fp->_backgroundSurface.h; y++) {
-			uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(0, y);
-
-			for (int x = 0; x < g_fp->_backgroundSurface.w; x++) {
-				uint32 color = *ptr;
-				color = (((color >> 24) & 0xff) * dim / 0xff) << 24 |
-						(((color >> 16) & 0xff) * dim / 0xff) << 16 |
-						(((color >>  8) & 0xff) * dim / 0xff) <<  8 |
-						(color & 0xff);
-				*ptr = color;
-				ptr++;
-			}
-		}
-
+		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface.w, g_fp->_backgroundSurface.h, direction ? dim : 255 - dim);
 		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 		g_fp->_system->updateScreen();
