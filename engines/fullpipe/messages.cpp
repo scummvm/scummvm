@@ -233,11 +233,13 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 ObjstateCommand::ObjstateCommand() {
 	_value = 0;
 	_objCommandName = 0;
+	_objtype = kObjTypeObjstateCommand;
 }
 
 ObjstateCommand::ObjstateCommand(ObjstateCommand *src) : ExCommand(src) {
 	_value = src->_value;
 	_objCommandName = (char *)calloc(strlen(src->_objCommandName) + 1, 1);
+	_objtype = kObjTypeObjstateCommand;
 
 	strncpy(_objCommandName, src->_objCommandName, strlen(src->_objCommandName));
 }
