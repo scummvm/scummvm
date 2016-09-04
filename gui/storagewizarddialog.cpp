@@ -56,11 +56,11 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	Common::String headline = Common::String::format(_("%s Storage Connection Wizard"), CloudMan.listStorages()[_storageId].c_str());
 	_headlineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Headline", headline);
 
-	_navigateLineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.NavigateLine", _s("Navigate to the following URL:"));
+	_navigateLineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.NavigateLine", _("Navigate to the following URL:"));
 	_urlLineWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.URLLine", getUrl());
 
-	_returnLine1 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine1", _s("Obtain the code from the storage, enter it"));
-	_returnLine2 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine2", _s("in the following field and press 'Connect':"));
+	_returnLine1 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine1", _("Obtain the code from the storage, enter it"));
+	_returnLine2 = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ReturnLine2", _("in the following field and press 'Connect':"));
 	for (uint32 i = 0; i < CODE_FIELDS; ++i)
 		_codeWidget[i] = new EditTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.CodeBox" + Common::String::format("%d", i+1), "", 0, kCodeBoxCmd);
 	_messageWidget = new StaticTextWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.MessageLine", "");
@@ -76,8 +76,8 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 
 	if (Cloud::CloudManager::couldUseLocalServer()) {
 		// hide fields and even the button if local webserver is on
-		_returnLine1->setLabel(_s("You would be navigated to ScummVM's page"));
-		_returnLine2->setLabel(_s("when you'd allow it to use your storage."));
+		_returnLine1->setLabel(_("You would be navigated to ScummVM's page"));
+		_returnLine2->setLabel(_("when you'd allow it to use your storage."));
 	}
         
 	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
