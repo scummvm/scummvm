@@ -1497,43 +1497,43 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 }
 
 void EventManager::commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
-	int16 championIndex = kM1_ChampionNone;
+	ChampionIndex championIndex = kM1_ChampionNone;
 	if (posY <= 48) {
 		switch (_vm->_championMan->_magicCasterChampionIndex) {
 		case 0:
 			if ((posX >= 280) && (posX <= 291))
-				championIndex = 1;
+				championIndex = k1_ChampionSecond;
 			else if ((posX >= 294) && (posX <= 305))
-				championIndex = 2;
+				championIndex = k2_ChampionThird;
 			else if (posX >= 308)
-				championIndex = 3;
+				championIndex = k3_ChampionFourth;
 
 			break;
 		case 1:
 			if ((posX >= 233) && (posX <= 244))
-				championIndex = 0;
+				championIndex = k0_ChampionFirst;
 			else if ((posX >= 294) && (posX <= 305))
-				championIndex = 2;
+				championIndex = k2_ChampionThird;
 			else if (posX >= 308)
-				championIndex = 3;
+				championIndex = k3_ChampionFourth;
 
 			break;
 		case 2:
 			if ((posX >= 233) && (posX <= 244))
-				championIndex = 0;
+				championIndex = k0_ChampionFirst;
 			else if ((posX >= 247) && (posX <= 258))
-				championIndex = 1;
+				championIndex = k1_ChampionSecond;
 			else if (posX >= 308)
-				championIndex = 3;
+				championIndex = k3_ChampionFourth;
 
 			break;
 		case 3:
 			if ((posX >= 247) && (posX <= 258))
-				championIndex = 1;
+				championIndex = k1_ChampionSecond;
 			else if ((posX >= 261) && (posX <= 272))
-				championIndex = 2;
+				championIndex = k2_ChampionThird;
 			else if (posX <= 244)
-				championIndex = 0;
+				championIndex = k0_ChampionFirst;
 			break;
 		default:
 			break;

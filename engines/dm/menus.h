@@ -36,6 +36,8 @@ namespace DM {
 
 #define kM1_damageCantReach -1 // @ CM1_DAMAGE_CANT_REACH    
 #define kM2_damageNoAmmunition -2 // @ CM2_DAMAGE_NO_AMMUNITION 
+#define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
+#define k3_SpellAreaChampionSymbols 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
 
 #define k0x8000_hitNonMaterialCreatures 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
 
@@ -90,7 +92,7 @@ public:
 	const char *getActionName(ChampionAction actionIndex); // @ F0384_MENUS_GetActionName
 	void drawSpellAreaControls(ChampionIndex champIndex); // @ F0393_MENUS_DrawSpellAreaControls
 	void buildSpellAreaLine(int16 spellAreaBitmapLine);// @ F0392_MENUS_BuildSpellAreaLine
-	void setMagicCasterAndDrawSpellArea(int16 champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
+	void setMagicCasterAndDrawSpellArea(ChampionIndex champIndex); // @ F0394_MENUS_SetMagicCasterAndDrawSpellArea
 	void drawEnabledMenus(); // @ F0457_START_DrawEnabledMenus_CPSF
 	int16 getClickOnSpellCastResult(); // @ F0408_MENUS_GetClickOnSpellCastResult
 	int16 getChampionSpellCastResult(uint16 champIndex); // @ F0412_MENUS_GetChampionSpellCastResult

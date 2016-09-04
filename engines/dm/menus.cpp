@@ -283,7 +283,7 @@ void MenuMan::drawActionArea() {
 }
 
 const char *MenuMan::getActionName(ChampionAction actionIndex) {
-	const char *g490_ChampionActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
+	const char *championActionNames[44] = { // @ G0490_ac_Graphic560_ActionNames
 		"N", "BLOCK", "CHOP", "X", "BLOW HORN", "FLIP", "PUNCH",
 		"KICK", "WAR CRY", "STAB", "CLIMB DOWN", "FREEZE LIFE",
 		"HIT", "SWING", "STAB", "THRUST", "JAB", "PARRY", "HACK",
@@ -294,7 +294,7 @@ const char *MenuMan::getActionName(ChampionAction actionIndex) {
 		"BRANDISH", "THROW", "FUSE"
 	};
 
-	return (actionIndex == k255_ChampionActionNone) ? "" : g490_ChampionActionNames[actionIndex];
+	return (actionIndex == k255_ChampionActionNone) ? "" : championActionNames[actionIndex];
 }
 
 void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
@@ -308,55 +308,61 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
+
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->highlightScreenBox(233, 277, 42, 49);
 		_vm->_textMan->printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		if (_vm->_championMan->_partyChampionCount > 1) {
-			if (champHP1) {
+			if (champHP1)
 				_vm->_eventMan->highlightScreenBox(280, 291, 42, 48);
-			}
-T0393002:
+
 			if (_vm->_championMan->_partyChampionCount > 2) {
-				if (champHP2) {
+				if (champHP2)
 					_vm->_eventMan->highlightScreenBox(294, 305, 42, 48);
-				}
-T0393003:
-				if (_vm->_championMan->_partyChampionCount > 3) {
-					if (champHP3) {
-						_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
-					}
-				}
+
+				if ((_vm->_championMan->_partyChampionCount > 3) && champHP3)
+					_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
 			}
 		}
 		break;
 	case 1:
-		if (champHP0) {
+		if (champHP0)
 			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
-		}
+
 		_vm->_eventMan->highlightScreenBox(247, 291, 42, 49);
 		_vm->_textMan->printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
-		goto T0393002;
+		if (_vm->_championMan->_partyChampionCount > 2) {
+			if (champHP2)
+				_vm->_eventMan->highlightScreenBox(294, 305, 42, 48);
+
+			if ((_vm->_championMan->_partyChampionCount > 3) && champHP3)
+				_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
+		}
+		break;
 	case 2:
-		if (champHP0) {
+		if (champHP0)
 			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
-		}
-		if (champHP1) {
+
+		if (champHP1)
 			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
-		}
+
 		_vm->_eventMan->highlightScreenBox(261, 305, 42, 49);
 		_vm->_textMan->printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
-		goto T0393003;
+		if ((_vm->_championMan->_partyChampionCount > 3) && champHP3)
+			_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
+		break;
+
 	case 3:
-		if (champHP0) {
+		if (champHP0)
 			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
-		}
-		if (champHP1) {
+
+		if (champHP1)
 			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
-		}
-		if (champHP2) {
+
+		if (champHP2)
 			_vm->_eventMan->highlightScreenBox(261, 272, 42, 48);
-		}
+
 		_vm->_eventMan->highlightScreenBox(275, 319, 42, 49);
 		_vm->_textMan->printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
 		break;
@@ -366,44 +372,42 @@ T0393003:
 	_vm->_eventMan->hideMouse();
 }
 
-#define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
-#define k3_SpellAreaChampionSymbols 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
-
 void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 	static Box boxSpellAreaLine(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine 
 
-	char L1204_ac_SpellSymbolString[2] = {'\0', '\0'};
-	Champion *L1203_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
+	char spellSymbolString[2] = {'\0', '\0'};
+	Champion *magicChampion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 1;
-		char character = 96 + (6 * L1203_ps_Champion->_symbolStep);
+		char character = 96 + (6 * magicChampion->_symbolStep);
 		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
-			L1204_ac_SpellSymbolString[0] = character++;
-			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x += 14, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
+			spellSymbolString[0] = character++;
+			x += 14;
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
 		}
 	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
 		int16 x = 8;
 		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
-			if ((L1204_ac_SpellSymbolString[0] = L1203_ps_Champion->_symbols[symbolIndex]) == '\0')
+			if ((spellSymbolString[0] = magicChampion->_symbols[symbolIndex]) == '\0')
 				break;
-			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x += 9, 8, k4_ColorCyan, k0_ColorBlack, L1204_ac_SpellSymbolString, 12);
+			x += 9;
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
 		}
 	}
 }
 
-void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
+void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 	static Box boxSpellAreaLine2(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2 
 	static Box boxSpellAreaLine3(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
 
-	Champion *L1213_ps_Champion;
-
-	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex) || ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth)) {
+	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex)
+	|| ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth))
 		return;
-	}
+
 	if (_vm->_championMan->_magicCasterChampionIndex == kM1_ChampionNone) {
 		_vm->_eventMan->showMouse();
 		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
@@ -417,7 +421,8 @@ void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
 		_vm->_eventMan->hideMouse();
 		return;
 	}
-	L1213_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex = (ChampionIndex)champIndex];
+	_vm->_championMan->_magicCasterChampionIndex = champIndex;
+	Champion *L1213_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	drawSpellAreaControls((ChampionIndex)champIndex);
@@ -428,23 +433,18 @@ void MenuMan::setMagicCasterAndDrawSpellArea(int16 champIndex) {
 }
 
 void MenuMan::drawEnabledMenus() {
-	int16 L1462_i_Multiple;
-#define AL1462_i_MagicCasterChampionIndex L1462_i_Multiple
-#define AL1462_i_InventoryChampionOrdinal L1462_i_Multiple
-
-
 	if (_vm->_championMan->_partyIsSleeping) {
 		_vm->_eventMan->drawSleepScreen();
 		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	} else {
-		AL1462_i_MagicCasterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
+		ChampionIndex casterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
 		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
-		setMagicCasterAndDrawSpellArea(AL1462_i_MagicCasterChampionIndex);
+		setMagicCasterAndDrawSpellArea(casterChampionIndex);
 		if (!_vm->_championMan->_actingChampionOrdinal) {
 			_actionAreaContainsIcons = true;
 		}
 		drawActionArea();
-		AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_inventoryChampionOrdinal;
+		int16 AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_inventoryChampionOrdinal;
 		if (AL1462_i_InventoryChampionOrdinal) {
 			_vm->_inventoryMan->_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
 			_vm->_inventoryMan->toggleInventory((ChampionIndex)_vm->ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
