@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-04 17:17+0200\n"
+"POT-Creation-Date: 2016-09-04 23:16+0100\n"
 "PO-Revision-Date: 2016-05-22 17:05+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
@@ -1180,7 +1180,7 @@ msgid "Last sync time:"
 msgstr ""
 
 #: gui/options.cpp:1314
-msgid "When this storage did saves sync last time"
+msgid "When the last saves sync for this storage occured"
 msgstr ""
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
@@ -1201,7 +1201,7 @@ msgstr ""
 
 #: gui/options.cpp:1319
 #, fuzzy
-msgid "Downloads"
+msgid "Download"
 msgstr "Уніз"
 
 #: gui/options.cpp:1319
@@ -1228,7 +1228,7 @@ msgstr "Дад. шлях:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
 #, fuzzy
-msgid "Specifies where Files Manager can access to"
+msgid "Specifies which directory the Files Manager can access"
 msgstr "Паказвае шлях да захаванняў гульні"
 
 #: gui/options.cpp:1328
@@ -1244,7 +1244,7 @@ msgstr "Сервер:"
 
 #: gui/options.cpp:1338
 msgid ""
-"Which port is used by server\n"
+"Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
 
@@ -1258,7 +1258,7 @@ msgid "Failed to change cloud storage!"
 msgstr "Не атрымалася захаваць гульню"
 
 #: gui/options.cpp:1524
-msgid "Current cloud storage is working at the moment."
+msgid "Another cloud storage is already active."
 msgstr ""
 
 #: gui/options.cpp:1562
@@ -1392,7 +1392,7 @@ msgstr "Невядомы аўтар"
 
 #: gui/remotebrowser.cpp:128
 #, fuzzy
-msgid "ScummVM couldn't list the directory!"
+msgid "ScummVM could not access the directory!"
 msgstr "ScummVM не можа адкрыць азначаную дырэкторыю!"
 
 #: gui/saveload-dialog.cpp:334
@@ -1491,15 +1491,15 @@ msgid "Pastes clipboard contents into fields"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You would be navigated to ScummVM's page"
+msgid "You will be directed to ScummVM's page where"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:80
-msgid "when you'd allow it to use your storage."
+msgid "you should allow it to access your storage."
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:113
-msgid "The other Storage is working. Do you want to interrupt it?"
+msgid "Another Storage is active. Do you want to interrupt it?"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:122
@@ -1528,7 +1528,7 @@ msgstr "Неверный путь"
 #: gui/storagewizarddialog.cpp:210
 msgid ""
 "Failed to open URL!\n"
-"You should navigate there manually then."
+"Please navigate to this page manually."
 msgstr ""
 
 #: gui/themebrowser.cpp:45
@@ -4230,6 +4230,10 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Выкарыстоўваць MPEG-відэа з DVD-версіі замест відэа нізкага адрознення ў "
 "фармаце AVI"
+
+#, fuzzy
+#~ msgid "Specifies where Files Manager can access to"
+#~ msgstr "Паказвае шлях да захаванняў гульні"
 
 #~ msgid "EGA undithering"
 #~ msgstr "EGA без растру"

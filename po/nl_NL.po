@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-04 17:17+0200\n"
+"POT-Creation-Date: 2016-09-04 23:16+0100\n"
 "PO-Revision-Date: 2016-07-05 10:07+0200\n"
 "Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
@@ -1188,7 +1188,7 @@ msgid "Last sync time:"
 msgstr ""
 
 #: gui/options.cpp:1314
-msgid "When this storage did saves sync last time"
+msgid "When the last saves sync for this storage occured"
 msgstr ""
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
@@ -1209,7 +1209,7 @@ msgstr ""
 
 #: gui/options.cpp:1319
 #, fuzzy
-msgid "Downloads"
+msgid "Download"
 msgstr "Omlaag"
 
 #: gui/options.cpp:1319
@@ -1236,7 +1236,7 @@ msgstr "Extra Pad:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
 #, fuzzy
-msgid "Specifies where Files Manager can access to"
+msgid "Specifies which directory the Files Manager can access"
 msgstr "Bepaalt waar opgeslagen spellen worden bewaard."
 
 #: gui/options.cpp:1328
@@ -1252,7 +1252,7 @@ msgstr "Server:"
 
 #: gui/options.cpp:1338
 msgid ""
-"Which port is used by server\n"
+"Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
 
@@ -1266,7 +1266,7 @@ msgid "Failed to change cloud storage!"
 msgstr "Opslaan van spel mislukt."
 
 #: gui/options.cpp:1524
-msgid "Current cloud storage is working at the moment."
+msgid "Another cloud storage is already active."
 msgstr ""
 
 #: gui/options.cpp:1562
@@ -1401,7 +1401,7 @@ msgstr "Onbekende Auteur"
 
 #: gui/remotebrowser.cpp:128
 #, fuzzy
-msgid "ScummVM couldn't list the directory!"
+msgid "ScummVM could not access the directory!"
 msgstr "ScummVM kon de opgegeven map niet openen!"
 
 #: gui/saveload-dialog.cpp:334
@@ -1500,15 +1500,15 @@ msgid "Pastes clipboard contents into fields"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You would be navigated to ScummVM's page"
+msgid "You will be directed to ScummVM's page where"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:80
-msgid "when you'd allow it to use your storage."
+msgid "you should allow it to access your storage."
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:113
-msgid "The other Storage is working. Do you want to interrupt it?"
+msgid "Another Storage is active. Do you want to interrupt it?"
 msgstr ""
 
 #: gui/storagewizarddialog.cpp:122
@@ -1536,7 +1536,7 @@ msgstr ""
 #: gui/storagewizarddialog.cpp:210
 msgid ""
 "Failed to open URL!\n"
-"You should navigate there manually then."
+"Please navigate to this page manually."
 msgstr ""
 
 #: gui/themebrowser.cpp:45
@@ -4237,3 +4237,7 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Gebruik de MPEG video van de DVD versie, in plaats van de lagere resolutie "
 "AVI"
+
+#, fuzzy
+#~ msgid "Specifies where Files Manager can access to"
+#~ msgstr "Bepaalt waar opgeslagen spellen worden bewaard."
