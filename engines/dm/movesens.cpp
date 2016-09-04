@@ -656,236 +656,207 @@ int16 MovesensMan::getSound(byte creatureType) {
 }
 
 int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex) {
-	int16 L0683_i_Rotation;
-	uint16 L0684_ui_GroupDirections;
-	uint16 L0685_ui_UpdatedGroupDirections;
-	Group *L0686_ps_Group;
-	uint16 L0687_ui_UpdatedGroupCells;
-	int16 L0688_i_CreatureIndex;
-	bool L0689_B_AbsoluteRotation;
-	uint16 L0690_ui_GroupCells;
-	int16 L0691_i_CreatureSize;
-	int16 L0692_i_RelativeRotation;
+	Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
+	Direction rotation = teleporter->getRotation();
+	uint16 groupDirections = _vm->_groupMan->getGroupDirections(group, mapIndex);
 
-	L0686_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
-	L0683_i_Rotation = teleporter->getRotation();
-	L0684_ui_GroupDirections = _vm->_groupMan->getGroupDirections(L0686_ps_Group, mapIndex);
+	bool absoluteRotation = teleporter->getAbsoluteRotation();
+	uint16 updatedGroupDirections;
+	if (absoluteRotation)
+		updatedGroupDirections = rotation;
+	else
+		updatedGroupDirections = normalizeModulo4(groupDirections + rotation);
 
-	L0689_B_AbsoluteRotation = teleporter->getAbsoluteRotation();
-	if (L0689_B_AbsoluteRotation) {
-		L0685_ui_UpdatedGroupDirections = L0683_i_Rotation;
-	} else {
-		L0685_ui_UpdatedGroupDirections = normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation);
-	}
-
-	L0687_ui_UpdatedGroupCells = _vm->_groupMan->getGroupCells(L0686_ps_Group, mapIndex);
-	if (L0687_ui_UpdatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
-		L0690_ui_GroupCells = L0687_ui_UpdatedGroupCells;
-		L0691_i_CreatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[L0686_ps_Group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
-		L0692_i_RelativeRotation = normalizeModulo4(4 + L0685_ui_UpdatedGroupDirections - L0684_ui_GroupDirections);
-		for (L0688_i_CreatureIndex = 0; L0688_i_CreatureIndex <= L0686_ps_Group->getCount(); L0688_i_CreatureIndex++) {
-			L0685_ui_UpdatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(L0685_ui_UpdatedGroupDirections, L0688_i_CreatureIndex, L0689_B_AbsoluteRotation ? L0683_i_Rotation : normalizeModulo4(L0684_ui_GroupDirections + L0683_i_Rotation));
-			if (L0691_i_CreatureSize == k0_MaskCreatureSizeQuarter) {
-				L0692_i_RelativeRotation = !L0689_B_AbsoluteRotation;
-				if (L0692_i_RelativeRotation) 
-					L0692_i_RelativeRotation = L0683_i_Rotation;
+	uint16 updatedGroupCells = _vm->_groupMan->getGroupCells(group, mapIndex);
+	if (updatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
+		int16 groupCells = updatedGroupCells;
+		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
+		int16 relativeRotation = normalizeModulo4(4 + updatedGroupDirections - groupDirections);
+		for (int16 creatureIdx = 0; creatureIdx <= group->getCount(); creatureIdx++) {
+			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? rotation : normalizeModulo4(groupDirections + rotation));
+			if (creatureSize == k0_MaskCreatureSizeQuarter) {
+				relativeRotation = absoluteRotation ? 1 : 0;
+				if (relativeRotation) 
+					relativeRotation = rotation;
 			}
-			if (L0692_i_RelativeRotation) {
-				L0687_ui_UpdatedGroupCells = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(L0687_ui_UpdatedGroupCells, L0688_i_CreatureIndex, normalizeModulo4(L0690_ui_GroupCells + L0692_i_RelativeRotation));
-			}
-			L0684_ui_GroupDirections >>= 2;
-			L0690_ui_GroupCells >>= 2;
+			if (relativeRotation)
+				updatedGroupCells = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupCells, creatureIdx, normalizeModulo4(groupCells + relativeRotation));
+
+			groupDirections >>= 2;
+			groupCells >>= 2;
 		}
 	}
-	_vm->_dungeonMan->setGroupDirections(L0686_ps_Group, L0685_ui_UpdatedGroupDirections, mapIndex);
-	_vm->_dungeonMan->setGroupCells(L0686_ps_Group, L0687_ui_UpdatedGroupCells, mapIndex);
-	if ((mapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0686_ps_Group->setBehaviour(k6_behavior_ATTACK))) {
-		return L0686_ps_Group->getActiveGroupIndex() + 2;
-	}
+	_vm->_dungeonMan->setGroupDirections(group, updatedGroupDirections, mapIndex);
+	_vm->_dungeonMan->setGroupCells(group, updatedGroupCells, mapIndex);
+	if ((mapIndex == _vm->_dungeonMan->_partyMapIndex) && (group->setBehaviour(k6_behavior_ATTACK)))
+		return group->getActiveGroupIndex() + 2;
+
 	return 1;
 }
 
 Thing MovesensMan::getTeleporterRotatedProjectileThing(Teleporter *teleporter, Thing projectileThing) {
-	int16 L0693_i_UpdatedDirection;
-	int16 L0694_i_Rotation;
-
-	L0693_i_UpdatedDirection = _moveResultDir;
-	L0694_i_Rotation = teleporter->getRotation();
-	if (teleporter->getAbsoluteRotation()) {
-		L0693_i_UpdatedDirection = L0694_i_Rotation;
-	} else {
-		L0693_i_UpdatedDirection = normalizeModulo4(L0693_i_UpdatedDirection + L0694_i_Rotation);
-		projectileThing = thingWithNewCell(projectileThing, normalizeModulo4((projectileThing).getCell() + L0694_i_Rotation));
+	int16 updatedDirection = _moveResultDir;
+	int16 rotation = teleporter->getRotation();
+	if (teleporter->getAbsoluteRotation())
+		updatedDirection = rotation;
+	else {
+		updatedDirection = normalizeModulo4(updatedDirection + rotation);
+		projectileThing = thingWithNewCell(projectileThing, normalizeModulo4((projectileThing).getCell() + rotation));
 	}
-	_moveResultDir = L0693_i_UpdatedDirection;
+	_moveResultDir = updatedDirection;
 	return projectileThing;
 }
 
 void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing) {
-	Thing L0766_T_Thing;
-	int16 L0767_i_ThingType;
-	bool L0768_B_TriggerSensor;
-	Sensor *L0769_ps_Sensor;
-	int16 L0770_ui_SensorTriggeredCell;
-	uint16 L0771_ui_ThingType;
-	bool L0772_B_SquareContainsObject;
-	bool L0773_B_SquareContainsGroup;
-	int16 L0774_i_ObjectType;
-	bool L0775_B_SquareContainsThingOfSameType;
-	bool L0776_B_SquareContainsThingOfDifferentType;
-	uint16 L0777_ui_Square;
-	int16 L0778_i_Effect;
-	int16 L0779_i_SensorData;
-
-
+	int16 thingType;
+	int16 objectType;
 	if (thing != Thing::_party) {
-		L0767_i_ThingType = thing.getType();
-		L0774_i_ObjectType = _vm->_objectMan->getObjectType(thing);
+		thingType = thing.getType();
+		objectType = _vm->_objectMan->getObjectType(thing);
 	} else {
-		L0767_i_ThingType = kM1_PartyThingType;
-		L0774_i_ObjectType = kM1_IconIndiceNone;
-	}
-	if ((!addThing) && (L0767_i_ThingType != kM1_PartyThingType)) {
-		_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
+		thingType = kM1_PartyThingType;
+		objectType = kM1_IconIndiceNone;
 	}
 
-	L0777_ui_Square = _vm->_dungeonMan->_currMapData[mapX][mapY];
-	if (Square(L0777_ui_Square).getType() == k0_WallElemType) {
-		L0770_ui_SensorTriggeredCell = thing.getCell();
-	} else {
-		L0770_ui_SensorTriggeredCell = kM1_CellAny; // this will wrap around
-	}
-	L0772_B_SquareContainsObject = L0773_B_SquareContainsGroup = L0775_B_SquareContainsThingOfSameType = L0776_B_SquareContainsThingOfDifferentType = false;
-	L0766_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	if (L0770_ui_SensorTriggeredCell == kM1_CellAny) {
-		while (L0766_T_Thing != Thing::_endOfList) {
-			if ((L0771_ui_ThingType = (L0766_T_Thing).getType()) == k4_GroupThingType) {
-				L0773_B_SquareContainsGroup = true;
-			} else {
-				if ((L0771_ui_ThingType == k2_TextstringType) && (L0767_i_ThingType == kM1_PartyThingType) && addThing && !partySquare) {
-					_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, L0766_T_Thing, k1_TextTypeMessage);
-					_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
-				} else {
-					if ((L0771_ui_ThingType > k4_GroupThingType) && (L0771_ui_ThingType < k14_ProjectileThingType)) {
-						L0772_B_SquareContainsObject = true;
-						L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
-						L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
-					}
-				}
+	if ((!addThing) && (thingType != kM1_PartyThingType))
+		_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);
+
+	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 sensorTriggeredCell;
+	if (Square(curSquare).getType() == k0_WallElemType)
+		sensorTriggeredCell = thing.getCell();
+	else
+		sensorTriggeredCell = kM1_CellAny; // this will wrap around
+
+	bool squareContainsObject = false;
+	bool squareContainsGroup = false;
+	bool squareContainsThingOfSameType = false;
+	bool squareContainsThingOfDifferentType = false;
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	if (sensorTriggeredCell == kM1_CellAny) {
+		while (curThing != Thing::_endOfList) {
+			uint16 curThingType = curThing.getType();
+			if (curThingType == k4_GroupThingType)
+				squareContainsGroup = true;
+			else if ((curThingType == k2_TextstringType) && (thingType == kM1_PartyThingType) && addThing && !partySquare) {
+				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, k1_TextTypeMessage);
+				_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
+			} else if ((curThingType > k4_GroupThingType) && (curThingType < k14_ProjectileThingType)) {
+				squareContainsObject = true;
+				squareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(curThing) == objectType);
+				squareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(curThing) != objectType);
 			}
-			L0766_T_Thing = _vm->_dungeonMan->getNextThing(L0766_T_Thing);
+			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
 	} else {
-		while (L0766_T_Thing != Thing::_endOfList) {
-			if ((L0770_ui_SensorTriggeredCell == (L0766_T_Thing).getCell()) && ((L0766_T_Thing).getType() > k4_GroupThingType)) {
-				L0772_B_SquareContainsObject = true;
-				L0775_B_SquareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) == L0774_i_ObjectType);
-				L0776_B_SquareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(L0766_T_Thing) != L0774_i_ObjectType);
+		while (curThing != Thing::_endOfList) {
+			if ((sensorTriggeredCell == (curThing).getCell()) && ((curThing).getType() > k4_GroupThingType)) {
+				squareContainsObject = true;
+				squareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(curThing) == objectType);
+				squareContainsThingOfDifferentType |= (_vm->_objectMan->getObjectType(curThing) != objectType);
 			}
-			L0766_T_Thing = _vm->_dungeonMan->getNextThing(L0766_T_Thing);
+			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
 	}
-	if (addThing && (L0767_i_ThingType != kM1_PartyThingType)) {
+	if (addThing && (thingType != kM1_PartyThingType))
 		_vm->_dungeonMan->linkThingToList(thing, Thing(0), mapX, mapY);
-	}
-	L0766_T_Thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while (L0766_T_Thing != Thing::_endOfList) {
-		L0771_ui_ThingType = (L0766_T_Thing).getType();
-		if (L0771_ui_ThingType == k3_SensorThingType) {
-			L0769_ps_Sensor = (Sensor *)_vm->_dungeonMan->getThingData(L0766_T_Thing);
-			if ((L0769_ps_Sensor)->getType() == k0_SensorDisabled)
+
+	curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	while (curThing != Thing::_endOfList) {
+		uint16 curThingType = curThing.getType();
+		if (curThingType == k3_SensorThingType) {
+			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			if (curSensor->getType() == k0_SensorDisabled)
 				goto T0276079;
-			L0779_i_SensorData = L0769_ps_Sensor->getData();
-			L0768_B_TriggerSensor = addThing;
-			if (L0770_ui_SensorTriggeredCell == kM1_CellAny) {
-				switch (L0769_ps_Sensor->getType()) {
+			int16 curSensorData = curSensor->getData();
+			bool triggerSensor = addThing;
+			if (sensorTriggeredCell == kM1_CellAny) {
+				switch (curSensor->getType()) {
 				case k1_SensorFloorTheronPartyCreatureObj:
-					if (partySquare || L0772_B_SquareContainsObject || L0773_B_SquareContainsGroup) /* BUG0_30 A floor sensor is not triggered when you put an object on the floor if a levitating creature is present on the same square. The condition to determine if the sensor should be triggered checks if there is a creature on the square but does not check whether the creature is levitating. While it is normal not to trigger the sensor if there is a non levitating creature on the square (because it was already triggered by the creature itself), a levitating creature should not prevent triggering the sensor with an object. */
+					if (partySquare || squareContainsObject || squareContainsGroup) /* BUG0_30 A floor sensor is not triggered when you put an object on the floor if a levitating creature is present on the same square. The condition to determine if the sensor should be triggered checks if there is a creature on the square but does not check whether the creature is levitating. While it is normal not to trigger the sensor if there is a non levitating creature on the square (because it was already triggered by the creature itself), a levitating creature should not prevent triggering the sensor with an object. */
 						goto T0276079;
 					break;
 				case k2_SensorFloorTheronPartyCreature:
-					if ((L0767_i_ThingType > k4_GroupThingType) || partySquare || L0773_B_SquareContainsGroup)
+					if ((thingType > k4_GroupThingType) || partySquare || squareContainsGroup)
 						goto T0276079;
 					break;
 				case k3_SensorFloorParty:
-					if ((L0767_i_ThingType != kM1_PartyThingType) || (_vm->_championMan->_partyChampionCount == 0))
+					if ((thingType != kM1_PartyThingType) || (_vm->_championMan->_partyChampionCount == 0))
 						goto T0276079;
-					if (L0779_i_SensorData == 0) {
+
+					if (curSensorData == 0) {
 						if (partySquare)
 							goto T0276079;
-					} else {
-						if (!addThing) {
-							L0768_B_TriggerSensor = false;
-						} else {
-							L0768_B_TriggerSensor = (L0779_i_SensorData == _vm->indexToOrdinal(_vm->_dungeonMan->_partyDir));
-						}
-					}
+					} else if (!addThing)
+						triggerSensor = false;
+					else
+						triggerSensor = (curSensorData == _vm->indexToOrdinal(_vm->_dungeonMan->_partyDir));
 					break;
 				case k4_SensorFloorObj:
-					if ((L0779_i_SensorData != _vm->_objectMan->getObjectType(thing)) || L0775_B_SquareContainsThingOfSameType)
+					if ((curSensorData != _vm->_objectMan->getObjectType(thing)) || squareContainsThingOfSameType)
 						goto T0276079;
 					break;
 				case k5_SensorFloorPartyOnStairs:
-					if ((L0767_i_ThingType != kM1_PartyThingType) || (Square(L0777_ui_Square).getType() != k3_StairsElemType))
+					if ((thingType != kM1_PartyThingType) || (Square(curSquare).getType() != k3_StairsElemType))
 						goto T0276079;
 					break;
 				case k6_SensorFloorGroupGenerator:
 					goto T0276079;
 				case k7_SensorFloorCreature:
-					if ((L0767_i_ThingType > k4_GroupThingType) || (L0767_i_ThingType == kM1_PartyThingType) || L0773_B_SquareContainsGroup)
+					if ((thingType > k4_GroupThingType) || (thingType == kM1_PartyThingType) || squareContainsGroup)
 						goto T0276079;
 					break;
 				case k8_SensorFloorPartyPossession:
-					if (L0767_i_ThingType != kM1_PartyThingType)
+					if (thingType != kM1_PartyThingType)
 						goto T0276079;
-					L0768_B_TriggerSensor = isObjcetInPartyPossession(L0779_i_SensorData);
+					triggerSensor = isObjcetInPartyPossession(curSensorData);
 					break;
 				case k9_SensorFloorVersionChecker:
-					if ((L0767_i_ThingType != kM1_PartyThingType) || !addThing || partySquare)
+					if ((thingType != kM1_PartyThingType) || !addThing || partySquare)
 						goto T0276079;
 					// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
-					L0768_B_TriggerSensor = (L0779_i_SensorData <= 20);
+					triggerSensor = (curSensorData <= 20);
 					break;
 				default:
 					goto T0276079;
 				}
 			} else {
-				if (L0770_ui_SensorTriggeredCell != (L0766_T_Thing).getCell())
+				if (sensorTriggeredCell != (curThing).getCell())
 					goto T0276079;
-				switch (L0769_ps_Sensor->getType()) {
+				switch (curSensor->getType()) {
 				case k1_SensorWallOrnClick:
-					if (L0772_B_SquareContainsObject)
+					if (squareContainsObject)
 						goto T0276079;
 					break;
 				case k2_SensorWallOrnClickWithAnyObj:
-					if (L0775_B_SquareContainsThingOfSameType || (L0769_ps_Sensor->getData() != _vm->_objectMan->getObjectType(thing)))
+					if (squareContainsThingOfSameType || (curSensor->getData() != _vm->_objectMan->getObjectType(thing)))
 						goto T0276079;
 					break;
 				case k3_SensorWallOrnClickWithSpecObj:
-					if (L0776_B_SquareContainsThingOfDifferentType || (L0769_ps_Sensor->getData() == _vm->_objectMan->getObjectType(thing)))
+					if (squareContainsThingOfDifferentType || (curSensor->getData() == _vm->_objectMan->getObjectType(thing)))
 						goto T0276079;
 					break;
 				default:
 					goto T0276079;
 				}
 			}
-			L0768_B_TriggerSensor ^= L0769_ps_Sensor->getAttrRevertEffectA();
-			L0778_i_Effect = L0769_ps_Sensor->getAttrEffectA();
-			if (L0778_i_Effect == k3_SensorEffHold) {
-				L0778_i_Effect = L0768_B_TriggerSensor ? k0_SensorEffSet : k1_SensorEffClear;
-			} else if (!L0768_B_TriggerSensor)
+			triggerSensor ^= curSensor->getAttrRevertEffectA();
+			int16 curSensorEffect = curSensor->getAttrEffectA();
+			if (curSensorEffect == k3_SensorEffHold)
+				curSensorEffect = triggerSensor ? k0_SensorEffSet : k1_SensorEffClear;
+			else if (!triggerSensor)
 				goto T0276079;
 
-			if (L0769_ps_Sensor->getAttrAudibleA())
+			if (curSensor->getAttrAudibleA())
 				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
 
-			triggerEffect(L0769_ps_Sensor, L0778_i_Effect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
+			triggerEffect(curSensor, curSensorEffect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
 			goto T0276079;
 		}
-		if (L0771_ui_ThingType >= k4_GroupThingType)
+		if (curThingType >= k4_GroupThingType)
 			break;
 T0276079:
-		L0766_T_Thing = _vm->_dungeonMan->getNextThing(L0766_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	processRotationEffect();
 }
