@@ -253,11 +253,13 @@ reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect frameRect;
 	const uint16 numFramesTotal = g_sci->_video32->getRobotPlayer().getFrameSize(frameRect);
 
-	reg_t *outRect = s->_segMan->derefRegPtr(argv[0], 4);
-	outRect[0] = make_reg(0, frameRect.left);
-	outRect[1] = make_reg(0, frameRect.top);
-	outRect[2] = make_reg(0, frameRect.right - 1);
-	outRect[3] = make_reg(0, frameRect.bottom - 1);
+	SciArray *outRect = s->_segMan->lookupArray(argv[0]);
+	reg_t values[4] = {
+		make_reg(0, frameRect.left),
+		make_reg(0, frameRect.top),
+		make_reg(0, frameRect.right - 1),
+		make_reg(0, frameRect.bottom - 1) };
+	outRect->setElements(0, 4, values);
 
 	return make_reg(0, numFramesTotal);
 }

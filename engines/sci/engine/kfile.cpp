@@ -693,8 +693,8 @@ reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
 	// We don't really use or need any of this...
 
 	uint16 saveSlot = argv[0].toUint16();
-	char* fileName = s->_segMan->lookupString(argv[1])->getRawData();
-	warning("kFileIOCreateSaveSlot(%d, '%s')", saveSlot, fileName);
+	const SciArray &fileName = *s->_segMan->lookupArray(argv[1]);
+	warning("kFileIOCreateSaveSlot(%d, '%s')", saveSlot, fileName.toString().c_str());
 
 	return TRUE_REG;	// slot creation was successful
 }
@@ -1051,7 +1051,7 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	// Param 1: a string with game parameters, ignored
 	// Param 2: the selected slot
 
-	SciString *resultString = s->_segMan->lookupString(argv[0]);
+	SciArray *resultString = s->_segMan->lookupArray(argv[0]);
 	uint16 virtualId = argv[2].toUint16();
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 		error("kMakeSaveFileName: invalid savegame ID specified");

@@ -410,7 +410,6 @@ uint16 Kernel::findRegType(reg_t reg) {
 	case SEG_TYPE_HUNK:
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_ARRAY:
-	case SEG_TYPE_STRING:
 	case SEG_TYPE_BITMAP:
 #endif
 		result |= SIG_TYPE_REFERENCE;

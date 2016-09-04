@@ -267,9 +267,9 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 				// NOTE: SCI2.1mid engine does no check to verify that an array is
 				// successfully retrieved, and SegMan will cause a fatal error
 				// if we try to use a memory segment that is not an array
-				SciArray<reg_t> *table = _segMan->lookupArray(pFadeArray);
+				SciArray &table = *_segMan->lookupArray(pFadeArray);
 
-				uint32 rangeCount = table->getSize();
+				uint32 rangeCount = table.size();
 				entry->fadeColorRangesCount = rangeCount;
 
 				// NOTE: SCI engine code always allocates memory even if the range
@@ -278,7 +278,7 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 				if (rangeCount > 0) {
 					entry->fadeColorRanges = new uint16[rangeCount];
 					for (size_t i = 0; i < rangeCount; ++i) {
-						entry->fadeColorRanges[i] = table->getValue(i).toUint16();
+						entry->fadeColorRanges[i] = table.int16At(i);
 					}
 				}
 			}

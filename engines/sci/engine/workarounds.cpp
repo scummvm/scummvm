@@ -396,6 +396,12 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kArraySetElements_workarounds[] = {
+	{ GID_PHANTASMAGORIA,902, 64918,  0,                "Str", "callKernel",                NULL,     0, { WORKAROUND_FAKE, 0 } }, // tries to set an element of a string array to the ego object when starting a new game and selecting a chapter above 1
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kCelHigh_workarounds[] = {
 	{ GID_KQ5,            -1,   255,  0,          "deathIcon", "setSize",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when getting beaten up in the inn and probably more, called with 2nd parameter as object - bug #5049
 	{ GID_PQ2,            -1,   255,  0,              "DIcon", "setSize",                   NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // when showing picture within windows, called with 2nd/3rd parameters as objects
@@ -767,13 +773,9 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
-const SciWorkaroundEntry kStringPutAt_workarounds[] = {
-	{ GID_PHANTASMAGORIA,902, 64918, 0,                 "Str", "callKernel",                 NULL,     0, { WORKAROUND_IGNORE, 0 } }, // When starting a new game from after chapter 1, the game tries to save ego's object in a string
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,  local-call-signature, index,                workaround
 const SciWorkaroundEntry kScrollWindowAdd_workarounds[] = {
 	{ GID_PHANTASMAGORIA, 45, 64907,  0,   "ScrollableWindow", "addString",                  NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // ScrollWindow interface passes the last two parameters twice
+	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin) {

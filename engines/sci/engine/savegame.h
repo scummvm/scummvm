@@ -37,7 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
- *      38 - SCI32 cursor
+ *      38 - SCI32 cursor, accurate SCI32 arrays/strings
  *      37 - Segment entry data changed to pointers
  *      36 - SCI32 bitmap segment
  *      35 - SCI32 remap

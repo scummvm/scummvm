@@ -2075,10 +2075,6 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				debugPrintf("A  SCI32 arrays (%d)", (*(ArrayTable *)mobj).entries_used);
 				break;
 
-			case SEG_TYPE_STRING:
-				debugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
-				break;
-
 			case SEG_TYPE_BITMAP:
 				debugPrintf("T  SCI32 bitmaps (%d)", (*(BitmapTable *)mobj).entries_used);
 				break;
@@ -2210,9 +2206,6 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 #ifdef ENABLE_SCI32
-	case SEG_TYPE_STRING:
-		debugPrintf("SCI32 strings\n");
-		break;
 	case SEG_TYPE_ARRAY:
 		debugPrintf("SCI32 arrays\n");
 		break;
@@ -2808,16 +2801,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
-				case SEG_TYPE_STRING: {
-					debugPrintf("SCI32 string\n");
-					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
-					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
-					break;
-				}
 				case SEG_TYPE_ARRAY: {
 					debugPrintf("SCI32 array:\n");
-					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					hexDumpReg(array->getRawData(), array->getSize(), 4, 0, true);
+					// TODO: Different prints for different types
+					const SciArray *array = _engine->_gamestate->_segMan->lookupArray(reg);
+					hexDumpReg((reg_t *)array->getRawData(), array->size(), 4, 0, true);
 					break;
 				}
 				case SEG_TYPE_BITMAP: {

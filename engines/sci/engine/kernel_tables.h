@@ -501,44 +501,56 @@ static const SciKernelMapSubEntry kRemapColors_subops[] = {
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kArray_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(ArrayNew),                  "ii",                   NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
+	{ SIG_SCI32,           2, MAP_CALL(ArrayGetElement),           "ri",                   NULL },
+	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri.*",                 kArraySetElements_workarounds },
+	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "r",                    NULL },
+	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 NULL },
+	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	// there is no subop 7
+	{ SIG_SCI32,           8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
+	{ SIG_SCI32,           9, MAP_CALL(ArrayGetData),              "[or]",                 NULL },
+	{ SIG_SCI3,           10, MAP_CALL(ArrayByteCopy),             "ririi",                NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kString_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
-	{ SIG_SCI32,           1, MAP_CALL(StringSize),                "[or]",                 NULL },
-	{ SIG_SCI32,           2, MAP_CALL(StringAt),                  "[or]i",                NULL },
-	{ SIG_SCI32,           3, MAP_CALL(StringPutAt),               "[or]i(i*)",            kStringPutAt_workarounds },
-	// StringFree accepts invalid references
-	{ SIG_SCI32,           4, MAP_CALL(StringFree),                "[or0!]",               NULL },
-	{ SIG_SCI32,           5, MAP_CALL(StringFill),                "[or]ii",               NULL },
-	{ SIG_SCI32,           6, MAP_CALL(StringCopy),                "[or]i[or]ii",          NULL },
-	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "[or][or](i)",          NULL },
+	// every single copy of script 64918 in SCI2 through 2.1mid calls StringNew
+	// with a second type argument which is unused (new strings are always type
+	// 3)
+	{ SIG_UNTIL_SCI21MID,  0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
+	{ SIG_UNTIL_SCI21MID,  1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID,  2, MAP_CALL(StringGetChar),             "ri",                   NULL },
+	{ SIG_UNTIL_SCI21MID,  3, MAP_CALL(ArraySetElements),          "rii*",                 kArraySetElements_workarounds },
+	{ SIG_UNTIL_SCI21MID,  4, MAP_CALL(StringFree),                "[0r]",                 NULL },
+	{ SIG_UNTIL_SCI21MID,  5, MAP_CALL(ArrayFill),                 "rii",                  NULL },
+	{ SIG_UNTIL_SCI21MID,  6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "rr(i)",                NULL },
 
-	// =SCI2, SCI2.1 Early and SCI2.1 Middle=
-	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(StringDup),                 "[or]",                 NULL },
-	// TODO: This gets called with null references in Torin. Check if this is correct, or it's
-	// caused by missing functionality
-	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[or0]",                NULL },
-	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLen),                 "[or]",                 NULL },
-	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
-	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
-	{ SIG_UNTIL_SCI21MID, 13, MAP_CALL(StringAtoi),                "[or]",                 NULL },
-	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "[or]i",                NULL },
-	{ SIG_UNTIL_SCI21MID, 15, MAP_CALL(StringUpper),               "[or]",                 NULL },
-	{ SIG_UNTIL_SCI21MID, 16, MAP_CALL(StringLower),               "[or]",                 NULL },
-	// the following 2 are unknown atm (happen in Phantasmagoria)
-	// possibly translate?
-	{ SIG_UNTIL_SCI21MID, 17, MAP_CALL(StringTrn),                 "[or]",                 NULL },
-	{ SIG_UNTIL_SCI21MID, 18, MAP_CALL(StringTrnExclude),          "[or]",                 NULL },
+	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[0or]",                NULL },
+	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLength),              "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringFormat),              "r.*",                  NULL },
+	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringFormatAt),            "r[ro].*",              NULL },
+	{ SIG_UNTIL_SCI21MID, 13, MAP_CALL(StringToInteger),           "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "ri(i)",                NULL },
+	{ SIG_UNTIL_SCI21MID, 15, MAP_CALL(StringToUpperCase),         "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID, 16, MAP_CALL(StringToLowerCase),         "r",                    NULL },
+	{ SIG_UNTIL_SCI21MID, 17, MAP_CALL(StringReplaceSubstring),    "rrrr",                 NULL },
+	{ SIG_UNTIL_SCI21MID, 18, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
 
-	// SCI2.1 Late + SCI3 - kStringDup + kStringGetData were removed
-	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLen),                 "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringPrintf),              "[or](.*)",             NULL },
-	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringPrintfBuf),           "[or](.*)",             NULL },
-	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringAtoi),                "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "[or]i",                NULL },
-	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringUpper),               "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE,14, MAP_CALL(StringLower),               "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE,15, MAP_CALL(StringTrn),                 "[or]",                 NULL },
-	{ SIG_SINCE_SCI21LATE,16, MAP_CALL(StringTrnExclude),          "[or]",                 NULL },
+	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLength),              "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "r.*",                  NULL },
+	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "rr.*",                 NULL },
+	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringToInteger),           "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "ri(i)",                NULL },
+	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringToUpperCase),         "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE,14, MAP_CALL(StringToLowerCase),         "r",                    NULL },
+	{ SIG_SINCE_SCI21LATE,15, MAP_CALL(StringReplaceSubstring),    "rrrr",                 NULL },
+	{ SIG_SINCE_SCI21LATE,16, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -811,7 +823,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  kArray_subops,   NULL },
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },

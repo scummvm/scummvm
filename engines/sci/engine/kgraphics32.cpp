@@ -317,7 +317,7 @@ reg_t kText(EngineState *s, int argc, reg_t *argv) {
 reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText32->setFont(argv[2].toUint16());
 
-	reg_t *rect = s->_segMan->derefRegPtr(argv[0], 4);
+	SciArray *rect = s->_segMan->lookupArray(argv[0]);
 	if (rect == nullptr) {
 		error("kTextSize: %04x:%04x cannot be dereferenced", PRINT_REG(argv[0]));
 	}
@@ -327,10 +327,14 @@ reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
 	bool doScaling = argc > 4 ? argv[4].toSint16() : true;
 
 	Common::Rect textRect = g_sci->_gfxText32->getTextSize(text, maxWidth, doScaling);
-	rect[0] = make_reg(0, textRect.left);
-	rect[1] = make_reg(0, textRect.top);
-	rect[2] = make_reg(0, textRect.right - 1);
-	rect[3] = make_reg(0, textRect.bottom - 1);
+
+	reg_t value[4] = {
+		make_reg(0, textRect.left),
+		make_reg(0, textRect.top),
+		make_reg(0, textRect.right - 1),
+		make_reg(0, textRect.bottom - 1) };
+
+	rect->setElements(0, 4, value);
 	return s->r_acc;
 }
 
