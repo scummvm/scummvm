@@ -191,8 +191,8 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		case Common::KEYCODE_7:
 		case Common::KEYCODE_8:
 		case Common::KEYCODE_9:
-			newSelection = topIndex + (_buttonValue == Common::KEYCODE_0) ? 9 :
-				(_buttonValue - Common::KEYCODE_1);
+			newSelection = topIndex + ((_buttonValue == Common::KEYCODE_0) ? 9 :
+				(_buttonValue - Common::KEYCODE_1));
 
 			if (newSelection < (int)_spells.size()) {
 				int expenseFactor = 0;
@@ -224,6 +224,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					break;
 				}
 
+				warning("TODO: category -> SPELLS_ALLOWED category value");
 				int spellId = _spells[newSelection]._spellId;
 				int spellIndex = _spells[newSelection]._spellIndex;
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
@@ -233,7 +234,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					Common::String spellName = _spells[newSelection]._name;
 					Common::String msg = (castingCopy & 0x80) ?
 						Common::String::format(SPELLS_PRESS_A_KEY, msg.c_str()) :
-						Common::String::format(SPELLS_PURCHASE, msg.c_str(), spellCost);
+						Common::String::format(SPELLS_PURCHASE, spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {
 						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {

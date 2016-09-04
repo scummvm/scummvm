@@ -37,10 +37,10 @@ public:
 	virtual void addDirtyRect(const Common::Rect &r) {}
 public:
 	XSurface();
-	XSurface(int w, int h);
+	XSurface(int width, int height);
 	virtual ~XSurface();
 
-	void create(uint16 w_, uint16 h_);
+	void create(uint16 width, uint16 height);
 
 	void create(XSurface *s, const Common::Rect &bounds);
 

@@ -525,6 +525,8 @@ void InterfaceMap::drawMap() {
 			_outdoorList[116]._sprites = nullptr;
 			_outdoorList[117]._sprites = nullptr;
 			monsterIndex = 3;
+		} else {
+			monsterIndex = 0;
 		}
 
 		drawOutdoors();
@@ -1157,7 +1159,7 @@ void InterfaceMap::setMazeBits() {
 		++_wo[143];
 		break;
 	case 9:
-		++_wo[3033];
+		++_wo[303];
 		break;
 	case 10:
 		++_wo[243];

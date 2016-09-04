@@ -335,8 +335,8 @@ void XeenEngine::gameLoop() {
 }
 
 Common::String XeenEngine::printMil(uint value) {
-	return (value >= 1000000) ? Common::String::format("%lu mil", value / 1000000) :
-		Common::String::format("%lu", value);
+	return (value >= 1000000) ? Common::String::format("%u mil", value / 1000000) :
+		Common::String::format("%u", value);
 }
 
 Common::String XeenEngine::printK(uint value) {

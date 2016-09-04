@@ -56,7 +56,6 @@ public:
 
 class SoundManager {
 private:
-	XeenEngine *_vm;
 	Audio::Mixer *_mixer;
 public:
 	SoundManager(XeenEngine *vm, Audio::Mixer *mixer);

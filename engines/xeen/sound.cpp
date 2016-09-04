@@ -47,7 +47,7 @@ void VOC::stop() {
 
 /*------------------------------------------------------------------------*/
 
-SoundManager::SoundManager(XeenEngine *vm, Audio::Mixer *mixer): _vm(vm), _mixer(mixer) {
+SoundManager::SoundManager(XeenEngine *vm, Audio::Mixer *mixer): _mixer(mixer) {
 }
 
 void SoundManager::proc2(Common::SeekableReadStream &f) {

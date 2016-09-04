@@ -33,9 +33,8 @@ namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
-		_priorGameCounterTime(0), _keyCode(Common::KEYCODE_INVALID),
-		_leftButton(false), _rightButton(false),
-		_sprites("mouse.icn") {
+		_leftButton(false), _rightButton(false), _sprites("mouse.icn"),
+		_keyCode(Common::KEYCODE_INVALID) {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 

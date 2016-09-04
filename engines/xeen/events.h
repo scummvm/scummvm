@@ -40,7 +40,6 @@ private:
 	uint32 _priorFrameCounterTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
-	uint32 _priorGameCounterTime;
 	Common::KeyCode _keyCode;
 	SpriteResource _sprites;
 

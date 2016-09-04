@@ -31,7 +31,7 @@
 namespace Xeen {
 
 #define MAX_NUM_MONSTERS 107
-#define PARTY_AND_MONSTERS 11
+#define PARTY_AND_MONSTERS 12
 
 enum DamageType {
 	DT_PHYSICAL = 0, DT_MAGICAL = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,

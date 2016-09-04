@@ -31,7 +31,8 @@ namespace Xeen {
 XSurface::XSurface() : Graphics::Surface(), _freeFlag(false) {
 }
 
-XSurface::XSurface(int w, int h) : Graphics::Surface(), _freeFlag(false) {
+XSurface::XSurface(int width, int height) : Graphics::Surface(),
+		_freeFlag(false) {
 	create(w, h);
 }
 
@@ -40,8 +41,8 @@ XSurface::~XSurface() {
 		free();
 }
 
-void XSurface::create(uint16 w_, uint16 h_) {
-	Graphics::Surface::create(w_, h_, Graphics::PixelFormat::createFormatCLUT8());
+void XSurface::create(uint16 width, uint16 height) {
+	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 	_freeFlag = true;
 }
 

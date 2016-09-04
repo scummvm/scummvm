@@ -1172,7 +1172,7 @@ void Scripts::cmdGiveEnchanted(Common::Array<byte> &params) {
 			cmdNoAction(params);
 			return;
 		} else {
-			party._gameFlags[6 + params[0]]++;
+			party._gameFlags[6 + params[0]] = true;
 		}
 	}
 
@@ -1435,7 +1435,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 
 		// Check if the character class can cast the particular spell
 		for (int idx = 0; idx < 39; ++idx) {
-			if (SPELLS_ALLOWED[mode][idx] == mask) {
+			if (SPELLS_ALLOWED[category][idx] == mask) {
 				// Can cast it. Check if the player has it in their spellbook
 				if (ps._spells[idx])
 					v = mask;
