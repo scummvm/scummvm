@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2016-09-04 23:16+0100\n"
-"PO-Revision-Date: 2016-09-04 23:20+0100\n"
+"PO-Revision-Date: 2016-09-05 00:40+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
 "Language: fr_FR\n"
@@ -1192,7 +1192,7 @@ msgstr "Espace utilisé par les sauvegardes de ScummVM sur ce stockage."
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr "Dernière synchronisation :"
+msgstr "Synchronisé :"
 
 #: gui/options.cpp:1314
 msgid "When the last saves sync for this storage occured"
@@ -1226,7 +1226,7 @@ msgstr "Ouvrir le gestionnaire de téléchargement"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr "Démarrer le serveur"
+msgstr "Démarrer serveur"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
@@ -1319,7 +1319,7 @@ msgstr "<jamais>"
 
 #: gui/options.cpp:1956
 msgid "Stop server"
-msgstr "Arrêter le serveur"
+msgstr "Arrêter serveur"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
@@ -1480,15 +1480,15 @@ msgstr "Assistant de Connexion pour %s"
 
 #: gui/storagewizarddialog.cpp:59
 msgid "Navigate to the following URL:"
-msgstr "Accédez à l'URL ci-après :"
+msgstr "Accédez à l'URL ci-dessous :"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "Obtain the code from the storage, enter it"
-msgstr "Obtenez le code du service de stockage, entrez le dans"
+msgstr "Obtenez le code du service de stockage, entrez le"
 
 #: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr "le champ de texte suivant et cliquez sur 'Se connecter' :"
+msgstr "ci-dessous et cliquez sur 'Se connecter' :"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Open URL"
