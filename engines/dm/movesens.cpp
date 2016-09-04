@@ -503,10 +503,8 @@ bool MovesensMan::isLevitating(Thing thing) {
 	bool retVal = false;
 	if (thingType == k4_GroupThingType)
 		retVal = getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), k0x0020_MaskCreatureInfo_levitation);
-	else if (thingType == k14_ProjectileThingType)
-		/* BUG0_26 An explosion may fall in a pit. If a pit is opened while there is an explosion above then the explosion
-		falls into the pit in getMoveResult(). Explosions are not considered as levitating so they are moved when the pit
-		is opened. This function should return true for explosions */
+	else if ((thingType == k14_ProjectileThingType) || (thingType == k15_ExplosionThingType))
+	// Fix original bug involving explosions falling in pits
 		retVal = true;
 
 	return retVal;
