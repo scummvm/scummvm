@@ -346,7 +346,7 @@ MessageQueue *AniHandler::makeRunQueue(MakeQueueStruct *mkQueue) {
 	ExCommand2 *ex2;
 
 	for (int i = subIdx; i != st2idx;) {
-		MGMSubItem *s = _items[itemIdx]->subItems[i + subOffset * _items[itemIdx]->statics.size()];
+		MGMSubItem *s = _items[itemIdx]->subItems[i + st2idx * _items[itemIdx]->statics.size()];
 
 		ex2 = createCommand(s->movement, mkQueue->ani->_id, x1, y1, &x2, &y2, -1);
 		ex2->_parId = mq->_id;
