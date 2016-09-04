@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Auswählen"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Verzeichnis mit Spieldateien auswählen"
+msgstr "Wählen Sie das Verzeichnis, in welches die Spieldaten heruntergeladen werden sollen"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -88,30 +87,32 @@ msgstr "Verzeichnis mit Spieldateien auswählen"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Von:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Nach:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Download abbrechen"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Download abbr."
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Verstecken"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Ihre Internetverbindung ist scheinbar eingeschränkt. Möchten Sie wirklich "
+"die Dateien herunterladen?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -146,6 +147,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Kann kein Verzeichnis zum Herunterladen erstellen - das gewählte Verzeichnis "
+"beinhaltet eine Datei mit dem gleichen Namen."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -173,11 +176,13 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" existiert im gewählten Verzeichnis bereits.\n"
+"Möchten Sie wirklich die Dateien in das gewählte Verzeichnis herunterladen?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "%s %s / %s %s heruntergeladen"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -406,6 +411,8 @@ msgid ""
 "Saves sync feature doesn't work with non-default directories. If you want "
 "your saves to sync, use default directory."
 msgstr ""
+"Spielstand-Synchronisierung funktioniert nicht mit anderen Verzeichnissen. Wenn Sie"
+"Ihre Spielstände synchronisieren möchten, verwenden Sie das Standard-Verzeichnis."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -694,7 +701,7 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Dieses Verzeichnis kann noch nicht verwendet werden, da noch Dateien heruntergeladen werden!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -1148,24 +1155,24 @@ msgstr "Jetzt prüfen"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Cloud-Speicher:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Aktiver Cloud-Speicher"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<keiner>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1173,101 +1180,96 @@ msgstr "Benutzername:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Benutzername, der von diesem Cloud-Speicher verwendet wird"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Belegter Speicher:"
 
 #: gui/options.cpp:1311
 msgid "Space used by ScummVM's saves on this storage"
-msgstr ""
+msgstr "Von ScummVM-Spielständen beleger Speicherplatz auf diesem Cloud-Speicher"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Letzte Sync.:"
 
 #: gui/options.cpp:1314
 msgid "When this storage did saves sync last time"
-msgstr ""
+msgstr "Zeitpunkt der letzten Synchronisierung dieses Cloud-Speichers"
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
 msgid "Connect"
-msgstr ""
+msgstr "Verbinden"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Öffnet den Assistent, der Sie durch die Einrichtung Ihres Cloud-Speichers führt."
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Aktualisiert die Informationen über diesen Cloud-Speicher (Benutzername und Belegung)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Downloads"
-msgstr "Runter"
+msgstr "Downloads"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Öffnet den Download-Manager"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Server starten"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Startet den lokalen Webserver"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Fehler beim Ausführen des Spiels:"
+msgstr "Nicht gestartet"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Extras:"
+msgstr "/root/-Pfad:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies where Files Manager can access to"
-msgstr "Legt fest, wo die Spielstände gespeichert werden."
+msgstr "Legt fest, auf welches Verzeichnis der Dateimanager zugreifen darf."
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Extras:"
+msgstr "/root/-Pfad:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Server-Port:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Legt den Port für den Server fest.\n"
+"Authentifizierung mit dem Server ist nicht verfügbar, wenn ein anderer Port verwendet wird."
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Sie müssen ScummVM neu starten, damit die Änderungen wirksam werden."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Konnte Spielstand nicht speichern."
+msgstr "Konnte den Cloud-Speicher nicht ändern!"
 
 #: gui/options.cpp:1524
 msgid "Current cloud storage is working at the moment."
-msgstr ""
+msgstr "Der aktuelle Cloud-Speicher arbeitet gerade."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1288,9 +1290,8 @@ msgid "Select directory for plugins"
 msgstr "Verzeichnis für Erweiterungen auswählen"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Verzeichnis für zusätzliche Dateien auswählen"
+msgstr "Wählen Sie das Verzeichnis aus, welches als Stammverzeichnis ('root') dient"
 
 # Nicht übersetzen, da diese Nachricht nur für nicht-lateinische Sprachen relevant ist.
 #: gui/options.cpp:1666
@@ -1305,31 +1306,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu Bytes"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<gerade eben>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "nie"
+msgstr "<nie>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Server anhalten"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Lokalen Webserver anhalten"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Anfrage fehlgeschlagen.\n"
+"Bitte überprüfen Sie Ihre Internetverbindung."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1403,9 +1404,8 @@ msgid "Unknown Author"
 msgstr "Unbekannter Autor"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM couldn't list the directory!"
-msgstr "ScummVM konnte das gewählte Verzeichnis nicht öffnen!"
+msgstr "ScummVM konnte das gewählte Verzeichnis nicht anzeigen!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1475,72 +1475,73 @@ msgstr "Geben Sie eine Beschreibung für Speicherplatz %d ein:"
 #: gui/storagewizarddialog.cpp:56
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Verbindungs-Assistent für %s"
 
 #: gui/storagewizarddialog.cpp:59
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Rufen Sie folgende URL auf:"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Geben Sie den Code, den Sie von Ihrem Cloud-Speicher bekommen haben,"
 
 #: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "geben Sie Ihn in das folgende Feld ein und klicken Sie auf 'Verbinden':"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "URL öffnen"
 
 #: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Einfügen"
 
 #: gui/storagewizarddialog.cpp:71
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Fügt den Inhalt der Zwischenablage in die Felder ein"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "You would be navigated to ScummVM's page"
-msgstr ""
+msgstr "Sie werden zur Webseite von ScummVM weitergeleitet,"
 
 #: gui/storagewizarddialog.cpp:80
 msgid "when you'd allow it to use your storage."
-msgstr ""
+msgstr "wenn Sie die Verwendung der Cloud erlauben."
 
 #: gui/storagewizarddialog.cpp:113
 msgid "The other Storage is working. Do you want to interrupt it?"
-msgstr ""
+msgstr "Der andere Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
 #: gui/storagewizarddialog.cpp:122
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Warten Sie, bis der Cloud-Speicher fertig ist und versuchen Sie es erneut."
 
 #: gui/storagewizarddialog.cpp:183
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Fehler in Feld %s."
 
 #: gui/storagewizarddialog.cpp:185
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Fehler in den Feldern %s"
 
 #: gui/storagewizarddialog.cpp:200
 msgid "All OK!"
-msgstr ""
+msgstr "Alles OK!"
 
 #: gui/storagewizarddialog.cpp:202
 msgid "Invalid code"
-msgstr ""
+msgstr "Code ungültig"
 
 #: gui/storagewizarddialog.cpp:210
 msgid ""
 "Failed to open URL!\n"
 "You should navigate there manually then."
 msgstr ""
+"Fehler beim Öffnen der URL!\n"
+"Sie sollten die URL manuell aufrufen."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -2025,19 +2026,20 @@ msgid "C64 Audio Emulator"
 msgstr "C64-Audio-Emulator"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
 msgid "Saves sync complete."
-msgstr "Suchlauf abgeschlossen!"
+msgstr "Spielstände synchronisiert."
 
 #: backends/cloud/storage.cpp:221
 msgid "Saves sync was cancelled."
-msgstr ""
+msgstr "Spielstand-Synchronisierung abgebrochen"
 
 #: backends/cloud/storage.cpp:223
 msgid ""
 "Saves sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Spielstand-Synchronisierung fehlgeschlagen.\n"
+"Überprüfen Sie Ihre Internetverbindung."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2045,16 +2047,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Download abgeschlossen.\n"
+"%u Dateien konnten nicht heruntergeladen werden."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Suchlauf abgeschlossen!"
+msgstr "Download abgeschlossen."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Datei laden"
+msgstr "Download fehlgeschlagen."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
