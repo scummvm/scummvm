@@ -511,116 +511,108 @@ bool MovesensMan::isLevitating(Thing thing) {
 }
 
 bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY, Thing thing) {
-	Thing L0697_T_Thing;
-	uint16 L0699_ui_Multiple;
-#define AL0699_ui_Cell                      L0699_ui_Multiple
-#define AL0699_ui_PrimaryDirection          L0699_ui_Multiple
-#define AL0699_ui_ChampionOrCreatureOrdinal L0699_ui_Multiple
-	int16 L0700_i_Multiple;
-#define AL0700_B_CreatureAlive      L0700_i_Multiple
-#define AL0700_i_Distance           L0700_i_Multiple
-#define AL0700_i_SecondaryDirection L0700_i_Multiple
-	Group *L0701_ps_Group;
-	int16 L0702_i_ImpactType;
-	bool L0703_B_CheckDestinationSquareProjectileImpacts;
-	uint16 L0704_ui_ProjectileMapX;
-	uint16 L0705_ui_ProjectileMapY;
-	byte L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[4]; /* This array is used only when moving between two adjacent squares and is used to test projectile impacts when the party or group is in the 'intermediary' step between the two squares. Without this test, in the example below no impact would be detected. In this example, the party moves from the source square on the left (which contains a single champion at cell 2) to the destination square on the right (which contains a single projectile at cell 3).
-																			Party:      Projectiles on target square:   Incorrect result without the test for the intermediary step (the champion would have passed through the projectile without impact):
-																			00    ->    00                         00
-																			01          P0                         P1 */
-	byte L0707_auc_ChampionOrCreatureOrdinalInCell[4]; /* This array has an entry for each cell on the source square, containing the ordinal of the champion or creature (0 if there is no champion or creature at this cell) */
+	/* This array is used only when moving between two adjacent squares and is used to test projectile
+	impacts when the party or group is in the 'intermediary' step between the two squares. Without
+	this test, in the example below no impact would be detected. In this example, the party moves from
+	the source square on the left (which contains a single champion at cell 2) to the destination square
+	on the right (which contains a single projectile at cell 3).
+	Party:      Projectiles on target square:   Incorrect result without the test for the intermediary step (the champion would have passed through the projectile without impact):
+	00    ->    00                         00
+	01          P0                         P1 */
+	byte intermediaryChampionOrCreatureOrdinalInCell[4]; 
 
+	/* This array has an entry for each cell on the source square, containing the ordinal of the champion
+	or creature (0 if there is no champion or creature at this cell) */
+	byte championOrCreatureOrdinalInCell[4];
 
-	L0703_B_CheckDestinationSquareProjectileImpacts = false;
+	bool checkDestinationSquareProjectileImpacts = false;
 	for (int16 i = 0; i < 4; ++i)
-		L0707_auc_ChampionOrCreatureOrdinalInCell[i] = 0;
+		championOrCreatureOrdinalInCell[i] = 0;
+
+	SquareType impactType;
 	if (thing == Thing::_party) {
-		L0702_i_ImpactType = kM2_ChampionElemType;
-		for (AL0699_ui_Cell = k0_CellNorthWest; AL0699_ui_Cell < k3_CellSouthWest + 1; AL0699_ui_Cell++) {
-			if (_vm->_championMan->getIndexInCell((ViewCell)AL0699_ui_Cell) >= 0) {
-				L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_Cell] = _vm->indexToOrdinal(AL0699_ui_Cell);
-			}
+		impactType = kM2_ChampionElemType;
+		for (uint16 cellIdx = k0_CellNorthWest; cellIdx < k3_CellSouthWest + 1; cellIdx++) {
+			if (_vm->_championMan->getIndexInCell((ViewCell)cellIdx) >= 0)
+				championOrCreatureOrdinalInCell[cellIdx] = _vm->indexToOrdinal(cellIdx);
 		}
 	} else {
-		L0702_i_ImpactType = kM1_CreatureElemType;
-		L0701_ps_Group = (Group *)_vm->_dungeonMan->getThingData(thing);
-		for (AL0699_ui_Cell = k0_CellNorthWest, AL0700_B_CreatureAlive = false; AL0699_ui_Cell < k3_CellSouthWest + 1; AL0699_ui_Cell++) {
-			AL0700_B_CreatureAlive |= L0701_ps_Group->_health[AL0699_ui_Cell];
-			if (_vm->_groupMan->getCreatureOrdinalInCell(L0701_ps_Group, AL0699_ui_Cell)) {
-				L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_Cell] = _vm->indexToOrdinal(AL0699_ui_Cell);
-			}
+		impactType = kM1_CreatureElemType;
+		Group *curGroup = (Group *)_vm->_dungeonMan->getThingData(thing);
+		int16 creatureAlive = 0;
+		for (uint16 cellIdx = k0_CellNorthWest; cellIdx < k3_CellSouthWest + 1; cellIdx++) {
+			creatureAlive |= curGroup->_health[cellIdx];
+			if (_vm->_groupMan->getCreatureOrdinalInCell(curGroup, cellIdx))
+				championOrCreatureOrdinalInCell[cellIdx] = _vm->indexToOrdinal(cellIdx);
 		}
-		if (!AL0700_B_CreatureAlive) {
+		if (!creatureAlive)
 			return false;
-		}
 	}
-	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) { /* If source and destination squares are adjacent (if party or group is not being teleported) */
-		AL0699_ui_PrimaryDirection = _vm->_groupMan->getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
-		AL0700_i_SecondaryDirection = returnNextVal(AL0699_ui_PrimaryDirection);
+	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) {
+		/* If source and destination squares are adjacent (if party or group is not being teleported) */
+		int16 primaryDirection = _vm->_groupMan->getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
+		int16 secondaryDirection = returnNextVal(primaryDirection);
 		for (int16 i = 0; i < 4; ++i)
-			L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[i] = 0;
+			intermediaryChampionOrCreatureOrdinalInCell[i] = 0;
 
-		L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection];
-		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)]) {
-			L0703_B_CheckDestinationSquareProjectileImpacts = true;
-		}
+		intermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)] = championOrCreatureOrdinalInCell[primaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)])
+			checkDestinationSquareProjectileImpacts = true;
 
-		L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)] = L0707_auc_ChampionOrCreatureOrdinalInCell[AL0700_i_SecondaryDirection];
-		if (L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)]) {
-			L0703_B_CheckDestinationSquareProjectileImpacts = true;
-		}
-		if (!L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection]) {
-			L0707_auc_ChampionOrCreatureOrdinalInCell[AL0699_ui_PrimaryDirection] = L0707_auc_ChampionOrCreatureOrdinalInCell[returnPrevVal(AL0699_ui_PrimaryDirection)];
-		}
-		if (!L0707_auc_ChampionOrCreatureOrdinalInCell[AL0700_i_SecondaryDirection]) {
-			L0707_auc_ChampionOrCreatureOrdinalInCell[AL0700_i_SecondaryDirection] = L0707_auc_ChampionOrCreatureOrdinalInCell[returnNextVal(AL0700_i_SecondaryDirection)];
-		}
+		intermediaryChampionOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)] = championOrCreatureOrdinalInCell[secondaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)])
+			checkDestinationSquareProjectileImpacts = true;
+
+		if (!championOrCreatureOrdinalInCell[primaryDirection])
+			championOrCreatureOrdinalInCell[primaryDirection] = championOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)];
+
+		if (!championOrCreatureOrdinalInCell[secondaryDirection])
+			championOrCreatureOrdinalInCell[secondaryDirection] = championOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)];
 	}
-	L0704_ui_ProjectileMapX = srcMapX; /* Check impacts with projectiles on the source square */
-	L0705_ui_ProjectileMapY = srcMapY;
+	uint16 projectileMapX = srcMapX; /* Check impacts with projectiles on the source square */
+	uint16 projectileMapY = srcMapY;
 T0266017_CheckProjectileImpacts:
-	L0697_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0704_ui_ProjectileMapX, L0705_ui_ProjectileMapY);
-	while (L0697_T_Thing != Thing::_endOfList) {
-		if (((L0697_T_Thing).getType() == k14_ProjectileThingType) &&
-			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(L0697_T_Thing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts) && (AL0699_ui_ChampionOrCreatureOrdinal = L0707_auc_ChampionOrCreatureOrdinalInCell[(L0697_T_Thing).getCell()]) &&
-			_vm->_projexpl->hasProjectileImpactOccurred(L0702_i_ImpactType, srcMapX, srcMapY, _vm->ordinalToIndex(AL0699_ui_ChampionOrCreatureOrdinal), L0697_T_Thing)) {
-			_vm->_projexpl->projectileDeleteEvent(L0697_T_Thing);
-			if (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup) {
-				return true;
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(projectileMapX, projectileMapY);
+	while (curThing != Thing::_endOfList) {
+		if (((curThing).getType() == k14_ProjectileThingType) &&
+			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[k14_ProjectileThingType])[(curThing).getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts)) {
+			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
+			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
+				_vm->_projexpl->projectileDeleteEvent(curThing);
+				if (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)
+					return true;
+
+				goto T0266017_CheckProjectileImpacts;
 			}
-			goto T0266017_CheckProjectileImpacts;
 		}
-		L0697_T_Thing = _vm->_dungeonMan->getNextThing(L0697_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
-	if (L0703_B_CheckDestinationSquareProjectileImpacts) {
-		srcMapX |= ((L0704_ui_ProjectileMapX = destMapX) + 1) << 8; /* Check impacts with projectiles on the destination square */
-		srcMapY |= (L0705_ui_ProjectileMapY = destMapY) << 8;
+	if (checkDestinationSquareProjectileImpacts) {
+		srcMapX |= ((projectileMapX = destMapX) + 1) << 8; /* Check impacts with projectiles on the destination square */
+		srcMapY |= (projectileMapY = destMapY) << 8;
 		for (uint16 i = 0; i < 4; ++i)
-			L0707_auc_ChampionOrCreatureOrdinalInCell[i] = L0706_auc_IntermediaryChampionOrCreatureOrdinalInCell[i];
-		L0703_B_CheckDestinationSquareProjectileImpacts = false;
+			championOrCreatureOrdinalInCell[i] = intermediaryChampionOrCreatureOrdinalInCell[i];
+		checkDestinationSquareProjectileImpacts = false;
 		goto T0266017_CheckProjectileImpacts;
 	}
 	return false;
 }
 
 void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effect, int32 time) {
-	TimelineEvent L0729_s_Event;
-
-	setMapAndTime(L0729_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, time);
-	L0729_s_Event._type = type;
-	L0729_s_Event._priority = 0;
-	L0729_s_Event._B._location._mapX = mapX;
-	L0729_s_Event._B._location._mapY = mapY;
-	L0729_s_Event._C.A._cell = cell;
-	L0729_s_Event._C.A._effect = effect;
-	_vm->_timeline->addEventGetEventIndex(&L0729_s_Event);
+	TimelineEvent newEvent;
+	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
+	newEvent._type = type;
+	newEvent._priority = 0;
+	newEvent._B._location._mapX = mapX;
+	newEvent._B._location._mapY = mapY;
+	newEvent._C.A._cell = cell;
+	newEvent._C.A._effect = effect;
+	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 
 int16 MovesensMan::getSound(byte creatureType) {
-	if (_vm->_championMan->_partyIsSleeping) {
+	if (_vm->_championMan->_partyIsSleeping)
 		return 35;
-	}
 
 	switch (creatureType) {
 	case k3_CreatureTypeWizardEyeFlyingEye:
@@ -659,7 +651,8 @@ int16 MovesensMan::getSound(byte creatureType) {
 	case k17_CreatureTypeGiantWaspMuncher:
 		return k23_soundMOVE_COUATL_GIANT_WASP_MUNCHER;
 	}
-	return -1000; // if this is returned, it's an error, this should break it good
+
+	return 35;
 }
 
 int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex) {
