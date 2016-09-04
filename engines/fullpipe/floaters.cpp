@@ -136,7 +136,7 @@ void Floaters::update() {
 				int dy = _array2[i]->val3 - _array2[i]->val5;
 				int dx = _array2[i]->val2 - _array2[i]->val4;
 				double dst = sqrt((double)(dy * dy + dx * dx));
-				double at = atan2((double)dx, (double)dy);
+				double at = atan2((double)dy, (double)dx);
 				int newX = (int)(cos(at) * _array2[i]->val9);
 				int newY = (int)(sin(at) * _array2[i]->val9);
 
