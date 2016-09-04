@@ -196,7 +196,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 	int qId = 0;
 
 	switch (ani->_okeyCode) {
-    case 0:
+	case 0:
 		if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Closed))
 			qId = QU_SC26_OPEN1;
 		else
@@ -204,7 +204,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 		break;
 
-    case 1:
+	case 1:
 		if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Closed))
 			qId = QU_SC26_OPEN2;
 		else
@@ -212,7 +212,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 		break;
 
-    case 2:
+	case 2:
 		if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Closed))
 			qId = QU_SC26_OPEN3;
 		else
@@ -220,7 +220,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 		break;
 
-    case 3:
+	case 3:
 		if (g_fp->getObjectState(sO_Valve4_26) == g_fp->getObjectEnumState(sO_Valve4_26, sO_Closed))
 			qId = QU_SC26_OPEN4;
 		else
@@ -228,7 +228,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 		break;
 
-    case 4:
+	case 4:
 		if (g_fp->getObjectState(sO_Valve5_26) == g_fp->getObjectEnumState(sO_Valve5_26, sO_Closed))
 			qId = QU_SC26_OPEN5;
 		else
@@ -236,7 +236,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 
 		break;
 
-    default:
+	default:
 		return;
 	}
 

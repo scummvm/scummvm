@@ -299,7 +299,7 @@ void Inventory2::draw() {
 			else
 				icn->pictureObjectNormal->drawAt(icn->x1, icn->y1 + 10);
 		}
-    }
+	}
 
 	if (!_isInventoryOut)
 		goto LABEL_30;
@@ -434,7 +434,7 @@ bool Inventory2::unselectItem(bool flag) {
 	for (uint i = 0; i < _inventoryIcons.size(); i++) {
 		if (_inventoryIcons[i]->isSelected)
 			_inventoryIcons[i]->isSelected = false;
-   }
+	}
 
 	g_fp->getGameLoaderInputController()->setCursorItemPicture(0);
 
@@ -470,7 +470,7 @@ int Inventory2::getHoveredItem(Common::Point *point) {
 			icn->isMouseHover = true;
 			return icn->inventoryItemId;
 		}
-    }
+	}
 
 	return 0;
 }

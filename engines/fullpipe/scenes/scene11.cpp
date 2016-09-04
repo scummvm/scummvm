@@ -139,7 +139,7 @@ void scene11_initScene(Scene *sc) {
 
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->replaceNodeX(303, 353);
 	} else if (swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-			   || swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
+				|| swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = true;
 
@@ -315,8 +315,8 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 	g_vars->scene11_dudeOnSwing->_flags |= 4;
 
-    MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
-    ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 	ex->_field_14 = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
@@ -551,7 +551,7 @@ void sceneHandler11_swingieSit() {
 }
 
 void sceneHandler11_swingieJumpDown() {
-    MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
 
@@ -590,7 +590,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case MSG_SC11_SITSWINGER:
 		if (g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-			    || g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
+				|| g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
 			g_fp->setObjectState(sO_Swingie, g_fp->getObjectEnumState(sO_Swingie, sO_IsSitting));
 		}
 		break;

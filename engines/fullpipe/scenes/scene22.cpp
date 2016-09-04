@@ -55,7 +55,7 @@ void scene22_initScene(Scene *sc) {
 		g_vars->scene22_numBagFalls = 2;
 	else {
 		g_vars->scene22_numBagFalls = 3;
-        g_vars->scene22_craneIsOut = false;
+		g_vars->scene22_craneIsOut = false;
 	}
 
 

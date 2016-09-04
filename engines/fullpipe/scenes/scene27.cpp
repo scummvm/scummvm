@@ -297,10 +297,10 @@ void sceneHandler27_startAiming() {
 
 	int phase = 21 - g_vars->scene27_launchPhase;
 
-    if (phase < 14)
+	if (phase < 14)
 		phase = 14;
 
-    if (phase > 20)
+	if (phase > 20)
 		phase = 20;
 
 	g_fp->playSound(SND_27_044, 0);
@@ -334,7 +334,7 @@ void sceneHandler27_wipeDo() {
 			g_vars->scene27_bats[i]->field_10 = atan2(520.0 - g_vars->scene27_bats[i]->currY, 800.0 - g_vars->scene27_bats[i]->currX);
 			g_vars->scene27_bats[i]->power += 1.0;
 		}
-    }
+	}
 }
 
 bool sceneHandler27_batFallLogic(uint batn) {
@@ -352,9 +352,9 @@ bool sceneHandler27_batFallLogic(uint batn) {
 
 		if (batn != g_vars->scene27_var07.size() - 1)
 			g_vars->scene27_var07.remove_at(batn);
-    } else if (!bat->ani->_movement) {
+	} else if (!bat->ani->_movement) {
 		bat->ani->startAnim(MV_BTA_FALL, 0, -1);
-    }
+	}
 
 	return true;
 }
@@ -386,7 +386,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		bat1->powerSin -= pow1y * 1.1;
 
 		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
-							   + atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
+								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
 		double pow2x = cos(bat2->field_10 - rndF) * (double)((int)(bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
 		double pow2y = sin(bat2->field_10 - rndF) * (double)((int)(bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
 
@@ -394,7 +394,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		bat2->powerSin -= pow2y * 1.1;
 
 		double dy = bat1->currY - bat2->currY;
-	    double dx = bat1->currX - bat2->currX;
+		double dx = bat1->currX - bat2->currX;
 		double dist = (sqrt(rndSin * rndSin * 0.25 + rndCos * rndCos) * 54.0 - sqrt(dx * dx + dy * dy)) / cos(rndF - bat1->field_10);
 		bat1->currX -= cos(bat1->field_10) * (dist + 1.0);
 		bat1->currY -= sin(bat1->field_10) * (dist + 1.0);

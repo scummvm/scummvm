@@ -1058,7 +1058,7 @@ void ModalMainMenu::updateSoundVolume(Sound *snd) {
 				dx = ani->_oy - _screct.bottom;
 			}
 
-		    par = 0;
+			par = 0;
 
 			if (dx > 800) {
 				snd->setPanAndVolume(-3500, 0);

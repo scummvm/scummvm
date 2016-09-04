@@ -133,7 +133,7 @@ int sceneHandler07(ExCommand *ex) {
 
 		break;
 
-    case MSG_SC7_CLOSELUKE:
+	case MSG_SC7_CLOSELUKE:
 		sceneHandler07_closeLuke();
 		break;
 

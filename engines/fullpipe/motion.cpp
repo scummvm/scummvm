@@ -630,7 +630,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 	mkQueue.flags = 14;
 	mkQueue.movementId = _ladmovements[pos]->movVars->varDownGo;
 
-   return _aniHandler.makeRunQueue(&mkQueue);
+	return _aniHandler.makeRunQueue(&mkQueue);
 }
 
 MessageQueue *MctlLadder::controllerWalkTo(StaticANIObject *ani, int off) {
@@ -2672,7 +2672,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 		mq->addExCommandToEnd(ex);
 	}
 
-    ex = new ExCommand(_items2[info->index]->_objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
+	ex = new ExCommand(_items2[info->index]->_objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
 	ex->_field_14 = info->distance2;
 
 	ex->_keyCode = _items2[info->index]->_obj->_okeyCode;

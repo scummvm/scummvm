@@ -424,7 +424,7 @@ void Scene::preloadMovements(GameVar *var) {
 				ani->loadMovementsPixelData();
 			}
 		}
-    }
+	}
 }
 
 void Scene::initObjectCursors(const char *varname) {
@@ -440,12 +440,12 @@ void Scene::initObjectCursors(const char *varname) {
 		GameObject *obj = getPictureObjectByName(sub->_varName, -1);
 
 		if (obj || (obj = getStaticANIObject1ByName(sub->_varName, -1)) != 0) {
-          if (obj->_id < minId)
-            minId = obj->_id;
-          if (obj->_id > maxId)
-            maxId = obj->_id;
-        }
-    }
+			if (obj->_id < minId)
+				minId = obj->_id;
+			if (obj->_id > maxId)
+				maxId = obj->_id;
+		}
+	}
 
 	g_fp->_minCursorId = minId;
 	g_fp->_maxCursorId = maxId;
@@ -732,7 +732,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 					break;
 			}
 		}
-    }
+	}
 
 
 	for (uint i = 1; i < _picObjList.size(); i++) {

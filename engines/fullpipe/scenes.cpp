@@ -1156,12 +1156,12 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 
 		if (pre->keyCode == TrubaLeft) {
 			updateMapPiece(PIC_MAP_P04, 1);
-	    }
+		}
 
 		if (pre->keyCode == TrubaUp) {
 			updateMapPiece(PIC_MAP_P05, 1);
 			updateMapPiece(PIC_MAP_A11, 1);
-	    }
+		}
 
 		break;
 
@@ -1433,7 +1433,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 			break;
 		}
 		break;
-    }
+	}
 }
 
 void BallChain::init(Ball **ball) {

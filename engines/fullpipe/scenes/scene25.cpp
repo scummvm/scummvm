@@ -33,7 +33,6 @@
 #include "fullpipe/interaction.h"
 #include "fullpipe/behavior.h"
 
-
 namespace Fullpipe {
 
 void scene25_showBoardOnRightFar() {
@@ -608,34 +607,34 @@ int sceneHandler25(ExCommand *cmd) {
 				if (y > g_fp->_sceneRect.bottom - 200)
 					g_fp->_currentScene->_y = y + 300 - g_fp->_sceneRect.bottom;
 			}
-        }
+		}
 
-        if (g_vars->scene25_beardersAreThere) {
+		if (g_vars->scene25_beardersAreThere) {
 			g_vars->scene25_beardersCounter++;
 
 			if (g_vars->scene25_beardersCounter >= 120)
 				sceneHandler25_animateBearders();
-        }
+		}
 
-        g_fp->_behaviorManager->updateBehaviors();
-        g_fp->startSceneTrack();
+		g_fp->_behaviorManager->updateBehaviors();
+		g_fp->startSceneTrack();
 
-        if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)
+		if (g_vars->scene25_waterIsPresent && !g_vars->scene25_water->_movement)
 			g_vars->scene25_water->startAnim(MV_WTR25_FLOW, 0, -1);
 
-        if (g_vars->scene25_dudeIsOnBoard && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
+		if (g_vars->scene25_dudeIsOnBoard && !g_fp->_aniMan->_movement && g_vars->scene25_sneezeFlipper)
 			sceneHandler25_sneeze();
 
-        g_vars->scene25_sneezeFlipper = true;
+		g_vars->scene25_sneezeFlipper = true;
 
-        if (g_vars->scene25_board->_flags & 4) {
+		if (g_vars->scene25_board->_flags & 4) {
 			if (!g_vars->scene25_board->_movement) {
 				if (g_vars->scene25_board->_statics->_staticsId & 0x4000)
 					g_vars->scene25_board->startAnim(rMV_BRD25_RIGHT, 0, -1);
 				else
 					g_vars->scene25_board->startAnim(MV_BRD25_RIGHT, 0, -1);
 			}
-        }
+		}
 		break;
 
 	case 29:

@@ -584,7 +584,7 @@ void MessageQueue::replaceKeyCode(int key1, int key2) {
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
 					&& ex->_keyCode == key1)
 			ex->_keyCode = key2;
-    }
+	}
 }
 
 int MessageQueue::calcDuration(StaticANIObject *obj) {
@@ -618,7 +618,7 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
 			 && ex->_keyCode == oldParam28
 			 && ex->_parentId == objId)
 			ex->_keyCode = newParam28;
-    }
+	}
 }
 
 int MessageQueue::activateExCommandsByKind(int kind) {

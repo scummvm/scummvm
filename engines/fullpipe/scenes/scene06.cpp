@@ -60,7 +60,7 @@ int scene06_updateCursor() {
 				return PIC_CSR_ITN;
 			}
 		} else if (g_fp->_objectAtCursor && (StaticANIObject *)g_fp->_objectAtCursor == g_vars->scene06_currentBall
-				   && g_fp->_cursorId == PIC_CSR_DEFAULT) {
+					&& g_fp->_cursorId == PIC_CSR_DEFAULT) {
 			g_fp->_cursorId = PIC_CSR_ITN;
 		}
 	}
@@ -143,19 +143,19 @@ void sceneHandler06_mumsyBallTake() {
 	int momAni = 0;
 
 	switch (g_vars->scene06_mumsyNumBalls) {
-    case 1:
+	case 1:
 		momAni = MV_MOM_TAKE1;
 		break;
-    case 2:
+	case 2:
 		momAni = MV_MOM_TAKE2;
 		break;
-    case 3:
+	case 3:
 		momAni = MV_MOM_TAKE3;
 		break;
-    case 4:
+	case 4:
 		momAni = MV_MOM_TAKE4;
 		break;
-    case 5:
+	case 5:
 		momAni = MV_MOM_TAKE5;
 		break;
 	}
@@ -361,7 +361,7 @@ void sceneHandler06_throwCallback(int *arg) {
 	if (g_vars->scene06_aimingBall) {
 		int dist = (g_fp->_mouseVirtY - g_vars->scene06_sceneClickY)
 			* (g_fp->_mouseVirtY - g_vars->scene06_sceneClickY)
-            + (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX)
+			+ (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX)
 			* (g_fp->_mouseVirtX - g_vars->scene06_sceneClickX);
 
 		*arg = (int)(sqrt((double)dist) * 0.1);

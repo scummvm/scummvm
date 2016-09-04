@@ -124,7 +124,7 @@ void sceneHandler05_makeWackoFeedback() {
 
 void sceneHandler05_resetTicks() {
 	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP
-										   || g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
+											|| g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
 		g_vars->scene05_wackoTicker = g_fp->_updateTicks;
 	else
 		g_vars->scene05_wackoTicker = 0;

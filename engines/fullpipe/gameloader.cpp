@@ -429,7 +429,7 @@ bool GameLoader::unloadScene(int sceneId) {
 	_sc2array[sceneTag]._isLoaded = 0;
 	_sc2array[sceneTag]._scene = 0;
 
-   return true;
+	return true;
 }
 
 int GameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {

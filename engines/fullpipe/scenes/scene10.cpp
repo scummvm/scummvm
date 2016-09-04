@@ -129,7 +129,7 @@ int sceneHandler10(ExCommand *ex) {
 	switch(ex->_messageNum) {
 	case MSG_LIFT_CLOSEDOOR:
 		g_fp->lift_closedoorSeq();
-        break;
+		break;
 
 	case MSG_LIFT_EXITLIFT:
 		g_fp->lift_exitSeq(ex);
@@ -144,7 +144,7 @@ int sceneHandler10(ExCommand *ex) {
 		break;
 
 	case MSG_SC10_LADDERTOBACK:
-        g_vars->scene10_ladder->_priority = 49;
+		g_vars->scene10_ladder->_priority = 49;
 		break;
 
 	case MSG_SC10_LADDERTOFORE:

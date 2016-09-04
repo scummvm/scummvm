@@ -192,7 +192,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 
 		if (src->_movements[i]->_currMovement) {
 			// WORKAROUND: Original uses weird construction here:
-			//    new Movement(getMovementById(src->getMovementIdById(mov->_id)), this);
+			//	new Movement(getMovementById(src->getMovementIdById(mov->_id)), this);
 			newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
 			newmov->_id = src->_movements[i]->_id;
 		} else {
@@ -1989,7 +1989,7 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 				return false;
 			}
 		} else if ((uint)_currDynamicPhaseIndex == _dynamicPhases.size() - 1
-				   && !(_dynamicPhases.back()->_countdown)) {
+					&& !(_dynamicPhases.back()->_countdown)) {
 			return false;
 		}
 	}

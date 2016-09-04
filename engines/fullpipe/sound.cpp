@@ -162,7 +162,7 @@ void Sound::setPanAndVolumeByStaticAni() {
 				dx = ani->_oy - g_fp->_sceneRect.bottom;
 			}
 
-		    par = 0;
+			par = 0;
 
 			if (dx > 800) {
 				setPanAndVolume(-3500, 0);

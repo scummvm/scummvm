@@ -111,15 +111,15 @@ void sceneHandler13_testClose() {
 
 void sceneHandler13_testOpen() {
 	switch (g_vars->scene13_handleR->_statics->_staticsId) {
-    case ST_HDLR_DOWN:
+	case ST_HDLR_DOWN:
 		chainQueue(QU_SC13_OPENFAIL, 1);
 		break;
 
-    case ST_HDLR_DOWN_GUM:
+	case ST_HDLR_DOWN_GUM:
 		chainQueue(QU_SC13_OPENSUCCESS, 1);
 		break;
 
-    case ST_HDLR_GUM:
+	case ST_HDLR_GUM:
 		g_vars->scene13_handleR->changeStatics2(ST_HDLR_DOWN_GUM);
 
 		chainQueue(QU_SC13_OPENSUCCESS, 1);
@@ -259,14 +259,14 @@ int sceneHandler13(ExCommand *cmd) {
 	switch(cmd->_messageNum) {
 	case MSG_SC13_OPENBRIDGE:
 		sceneHandler13_openBridge();
-        break;
+		break;
 
 	case MSG_SC13_TESTCLOSE:
 		sceneHandler13_testClose();
 		break;
 
 	case MSG_SC13_TESTOPEN:
-        sceneHandler13_testOpen();
+		sceneHandler13_testOpen();
 		break;
 
 	case MSG_SC13_CLOSEBRIDGE:

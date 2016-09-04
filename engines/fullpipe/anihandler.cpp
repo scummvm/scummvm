@@ -69,7 +69,7 @@ MessageQueue *AniHandler::makeQueue(StaticANIObject *ani, int staticsIndex, int 
 	if (!_items[idx]->subItems[subidx]->movement)
 		return 0;
 
-    MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	Common::Point point;
 	ExCommand *ex;
 

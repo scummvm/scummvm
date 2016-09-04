@@ -184,7 +184,7 @@ int sceneHandler17(ExCommand *cmd) {
 
 			g_vars->scene17_handPhase = true;
 		}
-        break;
+		break;
 
 	case MSG_SC17_FILLBOTTLE:
 		sceneHandler17_fillBottle();

@@ -440,7 +440,7 @@ void sceneHandler09_limitHangerPhase() {
 			if (g_vars->scene09_hangers[i]->phase > 0)
 				g_vars->scene09_hangers[i]->field_8--;
 		}
-    }
+	}
 }
 
 void sceneHandler09_collideBall(Ball *ball) {

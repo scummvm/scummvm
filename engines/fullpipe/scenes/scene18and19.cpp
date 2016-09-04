@@ -52,7 +52,7 @@ struct Swinger {
 #define ANGLE(x) ((x) * M_PI / 180)
 
 void scene18_preload() {
-    g_fp->_scene3 = 0;
+	g_fp->_scene3 = 0;
 
 	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {

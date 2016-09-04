@@ -809,14 +809,14 @@ int sceneHandler14(ExCommand *cmd) {
 		break;
 
 	case 29:
-        if (g_vars->scene14_arcadeIsOn) {
+		if (g_vars->scene14_arcadeIsOn) {
 			int pixel;
 
 			if (g_vars->scene14_dudeCanKick && g_fp->_aniMan->getPixelAtPos(cmd->_sceneClickX, cmd->_sceneClickY, &pixel) && !g_fp->_aniMan->_movement) {
 				sceneHandler14_dudeDecline();
 				break;
 			}
-        } else {
+		} else {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (ani && ani->_id == ANI_LIFTBUTTON) {
@@ -839,9 +839,9 @@ int sceneHandler14(ExCommand *cmd) {
 					}
 				}
 			}
-        }
+		}
 		break;
-    }
+	}
 
 	return 0;
 }

@@ -73,7 +73,7 @@ void scene20_initScene(Scene *sc) {
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_OnTheFloor)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_FLOOR);
 	} else if (g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipe)
-			   || g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
+				|| g_fp->getObjectState(sO_Grandma) == g_fp->getObjectEnumState(sO_Grandma, sO_NearPipeWithStool)) {
 		g_vars->scene20_grandma->changeStatics2(ST_GMA20_STAND);
 	} else {
 		g_vars->scene20_grandma->hide();

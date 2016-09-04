@@ -433,7 +433,7 @@ Interaction::~Interaction() {
 	if (_messageQueue) {
 		while (_messageQueue->getExCommandByIndex(0))
 			_messageQueue->deleteExCommandByIndex(0, 1);
-    }
+	}
 
 	delete _messageQueue;
 

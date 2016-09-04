@@ -984,7 +984,7 @@ void sceneHandler04_springWobble() {
 void sceneHandler04_leaveScene() {
 	g_fp->_aniMan2 = 0;
 
-    MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC4_MANTOBOTTLE), 0, 0);
 	ExCommand *ex = 0;
 
 	for (uint i = 0; i < mq->getCount(); i++) {
