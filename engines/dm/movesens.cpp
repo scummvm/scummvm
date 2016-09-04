@@ -809,7 +809,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				case k8_SensorFloorPartyPossession:
 					if (thingType != kM1_PartyThingType)
 						goto T0276079;
-					triggerSensor = isObjcetInPartyPossession(curSensorData);
+					triggerSensor = isObjectInPartyPossession(curSensorData);
 					break;
 				case k9_SensorFloorVersionChecker:
 					if ((thingType != kM1_PartyThingType) || !addThing || partySquare)
@@ -861,7 +861,7 @@ T0276079:
 	processRotationEffect();
 }
 
-bool MovesensMan::isObjcetInPartyPossession(int16 objectType) {
+bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 	bool leaderHandObjectProcessed = false;
 	Champion *curChampion = _vm->_championMan->_champions;
 	int16 championIdx;
@@ -871,14 +871,19 @@ bool MovesensMan::isObjcetInPartyPossession(int16 objectType) {
 	for (championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
 		if (curChampion->_currHealth) {
 			curSlotThing = curChampion->_slots;
-			for (slotIdx = k0_ChampionSlotReadyHand; (slotIdx < k30_ChampionSlotChest_1) && !leaderHandObjectProcessed; slotIdx++) {
-				curThing = *curSlotThing++;
-T0274003:
-				int16 objectType = _vm->_objectMan->getObjectType(curThing);
-				if (objectType == objectType)
+			for (slotIdx = k0_ChampionSlotReadyHand; (slotIdx < k30_ChampionSlotChest_1) || !leaderHandObjectProcessed; slotIdx++) {
+				if (slotIdx < k30_ChampionSlotChest_1)
+					curThing = *curSlotThing++;
+				else {
+					leaderHandObjectProcessed = true;
+					curThing = _vm->_championMan->_leaderHandObject;
+				}
+
+				int16 curObjectType = _vm->_objectMan->getObjectType(curThing);
+				if (curObjectType == objectType)
 					return true;
 
-				if (objectType == k144_IconIndiceContainerChestClosed) {
+				if (curObjectType == k144_IconIndiceContainerChestClosed) {
 					Container *container = (Container *)_vm->_dungeonMan->getThingData(curThing);
 					curThing = container->getSlot();
 					while (curThing != Thing::_endOfList) {
@@ -890,11 +895,6 @@ T0274003:
 				}
 			}
 		}
-	}
-	if (!leaderHandObjectProcessed) {
-		leaderHandObjectProcessed = true;
-		curThing = _vm->_championMan->_leaderHandObject;
-		goto T0274003;
 	}
 	return false;
 }
