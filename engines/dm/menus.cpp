@@ -1345,24 +1345,22 @@ void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
 }
 
 void MenuMan::decrementCharges(Champion *champ) {
-	Thing L1242_T_Thing;
-	Junk *L1243_ps_Junk;
-
-	L1243_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1242_T_Thing = champ->_slots[k1_ChampionSlotActionHand]);
-	switch (L1242_T_Thing.getType()) {
+	Thing slotActionThing = champ->_slots[k1_ChampionSlotActionHand];
+	Junk *slotActionData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
+	switch (slotActionThing.getType()) {
 	case k5_WeaponThingType:
-		if (((Weapon *)L1243_ps_Junk)->getChargeCount()) {
-			((Weapon *)L1243_ps_Junk)->setChargeCount(((Weapon *)L1243_ps_Junk)->getChargeCount() - 1);
+		if (((Weapon *)slotActionData)->getChargeCount()) {
+			((Weapon *)slotActionData)->setChargeCount(((Weapon *)slotActionData)->getChargeCount() - 1);
 		}
 		break;
 	case k6_ArmourThingType:
-		if (((Armour *)L1243_ps_Junk)->getChargeCount()) {
-			((Armour *)L1243_ps_Junk)->setChargeCount(((Armour *)L1243_ps_Junk)->getChargeCount() - 1);
+		if (((Armour *)slotActionData)->getChargeCount()) {
+			((Armour *)slotActionData)->setChargeCount(((Armour *)slotActionData)->getChargeCount() - 1);
 		}
 		break;
 	case k10_JunkThingType:
-		if (L1243_ps_Junk->getChargeCount()) {
-			L1243_ps_Junk->setChargeCount(L1243_ps_Junk->getChargeCount() - 1);
+		if (slotActionData->getChargeCount()) {
+			slotActionData->setChargeCount(slotActionData->getChargeCount() - 1);
 		}
 		break;
 	default:
@@ -1372,7 +1370,7 @@ void MenuMan::decrementCharges(Champion *champ) {
 }
 
 bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 actionIndex, int16 targetMapX, int16 targetMapY, int16 skillIndex) {
-	static unsigned char G0492_auc_Graphic560_ActionDamageFactor[44] = {
+	static unsigned char actionDamageFactorArray[44] = {
 		0,  /* N */
 		15, /* BLOCK */
 		48, /* CHOP */
@@ -1418,7 +1416,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		0,  /* THROW */
 		0   /* FUSE */
 	};
-	static unsigned char G0493_auc_Graphic560_ActionHitProbability[44] = {
+	static unsigned char actionHitProbabilityArray[44] = {
 		0,  /* N */
 		22, /* BLOCK */
 		48, /* CHOP */
@@ -1465,134 +1463,122 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		0   /* FUSE */
 	};
 
-	uint16 L1236_ui_Multiple;
-#define AL1236_ui_ChampionCell       L1236_ui_Multiple
-#define AL1236_ui_ActionDamageFactor L1236_ui_Multiple
-	uint16 L1237_ui_Multiple;
-#define AL1237_ui_Direction            L1237_ui_Multiple
-#define AL1237_ui_CellDelta            L1237_ui_Multiple
-#define AL1237_ui_ActionHitProbability L1237_ui_Multiple
-	int16 L1238_i_CreatureOrdinal;
-
 	_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 	if (_actionTargetGroupThing == Thing::_endOfList)
-		goto T0402010;
-	L1238_i_CreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, AL1236_ui_ChampionCell = champ->_cell);
-	if (L1238_i_CreatureOrdinal) {
-		switch (normalizeModulo4(AL1236_ui_ChampionCell + 4 - champ->_dir)) {
+		return false;
+
+	uint16 championCell = champ->_cell;
+	int16 targetCreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, championCell);
+	if (targetCreatureOrdinal) {
+		uint16 viewCell = normalizeModulo4(championCell + 4 - champ->_dir);
+		switch (viewCell) {
 		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
-			AL1237_ui_CellDelta = 3;
-			goto T0402005;
 		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
-			AL1237_ui_CellDelta = 1;
-T0402005: /* Check if there is another champion in front */
-			if (_vm->_championMan->getIndexInCell(normalizeModulo4(AL1236_ui_ChampionCell + AL1237_ui_CellDelta)) != kM1_ChampionNone) {
+			uint16 cellDelta = (viewCell == k2_ViewCellBackRight) ? 3 : 1;
+			/* Check if there is another champion in front */
+			if (_vm->_championMan->getIndexInCell(normalizeModulo4(championCell + cellDelta)) != kM1_ChampionNone) {
 				_actionDamage = kM1_damageCantReach;
-				goto T0402010;
+				return false;
 			}
+			break;
 		}
+
 		if ((actionIndex == k24_ChampionActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), k0x0040_MaskCreatureInfo_nonMaterial))
-			goto T0402010;
-		AL1237_ui_ActionHitProbability = G0493_auc_Graphic560_ActionHitProbability[actionIndex];
-		AL1236_ui_ActionDamageFactor = G0492_auc_Graphic560_ActionDamageFactor[actionIndex];
+			return false;
+
+		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
+		uint16 actionDamageFactor = actionDamageFactorArray[actionIndex];
 		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
-			setFlag(AL1237_ui_ActionHitProbability, k0x8000_hitNonMaterialCreatures);
+			setFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
-		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(L1238_i_CreatureOrdinal), targetMapX, targetMapY, AL1237_ui_ActionHitProbability, AL1236_ui_ActionDamageFactor, skillIndex);
+		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
 		return true;
 	}
-T0402010:
+
 	return false;
 }
 
 bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY) {
-	int16 L1229_i_FrightAmount = 0;
-	uint16 L1230_ui_FearResistance;
-	uint16 L1231_ui_Experience = 0;
-	bool L1232_B_IsGroupFrightenedByAction;
-	Group *L1233_ps_Group;
-	CreatureInfo *L1234_ps_CreatureInfo;
-	ActiveGroup *L1235_ps_ActiveGroup;
-
-
-	L1232_B_IsGroupFrightenedByAction = false;
+	bool isGroupFrightenedByAction = false;
 	if (_actionTargetGroupThing == Thing::_endOfList)
-		goto T0401016;
+		return isGroupFrightenedByAction;
+
+	uint16 experience = 0;
+	int16 frightAmount = 0;
+
 	switch (actionIndex) {
 	case k8_ChampionActionWarCry:
-		L1229_i_FrightAmount = 3;
-		L1231_ui_Experience = 12; /* War Cry gives experience in priest skill k14_ChampionSkillInfluence below. The War Cry action also has an experience gain of 7 defined in G0497_auc_Graphic560_ActionExperienceGain in the same skill (versions 1.1 and below) or in the fighter skill k7_ChampionSkillParry (versions 1.2 and above). In versions 1.2 and above, this is the only action that gives experience in two skills */
+		frightAmount = 3;
+		experience = 12; /* War Cry gives experience in priest skill k14_ChampionSkillInfluence below. The War Cry action also has an experience gain of 7 defined in G0497_auc_Graphic560_ActionExperienceGain in the same skill (versions 1.1 and below) or in the fighter skill k7_ChampionSkillParry (versions 1.2 and above). In versions 1.2 and above, this is the only action that gives experience in two skills */
 		break;
 	case k37_ChampionActionCalm:
-		L1229_i_FrightAmount = 7;
-		L1231_ui_Experience = 35;
+		frightAmount = 7;
+		experience = 35;
 		break;
 	case k41_ChampionActionBrandish:
-		L1229_i_FrightAmount = 6;
-		L1231_ui_Experience = 30;
+		frightAmount = 6;
+		experience = 30;
 		break;
 	case k4_ChampionActionBlowHorn:
-		L1229_i_FrightAmount = 6;
-		L1231_ui_Experience = 20;
+		frightAmount = 6;
+		experience = 20;
 		break;
 	case k22_ChampionActionConfuse:
-		L1229_i_FrightAmount = 12;
-		L1231_ui_Experience = 45;
+		frightAmount = 12;
+		experience = 45;
+		break;
 	}
-	L1229_i_FrightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
-	L1233_ps_Group = (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
-	L1234_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[L1233_ps_Group->_type];
-	if (((L1230_ui_FearResistance = L1234_ps_CreatureInfo->getFearResistance()) > _vm->getRandomNumber(L1229_i_FrightAmount)) || (L1230_ui_FearResistance == k15_immuneToFear)) {
-		L1231_ui_Experience >>= 1;
+	frightAmount += _vm->_championMan->getSkillLevel(champIndex, k14_ChampionSkillInfluence);
+	Group *targetGroup = (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[targetGroup->_type];
+	uint16 fearResistance = creatureInfo->getFearResistance();
+	if ((fearResistance > _vm->getRandomNumber(frightAmount)) || (fearResistance == k15_immuneToFear)) {
+		experience >>= 1;
 	} else {
-		L1235_ps_ActiveGroup = &_vm->_groupMan->_activeGroups[L1233_ps_Group->getActiveGroupIndex()];
-		if (L1233_ps_Group->getBehaviour() == k6_behavior_ATTACK) {
-			_vm->_groupMan->stopAttacking(L1235_ps_ActiveGroup, mapX, mapY);
+		ActiveGroup *activeGroup = &_vm->_groupMan->_activeGroups[targetGroup->getActiveGroupIndex()];
+		if (targetGroup->getBehaviour() == k6_behavior_ATTACK) {
+			_vm->_groupMan->stopAttacking(activeGroup, mapX, mapY);
 			_vm->_groupMan->startWandering(mapX, mapY);
 		}
-		L1233_ps_Group->setBehaviour(k5_behavior_FLEE);
-		L1235_ps_ActiveGroup->_delayFleeingFromTarget = ((16 - L1230_ui_FearResistance) << 2) / L1234_ps_CreatureInfo->_movementTicks;
-		L1232_B_IsGroupFrightenedByAction = true;
+		targetGroup->setBehaviour(k5_behavior_FLEE);
+		activeGroup->_delayFleeingFromTarget = ((16 - fearResistance) << 2) / creatureInfo->_movementTicks;
+		isGroupFrightenedByAction = true;
 	}
-	_vm->_championMan->addSkillExperience(champIndex, k14_ChampionSkillInfluence, L1231_ui_Experience);
-T0401016:
-	return L1232_B_IsGroupFrightenedByAction;
+	_vm->_championMan->addSkillExperience(champIndex, k14_ChampionSkillInfluence, experience);
+
+	return isGroupFrightenedByAction;
 }
 
 void MenuMan::printMessageAfterReplacements(const char *str) {
-	char *L1164_pc_Character;
-	char *L1165_pc_ReplacementString;
-	char L1166_ac_OutputString[128];
-
-
-	L1164_pc_Character = L1166_ac_OutputString;
-	*L1164_pc_Character++ = '\n'; /* New line */
+	char outputString[128];
+	char *curCharacter = outputString;
+	*curCharacter++ = '\n'; /* New line */
+	char *replacementString = "";
 	do {
 		if (*str == '@') {
 			str++;
-			if (*(L1164_pc_Character - 1) != '\n') { /* New line */
-				*L1164_pc_Character++ = ' ';
-			}
-			switch (*str) {
-			case 'p': /* '@p' in the source string is replaced by the champion name followed by a space */
-				L1165_pc_ReplacementString = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._name;
-			}
-			*L1164_pc_Character = '\0';
-			strcat(L1166_ac_OutputString, L1165_pc_ReplacementString);
-			L1164_pc_Character += strlen(L1165_pc_ReplacementString);
-			*L1164_pc_Character++ = ' ';
+			if (*(curCharacter - 1) != '\n') /* New line */
+				*curCharacter++ = ' ';
+
+			if (*str == 'p') /* '@p' in the source string is replaced by the champion name followed by a space */
+				replacementString = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._name;
+
+			*curCharacter = '\0';
+			strcat(outputString, replacementString);
+			curCharacter += strlen(replacementString);
+			*curCharacter++ = ' ';
 		} else {
-			*L1164_pc_Character++ = *str;
+			*curCharacter++ = *str;
 		}
 	} while (*str++);
-	*L1164_pc_Character = '\0';
-	if (L1166_ac_OutputString[1]) { /* If the string is not empty (the first character is a new line \n) */
-		_vm->_textMan->printMessage(k4_ColorCyan, L1166_ac_OutputString);
-	}
+	*curCharacter = '\0';
+
+	if (outputString[1]) /* If the string is not empty (the first character is a new line \n) */
+		_vm->_textMan->printMessage(k4_ColorCyan, outputString);
 }
 
 void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
-	static ActionSet G0489_as_Graphic560_ActionSets[44] = {
+	static ActionSet actionSets[44] = {
 		/* { ActionIndices[0], ActionIndices[1], ActionIndices[2], ActionProperties[0], ActionProperties[1], Useless } */
 		ActionSet(255, 255, 255, 0x00, 0x00),
 		ActionSet(27,  43,  35, 0x00, 0x00),
@@ -1639,74 +1625,69 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 		ActionSet(42, 255, 255, 0x00, 0x00),
 		ActionSet(6,  11, 255, 0x80, 0x00)
 	};
-	uint16 L1188_ui_ActionSetIndex;
-	Thing L1189_T_Thing;
-	Champion *L1190_ps_Champion;
-	ActionSet *L1191_ps_ActionSet;
 
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	if (getFlag(curChampion->_attributes, k0x0008_ChampionAttributeDisableAction) || !curChampion->_currHealth)
+		return;
 
-	L1190_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	if (getFlag(L1190_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction) || !L1190_ps_Champion->_currHealth) {
-		return;
+	uint16 actionSetIndex;
+	Thing slotActionThing = curChampion->_slots[k1_ChampionSlotActionHand];
+
+	if (slotActionThing == Thing::_none)
+		actionSetIndex = 2; /* Actions Punch, Kick and War Cry */
+	else {
+		actionSetIndex = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(slotActionThing)]._actionSetIndex;
+		if (actionSetIndex == 0)
+			return;
 	}
-	if ((L1189_T_Thing = L1190_ps_Champion->_slots[k1_ChampionSlotActionHand]) == Thing::_none) {
-		L1188_ui_ActionSetIndex = 2; /* Actions Punch, Kick and War Cry */
-	} else if ((L1188_ui_ActionSetIndex = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1189_T_Thing)]._actionSetIndex) == 0) {
-		return;
-	}
-	L1191_ps_ActionSet = &G0489_as_Graphic560_ActionSets[L1188_ui_ActionSetIndex];
+
+	ActionSet *actionSet = &actionSets[actionSetIndex];
 	_vm->_championMan->_actingChampionOrdinal = _vm->indexToOrdinal(champIndex);
-	setActionList(L1191_ps_ActionSet);
+	setActionList(actionSet);
 	_actionAreaContainsIcons = false;
-	setFlag(L1190_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
+	setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	drawActionArea();
 	drawActionArea();
 }
 
 void MenuMan::setActionList(ActionSet *actionSet) {
-
-#define k0x0080_actionRequiresCharge 0x0080 // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
-
-	uint16 L1169_ui_ActionListIndex;
-	uint16 L1170_ui_NextAvailableActionListIndex;
-	uint16 L1171_ui_ActionIndex;
-	uint16 L1172_ui_MinimumSkillLevel;
-
 	_actionList._actionIndices[0] = (ChampionAction)actionSet->_actionIndices[0];
 	_actionList._minimumSkillLevel[0] = 1;
-	L1170_ui_NextAvailableActionListIndex = 1;
-	for (L1169_ui_ActionListIndex = 1; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
-		if ((L1171_ui_ActionIndex = actionSet->_actionIndices[L1169_ui_ActionListIndex]) == k255_ChampionActionNone)
+	uint16 nextAvailableActionListIndex = 1;
+	for (uint16 idx = 1; idx < 3; idx++) {
+		uint16 actionIndex = actionSet->_actionIndices[idx];
+
+		if (actionIndex == k255_ChampionActionNone)
 			continue;
-		if (getFlag(L1172_ui_MinimumSkillLevel = actionSet->_actionProperties[L1169_ui_ActionListIndex - 1], k0x0080_actionRequiresCharge) && !getActionObjectChargeCount())
+
+		uint16 minimumSkillLevel = actionSet->_actionProperties[idx - 1];
+		if (getFlag(minimumSkillLevel, k0x0080_actionRequiresCharge) && !getActionObjectChargeCount())
 			continue;
-		clearFlag(L1172_ui_MinimumSkillLevel, k0x0080_actionRequiresCharge);
-		if (_vm->_championMan->getSkillLevel(_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal), _actionSkillIndex[L1171_ui_ActionIndex]) >= L1172_ui_MinimumSkillLevel) {
-			_actionList._actionIndices[L1170_ui_NextAvailableActionListIndex] = (ChampionAction)L1171_ui_ActionIndex;
-			_actionList._minimumSkillLevel[L1170_ui_NextAvailableActionListIndex] = L1172_ui_MinimumSkillLevel;
-			L1170_ui_NextAvailableActionListIndex++;
+
+		clearFlag(minimumSkillLevel, k0x0080_actionRequiresCharge);
+		if (_vm->_championMan->getSkillLevel(_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal), _actionSkillIndex[actionIndex]) >= minimumSkillLevel) {
+			_actionList._actionIndices[nextAvailableActionListIndex] = (ChampionAction)actionIndex;
+			_actionList._minimumSkillLevel[nextAvailableActionListIndex] = minimumSkillLevel;
+			nextAvailableActionListIndex++;
 		}
 	}
-	_actionCount = L1170_ui_NextAvailableActionListIndex;
-	for (L1169_ui_ActionListIndex = L1170_ui_NextAvailableActionListIndex; L1169_ui_ActionListIndex < 3; L1169_ui_ActionListIndex++) {
-		_actionList._actionIndices[L1169_ui_ActionListIndex] = k255_ChampionActionNone;
-	}
+	_actionCount = nextAvailableActionListIndex;
+
+	for (uint16 idx = nextAvailableActionListIndex; idx < 3; idx++)
+		_actionList._actionIndices[idx] = k255_ChampionActionNone;
 }
 
 int16 MenuMan::getActionObjectChargeCount() {
-	Thing L1167_T_Thing;
-	Junk *L1168_ps_Junk;
-
-
-	L1168_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L1167_T_Thing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand]);
-	switch (L1167_T_Thing.getType()) {
+	Thing slotActionThing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand];
+	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
+	switch (slotActionThing.getType()) {
 	case k5_WeaponThingType:
-		return ((Weapon *)L1168_ps_Junk)->getChargeCount();
+		return ((Weapon *)junkData)->getChargeCount();
 	case k6_ArmourThingType:
-		return ((Armour *)L1168_ps_Junk)->getChargeCount();
+		return ((Armour *)junkData)->getChargeCount();
 	case k10_JunkThingType:
-		return L1168_ps_Junk->getChargeCount();
+		return junkData->getChargeCount();
 	default:
 		return 1;
 	}
