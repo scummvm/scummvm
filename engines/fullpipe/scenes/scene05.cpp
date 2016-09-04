@@ -37,6 +37,7 @@
 namespace Fullpipe {
 
 void scene05_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene05_initScene()");
 
 #if 0
 	Inventory2 *inv = getGameLoaderInventory();
@@ -57,24 +58,32 @@ void scene05_initScene(Scene *sc) {
 
 	g_fp->_currentScene = sc;
 
+	debugC(2, kDebugSceneLogic, "scene05: Weird Wacko state: %d", g_fp->getObjectState(sO_WeirdWacko));
+
 	if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+		debugC(2, kDebugSceneLogic, "scene05: In glasses");
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_GLS_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
 		g_vars->scene05_handle->_flags |= 4;
 	} else if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+		debugC(2, kDebugSceneLogic, "scene05: With Drawer");
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_BOX_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
 		g_vars->scene05_handle->_flags |= 4;
 	} else {
-		g_vars->scene05_wacko->changeStatics2(ST_OTM_VNT_LEFT);
-
 		if (g_fp->getObjectState(sO_WeirdWacko) != g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithPlunger)) {
+			debugC(2, kDebugSceneLogic, "scene05: Without plunger");
+
 			g_vars->scene05_handle->changeStatics2(ST_HDL_BROKEN);
 			g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
+		} else {
+			debugC(2, kDebugSceneLogic, "scene05: With plunger");
 		}
+
+		g_vars->scene05_wacko->changeStatics2(ST_OTM_VNT_LEFT);
 	}
 
 	g_fp->_currentScene = oldscene;
