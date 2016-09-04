@@ -690,7 +690,7 @@ bool PreloadItems::load(MfcArchive &file) {
 		t->preloadId1 = file.readUint32LE();
 		t->preloadId2 = file.readUint32LE();
 		t->sceneId = file.readUint32LE();
-		t->keyCode = file.readUint32LE();
+		t->keyCode = file.readSint32LE();
 
 		push_back(t);
 	}
