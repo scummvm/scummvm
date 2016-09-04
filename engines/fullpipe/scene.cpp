@@ -531,6 +531,10 @@ void Scene::updateScrolling() {
 		_messageQueueId = 0;
 	}
 
+	// Might happen very early in the game
+	if (!_picObjList.size())
+		return;
+
 	if (_x || _y) {
 		int offsetX = 0;
 		int offsetY = 0;
