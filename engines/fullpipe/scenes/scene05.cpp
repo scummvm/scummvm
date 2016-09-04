@@ -22,6 +22,7 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/gameloader.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
@@ -36,6 +37,13 @@
 namespace Fullpipe {
 
 void scene05_initScene(Scene *sc) {
+
+#if 0
+	Inventory2 *inv = getGameLoaderInventory();
+	inv->addItem(ANI_INV_BOX, 1);
+	inv->rebuildItemRects();
+#endif
+
 	g_vars->scene05_handle = sc->getStaticANIObject1ById(ANI_HANDLE, -1);
 	g_vars->scene05_wacko = sc->getStaticANIObject1ById(ANI_OTMOROZ, -1);
 	g_vars->scene05_bigHatch = sc->getStaticANIObject1ById(ANI_BIGLUK, -1);
