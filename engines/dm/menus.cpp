@@ -422,7 +422,6 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 		return;
 	}
 	_vm->_championMan->_magicCasterChampionIndex = champIndex;
-	Champion *L1213_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	drawSpellAreaControls((ChampionIndex)champIndex);
