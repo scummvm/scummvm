@@ -33,14 +33,14 @@ namespace Xeen {
 
 class SoundManager;
 
-class VOC: public Common::File {
+class Voc: public Common::File {
 private:
 	static SoundManager *_sound;
 	Audio::SoundHandle _soundHandle;
 public:
-	VOC() {}
-	VOC(const Common::String &name);
-	virtual ~VOC() { stop(); }
+	Voc() {}
+	Voc(const Common::String &name);
+	virtual ~Voc() { stop(); }
 	static void init(XeenEngine *vm);
 
 	/**
@@ -51,6 +51,27 @@ public:
 	/**
 	 * Stop playing the sound
 	 */
+	void stop();
+};
+
+class Music : public Common::File {
+private:
+	static SoundManager *_sound;
+	Audio::SoundHandle _soundHandle;
+public:
+	Music() {}
+	Music(const Common::String &name);
+	virtual ~Music() { stop(); }
+	static void init(XeenEngine *vm);
+
+	/**
+	* Start playing the sound
+	*/
+	void play();
+
+	/**
+	* Stop playing the sound
+	*/
 	void stop();
 };
 
@@ -73,7 +94,13 @@ public:
 	/**
 	 * Play a given sound
 	 */
-	void playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle);
+	void playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+
+	/**
+	 * Play a given music
+	 */
+	void playMusic(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle);
 
 	/**
 	 * Stop playing a sound

@@ -825,7 +825,7 @@ Character *Town::doTempleOptions(Character *c) {
 
 				intf.drawParty(true);
 				sound.playSample(nullptr, 0);
-				VOC voc("ahh.voc");
+				Voc voc("ahh.voc");
 				voc.play();
 				_flag1 = true;
 				_donation = 0;

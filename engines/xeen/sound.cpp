@@ -26,22 +26,43 @@
 
 namespace Xeen {
 
-SoundManager *VOC::_sound;
+SoundManager *Voc::_sound;
 
-VOC::VOC(const Common::String &name) {
+Voc::Voc(const Common::String &name) {
 	if (!open(name))
 		error("Could not open - %s", name.c_str());
 }
 
-void VOC::init(XeenEngine *vm) {
+void Voc::init(XeenEngine *vm) {
 	_sound = vm->_sound;
 }
 
-void VOC::play() {
+void Voc::play() {
 	_sound->playSound(this, _soundHandle);
 }
 
-void VOC::stop() {
+void Voc::stop() {
+	_sound->stopSound(_soundHandle);
+}
+
+/*------------------------------------------------------------------------*/
+
+SoundManager *Music::_sound;
+
+Music::Music(const Common::String &name) {
+	if (!open(name))
+		error("Could not open - %s", name.c_str());
+}
+
+void Music::init(XeenEngine *vm) {
+	_sound = vm->_sound;
+}
+
+void Music::play() {
+	_sound->playMusic(this, _soundHandle);
+}
+
+void Music::stop() {
 	_sound->stopSound(_soundHandle);
 }
 
@@ -62,10 +83,14 @@ void SoundManager::stopMusic(int id) {
 	// TODO
 }
 
-void SoundManager::playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle) {
+void SoundManager::playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle,
+	Audio::Mixer::SoundType soundType) {
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(s, 0);
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &soundHandle, stream);
-		
+	_mixer->playStream(soundType, &soundHandle, stream);		
+}
+
+void SoundManager::playMusic(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle) {
+	// TODO
 }
 
 void SoundManager::stopSound(Audio::SoundHandle &soundHandle) {

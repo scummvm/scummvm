@@ -39,7 +39,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
 		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
 	};
-	VOC voc[3];
+	Voc voc[3];
 	voc[0].open("dragon1.voc");
 	voc[1].open("dragon2.voc");
 	voc[2].open("dragon3.voc");
@@ -158,7 +158,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	SpriteResource sprites[3] = {
 		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
 	};
-	Common::File voc[2];
+	Voc voc[2];
 	voc[0].open("pharoh1a.voc");
 	voc[1].open("pharoh1b.voc");
 
@@ -234,7 +234,24 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 }
 
 bool DarkSideCutscenes::showDarkSideEnding() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	SoundManager &sound = *_vm->_sound;
+
+	Voc voc("ido2.voc");
+	Music newBright("newbrigh.m");
+	SpriteResource box("box.vga");
+	
+	newBright.play();
+	screen.loadBackground("scene1.raw");
+	screen.loadPalette("endgame.pal");
+	screen.update();
+
+	screen.fadeIn(4);
+	events.updateGameCounter();
+
 	// TODO
+	events.wait(5000);
 	return true;
 }
 
