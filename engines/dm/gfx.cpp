@@ -834,7 +834,7 @@ void DisplayMan::loadIntoBitmap(uint16 index, byte *destBitmap) {
 	}
 }
 
-void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
+void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	uint16 srcWidth = srcByteWidth * 2;
 	uint16 destWidth = destByteWidth * 2;
@@ -1177,12 +1177,7 @@ void DisplayMan::blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color
 	blitToViewport(bitmap, actualBox, byteWidth, transparent, height);
 }
 
-void DisplayMan::blitToScreen(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height) {
-	Box actualBox(box[0], box[1], box[2], box[3]);
-	blitToScreen(bitmap, &actualBox, byteWidth, transparent, height);
-}
-
-void DisplayMan::blitToScreen(byte *bitmap, Box *box, int16 byteWidth, Color transparent, int16 height) {
+void DisplayMan::blitToScreen(byte *bitmap, const Box *box, int16 byteWidth, Color transparent, int16 height) {
 	_useByteBoxCoordinates = false;
 	blitToBitmap(bitmap, _bitmapScreen, *box, 0, 0, byteWidth, k160_byteWidthScreen, transparent, height, k200_heightScreen);
 }

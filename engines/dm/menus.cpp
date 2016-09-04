@@ -1694,89 +1694,91 @@ int16 MenuMan::getActionObjectChargeCount() {
 }
 
 void MenuMan::drawActionDamage(int16 damage) {
-	static const Box G0502_s_Graphic560_Box_ActionAreaMediumDamage = Box(242, 305, 81, 117);
-	static const Box G0503_s_Graphic560_Box_ActionAreaSmallDamage = Box(251, 292, 81, 117);
-
-	uint16 L1174_ui_Multiple;
-#define AL1174_ui_DerivedBitmapIndex L1174_ui_Multiple
-#define AL1174_ui_CharacterIndex     L1174_ui_Multiple
-	int16 L1175_i_ByteWidth;
-	int16 L1176_i_Multiple;
-#define AL1176_i_X          L1176_i_Multiple
-#define AL1176_i_PixelWidth L1176_i_Multiple
-	byte *L1177_puc_Bitmap;
-	unsigned char *L1178_puc_Multiple;
-#define AL1178_puc_String L1178_puc_Multiple
-#define AL1178_puc_Bitmap L1178_puc_Multiple
-	char L1179_ac_String[6];
-	const Box *L1180_ps_Box;
-	int16 L1643_i_Width;
+	static const Box actionAreaMediumDamage(242, 305, 81, 117);
+	static const Box actionAreaSmallDamage(251, 292, 81, 117);
 
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	_vm->_displayMan->fillScreenBox(_boxActionArea, k0_ColorBlack);
 	if (damage < 0) {
-		static const char *messages_EN_ANY[2] = {"CAN'T REACH", "NEED AMMO"};
-		static const char *messages_DE_DEU[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
-		static const char *messages_FR_FRA[2] = {"TROP LOIN", "SANS MUNITION"};
-		static int16  pos_EN_ANY[2] = {242, 248};
-		static int16  pos_DE_DEU[2] = {242, 236};
-		static int16  pos_FR_FRA[2] = {248, 236};
+		static const char *messagesEN[2] = {"CAN'T REACH", "NEED AMMO"};
+		static const char *messagesDE[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
+		static const char *messagesFR[2] = {"TROP LOIN", "SANS MUNITION"};
+		static int16 posEN[2] = {242, 248};
+		static int16 posDE[2] = {242, 236};
+		static int16 posFR[2] = {248, 236};
 		const char **message;
 		int16 *pos;
 		switch (_vm->getGameLanguage()) { // localized
+		case Common::DE_DEU:
+			message = messagesDE;
+			pos = posDE;
+			break;
+		case Common::FR_FRA:
+			message = messagesFR;
+			pos = posFR;
+			break;
 		default:
-		case Common::EN_ANY: message = messages_EN_ANY; pos = pos_EN_ANY;  break;
-		case Common::DE_DEU: message = messages_DE_DEU; pos = pos_DE_DEU; break;
-		case Common::FR_FRA: message = messages_FR_FRA; pos = pos_FR_FRA; break;
+			message = messagesEN;
+			pos = posEN;
+			break;
 		}
 
+		const char *displayString;
+		int16 textPosX;
 		if (damage == kM1_damageCantReach) {
-			AL1176_i_X = pos[0];
-			AL1178_puc_String = (byte *)message[0];
+			textPosX = pos[0];
+			displayString = message[0];
 		} else {
-			AL1176_i_X = pos[1];
-			AL1178_puc_String = (byte *)message[1];
+			textPosX = pos[1];
+			displayString = message[1];
 		}
-		_vm->_textMan->printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, (char *)AL1178_puc_String);
+		_vm->_textMan->printToLogicalScreen(textPosX, 100, k4_ColorCyan, k0_ColorBlack, displayString);
 	} else {
+		int16 byteWidth;
+		byte *blitBitmap;
+		const Box *blitBox;
+		int16 displayHeight;
 		if (damage > 40) {
-			L1180_ps_Box = &_boxActionArea3ActionMenu;
-			L1177_puc_Bitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
-			L1175_i_ByteWidth = k48_byteWidth;
-			L1643_i_Width = 45;
+			blitBox = &_boxActionArea3ActionMenu;
+			blitBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+			byteWidth = k48_byteWidth;
+			displayHeight = 45;
 		} else {
+			uint16 derivedBitmapIndex;
+			int16 destPixelWidth;
 			if (damage > 15) {
-				AL1174_ui_DerivedBitmapIndex = k2_DerivedBitmapDamageToCreatureMedium;
-				AL1176_i_PixelWidth = 64;
-				L1175_i_ByteWidth = k32_byteWidth;
-				L1180_ps_Box = &G0502_s_Graphic560_Box_ActionAreaMediumDamage;
+				derivedBitmapIndex = k2_DerivedBitmapDamageToCreatureMedium;
+				destPixelWidth = 64;
+				byteWidth = k32_byteWidth;
+				blitBox = &actionAreaMediumDamage;
 			} else {
-				AL1174_ui_DerivedBitmapIndex = k3_DerivedBitmapDamageToCreatureSmall;
-				AL1176_i_PixelWidth = 42;
-				L1175_i_ByteWidth = k24_byteWidth;
-				L1180_ps_Box = &G0503_s_Graphic560_Box_ActionAreaSmallDamage;
+				derivedBitmapIndex = k3_DerivedBitmapDamageToCreatureSmall;
+				destPixelWidth = 42;
+				byteWidth = k24_byteWidth;
+				blitBox = &actionAreaSmallDamage;
 			}
-			L1643_i_Width = 37;
-			if (!_vm->_displayMan->isDerivedBitmapInCache(AL1174_ui_DerivedBitmapIndex)) {
-				AL1178_puc_Bitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
-				L1177_puc_Bitmap = _vm->_displayMan->getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
-				_vm->_displayMan->blitToBitmapShrinkWithPalChange(AL1178_puc_Bitmap, L1177_puc_Bitmap, 96, 45, AL1176_i_PixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
-				_vm->_displayMan->addDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+			displayHeight = 37;
+			if (!_vm->_displayMan->isDerivedBitmapInCache(derivedBitmapIndex)) {
+				byte *nativeBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+				blitBitmap = _vm->_displayMan->getDerivedBitmap(derivedBitmapIndex);
+				_vm->_displayMan->blitToBitmapShrinkWithPalChange(nativeBitmap, blitBitmap, 96, 45, destPixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
+				_vm->_displayMan->addDerivedBitmap(derivedBitmapIndex);
 			} else {
-				L1177_puc_Bitmap = _vm->_displayMan->getDerivedBitmap(AL1174_ui_DerivedBitmapIndex);
+				blitBitmap = _vm->_displayMan->getDerivedBitmap(derivedBitmapIndex);
 			}
 		}
-		_vm->_displayMan->blitToScreen(L1177_puc_Bitmap, (int16 *)L1180_ps_Box, L1175_i_ByteWidth, kM1_ColorNoTransparency, L1643_i_Width);
+		_vm->_displayMan->blitToScreen(blitBitmap, blitBox, byteWidth, kM1_ColorNoTransparency, displayHeight);
 		/* Convert damage value to string */
-		AL1174_ui_CharacterIndex = 5;
-		AL1176_i_X = 274;
-		L1179_ac_String[5] = '\0';
+		uint16 charIndex = 5;
+		int16 textPosX = 274;
+		char scoreString[6];
+		scoreString[5] = '\0';
 		do {
-			L1179_ac_String[--AL1174_ui_CharacterIndex] = '0' + (damage % 10);
-			AL1176_i_X -= 3;
+			scoreString[--charIndex] = '0' + (damage % 10);
+			textPosX -= 3;
 		} while (damage /= 10);
-		_vm->_textMan->printToLogicalScreen(AL1176_i_X, 100, k4_ColorCyan, k0_ColorBlack, &L1179_ac_String[AL1174_ui_CharacterIndex]);
+		_vm->_textMan->printToLogicalScreen(textPosX, 100, k4_ColorCyan, k0_ColorBlack, &scoreString[charIndex]);
 	}
 	_vm->_eventMan->hideMouse();
 }
