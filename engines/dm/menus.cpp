@@ -440,9 +440,9 @@ void MenuMan::drawEnabledMenus() {
 		ChampionIndex casterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
 		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
 		setMagicCasterAndDrawSpellArea(casterChampionIndex);
-		if (!_vm->_championMan->_actingChampionOrdinal) {
+		if (!_vm->_championMan->_actingChampionOrdinal)
 			_actionAreaContainsIcons = true;
-		}
+
 		drawActionArea();
 		int16 AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_inventoryChampionOrdinal;
 		if (AL1462_i_InventoryChampionOrdinal) {
@@ -457,22 +457,20 @@ void MenuMan::drawEnabledMenus() {
 }
 
 int16 MenuMan::getClickOnSpellCastResult() {
-	int16 L1259_i_SpellCastResult;
-	Champion *L1260_ps_Champion;
-
-
-	L1260_ps_Champion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
+	Champion *casterChampion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	_vm->_eventMan->showMouse();
 	_vm->_eventMan->highlightBoxDisable();
-	if ((L1259_i_SpellCastResult = getChampionSpellCastResult(_vm->_championMan->_magicCasterChampionIndex)) != k3_spellCastFailureNeedsFlask) {
-		L1260_ps_Champion->_symbols[0] = '\0';
-		drawAvailableSymbols(L1260_ps_Champion->_symbolStep = 0);
-		drawChampionSymbols(L1260_ps_Champion);
-	} else {
-		L1259_i_SpellCastResult = k0_spellCastFailure;
-	}
+
+	int16 spellCastResult = getChampionSpellCastResult(_vm->_championMan->_magicCasterChampionIndex);
+	if (spellCastResult != k3_spellCastFailureNeedsFlask) {
+		casterChampion->_symbols[0] = '\0';
+		drawAvailableSymbols(casterChampion->_symbolStep = 0);
+		drawChampionSymbols(casterChampion);
+	} else
+		spellCastResult = k0_spellCastFailure;
+
 	_vm->_eventMan->hideMouse();
-	return L1259_i_SpellCastResult;
+	return spellCastResult;
 }
 
 int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
