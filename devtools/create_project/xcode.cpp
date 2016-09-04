@@ -111,7 +111,13 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 	// - if the file is an macOS icon file (icns), it belongs to the macOS target.
 	std::string name, ext;
 	splitFilename(fileName, name, ext);
+
 	if (targetIsIOS(targetName)) {
+		// networking backend for iOS is openurl-default
+		if (name == "openurl-posix" || name == "openurl-osx") {
+			return true;
+		}
+
 		// iOS target: we skip all files with the "_osx" suffix
 		if (name.length() > 4 && name.substr(name.length() - 4) == "_osx") {
 			return true;
@@ -148,6 +154,11 @@ bool shouldSkipFileForTarget(const std::string &fileID, const std::string &targe
 		const std::string directory = fileID.substr(0, fileID.length() - fileName.length());
 		static const std::string iphone_directory = "backends/platform/ios7";
 		if (directory.length() > iphone_directory.length() && directory.substr(directory.length() - iphone_directory.length()) == iphone_directory) {
+			return true;
+		}
+
+		// networking backend for macOS is openurl-osx
+		if (name == "openurl-default" || name == "openurl-posix") {
 			return true;
 		}
 	}
