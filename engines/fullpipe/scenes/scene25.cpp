@@ -234,7 +234,7 @@ void sceneHandler25_animateBearders() {
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene25_bearders[0]->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_okeyCode);
 		mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 		mq->chain(0);
 
@@ -243,14 +243,14 @@ void sceneHandler25_animateBearders() {
 		if (g_fp->_rnd->getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
-			mq->replaceKeyCode(-1, g_vars->scene25_bearders[1]->_okeyCode);
+			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_okeyCode);
 			mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 			mq->chain(0);
 
 			if (g_fp->_rnd->getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
-				mq->replaceKeyCode(-1, g_vars->scene25_bearders[2]->_okeyCode);
+				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_okeyCode);
 				mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
 				mq->chain(0);
 			}
@@ -522,7 +522,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 bool sceneHandler25_isOnLadder(ExCommand *cmd) {
 	if ((g_fp->_aniMan->_movement && g_fp->_aniMan->_movement->_id == MV_MAN_GOLADDERDOWN)
 		|| g_fp->_aniMan->_statics->_staticsId == ST_MAN_GOLADDERD) {
-		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_keyCode);
+		Interaction *inter = getGameLoaderInteractionController()->getInteractionByObjectIds(PIC_SC25_LADDERDOWN, ANI_MAN, cmd->_param);
 
 		if (!inter)
 			return 0;
@@ -656,20 +656,20 @@ int sceneHandler25(ExCommand *cmd) {
 						if (!(g_fp->_aniMan->_flags & 0x100)) {
 							if (ani->_id == ANI_WATER25) {
 								if (g_vars->scene25_dudeIsOnBoard) {
-									if (cmd->_keyCode == ANI_INV_LOPAT)
+									if (cmd->_param == ANI_INV_LOPAT)
 										sceneHandler25_rowShovel();
 
-									if (!cmd->_keyCode)
+									if (!cmd->_param)
 										sceneHandler25_rowHand();
 								} else {
-									if (cmd->_keyCode == ANI_INV_BOARD)
+									if (cmd->_param == ANI_INV_BOARD)
 										sceneHandler25_putBoard();
 
-									if (!cmd->_keyCode)
+									if (!cmd->_param)
 										sceneHandler25_tryWater();
 								}
 							} else if (ani->_id == ANI_BOARD25) {
-								sceneHandler25_tryRow(cmd->_keyCode);
+								sceneHandler25_tryRow(cmd->_param);
 								break;
 							}
 							break;
@@ -685,31 +685,31 @@ int sceneHandler25(ExCommand *cmd) {
 				break;
 
 			if (g_vars->scene25_dudeIsOnBoard) {
-				if (picId == PIC_SC25_RTRUBA && !cmd->_keyCode) {
+				if (picId == PIC_SC25_RTRUBA && !cmd->_param) {
 					sceneHandler25_enterTruba();
 					break;
 				}
 			} else {
 				if (picId != PIC_SC25_RTRUBA) {
-					if (picId == PIC_SC25_LADDERUP && !cmd->_keyCode)
+					if (picId == PIC_SC25_LADDERUP && !cmd->_param)
 						sceneHandler25_ladderUp();
 					break;
 				}
 
-				if (!cmd->_keyCode) {
+				if (!cmd->_param) {
 					sceneHandler25_backToPipe();
 					break;
 				}
 			}
 			if (g_vars->scene25_dudeIsOnBoard) {
-				if (picId != PIC_SC25_LADDERUP || cmd->_keyCode)
+				if (picId != PIC_SC25_LADDERUP || cmd->_param)
 					break;
 
 				sceneHandler25_toLadder();
 				break;
 			}
 
-			if (picId == PIC_SC25_LADDERUP && !cmd->_keyCode)
+			if (picId == PIC_SC25_LADDERUP && !cmd->_param)
 				sceneHandler25_ladderUp();
 
 			break;

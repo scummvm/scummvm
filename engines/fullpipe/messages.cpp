@@ -68,7 +68,7 @@ bool ExCommand::load(MfcArchive &file) {
 	_sceneClickY = file.readUint32LE();
 	_field_20 = file.readUint32LE();
 	_field_24 = file.readUint32LE();
-	_keyCode = file.readUint32LE();
+	_param = file.readUint32LE();
 	_field_2C = file.readUint32LE();
 	_field_30 = file.readUint32LE();
 	_field_34 = file.readUint32LE();
@@ -135,7 +135,7 @@ void ExCommand::setf3c(int val) {
 
 void ExCommand::firef34() {
 	if (_field_34) {
-		if (_field_3C >= _keyCode) {
+		if (_field_3C >= _param) {
 			_field_34 = 0;
 
 			sendMessage();
@@ -192,7 +192,7 @@ Message::Message() {
 	_sceneClickY = 0;
 	_field_20 = 0;
 	_field_24 = 0;
-	_keyCode = 0;
+	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
@@ -208,7 +208,7 @@ Message::Message(Message *src) {
 	_sceneClickY = src->_sceneClickY;
 	_field_20 = src->_field_20;
 	_field_24 = src->_field_24;
-	_keyCode = src->_keyCode;
+	_param = src->_param;
 	_field_2C = src->_field_2C;
 	_field_30 = src->_field_30;
 	_field_34 = src->_field_34;
@@ -224,7 +224,7 @@ Message::Message(int16 parentId, int messageKind, int x, int y, int a6, int a7, 
 	_sceneClickY = sceneClickY;
 	_field_24 = a7;
 	_field_20 = a10;
-	_keyCode = 0;
+	_param = 0;
 	_field_2C = 0;
 	_field_30 = 0;
 	_field_34 = 0;
@@ -502,7 +502,7 @@ bool MessageQueue::checkGlobalExCommandList1() {
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
 				continue;
 
-			if (ex1->_keyCode != ex->_keyCode && ex1->_keyCode != -1 && ex->_keyCode != -1)
+			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1)
 				continue;
 
 			MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex1->_parId);
@@ -533,7 +533,7 @@ bool MessageQueue::checkGlobalExCommandList2() {
 				continue;
 			}
 
-			if (ex1->_keyCode != ex->_keyCode && ex1->_keyCode != -1 && ex->_keyCode != -1) {
+			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1) {
 				it++;
 				continue;
 			}
@@ -579,13 +579,13 @@ void MessageQueue::finish() {
 		mq->update();
 }
 
-void MessageQueue::replaceKeyCode(int key1, int key2) {
+void MessageQueue::setParamInt(int key1, int key2) {
 	for (uint i = 0; i < getCount(); i++) {
 		ExCommand *ex = getExCommandByIndex(i);
 		int k = ex->_messageKind;
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-					&& ex->_keyCode == key1)
-			ex->_keyCode = key2;
+					&& ex->_param == key1)
+			ex->_param = key2;
 	}
 }
 
@@ -617,9 +617,9 @@ void MessageQueue::changeParam28ForObjectId(int objId, int oldParam28, int newPa
 		int k = ex->_messageKind;
 
 		if ((k == 1 || k == 20 || k == 5 || k == 6 || k == 2 || k == 18 || k == 19 || k == 22 || k == 55)
-			 && ex->_keyCode == oldParam28
+			 && ex->_param == oldParam28
 			 && ex->_parentId == objId)
-			ex->_keyCode = newParam28;
+			ex->_param = newParam28;
 	}
 }
 
@@ -964,7 +964,7 @@ bool chainObjQueue(StaticANIObject *obj, int queueId, int flags) {
 void postExCommand(int parentId, int keyCode, int x, int y, int f20, int f14) {
 	ExCommand *ex = new ExCommand(parentId, 17, 64, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_keyCode = keyCode;
+	ex->_param = keyCode;
 	ex->_excFlags |= 3;
 	ex->_x = x;
 	ex->_y = y;

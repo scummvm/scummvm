@@ -537,7 +537,7 @@ int sceneHandler23(ExCommand *cmd) {
 			}
 
 			if (ani && ani->_id == ANI_HANDLE23) {
-				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_param);
 				cmd->_messageKind = 0;
 			} else {
 				sceneHandler23_fromStool(cmd);

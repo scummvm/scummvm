@@ -200,7 +200,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 	if (g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
 
@@ -233,7 +233,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = TrubaLeft;
+			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addExCommandToEnd(ex);
 
@@ -249,7 +249,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
@@ -275,7 +275,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = TrubaLeft;
+			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addExCommandToEnd(ex);
 
@@ -292,7 +292,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
@@ -302,7 +302,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		return;
 	} else {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
 

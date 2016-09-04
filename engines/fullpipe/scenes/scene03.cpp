@@ -292,7 +292,7 @@ int sceneHandler03(ExCommand *ex) {
 					if (g_vars->scene03_domino->_flags & 4)
 						if (g_fp->_aniMan->isIdle())
 							if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene03_domino->_id) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_keyCode);
+								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_param);
 								ex->_messageKind = 0;
 
 								return 0;

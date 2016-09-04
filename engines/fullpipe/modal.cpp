@@ -69,7 +69,7 @@ bool ModalIntro::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_keyCode != 13 && message->_keyCode != 27 && message->_keyCode != 32)
+	if (message->_param != 13 && message->_param != 27 && message->_param != 32)
 		return false;
 
 	if (_stillRunning) {
@@ -356,7 +356,7 @@ bool ModalMap::handleMessage(ExCommand *cmd) {
 		return false;
 
 	case 36:
-		if (cmd->_keyCode != 9 && cmd->_keyCode != 27)
+		if (cmd->_param != 9 && cmd->_param != 27)
 			return false;
 
 		break;
@@ -618,7 +618,7 @@ void ModalFinal::unloadScenes() {
 }
 
 bool ModalFinal::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == 27) {
 		g_fp->_modalObject = new ModalMainMenu();
 		g_fp->_modalObject->_parentObj = this;
 
@@ -691,7 +691,7 @@ ModalCredits::~ModalCredits() {
 }
 
 bool ModalCredits::handleMessage(ExCommand *cmd) {
-	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+	if (cmd->_messageKind == 17 && cmd->_messageNum == 36 && cmd->_param == 27) {
 		_fadeIn = false;
 
 		return true;
@@ -892,10 +892,10 @@ bool ModalMainMenu::handleMessage(ExCommand *message) {
 	if (message->_messageNum != 36)
 		return false;
 
-	if (message->_keyCode == 27)
+	if (message->_param == 27)
 		_hoverAreaId = PIC_MNU_CONTINUE_L;
 	else
-		enableDebugMenu(message->_keyCode);
+		enableDebugMenu(message->_param);
 
 	return false;
 }
@@ -1397,7 +1397,7 @@ bool ModalQuery::handleMessage(ExCommand *cmd) {
 
 			if (_cancelBtn->isPointInside(g_fp->_mouseScreenPos.x, g_fp->_mouseScreenPos.y))
 				_queryResult = 0;
-		} else if (cmd->_messageNum == 36 && cmd->_keyCode == 27) {
+		} else if (cmd->_messageNum == 36 && cmd->_param == 27) {
 			_queryResult = 0;
 
 			return false;
@@ -1738,7 +1738,7 @@ bool ModalSaveGame::handleMessage(ExCommand *cmd) {
 	if (cmd->_messageNum == 29)
 		processMouse(cmd->_x, cmd->_y);
 	else if (cmd->_messageNum == 36)
-		processKey(cmd->_keyCode);
+		processKey(cmd->_param);
 
 	return false;
 }

@@ -489,7 +489,7 @@ void global_messageHandler_handleSound(ExCommand *cmd) {
 			snd->setPanAndVolume(g_fp->_sfxVolume, 0);
 
 		if (snd->getVolume() > -3500)
-			snd->play(cmd->_keyCode);
+			snd->play(cmd->_param);
 	} else if (cmd->_field_14 & 2) {
 		snd->stop();
 	}

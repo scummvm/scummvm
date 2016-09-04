@@ -303,14 +303,14 @@ void sceneHandler04_walkClimbLadder(ExCommand *ex) {
 
 	ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+	ex1->_param = g_fp->_aniMan->_okeyCode;
 	ex1->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex1);
 
 	ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 
-	ex2->_keyCode = g_fp->_aniMan->_okeyCode;
+	ex2->_param = g_fp->_aniMan->_okeyCode;
 	ex2->_excFlags |= 2;
 
 	mq->addExCommandToEnd(ex2);
@@ -502,13 +502,13 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		ExCommand *ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_TOLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex1->_excFlags = 2;
 		ex1->_field_24 = 1;
-		ex1->_keyCode = -1;
+		ex1->_param = -1;
 		mq->addExCommandToEnd(ex1);
 
 		ExCommand *ex2 = new ExCommand(ANI_MAN, 1, MV_MAN_STOPLADDER, 0, 0, 0, 1, 0, 0, 0);
 		ex2->_excFlags = 2;
 		ex2->_field_24 = 1;
-		ex2->_keyCode = -1;
+		ex2->_param = -1;
 		mq->addExCommandToEnd(ex2);
 
 		ExCommand *ex3 = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
@@ -589,29 +589,29 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 	if (mq) {
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_okeyCode;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -657,29 +657,29 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq1->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 5; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_okeyCode;
 			mq1->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq1->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq1->addExCommandToEnd(ex);
 	}
 
@@ -711,17 +711,17 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_RAISEHEAD, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		g_vars->scene04_kozHeadRaised = true;
@@ -771,29 +771,29 @@ MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 
 		ExCommand *ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 1, MV_KZW_TURN, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 2;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		for (int i = 0; i < 2; i++) {
 			ex = new ExCommand(ANI_KOZAWKA, 1, rMV_KZW_GOR, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 2;
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_okeyCode;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(ANI_KOZAWKA, 6, 0, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_KOZAWKA, 17, MSG_KOZAWRESTART, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -936,7 +936,7 @@ void sceneHandler04_walkKozyawka() {
 		g_vars->scene04_kozyawkiObjList.pop_front();
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_KOZAW_WALK), 0, 1);
-		mq->replaceKeyCode(-1, g_vars->scene04_walkingKozyawka->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene04_walkingKozyawka->_okeyCode);
 		mq->chain(0);
 	}
 }
@@ -1116,18 +1116,18 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 					if (g_fp->_aniMan->_statics->_staticsId == ST_MAN_LADDERDOWN) {
 						ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_LOOKLADDERRV, 0, 0, 0, 1, 0, 0, 0);
-						ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+						ex1->_param = g_fp->_aniMan->_okeyCode;
 						ex1->_excFlags |= 2;
 						mq->addExCommandToEnd(ex1);
 					}
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_STARTLADDERD, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+					ex1->_param = g_fp->_aniMan->_okeyCode;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
 					ex1 = new ExCommand(ANI_MAN, 1, MV_MAN_FROMLADDER, 0, 0, 0, 1, 0, 0, 0);
-					ex1->_keyCode = g_fp->_aniMan->_okeyCode;
+					ex1->_param = g_fp->_aniMan->_okeyCode;
 					ex1->_excFlags |= 2;
 					mq->addExCommandToEnd(ex1);
 
@@ -1491,10 +1491,10 @@ int sceneHandler04(ExCommand *ex) {
 				ex->_messageKind = 0;
 			} else if (g_vars->scene04_dudeOnLadder) {
 				sceneHandler04_leaveLadder(ex);
-			} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_keyCode)) {
+			} else if (!ani || !canInteractAny(g_fp->_aniMan, ani, ex->_param)) {
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picid, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic,ex->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic,ex->_param)) {
 					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 						g_fp->processArcade(ex);

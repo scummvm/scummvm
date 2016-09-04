@@ -510,7 +510,7 @@ void sceneHandler29_manHit() {
 		if (g_vars->scene29_manX <= 638) {
 			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP_NORM, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
-			ex->_keyCode = g_fp->_aniMan->_okeyCode;
+			ex->_param = g_fp->_aniMan->_okeyCode;
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(0, 17, MSG_SC29_STOPRIDE, 0, 0, 0, 1, 0, 0, 0);
@@ -524,7 +524,7 @@ void sceneHandler29_manHit() {
 		} else {
 			ex = new ExCommand(ANI_MAN, 1, MV_MAN29_STANDUP, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags = 2;
-			ex->_keyCode = g_fp->_aniMan->_okeyCode;
+			ex->_param = g_fp->_aniMan->_okeyCode;
 			mq->addExCommandToEnd(ex);
 		}
 
@@ -878,7 +878,7 @@ void sceneHandler29_animBearded() {
 				if (x - g_vars->scene29_manX < 100 || !g_vars->scene29_arcadeIsOn) {
 					mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRDOUT1), 0, 1);
 
-					mq->replaceKeyCode(-1, ani->_okeyCode);
+					mq->setParamInt(-1, ani->_okeyCode);
 					mq->chain(0);
 
 					g_vars->scene29_bearders[i]->wbflag = 0;
@@ -898,7 +898,7 @@ void sceneHandler29_animBearded() {
 
 						mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC29_BRDOUT2), 0, 1);
 
-						mq->replaceKeyCode(-1, ani->_okeyCode);
+						mq->setParamInt(-1, ani->_okeyCode);
 						mq->chain(0);
 
 						g_vars->scene29_bearders[i]->wbflag = 0;
@@ -939,7 +939,7 @@ void sceneHandler29_animBearded() {
 			}
 
 			mq->getExCommandByIndex(0)->_x = newx;
-			mq->replaceKeyCode(-1, ani->_okeyCode);
+			mq->setParamInt(-1, ani->_okeyCode);
 			mq->chain(0);
 
 			g_vars->scene29_bearders[i]->wbflag = 1;

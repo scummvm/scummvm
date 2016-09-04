@@ -143,13 +143,13 @@ void sceneHandler14_showBallGrandmaHit() {
 		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(0);
@@ -185,13 +185,13 @@ void sceneHandler14_showBallMan() {
 		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 		ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_TOGMA, 0, 0, 0, 1, 0, 0, 0);
 
-		ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 		ex->_excFlags |= 2;
 		ex->_field_24 = 1;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+		ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 		ex->_excFlags |= 3;
 		mq->addExCommandToEnd(ex);
 		mq->chain(0);
@@ -435,7 +435,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 		return 0;
 
 	if (!g_vars->scene14_grandmaIsHere) {
-		if (!cmd->_keyCode) {
+		if (!cmd->_param) {
 			if (g_vars->scene14_pink) {
 				if (g_vars->scene14_pink->_flags & 4) {
 					if (cmd->_sceneClickX < g_vars->scene14_pink->_ox + 40) {
@@ -501,13 +501,13 @@ void sceneHandler14_passToGrandma() {
 	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 	ExCommand *ex = new ExCommand(ANI_BALL14, 1, MV_BAL14_FALL, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+	ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 	ex->_excFlags |= 2;
 	ex->_field_24 = 1;
 	mq->addExCommandToEnd(ex);
 
 	ex = new ExCommand(ANI_BALL14, 6, 0, 0, 0, 0, 1, 0, 0, 0);
-	ex->_keyCode = g_vars->scene14_flyingBall->_okeyCode;
+	ex->_param = g_vars->scene14_flyingBall->_okeyCode;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
 	mq->chain(0);
@@ -825,12 +825,12 @@ int sceneHandler14(ExCommand *cmd) {
 				break;
 			}
 
-			if (!sceneHandler14_arcadeProcessClick(cmd) && (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode))) {
+			if (!sceneHandler14_arcadeProcessClick(cmd) && (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param))) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);

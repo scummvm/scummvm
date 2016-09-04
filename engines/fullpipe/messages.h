@@ -42,7 +42,7 @@ class Message : public CObject {
 	int _sceneClickY;
 	int _field_20;
 	int _field_24;
-	int _keyCode;
+	int _param;
 	int _field_2C;
 	int _field_30;
 	int _field_34;
@@ -144,7 +144,7 @@ class MessageQueue : public CObject {
 
 	void mergeQueue(MessageQueue *mq);
 
-	void replaceKeyCode(int key1, int key2);
+	void setParamInt(int key1, int key2);
 
 	bool chain(StaticANIObject *ani);
 	void update();

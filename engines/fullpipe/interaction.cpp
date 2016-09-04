@@ -189,7 +189,7 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
 			ex->_y = obj->_okeyCode;
-			ex->_keyCode = subj ? subj->_okeyCode : 0;
+			ex->_param = subj ? subj->_okeyCode : 0;
 			ex->_excFlags = 3;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 			ex->_field_20 = invId;
@@ -258,7 +258,7 @@ LABEL_38:
 
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = obj->_okeyCode;
+			ex->_param = obj->_okeyCode;
 			ex->_field_14 = 0x100;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
@@ -266,14 +266,14 @@ LABEL_38:
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = obj->_okeyCode;
+		ex->_param = obj->_okeyCode;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = subj->_okeyCode;
+		ex->_param = subj->_okeyCode;
 		ex->_field_14 = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
@@ -281,7 +281,7 @@ LABEL_38:
 
 		ex = new ExCommand(subj->_id, 17, 0x40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = 0;
+		ex->_param = 0;
 		mq->addExCommandToEnd(ex);
 
 		if (!mq->chain(subj)) {
@@ -320,7 +320,7 @@ LABEL_38:
 			ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
 			ex->_y = obj->_okeyCode;
-			ex->_keyCode = subj->_okeyCode;
+			ex->_param = subj->_okeyCode;
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
 			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
@@ -332,7 +332,7 @@ LABEL_38:
 			ex->_x = xpos;
 			ex->_y = ypos;
 			ex->_excFlags |= 3;
-			ex->_keyCode = 6;
+			ex->_param = 6;
 			ex->_field_14 = obj->_id;
 			ex->_field_20 = obj->_okeyCode;
 			ex->postMessage();
@@ -362,13 +362,13 @@ LABEL_38:
 					} else {
 						ex = new ExCommand(ani->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
 						ex->_field_14 = 0x80;
-						ex->_keyCode = ani->_okeyCode;
+						ex->_param = ani->_okeyCode;
 						ex->_excFlags = 3;
 						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = ani->_okeyCode;
+				ex->_param = ani->_okeyCode;
 				ex->_field_14 = 0x100;
 				ex->_excFlags = 3;
 				mq->addExCommandToEnd(ex);
@@ -376,7 +376,7 @@ LABEL_38:
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
 				ex->_y = ani->_okeyCode;
-				ex->_keyCode = subj->_okeyCode;
+				ex->_param = subj->_okeyCode;
 				ex->_excFlags = 2;
 				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;

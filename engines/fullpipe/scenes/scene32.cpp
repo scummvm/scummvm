@@ -185,7 +185,7 @@ void sceneHandler32_trySit(ExCommand *cmd) {
 		ex->_parentId = ANI_MAN;
 		ex->_messageKind = 1;
 		ex->_messageNum = MV_MAN32_SITDOWN;
-		ex->_keyCode = g_fp->_aniMan->_okeyCode;
+		ex->_param = g_fp->_aniMan->_okeyCode;
 
 		g_vars->scene32_dudeIsSitting = true;
 

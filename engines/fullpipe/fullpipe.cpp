@@ -347,7 +347,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = 32;
+				ex->_param = 32;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -359,7 +359,7 @@ void FullpipeEngine::updateEvents() {
 				}
 
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = event.kbd.keycode;
+				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -373,7 +373,7 @@ void FullpipeEngine::updateEvents() {
 					getDebugger()->onFrame();
 				}
 				ex = new ExCommand(0, 17, 36, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = event.kbd.keycode;
+				ex->_param = event.kbd.keycode;
 				ex->_excFlags |= 3;
 				ex->handle();
 				break;
@@ -414,7 +414,7 @@ void FullpipeEngine::updateEvents() {
 
 				ex->_sceneClickX = _sceneRect.left + ex->_x;
 				ex->_sceneClickY = _sceneRect.top + ex->_y;
-				ex->_keyCode = getGameLoaderInventory()->getSelectedItemId();
+				ex->_param = getGameLoaderInventory()->getSelectedItemId();
 				ex->_excFlags |= 3;
 				_lastInputTicks = _updateTicks;
 				ex->handle();

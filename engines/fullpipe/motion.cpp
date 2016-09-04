@@ -225,7 +225,7 @@ MessageQueue *MctlCompound::startMove(StaticANIObject *ani, int sourceX, int sou
 
 	ex->_excFlags |= 2;
 	ex->_field_20 = fuzzyMatch;
-	ex->_keyCode = ani->_okeyCode;
+	ex->_param = ani->_okeyCode;
 
 	mq->addExCommandToEnd(ex);
 
@@ -293,7 +293,7 @@ MessageQueue *MctlCompound::makeQueue(StaticANIObject *subj, int xpos, int ypos,
 		ex = new ExCommand(subj->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
 
 		ex->_field_20 = fuzzyMatch;
-		ex->_keyCode = subj->_okeyCode;
+		ex->_param = subj->_okeyCode;
 		ex->_excFlags |= 2;
 
 		mq->addExCommandToEnd(ex);
@@ -542,7 +542,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varUpStop, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		ex->_excFlags |= 2;
 
 		mq->insertExCommandAt(0, ex);
@@ -608,7 +608,7 @@ MessageQueue *MctlLadder::makeQueue(StaticANIObject *ani, int xpos, int ypos, in
 		mq = _aniHandler.makeRunQueue(&mkQueue);
 
 		ex = new ExCommand(ani->_id, 1, _ladmovements[pos]->movVars->varDownStop, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = ani->_okeyCode;
+		ex->_param = ani->_okeyCode;
 		ex->_excFlags |= 2;
 
 		mq->insertExCommandAt(0, ex);
@@ -950,13 +950,13 @@ MessageQueue *MovGraph::startMove(StaticANIObject *ani, int xpos, int ypos, int 
 			mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 			ex = new ExCommand(ani->_id, 21, 0, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_okeyCode;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(ani->_id, 51, 0, xpos, ypos, 0, 1, 0, 0, 0);
-			ex->_keyCode = ani->_okeyCode;
+			ex->_param = ani->_okeyCode;
 			ex->_field_3C = 1;
 			ex->_field_24 = 0;
 			ex->_field_20 = fuzzyMatch;
@@ -1998,7 +1998,7 @@ MessageQueue *MctlGraph::makeWholeQueue(MctlMQ *mctlMQ) {
 				ExCommand *ex = new ExCommand(_items2[mctlMQ->index]->_objectId, 1, mg2i->_movementId, 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_excFlags |= 2;
-				ex->_keyCode = _items2[mctlMQ->index]->_obj->_okeyCode;
+				ex->_param = _items2[mctlMQ->index]->_obj->_okeyCode;
 				ex->_field_24 = 1;
 				ex->_field_14 = -1;
 				mq->addExCommandToEnd(ex);
@@ -2241,21 +2241,21 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_field_24 = 1;
-			ex->_keyCode = picAniInfo.field_8;
+			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 2;
 
 			mq->addExCommandToEnd(ex);
 		} else {
 			ExCommand *ex = new ExCommand(picAniInfo.objectId, 22, obj->_statics->_staticsId, 0, 0, 0, 1, 0, 0, 0);
 
-			ex->_keyCode = picAniInfo.field_8;
+			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 3;
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(picAniInfo.objectId, 5, -1, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
 
 			ex->_field_14 = -1;
-			ex->_keyCode = picAniInfo.field_8;
+			ex->_param = picAniInfo.field_8;
 			ex->_excFlags |= 3;
 			mq->addExCommandToEnd(ex);
 		}
@@ -2378,13 +2378,13 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 			} else {
 				ex = new ExCommand(picAniInfo.objectId, 5, ex->_messageNum, obj->_ox, obj->_oy, 0, 1, 0, 0, 0);
 				ex->_field_14 = -1;
-				ex->_keyCode = picAniInfo.field_8;
+				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 2;
 				mq->addExCommand(ex);
 
 				ex = new ExCommand(picAniInfo.objectId, 22, _items2[idx]->_subItems[idxsub]._staticsId1, 0, 0, 0, 1, 0, 0, 0);
 
-				ex->_keyCode = picAniInfo.field_8;
+				ex->_param = picAniInfo.field_8;
 				ex->_excFlags |= 3;
 				mq->addExCommand(ex);
 			}
@@ -2599,7 +2599,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 
 		ex->_field_14 = info->distance1;
 
-		ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+		ex->_param = _items2[info->index]->_obj->_okeyCode;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
 	} else {
@@ -2617,7 +2617,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 
 		ex->_field_14 = info->distance1;
 
-		ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+		ex->_param = _items2[info->index]->_obj->_okeyCode;
 		ex->_field_24 = 1;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
@@ -2631,7 +2631,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 								  &y2,
 								  -1);
 		ex->_parId = mq->_id;
-		ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+		ex->_param = _items2[info->index]->_obj->_okeyCode;
 	}
 
 	mq->addExCommandToEnd(ex);
@@ -2653,7 +2653,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 								  &y2,
 								  par);
 		ex->_parId = mq->_id;
-		ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+		ex->_param = _items2[info->index]->_obj->_okeyCode;
 		mq->addExCommandToEnd(ex);
 	}
 
@@ -2667,7 +2667,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 								  &y2,
 								  -1);
 		ex->_parId = mq->_id;
-		ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+		ex->_param = _items2[info->index]->_obj->_okeyCode;
 
 		mq->addExCommandToEnd(ex);
 	}
@@ -2675,7 +2675,7 @@ MessageQueue *MctlGraph::makeLineQueue(MctlMQ *info) {
 	ex = new ExCommand(_items2[info->index]->_objectId, 5, -1, info->pt2.x, info->pt2.y, 0, 1, 0, 0, 0);
 	ex->_field_14 = info->distance2;
 
-	ex->_keyCode = _items2[info->index]->_obj->_okeyCode;
+	ex->_param = _items2[info->index]->_obj->_okeyCode;
 	ex->_field_24 = 0;
 	ex->_excFlags |= 2;
 

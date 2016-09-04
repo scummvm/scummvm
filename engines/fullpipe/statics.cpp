@@ -824,7 +824,7 @@ void StaticANIObject::update(int counterdiff) {
 					newex->_excFlags |= 2;
 					if (newex->_messageKind == 17) {
 						newex->_parentId = _id;
-						newex->_keyCode = _okeyCode;
+						newex->_param = _okeyCode;
 					}
 					newex->sendMessage();
 
@@ -836,7 +836,7 @@ void StaticANIObject::update(int counterdiff) {
 			if (dyn->_initialCountdown == dyn->_countdown && dyn->_field_68 != 0) {
 				newex = new ExCommand(_id, 17, dyn->_field_68, 0, 0, 0, 1, 0, 0, 0);
 				newex->_excFlags = 2;
-				newex->_keyCode = _okeyCode;
+				newex->_param = _okeyCode;
 				newex->sendMessage();
 
 				if (!_movement)
@@ -1006,7 +1006,7 @@ L12:
 		_movement = 0;
 
 		ExCommand *ex = new ExCommand(_id, 17, 24, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = _okeyCode;
+		ex->_param = _okeyCode;
 		ex->_excFlags = 2;
 		ex->postMessage();
 	}
@@ -1274,7 +1274,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 
 	ExCommand *ex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
-	ex->_keyCode = _okeyCode;
+	ex->_param = _okeyCode;
 	ex->_excFlags = 2;
 	ex->postMessage();
 }
@@ -1386,7 +1386,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 	ExCommand *newex = new ExCommand(_id, 17, 23, 0, 0, movementId, 1, 0, 0, 0);
 
-	newex->_keyCode = _okeyCode;
+	newex->_param = _okeyCode;
 	newex->_excFlags = 2;
 
 	newex->postMessage();

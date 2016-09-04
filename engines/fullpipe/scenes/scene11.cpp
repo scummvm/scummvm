@@ -407,13 +407,13 @@ void sceneHandler11_jumpHitAndWin() {
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_024;
 		ExCommand *ex = new ExCommand(ANI_MAN, 2, 36, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = -1;
+		ex->_param = -1;
 		ex->_excFlags = 2;
 
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaRight;
+		ex->_param = TrubaRight;
 		ex->_excFlags = 3;
 
 		mq->addExCommandToEnd(ex);
@@ -750,7 +750,7 @@ int sceneHandler11(ExCommand *cmd) {
 	case 29:
 		if (g_vars->scene11_swingIsSwinging) {
 			if (g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie
-				&& cmd->_keyCode == ANI_INV_BOOT)
+				&& cmd->_param == ANI_INV_BOOT)
 				sceneHandler11_putBoot();
 		} else {
 			if (g_vars->scene11_arcadeIsOn) {
@@ -763,11 +763,11 @@ int sceneHandler11(ExCommand *cmd) {
 		if (!g_vars->scene11_arcadeIsOn) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);

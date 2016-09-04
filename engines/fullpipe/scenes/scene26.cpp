@@ -263,7 +263,7 @@ void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
 					ExCommand *ex = new ExCommand(0, 17, MSG_SC26_CLICKVENT, 0, 0, 0, 1, 0, 0, 0);
 
 					ex->_excFlags |= 3;
-					ex->_keyCode = ani->_okeyCode;
+					ex->_param = ani->_okeyCode;
 
 					mq->addExCommandToEnd(ex);
 
@@ -309,7 +309,7 @@ int sceneHandler26(ExCommand *cmd) {
 
 	case MSG_SC26_CLICKVENT:
 		{
-			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_keyCode);
+			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT, cmd->_param);
 
 			if (ani && ani->_id == ANI_VENT)
 				sceneHandler26_clickVent(ani, cmd);

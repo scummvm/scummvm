@@ -398,7 +398,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 
 	ExCommand *ex = new ExCommand(_preloadItems[idx]->sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
-	ex->_keyCode = _preloadItems[idx]->keyCode;
+	ex->_param = _preloadItems[idx]->keyCode;
 
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;

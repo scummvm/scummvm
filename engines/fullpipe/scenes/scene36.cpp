@@ -64,7 +64,7 @@ int sceneHandler36(ExCommand *cmd) {
 				if (g_vars->scene36_scissors->_flags & 4)
 					if (g_fp->_aniMan->isIdle())
 						if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene36_scissors->_id ) {
-							handleObjectInteraction(g_fp->_aniMan, g_vars->scene36_scissors, cmd->_keyCode);
+							handleObjectInteraction(g_fp->_aniMan, g_vars->scene36_scissors, cmd->_param);
 
 							cmd->_messageKind = 0;
 						}

@@ -266,7 +266,7 @@ void sceneHandler06_showNextBall() {
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
-		mq->replaceKeyCode(-1, g_vars->scene06_currentBall->_okeyCode);
+		mq->setParamInt(-1, g_vars->scene06_currentBall->_okeyCode);
 		mq->chain(0);
 
 		++g_vars->scene06_numBallsGiven;
@@ -412,7 +412,7 @@ void sceneHandler06_fallBall() {
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_FALLBALL), 0, 1);
 
-	mq->replaceKeyCode(-1, g_vars->scene06_flyingBall->_okeyCode);
+	mq->setParamInt(-1, g_vars->scene06_flyingBall->_okeyCode);
 	mq->chain(0);
 
 	g_vars->scene06_balls.push_back(g_vars->scene06_flyingBall);
@@ -665,11 +665,11 @@ int sceneHandler06(ExCommand *ex) {
 				}
 			}
 
-			if (!st || !canInteractAny(g_fp->_aniMan, st, ex->_keyCode)) {
+			if (!st || !canInteractAny(g_fp->_aniMan, st, ex->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, ex->_param)) {
 					if ((g_fp->_sceneRect.right - ex->_sceneClickX < 47
 						 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (ex->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {

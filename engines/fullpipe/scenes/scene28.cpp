@@ -105,16 +105,16 @@ void sceneHandler28_trySecondaryPers() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 20;
-			mq->getExCommandByIndex(0)->_keyCode = 1;
-			mq->replaceKeyCode(-1, 1);
+			mq->getExCommandByIndex(0)->_param = 1;
+			mq->setParamInt(-1, 1);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 40;
 			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_keyCode = 2;
-			mq->replaceKeyCode(-1, 2);
+			mq->getExCommandByIndex(0)->_param = 2;
+			mq->setParamInt(-1, 2);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
@@ -124,16 +124,16 @@ void sceneHandler28_trySecondaryPers() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 20;
-			mq->getExCommandByIndex(0)->_keyCode = 1;
-			mq->replaceKeyCode(-1, 1);
+			mq->getExCommandByIndex(0)->_param = 1;
+			mq->setParamInt(-1, 1);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 40;
 			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_keyCode = 2;
-			mq->replaceKeyCode(-1, 2);
+			mq->getExCommandByIndex(0)->_param = 2;
+			mq->setParamInt(-1, 2);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
@@ -143,8 +143,8 @@ void sceneHandler28_trySecondaryPers() {
 
 		mq->getExCommandByIndex(0)->_x = x;
 		mq->getExCommandByIndex(0)->_y += 40;
-		mq->getExCommandByIndex(0)->_keyCode = 3;
-		mq->replaceKeyCode(-1, 3);
+		mq->getExCommandByIndex(0)->_param = 3;
+		mq->setParamInt(-1, 3);
 		mq->chain( 0);
 
 		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
@@ -381,7 +381,7 @@ int sceneHandler28(ExCommand *cmd) {
 		break;
 
 	case MSG_SC28_CLICKLIFT:
-		sceneHandler28_clickLift(cmd->_keyCode);
+		sceneHandler28_clickLift(cmd->_param);
 		break;
 
 	case MSG_SC28_ENDLIFT1:
@@ -411,11 +411,11 @@ int sceneHandler28(ExCommand *cmd) {
 					break;
 				}
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 						g_fp->processArcade(cmd);

@@ -176,7 +176,7 @@ int sceneHandler10(ExCommand *ex) {
 	case 29:
 		{
 			if (g_fp->_currentScene->getPictureObjectIdAtPos(ex->_sceneClickX, ex->_sceneClickY) == PIC_SC10_LADDER) {
-				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, g_fp->_currentScene->getPictureObjectById(PIC_SC10_DTRUBA, 0), ex->_param);
 				ex->_messageKind = 0;
 
 				return 0;
