@@ -1034,20 +1034,6 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		1   /* FUSE */
 	};
 
-	int16 L1245_i_Multiple;
-#define AL1245_T_ExplosionThing  L1245_i_Multiple
-#define AL1245_B_ActionPerformed L1245_i_Multiple
-	int16 L1246_i_Multiple = 0;
-#define AL1246_i_RequiredManaAmount    L1246_i_Multiple
-#define AL1246_i_ActionHandWeaponClass L1246_i_Multiple
-#define AL1246_i_StepEnergy            L1246_i_Multiple
-#define AL1246_i_HealingCapability     L1246_i_Multiple
-#define AL1246_i_Ticks                 L1246_i_Multiple
-	int16 L1250_i_Multiple;
-#define AL1250_i_KineticEnergy        L1250_i_Multiple
-#define AL1250_i_ReadyHandWeaponClass L1250_i_Multiple
-#define AL1250_i_MissingHealth        L1250_i_Multiple
-
 	if (champIndex >= _vm->_championMan->_partyChampionCount)
 		return false;
 
@@ -1067,37 +1053,35 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	int16 actionStamina = actionStaminaArray[actionIndex] + _vm->getRandomNumber(2);
 	int16 actionExperienceGain = actionExperienceGainArray[actionIndex];
 	uint16 targetSquare = _vm->_dungeonMan->getSquare(nextMapX, nextMapY).toByte();
-	AL1245_B_ActionPerformed = true;
-	if (((actionSkillIndex >= k16_ChampionSkillFire) && (actionSkillIndex <= k19_ChampionSkillWater)) || (actionSkillIndex == k3_ChampionSkillWizard)) {
-		AL1246_i_RequiredManaAmount = 7 - MIN((uint16)6, _vm->_championMan->getSkillLevel(champIndex, actionSkillIndex));
-	}
+
+	int16 requiredManaAmount = 0;
+	if (((actionSkillIndex >= k16_ChampionSkillFire) && (actionSkillIndex <= k19_ChampionSkillWater)) || (actionSkillIndex == k3_ChampionSkillWizard))
+		requiredManaAmount = 7 - MIN<uint16>(6, _vm->_championMan->getSkillLevel(champIndex, actionSkillIndex));
+
+	bool setDirectionFl = false;
+	int16 kineticEnergy = 0;
+	Thing explosionThing = Thing::_none;
+	bool actionPerformed = true;
 	switch (actionIndex) {
 	case k23_ChampionActionLightning:
-		AL1250_i_KineticEnergy = 180;
-		AL1245_T_ExplosionThing = Thing::_explLightningBolt.toUint16();
-		goto T0407014;
+		kineticEnergy = 180;
+		explosionThing = Thing::_explLightningBolt;
+		setDirectionFl = true;
+		break;
 	case k21_ChampionActionDispel:
-		AL1250_i_KineticEnergy = 150;
-		AL1245_T_ExplosionThing = Thing::_explHarmNonMaterial.toUint16();
-		goto T0407014;
+		kineticEnergy = 150;
+		explosionThing = Thing::_explHarmNonMaterial;
+		setDirectionFl = true;
+		break;
 	case k20_ChampionActionFireball:
-		AL1250_i_KineticEnergy = 150;
-		AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
-		goto T0407014;
+		kineticEnergy = 150;
+		explosionThing = Thing::_explFireBall;
+		setDirectionFl = true;
+		break;
 	case k40_ChampionActionSpit:
-		AL1250_i_KineticEnergy = 250;
-		AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
-T0407014:
-		setChampionDirectionToPartyDirection(curChampion);
-		if (curChampion->_currMana < AL1246_i_RequiredManaAmount) {
-			AL1250_i_KineticEnergy = MAX(2, curChampion->_currMana * AL1250_i_KineticEnergy / AL1246_i_RequiredManaAmount);
-			AL1246_i_RequiredManaAmount = curChampion->_currMana;
-		}
-		AL1245_B_ActionPerformed = _vm->_championMan->isProjectileSpellCast(champIndex, Thing(AL1245_T_ExplosionThing), AL1250_i_KineticEnergy, AL1246_i_RequiredManaAmount);
-		if (!AL1245_B_ActionPerformed)
-			actionExperienceGain >>= 1;
-
-		decrementCharges(curChampion);
+		kineticEnergy = 250;
+		explosionThing = Thing::_explFireBall;
+		setDirectionFl = true;
 		break;
 	case k30_ChampionActionBash:
 	case k18_ChampionActionHack:
@@ -1123,7 +1107,7 @@ T0407014:
 	case k28_ChampionActionSlash:
 	case k29_ChampionActionCleave:
 	case k6_ChampionActionPunch:
-		if (!(AL1245_B_ActionPerformed = isMeleeActionPerformed(champIndex, curChampion, actionIndex, nextMapX, nextMapY, actionSkillIndex))) {
+		if (!(actionPerformed = isMeleeActionPerformed(champIndex, curChampion, actionIndex, nextMapX, nextMapY, actionSkillIndex))) {
 			actionExperienceGain >>= 1;
 			actionDisabledTicks >>= 1;
 		}
@@ -1140,42 +1124,43 @@ T0407014:
 		else if (actionIndex == k4_ChampionActionBlowHorn)
 			_vm->_sound->requestPlay(k25_soundBLOW_HORN, nextMapX, nextMapY, k0_soundModePlayImmediately);
 
-		AL1245_B_ActionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
+		actionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
 	case k32_ChampionActionShoot: {
 		if (Thing(curChampion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType) {
 			_actionDamage = kM2_damageNoAmmunition;
 			actionExperienceGain = 0;
-			AL1245_B_ActionPerformed = false;
+			actionPerformed = false;
 			break;
 		}
 
 		WeaponInfo *weaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[weaponInHand->getType()];
 		WeaponInfo *weaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(curChampion->_slots[k0_ChampionSlotReadyHand]);
-		AL1246_i_ActionHandWeaponClass = weaponInfoActionHand->_class;
-		AL1250_i_ReadyHandWeaponClass = weaponInfoReadyHand->_class;
-		if ((AL1246_i_ActionHandWeaponClass >= k16_WeaponClassFirstBow) && (AL1246_i_ActionHandWeaponClass <= k31_WeaponClassLastBow)) {
-			if (AL1250_i_ReadyHandWeaponClass != k10_WeaponClassBowAmmunition) {
+		int16 actionHandWeaponClass = weaponInfoActionHand->_class;
+		int16 readyHandWeaponClass = weaponInfoReadyHand->_class;
+		int16 stepEnergy = actionHandWeaponClass;
+		if ((actionHandWeaponClass >= k16_WeaponClassFirstBow) && (actionHandWeaponClass <= k31_WeaponClassLastBow)) {
+			if (readyHandWeaponClass != k10_WeaponClassBowAmmunition) {
 				_actionDamage = kM2_damageNoAmmunition;
 				actionExperienceGain = 0;
-				AL1245_B_ActionPerformed = false;
+				actionPerformed = false;
 				break;
 			}
-			AL1246_i_StepEnergy -= k16_WeaponClassFirstBow;
-		} else if ((AL1246_i_ActionHandWeaponClass >= k32_WeaponClassFirstSling) && (AL1246_i_ActionHandWeaponClass <= k47_WeaponClassLastSling)) {
-			if (AL1250_i_ReadyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
+			stepEnergy -= k16_WeaponClassFirstBow;
+		} else if ((actionHandWeaponClass >= k32_WeaponClassFirstSling) && (actionHandWeaponClass <= k47_WeaponClassLastSling)) {
+			if (readyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
 				_actionDamage = kM2_damageNoAmmunition;
 				actionExperienceGain = 0;
-				AL1245_B_ActionPerformed = false;
+				actionPerformed = false;
 				break;
 			}
-			AL1246_i_StepEnergy -= k32_WeaponClassFirstSling;
+			stepEnergy -= k32_WeaponClassFirstSling;
 		}
 
 		setChampionDirectionToPartyDirection(curChampion);
 		Thing removedObject = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
 		_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, AL1246_i_StepEnergy);
+		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, k11_ChampionSkillShoot)) << 1, stepEnergy);
 		}
 		break;
 	case k5_ChampionActionFlip: {
@@ -1207,27 +1192,28 @@ T0407014:
 		if (!isPartySpellOrFireShieldSuccessful(curChampion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
 			actionExperienceGain >>= 2;
 			actionDisabledTicks >>= 1;
-		} else {
+		} else
 			decrementCharges(curChampion);
-		}
+
 		break;
 	case k27_ChampionActionInvoke:
-		AL1250_i_KineticEnergy = _vm->getRandomNumber(128) + 100;
+		kineticEnergy = _vm->getRandomNumber(128) + 100;
 		switch (_vm->getRandomNumber(6)) {
 		case 0:
-			AL1245_T_ExplosionThing = Thing::_explPoisonBolt.toUint16();
+			explosionThing = Thing::_explPoisonBolt;
 			break;
 		case 1:
-			AL1245_T_ExplosionThing = Thing::_explPoisonCloud.toUint16();
+			explosionThing = Thing::_explPoisonCloud;
 			break;
 		case 2:
-			AL1245_T_ExplosionThing = Thing::_explHarmNonMaterial.toUint16();
+			explosionThing = Thing::_explHarmNonMaterial;
 			break;
 		default:
-			AL1245_T_ExplosionThing = Thing::_explFireBall.toUint16();
+			explosionThing = Thing::_explFireBall;
 			break;
 		}
-		goto T0407014;
+		setDirectionFl = true;
+		break;
 
 	case k35_ChampionActionFluxcage:
 		setChampionDirectionToPartyDirection(curChampion);
@@ -1240,43 +1226,45 @@ T0407014:
 		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		_vm->_groupMan->fuseAction(nextMapX, nextMapY);
 		break;
-	case k36_ChampionActionHeal:
+	case k36_ChampionActionHeal: {
 		/* CHANGE2_17_IMPROVEMENT Heal action is much more effective
 		Heal cycles occur as long as the champion has missing health and enough mana. Cycle count = Min(Current Mana / 2, Missing health / Min(10, Heal skill level))
 		Healing amount is Min(Missing health, Min(10, Heal skill level)) * heal cycle count
 		Mana cost is 2 * heal cycle count
 		Experience gain is 2 + 2 * heal cycle count */
-		AL1250_i_MissingHealth = curChampion->_maxHealth - curChampion->_currHealth;
-		if ((AL1250_i_MissingHealth > 0) && curChampion->_currMana) {
-			AL1246_i_HealingCapability = MIN((uint16)10, _vm->_championMan->getSkillLevel(champIndex, k13_ChampionSkillHeal));
+		int16 missingHealth = curChampion->_maxHealth - curChampion->_currHealth;
+		if ((missingHealth > 0) && curChampion->_currMana) {
+			int16 healingCapability = MIN((uint16)10, _vm->_championMan->getSkillLevel(champIndex, k13_ChampionSkillHeal));
 			actionExperienceGain = 2;
 			uint16 healingAmount;
 			do {
-				healingAmount = MIN(AL1250_i_MissingHealth, AL1246_i_HealingCapability);
+				healingAmount = MIN(missingHealth, healingCapability);
 				curChampion->_currHealth += healingAmount;
 				actionExperienceGain += 2;
 				curChampion->_currMana = curChampion->_currMana - 2;
 				if (curChampion->_currMana > 0)
-					AL1250_i_MissingHealth -= healingAmount;
-			} while ((curChampion->_currMana > 0) && AL1250_i_MissingHealth);
+					missingHealth -= healingAmount;
+			} while ((curChampion->_currMana > 0) && missingHealth);
 
 			if (curChampion->_currMana < 0)
 				curChampion->_currMana = 0;
 
 			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
-			AL1245_B_ActionPerformed = true;
+			actionPerformed = true;
+		}
 		}
 		break;
 	case k39_ChampionActionWindow: {
-		AL1246_i_Ticks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
+		int16 windowTicks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
 		newEvent._type = k73_TMEventTypeThievesEye;
-		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1246_i_Ticks);
+		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		_vm->_championMan->_party._event73Count_ThievesEye++;
+		decrementCharges(curChampion);
 		}
-		goto T0407076;
+		break;
 	case k10_ChampionActionClimbDown:
 		nextMapX = _vm->_dungeonMan->_partyMapX;
 		nextMapY = _vm->_dungeonMan->_partyMapY;
@@ -1284,7 +1272,9 @@ T0407014:
 		nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
 		if ((_vm->_dungeonMan->getSquare(nextMapX, nextMapY).getType() == k2_PitElemType) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
-			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether the pit is open before moving the party over the pit. This is not consistent with the behavior when using the rope in front of a corridor where nothing happens */
+			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether
+			   the pit is open before moving the party over the pit. This is not consistent with the behavior when using the
+			   rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_useRopeToClimbDownPit = true;
 			_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, nextMapX, nextMapY);
 			_vm->_moveSens->_useRopeToClimbDownPit = false;
@@ -1292,45 +1282,59 @@ T0407014:
 			actionDisabledTicks = 0;
 		}
 		break;
-	case k11_ChampionActionFreezeLife:
+	case k11_ChampionActionFreezeLife: {
+		int16 freezeTicks;
 		if (weaponInHand->getType() == k42_JunkTypeMagicalBoxBlue) {
-			AL1246_i_Ticks = 30;
+			freezeTicks = 30;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
 		} else if (weaponInHand->getType() == k43_JunkTypeMagicalBoxGreen) {
-			AL1246_i_Ticks = 125;
+			freezeTicks = 125;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
 		} else {
-			AL1246_i_Ticks = 70;
+			freezeTicks = 70;
 			decrementCharges(curChampion);
 		}
-		_vm->_championMan->_party._freezeLifeTicks = MIN(200, _vm->_championMan->_party._freezeLifeTicks + AL1246_i_Ticks);
+		_vm->_championMan->_party._freezeLifeTicks = MIN(200, _vm->_championMan->_party._freezeLifeTicks + freezeTicks);
+		}
 		break;
 	case k38_ChampionActionLight:
 		_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
 		createEvent70_light(-2, 2500);
-T0407076:
 		decrementCharges(curChampion);
 		break;
 	case k42_ChampionActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		AL1245_B_ActionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
-		if (AL1245_B_ActionPerformed) {
+		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
+		break;
+	}
+
+	if (setDirectionFl) {
+		setChampionDirectionToPartyDirection(curChampion);
+		if (curChampion->_currMana < requiredManaAmount) {
+			kineticEnergy = MAX(2, curChampion->_currMana * kineticEnergy / requiredManaAmount);
+			requiredManaAmount = curChampion->_currMana;
 		}
+		actionPerformed = _vm->_championMan->isProjectileSpellCast(champIndex, explosionThing, kineticEnergy, requiredManaAmount);
+		if (!actionPerformed)
+			actionExperienceGain >>= 1;
+
+		decrementCharges(curChampion);
 	}
-	if (actionDisabledTicks) {
+	if (actionDisabledTicks)
 		_vm->_championMan->disableAction(champIndex, actionDisabledTicks);
-	}
-	if (actionStamina) {
+
+	if (actionStamina)
 		_vm->_championMan->decrementStamina(champIndex, actionStamina);
-	}
-	if (actionExperienceGain) {
+
+	if (actionExperienceGain)
 		_vm->_championMan->addSkillExperience(champIndex, actionSkillIndex, actionExperienceGain);
-	}
+
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
-	return AL1245_B_ActionPerformed;
+	return actionPerformed;
 }
 
 void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
