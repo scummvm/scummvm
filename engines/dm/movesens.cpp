@@ -862,43 +862,38 @@ T0276079:
 }
 
 bool MovesensMan::isObjcetInPartyPossession(int16 objectType) {
-	int16 L0742_i_ChampionIndex;
-	uint16 L0743_ui_SlotIndex = 0;
-	Thing L0744_T_Thing = Thing::_none;
-	Champion *L0745_ps_Champion;
-	Thing *L0746_pT_Thing = nullptr;
-	int16 L0747_i_ObjectType;
-	bool L0748_B_LeaderHandObjectProcessed;
-	Container *L0749_ps_Container;
-
-
-	L0748_B_LeaderHandObjectProcessed = false;
-	for (L0742_i_ChampionIndex = k0_ChampionFirst, L0745_ps_Champion = _vm->_championMan->_champions; L0742_i_ChampionIndex < _vm->_championMan->_partyChampionCount; L0742_i_ChampionIndex++, L0745_ps_Champion++) {
-		if (L0745_ps_Champion->_currHealth) {
-			L0746_pT_Thing = L0745_ps_Champion->_slots;
-			for (L0743_ui_SlotIndex = k0_ChampionSlotReadyHand; (L0743_ui_SlotIndex < k30_ChampionSlotChest_1) && !L0748_B_LeaderHandObjectProcessed; L0743_ui_SlotIndex++) {
-				L0744_T_Thing = *L0746_pT_Thing++;
+	bool leaderHandObjectProcessed = false;
+	Champion *curChampion = _vm->_championMan->_champions;
+	int16 championIdx;
+	uint16 slotIdx = 0;
+	Thing curThing;
+	Thing *curSlotThing = nullptr;
+	for (championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+		if (curChampion->_currHealth) {
+			curSlotThing = curChampion->_slots;
+			for (slotIdx = k0_ChampionSlotReadyHand; (slotIdx < k30_ChampionSlotChest_1) && !leaderHandObjectProcessed; slotIdx++) {
+				curThing = *curSlotThing++;
 T0274003:
-				L0747_i_ObjectType = _vm->_objectMan->getObjectType(L0744_T_Thing);
-				if (L0747_i_ObjectType == objectType) {
+				int16 objectType = _vm->_objectMan->getObjectType(curThing);
+				if (objectType == objectType)
 					return true;
-				}
-				if (L0747_i_ObjectType == k144_IconIndiceContainerChestClosed) {
-					L0749_ps_Container = (Container *)_vm->_dungeonMan->getThingData(L0744_T_Thing);
-					L0744_T_Thing = L0749_ps_Container->getSlot();
-					while (L0744_T_Thing != Thing::_endOfList) {
-						if (_vm->_objectMan->getObjectType(L0744_T_Thing) == objectType) {
+
+				if (objectType == k144_IconIndiceContainerChestClosed) {
+					Container *container = (Container *)_vm->_dungeonMan->getThingData(curThing);
+					curThing = container->getSlot();
+					while (curThing != Thing::_endOfList) {
+						if (_vm->_objectMan->getObjectType(curThing) == objectType)
 							return true;
-						}
-						L0744_T_Thing = _vm->_dungeonMan->getNextThing(L0744_T_Thing);
+
+						curThing = _vm->_dungeonMan->getNextThing(curThing);
 					}
 				}
 			}
 		}
 	}
-	if (!L0748_B_LeaderHandObjectProcessed) {
-		L0748_B_LeaderHandObjectProcessed = true;
-		L0744_T_Thing = _vm->_championMan->_leaderHandObject;
+	if (!leaderHandObjectProcessed) {
+		leaderHandObjectProcessed = true;
+		curThing = _vm->_championMan->_leaderHandObject;
 		goto T0274003;
 	}
 	return false;
