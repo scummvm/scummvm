@@ -47,7 +47,7 @@ StepArray::~StepArray() {
 		for (int i = 0; i < _pointsCount; i++)
 			delete _points[i];
 
-		delete _points;
+		free(_points);
 
 		_points = 0;
 	}
