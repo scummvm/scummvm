@@ -473,12 +473,6 @@ int16 MenuMan::getClickOnSpellCastResult() {
 }
 
 int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
-	uint16 L1267_ui_Multiple;
-#define AL1267_ui_SkillLevel L1267_ui_Multiple
-#define AL1267_ui_LightPower L1267_ui_Multiple
-#define AL1267_ui_SpellPower L1267_ui_Multiple
-#define AL1267_ui_Ticks      L1267_ui_Multiple
-
 	if (champIndex >= _vm->_championMan->_partyChampionCount)
 		return k0_spellCastFailure;
 
@@ -494,12 +488,12 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	int16 powerSymbolOrdinal = curChampion->_symbols[0] - '_'; /* Values 1 to 6 */
 	uint16 requiredSkillLevel = curSpell->_baseRequiredSkillLevel + powerSymbolOrdinal;
 	uint16 experience = _vm->getRandomNumber(8) + (requiredSkillLevel << 4) + ((_vm->ordinalToIndex(powerSymbolOrdinal) * curSpell->_baseRequiredSkillLevel) << 3) + (requiredSkillLevel * requiredSkillLevel);
-	AL1267_ui_SkillLevel = _vm->_championMan->getSkillLevel(champIndex, curSpell->_skillIndex);
-	if (AL1267_ui_SkillLevel < requiredSkillLevel) {
-		int16 missingSkillLevelCount = requiredSkillLevel - AL1267_ui_SkillLevel;
+	uint16 skillLevel = _vm->_championMan->getSkillLevel(champIndex, curSpell->_skillIndex);
+	if (skillLevel < requiredSkillLevel) {
+		int16 missingSkillLevelCount = requiredSkillLevel - skillLevel;
 		while (missingSkillLevelCount--) {
 			if (_vm->getRandomNumber(128) > MIN(curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
-				_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience >> (requiredSkillLevel - AL1267_ui_SkillLevel));
+				_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience >> (requiredSkillLevel - skillLevel));
 				menusPrintSpellFailureMessage(curChampion, k0_failureNeedsMorePractice, curSpell->_skillIndex);
 				return k0_spellCastFailure;
 			}
@@ -530,67 +524,82 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			setFlag(curChampion->_attributes, k0x0400_ChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
-		if (curSpell->getType() == k4_spellType_projectileOpenDoor) {
-			AL1267_ui_SkillLevel <<= 1;
-		}
-		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(curSpell->getType() + Thing::_firstExplosion.toUint16()), getBoundedValue(21, (powerSymbolOrdinal + 2) * (4 + (AL1267_ui_SkillLevel << 1)), 255), 0);
+		if (curSpell->getType() == k4_spellType_projectileOpenDoor)
+			skillLevel <<= 1;
+
+		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(curSpell->getType() + Thing::_firstExplosion.toUint16()), getBoundedValue(21, (powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 255), 0);
 		break;
 	case k3_spellKindOther: {
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
-		AL1267_ui_SpellPower = (powerSymbolOrdinal + 1) << 2;
+		uint16 spellPower = (powerSymbolOrdinal + 1) << 2;
 		uint16 ticks;
 		switch (curSpell->getType()) {
-		case k0_spellType_otherLight:
-			ticks = 10000 + ((AL1267_ui_SpellPower - 8) << 9);
-			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 1);
-			AL1267_ui_LightPower--;
-			goto T0412019;
-		case k5_spellType_otherMagicTorch:
-			ticks = 2000 + ((AL1267_ui_SpellPower - 3) << 7);
-			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
-			AL1267_ui_LightPower++;
-T0412019:
-			_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
-			createEvent70_light(-AL1267_ui_LightPower, ticks);
+		case k0_spellType_otherLight: {
+			ticks = 10000 + ((spellPower - 8) << 9);
+			uint16 lightPower = (spellPower >> 1);
+			lightPower--;
+			_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[lightPower];
+			createEvent70_light(-lightPower, ticks);
+			}
 			break;
-		case k1_spellType_otherDarkness:
-			AL1267_ui_LightPower = (AL1267_ui_SpellPower >> 2);
-			_vm->_championMan->_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[AL1267_ui_LightPower];
-			createEvent70_light(AL1267_ui_LightPower, 98);
+		case k5_spellType_otherMagicTorch: {
+			ticks = 2000 + ((spellPower - 3) << 7);
+			uint16 lightPower = (spellPower >> 2);
+			lightPower++;
+			_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[lightPower];
+			createEvent70_light(-lightPower, ticks);
+			}
 			break;
-		case k2_spellType_otherThievesEye:
+		case k1_spellType_otherDarkness: {
+			uint16 lightPower = (spellPower >> 2);
+			_vm->_championMan->_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[lightPower];
+			createEvent70_light(lightPower, 98);
+			}
+			break;
+		case k2_spellType_otherThievesEye: {
 			newEvent._type = k73_TMEventTypeThievesEye;
 			_vm->_championMan->_party._event73Count_ThievesEye++;
-			AL1267_ui_SpellPower = (AL1267_ui_SpellPower >> 1);
-			goto T0412032;
-		case k3_spellType_otherInvisibility:
+			spellPower = (spellPower >> 1);
+			uint16 spellTicks = spellPower * spellPower;
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
+			}
+			break;
+		case k3_spellType_otherInvisibility: {
 			newEvent._type = k71_TMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
-			goto T0412033;
-		case k4_spellType_otherPartyShield:
-			newEvent._type = k74_TMEventTypePartyShield;
-			newEvent._B._defense = AL1267_ui_SpellPower;
-			if (_vm->_championMan->_party._shieldDefense > 50) {
-				newEvent._B._defense >>= 2;
+			uint16 spellTicks = spellPower;
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
+			break;
+		case k4_spellType_otherPartyShield: {
+			newEvent._type = k74_TMEventTypePartyShield;
+			newEvent._B._defense = spellPower;
+			if (_vm->_championMan->_party._shieldDefense > 50)
+				newEvent._B._defense >>= 2;
+
 			_vm->_championMan->_party._shieldDefense += newEvent._B._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
-			goto T0412032;
-		case k6_spellType_otherFootprints:
+			uint16 spellTicks = spellPower * spellPower;
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
+			}
+			break;
+		case k6_spellType_otherFootprints: {
 			newEvent._type = k79_TMEventTypeFootprints;
 			_vm->_championMan->_party._event79Count_Footprints++;
 			_vm->_championMan->_party._firstScentIndex = _vm->_championMan->_party._scentCount;
-			if (powerSymbolOrdinal < 3) {
+			if (powerSymbolOrdinal < 3)
 				_vm->_championMan->_party._lastScentIndex = _vm->_championMan->_party._firstScentIndex;
-			} else {
+			else
 				_vm->_championMan->_party._lastScentIndex = 0;
-			}
-T0412032:
-			AL1267_ui_Ticks = AL1267_ui_SpellPower * AL1267_ui_SpellPower;
-T0412033:
-			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + AL1267_ui_Ticks);
+
+			uint16 spellTicks = spellPower * spellPower;
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
+			}
 			break;
 		case k7_spellType_otherZokathra: {
 			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType);
@@ -599,16 +608,16 @@ T0412033:
 
 			Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(unusedObject);
 			junkData->setType(k51_JunkTypeZokathra);
-			ChampionSlot AL1267_ui_SlotIndex;
+			ChampionSlot slotIndex;
 			if (curChampion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)
-				AL1267_ui_SlotIndex = k0_ChampionSlotReadyHand;
+				slotIndex = k0_ChampionSlotReadyHand;
 			else if (curChampion->_slots[k1_ChampionSlotActionHand] == Thing::_none)
-				AL1267_ui_SlotIndex = k1_ChampionSlotActionHand;
+				slotIndex = k1_ChampionSlotActionHand;
 			else
-				AL1267_ui_SlotIndex = kM1_ChampionSlotLeaderHand;
+				slotIndex = kM1_ChampionSlotLeaderHand;
 
-			if ((AL1267_ui_SlotIndex == k0_ChampionSlotReadyHand) || (AL1267_ui_SlotIndex == k1_ChampionSlotActionHand)) {
-				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, unusedObject, AL1267_ui_SlotIndex);
+			if ((slotIndex == k0_ChampionSlotReadyHand) || (slotIndex == k1_ChampionSlotActionHand)) {
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, unusedObject, slotIndex);
 				_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 			} else
 				_vm->_moveSens->getMoveResult(unusedObject, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
@@ -616,7 +625,7 @@ T0412033:
 			}
 			break;
 		case k8_spellType_otherFireshield:
-			isPartySpellOrFireShieldSuccessful(curChampion, false, (AL1267_ui_SpellPower * AL1267_ui_SpellPower) + 100, false);
+			isPartySpellOrFireShieldSuccessful(curChampion, false, (spellPower * spellPower) + 100, false);
 			break;
 		default:
 			break;
