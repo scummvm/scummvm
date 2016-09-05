@@ -31,14 +31,15 @@
 #include "dm/dm.h"
 #include "dm/champion.h"
 
-
 namespace DM {
 
 #define k8_SlotBoxInventoryFirstSlot 8 // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT   
 #define k9_SlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
 #define k38_SlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT      
 
+#define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
 #define k199_ObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
+#define k556_ObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
 
 class SlotBox {
 public:
@@ -69,6 +70,11 @@ public:
 	IconIndice getIconIndexInSlotBox(uint16 slotBoxIndex); // @ F0039_OBJECT_GetIconIndexInSlotBox
 	void clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
 	void drawIconToScreen(int16 iconIndex, int16 posX, int16 posY); // @ F0037_OBJECT_DrawIconToScreen
+
+	int16 iconGraphicHeight[7]; // @ K0077_ai_IconGraphicHeight
+	int16 iconGraphicFirstIndex[7]; // G0026_ai_Graphic562_IconGraphicFirstIconIndex
+
+	void initConstants();
 };
 
 }
