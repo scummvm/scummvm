@@ -763,99 +763,116 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 
 	curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (curThing != Thing::_endOfList) {
+		bool skipToNextThing = false;
 		uint16 curThingType = curThing.getType();
 		if (curThingType == k3_SensorThingType) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			if (curSensor->getType() == k0_SensorDisabled)
-				goto T0276079;
-			int16 curSensorData = curSensor->getData();
-			bool triggerSensor = addThing;
-			if (sensorTriggeredCell == kM1_CellAny) {
-				switch (curSensor->getType()) {
-				case k1_SensorFloorTheronPartyCreatureObj:
-					if (partySquare || squareContainsObject || squareContainsGroup) /* BUG0_30 A floor sensor is not triggered when you put an object on the floor if a levitating creature is present on the same square. The condition to determine if the sensor should be triggered checks if there is a creature on the square but does not check whether the creature is levitating. While it is normal not to trigger the sensor if there is a non levitating creature on the square (because it was already triggered by the creature itself), a levitating creature should not prevent triggering the sensor with an object. */
-						goto T0276079;
-					break;
-				case k2_SensorFloorTheronPartyCreature:
-					if ((thingType > k4_GroupThingType) || partySquare || squareContainsGroup)
-						goto T0276079;
-					break;
-				case k3_SensorFloorParty:
-					if ((thingType != kM1_PartyThingType) || (_vm->_championMan->_partyChampionCount == 0))
-						goto T0276079;
+				skipToNextThing = true;
 
-					if (curSensorData == 0) {
-						if (partySquare)
-							goto T0276079;
-					} else if (!addThing)
-						triggerSensor = false;
-					else
-						triggerSensor = (curSensorData == _vm->indexToOrdinal(_vm->_dungeonMan->_partyDir));
-					break;
-				case k4_SensorFloorObj:
-					if ((curSensorData != _vm->_objectMan->getObjectType(thing)) || squareContainsThingOfSameType)
-						goto T0276079;
-					break;
-				case k5_SensorFloorPartyOnStairs:
-					if ((thingType != kM1_PartyThingType) || (curSquare.getType() != k3_StairsElemType))
-						goto T0276079;
-					break;
-				case k6_SensorFloorGroupGenerator:
-					goto T0276079;
-				case k7_SensorFloorCreature:
-					if ((thingType > k4_GroupThingType) || (thingType == kM1_PartyThingType) || squareContainsGroup)
-						goto T0276079;
-					break;
-				case k8_SensorFloorPartyPossession:
-					if (thingType != kM1_PartyThingType)
-						goto T0276079;
-					triggerSensor = isObjectInPartyPossession(curSensorData);
-					break;
-				case k9_SensorFloorVersionChecker:
-					if ((thingType != kM1_PartyThingType) || !addThing || partySquare)
-						goto T0276079;
-					// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
-					triggerSensor = (curSensorData <= 20);
-					break;
-				default:
-					goto T0276079;
+			if (!skipToNextThing) {
+				int16 curSensorData = curSensor->getData();
+				bool triggerSensor = addThing;
+				if (sensorTriggeredCell == kM1_CellAny) {
+					switch (curSensor->getType()) {
+					case k1_SensorFloorTheronPartyCreatureObj:
+						if (partySquare || squareContainsObject || squareContainsGroup) /* BUG0_30 A floor sensor is not triggered when you put an object on the floor if a levitating creature is present on the same square. The condition to determine if the sensor should be triggered checks if there is a creature on the square but does not check whether the creature is levitating. While it is normal not to trigger the sensor if there is a non levitating creature on the square (because it was already triggered by the creature itself), a levitating creature should not prevent triggering the sensor with an object. */
+							skipToNextThing = true;
+						break;
+					case k2_SensorFloorTheronPartyCreature:
+						if ((thingType > k4_GroupThingType) || partySquare || squareContainsGroup)
+							skipToNextThing = true;
+						break;
+					case k3_SensorFloorParty:
+						if ((thingType != kM1_PartyThingType) || (_vm->_championMan->_partyChampionCount == 0)) {
+							skipToNextThing = true;
+							break;
+						}
+	
+						if (curSensorData == 0) {
+							if (partySquare)
+								skipToNextThing = true;
+						} else if (!addThing)
+							triggerSensor = false;
+						else
+							triggerSensor = (curSensorData == _vm->indexToOrdinal(_vm->_dungeonMan->_partyDir));
+						break;
+					case k4_SensorFloorObj:
+						if ((curSensorData != _vm->_objectMan->getObjectType(thing)) || squareContainsThingOfSameType)
+							skipToNextThing = true;
+						break;
+					case k5_SensorFloorPartyOnStairs:
+						if ((thingType != kM1_PartyThingType) || (curSquare.getType() != k3_StairsElemType))
+							skipToNextThing = true;
+						break;
+					case k6_SensorFloorGroupGenerator:
+						skipToNextThing = true;
+						break;
+					case k7_SensorFloorCreature:
+						if ((thingType > k4_GroupThingType) || (thingType == kM1_PartyThingType) || squareContainsGroup)
+							skipToNextThing = true;
+						break;
+					case k8_SensorFloorPartyPossession:
+						if (thingType != kM1_PartyThingType)
+							skipToNextThing = true;
+						else
+							triggerSensor = isObjectInPartyPossession(curSensorData);
+						break;
+					case k9_SensorFloorVersionChecker:
+						if ((thingType != kM1_PartyThingType) || !addThing || partySquare)
+							skipToNextThing = true;
+						else 
+						// Strangerke: 20 is a hardcoded version of the game. later version uses 21. Not present in the original dungeons anyway.
+							triggerSensor = (curSensorData <= 20);
+						break;
+					default:
+						skipToNextThing = true;
+						break;
+					}
+				} else {
+					if (sensorTriggeredCell != curThing.getCell())
+						skipToNextThing = true;
+					else {
+						switch (curSensor->getType()) {
+						case k1_SensorWallOrnClick:
+							if (squareContainsObject)
+								skipToNextThing = true;
+							break;
+						case k2_SensorWallOrnClickWithAnyObj:
+							if (squareContainsThingOfSameType || (curSensor->getData() != _vm->_objectMan->getObjectType(thing)))
+								skipToNextThing = true;
+							break;
+						case k3_SensorWallOrnClickWithSpecObj:
+							if (squareContainsThingOfDifferentType || (curSensor->getData() == _vm->_objectMan->getObjectType(thing)))
+								skipToNextThing = true;
+							break;
+						default:
+							skipToNextThing = true;
+							break;
+						}
+					}
 				}
-			} else {
-				if (sensorTriggeredCell != curThing.getCell())
-					goto T0276079;
-				switch (curSensor->getType()) {
-				case k1_SensorWallOrnClick:
-					if (squareContainsObject)
-						goto T0276079;
-					break;
-				case k2_SensorWallOrnClickWithAnyObj:
-					if (squareContainsThingOfSameType || (curSensor->getData() != _vm->_objectMan->getObjectType(thing)))
-						goto T0276079;
-					break;
-				case k3_SensorWallOrnClickWithSpecObj:
-					if (squareContainsThingOfDifferentType || (curSensor->getData() == _vm->_objectMan->getObjectType(thing)))
-						goto T0276079;
-					break;
-				default:
-					goto T0276079;
+				if (!skipToNextThing) {
+					triggerSensor ^= curSensor->getAttrRevertEffectA();
+					int16 curSensorEffect = curSensor->getAttrEffectA();
+					if (curSensorEffect == k3_SensorEffHold)
+						curSensorEffect = triggerSensor ? k0_SensorEffSet : k1_SensorEffClear;
+					else if (!triggerSensor)
+						skipToNextThing = true;
+		
+					if (!skipToNextThing) {
+						if (curSensor->getAttrAudibleA())
+							_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
+			
+						triggerEffect(curSensor, curSensorEffect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
+						skipToNextThing = true;
+					}
 				}
 			}
-			triggerSensor ^= curSensor->getAttrRevertEffectA();
-			int16 curSensorEffect = curSensor->getAttrEffectA();
-			if (curSensorEffect == k3_SensorEffHold)
-				curSensorEffect = triggerSensor ? k0_SensorEffSet : k1_SensorEffClear;
-			else if (!triggerSensor)
-				goto T0276079;
-
-			if (curSensor->getAttrAudibleA())
-				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
-
-			triggerEffect(curSensor, curSensorEffect, mapX, mapY, (uint16)kM1_CellAny); // this will wrap around
-			goto T0276079;
 		}
-		if (curThingType >= k4_GroupThingType)
+		if (!skipToNextThing && (curThingType >= k4_GroupThingType))
 			break;
-T0276079:
+
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	processRotationEffect();
