@@ -340,7 +340,7 @@ bool CPetRooms::changeLocationClass(int newClassNum) {
 
 bool CPetRooms::hasRoomFlags(uint roomFlags) const {
 	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		const CPetRoomsGlyph *glyph = dynamic_cast<const CPetRoomsGlyph *>(*i);
+		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
 		if (glyph->isAssigned() && glyph->getRoomFlags() == roomFlags)
 			return true;
 	}

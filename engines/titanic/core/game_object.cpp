@@ -1630,7 +1630,7 @@ bool CGameObject::starFn2() {
 /*------------------------------------------------------------------------*/
 
 void CGameObject::startTalking(const CString &npcName, uint id, CViewItem *view) {
-	CTrueTalkNPC *npc = dynamic_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
+	CTrueTalkNPC *npc = static_cast<CTrueTalkNPC *>(getRoot()->findByName(npcName));
 	startTalking(npc, id, view);
 }
 

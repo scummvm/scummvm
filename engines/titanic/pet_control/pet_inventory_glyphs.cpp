@@ -203,8 +203,8 @@ void CPetInventoryGlyph::setItem(CGameObject *item, bool isLoading) {
 
 	if (_owner && item) {
 		int v1 = populateItem(item, isLoading);
-		_background = dynamic_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
-		_image = dynamic_cast<CPetInventory *>(getPetSection())->getImage(v1);
+		_background = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
+		_image = static_cast<CPetInventory *>(getPetSection())->getImage(v1);
 	}
 }
 

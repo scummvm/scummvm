@@ -69,7 +69,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 	CVisibleMsg visibleMsg(true);
 	
 	if (msg->_item->isEquals("Chicken")) {
-		CChicken *chicken = dynamic_cast<CChicken *>(msg->_item);
+		CChicken *chicken = static_cast<CChicken *>(msg->_item);
 		_field104 = true;
 		if (_fieldF0) {
 			playSound("b#15.wav", 50);
