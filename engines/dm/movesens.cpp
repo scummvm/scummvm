@@ -71,9 +71,8 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 		thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed);
 	}
-	Thing lastProcessedThing = thingBeingProcessed = squareFirstThing;
-	while (thingBeingProcessed != Thing::_endOfList) {
-		bool skipToNextThing = false;
+	for (Thing thingBeingProcessed = squareFirstThing; thingBeingProcessed != Thing::_endOfList; thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed)) {
+		Thing lastProcessedThing = thingBeingProcessed;
 		uint16 ProcessedThingType = thingBeingProcessed.getType();
 		if (ProcessedThingType == k3_SensorThingType) {
 			int16 cellIdx = thingBeingProcessed.getCell();
@@ -81,142 +80,132 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			Sensor *currentSensor = (Sensor *)_vm->_dungeonMan->getThingData(thingBeingProcessed);
 			SensorType processedSensorType = currentSensor->getType();
 			if (processedSensorType == k0_SensorDisabled)
-				skipToNextThing = true;
-			else if ((_vm->_championMan->_leaderIndex == kM1_ChampionNone) && (processedSensorType != k127_SensorWallChampionPortrait))
-				skipToNextThing = true;
-			else if (cellIdx != cellParam)
-				skipToNextThing = true;
+				continue;
+			
+			if ((_vm->_championMan->_leaderIndex == kM1_ChampionNone) && (processedSensorType != k127_SensorWallChampionPortrait))
+				continue;
+			
+			if (cellIdx != cellParam)
+				continue;
 
 			bool doNotTriggerSensor;
 			int16 sensorData = 0;
 			int16 sensorEffect = 0;
-			if (!skipToNextThing) {
-				sensorData = currentSensor->getData();
-				sensorEffect = currentSensor->getAttrEffectA();
 
-				switch (processedSensorType) {
-				case k1_SensorWallOrnClick:
-					doNotTriggerSensor = false;
-					if (currentSensor->getAttrEffectA() == k3_SensorEffHold)
-						skipToNextThing = true;
-					break;
-				case k2_SensorWallOrnClickWithAnyObj:
-					doNotTriggerSensor = (_vm->_championMan->_leaderEmptyHanded != currentSensor->getAttrRevertEffectA());
-					break;
-				case k17_SensorWallOrnClickWithSpecObjRemovedSensor:
-				case k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors:
-					if (sensorCountToProcessPerCell[cellIdx]) { /* If the sensor is not the last one of its type on the cell */
-						skipToNextThing = true;
+			sensorData = currentSensor->getData();
+			sensorEffect = currentSensor->getAttrEffectA();
+
+			switch (processedSensorType) {
+			case k1_SensorWallOrnClick:
+				doNotTriggerSensor = false;
+				if (currentSensor->getAttrEffectA() == k3_SensorEffHold)
+					continue;
+				break;
+			case k2_SensorWallOrnClickWithAnyObj:
+				doNotTriggerSensor = (_vm->_championMan->_leaderEmptyHanded != currentSensor->getAttrRevertEffectA());
+				break;
+			case k17_SensorWallOrnClickWithSpecObjRemovedSensor:
+			case k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors:
+				if (sensorCountToProcessPerCell[cellIdx]) /* If the sensor is not the last one of its type on the cell */
+					continue;
+				// No break on purpose
+			case k3_SensorWallOrnClickWithSpecObj:
+			case k4_SensorWallOrnClickWithSpecObjRemoved:
+				doNotTriggerSensor = ((sensorData == _vm->_objectMan->getObjectType(leaderHandObject)) == currentSensor->getAttrRevertEffectA());
+				if (!doNotTriggerSensor && (processedSensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor)) {
+					if (lastProcessedThing == thingBeingProcessed) /* If the sensor is the only one of its type on the cell */
 						break;
-					}
-					// No break on purpose
-				case k3_SensorWallOrnClickWithSpecObj:
-				case k4_SensorWallOrnClickWithSpecObjRemoved:
-					doNotTriggerSensor = ((sensorData == _vm->_objectMan->getObjectType(leaderHandObject)) == currentSensor->getAttrRevertEffectA());
-					if (!doNotTriggerSensor && (processedSensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor)) {
-						if (lastProcessedThing == thingBeingProcessed) /* If the sensor is the only one of its type on the cell */
-							break;
-						Sensor *lastSensor = (Sensor *)_vm->_dungeonMan->getThingData(lastProcessedThing);
-						lastSensor->setNextThing(currentSensor->getNextThing());
-						currentSensor->setNextThing(Thing::_none);
-						thingBeingProcessed = lastProcessedThing;
-					}
-					if (!doNotTriggerSensor && (processedSensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors)) {
-						triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
-					}
-					break;
-				case k12_SensorWallObjGeneratorRotateSensors:
-					if (sensorCountToProcessPerCell[cellIdx]) { /* If the sensor is not the last one of its type on the cell */
-						skipToNextThing = true;
-						break;
-					}
-					doNotTriggerSensor = !_vm->_championMan->_leaderEmptyHanded;
-					if (!doNotTriggerSensor)
-						triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
-					break;
-				case k13_SensorWallSingleObjStorageRotateSensors:
-					if (_vm->_championMan->_leaderEmptyHanded) {
-						leaderHandObject = getObjectOfTypeInCell(mapX, mapY, cellIdx, sensorData);
-						if (leaderHandObject == Thing::_none) {
-							skipToNextThing = true;
-							break;
-						}
-						_vm->_dungeonMan->unlinkThingFromList(leaderHandObject, Thing(0), mapX, mapY);
-						_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
-					} else {
-						if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (getObjectOfTypeInCell(mapX, mapY, cellIdx, sensorData) != Thing::_none)) {
-							skipToNextThing = true;
-							break;
-						}
-						_vm->_championMan->getObjectRemovedFromLeaderHand();
-						_vm->_dungeonMan->linkThingToList(thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
-						leaderHandObject = Thing::_none;
-					}
+					Sensor *lastSensor = (Sensor *)_vm->_dungeonMan->getThingData(lastProcessedThing);
+					lastSensor->setNextThing(currentSensor->getNextThing());
+					currentSensor->setNextThing(Thing::_none);
+					thingBeingProcessed = lastProcessedThing;
+				}
+
+				if (!doNotTriggerSensor && (processedSensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors))
 					triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
-					if ((sensorEffect == k3_SensorEffHold) && !_vm->_championMan->_leaderEmptyHanded)
-						doNotTriggerSensor = true;
-					else
-						doNotTriggerSensor = false;
-	
-					break;
-				case k16_SensorWallObjExchanger: {
-					if (sensorCountToProcessPerCell[cellIdx]) { /* If the sensor is not the last one of its type on the cell */
-						skipToNextThing = true;
-						break;
-					}
-					Thing thingOnSquare = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
-					if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (thingOnSquare == Thing::_none)) {
-						skipToNextThing = true;
-						break;
-					}
-					_vm->_dungeonMan->unlinkThingFromList(thingOnSquare, Thing(0), mapX, mapY);
+
+				break;
+			case k12_SensorWallObjGeneratorRotateSensors:
+				if (sensorCountToProcessPerCell[cellIdx]) /* If the sensor is not the last one of its type on the cell */
+					continue;
+
+				doNotTriggerSensor = !_vm->_championMan->_leaderEmptyHanded;
+				if (!doNotTriggerSensor)
+					triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
+				break;
+			case k13_SensorWallSingleObjStorageRotateSensors:
+				if (_vm->_championMan->_leaderEmptyHanded) {
+					leaderHandObject = getObjectOfTypeInCell(mapX, mapY, cellIdx, sensorData);
+					if (leaderHandObject == Thing::_none)
+						continue;
+
+					_vm->_dungeonMan->unlinkThingFromList(leaderHandObject, Thing(0), mapX, mapY);
+					_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
+				} else {
+					if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (getObjectOfTypeInCell(mapX, mapY, cellIdx, sensorData) != Thing::_none))
+						continue;
+
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
 					_vm->_dungeonMan->linkThingToList(thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
-					_vm->_championMan->putObjectInLeaderHand(thingOnSquare, true);
-					doNotTriggerSensor = false;
-					}
-					break;
-				case k127_SensorWallChampionPortrait:
-					_vm->_championMan->addCandidateChampionToParty(sensorData);
-					skipToNextThing = true;
-					break;
-				default:
-					skipToNextThing = true;
-					break;
+					leaderHandObject = Thing::_none;
 				}
+				triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
+				if ((sensorEffect == k3_SensorEffHold) && !_vm->_championMan->_leaderEmptyHanded)
+					doNotTriggerSensor = true;
+				else
+					doNotTriggerSensor = false;
+
+				break;
+			case k16_SensorWallObjExchanger: {
+				if (sensorCountToProcessPerCell[cellIdx]) /* If the sensor is not the last one of its type on the cell */
+					continue;
+
+				Thing thingOnSquare = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
+				if ((_vm->_objectMan->getObjectType(leaderHandObject) != sensorData) || (thingOnSquare == Thing::_none))
+					continue;
+
+				_vm->_dungeonMan->unlinkThingFromList(thingOnSquare, Thing(0), mapX, mapY);
+				_vm->_championMan->getObjectRemovedFromLeaderHand();
+				_vm->_dungeonMan->linkThingToList(thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
+				_vm->_championMan->putObjectInLeaderHand(thingOnSquare, true);
+				doNotTriggerSensor = false;
+				}
+				break;
+			case k127_SensorWallChampionPortrait:
+				_vm->_championMan->addCandidateChampionToParty(sensorData);
+				continue;
+				break;
+			default:
+				continue;
+				break;
 			}
 
-			if (!skipToNextThing) {
-				if (sensorEffect == k3_SensorEffHold) {
-					sensorEffect = doNotTriggerSensor ? k1_SensorEffClear : k0_SensorEffSet;
-					doNotTriggerSensor = false;
-				}
-				if (!doNotTriggerSensor) {
-					atLeastOneSensorWasTriggered = true;
-					if (currentSensor->getAttrAudibleA())
-						_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-	
-					if (!_vm->_championMan->_leaderEmptyHanded && ((processedSensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (processedSensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (processedSensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
-						Thing *leaderThing = (Thing *)_vm->_dungeonMan->getThingData(leaderHandObject);
-						*leaderThing = Thing::_none;
-						_vm->_championMan->getObjectRemovedFromLeaderHand();
-						leaderHandObject = Thing::_none;
-					} else if (_vm->_championMan->_leaderEmptyHanded
-						&& (processedSensorType == k12_SensorWallObjGeneratorRotateSensors)) {
-						leaderHandObject = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
-						if (leaderHandObject != Thing::_none)
-							_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
-					}
-					triggerEffect(currentSensor, sensorEffect, mapX, mapY, cellIdx);
-				}
-				skipToNextThing = true;
+			if (sensorEffect == k3_SensorEffHold) {
+				sensorEffect = doNotTriggerSensor ? k1_SensorEffClear : k0_SensorEffSet;
+				doNotTriggerSensor = false;
 			}
+			if (!doNotTriggerSensor) {
+				atLeastOneSensorWasTriggered = true;
+				if (currentSensor->getAttrAudibleA())
+					_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+
+				if (!_vm->_championMan->_leaderEmptyHanded && ((processedSensorType == k4_SensorWallOrnClickWithSpecObjRemoved) || (processedSensorType == k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors) || (processedSensorType == k17_SensorWallOrnClickWithSpecObjRemovedSensor))) {
+					Thing *leaderThing = (Thing *)_vm->_dungeonMan->getThingData(leaderHandObject);
+					*leaderThing = Thing::_none;
+					_vm->_championMan->getObjectRemovedFromLeaderHand();
+					leaderHandObject = Thing::_none;
+				} else if (_vm->_championMan->_leaderEmptyHanded
+					&& (processedSensorType == k12_SensorWallObjGeneratorRotateSensors)) {
+					leaderHandObject = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
+					if (leaderHandObject != Thing::_none)
+						_vm->_championMan->putObjectInLeaderHand(leaderHandObject, true);
+				}
+				triggerEffect(currentSensor, sensorEffect, mapX, mapY, cellIdx);
+			}
+			continue;
 		}
-		if (!skipToNextThing && (ProcessedThingType >= k4_GroupThingType))
-			break;
-
-		lastProcessedThing = thingBeingProcessed;
-		thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed);
+		if (ProcessedThingType >= k4_GroupThingType)
+			break;		
 	}
 	processRotationEffect();
 	return atLeastOneSensorWasTriggered;
