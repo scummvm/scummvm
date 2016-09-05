@@ -1028,7 +1028,7 @@ void createScriptMap() {
 				break;
 		}
 
-		int v1, v2;
+		uint v1, v2;
 		sscanf(line, "%x %x", &v1, &v2);
 
 		if (counter != 0 && (counter % 3) == 0)
@@ -1036,7 +1036,7 @@ void createScriptMap() {
 		if ((counter % 3) == 0)
 			printf("\t");
 
-		printf("{ 0x%.5x, 0x%.5x }, ", (uint)v1, (uint)v2);
+		printf("{ 0x%.5x, 0x%.5x }, ", v1, v2);
 		++counter;
 	} while (!inFile.eof());
 
