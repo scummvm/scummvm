@@ -79,7 +79,7 @@ bool CParrotNutBowlActor::BowlStateChangeMsg(CBowlStateChangeMsg *msg) {
 	return true;
 }
 
-bool CParrotNutBowlActor::CParrotNutBowlActor::IsEarBowlPuzzleDone(CIsEarBowlPuzzleDone *msg) {
+bool CParrotNutBowlActor::IsEarBowlPuzzleDone(CIsEarBowlPuzzleDone *msg) {
 	msg->_value = _puzzleDone;
 	return true;
 }
