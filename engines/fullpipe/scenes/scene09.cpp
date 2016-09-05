@@ -69,21 +69,7 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_intHangerPhase = -1;
 	g_vars->scene09_intHangerMaxPhase = -1000;
 
-	g_vars->scene09_balls.cPlexLen = 10;
-	g_vars->scene09_flyingBalls.cPlexLen = 10;
-
-	while (g_vars->scene09_balls.numBalls) {
-		Ball *b = g_vars->scene09_balls.pHead->p0;
-
-		g_vars->scene09_balls.pHead = g_vars->scene09_balls.pHead->p0;
-
-		if (g_vars->scene09_balls.pHead)
-			g_vars->scene09_balls.pHead->p0->p1 = 0;
-		else
-			g_vars->scene09_balls.field_8 = 0;
-
-		g_vars->scene09_balls.init(&b);
-	}
+	g_vars->scene09_balls.clear();
 
 	g_vars->scene09_hangers.clear();
 	g_vars->scene09_numMovingHangers = 4;
@@ -116,80 +102,24 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers.push_back(hng);
 	}
 
-	while (g_vars->scene09_flyingBalls.numBalls) {
-		Ball *ohead = g_vars->scene09_flyingBalls.pHead;
+	g_vars->scene09_flyingBalls.clear();
 
-		g_vars->scene09_flyingBalls.pHead = g_vars->scene09_flyingBalls.pHead->p0;
+	g_vars->scene09_flyingBalls.push_back(new Ball);
 
-		if (g_vars->scene09_flyingBalls.pHead)
-			ohead->p0->p1 = 0;
-		else
-			g_vars->scene09_flyingBalls.field_8 = 0;
-
-		ohead->p0 = g_vars->scene09_flyingBalls.pTail;
-
-		g_vars->scene09_flyingBalls.pTail = ohead;
-
-		g_vars->scene09_flyingBalls.numBalls--;
-	}
-
-	g_vars->scene09_flyingBalls.reset();
-
-	Ball *b9 = g_vars->scene09_flyingBalls.sub04(g_vars->scene09_flyingBalls.field_8, 0);
+	Ball *b9 = g_vars->scene09_flyingBalls.front();
 
 	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
 	b9->ani->setAlpha(0xc8);
 
-	if (g_vars->scene09_flyingBalls.field_8) {
-		g_vars->scene09_flyingBalls.field_8->p0 = b9;
-		g_vars->scene09_flyingBalls.field_8 = b9;
-	} else {
-		g_vars->scene09_flyingBalls.pHead = b9;
-		g_vars->scene09_flyingBalls.field_8 = b9;
-	}
-
 	for (int i = 0; i < 4; i++) {
 		StaticANIObject *newball = new StaticANIObject(b9->ani);
+		b9 = new Ball;
 
 		newball->setAlpha(0xc8);
 
-		Ball *runPtr = g_vars->scene09_flyingBalls.pTail;
-		Ball *lastP = g_vars->scene09_flyingBalls.field_8;
+		b9->ani = newball;
 
-		if (!g_vars->scene09_flyingBalls.pTail) {
-			g_vars->scene09_flyingBalls.cPlex = (byte *)calloc(g_vars->scene09_flyingBalls.cPlexLen, sizeof(Ball));
-
-			byte *p1 = g_vars->scene09_flyingBalls.cPlex + (g_vars->scene09_flyingBalls.cPlexLen - 1) * sizeof(Ball);
-
-			if (g_vars->scene09_flyingBalls.cPlexLen - 1 < 0) {
-				runPtr = g_vars->scene09_flyingBalls.pTail;
-			} else {
-				runPtr = g_vars->scene09_flyingBalls.pTail;
-
-				for (int j = 0; j < g_vars->scene09_flyingBalls.cPlexLen; j++) {
-					((Ball *)p1)->p1 = runPtr;
-					runPtr = (Ball *)p1;
-
-					p1 -= sizeof(Ball);
-				}
-
-				g_vars->scene09_flyingBalls.pTail = runPtr;
-			}
-		}
-
-		g_vars->scene09_flyingBalls.pTail = runPtr->p0;
-		runPtr->p1 = lastP;
-		runPtr->p0 = 0;
-		runPtr->ani = newball;
-
-		g_vars->scene09_flyingBalls.numBalls++;
-
-		if (g_vars->scene09_flyingBalls.field_8)
-			g_vars->scene09_flyingBalls.field_8->p0 = runPtr;
-		else
-			g_vars->scene09_flyingBalls.pHead = runPtr;
-
-		g_vars->scene09_flyingBalls.field_8 = runPtr;
+		g_vars->scene09_flyingBalls.push_back(b9);
 
 		sc->addStaticANIObject(newball, 1);
 	}
@@ -302,42 +232,13 @@ void sceneHandler09_eatBall() {
 	if (g_vars->scene09_flyingBall) {
 		g_vars->scene09_flyingBall->hide();
 
-		Ball *ball = g_vars->scene09_balls.pHead;
+		Ball *ball = g_vars->scene09_balls.back();
 
-		if (ball) {
-			while (ball && ball->ani != g_vars->scene09_flyingBall)
-				ball = ball->p0;
+		g_vars->scene09_balls.pop_back();
 
-			if (ball) {
-				if (ball == g_vars->scene09_balls.pHead)
-					g_vars->scene09_balls.pHead = ball->p0;
-				else
-					ball->p1->p0 = ball->p0;
-
-				if (ball == g_vars->scene09_balls.field_8)
-					g_vars->scene09_balls.field_8 = ball->p1;
-				else
-					ball->p0->p1 = ball->p1;
-
-				ball->p0 = g_vars->scene09_balls.pTail;
-				g_vars->scene09_balls.pTail = ball;
-
-				g_vars->scene09_balls.numBalls--;
-
-				if (!g_vars->scene09_balls.numBalls)
-					g_vars->scene09_balls.reset();
-			}
-		}
-
-		ball = g_vars->scene09_flyingBalls.sub04(g_vars->scene09_flyingBalls.field_8, 0);
 		ball->ani = g_vars->scene09_flyingBall;
 
-		if (g_vars->scene09_flyingBalls.field_8)
-			g_vars->scene09_flyingBalls.field_8->p0 = ball;
-		else
-			g_vars->scene09_flyingBalls.pHead = ball;
-
-		g_vars->scene09_flyingBalls.field_8 = ball;
+		g_vars->scene09_flyingBalls.pop_back();
 
 		g_vars->scene09_flyingBall = 0;
 		g_vars->scene09_numSwallenBalls++;
@@ -361,40 +262,13 @@ void sceneHandler09_eatBall() {
 }
 
 void sceneHandler09_showBall() {
-	if (g_vars->scene09_flyingBalls.numBalls) {
-		StaticANIObject *ani = g_vars->scene09_flyingBalls.pHead->ani;
-		Ball *ph = g_vars->scene09_flyingBalls.pHead;
-		g_vars->scene09_flyingBalls.pHead = ph->p0;
+	if (g_vars->scene09_flyingBalls.size()) {
+		StaticANIObject *ani = g_vars->scene09_flyingBalls.front()->ani;
 
-		if (g_vars->scene09_flyingBalls.pHead)
-			ph->p0->p1 = 0;
-		else
-			g_vars->scene09_flyingBalls.field_8 = 0;
+		g_vars->scene09_flyingBalls.remove_at(0);
 
-		ph->p0 = g_vars->scene09_flyingBalls.pTail;
-
-		g_vars->scene09_flyingBalls.pTail = ph;
-		g_vars->scene09_flyingBalls.numBalls--;
-
-		if (!g_vars->scene09_flyingBalls.numBalls) {
-			g_vars->scene09_flyingBalls.numBalls = 0;
-			g_vars->scene09_flyingBalls.pTail = 0;
-			g_vars->scene09_flyingBalls.field_8 = 0;
-			g_vars->scene09_flyingBalls.pHead = 0;
-
-			free(g_vars->scene09_flyingBalls.cPlex);
-			g_vars->scene09_flyingBalls.cPlex = 0;
-		}
-
-		Ball *ball = g_vars->scene09_balls.sub04(g_vars->scene09_balls.field_8, 0);
+		Ball *ball = g_vars->scene09_balls.front();
 		ball->ani = ani;
-
-		if (g_vars->scene09_balls.field_8)
-			g_vars->scene09_balls.field_8->p0 = ball;
-		else
-			g_vars->scene09_balls.pHead = ball;
-
-		g_vars->scene09_balls.field_8 = ball;
 
 		ani->show1(g_fp->_aniMan->_ox + 94, g_fp->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
 	}
@@ -443,8 +317,10 @@ void sceneHandler09_limitHangerPhase() {
 	}
 }
 
-void sceneHandler09_collideBall(Ball *ball) {
+void sceneHandler09_collideBall(uint num) {
 	if (g_vars->scene09_gulperIsPresent) {
+		Ball *ball = g_vars->scene09_balls[num];
+
 		g_vars->scene09_flyingBall = ball->ani;
 
 		if (g_vars->scene09_gulper) {
@@ -460,29 +336,10 @@ void sceneHandler09_collideBall(Ball *ball) {
 	}
 }
 
-void sceneHandler09_ballExplode(Ball *ball) {
-	if (ball == g_vars->scene09_balls.pHead)
-		g_vars->scene09_balls.pHead = ball->p0;
-	else
-		ball->p1->p0 = ball->p0;
+void sceneHandler09_ballExplode(uint num) {
+	Ball *ball = g_vars->scene09_balls[num];
 
-	if (ball == g_vars->scene09_balls.field_8)
-		g_vars->scene09_balls.field_8 = ball->p1;
-	else
-		ball->p0->p1 = ball->p1;
-
-	ball->p0 = g_vars->scene09_balls.pTail;
-
-	g_vars->scene09_balls.pTail = ball;
-	g_vars->scene09_balls.numBalls--;
-
-	if (!g_vars->scene09_balls.numBalls) {
-		g_vars->scene09_balls.pTail = 0;
-		g_vars->scene09_balls.field_8 = 0;
-		g_vars->scene09_balls.pHead = 0;
-		free(g_vars->scene09_balls.cPlex);
-		g_vars->scene09_balls.cPlex = 0;
-	}
+	g_vars->scene09_balls.remove_at(num);
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
@@ -491,48 +348,13 @@ void sceneHandler09_ballExplode(Ball *ball) {
 	if (!mq->chain(ball->ani))
 		delete mq;
 
-	Ball *runPtr = g_vars->scene09_flyingBalls.pTail;
-	Ball *lastP = g_vars->scene09_flyingBalls.field_8;
-
-	if (!g_vars->scene09_flyingBalls.pTail) {
-		g_vars->scene09_flyingBalls.cPlex = (byte *)calloc(g_vars->scene09_flyingBalls.cPlexLen, sizeof(Ball));
-
-		byte *p1 = g_vars->scene09_flyingBalls.cPlex + (g_vars->scene09_flyingBalls.cPlexLen - 1) * sizeof(Ball);
-
-		if (g_vars->scene09_flyingBalls.cPlexLen - 1 < 0) {
-			runPtr = g_vars->scene09_flyingBalls.pTail;
-		} else {
-			runPtr = g_vars->scene09_flyingBalls.pTail;
-
-			for (int j = 0; j < g_vars->scene09_flyingBalls.cPlexLen; j++) {
-				((Ball *)p1)->p1 = runPtr;
-				runPtr = (Ball *)p1;
-
-				p1 -= sizeof(Ball);
-			}
-
-			g_vars->scene09_flyingBalls.pTail = runPtr;
-		}
-	}
-
-	g_vars->scene09_flyingBalls.pTail = runPtr->p0;
-	runPtr->p1 = lastP;
-	runPtr->p0 = 0;
-	runPtr->ani = ball->ani;
-
-	g_vars->scene09_flyingBalls.numBalls++;
-
-	if (g_vars->scene09_flyingBalls.field_8) {
-		g_vars->scene09_flyingBalls.field_8->p0 = runPtr;
-		g_vars->scene09_flyingBalls.field_8 = runPtr;
-	} else {
-		g_vars->scene09_flyingBalls.pHead = runPtr;
-		g_vars->scene09_flyingBalls.field_8 = runPtr;
-	}
+	g_vars->scene09_flyingBalls.pop_back();
 }
 
 void sceneHandler09_checkHangerCollide() {
-	for (Ball *ball = g_vars->scene09_balls.pHead; ball; ball = ball->p0) {
+	for (uint b = 0; b < g_vars->scene09_balls.size(); b++) {
+		Ball *ball = g_vars->scene09_balls[b];
+
 		int newx = ball->ani->_ox + 5;
 
 		ball->ani->setOXY(newx, ball->ani->_oy);
@@ -541,12 +363,12 @@ void sceneHandler09_checkHangerCollide() {
 			if (g_vars->scene09_gulperIsPresent)
 				goto LABEL_11;
 		} else if (g_vars->scene09_gulperIsPresent) {
-			sceneHandler09_collideBall(ball);
+			sceneHandler09_collideBall(b);
 			continue;
 		}
 
 		if (newx > 1600) {
-			sceneHandler09_ballExplode(ball);
+			sceneHandler09_ballExplode(b);
 			continue;
 		}
 
@@ -558,7 +380,7 @@ void sceneHandler09_checkHangerCollide() {
 				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->ani->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
 
 				if (pixel) {
-					sceneHandler09_ballExplode(ball);
+					sceneHandler09_ballExplode(b);
 					break;
 				}
 			}
