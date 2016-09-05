@@ -33,12 +33,21 @@ Window::Window() : _vm(nullptr),  _enabled(false), _a(0), _border(0),
 	_xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
+Window::Window(const Window &src) : _vm(src._vm), _enabled(src._enabled),
+		_a(src._a), _border(src._border), _xLo(src._xLo), _ycL(src._ycL),
+		_xHi(src._xHi), _ycH(src._ycH) {
+	if (src._vm) {
+		setBounds(src._bounds);
+		create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	}
+}
+
 Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border, 
 		int xLo, int ycL, int xHi, int ycH): 
 		_vm(vm), _enabled(false), _a(a), _border(border), 
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
-	create(_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 void Window::setBounds(const Common::Rect &r) {
@@ -346,7 +355,7 @@ void Screen::loadPage(int pageNum) {
 		_pages[1].create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 
-	blitTo(_pages[pageNum]);
+	_pages[pageNum].blitFrom(*this);
 }
 
 void Screen::freePages() {
@@ -447,7 +456,7 @@ void Screen::saveBackground(int slot) {
 void Screen::restoreBackground(int slot) {
 	assert(slot > 0 && slot < 10);
 
-	_savedScreens[slot - 1].blitTo(*this);
+	blitFrom(_savedScreens[slot - 1]);
 }
 
 void Screen::frameWindow(uint bgType) {

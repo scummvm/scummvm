@@ -26,29 +26,26 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/rect.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 
 namespace Xeen {
 
-class XSurface: public Graphics::Surface {
-private:
-	bool _freeFlag;
+class BaseSurface: public Graphics::ManagedSurface {
 public:
-	virtual void addDirtyRect(const Common::Rect &r) {}
+	virtual void addDirtyRect(const Common::Rect &r) {
+		Graphics::ManagedSurface::addDirtyRect(r);
+	}
 public:
-	XSurface();
-	XSurface(int width, int height);
-	virtual ~XSurface();
+	BaseSurface() : Graphics::ManagedSurface() {}
+	BaseSurface(int width, int height) : Graphics::ManagedSurface(width, height) {}
+	virtual ~BaseSurface() {}
+};
 
-	void create(uint16 width, uint16 height);
-
-	void create(XSurface *s, const Common::Rect &bounds);
-
-	void blitTo(XSurface &dest, const Common::Point &destPos) const;
-
-	void blitTo(XSurface &dest) const;
-
-	bool empty() const { return getPixels() == nullptr; }
+class XSurface : public BaseSurface {
+public:
+	XSurface() : BaseSurface() {}
+	XSurface(int width, int height) : BaseSurface(width, height) {}
+	virtual ~XSurface() {}
 };
 
 } // End of namespace Xeen

@@ -74,7 +74,7 @@ public:
 	virtual void addDirtyRect(const Common::Rect &r);
 public:
 	Window();
-
+	Window(const Window &src);
 	Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH);
 
