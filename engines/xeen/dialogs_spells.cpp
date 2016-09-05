@@ -224,10 +224,10 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					break;
 				}
 
-				warning("TODO: category -> SPELLS_ALLOWED category value");
-				int spellId = _spells[newSelection]._spellId;
 				int spellIndex = _spells[newSelection]._spellIndex;
+				int spellId = SPELLS_ALLOWED[category][spellIndex];
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
+
 				if (isCasting) {
 					selection = newSelection;					
 				} else {

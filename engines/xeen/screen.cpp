@@ -29,11 +29,11 @@
 
 namespace Xeen {
 
-Window::Window() : _vm(nullptr),  _enabled(false), _a(0), _border(0),
-	_xLo(0), _xHi(0), _ycL(0), _ycH(0) {
+Window::Window() : XSurface(), _vm(nullptr),  _enabled(false),
+	_a(0), _border(0), _xLo(0), _xHi(0), _ycL(0), _ycH(0) {
 }
 
-Window::Window(const Window &src) : _vm(src._vm), _enabled(src._enabled),
+Window::Window(const Window &src) : XSurface(), _vm(src._vm), _enabled(src._enabled),
 		_a(src._a), _border(src._border), _xLo(src._xLo), _ycL(src._ycL),
 		_xHi(src._xHi), _ycH(src._ycH) {
 	if (src._vm) {
@@ -43,7 +43,7 @@ Window::Window(const Window &src) : _vm(src._vm), _enabled(src._enabled),
 }
 
 Window::Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border, 
-		int xLo, int ycL, int xHi, int ycH): 
+		int xLo, int ycL, int xHi, int ycH): XSurface(),
 		_vm(vm), _enabled(false), _a(a), _border(border), 
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
