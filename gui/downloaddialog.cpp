@@ -170,10 +170,10 @@ bool DownloadDialog::selectDirectories() {
 			else if (localPath[i] == '\\')
 				++backslashes;
 
-			if (backslashes > 0)
-				localPath += '\\' + remoteDirectory.name();
-			else
-				localPath += '/' + remoteDirectory.name();
+		if (backslashes > 0)
+			localPath += '\\' + remoteDirectory.name();
+		else
+			localPath += '/' + remoteDirectory.name();
 	} else {
 		localPath += remoteDirectory.name();
 	}
