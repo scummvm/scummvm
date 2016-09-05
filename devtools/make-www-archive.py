@@ -4,6 +4,7 @@ import sys
 import re
 import os
 import zipfile
+import argparse
 
 ARCHIVE_FILE_EXTENSIONS = ('.html', '.css', '.js', '.ico', '.png')
 
@@ -31,6 +32,16 @@ def buildArchive(archiveName):
 	zf.close()
 
 def main():
+	parser = argparse.ArgumentParser(description='Generates wwwroot archive')
+	parser.add_argument('path', nargs='?', help='path where the wwwroot source data can be found')
+	args = parser.parse_args()
+	if args.path != None:
+		if not os.path.isdir(args.path):
+			print ("Directory '" + args.path + "' does not exist!")
+			return
+		else:	
+			os.chdir(args.path)
+	
 	buildArchive("wwwroot")
 
 if __name__ == "__main__":

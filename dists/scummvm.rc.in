@@ -20,7 +20,7 @@ scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 #ifdef USE_SDL_NET
-wwwroot.zip            FILE    "backends/networking/wwwroot.zip"
+wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 #endif
 
 #if ENABLE_ACCESS   == STATIC_PLUGIN

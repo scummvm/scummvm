@@ -44,6 +44,11 @@ devtools/make-scumm-fontdata$(EXEEXT): $(srcdir)/devtools/make-scumm-fontdata.c
 	$(QUIET)$(MKDIR) devtools/$(DEPDIR)
 	$(QUIET_LINK)$(LD) $(CFLAGS) -Wall -o $@ $<
 
+# Rule to explicitly rebuild the wwwroot archive
+wwwroot:
+	$(srcdir)/devtools/make-www-archive.py $(srcdir)/dists/networking/
+	
+
 #
 # Rules to explicitly rebuild the credits / MD5 tables.
 # The rules for the files in the "web" resp. "docs" modules
