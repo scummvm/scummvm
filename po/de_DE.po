@@ -187,9 +187,9 @@ msgid "Downloaded %s %s / %s %s"
 msgstr "%s %s / %s %s heruntergeladen"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "%s %s / %s %s heruntergeladen"
+msgstr "Geschwindigkeit: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
