@@ -1495,19 +1495,19 @@ void ChampionMan::championKill(uint16 champIndex) {
 	_vm->_displayMan->fillScreenBox(_boxChampionIcons[curChampionIconIndex], k0_ColorBlack);
 	drawChampionState((ChampionIndex)champIndex);
 
-	int16 aliveChampionIndex;
-	for (aliveChampionIndex = k0_ChampionFirst, curChampion = _champions; aliveChampionIndex < _partyChampionCount; aliveChampionIndex++, curChampion++) {
-		if (curChampion->_currHealth)
-			break;
-	}
+	ChampionIndex aliveChampionIndex;
+	int idx = 0;
+	for (curChampion = _champions; (idx < _partyChampionCount) && (curChampion->_currHealth == 0); idx++, curChampion++)
+		;
 
+	aliveChampionIndex = (ChampionIndex)idx;
 	if (aliveChampionIndex == _partyChampionCount) { /* BUG0_43 The game does not end if the last living champion in the party is killed while looking at a candidate champion in a portrait. The condition to end the game when the whole party is killed is not true because the code considers the candidate champion as alive (in the loop above) */
 		_partyDead = true;
 		return;
 	}
 
 	if (champIndex == _leaderIndex)
-		_vm->_eventMan->commandSetLeader((ChampionIndex)aliveChampionIndex);
+		_vm->_eventMan->commandSetLeader(aliveChampionIndex);
 
 	if (champIndex == _magicCasterChampionIndex)
 		_vm->_menuMan->setMagicCasterAndDrawSpellArea(aliveChampionIndex);
@@ -1829,28 +1829,31 @@ ChampionIndex ChampionMan::getIndexInCell(int16 cell) {
 
 void ChampionMan::resetDataToStartGame() {
 	if (!_vm->_newGameFl) {
-		Thing L0787_T_Thing;
-		if ((L0787_T_Thing = _leaderHandObject) == Thing::_none) {
+		Thing handThing = _leaderHandObject;
+		if (handThing == Thing::_none) {
 			_leaderEmptyHanded = true;
 			_leaderHandObjectIconIndex = kM1_IconIndiceNone;
 			_vm->_eventMan->setMousePointer();
-		} else {
-			putObjectInLeaderHand(L0787_T_Thing, true); /* This call will add the weight of the leader hand object to the Load of the leader a first time */
-		}
-		Champion *L0788_ps_Champion = _champions;
-		int16 L0785_i_ChampionIndex;
-		for (L0785_i_ChampionIndex = k0_ChampionFirst; L0785_i_ChampionIndex < _partyChampionCount; L0785_i_ChampionIndex++, L0788_ps_Champion++) {
-			clearFlag(L0788_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
-			setFlag(L0788_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
+		} else
+			putObjectInLeaderHand(handThing, true); /* This call will add the weight of the leader hand object to the Load of the leader a first time */
+
+		Champion *curChampion = _champions;
+		for (int16 idx = 0; idx < _partyChampionCount; idx++, curChampion++) {
+			clearFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle | k0x0100_ChampionAttributeStatistics | k0x0200_ChampionAttributeLoad | k0x0400_ChampionAttributeIcon | k0x0800_ChampionAttributePanel | k0x1000_ChampionAttributeStatusBox | k0x2000_ChampionAttributeWounds | k0x4000_ChampionAttributeViewport | k0x8000_ChampionAttributeActionHand);
+			setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand | k0x1000_ChampionAttributeStatusBox | k0x0400_ChampionAttributeIcon);
 		}
 		drawAllChampionStates();
-		if ((L0785_i_ChampionIndex = _leaderIndex) != kM1_ChampionNone) {
+
+		ChampionIndex championIndex = _leaderIndex;
+		if (championIndex != kM1_ChampionNone) {
 			_leaderIndex = kM1_ChampionNone;
-			_vm->_eventMan->commandSetLeader((ChampionIndex)L0785_i_ChampionIndex);
+			_vm->_eventMan->commandSetLeader(championIndex);
 		}
-		if ((L0785_i_ChampionIndex = _magicCasterChampionIndex) != kM1_ChampionNone) {
+
+		championIndex = _magicCasterChampionIndex;
+		if (championIndex != kM1_ChampionNone) {
 			_magicCasterChampionIndex = kM1_ChampionNone;
-			_vm->_menuMan->setMagicCasterAndDrawSpellArea(L0785_i_ChampionIndex);
+			_vm->_menuMan->setMagicCasterAndDrawSpellArea(championIndex);
 		}
 		return;
 	}

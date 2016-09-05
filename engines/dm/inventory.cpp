@@ -273,7 +273,7 @@ void InventoryMan::closeChest() {
 	bool processFirstChestSlot = true;
 	if (_openChest == Thing::_none)
 		return;
-	Container *container = (Container*)dunMan.getThingData(_openChest);
+	Container *container = (Container *)dunMan.getThingData(_openChest);
 	_openChest = Thing::_none;
 	container->getSlot() = Thing::_endOfList;
 	Thing prevThing;
@@ -294,8 +294,8 @@ void InventoryMan::closeChest() {
 	}
 }
 
-void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
-	for (char* iter = text; *iter != '\0'; ++iter) {
+void InventoryMan::drawPanelScrollTextLine(int16 yPos, char *text) {
+	for (char *iter = text; *iter != '\0'; ++iter) {
 		if ((*iter >= 'A') && (*iter <= 'Z'))
 			*iter -= 64;
 		else if (*iter >= '{') // this branch is CHANGE5_03_IMPROVEMENT
@@ -304,7 +304,7 @@ void InventoryMan::drawPanelScrollTextLine(int16 yPos, char* text) {
 	_vm->_textMan->printToViewport(162 - (6 * strlen(text) / 2), yPos, k0_ColorBlack, text, k15_ColorWhite);
 }
 
-void InventoryMan::drawPanelScroll(Scroll* scroll) {
+void InventoryMan::drawPanelScroll(Scroll *scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
@@ -352,7 +352,7 @@ void InventoryMan::drawPanelScroll(Scroll* scroll) {
 	}
 }
 
-void InventoryMan::openAndDrawChest(Thing thingToOpen, Container* chest, bool isPressingEye) {
+void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool isPressingEye) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 
@@ -393,7 +393,7 @@ void InventoryMan::drawIconToViewport(IconIndice iconIndex, int16 xPos, int16 yP
 	_vm->_displayMan->blitToViewport(iconBitmap, boxIcon, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 
-void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char** attribStrings, char* destString, const char* prefixString, const char* suffixString) {
+void InventoryMan::buildObjectAttributeString(int16 potentialAttribMask, int16 actualAttribMask, const char **attribStrings, char *destString, const char *prefixString, const char *suffixString) {
 	uint16 identicalBitCount = 0;
 	int16 attribMask = 1;
 	for (uint16 stringIndex = 0; stringIndex < 16; stringIndex++, attribMask <<= 1) {
@@ -489,7 +489,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == k7_ScrollThingType)
-		drawPanelScroll((Scroll*)rawThingPtr);
+		drawPanelScroll((Scroll *)rawThingPtr);
 	else if (thingType == k9_ContainerThingType)
 		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	else {
@@ -693,7 +693,7 @@ void InventoryMan::setDungeonViewPalette() {
 				Thing slotThing = curChampion->_slots[slotIndex];
 				if ((_vm->_objectMan->getObjectType(slotThing) >= k4_IconIndiceWeaponTorchUnlit) &&
 					(_vm->_objectMan->getObjectType(slotThing) <= k7_IconIndiceWeaponTorchLit)) {
-					Weapon *curWeapon = (Weapon*)_vm->_dungeonMan->getThingData(slotThing);
+					Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(slotThing);
 					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
 					*curTorchLightPower = 0;
@@ -779,9 +779,9 @@ void InventoryMan::decreaseTorchesLightPower() {
 }
 
 void InventoryMan::drawChampionSkillsAndStatistics() {
-	static const char* statisticNamesEN[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
-	static const char* statisticNamesDE[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
-	static const char* statisticNamesFR[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
+	static const char *statisticNamesEN[7] = {"L", "STRENGTH", "DEXTERITY", "WISDOM", "VITALITY", "ANTI-MAGIC", "ANTI-FIRE"};
+	static const char *statisticNamesDE[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
+	static const char *statisticNamesFR[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
 
 	const char **statisticNames;
 
@@ -864,7 +864,7 @@ void InventoryMan::drawStopPressingEye() {
 }
 
 void InventoryMan::clickOnMouth() {
-	static int16 G0242_ai_Graphic559_FoodAmounts[8] = {
+	static int16 foodAmounts[8] = {
 		500,    /* Apple */
 		600,    /* Corn */
 		650,    /* Bread */
@@ -872,27 +872,8 @@ void InventoryMan::clickOnMouth() {
 		550,    /* Screamer Slice */
 		350,    /* Worm round */
 		990,    /* Drumstick / Shank */
-		1400}; /* Dragon steak */
-
-	Thing L1078_T_Thing;
-	uint16 L1079_ui_IconIndex;
-	uint16 L1080_ui_ChampionIndex;
-	bool L1081_B_RemoveObjectFromLeaderHand;
-	Junk* L1082_ps_Junk;
-	Champion* L1083_ps_Champion;
-	TimelineEvent L1084_s_Event;
-	uint16 L1085_ui_Multiple;
-#define AL1085_ui_PotionPower         L1085_ui_Multiple
-#define AL1085_ui_AdjustedPotionPower L1085_ui_Multiple
-#define AL1085_ui_Counter             L1085_ui_Multiple
-	uint16 L1086_ui_Counter;
-	int16 L1087_i_Wounds;
-	uint16 L1088_ui_Multiple;
-#define AL1088_ui_ThingType               L1088_ui_Multiple
-#define AL1088_ui_Mana                    L1088_ui_Multiple
-#define AL1088_ui_HealWoundIterationCount L1088_ui_Multiple
-	uint16 L1089_ui_Weight;
-
+		1400    /* Dragon steak */
+	};
 
 	if (_vm->_championMan->_leaderEmptyHanded) {
 		if (_panelContent == k0_PanelContentFoodWaterPoisoned)
@@ -916,113 +897,116 @@ void InventoryMan::clickOnMouth() {
 	if (_vm->_championMan->_candidateChampionOrdinal)
 		return;
 
-	L1078_T_Thing = _vm->_championMan->_leaderHandObject;
-	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(L1078_T_Thing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth))
+	Thing handThing = _vm->_championMan->_leaderHandObject;
+	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(handThing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth))
 		return;
 
-	L1079_ui_IconIndex = _vm->_objectMan->getIconIndex(L1078_T_Thing);
-	AL1088_ui_ThingType = L1078_T_Thing.getType();
-	L1089_ui_Weight = _vm->_dungeonMan->getObjectWeight(L1078_T_Thing);
-	L1080_ui_ChampionIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
-	L1083_ps_Champion = &_vm->_championMan->_champions[L1080_ui_ChampionIndex];
-	L1082_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L1078_T_Thing);
-	if ((L1079_ui_IconIndex >= k8_IconIndiceJunkWater) && (L1079_ui_IconIndex <= k9_IconIndiceJunkWaterSkin)) {
-		if (!(L1082_ps_Junk->getChargeCount())) {
+	uint16 iconIndex = _vm->_objectMan->getIconIndex(handThing);
+	uint16 handThingType = handThing.getType();
+	uint16 handThingWeight = _vm->_dungeonMan->getObjectWeight(handThing);
+	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
+	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
+	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(handThing);
+	bool removeObjectFromLeaderHand;
+	if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
+		if (!(junkData->getChargeCount()))
 			return;
-		}
-		L1083_ps_Champion->_water = MIN(L1083_ps_Champion->_water + 800, 2048);
-		L1082_ps_Junk->setChargeCount(L1082_ps_Junk->getChargeCount() - 1);
-		L1081_B_RemoveObjectFromLeaderHand = false;
-	} else {
-		if (AL1088_ui_ThingType == k8_PotionThingType) {
-			L1081_B_RemoveObjectFromLeaderHand = false;
-		} else {
-			L1082_ps_Junk->setNextThing(Thing::_none);
-			L1081_B_RemoveObjectFromLeaderHand = true;
-		}
+
+		curChampion->_water = MIN(curChampion->_water + 800, 2048);
+		junkData->setChargeCount(junkData->getChargeCount() - 1);
+		removeObjectFromLeaderHand = false;
+	} else if (handThingType == k8_PotionThingType)
+		removeObjectFromLeaderHand = false;
+	else {
+		junkData->setNextThing(Thing::_none);
+		removeObjectFromLeaderHand = true;
 	}
 	_vm->_eventMan->showMouse();
-	if (L1081_B_RemoveObjectFromLeaderHand) {
+	if (removeObjectFromLeaderHand)
 		_vm->_championMan->getObjectRemovedFromLeaderHand();
-	}
-	if (AL1088_ui_ThingType == k8_PotionThingType) {
-		AL1085_ui_PotionPower = ((Potion*)L1082_ps_Junk)->getPower();
-		L1086_ui_Counter = ((511 - AL1085_ui_PotionPower) / (32 + (AL1085_ui_PotionPower + 1) / 8)) >> 1;
-		AL1085_ui_AdjustedPotionPower = (AL1085_ui_PotionPower / 25) + 8; /* Value between 8 and 18 */
-		switch (((Potion*)L1082_ps_Junk)->getType()) {
+
+	if (handThingType == k8_PotionThingType) {
+		uint16 potionPower = ((Potion *)junkData)->getPower();
+		uint16 counter = ((511 - potionPower) / (32 + (potionPower + 1) / 8)) >> 1;
+		uint16 adjustedPotionPower = (potionPower / 25) + 8; /* Value between 8 and 18 */
+
+		switch (((Potion *)junkData)->getType()) {
 		case k6_PotionTypeRos:
-			adjustStatisticCurrentValue(L1083_ps_Champion, k2_ChampionStatDexterity, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, k2_ChampionStatDexterity, adjustedPotionPower);
 			break;
 		case k7_PotionTypeKu:
-			adjustStatisticCurrentValue(L1083_ps_Champion, k1_ChampionStatStrength, (((Potion*)L1082_ps_Junk)->getPower() / 35) + 5); /* Value between 5 and 12 */
+			adjustStatisticCurrentValue(curChampion, k1_ChampionStatStrength, (((Potion *)junkData)->getPower() / 35) + 5); /* Value between 5 and 12 */
 			break;
 		case k8_PotionTypeDane:
-			adjustStatisticCurrentValue(L1083_ps_Champion, k3_ChampionStatWisdom, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, k3_ChampionStatWisdom, adjustedPotionPower);
 			break;
 		case k9_PotionTypeNeta:
-			adjustStatisticCurrentValue(L1083_ps_Champion, k4_ChampionStatVitality, AL1085_ui_AdjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, k4_ChampionStatVitality, adjustedPotionPower);
 			break;
 		case k10_PotionTypeAntivenin:
-			_vm->_championMan->unpoison(L1080_ui_ChampionIndex);
+			_vm->_championMan->unpoison(championIndex);
 			break;
 		case k11_PotionTypeMon:
-			L1083_ps_Champion->_currStamina += MIN(L1083_ps_Champion->_maxStamina - L1083_ps_Champion->_currStamina, L1083_ps_Champion->_maxStamina / L1086_ui_Counter);
+			curChampion->_currStamina += MIN(curChampion->_maxStamina - curChampion->_currStamina, curChampion->_maxStamina / counter);
 			break;
-		case k12_PotionTypeYa:
-			AL1085_ui_AdjustedPotionPower += AL1085_ui_AdjustedPotionPower >> 1;
-			if (L1083_ps_Champion->_shieldDefense > 50) {
-				AL1085_ui_AdjustedPotionPower >>= 2;
+		case k12_PotionTypeYa: {
+			adjustedPotionPower += adjustedPotionPower >> 1;
+			if (curChampion->_shieldDefense > 50)
+				adjustedPotionPower >>= 2;
+
+			curChampion->_shieldDefense += adjustedPotionPower;
+			TimelineEvent newEvent;
+			newEvent._type = k72_TMEventTypeChampionShield;
+			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (adjustedPotionPower * adjustedPotionPower));
+			newEvent._priority = championIndex;
+			newEvent._B._defense = adjustedPotionPower;
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
+			setFlag(curChampion->_attributes, k0x1000_ChampionAttributeStatusBox);
 			}
-			L1083_ps_Champion->_shieldDefense += AL1085_ui_AdjustedPotionPower;
-			L1084_s_Event._type = k72_TMEventTypeChampionShield;
-			setMapAndTime(L1084_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (AL1085_ui_AdjustedPotionPower * AL1085_ui_AdjustedPotionPower));
-			L1084_s_Event._priority = L1080_ui_ChampionIndex;
-			L1084_s_Event._B._defense = AL1085_ui_AdjustedPotionPower;
-			_vm->_timeline->addEventGetEventIndex(&L1084_s_Event);
-			setFlag(L1083_ps_Champion->_attributes, k0x1000_ChampionAttributeStatusBox);
 			break;
-		case k13_PotionTypeEe:
-			AL1088_ui_Mana = MIN(900, (L1083_ps_Champion->_currMana + AL1085_ui_AdjustedPotionPower) + (AL1085_ui_AdjustedPotionPower - 8));
-			if (AL1088_ui_Mana > L1083_ps_Champion->_maxMana) {
-				AL1088_ui_Mana -= (AL1088_ui_Mana - MAX(L1083_ps_Champion->_currMana, L1083_ps_Champion->_maxMana)) >> 1;
+		case k13_PotionTypeEe: {
+			uint16 mana = MIN(900, (curChampion->_currMana + adjustedPotionPower) + (adjustedPotionPower - 8));
+			if (mana > curChampion->_maxMana)
+				mana -= (mana - MAX(curChampion->_currMana, curChampion->_maxMana)) >> 1;
+
+			curChampion->_currMana = mana;
 			}
-			L1083_ps_Champion->_currMana = AL1088_ui_Mana;
 			break;
-		case k14_PotionTypeVi:
-			AL1088_ui_HealWoundIterationCount = MAX(1, (((Potion*)L1082_ps_Junk)->getPower() / 42));
-			L1083_ps_Champion->_currHealth += L1083_ps_Champion->_maxHealth / L1086_ui_Counter;
-			L1087_i_Wounds = L1083_ps_Champion->_wounds;
-			if (L1087_i_Wounds) { /* If the champion is wounded */
-				L1086_ui_Counter = 10;
+		case k14_PotionTypeVi: {
+			uint16 healWoundIterationCount = MAX(1, (((Potion *)junkData)->getPower() / 42));
+			curChampion->_currHealth += curChampion->_maxHealth / counter;
+			int16 wounds = curChampion->_wounds;
+			if (wounds) { /* If the champion is wounded */
+				counter = 10;
 				do {
-					for (AL1085_ui_Counter = 0; AL1085_ui_Counter < AL1088_ui_HealWoundIterationCount; AL1085_ui_Counter++) {
-						L1083_ps_Champion->_wounds &= _vm->getRandomNumber(65536);
-					}
-					AL1088_ui_HealWoundIterationCount = 1;
-				} while ((L1087_i_Wounds == L1083_ps_Champion->_wounds) && --L1086_ui_Counter); /* Loop until at least one wound is healed or there are no more heal iterations */
+					for (uint16 i = 0; i < healWoundIterationCount; i++)
+						curChampion->_wounds &= _vm->getRandomNumber(65536);
+
+					healWoundIterationCount = 1;
+				} while ((wounds == curChampion->_wounds) && --counter); /* Loop until at least one wound is healed or there are no more heal iterations */
 			}
-			setFlag(L1083_ps_Champion->_attributes, k0x0200_ChampionAttributeLoad | k0x2000_ChampionAttributeWounds);
+			setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad | k0x2000_ChampionAttributeWounds);
+			}
 			break;
 		case k15_PotionTypeWaterFlask:
-			L1083_ps_Champion->_water = MIN(L1083_ps_Champion->_water + 1600, 2048);
+			curChampion->_water = MIN(curChampion->_water + 1600, 2048);
 			break;
 		default:
 			break;
 		}
-		((Potion*)L1082_ps_Junk)->setType(k20_PotionTypeEmptyFlask);
-	} else if ((L1079_ui_IconIndex >= k168_IconIndiceJunkApple) && (L1079_ui_IconIndex < k176_IconIndiceJunkIronKey)) {
-		L1083_ps_Champion->_food = MIN(L1083_ps_Champion->_food + G0242_ai_Graphic559_FoodAmounts[L1079_ui_IconIndex - k168_IconIndiceJunkApple], 2048);
-	}
+		((Potion *)junkData)->setType(k20_PotionTypeEmptyFlask);
+	} else if ((iconIndex >= k168_IconIndiceJunkApple) && (iconIndex < k176_IconIndiceJunkIronKey))
+		curChampion->_food = MIN(curChampion->_food + foodAmounts[iconIndex - k168_IconIndiceJunkApple], 2048);
 
-	if (L1083_ps_Champion->_currStamina > L1083_ps_Champion->_maxStamina)
-		L1083_ps_Champion->_currStamina = L1083_ps_Champion->_maxStamina;
+	if (curChampion->_currStamina > curChampion->_maxStamina)
+		curChampion->_currStamina = curChampion->_maxStamina;
 
-	if (L1083_ps_Champion->_currHealth > L1083_ps_Champion->_maxHealth)
-		L1083_ps_Champion->_currHealth = L1083_ps_Champion->_maxHealth;
+	if (curChampion->_currHealth > curChampion->_maxHealth)
+		curChampion->_currHealth = curChampion->_maxHealth;
 
-	if (L1081_B_RemoveObjectFromLeaderHand) {
-		for (L1086_ui_Counter = 5; --L1086_ui_Counter; _vm->delay(8)) { /* Animate mouth icon */
-			_vm->_objectMan->drawIconToScreen(k205_IconIndiceMouthOpen + !(L1086_ui_Counter & 0x0001), 56, 46);
+	if (removeObjectFromLeaderHand) {
+		for (uint16 i = 5; --i; _vm->delay(8)) { /* Animate mouth icon */
+			_vm->_objectMan->drawIconToScreen(k205_IconIndiceMouthOpen + !(i & 0x0001), 56, 46);
 			_vm->_eventMan->discardAllInput();
 			if (_vm->_engineShouldQuit)
 				return;
@@ -1030,36 +1014,35 @@ void InventoryMan::clickOnMouth() {
 		}
 	} else {
 		_vm->_championMan->drawChangedObjectIcons();
-		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(L1078_T_Thing) - L1089_ui_Weight;
+		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
 		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
 	}
 	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
-	setFlag(L1083_ps_Champion->_attributes, k0x0100_ChampionAttributeStatistics);
-	if (_panelContent == k0_PanelContentFoodWaterPoisoned) {
-		setFlag(L1083_ps_Champion->_attributes, k0x0800_ChampionAttributePanel);
-	}
-	_vm->_championMan->drawChampionState((ChampionIndex)L1080_ui_ChampionIndex);
+	setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+
+	if (_panelContent == k0_PanelContentFoodWaterPoisoned)
+		setFlag(curChampion->_attributes, k0x0800_ChampionAttributePanel);
+
+	_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 	_vm->_eventMan->hideMouse();
 }
 
-void InventoryMan::adjustStatisticCurrentValue(Champion* champ, uint16 statIndex, int16 valueDelta) {
-	int16 L1077_i_Multiple;
-#define AL1077_i_CurrentValue L1077_i_Multiple
-#define AL1077_i_Delta        L1077_i_Multiple
-
+void InventoryMan::adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta) {
+	int16 delta;
 	if (valueDelta >= 0) {
-		if ((AL1077_i_CurrentValue = champ->_statistics[statIndex][k1_ChampionStatCurrent]) > 120) {
+		int16 currentValue = champ->_statistics[statIndex][k1_ChampionStatCurrent];
+		if (currentValue > 120) {
 			valueDelta >>= 1;
-			if (AL1077_i_CurrentValue > 150) {
+			if (currentValue > 150) {
 				valueDelta >>= 1;
 			}
 			valueDelta++;
 		}
-		AL1077_i_Delta = MIN(valueDelta, (int16)(170 - AL1077_i_CurrentValue));
+		delta = MIN(valueDelta, (int16)(170 - currentValue));
 	} else { /* BUG0_00 Useless code. The function is always called with valueDelta having a positive value */
-		AL1077_i_Delta = MAX(valueDelta, int16(champ->_statistics[statIndex][k2_ChampionStatMinimum] - champ->_statistics[statIndex][k1_ChampionStatCurrent]));
+		delta = MAX(valueDelta, int16(champ->_statistics[statIndex][k2_ChampionStatMinimum] - champ->_statistics[statIndex][k1_ChampionStatCurrent]));
 	}
-	champ->_statistics[statIndex][k1_ChampionStatCurrent] += AL1077_i_Delta;
+	champ->_statistics[statIndex][k1_ChampionStatCurrent] += delta;
 }
 
 void InventoryMan::clickOnEye() {
@@ -1077,13 +1060,13 @@ void InventoryMan::clickOnEye() {
 	_vm->_eventMan->hideMouse();
 	_vm->delay(8);
 	drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
-	if (_vm->_championMan->_leaderEmptyHanded) {
+	if (_vm->_championMan->_leaderEmptyHanded)
 		drawChampionSkillsAndStatistics();
-	} else {
+	else {
 		_vm->_objectMan->clearLeaderObjectName();
 		drawPanelObject(_vm->_championMan->_leaderHandObject, true);
 	}
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
-
 }
+
 }

@@ -51,7 +51,7 @@ class LZWdecompressor {
 	int16 _inputBufferBitCount;
 	int16 _charToRepeat;
 
-	byte* _tempBuffer;
+	byte *_tempBuffer;
 	int16 *_prefixCode;
 	byte *_appendCharacter;
 

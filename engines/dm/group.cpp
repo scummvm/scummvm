@@ -1727,7 +1727,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 		|| (groupThing == Thing::_none)) {
 		return Thing::_none;
 	}
-	Group *group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	group->_slot = Thing::_endOfList;
 	group->setDoNotDiscard(false);
 	group->setDir(dir);
@@ -1776,7 +1776,7 @@ int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 
 	if (groupThing == Thing::_endOfList)
 		return 0;
 
-	Group *group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	signed char orderedCellsToAttack[4];
 	setOrderedCellsToAttack(orderedCellsToAttack, groupX, groupY, partyX, partyY, champCell);
 	uint16 counter = 0;
@@ -1882,7 +1882,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 		return;
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
-	(((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
+	(((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
 	TimelineEvent newEvent;
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
@@ -1935,7 +1935,7 @@ bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 
 	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (thing != Thing::_endOfList) {
-		if ((thing.getType() == k15_ExplosionThingType) && (((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
+		if ((thing.getType() == k15_ExplosionThingType) && (((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
 			return true;
 
 		thing = _vm->_dungeonMan->getNextThing(thing);

@@ -727,15 +727,14 @@ public:
 
 	void blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
 	void blitToViewport(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
-	void blitToScreen(byte *bitmap, int16 *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
-	void blitToScreen(byte *bitmap, Box *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
+	void blitToScreen(byte *bitmap, const Box *box, int16 byteWidth, Color transparent, int16 height); // @ F0021_MAIN_BlitToScreen
 
 
 	/* srcHeight and destHeight are not necessary for blitting, only error checking, thus they are defaulted for existing code which
 	does not pass anything, newly imported calls do pass srcHeght and srcWidth, so this is a ceonvenience change so the the parameters
 	match the original exactly, if need arises for heights then we'll have to retrospectively add them in old function calls*/
 	/* Expects inclusive boundaries in box */
-	void blitToBitmap(byte *srcBitmap, byte *destBitmap, Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
+	void blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box, uint16 srcX, uint16 srcY, uint16 srcByteWidth,
 						   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight); // @ F0132_VIDEO_Blit
 	 /* Expects inclusive boundaries in box */
 	void blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box &box, int16 lastUnitIndex,

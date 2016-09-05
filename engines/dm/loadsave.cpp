@@ -40,14 +40,13 @@
 #include "dm/projexpl.h"
 #include "dm/dialog.h"
 
-
 namespace DM {
 
 LoadgameResponse DMEngine::loadgame(int16 slot) {
 	if (slot == -1 && _newGameFl == k0_modeLoadSavedGame)
 		return kM1_LoadgameFailure;
 
-	bool L1366_B_FadePalette = true;
+	bool fadePalette = true;
 	Common::String fileName;
 	Common::SaveFileManager *saveFileManager = nullptr;
 	Common::InSaveFile *file = nullptr;
@@ -131,7 +130,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 		_timeline->initTimeline();
 		_groupMan->initActiveGroups();
 
-		if (L1366_B_FadePalette) {
+		if (fadePalette) {
 			_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 			delay(1);
 			_displayMan->fillScreen(k0_ColorBlack);
@@ -154,7 +153,6 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 			_dialog->dialogDraw(nullptr, "CHARGEMENT DU JEU . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		}
-
 	}
 	_championMan->_partyDead = false;
 
@@ -254,10 +252,10 @@ Common::String DMEngine::getSavefileName(uint16 slot) {
 	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
 
-#define SAVEGAME_ID       MKTAG('D', 'M', 'D', 'M')
+#define SAVEGAME_ID       MKTAG('D', 'M', '2', '1')
 #define SAVEGAME_VERSION  1
 
-void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::String& saveName) {
+void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::String& saveName) {
 	out->writeUint32BE(SAVEGAME_ID);
 
 	// Write version
@@ -268,9 +266,9 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile* out, const Common::Strin
 	out->writeByte(0);
 
 	// Save the game thumbnail
-	if (_saveThumbnail) {
+	if (_saveThumbnail)
 		out->write(_saveThumbnail->getData(), _saveThumbnail->size());
-	} else
+	else
 		Graphics::saveThumbnail(*out);
 
 	// Creation date/time
@@ -291,9 +289,8 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
 
-	if (!file) {
+	if (!file)
 		return false;
-	}
 
 	writeSaveGameHeader(file, saveDescription);
 
@@ -339,29 +336,27 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeUint32BE(0x6f85e3d3);
 
 	// save _g278_dungeonFileHeader
-	{
-		DungeonFileHeader &header = _dungeonMan->_dungeonFileHeader;
-		file->writeUint16BE(header._ornamentRandomSeed);
-		file->writeUint16BE(header._rawMapDataSize);
-		file->writeByte(header._mapCount);
-		file->writeByte(0); // to match the structure of dungeon.dat, will be discarded
-		file->writeUint16BE(header._textDataWordCount);
-		file->writeUint16BE(header._partyStartLocation);
-		file->writeUint16BE(header._squareFirstThingCount);
-		for (uint16 i = 0; i < 16; ++i)
-			file->writeUint16BE(header._thingCounts[i]);
-	}
+	DungeonFileHeader &header = _dungeonMan->_dungeonFileHeader;
+	file->writeUint16BE(header._ornamentRandomSeed);
+	file->writeUint16BE(header._rawMapDataSize);
+	file->writeByte(header._mapCount);
+	file->writeByte(0); // to match the structure of dungeon.dat, will be discarded
+	file->writeUint16BE(header._textDataWordCount);
+	file->writeUint16BE(header._partyStartLocation);
+	file->writeUint16BE(header._squareFirstThingCount);
+	for (uint16 i = 0; i < 16; ++i)
+		file->writeUint16BE(header._thingCounts[i]);
 
 	// save _g277_dungeonMaps
 	for (uint16 i = 0; i < _dungeonMan->_dungeonFileHeader._mapCount; ++i) {
 		Map &map = _dungeonMan->_dungeonMaps[i];
-		uint16 tmp;
 
 		file->writeUint16BE(map._rawDunDataOffset);
 		file->writeUint32BE(0); // to match the structure of dungeon.dat, will be discarded
 		file->writeByte(map._offsetMapX);
 		file->writeByte(map._offsetMapY);
 
+		uint16 tmp;
 		tmp = ((map._height & 0x1F) << 11) | ((map._width & 0x1F) << 6) | (map._level & 0x3F);
 		file->writeUint16BE(tmp);
 
@@ -405,7 +400,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	return true;
 }
 
-bool readSaveGameHeader(Common::InSaveFile* in, SaveGameHeader* header) {
+bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header) {
 	uint32 id = in->readUint32BE();
 
 	// Check if it's a valid ScummVM savegame
