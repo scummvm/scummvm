@@ -31,18 +31,18 @@
 
 namespace DM {
 
-int16 gK77_IconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
+void ObjectMan::initConstants() {
+	int16 iconGraphicHeight[7] = {32, 32, 32, 32, 32, 32, 32}; // @ K0077_ai_IconGraphicHeight
+	int16 iconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
+		0,     /* First icon index in graphic #42 */
+		32,    /* First icon index in graphic #43 */
+		64,    /* First icon index in graphic #44 */
+		96,    /* First icon index in graphic #45 */
+		128,   /* First icon index in graphic #46 */
+		160,   /* First icon index in graphic #47 */
+		192    /* First icon index in graphic #48 */
+	};
 
-int16 g26_IconGraphicFirstIndex[7] = { // G0026_ai_Graphic562_IconGraphicFirstIconIndex
-	0,     /* First icon index in graphic #42 */
-	32,    /* First icon index in graphic #43 */
-	64,    /* First icon index in graphic #44 */
-	96,    /* First icon index in graphic #45 */
-	128,   /* First icon index in graphic #46 */
-	160,   /* First icon index in graphic #47 */
-	192}; /* First icon index in graphic #48 */
-
-ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	/* 8 for champion hands in status boxes, 30 for champion inventory, 8 for chest */
 	_slotBoxes[0] = SlotBox(4, 10, 0);    /* Champion Status Box 0 Ready Hand */
 	_slotBoxes[1] = SlotBox(24, 10, 0);   /* Champion Status Box 0 Action Hand */
@@ -91,18 +91,25 @@ ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	_slotBoxes[44] = SlotBox(179, 104, 0); /* Chest 7 */
 	_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
 
+	for (int i = 0; i < 7; i++) {
+		iconGraphicHeight[i] = iconGraphicHeight[i];
+		iconGraphicFirstIndex[i] = iconGraphicFirstIndex[i];
+	}
+}
+
+ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
 	for (uint16 i = 0; i < k199_ObjectNameCount; ++i)
 		_objectNames[i] = nullptr;
 
 	_objectIconForMousePointer = nullptr;
+
+	initConstants();
 }
 
 ObjectMan::~ObjectMan() {
 	delete[] _objectIconForMousePointer;
 	delete[] _objectNames[0];
 }
-
-#define k556_ObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
 
 void ObjectMan::loadObjectNames() {
 	DisplayMan &dispMan = *_vm->_displayMan;
@@ -129,41 +136,38 @@ IconIndice ObjectMan::getObjectType(Thing thing) {
 		return kM1_IconIndiceNone;
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
-	if (objectInfoIndex != -1) {
+	if (objectInfoIndex != -1)
 		objectInfoIndex = _vm->_dungeonMan->_objectInfos[objectInfoIndex]._type;
-	}
+
 	return (IconIndice)objectInfoIndex;
 }
 
-byte g29_ChargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
-
 IconIndice ObjectMan::getIconIndex(Thing thing) {
-	int16 L0005_i_IconIndex = getObjectType(thing);
-	if (L0005_i_IconIndex != kM1_IconIndiceNone) {
-		if (((L0005_i_IconIndex < k32_IconIndiceWeaponDagger) && (L0005_i_IconIndex >= k0_IconIndiceJunkCompassNorth)) ||
-			((L0005_i_IconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (L0005_i_IconIndex <= k163_IconIndicePotionWaterFlask)) ||
-			(L0005_i_IconIndex == k195_IconIndicePotionEmptyFlask)) {
-			Junk *L0006_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
-			switch (L0005_i_IconIndex) {
+	static byte chargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
+
+	int16 iconIndex = getObjectType(thing);
+	if (iconIndex != kM1_IconIndiceNone) {
+		if (((iconIndex < k32_IconIndiceWeaponDagger) && (iconIndex >= k0_IconIndiceJunkCompassNorth)) ||
+			((iconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (iconIndex <= k163_IconIndicePotionWaterFlask)) ||
+			(iconIndex == k195_IconIndicePotionEmptyFlask)) {
+			Junk *junkThing = (Junk*)_vm->_dungeonMan->getThingData(thing);
+			switch (iconIndex) {
 			case k0_IconIndiceJunkCompassNorth:
-				L0005_i_IconIndex += _vm->_dungeonMan->_partyDir;
+				iconIndex += _vm->_dungeonMan->_partyDir;
 				break;
 			case k4_IconIndiceWeaponTorchUnlit:
-				if (((Weapon*)L0006_ps_Junk)->isLit()) {
-					L0005_i_IconIndex += g29_ChargeCountToTorchType[((Weapon*)L0006_ps_Junk)->getChargeCount()];
-				}
+				if (((Weapon*)junkThing)->isLit())
+					iconIndex += chargeCountToTorchType[((Weapon*)junkThing)->getChargeCount()];
 				break;
 			case k30_IconIndiceScrollOpen:
-				if (((Scroll*)L0006_ps_Junk)->getClosed()) {
-					L0005_i_IconIndex++;
-				}
+				if (((Scroll*)junkThing)->getClosed())
+					iconIndex++;
 				break;
 			case k8_IconIndiceJunkWater:
 			case k12_IconIndiceJunkIllumuletUnequipped:
 			case k10_IconIndiceJunkJewelSymalUnequipped:
-				if (L0006_ps_Junk->getChargeCount()) {
-					L0005_i_IconIndex++;
-				}
+				if (junkThing->getChargeCount())
+					iconIndex++;
 				break;
 			case k23_IconIndiceWeaponBoltBladeStormEmpty:
 			case k14_IconIndiceWeaponFlamittEmpty:
@@ -171,94 +175,88 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 			case k25_IconIndiceWeaponFuryRaBladeEmpty:
 			case k16_IconIndiceWeaponEyeOfTimeEmpty:
 			case k20_IconIndiceWeaponStaffOfClawsEmpty:
-				if (((Weapon*)L0006_ps_Junk)->getChargeCount()) {
-					L0005_i_IconIndex++;
-				}
+				if (((Weapon*)junkThing)->getChargeCount())
+					iconIndex++;
+				break;
 			}
 		}
 	}
-	return (IconIndice)L0005_i_IconIndex;
+	return (IconIndice)iconIndex;
 }
 
 void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
-	uint16 L0011_ui_Counter;
-	byte* L0012_pl_Bitmap_Icon;
-	Box L1568_s_Box;
-
-	for (L0011_ui_Counter = 0; L0011_ui_Counter < 7; L0011_ui_Counter++) {
-		if (g26_IconGraphicFirstIndex[L0011_ui_Counter] > iconIndex)
+	uint16 counter;
+	for (counter = 0; counter < 7; counter++) {
+		if (iconGraphicFirstIndex[counter] > iconIndex)
 			break;
 	}
-	L0012_pl_Bitmap_Icon = _vm->_displayMan->getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + --L0011_ui_Counter);
-	iconIndex -= g26_IconGraphicFirstIndex[L0011_ui_Counter];
+	--counter;
+	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + counter);
+	iconIndex -= iconGraphicFirstIndex[counter];
 	_vm->_displayMan->_useByteBoxCoordinates = true;
-	L1568_s_Box._y1 = 0;
-	L1568_s_Box._x1 = 0;
-	L1568_s_Box._y2 = 15;
-	L1568_s_Box._x2 = 15;
-	_vm->_displayMan->blitToBitmap(L0012_pl_Bitmap_Icon, destBitmap, L1568_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0011_ui_Counter], 16);
+	Box blitBox(0, 15, 0, 15);
+	_vm->_displayMan->blitToBitmap(iconBitmap, destBitmap, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, iconGraphicHeight[counter], 16);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
-	uint16 L0015_ui_IconGraphicIndex;
-	int16 L0016_i_ByteWidth;
-	SlotBox* L0017_ps_SlotBox;
-	byte* L0018_puc_Bitmap_Icons;
-	Box L0019_s_Box;
-	byte* L0020_puc_Bitmap_Destination;
-	int16 L1569_i_Width;
-
-	L0017_ps_SlotBox = &_slotBoxes[slotBoxIndex];
-	if ((L0017_ps_SlotBox->_iconIndex = iconIndex) == kM1_IconIndiceNone) {
+	SlotBox *slotBox = &_slotBoxes[slotBoxIndex];
+	slotBox->_iconIndex = iconIndex;
+	if (slotBox->_iconIndex == kM1_IconIndiceNone)
 		return;
-	}
-	L0019_s_Box._x2 = (L0019_s_Box._x1 = L0017_ps_SlotBox->_x) + 15;
-	L0019_s_Box._y2 = (L0019_s_Box._y1 = L0017_ps_SlotBox->_y) + 15;
-	for (L0015_ui_IconGraphicIndex = 0; L0015_ui_IconGraphicIndex < 7; L0015_ui_IconGraphicIndex++) {
-		if (g26_IconGraphicFirstIndex[L0015_ui_IconGraphicIndex] > iconIndex)
+
+	Box blitBox;
+	blitBox._x1 = slotBox->_x;
+	blitBox._x2 = blitBox._x1 + 15;
+	blitBox._y1 = slotBox->_y;
+	blitBox._y2 = blitBox._y1 + 15;
+
+	uint16 iconGraphicIndex;
+	for (iconGraphicIndex = 0; iconGraphicIndex < 7; iconGraphicIndex++) {
+		if (iconGraphicFirstIndex[iconGraphicIndex] > iconIndex)
 			break;
 	}
-	L0015_ui_IconGraphicIndex--;
-	L0018_puc_Bitmap_Icons = _vm->_displayMan->getNativeBitmapOrGraphic(L0015_ui_IconGraphicIndex + k42_ObjectIcons_000_TO_031);
-	iconIndex -= g26_IconGraphicFirstIndex[L0015_ui_IconGraphicIndex];
+	iconGraphicIndex--;
+	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
+	iconIndex -= iconGraphicFirstIndex[iconGraphicIndex];
+	int16 byteWidth;
+	byte* blitDestination;
+	int16 destHeight;
 	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
-		L0020_puc_Bitmap_Destination = _vm->_displayMan->_bitmapViewport;
-		L0016_i_ByteWidth = k112_byteWidthViewport;
-		L1569_i_Width = 136;
+		blitDestination = _vm->_displayMan->_bitmapViewport;
+		byteWidth = k112_byteWidthViewport;
+		destHeight = 136;
 	} else {
-		L0020_puc_Bitmap_Destination = (unsigned char*)_vm->_displayMan->_bitmapScreen;
-		L0016_i_ByteWidth = k160_byteWidthScreen;
-		L1569_i_Width = 200;
+		blitDestination = (unsigned char*)_vm->_displayMan->_bitmapScreen;
+		byteWidth = k160_byteWidthScreen;
+		destHeight = 200;
 	}
-	_vm->_displayMan->_useByteBoxCoordinates = false, _vm->_displayMan->blitToBitmap(L0018_puc_Bitmap_Icons, L0020_puc_Bitmap_Destination, L0019_s_Box, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, L0016_i_ByteWidth, kM1_ColorNoTransparency, gK77_IconGraphicHeight[L0015_ui_IconGraphicIndex], L1569_i_Width);
+	_vm->_displayMan->_useByteBoxCoordinates = false;
+	_vm->_displayMan->blitToBitmap(iconBitmap, blitDestination, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, byteWidth, kM1_ColorNoTransparency, iconGraphicHeight[iconGraphicIndex], destHeight);
 }
 
-#define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
-
 void ObjectMan::drawLeaderObjectName(Thing thing) {
-	char* objectName = nullptr;
-	int16 L0007_i_IconIndex = getIconIndex(thing);
-	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
+	char *objectName = nullptr;
+	int16 iconIndex = getIconIndex(thing);
+	if (iconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		char champBonesName[16];
 
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-		case Common::DE_DEU: // english and german version are the same
-			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
-			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
-			break;
 		case Common::FR_FRA:
-			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
+			// Fix original bug: strcpy was coming after strcat
+			strcpy(champBonesName, _objectNames[iconIndex]);
+			strcat(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+			break;
+		default: // English and German version are the same
 			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+			strcat(champBonesName, _objectNames[iconIndex]);
 			break;
 		}
 
 		objectName = champBonesName;
-	} else {
-		objectName = _objectNames[L0007_i_IconIndex];
-	}
+	} else
+		objectName = _objectNames[iconIndex];
+
 	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
@@ -267,17 +265,14 @@ IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
 }
 
 void ObjectMan::clearLeaderObjectName() {
-	static Box g28_BoxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
-	_vm->_displayMan->fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
+	static Box boxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
+	_vm->_displayMan->fillScreenBox(boxLeaderHandObjectName, k0_ColorBlack);
 }
 
 void ObjectMan::drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
-	static byte L0013_puc_Bitmap_Icon[16 * 16];
-	Box L0014_s_Box;
-
-	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
-	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
-	extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
-	_vm->_displayMan->blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	static byte iconBitmap[16 * 16];
+	Box blitBox(posX, posX + 15, posY, posY + 15);
+	extractIconFromBitmap(iconIndex, iconBitmap);
+	_vm->_displayMan->blitToScreen(iconBitmap, &blitBox, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 }
