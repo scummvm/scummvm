@@ -193,7 +193,7 @@ void DownloadDialog::handleTickle() {
 		return;
 	}
 
-	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
+	int32 progress = (int32)(100 * CloudMan.getDownloadingProgress());
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
 		draw();
@@ -239,7 +239,7 @@ Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut) {
 	}
 
 	// print one digit after floating point
-	result = Common::String::format("%.1lf", floating);
+	result = Common::String::format("%.1f", floating);
 	return result;
 }
 }
