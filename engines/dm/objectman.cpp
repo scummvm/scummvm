@@ -236,28 +236,27 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
 	char* objectName = nullptr;
-	int16 L0007_i_IconIndex = getIconIndex(thing);
-	if (L0007_i_IconIndex == k147_IconIndiceJunkChampionBones) {
+	int16 iconIndex = getIconIndex(thing);
+	if (iconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		char champBonesName[16];
 
 		switch (_vm->getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-		case Common::DE_DEU: // english and german version are the same
-			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
-			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
-			break;
 		case Common::FR_FRA:
-			strcat(champBonesName, _objectNames[L0007_i_IconIndex]);
+			// Fix original bug: strcpy was coming after strcat
+			strcpy(champBonesName, _objectNames[iconIndex]);
+			strcat(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+			break;
+		default: // English and German version are the same
 			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+			strcat(champBonesName, _objectNames[iconIndex]);
 			break;
 		}
 
 		objectName = champBonesName;
-	} else {
-		objectName = _objectNames[L0007_i_IconIndex];
-	}
+	} else
+		objectName = _objectNames[iconIndex];
+
 	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
@@ -266,17 +265,14 @@ IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
 }
 
 void ObjectMan::clearLeaderObjectName() {
-	static Box g28_BoxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
-	_vm->_displayMan->fillScreenBox(g28_BoxLeaderHandObjectName, k0_ColorBlack);
+	static Box boxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
+	_vm->_displayMan->fillScreenBox(boxLeaderHandObjectName, k0_ColorBlack);
 }
 
 void ObjectMan::drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
-	static byte L0013_puc_Bitmap_Icon[16 * 16];
-	Box L0014_s_Box;
-
-	L0014_s_Box._x2 = (L0014_s_Box._x1 = posX) + 15;
-	L0014_s_Box._y2 = (L0014_s_Box._y1 = posY) + 15;
-	extractIconFromBitmap(iconIndex, L0013_puc_Bitmap_Icon);
-	_vm->_displayMan->blitToScreen(L0013_puc_Bitmap_Icon, &L0014_s_Box, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	static byte iconBitmap[16 * 16];
+	Box blitBox(posX, posX + 15, posY, posY + 15);
+	extractIconFromBitmap(iconIndex, iconBitmap);
+	_vm->_displayMan->blitToScreen(iconBitmap, &blitBox, k8_byteWidth, kM1_ColorNoTransparency, 16);
 }
 }
