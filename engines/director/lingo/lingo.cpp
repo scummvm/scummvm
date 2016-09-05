@@ -197,7 +197,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 			parse(chunk.c_str());
 
 			if (debugChannelSet(3, kDebugLingoCompile)) {
-				int pc = 0;
+				uint pc = 0;
 				while (pc < _currentScript->size()) {
 					Common::String instr = decodeInstruction(pc, &pc);
 					debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
@@ -225,7 +225,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		if (_currentScript->size() && !_hadError)
 			Common::hexdump((byte *)&_currentScript->front(), _currentScript->size() * sizeof(inst));
 
-		int pc = 0;
+		uint pc = 0;
 		while (pc < _currentScript->size()) {
 			Common::String instr = decodeInstruction(pc, &pc);
 			debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());

@@ -51,7 +51,7 @@
 
 namespace Director {
 
-void Lingo::execute(int pc) {
+void Lingo::execute(uint pc) {
 	for(_pc = pc; (*_currentScript)[_pc] != STOP && !_returning;) {
 		Common::String instr = decodeInstruction(_pc);
 
@@ -79,7 +79,7 @@ void Lingo::printStack(const char *s) {
 	debugC(5, kDebugLingoExec, "%s", stack.c_str());
 }
 
-Common::String Lingo::decodeInstruction(int pc, int *newPc) {
+Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 	Symbol sym;
 	Common::String res;
 

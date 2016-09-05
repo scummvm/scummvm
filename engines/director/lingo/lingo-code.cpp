@@ -778,7 +778,7 @@ void Lingo::c_whencode() {
 	g_lingo->define(eventname, start, 0, NULL, end);
 
 	if (debugChannelSet(3, kDebugLingoExec)) {
-		int pc = start;
+		uint pc = start;
 		while (pc <= end) {
 			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
 			debugC(3, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
@@ -855,7 +855,7 @@ void Lingo::c_call() {
 }
 
 void Lingo::call(Common::String name, int nargs) {
-	bool drop = false;
+	bool dropArgs = false;
 
 	Symbol *sym;
 
@@ -869,7 +869,7 @@ void Lingo::call(Common::String name, int nargs) {
 
 	if (!g_lingo->_handlers.contains(name)) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
-		drop = true;
+		dropArgs = true;
 	} else {
 		sym = g_lingo->_handlers[name];
 
@@ -879,11 +879,11 @@ void Lingo::call(Common::String name, int nargs) {
 			else
 				warning("Incorrect number of arguments to handler '%s', expecting %d or %d. Dropping %d stack items", name.c_str(), sym->nargs, sym->maxArgs, nargs);
 
-			drop = true;
+			dropArgs = true;
 		}
 	}
 
-	if (drop) {
+	if (dropArgs) {
 		for (int i = 0; i < nargs; i++)
 			g_lingo->pop();
 

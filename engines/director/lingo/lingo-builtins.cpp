@@ -183,7 +183,7 @@ void Lingo::dropStack(int nargs) {
 		pop();
 }
 
-void Lingo::drop(int num) {
+void Lingo::drop(uint num) {
 	if (num > _stack.size() - 1) {
 		warning("Incorrect number of elements to drop from stack: %d > %d", num, _stack.size() - 1);
 		return;

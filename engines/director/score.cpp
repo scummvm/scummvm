@@ -820,7 +820,7 @@ void Score::processEvents() {
 
 	Common::Event event;
 
-	int endTime = g_system->getMillis() + 200;
+	uint endTime = g_system->getMillis() + 200;
 
 	while (g_system->getMillis() < endTime) {
 		while (g_system->getEventManager()->pollEvent(event)) {

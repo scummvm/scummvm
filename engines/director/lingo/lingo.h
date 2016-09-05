@@ -175,7 +175,7 @@ public:
 	void addCode(const char *code, ScriptType type, uint16 id);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s);
-	Common::String decodeInstruction(int pc, int *newPC = NULL);
+	Common::String decodeInstruction(uint pc, uint *newPC = NULL);
 
 	ScriptType event2script(LEvent ev);
 
@@ -193,7 +193,7 @@ private:
 	const char *findNextDefinition(const char *s);
 
 public:
-	void execute(int pc);
+	void execute(uint pc);
 	void pushContext();
 	void popContext();
 	Symbol *lookupVar(const char *name, bool create = true, bool putInGlobalList = false);
@@ -296,7 +296,7 @@ public:
 	void printStubWithArglist(const char *funcname, int nargs);
 	void convertVOIDtoString(int arg, int nargs);
 	void dropStack(int nargs);
-	void drop(int num);
+	void drop(uint num);
 
 	static void b_abs(int nargs);
 	static void b_atan(int nargs);
@@ -445,7 +445,7 @@ private:
 
 	FuncHash _functions;
 
-	int _pc;
+	uint _pc;
 
 	StackData _stack;
 
