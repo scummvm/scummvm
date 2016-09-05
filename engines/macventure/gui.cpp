@@ -657,6 +657,7 @@ void Gui::drawInventories() {
 }
 
 void Gui::drawExitsWindow() {
+	_exitsWindow->setBackgroundPattern(kPatternLightGray);
 
 	Graphics::ManagedSurface *srf = _exitsWindow->getSurface();
 
