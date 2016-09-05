@@ -233,7 +233,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				} else {
 					Common::String spellName = _spells[newSelection]._name;
 					Common::String msg = (castingCopy & 0x80) ?
-						Common::String::format(SPELLS_PRESS_A_KEY, msg.c_str()) :
+						Common::String::format(SPELLS_PRESS_A_KEY, spellName.c_str()) :
 						Common::String::format(SPELLS_PURCHASE, spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {

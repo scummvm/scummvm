@@ -614,7 +614,7 @@ void PartyDialog::createChar() {
 		case Common::KEYCODE_c: {
 			_vm->_mode = MODE_FF;
 			bool result = saveCharacter(party._roster[freeCharList[charIndex]],
-				(CharacterClass)classId, race, sex, attribs);
+				classId, race, sex, attribs);
 			_vm->_mode = MODE_4;
 
 			if (result)
@@ -966,7 +966,7 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 	return result;
 }
 
-bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
+bool PartyDialog::saveCharacter(Character &c, int classId,
 		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
 	if (classId == -1) {
 		ErrorScroll::show(_vm, SELECT_CLASS_BEFORE_SAVING);
@@ -997,7 +997,7 @@ bool PartyDialog::saveCharacter(Character &c, CharacterClass classId,
 	c._xeenSide = map._loadDarkSide;
 	c._sex = sex;
 	c._race = race;
-	c._class = classId;
+	c._class = (CharacterClass)classId;
 	c._level._permanent = isDarkCc ? 5 : 1;
 
 	c._might._permanent = attribs[MIGHT];

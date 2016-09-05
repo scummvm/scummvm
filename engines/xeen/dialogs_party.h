@@ -100,7 +100,7 @@ private:
 	/**
 	 * Saves the rolled character into the roster
 	 */
-	bool saveCharacter(Character &c, CharacterClass classId, Race race,
+	bool saveCharacter(Character &c, int classId, Race race,
 		Sex sex, uint attribs[TOTAL_ATTRIBUTES]);
 public:
 	static void show(XeenEngine *vm);
