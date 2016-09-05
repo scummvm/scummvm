@@ -660,8 +660,8 @@ void Lingo::c_repeatwhilecode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	int body = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
 
 	g_lingo->execute(savepc + 2);	/* condition */
 	d = g_lingo->pop();
@@ -690,11 +690,11 @@ void Lingo::c_repeatwithcode(void) {
 	Datum d;
 	int savepc = g_lingo->_pc;
 
-	int init = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int finish =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int body = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	uint init = READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint finish =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint body = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
 	int inc = (int32)READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
-	int end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
+	uint end =  READ_UINT32(&(*g_lingo->_currentScript)[savepc + 4]);
 	Common::String countername((char *)&(*g_lingo->_currentScript)[savepc + 5]);
 	Symbol *counter = g_lingo->lookupVar(countername.c_str());
 
@@ -739,10 +739,10 @@ void Lingo::c_ifcode() {
 	Datum d;
 	int savepc = g_lingo->_pc;	/* then part */
 
-	int then =    READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
-	int elsep =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
-	int end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
-	int skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
+	uint then =    READ_UINT32(&(*g_lingo->_currentScript)[savepc]);
+	uint elsep =   READ_UINT32(&(*g_lingo->_currentScript)[savepc + 1]);
+	uint end =     READ_UINT32(&(*g_lingo->_currentScript)[savepc + 2]);
+	uint skipEnd = READ_UINT32(&(*g_lingo->_currentScript)[savepc + 3]);
 
 	debugC(8, kDebugLingoExec, "executing cond (have to %s end)", skipEnd ? "skip" : "execute");
 	g_lingo->execute(savepc + 4);	/* condition */
@@ -767,8 +767,8 @@ void Lingo::c_ifcode() {
 
 void Lingo::c_whencode() {
 	Datum d;
-	int start = g_lingo->_pc;
-	int end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
+	uint start = g_lingo->_pc;
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
 	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
