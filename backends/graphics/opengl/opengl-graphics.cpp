@@ -758,7 +758,7 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 
 void OpenGLGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
 #ifdef USE_OSD
-	warning("implement copyRectToOSD"); //TODO
+	_osd->copyRectToTexture(x, y, w, h, buf, pitch);
 #endif
 }
 
@@ -779,7 +779,9 @@ void OpenGLGraphicsManager::clearOSD() {
 #endif
 }
 
-Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() { return Graphics::PixelFormat(); } //TODO
+Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() {
+	return _defaultFormatAlpha;
+}
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());
