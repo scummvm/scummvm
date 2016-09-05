@@ -8,6 +8,8 @@ addons:
     packages:
     - g++ make
     - libsdl2-dev
+    - libsdl2-net-dev
+    - libcurl4-openssl-dev
     - libjpeg-turbo8-dev
     - libmpeg2-4-dev
     - libogg-dev
