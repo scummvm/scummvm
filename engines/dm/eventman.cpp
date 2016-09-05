@@ -355,7 +355,7 @@ void EventManager::initArrays() {
 	}
 
 	for (int i = 0; i < 13; i++)
-		_mouseInputChampionNamesHands[13] = mouseInputChampionNamesHands[i];
+		_mouseInputChampionNamesHands[i] = mouseInputChampionNamesHands[i];
 
 	for (int i = 0; i < 19; i++)
 		_secondaryKeyboardInputMovement[i] = secondaryKeyboardInputMovement[i];
