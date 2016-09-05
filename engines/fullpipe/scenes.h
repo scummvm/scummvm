@@ -382,7 +382,7 @@ public:
 	int scene09_intHangerMaxPhase;
 	BallArray scene09_balls;
 	Common::Array<Hanger *> scene09_hangers;
-	BallArray scene09_flyingBalls;
+	BallArray scene09_gulpedBalls;
 	int scene09_numMovingHangers;
 	int scene09_clickY;
 	Common::Point scene09_hangerOffsets[4];

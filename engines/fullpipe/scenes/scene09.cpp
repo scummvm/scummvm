@@ -102,11 +102,11 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers.push_back(hng);
 	}
 
-	g_vars->scene09_flyingBalls.clear();
+	g_vars->scene09_gulpedBalls.clear();
 
-	g_vars->scene09_flyingBalls.push_back(new Ball);
+	g_vars->scene09_gulpedBalls.push_back(new Ball);
 
-	Ball *b9 = g_vars->scene09_flyingBalls.front();
+	Ball *b9 = g_vars->scene09_gulpedBalls.front();
 
 	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
 	b9->ani->setAlpha(0xc8);
@@ -119,7 +119,7 @@ void scene09_initScene(Scene *sc) {
 
 		b9->ani = newball;
 
-		g_vars->scene09_flyingBalls.push_back(b9);
+		g_vars->scene09_gulpedBalls.push_back(b9);
 
 		sc->addStaticANIObject(newball, 1);
 	}
@@ -238,7 +238,7 @@ void sceneHandler09_eatBall() {
 
 		ball->ani = g_vars->scene09_flyingBall;
 
-		g_vars->scene09_flyingBalls.pop_back();
+		g_vars->scene09_gulpedBalls.pop_back();
 
 		g_vars->scene09_flyingBall = 0;
 		g_vars->scene09_numSwallenBalls++;
@@ -262,12 +262,12 @@ void sceneHandler09_eatBall() {
 }
 
 void sceneHandler09_showBall() {
-	if (g_vars->scene09_flyingBalls.size()) {
-		StaticANIObject *ani = g_vars->scene09_flyingBalls.front()->ani;
+	debugC(2, kDebugSceneLogic, "scene09: showBall");
 
-		g_vars->scene09_flyingBalls.remove_at(0);
+	if (g_vars->scene09_gulpedBalls.size()) {
+		StaticANIObject *ani = g_vars->scene09_gulpedBalls.front()->ani;
 
-		Ball *ball = g_vars->scene09_balls.front();
+		Ball *ball = g_vars->scene09_gulpedBalls.front();
 		ball->ani = ani;
 
 		ani->show1(g_fp->_aniMan->_ox + 94, g_fp->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
@@ -348,7 +348,7 @@ void sceneHandler09_ballExplode(uint num) {
 	if (!mq->chain(ball->ani))
 		delete mq;
 
-	g_vars->scene09_flyingBalls.pop_back();
+	g_vars->scene09_gulpedBalls.pop_back();
 }
 
 void sceneHandler09_checkHangerCollide() {
