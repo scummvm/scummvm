@@ -30,6 +30,7 @@
 #include "image/codecs/cdtoons.h"
 #include "image/codecs/cinepak.h"
 #include "image/codecs/indeo3.h"
+#include "image/codecs/indeo4.h"
 #include "image/codecs/mjpeg.h"
 #include "image/codecs/mpeg.h"
 #include "image/codecs/msvideo1.h"
@@ -209,6 +210,9 @@ Codec *createBitmapCodec(uint32 tag, int width, int height, int bitsPerPixel) {
 		return new CinepakDecoder(bitsPerPixel);
 	case MKTAG('I','V','3','2'):
 		return new Indeo3Decoder(width, height);
+	case MKTAG('I', 'V', '4', '1'):
+	case MKTAG('I', 'V', '4', '2'):
+		return new Indeo4Decoder(width, height);
 #ifdef IMAGE_CODECS_TRUEMOTION1_H
 	case MKTAG('D','U','C','K'):
 	case MKTAG('d','u','c','k'):

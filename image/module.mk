@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	codecs/cinepak.o \
 	codecs/codec.o \
 	codecs/indeo3.o \
+	codecs/indeo4.o \
 	codecs/mjpeg.o \
 	codecs/msrle.o \
 	codecs/msrle4.o \
@@ -21,7 +22,8 @@ MODULE_OBJS := \
 	codecs/rpza.o \
 	codecs/smc.o \
 	codecs/svq1.o \
-	codecs/truemotion1.o
+	codecs/truemotion1.o \
+	codecs/indeo/get_bits.o
 
 ifdef USE_MPEG2
 MODULE_OBJS += \
