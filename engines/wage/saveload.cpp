@@ -460,7 +460,7 @@ int WageEngine::loadGame(int slotId) {
 	data->readSint16LE();	// FFFF
 	data->readSint16LE();	// FFFF
 
-	int runCharOffset = data->readSint32LE();
+	/* int runCharOffset = */ data->readSint32LE();
 
 	// players experience points
 	int exp = data->readSint32LE(); // @ playerContext._experience
