@@ -235,7 +235,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 }
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
-	char* objectName = nullptr;
+	char *objectName = nullptr;
 	int16 iconIndex = getIconIndex(thing);
 	if (iconIndex == k147_IconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
