@@ -428,7 +428,7 @@ static const ScriptQuote MAITRED_QUOTES[] = {
 	{ 0x00000000, 0x00000000, 0x00000000 }
 };
 
-void writeScriptQuotes(const char *name, const ScriptQuote *quotes, 
+void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
 		uint tag1, uint tag2, uint rangeStart, uint rangeEnd) {
 	outputFile.seek(dataOffset);
 	outputFile.writeLong(tag1);

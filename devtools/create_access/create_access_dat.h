@@ -49,10 +49,10 @@ public:
 		_f = fopen(filename, (mode == kFileReadMode) ? "rb" : "wb+");
 		return (_f != NULL);
 	}
-	bool open(const byte *data, uint size) {
+	bool open(const byte *data, uint size_) {
 		close();
 		_memPtr = data;
-		_size = size;
+		_size = size_;
 		return true;
 	}
 
