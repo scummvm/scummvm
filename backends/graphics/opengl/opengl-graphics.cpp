@@ -367,7 +367,10 @@ void OpenGLGraphicsManager::updateScreen() {
 	    && !_gameScreen->isDirty()
 	    && !(_overlayVisible && _overlay->isDirty())
 	    && !(_cursorVisible && _cursor && _cursor->isDirty())
-	    && _osdAlpha == 0) {
+#ifdef USE_OSD
+	    && _osdAlpha == 0
+#endif
+	    ) {
 		return;
 	}
 	_forceRedraw = false;
@@ -378,7 +381,9 @@ void OpenGLGraphicsManager::updateScreen() {
 		_cursor->updateGLTexture();
 	}
 	_overlay->updateGLTexture();
+#ifdef USE_OSD
 	_osd->updateGLTexture();
+#endif
 
 	// Clear the screen buffer.
 	if (_scissorOverride && !_overlayVisible) {
