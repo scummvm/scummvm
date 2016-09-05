@@ -39,15 +39,14 @@ Common::Archive *HandlerUtils::getZipArchive() {
 	// first search in themepath
 	if (ConfMan.hasKey("themepath")) {
 		const Common::FSNode &node = Common::FSNode(ConfMan.get("themepath"));
-		if (!node.exists() || !node.isReadable() || !node.isDirectory())
-			return nullptr;
-
-		Common::FSNode fileNode = node.getChild(ARCHIVE_NAME);
-		if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
-			Common::SeekableReadStream *const stream = fileNode.createReadStream();
-			Common::Archive *zipArchive = Common::makeZipArchive(stream);
-			if (zipArchive)
-				return zipArchive;
+		if (node.exists() && node.isReadable() && node.isDirectory()) {
+			Common::FSNode fileNode = node.getChild(ARCHIVE_NAME);
+			if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
+				Common::SeekableReadStream *const stream = fileNode.createReadStream();
+				Common::Archive *zipArchive = Common::makeZipArchive(stream);
+				if (zipArchive)
+					return zipArchive;
+			}
 		}
 	}
 
