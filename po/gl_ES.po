@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-04 23:16+0100\n"
+"POT-Creation-Date: 2016-09-05 10:12+0200\n"
 "PO-Revision-Date: 2016-02-21 00:43+0100\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
@@ -176,6 +176,11 @@ msgstr ""
 #, c-format
 msgid "Downloaded %s %s / %s %s"
 msgstr ""
+
+#: gui/downloaddialog.cpp:258
+#, fuzzy, c-format
+msgid "Download speed: %s %s"
+msgstr "Análise finalizada!"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
