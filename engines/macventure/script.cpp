@@ -1061,8 +1061,14 @@ void ScriptEngine::opcaTIME(EngineState *state, EngineFrame *frame) {
 }
 
 void ScriptEngine::opcbDAY(EngineState *state, EngineFrame *frame) {
-	// Probaby irrelevant, so we push Day [9]
-	state->push(9);
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	int weekday = 1 + t.tm_wday;
+	weekday = 1;
+	state->push(weekday);
+
+	debugC(2, kMVDebugScript, "Current day of week: %d", weekday);
 }
 
 void ScriptEngine::opccCHLD(EngineState *state, EngineFrame *frame) {
