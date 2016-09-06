@@ -132,12 +132,16 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 					return false;
 			} else {
 				int16 associatedThingIndex = _vm->_dungeonMan->getObjectInfoIndex(projectileAssociatedThing);
-				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
-				&& getFlag(_vm->_dungeonMan->_objectInfos[associatedThingIndex].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)) {
+				uint16 associatedAllowedSlots = _vm->_dungeonMan->_objectInfos[associatedThingIndex].getAllowedSlots();
+				int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
 
-					int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
-					if ((projectileAssociatedThingType != k10_JunkThingType) || (iconIndex < k176_IconIndiceJunkIronKey) || (iconIndex > k191_IconIndiceJunkMasterKey))
-						return false;
+				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
+				&& getFlag(associatedAllowedSlots, k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
+				&& (   (projectileAssociatedThingType != k10_JunkThingType)
+					|| (iconIndex < k176_IconIndiceJunkIronKey)
+					|| (iconIndex > k191_IconIndiceJunkMasterKey)
+					)) {
+					return false;
 				}
 			}
 		}
