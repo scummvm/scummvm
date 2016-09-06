@@ -23,7 +23,10 @@ MODULE_OBJS := \
 	codecs/smc.o \
 	codecs/svq1.o \
 	codecs/truemotion1.o \
-	codecs/indeo/get_bits.o
+	codecs/indeo/get_bits.o \
+	codecs/indeo/indeo.o \
+	codecs/indeo/mem.o \
+	codecs/indeo/vlc.o
 
 ifdef USE_MPEG2
 MODULE_OBJS += \

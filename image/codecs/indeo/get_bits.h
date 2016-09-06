@@ -32,6 +32,8 @@
 #define IMAGE_CODECS_INDEO_GET_BITS_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
+#include "common/types.h"
 
 namespace Image {
 namespace Indeo {
@@ -44,13 +46,14 @@ namespace Indeo {
 class GetBits {
 private:
 	const byte *_buffer;
+	DisposeAfterUse::Flag _disposeAfterUse;
 	uint _index;
 	uint _sizeInBits;
 	uint _sizeInBitsPlus8;
 public:
 	/**
 	* Constructor
-	* @param buffer bitstream buffer, must be AV_INPUT_BUFFER_PADDING_SIZE bytes
+	* @param buffer		Bitstream buffer, must be AV_INPUT_BUFFER_PADDING_SIZE bytes
 	*        larger than the actual read bits because some optimized bitstream
 	*        readers read 32 or 64 bit at once and could read over the end
 	* @param bit_size the size of the buffer in bits
@@ -58,8 +61,22 @@ public:
 	*/
 	GetBits(const byte *buffer, size_t totalBits);
 	
+	/**
+	 * Constructor
+	 * @param stream	Stream to get data from
+	 */
+	GetBits(Common::SeekableReadStream &stream);
+
+	/**
+	 * Copy constructor
+	 */
 	GetBits(const GetBits &src);
 	
+	/**
+	 * Destructor
+	 */
+	~GetBits();
+
 	/**
 	 * Returns the number of bits read
 	 */

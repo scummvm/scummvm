@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "image/codecs/indeo/get_bits.h"
 
 /* Intel Indeo 4 decompressor, derived from ffmpeg.
  *
@@ -33,9 +34,13 @@
 #define IMAGE_CODECS_INDEO4_H
 
 #include "image/codecs/codec.h"
+#include "image/codecs/indeo/get_bits.h"
+#include "image/codecs/indeo/indeo.h"
 #include "graphics/managed_surface.h"
 
 namespace Image {
+
+using namespace Indeo;
 
 /**
  * Intel Indeo 4 decoder.
@@ -57,6 +62,33 @@ public:
 private:
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::ManagedSurface *_surface;
+	IVI45DecContext _ctx;
+
+	/**
+	 * Decode the Indeo 4 picture header.
+	 * @returns		0 = Ok, negative number = error
+	 */
+	int decodePictureHeader();
+
+	int scaleTileSize(int def_size, int size_factor);
+
+	/**
+	 *  Decode subdivision of a plane.
+	 *  This is a simplified version that checks for two supported subdivisions:
+	 *  - 1 wavelet band  per plane, size factor 1:1, code pattern: 3
+	 *  - 4 wavelet bands per plane, size factor 1:4, code pattern: 2,3,3,3,3
+	 *  Anything else is either unsupported or corrupt.
+	 *
+	 *  @param[in,out] gb    the GetBit context
+	 *  @return        number of wavelet bands or 0 on error
+	 */
+	int decodePlaneSubdivision();
+
+private:
+	/**
+	 * Standard picture dimensions
+	 */
+	static const uint _ivi4_common_pic_sizes[14];
 };
 
 } // End of namespace Image
