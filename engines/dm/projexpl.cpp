@@ -73,16 +73,6 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 }
 
 bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, int16 mapYCombo, int16 cell, Thing projectileThing) {
-#define AP0456_i_ChampionIndex cell
-	int16 L0487_i_Multiple;
-#define AL0487_i_DoorState  L0487_i_Multiple
-#define AL0487_i_IconIndex  L0487_i_Multiple
-#define AL0487_i_Outcome    L0487_i_Multiple
-#define AL0487_i_WeaponType L0487_i_Multiple
-	uint16 L0507_ui_Multiple;
-#define AL0507_ui_ExplosionAttack L0507_ui_Multiple
-#define AL0507_ui_SoundIndex      L0507_ui_Multiple
-
 	Projectile *projectileThingData = (Projectile *)_vm->_dungeonMan->getThingData(Thing(projectileThing));
 	bool removePotion = false;
 	int16 potionPower = 0;
@@ -103,7 +93,6 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 	}
 	bool createExplosionOnImpact = (projectileAssociatedThingType == k15_ExplosionThingType) && (projectileAssociatedThing != Thing::_explSlime) && (projectileAssociatedThing != Thing::_explPoisonBolt);
 	Thing *curGroupSlot = nullptr;
-	int16 championAttack = 0;
 	int16 projectileMapX;
 	int16 projectileMapY;
 	int16 projectileTargetMapX = mapXCombo;
@@ -119,19 +108,23 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		projectileTargetMapY &= 0x00FF;
 	}
 
+	int16 championAttack = 0;
 	int16 attack = 0;
+	int16 championIndex = 0;
 	switch (impactType) {
 	case k4_DoorElemType: {
 		byte curSquare = _vm->_dungeonMan->_currMapData[projectileTargetMapX][projectileTargetMapY];
-		AL0487_i_DoorState = Square(curSquare).getDoorState();
+		int16 curDoorState = Square(curSquare).getDoorState();
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(projectileTargetMapX, projectileTargetMapY);
-		if ((AL0487_i_DoorState != k5_doorState_DESTROYED) && (projectileAssociatedThing == Thing::_explOpenDoor)) {
+		if ((curDoorState != k5_doorState_DESTROYED) && (projectileAssociatedThing == Thing::_explOpenDoor)) {
 			if (curDoor->hasButton())
 				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, projectileTargetMapX, projectileTargetMapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
 			break;
 		}
-		if ((AL0487_i_DoorState == k5_doorState_DESTROYED) ||
-			(AL0487_i_DoorState <= k1_doorState_FOURTH) ||
+
+		int16 AL0487_i_IconIndex;
+		if ((curDoorState == k5_doorState_DESTROYED) ||
+			(curDoorState <= k1_doorState_FOURTH) ||
 			(getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0002_MaskDoorInfo_ProjectilesCanPassThrough) &&
 			((projectileAssociatedThingType == k15_ExplosionThingType) ?
 			 (projectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) :
@@ -148,7 +141,8 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		}
 		break;
 	case kM2_ChampionElemType:
-		if ((AP0456_i_ChampionIndex = _vm->_championMan->getIndexInCell(cell)) < 0)
+		championIndex = _vm->_championMan->getIndexInCell(cell);
+		if (championIndex < 0)
 			return false;
 
 		championAttack = attack = getProjectileImpactAttack(projectileThingData, projectileAssociatedThing);
@@ -172,18 +166,19 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 
 		attack = (uint16)((unsigned long)getProjectileImpactAttack(projectileThingData, projectileAssociatedThing) << 6) / curCreatureInfo->_defense;
 		if (attack) {
-			if ((AL0487_i_Outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(curGroup, curCreatureIndex, projectileTargetMapX, projectileTargetMapY, attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(curCreatureType, _projectilePoisonAttack), true)) != k0_outcomeKilledNoCreaturesInGroup)
+			int16 outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(curGroup, curCreatureIndex, projectileTargetMapX, projectileTargetMapY, attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(curCreatureType, _projectilePoisonAttack), true);
+			if (outcome != k0_outcomeKilledNoCreaturesInGroup)
 				_vm->_groupMan->processEvents29to41(projectileTargetMapX, projectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
 
-			_creatureDamageOutcome = AL0487_i_Outcome;
-			if (!createExplosionOnImpact && (AL0487_i_Outcome == k0_outcomeKilledNoCreaturesInGroup)
+			_creatureDamageOutcome = outcome;
+			if (!createExplosionOnImpact && (outcome == k0_outcomeKilledNoCreaturesInGroup)
 			&& (projectileAssociatedThingType == k5_WeaponThingType)
 			&& getFlag(curCreatureInfo->_attributes, k0x0400_MaskCreatureInfo_keepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
-				AL0487_i_WeaponType = weapon->getType();
-				if ((AL0487_i_WeaponType == k8_WeaponTypeDagger) || (AL0487_i_WeaponType == k27_WeaponTypeArrow)
-				|| (AL0487_i_WeaponType == k28_WeaponTypeSlayer) || (AL0487_i_WeaponType == k31_WeaponTypePoisonDart)
-				|| (AL0487_i_WeaponType == k32_WeaponTypeThrowingStar))
+				WeaponType weaponType = weapon->getType();
+				if ((weaponType == k8_WeaponTypeDagger) || (weaponType == k27_WeaponTypeArrow)
+				|| (weaponType == k28_WeaponTypeSlayer) || (weaponType == k31_WeaponTypePoisonDart)
+				|| (weaponType == k32_WeaponTypeThrowingStar))
 					curGroupSlot = &curGroup->_slot;
 			}
 		}
@@ -191,30 +186,30 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		break;
 	}
 	if (championAttack && _projectilePoisonAttack && _vm->getRandomNumber(2)
-	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(AP0456_i_ChampionIndex, attack, k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso, _projectileAttackType))
-		_vm->_championMan->championPoison(AP0456_i_ChampionIndex, _projectilePoisonAttack);
+	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso, _projectileAttackType))
+		_vm->_championMan->championPoison(championIndex, _projectilePoisonAttack);
 
 	if (createExplosionOnImpact || removePotion) {
+		uint16 explosionAttack;
 		if (removePotion) {
 			projectileAssociatedThing = explosionThing;
-			AL0507_ui_ExplosionAttack = potionPower;
+			explosionAttack = potionPower;
 		} else {
-			AL0507_ui_ExplosionAttack = projectileThingData->_kineticEnergy;
+			explosionAttack = projectileThingData->_kineticEnergy;
 		}
-		if ((projectileAssociatedThing == Thing::_explLightningBolt) && !(AL0507_ui_ExplosionAttack >>= 1))
+		if ((projectileAssociatedThing == Thing::_explLightningBolt) && !(explosionAttack >>= 1))
 			goto T0217044;
-		createExplosion(projectileAssociatedThing, AL0507_ui_ExplosionAttack, mapXCombo, mapYCombo, (projectileAssociatedThing == Thing::_explPoisonCloud) ? k255_CreatureTypeSingleCenteredCreature : cell);
+		createExplosion(projectileAssociatedThing, explosionAttack, mapXCombo, mapYCombo, (projectileAssociatedThing == Thing::_explPoisonCloud) ? k255_CreatureTypeSingleCenteredCreature : cell);
 	} else {
-		if ((projectileAssociatedThing).getType() == k5_WeaponThingType) {
-			AL0507_ui_SoundIndex = k00_soundMETALLIC_THUD;
-		} else {
-			if (projectileAssociatedThing == Thing::_explPoisonBolt) {
-				AL0507_ui_SoundIndex = k13_soundSPELL;
-			} else {
-				AL0507_ui_SoundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
-			}
-		}
-		_vm->_sound->requestPlay(AL0507_ui_SoundIndex, projectileMapX, projectileMapY, k1_soundModePlayIfPrioritized);
+		uint16 soundIndex;
+		if ((projectileAssociatedThing).getType() == k5_WeaponThingType)
+			soundIndex = k00_soundMETALLIC_THUD;
+		else if (projectileAssociatedThing == Thing::_explPoisonBolt)
+			soundIndex = k13_soundSPELL;
+		else
+			soundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
+
+		_vm->_sound->requestPlay(soundIndex, projectileMapX, projectileMapY, k1_soundModePlayIfPrioritized);
 	}
 T0217044:
 	if (removePotion) {
