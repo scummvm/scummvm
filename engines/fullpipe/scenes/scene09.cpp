@@ -188,6 +188,8 @@ void sceneHandler09_startAuntie() {
 }
 
 void sceneHandler09_spitterClick() {
+	debugC(2, kDebugSceneLogic, "scene09: spitterClick");
+
 	if (g_vars->scene09_spitter->_flags & 4) {
 		PicAniInfo info;
 
@@ -229,6 +231,8 @@ void sceneHandler09_spitterClick() {
 }
 
 void sceneHandler09_eatBall() {
+	debugC(2, kDebugSceneLogic, "scene09: eatBall");
+
 	if (g_vars->scene09_flyingBall) {
 		g_vars->scene09_flyingBall->hide();
 
@@ -318,6 +322,8 @@ void sceneHandler09_limitHangerPhase() {
 }
 
 void sceneHandler09_collideBall(uint num) {
+	debugC(2, kDebugSceneLogic, "scene09: collideBall");
+
 	if (g_vars->scene09_gulperIsPresent) {
 		Ball *ball = g_vars->scene09_balls[num];
 
@@ -337,6 +343,8 @@ void sceneHandler09_collideBall(uint num) {
 }
 
 void sceneHandler09_ballExplode(uint num) {
+	debugC(2, kDebugSceneLogic, "scene09: ballExplode");
+
 	Ball *ball = g_vars->scene09_balls[num];
 
 	g_vars->scene09_balls.remove_at(num);
