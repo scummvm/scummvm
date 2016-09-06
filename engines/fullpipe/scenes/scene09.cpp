@@ -102,24 +102,18 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers.push_back(hng);
 	}
 
-	g_vars->scene09_gulpedBalls.clear();
+	g_vars->scene09_flyingBalls.clear();
 
-	g_vars->scene09_gulpedBalls.push_back(new Ball);
+	g_vars->scene09_flyingBalls.push_back(new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1)));
 
-	Ball *b9 = g_vars->scene09_gulpedBalls.front();
-
-	b9->ani = sc->getStaticANIObject1ById(ANI_BALL9, -1);
-	b9->ani->setAlpha(0xc8);
+	StaticANIObject *b9 = g_vars->scene09_flyingBalls.front();
+	b9->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
-		StaticANIObject *newball = new StaticANIObject(b9->ani);
-		b9 = new Ball;
+		StaticANIObject *newball = new StaticANIObject(b9);
 
 		newball->setAlpha(0xc8);
-
-		b9->ani = newball;
-
-		g_vars->scene09_gulpedBalls.push_back(b9);
+		g_vars->scene09_flyingBalls.push_back(newball);
 
 		sc->addStaticANIObject(newball, 1);
 	}
@@ -236,13 +230,8 @@ void sceneHandler09_eatBall() {
 	if (g_vars->scene09_flyingBall) {
 		g_vars->scene09_flyingBall->hide();
 
-		Ball *ball = g_vars->scene09_balls.back();
-
 		g_vars->scene09_balls.pop_back();
-
-		ball->ani = g_vars->scene09_flyingBall;
-
-		g_vars->scene09_gulpedBalls.pop_back();
+		g_vars->scene09_flyingBalls.pop_back();
 
 		g_vars->scene09_flyingBall = 0;
 		g_vars->scene09_numSwallenBalls++;
@@ -268,11 +257,8 @@ void sceneHandler09_eatBall() {
 void sceneHandler09_showBall() {
 	debugC(2, kDebugSceneLogic, "scene09: showBall");
 
-	if (g_vars->scene09_gulpedBalls.size()) {
-		StaticANIObject *ani = g_vars->scene09_gulpedBalls.front()->ani;
-
-		Ball *ball = g_vars->scene09_gulpedBalls.front();
-		ball->ani = ani;
+	if (g_vars->scene09_flyingBalls.size()) {
+		StaticANIObject *ani = g_vars->scene09_flyingBalls.front();
 
 		ani->show1(g_fp->_aniMan->_ox + 94, g_fp->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
 	}
@@ -325,9 +311,7 @@ void sceneHandler09_collideBall(uint num) {
 	debugC(2, kDebugSceneLogic, "scene09: collideBall");
 
 	if (g_vars->scene09_gulperIsPresent) {
-		Ball *ball = g_vars->scene09_balls[num];
-
-		g_vars->scene09_flyingBall = ball->ani;
+		g_vars->scene09_flyingBall = g_vars->scene09_balls[num];
 
 		if (g_vars->scene09_gulper) {
 			g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
@@ -345,27 +329,27 @@ void sceneHandler09_collideBall(uint num) {
 void sceneHandler09_ballExplode(uint num) {
 	debugC(2, kDebugSceneLogic, "scene09: ballExplode");
 
-	Ball *ball = g_vars->scene09_balls[num];
+	StaticANIObject *ball = g_vars->scene09_balls[num];
 
 	g_vars->scene09_balls.remove_at(num);
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
-	mq->setParamInt(-1, ball->ani->_odelay);
+	mq->setParamInt(-1, ball->_odelay);
 
-	if (!mq->chain(ball->ani))
+	if (!mq->chain(ball))
 		delete mq;
 
-	g_vars->scene09_gulpedBalls.pop_back();
+	g_vars->scene09_flyingBalls.pop_back();
 }
 
 void sceneHandler09_checkHangerCollide() {
 	for (uint b = 0; b < g_vars->scene09_balls.size(); b++) {
-		Ball *ball = g_vars->scene09_balls[b];
+		StaticANIObject *ball = g_vars->scene09_balls[b];
 
-		int newx = ball->ani->_ox + 5;
+		int newx = ball->_ox + 5;
 
-		ball->ani->setOXY(newx, ball->ani->_oy);
+		ball->setOXY(newx, ball->_oy);
 
 		if (newx <= 1398 || g_vars->scene09_flyingBall) {
 			if (g_vars->scene09_gulperIsPresent)
@@ -385,7 +369,7 @@ void sceneHandler09_checkHangerCollide() {
 
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
-				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->ani->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
+				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
 
 				if (pixel) {
 					sceneHandler09_ballExplode(b);

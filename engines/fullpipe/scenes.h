@@ -219,7 +219,7 @@ struct Ball {
 	Ball() : p0(0), p1(0), ani(0) {}
 };
 
-typedef Common::Array<Ball *> BallArray;
+typedef Common::Array<StaticANIObject *> BallArray;
 
 struct BallChain {
 	Ball *pHead;
@@ -380,9 +380,9 @@ public:
 	int scene09_interactingHanger;
 	int scene09_intHangerPhase;
 	int scene09_intHangerMaxPhase;
-	BallArray scene09_balls;
+	Common::Array<StaticANIObject *> scene09_balls;
 	Common::Array<Hanger *> scene09_hangers;
-	BallArray scene09_gulpedBalls;
+	Common::Array<StaticANIObject *> scene09_flyingBalls;
 	int scene09_numMovingHangers;
 	int scene09_clickY;
 	Common::Point scene09_hangerOffsets[4];
