@@ -122,19 +122,24 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			break;
 		}
 
-		int16 AL0487_i_IconIndex;
-		if ((curDoorState == k5_doorState_DESTROYED) ||
-			(curDoorState <= k1_doorState_FOURTH) ||
-			(getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0002_MaskDoorInfo_ProjectilesCanPassThrough) &&
-			((projectileAssociatedThingType == k15_ExplosionThingType) ?
-			 (projectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) :
-			 ((projectileThingData->_attack > _vm->getRandomNumber(128)) &&
-			  getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(projectileAssociatedThing)].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
-			  && ((projectileAssociatedThingType != k10_JunkThingType) ||
-			  ((AL0487_i_IconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing)) < 0) ||
-				  (!((AL0487_i_IconIndex >= k176_IconIndiceJunkIronKey) && (AL0487_i_IconIndex <= k191_IconIndiceJunkMasterKey))))
-			  )))) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
+		if ((curDoorState == k5_doorState_DESTROYED) || (curDoorState <= k1_doorState_FOURTH))
 			return false;
+
+		DoorInfo curDoorInfo = _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()];
+		if (getFlag(curDoorInfo._attributes, k0x0002_MaskDoorInfo_ProjectilesCanPassThrough)) {
+			if (projectileAssociatedThingType == k15_ExplosionThingType) {
+				if (projectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16())
+					return false;
+			} else {
+				int16 associatedThingIndex = _vm->_dungeonMan->getObjectInfoIndex(projectileAssociatedThing);
+				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
+				&& getFlag(_vm->_dungeonMan->_objectInfos[associatedThingIndex].getAllowedSlots(), k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)) {
+
+					int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
+					if ((projectileAssociatedThingType != k10_JunkThingType) || (iconIndex < k176_IconIndiceJunkIronKey) || (iconIndex > k191_IconIndiceJunkMasterKey))
+						return false;
+				}
+			}
 		}
 		attack = getProjectileImpactAttack(projectileThingData, projectileAssociatedThing) + 1;
 		_vm->_groupMan->groupIsDoorDestoryedByAttack(projectileTargetMapX, projectileTargetMapY, attack + _vm->getRandomNumber(attack), false, 0);
