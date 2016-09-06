@@ -104,9 +104,7 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_sceneBalls.clear();
 
-	g_vars->scene09_sceneBalls.push_back(new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1)));
-
-	StaticANIObject *newball = g_vars->scene09_sceneBalls.front();
+	StaticANIObject *newball = new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
 	newball->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
@@ -343,8 +341,6 @@ void sceneHandler09_ballExplode(uint num) {
 
 	if (!mq->chain(ball))
 		delete mq;
-
-	//g_vars->scene09_sceneBalls.pop_back();
 }
 
 void sceneHandler09_checkHangerCollide() {
