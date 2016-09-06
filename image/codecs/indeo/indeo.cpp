@@ -20,10 +20,10 @@
  *
  */
 
-/* Common structures and macros shared by both Indeo4 and Indeo5 decoders,
- * derived from ffmpeg. We don't currently support Indeo5 decoding, but
- * just in case we eventually need it, this is kept as a separate file
- * like it is in ffmpeg.
+/* Common structures, macros, and base class shared by both Indeo4 and 
+ * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5 
+ * decoding, but just in case we eventually need it, this is kept as a separate
+ * file like it is in ffmpeg.
  *
  * Original copyright note: * Intel Indeo 4 (IV41, IV42, etc.) video decoder for ffmpeg
  * written, produced, and directed by Alan Smithee
@@ -31,6 +31,7 @@
 
 #include "image/codecs/indeo/indeo.h"
 #include "image/codecs/indeo/mem.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -379,6 +380,49 @@ int IVIBandDesc::ivi_init_tiles(IVITile *ref_tile, int p, int b, int t_height, i
 	}
 
 	return 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height) : Codec() {
+	_pixelFormat = g_system->getScreenFormat();
+	_surface = new Graphics::ManagedSurface();
+	_surface->create(width, height, _pixelFormat);
+	_ctx.gb = nullptr;
+	_ctx.pic_conf.pic_width = _ctx.pic_conf.pic_height = 0;
+	_ctx.show_indeo4_info = false;
+	_ctx.b_ref_buf = 3; // buffer 2 is used for scalability mode
+}
+
+IndeoDecoderBase::~IndeoDecoderBase() {
+	delete _surface;
+}
+
+int IndeoDecoderBase::decodeIndeoFrame() {
+	// Decode the header
+	int err = decodePictureHeader();
+
+	if (!err && _ctx.gop_invalid)
+		err = -1;
+
+	if (!err && _ctx.frame_type == IVI4_FRAMETYPE_NULL_LAST) {
+		// Returning the previous frame, so exit wth success
+		return 0;
+	}
+
+	if (!err && _ctx.gop_flags & IVI5_IS_PROTECTED) {
+		warning("Password-protected clip");
+		err = -1;
+	}
+
+	if (!err && !_ctx.planes[0].bands) {
+		warning("Color planes not initialized yet");
+		err = -1;
+	}
+
+	// TODO
+
+	return err;
 }
 
 /*------------------------------------------------------------------------*/

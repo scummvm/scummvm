@@ -28,7 +28,6 @@
  * written, produced, and directed by Alan Smithee
  */
 
-#include "common/system.h"
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -40,19 +39,8 @@ namespace Image {
 
 #define IVI4_PIC_SIZE_ESC   7
 
-Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height) {
-	_pixelFormat = g_system->getScreenFormat();
-	_surface = new Graphics::ManagedSurface();
-	_surface->create(width, height, _pixelFormat);
-	_ctx.gb = nullptr;
-	_ctx.pic_conf.pic_width = _ctx.pic_conf.pic_height = 0;
+Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
 	_ctx.is_indeo4 = true;
-	_ctx.show_indeo4_info = false;
-	_ctx.b_ref_buf = 3; // buffer 2 is used for scalability mode
-}
-
-Indeo4Decoder::~Indeo4Decoder() {
-	delete _surface;
 }
 
 bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
@@ -80,14 +68,13 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	// Set up the GetBits instance for reading the stream
 	_ctx.gb = new GetBits(stream);
 
-	// Decode the header
-	int err = decodePictureHeader();
+	// Decode the frame
+	int err = decodeIndeoFrame();
 
+	// Free the bit reader
 	delete _ctx.gb;
 	_ctx.gb = nullptr;
 
-	// TODO
-	err = -1;
 	return (err < 0) ? nullptr : &_surface->rawSurface();
 }
 

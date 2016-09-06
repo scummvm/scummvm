@@ -21,11 +21,13 @@
  */
 
 #include "common/scummsys.h"
+#include "graphics/managed_surface.h"
+#include "image/codecs/codec.h"
 
-/* Common structures and macros shared by both Indeo4 and Indeo5 decoders,
- * derived from ffmpeg. We don't currently support Indeo5 decoding, but
- * just in case we eventually need it, this is kept as a separate file
- * like it is in ffmpeg.
+/* Common structures, macros, and base class shared by both Indeo4 and 
+ * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5 
+ * decoding, but just in case we eventually need it, this is kept as a separate
+ * file like it is in ffmpeg.
  *
  * Original copyright note: * Intel Indeo 4 (IV41, IV42, etc.) video decoder for ffmpeg
  * written, produced, and directed by Alan Smithee
@@ -328,6 +330,33 @@ struct IVI45DecContext {
 
 //    AVFrame *       p_frame;
     int             got_p_frame;
+};
+
+class IndeoDecoderBase : public Codec {
+protected:
+	IVI45DecContext _ctx;
+	Graphics::PixelFormat _pixelFormat;
+	Graphics::ManagedSurface *_surface;
+protected:
+	/**
+	 * Returns the pixel format for the decoder's surface
+	 */
+	virtual Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+
+	/**
+	 * Decode the Indeo picture header.
+	 * @returns		0 = Ok, negative number = error
+	 */
+	virtual int decodePictureHeader() = 0;
+
+	/**
+	 * Decodes the Indeo frame from the bit reader already 
+	 * loaded into the context
+	 */
+	int decodeIndeoFrame();
+public:
+	IndeoDecoderBase(uint16 width, uint16 height);
+	virtual ~IndeoDecoderBase();
 };
 
 /*------------------------------------------------------------------------*/

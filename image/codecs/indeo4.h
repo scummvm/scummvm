@@ -33,7 +33,6 @@
 #ifndef IMAGE_CODECS_INDEO4_H
 #define IMAGE_CODECS_INDEO4_H
 
-#include "image/codecs/codec.h"
 #include "image/codecs/indeo/get_bits.h"
 #include "image/codecs/indeo/indeo.h"
 #include "graphics/managed_surface.h"
@@ -50,26 +49,21 @@ using namespace Indeo;
  * Used in video:
  *  - AVIDecoder
  */
-class Indeo4Decoder : public Codec {
+class Indeo4Decoder : public IndeoDecoderBase {
 public:
 	Indeo4Decoder(uint16 width, uint16 height);
-	~Indeo4Decoder();
+	virtual ~Indeo4Decoder() {}
 
-	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	virtual const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 
 	static bool isIndeo4(Common::SeekableReadStream &stream);
-private:
-	Graphics::PixelFormat _pixelFormat;
-	Graphics::ManagedSurface *_surface;
-	IVI45DecContext _ctx;
-
+protected:
 	/**
 	 * Decode the Indeo 4 picture header.
 	 * @returns		0 = Ok, negative number = error
 	 */
-	int decodePictureHeader();
-
+	virtual int decodePictureHeader();
+private:
 	int scaleTileSize(int def_size, int size_factor);
 
 	/**
