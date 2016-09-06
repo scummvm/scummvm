@@ -69,7 +69,7 @@ void scene09_initScene(Scene *sc) {
 	g_vars->scene09_intHangerPhase = -1;
 	g_vars->scene09_intHangerMaxPhase = -1000;
 
-	g_vars->scene09_balls.clear();
+	g_vars->scene09_flyingBalls.clear();
 
 	g_vars->scene09_hangers.clear();
 	g_vars->scene09_numMovingHangers = 4;
@@ -90,7 +90,7 @@ void scene09_initScene(Scene *sc) {
 		StaticANIObject *ani = new StaticANIObject(hanger);
 
 		ani->show1(x + hanger->_ox, hanger->_oy, MV_VSN_CYCLE2, 0);
-		sc->addStaticANIObject(hanger, 1);
+		sc->addStaticANIObject(ani, 1);
 
 		hng = new Hanger;
 
@@ -102,18 +102,18 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers.push_back(hng);
 	}
 
-	g_vars->scene09_flyingBalls.clear();
+	g_vars->scene09_sceneBalls.clear();
 
-	g_vars->scene09_flyingBalls.push_back(new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1)));
+	g_vars->scene09_sceneBalls.push_back(new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1)));
 
-	StaticANIObject *b9 = g_vars->scene09_flyingBalls.front();
-	b9->setAlpha(0xc8);
+	StaticANIObject *newball = g_vars->scene09_sceneBalls.front();
+	newball->setAlpha(0xc8);
 
 	for (int i = 0; i < 4; i++) {
-		StaticANIObject *newball = new StaticANIObject(b9);
+		newball = new StaticANIObject(newball);
 
 		newball->setAlpha(0xc8);
-		g_vars->scene09_flyingBalls.push_back(newball);
+		g_vars->scene09_sceneBalls.push_back(newball);
 
 		sc->addStaticANIObject(newball, 1);
 	}
@@ -230,8 +230,8 @@ void sceneHandler09_eatBall() {
 	if (g_vars->scene09_flyingBall) {
 		g_vars->scene09_flyingBall->hide();
 
-		g_vars->scene09_balls.pop_back();
 		g_vars->scene09_flyingBalls.pop_back();
+		//g_vars->scene09_sceneBalls.pop_back();
 
 		g_vars->scene09_flyingBall = 0;
 		g_vars->scene09_numSwallenBalls++;
@@ -257,8 +257,12 @@ void sceneHandler09_eatBall() {
 void sceneHandler09_showBall() {
 	debugC(2, kDebugSceneLogic, "scene09: showBall");
 
-	if (g_vars->scene09_flyingBalls.size()) {
-		StaticANIObject *ani = g_vars->scene09_flyingBalls.front();
+	if (g_vars->scene09_sceneBalls.size()) {
+		StaticANIObject *ani = g_vars->scene09_sceneBalls.front();
+		g_vars->scene09_sceneBalls.push_back(ani);
+		g_vars->scene09_sceneBalls.remove_at(0);
+
+		g_vars->scene09_flyingBalls.insert_at(0, ani);
 
 		ani->show1(g_fp->_aniMan->_ox + 94, g_fp->_aniMan->_oy - 162, MV_BALL9_EXPLODE, 0);
 	}
@@ -311,7 +315,7 @@ void sceneHandler09_collideBall(uint num) {
 	debugC(2, kDebugSceneLogic, "scene09: collideBall");
 
 	if (g_vars->scene09_gulperIsPresent) {
-		g_vars->scene09_flyingBall = g_vars->scene09_balls[num];
+		g_vars->scene09_flyingBall = g_vars->scene09_flyingBalls[num];
 
 		if (g_vars->scene09_gulper) {
 			g_vars->scene09_gulper->changeStatics2(ST_GLT_SIT);
@@ -327,11 +331,11 @@ void sceneHandler09_collideBall(uint num) {
 }
 
 void sceneHandler09_ballExplode(uint num) {
-	debugC(2, kDebugSceneLogic, "scene09: ballExplode");
+	debugC(2, kDebugSceneLogic, "scene09: ballExplode(%d) of %d", num, g_vars->scene09_flyingBalls.size());
 
-	StaticANIObject *ball = g_vars->scene09_balls[num];
+	StaticANIObject *ball = g_vars->scene09_flyingBalls[num];
 
-	g_vars->scene09_balls.remove_at(num);
+	g_vars->scene09_flyingBalls.remove_at(num);
 
 	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC9_BALLEXPLODE), 0, 1);
 
@@ -340,12 +344,12 @@ void sceneHandler09_ballExplode(uint num) {
 	if (!mq->chain(ball))
 		delete mq;
 
-	g_vars->scene09_flyingBalls.pop_back();
+	//g_vars->scene09_sceneBalls.pop_back();
 }
 
 void sceneHandler09_checkHangerCollide() {
-	for (uint b = 0; b < g_vars->scene09_balls.size(); b++) {
-		StaticANIObject *ball = g_vars->scene09_balls[b];
+	for (uint b = 0; b < g_vars->scene09_flyingBalls.size(); b++) {
+		StaticANIObject *ball = g_vars->scene09_flyingBalls[b];
 
 		int newx = ball->_ox + 5;
 
@@ -376,6 +380,9 @@ void sceneHandler09_checkHangerCollide() {
 					break;
 				}
 			}
+
+			if (pixel)
+				break;
 		}
 	}
 }
@@ -503,6 +510,8 @@ int sceneHandler09(ExCommand *cmd) {
 				}
 
 				if (ani->_id == ANI_VISUNCHIK) {
+					debugC(2, kDebugSceneLogic, "scene09: VISUNCHIK");
+
 					if (g_vars->scene09_numMovingHangers > 0) {
 						int hng = 0;
 

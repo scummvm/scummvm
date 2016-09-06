@@ -380,9 +380,9 @@ public:
 	int scene09_interactingHanger;
 	int scene09_intHangerPhase;
 	int scene09_intHangerMaxPhase;
-	Common::Array<StaticANIObject *> scene09_balls;
-	Common::Array<Hanger *> scene09_hangers;
 	Common::Array<StaticANIObject *> scene09_flyingBalls;
+	Common::Array<Hanger *> scene09_hangers;
+	Common::Array<StaticANIObject *> scene09_sceneBalls;
 	int scene09_numMovingHangers;
 	int scene09_clickY;
 	Common::Point scene09_hangerOffsets[4];
