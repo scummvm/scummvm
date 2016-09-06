@@ -473,6 +473,19 @@ byte *transCyrillic(byte *s) {
 	int i = 0;
 
 	for (byte *p = s; *p; p++) {
+#ifdef WIN32
+		// translate from cp1251 to cp866
+		byte c = *p;
+		if (c >= 0xC0 && c <= 0xEF)
+			c = c - 0xC0 + 0x80;
+		else if (c >= 0xF0 && c <= 0xFF)
+			c = c - 0xF0 + 0xE0;
+		else if (c == 0xA8)
+			c = 0xF0;
+		else if (c == 0xB8)
+			c = 0xF1;
+		tmp[i++] = c;
+#else
 		if (*p < 128) {
 			tmp[i++] = *p;
 		} else {
@@ -487,6 +500,7 @@ byte *transCyrillic(byte *s) {
 
 			assert(trans[j]);
 		}
+#endif
 	}
 
 	tmp[i] = 0;
