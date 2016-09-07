@@ -258,6 +258,7 @@ public:
 	void changeStatics2(int objId);
 
 	bool getPixelAtPos(int x, int y, int *pixel, bool hitOnly = false);
+	bool isPixelHitAtPos(int x, int y);
 };
 
 struct MovTable {
