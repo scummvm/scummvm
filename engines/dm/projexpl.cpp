@@ -496,6 +496,8 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		attack += _vm->getRandomNumber(attack) + 1;
 	}
 
+	bool AddEventFl = false;
+
 	switch (explosionThing.toUint16()) {
 	case 0xFF82:
 		if (!(attack >>= 1))
@@ -524,11 +526,12 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	case 0xFFE4:
 		explosion->setType(explosion->getType() + 1);
 		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, mapX, mapY, k1_soundModePlayIfPrioritized);
-		goto T0220026;
+		AddEventFl = true;
+		break;
 	case 0xFFA8:
 		if (explosion->getAttack() > 55) {
 			explosion->setAttack(explosion->getAttack() - 40);
-			goto T0220026;
+			AddEventFl = true;
 		}
 		break;
 	case 0xFF87:
@@ -542,15 +545,18 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		}
 		if (explosion->getAttack() >= 6) {
 			explosion->setAttack(explosion->getAttack() - 3);
-T0220026:
-			TimelineEvent newEvent;
-			newEvent = *event;
-			newEvent._mapTime++;
-			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			return;
+			AddEventFl = true;
 		}
+		break;
 	}
-	_vm->_dungeonMan->unlinkThingFromList(Thing(event->_C._slot), Thing(0), mapX, mapY);
-	explosion->setNextThing(Thing::_none);
+	if (AddEventFl) {
+		TimelineEvent newEvent;
+		newEvent = *event;
+		newEvent._mapTime++;
+		_vm->_timeline->addEventGetEventIndex(&newEvent);
+	} else {
+		_vm->_dungeonMan->unlinkThingFromList(Thing(event->_C._slot), Thing(0), mapX, mapY);
+		explosion->setNextThing(Thing::_none);
+	}
 }
 }
