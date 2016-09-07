@@ -350,19 +350,18 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell) {
 	int16 impactCount = 0;
 	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
-T0218001:
-	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while (curThing != Thing::_endOfList) {
-		if (((curThing).getType() == k14_ProjectileThingType) &&
-			((curThing).getCell() == cell) &&
+	
+	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != Thing::_endOfList; ) {
+		if (((curThing).getType() == k14_ProjectileThingType) && ((curThing).getCell() == cell) &&
 			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
 			projectileDeleteEvent(curThing);
 			impactCount++;
 			if ((impactType == kM1_CreatureElemType) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
 				break;
-			goto T0218001;
-		}
-		curThing = _vm->_dungeonMan->getNextThing(curThing);
+
+			Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+		} else
+			curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	return impactCount;
 }
