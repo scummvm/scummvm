@@ -122,7 +122,11 @@ void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 
 	if (s) {
 		Graphics::PixelFormat f = g_system->getOSDFormat();
 		if (f != s->format) {
-			Graphics::TransparentSurface *s2 = s->convertTo(f);
+			// Graphics::TransparentSurface::convertTo(f) errors out if the format is not 2Bpp or 4Bpp.
+			// We don't need to error out as we can recover from it. So check the format before calling convertTo(f);
+			Graphics::TransparentSurface *s2 = nullptr;
+			if (f.bytesPerPixel == 2 || f.bytesPerPixel == 4)
+				s2 = s->convertTo(f);
 			if (s2)
 				icon.copyFrom(*s2);
 			else

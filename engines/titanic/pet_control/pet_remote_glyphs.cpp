@@ -48,7 +48,7 @@ CPetRemoteGlyphs *CPetRemoteGlyph::getOwner() const {
 }
 
 CPetGfxElement *CPetRemoteGlyph::getElement(uint id) const {
-	CPetRemote *remote = dynamic_cast<CPetRemote *>(_owner->getOwner());
+	CPetRemote *remote = static_cast<CPetRemote *>(_owner->getOwner());
 	return remote->getElement(id);
 }
 

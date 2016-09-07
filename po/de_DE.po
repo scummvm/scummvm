@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-04 23:16+0100\n"
+"POT-Creation-Date: 2016-09-05 10:12+0200\n"
 "PO-Revision-Date: 2016-07-19 9:40:00+0200\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
@@ -185,6 +185,11 @@ msgstr ""
 #, c-format
 msgid "Downloaded %s %s / %s %s"
 msgstr "%s %s / %s %s heruntergeladen"
+
+#: gui/downloaddialog.cpp:258
+#, c-format
+msgid "Download speed: %s %s"
+msgstr "Geschwindigkeit: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -1202,7 +1207,7 @@ msgstr "Letzte Sync.:"
 
 #: gui/options.cpp:1314
 msgid "When the last saves sync for this storage occured"
-msgstr ""
+msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
 msgid "Connect"
@@ -1225,9 +1230,8 @@ msgstr ""
 "Belegung)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Downloads"
+msgstr "Herunterladen"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
@@ -1250,7 +1254,6 @@ msgid "/root/ Path:"
 msgstr "/root/-Pfad:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
 msgstr "Legt fest, auf welches Verzeichnis der Dateimanager zugreifen darf."
 
@@ -1264,7 +1267,6 @@ msgid "Server's port:"
 msgstr "Server-Port:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
@@ -1282,9 +1284,8 @@ msgid "Failed to change cloud storage!"
 msgstr "Konnte den Cloud-Speicher nicht ändern!"
 
 #: gui/options.cpp:1524
-#, fuzzy
 msgid "Another cloud storage is already active."
-msgstr "Der aktuelle Cloud-Speicher arbeitet gerade."
+msgstr "Ein anderer Cloud-Speicher arbeitet gerade."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1420,9 +1421,8 @@ msgid "Unknown Author"
 msgstr "Unbekannter Autor"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM konnte das gewählte Verzeichnis nicht anzeigen!"
+msgstr "ScummVM konnte auf das gewählte Verzeichnis nicht zugreifen!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1520,20 +1520,17 @@ msgid "Pastes clipboard contents into fields"
 msgstr "Fügt den Inhalt der Zwischenablage in die Felder ein"
 
 #: gui/storagewizarddialog.cpp:79
-#, fuzzy
 msgid "You will be directed to ScummVM's page where"
 msgstr "Sie werden zur Webseite von ScummVM weitergeleitet,"
 
 #: gui/storagewizarddialog.cpp:80
-#, fuzzy
 msgid "you should allow it to access your storage."
-msgstr "wenn Sie die Verwendung der Cloud erlauben."
+msgstr "wo Sie den Zugriff auf die Cloud erlauben sollten."
 
 #: gui/storagewizarddialog.cpp:113
-#, fuzzy
 msgid "Another Storage is active. Do you want to interrupt it?"
 msgstr ""
-"Der andere Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
+"Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
 #: gui/storagewizarddialog.cpp:122
 msgid "Wait until current Storage finishes up and try again."
@@ -1559,13 +1556,12 @@ msgid "Invalid code"
 msgstr "Code ungültig"
 
 #: gui/storagewizarddialog.cpp:210
-#, fuzzy
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
 "Fehler beim Öffnen der URL!\n"
-"Sie sollten die URL manuell aufrufen."
+"Sie sollten diese Seite manuell aufrufen."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"

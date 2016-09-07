@@ -842,6 +842,8 @@ void Score::processEvents() {
 
 			if (event.type == Common::EVENT_KEYDOWN) {
 				_vm->_keyCode = event.kbd.keycode;
+				_vm->_key = (unsigned char)(event.kbd.ascii & 0xff);
+
 				switch (_vm->_keyCode) {
 				case Common::KEYCODE_LEFT:
 					_vm->_keyCode = 123;

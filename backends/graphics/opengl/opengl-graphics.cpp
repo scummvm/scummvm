@@ -367,7 +367,10 @@ void OpenGLGraphicsManager::updateScreen() {
 	    && !_gameScreen->isDirty()
 	    && !(_overlayVisible && _overlay->isDirty())
 	    && !(_cursorVisible && _cursor && _cursor->isDirty())
-	    && _osdAlpha == 0) {
+#ifdef USE_OSD
+	    && _osdAlpha == 0
+#endif
+	    ) {
 		return;
 	}
 	_forceRedraw = false;
@@ -378,7 +381,9 @@ void OpenGLGraphicsManager::updateScreen() {
 		_cursor->updateGLTexture();
 	}
 	_overlay->updateGLTexture();
+#ifdef USE_OSD
 	_osd->updateGLTexture();
+#endif
 
 	// Clear the screen buffer.
 	if (_scissorOverride && !_overlayVisible) {
@@ -753,7 +758,7 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 
 void OpenGLGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
 #ifdef USE_OSD
-	warning("implement copyRectToOSD"); //TODO
+	_osd->copyRectToTexture(x, y, w, h, buf, pitch);
 #endif
 }
 
@@ -774,7 +779,9 @@ void OpenGLGraphicsManager::clearOSD() {
 #endif
 }
 
-Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() { return Graphics::PixelFormat(); } //TODO
+Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() {
+	return _defaultFormatAlpha;
+}
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());

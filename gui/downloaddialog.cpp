@@ -170,10 +170,10 @@ bool DownloadDialog::selectDirectories() {
 			else if (localPath[i] == '\\')
 				++backslashes;
 
-			if (backslashes > 0)
-				localPath += '\\' + remoteDirectory.name();
-			else
-				localPath += '/' + remoteDirectory.name();
+		if (backslashes > 0)
+			localPath += '\\' + remoteDirectory.name();
+		else
+			localPath += '/' + remoteDirectory.name();
 	} else {
 		localPath += remoteDirectory.name();
 	}
@@ -255,7 +255,7 @@ Common::String DownloadDialog::getSpeedLabelText() {
 	Common::String speed, speedUnits;
 	speed = getHumanReadableBytes(CloudMan.getDownloadSpeed(), speedUnits);
 	speedUnits += "/s";
-	return Common::String::format("Download speed: %s %s", speed.c_str(), _(speedUnits.c_str()));
+	return Common::String::format(_("Download speed: %s %s"), speed.c_str(), _(speedUnits.c_str()));
 }
 
 void DownloadDialog::refreshWidgets() {

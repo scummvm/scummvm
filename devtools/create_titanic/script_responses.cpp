@@ -612,9 +612,9 @@ const int MAITRED_RESPONSES[74][2] = {
 void writeScriptResponses(const char *name, const int *tags, uint count, int valuesPerTag) {
 	outputFile.seek(dataOffset);
 
-	for (int idx = 0; idx < count * (valuesPerTag + 1); ++idx, ++tags)
+	for (uint idx = 0; idx < count * (valuesPerTag + 1); ++idx, ++tags)
 		outputFile.writeLong(*tags);
-	
+
 	writeEntryHeader(name, dataOffset, count * (valuesPerTag + 1) * 4);
 	dataOffset += count * (valuesPerTag + 1) * 4;
 }

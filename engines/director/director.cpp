@@ -71,8 +71,10 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 
-	_colorDepth = 8;	// FIXME. Check if it is 8-bit
+	_colorDepth = 8;	// 256-color
+	_key = 0;
 	_keyCode = 0;
+	_machineType = 9; // Macintosh IIci
 }
 
 DirectorEngine::~DirectorEngine() {

@@ -227,6 +227,8 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		break;
 	case kTheColorDepth:
 		_vm->_colorDepth = d.toInt();
+
+		// bpp. 1, 2, 4, 8, 32
 		warning("STUB: Set color depth to %d", _vm->_colorDepth);
 		break;
 	default:
@@ -365,6 +367,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.type = FLOAT;
 		d.u.f = sqrt(id.u.f);
 		break;
+	case kTheKey:
+		d.type = STRING;
+		d.u.s = new Common::String(_vm->_key);
+		break;
 	case kTheKeyCode:
 		d.type = INT;
 		d.u.i = _vm->_keyCode;
@@ -374,8 +380,52 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d.u.i = 1;
 		break;
 	case kTheColorDepth:
+		// bpp. 1, 2, 4, 8, 32
 		d.type = INT;
 		d.u.i = _vm->_colorDepth;
+		break;
+	case kTheMachineType:
+		// 1 - Macintosh 512Ke			D2
+		// 2 - Macintosh Plus			D2
+		// 3 - Macintosh SE				D2
+		// 4 - Macintosh II				D2
+		// 5 - Macintosh IIx			D2
+		// 6 - Macintosh IIcx			D2
+		// 7 - Macintosh SE/30			D2
+		// 8 - Macintosh Portable		D2
+		// 9 - Macintosh IIci			D2
+		// 11 - Macintosh IIfx			D3
+		// 15 - Macintosh Classic		D3
+		// 16 - Macintosh IIsi			D3
+		// 17 - Macintosh LC			D3
+		// 18 - Macintosh Quadra 900	D3
+		// 19 - PowerBook 170			D3
+		// 20 - Macintosh Quadra 700	D3
+		// 21 - Classic II				D3
+		// 22 - PowerBook 100			D3
+		// 23 - PowerBook 140			D3
+		// 24 - Macintosh Quadra 950	D4
+		// 25 - Macintosh LCIII			D4
+		// 27 - PowerBook Duo 210		D4
+		// 28 - Macintosh Centris 650	D4
+		// 30 - PowerBook Duo 230		D4
+		// 31 - PowerBook 180			D4
+		// 32 - PowerBook 160			D4
+		// 33 - Macintosh Quadra 800	D4
+		// 35 - Macintosh LC II			D4
+		// 42 - Macintosh IIvi			D4
+		// 45 - Power Macintosh 7100/70	D5
+		// 46 - Macintosh IIvx			D4
+		// 47 - Macintosh Color Classic	D4
+		// 48 - PowerBook 165c			D4
+		// 50 - Macintosh Centris 610	D4
+		// 52 - PowerBook 145			D4
+		// 53 - PowerComputing 8100/100	D5
+		// 73 - Power Macintosh 6100/60	D5
+		// 76 - Macintosh Quadra 840av	D4
+		// 256 - IBM PC-type machine	D3
+		d.type = INT;
+		d.u.i = _vm->_machineType;
 		break;
 	default:
 		warning("Unprocessed getting field %d of entity %d", field, entity);

@@ -98,7 +98,9 @@ public:
 
 public:
 	int _colorDepth;
+	unsigned char _key;
 	int _keyCode;
+	int _machineType;
 
 protected:
 	virtual Common::Error run();

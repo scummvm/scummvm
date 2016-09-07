@@ -77,8 +77,8 @@ enum Version {
 };
 Version _version;
 
-const int FILE_DIFF[3] = { 
-	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF 
+const int FILE_DIFF[3] = {
+	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF
 };
 
 static const char *const ITEM_NAMES[46] = {
@@ -498,7 +498,7 @@ void writeResource(const char *name, Common::File *file) {
 void writeResource(const char *sectionStr, uint32 resId) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
-	
+
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
 	writeResource(nameBuffer, file);
@@ -508,7 +508,7 @@ void writeResource(const char *sectionStr, const char *resId) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
 
-	Common::File *file = res.getResource(getResId(sectionStr), 
+	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeResource(nameBuffer, file);
@@ -577,8 +577,8 @@ void writeString(uint offset) {
 
 void writeResponseTree() {
 	outputFile.seek(dataOffset);
-	
-	const int OFFSETS[3] = { 0x619520, 0x618340, 0x617380 };
+
+	const uint OFFSETS[3] = { 0x619520, 0x618340, 0x617380 };
 	for (int idx = 0; idx < 1022; ++idx) {
 		inputFile.seek(OFFSETS[_version] - FILE_DIFF[_version] + idx * 8);
 		uint id = inputFile.readLong();
@@ -606,7 +606,7 @@ void writeResponseTree() {
 void writeSentenceEntries(const char *name, uint tableOffset) {
 	outputFile.seek(dataOffset);
 
-	uint v1, v2, v4, v9, v11, v12, v13;
+	uint v1, v2, v9, v11, v12, v13;
 	uint offset3, offset5, offset6, offset7, offset8, offset10;
 
 	for (uint idx = 0; ; ++idx) {
@@ -619,7 +619,7 @@ void writeSentenceEntries(const char *name, uint tableOffset) {
 		// Read data fields
 		v2 = inputFile.readLong();
 		offset3 = inputFile.readLong();
-		v4 = inputFile.readLong();
+		/* v4 = */inputFile.readLong();
 		offset5 = inputFile.readLong();
 		offset6 = inputFile.readLong();
 		offset7 = inputFile.readLong();
@@ -813,7 +813,7 @@ void writeParrotLobbyLinkUpdaterEntries() {
 			linkOffset = inputFile.readUint32LE();
 			for (int idx = 0; idx < 8; ++idx)
 				vals[idx] = inputFile.readUint32LE();
-		
+
 			// Write out the entry
 			inputFile.seek(linkOffset - FILE_DIFF[_version]);
 			outputFile.writeString(inputFile);
@@ -889,7 +889,7 @@ void writeData() {
 		{ 0x5C2230, 0x5C10C8, 0X5C0108 }, { 0x5D1670, 0x5D0508, 0x5CF548 },
 		{ 0x5D1A80, 0x5D0918, 0x5CF958 }, { 0x5D1AE8, 0x5D0980, 0x5CF9C0 },
 		{ 0x5D1B88, 0x5D0A20, 0x5CFA60 }, { 0x5D2A60, 0x5D18F8, 0x5D0938 },
-		{ 0x5D2CD0, 0x5D1B68, 0x5D0BA8 }, { 0x5D3488, 0x5D2320, 0x5D1360 }, 
+		{ 0x5D2CD0, 0x5D1B68, 0x5D0BA8 }, { 0x5D3488, 0x5D2320, 0x5D1360 },
 		{ 0x5D3900, 0x5D2798, 0x5D17D8 }, { 0x5D3968, 0x5D2800, 0x5D1840 },
 		{ 0x5D4668, 0x5D3500, 0x5D2540 }, { 0x5D47A0, 0x5D3638, 0x5D2678 },
 		{ 0x5D4EC0, 0x5D3D58, 0x5D2D98 }, { 0x5D5100, 0x5D3F98, 0x5D2FD8 },
@@ -928,7 +928,7 @@ void writeData() {
 	writeSentenceEntries("Sentences/Deskbot", SENTENCES_DESKBOT[0][_version]);
 	writeSentenceEntries("Sentences/Deskbot/2", SENTENCES_DESKBOT[1][_version]);
 	writeSentenceEntries("Sentences/Deskbot/3", SENTENCES_DESKBOT[2][_version]);
-	
+
 	const int SENTENCES_DOORBOT[12][3] = {
 		{ 0x5EC110, 0x5EAFA8, 0x5E9FE8 }, { 0x5FD930, 0x5FC7C8, 0x5FB808 },
 		{ 0x5FDD0C, 0x5FCBA4, 0x5FBBE4 }, { 0x5FE668, 0x5FD500, 0x5FC540 },
@@ -1028,7 +1028,7 @@ void createScriptMap() {
 				break;
 		}
 
-		int v1, v2;
+		uint v1, v2;
 		sscanf(line, "%x %x", &v1, &v2);
 
 		if (counter != 0 && (counter % 3) == 0)

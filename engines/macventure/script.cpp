@@ -1044,24 +1044,31 @@ void ScriptEngine::opc9WAIT(EngineState *state, EngineFrame *frame) {
 }
 
 void ScriptEngine::opcaTIME(EngineState *state, EngineFrame *frame) {
-	for (uint i = 0; i < 3; i++) {// We skip year, month and date
-		state->push(0x00);
-	}
+	TimeDate t;
+	g_system->getTimeAndDate(t);
 
-	uint32 totalPlayTime = _engine->getTotalPlayTime() / 1000; // In seconds
-	int16 hours = totalPlayTime / 3600;
-	totalPlayTime %= 3600;
-	state->push(hours);
-	int16 minutes = totalPlayTime / 60;
-	totalPlayTime %= 60;
-	state->push(minutes);
-	state->push(totalPlayTime);
-	debugC(2, kMVDebugScript, "Saved time: h[%d] m[%d] s[%d]", hours, minutes, totalPlayTime);
+	int year = 1900 + t.tm_year;
+	int month = 1 + t.tm_mon;
+
+	state->push(year);
+	state->push(month);
+	state->push(t.tm_mday);
+	state->push(t.tm_hour);
+	state->push(t.tm_min);
+	state->push(t.tm_sec);
+
+	debugC(2, kMVDebugScript, "Saved time: Y[%d] M[%d] D[%d] h[%d] m[%d] s[%d]", year, month, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 void ScriptEngine::opcbDAY(EngineState *state, EngineFrame *frame) {
-	// Probaby irrelevant, so we push Day [9]
-	state->push(9);
+	TimeDate t;
+	g_system->getTimeAndDate(t);
+
+	int weekday = 1 + t.tm_wday;
+	weekday = 1;
+	state->push(weekday);
+
+	debugC(2, kMVDebugScript, "Current day of week: %d", weekday);
 }
 
 void ScriptEngine::opccCHLD(EngineState *state, EngineFrame *frame) {

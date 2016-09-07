@@ -2332,7 +2332,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 		double dst1 = sqrt((double)((ypos - nod->_y) * (ypos - nod->_y) + (xpos - nod->_x) * (xpos - nod->_x)));
 		int dst = linkInfoDest.link->_graphDst->_z - nod->_z;
 
-		mctlMQ1.distance2 = (int)(nod->_z + (dst1 * (double)dst / linkInfoDest.link->_length));
+		mctlMQ1.distance2 = nod->_z + (int)(dst1 * (double)dst / linkInfoDest.link->_length);
 
 		putToLink(&mctlMQ1.pt2, linkInfoDest.link, 1);
 

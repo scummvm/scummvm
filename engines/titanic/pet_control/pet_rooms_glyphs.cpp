@@ -141,7 +141,7 @@ bool CPetRoomsGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 
 void CPetRoomsGlyph::getTooltip(CPetText *text) {
 	CRoomFlags roomFlags(_roomFlags);
-	CPetRooms *owner = dynamic_cast<CPetRooms *>(getPetSection());
+	CPetRooms *owner = static_cast<CPetRooms *>(getPetSection());
 
 	CString msg;
 	if (isCurrentlyAssigned()) {
@@ -172,7 +172,7 @@ void CPetRoomsGlyph::saveGlyph(SimpleFile *file, int indent) {
 }
 
 bool CPetRoomsGlyph::proc33(CPetGlyph *glyph) {
-	CPetRoomsGlyph *roomGlyph = dynamic_cast<CPetRoomsGlyph *>(glyph);
+	CPetRoomsGlyph *roomGlyph = static_cast<CPetRoomsGlyph *>(glyph);
 
 	return CPetGlyph::proc33(glyph) && _roomFlags == roomGlyph->_roomFlags;
 }
@@ -246,7 +246,7 @@ CPetRoomsGlyph *CPetRoomsGlyphs::findAssignedRoom() const {
 
 CPetRoomsGlyph *CPetRoomsGlyphs::findGlyphByFlags(uint flags) const {
 	for (const_iterator i = begin(); i != end(); ++i) {
-		CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
+		CPetRoomsGlyph *glyph = static_cast<CPetRoomsGlyph *>(*i);
 		if (glyph->getRoomFlags() == flags)
 			return glyph;
 	}

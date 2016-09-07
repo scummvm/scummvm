@@ -29,6 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Kyra:
    - Updated Italian EOB1 translation.
+   - Fixed a bug that caused a crash in Lands of Lore.
 
  Mohawk:
    - Fixed visual glitches in the Spanish version of Myst.
@@ -54,6 +55,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      in Green Tentacle's room turned on.
    - Improved timing and pathfinding in Maniac Mansion (C64 and Apple II versions)
    - Added support for the Dutch demo of Let's Explore the Airport with Buzzy.
+
+ Sherlock:
+   - Fixed a bug that could cause a crash in The Case of the Serrated Scalpel.
+   - Fixed a bug that caused game lockups in the inventory of The Case of the Rose Tattoo.
 
  WAGE:
    - Closed memory leak.
