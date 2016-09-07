@@ -169,7 +169,7 @@ public:
 	 *                  read the longest vlc code
 	 *                  = (max_vlc_length + bits - 1) / bits
 	 */
-	int getVLC2(int(*table)[2], int bits, int maxDepth);
+	int getVLC2(int16 (*table)[2], int bits, int maxDepth);
 
 	int decode012();
 

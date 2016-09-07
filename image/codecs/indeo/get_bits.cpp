@@ -438,7 +438,7 @@ const byte *GetBits::alignGetBits() {
 *                  read the longest vlc code
 *                  = (max_vlc_length + bits - 1) / bits
 */
-int GetBits::getVLC2(int (*table)[2], int bits, int maxDepth) {
+int GetBits::getVLC2(int16 (*table)[2], int bits, int maxDepth) {
 	int code;
 
 	OPEN_READER(re);

@@ -35,6 +35,7 @@
 
 #include "image/codecs/indeo/get_bits.h"
 #include "image/codecs/indeo/indeo.h"
+#include "image/codecs/indeo/indeo_dsp.h"
 #include "graphics/managed_surface.h"
 
 namespace Image {
@@ -50,6 +51,11 @@ using namespace Indeo;
  *  - AVIDecoder
  */
 class Indeo4Decoder : public IndeoDecoderBase {
+	struct Transform {
+		InvTransformPtr *inv_trans;
+		DCTransformPtr  *dc_trans;
+		int             is_2d_trans;
+	};
 public:
 	Indeo4Decoder(uint16 width, uint16 height);
 	virtual ~Indeo4Decoder() {}
@@ -63,6 +69,31 @@ protected:
 	 * @returns		0 = Ok, negative number = error
 	 */
 	virtual int decodePictureHeader();
+
+	/**
+	 *  Rearrange decoding and reference buffers.
+	 */
+	virtual void switch_buffers();
+
+	virtual bool is_nonnull_frame() const;
+
+	/**
+	 *  Decode Indeo 4 band header.
+	 *
+	 *  @param[in,out] band      pointer to the band descriptor
+	 *  @return        result code: 0 = OK, negative number = error
+	 */
+	virtual int decode_band_hdr(IVIBandDesc *band);
+
+	/**
+	 *  Decode information (block type, cbp, quant delta, motion vector)
+	 *  for all macroblocks in the current tile.
+	 *
+	 *  @param[in,out] band      pointer to the band descriptor
+	 *  @param[in,out] tile      pointer to the tile descriptor
+	 *  @return        result code: 0 = OK, negative number = error
+	 */
+	virtual int decode_mb_info(IVIBandDesc *band, IVITile *tile);
 private:
 	int scaleTileSize(int def_size, int size_factor);
 
@@ -83,6 +114,30 @@ private:
 	 * Standard picture dimensions
 	 */
 	static const uint _ivi4_common_pic_sizes[14];
+
+	/**
+	 * Transformations list
+	 */
+	static Transform _transforms[18];
+
+	static const uint8 *const _scan_index_to_tab[15];
+
+	/**
+	 *  Indeo 4 dequant tables
+	 */
+	static const uint16 _ivi4_quant_8x8_intra[9][64];
+
+	static const uint16 _ivi4_quant_8x8_inter[9][64];
+
+	static const uint16 _ivi4_quant_4x4_intra[5][16];
+
+	static const uint16 _ivi4_quant_4x4_inter[5][16];
+
+	/**
+	 *  Table for mapping quant matrix index from the bitstream
+	 *  into internal quant table number.
+	 */
+	static const uint8 _quant_index_to_tab[22];
 };
 
 } // End of namespace Image

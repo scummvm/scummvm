@@ -55,8 +55,19 @@ enum {
     IVI4_FRAMETYPE_NULL_LAST   = 6   ///< empty frame with no data
 };
 
+typedef void(*ivi_mc_func) (int16 *buf, const int16 *ref_buf,
+	uint32 pitch, int mc_type);
+typedef void(*ivi_mc_avg_func) (int16 *buf, const int16 *ref_buf1,
+	const int16 *ref_buf2,
+	uint32 pitch, int mc_type, int mc_type2);
+
 #define IVI_VLC_BITS 13		///< max number of bits of the ivi's huffman codes
 #define IVI5_IS_PROTECTED 0x20
+
+/**
+ * convert unsigned values into signed ones (the sign is in the LSB)
+ */
+#define IVI_TOSIGNED(val) (-(((val) >> 1) ^ -((val) & 1)))
 
 /**
  *  huffman codebook descriptor
@@ -128,7 +139,6 @@ enum {
 //extern const uint8 ff_ivi_vertical_scan_8x8[64];
 //extern const uint8 ff_ivi_horizontal_scan_8x8[64];
 //extern const uint8 ff_ivi_direct_scan_4x4[16];
-
 
 /**
  *  Declare inverse transform function types
@@ -272,6 +282,40 @@ struct IVIPlaneDesc {
 	static void ivi_free_buffers(IVIPlaneDesc *planes);
 };
 
+struct AVFrame {
+#define AV_NUM_DATA_POINTERS 8
+	/**
+	* pointer to the picture/channel planes.
+	* This might be different from the first allocated byte
+	*
+	* Some decoders access areas outside 0,0 - width,height, please
+	* see avcodec_align_dimensions2(). Some filters and swscale can read
+	* up to 16 bytes beyond the planes, if these filters are to be used,
+	* then 16 extra bytes must be allocated.
+	*
+	* NOTE: Except for hwaccel formats, pointers not needed by the format
+	* MUST be set to NULL.
+	*/
+	uint8 *data[AV_NUM_DATA_POINTERS];
+
+   /**
+     * For video, size in bytes of each picture line.
+     * For audio, size in bytes of each plane.
+     *
+     * For audio, only linesize[0] may be set. For planar audio, each channel
+     * plane must be the same size.
+     *
+     * For video the linesizes should be multiples of the CPUs alignment
+     * preference, this is 16 or 32 for modern desktop CPUs.
+     * Some code requires such alignment other code can be slower without
+     * correct alignment, for yet other it makes no difference.
+     *
+     * @note The linesize may be larger than the size of usable data -- there
+     * may be extra padding present for performance reasons.
+     */
+    int linesize[AV_NUM_DATA_POINTERS];
+};
+
 struct IVI45DecContext {
     GetBits *		gb;
     RVMapDesc       rvmap_tabs[9];   ///< local corrected copy of the static rvmap tables
@@ -310,33 +354,131 @@ struct IVI45DecContext {
     uint8           gop_flags;
     uint32          lock_word;
 
-    int             show_indeo4_info;
     uint8           has_b_frames;
     uint8           has_transp;      ///< transparency mode status: 1 - enabled
     uint8           uses_tiling;
     uint8           uses_haar;
     uint8           uses_fullpel;
 
-//    int             (*decode_pic_hdr)  (struct IVI45DecContext *ctx, AVCodecContext *avctx);
-//    int             (*decode_band_hdr) (struct IVI45DecContext *ctx, IVIBandDesc *band, AVCodecContext *avctx);
-//    int             (*decode_mb_info)  (struct IVI45DecContext *ctx, IVIBandDesc *band, IVITile *tile, AVCodecContext *avctx);
-//    void            (*switch_buffers)  (struct IVI45DecContext *ctx);
-//    int             (*is_nonnull_frame)(struct IVI45DecContext *ctx);
-
     int gop_invalid;
     int buf_invalid[4];
 
     int is_indeo4;
 
-//    AVFrame *       p_frame;
+    AVFrame *       p_frame;
     int             got_p_frame;
 };
 
 class IndeoDecoderBase : public Codec {
+private:
+	/**
+	 *  Decode an Indeo 4 or 5 band.
+	 *
+	 *  @param[in,out]  band   ptr to the band descriptor
+	 *  @returns        result code: 0 = OK, -1 = error
+	 */
+	int decode_band(IVIBandDesc *band);
+
+	/**
+	 * Sets the frame dimensions
+	 */
+	int ff_set_dimensions(uint16 width, uint16 height);
+
+	/**
+	 * Get a buffer for a frame. This is a wrapper around
+	 * AVCodecContext.get_buffer() and should be used instead calling get_buffer()
+	 * directly.
+	 */
+	int ff_get_buffer(AVFrame *frame, int flags);
+
+	/**
+	 *  Haar wavelet recomposition filter for Indeo 4
+	 *
+	 *  @param[in]  plane        pointer to the descriptor of the plane being processed
+	 *  @param[out] dst          pointer to the destination buffer
+	 *  @param[in]  dst_pitch    pitch of the destination buffer
+	 */
+	void ff_ivi_recompose_haar(const IVIPlaneDesc *plane, uint8 *dst,
+		const int dst_pitch);
+
+	/**
+	 *  5/3 wavelet recomposition filter for Indeo5
+	 *
+	 *  @param[in]   plane        pointer to the descriptor of the plane being processed
+	 *  @param[out]  dst          pointer to the destination buffer
+	 *  @param[in]   dst_pitch    pitch of the destination buffer
+	 */
+	void ff_ivi_recompose53(const IVIPlaneDesc *plane,
+		uint8 *dst, const int dst_pitch);
+
+	/*
+	 *  Convert and output the current plane.
+	 *  This conversion is done by adding back the bias value of 128
+	 *  (subtracted in the encoder) and clipping the result.
+	 *
+	 *  @param[in]   plane      pointer to the descriptor of the plane being processed
+	 *  @param[out]  dst        pointer to the buffer receiving converted pixels
+	 *  @param[in]   dst_pitch  pitch for moving to the next y line
+	 */
+	void ivi_output_plane(IVIPlaneDesc *plane, uint8 *dst, int dst_pitch);
+
+	/**
+	 *  Handle empty tiles by performing data copying and motion
+	 *  compensation respectively.
+	 *
+	 *  @param[in]  band      pointer to the band descriptor
+	 *  @param[in]  tile      pointer to the tile descriptor
+	 *  @param[in]  mv_scale  scaling factor for motion vectors
+	 */
+	int ivi_process_empty_tile(IVIBandDesc *band, IVITile *tile, int32 mv_scale);
+
+	/*
+	 *  Decode size of the tile data.
+	 *  The size is stored as a variable-length field having the following format:
+	 *  if (tile_data_size < 255) than this field is only one byte long
+	 *  if (tile_data_size >= 255) than this field four is byte long: 0xFF X1 X2 X3
+	 *  where X1-X3 is size of the tile data
+	 *
+	 *  @param[in,out]  gb  the GetBit context
+	 *  @return     size of the tile data in bytes
+	 */
+	int ivi_dec_tile_data_size(GetBits *gb);
+
+	/*
+	 *  Decode block data:
+	 *  extract huffman-coded transform coefficients from the bitstream,
+	 *  dequantize them, apply inverse transform and motion compensation
+	 *  in order to reconstruct the picture.
+	 *
+	 *  @param[in,out]  gb    the GetBit context
+	 *  @param[in]      band  pointer to the band descriptor
+	 *  @param[in]      tile  pointer to the tile descriptor
+	 *  @return     result code: 0 - OK, -1 = error (corrupted blocks data)
+	 */
+	int ivi_decode_blocks(GetBits *gb, IVIBandDesc *band, IVITile *tile);
+
+	int ivi_mc(IVIBandDesc *band, ivi_mc_func mc, ivi_mc_avg_func mc_avg,
+		int offs, int mv_x, int mv_y, int mv_x2, int mv_y2,
+		int mc_type, int mc_type2);
+
+	int ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
+		ivi_mc_func mc, ivi_mc_avg_func mc_avg, int mv_x, int mv_y,
+		int mv_x2, int mv_y2, int *prev_dc, int is_intra,
+		int mc_type, int mc_type2, uint32 quant, int offs);
+
+	int ivi_dc_transform(IVIBandDesc *band, int *prev_dc, int buf_offs,
+		int blk_size);
 protected:
 	IVI45DecContext _ctx;
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::ManagedSurface *_surface;
+
+	/**
+	 *  Scan patterns shared between indeo4 and indeo5
+	 */
+	static const uint8 _ff_ivi_vertical_scan_8x8[64];
+	static const uint8 _ff_ivi_horizontal_scan_8x8[64];
+	static const uint8 _ff_ivi_direct_scan_4x4[16];
 protected:
 	/**
 	 * Returns the pixel format for the decoder's surface
@@ -350,10 +492,40 @@ protected:
 	virtual int decodePictureHeader() = 0;
 
 	/**
+	 *  Rearrange decoding and reference buffers.
+	 */
+	virtual void switch_buffers() = 0;
+
+	virtual bool is_nonnull_frame() const = 0;
+
+	/**
+	 *  Decode Indeo band header.
+	 *
+	 *  @param[in,out] band      pointer to the band descriptor
+	 *  @return        result code: 0 = OK, negative number = error
+	 */
+	virtual int decode_band_hdr(IVIBandDesc *band) = 0;
+
+	/**
+	*  Decode information (block type, cbp, quant delta, motion vector)
+	*  for all macroblocks in the current tile.
+	*
+	*  @param[in,out] band      pointer to the band descriptor
+	*  @param[in,out] tile      pointer to the tile descriptor
+	*  @return        result code: 0 = OK, negative number = error
+	*/
+	virtual int decode_mb_info(IVIBandDesc *band, IVITile *tile)= 0;
+
+	/**
 	 * Decodes the Indeo frame from the bit reader already 
 	 * loaded into the context
 	 */
 	int decodeIndeoFrame();
+
+	/**
+	 * scale motion vector
+	 */
+	int ivi_scale_mv(int mv, int mv_scale);
 public:
 	IndeoDecoderBase(uint16 width, uint16 height);
 	virtual ~IndeoDecoderBase();

@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	codecs/truemotion1.o \
 	codecs/indeo/get_bits.o \
 	codecs/indeo/indeo.o \
+	codecs/indeo/indeo_dsp.o \
 	codecs/indeo/mem.o \
 	codecs/indeo/vlc.o
 

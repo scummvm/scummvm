@@ -37,6 +37,7 @@ namespace Indeo {
 #define FF_ARRAY_ELEMS(a) (sizeof(a) / sizeof((a)[0]))
 #define FFALIGN(x, a) (((x) + (a)-1) & ~((a)-1))
 #define FFSWAP(type,a,b) do{type SWAP_tmp= b; b= a; a= SWAP_tmp;}while(0)
+#define FFSIGN(a) ((a) > 0 ? 1 : -1)
 
 /**
  * Allocate a memory block with alignment suitable for all memory accesses
@@ -138,6 +139,34 @@ extern uint16 inv_bits(uint16 val, int nbits);
  * Swap the order of the bytes in the passed value
  */
 extern uint32 bitswap_32(uint32 x);
+
+/**
+ * Clip a signed integer value into the 0-255 range.
+ * @param a value to clip
+ * @return clipped value
+ */
+extern uint8 av_clip_uint8(int a);
+
+/**
+ * Clip a signed integer to an unsigned power of two range.
+ * @param  a value to clip
+ * @param  p bit position to clip at
+ * @return clipped value
+ */
+extern unsigned av_clip_uintp2(int a, int p);
+
+/**
+* Clip a signed integer value into the amin-amax range.
+* @param a value to clip
+* @param amin minimum value of the clip range
+* @param amax maximum value of the clip range
+* @return clipped value
+*/
+#define av_clip CLIP
+
+/*------------------------------------------------------------------------*/
+
+extern const uint8 ff_zigzag_direct[64];
 
 } // End of namespace Indeo
 } // End of namespace Image
