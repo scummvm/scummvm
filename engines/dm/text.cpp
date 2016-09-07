@@ -190,43 +190,37 @@ void TextMan::moveCursor(int16 column, int16 row) {
 }
 
 void TextMan::clearExpiredRows() {
-	uint16 L0026_ui_RowIndex;
-	int32 L0027_l_ExpirationTime;
-	Box L0028_s_Box;
-
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	L0028_s_Box._x1 = 0;
-	L0028_s_Box._x2 = 319;
-	for (L0026_ui_RowIndex = 0; L0026_ui_RowIndex < 4; L0026_ui_RowIndex++) {
-		L0027_l_ExpirationTime = _messageAreaRowExpirationTime[L0026_ui_RowIndex];
-		if ((L0027_l_ExpirationTime == -1) || (L0027_l_ExpirationTime > _vm->_gameTime) || _isScrolling)
+	Box displayBox;
+	displayBox._x1 = 0;
+	displayBox._x2 = 319;
+	for (uint16 rowIndex = 0; rowIndex < 4; rowIndex++) {
+		int32 expirationTime = _messageAreaRowExpirationTime[rowIndex];
+		if ((expirationTime == -1) || (expirationTime > _vm->_gameTime) || _isScrolling)
 			continue;
-		L0028_s_Box._y2 = (L0028_s_Box._y1 = 172 + (L0026_ui_RowIndex * 7)) + 6;
+		displayBox._y2 = (displayBox._y1 = 172 + (rowIndex * 7)) + 6;
 		isTextScrolling(&_textScroller, true);
-		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapScreen, L0028_s_Box, k0_ColorBlack, k160_byteWidthScreen, k200_heightScreen);
-		_messageAreaRowExpirationTime[L0026_ui_RowIndex] = -1;
+		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapScreen, displayBox, k0_ColorBlack, k160_byteWidthScreen, k200_heightScreen);
+		_messageAreaRowExpirationTime[rowIndex] = -1;
 	}
 }
 
 void TextMan::printEndGameString(int16 x, int16 y, Color textColor, char* text) {
-	char* L1407_pc_Character;
-	char L1408_ac_ModifiedString[50];
+	char modifiedString[50];
 
-	L1407_pc_Character = L1408_ac_ModifiedString;
-	*L1407_pc_Character = *text++;
-	while (*L1407_pc_Character) {
-		if ((*L1407_pc_Character >= 'A') && (*L1407_pc_Character <= 'Z')) {
-			*L1407_pc_Character -= 64; /* Use the same font as the one used for scrolls */
-		}
-		L1407_pc_Character++;
-		*L1407_pc_Character = *text++;
+	char *wrkStringPtr = modifiedString;
+	*wrkStringPtr = *text++;
+	while (*wrkStringPtr) {
+		if ((*wrkStringPtr >= 'A') && (*wrkStringPtr <= 'Z'))
+			*wrkStringPtr -= 64; /* Use the same font as the one used for scrolls */
+
+		wrkStringPtr++;
+		*wrkStringPtr = *text++;
 	}
-	printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, L1408_ac_ModifiedString);
+	printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, modifiedString);
 }
 
 void TextMan::clearAllRows() {
-	int16 L0023_i_RowIndex;
-
 	isTextScrolling(&_textScroller, true);
 
 	Box tmpBox(0, 319, 169, 199);
@@ -234,9 +228,8 @@ void TextMan::clearAllRows() {
 
 	_messageAreaCursorRow = 3;
 	_messageAreaCursorColumn = 0;
-	for (L0023_i_RowIndex = 0; L0023_i_RowIndex < 4; L0023_i_RowIndex++) {
-		_messageAreaRowExpirationTime[L0023_i_RowIndex] = -1;
-	}
+	for (int16 rowIndex = 0; rowIndex < 4; rowIndex++)
+		_messageAreaRowExpirationTime[rowIndex] = -1;
 }
 
 void TextMan::updateMessageArea() {
@@ -245,6 +238,7 @@ void TextMan::updateMessageArea() {
 			_startedScrollingAt = g_system->getMillis();
 			memcpy(_messageAreaCopy, _vm->_displayMan->_bitmapScreen + (200 - 7 * 4) * 320, 320 * 7 * 4);
 		}
+
 		int linesToCopy = (g_system->getMillis() - _startedScrollingAt) / 50;
 		if (linesToCopy >= 7) {
 			linesToCopy = 7;
