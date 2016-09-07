@@ -458,7 +458,7 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 	return 0;
 }
 
-bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
+bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel, bool hitOnly) {
 	bool res = false;
 	Picture *pic;
 
@@ -504,6 +504,10 @@ bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
 	y = pic->_y;
 	pic->_x = 0;
 	pic->_y = 0;
+
+	if (hitOnly)
+		return pic->isPixelHitAtPos(xtarget, ytarget);
+
 	if (pic->isPixelHitAtPos(xtarget, ytarget)) {
 		*pixel = pic->getPixelAtPos(xtarget, ytarget);
 

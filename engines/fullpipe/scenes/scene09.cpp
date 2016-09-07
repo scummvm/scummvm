@@ -365,19 +365,19 @@ void sceneHandler09_checkHangerCollide() {
 		}
 
 	LABEL_11:
-		int pixel;
+		bool hit;
 
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
-				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
+				hit = g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, 0, true);
 
-				if (pixel) {
+				if (hit) {
 					sceneHandler09_ballExplode(b);
 					break;
 				}
 			}
 
-			if (pixel)
+			if (hit)
 				break;
 		}
 	}

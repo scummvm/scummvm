@@ -749,6 +749,9 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	if (x < 0 || y < 0)
 		return 0;
 
+	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
+
+	// It looks like this doesn't really work. TODO. FIXME
 	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
 			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
