@@ -20,6 +20,7 @@
  *
  */
 
+#include <psp2/power.h>
 #include "common/scummsys.h"
 
 #include "backends/platform/sdl/psp2/psp2.h"
@@ -28,6 +29,8 @@
 
 int main(int argc, char *argv[]) {
 
+	scePowerSetArmClockFrequency(444);
+	
 	// Create our OSystem instance
 	g_system = new OSystem_PSP2();
 	assert(g_system);
