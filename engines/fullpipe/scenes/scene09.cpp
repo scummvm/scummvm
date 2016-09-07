@@ -71,7 +71,11 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_flyingBalls.clear();
 
+	for (uint i = 0; i < g_vars->scene09_hangers.size(); i++)
+		delete g_vars->scene09_hangers[i];
+
 	g_vars->scene09_hangers.clear();
+
 	g_vars->scene09_numMovingHangers = 4;
 
 	StaticANIObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
@@ -101,6 +105,9 @@ void scene09_initScene(Scene *sc) {
 
 		g_vars->scene09_hangers.push_back(hng);
 	}
+
+	for (uint i = 0; i < g_vars->scene09_sceneBalls.size(); i++)
+		delete g_vars->scene09_sceneBalls[i];
 
 	g_vars->scene09_sceneBalls.clear();
 
