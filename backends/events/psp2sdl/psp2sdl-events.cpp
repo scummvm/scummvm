@@ -38,7 +38,7 @@ enum {
 	BTN_UP			= 8,
 
 	BTN_START		= 11,
-	BTN_SELECT		= 7,
+	BTN_SELECT		= 10,
 
 	BTN_SQUARE		= 3,
 	BTN_CROSS		= 2,
