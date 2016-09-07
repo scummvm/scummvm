@@ -930,7 +930,7 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 		// Fix original bug - When disabled ticks is equal to zero, increasing the defense leads
 		// to a permanent increment.
 		if (_actionDisabledTicks[actionIndex])
-			curChampion->_actionDefense += _actionDefense[actionIndex];
+			curChampion->_actionDefense += _vm->_timeline->_actionDefense[actionIndex];
 
 		setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
 		retVal = isActionPerformed(championIndex, actionIndex);

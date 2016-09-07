@@ -40,51 +40,57 @@
 
 namespace DM {
 
-signed char _actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
-	0,   /* N */
-	36,  /* BLOCK */
-	0,   /* CHOP */
-	0,   /* X */
-	-4,  /* BLOW HORN */
-	-10, /* FLIP */
-	-10, /* PUNCH */
-	-5,  /* KICK */
-	4,   /* WAR CRY */
-	-20, /* STAB */
-	-15, /* CLIMB DOWN */
-	-10, /* FREEZE LIFE */
-	16,  /* HIT */
-	5,   /* SWING */
-	-15, /* STAB */
-	-17, /* THRUST */
-	-5,  /* JAB */
-	29,  /* PARRY */
-	10,  /* HACK */
-	-10, /* BERZERK */
-	-7,  /* FIREBALL */
-	-7,  /* DISPELL */
-	-7,  /* CONFUSE */
-	-7,  /* LIGHTNING */
-	-7,  /* DISRUPT */
-	-5,  /* MELEE */
-	-15, /* X */
-	-9,  /* INVOKE */
-	4,   /* SLASH */
-	0,   /* CLEAVE */
-	0,   /* BASH */
-	5,   /* STUN */
-	-15, /* SHOOT */
-	-7,  /* SPELLSHIELD */
-	-7,  /* FIRESHIELD */
-	8,   /* FLUXCAGE */
-	-20, /* HEAL */
-	-5,  /* CALM */
-	0,   /* LIGHT */
-	-15, /* WINDOW */
-	-7,  /* SPIT */
-	-4,  /* BRANDISH */
-	0,   /* THROW */
-	8};  /* FUSE */
+void Timeline::initConstants() {
+	static signed char actionDefense[44] = { // @ G0495_ac_Graphic560_ActionDefense
+		0,   /* N */
+		36,  /* BLOCK */
+		0,   /* CHOP */
+		0,   /* X */
+		-4,  /* BLOW HORN */
+		-10, /* FLIP */
+		-10, /* PUNCH */
+		-5,  /* KICK */
+		4,   /* WAR CRY */
+		-20, /* STAB */
+		-15, /* CLIMB DOWN */
+		-10, /* FREEZE LIFE */
+		16,  /* HIT */
+		5,   /* SWING */
+		-15, /* STAB */
+		-17, /* THRUST */
+		-5,  /* JAB */
+		29,  /* PARRY */
+		10,  /* HACK */
+		-10, /* BERZERK */
+		-7,  /* FIREBALL */
+		-7,  /* DISPELL */
+		-7,  /* CONFUSE */
+		-7,  /* LIGHTNING */
+		-7,  /* DISRUPT */
+		-5,  /* MELEE */
+		-15, /* X */
+		-9,  /* INVOKE */
+		4,   /* SLASH */
+		0,   /* CLEAVE */
+		0,   /* BASH */
+		5,   /* STUN */
+		-15, /* SHOOT */
+		-7,  /* SPELLSHIELD */
+		-7,  /* FIRESHIELD */
+		8,   /* FLUXCAGE */
+		-20, /* HEAL */
+		-5,  /* CALM */
+		0,   /* LIGHT */
+		-15, /* WINDOW */
+		-7,  /* SPIT */
+		-4,  /* BRANDISH */
+		0,   /* THROW */
+		8    /* FUSE */
+	};
+
+	for (int i = 0; i < 44; i++)
+		_actionDefense[i] = actionDefense[i];
+}
 
 Timeline::Timeline(DMEngine* vm) : _vm(vm) {
 	_eventMaxCount = 0;
@@ -92,6 +98,8 @@ Timeline::Timeline(DMEngine* vm) : _vm(vm) {
 	_eventCount = 0;
 	_timeline = nullptr;
 	_firstUnusedEventIndex = 0;
+
+	initConstants();
 }
 
 Timeline::~Timeline() {
@@ -111,45 +119,37 @@ void Timeline::initTimeline() {
 }
 
 void Timeline::deleteEvent(uint16 eventIndex) {
-	uint16 L0586_ui_TimelineIndex;
-	uint16 L0587_ui_EventCount;
-
-
 	_events[eventIndex]._type = k0_TMEventTypeNone;
-	if (eventIndex < _firstUnusedEventIndex) {
+	if (eventIndex < _firstUnusedEventIndex)
 		_firstUnusedEventIndex = eventIndex;
-	}
+
 	_eventCount--;
-	if ((L0587_ui_EventCount = _eventCount) == 0) {
+	
+	uint16 eventCount = _eventCount;
+	if (eventCount == 0)
 		return;
-	}
-	L0586_ui_TimelineIndex = getIndex(eventIndex);
-	if (L0586_ui_TimelineIndex == L0587_ui_EventCount) {
+
+	uint16 timelineIndex = getIndex(eventIndex);
+	if (timelineIndex == eventCount)
 		return;
-	}
-	_timeline[L0586_ui_TimelineIndex] = _timeline[L0587_ui_EventCount];
-	fixChronology(L0586_ui_TimelineIndex);
+
+	_timeline[timelineIndex] = _timeline[eventCount];
+	fixChronology(timelineIndex);
 }
 
 void Timeline::fixChronology(uint16 timelineIndex) {
-	uint16 L0581_ui_TimelineIndex;
-	uint16 L0582_ui_EventIndex;
-	uint16 L0583_ui_EventCount;
-	TimelineEvent* L0584_ps_Event;
-	bool L0585_B_ChronologyFixed;
-
-
-	if ((L0583_ui_EventCount = _eventCount) == 1) {
+	uint16 eventCount = _eventCount;
+	if (eventCount == 1)
 		return;
-	}
 
-	L0584_ps_Event = &_events[L0582_ui_EventIndex = _timeline[timelineIndex]];
-	L0585_B_ChronologyFixed = false;
+	uint16 L0582_ui_EventIndex = _timeline[timelineIndex];
+	TimelineEvent *timelineEvent = &_events[L0582_ui_EventIndex];
+	bool L0585_B_ChronologyFixed = false;
 	while (timelineIndex > 0) { /* Check if the event should be moved earlier in the timeline */
-		L0581_ui_TimelineIndex = (timelineIndex - 1) >> 1;
-		if (isEventABeforeB(L0584_ps_Event, &_events[_timeline[L0581_ui_TimelineIndex]])) {
-			_timeline[timelineIndex] = _timeline[L0581_ui_TimelineIndex];
-			timelineIndex = L0581_ui_TimelineIndex;
+		uint16 altTimelineIndex = (timelineIndex - 1) >> 1;
+		if (isEventABeforeB(timelineEvent, &_events[_timeline[altTimelineIndex]])) {
+			_timeline[timelineIndex] = _timeline[altTimelineIndex];
+			timelineIndex = altTimelineIndex;
 			L0585_B_ChronologyFixed = true;
 		} else {
 			break;
@@ -157,15 +157,15 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 	}
 	if (L0585_B_ChronologyFixed)
 		goto T0236011;
-	L0583_ui_EventCount = ((L0583_ui_EventCount - 1) - 1) >> 1;
-	while (timelineIndex <= L0583_ui_EventCount) { /* Check if the event should be moved later in the timeline */
-		L0581_ui_TimelineIndex = (timelineIndex << 1) + 1;
-		if (((L0581_ui_TimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[L0581_ui_TimelineIndex + 1]], &_events[_timeline[L0581_ui_TimelineIndex]]))) {
-			L0581_ui_TimelineIndex++;
+	eventCount = ((eventCount - 1) - 1) >> 1;
+	while (timelineIndex <= eventCount) { /* Check if the event should be moved later in the timeline */
+		uint16 altTimelineIndex = (timelineIndex << 1) + 1;
+		if (((altTimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[altTimelineIndex + 1]], &_events[_timeline[altTimelineIndex]]))) {
+			altTimelineIndex++;
 		}
-		if (isEventABeforeB(&_events[_timeline[L0581_ui_TimelineIndex]], L0584_ps_Event)) {
-			_timeline[timelineIndex] = _timeline[L0581_ui_TimelineIndex];
-			timelineIndex = L0581_ui_TimelineIndex;
+		if (isEventABeforeB(&_events[_timeline[altTimelineIndex]], timelineEvent)) {
+			_timeline[timelineIndex] = _timeline[altTimelineIndex];
+			timelineIndex = altTimelineIndex;
 		} else {
 			break;
 		}

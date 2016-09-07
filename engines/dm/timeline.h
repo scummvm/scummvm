@@ -95,8 +95,6 @@ k82_TMEventTypeMagicMap_C82 = 82, // @ C82_EVENT_MAGIC_MAP
 k83_TMEventTypeMagicMap_C83 = 83  // @ C83_EVENT_MAGIC_MAP    
 };
 
-extern signed char _actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
-
 class TimelineEvent {
 public:
 	int32 _mapTime;
@@ -191,6 +189,10 @@ public:
 	void saveTimelinePart(Common::OutSaveFile *file);
 	void loadEventsPart(Common::InSaveFile* file);
 	void loadTimelinePart(Common::InSaveFile* file);
+
+	signed char _actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
+
+	void initConstants();
 };
 
 }
