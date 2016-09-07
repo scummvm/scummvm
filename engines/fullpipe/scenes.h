@@ -581,7 +581,7 @@ public:
 	int scene27_aimStartX;
 	int scene27_aimStartY;
 	int scene27_launchPhase;
-	BallChain scene27_balls;
+	Common::Array<StaticANIObject *> scene27_balls;
 	Common::Array<Bat *> scene27_bats;
 	Common::Array<Bat *> scene27_var07;
 

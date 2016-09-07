@@ -54,15 +54,10 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_maid = sc->getStaticANIObject1ById(ANI_MAID, -1);
 	g_vars->scene27_batHandler = sc->getStaticANIObject1ById(ANI_BITAHANDLER, -1);
 
-	g_vars->scene27_balls.numBalls = 0;
-	g_vars->scene27_balls.pTail = 0;
-	g_vars->scene27_balls.field_8 = 0;
-	g_vars->scene27_balls.pHead = 0;
-	g_vars->scene27_balls.cPlexLen = 10;
+	for (uint i = 0; i < g_vars->scene27_balls.size(); i++)
+		delete g_vars->scene27_balls[i];
 
-	free(g_vars->scene27_balls.cPlex);
-	g_vars->scene27_balls.cPlex = 0;
-
+	g_vars->scene27_balls.clear();
 	g_vars->scene27_bats.clear();
 	g_vars->scene27_var07.clear();
 
@@ -72,43 +67,6 @@ void scene27_initScene(Scene *sc) {
 	for (int i = 0; i < 4; i++) {
 		StaticANIObject *newbat = new StaticANIObject(g_vars->scene27_bat);
 
-		Ball *runPtr = g_vars->scene27_balls.pTail;
-		Ball *lastP = g_vars->scene27_balls.field_8;
-
-		if (!g_vars->scene27_balls.pTail) {
-			g_vars->scene27_balls.cPlex = (byte *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
-
-			byte *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
-
-			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
-				runPtr = g_vars->scene27_balls.pTail;
-			} else {
-				runPtr = g_vars->scene27_balls.pTail;
-
-				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
-					((Ball *)p1)->p1 = runPtr;
-					runPtr = (Ball *)p1;
-
-					p1 -= sizeof(Ball);
-				}
-
-				g_vars->scene27_balls.pTail = runPtr;
-			}
-		}
-
-		g_vars->scene27_balls.pTail = runPtr->p0;
-		runPtr->p1 = lastP;
-		runPtr->p0 = 0;
-		runPtr->ani = newbat;
-
-		g_vars->scene27_balls.numBalls++;
-
-		if (g_vars->scene27_balls.field_8)
-			g_vars->scene27_balls.field_8->p0 = runPtr;
-		else
-			g_vars->scene27_balls.pHead = runPtr;
-
-		g_vars->scene27_balls.field_8 = runPtr;
 
 		sc->addStaticANIObject(newbat, 1);
 	}
@@ -463,17 +421,11 @@ void sceneHandler27_maidSwitchback() {
 }
 
 void sceneHandler27_batLogic() {
-	if (g_vars->scene27_balls.numBalls) {
-		g_vars->scene27_bat = g_vars->scene27_balls.pHead->ani;
+	if (g_vars->scene27_balls.size()) {
+		g_vars->scene27_bat = g_vars->scene27_balls[0];
 
-		g_vars->scene27_balls.pHead = g_vars->scene27_balls.pHead->p0;
-
-		if (g_vars->scene27_balls.pHead)
-			g_vars->scene27_balls.pHead->p0->p1 = 0;
-		else
-			g_vars->scene27_balls.field_8 = 0;
-
-		g_vars->scene27_balls.init(&g_vars->scene27_balls.pHead->p0);
+		g_vars->scene27_balls.remove_at(0);
+		g_vars->scene27_balls.push_back(g_vars->scene27_bat);
 
 		int mv;
 
@@ -545,7 +497,7 @@ void sceneHandler27_calcWinArcade() {
 			}
 		}
 
-		if (!g_vars->scene27_balls.numBalls) {
+		if (!g_vars->scene27_balls.size()) {
 			sceneHandler27_driverPushButton();
 			sceneHandler27_maidSwitchback();
 			return;
@@ -563,44 +515,9 @@ void sceneHandler27_regenBats() {
 	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
 		g_vars->scene27_var07[i]->ani->hide();
 
-		Ball *runPtr = g_vars->scene27_balls.pTail;
-		Ball *lastP = g_vars->scene27_balls.field_8;
 		StaticANIObject *newbat = g_vars->scene27_var07[i]->ani;
 
-		if (!g_vars->scene27_balls.pTail) {
-			g_vars->scene27_balls.cPlex = (byte *)calloc(g_vars->scene27_balls.cPlexLen, sizeof(Ball));
-
-			byte *p1 = g_vars->scene27_balls.cPlex + (g_vars->scene27_balls.cPlexLen - 1) * sizeof(Ball);
-
-			if (g_vars->scene27_balls.cPlexLen - 1 < 0) {
-				runPtr = g_vars->scene27_balls.pTail;
-			} else {
-				runPtr = g_vars->scene27_balls.pTail;
-
-				for (int j = 0; j < g_vars->scene27_balls.cPlexLen; j++) {
-					((Ball *)p1)->p1 = runPtr;
-					runPtr = (Ball *)p1;
-
-					p1 -= sizeof(Ball);
-				}
-
-				g_vars->scene27_balls.pTail = runPtr;
-			}
-		}
-
-		g_vars->scene27_balls.pTail = runPtr->p0;
-		runPtr->p1 = lastP;
-		runPtr->p0 = 0;
-		runPtr->ani = newbat;
-
-		g_vars->scene27_balls.numBalls++;
-
-		if (g_vars->scene27_balls.field_8)
-			g_vars->scene27_balls.field_8->p0 = runPtr;
-		else
-			g_vars->scene27_balls.pHead = runPtr;
-
-		g_vars->scene27_balls.field_8 = runPtr;
+		g_vars->scene27_balls.push_back(newbat);
 	}
 
 	g_vars->scene27_var07.clear();
