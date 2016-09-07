@@ -315,10 +315,11 @@ void Timeline::processTimeline() {
 				break;
 			case k11_TMEventTypeEnableChampionAction:
 				processEventEnableChampionAction(newEvent._priority);
-				if (newEvent._B._slotOrdinal) {
+				if (newEvent._B._slotOrdinal)
 					processEventMoveWeaponFromQuiverToSlot(newEvent._priority, _vm->ordinalToIndex(newEvent._B._slotOrdinal));
-				}
-				goto T0261048;
+
+				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
+				break;
 			case k12_TMEventTypeHideDamageReceived:
 				processEventHideDamageReceived(newEvent._priority);
 				break;
@@ -333,7 +334,6 @@ void Timeline::processTimeline() {
 			case k72_TMEventTypeChampionShield:
 				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._B._defense;
 				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
-T0261048:
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
 			case k73_TMEventTypeThievesEye:
@@ -341,15 +341,16 @@ T0261048:
 				break;
 			case k74_TMEventTypePartyShield:
 				_vm->_championMan->_party._shieldDefense -= newEvent._B._defense;
-T0261053:
 				refreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
 				_vm->_championMan->_party._spellShieldDefense -= newEvent._B._defense;
-				goto T0261053;
+				refreshAllChampionStatusBoxes();
+				break;
 			case k78_TMEventTypeFireShield:
 				_vm->_championMan->_party._fireShieldDefense -= newEvent._B._defense;
-				goto T0261053;
+				refreshAllChampionStatusBoxes();
+				break;
 			case k75_TMEventTypePoisonChampion: {
 				uint16 championIndex = newEvent._priority;
 				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
