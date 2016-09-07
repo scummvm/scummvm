@@ -389,7 +389,7 @@ void ProjExpl::projectileDelete(Thing projectileThing, Thing *groupSlot, int16 m
 	projectile->_nextThing = Thing::_none;
 }
 
-void ProjExpl::processEvents48To49(TimelineEvent* event) {
+void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	int16 sourceMapX = -1;
 	int16 sourceMapY = -1;
 	TimelineEvent firstEvent = *event;
@@ -469,95 +469,88 @@ void ProjExpl::processEvents48To49(TimelineEvent* event) {
 	projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(curEvent);
 }
 
-void ProjExpl::processEvent25(TimelineEvent* event) {
-	Explosion* L0532_ps_Explosion;
-	Group* L0533_ps_Group = nullptr;
-	CreatureInfo* L0534_ps_CreatureInfo = nullptr;
-	uint16 L0528_ui_MapX;
-	uint16 L0529_ui_MapY;
-	int16 L0530_i_Attack;
-	int16 L0531_i_Multiple;
-#define AL0531_i_SquareType    L0531_i_Multiple
-#define AL0531_i_CreatureCount L0531_i_Multiple
-	Thing L0535_T_GroupThing;
-	Thing L0536_T_ExplosionThing;
-	uint16 L0537_ui_Multiple = 0;
-#define AL0537_ui_CreatureType                L0537_ui_Multiple
-#define AL0537_ui_NonMaterialAdditionalAttack L0537_ui_Multiple
-	bool L0538_B_ExplosionOnPartySquare;
-	TimelineEvent L0539_s_Event;
+void ProjExpl::processEvent25(TimelineEvent *event) {
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
+	Explosion *explosion = &((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
+	int16 curSquareType = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]).getType();
+	bool explosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
+	Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 
-	L0528_ui_MapX = event->_B._location._mapX;
-	L0529_ui_MapY = event->_B._location._mapY;
-	L0532_ps_Explosion = &((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
-	AL0531_i_SquareType = Square(_vm->_dungeonMan->_currMapData[L0528_ui_MapX][L0529_ui_MapY]).getType();
-	L0538_B_ExplosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0528_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0529_ui_MapY == _vm->_dungeonMan->_partyMapY);
-	if ((L0535_T_GroupThing = _vm->_groupMan->groupGetThing(L0528_ui_MapX, L0529_ui_MapY)) != Thing::_endOfList) {
-		L0533_ps_Group = (Group*)_vm->_dungeonMan->getThingData(L0535_T_GroupThing);
-		L0534_ps_CreatureInfo = &_vm->_dungeonMan->_creatureInfos[AL0537_ui_CreatureType = L0533_ps_Group->_type];
-	}
-	if ((L0536_T_ExplosionThing = Thing(Thing::_firstExplosion.toUint16() + L0532_ps_Explosion->getType())) == Thing::_explPoisonCloud) {
-		L0530_i_Attack = MAX(1, MIN(L0532_ps_Explosion->getAttack() >> 5, 4) + _vm->getRandomNumber(2)); /* Value between 1 and 5 */
-	} else {
-		L0530_i_Attack = (L0532_ps_Explosion->getAttack() >> 1) + 1;
-		L0530_i_Attack += _vm->getRandomNumber(L0530_i_Attack) + 1;
+	Group *group = nullptr;
+	CreatureInfo *creatureInfo = nullptr;
+
+	uint16 creatureType = 0;
+	if (groupThing != Thing::_endOfList) {
+		group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+		creatureType = group->_type;
+		creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
 	}
 
+	Thing explosionThing = Thing(Thing::_firstExplosion.toUint16() + explosion->getType());
+	int16 attack;
+	if (explosionThing == Thing::_explPoisonCloud)
+		attack = MAX(1, MIN(explosion->getAttack() >> 5, 4) + _vm->getRandomNumber(2)); /* Value between 1 and 5 */
+	else {
+		attack = (explosion->getAttack() >> 1) + 1;
+		attack += _vm->getRandomNumber(attack) + 1;
+	}
 
-	switch (L0536_T_ExplosionThing.toUint16()) {
+	switch (explosionThing.toUint16()) {
 	case 0xFF82:
-		if (!(L0530_i_Attack >>= 1))
+		if (!(attack >>= 1))
 			break;
 	case 0xFF80:
-		if (AL0531_i_SquareType == k4_DoorElemType) {
-			_vm->_groupMan->groupIsDoorDestoryedByAttack(L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true, 0);
-		}
+		if (curSquareType == k4_DoorElemType)
+			_vm->_groupMan->groupIsDoorDestoryedByAttack(mapX, mapY, attack, true, 0);
+
 		break;
 	case 0xFF83:
-		if ((L0535_T_GroupThing != Thing::_endOfList) && getFlag(L0534_ps_CreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
-			if ((AL0537_ui_CreatureType == k19_CreatureTypeMaterializerZytaz) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) { /* ASSEMBLY_COMPILATION_DIFFERENCE jmp */
-				L0530_i_Attack -= (AL0537_ui_NonMaterialAdditionalAttack = L0530_i_Attack >> 3);
-				AL0537_ui_NonMaterialAdditionalAttack <<= 1;
-				AL0537_ui_NonMaterialAdditionalAttack++;
-				AL0531_i_CreatureCount = L0533_ps_Group->getCount();
+		if ((groupThing != Thing::_endOfList) && getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if ((creatureType == k19_CreatureTypeMaterializerZytaz) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) {
+				int16 nonMaterialAdditionalAttack = attack >> 3;
+				attack -= nonMaterialAdditionalAttack;
+				nonMaterialAdditionalAttack <<= 1;
+				nonMaterialAdditionalAttack++;
+				int16 creatureCount = group->getCount();
 				do {
-					if (getFlag(_vm->_groupMan->_activeGroups[L0533_ps_Group->getActiveGroupIndex()]._aspect[AL0531_i_CreatureCount], k0x0080_MaskActiveGroupIsAttacking)) { /* Materializer / Zytaz can only be damaged while they are attacking */
-						_vm->_groupMan->groupGetDamageCreatureOutcome(L0533_ps_Group, AL0531_i_CreatureCount, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack + _vm->getRandomNumber(AL0537_ui_NonMaterialAdditionalAttack) + _vm->getRandomNumber(4), true);
-					}
-				} while (--AL0531_i_CreatureCount >= 0);
-			} else {
-				_vm->_groupMan->getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true);
-			}
+					if (getFlag(_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._aspect[creatureCount], k0x0080_MaskActiveGroupIsAttacking)) /* Materializer / Zytaz can only be damaged while they are attacking */
+						_vm->_groupMan->groupGetDamageCreatureOutcome(group, creatureCount, mapX, mapY, attack + _vm->getRandomNumber(nonMaterialAdditionalAttack) + _vm->getRandomNumber(4), true);
+				} while (--creatureCount >= 0);
+			} else
+				_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true);
 		}
 		break;
 	case 0xFFE4:
-		L0532_ps_Explosion->setType(L0532_ps_Explosion->getType() + 1);
-		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, L0528_ui_MapX, L0529_ui_MapY, k1_soundModePlayIfPrioritized);
+		explosion->setType(explosion->getType() + 1);
+		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, mapX, mapY, k1_soundModePlayIfPrioritized);
 		goto T0220026;
 	case 0xFFA8:
-		if (L0532_ps_Explosion->getAttack() > 55) {
-			L0532_ps_Explosion->setAttack(L0532_ps_Explosion->getAttack() - 40);
+		if (explosion->getAttack() > 55) {
+			explosion->setAttack(explosion->getAttack() - 40);
 			goto T0220026;
 		}
 		break;
 	case 0xFF87:
-		if (L0538_B_ExplosionOnPartySquare) {
-			_vm->_championMan->getDamagedChampionCount(L0530_i_Attack, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
-		} else {
-			if ((L0535_T_GroupThing != Thing::_endOfList) && (L0530_i_Attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(AL0537_ui_CreatureType, L0530_i_Attack)) && (_vm->_groupMan->getDamageAllCreaturesOutcome(L0533_ps_Group, L0528_ui_MapX, L0529_ui_MapY, L0530_i_Attack, true) != k2_outcomeKilledAllCreaturesInGroup) && (L0530_i_Attack > 2)) {
-				_vm->_groupMan->processEvents29to41(L0528_ui_MapX, L0529_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
-			}
+		if (explosionOnPartySquare)
+			_vm->_championMan->getDamagedChampionCount(attack, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
+		else if ((groupThing != Thing::_endOfList)
+			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
+			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != k2_outcomeKilledAllCreaturesInGroup)
+			&& (attack > 2)) {
+			_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 		}
-		if (L0532_ps_Explosion->getAttack() >= 6) {
-			L0532_ps_Explosion->setAttack(L0532_ps_Explosion->getAttack() - 3);
+		if (explosion->getAttack() >= 6) {
+			explosion->setAttack(explosion->getAttack() - 3);
 T0220026:
-			L0539_s_Event = *event;
-			L0539_s_Event._mapTime++;
-			_vm->_timeline->addEventGetEventIndex(&L0539_s_Event);
+			TimelineEvent newEvent;
+			newEvent = *event;
+			newEvent._mapTime++;
+			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			return;
 		}
 	}
-	_vm->_dungeonMan->unlinkThingFromList(Thing(event->_C._slot), Thing(0), L0528_ui_MapX, L0529_ui_MapY);
-	L0532_ps_Explosion->setNextThing(Thing::_none);
+	_vm->_dungeonMan->unlinkThingFromList(Thing(event->_C._slot), Thing(0), mapX, mapY);
+	explosion->setNextThing(Thing::_none);
 }
 }
