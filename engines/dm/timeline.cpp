@@ -172,203 +172,192 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 	_timeline[timelineIndex] = eventIndex;
 }
 
-bool Timeline::isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
-	bool L0578_B_Simultaneous;
+bool Timeline::isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB) {
+	bool simultaneousFl = (filterTime(eventA->_mapTime) == filterTime(eventB->_mapTime));
 
 	return (filterTime(eventA->_mapTime) < filterTime(eventB->_mapTime)) ||
-		((L0578_B_Simultaneous = (filterTime(eventA->_mapTime) == filterTime(eventB->_mapTime))) && (eventA->getTypePriority() > eventB->getTypePriority())) ||
-		(L0578_B_Simultaneous && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
+		(simultaneousFl && (eventA->getTypePriority() > eventB->getTypePriority())) ||
+		(simultaneousFl && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
 }
 
 uint16 Timeline::getIndex(uint16 eventIndex) {
-	uint16 L0579_ui_TimelineIndex;
-	uint16* L0580_pui_TimelineEntry;
+	uint16 timelineIndex;
+	uint16 *timelineEntry = _timeline;
 
-
-	for (L0579_ui_TimelineIndex = 0, L0580_pui_TimelineEntry = _timeline; L0579_ui_TimelineIndex < _eventMaxCount; L0579_ui_TimelineIndex++) {
-		if (*L0580_pui_TimelineEntry++ == eventIndex)
+	for (timelineIndex = 0; timelineIndex < _eventMaxCount; timelineIndex++) {
+		if (*timelineEntry++ == eventIndex)
 			break;
 	}
-	if (L0579_ui_TimelineIndex >= _eventMaxCount) { /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
-		L0579_ui_TimelineIndex = 0; /* BUG0_01 Coding error without consequence. Wrong return value. If the specified event index is not found in the timeline the function returns 0 which is the same value that is returned if the event index is found in the first timeline entry. No consequence because this code is never executed */
-	}
-	return L0579_ui_TimelineIndex;
+
+	if (timelineIndex >= _eventMaxCount) /* BUG0_00 Useless code. The function is always called with event indices that are in the timeline */
+		timelineIndex = 0; /* BUG0_01 Coding error without consequence. Wrong return value. If the specified event index is not found in the timeline the function returns 0 which is the same value that is returned if the event index is found in the first timeline entry. No consequence because this code is never executed */
+
+	return timelineIndex;
 }
 
-uint16 Timeline::addEventGetEventIndex(TimelineEvent* event) {
-	uint16 L0588_ui_EventIndex;
-	uint16 L0590_ui_NewEventIndex;
-	TimelineEvent* L0591_ps_Event;
-
-
+uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 	if (_eventCount == _eventMaxCount)
 		error("Too many events");
 
 	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
-		for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
-			if ((L0591_ps_Event->_type >= k5_TMEventTypeCorridor) && (L0591_ps_Event->_type <= k10_TMEventTypeDoor)) {
-				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY()) && ((L0591_ps_Event->_type != k6_TMEventTypeWall) || (L0591_ps_Event->_C.A._cell == event->_C.A._cell))) {
-					L0591_ps_Event->_C.A._effect = event->_C.A._effect;
-					return L0588_ui_EventIndex;
+		TimelineEvent *curEvent = _events;
+		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
+			if ((curEvent->_type >= k5_TMEventTypeCorridor) && (curEvent->_type <= k10_TMEventTypeDoor)) {
+				if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY()) && ((curEvent->_type != k6_TMEventTypeWall) || (curEvent->_C.A._cell == event->_C.A._cell))) {
+					curEvent->_C.A._effect = event->_C.A._effect;
+					return eventIndex;
 				}
 				continue;
-			} else {
-				if ((L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) && (event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY())) {
-					if (event->_C.A._effect == k2_SensorEffToggle) {
-						event->_C.A._effect = 1 - L0591_ps_Event->_C.A._effect;
-					}
-					deleteEvent(L0588_ui_EventIndex);
-					break;
+			} else if ((curEvent->_type == k1_TMEventTypeDoorAnimation) && (event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
+				if (event->_C.A._effect == k2_SensorEffToggle)
+					event->_C.A._effect = 1 - curEvent->_C.A._effect;
+
+				deleteEvent(eventIndex);
+				break;
+			}
+		}
+	} else if (event->_type == k1_TMEventTypeDoorAnimation) {
+		TimelineEvent *curEvent = _events;
+		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
+			if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
+				if (curEvent->_type == k10_TMEventTypeDoor) {
+					if (curEvent->_C.A._effect == k2_SensorEffToggle)
+						curEvent->_C.A._effect = 1 - event->_C.A._effect;
+
+					return eventIndex;
+				}
+				if (curEvent->_type == k1_TMEventTypeDoorAnimation) {
+					curEvent->_C.A._effect = event->_C.A._effect;
+					return eventIndex;
 				}
 			}
 		}
-	} else {
-		if (event->_type == k1_TMEventTypeDoorAnimation) {
-			for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
-				if ((event->_mapTime == L0591_ps_Event->_mapTime) && (event->getMapXY() == L0591_ps_Event->getMapXY())) {
-					if (L0591_ps_Event->_type == k10_TMEventTypeDoor) {
-						if (L0591_ps_Event->_C.A._effect == k2_SensorEffToggle) {
-							L0591_ps_Event->_C.A._effect = 1 - event->_C.A._effect;
-						}
-						return L0588_ui_EventIndex;
-					}
-					if (L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) {
-						L0591_ps_Event->_C.A._effect = event->_C.A._effect;
-						return L0588_ui_EventIndex;
-					}
-				}
-			}
-		} else {
-			if (event->_type == k2_TMEventTypeDoorDestruction) {
-				for (L0588_ui_EventIndex = 0, L0591_ps_Event = _events; L0588_ui_EventIndex < _eventMaxCount; L0588_ui_EventIndex++, L0591_ps_Event++) {
-					if ((event->getMapXY() == L0591_ps_Event->getMapXY()) && (getMap(event->_mapTime) == getMap(L0591_ps_Event->_mapTime))) {
-						if ((L0591_ps_Event->_type == k1_TMEventTypeDoorAnimation) || (L0591_ps_Event->_type == k10_TMEventTypeDoor)) {
-							deleteEvent(L0588_ui_EventIndex);
-						}
-					}
-				}
+	} else if (event->_type == k2_TMEventTypeDoorDestruction) {
+		TimelineEvent *curEvent = _events;
+		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
+			if ((event->getMapXY() == curEvent->getMapXY()) && (getMap(event->_mapTime) == getMap(curEvent->_mapTime))) {
+				if ((curEvent->_type == k1_TMEventTypeDoorAnimation) || (curEvent->_type == k10_TMEventTypeDoor))
+					deleteEvent(eventIndex);
 			}
 		}
 	}
-	_events[L0590_ui_NewEventIndex = _firstUnusedEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
+
+	uint16 newEventIndex = _firstUnusedEventIndex;
+	_events[newEventIndex] = *event; /* Copy the event data (Megamax C can assign structures) */
 	do {
 		if (_firstUnusedEventIndex == _eventMaxCount)
 			break;
 		_firstUnusedEventIndex++;
 	} while ((_events[_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
-	_timeline[_eventCount] = L0590_ui_NewEventIndex;
+	_timeline[_eventCount] = newEventIndex;
 	fixChronology(_eventCount++);
-	return L0590_ui_NewEventIndex;
+	return newEventIndex;
 }
 
 void Timeline::processTimeline() {
-	uint16 L0680_ui_Multiple;
-#define AL0680_ui_EventType     L0680_ui_Multiple
-#define AL0680_ui_ChampionIndex L0680_ui_Multiple
-	TimelineEvent* L0681_ps_Event;
-	TimelineEvent L0682_s_Event;
-
-
 	while (isFirstEventExpiered()) {
-		L0681_ps_Event = &L0682_s_Event;
-		extractFirstEvent(L0681_ps_Event);
-		_vm->_dungeonMan->setCurrentMap(getMap(L0682_s_Event._mapTime));
-		AL0680_ui_EventType = L0682_s_Event._type;
-		if ((AL0680_ui_EventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (AL0680_ui_EventType < (k41_TMEventTypeUpdateBehaviour_3 + 1))) {
-			_vm->_groupMan->processEvents29to41(L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, AL0680_ui_EventType, L0682_s_Event._C._ticks);
-		} else {
-			switch (AL0680_ui_EventType) {
+		TimelineEvent newEvent;
+		TimelineEvent *curEvent = &newEvent;
+		extractFirstEvent(curEvent);
+		_vm->_dungeonMan->setCurrentMap(getMap(newEvent._mapTime));
+		uint16 curEventType = newEvent._type;
+		if ((curEventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (k41_TMEventTypeUpdateBehaviour_3 + 1)))
+			_vm->_groupMan->processEvents29to41(newEvent._B._location._mapX, newEvent._B._location._mapY, curEventType, newEvent._C._ticks);
+		else {
+			switch (curEventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
 			case k49_TMEventTypeMoveProjectile:
-				_vm->_projexpl->processEvents48To49(L0681_ps_Event);
+				_vm->_projexpl->processEvents48To49(curEvent);
 				break;
 			case k1_TMEventTypeDoorAnimation:
-				processEventDoorAnimation(L0681_ps_Event);
+				processEventDoorAnimation(curEvent);
 				break;
 			case k25_TMEventTypeExplosion:
-				_vm->_projexpl->processEvent25(L0681_ps_Event);
+				_vm->_projexpl->processEvent25(curEvent);
 				break;
 			case k7_TMEventTypeFakeWall:
-				processEventSquareFakewall(L0681_ps_Event);
+				processEventSquareFakewall(curEvent);
 				break;
 			case k2_TMEventTypeDoorDestruction:
-				processEventDoorDestruction(L0681_ps_Event);
+				processEventDoorDestruction(curEvent);
 				break;
 			case k10_TMEventTypeDoor:
-				processEventSquareDoor(L0681_ps_Event);
+				processEventSquareDoor(curEvent);
 				break;
 			case k9_TMEventTypePit:
-				processEventSquarePit(L0681_ps_Event);
+				processEventSquarePit(curEvent);
 				break;
 			case k8_TMEventTypeTeleporter:
-				processEventSquareTeleporter(L0681_ps_Event);
+				processEventSquareTeleporter(curEvent);
 				break;
 			case k6_TMEventTypeWall:
-				processEventSquareWall(L0681_ps_Event);
+				processEventSquareWall(curEvent);
 				break;
 			case k5_TMEventTypeCorridor:
-				processEventSquareCorridor(L0681_ps_Event);
+				processEventSquareCorridor(curEvent);
 				break;
 			case k60_TMEventTypeMoveGroupSilent:
 			case k61_TMEventTypeMoveGroupAudible:
-				processEventsMoveGroup(L0681_ps_Event);
+				processEventsMoveGroup(curEvent);
 				break;
 			case k65_TMEventTypeEnableGroupGenerator:
-				procesEventEnableGroupGenerator(L0681_ps_Event);
+				procesEventEnableGroupGenerator(curEvent);
 				break;
 			case k20_TMEventTypePlaySound:
-				_vm->_sound->requestPlay(L0682_s_Event._C._soundIndex, L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(newEvent._C._soundIndex, newEvent._B._location._mapX, newEvent._B._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->unlinkThingFromList(Thing(L0682_s_Event._C._slot), Thing(0), L0682_s_Event._B._location._mapX, L0682_s_Event._B._location._mapY);
-					L0681_ps_Event = (TimelineEvent*)_vm->_dungeonMan->getThingData(Thing(L0682_s_Event._C._slot));
-					((Explosion*)L0681_ps_Event)->setNextThing(Thing::_none);
+					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._C._slot), Thing(0), newEvent._B._location._mapX, newEvent._B._location._mapY);
+					curEvent = (TimelineEvent*)_vm->_dungeonMan->getThingData(Thing(newEvent._C._slot));
+					((Explosion*)curEvent)->setNextThing(Thing::_none);
 				}
 				break;
 			case k11_TMEventTypeEnableChampionAction:
-				processEventEnableChampionAction(L0682_s_Event._priority);
-				if (L0682_s_Event._B._slotOrdinal) {
-					processEventMoveWeaponFromQuiverToSlot(L0682_s_Event._priority, _vm->ordinalToIndex(L0682_s_Event._B._slotOrdinal));
+				processEventEnableChampionAction(newEvent._priority);
+				if (newEvent._B._slotOrdinal) {
+					processEventMoveWeaponFromQuiverToSlot(newEvent._priority, _vm->ordinalToIndex(newEvent._B._slotOrdinal));
 				}
 				goto T0261048;
 			case k12_TMEventTypeHideDamageReceived:
-				processEventHideDamageReceived(L0682_s_Event._priority);
+				processEventHideDamageReceived(newEvent._priority);
 				break;
 			case k70_TMEventTypeLight:
 				_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
-				processEventLight(L0681_ps_Event);
+				processEventLight(curEvent);
 				_vm->_inventoryMan->setDungeonViewPalette();
 				break;
 			case k71_TMEventTypeInvisibility:
 				_vm->_championMan->_party._event71Count_Invisibility--;
 				break;
 			case k72_TMEventTypeChampionShield:
-				_vm->_championMan->_champions[L0682_s_Event._priority]._shieldDefense -= L0682_s_Event._B._defense;
-				setFlag(_vm->_championMan->_champions[L0682_s_Event._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
+				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._B._defense;
+				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
 T0261048:
-				_vm->_championMan->drawChampionState((ChampionIndex)L0682_s_Event._priority);
+				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
 			case k73_TMEventTypeThievesEye:
 				_vm->_championMan->_party._event73Count_ThievesEye--;
 				break;
 			case k74_TMEventTypePartyShield:
-				_vm->_championMan->_party._shieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._shieldDefense -= newEvent._B._defense;
 T0261053:
 				refreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
-				_vm->_championMan->_party._spellShieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._spellShieldDefense -= newEvent._B._defense;
 				goto T0261053;
 			case k78_TMEventTypeFireShield:
-				_vm->_championMan->_party._fireShieldDefense -= L0682_s_Event._B._defense;
+				_vm->_championMan->_party._fireShieldDefense -= newEvent._B._defense;
 				goto T0261053;
-			case k75_TMEventTypePoisonChampion:
-				_vm->_championMan->_champions[AL0680_ui_ChampionIndex = L0682_s_Event._priority]._poisonEventCount--;
-				_vm->_championMan->championPoison(AL0680_ui_ChampionIndex, L0682_s_Event._B._attack);
+			case k75_TMEventTypePoisonChampion: {
+				uint16 championIndex = newEvent._priority;
+				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
+				_vm->_championMan->championPoison(championIndex, newEvent._B._attack);
+				}
 				break;
 			case k13_TMEventTypeViAltarRebirth:
-				processEventViAltarRebirth(L0681_ps_Event);
+				processEventViAltarRebirth(curEvent);
 				break;
 			case k79_TMEventTypeFootprints:
 				_vm->_championMan->_party._event79Count_Footprints--;
@@ -383,10 +372,10 @@ bool Timeline::isFirstEventExpiered() {
 }
 
 void Timeline::extractFirstEvent(TimelineEvent* event) {
-	uint16 L0592_ui_EventIndex;
+	uint16 eventIndex = _timeline[0];
 
-	*event = _events[L0592_ui_EventIndex = _timeline[0]];
-	deleteEvent(L0592_ui_EventIndex);
+	*event = _events[eventIndex];
+	deleteEvent(eventIndex);
 }
 
 void Timeline::processEventDoorAnimation(TimelineEvent* event) {
