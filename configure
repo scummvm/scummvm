@@ -1553,7 +1553,7 @@ psp2)
 	# The prefix is always the same on PSP2 so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
 	# needed when packaging the app with a user-specific app ID.
-	test "x$prefix" = xNONE && prefix=ux0:data/scummvm
+	test "x$prefix" = xNONE && prefix=app0:
 	# PSP2 apps are installed into app-specific directories. The
 	# default directory structure of ScummVM makes no sense here so we
 	# hardcode PSP2 specific directories here.

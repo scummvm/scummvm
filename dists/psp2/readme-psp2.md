@@ -7,7 +7,6 @@ The page http://wiki.scummvm.org/index.php/Where_to_get_the_games references som
 Installing
 ==========
 From a computer, download the installable package. Unzip and copy the .vpk file it to the PlayStation Vita and install it.
-Copy the "scummvm" folder to "ux0:/data/" folder.
 
 Configuring and playing games
 =============================
@@ -15,7 +14,7 @@ The user manual describes how to add games to ScummVM and launch them : http://w
 
 PlayStation Vita Specifics
 ==========================
-Saves are wrote in the ux0:app/VSCU00001/saves folder.
+Saves are wrote in the ux0:/data/scummvm/saves folder.
 
 Joypad button mapping
 =====================
@@ -25,8 +24,8 @@ Joypad button mapping
 - Triangle   => Game menu (F5)
 - Square     => Escape
 - Start      => ScummVM's in global game menu
-- Select     => Toggle virtual keyboard (not working)
-- L1         => AGI predictive input dialog (not working)
+- Select     => Toggle virtual keyboard
+- L1         => AGI predictive input dialog
 
 Disclaimer
 ==========
@@ -45,7 +44,7 @@ The dependencies needed to build it are :
 
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :
 
-./configure --host=psp2 && make psp2pkg
+./configure --host=psp2 && make psp2vpk
 
 Thanks
 ======

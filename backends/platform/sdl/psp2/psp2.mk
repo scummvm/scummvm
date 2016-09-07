@@ -1,27 +1,25 @@
 DATE := $(shell date +%y-%m-%d)
 
-psp2pkg: $(EXECUTABLE)
+psp2vpk: $(EXECUTABLE)
 	$(STRIP) -g $(EXECUTABLE)
-	mkdir -p psp2pkg/scummvm/
+	rm -rf psp2pkg
+	rm -f $(EXECUTABLE)-$(DATE).vpk
+	mkdir -p psp2pkg/sce_sys/
+	mkdir -p psp2pkg/data/
+	mkdir -p psp2pkg/doc/
 	vita-elf-create $(EXECUTABLE) $(EXECUTABLE).velf
-	vita-make-fself -s $(EXECUTABLE).velf eboot.bin
-	vita-mksfoex -s TITLE_ID=VSCU00001 "$(EXECUTABLE)" param.sfo
-	vita-pack-vpk -s param.sfo -b eboot.bin \
-		--add $(srcdir)/dists/psp2/icon0.png=sce_sys/icon0.png \
-		--add $(srcdir)/dists/psp2/pic0.png=sce_sys/pic0.png \
-		psp2pkg/$(EXECUTABLE).vpk
-	mkdir -p psp2pkg/scummvm/data/
-	mkdir -p psp2pkg/scummvm/doc/
-	mkdir -p psp2pkg/scummvm/saves/
-	cp $(DIST_FILES_THEMES) psp2pkg/scummvm/data/
+	vita-make-fself -s $(EXECUTABLE).velf psp2pkg/eboot.bin
+	vita-mksfoex -s TITLE_ID=VSCU00001 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
+	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/icon0.png
+	cp $(srcdir)/dists/psp2/pic0.png psp2pkg/sce_sys/pic0.png
+	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip psp2pkg/data/
+	cp $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip psp2pkg/data/
+	cp $(DIST_FILES_THEMES) psp2pkg/data/
 ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) psp2pkg/scummvm/data/
+	cp $(DIST_FILES_ENGINEDATA) psp2pkg/data/
 endif
-	cp $(DIST_FILES_DOCS) psp2pkg/scummvm/doc/
-	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/scummvm/doc/
-	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/
-	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip psp2pkg/scummvm/data/
-	cp $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip psp2pkg/scummvm/data/
-	cd psp2pkg && 7z a -tzip ../$(EXECUTABLE)-psp2_$(DATE).zip -r . && cd ..
+	cp $(DIST_FILES_DOCS) psp2pkg/doc/
+	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/doc/
+	cd psp2pkg && zip -r ../$(EXECUTABLE)-$(DATE).vpk . && cd ..
 
-.PHONY: psp2pkg
+.PHONY: psp2vpk

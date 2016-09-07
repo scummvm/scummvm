@@ -51,6 +51,9 @@ OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
 
 void OSystem_PSP2::init() {
 	// Initialze File System Factory
+	sceIoMkdir("ux0:data", 0755);
+	sceIoMkdir("ux0:data/scummvm", 0755);
+	sceIoMkdir("ux0:data/scummvm/saves", 0755);
 	_fsFactory = new PSP2FilesystemFactory();
 
 	// Invoke parent implementation of this method
@@ -64,7 +67,7 @@ void OSystem_PSP2::initBackend() {
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
-		_savefileManager = new DefaultSaveFileManager(PREFIX "/saves");
+		_savefileManager = new DefaultSaveFileManager("ux0:data/scummvm/saves");
 
 	// Event source
 	if (_eventSource == 0)
@@ -75,10 +78,10 @@ void OSystem_PSP2::initBackend() {
 }
 
 Common::String OSystem_PSP2::getDefaultConfigFileName() {
-	return PREFIX "/" + _baseConfigName;
+	return "ux0:data/scummvm/" + _baseConfigName;
 }
 
 Common::WriteStream *OSystem_PSP2::createLogFile() {
-	Common::FSNode file(PREFIX "/scummvm.log");
+	Common::FSNode file("ux0:data/scummvm/scummvm.log");
 	return file.createWriteStream();
 }
