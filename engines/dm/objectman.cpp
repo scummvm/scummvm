@@ -92,8 +92,8 @@ void ObjectMan::initConstants() {
 	_slotBoxes[45] = SlotBox(196, 105, 0); /* Chest 8 */
 
 	for (int i = 0; i < 7; i++) {
-		iconGraphicHeight[i] = iconGraphicHeight[i];
-		iconGraphicFirstIndex[i] = iconGraphicFirstIndex[i];
+		_iconGraphicHeight[i] = iconGraphicHeight[i];
+		_iconGraphicFirstIndex[i] = iconGraphicFirstIndex[i];
 	}
 }
 
@@ -187,15 +187,15 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	uint16 counter;
 	for (counter = 0; counter < 7; counter++) {
-		if (iconGraphicFirstIndex[counter] > iconIndex)
+		if (_iconGraphicFirstIndex[counter] > iconIndex)
 			break;
 	}
 	--counter;
 	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + counter);
-	iconIndex -= iconGraphicFirstIndex[counter];
+	iconIndex -= _iconGraphicFirstIndex[counter];
 	_vm->_displayMan->_useByteBoxCoordinates = true;
 	Box blitBox(0, 15, 0, 15);
-	_vm->_displayMan->blitToBitmap(iconBitmap, destBitmap, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, iconGraphicHeight[counter], 16);
+	_vm->_displayMan->blitToBitmap(iconBitmap, destBitmap, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, _iconGraphicHeight[counter], 16);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
@@ -212,12 +212,12 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 
 	uint16 iconGraphicIndex;
 	for (iconGraphicIndex = 0; iconGraphicIndex < 7; iconGraphicIndex++) {
-		if (iconGraphicFirstIndex[iconGraphicIndex] > iconIndex)
+		if (_iconGraphicFirstIndex[iconGraphicIndex] > iconIndex)
 			break;
 	}
 	iconGraphicIndex--;
 	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
-	iconIndex -= iconGraphicFirstIndex[iconGraphicIndex];
+	iconIndex -= _iconGraphicFirstIndex[iconGraphicIndex];
 	int16 byteWidth;
 	byte* blitDestination;
 	int16 destHeight;
@@ -231,7 +231,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		destHeight = 200;
 	}
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_vm->_displayMan->blitToBitmap(iconBitmap, blitDestination, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, byteWidth, kM1_ColorNoTransparency, iconGraphicHeight[iconGraphicIndex], destHeight);
+	_vm->_displayMan->blitToBitmap(iconBitmap, blitDestination, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, byteWidth, kM1_ColorNoTransparency, _iconGraphicHeight[iconGraphicIndex], destHeight);
 }
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {

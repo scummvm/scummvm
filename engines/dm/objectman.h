@@ -71,8 +71,8 @@ public:
 	void clearLeaderObjectName(); // @ F0035_OBJECT_ClearLeaderHandObjectName
 	void drawIconToScreen(int16 iconIndex, int16 posX, int16 posY); // @ F0037_OBJECT_DrawIconToScreen
 
-	int16 iconGraphicHeight[7]; // @ K0077_ai_IconGraphicHeight
-	int16 iconGraphicFirstIndex[7]; // G0026_ai_Graphic562_IconGraphicFirstIconIndex
+	int16 _iconGraphicHeight[7]; // @ K0077_ai_IconGraphicHeight
+	int16 _iconGraphicFirstIndex[7]; // G0026_ai_Graphic562_IconGraphicFirstIconIndex
 
 	void initConstants();
 };
