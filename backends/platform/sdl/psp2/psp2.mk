@@ -18,9 +18,10 @@ ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) psp2pkg/scummvm/data/
 endif
 	cp $(DIST_FILES_DOCS) psp2pkg/scummvm/doc/
-	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/ psp2pkg/scummvm/doc/
+	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/scummvm/doc/
+	cp $(srcdir)/dists/psp2/readme-psp2.md psp2pkg/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip psp2pkg/scummvm/data/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip psp2pkg/scummvm/data/
-	cd psp2pkg && 7z a -tzip ../$(EXECUTABLE)_$(DATE).zip -r . && cd ..
+	cd psp2pkg && 7z a -tzip ../$(EXECUTABLE)-psp2_$(DATE).zip -r . && cd ..
 
 .PHONY: psp2pkg
