@@ -37,7 +37,7 @@ namespace DM {
 class SoundData {
 public:
 	uint32 _byteCount;
-	byte* _firstSample;
+	byte *_firstSample;
 	uint32 _sampleCount;
 	SoundData() : _byteCount(0), _firstSample(nullptr), _sampleCount(0) {}
 }; // @ SOUND_DATA
@@ -67,7 +67,7 @@ class SoundMan {
 	DMEngine *_vm;
 
 protected:
-	SoundMan(DMEngine* vm);
+	SoundMan(DMEngine *vm);
 public:
 	virtual ~SoundMan();
 
@@ -89,7 +89,7 @@ public:
 class SoundMan_Atari: public SoundMan {
 	friend class SoundMan;
 
-	SoundMan_Atari(DMEngine* vm): SoundMan(vm) {};
+	SoundMan_Atari(DMEngine *vm): SoundMan(vm) {};
 public:
 	void loadSounds() override {} // @ F0503_SOUND_LoadAll
 	void requestPlay(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) override {} // @ F0064_SOUND_RequestPlay_CPSD

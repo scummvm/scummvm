@@ -37,6 +37,9 @@ struct TextScroller {
 	// Placeholder, empty for now
 }; // @ Text_Scroller
 
+#define k5_LetterWidth 5
+#define k6_LetterHeight 6
+
 class TextMan {
 	DMEngine *_vm;
 	int16 _messageAreaCursorColumn; // @ G0359_i_MessageAreaCursorColumn

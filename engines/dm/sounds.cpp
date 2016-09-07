@@ -36,10 +36,9 @@
 #include "dm/dungeonman.h"
 #include "dm/sounds.h"
 
-
 namespace DM {
 
-SoundMan* SoundMan::getSoundMan(DMEngine* vm, const DMADGameDescription* gameVersion) {
+SoundMan *SoundMan::getSoundMan(DMEngine *vm, const DMADGameDescription *gameVersion) {
 	switch (gameVersion->_desc.platform) {
 	default:
 		warning("Unknown platform, using default Amiga SoundMan");
@@ -92,7 +91,7 @@ void SoundMan::initConstants() {
 		_sounds[i] = sounds[i];
 }
 
-SoundMan::SoundMan(DMEngine* vm) : _vm(vm) {
+SoundMan::SoundMan(DMEngine *vm) : _vm(vm) {
 	initConstants();
 }
 
@@ -132,8 +131,8 @@ void SoundMan::playPendingSound() {
 	}
 }
 
-bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, uint8* rightVolume) {
-	static byte K0030_aauc_DistanceToSoundVolume[25][25] = {
+bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume) {
+	static byte distanceToSoundVolume[25][25] = {
 		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4,  5,  5,  5,  5,  5,  5,  5, 5, 4, 4, 4, 4, 4},
 		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 5,  6,  6,  6,  6,  5,  5,  5, 5, 5, 5, 4, 4, 4},
 		{1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5,  6,  6,  6,  6,  6,  6,  5, 5, 5, 5, 5, 4, 4},
@@ -160,72 +159,68 @@ bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8* leftVolume, uint8* 
 		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3,  4,  4,  4,  4,  4,  4,  4, 4, 3, 3, 3, 3, 3},
 		{1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3,  4,  4,  4,  4,  4,  4,  4, 3, 3, 3, 3, 3, 3}};
 
-	int16 L1678_i_RightVolumeColumnIndex = 0;
-	int16 L1679_i_LineIndex = 0;
-	int16 L1680_i_LeftVolumeColumnIndex = 0;
-
+	int16 lineIndex = 0;
+	int16 rightVolumeColumnIndex = 0;
 
 	switch (_vm->_dungeonMan->_partyDir) {
 	case kDirNorth:
-		L1678_i_RightVolumeColumnIndex = mapX - _vm->_dungeonMan->_partyMapX;
-		L1679_i_LineIndex = mapY - _vm->_dungeonMan->_partyMapY;
+		rightVolumeColumnIndex = mapX - _vm->_dungeonMan->_partyMapX;
+		lineIndex = mapY - _vm->_dungeonMan->_partyMapY;
 		break;
 	case kDirEast:
-		L1678_i_RightVolumeColumnIndex = mapY - _vm->_dungeonMan->_partyMapY;
-		L1679_i_LineIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
+		rightVolumeColumnIndex = mapY - _vm->_dungeonMan->_partyMapY;
+		lineIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
 		break;
 	case kDirSouth:
-		L1678_i_RightVolumeColumnIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
-		L1679_i_LineIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
+		rightVolumeColumnIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
+		lineIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
 		break;
 	case kDirWest:
-		L1678_i_RightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
-		L1679_i_LineIndex = mapX - _vm->_dungeonMan->_partyMapX;
+		rightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
+		lineIndex = mapX - _vm->_dungeonMan->_partyMapX;
 		break;
 	}
-	if ((L1678_i_RightVolumeColumnIndex < -12) || (L1678_i_RightVolumeColumnIndex > 12)) { /* Sound is not audible if source is more than 12 squares away from the party */
+
+	if ((rightVolumeColumnIndex < -12) || (rightVolumeColumnIndex > 12)) /* Sound is not audible if source is more than 12 squares away from the party */
 		return false;
-	}
-	if ((L1679_i_LineIndex < -12) || (L1679_i_LineIndex > 12)) { /* Sound is not audible if source is more than 12 squares away from the party */
+
+	if ((lineIndex < -12) || (lineIndex > 12)) /* Sound is not audible if source is more than 12 squares away from the party */
 		return false;
-	}
-	L1680_i_LeftVolumeColumnIndex = -L1678_i_RightVolumeColumnIndex + 12;
-	L1678_i_RightVolumeColumnIndex += 12;
-	L1679_i_LineIndex += 12;
-	*rightVolume = K0030_aauc_DistanceToSoundVolume[L1679_i_LineIndex][L1678_i_RightVolumeColumnIndex];
-	*leftVolume = K0030_aauc_DistanceToSoundVolume[L1679_i_LineIndex][L1680_i_LeftVolumeColumnIndex];
+
+	int16 leftVolumeColumnIndex = -rightVolumeColumnIndex + 12;
+	rightVolumeColumnIndex += 12;
+	lineIndex += 12;
+	*rightVolume = distanceToSoundVolume[lineIndex][rightVolumeColumnIndex];
+	*leftVolume = distanceToSoundVolume[lineIndex][leftVolumeColumnIndex];
 	return true;
 }
 
 void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mode) {
-	Sound* sound;
-	uint8 leftVolume, rightVolume;
-
 	if (mode && (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex))
 		return;
 
-	sound = &_sounds[soundIndex];
+	Sound *sound = &_sounds[soundIndex];
 	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
-		TimelineEvent event;
-		setMapAndTime(event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
-		event._type = k20_TMEventTypePlaySound;
-		event._priority = sound->_priority;
-		event._C._soundIndex = soundIndex;
-		event._B._location._mapX = mapX;
-		event._B._location._mapY = mapY;
-		_vm->_timeline->addEventGetEventIndex(&event);
+		TimelineEvent newEvent;
+		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
+		newEvent._type = k20_TMEventTypePlaySound;
+		newEvent._priority = sound->_priority;
+		newEvent._C._soundIndex = soundIndex;
+		newEvent._B._location._mapX = mapX;
+		newEvent._B._location._mapY = mapY;
+		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		return;
 	}
 
-	if (!soundGetVolume(mapX, mapY, &leftVolume, &rightVolume)) {
+	uint8 leftVolume, rightVolume;
+	if (!soundGetVolume(mapX, mapY, &leftVolume, &rightVolume))
 		return;
-	}
+
 	if (!mode) { /* Play the sound immediately */
 		play(soundIndex, sound->_period, leftVolume, rightVolume);
 		return;
 	}
 	_pendingSounds.push(PendingSound(leftVolume, rightVolume, soundIndex));
 }
-
 
 }
