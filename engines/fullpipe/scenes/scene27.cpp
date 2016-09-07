@@ -67,6 +67,7 @@ void scene27_initScene(Scene *sc) {
 	for (int i = 0; i < 4; i++) {
 		StaticANIObject *newbat = new StaticANIObject(g_vars->scene27_bat);
 
+		g_vars->scene27_balls.push_back(newbat);
 
 		sc->addStaticANIObject(newbat, 1);
 	}
