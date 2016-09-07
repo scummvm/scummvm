@@ -503,175 +503,134 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 }
 
 void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
-	uint16 L0644_ui_Multiple;
-#define AL0644_ui_ThingType  L0644_ui_Multiple
-#define AL0644_ui_EventIndex L0644_ui_Multiple
-	Thing L0645_T_Thing;
-	Projectile* L0646_ps_Projectile;
-	TimelineEvent* L0647_ps_Event;
-	Thing L0648_T_NextThing;
-	int16 L0649_i_ThingsToMoveCount;
-
-
-	if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
+	if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)
+	 && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 		_vm->_moveSens->getMoveResult(Thing::_party, mapX, mapY, mapX, mapY);
 		_vm->_championMan->drawChangedObjectIcons();
 	}
-	if ((L0645_T_Thing = _vm->_groupMan->groupGetThing(mapX, mapY)) != Thing::_endOfList) {
-		_vm->_moveSens->getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
+
+	Thing curThing = _vm->_groupMan->groupGetThing(mapX, mapY);
+	if (curThing != Thing::_endOfList)
+		_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
+
+	curThing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
+	Thing nextThing = curThing;
+	int16 thingsToMoveCount = 0;
+	while (curThing != Thing::_endOfList) {
+		if (curThing.getType() > k4_GroupThingType)
+			thingsToMoveCount++;
+
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
-	L0645_T_Thing = _vm->_dungeonMan->getSquareFirstObject(mapX, mapY);
-	L0648_T_NextThing = L0645_T_Thing;
-	L0649_i_ThingsToMoveCount = 0;
-	while (L0645_T_Thing != Thing::_endOfList) {
-		if (L0645_T_Thing.getType() > k4_GroupThingType) {
-			L0649_i_ThingsToMoveCount++;
-		}
-		L0645_T_Thing = _vm->_dungeonMan->getNextThing(L0645_T_Thing);
-	}
-	L0645_T_Thing = L0648_T_NextThing;
-	while ((L0645_T_Thing != Thing::_endOfList) && L0649_i_ThingsToMoveCount) {
-		L0649_i_ThingsToMoveCount--;
-		L0648_T_NextThing = _vm->_dungeonMan->getNextThing(L0645_T_Thing);
-		AL0644_ui_ThingType = L0645_T_Thing.getType();
-		if (AL0644_ui_ThingType > k4_GroupThingType) {
-			_vm->_moveSens->getMoveResult(L0645_T_Thing, mapX, mapY, mapX, mapY);
-		}
-		if (AL0644_ui_ThingType == k14_ProjectileThingType) {
-			L0646_ps_Projectile = (Projectile*)_vm->_dungeonMan->getThingData(L0645_T_Thing);
-			L0647_ps_Event = &_events[L0646_ps_Projectile->_eventIndex];
-			L0647_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
-			L0647_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
-			L0647_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
-			L0647_ps_Event->_B._slot = thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_moveResultCell).toUint16();
-			M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_moveResultMapIndex);
-		} else {
-			if (AL0644_ui_ThingType == k15_ExplosionThingType) {
-				for (AL0644_ui_EventIndex = 0, L0647_ps_Event = _events; AL0644_ui_EventIndex < _eventMaxCount; L0647_ps_Event++, AL0644_ui_EventIndex++) {
-					if ((L0647_ps_Event->_type == k25_TMEventTypeExplosion) && (L0647_ps_Event->_C._slot == L0645_T_Thing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
-						L0647_ps_Event->_B._location._mapX = _vm->_moveSens->_moveResultMapX;
-						L0647_ps_Event->_B._location._mapY = _vm->_moveSens->_moveResultMapY;
-						L0647_ps_Event->_C._slot = thingWithNewCell(L0645_T_Thing, _vm->_moveSens->_moveResultCell).toUint16();
-						M31_setMap(L0647_ps_Event->_mapTime, _vm->_moveSens->_moveResultMapIndex);
-					}
+	curThing = nextThing;
+	while ((curThing != Thing::_endOfList) && thingsToMoveCount) {
+		thingsToMoveCount--;
+		nextThing = _vm->_dungeonMan->getNextThing(curThing);
+		uint16 curThingType = curThing.getType();
+		if (curThingType > k4_GroupThingType)
+			_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
+
+		if (curThingType == k14_ProjectileThingType) {
+			Projectile *projectile = (Projectile*)_vm->_dungeonMan->getThingData(curThing);
+			TimelineEvent* newEvent;
+			newEvent = &_events[projectile->_eventIndex];
+			newEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
+			newEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
+			newEvent->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
+			newEvent->_B._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
+		} else if (curThingType == k15_ExplosionThingType) {
+			TimelineEvent *newEvent = _events;
+			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
+				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_C._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
+					newEvent->_B._location._mapX = _vm->_moveSens->_moveResultMapX;
+					newEvent->_B._location._mapY = _vm->_moveSens->_moveResultMapY;
+					newEvent->_C._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+					M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 				}
 			}
 		}
-		L0645_T_Thing = L0648_T_NextThing;
+		curThing = nextThing;
 	}
 }
 
-void Timeline::processEventSquareTeleporter(TimelineEvent* event) {
-	uint16 L0650_ui_MapX;
-	uint16 L0651_ui_MapY;
-	byte* L0652_puc_Square;
+void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
 
+	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
+	if (event->_C.A._effect == k2_SensorEffToggle)
+		event->_C.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
-	L0652_puc_Square = &_vm->_dungeonMan->_currMapData[L0650_ui_MapX = event->_B._location._mapX][L0651_ui_MapY = event->_B._location._mapY];
-	if (event->_C.A._effect == k2_SensorEffToggle) {
-		event->_C.A._effect = getFlag(*L0652_puc_Square, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
-	}
 	if (event->_C.A._effect == k0_SensorEffSet) {
-		setFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
-		moveTeleporterOrPitSquareThings(L0650_ui_MapX, L0651_ui_MapY);
-	} else {
-		clearFlag(*L0652_puc_Square, k0x0008_TeleporterOpen);
-	}
+		setFlag(*curSquare, k0x0008_TeleporterOpen);
+		moveTeleporterOrPitSquareThings(mapX, mapY);
+	} else
+		clearFlag(*curSquare, k0x0008_TeleporterOpen);
 }
 
-void Timeline::processEventSquareWall(TimelineEvent* event) {
-	Thing L0634_T_Thing;
-	int16 L0635_i_ThingType;
-	int16 L0636_i_Multiple;
-#define AL0636_B_TriggerSetEffect L0636_i_Multiple
-#define AL0636_i_BitMask          L0636_i_Multiple
-	uint16 L0637_ui_SensorData;
-	Sensor* L0638_ps_Sensor;
-	TextString* L0639_ps_TextString;
-	uint16 L0640_ui_SensorType;
-	int16 L0641_i_MapX;
-	int16 L0642_i_MapY;
-	uint16 L0643_ui_Cell;
+void Timeline::processEventSquareWall(TimelineEvent *event) {
+	int16 mapX = event->_B._location._mapX;
+	int16 mapY = event->_B._location._mapY;
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	uint16 curCell = event->_C.A._cell;
+	while (curThing != Thing::_endOfList) {
+		int16 curThingType = curThing.getType();
+		if ((curThingType == k2_TextstringType) && (curThing.getCell() == event->_C.A._cell)) {
+			TextString *textString = (TextString*)_vm->_dungeonMan->getThingData(curThing);
+			if (event->_C.A._effect == k2_SensorEffToggle)
+				textString->setVisible(!textString->isVisible());
+			else
+				textString->setVisible(event->_C.A._effect == k0_SensorEffSet);
+		} else if (curThingType == k3_SensorThingType) {
+			Sensor *curThingSensor = (Sensor*)_vm->_dungeonMan->getThingData(curThing);
+			uint16 curSensorType = curThingSensor->getType();
+			uint16 curSensorData = curThingSensor->getData();
+			if (curSensorType == k6_SensorWallCountdown) {
+				if (curSensorData > 0) {
+					if (event->_C.A._effect == k0_SensorEffSet) {
+						if (curSensorData < 511)
+							curSensorData++;
+					} else
+						curSensorData--;
 
-
-	L0634_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0641_i_MapX = event->_B._location._mapX, L0642_i_MapY = event->_B._location._mapY);
-	L0643_ui_Cell = event->_C.A._cell;
-	while (L0634_T_Thing != Thing::_endOfList) {
-		if (((L0635_i_ThingType = L0634_T_Thing.getType()) == k2_TextstringType) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
-			L0639_ps_TextString = (TextString*)_vm->_dungeonMan->getThingData(L0634_T_Thing);
-			if (event->_C.A._effect == k2_SensorEffToggle) {
-				L0639_ps_TextString->setVisible(!L0639_ps_TextString->isVisible());
-			} else {
-				L0639_ps_TextString->setVisible(event->_C.A._effect == k0_SensorEffSet);
-			}
-		} else {
-			if (L0635_i_ThingType == k3_SensorThingType) {
-				L0638_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0634_T_Thing);
-				L0640_ui_SensorType = L0638_ps_Sensor->getType();
-				L0637_ui_SensorData = L0638_ps_Sensor->getData();
-				if (L0640_ui_SensorType == k6_SensorWallCountdown) {
-					if (L0637_ui_SensorData > 0) {
-						if (event->_C.A._effect == k0_SensorEffSet) {
-							if (L0637_ui_SensorData < 511) {
-								L0637_ui_SensorData++;
-							}
-						} else {
-							L0637_ui_SensorData--;
-						}
-						L0638_ps_Sensor->setData(L0637_ui_SensorData);
-						if (L0638_ps_Sensor->getAttrEffectA() == k3_SensorEffHold) {
-							AL0636_B_TriggerSetEffect = ((L0637_ui_SensorData == 0) != L0638_ps_Sensor->getAttrRevertEffectA());
-							_vm->_moveSens->triggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
-						} else {
-							if (L0637_ui_SensorData == 0) {
-								_vm->_moveSens->triggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getAttrEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
-							}
-						}
-					}
-				} else {
-					if (L0640_ui_SensorType == k5_SensorWallAndOrGate) {
-						AL0636_i_BitMask = 1 << (event->_C.A._cell);
-						if (event->_C.A._effect == k2_SensorEffToggle) {
-							if (getFlag(L0637_ui_SensorData, AL0636_i_BitMask)) {
-								clearFlag(L0637_ui_SensorData, AL0636_i_BitMask);
-							} else {
-								setFlag(L0637_ui_SensorData, AL0636_i_BitMask);
-							}
-						} else {
-							if (event->_C.A._effect) {
-								clearFlag(L0637_ui_SensorData, AL0636_i_BitMask);
-							} else {
-								setFlag(L0637_ui_SensorData, AL0636_i_BitMask);
-							}
-						}
-						L0638_ps_Sensor->setData(L0637_ui_SensorData);
-						AL0636_B_TriggerSetEffect = (Sensor::getDataMask1(L0637_ui_SensorData) == Sensor::getDataMask2(L0637_ui_SensorData)) != L0638_ps_Sensor->getAttrRevertEffectA();
-						if (L0638_ps_Sensor->getAttrEffectA() == k3_SensorEffHold) {
-							_vm->_moveSens->triggerEffect(L0638_ps_Sensor, AL0636_B_TriggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
-						} else {
-							if (AL0636_B_TriggerSetEffect) {
-								_vm->_moveSens->triggerEffect(L0638_ps_Sensor, L0638_ps_Sensor->getAttrEffectA(), L0641_i_MapX, L0642_i_MapY, L0643_ui_Cell);
-							}
-						}
-					} else {
-						if ((((L0640_ui_SensorType >= k7_SensorWallSingleProjLauncherNewObj) && (L0640_ui_SensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (L0640_ui_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0640_ui_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (L0634_T_Thing.getCell() == event->_C.A._cell)) {
-							triggerProjectileLauncher(L0638_ps_Sensor, event);
-							if (L0638_ps_Sensor->getAttrOnlyOnce()) {
-								L0638_ps_Sensor->setTypeDisabled();
-							}
-						} else {
-							if (L0640_ui_SensorType == k18_SensorWallEndGame) {
-								_vm->delay(60 * L0638_ps_Sensor->getAttrValue());
-								_vm->_restartGameAllowed = false;
-								_vm->_gameWon = true;
-								_vm->endGame(true);
-							}
-						}
-					}
+					curThingSensor->setData(curSensorData);
+					if (curThingSensor->getAttrEffectA() == k3_SensorEffHold) {
+						int16 triggerSetEffect = ((curSensorData == 0) != curThingSensor->getAttrRevertEffectA());
+						_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, mapX, mapY, curCell);
+					} else if (curSensorData == 0)
+						_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
 				}
+			} else if (curSensorType == k5_SensorWallAndOrGate) {
+				int16 bitMask = 1 << (event->_C.A._cell);
+				if (event->_C.A._effect == k2_SensorEffToggle) {
+					if (getFlag(curSensorData, bitMask))
+						clearFlag(curSensorData, bitMask);
+					else
+						setFlag(curSensorData, bitMask);
+				} else if (event->_C.A._effect)
+					clearFlag(curSensorData, bitMask);
+				else
+					setFlag(curSensorData, bitMask);
+	
+				curThingSensor->setData(curSensorData);
+				bool triggerSetEffect = (Sensor::getDataMask1(curSensorData) == Sensor::getDataMask2(curSensorData)) != curThingSensor->getAttrRevertEffectA();
+				if (curThingSensor->getAttrEffectA() == k3_SensorEffHold)
+					_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, mapX, mapY, curCell);
+				else if (triggerSetEffect)
+					_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
+			} else if ((((curSensorType >= k7_SensorWallSingleProjLauncherNewObj) && (curSensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (curSensorType == k14_SensorWallSingleProjLauncherSquareObj) || (curSensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_C.A._cell)) {
+				triggerProjectileLauncher(curThingSensor, event);
+				if (curThingSensor->getAttrOnlyOnce())
+					curThingSensor->setTypeDisabled();
+			} else if (curSensorType == k18_SensorWallEndGame) {
+				_vm->delay(60 * curThingSensor->getAttrValue());
+				_vm->_restartGameAllowed = false;
+				_vm->_gameWon = true;
+				_vm->endGame(true);
 			}
 		}
-		L0634_T_Thing = _vm->_dungeonMan->getNextThing(L0634_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 	_vm->_moveSens->processRotationEffect();
 }
