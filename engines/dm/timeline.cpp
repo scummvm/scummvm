@@ -142,36 +142,34 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 	if (eventCount == 1)
 		return;
 
-	uint16 L0582_ui_EventIndex = _timeline[timelineIndex];
-	TimelineEvent *timelineEvent = &_events[L0582_ui_EventIndex];
-	bool L0585_B_ChronologyFixed = false;
+	uint16 eventIndex = _timeline[timelineIndex];
+	TimelineEvent *timelineEvent = &_events[eventIndex];
+	bool chronologyFixed = false;
 	while (timelineIndex > 0) { /* Check if the event should be moved earlier in the timeline */
 		uint16 altTimelineIndex = (timelineIndex - 1) >> 1;
 		if (isEventABeforeB(timelineEvent, &_events[_timeline[altTimelineIndex]])) {
 			_timeline[timelineIndex] = _timeline[altTimelineIndex];
 			timelineIndex = altTimelineIndex;
-			L0585_B_ChronologyFixed = true;
-		} else {
+			chronologyFixed = true;
+		} else
 			break;
+	}
+	if (!chronologyFixed) {
+		eventCount = ((eventCount - 1) - 1) >> 1;
+		while (timelineIndex <= eventCount) { /* Check if the event should be moved later in the timeline */
+			uint16 altTimelineIndex = (timelineIndex << 1) + 1;
+			if (((altTimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[altTimelineIndex + 1]], &_events[_timeline[altTimelineIndex]])))
+				altTimelineIndex++;
+			
+			if (isEventABeforeB(&_events[_timeline[altTimelineIndex]], timelineEvent)) {
+				_timeline[timelineIndex] = _timeline[altTimelineIndex];
+				timelineIndex = altTimelineIndex;
+			} else
+				break;
 		}
 	}
-	if (L0585_B_ChronologyFixed)
-		goto T0236011;
-	eventCount = ((eventCount - 1) - 1) >> 1;
-	while (timelineIndex <= eventCount) { /* Check if the event should be moved later in the timeline */
-		uint16 altTimelineIndex = (timelineIndex << 1) + 1;
-		if (((altTimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[altTimelineIndex + 1]], &_events[_timeline[altTimelineIndex]]))) {
-			altTimelineIndex++;
-		}
-		if (isEventABeforeB(&_events[_timeline[altTimelineIndex]], timelineEvent)) {
-			_timeline[timelineIndex] = _timeline[altTimelineIndex];
-			timelineIndex = altTimelineIndex;
-		} else {
-			break;
-		}
-	}
-T0236011:
-	_timeline[timelineIndex] = L0582_ui_EventIndex;
+
+	_timeline[timelineIndex] = eventIndex;
 }
 
 bool Timeline::isEventABeforeB(TimelineEvent* eventA, TimelineEvent* eventB) {
