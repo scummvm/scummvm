@@ -2599,7 +2599,11 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		createWindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
+#ifdef PSP2 // use texture scaling instead built-in scalers
+	if (!_window->createWindow(870, 544, createWindowFlags)) {
+#else
 	if (!_window->createWindow(width, height, createWindowFlags)) {
+#endif
 		return nullptr;
 	}
 
@@ -2631,7 +2635,12 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
 
 	SDL_RenderClear(_renderer);
+#ifdef PSP2 // use texture scaling instead built-in scalers
+	SDL_Rect dst; dst.x = 45; dst.y = 0; dst.w = 870; dst.h = 544;
+	SDL_RenderCopy(_renderer, _screenTexture, NULL, &dst);
+#else
 	SDL_RenderCopy(_renderer, _screenTexture, NULL, &_viewport);
+#endif
 	SDL_RenderPresent(_renderer);
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)

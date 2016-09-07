@@ -207,3 +207,10 @@ dists/msvc*/**
 #Ignore Xcode output/project files
 out/
 scummvm.xcodeproj
+
+#Ignore PSP2 files
+psp2pkg/
+eboot.bin
+param.sfo
+*.velf
+*.vpk

@@ -20,34 +20,26 @@
  *
  */
 
-#include "common/scummsys.h"
+// Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
+// Also with clock() in sys/time.h in some Mac OS X SDKs.
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
 
-#if defined(POSIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(MAEMO) && !defined(WEBOS) && !defined(LINUXMOTO) && !defined(GPH_DEVICE) && !defined(GP2X) && !defined(DINGUX) && !defined(OPENPANDORA) && !defined(PLAYSTATION3) && !defined(PSP2) && !defined(ANDROIDSDL)
+#include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/posix/posix-fs.h"
+#include "backends/fs/psp2/psp2-fs-factory.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
-
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
+AbstractFSNode *PSP2FilesystemFactory::makeRootFileNode() const {
+	return new POSIXFilesystemNode("ux0:");
 }
 
-#endif
+AbstractFSNode *PSP2FilesystemFactory::makeCurrentDirectoryFileNode() const {
+	return makeRootFileNode();
+}
+
+AbstractFSNode *PSP2FilesystemFactory::makeFileNodePath(const Common::String &path) const {
+	assert(!path.empty());
+	return new POSIXFilesystemNode(path);
+}
