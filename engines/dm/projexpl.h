@@ -29,7 +29,6 @@
 
 #include "dm/dm.h"
 
-
 namespace DM {
 
 #define k0_outcomeKilledNoCreaturesInGroup 0 // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP   
@@ -70,7 +69,6 @@ namespace DM {
 #define k31_soundATTACK_COUATL 31 // @ C31_SOUND_ATTACK_COUATL
 #define k32_soundMOVE_RED_DRAGON 32 // @ C32_SOUND_MOVE_RED_DRAGON
 #define k33_soundMOVE_SKELETON 33 // @ C33_SOUND_MOVE_SKELETON
-
 
 #define M31_setMap(map_time, map) ((map_time) = (((map_time) & 0x00FFFFFF) | (((int32)(map)) << 24)))
 

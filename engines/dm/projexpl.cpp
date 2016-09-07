@@ -35,7 +35,7 @@
 
 namespace DM {
 
-ProjExpl::ProjExpl(DMEngine* vm) : _vm(vm) {
+ProjExpl::ProjExpl(DMEngine *vm) : _vm(vm) {
 	_creatureDamageOutcome = 0;
 	_secondaryDirToOrFromParty = 0;
 	_lastCreatureAttackTime = -200;
@@ -396,7 +396,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	TimelineEvent *curEvent = &firstEvent;
 	Thing projectileThingNewCell = Thing(curEvent->_B._slot);
 	Thing projectileThing  = projectileThingNewCell;
-	Projectile *projectile = (Projectile*)_vm->_dungeonMan->getThingData(projectileThing);
+	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	int16 destinationMapX = curEvent->_C._projectile.getMapX();
 	int16 destinationMapY = curEvent->_C._projectile.getMapY();
 
@@ -472,7 +472,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 void ProjExpl::processEvent25(TimelineEvent *event) {
 	uint16 mapX = event->_B._location._mapX;
 	uint16 mapY = event->_B._location._mapY;
-	Explosion *explosion = &((Explosion*)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
+	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
 	int16 curSquareType = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]).getType();
 	bool explosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
 	Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
@@ -482,7 +482,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 
 	uint16 creatureType = 0;
 	if (groupThing != Thing::_endOfList) {
-		group = (Group*)_vm->_dungeonMan->getThingData(groupThing);
+		group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 		creatureType = group->_type;
 		creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
 	}
