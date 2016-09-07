@@ -2208,6 +2208,9 @@ case $_host_cpu in
 				;;
 			arm-apple-darwin11)
 				;;
+			# psvita does not like the asm code...
+			arm-vita-eabi)
+				;;
 
 			*)
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
