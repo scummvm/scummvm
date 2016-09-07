@@ -146,9 +146,10 @@ uint16 inv_bits(uint16 val, int nbits) {
 
 	if (nbits <= 8) {
 		res = ff_reverse[val] >> (8 - nbits);
-	} else
+	} else {
 		res = ((ff_reverse[val & 0xFF] << 8) +
 			(ff_reverse[val >> 8])) >> (16 - nbits);
+	}
 
 	return res;
 }

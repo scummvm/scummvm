@@ -96,9 +96,10 @@ void IndeoDSP::ff_ivi_inverse_haar_8x8(const int32 *in, int16 *out, uint32 pitch
                       dst[ 0], dst[ 8], dst[16], dst[24],
                       dst[32], dst[40], dst[48], dst[56],
                       t0, t1, t2, t3, t4, t5, t6, t7, t8);
-        } else
+        } else {
             dst[ 0] = dst[ 8] = dst[16] = dst[24] =
             dst[32] = dst[40] = dst[48] = dst[56] = 0;
+		}
 
         src++;
         dst++;
@@ -165,11 +166,12 @@ void IndeoDSP::ff_ivi_col_haar8(const int32 *in, int16 *out, uint32 pitch,
                       out[4 * pitch], out[5 * pitch],
                       out[6 * pitch], out[7 * pitch],
                       t0, t1, t2, t3, t4, t5, t6, t7, t8);
-        } else
+        } else {
             out[0 * pitch] = out[1 * pitch] =
             out[2 * pitch] = out[3 * pitch] =
             out[4 * pitch] = out[5 * pitch] =
             out[6 * pitch] = out[7 * pitch] = 0;
+		}
 
         in++;
         out++;
@@ -198,8 +200,9 @@ void IndeoDSP::ff_ivi_inverse_haar_4x4(const int32 *in, int16 *out, uint32 pitch
             INV_HAAR4(   sp1,    sp2, src[8], src[12],
                       dst[0], dst[4], dst[8], dst[12],
                       t0, t1, t2, t3, t4);
-        } else
+        } else {
             dst[0] = dst[4] = dst[8] = dst[12] = 0;
+		}
 
         src++;
         dst++;
@@ -257,9 +260,10 @@ void IndeoDSP::ff_ivi_col_haar4(const int32 *in, int16 *out, uint32 pitch,
                       out[0 * pitch], out[1 * pitch],
                       out[2 * pitch], out[3 * pitch],
                       t0, t1, t2, t3, t4);
-        } else
+        } else {
             out[0 * pitch] = out[1 * pitch] =
             out[2 * pitch] = out[3 * pitch] = 0;
+		}
 
         in++;
         out++;
@@ -345,11 +349,12 @@ void IndeoDSP::ff_ivi_inverse_slant_8x8(const int32 *in, int16 *out, uint32 pitc
             IVI_INV_SLANT8(src[0], src[8], src[16], src[24], src[32], src[40], src[48], src[56],
                            dst[0], dst[8], dst[16], dst[24], dst[32], dst[40], dst[48], dst[56],
                            t0, t1, t2, t3, t4, t5, t6, t7, t8);
-        } else
+        } else {
             dst[0] = dst[8] = dst[16] = dst[24] = dst[32] = dst[40] = dst[48] = dst[56] = 0;
+		}
 
-            src++;
-            dst++;
+		src++;
+        dst++;
     }
 #undef COMPENSATE
 
@@ -384,11 +389,11 @@ void IndeoDSP::ff_ivi_inverse_slant_4x4(const int32 *in, int16 *out, uint32 pitc
             IVI_INV_SLANT4(src[0], src[4], src[8], src[12],
                            dst[0], dst[4], dst[8], dst[12],
                            t0, t1, t2, t3, t4);
-        } else
+        } else {
             dst[0] = dst[4] = dst[8] = dst[12] = 0;
-
-            src++;
-            dst++;
+		}
+		src++;
+		dst++;
     }
 #undef COMPENSATE
 

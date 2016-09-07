@@ -248,8 +248,7 @@ void Indeo4Decoder::switch_buffers() {
 
 	if (is_prev_ref && is_ref) {
 		FFSWAP(int, _ctx.dst_buf, _ctx.ref_buf);
-	}
-	else if (is_prev_ref) {
+	} else if (is_prev_ref) {
 		FFSWAP(int, _ctx.ref_buf, _ctx.b_ref_buf);
 		FFSWAP(int, _ctx.dst_buf, _ctx.ref_buf);
 	}
@@ -488,24 +487,22 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 					if (mv_scale) {
 						mb->mv_x = ivi_scale_mv(ref_mb->mv_x, mv_scale);
 						mb->mv_y = ivi_scale_mv(ref_mb->mv_y, mv_scale);
-					}
-					else {
+					} else {
 						mb->mv_x = ref_mb->mv_x;
 						mb->mv_y = ref_mb->mv_y;
 					}
 				}
 			} else {
 				if (band->inherit_mv) {
-					/* copy mb_type from corresponding reference mb */
+					// copy mb_type from corresponding reference mb
 					if (!ref_mb) {
 						warning("ref_mb unavailable");
 						return -1;
 					}
 					mb->type = ref_mb->type;
-				}
-				else if (_ctx.frame_type == IVI4_FRAMETYPE_INTRA ||
+				} else if (_ctx.frame_type == IVI4_FRAMETYPE_INTRA ||
 					_ctx.frame_type == IVI4_FRAMETYPE_INTRA1) {
-					mb->type = 0; /* mb_type is always INTRA for intra-frames */
+					mb->type = 0; // mb_type is always INTRA for intra-frames
 				} else {
 					mb->type = _ctx.gb->getBits(mb_type_bits);
 				}
@@ -524,11 +521,11 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				}
 
 				if (!mb->type) {
-					mb->mv_x = mb->mv_y = 0; /* there is no motion vector in intra-macroblocks */
+					mb->mv_x = mb->mv_y = 0; // there is no motion vector in intra-macroblocks
 				} else {
 					if (band->inherit_mv) {
 						if (ref_mb)
-							/* motion vector inheritance */
+							// motion vector inheritance
 							if (mv_scale) {
 								mb->mv_x = ivi_scale_mv(ref_mb->mv_x, mv_scale);
 								mb->mv_y = ivi_scale_mv(ref_mb->mv_y, mv_scale);
@@ -538,7 +535,7 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 								mb->mv_y = ref_mb->mv_y;
 							}
 					} else {
-						/* decode motion vector deltas */
+						// decode motion vector deltas
 						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->table,
 							IVI_VLC_BITS, 1);
 						mv_y += IVI_TOSIGNED(mv_delta);

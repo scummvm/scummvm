@@ -396,6 +396,11 @@ IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height) : Codec() {
 
 IndeoDecoderBase::~IndeoDecoderBase() {
 	delete _surface;
+	IVIPlaneDesc::ivi_free_buffers(_ctx.planes);
+	if (_ctx.mb_vlc.cust_tab.table)
+		_ctx.mb_vlc.cust_tab.ff_free_vlc();
+
+	delete _ctx.p_frame;
 }
 
 int IndeoDecoderBase::decodeIndeoFrame() {
@@ -512,8 +517,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 	if (_ctx.is_indeo4 && _ctx.frame_type == IVI4_FRAMETYPE_BIDIR) {
 		band->ref_buf = band->bufs[_ctx.b_ref_buf];
 		band->b_ref_buf = band->bufs[_ctx.ref_buf];
-	}
-	else {
+	} else {
 		band->ref_buf = band->bufs[_ctx.ref_buf];
 		band->b_ref_buf = 0;
 	}
@@ -533,7 +537,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 
 	band->rv_map = &_ctx.rvmap_tabs[band->rvmap_sel];
 
-	/* apply corrections to the selected rvmap table if present */
+	// apply corrections to the selected rvmap table if present
 	for (i = 0; i < band->num_corr; i++) {
 		idx1 = band->corr[i * 2];
 		idx2 = band->corr[i * 2 + 1];
@@ -858,7 +862,7 @@ int IndeoDecoderBase::ivi_process_empty_tile(IVIBandDesc *band,
 	mb = tile->mbs;
 	ref_mb = tile->ref_mbs;
 	row_offset = band->mb_size * band->pitch;
-	need_mc = 0; /* reset the mc tracking flag */
+	need_mc = 0; // reset the mc tracking flag
 
 	for (y = tile->ypos; y < (tile->ypos + tile->height); y += band->mb_size) {
 		mb_offset = offs;
@@ -868,8 +872,8 @@ int IndeoDecoderBase::ivi_process_empty_tile(IVIBandDesc *band,
 			mb->ypos = y;
 			mb->buf_offs = mb_offset;
 
-			mb->type = 1; /* set the macroblocks type = INTER */
-			mb->cbp = 0; /* all blocks are empty */
+			mb->type = 1; // set the macroblocks type = INTER
+			mb->cbp = 0; // all blocks are empty
 
 			if (!band->qdelta_present && !band->plane && !band->band_num) {
 				mb->q_delta = band->glob_quant;
@@ -881,7 +885,7 @@ int IndeoDecoderBase::ivi_process_empty_tile(IVIBandDesc *band,
 				mb->q_delta = ref_mb->q_delta;
 
 			if (band->inherit_mv && ref_mb) {
-				/* motion vector inheritance */
+				// motion vector inheritance
 				if (mv_scale) {
 					mb->mv_x = ivi_scale_mv(ref_mb->mv_x, mv_scale);
 					mb->mv_y = ivi_scale_mv(ref_mb->mv_y, mv_scale);
@@ -889,7 +893,7 @@ int IndeoDecoderBase::ivi_process_empty_tile(IVIBandDesc *band,
 					mb->mv_x = ref_mb->mv_x;
 					mb->mv_y = ref_mb->mv_y;
 				}
-				need_mc |= mb->mv_x || mb->mv_y; /* tracking non-zero motion vectors */
+				need_mc |= mb->mv_x || mb->mv_y; // tracking non-zero motion vectors
 				{
 					int dmv_x, dmv_y, cx, cy;
 
@@ -981,10 +985,10 @@ int IndeoDecoderBase::ivi_decode_blocks(GetBits *gb, IVIBandDesc *band, IVITile 
     ivi_mc_avg_func mc_avg_with_delta_func, mc_avg_no_delta_func;
     const uint8 *scale_tab;
 
-    /* init intra prediction for the DC coefficient */
+    // init intra prediction for the DC coefficient
     prev_dc    = 0;
     blk_size   = band->blk_size;
-    /* number of blocks per mb */
+    // number of blocks per mb
     num_blocks = (band->mb_size != blk_size) ? 4 : 1;
     if (blk_size == 8) {
         mc_with_delta_func     = IndeoDSP::ff_ivi_mc_8x8_delta;
@@ -1024,7 +1028,7 @@ int IndeoDecoderBase::ivi_decode_blocks(GetBits *gb, IVIBandDesc *band, IVITile 
                 mv_x  >>= 1;
                 mv_y  >>= 1;
                 mv_x2 >>= 1;
-                mv_y2 >>= 1; /* convert halfpel vectors into fullpel ones */
+                mv_y2 >>= 1; // convert halfpel vectors into fullpel ones
             }
             if (mb->type == 2)
                 mc_type = -1;
@@ -1153,7 +1157,8 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 	RVMapDesc *rvmap = band->rv_map;
 	uint8 col_flags[8];
 	int32 trvec[64];
-	uint32 sym = 0, lo, hi, q;
+	uint32 sym = 0, q;
+	int lo, hi;
 	int pos, run, val;
 	int blk_size = band->blk_size;
 	int num_coeffs = blk_size * blk_size;
@@ -1188,8 +1193,7 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 			hi = gb->getVLC2(band->blk_vlc.tab->table, IVI_VLC_BITS, 1);
 			// merge them and convert into signed val
 			val = IVI_TOSIGNED((hi << 6) | lo);
-		}
-		else {
+		} else {
 			if (sym >= 256U) {
 				warning("Invalid sym encountered");
 				return -1;
