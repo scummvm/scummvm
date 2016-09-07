@@ -390,94 +390,83 @@ void ProjExpl::projectileDelete(Thing projectileThing, Thing *groupSlot, int16 m
 }
 
 void ProjExpl::processEvents48To49(TimelineEvent* event) {
-	TimelineEvent* L0519_ps_Event;
-	Projectile* L0520_ps_Projectile;
-	Thing L0515_T_ProjectileThingNewCell;
-	uint16 L0516_ui_Multiple;
-#define AL0516_ui_StepEnergy L0516_ui_Multiple
-#define AL0516_ui_Square     L0516_ui_Multiple
-	Thing L0521_T_ProjectileThing;
-	uint16 L0517_ui_ProjectileDirection;
-	bool L0522_B_ProjectileMovesToOtherSquare;
-	int16 L0523_i_DestinationMapX;
-	int16 L0524_i_DestinationMapY;
-	uint16 L0518_ui_Cell;
-	int16 L0525_i_SourceMapX = -1;
-	int16 L0526_i_SourceMapY = -1;
-	TimelineEvent L0527_s_Event;
+	int16 sourceMapX = -1;
+	int16 sourceMapY = -1;
+	TimelineEvent firstEvent = *event;
+	TimelineEvent *curEvent = &firstEvent;
+	Thing projectileThingNewCell = Thing(curEvent->_B._slot);
+	Thing projectileThing  = projectileThingNewCell;
+	Projectile *projectile = (Projectile*)_vm->_dungeonMan->getThingData(projectileThing);
+	int16 destinationMapX = curEvent->_C._projectile.getMapX();
+	int16 destinationMapY = curEvent->_C._projectile.getMapY();
 
+	if (curEvent->_type == k48_TMEventTypeMoveProjectileIgnoreImpacts)
+		curEvent->_type = k49_TMEventTypeMoveProjectile;
+	else {
+		uint16 projectileCurCell = projectileThingNewCell.getCell();
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (destinationMapX == _vm->_dungeonMan->_partyMapX) && (destinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kM2_ChampionElemType, destinationMapX, destinationMapY, projectileCurCell, projectileThingNewCell))
+			return;
 
-	L0527_s_Event = *event;
-	L0519_ps_Event = &L0527_s_Event;
-	L0520_ps_Projectile = (Projectile*)_vm->_dungeonMan->getThingData(L0521_T_ProjectileThing = L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot));
-	L0523_i_DestinationMapX = L0519_ps_Event->_C._projectile.getMapX();
-	L0524_i_DestinationMapY = L0519_ps_Event->_C._projectile.getMapY();
-	if (L0519_ps_Event->_type == k48_TMEventTypeMoveProjectileIgnoreImpacts) {
-		L0519_ps_Event->_type = k49_TMEventTypeMoveProjectile;
-	} else {
-		L0518_ui_Cell = (L0515_T_ProjectileThingNewCell).getCell();
-		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0523_i_DestinationMapX == _vm->_dungeonMan->_partyMapX) && (L0524_i_DestinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kM2_ChampionElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+		if ((_vm->_groupMan->groupGetThing(destinationMapX, destinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kM1_CreatureElemType, destinationMapX, destinationMapY, projectileCurCell, projectileThing))
+			return;
+
+		uint16 stepEnergy = curEvent->_C._projectile.getStepEnergy();
+		if (projectile->_kineticEnergy <= stepEnergy) {
+			_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell = projectileThing, Thing(0), destinationMapX, destinationMapY);
+			projectileDelete(projectileThingNewCell, NULL, destinationMapX, destinationMapY);
 			return;
 		}
-		if ((_vm->_groupMan->groupGetThing(L0523_i_DestinationMapX, L0524_i_DestinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kM1_CreatureElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
-			return;
-		}
-		if (L0520_ps_Projectile->_kineticEnergy <= (AL0516_ui_StepEnergy = L0519_ps_Event->_C._projectile.getStepEnergy())) {
-			_vm->_dungeonMan->unlinkThingFromList(L0515_T_ProjectileThingNewCell = L0521_T_ProjectileThing, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-			projectileDelete(L0515_T_ProjectileThingNewCell, NULL, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-			return;
-		}
-		L0520_ps_Projectile->_kineticEnergy -= AL0516_ui_StepEnergy;
-		if (L0520_ps_Projectile->_attack < AL0516_ui_StepEnergy) {
-			L0520_ps_Projectile->_attack = 0;
-		} else {
-			L0520_ps_Projectile->_attack -= AL0516_ui_StepEnergy;
-		}
+		projectile->_kineticEnergy -= stepEnergy;
+		if (projectile->_attack < stepEnergy)
+			projectile->_attack = 0;
+		else
+			projectile->_attack -= stepEnergy;
 	}
-	L0517_ui_ProjectileDirection = L0519_ps_Event->_C._projectile.getDir();
-	L0515_T_ProjectileThingNewCell = Thing(L0519_ps_Event->_B._slot);
-	L0518_ui_Cell = L0515_T_ProjectileThingNewCell.getCell();
-	L0522_B_ProjectileMovesToOtherSquare = (L0517_ui_ProjectileDirection == L0518_ui_Cell) || (returnNextVal(L0517_ui_ProjectileDirection) == L0518_ui_Cell);
-	if (L0522_B_ProjectileMovesToOtherSquare) {
-		L0525_i_SourceMapX = L0523_i_DestinationMapX;
-		L0526_i_SourceMapY = L0524_i_DestinationMapY;
-		L0523_i_DestinationMapX += _vm->_dirIntoStepCountEast[L0517_ui_ProjectileDirection], L0524_i_DestinationMapY += _vm->_dirIntoStepCountNorth[L0517_ui_ProjectileDirection];
-		AL0516_ui_Square = _vm->_dungeonMan->getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY).toByte();
-		if ((Square(AL0516_ui_Square).getType() == k0_WallElemType) ||
-			((Square(AL0516_ui_Square).getType() == k6_FakeWallElemType) && !getFlag(AL0516_ui_Square, (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
-			((Square(AL0516_ui_Square).getType() == k3_StairsElemType) && (Square(_vm->_dungeonMan->_currMapData[L0525_i_SourceMapX][L0526_i_SourceMapY]).getType() == k3_StairsElemType))) {
-			if (hasProjectileImpactOccurred(Square(AL0516_ui_Square).getType(), L0525_i_SourceMapX, L0526_i_SourceMapY, L0518_ui_Cell, L0515_T_ProjectileThingNewCell)) {
+	uint16 projectileDirection = curEvent->_C._projectile.getDir();
+	projectileThingNewCell = Thing(curEvent->_B._slot);
+	uint16 projectileNewCell = projectileThingNewCell.getCell();
+	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (returnNextVal(projectileDirection) == projectileNewCell);
+	if (projectileMovesToOtherSquare) {
+		sourceMapX = destinationMapX;
+		sourceMapY = destinationMapY;
+		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection], destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
+		Square destSquare = _vm->_dungeonMan->getSquare(destinationMapX, destinationMapY);
+		SquareType destSquareType = destSquare.getType();
+		if ((destSquareType == k0_WallElemType) ||
+			((destSquareType == k6_FakeWallElemType) && !getFlag(destSquare.toByte(), (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
+			((destSquareType == k3_StairsElemType) && (Square(_vm->_dungeonMan->_currMapData[sourceMapX][sourceMapY]).getType() == k3_StairsElemType))) {
+			if (hasProjectileImpactOccurred(destSquare.getType(), sourceMapX, sourceMapY, projectileNewCell, projectileThingNewCell)) {
 				return;
 			}
 		}
 	}
-	if ((L0517_ui_ProjectileDirection & 0x0001) == (L0518_ui_Cell & 0x0001)) {
-		L0518_ui_Cell--;
+
+	if ((projectileDirection & 0x0001) == (projectileNewCell & 0x0001))
+		projectileNewCell--;
+	else
+		projectileNewCell++;
+
+	projectileThingNewCell = thingWithNewCell(projectileThingNewCell, projectileNewCell &= 0x0003);
+	if (projectileMovesToOtherSquare) {
+		_vm->_moveSens->getMoveResult(projectileThingNewCell, sourceMapX, sourceMapY, destinationMapX, destinationMapY);
+		curEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
+		curEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
+		curEvent->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
+		projectileThingNewCell = thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
+		M31_setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
-		L0518_ui_Cell++;
-	}
-	L0515_T_ProjectileThingNewCell = thingWithNewCell(L0515_T_ProjectileThingNewCell, L0518_ui_Cell &= 0x0003);
-	if (L0522_B_ProjectileMovesToOtherSquare) {
-		_vm->_moveSens->getMoveResult(L0515_T_ProjectileThingNewCell, L0525_i_SourceMapX, L0526_i_SourceMapY, L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-		L0519_ps_Event->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
-		L0519_ps_Event->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
-		L0519_ps_Event->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
-		L0515_T_ProjectileThingNewCell = thingWithNewCell(L0515_T_ProjectileThingNewCell, _vm->_moveSens->_moveResultCell);
-		M31_setMap(L0519_ps_Event->_mapTime, _vm->_moveSens->_moveResultMapIndex);
-	} else {
-		if ((Square(_vm->_dungeonMan->getSquare(L0523_i_DestinationMapX, L0524_i_DestinationMapY)).getType() == k4_DoorElemType) && hasProjectileImpactOccurred(k4_DoorElemType, L0523_i_DestinationMapX, L0524_i_DestinationMapY, L0518_ui_Cell, L0521_T_ProjectileThing)) {
+		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == k4_DoorElemType) && hasProjectileImpactOccurred(k4_DoorElemType, destinationMapX, destinationMapY, projectileNewCell, projectileThing))
 			return;
-		}
-		_vm->_dungeonMan->unlinkThingFromList(L0515_T_ProjectileThingNewCell, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
-		_vm->_dungeonMan->linkThingToList(L0515_T_ProjectileThingNewCell, Thing(0), L0523_i_DestinationMapX, L0524_i_DestinationMapY);
+
+		_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell, Thing(0), destinationMapX, destinationMapY);
+		_vm->_dungeonMan->linkThingToList(projectileThingNewCell, Thing(0), destinationMapX, destinationMapY);
 	}
-	L0519_ps_Event->_mapTime += (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) ? 1 : 3;
-	//Strangerke: CHECKME: Maybe we should keep that piece of code too as it sounds like it's fixing a weird behavior of projectiles on different maps
-#ifdef COMPILE42_CSB20EN_CSB21EN /* CHANGE7_20_IMPROVEMENT Projectiles now move at the same speed on all maps instead of moving slower on maps other than the party map */
-	L0519_ps_Event->Map_Time++;
-#endif
-	L0519_ps_Event->_B._slot = L0515_T_ProjectileThingNewCell.toUint16();
-	L0520_ps_Projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(L0519_ps_Event);
+
+	// This code is from CSB20. The projectiles move at the same speed on all maps instead of moving slower on maps other than the party map */
+	curEvent->_mapTime++;
+
+	curEvent->_B._slot = projectileThingNewCell.toUint16();
+	projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(curEvent);
 }
 
 void ProjExpl::processEvent25(TimelineEvent* event) {
