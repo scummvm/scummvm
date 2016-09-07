@@ -372,162 +372,134 @@ bool Timeline::isFirstEventExpiered() {
 	return (_eventCount && (filterTime(_events[_timeline[0]]._mapTime) <= _vm->_gameTime));
 }
 
-void Timeline::extractFirstEvent(TimelineEvent* event) {
+void Timeline::extractFirstEvent(TimelineEvent *event) {
 	uint16 eventIndex = _timeline[0];
 
 	*event = _events[eventIndex];
 	deleteEvent(eventIndex);
 }
 
-void Timeline::processEventDoorAnimation(TimelineEvent* event) {
-	uint16 L0593_ui_MapX;
-	uint16 L0594_ui_MapY;
-	int16 L0595_i_Effect;
-	int16 L0596_i_DoorState;
-	Square* L0597_puc_Square;
-	Door* L0598_ps_Door;
-	Thing L0599_T_GroupThing;
-	uint16 L0600_ui_CreatureAttributes;
-	uint16 L0602_ui_Multiple;
-#define AL0602_ui_VerticalDoor L0602_ui_Multiple
-#define AL0602_ui_Height       L0602_ui_Multiple
-
-	L0597_puc_Square = (Square*)&_vm->_dungeonMan->_currMapData[L0593_ui_MapX = event->_B._location._mapX][L0594_ui_MapY = event->_B._location._mapY];
-	if ((L0596_i_DoorState = Square(*L0597_puc_Square).getDoorState()) == k5_doorState_DESTROYED) {
+void Timeline::processEventDoorAnimation(TimelineEvent *event) {
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
+	Square *curSquare = (Square*)&_vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 doorState = Square(*curSquare).getDoorState();
+	if (doorState == k5_doorState_DESTROYED)
 		return;
-	}
+
 	event->_mapTime++;
-	L0595_i_Effect = event->_C.A._effect;
-	if (L0595_i_Effect == k1_SensorEffClear) {
-		L0598_ps_Door = (Door*)_vm->_dungeonMan->getSquareFirstThingData(L0593_ui_MapX, L0594_ui_MapY);
-		AL0602_ui_VerticalDoor = L0598_ps_Door->opensVertically();
-		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0593_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0594_ui_MapY == _vm->_dungeonMan->_partyMapY) && (L0596_i_DoorState != k0_doorState_OPEN)) {
+	int16 sensorEffect = event->_C.A._effect;
+	if (sensorEffect == k1_SensorEffClear) {
+		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		bool verticalDoorFl = curDoor->opensVertically();
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
+		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != k0_doorState_OPEN)) {
 			if (_vm->_championMan->_partyChampionCount > 0) {
-				L0597_puc_Square->setDoorState(k0_doorState_OPEN);
+				curSquare->setDoorState(k0_doorState_OPEN);
 
 				// Strangerke
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
-				if (_vm->_championMan->getDamagedChampionCount(5, k0x0008_ChampionWoundTorso | (AL0602_ui_VerticalDoor ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand), k2_attackType_SELF)) {
-					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
-				}
+				int16 wounds = k0x0008_ChampionWoundTorso | (verticalDoorFl ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand);
+				if (_vm->_championMan->getDamagedChampionCount(5, wounds, k2_attackType_SELF))
+					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, mapX, mapY, k1_soundModePlayIfPrioritized);
 			}
 			event->_mapTime++;
 			addEventGetEventIndex(event);
 			return;
 		}
-		if (((L0599_T_GroupThing = _vm->_groupMan->groupGetThing(L0593_ui_MapX, L0594_ui_MapY)) != Thing::_endOfList) && !getFlag(L0600_ui_CreatureAttributes = _vm->_dungeonMan->getCreatureAttributes(L0599_T_GroupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
-			if (L0596_i_DoorState >= (AL0602_ui_Height ? CreatureInfo::getHeight(L0600_ui_CreatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(L0599_T_GroupThing), L0593_ui_MapX, L0594_ui_MapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup) {
-					_vm->_groupMan->processEvents29to41(L0593_ui_MapX, L0594_ui_MapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
-				}
-				L0596_i_DoorState = (L0596_i_DoorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (L0596_i_DoorState - 1);
-				L0597_puc_Square->setDoorState(L0596_i_DoorState);
-				_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
+		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
+		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
+		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
+					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+
+				doorState = (doorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (doorState - 1);
+				curSquare->setDoorState(doorState);
+				_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, k1_soundModePlayIfPrioritized);
 				event->_mapTime++;
 				addEventGetEventIndex(event);
 				return;
 			}
 		}
 	}
-	if (((L0595_i_Effect == k0_SensorEffSet) && (L0596_i_DoorState == k0_doorState_OPEN)) || ((L0595_i_Effect == k1_SensorEffClear) && (L0596_i_DoorState == k4_doorState_CLOSED))) {
-		goto T0241020_Return;
-	}
-	L0596_i_DoorState += (L0595_i_Effect == k0_SensorEffSet) ? -1 : 1;
-	L0597_puc_Square->setDoorState(L0596_i_DoorState);
-	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, L0593_ui_MapX, L0594_ui_MapY, k1_soundModePlayIfPrioritized);
-
-	if (L0595_i_Effect == k0_SensorEffSet) {
-		if (L0596_i_DoorState == k0_doorState_OPEN) {
-			return;
-		}
-	} else {
-		if (L0596_i_DoorState == k4_doorState_CLOSED) {
-			return;
-		}
-	}
-	addEventGetEventIndex(event);
-T0241020_Return:
-	;
-}
-
-void Timeline::processEventSquareFakewall(TimelineEvent* event) {
-	uint16 L0603_ui_MapX;
-	uint16 L0604_ui_MapY;
-	int16 L0605_i_Effect;
-	Thing L0606_T_Thing;
-	byte* L0607_puc_Square;
-
-
-	L0607_puc_Square = &_vm->_dungeonMan->_currMapData[L0603_ui_MapX = event->_B._location._mapX][L0604_ui_MapY = event->_B._location._mapY];
-	L0605_i_Effect = event->_C.A._effect;
-	if (L0605_i_Effect == k2_SensorEffToggle) {
-		L0605_i_Effect = getFlag(*L0607_puc_Square, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
-	}
-	if (L0605_i_Effect == k1_SensorEffClear) {
-		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0603_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0604_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
-			event->_mapTime++;
-			addEventGetEventIndex(event);
-		} else {
-			if (((L0606_T_Thing = _vm->_groupMan->groupGetThing(L0603_ui_MapX, L0604_ui_MapY)) != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(L0606_T_Thing), k0x0040_MaskCreatureInfo_nonMaterial)) {
-				event->_mapTime++;
-				addEventGetEventIndex(event);
-			} else {
-				clearFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
-			}
-		}
-	} else {
-		setFlag(*L0607_puc_Square, k0x0004_FakeWallOpen);
-	}
-}
-
-void Timeline::processEventDoorDestruction(TimelineEvent* event) {
-	Square* L0608_puc_Square;
-
-	L0608_puc_Square = (Square*)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
-	L0608_puc_Square->setDoorState(k5_doorState_DESTROYED);
-}
-
-void Timeline::processEventSquareDoor(TimelineEvent* event) {
-	int16 L0609_i_DoorState;
-
-
-	if ((L0609_i_DoorState = Square(_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState()) == k5_doorState_DESTROYED) {
+	if ((sensorEffect == k0_SensorEffSet) && (doorState == k0_doorState_OPEN))
 		return;
-	}
-	if (event->_C.A._effect == k2_SensorEffToggle) {
-		event->_C.A._effect = (L0609_i_DoorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
-	} else {
-		if (event->_C.A._effect == k0_SensorEffSet) {
-			if (L0609_i_DoorState == k0_doorState_OPEN) {
-				return;
-			}
+
+	if ((sensorEffect == k1_SensorEffClear) && (doorState == k4_doorState_CLOSED))
+		return;
+
+	doorState += (sensorEffect == k0_SensorEffSet) ? -1 : 1;
+	curSquare->setDoorState(doorState);
+	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, mapX, mapY, k1_soundModePlayIfPrioritized);
+
+	if (sensorEffect == k0_SensorEffSet) {
+		if (doorState == k0_doorState_OPEN)
+			return;
+	} else if (doorState == k4_doorState_CLOSED)
+		return;
+
+	addEventGetEventIndex(event);
+}
+
+void Timeline::processEventSquareFakewall(TimelineEvent *event) {
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
+	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
+	int16 effect = event->_C.A._effect;
+	if (effect == k2_SensorEffToggle)
+		effect = getFlag(*curSquare, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+
+	if (effect == k1_SensorEffClear) {
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
+			event->_mapTime++;
+			addEventGetEventIndex(event);
 		} else {
-			if (L0609_i_DoorState == k4_doorState_CLOSED) {
-				return;
-			}
+			Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
+			if ((groupThing != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(groupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+				event->_mapTime++;
+				addEventGetEventIndex(event);
+			} else
+				clearFlag(*curSquare, k0x0004_FakeWallOpen);
 		}
+	} else
+		setFlag(*curSquare, k0x0004_FakeWallOpen);
+}
+
+void Timeline::processEventDoorDestruction(TimelineEvent *event) {
+	Square *square = (Square*)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
+	square->setDoorState(k5_doorState_DESTROYED);
+}
+
+void Timeline::processEventSquareDoor(TimelineEvent *event) {
+	int16 doorState = Square(_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState();
+	if (doorState == k5_doorState_DESTROYED)
+		return;
+
+	if (event->_C.A._effect == k2_SensorEffToggle)
+		event->_C.A._effect = (doorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
+	else if (event->_C.A._effect == k0_SensorEffSet) {
+		if ((doorState == k0_doorState_OPEN) || (doorState == k4_doorState_CLOSED))
+			return;
 	}
 	event->_type = k1_TMEventTypeDoorAnimation;
 	addEventGetEventIndex(event);
 }
 
-void Timeline::processEventSquarePit(TimelineEvent* event) {
-	uint16 L0653_ui_MapX;
-	uint16 L0654_ui_MapY;
-	byte* L0655_puc_Square;
+void Timeline::processEventSquarePit(TimelineEvent *event) {
+	uint16 L0653_ui_MapX = event->_B._location._mapX;
+	uint16 L0654_ui_MapY = event->_B._location._mapY;
 
+	byte *square = &_vm->_dungeonMan->_currMapData[L0653_ui_MapX][L0654_ui_MapY];
+	if (event->_C.A._effect == k2_SensorEffToggle)
+		event->_C.A._effect = getFlag(*square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
-	L0655_puc_Square = &_vm->_dungeonMan->_currMapData[L0653_ui_MapX = event->_B._location._mapX][L0654_ui_MapY = event->_B._location._mapY];
-	if (event->_C.A._effect == k2_SensorEffToggle) {
-		event->_C.A._effect = getFlag(*L0655_puc_Square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
-	}
 	if (event->_C.A._effect == k0_SensorEffSet) {
-		setFlag(*L0655_puc_Square, k0x0008_PitOpen);
+		setFlag(*square, k0x0008_PitOpen);
 		moveTeleporterOrPitSquareThings(L0653_ui_MapX, L0654_ui_MapY);
-	} else {
-		clearFlag(*L0655_puc_Square, k0x0008_PitOpen);
-	}
+	} else
+		clearFlag(*square, k0x0008_PitOpen);
 }
 
 void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
