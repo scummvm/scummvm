@@ -364,7 +364,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 
 	_openChest = thingToOpen;
 	if (!isPressingEye) {
-		objMan.drawIconInSlotBox(k9_SlotBoxInventoryActionHand, k145_IconIndiceContainerChestOpen);
+		objMan.drawIconInSlotBox(k9_SlotBoxInventoryActionHand, kDMIconIndiceContainerChestOpen);
 	}
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k25_PanelOpenChestIndice),
 							   _boxPanel, k72_byteWidth, k8_ColorRed, 73);
@@ -380,7 +380,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
-		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kM1_IconIndiceNone);
+		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kDMIconIndiceNone);
 		_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
@@ -501,7 +501,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 		Common::String descString;
 		Common::String str;
-		if (iconIndex == k147_IconIndiceJunkChampionBones) {
+		if (iconIndex == kDMIconIndiceJunkChampionBones) {
 			switch (_vm->getGameLanguage()) { // localized
 			case Common::FR_FRA:
 				// Fix original bug dur to a cut&paste error: string was concatenated then overwritten by the name
@@ -514,7 +514,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 			descString = str;
 		} else if ((thingType == k8_PotionThingType)
-				   && (iconIndex != k163_IconIndicePotionWaterFlask)
+				   && (iconIndex != kDMIconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), k2_ChampionSkillPriest) > 1)) {
 			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
 			str += " ";
@@ -537,8 +537,8 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0002_DescriptionMaskPoisoned | k0x0004_DescriptionMaskBroken;
 			Weapon *weapon = (Weapon *)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
-			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit)
-				&& (iconIndex <= k7_IconIndiceWeaponTorchLit)
+			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit)
+				&& (iconIndex <= kDMIconIndiceWeaponTorchLit)
 				&& (weapon->getChargeCount() == 0)) {
 
 				switch (_vm->getGameLanguage()) { // localized
@@ -569,7 +569,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			break;
 		}
 		case k10_JunkThingType: {
-			if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
+			if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
 				const char *descStringEN[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
 				const char *descStringDE[4] = {"(LEER)", "(FAST LEER)", "(FAST VOLL)", "(VOLL)"};
@@ -589,7 +589,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				}
 
 				drawPanelObjectDescriptionString(descString.c_str());
-			} else if ((iconIndex >= k0_IconIndiceJunkCompassNorth) && (iconIndex <= k3_IconIndiceJunkCompassWest)) {
+			} else if ((iconIndex >= kDMIconIndiceJunkCompassNorth) && (iconIndex <= kDMIconIndiceJunkCompassWest)) {
 				const static char *directionNameEN[4] = {"NORTH", "EAST", "SOUTH", "WEST"};
 				const static char *directionNameDE[4] = {"NORDEN", "OSTEN", "SUEDEN", "WESTEN"};
 				const static char *directionNameFR[4] = {"AU NORD", "A L'EST", "AU SUD", "A L'OUEST"};
@@ -691,8 +691,8 @@ void InventoryMan::setDungeonViewPalette() {
 			uint16 slotIndex = k1_ChampionSlotActionHand + 1;
 			while (slotIndex--) {
 				Thing slotThing = curChampion->_slots[slotIndex];
-				if ((_vm->_objectMan->getObjectType(slotThing) >= k4_IconIndiceWeaponTorchUnlit) &&
-					(_vm->_objectMan->getObjectType(slotThing) <= k7_IconIndiceWeaponTorchLit)) {
+				if ((_vm->_objectMan->getObjectType(slotThing) >= kDMIconIndiceWeaponTorchUnlit) &&
+					(_vm->_objectMan->getObjectType(slotThing) <= kDMIconIndiceWeaponTorchLit)) {
 					Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(slotThing);
 					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
@@ -759,7 +759,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 		int16 slotIndex = k1_ChampionSlotActionHand + 1;
 		while (slotIndex--) {
 			int16 iconIndex = _vm->_objectMan->getIconIndex(curChampion->_slots[slotIndex]);
-			if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit)) {
+			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit)) {
 				Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[slotIndex]);
 				if (curWeapon->getChargeCount()) {
 					if (curWeapon->setChargeCount(curWeapon->getChargeCount() - 1) == 0) {
@@ -803,7 +803,7 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k20_PanelEmptyIndice), _boxPanel, k72_byteWidth, k8_ColorRed, 73);
 	int16 textPosY = 58;
 	for (uint16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
-		int16 skillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(championIndex, idx | k0x8000_IgnoreTemporaryExperience));
+		int16 skillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(championIndex, idx | kDMIgnoreTemporaryExperience));
 		if (skillLevel == 1)
 			continue;
 
@@ -851,7 +851,7 @@ void InventoryMan::drawStopPressingMouth() {
 }
 
 void InventoryMan::drawStopPressingEye() {
-	drawIconToViewport(k202_IconIndiceEyeNotLooking, 12, 13);
+	drawIconToViewport(kDMIconIndiceEyeNotLooking, 12, 13);
 	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	Thing leaderHandObject = _vm->_championMan->_leaderHandObject;
@@ -908,7 +908,7 @@ void InventoryMan::clickOnMouth() {
 	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
 	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(handThing);
 	bool removeObjectFromLeaderHand;
-	if ((iconIndex >= k8_IconIndiceJunkWater) && (iconIndex <= k9_IconIndiceJunkWaterSkin)) {
+	if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
 		if (!(junkData->getChargeCount()))
 			return;
 
@@ -995,8 +995,8 @@ void InventoryMan::clickOnMouth() {
 			break;
 		}
 		((Potion *)junkData)->setType(k20_PotionTypeEmptyFlask);
-	} else if ((iconIndex >= k168_IconIndiceJunkApple) && (iconIndex < k176_IconIndiceJunkIronKey))
-		curChampion->_food = MIN(curChampion->_food + foodAmounts[iconIndex - k168_IconIndiceJunkApple], 2048);
+	} else if ((iconIndex >= kDMIconIndiceJunkApple) && (iconIndex < kDMIconIndiceJunkIronKey))
+		curChampion->_food = MIN(curChampion->_food + foodAmounts[iconIndex - kDMIconIndiceJunkApple], 2048);
 
 	if (curChampion->_currStamina > curChampion->_maxStamina)
 		curChampion->_currStamina = curChampion->_maxStamina;
@@ -1006,7 +1006,7 @@ void InventoryMan::clickOnMouth() {
 
 	if (removeObjectFromLeaderHand) {
 		for (uint16 i = 5; --i; _vm->delay(8)) { /* Animate mouth icon */
-			_vm->_objectMan->drawIconToScreen(k205_IconIndiceMouthOpen + !(i & 0x0001), 56, 46);
+			_vm->_objectMan->drawIconToScreen(kDMIconIndiceMouthOpen + !(i & 0x0001), 56, 46);
 			_vm->_eventMan->discardAllInput();
 			if (_vm->_engineShouldQuit)
 				return;
@@ -1059,7 +1059,7 @@ void InventoryMan::clickOnEye() {
 	_vm->_eventMan->hideMouse();
 	_vm->_eventMan->hideMouse();
 	_vm->delay(8);
-	drawIconToViewport(k203_IconIndiceEyeLooking, 12, 13);
+	drawIconToViewport(kDMIconIndiceEyeLooking, 12, 13);
 	if (_vm->_championMan->_leaderEmptyHanded)
 		drawChampionSkillsAndStatistics();
 	else {

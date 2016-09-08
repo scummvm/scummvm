@@ -3309,8 +3309,8 @@ T0115077_DrawSecondHalfSquareCreature:
 			sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightSide;
 		} else {
 			useCreatureBackBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
-			useCreatureAttackBitmap = !useCreatureBackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack);
-			if (useCreatureAttackBitmap) {
+			useCreatureAttackBitmap = !useCreatureBackBitmap;
+			if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack)) {
 				useFlippedHorizontallyCreatureFrontImage = false;
 				sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthAttack;
 				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightAttack;

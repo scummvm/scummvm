@@ -138,8 +138,8 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
 				&& getFlag(associatedAllowedSlots, k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
 				&& (   (projectileAssociatedThingType != k10_JunkThingType)
-					|| (iconIndex < k176_IconIndiceJunkIronKey)
-					|| (iconIndex > k191_IconIndiceJunkMasterKey)
+					|| (iconIndex < kDMIconIndiceJunkIronKey)
+					|| (iconIndex > kDMIconIndiceJunkMasterKey)
 					)) {
 					return false;
 				}

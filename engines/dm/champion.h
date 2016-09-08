@@ -35,8 +35,8 @@
 
 namespace DM {
 
-#define k0x4000_IgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
-#define k0x8000_IgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
+#define kDMIgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
+#define kDMIgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
 
 class Scent {
 	uint16 _scent;
@@ -97,79 +97,79 @@ public:
 }; // @  PARTY
 
 enum IconIndice {
-	kM1_IconIndiceNone = -1, // @ CM1_ICON_NONE
-	k0_IconIndiceJunkCompassNorth = 0, // @ C000_ICON_JUNK_COMPASS_NORTH
-	k3_IconIndiceJunkCompassWest = 3, // @ C003_ICON_JUNK_COMPASS_WEST
-	k4_IconIndiceWeaponTorchUnlit = 4, // @ C004_ICON_WEAPON_TORCH_UNLIT
-	k7_IconIndiceWeaponTorchLit = 7, // @ C007_ICON_WEAPON_TORCH_LIT
-	k8_IconIndiceJunkWater = 8, // @ C008_ICON_JUNK_WATER
-	k9_IconIndiceJunkWaterSkin = 9, // @ C009_ICON_JUNK_WATERSKIN
-	k10_IconIndiceJunkJewelSymalUnequipped = 10, // @ C010_ICON_JUNK_JEWEL_SYMAL_UNEQUIPPED
-	k11_IconIndiceJunkJewelSymalEquipped = 11, // @ C011_ICON_JUNK_JEWEL_SYMAL_EQUIPPED
-	k12_IconIndiceJunkIllumuletUnequipped = 12, // @ C012_ICON_JUNK_ILLUMULET_UNEQUIPPED
-	k13_IconIndiceJunkIllumuletEquipped = 13, // @ C013_ICON_JUNK_ILLUMULET_EQUIPPED
-	k14_IconIndiceWeaponFlamittEmpty = 14, // @ C014_ICON_WEAPON_FLAMITT_EMPTY
-	k16_IconIndiceWeaponEyeOfTimeEmpty = 16, // @ C016_ICON_WEAPON_EYE_OF_TIME_EMPTY
-	k18_IconIndiceWeaponStormringEmpty = 18, // @ C018_ICON_WEAPON_STORMRING_EMPTY
-	k20_IconIndiceWeaponStaffOfClawsEmpty = 20, // @ C020_ICON_WEAPON_STAFF_OF_CLAWS_EMPTY
-	k22_IconIndiceWeaponStaffOfClawsFull = 22, // @ C022_ICON_WEAPON_STAFF_OF_CLAWS_FULL
-	k23_IconIndiceWeaponBoltBladeStormEmpty = 23, // @ C023_ICON_WEAPON_BOLT_BLADE_STORM_EMPTY
-	k25_IconIndiceWeaponFuryRaBladeEmpty = 25, // @ C025_ICON_WEAPON_FURY_RA_BLADE_EMPTY
-	k27_IconIndiceWeaponTheFirestaff = 27, // @ C027_ICON_WEAPON_THE_FIRESTAFF
-	k28_IconIndiceWeaponTheFirestaffComplete = 28, // @ C028_ICON_WEAPON_THE_FIRESTAFF_COMPLETE
-	k30_IconIndiceScrollOpen = 30, // @ C030_ICON_SCROLL_SCROLL_OPEN
-	k31_IconIndiceScrollClosed = 31, // @ C031_ICON_SCROLL_SCROLL_CLOSED
-	k32_IconIndiceWeaponDagger = 32, // @ C032_ICON_WEAPON_DAGGER
-	k38_IconIndiceWeaponDeltaSideSplitter = 38, // @ C038_ICON_WEAPON_DELTA_SIDE_SPLITTER
-	k39_IconIndiceWeaponDiamondEdge = 39, // @ C039_ICON_WEAPON_DIAMOND_EDGE
-	k40_IconIndiceWeaponVorpalBlade = 40, // @ C040_ICON_WEAPON_VORPAL_BLADE
-	k41_IconIndiceWeaponTheInquisitorDragonFang = 41, // @ C041_ICON_WEAPON_THE_INQUISITOR_DRAGON_FANG
-	k43_IconIndiceWeaponHardcleaveExecutioner = 43, // @ C043_ICON_WEAPON_HARDCLEAVE_EXECUTIONER
-	k45_IconIndiceWeaponMaceOfOrder = 45, // @ C045_ICON_WEAPON_MACE_OF_ORDER
-	k51_IconIndiceWeaponArrow = 51, // @ C051_ICON_WEAPON_ARROW
-	k52_IconIndiceWeaponSlayer = 52, // @ C052_ICON_WEAPON_SLAYER
-	k54_IconIndiceWeaponRock = 54, // @ C054_ICON_WEAPON_ROCK
-	k55_IconIndiceWeaponPoisonDart = 55, // @ C055_ICON_WEAPON_POISON_DART
-	k56_IconIndiceWeaponThrowingStar = 56, // @ C056_ICON_WEAPON_THROWING_STAR
-	k58_IconIndiceWeaponStaff = 58, // @ C058_ICON_WEAPON_STAFF
-	k59_IconIndiceWeaponWand = 59, // @ C059_ICON_WEAPON_WAND
-	k60_IconIndiceWeaponTeowand = 60, // @ C060_ICON_WEAPON_TEOWAND
-	k61_IconIndiceWeaponYewStaff = 61, // @ C061_ICON_WEAPON_YEW_STAFF
-	k62_IconIndiceWeaponStaffOfManarStaffOfIrra = 62, // @ C062_ICON_WEAPON_STAFF_OF_MANAR_STAFF_OF_IRRA
-	k63_IconIndiceWeaponSnakeStaffCrossOfNeta = 63, // @ C063_ICON_WEAPON_SNAKE_STAFF_CROSS_OF_NETA
-	k64_IconIndiceWeaponTheConduitSerpentStaff = 64, // @ C064_ICON_WEAPON_THE_CONDUIT_SERPENT_STAFF
-	k65_IconIndiceWeaponDragonSpit = 65, // @ C065_ICON_WEAPON_DRAGON_SPIT
-	k66_IconIndiceWeaponSceptreOfLyf = 66, // @ C066_ICON_WEAPON_SCEPTRE_OF_LYF
-	k81_IconIndiceArmourCloakOfNight = 81, // @ C081_ICON_ARMOUR_CLOAK_OF_NIGHT
-	k104_IconIndiceArmourCrownOfNerra = 104, // @ C104_ICON_ARMOUR_CROWN_OF_NERRA
-	k119_IconIndiceArmourElvenBoots = 119, // @ C119_ICON_ARMOUR_ELVEN_BOOTS
-	k120_IconIndiceJunkGemOfAges = 120, // @ C120_ICON_JUNK_GEM_OF_AGES
-	k121_IconIndiceJunkEkkhardCross = 121, // @ C121_ICON_JUNK_EKKHARD_CROSS
-	k122_IconIndiceJunkMoonstone = 122, // @ C122_ICON_JUNK_MOONSTONE
-	k124_IconIndiceJunkPendantFeral = 124, // @ C124_ICON_JUNK_PENDANT_FERAL
-	k128_IconIndiceJunkBoulder = 128, // @ C128_ICON_JUNK_BOULDER
-	k137_IconIndiceJunkRabbitsFoot = 137, // @ C137_ICON_JUNK_RABBITS_FOOT
-	k140_IconIndiceArmourDexhelm = 140, // @ C140_ICON_ARMOUR_DEXHELM
-	k141_IconIndiceArmourFlamebain = 141, // @ C141_ICON_ARMOUR_FLAMEBAIN
-	k142_IconIndiceArmourPowertowers = 142, // @ C142_ICON_ARMOUR_POWERTOWERS
-	k144_IconIndiceContainerChestClosed = 144, // @ C144_ICON_CONTAINER_CHEST_CLOSED
-	k145_IconIndiceContainerChestOpen = 145, // @ C145_ICON_CONTAINER_CHEST_OPEN
-	k147_IconIndiceJunkChampionBones = 147, // @ C147_ICON_JUNK_CHAMPION_BONES
-	k148_IconIndicePotionMaPotionMonPotion = 148, // @ C148_ICON_POTION_MA_POTION_MON_POTION
-	k163_IconIndicePotionWaterFlask = 163, // @ C163_ICON_POTION_WATER_FLASK
-	k168_IconIndiceJunkApple = 168, // @ C168_ICON_JUNK_APPLE
-	k176_IconIndiceJunkIronKey = 176, // @ C176_ICON_JUNK_IRON_KEY
-	k191_IconIndiceJunkMasterKey = 191, // @ C191_ICON_JUNK_MASTER_KEY
-	k194_IconIndiceArmourBootOfSpeed = 194, // @ C194_ICON_ARMOUR_BOOT_OF_SPEED
-	k195_IconIndicePotionEmptyFlask = 195, // @ C195_ICON_POTION_EMPTY_FLASK
-	k197_IconIndiceJunkZokathra = 197, // @ C197_ICON_JUNK_ZOKATHRA
-	k201_IconIndiceActionEmptyHand = 201, // @ C201_ICON_ACTION_ICON_EMPTY_HAND
-	k202_IconIndiceEyeNotLooking = 202, // @ C202_ICON_EYE_NOT_LOOKING /* One pixel is different in this bitmap from the eye in C017_GRAPHIC_INVENTORY. This is visible by selecting another champion after clicking the eye */
-	k203_IconIndiceEyeLooking = 203, // @ C203_ICON_EYE_LOOKING
-	k204_IconIndiceEmptyBox = 204, // @ C204_ICON_EMPTY_BOX
-	k205_IconIndiceMouthOpen = 205, // @ C205_ICON_MOUTH_OPEN
-	k208_IconIndiceNeck = 208, // @ C208_ICON_NECK
-	k212_IconIndiceReadyHand = 212 // @ C212_ICON_READY_HAND
+	kDMIconIndiceNone = -1, // @ CM1_ICON_NONE
+	kDMIconIndiceJunkCompassNorth = 0, // @ C000_ICON_JUNK_COMPASS_NORTH
+	kDMIconIndiceJunkCompassWest = 3, // @ C003_ICON_JUNK_COMPASS_WEST
+	kDMIconIndiceWeaponTorchUnlit = 4, // @ C004_ICON_WEAPON_TORCH_UNLIT
+	kDMIconIndiceWeaponTorchLit = 7, // @ C007_ICON_WEAPON_TORCH_LIT
+	kDMIconIndiceJunkWater = 8, // @ C008_ICON_JUNK_WATER
+	kDMIconIndiceJunkWaterSkin = 9, // @ C009_ICON_JUNK_WATERSKIN
+	kDMIconIndiceJunkJewelSymalUnequipped = 10, // @ C010_ICON_JUNK_JEWEL_SYMAL_UNEQUIPPED
+	kDMIconIndiceJunkJewelSymalEquipped = 11, // @ C011_ICON_JUNK_JEWEL_SYMAL_EQUIPPED
+	kDMIconIndiceJunkIllumuletUnequipped = 12, // @ C012_ICON_JUNK_ILLUMULET_UNEQUIPPED
+	kDMIconIndiceJunkIllumuletEquipped = 13, // @ C013_ICON_JUNK_ILLUMULET_EQUIPPED
+	kDMIconIndiceWeaponFlamittEmpty = 14, // @ C014_ICON_WEAPON_FLAMITT_EMPTY
+	kDMIconIndiceWeaponEyeOfTimeEmpty = 16, // @ C016_ICON_WEAPON_EYE_OF_TIME_EMPTY
+	kDMIconIndiceWeaponStormringEmpty = 18, // @ C018_ICON_WEAPON_STORMRING_EMPTY
+	kDMIconIndiceWeaponStaffOfClawsEmpty = 20, // @ C020_ICON_WEAPON_STAFF_OF_CLAWS_EMPTY
+	kDMIconIndiceWeaponStaffOfClawsFull = 22, // @ C022_ICON_WEAPON_STAFF_OF_CLAWS_FULL
+	kDMIconIndiceWeaponBoltBladeStormEmpty = 23, // @ C023_ICON_WEAPON_BOLT_BLADE_STORM_EMPTY
+	kDMIconIndiceWeaponFuryRaBladeEmpty = 25, // @ C025_ICON_WEAPON_FURY_RA_BLADE_EMPTY
+	kDMIconIndiceWeaponTheFirestaff = 27, // @ C027_ICON_WEAPON_THE_FIRESTAFF
+	kDMIconIndiceWeaponTheFirestaffComplete = 28, // @ C028_ICON_WEAPON_THE_FIRESTAFF_COMPLETE
+	kDMIconIndiceScrollOpen = 30, // @ C030_ICON_SCROLL_SCROLL_OPEN
+	kDMIconIndiceScrollClosed = 31, // @ C031_ICON_SCROLL_SCROLL_CLOSED
+	kDMIconIndiceWeaponDagger = 32, // @ C032_ICON_WEAPON_DAGGER
+	kDMIconIndiceWeaponDeltaSideSplitter = 38, // @ C038_ICON_WEAPON_DELTA_SIDE_SPLITTER
+	kDMIconIndiceWeaponDiamondEdge = 39, // @ C039_ICON_WEAPON_DIAMOND_EDGE
+	kDMIconIndiceWeaponVorpalBlade = 40, // @ C040_ICON_WEAPON_VORPAL_BLADE
+	kDMIconIndiceWeaponTheInquisitorDragonFang = 41, // @ C041_ICON_WEAPON_THE_INQUISITOR_DRAGON_FANG
+	kDMIconIndiceWeaponHardcleaveExecutioner = 43, // @ C043_ICON_WEAPON_HARDCLEAVE_EXECUTIONER
+	kDMIconIndiceWeaponMaceOfOrder = 45, // @ C045_ICON_WEAPON_MACE_OF_ORDER
+	kDMIconIndiceWeaponArrow = 51, // @ C051_ICON_WEAPON_ARROW
+	kDMIconIndiceWeaponSlayer = 52, // @ C052_ICON_WEAPON_SLAYER
+	kDMIconIndiceWeaponRock = 54, // @ C054_ICON_WEAPON_ROCK
+	kDMIconIndiceWeaponPoisonDart = 55, // @ C055_ICON_WEAPON_POISON_DART
+	kDMIconIndiceWeaponThrowingStar = 56, // @ C056_ICON_WEAPON_THROWING_STAR
+	kDMIconIndiceWeaponStaff = 58, // @ C058_ICON_WEAPON_STAFF
+	kDMIconIndiceWeaponWand = 59, // @ C059_ICON_WEAPON_WAND
+	kDMIconIndiceWeaponTeowand = 60, // @ C060_ICON_WEAPON_TEOWAND
+	kDMIconIndiceWeaponYewStaff = 61, // @ C061_ICON_WEAPON_YEW_STAFF
+	kDMIconIndiceWeaponStaffOfManarStaffOfIrra = 62, // @ C062_ICON_WEAPON_STAFF_OF_MANAR_STAFF_OF_IRRA
+	kDMIconIndiceWeaponSnakeStaffCrossOfNeta = 63, // @ C063_ICON_WEAPON_SNAKE_STAFF_CROSS_OF_NETA
+	kDMIconIndiceWeaponTheConduitSerpentStaff = 64, // @ C064_ICON_WEAPON_THE_CONDUIT_SERPENT_STAFF
+	kDMIconIndiceWeaponDragonSpit = 65, // @ C065_ICON_WEAPON_DRAGON_SPIT
+	kDMIconIndiceWeaponSceptreOfLyf = 66, // @ C066_ICON_WEAPON_SCEPTRE_OF_LYF
+	kDMIconIndiceArmourCloakOfNight = 81, // @ C081_ICON_ARMOUR_CLOAK_OF_NIGHT
+	kDMIconIndiceArmourCrownOfNerra = 104, // @ C104_ICON_ARMOUR_CROWN_OF_NERRA
+	kDMIconIndiceArmourElvenBoots = 119, // @ C119_ICON_ARMOUR_ELVEN_BOOTS
+	kDMIconIndiceJunkGemOfAges = 120, // @ C120_ICON_JUNK_GEM_OF_AGES
+	kDMIconIndiceJunkEkkhardCross = 121, // @ C121_ICON_JUNK_EKKHARD_CROSS
+	kDMIconIndiceJunkMoonstone = 122, // @ C122_ICON_JUNK_MOONSTONE
+	kDMIconIndiceJunkPendantFeral = 124, // @ C124_ICON_JUNK_PENDANT_FERAL
+	kDMIconIndiceJunkBoulder = 128, // @ C128_ICON_JUNK_BOULDER
+	kDMIconIndiceJunkRabbitsFoot = 137, // @ C137_ICON_JUNK_RABBITS_FOOT
+	kDMIconIndiceArmourDexhelm = 140, // @ C140_ICON_ARMOUR_DEXHELM
+	kDMIconIndiceArmourFlamebain = 141, // @ C141_ICON_ARMOUR_FLAMEBAIN
+	kDMIconIndiceArmourPowertowers = 142, // @ C142_ICON_ARMOUR_POWERTOWERS
+	kDMIconIndiceContainerChestClosed = 144, // @ C144_ICON_CONTAINER_CHEST_CLOSED
+	kDMIconIndiceContainerChestOpen = 145, // @ C145_ICON_CONTAINER_CHEST_OPEN
+	kDMIconIndiceJunkChampionBones = 147, // @ C147_ICON_JUNK_CHAMPION_BONES
+	kDMIconIndicePotionMaPotionMonPotion = 148, // @ C148_ICON_POTION_MA_POTION_MON_POTION
+	kDMIconIndicePotionWaterFlask = 163, // @ C163_ICON_POTION_WATER_FLASK
+	kDMIconIndiceJunkApple = 168, // @ C168_ICON_JUNK_APPLE
+	kDMIconIndiceJunkIronKey = 176, // @ C176_ICON_JUNK_IRON_KEY
+	kDMIconIndiceJunkMasterKey = 191, // @ C191_ICON_JUNK_MASTER_KEY
+	kDMIconIndiceArmourBootOfSpeed = 194, // @ C194_ICON_ARMOUR_BOOT_OF_SPEED
+	kDMIconIndicePotionEmptyFlask = 195, // @ C195_ICON_POTION_EMPTY_FLASK
+	kDMIconIndiceJunkZokathra = 197, // @ C197_ICON_JUNK_ZOKATHRA
+	kDMIconIndiceActionEmptyHand = 201, // @ C201_ICON_ACTION_ICON_EMPTY_HAND
+	kDMIconIndiceEyeNotLooking = 202, // @ C202_ICON_EYE_NOT_LOOKING /* One pixel is different in this bitmap from the eye in C017_GRAPHIC_INVENTORY. This is visible by selecting another champion after clicking the eye */
+	kDMIconIndiceEyeLooking = 203, // @ C203_ICON_EYE_LOOKING
+	kDMIconIndiceEmptyBox = 204, // @ C204_ICON_EMPTY_BOX
+	kDMIconIndiceMouthOpen = 205, // @ C205_ICON_MOUTH_OPEN
+	kDMIconIndiceNeck = 208, // @ C208_ICON_NECK
+	kDMIconIndiceReadyHand = 212 // @ C212_ICON_READY_HAND
 };
 
 enum ChampionIndex {

@@ -204,7 +204,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	Thing thing = champion.getSlot(k1_ChampionSlotActionHand);
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
-		iconIndex = k201_IconIndiceActionEmptyHand;
+		iconIndex = kDMIconIndiceActionEmptyHand;
 	} else if (_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
@@ -787,7 +787,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 	for (int16 slotIndex = k2_ChampionSlotHead; --slotIndex >= k0_ChampionSlotReadyHand; ) {
 		Thing curThing = champ->_slots[slotIndex];
-		if ((curThing != Thing::_none) && (_vm->_objectMan->getIconIndex(curThing) == k195_IconIndicePotionEmptyFlask)) {
+		if ((curThing != Thing::_none) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
 			return (Potion *)_vm->_dungeonMan->getThingData(curThing);
 		}
@@ -1488,7 +1488,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
 		uint16 actionDamageFactor = actionDamageFactorArray[actionIndex];
-		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == k40_IconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
+		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
 		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);

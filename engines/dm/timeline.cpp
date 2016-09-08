@@ -930,7 +930,7 @@ T0255002:
 		while (curThing != Thing::_endOfList) {
 			if ((curThing.getCell() == cell) && (curThing.getType() == k10_JunkThingType)) {
 				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
-				if (iconIndex == k147_IconIndiceJunkChampionBones) {
+				if (iconIndex == kDMIconIndiceJunkChampionBones) {
 					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);
 					if (junkData->getChargeCount() == championIndex) {
 						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */

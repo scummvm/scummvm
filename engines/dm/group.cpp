@@ -1820,9 +1820,9 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 		L0565_i_Damage += _vm->getRandomNumber((L0565_i_Damage >> 1) + 1);
 		L0565_i_Damage = ((long)L0565_i_Damage * (long)actionDamageFactor) >> 5;
 		L0568_i_Defense = _vm->getRandomNumber(32) + creatureInfo->_defense + doubledMapDifficulty;
-		if (actionHandObjectIconIndex == k39_IconIndiceWeaponDiamondEdge)
+		if (actionHandObjectIconIndex == kDMIconIndiceWeaponDiamondEdge)
 			L0568_i_Defense -= L0568_i_Defense >> 2;
-		else if (actionHandObjectIconIndex == k43_IconIndiceWeaponHardcleaveExecutioner)
+		else if (actionHandObjectIconIndex == kDMIconIndiceWeaponHardcleaveExecutioner)
 			L0568_i_Defense -= L0568_i_Defense >> 3;
 
 		L0565_i_Damage += _vm->getRandomNumber(32) - L0568_i_Defense;
@@ -1847,7 +1847,7 @@ T0231009:
 		L0565_i_Damage += _vm->getRandomNumber(L0565_i_Damage);
 		L0565_i_Damage >>= 2;
 		L0565_i_Damage += _vm->getRandomNumber(4) + 1;
-		if ((actionHandObjectIconIndex == k40_IconIndiceWeaponVorpalBlade)
+		if ((actionHandObjectIconIndex == kDMIconIndiceWeaponVorpalBlade)
 			&& !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)
 			&& !(L0565_i_Damage >>= 1))
 			goto T0231015;

@@ -1197,9 +1197,9 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 					if (_vm->_dungeonMan->_isFacingFountain) {
 						uint16 iconIdx = _vm->_objectMan->getIconIndex(thingHandObject);
 						uint16 weight = _vm->_dungeonMan->getObjectWeight(thingHandObject);
-						if ((iconIdx >= k8_IconIndiceJunkWater) && (iconIdx <= k9_IconIndiceJunkWaterSkin))
+						if ((iconIdx >= kDMIconIndiceJunkWater) && (iconIdx <= kDMIconIndiceJunkWaterSkin))
 							junkPtr->setChargeCount(3); /* Full */
-						else if (iconIdx == k195_IconIndicePotionEmptyFlask)
+						else if (iconIdx == kDMIconIndicePotionEmptyFlask)
 							((Potion*)junkPtr)->setType(k15_PotionTypeWaterFlask);
 						else {
 							commandProcessType80ClickInDungeonViewTouchFrontWall();
@@ -1356,7 +1356,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 	}
 
 	Thing topPileThing = _vm->_dungeonMan->_pileTopObject[viewCell];
-	if (_vm->_objectMan->getIconIndex(topPileThing) != kM1_IconIndiceNone) {
+	if (_vm->_objectMan->getIconIndex(topPileThing) != kDMIconIndiceNone) {
 		_vm->_moveSens->getMoveResult(topPileThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
 		_vm->_championMan->putObjectInLeaderHand(topPileThing, true);
 	}
@@ -1380,7 +1380,7 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 	uint16 currCell = normalizeModulo4(_vm->_dungeonMan->_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
 	_vm->_moveSens->getMoveResult(thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
-	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == k147_IconIndiceJunkChampionBones)) {
+	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == kDMIconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
 		TimelineEvent newEvent;
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);

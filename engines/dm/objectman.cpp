@@ -133,7 +133,7 @@ void ObjectMan::loadObjectNames() {
 
 IconIndice ObjectMan::getObjectType(Thing thing) {
 	if (thing == Thing::_none)
-		return kM1_IconIndiceNone;
+		return kDMIconIndiceNone;
 
 	int16 objectInfoIndex = _vm->_dungeonMan->getObjectInfoIndex(thing);
 	if (objectInfoIndex != -1)
@@ -146,35 +146,35 @@ IconIndice ObjectMan::getIconIndex(Thing thing) {
 	static byte chargeCountToTorchType[16] = {0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3}; // @ G0029_auc_Graphic562_ChargeCountToTorchType
 
 	int16 iconIndex = getObjectType(thing);
-	if (iconIndex != kM1_IconIndiceNone) {
-		if (((iconIndex < k32_IconIndiceWeaponDagger) && (iconIndex >= k0_IconIndiceJunkCompassNorth)) ||
-			((iconIndex >= k148_IconIndicePotionMaPotionMonPotion) && (iconIndex <= k163_IconIndicePotionWaterFlask)) ||
-			(iconIndex == k195_IconIndicePotionEmptyFlask)) {
+	if (iconIndex != kDMIconIndiceNone) {
+		if (((iconIndex < kDMIconIndiceWeaponDagger) && (iconIndex >= kDMIconIndiceJunkCompassNorth)) ||
+			((iconIndex >= kDMIconIndicePotionMaPotionMonPotion) && (iconIndex <= kDMIconIndicePotionWaterFlask)) ||
+			(iconIndex == kDMIconIndicePotionEmptyFlask)) {
 			Junk *junkThing = (Junk*)_vm->_dungeonMan->getThingData(thing);
 			switch (iconIndex) {
-			case k0_IconIndiceJunkCompassNorth:
+			case kDMIconIndiceJunkCompassNorth:
 				iconIndex += _vm->_dungeonMan->_partyDir;
 				break;
-			case k4_IconIndiceWeaponTorchUnlit:
+			case kDMIconIndiceWeaponTorchUnlit:
 				if (((Weapon*)junkThing)->isLit())
 					iconIndex += chargeCountToTorchType[((Weapon*)junkThing)->getChargeCount()];
 				break;
-			case k30_IconIndiceScrollOpen:
+			case kDMIconIndiceScrollOpen:
 				if (((Scroll*)junkThing)->getClosed())
 					iconIndex++;
 				break;
-			case k8_IconIndiceJunkWater:
-			case k12_IconIndiceJunkIllumuletUnequipped:
-			case k10_IconIndiceJunkJewelSymalUnequipped:
+			case kDMIconIndiceJunkWater:
+			case kDMIconIndiceJunkIllumuletUnequipped:
+			case kDMIconIndiceJunkJewelSymalUnequipped:
 				if (junkThing->getChargeCount())
 					iconIndex++;
 				break;
-			case k23_IconIndiceWeaponBoltBladeStormEmpty:
-			case k14_IconIndiceWeaponFlamittEmpty:
-			case k18_IconIndiceWeaponStormringEmpty:
-			case k25_IconIndiceWeaponFuryRaBladeEmpty:
-			case k16_IconIndiceWeaponEyeOfTimeEmpty:
-			case k20_IconIndiceWeaponStaffOfClawsEmpty:
+			case kDMIconIndiceWeaponBoltBladeStormEmpty:
+			case kDMIconIndiceWeaponFlamittEmpty:
+			case kDMIconIndiceWeaponStormringEmpty:
+			case kDMIconIndiceWeaponFuryRaBladeEmpty:
+			case kDMIconIndiceWeaponEyeOfTimeEmpty:
+			case kDMIconIndiceWeaponStaffOfClawsEmpty:
 				if (((Weapon*)junkThing)->getChargeCount())
 					iconIndex++;
 				break;
@@ -201,7 +201,7 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	SlotBox *slotBox = &_slotBoxes[slotBoxIndex];
 	slotBox->_iconIndex = iconIndex;
-	if (slotBox->_iconIndex == kM1_IconIndiceNone)
+	if (slotBox->_iconIndex == kDMIconIndiceNone)
 		return;
 
 	Box blitBox;
@@ -237,7 +237,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 void ObjectMan::drawLeaderObjectName(Thing thing) {
 	char *objectName = nullptr;
 	int16 iconIndex = getIconIndex(thing);
-	if (iconIndex == k147_IconIndiceJunkChampionBones) {
+	if (iconIndex == kDMIconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
 		char champBonesName[16];
 

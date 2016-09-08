@@ -656,7 +656,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 
 				_textMan->printEndGameString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
 				for (int16 idx = k0_ChampionSkillFighter; idx <= k3_ChampionSkillWizard; idx++) {
-					uint16 skillLevel = MIN<uint16>(16, _championMan->getSkillLevel(championIndex, idx | (k0x4000_IgnoreObjectModifiers | k0x8000_IgnoreTemporaryExperience)));
+					uint16 skillLevel = MIN<uint16>(16, _championMan->getSkillLevel(championIndex, idx | (kDMIgnoreObjectModifiers | kDMIgnoreTemporaryExperience)));
 					if (skillLevel == 1)
 						continue;
 

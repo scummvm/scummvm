@@ -1616,35 +1616,35 @@ int16 DungeonMan::getStairsExitDirection(int16 mapX, int16 mapY) {
 
 Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 	int16 thingType = k5_WeaponThingType;
-	if ((iconIndex >= k4_IconIndiceWeaponTorchUnlit) && (iconIndex <= k7_IconIndiceWeaponTorchLit))
-		iconIndex = k4_IconIndiceWeaponTorchUnlit;
+	if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit))
+		iconIndex = kDMIconIndiceWeaponTorchUnlit;
 
 	int16 junkType;
 
 	switch (iconIndex) {
-	case k54_IconIndiceWeaponRock:
+	case kDMIconIndiceWeaponRock:
 		junkType = k30_WeaponTypeRock;
 		break;
-	case k128_IconIndiceJunkBoulder:
+	case kDMIconIndiceJunkBoulder:
 		junkType = k25_JunkTypeBoulder;
 		thingType = k10_JunkThingType;
 		break;
-	case k51_IconIndiceWeaponArrow:
+	case kDMIconIndiceWeaponArrow:
 		junkType = k27_WeaponTypeArrow;
 		break;
-	case k52_IconIndiceWeaponSlayer:
+	case kDMIconIndiceWeaponSlayer:
 		junkType = k28_WeaponTypeSlayer;
 		break;
-	case k55_IconIndiceWeaponPoisonDart:
+	case kDMIconIndiceWeaponPoisonDart:
 		junkType = k31_WeaponTypePoisonDart;
 		break;
-	case k56_IconIndiceWeaponThrowingStar:
+	case kDMIconIndiceWeaponThrowingStar:
 		junkType = k32_WeaponTypeThrowingStar;
 		break;
-	case k32_IconIndiceWeaponDagger:
+	case kDMIconIndiceWeaponDagger:
 		junkType = k8_WeaponTypeDagger;
 		break;
-	case k4_IconIndiceWeaponTorchUnlit:
+	case kDMIconIndiceWeaponTorchUnlit:
 		junkType = k2_WeaponTypeTorch;
 		break;
 	default:
@@ -1657,7 +1657,7 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 
 	Junk *junkPtr = (Junk *)getThingData(unusedThing);
 	junkPtr->setType(junkType); /* Also works for WEAPON in cases other than Boulder */
-	if ((iconIndex == k4_IconIndiceWeaponTorchUnlit) && ((Weapon *)junkPtr)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
+	if ((iconIndex == kDMIconIndiceWeaponTorchUnlit) && ((Weapon *)junkPtr)->isLit()) /* BUG0_65 Torches created by object generator or projectile launcher sensors have no charges. Charges are only defined if the Torch is lit which is not possible at the time it is created */
 		((Weapon *)junkPtr)->setChargeCount(15);
 
 	return unusedThing;

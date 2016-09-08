@@ -704,7 +704,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 		objectType = _vm->_objectMan->getObjectType(thing);
 	} else {
 		thingType = kM1_PartyThingType;
-		objectType = kM1_IconIndiceNone;
+		objectType = kDMIconIndiceNone;
 	}
 
 	if ((!addThing) && (thingType != kM1_PartyThingType))
@@ -878,7 +878,7 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 				if (curObjectType == objectType)
 					return true;
 
-				if (curObjectType == k144_IconIndiceContainerChestClosed) {
+				if (curObjectType == kDMIconIndiceContainerChestClosed) {
 					Container *container = (Container *)_vm->_dungeonMan->getThingData(curThing);
 					curThing = container->getSlot();
 					while (curThing != Thing::_endOfList) {
