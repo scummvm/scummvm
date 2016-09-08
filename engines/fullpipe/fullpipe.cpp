@@ -463,6 +463,7 @@ void FullpipeEngine::cleanup() {
 	stopAllSoundStreams();
 
 	delete _origFormat;
+	_backgroundSurface.free();
 }
 
 void FullpipeEngine::updateScreen() {
