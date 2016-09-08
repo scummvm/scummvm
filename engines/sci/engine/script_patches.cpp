@@ -677,8 +677,11 @@ static const uint16 gk1PatchDay6PoliceSleep[] = {
 // GetTheVeve::changeState(0) would also play the first line of the veve pattern newspaper and that's skipped,
 // when the player is supposed to get the drum book.
 // GetTheVeve::changeState(1) up to state 10 will do the dialogue about the veve newspaper.
+// At the start of state 1 though, the player will get the drum book in case he ask for research.
+// Right after that the scripts check, if the player has the drum book and then go the veve newspaper route.
 //
-// We fix this by removing the state 0 drum book code and instead will then skip up to state 11.
+// We fix this by skipping the drum book check in case the player just got the drum book.
+// The scripts will then skip to state 12, skipping over the second drum book dialogue call.
 //
 // More notes: The veve newspaper item is inventory 9. The drum book is inventory 14.
 //             The flag for veve research is 36, the flag for drum research is 73.
@@ -688,35 +691,37 @@ static const uint16 gk1PatchDay6PoliceSleep[] = {
 // Special thanks, credits and kudos to sluicebox on IRC, who did a ton of research on this and even found this game bug originally.
 //
 // Applies to at least: English PC-CD, German PC-CD
-// Responsible method: getTheVeve::changeState(0) - script 212
+// Responsible method: getTheVeve::changeState(1) - script 212
 static const uint16 gk1SignatureDay5DrumBookDialogue[] = {
-	0x38, SIG_UINT16(0x0202),           // pushi 202h ("has")
-	0x78,                               // push
+	0x31, 0x0b,                         // bnt [skip giving player drum book code]
+	0x38, SIG_UINT16(0x0200),           // pushi 0200h
+	0x78,                               // push1
 	SIG_MAGICDWORD,
-	0x39, 0x09,                         // pushi 09 (veve newspaper item)
+	0x39, 0x0e,                         // pushi 0Eh
 	0x81, 0x00,                         // lag global[0]
-	0x4a, 0x06, 0x00,                   // send 06
-	0x31, 0x0f,                         // bnt [skip to start of veve newspaper dialogue]
-	// code that will trigger the drum book sequence
-	0x38, SIG_UINT16(0x00b7),           // pushi 00B7h ("setScript")
-	0x7a,                               // push2
-	0x72, SIG_UINT16(0x00b6),           // lofsa getTheDrumBook
-	0x36,                               // push
-	0x7c,                               // pushSelf
-	0x54, 0x08, 0x00,                   // self 08 - getTheVeve::setScript(getTheDrumBook, getTheVeve)
-	0x32, SIG_UINT16(0x0A5B),           // jmp [exit method]
+	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::get(0Eh)
+	// end of giving player drum book code
+	0x38, SIG_UINT16(0x0202),           // pushi 0202h
+	0x78,                               // push1
+	0x39, 0x0e,                         // pushi 0Eh
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::has(0Eh)
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0025),           // bnt [veve newspaper code]
 	SIG_END
 };
 
 static const uint16 gk1PatchDay5DrumBookDialogue[] = {
-	PATCH_ADDTOOFFSET(+13),
-	// now we are at the start of the drum book sequence code
-	0x35, 0x0A,                         // ldi 0A (one state before the second drum book code)
-	0x65, 0x14,                         // aTop state
-	0x35, 0x01,                         // ldi 01
-	0x65, 0x1a,                         // aTop cycles
-	0x3A,                               // toss
-	0x48,                               // ret
+	0x31, 0x0d,                         // bnt [skip giving player drum book code] adjusted
+	PATCH_ADDTOOFFSET(+11),             // skip give player drum book original code
+	0x33, 0x0D,                         // jmp [over the check inventory for drum book code]
+	// check inventory for drum book
+	0x38, SIG_UINT16(0x0202),           // pushi 0202h
+	0x78,                               // push1
+	0x39, 0x0e,                         // pushi 0Eh
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x06, 0x00,                   // send 06 - GKEgo::has(0Eh)
+	0x2f, 0x23,                         // bt [veve newspaper code] (adjusted, saves 2 bytes)
 	PATCH_END
 };
 
