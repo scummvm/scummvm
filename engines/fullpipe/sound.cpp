@@ -43,6 +43,10 @@ SoundList::SoundList() {
 	_libHandle = 0;
 }
 
+SoundList::~SoundList() {
+	free(_soundItems);
+}
+
 bool SoundList::load(MfcArchive &file, char *fname) {
 	debugC(5, kDebugLoading, "SoundList::load()");
 
