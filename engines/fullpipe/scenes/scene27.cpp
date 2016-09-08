@@ -340,16 +340,16 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		double rndCos = cos(rndF);
 		double rndSin = sin(rndF);
 
-		double pow1x = cos(bat1->field_10 - rndF) * (double)((int)(bat2->currX - bat1->currX) >= 0 ? 1 : -1) * bat1->power;
-		double pow1y = sin(bat1->field_10 - rndF) * (double)((int)(bat2->currY - bat1->currY) >= 0 ? 1 : -1) * bat1->power;
+		double pow1x = cos(bat1->field_10 - rndF) * (double)((bat2->currX - bat1->currX) >= 0 ? 1 : -1) * bat1->power;
+		double pow1y = sin(bat1->field_10 - rndF) * (double)((bat2->currY - bat1->currY) >= 0 ? 1 : -1) * bat1->power;
 
 		bat1->powerCos -= pow1x * 1.1;
 		bat1->powerSin -= pow1y * 1.1;
 
 		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
 								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
-		double pow2x = cos(bat2->field_10 - rndF) * (double)((int)(bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
-		double pow2y = sin(bat2->field_10 - rndF) * (double)((int)(bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
+		double pow2x = cos(bat2->field_10 - rndF) * (double)((bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
+		double pow2y = sin(bat2->field_10 - rndF) * (double)((bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
 
 		bat2->powerCos -= pow2x * 1.1;
 		bat2->powerSin -= pow2y * 1.1;
@@ -357,8 +357,9 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 		double dy = bat1->currY - bat2->currY;
 		double dx = bat1->currX - bat2->currX;
 		double dist = (sqrt(rndSin * rndSin * 0.25 + rndCos * rndCos) * 54.0 - sqrt(dx * dx + dy * dy)) / cos(rndF - bat1->field_10);
-		bat1->currX -= cos(bat1->field_10) * (dist + 1.0);
-		bat1->currY -= sin(bat1->field_10) * (dist + 1.0);
+		bat1->currX = (double)bat1->currX - cos(bat1->field_10) * (dist + 1.0);
+		bat1->currY = (double)bat1->currY - sin(bat1->field_10) * (dist + 1.0);
+
 		bat1->powerCos += pow2x * 0.64;
 
 		if (bat1->currX <= 500.0)
@@ -368,10 +369,11 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 		bat1->field_10 = atan2(bat1->powerSin, bat1->powerCos);
 		bat1->power = sqrt(bat1->powerCos * bat1->powerCos + bat1->powerSin * bat1->powerSin);
+
 		bat2->powerCos += pow1x * 0.64;
 
 		if (bat2->currX <= 500.0)
-			bat2->powerSin = 0;
+			bat2->powerSin = 0.0;
 		else
 			bat2->powerSin += pow1y * 0.64;
 
