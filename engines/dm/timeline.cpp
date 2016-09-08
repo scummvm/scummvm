@@ -488,16 +488,16 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 }
 
 void Timeline::processEventSquarePit(TimelineEvent *event) {
-	uint16 L0653_ui_MapX = event->_B._location._mapX;
-	uint16 L0654_ui_MapY = event->_B._location._mapY;
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
 
-	byte *square = &_vm->_dungeonMan->_currMapData[L0653_ui_MapX][L0654_ui_MapY];
+	byte *square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	if (event->_C.A._effect == k2_SensorEffToggle)
 		event->_C.A._effect = getFlag(*square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
 	if (event->_C.A._effect == k0_SensorEffSet) {
 		setFlag(*square, k0x0008_PitOpen);
-		moveTeleporterOrPitSquareThings(L0653_ui_MapX, L0654_ui_MapY);
+		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
 		clearFlag(*square, k0x0008_PitOpen);
 }
@@ -799,65 +799,55 @@ T0252001:
 }
 
 void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
-	Thing L0620_T_Thing;
-	Sensor *L0621_ps_Sensor;
-
-	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
-	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
-	while (L0620_T_Thing != Thing::_none) {
-		if ((L0620_T_Thing.getType()) == k3_SensorThingType) {
-			L0621_ps_Sensor = (Sensor *)_vm->_dungeonMan->getThingData(L0620_T_Thing);
-			if (L0621_ps_Sensor->getType() == k0_SensorDisabled) {
-				L0621_ps_Sensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	while (curThing != Thing::_none) {
+		if ((curThing.getType()) == k3_SensorThingType) {
+			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			if (curSensor->getType() == k0_SensorDisabled) {
+				curSensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
 				return;
 			}
 		}
-		L0620_T_Thing = _vm->_dungeonMan->getNextThing(L0620_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 }
 
 void Timeline::processEventEnableChampionAction(uint16 champIndex) {
-	int16 L0660_i_SlotIndex;
-	int16 L0661_i_QuiverSlotIndex;
-	Champion *L0662_ps_Champion;
-
-	L0662_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	L0662_ps_Champion->_enableActionEventIndex = -1;
-	clearFlag(L0662_ps_Champion->_attributes, k0x0008_ChampionAttributeDisableAction);
-	if (L0662_ps_Champion->_actionIndex != k255_ChampionActionNone) {
-		L0662_ps_Champion->_actionDefense -= _actionDefense[L0662_ps_Champion->_actionDefense];
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	curChampion->_enableActionEventIndex = -1;
+	clearFlag(curChampion->_attributes, k0x0008_ChampionAttributeDisableAction);
+	if (curChampion->_actionIndex != k255_ChampionActionNone) {
+		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
 	}
-	if (L0662_ps_Champion->_currHealth) {
-		if ((L0662_ps_Champion->_actionIndex == k32_ChampionActionShoot) && (L0662_ps_Champion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
-			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = k12_ChampionSlotQuiverLine_1_1)) {
-T0253002:
-				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, L0660_i_SlotIndex), k0_ChampionSlotReadyHand);
-			} else {
-				for (L0661_i_QuiverSlotIndex = 0; L0661_i_QuiverSlotIndex < 3; L0661_i_QuiverSlotIndex++) {
-					if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, L0660_i_SlotIndex = L0661_i_QuiverSlotIndex + k7_ChampionSlotQuiverLine_2_1))
-						goto T0253002;
+	if (curChampion->_currHealth) {
+		if ((curChampion->_actionIndex == k32_ChampionActionShoot) && (curChampion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
+			int16 slotIndex = k12_ChampionSlotQuiverLine_1_1;
+			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, slotIndex))
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), k0_ChampionSlotReadyHand);
+			else {
+				for (int16 quiverSlotIndex = 0; quiverSlotIndex < 3; quiverSlotIndex++) {
+					slotIndex = quiverSlotIndex + k7_ChampionSlotQuiverLine_2_1;
+					if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, slotIndex))
+						_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), k0_ChampionSlotReadyHand);
 				}
 			}
 		}
-		setFlag(L0662_ps_Champion->_attributes, k0x8000_ChampionAttributeActionHand);
+		setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
-	L0662_ps_Champion->_actionIndex = k255_ChampionActionNone;
+	curChampion->_actionIndex = k255_ChampionActionNone;
 }
 
 void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
-	uint16 L0677_ui_SlotIndex;
-	Champion *L0678_ps_Champion;
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	if (curChampion->_slots[slotIndex] != Thing::_none)
+		return;
 
-	L0678_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	if (L0678_ps_Champion->_slots[slotIndex] != Thing::_none) {
+	if (hasWeaponMovedSlot(champIndex, curChampion, k12_ChampionSlotQuiverLine_1_1, slotIndex))
 		return;
-	}
-	if (hasWeaponMovedSlot(champIndex, L0678_ps_Champion, k12_ChampionSlotQuiverLine_1_1, slotIndex)) {
-		return;
-	}
-	for (L0677_ui_SlotIndex = k7_ChampionSlotQuiverLine_2_1; L0677_ui_SlotIndex <= k9_ChampionSlotQuiverLine_2_2; L0677_ui_SlotIndex++) {
-		if (hasWeaponMovedSlot(champIndex, L0678_ps_Champion, L0677_ui_SlotIndex, slotIndex))
+
+	for (uint16 srcSlotIndex = k7_ChampionSlotQuiverLine_2_1; srcSlotIndex <= k9_ChampionSlotQuiverLine_2_2; srcSlotIndex++) {
+		if (hasWeaponMovedSlot(champIndex, curChampion, srcSlotIndex, slotIndex))
 			break;
 	}
 }
@@ -872,108 +862,86 @@ bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion *champ, uint16 sour
 }
 
 void Timeline::processEventHideDamageReceived(uint16 champIndex) {
-	Champion *L0663_ps_Champion;
-
-
-	L0663_ps_Champion = &_vm->_championMan->_champions[champIndex];
-	L0663_ps_Champion->_hideDamageReceivedIndex = -1;
-	if (!L0663_ps_Champion->_currHealth) {
+	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
+	curChampion->_hideDamageReceivedIndex = -1;
+	if (!curChampion->_currHealth)
 		return;
-	}
+
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		_vm->_eventMan->showMouse();
 		_vm->_inventoryMan->drawStatusBoxPortrait((ChampionIndex)champIndex);
 		_vm->_eventMan->hideMouse();
 	} else {
-		setFlag(L0663_ps_Champion->_attributes, k0x0080_ChampionAttributeNameTitle);
+		setFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
 }
 
 void Timeline::processEventLight(TimelineEvent *event) {
-	int16 L0673_i_WeakerLightPower;
-	int16 L0674_i_Multiple;
-#define AL0674_i_LightPower  L0674_i_Multiple
-#define AL0674_i_LightAmount L0674_i_Multiple
-	bool L0675_B_NegativeLightPower;
-	TimelineEvent L0676_s_Event;
-
-
-	if ((AL0674_i_LightPower = event->_B._lightPower) == 0) {
+	int16 lightPower = event->_B._lightPower;
+	if (lightPower == 0)
 		return;
-	}
 
-	L0675_B_NegativeLightPower = (AL0674_i_LightPower < 0);
-	if (L0675_B_NegativeLightPower) {
-		AL0674_i_LightPower = -AL0674_i_LightPower;
-	}
+	bool negativeLightPower = (lightPower < 0);
+	if (negativeLightPower)
+		lightPower = -lightPower;
 
-	L0673_i_WeakerLightPower = AL0674_i_LightPower - 1;
-	AL0674_i_LightAmount = _vm->_championMan->_lightPowerToLightAmount[AL0674_i_LightPower] - _vm->_championMan->_lightPowerToLightAmount[L0673_i_WeakerLightPower];
-	if (L0675_B_NegativeLightPower) {
-		AL0674_i_LightAmount = -AL0674_i_LightAmount;
-		L0673_i_WeakerLightPower = -L0673_i_WeakerLightPower;
+	int16 weakerLightPower = lightPower - 1;
+	int16 lightAmount = _vm->_championMan->_lightPowerToLightAmount[lightPower] - _vm->_championMan->_lightPowerToLightAmount[weakerLightPower];
+	if (negativeLightPower) {
+		lightAmount = -lightAmount;
+		weakerLightPower = -weakerLightPower;
 	}
-	_vm->_championMan->_party._magicalLightAmount += AL0674_i_LightAmount;
-	if (L0673_i_WeakerLightPower) {
-		L0676_s_Event._type = k70_TMEventTypeLight;
-		L0676_s_Event._B._lightPower = L0673_i_WeakerLightPower;
-		setMapAndTime(L0676_s_Event._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
-		L0676_s_Event._priority = 0;
-		addEventGetEventIndex(&L0676_s_Event);
+	_vm->_championMan->_party._magicalLightAmount += lightAmount;
+	if (weakerLightPower) {
+		TimelineEvent newEvent;
+		newEvent._type = k70_TMEventTypeLight;
+		newEvent._B._lightPower = weakerLightPower;
+		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
+		newEvent._priority = 0;
+		addEventGetEventIndex(&newEvent);
 	}
 }
 
 void Timeline::refreshAllChampionStatusBoxes() {
-	uint16 L0679_ui_ChampionIndex;
+	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++)
+		setFlag(_vm->_championMan->_champions[idx]._attributes, k0x1000_ChampionAttributeStatusBox);
 
-	for (L0679_ui_ChampionIndex = k0_ChampionFirst; L0679_ui_ChampionIndex < _vm->_championMan->_partyChampionCount; L0679_ui_ChampionIndex++) {
-		setFlag(_vm->_championMan->_champions[L0679_ui_ChampionIndex]._attributes, k0x1000_ChampionAttributeStatusBox);
-	}
 	_vm->_championMan->drawAllChampionStates();
 }
 
 void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
-	int16 L0664_i_MapX;
-	int16 L0665_i_MapY;
-	uint16 L0666_ui_Cell;
-	Thing L0667_T_Thing;
-	Junk *L0668_ps_Junk;
-	int16 L0669_i_IconIndex;
-	uint16 L0670_ui_Step;
-	uint16 L0671_ui_ChampionIndex;
-
-
-	L0664_i_MapX = event->_B._location._mapX;
-	L0665_i_MapY = event->_B._location._mapY;
-	L0665_i_MapY = event->_B._location._mapY;
-	L0666_ui_Cell = event->_C.A._cell;
-	L0671_ui_ChampionIndex = event->_priority;
-	switch (L0670_ui_Step = event->_C.A._effect) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
+	int16 mapX = event->_B._location._mapX;
+	int16 mapY = event->_B._location._mapY;
+	uint16 cell = event->_C.A._cell;
+	uint16 championIndex = event->_priority;
+	uint16 rebirthStep = event->_C.A._effect;
+	switch (rebirthStep) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
 	case 2:
-		_vm->_projexpl->createExplosion(Thing::_explRebirthStep1, 0, L0664_i_MapX, L0665_i_MapY, L0666_ui_Cell);
+		_vm->_projexpl->createExplosion(Thing::_explRebirthStep1, 0, mapX, mapY, cell);
 		event->_mapTime += 5;
 T0255002:
-		L0670_ui_Step--;
-		event->_C.A._effect = L0670_ui_Step;
+		rebirthStep--;
+		event->_C.A._effect = rebirthStep;
 		addEventGetEventIndex(event);
 		break;
-	case 1:
-		L0667_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0664_i_MapX, L0665_i_MapY);
-		while (L0667_T_Thing != Thing::_endOfList) {
-			if ((L0667_T_Thing.getCell() == L0666_ui_Cell) && (L0667_T_Thing.getType() == k10_JunkThingType)) {
-				L0669_i_IconIndex = _vm->_objectMan->getIconIndex(L0667_T_Thing);
-				if (L0669_i_IconIndex == k147_IconIndiceJunkChampionBones) {
-					L0668_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L0667_T_Thing);
-					if (L0668_ps_Junk->getChargeCount() == L0671_ui_ChampionIndex) {
-						_vm->_dungeonMan->unlinkThingFromList(L0667_T_Thing, Thing(0), L0664_i_MapX, L0665_i_MapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
-						L0668_ps_Junk->setNextThing(Thing::_none);
+	case 1: {
+		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+		while (curThing != Thing::_endOfList) {
+			if ((curThing.getCell() == cell) && (curThing.getType() == k10_JunkThingType)) {
+				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
+				if (iconIndex == k147_IconIndiceJunkChampionBones) {
+					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);
+					if (junkData->getChargeCount() == championIndex) {
+						_vm->_dungeonMan->unlinkThingFromList(curThing, Thing(0), mapX, mapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
+						junkData->setNextThing(Thing::_none);
 						event->_mapTime += 1;
 						goto T0255002;
 					}
 				}
 			}
-			L0667_T_Thing = _vm->_dungeonMan->getNextThing(L0667_T_Thing);
+			curThing = _vm->_dungeonMan->getNextThing(curThing);
+		}
 		}
 		break;
 	case 0:
