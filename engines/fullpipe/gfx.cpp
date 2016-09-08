@@ -790,6 +790,7 @@ Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
 
+	_surface->free();
 	delete _surface;
 
 	_pixels = 0;
