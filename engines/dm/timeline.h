@@ -34,7 +34,7 @@ namespace DM {
 	class Champion;
 	class Sensor;
 
-	/* Event types */
+/* Event types */
 enum TimelineEventType {
 /* Used when a creature in a group was damaged or killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by = 3, Fluxcages */
 kM3_TMEventTypeCreateReactionEvent29DangerOnSquare = -3, // @ CM3_EVENT_CREATE_REACTION_EVENT_29_DANGER_ON_SQUARE 
@@ -94,6 +94,9 @@ k81_TMEventTypeMagicMap_C81 = 81, // @ C81_EVENT_MAGIC_MAP
 k82_TMEventTypeMagicMap_C82 = 82, // @ C82_EVENT_MAGIC_MAP                                 
 k83_TMEventTypeMagicMap_C83 = 83  // @ C83_EVENT_MAGIC_MAP    
 };
+
+#define k0x0007_generatedCreatureCount 0x0007	// @ MASK0x0007_GENERATED_CREATURE_COUNT
+#define k0x0008_randomizeGeneratedCreatureCount 0x0008 // @ MASK0x0008_RANDOMIZE_GENERATED_CREATURE_COUNT
 
 class TimelineEvent {
 public:
@@ -177,8 +180,7 @@ public:
 	void processEventsMoveGroup(TimelineEvent *event); // @ F0252_TIMELINE_ProcessEvents60to61_MoveGroup
 	void procesEventEnableGroupGenerator(TimelineEvent *event); // @ F0246_TIMELINE_ProcessEvent65_EnableGroupGenerator
 	void processEventEnableChampionAction(uint16 champIndex); // @ F0253_TIMELINE_ProcessEvent11Part1_EnableChampionAction
-	void processEventMoveWeaponFromQuiverToSlot(uint16 champIndex,
-																	 uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
+	void processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex);// @ F0259_TIMELINE_ProcessEvent11Part2_MoveWeaponFromQuiverToSlot
 	bool hasWeaponMovedSlot(int16 champIndex, Champion *champ,
 										 uint16 sourceSlotIndex, int16 destSlotIndex); // @ F0258_TIMELINE_HasWeaponMovedToSlot
 	void processEventHideDamageReceived(uint16 champIndex); // @ F0254_TIMELINE_ProcessEvent12_HideDamageReceived
@@ -187,8 +189,8 @@ public:
 	void processEventViAltarRebirth(TimelineEvent *event); // @ F0255_TIMELINE_ProcessEvent13_ViAltarRebirth
 	void saveEventsPart(Common::OutSaveFile *file);
 	void saveTimelinePart(Common::OutSaveFile *file);
-	void loadEventsPart(Common::InSaveFile* file);
-	void loadTimelinePart(Common::InSaveFile* file);
+	void loadEventsPart(Common::InSaveFile *file);
+	void loadTimelinePart(Common::InSaveFile *file);
 
 	signed char _actionDefense[44]; // @ G0495_ac_Graphic560_ActionDefense
 

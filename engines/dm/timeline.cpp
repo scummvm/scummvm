@@ -92,7 +92,7 @@ void Timeline::initConstants() {
 		_actionDefense[i] = actionDefense[i];
 }
 
-Timeline::Timeline(DMEngine* vm) : _vm(vm) {
+Timeline::Timeline(DMEngine *vm) : _vm(vm) {
 	_eventMaxCount = 0;
 	_events = nullptr;
 	_eventCount = 0;
@@ -309,8 +309,8 @@ void Timeline::processTimeline() {
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._C._slot), Thing(0), newEvent._B._location._mapX, newEvent._B._location._mapY);
-					curEvent = (TimelineEvent*)_vm->_dungeonMan->getThingData(Thing(newEvent._C._slot));
-					((Explosion*)curEvent)->setNextThing(Thing::_none);
+					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._C._slot));
+					((Explosion *)curEvent)->setNextThing(Thing::_none);
 				}
 				break;
 			case k11_TMEventTypeEnableChampionAction:
@@ -382,7 +382,7 @@ void Timeline::extractFirstEvent(TimelineEvent *event) {
 void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	uint16 mapX = event->_B._location._mapX;
 	uint16 mapY = event->_B._location._mapY;
-	Square *curSquare = (Square*)&_vm->_dungeonMan->_currMapData[mapX][mapY];
+	Square *curSquare = (Square *)&_vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 doorState = Square(*curSquare).getDoorState();
 	if (doorState == k5_doorState_DESTROYED)
 		return;
@@ -412,7 +412,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
 		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group*)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 
 				doorState = (doorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (doorState - 1);
@@ -468,7 +468,7 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 }
 
 void Timeline::processEventDoorDestruction(TimelineEvent *event) {
-	Square *square = (Square*)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
+	Square *square = (Square *)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
 	square->setDoorState(k5_doorState_DESTROYED);
 }
 
@@ -531,8 +531,8 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
 
 		if (curThingType == k14_ProjectileThingType) {
-			Projectile *projectile = (Projectile*)_vm->_dungeonMan->getThingData(curThing);
-			TimelineEvent* newEvent;
+			Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(curThing);
+			TimelineEvent *newEvent;
 			newEvent = &_events[projectile->_eventIndex];
 			newEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
 			newEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
@@ -577,13 +577,13 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	while (curThing != Thing::_endOfList) {
 		int16 curThingType = curThing.getType();
 		if ((curThingType == k2_TextstringType) && (curThing.getCell() == event->_C.A._cell)) {
-			TextString *textString = (TextString*)_vm->_dungeonMan->getThingData(curThing);
+			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
 			if (event->_C.A._effect == k2_SensorEffToggle)
 				textString->setVisible(!textString->isVisible());
 			else
 				textString->setVisible(event->_C.A._effect == k0_SensorEffSet);
 		} else if (curThingType == k3_SensorThingType) {
-			Sensor *curThingSensor = (Sensor*)_vm->_dungeonMan->getThingData(curThing);
+			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
 			if (curSensorType == k6_SensorWallCountdown) {
@@ -635,192 +635,161 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	_vm->_moveSens->processRotationEffect();
 }
 
-void Timeline::triggerProjectileLauncher(Sensor* sensor, TimelineEvent* event) {
-	Thing L0622_T_FirstProjectileAssociatedThing;
-	Thing L0623_T_SecondProjectileAssociatedThing;
-	uint16 L0624_ui_Cell;
-	int16 L0625_i_SensorType;
-	int16 L0626_i_MapX;
-	int16 L0627_i_MapY;
-	uint16 L0628_ui_ProjectileCell;
-	int16 L0629_i_SensorData;
-	int16 L0630_i_KineticEnergy;
-	int16 L0631_i_StepEnergy;
-	bool L0632_B_LaunchSingleProjectile;
-	uint16 L0633_ui_ThingCell;
+void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
+	int16 mapX = event->_B._location._mapX;
+	int16 mapY = event->_B._location._mapY;
+	uint16 cell = event->_C.A._cell;
+	uint16 projectileCell = returnOppositeDir((Direction)cell);
+	int16 sensorType = sensor->getType();
+	int16 sensorData = sensor->getData();
+	int16 kineticEnergy = sensor->getActionKineticEnergy();
+	int16 stepEnergy = sensor->getActionStepEnergy();
+	bool launchSingleProjectile = (sensorType == k7_SensorWallSingleProjLauncherNewObj) ||
+		(sensorType == k8_SensorWallSingleProjLauncherExplosion) ||
+		(sensorType == k14_SensorWallSingleProjLauncherSquareObj);
 
-
-	L0626_i_MapX = event->_B._location._mapX;
-	L0627_i_MapY = event->_B._location._mapY;
-	L0624_ui_Cell = event->_C.A._cell;
-	L0628_ui_ProjectileCell = returnOppositeDir((Direction)L0624_ui_Cell);
-	L0625_i_SensorType = sensor->getType();
-	L0629_i_SensorData = sensor->getData();
-	L0630_i_KineticEnergy = sensor->getActionKineticEnergy();
-	L0631_i_StepEnergy = sensor->getActionStepEnergy();
-	L0632_B_LaunchSingleProjectile = (L0625_i_SensorType == k7_SensorWallSingleProjLauncherNewObj) ||
-		(L0625_i_SensorType == k8_SensorWallSingleProjLauncherExplosion) ||
-		(L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj);
-	if ((L0625_i_SensorType == k8_SensorWallSingleProjLauncherExplosion) || (L0625_i_SensorType == k10_SensorWallDoubleProjLauncherExplosion)) {
-		L0622_T_FirstProjectileAssociatedThing = L0623_T_SecondProjectileAssociatedThing = Thing(L0629_i_SensorData + Thing::_firstExplosion.toUint16());
-	} else {
-		if ((L0625_i_SensorType == k14_SensorWallSingleProjLauncherSquareObj) || (L0625_i_SensorType == k15_SensorWallDoubleProjLauncherSquareObj)) {
-			L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
-			while (L0622_T_FirstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
-				L0633_ui_ThingCell = L0622_T_FirstProjectileAssociatedThing.getCell();
-				if ((L0622_T_FirstProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
-					break;
-				L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(L0622_T_FirstProjectileAssociatedThing);
-			}
-			if (L0622_T_FirstProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
-				return;
-			}
-			_vm->_dungeonMan->unlinkThingFromList(L0622_T_FirstProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
-			if (!L0632_B_LaunchSingleProjectile) {
-				L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(L0626_i_MapX, L0627_i_MapY);
-				while (L0623_T_SecondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
-					L0633_ui_ThingCell = L0623_T_SecondProjectileAssociatedThing.getCell();
-					if ((L0623_T_SecondProjectileAssociatedThing.getType() > k3_SensorThingType) && ((L0633_ui_ThingCell == L0624_ui_Cell) || (L0633_ui_ThingCell == returnNextVal(L0624_ui_Cell))))
-						break;
-					L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(L0623_T_SecondProjectileAssociatedThing);
-				}
-				if (L0623_T_SecondProjectileAssociatedThing == Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
-					L0632_B_LaunchSingleProjectile = true;
-				} else {
-					_vm->_dungeonMan->unlinkThingFromList(L0623_T_SecondProjectileAssociatedThing, Thing(0), L0626_i_MapX, L0627_i_MapY); /* The object is removed without triggering any sensor effects */
-				}
-			}
-		} else {
-			if ((L0622_T_FirstProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none) {
-				return;
-			}
-			if (!L0632_B_LaunchSingleProjectile && ((L0623_T_SecondProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(L0629_i_SensorData)) == Thing::_none)) {
-				L0632_B_LaunchSingleProjectile = true;
-			}
+	Thing firstProjectileAssociatedThing;
+	Thing secondProjectileAssociatedThing;
+	if ((sensorType == k8_SensorWallSingleProjLauncherExplosion) || (sensorType == k10_SensorWallDoubleProjLauncherExplosion))
+		firstProjectileAssociatedThing = secondProjectileAssociatedThing = Thing(sensorData + Thing::_firstExplosion.toUint16());
+	else if ((sensorType == k14_SensorWallSingleProjLauncherSquareObj) || (sensorType == k15_SensorWallDoubleProjLauncherSquareObj)) {
+		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
+			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
+			if ((firstProjectileAssociatedThing.getType() > k3_SensorThingType) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+				break;
+			firstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(firstProjectileAssociatedThing);
 		}
+		if (firstProjectileAssociatedThing == Thing::_none) /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+			return;
+
+		_vm->_dungeonMan->unlinkThingFromList(firstProjectileAssociatedThing, Thing(0), mapX, mapY); /* The object is removed without triggering any sensor effects */
+		if (!launchSingleProjectile) {
+			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+			while (secondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
+				uint16 projectiveThingCell = secondProjectileAssociatedThing.getCell();
+				if ((secondProjectileAssociatedThing.getType() > k3_SensorThingType) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+					break;
+				secondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(secondProjectileAssociatedThing);
+			}
+			if (secondProjectileAssociatedThing == Thing::_none) /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList */
+				launchSingleProjectile = true;
+			else
+				_vm->_dungeonMan->unlinkThingFromList(secondProjectileAssociatedThing, Thing::_none, mapX, mapY); /* The object is removed without triggering any sensor effects */
+		}
+	} else {
+		firstProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
+		if ((firstProjectileAssociatedThing) == Thing::_none)
+			return;
+
+		secondProjectileAssociatedThing = _vm->_dungeonMan->getObjForProjectileLaucherOrObjGen(sensorData);
+		if (!launchSingleProjectile && (secondProjectileAssociatedThing == Thing::_none))
+			launchSingleProjectile = true;
 	}
-	if (L0632_B_LaunchSingleProjectile) {
-		L0628_ui_ProjectileCell = normalizeModulo4(L0628_ui_ProjectileCell + _vm->getRandomNumber(2));
-	}
-	L0626_i_MapX += _vm->_dirIntoStepCountEast[L0624_ui_Cell], L0627_i_MapY += _vm->_dirIntoStepCountNorth[L0624_ui_Cell]; /* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
+	if (launchSingleProjectile)
+		projectileCell = normalizeModulo4(projectileCell + _vm->getRandomNumber(2));
+
+	/* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
+	mapX += _vm->_dirIntoStepCountEast[cell];
+	mapY += _vm->_dirIntoStepCountNorth[cell];
 	_vm->_projexpl->_createLauncherProjectile = true;
-	_vm->_projexpl->createProjectile(L0622_T_FirstProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, L0628_ui_ProjectileCell, (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
-	if (!L0632_B_LaunchSingleProjectile) {
-		_vm->_projexpl->createProjectile(L0623_T_SecondProjectileAssociatedThing, L0626_i_MapX, L0627_i_MapY, returnNextVal(L0628_ui_ProjectileCell), (Direction)L0624_ui_Cell, L0630_i_KineticEnergy, 100, L0631_i_StepEnergy);
-	}
+	_vm->_projexpl->createProjectile(firstProjectileAssociatedThing, mapX, mapY, projectileCell, (Direction)cell, kineticEnergy, 100, stepEnergy);
+	if (!launchSingleProjectile)
+		_vm->_projexpl->createProjectile(secondProjectileAssociatedThing, mapX, mapY, returnNextVal(projectileCell), (Direction)cell, kineticEnergy, 100, stepEnergy);
+
 	_vm->_projexpl->_createLauncherProjectile = false;
 }
 
-void Timeline::processEventSquareCorridor(TimelineEvent* event) {
-#define k0x0008_randomizeGeneratedCreatureCount 0x0008 // @ MASK0x0008_RANDOMIZE_GENERATED_CREATURE_COUNT
-#define k0x0007_generatedCreatureCount 0x0007	// @ MASK0x0007_GENERATED_CREATURE_COUNT
+void Timeline::processEventSquareCorridor(TimelineEvent *event) {
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	while (curThing != Thing::_endOfList) {
+		int16 curThingType = curThing.getType();
+		if (curThingType == k2_TextstringType) {
+			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
+			bool textCurrentlyVisible = textString->isVisible();
+			if (event->_C.A._effect == k2_SensorEffToggle)
+				textString->setVisible(!textCurrentlyVisible);
+			else
+				textString->setVisible((event->_C.A._effect == k0_SensorEffSet));
 
-	int16 L0610_i_ThingType;
-	bool L0611_B_TextCurrentlyVisible;
-	int16 L0612_i_CreatureCount;
-	Thing L0613_T_Thing;
-	Sensor* L0614_ps_Sensor;
-	TextString* L0615_ps_TextString;
-	uint16 L0616_ui_MapX;
-	uint16 L0617_ui_MapY;
-	uint16 L0618_ui_Multiple;
-#define AL0618_ui_HealthMultiplier L0618_ui_Multiple
-#define AL0618_ui_Ticks            L0618_ui_Multiple
-	TimelineEvent L0619_s_Event;
-
-
-	L0613_T_Thing = _vm->_dungeonMan->getSquareFirstThing(L0616_ui_MapX = event->_B._location._mapX, L0617_ui_MapY = event->_B._location._mapY);
-	while (L0613_T_Thing != Thing::_endOfList) {
-		if ((L0610_i_ThingType = L0613_T_Thing.getType()) == k2_TextstringType) {
-			L0615_ps_TextString = (TextString*)_vm->_dungeonMan->getThingData(L0613_T_Thing);
-			L0611_B_TextCurrentlyVisible = L0615_ps_TextString->isVisible();
-			if (event->_C.A._effect == k2_SensorEffToggle) {
-				L0615_ps_TextString->setVisible(!L0611_B_TextCurrentlyVisible);
-			} else {
-				L0615_ps_TextString->setVisible((event->_C.A._effect == k0_SensorEffSet));
-			}
-			if (!L0611_B_TextCurrentlyVisible && L0615_ps_TextString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (L0616_ui_MapX == _vm->_dungeonMan->_partyMapX) && (L0617_ui_MapY == _vm->_dungeonMan->_partyMapY)) {
-				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, L0613_T_Thing, k1_TextTypeMessage);
+			if (!textCurrentlyVisible && textString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
+				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, k1_TextTypeMessage);
 				_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
-		} else {
-			if (L0610_i_ThingType == k3_SensorThingType) {
-				L0614_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0613_T_Thing);
-				if (L0614_ps_Sensor->getType() == k6_SensorFloorGroupGenerator) {
-					L0612_i_CreatureCount = L0614_ps_Sensor->getAttrValue();
-					if (getFlag(L0612_i_CreatureCount, k0x0008_randomizeGeneratedCreatureCount)) {
-						L0612_i_CreatureCount = _vm->getRandomNumber(getFlag(L0612_i_CreatureCount, k0x0007_generatedCreatureCount));
-					} else {
-						L0612_i_CreatureCount--;
-					}
-					AL0618_ui_HealthMultiplier = L0614_ps_Sensor->getActionHealthMultiplier();
-					if (AL0618_ui_HealthMultiplier == 0) {
-						AL0618_ui_HealthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
-					}
-					_vm->_groupMan->groupGetGenerated(L0614_ps_Sensor->getData(), AL0618_ui_HealthMultiplier, L0612_i_CreatureCount, (Direction)_vm->getRandomNumber(4), L0616_ui_MapX, L0617_ui_MapY);
-					if (L0614_ps_Sensor->getAttrAudibleA()) {
-						_vm->_sound->requestPlay(k17_soundBUZZ, L0616_ui_MapX, L0617_ui_MapY, k1_soundModePlayIfPrioritized);
-					}
-					if (L0614_ps_Sensor->getAttrOnlyOnce()) {
-						L0614_ps_Sensor->setTypeDisabled();
-					} else {
-						AL0618_ui_Ticks = L0614_ps_Sensor->getActionTicks();
-						if (AL0618_ui_Ticks != 0) {
-							L0614_ps_Sensor->setTypeDisabled();
-							if (AL0618_ui_Ticks > 127) {
-								AL0618_ui_Ticks = (AL0618_ui_Ticks - 126) << 6;
-							}
-							L0619_s_Event._type = k65_TMEventTypeEnableGroupGenerator;
-							setMapAndTime(L0619_s_Event._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + AL0618_ui_Ticks);
-							L0619_s_Event._priority = 0;
-							L0619_s_Event._B._location._mapX = L0616_ui_MapX;
-							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
-							L0619_s_Event._B._location._mapY = L0617_ui_MapY;
-							addEventGetEventIndex(&L0619_s_Event);
-						}
+		} else if (curThingType == k3_SensorThingType) {
+			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
+			if (curSensor->getType() == k6_SensorFloorGroupGenerator) {
+				int16 creatureCount = curSensor->getAttrValue();
+				if (getFlag(creatureCount, k0x0008_randomizeGeneratedCreatureCount))
+					creatureCount = _vm->getRandomNumber(getFlag(creatureCount, k0x0007_generatedCreatureCount));
+				else
+					creatureCount--;
+
+				uint16 healthMultiplier = curSensor->getActionHealthMultiplier();
+				if (healthMultiplier == 0)
+					healthMultiplier = _vm->_dungeonMan->_currMap->_difficulty;
+
+				_vm->_groupMan->groupGetGenerated(curSensor->getData(), healthMultiplier, creatureCount, (Direction)_vm->getRandomNumber(4), mapX, mapY);
+				if (curSensor->getAttrAudibleA())
+					_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
+
+				if (curSensor->getAttrOnlyOnce())
+					curSensor->setTypeDisabled();
+				else {
+					uint16 actionTicks = curSensor->getActionTicks();
+					if (actionTicks != 0) {
+						curSensor->setTypeDisabled();
+						if (actionTicks > 127)
+							actionTicks = (actionTicks - 126) << 6;
+
+						TimelineEvent newEvent;
+						newEvent._type = k65_TMEventTypeEnableGroupGenerator;
+						setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
+						newEvent._priority = 0;
+						newEvent._B._location._mapX = mapX;
+						newEvent._B._location._mapY = mapY;
+						newEvent._B._location._mapY = mapY;
+						addEventGetEventIndex(&newEvent);
 					}
 				}
 			}
 		}
-		L0613_T_Thing = _vm->_dungeonMan->getNextThing(L0613_T_Thing);
+		curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
 }
 
-void Timeline::processEventsMoveGroup(TimelineEvent* event) {
-	uint16 L0656_ui_MapX;
-	uint16 L0657_ui_MapY;
-	Group* L0658_ps_Group;
-	bool L0659_B_RandomDirectionMoveRetried;
+void Timeline::processEventsMoveGroup(TimelineEvent *event) {
+	bool randomDirectionMoveRetried = false;
+	uint16 mapX = event->_B._location._mapX;
+	uint16 mapY = event->_B._location._mapY;
 
-	L0659_B_RandomDirectionMoveRetried = false;
-	L0656_ui_MapX = event->_B._location._mapX;
-	L0657_ui_MapY = event->_B._location._mapY;
-	L0657_ui_MapY = event->_B._location._mapY;
 T0252001:
-	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (L0656_ui_MapX != _vm->_dungeonMan->_partyMapX) || (L0657_ui_MapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(L0656_ui_MapX, L0657_ui_MapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
-		if (event->_type == k61_TMEventTypeMoveGroupAudible) {
-			_vm->_sound->requestPlay(k17_soundBUZZ, L0656_ui_MapX, L0657_ui_MapY, k1_soundModePlayIfPrioritized);
-		}
-		_vm->_moveSens->getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, L0656_ui_MapX, L0657_ui_MapY);
+	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
+		if (event->_type == k61_TMEventTypeMoveGroupAudible)
+			_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
+
+		_vm->_moveSens->getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, mapX, mapY);
 	} else {
-		if (!L0659_B_RandomDirectionMoveRetried) {
-			L0659_B_RandomDirectionMoveRetried = true;
-			L0658_ps_Group = (Group*)_vm->_dungeonMan->getThingData(Thing(event->_C._slot));
-			if ((L0658_ps_Group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
+		if (!randomDirectionMoveRetried) {
+			randomDirectionMoveRetried = true;
+			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_C._slot));
+			if ((group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
-					L0656_ui_MapX--;
+					mapX--;
 					break;
 				case 1:
-					L0656_ui_MapX++;
+					mapX++;
 					break;
 				case 2:
-					L0657_ui_MapY--;
+					mapY--;
 					break;
 				case 3:
-					L0657_ui_MapY++;
+					mapY++;
 				}
-				if (_vm->_groupMan->isSquareACorridorTeleporterPitOrDoor(L0656_ui_MapX, L0657_ui_MapY))
+				if (_vm->_groupMan->isSquareACorridorTeleporterPitOrDoor(mapX, mapY))
 					goto T0252001;
 			}
 		}
@@ -829,15 +798,15 @@ T0252001:
 	}
 }
 
-void Timeline::procesEventEnableGroupGenerator(TimelineEvent* event) {
+void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	Thing L0620_T_Thing;
-	Sensor* L0621_ps_Sensor;
+	Sensor *L0621_ps_Sensor;
 
 	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
 	L0620_T_Thing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
 	while (L0620_T_Thing != Thing::_none) {
 		if ((L0620_T_Thing.getType()) == k3_SensorThingType) {
-			L0621_ps_Sensor = (Sensor*)_vm->_dungeonMan->getThingData(L0620_T_Thing);
+			L0621_ps_Sensor = (Sensor *)_vm->_dungeonMan->getThingData(L0620_T_Thing);
 			if (L0621_ps_Sensor->getType() == k0_SensorDisabled) {
 				L0621_ps_Sensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
 				return;
@@ -850,7 +819,7 @@ void Timeline::procesEventEnableGroupGenerator(TimelineEvent* event) {
 void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	int16 L0660_i_SlotIndex;
 	int16 L0661_i_QuiverSlotIndex;
-	Champion* L0662_ps_Champion;
+	Champion *L0662_ps_Champion;
 
 	L0662_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	L0662_ps_Champion->_enableActionEventIndex = -1;
@@ -878,7 +847,7 @@ T0253002:
 
 void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {
 	uint16 L0677_ui_SlotIndex;
-	Champion* L0678_ps_Champion;
+	Champion *L0678_ps_Champion;
 
 	L0678_ps_Champion = &_vm->_championMan->_champions[champIndex];
 	if (L0678_ps_Champion->_slots[slotIndex] != Thing::_none) {
@@ -893,7 +862,7 @@ void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 
 	}
 }
 
-bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
+bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion *champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
 	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
 		_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
 			(ChampionSlot)destSlotIndex);
@@ -903,7 +872,7 @@ bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion* champ, uint16 sour
 }
 
 void Timeline::processEventHideDamageReceived(uint16 champIndex) {
-	Champion* L0663_ps_Champion;
+	Champion *L0663_ps_Champion;
 
 
 	L0663_ps_Champion = &_vm->_championMan->_champions[champIndex];
@@ -921,7 +890,7 @@ void Timeline::processEventHideDamageReceived(uint16 champIndex) {
 	}
 }
 
-void Timeline::processEventLight(TimelineEvent* event) {
+void Timeline::processEventLight(TimelineEvent *event) {
 	int16 L0673_i_WeakerLightPower;
 	int16 L0674_i_Multiple;
 #define AL0674_i_LightPower  L0674_i_Multiple
@@ -964,12 +933,12 @@ void Timeline::refreshAllChampionStatusBoxes() {
 	_vm->_championMan->drawAllChampionStates();
 }
 
-void Timeline::processEventViAltarRebirth(TimelineEvent* event) {
+void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
 	int16 L0664_i_MapX;
 	int16 L0665_i_MapY;
 	uint16 L0666_ui_Cell;
 	Thing L0667_T_Thing;
-	Junk* L0668_ps_Junk;
+	Junk *L0668_ps_Junk;
 	int16 L0669_i_IconIndex;
 	uint16 L0670_ui_Step;
 	uint16 L0671_ui_ChampionIndex;
@@ -995,7 +964,7 @@ T0255002:
 			if ((L0667_T_Thing.getCell() == L0666_ui_Cell) && (L0667_T_Thing.getType() == k10_JunkThingType)) {
 				L0669_i_IconIndex = _vm->_objectMan->getIconIndex(L0667_T_Thing);
 				if (L0669_i_IconIndex == k147_IconIndiceJunkChampionBones) {
-					L0668_ps_Junk = (Junk*)_vm->_dungeonMan->getThingData(L0667_T_Thing);
+					L0668_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(L0667_T_Thing);
 					if (L0668_ps_Junk->getChargeCount() == L0671_ui_ChampionIndex) {
 						_vm->_dungeonMan->unlinkThingFromList(L0667_T_Thing, Thing(0), L0664_i_MapX, L0665_i_MapY); /* BUG0_25 When a champion dies, no bones object is created so it is not possible to bring the champion back to life at an altar of Vi. Each time a champion is brought back to life, the bones object is removed from the dungeon but it is not marked as unused and thus becomes an orphan. After a large number of champion deaths, all JUNK things are exhausted and the game cannot create any more. This also affects the creation of JUNK things dropped by some creatures when they die (Screamer, Rockpile, Magenta Worm, Pain Rat, Red Dragon) */
 						L0668_ps_Junk->setNextThing(Thing::_none);
@@ -1012,7 +981,7 @@ T0255002:
 	}
 }
 
-void Timeline::saveEventsPart(Common::OutSaveFile* file) {
+void Timeline::saveEventsPart(Common::OutSaveFile *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		file->writeSint32BE(event->_mapTime);
@@ -1025,12 +994,12 @@ void Timeline::saveEventsPart(Common::OutSaveFile* file) {
 	}
 }
 
-void Timeline::saveTimelinePart(Common::OutSaveFile* file) {
+void Timeline::saveTimelinePart(Common::OutSaveFile *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		file->writeUint16BE(_timeline[i]);
 }
 
-void Timeline::loadEventsPart(Common::InSaveFile* file) {
+void Timeline::loadEventsPart(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		event->_mapTime = file->readSint32BE();
@@ -1043,7 +1012,7 @@ void Timeline::loadEventsPart(Common::InSaveFile* file) {
 	}
 }
 
-void Timeline::loadTimelinePart(Common::InSaveFile* file) {
+void Timeline::loadTimelinePart(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i)
 		_timeline[i] = file->readUint16BE();
 }
