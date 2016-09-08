@@ -226,15 +226,14 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	ObjVarRef address;
 
 	if ((selectorId < 0) || (selectorId > (int)g_sci->getKernel()->getSelectorNamesSize())) {
-		error("Attempt to write to invalid selector %d of"
-		         " object at %04x:%04x.", selectorId, PRINT_REG(object));
-		return;
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("Attempt to write to invalid selector %d. Address %04x:%04x, method %s::%s (room %d, script %d, localCall %x)", selectorId, PRINT_REG(object), origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
 	}
 
-	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
-		error("Selector '%s' of object at %04x:%04x could not be"
-		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-	else {
+	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable) {
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("Selector '%s' of object could not be written to. Address %04x:%04x, method %s::%s (room %d, script %d, localCall %x)", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
+	} else {
 		*address.getPointer(segMan) = value;
 #ifdef ENABLE_SCI32
 		updateInfoFlagViewVisible(segMan->getObject(object), selectorId);
@@ -255,12 +254,12 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
 
 	if (slc_type == kSelectorNone) {
-		error("Selector '%s' of object at %04x:%04x could not be invoked",
-		         g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("invokeSelector: Selector '%s' could not be invoked. Address %04x:%04x, method %s::%s (room %d, script %d, localCall %x)", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
 	}
 	if (slc_type == kSelectorVariable) {
-		error("Attempting to invoke variable selector %s of object %04x:%04x",
-			g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("invokeSelector: Attempting to invoke variable selector %s. Address %04x:%04x, method %s::%s (room %d, script %d, localCall %x)", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object), origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
 	}
 
 	for (i = 0; i < argc; i++)
@@ -288,8 +287,8 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector sel
 		selectorId &= ~1;
 
 	if (!obj) {
-		error("lookupSelector(): Attempt to send to non-object or invalid script. Address was %04x:%04x",
-				PRINT_REG(obj_location));
+		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
+		error("lookupSelector: Attempt to send to non-object or invalid script. Address %04x:%04x, method %s::%s (room %d, script %d, localCall %x)", PRINT_REG(obj_location), origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
 	}
 
 	index = obj->locateVarSelector(segMan, selectorId);
