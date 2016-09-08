@@ -196,22 +196,21 @@ void WidgetTalk::handleEvents() {
 
 	// Handle selecting a talk entry if a numeric key has been pressed
 	if (keycode >= Common::KEYCODE_1 && keycode <= Common::KEYCODE_9) {
-		int x = 0, t = 0, y = 0;
+		int x = 0, y = 0, t;
 
-		do {
+		for (t = 0; t < (int)_statementLines.size(); ++t) {
+			if (t > 0 && _statementLines[x]._num != _statementLines[t]._num) {
+				x = t;
+				++y;
+			}
+
 			if (y == (keycode - Common::KEYCODE_1)) {
 				_selector = _statementLines[t]._num;
 				_outsideMenu = false;
 				hotkey = true;
 				break;
 			}
-
-			++t;
-			if (_statementLines[x]._num != _statementLines[t]._num) {
-				x = t;
-				++y;
-			}
-		} while (t < (int)_statementLines.size());
+		}
 	}
 
 	// Display the selected statement highlighted and reset the last statement.
