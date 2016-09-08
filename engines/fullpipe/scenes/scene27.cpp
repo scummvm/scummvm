@@ -288,6 +288,8 @@ void sceneHandler27_aimDude() {
 }
 
 void sceneHandler27_wipeDo() {
+	debugC(2, kDebugSceneLogic, "scene27: wipeDo");
+
 	for (uint i = 0; i < g_vars->scene27_bats.size(); i++) {
 		if (g_vars->scene27_bats[i]->currX < 800.0) {
 			g_vars->scene27_bats[i]->field_10 = atan2(520.0 - g_vars->scene27_bats[i]->currY, 800.0 - g_vars->scene27_bats[i]->currX);
@@ -309,8 +311,8 @@ bool sceneHandler27_batFallLogic(uint batn) {
 
 		g_vars->scene27_var07.push_back(bat);
 
-		if (batn != g_vars->scene27_var07.size() - 1)
-			g_vars->scene27_var07.remove_at(batn);
+		if (batn != g_vars->scene27_bats.size() - 1)
+			g_vars->scene27_bats.remove_at(batn);
 	} else if (!bat->ani->_movement) {
 		bat->ani->startAnim(MV_BTA_FALL, 0, -1);
 	}
