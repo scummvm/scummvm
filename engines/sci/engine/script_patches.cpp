@@ -663,6 +663,63 @@ static const uint16 gk1PatchDay6PoliceSleep[] = {
 	PATCH_END
 };
 
+// At the start of day 5, there is like always some dialogue with Grace.
+//
+// The dialogue script code about the drum book + veve newspaper clip is a bit broken.
+//
+// In case the player already has the veve, but is supposed to get the drum book, then the drum book
+// dialogue is repeated twice and the veve newspaper dialogue is also repeated (although it was played on day 4
+// in such case already).
+//
+// Drum book dialogue is called twice.
+// Once via GetTheVeve::changeState(0) and a second time via GetTheVeve::changeState(11).
+//
+// GetTheVeve::changeState(0) would also play the first line of the veve pattern newspaper and that's skipped,
+// when the player is supposed to get the drum book.
+// GetTheVeve::changeState(1) up to state 10 will do the dialogue about the veve newspaper.
+//
+// We fix this by removing the state 0 drum book code and instead will then skip up to state 11.
+//
+// More notes: The veve newspaper item is inventory 9. The drum book is inventory 14.
+//             The flag for veve research is 36, the flag for drum research is 73.
+//
+// This bug of course also occurs, when using the original interpreter.
+//
+// Special thanks, credits and kudos to sluicebox on IRC, who did a ton of research on this and even found this game bug originally.
+//
+// Applies to at least: English PC-CD, German PC-CD
+// Responsible method: getTheVeve::changeState(0) - script 212
+static const uint16 gk1SignatureDay5DrumBookDialogue[] = {
+	0x38, SIG_UINT16(0x0202),           // pushi 202h ("has")
+	0x78,                               // push
+	SIG_MAGICDWORD,
+	0x39, 0x09,                         // pushi 09 (veve newspaper item)
+	0x81, 0x00,                         // lag global[0]
+	0x4a, 0x06, 0x00,                   // send 06
+	0x31, 0x0f,                         // bnt [skip to start of veve newspaper dialogue]
+	// code that will trigger the drum book sequence
+	0x38, SIG_UINT16(0x00b7),           // pushi 00B7h ("setScript")
+	0x7a,                               // push2
+	0x72, SIG_UINT16(0x00b6),           // lofsa getTheDrumBook
+	0x36,                               // push
+	0x7c,                               // pushSelf
+	0x54, 0x08, 0x00,                   // self 08 - getTheVeve::setScript(getTheDrumBook, getTheVeve)
+	0x32, SIG_UINT16(0x0A5B),           // jmp [exit method]
+	SIG_END
+};
+
+static const uint16 gk1PatchDay5DrumBookDialogue[] = {
+	PATCH_ADDTOOFFSET(+13),
+	// now we are at the start of the drum book sequence code
+	0x35, 0x0A,                         // ldi 0A (one state before the second drum book code)
+	0x65, 0x14,                         // aTop state
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1a,                         // aTop cycles
+	0x3A,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 // startOfDay5::changeState (20h) - when gabriel goes to the phone the script will hang
 // Applies to at least: English PC-CD, German PC-CD, English Mac
 // Responsible method: startOfDay5::changeState
@@ -729,7 +786,7 @@ static const uint16 gk1PatchInterrogationBug[] = {
 	0x76,                            // push0
 	0x4a, 0x04, 0x00,                // send 0004
 	0xa5, 0x00,                      // sat 00
-	0x38, SIG_SELECTOR16(dispose),   // pushi dispose
+	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
 	0x76,                            // push0
 	0x63, 0x50,                      // pToa 50
 	0x4a, 0x04, 0x00,                // send 0004
@@ -848,13 +905,14 @@ static const uint16 gk1PatchDay10GabrielDressUp[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                        patch
+//          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
-	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,    gk1PatchInterrogationBug },
-	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,     gk1PatchDay5PhoneFreeze },
-	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,   gk1PatchDay6PoliceBeignet },
-	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,     gk1PatchDay6PoliceSleep },
-	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp, gk1PatchDay10GabrielDressUp },
+	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,     gk1PatchInterrogationBug },
+	{  true,   212, "day 5 drum book dialogue error",              1, gk1SignatureDay5DrumBookDialogue, gk1PatchDay5DrumBookDialogue },
+	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,      gk1PatchDay5PhoneFreeze },
+	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,    gk1PatchDay6PoliceBeignet },
+	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,      gk1PatchDay6PoliceSleep },
+	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
