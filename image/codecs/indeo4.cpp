@@ -476,7 +476,7 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 
 				mb->q_delta = 0;
 				if (!band->plane && !band->band_num && _ctx.in_q) {
-					mb->q_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->table,
+					mb->q_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,
 						IVI_VLC_BITS, 1);
 					mb->q_delta = IVI_TOSIGNED(mb->q_delta);
 				}
@@ -515,7 +515,7 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				}
 				else if (mb->cbp || (!band->plane && !band->band_num &&
 					_ctx.in_q)) {
-					mb->q_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->table,
+					mb->q_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,
 						IVI_VLC_BITS, 1);
 					mb->q_delta = IVI_TOSIGNED(mb->q_delta);
 				}
@@ -536,21 +536,21 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 							}
 					} else {
 						// decode motion vector deltas
-						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->table,
+						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,
 							IVI_VLC_BITS, 1);
 						mv_y += IVI_TOSIGNED(mv_delta);
-						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->table,
+						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,
 							IVI_VLC_BITS, 1);
 						mv_x += IVI_TOSIGNED(mv_delta);
 						mb->mv_x = mv_x;
 						mb->mv_y = mv_y;
 						if (mb->type == 3) {
 							mv_delta = _ctx.gb->getVLC2(
-								_ctx.mb_vlc.tab->table,
+								_ctx.mb_vlc.tab->_table,
 								IVI_VLC_BITS, 1);
 							mv_y += IVI_TOSIGNED(mv_delta);
 							mv_delta = _ctx.gb->getVLC2(
-								_ctx.mb_vlc.tab->table,
+								_ctx.mb_vlc.tab->_table,
 								IVI_VLC_BITS, 1);
 							mv_x += IVI_TOSIGNED(mv_delta);
 							mb->b_mv_x = -mv_x;

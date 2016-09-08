@@ -37,8 +37,11 @@ namespace Image {
 namespace Indeo {
 
 #define VLC_TYPE int16
-#define INIT_VLC_LE             2
-#define INIT_VLC_USE_NEW_STATIC 4
+
+enum VLCFlag {
+	INIT_VLC_LE             = 2,
+	INIT_VLC_USE_NEW_STATIC = 4
+};
 
 struct VLCcode {
 	uint8 bits;
@@ -54,14 +57,21 @@ struct VLCcode {
 struct VLC {
 private:
 	static int compare_vlcspec(const void *a, const void *b);
+
+	/**
+	 * Gets a value of a given size from a table
+	 * @param table		Table to get data from
+	 * @param idx		Index of value to retrieve
+	 * @param wrap		Size of elements with alignment
+	 * @param size		Size of elements
+	 */
+	static uint getData(const void *table, uint idx, uint wrap, uint size);
 public:
-    int bits;
-    VLC_TYPE (*table)[2];	///< code, bits
-    int table_size, table_allocated;
+    int _bits;
+    VLC_TYPE (*_table)[2];	///< code, bits
+    int _table_size, _table_allocated;
 
 	VLC();
-	~VLC() { ff_free_vlc(); }
-
 
 	/* Build VLC decoding tables suitable for use with get_vlc().
 

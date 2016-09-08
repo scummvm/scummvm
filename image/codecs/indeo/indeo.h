@@ -55,6 +55,17 @@ enum {
     IVI4_FRAMETYPE_NULL_LAST   = 6   ///< empty frame with no data
 };
 
+enum {
+    IVI_MB_HUFF   = 0,      /// Huffman table is used for coding macroblocks
+    IVI_BLK_HUFF  = 1       /// Huffman table is used for coding blocks
+};
+
+/**
+ *  Declare inverse transform function types
+ */
+typedef void (InvTransformPtr)(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags);
+typedef void (DCTransformPtr) (const int32 *in, int16 *out, uint32 pitch, int blk_size);
+
 typedef void(*ivi_mc_func) (int16 *buf, const int16 *ref_buf,
 	uint32 pitch, int mc_type);
 typedef void(*ivi_mc_avg_func) (int16 *buf, const int16 *ref_buf1,
@@ -127,26 +138,6 @@ public:
 	int ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab);
 };
 
-enum {
-    IVI_MB_HUFF   = 0,      /// Huffman table is used for coding macroblocks
-    IVI_BLK_HUFF  = 1       /// Huffman table is used for coding blocks
-};
-
-
-/**
- *  Common scan patterns (defined in ivi_common.c)
- */
-//extern const uint8 ff_ivi_vertical_scan_8x8[64];
-//extern const uint8 ff_ivi_horizontal_scan_8x8[64];
-//extern const uint8 ff_ivi_direct_scan_4x4[16];
-
-/**
- *  Declare inverse transform function types
- */
-typedef void (InvTransformPtr)(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags);
-typedef void (DCTransformPtr) (const int32 *in, int16 *out, uint32 pitch, int blk_size);
-
-
 /**
  *  run-value (RLE) table descriptor
  */
@@ -155,10 +146,9 @@ struct RVMapDesc {
     uint8     esc_sym; ///< escape symbol
     uint8     runtab[256];
     int8      valtab[256];
+
+	RVMapDesc();
 };
-
-extern const RVMapDesc ff_ivi_rvmap_tabs[9];
-
 
 /**
  *  information for Indeo macroblock (16x16, 8x8 or 4x4)
@@ -174,8 +164,9 @@ struct IVIMbInfo {
     int8      mv_y;     ///< motion vector (y component)
     int8      b_mv_x;   ///< second motion vector (x component)
     int8      b_mv_y;   ///< second motion vector (y component)
-};
 
+	IVIMbInfo();
+};
 
 /**
  *  information for Indeo tile
@@ -191,8 +182,9 @@ struct IVITile {
     int         num_MBs;   ///< number of macroblocks in this tile
     IVIMbInfo * mbs;      ///< array of macroblock descriptors
     IVIMbInfo * ref_mbs;  ///< ptr to the macroblock descriptors of the reference tile
-};
 
+	IVITile();
+};
 
 /**
  *  information for Indeo wavelet band
@@ -242,6 +234,8 @@ struct IVIBandDesc {
     const uint8 *   intra_scale;    ///< quantization coefficient for intra blocks
     const uint8 *   inter_scale;    ///< quantization coefficient for inter blocks
 
+	IVIBandDesc();
+
 	int ivi_init_tiles(IVITile *ref_tile, int p, int b, int t_height, int t_width);
 };
 
@@ -254,6 +248,8 @@ struct IVIPicConfig {
     uint16    tile_height;
     uint8     luma_bands;
     uint8     chroma_bands;
+
+	IVIPicConfig();
 
 	/**
 	 * Compare some properties of two pictures
@@ -269,6 +265,8 @@ struct IVIPlaneDesc {
     uint16    height;
     uint8     num_bands;  ///< number of bands this plane subdivided into
     IVIBandDesc *bands;   ///< array of band descriptors
+
+	IVIPlaneDesc();
 
 	static int ff_ivi_init_planes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool is_indeo4);
 
@@ -314,6 +312,8 @@ struct AVFrame {
      * may be extra padding present for performance reasons.
      */
     int linesize[AV_NUM_DATA_POINTERS];
+
+	AVFrame();
 };
 
 struct IVI45DecContext {
@@ -367,6 +367,8 @@ struct IVI45DecContext {
 
     AVFrame *       p_frame;
     int             got_p_frame;
+
+	IVI45DecContext();
 };
 
 class IndeoDecoderBase : public Codec {
@@ -541,9 +543,8 @@ public:
  * @param h the height of the picture
  * @param log_offset the offset to sum to the log level for logging with log_ctx
  * @returns >= 0 if valid, a negative error code otherwise
-*/
+ */
 extern int av_image_check_size(unsigned int w, unsigned int h, int log_offset, void *log_ctx);
-
 
 } // End of namespace Indeo
 } // End of namespace Image

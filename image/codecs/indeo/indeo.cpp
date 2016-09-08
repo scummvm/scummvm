@@ -33,6 +33,7 @@
 #include "image/codecs/indeo/indeo_dsp.h"
 #include "image/codecs/indeo/mem.h"
 #include "common/system.h"
+#include "common/algorithm.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -139,13 +140,15 @@ void IVIHuffDesc::ivi_huff_desc_copy(const IVIHuffDesc *src) {
 
 IVIHuffTab::IVIHuffTab() {
 	tab = nullptr;
+	for (int idx = 0; idx < (8192 * 16); ++idx)
+		table_data[idx][0] = table_data[idx][1] = 0;
 
 	for (int i = 0; i < 8; i++) {
-		ivi_mb_vlc_tabs[i].table = table_data + i * 2 * 8192;
-		ivi_mb_vlc_tabs[i].table_allocated = 8192;
+		ivi_mb_vlc_tabs[i]._table = table_data + i * 2 * 8192;
+		ivi_mb_vlc_tabs[i]._table_allocated = 8192;
 		ivi_mb_huff_desc[i].ivi_create_huff_from_desc(&ivi_mb_vlc_tabs[i], 1);
-		ivi_blk_vlc_tabs[i].table = table_data + (i * 2 + 1) * 8192;
-		ivi_blk_vlc_tabs[i].table_allocated = 8192;
+		ivi_blk_vlc_tabs[i]._table = table_data + (i * 2 + 1) * 8192;
+		ivi_blk_vlc_tabs[i]._table_allocated = 8192;
 		ivi_blk_huff_desc[i].ivi_create_huff_from_desc(&ivi_blk_vlc_tabs[i], 1);
 	}
 }
@@ -174,10 +177,10 @@ int IVIHuffTab::ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab)
 			new_huff.xbits[i] = gb->getBits(4);
 
 		// Have we got the same custom table? Rebuild if not.
-		if (new_huff.ivi_huff_desc_cmp(&cust_desc) || !cust_tab.table) {
+		if (new_huff.ivi_huff_desc_cmp(&cust_desc) || !cust_tab._table) {
 			cust_desc.ivi_huff_desc_copy(&new_huff);
 
-			if (cust_tab.table)
+			if (cust_tab._table)
 				cust_tab.ff_free_vlc();
 			result = cust_desc.ivi_create_huff_from_desc(&cust_tab, 0);
 			if (result) {
@@ -199,6 +202,83 @@ int IVIHuffTab::ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab)
 
 /*------------------------------------------------------------------------*/
 
+RVMapDesc::RVMapDesc() {
+	eob_sym = esc_sym = 0;
+	Common::fill(&runtab[0], &runtab[256], 0);
+	Common::fill(&valtab[0], &valtab[256], 0);
+}
+
+/*------------------------------------------------------------------------*/
+
+IVIMbInfo::IVIMbInfo() : xpos(0), ypos(0), buf_offs(0), type(0), cbp(0),
+		q_delta(0), mv_x(0), mv_y(0), b_mv_x(0), b_mv_y(0) {
+}
+
+/*------------------------------------------------------------------------*/
+
+IVITile::IVITile() : xpos(0), ypos(0), width(0), height(0), mb_size(0),
+		is_empty(0), data_size(0), num_MBs(0), mbs(nullptr), ref_mbs(nullptr) {
+}
+
+/*------------------------------------------------------------------------*/
+
+IVIBandDesc::IVIBandDesc() : plane(0), band_num(0), width(0), height(0),
+		aheight(0), data_ptr(nullptr), data_size(0), buf(nullptr),
+		ref_buf(nullptr), b_ref_buf(nullptr), pitch(0), is_empty(0),
+		mb_size(0), blk_size(0), is_halfpel(0), inherit_mv(0), bufsize(0),
+		inherit_qdelta(0), qdelta_present(0), quant_mat(0), glob_quant(0),
+		scan(nullptr), scan_size(0), num_corr(0), rvmap_sel(0), rv_map(nullptr),
+		num_tiles(0), tiles(nullptr), inv_transform(nullptr), transform_size(0),
+		dc_transform(nullptr), is_2d_trans(0), checksum(0), checksum_present(0), 
+		intra_base(nullptr), inter_base(nullptr), intra_scale(nullptr),
+		inter_scale(nullptr) {
+	Common::fill(&bufs[0], &bufs[4], (int16 *)nullptr);
+	Common::fill(&corr[0], &corr[61 * 2], 0);
+}
+
+int IVIBandDesc::ivi_init_tiles(IVITile *ref_tile, int p, int b, int t_height, int t_width) {
+	int x, y;
+	IVITile *tile = tiles;
+
+	for (y = 0; y < height; y += t_height) {
+		for (x = 0; x < width; x += t_width) {
+			tile->xpos = x;
+			tile->ypos = y;
+			tile->mb_size = mb_size;
+			tile->width = MIN(width - x, t_width);
+			tile->height = MIN(height - y, t_height);
+			tile->is_empty = tile->data_size = 0;
+			// calculate number of macroblocks
+			tile->num_MBs = IVI_MBs_PER_TILE(tile->width, tile->height,
+				mb_size);
+
+			av_freep(&tile->mbs);
+			tile->mbs = (IVIMbInfo *)av_mallocz_array(tile->num_MBs, sizeof(IVIMbInfo));
+			if (!tile->mbs)
+				return -2;
+
+			tile->ref_mbs = 0;
+			if (p || b) {
+				if (tile->num_MBs != ref_tile->num_MBs) {
+					warning("ref_tile mismatch");
+					return -1;
+				}
+				tile->ref_mbs = ref_tile->mbs;
+				ref_tile++;
+			}
+			tile++;
+		}
+	}
+
+	return 0;
+}
+
+/*------------------------------------------------------------------------*/
+
+IVIPicConfig::IVIPicConfig() : pic_width(0), pic_height(0), chroma_width(0),
+		chroma_height(0), tile_width(0), tile_height(0), luma_bands(0), chroma_bands(0) {
+}
+
 bool IVIPicConfig::ivi_pic_config_cmp(const IVIPicConfig &cfg2) {
 	return pic_width != cfg2.pic_width || pic_height != cfg2.pic_height ||
 		chroma_width != cfg2.chroma_width || chroma_height != cfg2.chroma_height ||
@@ -207,6 +287,9 @@ bool IVIPicConfig::ivi_pic_config_cmp(const IVIPicConfig &cfg2) {
 }
 
 /*------------------------------------------------------------------------*/
+
+IVIPlaneDesc::IVIPlaneDesc() : width(0), height(0), num_bands(0), bands(nullptr) {
+}
 
 int IVIPlaneDesc::ff_ivi_init_planes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool is_indeo4) {
 	int p, b;
@@ -333,7 +416,7 @@ void IVIPlaneDesc::ivi_free_buffers(IVIPlaneDesc *planes) {
 				av_freep(&planes[p].bands[b].bufs[2]);
 				av_freep(&planes[p].bands[b].bufs[3]);
 
-				if (planes[p].bands[b].blk_vlc.cust_tab.table)
+				if (planes[p].bands[b].blk_vlc.cust_tab._table)
 					planes[p].bands[b].blk_vlc.cust_tab.ff_free_vlc();
 				for (t = 0; t < planes[p].bands[b].num_tiles; t++)
 					av_freep(&planes[p].bands[b].tiles[t].mbs);
@@ -346,41 +429,22 @@ void IVIPlaneDesc::ivi_free_buffers(IVIPlaneDesc *planes) {
 
 /*------------------------------------------------------------------------*/
 
-int IVIBandDesc::ivi_init_tiles(IVITile *ref_tile, int p, int b, int t_height, int t_width) {
-	int x, y;
-	IVITile *tile = tiles;
+AVFrame::AVFrame() {
+	Common::fill(&data[0], &data[AV_NUM_DATA_POINTERS], (uint8 *)nullptr);
+	Common::fill(&linesize[0], &linesize[AV_NUM_DATA_POINTERS], 0);
+}
 
-	for (y = 0; y < height; y += t_height) {
-		for (x = 0; x < width; x += t_width) {
-			tile->xpos = x;
-			tile->ypos = y;
-			tile->mb_size = mb_size;
-			tile->width = MIN(width - x, t_width);
-			tile->height = MIN(height - y, t_height);
-			tile->is_empty = tile->data_size = 0;
-			// calculate number of macroblocks
-			tile->num_MBs = IVI_MBs_PER_TILE(tile->width, tile->height,
-				mb_size);
+/*------------------------------------------------------------------------*/
 
-			av_freep(&tile->mbs);
-			tile->mbs = (IVIMbInfo *)av_mallocz_array(tile->num_MBs, sizeof(IVIMbInfo));
-			if (!tile->mbs)
-				return -2;
-
-			tile->ref_mbs = 0;
-			if (p || b) {
-				if (tile->num_MBs != ref_tile->num_MBs) {
-					warning("ref_tile mismatch");
-					return -1;
-				}
-				tile->ref_mbs = ref_tile->mbs;
-				ref_tile++;
-			}
-			tile++;
-		}
-	}
-
-	return 0;
+IVI45DecContext::IVI45DecContext() : gb(nullptr), frame_num(0), frame_type(0),
+		prev_frame_type(0), data_size(0), is_scalable(0), frame_data(0),
+		inter_scal(0), frame_size(0), pic_hdr_size(0), frame_flags(0),
+		checksum(0), buf_switch(0), dst_buf(0), ref_buf(0), ref2_buf(0),
+		b_ref_buf(0), rvmap_sel(0), in_imf(0), in_q(0), pic_glob_quant(0),
+		unknown1(0), gop_hdr_size(0), gop_flags(0), lock_word(0), has_b_frames(0),
+		has_transp(0), uses_tiling(0), uses_haar(0), uses_fullpel(0), gop_invalid(0),
+		is_indeo4(0), p_frame(nullptr), got_p_frame(0) {
+	Common::fill(&buf_invalid[0], &buf_invalid[4], 0);
 }
 
 /*------------------------------------------------------------------------*/
@@ -389,15 +453,13 @@ IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height) : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
 	_surface = new Graphics::ManagedSurface();
 	_surface->create(width, height, _pixelFormat);
-	_ctx.gb = nullptr;
-	_ctx.pic_conf.pic_width = _ctx.pic_conf.pic_height = 0;
 	_ctx.b_ref_buf = 3; // buffer 2 is used for scalability mode
 }
 
 IndeoDecoderBase::~IndeoDecoderBase() {
 	delete _surface;
 	IVIPlaneDesc::ivi_free_buffers(_ctx.planes);
-	if (_ctx.mb_vlc.cust_tab.table)
+	if (_ctx.mb_vlc.cust_tab._table)
 		_ctx.mb_vlc.cust_tab.ff_free_vlc();
 
 	delete _ctx.p_frame;
@@ -1181,16 +1243,16 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 	// zero column flags
 	memset(col_flags, 0, sizeof(col_flags));
 	while (scan_pos <= num_coeffs) {
-		sym = gb->getVLC2(band->blk_vlc.tab->table,
+		sym = gb->getVLC2(band->blk_vlc.tab->_table,
 			IVI_VLC_BITS, 1);
 		if (sym == rvmap->eob_sym)
 			break; // End of block
 
 				   // Escape - run/val explicitly coded using 3 vlc codes
 		if (sym == rvmap->esc_sym) {
-			run = gb->getVLC2(band->blk_vlc.tab->table, IVI_VLC_BITS, 1) + 1;
-			lo = gb->getVLC2(band->blk_vlc.tab->table, IVI_VLC_BITS, 1);
-			hi = gb->getVLC2(band->blk_vlc.tab->table, IVI_VLC_BITS, 1);
+			run = gb->getVLC2(band->blk_vlc.tab->_table, IVI_VLC_BITS, 1) + 1;
+			lo = gb->getVLC2(band->blk_vlc.tab->_table, IVI_VLC_BITS, 1);
+			hi = gb->getVLC2(band->blk_vlc.tab->_table, IVI_VLC_BITS, 1);
 			// merge them and convert into signed val
 			val = IVI_TOSIGNED((hi << 6) | lo);
 		} else {
