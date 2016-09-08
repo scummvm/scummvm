@@ -44,6 +44,8 @@ SoundList::SoundList() {
 }
 
 SoundList::~SoundList() {
+	for (int i = 0; i < _soundItemsCount; i++)
+		delete _soundItems[i];
 	free(_soundItems);
 }
 
