@@ -20,6 +20,7 @@
  *
  */
 
+#include <psp2/kernel/processmgr.h>
 #include <psp2/power.h>
 #include "common/scummsys.h"
 
@@ -28,6 +29,9 @@
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
+
+	// prevent suspend (scummvm games contains a lot of cutscenes..)
+	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
 
 	scePowerSetArmClockFrequency(444);
 	
