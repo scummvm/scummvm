@@ -337,14 +337,12 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 	debugC(2, kDebugSceneLogic, "scene27: knockBats(%d, %d)", bat1n, bat2n);
 
-	if (0.0 != bat1->power) {
+	if (bat1->power != 0.0) {
 		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
 			+ atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
-		double rndCos = cos(rndF);
-		double rndSin = sin(rndF);
 
-		double pow1x = cos(bat1->angle - rndF) * (double)((bat2->currX - bat1->currX) >= 0 ? 1 : -1) * bat1->power;
-		double pow1y = sin(bat1->angle - rndF) * (double)((bat2->currY - bat1->currY) >= 0 ? 1 : -1) * bat1->power;
+		double pow1x = cos(bat1->angle - rndF) * ((bat2->currX - bat1->currX) >= 0 ? bat1->power : -bat1->power);
+		double pow1y = sin(bat1->angle - rndF) * ((bat2->currY - bat1->currY) >= 0 ? bat1->power : -bat1->power);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 from: powerCos: %f powerSin: %f, power: %f, angle: %f",
 				bat1->powerCos, bat1->powerSin, bat1->power, bat1->angle);
@@ -354,10 +352,10 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 to: powerCos: %f powerSin: %f", bat1->powerCos, bat1->powerSin);
 
-		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
-								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
-		double pow2x = cos(bat2->angle - rndF) * (double)((bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
-		double pow2y = sin(bat2->angle - rndF) * (double)((bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
+		double rndF2 = (double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
+								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX);
+		double pow2x = cos(bat2->angle - rndF2) * ((bat1->currX - bat2->currX) >= 0 ? bat2->power : -bat2->power);
+		double pow2y = sin(bat2->angle - rndF2) * ((bat1->currY - bat2->currY) >= 0 ? bat2->power : -bat2->power);
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat2 from: powerCos: %f powerSin: %f, power: %f, angle: %f",
 				bat2->powerCos, bat2->powerSin, bat2->power, bat2->angle);
@@ -367,11 +365,14 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat2 to: powerCos: %f powerSin: %f", bat2->powerCos, bat2->powerSin);
 
+		double rndCos = cos(rndF);
+		double rndSin = sin(rndF);
+
 		double dy = bat1->currY - bat2->currY;
 		double dx = bat1->currX - bat2->currX;
 		double dist = (sqrt(rndSin * rndSin * 0.25 + rndCos * rndCos) * 54.0 - sqrt(dx * dx + dy * dy)) / cos(rndF - bat1->angle);
-		bat1->currX = (double)bat1->currX - cos(bat1->angle) * (dist + 1.0);
-		bat1->currY = (double)bat1->currY - sin(bat1->angle) * (dist + 1.0);
+		bat1->currX = bat1->currX - cos(bat1->angle) * (dist + 1.0);
+		bat1->currY = bat1->currY - sin(bat1->angle) * (dist + 1.0);
 
 		bat1->powerCos += pow2x * 0.64;
 
