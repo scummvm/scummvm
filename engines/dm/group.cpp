@@ -1613,7 +1613,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
-				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, k4_ChampionStatVitality, poisonAttack);
+				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, kDMChampionStatVitality, poisonAttack);
 				if (poisonAttack >= 0)
 					_vm->_championMan->championPoison(champIndex, poisonAttack);
 			}

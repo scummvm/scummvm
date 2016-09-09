@@ -469,7 +469,7 @@ void EventManager::setPointerToObject(byte *bitmap) {
 void EventManager::mouseDropChampionIcon() {
 	_preventBuildPointerScreenArea = true;
 	uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
-	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 	_mousePointerBitmapUpdated = true;
 	bool useByteBoxCoordinatesBackup = _vm->_displayMan->_useByteBoxCoordinates;
 	_vm->_displayMan->blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, k12_ColorDarkestGray, 18);
@@ -577,7 +577,7 @@ void EventManager::buildpointerScreenArea(int16 mousePosX, int16 mousePosY) {
 
 void EventManager::setMousePointer() {
 	if (_vm->_championMan->_leaderEmptyHanded)
-		setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+		setMousePointerToNormal((_vm->_championMan->_leaderIndex == kDMChampionNone) ? k0_pointerArrow : k1_pointerHand);
 	else
 		setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
 }
@@ -763,7 +763,7 @@ void EventManager::processCommandQueue() {
 	}
 
 	if ((cmdType >= k28_CommandClickOnSlotBoxInventoryReadyHand) && (cmdType < (k65_CommandClickOnSlotBoxChest_8 + 1))) {
-		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone)
+		if (_vm->_championMan->_leaderIndex != kDMChampionNone)
 			_vm->_championMan->clickOnSlotBox(cmdType - k20_CommandClickOnSlotBoxChampion_0_StatusBoxReadyHand);
 
 		return;
@@ -779,21 +779,21 @@ void EventManager::processCommandQueue() {
 		}
 
 		int16 championIndex = cmdType - k7_CommandToggleInventoryChampion_0;
-		if (((championIndex == k4_ChampionCloseInventory) || (championIndex < _vm->_championMan->_partyChampionCount)) && !_vm->_championMan->_candidateChampionOrdinal)
+		if (((championIndex == kDMChampionCloseInventory) || (championIndex < _vm->_championMan->_partyChampionCount)) && !_vm->_championMan->_candidateChampionOrdinal)
 			_vm->_inventoryMan->toggleInventory((ChampionIndex)championIndex);
 
 		return;
 	}
 
 	if (cmdType == k83_CommandToggleInventoryLeader) {
-		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone)
+		if (_vm->_championMan->_leaderIndex != kDMChampionNone)
 			_vm->_inventoryMan->toggleInventory(_vm->_championMan->_leaderIndex);
 
 		return;
 	}
 
 	if (cmdType == k100_CommandClickInSpellArea) {
-		if ((!_vm->_championMan->_candidateChampionOrdinal) && (_vm->_championMan->_magicCasterChampionIndex != kM1_ChampionNone))
+		if ((!_vm->_championMan->_candidateChampionOrdinal) && (_vm->_championMan->_magicCasterChampionIndex != kDMChampionNone))
 			commandProcessType100_clickInSpellArea(commandX, commandY);
 
 		return;
@@ -831,7 +831,7 @@ void EventManager::processCommandQueue() {
 	if (cmdType == k145_CommandSleep) {
 		if (!_vm->_championMan->_candidateChampionOrdinal) {
 			if (_vm->_inventoryMan->_inventoryChampionOrdinal)
-				_vm->_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
+				_vm->_inventoryMan->toggleInventory(kDMChampionCloseInventory);
 
 			_vm->_menuMan->drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;
@@ -970,7 +970,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	_vm->_stopWaitingForPlayerInput = true;
 	Champion *championsPtr = _vm->_championMan->_champions;
-	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++) {
+	for (uint16 idx = kDMChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++) {
 		_vm->_championMan->decrementStamina(idx, ((championsPtr->_load * 3) / _vm->_championMan->getMaximumLoad(championsPtr)) + 1); /* BUG0_50 When a champion is brought back to life at a Vi Altar, his current stamina is lower than what it was before dying. Each time the party moves the current stamina of all champions is decreased, including for dead champions, by an amount that depends on the current load of the champion. For a dead champion the load before he died is used */
 		championsPtr++;
 	}
@@ -1009,9 +1009,9 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			movementArrowIdx += (_vm->_dungeonMan->_partyDir + 2);
 			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, normalizeModulo4(movementArrowIdx));
 			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, returnNextVal(movementArrowIdx));
-			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, kDMChampionWoundTorso | kDMChampionWoundLegs, k2_attackType_SELF);
 			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
-				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs, k2_attackType_SELF);
+				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, kDMChampionWoundTorso | kDMChampionWoundLegs, k2_attackType_SELF);
 
 			if (damage)
 				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
@@ -1036,7 +1036,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	uint16 disabledMovtTicks = 1;
 	championsPtr = _vm->_championMan->_champions;
-	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++) {
+	for (uint16 idx = kDMChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++) {
 		if (championsPtr->_currHealth)
 			disabledMovtTicks = MAX((int32)disabledMovtTicks, (int32)_vm->_championMan->getMovementTicks(championsPtr));
 
@@ -1105,19 +1105,19 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	ChampionMan &cm = *_vm->_championMan;
 	ChampionIndex leaderIndex;
 
-	if ((cm._leaderIndex == champIndex) || ((champIndex != kM1_ChampionNone) && !cm._champions[champIndex]._currHealth))
+	if ((cm._leaderIndex == champIndex) || ((champIndex != kDMChampionNone) && !cm._champions[champIndex]._currHealth))
 		return;
 
-	if (cm._leaderIndex != kM1_ChampionNone) {
+	if (cm._leaderIndex != kDMChampionNone) {
 		leaderIndex = cm._leaderIndex;
-		cm._champions[leaderIndex].setAttributeFlag(k0x0200_ChampionAttributeLoad, true);
-		cm._champions[leaderIndex].setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
+		cm._champions[leaderIndex].setAttributeFlag(kDMChampionAttributeLoad, true);
+		cm._champions[leaderIndex].setAttributeFlag(kDMChampionAttributeNameTitle, true);
 		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
-		cm._leaderIndex = kM1_ChampionNone;
+		cm._leaderIndex = kDMChampionNone;
 		cm.drawChampionState(leaderIndex);
 	}
-	if (champIndex == kM1_ChampionNone) {
-		cm._leaderIndex = kM1_ChampionNone;
+	if (champIndex == kDMChampionNone) {
+		cm._leaderIndex = kDMChampionNone;
 		return;
 	}
 	cm._leaderIndex = champIndex;
@@ -1125,8 +1125,8 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	champion->_dir = _vm->_dungeonMan->_partyDir;
 	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
 	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
-		champion->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
-		champion->setAttributeFlag(k0x0080_ChampionAttributeNameTitle, true);
+		champion->setAttributeFlag(kDMChampionAttributeIcon, true);
+		champion->setAttributeFlag(kDMChampionAttributeNameTitle, true);
 		cm.drawChampionState(champIndex);
 	}
 }
@@ -1150,7 +1150,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 	};
 
 	if (_vm->_dungeonMan->_squareAheadElement == k17_ElementTypeDoorFront) {
-		if (_vm->_championMan->_leaderIndex == kM1_ChampionNone)
+		if (_vm->_championMan->_leaderIndex == kDMChampionNone)
 			return;
 
 		int16 L1155_i_MapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
@@ -1234,10 +1234,10 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	uint16 championIndex = champMan._partyChampionCount - 1;
 	Champion *champ = &champMan._champions[championIndex];
 	if (commandType == k162_CommandClickInPanelCancel) {
-		invMan.toggleInventory(k4_ChampionCloseInventory);
-		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		invMan.toggleInventory(kDMChampionCloseInventory);
+		champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 		if (champMan._partyChampionCount == 1) {
-			commandSetLeader(kM1_ChampionNone);
+			commandSetLeader(kDMChampionNone);
 		}
 		champMan._partyChampionCount--;
 		Box box;
@@ -1253,7 +1253,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		return;
 	}
 
-	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+	champMan._candidateChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 	int16 mapX = dunMan._partyMapX + _vm->_dirIntoStepCountEast[dunMan._partyDir];
 	int16 mapY = dunMan._partyMapY + _vm->_dirIntoStepCountNorth[dunMan._partyDir];
 
@@ -1280,15 +1280,15 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 		for (uint16 i = 0; i < 12; i++) {
 			uint16 statIndex = _vm->getRandomNumber(7);
-			champ->getStatistic((ChampionStatisticType)statIndex, k1_ChampionStatCurrent)++; // returns reference
-			champ->getStatistic((ChampionStatisticType)statIndex, k0_ChampionStatMaximum)++; // returns reference
+			champ->getStatistic((ChampionStatisticType)statIndex, kDMChampionStatCurrent)++; // returns reference
+			champ->getStatistic((ChampionStatisticType)statIndex, kDMChampionStatMaximum)++; // returns reference
 		}
 	}
 
 	if (champMan._partyChampionCount == 1) {
 		_vm->_projexpl->_lastPartyMovementTime = _vm->_gameTime;
-		commandSetLeader(k0_ChampionFirst);
-		_vm->_menuMan->setMagicCasterAndDrawSpellArea(k0_ChampionFirst);
+		commandSetLeader(kDMChampionFirst);
+		_vm->_menuMan->setMagicCasterAndDrawSpellArea(kDMChampionFirst);
 	} else
 		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 
@@ -1309,9 +1309,9 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		break;
 	}
 
-	invMan.toggleInventory(k4_ChampionCloseInventory);
+	invMan.toggleInventory(kDMChampionCloseInventory);
 	_vm->_menuMan->drawEnabledMenus();
-	setMousePointerToNormal((_vm->_championMan->_leaderIndex == kM1_ChampionNone) ? k0_pointerArrow : k1_pointerHand);
+	setMousePointerToNormal((_vm->_championMan->_leaderIndex == kDMChampionNone) ? k0_pointerArrow : k1_pointerHand);
 }
 
 void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
@@ -1321,7 +1321,7 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 	CommandType commandType;
 	switch (invMan._panelContent) {
 	case k4_PanelContentChest:
-		if (champMan._leaderIndex == kM1_ChampionNone) // if no leader
+		if (champMan._leaderIndex == kDMChampionNone) // if no leader
 			return;
 		commandType = getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), k1_LeftMouseButton);
 		if (commandType != k0_CommandNone)
@@ -1340,7 +1340,7 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 }
 
 void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell) {
-	if (_vm->_championMan->_leaderIndex == kM1_ChampionNone)
+	if (_vm->_championMan->_leaderIndex == kDMChampionNone)
 		return;
 
 	int16 mapX = _vm->_dungeonMan->_partyMapX;
@@ -1365,7 +1365,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 }
 
 void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
-	if (_vm->_championMan->_leaderIndex == kM1_ChampionNone)
+	if (_vm->_championMan->_leaderIndex == kDMChampionNone)
 		return;
 
 	int16 mapX = _vm->_dungeonMan->_partyMapX;
@@ -1454,7 +1454,7 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 
 	_preventBuildPointerScreenArea = true;
 	if (!_useChampionIconOrdinalAsMousePointerBitmap) {
-		if (_vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir)) == kM1_ChampionNone) {
+		if (_vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir)) == kDMChampionNone) {
 			_preventBuildPointerScreenArea = false;
 			return;
 		}
@@ -1473,22 +1473,22 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 	} else {
 		_mousePointerBitmapUpdated = true;
 		uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
-		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kM1_ChampionNone);
+		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 		int16 championCellIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir));
 		if (championIconIndex == champIconIndex) {
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		} else {
 			int16 championIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir));
 			if (championIndex >= 0) {
 				_vm->_championMan->_champions[championIndex]._cell = (ViewCell)normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir);
-				setFlag(_vm->_championMan->_champions[championIndex]._attributes, k0x0400_ChampionAttributeIcon);
+				setFlag(_vm->_championMan->_champions[championIndex]._attributes, kDMChampionAttributeIcon);
 				_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 			} else
 				_vm->_displayMan->fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], k0_ColorBlack);
 
 			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, k0x0400_ChampionAttributeIcon);
+			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		}
 	}
@@ -1497,49 +1497,49 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 }
 
 void EventManager::commandProcessType100_clickInSpellArea(uint16 posX, uint16 posY) {
-	ChampionIndex championIndex = kM1_ChampionNone;
+	ChampionIndex championIndex = kDMChampionNone;
 	if (posY <= 48) {
 		switch (_vm->_championMan->_magicCasterChampionIndex) {
 		case 0:
 			if ((posX >= 280) && (posX <= 291))
-				championIndex = k1_ChampionSecond;
+				championIndex = kDMChampionSecond;
 			else if ((posX >= 294) && (posX <= 305))
-				championIndex = k2_ChampionThird;
+				championIndex = kDMChampionThird;
 			else if (posX >= 308)
-				championIndex = k3_ChampionFourth;
+				championIndex = kDMChampionFourth;
 
 			break;
 		case 1:
 			if ((posX >= 233) && (posX <= 244))
-				championIndex = k0_ChampionFirst;
+				championIndex = kDMChampionFirst;
 			else if ((posX >= 294) && (posX <= 305))
-				championIndex = k2_ChampionThird;
+				championIndex = kDMChampionThird;
 			else if (posX >= 308)
-				championIndex = k3_ChampionFourth;
+				championIndex = kDMChampionFourth;
 
 			break;
 		case 2:
 			if ((posX >= 233) && (posX <= 244))
-				championIndex = k0_ChampionFirst;
+				championIndex = kDMChampionFirst;
 			else if ((posX >= 247) && (posX <= 258))
-				championIndex = k1_ChampionSecond;
+				championIndex = kDMChampionSecond;
 			else if (posX >= 308)
-				championIndex = k3_ChampionFourth;
+				championIndex = kDMChampionFourth;
 
 			break;
 		case 3:
 			if ((posX >= 247) && (posX <= 258))
-				championIndex = k1_ChampionSecond;
+				championIndex = kDMChampionSecond;
 			else if ((posX >= 261) && (posX <= 272))
-				championIndex = k2_ChampionThird;
+				championIndex = kDMChampionThird;
 			else if (posX <= 244)
-				championIndex = k0_ChampionFirst;
+				championIndex = kDMChampionFirst;
 			break;
 		default:
 			break;
 		}
 
-		if ((championIndex != kM1_ChampionNone) && (championIndex < _vm->_championMan->_partyChampionCount))
+		if ((championIndex != kDMChampionNone) && (championIndex < _vm->_championMan->_partyChampionCount))
 			_vm->_menuMan->setMagicCasterAndDrawSpellArea(championIndex);
 
 		return;

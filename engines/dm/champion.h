@@ -173,57 +173,57 @@ enum IconIndice {
 };
 
 enum ChampionIndex {
-	kM1_ChampionNone = -1, // @ CM1_CHAMPION_NONE
-	k0_ChampionFirst = 0, // @ C00_CHAMPION_FIRST
-	k1_ChampionSecond = 1,
-	k2_ChampionThird = 2,
-	k3_ChampionFourth = 3,
-	k4_ChampionCloseInventory = 4, // @ C04_CHAMPION_CLOSE_INVENTORY
-	k5_ChampionSpecialInventory = 5 // @ C05_CHAMPION_SPECIAL_INVENTORY
+	kDMChampionNone = -1, // @ CM1_CHAMPION_NONE
+	kDMChampionFirst = 0, // @ C00_CHAMPION_FIRST
+	kDMChampionSecond = 1,
+	kDMChampionThird = 2,
+	kDMChampionFourth = 3,
+	kDMChampionCloseInventory = 4, // @ C04_CHAMPION_CLOSE_INVENTORY
+	kDMChampionSpecialInventory = 5 // @ C05_CHAMPION_SPECIAL_INVENTORY
 };
 
 enum ChampionAttribute {
-	k0x0000_ChampionAttributNone = 0x0000, // @ MASK0x0000_NONE
-	k0x0008_ChampionAttributeDisableAction = 0x0008, // @ MASK0x0008_DISABLE_ACTION
-	k0x0010_ChampionAttributeMale = 0x0010, // @ MASK0x0010_MALE
-	k0x0080_ChampionAttributeNameTitle = 0x0080, // @ MASK0x0080_NAME_TITLE
-	k0x0100_ChampionAttributeStatistics = 0x0100, // @ MASK0x0100_STATISTICS
-	k0x0200_ChampionAttributeLoad = 0x0200, // @ MASK0x0200_LOAD
-	k0x0400_ChampionAttributeIcon = 0x0400, // @ MASK0x0400_ICON
-	k0x0800_ChampionAttributePanel = 0x0800, // @ MASK0x0800_PANEL
-	k0x1000_ChampionAttributeStatusBox = 0x1000, // @ MASK0x1000_STATUS_BOX
-	k0x2000_ChampionAttributeWounds = 0x2000, // @ MASK0x2000_WOUNDS
-	k0x4000_ChampionAttributeViewport = 0x4000, // @ MASK0x4000_VIEWPORT
-	k0x8000_ChampionAttributeActionHand = 0x8000 // @ MASK0x8000_ACTION_HAND
+	kDMChampionAttributNone = 0x0000, // @ MASK0x0000_NONE
+	kDMChampionAttributeDisableAction = 0x0008, // @ MASK0x0008_DISABLE_ACTION
+	kDMChampionAttributeMale = 0x0010, // @ MASK0x0010_MALE
+	kDMChampionAttributeNameTitle = 0x0080, // @ MASK0x0080_NAME_TITLE
+	kDMChampionAttributeStatistics = 0x0100, // @ MASK0x0100_STATISTICS
+	kDMChampionAttributeLoad = 0x0200, // @ MASK0x0200_LOAD
+	kDMChampionAttributeIcon = 0x0400, // @ MASK0x0400_ICON
+	kDMChampionAttributePanel = 0x0800, // @ MASK0x0800_PANEL
+	kDMChampionAttributeStatusBox = 0x1000, // @ MASK0x1000_STATUS_BOX
+	kDMChampionAttributeWounds = 0x2000, // @ MASK0x2000_WOUNDS
+	kDMChampionAttributeViewport = 0x4000, // @ MASK0x4000_VIEWPORT
+	kDMChampionAttributeActionHand = 0x8000 // @ MASK0x8000_ACTION_HAND
 };
 
 
 enum ChampionWound {
-	k0x0000_ChampionWoundNone = 0x0000, // @ MASK0x0000_NO_WOUND
-	k0x0001_ChampionWoundReadHand = 0x0001, // @ MASK0x0001_READY_HAND
-	k0x0002_ChampionWoundActionHand = 0x0002, // @ MASK0x0002_ACTION_HAND
-	k0x0004_ChampionWoundHead = 0x0004, // @ MASK0x0004_HEAD
-	k0x0008_ChampionWoundTorso = 0x0008, // @ MASK0x0008_TORSO
-	k0x0010_ChampionWoundLegs = 0x0010, // @ MASK0x0010_LEGS
-	k0x0020_ChampionWoundFeet = 0x0020 // @ MASK0x0020_FEET
+	kDMChampionWoundNone = 0x0000, // @ MASK0x0000_NO_WOUND
+	kDMChampionWoundReadHand = 0x0001, // @ MASK0x0001_READY_HAND
+	kDMChampionWoundActionHand = 0x0002, // @ MASK0x0002_ACTION_HAND
+	kDMChampionWoundHead = 0x0004, // @ MASK0x0004_HEAD
+	kDMChampionWoundTorso = 0x0008, // @ MASK0x0008_TORSO
+	kDMChampionWoundLegs = 0x0010, // @ MASK0x0010_LEGS
+	kDMChampionWoundFeet = 0x0020 // @ MASK0x0020_FEET
 };
 
 
 enum ChampionStatisticType {
-	k0_ChampionStatLuck = 0, // @ C0_STATISTIC_LUCK
-	k1_ChampionStatStrength = 1, // @ C1_STATISTIC_STRENGTH
-	k2_ChampionStatDexterity = 2, // @ C2_STATISTIC_DEXTERITY
-	k3_ChampionStatWisdom = 3, // @ C3_STATISTIC_WISDOM
-	k4_ChampionStatVitality = 4, // @ C4_STATISTIC_VITALITY
-	k5_ChampionStatAntimagic = 5, // @ C5_STATISTIC_ANTIMAGIC
-	k6_ChampionStatAntifire = 6, // @ C6_STATISTIC_ANTIFIRE
-	k8_ChampionStatMana = 8 // @ C8_STATISTIC_MANA /* Used as a fake statistic index for objects granting a Mana bonus */
+	kDMChampionStatLuck = 0, // @ C0_STATISTIC_LUCK
+	kDMChampionStatStrength = 1, // @ C1_STATISTIC_STRENGTH
+	kDMChampionStatDexterity = 2, // @ C2_STATISTIC_DEXTERITY
+	kDMChampionStatWisdom = 3, // @ C3_STATISTIC_WISDOM
+	kDMChampionStatVitality = 4, // @ C4_STATISTIC_VITALITY
+	kDMChampionStatAntimagic = 5, // @ C5_STATISTIC_ANTIMAGIC
+	kDMChampionStatAntifire = 6, // @ C6_STATISTIC_ANTIFIRE
+	kDMChampionStatMana = 8 // @ C8_STATISTIC_MANA /* Used as a fake statistic index for objects granting a Mana bonus */
 };
 
 enum ChampionStatisticValue {
-	k0_ChampionStatMaximum = 0, // @ C0_MAXIMUM
-	k1_ChampionStatCurrent = 1, // @ C1_CURRENT
-	k2_ChampionStatMinimum = 2 // @ C2_MINIMUM
+	kDMChampionStatMaximum = 0, // @ C0_MAXIMUM
+	kDMChampionStatCurrent = 1, // @ C1_CURRENT
+	kDMChampionStatMinimum = 2 // @ C2_MINIMUM
 };
 
 enum ChampionSkill {
@@ -339,14 +339,16 @@ enum ChampionAction {
 	k255_ChampionActionNone = 255 // @ C255_ACTION_NONE
 };
 
-#define k0_attackType_NORMAL 0 // @ C0_ATTACK_NORMAL
-#define k1_attackType_FIRE 1 // @ C1_ATTACK_FIRE
-#define k2_attackType_SELF 2 // @ C2_ATTACK_SELF
-#define k3_attackType_BLUNT 3 // @ C3_ATTACK_BLUNT
-#define k4_attackType_SHARP 4 // @ C4_ATTACK_SHARP
-#define k5_attackType_MAGIC 5 // @ C5_ATTACK_MAGIC
-#define k6_attackType_PSYCHIC 6 // @ C6_ATTACK_PSYCHIC
-#define k7_attackType_LIGHTNING 7 // @ C7_ATTACK_LIGHTNING
+enum AttackType {
+	k0_attackType_NORMAL = 0, // @ C0_ATTACK_NORMAL
+	k1_attackType_FIRE = 1, // @ C1_ATTACK_FIRE
+	k2_attackType_SELF = 2, // @ C2_ATTACK_SELF
+	k3_attackType_BLUNT = 3, // @ C3_ATTACK_BLUNT
+	k4_attackType_SHARP = 4, // @ C4_ATTACK_SHARP
+	k5_attackType_MAGIC = 5, // @ C5_ATTACK_MAGIC
+	k6_attackType_PSYCHIC = 6, // @ C6_ATTACK_PSYCHIC
+	k7_attackType_LIGHTNING = 7 // @ C7_ATTACK_LIGHTNING
+};
 
 class Skill {
 public:
@@ -401,12 +403,12 @@ public:
 	uint16 getAttributes() { return _attributes; }
 	uint16 getAttributes(ChampionAttribute flag) { return _attributes & flag; }
 	void setAttributeFlag(ChampionAttribute flag, bool value);
-	void clearAttributes(ChampionAttribute attribute = k0x0000_ChampionAttributNone) { _attributes = attribute; }
+	void clearAttributes(ChampionAttribute attribute = kDMChampionAttributNone) { _attributes = attribute; }
 
 	uint16 getWounds() { return _wounds; }
 	void setWoundsFlag(ChampionWound flag, bool value);
 	uint16 getWoundsFlag(ChampionWound wound) { return _wounds & wound; }
-	void clearWounds() { _wounds = k0x0000_ChampionWoundNone; }
+	void clearWounds() { _wounds = kDMChampionWoundNone; }
 	void resetSkillsToZero() {
 		for (int16 i = 0; i < 20; ++i)
 			_skills[i].resetToZero();

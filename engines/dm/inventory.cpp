@@ -86,7 +86,7 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	static Box boxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
-	if ((championIndex != k4_ChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth)
+	if ((championIndex != kDMChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth)
 		return;
 
 	if (_vm->_pressingMouth || _vm->_pressingEye)
@@ -95,22 +95,22 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	_vm->_stopWaitingForPlayerInput = true;
 	uint16 inventoryChampionOrdinal = _inventoryChampionOrdinal;
 	if (_vm->indexToOrdinal(championIndex) == inventoryChampionOrdinal)
-		championIndex = k4_ChampionCloseInventory;
+		championIndex = kDMChampionCloseInventory;
 
 	_vm->_eventMan->showMouse();
 	if (inventoryChampionOrdinal) {
-		_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		_inventoryChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 		closeChest();
 		Champion *champion = &_vm->_championMan->_champions[_vm->ordinalToIndex(inventoryChampionOrdinal)];
 		if (champion->_currHealth && !_vm->_championMan->_candidateChampionOrdinal) {
-			setFlag(champion->_attributes, k0x1000_ChampionAttributeStatusBox);
+			setFlag(champion->_attributes, kDMChampionAttributeStatusBox);
 			_vm->_championMan->drawChampionState((ChampionIndex)_vm->ordinalToIndex(inventoryChampionOrdinal));
 		}
 		if (_vm->_championMan->_partyIsSleeping) {
 			_vm->_eventMan->hideMouse();
 			return;
 		}
-		if (championIndex == k4_ChampionCloseInventory) {
+		if (championIndex == kDMChampionCloseInventory) {
 			_vm->_eventMan->_refreshMousePointerInMainLoop = true;
 			_vm->_menuMan->drawMovementArrows();
 			_vm->_eventMan->hideMouse();
@@ -152,7 +152,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	for (uint16 i = k0_ChampionSlotReadyHand; i < k30_ChampionSlotChest_1; i++)
 		_vm->_championMan->drawSlot(championIndex, i);
 
-	setFlag(champion->_attributes, k0x4000_ChampionAttributeViewport | k0x1000_ChampionAttributeStatusBox | k0x0800_ChampionAttributePanel | k0x0200_ChampionAttributeLoad | k0x0100_ChampionAttributeStatistics | k0x0080_ChampionAttributeNameTitle);
+	setFlag(champion->_attributes, kDMChampionAttributeViewport | kDMChampionAttributeStatusBox | kDMChampionAttributePanel | kDMChampionAttributeLoad | kDMChampionAttributeStatistics | kDMChampionAttributeNameTitle);
 	_vm->_championMan->drawChampionState(championIndex);
 	_vm->_eventMan->_mousePointerBitmapUpdated = true;
 	_vm->_eventMan->hideMouse();
@@ -822,10 +822,10 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 		textPosY += 7;
 	}
 	textPosY = 86;
-	for (uint16 idx = k1_ChampionStatStrength; idx <= k6_ChampionStatAntifire; idx++) {
+	for (uint16 idx = kDMChampionStatStrength; idx <= kDMChampionStatAntifire; idx++) {
 		_vm->_textMan->printToViewport(108, textPosY, k13_ColorLightestGray, statisticNames[idx]);
-		int16 statisticCurrentValue = curChampion->_statistics[idx][k1_ChampionStatCurrent];
-		uint16 statisticMaximumValue = curChampion->_statistics[idx][k0_ChampionStatMaximum];
+		int16 statisticCurrentValue = curChampion->_statistics[idx][kDMChampionStatCurrent];
+		uint16 statisticMaximumValue = curChampion->_statistics[idx][kDMChampionStatMaximum];
 		int16 statisticColor;
 		if (statisticCurrentValue < statisticMaximumValue)
 			statisticColor = k8_ColorRed;
@@ -932,16 +932,16 @@ void InventoryMan::clickOnMouth() {
 
 		switch (((Potion *)junkData)->getType()) {
 		case k6_PotionTypeRos:
-			adjustStatisticCurrentValue(curChampion, k2_ChampionStatDexterity, adjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, kDMChampionStatDexterity, adjustedPotionPower);
 			break;
 		case k7_PotionTypeKu:
-			adjustStatisticCurrentValue(curChampion, k1_ChampionStatStrength, (((Potion *)junkData)->getPower() / 35) + 5); /* Value between 5 and 12 */
+			adjustStatisticCurrentValue(curChampion, kDMChampionStatStrength, (((Potion *)junkData)->getPower() / 35) + 5); /* Value between 5 and 12 */
 			break;
 		case k8_PotionTypeDane:
-			adjustStatisticCurrentValue(curChampion, k3_ChampionStatWisdom, adjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, kDMChampionStatWisdom, adjustedPotionPower);
 			break;
 		case k9_PotionTypeNeta:
-			adjustStatisticCurrentValue(curChampion, k4_ChampionStatVitality, adjustedPotionPower);
+			adjustStatisticCurrentValue(curChampion, kDMChampionStatVitality, adjustedPotionPower);
 			break;
 		case k10_PotionTypeAntivenin:
 			_vm->_championMan->unpoison(championIndex);
@@ -961,7 +961,7 @@ void InventoryMan::clickOnMouth() {
 			newEvent._priority = championIndex;
 			newEvent._B._defense = adjustedPotionPower;
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
-			setFlag(curChampion->_attributes, k0x1000_ChampionAttributeStatusBox);
+			setFlag(curChampion->_attributes, kDMChampionAttributeStatusBox);
 			}
 			break;
 		case k13_PotionTypeEe: {
@@ -985,7 +985,7 @@ void InventoryMan::clickOnMouth() {
 					healWoundIterationCount = 1;
 				} while ((wounds == curChampion->_wounds) && --counter); /* Loop until at least one wound is healed or there are no more heal iterations */
 			}
-			setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad | k0x2000_ChampionAttributeWounds);
+			setFlag(curChampion->_attributes, kDMChampionAttributeLoad | kDMChampionAttributeWounds);
 			}
 			break;
 		case k15_PotionTypeWaterFlask:
@@ -1015,13 +1015,13 @@ void InventoryMan::clickOnMouth() {
 	} else {
 		_vm->_championMan->drawChangedObjectIcons();
 		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
-		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, k0x0200_ChampionAttributeLoad);
+		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, kDMChampionAttributeLoad);
 	}
 	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
-	setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+	setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
 
 	if (_panelContent == k0_PanelContentFoodWaterPoisoned)
-		setFlag(curChampion->_attributes, k0x0800_ChampionAttributePanel);
+		setFlag(curChampion->_attributes, kDMChampionAttributePanel);
 
 	_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 	_vm->_eventMan->hideMouse();
@@ -1030,7 +1030,7 @@ void InventoryMan::clickOnMouth() {
 void InventoryMan::adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta) {
 	int16 delta;
 	if (valueDelta >= 0) {
-		int16 currentValue = champ->_statistics[statIndex][k1_ChampionStatCurrent];
+		int16 currentValue = champ->_statistics[statIndex][kDMChampionStatCurrent];
 		if (currentValue > 120) {
 			valueDelta >>= 1;
 			if (currentValue > 150) {
@@ -1040,9 +1040,9 @@ void InventoryMan::adjustStatisticCurrentValue(Champion *champ, uint16 statIndex
 		}
 		delta = MIN(valueDelta, (int16)(170 - currentValue));
 	} else { /* BUG0_00 Useless code. The function is always called with valueDelta having a positive value */
-		delta = MAX(valueDelta, int16(champ->_statistics[statIndex][k2_ChampionStatMinimum] - champ->_statistics[statIndex][k1_ChampionStatCurrent]));
+		delta = MAX(valueDelta, int16(champ->_statistics[statIndex][kDMChampionStatMinimum] - champ->_statistics[statIndex][kDMChampionStatCurrent]));
 	}
-	champ->_statistics[statIndex][k1_ChampionStatCurrent] += delta;
+	champ->_statistics[statIndex][kDMChampionStatCurrent] += delta;
 }
 
 void InventoryMan::clickOnEye() {

@@ -195,7 +195,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		break;
 	}
 	if (championAttack && _projectilePoisonAttack && _vm->getRandomNumber(2)
-	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso, _projectileAttackType))
+	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMChampionWoundHead | kDMChampionWoundTorso, _projectileAttackType))
 		_vm->_championMan->championPoison(championIndex, _projectilePoisonAttack);
 
 	if (createExplosionOnImpact || removePotion) {
@@ -325,7 +325,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 		attack += _vm->getRandomNumber(attack) + 1;
 		if ((explThing == Thing::_explFireBall) || (attack >>= 1)) {
 			if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (projectileMapX == _vm->_dungeonMan->_partyMapX) && (projectileMapY == _vm->_dungeonMan->_partyMapY)) {
-				int16 wounds = k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand | k0x0004_ChampionWoundHead | k0x0008_ChampionWoundTorso | k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet;
+				int16 wounds = kDMChampionWoundReadHand | kDMChampionWoundActionHand | kDMChampionWoundHead | kDMChampionWoundTorso | kDMChampionWoundLegs | kDMChampionWoundFeet;
 				_vm->_championMan->getDamagedChampionCount(attack, wounds, k1_attackType_FIRE);
 			} else {
 				unusedThing = _vm->_groupMan->groupGetThing(projectileMapX, projectileMapY);
@@ -536,7 +536,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		break;
 	case 0xFF87:
 		if (explosionOnPartySquare)
-			_vm->_championMan->getDamagedChampionCount(attack, k0x0000_ChampionWoundNone, k0_attackType_NORMAL);
+			_vm->_championMan->getDamagedChampionCount(attack, kDMChampionWoundNone, k0_attackType_NORMAL);
 		else if ((groupThing != Thing::_endOfList)
 			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
 			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != k2_outcomeKilledAllCreaturesInGroup)

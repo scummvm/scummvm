@@ -333,7 +333,7 @@ void Timeline::processTimeline() {
 				break;
 			case k72_TMEventTypeChampionShield:
 				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._B._defense;
-				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, k0x1000_ChampionAttributeStatusBox);
+				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, kDMChampionAttributeStatusBox);
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
 			case k73_TMEventTypeThievesEye:
@@ -400,7 +400,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 				// Strangerke
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
-				int16 wounds = k0x0008_ChampionWoundTorso | (verticalDoorFl ? k0x0004_ChampionWoundHead : k0x0001_ChampionWoundReadHand | k0x0002_ChampionWoundActionHand);
+				int16 wounds = kDMChampionWoundTorso | (verticalDoorFl ? kDMChampionWoundHead : kDMChampionWoundReadHand | kDMChampionWoundActionHand);
 				if (_vm->_championMan->getDamagedChampionCount(5, wounds, k2_attackType_SELF))
 					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, mapX, mapY, k1_soundModePlayIfPrioritized);
 			}
@@ -815,7 +815,7 @@ void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
 	curChampion->_enableActionEventIndex = -1;
-	clearFlag(curChampion->_attributes, k0x0008_ChampionAttributeDisableAction);
+	clearFlag(curChampion->_attributes, kDMChampionAttributeDisableAction);
 	if (curChampion->_actionIndex != k255_ChampionActionNone) {
 		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
 	}
@@ -832,7 +832,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 				}
 			}
 		}
-		setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
+		setFlag(curChampion->_attributes, kDMChampionAttributeActionHand);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
 	curChampion->_actionIndex = k255_ChampionActionNone;
@@ -872,7 +872,7 @@ void Timeline::processEventHideDamageReceived(uint16 champIndex) {
 		_vm->_inventoryMan->drawStatusBoxPortrait((ChampionIndex)champIndex);
 		_vm->_eventMan->hideMouse();
 	} else {
-		setFlag(curChampion->_attributes, k0x0080_ChampionAttributeNameTitle);
+		setFlag(curChampion->_attributes, kDMChampionAttributeNameTitle);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
 }
@@ -904,8 +904,8 @@ void Timeline::processEventLight(TimelineEvent *event) {
 }
 
 void Timeline::refreshAllChampionStatusBoxes() {
-	for (uint16 idx = k0_ChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++)
-		setFlag(_vm->_championMan->_champions[idx]._attributes, k0x1000_ChampionAttributeStatusBox);
+	for (uint16 idx = kDMChampionFirst; idx < _vm->_championMan->_partyChampionCount; idx++)
+		setFlag(_vm->_championMan->_champions[idx]._attributes, kDMChampionAttributeStatusBox);
 
 	_vm->_championMan->drawAllChampionStates();
 }

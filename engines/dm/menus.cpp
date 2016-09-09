@@ -175,9 +175,9 @@ void MenuMan::clearActingChampion() {
 	ChampionMan &cm = *_vm->_championMan;
 	if (cm._actingChampionOrdinal) {
 		cm._actingChampionOrdinal--;
-		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
+		cm._champions[cm._actingChampionOrdinal].setAttributeFlag(kDMChampionAttributeActionHand, true);
 		cm.drawChampionState((ChampionIndex)cm._actingChampionOrdinal);
-		cm._actingChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+		cm._actingChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 		_refreshActionArea = true;
 	}
 }
@@ -221,7 +221,7 @@ T0386006:
 	box2._y1 = 95;
 	box2._y2 = 110;
 	dm.blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
-	if (champion.getAttributes(k0x0008_ChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
+	if (champion.getAttributes(kDMChampionAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
 		_vm->_displayMan->shadeScreenBox(&box, k0_ColorBlack);
 	}
 }
@@ -259,7 +259,7 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 			return;
 	} else {
 		champ = champMan._champions;
-		int16 champIndex = k0_ChampionFirst;
+		int16 champIndex = kDMChampionFirst;
 
 		do {
 			if ((champIndex != champMan._leaderIndex)
@@ -268,7 +268,7 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 				&& (champ->_dir != champ->_directionMaximumDamageReceived)) {
 
 				champ->_dir = (Direction)champ->_directionMaximumDamageReceived;
-				champ->setAttributeFlag(k0x0400_ChampionAttributeIcon, true);
+				champ->setAttributeFlag(kDMChampionAttributeIcon, true);
 				champMan.drawChampionState((ChampionIndex)champIndex);
 			}
 			champ->_maximumDamageReceived = 0;
@@ -288,7 +288,7 @@ void MenuMan::refreshActionAreaAndSetChampDirMaxDamageReceived() {
 			}
 		} else {
 			_actionAreaContainsIcons = false;
-			champ->setAttributeFlag(k0x8000_ChampionAttributeActionHand, true);
+			champ->setAttributeFlag(kDMChampionAttributeActionHand, true);
 			champMan.drawChampionState((ChampionIndex)_vm->ordinalToIndex(champMan._actingChampionOrdinal));
 			drawActionArea();
 		}
@@ -307,7 +307,7 @@ void MenuMan::drawActionArea() {
 	dispMan._useByteBoxCoordinates = false;
 	dispMan.fillScreenBox(_boxActionArea, k0_ColorBlack);
 	if (_actionAreaContainsIcons) {
-		for (uint16 champIndex = k0_ChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
+		for (uint16 champIndex = kDMChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
 			drawActionIcon((ChampionIndex)champIndex);
 	} else if (champMan._actingChampionOrdinal) {
 		Box box = _boxActionArea3ActionMenu;
@@ -453,16 +453,16 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 	static Box boxSpellAreaLine3(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
 
 	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex)
-	|| ((champIndex != kM1_ChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth))
+	|| ((champIndex != kDMChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth))
 		return;
 
-	if (_vm->_championMan->_magicCasterChampionIndex == kM1_ChampionNone) {
+	if (_vm->_championMan->_magicCasterChampionIndex == kDMChampionNone) {
 		_vm->_eventMan->showMouse();
 		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
 		_vm->_eventMan->hideMouse();
 	}
-	if (champIndex == kM1_ChampionNone) {
-		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone;
+	if (champIndex == kDMChampionNone) {
+		_vm->_championMan->_magicCasterChampionIndex = kDMChampionNone;
 		_vm->_eventMan->showMouse();
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->fillScreenBox(_boxSpellArea, k0_ColorBlack);
@@ -485,7 +485,7 @@ void MenuMan::drawEnabledMenus() {
 		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	} else {
 		ChampionIndex casterChampionIndex = _vm->_championMan->_magicCasterChampionIndex;
-		_vm->_championMan->_magicCasterChampionIndex = kM1_ChampionNone; /* Force next function to draw the spell area */
+		_vm->_championMan->_magicCasterChampionIndex = kDMChampionNone; /* Force next function to draw the spell area */
 		setMagicCasterAndDrawSpellArea(casterChampionIndex);
 		if (!_vm->_championMan->_actingChampionOrdinal)
 			_actionAreaContainsIcons = true;
@@ -493,7 +493,7 @@ void MenuMan::drawEnabledMenus() {
 		drawActionArea();
 		int16 AL1462_i_InventoryChampionOrdinal = _vm->_inventoryMan->_inventoryChampionOrdinal;
 		if (AL1462_i_InventoryChampionOrdinal) {
-			_vm->_inventoryMan->_inventoryChampionOrdinal = _vm->indexToOrdinal(kM1_ChampionNone);
+			_vm->_inventoryMan->_inventoryChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 			_vm->_inventoryMan->toggleInventory((ChampionIndex)_vm->ordinalToIndex(AL1462_i_InventoryChampionOrdinal));
 		} else {
 			_vm->_displayMan->drawFloorAndCeiling();
@@ -540,7 +540,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	if (skillLevel < requiredSkillLevel) {
 		int16 missingSkillLevelCount = requiredSkillLevel - skillLevel;
 		while (missingSkillLevelCount--) {
-			if (_vm->getRandomNumber(128) > MIN(curChampion->_statistics[k3_ChampionStatWisdom][k1_ChampionStatCurrent] + 15, 115)) {
+			if (_vm->getRandomNumber(128) > MIN(curChampion->_statistics[kDMChampionStatWisdom][kDMChampionStatCurrent] + 15, 115)) {
 				_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience >> (requiredSkillLevel - skillLevel));
 				menusPrintSpellFailureMessage(curChampion, k0_failureNeedsMorePractice, curSpell->_skillIndex);
 				return k0_spellCastFailure;
@@ -561,7 +561,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		curChampion->_load += _vm->_dungeonMan->getObjectWeight(newObject) - emptyFlaskWeight;
 		_vm->_championMan->drawChangedObjectIcons();
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex)) {
-			setFlag(curChampion->_attributes, k0x0200_ChampionAttributeLoad);
+			setFlag(curChampion->_attributes, kDMChampionAttributeLoad);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
 		}
@@ -569,7 +569,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	case k2_spellKindProjectile:
 		if (curChampion->_dir != _vm->_dungeonMan->_partyDir) {
 			curChampion->_dir = _vm->_dungeonMan->_partyDir;
-			setFlag(curChampion->_attributes, k0x0400_ChampionAttributeIcon);
+			setFlag(curChampion->_attributes, kDMChampionAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
 		if (curSpell->getType() == k4_spellType_projectileOpenDoor)
@@ -889,7 +889,7 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 
 	if (manaCost <= casterChampion->_currMana) {
 		casterChampion->_currMana -= manaCost;
-		setFlag(casterChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+		setFlag(casterChampion->_attributes, kDMChampionAttributeStatistics);
 		casterChampion->_symbols[symbolStep] = 96 + (symbolStep * 6) + symbolIndex;
 		casterChampion->_symbols[symbolStep + 1] = '\0';
 		casterChampion->_symbolStep = symbolStep = returnNextVal(symbolStep);
@@ -932,7 +932,7 @@ bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 		if (_actionDisabledTicks[actionIndex])
 			curChampion->_actionDefense += _vm->_timeline->_actionDefense[actionIndex];
 
-		setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+		setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
 		retVal = isActionPerformed(championIndex, actionIndex);
 		curChampion->_actionIndex = (ChampionAction)actionIndex;
 	}
@@ -1249,7 +1249,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			if (curChampion->_currMana < 0)
 				curChampion->_currMana = 0;
 
-			setFlag(curChampion->_attributes, k0x0100_ChampionAttributeStatistics);
+			setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
 			actionPerformed = true;
 		}
 		}
@@ -1340,7 +1340,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
 	if (champ->_dir != _vm->_dungeonMan->_partyDir) {
 		champ->_dir = _vm->_dungeonMan->_partyDir;
-		setFlag(champ->_attributes, k0x0400_ChampionAttributeIcon);
+		setFlag(champ->_attributes, kDMChampionAttributeIcon);
 	}
 }
 
@@ -1476,7 +1476,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
 			uint16 cellDelta = (viewCell == k2_ViewCellBackRight) ? 3 : 1;
 			/* Check if there is another champion in front */
-			if (_vm->_championMan->getIndexInCell(normalizeModulo4(championCell + cellDelta)) != kM1_ChampionNone) {
+			if (_vm->_championMan->getIndexInCell(normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
 				_actionDamage = kM1_damageCantReach;
 				return false;
 			}
@@ -1627,7 +1627,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	};
 
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
-	if (getFlag(curChampion->_attributes, k0x0008_ChampionAttributeDisableAction) || !curChampion->_currHealth)
+	if (getFlag(curChampion->_attributes, kDMChampionAttributeDisableAction) || !curChampion->_currHealth)
 		return;
 
 	uint16 actionSetIndex;
@@ -1645,7 +1645,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	_vm->_championMan->_actingChampionOrdinal = _vm->indexToOrdinal(champIndex);
 	setActionList(actionSet);
 	_actionAreaContainsIcons = false;
-	setFlag(curChampion->_attributes, k0x8000_ChampionAttributeActionHand);
+	setFlag(curChampion->_attributes, kDMChampionAttributeActionHand);
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	drawActionArea();
 	drawActionArea();

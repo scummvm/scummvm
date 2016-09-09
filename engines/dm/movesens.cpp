@@ -82,7 +82,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			if (processedSensorType == k0_SensorDisabled)
 				continue;
 			
-			if ((_vm->_championMan->_leaderIndex == kM1_ChampionNone) && (processedSensorType != k127_SensorWallChampionPortrait))
+			if ((_vm->_championMan->_leaderIndex == kDMChampionNone) && (processedSensorType != k127_SensorWallChampionPortrait))
 				continue;
 			
 			if (cellIdx != cellParam)
@@ -327,11 +327,11 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						if (_vm->_championMan->_partyChampionCount > 0) {
 							if (_useRopeToClimbDownPit) {
 								Champion *curChampion = _vm->_championMan->_champions;
-								for (int16 championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+								for (int16 championIdx = kDMChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
 									if (curChampion->_currHealth)
 										_vm->_championMan->decrementStamina(championIdx, ((curChampion->_load * 25) / _vm->_championMan->getMaximumLoad(curChampion)) + 1);
 								}
-							} else if (_vm->_championMan->getDamagedChampionCount(20, k0x0010_ChampionWoundLegs | k0x0020_ChampionWoundFeet, k2_attackType_SELF))
+							} else if (_vm->_championMan->getDamagedChampionCount(20, kDMChampionWoundLegs | kDMChampionWoundFeet, k2_attackType_SELF))
 								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 						}
 						_useRopeToClimbDownPit = false;
@@ -863,7 +863,7 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 	uint16 slotIdx = 0;
 	Thing curThing;
 	Thing *curSlotThing = nullptr;
-	for (championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+	for (championIdx = kDMChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
 		if (curChampion->_currHealth) {
 			curSlotThing = curChampion->_slots;
 			for (slotIdx = k0_ChampionSlotReadyHand; (slotIdx < k30_ChampionSlotChest_1) || !leaderHandObjectProcessed; slotIdx++) {
@@ -938,12 +938,12 @@ void MovesensMan::triggerLocalEffect(int16 localEffect, int16 effX, int16 effY, 
 
 void MovesensMan::addSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly) {
 	if (leaderOnly) {
-		if (_vm->_championMan->_leaderIndex != kM1_ChampionNone)
+		if (_vm->_championMan->_leaderIndex != kDMChampionNone)
 			_vm->_championMan->addSkillExperience(_vm->_championMan->_leaderIndex, skillIndex, exp);
 	} else {
 		exp /= _vm->_championMan->_partyChampionCount;
 		Champion *curChampion = _vm->_championMan->_champions;
-		for (int16 championIdx = k0_ChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
+		for (int16 championIdx = kDMChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
 			if (curChampion->_currHealth)
 				_vm->_championMan->addSkillExperience(championIdx, skillIndex, exp);
 		}

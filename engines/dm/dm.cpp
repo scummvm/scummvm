@@ -318,9 +318,9 @@ void DMEngine::startGame() {
 	_highlightBoxInversionRequested = false;
 	_eventMan->_highlightBoxEnabled = false;
 	_championMan->_partyIsSleeping = false;
-	_championMan->_actingChampionOrdinal = indexToOrdinal(kM1_ChampionNone);
+	_championMan->_actingChampionOrdinal = indexToOrdinal(kDMChampionNone);
 	_menuMan->_actionAreaContainsIcons = true;
-	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kM1_ChampionNone);
+	_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = indexToOrdinal(kDMChampionNone);
 
 	_eventMan->_primaryMouseInput = _eventMan->_primaryMouseInputInterface;
 	_eventMan->_secondaryMouseInput = _eventMan->_secondaryMouseInputMovement;
@@ -643,7 +643,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 		if (_gameWon) {
 			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
 			_displayMan->fillScreen(k12_ColorDarkestGray);
-			for (int16 championIndex = k0_ChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
+			for (int16 championIndex = kDMChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
 				int16 textPosY = championIndex * 48;
 				Champion *curChampion = &_championMan->_champions[championIndex];
 				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
@@ -917,7 +917,7 @@ void DMEngine::entranceDrawCredits() {
 void DMEngine::fuseSequence() {
 	_gameWon = true;
 	if (_inventoryMan->_inventoryChampionOrdinal)
-		_inventoryMan->toggleInventory(k4_ChampionCloseInventory);
+		_inventoryMan->toggleInventory(kDMChampionCloseInventory);
 
 	_eventMan->highlightBoxDisable();
 	_championMan->_party._magicalLightAmount = 200;
