@@ -338,7 +338,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 	debugC(2, kDebugSceneLogic, "scene27: knockBats(%d, %d)", bat1n, bat2n);
 
 	if (0.0 != bat1->power) {
-		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
+		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
 			+ atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
 		double rndCos = cos(rndF);
 		double rndSin = sin(rndF);
@@ -354,7 +354,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 to: powerCos: %f powerSin: %f", bat1->powerCos, bat1->powerSin);
 
-		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.0000009155552842799158 - 0.015
+		rndF = ((double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
 								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX));
 		double pow2x = cos(bat2->angle - rndF) * (double)((bat1->currX - bat2->currX) >= 0 ? 1 : -1) * bat2->power;
 		double pow2y = sin(bat2->angle - rndF) * (double)((bat1->currY - bat2->currY) >= 0 ? 1 : -1) * bat2->power;
