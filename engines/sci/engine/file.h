@@ -34,12 +34,17 @@ enum {
 	_K_FILE_MODE_CREATE = 2
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+	SCI_MAX_SAVENAME_LENGTH = 36, ///< Maximum length of a savegame name (including terminator character).
+	MAX_SAVEGAME_NR = 20 ///< Maximum number of savegames
 };
+
+#ifdef ENABLE_SCI32
+enum {
+	kAutoSaveId = 0,
+	kNewGameId = 100
+};
+#endif
 
 #define VIRTUALFILE_HANDLE_START 32000
 #define VIRTUALFILE_HANDLE_SCI32SAVE 32100
@@ -53,6 +58,7 @@ struct SavegameDesc {
 	int time;
 	int version;
 	char name[SCI_MAX_SAVENAME_LENGTH];
+	Common::String gameVersion;
 };
 
 class FileHandle {

@@ -1009,10 +1009,11 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
-	if (s->executionStackBase) {
-		warning("Cannot save from below kernel function");
-		return false;
-	}
+// TODO: This breaks Torin autosave, is there actually any reason for it?
+//	if (s->executionStackBase) {
+//		warning("Cannot save from below kernel function");
+//		return false;
+//	}
 
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
