@@ -423,6 +423,8 @@ void sceneHandler27_batSetColors(int batn) {
 }
 
 void sceneHandler27_driverPushButton() {
+	debugC(2, kDebugSceneLogic, "scene27: driverPushButton");
+
 	if (g_fp->getObjectState(sO_Driver) == g_fp->getObjectEnumState(sO_Driver, sO_WithSteering)) {
 		g_vars->scene27_driver->changeStatics2(ST_DRV_VENT);
 		chainQueue(QU_DRV_PUSHBUTTON, 1);
@@ -537,6 +539,8 @@ void sceneHandler27_calcWinArcade() {
 }
 
 void sceneHandler27_regenBats() {
+	debugC(2, kDebugSceneLogic, "scene27: regenBats");
+
 	g_vars->scene27_wipeIsNeeded = false;
 
 	for (uint i = 0; i < g_vars->scene27_var07.size(); i++) {
@@ -639,6 +643,8 @@ int sceneHandler27(ExCommand *cmd) {
 		break;
 
 	case MSG_SC27_STARTWIPE:
+		debugC(2, kDebugSceneLogic, "scene27: STARTWIPE");
+
 		g_vars->scene27_wipeIsNeeded = true;
 
 		g_fp->playSound(SND_27_027, 0);
