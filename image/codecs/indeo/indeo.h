@@ -146,8 +146,6 @@ struct RVMapDesc {
     uint8     esc_sym; ///< escape symbol
     uint8     runtab[256];
     int8      valtab[256];
-
-	RVMapDesc();
 };
 
 /**
@@ -369,6 +367,11 @@ struct IVI45DecContext {
     int             got_p_frame;
 
 	IVI45DecContext();
+private:
+	/**
+	 *  Initial Run-value (RLE) tables.
+	 */
+	static const RVMapDesc _ff_ivi_rvmap_tabs[9];
 };
 
 class IndeoDecoderBase : public Codec {

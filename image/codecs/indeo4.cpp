@@ -42,6 +42,9 @@ namespace Image {
 
 Indeo4Decoder::Indeo4Decoder(uint16 width, uint16 height) : IndeoDecoderBase(width, height) {
 	_ctx.is_indeo4 = true;
+	_ctx.ref_buf = 1;
+	_ctx.b_ref_buf = 3;
+	_ctx.p_frame = new AVFrame();
 }
 
 bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
@@ -66,15 +69,24 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	if (!isIndeo4(stream))
 		return nullptr;
 
-	// Set up the GetBits instance for reading the stream
-	_ctx.gb = new GetBits(stream);
+	// Set up the frame data buffer
+	byte *frameData = new byte[stream.size()];
+	stream.read(frameData, stream.size());
+	_ctx.frame_data = frameData;
+	_ctx.frame_size = stream.size();
+
+	// Set up the GetBits instance for reading the data
+	_ctx.gb = new GetBits(_ctx.frame_data, _ctx.frame_size * 8);
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
 
-	// Free the bit reader
+	// Free the bit reader and frame buffer
 	delete _ctx.gb;
 	_ctx.gb = nullptr;
+	delete[] frameData;
+	_ctx.frame_data = nullptr;
+	_ctx.frame_size = 0;
 
 	return (err < 0) ? nullptr : &_surface->rawSurface();
 }

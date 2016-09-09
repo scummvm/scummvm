@@ -161,35 +161,13 @@ GetBits::GetBits(const byte *buffer, size_t totalBits) {
 	assert(buffer && totalBits < (INT_MAX - 7));
 
 	_buffer = buffer;
-	_disposeAfterUse = DisposeAfterUse::NO;
 	_sizeInBits = totalBits;
 	_sizeInBitsPlus8 = totalBits + 8;
 	_index = 0;
 }
 
-GetBits::GetBits(Common::SeekableReadStream &stream) {
-	byte *buffer = new byte[stream.size()];
-	stream.read(buffer, stream.size());
-	_buffer = buffer;
-	_disposeAfterUse = DisposeAfterUse::YES;
-	_sizeInBits = stream.size() * 8;
-	_sizeInBitsPlus8 = _sizeInBits + 8;
-	_index = 0;
-}
-
 GetBits::GetBits(const GetBits &src) : _index(src._index), _buffer(src._buffer),
-		_sizeInBits(src._sizeInBits), _sizeInBitsPlus8(src._sizeInBitsPlus8),
-		_disposeAfterUse(src._disposeAfterUse) {	
-	if (_disposeAfterUse == DisposeAfterUse::YES) {
-		byte *buffer = new byte[src._sizeInBits / 8];
-		Common::copy(src._buffer, src._buffer + (src._sizeInBits / 8), buffer);
-		_buffer = buffer;
-	}
-}
-
-GetBits::~GetBits() {
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete[] _buffer;
+		_sizeInBits(src._sizeInBits), _sizeInBitsPlus8(src._sizeInBitsPlus8){	
 }
 
 int GetBits::getXbits(int n) {

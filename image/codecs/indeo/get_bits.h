@@ -46,7 +46,6 @@ namespace Indeo {
 class GetBits {
 private:
 	const byte *_buffer;
-	DisposeAfterUse::Flag _disposeAfterUse;
 	uint _index;
 	uint _sizeInBits;
 	uint _sizeInBitsPlus8;
@@ -60,22 +59,11 @@ public:
 	* @return 0 on success, AVERROR_INVALIDDATA if the buffer_size would overflow.
 	*/
 	GetBits(const byte *buffer, size_t totalBits);
-	
-	/**
-	 * Constructor
-	 * @param stream	Stream to get data from
-	 */
-	GetBits(Common::SeekableReadStream &stream);
 
 	/**
 	 * Copy constructor
 	 */
 	GetBits(const GetBits &src);
-	
-	/**
-	 * Destructor
-	 */
-	~GetBits();
 
 	/**
 	 * Returns the number of bits read
