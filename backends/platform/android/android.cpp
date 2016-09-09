@@ -401,7 +401,8 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureAspectRatioCorrection ||
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
-			f == kFeatureOverlaySupportsAlpha);
+			f == kFeatureOverlaySupportsAlpha ||
+			f == kFeatureOpenUrl);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -584,6 +585,10 @@ Common::String OSystem_Android::getSystemLanguage() const {
 	return Common::String::format("%s_%s",
 							getSystemProperty("persist.sys.language").c_str(),
 							getSystemProperty("persist.sys.country").c_str());
+}
+
+bool OSystem_Android::openUrl(const Common::String &url) {
+	return JNI::openUrl(url.c_str());
 }
 
 Common::String OSystem_Android::getSystemProperty(const char *name) const {

@@ -22,7 +22,6 @@
 
 #include "testbed/misc.h"
 #include "common/timer.h"
-#include "backends/networking/browser/openurl.h"
 
 namespace Testbed {
 
@@ -170,7 +169,7 @@ TestExitStatus MiscTests::testOpenUrl() {
 		return kTestSkipped;
 	}
 
-	if (!Networking::Browser::openUrl("http://scummvm.org/")) {
+	if (!g_system->openUrl("http://scummvm.org/")) {
 		Testsuite::logPrintf("Info! openUrl() says it couldn't open the url (probably not supported on this platform)\n");
 		return kTestFailed;
 	}

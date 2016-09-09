@@ -30,7 +30,6 @@
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
-#include "backends/networking/browser/openurl.h"
 #include "common/translation.h"
 
 namespace GUI {
@@ -206,7 +205,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kOpenUrlCmd: {
-		if (!Networking::Browser::openUrl(getUrl())) {
+		if (!g_system->openUrl(getUrl())) {
 			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
 			alert.runModal();
 		}

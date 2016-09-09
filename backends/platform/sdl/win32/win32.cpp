@@ -94,7 +94,7 @@ void OSystem_Win32::initBackend() {
 
 
 bool OSystem_Win32::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile)
+	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
 		return true;
 
 	return OSystem_SDL::hasFeature(f);
@@ -133,6 +133,16 @@ bool OSystem_Win32::displayLogFile() {
 		return true;
 
 	return false;
+}
+
+bool OSystem_Win32::openUrl(const Common::String &url) {
+	const uint64 result = (uint64)ShellExecute(0, 0, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), 0, 0, SW_SHOWNORMAL);
+	// ShellExecute returns a value greater than 32 if successful
+	if (result <= 32) {
+		warning("ShellExecute failed: error = %u", result);
+		return false;
+	}
+	return true;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {

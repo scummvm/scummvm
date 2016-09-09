@@ -322,7 +322,15 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureClipboardSupport
+		kFeatureClipboardSupport,
+
+		/**
+		 * The presence of this feature indicates whether the openUrl()
+		 * call is supported.
+		 *
+		 * This feature has no associated state.
+		 */
+		kFeatureOpenUrl
 	};
 
 	/**
@@ -1267,6 +1275,20 @@ public:
 	 * @return clipboard contents ("" if hasTextInClipboard() == false)
 	 */
 	virtual Common::String getTextFromClipboard() { return ""; }
+
+	/**
+	 * Open the given Url in the default browser (if available on the target
+	 * system).
+	 *
+	 * @return true on success, false otherwise.
+	 *
+	 * @note It is up to the backend to ensure that the system is in a state
+	 * that allows the user to actually see the web page. This might for
+	 * example require leaving fullscreen mode.
+	 *
+	 * @parem url the URL to open
+	 */
+	virtual bool openUrl(const Common::String &url) {return false; }
 
 	/**
 	 * Returns the locale of the system.

@@ -150,33 +150,6 @@ MODULE_OBJS += \
 endif
 endif
 
-# openUrl
-ifeq ($(BACKEND),android)
-MODULE_OBJS += \
-	networking/browser/openurl-android.o
-else
-ifdef MACOSX
-MODULE_OBJS += \
-	networking/browser/openurl-osx.o
-else
-ifdef WIN32
-MODULE_OBJS += \
-	networking/browser/openurl-windows.o
-else
-	ifdef POSIX
-	MODULE_OBJS += \
-		networking/browser/openurl-posix.o
-	else
-		# create_project doesn't know something about `else`
-		ifndef WIN32
-		MODULE_OBJS += \
-		networking/browser/openurl-default.o
-		endif
-	endif
-endif
-endif
-endif
-
 # Connection::isLimited
 ifeq ($(BACKEND),android)
 MODULE_OBJS += \
