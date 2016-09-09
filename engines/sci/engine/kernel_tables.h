@@ -351,15 +351,19 @@ static const SciKernelMapSubEntry kPalCycle_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kSave_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r0)",        NULL },
-	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
-	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
-	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
+	{ SIG_SCI32,           0, MAP_CALL(SaveSave32),                "rir[r0]",              NULL },
+	{ SIG_SCI32,           1, MAP_CALL(SaveRestore32),             "ri[r0]",               NULL },
+	// System script 64994 in several SCI2.1mid games (KQ7 2.00b, Phant1,
+	// PQ:SWAT, SQ6, Torin) calls GetSaveDir with an extra unused argument, and
+	// it is easier to just handle it here than to bother with creating
+	// workarounds
+	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r)",                  NULL },
+	{ SIG_SCI32,           3, MAP_CALL(SaveCheck32),               "ri[r0]",               NULL },
 	// Subop 4 hasn't been encountered yet
-	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles),              "rrr",                  NULL },
+	{ SIG_SCI32,           5, MAP_CALL(SaveList32),                "rrr",                  NULL },
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
-	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	{ SIG_SCI32,           8, MAP_EMPTY(GameIsRestarting),         ".*",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -628,7 +632,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(CheckFreeSpace),    SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r(i)",          NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI16, SIGFOR_ALL,    "r",                     NULL,            NULL },
-	{ MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "CheckSaveGame", kSaveCheck32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri[r0]",      NULL,            NULL },
+#endif
+	{ MAP_CALL(CheckSaveGame),     SIG_SCI16, SIGFOR_ALL,    ".*",                    NULL,            NULL },
 	{ MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
 	{ MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
@@ -678,8 +685,13 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
 	{ MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
 	{ MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
-	{ MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
-	{ MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(GetSaveDir),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "",              NULL,            NULL },
+#endif
+	{ MAP_CALL(GetSaveDir),        SIG_SCI16, SIGFOR_ALL,    "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "GetSaveFiles", kSaveList32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "rrr",           NULL,            NULL },
+#endif
 	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
 	{ MAP_CALL(GlobalToLocal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
@@ -741,9 +753,15 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "RestoreGame", kSaveRestore32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri[r0]",      NULL,            NULL },
+#endif
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
-	{ MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "[r0]i[r0](r0)",         NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "SaveGame", kSaveSave32,     SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "rir[r0]",       NULL,            NULL },
+#endif
+	{ MAP_CALL(SaveGame),          SIG_SCI16, SIGFOR_ALL,    "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
 	{ MAP_CALL(SetCursor),         SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(iiiiii)",    NULL,            NULL },
 	{ MAP_CALL(SetCursor),         SIG_SCI16, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },

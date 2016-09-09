@@ -483,6 +483,12 @@ reg_t kShowMovieWinGetDuration(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv);
 
+reg_t kSave(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveRestore32(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveList32(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv);
+
 reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
@@ -615,8 +621,6 @@ reg_t kMorphOn(EngineState *s, int argc, reg_t *argv);
 reg_t kText(EngineState *s, int argc, reg_t *argv);
 reg_t kTextSize32(EngineState *s, int argc, reg_t *argv);
 reg_t kTextWidth(EngineState *s, int argc, reg_t *argv);
-reg_t kSave(EngineState *s, int argc, reg_t *argv);
-reg_t kAutoSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
 reg_t kCheckCD(EngineState *s, int argc, reg_t *argv);

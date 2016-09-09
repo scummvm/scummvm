@@ -330,14 +330,23 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			}
 			delete in;
 
+			const int id = strtol(filename.end() - 3, NULL, 10);
+
+#ifdef ENABLE_SCI32
+			if (id == kNewGameId) {
+				continue;
+			}
+#endif
+
 			SavegameDesc desc;
-			desc.id = strtol(filename.end() - 3, NULL, 10);
+			desc.id = id;
 			desc.date = meta.saveDate;
 			// We need to fix date in here, because we save DDMMYYYY instead of
 			// YYYYMMDD, so sorting wouldn't work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.saveTime;
 			desc.version = meta.version;
+			desc.gameVersion = meta.gameVersion;
 
 			if (meta.name.lastChar() == '\n')
 				meta.name.deleteLastChar();
