@@ -317,11 +317,11 @@ public:
 		kFeatureDisplayLogFile,
 
 		/**
-		* The presence of this feature indicates whether the hasTextInClipboard()
-		* and getTextFromClipboard() calls are supported.
-		*
-		* This feature has no associated state.
-		*/
+		 * The presence of this feature indicates whether the hasTextInClipboard()
+		 * and getTextFromClipboard() calls are supported.
+		 *
+		 * This feature has no associated state.
+		 */
 		kFeatureClipboardSupport
 	};
 
@@ -1247,25 +1247,25 @@ public:
 	virtual bool displayLogFile() { return false; }
 
 	/**
-	* Returns whether there is text available in the clipboard.
-	*
-	* The kFeatureClipboardSupport feature flag can be used to
-	* test whether this call has been implemented by the active
-	* backend.
-	*
-	* @return true if there is text in the clipboard, false otherwise
-	*/
+	 * Returns whether there is text available in the clipboard.
+	 *
+	 * The kFeatureClipboardSupport feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return true if there is text in the clipboard, false otherwise
+	 */
 	virtual bool hasTextInClipboard() { return false; }
 
 	/**
-	* Returns clipboard contents as a String.
-	*
-	* The kFeatureClipboardSupport feature flag can be used to
-	* test whether this call has been implemented by the active
-	* backend.
-	*
-	* @return clipboard contents ("" if hasTextInClipboard() == false)
-	*/
+	 * Returns clipboard contents as a String.
+	 *
+	 * The kFeatureClipboardSupport feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return clipboard contents ("" if hasTextInClipboard() == false)
+	 */
 	virtual Common::String getTextFromClipboard() { return ""; }
 
 	/**
