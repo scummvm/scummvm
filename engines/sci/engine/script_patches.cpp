@@ -103,6 +103,9 @@ static const char *const selectorNameTable[] = {
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest
+#ifdef ENABLE_SCI32
+	"newWith",      // SCI2 array script
+#endif
 	NULL
 };
 
@@ -132,6 +135,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_modNum,
 	SELECTOR_cycler,
 	SELECTOR_setLoop
+#ifdef ENABLE_SCI32
+	,
+	SELECTOR_newWith
+#endif
 };
 
 // ===========================================================================
@@ -2700,6 +2707,40 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+// Phantasmagoria & SQ6 try to initialize the first entry of an int16 array
+// using an empty string, which is not valid (it should be a number)
+static const uint16 sci21IntArraySignature[] = {
+	0x38, SIG_SELECTOR16(newWith), // pushi newWith
+	0x7a,                          // push2
+	0x39, 0x04,                    // pushi $4
+	0x72, SIG_ADDTOOFFSET(+2),     // lofsa string ""
+	SIG_MAGICDWORD,
+	0x36,                          // push
+	0x51, 0x0b,                    // class IntArray
+	0x4a, 0x8,                     // send $8
+	SIG_END
+};
+
+static const uint16 sci21IntArrayPatch[] = {
+	PATCH_ADDTOOFFSET(+6),      // push $b9; push2; pushi $4
+	0x76,                       // push0
+	0x34, PATCH_UINT16(0x0001), // ldi 0001 (waste bytes)
+	PATCH_END
+};
+
+#pragma mark -
+#pragma mark Phantasmagoria
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
+	{  true,   901, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
+#endif
+
 // ===========================================================================
 // Police Quest 1 VGA
 
@@ -4371,6 +4412,22 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Space Quest 6
+
+//          script, description,                                      signature                        patch
+static const SciScriptPatcherEntry sq6Signatures[] = {
+	{  true,    15, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#pragma mark -
+#endif
+
 // =================================================================================
 
 ScriptPatcher::ScriptPatcher() {
@@ -4835,6 +4892,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_PHANTASMAGORIA:
+		signatureTable = phantasmagoriaSignatures;
+		break;
+#endif
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
 		break;
@@ -4859,6 +4921,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_SQ5:
 		signatureTable = sq5Signatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_SQ6:
+		signatureTable = sq6Signatures;
+#endif
 	default:
 		break;
 	}
