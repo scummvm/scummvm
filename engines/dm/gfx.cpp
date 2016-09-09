@@ -3730,8 +3730,7 @@ T0115200_DrawExplosion:
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, k10_ColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
-		thingParam = _vm->_dungeonMan->getNextThing(thingParam);
-	} while (thingParam != Thing::_endOfList);
+	} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam))!= Thing::_endOfList);
 
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */
