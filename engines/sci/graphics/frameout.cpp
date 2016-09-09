@@ -58,7 +58,7 @@
 namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
-	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
+	_isHiRes(gameIsHiRes()),
 	_palette(palette),
 	_cursor(cursor),
 	_segMan(segMan),
@@ -70,11 +70,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_frameNowVisible(false),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
-
-	// QFG4 is the only SCI32 game that doesn't have a high-resolution version
-	if (g_sci->getGameId() == GID_QFG4) {
-		_isHiRes = false;
-	}
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer = Buffer(630, 450, nullptr);
@@ -211,6 +206,26 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 
 		planesNodeObject = planesNode->succ;
 	}
+}
+
+bool GfxFrameout::gameIsHiRes() const {
+	// QFG4 is always low resolution
+	if (g_sci->getGameId() == GID_QFG4) {
+		return false;
+	}
+
+	// GK1 DOS floppy is low resolution only, but GK1 Mac floppy is high
+	// resolution only
+	if (g_sci->getGameId() == GID_GK1 &&
+		!g_sci->isCD() &&
+		g_sci->getPlatform() != Common::kPlatformMacintosh) {
+
+		return false;
+	}
+
+	// All other games are either high resolution by default, or have a
+	// user-defined toggle
+	return ConfMan.getBool("enable_high_resolution_graphics");
 }
 
 #pragma mark -
