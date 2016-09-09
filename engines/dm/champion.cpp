@@ -230,9 +230,9 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 			experience += weaponKineticEnergy >> 2;
 		}
 	}
-	addSkillExperience(champIndex, k10_ChampionSkillThrow, experience);
+	addSkillExperience(champIndex, kDMSkillThrow, experience);
 	kineticEnergy += weaponKineticEnergy;
-	int16 skillLevel = getSkillLevel((ChampionIndex)champIndex, k10_ChampionSkillThrow);
+	int16 skillLevel = getSkillLevel((ChampionIndex)champIndex, kDMSkillThrow);
 	kineticEnergy += _vm->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
 	int16 attack = getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->getRandomNumber(32)), (uint16)200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
@@ -287,7 +287,7 @@ Common::String ChampionMan::getStringFromInteger(uint16 val, bool padding, uint1
 }
 
 void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, int16 iconIndex, int16 modifierFactor, Thing thing) {
-	int16 statIndex = kDMChampionStatLuck;
+	int16 statIndex = kDMStatLuck;
 	int16 modifier = 0;
 	ThingType thingType = thing.getType();
 
@@ -304,23 +304,23 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 		}
 
 		if (cursed) {
-			statIndex = kDMChampionStatLuck;
+			statIndex = kDMStatLuck;
 			modifier = -3;
 		}
 	}
 
 	if (!cursed) {
-		statIndex = (ChampionStatisticType)thingType; // variable sharing
+		statIndex = (ChampionStatType)thingType; // variable sharing
 
 		if ((iconIndex == kDMIconIndiceJunkRabbitsFoot) && (slotIndex < k30_ChampionSlotChest_1)) {
-			statIndex = kDMChampionStatLuck;
+			statIndex = kDMStatLuck;
 			modifier = 10;
 		} else if (slotIndex == k1_ChampionSlotActionHand) {
 			if (iconIndex == kDMIconIndiceWeaponMaceOfOrder) {
-				statIndex = kDMChampionStatStrength;
+				statIndex = kDMStatStrength;
 				modifier = 5;
 			} else {
-				statIndex = kDMChampionStatMana;
+				statIndex = kDMStatMana;
 				if ((iconIndex >= kDMIconIndiceWeaponStaffOfClawsEmpty) && (iconIndex <= kDMIconIndiceWeaponStaffOfClawsFull)) {
 					modifier = 4;
 				} else {
@@ -368,17 +368,17 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 			}
 		} else if (slotIndex == k4_ChampionSlotLegs) {
 			if (iconIndex == kDMIconIndiceArmourPowertowers) {
-				statIndex = kDMChampionStatStrength;
+				statIndex = kDMStatStrength;
 				modifier = 10;
 			}
 		} else if (slotIndex == k2_ChampionSlotHead) {
 			switch (iconIndex) {
 			case kDMIconIndiceArmourCrownOfNerra:
-				statIndex = kDMChampionStatWisdom;
+				statIndex = kDMStatWisdom;
 				modifier = 10;
 				break;
 			case kDMIconIndiceArmourDexhelm:
-				statIndex = kDMChampionStatDexterity;
+				statIndex = kDMStatDexterity;
 				modifier = 10;
 				break;
 			default:
@@ -387,11 +387,11 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 		} else if (slotIndex == k3_ChampionSlotTorso) {
 			switch (iconIndex) {
 			case kDMIconIndiceArmourFlamebain:
-				statIndex = kDMChampionStatAntifire;
+				statIndex = kDMStatAntifire;
 				modifier = 12;
 				break;
 			case kDMIconIndiceArmourCloakOfNight:
-				statIndex = kDMChampionStatDexterity;
+				statIndex = kDMStatDexterity;
 				modifier = 8;
 				break;
 			default:
@@ -401,15 +401,15 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 			switch (iconIndex) {
 			case kDMIconIndiceJunkJewelSymalUnequipped:
 			case kDMIconIndiceJunkJewelSymalEquipped:
-				statIndex = kDMChampionStatAntimagic;
+				statIndex = kDMStatAntimagic;
 				modifier = 15;
 				break;
 			case kDMIconIndiceArmourCloakOfNight:
-				statIndex = kDMChampionStatDexterity;
+				statIndex = kDMStatDexterity;
 				modifier = 8;
 				break;
 			case kDMIconIndiceJunkMoonstone:
-				statIndex = kDMChampionStatMana;
+				statIndex = kDMStatMana;
 				modifier = 3;
 				break;
 			default:
@@ -421,11 +421,11 @@ void ChampionMan::applyModifiersToStatistics(Champion *champ, int16 slotIndex, i
 	if (modifier) {
 		modifier *= modifierFactor;
 		//statIndex is set when modifier is set
-		if (statIndex == kDMChampionStatMana) {
+		if (statIndex == kDMStatMana) {
 			champ->_maxMana += modifier;
-		} else if (statIndex < kDMChampionStatAntifire + 1) {
-			for (uint16 statValIndex = kDMChampionStatMaximum; statValIndex <= kDMChampionStatMinimum; ++statValIndex) {
-				champ->getStatistic((ChampionStatisticType)statIndex, (ChampionStatisticValue)statValIndex) += modifier;
+		} else if (statIndex < kDMStatAntifire + 1) {
+			for (uint16 statValIndex = kDMStatMaximum; statValIndex <= kDMStatMinimum; ++statValIndex) {
+				champ->getStatistic((ChampionStatType)statIndex, (ChampionStatValue)statValIndex) += modifier;
 			}
 		}
 	}
@@ -511,7 +511,7 @@ void ChampionMan::drawChangedObjectIcons() {
 		}
 
 		if (drawViewport) {
-			champ->setAttributeFlag(kDMChampionAttributeViewport, true);
+			champ->setAttributeFlag(kDMAttributeViewport, true);
 			drawChampionState((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
 		}
 	}
@@ -538,7 +538,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 	}
 
 	champ->_load += dunMan.getObjectWeight(thing);
-	champ->setAttributeFlag(kDMChampionAttributeLoad, true);
+	champ->setAttributeFlag(kDMAttributeLoad, true);
 	IconIndice iconIndex = objMan.getIconIndex(thing);
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == invMan._inventoryChampionOrdinal);
 	applyModifiersToStatistics(champ, slotIndex, iconIndex, 1, thing);
@@ -546,7 +546,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 
 	if (slotIndex < k2_ChampionSlotHead) {
 		if (slotIndex == k1_ChampionSlotActionHand) {
-			champ->setAttributeFlag(kDMChampionAttributeActionHand, true);
+			champ->setAttributeFlag(kDMAttributeActionHand, true);
 			if (_actingChampionOrdinal == _vm->indexToOrdinal(champIndex))
 				menuMan.clearActingChampion();
 
@@ -562,7 +562,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 			drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == k1_ChampionSlotActionHand) &&
 			((iconIndex == kDMIconIndiceContainerChestClosed) || ((iconIndex >= kDMIconIndiceScrollOpen) && (iconIndex <= kDMIconIndiceScrollClosed)))) {
-			champ->setAttributeFlag(kDMChampionAttributePanel, true);
+			champ->setAttributeFlag(kDMAttributePanel, true);
 		}
 	} else if (slotIndex == k10_ChampionSlotNeck) {
 		if ((iconIndex >= kDMIconIndiceJunkIllumuletUnequipped) && (iconIndex <= kDMIconIndiceJunkIllumuletEquipped)) {
@@ -578,7 +578,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 
 	drawSlot(champIndex, slotIndex);
 	if (isInventoryChampion)
-		champ->setAttributeFlag(kDMChampionAttributeViewport, true);
+		champ->setAttributeFlag(kDMAttributeViewport, true);
 }
 
 int16 ChampionMan::getScentOrdinal(int16 mapX, int16 mapY) {
@@ -613,7 +613,7 @@ Thing ChampionMan::getObjectRemovedFromLeaderHand() {
 		_vm->_eventMan->hideMouse();
 		if (_leaderIndex != kDMChampionNone) {
 			_champions[_leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(leaderHandObject);
-			setFlag(_champions[_leaderIndex]._attributes, kDMChampionAttributeLoad);
+			setFlag(_champions[_leaderIndex]._attributes, kDMAttributeLoad);
 			drawChampionState(_leaderIndex);
 		}
 	}
@@ -622,7 +622,7 @@ Thing ChampionMan::getObjectRemovedFromLeaderHand() {
 
 uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	Champion *curChampion = &_champions[champIndex];
-	int16 strength = _vm->getRandomNumber(16) + curChampion->_statistics[kDMChampionStatStrength][kDMChampionStatCurrent];
+	int16 strength = _vm->getRandomNumber(16) + curChampion->_statistics[kDMStatStrength][kDMStatCurrent];
 	Thing curThing = curChampion->_slots[slotIndex];
 	uint16 objectWeight = _vm->_dungeonMan->getObjectWeight(curThing);
 	uint16 oneSixteenthMaximumLoad = getMaximumLoad(curChampion) >> 4;
@@ -643,18 +643,18 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 		uint16 skillLevel = 0;
 		uint16 weaponClass = weaponInfo->_class;
 		if ((weaponClass == k0_WeaponClassSwingWeapon) || (weaponClass == k2_WeaponClassDaggerAndAxes)) {
-			skillLevel = getSkillLevel(champIndex, k4_ChampionSkillSwing);
+			skillLevel = getSkillLevel(champIndex, kDMSkillSwing);
 		}
 		if ((weaponClass != k0_WeaponClassSwingWeapon) && (weaponClass < k16_WeaponClassFirstBow)) {
-			skillLevel += getSkillLevel(champIndex, k10_ChampionSkillThrow);
+			skillLevel += getSkillLevel(champIndex, kDMSkillThrow);
 		}
 		if ((weaponClass >= k16_WeaponClassFirstBow) && (weaponClass < k112_WeaponClassFirstMagicWeapon)) {
-			skillLevel += getSkillLevel(champIndex, k11_ChampionSkillShoot);
+			skillLevel += getSkillLevel(champIndex, kDMSkillShoot);
 		}
 		strength += skillLevel << 1;
 	}
 	strength = getStaminaAdjustedValue(curChampion, strength);
-	if (getFlag(curChampion->_wounds, (slotIndex == k0_ChampionSlotReadyHand) ? kDMChampionWoundReadHand : kDMChampionWoundActionHand)) {
+	if (getFlag(curChampion->_wounds, (slotIndex == k0_ChampionSlotReadyHand) ? kDMWoundReadHand : kDMWoundActionHand)) {
 		strength >>= 1;
 	}
 	return getBoundedValue(0, strength >> 1, 100);
@@ -693,11 +693,11 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 
 	drawSlot(champIndex, slotIndex);
 	if (isInventoryChampion)
-		setFlag(curChampion->_attributes, kDMChampionAttributeViewport);
+		setFlag(curChampion->_attributes, kDMAttributeViewport);
 
 	if (slotIndex < k2_ChampionSlotHead) {
 		if (slotIndex == k1_ChampionSlotActionHand) {
-			setFlag(curChampion->_attributes, kDMChampionAttributeActionHand);
+			setFlag(curChampion->_attributes, kDMAttributeActionHand);
 			if (_actingChampionOrdinal == _vm->indexToOrdinal(champIndex))
 				_vm->_menuMan->clearActingChampion();
 
@@ -720,7 +720,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 			// No break on purpose
 			case kDMIconIndiceScrollOpen:
 			case kDMIconIndiceScrollClosed:
-				setFlag(curChampion->_attributes, kDMChampionAttributePanel);
+				setFlag(curChampion->_attributes, kDMAttributePanel);
 				break;
 			default:
 				break;
@@ -728,7 +728,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 		}
 	}
 	curChampion->_load -= _vm->_dungeonMan->getObjectWeight(curThing);
-	setFlag(curChampion->_attributes, kDMChampionAttributeLoad);
+	setFlag(curChampion->_attributes, kDMAttributeLoad);
 	return curThing;
 }
 
@@ -742,12 +742,12 @@ void ChampionMan::decrementStamina(int16 championIndex, int16 decrement) {
 	int16 stamina = curChampion->_currStamina;
 	if (stamina <= 0) {
 		curChampion->_currStamina = 0;
-		addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, kDMChampionWoundNone, k0_attackType_NORMAL);
+		addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, kDMWoundNone, k0_attackType_NORMAL);
 	} else if (stamina > curChampion->_maxStamina) {
 		curChampion->_currStamina = curChampion->_maxStamina;
 	}
 
-	setFlag(curChampion->_attributes, kDMChampionAttributeLoad | kDMChampionAttributeStatistics);
+	setFlag(curChampion->_attributes, kDMAttributeLoad | kDMAttributeStatistics);
 }
 
 int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds, uint16 attackType) {
@@ -774,7 +774,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 		switch (attackType) {
 		case k6_attackType_PSYCHIC:
 		{
-			int16 wisdomFactor = 115 - curChampion->_statistics[kDMChampionStatWisdom][kDMChampionStatCurrent];
+			int16 wisdomFactor = 115 - curChampion->_statistics[kDMStatWisdom][kDMStatCurrent];
 			if (wisdomFactor <= 0) {
 				attack = 0;
 			} else {
@@ -785,12 +785,12 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 		}
 		break;
 		case k5_attackType_MAGIC:
-			attack = getStatisticAdjustedAttack(curChampion, kDMChampionStatAntimagic, attack);
+			attack = getStatisticAdjustedAttack(curChampion, kDMStatAntimagic, attack);
 			attack -= _party._spellShieldDefense;
 			skipScaling = true;
 			break;
 		case k1_attackType_FIRE:
-			attack = getStatisticAdjustedAttack(curChampion, kDMChampionStatAntifire, attack);
+			attack = getStatisticAdjustedAttack(curChampion, kDMStatAntifire, attack);
 			attack -= _party._fireShieldDefense;
 			break;
 		case k2_attackType_SELF:
@@ -818,7 +818,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 		if (attack <= 0)
 			return 0;
 
-		int16 adjustedAttack = getStatisticAdjustedAttack(curChampion, kDMChampionStatVitality, _vm->getRandomNumber(128) + 10);
+		int16 adjustedAttack = getStatisticAdjustedAttack(curChampion, kDMStatVitality, _vm->getRandomNumber(128) + 10);
 		if (attack > adjustedAttack) {
 		/* BUG0_45
 			This bug is not perceptible because of BUG0_41 that ignores Vitality while determining the
@@ -858,7 +858,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		}
 	}
 
-	int16 woundDefense = _vm->getRandomNumber((curChampion->_statistics[kDMChampionStatVitality][kDMChampionStatCurrent] >> 3) + 1);
+	int16 woundDefense = _vm->getRandomNumber((curChampion->_statistics[kDMStatVitality][kDMStatCurrent] >> 3) + 1);
 	if (useSharpDefense)
 		woundDefense >>= 1;
 
@@ -881,7 +881,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 }
 
 uint16 ChampionMan::getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack) {
-	int16 factor = 170 - champ->_statistics[statIndex][kDMChampionStatCurrent];
+	int16 factor = 170 - champ->_statistics[statIndex][kDMStatCurrent];
 
 	/* BUG0_41
 		The Antifire and Antimagic statistics are completely ignored. The Vitality statistic is ignored
@@ -939,7 +939,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 		}
 		_vm->_timeline->deleteEvent(eventIndex);
 	} else {
-		setFlag(curChampion->_attributes, kDMChampionAttributeActionHand | kDMChampionAttributeDisableAction);
+		setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeDisableAction);
 		drawChampionState((ChampionIndex)champIndex);
 	}
 	setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
@@ -947,7 +947,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 }
 
 void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
-	if ((skillIndex >= k4_ChampionSkillSwing) && (skillIndex <= k11_ChampionSkillShoot) && (_vm->_projexpl->_lastCreatureAttackTime < _vm->_gameTime - 150))
+	if ((skillIndex >= kDMSkillSwing) && (skillIndex <= kDMSkillShoot) && (_vm->_projexpl->_lastCreatureAttackTime < _vm->_gameTime - 150))
 		exp >>= 1;
 
 	if (exp) {
@@ -956,14 +956,14 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 
 		Champion *curChampion = &_champions[champIndex];
 		uint16 baseSkillIndex;
-		if (skillIndex >= k4_ChampionSkillSwing)
-			baseSkillIndex = (skillIndex - k4_ChampionSkillSwing) >> 2;
+		if (skillIndex >= kDMSkillSwing)
+			baseSkillIndex = (skillIndex - kDMSkillSwing) >> 2;
 		else
 			baseSkillIndex = skillIndex;
 
 		uint16 skillLevelBefore = getSkillLevel(champIndex, baseSkillIndex | (kDMIgnoreObjectModifiers | kDMIgnoreTemporaryExperience));
 
-		if ((skillIndex >= k4_ChampionSkillSwing) && (_vm->_projexpl->_lastCreatureAttackTime > _vm->_gameTime - 25))
+		if ((skillIndex >= kDMSkillSwing) && (_vm->_projexpl->_lastCreatureAttackTime > _vm->_gameTime - 25))
 			exp <<= 1;
 
 		Skill *curSkill = &curChampion->_skills[skillIndex];
@@ -972,7 +972,7 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 			curSkill->_temporaryExperience += getBoundedValue(1, exp >> 3, 100);
 
 		curSkill = &curChampion->_skills[baseSkillIndex];
-		if (skillIndex >= k4_ChampionSkillSwing)
+		if (skillIndex >= kDMSkillSwing)
 			curSkill->_experience += exp;
 
 		uint16 skillLevelAfter = getSkillLevel(champIndex, baseSkillIndex | (kDMIgnoreObjectModifiers | kDMIgnoreTemporaryExperience));
@@ -981,37 +981,37 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 			int16 minorStatIncrease = _vm->getRandomNumber(2);
 			int16 majorStatIncrease = 1 + _vm->getRandomNumber(2);
 			uint16 vitalityAmount = _vm->getRandomNumber(2); /* For Priest skill, the amount is 0 or 1 for all skill levels */
-			if (baseSkillIndex != k2_ChampionSkillPriest) {
+			if (baseSkillIndex != kDMSkillPriest) {
 				vitalityAmount &= skillLevelAfter; /* For non Priest skills the amount is 0 for even skill levels. The amount is 0 or 1 for odd skill levels */
 			}
-			curChampion->_statistics[kDMChampionStatVitality][kDMChampionStatMaximum] += vitalityAmount;
+			curChampion->_statistics[kDMStatVitality][kDMStatMaximum] += vitalityAmount;
 			uint16 staminaAmount = curChampion->_maxStamina;
-			curChampion->_statistics[kDMChampionStatAntifire][kDMChampionStatMaximum] += _vm->getRandomNumber(2) & ~skillLevelAfter; /* The amount is 0 for odd skill levels. The amount is 0 or 1 for even skill levels */
+			curChampion->_statistics[kDMStatAntifire][kDMStatMaximum] += _vm->getRandomNumber(2) & ~skillLevelAfter; /* The amount is 0 for odd skill levels. The amount is 0 or 1 for even skill levels */
 			bool increaseManaFl = false;
 			switch (baseSkillIndex) {
-			case k0_ChampionSkillFighter:
+			case kDMSkillFighter:
 				staminaAmount >>= 4;
 				skillLevelAfter *= 3;
-				curChampion->_statistics[kDMChampionStatStrength][kDMChampionStatMaximum] += majorStatIncrease;
-				curChampion->_statistics[kDMChampionStatDexterity][kDMChampionStatMaximum] += minorStatIncrease;
+				curChampion->_statistics[kDMStatStrength][kDMStatMaximum] += majorStatIncrease;
+				curChampion->_statistics[kDMStatDexterity][kDMStatMaximum] += minorStatIncrease;
 				break;
-			case k1_ChampionSkillNinja:
+			case kDMSkillNinja:
 				staminaAmount /= 21;
 				skillLevelAfter <<= 1;
-				curChampion->_statistics[kDMChampionStatStrength][kDMChampionStatMaximum] += minorStatIncrease;
-				curChampion->_statistics[kDMChampionStatDexterity][kDMChampionStatMaximum] += majorStatIncrease;
+				curChampion->_statistics[kDMStatStrength][kDMStatMaximum] += minorStatIncrease;
+				curChampion->_statistics[kDMStatDexterity][kDMStatMaximum] += majorStatIncrease;
 				break;
-			case k3_ChampionSkillWizard:
+			case kDMSkillWizard:
 				staminaAmount >>= 5;
 				curChampion->_maxMana += skillLevelAfter + (skillLevelAfter >> 1);
-				curChampion->_statistics[kDMChampionStatWisdom][kDMChampionStatMaximum] += majorStatIncrease;
+				curChampion->_statistics[kDMStatWisdom][kDMStatMaximum] += majorStatIncrease;
 				increaseManaFl = true;
 				break;
-			case k2_ChampionSkillPriest:
+			case kDMSkillPriest:
 				staminaAmount /= 25;
 				curChampion->_maxMana += skillLevelAfter;
 				skillLevelAfter += (skillLevelAfter + 1) >> 1;
-				curChampion->_statistics[kDMChampionStatWisdom][kDMChampionStatMaximum] += minorStatIncrease;
+				curChampion->_statistics[kDMStatWisdom][kDMStatMaximum] += minorStatIncrease;
 				increaseManaFl = true;
 				break;
 			default:
@@ -1020,7 +1020,7 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 			if (increaseManaFl) {
 				if ((curChampion->_maxMana += MIN(_vm->getRandomNumber(4), (uint16)(newBaseSkillLevel - 1))) > 900)
 					curChampion->_maxMana = 900;
-				curChampion->_statistics[kDMChampionStatAntimagic][kDMChampionStatMaximum] += _vm->getRandomNumber(3);
+				curChampion->_statistics[kDMStatAntimagic][kDMStatMaximum] += _vm->getRandomNumber(3);
 			}
 
 			if ((curChampion->_maxHealth += skillLevelAfter + _vm->getRandomNumber((skillLevelAfter >> 1) + 1)) > 999)
@@ -1029,7 +1029,7 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 			if ((curChampion->_maxStamina += staminaAmount + _vm->getRandomNumber((staminaAmount >> 1) + 1)) > 9999)
 				curChampion->_maxStamina = 9999;
 
-			setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
+			setFlag(curChampion->_attributes, kDMAttributeStatistics);
 			drawChampionState((ChampionIndex)champIndex);
 			_vm->_textMan->printLineFeed();
 			Color curChampionColor = _championColor[champIndex];
@@ -1083,7 +1083,7 @@ int16 ChampionMan::getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
 }
 
 int16 ChampionMan::getDexterity(Champion *champ) {
-	int16 dexterity = _vm->getRandomNumber(8) + champ->_statistics[kDMChampionStatDexterity][kDMChampionStatCurrent];
+	int16 dexterity = _vm->getRandomNumber(8) + champ->_statistics[kDMStatDexterity][kDMStatCurrent];
 	dexterity -= ((int32)(dexterity >> 1) * (int32)champ->_load) / getMaximumLoad(champ);
 	if (_partyIsSleeping)
 		dexterity >>= 1;
@@ -1095,9 +1095,9 @@ bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
 	if (_vm->getRandomNumber(2) && (_vm->getRandomNumber(100) > percentage))
 		return true;
 
-	unsigned char *curStat = champ->_statistics[kDMChampionStatLuck];
-	bool isLucky = (_vm->getRandomNumber(curStat[kDMChampionStatCurrent]) > percentage);
-	curStat[kDMChampionStatCurrent] = getBoundedValue<char>(curStat[kDMChampionStatMinimum], curStat[kDMChampionStatCurrent] + (isLucky ? -2 : 2), curStat[kDMChampionStatMaximum]);
+	unsigned char *curStat = champ->_statistics[kDMStatLuck];
+	bool isLucky = (_vm->getRandomNumber(curStat[kDMStatCurrent]) > percentage);
+	curStat[kDMStatCurrent] = getBoundedValue<char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (isLucky ? -2 : 2), curStat[kDMStatMaximum]);
 	return isLucky;
 }
 
@@ -1106,10 +1106,10 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		return;
 
 	Champion *curChampion = &_champions[champIndex];
-	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), kDMChampionWoundNone, k0_attackType_NORMAL);
-	setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
+	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), kDMWoundNone, k0_attackType_NORMAL);
+	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) && (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
-		setFlag(curChampion->_attributes, kDMChampionAttributePanel);
+		setFlag(curChampion->_attributes, kDMAttributePanel);
 	}
 
 	if (--attack) {
@@ -1208,7 +1208,7 @@ void ChampionMan::putObjectInLeaderHand(Thing thing, bool setMousePointer) {
 	_vm->_eventMan->hideMouse();
 	if (_leaderIndex != kDMChampionNone) {
 		_champions[_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(thing);
-		setFlag(_champions[_leaderIndex]._attributes, kDMChampionAttributeLoad);
+		setFlag(_champions[_leaderIndex]._attributes, kDMAttributeLoad);
 		drawChampionState(_leaderIndex);
 	}
 }
@@ -1235,7 +1235,7 @@ int16 ChampionMan::getMovementTicks(Champion *champ) {
 		woundTicks = 2;
 	}
 
-	if (getFlag(champ->_wounds, kDMChampionWoundFeet))
+	if (getFlag(champ->_wounds, kDMWoundFeet))
 		ticks += woundTicks;
 
 	if (_vm->_objectMan->getIconIndex(champ->_slots[k5_ChampionSlotFeet]) == kDMIconIndiceArmourBootOfSpeed)
@@ -1286,7 +1286,7 @@ void ChampionMan::viAltarRebirth(uint16 champIndex) {
 	curChampion->_currHealth = curChampion->_maxHealth >> 1;
 	_vm->_menuMan->drawSpellAreaControls(_magicCasterChampionIndex);
 	curChampion->_dir = _vm->_dungeonMan->_partyDir;
-	setFlag(curChampion->_attributes, kDMChampionAttributeActionHand | kDMChampionAttributeStatusBox | kDMChampionAttributeIcon);
+	setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeStatusBox | kDMAttributeIcon);
 	drawChampionState((ChampionIndex)champIndex);
 }
 
@@ -1344,7 +1344,7 @@ bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 ki
 		return false;
 
 	curChampion->_currMana -= requiredManaAmount;
-	setFlag(curChampion->_attributes, kDMChampionAttributeStatistics);
+	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 	int16 stepEnergy = 10 - MIN(8, curChampion->_maxMana >> 3);
 	if (kineticEnergy < (stepEnergy << 2)) {
 		kineticEnergy += 3;
@@ -1385,9 +1385,9 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			championKill(championIndex);
 		} else {
 			championPtr->_currHealth = curHealth;
-			setFlag(championPtr->_attributes, kDMChampionAttributeStatistics);
+			setFlag(championPtr->_attributes, kDMAttributeStatistics);
 			if (pendingWounds) {
-				setFlag(championPtr->_attributes, kDMChampionAttributeWounds);
+				setFlag(championPtr->_attributes, kDMAttributeWounds);
 			}
 
 			int16 textPosX = championIndex * k69_ChampionStatusBoxSpacing;
@@ -1449,7 +1449,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 void ChampionMan::championKill(uint16 champIndex) {
 	Champion *curChampion = &_champions[champIndex];
 	curChampion->_currHealth = 0;
-	setFlag(curChampion->_attributes, kDMChampionAttributeStatusBox);
+	setFlag(curChampion->_attributes, kDMAttributeStatusBox);
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		if (_vm->_pressingEye) {
 			_vm->_pressingEye = false;
@@ -1593,9 +1593,9 @@ void ChampionMan::applyTimeEffects() {
 	Champion *championPtr = _champions;
 	for (uint16 championIndex = kDMChampionFirst; championIndex < _partyChampionCount; championIndex++, championPtr++) {
 		if (championPtr->_currHealth && (_vm->indexToOrdinal(championIndex) != _candidateChampionOrdinal)) {
-			uint16 wizardSkillLevel = getSkillLevel(championIndex, k3_ChampionSkillWizard) + getSkillLevel(championIndex, k2_ChampionSkillPriest);
+			uint16 wizardSkillLevel = getSkillLevel(championIndex, kDMSkillWizard) + getSkillLevel(championIndex, kDMSkillPriest);
 			if ((championPtr->_currMana < championPtr->_maxMana)
-				&& (timeCriteria < championPtr->_statistics[kDMChampionStatWisdom][kDMChampionStatCurrent] + wizardSkillLevel)) {
+				&& (timeCriteria < championPtr->_statistics[kDMStatWisdom][kDMStatCurrent] + wizardSkillLevel)) {
 				int16 manaGain = championPtr->_maxMana / 40;
 				if (_partyIsSleeping)
 					manaGain <<= 1;
@@ -1606,7 +1606,7 @@ void ChampionMan::applyTimeEffects() {
 			} else if (championPtr->_currMana > championPtr->_maxMana)
 				championPtr->_currMana--;
 
-			for (int16 idx = k19_ChampionSkillWater; idx >= k0_ChampionSkillFighter; idx--) {
+			for (int16 idx = kDMSkillWater; idx >= kDMSkillFighter; idx--) {
 				if (championPtr->_skills[idx]._temporaryExperience > 0)
 					championPtr->_skills[idx]._temporaryExperience--;
 			}
@@ -1658,7 +1658,7 @@ void ChampionMan::applyTimeEffects() {
 			if (championPtr->_water < -1024)
 				championPtr->_water = -1024;
 
-			if ((championPtr->_currHealth < championPtr->_maxHealth) && (championPtr->_currStamina >= (championPtr->_maxStamina >> 2)) && (timeCriteria < (championPtr->_statistics[kDMChampionStatVitality][kDMChampionStatCurrent] + 12))) {
+			if ((championPtr->_currHealth < championPtr->_maxHealth) && (championPtr->_currStamina >= (championPtr->_maxStamina >> 2)) && (timeCriteria < (championPtr->_statistics[kDMStatVitality][kDMStatCurrent] + 12))) {
 				int16 healthGain = (championPtr->_maxHealth >> 7) + 1;
 				if (_partyIsSleeping)
 					healthGain <<= 1;
@@ -1669,24 +1669,24 @@ void ChampionMan::applyTimeEffects() {
 				championPtr->_currHealth += MIN(healthGain, (int16)(championPtr->_maxHealth - championPtr->_currHealth));
 			}
 			if (!((int)_vm->_gameTime & (_partyIsSleeping ? 63 : 255))) {
-				for (uint16 i = kDMChampionStatLuck; i <= kDMChampionStatAntifire; i++) {
+				for (uint16 i = kDMStatLuck; i <= kDMStatAntifire; i++) {
 					byte *curStatistic = championPtr->_statistics[i];
-					uint16 statisticMaximum = curStatistic[kDMChampionStatMaximum];
-					if (curStatistic[kDMChampionStatCurrent] < statisticMaximum)
-						curStatistic[kDMChampionStatCurrent]++;
-					else if (curStatistic[kDMChampionStatCurrent] > statisticMaximum)
-						curStatistic[kDMChampionStatCurrent] -= curStatistic[kDMChampionStatCurrent] / statisticMaximum;
+					uint16 statisticMaximum = curStatistic[kDMStatMaximum];
+					if (curStatistic[kDMStatCurrent] < statisticMaximum)
+						curStatistic[kDMStatCurrent]++;
+					else if (curStatistic[kDMStatCurrent] > statisticMaximum)
+						curStatistic[kDMStatCurrent] -= curStatistic[kDMStatCurrent] / statisticMaximum;
 				}
 			}
 			if (!_partyIsSleeping && (championPtr->_dir != _vm->_dungeonMan->_partyDir) && (_vm->_projexpl->_lastCreatureAttackTime + 60 < _vm->_gameTime)) {
 				championPtr->_dir = _vm->_dungeonMan->_partyDir;
 				championPtr->_maximumDamageReceived = 0;
-				setFlag(championPtr->_attributes, kDMChampionAttributeIcon);
+				setFlag(championPtr->_attributes, kDMAttributeIcon);
 			}
-			setFlag(championPtr->_attributes, kDMChampionAttributeStatistics);
+			setFlag(championPtr->_attributes, kDMAttributeStatistics);
 			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 				if (_vm->_pressingMouth || _vm->_pressingEye || (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
-					setFlag(championPtr->_attributes, kDMChampionAttributePanel);
+					setFlag(championPtr->_attributes, kDMAttributePanel);
 				}
 			}
 		}
@@ -1839,8 +1839,8 @@ void ChampionMan::resetDataToStartGame() {
 
 		Champion *curChampion = _champions;
 		for (int16 idx = 0; idx < _partyChampionCount; idx++, curChampion++) {
-			clearFlag(curChampion->_attributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeLoad | kDMChampionAttributeIcon | kDMChampionAttributePanel | kDMChampionAttributeStatusBox | kDMChampionAttributeWounds | kDMChampionAttributeViewport | kDMChampionAttributeActionHand);
-			setFlag(curChampion->_attributes, kDMChampionAttributeActionHand | kDMChampionAttributeStatusBox | kDMChampionAttributeIcon);
+			clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
+			setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeStatusBox | kDMAttributeIcon);
 		}
 		drawAllChampionStates();
 
@@ -1885,7 +1885,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		viewCell++;
 
 	championPtr->_cell = (ViewCell)normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir);
-	championPtr->_attributes = kDMChampionAttributeIcon;
+	championPtr->_attributes = kDMAttributeIcon;
 	championPtr->_directionMaximumDamageReceived = _vm->_dungeonMan->_partyDir;
 	championPtr->_food = 1500 + _vm->getRandomNumber(256);
 	championPtr->_water = 1500 + _vm->getRandomNumber(256);
@@ -1919,7 +1919,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	}
 	championPtr->_title[charIdx] = '\0';
 	if (*decodedStringPtr++ == 'M')
-		setFlag(championPtr->_attributes, kDMChampionAttributeMale);
+		setFlag(championPtr->_attributes, kDMAttributeMale);
 
 	decodedStringPtr++;
 	championPtr->_currHealth = championPtr->_maxHealth = getDecodedValue(decodedStringPtr, 4);
@@ -1929,19 +1929,19 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	championPtr->_currMana = championPtr->_maxMana = getDecodedValue(decodedStringPtr, 4);
 	decodedStringPtr += 4;
 	decodedStringPtr++;
-	for (int16 statIdx = kDMChampionStatLuck; statIdx <= kDMChampionStatAntifire; statIdx++) {
-		championPtr->_statistics[statIdx][kDMChampionStatMinimum] = 30;
-		championPtr->_statistics[statIdx][kDMChampionStatCurrent] = championPtr->_statistics[statIdx][kDMChampionStatMaximum] = getDecodedValue(decodedStringPtr, 2);
+	for (int16 statIdx = kDMStatLuck; statIdx <= kDMStatAntifire; statIdx++) {
+		championPtr->_statistics[statIdx][kDMStatMinimum] = 30;
+		championPtr->_statistics[statIdx][kDMStatCurrent] = championPtr->_statistics[statIdx][kDMStatMaximum] = getDecodedValue(decodedStringPtr, 2);
 		decodedStringPtr += 2;
 	}
-	championPtr->_statistics[kDMChampionStatLuck][kDMChampionStatMinimum] = 10;
+	championPtr->_statistics[kDMStatLuck][kDMStatMinimum] = 10;
 	decodedStringPtr++;
-	for (uint16 skillIdx = k4_ChampionSkillSwing; skillIdx <= k19_ChampionSkillWater; skillIdx++) {
+	for (uint16 skillIdx = kDMSkillSwing; skillIdx <= kDMSkillWater; skillIdx++) {
 		int skillValue = *decodedStringPtr++ - 'A';
 		if (skillValue > 0)
 			championPtr->_skills[skillIdx]._experience = 125L << skillValue;
 	}
-	for (uint16 skillIdx = k0_ChampionSkillFighter; skillIdx <= k3_ChampionSkillWizard; skillIdx++) {
+	for (uint16 skillIdx = kDMSkillFighter; skillIdx <= kDMSkillWizard; skillIdx++) {
 		int32 baseSkillExperience = 0;
 		int16 hiddenSkillIndex = (skillIdx + 1) << 2;
 		for (uint16 hiddenIdx = 0; hiddenIdx < 4; hiddenIdx++)
@@ -2098,11 +2098,11 @@ uint16 ChampionMan::getStaminaAdjustedValue(Champion *champ, int16 val) {
 }
 
 uint16 ChampionMan::getMaximumLoad(Champion *champ) {
-	uint16 maximumLoad = champ->getStatistic(kDMChampionStatStrength, kDMChampionStatCurrent) * 8 + 100;
+	uint16 maximumLoad = champ->getStatistic(kDMStatStrength, kDMStatCurrent) * 8 + 100;
 	maximumLoad = getStaminaAdjustedValue(champ, maximumLoad);
 	int16 wounds = champ->getWounds();
 	if (wounds)
-		maximumLoad -= maximumLoad >> (champ->getWoundsFlag(kDMChampionWoundLegs) ? 2 : 3);
+		maximumLoad -= maximumLoad >> (champ->getWoundsFlag(kDMWoundLegs) ? 2 : 3);
 
 	if (_vm->_objectMan->getIconIndex(champ->getSlot(k5_ChampionSlotFeet)) == kDMIconIndiceArmourElvenBoots)
 		maximumLoad += maximumLoad * 16;
@@ -2119,13 +2119,13 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	int16 championStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
 	Champion *curChampion = &_champions[champIndex];
 	uint16 championAttributes = curChampion->_attributes;
-	if (!getFlag(championAttributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeLoad | kDMChampionAttributeIcon | kDMChampionAttributePanel | kDMChampionAttributeStatusBox | kDMChampionAttributeWounds | kDMChampionAttributeViewport | kDMChampionAttributeActionHand))
+	if (!getFlag(championAttributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand))
 		return;
 
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal);
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	_vm->_eventMan->showMouse();
-	if (getFlag(championAttributes, kDMChampionAttributeStatusBox)) {
+	if (getFlag(championAttributes, kDMAttributeStatusBox)) {
 		Box box;
 		box._y1 = 0;
 		box._y2 = 28;
@@ -2152,26 +2152,26 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 			if (isInventoryChampion) {
 				_vm->_inventoryMan->drawStatusBoxPortrait(champIndex);
-				setFlag(championAttributes, kDMChampionAttributeStatistics);
+				setFlag(championAttributes, kDMAttributeStatistics);
 			} else
-				setFlag(championAttributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeWounds | kDMChampionAttributeActionHand);
+				setFlag(championAttributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeWounds | kDMAttributeActionHand);
 		} else {
 			_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k8_StatusBoxDeadChampion), &box, k40_byteWidth, kM1_ColorNoTransparency, 29);
 			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, k13_ColorLightestGray, k1_ColorDarkGary, curChampion->_name);
 			_vm->_menuMan->drawActionIcon(champIndex);
 
-			clearFlag(curChampion->_attributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeLoad | kDMChampionAttributeIcon | kDMChampionAttributePanel | kDMChampionAttributeStatusBox | kDMChampionAttributeWounds | kDMChampionAttributeViewport | kDMChampionAttributeActionHand);
+			clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
 			_vm->_eventMan->hideMouse();
 			return;
 		}
 	}
 	if (!(curChampion->_currHealth)) {
-		clearFlag(curChampion->_attributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeLoad | kDMChampionAttributeIcon | kDMChampionAttributePanel | kDMChampionAttributeStatusBox | kDMChampionAttributeWounds | kDMChampionAttributeViewport | kDMChampionAttributeActionHand);
+		clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
 		_vm->_eventMan->hideMouse();
 		return;
 	}
 
-	if (getFlag(championAttributes, kDMChampionAttributeNameTitle)) {
+	if (getFlag(championAttributes, kDMAttributeNameTitle)) {
 		Color nameColor = (champIndex == _leaderIndex) ? k9_ColorGold : k13_ColorLightestGray;
 		if (isInventoryChampion) {
 			char *championName = curChampion->_name;
@@ -2182,7 +2182,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				championTitleX += 6;
 
 			_vm->_textMan->printToViewport(championTitleX, 7, nameColor, curChampion->_title);
-			setFlag(championAttributes, kDMChampionAttributeViewport);
+			setFlag(championAttributes, kDMAttributeViewport);
 		} else {
 			Box box;
 			box._y1 = 0;
@@ -2193,7 +2193,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, k1_ColorDarkGary, curChampion->_name);
 		}
 	}
-	if (getFlag(championAttributes, kDMChampionAttributeStatistics)) {
+	if (getFlag(championAttributes, kDMAttributeStatistics)) {
 		drawChampionBarGraphs(champIndex);
 		if (isInventoryChampion) {
 			drawHealthStaminaManaValues(curChampion);
@@ -2205,24 +2205,24 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 			_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(nativeBitmapIndex), boxMouth, k16_byteWidth, k12_ColorDarkestGray, 18);
 			nativeBitmapIndex = k33_SlotBoxNormalIndice;
-			for (int i = kDMChampionStatStrength; i <= kDMChampionStatAntifire; i++) {
-				if ((curChampion->_statistics[i][kDMChampionStatCurrent] < curChampion->_statistics[i][kDMChampionStatMaximum])) {
+			for (int i = kDMStatStrength; i <= kDMStatAntifire; i++) {
+				if ((curChampion->_statistics[i][kDMStatCurrent] < curChampion->_statistics[i][kDMStatMaximum])) {
 					nativeBitmapIndex = k34_SlotBoxWoundedIndice;
 					break;
 				}
 			}
 			_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(nativeBitmapIndex), boxEye, k16_byteWidth, k12_ColorDarkestGray, 18);
-			setFlag(championAttributes, kDMChampionAttributeViewport);
+			setFlag(championAttributes, kDMAttributeViewport);
 		}
 	}
-	if (getFlag(championAttributes, kDMChampionAttributeWounds)) {
+	if (getFlag(championAttributes, kDMAttributeWounds)) {
 		for (int i = isInventoryChampion ? k5_ChampionSlotFeet : k1_ChampionSlotActionHand; i >= k0_ChampionSlotReadyHand; i--)
 			drawSlot(champIndex, i);
 
 		if (isInventoryChampion)
-			setFlag(championAttributes, kDMChampionAttributeViewport);
+			setFlag(championAttributes, kDMAttributeViewport);
 	}
-	if (getFlag(championAttributes, kDMChampionAttributeLoad) && isInventoryChampion) {
+	if (getFlag(championAttributes, kDMAttributeLoad) && isInventoryChampion) {
 		uint16 maxLoad = getMaximumLoad(curChampion);
 		Color loadColor;
 		if (curChampion->_load > maxLoad)
@@ -2256,14 +2256,14 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		strcat(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
 		strcat(_vm->_stringBuildBuffer, " KG");
 		_vm->_textMan->printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
-		setFlag(championAttributes, kDMChampionAttributeViewport);
+		setFlag(championAttributes, kDMAttributeViewport);
 	}
 	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, _vm->_dungeonMan->_partyDir);
-	if (getFlag(championAttributes, kDMChampionAttributeIcon) && (_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
+	if (getFlag(championAttributes, kDMAttributeIcon) && (_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
 		_vm->_displayMan->fillScreenBox(_boxChampionIcons[championIconIndex], _championColor[champIndex]);
 		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getNativeBitmapOrGraphic(k28_ChampionIcons), _vm->_displayMan->_bitmapScreen, _boxChampionIcons[championIconIndex], getChampionIconIndex(curChampion->_dir, _vm->_dungeonMan->_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, k12_ColorDarkestGray, 14, k200_heightScreen);
 	}
-	if (getFlag(championAttributes, kDMChampionAttributePanel) && isInventoryChampion) {
+	if (getFlag(championAttributes, kDMAttributePanel) && isInventoryChampion) {
 		if (_vm->_pressingMouth)
 			_vm->_inventoryMan->drawPanelFoodWaterPoisoned();
 		else if (_vm->_pressingEye) {
@@ -2272,18 +2272,18 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		} else
 			_vm->_inventoryMan->drawPanel();
 
-		setFlag(championAttributes, kDMChampionAttributeViewport);
+		setFlag(championAttributes, kDMAttributeViewport);
 	}
-	if (getFlag(championAttributes, kDMChampionAttributeActionHand)) {
+	if (getFlag(championAttributes, kDMAttributeActionHand)) {
 		drawSlot(champIndex, k1_ChampionSlotActionHand);
 		_vm->_menuMan->drawActionIcon(champIndex);
 		if (isInventoryChampion)
-			setFlag(championAttributes, kDMChampionAttributeViewport);
+			setFlag(championAttributes, kDMAttributeViewport);
 	}
-	if (getFlag(championAttributes, kDMChampionAttributeViewport))
+	if (getFlag(championAttributes, kDMAttributeViewport))
 		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 
-	clearFlag(curChampion->_attributes, kDMChampionAttributeNameTitle | kDMChampionAttributeStatistics | kDMChampionAttributeLoad | kDMChampionAttributeIcon | kDMChampionAttributePanel | kDMChampionAttributeStatusBox | kDMChampionAttributeWounds | kDMChampionAttributeViewport | kDMChampionAttributeActionHand);
+	clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
 	_vm->_eventMan->hideMouse();
 }
 
@@ -2557,9 +2557,9 @@ uint16 ChampionMan::getSkillLevel(int16 champIndex, uint16 skillIndex) {
 	if (!ignoreTmpExp)
 		exp += skill->_temporaryExperience;
 
-	if (skillIndex > k3_ChampionSkillWizard) {
+	if (skillIndex > kDMSkillWizard) {
 		// Hidden skill
-		skill = &champ->_skills[(skillIndex - k4_ChampionSkillSwing) >> 2];
+		skill = &champ->_skills[(skillIndex - kDMSkillSwing) >> 2];
 		exp += skill->_experience; // Add experience in the base skill
 		if (!ignoreTmpExp)
 			exp += skill->_temporaryExperience;
@@ -2580,20 +2580,20 @@ uint16 ChampionMan::getSkillLevel(int16 champIndex, uint16 skillIndex) {
 
 		int16 neckIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k10_ChampionSlotNeck]);
 		switch (skillIndex) {
-		case k3_ChampionSkillWizard:
+		case kDMSkillWizard:
 			if (neckIconIndex == kDMIconIndiceJunkPendantFeral)
 				skillLevel += 1;
 			break;
-		case k13_ChampionSkillHeal:
+		case kDMSkillHeal:
 			// The skill modifiers of these two objects are not cumulative
 			if ((neckIconIndex == kDMIconIndiceJunkGemOfAges) || (actionHandIconIndex == kDMIconIndiceWeaponSceptreOfLyf))
 				skillLevel += 1;
 			break;
-		case k14_ChampionSkillInfluence:
+		case kDMSkillInfluence:
 			if (neckIconIndex == kDMIconIndiceJunkMoonstone)
 				skillLevel += 1;
 			break;
-		case k15_ChampionSkillDefend:
+		case kDMSkillDefend:
 			if (neckIconIndex == kDMIconIndiceJunkEkkhardCross)
 				skillLevel += 1;
 			break;

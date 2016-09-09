@@ -183,70 +183,69 @@ enum ChampionIndex {
 };
 
 enum ChampionAttribute {
-	kDMChampionAttributNone = 0x0000, // @ MASK0x0000_NONE
-	kDMChampionAttributeDisableAction = 0x0008, // @ MASK0x0008_DISABLE_ACTION
-	kDMChampionAttributeMale = 0x0010, // @ MASK0x0010_MALE
-	kDMChampionAttributeNameTitle = 0x0080, // @ MASK0x0080_NAME_TITLE
-	kDMChampionAttributeStatistics = 0x0100, // @ MASK0x0100_STATISTICS
-	kDMChampionAttributeLoad = 0x0200, // @ MASK0x0200_LOAD
-	kDMChampionAttributeIcon = 0x0400, // @ MASK0x0400_ICON
-	kDMChampionAttributePanel = 0x0800, // @ MASK0x0800_PANEL
-	kDMChampionAttributeStatusBox = 0x1000, // @ MASK0x1000_STATUS_BOX
-	kDMChampionAttributeWounds = 0x2000, // @ MASK0x2000_WOUNDS
-	kDMChampionAttributeViewport = 0x4000, // @ MASK0x4000_VIEWPORT
-	kDMChampionAttributeActionHand = 0x8000 // @ MASK0x8000_ACTION_HAND
+	kDMAttributNone = 0x0000, // @ MASK0x0000_NONE
+	kDMAttributeDisableAction = 0x0008, // @ MASK0x0008_DISABLE_ACTION
+	kDMAttributeMale = 0x0010, // @ MASK0x0010_MALE
+	kDMAttributeNameTitle = 0x0080, // @ MASK0x0080_NAME_TITLE
+	kDMAttributeStatistics = 0x0100, // @ MASK0x0100_STATISTICS
+	kDMAttributeLoad = 0x0200, // @ MASK0x0200_LOAD
+	kDMAttributeIcon = 0x0400, // @ MASK0x0400_ICON
+	kDMAttributePanel = 0x0800, // @ MASK0x0800_PANEL
+	kDMAttributeStatusBox = 0x1000, // @ MASK0x1000_STATUS_BOX
+	kDMAttributeWounds = 0x2000, // @ MASK0x2000_WOUNDS
+	kDMAttributeViewport = 0x4000, // @ MASK0x4000_VIEWPORT
+	kDMAttributeActionHand = 0x8000 // @ MASK0x8000_ACTION_HAND
 };
-
 
 enum ChampionWound {
-	kDMChampionWoundNone = 0x0000, // @ MASK0x0000_NO_WOUND
-	kDMChampionWoundReadHand = 0x0001, // @ MASK0x0001_READY_HAND
-	kDMChampionWoundActionHand = 0x0002, // @ MASK0x0002_ACTION_HAND
-	kDMChampionWoundHead = 0x0004, // @ MASK0x0004_HEAD
-	kDMChampionWoundTorso = 0x0008, // @ MASK0x0008_TORSO
-	kDMChampionWoundLegs = 0x0010, // @ MASK0x0010_LEGS
-	kDMChampionWoundFeet = 0x0020 // @ MASK0x0020_FEET
+	kDMWoundNone = 0x0000, // @ MASK0x0000_NO_WOUND
+	kDMWoundReadHand = 0x0001, // @ MASK0x0001_READY_HAND
+	kDMWoundActionHand = 0x0002, // @ MASK0x0002_ACTION_HAND
+	kDMWoundHead = 0x0004, // @ MASK0x0004_HEAD
+	kDMWoundTorso = 0x0008, // @ MASK0x0008_TORSO
+	kDMWoundLegs = 0x0010, // @ MASK0x0010_LEGS
+	kDMWoundFeet = 0x0020 // @ MASK0x0020_FEET
 };
 
 
-enum ChampionStatisticType {
-	kDMChampionStatLuck = 0, // @ C0_STATISTIC_LUCK
-	kDMChampionStatStrength = 1, // @ C1_STATISTIC_STRENGTH
-	kDMChampionStatDexterity = 2, // @ C2_STATISTIC_DEXTERITY
-	kDMChampionStatWisdom = 3, // @ C3_STATISTIC_WISDOM
-	kDMChampionStatVitality = 4, // @ C4_STATISTIC_VITALITY
-	kDMChampionStatAntimagic = 5, // @ C5_STATISTIC_ANTIMAGIC
-	kDMChampionStatAntifire = 6, // @ C6_STATISTIC_ANTIFIRE
-	kDMChampionStatMana = 8 // @ C8_STATISTIC_MANA /* Used as a fake statistic index for objects granting a Mana bonus */
+enum ChampionStatType {
+	kDMStatLuck = 0, // @ C0_STATISTIC_LUCK
+	kDMStatStrength = 1, // @ C1_STATISTIC_STRENGTH
+	kDMStatDexterity = 2, // @ C2_STATISTIC_DEXTERITY
+	kDMStatWisdom = 3, // @ C3_STATISTIC_WISDOM
+	kDMStatVitality = 4, // @ C4_STATISTIC_VITALITY
+	kDMStatAntimagic = 5, // @ C5_STATISTIC_ANTIMAGIC
+	kDMStatAntifire = 6, // @ C6_STATISTIC_ANTIFIRE
+	kDMStatMana = 8 // @ C8_STATISTIC_MANA /* Used as a fake statistic index for objects granting a Mana bonus */
 };
 
-enum ChampionStatisticValue {
-	kDMChampionStatMaximum = 0, // @ C0_MAXIMUM
-	kDMChampionStatCurrent = 1, // @ C1_CURRENT
-	kDMChampionStatMinimum = 2 // @ C2_MINIMUM
+enum ChampionStatValue {
+	kDMStatMaximum = 0, // @ C0_MAXIMUM
+	kDMStatCurrent = 1, // @ C1_CURRENT
+	kDMStatMinimum = 2 // @ C2_MINIMUM
 };
 
 enum ChampionSkill {
-	k0_ChampionSkillFighter = 0, // @ C00_SKILL_FIGHTER
-	k1_ChampionSkillNinja = 1, // @ C01_SKILL_NINJA
-	k2_ChampionSkillPriest = 2, // @ C02_SKILL_PRIEST
-	k3_ChampionSkillWizard = 3, // @ C03_SKILL_WIZARD
-	k4_ChampionSkillSwing = 4, // @ C04_SKILL_SWING
-	k5_ChampionSkillThrust = 5, // @ C05_SKILL_THRUST
-	k6_ChampionSkillClub = 6, // @ C06_SKILL_CLUB
-	k7_ChampionSkillParry = 7, // @ C07_SKILL_PARRY
-	k8_ChampionSkillSteal = 8, // @ C08_SKILL_STEAL
-	k9_ChampionSkillFight = 9, // @ C09_SKILL_FIGHT
-	k10_ChampionSkillThrow = 10, // @ C10_SKILL_THROW
-	k11_ChampionSkillShoot = 11, // @ C11_SKILL_SHOOT
-	k12_ChampionSkillIdentify = 12, // @ C12_SKILL_IDENTIFY
-	k13_ChampionSkillHeal = 13, // @ C13_SKILL_HEAL
-	k14_ChampionSkillInfluence = 14, // @ C14_SKILL_INFLUENCE
-	k15_ChampionSkillDefend = 15, // @ C15_SKILL_DEFEND
-	k16_ChampionSkillFire = 16, // @ C16_SKILL_FIRE
-	k17_ChampionSkillAir = 17, // @ C17_SKILL_AIR
-	k18_ChampionSkillEarth = 18, // @ C18_SKILL_EARTH
-	k19_ChampionSkillWater = 19 // @ C19_SKILL_WATER
+	kDMSkillFighter = 0, // @ C00_SKILL_FIGHTER
+	kDMSkillNinja = 1, // @ C01_SKILL_NINJA
+	kDMSkillPriest = 2, // @ C02_SKILL_PRIEST
+	kDMSkillWizard = 3, // @ C03_SKILL_WIZARD
+	kDMSkillSwing = 4, // @ C04_SKILL_SWING
+	kDMSkillThrust = 5, // @ C05_SKILL_THRUST
+	kDMSkillClub = 6, // @ C06_SKILL_CLUB
+	kDMSkillParry = 7, // @ C07_SKILL_PARRY
+	kDMSkillSteal = 8, // @ C08_SKILL_STEAL
+	kDMSkillFight = 9, // @ C09_SKILL_FIGHT
+	kDMSkillThrow = 10, // @ C10_SKILL_THROW
+	kDMSkillShoot = 11, // @ C11_SKILL_SHOOT
+	kDMSkillIdentify = 12, // @ C12_SKILL_IDENTIFY
+	kDMSkillHeal = 13, // @ C13_SKILL_HEAL
+	kDMSkillInfluence = 14, // @ C14_SKILL_INFLUENCE
+	kDMSkillDefend = 15, // @ C15_SKILL_DEFEND
+	kDMSkillFire = 16, // @ C16_SKILL_FIRE
+	kDMSkillAir = 17, // @ C17_SKILL_AIR
+	kDMSkillEarth = 18, // @ C18_SKILL_EARTH
+	kDMSkillWater = 19 // @ C19_SKILL_WATER
 };
 
 enum ChampionSlot {
@@ -350,6 +349,40 @@ enum AttackType {
 	k7_attackType_LIGHTNING = 7 // @ C7_ATTACK_LIGHTNING
 };
 
+#define k0x0000_maskDoNotUseSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
+#define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
+
+#define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
+
+#define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
+#define k1_spellCastSuccess 1 // @ C1_SPELL_CAST_SUCCESS             
+#define k3_spellCastFailureNeedsFlask 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
+
+#define k0_failureNeedsMorePractice 0 // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
+#define k1_failureMeaninglessSpell 1 // @ C01_FAILURE_MEANINGLESS_SPELL        
+#define k10_failureNeedsFlaskInHand 10 // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
+#define k11_failureNeedsMagicMapInHand 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
+
+#define k1_spellKindPotion 1 // @ C1_SPELL_KIND_POTION    
+#define k2_spellKindProjectile 2 // @ C2_SPELL_KIND_PROJECTILE
+#define k3_spellKindOther 3 // @ C3_SPELL_KIND_OTHER     
+#define k4_spellKindMagicMap 4 // @ C4_SPELL_KIND_MAGIC_MAP 
+
+#define k4_spellType_projectileOpenDoor 4 // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
+#define k0_spellType_otherLight 0 // @ C0_SPELL_TYPE_OTHER_LIGHT         
+#define k1_spellType_otherDarkness 1 // @ C1_SPELL_TYPE_OTHER_DARKNESS      
+#define k2_spellType_otherThievesEye 2 // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
+#define k3_spellType_otherInvisibility 3 // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
+#define k4_spellType_otherPartyShield 4 // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
+#define k5_spellType_otherMagicTorch 5 // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
+#define k6_spellType_otherFootprints 6 // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
+#define k7_spellType_otherZokathra 7 // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
+#define k8_spellType_otherFireshield 8 // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
+#define k0_spellType_magicMap0 0 // @ C0_SPELL_TYPE_MAGIC_MAP           
+#define k1_spellType_magicMap1 1 // @ C1_SPELL_TYPE_MAGIC_MAP           
+#define k2_spellType_magicMap2 2 // @ C2_SPELL_TYPE_MAGIC_MAP           
+#define k3_spellType_magicMap3 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
+
 class Skill {
 public:
 	int16 _temporaryExperience;
@@ -397,18 +430,18 @@ public:
 	void setSkillExp(ChampionSkill skill,  int32 val) { _skills[skill]._experience = val; }
 	void setSkillTempExp(ChampionSkill skill,  int16 val) { _skills[skill]._temporaryExperience= val; }
 
-	byte& getStatistic(ChampionStatisticType type, ChampionStatisticValue valType) { return _statistics[type][valType]; }
-	void setStatistic(ChampionStatisticType type, ChampionStatisticValue valType, byte newVal) { _statistics[type][valType] = newVal; }
+	byte& getStatistic(ChampionStatType type, ChampionStatValue valType) { return _statistics[type][valType]; }
+	void setStatistic(ChampionStatType type, ChampionStatValue valType, byte newVal) { _statistics[type][valType] = newVal; }
 
 	uint16 getAttributes() { return _attributes; }
 	uint16 getAttributes(ChampionAttribute flag) { return _attributes & flag; }
 	void setAttributeFlag(ChampionAttribute flag, bool value);
-	void clearAttributes(ChampionAttribute attribute = kDMChampionAttributNone) { _attributes = attribute; }
+	void clearAttributes(ChampionAttribute attribute = kDMAttributNone) { _attributes = attribute; }
 
 	uint16 getWounds() { return _wounds; }
 	void setWoundsFlag(ChampionWound flag, bool value);
 	uint16 getWoundsFlag(ChampionWound wound) { return _wounds & wound; }
-	void clearWounds() { _wounds = kDMChampionWoundNone; }
+	void clearWounds() { _wounds = kDMWoundNone; }
 	void resetSkillsToZero() {
 		for (int16 i = 0; i < 20; ++i)
 			_skills[i].resetToZero();
@@ -416,40 +449,6 @@ public:
 	void resetToZero();
 
 }; // @ CHAMPION_INCLUDING_PORTRAIT
-
-#define k0x0000_maskDoNotUseSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
-#define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
-
-#define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
-
-#define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
-#define k1_spellCastSuccess 1 // @ C1_SPELL_CAST_SUCCESS             
-#define k3_spellCastFailureNeedsFlask 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
-
-#define k0_failureNeedsMorePractice 0 // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
-#define k1_failureMeaninglessSpell 1 // @ C01_FAILURE_MEANINGLESS_SPELL        
-#define k10_failureNeedsFlaskInHand 10 // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
-#define k11_failureNeedsMagicMapInHand 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
-
-#define k1_spellKindPotion 1 // @ C1_SPELL_KIND_POTION    
-#define k2_spellKindProjectile 2 // @ C2_SPELL_KIND_PROJECTILE
-#define k3_spellKindOther 3 // @ C3_SPELL_KIND_OTHER     
-#define k4_spellKindMagicMap 4 // @ C4_SPELL_KIND_MAGIC_MAP 
-
-#define k4_spellType_projectileOpenDoor 4 // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
-#define k0_spellType_otherLight 0 // @ C0_SPELL_TYPE_OTHER_LIGHT         
-#define k1_spellType_otherDarkness 1 // @ C1_SPELL_TYPE_OTHER_DARKNESS      
-#define k2_spellType_otherThievesEye 2 // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
-#define k3_spellType_otherInvisibility 3 // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
-#define k4_spellType_otherPartyShield 4 // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
-#define k5_spellType_otherMagicTorch 5 // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
-#define k6_spellType_otherFootprints 6 // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
-#define k7_spellType_otherZokathra 7 // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
-#define k8_spellType_otherFireshield 8 // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
-#define k0_spellType_magicMap0 0 // @ C0_SPELL_TYPE_MAGIC_MAP           
-#define k1_spellType_magicMap1 1 // @ C1_SPELL_TYPE_MAGIC_MAP           
-#define k2_spellType_magicMap2 2 // @ C2_SPELL_TYPE_MAGIC_MAP           
-#define k3_spellType_magicMap3 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
 
 class Spell {
 public:

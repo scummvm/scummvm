@@ -1577,7 +1577,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
 	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
-	_vm->_championMan->addSkillExperience(champIndex, k7_ChampionSkillParry, creatureInfo.getExperience());
+	_vm->_championMan->addSkillExperience(champIndex, kDMSkillParry, creatureInfo.getExperience());
 	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(curChampion) < (_vm->getRandomNumber(32) + creatureInfo._dexterity + doubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(curChampion, 60))) {
 		uint16 allowedWound;
 		uint16 woundTest = _vm->getRandomNumber(65536);
@@ -1592,7 +1592,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 		} else
 			allowedWound = woundTest & 0x0001; /* 0 (Ready hand) or 1 (action hand) */
 
-		int16 attack = (_vm->getRandomNumber(16) + creatureInfo._attack + doubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, k7_ChampionSkillParry) << 1);
+		int16 attack = (_vm->getRandomNumber(16) + creatureInfo._attack + doubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, kDMSkillParry) << 1);
 		if (attack <= 1) {
 			if (_vm->getRandomNumber(2))
 				return 0;
@@ -1613,7 +1613,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
-				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, kDMChampionStatVitality, poisonAttack);
+				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, kDMStatVitality, poisonAttack);
 				if (poisonAttack >= 0)
 					_vm->_championMan->championPoison(champIndex, poisonAttack);
 			}

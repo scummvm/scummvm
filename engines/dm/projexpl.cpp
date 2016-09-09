@@ -195,7 +195,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		break;
 	}
 	if (championAttack && _projectilePoisonAttack && _vm->getRandomNumber(2)
-	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMChampionWoundHead | kDMChampionWoundTorso, _projectileAttackType))
+	&& _vm->_championMan->addPendingDamageAndWounds_getDamage(championIndex, attack, kDMWoundHead | kDMWoundTorso, _projectileAttackType))
 		_vm->_championMan->championPoison(championIndex, _projectilePoisonAttack);
 
 	if (createExplosionOnImpact || removePotion) {
@@ -325,7 +325,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 		attack += _vm->getRandomNumber(attack) + 1;
 		if ((explThing == Thing::_explFireBall) || (attack >>= 1)) {
 			if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (projectileMapX == _vm->_dungeonMan->_partyMapX) && (projectileMapY == _vm->_dungeonMan->_partyMapY)) {
-				int16 wounds = kDMChampionWoundReadHand | kDMChampionWoundActionHand | kDMChampionWoundHead | kDMChampionWoundTorso | kDMChampionWoundLegs | kDMChampionWoundFeet;
+				int16 wounds = kDMWoundReadHand | kDMWoundActionHand | kDMWoundHead | kDMWoundTorso | kDMWoundLegs | kDMWoundFeet;
 				_vm->_championMan->getDamagedChampionCount(attack, wounds, k1_attackType_FIRE);
 			} else {
 				unusedThing = _vm->_groupMan->groupGetThing(projectileMapX, projectileMapY);
@@ -536,7 +536,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		break;
 	case 0xFF87:
 		if (explosionOnPartySquare)
-			_vm->_championMan->getDamagedChampionCount(attack, kDMChampionWoundNone, k0_attackType_NORMAL);
+			_vm->_championMan->getDamagedChampionCount(attack, kDMWoundNone, k0_attackType_NORMAL);
 		else if ((groupThing != Thing::_endOfList)
 			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
 			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != k2_outcomeKilledAllCreaturesInGroup)

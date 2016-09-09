@@ -1009,9 +1009,9 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 			movementArrowIdx += (_vm->_dungeonMan->_partyDir + 2);
 			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, normalizeModulo4(movementArrowIdx));
 			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, returnNextVal(movementArrowIdx));
-			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, kDMChampionWoundTorso | kDMChampionWoundLegs, k2_attackType_SELF);
+			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, k2_attackType_SELF);
 			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
-				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, kDMChampionWoundTorso | kDMChampionWoundLegs, k2_attackType_SELF);
+				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, k2_attackType_SELF);
 
 			if (damage)
 				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
@@ -1110,8 +1110,8 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 
 	if (cm._leaderIndex != kDMChampionNone) {
 		leaderIndex = cm._leaderIndex;
-		cm._champions[leaderIndex].setAttributeFlag(kDMChampionAttributeLoad, true);
-		cm._champions[leaderIndex].setAttributeFlag(kDMChampionAttributeNameTitle, true);
+		cm._champions[leaderIndex].setAttributeFlag(kDMAttributeLoad, true);
+		cm._champions[leaderIndex].setAttributeFlag(kDMAttributeNameTitle, true);
 		cm._champions[leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
 		cm._leaderIndex = kDMChampionNone;
 		cm.drawChampionState(leaderIndex);
@@ -1125,8 +1125,8 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 	champion->_dir = _vm->_dungeonMan->_partyDir;
 	cm._champions[champIndex]._load += _vm->_dungeonMan->getObjectWeight(cm._leaderHandObject);
 	if (_vm->indexToOrdinal(champIndex) != cm._candidateChampionOrdinal) {
-		champion->setAttributeFlag(kDMChampionAttributeIcon, true);
-		champion->setAttributeFlag(kDMChampionAttributeNameTitle, true);
+		champion->setAttributeFlag(kDMAttributeIcon, true);
+		champion->setAttributeFlag(kDMAttributeNameTitle, true);
 		cm.drawChampionState(champIndex);
 	}
 }
@@ -1280,8 +1280,8 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 
 		for (uint16 i = 0; i < 12; i++) {
 			uint16 statIndex = _vm->getRandomNumber(7);
-			champ->getStatistic((ChampionStatisticType)statIndex, kDMChampionStatCurrent)++; // returns reference
-			champ->getStatistic((ChampionStatisticType)statIndex, kDMChampionStatMaximum)++; // returns reference
+			champ->getStatistic((ChampionStatType)statIndex, kDMStatCurrent)++; // returns reference
+			champ->getStatistic((ChampionStatType)statIndex, kDMStatMaximum)++; // returns reference
 		}
 	}
 
@@ -1476,19 +1476,19 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 		int16 championCellIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir));
 		if (championIconIndex == champIconIndex) {
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMChampionAttributeIcon);
+			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		} else {
 			int16 championIndex = _vm->_championMan->getIndexInCell(normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir));
 			if (championIndex >= 0) {
 				_vm->_championMan->_champions[championIndex]._cell = (ViewCell)normalizeModulo4(championIconIndex + _vm->_dungeonMan->_partyDir);
-				setFlag(_vm->_championMan->_champions[championIndex]._attributes, kDMChampionAttributeIcon);
+				setFlag(_vm->_championMan->_champions[championIndex]._attributes, kDMAttributeIcon);
 				_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 			} else
 				_vm->_displayMan->fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], k0_ColorBlack);
 
 			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
-			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMChampionAttributeIcon);
+			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)championCellIndex);
 		}
 	}

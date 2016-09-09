@@ -331,7 +331,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 									if (curChampion->_currHealth)
 										_vm->_championMan->decrementStamina(championIdx, ((curChampion->_load * 25) / _vm->_championMan->getMaximumLoad(curChampion)) + 1);
 								}
-							} else if (_vm->_championMan->getDamagedChampionCount(20, kDMChampionWoundLegs | kDMChampionWoundFeet, k2_attackType_SELF))
+							} else if (_vm->_championMan->getDamagedChampionCount(20, kDMWoundLegs | kDMWoundFeet, k2_attackType_SELF))
 								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
 						}
 						_useRopeToClimbDownPit = false;
@@ -927,7 +927,7 @@ void MovesensMan::triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 
 
 void MovesensMan::triggerLocalEffect(int16 localEffect, int16 effX, int16 effY, int16 effCell) {
 	if (localEffect == k10_SensorEffAddExp) {
-		addSkillExperience(k8_ChampionSkillSteal, 300, localEffect != kM1_CellAny);
+		addSkillExperience(kDMSkillSteal, 300, localEffect != kM1_CellAny);
 		return;
 	}
 	_sensorRotationEffect = localEffect;
