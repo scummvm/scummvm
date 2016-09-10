@@ -10,6 +10,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - Probleme mit dem MS ADPCM-Decoder behoben.
+   - SDL-Backend verwendet jetzt SDL2 als Standard. SDL1 ist eine Rückfalloption.
 
  AGI:
    - Unterstützung für Hercules-Darstellung (Grün + Bernstein) hinzugefügt.
@@ -29,6 +30,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Kyra:
    - Italienische Übersetzung von EOB1 aktualisiert.
+   - Fehler behoben, der einen Absturz in "Lands of Lore" verursacht.
 
  Mohawk:
    - Grafikfehler in der spanischen Version von Myst behoben.
@@ -49,13 +51,18 @@ Programmcodes finden Sie auf Englisch unter:
    - Automatisches Speichern im Fan-Spiel "Cascade Quest" repariert.
    - Fehler in "Conquest of the Longbow: The Adventures of Robin Hood" behoben, der einen
      Absturz verursacht, wenn sich der Spieler durch den Sherwood Forest bewegt.
-   - Erkennungseintrag für die Demo-Version des "ImagiNation Network (INN)" hinzugefügt.
+   - Unterstützung für die Demo-Version des "ImagiNation Network (INN)" hinzugefügt.
 
  SCUMM:
    - Fehlende Übersetzungen in den "Beenden"- und "Neustart"-Dialogen in "Pyjama Sam 1" behoben.
    - Grafikfehler in DOTT behoben, die auftraten, wenn ein Spielstand geladen wurde, in dem
      die Stereoanlage in Grüntentakels Zimmer eingeschaltet ist.
    - Timing und Wegfindung in "Maniac Mansion (C64- und Apple II-Version)" verbessert.
+   - Unterstützung für niederländische Demo von Let's Explore the Airport with Buzzy hinzugefügt.
+
+ Sherlock:
+   - Fehler behoben, der einen Absturz in "The Case of the Serrated Scalpel" verursachen konnte.
+   - Fehler behoben, der in "The Case of the Rose Tattoo" dazu führt, dass sich das Spiel aufhängt.
 
  WAGE:
    - Speicherleck geschlossen.
@@ -63,6 +70,9 @@ Programmcodes finden Sie auf Englisch unter:
  Windows-Portierung:
    - Taskleisten-Integration unter Windows 10 und höher repariert.
    - Tastenbelegung für Tastaturen korrigiert, die keine QWERTY-Tastaturen sind.
+
+ Linux-Portierung:
+   - Grundlegende Unterstützung für das snap-Paketierungssystem hinzugefügt.
 
 1.8.1 (25.05.2016)
  Neue Portierungen:
