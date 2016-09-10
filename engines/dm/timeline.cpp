@@ -401,7 +401,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
 				// See BUG0_78
 				int16 wounds = kDMWoundTorso | (verticalDoorFl ? kDMWoundHead : kDMWoundReadHand | kDMWoundActionHand);
-				if (_vm->_championMan->getDamagedChampionCount(5, wounds, k2_attackType_SELF))
+				if (_vm->_championMan->getDamagedChampionCount(5, wounds, kDMAttackTypeSelf))
 					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, mapX, mapY, k1_soundModePlayIfPrioritized);
 			}
 			event->_mapTime++;
@@ -816,11 +816,11 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
 	curChampion->_enableActionEventIndex = -1;
 	clearFlag(curChampion->_attributes, kDMAttributeDisableAction);
-	if (curChampion->_actionIndex != k255_ChampionActionNone) {
+	if (curChampion->_actionIndex != kDMActionNone) {
 		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
 	}
 	if (curChampion->_currHealth) {
-		if ((curChampion->_actionIndex == k32_ChampionActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)) {
+		if ((curChampion->_actionIndex == kDMActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)) {
 			int16 slotIndex = kDMSlotQuiverLine1_1;
 			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, kDMSlotActionHand, slotIndex))
 				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), kDMSlotReadyHand);
@@ -835,7 +835,7 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 		setFlag(curChampion->_attributes, kDMAttributeActionHand);
 		_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	}
-	curChampion->_actionIndex = k255_ChampionActionNone;
+	curChampion->_actionIndex = kDMActionNone;
 }
 
 void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 slotIndex) {

@@ -232,7 +232,7 @@ T0217044:
 
 uint16 ProjExpl::getProjectileImpactAttack(Projectile *projectile, Thing thing) {
 	_projectilePoisonAttack = 0;
-	_projectileAttackType = k3_attackType_BLUNT;
+	_projectileAttackType = kDMAttackTypeBlunt;
 
 	uint16 kineticEnergy = projectile->_kineticEnergy;
 	ThingType thingType = thing.getType();
@@ -241,7 +241,7 @@ uint16 ProjExpl::getProjectileImpactAttack(Projectile *projectile, Thing thing) 
 		if (thingType == k5_WeaponThingType) {
 			WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(thing);
 			attack = weaponInfo->_kineticEnergy;
-			_projectileAttackType = k3_attackType_BLUNT;
+			_projectileAttackType = kDMAttackTypeBlunt;
 		} else
 			attack = _vm->getRandomNumber(4);
 
@@ -252,17 +252,17 @@ uint16 ProjExpl::getProjectileImpactAttack(Projectile *projectile, Thing thing) 
 		attack += _vm->getRandomNumber(32);
 	} else {
 		if (thing.toUint16() >= Thing::_explHarmNonMaterial.toUint16()) {
-			_projectileAttackType = k5_attackType_MAGIC;
+			_projectileAttackType = kDMAttackTypeMagic;
 			if (thing == Thing::_explPoisonBolt) {
 				_projectilePoisonAttack = kineticEnergy;
 				return 1;
 			}
 			return 0;
 		}
-		_projectileAttackType = k1_attackType_FIRE;
+		_projectileAttackType = kDMAttackTypeFire;
 		attack = _vm->getRandomNumber(16) + _vm->getRandomNumber(16) + 10;
 		if (thing == Thing::_explLightningBolt) {
-			_projectileAttackType = k7_attackType_LIGHTNING;
+			_projectileAttackType = kDMAttackTypeLightning;
 			attack *= 5;
 		}
 	}
@@ -326,7 +326,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 		if ((explThing == Thing::_explFireBall) || (attack >>= 1)) {
 			if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (projectileMapX == _vm->_dungeonMan->_partyMapX) && (projectileMapY == _vm->_dungeonMan->_partyMapY)) {
 				int16 wounds = kDMWoundReadHand | kDMWoundActionHand | kDMWoundHead | kDMWoundTorso | kDMWoundLegs | kDMWoundFeet;
-				_vm->_championMan->getDamagedChampionCount(attack, wounds, k1_attackType_FIRE);
+				_vm->_championMan->getDamagedChampionCount(attack, wounds, kDMAttackTypeFire);
 			} else {
 				unusedThing = _vm->_groupMan->groupGetThing(projectileMapX, projectileMapY);
 				if (unusedThing != Thing::_endOfList) {
@@ -536,7 +536,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		break;
 	case 0xFF87:
 		if (explosionOnPartySquare)
-			_vm->_championMan->getDamagedChampionCount(attack, kDMWoundNone, k0_attackType_NORMAL);
+			_vm->_championMan->getDamagedChampionCount(attack, kDMWoundNone, kDMAttackTypeNormal);
 		else if ((groupThing != Thing::_endOfList)
 			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
 			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != k2_outcomeKilledAllCreaturesInGroup)

@@ -290,77 +290,80 @@ enum ChampionSlot {
 };
 
 enum ChampionAction {
-	k0_ChampionActionN = 0, // @ C000_ACTION_N
-	k1_ChampionActionBlock = 1, // @ C001_ACTION_BLOCK
-	k2_ChampionActionChop = 2, // @ C002_ACTION_CHOP
-	k3_ChampionActionX_C003 = 3, // @ C003_ACTION_X
-	k4_ChampionActionBlowHorn = 4, // @ C004_ACTION_BLOW_HORN
-	k5_ChampionActionFlip = 5, // @ C005_ACTION_FLIP
-	k6_ChampionActionPunch = 6, // @ C006_ACTION_PUNCH
-	k7_ChampionActionKick = 7, // @ C007_ACTION_KICK
-	k8_ChampionActionWarCry = 8, // @ C008_ACTION_WAR_CRY
-	k9_ChampionActionStab_C009 = 9, // @ C009_ACTION_STAB
-	k10_ChampionActionClimbDown = 10, // @ C010_ACTION_CLIMB_DOWN
-	k11_ChampionActionFreezeLife = 11, // @ C011_ACTION_FREEZE_LIFE
-	k12_ChampionActionHit = 12, // @ C012_ACTION_HIT
-	k13_ChampionActionSwing = 13, // @ C013_ACTION_SWING
-	k14_ChampionActionStab_C014 = 14, // @ C014_ACTION_STAB
-	k15_ChampionActionThrust = 15, // @ C015_ACTION_THRUST
-	k16_ChampionActionJab = 16, // @ C016_ACTION_JAB
-	k17_ChampionActionParry = 17, // @ C017_ACTION_PARRY
-	k18_ChampionActionHack = 18, // @ C018_ACTION_HACK
-	k19_ChampionActionBerzerk = 19, // @ C019_ACTION_BERZERK
-	k20_ChampionActionFireball = 20, // @ C020_ACTION_FIREBALL
-	k21_ChampionActionDispel = 21, // @ C021_ACTION_DISPELL
-	k22_ChampionActionConfuse = 22, // @ C022_ACTION_CONFUSE
-	k23_ChampionActionLightning = 23, // @ C023_ACTION_LIGHTNING
-	k24_ChampionActionDisrupt = 24, // @ C024_ACTION_DISRUPT
-	k25_ChampionActionMelee = 25, // @ C025_ACTION_MELEE
-	k26_ChampionActionX_C026 = 26, // @ C026_ACTION_X
-	k27_ChampionActionInvoke = 27, // @ C027_ACTION_INVOKE
-	k28_ChampionActionSlash = 28, // @ C028_ACTION_SLASH
-	k29_ChampionActionCleave = 29, // @ C029_ACTION_CLEAVE
-	k30_ChampionActionBash = 30, // @ C030_ACTION_BASH
-	k31_ChampionActionStun = 31, // @ C031_ACTION_STUN
-	k32_ChampionActionShoot = 32, // @ C032_ACTION_SHOOT
-	k33_ChampionActionSpellshield = 33, // @ C033_ACTION_SPELLSHIELD
-	k34_ChampionActionFireshield = 34, // @ C034_ACTION_FIRESHIELD
-	k35_ChampionActionFluxcage = 35, // @ C035_ACTION_FLUXCAGE
-	k36_ChampionActionHeal = 36, // @ C036_ACTION_HEAL
-	k37_ChampionActionCalm = 37, // @ C037_ACTION_CALM
-	k38_ChampionActionLight = 38, // @ C038_ACTION_LIGHT
-	k39_ChampionActionWindow = 39, // @ C039_ACTION_WINDOW
-	k40_ChampionActionSpit = 40, // @ C040_ACTION_SPIT
-	k41_ChampionActionBrandish = 41, // @ C041_ACTION_BRANDISH
-	k42_ChampionActionThrow = 42, // @ C042_ACTION_THROW
-	k43_ChampionActionFuse = 43, // @ C043_ACTION_FUSE
-	k255_ChampionActionNone = 255 // @ C255_ACTION_NONE
+	kDMActionN = 0, // @ C000_ACTION_N
+	kDMActionBlock = 1, // @ C001_ACTION_BLOCK
+	kDMActionChop = 2, // @ C002_ACTION_CHOP
+	kDMActionX = 3, // @ C003_ACTION_X
+	kDMActionBlowHorn = 4, // @ C004_ACTION_BLOW_HORN
+	kDMActionFlip = 5, // @ C005_ACTION_FLIP
+	kDMActionPunch = 6, // @ C006_ACTION_PUNCH
+	kDMActionKick = 7, // @ C007_ACTION_KICK
+	kDMActionWarCry = 8, // @ C008_ACTION_WAR_CRY
+	kDMActionStab9 = 9, // @ C009_ACTION_STAB
+	kDMActionClimbDown = 10, // @ C010_ACTION_CLIMB_DOWN
+	kDMActionFreezeLife = 11, // @ C011_ACTION_FREEZE_LIFE
+	kDMActionHit = 12, // @ C012_ACTION_HIT
+	kDMActionSwing = 13, // @ C013_ACTION_SWING
+	kDMActionStab14 = 14, // @ C014_ACTION_STAB
+	kDMActionThrust = 15, // @ C015_ACTION_THRUST
+	kDMActionJab = 16, // @ C016_ACTION_JAB
+	kDMActionParry = 17, // @ C017_ACTION_PARRY
+	kDMActionHack = 18, // @ C018_ACTION_HACK
+	kDMActionBerzerk = 19, // @ C019_ACTION_BERZERK
+	kDMActionFireball = 20, // @ C020_ACTION_FIREBALL
+	kDMActionDispel = 21, // @ C021_ACTION_DISPELL
+	kDMActionConfuse = 22, // @ C022_ACTION_CONFUSE
+	kDMActionLightning = 23, // @ C023_ACTION_LIGHTNING
+	kDMActionDisrupt = 24, // @ C024_ACTION_DISRUPT
+	kDMActionMelee = 25, // @ C025_ACTION_MELEE
+	kDMActionX_C026 = 26, // @ C026_ACTION_X
+	kDMActionInvoke = 27, // @ C027_ACTION_INVOKE
+	kDMActionSlash = 28, // @ C028_ACTION_SLASH
+	kDMActionCleave = 29, // @ C029_ACTION_CLEAVE
+	kDMActionBash = 30, // @ C030_ACTION_BASH
+	kDMActionStun = 31, // @ C031_ACTION_STUN
+	kDMActionShoot = 32, // @ C032_ACTION_SHOOT
+	kDMActionSpellshield = 33, // @ C033_ACTION_SPELLSHIELD
+	kDMActionFireshield = 34, // @ C034_ACTION_FIRESHIELD
+	kDMActionFluxcage = 35, // @ C035_ACTION_FLUXCAGE
+	kDMActionHeal = 36, // @ C036_ACTION_HEAL
+	kDMActionCalm = 37, // @ C037_ACTION_CALM
+	kDMActionLight = 38, // @ C038_ACTION_LIGHT
+	kDMActionWindow = 39, // @ C039_ACTION_WINDOW
+	kDMActionSpit = 40, // @ C040_ACTION_SPIT
+	kDMActionBrandish = 41, // @ C041_ACTION_BRANDISH
+	kDMActionThrow = 42, // @ C042_ACTION_THROW
+	kDMActionFuse = 43, // @ C043_ACTION_FUSE
+	kDMActionNone = 255 // @ C255_ACTION_NONE
 };
 
 enum AttackType {
-	k0_attackType_NORMAL = 0, // @ C0_ATTACK_NORMAL
-	k1_attackType_FIRE = 1, // @ C1_ATTACK_FIRE
-	k2_attackType_SELF = 2, // @ C2_ATTACK_SELF
-	k3_attackType_BLUNT = 3, // @ C3_ATTACK_BLUNT
-	k4_attackType_SHARP = 4, // @ C4_ATTACK_SHARP
-	k5_attackType_MAGIC = 5, // @ C5_ATTACK_MAGIC
-	k6_attackType_PSYCHIC = 6, // @ C6_ATTACK_PSYCHIC
-	k7_attackType_LIGHTNING = 7 // @ C7_ATTACK_LIGHTNING
+	kDMAttackTypeNormal = 0, // @ C0_ATTACK_NORMAL
+	kDMAttackTypeFire = 1, // @ C1_ATTACK_FIRE
+	kDMAttackTypeSelf = 2, // @ C2_ATTACK_SELF
+	kDMAttackTypeBlunt = 3, // @ C3_ATTACK_BLUNT
+	kDMAttackTypeSharp = 4, // @ C4_ATTACK_SHARP
+	kDMAttackTypeMagic = 5, // @ C5_ATTACK_MAGIC
+	kDMAttackTypePsychic = 6, // @ C6_ATTACK_PSYCHIC
+	kDMAttackTypeLightning = 7 // @ C7_ATTACK_LIGHTNING
 };
 
 #define k0x0000_maskDoNotUseSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
 #define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
-
 #define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
-#define k0_spellCastFailure 0 // @ C0_SPELL_CAST_FAILURE             
-#define k1_spellCastSuccess 1 // @ C1_SPELL_CAST_SUCCESS             
-#define k3_spellCastFailureNeedsFlask 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
+enum SpellCastResult {
+	kDMSpellCastFailure = 0, // @ C0_SPELL_CAST_FAILURE             
+	kDMSpellCastSuccess = 1, // @ C1_SPELL_CAST_SUCCESS             
+	kDMSpellCastFailureNeedsFlask = 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
+};
 
-#define k0_failureNeedsMorePractice 0 // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
-#define k1_failureMeaninglessSpell 1 // @ C01_FAILURE_MEANINGLESS_SPELL        
-#define k10_failureNeedsFlaskInHand 10 // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
-#define k11_failureNeedsMagicMapInHand 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
+enum SpellFailure {
+	kDMFailureNeedsMorePractice = 0, // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
+	kDMFailureMeaninglessSpell = 1, // @ C01_FAILURE_MEANINGLESS_SPELL        
+	kDMFailureNeedsFlaskInHand = 10, // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
+	kDMFailureNeedsMagicMapInHand = 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
+};
 
 #define k1_spellKindPotion 1 // @ C1_SPELL_KIND_POTION    
 #define k2_spellKindProjectile 2 // @ C2_SPELL_KIND_PROJECTILE

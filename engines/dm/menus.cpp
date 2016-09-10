@@ -311,9 +311,9 @@ void MenuMan::drawActionArea() {
 			drawActionIcon((ChampionIndex)champIndex);
 	} else if (champMan._actingChampionOrdinal) {
 		Box box = _boxActionArea3ActionMenu;
-		if (_actionList._actionIndices[2] == k255_ChampionActionNone)
+		if (_actionList._actionIndices[2] == kDMActionNone)
 			box = _boxActionArea2ActionMenu;
-		if (_actionList._actionIndices[1] == k255_ChampionActionNone)
+		if (_actionList._actionIndices[1] == kDMActionNone)
 			box = _boxActionArea1ActionMenu;
 		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
 								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
@@ -342,7 +342,7 @@ const char *MenuMan::getActionName(ChampionAction actionIndex) {
 		"BRANDISH", "THROW", "FUSE"
 	};
 
-	return (actionIndex == k255_ChampionActionNone) ? "" : championActionNames[actionIndex];
+	return (actionIndex == kDMActionNone) ? "" : championActionNames[actionIndex];
 }
 
 void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
@@ -509,12 +509,12 @@ int16 MenuMan::getClickOnSpellCastResult() {
 	_vm->_eventMan->highlightBoxDisable();
 
 	int16 spellCastResult = getChampionSpellCastResult(_vm->_championMan->_magicCasterChampionIndex);
-	if (spellCastResult != k3_spellCastFailureNeedsFlask) {
+	if (spellCastResult != kDMSpellCastFailureNeedsFlask) {
 		casterChampion->_symbols[0] = '\0';
 		drawAvailableSymbols(casterChampion->_symbolStep = 0);
 		drawChampionSymbols(casterChampion);
 	} else
-		spellCastResult = k0_spellCastFailure;
+		spellCastResult = kDMSpellCastFailure;
 
 	_vm->_eventMan->hideMouse();
 	return spellCastResult;
@@ -522,16 +522,16 @@ int16 MenuMan::getClickOnSpellCastResult() {
 
 int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	if (champIndex >= _vm->_championMan->_partyChampionCount)
-		return k0_spellCastFailure;
+		return kDMSpellCastFailure;
 
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
 	if (!curChampion->_currHealth)
-		return k0_spellCastFailure;
+		return kDMSpellCastFailure;
 
 	Spell *curSpell = getSpellFromSymbols((unsigned char *)curChampion->_symbols);
 	if (!curSpell) {
-		menusPrintSpellFailureMessage(curChampion, k1_spellCastSuccess, 0);
-		return k0_spellCastFailure;
+		menusPrintSpellFailureMessage(curChampion, kDMSpellCastSuccess, 0);
+		return kDMSpellCastFailure;
 	}
 	int16 powerSymbolOrdinal = curChampion->_symbols[0] - '_'; /* Values 1 to 6 */
 	uint16 requiredSkillLevel = curSpell->_baseRequiredSkillLevel + powerSymbolOrdinal;
@@ -542,8 +542,8 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		while (missingSkillLevelCount--) {
 			if (_vm->getRandomNumber(128) > MIN(curChampion->_statistics[kDMStatWisdom][kDMStatCurrent] + 15, 115)) {
 				_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience >> (requiredSkillLevel - skillLevel));
-				menusPrintSpellFailureMessage(curChampion, k0_failureNeedsMorePractice, curSpell->_skillIndex);
-				return k0_spellCastFailure;
+				menusPrintSpellFailureMessage(curChampion, kDMFailureNeedsMorePractice, curSpell->_skillIndex);
+				return kDMSpellCastFailure;
 			}
 		}
 	}
@@ -552,8 +552,8 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		Thing newObject;
 		Potion *newPotion = getEmptyFlaskInHand(curChampion, &newObject);
 		if (!newPotion) {
-			menusPrintSpellFailureMessage(curChampion, k10_failureNeedsFlaskInHand, 0);
-			return k3_spellCastFailureNeedsFlask;
+			menusPrintSpellFailureMessage(curChampion, kDMFailureNeedsFlaskInHand, 0);
+			return kDMSpellCastFailureNeedsFlask;
 		}
 		uint16 emptyFlaskWeight = _vm->_dungeonMan->getObjectWeight(newObject);
 		newPotion->setType((PotionType)curSpell->getType());
@@ -682,7 +682,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	}
 	_vm->_championMan->addSkillExperience(champIndex, curSpell->_skillIndex, experience);
 	_vm->_championMan->disableAction(champIndex, curSpell->getDuration());
-	return k1_spellCastSuccess;
+	return kDMSpellCastSuccess;
 }
 
 Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
@@ -765,7 +765,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 
 	const char *message = nullptr;
 	switch (failureType) {
-	case k0_failureNeedsMorePractice:
+	case kDMFailureNeedsMorePractice:
 		_vm->_textMan->printMessage(k4_ColorCyan, messages[0]);
 		_vm->_textMan->printMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
 		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == kDMSkillWizard)
@@ -774,11 +774,13 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 			message = messages[4];
 
 		break;
-	case k1_failureMeaninglessSpell:
+	case kDMFailureMeaninglessSpell:
 		message = messages[2];
 		break;
-	case k10_failureNeedsFlaskInHand:
+	case kDMFailureNeedsFlaskInHand:
 		message = messages[3];
+		break;
+	default:
 		break;
 	}
 	_vm->_textMan->printMessage(k4_ColorCyan, message);
@@ -918,7 +920,7 @@ void MenuMan::deleteChampionSymbol() {
 bool MenuMan::didClickTriggerAction(int16 actionListIndex) {
 	bool retVal = false;
 
-	if (!_vm->_championMan->_actingChampionOrdinal || (actionListIndex != -1 && (_actionList._actionIndices[actionListIndex] == k255_ChampionActionNone)))
+	if (!_vm->_championMan->_actingChampionOrdinal || (actionListIndex != -1 && (_actionList._actionIndices[actionListIndex] == kDMActionNone)))
 		return retVal;
 
 	uint16 championIndex = _vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal);
@@ -1063,32 +1065,32 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	Thing explosionThing = Thing::_none;
 	bool actionPerformed = true;
 	switch (actionIndex) {
-	case k23_ChampionActionLightning:
+	case kDMActionLightning:
 		kineticEnergy = 180;
 		explosionThing = Thing::_explLightningBolt;
 		setDirectionFl = true;
 		break;
-	case k21_ChampionActionDispel:
+	case kDMActionDispel:
 		kineticEnergy = 150;
 		explosionThing = Thing::_explHarmNonMaterial;
 		setDirectionFl = true;
 		break;
-	case k20_ChampionActionFireball:
+	case kDMActionFireball:
 		kineticEnergy = 150;
 		explosionThing = Thing::_explFireBall;
 		setDirectionFl = true;
 		break;
-	case k40_ChampionActionSpit:
+	case kDMActionSpit:
 		kineticEnergy = 250;
 		explosionThing = Thing::_explFireBall;
 		setDirectionFl = true;
 		break;
-	case k30_ChampionActionBash:
-	case k18_ChampionActionHack:
-	case k19_ChampionActionBerzerk:
-	case k7_ChampionActionKick:
-	case k13_ChampionActionSwing:
-	case k2_ChampionActionChop:
+	case kDMActionBash:
+	case kDMActionHack:
+	case kDMActionBerzerk:
+	case kDMActionKick:
+	case kDMActionSwing:
+	case kDMActionChop:
 		if ((Square(targetSquare).getType() == k4_DoorElemType) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
@@ -1096,37 +1098,37 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
-	case k24_ChampionActionDisrupt:
-	case k16_ChampionActionJab:
-	case k17_ChampionActionParry:
-	case k14_ChampionActionStab_C014:
-	case k9_ChampionActionStab_C009:
-	case k31_ChampionActionStun:
-	case k15_ChampionActionThrust:
-	case k25_ChampionActionMelee:
-	case k28_ChampionActionSlash:
-	case k29_ChampionActionCleave:
-	case k6_ChampionActionPunch:
+	case kDMActionDisrupt:
+	case kDMActionJab:
+	case kDMActionParry:
+	case kDMActionStab14:
+	case kDMActionStab9:
+	case kDMActionStun:
+	case kDMActionThrust:
+	case kDMActionMelee:
+	case kDMActionSlash:
+	case kDMActionCleave:
+	case kDMActionPunch:
 		if (!(actionPerformed = isMeleeActionPerformed(champIndex, curChampion, actionIndex, nextMapX, nextMapY, actionSkillIndex))) {
 			actionExperienceGain >>= 1;
 			actionDisabledTicks >>= 1;
 		}
 		break;
-	case k22_ChampionActionConfuse:
+	case kDMActionConfuse:
 		decrementCharges(curChampion);
 		// No break on purpose
-	case k8_ChampionActionWarCry:
-	case k37_ChampionActionCalm:
-	case k41_ChampionActionBrandish:
-	case k4_ChampionActionBlowHorn:
-		if (actionIndex == k8_ChampionActionWarCry)
+	case kDMActionWarCry:
+	case kDMActionCalm:
+	case kDMActionBrandish:
+	case kDMActionBlowHorn:
+		if (actionIndex == kDMActionWarCry)
 			_vm->_sound->requestPlay(k28_soundWAR_CRY, nextMapX, nextMapY, k0_soundModePlayImmediately);
-		else if (actionIndex == k4_ChampionActionBlowHorn)
+		else if (actionIndex == kDMActionBlowHorn)
 			_vm->_sound->requestPlay(k25_soundBLOW_HORN, nextMapX, nextMapY, k0_soundModePlayImmediately);
 
 		actionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
-	case k32_ChampionActionShoot: {
+	case kDMActionShoot: {
 		if (Thing(curChampion->_slots[kDMSlotReadyHand]).getType() != k5_WeaponThingType) {
 			_actionDamage = kM2_damageNoAmmunition;
 			actionExperienceGain = 0;
@@ -1163,7 +1165,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, kDMSkillShoot)) << 1, stepEnergy);
 		}
 		break;
-	case k5_ChampionActionFlip: {
+	case kDMActionFlip: {
 		const char *messagesEN[2] = {"IT COMES UP HEADS.", "IT COMES UP TAILS."};
 		const char *messagesDE[2] = {"DIE KOPFSEITE IST OBEN.", "DIE ZAHL IST OBEN."};
 		const char *messagesFR[2] = {"C'EST FACE.", "C'EST PILE."};
@@ -1187,16 +1189,16 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 
 		}
 		break;
-	case k33_ChampionActionSpellshield:
-	case k34_ChampionActionFireshield:
-		if (!isPartySpellOrFireShieldSuccessful(curChampion, actionIndex == k33_ChampionActionSpellshield, 280, true)) {
+	case kDMActionSpellshield:
+	case kDMActionFireshield:
+		if (!isPartySpellOrFireShieldSuccessful(curChampion, actionIndex == kDMActionSpellshield, 280, true)) {
 			actionExperienceGain >>= 2;
 			actionDisabledTicks >>= 1;
 		} else
 			decrementCharges(curChampion);
 
 		break;
-	case k27_ChampionActionInvoke:
+	case kDMActionInvoke:
 		kineticEnergy = _vm->getRandomNumber(128) + 100;
 		switch (_vm->getRandomNumber(6)) {
 		case 0:
@@ -1215,18 +1217,18 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		setDirectionFl = true;
 		break;
 
-	case k35_ChampionActionFluxcage:
+	case kDMActionFluxcage:
 		setChampionDirectionToPartyDirection(curChampion);
 		_vm->_groupMan->fluxCageAction(nextMapX, nextMapY);
 		break;
-	case k43_ChampionActionFuse:
+	case kDMActionFuse:
 		setChampionDirectionToPartyDirection(curChampion);
 		nextMapX = _vm->_dungeonMan->_partyMapX;
 		nextMapY = _vm->_dungeonMan->_partyMapY;
 		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		_vm->_groupMan->fuseAction(nextMapX, nextMapY);
 		break;
-	case k36_ChampionActionHeal: {
+	case kDMActionHeal: {
 		/* CHANGE2_17_IMPROVEMENT Heal action is much more effective
 		Heal cycles occur as long as the champion has missing health and enough mana. Cycle count = Min(Current Mana / 2, Missing health / Min(10, Heal skill level))
 		Healing amount is Min(Missing health, Min(10, Heal skill level)) * heal cycle count
@@ -1254,7 +1256,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		}
 		}
 		break;
-	case k39_ChampionActionWindow: {
+	case kDMActionWindow: {
 		int16 windowTicks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
@@ -1265,7 +1267,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		decrementCharges(curChampion);
 		}
 		break;
-	case k10_ChampionActionClimbDown:
+	case kDMActionClimbDown:
 		nextMapX = _vm->_dungeonMan->_partyMapX;
 		nextMapY = _vm->_dungeonMan->_partyMapY;
 		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
@@ -1282,7 +1284,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			actionDisabledTicks = 0;
 		}
 		break;
-	case k11_ChampionActionFreezeLife: {
+	case kDMActionFreezeLife: {
 		int16 freezeTicks;
 		if (weaponInHand->getType() == k42_JunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
@@ -1299,12 +1301,12 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		_vm->_championMan->_party._freezeLifeTicks = MIN(200, _vm->_championMan->_party._freezeLifeTicks + freezeTicks);
 		}
 		break;
-	case k38_ChampionActionLight:
+	case kDMActionLight:
 		_vm->_championMan->_party._magicalLightAmount += _vm->_championMan->_lightPowerToLightAmount[2];
 		createEvent70_light(-2, 2500);
 		decrementCharges(curChampion);
 		break;
-	case k42_ChampionActionThrow:
+	case kDMActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
 		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
@@ -1483,12 +1485,12 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 			break;
 		}
 
-		if ((actionIndex == k24_ChampionActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), k0x0040_MaskCreatureInfo_nonMaterial))
+		if ((actionIndex == kDMActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), k0x0040_MaskCreatureInfo_nonMaterial))
 			return false;
 
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
 		uint16 actionDamageFactor = actionDamageFactorArray[actionIndex];
-		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
+		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == kDMActionDisrupt)) {
 			setFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
 		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
@@ -1507,23 +1509,23 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	int16 frightAmount = 0;
 
 	switch (actionIndex) {
-	case k8_ChampionActionWarCry:
+	case kDMActionWarCry:
 		frightAmount = 3;
 		experience = 12; /* War Cry gives experience in priest skill k14_ChampionSkillInfluence below. The War Cry action also has an experience gain of 7 defined in G0497_auc_Graphic560_ActionExperienceGain in the same skill (versions 1.1 and below) or in the fighter skill k7_ChampionSkillParry (versions 1.2 and above). In versions 1.2 and above, this is the only action that gives experience in two skills */
 		break;
-	case k37_ChampionActionCalm:
+	case kDMActionCalm:
 		frightAmount = 7;
 		experience = 35;
 		break;
-	case k41_ChampionActionBrandish:
+	case kDMActionBrandish:
 		frightAmount = 6;
 		experience = 30;
 		break;
-	case k4_ChampionActionBlowHorn:
+	case kDMActionBlowHorn:
 		frightAmount = 6;
 		experience = 20;
 		break;
-	case k22_ChampionActionConfuse:
+	case kDMActionConfuse:
 		frightAmount = 12;
 		experience = 45;
 		break;
@@ -1658,7 +1660,7 @@ void MenuMan::setActionList(ActionSet *actionSet) {
 	for (uint16 idx = 1; idx < 3; idx++) {
 		uint16 actionIndex = actionSet->_actionIndices[idx];
 
-		if (actionIndex == k255_ChampionActionNone)
+		if (actionIndex == kDMActionNone)
 			continue;
 
 		uint16 minimumSkillLevel = actionSet->_actionProperties[idx - 1];
@@ -1675,7 +1677,7 @@ void MenuMan::setActionList(ActionSet *actionSet) {
 	_actionCount = nextAvailableActionListIndex;
 
 	for (uint16 idx = nextAvailableActionListIndex; idx < 3; idx++)
-		_actionList._actionIndices[idx] = k255_ChampionActionNone;
+		_actionList._actionIndices[idx] = kDMActionNone;
 }
 
 int16 MenuMan::getActionObjectChargeCount() {

@@ -52,7 +52,7 @@ void Champion::resetToZero() {
 	memset(_title, '\0', 20);
 	_dir = kDirNorth;
 	_cell = k0_ViewCellFronLeft;
-	_actionIndex = k0_ChampionActionN;
+	_actionIndex = kDMActionN;
 	_symbolStep = 0;
 	memset(_symbols, '\0', 5);
 	_directionMaximumDamageReceived = _maximumDamageReceived = _poisonEventCount = _enableActionEventIndex = 0;
@@ -742,7 +742,7 @@ void ChampionMan::decrementStamina(int16 championIndex, int16 decrement) {
 	int16 stamina = curChampion->_currStamina;
 	if (stamina <= 0) {
 		curChampion->_currStamina = 0;
-		addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, kDMWoundNone, k0_attackType_NORMAL);
+		addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, kDMWoundNone, kDMAttackTypeNormal);
 	} else if (stamina > curChampion->_maxStamina) {
 		curChampion->_currStamina = curChampion->_maxStamina;
 	}
@@ -758,13 +758,13 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 	if (!curChampion->_currHealth)
 		return 0;
 
-	if (attackType != k0_attackType_NORMAL) {
+	if (attackType != kDMAttackTypeNormal) {
 		uint16 defense = 0;
 		uint16 woundCount = 0;
 		for (int16 woundIndex = kDMSlotReadyHand; woundIndex <= kDMSlotFeet; woundIndex++) {
 			if (allowedWounds & (1 << woundIndex)) {
 				woundCount++;
-				defense += getWoundDefense(champIndex, woundIndex | ((attackType == k4_attackType_SHARP) ? k0x8000_maskUseSharpDefense : k0x0000_maskDoNotUseSharpDefense));
+				defense += getWoundDefense(champIndex, woundIndex | ((attackType == kDMAttackTypeSharp) ? k0x8000_maskUseSharpDefense : k0x0000_maskDoNotUseSharpDefense));
 			}
 		}
 		if (woundCount)
@@ -772,7 +772,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 
 		bool skipScaling = false;
 		switch (attackType) {
-		case k6_attackType_PSYCHIC:
+		case kDMAttackTypePsychic:
 		{
 			int16 wisdomFactor = 115 - curChampion->_statistics[kDMStatWisdom][kDMStatCurrent];
 			if (wisdomFactor <= 0) {
@@ -784,16 +784,16 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 			skipScaling = true;
 		}
 		break;
-		case k5_attackType_MAGIC:
+		case kDMAttackTypeMagic:
 			attack = getStatisticAdjustedAttack(curChampion, kDMStatAntimagic, attack);
 			attack -= _party._spellShieldDefense;
 			skipScaling = true;
 			break;
-		case k1_attackType_FIRE:
+		case kDMAttackTypeFire:
 			attack = getStatisticAdjustedAttack(curChampion, kDMStatAntifire, attack);
 			attack -= _party._fireShieldDefense;
 			break;
-		case k2_attackType_SELF:
+		case kDMAttackTypeSelf:
 			defense >>= 1;
 			break;
 		default:
@@ -1106,7 +1106,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		return;
 
 	Champion *curChampion = &_champions[champIndex];
-	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), kDMWoundNone, k0_attackType_NORMAL);
+	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), kDMWoundNone, kDMAttackTypeNormal);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) && (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
 		setFlag(curChampion->_attributes, kDMAttributePanel);
@@ -1876,7 +1876,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	// Strangerke - TODO: Check if the new code is possible to run on the older version (example: the portraits could be missing in the data)
 	_vm->_displayMan->_useByteBoxCoordinates = true;
 	_vm->_displayMan->blitToBitmap(_vm->_displayMan->getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), championPtr->_portrait, _boxChampionPortrait, getChampionPortraitX(championPortraitIndex), getChampionPortraitY(championPortraitIndex), k128_byteWidth, k16_byteWidth, kM1_ColorNoTransparency, 87, 29);
-	championPtr->_actionIndex = k255_ChampionActionNone;
+	championPtr->_actionIndex = kDMActionNone;
 	championPtr->_enableActionEventIndex = -1;
 	championPtr->_hideDamageReceivedIndex = -1;
 	championPtr->_dir = _vm->_dungeonMan->_partyDir;
