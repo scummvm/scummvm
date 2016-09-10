@@ -1265,7 +1265,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	}
 	Thing thing = dunMan.getSquareFirstThing(mapX, mapY);
 	for (;;) { // infinite
-		if (thing.getType() == k3_SensorThingType) {
+		if (thing.getType() == kDMThingTypeSensor) {
 			((Sensor*)dunMan.getThingData(thing))->setTypeDisabled();
 			break;
 		}

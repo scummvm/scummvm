@@ -428,7 +428,7 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_partyMapX = 0;
 	_partyMapY = 0;
 	_partyMapIndex = 0;
-	_currMapIndex = kM1_mapIndexNone;
+	_currMapIndex = kDMMapIndexNone;
 	_currMapData = nullptr;
 	_currMap = nullptr;
 	_currMapWidth = 0;
@@ -583,7 +583,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	_dungeonFileHeader._textDataWordCount = dunDataStream->readUint16BE();
 	_dungeonFileHeader._partyStartLocation = dunDataStream->readUint16BE();
 	_dungeonFileHeader._squareFirstThingCount = dunDataStream->readUint16BE();
-	for (uint16 i = 0; i < k16_ThingTypeTotal; ++i)
+	for (uint16 i = 0; i < kDMThingTypeTotal; ++i)
 		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
 
 	// init party position and mapindex
@@ -680,10 +680,10 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_vm->_timeline->_eventMaxCount = 100;
 
 	// load things
-	for (uint16 thingType = k0_DoorThingType; thingType < k16_ThingTypeTotal; ++thingType) {
+	for (uint16 thingType = kDMThingTypeDoor; thingType < kDMThingTypeTotal; ++thingType) {
 		uint16 thingCount = _dungeonFileHeader._thingCounts[thingType];
 		if (_vm->_newGameFl)
-			_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == k15_ExplosionThingType) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
+			_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == kDMThingTypeExplosion) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
 
 		uint16 thingStoreWordCount = _thingDataWordCount[thingType];
 
@@ -695,7 +695,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			_thingData[thingType] = new uint16[_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
 		}
 
-		if ((thingType == k4_GroupThingType || thingType == k14_ProjectileThingType) && !file) { // !file because save files have diff. structure than dungeon.dat 
+		if ((thingType == kDMThingTypeGroup || thingType == kDMThingTypeProjectile) && !file) { // !file because save files have diff. structure than dungeon.dat 
 			for (uint16 i = 0; i < thingCount; ++i) {
 				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
@@ -714,7 +714,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		}
 
 		if (_vm->_newGameFl) {
-			if ((thingType == k4_GroupThingType) || thingType >= k14_ProjectileThingType)
+			if ((thingType == kDMThingTypeGroup) || thingType >= kDMThingTypeProjectile)
 				_vm->_timeline->_eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
 
 			for (uint16 i = 0; i < additionalThingCounts[thingType]; ++i)
@@ -866,22 +866,22 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 	switch (aspectArray[k0_ElementAspect]) {
 	case k0_ElementTypeWall:
 		switch (dir) {
-		case kDirNorth:
+		case kDMDirNorth:
 			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
 			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
 			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
 			break;
-		case kDirEast:
+		case kDMDirEast:
 			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
 			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
 			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
 			break;
-		case kDirSouth:
+		case kDMDirSouth:
 			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
 			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
 			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
 			break;
-		case kDirWest:
+		case kDMDirWest:
 			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
 			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
 			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
@@ -893,12 +893,12 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
-		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
 			ThingType curThingType = curThing.getType();
 			int16 AL0310_i_SideIndex = normalizeModulo4(curThing.getCell() - dir);
 			if (AL0310_i_SideIndex) { /* Invisible on the back wall if 0 */
 				Sensor *curSensor = (Sensor *)getThingData(curThing);
-				if (curThingType == k2_TextstringType) {
+				if (curThingType == kDMstringTypeText) {
 					if (((TextString *)curSensor)->isVisible()) {
 						aspectArray[AL0310_i_SideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
 						_vm->_displayMan->_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
@@ -946,8 +946,8 @@ T0172010_ClosedFakeWall:
 			AL0307_uc_FootprintsAllowed = true;
 		}
 
-		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType)) {
-			if (curThing.getType() == k3_SensorThingType) {
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
+			if (curThing.getType() == kDMThingTypeSensor) {
 				Sensor *curSensor = (Sensor *)getThingData(curThing);
 				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getAttrOrnOrdinal();
 			}
@@ -963,7 +963,7 @@ T0172010_ClosedFakeWall:
 		aspectArray[k0_ElementAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
 		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
 		AL0307_uc_FootprintsAllowed = false;
-		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 		break;
 	case k4_DoorElemType:
@@ -976,7 +976,7 @@ T0172010_ClosedFakeWall:
 		}
 		AL0307_uc_FootprintsAllowed = true;
 
-		while ((curThing != Thing::_endOfList) && (curThing.getType() <= k3_SensorThingType))
+		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 
 		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
@@ -1117,7 +1117,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 		{0,   0,  0,  0, 0, 0, 0, 0}
 	};
 
-	TextString textString(_thingData[k2_TextstringType] + thing.getIndex() * _thingDataWordCount[k2_TextstringType]);
+	TextString textString(_thingData[kDMstringTypeText] + thing.getIndex() * _thingDataWordCount[kDMstringTypeText]);
 	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
 		char sepChar;
@@ -1182,9 +1182,9 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 
 Thing DungeonMan::getUnusedThing(uint16 thingType) {
 	int16 thingCount = _dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
-	if (thingType == (k0x8000_championBones | k10_JunkThingType)) {
-		thingType = k10_JunkThingType;
-	} else if (thingType == k10_JunkThingType)
+	if (thingType == (k0x8000_championBones | kDMThingTypeJunk)) {
+		thingType = kDMThingTypeJunk;
+	} else if (thingType == kDMThingTypeJunk)
 		thingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
 
 	int16 thingIdx = thingCount;
@@ -1249,19 +1249,19 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 	Junk *junk = (Junk *)getThingData(thing);
 
 	switch (thing.getType()) {
-	case k5_WeaponThingType:
+	case kDMThingTypeWeapon:
 		weight = _weaponInfos[((Weapon *)junk)->getType()]._weight;
 		break;
-	case k6_ArmourThingType:
+	case kDMThingTypeArmour:
 		weight = _armourInfos[((Armour *)junk)->getType()]._weight;
 		break;
-	case k10_JunkThingType:
+	case kDMThingTypeJunk:
 		weight = junkInfo[junk->getType()];
 		if (junk->getType() == k1_JunkTypeWaterskin)
 			weight += junk->getChargeCount() << 1;
 
 		break;
-	case k9_ContainerThingType:
+	case kDMThingTypeContainer:
 		weight = 50;
 		thing = ((Container *)junk)->getSlot();
 		while (thing != Thing::_endOfList) {
@@ -1269,13 +1269,13 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 			thing = getNextThing(thing);
 		}
 		break;
-	case k8_PotionThingType:
+	case kDMThingTypePotion:
 		if (((Potion *)junk)->getType() == k20_PotionTypeEmptyFlask)
 			weight = 1;
 		else
 			weight = 3;
 		break;
-	case k7_ScrollThingType:
+	case kDMThingTypeScroll:
 		weight = 1;
 		break;
 	default:
@@ -1288,17 +1288,17 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 int16 DungeonMan::getObjectInfoIndex(Thing thing) {
 	uint16 *rawType = getThingData(thing);
 	switch (thing.getType()) {
-	case k7_ScrollThingType:
+	case kDMThingTypeScroll:
 		return k0_ObjectInfoIndexFirstScroll;
-	case k9_ContainerThingType:
+	case kDMThingTypeContainer:
 		return k1_ObjectInfoIndexFirstContainer + Container(rawType).getType();
-	case k10_JunkThingType:
+	case kDMThingTypeJunk:
 		return k127_ObjectInfoIndexFirstJunk + Junk(rawType).getType();
-	case k5_WeaponThingType:
+	case kDMThingTypeWeapon:
 		return k23_ObjectInfoIndexFirstWeapon + Weapon(rawType).getType();
-	case k6_ArmourThingType:
+	case kDMThingTypeArmour:
 		return k69_ObjectInfoIndexFirstArmour + Armour(rawType).getType();
-	case k8_PotionThingType:
+	case kDMThingTypePotion:
 		return k2_ObjectInfoIndexFirstPotion + Potion(rawType).getType();
 	default:
 		return -1;
@@ -1354,7 +1354,7 @@ WeaponInfo *DungeonMan::getWeaponInfo(Thing thing) {
 
 int16 DungeonMan::getProjectileAspect(Thing thing) {
 	ThingType thingType = thing.getType();
-	if (thingType == k15_ExplosionThingType) {
+	if (thingType == kDMThingTypeExplosion) {
 		if (thing == Thing::_explFireBall)
 			return -_vm->indexToOrdinal(k10_ProjectileAspectExplosionFireBall);
 		if (thing == Thing::_explSlime)
@@ -1365,7 +1365,7 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 			return -_vm->indexToOrdinal(k13_ProjectileAspectExplosionPoisonBoltCloud);
 
 		return -_vm->indexToOrdinal(k11_ProjectileAspectExplosionDefault);
-	} else if (thingType == k5_WeaponThingType) {
+	} else if (thingType == kDMThingTypeWeapon) {
 		WeaponInfo *weaponInfo = getWeaponInfo(thing);
 		int16 projAspOrd = weaponInfo->getProjectileAspectOrdinal();
 		if (projAspOrd)
@@ -1376,8 +1376,8 @@ int16 DungeonMan::getProjectileAspect(Thing thing) {
 }
 
 int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, int16 *mapX, int16 *mapY) {
-	if (_partyMapIndex == k255_mapIndexEntrance)
-		return kM1_mapIndexNone;
+	if (_partyMapIndex == kDMMapIndexEntrance)
+		return kDMMapIndexNone;
 
 	Map *map = _dungeonMaps + mapIndex;
 	int16 newMapX = map->_offsetMapX + *mapX;
@@ -1395,12 +1395,12 @@ int16 DungeonMan::getLocationAfterLevelChange(int16 mapIndex, int16 levelDelta, 
 		}
 		map++;
 	}
-	return kM1_mapIndexNone;
+	return kDMMapIndexNone;
 }
 
 Thing DungeonMan::getSquareFirstObject(int16 mapX, int16 mapY) {
 	Thing thing = getSquareFirstThing(mapX, mapY);
-	while ((thing != Thing::_endOfList) && (thing.getType() < k4_GroupThingType))
+	while ((thing != Thing::_endOfList) && (thing.getType() < kDMThingTypeGroup))
 		thing = getNextThing(thing);
 
 	return thing;
@@ -1418,7 +1418,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 	// CHECKME: Shouldn't it be saved in the savegames?
 	static unsigned char lastDiscardedThingMapIndex[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	if (thingType == k15_ExplosionThingType)
+	if (thingType == kDMThingTypeExplosion)
 		return Thing::_none;
 
 	int16 currentMapIdx = _currMapIndex;
@@ -1442,19 +1442,19 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 
 					do {
 						ThingType squareThingType = squareThing.getType();
-						if (squareThingType == k3_SensorThingType) {
+						if (squareThingType == kDMThingTypeSensor) {
 							Thing *squareThingData = (Thing *)getThingData(squareThing);
 							if (((Sensor *)squareThingData)->getType()) /* If sensor is not disabled */
 								break;
 						} else if (squareThingType == thingType) {
 							Thing *squareThingData = (Thing *)getThingData(squareThing);
 							switch (thingType) {
-							case k4_GroupThingType:
+							case kDMThingTypeGroup:
 								if (((Group *)squareThingData)->getDoNotDiscard())
 									continue;
-							case k14_ProjectileThingType:
+							case kDMThingTypeProjectile:
 								setCurrentMap(mapIndex);
-								if (thingType == k4_GroupThingType) {
+								if (thingType == kDMThingTypeGroup) {
 									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
 									_vm->_groupMan->groupDelete(currMapX, currMapY);
 								} else {
@@ -1463,28 +1463,28 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 									_vm->_projexpl->projectileDelete(squareThing, 0, currMapX, currMapY);
 								}
 								break;
-							case k6_ArmourThingType:
+							case kDMThingTypeArmour:
 								if (((Armour *)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
-							case k5_WeaponThingType:
+							case kDMThingTypeWeapon:
 								if (((Weapon *)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
-							case k10_JunkThingType:
+							case kDMThingTypeJunk:
 								if (((Junk *)squareThingData)->getDoNotDiscard())
 									continue;
 
 								setCurrentMap(mapIndex);
 								_vm->_moveSens->getMoveResult(squareThing, currMapX, currMapY, kM1_MapXNotOnASquare, 0);
 								break;
-							case k8_PotionThingType:
+							case kDMThingTypePotion:
 								if (((Potion *)squareThingData)->getDoNotDiscard())
 									continue;
 
@@ -1599,11 +1599,11 @@ int16 DungeonMan::getStairsExitDirection(int16 mapX, int16 mapY) {
 	bool northSouthOrientedStairs = !getFlag(getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient);
 
 	if (northSouthOrientedStairs) {
-		mapX = mapX + _vm->_dirIntoStepCountEast[kDirEast];
-		mapY = mapY + _vm->_dirIntoStepCountNorth[kDirEast];
+		mapX = mapX + _vm->_dirIntoStepCountEast[kDMDirEast];
+		mapY = mapY + _vm->_dirIntoStepCountNorth[kDMDirEast];
 	} else {
-		mapX = mapX + _vm->_dirIntoStepCountEast[kDirNorth];
-		mapY = mapY + _vm->_dirIntoStepCountNorth[kDirNorth];
+		mapX = mapX + _vm->_dirIntoStepCountEast[kDMDirNorth];
+		mapY = mapY + _vm->_dirIntoStepCountNorth[kDMDirNorth];
 	}
 	int16 squareType = Square(getSquare(mapX, mapY)).getType();
 
@@ -1615,7 +1615,7 @@ int16 DungeonMan::getStairsExitDirection(int16 mapX, int16 mapY) {
 }
 
 Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
-	int16 thingType = k5_WeaponThingType;
+	int16 thingType = kDMThingTypeWeapon;
 	if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit))
 		iconIndex = kDMIconIndiceWeaponTorchUnlit;
 
@@ -1627,7 +1627,7 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 		break;
 	case kDMIconIndiceJunkBoulder:
 		junkType = k25_JunkTypeBoulder;
-		thingType = k10_JunkThingType;
+		thingType = kDMThingTypeJunk;
 		break;
 	case kDMIconIndiceWeaponArrow:
 		junkType = k27_WeaponTypeArrow;

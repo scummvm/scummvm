@@ -650,7 +650,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			}
 			break;
 		case kDMSpellTypeOtherZokathra: {
-			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType);
+			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(kDMThingTypeJunk);
 			if (unusedObject == Thing::_none)
 				break;
 
@@ -1129,7 +1129,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		actionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
 	case kDMActionShoot: {
-		if (Thing(curChampion->_slots[kDMSlotReadyHand]).getType() != k5_WeaponThingType) {
+		if (Thing(curChampion->_slots[kDMSlotReadyHand]).getType() != kDMThingTypeWeapon) {
 			_actionDamage = kM2_damageNoAmmunition;
 			actionExperienceGain = 0;
 			actionPerformed = false;
@@ -1350,17 +1350,17 @@ void MenuMan::decrementCharges(Champion *champ) {
 	Thing slotActionThing = champ->_slots[kDMSlotActionHand];
 	Junk *slotActionData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
-	case k5_WeaponThingType:
+	case kDMThingTypeWeapon:
 		if (((Weapon *)slotActionData)->getChargeCount()) {
 			((Weapon *)slotActionData)->setChargeCount(((Weapon *)slotActionData)->getChargeCount() - 1);
 		}
 		break;
-	case k6_ArmourThingType:
+	case kDMThingTypeArmour:
 		if (((Armour *)slotActionData)->getChargeCount()) {
 			((Armour *)slotActionData)->setChargeCount(((Armour *)slotActionData)->getChargeCount() - 1);
 		}
 		break;
-	case k10_JunkThingType:
+	case kDMThingTypeJunk:
 		if (slotActionData->getChargeCount()) {
 			slotActionData->setChargeCount(slotActionData->getChargeCount() - 1);
 		}
@@ -1684,11 +1684,11 @@ int16 MenuMan::getActionObjectChargeCount() {
 	Thing slotActionThing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[kDMSlotActionHand];
 	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
-	case k5_WeaponThingType:
+	case kDMThingTypeWeapon:
 		return ((Weapon *)junkData)->getChargeCount();
-	case k6_ArmourThingType:
+	case kDMThingTypeArmour:
 		return ((Armour *)junkData)->getChargeCount();
-	case k10_JunkThingType:
+	case kDMThingTypeJunk:
 		return junkData->getChargeCount();
 	default:
 		return 1;

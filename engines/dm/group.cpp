@@ -152,7 +152,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 		do {
 			nextThing = _vm->_dungeonMan->getNextThing(currentThing);
 			currentThing = thingWithNewCell(currentThing, _vm->getRandomNumber(4));
-			if ((currentThing).getType() == k5_WeaponThingType) {
+			if ((currentThing).getType() == kDMThingTypeWeapon) {
 				L0371_B_WeaponDropped = true;
 			}
 			_vm->_moveSens->getMoveResult(currentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
@@ -264,14 +264,14 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 
 		int16 currThingType;
 		if (clearFlag(currFixedPossession, k0x8000_randomDrop) >= k127_ObjectInfoIndexFirstJunk) {
-			currThingType = k10_JunkThingType;
+			currThingType = kDMThingTypeJunk;
 			currFixedPossession -= k127_ObjectInfoIndexFirstJunk;
 		} else if (currFixedPossession >= k69_ObjectInfoIndexFirstArmour) {
-			currThingType = k6_ArmourThingType;
+			currThingType = kDMThingTypeArmour;
 			currFixedPossession -= k69_ObjectInfoIndexFirstArmour;
 		} else {
 			weaponDropped = true;
-			currThingType = k5_WeaponThingType;
+			currThingType = kDMThingTypeWeapon;
 			currFixedPossession -= k23_ObjectInfoIndexFirstWeapon;
 		}
 
@@ -294,25 +294,25 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 	if (srcMapX == destMapX) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 1; /* Resulting direction may be 1 or 3 (East or West) */
 		if (srcMapY > destMapY)
-			return kDirNorth;
+			return kDMDirNorth;
 
-		return kDirSouth;
+		return kDMDirSouth;
 	}
 	if (srcMapY == destMapY) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = (_vm->getRandomNumber(65536) & 0x0002) + 0; /* Resulting direction may be 0 or 2 (North or South) */
 		if (srcMapX > destMapX)
-			return kDirWest;
+			return kDMDirWest;
 
-		return kDirEast;
+		return kDMDirEast;
 	}
 
-	int16 curDirection = kDirNorth;
+	int16 curDirection = kDMDirNorth;
 	for (;;) {
 		if (isDestVisibleFromSource(curDirection, srcMapX, srcMapY, destMapX, destMapY)) {
 			_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal(curDirection);
 			if (!isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
 				_vm->_projexpl->_secondaryDirToOrFromParty = returnPrevVal(curDirection);
-				if ((curDirection != kDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
+				if ((curDirection != kDMDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
 					_vm->_projexpl->_secondaryDirToOrFromParty = returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + curDirection);
 					return curDirection;
 				}
@@ -330,15 +330,15 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 
 bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
 	switch (dir) { /* If direction is not 'West' then swap variables so that the same test as for west can be applied */
-	case kDirSouth:
+	case kDMDirSouth:
 		SWAP(srcMapX, destMapY);
 		SWAP(destMapX, srcMapY);
 		break;
-	case kDirEast:
+	case kDMDirEast:
 		SWAP(srcMapX, destMapX);
 		SWAP(destMapY, srcMapY);
 		break;
-	case kDirNorth:
+	case kDMDirNorth:
 		SWAP(srcMapX, srcMapY);
 		SWAP(destMapX, destMapY);
 		break;
@@ -373,7 +373,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 
 Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	while ((curThing != Thing::_endOfList) && (curThing.getType() != k4_GroupThingType))
+	while ((curThing != Thing::_endOfList) && (curThing.getType() != kDMThingTypeGroup))
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
 
 	return curThing;
@@ -1076,7 +1076,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) {
 		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (curThing != Thing::_endOfList) {
-			if ((curThing).getType() == k15_ExplosionThingType) {
+			if ((curThing).getType() == kDMThingTypeExplosion) {
 				Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getThingData(curThing);
 				if (((Explosion *)curTeleporter)->setType(k50_ExplosionType_Fluxcage)) {
 					_fluxCages[dir] = true;
@@ -1128,7 +1128,7 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 	if (getFlag(groupCreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) { /* If creature can see in all directions */
 		alwaysSee = true;
 		checkDirectionsCount = 1;
-		creatureViewDirections[0] = kDirNorth;
+		creatureViewDirections[0] = kDMDirNorth;
 	} else {
 		groupDirections = _activeGroups[group->getActiveGroupIndex()]._directions;
 		if (creatureIndex < 0) { /* Negative index means test if each creature in the group can see the party in their respective direction */
@@ -1240,7 +1240,7 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
-	Group *group = &(((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex]);
+	Group *group = &(((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[activeGroup->_groupThingIndex]);
 	uint16 creatureType = group->_type;
 	uint16 creatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[creatureType]._graphicInfo;
 	bool processGroup = (creatureIndex < 0);
@@ -1370,7 +1370,7 @@ bool GroupMan::isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
 }
 
 int16 GroupMan::getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY, bool allowMovementOverImaginaryPitsAndFakeWalls) {
-	for (int16 direction = kDirNorth; direction <= kDirWest; direction++) {
+	for (int16 direction = kDMDirNorth; direction <= kDMDirWest; direction++) {
 		if ((!_groupMovementTestedDirections[direction]) && isMovementPossible(info, mapX, mapY, direction, allowMovementOverImaginaryPitsAndFakeWalls)) {
 			return _vm->indexToOrdinal(direction);
 		}
@@ -1661,8 +1661,8 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	_currActiveGroupCount++;
 
 	activeGroup->_groupThingIndex = (thing).getIndex();
-	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] +
-		_vm->_dungeonMan->_thingDataWordCount[k4_GroupThingType] * activeGroup->_groupThingIndex);
+	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[kDMThingTypeGroup] +
+		_vm->_dungeonMan->_thingDataWordCount[kDMThingTypeGroup] * activeGroup->_groupThingIndex);
 
 	activeGroup->_cells = curGroup->_cells;
 	curGroup->getActiveGroupIndex() = activeGroupIndex;
@@ -1682,7 +1682,7 @@ void GroupMan::removeActiveGroup(uint16 activeGroupIndex) {
 		return;
 
 	ActiveGroup *activeGroup = &_activeGroups[activeGroupIndex];
-	Group *group = &((Group *)_vm->_dungeonMan->_thingData[k4_GroupThingType])[activeGroup->_groupThingIndex];
+	Group *group = &((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[activeGroup->_groupThingIndex];
 	_currActiveGroupCount--;
 	group->_cells = activeGroup->_cells;
 	group->setDir(normalizeModulo4(activeGroup->_directions));
@@ -1708,7 +1708,7 @@ void GroupMan::addAllActiveGroups() {
 			if (getFlag(*curSquare++, k0x0010_ThingListPresent)) {
 				Thing curThing = *squareCurThing++;
 				do {
-					if (curThing.getType() == k4_GroupThingType) {
+					if (curThing.getType() == kDMThingTypeGroup) {
 						groupDeleteEvents(mapX, mapY);
 						addActiveGroup(curThing, mapX, mapY);
 						startWandering(mapX, mapY);
@@ -1722,7 +1722,7 @@ void GroupMan::addAllActiveGroups() {
 }
 
 Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
-	Thing groupThing = _vm->_dungeonMan->getUnusedThing(k4_GroupThingType);
+	Thing groupThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeGroup);
 	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex))
 		|| (groupThing == Thing::_none)) {
 		return Thing::_none;
@@ -1877,12 +1877,12 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	if ((squareType == k0_WallElemType) || (squareType == k3_StairsElemType))
 		return;
 
-	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(k15_ExplosionThingType);
+	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeExplosion);
 	if (unusedThing == Thing::_none)
 		return;
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
-	(((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
+	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
 	TimelineEvent newEvent;
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
@@ -1935,7 +1935,7 @@ bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 
 	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (thing != Thing::_endOfList) {
-		if ((thing.getType() == k15_ExplosionThingType) && (((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
+		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
 			return true;
 
 		thing = _vm->_dungeonMan->getNextThing(thing);

@@ -250,10 +250,10 @@ void InventoryMan::drawPanel() {
 
 	_panelContent = k0_PanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
-	case k9_ContainerThingType:
+	case kDMThingTypeContainer:
 		_panelContent = k4_PanelContentChest;
 		break;
-	case k7_ScrollThingType:
+	case kDMThingTypeScroll:
 		_panelContent = k2_PanelContentScroll;
 		break;
 	default:
@@ -488,9 +488,9 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
-	if (thingType == k7_ScrollThingType)
+	if (thingType == kDMThingTypeScroll)
 		drawPanelScroll((Scroll *)rawThingPtr);
-	else if (thingType == k9_ContainerThingType)
+	else if (thingType == kDMThingTypeContainer)
 		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
@@ -513,7 +513,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			}
 
 			descString = str;
-		} else if ((thingType == k8_PotionThingType)
+		} else if ((thingType == kDMThingTypePotion)
 				   && (iconIndex != kDMIconIndicePotionWaterFlask)
 				   && (champMan.getSkillLevel((ChampionIndex)_vm->ordinalToIndex(_inventoryChampionOrdinal), kDMSkillPriest) > 1)) {
 			str = ('_' + ((Potion *)rawThingPtr)->getPower() / 40);
@@ -533,7 +533,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		uint16 potentialAttribMask = 0;
 		uint16 actualAttribMask = 0;
 		switch (thingType) {
-		case k5_WeaponThingType: {
+		case kDMThingTypeWeapon: {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0002_DescriptionMaskPoisoned | k0x0004_DescriptionMaskBroken;
 			Weapon *weapon = (Weapon *)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
@@ -556,19 +556,19 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			}
 			break;
 		}
-		case k6_ArmourThingType: {
+		case kDMThingTypeArmour: {
 			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0004_DescriptionMaskBroken;
 			Armour *armour = (Armour *)rawThingPtr;
 			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
 			break;
 		}
-		case k8_PotionThingType: {
+		case kDMThingTypePotion: {
 			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
 			actualAttribMask = _vm->_dungeonMan->_objectInfos[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
-		case k10_JunkThingType: {
+		case kDMThingTypeJunk: {
 			if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
 				potentialAttribMask = 0;
 				const char *descStringEN[4] = {"(EMPTY)", "(ALMOST EMPTY)", "(ALMOST FULL)", "(FULL)"};
@@ -915,7 +915,7 @@ void InventoryMan::clickOnMouth() {
 		curChampion->_water = MIN(curChampion->_water + 800, 2048);
 		junkData->setChargeCount(junkData->getChargeCount() - 1);
 		removeObjectFromLeaderHand = false;
-	} else if (handThingType == k8_PotionThingType)
+	} else if (handThingType == kDMThingTypePotion)
 		removeObjectFromLeaderHand = false;
 	else {
 		junkData->setNextThing(Thing::_none);
@@ -925,7 +925,7 @@ void InventoryMan::clickOnMouth() {
 	if (removeObjectFromLeaderHand)
 		_vm->_championMan->getObjectRemovedFromLeaderHand();
 
-	if (handThingType == k8_PotionThingType) {
+	if (handThingType == kDMThingTypePotion) {
 		uint16 potionPower = ((Potion *)junkData)->getPower();
 		uint16 counter = ((511 - potionPower) / (32 + (potionPower + 1) / 8)) >> 1;
 		uint16 adjustedPotionPower = (potionPower / 25) + 8; /* Value between 8 and 18 */

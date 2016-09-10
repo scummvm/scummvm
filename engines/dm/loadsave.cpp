@@ -42,9 +42,9 @@
 
 namespace DM {
 
-LoadgameResponse DMEngine::loadgame(int16 slot) {
+LoadgameResult DMEngine::loadgame(int16 slot) {
 	if (slot == -1 && _newGameFl == k0_modeLoadSavedGame)
-		return kM1_LoadgameFailure;
+		return kDMLoadgameFailure;
 
 	bool fadePalette = true;
 	Common::String fileName;
@@ -156,7 +156,7 @@ LoadgameResponse DMEngine::loadgame(int16 slot) {
 	}
 	_championMan->_partyDead = false;
 
-	return k1_LoadgameSuccess;
+	return kDMLoadgameSuccess;
 }
 
 
@@ -184,7 +184,7 @@ void DMEngine::saveGame() {
 		kLoad = 4
 	};
 
-	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->getChoice(4, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+	SaveAndPlayChoice saveAndPlayChoice = (SaveAndPlayChoice)_dialog->getChoice(4, kDMDialogCommandSetViewport, 0, kDMDialogChoiceNone);
 
 	if (saveAndPlayChoice == kLoad) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
@@ -227,7 +227,7 @@ void DMEngine::saveGame() {
 
 			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
 				_dialog->dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
-				_dialog->getChoice(1, k0_DIALOG_SET_VIEWPORT, 0, k0_DIALOG_CHOICE_NONE);
+				_dialog->getChoice(1, kDMDialogCommandSetViewport, 0, kDMDialogChoiceNone);
 			}
 
 			if (!_championMan->_leaderEmptyHanded) {

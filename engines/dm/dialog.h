@@ -32,17 +32,19 @@
 
 namespace DM {
 
-#define k0_DIALOG_SET_VIEWPORT 0
-#define k1_DIALOG_SET_SCREEN   1
-#define k2_DIALOG_SET_UNKNOWN  2
-#define k1_ONE_CHOICE          1
-#define k2_TWO_CHOICES         2
-#define k4_FOUR_CHOICES        4
-#define k0_DIALOG_CHOICE_NONE  0
-#define k1_DIALOG_CHOICE_1     1
-#define k2_DIALOG_CHOICE_2     2
-#define k3_DIALOG_CHOICE_3     3
-#define k4_DIALOG_CHOICE_4     4
+enum DialogCommand {
+	kDMDialogCommandSetViewport = 0,
+	kDMDialogCommandSetScreen = 1,
+	kDMDialogCommandSetUnknown = 2
+};
+
+enum DialogChoice {
+	kDMDialogChoiceNone = 0,
+	kDMDialogChoice1 = 1,
+	kDMDialogChoice2 = 2,
+	kDMDialogChoice3 = 3,
+	kDMDialogChoice4 = 4
+};
 
 class DialogMan {
 	DMEngine *_vm;

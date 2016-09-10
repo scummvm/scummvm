@@ -517,7 +517,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 	Thing nextThing = curThing;
 	int16 thingsToMoveCount = 0;
 	while (curThing != Thing::_endOfList) {
-		if (curThing.getType() > k4_GroupThingType)
+		if (curThing.getType() > kDMThingTypeGroup)
 			thingsToMoveCount++;
 
 		curThing = _vm->_dungeonMan->getNextThing(curThing);
@@ -527,10 +527,10 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		thingsToMoveCount--;
 		nextThing = _vm->_dungeonMan->getNextThing(curThing);
 		uint16 curThingType = curThing.getType();
-		if (curThingType > k4_GroupThingType)
+		if (curThingType > kDMThingTypeGroup)
 			_vm->_moveSens->getMoveResult(curThing, mapX, mapY, mapX, mapY);
 
-		if (curThingType == k14_ProjectileThingType) {
+		if (curThingType == kDMThingTypeProjectile) {
 			Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(curThing);
 			TimelineEvent *newEvent;
 			newEvent = &_events[projectile->_eventIndex];
@@ -539,7 +539,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			newEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
 			newEvent->_Bu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
-		} else if (curThingType == k15_ExplosionThingType) {
+		} else if (curThingType == kDMThingTypeExplosion) {
 			TimelineEvent *newEvent = _events;
 			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
 				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_Cu._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
@@ -576,13 +576,13 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	uint16 curCell = event->_Cu.A._cell;
 	while (curThing != Thing::_endOfList) {
 		int16 curThingType = curThing.getType();
-		if ((curThingType == k2_TextstringType) && (curThing.getCell() == event->_Cu.A._cell)) {
+		if ((curThingType == kDMstringTypeText) && (curThing.getCell() == event->_Cu.A._cell)) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
 			if (event->_Cu.A._effect == k2_SensorEffToggle)
 				textString->setVisible(!textString->isVisible());
 			else
 				textString->setVisible(event->_Cu.A._effect == k0_SensorEffSet);
-		} else if (curThingType == k3_SensorThingType) {
+		} else if (curThingType == kDMThingTypeSensor) {
 			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
@@ -656,7 +656,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
-			if ((firstProjectileAssociatedThing.getType() > k3_SensorThingType) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
 				break;
 			firstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(firstProjectileAssociatedThing);
 		}
@@ -668,7 +668,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 			while (secondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
 				uint16 projectiveThingCell = secondProjectileAssociatedThing.getCell();
-				if ((secondProjectileAssociatedThing.getType() > k3_SensorThingType) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
 					break;
 				secondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(secondProjectileAssociatedThing);
 			}
@@ -706,7 +706,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (curThing != Thing::_endOfList) {
 		int16 curThingType = curThing.getType();
-		if (curThingType == k2_TextstringType) {
+		if (curThingType == kDMstringTypeText) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
 			bool textCurrentlyVisible = textString->isVisible();
 			if (event->_Cu.A._effect == k2_SensorEffToggle)
@@ -718,7 +718,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, k1_TextTypeMessage);
 				_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
-		} else if (curThingType == k3_SensorThingType) {
+		} else if (curThingType == kDMThingTypeSensor) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			if (curSensor->getType() == k6_SensorFloorGroupGenerator) {
 				int16 creatureCount = curSensor->getAttrValue();
@@ -801,7 +801,7 @@ T0252001:
 void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_Bu._location._mapX, event->_Bu._location._mapY);
 	while (curThing != Thing::_none) {
-		if ((curThing.getType()) == k3_SensorThingType) {
+		if ((curThing.getType()) == kDMThingTypeSensor) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			if (curSensor->getType() == k0_SensorDisabled) {
 				curSensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
@@ -853,7 +853,7 @@ void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 
 }
 
 bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion *champ, uint16 sourceSlotIndex, int16 destSlotIndex) {
-	if (Thing(champ->_slots[sourceSlotIndex]).getType() == k5_WeaponThingType) {
+	if (Thing(champ->_slots[sourceSlotIndex]).getType() == kDMThingTypeWeapon) {
 		_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, sourceSlotIndex),
 			(ChampionSlot)destSlotIndex);
 		return true;
@@ -928,7 +928,7 @@ T0255002:
 	case 1: {
 		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (curThing != Thing::_endOfList) {
-			if ((curThing.getCell() == cell) && (curThing.getType() == k10_JunkThingType)) {
+			if ((curThing.getCell() == cell) && (curThing.getType() == kDMThingTypeJunk)) {
 				int16 iconIndex = _vm->_objectMan->getIconIndex(curThing);
 				if (iconIndex == kDMIconIndiceJunkChampionBones) {
 					Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(curThing);

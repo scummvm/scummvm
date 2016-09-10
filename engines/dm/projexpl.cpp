@@ -46,7 +46,7 @@ ProjExpl::ProjExpl(DMEngine *vm) : _vm(vm) {
 }
 
 void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell, Direction dir, byte kineticEnergy, byte attack, byte stepEnergy) {
-	Thing projectileThing = _vm->_dungeonMan->getUnusedThing(k14_ProjectileThingType);
+	Thing projectileThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeProjectile);
 	if (projectileThing == Thing::_none) /* BUG0_16 If the game cannot create a projectile thing because it has run out of such things (60 maximum) then the object being thrown/shot/launched is orphaned. If the game has run out of projectile things it will try to remove a projectile from elsewhere in the dungeon, except in an area of 11x11 squares centered around the party (to make sure the player cannot actually see the thing disappear on screen) */
 		return;
 
@@ -81,7 +81,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 	int16 projectileAssociatedThingType = projectileAssociatedThing.getType();
 	Potion *potion = nullptr;
 	Thing explosionThing = Thing::_none;
-	if (projectileAssociatedThingType == k8_PotionThingType) {
+	if (projectileAssociatedThingType == kDMThingTypePotion) {
 		Group *projectileAssociatedGroup = (Group *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 		PotionType potionType = ((Potion *)projectileAssociatedGroup)->getType();
 		if ((potionType == k3_PotionTypeVen) || (potionType == k19_PotionTypeFulBomb)) {
@@ -91,7 +91,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			potion = (Potion *)projectileAssociatedGroup;
 		}
 	}
-	bool createExplosionOnImpact = (projectileAssociatedThingType == k15_ExplosionThingType) && (projectileAssociatedThing != Thing::_explSlime) && (projectileAssociatedThing != Thing::_explPoisonBolt);
+	bool createExplosionOnImpact = (projectileAssociatedThingType == kDMThingTypeExplosion) && (projectileAssociatedThing != Thing::_explSlime) && (projectileAssociatedThing != Thing::_explPoisonBolt);
 	Thing *curGroupSlot = nullptr;
 	int16 projectileMapX;
 	int16 projectileMapY;
@@ -127,7 +127,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 
 		DoorInfo curDoorInfo = _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()];
 		if (getFlag(curDoorInfo._attributes, k0x0002_MaskDoorInfo_ProjectilesCanPassThrough)) {
-			if (projectileAssociatedThingType == k15_ExplosionThingType) {
+			if (projectileAssociatedThingType == kDMThingTypeExplosion) {
 				if (projectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16())
 					return false;
 			} else {
@@ -137,7 +137,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 
 				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
 				&& getFlag(associatedAllowedSlots, k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
-				&& (   (projectileAssociatedThingType != k10_JunkThingType)
+				&& (   (projectileAssociatedThingType != kDMThingTypeJunk)
 					|| (iconIndex < kDMIconIndiceJunkIronKey)
 					|| (iconIndex > kDMIconIndiceJunkMasterKey)
 					)) {
@@ -181,7 +181,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 
 			_creatureDamageOutcome = outcome;
 			if (!createExplosionOnImpact && (outcome == k0_outcomeKilledNoCreaturesInGroup)
-			&& (projectileAssociatedThingType == k5_WeaponThingType)
+			&& (projectileAssociatedThingType == kDMThingTypeWeapon)
 			&& getFlag(curCreatureInfo->_attributes, k0x0400_MaskCreatureInfo_keepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 				WeaponType weaponType = weapon->getType();
@@ -211,7 +211,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		createExplosion(projectileAssociatedThing, explosionAttack, mapXCombo, mapYCombo, (projectileAssociatedThing == Thing::_explPoisonCloud) ? k255_CreatureTypeSingleCenteredCreature : cell);
 	} else {
 		uint16 soundIndex;
-		if ((projectileAssociatedThing).getType() == k5_WeaponThingType)
+		if ((projectileAssociatedThing).getType() == kDMThingTypeWeapon)
 			soundIndex = k00_soundMETALLIC_THUD;
 		else if (projectileAssociatedThing == Thing::_explPoisonBolt)
 			soundIndex = k13_soundSPELL;
@@ -237,8 +237,8 @@ uint16 ProjExpl::getProjectileImpactAttack(Projectile *projectile, Thing thing) 
 	uint16 kineticEnergy = projectile->_kineticEnergy;
 	ThingType thingType = thing.getType();
 	uint16 attack;
-	if (thingType != k15_ExplosionThingType) {
-		if (thingType == k5_WeaponThingType) {
+	if (thingType != kDMThingTypeExplosion) {
+		if (thingType == kDMThingTypeWeapon) {
 			WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(thing);
 			attack = weaponInfo->_kineticEnergy;
 			_projectileAttackType = kDMAttackTypeBlunt;
@@ -273,11 +273,11 @@ uint16 ProjExpl::getProjectileImpactAttack(Projectile *projectile, Thing thing) 
 }
 
 void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo, uint16 mapYCombo, uint16 cell) {
-	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(k15_ExplosionThingType);
+	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeExplosion);
 	if (unusedThing == Thing::_none)
 		return;
 
-	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[(unusedThing).getIndex()];
+	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[(unusedThing).getIndex()];
 	int16 projectileTargetMapX;
 	int16 projectileTargetMapY;
 	uint16 projectileMapX = mapXCombo;
@@ -352,7 +352,7 @@ int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 map
 	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
 
 	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != Thing::_endOfList; ) {
-		if (((curThing).getType() == k14_ProjectileThingType) && ((curThing).getCell() == cell) &&
+		if (((curThing).getType() == kDMThingTypeProjectile) && ((curThing).getCell() == cell) &&
 			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
 			projectileDeleteEvent(curThing);
 			impactCount++;
@@ -374,7 +374,7 @@ void ProjExpl::projectileDeleteEvent(Thing thing) {
 void ProjExpl::projectileDelete(Thing projectileThing, Thing *groupSlot, int16 mapX, int16 mapY) {
 	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	Thing projectileSlotThing = projectile->_slot;
-	if (projectileSlotThing.getType() != k15_ExplosionThingType) {
+	if (projectileSlotThing.getType() != kDMThingTypeExplosion) {
 		if (groupSlot != NULL) {
 			Thing previousThing = *groupSlot;
 			if (previousThing == Thing::_endOfList) {
@@ -472,7 +472,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 void ProjExpl::processEvent25(TimelineEvent *event) {
 	uint16 mapX = event->_Bu._location._mapX;
 	uint16 mapY = event->_Bu._location._mapY;
-	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_Cu._slot)).getIndex()];
+	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[Thing((event->_Cu._slot)).getIndex()];
 	int16 curSquareType = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]).getType();
 	bool explosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
 	Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);

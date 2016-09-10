@@ -60,37 +60,89 @@ class DialogMan;
 class SoundMan;
 
 enum OriginalSaveFormat {
-	k_saveFormat_accept_any = -1,
-	k_saveFormat_endOfList = 0,
-	k_saveFormat_none = 0,
-	k_saveFormat_dm_atari_st = 1,
-	k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st = 2,
-	k_saveFormat_dm_apple_iigs = 3,
-	k_saveFormat_dm_amiga_36_pc_csb_amiga_pc98_x68000_fm_towns = 5,
-	k_saveFormat_total
+	kDMSaveFormatAcceptAny = -1,
+	kDMSaveFormatEndOfList = 0,
+	kDMSaveFormatNone = 0,
+	kDMSaveFormatAtari = 1,
+	kDMSaveFormatAmigaPC98FmTowns = 2,
+	kCSBSaveFormatAtari = 2,
+	kDMSaveFormatAppleIIgs = 3,
+	kDMSaveFormatAmiga36PC = 5,
+	kCSBSaveFormatAmigaPC98FmTowns = 5,
+	kDMSaveFormatTotal
 };
 
 enum OriginalSavePlatform {
-	k_savePlatform_accept_any = -1,
-	k_savePlatform_endOfList = 0,
-	k_savePlatform_none = 0,
-	k_savePlatform_atari_st = 1, // @ C1_PLATFORM_ATARI_ST   
-	k_savePlatform_apple_iigs = 2, // @ C2_PLATFORM_APPLE_IIGS 
-	k_savePlatform_amiga = 3, // @ C3_PLATFORM_AMIGA      
-	k_savePlatform_pc98 = 5, // @ C5_PLATFORM_PC98       
-	k_savePlatform_x68000 = 6, // @ C6_PLATFORM_X68000     
-	k_savePlatform_fm_towns_en = 7, // @ C7_PLATFORM_FM_TOWNS_EN
-	k_savePlatform_fm_towns_jp = 8, // @ C8_PLATFORM_FM_TOWNS_JP
-	k_savePlatform_pc = 9, // @ C9_PLATFORM_PC
-	k_savePlatform_total
+	kDMSavePlatformAcceptAny = -1,
+	kDMSavePlatformEndOfList = 0,
+	kDMSavePlatformNone = 0,
+	kDMSavePlatformAtariSt = 1, // @ C1_PLATFORM_ATARI_ST   
+	kDMSavePlatformAppleIIgs = 2, // @ C2_PLATFORM_APPLE_IIGS 
+	kDMSavePlatformAmiga = 3, // @ C3_PLATFORM_AMIGA      
+	kDMSavePlatformPC98 = 5, // @ C5_PLATFORM_PC98       
+	kDMSavePlatformX68000 = 6, // @ C6_PLATFORM_X68000     
+	kDMSavePlatformFmTownsEN = 7, // @ C7_PLATFORM_FM_TOWNS_EN
+	kDMSavePlatformFmTownsJP = 8, // @ C8_PLATFORM_FM_TOWNS_JP
+	kDMSavePlatformPC = 9, // @ C9_PLATFORM_PC
+	kDMSavePlatformTotal
 };
 
 enum SaveTarget {
-	k_saveTarget_accept_any = -1,
-	k_saveTarget_endOfList = 0,
-	k_saveTarget_none = 0,
-	k_saveTarget_DM21 = 1,
-	k_saveTarget_total
+	kDMSaveTargetAcceptAny = -1,
+	kDMSaveTargetEndOfList = 0,
+	kDMSaveTargetNone = 0,
+	kDMSaveTargetDM21 = 1,
+	kDMSaveTargetTotal
+};
+
+enum Direction {
+	kDMDirNorth = 0,
+	kDMDirEast = 1,
+	kDMDirSouth = 2,
+	kDMDirWest = 3
+};
+
+enum ThingType {
+	kDMThingTypeParty = -1,  // @ CM1_THING_TYPE_PARTY
+	kDMThingTypeDoor = 0, // @ C00_THING_TYPE_DOOR       
+	kDMThingTypeTeleporter = 1, // @ C01_THING_TYPE_TELEPORTER 
+	kDMstringTypeText = 2, // @ C02_THING_TYPE_TEXTSTRING 
+	kDMThingTypeSensor = 3,  // @ C03_THING_TYPE_SENSOR     
+	kDMThingTypeGroup = 4, // @ C04_THING_TYPE_GROUP 
+	kDMThingTypeWeapon = 5, // @ C05_THING_TYPE_WEAPON
+	kDMThingTypeArmour = 6, // @ C06_THING_TYPE_ARMOUR
+	kDMThingTypeScroll = 7,  // @ C07_THING_TYPE_SCROLL     
+	kDMThingTypePotion = 8,  // @ C08_THING_TYPE_POTION     
+	kDMThingTypeContainer = 9,  // @ C09_THING_TYPE_CONTAINER  
+	kDMThingTypeJunk = 10,  // @ C10_THING_TYPE_JUNK      
+	kDMThingTypeProjectile = 14,  // @ C14_THING_TYPE_PROJECTILE
+	kDMThingTypeExplosion = 15,  // @ C15_THING_TYPE_EXPLOSION 
+	kDMThingTypeTotal = 16 // +1 than the last (explosionThingType)
+}; // @ C[00..15]_THING_TYPE_...
+
+enum Cell {
+	kDMCellAny = -1, // @ CM1_CELL_ANY      
+	kDMCellNorthWest = 0, // @ C00_CELL_NORTHWEST 
+	kDMCellNorthEast = 1, // @ C01_CELL_NORTHEAST 
+	kDMCellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
+	kDMCellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
+};
+
+enum GameMode {
+	k0_modeLoadSavedGame = 0, // @ C000_MODE_LOAD_SAVED_GAME        
+	k1_modeLoadDungeon = 1, // @ C001_MODE_LOAD_DUNGEON           
+	k99_modeWaitingOnEntrance = 99, // @ C099_MODE_WAITING_ON_ENTRANCE   
+	k202_modeEntranceDrawCredits = 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
+};
+
+enum LoadgameResult {
+	kDMLoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
+	kDMLoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
+};
+
+enum MapIndice {
+	kDMMapIndexNone = -1, // @ CM1_MAP_INDEX_NONE       
+	kDMMapIndexEntrance = 255 // @ C255_MAP_INDEX_ENTRANCE 
 };
 
 struct DMADGameDescription {
@@ -100,38 +152,12 @@ struct DMADGameDescription {
 	OriginalSaveFormat _origSaveFormatToWrite;
 	OriginalSavePlatform _origPlatformToWrite;
 
-	SaveTarget _saveTargetToAccept[k_saveTarget_total + 1];
-	OriginalSaveFormat _saveFormatToAccept[k_saveFormat_total + 1];
-	OriginalSavePlatform _origPlatformToAccept[k_savePlatform_total + 1];
-};
-
-enum Direction {
-	kDirNorth = 0,
-	kDirEast = 1,
-	kDirSouth = 2,
-	kDirWest = 3
+	SaveTarget _saveTargetToAccept[kDMSaveTargetTotal + 1];
+	OriginalSaveFormat _saveFormatToAccept[kDMSaveFormatTotal + 1];
+	OriginalSavePlatform _origPlatformToAccept[kDMSavePlatformTotal + 1];
 };
 
 const char *debugGetDirectionName(Direction dir);
-
-enum ThingType {
-	kM1_PartyThingType = -1,  // @ CM1_THING_TYPE_PARTY
-	k0_DoorThingType = 0, // @ C00_THING_TYPE_DOOR       
-	k1_TeleporterThingType = 1, // @ C01_THING_TYPE_TELEPORTER 
-	k2_TextstringType = 2, // @ C02_THING_TYPE_TEXTSTRING 
-	k3_SensorThingType = 3,  // @ C03_THING_TYPE_SENSOR     
-	k4_GroupThingType = 4, // @ C04_THING_TYPE_GROUP 
-	k5_WeaponThingType = 5, // @ C05_THING_TYPE_WEAPON
-	k6_ArmourThingType = 6, // @ C06_THING_TYPE_ARMOUR
-	k7_ScrollThingType = 7,  // @ C07_THING_TYPE_SCROLL     
-	k8_PotionThingType = 8,  // @ C08_THING_TYPE_POTION     
-	k9_ContainerThingType = 9,  // @ C09_THING_TYPE_CONTAINER  
-	k10_JunkThingType = 10,  // @ C10_THING_TYPE_JUNK      
-	k14_ProjectileThingType = 14,  // @ C14_THING_TYPE_PROJECTILE
-	k15_ExplosionThingType = 15,  // @ C15_THING_TYPE_EXPLOSION 
-	k16_ThingTypeTotal = 16 // +1 than the last (explosionThingType)
-}; // @ C[00..15]_THING_TYPE_...
-
 
 class Thing {
 public:
@@ -194,17 +220,6 @@ uint16 getMap(int32 map_time); // @ M29_MAP
 Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
 int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
 
-enum Cell {
-	kM1_CellAny = -1, // @ CM1_CELL_ANY      
-	k0_CellNorthWest = 0, // @ C00_CELL_NORTHWEST 
-	k1_CellNorthEast = 1, // @ C01_CELL_NORTHEAST 
-	k2_CellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
-	k3_CellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
-};
-
-#define kM1_mapIndexNone -1 // @ CM1_MAP_INDEX_NONE       
-#define k255_mapIndexEntrance 255 // @ C255_MAP_INDEX_ENTRANCE 
-
 //TODO: Directly use CLIP
 template<typename T>
 inline T getBoundedValue(T min, T val, T max) {
@@ -212,16 +227,6 @@ inline T getBoundedValue(T min, T val, T max) {
 } // @ F0026_MAIN_GetBoundedValue
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
-
-#define k0_modeLoadSavedGame 0 // @ C000_MODE_LOAD_SAVED_GAME        
-#define k1_modeLoadDungeon 1 // @ C001_MODE_LOAD_DUNGEON           
-#define k99_modeWaitingOnEntrance 99 // @ C099_MODE_WAITING_ON_ENTRANCE   
-#define k202_modeEntranceDrawCredits 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
-
-enum LoadgameResponse {
-	kM1_LoadgameFailure = -1, // @ CM1_LOAD_GAME_FAILURE
-	k1_LoadgameSuccess = 1// @ C01_LOAD_GAME_SUCCESS
-};
 
 struct SaveGameHeader {
 	byte _version;
@@ -256,7 +261,7 @@ public:
 	int16 indexToOrdinal(int16 val); // @ M00_INDEX_TO_ORDINAL
 	virtual Common::Error run(); // @ main
 	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
-	LoadgameResponse loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
+	LoadgameResult loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
 	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 	void endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 

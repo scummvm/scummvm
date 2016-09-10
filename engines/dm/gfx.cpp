@@ -1057,7 +1057,7 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, uint16 doorState, int16* doorNa
 		return;
 
 	DoorFrames *doorFramesTemp = doorFrames;
-	Door *door = (Door *)(_vm->_dungeonMan->_thingData[k0_DoorThingType]) + doorThingIndex;
+	Door *door = (Door *)(_vm->_dungeonMan->_thingData[kDMThingTypeDoor]) + doorThingIndex;
 	uint16 doorType = door->getType();
 	memmove(_tmpBitmap, getNativeBitmapOrGraphic(doorNativeBitmapIndices[doorType]), byteCount * 2);
 	drawDoorOrnament(door->getOrnOrdinal(), viewDoorOrnIndex);
@@ -1328,7 +1328,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k2_ViewSquare_D3R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3L, 32 * 44);
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3R);
-		if (((Door *)_vm->_dungeonMan->_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
+		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k0_viewDoorButton_D3R);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect],
@@ -1406,7 +1406,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
 		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, 32 * 44);
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3C);
-		if (((Door *)_vm->_dungeonMan->_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
+		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k1_ViewDoorOrnament_D2LCR);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
@@ -1656,7 +1656,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD2C, doorFrameLeftD2C);
 		memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, 48 * 65);
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD2C);
-		if (((Door *)_vm->_dungeonMan->_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
+		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k2_viewDoorButton_D2C);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
@@ -1910,7 +1910,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1C);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD1C, _doorFrameLeftD1C);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameRightD1C, _doorFrameRightD1C);
-		if (((Door *)_vm->_dungeonMan->_thingData[k0_DoorThingType])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
+		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[k3_DoorThingIndexAspect]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
@@ -2146,8 +2146,8 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_bitmapWallSetWallD0R = _bitmapWallD0RNative;
 	}
 
-	drawViewport((_vm->_dungeonMan->_partyMapIndex != k255_mapIndexEntrance) ? 1 : 0);
-	if (_vm->_dungeonMan->_partyMapIndex != k255_mapIndexEntrance)
+	drawViewport((_vm->_dungeonMan->_partyMapIndex != kDMMapIndexEntrance) ? 1 : 0);
+	if (_vm->_dungeonMan->_partyMapIndex != kDMMapIndexEntrance)
 		drawFloorAndCeiling();
 }
 
@@ -3090,17 +3090,17 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 		objectShiftIndex += (cellYellowBear & 0x0001) << 3;
 		drawProjectileAsObject = false;
 		do {
-			if ((AL_4_thingType = thingParam.getType()) == k4_GroupThingType) {
+			if ((AL_4_thingType = thingParam.getType()) == kDMThingTypeGroup) {
 				groupThing = thingParam;
 				continue;
 			}
 
-			if (AL_4_thingType == k14_ProjectileThingType) {
+			if (AL_4_thingType == kDMThingTypeProjectile) {
 				squareHasProjectile = true;
 				continue;
 			}
 
-			if (AL_4_thingType == k15_ExplosionThingType) {
+			if (AL_4_thingType == kDMThingTypeExplosion) {
 				squareHasExplosion = true;
 				continue;
 			}
@@ -3478,7 +3478,7 @@ T0115129_DrawProjectiles:
 
 		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
 		do {
-			if ((thingParam.getType() == k14_ProjectileThingType) && (thingParam.getCell() == cellYellowBear)) {
+			if ((thingParam.getType() == kDMThingTypeProjectile) && (thingParam.getCell() == cellYellowBear)) {
 				Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(thingParam);
 				if ((AL_4_projectileAspect = _vm->_dungeonMan->getProjectileAspect(projectile->_slot)) < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
 					objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
@@ -3606,7 +3606,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 	AL_10_explosionScaleIndex = AL_1_viewSquareExplosionIndex / 3;
 	thingParam = firstThingToDraw; /* Restart processing list of things from the beginning. The next loop draws only explosion things among the list */
 	do {
-		if (thingParam.getType() == k15_ExplosionThingType) {
+		if (thingParam.getType() == kDMThingTypeExplosion) {
 			AL_2_cellPurpleMan = thingParam.getCell();
 			Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(thingParam);
 			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1);

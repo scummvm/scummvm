@@ -163,19 +163,19 @@ bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *
 	int16 rightVolumeColumnIndex = 0;
 
 	switch (_vm->_dungeonMan->_partyDir) {
-	case kDirNorth:
+	case kDMDirNorth:
 		rightVolumeColumnIndex = mapX - _vm->_dungeonMan->_partyMapX;
 		lineIndex = mapY - _vm->_dungeonMan->_partyMapY;
 		break;
-	case kDirEast:
+	case kDMDirEast:
 		rightVolumeColumnIndex = mapY - _vm->_dungeonMan->_partyMapY;
 		lineIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
 		break;
-	case kDirSouth:
+	case kDMDirSouth:
 		rightVolumeColumnIndex = -(mapX - _vm->_dungeonMan->_partyMapX);
 		lineIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
 		break;
-	case kDirWest:
+	case kDMDirWest:
 		rightVolumeColumnIndex = -(mapY - _vm->_dungeonMan->_partyMapY);
 		lineIndex = mapX - _vm->_dungeonMan->_partyMapX;
 		break;

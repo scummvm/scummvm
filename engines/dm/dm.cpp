@@ -167,7 +167,7 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst
 	_projectileDisableMovementTicks = 0;
 	_lastProjectileDisabledMovementDirection = 0;
 	_gameWon = false;
-	_newPartyMapIndex = kM1_mapIndexNone;
+	_newPartyMapIndex = kDMMapIndexNone;
 	_setMousePointerToObjectInMainLoop = false;
 	_disabledMovementTicks = 0;
 	_gameTime = 0;
@@ -219,7 +219,7 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error DMEngine::loadGameState(int slot) {
-	if (loadgame(slot) != kM1_LoadgameFailure) {
+	if (loadgame(slot) != kDMLoadgameFailure) {
 		_displayMan->fillScreen(k0_ColorBlack);
 		_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 		_newGameFl = k0_modeLoadSavedGame;
@@ -282,7 +282,7 @@ void DMEngine::initializeGame() {
 				delete dialog;
 			}
 		}
-	} while (loadgame(saveSlot) != k1_LoadgameSuccess);
+	} while (loadgame(saveSlot) != kDMLoadgameSuccess);
 
 	_displayMan->loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 
@@ -422,15 +422,15 @@ void DMEngine::gameloop() {
 		for (;;) {
 
 
-			if (_newPartyMapIndex != kM1_mapIndexNone) {
+			if (_newPartyMapIndex != kDMMapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
 				_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
-				_newPartyMapIndex = kM1_mapIndexNone;
+				_newPartyMapIndex = kDMMapIndexNone;
 				_eventMan->discardAllInput();
 			}
 			_timeline->processTimeline();
 
-			if (_newPartyMapIndex == kM1_mapIndexNone)
+			if (_newPartyMapIndex == kDMMapIndexNone)
 				break;
 		}
 
@@ -722,7 +722,7 @@ T0444017:
 				_displayMan->fillScreen(k0_ColorBlack);
 				_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 				_newGameFl = k0_modeLoadSavedGame;
-				if (loadgame(1) != kM1_LoadgameFailure) {
+				if (loadgame(1) != kDMLoadgameFailure) {
 					startGame();
 					_restartGameRequest = false;
 					_eventMan->hideMouse();
@@ -763,7 +763,7 @@ void DMEngine::drawEntrance() {
 
 	byte *microDungeonCurrentMapData[32];
 
-	_dungeonMan->_partyMapIndex = k255_mapIndexEntrance;
+	_dungeonMan->_partyMapIndex = kDMMapIndexEntrance;
 	_displayMan->_drawFloorAndCeilingRequested = true;
 	_dungeonMan->_currMapWidth = 5;
 	_dungeonMan->_currMapHeight = 5;
@@ -784,7 +784,7 @@ void DMEngine::drawEntrance() {
 
 	// note, a global variable is used here in the original
 	_displayMan->loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_bitmapScreen);
-	_displayMan->drawDungeon(kDirSouth, 2, 0);
+	_displayMan->drawDungeon(kDMDirSouth, 2, 0);
 
 	if (!_savedScreenForOpenEntranceDoors)
 		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];
@@ -941,7 +941,7 @@ void DMEngine::fuseSequence() {
 	for (;;) {
 		Thing curThing = _dungeonMan->getSquareFirstObject(fluxCageMapX, fluxcageMapY);
 		while (curThing != Thing::_endOfList) {
-			if (curThing.getType() == k15_ExplosionThingType) {
+			if (curThing.getType() == kDMThingTypeExplosion) {
 				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
 				if (curExplosion->getType() == k50_ExplosionType_Fluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
@@ -999,7 +999,7 @@ void DMEngine::fuseSequence() {
 	int16 textStringThingCount = 0;
 	Thing textStringThings[8];
 	while (curThing != Thing::_endOfList) {
-		if (curThing.getType() == k2_TextstringType)
+		if (curThing.getType() == kDMstringTypeText)
 			textStringThings[textStringThingCount++] = curThing;
 
 		curThing = _dungeonMan->getNextThing(curThing);

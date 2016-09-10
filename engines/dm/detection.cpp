@@ -51,10 +51,10 @@ static const DMADGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE)
 		},
-	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_amiga,
-		{ k_saveTarget_DM21, k_saveTarget_endOfList },
-		{ k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
-		{ k_savePlatform_accept_any}
+	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAmiga,
+		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList },
+		{ kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+		{ kDMSavePlatformAcceptAny}
 	},
 	{
 		{"dm", "Atari ???v English",
@@ -65,15 +65,15 @@ static const DMADGameDescription gameDescriptions[] = {
 			},
 	    	Common::EN_ANY, Common::kPlatformAtariST, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
 	    },
-	    k_saveTarget_DM21, k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_savePlatform_atari_st,
-	    { k_saveTarget_DM21, k_saveTarget_endOfList},
-	    { k_saveFormat_dm_amiga__2_x_pc98_x68000_fm_towns_csb_atari_st, k_saveFormat_endOfList},
-	    { k_savePlatform_accept_any }
+	    kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
+	    { kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+	    { kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+	    { kDMSavePlatformAcceptAny }
 	},
 
 	{	
-		AD_TABLE_END_MARKER, k_saveTarget_none, k_saveFormat_none, k_savePlatform_none,
-		{k_saveTarget_none}, {k_saveFormat_none}, {k_savePlatform_none}
+		AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone,
+		{kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}
 	}
 };
 
