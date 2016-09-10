@@ -1949,12 +1949,12 @@ DynamicPhase *Movement::getDynamicPhaseByIndex(int idx) {
 
 void Movement::loadPixelData() {
 	Movement *mov = this;
-	for (Movement *i = _currMovement; i; i = i->_currMovement)
-		mov = i;
+	while (mov->_currMovement)
+		mov = mov->_currMovement;
 
-	for (uint i = 0; i < _dynamicPhases.size(); i++) {
-		if ((Statics *)_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
-			_dynamicPhases[i]->getPixelData();
+	for (uint i = 0; i < mov->_dynamicPhases.size(); i++) {
+		if ((Statics *)mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
+			mov->_dynamicPhases[i]->getPixelData();
 	}
 
 	if (!(mov->_staticsObj1->_staticsId & 0x4000))
