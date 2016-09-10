@@ -57,7 +57,7 @@
  */
 const char *gScummVMVersion = SCUMMVM_VERSION;
 #ifdef __amigaos4__
-static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION " (" __DATE__ ", " __TIME__ ")";
+static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION " (" AMIGA_DATE ")";
 #endif
 #ifdef __PLAYSTATION2__
 const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */

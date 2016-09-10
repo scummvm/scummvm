@@ -165,6 +165,11 @@ VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
+#ifdef AMIGAOS
+# Amiga needs date in specific format for the version cookie
+AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+#endif
 
 ######################################################################
 # Get git's working copy information
@@ -182,13 +187,10 @@ else
 GITROOT := git://github.com/scummvm/scummvm.git
 endif
 
-# Amiga needs date in another format
-AMIGA_DATE = $(shell date '+%d.%m.%Y')
-
 # Define the Subversion revision if available, either autodetected or
 # specified by the user, but only for base/version.cpp.
 ifneq ($(origin VER_REV), undefined)
-base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_REVISION=\"$(VER_REV)\" -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DSCUMMVM_REVISION=\"$(VER_REV)\"
 endif
 
 ######################################################################
