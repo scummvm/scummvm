@@ -85,7 +85,7 @@ prepend_var() {
 	if eval test -z \"\$${VAR}\" ; then
 		eval ${VAR}='$@'
 	else
-		eval ${VAR}='$@' \"\$${VAR} \"
+		eval ${VAR}='$@'\" \$${VAR}\"
 	fi
 }
 
