@@ -83,13 +83,6 @@ static const IVIHuffDesc ivi_blk_huff_desc[8] = {
  */
 #define IVI_NUM_TILES(stride, tile_size) (((stride) + (tile_size) - 1) / (tile_size))
 
-
-/**
- * calculate number of macroblocks in a tile
- */
-#define IVI_MBs_PER_TILE(tile_width, tile_height, mb_size) \
-    ((((tile_width) + (mb_size) - 1) / (mb_size)) * (((tile_height) + (mb_size) - 1) / (mb_size)))
-
 /*------------------------------------------------------------------------*/
 
 int IVIHuffDesc::ivi_create_huff_from_desc(VLC *vlc, int flag) const {

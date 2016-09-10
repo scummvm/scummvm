@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	codecs/codec.o \
 	codecs/indeo3.o \
 	codecs/indeo4.o \
+	codecs/indeo5.o \
 	codecs/mjpeg.o \
 	codecs/msrle.o \
 	codecs/msrle4.o \

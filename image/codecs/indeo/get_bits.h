@@ -22,7 +22,7 @@
 
 #include "common/scummsys.h"
 
-/* Intel Indeo 4 bitstream reader
+/* Indeo 4 & 5 bitstream reader
  *
  * Original copyright note:
  * Copyright (c) 2004 Michael Niedermayer

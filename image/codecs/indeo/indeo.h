@@ -81,6 +81,12 @@ typedef void(*ivi_mc_avg_func) (int16 *buf, const int16 *ref_buf1,
 #define IVI_TOSIGNED(val) (-(((val) >> 1) ^ -((val) & 1)))
 
 /**
+ * calculate number of macroblocks in a tile
+ */
+#define IVI_MBs_PER_TILE(tile_width, tile_height, mb_size) \
+    ((((tile_width) + (mb_size) - 1) / (mb_size)) * (((tile_height) + (mb_size) - 1) / (mb_size)))
+
+/**
  *  huffman codebook descriptor
  */
 struct IVIHuffDesc {
