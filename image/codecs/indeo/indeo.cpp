@@ -425,9 +425,15 @@ int AVFrame::ff_set_dimensions(uint16 width, uint16 height) {
 
 int AVFrame::ff_get_buffer(int flags) {
 	av_frame_free();
+
+	// Luminance channel
 	_data[0] = (uint8 *)av_mallocz(_width * _height);
-	_data[1] = (uint8 *)av_mallocz(_width * _height);
-	_data[2] = (uint8 *)av_mallocz(_width * _height);
+	
+	// UV Chroma Channels
+	_data[1] = (uint8 *)av_malloc(_width * _height);
+	_data[2] = (uint8 *)av_malloc(_width * _height);
+	Common::fill(_data[1], _data[1] + _width * _height, 0x80);
+	Common::fill(_data[2], _data[2] + _width * _height, 0x80);
 
 	return 0;
 }
