@@ -1480,8 +1480,13 @@ bool Statics::load(MfcArchive &file) {
 void Statics::init() {
 	Picture::init();
 
-	if (_staticsId & 0x4000)
-		_bitmap->reverseImage();
+	if (_staticsId & 0x4000) {
+		Bitmap *reversed = _bitmap->reverseImage();
+		freePixelData();
+		// TODO: properly dispose old _bitmap
+		_bitmap = reversed;
+		// _data = ... // useless?
+	}
 }
 
 Common::Point *Statics::getSomeXY(Common::Point &p) {
