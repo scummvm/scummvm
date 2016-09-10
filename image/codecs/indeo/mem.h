@@ -38,6 +38,7 @@ namespace Indeo {
 #define FFALIGN(x, a) (((x) + (a)-1) & ~((a)-1))
 #define FFSWAP(type,a,b) do{type SWAP_tmp= b; b= a; a= SWAP_tmp;}while(0)
 #define FFSIGN(a) ((a) > 0 ? 1 : -1)
+#define MAX_INTEGER 0x7ffffff
 
 /**
  * Allocate a memory block with alignment suitable for all memory accesses

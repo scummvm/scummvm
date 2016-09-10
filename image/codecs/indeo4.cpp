@@ -317,7 +317,7 @@ int Indeo4Decoder::decode_band_hdr(IVIBandDesc *band) {
 
 		if (!_ctx.gb->getBits1() || _ctx.frame_type == IVI4_FRAMETYPE_INTRA) {
 			transform_id = _ctx.gb->getBits(5);
-			if (transform_id >= FF_ARRAY_ELEMS(_transforms) ||
+			if ((uint)transform_id >= FF_ARRAY_ELEMS(_transforms) ||
 				!_transforms[transform_id].inv_trans) {
 				warning("Transform %d", transform_id);
 				return -3;
@@ -372,7 +372,7 @@ int Indeo4Decoder::decode_band_hdr(IVIBandDesc *band) {
 				warning("Custom quant matrix encountered!");
 				return -1;
 			}
-			if (quant_mat >= FF_ARRAY_ELEMS(_quant_index_to_tab)) {
+			if ((uint)quant_mat >= FF_ARRAY_ELEMS(_quant_index_to_tab)) {
 				warning("Quantization matrix %d", quant_mat);
 				return -1;
 			}
@@ -523,8 +523,7 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				mb->q_delta = 0;
 				if (band->inherit_qdelta) {
 					if (ref_mb) mb->q_delta = ref_mb->q_delta;
-				}
-				else if (mb->cbp || (!band->plane && !band->band_num &&
+				} else if (mb->cbp || (!band->plane && !band->band_num &&
 					_ctx.in_q)) {
 					mb->q_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,
 						IVI_VLC_BITS, 1);
@@ -535,16 +534,16 @@ int Indeo4Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 					mb->mv_x = mb->mv_y = 0; // there is no motion vector in intra-macroblocks
 				} else {
 					if (band->inherit_mv) {
-						if (ref_mb)
+						if (ref_mb) {
 							// motion vector inheritance
 							if (mv_scale) {
 								mb->mv_x = ivi_scale_mv(ref_mb->mv_x, mv_scale);
 								mb->mv_y = ivi_scale_mv(ref_mb->mv_y, mv_scale);
-							}
-							else {
+							} else {
 								mb->mv_x = ref_mb->mv_x;
 								mb->mv_y = ref_mb->mv_y;
 							}
+						}
 					} else {
 						// decode motion vector deltas
 						mv_delta = _ctx.gb->getVLC2(_ctx.mb_vlc.tab->_table,

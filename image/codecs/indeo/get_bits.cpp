@@ -21,6 +21,7 @@
  */
 
 #include "image/codecs/indeo/get_bits.h"
+#include "image/codecs/indeo/mem.h"
 #include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/textconsole.h"
@@ -158,7 +159,7 @@ static uint zeroExtend(uint val, uint bits) {
 }
 
 GetBits::GetBits(const byte *buffer, size_t totalBits) {
-	assert(buffer && totalBits < (INT_MAX - 7));
+	assert(buffer && totalBits < (MAX_INTEGER - 7));
 
 	_buffer = buffer;
 	_sizeInBits = totalBits;

@@ -1304,7 +1304,7 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 		col_flags[pos & col_mask] |= !!val;
 	}
 
-	if (scan_pos < 0 || scan_pos >= num_coeffs && sym != rvmap->eob_sym)
+	if (scan_pos < 0 || (scan_pos >= num_coeffs && sym != rvmap->eob_sym))
 		return -1; // corrupt block data
 
 	// undoing DC coeff prediction for intra-blocks
@@ -1348,7 +1348,7 @@ int IndeoDecoderBase::ivi_dc_transform(IVIBandDesc *band, int *prev_dc,
 /*------------------------------------------------------------------------*/
 
 int av_image_check_size(unsigned int w, unsigned int h, int log_offset, void *log_ctx) {
-	if (((w + 128) * (uint64)(h + 128)) < (INT_MAX / 8))
+	if (((w + 128) * (uint64)(h + 128)) < (MAX_INTEGER / 8))
 		return 0;
 
 	error("Picture size %ux%u is invalid", w, h);

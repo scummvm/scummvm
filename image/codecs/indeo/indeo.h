@@ -113,7 +113,7 @@ struct IVIHuffDesc {
 	void ivi_huff_desc_copy(const IVIHuffDesc *src);
 };
 
-class IVI45DecContext;
+struct IVI45DecContext;
 
 /**
  *  macroblock/block huffman table descriptor
@@ -341,7 +341,7 @@ struct AVFrame {
 };
 
 struct IVI45DecContext {
-	friend class IVIHuffTab;
+	friend struct IVIHuffTab;
 private:
 	VLC_TYPE table_data[8192 * 16][2];
 	VLC ivi_mb_vlc_tabs[8];  ///< static macroblock Huffman tables

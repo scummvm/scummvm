@@ -85,13 +85,13 @@ void *av_mallocz(size_t size) {
 }
 
 void *av_malloc_array(size_t nmemb, size_t size) {
-    if (!size || nmemb >= INT_MAX / size)
+    if (!size || nmemb >= MAX_INTEGER / size)
         return nullptr;
     return malloc(nmemb * size);
 }
 
 void *av_mallocz_array(size_t nmemb, size_t size) {
-	if (!size || nmemb >= INT_MAX / size)
+	if (!size || nmemb >= MAX_INTEGER / size)
 		return NULL;
 
 	return av_mallocz(nmemb * size);
