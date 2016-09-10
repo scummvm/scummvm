@@ -1388,8 +1388,8 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 		newEvent._priority = removedJunk->getChargeCount();
 		newEvent._Bu._location._mapX = mapX;
 		newEvent._Bu._location._mapY = mapY;
-		newEvent._C.A._cell = currCell;
-		newEvent._C.A._effect = k2_SensorEffToggle;
+		newEvent._Cu.A._cell = currCell;
+		newEvent._Cu.A._effect = k2_SensorEffToggle;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
 	_vm->_stopWaitingForPlayerInput = true;

@@ -65,10 +65,10 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 
 	newEvent._priority = 0;
 	newEvent._Bu._slot = projectileThing.toUint16();
-	newEvent._C._projectile.setMapX(mapX);
-	newEvent._C._projectile.setMapY(mapY);
-	newEvent._C._projectile.setStepEnergy(stepEnergy);
-	newEvent._C._projectile.setDir(dir);
+	newEvent._Cu._projectile.setMapX(mapX);
+	newEvent._Cu._projectile.setMapY(mapY);
+	newEvent._Cu._projectile.setStepEnergy(stepEnergy);
+	newEvent._Cu._projectile.setDir(dir);
 	projectilePtr->_eventIndex = _vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 
@@ -314,7 +314,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	newEvent._type = k25_TMEventTypeExplosion;
 	newEvent._priority = 0;
-	newEvent._C._slot = unusedThing.toUint16();
+	newEvent._Cu._slot = unusedThing.toUint16();
 	newEvent._Bu._location._mapX = projectileMapX;
 	newEvent._Bu._location._mapY = projectileMapY;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
@@ -397,8 +397,8 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	Thing projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	Thing projectileThing  = projectileThingNewCell;
 	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
-	int16 destinationMapX = curEvent->_C._projectile.getMapX();
-	int16 destinationMapY = curEvent->_C._projectile.getMapY();
+	int16 destinationMapX = curEvent->_Cu._projectile.getMapX();
+	int16 destinationMapY = curEvent->_Cu._projectile.getMapY();
 
 	if (curEvent->_type == k48_TMEventTypeMoveProjectileIgnoreImpacts)
 		curEvent->_type = k49_TMEventTypeMoveProjectile;
@@ -410,7 +410,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		if ((_vm->_groupMan->groupGetThing(destinationMapX, destinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kM1_CreatureElemType, destinationMapX, destinationMapY, projectileCurCell, projectileThing))
 			return;
 
-		uint16 stepEnergy = curEvent->_C._projectile.getStepEnergy();
+		uint16 stepEnergy = curEvent->_Cu._projectile.getStepEnergy();
 		if (projectile->_kineticEnergy <= stepEnergy) {
 			_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell = projectileThing, Thing(0), destinationMapX, destinationMapY);
 			projectileDelete(projectileThingNewCell, NULL, destinationMapX, destinationMapY);
@@ -422,7 +422,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		else
 			projectile->_attack -= stepEnergy;
 	}
-	uint16 projectileDirection = curEvent->_C._projectile.getDir();
+	uint16 projectileDirection = curEvent->_Cu._projectile.getDir();
 	projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	uint16 projectileNewCell = projectileThingNewCell.getCell();
 	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (returnNextVal(projectileDirection) == projectileNewCell);
@@ -449,9 +449,9 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	projectileThingNewCell = thingWithNewCell(projectileThingNewCell, projectileNewCell &= 0x0003);
 	if (projectileMovesToOtherSquare) {
 		_vm->_moveSens->getMoveResult(projectileThingNewCell, sourceMapX, sourceMapY, destinationMapX, destinationMapY);
-		curEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
-		curEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
-		curEvent->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
+		curEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
+		curEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
+		curEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
 		projectileThingNewCell = thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
 		M31_setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
@@ -472,7 +472,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 void ProjExpl::processEvent25(TimelineEvent *event) {
 	uint16 mapX = event->_Bu._location._mapX;
 	uint16 mapY = event->_Bu._location._mapY;
-	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
+	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_Cu._slot)).getIndex()];
 	int16 curSquareType = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]).getType();
 	bool explosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
 	Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
@@ -555,7 +555,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		newEvent._mapTime++;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	} else {
-		_vm->_dungeonMan->unlinkThingFromList(Thing(event->_C._slot), Thing(0), mapX, mapY);
+		_vm->_dungeonMan->unlinkThingFromList(Thing(event->_Cu._slot), Thing(0), mapX, mapY);
 		explosion->setNextThing(Thing::_none);
 	}
 }

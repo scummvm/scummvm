@@ -203,14 +203,14 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 		TimelineEvent *curEvent = _events;
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
 			if ((curEvent->_type >= k5_TMEventTypeCorridor) && (curEvent->_type <= k10_TMEventTypeDoor)) {
-				if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY()) && ((curEvent->_type != k6_TMEventTypeWall) || (curEvent->_C.A._cell == event->_C.A._cell))) {
-					curEvent->_C.A._effect = event->_C.A._effect;
+				if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY()) && ((curEvent->_type != k6_TMEventTypeWall) || (curEvent->_Cu.A._cell == event->_Cu.A._cell))) {
+					curEvent->_Cu.A._effect = event->_Cu.A._effect;
 					return eventIndex;
 				}
 				continue;
 			} else if ((curEvent->_type == k1_TMEventTypeDoorAnimation) && (event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
-				if (event->_C.A._effect == k2_SensorEffToggle)
-					event->_C.A._effect = 1 - curEvent->_C.A._effect;
+				if (event->_Cu.A._effect == k2_SensorEffToggle)
+					event->_Cu.A._effect = 1 - curEvent->_Cu.A._effect;
 
 				deleteEvent(eventIndex);
 				break;
@@ -221,13 +221,13 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
 			if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
 				if (curEvent->_type == k10_TMEventTypeDoor) {
-					if (curEvent->_C.A._effect == k2_SensorEffToggle)
-						curEvent->_C.A._effect = 1 - event->_C.A._effect;
+					if (curEvent->_Cu.A._effect == k2_SensorEffToggle)
+						curEvent->_Cu.A._effect = 1 - event->_Cu.A._effect;
 
 					return eventIndex;
 				}
 				if (curEvent->_type == k1_TMEventTypeDoorAnimation) {
-					curEvent->_C.A._effect = event->_C.A._effect;
+					curEvent->_Cu.A._effect = event->_Cu.A._effect;
 					return eventIndex;
 				}
 			}
@@ -262,7 +262,7 @@ void Timeline::processTimeline() {
 		_vm->_dungeonMan->setCurrentMap(getMap(newEvent._mapTime));
 		uint16 curEventType = newEvent._type;
 		if ((curEventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (k41_TMEventTypeUpdateBehaviour_3 + 1)))
-			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._C._ticks);
+			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._Cu._ticks);
 		else {
 			switch (curEventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
@@ -304,12 +304,12 @@ void Timeline::processTimeline() {
 				procesEventEnableGroupGenerator(curEvent);
 				break;
 			case k20_TMEventTypePlaySound:
-				_vm->_sound->requestPlay(newEvent._C._soundIndex, newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(newEvent._Cu._soundIndex, newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._C._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
-					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._C._slot));
+					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
+					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
 					((Explosion *)curEvent)->setNextThing(Thing::_none);
 				}
 				break;
@@ -388,7 +388,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		return;
 
 	event->_mapTime++;
-	int16 sensorEffect = event->_C.A._effect;
+	int16 sensorEffect = event->_Cu.A._effect;
 	if (sensorEffect == k1_SensorEffClear) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		bool verticalDoorFl = curDoor->opensVertically();
@@ -447,7 +447,7 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 	uint16 mapX = event->_Bu._location._mapX;
 	uint16 mapY = event->_Bu._location._mapY;
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-	int16 effect = event->_C.A._effect;
+	int16 effect = event->_Cu.A._effect;
 	if (effect == k2_SensorEffToggle)
 		effect = getFlag(*curSquare, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
@@ -477,9 +477,9 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 	if (doorState == k5_doorState_DESTROYED)
 		return;
 
-	if (event->_C.A._effect == k2_SensorEffToggle)
-		event->_C.A._effect = (doorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
-	else if (event->_C.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == k2_SensorEffToggle)
+		event->_Cu.A._effect = (doorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
+	else if (event->_Cu.A._effect == k0_SensorEffSet) {
 		if ((doorState == k0_doorState_OPEN) || (doorState == k4_doorState_CLOSED))
 			return;
 	}
@@ -492,10 +492,10 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-	if (event->_C.A._effect == k2_SensorEffToggle)
-		event->_C.A._effect = getFlag(*square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	if (event->_Cu.A._effect == k2_SensorEffToggle)
+		event->_Cu.A._effect = getFlag(*square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
-	if (event->_C.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == k0_SensorEffSet) {
 		setFlag(*square, k0x0008_PitOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
@@ -534,18 +534,18 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(curThing);
 			TimelineEvent *newEvent;
 			newEvent = &_events[projectile->_eventIndex];
-			newEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
-			newEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
-			newEvent->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
+			newEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
+			newEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
+			newEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
 			newEvent->_Bu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 		} else if (curThingType == k15_ExplosionThingType) {
 			TimelineEvent *newEvent = _events;
 			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
-				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_C._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
+				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_Cu._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 					newEvent->_Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
 					newEvent->_Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
-					newEvent->_C._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+					newEvent->_Cu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 					M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 				}
 			}
@@ -559,10 +559,10 @@ void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-	if (event->_C.A._effect == k2_SensorEffToggle)
-		event->_C.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	if (event->_Cu.A._effect == k2_SensorEffToggle)
+		event->_Cu.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
 
-	if (event->_C.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == k0_SensorEffSet) {
 		setFlag(*curSquare, k0x0008_TeleporterOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
@@ -573,22 +573,22 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 	int16 mapX = event->_Bu._location._mapX;
 	int16 mapY = event->_Bu._location._mapY;
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
-	uint16 curCell = event->_C.A._cell;
+	uint16 curCell = event->_Cu.A._cell;
 	while (curThing != Thing::_endOfList) {
 		int16 curThingType = curThing.getType();
-		if ((curThingType == k2_TextstringType) && (curThing.getCell() == event->_C.A._cell)) {
+		if ((curThingType == k2_TextstringType) && (curThing.getCell() == event->_Cu.A._cell)) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
-			if (event->_C.A._effect == k2_SensorEffToggle)
+			if (event->_Cu.A._effect == k2_SensorEffToggle)
 				textString->setVisible(!textString->isVisible());
 			else
-				textString->setVisible(event->_C.A._effect == k0_SensorEffSet);
+				textString->setVisible(event->_Cu.A._effect == k0_SensorEffSet);
 		} else if (curThingType == k3_SensorThingType) {
 			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
 			if (curSensorType == k6_SensorWallCountdown) {
 				if (curSensorData > 0) {
-					if (event->_C.A._effect == k0_SensorEffSet) {
+					if (event->_Cu.A._effect == k0_SensorEffSet) {
 						if (curSensorData < 511)
 							curSensorData++;
 					} else
@@ -602,13 +602,13 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 						_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
 				}
 			} else if (curSensorType == k5_SensorWallAndOrGate) {
-				int16 bitMask = 1 << (event->_C.A._cell);
-				if (event->_C.A._effect == k2_SensorEffToggle) {
+				int16 bitMask = 1 << (event->_Cu.A._cell);
+				if (event->_Cu.A._effect == k2_SensorEffToggle) {
 					if (getFlag(curSensorData, bitMask))
 						clearFlag(curSensorData, bitMask);
 					else
 						setFlag(curSensorData, bitMask);
-				} else if (event->_C.A._effect)
+				} else if (event->_Cu.A._effect)
 					clearFlag(curSensorData, bitMask);
 				else
 					setFlag(curSensorData, bitMask);
@@ -619,7 +619,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 					_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, mapX, mapY, curCell);
 				else if (triggerSetEffect)
 					_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
-			} else if ((((curSensorType >= k7_SensorWallSingleProjLauncherNewObj) && (curSensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (curSensorType == k14_SensorWallSingleProjLauncherSquareObj) || (curSensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_C.A._cell)) {
+			} else if ((((curSensorType >= k7_SensorWallSingleProjLauncherNewObj) && (curSensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (curSensorType == k14_SensorWallSingleProjLauncherSquareObj) || (curSensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_Cu.A._cell)) {
 				triggerProjectileLauncher(curThingSensor, event);
 				if (curThingSensor->getAttrOnlyOnce())
 					curThingSensor->setTypeDisabled();
@@ -638,7 +638,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	int16 mapX = event->_Bu._location._mapX;
 	int16 mapY = event->_Bu._location._mapY;
-	uint16 cell = event->_C.A._cell;
+	uint16 cell = event->_Cu.A._cell;
 	uint16 projectileCell = returnOppositeDir((Direction)cell);
 	int16 sensorType = sensor->getType();
 	int16 sensorData = sensor->getData();
@@ -709,10 +709,10 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 		if (curThingType == k2_TextstringType) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
 			bool textCurrentlyVisible = textString->isVisible();
-			if (event->_C.A._effect == k2_SensorEffToggle)
+			if (event->_Cu.A._effect == k2_SensorEffToggle)
 				textString->setVisible(!textCurrentlyVisible);
 			else
-				textString->setVisible((event->_C.A._effect == k0_SensorEffSet));
+				textString->setVisible((event->_Cu.A._effect == k0_SensorEffSet));
 
 			if (!textCurrentlyVisible && textString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, k1_TextTypeMessage);
@@ -770,11 +770,11 @@ T0252001:
 		if (event->_type == k61_TMEventTypeMoveGroupAudible)
 			_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
 
-		_vm->_moveSens->getMoveResult(Thing(event->_C._slot), kM1_MapXNotOnASquare, 0, mapX, mapY);
+		_vm->_moveSens->getMoveResult(Thing(event->_Cu._slot), kM1_MapXNotOnASquare, 0, mapX, mapY);
 	} else {
 		if (!randomDirectionMoveRetried) {
 			randomDirectionMoveRetried = true;
-			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_C._slot));
+			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_Cu._slot));
 			if ((group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
@@ -913,16 +913,16 @@ void Timeline::refreshAllChampionStatusBoxes() {
 void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
 	int16 mapX = event->_Bu._location._mapX;
 	int16 mapY = event->_Bu._location._mapY;
-	uint16 cell = event->_C.A._cell;
+	uint16 cell = event->_Cu.A._cell;
 	uint16 championIndex = event->_priority;
-	uint16 rebirthStep = event->_C.A._effect;
+	uint16 rebirthStep = event->_Cu.A._effect;
 	switch (rebirthStep) { /* Rebirth is a 3 steps process (Step 2 -> Step 1 -> Step 0). Step is stored in the Effect value of the event */
 	case 2:
 		_vm->_projexpl->createExplosion(Thing::_explRebirthStep1, 0, mapX, mapY, cell);
 		event->_mapTime += 5;
 T0255002:
 		rebirthStep--;
-		event->_C.A._effect = rebirthStep;
+		event->_Cu.A._effect = rebirthStep;
 		addEventGetEventIndex(event);
 		break;
 	case 1: {
@@ -957,8 +957,8 @@ void Timeline::saveEventsPart(Common::OutSaveFile *file) {
 		file->writeByte(event->_priority);
 		file->writeByte(event->_Bu._location._mapX); // writing bytes of the union I think should preserve the union's identity
 		file->writeByte(event->_Bu._location._mapY);
-		file->writeUint16BE(event->_C.A._cell); // writing bytes of the union I think should preserve the union's identity
-		file->writeUint16BE(event->_C.A._effect);
+		file->writeUint16BE(event->_Cu.A._cell); // writing bytes of the union I think should preserve the union's identity
+		file->writeUint16BE(event->_Cu.A._effect);
 	}
 }
 
@@ -975,8 +975,8 @@ void Timeline::loadEventsPart(Common::InSaveFile *file) {
 		event->_priority = file->readByte();
 		event->_Bu._location._mapX = file->readByte();
 		event->_Bu._location._mapY = file->readByte();
-		event->_C.A._cell = file->readUint16BE();
-		event->_C.A._effect = file->readUint16BE();
+		event->_Cu.A._cell = file->readUint16BE();
+		event->_Cu.A._effect = file->readUint16BE();
 	}
 }
 

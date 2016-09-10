@@ -256,7 +256,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 
 		if (thingType == k14_ProjectileThingType) {
 			Teleporter *L0712_ps_Teleporter = (Teleporter *)_vm->_dungeonMan->getThingData(thing);
-			_moveResultDir = (_vm->_timeline->_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._C._projectile.getDir();
+			_moveResultDir = (_vm->_timeline->_events[((Projectile *)L0712_ps_Teleporter)->_eventIndex])._Cu._projectile.getDir();
 		}
 
 		int16 destinationSquareData = 0;
@@ -594,8 +594,8 @@ void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effe
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;
 	newEvent._Bu._location._mapY = mapY;
-	newEvent._C.A._cell = cell;
-	newEvent._C.A._effect = effect;
+	newEvent._Cu.A._cell = cell;
+	newEvent._Cu.A._effect = effect;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 
@@ -992,7 +992,7 @@ void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY,
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;
 	newEvent._Bu._location._mapY = mapY;
-	newEvent._C._slot = groupThing.toUint16();
+	newEvent._Cu._slot = groupThing.toUint16();
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 

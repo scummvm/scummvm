@@ -205,7 +205,7 @@ void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mod
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
 		newEvent._type = k20_TMEventTypePlaySound;
 		newEvent._priority = sound->_priority;
-		newEvent._C._soundIndex = soundIndex;
+		newEvent._Cu._soundIndex = soundIndex;
 		newEvent._Bu._location._mapX = mapX;
 		newEvent._Bu._location._mapY = mapY;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);

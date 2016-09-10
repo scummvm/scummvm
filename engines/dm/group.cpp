@@ -636,7 +636,7 @@ T0209005_AddEventAndReturn:
 		if (eventType < 0)
 			return;
 		nextEvent._type = eventType;
-		nextEvent._C._ticks = ticks;
+		nextEvent._Cu._ticks = ticks;
 		AL0446_i_Ticks = 4; /* Retry in 4 ticks */
 		goto T0209005_AddEventAndReturn;
 	}
@@ -1336,10 +1336,10 @@ void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 	warning("potentially dangerous cast to uint32 below");
 	if (time < (uint32)filterTime(event->_mapTime)) {
 		event->_type -= 5;
-		event->_C._ticks = filterTime(event->_mapTime) - time;
+		event->_Cu._ticks = filterTime(event->_mapTime) - time;
 		M32_setTime(event->_mapTime, time);
 	} else {
-		event->_C._ticks = time - filterTime(event->_mapTime);
+		event->_Cu._ticks = time - filterTime(event->_mapTime);
 	}
 	_vm->_timeline->addEventGetEventIndex(event);
 }
@@ -1643,7 +1643,7 @@ void GroupMan::startWandering(int16 mapX, int16 mapY) {
 	setMapAndTime(nextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
 	nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
 	nextEvent._priority = 255 - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
-	nextEvent._C._ticks = 0;
+	nextEvent._Cu._ticks = 0;
 	nextEvent._Bu._location._mapX = mapX;
 	nextEvent._Bu._location._mapY = mapY;
 	_vm->_timeline->addEventGetEventIndex(&nextEvent);
@@ -1887,7 +1887,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
 	newEvent._priority = 0;
-	newEvent._C._slot = unusedThing.toUint16();
+	newEvent._Cu._slot = unusedThing.toUint16();
 	newEvent._Bu._location._mapX = mapX;
 	newEvent._Bu._location._mapY = mapY;
 	newEvent._Bu._location._mapY = mapY;

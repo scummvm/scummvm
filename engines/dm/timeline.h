@@ -146,7 +146,7 @@ public:
 		byte _ticks;
 	};
 
-	C_uionTimelineEvent _C;
+	C_uionTimelineEvent _Cu;
 }; // @ EVENT
 
 class Timeline {

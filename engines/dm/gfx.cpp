@@ -163,7 +163,7 @@ void DisplayMan::initConstants() {
 	};
 
 	const ExplosionAspect explosionAspects[k4_ExplosionAspectCount] = { // @ G0211_as_Graphic558_ExplosionAspects
-		// ByteWidth, Height 
+		// ByteWidth, Height
 		ExplosionAspect(80, 111),   // Fire
 		ExplosionAspect(64,  97),   // Spell
 		ExplosionAspect(80,  91),   // Poison
@@ -411,7 +411,7 @@ void DisplayMan::initConstants() {
 	   Frame(124, 159, 17, 102, 48, 88, 48, 0)	 /* Right Horizontal Closed three fourth */
 	);
 
-	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
+	_boxThievesEyeViewPortVisibleArea = Box(64, 159, 19, 113); // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea
 	_boxMovementArrows = Box(224, 319, 124, 168); // @ G0002_s_Graphic562_Box_MovementArrows
 }
 
@@ -1475,7 +1475,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		isDrawnWallOrnAnAlcove(squareAspect[k2_RightWallOrnOrdAspect], k5_ViewWall_D2L_RIGHT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[k3_FrontWallOrnOrdAspect], k7_ViewWall_D2L_FRONT))
 			order = k0x0000_CellOrder_Alcove;
-		else 
+		else
 			return;
 		break;
 	case k18_ElementTypeStairsSide:
@@ -1860,7 +1860,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameStairsDownFrontD1C = Frame(32, 191, 18, 108, 80, 91, 0, 0); // @ G0128_s_Graphic558_Frame_StairsDownFront_D1C
 	static Frame frameFloorPitD1C = Frame(32, 191, 93, 116, 80, 24, 0, 0); // @ G0147_s_Graphic558_Frame_FloorPit_D1C
 	static Frame frameCeilingPitD1C = Frame(32, 191, 8, 16, 80, 9, 0, 0); // @ G0156_s_Graphic558_Frame_CeilingPit_D1C
-	static Box boxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea 
+	static Box boxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea
 
 	int16 order;
 	uint16 squareAspect[5];
@@ -2007,7 +2007,7 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameStairsDownFrontD0R = Frame(192, 223, 76, 135, 16, 60, 0, 0); // @ G0131_s_Graphic558_Frame_StairsDownFront_D0R
 	static Frame frameFloorPitD0C = Frame(16, 207, 124, 135, 96, 12, 0, 0); // @ G0150_s_Graphic558_Frame_FloorPit_D0C
 	static Frame frameCeilingPitD0C = Frame(16, 207, 0, 3, 96, 4, 0, 0); // @ G0159_s_Graphic558_Frame_CeilingPit_D0C
-	static Box boxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame 
+	static Box boxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame
 
 	uint16 squareAspect[5];
 
@@ -2700,7 +2700,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			copyBitmapAndFlipHorizontal(ornBlitBitmap, _tmpBitmap, ornCoordSet[4], ornCoordSet[5]);
 			ornBlitBitmap = _tmpBitmap;
 			blitPosX = 15 - (blitPosX & 0x000F);
-		} else if (viewWallIndex == k7_ViewWall_D2L_FRONT) 
+		} else if (viewWallIndex == k7_ViewWall_D2L_FRONT)
 			blitPosX -= ornCoordSet[1] - ornCoordSet[0];
 		else
 			blitPosX = 0;
@@ -2871,7 +2871,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	bool projectileFlipVertical = false;
 
 	/* This is the full dungeon view */
-	static Box boxExplosionPatternD0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C 
+	static Box boxExplosionPatternD0C = Box(0, 223, 0, 135); // @ G0105_s_Graphic558_Box_ExplosionPattern_D0C
 
 	static byte explosionBaseScales[5] = { // @ G0216_auc_Graphic558_ExplosionBaseScales
 		10,  /* D4 */
@@ -3507,7 +3507,7 @@ T0115129_DrawProjectiles:
 					if (projectileAspectType == k3_ProjectileAspectHasNone) {
 						projectileBitmapIndexDelta = 0;
 						flipVertical = flipHorizontal = false;
-					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_events[projectile->_eventIndex]._C._projectile.getDir())) != isOrientedWestEast(directionParam)) {
+					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_events[projectile->_eventIndex]._Cu._projectile.getDir())) != isOrientedWestEast(directionParam)) {
 						if (projectileAspectType == k2_ProjectileAspectHasRotation)
 							projectileBitmapIndexDelta = 1;
 						else
@@ -3757,7 +3757,7 @@ bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 		// * 2, because the original uses 4 bits instead of 8 bits to store a pixel
 		_derivedBitmaps[derivedBitmapIndex] = new byte[_derivedBitmapByteCount[derivedBitmapIndex] * 2];
 		return false;
-	} 
+	}
 
 	return true;
 }
@@ -3790,7 +3790,7 @@ uint16 DisplayMan::getDarkenedColor(uint16 RGBcolor) {
 void DisplayMan::startEndFadeToPalette(uint16* P0849_pui_Palette) {
 	uint16 *paletteRegister = _paletteFadeTemporary;
 
-	for (int16 i = 0; i < 16; i++) 
+	for (int16 i = 0; i < 16; i++)
 		paletteRegister[i] = _paletteFadeFrom[i];
 
 	for (int16 i = 0; i < 8; i++) {
