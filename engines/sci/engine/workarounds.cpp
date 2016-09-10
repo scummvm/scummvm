@@ -550,6 +550,12 @@ const SciWorkaroundEntry kGetAngle_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kFileIOOpen_workarounds[] = {
+	{ GID_TORIN,       61000, 61000,  0,       "roSierraLogo", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // Missing second argument when the game checks for autosave.cat after the Sierra logo
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kFindKey_workarounds[] = {
 	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",                   NULL,     0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed - bug #4987
 	{ GID_HOYLE4,        300,   999,  0,             "Piles", "contains",                   NULL,     0, { WORKAROUND_FAKE, 0 } }, // When passing the three cards in Hearts, a null reference to a list is passed - bug #5664
