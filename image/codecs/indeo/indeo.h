@@ -66,7 +66,7 @@ enum {
 typedef void (InvTransformPtr)(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags);
 typedef void (DCTransformPtr) (const int32 *in, int16 *out, uint32 pitch, int blkSize);
 
-typedef void(*IviMCFunc) (int16 *buf, const int16 *refBuf, uint32 pitch, int mc_type);
+typedef void(*IviMCFunc) (int16 *buf, const int16 *refBuf, uint32 pitch, int mcType);
 typedef void(*IviMCAvgFunc) (int16 *buf, const int16 *refBuf1, const int16 *refBuf2,
 	uint32 pitch, int mcType, int mcType2);
 
@@ -82,8 +82,8 @@ typedef void(*IviMCAvgFunc) (int16 *buf, const int16 *refBuf1, const int16 *refB
 /**
  * calculate number of macroblocks in a tile
  */
-#define IVI_MBs_PER_TILE(_tileWidth, _tileHeight, _mbSize) \
-    ((((_tileWidth) + (_mbSize) - 1) / (_mbSize)) * (((_tileHeight) + (_mbSize) - 1) / (_mbSize)))
+#define IVI_MBs_PER_TILE(tileWidth, tileHeight, mbSize) \
+    ((((tileWidth) + (mbSize) - 1) / (mbSize)) * (((tileHeight) + (mbSize) - 1) / (mbSize)))
 
 /**
  *  huffman codebook descriptor
@@ -96,32 +96,32 @@ struct IVIHuffDesc {
 	 *  Generate a huffman codebook from the given descriptor
 	 *  and convert it into the FFmpeg VLC table.
 	 *
-	 *  @param[out]  vlc   where to place the generated VLC table
-	 *  @param[in]   flag  flag: 1 - for static or 0 for dynamic tables
-	 *  @return     result code: 0 - OK, -1 = error (invalid codebook descriptor)
+	 *  @param[out]  vlc	Where to place the generated VLC table
+	 *  @param[in]   flag	Flag: true - for static or false for dynamic tables
+	 *  @returns	result code: 0 - OK, -1 = error (invalid codebook descriptor)
 	 */
-	int ivi_create_huff_from_desc(VLC *vlc, int flag) const;
+	int createHuffFromDesc(VLC *vlc, bool flag) const;
 
 	/*
 	 *  Compare two huffman codebook descriptors.
 	 *
-	 *  @param[in]  desc2  ptr to the 2nd descriptor to compare
-	 *  @return         comparison result: 0 - equal, 1 - not equal
+	 *  @param[in]  desc2	Ptr to the 2nd descriptor to compare
+	 *  @returns	comparison result: 0 - equal, 1 - not equal
 	 */
-	bool ivi_huff_desc_cmp(const IVIHuffDesc *desc2) const;
+	bool huffDescCompare(const IVIHuffDesc *desc2) const;
 
 	/*
 	 *  Copy huffman codebook descriptors.
 	 *
-	 *  @param[in]   src  ptr to the source descriptor
+	 *  @param[in]   src	ptr to the source descriptor
 	 */
-	void ivi_huff_desc_copy(const IVIHuffDesc *src);
+	void huffDescCopy(const IVIHuffDesc *src);
 };
 
 struct IVI45DecContext;
 
 /**
- *  macroblock/block huffman table descriptor
+ *  Macroblock/block huffman table descriptor
  */
 struct IVIHuffTab {
 public:
@@ -138,7 +138,16 @@ public:
 	 */
 	IVIHuffTab();
 
-	int ff_ivi_dec_huff_desc(IVI45DecContext *ctx, int desc_coded, int which_tab);
+	/**
+	 *  Decode a huffman codebook descriptor from the bitstream
+	 *  and select specified huffman table.
+	 *
+	 *  @param[in]		ctx			Decoder context
+	 *  @param[in]      descCoded	Flag signalling if table descriptor was coded
+	 *  @param[in]      whichTab	Codebook purpose (IVI_MB_HUFF or IVI_BLK_HUFF)
+	 *  @returns	Zero on success, negative value otherwise
+	 */
+	int decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab);
 };
 
 /**
@@ -237,7 +246,7 @@ struct IVIBandDesc {
 
 	IVIBandDesc();
 
-	int ivi_init_tiles(IVITile *ref_tile, int p, int b, int t_height, int t_width);
+	int initTiles(IVITile *refTile, int p, int b, int tHeight, int tWidth);
 };
 
 struct IVIPicConfig {
@@ -269,16 +278,27 @@ struct IVIPlaneDesc {
 
 	IVIPlaneDesc();
 
-	static int ff_ivi_init_planes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool _isIndeo4);
+	static int initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool isIndeo4);
 
-	static int ff_ivi_init_tiles(IVIPlaneDesc *planes, int _tileWidth, int _tileHeight);
+	static int initTiles(IVIPlaneDesc *planes, int tileWidth, int tileHeight);
 
 	/*
 	 *  Free planes, bands and macroblocks buffers.
 	 *
 	 *  @param[in]  planes  pointer to the array of the plane descriptors
 	 */
-	static void ivi_free_buffers(IVIPlaneDesc *planes);
+	static void freeBuffers(IVIPlaneDesc *planes);
+
+	/**
+	 * Check if the given dimension of an image is valid, meaning that all
+	 * bytes of the image can be addressed with a signed int.
+	 *
+	 * @param w the width of the picture
+	 * @param h the height of the picture
+	 * @param log_offset the offset to sum to the log level for logging with log_ctx
+	 * @returns >= 0 if valid, a negative error code otherwise
+	 */
+	static int checkImageSize(unsigned int w, unsigned int h, int logOffset);
 };
 
 struct AVFrame {
@@ -327,22 +347,22 @@ struct AVFrame {
 	/**
 	 * Destructor
 	 */
-	~AVFrame() { av_frame_free(); }
+	~AVFrame() { freeFrame(); }
 
 	/**
 	 * Sets the frame dimensions
 	 */
-	int ff_set_dimensions(uint16 width, uint16 height);
+	int setDimensions(uint16 width, uint16 height);
 
 	/**
 	 * Get a buffer for a frame
 	 */
-	int ff_get_buffer(int flags);
+	int getBuffer(int flags);
 
 	/**
 	 * Frees any data loaded for the frame
 	 */
-	void av_frame_free();
+	void freeFrame();
 };
 
 struct IVI45DecContext {
@@ -424,43 +444,41 @@ private:
 	/**
 	 *  Haar wavelet recomposition filter for Indeo 4
 	 *
-	 *  @param[in]  plane        pointer to the descriptor of the plane being processed
-	 *  @param[out] dst          pointer to the destination buffer
-	 *  @param[in]  dst_pitch    _pitch of the destination buffer
+	 *  @param[in]  plane		Pointer to the descriptor of the plane being processed
+	 *  @param[out] dst			pointer to the destination buffer
+	 *  @param[in]  dstPitch	Pitch of the destination buffer
 	 */
-	void ff_ivi_recompose_haar(const IVIPlaneDesc *plane, uint8 *dst,
-		const int dst_pitch);
+	void recomposeHaar(const IVIPlaneDesc *plane, uint8 *dst, const int dstPitch);
 
 	/**
 	 *  5/3 wavelet recomposition filter for Indeo5
 	 *
-	 *  @param[in]   plane        pointer to the descriptor of the plane being processed
-	 *  @param[out]  dst          pointer to the destination buffer
-	 *  @param[in]   dst_pitch    _pitch of the destination buffer
+	 *  @param[in]   plane        Pointer to the descriptor of the plane being processed
+	 *  @param[out]  dst          Pointer to the destination buffer
+	 *  @param[in]   dstPitch     Pitch of the destination buffer
 	 */
-	void ff_ivi_recompose53(const IVIPlaneDesc *plane,
-		uint8 *dst, const int dst_pitch);
+	void recompose53(const IVIPlaneDesc *plane, uint8 *dst, const int dstPitch);
 
 	/*
 	 *  Convert and output the current plane.
 	 *  This conversion is done by adding back the bias value of 128
 	 *  (subtracted in the encoder) and clipping the result.
 	 *
-	 *  @param[in]   plane      pointer to the descriptor of the plane being processed
-	 *  @param[out]  dst        pointer to the buffer receiving converted pixels
-	 *  @param[in]   dst_pitch  _pitch for moving to the next y line
+	 *  @param[in]   plane		Pointer to the descriptor of the plane being processed
+	 *  @param[out]  dst		Pointer to the buffer receiving converted pixels
+	 *  @param[in]   dstPitch	Pitch for moving to the next y line
 	 */
-	void ivi_output_plane(IVIPlaneDesc *plane, uint8 *dst, int dst_pitch);
+	void outputPlane(IVIPlaneDesc *plane, uint8 *dst, int dstPitch);
 
 	/**
 	 *  Handle empty tiles by performing data copying and motion
 	 *  compensation respectively.
 	 *
-	 *  @param[in]  band      pointer to the band descriptor
-	 *  @param[in]  tile      pointer to the tile descriptor
-	 *  @param[in]  mv_scale  scaling factor for motion vectors
+	 *  @param[in]  band		Pointer to the band descriptor
+	 *  @param[in]  tile		Pointer to the tile descriptor
+	 *  @param[in]  mvScale		Scaling factor for motion vectors
 	 */
-	int ivi_process_empty_tile(IVIBandDesc *band, IVITile *tile, int32 mv_scale);
+	int processEmptyTile(IVIBandDesc *band, IVITile *tile, int32 mvScale);
 
 	/*
 	 *  Decode size of the tile data.
@@ -470,9 +488,9 @@ private:
 	 *  where X1-X3 is size of the tile data
 	 *
 	 *  @param[in,out]  gb  the GetBit context
-	 *  @return     size of the tile data in bytes
+	 *  @returns	Size of the tile data in bytes
 	 */
-	int ivi_dec_tile_data_size(GetBits *gb);
+	int decodeTileDataSize(GetBits *gb);
 
 	/*
 	 *  Decode block data:
@@ -480,21 +498,20 @@ private:
 	 *  dequantize them, apply inverse transform and motion compensation
 	 *  in order to reconstruct the picture.
 	 *
-	 *  @param[in,out]  gb    the GetBit context
-	 *  @param[in]      band  pointer to the band descriptor
-	 *  @param[in]      tile  pointer to the tile descriptor
-	 *  @return     result code: 0 - OK, -1 = error (corrupted blocks data)
+	 *  @param[in,out]  gb		The GetBit context
+	 *  @param[in]      band	Pointer to the band descriptor
+	 *  @param[in]      tile	Pointer to the tile descriptor
+	 *  @returns	Result code: 0 - OK, -1 = error (corrupted blocks data)
 	 */
-	int ivi_decode_blocks(GetBits *gb, IVIBandDesc *band, IVITile *tile);
+	int decodeBlocks(GetBits *gb, IVIBandDesc *band, IVITile *tile);
 
-	int ivi_mc(IVIBandDesc *band, IviMCFunc mc, IviMCAvgFunc mc_avg,
-		int offs, int _mvX, int _mvY, int mv_x2, int mv_y2,
-		int mc_type, int mc_type2);
+	int iviMc(IVIBandDesc *band, IviMCFunc mc, IviMCAvgFunc mcAvg,
+		int offs, int mvX, int mvY, int mvX2, int mvY2, int mcType, int mcType2);
 
 	int ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
-		IviMCFunc mc, IviMCAvgFunc mc_avg, int _mvX, int _mvY,
-		int mv_x2, int mv_y2, int *prev_dc, int is_intra,
-		int mc_type, int mc_type2, uint32 quant, int offs);
+		IviMCFunc mc, IviMCAvgFunc mcAvg, int mvX, int mvY,
+		int mvX2, int mvY2, int *prevDc, int isIntra,
+		int mcType, int mcType2, uint32 quant, int offs);
 
 	int ivi_dc_transform(IVIBandDesc *band, int *prevDc, int bufOffs,
 		int blkSize);
@@ -524,27 +541,27 @@ protected:
 	/**
 	 *  Rearrange decoding and reference buffers.
 	 */
-	virtual void switch_buffers() = 0;
+	virtual void switchBuffers() = 0;
 
-	virtual bool is_nonnull_frame() const = 0;
+	virtual bool isNonNullFrame() const = 0;
 
 	/**
 	 *  Decode Indeo band header.
 	 *
-	 *  @param[in,out] band      pointer to the band descriptor
-	 *  @return        result code: 0 = OK, negative number = error
+	 *  @param[in,out] band		Pointer to the band descriptor
+	 *  @returns	Result code: 0 = OK, negative number = error
 	 */
-	virtual int decode_band_hdr(IVIBandDesc *band) = 0;
+	virtual int decodeBandHeader(IVIBandDesc *band) = 0;
 
 	/**
 	*  Decode information (block type, _cbp, quant delta, motion vector)
 	*  for all macroblocks in the current tile.
 	*
-	*  @param[in,out] band      pointer to the band descriptor
-	*  @param[in,out] tile      pointer to the tile descriptor
-	*  @return        result code: 0 = OK, negative number = error
+	*  @param[in,out] band		Pointer to the band descriptor
+	*  @param[in,out] tile		Pointer to the tile descriptor
+	*  @returns		Result code: 0 = OK, negative number = error
 	*/
-	virtual int decode_mb_info(IVIBandDesc *band, IVITile *tile)= 0;
+	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile) = 0;
 
 	/**
 	 * Decodes the Indeo frame from the bit reader already 
@@ -555,24 +572,11 @@ protected:
 	/**
 	 * scale motion vector
 	 */
-	int ivi_scale_mv(int mv, int mv_scale);
+	int scaleMV(int mv, int mvScale);
 public:
 	IndeoDecoderBase(uint16 width, uint16 height);
 	virtual ~IndeoDecoderBase();
 };
-
-/*------------------------------------------------------------------------*/
-
-/**
- * Check if the given dimension of an image is valid, meaning that all
- * bytes of the image can be addressed with a signed int.
- *
- * @param w the width of the picture
- * @param h the height of the picture
- * @param log_offset the offset to sum to the log level for logging with log_ctx
- * @returns >= 0 if valid, a negative error code otherwise
- */
-extern int av_image_check_size(unsigned int w, unsigned int h, int log_offset, void *log_ctx);
 
 } // End of namespace Indeo
 } // End of namespace Image

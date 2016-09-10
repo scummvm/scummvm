@@ -73,9 +73,9 @@ protected:
 	/**
 	 *  Rearrange decoding and reference buffers.
 	 */
-	virtual void switch_buffers();
+	virtual void switchBuffers();
 
-	virtual bool is_nonnull_frame() const;
+	virtual bool isNonNullFrame() const;
 
 	/**
 	 *  Decode Indeo 4 band header.
@@ -83,7 +83,7 @@ protected:
 	 *  @param[in,out] band      pointer to the band descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decode_band_hdr(IVIBandDesc *band);
+	virtual int decodeBandHeader(IVIBandDesc *band);
 
 	/**
 	 *  Decode information (block type, cbp, quant delta, motion vector)
@@ -93,7 +93,7 @@ protected:
 	 *  @param[in,out] tile      pointer to the tile descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decode_mb_info(IVIBandDesc *band, IVITile *tile);
+	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
 private:
 	/**
 	 *  Decode Indeo5 GOP (Group of pictures) header.

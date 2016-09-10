@@ -103,8 +103,8 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 }
 
 int Indeo5Decoder::decodePictureHeader() {
-	int             pic_size_indx, i, p;
-	IVIPicConfig    pic_conf;
+	int             picSizeIndx, i, p;
+	IVIPicConfig    picConf;
 
 	int ret;
 
@@ -149,7 +149,7 @@ int Indeo5Decoder::decodePictureHeader() {
 			skip_hdr_extension(); // XXX: untested
 
 										  // decode macroblock huffman codebook
-		ret = _ctx._mbVlc.ff_ivi_dec_huff_desc(&_ctx, _ctx._frameFlags & 0x40,
+		ret = _ctx._mbVlc.decodeHuffDesc(&_ctx, _ctx._frameFlags & 0x40,
 			IVI_MB_HUFF);
 		if (ret < 0)
 			return ret;
@@ -161,7 +161,7 @@ int Indeo5Decoder::decodePictureHeader() {
 	return 0;
 }
 
-void Indeo5Decoder::switch_buffers() {
+void Indeo5Decoder::switchBuffers() {
 	switch (_ctx._prevFrameType) {
 	case FRAMETYPE_INTRA:
 	case FRAMETYPE_INTER:
@@ -169,6 +169,7 @@ void Indeo5Decoder::switch_buffers() {
 		_ctx._dstBuf = _ctx._bufSwitch;
 		_ctx._refBuf = _ctx._bufSwitch ^ 1;
 		break;
+
 	case FRAMETYPE_INTER_SCAL:
 		if (!_ctx._interScal) {
 			_ctx._ref2Buf = 2;
@@ -177,6 +178,7 @@ void Indeo5Decoder::switch_buffers() {
 		FFSWAP(int, _ctx._dstBuf, _ctx._ref2Buf);
 		_ctx._refBuf = _ctx._ref2Buf;
 		break;
+
 	case FRAMETYPE_INTER_NOREF:
 		break;
 	}
@@ -190,6 +192,7 @@ void Indeo5Decoder::switch_buffers() {
 		_ctx._dstBuf = _ctx._bufSwitch;
 		_ctx._refBuf = _ctx._bufSwitch ^ 1;
 		break;
+
 	case FRAMETYPE_INTER_SCAL:
 	case FRAMETYPE_INTER_NOREF:
 	case FRAMETYPE_NULL:
@@ -197,32 +200,32 @@ void Indeo5Decoder::switch_buffers() {
 	}
 }
 
-bool Indeo5Decoder::is_nonnull_frame() const {
+bool Indeo5Decoder::isNonNullFrame() const {
 	return _ctx._frameType != FRAMETYPE_NULL;
 }
 
-int Indeo5Decoder::decode_band_hdr(IVIBandDesc *band) {
+int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 	int         i, ret;
-	uint8     band_flags;
+	uint8     bandFlags;
 
-	band_flags = _ctx._gb->getBits(8);
+	bandFlags = _ctx._gb->getBits(8);
 
-	if (band_flags & 1) {
+	if (bandFlags & 1) {
 		band->_isEmpty = true;
 		return 0;
 	}
 
 	band->_dataSize = (_ctx._frameFlags & 0x80) ? _ctx._gb->getBitsLong(24) : 0;
 
-	band->_inheritMv = (band_flags & 2) != 0;
-	band->_inheritQDelta = (band_flags & 8) != 0;
-	band->_qdeltaPresent = (band_flags & 4) != 0;
+	band->_inheritMv = (bandFlags & 2) != 0;
+	band->_inheritQDelta = (bandFlags & 8) != 0;
+	band->_qdeltaPresent = (bandFlags & 4) != 0;
 	if (!band->_qdeltaPresent)
 		band->_inheritQDelta = 1;
 
 	// decode rvmap probability corrections if any
 	band->_numCorr = 0; // there are no corrections
-	if (band_flags & 0x10) {
+	if (bandFlags & 0x10) {
 		band->_numCorr = _ctx._gb->getBits(8); // get number of correction pairs
 		if (band->_numCorr > 61) {
 			warning("Too many corrections: %d", band->_numCorr);
@@ -235,10 +238,10 @@ int Indeo5Decoder::decode_band_hdr(IVIBandDesc *band) {
 	}
 
 	// select appropriate rvmap table for this band
-	band->_rvmapSel = (band_flags & 0x40) ? _ctx._gb->getBits(3) : 8;
+	band->_rvmapSel = (bandFlags & 0x40) ? _ctx._gb->getBits(3) : 8;
 
 	// decode block huffman codebook
-	ret = band->_blkVlc.ff_ivi_dec_huff_desc(&_ctx, band_flags & 0x80, IVI_BLK_HUFF);
+	ret = band->_blkVlc.decodeHuffDesc(&_ctx, bandFlags & 0x80, IVI_BLK_HUFF);
 	if (ret < 0)
 		return ret;
 
@@ -249,7 +252,7 @@ int Indeo5Decoder::decode_band_hdr(IVIBandDesc *band) {
 	band->_globQuant = _ctx._gb->getBits(5);
 
 	// skip unknown extension if any
-	if (band_flags & 0x20) { // XXX: untested
+	if (bandFlags & 0x20) { // XXX: untested
 		_ctx._gb->alignGetBits();
 		skip_hdr_extension();
 	}
@@ -259,17 +262,17 @@ int Indeo5Decoder::decode_band_hdr(IVIBandDesc *band) {
 	return 0;
 }
 
-int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
-	int         x, y, _mvX, _mvY, mv_delta, offs, mb_offset,
-		mv_scale, blks_per_mb, s;
-	IVIMbInfo   *mb, *ref_mb;
-	int         row_offset = band->_mbSize * band->_pitch;
+int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
+	int         x, y, mvX, mvY, mvDelta, offs, mbOffset,
+		mvScale, blksPerMb, s;
+	IVIMbInfo   *mb, *refMb;
+	int         rowOffset = band->_mbSize * band->_pitch;
 
 	mb = tile->_mbs;
-	ref_mb = tile->_refMbs;
+	refMb = tile->_refMbs;
 	offs = tile->_yPos * band->_pitch + tile->_xPos;
 
-	if (!ref_mb &&
+	if (!refMb &&
 		((band->_qdeltaPresent && band->_inheritQDelta) || band->_inheritMv))
 		return -1;
 
@@ -280,16 +283,16 @@ int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 	}
 
 	// scale factor for motion vectors
-	mv_scale = (_ctx._planes[0]._bands[0]._mbSize >> 3) - (band->_mbSize >> 3);
-	_mvX = _mvY = 0;
+	mvScale = (_ctx._planes[0]._bands[0]._mbSize >> 3) - (band->_mbSize >> 3);
+	mvX = mvY = 0;
 
 	for (y = tile->_yPos; y < (tile->_yPos + tile->_height); y += band->_mbSize) {
-		mb_offset = offs;
+		mbOffset = offs;
 
 		for (x = tile->_xPos; x < (tile->_xPos + tile->_width); x += band->_mbSize) {
 			mb->_xPos = x;
 			mb->_yPos = y;
-			mb->_bufOffs = mb_offset;
+			mb->_bufOffs = mbOffset;
 
 			if (_ctx._gb->getBits1()) {
 				if (_ctx._frameType == FRAMETYPE_INTRA) {
@@ -306,32 +309,32 @@ int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				}
 
 				mb->_mvX = mb->_mvY = 0; // no motion vector coded
-				if (band->_inheritMv && ref_mb) {
+				if (band->_inheritMv && refMb) {
 					// motion vector inheritance
-					if (mv_scale) {
-						mb->_mvX = ivi_scale_mv(ref_mb->_mvX, mv_scale);
-						mb->_mvY = ivi_scale_mv(ref_mb->_mvY, mv_scale);
+					if (mvScale) {
+						mb->_mvX = scaleMV(refMb->_mvX, mvScale);
+						mb->_mvY = scaleMV(refMb->_mvY, mvScale);
 					} else {
-						mb->_mvX = ref_mb->_mvX;
-						mb->_mvY = ref_mb->_mvY;
+						mb->_mvX = refMb->_mvX;
+						mb->_mvY = refMb->_mvY;
 					}
 				}
 			} else {
-				if (band->_inheritMv && ref_mb) {
-					mb->_type = ref_mb->_type; // copy mb_type from corresponding reference mb
+				if (band->_inheritMv && refMb) {
+					mb->_type = refMb->_type; // copy mb_type from corresponding reference mb
 				} else if (_ctx._frameType == FRAMETYPE_INTRA) {
 					mb->_type = 0; // mb_type is always INTRA for intra-frames
 				} else {
 					mb->_type = _ctx._gb->getBits1();
 				}
 
-				blks_per_mb = band->_mbSize != band->_blkSize ? 4 : 1;
-				mb->_cbp = _ctx._gb->getBits(blks_per_mb);
+				blksPerMb = band->_mbSize != band->_blkSize ? 4 : 1;
+				mb->_cbp = _ctx._gb->getBits(blksPerMb);
 
 				mb->_qDelta = 0;
 				if (band->_qdeltaPresent) {
 					if (band->_inheritQDelta) {
-						if (ref_mb) mb->_qDelta = ref_mb->_qDelta;
+						if (refMb) mb->_qDelta = refMb->_qDelta;
 					} else if (mb->_cbp || (!band->_plane && !band->_bandNum &&
 						(_ctx._frameFlags & 8))) {
 						mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table, IVI_VLC_BITS, 1);
@@ -342,23 +345,23 @@ int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				if (!mb->_type) {
 					mb->_mvX = mb->_mvY = 0; // there is no motion vector in intra-macroblocks
 				} else {
-					if (band->_inheritMv && ref_mb) {
+					if (band->_inheritMv && refMb) {
 						// motion vector inheritance
-						if (mv_scale) {
-							mb->_mvX = ivi_scale_mv(ref_mb->_mvX, mv_scale);
-							mb->_mvY = ivi_scale_mv(ref_mb->_mvY, mv_scale);
+						if (mvScale) {
+							mb->_mvX = scaleMV(refMb->_mvX, mvScale);
+							mb->_mvY = scaleMV(refMb->_mvY, mvScale);
 						} else {
-							mb->_mvX = ref_mb->_mvX;
-							mb->_mvY = ref_mb->_mvY;
+							mb->_mvX = refMb->_mvX;
+							mb->_mvY = refMb->_mvY;
 						}
 					} else {
 						// decode motion vector deltas
-						mv_delta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table, IVI_VLC_BITS, 1);
-						_mvY += IVI_TOSIGNED(mv_delta);
-						mv_delta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table, IVI_VLC_BITS, 1);
-						_mvX += IVI_TOSIGNED(mv_delta);
-						mb->_mvX = _mvX;
-						mb->_mvY = _mvY;
+						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table, IVI_VLC_BITS, 1);
+						mvY += IVI_TOSIGNED(mvDelta);
+						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table, IVI_VLC_BITS, 1);
+						mvX += IVI_TOSIGNED(mvDelta);
+						mb->_mvX = mvX;
+						mb->_mvY = mvY;
 					}
 				}
 			}
@@ -373,12 +376,12 @@ int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 				}
 
 			mb++;
-			if (ref_mb)
-				ref_mb++;
-			mb_offset += band->_mbSize;
+			if (refMb)
+				refMb++;
+			mbOffset += band->_mbSize;
 		}
 
-		offs += row_offset;
+		offs += rowOffset;
 	}
 
 	_ctx._gb->alignGetBits();
@@ -387,11 +390,11 @@ int Indeo5Decoder::decode_mb_info(IVIBandDesc *band, IVITile *tile) {
 }
 
 int Indeo5Decoder::decode_gop_header() {
-	int				result, i, p, tile_size, pic_size_indx, mbSize, blkSize, isScalable;
+	int				result, i, p, tile_size, picSizeIndx, mbSize, blkSize, isScalable;
 	int				quantMat;
-	bool			blk_size_changed = false;
+	bool			blkSizeChanged = false;
 	IVIBandDesc     *band, *band1, *band2;
-	IVIPicConfig    pic_conf;
+	IVIPicConfig    picConf;
 
 	_ctx._gopFlags = _ctx._gb->getBits(8);
 
@@ -408,22 +411,22 @@ int Indeo5Decoder::decode_gop_header() {
 
 	// decode number of wavelet bands
 	// num_levels * 3 + 1
-	pic_conf._lumaBands = _ctx._gb->getBits(2) * 3 + 1;
-	pic_conf._chromaBands = _ctx._gb->getBits1() * 3 + 1;
-	isScalable = pic_conf._lumaBands != 1 || pic_conf._chromaBands != 1;
-	if (isScalable && (pic_conf._lumaBands != 4 || pic_conf._chromaBands != 1)) {
+	picConf._lumaBands = _ctx._gb->getBits(2) * 3 + 1;
+	picConf._chromaBands = _ctx._gb->getBits1() * 3 + 1;
+	isScalable = picConf._lumaBands != 1 || picConf._chromaBands != 1;
+	if (isScalable && (picConf._lumaBands != 4 || picConf._chromaBands != 1)) {
 		warning("Scalability: unsupported subdivision! Luma bands: %d, chroma bands: %d",
-			pic_conf._lumaBands, pic_conf._chromaBands);
+			picConf._lumaBands, picConf._chromaBands);
 		return -1;
 	}
 
-	pic_size_indx = _ctx._gb->getBits(4);
-	if (pic_size_indx == IVI5_PIC_SIZE_ESC) {
-		pic_conf._picHeight = _ctx._gb->getBits(13);
-		pic_conf._picWidth = _ctx._gb->getBits(13);
+	picSizeIndx = _ctx._gb->getBits(4);
+	if (picSizeIndx == IVI5_PIC_SIZE_ESC) {
+		picConf._picHeight = _ctx._gb->getBits(13);
+		picConf._picWidth = _ctx._gb->getBits(13);
 	} else {
-		pic_conf._picHeight = _ivi5_common_pic_sizes[pic_size_indx * 2 + 1] << 2;
-		pic_conf._picWidth = _ivi5_common_pic_sizes[pic_size_indx * 2] << 2;
+		picConf._picHeight = _ivi5_common_pic_sizes[picSizeIndx * 2 + 1] << 2;
+		picConf._picWidth = _ivi5_common_pic_sizes[picSizeIndx * 2] << 2;
 	}
 
 	if (_ctx._gopFlags & 2) {
@@ -431,30 +434,30 @@ int Indeo5Decoder::decode_gop_header() {
 		return -2;
 	}
 
-	pic_conf._chromaHeight = (pic_conf._picHeight + 3) >> 2;
-	pic_conf._chromaWidth = (pic_conf._picWidth + 3) >> 2;
+	picConf._chromaHeight = (picConf._picHeight + 3) >> 2;
+	picConf._chromaWidth = (picConf._picWidth + 3) >> 2;
 
 	if (!tile_size) {
-		pic_conf._tileHeight = pic_conf._picHeight;
-		pic_conf._tileWidth = pic_conf._picWidth;
+		picConf._tileHeight = picConf._picHeight;
+		picConf._tileWidth = picConf._picWidth;
 	} else {
-		pic_conf._tileHeight = pic_conf._tileWidth = tile_size;
+		picConf._tileHeight = picConf._tileWidth = tile_size;
 	}
 
 	// check if picture layout was changed and reallocate buffers
-	if (pic_conf.ivi_pic_config_cmp(_ctx._picConf) || _ctx._gopInvalid) {
-		result = IVIPlaneDesc::ff_ivi_init_planes(_ctx._planes, &pic_conf, 0);
+	if (picConf.ivi_pic_config_cmp(_ctx._picConf) || _ctx._gopInvalid) {
+		result = IVIPlaneDesc::initPlanes(_ctx._planes, &picConf, 0);
 		if (result < 0) {
 			warning("Couldn't reallocate color planes!");
 			return result;
 		}
-		_ctx._picConf = pic_conf;
+		_ctx._picConf = picConf;
 		_ctx._isScalable = isScalable;
-		blk_size_changed = 1; // force reallocation of the internal structures
+		blkSizeChanged = 1; // force reallocation of the internal structures
 	}
 
 	for (p = 0; p <= 1; p++) {
-		for (i = 0; i < (!p ? pic_conf._lumaBands : pic_conf._chromaBands); i++) {
+		for (i = 0; i < (!p ? picConf._lumaBands : picConf._chromaBands); i++) {
 			band = &_ctx._planes[p]._bands[i];
 
 			band->_isHalfpel = _ctx._gb->getBits1();
@@ -468,8 +471,8 @@ int Indeo5Decoder::decode_gop_header() {
 				return -2;
 			}
 
-			blk_size_changed = mbSize != band->_mbSize || blkSize != band->_blkSize;
-			if (blk_size_changed) {
+			blkSizeChanged = mbSize != band->_mbSize || blkSize != band->_blkSize;
+			if (blkSizeChanged) {
 				band->_mbSize = mbSize;
 				band->_blkSize = blkSize;
 			}
@@ -527,7 +530,7 @@ int Indeo5Decoder::decode_gop_header() {
 
 			// select dequant matrix according to plane and band number
 			if (!p) {
-				quantMat = (pic_conf._lumaBands > 1) ? i + 1 : 0;
+				quantMat = (picConf._lumaBands > 1) ? i + 1 : 0;
 			} else {
 				quantMat = 5;
 			}
@@ -556,7 +559,7 @@ int Indeo5Decoder::decode_gop_header() {
 	}
 
 	// copy chroma parameters into the 2nd chroma plane
-	for (i = 0; i < pic_conf._chromaBands; i++) {
+	for (i = 0; i < picConf._chromaBands; i++) {
 		band1 = &_ctx._planes[1]._bands[i];
 		band2 = &_ctx._planes[2]._bands[i];
 
@@ -577,9 +580,9 @@ int Indeo5Decoder::decode_gop_header() {
 	}
 
 	// reallocate internal structures if needed
-	if (blk_size_changed) {
-		result = IVIPlaneDesc::ff_ivi_init_tiles(_ctx._planes, pic_conf._tileWidth,
-			pic_conf._tileHeight);
+	if (blkSizeChanged) {
+		result = IVIPlaneDesc::initTiles(_ctx._planes, picConf._tileWidth,
+			picConf._tileHeight);
 		if (result < 0) {
 			warning("Couldn't reallocate internal structures!");
 			return result;

@@ -73,9 +73,9 @@ protected:
 	/**
 	 *  Rearrange decoding and reference buffers.
 	 */
-	virtual void switch_buffers();
+	virtual void switchBuffers();
 
-	virtual bool is_nonnull_frame() const;
+	virtual bool isNonNullFrame() const;
 
 	/**
 	 *  Decode Indeo 4 band header.
@@ -83,7 +83,7 @@ protected:
 	 *  @param[in,out] band      pointer to the band descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decode_band_hdr(IVIBandDesc *band);
+	virtual int decodeBandHeader(IVIBandDesc *band);
 
 	/**
 	 *  Decode information (block type, cbp, quant delta, motion vector)
@@ -93,9 +93,9 @@ protected:
 	 *  @param[in,out] tile      pointer to the tile descriptor
 	 *  @return        result code: 0 = OK, negative number = error
 	 */
-	virtual int decode_mb_info(IVIBandDesc *band, IVITile *tile);
+	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
 private:
-	int scaleTileSize(int def_size, int size_factor);
+	int scaleTileSize(int defSize, int sizeFactor);
 
 	/**
 	 *  Decode subdivision of a plane.
@@ -104,8 +104,8 @@ private:
 	 *  - 4 wavelet bands per plane, size factor 1:4, code pattern: 2,3,3,3,3
 	 *  Anything else is either unsupported or corrupt.
 	 *
-	 *  @param[in,out] gb    the GetBit context
-	 *  @return        number of wavelet bands or 0 on error
+	 *  @param[in,out] gb	The GetBit context
+	 *  @returns		Number of wavelet bands or 0 on error
 	 */
 	int decodePlaneSubdivision();
 
