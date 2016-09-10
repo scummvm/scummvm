@@ -292,7 +292,10 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	if (_picture) {
 		_picture->setVisible(g_system->getOverlayWidth() > 320);
 	}
-	if (_openUrlWidget) _openUrlWidget->setVisible(true);
+	if (_openUrlWidget) {
+		bool visible = g_system->hasFeature(OSystem::kFeatureOpenUrl);
+		_openUrlWidget->setVisible(visible);
+	}
 	if (_pasteCodeWidget) {
 		bool visible = showFields && g_system->hasFeature(OSystem::kFeatureClipboardSupport);
 		_pasteCodeWidget->setVisible(visible);
