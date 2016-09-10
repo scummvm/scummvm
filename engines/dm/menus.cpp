@@ -201,7 +201,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 		return;
 	}
 	byte *bitmapIcon = dm._tmpBitmap;
-	Thing thing = champion.getSlot(k1_ChampionSlotActionHand);
+	Thing thing = champion.getSlot(kDMSlotActionHand);
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = kDMIconIndiceActionEmptyHand;
@@ -657,14 +657,14 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(unusedObject);
 			junkData->setType(k51_JunkTypeZokathra);
 			ChampionSlot slotIndex;
-			if (curChampion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)
-				slotIndex = k0_ChampionSlotReadyHand;
-			else if (curChampion->_slots[k1_ChampionSlotActionHand] == Thing::_none)
-				slotIndex = k1_ChampionSlotActionHand;
+			if (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)
+				slotIndex = kDMSlotReadyHand;
+			else if (curChampion->_slots[kDMSlotActionHand] == Thing::_none)
+				slotIndex = kDMSlotActionHand;
 			else
-				slotIndex = kM1_ChampionSlotLeaderHand;
+				slotIndex = kDMSlotLeaderHand;
 
-			if ((slotIndex == k0_ChampionSlotReadyHand) || (slotIndex == k1_ChampionSlotActionHand)) {
+			if ((slotIndex == kDMSlotReadyHand) || (slotIndex == kDMSlotActionHand)) {
 				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, unusedObject, slotIndex);
 				_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 			} else
@@ -785,7 +785,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 }
 
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
-	for (int16 slotIndex = k2_ChampionSlotHead; --slotIndex >= k0_ChampionSlotReadyHand; ) {
+	for (int16 slotIndex = kDMSlotHead; --slotIndex >= kDMSlotReadyHand; ) {
 		Thing curThing = champ->_slots[slotIndex];
 		if ((curThing != Thing::_none) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
@@ -1041,7 +1041,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	if (!curChampion->_currHealth)
 		return false;
 
-	Weapon *weaponInHand = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[k1_ChampionSlotActionHand]);
+	Weapon *weaponInHand = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[kDMSlotActionHand]);
 
 	int16 nextMapX = _vm->_dungeonMan->_partyMapX;
 	int16 nextMapY = _vm->_dungeonMan->_partyMapY;
@@ -1092,7 +1092,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		if ((Square(targetSquare).getType() == k4_DoorElemType) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
-			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand), false, 2);
+			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, kDMSlotActionHand), false, 2);
 			_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
 			break;
 		}
@@ -1127,7 +1127,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		actionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
 	case k32_ChampionActionShoot: {
-		if (Thing(curChampion->_slots[k0_ChampionSlotReadyHand]).getType() != k5_WeaponThingType) {
+		if (Thing(curChampion->_slots[kDMSlotReadyHand]).getType() != k5_WeaponThingType) {
 			_actionDamage = kM2_damageNoAmmunition;
 			actionExperienceGain = 0;
 			actionPerformed = false;
@@ -1135,7 +1135,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		}
 
 		WeaponInfo *weaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[weaponInHand->getType()];
-		WeaponInfo *weaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(curChampion->_slots[k0_ChampionSlotReadyHand]);
+		WeaponInfo *weaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(curChampion->_slots[kDMSlotReadyHand]);
 		int16 actionHandWeaponClass = weaponInfoActionHand->_class;
 		int16 readyHandWeaponClass = weaponInfoReadyHand->_class;
 		int16 stepEnergy = actionHandWeaponClass;
@@ -1158,7 +1158,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		}
 
 		setChampionDirectionToPartyDirection(curChampion);
-		Thing removedObject = _vm->_championMan->getObjectRemovedFromSlot(champIndex, k0_ChampionSlotReadyHand);
+		Thing removedObject = _vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotReadyHand);
 		_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
 		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, kDMSkillShoot)) << 1, stepEnergy);
 		}
@@ -1286,11 +1286,11 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		int16 freezeTicks;
 		if (weaponInHand->getType() == k42_JunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
-			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
+			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
 		} else if (weaponInHand->getType() == k43_JunkTypeMagicalBoxGreen) {
 			freezeTicks = 125;
-			_vm->_championMan->getObjectRemovedFromSlot(champIndex, k1_ChampionSlotActionHand);
+			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
 		} else {
 			freezeTicks = 70;
@@ -1306,9 +1306,9 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case k42_ChampionActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, k1_ChampionSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
-			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(k1_ChampionSlotActionHand);
+			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
 	}
 
@@ -1345,7 +1345,7 @@ void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
 }
 
 void MenuMan::decrementCharges(Champion *champ) {
-	Thing slotActionThing = champ->_slots[k1_ChampionSlotActionHand];
+	Thing slotActionThing = champ->_slots[kDMSlotActionHand];
 	Junk *slotActionData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
 	case k5_WeaponThingType:
@@ -1488,7 +1488,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
 		uint16 actionDamageFactor = actionDamageFactorArray[actionIndex];
-		if ((_vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
+		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == k24_ChampionActionDisrupt)) {
 			setFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 		}
 		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
@@ -1631,7 +1631,7 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 		return;
 
 	uint16 actionSetIndex;
-	Thing slotActionThing = curChampion->_slots[k1_ChampionSlotActionHand];
+	Thing slotActionThing = curChampion->_slots[kDMSlotActionHand];
 
 	if (slotActionThing == Thing::_none)
 		actionSetIndex = 2; /* Actions Punch, Kick and War Cry */
@@ -1679,7 +1679,7 @@ void MenuMan::setActionList(ActionSet *actionSet) {
 }
 
 int16 MenuMan::getActionObjectChargeCount() {
-	Thing slotActionThing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[k1_ChampionSlotActionHand];
+	Thing slotActionThing = _vm->_championMan->_champions[_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal)]._slots[kDMSlotActionHand];
 	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(slotActionThing);
 	switch (slotActionThing.getType()) {
 	case k5_WeaponThingType:

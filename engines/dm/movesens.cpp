@@ -866,8 +866,8 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 	for (championIdx = kDMChampionFirst; championIdx < _vm->_championMan->_partyChampionCount; championIdx++, curChampion++) {
 		if (curChampion->_currHealth) {
 			curSlotThing = curChampion->_slots;
-			for (slotIdx = k0_ChampionSlotReadyHand; (slotIdx < k30_ChampionSlotChest_1) || !leaderHandObjectProcessed; slotIdx++) {
-				if (slotIdx < k30_ChampionSlotChest_1)
+			for (slotIdx = kDMSlotReadyHand; (slotIdx < kDMSlotChest1) || !leaderHandObjectProcessed; slotIdx++) {
+				if (slotIdx < kDMSlotChest1)
 					curThing = *curSlotThing++;
 				else {
 					leaderHandObjectProcessed = true;

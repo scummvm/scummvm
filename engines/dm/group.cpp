@@ -1535,7 +1535,7 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 	uint16 slotIdx = _vm->getRandomNumber(8);
 	while ((percentage > 0) && !_vm->_championMan->isLucky(champion, percentage)) {
 		uint16 stealFromSlotIndex = G0394_auc_StealFromSlotIndices[slotIdx];
-		if (stealFromSlotIndex == k13_ChampionSlotBackpackLine_1_1)
+		if (stealFromSlotIndex == kDMSlotBackpackLine1_1)
 			stealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
 
 		Thing slotThing = champion->_slots[stealFromSlotIndex];
@@ -1803,7 +1803,7 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 
 	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	int16 actionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[k1_ChampionSlotActionHand]);
+	int16 actionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]);
 	bool actionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 	if (actionHitsNonMaterialCreatures)
 		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
@@ -1813,7 +1813,7 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 		(!_vm->getRandomNumber(4)) ||
 		 (_vm->_championMan->isLucky(champ, 75 - actionHitProbability)))) {
 
-		L0565_i_Damage = _vm->_championMan->getStrength(champIndex, k1_ChampionSlotActionHand);
+		L0565_i_Damage = _vm->_championMan->getStrength(champIndex, kDMSlotActionHand);
 		if (!(L0565_i_Damage))
 			goto T0231009;
 

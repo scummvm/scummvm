@@ -820,15 +820,15 @@ void Timeline::processEventEnableChampionAction(uint16 champIndex) {
 		curChampion->_actionDefense -= _actionDefense[curChampion->_actionDefense];
 	}
 	if (curChampion->_currHealth) {
-		if ((curChampion->_actionIndex == k32_ChampionActionShoot) && (curChampion->_slots[k0_ChampionSlotReadyHand] == Thing::_none)) {
-			int16 slotIndex = k12_ChampionSlotQuiverLine_1_1;
-			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, slotIndex))
-				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), k0_ChampionSlotReadyHand);
+		if ((curChampion->_actionIndex == k32_ChampionActionShoot) && (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)) {
+			int16 slotIndex = kDMSlotQuiverLine1_1;
+			if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, kDMSlotActionHand, slotIndex))
+				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), kDMSlotReadyHand);
 			else {
 				for (int16 quiverSlotIndex = 0; quiverSlotIndex < 3; quiverSlotIndex++) {
-					slotIndex = quiverSlotIndex + k7_ChampionSlotQuiverLine_2_1;
-					if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, k1_ChampionSlotActionHand, slotIndex))
-						_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), k0_ChampionSlotReadyHand);
+					slotIndex = quiverSlotIndex + kDMSlotQuiverLine2_1;
+					if (_vm->_championMan->isAmmunitionCompatibleWithWeapon(champIndex, kDMSlotActionHand, slotIndex))
+						_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, _vm->_championMan->getObjectRemovedFromSlot(champIndex, slotIndex), kDMSlotReadyHand);
 				}
 			}
 		}
@@ -843,10 +843,10 @@ void Timeline::processEventMoveWeaponFromQuiverToSlot(uint16 champIndex, uint16 
 	if (curChampion->_slots[slotIndex] != Thing::_none)
 		return;
 
-	if (hasWeaponMovedSlot(champIndex, curChampion, k12_ChampionSlotQuiverLine_1_1, slotIndex))
+	if (hasWeaponMovedSlot(champIndex, curChampion, kDMSlotQuiverLine1_1, slotIndex))
 		return;
 
-	for (uint16 srcSlotIndex = k7_ChampionSlotQuiverLine_2_1; srcSlotIndex <= k9_ChampionSlotQuiverLine_2_2; srcSlotIndex++) {
+	for (uint16 srcSlotIndex = kDMSlotQuiverLine2_1; srcSlotIndex <= kDMSlotQuiverLine2_2; srcSlotIndex++) {
 		if (hasWeaponMovedSlot(champIndex, curChampion, srcSlotIndex, slotIndex))
 			break;
 	}

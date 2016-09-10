@@ -1257,7 +1257,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	int16 mapX = dunMan._partyMapX + _vm->_dirIntoStepCountEast[dunMan._partyDir];
 	int16 mapY = dunMan._partyMapY + _vm->_dirIntoStepCountNorth[dunMan._partyDir];
 
-	for (uint16 slotIndex = k0_ChampionSlotReadyHand; slotIndex < k30_ChampionSlotChest_1; slotIndex++) {
+	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing thing = champ->getSlot((ChampionSlot)slotIndex);
 		if (thing != Thing::_none) {
 			_vm->_dungeonMan->unlinkThingFromList(thing, Thing(0), mapX, mapY);

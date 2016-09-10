@@ -207,7 +207,6 @@ enum ChampionWound {
 	kDMWoundFeet = 0x0020 // @ MASK0x0020_FEET
 };
 
-
 enum ChampionStatType {
 	kDMStatLuck = 0, // @ C0_STATISTIC_LUCK
 	kDMStatStrength = 1, // @ C1_STATISTIC_STRENGTH
@@ -249,45 +248,45 @@ enum ChampionSkill {
 };
 
 enum ChampionSlot {
-	kM1_ChampionSlotLeaderHand = -1, // @ CM1_SLOT_LEADER_HAND
-	k0_ChampionSlotReadyHand = 0, // @ C00_SLOT_READY_HAND
-	k1_ChampionSlotActionHand = 1, // @ C01_SLOT_ACTION_HAND
-	k2_ChampionSlotHead = 2, // @ C02_SLOT_HEAD
-	k3_ChampionSlotTorso = 3, // @ C03_SLOT_TORSO
-	k4_ChampionSlotLegs = 4, // @ C04_SLOT_LEGS
-	k5_ChampionSlotFeet = 5, // @ C05_SLOT_FEET
-	k6_ChampionSlotPouch_2 = 6, // @ C06_SLOT_POUCH_2
-	k7_ChampionSlotQuiverLine_2_1 = 7, // @ C07_SLOT_QUIVER_LINE2_1
-	k8_ChampionSlotQuiverLine_1_2 = 8, // @ C08_SLOT_QUIVER_LINE1_2
-	k9_ChampionSlotQuiverLine_2_2 = 9, // @ C09_SLOT_QUIVER_LINE2_2
-	k10_ChampionSlotNeck = 10, // @ C10_SLOT_NECK
-	k11_ChampionSlotPouch_1 = 11, // @ C11_SLOT_POUCH_1
-	k12_ChampionSlotQuiverLine_1_1 = 12, // @ C12_SLOT_QUIVER_LINE1_1
-	k13_ChampionSlotBackpackLine_1_1 = 13, // @ C13_SLOT_BACKPACK_LINE1_1
-	k14_ChampionSlotBackpackLine_2_2 = 14, // @ C14_SLOT_BACKPACK_LINE2_2
-	k15_ChampionSlotBackpackLine_2_3 = 15, // @ C15_SLOT_BACKPACK_LINE2_3
-	k16_ChampionSlotBackpackLine_2_4 = 16, // @ C16_SLOT_BACKPACK_LINE2_4
-	k17_ChampionSlotBackpackLine_2_5 = 17, // @ C17_SLOT_BACKPACK_LINE2_5
-	k18_ChampionSlotBackpackLine_2_6 = 18, // @ C18_SLOT_BACKPACK_LINE2_6
-	k19_ChampionSlotBackpackLine_2_7 = 19, // @ C19_SLOT_BACKPACK_LINE2_7
-	k20_ChampionSlotBackpackLine_2_8 = 20, // @ C20_SLOT_BACKPACK_LINE2_8
-	k21_ChampionSlotBackpackLine_2_9 = 21, // @ C21_SLOT_BACKPACK_LINE2_9
-	k22_ChampionSlotBackpackLine_1_2 = 22, // @ C22_SLOT_BACKPACK_LINE1_2
-	k23_ChampionSlotBackpackLine_1_3 = 23, // @ C23_SLOT_BACKPACK_LINE1_3
-	k24_ChampionSlotBackpackLine_1_4 = 24, // @ C24_SLOT_BACKPACK_LINE1_4
-	k25_ChampionSlotBackpackLine_1_5 = 25, // @ C25_SLOT_BACKPACK_LINE1_5
-	k26_ChampionSlotBackpackLine_1_6 = 26, // @ C26_SLOT_BACKPACK_LINE1_6
-	k27_ChampionSlotBackpackLine_1_7 = 27, // @ C27_SLOT_BACKPACK_LINE1_7
-	k28_ChampionSlotBackpackLine_1_8 = 28, // @ C28_SLOT_BACKPACK_LINE1_8
-	k29_ChampionSlotBackpackLine_1_9 = 29, // @ C29_SLOT_BACKPACK_LINE1_9
-	k30_ChampionSlotChest_1 = 30, // @ C30_SLOT_CHEST_1
-	k31_ChampionSlotChest_2 = 31, // @ C31_SLOT_CHEST_2
-	k32_ChampionSlotChest_3 = 32, // @ C32_SLOT_CHEST_3
-	k33_ChampionSlotChest_4 = 33, // @ C33_SLOT_CHEST_4
-	k34_ChampionSlotChest_5 = 34, // @ C34_SLOT_CHEST_5
-	k35_ChampionSlotChest_6 = 35, // @ C35_SLOT_CHEST_6
-	k36_ChampionSlotChest_7 = 36, // @ C36_SLOT_CHEST_7
-	k37_ChampionSlotChest_8 = 37 // @ C37_SLOT_CHEST_8
+	kDMSlotLeaderHand = -1, // @ CM1_SLOT_LEADER_HAND
+	kDMSlotReadyHand = 0, // @ C00_SLOT_READY_HAND
+	kDMSlotActionHand = 1, // @ C01_SLOT_ACTION_HAND
+	kDMSlotHead = 2, // @ C02_SLOT_HEAD
+	kDMSlotTorso = 3, // @ C03_SLOT_TORSO
+	kDMSlotLegs = 4, // @ C04_SLOT_LEGS
+	kDMSlotFeet = 5, // @ C05_SLOT_FEET
+	kDMSlotPouch_2 = 6, // @ C06_SLOT_POUCH_2
+	kDMSlotQuiverLine2_1 = 7, // @ C07_SLOT_QUIVER_LINE2_1
+	kDMSlotQuiverLine1_2 = 8, // @ C08_SLOT_QUIVER_LINE1_2
+	kDMSlotQuiverLine2_2 = 9, // @ C09_SLOT_QUIVER_LINE2_2
+	kDMSlotNeck = 10, // @ C10_SLOT_NECK
+	kDMSlotPouch1 = 11, // @ C11_SLOT_POUCH_1
+	kDMSlotQuiverLine1_1 = 12, // @ C12_SLOT_QUIVER_LINE1_1
+	kDMSlotBackpackLine1_1 = 13, // @ C13_SLOT_BACKPACK_LINE1_1
+	kDMSlotBackpackLine2_2 = 14, // @ C14_SLOT_BACKPACK_LINE2_2
+	kDMSlotBackpackLine2_3 = 15, // @ C15_SLOT_BACKPACK_LINE2_3
+	kDMSlotBackpackLine2_4 = 16, // @ C16_SLOT_BACKPACK_LINE2_4
+	kDMSlotBackpackLine2_5 = 17, // @ C17_SLOT_BACKPACK_LINE2_5
+	kDMSlotBackpackLine2_6 = 18, // @ C18_SLOT_BACKPACK_LINE2_6
+	kDMSlotBackpackLine2_7 = 19, // @ C19_SLOT_BACKPACK_LINE2_7
+	kDMSlotBackpackLine2_8 = 20, // @ C20_SLOT_BACKPACK_LINE2_8
+	kDMSlotBackpackLine2_9 = 21, // @ C21_SLOT_BACKPACK_LINE2_9
+	kDMSlotBackpackLine1_2 = 22, // @ C22_SLOT_BACKPACK_LINE1_2
+	kDMSlotBackpackLine1_3 = 23, // @ C23_SLOT_BACKPACK_LINE1_3
+	kDMSlotBackpackLine1_4 = 24, // @ C24_SLOT_BACKPACK_LINE1_4
+	kDMSlotBackpackLine1_5 = 25, // @ C25_SLOT_BACKPACK_LINE1_5
+	kDMSlotBackpackLine1_6 = 26, // @ C26_SLOT_BACKPACK_LINE1_6
+	kDMSlotBackpackLine1_7 = 27, // @ C27_SLOT_BACKPACK_LINE1_7
+	kDMSlotBackpackLine1_8 = 28, // @ C28_SLOT_BACKPACK_LINE1_8
+	kDMSlotBackpackLine1_9 = 29, // @ C29_SLOT_BACKPACK_LINE1_9
+	kDMSlotChest1 = 30, // @ C30_SLOT_CHEST_1
+	kDMSlotChest2 = 31, // @ C31_SLOT_CHEST_2
+	kDMSlotChest3 = 32, // @ C32_SLOT_CHEST_3
+	kDMSlotChest4 = 33, // @ C33_SLOT_CHEST_4
+	kDMSlotChest5 = 34, // @ C34_SLOT_CHEST_5
+	kDMSlotChest6 = 35, // @ C35_SLOT_CHEST_6
+	kDMSlotChest7 = 36, // @ C36_SLOT_CHEST_7
+	kDMSlotChest8 = 37 // @ C37_SLOT_CHEST_8
 };
 
 enum ChampionAction {

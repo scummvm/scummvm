@@ -149,7 +149,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 
 	_vm->_textMan->printToViewport(5, 132, k13_ColorLightestGray, "MANA");
 
-	for (uint16 i = k0_ChampionSlotReadyHand; i < k30_ChampionSlotChest_1; i++)
+	for (uint16 i = kDMSlotReadyHand; i < kDMSlotChest1; i++)
 		_vm->_championMan->drawSlot(championIndex, i);
 
 	setFlag(champion->_attributes, kDMAttributeViewport | kDMAttributeStatusBox | kDMAttributePanel | kDMAttributeLoad | kDMAttributeStatistics | kDMAttributeNameTitle);
@@ -246,7 +246,7 @@ void InventoryMan::drawPanel() {
 		return;
 	}
 
-	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(k1_ChampionSlotActionHand);
+	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kDMSlotActionHand);
 
 	_panelContent = k0_PanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
@@ -688,7 +688,7 @@ void InventoryMan::setDungeonViewPalette() {
 		int16 torchesLightPower[8];
 		int16 *curTorchLightPower = torchesLightPower;
 		while (counter--) {
-			uint16 slotIndex = k1_ChampionSlotActionHand + 1;
+			uint16 slotIndex = kDMSlotActionHand + 1;
 			while (slotIndex--) {
 				Thing slotThing = curChampion->_slots[slotIndex];
 				if ((_vm->_objectMan->getObjectType(slotThing) >= kDMIconIndiceWeaponTorchUnlit) &&
@@ -756,7 +756,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 
 	Champion *curChampion = _vm->_championMan->_champions;
 	while (championCount--) {
-		int16 slotIndex = k1_ChampionSlotActionHand + 1;
+		int16 slotIndex = kDMSlotActionHand + 1;
 		while (slotIndex--) {
 			int16 iconIndex = _vm->_objectMan->getIconIndex(curChampion->_slots[slotIndex]);
 			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit)) {
