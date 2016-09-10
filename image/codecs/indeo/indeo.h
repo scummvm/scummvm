@@ -523,9 +523,9 @@ protected:
 	/**
 	 *  Scan patterns shared between indeo4 and indeo5
 	 */
-	static const uint8 _ff_ivi_vertical_scan_8x8[64];
-	static const uint8 _ff_ivi_horizontal_scan_8x8[64];
-	static const uint8 _ff_ivi_direct_scan_4x4[16];
+	static const uint8 _ffIviVerticalScan8x8[64];
+	static const uint8 _ffIviHorizontalScan8x8[64];
+	static const uint8 _ffIviDirectScan4x4[16];
 protected:
 	/**
 	 * Returns the pixel format for the decoder's surface

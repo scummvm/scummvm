@@ -425,8 +425,8 @@ int Indeo5Decoder::decode_gop_header() {
 		picConf._picHeight = _ctx._gb->getBits(13);
 		picConf._picWidth = _ctx._gb->getBits(13);
 	} else {
-		picConf._picHeight = _ivi5_common_pic_sizes[picSizeIndx * 2 + 1] << 2;
-		picConf._picWidth = _ivi5_common_pic_sizes[picSizeIndx * 2] << 2;
+		picConf._picHeight = _commonPicSizes[picSizeIndx * 2 + 1] << 2;
+		picConf._picWidth = _commonPicSizes[picSizeIndx * 2] << 2;
 	}
 
 	if (_ctx._gopFlags & 2) {
@@ -485,43 +485,43 @@ int Indeo5Decoder::decode_gop_header() {
 			// select transform function and scan pattern according to plane and band number
 			switch ((p << 2) + i) {
 			case 0:
-				band->_invTransform = IndeoDSP::ff_ivi_inverse_slant_8x8;
-				band->_dcTransform = IndeoDSP::ff_ivi_dc_slant_2d;
-				band->_scan = ff_zigzag_direct;
+				band->_invTransform = IndeoDSP::ffIviInverseSlant8x8;
+				band->_dcTransform = IndeoDSP::ffIviDcSlant2d;
+				band->_scan = ffZigZagDirect;
 				band->_transformSize = 8;
 				break;
 
 			case 1:
-				band->_invTransform = IndeoDSP::ff_ivi_row_slant8;
-				band->_dcTransform = IndeoDSP::ff_ivi_dc_row_slant;
-				band->_scan = _ff_ivi_vertical_scan_8x8;
+				band->_invTransform = IndeoDSP::ffIviRowSlant8;
+				band->_dcTransform = IndeoDSP::ffIviDcRowSlant;
+				band->_scan = _ffIviVerticalScan8x8;
 				band->_transformSize = 8;
 				break;
 
 			case 2:
-				band->_invTransform = IndeoDSP::ff_ivi_col_slant8;
-				band->_dcTransform = IndeoDSP::ff_ivi_dc_col_slant;
-				band->_scan = _ff_ivi_horizontal_scan_8x8;
+				band->_invTransform = IndeoDSP::ffIviColSlant8;
+				band->_dcTransform = IndeoDSP::ffIviDcColSlant;
+				band->_scan = _ffIviHorizontalScan8x8;
 				band->_transformSize = 8;
 				break;
 
 			case 3:
-				band->_invTransform = IndeoDSP::ff_ivi_put_pixels_8x8;
-				band->_dcTransform = IndeoDSP::ff_ivi_put_dc_pixel_8x8;
-				band->_scan = _ff_ivi_horizontal_scan_8x8;
+				band->_invTransform = IndeoDSP::ffIviPutPixels8x8;
+				band->_dcTransform = IndeoDSP::ffIviPutDcPixel8x8;
+				band->_scan = _ffIviHorizontalScan8x8;
 				band->_transformSize = 8;
 				break;
 
 			case 4:
-				band->_invTransform = IndeoDSP::ff_ivi_inverse_slant_4x4;
-				band->_dcTransform = IndeoDSP::ff_ivi_dc_slant_2d;
-				band->_scan = _ff_ivi_direct_scan_4x4;
+				band->_invTransform = IndeoDSP::ffIviInverseSlant4x4;
+				band->_dcTransform = IndeoDSP::ffIviDcSlant2d;
+				band->_scan = _ffIviDirectScan4x4;
 				band->_transformSize = 4;
 				break;
 			}
 
-			band->_is2dTrans = band->_invTransform == IndeoDSP::ff_ivi_inverse_slant_8x8 ||
-				band->_invTransform == IndeoDSP::ff_ivi_inverse_slant_4x4;
+			band->_is2dTrans = band->_invTransform == IndeoDSP::ffIviInverseSlant8x8 ||
+				band->_invTransform == IndeoDSP::ffIviInverseSlant4x4;
 
 			if (band->_transformSize != band->_blkSize) {
 				warning("transform and block size mismatch (%d != %d)", band->_transformSize, band->_blkSize);
@@ -540,15 +540,15 @@ int Indeo5Decoder::decode_gop_header() {
 					warning("_quantMat %d too large!", quantMat);
 					return -1;
 				}
-				band->_intraBase = &_ivi5_base_quant_8x8_intra[quantMat][0];
-				band->_interBase = &_ivi5_base_quant_8x8_inter[quantMat][0];
-				band->_intraScale = &_ivi5_scale_quant_8x8_intra[quantMat][0];
-				band->_interScale = &_ivi5_scale_quant_8x8_inter[quantMat][0];
+				band->_intraBase = &_baseQuant8x8Intra[quantMat][0];
+				band->_interBase = &_baseQuant8x8Inter[quantMat][0];
+				band->_intraScale = &_scaleQuant8x8Intra[quantMat][0];
+				band->_interScale = &_scaleQuant8x8Inter[quantMat][0];
 			} else {
-				band->_intraBase = _ivi5_base_quant_4x4_intra;
-				band->_interBase = _ivi5_base_quant_4x4_inter;
-				band->_intraScale = _ivi5_scale_quant_4x4_intra;
-				band->_interScale = _ivi5_scale_quant_4x4_inter;
+				band->_intraBase = _baseQuant4x4Intra;
+				band->_interBase = _baseQuant4x4Inter;
+				band->_intraScale = _scaleQuant4x4Intra;
+				band->_interScale = _scaleQuant4x4Inter;
 			}
 
 			if (_ctx._gb->getBits(2)) {
@@ -631,17 +631,12 @@ int Indeo5Decoder::skip_hdr_extension() {
 
 /*------------------------------------------------------------------------*/
 
-const uint8 Indeo5Decoder::_ivi5_common_pic_sizes[30] = {
+const uint8 Indeo5Decoder::_commonPicSizes[30] = {
 	160, 120, 80, 60, 40, 30, 176, 120, 88, 60, 88, 72, 44, 36, 60, 45, 160, 60,
 	176,  60, 20, 15, 22, 18,   0,   0,  0,  0,  0,  0
 };
 
-const uint8 Indeo5Decoder::ivi5_common_pic_sizes[30] = {
-    160, 120, 80, 60, 40, 30, 176, 120, 88, 60, 88, 72, 44, 36, 60, 45, 160, 60,
-    176,  60, 20, 15, 22, 18,   0,   0,  0,  0,  0,  0
-};
-
-const uint16 Indeo5Decoder::_ivi5_base_quant_8x8_inter[5][64] = {
+const uint16 Indeo5Decoder::_baseQuant8x8Inter[5][64] = {
     {0x26, 0x3a, 0x3e, 0x46, 0x4a, 0x4e, 0x52, 0x5a, 0x3a, 0x3e, 0x42, 0x46, 0x4a, 0x4e, 0x56, 0x5e,
      0x3e, 0x42, 0x46, 0x48, 0x4c, 0x52, 0x5a, 0x62, 0x46, 0x46, 0x48, 0x4a, 0x4e, 0x56, 0x5e, 0x66,
      0x4a, 0x4a, 0x4c, 0x4e, 0x52, 0x5a, 0x62, 0x6a, 0x4e, 0x4e, 0x52, 0x56, 0x5a, 0x5e, 0x66, 0x6e,
@@ -669,7 +664,7 @@ const uint16 Indeo5Decoder::_ivi5_base_quant_8x8_inter[5][64] = {
     }
 };
 
-const uint16 Indeo5Decoder::_ivi5_base_quant_8x8_intra[5][64] = {
+const uint16 Indeo5Decoder::_baseQuant8x8Intra[5][64] = {
     {0x1a, 0x2e, 0x36, 0x42, 0x46, 0x4a, 0x4e, 0x5a, 0x2e, 0x32, 0x3e, 0x42, 0x46, 0x4e, 0x56, 0x6a,
      0x36, 0x3e, 0x3e, 0x44, 0x4a, 0x54, 0x66, 0x72, 0x42, 0x42, 0x44, 0x4a, 0x52, 0x62, 0x6c, 0x7a,
      0x46, 0x46, 0x4a, 0x52, 0x5e, 0x66, 0x72, 0x8e, 0x4a, 0x4e, 0x54, 0x62, 0x66, 0x6e, 0x86, 0xa6,
@@ -697,16 +692,16 @@ const uint16 Indeo5Decoder::_ivi5_base_quant_8x8_intra[5][64] = {
     }
 };
 
-const uint16 Indeo5Decoder::_ivi5_base_quant_4x4_inter[16] = {
+const uint16 Indeo5Decoder::_baseQuant4x4Inter[16] = {
     0x1e, 0x3e, 0x4a, 0x52, 0x3e, 0x4a, 0x52, 0x56, 0x4a, 0x52, 0x56, 0x5e, 0x52, 0x56, 0x5e, 0x66
 };
 
-const uint16 Indeo5Decoder::_ivi5_base_quant_4x4_intra[16] = {
+const uint16 Indeo5Decoder::_baseQuant4x4Intra[16] = {
     0x1e, 0x3e, 0x4a, 0x52, 0x3e, 0x4a, 0x52, 0x5e, 0x4a, 0x52, 0x5e, 0x7a, 0x52, 0x5e, 0x7a, 0x92
 };
 
 
-const uint8 Indeo5Decoder::_ivi5_scale_quant_8x8_inter[5][24] = {
+const uint8 Indeo5Decoder::_scaleQuant8x8Inter[5][24] = {
     {0x0b, 0x11, 0x13, 0x14, 0x15, 0x16, 0x18, 0x1a, 0x1b, 0x1d, 0x20, 0x22,
      0x23, 0x25, 0x28, 0x2a, 0x2e, 0x32, 0x35, 0x39, 0x3d, 0x41, 0x44, 0x4a,
     },
@@ -724,7 +719,7 @@ const uint8 Indeo5Decoder::_ivi5_scale_quant_8x8_inter[5][24] = {
     },
 };
 
-const uint8 Indeo5Decoder::_ivi5_scale_quant_8x8_intra[5][24] = {
+const uint8 Indeo5Decoder::_scaleQuant8x8Intra[5][24] = {
     {0x0b, 0x0e, 0x10, 0x12, 0x14, 0x16, 0x17, 0x18, 0x1a, 0x1c, 0x1e, 0x20,
      0x22, 0x24, 0x27, 0x28, 0x2a, 0x2d, 0x2f, 0x31, 0x34, 0x37, 0x39, 0x3c,
     },
@@ -742,12 +737,12 @@ const uint8 Indeo5Decoder::_ivi5_scale_quant_8x8_intra[5][24] = {
     }
 };
 
-const uint8 Indeo5Decoder::_ivi5_scale_quant_4x4_inter[24] = {
+const uint8 Indeo5Decoder::_scaleQuant4x4Inter[24] = {
     0x0b, 0x0d, 0x0d, 0x0e, 0x11, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
     0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23,
 };
 
-const uint8 Indeo5Decoder::_ivi5_scale_quant_4x4_intra[24] = {
+const uint8 Indeo5Decoder::_scaleQuant4x4Intra[24] = {
     0x01, 0x0b, 0x0b, 0x0d, 0x0d, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x13, 0x14,
     0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20
 };

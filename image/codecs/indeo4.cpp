@@ -624,22 +624,22 @@ int Indeo4Decoder::decodePlaneSubdivision() {
 /**
  *  Indeo 4 8x8 scan (zigzag) patterns
  */
-static const uint8 ivi4_alternate_scan_8x8[64] = {
+static const uint8 ivi4AlternateScan8x8[64] = {
 	0,  8,  1,  9, 16, 24,  2,  3, 17, 25, 10, 11, 32, 40, 48, 56,
 	4,  5,  6,  7, 33, 41, 49, 57, 18, 19, 26, 27, 12, 13, 14, 15,
 	34, 35, 43, 42, 50, 51, 59, 58, 20, 21, 22, 23, 31, 30, 29, 28,
 	36, 37, 38, 39, 47, 46, 45, 44, 52, 53, 54, 55, 63, 62, 61, 60
 };
 
-static const uint8 ivi4_alternate_scan_4x4[16] = {
+static const uint8 ivi4AlternateScan4x4[16] = {
 	0, 1, 4, 5, 8, 12, 2, 3, 9, 13, 6, 7, 10, 11, 14, 15
 };
 
-static const uint8 ivi4_vertical_scan_4x4[16] = {
+static const uint8 ivi4VerticalScan4x4[16] = {
 	0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15
 };
 
-static const uint8 ivi4_horizontal_scan_4x4[16] = {
+static const uint8 ivi4HorizontalScan4x4[16] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 };
 
@@ -648,47 +648,47 @@ const uint Indeo4Decoder::_ivi4_common_pic_sizes[14] = {
 };
 
 Indeo4Decoder::Transform Indeo4Decoder::_transforms[18] = {
-	{ IndeoDSP::ff_ivi_inverse_haar_8x8,  IndeoDSP::ff_ivi_dc_haar_2d,       1 },
-	{ IndeoDSP::ff_ivi_row_haar8,         IndeoDSP::ff_ivi_dc_haar_2d,       0 },
-	{ IndeoDSP::ff_ivi_col_haar8,         IndeoDSP::ff_ivi_dc_haar_2d,       0 },
-	{ IndeoDSP::ff_ivi_put_pixels_8x8,    IndeoDSP::ff_ivi_put_dc_pixel_8x8, 1 },
-	{ IndeoDSP::ff_ivi_inverse_slant_8x8, IndeoDSP::ff_ivi_dc_slant_2d,      1 },
-	{ IndeoDSP::ff_ivi_row_slant8,        IndeoDSP::ff_ivi_dc_row_slant,     1 },
-	{ IndeoDSP::ff_ivi_col_slant8,        IndeoDSP::ff_ivi_dc_col_slant,     1 },
+	{ IndeoDSP::ffIviInverseHaar8x8,  IndeoDSP::ffIviDcHaar2d,       1 },
+	{ IndeoDSP::ffIviRowHaar8,         IndeoDSP::ffIviDcHaar2d,       0 },
+	{ IndeoDSP::ffIviColHaar8,         IndeoDSP::ffIviDcHaar2d,       0 },
+	{ IndeoDSP::ffIviPutPixels8x8,    IndeoDSP::ffIviPutDcPixel8x8, 1 },
+	{ IndeoDSP::ffIviInverseSlant8x8, IndeoDSP::ffIviDcSlant2d,      1 },
+	{ IndeoDSP::ffIviRowSlant8,        IndeoDSP::ffIviDcRowSlant,     1 },
+	{ IndeoDSP::ffIviColSlant8,        IndeoDSP::ffIviDcColSlant,     1 },
 	{ NULL, NULL, 0 }, // inverse DCT 8x8
 	{ NULL, NULL, 0 }, // inverse DCT 8x1
 	{ NULL, NULL, 0 }, // inverse DCT 1x8
-	{ IndeoDSP::ff_ivi_inverse_haar_4x4,  IndeoDSP::ff_ivi_dc_haar_2d,       1 },
-	{ IndeoDSP::ff_ivi_inverse_slant_4x4, IndeoDSP::ff_ivi_dc_slant_2d,      1 },
+	{ IndeoDSP::ffIviInverseHaar4x4,  IndeoDSP::ffIviDcHaar2d,       1 },
+	{ IndeoDSP::ffIviInverseSlant4x4, IndeoDSP::ffIviDcSlant2d,      1 },
 	{ NULL, NULL, 0 }, // no transform 4x4
-	{ IndeoDSP::ff_ivi_row_haar4,         IndeoDSP::ff_ivi_dc_haar_2d,       0 },
-	{ IndeoDSP::ff_ivi_col_haar4,         IndeoDSP::ff_ivi_dc_haar_2d,       0 },
-	{ IndeoDSP::ff_ivi_row_slant4,        IndeoDSP::ff_ivi_dc_row_slant,     0 },
-	{ IndeoDSP::ff_ivi_col_slant4,        IndeoDSP::ff_ivi_dc_col_slant,     0 },
+	{ IndeoDSP::ffIviRowHaar4,         IndeoDSP::ffIviDcHaar2d,       0 },
+	{ IndeoDSP::ffIviColHaar4,         IndeoDSP::ffIviDcHaar2d,       0 },
+	{ IndeoDSP::ffIviRowSlant4,        IndeoDSP::ffIviDcRowSlant,     0 },
+	{ IndeoDSP::ffIviColSlant4,        IndeoDSP::ffIviDcColSlant,     0 },
 	{ NULL, NULL, 0 }, // inverse DCT 4x4
 };
 
 const uint8 *const Indeo4Decoder::_scan_index_to_tab[15] = {
 	// for 8x8 transforms
-	ff_zigzag_direct,
-	ivi4_alternate_scan_8x8,
-	_ff_ivi_horizontal_scan_8x8,
-	_ff_ivi_vertical_scan_8x8,
-	ff_zigzag_direct,
+	ffZigZagDirect,
+	ivi4AlternateScan8x8,
+	_ffIviHorizontalScan8x8,
+	_ffIviVerticalScan8x8,
+	ffZigZagDirect,
 
 	// for 4x4 transforms
-	_ff_ivi_direct_scan_4x4,
-	ivi4_alternate_scan_4x4,
-	ivi4_vertical_scan_4x4,
-	ivi4_horizontal_scan_4x4,
-	_ff_ivi_direct_scan_4x4,
+	_ffIviDirectScan4x4,
+	ivi4AlternateScan4x4,
+	ivi4VerticalScan4x4,
+	ivi4HorizontalScan4x4,
+	_ffIviDirectScan4x4,
 
 	// TODO: check if those are needed
-	_ff_ivi_horizontal_scan_8x8,
-	_ff_ivi_horizontal_scan_8x8,
-	_ff_ivi_horizontal_scan_8x8,
-	_ff_ivi_horizontal_scan_8x8,
-	_ff_ivi_horizontal_scan_8x8
+	_ffIviHorizontalScan8x8,
+	_ffIviHorizontalScan8x8,
+	_ffIviHorizontalScan8x8,
+	_ffIviHorizontalScan8x8,
+	_ffIviHorizontalScan8x8
 };
 
 /**

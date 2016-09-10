@@ -49,7 +49,7 @@ namespace Indeo {
  *         be allocated
  * @see av_mallocz()
  */
-extern void *av_malloc(size_t size);
+extern void *avMalloc(size_t size);
 
 /**
  * Allocate a memory block with alignment suitable for all memory accesses
@@ -60,7 +60,7 @@ extern void *av_malloc(size_t size);
  * @return Pointer to the allocated block, or `NULL` if it cannot be allocated
  * @see av_malloc()
  */
-extern void *av_mallocz(size_t size);
+extern void *avMallocZ(size_t size);
 
 /**
  * Allocate a memory block for an array with av_malloc().
@@ -73,7 +73,7 @@ extern void *av_mallocz(size_t size);
  *         be allocated
  * @see av_malloc()
  */
-extern void *av_malloc_array(size_t nmemb, size_t size);
+extern void *avMallocArray(size_t nmemb, size_t size);
 
 /**
  * Allocate a memory block for an array with av_mallocz().
@@ -88,7 +88,7 @@ extern void *av_malloc_array(size_t nmemb, size_t size);
  * @see av_mallocz()
  * @see av_malloc_array()
  */
-extern void *av_mallocz_array(size_t nmemb, size_t size);
+extern void *avMallocZArray(size_t nmemb, size_t size);
 
 /**
  * Free a memory block which has been allocated with a function of av_malloc()
@@ -101,7 +101,7 @@ extern void *av_mallocz_array(size_t nmemb, size_t size);
  *       behind dangling pointers.
  * @see av_freep()
  */
-extern void av_free(void *ptr);
+extern void avFree(void *ptr);
 
 /**
  * Free a memory block which has been allocated with a function of av_malloc()
@@ -110,7 +110,7 @@ extern void av_free(void *ptr);
  * @param ptr Pointer to the pointer to the memory block which should be freed
  * @note `*ptr = NULL` is safe and leads to no action.
  */
-extern void av_freep(void *arg);
+extern void avFreeP(void *arg);
 
 
 /**
@@ -128,25 +128,25 @@ extern void av_freep(void *arg);
  *   @endcode
  *   pattern.
  */
-extern void *av_realloc_f(void *ptr, size_t nelem, size_t elsize);
+extern void *avReallocF(void *ptr, size_t nelem, size_t elsize);
 
 /**
  * Reverse "nbits" bits of the value "val" and return the result
  * in the least significant bits.
  */
-extern uint16 inv_bits(uint16 val, int nbits);
+extern uint16 invertBits(uint16 val, int nbits);
 
 /**
  * Swap the order of the bytes in the passed value
  */
-extern uint32 bitswap_32(uint32 x);
+extern uint32 bitswap32(uint32 x);
 
 /**
  * Clip a signed integer value into the 0-255 range.
  * @param a value to clip
  * @return clipped value
  */
-extern uint8 av_clip_uint8(int a);
+extern uint8 avClipUint8(int a);
 
 /**
  * Clip a signed integer to an unsigned power of two range.
@@ -154,7 +154,7 @@ extern uint8 av_clip_uint8(int a);
  * @param  p bit position to clip at
  * @return clipped value
  */
-extern unsigned av_clip_uintp2(int a, int p);
+extern unsigned avClipUintp2(int a, int p);
 
 /**
 * Clip a signed integer value into the amin-amax range.
@@ -165,9 +165,7 @@ extern unsigned av_clip_uintp2(int a, int p);
 */
 #define av_clip CLIP
 
-/*------------------------------------------------------------------------*/
-
-extern const uint8 ff_zigzag_direct[64];
+extern const uint8 ffZigZagDirect[64];
 
 } // End of namespace Indeo
 } // End of namespace Image

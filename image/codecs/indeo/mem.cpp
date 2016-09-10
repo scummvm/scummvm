@@ -31,7 +31,7 @@
 namespace Image {
 namespace Indeo {
 
-const uint8 ff_reverse[256] = {
+const uint8 ffReverse[256] = {
 	0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 
 	0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8, 0x18, 0x98, 0x58, 0xD8, 0x38, 0xB8, 0x78, 0xF8, 
 	0x04, 0x84, 0x44, 0xC4, 0x24, 0xA4, 0x64, 0xE4, 0x14, 0x94, 0x54, 0xD4, 0x34, 0xB4, 0x74, 0xF4, 
@@ -50,6 +50,17 @@ const uint8 ff_reverse[256] = {
 	0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF, 0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF, 
 };
 
+const uint8 ffZigZagDirect[64] = {
+	0,   1,  8, 16,  9,  2,  3, 10,
+	17, 24, 32, 25, 18, 11,  4,  5,
+	12, 19, 26, 33, 40, 48, 41, 34,
+	27, 20, 13,  6,  7, 14, 21, 28,
+	35, 42, 49, 56, 57, 50, 43, 36,
+	29, 22, 15, 23, 30, 37, 44, 51,
+	58, 59, 52, 45, 38, 31, 39, 46,
+	53, 60, 61, 54, 47, 55, 62, 63
+};
+
 /*------------------------------------------------------------------------*/
 
 /**
@@ -59,7 +70,7 @@ const uint8 ff_reverse[256] = {
  * @param[out] r   Pointer to the result of the operation
  * @return 0 on success, AVERROR(EINVAL) on overflow
  */
-static inline int av_size_mult(size_t a, size_t b, size_t *r) {
+static inline int avSizeMult(size_t a, size_t b, size_t *r) {
     size_t t = a * b;
 
     // Hack inspired from glibc: don't try the division if nelem and elsize
@@ -72,56 +83,56 @@ static inline int av_size_mult(size_t a, size_t b, size_t *r) {
 
 /*------------------------------------------------------------------------*/
 
-void *av_malloc(size_t size) {
+void *avMalloc(size_t size) {
 	return malloc(size);
 }
 
-void *av_mallocz(size_t size) {
-	void *ptr = av_malloc(size);
+void *avMallocZ(size_t size) {
+	void *ptr = avMalloc(size);
 	if (ptr)
 		memset(ptr, 0, size);
 
 	return ptr;
 }
 
-void *av_malloc_array(size_t nmemb, size_t size) {
+void *avMallocArray(size_t nmemb, size_t size) {
     if (!size || nmemb >= MAX_INTEGER / size)
         return nullptr;
     return malloc(nmemb * size);
 }
 
-void *av_mallocz_array(size_t nmemb, size_t size) {
+void *avMallocZArray(size_t nmemb, size_t size) {
 	if (!size || nmemb >= MAX_INTEGER / size)
 		return NULL;
 
-	return av_mallocz(nmemb * size);
+	return avMallocZ(nmemb * size);
 }
 
-void av_free(void *ptr) {
+void avFree(void *ptr) {
 	free(ptr);
 }
 
-void av_freep(void *arg) {
+void avFreeP(void *arg) {
 	void **ptr = (void **)arg;
 	free(*ptr);
 	*ptr = nullptr;
 }
 
-static void *av_realloc(void *ptr, size_t size) {
+static void *avRealloc(void *ptr, size_t size) {
 	return realloc(ptr, size + !size);
 }
 
-void *av_realloc_f(void *ptr, size_t nelem, size_t elsize) {
+void *avReallocF(void *ptr, size_t nelem, size_t elsize) {
 	size_t size;
 	void *r;
 
-	if (av_size_mult(elsize, nelem, &size)) {
-		av_free(ptr);
+	if (avSizeMult(elsize, nelem, &size)) {
+		avFree(ptr);
 		return nullptr;
 	}
-	r = av_realloc(ptr, size);
+	r = avRealloc(ptr, size);
 	if (!r)
-		av_free(ptr);
+		avFree(ptr);
 
 	return r;
 }
@@ -130,53 +141,39 @@ void *av_realloc_f(void *ptr, size_t nelem, size_t elsize) {
 /**
  * Swap the order of the bytes in the passed value
  */
-uint32 bitswap_32(uint32 x) {
-	return (uint32)ff_reverse[x & 0xFF] << 24 |
-		(uint32)ff_reverse[(x >> 8) & 0xFF] << 16 |
-		(uint32)ff_reverse[(x >> 16) & 0xFF] << 8 |
-		(uint32)ff_reverse[x >> 24];
+uint32 bitswap32(uint32 x) {
+	return (uint32)ffReverse[x & 0xFF] << 24 |
+		(uint32)ffReverse[(x >> 8) & 0xFF] << 16 |
+		(uint32)ffReverse[(x >> 16) & 0xFF] << 8 |
+		(uint32)ffReverse[x >> 24];
 }
 
 /**
  * Reverse "nbits" bits of the value "val" and return the result
  * in the least significant bits.
  */
-uint16 inv_bits(uint16 val, int nbits) {
+uint16 invertBits(uint16 val, int nbits) {
 	uint16 res;
 
 	if (nbits <= 8) {
-		res = ff_reverse[val] >> (8 - nbits);
+		res = ffReverse[val] >> (8 - nbits);
 	} else {
-		res = ((ff_reverse[val & 0xFF] << 8) +
-			(ff_reverse[val >> 8])) >> (16 - nbits);
+		res = ((ffReverse[val & 0xFF] << 8) +
+			(ffReverse[val >> 8])) >> (16 - nbits);
 	}
 
 	return res;
 }
 
-uint8 av_clip_uint8(int a) {
+uint8 avClipUint8(int a) {
 	if (a&(~0xFF)) return (-a) >> 31;
 	else           return a;
 }
 
-unsigned av_clip_uintp2(int a, int p) {
+unsigned avClipUintp2(int a, int p) {
 	if (a & ~((1 << p) - 1)) return -a >> 31 & ((1 << p) - 1);
 	else                   return  a;
 }
-
-
-/*------------------------------------------------------------------------*/
-
-const uint8 ff_zigzag_direct[64] = {
-	0,   1,  8, 16,  9,  2,  3, 10,
-	17, 24, 32, 25, 18, 11,  4,  5,
-	12, 19, 26, 33, 40, 48, 41, 34,
-	27, 20, 13,  6,  7, 14, 21, 28,
-	35, 42, 49, 56, 57, 50, 43, 36,
-	29, 22, 15, 23, 30, 37, 44, 51,
-	58, 59, 52, 45, 38, 31, 39, 46,
-	53, 60, 61, 54, 47, 55, 62, 63
-};
 
 } // End of namespace Indeo
 } // End of namespace Image

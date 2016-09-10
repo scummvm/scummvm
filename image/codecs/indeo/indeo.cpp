@@ -105,7 +105,7 @@ int IVIHuffDesc::createHuffFromDesc(VLC *vlc, bool flag) const {
             if (bits[pos] > IVI_VLC_BITS)
                 return -1; // invalid descriptor
 
-            codewords[pos] = inv_bits((prefix | j), bits[pos]);
+            codewords[pos] = invertBits((prefix | j), bits[pos]);
             if (!bits[pos])
                 bits[pos] = 1;
 
@@ -227,8 +227,8 @@ int IVIBandDesc::initTiles(IVITile *refTile, int p, int b, int tHeight, int tWid
 			tile->_numMBs = IVI_MBs_PER_TILE(tile->_width, tile->_height,
 				_mbSize);
 
-			av_freep(&tile->_mbs);
-			tile->_mbs = (IVIMbInfo *)av_mallocz_array(tile->_numMBs, sizeof(IVIMbInfo));
+			avFreeP(&tile->_mbs);
+			tile->_mbs = (IVIMbInfo *)avMallocZArray(tile->_numMBs, sizeof(IVIMbInfo));
 			if (!tile->_mbs)
 				return -2;
 
@@ -289,7 +289,7 @@ int IVIPlaneDesc::initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool
 	planes[1]._numBands = planes[2]._numBands = cfg->_chromaBands;
 
 	for (p = 0; p < 3; p++) {
-		planes[p]._bands = (IVIBandDesc *)av_mallocz_array(planes[p]._numBands, sizeof(IVIBandDesc));
+		planes[p]._bands = (IVIBandDesc *)avMallocZArray(planes[p]._numBands, sizeof(IVIBandDesc));
 		if (!planes[p]._bands)
 			return -2;
 
@@ -316,20 +316,20 @@ int IVIPlaneDesc::initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool
 			band->_height = b_height;
 			band->_pitch = width_aligned;
 			band->_aHeight = height_aligned;
-			band->_bufs[0] = (int16 *)av_mallocz(bufSize);
-			band->_bufs[1] = (int16 *)av_mallocz(bufSize);
+			band->_bufs[0] = (int16 *)avMallocZ(bufSize);
+			band->_bufs[1] = (int16 *)avMallocZ(bufSize);
 			band->_bufSize = bufSize / 2;
 			if (!band->_bufs[0] || !band->_bufs[1])
 				return -2;
 
 			// allocate the 3rd band buffer for scalability mode
 			if (cfg->_lumaBands > 1) {
-				band->_bufs[2] = (int16 *)av_mallocz(bufSize);
+				band->_bufs[2] = (int16 *)avMallocZ(bufSize);
 				if (!band->_bufs[2])
 					return -2;
 			}
 			if (isIndeo4) {
-				band->_bufs[3] = (int16 *)av_mallocz(bufSize);
+				band->_bufs[3] = (int16 *)avMallocZ(bufSize);
 				if (!band->_bufs[3])
 					return -2;
 			}
@@ -362,8 +362,8 @@ int IVIPlaneDesc::initTiles(IVIPlaneDesc *planes, int tileWidth, int tileHeight)
 			yTiles = IVI_NUM_TILES(band->_height, tHeight);
 			band->_numTiles = xTiles * yTiles;
 
-			av_freep(&band->_tiles);
-			band->_tiles = (IVITile *)av_mallocz_array(band->_numTiles, sizeof(IVITile));
+			avFreeP(&band->_tiles);
+			band->_tiles = (IVITile *)avMallocZArray(band->_numTiles, sizeof(IVITile));
 			if (!band->_tiles)
 				return -2;
 
@@ -385,18 +385,18 @@ void IVIPlaneDesc::freeBuffers(IVIPlaneDesc *planes) {
 	for (p = 0; p < 3; p++) {
 		if (planes[p]._bands)
 			for (b = 0; b < planes[p]._numBands; b++) {
-				av_freep(&planes[p]._bands[b]._bufs[0]);
-				av_freep(&planes[p]._bands[b]._bufs[1]);
-				av_freep(&planes[p]._bands[b]._bufs[2]);
-				av_freep(&planes[p]._bands[b]._bufs[3]);
+				avFreeP(&planes[p]._bands[b]._bufs[0]);
+				avFreeP(&planes[p]._bands[b]._bufs[1]);
+				avFreeP(&planes[p]._bands[b]._bufs[2]);
+				avFreeP(&planes[p]._bands[b]._bufs[3]);
 
 				if (planes[p]._bands[b]._blkVlc._custTab._table)
 					planes[p]._bands[b]._blkVlc._custTab.ff_free_vlc();
 				for (t = 0; t < planes[p]._bands[b]._numTiles; t++)
-					av_freep(&planes[p]._bands[b]._tiles[t]._mbs);
-				av_freep(&planes[p]._bands[b]._tiles);
+					avFreeP(&planes[p]._bands[b]._tiles[t]._mbs);
+				avFreeP(&planes[p]._bands[b]._tiles);
 			}
-		av_freep(&planes[p]._bands);
+		avFreeP(&planes[p]._bands);
 		planes[p]._numBands = 0;
 	}
 }
@@ -427,11 +427,11 @@ int AVFrame::getBuffer(int flags) {
 	freeFrame();
 
 	// Luminance channel
-	_data[0] = (uint8 *)av_mallocz(_width * _height);
+	_data[0] = (uint8 *)avMallocZ(_width * _height);
 	
 	// UV Chroma Channels
-	_data[1] = (uint8 *)av_malloc(_width * _height);
-	_data[2] = (uint8 *)av_malloc(_width * _height);
+	_data[1] = (uint8 *)avMalloc(_width * _height);
+	_data[2] = (uint8 *)avMalloc(_width * _height);
 	Common::fill(_data[1], _data[1] + _width * _height, 0x80);
 	Common::fill(_data[2], _data[2] + _width * _height, 0x80);
 
@@ -439,9 +439,9 @@ int AVFrame::getBuffer(int flags) {
 }
 
 void AVFrame::freeFrame() {
-	av_freep(&_data[0]);
-	av_freep(&_data[1]);
-	av_freep(&_data[2]);
+	avFreeP(&_data[0]);
+	avFreeP(&_data[1]);
+	avFreeP(&_data[2]);
 }
 
 /*------------------------------------------------------------------------*/
@@ -739,10 +739,10 @@ void IndeoDecoderBase::recomposeHaar(const IVIPlaneDesc *_plane,
 			p3 = (b0 - b1 - b2 + b3 + 2) >> 2;
 
 			// bias, convert and output four pixels
-			dst[x] = av_clip_uint8(p0 + 128);
-			dst[x + 1] = av_clip_uint8(p1 + 128);
-			dst[dstPitch + x] = av_clip_uint8(p2 + 128);
-			dst[dstPitch + x + 1] = av_clip_uint8(p3 + 128);
+			dst[x] = avClipUint8(p0 + 128);
+			dst[x + 1] = avClipUint8(p1 + 128);
+			dst[dstPitch + x] = avClipUint8(p2 + 128);
+			dst[dstPitch + x + 1] = avClipUint8(p3 + 128);
 		}// for x
 
 		dst += dstPitch << 1;
@@ -893,10 +893,10 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 			}
 
 			// output four pixels
-			dst[x] = av_clip_uint8((p0 >> 6) + 128);
-			dst[x + 1] = av_clip_uint8((p1 >> 6) + 128);
-			dst[dstPitch + x] = av_clip_uint8((p2 >> 6) + 128);
-			dst[dstPitch + x + 1] = av_clip_uint8((p3 >> 6) + 128);
+			dst[x] = avClipUint8((p0 >> 6) + 128);
+			dst[x + 1] = avClipUint8((p1 >> 6) + 128);
+			dst[dstPitch + x] = avClipUint8((p2 >> 6) + 128);
+			dst[dstPitch + x + 1] = avClipUint8((p3 >> 6) + 128);
 		}// for x
 
 		dst += dstPitch << 1;
@@ -920,7 +920,7 @@ void IndeoDecoderBase::outputPlane(IVIPlaneDesc *_plane, uint8 *dst, int dstPitc
 
 	for (y = 0; y < _plane->_height; y++) {
 		for (x = 0; x < _plane->_width; x++)
-			dst[x] = av_clip_uint8(src[x] + 128);
+			dst[x] = avClipUint8(src[x] + 128);
 		src += pitch;
 		dst += dstPitch;
 	}
@@ -1006,8 +1006,8 @@ int IndeoDecoderBase::processEmptyTile(IVIBandDesc *band,
 
 	if (band->_inheritMv && needMc) { // apply motion compensation if there is at least one non-zero motion vector
 		numBlocks = (band->_mbSize != band->_blkSize) ? 4 : 1; // number of blocks per mb
-		mcNoDeltaFunc = (band->_blkSize == 8) ? IndeoDSP::ff_ivi_mc_8x8_no_delta
-			: IndeoDSP::ff_ivi_mc_4x4_no_delta;
+		mcNoDeltaFunc = (band->_blkSize == 8) ? IndeoDSP::ffIviMc8x8NoDelta
+			: IndeoDSP::ffIviMc4x4NoDelta;
 
 		for (mbn = 0, mb = tile->_mbs; mbn < tile->_numMBs; mb++, mbn++) {
 			mvX = mb->_mvX;
@@ -1075,15 +1075,15 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
     // number of blocks per mb
     numBlocks = (band->_mbSize != blkSize) ? 4 : 1;
     if (blkSize == 8) {
-        mcWithDeltaFunc     = IndeoDSP::ff_ivi_mc_8x8_delta;
-        mcNoDeltaFunc       = IndeoDSP::ff_ivi_mc_8x8_no_delta;
-        mcAvgWithDeltaFunc = IndeoDSP::ff_ivi_mc_avg_8x8_delta;
-        mcAvgNoDeltaFunc   = IndeoDSP::ff_ivi_mc_avg_8x8_no_delta;
+        mcWithDeltaFunc     = IndeoDSP::ffIviMc8x8Delta;
+        mcNoDeltaFunc       = IndeoDSP::ffIviMc8x8NoDelta;
+        mcAvgWithDeltaFunc = IndeoDSP::ffIviMcAvg8x8Delta;
+        mcAvgNoDeltaFunc   = IndeoDSP::ffIviMcAvg8x8NoDelta;
     } else {
-        mcWithDeltaFunc     = IndeoDSP::ff_ivi_mc_4x4_delta;
-        mcNoDeltaFunc       = IndeoDSP::ff_ivi_mc_4x4_no_delta;
-        mcAvgWithDeltaFunc = IndeoDSP::ff_ivi_mc_avg_4x4_delta;
-        mcAvgNoDeltaFunc   = IndeoDSP::ff_ivi_mc_avg_4x4_no_delta;
+        mcWithDeltaFunc     = IndeoDSP::ffIviMc4x4Delta;
+        mcNoDeltaFunc       = IndeoDSP::ffIviMc4x4NoDelta;
+        mcAvgWithDeltaFunc = IndeoDSP::ffIviMcAvg4x4Delta;
+        mcAvgNoDeltaFunc   = IndeoDSP::ffIviMcAvg4x4NoDelta;
     }
 
     for (mbn = 0, mb = tile->_mbs; mbn < tile->_numMBs; mb++, mbn++) {
@@ -1093,7 +1093,7 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
 
         quant = band->_globQuant + mb->_qDelta;
         if (_ctx._isIndeo4)
-            quant = av_clip_uintp2(quant, 5);
+            quant = avClipUintp2(quant, 5);
         else
             quant = av_clip((int)quant, 0, 23);
 
@@ -1346,7 +1346,7 @@ int IndeoDecoderBase::ivi_dc_transform(IVIBandDesc *band, int *prevDc,
 
 /*------------------------------------------------------------------------*/
 
-const uint8 IndeoDecoderBase::_ff_ivi_vertical_scan_8x8[64] = {
+const uint8 IndeoDecoderBase::_ffIviVerticalScan8x8[64] = {
 	0,  8, 16, 24, 32, 40, 48, 56,
 	1,  9, 17, 25, 33, 41, 49, 57,
 	2, 10, 18, 26, 34, 42, 50, 58,
@@ -1357,7 +1357,7 @@ const uint8 IndeoDecoderBase::_ff_ivi_vertical_scan_8x8[64] = {
 	7, 15, 23, 31, 39, 47, 55, 63
 };
 
-const uint8 IndeoDecoderBase::_ff_ivi_horizontal_scan_8x8[64] = {
+const uint8 IndeoDecoderBase::_ffIviHorizontalScan8x8[64] = {
 	0,  1,  2,  3,  4,  5,  6,  7,
 	8,  9, 10, 11, 12, 13, 14, 15,
 	16, 17, 18, 19, 20, 21, 22, 23,
@@ -1368,7 +1368,7 @@ const uint8 IndeoDecoderBase::_ff_ivi_horizontal_scan_8x8[64] = {
 	56, 57, 58, 59, 60, 61, 62, 63
 };
 
-const uint8 IndeoDecoderBase::_ff_ivi_direct_scan_4x4[16] = {
+const uint8 IndeoDecoderBase::_ffIviDirectScan4x4[16] = {
 	0, 1, 4, 8, 5, 2, 3, 6, 9, 12, 13, 10, 7, 11, 14, 15
 };
 

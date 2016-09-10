@@ -123,7 +123,7 @@ namespace Image {
             return -1;                                                      \
         }                                                                   \
         if (flags & INIT_VLC_LE)                                            \
-            buf[j].code = bitswap_32(buf[j].code);                          \
+            buf[j].code = bitswap32(buf[j].code);                          \
         else                                                                \
             buf[j].code <<= 32 - buf[j].bits;                               \
         if (symbols)                                                        \
@@ -165,7 +165,7 @@ int VLC::init_vlc(int nb_bits, int nb_codes, const void *p_bits, int bits_wrap,
 		vlc->_table_allocated = 0;
 		vlc->_table_size = 0;
 
-		buf = (VLCcode *)av_malloc_array((nb_codes + 1), sizeof(VLCcode));
+		buf = (VLCcode *)avMallocArray((nb_codes + 1), sizeof(VLCcode));
 		assert(buf);
 	}
 
@@ -190,7 +190,7 @@ int VLC::init_vlc(int nb_bits, int nb_codes, const void *p_bits, int bits_wrap,
 	} else {
 		free(buf);
 		if (ret < 0) {
-			av_freep(&vlc->_table);
+			avFreeP(&vlc->_table);
 			return -1;
 		}
 	}
@@ -237,7 +237,7 @@ int VLC::build_table(int table_nb_bits, int nb_codes,
 			nb = 1 << (table_nb_bits - n);
 			inc = 1;
 			if (flags & INIT_VLC_LE) {
-				j = bitswap_32(code);
+				j = bitswap32(code);
 				inc = 1 << n;
 			}
 			for (k = 0; k < nb; k++) {
@@ -272,7 +272,7 @@ int VLC::build_table(int table_nb_bits, int nb_codes,
 				subtable_bits = MAX(subtable_bits, n);
 			}
 			subtable_bits = MIN(subtable_bits, table_nb_bits);
-			j = (flags & INIT_VLC_LE) ? bitswap_32(code_prefix) >> (32 - table_nb_bits) : code_prefix;
+			j = (flags & INIT_VLC_LE) ? bitswap32(code_prefix) >> (32 - table_nb_bits) : code_prefix;
 			table[j][1] = -subtable_bits;
 			//warning("%4x: n=%d (subtable)", j, codes[i].bits + table_nb_bits);
 			index = vlc->build_table(subtable_bits, k - i, codes + i, flags);
@@ -304,7 +304,7 @@ int VLC::alloc_table(int size, int use_static) {
 		assert(!use_static);
 
 		vlc->_table_allocated += (1 << vlc->_bits);
-		vlc->_table = (int16(*)[2])av_realloc_f(vlc->_table, vlc->_table_allocated, sizeof(VLC_TYPE) * 2);
+		vlc->_table = (int16(*)[2])avReallocF(vlc->_table, vlc->_table_allocated, sizeof(VLC_TYPE) * 2);
 		if (!vlc->_table) {
 			vlc->_table_allocated = 0;
 			vlc->_table_size = 0;
