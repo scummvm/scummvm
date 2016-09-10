@@ -4179,9 +4179,11 @@ if test "$_libcurl" != "no"; then
 		LIBCURL_LIBS=`$_libcurlconfig --libs`
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
-		if test "$_host" = "amigaos"; then
-			append_var LIBCURL_LIBS "-lpthread"
-		fi
+		case $_host_os in
+			amigaos*)
+				append_var LIBCURL_LIBS "-lpthread"
+			;;
+		esac
 
 		if test "$_libcurl" = "auto"; then
 			_libcurl=no
