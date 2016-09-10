@@ -165,21 +165,20 @@ void AudioPlayer::fadeAndStopTrack(Track *track, int time)
 
 int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags) {
 	/* Find first available track or, alternatively, the lowest priority playing track */
-	int    trackId = -1;
 	Track *track = NULL;
-	int    lowestPriority = 100;
+	int    lowestPriority;
 	Track *lowestPriorityTrack = NULL;
 
 	for (int i = 0; i != 6; ++i) {
-		track = &_tracks[i];
-		if (!isTrackActive(track)) {
-			trackId = 1;
+		Track *ti = &_tracks[i];
+		if (!isTrackActive(ti)) {
+			track = ti;
 			break;
 		}
 
-		if (track->priority < lowestPriority) {
-			lowestPriority = track->priority;
-			lowestPriorityTrack = track;
+		if (lowestPriorityTrack == NULL || ti->priority < lowestPriority) {
+			lowestPriority = ti->priority;
+			lowestPriorityTrack = ti;
 		}
 	}
 
@@ -222,7 +221,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 
 	Audio::SoundHandle soundHandle;
 
-	debug("PlayStream: %s", name.c_str());
+	// debug("PlayStream: %s", name.c_str());
 
 	int balance = panFrom;
 
@@ -240,7 +239,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	track->hash          = hash;
 	track->volume        = volume;
 
-	return trackId;
+	return track - &_tracks[0];
 }
 
 } // End of namespace BladeRunner

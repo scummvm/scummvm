@@ -27,11 +27,6 @@
 
 namespace BladeRunner {
 
-View::View(BladeRunnerEngine* vm)
-{
-	_vm = vm;
-}
-
 bool View::read(Common::ReadStream *stream) {
 	uint32 frame;
 	frame = stream->readUint32LE();

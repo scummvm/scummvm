@@ -23,8 +23,6 @@
 #ifndef BLADERUNNER_VIEW_H
 #define BLADERUNNER_VIEW_H
 
-#include "bladerunner/bladerunner.h"
-
 #include "matrix.h"
 
 namespace Common {
@@ -34,7 +32,6 @@ namespace Common {
 namespace BladeRunner {
 
 class View {
-	BladeRunnerEngine *_vm;
 public:
 	float     _fovX;
 	Matrix4x3 _frameViewMatrix;
@@ -47,11 +44,7 @@ public:
 	float     _viewportHalfHeight;
 	float     _viewportDistance;
 
-	View(BladeRunnerEngine *vm);
-
 	bool read(Common::ReadStream *stream);
-
-
 
 private:
 	void setFovX(float fovX);

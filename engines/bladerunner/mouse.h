@@ -23,14 +23,15 @@
 #ifndef BLADERUNNER_MOUSE_H
 #define BLADERUNNER_MOUSE_H
 
+#include "bladerunner/vector.h"
+
 namespace Graphics {
 	struct Surface;
 }
 
 namespace BladeRunner {
-	class Vector3;
 
-	class BladeRunnerEngine;
+class BladeRunnerEngine;
 
 class Mouse {
 	BladeRunnerEngine *_vm;
@@ -59,8 +60,9 @@ public:
 	void updateCursorFrame();
 
 	void tick(int x, int y);
-private:
-	void Mouse::getXYZ(int x, int y, Vector3* mousePosition);
+
+// private:
+	Vector3 getXYZ(int x, int y);
 };
 
 } // End of namespace BladeRunner

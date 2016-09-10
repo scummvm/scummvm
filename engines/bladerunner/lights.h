@@ -29,36 +29,31 @@
 
 #include "common/stream.h"
 
-
 namespace BladeRunner {
 
-	class Lights
-	{
-		BladeRunnerEngine *_vm;
+class Lights {
+	BladeRunnerEngine *_vm;
 
-	private:
-		Color _ambientLightColor;
+	Color _ambientLightColor;
 
-		int _lightsCount;
-		Light *_lights;
-		
-		int _frame;
-		//char gap[28];
+	int _lightsCount;
+	Light *_lights;
 
-	public:
-		Lights(BladeRunnerEngine *vm);
-		~Lights();
+	int _frame;
+	//char gap[28];
 
-		void read(Common::ReadStream *stream, int framesCount);
-		void readVqa(Common::ReadStream *stream);
+public:
+	Lights(BladeRunnerEngine *vm);
+	~Lights();
 
-		void reset();
+	void read(Common::ReadStream *stream, int framesCount);
+	void readVqa(Common::ReadStream *stream);
 
-		void setupFrame(int frame);
+	void reset();
 
-	private:
+	void setupFrame(int frame);
+};
 
-	};
+} // End of namespace BladeRunner
 
-}
 #endif

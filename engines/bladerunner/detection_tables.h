@@ -42,6 +42,6 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-} // End of namespace Hopkins
+} // End of namespace BladeRunner
 
 #endif

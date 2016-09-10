@@ -11,10 +11,10 @@ Item::Item() {
 Item::~Item() {
 }
 
-
-void Item::getXyz(float* x, float* y, float* z) {
+void Item::getXYZ(float *x, float *y, float *z) {
 	*x = _position.x;
 	*y = _position.y;
 	*z = _position.z;
 }
-}
+
+} // End of namespace BladeRunner

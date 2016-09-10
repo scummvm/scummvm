@@ -23,40 +23,53 @@
 #ifndef BLADERUNNER_ACTOR_WALK_H
 #define BLADERUNNER_ACTOR_WALK_H
 
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/vector.h"
 
-namespace BladeRunner
+namespace BladeRunner {
+
+class BladeRunnerEngine;
+
+struct ActorWalkEntry
 {
-	struct ActorWalkEntry
-	{
-		int _actorId;
-		int _present;
-	};
+	int _actorId;
+	int _present;
+};
 
-	class ActorWalk
-	{
-		BladeRunnerEngine *_vm;
-	private:
-		int _walking;
-		int _running;
-		Vector3 _wanted;
-		Vector3 _unknown;
-		Vector3 _start;
-		Vector3 _end;
-		int facing;
-		ActorWalkEntry _actors[20];
-		int _actorsCount;
-		int _field15;
-		int _status;
-	public:
-		ActorWalk(BladeRunnerEngine *vm);
-		~ActorWalk();
+class ActorWalk
+{
+	BladeRunnerEngine *_vm;
 
-		bool isWalking();
-		void stop(int actorId, bool unknown, int animationMode, int notused);
+private:
+	int     _walking;
+	int     _running;
+	Vector3 _destination;
+	Vector3 _unknown;
+	Vector3 _current;
+	Vector3 _next;
+	int     _facing;
+	ActorWalkEntry _actors[20];
+	int     _actorsCount;
+	int     _field15;
+	int     _status;
 
-	};
-}
+public:
+	ActorWalk(BladeRunnerEngine *vm);
+	~ActorWalk();
+
+	int setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, int *unk2);
+	void getCurrentPosition(int actorId, Vector3 *pos, int *facing);
+	bool tick(int actorId, float stepDistance, bool flag);
+
+	bool isWalking() { return _walking; }
+	bool isRunning() { return _running; }
+	void setRunning();
+
+	void stop(int actorId, bool unknown, int animationMode = 4, int notused = 0);
+	// void setWalkingMode(int actorId, int active, int unk2 = 4, int unk3 = 0);
+
+	int nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next);
+};
+
+} // End of namespace BladeRunner
 
 #endif

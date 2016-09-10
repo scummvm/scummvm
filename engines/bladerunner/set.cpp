@@ -23,13 +23,12 @@
 #include "bladerunner/set.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/slice_renderer.h"
+#include "bladerunner/scene_objects.h"
 
 #include "common/debug.h"
 #include "common/ptr.h"
 #include "common/str.h"
 #include "common/stream.h"
-
 
 namespace BladeRunner {
 
@@ -40,12 +39,9 @@ Set::Set(BladeRunnerEngine *vm) : _vm(vm) {
 	_walkboxCount = 0;
 	_objects = new Object[85];
 	_walkboxes = new Walkbox[95];
-	_footstepSoundOverride = -1;
-	_effects = new SetEffects(vm);
 }
 
 Set::~Set() {
-	delete _effects;
 	delete[] _objects;
 	delete[] _walkboxes;
 }
@@ -57,7 +53,7 @@ bool Set::open(const Common::String &name) {
 	if (sig != kSet0)
 		return false;
 
-	int framesCount = s->readUint32LE();
+	s->skip(4); // TODO: LITE length
 
 	_objectCount = s->readUint32LE();
 	assert(_objectCount <= 85);
@@ -78,10 +74,10 @@ bool Set::open(const Common::String &name) {
 		_objects[i]._isObstacle = s->readByte();
 		_objects[i]._isClickable = s->readByte();
 		_objects[i]._isHotMouse = 0;
-		_objects[i]._isCombatTarget = 0;
+		_objects[i]._isTarget = 0;
 		s->skip(4);
 
-		// debug("OBJECT: %s", _objects[i]._name);
+		// debug("OBJECT: %s [%d%d%d%d]", _objects[i]._name, _objects[i]._isObstacle, _objects[i]._isClickable, _objects[i]._isHotMouse, _objects[i]._isTarget);
 	}
 
 	_walkboxCount = s->readUint32LE();
@@ -106,51 +102,49 @@ bool Set::open(const Common::String &name) {
 		// debug("WALKBOX: %s", _walkboxes[i]._name);
 	}
 
-	_vm->_lights->reset();
-	_vm->_lights->read(s.get(), framesCount);
-	_vm->_sliceRenderer->setLights(_vm->_lights);
-	_effects->reset();
-	_effects->read(s.get(), framesCount);
-	_vm->_sliceRenderer->setSetEffects(_effects);
+	// TODO: Read LITE
 
 	return true;
 }
-
 
 void Set::addObjectsToScene(SceneObjects* sceneObjects)
 {
 	uint32 i;
 	for (i = 0; i < _objectCount; i++) {
-		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isCombatTarget);
+		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isTarget);
 	}
 }
 
+// Source: http://www.faqs.org/faqs/graphics/algorithms-faq/ section 2.03
+/*
+static
+bool pointInWalkbox(float x, float z, const Walkbox &w)
+{
+	uint32 i, j;
+	bool c = false;
 
-int Set::findWalkbox(float x, float z) {
-	int i;
-	float altitude = 0.0f;
-	int foundWalkboxId = -1;
-	for (i = 0; i < (int)_walkboxCount; i++) {
-		if (isXzInWalkbox(x, z, &_walkboxes[i])) {
-			if (foundWalkboxId == -1 || altitude < _walkboxes[i]._altitude) {
-				altitude = _walkboxes[i]._altitude;
-				foundWalkboxId = i;
-			}
+	for (i = 0, j = w._vertexCount - 1; i < w._vertexCount; j = i++) {
+		if ((((w._vertices[i].z <= z) && (z < w._vertices[j].z)) ||
+		     ((w._vertices[j].z <= z) && (z < w._vertices[i].z))) &&
+		    (x < (w._vertices[j].x - w._vertices[i].x) * (z - w._vertices[i].z) / (w._vertices[j].z - w._vertices[i].z) + w._vertices[i].x))
+		{
+			c = !c;
 		}
 	}
-	return foundWalkboxId;
+	return c;
 }
+*/
 
-bool Set::isXzInWalkbox(float x, float z, Walkbox* walkbox) {
+static
+bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 	int found = 0;
 	int i;
 
-	float lastX = walkbox->_vertices[walkbox->_vertexCount - 1].x;
-	float lastZ = walkbox->_vertices[walkbox->_vertexCount - 1].z;
-	for (i = 0; i < (int)walkbox->_vertexCount; i++) {
-
-		float currentX = walkbox->_vertices[i].x;
-		float currentZ = walkbox->_vertices[i].z;
+	float lastX = walkbox._vertices[walkbox._vertexCount - 1].x;
+	float lastZ = walkbox._vertices[walkbox._vertexCount - 1].z;
+	for (i = 0; i < (int)walkbox._vertexCount; i++) {
+		float currentX = walkbox._vertices[i].x;
+		float currentZ = walkbox._vertices[i].z;
 
 		if ((currentZ > z && z >= lastZ) || (currentZ <= z && z < lastZ)) {
 			float lineX = (lastX - currentX) / (lastZ - currentZ) * (z - currentZ) + currentX;
@@ -162,14 +156,50 @@ bool Set::isXzInWalkbox(float x, float z, Walkbox* walkbox) {
 	return found & 1;
 }
 
+float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) {
+	float altitude = _walkboxes[0]._altitude;
+	*inWalkbox = false;
 
-int Set::findObject(char* objectName) {
-	int i;	
+	for (uint32 i = 0; i != _walkboxCount; ++i) {
+		const Walkbox &w = _walkboxes[i];
+
+		if (isXZInWalkbox(x, z, w)) {
+			*inWalkbox = true;
+			if (w._altitude > altitude) {
+				altitude = w._altitude;
+			}
+		}
+	}
+
+	return altitude;
+}
+
+int Set::findWalkbox(float x, float z) {
+	int result = -1;
+
+	for (uint32 i = 0; i != _walkboxCount; ++i) {
+		const Walkbox &w = _walkboxes[i];
+
+		if (isXZInWalkbox(x, z, w)) {
+			if (result == -1 || w._altitude > _walkboxes[result]._altitude) {
+				result = i;
+			}
+		}
+	}
+
+	return result;
+}
+
+int Set::findObject(const char *objectName) {
+	int i;
 	for (i = 0; i < (int)_objectCount; i++) {
 		if (scumm_stricmp(objectName, _objects[i]._name) == 0) {
 			return i;
 		}
 	}
+
+	debug("Set::findObject didn't find \"%s\"", objectName);
+
 	return -1;
 }
 
@@ -177,22 +207,22 @@ bool Set::objectSetHotMouse(int objectId) {
 	if(!_objects || objectId < 0 || objectId >= (int)_objectCount) {
 		return false;
 	}
-	
+
 	_objects[objectId]._isHotMouse = true;
 	return true;
 }
 
-bool Set::objectGetBoundingBox(int objectId, BoundingBox* boundingBox) {
+bool Set::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
 	assert(boundingBox);
 
 	if (!_objects || objectId < 0 || objectId >= (int)_objectCount) {
-		boundingBox->setXyz(0, 0, 0, 0, 0, 0);
+		boundingBox->setXYZ(0, 0, 0, 0, 0, 0);
 		return false;
 	}
 	float x0, y0, z0, x1, y1, z1;
 
-	_objects[objectId]._bbox.getXyz(&x0, &y0, &z0, &x1, &y1, &z1);
-	boundingBox->setXyz(x0, y0, z0, x1, y1, z1);
+	_objects[objectId]._bbox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+	boundingBox->setXYZ(x0, y0, z0, x1, y1, z1);
 
 	return true;
 }
@@ -205,8 +235,12 @@ void Set::objectSetIsObstacle(int objectId, bool isObstacle) {
 	_objects[objectId]._isObstacle = isObstacle;
 }
 
-void Set::objectSetIsCombatTarget(int objectId, bool isCombatTarget) {
-	_objects[objectId]._isCombatTarget = isCombatTarget;
+void Set::objectSetIsTarget(int objectId, bool isTarget) {
+	_objects[objectId]._isTarget = isTarget;
+}
+
+const char *Set::objectGetName(int objectId) {
+	return _objects[objectId]._name;
 }
 
 } // End of namespace BladeRunner

@@ -23,11 +23,12 @@
 #include "bladerunner/clues.h"
 
 #include "bladerunner/bladerunner.h"
+
 #include "bladerunner/text_resource.h"
 
 namespace BladeRunner {
 
-Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, uint32 clueCount)
+Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, int clueCount)
 	: _clueCount(clueCount)
 {
 	// reset();
@@ -38,14 +39,14 @@ Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, uint32 clueCount)
 	_cluesText = new TextResource(vm);
 	_cluesText->open(cluesResource);
 
-	for (uint32 i = 0; i != _clueCount; ++i) {
+	for (int i = 0; i != _clueCount; ++i) {
 		_crimes[i] = -1;
 		_assetTypes[i] = -1;
 	}
 }
 
 Clues::~Clues() {
-	delete _cluesText;
+	delete   _cluesText;
 	delete[] _assetTypes;
 	delete[] _crimes;
 }

@@ -25,46 +25,46 @@
 
 #include "bladerunner/bladerunner.h"
 
-
 namespace BladeRunner {
 
-	class BladeRunnerEngine;
-	class BoundingBox;
+class BladeRunnerEngine;
+class BoundingBox;
 
-	struct MovementTrackEntry
-	{
-		int waypointId;
-		int delay;
-		int angle;
-		int running;
-	};
+struct MovementTrackEntry
+{
+	int waypointId;
+	int delay;
+	int angle;
+	int running;
+};
 
-	class MovementTrack {
-		BladeRunnerEngine *_vm;
+class MovementTrack {
+	BladeRunnerEngine *_vm;
 
-	private:
-		int _currentIndex;
-		int _lastIndex;
-		int _hasNext;
-		int _paused;
-		MovementTrackEntry _entries[100];
-		void reset();
+private:
+	int _currentIndex;
+	int _lastIndex;
+	int _hasNext;
+	int _paused;
+	MovementTrackEntry _entries[100];
+	void reset();
 
-	public:
-		MovementTrack();
-		~MovementTrack();
-		int append(int waypointId, int delay, int running);
-		int append(int waypointId, int delay, int angle, int running);
-		void flush();
-		void repeat();
-		int pause();
-		int unpause();
-		int isPaused();
-		int hasNext();
-		int next(int *waypointId, int *delay, int *angle, int *running);
+public:
+	MovementTrack();
+	~MovementTrack();
+	int append(int waypointId, int delay, int running);
+	int append(int waypointId, int delay, int angle, int running);
+	void flush();
+	void repeat();
+	int pause();
+	int unpause();
+	int isPaused();
+	int hasNext();
+	int next(int *waypointId, int *delay, int *angle, int *running);
 
-		//int saveGame();
-	};
+	//int saveGame();
+};
+
 } // End of namespace BladeRunner
 
 #endif

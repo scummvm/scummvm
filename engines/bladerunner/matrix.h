@@ -93,6 +93,7 @@ public:
 
 	      float &operator()(int r, int c)       { assert(r >= 0 && r < 3); assert(c >= 0 && c < 4); return _m[r][c]; }
 	const float &operator()(int r, int c) const { assert(r >= 0 && r < 3); assert(c >= 0 && c < 4); return _m[r][c]; }
+
 	void unknown();
 };
 
@@ -127,8 +128,6 @@ Vector3 operator*(const Matrix4x3 &m, const Vector3 &v)
 
 	return r;
 }
-
-
 
 } // End of namespace BladeRunner
 

@@ -23,21 +23,19 @@
 #ifndef BLADERUNNER_CLUES_H
 #define BLADERUNNER_CLUES_H
 
-#include "common/scummsys.h"
-
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 class TextResource;
 
 class Clues {
-	uint32        _clueCount;
+	int           _clueCount;
 	int          *_crimes;
 	int          *_assetTypes;
 	TextResource *_cluesText;
 
 public:
-	Clues(BladeRunnerEngine *vm, const char *cluesResource, uint32 clueCount);
+	Clues(BladeRunnerEngine *vm, const char *cluesResource, int clueCount);
 	~Clues();
 
 	const char *getClueText(int id);

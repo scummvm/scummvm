@@ -23,11 +23,11 @@
 #include "bladerunner/mouse.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/scene_objects.h"
+#include "bladerunner/shape.h"
 
 #include "graphics/surface.h"
-#include "common/rect.h"
 
 namespace BladeRunner {
 
@@ -169,7 +169,6 @@ void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	_x = CLIP(x, 0, surface.w - 1);
 	_y = CLIP(y, 0, surface.h - 1);
 
-
 	if (_cursor < 0 || (uint)_cursor >= _vm->_shapes.size()) {
 		return;
 	}
@@ -254,43 +253,78 @@ void Mouse::tick(int x, int y)
 	if (!_vm->playerHasControl() || isDisabled())
 		return;
 
-	Vector3 mousePosition;
+	Vector3 mousePosition = getXYZ(x, y);
+	int cursorId = 0;
 
-	getXYZ(x, y, &mousePosition);
 	int isClickable = 0;
-	int isObstacle = 0;
-	int isCombatTarget = 0;
-	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isCombatTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
-	//debug("mouse tick: objectid = %d", sceneObjectId);
+	int isObstacle  = 0;
+	int isTarget    = 0;
+
+	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
+	int exitType = _vm->_scene->_exits->getTypeAtXY(x, y);
+
+	if (sceneObjectId >= 0 && sceneObjectId <= 74) {
+		exitType = -1;
+	}
+
+	if (exitType != -1) {
+		switch (exitType) {
+			case 1:
+				cursorId = 13;
+				break;
+			case 2:
+				cursorId = 14;
+				break;
+			case 3:
+				cursorId = 15;
+				break;
+			default:
+				cursorId = 12;
+		}
+		setCursor(cursorId);
+		return;
+	}
+
+	if (true /* not in combat */) {
+		if (sceneObjectId == 0
+		 || (sceneObjectId >= 0 && isClickable)
+		 || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0)
+		{
+			cursorId = 1;
+		}
+		setCursor(cursorId);
+		return;
+	}
+
+	setCursor(cursorId);
 }
 
-void Mouse::getXYZ(int x, int y, Vector3* mousePosition)
+// TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]
+Vector3 Mouse::getXYZ(int x, int y)
 {
-	if (_vm->_scene->_setId == -1)
-		return;
+	if (_vm->_scene->getSetId() == -1)
+		return Vector3();
 
 	int screenRight = 640 - x;
-	int screenDown = 480 - y;
-	
-	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
+	int screenDown  = 480 - y;
 
-	float x3d = (2.0f / 640.0f * screenRight - 1)  * zcoef / (1*zcoef);
-	float y3d = (2.0f / 480.0f * screenDown- 1) / (4/3 * zcoef) * zcoef;
+	float zcoef = 1.0f / tan(_vm->_scene->_view._fovX / 2.0f);
 
-	uint16 zbufval = _vm->_zBuffer1[x + y * 480];
+	float x3d = (2.0f / 640.0f * screenRight - 1.0f);
+	float y3d = (2.0f / 480.0f * screenDown  - 1.0f) * 0.75f;
 
-	Vector3 vector;
-	vector.z = zbufval / 25.5f;
-	vector.x = vector.z / zcoef * x3d;
-	vector.y = vector.z / zcoef * y3d;
+	uint16 zbufval = _vm->_zBuffer1[x + y * 640];
 
-	Matrix4x3 matrix = _vm->_view->_frameViewMatrix;
+	Vector3 pos;
+	pos.z = zbufval / 25.5f;
+	pos.x = pos.z / zcoef * x3d;
+	pos.y = pos.z / zcoef * y3d;
+
+	Matrix4x3 matrix = _vm->_scene->_view._frameViewMatrix;
+
 	matrix.unknown();
-	vector = matrix * vector;
 
-	mousePosition->x = vector.x;
-	mousePosition->y = vector.y;
-	mousePosition->z = vector.z;
+	return matrix * pos;
 }
 
 } // End of namespace BladeRunner

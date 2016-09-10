@@ -44,16 +44,16 @@ AudioSpeech::~AudioSpeech() {
 }
 
 bool AudioSpeech::playSpeech(const char *name, int balance) {
-
+	// debug("AudioSpeech::playSpeech(\"%s\")", name);
 	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
 
 	if (!r) {
-		debug("AudioSpeech::playSpeech: AUD resource \"%s\" not found", name);
+		warning("AudioSpeech::playSpeech: AUD resource \"%s\" not found", name);
 		return false;
 	}
 
 	if (r->size() > BUFFER_SIZE) {
-		debug("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", r->size(), BUFFER_SIZE);
+		warning("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", r->size(), BUFFER_SIZE);
 		return false;
 	}
 
@@ -63,7 +63,7 @@ bool AudioSpeech::playSpeech(const char *name, int balance) {
 
 	r->read(_data, r->size());
 	if (r->err()) {
-		debug("AudioSpeech::playSpeech: Error reading resource \"%s\"", name);
+		warning("AudioSpeech::playSpeech: Error reading resource \"%s\"", name);
 		return false;
 	}
 

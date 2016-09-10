@@ -23,24 +23,24 @@
 #ifndef BLADERUNNER_ACTOR_H
 #define BLADERUNNER_ACTOR_H
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/vector.h"
-#include "bladerunner/movement_track.h"
-#include "bladerunner/actor_clues.h"
-#include "bladerunner/actor_walk.h"
-#include "bladerunner/actor_combat.h"
 
 #include "common/rect.h"
 
 namespace BladeRunner {
 
+class ActorClues;
+class ActorCombat;
+class ActorWalk;
 class BladeRunnerEngine;
 class BoundingBox;
+class MovementTrack;
 
 class Actor {
-	BladeRunnerEngine *_vm;
 	friend class ScriptBase;
+
+	BladeRunnerEngine *_vm;
+
 private:
 	BoundingBox   *_bbox;
 	Common::Rect   _screenRectangle;
@@ -58,7 +58,7 @@ private:
 	int _currentHP;
 	int _maxHP;
 
-	ActorClues* _clues;
+	ActorClues *_clues;
 
 	int     _id;
 	int     _setId;
@@ -77,7 +77,7 @@ private:
 	bool _damageAnimIfMoving;
 
 	// Animation
-	int _width;	
+	int _width;
 	int _height;
 	int _animationMode;
 	int _combatAnimationMode;
@@ -89,15 +89,13 @@ private:
 	int _retiredWidth;
 	int _retiredHeight;
 
-
 	int _timersRemain[7];
-	int _timersBegan[7];
+	int _timersStart[7];
 
 	float _scale;
 
 	int _unknown1;
 	int _unknown2;
-	int _unknown3;
 
 	Vector3 _actorSpeed;
 
@@ -107,8 +105,8 @@ public:
 
 	void setup(int actorId);
 
-	void set_at_xyz(Vector3 pos, int facing, bool halfOrSet, int unknown, bool retired);
-	void set_at_waypoint(int waypointId, int angle, int unknown, bool retired);
+	void setAtXYZ(Vector3 pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
+	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
 	float getX();
 	float getY();
@@ -117,7 +115,21 @@ public:
 	int getFacing();
 	int getAnimationMode();
 
+	Vector3 getPosition() { return _position; }
+
+	void changeAnimationMode(int animationMode, bool force = false);
+	void setFPS(int fps);
+
+	void loopWalkToXYZ(Vector3 destination);
+	void loopWalkToSceneObject(const char *objectName, int destinationOffset = 0);
+
+	bool tick(bool forceUpdate);
 	void draw();
+
+	void countdownTimerStart(int timerId, int interval);
+	void countdownTimerReset(int timerId);
+	int  countdownTimerGetRemainingTime(int timerId);
+	void countdownTimerUpdate(int timerId);
 
 	int getSetId();
 	void setSetId(int setId);
@@ -131,12 +143,9 @@ public:
 	void setMoving(bool value) { _isMoving = value; }
 	bool isWalking();
 	void stopWalking(bool value);
-	
-	void changeAnimationMode(int animationMode, bool force);
-	void setFps(int fps);
 
 	void faceActor(int otherActorId, bool animate);
-	void faceObject(char *objectName, bool animate);
+	void faceObject(const char *objectName, bool animate);
 	void faceItem(int itemId, bool animate);
 	void faceWaypoint(int waypointId, bool animate);
 	void faceXYZ(float x, float y, float z, bool animate);
@@ -180,9 +189,8 @@ public:
 	bool hasClue(int clueId);
 	void copyClues(int actorId);
 private:
-	void setFacing(int facing, bool halfOrSet);
+	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(Vector3 position, bool retired);
-
 };
 
 } // End of namespace BladeRunner

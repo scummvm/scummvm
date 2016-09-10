@@ -166,16 +166,20 @@ Matrix4x3 invertMatrix(const Matrix4x3 &m)
 	return result;
 }
 
-
 void Matrix4x3::unknown()
 {
-	float m14 = _m[0][3];
-	float m24 = _m[1][3];
-	float m34 = _m[2][3];
+	Matrix4x3 t;
 
-	_m[0][3] = -(m34 * _m[0][2]) - m24 * _m[0][1] - m14 * _m[0][0];
-	_m[1][3] = -(m34 * _m[1][2]) - m24 * _m[1][1] - m14 * _m[1][0];
-	_m[2][3] = -(m34 * _m[2][2]) - m24 * _m[2][1] - m14 * _m[2][0];
+	// Transpose the 3x3 top left submatrix
+	for (int r = 0; r != 3; ++r)
+		for (int c = 0; c != 3; ++c)
+			t(r, c) = _m[c][r];
 
+	t(0,3) = -(_m[0][3] * _m[0][0] + _m[1][3] * _m[1][0] + _m[2][3] * _m[2][0]);
+	t(1,3) = -(_m[0][3] * _m[0][1] + _m[1][3] * _m[1][1] + _m[2][3] * _m[2][1]);
+	t(2,3) = -(_m[0][3] * _m[0][2] + _m[1][3] * _m[1][2] + _m[2][3] * _m[2][2]);
+
+	*this = t;
 }
+
 } // End of namespace BladeRunner

@@ -30,7 +30,6 @@
 
 #include "common/array.h"
 #include "common/util.h"
-#include "common/memstream.h"
 
 namespace BladeRunner {
 
@@ -181,14 +180,14 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	_videoTrack = new VQAVideoTrack(this);
 	_audioTrack = new VQAAudioTrack(this);
 
-	/*
+#if 0
 	for (int i = 0; i != _loopInfo.loopCount; ++i) {
 		debug("LOOP %2d: %4d %4d %s", i,
 			_loopInfo.loops[i].begin,
 			_loopInfo.loops[i].end,
 			_loopInfo.loops[i].name.c_str());
 	}
-	*/
+#endif
 
 	return true;
 }
@@ -242,6 +241,16 @@ void VQADecoder::readNextPacket() {
 			return;
 		}
 	} while (chd.id != kVQFR);
+}
+
+void VQADecoder::readPacket(int frame) {
+	if (frame < 0 || frame >= numFrames()) {
+		error("frame %d out of bounds, frame count is %d", frame, numFrames());
+	}
+
+	uint32 frameOffset = 2 * (_frameInfo[frame] & 0x0FFFFFFF);
+	_s->seek(frameOffset);
+	readNextPacket();
 }
 
 bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
@@ -515,6 +524,18 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
+bool VQADecoder::getLoopBeginAndEndFrame(int loop, int *begin, int *end) {
+	assert(begin && end);
+
+	if (loop < 0 || loop >= _loopInfo.loopCount)
+		return false;
+
+	*begin = _loopInfo.loops[loop].begin;
+	*end   = _loopInfo.loops[loop].end;
+
+	return true;
+}
+
 bool VQADecoder::readCLIP(Common::SeekableReadStream *s, uint32 size) {
 	s->skip(roundup(size));
 	return true;
@@ -525,12 +546,7 @@ bool VQADecoder::readMFCI(Common::SeekableReadStream *s, uint32 size) {
 	return true;
 }
 
-void VQADecoder::decodeView(View* view)
-{
-	_videoTrack->decodeView(view);
-}
-
-	VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
+VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	VQADecoder::Header *header = &vqaDecoder->_header;
 
 	_surface = nullptr;
@@ -566,8 +582,6 @@ void VQADecoder::decodeView(View* view)
 
 	_surface = new Graphics::Surface();
 	_surface->create(_width, _height, createRGB555());
-
-	_viewData = new uint8[56];
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
@@ -575,12 +589,11 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 	delete[] _cbfz;
 	delete[] _zbufChunk;
 	delete[] _vpointer;
-	delete[] _viewData;
 
 	if (_surface)
 		_surface->free();
 	delete _surface;
-	delete _zbuffer;
+	delete[] _zbuffer;
 }
 
 uint16 VQADecoder::VQAVideoTrack::getWidth() const {
@@ -752,29 +765,18 @@ const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 	return _zbuffer;
 }
 
-
-void VQADecoder::VQAVideoTrack::decodeView(View* view)
-{
-	assert(_viewData);
-	assert(view);
-	
-	Common::MemoryReadStream s(_viewData, 56);
-	view->read(&s);
-}
-
-	bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
+bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
 {
 	if (size != 56)
 		return false;
 
-	s->read(_viewData, 56);
+	_view.read(s);
 
 	return true;
 }
 
 bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size)
 {
-	// some screen (2d not 3d) effects for transparency
 	s->skip(roundup(size));
 	return true;
 }

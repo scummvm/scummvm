@@ -41,7 +41,7 @@ public:
 	AudioSpeech(BladeRunnerEngine *vm);
 	~AudioSpeech();
 
-	bool playSpeech(const char *name, int balance = 50);
+	bool playSpeech(const char *name, int balance = 0);
 	void stopSpeech();
 	bool isPlaying();
 	void setVolume(int volume) { _volume = volume; }

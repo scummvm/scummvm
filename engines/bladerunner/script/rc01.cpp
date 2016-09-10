@@ -26,9 +26,12 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 
+#include "common/debug.h"
+
 namespace BladeRunner {
 
 void ScriptRC01::InitializeScene() {
+	// Game_Flag_Set(24);
 	if (!Game_Flag_Query(24)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -38,7 +41,7 @@ void ScriptRC01::InitializeScene() {
 		Outtake_Play(33, 1); // DSCENT_E.VQA
 	}
 
-	Game_Flag_Set(9); // Force flag 9 so McCoy will be in view
+	// Game_Flag_Set(9); // Force flag 9 so McCoy will be in view
 	if (Game_Flag_Query(9)) {
 		Setup_Scene_Information(-171.16,  5.55,  27.28, 616);
 	} else if (Game_Flag_Query(114)) {
@@ -46,6 +49,7 @@ void ScriptRC01::InitializeScene() {
 	} else {
 		Setup_Scene_Information( -10.98, -0.30, 318.15, 616);
 	}
+	// Setup_Scene_Information(-151.98, -0.30, 318.15, 616);
 
 	Scene_Exit_Add_2D_Exit(0, 314, 145, 340, 255, 0);
 	if (Game_Flag_Query(249))
@@ -118,7 +122,67 @@ void ScriptRC01::InitializeScene() {
 }
 
 void ScriptRC01::SceneLoaded() {
-	if (!Game_Flag_Query(24)){
+	Obstacle_Object("HYDRANT02", 1);
+	Obstacle_Object("PARKING METER 04", 1);
+	Obstacle_Object("CHEVY PROP", 1);
+	Obstacle_Object("PARKING METER 01", 1);
+	Obstacle_Object("T-CAN01", 1);
+	Obstacle_Object("BARICADE01", 1);
+	Obstacle_Object("BARICADE02", 1);
+	Obstacle_Object("DOOR LEFT", 1);
+	Unobstacle_Object("BOX06", 1);
+	Clickable_Object("DOORWAY01");
+	Clickable_Object("DOOR LEFT");
+	Clickable_Object("HYDRANT02");
+	Clickable_Object("T-CAN01");
+	Clickable_Object("BARICADE01");
+	Clickable_Object("70_1");
+	Clickable_Object("70_2");
+	Clickable_Object("70_3");
+	Clickable_Object("70_5");
+	Clickable_Object("70_6");
+	Unclickable_Object("BARICADE02");
+	Unclickable_Object("BARICADE05");
+	Unclickable_Object("SPINNER BODY");
+	Unclickable_Object("HORSE01");
+	Unclickable_Object("DOORWAY01");
+	Unobstacle_Object("DOORWAY01", 1);
+
+	if (Game_Flag_Query(186)) {
+		Unclickable_Object("70_1");
+		Unclickable_Object("70_2");
+		Unclickable_Object("70_3");
+		Unclickable_Object("70_5");
+		Unclickable_Object("70_6");
+		Unclickable_Object("BARICADE01");
+		Unclickable_Object("BARICADE03");
+		Unclickable_Object("BARICADE04");
+		Unobstacle_Object("70_1", 1);
+		Unobstacle_Object("70_2", 1);
+		Unobstacle_Object("70_3", 1);
+		Unobstacle_Object("70_5", 1);
+		Unobstacle_Object("70_6", 1);
+		Unobstacle_Object("BARICADE01", 1);
+		Unobstacle_Object("BARICADE02", 1);
+		Unobstacle_Object("BARICADE03", 1);
+		Unobstacle_Object("BARICADE04", 1);
+		Unobstacle_Object("BARICADE05", 1);
+	}
+
+	if (!Game_Flag_Query(186)) {
+		Preload(13);
+		Preload(14);
+		Preload(19);
+		Preload(582);
+		Preload(589);
+	}
+
+	/*
+	if (!Game_Flag_Query(163))
+		Item_Add_To_World(66, 938, 69, -148.60f, -0.30f, 225.15f, 256, 24, 24, 0, 1, 0, 1);
+	*/
+
+	if (!Game_Flag_Query(24)) {
 		// ADQ_Flush();
 		Actor_Voice_Over(1830, 99);
 		Actor_Voice_Over(1850, 99);
@@ -130,6 +194,99 @@ void ScriptRC01::SceneLoaded() {
 		Game_Flag_Set(24);
 	}
 }
+
+void ScriptRC01::sub_403850()
+{
+	if (Game_Flag_Query(186))
+		return;
+
+	if (Loop_Actor_Walk_To_Scene_Object(0, "BARICADE03", 36, 1, 0))
+		return;
+
+	Actor_Set_Goal_Number(23, 0);
+	Actor_Face_Object(0, "BARICADE03", 1);
+	// Loop_Actor_Walk_To_Actor(23, 0, 36, 1, 0);
+	Actor_Face_Actor(23, 0, 1);
+	Actor_Says(0, 4500, 14);
+	I_Sez("MG: We don't want any of that abstract art oozing out onto the street.");
+	Actor_Says(23, 10, 14);
+	Actor_Set_Goal_Number(23, 1);
+}
+
+bool ScriptRC01::ClickedOn3DObject(const char *objectName) {
+	if (Object_Query_Click("BARICADE01", objectName)
+	 || Object_Query_Click("BARICADE03", objectName)
+	 || Object_Query_Click("BARICADE04", objectName)
+	 || Object_Query_Click("70_1", objectName)
+	 || Object_Query_Click("70_2", objectName)
+	 || Object_Query_Click("70_3", objectName)
+	 || Object_Query_Click("70_5", objectName)
+	 || Object_Query_Click("70_6", objectName))
+	{
+		sub_403850();
+		return true;
+	}
+
+	if (Object_Query_Click("HYDRANT02", objectName)) {
+		if (Loop_Actor_Walk_To_Scene_Object(0, "HYDRANT02", 60, 1, 0) == 0) {
+			if (Actor_Clue_Query(0, 26)) {
+				Actor_Says(0, 6975, 3);
+			} else {
+				Actor_Face_Object(0, "HYDRANT02", 1);
+				Actor_Voice_Over(1880, 99);
+				Actor_Voice_Over(1890, 99);
+				I_Sez("JM: That McCoy--he's one funny guy! Jet-black fire truck, hehehehe...");
+				Actor_Clue_Acquire(0, 26, 1, -1);
+			}
+		}
+		return true;
+	}
+
+	if (Object_Query_Click("DOOR LEFT", objectName))
+	{
+		if (!Loop_Actor_Walk_To_Scene_Object(0, "DOOR LEFT", 48, 1, 0))
+		{
+			Actor_Face_Object(0, "DOOR LEFT", 1);
+			if (Actor_Clue_Query(0, 2) || !Actor_Query_In_Set(23, 69) || Global_Variable_Query(1) != 1)
+			{
+				Actor_Says(0, 8570, 14);
+			}
+			else
+			{
+				Actor_Set_Goal_Number(23, 0);
+				Actor_Face_Actor(23, 0, 1);
+				Actor_Says(23, 0, 12);
+				Actor_Says(0, 4495, 13);
+				Actor_Clue_Acquire(0, 2, 1, 23);
+			}
+			Actor_Clue_Acquire(0, 1, 1, -1);
+		}
+		return true;
+	}
+
+	if (Object_Query_Click("T-CAN01", objectName))
+	{
+		if (!Loop_Actor_Walk_To_Scene_Object(0, "T-CAN01", 24, 1, 0))
+		{
+			Actor_Face_Object(0, "T-CAN01", 1);
+			Actor_Voice_Over(1810, 99);
+			Actor_Voice_Over(1820, 99);
+		}
+		return true;
+	}
+
+	return false;
+}
+
+bool ScriptRC01::ClickedOn2DRegion(int region) {
+	if (region == 0) {
+		sub_403850();
+		return 1;
+	}
+
+	return 0;
+}
+
 
 void ScriptRC01::SceneFrameAdvanced(int frame) {
 	if (frame == 1)
@@ -154,11 +311,41 @@ void ScriptRC01::SceneFrameAdvanced(int frame) {
 		Sound_Play(118, 40, 80, 80, 50);  // CARDOWN3.AUD
 }
 
-
 void ScriptRC01::SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-
 }
 
+void ScriptRC01::PlayerWalkedIn()
+{
+	if (Game_Flag_Query(249) && !Game_Flag_Query(9) && !Game_Flag_Query(114)) {
+		// Extract to sub_4037AC():
+		Player_Loses_Control();
+		Game_Flag_Set(182);
+		Actor_Set_Immunity_To_Obstacles(0, true);
+		Loop_Actor_Walk_To_XYZ(0, -151.98, -0.30, 318.15, 0, 0, 0, 0);
+		Actor_Set_Immunity_To_Obstacles(0, false);
+		Player_Gains_Control();
+	}
 
+	if (Game_Flag_Query(114)) {
+		Player_Loses_Control();
+		Loop_Actor_Walk_To_XYZ(0, -415.98, -0.30, 262.15, 0, 0, 0, 0);
+		Player_Gains_Control();
+		Game_Flag_Reset(114);
+	}
+
+	if (Game_Flag_Query(9)) {
+		Player_Loses_Control();
+		Loop_Actor_Walk_To_XYZ(0, -203.45, 5.55, 85.05, 0, 0, 0, 0);
+		Player_Gains_Control();
+		Game_Flag_Reset(9);
+
+		if (Game_Flag_Query(1) && !Game_Flag_Query(4)) {
+			Actor_Voice_Over(1910, 99);
+			Actor_Voice_Over(1920, 99);
+			Actor_Voice_Over(1930, 99);
+			Game_Flag_Set(4);
+		}
+	}
+}
 
 } // End of namespace BladeRunner

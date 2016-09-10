@@ -24,15 +24,22 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/actor_clues.h"
+#include "bladerunner/actor_combat.h"
+#include "bladerunner/actor_walk.h"
+#include "bladerunner/audio_speech.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/gameinfo.h"
-#include "bladerunner/slice_renderer.h"
-#include "bladerunner/waypoints.h"
-#include "bladerunner/scene.h"
 #include "bladerunner/items.h"
+#include "bladerunner/movement_track.h"
+#include "bladerunner/scene.h"
+#include "bladerunner/scene_objects.h"
 #include "bladerunner/script/script.h"
 #include "bladerunner/slice_animations.h"
-#include "bladerunner/audio_speech.h"
+#include "bladerunner/slice_renderer.h"
+#include "bladerunner/waypoints.h"
+
+#include "common/system.h"
 
 namespace BladeRunner {
 
@@ -50,24 +57,22 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 }
 
 Actor::~Actor() {
-	
 	delete[] _friendlinessToOther;
 	delete   _combatInfo;
 	delete   _bbox;
 	delete   _clues;
 	delete   _movementTrack;
 	delete   _walkInfo;
-	
 }
 
 void Actor::setup(int actorId) {
 	_id  = actorId;
 	_setId = -1;
 
-	_position     = Vector3(0.0, 0.0, 0.0);
-	_facing       = 512;
+	_position  = Vector3(0.0, 0.0, 0.0);
+	_facing    = 512;
 	_targetFacing = -1;
-	_walkboxId    = -1;
+	_walkboxId = -1;
 
 	_animationId = 0;
 	_animationFrame = 0;
@@ -77,7 +82,7 @@ void Actor::setup(int actorId) {
 	_isTargetable        = false;
 	_isInvisible         = false;
 	_isImmuneToObstacles = false;
-	
+
 	_isRetired           = false;
 
 	_width         = 0;
@@ -87,7 +92,7 @@ void Actor::setup(int actorId) {
 
 	for (int i = 0; i != 7; ++i) {
 		_timersRemain[i] = 0;
-		_timersBegan[i]  = _vm->getTotalPlayTime();
+		_timersStart[i]  = _vm->getTotalPlayTime();
 	}
 
 	_scale = 1.0;
@@ -104,6 +109,7 @@ void Actor::setup(int actorId) {
 	_timersRemain[4] = 60000;
 	_animationMode = -1;
 	_screenRectangle = Common::Rect(-1, -1, -1, -1);
+
 	_combatAnimationMode = 4;
 	_unknown1 = 7;
 	_unknown2 = 8;
@@ -119,17 +125,52 @@ void Actor::setup(int actorId) {
 	_actorSpeed = Vector3();
 }
 
-void Actor::set_at_xyz(Vector3 position, int facing, bool halfOrSet, int moving, bool retired) {
-	_position = position;
-	setFacing(facing, halfOrSet);
-	
-	if(_vm->_scene->_setId == _setId) {
-		_walkboxId = _vm->_scene->_set->findWalkbox(position.x, position.y);
-	}else {
+void Actor::changeAnimationMode(int animationMode, bool force)
+{
+	if (force)
+		_animationMode = -1;
+
+	if (animationMode != _animationMode) {
+		_vm->_aiScripts->ChangeAnimationMode(_id, animationMode);
+		_animationMode = animationMode;
+	}
+}
+
+void Actor::setFPS(int fps)
+{
+	_fps = fps;
+
+	if (fps == 0)
+	{
+		_frame_ms = 0;
+	}
+	else if (fps == -1)
+	{
+		_frame_ms = -1000;
+	}
+	else if (fps == -2)
+	{
+		_fps = _vm->_sliceAnimations->getFPS(_animationId);
+		_frame_ms = 1000 / _fps;
+	}
+	else
+	{
+		_frame_ms = 1000 / fps;
+	}
+}
+
+void Actor::setAtXYZ(Vector3 pos, int facing, bool snapFacing, bool moving, bool retired)
+{
+	_position = pos;
+	setFacing(facing, snapFacing);
+
+	if (_vm->_scene->_setId == _setId) {
+		_walkboxId = _vm->_scene->_set->findWalkbox(_position.x, _position.y);
+	} else {
 		_walkboxId = -1;
 	}
 
-	setBoundingBox(position, retired);
+	setBoundingBox(_position, retired);
 
 	_vm->_sceneObjects->remove(_id);
 
@@ -138,25 +179,151 @@ void Actor::set_at_xyz(Vector3 position, int facing, bool halfOrSet, int moving,
 	}
 }
 
-
-void Actor::set_at_waypoint(int waypointId, int angle, int unknown, bool retired) {
+void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired)
+{
 	Vector3 waypointPosition;
-	_vm->_waypoints->getXyz(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-	set_at_xyz(waypointPosition, angle, true, unknown, retired);
+	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
+	setAtXYZ(waypointPosition, angle, true, moving, retired);
+}
+
+void Actor::loopWalkToXYZ(Vector3 destination)
+{
+	int unk1;
+	_walkInfo->setup(_id, false, _position, destination, 0, &unk1);
+
+	for (;;)
+	{
+		_vm->gameTick();
+		if (!_walkInfo->isWalking() && !_walkInfo->isRunning())
+			break;
+		if (!_vm->_gameIsRunning)
+			break;
+	}
+}
+
+float distance(float, float, float, float);
+float distance(Vector3 &v1, Vector3 &v2);
+
+void Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset)
+{
+	int sceneObject = _vm->_scene->_set->findObject(objectName);
+	if (sceneObject < 0)
+		return;
+
+	BoundingBox bbox;
+	if (!_vm->_scene->_set->objectGetBoundingBox(sceneObject, &bbox))
+		return;
+
+	float x0, y0, z0, x1, y1, z1;
+	bbox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+
+	// debug("[%f %f] -> [%f %f %f, %f %f %f]", _position.x, _position.z, x0, y0, z0, x1, y1, z1);
+
+	float closest_distance = distance(_position.x, _position.z, x0, z0);
+	float closest_x = x0;
+	float closest_z = z0;
+
+	float d = distance(_position.x, _position.z, x1, z0);
+	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
+	if (d < closest_distance) {
+		closest_x = x1;
+		closest_z = z0;
+		closest_distance = d;
+	}
+
+	d = distance(_position.x, _position.z, x1, z1);
+	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
+	if (d < closest_distance) {
+		closest_x = x1;
+		closest_z = z1;
+		closest_distance = d;
+	}
+
+	d = distance(_position.x, _position.z, x0, z1);
+	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
+	if (d < closest_distance) {
+		closest_x = x0;
+		closest_z = z1;
+		closest_distance = d;
+	}
+
+	// debug("%f = %f %f %f %f", closest_distance, _position.x, _position.z, closest_x, closest_z);
+
+	Vector3 destination(closest_x, _position.y, closest_z);
+
+	// Vector3 properDestination(-124.2592, -0.3046913, 204.0923);
+	// debug("delta: %f\n", distance(destination, properDestination));
+
+	loopWalkToXYZ(destination);
+}
+
+bool Actor::tick(bool forceDraw)
+{
+	int remain = 0;
+	bool needsUpdate = false;
+	if (_fps > 0)
+	{
+		countdownTimerUpdate(5);
+		remain = countdownTimerGetRemainingTime(5);
+		needsUpdate = remain <= 0;
+	}
+	else if (forceDraw)
+	{
+		needsUpdate = true;
+		remain = 0;
+	}
+
+	if (needsUpdate)
+	{
+		int newAnimation = 0, newFrame = 0;
+		_vm->_aiScripts->UpdateAnimation(_id, &newAnimation, &newFrame);
+
+		if (_animationId != newAnimation) {
+			_animationId = newAnimation;
+			setFPS(-2);
+		}
+		_animationFrame = newFrame;
+
+		if (isWalking())
+		{
+			float stepDistance = 3.0;
+			if (stepDistance <= 0.0) {
+				stepDistance = 4.0;
+			}
+			if (_walkInfo->tick(_id, stepDistance, false)) {
+				_vm->_actors[_id]->changeAnimationMode(0);
+			}
+
+			Vector3 pos; int facing;
+			_walkInfo->getCurrentPosition(_id, &pos, &facing);
+
+			setAtXYZ(pos, facing);
+		}
+	}
+
+	draw();
+
+	if (needsUpdate)
+	{
+		int nextFrameTime = remain + _frame_ms;
+		if (nextFrameTime <= 0)
+			nextFrameTime = 1;
+		countdownTimerStart(5, nextFrameTime);
+	}
+
+	return false;
 }
 
 void Actor::draw() {
 	Vector3 draw_position(_position.x, -_position.z, _position.y + 2.0);
-	float   draw_facing = _facing * M_PI / 512.0;
-	// just for viewing animations _facing = (_facing + 10) % 1024;
+	float   draw_facing = M_PI - _facing * M_PI / 512.0;
 	// float   draw_scale  = _scale;
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->setupFrame(19, 1, draw_position, M_PI - draw_facing);
+	_vm->_sliceRenderer->setupFrame(_animationId, _animationFrame, draw_position, draw_facing);
 	_vm->_sliceRenderer->drawFrame(_vm->_surface2, _vm->_zBuffer2);
 }
-
 
 int Actor::getSetId() {
 	return _setId;
@@ -172,16 +339,16 @@ void Actor::setSetId(int setId) {
 	if(_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				//actorScript->OtherAgentExitedThisScene( i, _id);
+				// TODO: actorScript->OtherAgentExitedThisScene( i, _id);
 			}
 		}
 	}
 	_setId = setId;
-	//actorScript->EnteredScene(_id, set);
+	// TODO: actorScript->EnteredScene(_id, set);
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				//actorScript->OtherAgentEnteredThisScene(i, _id);
+				// TODO: actorScript->OtherAgentEnteredThisScene(i, _id);
 			}
 		}
 	}
@@ -221,41 +388,27 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 			offset = -ccw / 2;
 		}
 	}
+
 	_facing = (_facing + offset) % 1024;
 }
 
 void Actor::setBoundingBox(Vector3 position, bool retired) {
 	if (retired) {
-		_bbox->setXyz(position.x - (_retiredWidth / 2.0f), position.y, position.z - (_retiredWidth / 2.0f), position.x + (_retiredWidth / 2.0f), position.y + _retiredHeight, position.z + (_retiredWidth / 2.0f));
+		_bbox->setXYZ(position.x - (_retiredWidth / 2.0f),
+		              position.y,
+		              position.z - (_retiredWidth / 2.0f),
+
+		              position.x + (_retiredWidth / 2.0f),
+		              position.y + _retiredHeight,
+		              position.z + (_retiredWidth / 2.0f));
 	} else {
-		_bbox->setXyz(position.x - 12.0f, position.y + 6.0f, position.z - 12.0f, position.x + 12.0f, position.y + 72.0f, position.z + 12.0f);
-	}
-}
+		_bbox->setXYZ(position.x - 12.0f,
+		              position.y + 6.0f,
+		              position.z - 12.0f,
 
-
-void Actor::changeAnimationMode(int animationMode, bool force) {
-	if (force == 1) {
-		_animationMode = -1;
-	}
-	if(animationMode != _animationMode) {
-		//TODO: _vm->actorScript->ChangeAnimationMode(_id, animationMode);
-		_animationMode = animationMode;
-	}
-}
-
-void Actor::setFps(int fps) {
-	_fps = fps;
-	if (fps == 0) {
-		_frame_ms = 0;
-	} else {
-		if(_fps == -1) {
-			_frame_ms = -1000;
-		} else if (_fps == -2) {
-			_fps = _vm->_sliceAnimations->getFps(_animationId);
-			_frame_ms = 1000 / _fps;
-		} else {
-			_frame_ms = 1000 / _fps;
-		}
+		              position.x + 12.0f,
+		              position.y + 72.0f,
+		              position.z + 12.0f);
 	}
 }
 
@@ -268,9 +421,9 @@ void Actor::stopWalking(bool value) {
 		_vm->_playerActorIdle = true;
 	}
 
-	if(isWalking()) {
+	if (isWalking()) {
 		_walkInfo->stop(_id, 1, _combatAnimationMode, 0);
-	} else if(inCombat()) {
+	} else if (inCombat()) {
 		changeAnimationMode(_combatAnimationMode, 0);
 	} else {
 		changeAnimationMode(0, 0);
@@ -281,7 +434,7 @@ void Actor::faceActor(int otherActorId, bool animate) {
 	if (_setId != _vm->_scene->_setId) {
 		return;
 	}
-	
+
 	Actor *otherActor = _vm->_actors[otherActorId];
 
 	if (_setId != otherActor->_setId) {
@@ -291,7 +444,7 @@ void Actor::faceActor(int otherActorId, bool animate) {
 	faceXYZ(otherActor->_position.x, otherActor->_position.y, otherActor->_position.z, animate);
 }
 
-void Actor::faceObject(char *objectName, bool animate) {
+void Actor::faceObject(const char *objectName, bool animate) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1) {
 		return;
@@ -301,7 +454,7 @@ void Actor::faceObject(char *objectName, bool animate) {
 	_vm->_scene->objectGetBoundingBox(objectId, &boundingBox);
 
 	float x0, y0, z0, x1, y1, z1;
-	boundingBox.getXyz(&x0, &y0, &z0, &x1, &y1, &z1);
+	boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 
 	float x = (x1 + x0) / 2.0f;
 	float z = (z1 + z0) / 2.0f;
@@ -310,13 +463,13 @@ void Actor::faceObject(char *objectName, bool animate) {
 
 void Actor::faceItem(int itemId, bool animate) {
 	float x, y, z;
-	_vm->_items->getXyz(itemId, &x, &y, &z);
+	_vm->_items->getXYZ(itemId, &x, &y, &z);
 	faceXYZ(x, y, z, animate);
 }
 
 void Actor::faceWaypoint(int waypointId, bool animate) {
 	float x, y, z;
-	_vm->_waypoints->getXyz(waypointId, &x, &y, &z);
+	_vm->_waypoints->getXYZ(waypointId, &x, &y, &z);
 	faceXYZ(x, y, z, animate);
 }
 
@@ -413,15 +566,15 @@ bool Actor::getFlagDamageAnimIfMoving() {
 	return _damageAnimIfMoving;
 }
 
-void Actor::retire(bool isRetired, int width, int height, int retiredByActorId) {
-	_isRetired = isRetired;
+void Actor::retire(bool retired, int width, int height, int retiredByActorId) {
+	_isRetired = retired;
 	_retiredWidth = MAX(width, 0);
 	_retiredHeight = MAX(height, 0);
-	if (_id == 0 && isRetired) {
+	if (_id == 0 && _isRetired) {
 		_vm->playerLosesControl();
 		_vm->_playerDead = true;
 	}
-	if (isRetired) {
+	if (_isRetired) {
 		//TODO: _vm->actorScript->Retired(_id, retiredByActorId);
 	}
 }
@@ -433,7 +586,7 @@ void Actor::setTargetable(bool targetable) {
 void Actor::setHealth(int hp, int maxHp) {
 	_currentHP = hp;
 	_maxHP = maxHp;
-	if(hp > 0) {
+	if (hp > 0) {
 		retire(0, 0, 0, -1);
 	}
 }
@@ -519,11 +672,11 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	sprintf(name, "%02d-%04d.AUD", _id, sentenceId); //TODO somewhere here should be also language code
 	int balance;
 
-	if(voiceOver || _id == 99) {
+	if (voiceOver || _id == 99) {
 		balance = 0;
-	}else {
-		Vector3 pos = _vm->_view->_frameViewMatrix * _position;
-		int screenX = 0, screenY = 0;
+	} else {
+		// Vector3 pos = _vm->_view->_frameViewMatrix * _position;
+		int screenX = 320; //, screenY = 0;
 		//TODO: transform to screen space using fov;
 		balance = 127 * (2 * screenX - 640) / 640;
 		balance = MIN(127, MAX(-127, balance));
@@ -560,11 +713,65 @@ void Actor::copyClues(int actorId) {
 	Actor *otherActor = _vm->_actors[actorId];
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
-		if(hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
+		if (hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
 			if (_id == 99)
 				fromActorId = _clues->getFromActorId(i);
 			otherActor->acquireClue(i, 0, fromActorId);
+		}
+	}
+}
+
+void Actor::countdownTimerStart(int timerId, int interval)
+{
+	assert(timerId >= 0 && timerId < 7);
+	_timersRemain[timerId] = interval;
+	_timersStart[timerId] = _vm->getTotalPlayTime();
+}
+
+void Actor::countdownTimerReset(int timerId)
+{
+	assert(timerId >= 0 && timerId < 7);
+	_timersRemain[timerId] = 0;
+}
+
+int Actor::countdownTimerGetRemainingTime(int timerId)
+{
+	assert(timerId >= 0 && timerId < 7);
+	return _timersRemain[timerId];
+}
+
+void Actor::countdownTimerUpdate(int timerId)
+{
+	if (_timersRemain[timerId] == 0)
+		return;
+
+	uint32 now = _vm->getTotalPlayTime();
+	int tickInterval = now - _timersStart[timerId];
+	_timersStart[timerId] = now;
+
+	// warning("tickInterval: %d", tickInterval);
+	_timersRemain[timerId] -= tickInterval;
+
+	if (_timersRemain[timerId] <= 0) {
+		switch (timerId) {
+		case 0:
+		case 1:
+		case 2:
+			// AI timers, call AI dll
+			break;
+		case 3:
+			// Movement track timer
+			break;
+		case 4:
+			// Something timer
+			break;
+		case 5:
+			// Actor animation frame timer
+			break;
+		case 6:
+			// Slow down actor run timer?
+			break;
 		}
 	}
 }

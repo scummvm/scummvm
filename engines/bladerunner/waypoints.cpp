@@ -9,7 +9,7 @@ Waypoints::Waypoints(BladeRunnerEngine* vm, int count) {
 Waypoints::~Waypoints() {
 }
 
-void Waypoints::getXyz(int waypointId, float *x, float *y, float *z) {
+void Waypoints::getXYZ(int waypointId, float *x, float *y, float *z) {
 	*x = 0;
 	*y = 0;
 	*z = 0;
@@ -64,4 +64,4 @@ float Waypoints::getZ(int waypointId) {
 	return _waypoints[waypointId]._position.z;
 }
 
-}
+} // End of namespace BladeRunner

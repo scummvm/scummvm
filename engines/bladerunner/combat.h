@@ -23,9 +23,9 @@
 #ifndef BLADERUNNER_COMBAT_H
 #define BLADERUNNER_COMBAT_H
 
-#include "bladerunner/bladerunner.h"
-
 namespace BladeRunner {
+
+class BladeRunnerEngine;
 
 class Combat {
 	BladeRunnerEngine *_vm;
@@ -38,7 +38,7 @@ class Combat {
 	int _random2;
 
 public:
-	int _ammoDamage[3] = { 10, 20, 30 };
+	int _ammoDamage[3];
 
 public:
 	Combat(BladeRunnerEngine *vm);
@@ -53,9 +53,8 @@ public:
 
 	void setHitSoundId(int row, int column, int soundId);
 	void setMissSoundId(int row, int column, int soundId);
-
 };
 
-}
+} // End of namespace BladeRunner
 
 #endif

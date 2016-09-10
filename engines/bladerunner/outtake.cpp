@@ -43,7 +43,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	else
 		resName = name + "_E.VQA";
 
-	VQAPlayer vqa_player(_vm, _vm->_view);
+	VQAPlayer vqa_player(_vm);
 
 	vqa_player.open(resName);
 

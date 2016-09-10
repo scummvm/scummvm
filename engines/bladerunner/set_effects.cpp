@@ -1,7 +1,6 @@
 #include "bladerunner/set_effects.h"
 
-namespace BladeRunner
-{
+namespace BladeRunner {
 
 SetEffects::SetEffects(BladeRunnerEngine* vm) {
 	_vm = vm;
@@ -119,4 +118,4 @@ Fog* SetEffects::findFog(char* fogName) {
 	return fog;
 }
 
-}
+} // End of namespace BladeRunner

@@ -24,21 +24,27 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/actor.h"
+#include "bladerunner/actor_combat.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/clues.h"
+#include "bladerunner/combat.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
+#include "bladerunner/settings.h"
+#include "bladerunner/set_effects.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/scene_objects.h"
+#include "bladerunner/slice_animations.h"
+#include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
-#include "bladerunner/slice_renderer.h"
-#include "bladerunner/actor.h"
 #include "bladerunner/waypoints.h"
-#include "bladerunner/slice_animations.h"
-#include "bladerunner/combat.h"
-#include "bladerunner/settings.h"
+
+#include "bladerunner/script/ai_00_mccoy.h"
+#include "bladerunner/script/aiscript_officer_leroy.h"
 
 namespace BladeRunner {
 
@@ -46,8 +52,6 @@ bool Script::open(const Common::String &name) {
 	delete _currentScript;
 
 	if (name == "RC01") { _currentScript = new ScriptRC01(_vm); return true; }
-
-	_currentScript = new ScriptRC01(_vm); return true;
 
 	return false;
 }
@@ -68,6 +72,26 @@ void Script::SceneLoaded() {
 	_inScriptCounter--;
 }
 
+bool Script::ClickedOn3DObject(const char *objectName) {
+	if (_inScriptCounter > 0)
+		return true;
+
+	_inScriptCounter++;
+	bool result = _currentScript->ClickedOn3DObject(objectName);
+	_inScriptCounter--;
+	return result;
+}
+
+bool Script::ClickedOn2DRegion(int region) {
+	if (_inScriptCounter > 0)
+		return true;
+
+	_inScriptCounter++;
+	bool result = _currentScript->ClickedOn2DRegion(region);
+	_inScriptCounter--;
+	return result;
+}
+
 void Script::SceneFrameAdvanced(int frame) {
 	_inScriptCounter++;
 	_currentScript->SceneFrameAdvanced(frame);
@@ -80,6 +104,12 @@ void Script::SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool c
 	_inScriptCounter--;
 }
 
+void Script::PlayerWalkedIn() {
+	_inScriptCounter++;
+	_currentScript->PlayerWalkedIn();
+	_inScriptCounter--;
+}
+
 void ScriptBase::Preload(int animationId) {
 	_vm->_sliceRenderer->preload(animationId);
 }
@@ -88,12 +118,12 @@ void ScriptBase::Actor_Put_In_Set(int actorId, int setId) {
 	_vm->_actors[actorId]->setSetId(setId);
 }
 
-void ScriptBase::Actor_Set_At_XYZ(int actorId, float x, float y, float z, int angle) {
-	_vm->_actors[actorId]->set_at_xyz(Vector3(x, y, z), angle, true, 0, 0);
+void ScriptBase::Actor_Set_At_XYZ(int actorId, float x, float y, float z, int direction) {
+	_vm->_actors[actorId]->setAtXYZ(Vector3(x, y, z), direction);
 }
 
 void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
-	_vm->_actors[actorId]->set_at_waypoint(waypointId, angle, 0, 0);
+	_vm->_actors[actorId]->setAtWaypoint(waypointId, angle, 0, 0);
 }
 
 bool ScriptBase::Region_Check(int left, int top, int right, int down) {
@@ -101,10 +131,16 @@ bool ScriptBase::Region_Check(int left, int top, int right, int down) {
 	return false;
 }
 
-// ScriptBase::Object_Query_Click
-// ScriptBase::Object_Do_Ground_Click
+bool ScriptBase::Object_Query_Click(const char *objectName1, const char *objectName2) {
+	return strcmp(objectName1, objectName2) == 0;
+}
 
-bool ScriptBase::Object_Mark_For_Hot_Mouse(char *objectName) {
+void ScriptBase::Object_Do_Ground_Click() {
+	//This is not implemented in game
+	return;
+}
+
+bool ScriptBase::Object_Mark_For_Hot_Mouse(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return false;
@@ -115,7 +151,7 @@ void ScriptBase::Actor_Face_Actor(int actorId, int otherActorId, bool animate) {
 	_vm->_actors[actorId]->faceActor(otherActorId, animate);
 }
 
-void ScriptBase::Actor_Face_Object(int actorId, char *objectName, bool animate) {
+void ScriptBase::Actor_Face_Object(int actorId, const char *objectName, bool animate) {
 	_vm->_actors[actorId]->faceObject(objectName, animate);
 }
 
@@ -242,7 +278,7 @@ void ScriptBase::Actor_Set_Health(int actorId, int hp, int maxHp) {
 
 void ScriptBase::Actor_Set_Targetable(int actorId, bool targetable) {
 	_vm->_actors[actorId]->setTargetable(targetable);
-	
+
 }
 
 void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode){
@@ -302,6 +338,29 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	Player_Gains_Control();
 }
 
+#if 0
+void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
+	// Wait for any existing speech to end
+	_vm->loopActorSpeaking();
+
+	// TODO: Hack - This needs to go through the actor class
+	char name[13];
+	sprintf(name, "%02d-%04d.AUD", actorId, sentenceId);
+	_vm->_audioSpeech->playSpeech(name);
+
+	// warning("start voice over loop");
+	while (true)
+	{
+		_vm->gameTick();
+		if (_vm->shouldQuit())
+			break;
+		if (!_vm->_audioSpeech->isPlaying())
+			break;
+	}
+	// warning("end voice over loop");
+}
+#endif
+
 void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
@@ -328,7 +387,7 @@ void ScriptBase::Actor_Start_Speech_Sample(int actorId, int sentenceId) {
 }
 
 void ScriptBase::Actor_Start_Voice_Over_Sample(int sentenceId) {
-	_vm->loopActorSpeaking();	
+	_vm->loopActorSpeaking();
 	_vm->_voiceoverActor->speechPlay(sentenceId, true);
 }
 
@@ -397,11 +456,11 @@ int ScriptBase::Actor_Query_Facing_1024(int actorId) {
 }
 
 void ScriptBase::Actor_Set_Frame_Rate_FPS(int actorId, int fps) {
-	_vm->_actors[actorId]->setFps(fps);
+	_vm->_actors[actorId]->setFPS(fps);
 }
 
-int ScriptBase::Slice_Animation_Query_Number_Of_Frames(int animationId) {
-	return _vm->_sliceAnimations->getNumberOfFrames(animationId);
+int ScriptBase::Slice_Animation_Query_Number_Of_Frames(int animation) {
+	return _vm->_sliceAnimations->getFrameCount(animation);
 }
 
 void ScriptBase::Actor_Change_Animation_Mode(int actorId, int animationMode) {
@@ -414,9 +473,21 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 
 // ScriptBase::Loop_Actor_Walk_To_Actor
 // ScriptBase::Loop_Actor_Walk_To_Item
-// ScriptBase::Loop_Actor_Walk_To_Scene_Object
+
+bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, int a5) {
+	_vm->gameWaitForActive();
+
+	_vm->_actors[actorId]->loopWalkToSceneObject(objectName);
+
+	return false;
+}
+
 // ScriptBase::Loop_Actor_Walk_To_Waypoint
-// ScriptBase::Loop_Actor_Walk_To_XYZ
+
+void ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7) {
+	_vm->loopActorWalkToXYZ(actorId, x, y, z, a4, a5, a6, a7);
+}
+
 // ScriptBase::Async_Actor_Walk_To_Waypoint
 // ScriptBase::Async_Actor_Walk_To_XYZ
 // ScriptBase::Actor_Force_Stop_Walking
@@ -487,30 +558,28 @@ int ScriptBase::Animation_Skip_To_Frame() {
 	return 0;
 }
 
-
 void ScriptBase::Delay(int miliseconds) {
 	Player_Loses_Control();
 	int endTime = _vm->getTotalPlayTime() + miliseconds;
 	while ((int)_vm->getTotalPlayTime() < endTime)
 		_vm->gameTick();
 	Player_Gains_Control();
-	
 }
 
 void ScriptBase::Player_Loses_Control() {
-	_vm->playerLosesControl();
+		_vm->playerLosesControl();
 }
 
 void ScriptBase::Player_Gains_Control() {
-	_vm->playerGainsControl();
+		_vm->playerGainsControl();
 }
 
 void ScriptBase::Player_Set_Combat_Mode(bool activate) {
-	if(!_vm->_combat->isActive() || activate) {
-		if(_vm->_combat->isActive() && activate) {
+	if (!_vm->_combat->isActive() || activate) {
+		if (_vm->_combat->isActive() && activate) {
 			_vm->_combat->activate();
 		}
-	}else {
+	} else {
 		_vm->_combat->deactivate();
 	}
 }
@@ -520,9 +589,9 @@ bool ScriptBase::Player_Query_Combat_Mode() {
 }
 
 void ScriptBase::Player_Set_Combat_Mode_Access(bool enable) {
-	if(enable) {
+	if (enable) {
 		_vm->_combat->enable();
-	}else {
+	} else {
 		_vm->_combat->disable();
 	}
 }
@@ -546,6 +615,7 @@ void ScriptBase::Player_Set_Agenda(int agenda) {
 int ScriptBase::Query_Difficulty_Level() {
 	return _vm->_settings->getDifficulty();
 }
+
 
 void ScriptBase::Game_Flag_Set(int flag) {
 	_vm->_gameFlags->set(flag);
@@ -614,11 +684,17 @@ void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int prio
 // ScriptBase::Overlay_Remove
 
 void ScriptBase::Scene_Loop_Set_Default(int a) {
-	debug("Scene_Loop_Set_Default(%d)", a);
+	// debug("Scene_Loop_Set_Default(%d)", a);
+
+	_vm->_scene->loopSetDefault(a);
+	// _vm->_scene->_defaultLoop = a;
 }
 
 void ScriptBase::Scene_Loop_Start_Special(int a, int b, int c) {
-	debug("Scene_Loop_Start_Special(%d, %d, %d)", a, b, c);
+	// debug("Scene_Loop_Start_Special(%d, %d, %d)", a, b, c);
+
+	_vm->_scene->loopStartSpecial(a, b, c);
+	// _vm->_scene->_field_24_loop_start_special_param_1 = a;
 }
 
 void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
@@ -725,7 +801,7 @@ void ScriptBase::Scene_2D_Region_Remove(int index) {
 // ScriptBase::Query_Score
 
 void ScriptBase::Set_Score(int a0, int a1) {
-	debug("STUB: Set_Score(%d, %d)", a0, a1);
+	// debug("STUB: Set_Score(%d, %d)", a0, a1);
 }
 
 void ScriptBase::Give_McCoy_Ammo(int ammoType, int ammo) {
@@ -757,32 +833,32 @@ void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int reti
 	Vector3 actorPosition;
 	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
 	actor->retire(retired, width, height, retiredByActorId);
-	actor->set_at_xyz(actorPosition, actor->getFacing(), true, 0, true);
+	actor->setAtXYZ(actorPosition, actor->getFacing(), true, 0, true);
 	_vm->_sceneObjects->setRetired(actorId, true);
 }
 
-void ScriptBase::Clickable_Object(char *objectName) {
+void ScriptBase::Clickable_Object(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
 	_vm->_scene->objectSetIsClickable(objectId, true, !_vm->_sceneIsLoading);
 }
 
-void ScriptBase::Unclickable_Object(char *objectName) {
+void ScriptBase::Unclickable_Object(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
 	_vm->_scene->objectSetIsClickable(objectId, false, !_vm->_sceneIsLoading);
 }
 
-void ScriptBase::Obstacle_Object(char *objectName, bool updateWalkpath) {
+void ScriptBase::Obstacle_Object(const char *objectName, bool updateWalkpath) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
 	_vm->_scene->objectSetIsObstacle(objectId, true, !_vm->_sceneIsLoading, !_vm->_sceneIsLoading && updateWalkpath);
 }
 
-void ScriptBase::Unobstacle_Object(char *objectName, bool updateWalkpath) {
+void ScriptBase::Unobstacle_Object(const char *objectName, bool updateWalkpath) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
@@ -793,18 +869,18 @@ void ScriptBase::Obstacle_Flag_All_Objects(bool isObstacle) {
 	_vm->_scene->objectSetIsObstacleAll(isObstacle, !_vm->_sceneIsLoading);
 }
 
-void ScriptBase::Combat_Target_Object(char *objectName) {
+void ScriptBase::Combat_Target_Object(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
-	_vm->_scene->objectSetIsCombatTarget(objectId, true, !_vm->_sceneIsLoading);
+	_vm->_scene->objectSetIsTarget(objectId, true, !_vm->_sceneIsLoading);
 }
 
-void ScriptBase::Un_Combat_Target_Object(char *objectName) {
+void ScriptBase::Un_Combat_Target_Object(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
-	_vm->_scene->objectSetIsCombatTarget(objectId, true, !_vm->_sceneIsLoading);
+	_vm->_scene->objectSetIsTarget(objectId, true, !_vm->_sceneIsLoading);
 }
 
 void ScriptBase::Set_Fade_Color(float r, float g, float b) {
@@ -841,5 +917,37 @@ void ScriptBase::I_Sez(const char *str) {
 	_vm->ISez(str);
 }
 
+AIScripts::AIScripts(BladeRunnerEngine *vm)
+	: _vm(vm),
+	  _inScriptCounter(0)
+{
+	for (int i = 0; i != 100; ++i)
+		_AIScripts[i] = 0;
+
+	_AIScripts[0]  = new AIScript_McCoy(_vm);
+	_AIScripts[23] = new AIScript_Officer_Leroy(_vm);
+}
+
+void AIScripts::Initialize(int actor)
+{
+	if (_AIScripts[actor])
+		_AIScripts[actor]->Initialize();
+}
+
+void AIScripts::UpdateAnimation(int actor, int *animation, int *frame)
+{
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->UpdateAnimation(animation, frame);
+	_inScriptCounter--;
+}
+
+void AIScripts::ChangeAnimationMode(int actor, int mode)
+{
+	_inScriptCounter++;
+	if (_AIScripts[actor])
+		_AIScripts[actor]->ChangeAnimationMode(mode);
+	_inScriptCounter--;
+}
 
 } // End of namespace BladeRunner

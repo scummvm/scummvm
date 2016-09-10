@@ -44,16 +44,13 @@ void BoundingBox::expand(float x0, float y0, float z0, float x1, float y1, float
 	_vertices[1].z += z1;
 }
 
-
 bool BoundingBox::inside(float x, float y, float z) {
-	return
-		x >= _vertices[0].x && x <= _vertices[1].x
-		&& y >= _vertices[0].y && y <= _vertices[1].y
-		&& z >= _vertices[0].z && z <= _vertices[1].z;
+	return x >= _vertices[0].x && x <= _vertices[1].x
+	    && y >= _vertices[0].y && y <= _vertices[1].y
+	    && z >= _vertices[0].z && z <= _vertices[1].z;
 }
 
-
-void BoundingBox::setXyz(float x0, float y0, float z0, float x1, float y1, float z1) {
+void BoundingBox::setXYZ(float x0, float y0, float z0, float x1, float y1, float z1) {
 	_vertices[0].x = x0;
 	_vertices[0].y = y0;
 	_vertices[0].z = z0;
@@ -63,7 +60,7 @@ void BoundingBox::setXyz(float x0, float y0, float z0, float x1, float y1, float
 	_vertices[1].z = z1;
 }
 
-void BoundingBox::getXyz(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) {
+void BoundingBox::getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) {
 	*x0 = _vertices[0].x;
 	*y0 = _vertices[0].y;
 	*z0 = _vertices[0].z;
@@ -73,7 +70,6 @@ void BoundingBox::getXyz(float *x0, float *y0, float *z0, float *x1, float *y1, 
 	*z1 = _vertices[1].z;
 }
 
-
 float BoundingBox::getZ0() {
 	return _vertices[0].z;
 }
@@ -81,4 +77,5 @@ float BoundingBox::getZ0() {
 float BoundingBox::getZ1() {
 	return _vertices[1].z;
 }
+
 } // End of namespace BladeRunner

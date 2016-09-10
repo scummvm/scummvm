@@ -23,8 +23,6 @@
 #ifndef BLADERUNNER_SLICE_ANIMATIONS_H
 #define BLADERUNNER_SLICE_ANIMATIONS_H
 
-#include "bladerunner/vector.h"
-
 #include "common/array.h"
 #include "common/file.h"
 #include "common/str.h"
@@ -48,8 +46,10 @@ class SliceAnimations {
 		uint32 frameCount;
 		uint32 frameSize;
 		float  fps;
-		Vector3 positionChange;
-		float facingChange;
+		float  unk0;
+		float  unk1;
+		float  unk2;
+		float  unk3;
 		uint32 offset;
 	};
 
@@ -102,10 +102,11 @@ public:
 	bool openCoreAnim();
 	bool openHDFrames();
 
-	SlicePalette &getPalette(int i) { return _palettes[i]; }
+	SlicePalette &getPalette(int i) { return _palettes[i]; };
 	void *getFramePtr(uint32 animation, uint32 frame);
-	int getNumberOfFrames(int animationId);
-	float getFps(int animationId);
+
+	float getFrameCount(int animation){ return _animations[animation].frameCount; }
+	float getFPS(int animation){ return _animations[animation].fps; }
 };
 
 } // End of namespace BladeRunner

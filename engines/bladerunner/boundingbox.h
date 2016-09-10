@@ -23,12 +23,11 @@
 #ifndef BLADERUNNER_BOUNDING_BOX_H
 #define BLADERUNNER_BOUNDING_BOX_H
 
-#include "vector.h"
+#include "bladerunner/vector.h"
 
 namespace BladeRunner {
 
 class BoundingBox {
-private:
 	Vector3 _vertices[2];
 
 public:
@@ -37,8 +36,10 @@ public:
 
 	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
 	bool inside(float x, float y, float z);
-	void setXyz(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXyz(float* x0, float* y0, float* z0, float* x1, float* y1, float* z1);
+
+	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
+	void getXYZ(float* x0, float* y0, float* z0, float* x1, float* y1, float* z1);
+
 	float getZ0();
 	float getZ1();
 };

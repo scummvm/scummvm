@@ -65,7 +65,7 @@ bool MIXArchive::open(const Common::String &filename) {
 		return false;
 	}
 
-	debug("MIXArchive::open: Opened archive %s", filename.c_str());
+	// debug("MIXArchive::open: Opened archive %s", filename.c_str());
 
 	return true;
 }

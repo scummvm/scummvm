@@ -63,14 +63,14 @@ bool SliceAnimations::open(const Common::String &name) {
 	_animations.resize(animationCount);
 
 	for (uint32 i = 0; i != animationCount; ++i) {
-		_animations[i].frameCount       = file.readUint32LE();
-		_animations[i].frameSize        = file.readUint32LE();
-		_animations[i].fps              = file.readFloatLE();
-		_animations[i].positionChange.x = file.readFloatLE();
-		_animations[i].positionChange.y = file.readFloatLE();
-		_animations[i].positionChange.z = file.readFloatLE();
-		_animations[i].facingChange     = file.readFloatLE();
-		_animations[i].offset           = file.readUint32LE();
+		_animations[i].frameCount = file.readUint32LE();
+		_animations[i].frameSize  = file.readUint32LE();
+		_animations[i].fps        = file.readFloatLE();
+		_animations[i].unk0       = file.readFloatLE();
+		_animations[i].unk1       = file.readFloatLE();
+		_animations[i].unk2       = file.readFloatLE();
+		_animations[i].unk3       = file.readFloatLE();
+		_animations[i].offset     = file.readUint32LE();
 
 #if 0
 		debug("%4d  %6d %6x  %7.2g %7.2g %7.2g %7.2g %7.2g %8x",
@@ -128,7 +128,7 @@ bool SliceAnimations::PageFile::open(const Common::String &name) {
 		_pageOffsets[pageNumber] = dataOffset + i * _sliceAnimations->_pageSize;
 	}
 
-	debug("PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
+	// debug("PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
 
 	return true;
 }
@@ -168,20 +168,6 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 	_pages[page]._lastAccess = _vm->_system->getMillis();
 
 	return (byte*)_pages[page]._data + pageOffset;
-}
-
-
-int SliceAnimations::getNumberOfFrames(int animationId) {
-	if (animationId > (int)_animations.size())
-		return 0;
-	return _animations[animationId].frameCount;
-}
-
-
-float SliceAnimations::getFps(int animationId) {
-	if (animationId > (int)_animations.size())
-		return 15.0f;
-	return _animations[animationId].fps;
 }
 
 } // End of namespace BladeRunner

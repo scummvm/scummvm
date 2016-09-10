@@ -95,7 +95,6 @@ bool Settings::openNewScene() {
 	return true;
 }
 
-
 int Settings::getAmmoType() {
 	return _ammoType;
 }
@@ -121,7 +120,5 @@ int Settings::getPlayerAgenda() {
 void Settings::setPlayerAgenda(int agenda) {
 	_playerAgenda = agenda;
 }
-
-
 
 } // End of namespace BladeRunner

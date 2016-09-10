@@ -23,10 +23,11 @@
 #ifndef BLADERUNNER_IMAGE_H
 #define BLADERUNNER_IMAGE_H
 
-#include "common/debug.h"
-#include "common/substream.h"
-
 #include "graphics/surface.h"
+
+namespace Common {
+	class String;
+}
 
 namespace BladeRunner {
 

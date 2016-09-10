@@ -42,15 +42,15 @@ public:
 
 protected:
 	void Preload(int animationId);
-	void Actor_Put_In_Set(int actorId, int setId);
-	void Actor_Set_At_XYZ(int actorId, float x, float y, float z, int angle);
+	void Actor_Put_In_Set(int id, int set);
+	void Actor_Set_At_XYZ(int actorId, float x, float y, float z, int direction);
 	void Actor_Set_At_Waypoint(int actorId, int waypointId, int angle);
 	bool Region_Check(int left, int top, int right, int down);
-	// Object_Query_Click
-	// Object_Do_Ground_Click
-	bool Object_Mark_For_Hot_Mouse(char *objectName);
+	bool Object_Query_Click(const char *objectName1, const char *objectName2);
+	void Object_Do_Ground_Click();
+	bool Object_Mark_For_Hot_Mouse(const char *objectName);
 	void Actor_Face_Actor(int actorId, int otherActorId, bool animate);
-	void Actor_Face_Object(int actorId, char *objectName, bool animate);
+	void Actor_Face_Object(int actorId, const char *objectName, bool animate);
 	void Actor_Face_Item(int actorId, int itemId, bool animate);
 	void Actor_Face_Waypoint(int actorId, int waypointId, bool animate);
 	void Actor_Face_XYZ(int actorId, float x, float y, float z, bool animate);
@@ -103,9 +103,9 @@ protected:
 	int Actor_Query_Animation_Mode(int actorId);
 	// Loop_Actor_Walk_To_Actor
 	// Loop_Actor_Walk_To_Item
-	// Loop_Actor_Walk_To_Scene_Object
+	bool Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, int a5);
 	// Loop_Actor_Walk_To_Waypoint
-	// Loop_Actor_Walk_To_XYZ
+	void Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7);
 	// Async_Actor_Walk_To_Waypoint
 	// Async_Actor_Walk_To_XYZ
 	// Actor_Force_Stop_Walking
@@ -241,13 +241,13 @@ protected:
 	void Disable_Shadows(int *animationsIdsList, int listSize);
 	bool Query_System_Currently_Loading_Game();
 	void Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId);
-	void Clickable_Object(char *objectName);
-	void Unclickable_Object(char *objectName);
-	void Obstacle_Object(char *objectName, bool updateWalkpath);
-	void Unobstacle_Object(char *objectName, bool updateWalkpath);
+	void Clickable_Object(const char *objectName);
+	void Unclickable_Object(const char *objectName);
+	void Obstacle_Object(const char *objectName, bool updateWalkpath);
+	void Unobstacle_Object(const char *objectName, bool updateWalkpath);
 	void Obstacle_Flag_All_Objects(bool isObstacle);
-	void Combat_Target_Object(char *objectName);
-	void Un_Combat_Target_Object(char *objectName);
+	void Combat_Target_Object(const char *objectName);
+	void Un_Combat_Target_Object(const char *objectName);
 	void Set_Fade_Color(float r, float g, float b);
 	void Set_Fade_Density(float density);
 	void Set_Fog_Color(char* fogName, float r, float g, float b);
@@ -268,9 +268,16 @@ public:
 
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
+	virtual bool ClickedOn3DObject(const char *objectName) = 0;
+	virtual bool ClickedOn2DRegion(int region) = 0;
 	virtual void SceneFrameAdvanced(int frame) = 0;
 	virtual void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) = 0;
+	virtual void PlayerWalkedIn() = 0;
 };
+
+/*
+ * Scene Scripts
+ */
 
 class Script {
 public:
@@ -289,8 +296,11 @@ public:
 
 	void InitializeScene();
 	void SceneLoaded();
+	bool ClickedOn3DObject(const char *objectName);
+	bool ClickedOn2DRegion(int region);
 	void SceneFrameAdvanced(int frame);
 	void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet);
+	void PlayerWalkedIn();
 };
 
 #define DECLARE_SCRIPT(name) \
@@ -301,13 +311,48 @@ public: \
 	{} \
 	void InitializeScene(); \
 	void SceneLoaded(); \
+	bool ClickedOn3DObject(const char *objectName); \
+	bool ClickedOn2DRegion(int region); \
 	void SceneFrameAdvanced(int frame); \
 	void SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet); \
-};
+	void PlayerWalkedIn(); \
+private:
+#define END_SCRIPT };
 
 DECLARE_SCRIPT(RC01)
+	void sub_403850();
+END_SCRIPT
 
 #undef DECLARE_SCRIPT
+
+/*
+ * Actor Scripts
+ */
+
+class AIScriptBase : public ScriptBase {
+public:
+	AIScriptBase(BladeRunnerEngine *vm)
+		: ScriptBase(vm)
+	{}
+
+	virtual void Initialize() = 0;
+	virtual void UpdateAnimation(int *animation, int *frame) = 0;
+	virtual void ChangeAnimationMode(int mode) = 0;
+};
+
+class AIScripts {
+public:
+	BladeRunnerEngine *_vm;
+	int                _inScriptCounter;
+	AIScriptBase      *_AIScripts[100];
+
+	AIScripts(BladeRunnerEngine *vm);
+	~AIScripts();
+
+	void Initialize(int actor);
+	void UpdateAnimation(int actor, int *animation, int *frame);
+	void ChangeAnimationMode(int actor, int mode);
+};
 
 } // End of namespace BladeRunner
 

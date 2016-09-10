@@ -37,13 +37,17 @@
 namespace BladeRunner {
 
 class Actor;
+class AIScripts;
 class AmbientSounds;
 class AudioPlayer;
 class AudioSpeech;
 class Chapters;
 class Clues;
-class GameInfo;
+class Combat;
 class GameFlags;
+class GameInfo;
+class Items;
+class Lights;
 class Mouse;
 class Scene;
 class SceneObjects;
@@ -53,12 +57,8 @@ class Shape;
 class SliceAnimations;
 class SliceRenderer;
 class TextResource;
-class Lights;
 class View;
 class Waypoints;
-class Items;
-class Combat;
-
 
 class BladeRunnerEngine : public Engine {
 public:
@@ -66,6 +66,7 @@ public:
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
 
+	AIScripts       *_aiScripts;
 	AmbientSounds   *_ambientSounds;
 	AudioPlayer     *_audioPlayer;
 	AudioSpeech     *_audioSpeech;
@@ -74,13 +75,13 @@ public:
 	GameFlags       *_gameFlags;
 	GameInfo        *_gameInfo;
 	Mouse           *_mouse;
-	View            *_view;
 	Scene           *_scene;
 	SceneObjects    *_sceneObjects;
 	Script          *_script;
 	Settings        *_settings;
 	SliceAnimations *_sliceAnimations;
 	SliceRenderer   *_sliceRenderer;
+	View            *_view;
 	int             *_gameVars;
 
 	Lights          *_lights;
@@ -118,7 +119,7 @@ public:
 	int  _gameAutoSave;
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
-	
+
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
@@ -137,12 +138,15 @@ public:
 
 	bool loadSplash();
 	bool init2();
-	
+
 	void gameLoop();
 	void gameTick();
 	void handleEvents();
+	void handleMouseClick(int x, int y);
 	void gameWaitForActive();
 	void loopActorSpeaking();
+
+	void loopActorWalkToXYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7);
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
 

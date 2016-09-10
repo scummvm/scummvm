@@ -26,8 +26,6 @@
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
 #include "bladerunner/matrix.h"
-#include "bladerunner/lights.h"
-#include "bladerunner/set_effects.h"
 
 #include "graphics/surface.h"
 
@@ -36,9 +34,10 @@ namespace Common {
 }
 
 namespace BladeRunner {
-	class SetEffects;
 
-	class BladeRunnerEngine;
+class BladeRunnerEngine;
+class Lights;
+class SetEffects;
 
 class SliceRenderer {
 	BladeRunnerEngine *_vm;
@@ -49,7 +48,7 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
-	View       *_view;
+	View      _view;
 	Lights     *_lights;
 	SetEffects *_setEffects;
 
@@ -89,7 +88,7 @@ public:
 	SliceRenderer(BladeRunnerEngine *vm);
 	~SliceRenderer();
 
-	void setView(View *view);
+	void setView(const View &view);
 	void setLights(Lights *lights);
 	void setSetEffects(SetEffects *setEffects);
 

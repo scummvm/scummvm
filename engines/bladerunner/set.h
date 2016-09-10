@@ -24,10 +24,6 @@
 #define BLADERUNNER_SET_H
 
 #include "bladerunner/boundingbox.h"
-#include "bladerunner/set_effects.h"
-#include "bladerunner/lights.h"
-#include "bladerunner/scene_objects.h"
-
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -35,8 +31,10 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+
 class VQADecoder;
-class Scene;
+class SetEffects;
+class SceneObjects;
 
 struct Object {
 	char        _name[20];
@@ -44,7 +42,7 @@ struct Object {
 	uint8       _isObstacle;
 	uint8       _isClickable;
 	uint8       _isHotMouse;
-	uint8       _isCombatTarget;
+	uint8       _isTarget;
 	uint8       _unknown1;
 };
 
@@ -56,8 +54,6 @@ struct Walkbox {
 };
 
 class Set {
-	friend class Scene;
-
 	BladeRunnerEngine *_vm;
 
 	uint32      _objectCount;
@@ -66,6 +62,7 @@ class Set {
 	Walkbox    *_walkboxes;
 	int         _walkboxStepSound[85];
 	int         _footstepSoundOverride;
+	float       _unknown[10];
 public:
 	SetEffects *_effects;
 
@@ -74,20 +71,21 @@ public:
 	~Set();
 
 	bool open(const Common::String &name);
+
 	void addObjectsToScene(SceneObjects *sceneObjects);
+	uint32 getObjectCount() { return _objectCount; }
+
+	float getAltitudeAtXZ(float x, float z, bool *inWalkbox);
 
 	int findWalkbox(float x, float z);
-	int findObject(char* objectName);
+	int findObject(const char *objectName);
 
 	bool objectSetHotMouse(int objectId);
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
 	void objectSetIsClickable(int objectId, bool isClickable);
 	void objectSetIsObstacle(int objectId, bool isObstacle);
-	void objectSetIsCombatTarget(int objectId, bool isCombatTarget);
-
-private:
-	bool isXzInWalkbox(float x, float z, Walkbox* walkbox);
-
+	void objectSetIsTarget(int objectId, bool isTarget);
+	const char *objectGetName(int objectId);
 };
 
 } // End of namespace BladeRunner

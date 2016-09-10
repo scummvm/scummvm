@@ -28,33 +28,35 @@
 
 #include "common/array.h"
 
-
 namespace BladeRunner {
 
-	struct Waypoint {
-		int _setId;
-		Vector3 _position;
-		bool _present;
-	};
+struct Waypoint {
+	int _setId;
+	Vector3 _position;
+	bool _present;
+};
 
-	class Waypoints {
-		BladeRunnerEngine *_vm;
-	private:
-		int       _count;
-		Waypoint *_waypoints;
-	public:
-		Waypoints(BladeRunnerEngine *vm, int count);
-		~Waypoints();
+class Waypoints {
+	BladeRunnerEngine *_vm;
 
-		void getXyz(int waypointId, float *x, float *y, float *z);
-		float getX(int waypointId);
-		float getY(int waypointId);
-		float getZ(int waypointId);
-		int getSetId(int waypointId);
+private:
+	int       _count;
+	Waypoint *_waypoints;
 
-		bool set(int waypointId, int setId, Vector3 position);
-		bool reset(int waypointId);
-	};
-}
+public:
+	Waypoints(BladeRunnerEngine *vm, int count);
+	~Waypoints();
+
+	void getXYZ(int waypointId, float *x, float *y, float *z);
+	float getX(int waypointId);
+	float getY(int waypointId);
+	float getZ(int waypointId);
+	int getSetId(int waypointId);
+
+	bool set(int waypointId, int setId, Vector3 position);
+	bool reset(int waypointId);
+};
+
+} // End of namespace BladeRunner
 
 #endif

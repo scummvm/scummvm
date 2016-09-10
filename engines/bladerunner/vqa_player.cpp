@@ -60,17 +60,17 @@ int VQAPlayer::update() {
 	if (_curFrame == -1) {
 		_curFrame = 0;
 		if (_curFrame >= 0) {
-			_decoder.readNextPacket();
+			_decoder.readPacket(_curFrame);
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			_surface = _decoder.decodeVideoFrame();
 			_zBuffer = _decoder.decodeZBuffer();
-			_decoder.decodeView(_view);
+			_view = _decoder.getView();
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);
 		if (_decodedFrame >= 0) {
-			_decoder.readNextPacket();
+			_decoder.readPacket(_decodedFrame);
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 		}
@@ -89,12 +89,12 @@ int VQAPlayer::update() {
 		if (_curFrame >= 0) {
 			_surface = _decoder.decodeVideoFrame();
 			_zBuffer = _decoder.decodeZBuffer();
-			_decoder.decodeView(_view);
+			_view = _decoder.getView();
 		}
 
 		_decodedFrame = calcNextFrame(_curFrame);
 		if (_decodedFrame >= 0) {
-			_decoder.readNextPacket();
+			_decoder.readPacket(_decodedFrame);
 			if (_hasAudio)
 				queueAudioFrame(_decoder.decodeAudioFrame());
 		}
@@ -115,21 +115,46 @@ const uint16 *VQAPlayer::getZBuffer() const {
 	return _zBuffer;
 }
 
-void VQAPlayer::setLoopSpecial(int loop, bool wait) {
-	_loopSpecial = loop;
-	if (!wait)
-		_curLoop = -1;
+bool VQAPlayer::setLoop(int loop) {
+	int begin, end;
+	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+		return false;
+	}
+
+	_curLoop   = loop;
+	_loopBegin = begin;
+	_loopEnd   = end;
+
+	// warning("\t\t\tActive Loop: %d - %d\n", begin, end);
+
+	return true;
 }
 
-void VQAPlayer::setLoopDefault(int loop) {
-	_loopDefault = loop;
+int VQAPlayer::getLoopBeginFrame(int loop) {
+	int begin, end;
+	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+		return -1;
+	}
+	return begin;
+}
+
+int VQAPlayer::getLoopEndFrame(int loop) {
+	int begin, end;
+	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
+		return -1;
+	}
+	return end;
 }
 
 int VQAPlayer::calcNextFrame(int frame) const {
 	if (frame < 0)
 		return -3;
 
-	frame += 1;
+	if (_curLoop != -1 && frame >= _loopEnd) {
+		frame = _loopBegin;
+	} else {
+		frame++;
+	}
 
 	if (frame == _decoder.numFrames())
 		frame = -3;

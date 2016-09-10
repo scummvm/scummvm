@@ -46,7 +46,7 @@ class Settings {
 
 	int   _difficulty;
 	int   _playerAgenda;
-	
+
 	int   _ammoType;
 	int   _ammoAmounts[3];
 

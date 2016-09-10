@@ -23,76 +23,76 @@
 #ifndef BLADERUNNER_SCENE_OBJECTS_H
 #define BLADERUNNER_SCENE_OBJECTS_H
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/boundingbox.h"
-#include "bladerunner/view.h"
 
 #include "common/rect.h"
 
 namespace BladeRunner {
-	class BladeRunnerEngine;
 
-	enum SceneObjectType
-	{
-		SceneObjectTypeUnknown = -1,
-		SceneObjectTypeActor = 0,
-		SceneObjectTypeObject = 1,
-		SceneObjectTypeItem = 2,
-	};
+class BladeRunnerEngine;
+class View;
+
+enum SceneObjectType
+{
+	SceneObjectTypeUnknown = -1,
+	SceneObjectTypeActor = 0,
+	SceneObjectTypeObject = 1,
+	SceneObjectTypeItem = 2
+};
 
 #define SCENE_OBJECTS_COUNT 115
 #define SCENE_OBJECTS_ACTORS_OFFSET 0
 #define SCENE_OBJECTS_ITEMS_OFFSET 74
 #define SCENE_OBJECTS_OBJECTS_OFFSET 198
 
-	struct SceneObject
-	{
-		int _sceneObjectId;
-		SceneObjectType _sceneObjectType;
-		BoundingBox _boundingBox;
-		Common::Rect _screenRectangle;
-		float _distanceToCamera;
-		int _present;
-		int _isClickable;
-		int _isObstacle;
-		int _unknown1;
-		int _isCombatTarget;
-		int _isMoving;
-		int _isRetired;
-	};
+struct SceneObject
+{
+	int             _sceneObjectId;
+	SceneObjectType _sceneObjectType;
+	BoundingBox     _boundingBox;
+	Common::Rect    _screenRectangle;
+	float           _distanceToCamera;
+	int             _present;
+	int             _isClickable;
+	int             _isObstacle;
+	int             _unknown1;
+	int             _isTarget;
+	int             _isMoving;
+	int             _isRetired;
+};
 
+class SceneObjects {
+	BladeRunnerEngine *_vm;
 
-	class SceneObjects {
-		BladeRunnerEngine *_vm;
-	private:
-		View *_view;
-		int _count;
-		SceneObject *_sceneObjects;
-		int *_sceneObjectsSortedByDistance;
+private:
+	View        *_view;
+	int          _count;
+	SceneObject *_sceneObjects;
+	int         *_sceneObjectsSortedByDistance;
 
-	public:
-		SceneObjects(BladeRunnerEngine *vm, View *view);
-		~SceneObjects();
-		bool addActor(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 unknown1, uint8 isCombatTarget, uint8 isRetired);
-		bool addObject(int sceneObjectId, BoundingBox* boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isCombatTarget);
-		bool addItem(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isCombatTarget, uint8 isObstacle);
-		bool remove(int sceneObjectId);
-		void clear();
-		int findByXYZ(int *isClickable, int *isObstacle, int *isCombatTarget, float x, float y, float z, int mustBeClickable, int mustBeObstacle, int mustBeCombatTarget);
-		void setMoving(int sceneObjectId, bool isMoving);
-		void setRetired(int sceneObjectId, bool isRetired);
-		bool isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2);
-		void setIsClickable(int sceneObjectId, bool isClickable);
-		void setIsObstacle(int sceneObjectId, bool isObstacle);
-		void setIsCombatTarget(int sceneObjectId, bool isCombatTarget);
-		void updateWalkpath();
-	private:
-		int findById(int sceneObjectId);
-		bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isCombatTarget, uint unknown2, uint isRetired);
-		int findEmpty();
-	};
+public:
+	SceneObjects(BladeRunnerEngine *vm, View *view);
+	~SceneObjects();
+	bool addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 unknown1, uint8 isTarget, uint8 isRetired);
+	bool addObject(int sceneObjectId, BoundingBox *boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget);
+	bool addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isTarget, uint8 isObstacle);
+	bool remove(int sceneObjectId);
+	void clear();
+	int findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets);
+	void setMoving(int sceneObjectId, bool isMoving);
+	void setRetired(int sceneObjectId, bool isRetired);
+	bool isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2);
+	void setIsClickable(int sceneObjectId, bool isClickable);
+	void setIsObstacle(int sceneObjectId, bool isObstacle);
+	void setIsTarget(int sceneObjectId, bool isTarget);
+	void updateWalkpath();
 
+private:
+	int findById(int sceneObjectId);
+	bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint unknown2, uint isRetired);
+	int findEmpty();
+};
 
-}
+} // End of namespace BladeRunner
+
 #endif

@@ -48,12 +48,13 @@ public:
 	bool loadStream(Common::SeekableReadStream *s);
 
 	void readNextPacket();
+	void readPacket(int frame);
 
 	const Graphics::Surface    *decodeVideoFrame();
 	const uint16               *decodeZBuffer();
 	Audio::SeekableAudioStream *decodeAudioFrame();
-	void                        decodeView(View *view);
-	//const View &getView() { return _videoTrack->getView(); }
+
+	const View &getView() { return _videoTrack->getView(); }
 
 	uint16 numFrames() const { return _header.numFrames; }
 	uint8  frameRate() const { return _header.frameRate; }
@@ -63,6 +64,8 @@ public:
 
 	bool   hasAudio() const { return _header.channels != 0; }
 	uint16 frequency() const { return _header.freq; }
+
+	bool getLoopBeginAndEndFrame(int loop, int *begin, int *end);
 
 protected:
 
@@ -163,7 +166,7 @@ private:
 		int getFrameCount() const;
 		const Graphics::Surface *decodeVideoFrame();
 		const uint16 *decodeZBuffer();
-		void decodeView(View *view);
+		const View &getView() { return _view; }
 
 		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
@@ -207,7 +210,7 @@ private:
 
 		int      _curFrame;
 
-		uint8   *_viewData;
+		View     _view;
 
 		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(uint16 *frame);

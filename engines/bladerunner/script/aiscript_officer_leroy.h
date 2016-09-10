@@ -20,65 +20,22 @@
  *
  */
 
-#ifndef BLADERUNNER_ACTOR_CLUES_H
-#define BLADERUNNER_ACTOR_CLUES_H
+#include "bladerunner/script/script.h"
 
 #include "bladerunner/bladerunner.h"
 
-#include "bladerunner/gameinfo.h"
-
 namespace BladeRunner {
 
-struct ActorClue
-{
-	int _clueId;
-	int _field1;
-	int _fromActorId;
-	int _field3;
-	int _field4;
-	int _field5;
-	int _field6;
-	int _field7;
-	int _field8;
-	unsigned char _flags;
-};
-
-class ActorClues
-{
-	BladeRunnerEngine *_vm;
-
-private:
-	int _count;
-	int _maxCount;
-	ActorClue *_clues;
-
+class AIScript_Officer_Leroy : public AIScriptBase {
+	int var_45D5B0_animation_state;
+	int var_45D5B4_frame;
+	int var_45D5B8;
 public:
-	ActorClues(BladeRunnerEngine *_vm, int cluesType);
-	~ActorClues();
+	AIScript_Officer_Leroy(BladeRunnerEngine *vm);
 
-	void add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId);
-	void acquire(int clueId, char flag2, int fromActorId);
-	void lose(int clueId);
-	bool isAcquired(int clueId);
-	int getFromActorId(int clueId);
-	bool isFlag2(int clueId);
-	bool isFlag3(int clueId);
-	bool isFlag4(int clueId);
-	int getField1(int clueId);
-
-	int getCount();
-
-	void removeAll();
-
-	//savegame
-	//loadgame
-
-private:
-	bool exists(int clueId);
-	int findClueIndex(int clueId);
-	void remove(int clueIndex);
+	void Initialize();
+	void UpdateAnimation(int *animation, int *frame);
+	void ChangeAnimationMode(int mode);
 };
 
 } // End of namespace BladeRunner
-
-#endif
