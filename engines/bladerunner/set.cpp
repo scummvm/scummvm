@@ -23,7 +23,10 @@
 #include "bladerunner/set.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/lights.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/set_effects.h"
+#include "bladerunner/slice_renderer.h"
 
 #include "common/debug.h"
 #include "common/ptr.h"
@@ -39,9 +42,12 @@ Set::Set(BladeRunnerEngine *vm) : _vm(vm) {
 	_walkboxCount = 0;
 	_objects = new Object[85];
 	_walkboxes = new Walkbox[95];
+	_footstepSoundOverride = -1;
+	_effects = new SetEffects(vm);
 }
 
 Set::~Set() {
+	delete _effects;
 	delete[] _objects;
 	delete[] _walkboxes;
 }
@@ -53,7 +59,7 @@ bool Set::open(const Common::String &name) {
 	if (sig != kSet0)
 		return false;
 
-	s->skip(4); // TODO: LITE length
+	int framesCount = s->readUint32LE();
 
 	_objectCount = s->readUint32LE();
 	assert(_objectCount <= 85);
@@ -102,7 +108,12 @@ bool Set::open(const Common::String &name) {
 		// debug("WALKBOX: %s", _walkboxes[i]._name);
 	}
 
-	// TODO: Read LITE
+	_vm->_lights->reset();
+	_vm->_lights->read(s.get(), framesCount);
+	_vm->_sliceRenderer->setLights(_vm->_lights);
+	_effects->reset();
+	_effects->read(s.get(), framesCount);
+	_vm->_sliceRenderer->setSetEffects(_effects);
 
 	return true;
 }

@@ -56,14 +56,12 @@ public:
 	Vector3     _actorStartPosition;
 	int         _actorStartFacing;
 	bool        _playerWalkedIn;
-	View        _view;
 
 	Regions*    _regions;
 	Regions*    _exits;
 
 	// _default_loop_id = 0;
 	// _scene_vqa_frame_number = -1;
-
 
 public:
 	Scene(BladeRunnerEngine *vm)

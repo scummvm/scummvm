@@ -343,6 +343,9 @@ void setupLookupTable(int t[256], int inc) {
 
 void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
 	assert(_sliceFramePtr);
+	assert(_lights);
+	assert(_setEffects);
+	//assert(_view);
 
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
@@ -351,6 +354,9 @@ void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
 		_field_10D2, _field_10CE, // 2 floats
 		_field_109E              // 3x2 matrix
 		);
+
+	_lights->setupFrame(_view._frame);
+	_setEffects->setupFrame(_view._frame);
 
 	setupLookupTable(_t1, sliceLineIterator._field_00[0][0]);
 	setupLookupTable(_t2, sliceLineIterator._field_00[0][1]);
@@ -433,7 +439,7 @@ void SliceRenderer::preload(int animationId) {
 		_vm->_sliceAnimations->getFramePtr(animationId, i);
 }
 
-void SliceRenderer::disableShadows(int* animationsIdsList, int listSize) {
+void SliceRenderer::disableShadows(int animationsIdsList[], int listSize) {
 	int i;
 	for (i = 0; i < listSize; i++) {
 		_animationsShadowEnabled[animationsIdsList[i]] = false;

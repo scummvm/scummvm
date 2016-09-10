@@ -143,10 +143,13 @@ public:
 	void gameTick();
 	void handleEvents();
 	void handleMouseClick(int x, int y);
+	void handleMouseClickExit(int x, int y, int exitIndex);
+	void handleMouseClickRegion(int x, int y, int regionIndex);
+	void handleMouseClickItem(int x, int y, int itemId);
+	void handleMouseClickActor(int x, int y, int actorId);
+	void handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget);
 	void gameWaitForActive();
 	void loopActorSpeaking();
-
-	void loopActorWalkToXYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7);
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
 

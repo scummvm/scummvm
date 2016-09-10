@@ -121,6 +121,7 @@ public:
 	void setFPS(int fps);
 
 	void loopWalkToXYZ(Vector3 destination);
+	void loopWalkToXYZ(float x, float y, float z, int a4, int a5, int a6, int a7);
 	void loopWalkToSceneObject(const char *objectName, int destinationOffset = 0);
 
 	bool tick(bool forceUpdate);

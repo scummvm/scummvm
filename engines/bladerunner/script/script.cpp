@@ -33,6 +33,7 @@
 #include "bladerunner/combat.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
+#include "bladerunner/movement_track.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/scene.h"
@@ -72,12 +73,57 @@ void Script::SceneLoaded() {
 	_inScriptCounter--;
 }
 
-bool Script::ClickedOn3DObject(const char *objectName) {
+bool Script::MouseClick(int x, int y) {
+	if (_inScriptCounter > 0)
+		return true;
+	
+	_inScriptCounter++;
+	//MouseX = x;
+	//MouseY = y;
+	bool result = _currentScript->MouseClick(x, y);
+	//SelectedEntity = -1;
+	_inScriptCounter--;
+	//MouseX = -1;
+	//MouseY = -1;
+	return result;
+}
+
+bool Script::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (_inScriptCounter > 0)
 		return true;
 
 	_inScriptCounter++;
-	bool result = _currentScript->ClickedOn3DObject(objectName);
+	bool result = _currentScript->ClickedOn3DObject(objectName, a2);
+	_inScriptCounter--;
+	return result;
+}
+
+bool Script::ClickedOnActor(int actorId) {
+	if (_inScriptCounter > 0)
+		return true;
+
+	_inScriptCounter++;
+	bool result = _currentScript->ClickedOnActor(actorId);
+	_inScriptCounter--;
+	return result;
+}
+
+bool Script::ClickedOnItem(int itemId, bool a2) {
+	if (_inScriptCounter > 0)
+		return true;
+
+	_inScriptCounter++;
+	bool result = _currentScript->ClickedOnItem(itemId, a2);
+	_inScriptCounter--;
+	return result;
+}
+
+bool Script::ClickedOnExit(int exitId) {
+	if (_inScriptCounter > 0)
+		return true;
+
+	_inScriptCounter++;
+	bool result = _currentScript->ClickedOnExit(exitId);
 	_inScriptCounter--;
 	return result;
 }
@@ -98,15 +144,27 @@ void Script::SceneFrameAdvanced(int frame) {
 	_inScriptCounter--;
 }
 
-void Script::SceneActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
+void Script::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	_inScriptCounter++;
-	_currentScript->SceneActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
+	_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
 	_inScriptCounter--;
 }
 
 void Script::PlayerWalkedIn() {
 	_inScriptCounter++;
 	_currentScript->PlayerWalkedIn();
+	_inScriptCounter--;
+}
+
+void Script::PlayerWalkedOut() {
+	_inScriptCounter++;
+	_currentScript->PlayerWalkedOut();
+	_inScriptCounter--;
+}
+
+void Script::DialogueQueueFlushed(int a1) {
+	_inScriptCounter++;
+	_currentScript->DialogueQueueFlushed(a1);
 	_inScriptCounter--;
 }
 
@@ -128,6 +186,7 @@ void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
 
 bool ScriptBase::Region_Check(int left, int top, int right, int down) {
 	//TODO: return _vm->_mouse.x >= left && _vm->_mouse.y >= top && _vm->_mouse.x <= right && _vm->_mouse.y <= down;
+	warning("Region_Check(%d, %d, %d, %d)", left, top, right, down);
 	return false;
 }
 
@@ -171,7 +230,7 @@ void ScriptBase::Actor_Face_Current_Camera(int actorId, bool animate) {
 	_vm->_actors[actorId]->faceCurrentCamera(animate);
 }
 
-void ScriptBase::Actor_Face_Heading(int actorId, int heading) {
+void ScriptBase::Actor_Face_Heading(int actorId, int heading, bool animate) {
 	_vm->_actors[actorId]->faceHeading(heading, true);
 }
 
@@ -471,10 +530,19 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 	return _vm->_actors[actorId]->getAnimationMode();
 }
 
-// ScriptBase::Loop_Actor_Walk_To_Actor
-// ScriptBase::Loop_Actor_Walk_To_Item
+bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool running) {
+	//TODO
+	warning("Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, a3, a4, running);
+	return false;
+}
 
-bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, int a5) {
+bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool running) {
+	//TODO
+	warning("Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, a3, a4, running);
+	return false;
+}
+
+bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, bool running) {
 	_vm->gameWaitForActive();
 
 	_vm->_actors[actorId]->loopWalkToSceneObject(objectName);
@@ -482,17 +550,46 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	return false;
 }
 
-// ScriptBase::Loop_Actor_Walk_To_Waypoint
-
-void ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7) {
-	_vm->loopActorWalkToXYZ(actorId, x, y, z, a4, a5, a6, a7);
+bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int a4, bool running) {
+	//TODO
+	warning("Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, a3, a4, running);
+	return false;
 }
 
-// ScriptBase::Async_Actor_Walk_To_Waypoint
-// ScriptBase::Async_Actor_Walk_To_XYZ
-// ScriptBase::Actor_Force_Stop_Walking
-// ScriptBase::Loop_Actor_Travel_Stairs
-// ScriptBase::Loop_Actor_Travel_Ladder
+bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, bool running, int a7) {
+	_vm->gameWaitForActive();
+
+	_vm->_actors[actorId]->loopWalkToXYZ(x, y, z, a4, a5, running, 1);
+
+	return false;
+}
+
+void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int running) {
+	//TODO
+	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, a3, running);
+}
+
+void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a5, bool running) {
+	//TODO
+	warning("Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, a5, running);
+}
+
+void ScriptBase::Actor_Force_Stop_Walking(int actorId) {
+	//TODO
+	warning("Loop_Actor_Travel_Stairs(%d)", actorId);
+}
+
+bool ScriptBase::Loop_Actor_Travel_Stairs(int actorId, int a2, int a3, int a4) {
+	//TODO
+	warning("Loop_Actor_Travel_Stairs(%d, %d, %d, %d)", actorId, a2, a3, a4);
+	return false;
+}
+
+bool ScriptBase::Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4) {
+	//TODO
+	warning("Loop_Actor_Travel_Ladder(%d, %d, %d, %d)", actorId,a2,a3,a4);
+	return false;
+}
 
 void ScriptBase::Actor_Clue_Add_To_Database(int actorId, int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId) {
 	_vm->_actors[actorId]->addClueToDatabase(clueId, unknown, clueAcquired, unknownFlag, fromActorId);
@@ -526,12 +623,32 @@ void ScriptBase::Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune) {
 	_vm->_actors[actorId]->setImmunityToObstacles(isImmune);
 }
 
-// ScriptBase::Item_Add_To_World
-// ScriptBase::Item_Remove_From_World
-// ScriptBase::Item_Spin_In_World
-// ScriptBase::Item_Flag_As_Target
-// ScriptBase::Item_Flag_As_Non_Target
-// ScriptBase::Item_Pickup_Spin_Effect
+void ScriptBase::Item_Add_To_World(int itemId, int animationId, int sceneIndex, float x, float y, float z, signed int angle, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly) {
+	//TODO
+	warning("Item_Add_To_World(%d, %d, %d, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d)", itemId, animationId, sceneIndex, x, y, z, angle, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly);
+}
+
+void ScriptBase::Item_Remove_From_World(int itemId) {
+	//TODO
+	warning("Item_Remove_From_World(%d)", itemId);
+}
+
+void ScriptBase::Item_Spin_In_World(int itemId) {
+	warning("Item_Spin_In_World(%d)", itemId);
+}
+
+void ScriptBase::Item_Flag_As_Target(int itemId) {
+	warning("Item_Flag_As_Target(%d)", itemId);
+}
+
+void ScriptBase::Item_Flag_As_Non_Target(int itemId) {
+	warning("Item_Flag_As_Non_Target(%d)", itemId);
+}
+
+void ScriptBase::Item_Pickup_Spin_Effect(int a1, int a2, int a3) {
+	//TODO
+	warning("Item_Pickup_Spin_Effect(%d, %d, %d)", a1, a2, a3);
+}
 
 int ScriptBase::Animation_Open() {
 	//This is not implemented in game
@@ -667,21 +784,62 @@ void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int prio
 	_vm->_audioPlayer->playAud(name, volume, panFrom, panTo, priority);
 }
 
-// ScriptBase::Sound_Play_Speech_Line
+void ScriptBase::Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a4, int a5) {
+	//TODO
+	warning("Sound_Play_Speech_Line(%d, %d, %d, %d, %d)", actorId, speechId, a3, a4, a5);
+}
 // ScriptBase::Sound_Left_Footstep_Walk
 // ScriptBase::Sound_Right_Footstep_Walk
 // ScriptBase::Sound_Left_Footstep_Run
 // ScriptBase::Sound_Right_Footstep_Run
 // ScriptBase::Sound_Walk_Shuffle_Stop
-// ScriptBase::Footstep_Sounds_Set
-// ScriptBase::Footstep_Sound_Override_On
-// ScriptBase::Footstep_Sound_Override_Off
-// ScriptBase::Music_Play
-// ScriptBase::Music_Adjust
-// ScriptBase::Music_Stop
-// ScriptBase::Music_Is_Playing
-// ScriptBase::Overlay_Play
-// ScriptBase::Overlay_Remove
+
+void ScriptBase::Footstep_Sounds_Set(int walkboxId, int stepSound) {
+	//TODO
+	warning("Footstep_Sounds_Set(%d, %d)", walkboxId, stepSound);
+}
+
+void ScriptBase::Footstep_Sound_Override_On(int footstepSoundOverride) {
+	//TODO
+	warning("Footstep_Sound_Override_On(%d)", footstepSoundOverride);
+}
+
+void ScriptBase::Footstep_Sound_Override_Off() {
+	//TODO
+	warning("Footstep_Sound_Override_Off()");
+}
+
+bool ScriptBase::Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
+	//TODO
+	warning("Music_Play(%d, %d, %d, %d, %d, %d, %d)", a1,  a2,  a3,  a4,  a5,  a6,  a7);
+	return false;
+}
+
+void ScriptBase::Music_Adjust(int a1, int a2, int a3) {
+	//TODO
+	warning("Music_Adjust(%d, %d, %d)", a1, a2, a3);
+}
+
+void ScriptBase::Music_Stop(int a1) {
+	//TODO
+	warning("Music_Stop(%d)", a1);
+}
+
+bool ScriptBase::Music_Is_Playing() {
+	//TODO
+	warning("Music_Is_Playing()");
+	return false;
+}
+
+void ScriptBase::Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5) {
+	//TODO
+	warning("Overlay_Play(%s, %d, %d, %d, %d)", overlay, a2, a3, a4, a5);
+}
+
+void ScriptBase::Overlay_Remove(const char *overlay) {
+	//TODO
+	warning("Overlay_Remove(%s)", overlay);
+}
 
 void ScriptBase::Scene_Loop_Set_Default(int a) {
 	// debug("Scene_Loop_Set_Default(%d)", a);
@@ -705,10 +863,24 @@ void ScriptBase::Ambient_Sounds_Add_Sound(int id, int time1, int time2, int volu
 	_vm->_ambientSounds->addSound(id, time1, time2, volume1, volume2, pan1begin, pan1end, pan2begin, pan2end, priority, unk);
 }
 
-// ScriptBase::Ambient_Sounds_Remove_Sound
-// ScriptBase::Ambient_Sounds_Add_Speech_Sound
+void  ScriptBase::Ambient_Sounds_Remove_Sound(int id, bool a2) {
+	//TODO
+	warning("Ambient_Sounds_Remove_Sound(%d, %d)", id, a2);
+}
+
+void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int id, int unk1, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk2){
+	//TODO
+	warning("Ambient_Sounds_Add_Speech_Sound(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", id, unk1, time1, time2, volume1, volume2, pan1begin, pan1end, pan2begin, pan2end, priority, unk2);
+}
+
 // ScriptBase::Ambient_Sounds_Remove_Speech_Sound
-// ScriptBase::Ambient_Sounds_Play_Sound
+
+int ScriptBase::Ambient_Sounds_Play_Sound(int a1, int a2, int a3, int a4, int a5) {
+	//TODO
+	warning("Ambient_Sounds_Remove_Sound(%d, %d, %d, %d, %d)", a1, a2, a3, a4, a5);
+	return -1;
+}
+
 // ScriptBase::Ambient_Sounds_Play_Speech_Sound
 
 void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time) {
@@ -719,8 +891,15 @@ void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int id, int volume, int pan, i
 	_vm->_ambientSounds->addLoopingSound(id, volume, pan, fadeInTime);
 }
 
-// ScriptBase::Ambient_Sounds_Adjust_Looping_Sound
-// ScriptBase::Ambient_Sounds_Remove_Looping_Sound
+void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int id, int panBegin, int panEnd, int a4) {
+	//TODO
+	warning("Ambient_Sounds_Adjust_Looping_Sound(%d, %d, %d, %d)", id, panBegin, panEnd, a4);
+}
+
+void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int id, bool a2){
+	//TODO
+	warning("Ambient_Sounds_Remove_Looping_Sound(%d, %d)", id, a2);
+}
 
 void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int time) {
 	// _vm->_ambientSounds->removeAllLoopingSounds(time);
@@ -730,17 +909,66 @@ void ScriptBase::Setup_Scene_Information(float actorX, float actorY, float actor
 	_vm->_scene->setActorStart(Vector3(actorX, actorY, actorZ), actorFacing);
 }
 
-// ScriptBase::Dialogue_Menu_Appear
-// ScriptBase::Dialogue_Menu_Disappear
-// ScriptBase::Dialogue_Menu_Clear_List
-// ScriptBase::Dialogue_Menu_Add_To_List
-// ScriptBase::Dialogue_Menu_Add_DONE_To_List
-// ScriptBase::Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected
-// ScriptBase::DM_Add_To_List
-// ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected
-// ScriptBase::Dialogue_Menu_Remove_From_List
-// ScriptBase::Dialogue_Menu_Query_Input
-// ScriptBase::Dialogue_Menu_Query_List_Size
+bool ScriptBase::Dialogue_Menu_Appear(int x, int y) {
+	//TODO
+	warning("Dialogue_Menu_Appear(%d, %d)", x, y);
+	return false;
+}
+
+bool ScriptBase::Dialogue_Menu_Disappear() {
+	//TODO
+	warning("Dialogue_Menu_Disappear()");
+	return false;
+}
+
+bool ScriptBase::Dialogue_Menu_Clear_List() {
+	//TODO
+	warning("Dialogue_Menu_Clear_List()");
+	return false;
+}
+
+bool ScriptBase::Dialogue_Menu_Add_To_List(int answer) {
+	//TODO
+	warning("Dialogue_Menu_Add_To_List(%d)", answer);
+	return false;
+}
+
+bool ScriptBase::Dialogue_Menu_Add_DONE_To_List(int answerValue) {
+	//TODO
+	warning("Dialogue_Menu_Add_DONE_To_List(%d)", answerValue);
+	return false;
+}
+
+// Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected
+
+bool ScriptBase::DM_Add_To_List(int answer, int a2, int a3, int a4) {
+	//TODO
+	warning("DM_Add_To_List(%d, %d, %d, %d)", answer, a2, a3, a4);
+	return false;
+}
+
+bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int a2, int a3, int a4) {
+	//TODO
+	warning("DM_Add_To_List_Never_Repeat_Once_Selected(%d, %d, %d, %d)", answer, a2, a3, a4);
+	return false;
+}
+
+void ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {
+	//TODO
+	warning("Dialogue_Menu_Remove_From_List(%d)", answer);
+}
+
+int ScriptBase::Dialogue_Menu_Query_Input() {
+	//TODO
+	warning("Dialogue_Menu_Query_Input()");
+	return 0;
+}
+
+int ScriptBase::Dialogue_Menu_Query_List_Size() {
+	//TODO
+	warning("Dialogue_Menu_Query_List_Size()");
+	return 0;
+}
 
 void ScriptBase::Scene_Exit_Add_2D_Exit(int index, int left, int top, int right, int down, int type) {
 	_vm->_scene->_exits->add(index, Common::Rect(left, top, right, down), type);
@@ -765,39 +993,154 @@ void ScriptBase::Scene_2D_Region_Remove(int index) {
 	_vm->_scene->_regions->remove(index);
 }
 
-// ScriptBase::World_Waypoint_Set
+void ScriptBase::World_Waypoint_Set(int waypointId, int sceneId, float x, float y, float z) {
+	//TODO
+	warning("World_Waypoint_Set(%d, %d, %f, %f, %f)", waypointId, sceneId, x, y, z);
+}
 // ScriptBase::World_Waypoint_Reset
-// ScriptBase::World_Waypoint_Query_X
-// ScriptBase::World_Waypoint_Query_Y
-// ScriptBase::World_Waypoint_Query_Z
-// ScriptBase::Combat_Cover_Waypoint_Set_Data
-// ScriptBase::Combat_Flee_Waypoint_Set_Data
-// ScriptBase::Police_Maze_Target_Track_Add
+
+float ScriptBase::World_Waypoint_Query_X(int waypointId) {
+	//TODO
+	warning("World_Waypoint_Query_X(%d)", waypointId);
+	return 0.0f;
+}
+
+float ScriptBase::World_Waypoint_Query_Y(int waypointId) {
+	//TODO
+	warning("World_Waypoint_Query_Y(%d)", waypointId);
+	return 0.0f;
+}
+
+float ScriptBase::World_Waypoint_Query_Z(int waypointId) {
+	//TODO
+	warning("World_Waypoint_Query_Z(%d)", waypointId);
+	return 0.0f;
+}
+
+void ScriptBase::Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int sceneId, int a4, float x, float y, float z) {
+	//TODO
+	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f)", combatCoverId, a2, sceneId, a4, x, y, z);
+}
+
+void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2, int sceneId, int a4, float x, float y, float z, int a8) {
+	//TODO
+	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f, %d)", combatFleeWaypointId, a2, sceneId, a4, x, y, z, a8);
+}
+
+void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
+	//TODO
+	warning("Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, %x, %d)", itemId,  startX,  startY,  startZ,  endX,  endY,  endZ,  steps,  data,  a10);
+	
+}
+
 // ScriptBase::Police_Maze_Query_Score
 // ScriptBase::Police_Maze_Zero_Score
 // ScriptBase::Police_Maze_Increment_Score
 // ScriptBase::Police_Maze_Decrement_Score
 // ScriptBase::Police_Maze_Set_Score
-// ScriptBase::Police_Maze_Set_Pause_State
-// ScriptBase::CDB_Set_Crime
-// ScriptBase::CDB_Set_Clue_Asset_Type
-// ScriptBase::SDB_Set_Actor
-// ScriptBase::SDB_Add_Photo_Clue
-// ScriptBase::SDB_Set_Name
-// ScriptBase::SDB_Set_Sex
-// ScriptBase::SDB_Add_Identity_Clue
-// ScriptBase::SDB_Add_MO_Clue
-// ScriptBase::SDB_Add_Whereabouts_Clue
-// ScriptBase::SDB_Add_Replicant_Clue
-// ScriptBase::SDB_Add_Non_Replicant_Clue
-// ScriptBase::SDB_Add_Other_Clue
+
+void ScriptBase::Police_Maze_Set_Pause_State(int a1) {
+	//TODO
+	warning("Police_Maze_Set_Pause_State(%d)", a1);
+}
+
+void ScriptBase::CDB_Set_Crime(int crimeId, int value) {
+	//TODO
+	warning("CDB_Set_Crime(%d, %d)", crimeId, value);
+}
+
+void ScriptBase::CDB_Set_Clue_Asset_Type(int assetId, int type) {
+	//TODO
+	warning("CDB_Set_Clue_Asset_Type(%d, %d)", assetId, type);
+}
+
+void ScriptBase::SDB_Set_Actor(int actorId, int a2) {
+	//TODO
+	warning("SDB_Set_Actor(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Photo_Clue(int actorId, int a2, int a3) {
+	//TODO
+	warning("SDB_Add_Photo_Clue(%d, %d, %d)", actorId, a2, a3);
+}
+
+void ScriptBase::SDB_Set_Name(int actorId) {
+	// not implemented in game
+}
+
+void ScriptBase::SDB_Set_Sex(int actorId, int a2) {
+	//TODO
+	warning("SDB_Set_Sex(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Identity_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_Identity_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_MO_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_MO_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Whereabouts_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_Whereabouts_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Replicant_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_Replicant_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Non_Replicant_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_Non_Replicant_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::SDB_Add_Other_Clue(int actorId, int a2) {
+	//TODO
+	warning("SDB_Add_Other_Clue(%d, %d)", actorId, a2);
+}
+
+void ScriptBase::Spinner_Set_Selectable_Destination_Flag(int a1, int a2) {
+	//TODO
+	warning("Spinner_Set_Selectable_Destination_Flag(%d, %d)", a1, a2);
+}
+
+// ScriptBase::Spinner_Query_Selectable_Destination_Flag
+
+int ScriptBase::Spinner_Interface_Choose_Dest(int a1, int a2) {
+	//TODO
+	warning("Spinner_Interface_Choose_Dest(%d, %d)", a1, a2);
+	return -1;
+}
+
 // ScriptBase::Spinner_Set_Selectable_Destination_Flag
 // ScriptBase::Spinner_Query_Selectable_Destination_Flag
 // ScriptBase::Spinner_Interface_Choose_Dest
-// ScriptBase::ESPER_Flag_To_Activate
-// ScriptBase::Voight_Kampff_Activate
-// ScriptBase::Elevator_Activate
-// ScriptBase::View_Score_Board
+
+void ScriptBase::ESPER_Flag_To_Activate() {
+	//TODO
+	warning("ESPER_Flag_To_Activate()");
+}
+
+bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
+	//TODO
+	warning("Voight_Kampff_Activate(%d, %d)", a1, a2);
+	return false;
+}
+
+int ScriptBase::Elevator_Activate(int elevator) {
+	//TODO
+	warning("Elevator_Activate(%d)", elevator);
+	return 0;	
+}
+
+void ScriptBase::View_Score_Board() {
+	//TODO
+	warning("View_Score_Board()");
+}
 // ScriptBase::Query_Score
 
 void ScriptBase::Set_Score(int a0, int a1) {
@@ -820,7 +1163,7 @@ void ScriptBase::Assign_Player_Gun_Miss_Sounds(int row, int soundId1, int soundI
 	_vm->_combat->setMissSoundId(row, 2, soundId3);
 }
 
-void ScriptBase::Disable_Shadows(int *animationsIdsList, int listSize) {
+void ScriptBase::Disable_Shadows(int animationsIdsList[], int listSize) {
 	_vm->_sliceRenderer->disableShadows(animationsIdsList, listSize);
 }
 
@@ -899,9 +1242,20 @@ void ScriptBase::Set_Fog_Density(char* fogName, float density) {
 	_vm->_scene->_set->_effects->setFogDensity(fogName, density);
 }
 
-// ScriptBase::ADQ_Flush
-// ScriptBase::ADQ_Add
-// ScriptBase::ADQ_Add_Pause
+void ScriptBase::ADQ_Flush() {
+	//TODO
+	warning("ADQ_Flush()");
+}
+
+void ScriptBase::ADQ_Add(int a1, int a2, int a3) {
+	//TODO
+	warning("ADQ_Add(%d, %d, %d)", a1, a2, a3);
+}
+
+void ScriptBase::ADQ_Add_Pause(int delay) {
+	//TODO
+	warning("ADQ_Add_Pause(%d)", delay);
+}
 
 bool ScriptBase::Game_Over() {
 	_vm->_gameIsRunning = false;
@@ -915,6 +1269,75 @@ void ScriptBase::Autosave_Game(int textId) {
 
 void ScriptBase::I_Sez(const char *str) {
 	_vm->ISez(str);
+}
+
+void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int seconds) {
+//	if (timer >= 0 && timer <= 2)
+//		_vm->_actors[actorId]->timerSet(timer, 1000 * seconds);
+}
+
+void ScriptBase::AI_Countdown_Timer_Reset(int actorId, int timer) {
+//	if (timer >= 0 && timer <= 2)
+//		_vm->_actors[actorId]->timerReset(timer);
+}
+
+void ScriptBase::AI_Movement_Track_Unpause(int actorId) {
+	//_vm->_actors[actorId]->movementTrackUnpause();
+}
+
+void ScriptBase::AI_Movement_Track_Pause(int actorId) {
+	//_vm->_actors[actorId]->movementTrackPause();
+}
+
+void ScriptBase::AI_Movement_Track_Repeat(int actorId) {
+	_vm->_actors[actorId]->_movementTrack->repeat();
+	//_vm->_actors[actorId]->movementTrackRepeat(1);
+}
+
+void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int delay, int angle) {
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, angle, 1);
+}
+
+void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int delay, int angle) {
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, angle, 0);
+}
+
+void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, int delay) {
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, 1);
+}
+
+void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, int delay) {
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, 0);
+}
+
+void ScriptBase::AI_Movement_Track_Flush(int actorId) {
+	_vm->_actors[actorId]->_movementTrack->flush();
+	_vm->_actors[actorId]->stopWalking(false);
+}
+
+void ScriptBase::KIA_Play_Actor_Dialogue(int a1, int a2) {
+	//TODO
+	warning("KIA_Play_Actor_Dialogue(%d, %d)", a1, a2);
+}
+
+void ScriptBase::KIA_Play_Slice_Model(int a1) {
+	//TODO
+	warning("KIA_Play_Slice_Model(%d)", a1);
+}
+
+void ScriptBase::KIA_Play_Photograph(int a1) {
+	//TODO
+	warning("KIA_Play_Photograph(%d)", a1);
+}
+
+void ScriptBase::ESPER_Add_Photo(const char* fileName, int a2, int a3) {
+	//TODO
+	warning("ESPER_Add_Photo(%s, %d, %d)", fileName, a2, a3);
+}
+
+void ScriptBase::ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name) {
+	//TODO
+	warning("ESPER_Define_Special_Region(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)",  a1,  a2,  a3,  a4,  a5,  a6,  a7,  a8,  a9,  a10,  a11,  a12,  a13, name);
 }
 
 AIScripts::AIScripts(BladeRunnerEngine *vm)

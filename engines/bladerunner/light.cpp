@@ -48,8 +48,39 @@ void Light::read(Common::ReadStream* stream, int framesCount, int frame, int ani
 	setupFrame(frame);
 }
 
-void Light::readVqa(Common::ReadStream* stream)
+void Light::readVqa(Common::ReadStream* stream, int framesCount, int frame, int animated)
 {
+	_framesCount = framesCount;
+	_animated = animated;
+
+	_animatedParameters = stream->readUint32LE();
+
+	int size = stream->readUint32LE();
+
+	_animationData = new float[size / sizeof(float)];
+	stream->read(_animationData, size);
+
+	_m11ptr = _animationData;
+	_m12ptr = _m11ptr + (_animatedParameters & 0x1 ? framesCount : 1);
+	_m13ptr = _m12ptr + (_animatedParameters & 0x2 ? framesCount : 1);
+	_m14ptr = _m13ptr + (_animatedParameters & 0x4 ? framesCount : 1);
+	_m21ptr = _m14ptr + (_animatedParameters & 0x8 ? framesCount : 1);
+	_m22ptr = _m21ptr + (_animatedParameters & 0x10 ? framesCount : 1);
+	_m23ptr = _m22ptr + (_animatedParameters & 0x20 ? framesCount : 1);
+	_m24ptr = _m23ptr + (_animatedParameters & 0x40 ? framesCount : 1);
+	_m31ptr = _m24ptr + (_animatedParameters & 0x80 ? framesCount : 1);
+	_m32ptr = _m31ptr + (_animatedParameters & 0x100 ? framesCount : 1);
+	_m33ptr = _m32ptr + (_animatedParameters & 0x200 ? framesCount : 1);
+	_m34ptr = _m33ptr + (_animatedParameters & 0x400 ? framesCount : 1);
+	_colorRPtr = _m34ptr + (_animatedParameters & 0x800 ? framesCount : 1);
+	_colorGPtr = _colorRPtr + (_animatedParameters & 0x1000 ? framesCount : 1);
+	_colorBPtr = _colorGPtr + (_animatedParameters & 0x2000 ? framesCount : 1);
+	_field16ptr = _colorGPtr + (_animatedParameters & 0x4000 ? framesCount : 1);
+	_field17ptr = _field16ptr + (_animatedParameters & 0x8000 ? framesCount : 1);
+	_field18ptr = _field17ptr + (_animatedParameters & 0x10000 ? framesCount : 1);
+	_field19ptr = _field18ptr + (_animatedParameters & 0x20000 ? framesCount : 1);
+
+	setupFrame(frame);
 }
 
 void Light::setupFrame(int frame)

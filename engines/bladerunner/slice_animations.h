@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/types.h"
+#include "vector.h"
 
 namespace BladeRunner {
 
@@ -46,10 +47,8 @@ class SliceAnimations {
 		uint32 frameCount;
 		uint32 frameSize;
 		float  fps;
-		float  unk0;
-		float  unk1;
-		float  unk2;
-		float  unk3;
+		Vector3 positionChange;
+		float facingChange;
 		uint32 offset;
 	};
 

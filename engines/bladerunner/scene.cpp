@@ -136,7 +136,8 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	if (frame >= 0) {
 		surface.copyFrom(*_vqaPlayer.getSurface());
 		memcpy(zBuffer, _vqaPlayer.getZBuffer(), 640*480*2);
-		_view = _vqaPlayer.getView();
+		_vqaPlayer.updateView(_vm->_view);
+		_vqaPlayer.updateLights(_vm->_lights);
 	}
 
 	if (frame < 0) {

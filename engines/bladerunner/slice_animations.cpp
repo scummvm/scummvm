@@ -66,10 +66,10 @@ bool SliceAnimations::open(const Common::String &name) {
 		_animations[i].frameCount = file.readUint32LE();
 		_animations[i].frameSize  = file.readUint32LE();
 		_animations[i].fps        = file.readFloatLE();
-		_animations[i].unk0       = file.readFloatLE();
-		_animations[i].unk1       = file.readFloatLE();
-		_animations[i].unk2       = file.readFloatLE();
-		_animations[i].unk3       = file.readFloatLE();
+		_animations[i].positionChange.x = file.readFloatLE();
+		_animations[i].positionChange.y = file.readFloatLE();
+		_animations[i].positionChange.z = file.readFloatLE();
+		_animations[i].facingChange = file.readFloatLE();
 		_animations[i].offset     = file.readUint32LE();
 
 #if 0

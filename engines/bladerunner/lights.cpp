@@ -19,7 +19,7 @@ Lights::~Lights()
 	reset();
 }
 
-void Lights::read(Common::ReadStream* stream, int framesCount)
+void Lights::read(Common::ReadStream *stream, int framesCount)
 {
 	_ambientLightColor.r = stream->readFloatLE();
 	_ambientLightColor.g = stream->readFloatLE();
@@ -58,11 +58,66 @@ void Lights::read(Common::ReadStream* stream, int framesCount)
 	}
 }
 
-void Lights::readVqa(Common::ReadStream* stream)
+void Lights::removeAnimated()
 {
-	reset();
-	//int framesCount = stream->readUint32LE();
-	//int count = stream->readUint32LE();
+	Light **nextLight;
+	Light *light; 
+
+	nextLight = &this->_lights;
+	light = this->_lights;
+	if (light)
+	{
+		do
+		{
+			if (light->_animated)
+			{
+				*nextLight = light->_next;
+				delete light;
+			}
+			else
+			{
+				nextLight = &light->_next;
+			}
+			light = *nextLight;
+		} while (*nextLight);
+	}
+}
+
+void Lights::readVqa(Common::ReadStream *stream)
+{
+	removeAnimated();
+	if (stream->eos())
+		return;
+
+	int framesCount = stream->readUint32LE();
+	int count = stream->readUint32LE();
+	for (int i = 0; i < count; i++) {
+		int lightType = stream->readUint32LE();
+		Light* light;
+		switch(lightType)
+		{
+			case 5:
+				light = new Light5();
+				break;
+			case 4:
+				light = new Light4();
+				break;
+			case 3:
+				light = new Light3();
+				break;
+			case 2:
+				light = new Light2();
+				break;
+			case 1:
+				light = new Light1();
+				break;
+			default:
+				light = new Light();
+		}
+		light->readVqa(stream, framesCount, _frame, 1);
+		light->_next = _lights;
+		_lights = light;
+	}
 }
 
 void Lights::setupFrame(int frame)

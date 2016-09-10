@@ -54,7 +54,7 @@ bool Shape::readFromContainer(const Common::String &container, int index) {
 		return false;
 	}
 
-	uint32 size, width, height;
+	uint32 size = 0, width = 0, height = 0;
 	for (int i = 0; i <= index; ++i) {
 		width  = stream->readUint32LE();
 		height = stream->readUint32LE();

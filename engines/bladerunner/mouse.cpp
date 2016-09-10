@@ -308,7 +308,7 @@ Vector3 Mouse::getXYZ(int x, int y)
 	int screenRight = 640 - x;
 	int screenDown  = 480 - y;
 
-	float zcoef = 1.0f / tan(_vm->_scene->_view._fovX / 2.0f);
+	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
 
 	float x3d = (2.0f / 640.0f * screenRight - 1.0f);
 	float y3d = (2.0f / 480.0f * screenDown  - 1.0f) * 0.75f;
@@ -320,7 +320,7 @@ Vector3 Mouse::getXYZ(int x, int y)
 	pos.x = pos.z / zcoef * x3d;
 	pos.y = pos.z / zcoef * y3d;
 
-	Matrix4x3 matrix = _vm->_scene->_view._frameViewMatrix;
+	Matrix4x3 matrix = _vm->_view->_frameViewMatrix;
 
 	matrix.unknown();
 

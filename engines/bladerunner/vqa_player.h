@@ -33,6 +33,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class View;
+class Lights;
 
 class VQAPlayer {
 	BladeRunnerEngine           *_vm;
@@ -47,8 +49,6 @@ class VQAPlayer {
 	int _curLoop;
 	int _loopBegin;
 	int _loopEnd;
-
-	View _view;
 
 	uint32 _nextFrameTime;
 	bool   _hasAudio;
@@ -82,7 +82,8 @@ public:
 	int  update();
 	const Graphics::Surface *getSurface() const;
 	const uint16 *getZBuffer() const;
-	const View &getView() const { return _view; }
+	void updateView(View *view);
+	void updateLights(Lights *lights);
 
 	bool setLoop(int loop);
 	// void setLoopSpecial(int loop, bool wait);

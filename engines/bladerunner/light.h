@@ -77,7 +77,7 @@ public:
 	~Light();
 
 	void read(Common::ReadStream *stream, int framesCount, int frame, int animated);
-	void readVqa(Common::ReadStream *stream);
+	void readVqa(Common::ReadStream *stream, int framesCount, int frame, int animated);
 
 	void setupFrame(int frame);
 

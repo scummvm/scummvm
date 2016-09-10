@@ -25,11 +25,16 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/decompress_lcw.h"
 #include "bladerunner/decompress_lzo.h"
+#include "bladerunner/lights.h"
+#include "bladerunner/view.h"
 
 #include "audio/decoders/raw.h"
 
 #include "common/array.h"
 #include "common/util.h"
+#include "common/memstream.h"
+
+
 
 namespace BladeRunner {
 
@@ -202,6 +207,16 @@ const uint16 *VQADecoder::decodeZBuffer() {
 
 Audio::SeekableAudioStream *VQADecoder::decodeAudioFrame() {
 	return _audioTrack->decodeAudioFrame();
+}
+
+void VQADecoder::decodeView(View* view)
+{
+	_videoTrack->decodeView(view);
+}
+
+void VQADecoder::decodeLights(Lights *lights)
+{
+	_videoTrack->decodeLights(lights);
 }
 
 void VQADecoder::readNextPacket() {
@@ -582,6 +597,9 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 
 	_surface = new Graphics::Surface();
 	_surface->create(_width, _height, createRGB555());
+
+	_viewData = nullptr;
+	_lightsData = nullptr;
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
@@ -594,6 +612,11 @@ VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
 		_surface->free();
 	delete _surface;
 	delete[] _zbuffer;
+
+	if (_viewData)
+		delete[] _viewData;
+	if (_lightsData)
+		delete[] _lightsData;
 }
 
 uint16 VQADecoder::VQAVideoTrack::getWidth() const {
@@ -770,22 +793,65 @@ bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 s
 	if (size != 56)
 		return false;
 
-	_view.read(s);
+	if (_viewData) {
+		delete[] _viewData;
+		_viewData = nullptr;
+	}
+
+	_viewDataSize = size;
+	_viewData = new uint8[_viewDataSize];
+	s->read(_viewData, _viewDataSize);
 
 	return true;
 }
 
+void VQADecoder::VQAVideoTrack::decodeView(View* view)
+{
+	if (!view || !_viewData)
+		return;
+
+	Common::MemoryReadStream s(_viewData, _viewDataSize);
+	view->read(&s);
+
+	delete[] _viewData;
+	_viewData = nullptr;
+}
+
 bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size)
 {
+	debug("VQADecoder::readAESC(%d)", size);
+
 	s->skip(roundup(size));
 	return true;
 }
 
 bool VQADecoder::VQAVideoTrack::readLITE(Common::SeekableReadStream *s, uint32 size)
 {
-	s->skip(roundup(size));
+	if (_lightsData) {
+		delete[] _lightsData;
+		_lightsData = nullptr;
+	}
+
+	_lightsDataSize = size;
+	_lightsData = new uint8[_lightsDataSize];
+	s->read(_lightsData, _lightsDataSize);
+
 	return true;
 }
+
+
+void VQADecoder::VQAVideoTrack::decodeLights(Lights *lights)
+{
+	if (!lights || !_lightsData)
+		return;
+
+	Common::MemoryReadStream s(_lightsData, _lightsDataSize);
+	lights->readVqa(&s);
+
+	delete[] _lightsData;
+	_lightsData = nullptr;
+}
+
 
 bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 size)
 {

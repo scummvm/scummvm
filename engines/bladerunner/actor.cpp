@@ -186,6 +186,10 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired)
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
 }
 
+void Actor::loopWalkToXYZ(float x, float y, float z, int a4, int a5, int a6, int a7) {
+	this->loopWalkToXYZ(Vector3(x, y, z));
+}
+
 void Actor::loopWalkToXYZ(Vector3 destination)
 {
 	int unk1;
@@ -660,7 +664,7 @@ void Actor::setGoal(int goalNumber) {
 
 	//TODO: _vm->actorScript->GoalChanged(_id, _goalNumber, goalNumber);
 
-	_vm->_script->SceneActorChangedGoal(_id, goalNumber, _goalNumber, _vm->_scene->getSetId() == _setId);
+	_vm->_script->ActorChangedGoal(_id, goalNumber, _goalNumber, _vm->_scene->getSetId() == _setId);
 }
 
 int Actor::getGoal() {

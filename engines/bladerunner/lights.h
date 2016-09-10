@@ -52,6 +52,8 @@ public:
 	void reset();
 
 	void setupFrame(int frame);
+private: 
+	void removeAnimated();
 };
 
 } // End of namespace BladeRunner

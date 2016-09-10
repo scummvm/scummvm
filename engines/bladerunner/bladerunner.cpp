@@ -555,7 +555,7 @@ void BladeRunnerEngine::gameTick() {
 
 		if (_settings->getNewScene() == -1 || _script->_inScriptCounter /* || in_ai */) {
 
-			_sliceRenderer->setView(_scene->_view);
+			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
@@ -611,29 +611,66 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	int isTarget;
 
 	int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
-	int exitType      = _scene->_exits->getTypeAtXY(x, y);
+	int exitIndex     = _scene->_exits->getTypeAtXY(x, y);
 
-	debug("%d %d", sceneObjectId, exitType);
+	debug("%d %d", sceneObjectId, exitIndex);
 
-	if ((sceneObjectId < 0 || sceneObjectId > 73) && exitType >= 0) {
-		// clickedOnExit(exitType, x, y);
-		debug("clicked on exit %d %d %d", exitType, x, y);
+	if ((sceneObjectId < 0 || sceneObjectId > 73) && exitIndex >= 0) {
+		handleMouseClickExit(x, y, exitIndex);
 		return;
 	}
 
 	int regionIndex = _scene->_regions->getRegionAtXY(x, y);
 	if (regionIndex >= 0) {
-		debug("clicked on region %d %d %d", regionIndex, x, y);
-		_script->ClickedOn2DRegion(regionIndex);
-	}
-
-	if (sceneObjectId >= 198 && sceneObjectId <= 293) {
-		const char *objectName = _scene->objectGetName(sceneObjectId - 198);
-		debug("%s", objectName);
-		_script->ClickedOn3DObject(objectName);
+		handleMouseClickRegion(x, y, regionIndex);
 		return;
 	}
 
+	if (sceneObjectId == -1) {
+		debug("Clicked on nothing");
+		return;
+	} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {
+		handleMouseClickActor(x, y, sceneObjectId);
+		return;
+	} else if (sceneObjectId >= 74 && sceneObjectId <= 197) {
+		handleMouseClickItem(x, y, sceneObjectId - 74);
+		return;
+	} else if (sceneObjectId >= 198 && sceneObjectId <= 293) {
+		handleMouseClick3DObject(x, y, sceneObjectId - 198, isClickable, isTarget);
+		return;
+	}
+}
+
+void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex)
+{
+	// clickedOnExit(exitType, x, y);
+	debug("clicked on exit %d %d %d", exitIndex, x, y);
+	_script->ClickedOnExit(exitIndex);
+}
+
+void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex)
+{
+	debug("clicked on region %d %d %d", regionIndex, x, y);
+	_script->ClickedOn2DRegion(regionIndex);
+}
+
+void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget)
+{
+	const char *objectName = _scene->objectGetName(objectId);
+	debug("Clicked on object %s", objectName);
+	_script->ClickedOn3DObject(objectName, false);
+}
+
+void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId)
+{
+	debug("Clicked on item %d", itemId);
+	_script->ClickedOnItem(itemId, false);
+}
+
+void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId)
+{	
+	debug("Clicked on actor %d", actorId);
+	_script->ClickedOnActor(actorId);
 }
 
 void BladeRunnerEngine::gameWaitForActive() {
@@ -653,12 +690,6 @@ void BladeRunnerEngine::loopActorSpeaking() {
 	} while (_gameIsRunning && _audioSpeech->isPlaying());
 
 	playerGainsControl();
-}
-
-void BladeRunnerEngine::loopActorWalkToXYZ(int actorId, float x, float y, float z, int a4, int a5, int a6, int a7) {
-	Actor *actor = _actors[actorId];
-
-	actor->loopWalkToXYZ(Vector3(x, y, z));
 }
 
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
