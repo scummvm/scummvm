@@ -1979,8 +1979,8 @@ void Movement::removeFirstPhase() {
 			_dynamicPhases.remove_at(0);
 
 			for (uint i = 0; i < _dynamicPhases.size(); i++) {
-				_framePosOffsets[i - 1]->x = _framePosOffsets[i]->x;
-				_framePosOffsets[i - 1]->y = _framePosOffsets[i]->y;
+				_framePosOffsets[i]->x = _framePosOffsets[i + 1]->x;
+				_framePosOffsets[i]->y = _framePosOffsets[i + 1]->y;
 			}
 		}
 		_currDynamicPhaseIndex--;
