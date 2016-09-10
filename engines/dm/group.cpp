@@ -359,8 +359,8 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 				setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
 				newEvent._type = k2_TMEventTypeDoorDestruction;
 				newEvent._priority = 0;
-				newEvent._B._location._mapX = mapX;
-				newEvent._B._location._mapY = mapY;
+				newEvent._Bu._location._mapX = mapX;
+				newEvent._Bu._location._mapY = mapY;
 				_vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
 				((Square *)curSquare)->setDoorState(k5_doorState_DESTROYED);
@@ -415,8 +415,8 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 				for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventIndex++) {
 					uint16 curEventType = curEvent->_type;
 					if ((getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
-						(curEvent->_B._location._mapX == mapX) &&
-						(curEvent->_B._location._mapY == mapY) &&
+						(curEvent->_Bu._location._mapX == mapX) &&
+						(curEvent->_Bu._location._mapY == mapY) &&
 						(curEventType > k32_TMEventTypeUpdateAspectGroup) &&
 						(curEventType < k41_TMEventTypeUpdateBehaviour_3 + 1)) {
 						uint16 nextCreatureIndex;
@@ -502,7 +502,7 @@ void GroupMan::groupDeleteEvents(int16 mapX, int16 mapY) {
 		uint16 curEventType = curEvent->_type;
 		if ((getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
 			(curEventType > k29_TMEventTypeGroupReactionDangerOnSquare - 1) && (curEventType < k41_TMEventTypeUpdateBehaviour_3 + 1) &&
-			(curEvent->_B._location._mapX == mapX) && (curEvent->_B._location._mapY == mapY)) {
+			(curEvent->_Bu._location._mapX == mapX) && (curEvent->_Bu._location._mapY == mapY)) {
 			_vm->_timeline->deleteEvent(eventIndex);
 		}
 		curEvent++;
@@ -536,7 +536,7 @@ int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 map
 		if (killedSomeCreatures)
 			return k1_outcomeKilledSomeCreaturesInGroup;
 	}
-	
+
 	return k0_outcomeKilledNoCreaturesInGroup;
 }
 
@@ -590,8 +590,8 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 	TimelineEvent nextEvent;
 	setMapAndTime(nextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime);
 	nextEvent._priority = 255 - creatureInfo._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
-	nextEvent._B._location._mapX = eventMapX;
-	nextEvent._B._location._mapY = eventMapY;
+	nextEvent._Bu._location._mapX = eventMapX;
+	nextEvent._Bu._location._mapY = eventMapY;
 	/* If the creature is not on the party map then try and move the creature in a random direction and place a new event 37 in the timeline for the next creature movement */
 	if (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) {
 		if (isMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->getRandomNumber(4), false)) { /* BUG0_67 A group that is not on the party map may wrongly move or not move into a teleporter. Normally, a creature type with Wariness >= 10 (Vexirk, Materializer / Zytaz, Demon, Lord Chaos, Red Dragon / Dragon) would only move into a teleporter if the creature type is allowed on the destination map. However, the variable G0380_T_CurrentGroupThing identifying the group is not set before being used by F0139_DUNGEON_IsCreatureAllowedOnMap called by f202_isMovementPossible so the check to see if the creature type is allowed may operate on another creature type and thus return an incorrect result, causing the creature to teleport while it should not, or not to teleport while it should */
@@ -601,8 +601,8 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 			AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
 			if (_vm->_moveSens->getMoveResult(groupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
 				return;
-			nextEvent._B._location._mapX = _vm->_moveSens->_moveResultMapX;
-			nextEvent._B._location._mapY = _vm->_moveSens->_moveResultMapY;
+			nextEvent._Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
+			nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 		}
 		nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
 		AL0446_i_Ticks = MAX(ABS(_vm->_dungeonMan->_currMapIndex - _vm->_dungeonMan->_partyMapIndex) << 4, creatureInfo._movementTicks << 1);
@@ -793,8 +793,8 @@ T0209061_MoveGroup:
 									if (newGroupDirectionFound) {
 										if (_vm->_moveSens->getMoveResult(groupThing, eventMapX, eventMapY, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY))
 											return;
-										nextEvent._B._location._mapX = _vm->_moveSens->_moveResultMapX;
-										nextEvent._B._location._mapY = _vm->_moveSens->_moveResultMapY;;
+										nextEvent._Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
+										nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;;
 										activeGroup->_priorMapX = eventMapX;
 										activeGroup->_priorMapY = eventMapY;
 										activeGroup->_lastMoveTime = _vm->_gameTime;
@@ -1199,8 +1199,8 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 	/* 128 when the creature is on the same row or column as the party */
 	do {
 		if (isDistanceXEqualsDistanceY) {
-			if ((   (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX + axisStepX, pathMapY) 
-				 && (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY + axisStepY)) 
+			if ((   (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX + axisStepX, pathMapY)
+				 && (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX, pathMapY + axisStepY))
 			 || (CALL_MEMBER_FN(*_vm->_groupMan, isBlocked))(pathMapX = pathMapX + axisStepX, pathMapY = pathMapY + axisStepY))
 				return 0;
 		} else {
@@ -1644,8 +1644,8 @@ void GroupMan::startWandering(int16 mapX, int16 mapY) {
 	nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
 	nextEvent._priority = 255 - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._C._ticks = 0;
-	nextEvent._B._location._mapX = mapX;
-	nextEvent._B._location._mapY = mapY;
+	nextEvent._Bu._location._mapX = mapX;
+	nextEvent._Bu._location._mapY = mapY;
 	_vm->_timeline->addEventGetEventIndex(&nextEvent);
 }
 
@@ -1661,7 +1661,7 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	_currActiveGroupCount++;
 
 	activeGroup->_groupThingIndex = (thing).getIndex();
-	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] + 
+	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[k4_GroupThingType] +
 		_vm->_dungeonMan->_thingDataWordCount[k4_GroupThingType] * activeGroup->_groupThingIndex);
 
 	activeGroup->_cells = curGroup->_cells;
@@ -1888,9 +1888,9 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
 	newEvent._priority = 0;
 	newEvent._C._slot = unusedThing.toUint16();
-	newEvent._B._location._mapX = mapX;
-	newEvent._B._location._mapY = mapY;
-	newEvent._B._location._mapY = mapY;
+	newEvent._Bu._location._mapX = mapX;
+	newEvent._Bu._location._mapY = mapY;
+	newEvent._Bu._location._mapY = mapY;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	int16 fluxcageCount;
 	if (isLordChaosOnSquare(mapX, mapY - 1)) {

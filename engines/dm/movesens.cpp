@@ -81,10 +81,10 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			SensorType processedSensorType = currentSensor->getType();
 			if (processedSensorType == k0_SensorDisabled)
 				continue;
-			
+
 			if ((_vm->_championMan->_leaderIndex == kDMChampionNone) && (processedSensorType != k127_SensorWallChampionPortrait))
 				continue;
-			
+
 			if (cellIdx != cellParam)
 				continue;
 
@@ -205,7 +205,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			continue;
 		}
 		if (ProcessedThingType >= k4_GroupThingType)
-			break;		
+			break;
 	}
 	processRotationEffect();
 	return atLeastOneSensorWasTriggered;
@@ -508,7 +508,7 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 	Party:      Projectiles on target square:   Incorrect result without the test for the intermediary step (the champion would have passed through the projectile without impact):
 	00    ->    00                         00
 	01          P0                         P1 */
-	byte intermediaryChampionOrCreatureOrdinalInCell[4]; 
+	byte intermediaryChampionOrCreatureOrdinalInCell[4];
 
 	/* This array has an entry for each cell on the source square, containing the ordinal of the champion
 	or creature (0 if there is no champion or creature at this cell) */
@@ -592,8 +592,8 @@ void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effe
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
 	newEvent._type = type;
 	newEvent._priority = 0;
-	newEvent._B._location._mapX = mapX;
-	newEvent._B._location._mapY = mapY;
+	newEvent._Bu._location._mapX = mapX;
+	newEvent._Bu._location._mapY = mapY;
 	newEvent._C.A._cell = cell;
 	newEvent._C.A._effect = effect;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
@@ -665,7 +665,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? rotation : normalizeModulo4(groupDirections + rotation));
 			if (creatureSize == k0_MaskCreatureSizeQuarter) {
 				relativeRotation = absoluteRotation ? 1 : 0;
-				if (relativeRotation) 
+				if (relativeRotation)
 					relativeRotation = rotation;
 			}
 			if (relativeRotation)
@@ -990,8 +990,8 @@ void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY,
 	setMapAndTime(newEvent._mapTime, mapIndex, _vm->_gameTime + 5);
 	newEvent._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
 	newEvent._priority = 0;
-	newEvent._B._location._mapX = mapX;
-	newEvent._B._location._mapY = mapY;
+	newEvent._Bu._location._mapX = mapX;
+	newEvent._Bu._location._mapY = mapY;
 	newEvent._C._slot = groupThing.toUint16();
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }

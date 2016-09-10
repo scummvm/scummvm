@@ -124,7 +124,7 @@ void Timeline::deleteEvent(uint16 eventIndex) {
 		_firstUnusedEventIndex = eventIndex;
 
 	_eventCount--;
-	
+
 	uint16 eventCount = _eventCount;
 	if (eventCount == 0)
 		return;
@@ -160,7 +160,7 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 			uint16 altTimelineIndex = (timelineIndex << 1) + 1;
 			if (((altTimelineIndex + 1) < _eventCount) && (isEventABeforeB(&_events[_timeline[altTimelineIndex + 1]], &_events[_timeline[altTimelineIndex]])))
 				altTimelineIndex++;
-			
+
 			if (isEventABeforeB(&_events[_timeline[altTimelineIndex]], timelineEvent)) {
 				_timeline[timelineIndex] = _timeline[altTimelineIndex];
 				timelineIndex = altTimelineIndex;
@@ -262,7 +262,7 @@ void Timeline::processTimeline() {
 		_vm->_dungeonMan->setCurrentMap(getMap(newEvent._mapTime));
 		uint16 curEventType = newEvent._type;
 		if ((curEventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (k41_TMEventTypeUpdateBehaviour_3 + 1)))
-			_vm->_groupMan->processEvents29to41(newEvent._B._location._mapX, newEvent._B._location._mapY, curEventType, newEvent._C._ticks);
+			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._C._ticks);
 		else {
 			switch (curEventType) {
 			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
@@ -304,19 +304,19 @@ void Timeline::processTimeline() {
 				procesEventEnableGroupGenerator(curEvent);
 				break;
 			case k20_TMEventTypePlaySound:
-				_vm->_sound->requestPlay(newEvent._C._soundIndex, newEvent._B._location._mapX, newEvent._B._location._mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(newEvent._C._soundIndex, newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, k1_soundModePlayIfPrioritized);
 				break;
 			case k24_TMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
-					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._C._slot), Thing(0), newEvent._B._location._mapX, newEvent._B._location._mapY);
+					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._C._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
 					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._C._slot));
 					((Explosion *)curEvent)->setNextThing(Thing::_none);
 				}
 				break;
 			case k11_TMEventTypeEnableChampionAction:
 				processEventEnableChampionAction(newEvent._priority);
-				if (newEvent._B._slotOrdinal)
-					processEventMoveWeaponFromQuiverToSlot(newEvent._priority, _vm->ordinalToIndex(newEvent._B._slotOrdinal));
+				if (newEvent._Bu._slotOrdinal)
+					processEventMoveWeaponFromQuiverToSlot(newEvent._priority, _vm->ordinalToIndex(newEvent._Bu._slotOrdinal));
 
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
@@ -332,7 +332,7 @@ void Timeline::processTimeline() {
 				_vm->_championMan->_party._event71Count_Invisibility--;
 				break;
 			case k72_TMEventTypeChampionShield:
-				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._B._defense;
+				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._Bu._defense;
 				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, kDMAttributeStatusBox);
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
@@ -340,21 +340,21 @@ void Timeline::processTimeline() {
 				_vm->_championMan->_party._event73Count_ThievesEye--;
 				break;
 			case k74_TMEventTypePartyShield:
-				_vm->_championMan->_party._shieldDefense -= newEvent._B._defense;
+				_vm->_championMan->_party._shieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
 			case k77_TMEventTypeSpellShield:
-				_vm->_championMan->_party._spellShieldDefense -= newEvent._B._defense;
+				_vm->_championMan->_party._spellShieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
 			case k78_TMEventTypeFireShield:
-				_vm->_championMan->_party._fireShieldDefense -= newEvent._B._defense;
+				_vm->_championMan->_party._fireShieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
 			case k75_TMEventTypePoisonChampion: {
 				uint16 championIndex = newEvent._priority;
 				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
-				_vm->_championMan->championPoison(championIndex, newEvent._B._attack);
+				_vm->_championMan->championPoison(championIndex, newEvent._Bu._attack);
 				}
 				break;
 			case k13_TMEventTypeViAltarRebirth:
@@ -380,8 +380,8 @@ void Timeline::extractFirstEvent(TimelineEvent *event) {
 }
 
 void Timeline::processEventDoorAnimation(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 	Square *curSquare = (Square *)&_vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 doorState = Square(*curSquare).getDoorState();
 	if (doorState == k5_doorState_DESTROYED)
@@ -444,8 +444,8 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 }
 
 void Timeline::processEventSquareFakewall(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 effect = event->_C.A._effect;
 	if (effect == k2_SensorEffToggle)
@@ -468,12 +468,12 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 }
 
 void Timeline::processEventDoorDestruction(TimelineEvent *event) {
-	Square *square = (Square *)&_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY];
+	Square *square = (Square *)&_vm->_dungeonMan->_currMapData[event->_Bu._location._mapX][event->_Bu._location._mapY];
 	square->setDoorState(k5_doorState_DESTROYED);
 }
 
 void Timeline::processEventSquareDoor(TimelineEvent *event) {
-	int16 doorState = Square(_vm->_dungeonMan->_currMapData[event->_B._location._mapX][event->_B._location._mapY]).getDoorState();
+	int16 doorState = Square(_vm->_dungeonMan->_currMapData[event->_Bu._location._mapX][event->_Bu._location._mapY]).getDoorState();
 	if (doorState == k5_doorState_DESTROYED)
 		return;
 
@@ -488,8 +488,8 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 }
 
 void Timeline::processEventSquarePit(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	if (event->_C.A._effect == k2_SensorEffToggle)
@@ -537,14 +537,14 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			newEvent->_C._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
 			newEvent->_C._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 			newEvent->_C._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
-			newEvent->_B._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+			newEvent->_Bu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 		} else if (curThingType == k15_ExplosionThingType) {
 			TimelineEvent *newEvent = _events;
 			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
 				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_C._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
-					newEvent->_B._location._mapX = _vm->_moveSens->_moveResultMapX;
-					newEvent->_B._location._mapY = _vm->_moveSens->_moveResultMapY;
+					newEvent->_Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
+					newEvent->_Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 					newEvent->_C._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 					M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 				}
@@ -555,8 +555,8 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 }
 
 void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	if (event->_C.A._effect == k2_SensorEffToggle)
@@ -570,8 +570,8 @@ void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
 }
 
 void Timeline::processEventSquareWall(TimelineEvent *event) {
-	int16 mapX = event->_B._location._mapX;
-	int16 mapY = event->_B._location._mapY;
+	int16 mapX = event->_Bu._location._mapX;
+	int16 mapY = event->_Bu._location._mapY;
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	uint16 curCell = event->_C.A._cell;
 	while (curThing != Thing::_endOfList) {
@@ -612,7 +612,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 					clearFlag(curSensorData, bitMask);
 				else
 					setFlag(curSensorData, bitMask);
-	
+
 				curThingSensor->setData(curSensorData);
 				bool triggerSetEffect = (Sensor::getDataMask1(curSensorData) == Sensor::getDataMask2(curSensorData)) != curThingSensor->getAttrRevertEffectA();
 				if (curThingSensor->getAttrEffectA() == k3_SensorEffHold)
@@ -636,8 +636,8 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 }
 
 void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
-	int16 mapX = event->_B._location._mapX;
-	int16 mapY = event->_B._location._mapY;
+	int16 mapX = event->_Bu._location._mapX;
+	int16 mapY = event->_Bu._location._mapY;
 	uint16 cell = event->_C.A._cell;
 	uint16 projectileCell = returnOppositeDir((Direction)cell);
 	int16 sensorType = sensor->getType();
@@ -701,8 +701,8 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 }
 
 void Timeline::processEventSquareCorridor(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (curThing != Thing::_endOfList) {
 		int16 curThingType = curThing.getType();
@@ -748,9 +748,9 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 						newEvent._type = k65_TMEventTypeEnableGroupGenerator;
 						setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
 						newEvent._priority = 0;
-						newEvent._B._location._mapX = mapX;
-						newEvent._B._location._mapY = mapY;
-						newEvent._B._location._mapY = mapY;
+						newEvent._Bu._location._mapX = mapX;
+						newEvent._Bu._location._mapY = mapY;
+						newEvent._Bu._location._mapY = mapY;
 						addEventGetEventIndex(&newEvent);
 					}
 				}
@@ -762,8 +762,8 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 
 void Timeline::processEventsMoveGroup(TimelineEvent *event) {
 	bool randomDirectionMoveRetried = false;
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 
 T0252001:
 	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
@@ -799,7 +799,7 @@ T0252001:
 }
 
 void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
-	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_B._location._mapX, event->_B._location._mapY);
+	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(event->_Bu._location._mapX, event->_Bu._location._mapY);
 	while (curThing != Thing::_none) {
 		if ((curThing.getType()) == k3_SensorThingType) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
@@ -878,7 +878,7 @@ void Timeline::processEventHideDamageReceived(uint16 champIndex) {
 }
 
 void Timeline::processEventLight(TimelineEvent *event) {
-	int16 lightPower = event->_B._lightPower;
+	int16 lightPower = event->_Bu._lightPower;
 	if (lightPower == 0)
 		return;
 
@@ -896,7 +896,7 @@ void Timeline::processEventLight(TimelineEvent *event) {
 	if (weakerLightPower) {
 		TimelineEvent newEvent;
 		newEvent._type = k70_TMEventTypeLight;
-		newEvent._B._lightPower = weakerLightPower;
+		newEvent._Bu._lightPower = weakerLightPower;
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		newEvent._priority = 0;
 		addEventGetEventIndex(&newEvent);
@@ -911,8 +911,8 @@ void Timeline::refreshAllChampionStatusBoxes() {
 }
 
 void Timeline::processEventViAltarRebirth(TimelineEvent *event) {
-	int16 mapX = event->_B._location._mapX;
-	int16 mapY = event->_B._location._mapY;
+	int16 mapX = event->_Bu._location._mapX;
+	int16 mapY = event->_Bu._location._mapY;
 	uint16 cell = event->_C.A._cell;
 	uint16 championIndex = event->_priority;
 	uint16 rebirthStep = event->_C.A._effect;
@@ -955,8 +955,8 @@ void Timeline::saveEventsPart(Common::OutSaveFile *file) {
 		file->writeSint32BE(event->_mapTime);
 		file->writeByte(event->_type);
 		file->writeByte(event->_priority);
-		file->writeByte(event->_B._location._mapX); // writing bytes of the union I think should preserve the union's identity
-		file->writeByte(event->_B._location._mapY);
+		file->writeByte(event->_Bu._location._mapX); // writing bytes of the union I think should preserve the union's identity
+		file->writeByte(event->_Bu._location._mapY);
 		file->writeUint16BE(event->_C.A._cell); // writing bytes of the union I think should preserve the union's identity
 		file->writeUint16BE(event->_C.A._effect);
 	}
@@ -973,8 +973,8 @@ void Timeline::loadEventsPart(Common::InSaveFile *file) {
 		event->_mapTime = file->readSint32BE();
 		event->_type = file->readByte();
 		event->_priority = file->readByte();
-		event->_B._location._mapX = file->readByte();
-		event->_B._location._mapY = file->readByte();
+		event->_Bu._location._mapX = file->readByte();
+		event->_Bu._location._mapY = file->readByte();
 		event->_C.A._cell = file->readUint16BE();
 		event->_C.A._effect = file->readUint16BE();
 	}

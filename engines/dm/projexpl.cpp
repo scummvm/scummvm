@@ -64,7 +64,7 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 		newEvent._type = k48_TMEventTypeMoveProjectileIgnoreImpacts; /* Projectiles created by champions or creatures ignore impacts on their first movement */
 
 	newEvent._priority = 0;
-	newEvent._B._slot = projectileThing.toUint16();
+	newEvent._Bu._slot = projectileThing.toUint16();
 	newEvent._C._projectile.setMapX(mapX);
 	newEvent._C._projectile.setMapY(mapY);
 	newEvent._C._projectile.setStepEnergy(stepEnergy);
@@ -315,8 +315,8 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	newEvent._type = k25_TMEventTypeExplosion;
 	newEvent._priority = 0;
 	newEvent._C._slot = unusedThing.toUint16();
-	newEvent._B._location._mapX = projectileMapX;
-	newEvent._B._location._mapY = projectileMapY;
+	newEvent._Bu._location._mapX = projectileMapX;
+	newEvent._Bu._location._mapY = projectileMapY;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	if ((explThing == Thing::_explLightningBolt) || (explThing == Thing::_explFireBall)) {
 		projectileMapX = projectileTargetMapX;
@@ -350,7 +350,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell) {
 	int16 impactCount = 0;
 	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
-	
+
 	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != Thing::_endOfList; ) {
 		if (((curThing).getType() == k14_ProjectileThingType) && ((curThing).getCell() == cell) &&
 			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
@@ -394,7 +394,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	int16 sourceMapY = -1;
 	TimelineEvent firstEvent = *event;
 	TimelineEvent *curEvent = &firstEvent;
-	Thing projectileThingNewCell = Thing(curEvent->_B._slot);
+	Thing projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	Thing projectileThing  = projectileThingNewCell;
 	Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	int16 destinationMapX = curEvent->_C._projectile.getMapX();
@@ -423,7 +423,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 			projectile->_attack -= stepEnergy;
 	}
 	uint16 projectileDirection = curEvent->_C._projectile.getDir();
-	projectileThingNewCell = Thing(curEvent->_B._slot);
+	projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	uint16 projectileNewCell = projectileThingNewCell.getCell();
 	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (returnNextVal(projectileDirection) == projectileNewCell);
 	if (projectileMovesToOtherSquare) {
@@ -465,13 +465,13 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	// This code is from CSB20. The projectiles move at the same speed on all maps instead of moving slower on maps other than the party map */
 	curEvent->_mapTime++;
 
-	curEvent->_B._slot = projectileThingNewCell.toUint16();
+	curEvent->_Bu._slot = projectileThingNewCell.toUint16();
 	projectile->_eventIndex = _vm->_timeline->addEventGetEventIndex(curEvent);
 }
 
 void ProjExpl::processEvent25(TimelineEvent *event) {
-	uint16 mapX = event->_B._location._mapX;
-	uint16 mapY = event->_B._location._mapY;
+	uint16 mapX = event->_Bu._location._mapX;
+	uint16 mapY = event->_Bu._location._mapY;
 	Explosion *explosion = &((Explosion *)_vm->_dungeonMan->_thingData[k15_ExplosionThingType])[Thing((event->_C._slot)).getIndex()];
 	int16 curSquareType = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]).getType();
 	bool explosionOnPartySquare = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);

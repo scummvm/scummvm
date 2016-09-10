@@ -130,11 +130,11 @@ void ChampionMan::initConstants() {
 		0x0400    /* Chest 8          Chest */
 	};
 
-	_boxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait 
+	_boxChampionPortrait = Box(0, 31, 0, 28); // @ G0047_s_Graphic562_Box_ChampionPortrait
 
 	const char **baseSkillName;
 	switch (_vm->getGameLanguage()) { // localized
-	case Common::EN_ANY: 
+	case Common::EN_ANY:
 		baseSkillName = g417_baseSkillName_EN_ANY;
 		break;
 	case Common::DE_DEU:
@@ -927,7 +927,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 	TimelineEvent curEvent;
 	curEvent._type = k11_TMEventTypeEnableChampionAction;
 	curEvent._priority = champIndex;
-	curEvent._B._slotOrdinal = 0;
+	curEvent._Bu._slotOrdinal = 0;
 
 	int16 eventIndex = curChampion->_enableActionEventIndex;
 	if (eventIndex >= 0) {
@@ -1118,7 +1118,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		newEvent._type = k75_TMEventTypePoisonChampion;
 		newEvent._priority = champIndex;
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
-		newEvent._B._attack = attack;
+		newEvent._Bu._attack = attack;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
 
@@ -2113,8 +2113,8 @@ uint16 ChampionMan::getMaximumLoad(Champion *champ) {
 }
 
 void ChampionMan::drawChampionState(ChampionIndex champIndex) {
-	static Box boxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth 
-	static Box boxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye 
+	static Box boxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth
+	static Box boxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye
 
 	int16 championStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
 	Champion *curChampion = &_champions[champIndex];

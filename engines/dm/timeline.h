@@ -118,9 +118,9 @@ public:
 		int16 _slotOrdinal;
 	};
 
-	B_unionTimelineEvent _B;
+	B_unionTimelineEvent _Bu;
 
-	int16 getMapXY() { return (_B._location._mapX << 8) + _B._location._mapY; }
+	int16 getMapXY() { return (_Bu._location._mapX << 8) + _Bu._location._mapY; }
 
 	union C_uionTimelineEvent {
 		struct {

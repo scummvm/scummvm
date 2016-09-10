@@ -446,8 +446,8 @@ void EventManager::setPointerToObject(byte *bitmap) {
 		120, 120, 120, 120, 0, 120, 120, 120}; // @ K0027_auc_PaletteChanges_MousePointerObjectIconShadow
 	static byte palChangesMousePointerIcon[16] = {120, 10, 20, 30, 40, 50, 60, 70, 80, 90,
 		100, 110, 0, 130, 140, 150}; // @ G0044_auc_Graphic562_PaletteChanges_MousePointerIcon
-	static Box boxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow 
-	static Box boxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object 
+	static Box boxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow
+	static Box boxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object
 
 	_preventBuildPointerScreenArea = true;
 	_useObjectAsMousePointerBitmap = true;
@@ -1047,8 +1047,8 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 }
 
 bool EventManager::isLeaderHandObjThrown(int16 posX, int16 posY) {
-#define k0_sideLeft 0 // @ C0_SIDE_LEFT 
-#define k1_sideRight 1 // @ C0_SIDE_LEFT 
+#define k0_sideLeft 0 // @ C0_SIDE_LEFT
+#define k1_sideRight 1 // @ C0_SIDE_LEFT
 
 	if ((posY < 47) || (posY > 102))
 		return false;
@@ -1386,8 +1386,8 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
 		newEvent._type = k13_TMEventTypeViAltarRebirth;
 		newEvent._priority = removedJunk->getChargeCount();
-		newEvent._B._location._mapX = mapX;
-		newEvent._B._location._mapY = mapY;
+		newEvent._Bu._location._mapX = mapX;
+		newEvent._Bu._location._mapY = mapY;
 		newEvent._C.A._cell = currCell;
 		newEvent._C.A._effect = k2_SensorEffToggle;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);

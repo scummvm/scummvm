@@ -139,7 +139,7 @@ void MenuMan::initConstants() {
 	_boxActionArea1ActionMenu = Box(224, 319, 77, 97); // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
 	_boxActionArea2ActionMenu = Box(224, 319, 77, 109); // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
 	_boxActionArea3ActionMenu = Box(224, 319, 77, 121); // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
-	_boxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea 
+	_boxActionArea = Box(224, 319, 77, 121); // @ G0001_s_Graphic562_Box_ActionArea
 	_boxSpellArea = Box(224, 319, 42, 74);
 
 	for (int i = 0; i < 44; i++) {
@@ -346,7 +346,7 @@ const char *MenuMan::getActionName(ChampionAction actionIndex) {
 }
 
 void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
-	static Box boxSpellAreaControls(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls 
+	static Box boxSpellAreaControls(233, 319, 42, 49); // @ G0504_s_Graphic560_Box_SpellAreaControls
 
 	Champion *champ = &_vm->_championMan->_champions[champIndex];
 	_vm->_displayMan->_useByteBoxCoordinates = false;
@@ -421,7 +421,7 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 }
 
 void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
-	static Box boxSpellAreaLine(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine 
+	static Box boxSpellAreaLine(0, 95, 0, 11); // @ K0074_s_Box_SpellAreaLine
 
 	char spellSymbolString[2] = {'\0', '\0'};
 	Champion *magicChampion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
@@ -449,8 +449,8 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 }
 
 void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
-	static Box boxSpellAreaLine2(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2 
-	static Box boxSpellAreaLine3(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3 
+	static Box boxSpellAreaLine2(224, 319, 50, 61); // @ K0075_s_Box_SpellAreaLine2
+	static Box boxSpellAreaLine3(224, 319, 62, 73); // @ K0076_s_Box_SpellAreaLine3
 
 	if ((champIndex == _vm->_championMan->_magicCasterChampionIndex)
 	|| ((champIndex != kDMChampionNone) && !_vm->_championMan->_champions[champIndex]._currHealth))
@@ -624,11 +624,11 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			break;
 		case kDMSpellTypeOtherPartyShield: {
 			newEvent._type = k74_TMEventTypePartyShield;
-			newEvent._B._defense = spellPower;
+			newEvent._Bu._defense = spellPower;
 			if (_vm->_championMan->_party._shieldDefense > 50)
-				newEvent._B._defense >>= 2;
+				newEvent._Bu._defense >>= 2;
 
-			_vm->_championMan->_party._shieldDefense += newEvent._B._defense;
+			_vm->_championMan->_party._shieldDefense += newEvent._Bu._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
 			uint16 spellTicks = spellPower * spellPower;
 			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
@@ -800,7 +800,7 @@ Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	TimelineEvent newEvent;
 	newEvent._type = k70_TMEventTypeLight;
-	newEvent._B._lightPower = lightPower;
+	newEvent._Bu._lightPower = lightPower;
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	newEvent._priority = 0;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
@@ -821,19 +821,19 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShie
 			champ->_currMana -= 4;
 	}
 	TimelineEvent newEvent;
-	newEvent._B._defense = ticks >> 5;
+	newEvent._Bu._defense = ticks >> 5;
 	if (spellShield) {
 		newEvent._type = k77_TMEventTypeSpellShield;
 		if (_vm->_championMan->_party._spellShieldDefense > 50)
-			newEvent._B._defense >>= 2;
+			newEvent._Bu._defense >>= 2;
 
-		_vm->_championMan->_party._spellShieldDefense += newEvent._B._defense;
+		_vm->_championMan->_party._spellShieldDefense += newEvent._Bu._defense;
 	} else {
 		newEvent._type = k78_TMEventTypeFireShield;
 		if (_vm->_championMan->_party._fireShieldDefense > 50)
-			newEvent._B._defense >>= 2;
+			newEvent._Bu._defense >>= 2;
 
-		_vm->_championMan->_party._fireShieldDefense += newEvent._B._defense;
+		_vm->_championMan->_party._fireShieldDefense += newEvent._Bu._defense;
 	}
 	newEvent._priority = 0;
 	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
@@ -1310,7 +1310,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		setChampionDirectionToPartyDirection(curChampion);
 		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
-			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._B._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
+			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
 	}
 

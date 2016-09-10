@@ -466,7 +466,7 @@ void InventoryMan::drawPanelObjectDescriptionString(const char *descString) {
 }
 
 void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
-	static Box boxArrowOrEye(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye 
+	static Box boxArrowOrEye(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye
 
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(pressingEye ? k19_EyeForObjectDescriptionIndice : k18_ArrowForChestContentIndice),
@@ -474,7 +474,7 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 }
 
 void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
-	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle 
+	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle
 
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
@@ -621,7 +621,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		}
 		default:
 			break;
-		} // end of switch 
+		} // end of switch
 
 		if (potentialAttribMask) {
 			static const char *attribStringEN[4] = {"CONSUMABLE", "POISONED", "BROKEN", "CURSED"};
@@ -959,7 +959,7 @@ void InventoryMan::clickOnMouth() {
 			newEvent._type = k72_TMEventTypeChampionShield;
 			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (adjustedPotionPower * adjustedPotionPower));
 			newEvent._priority = championIndex;
-			newEvent._B._defense = adjustedPotionPower;
+			newEvent._Bu._defense = adjustedPotionPower;
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			setFlag(curChampion->_attributes, kDMAttributeStatusBox);
 			}

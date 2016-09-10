@@ -206,8 +206,8 @@ void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mod
 		newEvent._type = k20_TMEventTypePlaySound;
 		newEvent._priority = sound->_priority;
 		newEvent._C._soundIndex = soundIndex;
-		newEvent._B._location._mapX = mapX;
-		newEvent._B._location._mapY = mapY;
+		newEvent._Bu._location._mapX = mapX;
+		newEvent._Bu._location._mapY = mapY;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		return;
 	}
