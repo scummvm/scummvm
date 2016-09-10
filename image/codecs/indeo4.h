@@ -52,9 +52,9 @@ using namespace Indeo;
  */
 class Indeo4Decoder : public IndeoDecoderBase {
 	struct Transform {
-		InvTransformPtr *inv_trans;
-		DCTransformPtr  *dc_trans;
-		int             is_2d_trans;
+		InvTransformPtr *_invTrans;
+		DCTransformPtr *_dcTrans;
+		bool _is2dTrans;
 	};
 public:
 	Indeo4Decoder(uint16 width, uint16 height);
