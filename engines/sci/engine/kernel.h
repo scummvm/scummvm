@@ -716,7 +716,7 @@ reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv);
-reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOGetCWD(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv);
 #endif
 

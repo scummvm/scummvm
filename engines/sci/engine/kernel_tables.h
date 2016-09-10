@@ -326,13 +326,13 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCIALL,         10, MAP_CALL(FileIOExists),              "r",                    NULL },
 	{ SIG_SINCE_SCI11,    11, MAP_CALL(FileIORename),              "rr",                   NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SCI32,          13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
-	{ SIG_SCI32,          14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
-	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
-	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
-	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
-	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
-	{ SIG_SCI32,          19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL }, // for Torin / Torin demo
+	{ SIG_SINCE_SCI21MID, 13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
+	{ SIG_SINCE_SCI21MID, 14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
+	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
+	{ SIG_SINCE_SCI21MID, 16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
+	{ SIG_SINCE_SCI21MID, 17, "FileIOCheckFreeSpace", kCheckFreeSpace, "i(r)",             NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_CALL(FileIOGetCWD),              "r",                    NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -625,9 +625,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ "CelHigh", kCelHigh32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
 	{ "CelWide", kCelWide32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            kCelWide_workarounds },
 #endif
-	{ MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
+	{ MAP_CALL(CheckFreeSpace),    SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r(i)",          NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
-	{ MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+	{ MAP_CALL(CheckFreeSpace),    SIG_SCI16, SIGFOR_ALL,    "r",                     NULL,            NULL },
 	{ MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
 	{ MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },

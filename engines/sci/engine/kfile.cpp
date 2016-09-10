@@ -158,33 +158,37 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
-	if (argc > 1) {
-		// SCI1.1/SCI32
-		// TODO: don't know if those are right for SCI32 as well
-		// Please note that sierra sci supported both calls either w/ or w/o opcode in SCI1.1
-		switch (argv[1].toUint16()) {
-		case 0: // return saved game size
-			return make_reg(0, 0); // we return 0
+	// A file path to test is also passed to this function as a separate
+	// argument, but we do not actually check anything, so it is unused
 
-		case 1: // return free harddisc space (shifted right somehow)
-			return make_reg(0, 0x7fff); // we return maximum
+	enum {
+		kSaveGameSize      = 0,
+		kFreeDiskSpace     = 1,
+		kEnoughSpaceToSave = 2
+	};
 
-		case 2: // same as call w/o opcode
-			break;
-			return make_reg(0, 1);
-
-		default:
-			error("kCheckFreeSpace: called with unknown sub-op %d", argv[1].toUint16());
-		}
+	int16 subop;
+	// In SCI2.1mid, the call is moved into kFileIO and the arguments are
+	// flipped
+	if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
+		subop = argc > 0 ? argv[0].toSint16() : 2;
+	} else {
+		subop = argc > 1 ? argv[1].toSint16() : 2;
 	}
 
-	Common::String path = s->_segMan->getString(argv[0]);
+	switch (subop) {
+	case kSaveGameSize:
+		return make_reg(0, 0);
 
-	debug(3, "kCheckFreeSpace(%s)", path.c_str());
-	// We simply always pretend that there is enough space. The alternative
-	// would be to write a big test file, which is not nice on systems where
-	// doing so is very slow.
-	return make_reg(0, 1);
+	case kFreeDiskSpace: // in KiB; up to 32MiB maximum
+		return make_reg(0, 0x7fff);
+
+	case kEnoughSpaceToSave:
+		return make_reg(0, 1);
+
+	default:
+		error("kCheckFreeSpace: called with unknown sub-op %d", subop);
+	}
 }
 
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
@@ -660,7 +664,7 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeByte(argv[1].toUint16() & 0xff);
-	return s->r_acc; // FIXME: does this really not return anything?
+	return s->r_acc;
 }
 
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
@@ -674,27 +678,13 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (f)
 		f->_out->writeUint16LE(argv[1].toUint16());
-	return s->r_acc; // FIXME: does this really not return anything?
+	return s->r_acc;
 }
 
-reg_t kFileIOCreateSaveSlot(EngineState *s, int argc, reg_t *argv) {
-	// Used in Shivers when the user enters his name on the guest book
-	// in the beginning to start the game.
-
-	// Creates a new save slot, and returns if the operation was successful
-
-	// Argument 0 denotes the save slot as a negative integer, 2 means "0"
-	// Argument 1 is a string, with the file name, obtained from kSave(5).
-	// The interpreter checks if it can be written to (by checking for free
-	// disk space and write permissions)
-
-	// We don't really use or need any of this...
-
-	uint16 saveSlot = argv[0].toUint16();
-	const SciArray &fileName = *s->_segMan->lookupArray(argv[1]);
-	warning("kFileIOCreateSaveSlot(%d, '%s')", saveSlot, fileName.toString().c_str());
-
-	return TRUE_REG;	// slot creation was successful
+reg_t kFileIOGetCWD(EngineState *s, int argc, reg_t *argv) {
+	SciArray &fileName = *s->_segMan->lookupArray(argv[0]);
+	fileName.fromString("C:\\SIERRA\\");
+	return argv[0];
 }
 
 reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv) {
