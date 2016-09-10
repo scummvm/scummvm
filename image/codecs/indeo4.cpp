@@ -205,8 +205,8 @@ int Indeo4Decoder::decodePictureHeader() {
 		_ctx.gb->skipBits(8);
 
 	// decode macroblock and block huffman codebooks
-	if (_ctx.mb_vlc.ff_ivi_dec_huff_desc(_ctx.gb, _ctx.gb->getBits1(), IVI_MB_HUFF) ||
-		_ctx.blk_vlc.ff_ivi_dec_huff_desc(_ctx.gb, _ctx.gb->getBits1(), IVI_BLK_HUFF))
+	if (_ctx.mb_vlc.ff_ivi_dec_huff_desc(&_ctx, _ctx.gb->getBits1(), IVI_MB_HUFF) ||
+		_ctx.blk_vlc.ff_ivi_dec_huff_desc(&_ctx, _ctx.gb->getBits1(), IVI_BLK_HUFF))
 		return -1;
 
 	_ctx.rvmap_sel = _ctx.gb->getBits1() ? _ctx.gb->getBits(3) : 8;
@@ -223,7 +223,6 @@ int Indeo4Decoder::decodePictureHeader() {
 
 	// skip picture header extension if any
 	while (_ctx.gb->getBits1()) {
-		warning("Pic hdr extension encountered!");
 		_ctx.gb->skipBits(8);
 	}
 
@@ -402,7 +401,7 @@ int Indeo4Decoder::decode_band_hdr(IVIBandDesc *band) {
 		if (!_ctx.gb->getBits1())
 			band->blk_vlc.tab = _ctx.blk_vlc.tab;
 		else
-			if (band->blk_vlc.ff_ivi_dec_huff_desc(_ctx.gb, 1, IVI_BLK_HUFF))
+			if (band->blk_vlc.ff_ivi_dec_huff_desc(&_ctx, 1, IVI_BLK_HUFF))
 				return -1;
 
 		// select appropriate rvmap table for this band

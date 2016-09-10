@@ -138,43 +138,31 @@ void IVIHuffDesc::ivi_huff_desc_copy(const IVIHuffDesc *src) {
 
 /*------------------------------------------------------------------------*/
 
-IVIHuffTab::IVIHuffTab() {
-	tab = nullptr;
-	for (int idx = 0; idx < (8192 * 16); ++idx)
-		table_data[idx][0] = table_data[idx][1] = 0;
-
-	for (int i = 0; i < 8; i++) {
-		ivi_mb_vlc_tabs[i]._table = table_data + i * 2 * 8192;
-		ivi_mb_vlc_tabs[i]._table_allocated = 8192;
-		ivi_mb_huff_desc[i].ivi_create_huff_from_desc(&ivi_mb_vlc_tabs[i], 1);
-		ivi_blk_vlc_tabs[i]._table = table_data + (i * 2 + 1) * 8192;
-		ivi_blk_vlc_tabs[i]._table_allocated = 8192;
-		ivi_blk_huff_desc[i].ivi_create_huff_from_desc(&ivi_blk_vlc_tabs[i], 1);
-	}
+IVIHuffTab::IVIHuffTab() : tab(nullptr) {
 }
 
-int IVIHuffTab::ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab) {
+int IVIHuffTab::ff_ivi_dec_huff_desc(IVI45DecContext *ctx, int desc_coded, int which_tab) {
 	int i, result;
 	IVIHuffDesc new_huff;
 
 	if (!desc_coded) {
 		// select default table
-		tab = (which_tab) ? &ivi_blk_vlc_tabs[7]
-			: &ivi_mb_vlc_tabs[7];
+		tab = (which_tab) ? &ctx->ivi_blk_vlc_tabs[7]
+			: &ctx->ivi_mb_vlc_tabs[7];
 		return 0;
 	}
 
-	tab_sel = gb->getBits(3);
+	tab_sel = ctx->gb->getBits(3);
 	if (tab_sel == 7) {
 		// custom huffman table (explicitly encoded)
-		new_huff.num_rows = gb->getBits(4);
+		new_huff.num_rows = ctx->gb->getBits(4);
 		if (!new_huff.num_rows) {
 			warning("Empty custom Huffman table!");
 			return -1;
 		}
 
 		for (i = 0; i < new_huff.num_rows; i++)
-			new_huff.xbits[i] = gb->getBits(4);
+			new_huff.xbits[i] = ctx->gb->getBits(4);
 
 		// Have we got the same custom table? Rebuild if not.
 		if (new_huff.ivi_huff_desc_cmp(&cust_desc) || !cust_tab._table) {
@@ -193,8 +181,8 @@ int IVIHuffTab::ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab)
 		tab = &cust_tab;
 	} else {
 		// select one of predefined tables
-		tab = (which_tab) ? &ivi_blk_vlc_tabs[tab_sel]
-			: &ivi_mb_vlc_tabs[tab_sel];
+		tab = (which_tab) ? &ctx->ivi_blk_vlc_tabs[tab_sel]
+			: &ctx->ivi_mb_vlc_tabs[tab_sel];
 	}
 
 	return 0;
@@ -438,6 +426,18 @@ IVI45DecContext::IVI45DecContext() : gb(nullptr), frame_num(0), frame_type(0),
 		is_indeo4(0), p_frame(nullptr), got_p_frame(0) {
 	Common::fill(&buf_invalid[0], &buf_invalid[4], 0);
 	Common::copy(&_ff_ivi_rvmap_tabs[0], &_ff_ivi_rvmap_tabs[9], &rvmap_tabs[0]);
+
+	for (int idx = 0; idx < (8192 * 16); ++idx)
+		table_data[idx][0] = table_data[idx][1] = 0;
+
+	for (int i = 0; i < 8; i++) {
+		ivi_mb_vlc_tabs[i]._table = table_data + i * 2 * 8192;
+		ivi_mb_vlc_tabs[i]._table_allocated = 8192;
+		ivi_mb_huff_desc[i].ivi_create_huff_from_desc(&ivi_mb_vlc_tabs[i], 1);
+		ivi_blk_vlc_tabs[i]._table = table_data + (i * 2 + 1) * 8192;
+		ivi_blk_vlc_tabs[i]._table_allocated = 8192;
+		ivi_blk_huff_desc[i].ivi_create_huff_from_desc(&ivi_blk_vlc_tabs[i], 1);
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -676,6 +676,8 @@ int IndeoDecoderBase::ff_set_dimensions(uint16 width, uint16 height) {
 
 int IndeoDecoderBase::ff_get_buffer(AVFrame *frame, int flags) {
 	frame->data[0] = (uint8 *)_surface->getBasePtr(0, 0);
+	frame->linesize[0] = _surface->pitch;
+
 	return 0;
 }
 

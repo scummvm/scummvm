@@ -248,10 +248,7 @@ uint GetBits::getBits1() {
 	result <<= index & 7;
 	result >>= 8 - 1;
 #endif
-#if !UNCHECKED_BITSTREAM_READER
-	if (_index < _sizeInBitsPlus8)
-#endif
-		index++;
+	index++;
 	_index = index;
 
 	return result;

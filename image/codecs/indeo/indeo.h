@@ -113,14 +113,12 @@ struct IVIHuffDesc {
 	void ivi_huff_desc_copy(const IVIHuffDesc *src);
 };
 
+class IVI45DecContext;
+
 /**
  *  macroblock/block huffman table descriptor
  */
 struct IVIHuffTab {
-private:
-	VLC_TYPE table_data[8192 * 16][2];
-	VLC ivi_mb_vlc_tabs[8];  ///< static macroblock Huffman tables
-	VLC ivi_blk_vlc_tabs[8]; ///< static block Huffman tables
 public:
 	int32	tab_sel;    /// index of one of the predefined tables
 						/// or "7" for custom one
@@ -135,7 +133,7 @@ public:
 	 */
 	IVIHuffTab();
 
-	int ff_ivi_dec_huff_desc(GetBits *gb, int desc_coded, int which_tab);
+	int ff_ivi_dec_huff_desc(IVI45DecContext *ctx, int desc_coded, int which_tab);
 };
 
 /**
@@ -315,6 +313,12 @@ struct AVFrame {
 };
 
 struct IVI45DecContext {
+	friend class IVIHuffTab;
+private:
+	VLC_TYPE table_data[8192 * 16][2];
+	VLC ivi_mb_vlc_tabs[8];  ///< static macroblock Huffman tables
+	VLC ivi_blk_vlc_tabs[8]; ///< static block Huffman tables
+public:
     GetBits *		gb;
     RVMapDesc       rvmap_tabs[9];   ///< local corrected copy of the static rvmap tables
 
