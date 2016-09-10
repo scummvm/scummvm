@@ -32,6 +32,7 @@
 #include "image/codecs/indeo/indeo.h"
 #include "image/codecs/indeo/indeo_dsp.h"
 #include "image/codecs/indeo/mem.h"
+#include "graphics/yuv_to_rgb.h"
 #include "common/system.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
@@ -410,8 +411,31 @@ void IVIPlaneDesc::ivi_free_buffers(IVIPlaneDesc *planes) {
 /*------------------------------------------------------------------------*/
 
 AVFrame::AVFrame() {
-	Common::fill(&data[0], &data[AV_NUM_DATA_POINTERS], (uint8 *)nullptr);
-	Common::fill(&linesize[0], &linesize[AV_NUM_DATA_POINTERS], 0);
+	Common::fill(&_data[0], &_data[AV_NUM_DATA_POINTERS], (uint8 *)nullptr);
+	Common::fill(&_linesize[0], &_linesize[AV_NUM_DATA_POINTERS], 0);
+}
+
+int AVFrame::ff_set_dimensions(uint16 width, uint16 height) {
+	_width = width;
+	_height = height;
+	_linesize[0] = _linesize[1] = _linesize[2] = width;
+
+	return 0;
+}
+
+int AVFrame::ff_get_buffer(int flags) {
+	av_frame_free();
+	_data[0] = (uint8 *)av_mallocz(_width * _height);
+	_data[1] = (uint8 *)av_mallocz(_width * _height);
+	_data[2] = (uint8 *)av_mallocz(_width * _height);
+
+	return 0;
+}
+
+void AVFrame::av_frame_free() {
+	av_freep(&_data[0]);
+	av_freep(&_data[1]);
+	av_freep(&_data[2]);
 }
 
 /*------------------------------------------------------------------------*/
@@ -444,8 +468,10 @@ IVI45DecContext::IVI45DecContext() : gb(nullptr), frame_num(0), frame_type(0),
 
 IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height) : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
+	assert(_pixelFormat.bytesPerPixel > 1);
 	_surface = new Graphics::ManagedSurface();
 	_surface->create(width, height, _pixelFormat);
+	_surface->fillRect(Common::Rect(0, 0, width, height), 0);
 	_ctx.b_ref_buf = 3; // buffer 2 is used for scalability mode
 }
 
@@ -518,24 +544,25 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	if (!is_nonnull_frame())
 		return 0;
 
-	result = ff_set_dimensions(_ctx.planes[0].width, _ctx.planes[0].height);
+	assert(_ctx.planes[0].width <= _surface->w && _ctx.planes[0].height <= _surface->h);
+	result = frame->ff_set_dimensions(_ctx.planes[0].width, _ctx.planes[0].height);
 	if (result < 0)
 		return result;
 
-	if ((result = ff_get_buffer(frame, 0)) < 0)
+	if ((result = frame->ff_get_buffer(0)) < 0)
 		return result;
 
 	if (_ctx.is_scalable) {
 		if (_ctx.is_indeo4)
-			ff_ivi_recompose_haar(&_ctx.planes[0], frame->data[0], frame->linesize[0]);
+			ff_ivi_recompose_haar(&_ctx.planes[0], frame->_data[0], frame->_linesize[0]);
 		else
-			ff_ivi_recompose53(&_ctx.planes[0], frame->data[0], frame->linesize[0]);
+			ff_ivi_recompose53(&_ctx.planes[0], frame->_data[0], frame->_linesize[0]);
 	} else {
-		ivi_output_plane(&_ctx.planes[0], frame->data[0], frame->linesize[0]);
+		ivi_output_plane(&_ctx.planes[0], frame->_data[0], frame->_linesize[0]);
 	}
 
-	ivi_output_plane(&_ctx.planes[2], frame->data[1], frame->linesize[1]);
-	ivi_output_plane(&_ctx.planes[1], frame->data[2], frame->linesize[2]);
+	ivi_output_plane(&_ctx.planes[2], frame->_data[1], frame->_linesize[1]);
+	ivi_output_plane(&_ctx.planes[1], frame->_data[2], frame->_linesize[2]);
 
 	// If the bidirectional mode is enabled, next I and the following P
 	// frame will be sent together. Unfortunately the approach below seems
@@ -556,6 +583,15 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 			error("Indeo decoder: Mode not currently implemented in ScummVM");
 		}
 	}
+
+	// Merge the planes into the final surface
+	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
+	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,		
+		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
+		frame->_width, frame->_width);
+
+	// Free the now un-needed frame data
+	frame->av_frame_free();
 
 	return 0;
 }
@@ -665,20 +701,6 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 	_ctx.gb->alignGetBits();
 
 	return result;
-}
-
-int IndeoDecoderBase::ff_set_dimensions(uint16 width, uint16 height) {
-	if (_surface->w != width || _surface->h != height)
-		_surface->create(width, height);
-
-	return 0;
-}
-
-int IndeoDecoderBase::ff_get_buffer(AVFrame *frame, int flags) {
-	frame->data[0] = (uint8 *)_surface->getBasePtr(0, 0);
-	frame->linesize[0] = _surface->pitch;
-
-	return 0;
 }
 
 void IndeoDecoderBase::ff_ivi_recompose_haar(const IVIPlaneDesc *plane,

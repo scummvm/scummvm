@@ -277,7 +277,12 @@ struct IVIPlaneDesc {
 };
 
 struct AVFrame {
-#define AV_NUM_DATA_POINTERS 8
+	/**
+	 * Dimensions
+	 */
+	int _width, _height;
+
+#define AV_NUM_DATA_POINTERS 3
 	/**
 	* pointer to the picture/channel planes.
 	* This might be different from the first allocated byte
@@ -290,7 +295,7 @@ struct AVFrame {
 	* NOTE: Except for hwaccel formats, pointers not needed by the format
 	* MUST be set to NULL.
 	*/
-	uint8 *data[AV_NUM_DATA_POINTERS];
+	uint8 *_data[AV_NUM_DATA_POINTERS];
 
    /**
      * For video, size in bytes of each picture line.
@@ -307,9 +312,32 @@ struct AVFrame {
      * @note The linesize may be larger than the size of usable data -- there
      * may be extra padding present for performance reasons.
      */
-    int linesize[AV_NUM_DATA_POINTERS];
+    int _linesize[AV_NUM_DATA_POINTERS];
 
+	/**
+	 * Constructor
+	 */
 	AVFrame();
+	
+	/**
+	 * Destructor
+	 */
+	~AVFrame() { av_frame_free(); }
+
+	/**
+	 * Sets the frame dimensions
+	 */
+	int ff_set_dimensions(uint16 width, uint16 height);
+
+	/**
+	 * Get a buffer for a frame
+	 */
+	int ff_get_buffer(int flags);
+
+	/**
+	 * Frees any data loaded for the frame
+	 */
+	void av_frame_free();
 };
 
 struct IVI45DecContext {
@@ -387,18 +415,6 @@ private:
 	 *  @returns        result code: 0 = OK, -1 = error
 	 */
 	int decode_band(IVIBandDesc *band);
-
-	/**
-	 * Sets the frame dimensions
-	 */
-	int ff_set_dimensions(uint16 width, uint16 height);
-
-	/**
-	 * Get a buffer for a frame. This is a wrapper around
-	 * AVCodecContext.get_buffer() and should be used instead calling get_buffer()
-	 * directly.
-	 */
-	int ff_get_buffer(AVFrame *frame, int flags);
 
 	/**
 	 *  Haar wavelet recomposition filter for Indeo 4
