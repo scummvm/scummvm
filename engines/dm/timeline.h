@@ -116,7 +116,6 @@ public:
 		int16 _lightPower;
 		uint16 _slot; // Thing
 		int16 _slotOrdinal;
-		B_unionTimelineEvent() {}
 	} _B;
 
 	int16 getMapXY() { return (_B._location._mapX << 8) + _B._location._mapY; }
@@ -143,7 +142,6 @@ public:
 		uint16 _slot;
 		int16 _soundIndex;
 		byte _ticks;
-		C_uionTimelineEvent() {}
 	} _C;
 }; // @ EVENT
 
