@@ -764,7 +764,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 		for (int16 woundIndex = kDMSlotReadyHand; woundIndex <= kDMSlotFeet; woundIndex++) {
 			if (allowedWounds & (1 << woundIndex)) {
 				woundCount++;
-				defense += getWoundDefense(champIndex, woundIndex | ((attackType == kDMAttackTypeSharp) ? k0x8000_maskUseSharpDefense : k0x0000_maskDoNotUseSharpDefense));
+				defense += getWoundDefense(champIndex, woundIndex | ((attackType == kDMAttackTypeSharp) ? kDMMaskSharpDefense : kDMMaskNoSharpDefense));
 			}
 		}
 		if (woundCount)
@@ -843,9 +843,9 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	static const byte woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
 
 	Champion *curChampion = &_champions[champIndex];
-	bool useSharpDefense = getFlag(woundIndex, k0x8000_maskUseSharpDefense);
+	bool useSharpDefense = getFlag(woundIndex, kDMMaskSharpDefense);
 	if (useSharpDefense)
-		clearFlag(woundIndex, k0x8000_maskUseSharpDefense);
+		clearFlag(woundIndex, kDMMaskSharpDefense);
 
 	uint16 armorShieldDefense = 0;
 	for (int16 slotIndex = kDMSlotReadyHand; slotIndex <= kDMSlotActionHand; slotIndex++) {
@@ -1164,9 +1164,9 @@ void ChampionMan::deleteScent(uint16 scentIndex) {
 void ChampionMan::addScentStrength(int16 mapX, int16 mapY, int32 cycleCount) {
 	int16 scentIndex = _party._scentCount;
 	if (scentIndex) {
-		bool mergeFl = getFlag(cycleCount, k0x8000_mergeCycles);
+		bool mergeFl = getFlag(cycleCount, kDMMaskMergeCycles);
 		if (mergeFl)
-			clearFlag(cycleCount, k0x8000_mergeCycles);
+			clearFlag(cycleCount, kDMMaskMergeCycles);
 
 		Scent newScent; /* BUG0_00 Useless code */
 		newScent.setMapX(mapX); /* BUG0_00 Useless code */

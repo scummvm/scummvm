@@ -348,10 +348,6 @@ enum AttackType {
 	kDMAttackTypeLightning = 7 // @ C7_ATTACK_LIGHTNING
 };
 
-#define k0x0000_maskDoNotUseSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
-#define k0x8000_maskUseSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
-#define k0x8000_mergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
-
 enum SpellCastResult {
 	kDMSpellCastFailure = 0, // @ C0_SPELL_CAST_FAILURE             
 	kDMSpellCastSuccess = 1, // @ C1_SPELL_CAST_SUCCESS             
@@ -365,25 +361,33 @@ enum SpellFailure {
 	kDMFailureNeedsMagicMapInHand = 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
 };
 
-#define k1_spellKindPotion 1 // @ C1_SPELL_KIND_POTION    
-#define k2_spellKindProjectile 2 // @ C2_SPELL_KIND_PROJECTILE
-#define k3_spellKindOther 3 // @ C3_SPELL_KIND_OTHER     
-#define k4_spellKindMagicMap 4 // @ C4_SPELL_KIND_MAGIC_MAP 
+enum SpellKind {
+	kDMSpellKindPotion = 1, // @ C1_SPELL_KIND_POTION    
+	kDMSpellKindProjectile = 2, // @ C2_SPELL_KIND_PROJECTILE
+	kDMSpellKindOther = 3, // @ C3_SPELL_KIND_OTHER     
+	kDMSpellKindMagicMap = 4 // @ C4_SPELL_KIND_MAGIC_MAP 
+};
 
-#define k4_spellType_projectileOpenDoor 4 // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
-#define k0_spellType_otherLight 0 // @ C0_SPELL_TYPE_OTHER_LIGHT         
-#define k1_spellType_otherDarkness 1 // @ C1_SPELL_TYPE_OTHER_DARKNESS      
-#define k2_spellType_otherThievesEye 2 // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
-#define k3_spellType_otherInvisibility 3 // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
-#define k4_spellType_otherPartyShield 4 // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
-#define k5_spellType_otherMagicTorch 5 // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
-#define k6_spellType_otherFootprints 6 // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
-#define k7_spellType_otherZokathra 7 // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
-#define k8_spellType_otherFireshield 8 // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
-#define k0_spellType_magicMap0 0 // @ C0_SPELL_TYPE_MAGIC_MAP           
-#define k1_spellType_magicMap1 1 // @ C1_SPELL_TYPE_MAGIC_MAP           
-#define k2_spellType_magicMap2 2 // @ C2_SPELL_TYPE_MAGIC_MAP           
-#define k3_spellType_magicMap3 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
+enum SpellType {
+	kDMSpellTypeProjectileOpenDoor = 4, // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
+	kDMSpellTypeOtherLight = 0, // @ C0_SPELL_TYPE_OTHER_LIGHT         
+	kDMSpellTypeOtherDarkness = 1, // @ C1_SPELL_TYPE_OTHER_DARKNESS      
+	kDMSpellTypeOtherThievesEye = 2, // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
+	kDMSpellTypeOtherInvisibility = 3, // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
+	kDMSpellTypeOtherPartyShield = 4, // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
+	kDMSpellTypeOtherMagicTorch = 5, // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
+	kDMSpellTypeOtherFootprints = 6, // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
+	kDMSpellTypeOtherZokathra = 7, // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
+	kDMSpellTypeOtherFireshield = 8, // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
+	kDMSpellTypeMagicMap0 = 0, // @ C0_SPELL_TYPE_MAGIC_MAP           
+	kDMSpellTypeMagicMap1 = 1, // @ C1_SPELL_TYPE_MAGIC_MAP           
+	kDMSpellTypeMagicMap2 = 2, // @ C2_SPELL_TYPE_MAGIC_MAP           
+	kDMSpellTypeMagicMap3 = 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
+};
+
+#define kDMMaskNoSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
+#define kDMMaskSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
+#define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
 class Skill {
 public:

@@ -402,7 +402,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				_vm->_championMan->_party._scents[scentIndex].setMapY(destMapY);
 				_vm->_championMan->_party._scents[scentIndex].setMapIndex(mapIndexDestination);
 				_vm->_championMan->_party._scentStrengths[scentIndex] = 0;
-				_vm->_championMan->addScentStrength(destMapX, destMapY, k0x8000_mergeCycles | 24);
+				_vm->_championMan->addScentStrength(destMapX, destMapY, kDMMaskMergeCycles | 24);
 				destinationSquareData = oldDestinationSquare;
 			}
 			if (mapIndexDestination != mapIndexSource)

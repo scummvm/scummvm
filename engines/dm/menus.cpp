@@ -548,7 +548,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		}
 	}
 	switch (curSpell->getKind()) {
-	case k1_spellKindPotion: {
+	case kDMSpellKindPotion: {
 		Thing newObject;
 		Potion *newPotion = getEmptyFlaskInHand(curChampion, &newObject);
 		if (!newPotion) {
@@ -566,24 +566,24 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		}
 		}
 		break;
-	case k2_spellKindProjectile:
+	case kDMSpellKindProjectile:
 		if (curChampion->_dir != _vm->_dungeonMan->_partyDir) {
 			curChampion->_dir = _vm->_dungeonMan->_partyDir;
 			setFlag(curChampion->_attributes, kDMAttributeIcon);
 			_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 		}
-		if (curSpell->getType() == k4_spellType_projectileOpenDoor)
+		if (curSpell->getType() == kDMSpellTypeProjectileOpenDoor)
 			skillLevel <<= 1;
 
 		_vm->_championMan->isProjectileSpellCast(champIndex, Thing(curSpell->getType() + Thing::_firstExplosion.toUint16()), getBoundedValue(21, (powerSymbolOrdinal + 2) * (4 + (skillLevel << 1)), 255), 0);
 		break;
-	case k3_spellKindOther: {
+	case kDMSpellKindOther: {
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
 		uint16 spellPower = (powerSymbolOrdinal + 1) << 2;
 		uint16 ticks;
 		switch (curSpell->getType()) {
-		case k0_spellType_otherLight: {
+		case kDMSpellTypeOtherLight: {
 			ticks = 10000 + ((spellPower - 8) << 9);
 			uint16 lightPower = (spellPower >> 1);
 			lightPower--;
@@ -591,7 +591,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			createEvent70_light(-lightPower, ticks);
 			}
 			break;
-		case k5_spellType_otherMagicTorch: {
+		case kDMSpellTypeOtherMagicTorch: {
 			ticks = 2000 + ((spellPower - 3) << 7);
 			uint16 lightPower = (spellPower >> 2);
 			lightPower++;
@@ -599,13 +599,13 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			createEvent70_light(-lightPower, ticks);
 			}
 			break;
-		case k1_spellType_otherDarkness: {
+		case kDMSpellTypeOtherDarkness: {
 			uint16 lightPower = (spellPower >> 2);
 			_vm->_championMan->_party._magicalLightAmount -= _vm->_championMan->_lightPowerToLightAmount[lightPower];
 			createEvent70_light(lightPower, 98);
 			}
 			break;
-		case k2_spellType_otherThievesEye: {
+		case kDMSpellTypeOtherThievesEye: {
 			newEvent._type = k73_TMEventTypeThievesEye;
 			_vm->_championMan->_party._event73Count_ThievesEye++;
 			spellPower = (spellPower >> 1);
@@ -614,7 +614,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
-		case k3_spellType_otherInvisibility: {
+		case kDMSpellTypeOtherInvisibility: {
 			newEvent._type = k71_TMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
@@ -622,7 +622,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
-		case k4_spellType_otherPartyShield: {
+		case kDMSpellTypeOtherPartyShield: {
 			newEvent._type = k74_TMEventTypePartyShield;
 			newEvent._B._defense = spellPower;
 			if (_vm->_championMan->_party._shieldDefense > 50)
@@ -635,7 +635,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
-		case k6_spellType_otherFootprints: {
+		case kDMSpellTypeOtherFootprints: {
 			newEvent._type = k79_TMEventTypeFootprints;
 			_vm->_championMan->_party._event79Count_Footprints++;
 			_vm->_championMan->_party._firstScentIndex = _vm->_championMan->_party._scentCount;
@@ -649,7 +649,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
-		case k7_spellType_otherZokathra: {
+		case kDMSpellTypeOtherZokathra: {
 			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(k10_JunkThingType);
 			if (unusedObject == Thing::_none)
 				break;
@@ -672,7 +672,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 
 			}
 			break;
-		case k8_spellType_otherFireshield:
+		case kDMSpellTypeOtherFireshield:
 			isPartySpellOrFireShieldSuccessful(curChampion, false, (spellPower * spellPower) + 100, false);
 			break;
 		default:
