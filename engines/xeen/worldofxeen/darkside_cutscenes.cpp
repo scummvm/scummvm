@@ -31,7 +31,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	SoundManager &sound = *_vm->_sound;
-	
+
 	// TODO: Starting method, and sound
 	//sub_28F40
 	screen.loadPalette("dark.pal");
@@ -194,8 +194,8 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		}
 
 		yCtr -= timeExpired;
-		yp = MIN(yp + timeExpired, (uint)200);
-		 
+		yp = MIN((uint)(yp + timeExpired), (uint)200);
+
 		if (events.wait(1, true))
 			return false;
 
@@ -241,7 +241,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	Voc voc("ido2.voc");
 	Music newBright("newbrigh.m");
 	SpriteResource box("box.vga");
-	
+
 	newBright.play();
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
