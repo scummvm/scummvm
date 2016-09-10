@@ -233,9 +233,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
-	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
-	// just be checking if it exists.
-	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
+	int mode = argv[1].toUint16();
 	bool unwrapFilename = true;
 
 	// SQ4 floppy prepends /\ to the filenames

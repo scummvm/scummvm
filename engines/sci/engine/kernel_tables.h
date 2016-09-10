@@ -311,9 +311,9 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kFileIO_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(FileIOOpen),                "r(i)",                 NULL },
-	{ SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   NULL },
+	{ SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   kFileIOOpen_workarounds },
 	{ SIG_SCIALL,          1, MAP_CALL(FileIOClose),               "i",                    NULL },
 	{ SIG_SCIALL,          2, MAP_CALL(FileIOReadRaw),             "iri",                  NULL },
 	{ SIG_SCIALL,          3, MAP_CALL(FileIOWriteRaw),            "iri",                  NULL },

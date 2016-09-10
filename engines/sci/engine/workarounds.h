@@ -70,6 +70,7 @@ extern const SciWorkaroundEntry kDirLoop_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundPlay_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
+extern const SciWorkaroundEntry kFileIOOpen_workarounds[];
 extern const SciWorkaroundEntry kFindKey_workarounds[];
 extern const SciWorkaroundEntry kDeleteKey_workarounds[];
 extern const SciWorkaroundEntry kGetAngle_workarounds[];
