@@ -55,16 +55,18 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0xD40
+#define HEADER_SIZE 0xF00
 
 Common::File inputFile, outputFile;
-Common::PEResources res;
+Common::PEResources resEng, resGer;
 uint headerOffset = 6;
 uint dataOffset = HEADER_SIZE;
 
 #define ENGLISH_10042C_FILESIZE 4099072
 #define ENGLISH_10042B_FILESIZE 4095488
 #define ENGLISH_10042_FILESIZE 4094976
+#define GERMAN_10042D_FILESIZE 4542464
+
 enum {
 	ENGLISH_10042C_DIFF = 0x401C00,
 	ENGLISH_10042B_DIFF = 0x401400,
@@ -699,19 +701,21 @@ void writeResource(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeResource(const char *sectionStr, uint32 resId) {
+void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
 	writeResource(nameBuffer, file);
 }
 
-void writeResource(const char *sectionStr, const char *resId) {
+void writeResource(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
@@ -735,20 +739,24 @@ void writeBitmap(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeBitmap(const char *sectionStr, const char *resId) {
+void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+	sprintf(nameBuffer, "%s/%s%s", sectionStr, resId,
+		isEnglish ? "" : "/DE");
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeBitmap(nameBuffer, file);
 }
 
-void writeBitmap(const char *sectionStr, uint32 resId) {
+void writeBitmap(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	sprintf(nameBuffer, "%s/%u%s", sectionStr, resId,
+		isEnglish ? "" : "/DE");
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
@@ -1043,18 +1051,22 @@ void writeHeader() {
 }
 
 void writeData() {
-	writeBitmap("Bitmap", "BACKDROP");
-	writeBitmap("Bitmap", "EVILTWIN");
-	writeBitmap("Bitmap", "RESTORED");
-	writeBitmap("Bitmap", "RESTOREF");
-	writeBitmap("Bitmap", "RESTOREU");
-	writeBitmap("Bitmap", "STARTD");
-	writeBitmap("Bitmap", "STARTF");
-	writeBitmap("Bitmap", "STARTU");
-	writeBitmap("Bitmap", "TITANIC");
-	writeBitmap("Bitmap", 133);
-	writeBitmap("Bitmap", 164);
-	writeBitmap("Bitmap", 165);
+	for (int idx = 0; idx < (resGer.empty() ? 1 : 2); ++idx) {
+		bool isEnglish = idx == 0;
+
+		writeBitmap("Bitmap", "BACKDROP", isEnglish);
+		writeBitmap("Bitmap", "EVILTWIN", isEnglish);
+		writeBitmap("Bitmap", "RESTORED", isEnglish);
+		writeBitmap("Bitmap", "RESTOREF", isEnglish);
+		writeBitmap("Bitmap", "RESTOREU", isEnglish);
+		writeBitmap("Bitmap", "STARTD", isEnglish);
+		writeBitmap("Bitmap", "STARTF", isEnglish);
+		writeBitmap("Bitmap", "STARTU", isEnglish);
+		writeBitmap("Bitmap", "TITANIC", isEnglish);
+		writeBitmap("Bitmap", 133, isEnglish);
+		writeBitmap("Bitmap", 164, isEnglish);
+		writeBitmap("Bitmap", 165, isEnglish);
+	}
 
 	writeResource("STFONT", 149);
 	writeResource("STFONT", 151);
@@ -1250,15 +1262,19 @@ void createScriptMap() {
 }
 
 int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Format: %s ST.exe titanic.dat\n", argv[0]);
+	if (argc < 2) {
+		printf("Format: %s ST.exe [ST_german.exe] [titanic.dat]\n", argv[0]);
 		exit(0);
 	}
 
 	if (!inputFile.open(argv[1])) {
 		error("Could not open input file");
 	}
-	res.loadFromEXE(argv[1]);
+	resEng.loadFromEXE(argv[1]);
+
+	if (argc >= 3) {
+		resGer.loadFromEXE(argv[2]);
+	}
 
 	if (inputFile.size() == ENGLISH_10042C_FILESIZE)
 		_version = ENGLISH_10042C;
@@ -1266,13 +1282,18 @@ int main(int argc, char *argv[]) {
 		_version = ENGLISH_10042B;
 	else if (inputFile.size() == ENGLISH_10042_FILESIZE)
 		_version = ENGLISH_10042;
-	else {
-		printf("Unknown version of ST.exe specified");
+	else if (inputFile.size() == GERMAN_10042D_FILESIZE) {
+		printf("German version detected. You must use an English versoin "
+			"for the primary input file\n");
+		exit(0);
+	} else {
+		printf("Unknown version of ST.exe specified\n");
 		exit(0);
 	}
 
-	if (!outputFile.open(argv[2], Common::kFileWriteMode)) {
-		error("Could not open output file");
+	if (!outputFile.open(argc == 4 ? argv[3] : "titanic.dat", Common::kFileWriteMode)) {
+		printf("Could not open output file\n");
+		exit(0);
 	}
 
 	writeHeader();
