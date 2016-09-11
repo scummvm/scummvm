@@ -29,6 +29,7 @@
  */
 
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -58,7 +59,7 @@ bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 18-bit word has the correct identifier
-	Indeo::GetBits gb(buffer, 16 * 8);
+	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8), DisposeAfterUse::YES);
 	bool isIndeo4 = gb.getBits(18) == 0x3FFF8;
 
 	return isIndeo4;
@@ -76,7 +77,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize * 8);
+	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize * 8));
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
@@ -110,15 +111,15 @@ int Indeo4Decoder::decodePictureHeader() {
 	if (_ctx._frameType == IVI4_FRAMETYPE_BIDIR)
 		_ctx._hasBFrames = true;
 
-	_ctx._hasTransp = _ctx._gb->getBits1();
+	_ctx._hasTransp = _ctx._gb->getBit();
 
 	// unknown bit: Mac decoder ignores this bit, XANIM returns error
-	if (_ctx._gb->getBits1()) {
+	if (_ctx._gb->getBit()) {
 		warning("Sync bit is set!");
 		return -1;
 	}
 
-	_ctx._dataSize = _ctx._gb->getBits1() ? _ctx._gb->getBits(24) : 0;
+	_ctx._dataSize = _ctx._gb->getBit() ? _ctx._gb->getBits(24) : 0;
 
 	// null frames don't contain anything else so we just return
 	if (_ctx._frameType >= IVI4_FRAMETYPE_NULL_FIRST) {
@@ -129,8 +130,8 @@ int Indeo4Decoder::decodePictureHeader() {
 	// Check key lock status. If enabled - ignore lock word.
 	// Usually we have to prompt the user for the password, but
 	// we don't do that because Indeo 4 videos can be decoded anyway
-	if (_ctx._gb->getBits1()) {
-		_ctx._gb->skipBitsLong(32);
+	if (_ctx._gb->getBit()) {
+		_ctx._gb->skip(32);
 		warning("Password-protected clip!");
 	}
 
@@ -144,7 +145,7 @@ int Indeo4Decoder::decodePictureHeader() {
 	}
 
 	// Decode tile dimensions.
-	_ctx._usesTiling = _ctx._gb->getBits1();
+	_ctx._usesTiling = _ctx._gb->getBit();
 	if (_ctx._usesTiling) {
 		_picConf._tileHeight = scaleTileSize(_picConf._picHeight, _ctx._gb->getBits(4));
 		_picConf._tileWidth = scaleTileSize(_picConf._picWidth, _ctx._gb->getBits(4));
@@ -198,39 +199,39 @@ int Indeo4Decoder::decodePictureHeader() {
 		}
 	}
 
-	_ctx._frameNum = _ctx._gb->getBits1() ? _ctx._gb->getBits(20) : 0;
+	_ctx._frameNum = _ctx._gb->getBit() ? _ctx._gb->getBits(20) : 0;
 
 	// skip decTimeEst field if present
-	if (_ctx._gb->getBits1())
-		_ctx._gb->skipBits(8);
+	if (_ctx._gb->getBit())
+		_ctx._gb->skip(8);
 
 	// decode macroblock and block huffman codebooks
-	if (_ctx._mbVlc.decodeHuffDesc(&_ctx, _ctx._gb->getBits1(), IVI_MB_HUFF) ||
-		_ctx._blkVlc.decodeHuffDesc(&_ctx, _ctx._gb->getBits1(), IVI_BLK_HUFF))
+	if (_ctx._mbVlc.decodeHuffDesc(&_ctx, _ctx._gb->getBit(), IVI_MB_HUFF) ||
+		_ctx._blkVlc.decodeHuffDesc(&_ctx, _ctx._gb->getBit(), IVI_BLK_HUFF))
 		return -1;
 
-	_ctx._rvmapSel = _ctx._gb->getBits1() ? _ctx._gb->getBits(3) : 8;
+	_ctx._rvmapSel = _ctx._gb->getBit() ? _ctx._gb->getBits(3) : 8;
 
-	_ctx._inImf = _ctx._gb->getBits1();
-	_ctx._inQ = _ctx._gb->getBits1();
+	_ctx._inImf = _ctx._gb->getBit();
+	_ctx._inQ = _ctx._gb->getBit();
 
 	_ctx._picGlobQuant = _ctx._gb->getBits(5);
 
 	// TODO: ignore this parameter if unused
-	_ctx._unknown1 = _ctx._gb->getBits1() ? _ctx._gb->getBits(3) : 0;
+	_ctx._unknown1 = _ctx._gb->getBit() ? _ctx._gb->getBits(3) : 0;
 
-	_ctx._checksum = _ctx._gb->getBits1() ? _ctx._gb->getBits(16) : 0;
+	_ctx._checksum = _ctx._gb->getBit() ? _ctx._gb->getBits(16) : 0;
 
 	// skip picture header extension if any
-	while (_ctx._gb->getBits1()) {
-		_ctx._gb->skipBits(8);
+	while (_ctx._gb->getBit()) {
+		_ctx._gb->skip(8);
 	}
 
-	if (_ctx._gb->getBits1()) {
+	if (_ctx._gb->getBit()) {
 		warning("Bad blocks bits encountered!");
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	return 0;
 }
@@ -281,13 +282,13 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 		return -1;
 	}
 
-	band->_isEmpty = _ctx._gb->getBits1();
+	band->_isEmpty = _ctx._gb->getBit();
 	if (!band->_isEmpty) {
 		int old_blk_size = band->_blkSize;
 		// skip header size
 		// If header size is not given, header size is 4 bytes.
-		if (_ctx._gb->getBits1())
-			_ctx._gb->skipBits(16);
+		if (_ctx._gb->getBit())
+			_ctx._gb->skip(16);
 
 		band->_isHalfpel = _ctx._gb->getBits(2);
 		if (band->_isHalfpel >= 2) {
@@ -298,7 +299,7 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 		if (!band->_isHalfpel)
 			_ctx._usesFullpel = true;
 
-		band->_checksumPresent = _ctx._gb->getBits1();
+		band->_checksumPresent = _ctx._gb->getBit();
 		if (band->_checksumPresent)
 			band->_checksum = _ctx._gb->getBits(16);
 
@@ -310,12 +311,12 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 		band->_mbSize = 16 >> indx;
 		band->_blkSize = 8 >> (indx >> 1);
 
-		band->_inheritMv = _ctx._gb->getBits1();
-		band->_inheritQDelta = _ctx._gb->getBits1();
+		band->_inheritMv = _ctx._gb->getBit();
+		band->_inheritQDelta = _ctx._gb->getBit();
 
 		band->_globQuant = _ctx._gb->getBits(5);
 
-		if (!_ctx._gb->getBits1() || _ctx._frameType == IVI4_FRAMETYPE_INTRA) {
+		if (!_ctx._gb->getBit() || _ctx._frameType == IVI4_FRAMETYPE_INTRA) {
 			transformId = _ctx._gb->getBits(5);
 			if ((uint)transformId >= FF_ARRAY_ELEMS(_transforms) ||
 				!_transforms[transformId]._invTrans) {
@@ -398,18 +399,18 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 		}
 
 		// decode block huffman codebook
-		if (!_ctx._gb->getBits1())
+		if (!_ctx._gb->getBit())
 			band->_blkVlc._tab = _ctx._blkVlc._tab;
 		else
 			if (band->_blkVlc.decodeHuffDesc(&_ctx, 1, IVI_BLK_HUFF))
 				return -1;
 
 		// select appropriate rvmap table for this band
-		band->_rvmapSel = _ctx._gb->getBits1() ? _ctx._gb->getBits(3) : 8;
+		band->_rvmapSel = _ctx._gb->getBit() ? _ctx._gb->getBits(3) : 8;
 
 		// decode rvmap probability corrections if any
 		band->_numCorr = 0; // there is no corrections
-		if (_ctx._gb->getBits1()) {
+		if (_ctx._gb->getBit()) {
 			band->_numCorr = _ctx._gb->getBits(8); // get number of correction pairs
 			if (band->_numCorr > 61) {
 				warning("Too many corrections: %d",
@@ -435,7 +436,7 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 	band->_intraScale = NULL;
 	band->_interScale = NULL;
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	if (!band->_scan) {
 		warning("band->_scan not set");
@@ -476,7 +477,7 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 			mb->_bufOffs = mbOffset;
 			mb->_bMvX = mb->_bMvY = 0;
 
-			if (_ctx._gb->getBits1()) {
+			if (_ctx._gb->getBit()) {
 				if (_ctx._frameType == IVI4_FRAMETYPE_INTRA) {
 					warning("Empty macroblock in an INTRA picture!");
 					return -1;
@@ -593,7 +594,7 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 		offs += row_offset;
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 	return 0;
 }
 

@@ -29,6 +29,7 @@
  */
 
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -69,7 +70,7 @@ bool Indeo5Decoder::isIndeo5(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 5-bit word has the correct identifier
-	Indeo::GetBits gb(buffer, 16 * 8);
+	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8));
 	bool isIndeo5 = gb.getBits(5) == 0x1F;
 
 	return isIndeo5;
@@ -87,7 +88,7 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize * 8);
+	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize * 8));
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
@@ -140,7 +141,7 @@ int Indeo5Decoder::decodePictureHeader() {
 	if (_ctx._frameType != FRAMETYPE_NULL) {
 		_ctx._frameFlags = _ctx._gb->getBits(8);
 
-		_ctx._picHdrSize = (_ctx._frameFlags & 1) ? _ctx._gb->getBitsLong(24) : 0;
+		_ctx._picHdrSize = (_ctx._frameFlags & 1) ? _ctx._gb->getBits(24) : 0;
 
 		_ctx._checksum = (_ctx._frameFlags & 0x10) ? _ctx._gb->getBits(16) : 0;
 
@@ -154,10 +155,10 @@ int Indeo5Decoder::decodePictureHeader() {
 		if (ret < 0)
 			return ret;
 
-		_ctx._gb->skipBits(3); // FIXME: unknown meaning!
+		_ctx._gb->skip(3); // FIXME: unknown meaning!
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 	return 0;
 }
 
@@ -215,7 +216,7 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 		return 0;
 	}
 
-	band->_dataSize = (_ctx._frameFlags & 0x80) ? _ctx._gb->getBitsLong(24) : 0;
+	band->_dataSize = (_ctx._frameFlags & 0x80) ? _ctx._gb->getBits(24) : 0;
 
 	band->_inheritMv = (bandFlags & 2) != 0;
 	band->_inheritQDelta = (bandFlags & 8) != 0;
@@ -245,7 +246,7 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 	if (ret < 0)
 		return ret;
 
-	band->_checksumPresent = _ctx._gb->getBits1();
+	band->_checksumPresent = _ctx._gb->getBit();
 	if (band->_checksumPresent)
 		band->_checksum = _ctx._gb->getBits(16);
 
@@ -253,11 +254,11 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 
 	// skip unknown extension if any
 	if (bandFlags & 0x20) { // XXX: untested
-		_ctx._gb->alignGetBits();
+		_ctx._gb->align();
 		skip_hdr_extension();
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	return 0;
 }
@@ -294,7 +295,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 			mb->_yPos = y;
 			mb->_bufOffs = mbOffset;
 
-			if (_ctx._gb->getBits1()) {
+			if (_ctx._gb->getBit()) {
 				if (_ctx._frameType == FRAMETYPE_INTRA) {
 					warning("Empty macroblock in an INTRA picture!");
 					return -1;
@@ -325,7 +326,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 				} else if (_ctx._frameType == FRAMETYPE_INTRA) {
 					mb->_type = 0; // mb_type is always INTRA for intra-frames
 				} else {
-					mb->_type = _ctx._gb->getBits1();
+					mb->_type = _ctx._gb->getBit();
 				}
 
 				blksPerMb = band->_mbSize != band->_blkSize ? 4 : 1;
@@ -384,7 +385,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 		offs += rowOffset;
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	return 0;
 }
@@ -401,7 +402,7 @@ int Indeo5Decoder::decode_gop_header() {
 	_ctx._gopHdrSize = (_ctx._gopFlags & 1) ? _ctx._gb->getBits(16) : 0;
 
 	if (_ctx._gopFlags & IVI5_IS_PROTECTED)
-		_ctx._lockWord = _ctx._gb->getBitsLong(32);
+		_ctx._lockWord = _ctx._gb->getBits(32);
 
 	tile_size = (_ctx._gopFlags & 0x40) ? 64 << _ctx._gb->getBits(2) : 0;
 	if (tile_size > 256) {
@@ -412,7 +413,7 @@ int Indeo5Decoder::decode_gop_header() {
 	// decode number of wavelet bands
 	// num_levels * 3 + 1
 	picConf._lumaBands = _ctx._gb->getBits(2) * 3 + 1;
-	picConf._chromaBands = _ctx._gb->getBits1() * 3 + 1;
+	picConf._chromaBands = _ctx._gb->getBit() * 3 + 1;
 	isScalable = picConf._lumaBands != 1 || picConf._chromaBands != 1;
 	if (isScalable && (picConf._lumaBands != 4 || picConf._chromaBands != 1)) {
 		warning("Scalability: unsupported subdivision! Luma bands: %d, chroma bands: %d",
@@ -460,10 +461,10 @@ int Indeo5Decoder::decode_gop_header() {
 		for (i = 0; i < (!p ? picConf._lumaBands : picConf._chromaBands); i++) {
 			band = &_ctx._planes[p]._bands[i];
 
-			band->_isHalfpel = _ctx._gb->getBits1();
+			band->_isHalfpel = _ctx._gb->getBit();
 
-			mbSize = _ctx._gb->getBits1();
-			blkSize = 8 >> _ctx._gb->getBits1();
+			mbSize = _ctx._gb->getBit();
+			blkSize = 8 >> _ctx._gb->getBit();
 			mbSize = blkSize << !mbSize;
 
 			if (p == 0 && blkSize == 4) {
@@ -477,7 +478,7 @@ int Indeo5Decoder::decode_gop_header() {
 				band->_blkSize = blkSize;
 			}
 
-			if (_ctx._gb->getBits1()) {
+			if (_ctx._gb->getBit()) {
 				warning("Extended transform info");
 				return -2;
 			}
@@ -595,22 +596,22 @@ int Indeo5Decoder::decode_gop_header() {
 			return -1;
 		}
 
-		if (_ctx._gb->getBits1())
-			_ctx._gb->skipBitsLong(24); // skip transparency fill color
+		if (_ctx._gb->getBit())
+			_ctx._gb->skip(24);	// skip transparency fill color
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
-	_ctx._gb->skipBits(23); // FIXME: unknown meaning
+	_ctx._gb->skip(23);			// FIXME: unknown meaning
 
-							 // skip GOP extension if any
-	if (_ctx._gb->getBits1()) {
+	// skip GOP extension if any
+	if (_ctx._gb->getBit()) {
 		do {
 			i = _ctx._gb->getBits(16);
 		} while (i & 0x8000);
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	return 0;
 }
@@ -620,10 +621,10 @@ int Indeo5Decoder::skip_hdr_extension() {
 
 	do {
 		len = _ctx._gb->getBits(8);
-		if (8 * len > _ctx._gb->getBitsLeft())
+		if (_ctx._gb->eos())
 			return -1;
 		for (i = 0; i < len; i++)
-			_ctx._gb->skipBits(8);
+			_ctx._gb->skip(8);
 	} while (len);
 
 	return 0;

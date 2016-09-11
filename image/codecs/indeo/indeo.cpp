@@ -582,10 +582,10 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 			if (_ctx._gb->getBitsLeft() < 8)
 				return -1;
 		}
-		left = _ctx._gb->getBitsCount() & 0x18;
-		_ctx._gb->skipBitsLong(64 - left);
+		left = _ctx._gb->pos() & 0x18;
+		_ctx._gb->skip(64 - left);
 		if (_ctx._gb->getBitsLeft() > 18 &&
-			_ctx._gb->showBitsLong(21) == 0xBFFF8) { // syncheader + inter _type
+			_ctx._gb->peekBits(21) == 0xBFFF8) { // syncheader + inter _type
 			error("Indeo decoder: Mode not currently implemented in ScummVM");
 		}
 	}
@@ -618,7 +618,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 		band->_refBuf = band->_bufs[_ctx._refBuf];
 		band->_bRefBuf = 0;
 	}
-	band->_dataPtr = _ctx._frameData + (_ctx._gb->getBitsCount() >> 3);
+	band->_dataPtr = _ctx._frameData + (_ctx._gb->pos() >> 3);
 
 	result = decodeBandHeader(band);
 	if (result) {
@@ -646,7 +646,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 			band->_rvMap->_escSym ^= idx1 ^ idx2;
 	}
 
-	pos = _ctx._gb->getBitsCount();
+	pos = _ctx._gb->pos();
 
 	for (t = 0; t < band->_numTiles; t++) {
 		tile = &band->_tiles[t];
@@ -656,7 +656,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 				band->_mbSize, tile->_mbSize);
 			return -1;
 		}
-		tile->_isEmpty = _ctx._gb->getBits1();
+		tile->_isEmpty = _ctx._gb->getBit();
 		if (tile->_isEmpty) {
 			result = processEmptyTile(band, tile,
 				(_ctx._planes[0]._bands[0]._mbSize >> 3) - (band->_mbSize >> 3));
@@ -681,7 +681,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 				break;
 			}
 
-			if ((((int)_ctx._gb->getBitsCount() - pos) >> 3) != tile->_dataSize) {
+			if ((((int)_ctx._gb->pos() - pos) >> 3) != tile->_dataSize) {
 				warning("Tile _dataSize mismatch!");
 				result = -1;
 				break;
@@ -704,7 +704,7 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 			band->_rvMap->_escSym ^= idx1 ^ idx2;
 	}
 
-	_ctx._gb->alignGetBits();
+	_ctx._gb->align();
 
 	return result;
 }
@@ -1046,14 +1046,14 @@ int IndeoDecoderBase::processEmptyTile(IVIBandDesc *band,
 int IndeoDecoderBase::decodeTileDataSize(GetBits *gb) {
 	int len = 0;
 
-	if (gb->getBits1()) {
+	if (gb->getBit()) {
 		len = gb->getBits(8);
 		if (len == 255)
-			len = gb->getBitsLong(24);
+			len = gb->getBits(24);
 	}
 
 	// align the bitstream reader on the byte boundary
-	gb->alignGetBits();
+	gb->align();
 
 	return len;
 }
@@ -1189,7 +1189,7 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
         }// for blk
     }// for mbn
 
-	_gb->alignGetBits();
+	_gb->align();
     return 0;
 }
 
