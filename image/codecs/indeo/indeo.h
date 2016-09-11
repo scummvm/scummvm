@@ -21,7 +21,7 @@
  */
 
 #include "common/scummsys.h"
-#include "graphics/managed_surface.h"
+#include "graphics/surface.h"
 #include "image/codecs/codec.h"
 
 /* Common structures, macros, and base class shared by both Indeo4 and 
@@ -518,7 +518,7 @@ private:
 protected:
 	IVI45DecContext _ctx;
 	Graphics::PixelFormat _pixelFormat;
-	Graphics::ManagedSurface *_surface;
+	Graphics::Surface *_surface;
 
 	/**
 	 *  Scan patterns shared between indeo4 and indeo5

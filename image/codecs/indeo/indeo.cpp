@@ -35,6 +35,7 @@
 #include "graphics/yuv_to_rgb.h"
 #include "common/system.h"
 #include "common/algorithm.h"
+#include "common/rect.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -468,13 +469,14 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height) : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
 	assert(_pixelFormat.bytesPerPixel > 1);
-	_surface = new Graphics::ManagedSurface();
+	_surface = new Graphics::Surface();
 	_surface->create(width, height, _pixelFormat);
 	_surface->fillRect(Common::Rect(0, 0, width, height), 0);
 	_ctx._bRefBuf = 3; // buffer 2 is used for scalability mode
 }
 
 IndeoDecoderBase::~IndeoDecoderBase() {
+	_surface->free();
 	delete _surface;
 	IVIPlaneDesc::freeBuffers(_ctx._planes);
 	if (_ctx._mbVlc._custTab._table)
