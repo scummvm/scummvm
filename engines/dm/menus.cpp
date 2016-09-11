@@ -1555,7 +1555,7 @@ void MenuMan::printMessageAfterReplacements(const char *str) {
 	char outputString[128];
 	char *curCharacter = outputString;
 	*curCharacter++ = '\n'; /* New line */
-	char *replacementString = "";
+	const char *replacementString = "";
 	do {
 		if (*str == '@') {
 			str++;
