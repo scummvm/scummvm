@@ -112,11 +112,11 @@ int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
 	byte creatureIndex = group->getCount();
 	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
-			cell = _vm->returnPrevVal(cell);
+			cell = _vm->turnDirLeft(cell);
 
 		do {
 			byte creatureCell = getCreatureValue(groupCells, creatureIndex);
-			if (creatureCell == cell || creatureCell == _vm->returnNextVal(cell)) {
+			if (creatureCell == cell || creatureCell == _vm->turnDirRight(cell)) {
 				retval = _vm->indexToOrdinal(creatureIndex);
 				break;
 			}
@@ -313,11 +313,11 @@ int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY
 	int16 curDirection = kDMDirNorth;
 	for (;;) {
 		if (isDestVisibleFromSource(curDirection, srcMapX, srcMapY, destMapX, destMapY)) {
-			_vm->_projexpl->_secondaryDirToOrFromParty = _vm->returnNextVal(curDirection);
+			_vm->_projexpl->_secondaryDirToOrFromParty = _vm->turnDirRight(curDirection);
 			if (!isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
-				_vm->_projexpl->_secondaryDirToOrFromParty = _vm->returnPrevVal(curDirection);
+				_vm->_projexpl->_secondaryDirToOrFromParty = _vm->turnDirLeft(curDirection);
 				if ((curDirection != kDMDirNorth) || !isDestVisibleFromSource(_vm->_projexpl->_secondaryDirToOrFromParty, srcMapX, srcMapY, destMapX, destMapY)) {
-					_vm->_projexpl->_secondaryDirToOrFromParty = _vm->returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + curDirection);
+					_vm->_projexpl->_secondaryDirToOrFromParty = _vm->turnDirRight((_vm->getRandomNumber(65536) & 0x0002) + curDirection);
 					return curDirection;
 				}
 			}
@@ -817,14 +817,14 @@ T0209061_MoveGroup:
 									activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 									activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 								}
-								AL0446_i_Direction = _vm->returnNextVal(AL0446_i_Direction);
+								AL0446_i_Direction = _vm->turnDirRight(AL0446_i_Direction);
 							} while (AL0446_i_Direction != AL0447_i_ReferenceDirection);
 						}
 						if (!newGroupDirectionFound &&
 							(ticksSinceLastMove != -1) &&
 							isArchEnemy &&
 							((eventType == kM3_TMEventTypeCreateReactionEvent29DangerOnSquare) || !_vm->getRandomNumber(4))) { /* BUG0_15 The game hangs when you close a door on Lord Chaos. A condition is missing in the code to manage creatures and this may create an infinite loop between two parts in the code */
-							_vm->_projexpl->_secondaryDirToOrFromParty = _vm->returnNextVal(primaryDirectionToOrFromParty = _vm->getRandomNumber(4));
+							_vm->_projexpl->_secondaryDirToOrFromParty = _vm->turnDirRight(primaryDirectionToOrFromParty = _vm->getRandomNumber(4));
 							goto T0209089_DoubleSquareMove; /* BUG0_69 Memory corruption when you close a door on Lord Chaos. The local variable (L0454_i_PrimaryDirectionToOrFromParty) containing the direction where Lord Chaos tries to move may be used as an array index without being initialized and cause memory corruption */
 						}
 						if (newGroupDirectionFound || ((!_vm->getRandomNumber(4) || (distanceToVisibleParty <= creatureInfo.getSmellRange())) && (eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare))) {
@@ -986,7 +986,7 @@ T0209096_SetBehavior0_Wander:
 							(creatureSize == k0_MaskCreatureSizeQuarter) &&
 							(activeGroup->_cells != k255_CreatureTypeSingleCenteredCreature) &&
 							((AL0446_i_Cell = getCreatureValue(activeGroup->_cells, AL0447_i_CreatureIndex)) != primaryDirectionToOrFromParty) &&
-							(AL0446_i_Cell != _vm->returnNextVal(primaryDirectionToOrFromParty))) { /* If the creature cannot cast spells (range = 1) and is not on a cell where it can attack the party directly and is a quarter square sized creature not in the center of the square then the creature moves to another cell and attack does not occur immediately */
+							(AL0446_i_Cell != _vm->turnDirRight(primaryDirectionToOrFromParty))) { /* If the creature cannot cast spells (range = 1) and is not on a cell where it can attack the party directly and is a quarter square sized creature not in the center of the square then the creature moves to another cell and attack does not occur immediately */
 							if (!creatureCount && _vm->getRandomNumber(2)) {
 								activeGroup->_cells = k255_CreatureTypeSingleCenteredCreature;
 							} else {
@@ -1321,7 +1321,7 @@ void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 
 	uint16 groupDirections = activeGroup->_directions;
 	if (_vm->normalizeModulo4(getCreatureValue(groupDirections, creatureIndex) - dir) == 2) { /* If current and new direction are opposites then change direction only one step at a time */
-		dir = _vm->returnNextVal((_vm->getRandomNumber(65536) & 0x0002) + dir);
+		dir = _vm->turnDirRight((_vm->getRandomNumber(65536) & 0x0002) + dir);
 		groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, creatureIndex, dir);
 	} else
 		groupDirections = getGroupValueUpdatedWithCreatureValue(groupDirections, creatureIndex, dir);
@@ -1480,7 +1480,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 			championIndex = _vm->getRandomNumber(4);
 			int cpt;
 			for (cpt = 0; (cpt < 4) && !_vm->_championMan->_champions[championIndex]._currHealth; cpt++)
-				championIndex = _vm->returnNextVal(championIndex);
+				championIndex = _vm->turnDirRight(championIndex);
 
 			if (cpt == 4)
 				return false;
@@ -1969,7 +1969,7 @@ void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
 			int16 destMapX = mapX;
 			int16 destMapY = mapY;
 			uint16 fluxcageIndex = _vm->getRandomNumber(4);
-			for (uint16 i = 5; --i; fluxcageIndex = _vm->returnNextVal(fluxcageIndex)) {
+			for (uint16 i = 5; --i; fluxcageIndex = _vm->turnDirRight(fluxcageIndex)) {
 				if (!isFluxcages[fluxcageIndex]) {
 					isFluxcages[fluxcageIndex] = true;
 					switch (fluxcageIndex) {

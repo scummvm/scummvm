@@ -425,7 +425,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	uint16 projectileDirection = curEvent->_Cu._projectile.getDir();
 	projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	uint16 projectileNewCell = projectileThingNewCell.getCell();
-	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (_vm->returnNextVal(projectileDirection) == projectileNewCell);
+	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (_vm->turnDirRight(projectileDirection) == projectileNewCell);
 	if (projectileMovesToOtherSquare) {
 		sourceMapX = destinationMapX;
 		sourceMapY = destinationMapY;

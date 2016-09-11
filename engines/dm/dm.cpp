@@ -68,39 +68,27 @@
 #include "dm/sounds.h"
 
 namespace DM {
-const char *debugGetDirectionName(Direction dir) {
-	static const char *directionNames[] = {"North", "East", "South", "West"};
-	if (dir < 0 || dir > 3)
-		return "Invalid direction";
-	return directionNames[dir];
+Direction DMEngine::turnDirRight(int16 dir) {
+	Direction result = (Direction)((dir + 1) & 3);
+	return result;
 }
 
-void DMEngine::turnDirRight(Direction &dir) {
-	dir = (Direction)((dir + 1) & 3);
+Direction DMEngine::returnOppositeDir(int16 dir) {
+	Direction result = (Direction)((dir + 2) & 3);
+	return result;
 }
 
-void DMEngine::turnDirLeft(Direction &dir) {
-	dir = (Direction)((dir - 1) & 3);
+Direction DMEngine::turnDirLeft(int16 dir) {
+	Direction result = (Direction)((dir + 3) & 3);
+	return result;
 }
 
-Direction DMEngine::returnOppositeDir(Direction dir) {
-	return (Direction)((dir + 2) & 3);
-}
-
-uint16 DMEngine::returnPrevVal(uint16 val) {
-	return (Direction)((val + 3) & 3);
-}
-
-uint16 DMEngine::returnNextVal(uint16 val) {
-	return (val + 1) & 0x3;
-}
-
-bool DMEngine::isOrientedWestEast(Direction dir) {
+bool DMEngine::isOrientedWestEast(int16 dir) {
 	return dir & 1;
 }
 
-uint16 DMEngine::normalizeModulo4(uint16 val) {
-	return val & 3;
+uint16 DMEngine::normalizeModulo4(int16 dir) {
+	return dir & 3;
 }
 
 int32 DMEngine::filterTime(int32 mapTime) {

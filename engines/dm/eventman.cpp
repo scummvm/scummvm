@@ -979,14 +979,18 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
 	int16 partyMapX = _vm->_dungeonMan->_partyMapX;
 	int16 partyMapY = _vm->_dungeonMan->_partyMapY;
+	
+	// TODO: refactor Square
 	uint16 AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte();
 	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_StairsElemType);
 	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
 		commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
 		return;
 	}
+
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(_vm->_dungeonMan->_partyDir, movementArrowToStepForwardCount[movementArrowIdx], movementArrowToSepRightCount[movementArrowIdx], partyMapX, partyMapY);
-	int16 partySquareType = Square(AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte()).getType();
+	AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte();
+	int16 partySquareType = Square(AL1115_ui_Square).getType();
 	if (partySquareType == k3_ElementTypeStairs) {
 		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
@@ -1007,11 +1011,11 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	if (_vm->_championMan->_partyChampionCount) {
 		if (isMovementBlocked) {
 			movementArrowIdx += (_vm->_dungeonMan->_partyDir + 2);
-			int16 L1124_i_FirstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->normalizeModulo4(movementArrowIdx));
-			int16 L1125_i_SecondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->returnNextVal(movementArrowIdx));
-			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(L1124_i_FirstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
-			if (L1124_i_FirstDamagedChampionIndex != L1125_i_SecondDamagedChampionIndex)
-				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(L1125_i_SecondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
+			int16 firstDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->normalizeModulo4(movementArrowIdx));
+			int16 secondDamagedChampionIndex = _vm->_championMan->getTargetChampionIndex(partyMapX, partyMapY, _vm->turnDirRight(movementArrowIdx));
+			int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(firstDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
+			if (firstDamagedChampionIndex != secondDamagedChampionIndex)
+				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(secondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
 
 			if (damage)
 				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);

@@ -157,8 +157,6 @@ struct DMADGameDescription {
 	OriginalSavePlatform _origPlatformToAccept[kDMSavePlatformTotal + 1];
 };
 
-const char *debugGetDirectionName(Direction dir);
-
 class Thing {
 public:
 	uint16 _data;
@@ -258,13 +256,12 @@ public:
 	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
 	Common::Language getGameLanguage();
 
-	void turnDirRight(Direction &dir);
-	void turnDirLeft(Direction &dir);
-	Direction returnOppositeDir(Direction dir);	// @ M18_OPPOSITE
-	uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
-	uint16 returnNextVal(uint16 val); // @ M17_NEXT
-	bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
-	uint16 normalizeModulo4(uint16 val); // @ M21_NORMALIZE
+	Direction turnDirRight(int16 dir); // @ M17_NEXT
+	Direction turnDirLeft(int16 dir); // @ M19_PREVIOUS
+	Direction returnOppositeDir(int16 dir);	// @ M18_OPPOSITE
+	bool isOrientedWestEast(int16 dir);	// @ M16_IS_ORIENTED_WEST_EAST
+	uint16 normalizeModulo4(int16 val); // @ M21_NORMALIZE
+
 	int32 filterTime(int32 map_time); // @ M30_TIME
 	int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
 	uint16 getMap(int32 map_time); // @ M29_MAP

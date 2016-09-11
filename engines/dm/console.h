@@ -45,6 +45,8 @@ private:
 	bool Cmd_listItems(int argc, const char **argv);
 	bool Cmd_gimme(int argc, const char **argv);
 
+	const char *debugGetDirectionName(int16 dir);
+
 public:
 	explicit Console(DM::DMEngine *vm);
 	virtual ~Console(void) {}

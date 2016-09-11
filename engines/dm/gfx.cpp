@@ -3281,7 +3281,7 @@ T0115015_DrawProjectileAsObject:
 						creatureIndexGreen = 0;
 
 					twoHalfSquareCreaturesFrontView = group->getCount();
-					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == _vm->returnPrevVal(directionParam)))
+					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == _vm->turnDirLeft(directionParam)))
 						AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
 					else
 						AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
@@ -3523,7 +3523,7 @@ T0115129_DrawProjectiles:
 								flipHorizontal = !flipHorizontal;
 						} else {
 							flipVertical = false;
-							flipHorizontal = (_vm->returnNextVal(directionParam) == projectileDirection);
+							flipHorizontal = (_vm->turnDirRight(directionParam) == projectileDirection);
 						}
 					} else {
 						if ((projectileAspectType >= k2_ProjectileAspectHasRotation) || ((projectileAspectType == k1_ProjectileAspectBackGraphic) && (projectileDirection != directionParam)) || (projectileAspectTypeHasBackGraphicAndRotation && projectileFlipVertical)) /* If the projectile does not have a back graphic or has one but is not seen from the back or if it has a back graphic and rotation and should be flipped vertically */
@@ -3679,7 +3679,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					if (explosion->getCentered()) {
 						explosionCoordinates = centeredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
 					} else {
-						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == _vm->returnPrevVal(directionParam)))
+						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == _vm->turnDirLeft(directionParam)))
 							AL_2_viewCell = k0_ViewCellFronLeft;
 						else
 							AL_2_viewCell = k1_ViewCellFrontRight;

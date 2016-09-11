@@ -656,7 +656,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
-			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->returnNextVal(cell))))
+			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->turnDirRight(cell))))
 				break;
 			firstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(firstProjectileAssociatedThing);
 		}
@@ -668,7 +668,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 			while (secondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
 				uint16 projectiveThingCell = secondProjectileAssociatedThing.getCell();
-				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->returnNextVal(cell))))
+				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->turnDirRight(cell))))
 					break;
 				secondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(secondProjectileAssociatedThing);
 			}
@@ -695,7 +695,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	_vm->_projexpl->_createLauncherProjectile = true;
 	_vm->_projexpl->createProjectile(firstProjectileAssociatedThing, mapX, mapY, projectileCell, (Direction)cell, kineticEnergy, 100, stepEnergy);
 	if (!launchSingleProjectile)
-		_vm->_projexpl->createProjectile(secondProjectileAssociatedThing, mapX, mapY, _vm->returnNextVal(projectileCell), (Direction)cell, kineticEnergy, 100, stepEnergy);
+		_vm->_projexpl->createProjectile(secondProjectileAssociatedThing, mapX, mapY, _vm->turnDirRight(projectileCell), (Direction)cell, kineticEnergy, 100, stepEnergy);
 
 	_vm->_projexpl->_createLauncherProjectile = false;
 }

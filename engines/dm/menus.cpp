@@ -894,7 +894,7 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 		setFlag(casterChampion->_attributes, kDMAttributeStatistics);
 		casterChampion->_symbols[symbolStep] = 96 + (symbolStep * 6) + symbolIndex;
 		casterChampion->_symbols[symbolStep + 1] = '\0';
-		casterChampion->_symbolStep = symbolStep = _vm->returnNextVal(symbolStep);
+		casterChampion->_symbolStep = symbolStep = _vm->turnDirRight(symbolStep);
 		_vm->_eventMan->showMouse();
 		drawAvailableSymbols(symbolStep);
 		drawChampionSymbols(casterChampion);
@@ -908,7 +908,7 @@ void MenuMan::deleteChampionSymbol() {
 	if (!strlen(casterChampion->_symbols))
 		return;
 
-	int16 symbolStep = _vm->returnPrevVal(casterChampion->_symbolStep);
+	int16 symbolStep = _vm->turnDirLeft(casterChampion->_symbolStep);
 	casterChampion->_symbolStep = symbolStep;
 	casterChampion->_symbols[symbolStep] = '\0';
 	_vm->_eventMan->showMouse();
@@ -1308,7 +1308,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == _vm->returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == _vm->turnDirRight(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;

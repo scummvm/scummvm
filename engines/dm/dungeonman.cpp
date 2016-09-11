@@ -40,7 +40,7 @@ namespace DM {
 void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsForward;
-	_vm->turnDirRight(dir);
+	dir = _vm->turnDirRight(dir);
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsRight;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsRight;
 }

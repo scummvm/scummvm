@@ -540,23 +540,23 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) {
 		/* If source and destination squares are adjacent (if party or group is not being teleported) */
 		int16 primaryDirection = _vm->_groupMan->getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
-		int16 secondaryDirection = _vm->returnNextVal(primaryDirection);
+		int16 secondaryDirection = _vm->turnDirRight(primaryDirection);
 		for (int16 i = 0; i < 4; ++i)
 			intermediaryChampionOrCreatureOrdinalInCell[i] = 0;
 
-		intermediaryChampionOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)] = championOrCreatureOrdinalInCell[primaryDirection];
-		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)])
+		intermediaryChampionOrCreatureOrdinalInCell[_vm->turnDirLeft(primaryDirection)] = championOrCreatureOrdinalInCell[primaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->turnDirLeft(primaryDirection)])
 			checkDestinationSquareProjectileImpacts = true;
 
-		intermediaryChampionOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)] = championOrCreatureOrdinalInCell[secondaryDirection];
-		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)])
+		intermediaryChampionOrCreatureOrdinalInCell[_vm->turnDirRight(secondaryDirection)] = championOrCreatureOrdinalInCell[secondaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->turnDirRight(secondaryDirection)])
 			checkDestinationSquareProjectileImpacts = true;
 
 		if (!championOrCreatureOrdinalInCell[primaryDirection])
-			championOrCreatureOrdinalInCell[primaryDirection] = championOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)];
+			championOrCreatureOrdinalInCell[primaryDirection] = championOrCreatureOrdinalInCell[_vm->turnDirLeft(primaryDirection)];
 
 		if (!championOrCreatureOrdinalInCell[secondaryDirection])
-			championOrCreatureOrdinalInCell[secondaryDirection] = championOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)];
+			championOrCreatureOrdinalInCell[secondaryDirection] = championOrCreatureOrdinalInCell[_vm->turnDirRight(secondaryDirection)];
 	}
 	uint16 projectileMapX = srcMapX; /* Check impacts with projectiles on the source square */
 	uint16 projectileMapY = srcMapY;
