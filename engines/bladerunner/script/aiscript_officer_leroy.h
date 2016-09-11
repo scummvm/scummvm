@@ -34,8 +34,25 @@ public:
 	AIScript_Officer_Leroy(BladeRunnerEngine *vm);
 
 	void Initialize();
-	void UpdateAnimation(int *animation, int *frame);
-	void ChangeAnimationMode(int mode);
+	bool Update();
+	void TimerExpired(int timer);
+	void CompletedMovementTrack();
+	void ReceivedClue(int clueId, int fromActorId);
+	void ClickedByPlayer();
+	void EnteredScene(int sceneId);
+	void OtherAgentEnteredThisScene();
+	void OtherAgentExitedThisScene();
+	void OtherAgentEnteredCombatMode();
+	void ShotAtAndMissed();
+	void ShotAtAndHit();
+	void Retired(int byActorId);
+	void GetFriendlinessModifierIfGetsClue();
+	bool GoalChanged(int currentGoalNumber, int newGoalNumber);
+	bool UpdateAnimation(int *animation, int *frame);
+	bool ChangeAnimationMode(int mode);
+	void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4);
+	void SetAnimationState(int animationState, int a2, int a3, int a4);
+	bool ReachedMovementTrackWaypoint();
 };
 
 } // End of namespace BladeRunner

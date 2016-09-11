@@ -40,7 +40,51 @@ void AIScript_Officer_Leroy::Initialize()
 	// Actor_Set_Frame_Rate_FPS(23, 8);
 }
 
-void AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
+bool AIScript_Officer_Leroy::Update() {
+	return false;
+}
+
+void AIScript_Officer_Leroy::TimerExpired(int timer) {
+}
+
+void AIScript_Officer_Leroy::CompletedMovementTrack() {
+}
+
+void AIScript_Officer_Leroy::ReceivedClue(int clueId, int fromActorId) {
+}
+
+void AIScript_Officer_Leroy::ClickedByPlayer() {
+}
+
+void AIScript_Officer_Leroy::EnteredScene(int sceneId) {
+}
+
+void AIScript_Officer_Leroy::OtherAgentEnteredThisScene() {
+}
+
+void AIScript_Officer_Leroy::OtherAgentExitedThisScene() {
+}
+
+void AIScript_Officer_Leroy::OtherAgentEnteredCombatMode() {
+}
+
+void AIScript_Officer_Leroy::ShotAtAndMissed() {
+}
+
+void AIScript_Officer_Leroy::ShotAtAndHit() {
+}
+
+void AIScript_Officer_Leroy::Retired(int byActorId) {
+}
+
+void AIScript_Officer_Leroy::GetFriendlinessModifierIfGetsClue() {
+}
+
+bool AIScript_Officer_Leroy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
+	return false;
+}
+
+bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
 {
 	if (var_45D5B8 == 0) {
 		*animation = 589;
@@ -70,11 +114,11 @@ void AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
 			var_45D5B8 = Random_Query(0, 2);
 		}
 	}
-
 	*frame = var_45D5B4_frame;
+	return true;
 }
 
-void AIScript_Officer_Leroy::ChangeAnimationMode(int mode)
+bool AIScript_Officer_Leroy::ChangeAnimationMode(int mode)
 {
 	switch (mode)
 	{
@@ -82,6 +126,16 @@ void AIScript_Officer_Leroy::ChangeAnimationMode(int mode)
 			var_45D5B0_animation_state = 32;
 			break;
 	}
+	return true;
 }
 
+void AIScript_Officer_Leroy::QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) {
+}
+
+void AIScript_Officer_Leroy::SetAnimationState(int animationState, int a2, int a3, int a4) {
+}
+
+bool AIScript_Officer_Leroy::ReachedMovementTrackWaypoint() {
+	return false;
+}
 } // End of namespace BladeRunner

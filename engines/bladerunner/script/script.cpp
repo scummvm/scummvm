@@ -146,7 +146,9 @@ void Script::SceneFrameAdvanced(int frame) {
 
 void Script::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	_inScriptCounter++;
-	_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
+	//TODO remove this check
+	if(_currentScript)
+		_currentScript->ActorChangedGoal(actorId, newGoal, oldGoal, currentSet);
 	_inScriptCounter--;
 }
 
@@ -788,10 +790,27 @@ void ScriptBase::Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a
 	//TODO
 	warning("Sound_Play_Speech_Line(%d, %d, %d, %d, %d)", actorId, speechId, a3, a4, a5);
 }
-// ScriptBase::Sound_Left_Footstep_Walk
-// ScriptBase::Sound_Right_Footstep_Walk
-// ScriptBase::Sound_Left_Footstep_Run
-// ScriptBase::Sound_Right_Footstep_Run
+
+void ScriptBase::Sound_Left_Footstep_Walk(int actorId) {
+	//TODO
+	warning("Sound_Left_Footstep_Walk(%d)", actorId);
+}
+
+void ScriptBase::Sound_Right_Footstep_Walk(int actorId) {
+	//TODO
+	warning("Sound_Right_Footstep_Walk(%d)", actorId);
+}
+
+void ScriptBase::Sound_Left_Footstep_Run(int actorId) {
+	//TODO
+	warning("Sound_Left_Footstep_Run(%d)", actorId);
+}
+
+void ScriptBase::Sound_Right_Footstep_Run(int actorId) {
+	//TODO
+	warning("Sound_Right_Footstep_Run(%d)", actorId);
+}
+
 // ScriptBase::Sound_Walk_Shuffle_Stop
 
 void ScriptBase::Footstep_Sounds_Set(int walkboxId, int stepSound) {

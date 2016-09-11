@@ -154,10 +154,10 @@ protected:
 	int Random_Query(int min, int max);
 	void Sound_Play(int id, int volume, int panFrom, int panTo, int priority);
 	void Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a4, int a5);
-	// Sound_Left_Footstep_Walk
-	// Sound_Right_Footstep_Walk
-	// Sound_Left_Footstep_Run
-	// Sound_Right_Footstep_Run
+	void Sound_Left_Footstep_Walk(int actorId);
+	void Sound_Right_Footstep_Walk(int actorId);
+	void Sound_Left_Footstep_Run(int actorId);
+	void Sound_Right_Footstep_Run(int actorId);
 	// Sound_Walk_Shuffle_Stop
 	void Footstep_Sounds_Set(int index, int value);
 	void Footstep_Sound_Override_On(int footstepSoundOverride);
@@ -822,8 +822,25 @@ public:
 	{}
 
 	virtual void Initialize() = 0;
-	virtual void UpdateAnimation(int *animation, int *frame) = 0;
-	virtual void ChangeAnimationMode(int mode) = 0;
+	virtual bool Update() = 0;
+	virtual void TimerExpired(int timer) = 0;
+	virtual void CompletedMovementTrack() = 0;
+	virtual void ReceivedClue(int clueId, int fromActorId) = 0;
+	virtual void ClickedByPlayer() = 0;
+	virtual void EnteredScene(int sceneId) = 0;
+	virtual void OtherAgentEnteredThisScene() = 0;
+	virtual void OtherAgentExitedThisScene() = 0;
+	virtual void OtherAgentEnteredCombatMode() = 0;
+	virtual void ShotAtAndMissed() = 0;
+	virtual void ShotAtAndHit() = 0;
+	virtual void Retired(int byActorId) = 0;
+	virtual void GetFriendlinessModifierIfGetsClue() = 0;
+	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
+	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
+	virtual bool ChangeAnimationMode(int mode) = 0;
+	virtual void QueryAnimationState(int *animationState, int *a2, int *a3, int *a4) = 0;
+	virtual void SetAnimationState(int animationState, int a2, int a3, int a4) = 0;
+	virtual bool ReachedMovementTrackWaypoint() = 0;
 };
 
 class AIScripts {
