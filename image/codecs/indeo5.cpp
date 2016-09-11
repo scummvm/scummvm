@@ -100,8 +100,7 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 }
 
 int Indeo5Decoder::decodePictureHeader() {
-	IVIPicConfig    picConf;
-
+	IVIPicConfig picConf;
 	int ret;
 
 	if (_ctx._gb->getBits(5) != 0x1F) {
@@ -201,8 +200,8 @@ bool Indeo5Decoder::isNonNullFrame() const {
 }
 
 int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
-	int		i, ret;
-	uint8	bandFlags;
+	int i, ret;
+	uint8 bandFlags;
 
 	bandFlags = _ctx._gb->getBits(8);
 
@@ -259,10 +258,9 @@ int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
 }
 
 int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
-	int         x, y, mvX, mvY, mvDelta, offs, mbOffset,
-		mvScale, blksPerMb, s;
-	IVIMbInfo   *mb, *refMb;
-	int         rowOffset = band->_mbSize * band->_pitch;
+	int x, y, mvX, mvY, mvDelta, offs, mbOffset, mvScale, blksPerMb, s;
+	IVIMbInfo *mb, *refMb;
+	int rowOffset = band->_mbSize * band->_pitch;
 
 	mb = tile->_mbs;
 	refMb = tile->_refMbs;
@@ -386,11 +384,11 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 }
 
 int Indeo5Decoder::decode_gop_header() {
-	int				result, i, p, tileSize, picSizeIndx, mbSize, blkSize, isScalable;
-	int				quantMat;
-	bool			blkSizeChanged = false;
-	IVIBandDesc     *band, *band1, *band2;
-	IVIPicConfig    picConf;
+	int result, i, p, tileSize, picSizeIndx, mbSize, blkSize, isScalable;
+	int quantMat;
+	bool blkSizeChanged = false;
+	IVIBandDesc *band, *band1, *band2;
+	IVIPicConfig picConf;
 
 	_ctx._gopFlags = _ctx._gb->getBits(8);
 

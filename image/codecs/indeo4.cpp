@@ -89,8 +89,8 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 }
 
 int Indeo4Decoder::decodePictureHeader() {
-	int             pic_size_indx, i, p;
-	IVIPicConfig    _picConf;
+	int pic_size_indx, i, p;
+	IVIPicConfig picConf;
 
 	if (_ctx._gb->getBits(18) != 0x3FFF8) {
 		warning("Invalid picture start code!");
@@ -133,21 +133,21 @@ int Indeo4Decoder::decodePictureHeader() {
 
 	pic_size_indx = _ctx._gb->getBits(3);
 	if (pic_size_indx == IVI4_PIC_SIZE_ESC) {
-		_picConf._picHeight = _ctx._gb->getBits(16);
-		_picConf._picWidth = _ctx._gb->getBits(16);
+		picConf._picHeight = _ctx._gb->getBits(16);
+		picConf._picWidth = _ctx._gb->getBits(16);
 	} else {
-		_picConf._picHeight = _ivi4_common_pic_sizes[pic_size_indx * 2 + 1];
-		_picConf._picWidth = _ivi4_common_pic_sizes[pic_size_indx * 2];
+		picConf._picHeight = _ivi4_common_pic_sizes[pic_size_indx * 2 + 1];
+		picConf._picWidth = _ivi4_common_pic_sizes[pic_size_indx * 2];
 	}
 
 	// Decode tile dimensions.
 	_ctx._usesTiling = _ctx._gb->getBit();
 	if (_ctx._usesTiling) {
-		_picConf._tileHeight = scaleTileSize(_picConf._picHeight, _ctx._gb->getBits(4));
-		_picConf._tileWidth = scaleTileSize(_picConf._picWidth, _ctx._gb->getBits(4));
+		picConf._tileHeight = scaleTileSize(picConf._picHeight, _ctx._gb->getBits(4));
+		picConf._tileWidth = scaleTileSize(picConf._picWidth, _ctx._gb->getBits(4));
 	} else {
-		_picConf._tileHeight = _picConf._picHeight;
-		_picConf._tileWidth = _picConf._picWidth;
+		picConf._tileHeight = picConf._picHeight;
+		picConf._tileWidth = picConf._picWidth;
 	}
 
 	// Decode chroma subsampling. We support only 4:4 aka YVU9.
@@ -155,34 +155,34 @@ int Indeo4Decoder::decodePictureHeader() {
 		warning("Only YVU9 picture format is supported!");
 		return -1;
 	}
-	_picConf._chromaHeight = (_picConf._picHeight + 3) >> 2;
-	_picConf._chromaWidth = (_picConf._picWidth + 3) >> 2;
+	picConf._chromaHeight = (picConf._picHeight + 3) >> 2;
+	picConf._chromaWidth = (picConf._picWidth + 3) >> 2;
 
 	// decode subdivision of the planes
-	_picConf._lumaBands = decodePlaneSubdivision();
-	_picConf._chromaBands = 0;
-	if (_picConf._lumaBands)
-		_picConf._chromaBands = decodePlaneSubdivision();
-	_ctx._isScalable = _picConf._lumaBands != 1 || _picConf._chromaBands != 1;
-	if (_ctx._isScalable && (_picConf._lumaBands != 4 || _picConf._chromaBands != 1)) {
+	picConf._lumaBands = decodePlaneSubdivision();
+	picConf._chromaBands = 0;
+	if (picConf._lumaBands)
+		picConf._chromaBands = decodePlaneSubdivision();
+	_ctx._isScalable = picConf._lumaBands != 1 || picConf._chromaBands != 1;
+	if (_ctx._isScalable && (picConf._lumaBands != 4 || picConf._chromaBands != 1)) {
 		warning("Scalability: unsupported subdivision! Luma bands: %d, chroma bands: %d",
-			_picConf._lumaBands, _picConf._chromaBands);
+			picConf._lumaBands, picConf._chromaBands);
 		return -1;
 	}
 
 	// check if picture layout was changed and reallocate buffers
-	if (_picConf.ivi_pic_config_cmp(_ctx._picConf)) {
-		if (IVIPlaneDesc::initPlanes(_ctx._planes, &_picConf, 1)) {
+	if (picConf.ivi_pic_config_cmp(_ctx._picConf)) {
+		if (IVIPlaneDesc::initPlanes(_ctx._planes, &picConf, 1)) {
 			warning("Couldn't reallocate color planes!");
 			_ctx._picConf._lumaBands = 0;
 			return -2;
 		}
 
-		_ctx._picConf = _picConf;
+		_ctx._picConf = picConf;
 
 		// set default macroblock/block dimensions
 		for (p = 0; p <= 2; p++) {
-			for (i = 0; i < (!p ? _picConf._lumaBands : _picConf._chromaBands); i++) {
+			for (i = 0; i < (!p ? picConf._lumaBands : picConf._chromaBands); i++) {
 				_ctx._planes[p]._bands[i]._mbSize = !p ? (!_ctx._isScalable ? 16 : 8) : 4;
 				_ctx._planes[p]._bands[i]._blkSize = !p ? 8 : 4;
 			}
@@ -233,13 +233,13 @@ int Indeo4Decoder::decodePictureHeader() {
 }
 
 void Indeo4Decoder::switchBuffers() {
-	int is_prev_ref = 0, is_ref = 0;
+	int isPrevRef = 0, isRef = 0;
 
 	switch (_ctx._prevFrameType) {
 	case IVI4_FRAMETYPE_INTRA:
 	case IVI4_FRAMETYPE_INTRA1:
 	case IVI4_FRAMETYPE_INTER:
-		is_prev_ref = 1;
+		isPrevRef = 1;
 		break;
 	}
 
@@ -247,16 +247,16 @@ void Indeo4Decoder::switchBuffers() {
 	case IVI4_FRAMETYPE_INTRA:
 	case IVI4_FRAMETYPE_INTRA1:
 	case IVI4_FRAMETYPE_INTER:
-		is_ref = 1;
+		isRef = 1;
 		break;
 
 	default:
 		break;
 	}
 
-	if (is_prev_ref && is_ref) {
+	if (isPrevRef && isRef) {
 		SWAP(_ctx._dstBuf, _ctx._refBuf);
-	} else if (is_prev_ref) {
+	} else if (isPrevRef) {
 		SWAP(_ctx._refBuf, _ctx._bRefBuf);
 		SWAP(_ctx._dstBuf, _ctx._refBuf);
 	}
@@ -443,13 +443,13 @@ int Indeo4Decoder::decodeBandHeader(IVIBandDesc *band) {
 }
 
 int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
-	int         x, y, mvX, mvY, mvDelta, offs, mbOffset, blksPerMb,
+	int x, y, mvX, mvY, mvDelta, offs, mbOffset, blksPerMb,
 		mvScale, mbTypeBits, s;
-	IVIMbInfo	*mb, *ref_mb;
-	int			row_offset = band->_mbSize * band->_pitch;
+	IVIMbInfo *mb, *refMb;
+	int row_offset = band->_mbSize * band->_pitch;
 
 	mb = tile->_mbs;
-	ref_mb = tile->_refMbs;
+	refMb = tile->_refMbs;
 	offs = tile->_yPos * band->_pitch + tile->_xPos;
 
 	blksPerMb = band->_mbSize != band->_blkSize ? 4 : 1;
@@ -489,24 +489,24 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 				}
 
 				mb->_mvX = mb->_mvY = 0; // no motion vector coded
-				if (band->_inheritMv && ref_mb) {
+				if (band->_inheritMv && refMb) {
 					// motion vector inheritance
 					if (mvScale) {
-						mb->_mvX = scaleMV(ref_mb->_mvX, mvScale);
-						mb->_mvY = scaleMV(ref_mb->_mvY, mvScale);
+						mb->_mvX = scaleMV(refMb->_mvX, mvScale);
+						mb->_mvY = scaleMV(refMb->_mvY, mvScale);
 					} else {
-						mb->_mvX = ref_mb->_mvX;
-						mb->_mvY = ref_mb->_mvY;
+						mb->_mvX = refMb->_mvX;
+						mb->_mvY = refMb->_mvY;
 					}
 				}
 			} else {
 				if (band->_inheritMv) {
 					// copy mb_type from corresponding reference mb
-					if (!ref_mb) {
-						warning("ref_mb unavailable");
+					if (!refMb) {
+						warning("refMb unavailable");
 						return -1;
 					}
-					mb->_type = ref_mb->_type;
+					mb->_type = refMb->_type;
 				} else if (_ctx._frameType == IVI4_FRAMETYPE_INTRA ||
 					_ctx._frameType == IVI4_FRAMETYPE_INTRA1) {
 					mb->_type = 0; // mb_type is always INTRA for intra-frames
@@ -518,7 +518,7 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 				mb->_qDelta = 0;
 				if (band->_inheritQDelta) {
-					if (ref_mb) mb->_qDelta = ref_mb->_qDelta;
+					if (refMb) mb->_qDelta = refMb->_qDelta;
 				} else if (mb->_cbp || (!band->_plane && !band->_bandNum &&
 					_ctx._inQ)) {
 					mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
@@ -530,14 +530,14 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 					mb->_mvX = mb->_mvY = 0; // there is no motion vector in intra-macroblocks
 				} else {
 					if (band->_inheritMv) {
-						if (ref_mb) {
+						if (refMb) {
 							// motion vector inheritance
 							if (mvScale) {
-								mb->_mvX = scaleMV(ref_mb->_mvX, mvScale);
-								mb->_mvY = scaleMV(ref_mb->_mvY, mvScale);
+								mb->_mvX = scaleMV(refMb->_mvX, mvScale);
+								mb->_mvY = scaleMV(refMb->_mvY, mvScale);
 							} else {
-								mb->_mvX = ref_mb->_mvX;
-								mb->_mvY = ref_mb->_mvY;
+								mb->_mvX = refMb->_mvX;
+								mb->_mvY = refMb->_mvY;
 							}
 						}
 					} else {
@@ -582,8 +582,8 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 				}
 
 			mb++;
-			if (ref_mb)
-				ref_mb++;
+			if (refMb)
+				refMb++;
 			mbOffset += band->_mbSize;
 		}
 

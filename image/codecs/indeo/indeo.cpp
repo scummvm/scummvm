@@ -86,9 +86,9 @@ static const IVIHuffDesc ivi_blk_huff_desc[8] = {
 /*------------------------------------------------------------------------*/
 
 int IVIHuffDesc::createHuffFromDesc(VLC *vlc, bool flag) const {
-	int         pos, i, j, codesPerRow, prefix, notLastRow;
-	uint16      codewords[256];
-	uint8       bits[256];
+	int pos, i, j, codesPerRow, prefix, notLastRow;
+	uint16 codewords[256];
+	uint8 bits[256];
 
 	pos = 0; // current position = 0
 
@@ -268,8 +268,7 @@ IVIPlaneDesc::IVIPlaneDesc() : _width(0), _height(0), _numBands(0), _bands(nullp
 
 int IVIPlaneDesc::initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool isIndeo4) {
 	int p, b;
-	uint32 b_width, b_height, align_fac, width_aligned,
-		height_aligned, bufSize;
+	uint32 b_width, b_height, align_fac, width_aligned, height_aligned, bufSize;
 	IVIBandDesc *band;
 
 	freeBuffers(planes);
@@ -430,8 +429,8 @@ int AVFrame::getBuffer(int flags) {
 	_data[0] = (uint8 *)avMallocZ(_width * _height);
 	
 	// UV Chroma Channels
-	_data[1] = (uint8 *)avMalloc(_width * _height);
-	_data[2] = (uint8 *)avMalloc(_width * _height);
+	_data[1] = (uint8 *)malloc(_width * _height);
+	_data[2] = (uint8 *)malloc(_width * _height);
 	Common::fill(_data[1], _data[1] + _width * _height, 0x80);
 	Common::fill(_data[2], _data[2] + _width * _height, 0x80);
 
@@ -603,8 +602,8 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 }
 
 int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
-	int         result, i, t, idx1, idx2, pos;
-	IVITile *	tile;
+	int result, i, t, idx1, idx2, pos;
+	IVITile *tile;
 
 	band->_buf = band->_bufs[_ctx._dstBuf];
 	if (!band->_buf) {
@@ -711,12 +710,12 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 
 void IndeoDecoderBase::recomposeHaar(const IVIPlaneDesc *_plane,
 		uint8 *dst, const int dstPitch) {
-	int           x, y, indx, b0, b1, b2, b3, p0, p1, p2, p3;
-	const short * b0Ptr, *b1Ptr, *b2Ptr, *b3Ptr;
-	int32         _pitch;
+	int x, y, indx, b0, b1, b2, b3, p0, p1, p2, p3;
+	const short *b0Ptr, *b1Ptr, *b2Ptr, *b3Ptr;
+	int32 pitch;
 
 	// all bands should have the same _pitch
-	_pitch = _plane->_bands[0]._pitch;
+	pitch = _plane->_bands[0]._pitch;
 
 	// get pointers to the wavelet bands
 	b0Ptr = _plane->_bands[0]._buf;
@@ -747,22 +746,22 @@ void IndeoDecoderBase::recomposeHaar(const IVIPlaneDesc *_plane,
 
 		dst += dstPitch << 1;
 
-		b0Ptr += _pitch;
-		b1Ptr += _pitch;
-		b2Ptr += _pitch;
-		b3Ptr += _pitch;
+		b0Ptr += pitch;
+		b1Ptr += pitch;
+		b2Ptr += pitch;
+		b3Ptr += pitch;
 	}// for y
 }
 
 void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 		uint8 *dst, const int dstPitch) {
-	int           x, y, indx;
-	int32         p0, p1, p2, p3, tmp0, tmp1, tmp2;
-	int32         b0_1, b0_2, b1_1, b1_2, b1_3, b2_1, b2_2, b2_3, b2_4, b2_5, b2_6;
-	int32         b3_1, b3_2, b3_3, b3_4, b3_5, b3_6, b3_7, b3_8, b3_9;
-	int32         _pitch, back_pitch;
-	const short * b0Ptr, *b1Ptr, *b2Ptr, *b3Ptr;
-	const int     _numBands = 4;
+	int x, y, indx;
+	int32 p0, p1, p2, p3, tmp0, tmp1, tmp2;
+	int32 b0_1, b0_2, b1_1, b1_2, b1_3, b2_1, b2_2, b2_3, b2_4, b2_5, b2_6;
+	int32 b3_1, b3_2, b3_3, b3_4, b3_5, b3_6, b3_7, b3_8, b3_9;
+	int32 _pitch, back_pitch;
+	const short *b0Ptr, *b1Ptr, *b2Ptr, *b3Ptr;
+	const int numBands = 4;
 
 	// all bands should have the same _pitch
 	_pitch = _plane->_bands[0]._pitch;
@@ -781,25 +780,25 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 		if (y + 2 >= _plane->_height)
 			_pitch = 0;
 		// load storage variables with values
-		if (_numBands > 0) {
+		if (numBands > 0) {
 			b0_1 = b0Ptr[0];
 			b0_2 = b0Ptr[_pitch];
 		}
 
-		if (_numBands > 1) {
+		if (numBands > 1) {
 			b1_1 = b1Ptr[back_pitch];
 			b1_2 = b1Ptr[0];
 			b1_3 = b1_1 - b1_2 * 6 + b1Ptr[_pitch];
 		}
 
-		if (_numBands > 2) {
+		if (numBands > 2) {
 			b2_2 = b2Ptr[0];		// b2[x,  y  ]
 			b2_3 = b2_2;			// b2[x+1,y  ] = b2[x,y]
 			b2_5 = b2Ptr[_pitch];	// b2[x  ,y+1]
 			b2_6 = b2_5;			// b2[x+1,y+1] = b2[x,y+1]
 		}
 
-		if (_numBands > 3) {
+		if (numBands > 3) {
 			b3_2 = b3Ptr[back_pitch];	// b3[x  ,y-1]
 			b3_3 = b3_2;				// b3[x+1,y-1] = b3[x  ,y-1]
 			b3_5 = b3Ptr[0];			// b3[x  ,y  ]
@@ -832,7 +831,7 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 			p0 = p1 = p2 = p3 = 0;
 
 			// process the LL-band by applying LPF both vertically and horizontally
-			if (_numBands > 0) {
+			if (numBands > 0) {
 				tmp0 = b0_1;
 				tmp2 = b0_2;
 				b0_1 = b0Ptr[indx + 1];
@@ -846,7 +845,7 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 			}
 
 			// process the HL-band by applying HPF vertically and LPF horizontally
-			if (_numBands > 1) {
+			if (numBands > 1) {
 				tmp0 = b1_2;
 				tmp1 = b1_1;
 				b1_2 = b1Ptr[indx + 1];
@@ -862,7 +861,7 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 			}
 
 			// process the LH-band by applying LPF vertically and HPF horizontally
-			if (_numBands > 2) {
+			if (numBands > 2) {
 				b2_3 = b2Ptr[indx + 1];
 				b2_6 = b2Ptr[_pitch + indx + 1];
 
@@ -876,7 +875,7 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 			}
 
 			// process the HH-band by applying HPF both vertically and horizontally
-			if (_numBands > 3) {
+			if (numBands > 3) {
 				b3_6 = b3Ptr[indx + 1];            // b3[x+1,y  ]
 				b3_3 = b3Ptr[back_pitch + indx + 1]; // b3[x+1,y-1]
 
@@ -911,9 +910,9 @@ void IndeoDecoderBase::recompose53(const IVIPlaneDesc *_plane,
 }
 
 void IndeoDecoderBase::outputPlane(IVIPlaneDesc *_plane, uint8 *dst, int dstPitch) {
-	int           x, y;
-	const int16 * src = _plane->_bands[0]._buf;
-	uint32        pitch = _plane->_bands[0]._pitch;
+	int x, y;
+	const int16 *src = _plane->_bands[0]._buf;
+	uint32 pitch = _plane->_bands[0]._pitch;
 
 	if (!src)
 		return;
@@ -928,12 +927,12 @@ void IndeoDecoderBase::outputPlane(IVIPlaneDesc *_plane, uint8 *dst, int dstPitc
 
 int IndeoDecoderBase::processEmptyTile(IVIBandDesc *band,
 			IVITile *tile, int32 mvScale) {
-	int             x, y, needMc, mbn, blk, numBlocks, mvX, mvY, mcType;
-	int             offs, mbOffset, rowOffset, ret;
-	IVIMbInfo       *mb, *refMb;
-	const int16 *	src;
-	int16 *			dst;
-	IviMCFunc		mcNoDeltaFunc;
+	int x, y, needMc, mbn, blk, numBlocks, mvX, mvY, mcType;
+	int offs, mbOffset, rowOffset, ret;
+	IVIMbInfo *mb, *refMb;
+	const int16 *src;
+	int16 *dst;
+	IviMCFunc mcNoDeltaFunc;
 
 	if (tile->_numMBs != IVI_MBs_PER_TILE(tile->_width, tile->_height, band->_mbSize)) {
 		warning("Allocated tile size %d mismatches "
@@ -1237,7 +1236,7 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 		IviMCFunc mc, IviMCAvgFunc mcAvg, int mvX, int mvY,
 		int mvX2, int mvY2, int *prevDc, int isIntra,
 		int mcType, int mcType2, uint32 quant, int offs) {
-	const uint16 *base_tab = isIntra ? band->_intraBase : band->_interBase;
+	const uint16 *baseTab = isIntra ? band->_intraBase : band->_interBase;
 	RVMapDesc *rvmap = band->_rvMap;
 	uint8 colFlags[8];
 	int32 trvec[64];
@@ -1295,7 +1294,7 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 		if (!val)
 			warning("Val = 0 encountered!");
 
-		q = (base_tab[pos] * quant) >> 9;
+		q = (baseTab[pos] * quant) >> 9;
 		if (q > 1)
 			val = val * q + FFSIGN(val) * (((q ^ 1) - 1) >> 1);
 		trvec[pos] = val;

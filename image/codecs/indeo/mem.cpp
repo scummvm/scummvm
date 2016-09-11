@@ -83,12 +83,8 @@ static inline int avSizeMult(size_t a, size_t b, size_t *r) {
 
 /*------------------------------------------------------------------------*/
 
-void *avMalloc(size_t size) {
-	return malloc(size);
-}
-
 void *avMallocZ(size_t size) {
-	void *ptr = avMalloc(size);
+	void *ptr = malloc(size);
 	if (ptr)
 		memset(ptr, 0, size);
 
@@ -96,20 +92,13 @@ void *avMallocZ(size_t size) {
 }
 
 void *avMallocArray(size_t nmemb, size_t size) {
-	if (!size || nmemb >= MAX_INTEGER / size)
-		return nullptr;
+	assert(size && nmemb < MAX_INTEGER / size);
 	return malloc(nmemb * size);
 }
 
 void *avMallocZArray(size_t nmemb, size_t size) {
-	if (!size || nmemb >= MAX_INTEGER / size)
-		return NULL;
-
+	assert(size && nmemb < MAX_INTEGER / size);
 	return avMallocZ(nmemb * size);
-}
-
-void avFree(void *ptr) {
-	free(ptr);
 }
 
 void avFreeP(void *arg) {
@@ -127,12 +116,12 @@ void *avReallocF(void *ptr, size_t nelem, size_t elsize) {
 	void *r;
 
 	if (avSizeMult(elsize, nelem, &size)) {
-		avFree(ptr);
+		free(ptr);
 		return nullptr;
 	}
 	r = avRealloc(ptr, size);
 	if (!r)
-		avFree(ptr);
+		free(ptr);
 
 	return r;
 }

@@ -41,17 +41,6 @@ namespace Indeo {
 
 /**
  * Allocate a memory block with alignment suitable for all memory accesses
- * (including vectors if available on the CPU).
- *
- * @param size Size in bytes for the memory block to be allocated
- * @return Pointer to the allocated block, or `NULL` if the block cannot
- *         be allocated
- * @see av_mallocz()
- */
-extern void *avMalloc(size_t size);
-
-/**
- * Allocate a memory block with alignment suitable for all memory accesses
  * (including vectors if available on the CPU) and zero all the bytes of the
  * block.
  *
@@ -88,19 +77,6 @@ extern void *avMallocArray(size_t nmemb, size_t size);
  * @see av_malloc_array()
  */
 extern void *avMallocZArray(size_t nmemb, size_t size);
-
-/**
- * Free a memory block which has been allocated with a function of av_malloc()
- * or av_realloc() family.
- *
- * @param ptr Pointer to the memory block which should be freed.
- *
- * @note `ptr = NULL` is explicitly allowed.
- * @note It is recommended that you use av_freep() instead, to prevent leaving
- *       behind dangling pointers.
- * @see av_freep()
- */
-extern void avFree(void *ptr);
 
 /**
  * Free a memory block which has been allocated with a function of av_malloc()
