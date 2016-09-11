@@ -20,35 +20,16 @@
  *
  */
 
-#include "titanic/moves/trip_down_canal.h"
+#include "titanic/support/strings.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CTripDownCanal, CMovePlayerTo)
-	ON_MESSAGE(MouseButtonDownMsg)
-END_MESSAGE_MAP()
-
-CTripDownCanal::CTripDownCanal() : CMovePlayerTo() {
-}
-
-void CTripDownCanal::save(SimpleFile *file, int indent) {
-	file->writeNumberLine(1, indent);
-	CMovePlayerTo::save(file, indent);
-}
-
-void CTripDownCanal::load(SimpleFile *file) {
-	file->readNumber();
-	CMovePlayerTo::load(file);
-}
-
-bool CTripDownCanal::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (stateGetSeason() == SEASON_WINTER) {
-		petDisplayMessage(CANAL_CLOSED_FOR_WINTER);
-	} else if (getGameManager()) {
-		changeView(_destination);
-	}
-
-	return true;
+Strings::Strings() {
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/STRINGS");
+	while (r->pos() < r->size())
+		push_back(readStringFromStream(r));
+	delete r;
 }
 
 } // End of namespace Titanic

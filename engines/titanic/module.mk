@@ -463,6 +463,7 @@ MODULE_OBJS := \
 	support/font.o \
 	support/image.o \
 	support/image_decoders.o \
+	support/strings.o \
 	support/mouse_cursor.o \
 	support/movie.o \
 	support/movie_clip.o \

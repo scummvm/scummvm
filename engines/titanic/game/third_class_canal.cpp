@@ -39,7 +39,7 @@ void CThirdClassCanal::load(SimpleFile *file) {
 }
 
 bool CThirdClassCanal::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	petDisplayMessage("This area is off limits to passengers.");
+	petDisplayMessage(AREA_OFF_LIMIT_TO_PASSENGERS);
 	return true;
 }
 

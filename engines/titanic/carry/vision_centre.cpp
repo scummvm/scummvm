@@ -49,7 +49,7 @@ bool CVisionCentre::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_fieldE0) {
 		return CBrain::MouseButtonDownMsg(msg);
 	} else {
-		petDisplayMessage(1, "It would be nice if you could take that but you can't.");
+		petDisplayMessage(1, NICE_IF_TAKE_BUT_CANT);
 		return true;
 	}
 }
@@ -58,7 +58,7 @@ bool CVisionCentre::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_fieldE0) {
 		return CBrain::MouseDragStartMsg(msg);
 	} else {
-		petDisplayMessage(1, "It would be nice if you could take that but you can't.");
+		petDisplayMessage(1, NICE_IF_TAKE_BUT_CANT);
 		return true;
 	}
 }

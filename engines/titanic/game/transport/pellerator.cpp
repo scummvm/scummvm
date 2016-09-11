@@ -67,9 +67,9 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	int newDest = msg->_newStatus;
 
 	if (msg->_newStatus == _destination) {
-		petDisplayMessage(1, "You are already at your chosen destination.");
+		petDisplayMessage(1, ALREADY_AT_DESTINATION);
 	} else if (classNum == 3 || (msg->_newStatus > 4 && classNum != 1)) {
-		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (newDest > _destination) {
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?

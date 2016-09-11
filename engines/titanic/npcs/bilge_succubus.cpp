@@ -81,7 +81,7 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 		playSound("z#28.wav", 70);
 	} else if (!_enabled) {
-		petDisplayMessage(2, "The Succ-U-Bus is in Standby, or \"Off\" mode at present.");
+		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return false;
 	} else if (!pet) {
 		return false;
@@ -96,7 +96,7 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			if (_startFrame4 >= 0)
 				playMovie(_startFrame4, _endFrame4, MOVIE_GAMESTATE);
 		} else {
-			petDisplayMessage(2, "There is currently nothing to deliver.");
+			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		}
 	}
 
@@ -112,7 +112,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	CGameObject *mailObject = findMail(petRoomFlags);
 
 	if (!mailObject) {
-		petDisplayMessage(2, "There is currently nothing in the tray to send.");
+		petDisplayMessage(2, NOTHING_IN_SUCCUBUS_TRAY);
 		return true;
 	}
 
@@ -329,7 +329,7 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 	uint petRoomFlags = pet->getRoomFlags();
 	if (mailExists(petRoomFlags)) {
-		petDisplayMessage(2, "The Succ-U-Bus is a Single Entity Delivery Device.");
+		petDisplayMessage(2, SUCCUBUS_SINGLE_DELIVERY);
 		item->petAddToInventory();
 		return true;
 	}
@@ -387,7 +387,7 @@ bool CBilgeSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CBilgeSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
-	petDisplayMessage(2, "");
+	petDisplayMessage(2, BLANK);
 	petClear();
 
 	if (_soundHandle != -1) {

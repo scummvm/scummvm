@@ -52,12 +52,11 @@ bool CEnterExitFirstClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		break;
 
 	case 2:
-		petDisplayMessage(1, "This room is reserved for the exclusive use of first class passengeres."
-			" That does not currently include you");
+		petDisplayMessage(1, ROOM_RESERVED_FOR_FIRST_CLASS);
 		break;
 
 	default:
-		petDisplayMessage("No losers.");
+		petDisplayMessage(NO_LOSERS);
 		break;
 	}
 

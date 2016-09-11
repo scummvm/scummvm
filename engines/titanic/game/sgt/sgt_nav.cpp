@@ -59,11 +59,9 @@ bool SGTNav::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		changeView("SGTState.Node 2.E");
 	} else if (_statics->_v1 == "Open") {
-		petDisplayMessage(1, "This is your stateroom. It is for sleeping. If you desire "
-			"entertainment or relaxation, please visit your local leisure lounge.");
+		petDisplayMessage(1, YOUR_STATEROOM);
 	} else if (_statics->_v6 == "Closed") {
-		petDisplayMessage(1, "The bed will not currently support your weight."
-			" We are working on this problem but are unlikely to be able to fix it.");
+		petDisplayMessage(1, BED_NOT_SUPPORT_YOUR_WEIGHT);
 	}
 
 	return true;

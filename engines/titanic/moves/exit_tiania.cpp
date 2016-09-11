@@ -54,8 +54,7 @@ void CExitTiania::load(SimpleFile *file) {
 
 bool CExitTiania::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getPassengerClass() == 4) {
-		petDisplayMessage(1, "For mysterious and unknowable reasons, "
-			"this transport is temporarily out of order.");
+		petDisplayMessage(1, TRANSPORT_OUT_OF_ORDER);
 	} else {
 		lockMouse();
 		for (int idx = 0; idx < 3; ++idx)

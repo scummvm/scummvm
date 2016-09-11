@@ -419,7 +419,7 @@ int CPetConversations::canSummonBot(const CString &name) {
 void CPetConversations::summonBot(const CString &name) {
 	if (_petControl) {
 		if (_petControl->getPassengerClass() >= 4) {
-			_petControl->displayMessage("Sorry, you must be at least 3rd class before you can summon for help.");
+			_petControl->displayMessage(AT_LEAST_3RD_CLASS_FOR_HELP);
 		} else {
 			_petControl->summonBot(name, 0);
 		}

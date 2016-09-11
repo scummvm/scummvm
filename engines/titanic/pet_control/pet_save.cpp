@@ -76,10 +76,10 @@ void CPetSave::execute() {
 
 		if (project) {
 			project->saveGame(_savegameSlotNum, _slotNames[_savegameSlotNum].getText());
-			pet->displayMessage("");
+			pet->displayMessage(BLANK);
 		}
 	} else if (pet) {
-		pet->displayMessage("You must select a game to save first.");
+		pet->displayMessage(SELECT_GAME_TO_SAVE);
 	}
 }
 

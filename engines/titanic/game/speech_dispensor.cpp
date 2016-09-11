@@ -68,7 +68,7 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 	CGameObject *dragObject = getDraggingObject();
 	if (!_dragItem && dragObject && getView() == findView()) {
 		if (dragObject->isEquals("Perch")) {
-			petDisplayMessage(1, "This stick is too short to reach the branches.");
+			petDisplayMessage(1, TOO_SHORT_TO_REACH_BRANCHES);
 			return true;
 		}
 
@@ -86,7 +86,7 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 		case 0:
 			playSound("z#93.wav");
 			if (_seasonNum == SEASON_WINTER) {
-				petDisplayMessage(1, "You cannot get this, it is frozen to the branch.");
+				petDisplayMessage(1, FROZEN_TO_BRANCH);
 				_fieldE0 = false;
 				_state = 1;
 			} else {
@@ -121,9 +121,9 @@ bool CSpeechDispensor::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (!_fieldEC) {
 		playSound("z#93.wav");
 		if (_fieldF8) {
-			petDisplayMessage(1, "Sadly, this is out of your reach.");
+			petDisplayMessage(1, OUT_OF_REACH);
 		} else {
-			petDisplayMessage(1, "You can't pick this up on account of it being stuck to the branch.");
+			petDisplayMessage(1, STUCK_TO_BRANCH);
 		}
 	}
 

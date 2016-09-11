@@ -80,7 +80,7 @@ bool CLemonDispensor::FrameMsg(CFrameMsg *msg) {
 		CGameObject *obj = getDraggingObject();
 		if (obj && getView() == findView()) {
 			if (obj->isEquals("Perch")) {
-				petDisplayMessage(1, "This stick is too short to reach the branches.");
+				petDisplayMessage(1, TOO_SHORT_TO_REACH_BRANCHES);
 				return true;
 			}
 

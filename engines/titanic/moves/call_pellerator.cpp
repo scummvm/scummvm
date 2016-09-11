@@ -47,7 +47,7 @@ bool CCallPellerator::EnterViewMsg(CEnterViewMsg *msg) {
 	CString name = getFullViewName();
 
 	if (name == "TopOfWell.Node 6.S") {
-		petDisplayMessage(2, "You are standing outside the Pellerator.");
+		petDisplayMessage(2, STANDING_OUTSIDE_PELLERATOR);
 	}
 
 	petSetRemoteTarget();
@@ -64,7 +64,7 @@ bool CCallPellerator::PETActivateMsg(CPETActivateMsg *msg) {
 
 	if (msg->_name == "Pellerator") {
 		if (petDoorOrBellbotPresent()) {
-			petDisplayMessage("I'm sorry, you cannot enter this pellerator at present as a bot is in the way.");
+			petDisplayMessage(BOT_BLOCKING_PELLERATOR);
 		} else if (name == "Bar.Node 1.S") {
 			changeView("Pellerator.Node 1.S");
 		} else {

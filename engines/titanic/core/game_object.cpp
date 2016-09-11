@@ -1536,14 +1536,24 @@ bool CGameObject::petDoorOrBellbotPresent() const {
 	return pet ? pet->isDoorOrBellbotPresent() : false;
 }
 
+void CGameObject::petDisplayMessage(int unused, StringId stringId) {
+	petDisplayMessage(stringId);
+}
+
+void CGameObject::petDisplayMessage(StringId stringId, int param) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->displayMessage(stringId, param);
+}
+
 void CGameObject::petDisplayMessage(int unused, const CString &msg) {
 	petDisplayMessage(msg);
 }
 
-void CGameObject::petDisplayMessage(const CString &msg) {
+void CGameObject::petDisplayMessage(const CString &msg, int param) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->displayMessage(msg);
+		pet->displayMessage(msg, param);
 }
 
 void CGameObject::petInvChange() {

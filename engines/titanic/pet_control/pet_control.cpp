@@ -376,7 +376,13 @@ bool CPetControl::checkDragEnd(CGameObject *item) const {
 	return _sections[_currentArea]->checkDragEnd(item);
 }
 
-void CPetControl::displayMessage(const CString &msg) const {
+void CPetControl::displayMessage(StringId stringId, int param) const {
+	CString msg = CString::format(_strings[stringId].c_str(), param);
+	_sections[_currentArea]->displayMessage(msg);
+}
+
+void CPetControl::displayMessage(const CString &str, int param) const {
+	CString msg = CString::format(str.c_str(), param);
 	_sections[_currentArea]->displayMessage(msg);
 }
 

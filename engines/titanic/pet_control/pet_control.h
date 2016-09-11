@@ -36,6 +36,7 @@
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
+#include "titanic/support/strings.h"
 #include "titanic/room_flags.h"
 
 namespace Titanic {
@@ -67,6 +68,7 @@ private:
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
 	PetEventInfo _timers[2];
+	Strings _strings;
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -232,7 +234,12 @@ public:
 	/**
 	 * Display a message
 	 */
-	void displayMessage(const CString &msg) const;
+	void displayMessage(StringId stringId, int param = 0) const;
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const CString &str, int param = 0) const;
 
 	/**
 	 * Get the first game object stored in the PET

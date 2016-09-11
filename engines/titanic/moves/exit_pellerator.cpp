@@ -94,7 +94,7 @@ bool CExitPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			changeView(_statics->_isWinter ? "FrozenArboretum.Node 4.S" : "Arboretum.Node 4.W");
 			break;
 		default:
-			petDisplayMessage(2, "Please exit from the other side.");
+			petDisplayMessage(2, EXIT_FROM_OTHER_SIDE);
 			CPellerator::_soundHandle = queueSound("z#438.wav", CPellerator::_soundHandle);
 
 		}
@@ -116,7 +116,7 @@ bool CExitPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		if (_statics->_v2 == 2) {
 			changeView("Bar.Node 1.N");
 		} else {
-			petDisplayMessage(2, "Please exit from the other side.");
+			petDisplayMessage(2, EXIT_FROM_OTHER_SIDE);
 			CPellerator::_soundHandle = queueSound("z#438.wav", CPellerator::_soundHandle);
 		}
 	}

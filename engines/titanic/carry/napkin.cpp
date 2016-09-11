@@ -49,7 +49,7 @@ bool CNapkin::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			CActMsg actMsg("Clean");
 			actMsg.execute("Chicken");
 		} else {
-			petDisplayMessage("The Chicken is already quite clean enough, thank you.");
+			petDisplayMessage(CHICKEN_IS_CLEAN);
 		}
 	}
 

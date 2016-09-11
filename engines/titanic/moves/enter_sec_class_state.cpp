@@ -50,7 +50,7 @@ void CEnterSecClassState::load(SimpleFile *file) {
 bool CEnterSecClassState::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getPassengerClass() > 2) {
 		playSound("b#105.wav");
-		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+		petDisplayMessage(1, CLASS_NOT_PERMITTED_IN_AREA);
 	} else if (!compareRoomNameTo("SecClassLittleLift") || _mode == 2)  {
 		CActMsg actMsg(getFullViewName().deleteRight(3) + ".S");
 		actMsg.execute("SecClassRoomLeaver");

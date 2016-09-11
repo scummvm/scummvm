@@ -91,7 +91,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			CPETPhotoOnOffMsg photoMsg;
 			photoMsg.execute(_petControl->_remoteTarget);
 		} else {
-			_petControl->displayMessage("Please supply Galactic reference material.");
+			_petControl->displayMessage(SUPPLY_GALACTIC_REFERENCE);
 		}
 	} else if (!_btnSetDest.MouseButtonDownMsg(msg->_mousePos)) {
 		return elementsMouseDown(msg);

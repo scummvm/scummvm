@@ -52,7 +52,7 @@ bool CPETLift::TransportMsg(CTransportMsg *msg) {
 	} else if (msg->_roomName == "PlayersRoom" && pet) {
 		int assignedFloor = pet->getAssignedFloorNum();
 		if (assignedFloor < 1 || assignedFloor > 39) {
-			pet->petDisplayMessage("You have not assigned a room to go to.");
+			pet->petDisplayMessage(NO_ROOM_ASSIGNED);
 			floorNum = -1;
 		}
 	}
@@ -61,7 +61,7 @@ bool CPETLift::TransportMsg(CTransportMsg *msg) {
 		int elevatorNum = pet ? pet->getRoomsElevatorNum() : 0;
 
 		if ((elevatorNum == 2 || elevatorNum == 4) && floorNum > 27) {
-			petDisplayMessage("Sorry, this elevator does not go below floor 27.");
+			petDisplayMessage(ELEVATOR_NOT_BELOW_27);
 		} else {
 			CTrueTalkTriggerActionMsg triggerMsg(2, floorNum, 0);
 			triggerMsg.execute("Liftbot");

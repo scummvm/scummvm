@@ -60,7 +60,7 @@ bool CSweetBowl::ActMsg(CActMsg *msg) {
 	}
 
 	petDisplayMessage(isEquals("BowlNutsRustler") ?
-		"A bowl of pistachio nuts." : "Not a bowl of pistachio nuts.");
+		BOWL_OF_NUTS : NOT_A_BOWL_OF_NUTS);
 	return true;
 }
 

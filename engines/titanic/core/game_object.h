@@ -25,13 +25,14 @@
 
 #include "audio/mixer.h"
 #include "common/stream.h"
+#include "titanic/core/named_item.h"
+#include "titanic/sound/proximity.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
-#include "titanic/sound/proximity.h"
 #include "titanic/support/rect.h"
+#include "titanic/support/strings.h"
 #include "titanic/support/movie_clip.h"
-#include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
 #include "titanic/game_state.h"
@@ -826,12 +827,22 @@ public:
 	/**
 	 * Display a message in the PET
 	 */
-	void petDisplayMessage(int unused, const CString &msg);
+	void petDisplayMessage(int unused, StringId stringId);
 
 	/**
 	 * Display a message in the PET
 	 */
-	void petDisplayMessage(const CString &msg);
+	void petDisplayMessage(int unused, const CString &str);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(StringId stringId, int param = 0);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(const CString &str, int param = 0);
 
 	/**
 	 * Gets the entry number used when last arriving at the well

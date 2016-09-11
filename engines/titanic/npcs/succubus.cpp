@@ -274,7 +274,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	if (!_enabled || !pet || !item || !tempRect.contains(item->getControid())) {
 		item->petAddToInventory();
 	} else if (mailExists(roomFlags)) {
-		petDisplayMessage("The Succ-U-Bus is a Single Entity Delivery Device.");
+		petDisplayMessage(SUCCUBUS_DESCRIPTION);
 		item->petAddToInventory();
 	} else {
 		petContainerRemove(item);
@@ -337,7 +337,7 @@ bool CSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
-	petDisplayMessage(2, "");
+	petDisplayMessage(2, BLANK);
 	if (_startFrame8 >= 0)
 		loadFrame(_startFrame8);
 	else if (!_field15C && _startFrame9 >= 0)
@@ -370,7 +370,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		return true;
 
 	if (!_enabled) {
-		petDisplayMessage(2, "The Succ-U-Bus is in Standby, or \"Off\" mode at present.");
+		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
 
@@ -394,7 +394,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			break;
 		}
 
-		petDisplayMessage(2, "There is currently nothing in the tray to send.");
+		petDisplayMessage(2, NOTHING_IN_SUCCUBUS_TRAY);
 	} else {
 		_field19C = 0;
 		
@@ -458,7 +458,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	if (_field1D8 || !pet)
 		return true;
 	if (!_enabled) {
-		petDisplayMessage(2, "The Succ-U-Bus is in Standby, or \"Off\" mode at present.");
+		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
 
@@ -489,7 +489,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 			playMovie(_startFrame6, _endFrame6, 0);
 			playMovie(_startFrame7, _endFrame7, 0);
-			petDisplayMessage(2, "There is currently nothing to deliver.");
+			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		} else {
 			startTalking(this, 230004, findView());
 

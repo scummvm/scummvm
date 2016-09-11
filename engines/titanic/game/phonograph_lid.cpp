@@ -58,7 +58,7 @@ bool CPhonographLid::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		_open = !_open;
 	} else {
-		petDisplayMessage(0, "This is the restaurant music system.  It appears to be locked.");
+		petDisplayMessage(0, LOCKED_MUSIC_SYSTEM);
 	}
 
 	return true;

@@ -48,7 +48,7 @@ bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		CPuzzleSolvedMsg puzzleMsg;
 		puzzleMsg.execute(msg->_other);
 	} else if (msg->_other->isEquals("LongStickDispensor")) {
-		petDisplayMessage(1, "You already have one.");
+		petDisplayMessage(1, ALREADY_HAVE_STICK);
 	} else if (msg->_other->isEquals("Bomb")) {
 		CActMsg actMsg("Hit");
 		actMsg.execute("Bomb");
