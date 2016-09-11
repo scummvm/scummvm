@@ -359,7 +359,7 @@ int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 map
 			if ((impactType == kM1_CreatureElemType) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
 				break;
 
-			Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+			curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		} else
 			curThing = _vm->_dungeonMan->getNextThing(curThing);
 	}
