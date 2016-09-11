@@ -165,7 +165,7 @@ int VLC::init_vlc(int nbBits, int nbCodes, const void *p_bits, int bitsWrap,
 		vlc->_tableAllocated = 0;
 		vlc->_tableSize = 0;
 
-		buf = (VLCcode *)avMallocArray((nbCodes + 1), sizeof(VLCcode));
+		buf = (VLCcode *)malloc((nbCodes + 1) * sizeof(VLCcode));
 		assert(buf);
 	}
 

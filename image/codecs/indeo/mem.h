@@ -40,45 +40,6 @@ namespace Indeo {
 #define MAX_INTEGER 0x7ffffff
 
 /**
- * Allocate a memory block with alignment suitable for all memory accesses
- * (including vectors if available on the CPU) and zero all the bytes of the
- * block.
- *
- * @param size Size in bytes for the memory block to be allocated
- * @return Pointer to the allocated block, or `NULL` if it cannot be allocated
- * @see av_malloc()
- */
-extern void *avMallocZ(size_t size);
-
-/**
- * Allocate a memory block for an array with av_malloc().
- *
- * The allocated memory will have size `size * nmemb` bytes.
- *
- * @param nmemb Number of element
- * @param size  Size of a single element
- * @return Pointer to the allocated block, or `NULL` if the block cannot
- *         be allocated
- * @see av_malloc()
- */
-extern void *avMallocArray(size_t nmemb, size_t size);
-
-/**
- * Allocate a memory block for an array with av_mallocz().
- *
- * The allocated memory will have size `size * nmemb` bytes.
- *
- * @param nmemb Number of elements
- * @param size  Size of the single element
- * @return Pointer to the allocated block, or `NULL` if the block cannot
- *         be allocated
- *
- * @see av_mallocz()
- * @see av_malloc_array()
- */
-extern void *avMallocZArray(size_t nmemb, size_t size);
-
-/**
  * Free a memory block which has been allocated with a function of av_malloc()
  * or av_realloc() family, and set the pointer pointing to it to `NULL`.
  *
@@ -130,15 +91,6 @@ extern uint8 avClipUint8(int a);
  * @return clipped value
  */
 extern unsigned avClipUintp2(int a, int p);
-
-/**
-* Clip a signed integer value into the amin-amax range.
-* @param a value to clip
-* @param amin minimum value of the clip range
-* @param amax maximum value of the clip range
-* @return clipped value
-*/
-#define av_clip CLIP
 
 extern const uint8 ffZigZagDirect[64];
 

@@ -225,7 +225,7 @@ int IVIBandDesc::initTiles(IVITile *refTile, int p, int b, int tHeight, int tWid
 				_mbSize);
 
 			avFreeP(&tile->_mbs);
-			tile->_mbs = (IVIMbInfo *)avMallocZArray(tile->_numMBs, sizeof(IVIMbInfo));
+			tile->_mbs = (IVIMbInfo *)calloc(tile->_numMBs, sizeof(IVIMbInfo));
 			if (!tile->_mbs)
 				return -2;
 
@@ -284,7 +284,7 @@ int IVIPlaneDesc::initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool
 	planes[1]._numBands = planes[2]._numBands = cfg->_chromaBands;
 
 	for (int p = 0; p < 3; p++) {
-		planes[p]._bands = (IVIBandDesc *)avMallocZArray(planes[p]._numBands, sizeof(IVIBandDesc));
+		planes[p]._bands = (IVIBandDesc *)calloc(planes[p]._numBands, sizeof(IVIBandDesc));
 		if (!planes[p]._bands)
 			return -2;
 
@@ -311,20 +311,20 @@ int IVIPlaneDesc::initPlanes(IVIPlaneDesc *planes, const IVIPicConfig *cfg, bool
 			band->_height = b_height;
 			band->_pitch = width_aligned;
 			band->_aHeight = height_aligned;
-			band->_bufs[0] = (int16 *)avMallocZ(bufSize);
-			band->_bufs[1] = (int16 *)avMallocZ(bufSize);
+			band->_bufs[0] = (int16 *)calloc(bufSize, 1);
+			band->_bufs[1] = (int16 *)calloc(bufSize, 1);
 			band->_bufSize = bufSize / 2;
 			if (!band->_bufs[0] || !band->_bufs[1])
 				return -2;
 
 			// allocate the 3rd band buffer for scalability mode
 			if (cfg->_lumaBands > 1) {
-				band->_bufs[2] = (int16 *)avMallocZ(bufSize);
+				band->_bufs[2] = (int16 *)calloc(bufSize, 1);
 				if (!band->_bufs[2])
 					return -2;
 			}
 			if (isIndeo4) {
-				band->_bufs[3] = (int16 *)avMallocZ(bufSize);
+				band->_bufs[3] = (int16 *)calloc(bufSize, 1);
 				if (!band->_bufs[3])
 					return -2;
 			}
@@ -358,7 +358,7 @@ int IVIPlaneDesc::initTiles(IVIPlaneDesc *planes, int tileWidth, int tileHeight)
 			band->_numTiles = xTiles * yTiles;
 
 			avFreeP(&band->_tiles);
-			band->_tiles = (IVITile *)avMallocZArray(band->_numTiles, sizeof(IVITile));
+			band->_tiles = (IVITile *)calloc(band->_numTiles, sizeof(IVITile));
 			if (!band->_tiles)
 				return -2;
 
@@ -420,7 +420,7 @@ int AVFrame::getBuffer(int flags) {
 	freeFrame();
 
 	// Luminance channel
-	_data[0] = (uint8 *)avMallocZ(_width * _height);
+	_data[0] = (uint8 *)calloc(_width * _height, 1);
 
 	// UV Chroma Channels
 	_data[1] = (uint8 *)malloc(_width * _height);
@@ -1072,7 +1072,7 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
 		if (_ctx._isIndeo4)
 			quant = avClipUintp2(quant, 5);
 		else
-			quant = av_clip((int)quant, 0, 23);
+			quant = CLIP((int)quant, 0, 23);
 
 		const uint8 *scaleTab = isIntra ? band->_intraScale : band->_interScale;
 		if (scaleTab)
