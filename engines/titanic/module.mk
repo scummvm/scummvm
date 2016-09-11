@@ -167,6 +167,7 @@ MODULE_OBJS := \
 	game/pet_disabler.o \
 	game/phonograph.o \
 	game/phonograph_lid.o \
+	game/place_holder_item.o \
 	game/play_music_button.o \
 	game/play_on_act.o \
 	game/port_hole.o \
@@ -199,6 +200,7 @@ MODULE_OBJS := \
 	game/titania_still_control.o \
 	game/up_lighter.o \
 	game/useless_lever.o \
+	game/variable_list.o \
 	game/volume_control.o \
 	game/wheel_button.o \
 	game/wheel_hotspot.o \

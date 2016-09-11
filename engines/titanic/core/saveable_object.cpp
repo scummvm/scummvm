@@ -175,6 +175,7 @@
 #include "titanic/game/pet_disabler.h"
 #include "titanic/game/phonograph.h"
 #include "titanic/game/phonograph_lid.h"
+#include "titanic/game/place_holder_item.h"
 #include "titanic/game/play_music_button.h"
 #include "titanic/game/play_on_act.h"
 #include "titanic/game/port_hole.h"
@@ -207,6 +208,7 @@
 #include "titanic/game/tow_parrot_nav.h"
 #include "titanic/game/up_lighter.h"
 #include "titanic/game/useless_lever.h"
+#include "titanic/game/variable_list.h"
 #include "titanic/game/volume_control.h"
 #include "titanic/game/wheel_button.h"
 #include "titanic/game/wheel_hotspot.h"
@@ -586,6 +588,7 @@ DEFFN(CNutReplacer);
 DEFFN(CPetDisabler);
 DEFFN(CPhonograph);
 DEFFN(CPhonographLid);
+DEFFN(CPlaceHolderItem);
 DEFFN(CPlayMusicButton);
 DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
@@ -618,6 +621,7 @@ DEFFN(CTitaniaStillControl);
 DEFFN(CTOWParrotNav);
 DEFFN(CUpLighter);
 DEFFN(CUselessLever);
+DEFFN(CVariableListItem);
 DEFFN(CVolumeControl);
 DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
@@ -1174,6 +1178,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetDisabler, CGameObject);
 	ADDFN(CPhonograph, CMusicPlayer);
 	ADDFN(CPhonographLid, CGameObject);
+	ADDFN(CPlaceHolderItem, CNamedItem);
 	ADDFN(CPlayMusicButton, CBackground);
 	ADDFN(CPlayOnAct, CBackground);
 	ADDFN(CPortHole, CGameObject);
@@ -1206,6 +1211,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTOWParrotNav, CGameObject);
 	ADDFN(CUpLighter, CDropTarget);
 	ADDFN(CUselessLever, CToggleButton);
+	ADDFN(CVariableListItem, ListItem);
 	ADDFN(CVolumeControl, CGameObject);
 	ADDFN(CWheelButton, CBackground);
 	ADDFN(CWheelHotSpot, CBackground);
