@@ -989,25 +989,33 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(_vm->_dungeonMan->_partyDir, movementArrowToStepForwardCount[movementArrowIdx], movementArrowToSepRightCount[movementArrowIdx], partyMapX, partyMapY);
 	curSquare = _vm->_dungeonMan->getSquare(partyMapX, partyMapY);
-	int16 partySquareType = curSquare.getType();
-	if (partySquareType == k3_ElementTypeStairs) {
+
+	bool isMovementBlocked = false;
+	SquareType partySquareType = curSquare.getType();
+	switch (partySquareType){
+	case k0_ElementTypeWall:
+		isMovementBlocked = true;
+		break;
+	case k3_ElementTypeStairs: {
 		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
 		byte stairState = curSquare.toByte();
 		commandTakeStairs(getFlag(stairState, k0x0004_StairsUp));
 		return;
-	}
-
-	bool isMovementBlocked = false;
-	if (partySquareType == k0_ElementTypeWall)
-		isMovementBlocked = true;
-	else if (partySquareType == k4_DoorElemType) {
+		}
+	case k4_DoorElemType: {
 		byte doorState = curSquare.getDoorState();
 		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
-	} else if (partySquareType == k6_ElementTypeFakeWall) {
+		}
+		break;
+	case k6_ElementTypeFakeWall: {
 		byte wallState = curSquare.toByte();
 		isMovementBlocked = (!getFlag(wallState, k0x0004_FakeWallOpen) && !getFlag(wallState, k0x0001_FakeWallImaginary));
+		}
+		break;
+	default:
+		break;
 	}
 
 	if (_vm->_championMan->_partyChampionCount) {
