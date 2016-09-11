@@ -63,8 +63,9 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 		warning("Sound initialization failed.");
 	}
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	syncSoundSettings();
+	_sfxVolume = ConfMan.getInt("sfx_volume") * 39 - 10000;
+	_musicVolume = ConfMan.getInt("music_volume");
 
 	_rnd = new Common::RandomSource("fullpipe");
 	_console = 0;
@@ -83,9 +84,6 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_soundEnabled = true;
 	_flgSoundList = true;
-
-	_sfxVolume = 0;
-	_musicVolume = 0;
 
 	_inputController = 0;
 	_inputDisabled = false;
