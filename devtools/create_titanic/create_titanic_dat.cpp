@@ -479,6 +479,131 @@ static const char *const STRINGS_EN[] = {
 	"Not a bowl of pistachio nuts."
 };
 
+static const char *const STRINGS_DE[] = {
+	"",
+	"You are standing outside the Pellerator.",
+	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
+	"The Succ-U-Bus is in Standby, or \"Off\" mode at present.",
+	"There is currently nothing to deliver.",
+	"There is currently nothing in the tray to send.",
+	"The Succ-U-Bus is a Single Entity Delivery Device.",
+	"Chickens are allocated on a one-per-customer basis.",
+	"Only one piece of chicken per passenger. Thank you.",
+	"You have been upgraded to 1st Class status. Enjoy hugely.",
+	"You have been upgraded to 2nd Class status. Enjoy.",
+	"This room is reserved for the exclusive use of first class passengers."
+	" That does not currently include you",
+	"No losers.",
+	"Passengers of your class are not permitted to enter this area.",
+	"Please exit from the other side.",
+	"For mysterious and unknowable reasons, this transport is temporarily out of order.",
+	"Unfortunately this fan controller has blown a fuse.",
+	"In case of emergency hammer requirement, poke with long stick.",
+	"This stick is too short to reach the branches.",
+	"You are standing outside Elevator %d",
+	"I'm sorry, you cannot enter this elevator at present as a bot is in the way.",
+	"This elevator is currently in an advanced state of non-functionality.",
+	"That light appears to be loose.",
+	"Lumi-Glow(tm) Lights.  They glow in the dark!",
+	"You already have one.",
+	"'This glass is totally and utterly unbreakable.",
+	"For emergency long stick, smash glass.",
+	"This dispenser has suddenly been fitted with unbreakable glass "
+	"to prevent unseemly hoarding of sticks.",
+	"The Chicken is already quite clean enough, thank you.",
+	"Now would be an excellent opportunity to adjust your viewing apparatus.",
+	"You cannot take this because the cage is locked shut.",
+	"You are already at your chosen destination.",
+	"Passengers of your class are not permitted to enter this area.",
+	"Sorry, you must be at least 3rd class before you can summon for help.",
+	"You have not assigned a room to go to.",
+	"Sorry, this elevator does not go below floor 27.",
+	"You must select a game to load first.",
+	"You must select a game to save first.",
+	"Please supply Galactic reference material.",
+	"This is the restaurant music system.  It appears to be locked.",
+	"You can't pick this up on account of it being stuck to the branch.",
+	"You cannot get this, it is frozen to the branch.",
+	"Please check in at the reception desk.",
+	"This foodstuff is already sufficiently garnished.",
+	"Sadly, this dispenser is currently empty.",
+	"Please place food source beneath dispenser for sauce delivery.",
+	"The Seasonal Adjustment switch is not operational at the present time.",
+	"This is your stateroom. It is for sleeping. If you desire "
+	"entertainment or relaxation, please visit your local leisure lounge.",
+	"The bed will not currently support your weight."
+	" We are working on this problem but are unlikely to be able to fix it.",
+	"This is not your assigned room. Please do not enjoy.",
+	"Sadly, this is out of your reach.",
+	"The Succ-U-Bus is a Single Entity Delivery Device.",
+	"Sadly, the Grand Canal transport system is closed for the winter.",
+	"This area is off limits to passengers.",
+	"Go where?",
+	"It would be nice if you could take that but you can't.",
+	"A bowl of pistachio nuts.",
+	"Not a bowl of pistachio nuts.",
+	
+	"Sommer",
+	"Herbst",
+	"Winter",
+	"Fr\0xFC" "nhling",
+	"Sn'ood",
+	"J'af'ah",
+	"Bitta",
+	"Fr\0xAA" "ic",
+	"Pflanzen bitte nicht ber\0xFC" "nhren.",
+	"!\0xBC" "ta'\0xAD" "ta! !T\0xAA" "z n\0xAA" " sappibundli t\0xAA"
+		"cn\0xAA" "z!",
+	
+	"Stop",
+	"!Hanaz!",
+	"VorwSrts",
+	"!Panaz!",
+	"T\0xAA" "z k'b\0xAA" "z",
+	"Ein wenig herumkurven",
+	"Otundo a\0x92" " doom\0xAA" "n n\0x92" "sanza",
+	"Sinnlose Drehung des Steuerrads",
+	"!0xBC" "ta\0x92\0xAD" "ta!  T\0xAA""z vidsta\0x92" "jaha i\0xAC"
+		"in\0x92" "qu\0xAA" " m\0xAA" "n\0xAA" "z",
+	"Sternenpanorama des Reiseziels hier einf\0xFC" "ngen.",
+
+	"V'lo\0xAC",
+	"Geschwindigkeit",
+	"Pan",
+	"Ein",
+	"Han",
+	"Aus",
+	"Turgo",
+	"Langsam",
+	"Pido",
+	"Schnell",
+
+	"\0xBC" "lu\0xAD" " q\0xB0 scu'b\0xAA" "rri",
+	"H\0xFC" "hnchen a la sauce tomate",
+	"\0xBC" "lu\0xAD" " q\0xB0 scu'jajaja",
+	"H0xFC" "hnchen a la sauce moutarde",
+	"\0xBC" "lu0xAD q\0xB0 scu'\0xAD" "lu\0xAD",
+	"H\0xFC" "hnchen a la sauce 'Vogel'",
+	"\0xBC" "lu\0xAD" " sanza scu, n\0xAA n\0xAA n\0xAA",
+	"H\0xFC" "hnchen bar jeglicher sauce",
+
+	"!\0xB2" "la! !\0xB2" "la!  !!!Sizzlo ab\0x92\0xAA\0xAA" "o s\0xAA"
+		"nza cr\0xAA" "dibo!!!  N\0xAA" "nto p\0xAA" "rificio i\0xAC" "ind\0xAA",
+	"Achtung, Lebensgefahr. Unglaublich hohe Voltzahl!!! Innen keine "
+		"artungsbed\0xFC" "rftigen Teile vorhanden.",
+	"!!!Birin\0xAC" "i sp\0xAA" "culato t\0xAA" "z n\0xAA n\0xAA n\0xAA"
+		" ouvraditiniz!  J\0x92" "in n\0xAA n\0xAA upraximus stifibilimus"
+		" j\0x92" "in sigorto funct",
+	"Sie hStten die erste Kontrollt\0xFC" "r nicht \0xF6"
+		"ffnen sollen! Dies ist nicht nur ungeheuer gef\0xE4"
+		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\0xFC" "che.",
+	"!T\0xAA" "z n\0xAA bleabaz t\0xAA" "z n\0xAA j\0x92" "abaz!  Coco?",
+	"Und sagen Sie hinterher blo\0xFC nicht, niemand hStte Sie gewarnt.",
+	"Pin\0xAA" "z-pin\0xAA" "z stot \0xAF" "r\0xB0 jibbli",
+	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
+
+};
+
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
