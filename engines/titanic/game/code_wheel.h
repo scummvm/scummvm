@@ -37,6 +37,9 @@ private:
 	int _field108;
 	int _state;
 	int _field110;
+	// German specific fields
+	int _field114;
+	int _field118;
 public:
 	CLASSDEF;
 	CodeWheel();

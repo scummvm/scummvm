@@ -740,7 +740,7 @@ DEFFN(CPetModePanel);
 DEFFN(CPetPannel1);
 DEFFN(CPetPannel2);
 DEFFN(CPetPannel3);
-DEFFN(CPetShowTranslation);
+DEFFN(CPETShowTranslation);
 DEFFN(CSendToSucc);
 DEFFN(CSGTSelector);
 DEFFN(CSliderButton);
@@ -1331,7 +1331,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetPannel1, CPetGraphic);
 	ADDFN(CPetPannel2, CPetGraphic);
 	ADDFN(CPetPannel3, CPetGraphic);
-	ADDFN(CPetShowTranslation, CGameObject);
+	ADDFN(CPETShowTranslation, CGameObject);
 	ADDFN(CSendToSucc, CToggleSwitch);
 	ADDFN(CSGTSelector, CPetGraphic);
 	ADDFN(CSliderButton, CSTButton);

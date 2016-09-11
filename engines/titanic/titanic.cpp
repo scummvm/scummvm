@@ -85,7 +85,7 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	_debugger = new Debugger(this);
-	_filesManager = new CFilesManager();
+	_filesManager = new CFilesManager(this);
 
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();

@@ -31,7 +31,7 @@ namespace Titanic {
  * Used by the German version to show contextual translation of
  * English background text throughout the game
  */
-class CPetShowTranslation: public CGameObject {
+class CPETShowTranslation: public CGameObject {
 	DECLARE_MESSAGE_MAP;
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
@@ -39,7 +39,7 @@ class CPetShowTranslation: public CGameObject {
 	bool ArboretumGateMsg(CArboretumGateMsg *msg);
 public:
 	CLASSDEF;
-	CPetShowTranslation() : CGameObject() {}
+	CPETShowTranslation() : CGameObject() {}
 
 	/**
 	 * Save the data for the class to file

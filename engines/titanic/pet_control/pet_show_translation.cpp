@@ -25,7 +25,7 @@
 
 namespace Titanic {
 
-BEGIN_MESSAGE_MAP(CPetShowTranslation, CGameObject)
+BEGIN_MESSAGE_MAP(CPETShowTranslation, CGameObject)
 	ON_MESSAGE(EnterViewMsg)
 	ON_MESSAGE(LeaveViewMsg)
 	ON_MESSAGE(ChangeSeasonMsg)
@@ -33,17 +33,17 @@ BEGIN_MESSAGE_MAP(CPetShowTranslation, CGameObject)
 END_MESSAGE_MAP()
 
 
-void CPetShowTranslation::save(SimpleFile *file, int indent) {
+void CPETShowTranslation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	CGameObject::save(file, indent);
 }
 
-void CPetShowTranslation::load(SimpleFile *file) {
+void CPETShowTranslation::load(SimpleFile *file) {
 	file->readNumber();
 	CGameObject::load(file);
 }
 
-bool CPetShowTranslation::EnterViewMsg(CEnterViewMsg *msg) {
+bool CPETShowTranslation::EnterViewMsg(CEnterViewMsg *msg) {
 	CPetControl *pet = getPetControl();
 	if (!pet)
 		return true;
@@ -113,15 +113,69 @@ bool CPetShowTranslation::EnterViewMsg(CEnterViewMsg *msg) {
 	return true;
 }
 
-bool CPetShowTranslation::LeaveViewMsg(CLeaveViewMsg *msg) {
+bool CPETShowTranslation::LeaveViewMsg(CLeaveViewMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->clearTranslation();
+
 	return true;
 }
 
-bool CPetShowTranslation::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+bool CPETShowTranslation::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		pet->clearTranslation();
+
+		CString viewName = getFullViewName();
+		if (viewName == "Arboretum.Node 2.N" || viewName == "FrozenArboretum.Node 2.N") {
+			if (msg->_season == "Summer")
+				pet->addTranslation(DE_SUMMER_ARBORETUM, DE_SUMMER);
+			else if (msg->_season == "Autumn")
+				pet->addTranslation(DE_AUTUMN_ARBORETUM, DE_AUTUMN);
+			else if (msg->_season == "Winter")
+				pet->addTranslation(DE_WINTER_ARBORETUM, DE_WINTER);
+			else if (msg->_season == "Spring")
+				pet->addTranslation(DE_SPRING_ARBORETUM, DE_SPRING);
+
+			pet->addTranslation(DE_ARBORETUM_MSG1, DE_ARBORETUM_MSG2);
+		}
+	}
+
 	return true;
 }
 
-bool CPetShowTranslation::ArboretumGateMsg(CArboretumGateMsg *msg) {
+bool CPETShowTranslation::ArboretumGateMsg(CArboretumGateMsg *msg) {
+	CPetControl *pet = getPetControl();
+	if (pet) {
+		pet->clearTranslation();
+
+		CString viewName = getFullViewName();
+		if (viewName == "Arboretum.Node 2.N" || viewName == "FrozenArboretum.Node 2.N") {
+			switch (stateGetSeason()) {
+			case SEASON_SUMMER:
+				pet->addTranslation(DE_SUMMER_ARBORETUM, DE_SUMMER);
+				break;
+
+			case SEASON_AUTUMN:
+				pet->addTranslation(DE_AUTUMN_ARBORETUM, DE_AUTUMN);
+				break;
+
+			case SEASON_WINTER:
+				pet->addTranslation(DE_WINTER_ARBORETUM, DE_WINTER);
+				break;
+
+			case SEASON_SPRING:
+				pet->addTranslation(DE_SPRING_ARBORETUM, DE_SPRING);
+				break;
+
+			default:
+				break;
+			}
+
+			pet->addTranslation(DE_ARBORETUM_MSG1, DE_ARBORETUM_MSG2);
+		}
+	}
+
 	return true;
 }
 

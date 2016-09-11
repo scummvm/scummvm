@@ -29,6 +29,7 @@
 
 namespace Titanic {
 
+class TitanicEngine;
 class CGameManager;
 
 class CFilesManagerList : public List<ListItem> {
@@ -44,6 +45,7 @@ class CFilesManager {
 	};
 	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
 private:
+	TitanicEngine *_vm;
 	CGameManager *_gameManager;
 	Common::File _datFile;
 	ResourceHash _resources;
@@ -53,7 +55,7 @@ private:
 private:
 	void loadResourceIndex();
 public:
-	CFilesManager();
+	CFilesManager(TitanicEngine *vm);
 	~CFilesManager();
 
 	/**
