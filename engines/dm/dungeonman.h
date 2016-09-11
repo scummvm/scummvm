@@ -119,7 +119,7 @@ enum SquareAspect {
 	kDMSquareAspectStairsUp = 2, // @ C2_STAIRS_UP
 	kDMSquareAspectDoorState = 2, // @ C2_DOOR_STATE
 	kDMSquareAspectDoorThingIndex = 3, // @ C3_DOOR_THING_INDEX
-	kDMSquareAspectFloorOrn = 4, // @ C4_FLOOR_ORNAMENT_ORDINAL 
+	kDMSquareAspectFloorOrn = 4 // @ C4_FLOOR_ORNAMENT_ORDINAL
 };
 
 #define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE
