@@ -979,23 +979,23 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
 	int16 partyMapX = _vm->_dungeonMan->_partyMapX;
 	int16 partyMapY = _vm->_dungeonMan->_partyMapY;
-	
-	// TODO: refactor Square
-	uint16 AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte();
-	bool isStairsSquare = (Square(AL1115_ui_Square).getType() == k3_StairsElemType);
+
+	Square curSquare = _vm->_dungeonMan->getSquare(partyMapX, partyMapY);
+	bool isStairsSquare = (curSquare.getType() == k3_StairsElemType);
 	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
-		commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		commandTakeStairs(getFlag(curSquare.toByte(), k0x0004_StairsUp));
 		return;
 	}
 
 	_vm->_dungeonMan->mapCoordsAfterRelMovement(_vm->_dungeonMan->_partyDir, movementArrowToStepForwardCount[movementArrowIdx], movementArrowToSepRightCount[movementArrowIdx], partyMapX, partyMapY);
-	AL1115_ui_Square = _vm->_dungeonMan->getSquare(partyMapX, partyMapY).toByte();
-	int16 partySquareType = Square(AL1115_ui_Square).getType();
+	curSquare = _vm->_dungeonMan->getSquare(partyMapX, partyMapY);
+	int16 partySquareType = curSquare.getType();
 	if (partySquareType == k3_ElementTypeStairs) {
 		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
-		commandTakeStairs(getFlag(AL1115_ui_Square, k0x0004_StairsUp));
+		byte stairState = curSquare.toByte();
+		commandTakeStairs(getFlag(stairState, k0x0004_StairsUp));
 		return;
 	}
 
@@ -1003,10 +1003,12 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	if (partySquareType == k0_ElementTypeWall)
 		isMovementBlocked = true;
 	else if (partySquareType == k4_DoorElemType) {
-		byte doorState = Square(AL1115_ui_Square).getDoorState();
+		byte doorState = curSquare.getDoorState();
 		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
-	} else if (partySquareType == k6_ElementTypeFakeWall)
-		isMovementBlocked = (!getFlag(AL1115_ui_Square, k0x0004_FakeWallOpen) && !getFlag(AL1115_ui_Square, k0x0001_FakeWallImaginary));
+	} else if (partySquareType == k6_ElementTypeFakeWall) {
+		byte wallState = curSquare.toByte();
+		isMovementBlocked = (!getFlag(wallState, k0x0004_FakeWallOpen) && !getFlag(wallState, k0x0001_FakeWallImaginary));
+	}
 
 	if (_vm->_championMan->_partyChampionCount) {
 		if (isMovementBlocked) {
