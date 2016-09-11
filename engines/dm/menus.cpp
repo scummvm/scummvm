@@ -610,7 +610,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_championMan->_party._event73Count_ThievesEye++;
 			spellPower = (spellPower >> 1);
 			uint16 spellTicks = spellPower * spellPower;
-			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -618,7 +618,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			newEvent._type = k71_TMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
-			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -631,7 +631,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_championMan->_party._shieldDefense += newEvent._Bu._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
 			uint16 spellTicks = spellPower * spellPower;
-			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -645,7 +645,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				_vm->_championMan->_party._lastScentIndex = 0;
 
 			uint16 spellTicks = spellPower * spellPower;
-			setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -801,7 +801,7 @@ void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	TimelineEvent newEvent;
 	newEvent._type = k70_TMEventTypeLight;
 	newEvent._Bu._lightPower = lightPower;
-	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
+	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	newEvent._priority = 0;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	_vm->_inventoryMan->setDungeonViewPalette();
@@ -836,7 +836,7 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShie
 		_vm->_championMan->_party._fireShieldDefense += newEvent._Bu._defense;
 	}
 	newEvent._priority = 0;
-	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
+	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	_vm->_timeline->refreshAllChampionStatusBoxes();
 
@@ -894,7 +894,7 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 		setFlag(casterChampion->_attributes, kDMAttributeStatistics);
 		casterChampion->_symbols[symbolStep] = 96 + (symbolStep * 6) + symbolIndex;
 		casterChampion->_symbols[symbolStep + 1] = '\0';
-		casterChampion->_symbolStep = symbolStep = returnNextVal(symbolStep);
+		casterChampion->_symbolStep = symbolStep = _vm->returnNextVal(symbolStep);
 		_vm->_eventMan->showMouse();
 		drawAvailableSymbols(symbolStep);
 		drawChampionSymbols(casterChampion);
@@ -908,7 +908,7 @@ void MenuMan::deleteChampionSymbol() {
 	if (!strlen(casterChampion->_symbols))
 		return;
 
-	int16 symbolStep = returnPrevVal(casterChampion->_symbolStep);
+	int16 symbolStep = _vm->returnPrevVal(casterChampion->_symbolStep);
 	casterChampion->_symbolStep = symbolStep;
 	casterChampion->_symbols[symbolStep] = '\0';
 	_vm->_eventMan->showMouse();
@@ -1261,7 +1261,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
 		newEvent._type = k73_TMEventTypeThievesEye;
-		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
+		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		_vm->_championMan->_party._event73Count_ThievesEye++;
 		decrementCharges(curChampion);
@@ -1308,7 +1308,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == _vm->returnNextVal(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
@@ -1472,13 +1472,13 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 	uint16 championCell = champ->_cell;
 	int16 targetCreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, championCell);
 	if (targetCreatureOrdinal) {
-		uint16 viewCell = normalizeModulo4(championCell + 4 - champ->_dir);
+		uint16 viewCell = _vm->normalizeModulo4(championCell + 4 - champ->_dir);
 		switch (viewCell) {
 		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
 		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
 			uint16 cellDelta = (viewCell == k2_ViewCellBackRight) ? 3 : 1;
 			/* Check if there is another champion in front */
-			if (_vm->_championMan->getIndexInCell(normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
+			if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
 				_actionDamage = kM1_damageCantReach;
 				return false;
 			}

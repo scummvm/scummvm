@@ -75,59 +75,59 @@ const char *debugGetDirectionName(Direction dir) {
 	return directionNames[dir];
 }
 
-void turnDirRight(Direction &dir) {
+void DMEngine::turnDirRight(Direction &dir) {
 	dir = (Direction)((dir + 1) & 3);
 }
 
-void turnDirLeft(Direction &dir) {
+void DMEngine::turnDirLeft(Direction &dir) {
 	dir = (Direction)((dir - 1) & 3);
 }
 
-Direction returnOppositeDir(Direction dir) {
+Direction DMEngine::returnOppositeDir(Direction dir) {
 	return (Direction)((dir + 2) & 3);
 }
 
-uint16 returnPrevVal(uint16 val) {
+uint16 DMEngine::returnPrevVal(uint16 val) {
 	return (Direction)((val + 3) & 3);
 }
 
-uint16 returnNextVal(uint16 val) {
+uint16 DMEngine::returnNextVal(uint16 val) {
 	return (val + 1) & 0x3;
 }
 
-bool isOrientedWestEast(Direction dir) {
+bool DMEngine::isOrientedWestEast(Direction dir) {
 	return dir & 1;
 }
 
-uint16 toggleFlag(uint16& val, uint16 mask) {
+uint16 DMEngine::toggleFlag(uint16& val, uint16 mask) {
 	return val ^= mask;
 }
 
-uint16 bitmapByteCount(uint16 pixelWidth, uint16 height) {
+uint16 DMEngine::bitmapByteCount(uint16 pixelWidth, uint16 height) {
 	return pixelWidth / 2 * height;
 }
 
-uint16 normalizeModulo4(uint16 val) {
+uint16 DMEngine::normalizeModulo4(uint16 val) {
 	return val & 3;
 }
 
-int32 filterTime(int32 mapTime) {
+int32 DMEngine::filterTime(int32 mapTime) {
 	return mapTime & 0x00FFFFFF;
 }
 
-int32 setMapAndTime(int32 &mapTime, uint32 map, uint32 time) {
+int32 DMEngine::setMapAndTime(int32 &mapTime, uint32 map, uint32 time) {
 	return (mapTime) = ((time) | (((long)(map)) << 24));
 }
 
-uint16 getMap(int32 mapTime) {
+uint16 DMEngine::getMap(int32 mapTime) {
 	return ((uint16)((mapTime) >> 24));
 }
 
-Thing thingWithNewCell(Thing thing, int16 cell) {
+Thing DMEngine::thingWithNewCell(Thing thing, int16 cell) {
 	return Thing(((thing.toUint16()) & 0x3FFF) | ((cell) << 14));
 }
 
-int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
+int16 DMEngine::getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) {
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 

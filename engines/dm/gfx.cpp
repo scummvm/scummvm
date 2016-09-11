@@ -1249,7 +1249,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k1_ViewSquare_D3L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3L, doorFrameLeftD3L);
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD3LCR, bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3L);
+					  _doorNativeBitmapIndexFrontD3LCR, _vm->bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3L);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1333,7 +1333,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect],
 					  squareAspect[k2_DoorStateAspect], _doorNativeBitmapIndexFrontD3LCR,
-					  bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3R);
+					  _vm->bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3R);
 		break;;
 	case k2_ElementTypePit:
 		if (!squareAspect[k2_PitInvisibleAspect])
@@ -1410,7 +1410,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k1_ViewDoorOrnament_D2LCR);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD3LCR, bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3C);
+					  _doorNativeBitmapIndexFrontD3LCR, _vm->bitmapByteCount(48, 41), k0_ViewDoorOrnament_D3LCR, &doorFrameD3C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1490,7 +1490,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k4_ViewSquare_D2L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2L);
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect], _doorNativeBitmapIndexFrontD2LCR,
-					  bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2L);
+					  _vm->bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2L);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1577,7 +1577,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k5_ViewSquare_D2R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2R);
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD2LCR, bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2R);
+					  _doorNativeBitmapIndexFrontD2LCR, _vm->bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2R);
 		order = k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft;
 		break;
 	case k2_ElementTypePit:
@@ -1660,7 +1660,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k2_viewDoorButton_D2C);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD2LCR, bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2C);
+					  _doorNativeBitmapIndexFrontD2LCR, _vm->bitmapByteCount(64, 61), k1_ViewDoorOrnament_D2LCR, &doorFrameD2C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1745,7 +1745,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k7_ViewSquare_D1L, k0x0028_CellOrder_DoorPass1_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1L);
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1L);
+					  _doorNativeBitmapIndexFrontD1LCR, _vm->bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1L);
 		order = k0x0039_CellOrder_DoorPass2_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -1829,7 +1829,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[k1_FirstGroupOrObjectAspect]), dir, posX, posY, k8_ViewSquare_D1R, k0x0018_CellOrder_DoorPass1_BackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1R);
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1R);
+					  _doorNativeBitmapIndexFrontD1LCR, _vm->bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, &doorFrameD1R);
 		order = k0x0049_CellOrder_DoorPass2_FrontLeft;
 		break;
 	case k2_ElementTypePit:
@@ -1914,7 +1914,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), k3_viewDoorButton_D1C);
 
 		drawDoor(squareAspect[k3_DoorThingIndexAspect], squareAspect[k2_DoorStateAspect],
-					  _doorNativeBitmapIndexFrontD1LCR, bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, _doorFrameD1C);
+					  _doorNativeBitmapIndexFrontD1LCR, _vm->bitmapByteCount(96, 88), k2_ViewDoorOrnament_D1LCR, _doorFrameD1C);
 		order = k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight;
 		break;
 	case k2_ElementTypePit:
@@ -3075,14 +3075,14 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 		/* Draw objects */
 		if (L0135_B_DrawAlcoveObjects) {
 			AL_2_viewCell = k4_ViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
-			cellYellowBear = returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
+			cellYellowBear = _vm->returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
 			objectShiftIndex = 2;
 		} else {
 			AL_2_viewCell = _vm->ordinalToIndex((int16)remainingViewCellOrdinalsToProcess & 0x000F); /* View cell is the index of coordinates to draw object */
 			currentViewCellToDraw = AL_2_viewCell;
 			remainingViewCellOrdinalsToProcess >>= 4; /* Proceed to the next cell ordinal */
 			cellCounter++;
-			cellYellowBear = normalizeModulo4(AL_2_viewCell + directionParam); /* Convert view cell to absolute cell */
+			cellYellowBear = _vm->normalizeModulo4(AL_2_viewCell + directionParam); /* Convert view cell to absolute cell */
 			thingParam = firstThingToDraw;
 			viewSquareIndex = AL_10_viewSquareIndexBackup; /* Restore value as it may have been modified while drawing a creature */
 			objectShiftIndex = 0;
@@ -3248,7 +3248,7 @@ T0115015_DrawProjectileAsObject:
 		} else
 			goto T0115129_DrawProjectiles; /* No creature to draw at cell, skip to projectiles */
 
-		creatureDirectionDelta = normalizeModulo4(directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
+		creatureDirectionDelta = _vm->normalizeModulo4(directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
 		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
@@ -3277,7 +3277,7 @@ T0115015_DrawProjectileAsObject:
 						creatureIndexGreen = 0;
 
 					twoHalfSquareCreaturesFrontView = group->getCount();
-					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == returnPrevVal(directionParam)))
+					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == _vm->returnPrevVal(directionParam)))
 						AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
 					else
 						AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
@@ -3507,7 +3507,7 @@ T0115129_DrawProjectiles:
 					if (projectileAspectType == k3_ProjectileAspectHasNone) {
 						projectileBitmapIndexDelta = 0;
 						flipVertical = flipHorizontal = false;
-					} else if (isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_events[projectile->_eventIndex]._Cu._projectile.getDir())) != isOrientedWestEast(directionParam)) {
+					} else if (_vm->isOrientedWestEast(Direction(projectileDirection = _vm->_timeline->_events[projectile->_eventIndex]._Cu._projectile.getDir())) != _vm->isOrientedWestEast(directionParam)) {
 						if (projectileAspectType == k2_ProjectileAspectHasRotation)
 							projectileBitmapIndexDelta = 1;
 						else
@@ -3519,7 +3519,7 @@ T0115129_DrawProjectiles:
 								flipHorizontal = !flipHorizontal;
 						} else {
 							flipVertical = false;
-							flipHorizontal = (returnNextVal(directionParam) == projectileDirection);
+							flipHorizontal = (_vm->returnNextVal(directionParam) == projectileDirection);
 						}
 					} else {
 						if ((projectileAspectType >= k2_ProjectileAspectHasRotation) || ((projectileAspectType == k1_ProjectileAspectBackGraphic) && (projectileDirection != directionParam)) || (projectileAspectTypeHasBackGraphicAndRotation && projectileFlipVertical)) /* If the projectile does not have a back graphic or has one but is not seen from the back or if it has a back graphic and rotation and should be flipped vertically */
@@ -3675,7 +3675,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					if (explosion->getCentered()) {
 						explosionCoordinates = centeredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
 					} else {
-						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == returnPrevVal(directionParam)))
+						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == _vm->returnPrevVal(directionParam)))
 							AL_2_viewCell = k0_ViewCellFronLeft;
 						else
 							AL_2_viewCell = k1_ViewCellFrontRight;

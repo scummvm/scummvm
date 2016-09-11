@@ -237,7 +237,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 	int16 attack = getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->getRandomNumber(32)), (uint16)200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
 	_vm->_projexpl->createProjectile(curThing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
-										  normalizeModulo4(_vm->_dungeonMan->_partyDir + side),
+										  _vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + side),
 										  _vm->_dungeonMan->_partyDir, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
 	_vm->_lastProjectileDisabledMovementDirection = _vm->_dungeonMan->_partyDir;
@@ -931,7 +931,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 
 	int16 eventIndex = curChampion->_enableActionEventIndex;
 	if (eventIndex >= 0) {
-		int32 currentEnableActionEventTime = filterTime(_vm->_timeline->_events[eventIndex]._mapTime);
+		int32 currentEnableActionEventTime = _vm->filterTime(_vm->_timeline->_events[eventIndex]._mapTime);
 		if (updatedEnableActionEventTime >= currentEnableActionEventTime) {
 			updatedEnableActionEventTime += (currentEnableActionEventTime - _vm->_gameTime) >> 1;
 		} else {
@@ -942,7 +942,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 		setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeDisableAction);
 		drawChampionState((ChampionIndex)champIndex);
 	}
-	setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
+	_vm->setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
 	curChampion->_enableActionEventIndex = _vm->_timeline->addEventGetEventIndex(&curEvent);
 }
 
@@ -1070,7 +1070,7 @@ int16 ChampionMan::getDamagedChampionCount(uint16 attack, int16 wounds, int16 at
 }
 
 int16 ChampionMan::getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
-	if (_partyChampionCount && (getDistance(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)) {
+	if (_partyChampionCount && (_vm->getDistance(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)) {
 		signed char orderedCellsToAttack[4];
 		_vm->_groupMan->setOrderedCellsToAttack(orderedCellsToAttack, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, mapX, mapY, cell);
 		for (uint16 i = 0; i < 4; i++) {
@@ -1117,7 +1117,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		TimelineEvent newEvent;
 		newEvent._type = k75_TMEventTypePoisonChampion;
 		newEvent._priority = champIndex;
-		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
+		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
 		newEvent._Bu._attack = attack;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
@@ -1129,14 +1129,14 @@ void ChampionMan::setPartyDirection(int16 dir) {
 	if (dir == _vm->_dungeonMan->_partyDir)
 		return;
 
-	int16 L0834_i_Delta = dir - _vm->_dungeonMan->_partyDir;
-	if (L0834_i_Delta < 0)
-		L0834_i_Delta += 4;
+	int16 dirDiff = dir - _vm->_dungeonMan->_partyDir;
+	if (dirDiff < 0)
+		dirDiff += 4;
 
 	Champion *curChampion = _champions;
 	for (int16 i = kDMChampionFirst; i < _partyChampionCount; i++) {
-		curChampion->_cell = (ViewCell)normalizeModulo4(curChampion->_cell + L0834_i_Delta);
-		curChampion->_dir = (Direction)normalizeModulo4(curChampion->_dir + L0834_i_Delta);
+		curChampion->_cell = (ViewCell)_vm->normalizeModulo4(curChampion->_cell + dirDiff);
+		curChampion->_dir = (Direction)_vm->normalizeModulo4(curChampion->_dir + dirDiff);
 		curChampion++;
 	}
 
@@ -1357,7 +1357,7 @@ bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 ki
 
 void ChampionMan::championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
 	Direction newDirection = champ->_dir;
-	_vm->_projexpl->createProjectile(thing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
+	_vm->_projexpl->createProjectile(thing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, _vm->normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
 	_vm->_lastProjectileDisabledMovementDirection = newDirection;
 }
@@ -1432,12 +1432,12 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			if (eventIndex == -1) {
 				TimelineEvent newEvent;
 				newEvent._type = k12_TMEventTypeHideDamageReceived;
-				setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
+				_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				newEvent._priority = championIndex;
 				championPtr->_hideDamageReceivedIndex = _vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
 				TimelineEvent *curEvent = &_vm->_timeline->_events[eventIndex];
-				setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
+				_vm->setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 			}
 			drawChampionState((ChampionIndex)championIndex);
@@ -1476,7 +1476,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
 		curCell = curChampion->_cell;
-		_vm->_moveSens->getMoveResult(thingWithNewCell(unusedThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+		_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(unusedThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 	}
 	curChampion->_symbolStep = 0;
 	curChampion->_symbols[0] = '\0';
@@ -1553,7 +1553,7 @@ void ChampionMan::dropAllObjects(uint16 champIndex) {
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing curThing = getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
 		if (curThing != Thing::_none)
-			_vm->_moveSens->getMoveResult(thingWithNewCell(curThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 	}
 }
 
@@ -1881,10 +1881,10 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	championPtr->_hideDamageReceivedIndex = -1;
 	championPtr->_dir = _vm->_dungeonMan->_partyDir;
 	uint16 viewCell = k0_ViewCellFronLeft;
-	while (getIndexInCell(normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir)) != kDMChampionNone)
+	while (getIndexInCell(_vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir)) != kDMChampionNone)
 		viewCell++;
 
-	championPtr->_cell = (ViewCell)normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir);
+	championPtr->_cell = (ViewCell)_vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir);
 	championPtr->_attributes = kDMAttributeIcon;
 	championPtr->_directionMaximumDamageReceived = _vm->_dungeonMan->_partyDir;
 	championPtr->_food = 1500 + _vm->getRandomNumber(256);
@@ -1960,7 +1960,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 
 	int16 curMapX = _vm->_dungeonMan->_partyMapX;
 	int16 curMapY = _vm->_dungeonMan->_partyMapY;
-	uint16 championObjectsCell = returnOppositeDir(_vm->_dungeonMan->_partyDir);
+	uint16 championObjectsCell = _vm->returnOppositeDir(_vm->_dungeonMan->_partyDir);
 	curMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], curMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 	curThing = _vm->_dungeonMan->getSquareFirstThing(curMapX, curMapY);
 	int16 slotIdx = kDMSlotBackpackLine1_1;

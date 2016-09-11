@@ -40,7 +40,7 @@ namespace DM {
 void DungeonMan::mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY) {
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsForward;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsForward;
-	turnDirRight(dir);
+	_vm->turnDirRight(dir);
 	posX += _vm->_dirIntoStepCountEast[dir] * stepsRight;
 	posY += _vm->_dirIntoStepCountNorth[dir] * stepsRight;
 }
@@ -895,7 +895,7 @@ T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
 			ThingType curThingType = curThing.getType();
-			int16 AL0310_i_SideIndex = normalizeModulo4(curThing.getCell() - dir);
+			int16 AL0310_i_SideIndex = _vm->normalizeModulo4(curThing.getCell() - dir);
 			if (AL0310_i_SideIndex) { /* Invisible on the back wall if 0 */
 				Sensor *curSensor = (Sensor *)getThingData(curThing);
 				if (curThingType == kDMstringTypeText) {
@@ -960,14 +960,14 @@ T0172010_ClosedFakeWall:
 
 		break;
 	case k3_ElementTypeStairs:
-		aspectArray[k0_ElementAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
+		aspectArray[k0_ElementAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) ? k18_ElementTypeStairsSide : k19_ElementTypeStaisFront;
 		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
 		AL0307_uc_FootprintsAllowed = false;
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 		break;
 	case k4_DoorElemType:
-		if (bool((getFlag(AL0307_uc_Square, k0x0008_DoorNorthSouthOrient) >> 3)) == isOrientedWestEast(dir)) {
+		if (bool((getFlag(AL0307_uc_Square, (byte) k0x0008_DoorNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) {
 			aspectArray[k0_ElementAspect] = k16_DoorSideElemType;
 		} else {
 			aspectArray[k0_ElementAspect] = k17_DoorFrontElemType;
@@ -991,9 +991,9 @@ void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowe
 												 int16 mapX, int16 mapY, bool isFakeWall) {
 
 	int16 randomWallOrnamentCount = _currMap->_randWallOrnCount;
-	aspectArray[k2_RightWallOrnOrdAspect] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k3_FrontWallOrnOrdAspect] = getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k4_LeftWallOrnOrdAspect] = getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (normalizeModulo4(++dir) + 1), 30);
+	aspectArray[k2_RightWallOrnOrdAspect] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
+	aspectArray[k3_FrontWallOrnOrdAspect] = getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
+	aspectArray[k4_LeftWallOrnOrdAspect] = getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (_vm->normalizeModulo4(++dir) + 1), 30);
 	if (isFakeWall || (mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight)) { /* If square is a fake wall or is out of map bounds */
 		for (int16 sideIndex = k2_RightWallOrnOrdAspect; sideIndex <= k4_LeftWallOrnOrdAspect; sideIndex++) { /* Loop to remove any random ornament that is an alcove */
 			if (isWallOrnAnAlcove(_vm->ordinalToIndex(aspectArray[sideIndex])))
@@ -1531,7 +1531,7 @@ void DungeonMan::setGroupDirections(Group *group, int16 dir, uint16 mapIndex) {
 	if (mapIndex == _partyMapIndex)
 		_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._directions = (Direction)dir;
 	else
-		group->setDir(normalizeModulo4(dir));
+		group->setDir(_vm->normalizeModulo4(dir));
 }
 
 bool DungeonMan::isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {

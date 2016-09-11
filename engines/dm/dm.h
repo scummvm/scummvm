@@ -200,25 +200,9 @@ public:
 	bool operator!=(const Thing &rhs) const { return _data != rhs._data; }
 }; // @ THING
 
-void turnDirRight(Direction &dir);
-void turnDirLeft(Direction &dir);
-Direction returnOppositeDir(Direction dir);	// @ M18_OPPOSITE
-uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
-uint16 returnNextVal(uint16 val); // @ M17_NEXT
-bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
-
 #define setFlag(val, mask) ((val) |= (mask))
 #define getFlag(val, mask) ((val) & (mask))
 #define clearFlag(val, mask) ((val) &= (~(mask))) // @ M09_CLEAR
-
-uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
-uint16 bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
-uint16 normalizeModulo4(uint16 val); // @ M21_NORMALIZE
-int32 filterTime(int32 map_time); // @ M30_TIME
-int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
-uint16 getMap(int32 map_time); // @ M29_MAP
-Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
-int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
 
 //TODO: Directly use CLIP
 template<typename T>
@@ -271,6 +255,21 @@ public:
 	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
 	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	Common::Language getGameLanguage();
+
+	void turnDirRight(Direction &dir);
+	void turnDirLeft(Direction &dir);
+	Direction returnOppositeDir(Direction dir);	// @ M18_OPPOSITE
+	uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
+	uint16 returnNextVal(uint16 val); // @ M17_NEXT
+	bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
+	uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
+	uint16 bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
+	uint16 normalizeModulo4(uint16 val); // @ M21_NORMALIZE
+	int32 filterTime(int32 map_time); // @ M30_TIME
+	int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
+	uint16 getMap(int32 map_time); // @ M29_MAP
+	Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
+	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
 
 private:
 	uint16 _dungeonId; // @ G0526_ui_DungeonID

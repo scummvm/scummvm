@@ -50,14 +50,14 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	if (projectileThing == Thing::_none) /* BUG0_16 If the game cannot create a projectile thing because it has run out of such things (60 maximum) then the object being thrown/shot/launched is orphaned. If the game has run out of projectile things it will try to remove a projectile from elsewhere in the dungeon, except in an area of 11x11 squares centered around the party (to make sure the player cannot actually see the thing disappear on screen) */
 		return;
 
-	projectileThing = thingWithNewCell(projectileThing, cell);
+	projectileThing = _vm->thingWithNewCell(projectileThing, cell);
 	Projectile *projectilePtr = (Projectile *)_vm->_dungeonMan->getThingData(projectileThing);
 	projectilePtr->_slot = thing;
 	projectilePtr->_kineticEnergy = MIN((int16)kineticEnergy, (int16)255);
 	projectilePtr->_attack = attack;
 	_vm->_dungeonMan->linkThingToList(projectileThing, Thing(0), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
 	TimelineEvent newEvent;
-	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
+	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
 	if (_createLauncherProjectile)
 		newEvent._type = k49_TMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
 	else
@@ -298,7 +298,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 		explosion->setCentered(true);
 	else {
 		explosion->setCentered(false);
-		unusedThing = thingWithNewCell(unusedThing, cell);
+		unusedThing = _vm->thingWithNewCell(unusedThing, cell);
 	}
 
 	explosion->setType(explThing.toUint16() - Thing::_firstExplosion.toUint16());
@@ -311,7 +311,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), projectileMapX, projectileMapY);
 	TimelineEvent newEvent;
-	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
+	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	newEvent._type = k25_TMEventTypeExplosion;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();
@@ -425,7 +425,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	uint16 projectileDirection = curEvent->_Cu._projectile.getDir();
 	projectileThingNewCell = Thing(curEvent->_Bu._slot);
 	uint16 projectileNewCell = projectileThingNewCell.getCell();
-	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (returnNextVal(projectileDirection) == projectileNewCell);
+	bool projectileMovesToOtherSquare = (projectileDirection == projectileNewCell) || (_vm->returnNextVal(projectileDirection) == projectileNewCell);
 	if (projectileMovesToOtherSquare) {
 		sourceMapX = destinationMapX;
 		sourceMapY = destinationMapY;
@@ -446,13 +446,13 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	else
 		projectileNewCell++;
 
-	projectileThingNewCell = thingWithNewCell(projectileThingNewCell, projectileNewCell &= 0x0003);
+	projectileThingNewCell = _vm->thingWithNewCell(projectileThingNewCell, projectileNewCell &= 0x0003);
 	if (projectileMovesToOtherSquare) {
 		_vm->_moveSens->getMoveResult(projectileThingNewCell, sourceMapX, sourceMapY, destinationMapX, destinationMapY);
 		curEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
 		curEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 		curEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
-		projectileThingNewCell = thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
+		projectileThingNewCell = _vm->thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
 		M31_setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
 		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == k4_DoorElemType) && hasProjectileImpactOccurred(k4_DoorElemType, destinationMapX, destinationMapY, projectileNewCell, projectileThing))

@@ -146,7 +146,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 						continue;
 
 					_vm->_championMan->getObjectRemovedFromLeaderHand();
-					_vm->_dungeonMan->linkThingToList(thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
+					_vm->_dungeonMan->linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
 					leaderHandObject = Thing::_none;
 				}
 				triggerLocalEffect(k2_SensorEffToggle, mapX, mapY, cellIdx); /* This will cause a rotation of the sensors at the specified cell on the specified square after all sensors have been processed */
@@ -166,7 +166,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 				_vm->_dungeonMan->unlinkThingFromList(thingOnSquare, Thing(0), mapX, mapY);
 				_vm->_championMan->getObjectRemovedFromLeaderHand();
-				_vm->_dungeonMan->linkThingToList(thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
+				_vm->_dungeonMan->linkThingToList(_vm->thingWithNewCell(leaderHandObject, cellIdx), Thing(0), mapX, mapY);
 				_vm->_championMan->putObjectInLeaderHand(thingOnSquare, true);
 				doNotTriggerSensor = false;
 				}
@@ -290,7 +290,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					if (teleporter->getAbsoluteRotation())
 						_vm->_championMan->setPartyDirection(teleporter->getRotation());
 					else
-						_vm->_championMan->setPartyDirection(normalizeModulo4(_vm->_dungeonMan->_partyDir + teleporter->getRotation()));
+						_vm->_championMan->setPartyDirection(_vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + teleporter->getRotation()));
 				} else {
 					if (thingType == kDMThingTypeGroup) {
 						if (teleporter->isAudible())
@@ -301,7 +301,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						if (thingType == kDMThingTypeProjectile)
 							thing = getTeleporterRotatedProjectileThing(teleporter, thing);
 						else if (!(teleporter->getAbsoluteRotation()) && (mapX != -2))
-							thing = thingWithNewCell(thing, normalizeModulo4(thing.getCell() + teleporter->getRotation()));
+							thing = _vm->thingWithNewCell(thing, _vm->normalizeModulo4(thing.getCell() + teleporter->getRotation()));
 					}
 				}
 				if (destinationIsTeleporterTarget)
@@ -353,10 +353,10 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					}
 					direction = _vm->_dungeonMan->getStairsExitDirection(destMapX, destMapY);
 					destMapX += _vm->_dirIntoStepCountEast[direction], destMapY += _vm->_dirIntoStepCountNorth[direction];
-					direction = returnOppositeDir((Direction)direction);
+					direction = _vm->returnOppositeDir((Direction)direction);
 					uint16 thingCell = thing.getCell();
-					thingCell = normalizeModulo4((((thingCell - direction + 1) & 0x0002) >> 1) + direction);
-					thing = thingWithNewCell(thing, thingCell);
+					thingCell = _vm->normalizeModulo4((((thingCell - direction + 1) & 0x0002) >> 1) + direction);
+					thing = _vm->thingWithNewCell(thing, thingCell);
 				} else
 					break;
 			}
@@ -540,23 +540,23 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 	if ((destMapX >= 0) && ((abs(srcMapX - destMapX) + abs(srcMapY - destMapY)) == 1)) {
 		/* If source and destination squares are adjacent (if party or group is not being teleported) */
 		int16 primaryDirection = _vm->_groupMan->getDirsWhereDestIsVisibleFromSource(srcMapX, srcMapY, destMapX, destMapY);
-		int16 secondaryDirection = returnNextVal(primaryDirection);
+		int16 secondaryDirection = _vm->returnNextVal(primaryDirection);
 		for (int16 i = 0; i < 4; ++i)
 			intermediaryChampionOrCreatureOrdinalInCell[i] = 0;
 
-		intermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)] = championOrCreatureOrdinalInCell[primaryDirection];
-		if (intermediaryChampionOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)])
+		intermediaryChampionOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)] = championOrCreatureOrdinalInCell[primaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)])
 			checkDestinationSquareProjectileImpacts = true;
 
-		intermediaryChampionOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)] = championOrCreatureOrdinalInCell[secondaryDirection];
-		if (intermediaryChampionOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)])
+		intermediaryChampionOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)] = championOrCreatureOrdinalInCell[secondaryDirection];
+		if (intermediaryChampionOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)])
 			checkDestinationSquareProjectileImpacts = true;
 
 		if (!championOrCreatureOrdinalInCell[primaryDirection])
-			championOrCreatureOrdinalInCell[primaryDirection] = championOrCreatureOrdinalInCell[returnPrevVal(primaryDirection)];
+			championOrCreatureOrdinalInCell[primaryDirection] = championOrCreatureOrdinalInCell[_vm->returnPrevVal(primaryDirection)];
 
 		if (!championOrCreatureOrdinalInCell[secondaryDirection])
-			championOrCreatureOrdinalInCell[secondaryDirection] = championOrCreatureOrdinalInCell[returnNextVal(secondaryDirection)];
+			championOrCreatureOrdinalInCell[secondaryDirection] = championOrCreatureOrdinalInCell[_vm->returnNextVal(secondaryDirection)];
 	}
 	uint16 projectileMapX = srcMapX; /* Check impacts with projectiles on the source square */
 	uint16 projectileMapY = srcMapY;
@@ -589,7 +589,7 @@ T0266017_CheckProjectileImpacts:
 
 void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effect, int32 time) {
 	TimelineEvent newEvent;
-	setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
+	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
 	newEvent._type = type;
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;
@@ -654,22 +654,22 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 	if (absoluteRotation)
 		updatedGroupDirections = rotation;
 	else
-		updatedGroupDirections = normalizeModulo4(groupDirections + rotation);
+		updatedGroupDirections = _vm->normalizeModulo4(groupDirections + rotation);
 
 	uint16 updatedGroupCells = _vm->_groupMan->getGroupCells(group, mapIndex);
 	if (updatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
 		int16 groupCells = updatedGroupCells;
 		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
-		int16 relativeRotation = normalizeModulo4(4 + updatedGroupDirections - groupDirections);
+		int16 relativeRotation = _vm->normalizeModulo4(4 + updatedGroupDirections - groupDirections);
 		for (int16 creatureIdx = 0; creatureIdx <= group->getCount(); creatureIdx++) {
-			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? rotation : normalizeModulo4(groupDirections + rotation));
+			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? rotation : _vm->normalizeModulo4(groupDirections + rotation));
 			if (creatureSize == k0_MaskCreatureSizeQuarter) {
 				relativeRotation = absoluteRotation ? 1 : 0;
 				if (relativeRotation)
 					relativeRotation = rotation;
 			}
 			if (relativeRotation)
-				updatedGroupCells = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupCells, creatureIdx, normalizeModulo4(groupCells + relativeRotation));
+				updatedGroupCells = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupCells, creatureIdx, _vm->normalizeModulo4(groupCells + relativeRotation));
 
 			groupDirections >>= 2;
 			groupCells >>= 2;
@@ -689,8 +689,8 @@ Thing MovesensMan::getTeleporterRotatedProjectileThing(Teleporter *teleporter, T
 	if (teleporter->getAbsoluteRotation())
 		updatedDirection = rotation;
 	else {
-		updatedDirection = normalizeModulo4(updatedDirection + rotation);
-		projectileThing = thingWithNewCell(projectileThing, normalizeModulo4(projectileThing.getCell() + rotation));
+		updatedDirection = _vm->normalizeModulo4(updatedDirection + rotation);
+		projectileThing = _vm->thingWithNewCell(projectileThing, _vm->normalizeModulo4(projectileThing.getCell() + rotation));
 	}
 	_moveResultDir = updatedDirection;
 	return projectileThing;
@@ -987,7 +987,7 @@ void MovesensMan::processRotationEffect() {
 
 void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible) {
 	TimelineEvent newEvent;
-	setMapAndTime(newEvent._mapTime, mapIndex, _vm->_gameTime + 5);
+	_vm->setMapAndTime(newEvent._mapTime, mapIndex, _vm->_gameTime + 5);
 	newEvent._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;

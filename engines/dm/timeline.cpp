@@ -173,9 +173,9 @@ void Timeline::fixChronology(uint16 timelineIndex) {
 }
 
 bool Timeline::isEventABeforeB(TimelineEvent *eventA, TimelineEvent *eventB) {
-	bool simultaneousFl = (filterTime(eventA->_mapTime) == filterTime(eventB->_mapTime));
+	bool simultaneousFl = (_vm->filterTime(eventA->_mapTime) == _vm->filterTime(eventB->_mapTime));
 
-	return (filterTime(eventA->_mapTime) < filterTime(eventB->_mapTime)) ||
+	return (_vm->filterTime(eventA->_mapTime) < _vm->filterTime(eventB->_mapTime)) ||
 		(simultaneousFl && (eventA->getTypePriority() > eventB->getTypePriority())) ||
 		(simultaneousFl && (eventA->getTypePriority() == eventB->getTypePriority()) && (eventA <= eventB));
 }
@@ -235,7 +235,7 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 	} else if (event->_type == k2_TMEventTypeDoorDestruction) {
 		TimelineEvent *curEvent = _events;
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
-			if ((event->getMapXY() == curEvent->getMapXY()) && (getMap(event->_mapTime) == getMap(curEvent->_mapTime))) {
+			if ((event->getMapXY() == curEvent->getMapXY()) && (_vm->getMap(event->_mapTime) == _vm->getMap(curEvent->_mapTime))) {
 				if ((curEvent->_type == k1_TMEventTypeDoorAnimation) || (curEvent->_type == k10_TMEventTypeDoor))
 					deleteEvent(eventIndex);
 			}
@@ -259,7 +259,7 @@ void Timeline::processTimeline() {
 		TimelineEvent newEvent;
 		TimelineEvent *curEvent = &newEvent;
 		extractFirstEvent(curEvent);
-		_vm->_dungeonMan->setCurrentMap(getMap(newEvent._mapTime));
+		_vm->_dungeonMan->setCurrentMap(_vm->getMap(newEvent._mapTime));
 		uint16 curEventType = newEvent._type;
 		if ((curEventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (k41_TMEventTypeUpdateBehaviour_3 + 1)))
 			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._Cu._ticks);
@@ -369,7 +369,7 @@ void Timeline::processTimeline() {
 }
 
 bool Timeline::isFirstEventExpiered() {
-	return (_eventCount && (filterTime(_events[_timeline[0]]._mapTime) <= _vm->_gameTime));
+	return (_eventCount && (_vm->filterTime(_events[_timeline[0]]._mapTime) <= _vm->_gameTime));
 }
 
 void Timeline::extractFirstEvent(TimelineEvent *event) {
@@ -537,7 +537,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			newEvent->_Cu._projectile.setMapX(_vm->_moveSens->_moveResultMapX);
 			newEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 			newEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
-			newEvent->_Bu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+			newEvent->_Bu._slot = _vm->thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 		} else if (curThingType == kDMThingTypeExplosion) {
 			TimelineEvent *newEvent = _events;
@@ -545,7 +545,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_Cu._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 					newEvent->_Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
 					newEvent->_Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
-					newEvent->_Cu._slot = thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
+					newEvent->_Cu._slot = _vm->thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
 					M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 				}
 			}
@@ -639,7 +639,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	int16 mapX = event->_Bu._location._mapX;
 	int16 mapY = event->_Bu._location._mapY;
 	uint16 cell = event->_Cu.A._cell;
-	uint16 projectileCell = returnOppositeDir((Direction)cell);
+	uint16 projectileCell = _vm->returnOppositeDir((Direction)cell);
 	int16 sensorType = sensor->getType();
 	int16 sensorData = sensor->getData();
 	int16 kineticEnergy = sensor->getActionKineticEnergy();
@@ -656,7 +656,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
-			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+			if ((firstProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->returnNextVal(cell))))
 				break;
 			firstProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(firstProjectileAssociatedThing);
 		}
@@ -668,7 +668,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 			secondProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 			while (secondProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game */
 				uint16 projectiveThingCell = secondProjectileAssociatedThing.getCell();
-				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == returnNextVal(cell))))
+				if ((secondProjectileAssociatedThing.getType() > kDMThingTypeSensor) && ((projectiveThingCell == cell) || (projectiveThingCell == _vm->returnNextVal(cell))))
 					break;
 				secondProjectileAssociatedThing = _vm->_dungeonMan->getNextThing(secondProjectileAssociatedThing);
 			}
@@ -687,7 +687,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 			launchSingleProjectile = true;
 	}
 	if (launchSingleProjectile)
-		projectileCell = normalizeModulo4(projectileCell + _vm->getRandomNumber(2));
+		projectileCell = _vm->normalizeModulo4(projectileCell + _vm->getRandomNumber(2));
 
 	/* BUG0_20 The game crashes if the launcher sensor is on a map boundary and shoots in a direction outside the map */
 	mapX += _vm->_dirIntoStepCountEast[cell];
@@ -695,7 +695,7 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	_vm->_projexpl->_createLauncherProjectile = true;
 	_vm->_projexpl->createProjectile(firstProjectileAssociatedThing, mapX, mapY, projectileCell, (Direction)cell, kineticEnergy, 100, stepEnergy);
 	if (!launchSingleProjectile)
-		_vm->_projexpl->createProjectile(secondProjectileAssociatedThing, mapX, mapY, returnNextVal(projectileCell), (Direction)cell, kineticEnergy, 100, stepEnergy);
+		_vm->_projexpl->createProjectile(secondProjectileAssociatedThing, mapX, mapY, _vm->returnNextVal(projectileCell), (Direction)cell, kineticEnergy, 100, stepEnergy);
 
 	_vm->_projexpl->_createLauncherProjectile = false;
 }
@@ -746,7 +746,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 
 						TimelineEvent newEvent;
 						newEvent._type = k65_TMEventTypeEnableGroupGenerator;
-						setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
+						_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
 						newEvent._priority = 0;
 						newEvent._Bu._location._mapX = mapX;
 						newEvent._Bu._location._mapY = mapY;
@@ -897,7 +897,7 @@ void Timeline::processEventLight(TimelineEvent *event) {
 		TimelineEvent newEvent;
 		newEvent._type = k70_TMEventTypeLight;
 		newEvent._Bu._lightPower = weakerLightPower;
-		setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
+		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		newEvent._priority = 0;
 		addEventGetEventIndex(&newEvent);
 	}
