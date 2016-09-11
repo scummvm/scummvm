@@ -715,7 +715,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 				textString->setVisible((event->_Cu.A._effect == k0_SensorEffSet));
 
 			if (!textCurrentlyVisible && textString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
-				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, k1_TextTypeMessage);
+				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, kDMTextTypeMessage);
 				_vm->_textMan->printMessage(k15_ColorWhite, _vm->_stringBuildBuffer);
 			}
 		} else if (curThingType == kDMThingTypeSensor) {

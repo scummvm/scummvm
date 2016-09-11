@@ -136,7 +136,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 				int16 iconIndex = _vm->_objectMan->getIconIndex(projectileAssociatedThing);
 
 				if ((projectileThingData->_attack > _vm->getRandomNumber(128))
-				&& getFlag(associatedAllowedSlots, k0x0100_ObjectAllowedSlotPouchPassAndThroughDoors)
+				&& getFlag(associatedAllowedSlots, kDMMaskPouchPassAndThroughDoors)
 				&& (   (projectileAssociatedThingType != kDMThingTypeJunk)
 					|| (iconIndex < kDMIconIndiceJunkIronKey)
 					|| (iconIndex > kDMIconIndiceJunkMasterKey)

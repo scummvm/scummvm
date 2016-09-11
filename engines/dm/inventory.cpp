@@ -308,7 +308,7 @@ void InventoryMan::drawPanelScroll(Scroll *scroll) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 
 	char stringFirstLine[300];
-	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(stringFirstLine, Thing(scroll->getTextStringThingIndex()), (TextType)(kDMTextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 	char *charRed = stringFirstLine;
 	while (*charRed && (*charRed != '\n'))
 		charRed++;

@@ -1141,22 +1141,22 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		int16 actionHandWeaponClass = weaponInfoActionHand->_class;
 		int16 readyHandWeaponClass = weaponInfoReadyHand->_class;
 		int16 stepEnergy = actionHandWeaponClass;
-		if ((actionHandWeaponClass >= k16_WeaponClassFirstBow) && (actionHandWeaponClass <= k31_WeaponClassLastBow)) {
-			if (readyHandWeaponClass != k10_WeaponClassBowAmmunition) {
+		if ((actionHandWeaponClass >= kDMWeaponClassFirstBow) && (actionHandWeaponClass <= kDMWeaponClassLastBow)) {
+			if (readyHandWeaponClass != kDMWeaponClassBowAmmunition) {
 				_actionDamage = kM2_damageNoAmmunition;
 				actionExperienceGain = 0;
 				actionPerformed = false;
 				break;
 			}
-			stepEnergy -= k16_WeaponClassFirstBow;
-		} else if ((actionHandWeaponClass >= k32_WeaponClassFirstSling) && (actionHandWeaponClass <= k47_WeaponClassLastSling)) {
-			if (readyHandWeaponClass != k11_WeaponClassSlingAmmunition) {
+			stepEnergy -= kDMWeaponClassFirstBow;
+		} else if ((actionHandWeaponClass >= kDMWeaponClassFirstSling) && (actionHandWeaponClass <= kDMWeaponClassLastSling)) {
+			if (readyHandWeaponClass != kDMWeaponClassSlingAmmunition) {
 				_actionDamage = kM2_damageNoAmmunition;
 				actionExperienceGain = 0;
 				actionPerformed = false;
 				break;
 			}
-			stepEnergy -= k32_WeaponClassFirstSling;
+			stepEnergy -= kDMWeaponClassFirstSling;
 		}
 
 		setChampionDirectionToPartyDirection(curChampion);

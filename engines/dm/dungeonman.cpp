@@ -862,8 +862,8 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 	bool frontRandomWallOrnamentAllowed = false;
 	bool squareIsFakeWall;
 
-	aspectArray[k0_ElementAspect] = Square(AL0307_uc_Square).getType();
-	switch (aspectArray[k0_ElementAspect]) {
+	aspectArray[kDMSquareAspectElement] = Square(AL0307_uc_Square).getType();
+	switch (aspectArray[kDMSquareAspectElement]) {
 	case kDMElementTypeWall:
 		switch (dir) {
 		case kDMDirNorth:
@@ -913,66 +913,66 @@ T0172010_ClosedFakeWall:
 			curThing = getNextThing(curThing);
 		}
 		if (squareIsFakeWall && (_partyMapX != mapX) && (_partyMapY != mapY)) {
-			aspectArray[k1_FirstGroupOrObjectAspect] = Thing::_endOfList.toUint16();
+			aspectArray[kDMSquareAspectFirstGroupOrObject] = Thing::_endOfList.toUint16();
 			return;
 		}
 		break;
 	case kDMElementTypeFakeWall:
 		if (!getFlag(AL0307_uc_Square, k0x0004_FakeWallOpen)) {
-			aspectArray[k0_ElementAspect] = kDMElementTypeWall;
+			aspectArray[kDMSquareAspectElement] = kDMElementTypeWall;
 			leftRandomWallOrnamentAllowed = rightRandomWallOrnamentAllowed = frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed);
 			squareIsFakeWall = true;
 			goto T0172010_ClosedFakeWall;
 		}
-		aspectArray[k0_ElementAspect] = k1_CorridorElemType;
+		aspectArray[kDMSquareAspectElement] = k1_CorridorElemType;
 		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed) ? 8 : 0;
 		// No break on purpose
 	case k1_CorridorElemType:
 	case kDMElementTypePit:
 	case kDMElementTypeTeleporter:
-		if (aspectArray[k0_ElementAspect] == k1_CorridorElemType) {
-			aspectArray[k4_FloorOrnOrdAspect] = getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _currMap->_randFloorOrnCount, mapX, mapY, 30);
+		if (aspectArray[kDMSquareAspectElement] == k1_CorridorElemType) {
+			aspectArray[kDMSquareAspectFloorOrn] = getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _currMap->_randFloorOrnCount, mapX, mapY, 30);
 			AL0307_uc_FootprintsAllowed = true;
-		} else if (aspectArray[k0_ElementAspect] == kDMElementTypePit) {
+		} else if (aspectArray[kDMSquareAspectElement] == kDMElementTypePit) {
 			if (getFlag(AL0307_uc_Square, k0x0008_PitOpen)) {
-				aspectArray[k2_PitInvisibleAspect] = getFlag(AL0307_uc_Square, k0x0004_PitInvisible);
+				aspectArray[kDMSquareAspectPitInvisible] = getFlag(AL0307_uc_Square, k0x0004_PitInvisible);
 				AL0307_uc_FootprintsAllowed &= 0x0001;
 			} else {
-				aspectArray[k0_ElementAspect] = k1_CorridorElemType;
+				aspectArray[kDMSquareAspectElement] = k1_CorridorElemType;
 				AL0307_uc_FootprintsAllowed = true;
 			}
 		} else { // k5_ElementTypeTeleporter
-			aspectArray[k2_TeleporterVisibleAspect] = getFlag(AL0307_uc_Square, k0x0008_TeleporterOpen) && getFlag(AL0307_uc_Square, k0x0004_TeleporterVisible);
+			aspectArray[kDMSquareAspectTeleporterVisible] = getFlag(AL0307_uc_Square, k0x0008_TeleporterOpen) && getFlag(AL0307_uc_Square, k0x0004_TeleporterVisible);
 			AL0307_uc_FootprintsAllowed = true;
 		}
 
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor)) {
 			if (curThing.getType() == kDMThingTypeSensor) {
 				Sensor *curSensor = (Sensor *)getThingData(curThing);
-				aspectArray[k4_FloorOrnOrdAspect] = curSensor->getAttrOrnOrdinal();
+				aspectArray[kDMSquareAspectFloorOrn] = curSensor->getAttrOrnOrdinal();
 			}
 			curThing = getNextThing(curThing);
 		}
 
 		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
-			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
+			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 
 		break;
 	case kDMElementTypeStairs:
-		aspectArray[k0_ElementAspect] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) ? kDMElementTypeStairsSide : kDMElementTypeStairsFront;
-		aspectArray[k2_StairsUpAspect] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
+		aspectArray[kDMSquareAspectElement] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) ? kDMElementTypeStairsSide : kDMElementTypeStairsFront;
+		aspectArray[kDMSquareAspectStairsUp] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
 		AL0307_uc_FootprintsAllowed = false;
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 		break;
 	case k4_DoorElemType:
 		if (bool((getFlag(AL0307_uc_Square, (byte) k0x0008_DoorNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) {
-			aspectArray[k0_ElementAspect] = k16_DoorSideElemType;
+			aspectArray[kDMSquareAspectElement] = k16_DoorSideElemType;
 		} else {
-			aspectArray[k0_ElementAspect] = k17_DoorFrontElemType;
-			aspectArray[k2_DoorStateAspect] = Square(AL0307_uc_Square).getDoorState();
-			aspectArray[k3_DoorThingIndexAspect] = getSquareFirstThing(mapX, mapY).getIndex();
+			aspectArray[kDMSquareAspectElement] = k17_DoorFrontElemType;
+			aspectArray[kDMSquareAspectDoorState] = Square(AL0307_uc_Square).getDoorState();
+			aspectArray[kDMSquareAspectDoorThingIndex] = getSquareFirstThing(mapX, mapY).getIndex();
 		}
 		AL0307_uc_FootprintsAllowed = true;
 
@@ -981,21 +981,21 @@ T0172010_ClosedFakeWall:
 
 		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
 		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
-			setFlag(aspectArray[k4_FloorOrnOrdAspect], k0x8000_FootprintsAspect);
+			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 		break;
 	}
-	aspectArray[k1_FirstGroupOrObjectAspect] = curThing.toUint16();
+	aspectArray[kDMSquareAspectFirstGroupOrObject] = curThing.toUint16();
 }
 
 void DungeonMan::setSquareAspectOrnOrdinals(uint16 *aspectArray, bool leftAllowed, bool frontAllowed, bool rightAllowed, int16 dir,
 												 int16 mapX, int16 mapY, bool isFakeWall) {
 
 	int16 randomWallOrnamentCount = _currMap->_randWallOrnCount;
-	aspectArray[k2_RightWallOrnOrdAspect] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k3_FrontWallOrnOrdAspect] = getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
-	aspectArray[k4_LeftWallOrnOrdAspect] = getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (_vm->normalizeModulo4(++dir) + 1), 30);
+	aspectArray[kDMSquareAspectRightWallOrnOrd] = getRandomOrnOrdinal(leftAllowed, randomWallOrnamentCount, mapX, ++mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
+	aspectArray[kDMSquareFrontWallOrnOrd] = getRandomOrnOrdinal(frontAllowed, randomWallOrnamentCount, mapX, mapY * (_vm->normalizeModulo4(++dir) + 1), 30);
+	aspectArray[kDMSquareAspectLeftWallOrnOrd] = getRandomOrnOrdinal(rightAllowed, randomWallOrnamentCount, mapX, mapY-- * (_vm->normalizeModulo4(++dir) + 1), 30);
 	if (isFakeWall || (mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight)) { /* If square is a fake wall or is out of map bounds */
-		for (int16 sideIndex = k2_RightWallOrnOrdAspect; sideIndex <= k4_LeftWallOrnOrdAspect; sideIndex++) { /* Loop to remove any random ornament that is an alcove */
+		for (int16 sideIndex = kDMSquareAspectRightWallOrnOrd; sideIndex <= kDMSquareAspectLeftWallOrnOrd; sideIndex++) { /* Loop to remove any random ornament that is an alcove */
 			if (isWallOrnAnAlcove(_vm->ordinalToIndex(aspectArray[sideIndex])))
 				aspectArray[sideIndex] = 0;
 		}
@@ -1121,10 +1121,10 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
 		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
 		char sepChar;
-		if (type == k1_TextTypeMessage) {
+		if (type == kDMTextTypeMessage) {
 			*destString++ = '\n';
 			sepChar = ' ';
-		} else if (type == k0_TextTypeInscription) {
+		} else if (type == kDMTextTypeInscription) {
 			sepChar = (char)0x80;
 		} else {
 			sepChar = '\n';
@@ -1149,7 +1149,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 			if (escChar) {
 				*destString = '\0';
 				if (escChar == 30) {
-					if (type != k0_TextTypeInscription)
+					if (type != kDMTextTypeInscription)
 						escReplString = messageAndScrollEscReplacementStrings[code];
 					else
 						escReplString = inscriptionEscReplacementStrings[code];
@@ -1160,7 +1160,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 				destString += strlen(escReplString);
 				escChar = 0;
 			} else if (code < 28) {
-				if (type != k0_TextTypeInscription) {
+				if (type != kDMTextTypeInscription) {
 					if (code == 26)
 						code = ' ';
 					else if (code == 27)
@@ -1177,7 +1177,7 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 				break;
 		}
 	}
-	*destString = ((type == k0_TextTypeInscription) ? 0x81 : '\0');
+	*destString = ((type == kDMTextTypeInscription) ? 0x81 : '\0');
 }
 
 Thing DungeonMan::getUnusedThing(uint16 thingType) {
@@ -1409,7 +1409,7 @@ Thing DungeonMan::getSquareFirstObject(int16 mapX, int16 mapY) {
 uint16 DungeonMan::getArmourDefense(ArmourInfo *armourInfo, bool useSharpDefense) {
 	uint16 defense = armourInfo->_defense;
 	if (useSharpDefense)
-		defense = _vm->getScaledProduct(defense, 3, getFlag(armourInfo->_attributes, k0x0007_ArmourAttributeSharpDefense) + 4);
+		defense = _vm->getScaledProduct(defense, 3, getFlag(armourInfo->_attributes, kDMArmourAttributeSharpDefense) + 4);
 
 	return defense;
 }

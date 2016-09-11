@@ -225,7 +225,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 	if (curThing.getType() == kDMThingTypeWeapon) {
 		experience += 4;
 		WeaponInfo *curWeapon = _vm->_dungeonMan->getWeaponInfo(curThing);
-		if (curWeapon->_class <= k12_WeaponClassPoisinDart) {
+		if (curWeapon->_class <= kDMWeaponClassPoisinDart) {
 			weaponKineticEnergy = curWeapon->_kineticEnergy;
 			experience += weaponKineticEnergy >> 2;
 		}
@@ -642,13 +642,13 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 		strength += weaponInfo->_strength;
 		uint16 skillLevel = 0;
 		uint16 weaponClass = weaponInfo->_class;
-		if ((weaponClass == k0_WeaponClassSwingWeapon) || (weaponClass == k2_WeaponClassDaggerAndAxes)) {
+		if ((weaponClass == kDMWeaponClassSwingWeapon) || (weaponClass == kDMWeaponClassDaggerAndAxes)) {
 			skillLevel = getSkillLevel(champIndex, kDMSkillSwing);
 		}
-		if ((weaponClass != k0_WeaponClassSwingWeapon) && (weaponClass < k16_WeaponClassFirstBow)) {
+		if ((weaponClass != kDMWeaponClassSwingWeapon) && (weaponClass < kDMWeaponClassFirstBow)) {
 			skillLevel += getSkillLevel(champIndex, kDMSkillThrow);
 		}
-		if ((weaponClass >= k16_WeaponClassFirstBow) && (weaponClass < k112_WeaponClassFirstMagicWeapon)) {
+		if ((weaponClass >= kDMWeaponClassFirstBow) && (weaponClass < kDMWeaponClassFirstMagicWeapon)) {
 			skillLevel += getSkillLevel(champIndex, kDMSkillShoot);
 		}
 		strength += skillLevel << 1;
@@ -853,7 +853,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 		if (curThing.getType() == kDMThingTypeArmour) {
 			ArmourInfo *armorInfo = (ArmourInfo *)_vm->_dungeonMan->getThingData(curThing);
 			armorInfo = &_vm->_dungeonMan->_armourInfos[((Armour *)armorInfo)->getType()];
-			if (getFlag(armorInfo->_attributes, k0x0080_ArmourAttributeIsAShield))
+			if (getFlag(armorInfo->_attributes, kDMArmourAttributeShield))
 				armorShieldDefense += ((getStrength(champIndex, slotIndex) + _vm->_dungeonMan->getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
 		}
 	}
@@ -1251,14 +1251,14 @@ bool ChampionMan::isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 wea
 		return false;
 
 	WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(curThing);
-	int16 weaponClass = kM1_WeaponClassNone;
+	int16 weaponClass = kDMWeaponClassNone;
 
-	if ((weaponInfo->_class >= k16_WeaponClassFirstBow) && (weaponInfo->_class <= k31_WeaponClassLastBow))
-		weaponClass = k10_WeaponClassBowAmmunition;
-	else if ((weaponInfo->_class >= k32_WeaponClassFirstSling) && (weaponInfo->_class <= k47_WeaponClassLastSling))
-		weaponClass = k11_WeaponClassSlingAmmunition;
+	if ((weaponInfo->_class >= kDMWeaponClassFirstBow) && (weaponInfo->_class <= kDMWeaponClassLastBow))
+		weaponClass = kDMWeaponClassBowAmmunition;
+	else if ((weaponInfo->_class >= kDMWeaponClassFirstSling) && (weaponInfo->_class <= kDMWeaponClassLastSling))
+		weaponClass = kDMWeaponClassSlingAmmunition;
 
-	if (weaponClass == kM1_WeaponClassNone)
+	if (weaponClass == kDMWeaponClassNone)
 		return false;
 
 	curThing = curChampion->_slots[ammunitionSlotIndex];
@@ -1898,7 +1898,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 
 	char L0807_ac_DecodedChampionText[77];
 	char *decodedStringPtr = L0807_ac_DecodedChampionText;
-	_vm->_dungeonMan->decodeText(decodedStringPtr, curThing, (TextType)(k2_TextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | k0x8000_DecodeEvenIfInvisible));
 
 	uint16 charIdx = 0;
 	char tmpChar;

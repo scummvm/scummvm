@@ -989,7 +989,7 @@ void DMEngine::fuseSequence() {
 	while (textStringThingCount--) {
 		for (int16 idx = 0; idx < maxCount; idx++) {
 			char decodedString[200];
-			_dungeonMan->decodeText(decodedString, textStringThings[idx], (TextType)(k1_TextTypeMessage | k0x8000_DecodeEvenIfInvisible));
+			_dungeonMan->decodeText(decodedString, textStringThings[idx], (TextType)(kDMTextTypeMessage | k0x8000_DecodeEvenIfInvisible));
 			if (decodedString[1] == textFirstChar) {
 				_textMan->clearAllRows();
 				decodedString[1] = '\n'; /* New line */
