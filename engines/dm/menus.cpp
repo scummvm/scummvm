@@ -885,8 +885,8 @@ void MenuMan::addChampionSymbol(int16 symbolIndex) {
 	uint16 symbolStep = casterChampion->_symbolStep;
 	uint16 manaCost = symbolBaseManaCost[symbolStep][symbolIndex];
 	if (symbolStep) {
-		uint16 symbolIndex = casterChampion->_symbols[0] - 96;
-		manaCost = (manaCost * symbolManaCostMultiplier[symbolIndex]) >> 3;
+		uint16 symbolIndex1 = casterChampion->_symbols[0] - 96;
+		manaCost = (manaCost * symbolManaCostMultiplier[symbolIndex1]) >> 3;
 	}
 
 	if (manaCost <= casterChampion->_currMana) {
