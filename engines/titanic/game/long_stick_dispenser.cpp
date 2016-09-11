@@ -22,6 +22,7 @@
 
 #include "titanic/game/long_stick_dispenser.h"
 #include "titanic/core/project_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -61,7 +62,7 @@ bool CLongStickDispenser::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 		_fieldC0 = 1;
 		loadFrame(19);
 	} else if (_fieldC0) {
-		playSound("z#63.wav");
+		playSound(g_vm->isGerman() ? "z#594.wav" : "z#63.wav");
 		petDisplayMessage(1, GLASS_IS_UNBREAKABLE);
 	}
 

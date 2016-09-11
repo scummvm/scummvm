@@ -152,6 +152,11 @@ public:
 	Common::Language getLanguage() const;
 
 	/**
+	 * Returns true if it's the German version
+	 */
+	bool isGerman() const { return getLanguage() == Common::DE_DEU; }
+
+	/**
 	 * Gets a random number
 	 */
 	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }

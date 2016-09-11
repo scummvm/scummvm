@@ -72,7 +72,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	for (obj = getMailManFirstObject(); obj; obj = getNextMail(obj)) {
 		if (obj->isEquals("Chicken")) {
-			petDisplayMessage(1, ONE_ALLOCATED_CHICKEN_PER_CUSTOMER);
+			petDisplayMessage(1, ONE_CHICKEN_PER_CUSTOMER);
 			return true;
 		}
 	}
@@ -82,7 +82,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	switch (v1) {
 	case 0:
-		petDisplayMessage(1, ONE_CHICKEN_PER_CUSTOMER);
+		petDisplayMessage(1, ONE_ALLOCATED_CHICKEN_PER_CUSTOMER);
 		break;
 	case 1:
 		setVisible(true);

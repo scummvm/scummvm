@@ -113,7 +113,7 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrameWinterOn2, indent);
 	file->writeQuotedLine(_viewName2, indent);
 
-	if (g_vm->getLanguage() == Common::DE_DEU) {
+	if (g_vm->isGerman()) {
 		file->writeNumberLine(_field160, indent);
 		file->writeNumberLine(_field164, indent);
 		file->writeNumberLine(_field168, indent);
@@ -177,7 +177,7 @@ void CArboretumGate::load(SimpleFile *file) {
 	_endFrameWinterOn2 = file->readNumber();
 	_viewName2 = file->readString();
 
-	if (g_vm->getLanguage() == Common::DE_DEU) {
+	if (g_vm->isGerman()) {
 		_field160 = file->readNumber();
 		_field164 = file->readNumber();
 		_field168 = file->readNumber();

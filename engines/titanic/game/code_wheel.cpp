@@ -41,7 +41,7 @@ void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_field110, indent);
-	if (g_vm->getLanguage() == Common::DE_DEU) {
+	if (g_vm->isGerman()) {
 		file->writeNumberLine(_field114, indent);
 		file->writeNumberLine(_field118, indent);
 	}
@@ -54,7 +54,7 @@ void CodeWheel::load(SimpleFile *file) {
 	_field108 = file->readNumber();
 	_state = file->readNumber();
 	_field110 = file->readNumber();
-	if (g_vm->getLanguage() == Common::DE_DEU) {
+	if (g_vm->isGerman()) {
 		_field114 = file->readNumber();
 		_field118 = file->readNumber();
 	}

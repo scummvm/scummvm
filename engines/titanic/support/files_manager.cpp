@@ -126,7 +126,7 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 
 	// If we're running the German version, check for the existance of
 	// a German specific version of the given resource
-	if (_vm->getLanguage() == Common::DE_DEU && _resources.contains(str + "/DE"))
+	if (_vm->isGerman() && _resources.contains(str + "/DE"))
 		resEntry = _resources[str + "/DE"];
 
 	_datFile.seek(resEntry._offset);
