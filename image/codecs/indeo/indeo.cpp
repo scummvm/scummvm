@@ -86,18 +86,17 @@ static const IVIHuffDesc ivi_blk_huff_desc[8] = {
 /*------------------------------------------------------------------------*/
 
 int IVIHuffDesc::createHuffFromDesc(VLC *vlc, bool flag) const {
-	int pos, i, j, codesPerRow, prefix, notLastRow;
 	uint16 codewords[256];
 	uint8 bits[256];
 
-	pos = 0; // current position = 0
+	int pos = 0; // current position = 0
 
-	for (i = 0; i < _numRows; i++) {
-		codesPerRow = 1 << _xBits[i];
-		notLastRow  = (i != _numRows - 1);
-		prefix      = ((1 << i) - 1) << (_xBits[i] + notLastRow);
+	for (int i = 0; i < _numRows; i++) {
+		int codesPerRow = 1 << _xBits[i];
+		int notLastRow  = (i != _numRows - 1);
+		int prefix      = ((1 << i) - 1) << (_xBits[i] + notLastRow);
 
-		for (j = 0; j < codesPerRow; j++) {
+		for (int j = 0; j < codesPerRow; j++) {
 			if (pos >= 256) // Some Indeo5 codebooks can have more than 256
 				break;      // elements, but only 256 codes are allowed!
 
@@ -135,7 +134,6 @@ IVIHuffTab::IVIHuffTab() : _tab(nullptr) {
 }
 
 int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab) {
-	int i, result;
 	IVIHuffDesc newHuff;
 
 	if (!descCoded) {
@@ -154,7 +152,7 @@ int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab
 			return -1;
 		}
 
-		for (i = 0; i < newHuff._numRows; i++)
+		for (int i = 0; i < newHuff._numRows; i++)
 			newHuff._xBits[i] = ctx->_gb->getBits(4);
 
 		// Have we got the same custom table? Rebuild if not.
@@ -163,7 +161,7 @@ int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab
 
 			if (_custTab._table)
 				_custTab.freeVlc();
-			result = _custDesc.createHuffFromDesc(&_custTab, false);
+			int result = _custDesc.createHuffFromDesc(&_custTab, false);
 			if (result) {
 				// reset faulty description
 				_custDesc._numRows = 0;

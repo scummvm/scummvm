@@ -73,24 +73,21 @@ namespace Indeo {
 
 void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int i, shift, sp1, sp2, sp3, sp4;
-	const int32 *src;
-	int32 *dst;
 	int tmp[64];
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
-	src = in;
-	dst = tmp;
-	for (i = 0; i < 8; i++) {
+	const int32 *src = in;
+	int32 *dst = tmp;
+	for (int i = 0; i < 8; i++) {
 		if (flags[i]) {
 			// pre-scaling
-			shift = !(i & 4);
-			sp1 = src[ 0] << shift;
-			sp2 = src[ 8] << shift;
-			sp3 = src[16] << shift;
-			sp4 = src[24] << shift;
+			int shift = !(i & 4);
+			int sp1 = src[ 0] << shift;
+			int sp2 = src[ 8] << shift;
+			int sp3 = src[16] << shift;
+			int sp4 = src[24] << shift;
 			INV_HAAR8(    sp1,     sp2,     sp3,     sp4,
 					  src[32], src[40], src[48], src[56],
 					  dst[ 0], dst[ 8], dst[16], dst[24],
@@ -109,7 +106,7 @@ void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 	// apply the InvHaar8 to all rows
 #define COMPENSATE(x) (x)
 	src = tmp;
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (   !src[0] && !src[1] && !src[2] && !src[3]
 			&& !src[4] && !src[5] && !src[6] && !src[7]) {
 			memset(out, 0, 8 * sizeof(out[0]));
@@ -128,12 +125,11 @@ void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviRowHaar8(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all rows
 #define COMPENSATE(x) (x)
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (   !in[0] && !in[1] && !in[2] && !in[3]
 			&& !in[4] && !in[5] && !in[6] && !in[7]) {
 			memset(out, 0, 8 * sizeof(out[0]));
@@ -152,12 +148,11 @@ void IndeoDSP::ffIviRowHaar8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (flags[i]) {
 			INV_HAAR8(in[ 0], in[ 8], in[16], in[24],
 					  in[32], in[40], in[48], in[56],
@@ -181,22 +176,19 @@ void IndeoDSP::ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int i, shift, sp1, sp2;
-	const int32 *src;
-	int32 *dst;
 	int tmp[16];
 	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar4 to all columns
 #define COMPENSATE(x) (x)
-	src = in;
-	dst = tmp;
-	for (i = 0; i < 4; i++) {
+	const int32 *src = in;
+	int32 *dst = tmp;
+	for (int i = 0; i < 4; i++) {
 		if (flags[i]) {
 			// pre-scaling
-			shift = !(i & 2);
-			sp1 = src[0] << shift;
-			sp2 = src[4] << shift;
+			int shift = !(i & 2);
+			int sp1 = src[0] << shift;
+			int sp2 = src[4] << shift;
 			INV_HAAR4(   sp1,    sp2, src[8], src[12],
 					  dst[0], dst[4], dst[8], dst[12],
 					  t0, t1, t2, t3, t4);
@@ -212,7 +204,7 @@ void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 	// apply the InvHaar8 to all rows
 #define COMPENSATE(x) (x)
 	src = tmp;
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (!src[0] && !src[1] && !src[2] && !src[3]) {
 			memset(out, 0, 4 * sizeof(out[0]));
 		} else {
@@ -228,12 +220,11 @@ void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviRowHaar4(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar4 to all rows
 #define COMPENSATE(x) (x)
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (!in[0] && !in[1] && !in[2] && !in[3]) {
 			memset(out, 0, 4 * sizeof(out[0]));
 		} else {
@@ -249,12 +240,11 @@ void IndeoDSP::ffIviRowHaar4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviColHaar4(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (flags[i]) {
 			INV_HAAR4(in[0], in[4], in[8], in[12],
 					  out[0 * pitch], out[1 * pitch],
@@ -273,13 +263,10 @@ void IndeoDSP::ffIviColHaar4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
 					   int blkSize) {
-	int x, y;
-	int16 dcCoeff;
+	int16 dcCoeff = (*in + 0) >> 3;
 
-	dcCoeff = (*in + 0) >> 3;
-
-	for (y = 0; y < blkSize; out += pitch, y++) {
-		for (x = 0; x < blkSize; x++)
+	for (int y = 0; y < blkSize; out += pitch, y++) {
+		for (int x = 0; x < blkSize; x++)
 			out[x] = dcCoeff;
 	}
 }
@@ -335,16 +322,13 @@ void IndeoDSP::ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
 	d4 = COMPENSATE(t4);}
 
 void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int i;
-	const int32 *src;
-	int32 *dst;
 	int tmp[64];
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 #define COMPENSATE(x) (x)
-	src = in;
-	dst = tmp;
-	for (i = 0; i < 8; i++) {
+	const int32 *src = in;
+	int32 *dst = tmp;
+	for (int i = 0; i < 8; i++) {
 		if (flags[i]) {
 			IVI_INV_SLANT8(src[0], src[8], src[16], src[24], src[32], src[40], src[48], src[56],
 						   dst[0], dst[8], dst[16], dst[24], dst[32], dst[40], dst[48], dst[56],
@@ -360,7 +344,7 @@ void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, c
 
 #define COMPENSATE(x) (((x) + 1)>>1)
 	src = tmp;
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (!src[0] && !src[1] && !src[2] && !src[3] && !src[4] && !src[5] && !src[6] && !src[7]) {
 			memset(out, 0, 8*sizeof(out[0]));
 		} else {
@@ -375,16 +359,13 @@ void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, c
 }
 
 void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int i;
-	const int32 *src;
-	int32 *dst;
 	int tmp[16];
 	int t0, t1, t2, t3, t4;
 
 #define COMPENSATE(x) (x)
-	src = in;
-	dst = tmp;
-	for (i = 0; i < 4; i++) {
+	const int32 *src = in;
+	int32 *dst = tmp;
+	for (int i = 0; i < 4; i++) {
 		if (flags[i]) {
 			IVI_INV_SLANT4(src[0], src[4], src[8], src[12],
 						   dst[0], dst[4], dst[8], dst[12],
@@ -399,7 +380,7 @@ void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, c
 
 #define COMPENSATE(x) (((x) + 1)>>1)
 	src = tmp;
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (!src[0] && !src[1] && !src[2] && !src[3]) {
 			out[0] = out[1] = out[2] = out[3] = 0;
 		} else {
@@ -415,24 +396,20 @@ void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, c
 
 void IndeoDSP::ffIviDcSlant2d(const int32 *in, int16 *out, uint32 pitch,
 		int blkSize) {
-	int x, y;
-	int16 dcCoeff;
+	int16 dcCoeff = (*in + 1) >> 1;
 
-	dcCoeff = (*in + 1) >> 1;
-
-	for (y = 0; y < blkSize; out += pitch, y++) {
-		for (x = 0; x < blkSize; x++)
+	for (int y = 0; y < blkSize; out += pitch, y++) {
+		for (int x = 0; x < blkSize; x++)
 			out[x] = dcCoeff;
 	}
 }
 
 void IndeoDSP::ffIviRowSlant8(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (!in[0] && !in[1] && !in[2] && !in[3] && !in[4] && !in[5] && !in[6] && !in[7]) {
 			memset(out, 0, 8*sizeof(out[0]));
 		} else {
@@ -447,32 +424,28 @@ void IndeoDSP::ffIviRowSlant8(const int32 *in, int16 *out, uint32 pitch,
 }
 
 void IndeoDSP::ffIviDcRowSlant(const int32 *in, int16 *out, uint32 pitch, int blkSize) {
-	int x, y;
-	int16 dcCoeff;
+	int16 dcCoeff = (*in + 1) >> 1;
 
-	dcCoeff = (*in + 1) >> 1;
-
-	for (x = 0; x < blkSize; x++)
+	for (int x = 0; x < blkSize; x++)
 		out[x] = dcCoeff;
 
 	out += pitch;
 
-	for (y = 1; y < blkSize; out += pitch, y++) {
-		for (x = 0; x < blkSize; x++)
+	for (int y = 1; y < blkSize; out += pitch, y++) {
+		for (int x = 0; x < blkSize; x++)
 			out[x] = 0;
 	}
 }
 
 void IndeoDSP::ffIviColSlant8(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int i, row2, row4, row8;
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
-	row2 = pitch << 1;
-	row4 = pitch << 2;
-	row8 = pitch << 3;
+	int row2 = pitch << 1;
+	int row4 = pitch << 2;
+	int row8 = pitch << 3;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
-	for (i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		if (flags[i]) {
 			IVI_INV_SLANT8(in[0], in[8], in[16], in[24], in[32], in[40], in[48], in[56],
 						   out[0], out[pitch], out[row2], out[row2 + pitch], out[row4],
@@ -490,25 +463,21 @@ void IndeoDSP::ffIviColSlant8(const int32 *in, int16 *out, uint32 pitch, const u
 }
 
 void IndeoDSP::ffIviDcColSlant(const int32 *in, int16 *out, uint32 pitch, int blkSize) {
-	int x, y;
-	int16 dcCoeff;
+	int16 dcCoeff = (*in + 1) >> 1;
 
-	dcCoeff = (*in + 1) >> 1;
-
-	for (y = 0; y < blkSize; out += pitch, y++) {
+	for (int y = 0; y < blkSize; out += pitch, y++) {
 		out[0] = dcCoeff;
-		for (x = 1; x < blkSize; x++)
+		for (int x = 1; x < blkSize; x++)
 			out[x] = 0;
 	}
 }
 
 void IndeoDSP::ffIviRowSlant4(const int32 *in, int16 *out,
 		uint32 pitch, const uint8 *flags) {
-	int i;
 	int t0, t1, t2, t3, t4;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (!in[0] && !in[1] && !in[2] && !in[3]) {
 			memset(out, 0, 4*sizeof(out[0]));
 		} else {
@@ -524,13 +493,12 @@ void IndeoDSP::ffIviRowSlant4(const int32 *in, int16 *out,
 
 void IndeoDSP::ffIviColSlant4(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int i, row2;
 	int t0, t1, t2, t3, t4;
 
-	row2 = pitch << 1;
+	int row2 = pitch << 1;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
-	for (i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		if (flags[i]) {
 			IVI_INV_SLANT4(in[0], in[4], in[8], in[12],
 						   out[0], out[pitch], out[row2], out[row2 + pitch],
@@ -547,23 +515,19 @@ void IndeoDSP::ffIviColSlant4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviPutPixels8x8(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int x, y;
-
-	for (y = 0; y < 8; out += pitch, in += 8, y++)
-		for (x = 0; x < 8; x++)
+	for (int y = 0; y < 8; out += pitch, in += 8, y++)
+		for (int x = 0; x < 8; x++)
 			out[x] = in[x];
 }
 
 void IndeoDSP::ffIviPutDcPixel8x8(const int32 *in, int16 *out, uint32 pitch,
 		int blkSize) {
-	int y;
-
 	out[0] = in[0];
-	memset(out + 1, 0, 7*sizeof(out[0]));
+	memset(out + 1, 0, 7 * sizeof(out[0]));
 	out += pitch;
 
-	for (y = 1; y < 8; out += pitch, y++)
-		memset(out, 0, 8*sizeof(out[0]));
+	for (int y = 1; y < 8; out += pitch, y++)
+		memset(out, 0, 8 * sizeof(out[0]));
 }
 
 #define IVI_MC_TEMPLATE(size, suffix, OP) \
@@ -572,32 +536,31 @@ static void iviMc ## size ##x## size ## suffix(int16 *buf, \
 												 const int16 *refBuf, \
 												 uint32 pitch, int mcType) \
 { \
-	int	i, j; \
 	const int16 *wptr; \
 \
 	switch (mcType) { \
 	case 0: /* fullpel (no interpolation) */ \
-		for (i = 0; i < size; i++, buf += dpitch, refBuf += pitch) { \
-			for (j = 0; j < size; j++) {\
+		for (int i = 0; i < size; i++, buf += dpitch, refBuf += pitch) { \
+			for (int j = 0; j < size; j++) {\
 				OP(buf[j], refBuf[j]); \
 			} \
 		} \
 		break; \
 	case 1: /* horizontal halfpel interpolation */ \
-		for (i = 0; i < size; i++, buf += dpitch, refBuf += pitch) \
-			for (j = 0; j < size; j++) \
+		for (int i = 0; i < size; i++, buf += dpitch, refBuf += pitch) \
+			for (int j = 0; j < size; j++) \
 				OP(buf[j], (refBuf[j] + refBuf[j+1]) >> 1); \
 		break; \
 	case 2: /* vertical halfpel interpolation */ \
 		wptr = refBuf + pitch; \
-		for (i = 0; i < size; i++, buf += dpitch, wptr += pitch, refBuf += pitch) \
-			for (j = 0; j < size; j++) \
+		for (int i = 0; i < size; i++, buf += dpitch, wptr += pitch, refBuf += pitch) \
+			for (int j = 0; j < size; j++) \
 				OP(buf[j], (refBuf[j] + wptr[j]) >> 1); \
 		break; \
 	case 3: /* vertical and horizontal halfpel interpolation */ \
 		wptr = refBuf + pitch; \
-		for (i = 0; i < size; i++, buf += dpitch, wptr += pitch, refBuf += pitch) \
-			for (j = 0; j < size; j++) \
+		for (int i = 0; i < size; i++, buf += dpitch, wptr += pitch, refBuf += pitch) \
+			for (int j = 0; j < size; j++) \
 				OP(buf[j], (refBuf[j] + refBuf[j+1] + wptr[j] + wptr[j+1]) >> 2); \
 		break; \
 	} \
@@ -617,12 +580,11 @@ void IndeoDSP::ffIviMcAvg ## size ##x## size ## suffix(int16 *buf, \
 											   int mcType, int mcType2) \
 { \
 	int16 tmp[size * size]; \
-	int i, j; \
 \
 	iviMc ## size ##x## size ## NoDelta(tmp, size, refBuf, pitch, mcType); \
 	iviMc ## size ##x## size ## Delta(tmp, size, refBuf2, pitch, mcType2); \
-	for (i = 0; i < size; i++, buf += pitch) { \
-		for (j = 0; j < size; j++) {\
+	for (int i = 0; i < size; i++, buf += pitch) { \
+		for (int j = 0; j < size; j++) {\
 			OP(buf[j], tmp[i * size + j] >> 1); \
 		} \
 	} \
