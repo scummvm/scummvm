@@ -20,11 +20,12 @@
  *
  */
 
-#include "titanic/pet_control/pet_message.h"
+#include "titanic/pet_control/pet_translation.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
-CPetMessage::CPetMessage() {
+CPetTranslation::CPetTranslation() {
 	Rect rect1(0, 0, 580, 70);
 	rect1.translate(32, 368);
 	_message.setBounds(rect1);
@@ -37,21 +38,33 @@ CPetMessage::CPetMessage() {
 	_tooltip.setHasBorder(false);
 }
 
-bool CPetMessage::setup(CPetControl *petControl) {
+bool CPetTranslation::setup(CPetControl *petControl) {
 	if (petControl && setupControl(petControl))
 		return reset();
 	return false;
 }
 
-void CPetMessage::draw(CScreenManager *screenManager) {
+void CPetTranslation::draw(CScreenManager *screenManager) {
 	_message.draw(screenManager);
 	_tooltip.draw(screenManager);
 }
 
-bool CPetMessage::setupControl(CPetControl *petControl) {
+bool CPetTranslation::setupControl(CPetControl *petControl) {
 	if (petControl)
 		_petControl = petControl;
 	return true;
+}
+
+void CPetTranslation::clearTranslation() {
+	_message.setup();
+}
+
+void CPetTranslation::addTranslation(const CString &str1, const CString &str2) {
+	CString msg = CString::format("%s%s - %s%s",
+		CPetText::getColorText(0, 0x80, 0).c_str(), str1.c_str(),
+		CPetText::getColorText(0, 0, 0).c_str(), str2.c_str());
+	_message.addLine(msg);
+	_petControl->makeDirty();
 }
 
 } // End of namespace Titanic

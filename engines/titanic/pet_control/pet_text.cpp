@@ -61,6 +61,11 @@ void CPetText::setLineColor(uint lineNum, uint col) {
 }
 
 void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
+	_array[lineNum]._rgb = getColorText(r, g, b);
+	_stringsMerged = false;
+}
+
+CString CPetText::getColorText(byte r, byte g, byte b) {
 	char buffer[6];
 	if (!r)
 		r = 1;
@@ -75,9 +80,8 @@ void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
 	buffer[3] = b;
 	buffer[4] = TEXTCMD_SET_COLOR;
 	buffer[5] = '\0';
-	_array[lineNum]._rgb = buffer;
 
-	_stringsMerged = false;
+	return CString(buffer);
 }
 
 void CPetText::load(SimpleFile *file, int param) {

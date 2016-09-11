@@ -372,7 +372,6 @@ MODULE_OBJS := \
 	pet_control/pet_gfx_element.o \
 	pet_control/pet_inventory.o \
 	pet_control/pet_inventory_glyphs.o \
-	pet_control/pet_message.o \
 	pet_control/pet_starfield.o \
 	pet_control/pet_real_life.o \
 	pet_control/pet_remote.o \
@@ -380,6 +379,7 @@ MODULE_OBJS := \
 	pet_control/pet_rooms.o \
 	pet_control/pet_rooms_glyphs.o \
 	pet_control/pet_section.o \
+	pet_control/pet_translation.o \
 	pet_control/pet_drag_chev.o \
 	pet_control/pet_graphic2.o \
 	pet_control/pet_graphic.o \
@@ -395,6 +395,7 @@ MODULE_OBJS := \
 	pet_control/pet_pannel3.o \
 	pet_control/pet_quit.o \
 	pet_control/pet_save.o \
+	pet_control/pet_show_translation.o \
 	pet_control/pet_slider.o \
 	pet_control/pet_sound.o \
 	pet_control/pet_text.o \

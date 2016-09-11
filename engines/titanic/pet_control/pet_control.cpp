@@ -52,7 +52,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_ROOMS] = &_rooms;
 	_sections[PET_REAL_LIFE] = &_realLife;
 	_sections[PET_STARFIELD] = &_starfield;
-	_sections[PET_MESSAGE] = &_message;
+	_sections[PET_TRANSLATION] = &_translation;
 }
 
 void CPetControl::save(SimpleFile *file, int indent) {
@@ -87,7 +87,7 @@ void CPetControl::setup() {
 	_inventory.setup(this);
 	_starfield.setup(this);
 	_realLife.setup(this);
-	_message.setup(this);
+	_translation.setup(this);
 	_frame.setup(this);
 }
 
@@ -98,7 +98,7 @@ bool CPetControl::isValid() {
 		_inventory.isValid(this) &&
 		_starfield.isValid(this) &&
 		_realLife.isValid(this) &&
-		_message.isValid(this) &&
+		_translation.isValid(this) &&
 		_frame.isValid(this);
 }
 
@@ -109,7 +109,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_inventory.load(file, param);
 	_starfield.load(file, param);
 	_realLife.load(file, param);
-	_message.load(file, param);
+	_translation.load(file, param);
 	_frame.load(file, param);
 }
 
@@ -120,7 +120,7 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) {
 	_inventory.save(file, indent);
 	_starfield.save(file, indent);
 	_realLife.save(file, indent);
-	_message.save(file, indent);
+	_translation.save(file, indent);
 	_frame.save(file, indent);
 }
 
@@ -165,7 +165,7 @@ void CPetControl::loaded() {
 	_inventory.postLoad();
 	_starfield.postLoad();
 	_realLife.postLoad();
-	_message.postLoad();
+	_translation.postLoad();
 	_frame.postLoad();
 }
 
@@ -384,6 +384,15 @@ void CPetControl::displayMessage(StringId stringId, int param) const {
 void CPetControl::displayMessage(const CString &str, int param) const {
 	CString msg = CString::format(str.c_str(), param);
 	_sections[_currentArea]->displayMessage(msg);
+}
+
+void CPetControl::addTranslation(StringId id1, StringId id2) {
+	setArea(PET_TRANSLATION);
+	_translation.addTranslation(_strings[id1], _strings[id2]);
+}
+
+void CPetControl::clearTranslation() {
+	_translation.clearTranslation();
 }
 
 CGameObject *CPetControl::getFirstObject() const {

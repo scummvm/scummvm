@@ -151,6 +151,11 @@ public:
 	void setLineColor(uint lineNum, byte r, byte g, byte b);
 
 	/**
+	 * Gets the text string representing a color encoding
+	 */
+	static CString getColorText(byte r, byte g, byte b);
+
+	/**
 	 * Set the color for a line
 	 */
 	void setLineColor(uint lineNum, uint col);

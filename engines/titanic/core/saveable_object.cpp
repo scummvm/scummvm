@@ -385,6 +385,8 @@
 #include "titanic/pet_control/pet_pannel1.h"
 #include "titanic/pet_control/pet_pannel2.h"
 #include "titanic/pet_control/pet_pannel3.h"
+#include "titanic/pet_control/pet_show_translation.h"
+#include "titanic/pet_control/pet_translation.h"
 
 #include "titanic/sound/auto_music_player.h"
 #include "titanic/sound/auto_music_player_base.h"
@@ -738,6 +740,7 @@ DEFFN(CPetModePanel);
 DEFFN(CPetPannel1);
 DEFFN(CPetPannel2);
 DEFFN(CPetPannel3);
+DEFFN(CPetShowTranslation);
 DEFFN(CSendToSucc);
 DEFFN(CSGTSelector);
 DEFFN(CSliderButton);
@@ -1328,6 +1331,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetPannel1, CPetGraphic);
 	ADDFN(CPetPannel2, CPetGraphic);
 	ADDFN(CPetPannel3, CPetGraphic);
+	ADDFN(CPetShowTranslation, CGameObject);
 	ADDFN(CSendToSucc, CToggleSwitch);
 	ADDFN(CSGTSelector, CPetGraphic);
 	ADDFN(CSliderButton, CSTButton);

@@ -31,7 +31,7 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory.h"
-#include "titanic/pet_control/pet_message.h"
+#include "titanic/pet_control/pet_translation.h"
 #include "titanic/pet_control/pet_starfield.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
@@ -61,7 +61,7 @@ private:
 	CPetRemote _remote;
 	CPetRooms _rooms;
 	CPetRealLife _realLife;
-	CPetMessage _message;
+	CPetTranslation _translation;
 	CPetFrame _frame;
 	CString _activeNPCName;
 	CString _remoteTargetName;
@@ -240,6 +240,16 @@ public:
 	 * Display a message
 	 */
 	void displayMessage(const CString &str, int param = 0) const;
+
+	/**
+	 * Switches to the Translation display, and adds a line to it's content
+	 */
+	void addTranslation(StringId id1, StringId id2);
+
+	/**
+	 * Clears the translation display
+	 */
+	void clearTranslation();
 
 	/**
 	 * Get the first game object stored in the PET

@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef TITANIC_PET_MESSAGE_H
-#define TITANIC_PET_MESSAGE_H
+#ifndef TITANIC_PET_TRANSLATION_H
+#define TITANIC_PET_TRANSLATION_H
 
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
 
 namespace Titanic {
 
-class CPetMessage : public CPetSection {
+class CPetTranslation : public CPetSection {
 private:
 	CPetText _message;
 	CPetText _tooltip;
@@ -38,7 +38,7 @@ private:
 	 */
 	bool setupControl(CPetControl *petControl);
 public:
-	CPetMessage();
+	CPetTranslation();
 
 	/**
 	 * Sets up the section
@@ -89,8 +89,17 @@ public:
 	 */
 	virtual CPetText *getText() { return &_tooltip; }
 
+	/**
+	 * Clear any current translation text
+	 */
+	void clearTranslation();
+
+	/**
+	 * Adds a line to the translation display
+	 */
+	void addTranslation(const CString &str1, const CString &str2);
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_PET_MESSAGE_H */
+#endif /* TITANIC_PET_TRANSLATION_H */
