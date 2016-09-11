@@ -354,7 +354,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					direction = _vm->_dungeonMan->getStairsExitDirection(destMapX, destMapY);
 					destMapX += _vm->_dirIntoStepCountEast[direction], destMapY += _vm->_dirIntoStepCountNorth[direction];
 					direction = _vm->returnOppositeDir((Direction)direction);
-					uint16 thingCell = thing.getCell();
+					thingCell = thing.getCell();
 					thingCell = _vm->normalizeModulo4((((thingCell - direction + 1) & 0x0002) >> 1) + direction);
 					thing = _vm->thingWithNewCell(thing, thingCell);
 				} else
