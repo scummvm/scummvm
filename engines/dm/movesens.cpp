@@ -71,7 +71,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 
 		thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed);
 	}
-	for (Thing thingBeingProcessed = squareFirstThing; thingBeingProcessed != Thing::_endOfList; thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed)) {
+	for (thingBeingProcessed = squareFirstThing; thingBeingProcessed != Thing::_endOfList; thingBeingProcessed = _vm->_dungeonMan->getNextThing(thingBeingProcessed)) {
 		Thing lastProcessedThing = thingBeingProcessed;
 		uint16 ProcessedThingType = thingBeingProcessed.getType();
 		if (ProcessedThingType == kDMThingTypeSensor) {
