@@ -73,11 +73,11 @@ namespace Indeo {
 
 void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int			i, shift, sp1, sp2, sp3, sp4;
+	int i, shift, sp1, sp2, sp3, sp4;
 	const int32 *src;
-	int32 *		dst;
-	int			tmp[64];
-	int			t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int32 *dst;
+	int tmp[64];
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
@@ -128,8 +128,8 @@ void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviRowHaar8(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int i;
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all rows
 #define COMPENSATE(x) (x)
@@ -152,8 +152,8 @@ void IndeoDSP::ffIviRowHaar8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int i;
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
@@ -181,11 +181,11 @@ void IndeoDSP::ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int		i, shift, sp1, sp2;
+	int i, shift, sp1, sp2;
 	const int32 *src;
-	int32 *	dst;
-	int		tmp[16];
-	int		t0, t1, t2, t3, t4;
+	int32 *dst;
+	int tmp[16];
+	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar4 to all columns
 #define COMPENSATE(x) (x)
@@ -228,8 +228,8 @@ void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviRowHaar4(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4;
+	int i;
+	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar4 to all rows
 #define COMPENSATE(x) (x)
@@ -249,8 +249,8 @@ void IndeoDSP::ffIviRowHaar4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviColHaar4(const int32 *in, int16 *out, uint32 pitch,
 					  const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4;
+	int i;
+	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar8 to all columns
 #define COMPENSATE(x) (x)
@@ -273,8 +273,8 @@ void IndeoDSP::ffIviColHaar4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
 					   int blkSize) {
-	int		x, y;
-	int16	dcCoeff;
+	int x, y;
+	int16 dcCoeff;
 
 	dcCoeff = (*in + 0) >> 3;
 
@@ -335,11 +335,11 @@ void IndeoDSP::ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
 	d4 = COMPENSATE(t4);}
 
 void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int		i;
+	int i;
 	const int32 *src;
-	int32 *	dst;
-	int		tmp[64];
-	int		t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int32 *dst;
+	int tmp[64];
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 #define COMPENSATE(x) (x)
 	src = in;
@@ -375,11 +375,11 @@ void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, c
 }
 
 void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int		i;
+	int i;
 	const int32 *src;
-	int32 *	dst;
-	int		tmp[16];
-	int		t0, t1, t2, t3, t4;
+	int32 *dst;
+	int tmp[16];
+	int t0, t1, t2, t3, t4;
 
 #define COMPENSATE(x) (x)
 	src = in;
@@ -415,8 +415,8 @@ void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, c
 
 void IndeoDSP::ffIviDcSlant2d(const int32 *in, int16 *out, uint32 pitch,
 		int blkSize) {
-	int		x, y;
-	int16	dcCoeff;
+	int x, y;
+	int16 dcCoeff;
 
 	dcCoeff = (*in + 1) >> 1;
 
@@ -428,8 +428,8 @@ void IndeoDSP::ffIviDcSlant2d(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviRowSlant8(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int i;
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
 	for (i = 0; i < 8; i++) {
@@ -447,8 +447,8 @@ void IndeoDSP::ffIviRowSlant8(const int32 *in, int16 *out, uint32 pitch,
 }
 
 void IndeoDSP::ffIviDcRowSlant(const int32 *in, int16 *out, uint32 pitch, int blkSize) {
-	int		x, y;
-	int16	dcCoeff;
+	int x, y;
+	int16 dcCoeff;
 
 	dcCoeff = (*in + 1) >> 1;
 
@@ -464,8 +464,8 @@ void IndeoDSP::ffIviDcRowSlant(const int32 *in, int16 *out, uint32 pitch, int bl
 }
 
 void IndeoDSP::ffIviColSlant8(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int		i, row2, row4, row8;
-	int		t0, t1, t2, t3, t4, t5, t6, t7, t8;
+	int i, row2, row4, row8;
+	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	row2 = pitch << 1;
 	row4 = pitch << 2;
@@ -490,8 +490,8 @@ void IndeoDSP::ffIviColSlant8(const int32 *in, int16 *out, uint32 pitch, const u
 }
 
 void IndeoDSP::ffIviDcColSlant(const int32 *in, int16 *out, uint32 pitch, int blkSize) {
-	int		x, y;
-	int16	dcCoeff;
+	int x, y;
+	int16 dcCoeff;
 
 	dcCoeff = (*in + 1) >> 1;
 
@@ -504,8 +504,8 @@ void IndeoDSP::ffIviDcColSlant(const int32 *in, int16 *out, uint32 pitch, int bl
 
 void IndeoDSP::ffIviRowSlant4(const int32 *in, int16 *out,
 		uint32 pitch, const uint8 *flags) {
-	int		i;
-	int		t0, t1, t2, t3, t4;
+	int i;
+	int t0, t1, t2, t3, t4;
 
 #define COMPENSATE(x) (((x) + 1)>>1)
 	for (i = 0; i < 4; i++) {
@@ -524,8 +524,8 @@ void IndeoDSP::ffIviRowSlant4(const int32 *in, int16 *out,
 
 void IndeoDSP::ffIviColSlant4(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int		i, row2;
-	int		t0, t1, t2, t3, t4;
+	int i, row2;
+	int t0, t1, t2, t3, t4;
 
 	row2 = pitch << 1;
 
@@ -547,7 +547,7 @@ void IndeoDSP::ffIviColSlant4(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviPutPixels8x8(const int32 *in, int16 *out, uint32 pitch,
 		const uint8 *flags) {
-	int		x, y;
+	int x, y;
 
 	for (y = 0; y < 8; out += pitch, in += 8, y++)
 		for (x = 0; x < 8; x++)
@@ -556,7 +556,7 @@ void IndeoDSP::ffIviPutPixels8x8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviPutDcPixel8x8(const int32 *in, int16 *out, uint32 pitch,
 		int blkSize) {
-	int		y;
+	int y;
 
 	out[0] = in[0];
 	memset(out + 1, 0, 7*sizeof(out[0]));

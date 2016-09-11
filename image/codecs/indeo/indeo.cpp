@@ -20,8 +20,8 @@
  *
  */
 
-/* Common structures, macros, and base class shared by both Indeo4 and 
- * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5 
+/* Common structures, macros, and base class shared by both Indeo4 and
+ * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5
  * decoding, but just in case we eventually need it, this is kept as a separate
  * file like it is in ffmpeg.
  *
@@ -40,7 +40,7 @@
 
 namespace Image {
 namespace Indeo {
-	
+
 /**
  * These are 2x8 predefined Huffman codebooks for coding macroblock/block
  * signals. They are specified using "huffman descriptors" in order to
@@ -202,7 +202,7 @@ IVIBandDesc::IVIBandDesc() : _plane(0), _bandNum(0), _width(0), _height(0),
 		_inheritQDelta(false), _qdeltaPresent(false), _quantMat(0), _globQuant(0),
 		_scan(nullptr), _scanSize(0), _numCorr(0), _rvmapSel(0), _rvMap(nullptr),
 		_numTiles(0), _tiles(nullptr), _invTransform(nullptr), _transformSize(0),
-		_dcTransform(nullptr), _is2dTrans(0), _checksum(0), _checksumPresent(false), 
+		_dcTransform(nullptr), _is2dTrans(0), _checksum(0), _checksumPresent(false),
 		_intraBase(nullptr), _interBase(nullptr), _intraScale(nullptr),
 		_interScale(nullptr) {
 	Common::fill(&_bufs[0], &_bufs[4], (int16 *)nullptr);
@@ -427,7 +427,7 @@ int AVFrame::getBuffer(int flags) {
 
 	// Luminance channel
 	_data[0] = (uint8 *)avMallocZ(_width * _height);
-	
+
 	// UV Chroma Channels
 	_data[1] = (uint8 *)malloc(_width * _height);
 	_data[2] = (uint8 *)malloc(_width * _height);
@@ -591,7 +591,7 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 
 	// Merge the planes into the final surface
 	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
-	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,		
+	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,
 		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
 		frame->_width, frame->_width);
 
@@ -977,21 +977,20 @@ int IndeoDecoderBase::processEmptyTile(IVIBandDesc *band,
 					mb->_mvY = refMb->_mvY;
 				}
 				needMc |= mb->_mvX || mb->_mvY; // tracking non-zero motion vectors
-				{
-					int dmv_x, dmv_y, cx, cy;
 
-					dmv_x = mb->_mvX >> band->_isHalfpel;
-					dmv_y = mb->_mvY >> band->_isHalfpel;
-					cx = mb->_mvX &  band->_isHalfpel;
-					cy = mb->_mvY &  band->_isHalfpel;
+				int dmv_x, dmv_y, cx, cy;
 
-					if (mb->_xPos + dmv_x < 0
-						|| mb->_xPos + dmv_x + band->_mbSize + cx > band->_pitch
-						|| mb->_yPos + dmv_y < 0
-						|| mb->_yPos + dmv_y + band->_mbSize + cy > band->_aHeight) {
-						warning("MV out of bounds");
-						return -1;
-					}
+				dmv_x = mb->_mvX >> band->_isHalfpel;
+				dmv_y = mb->_mvY >> band->_isHalfpel;
+				cx = mb->_mvX &  band->_isHalfpel;
+				cy = mb->_mvY &  band->_isHalfpel;
+
+				if (mb->_xPos + dmv_x < 0
+					|| mb->_xPos + dmv_x + band->_mbSize + cx > band->_pitch
+					|| mb->_yPos + dmv_y < 0
+					|| mb->_yPos + dmv_y + band->_mbSize + cy > band->_aHeight) {
+					warning("MV out of bounds");
+					return -1;
 				}
 			}
 

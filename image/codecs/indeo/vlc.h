@@ -46,7 +46,7 @@ enum VLCFlag {
 struct VLCcode {
 	uint8 bits;
 	uint16 symbol;
-	
+
 	/**
 	 * codeword, with the first bit-to-be-read in the msb
 	 * (even if intended for a little-endian bitstream reader)
@@ -111,7 +111,7 @@ public:
 	 */
 	void freeVlc();
 
-	
+
 	/**
 	 * Build VLC decoding tables suitable for use with get_vlc().
 	 *
