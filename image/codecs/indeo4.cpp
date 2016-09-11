@@ -35,6 +35,7 @@
 #include "common/util.h"
 #include "graphics/yuv_to_rgb.h"
 #include "image/codecs/indeo4.h"
+#include "image/codecs/indeo/indeo_dsp.h"
 #include "image/codecs/indeo/mem.h"
 
 namespace Image {
@@ -259,10 +260,10 @@ void Indeo4Decoder::switchBuffers() {
 	}
 
 	if (is_prev_ref && is_ref) {
-		FFSWAP(int, _ctx._dstBuf, _ctx._refBuf);
+		SWAP(_ctx._dstBuf, _ctx._refBuf);
 	} else if (is_prev_ref) {
-		FFSWAP(int, _ctx._refBuf, _ctx._bRefBuf);
-		FFSWAP(int, _ctx._dstBuf, _ctx._refBuf);
+		SWAP(_ctx._refBuf, _ctx._bRefBuf);
+		SWAP(_ctx._dstBuf, _ctx._refBuf);
 	}
 }
 
@@ -459,7 +460,7 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 	blksPerMb = band->_mbSize != band->_blkSize ? 4 : 1;
 	mbTypeBits = _ctx._frameType == IVI4_FRAMETYPE_BIDIR ? 2 : 1;
 
-	/* scale factor for motion vectors */
+	// scale factor for motion vectors
 	mvScale = (_ctx._planes[0]._bands[0]._mbSize >> 3) - (band->_mbSize >> 3);
 	mvX = mvY = 0;
 

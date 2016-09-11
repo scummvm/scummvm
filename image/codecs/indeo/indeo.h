@@ -64,10 +64,10 @@ enum {
  *  Declare inverse transform function types
  */
 typedef void (InvTransformPtr)(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags);
-typedef void (DCTransformPtr) (const int32 *in, int16 *out, uint32 pitch, int blkSize);
+typedef void (DCTransformPtr)(const int32 *in, int16 *out, uint32 pitch, int blkSize);
 
-typedef void(*IviMCFunc) (int16 *buf, const int16 *refBuf, uint32 pitch, int mcType);
-typedef void(*IviMCAvgFunc) (int16 *buf, const int16 *refBuf1, const int16 *refBuf2,
+typedef void (*IviMCFunc)(int16 *buf, const int16 *refBuf, uint32 pitch, int mcType);
+typedef void (*IviMCAvgFunc)(int16 *buf, const int16 *refBuf1, const int16 *refBuf2,
 	uint32 pitch, int mcType, int mcType2);
 
 ///< max number of bits of the ivi's huffman codes

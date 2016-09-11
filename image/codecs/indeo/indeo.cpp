@@ -162,7 +162,7 @@ int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab
 			_custDesc.huffDescCopy(&newHuff);
 
 			if (_custTab._table)
-				_custTab.ff_free_vlc();
+				_custTab.freeVlc();
 			result = _custDesc.createHuffFromDesc(&_custTab, false);
 			if (result) {
 				// reset faulty description
@@ -391,7 +391,7 @@ void IVIPlaneDesc::freeBuffers(IVIPlaneDesc *planes) {
 				avFreeP(&planes[p]._bands[b]._bufs[3]);
 
 				if (planes[p]._bands[b]._blkVlc._custTab._table)
-					planes[p]._bands[b]._blkVlc._custTab.ff_free_vlc();
+					planes[p]._bands[b]._blkVlc._custTab.freeVlc();
 				for (t = 0; t < planes[p]._bands[b]._numTiles; t++)
 					avFreeP(&planes[p]._bands[b]._tiles[t]._mbs);
 				avFreeP(&planes[p]._bands[b]._tiles);
@@ -462,10 +462,10 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 
 	for (int i = 0; i < 8; i++) {
 		_iviMbVlcTabs[i]._table = _tableData + i * 2 * 8192;
-		_iviMbVlcTabs[i]._table_allocated = 8192;
+		_iviMbVlcTabs[i]._tableAllocated = 8192;
 		ivi_mb_huff_desc[i].createHuffFromDesc(&_iviMbVlcTabs[i], true);
 		_iviBlkVlcTabs[i]._table = _tableData + (i * 2 + 1) * 8192;
-		_iviBlkVlcTabs[i]._table_allocated = 8192;
+		_iviBlkVlcTabs[i]._tableAllocated = 8192;
 		ivi_blk_huff_desc[i].createHuffFromDesc(&_iviBlkVlcTabs[i], true);
 	}
 }
@@ -485,7 +485,7 @@ IndeoDecoderBase::~IndeoDecoderBase() {
 	delete _surface;
 	IVIPlaneDesc::freeBuffers(_ctx._planes);
 	if (_ctx._mbVlc._custTab._table)
-		_ctx._mbVlc._custTab.ff_free_vlc();
+		_ctx._mbVlc._custTab.freeVlc();
 
 	delete _ctx._pFrame;
 }
@@ -638,8 +638,8 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 	for (i = 0; i < band->_numCorr; i++) {
 		idx1 = band->_corr[i * 2];
 		idx2 = band->_corr[i * 2 + 1];
-		FFSWAP(uint8, band->_rvMap->_runtab[idx1], band->_rvMap->_runtab[idx2]);
-		FFSWAP(int16, band->_rvMap->_valtab[idx1], band->_rvMap->_valtab[idx2]);
+		SWAP(band->_rvMap->_runtab[idx1], band->_rvMap->_runtab[idx2]);
+		SWAP(band->_rvMap->_valtab[idx1], band->_rvMap->_valtab[idx2]);
 		if (idx1 == band->_rvMap->_eobSym || idx2 == band->_rvMap->_eobSym)
 			band->_rvMap->_eobSym ^= idx1 ^ idx2;
 		if (idx1 == band->_rvMap->_escSym || idx2 == band->_rvMap->_escSym)
@@ -696,8 +696,8 @@ int IndeoDecoderBase::decode_band(IVIBandDesc *band) {
 	for (i = band->_numCorr - 1; i >= 0; i--) {
 		idx1 = band->_corr[i * 2];
 		idx2 = band->_corr[i * 2 + 1];
-		FFSWAP(uint8, band->_rvMap->_runtab[idx1], band->_rvMap->_runtab[idx2]);
-		FFSWAP(int16, band->_rvMap->_valtab[idx1], band->_rvMap->_valtab[idx2]);
+		SWAP(band->_rvMap->_runtab[idx1], band->_rvMap->_runtab[idx2]);
+		SWAP(band->_rvMap->_valtab[idx1], band->_rvMap->_valtab[idx2]);
 		if (idx1 == band->_rvMap->_eobSym || idx2 == band->_rvMap->_eobSym)
 			band->_rvMap->_eobSym ^= idx1 ^ idx2;
 		if (idx1 == band->_rvMap->_escSym || idx2 == band->_rvMap->_escSym)
@@ -1725,7 +1725,6 @@ const RVMapDesc IVI45DecContext::_ff_ivi_rvmap_tabs[9] = {
       1,   1, -12,  25,  -1,  -5,   5, -25,  -1,   1,   9,   1,  -1,  -9,  26, -26}
 }
 };
-
 
 } // End of namespace Indeo
 } // End of namespace Image

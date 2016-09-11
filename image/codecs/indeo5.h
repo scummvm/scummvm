@@ -20,9 +20,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "image/codecs/indeo/get_bits.h"
-
 /* Intel Indeo 4 decompressor, derived from ffmpeg.
  *
  * Original copyright note:
@@ -35,8 +32,6 @@
 
 #include "image/codecs/indeo/get_bits.h"
 #include "image/codecs/indeo/indeo.h"
-#include "image/codecs/indeo/indeo_dsp.h"
-#include "graphics/managed_surface.h"
 
 namespace Image {
 

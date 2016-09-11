@@ -35,6 +35,7 @@
 #include "common/util.h"
 #include "graphics/yuv_to_rgb.h"
 #include "image/codecs/indeo5.h"
+#include "image/codecs/indeo/indeo_dsp.h"
 #include "image/codecs/indeo/mem.h"
 
 namespace Image {
@@ -104,7 +105,6 @@ const Graphics::Surface *Indeo5Decoder::decodeFrame(Common::SeekableReadStream &
 }
 
 int Indeo5Decoder::decodePictureHeader() {
-	int             picSizeIndx, i, p;
 	IVIPicConfig    picConf;
 
 	int ret;
@@ -176,7 +176,7 @@ void Indeo5Decoder::switchBuffers() {
 			_ctx._ref2Buf = 2;
 			_ctx._interScal = 1;
 		}
-		FFSWAP(int, _ctx._dstBuf, _ctx._ref2Buf);
+		SWAP(_ctx._dstBuf, _ctx._ref2Buf);
 		_ctx._refBuf = _ctx._ref2Buf;
 		break;
 
@@ -206,8 +206,8 @@ bool Indeo5Decoder::isNonNullFrame() const {
 }
 
 int Indeo5Decoder::decodeBandHeader(IVIBandDesc *band) {
-	int         i, ret;
-	uint8     bandFlags;
+	int		i, ret;
+	uint8	bandFlags;
 
 	bandFlags = _ctx._gb->getBits(8);
 
@@ -369,10 +369,10 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 			s = band->_isHalfpel;
 			if (mb->_type)
-				if (x + (mb->_mvX >> s) + (y + (mb->_mvY >> s))*band->_pitch < 0 ||
+				if (x + (mb->_mvX >> s) + (y + (mb->_mvY >> s)) * band->_pitch < 0 ||
 					x + ((mb->_mvX + s) >> s) + band->_mbSize - 1
-					+ (y + band->_mbSize - 1 + ((mb->_mvY + s) >> s))*band->_pitch > band->_bufSize - 1) {
-					warning("motion vector %d %d outside reference", x*s + mb->_mvX, y*s + mb->_mvY);
+					+ (y + band->_mbSize - 1 + ((mb->_mvY + s) >> s)) * band->_pitch > band->_bufSize - 1) {
+					warning("motion vector %d %d outside reference", x*s + mb->_mvX, y * s + mb->_mvY);
 					return -1;
 				}
 
@@ -391,7 +391,7 @@ int Indeo5Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 }
 
 int Indeo5Decoder::decode_gop_header() {
-	int				result, i, p, tile_size, picSizeIndx, mbSize, blkSize, isScalable;
+	int				result, i, p, tileSize, picSizeIndx, mbSize, blkSize, isScalable;
 	int				quantMat;
 	bool			blkSizeChanged = false;
 	IVIBandDesc     *band, *band1, *band2;
@@ -404,9 +404,9 @@ int Indeo5Decoder::decode_gop_header() {
 	if (_ctx._gopFlags & IVI5_IS_PROTECTED)
 		_ctx._lockWord = _ctx._gb->getBits(32);
 
-	tile_size = (_ctx._gopFlags & 0x40) ? 64 << _ctx._gb->getBits(2) : 0;
-	if (tile_size > 256) {
-		warning("Invalid tile size: %d", tile_size);
+	tileSize = (_ctx._gopFlags & 0x40) ? 64 << _ctx._gb->getBits(2) : 0;
+	if (tileSize > 256) {
+		warning("Invalid tile size: %d", tileSize);
 		return -1;
 	}
 
@@ -438,11 +438,11 @@ int Indeo5Decoder::decode_gop_header() {
 	picConf._chromaHeight = (picConf._picHeight + 3) >> 2;
 	picConf._chromaWidth = (picConf._picWidth + 3) >> 2;
 
-	if (!tile_size) {
+	if (!tileSize) {
 		picConf._tileHeight = picConf._picHeight;
 		picConf._tileWidth = picConf._picWidth;
 	} else {
-		picConf._tileHeight = picConf._tileWidth = tile_size;
+		picConf._tileHeight = picConf._tileWidth = tileSize;
 	}
 
 	// check if picture layout was changed and reallocate buffers
@@ -465,8 +465,8 @@ int Indeo5Decoder::decode_gop_header() {
 
 			mbSize = _ctx._gb->getBit();
 			blkSize = 8 >> _ctx._gb->getBit();
-			mbSize = blkSize << !mbSize;
-
+			mbSize = blkSize << (!mbSize ? 1 : 0);
+			
 			if (p == 0 && blkSize == 4) {
 				warning("4x4 luma blocks are unsupported!");
 				return -2;

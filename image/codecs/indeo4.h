@@ -20,9 +20,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "image/codecs/indeo/get_bits.h"
-
 /* Intel Indeo 4 decompressor, derived from ffmpeg.
  *
  * Original copyright note:
@@ -35,8 +32,6 @@
 
 #include "image/codecs/indeo/get_bits.h"
 #include "image/codecs/indeo/indeo.h"
-#include "image/codecs/indeo/indeo_dsp.h"
-#include "graphics/managed_surface.h"
 
 namespace Image {
 
@@ -81,7 +76,7 @@ protected:
 	 *  Decode Indeo 4 band header.
 	 *
 	 *  @param[in,out] band      pointer to the band descriptor
-	 *  @return        result code: 0 = OK, negative number = error
+	 *  @returns       result code: 0 = OK, negative number = error
 	 */
 	virtual int decodeBandHeader(IVIBandDesc *band);
 
@@ -91,7 +86,7 @@ protected:
 	 *
 	 *  @param[in,out] band      pointer to the band descriptor
 	 *  @param[in,out] tile      pointer to the tile descriptor
-	 *  @return        result code: 0 = OK, negative number = error
+	 *  @returns       result code: 0 = OK, negative number = error
 	 */
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
 private:

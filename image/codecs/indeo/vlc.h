@@ -56,7 +56,7 @@ struct VLCcode {
 
 struct VLC {
 private:
-	static int compare_vlcspec(const void *a, const void *b);
+	static int compareVlcSpec(const void *a, const void *b);
 
 	/**
 	 * Gets a value of a given size from a table
@@ -69,17 +69,17 @@ private:
 public:
     int _bits;
     VLC_TYPE (*_table)[2];	///< code, bits
-    int _table_size, _table_allocated;
+    int _tableSize, _tableAllocated;
 
 	VLC();
 
 	/* Build VLC decoding tables suitable for use with get_vlc().
 
-	'nb_bits' sets the decoding table size (2^nb_bits) entries. The
+	'nbBits' sets the decoding table size (2^nbBits) entries. The
 	bigger it is, the faster is the decoding. But it should not be too
 	big to save memory and L1 cache. '9' is a good compromise.
 
-	'nb_codes' : number of vlcs codes
+	'nbCodes' : number of vlcs codes
 
 	'bits' : table which gives the size (in bits) of each vlc code.
 
@@ -96,51 +96,38 @@ public:
 	'wrap' and 'size' make it possible to use any memory configuration and types
 	(byte/word/long) to store the 'bits', 'codes', and 'symbols' tables.
 
-	'use_static' should be set to 1 for tables, which should be freed
-	with av_free_static(), 0 if ff_free_vlc() will be used.
+	'useStatic' should be set to 1 for tables, which should be freed
+	with av_free_static(), 0 if freeVlc() will be used.
 	*/
-	int init_vlc(int nb_bits, int nb_codes, const void *bits, int bits_wrap,
-		int bits_size, const void *codes, int codes_wrap, int codes_size,
-		const void *symbols, int symbols_wrap, int symbols_size, int flags);
+	int init_vlc(int nbBits, int nbCodes, const void *bits, int bitsWrap,
+		int bitsSize, const void *codes, int codesWrap, int codesSize,
+		const void *symbols, int symbolsWrap, int symbolsSize, int flags);
 
-	int init_vlc(int nb_bits, int nb_codes, const void *bits, int bits_wrap, int bits_size,
-		const void *codes, int codes_wrap, int codes_size, int flags);
+	int init_vlc(int nbBits, int nbCodes, const void *bits, int bitsWrap, int bitsSize,
+		const void *codes, int codesWrap, int codesSize, int flags);
 
 	/**
 	 * Free VLC data
 	 */
-	void ff_free_vlc();
+	void freeVlc();
 
 	
 	/**
 	 * Build VLC decoding tables suitable for use with get_vlc().
 	 *
-	 * @param table_nb_bits  max length of vlc codes to store directly in this table
+	 * @param tableNbBits    max length of vlc codes to store directly in this table
 	 *                       (Longer codes are delegated to subtables.)
 	 *
-	 * @param nb_codes       number of elements in codes[]
+	 * @param nbCodes        number of elements in codes[]
 	 *
 	 * @param codes          descriptions of the vlc codes
 	 *                       These must be ordered such that codes going into the same subtable are contiguous.
 	 *                       Sorting by VLCcode.code is sufficient, though not necessary.
 	 */
-	int build_table(int table_nb_bits, int nb_codes,
-		VLCcode *codes, int flags);
+	int buildTable(int tableNbBits, int nbCodes, VLCcode *codes, int flags);
 
-	int alloc_table(int size, int use_static);
+	int allocTable(int size, int useStatic);
 };
-
-
-/**
- * Reverse "nbits" bits of the value "val" and return the result
- * in the least significant bits.
- */
-extern uint16 inv_bits(uint16 val, int nbits);
-
-/**
- * Swap the order of the bytes in the passed value
- */
-extern uint32 bitswap_32(uint32 x);
 
 } // End of namespace Indeo
 } // End of namespace Image
