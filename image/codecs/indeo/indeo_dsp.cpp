@@ -73,7 +73,7 @@ namespace Indeo {
 
 void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int tmp[64];
+	int32 tmp[64];
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 	// apply the InvHaar8 to all columns
@@ -107,8 +107,8 @@ void IndeoDSP::ffIviInverseHaar8x8(const int32 *in, int16 *out, uint32 pitch,
 #define COMPENSATE(x) (x)
 	src = tmp;
 	for (int i = 0; i < 8; i++) {
-		if (   !src[0] && !src[1] && !src[2] && !src[3]
-			&& !src[4] && !src[5] && !src[6] && !src[7]) {
+		if (!src[0] && !src[1] && !src[2] && !src[3] &&
+				!src[4] && !src[5] && !src[6] && !src[7]) {
 			memset(out, 0, 8 * sizeof(out[0]));
 		} else {
 			INV_HAAR8(src[0], src[1], src[2], src[3],
@@ -176,7 +176,7 @@ void IndeoDSP::ffIviColHaar8(const int32 *in, int16 *out, uint32 pitch,
 
 void IndeoDSP::ffIviInverseHaar4x4(const int32 *in, int16 *out, uint32 pitch,
 							 const uint8 *flags) {
-	int tmp[16];
+	int32 tmp[16];
 	int t0, t1, t2, t3, t4;
 
 	// apply the InvHaar4 to all columns
@@ -322,7 +322,7 @@ void IndeoDSP::ffIviDcHaar2d(const int32 *in, int16 *out, uint32 pitch,
 	d4 = COMPENSATE(t4);}
 
 void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int tmp[64];
+	int32 tmp[64];
 	int t0, t1, t2, t3, t4, t5, t6, t7, t8;
 
 #define COMPENSATE(x) (x)
@@ -359,7 +359,7 @@ void IndeoDSP::ffIviInverseSlant8x8(const int32 *in, int16 *out, uint32 pitch, c
 }
 
 void IndeoDSP::ffIviInverseSlant4x4(const int32 *in, int16 *out, uint32 pitch, const uint8 *flags) {
-	int tmp[16];
+	int32 tmp[16];
 	int t0, t1, t2, t3, t4;
 
 #define COMPENSATE(x) (x)

@@ -155,7 +155,7 @@ int VLC::init_vlc(int nbBits, int nbCodes, const void *p_bits, int bitsWrap,
 	vlc = this;
 	vlc->_bits = nbBits;
 	if (flags & INIT_VLC_USE_NEW_STATIC) {
-		assert((nbCodes + 1) <= FF_ARRAY_ELEMS(localbuf));
+		assert((nbCodes + 1) <= (int)FF_ARRAY_ELEMS(localbuf));
 		buf = localbuf;
 		localvlc = *this;
 		vlc = &localvlc;

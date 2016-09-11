@@ -508,12 +508,12 @@ private:
 	int iviMc(IVIBandDesc *band, IviMCFunc mc, IviMCAvgFunc mcAvg,
 		int offs, int mvX, int mvY, int mvX2, int mvY2, int mcType, int mcType2);
 
-	int ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
+	int decodeCodedBlocks(GetBits *gb, IVIBandDesc *band,
 		IviMCFunc mc, IviMCAvgFunc mcAvg, int mvX, int mvY,
-		int mvX2, int mvY2, int *prevDc, int isIntra,
+		int mvX2, int mvY2, int32 *prevDc, int isIntra,
 		int mcType, int mcType2, uint32 quant, int offs);
 
-	int ivi_dc_transform(IVIBandDesc *band, int *prevDc, int bufOffs,
+	int iviDcTransform(IVIBandDesc *band, int32 *prevDc, int bufOffs,
 		int blkSize);
 protected:
 	IVI45DecContext _ctx;

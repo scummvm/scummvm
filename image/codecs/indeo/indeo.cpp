@@ -1156,7 +1156,7 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
 			}
 
 			if (cbp & 1) { // block coded ?
-				ret = ivi_decode_coded_blocks(_gb, band, mcWithDeltaFunc,
+				ret = decodeCodedBlocks(_gb, band, mcWithDeltaFunc,
 											  mcAvgWithDeltaFunc,
 											  mvX, mvY, mvX2, mvY2,
 											  &prevDc, isIntra,
@@ -1169,7 +1169,7 @@ int IndeoDecoderBase::decodeBlocks(GetBits *_gb, IVIBandDesc *band, IVITile *til
 				// for intra blocks apply the dc slant transform
 				// for inter - perform the motion compensation without delta
 				if (isIntra) {
-					ret = ivi_dc_transform(band, &prevDc, bufOffs, blkSize);
+					ret = iviDcTransform(band, &prevDc, bufOffs, blkSize);
 					if (ret < 0)
 						return ret;
 				} else {
@@ -1229,9 +1229,9 @@ int IndeoDecoderBase::iviMc(IVIBandDesc *band, IviMCFunc mc, IviMCAvgFunc mcAvg,
 	return 0;
 }
 
-int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
+int IndeoDecoderBase::decodeCodedBlocks(GetBits *gb, IVIBandDesc *band,
 		IviMCFunc mc, IviMCAvgFunc mcAvg, int mvX, int mvY,
-		int mvX2, int mvY2, int *prevDc, int isIntra,
+		int mvX2, int mvY2, int32 *prevDc, int isIntra,
 		int mcType, int mcType2, uint32 quant, int offs) {
 	const uint16 *baseTab = isIntra ? band->_intraBase : band->_interBase;
 	RVMapDesc *rvmap = band->_rvMap;
@@ -1326,7 +1326,7 @@ int IndeoDecoderBase::ivi_decode_coded_blocks(GetBits *gb, IVIBandDesc *band,
 	return 0;
 }
 
-int IndeoDecoderBase::ivi_dc_transform(IVIBandDesc *band, int *prevDc,
+int IndeoDecoderBase::iviDcTransform(IVIBandDesc *band, int32 *prevDc,
 		int bufOffs, int blkSize) {
 	int bufSize = band->_pitch * band->_aHeight - bufOffs;
 	int minSize = (blkSize - 1) * band->_pitch + blkSize;
@@ -1334,9 +1334,7 @@ int IndeoDecoderBase::ivi_dc_transform(IVIBandDesc *band, int *prevDc,
 	if (minSize > bufSize)
 		return -1;
 
-	band->_dcTransform(prevDc, band->_buf + bufOffs,
-		band->_pitch, blkSize);
-
+	band->_dcTransform(prevDc, band->_buf + bufOffs, band->_pitch, blkSize);
 	return 0;
 }
 
