@@ -202,11 +202,7 @@ public:
 #define getFlag(val, mask) ((val) & (mask))
 #define clearFlag(val, mask) ((val) &= (~(mask))) // @ M09_CLEAR
 
-//TODO: Directly use CLIP
-template<typename T>
-inline T getBoundedValue(T min, T val, T max) {
-	return CLIP<T>(min, val, max);
-} // @ F0026_MAIN_GetBoundedValue
+// Note: F0026_MAIN_GetBoundedValue<T> has been replaced by CLIP<T>
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
@@ -260,7 +256,7 @@ public:
 	Direction turnDirLeft(int16 dir); // @ M19_PREVIOUS
 	Direction returnOppositeDir(int16 dir);	// @ M18_OPPOSITE
 	bool isOrientedWestEast(int16 dir);	// @ M16_IS_ORIENTED_WEST_EAST
-	uint16 normalizeModulo4(int16 val); // @ M21_NORMALIZE
+	uint16 normalizeModulo4(int16 dir); // @ M21_NORMALIZE
 
 	int32 filterTime(int32 map_time); // @ M30_TIME
 	int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME

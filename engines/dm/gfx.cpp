@@ -2809,7 +2809,6 @@ int16 DisplayMan::getScaledDimension(int16 dimension, int16 scale) {
 
 void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Direction directionParam, int16 mapXpos,
 							  int16 mapYpos, int16 viewSquareIndex, uint16 orderedViewCellOrdinals) {
-	int16 AL_0_creatureGraphicInfoRed;
 	int16 AL_0_creatureIndexRed;
 #define AL_1_viewSquareExplosionIndex viewSquareIndex
 	int16 L0126_i_Multiple;
@@ -2854,6 +2853,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	int16 creatureSize;
 	int16 creatureDirectionDelta;
 	int16 creatureGraphicInfoGreen;
+	int16 creatureGraphicInfoRed;
 	int16 creatureAspectInt;
 	int16 creatureIndexGreen;
 	int16 transparentColor;
@@ -3299,12 +3299,12 @@ T0115077_DrawSecondHalfSquareCreature:
 		coordinateSet = creatureCoordinateSets[((CreatureAspect *)objectAspect)->getCoordSet()][viewSquareIndex][AL_2_viewCell];
 		if (!coordinateSet[1])
 			goto T0115126_CreatureNotVisible;
-		AL_0_creatureGraphicInfoRed = creatureGraphicInfoGreen;
+		creatureGraphicInfoRed = creatureGraphicInfoGreen;
 		AL_4_nativeBitmapIndex = k446_FirstCreatureGraphicIndice + ((CreatureAspect *)objectAspect)->_firstNativeBitmapRelativeIndex; /* By default, assume using the front image */
 		derivedBitmapIndex = ((CreatureAspect *)objectAspect)->_firstDerivedBitmapIndex;
 		int16 sourceByteWidth;
 		int16 sourceHeight;
-		useCreatureSideBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001);
+		useCreatureSideBitmap = getFlag(creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide) && (creatureDirectionDelta & 0x0001);
 		if (useCreatureSideBitmap) {
 			useCreatureAttackBitmap = useFlippedHorizontallyCreatureFrontImage = useCreatureBackBitmap = false;
 			AL_4_nativeBitmapIndex++; /* Skip the front image. Side image is right after the front image */
@@ -3312,20 +3312,20 @@ T0115077_DrawSecondHalfSquareCreature:
 			sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthSide;
 			sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightSide;
 		} else {
-			useCreatureBackBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
+			useCreatureBackBitmap = getFlag(creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack) && (creatureDirectionDelta == 0);
 			useCreatureAttackBitmap = !useCreatureBackBitmap;
-			if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack)) {
+			if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack)) {
 				useFlippedHorizontallyCreatureFrontImage = false;
 				sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthAttack;
 				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightAttack;
 				AL_4_nativeBitmapIndex++; /* Skip the front image */
 				derivedBitmapIndex += 2;
-				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
+				if (getFlag(creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
 					AL_4_nativeBitmapIndex++; /* If the creature has a side image, it preceeds the attack image */
 					derivedBitmapIndex += 2;
 				}
 
-				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack)) {
+				if (getFlag(creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack)) {
 					AL_4_nativeBitmapIndex++; /* If the creature has a back image, it preceeds the attack image */
 					derivedBitmapIndex += 2;
 				}
@@ -3334,7 +3334,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightFront;
 				if (useCreatureBackBitmap) {
 					useFlippedHorizontallyCreatureFrontImage = false;
-					if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
+					if (getFlag(creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide)) {
 						AL_4_nativeBitmapIndex += 2; /* If the creature has a side image, it preceeds the back image */
 						derivedBitmapIndex += 4;
 					} else {
@@ -3342,16 +3342,16 @@ T0115077_DrawSecondHalfSquareCreature:
 						derivedBitmapIndex += 2;
 					}
 				} else {
-					useFlippedHorizontallyCreatureFrontImage = getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack) && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap);
+					useFlippedHorizontallyCreatureFrontImage = getFlag(creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack) && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap);
 					if (useFlippedHorizontallyCreatureFrontImage) {
 						derivedBitmapIndex += 2;
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide))
+						if (getFlag(creatureGraphicInfoRed, k0x0008_CreatureInfoGraphicMaskSide))
 							derivedBitmapIndex += 2;
 
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack))
+						if (getFlag(creatureGraphicInfoRed, k0x0010_CreatureInfoGraphicMaskBack))
 							derivedBitmapIndex += 2;
 
-						if (getFlag(AL_0_creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack))
+						if (getFlag(creatureGraphicInfoRed, k0x0020_CreatureInfoGraphicMaskAttack))
 							derivedBitmapIndex += 2;
 					}
 				}
@@ -3379,7 +3379,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 			else {
 				bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-				if (getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))
+				if (getFlag(creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))
 					copyBitmapAndFlipHorizontal(bitmapGreenAnt, bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex), byteWidth, heightRedEagle);
 
 				addDerivedBitmap(derivedBitmapIndex);
@@ -3392,7 +3392,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			if (viewSquareIndex >= k3_ViewSquare_D2C) { /* Creature is on D2 */
 				derivedBitmapIndex++; /* Skip front D3 image in additional graphics */
 				AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
-				useCreatureSpecialD2FrontBitmap = getFlag(AL_0_creatureGraphicInfoRed, k0x0080_CreatureInfoGraphicMaskSpecialD2Front) && !useCreatureSideBitmap && !useCreatureBackBitmap && !useCreatureAttackBitmap;
+				useCreatureSpecialD2FrontBitmap = getFlag(creatureGraphicInfoRed, k0x0080_CreatureInfoGraphicMaskSpecialD2Front) && !useCreatureSideBitmap && !useCreatureBackBitmap && !useCreatureAttackBitmap;
 				paletteChanges = _palChangesCreatureD2;
 				scale = k20_Scale_D2;
 			} else { /* Creature is on D3 */
@@ -3416,8 +3416,8 @@ T0115077_DrawSecondHalfSquareCreature:
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
 				(useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) ||
-				(useCreatureSpecialD2FrontBitmap && getFlag(AL_0_creatureGraphicInfoRed, k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped)) ||
-				(useFlippedHorizontallyCreatureFrontImage && getFlag(AL_0_creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))) { /* If the graphic should be flipped */
+				(useCreatureSpecialD2FrontBitmap && getFlag(creatureGraphicInfoRed, k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped)) ||
+				(useFlippedHorizontallyCreatureFrontImage && getFlag(creatureGraphicInfoRed, k0x0004_CreatureInfoGraphicMaskFlipNonAttack))) { /* If the graphic should be flipped */
 				if (!useFlippedHorizontallyCreatureFrontImage || !derivedBitmapInCache) {
 					AL_4_normalizdByteWidth = getNormalizedByteWidth(byteWidth);
 					if (!useFlippedHorizontallyCreatureFrontImage) {
@@ -3442,12 +3442,12 @@ T0115077_DrawSecondHalfSquareCreature:
 		else if (viewLane) /* Lane right */
 			AL_4_xPos += 100;
 
-		boxByteGreen._x2 = getBoundedValue(0, AL_4_xPos + byteWidth, 223);
+		boxByteGreen._x2 = CLIP(0, AL_4_xPos + byteWidth, 223);
 
 		if (!boxByteGreen._x2)
 			goto T0115126_CreatureNotVisible;
 		int16 AL_0_creaturePosX;
-		boxByteGreen._x1 = getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
+		boxByteGreen._x1 = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
 		if (boxByteGreen._x1) {
 			if (boxByteGreen._x1 == 223)
 				goto T0115126_CreatureNotVisible;
@@ -3706,7 +3706,7 @@ T0115200_DrawExplosion:
 					continue;
 				boxByteGreen._x2 = AL_4_xPos;
 				AL_4_xPos = explosionCoordinates[0];
-				boxByteGreen._x1 = getBoundedValue(0, AL_4_xPos - byteWidth + 1, 223);
+				boxByteGreen._x1 = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
 
 				if (boxByteGreen._x1)
 					AL_4_xPos = paddingPixelCount;

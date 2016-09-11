@@ -234,7 +234,7 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 	kineticEnergy += weaponKineticEnergy;
 	int16 skillLevel = getSkillLevel((ChampionIndex)champIndex, kDMSkillThrow);
 	kineticEnergy += _vm->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
-	int16 attack = getBoundedValue((uint16)40, (uint16)((skillLevel << 3) + _vm->getRandomNumber(32)), (uint16)200);
+	int16 attack = CLIP<int16>(40, ((skillLevel << 3) + _vm->getRandomNumber(32)), 200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
 	_vm->_projexpl->createProjectile(curThing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
 										  _vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + side),
@@ -657,7 +657,7 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	if (getFlag(curChampion->_wounds, (slotIndex == kDMSlotReadyHand) ? kDMWoundReadHand : kDMWoundActionHand)) {
 		strength >>= 1;
 	}
-	return getBoundedValue(0, strength >> 1, 100);
+	return CLIP(0, strength >> 1, 100);
 }
 
 Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex) {
@@ -877,7 +877,7 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	if (_partyIsSleeping)
 		woundDefense >>= 1;
 
-	return getBoundedValue(0, woundDefense >> 1, 100);
+	return CLIP(0, woundDefense >> 1, 100);
 }
 
 uint16 ChampionMan::getStatisticAdjustedAttack(Champion *champ, uint16 statIndex, uint16 attack) {
@@ -912,7 +912,7 @@ void ChampionMan::wakeUp() {
 
 int16 ChampionMan::getThrowingStaminaCost(Thing thing) {
 	int16 weight = _vm->_dungeonMan->getObjectWeight(thing) >> 1;
-	int16 staminaCost = getBoundedValue<int16>(1, weight, 10);
+	int16 staminaCost = CLIP<int16>(1, weight, 10);
 
 	while ((weight -= 10) > 0)
 		staminaCost += weight >> 1;
@@ -969,7 +969,7 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 		Skill *curSkill = &curChampion->_skills[skillIndex];
 		curSkill->_experience += exp;
 		if (curSkill->_temporaryExperience < 32000)
-			curSkill->_temporaryExperience += getBoundedValue(1, exp >> 3, 100);
+			curSkill->_temporaryExperience += CLIP(1, exp >> 3, 100);
 
 		curSkill = &curChampion->_skills[baseSkillIndex];
 		if (skillIndex >= kDMSkillSwing)
@@ -1088,7 +1088,7 @@ int16 ChampionMan::getDexterity(Champion *champ) {
 	if (_partyIsSleeping)
 		dexterity >>= 1;
 
-	return getBoundedValue(1 + _vm->getRandomNumber(8), dexterity >> 1, 100 - _vm->getRandomNumber(8));
+	return CLIP(1 + _vm->getRandomNumber(8), dexterity >> 1, 100 - _vm->getRandomNumber(8));
 }
 
 bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
@@ -1097,7 +1097,7 @@ bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
 
 	unsigned char *curStat = champ->_statistics[kDMStatLuck];
 	bool isLucky = (_vm->getRandomNumber(curStat[kDMStatCurrent]) > percentage);
-	curStat[kDMStatCurrent] = getBoundedValue<char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (isLucky ? -2 : 2), curStat[kDMStatMaximum]);
+	curStat[kDMStatCurrent] = CLIP<unsigned char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (isLucky ? -2 : 2), curStat[kDMStatMaximum]);
 	return isLucky;
 }
 
@@ -1616,7 +1616,7 @@ void ChampionMan::applyTimeEffects() {
 				staminaGainCycleCount += 2;
 
 			int16 staminaLoss = 0;
-			int16 staminaAmount = getBoundedValue(1, (championPtr->_maxStamina >> 8) - 1, 6);
+			int16 staminaAmount = CLIP(1, (championPtr->_maxStamina >> 8) - 1, 6);
 			if (_partyIsSleeping)
 				staminaAmount <<= 1;
 

@@ -1473,7 +1473,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
 		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
-		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, getBoundedValue((int16)20, kineticEnergy, (int16)255), creatureInfo->_dexterity, 8);
+		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, CLIP<byte>(20, kineticEnergy, 255), creatureInfo->_dexterity, 8);
 	} else {
 		int16 championIndex;
 		if (getFlag(creatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
