@@ -480,9 +480,11 @@ static const char *const STRINGS_EN[] = {
 };
 
 static const char *const STRINGS_DE[] = {
+	// TODO: Translate these to their German versions
 	"",
-	"You are standing outside the Pellerator.",
-	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
+	"Sie befinden sich vor dem Pellerator.",
+	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
+		"glich, da die T\0xFC" "r zugefroren ist.",
 	"The Succ-U-Bus is in Standby, or \"Off\" mode at present.",
 	"There is currently nothing to deliver.",
 	"There is currently nothing in the tray to send.",
@@ -601,7 +603,6 @@ static const char *const STRINGS_DE[] = {
 	"Und sagen Sie hinterher blo\0xFC nicht, niemand hStte Sie gewarnt.",
 	"Pin\0xAA" "z-pin\0xAA" "z stot \0xAF" "r\0xB0 jibbli",
 	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
-
 };
 
 void NORETURN_PRE error(const char *s, ...) {
@@ -1059,6 +1060,7 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
 	writeStringArray("TEXT/STRINGS", STRINGS_EN, 58);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 104);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
