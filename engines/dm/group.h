@@ -171,6 +171,8 @@ class GroupMan {
 	bool _groupMovementBlockedByParty; // @ G0390_B_GroupMovementBlockedByParty
 	bool _groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
 	int32 twoHalfSquareSizedCreaturesGroupLastDirectionSetTime; // @ G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime
+	uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
+
 public:
 	uint16 _maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
 	ActiveGroup *_activeGroups; // @ G0375_ps_ActiveGroups

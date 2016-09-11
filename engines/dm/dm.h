@@ -218,6 +218,7 @@ struct SaveGameHeader {
 };
 
 class DMEngine : public Engine {
+private:
 	void startGame(); // @ F0462_START_StartGame_CPSF
 	void processNewPartyMap(uint16 mapIndex); // @ F0003_MAIN_ProcessNewPartyMap_CPSE
 	void initializeGame(); // @ F0463_START_InitializeGame_CPSADEF
@@ -228,6 +229,11 @@ class DMEngine : public Engine {
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
 	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
 	void drawEntrance(); // @ F0439_STARTEND_DrawEntrance
+	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
+	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
+	void openEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
+	void drawTittle(); // @ F0437_STARTEND_DrawTitle
+
 public:
 	explicit DMEngine(OSystem *syst, const DMADGameDescription *gameDesc);
 	~DMEngine();
@@ -246,14 +252,10 @@ public:
 	virtual Common::Error run(); // @ main
 	void saveGame(); // @ F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF
 	LoadgameResult loadgame(int16 slot); // @ F0435_STARTEND_LoadGame_CPSF
-	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance
 	void endGame(bool doNotDrawCreditsOnly); // @ F0444_STARTEND_Endgame
 
-	void openEntranceDoors(); // @ F0438_STARTEND_OpenEntranceDoors
-	void drawTittle(); // @ F0437_STARTEND_DrawTitle
 	void entranceDrawCredits();
 	void fuseSequence(); // @ F0446_STARTEND_FuseSequence
-	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	Common::Language getGameLanguage();
 
 	void turnDirRight(Direction &dir);
@@ -262,8 +264,6 @@ public:
 	uint16 returnPrevVal(uint16 val); // @ M19_PREVIOUS
 	uint16 returnNextVal(uint16 val); // @ M17_NEXT
 	bool isOrientedWestEast(Direction dir);	// @ M16_IS_ORIENTED_WEST_EAST
-	uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
-	uint16 bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
 	uint16 normalizeModulo4(uint16 val); // @ M21_NORMALIZE
 	int32 filterTime(int32 map_time); // @ M30_TIME
 	int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME

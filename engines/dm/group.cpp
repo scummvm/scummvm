@@ -70,6 +70,10 @@ GroupMan::~GroupMan() {
 	delete[] _activeGroups;
 }
 
+uint16 GroupMan::toggleFlag(uint16& val, uint16 mask) {
+	return val ^= mask;
+}
+
 void GroupMan::initActiveGroups() {
 	if (_vm->_newGameFl)
 		_maxActiveGroupCount = 60;
@@ -1270,7 +1274,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 			if (getFlag(creatureGraphicInfo, k0x0200_CreatureInfoGraphicMaskFlipAttack)) {
 				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
-						_vm->toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
 					}
 				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
@@ -1287,7 +1291,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 			if (getFlag(creatureGraphicInfo, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
 				if (creatureType == k13_CreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
-						_vm->toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						uint16 soundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
 						if (soundIndex <= k34_D13_soundCount)
 							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);

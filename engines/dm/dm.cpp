@@ -99,14 +99,6 @@ bool DMEngine::isOrientedWestEast(Direction dir) {
 	return dir & 1;
 }
 
-uint16 DMEngine::toggleFlag(uint16& val, uint16 mask) {
-	return val ^= mask;
-}
-
-uint16 DMEngine::bitmapByteCount(uint16 pixelWidth, uint16 height) {
-	return pixelWidth / 2 * height;
-}
-
 uint16 DMEngine::normalizeModulo4(uint16 val) {
 	return val & 3;
 }
