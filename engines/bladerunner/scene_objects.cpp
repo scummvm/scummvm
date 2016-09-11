@@ -63,21 +63,20 @@ void SceneObjects::clear() {
 	}
 }
 
-bool SceneObjects::addActor(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 isMoving, uint8 isTarget, uint8 isRetired) {
+bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isMoving, uint8 isTarget, uint8 isRetired) {
 	return addSceneObject(sceneObjectId, SceneObjectTypeActor, boundingBox, screenRectangle, isClickable, 0, 0, isTarget, isMoving, isRetired);
 }
 
-bool SceneObjects::addObject(int sceneObjectId, BoundingBox* boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget) {
+bool SceneObjects::addObject(int sceneObjectId, BoundingBox *boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget) {
 	Common::Rect rect(-1, -1, -1, -1);
 	return addSceneObject(sceneObjectId, SceneObjectTypeObject, boundingBox, &rect, isClickable, isObstacle, unknown1, isTarget, 0, 0);
 }
 
-bool SceneObjects::addItem(int sceneObjectId, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isTarget, uint8 isObstacle) {
+bool SceneObjects::addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isTarget, uint8 isObstacle) {
 	return addSceneObject(sceneObjectId, SceneObjectTypeItem, boundingBox, screenRectangle, isObstacle, 0, 0, isTarget, 0, 0);
 }
 
-bool SceneObjects::remove(int sceneObjectId)
-{
+bool SceneObjects::remove(int sceneObjectId) {
 	int i = findById(sceneObjectId);
 	if (i == -1) {
 		return false;
@@ -99,8 +98,8 @@ bool SceneObjects::remove(int sceneObjectId)
 
 int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets) {
 	*isClickable = 0;
-	*isObstacle  = 0;
-	*isTarget    = 0;
+	*isObstacle = 0;
+	*isTarget = 0;
 
 	for (int i = 0; i < _count; ++i) {
 		assert(_sceneObjectsSortedByDistance[i] < _count);
@@ -108,9 +107,8 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 		SceneObject &sceneObject = _sceneObjects[_sceneObjectsSortedByDistance[i]];
 
 		if ((findClickables && sceneObject._isClickable) ||
-		    (findObstacles  && sceneObject._isObstacle)  ||
-		    (findTargets    && sceneObject._isTarget))
-		{
+			(findObstacles  && sceneObject._isObstacle) ||
+			(findTargets    && sceneObject._isTarget)) {
 			BoundingBox boundingBox = sceneObject._boundingBox;
 
 			if (sceneObject._sceneObjectType == SceneObjectTypeObject || sceneObject._sceneObjectType == SceneObjectTypeItem) {
@@ -119,8 +117,8 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 
 			if (boundingBox.inside(x, y, z)) {
 				*isClickable = sceneObject._isClickable;
-				*isObstacle  = sceneObject._isObstacle;
-				*isTarget    = sceneObject._isTarget;
+				*isObstacle = sceneObject._isObstacle;
+				*isTarget = sceneObject._isTarget;
 
 				return sceneObject._sceneObjectId;
 			}
@@ -130,8 +128,43 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 	return -1;
 }
 
-int SceneObjects::findById(int sceneObjectId)
-{
+bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6) {
+	float xMin = x - 12.5f;
+	float xMax = x + 12.5f;
+	float zMin = z - 12.5f;
+	float zMax = z + 12.5f;
+
+	int count = this->_count;
+
+	if (count > 0) {
+		for (int i = 0; i < count; i++) {
+			SceneObject *sceneObject = &this->_sceneObjects[this->_sceneObjectsSortedByDistance[i]];
+			bool v13 = false;
+			if (sceneObject->_sceneObjectType == SceneObjectTypeActor) {
+				if (sceneObject->_isRetired) {
+					v13 = false;
+				} else if (sceneObject->_isMoving) {
+					v13 = a5 != 0;
+				} else {
+					v13 = a6 != 0;
+				}
+			} else {
+				v13 = sceneObject->_isObstacle;
+			}
+
+			if (v13 && sceneObject->_sceneObjectId != exceptSceneObjectId) {
+				float x1, y1, z1, x2, y2, z2;
+				sceneObject->_boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
+				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+int SceneObjects::findById(int sceneObjectId) {
 	for (int i = 0; i < _count; ++i) {
 		if (_sceneObjects[i]._present && _sceneObjects[i]._sceneObjectId == sceneObjectId) {
 			return i;
@@ -140,23 +173,23 @@ int SceneObjects::findById(int sceneObjectId)
 	return -1;
 }
 
-bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox* boundingBox, Common::Rect* screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint isMoving, uint isRetired) {
+bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint isMoving, uint isRetired) {
 	int index = findEmpty();
 	if (index == -1) {
 		return false;
 	}
 
-	_sceneObjects[index]._sceneObjectId   = sceneObjectId;
+	_sceneObjects[index]._sceneObjectId = sceneObjectId;
 	_sceneObjects[index]._sceneObjectType = sceneObjectType;
-	_sceneObjects[index]._present         = 1;
-	_sceneObjects[index]._boundingBox     = *boundingBox;
+	_sceneObjects[index]._present = 1;
+	_sceneObjects[index]._boundingBox = *boundingBox;
 	_sceneObjects[index]._screenRectangle = *screenRectangle;
-	_sceneObjects[index]._isClickable     = isClickable;
-	_sceneObjects[index]._isObstacle      = isObstacle;
-	_sceneObjects[index]._unknown1        = unknown1;
-	_sceneObjects[index]._isTarget        = isTarget;
-	_sceneObjects[index]._isMoving        = isMoving;
-	_sceneObjects[index]._isRetired       = isRetired;
+	_sceneObjects[index]._isClickable = isClickable;
+	_sceneObjects[index]._isObstacle = isObstacle;
+	_sceneObjects[index]._unknown1 = unknown1;
+	_sceneObjects[index]._isTarget = isTarget;
+	_sceneObjects[index]._isMoving = isMoving;
+	_sceneObjects[index]._isRetired = isRetired;
 
 	float centerZ = (_sceneObjects[index]._boundingBox.getZ0() + _sceneObjects[index]._boundingBox.getZ1()) / 2.0;
 
@@ -213,11 +246,11 @@ bool SceneObjects::isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x
 	_sceneObjects[i]._boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
 	//TODO
-//		if (!lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ1, objectX2, objectZ1, &intersectionX, &intersectionY, &v18)
-//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ1, objectX2, objectZ2, &intersectionX, &intersectionY, &v18)
-//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ2, objectX1, objectZ2, &intersectionX, &intersectionY, &v18)
-//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ2, objectX1, objectZ1, &intersectionX, &intersectionY, &v18))
-//			return false;
+	//		if (!lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ1, objectX2, objectZ1, &intersectionX, &intersectionY, &v18)
+	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ1, objectX2, objectZ2, &intersectionX, &intersectionY, &v18)
+	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ2, objectX1, objectZ2, &intersectionX, &intersectionY, &v18)
+	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ2, objectX1, objectZ1, &intersectionX, &intersectionY, &v18))
+	//			return false;
 	return true;
 }
 

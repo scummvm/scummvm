@@ -170,4 +170,12 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 	return (byte*)_pages[page]._data + pageOffset;
 }
 
+Vector3 SliceAnimations::getPositionChange(int animation) {
+	return _animations[animation].positionChange;
+}
+
+float SliceAnimations::getFacingChange(int animation) {
+	return _animations[animation].facingChange;
+}
+
 } // End of namespace BladeRunner

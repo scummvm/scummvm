@@ -79,6 +79,7 @@ public:
 	bool remove(int sceneObjectId);
 	void clear();
 	int findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets);
+	bool existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6);
 	void setMoving(int sceneObjectId, bool isMoving);
 	void setRetired(int sceneObjectId, bool isRetired);
 	bool isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2);

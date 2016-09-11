@@ -558,9 +558,12 @@ void BladeRunnerEngine::gameTick() {
 			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
+			int setId = _scene->_setId;
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-				if (i == 0 || i == 23) // Currently limited to McCoy and Officer Leroy
+				//if (_actors[i]->getSetId() == setId) {
+					if (i == 0 || i == 23){ // Currently limited to McCoy and Officer Leroy
 					_actors[i]->tick(backgroundChanged);
+				}
 			}
 
 			// TODO: Draw items

@@ -106,6 +106,9 @@ public:
 
 	float getFrameCount(int animation){ return _animations[animation].frameCount; }
 	float getFPS(int animation){ return _animations[animation].fps; }
+
+	Vector3 getPositionChange(int animation);
+	float getFacingChange(int animation);
 };
 
 } // End of namespace BladeRunner
