@@ -28,6 +28,7 @@
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
+#include "common/types.h"
 
 namespace Common {
 
@@ -88,8 +89,8 @@ protected:
 template<int valueBits, bool isLE, bool isMSB2LSB>
 class BitStreamImpl : public BitStream {
 private:
-	SeekableReadStream *_stream; ///< The input stream.
-	bool _disposeAfterUse;       ///< Should we delete the stream on destruction?
+	SeekableReadStream *_stream;			///< The input stream.
+	DisposeAfterUse::Flag _disposeAfterUse; ///< Should we delete the stream on destruction?
 
 	uint32 _value;   ///< Current value.
 	uint8  _inValue; ///< Position within the current value.
@@ -132,7 +133,7 @@ private:
 
 public:
 	/** Create a bit stream using this input data stream and optionally delete it on destruction. */
-	BitStreamImpl(SeekableReadStream *stream, bool disposeAfterUse = false) :
+	BitStreamImpl(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::NO) :
 		_stream(stream), _disposeAfterUse(disposeAfterUse), _value(0), _inValue(0) {
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
@@ -141,14 +142,14 @@ public:
 
 	/** Create a bit stream using this input data stream. */
 	BitStreamImpl(SeekableReadStream &stream) :
-		_stream(&stream), _disposeAfterUse(false), _value(0), _inValue(0) {
+		_stream(&stream), _disposeAfterUse(DisposeAfterUse::NO), _value(0), _inValue(0) {
 
 		if ((valueBits != 8) && (valueBits != 16) && (valueBits != 32))
 			error("BitStreamImpl: Invalid memory layout %d, %d, %d", valueBits, isLE, isMSB2LSB);
 	}
 
 	~BitStreamImpl() {
-		if (_disposeAfterUse)
+		if (_disposeAfterUse == DisposeAfterUse::YES)
 			delete _stream;
 	}
 

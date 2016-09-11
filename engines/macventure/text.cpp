@@ -50,7 +50,7 @@ TextAsset::TextAsset(MacVentureEngine *engine, ObjID objid, ObjID source, ObjID 
 void TextAsset::decodeOld() {
 	Common::SeekableReadStream *res = _container->getItem(_id);
 	uint16 strLen = res->readUint16BE();
-	Common::BitStream32BELSB stream(res, true);
+	Common::BitStream32BELSB stream(res, DisposeAfterUse::YES);
 	char *str = new char[strLen + 1];
 	bool lowercase = false;
 	char c;
@@ -114,7 +114,7 @@ void TextAsset::decodeOld() {
 void TextAsset::decodeHuffman() {
 	_decoded = Common::String("");
 	Common::SeekableReadStream *res = _container->getItem(_id);
-	Common::BitStream8MSB stream(res, true);
+	Common::BitStream8MSB stream(res, DisposeAfterUse::YES);
 	uint16 strLen = 0;
 	if (stream.getBit()) {
 		strLen = stream.getBits(15);
