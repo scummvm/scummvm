@@ -521,7 +521,7 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 
 void FullpipeEngine::updateSoundVolume() {
 	for (int i = 0; i < _currSoundListCount; i++)
-		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(_sfxVolume, 0);
 		}
 }
