@@ -454,7 +454,6 @@ void sceneHandler27_batLogic() {
 		g_vars->scene27_bat = g_vars->scene27_balls[0];
 
 		g_vars->scene27_balls.remove_at(0);
-		g_vars->scene27_balls.push_back(g_vars->scene27_bat);
 
 		int mv;
 
