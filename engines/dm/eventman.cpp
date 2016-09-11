@@ -1175,7 +1175,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
+				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, kDMSensorEffectToggle, _vm->_gameTime + 1);
 				return;
 			}
 		} else if (isLeaderHandObjThrown(posX, posY))
@@ -1403,7 +1403,7 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 		newEvent._Bu._location._mapX = mapX;
 		newEvent._Bu._location._mapY = mapY;
 		newEvent._Cu.A._cell = currCell;
-		newEvent._Cu.A._effect = k2_SensorEffToggle;
+		newEvent._Cu.A._effect = kDMSensorEffectToggle;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
 	_vm->_stopWaitingForPlayerInput = true;

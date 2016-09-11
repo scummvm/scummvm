@@ -169,48 +169,48 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 
 void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
 	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
-		kDMObjectInfoIndexFirstWeapon + k9_WeaponTypeFalchion,
-		kDMObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponFalchion,
+		kDMObjectInfoIndexFirstArmour + kDMArmourWoodenShield,
 		0}
 	;
 	static uint16 fixedPossessionCreature9StoneGolem[2] = { // @ G0246_aui_Graphic559_FixedPossessionsCreature09StoneGolem
-		kDMObjectInfoIndexFirstWeapon + k24_WeaponTypeStoneClub,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponStoneClub,
 		0
 	};
 	static uint16 fixedPossessionCreatur16TrolinAntman[2] = { // @ G0247_aui_Graphic559_FixedPossessionsCreature16Trolin_Antman
-		kDMObjectInfoIndexFirstWeapon + k23_WeaponTypeClub,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponClub,
 		0
 	};
 	static uint16 fixedPossessionCreature18AnimatedArmourDethKnight[7] = { // @ G0248_aui_Graphic559_FixedPossessionsCreature18AnimatedArmour_DethKnight
-		kDMObjectInfoIndexFirstArmour + k41_ArmourTypeFootPlate,
-		kDMObjectInfoIndexFirstArmour + k40_ArmourTypeLegPlate,
-		kDMObjectInfoIndexFirstArmour + k39_ArmourTypeTorsoPlate,
-		kDMObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
-		kDMObjectInfoIndexFirstArmour + k38_ArmourTypeArmet,
-		kDMObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
+		kDMObjectInfoIndexFirstArmour + kDMArmourFootPlate,
+		kDMObjectInfoIndexFirstArmour + kDMArmourLegPlate,
+		kDMObjectInfoIndexFirstArmour + kDMArmourTorsoPlate,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponSword,
+		kDMObjectInfoIndexFirstArmour + kDMArmourArmet,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponSword,
 		0
 	};
 	static uint16 fixedPossessionCreature7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
 		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder,
-		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | k0x8000_randomDrop,
-		kDMObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
-		kDMObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
 		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank,
-		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
 		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice,
-		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
 		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound,
-		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
-		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
@@ -222,8 +222,8 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
 		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
 		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop, 0};
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | kDMMaskRandomDrop, 0};
 
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;
@@ -263,11 +263,11 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 	uint16 currFixedPossession = *fixedPossessions++;
 	bool weaponDropped = false;
 	while (currFixedPossession) {
-		if (getFlag(currFixedPossession, k0x8000_randomDrop) && _vm->getRandomNumber(2))
+		if (getFlag(currFixedPossession, kDMMaskRandomDrop) && _vm->getRandomNumber(2))
 			continue;
 
 		int16 currThingType;
-		if (clearFlag(currFixedPossession, k0x8000_randomDrop) >= kDMObjectInfoIndexFirstJunk) {
+		if (clearFlag(currFixedPossession, kDMMaskRandomDrop) >= kDMObjectInfoIndexFirstJunk) {
 			currThingType = kDMThingTypeJunk;
 			currFixedPossession -= kDMObjectInfoIndexFirstJunk;
 		} else if (currFixedPossession >= kDMObjectInfoIndexFirstArmour) {
@@ -547,7 +547,7 @@ int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 map
 int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack) {
 	int16 poisonResistance = _vm->_dungeonMan->_creatureInfos[creatreType].getPoisonResistance();
 
-	if (!poisonAttack || (poisonResistance == k15_immuneToPoison))
+	if (!poisonAttack || (poisonResistance == kDMImmuneToPoison))
 		return 0;
 
 	return ((poisonAttack + _vm->getRandomNumber(4)) << 3) / (poisonResistance + 1);
@@ -1094,7 +1094,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	}
 	if ((curSquareType == kDMElementTypeTeleporter) && getFlag(curSquare, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-		if (getFlag(curTeleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
+		if (getFlag(curTeleporter->getScope(), kDMTeleporterScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
 			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 			return false;
 		}

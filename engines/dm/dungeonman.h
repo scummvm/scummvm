@@ -73,7 +73,8 @@ enum ObjectAllowedSlot {
 	kDMMaskPouchPassAndThroughDoors = 0x0100, // @ MASK0x0100_POUCH_PASS_AND_THROUGH_DOORS
 	kDMMaskHands = 0x0200, // @ MASK0x0200_HANDS
 	kDMMaskContainer = 0x0400, // @ MASK0x0400_CONTAINER
-	kDMMaskFootprints = 0x8000 // @ MASK0x8000_FOOTPRINTS
+	kDMMaskFootprints = 0x8000, // @ MASK0x8000_FOOTPRINTS
+	kDMMaskRandomDrop = 0x8000 // @ MASK0x8000_RANDOM_DROP
 };
 
 enum ArmourAttribute {
@@ -122,77 +123,75 @@ enum SquareAspect {
 	kDMSquareAspectFloorOrn = 4 // @ C4_FLOOR_ORNAMENT_ORDINAL
 };
 
-#define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE
-#define k15_immuneToPoison 15 // @ C15_IMMUNE_TO_POISON
+#define kDMImmuneToFire 15 // @ C15_IMMUNE_TO_FIRE
+#define kDMImmuneToPoison 15 // @ C15_IMMUNE_TO_POISON
 
 enum TeleporterScope {
-	k0x0001_TelepScopeCreatures = 1, // @ MASK0x0001_SCOPE_CREATURES
-	k0x0002_TelepScopeObjOrParty = 2 // @ MASK0x0002_SCOPE_OBJECTS_OR_PARTY
+	kDMTeleporterScopeCreatures = 1, // @ MASK0x0001_SCOPE_CREATURES
+	kDMTeleporterScopeObjectsOrParty = 2 // @ MASK0x0002_SCOPE_OBJECTS_OR_PARTY
 };
 
-enum SensorActionType {
-	kM1_SensorEffNone = -1, // @ CM1_EFFECT_NONE
-	k0_SensorEffSet = 0, // @ C00_EFFECT_SET
-	k1_SensorEffClear = 1, // @ C01_EFFECT_CLEAR
-	k2_SensorEffToggle = 2, // @ C02_EFFECT_TOGGLE
-	k3_SensorEffHold = 3, // @ C03_EFFECT_HOLD
-	k10_SensorEffAddExp = 10 // @ C10_EFFECT_ADD_EXPERIENCE
+enum SensorEffect {
+	kDMSensorEffectNone = -1, // @ CM1_EFFECT_NONE
+	kDMSensorEffectSet = 0, // @ C00_EFFECT_SET
+	kDMSensorEffectClear = 1, // @ C01_EFFECT_CLEAR
+	kDMSensorEffectToggle = 2, // @ C02_EFFECT_TOGGLE
+	kDMSensorEffectHold = 3, // @ C03_EFFECT_HOLD
+	kDMSensorEffectAddExperience = 10 // @ C10_EFFECT_ADD_EXPERIENCE
 };
 
 enum SensorType {
-	k0_SensorDisabled = 0, // @ C000_SENSOR_DISABLED    /* Never triggered, may be used for a floor or wall ornament */
-	k1_SensorFloorTheronPartyCreatureObj = 1, // @ C001_SENSOR_FLOOR_THERON_PARTY_CREATURE_OBJECT    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k2_SensorFloorTheronPartyCreature = 2, // @ C002_SENSOR_FLOOR_THERON_PARTY_CREATURE    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k3_SensorFloorParty = 3, // @ C003_SENSOR_FLOOR_PARTY    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k4_SensorFloorObj = 4, // @ C004_SENSOR_FLOOR_OBJECT    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k5_SensorFloorPartyOnStairs = 5, // @ C005_SENSOR_FLOOR_PARTY_ON_STAIRS    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k6_SensorFloorGroupGenerator = 6, // @ C006_SENSOR_FLOOR_GROUP_GENERATOR    /* Triggered by event F0245_TIMELINE_ProcessEvent5_Square_Corridor */
-	k7_SensorFloorCreature = 7, // @ C007_SENSOR_FLOOR_CREATURE    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k8_SensorFloorPartyPossession = 8, // @ C008_SENSOR_FLOOR_PARTY_POSSESSION    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k9_SensorFloorVersionChecker = 9, // @ C009_SENSOR_FLOOR_VERSION_CHECKER    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
-	k1_SensorWallOrnClick = 1, // @ C001_SENSOR_WALL_ORNAMENT_CLICK    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k2_SensorWallOrnClickWithAnyObj = 2, // @ C002_SENSOR_WALL_ORNAMENT_CLICK_WITH_ANY_OBJECT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k3_SensorWallOrnClickWithSpecObj = 3, // @ C003_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k4_SensorWallOrnClickWithSpecObjRemoved = 4, // @ C004_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k5_SensorWallAndOrGate = 5, // @ C005_SENSOR_WALL_AND_OR_GATE    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k6_SensorWallCountdown = 6, // @ C006_SENSOR_WALL_COUNTDOWN    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k7_SensorWallSingleProjLauncherNewObj = 7, // @ C007_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_NEW_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k8_SensorWallSingleProjLauncherExplosion = 8, // @ C008_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_EXPLOSION    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k9_SensorWallDoubleProjLauncherNewObj = 9, // @ C009_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_NEW_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k10_SensorWallDoubleProjLauncherExplosion = 10, // @ C010_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_EXPLOSION    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k11_SensorWallOrnClickWithSpecObjRemovedRotateSensors = 11, // @ C011_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED_ROTATE_SENSORS   /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k12_SensorWallObjGeneratorRotateSensors = 12, // @ C012_SENSOR_WALL_OBJECT_GENERATOR_ROTATE_SENSORS    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k13_SensorWallSingleObjStorageRotateSensors = 13, // @ C013_SENSOR_WALL_SINGLE_OBJECT_STORAGE_ROTATE_SENSORS    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k14_SensorWallSingleProjLauncherSquareObj = 14, // @ C014_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_SQUARE_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k15_SensorWallDoubleProjLauncherSquareObj = 15, // @ C015_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_SQUARE_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k16_SensorWallObjExchanger = 16, // @ C016_SENSOR_WALL_OBJECT_EXCHANGER    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k17_SensorWallOrnClickWithSpecObjRemovedSensor = 17, // @ C017_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED_REMOVE_SENSOR    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
-	k18_SensorWallEndGame = 18, // @ C018_SENSOR_WALL_END_GAME    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
-	k127_SensorWallChampionPortrait = 127 // @ C127_SENSOR_WALL_CHAMPION_PORTRAIT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorDisabled = 0, // @ C000_SENSOR_DISABLED    /* Never triggered, may be used for a floor or wall ornament */
+	kDMSensorFloorTheronPartyCreatureObj = 1, // @ C001_SENSOR_FLOOR_THERON_PARTY_CREATURE_OBJECT    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorTheronPartyCreature = 2, // @ C002_SENSOR_FLOOR_THERON_PARTY_CREATURE    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorParty = 3, // @ C003_SENSOR_FLOOR_PARTY    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorObj = 4, // @ C004_SENSOR_FLOOR_OBJECT    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorPartyOnStairs = 5, // @ C005_SENSOR_FLOOR_PARTY_ON_STAIRS    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorGroupGenerator = 6, // @ C006_SENSOR_FLOOR_GROUP_GENERATOR    /* Triggered by event F0245_TIMELINE_ProcessEvent5_Square_Corridor */
+	kDMSensorFloorCreature = 7, // @ C007_SENSOR_FLOOR_CREATURE    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorPartyPossession = 8, // @ C008_SENSOR_FLOOR_PARTY_POSSESSION    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorFloorVersionChecker = 9, // @ C009_SENSOR_FLOOR_VERSION_CHECKER    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */
+	kDMSensorWallOrnClick = 1, // @ C001_SENSOR_WALL_ORNAMENT_CLICK    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallOrnClickWithAnyObj = 2, // @ C002_SENSOR_WALL_ORNAMENT_CLICK_WITH_ANY_OBJECT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallOrnClickWithSpecObj = 3, // @ C003_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallOrnClickWithSpecObjRemoved = 4, // @ C004_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallAndOrGate = 5, // @ C005_SENSOR_WALL_AND_OR_GATE    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallCountdown = 6, // @ C006_SENSOR_WALL_COUNTDOWN    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallSingleProjLauncherNewObj = 7, // @ C007_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_NEW_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallSingleProjLauncherExplosion = 8, // @ C008_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_EXPLOSION    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallDoubleProjLauncherNewObj = 9, // @ C009_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_NEW_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallDoubleProjLauncherExplosion = 10, // @ C010_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_EXPLOSION    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallOrnClickWithSpecObjRemovedRotateSensors = 11, // @ C011_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED_ROTATE_SENSORS   /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallObjGeneratorRotateSensors = 12, // @ C012_SENSOR_WALL_OBJECT_GENERATOR_ROTATE_SENSORS    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallSingleObjStorageRotateSensors = 13, // @ C013_SENSOR_WALL_SINGLE_OBJECT_STORAGE_ROTATE_SENSORS    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallSingleProjLauncherSquareObj = 14, // @ C014_SENSOR_WALL_SINGLE_PROJECTILE_LAUNCHER_SQUARE_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallDoubleProjLauncherSquareObj = 15, // @ C015_SENSOR_WALL_DOUBLE_PROJECTILE_LAUNCHER_SQUARE_OBJECT    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallObjExchanger = 16, // @ C016_SENSOR_WALL_OBJECT_EXCHANGER    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallOrnClickWithSpecObjRemovedSensor = 17, // @ C017_SENSOR_WALL_ORNAMENT_CLICK_WITH_SPECIFIC_OBJECT_REMOVED_REMOVE_SENSOR    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
+	kDMSensorWallEndGame = 18, // @ C018_SENSOR_WALL_END_GAME    /* Triggered by event F0248_TIMELINE_ProcessEvent6_Square_Wall */
+	kDMSensorWallChampionPortrait = 127 // @ C127_SENSOR_WALL_CHAMPION_PORTRAIT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
 };
 
-#define k0x8000_randomDrop 0x8000 // @ MASK0x8000_RANDOM_DROP
-
 enum WeaponType {
-	k2_WeaponTypeTorch = 2, // @ C02_WEAPON_TORCH
-	k8_WeaponTypeDagger = 8, // @ C08_WEAPON_DAGGER
-	k9_WeaponTypeFalchion = 9, // @ C09_WEAPON_FALCHION
-	k10_WeaponTypeSword = 10, // @ C10_WEAPON_SWORD
-	k23_WeaponTypeClub = 23, // @ C23_WEAPON_CLUB
-	k24_WeaponTypeStoneClub = 24, // @ C24_WEAPON_STONE_CLUB
-	k27_WeaponTypeArrow = 27, // @ C27_WEAPON_ARROW
-	k28_WeaponTypeSlayer = 28, // @ C28_WEAPON_SLAYER
-	k30_WeaponTypeRock = 30, // @ C30_WEAPON_ROCK
-	k31_WeaponTypePoisonDart = 31, // @ C31_WEAPON_POISON_DART
-	k32_WeaponTypeThrowingStar = 32 // @ C32_WEAPON_THROWING_STAR
+	kDMWeaponTorch = 2, // @ C02_WEAPON_TORCH
+	kDMWeaponDagger = 8, // @ C08_WEAPON_DAGGER
+	kDMWeaponFalchion = 9, // @ C09_WEAPON_FALCHION
+	kDMWeaponSword = 10, // @ C10_WEAPON_SWORD
+	kDMWeaponClub = 23, // @ C23_WEAPON_CLUB
+	kDMWeaponStoneClub = 24, // @ C24_WEAPON_STONE_CLUB
+	kDMWeaponArrow = 27, // @ C27_WEAPON_ARROW
+	kDMWeaponSlayer = 28, // @ C28_WEAPON_SLAYER
+	kDMWeaponRock = 30, // @ C30_WEAPON_ROCK
+	kDMWeaponPoisonDart = 31, // @ C31_WEAPON_POISON_DART
+	kDMWeaponThrowingStar = 32 // @ C32_WEAPON_THROWING_STAR
 };
 
 enum ArmourType {
-	k30_ArmourTypeWoodenShield = 30, // @ C30_ARMOUR_WOODEN_SHIELD
-	k38_ArmourTypeArmet = 38, // @ C38_ARMOUR_ARMET
-	k39_ArmourTypeTorsoPlate = 39, // @ C39_ARMOUR_TORSO_PLATE
-	k40_ArmourTypeLegPlate = 40, // @ C40_ARMOUR_LEG_PLATE
-	k41_ArmourTypeFootPlate = 41 // @ C41_ARMOUR_FOOT_PLATE
+	kDMArmourWoodenShield = 30, // @ C30_ARMOUR_WOODEN_SHIELD
+	kDMArmourArmet = 38, // @ C38_ARMOUR_ARMET
+	kDMArmourTorsoPlate = 39, // @ C39_ARMOUR_TORSO_PLATE
+	kDMArmourLegPlate = 40, // @ C40_ARMOUR_LEG_PLATE
+	kDMArmourFootPlate = 41 // @ C41_ARMOUR_FOOT_PLATE
 };
 
 enum PotionType {

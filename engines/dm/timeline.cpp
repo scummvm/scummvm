@@ -209,7 +209,7 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 				}
 				continue;
 			} else if ((curEvent->_type == k1_TMEventTypeDoorAnimation) && (event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
-				if (event->_Cu.A._effect == k2_SensorEffToggle)
+				if (event->_Cu.A._effect == kDMSensorEffectToggle)
 					event->_Cu.A._effect = 1 - curEvent->_Cu.A._effect;
 
 				deleteEvent(eventIndex);
@@ -221,7 +221,7 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
 			if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
 				if (curEvent->_type == k10_TMEventTypeDoor) {
-					if (curEvent->_Cu.A._effect == k2_SensorEffToggle)
+					if (curEvent->_Cu.A._effect == kDMSensorEffectToggle)
 						curEvent->_Cu.A._effect = 1 - event->_Cu.A._effect;
 
 					return eventIndex;
@@ -389,7 +389,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 
 	event->_mapTime++;
 	int16 sensorEffect = event->_Cu.A._effect;
-	if (sensorEffect == k1_SensorEffClear) {
+	if (sensorEffect == kDMSensorEffectClear) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		bool verticalDoorFl = curDoor->opensVertically();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
@@ -424,17 +424,17 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 			}
 		}
 	}
-	if ((sensorEffect == k0_SensorEffSet) && (doorState == k0_doorState_OPEN))
+	if ((sensorEffect == kDMSensorEffectSet) && (doorState == k0_doorState_OPEN))
 		return;
 
-	if ((sensorEffect == k1_SensorEffClear) && (doorState == k4_doorState_CLOSED))
+	if ((sensorEffect == kDMSensorEffectClear) && (doorState == k4_doorState_CLOSED))
 		return;
 
-	doorState += (sensorEffect == k0_SensorEffSet) ? -1 : 1;
+	doorState += (sensorEffect == kDMSensorEffectSet) ? -1 : 1;
 	curSquare->setDoorState(doorState);
 	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, mapX, mapY, k1_soundModePlayIfPrioritized);
 
-	if (sensorEffect == k0_SensorEffSet) {
+	if (sensorEffect == kDMSensorEffectSet) {
 		if (doorState == k0_doorState_OPEN)
 			return;
 	} else if (doorState == k4_doorState_CLOSED)
@@ -448,10 +448,10 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 effect = event->_Cu.A._effect;
-	if (effect == k2_SensorEffToggle)
-		effect = getFlag(*curSquare, k0x0004_FakeWallOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	if (effect == kDMSensorEffectToggle)
+		effect = getFlag(*curSquare, k0x0004_FakeWallOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
-	if (effect == k1_SensorEffClear) {
+	if (effect == kDMSensorEffectClear) {
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 			event->_mapTime++;
 			addEventGetEventIndex(event);
@@ -477,9 +477,9 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 	if (doorState == k5_doorState_DESTROYED)
 		return;
 
-	if (event->_Cu.A._effect == k2_SensorEffToggle)
-		event->_Cu.A._effect = (doorState == k0_doorState_OPEN) ? k1_SensorEffClear : k0_SensorEffSet;
-	else if (event->_Cu.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == kDMSensorEffectToggle)
+		event->_Cu.A._effect = (doorState == k0_doorState_OPEN) ? kDMSensorEffectClear : kDMSensorEffectSet;
+	else if (event->_Cu.A._effect == kDMSensorEffectSet) {
 		if ((doorState == k0_doorState_OPEN) || (doorState == k4_doorState_CLOSED))
 			return;
 	}
@@ -492,10 +492,10 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-	if (event->_Cu.A._effect == k2_SensorEffToggle)
-		event->_Cu.A._effect = getFlag(*square, k0x0008_PitOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	if (event->_Cu.A._effect == kDMSensorEffectToggle)
+		event->_Cu.A._effect = getFlag(*square, k0x0008_PitOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
-	if (event->_Cu.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == kDMSensorEffectSet) {
 		setFlag(*square, k0x0008_PitOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
@@ -559,10 +559,10 @@ void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
 	uint16 mapY = event->_Bu._location._mapY;
 
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-	if (event->_Cu.A._effect == k2_SensorEffToggle)
-		event->_Cu.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? k1_SensorEffClear : k0_SensorEffSet;
+	if (event->_Cu.A._effect == kDMSensorEffectToggle)
+		event->_Cu.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
-	if (event->_Cu.A._effect == k0_SensorEffSet) {
+	if (event->_Cu.A._effect == kDMSensorEffectSet) {
 		setFlag(*curSquare, k0x0008_TeleporterOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
@@ -578,32 +578,32 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 		int16 curThingType = curThing.getType();
 		if ((curThingType == kDMstringTypeText) && (curThing.getCell() == event->_Cu.A._cell)) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
-			if (event->_Cu.A._effect == k2_SensorEffToggle)
+			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textString->isVisible());
 			else
-				textString->setVisible(event->_Cu.A._effect == k0_SensorEffSet);
+				textString->setVisible(event->_Cu.A._effect == kDMSensorEffectSet);
 		} else if (curThingType == kDMThingTypeSensor) {
 			Sensor *curThingSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			uint16 curSensorType = curThingSensor->getType();
 			uint16 curSensorData = curThingSensor->getData();
-			if (curSensorType == k6_SensorWallCountdown) {
+			if (curSensorType == kDMSensorWallCountdown) {
 				if (curSensorData > 0) {
-					if (event->_Cu.A._effect == k0_SensorEffSet) {
+					if (event->_Cu.A._effect == kDMSensorEffectSet) {
 						if (curSensorData < 511)
 							curSensorData++;
 					} else
 						curSensorData--;
 
 					curThingSensor->setData(curSensorData);
-					if (curThingSensor->getAttrEffectA() == k3_SensorEffHold) {
+					if (curThingSensor->getAttrEffectA() == kDMSensorEffectHold) {
 						int16 triggerSetEffect = ((curSensorData == 0) != curThingSensor->getAttrRevertEffectA());
-						_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, mapX, mapY, curCell);
+						_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? kDMSensorEffectSet : kDMSensorEffectClear, mapX, mapY, curCell);
 					} else if (curSensorData == 0)
 						_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
 				}
-			} else if (curSensorType == k5_SensorWallAndOrGate) {
+			} else if (curSensorType == kDMSensorWallAndOrGate) {
 				int16 bitMask = 1 << (event->_Cu.A._cell);
-				if (event->_Cu.A._effect == k2_SensorEffToggle) {
+				if (event->_Cu.A._effect == kDMSensorEffectToggle) {
 					if (getFlag(curSensorData, bitMask))
 						clearFlag(curSensorData, bitMask);
 					else
@@ -615,15 +615,15 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 
 				curThingSensor->setData(curSensorData);
 				bool triggerSetEffect = (Sensor::getDataMask1(curSensorData) == Sensor::getDataMask2(curSensorData)) != curThingSensor->getAttrRevertEffectA();
-				if (curThingSensor->getAttrEffectA() == k3_SensorEffHold)
-					_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? k0_SensorEffSet : k1_SensorEffClear, mapX, mapY, curCell);
+				if (curThingSensor->getAttrEffectA() == kDMSensorEffectHold)
+					_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? kDMSensorEffectSet : kDMSensorEffectClear, mapX, mapY, curCell);
 				else if (triggerSetEffect)
 					_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
-			} else if ((((curSensorType >= k7_SensorWallSingleProjLauncherNewObj) && (curSensorType <= k10_SensorWallDoubleProjLauncherExplosion)) || (curSensorType == k14_SensorWallSingleProjLauncherSquareObj) || (curSensorType == k15_SensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_Cu.A._cell)) {
+			} else if ((((curSensorType >= kDMSensorWallSingleProjLauncherNewObj) && (curSensorType <= kDMSensorWallDoubleProjLauncherExplosion)) || (curSensorType == kDMSensorWallSingleProjLauncherSquareObj) || (curSensorType == kDMSensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_Cu.A._cell)) {
 				triggerProjectileLauncher(curThingSensor, event);
 				if (curThingSensor->getAttrOnlyOnce())
 					curThingSensor->setTypeDisabled();
-			} else if (curSensorType == k18_SensorWallEndGame) {
+			} else if (curSensorType == kDMSensorWallEndGame) {
 				_vm->delay(60 * curThingSensor->getAttrValue());
 				_vm->_restartGameAllowed = false;
 				_vm->_gameWon = true;
@@ -644,15 +644,15 @@ void Timeline::triggerProjectileLauncher(Sensor *sensor, TimelineEvent *event) {
 	int16 sensorData = sensor->getData();
 	int16 kineticEnergy = sensor->getActionKineticEnergy();
 	int16 stepEnergy = sensor->getActionStepEnergy();
-	bool launchSingleProjectile = (sensorType == k7_SensorWallSingleProjLauncherNewObj) ||
-		(sensorType == k8_SensorWallSingleProjLauncherExplosion) ||
-		(sensorType == k14_SensorWallSingleProjLauncherSquareObj);
+	bool launchSingleProjectile = (sensorType == kDMSensorWallSingleProjLauncherNewObj) ||
+		(sensorType == kDMSensorWallSingleProjLauncherExplosion) ||
+		(sensorType == kDMSensorWallSingleProjLauncherSquareObj);
 
 	Thing firstProjectileAssociatedThing;
 	Thing secondProjectileAssociatedThing;
-	if ((sensorType == k8_SensorWallSingleProjLauncherExplosion) || (sensorType == k10_SensorWallDoubleProjLauncherExplosion))
+	if ((sensorType == kDMSensorWallSingleProjLauncherExplosion) || (sensorType == kDMSensorWallDoubleProjLauncherExplosion))
 		firstProjectileAssociatedThing = secondProjectileAssociatedThing = Thing(sensorData + Thing::_firstExplosion.toUint16());
-	else if ((sensorType == k14_SensorWallSingleProjLauncherSquareObj) || (sensorType == k15_SensorWallDoubleProjLauncherSquareObj)) {
+	else if ((sensorType == kDMSensorWallSingleProjLauncherSquareObj) || (sensorType == kDMSensorWallDoubleProjLauncherSquareObj)) {
 		firstProjectileAssociatedThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (firstProjectileAssociatedThing != Thing::_none) { /* BUG0_19 The game crashes when an object launcher sensor is triggered. Thing::_none should be Thing::_endOfList. If there are no more objects on the square then this loop may return an undefined value, this can crash the game. In the original DM and CSB dungeons, the number of times that these sensors are triggered is always controlled to be equal to the number of available objects (with a countdown sensor or a number of once only sensors) */
 			uint16 projectiveThingCell = firstProjectileAssociatedThing.getCell();
@@ -709,10 +709,10 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 		if (curThingType == kDMstringTypeText) {
 			TextString *textString = (TextString *)_vm->_dungeonMan->getThingData(curThing);
 			bool textCurrentlyVisible = textString->isVisible();
-			if (event->_Cu.A._effect == k2_SensorEffToggle)
+			if (event->_Cu.A._effect == kDMSensorEffectToggle)
 				textString->setVisible(!textCurrentlyVisible);
 			else
-				textString->setVisible((event->_Cu.A._effect == k0_SensorEffSet));
+				textString->setVisible((event->_Cu.A._effect == kDMSensorEffectSet));
 
 			if (!textCurrentlyVisible && textString->isVisible() && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
 				_vm->_dungeonMan->decodeText(_vm->_stringBuildBuffer, curThing, kDMTextTypeMessage);
@@ -720,7 +720,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 			}
 		} else if (curThingType == kDMThingTypeSensor) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
-			if (curSensor->getType() == k6_SensorFloorGroupGenerator) {
+			if (curSensor->getType() == kDMSensorFloorGroupGenerator) {
 				int16 creatureCount = curSensor->getAttrValue();
 				if (getFlag(creatureCount, k0x0008_randomizeGeneratedCreatureCount))
 					creatureCount = _vm->getRandomNumber(getFlag(creatureCount, k0x0007_generatedCreatureCount));
@@ -803,8 +803,8 @@ void Timeline::procesEventEnableGroupGenerator(TimelineEvent *event) {
 	while (curThing != Thing::_none) {
 		if ((curThing.getType()) == kDMThingTypeSensor) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
-			if (curSensor->getType() == k0_SensorDisabled) {
-				curSensor->setDatAndTypeWithOr(k6_SensorFloorGroupGenerator);
+			if (curSensor->getType() == kDMSensorDisabled) {
+				curSensor->setDatAndTypeWithOr(kDMSensorFloorGroupGenerator);
 				return;
 			}
 		}

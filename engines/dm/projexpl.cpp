@@ -118,7 +118,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(projectileTargetMapX, projectileTargetMapY);
 		if ((curDoorState != k5_doorState_DESTROYED) && (projectileAssociatedThing == Thing::_explOpenDoor)) {
 			if (curDoor->hasButton())
-				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, projectileTargetMapX, projectileTargetMapY, 0, k2_SensorEffToggle, _vm->_gameTime + 1);
+				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, projectileTargetMapX, projectileTargetMapY, 0, kDMSensorEffectToggle, _vm->_gameTime + 1);
 			break;
 		}
 
@@ -185,9 +185,9 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			&& getFlag(curCreatureInfo->_attributes, k0x0400_MaskCreatureInfo_keepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 				WeaponType weaponType = weapon->getType();
-				if ((weaponType == k8_WeaponTypeDagger) || (weaponType == k27_WeaponTypeArrow)
-				|| (weaponType == k28_WeaponTypeSlayer) || (weaponType == k31_WeaponTypePoisonDart)
-				|| (weaponType == k32_WeaponTypeThrowingStar))
+				if ((weaponType == kDMWeaponDagger) || (weaponType == kDMWeaponArrow)
+				|| (weaponType == kDMWeaponSlayer) || (weaponType == kDMWeaponPoisonDart)
+				|| (weaponType == kDMWeaponThrowingStar))
 					curGroupSlot = &curGroup->_slot;
 			}
 		}
@@ -333,7 +333,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 					Group *creatureGroup = (Group *)_vm->_dungeonMan->getThingData(unusedThing);
 					CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureGroup->_type];
 					int16 creatureFireResistance = creatureInfo->getFireResistance();
-					if (creatureFireResistance != k15_immuneToFire) {
+					if (creatureFireResistance != kDMImmuneToFire) {
 						if (getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial))
 							attack >>= 2;
 

@@ -905,7 +905,7 @@ T0172010_ClosedFakeWall:
 					}
 				} else {
 					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getAttrOrnOrdinal();
-					if (curSensor->getType() == k127_SensorWallChampionPortrait) {
+					if (curSensor->getType() == kDMSensorWallChampionPortrait) {
 						_vm->_displayMan->_championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
 					}
 				}
@@ -1623,29 +1623,29 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 
 	switch (iconIndex) {
 	case kDMIconIndiceWeaponRock:
-		junkType = k30_WeaponTypeRock;
+		junkType = kDMWeaponRock;
 		break;
 	case kDMIconIndiceJunkBoulder:
 		junkType = k25_JunkTypeBoulder;
 		thingType = kDMThingTypeJunk;
 		break;
 	case kDMIconIndiceWeaponArrow:
-		junkType = k27_WeaponTypeArrow;
+		junkType = kDMWeaponArrow;
 		break;
 	case kDMIconIndiceWeaponSlayer:
-		junkType = k28_WeaponTypeSlayer;
+		junkType = kDMWeaponSlayer;
 		break;
 	case kDMIconIndiceWeaponPoisonDart:
-		junkType = k31_WeaponTypePoisonDart;
+		junkType = kDMWeaponPoisonDart;
 		break;
 	case kDMIconIndiceWeaponThrowingStar:
-		junkType = k32_WeaponTypeThrowingStar;
+		junkType = kDMWeaponThrowingStar;
 		break;
 	case kDMIconIndiceWeaponDagger:
-		junkType = k8_WeaponTypeDagger;
+		junkType = kDMWeaponDagger;
 		break;
 	case kDMIconIndiceWeaponTorchUnlit:
-		junkType = k2_WeaponTypeTorch;
+		junkType = kDMWeaponTorch;
 		break;
 	default:
 		return Thing::_none;
