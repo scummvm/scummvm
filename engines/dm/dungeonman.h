@@ -58,7 +58,7 @@ enum ElementType {
 	kDMElementTypeDoorSide = 16, // @ C16_ELEMENT_DOOR_SIDE /* Values 16-19 are only used for square aspect */
 	kDMElementTypeDoorFront = 17, // @ C17_ELEMENT_DOOR_FRONT
 	kDMElementTypeStairsSide = 18, // @ C18_ELEMENT_STAIRS_SIDE
-	kDMElementTypeStairsFront = 19  // @ C19_ELEMENT_STAIRS_FRONT	
+	kDMElementTypeStairsFront = 19  // @ C19_ELEMENT_STAIRS_FRONT
 };
 
 enum ObjectAllowedSlot {
@@ -73,7 +73,7 @@ enum ObjectAllowedSlot {
 	kDMMaskPouchPassAndThroughDoors = 0x0100, // @ MASK0x0100_POUCH_PASS_AND_THROUGH_DOORS
 	kDMMaskHands = 0x0200, // @ MASK0x0200_HANDS
 	kDMMaskContainer = 0x0400, // @ MASK0x0400_CONTAINER
-	kDMMaskFootprints = 0x8000 // @ MASK0x8000_FOOTPRINTS             
+	kDMMaskFootprints = 0x8000 // @ MASK0x8000_FOOTPRINTS
 };
 
 enum ArmourAttribute {
@@ -84,14 +84,14 @@ enum ArmourAttribute {
 enum WeaponClass {
 	kDMWeaponClassNone = -1,
 /* Class 0: SWING weapons */
-	kDMWeaponClassSwingWeapon = 0, // @ C000_CLASS_SWING_WEAPON 
+	kDMWeaponClassSwingWeapon = 0, // @ C000_CLASS_SWING_WEAPON
 /* Class 1 to 15: THROW weapons */
-	kDMWeaponClassDaggerAndAxes = 2, // @ C002_CLASS_DAGGER_AND_AXES 
+	kDMWeaponClassDaggerAndAxes = 2, // @ C002_CLASS_DAGGER_AND_AXES
 	kDMWeaponClassBowAmmunition = 10, // @ C010_CLASS_BOW_AMMUNITION
 	kDMWeaponClassSlingAmmunition = 11, // @ C011_CLASS_SLING_AMMUNITION
 	kDMWeaponClassPoisinDart = 12, // @ C012_CLASS_POISON_DART
 /* Class 16 to 111: SHOOT weapons */
-	kDMWeaponClassFirstBow = 16, // @ C016_CLASS_FIRST_BOW 
+	kDMWeaponClassFirstBow = 16, // @ C016_CLASS_FIRST_BOW
 	kDMWeaponClassLastBow = 31, // @ C031_CLASS_LAST_BOW
 	kDMWeaponClassFirstSling = 32, // @ C032_CLASS_FIRST_SLING
 	kDMWeaponClassLastSling = 47, // @ C047_CLASS_LAST_SLING
@@ -101,29 +101,29 @@ enum WeaponClass {
 
 enum TextType {
 	/* Used for text on walls */
-	kDMTextTypeInscription = 0, // @ C0_TEXT_TYPE_INSCRIPTION 
+	kDMTextTypeInscription = 0, // @ C0_TEXT_TYPE_INSCRIPTION
 	/* Used for messages displayed when the party walks on a square */
-	kDMTextTypeMessage = 1, // @ C1_TEXT_TYPE_MESSAGE 
+	kDMTextTypeMessage = 1, // @ C1_TEXT_TYPE_MESSAGE
 	/* Used for text on scrolls and champion information */
-	kDMTextTypeScroll = 2 // @ C2_TEXT_TYPE_SCROLL 
+	kDMTextTypeScroll = 2 // @ C2_TEXT_TYPE_SCROLL
 };
 
 enum SquareAspect {
 	kDMSquareAspectElement = 0, // @ C0_ELEMENT
-	kDMSquareAspectFirstGroupOrObject = 1, // @ C1_FIRST_GROUP_OR_OBJECT 
-	kDMSquareAspectRightWallOrnOrd = 2, // @ C2_RIGHT_WALL_ORNAMENT_ORDINAL 
-	kDMSquareFrontWallOrnOrd = 3, // @ C3_FRONT_WALL_ORNAMENT_ORDINAL 
-	kDMSquareAspectLeftWallOrnOrd = 4, // @ C4_LEFT_WALL_ORNAMENT_ORDINAL 
-	kDMSquareAspectPitInvisible = 2, // @ C2_PIT_INVISIBLE 
-	kDMSquareAspectTeleporterVisible = 2, // @ C2_TELEPORTER_VISIBLE 
-	kDMSquareAspectStairsUp = 2, // @ C2_STAIRS_UP 
-	kDMSquareAspectDoorState = 2, // @ C2_DOOR_STATE 
-	kDMSquareAspectDoorThingIndex = 3, // @ C3_DOOR_THING_INDEX 
+	kDMSquareAspectFirstGroupOrObject = 1, // @ C1_FIRST_GROUP_OR_OBJECT
+	kDMSquareAspectRightWallOrnOrd = 2, // @ C2_RIGHT_WALL_ORNAMENT_ORDINAL
+	kDMSquareFrontWallOrnOrd = 3, // @ C3_FRONT_WALL_ORNAMENT_ORDINAL
+	kDMSquareAspectLeftWallOrnOrd = 4, // @ C4_LEFT_WALL_ORNAMENT_ORDINAL
+	kDMSquareAspectPitInvisible = 2, // @ C2_PIT_INVISIBLE
+	kDMSquareAspectTeleporterVisible = 2, // @ C2_TELEPORTER_VISIBLE
+	kDMSquareAspectStairsUp = 2, // @ C2_STAIRS_UP
+	kDMSquareAspectDoorState = 2, // @ C2_DOOR_STATE
+	kDMSquareAspectDoorThingIndex = 3, // @ C3_DOOR_THING_INDEX
 	kDMSquareAspectFloorOrn = 4, // @ C4_FLOOR_ORNAMENT_ORDINAL 
 };
 
-#define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE   
-#define k15_immuneToPoison 15 // @ C15_IMMUNE_TO_POISON 
+#define k15_immuneToFire 15 // @ C15_IMMUNE_TO_FIRE
+#define k15_immuneToPoison 15 // @ C15_IMMUNE_TO_POISON
 
 enum TeleporterScope {
 	k0x0001_TelepScopeCreatures = 1, // @ MASK0x0001_SCOPE_CREATURES
@@ -171,7 +171,7 @@ enum SensorType {
 	k127_SensorWallChampionPortrait = 127 // @ C127_SENSOR_WALL_CHAMPION_PORTRAIT    /* Triggered by player click F0275_SENSOR_IsTriggeredByClickOnWall */
 };
 
-#define k0x8000_randomDrop 0x8000 // @ MASK0x8000_RANDOM_DROP 
+#define k0x8000_randomDrop 0x8000 // @ MASK0x8000_RANDOM_DROP
 
 enum WeaponType {
 	k2_WeaponTypeTorch = 2, // @ C02_WEAPON_TORCH
@@ -224,62 +224,62 @@ enum JunkType {
 	k51_JunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
 };
 
-#define kM1_soundModeDoNotPlaySound -1 // @ CM1_MODE_DO_NOT_PLAY_SOUND  
-#define k0_soundModePlayImmediately 0 // @ C00_MODE_PLAY_IMMEDIATELY    
-#define k1_soundModePlayIfPrioritized 1 // @ C01_MODE_PLAY_IF_PRIORITIZED 
-#define k2_soundModePlayOneTickLater 2 // @ C02_MODE_PLAY_ONE_TICK_LATER 
+#define kM1_soundModeDoNotPlaySound -1 // @ CM1_MODE_DO_NOT_PLAY_SOUND
+#define k0_soundModePlayImmediately 0 // @ C00_MODE_PLAY_IMMEDIATELY
+#define k1_soundModePlayIfPrioritized 1 // @ C01_MODE_PLAY_IF_PRIORITIZED
+#define k2_soundModePlayOneTickLater 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
 
-#define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL           
-#define k1_ExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME              
-#define k2_ExplosionType_LightningBolt 2 // @ C002_EXPLOSION_LIGHTNING_BOLT     
-#define k3_ExplosionType_HarmNonMaterial 3 // @ C003_EXPLOSION_HARM_NON_MATERIAL  
-#define k4_ExplosionType_OpenDoor 4 // @ C004_EXPLOSION_OPEN_DOOR          
-#define k6_ExplosionType_PoisonBolt 6 // @ C006_EXPLOSION_POISON_BOLT        
-#define k7_ExplosionType_PoisonCloud 7 // @ C007_EXPLOSION_POISON_CLOUD       
-#define k40_ExplosionType_Smoke 40 // @ C040_EXPLOSION_SMOKE             
-#define k50_ExplosionType_Fluxcage 50 // @ C050_EXPLOSION_FLUXCAGE          
-#define k100_ExplosionType_RebirthStep1 100 // @ C100_EXPLOSION_REBIRTH_STEP1    
-#define k101_ExplosionType_RebirthStep2 101 // @ C101_EXPLOSION_REBIRTH_STEP2    
+#define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL
+#define k1_ExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME
+#define k2_ExplosionType_LightningBolt 2 // @ C002_EXPLOSION_LIGHTNING_BOLT
+#define k3_ExplosionType_HarmNonMaterial 3 // @ C003_EXPLOSION_HARM_NON_MATERIAL
+#define k4_ExplosionType_OpenDoor 4 // @ C004_EXPLOSION_OPEN_DOOR
+#define k6_ExplosionType_PoisonBolt 6 // @ C006_EXPLOSION_POISON_BOLT
+#define k7_ExplosionType_PoisonCloud 7 // @ C007_EXPLOSION_POISON_CLOUD
+#define k40_ExplosionType_Smoke 40 // @ C040_EXPLOSION_SMOKE
+#define k50_ExplosionType_Fluxcage 50 // @ C050_EXPLOSION_FLUXCAGE
+#define k100_ExplosionType_RebirthStep1 100 // @ C100_EXPLOSION_REBIRTH_STEP1
+#define k101_ExplosionType_RebirthStep2 101 // @ C101_EXPLOSION_REBIRTH_STEP2
 
 enum SquareMask {
-	k0x0001_WallWestRandOrnAllowed = 0x1, // @ MASK0x0001_WALL_WEST_RANDOM_ORNAMENT_ALLOWED 
-	k0x0002_WallSouthRandOrnAllowed = 0x2, // @ MASK0x0002_WALL_SOUTH_RANDOM_ORNAMENT_ALLOWED 
-	k0x0004_WallEastRandOrnAllowed = 0x4, // @ MASK0x0004_WALL_EAST_RANDOM_ORNAMENT_ALLOWED 
-	k0x0008_WallNorthRandOrnAllowed = 0x8, // @ MASK0x0008_WALL_NORTH_RANDOM_ORNAMENT_ALLOWED 
-	k0x0008_CorridorRandOrnAllowed = 0x8, // @ MASK0x0008_CORRIDOR_RANDOM_ORNAMENT_ALLOWED 
-	k0x0001_PitImaginary = 0x1, // @ MASK0x0001_PIT_IMAGINARY 
-	k0x0004_PitInvisible = 0x4, // @ MASK0x0004_PIT_INVISIBLE 
-	k0x0008_PitOpen = 0x8, // @ MASK0x0008_PIT_OPEN 
-	k0x0004_StairsUp = 0x4, // @ MASK0x0004_STAIRS_UP 
-	k0x0008_StairsNorthSouthOrient = 0x8, // @ MASK0x0008_STAIRS_NORTH_SOUTH_ORIENTATION 
-	k0x0008_DoorNorthSouthOrient = 0x8, // @ MASK0x0008_DOOR_NORTH_SOUTH_ORIENTATION 
-	k0x0004_TeleporterVisible = 0x4, // @ MASK0x0004_TELEPORTER_VISIBLE 
-	k0x0008_TeleporterOpen = 0x8, // @ MASK0x0008_TELEPORTER_OPEN 
-	k0x0001_FakeWallImaginary = 0x1, // @ MASK0x0001_FAKEWALL_IMAGINARY 
-	k0x0004_FakeWallOpen = 0x4, // @ MASK0x0004_FAKEWALL_OPEN 
-	k0x0008_FakeWallRandOrnOrFootPAllowed = 0x8, // @ MASK0x0008_FAKEWALL_RANDOM_ORNAMENT_OR_FOOTPRINTS_ALLOWED 
-	k0x0010_ThingListPresent = 0x10, // @ MASK0x0010_THING_LIST_PRESENT 
-	k0x8000_DecodeEvenIfInvisible = 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE 
+	k0x0001_WallWestRandOrnAllowed = 0x1, // @ MASK0x0001_WALL_WEST_RANDOM_ORNAMENT_ALLOWED
+	k0x0002_WallSouthRandOrnAllowed = 0x2, // @ MASK0x0002_WALL_SOUTH_RANDOM_ORNAMENT_ALLOWED
+	k0x0004_WallEastRandOrnAllowed = 0x4, // @ MASK0x0004_WALL_EAST_RANDOM_ORNAMENT_ALLOWED
+	k0x0008_WallNorthRandOrnAllowed = 0x8, // @ MASK0x0008_WALL_NORTH_RANDOM_ORNAMENT_ALLOWED
+	k0x0008_CorridorRandOrnAllowed = 0x8, // @ MASK0x0008_CORRIDOR_RANDOM_ORNAMENT_ALLOWED
+	k0x0001_PitImaginary = 0x1, // @ MASK0x0001_PIT_IMAGINARY
+	k0x0004_PitInvisible = 0x4, // @ MASK0x0004_PIT_INVISIBLE
+	k0x0008_PitOpen = 0x8, // @ MASK0x0008_PIT_OPEN
+	k0x0004_StairsUp = 0x4, // @ MASK0x0004_STAIRS_UP
+	k0x0008_StairsNorthSouthOrient = 0x8, // @ MASK0x0008_STAIRS_NORTH_SOUTH_ORIENTATION
+	k0x0008_DoorNorthSouthOrient = 0x8, // @ MASK0x0008_DOOR_NORTH_SOUTH_ORIENTATION
+	k0x0004_TeleporterVisible = 0x4, // @ MASK0x0004_TELEPORTER_VISIBLE
+	k0x0008_TeleporterOpen = 0x8, // @ MASK0x0008_TELEPORTER_OPEN
+	k0x0001_FakeWallImaginary = 0x1, // @ MASK0x0001_FAKEWALL_IMAGINARY
+	k0x0004_FakeWallOpen = 0x4, // @ MASK0x0004_FAKEWALL_OPEN
+	k0x0008_FakeWallRandOrnOrFootPAllowed = 0x8, // @ MASK0x0008_FAKEWALL_RANDOM_ORNAMENT_OR_FOOTPRINTS_ALLOWED
+	k0x0010_ThingListPresent = 0x10, // @ MASK0x0010_THING_LIST_PRESENT
+	k0x8000_DecodeEvenIfInvisible = 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
 };
 
 enum SquareType {
-	kM2_ChampionElemType = -2, // @ CM2_ELEMENT_CHAMPION 
-	kM1_CreatureElemType = -1, // @ CM1_ELEMENT_CREATURE 
-	k0_WallElemType = 0, // @ C00_ELEMENT_WALL 
-	k1_CorridorElemType = 1, // @ C01_ELEMENT_CORRIDOR 
-	k2_PitElemType = 2, // @ C02_ELEMENT_PIT 
-	k3_StairsElemType = 3, // @ C03_ELEMENT_STAIRS 
-	k4_DoorElemType = 4, // @ C04_ELEMENT_DOOR 
-	k5_TeleporterElemType = 5, // @ C05_ELEMENT_TELEPORTER 
-	k6_FakeWallElemType = 6, // @ C06_ELEMENT_FAKEWALL 
-	k16_DoorSideElemType = 16, // @ C16_ELEMENT_DOOR_SIDE 
-	k17_DoorFrontElemType = 17, // @ C17_ELEMENT_DOOR_FRONT 
-	k18_StairsSideElemType = 18, // @ C18_ELEMENT_STAIRS_SIDE 
-	k19_StairsFrontElemType = 19 // @ C19_ELEMENT_STAIRS_FRONT 
+	kM2_ChampionElemType = -2, // @ CM2_ELEMENT_CHAMPION
+	kM1_CreatureElemType = -1, // @ CM1_ELEMENT_CREATURE
+	k0_WallElemType = 0, // @ C00_ELEMENT_WALL
+	k1_CorridorElemType = 1, // @ C01_ELEMENT_CORRIDOR
+	k2_PitElemType = 2, // @ C02_ELEMENT_PIT
+	k3_StairsElemType = 3, // @ C03_ELEMENT_STAIRS
+	k4_DoorElemType = 4, // @ C04_ELEMENT_DOOR
+	k5_TeleporterElemType = 5, // @ C05_ELEMENT_TELEPORTER
+	k6_FakeWallElemType = 6, // @ C06_ELEMENT_FAKEWALL
+	k16_DoorSideElemType = 16, // @ C16_ELEMENT_DOOR_SIDE
+	k17_DoorFrontElemType = 17, // @ C17_ELEMENT_DOOR_FRONT
+	k18_StairsSideElemType = 18, // @ C18_ELEMENT_STAIRS_SIDE
+	k19_StairsFrontElemType = 19 // @ C19_ELEMENT_STAIRS_FRONT
 }; // @ C[-2..19]_ELEMENT_...
 
-#define k0x8000_championBones 0x8000 // @ MASK0x8000_CHAMPION_BONES 
-#define k0x7FFF_thingType 0x7FFF // @ MASK0x7FFF_THING_TYPE     
+#define k0x8000_championBones 0x8000 // @ MASK0x8000_CHAMPION_BONES
+#define k0x7FFF_thingType 0x7FFF // @ MASK0x7FFF_THING_TYPE
 
 class ObjectInfoIndex {
 public:
@@ -724,10 +724,10 @@ public:
 	bool _isFacingAlcove; // @ G0286_B_FacingAlcove
 	bool _isFacingViAltar; // @ G0287_B_FacingViAltar
 	bool _isFacingFountain; // @ G0288_B_FacingFountain
-	ElementType _squareAheadElement; // @ G0285_i_SquareAheadElement 
+	ElementType _squareAheadElement; // @ G0285_i_SquareAheadElement
 	Thing _pileTopObject[5]; // @ G0292_aT_PileTopObject
 	DoorInfo _currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
-	
+
 	ObjectInfoIndex _objectInfos[180]; // @ G0237_as_Graphic559_ObjectInfo
 	ArmourInfo _armourInfos[58]; // @ G0239_as_Graphic559_ArmourInfo
 	WeaponInfo _weaponInfos[46]; // @ G0238_as_Graphic559_WeaponInfo
