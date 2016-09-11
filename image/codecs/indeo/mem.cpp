@@ -71,14 +71,14 @@ const uint8 ffZigZagDirect[64] = {
  * @return 0 on success, AVERROR(EINVAL) on overflow
  */
 static inline int avSizeMult(size_t a, size_t b, size_t *r) {
-    size_t t = a * b;
+	size_t t = a * b;
 
-    // Hack inspired from glibc: don't try the division if nelem and elsize
-    // are both less than sqrt(SIZE_MAX).
-    if ((a | b) >= ((size_t)1 << (sizeof(size_t) * 4)) && a && t / a != b)
-        return -1;
-    *r = t;
-    return 0;
+	// Hack inspired from glibc: don't try the division if nelem and elsize
+	// are both less than sqrt(SIZE_MAX).
+	if ((a | b) >= ((size_t)1 << (sizeof(size_t) * 4)) && a && t / a != b)
+		return -1;
+	*r = t;
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/
@@ -96,9 +96,9 @@ void *avMallocZ(size_t size) {
 }
 
 void *avMallocArray(size_t nmemb, size_t size) {
-    if (!size || nmemb >= MAX_INTEGER / size)
-        return nullptr;
-    return malloc(nmemb * size);
+	if (!size || nmemb >= MAX_INTEGER / size)
+		return nullptr;
+	return malloc(nmemb * size);
 }
 
 void *avMallocZArray(size_t nmemb, size_t size) {

@@ -27,12 +27,12 @@ namespace Indeo {
 
 int GetBits::getVLC2(int16 (*table)[2], int bits, int maxDepth) {
 	int code;
-    int n, nbBits;
-    unsigned int index;
+	int n, nbBits;
+	unsigned int index;
 
 	index = peekBits(bits);
-    code  = table[index][0];
-    n     = table[index][1];
+	code  = table[index][0];
+	n     = table[index][1];
 
 	if (maxDepth > 1 && n < 0) {
 		skip(bits);

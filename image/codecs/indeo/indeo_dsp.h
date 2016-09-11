@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/scummsys.h"
-
 /* VLC code
  *
  * Original copyright note:

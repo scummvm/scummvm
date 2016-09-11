@@ -67,9 +67,9 @@ private:
 	 */
 	static uint getData(const void *table, uint idx, uint wrap, uint size);
 public:
-    int _bits;
-    VLC_TYPE (*_table)[2];	///< code, bits
-    int _tableSize, _tableAllocated;
+	int _bits;
+	VLC_TYPE (*_table)[2];	///< code, bits
+	int _tableSize, _tableAllocated;
 
 	VLC();
 
