@@ -770,7 +770,7 @@ T0252001:
 		if (event->_type == k61_TMEventTypeMoveGroupAudible)
 			_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
 
-		_vm->_moveSens->getMoveResult(Thing(event->_Cu._slot), kM1_MapXNotOnASquare, 0, mapX, mapY);
+		_vm->_moveSens->getMoveResult(Thing(event->_Cu._slot), kDMMapXNotOnASquare, 0, mapX, mapY);
 	} else {
 		if (!randomDirectionMoveRetried) {
 			randomDirectionMoveRetried = true;

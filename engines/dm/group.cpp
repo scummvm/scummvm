@@ -159,7 +159,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 			if ((currentThing).getType() == kDMThingTypeWeapon) {
 				L0371_B_WeaponDropped = true;
 			}
-			_vm->_moveSens->getMoveResult(currentThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+			_vm->_moveSens->getMoveResult(currentThing, kDMMapXNotOnASquare, 0, mapX, mapY);
 		} while ((currentThing = nextThing) != Thing::_endOfList);
 
 		if (mode >= k0_soundModePlayImmediately)
@@ -169,61 +169,61 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, in
 
 void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
 	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
-		k23_ObjectInfoIndexFirstWeapon + k9_WeaponTypeFalchion,
-		k69_ObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield,
+		kDMObjectInfoIndexFirstWeapon + k9_WeaponTypeFalchion,
+		kDMObjectInfoIndexFirstArmour + k30_ArmourTypeWoodenShield,
 		0}
 	;
 	static uint16 fixedPossessionCreature9StoneGolem[2] = { // @ G0246_aui_Graphic559_FixedPossessionsCreature09StoneGolem
-		k23_ObjectInfoIndexFirstWeapon + k24_WeaponTypeStoneClub,
+		kDMObjectInfoIndexFirstWeapon + k24_WeaponTypeStoneClub,
 		0
 	};
 	static uint16 fixedPossessionCreatur16TrolinAntman[2] = { // @ G0247_aui_Graphic559_FixedPossessionsCreature16Trolin_Antman
-		k23_ObjectInfoIndexFirstWeapon + k23_WeaponTypeClub,
+		kDMObjectInfoIndexFirstWeapon + k23_WeaponTypeClub,
 		0
 	};
 	static uint16 fixedPossessionCreature18AnimatedArmourDethKnight[7] = { // @ G0248_aui_Graphic559_FixedPossessionsCreature18AnimatedArmour_DethKnight
-		k69_ObjectInfoIndexFirstArmour + k41_ArmourTypeFootPlate,
-		k69_ObjectInfoIndexFirstArmour + k40_ArmourTypeLegPlate,
-		k69_ObjectInfoIndexFirstArmour + k39_ArmourTypeTorsoPlate,
-		k23_ObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
-		k69_ObjectInfoIndexFirstArmour + k38_ArmourTypeArmet,
-		k23_ObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
+		kDMObjectInfoIndexFirstArmour + k41_ArmourTypeFootPlate,
+		kDMObjectInfoIndexFirstArmour + k40_ArmourTypeLegPlate,
+		kDMObjectInfoIndexFirstArmour + k39_ArmourTypeTorsoPlate,
+		kDMObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
+		kDMObjectInfoIndexFirstArmour + k38_ArmourTypeArmet,
+		kDMObjectInfoIndexFirstWeapon + k10_WeaponTypeSword,
 		0
 	};
 	static uint16 fixedPossessionCreature7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
-		k127_ObjectInfoIndexFirstJunk + k25_JunkTypeBoulder,
-		k127_ObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | k0x8000_randomDrop,
-		k23_ObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
-		k23_ObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder,
+		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstWeapon + k30_WeaponTypeRock | k0x8000_randomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
-		k127_ObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank,
-		k127_ObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank,
+		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | k0x8000_randomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
-		k127_ObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice,
-		k127_ObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice,
+		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | k0x8000_randomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
-		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound,
-		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
-		k127_ObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound,
+		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | k0x8000_randomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop,
-		k127_ObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop, 0};
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop,
+		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | k0x8000_randomDrop, 0};
 
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;
@@ -267,16 +267,16 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 			continue;
 
 		int16 currThingType;
-		if (clearFlag(currFixedPossession, k0x8000_randomDrop) >= k127_ObjectInfoIndexFirstJunk) {
+		if (clearFlag(currFixedPossession, k0x8000_randomDrop) >= kDMObjectInfoIndexFirstJunk) {
 			currThingType = kDMThingTypeJunk;
-			currFixedPossession -= k127_ObjectInfoIndexFirstJunk;
-		} else if (currFixedPossession >= k69_ObjectInfoIndexFirstArmour) {
+			currFixedPossession -= kDMObjectInfoIndexFirstJunk;
+		} else if (currFixedPossession >= kDMObjectInfoIndexFirstArmour) {
 			currThingType = kDMThingTypeArmour;
-			currFixedPossession -= k69_ObjectInfoIndexFirstArmour;
+			currFixedPossession -= kDMObjectInfoIndexFirstArmour;
 		} else {
 			weaponDropped = true;
 			currThingType = kDMThingTypeWeapon;
-			currFixedPossession -= k23_ObjectInfoIndexFirstWeapon;
+			currFixedPossession -= kDMObjectInfoIndexFirstWeapon;
 		}
 
 		Thing nextUnusedThing = _vm->_dungeonMan->getUnusedThing(currThingType);
@@ -288,7 +288,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		currWeapon->setType(currFixedPossession);
 		currWeapon->setCursed(cursedPossessions);
 		nextUnusedThing = _vm->thingWithNewCell(nextUnusedThing, ((cell == k255_CreatureTypeSingleCenteredCreature) || !_vm->getRandomNumber(4)) ? _vm->getRandomNumber(4) : cell);
-		_vm->_moveSens->getMoveResult(nextUnusedThing, kM1_MapXNotOnASquare, 0, mapX, mapY);
+		_vm->_moveSens->getMoveResult(nextUnusedThing, kDMMapXNotOnASquare, 0, mapX, mapY);
 		currFixedPossession = *fixedPossessions++;
 	}
 	_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
@@ -491,7 +491,7 @@ void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	for (uint16 i = 0; i < 4; ++i)
 		group->_health[i] = 0;
-	_vm->_moveSens->getMoveResult(groupThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
+	_vm->_moveSens->getMoveResult(groupThing, mapX, mapY, kDMMapXNotOnASquare, 0);
 	group->_nextThing = Thing::_none;
 	if (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) {
 		_activeGroups[group->getActiveGroupIndex()]._groupThingIndex = -1;
@@ -1069,10 +1069,10 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
 		!(((mapX >= 0) && (mapX < _vm->_dungeonMan->_currMapWidth)) &&
 		 ((mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight)) &&
-		  (curSquareType != k0_ElementTypeWall) &&
-		  (curSquareType != k3_ElementTypeStairs) &&
-		 ((curSquareType != k2_ElementTypePit) || (getFlag(curSquare, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
-		 ((curSquareType != k6_ElementTypeFakeWall) || getFlag(curSquare, k0x0004_FakeWallOpen) || (getFlag(curSquare, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
+		  (curSquareType != kDMElementTypeWall) &&
+		  (curSquareType != kDMElementTypeStairs) &&
+		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
+		 ((curSquareType != kDMElementTypeFakeWall) || getFlag(curSquare, k0x0004_FakeWallOpen) || (getFlag(curSquare, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
 
 	if (_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
 		return false;
@@ -1092,7 +1092,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
 	}
-	if ((curSquareType == k5_ElementTypeTeleporter) && getFlag(curSquare, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
+	if ((curSquareType == kDMElementTypeTeleporter) && getFlag(curSquare, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		if (getFlag(curTeleporter->getScope(), k0x0001_TelepScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
 			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
@@ -1239,7 +1239,7 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 		int16 curDoorState = Square(curSquare).getDoorState();
 		return ((curDoorState == k3_doorState_FOURTH) || (curDoorState == k4_doorState_CLOSED)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
 	}
-	return (curSquareType == k0_ElementTypeWall) || ((curSquareType == k6_ElementTypeFakeWall) && !getFlag(curSquare, k0x0004_FakeWallOpen));
+	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, k0x0004_FakeWallOpen));
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
@@ -1368,7 +1368,7 @@ bool GroupMan::isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
 	uint16 square = _vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 squareType = Square(square).getType();
 
-	return ( (squareType) == k0_ElementTypeWall) || ((squareType == k6_ElementTypeFakeWall)
+	return ( (squareType) == kDMElementTypeWall) || ((squareType == kDMElementTypeFakeWall)
 		  && !getFlag(square, k0x0004_FakeWallOpen));
 }
 
@@ -1551,7 +1551,7 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 				The following statement is missing: L0394_T_Thing->Next = Thing::_endOfList;
 				This creates cloned things if L0394_T_Thing->Next is not Thing::_endOfList which is the case when the object comes from a chest in which it was not the last object */
 			} else {
-				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kM1_MapXNotOnASquare, 0);
+				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kDMMapXNotOnASquare, 0);
 			}
 			_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 		}
@@ -1756,7 +1756,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 		}
 	} while (creatureCount--);
 	group->_cells = groupCells;
-	if (_vm->_moveSens->getMoveResult(groupThing, kM1_MapXNotOnASquare, 0, mapX, mapY)) {
+	if (_vm->_moveSens->getMoveResult(groupThing, kDMMapXNotOnASquare, 0, mapX, mapY)) {
 		/* If F0267_MOVE_GetMoveResult_CPSCE returns true then the group was either killed by a projectile
 		   impact (in which case the thing data was marked as unused) or the party is on the destination
 		   square and an event is created to move the creature into the dungeon later
@@ -1770,8 +1770,8 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
 	int16 squareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType();
 
-	return ((squareType == k1_CorridorElemType) || (squareType == k5_ElementTypeTeleporter)
-		 || (squareType == k2_ElementTypePit) || (squareType == k4_DoorElemType));
+	return ((squareType == k1_CorridorElemType) || (squareType == kDMElementTypeTeleporter)
+		 || (squareType == kDMElementTypePit) || (squareType == k4_DoorElemType));
 }
 
 int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {

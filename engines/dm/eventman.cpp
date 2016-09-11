@@ -993,11 +993,11 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	bool isMovementBlocked = false;
 	SquareType partySquareType = curSquare.getType();
 	switch (partySquareType){
-	case k0_ElementTypeWall:
+	case kDMElementTypeWall:
 		isMovementBlocked = true;
 		break;
-	case k3_ElementTypeStairs: {
-		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
+	case kDMElementTypeStairs: {
+		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
 		byte stairState = curSquare.toByte();
@@ -1009,7 +1009,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
 		}
 		break;
-	case k6_ElementTypeFakeWall: {
+	case kDMElementTypeFakeWall: {
 		byte wallState = curSquare.toByte();
 		isMovementBlocked = (!getFlag(wallState, k0x0004_FakeWallOpen) && !getFlag(wallState, k0x0001_FakeWallImaginary));
 		}
@@ -1044,7 +1044,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	}
 
 	if (isStairsSquare)
-		_vm->_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, partyMapX, partyMapY);
+		_vm->_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, partyMapX, partyMapY);
 	else
 		_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, partyMapX, partyMapY);
 
@@ -1069,7 +1069,7 @@ bool EventManager::isLeaderHandObjThrown(int16 posX, int16 posY) {
 
 	bool objectThrownFl;
 	if (posX <= 111) {
-		if (_vm->_dungeonMan->_squareAheadElement == k17_ElementTypeDoorFront) {
+		if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeDoorFront) {
 			if (posX < 64)
 				return false;
 		} else if (posX < 32)
@@ -1078,7 +1078,7 @@ bool EventManager::isLeaderHandObjThrown(int16 posX, int16 posY) {
 		// Strangerke: Only present in CSB2.1... But it fixes a bug so we keep it
 		objectThrownFl = _vm->_championMan->isLeaderHandObjectThrown(k0_sideLeft);
 	} else {
-		if (_vm->_dungeonMan->_squareAheadElement == k17_ElementTypeDoorFront) {
+		if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeDoorFront) {
 			if (posX > 163)
 				return false;
 		} else if (posX > 191)
@@ -1163,7 +1163,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		Box(40, 111, 122, 147)    /* Back left */
 	};
 
-	if (_vm->_dungeonMan->_squareAheadElement == k17_ElementTypeDoorFront) {
+	if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeDoorFront) {
 		if (_vm->_championMan->_leaderIndex == kDMChampionNone)
 			return;
 
@@ -1197,7 +1197,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 	} else {
 		Thing thingHandObject = _vm->_championMan->_leaderHandObject;
 		Junk *junkPtr = (Junk*)_vm->_dungeonMan->getThingData(thingHandObject);
-		if (_vm->_dungeonMan->_squareAheadElement == k0_ElementTypeWall) {
+		if (_vm->_dungeonMan->_squareAheadElement == kDMElementTypeWall) {
 			for (uint16 currViewCell = k0_ViewCellFronLeft; currViewCell < k1_ViewCellFrontRight + 1; currViewCell++) {
 				if (boxObjectPiles[currViewCell].isPointInside(posX, posY)) {
 					processType80_clickInDungeonViewDropLeaderHandObject(currViewCell);
@@ -1371,7 +1371,7 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 
 	Thing topPileThing = _vm->_dungeonMan->_pileTopObject[viewCell];
 	if (_vm->_objectMan->getIconIndex(topPileThing) != kDMIconIndiceNone) {
-		_vm->_moveSens->getMoveResult(topPileThing, mapX, mapY, kM1_MapXNotOnASquare, 0);
+		_vm->_moveSens->getMoveResult(topPileThing, mapX, mapY, kDMMapXNotOnASquare, 0);
 		_vm->_championMan->putObjectInLeaderHand(topPileThing, true);
 	}
 
@@ -1393,7 +1393,7 @@ void EventManager::processType80_clickInDungeonViewDropLeaderHandObject(uint16 v
 
 	uint16 currCell = _vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();
-	_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(removedThing, currCell), kM1_MapXNotOnASquare, 0, mapX, mapY);
+	_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(removedThing, currCell), kDMMapXNotOnASquare, 0, mapX, mapY);
 	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == kDMIconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
 		TimelineEvent newEvent;
@@ -1442,7 +1442,7 @@ void EventManager::discardAllInput() {
 }
 
 void EventManager::commandTakeStairs(bool stairsGoDown) {
-	_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kM1_MapXNotOnASquare, 0);
+	_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMMapXNotOnASquare, 0);
 	_vm->_newPartyMapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(_vm->_dungeonMan->_partyMapIndex, stairsGoDown ? -1 : 1, &_vm->_dungeonMan->_partyMapX, &_vm->_dungeonMan->_partyMapY);
 	_vm->_dungeonMan->setCurrentMap(_vm->_newPartyMapIndex);
 	_vm->_championMan->setPartyDirection(_vm->_dungeonMan->getStairsExitDirection(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY));

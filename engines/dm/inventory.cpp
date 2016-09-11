@@ -287,7 +287,7 @@ void InventoryMan::closeChest() {
 				*dunMan.getThingData(thing) = Thing::_endOfList.toUint16();
 				container->getSlot() = prevThing = thing;
 			} else {
-				dunMan.linkThingToList(thing, prevThing, kM1_MapXNotOnASquare, 0);
+				dunMan.linkThingToList(thing, prevThing, kDMMapXNotOnASquare, 0);
 				prevThing = thing;
 			}
 		}
@@ -565,7 +565,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case kDMThingTypePotion: {
 			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
-			actualAttribMask = _vm->_dungeonMan->_objectInfos[k2_ObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
 		case kDMThingTypeJunk: {
@@ -615,7 +615,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
-				actualAttribMask = _vm->_dungeonMan->_objectInfos[k127_ObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+				actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}
@@ -898,7 +898,7 @@ void InventoryMan::clickOnMouth() {
 		return;
 
 	Thing handThing = _vm->_championMan->_leaderHandObject;
-	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(handThing)]._allowedSlots, k0x0001_ObjectAllowedSlotMouth))
+	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(handThing)]._allowedSlots, kDMMaskMouth))
 		return;
 
 	uint16 iconIndex = _vm->_objectMan->getIconIndex(handThing);

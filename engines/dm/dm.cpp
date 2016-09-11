@@ -271,7 +271,7 @@ void DMEngine::initializeGame() {
 
 	startGame();
 	if (_newGameFl)
-		_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+		_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_eventMan->showMouse();
 	_eventMan->discardAllInput();
 }
@@ -404,7 +404,7 @@ void DMEngine::gameloop() {
 
 			if (_newPartyMapIndex != kDMMapIndexNone) {
 				processNewPartyMap(_newPartyMapIndex);
-				_moveSens->getMoveResult(Thing::_party, kM1_MapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
+				_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 				_newPartyMapIndex = kDMMapIndexNone;
 				_eventMan->discardAllInput();
 			}
@@ -753,7 +753,7 @@ void DMEngine::drawEntrance() {
 	_dungeonMan->_currMap = &map;
 	Square microDungeonSquares[25];
 	for (uint16 i = 0; i < 25; ++i)
-		microDungeonSquares[i] = Square(k0_ElementTypeWall, 0);
+		microDungeonSquares[i] = Square(kDMElementTypeWall, 0);
 
 	for (int16 idx = 0; idx < 5; idx++) {
 		microDungeonCurrentMapData[idx] = (byte*)&microDungeonSquares[idx * 5];

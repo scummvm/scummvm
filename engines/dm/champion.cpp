@@ -1476,7 +1476,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
 		curCell = curChampion->_cell;
-		_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(unusedThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+		_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(unusedThing, curCell), kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 	}
 	curChampion->_symbolStep = 0;
 	curChampion->_symbols[0] = '\0';
@@ -1553,7 +1553,7 @@ void ChampionMan::dropAllObjects(uint16 champIndex) {
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing curThing = getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
 		if (curThing != Thing::_none)
-			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 	}
 }
 

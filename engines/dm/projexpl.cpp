@@ -382,7 +382,7 @@ void ProjExpl::projectileDelete(Thing projectileThing, Thing *groupSlot, int16 m
 				*genericThing = Thing::_endOfList;
 				*groupSlot = projectileSlotThing;
 			} else
-				_vm->_dungeonMan->linkThingToList(projectileSlotThing, previousThing, kM1_MapXNotOnASquare, 0);
+				_vm->_dungeonMan->linkThingToList(projectileSlotThing, previousThing, kDMMapXNotOnASquare, 0);
 		} else
 			_vm->_moveSens->getMoveResult(Thing((projectileSlotThing).getTypeAndIndex() | getFlag(projectileThing.toUint16(), 0xC)), -2, 0, mapX, mapY);
 	}

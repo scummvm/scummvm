@@ -34,37 +34,37 @@
 namespace DM {
 
 /* Object info */
-#define k0_ObjectInfoIndexFirstScroll 0 // @ C000_OBJECT_INFO_INDEX_FIRST_SCROLL
-#define k1_ObjectInfoIndexFirstContainer 1 // @ C001_OBJECT_INFO_INDEX_FIRST_CONTAINER
-#define k2_ObjectInfoIndexFirstPotion 2 // @ C002_OBJECT_INFO_INDEX_FIRST_POTION
-#define k23_ObjectInfoIndexFirstWeapon 23 // @ C023_OBJECT_INFO_INDEX_FIRST_WEAPON
-#define k69_ObjectInfoIndexFirstArmour 69 // @ C069_OBJECT_INFO_INDEX_FIRST_ARMOUR
-#define k127_ObjectInfoIndexFirstJunk 127 // @ C127_OBJECT_INFO_INDEX_FIRST_JUNK
-
-#define kM1_MapXNotOnASquare -1 // @ CM1_MAPX_NOT_ON_A_SQUARE
-
-enum ElementType {
-	kM2_ElementTypeChampion = -2, // @ CM2_ELEMENT_CHAMPION /* Values -2 and -1 are only used as projectile impact types */
-	kM1_ElementTypeCreature = -1, // @ CM1_ELEMENT_CREATURE
-	k0_ElementTypeWall = 0, // @ C00_ELEMENT_WALL /* Values 0-6 are used as square types and projectile impact types. Values 0-2 and 5-6 are also used for square aspect */
-	k1_ElementTypeCorridor = 1, // @ C01_ELEMENT_CORRIDOR
-	k2_ElementTypePit = 2, // @ C02_ELEMENT_PIT
-	k3_ElementTypeStairs = 3, // @ C03_ELEMENT_STAIRS
-	// TODO: refactor direction into a class
-	k4_ElementTypeDoor = 4, // @ C04_ELEMENT_DOOR
-	k5_ElementTypeTeleporter = 5, // @ C05_ELEMENT_TELEPORTER
-	k6_ElementTypeFakeWall = 6, // @ C06_ELEMENT_FAKEWALL
-	k16_ElementTypeDoorSide = 16, // @ C16_ELEMENT_DOOR_SIDE /* Values 16-19 are only used for square aspect */
-	k17_ElementTypeDoorFront = 17, // @ C17_ELEMENT_DOOR_FRONT
-	k18_ElementTypeStairsSide = 18, // @ C18_ELEMENT_STAIRS_SIDE
-	k19_ElementTypeStaisFront = 19  // @ C19_ELEMENT_STAIRS_FRONT	
+enum ObjectInfoIndexConst {
+	kDMObjectInfoIndexFirstScroll = 0, // @ C000_OBJECT_INFO_INDEX_FIRST_SCROLL
+	kDMObjectInfoIndexFirstContainer = 1, // @ C001_OBJECT_INFO_INDEX_FIRST_CONTAINER
+	kDMObjectInfoIndexFirstPotion = 2, // @ C002_OBJECT_INFO_INDEX_FIRST_POTION
+	kDMObjectInfoIndexFirstWeapon = 23, // @ C023_OBJECT_INFO_INDEX_FIRST_WEAPON
+	kDMObjectInfoIndexFirstArmour = 69, // @ C069_OBJECT_INFO_INDEX_FIRST_ARMOUR
+	kDMObjectInfoIndexFirstJunk = 127 // @ C127_OBJECT_INFO_INDEX_FIRST_JUNK
 };
 
+#define kDMMapXNotOnASquare -1 // @ CM1_MAPX_NOT_ON_A_SQUARE
+
+enum ElementType {
+	kDMElementTypeChampion = -2, // @ CM2_ELEMENT_CHAMPION /* Values -2 and -1 are only used as projectile impact types */
+	kDMElementTypeCreature = -1, // @ CM1_ELEMENT_CREATURE
+	kDMElementTypeWall = 0, // @ C00_ELEMENT_WALL /* Values 0-6 are used as square types and projectile impact types. Values 0-2 and 5-6 are also used for square aspect */
+	kDMElementTypeCorridor = 1, // @ C01_ELEMENT_CORRIDOR
+	kDMElementTypePit = 2, // @ C02_ELEMENT_PIT
+	kDMElementTypeStairs = 3, // @ C03_ELEMENT_STAIRS
+	kDMElementTypeDoor = 4, // @ C04_ELEMENT_DOOR
+	kDMElementTypeTeleporter = 5, // @ C05_ELEMENT_TELEPORTER
+	kDMElementTypeFakeWall = 6, // @ C06_ELEMENT_FAKEWALL
+	kDMElementTypeDoorSide = 16, // @ C16_ELEMENT_DOOR_SIDE /* Values 16-19 are only used for square aspect */
+	kDMElementTypeDoorFront = 17, // @ C17_ELEMENT_DOOR_FRONT
+	kDMElementTypeStairsSide = 18, // @ C18_ELEMENT_STAIRS_SIDE
+	kDMElementTypeStairsFront = 19  // @ C19_ELEMENT_STAIRS_FRONT	
+};
 
 enum ObjectAllowedSlot {
-	k0x0001_ObjectAllowedSlotMouth = 0x0001, // @ MASK0x0001_MOUTH
-	k0x0002_ObjectAllowedSlotHead = 0x0002, // @ MASK0x0002_HEAD
-	k0x0004_ObjectAllowedSlotNeck = 0x0004, // @ MASK0x0004_NECK
+	kDMMaskMouth = 0x0001, // @ MASK0x0001_MOUTH
+	kDMMaskHead = 0x0002, // @ MASK0x0002_HEAD
+	kDMMaskNeck = 0x0004, // @ MASK0x0004_NECK
 	k0x0008_ObjectAllowedSlotTorso = 0x0008, // @ MASK0x0008_TORSO
 	k0x0010_ObjectAllowedSlotLegs = 0x0010, // @ MASK0x0010_LEGS
 	k0x0020_ObjectAllowedSlotFeet = 0x0020, // @ MASK0x0020_FEET
@@ -75,15 +75,15 @@ enum ObjectAllowedSlot {
 	k0x0400_ObjectAllowedSlotContainer = 0x0400 // @ MASK0x0400_CONTAINER
 };
 
-class ObjectInfo {
+class ObjectInfoIndex {
 public:
 	int16 _type;
 	uint16 _objectAspectIndex;
 	uint16 _actionSetIndex;
 	uint16 _allowedSlots;
-	ObjectInfo(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
+	ObjectInfoIndex(int16 type, uint16 objectAspectIndex, uint16 actionSetIndex, uint16 allowedSlots)
 		: _type(type), _objectAspectIndex(objectAspectIndex), _actionSetIndex(actionSetIndex), _allowedSlots(allowedSlots) {}
-	ObjectInfo() : _type(0), _objectAspectIndex(0), _actionSetIndex(0), _allowedSlots(0) {}
+	ObjectInfoIndex() : _type(0), _objectAspectIndex(0), _actionSetIndex(0), _allowedSlots(0) {}
 	bool getAllowedSlot(ObjectAllowedSlot slot) { return _allowedSlots & slot; }
 	uint16 getAllowedSlots() { return _allowedSlots; }
 	void setAllowedSlot(ObjectAllowedSlot slot, bool val) {
@@ -726,7 +726,7 @@ public:
 	Thing _pileTopObject[5]; // @ G0292_aT_PileTopObject
 	DoorInfo _currMapDoorInfo[2]; // @ G0275_as_CurrentMapDoorInfo
 	
-	ObjectInfo _objectInfos[180]; // @ G0237_as_Graphic559_ObjectInfo
+	ObjectInfoIndex _objectInfos[180]; // @ G0237_as_Graphic559_ObjectInfo
 	ArmourInfo _armourInfos[58]; // @ G0239_as_Graphic559_ArmourInfo
 	WeaponInfo _weaponInfos[46]; // @ G0238_as_Graphic559_WeaponInfo
 	CreatureInfo _creatureInfos[k27_CreatureTypeCount]; // @ G0243_as_Graphic559_CreatureInfo

@@ -668,7 +668,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				_vm->_championMan->addObjectInSlot((ChampionIndex)champIndex, unusedObject, slotIndex);
 				_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 			} else
-				_vm->_moveSens->getMoveResult(unusedObject, kM1_MapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+				_vm->_moveSens->getMoveResult(unusedObject, kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 
 			}
 			break;
