@@ -1286,11 +1286,11 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionFreezeLife: {
 		int16 freezeTicks;
-		if (weaponInHand->getType() == k42_JunkTypeMagicalBoxBlue) {
+		if (weaponInHand->getType() == (int)k42_JunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
-		} else if (weaponInHand->getType() == k43_JunkTypeMagicalBoxGreen) {
+		} else if (weaponInHand->getType() == (int)k43_JunkTypeMagicalBoxGreen) {
 			freezeTicks = 125;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
@@ -1308,7 +1308,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == _vm->turnDirRight(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		actionPerformed = _vm->_championMan->isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == (ViewCell)_vm->turnDirRight(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
 		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
