@@ -70,7 +70,7 @@ public:
 	void initialize(); // @ F0054_TEXT_Initialize
 	void moveCursor(int16 column, int16 row); // @ F0042_TEXT_MESSAGEAREA_MoveCursor
 	void clearExpiredRows(); // @ F0044_TEXT_MESSAGEAREA_ClearExpiredRows
-	void printEndGameString(int16 x, int16 y, Color textColor, char *text); // @ F0443_STARTEND_EndgamePrintString
+	void printEndGameString(int16 x, int16 y, Color textColor, const char *text); // @ F0443_STARTEND_EndgamePrintString
 	bool isTextScrolling(TextScroller *scroller, bool waitEndOfScrolling) { return false; } // @ F0561_SCROLLER_IsTextScrolling
 	void setScrollerCommand(TextScroller *scroller, int16 command) { } // @ F0560_SCROLLER_SetCommand
 	void clearAllRows(); // @ F0043_TEXT_MESSAGEAREA_ClearAllRows

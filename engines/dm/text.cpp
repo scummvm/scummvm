@@ -205,7 +205,7 @@ void TextMan::clearExpiredRows() {
 	}
 }
 
-void TextMan::printEndGameString(int16 x, int16 y, Color textColor, char* text) {
+void TextMan::printEndGameString(int16 x, int16 y, Color textColor, const char* text) {
 	char modifiedString[50];
 
 	char *wrkStringPtr = modifiedString;

@@ -235,29 +235,29 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 }
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
-	char *objectName = nullptr;
+	Common::String objectName;
 	int16 iconIndex = getIconIndex(thing);
 	if (iconIndex == kDMIconIndiceJunkChampionBones) {
 		Junk *junk = (Junk*)_vm->_dungeonMan->getThingData(thing);
-		char champBonesName[16];
+		Common::String champBonesName;
 
 		switch (_vm->getGameLanguage()) { // localized
 		case Common::FR_FRA:
 			// Fix original bug: strcpy was coming after strcat
-			strcpy(champBonesName, _objectNames[iconIndex]);
-			strcat(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
+			champBonesName = Common::String(_objectNames[iconIndex]);
+			champBonesName += Common::String(_vm->_championMan->_champions[junk->getChargeCount()]._name);
 			break;
 		default: // English and German version are the same
-			strcpy(champBonesName, _vm->_championMan->_champions[junk->getChargeCount()]._name);
-			strcat(champBonesName, _objectNames[iconIndex]);
+			champBonesName = Common::String(_vm->_championMan->_champions[junk->getChargeCount()]._name);
+			champBonesName += Common::String(_objectNames[iconIndex]);
 			break;
 		}
 
 		objectName = champBonesName;
 	} else
-		objectName = _objectNames[iconIndex];
+		objectName = Common::String(_objectNames[iconIndex]);
 
-	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName, k14_ObjectNameMaximumLength, k200_heightScreen);
+	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName.c_str(), k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {

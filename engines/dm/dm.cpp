@@ -640,11 +640,8 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 					if (skillLevel == 1)
 						continue;
 
-					char displStr[20];
-					strcpy(displStr, _inventoryMan->_skillLevelNames[skillLevel - 2]);
-					strcat(displStr, " ");
-					strcat(displStr, _championMan->_baseSkillName[idx]);
-					_textMan->printEndGameString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr);
+					Common::String displStr = Common::String::format("%s %s", _inventoryMan->_skillLevelNames[skillLevel - 2], _championMan->_baseSkillName[idx]);
+					_textMan->printEndGameString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr.c_str());
 				}
 				championMirrorBox._y1 += 48;
 				championMirrorBox._y2 += 48;
