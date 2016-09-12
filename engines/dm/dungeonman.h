@@ -131,15 +131,6 @@ enum TeleporterScope {
 	kDMTeleporterScopeObjectsOrParty = 2 // @ MASK0x0002_SCOPE_OBJECTS_OR_PARTY
 };
 
-enum SensorEffect {
-	kDMSensorEffectNone = -1, // @ CM1_EFFECT_NONE
-	kDMSensorEffectSet = 0, // @ C00_EFFECT_SET
-	kDMSensorEffectClear = 1, // @ C01_EFFECT_CLEAR
-	kDMSensorEffectToggle = 2, // @ C02_EFFECT_TOGGLE
-	kDMSensorEffectHold = 3, // @ C03_EFFECT_HOLD
-	kDMSensorEffectAddExperience = 10 // @ C10_EFFECT_ADD_EXPERIENCE
-};
-
 enum SensorType {
 	kDMSensorDisabled = 0, // @ C000_SENSOR_DISABLED    /* Never triggered, may be used for a floor or wall ornament */
 	kDMSensorFloorTheronPartyCreatureObj = 1, // @ C001_SENSOR_FLOOR_THERON_PARTY_CREATURE_OBJECT    /* Triggered by party/thing F0276_SENSOR_ProcessThingAdditionOrRemoval */

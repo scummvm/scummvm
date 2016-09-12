@@ -599,7 +599,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 						int16 triggerSetEffect = ((curSensorData == 0) != curThingSensor->getAttrRevertEffectA());
 						_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? kDMSensorEffectSet : kDMSensorEffectClear, mapX, mapY, curCell);
 					} else if (curSensorData == 0)
-						_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
+						_vm->_moveSens->triggerEffect(curThingSensor, (SensorEffect)curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
 				}
 			} else if (curSensorType == kDMSensorWallAndOrGate) {
 				int16 bitMask = 1 << (event->_Cu.A._cell);
@@ -618,7 +618,7 @@ void Timeline::processEventSquareWall(TimelineEvent *event) {
 				if (curThingSensor->getAttrEffectA() == kDMSensorEffectHold)
 					_vm->_moveSens->triggerEffect(curThingSensor, triggerSetEffect ? kDMSensorEffectSet : kDMSensorEffectClear, mapX, mapY, curCell);
 				else if (triggerSetEffect)
-					_vm->_moveSens->triggerEffect(curThingSensor, curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
+					_vm->_moveSens->triggerEffect(curThingSensor, (SensorEffect)curThingSensor->getAttrEffectA(), mapX, mapY, curCell);
 			} else if ((((curSensorType >= kDMSensorWallSingleProjLauncherNewObj) && (curSensorType <= kDMSensorWallDoubleProjLauncherExplosion)) || (curSensorType == kDMSensorWallSingleProjLauncherSquareObj) || (curSensorType == kDMSensorWallDoubleProjLauncherSquareObj)) && (curThing.getCell() == event->_Cu.A._cell)) {
 				triggerProjectileLauncher(curThingSensor, event);
 				if (curThingSensor->getAttrOnlyOnce())

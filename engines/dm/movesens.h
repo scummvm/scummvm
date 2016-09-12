@@ -31,6 +31,15 @@
 
 #include "dm/dm.h"
 
+enum SensorEffect {
+	kDMSensorEffectNone = -1, // @ CM1_EFFECT_NONE
+	kDMSensorEffectSet = 0, // @ C00_EFFECT_SET
+	kDMSensorEffectClear = 1, // @ C01_EFFECT_CLEAR
+	kDMSensorEffectToggle = 2, // @ C02_EFFECT_TOGGLE
+	kDMSensorEffectHold = 3, // @ C03_EFFECT_HOLD
+	kDMSensorEffectAddExperience = 10 // @ C10_EFFECT_ADD_EXPERIENCE
+};
+
 namespace DM {
 	class Sensor;
 	class Teleporter;
@@ -61,8 +70,8 @@ public:
 	Thing getTeleporterRotatedProjectileThing(Teleporter *teleporter, Thing projectileThing); // @ F0263_MOVE_GetTeleporterRotatedProjectileThing
 	void processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing);// @ F0276_SENSOR_ProcessThingAdditionOrRemoval
 	bool isObjectInPartyPossession(int16 objectType); // @ F0274_SENSOR_IsObjectInPartyPossession
-	void triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 mapY, uint16 cell); // @ F0272_SENSOR_TriggerEffect
-	void triggerLocalEffect(int16 localEffect, int16 effX, int16 effY, int16 effCell); // @ F0270_SENSOR_TriggerLocalEffect
+	void triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell); // @ F0272_SENSOR_TriggerEffect
+	void triggerLocalEffect(SensorEffect localEffect, int16 effX, int16 effY, int16 effCell); // @ F0270_SENSOR_TriggerLocalEffect
 	void addSkillExperience(int16 skillIndex, uint16 exp, bool leaderOnly); // @ F0269_SENSOR_AddSkillExperience
 	void processRotationEffect();// @ F0271_SENSOR_ProcessRotationEffect
 	void createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible); // @ F0265_MOVE_CreateEvent60To61_MoveGroup

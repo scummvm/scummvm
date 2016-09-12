@@ -25,7 +25,6 @@
 * maintainer of the Dungeon Master Encyclopaedia (http://dmweb.free.fr/)
 */
 
-
 #include "dm/movesens.h"
 #include "dm/champion.h"
 #include "dm/inventory.h"
@@ -36,7 +35,6 @@
 #include "dm/projexpl.h"
 #include "dm/text.h"
 #include "dm/sounds.h"
-
 
 namespace DM {
 
@@ -89,11 +87,8 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 				continue;
 
 			bool doNotTriggerSensor;
-			int16 sensorData = 0;
-			int16 sensorEffect = 0;
-
-			sensorData = currentSensor->getData();
-			sensorEffect = currentSensor->getAttrEffectA();
+			int16 sensorData = currentSensor->getData();
+			SensorEffect sensorEffect = (SensorEffect)currentSensor->getAttrEffectA();
 
 			switch (processedSensorType) {
 			case kDMSensorWallOrnClick:
@@ -837,7 +832,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 			}
 
 			triggerSensor ^= curSensor->getAttrRevertEffectA();
-			int16 curSensorEffect = curSensor->getAttrEffectA();
+			SensorEffect curSensorEffect = (SensorEffect)curSensor->getAttrEffectA();
 			if (curSensorEffect == kDMSensorEffectHold)
 				curSensorEffect = triggerSensor ? kDMSensorEffectSet : kDMSensorEffectClear;
 			else if (!triggerSensor)
@@ -894,7 +889,7 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 	return false;
 }
 
-void MovesensMan::triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 mapY, uint16 cell) {
+void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell) {
 	TimelineEventType squareTypeToEventTypeArray[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
 		k6_TMEventTypeWall,
 		k5_TMEventTypeCorridor,
@@ -910,7 +905,7 @@ void MovesensMan::triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 
 
 	int32 endTime = _vm->_gameTime + sensor->getAttrValue();
 	if (sensor->getAttrLocalEffect())
-		triggerLocalEffect(sensor->getActionLocalEffect(), mapX, mapY, cell);
+		triggerLocalEffect((SensorEffect)sensor->getActionLocalEffect(), mapX, mapY, cell);
 	else {
 		int16 targetMapX = sensor->getActionTargetMapX();
 		int16 targetMapY = sensor->getActionTargetMapY();
@@ -925,9 +920,9 @@ void MovesensMan::triggerEffect(Sensor *sensor, int16 effect, int16 mapX, int16 
 	}
 }
 
-void MovesensMan::triggerLocalEffect(int16 localEffect, int16 effX, int16 effY, int16 effCell) {
+void MovesensMan::triggerLocalEffect(SensorEffect localEffect, int16 effX, int16 effY, int16 effCell) {
 	if (localEffect == kDMSensorEffectAddExperience) {
-		addSkillExperience(kDMSkillSteal, 300, localEffect != kDMCellAny);
+		addSkillExperience(kDMSkillSteal, 300, localEffect != kDMSensorEffectNone);
 		return;
 	}
 	_sensorRotationEffect = localEffect;
