@@ -183,13 +183,15 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 
 	// NOTE: Not fully disassembled, but this should be right
 	int16 rectWidth = targetRect.width();
-	int16 sidesHeight = targetRect.height() - size * 2;
+	int16 heightRemaining = targetRect.height();
+	int16 sidesHeight = heightRemaining - size * 2;
 	int16 centerWidth = rectWidth - size * 2;
 	int16 stride = _width - rectWidth;
 
-	for (int16 y = 0; y < size; ++y) {
+	for (int16 y = 0; y < size && y < heightRemaining; ++y) {
 		memset(pixels, color, rectWidth);
 		pixels += _width;
+		--heightRemaining;
 	}
 	for (int16 y = 0; y < sidesHeight; ++y) {
 		for (int16 x = 0; x < size; ++x) {
@@ -201,9 +203,10 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 		}
 		pixels += stride;
 	}
-	for (int16 y = 0; y < size; ++y) {
+	for (int16 y = 0; y < size && y < heightRemaining; ++y) {
 		memset(pixels, color, rectWidth);
 		pixels += _width;
+		--heightRemaining;
 	}
 }
 
