@@ -1167,15 +1167,15 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 		if (_vm->_championMan->_leaderIndex == kDMChampionNone)
 			return;
 
-		int16 L1155_i_MapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
-		int16 L1156_i_MapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		int16 mapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
+		int16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 
 		if (_vm->_championMan->_leaderEmptyHanded) {
-			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(L1155_i_MapX, L1156_i_MapY);
+			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
-				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, L1155_i_MapX, L1156_i_MapY, 0, kDMSensorEffectToggle, _vm->_gameTime + 1);
+				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
 				return;
 			}
 		} else if (isLeaderHandObjThrown(posX, posY))

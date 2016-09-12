@@ -582,7 +582,7 @@ T0266017_CheckProjectileImpacts:
 	return false;
 }
 
-void MovesensMan::addEvent(byte type, byte mapX, byte mapY, byte cell, byte effect, int32 time) {
+void MovesensMan::addEvent(byte type, byte mapX, byte mapY, Cell cell, byte effect, int32 time) {
 	TimelineEvent newEvent;
 	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
 	newEvent._type = type;
@@ -910,8 +910,8 @@ void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX,
 		int16 targetMapX = sensor->getActionTargetMapX();
 		int16 targetMapY = sensor->getActionTargetMapY();
 		SquareType curSquareType = Square(_vm->_dungeonMan->_currMapData[targetMapX][targetMapY]).getType();
-		uint16 targetCell;
-		if (curSquareType == (int)kDMElementTypeWall)
+		Cell targetCell;
+		if (curSquareType == k0_WallElemType)
 			targetCell = sensor->getActionTargetCell();
 		else
 			targetCell = kDMCellNorthWest;

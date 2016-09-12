@@ -422,7 +422,7 @@ public:
 
 	uint16 getActionTargetMapY() { return (_action >> 11); }
 	uint16 getActionTargetMapX() { return (_action >> 6) & 0x1F; }
-	Direction getActionTargetCell() { return (Direction)((_action >> 4) & 3); }
+	Cell getActionTargetCell() { return (Cell)((_action >> 4) & 3); }
 	uint16 getActionHealthMultiplier() { return ((_action >> 4) & 0xF); } // @ M45_HEALTH_MULTIPLIER
 	uint16 getActionTicks() { return ((_action >> 4) >> 4) & 0xFFF; } // @ M46_TICKS
 	uint16 getActionKineticEnergy() { return ((_action >> 4) & 0xFF); }// @ M47_KINETIC_ENERGY
