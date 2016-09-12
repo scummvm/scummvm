@@ -1317,6 +1317,9 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	if (setDirectionFl) {
 		setChampionDirectionToPartyDirection(curChampion);
 		if (curChampion->_currMana < requiredManaAmount) {
+			// Fix potential divide by zero
+			if (!requiredManaAmount)
+				requiredManaAmount = 1;
 			kineticEnergy = MAX(2, curChampion->_currMana * kineticEnergy / requiredManaAmount);
 			requiredManaAmount = curChampion->_currMana;
 		}
