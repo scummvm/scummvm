@@ -64,7 +64,7 @@ public:
 	bool getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destMapX, int16 destMapY); // @ F0267_MOVE_GetMoveResult_CPSCE
 	bool isLevitating(Thing thing); // @ F0264_MOVE_IsLevitating
 	bool moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY, Thing thing); // @ F0266_MOVE_IsKilledByProjectileImpact
-	void addEvent(byte type, byte mapX, byte mapY, Cell cell, byte effect, int32 time); // @ F0268_SENSOR_AddEvent
+	void addEvent(byte type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time); // @ F0268_SENSOR_AddEvent
 	int16 getSound(byte creatureType); // @ F0514_MOVE_GetSound
 	int16 getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex);// @ F0262_MOVE_GetTeleporterRotatedGroupResult
 	Thing getTeleporterRotatedProjectileThing(Teleporter *teleporter, Thing projectileThing); // @ F0263_MOVE_GetTeleporterRotatedProjectileThing
