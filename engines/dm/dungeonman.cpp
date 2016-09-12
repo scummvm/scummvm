@@ -1455,7 +1455,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 							case kDMThingTypeProjectile:
 								setCurrentMap(mapIndex);
 								if (thingType == kDMThingTypeGroup) {
-									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kM1_soundModeDoNotPlaySound);
+									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kDMSoundModeDoNotPlaySound);
 									_vm->_groupMan->groupDelete(currMapX, currMapY);
 								} else {
 									_vm->_projexpl->projectileDeleteEvent(squareThing);

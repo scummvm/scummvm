@@ -34,6 +34,7 @@
 #include "dm/gfx.h"
 #include "dm/timeline.h"
 #include "dm/dungeonman.h"
+#include "dm/group.h"
 #include "dm/sounds.h"
 
 namespace DM {
@@ -195,14 +196,14 @@ bool SoundMan::soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *
 	return true;
 }
 
-void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mode) {
-	if (mode && (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex))
+void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode soundMode) {
+	if ((soundMode != kDMSoundModePlayImmediately) && (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex))
 		return;
 
 	Sound *sound = &_sounds[soundIndex];
-	if (mode > k1_soundModePlayIfPrioritized) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
+	if (soundMode == kDMSoundModePlayOneTickLater) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent newEvent;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + mode - 1);
+		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + soundMode - 1);
 		newEvent._type = k20_TMEventTypePlaySound;
 		newEvent._priority = sound->_priority;
 		newEvent._Cu._soundIndex = soundIndex;
@@ -216,7 +217,7 @@ void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, uint16 mod
 	if (!soundGetVolume(mapX, mapY, &leftVolume, &rightVolume))
 		return;
 
-	if (!mode) { /* Play the sound immediately */
+	if (soundMode == kDMSoundModePlayImmediately) { /* Play the sound immediately */
 		play(soundIndex, sound->_period, leftVolume, rightVolume);
 		return;
 	}

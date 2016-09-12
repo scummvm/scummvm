@@ -137,37 +137,37 @@ uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 	return (groupVal >> (creatureIndex << 1)) & 0x3;
 }
 
-void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode) {
+void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode soundMode) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	uint16 creatureType = group->_type;
-	if ((mode >= k0_soundModePlayImmediately) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
 		do {
 			dropCreatureFixedPossessions(creatureType, mapX, mapY,
-				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), mode);
+				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), soundMode);
 		} while (creatureIndex--);
 	}
 
 	Thing currentThing = group->_slot;
 	if ((currentThing) != Thing::_endOfList) {
-		bool L0371_B_WeaponDropped = false;
+		bool weaponDropped = false;
 		Thing nextThing;
 		do {
 			nextThing = _vm->_dungeonMan->getNextThing(currentThing);
 			currentThing = _vm->thingWithNewCell(currentThing, _vm->getRandomNumber(4));
 			if ((currentThing).getType() == kDMThingTypeWeapon) {
-				L0371_B_WeaponDropped = true;
+				weaponDropped = true;
 			}
 			_vm->_moveSens->getMoveResult(currentThing, kDMMapXNotOnASquare, 0, mapX, mapY);
 		} while ((currentThing = nextThing) != Thing::_endOfList);
 
-		if (mode >= k0_soundModePlayImmediately)
-			_vm->_sound->requestPlay(L0371_B_WeaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
+		if (soundMode != kDMSoundModeDoNotPlaySound)
+			_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, soundMode);
 	}
 }
 
-void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, int16 mode) {
+void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, SoundMode soundMode) {
 	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
 		kDMObjectInfoIndexFirstWeapon + kDMWeaponFalchion,
 		kDMObjectInfoIndexFirstArmour + kDMArmourWoodenShield,
@@ -291,7 +291,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		_vm->_moveSens->getMoveResult(nextUnusedThing, kDMMapXNotOnASquare, 0, mapX, mapY);
 		currFixedPossession = *fixedPossessions++;
 	}
-	_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, mode);
+	_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, soundMode);
 }
 
 int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
@@ -397,7 +397,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 
 		if (!creatureCount) { /* If there is a single creature in the group */
 			if (notMoving) {
-				dropGroupPossessions(mapX, mapY, groupGetThing(mapX, mapY), k2_soundModePlayOneTickLater);
+				dropGroupPossessions(mapX, mapY, groupGetThing(mapX, mapY), kDMSoundModePlayOneTickLater);
 				groupDelete(mapX, mapY);
 			}
 			retVal = k2_outcomeKilledAllCreaturesInGroup;
@@ -405,7 +405,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			uint16 groupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
 			if (getFlag(creatureInfo->_attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 				if (notMoving)
-					dropCreatureFixedPossessions(creatureType, mapX, mapY, cell, k2_soundModePlayOneTickLater);
+					dropCreatureFixedPossessions(creatureType, mapX, mapY, cell, kDMSoundModePlayOneTickLater);
 				else
 					_dropMovingCreatureFixedPossessionsCell[_dropMovingCreatureFixedPossCellCount++] = cell;
 			}
@@ -890,7 +890,7 @@ T0209089_DoubleSquareMove:
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
-							_vm->_sound->requestPlay(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, kDMSoundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
 					}
@@ -1275,7 +1275,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
+						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
 				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
@@ -1294,7 +1294,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						uint16 soundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
 						if (soundIndex <= k34_D13_soundCount)
-							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
 					setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
@@ -1472,7 +1472,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		int16 kineticEnergy = (creatureInfo->_attack >> 2) + 1;
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
-		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, k0_soundModePlayImmediately);
+		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, kDMSoundModePlayImmediately);
 		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, CLIP<byte>(20, kineticEnergy, 255), creatureInfo->_dexterity, 8);
 	} else {
 		int16 championIndex;
@@ -1503,7 +1503,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 	}
 	int16 attackSoundOrdinal = creatureInfo->_attackSoundOrdinal;
 	if (attackSoundOrdinal)
-		_vm->_sound->requestPlay(creatureAttackSounds[--attackSoundOrdinal], mapX, mapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(creatureAttackSounds[--attackSoundOrdinal], mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 	return true;
 }
@@ -1612,7 +1612,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 		int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
 		if (damage) {
-			_vm->_sound->requestPlay(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k2_soundModePlayOneTickLater);
+			_vm->_sound->requestPlay(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
@@ -1632,7 +1632,7 @@ void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 
 		Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
 		int16 creatureType = group->_type;
 		while (_dropMovingCreatureFixedPossCellCount) {
-			dropCreatureFixedPossessions(creatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], k2_soundModePlayOneTickLater);
+			dropCreatureFixedPossessions(creatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], kDMSoundModePlayOneTickLater);
 		}
 	}
 }
@@ -1763,7 +1763,7 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 		   (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
-	_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, k1_soundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, kDMSoundModePlayIfPrioritized);
 	return groupThing;
 }
 

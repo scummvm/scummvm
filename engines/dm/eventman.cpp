@@ -1028,7 +1028,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 				damage |= _vm->_championMan->addPendingDamageAndWounds_getDamage(secondDamagedChampionIndex, 1, kDMWoundTorso | kDMWoundLegs, kDMAttackTypeSelf);
 
 			if (damage)
-				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, k0_soundModePlayImmediately);
+				_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, partyMapX, partyMapY, kDMSoundModePlayImmediately);
 		} else {
 			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
 			if (isMovementBlocked)
@@ -1174,7 +1174,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			Junk *junkPtr = (Junk*)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
-				_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
 				return;
 			}

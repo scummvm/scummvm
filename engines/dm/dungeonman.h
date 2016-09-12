@@ -214,13 +214,6 @@ enum JunkType {
 	kDMJunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
 };
 
-enum SoundMode {
-	kM1_soundModeDoNotPlaySound = -1, // @ CM1_MODE_DO_NOT_PLAY_SOUND
-	k0_soundModePlayImmediately = 0, // @ C00_MODE_PLAY_IMMEDIATELY
-	k1_soundModePlayIfPrioritized = 1, // @ C01_MODE_PLAY_IF_PRIORITIZED
-	k2_soundModePlayOneTickLater = 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
-};
-
 #define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL
 #define k1_ExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME
 #define k2_ExplosionType_LightningBolt 2 // @ C002_EXPLOSION_LIGHTNING_BOLT

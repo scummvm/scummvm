@@ -182,7 +182,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			if (!doNotTriggerSensor) {
 				atLeastOneSensorWasTriggered = true;
 				if (currentSensor->getAttrAudibleA())
-					_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 
 				if (!_vm->_championMan->_leaderEmptyHanded && ((processedSensorType == kDMSensorWallOrnClickWithSpecObjRemoved) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedRotateSensors) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedSensor))) {
 					Thing *leaderThing = (Thing *)_vm->_dungeonMan->getThingData(leaderHandObject);
@@ -279,7 +279,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					_vm->_dungeonMan->_partyMapX = destMapX;
 					_vm->_dungeonMan->_partyMapY = destMapY;
 					if (teleporter->isAudible())
-						_vm->_sound->requestPlay(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+						_vm->_sound->requestPlay(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 
 					drawDungeonViewWhileFalling = true;
 					if (teleporter->getAbsoluteRotation())
@@ -289,7 +289,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				} else {
 					if (thingType == kDMThingTypeGroup) {
 						if (teleporter->isAudible())
-							_vm->_sound->requestPlay(k17_soundBUZZ, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(k17_soundBUZZ, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
 						moveGroupResult = getTeleporterRotatedGroupResult(teleporter, thing, mapIndexSource);
 					} else {
@@ -327,7 +327,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 										_vm->_championMan->decrementStamina(championIdx, ((curChampion->_load * 25) / _vm->_championMan->getMaximumLoad(curChampion)) + 1);
 								}
 							} else if (_vm->_championMan->getDamagedChampionCount(20, kDMWoundLegs | kDMWoundFeet, kDMAttackTypeSelf))
-								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 						}
 						_useRopeToClimbDownPit = false;
 					} else if (thingType == kDMThingTypeGroup) {
@@ -358,7 +358,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 		}
 		if ((thingType == kDMThingTypeGroup) && (fallKilledGroup || !_vm->_dungeonMan->isCreatureAllowedOnMap(thing, mapIndexDestination))) {
 			_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
-			_vm->_groupMan->dropGroupPossessions(destMapX, destMapY, thing, k2_soundModePlayOneTickLater);
+			_vm->_groupMan->dropGroupPossessions(destMapX, destMapY, thing, kDMSoundModePlayOneTickLater);
 			_vm->_dungeonMan->setCurrentMap(mapIndexSource);
 			if (mapX >= 0)
 				_vm->_groupMan->groupDelete(mapX, mapY);
@@ -416,7 +416,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 		if (thing == Thing::_party) {
 			_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
 			if ((thing = _vm->_groupMan->groupGetThing(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) != Thing::_endOfList) { /* Delete group if party moves onto its square */
-				_vm->_groupMan->dropGroupPossessions(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, thing, k1_soundModePlayIfPrioritized);
+				_vm->_groupMan->dropGroupPossessions(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, thing, kDMSoundModePlayIfPrioritized);
 				_vm->_groupMan->groupDelete(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
 			}
 
@@ -444,7 +444,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				}
 				uint16 movementSoundIndex = getSound(((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[thing.getIndex()]._type);
 				if (movementSoundIndex < k34_D13_soundCount)
-					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, k1_soundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
 				if (groupOnPartyMap && (mapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
 					_vm->_groupMan->removeActiveGroup(activeGroupIndex);
@@ -839,7 +839,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				continue;
 
 			if (curSensor->getAttrAudibleA())
-				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, k1_soundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 			triggerEffect(curSensor, curSensorEffect, mapX, mapY, (uint16)kDMCellAny); // this will wrap around
 			continue;

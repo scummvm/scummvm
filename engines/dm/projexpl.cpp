@@ -218,7 +218,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		else
 			soundIndex = k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM;
 
-		_vm->_sound->requestPlay(soundIndex, projectileMapX, projectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(soundIndex, projectileMapX, projectileMapY, kDMSoundModePlayIfPrioritized);
 	}
 T0217044:
 	if (removePotion) {
@@ -305,9 +305,9 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	explosion->setAttack(attack);
 	if (explThing.toUint16() < Thing::_explHarmNonMaterial.toUint16()) {
 		uint16 soundIndex = (attack > 80) ? k05_soundSTRONG_EXPLOSION : k20_soundWEAK_EXPLOSION;
-		_vm->_sound->requestPlay(soundIndex, projectileMapX, projectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(soundIndex, projectileMapX, projectileMapY, kDMSoundModePlayIfPrioritized);
 	} else if (explThing != Thing::_explSmoke)
-		_vm->_sound->requestPlay(k13_soundSPELL, projectileMapX, projectileMapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(k13_soundSPELL, projectileMapX, projectileMapY, kDMSoundModePlayIfPrioritized);
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), projectileMapX, projectileMapY);
 	TimelineEvent newEvent;
@@ -525,7 +525,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		break;
 	case 0xFFE4:
 		explosion->setType(explosion->getType() + 1);
-		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, mapX, mapY, k1_soundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(k05_soundSTRONG_EXPLOSION, mapX, mapY, kDMSoundModePlayIfPrioritized);
 		AddEventFl = true;
 		break;
 	case 0xFFA8:

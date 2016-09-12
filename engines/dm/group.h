@@ -89,6 +89,13 @@ enum CreatureType {
 #define k0x0040_MaskActiveGroupFlipBitmap 0x0040 // @ MASK0x0040_FLIP_BITMAP  
 #define k0x0080_MaskActiveGroupIsAttacking 0x0080 // @ MASK0x0080_IS_ATTACKING 
 
+enum SoundMode {
+	kDMSoundModeDoNotPlaySound = -1, // @ CM1_MODE_DO_NOT_PLAY_SOUND
+	kDMSoundModePlayImmediately = 0, // @ C00_MODE_PLAY_IMMEDIATELY
+	kDMSoundModePlayIfPrioritized = 1, // @ C01_MODE_PLAY_IF_PRIORITIZED
+	kDMSoundModePlayOneTickLater = 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
+};
+
 class ActiveGroup {
 public:
 	int16 _groupThingIndex;
@@ -185,9 +192,9 @@ public:
 	uint16 getGroupDirections(Group *group, int16 mapIndex); // @ F0147_DUNGEON_GetGroupDirections
 	int16 getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
 	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
-	void dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, int16 mode); // @ F0188_GROUP_DropGroupPossessions
+	void dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode mode); // @ F0188_GROUP_DropGroupPossessions
 	void dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell,
-										   int16 mode); // @ F0186_GROUP_DropCreatureFixedPossessions
+										   SoundMode soundMode); // @ F0186_GROUP_DropCreatureFixedPossessions
 	int16 getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
 												   int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
 	bool isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY, int16 destMapX,

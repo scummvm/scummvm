@@ -31,6 +31,7 @@
 #include "dm/inventory.h"
 #include "dm/dungeonman.h"
 #include "dm/eventman.h"
+#include "dm/group.h"
 #include "dm/menus.h"
 #include "dm/gfx.h"
 #include "dm/text.h"
@@ -1017,7 +1018,7 @@ void InventoryMan::clickOnMouth() {
 		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
 		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, kDMAttributeLoad);
 	}
-	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 
 	if (_panelContent == k0_PanelContentFoodWaterPoisoned)

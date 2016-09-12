@@ -596,7 +596,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 	_eventMan->_primaryKeyboardInput = nullptr;
 	_eventMan->_secondaryKeyboardInput = nullptr;
 	if (doNotDrawCreditsOnly && !_gameWon) {
-		_sound->requestPlay(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, k0_soundModePlayImmediately);
+		_sound->requestPlay(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 		delay(240);
 	}
 
@@ -940,7 +940,7 @@ void DMEngine::fuseSequence() {
 		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, k1_soundModePlayIfPrioritized);
+	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 	lordGroup->_type = k25_CreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
@@ -949,7 +949,7 @@ void DMEngine::fuseSequence() {
 	}
 	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
 		for (int16 switchCount = 4; switchCount > 0; switchCount--) {
-			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, k1_soundModePlayIfPrioritized);
+			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 			lordGroup->_type = (switchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
 			for (int16 fuseSequenceUpdateCount = cycleCount - 1; fuseSequenceUpdateCount >= 0; fuseSequenceUpdateCount--)
 				fuseSequenceUpdate();

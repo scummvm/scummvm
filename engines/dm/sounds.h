@@ -77,8 +77,8 @@ public:
 	Common::Queue<PendingSound> _pendingSounds;
 
 	virtual void loadSounds(); // @ F0503_SOUND_LoadAll
-	virtual void requestPlay(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode); // @ F0064_SOUND_RequestPlay_CPSD
-	virtual void play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol); // @ F0060_SOUND_Play
+	virtual void requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode soundMode); // @ F0064_SOUND_RequestPlay_CPSD
+	virtual void play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume); // @ F0060_SOUND_Play
 	void playPendingSound(); // @ F0065_SOUND_PlayPendingSound_CPSD
 	bool soundGetVolume(int16 mapX, int16 mapY, uint8 *leftVolume, uint8 *rightVolume); // @ F0505_SOUND_GetVolume
 
@@ -92,8 +92,8 @@ class SoundMan_Atari: public SoundMan {
 	SoundMan_Atari(DMEngine *vm): SoundMan(vm) {};
 public:
 	void loadSounds() override {} // @ F0503_SOUND_LoadAll
-	void requestPlay(uint16 P0088_ui_SoundIndex, int16 P0089_i_MapX, int16 P0090_i_MapY, uint16 P0091_ui_Mode) override {} // @ F0064_SOUND_RequestPlay_CPSD
-	void play(uint16 P0921_ui_SoundIndex, uint16 P0085_i_Period, uint8 leftVol, uint8 rightVol) override {} // @ F0060_SOUND_Play
+	void requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode soundMode) override {} // @ F0064_SOUND_RequestPlay_CPSD
+	void play(uint16 soundIndex, uint16 period, uint8 leftVolume, uint8 rightVolume) override {} // @ F0060_SOUND_Play
 };
 
 }
