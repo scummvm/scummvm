@@ -738,11 +738,25 @@ Spell *MenuMan::getSpellFromSymbols(byte *symbols) {
 }
 
 void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType, uint16 skillIndex) {
-	const char *messagesEN[4] = {" NEEDS MORE PRACTICE WITH THIS ", " SPELL.", " MUMBLES A MEANINGLESS SPELL."," NEEDS AN EMPTY FLASK IN HAND FOR POTION."};
-	const char *messagesDE[4] = {" BRAUCHT MEHR UEBUNG MIT DIESEM ", " ZAUBERSPRUCH.",
-		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.", " MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."};
-	const char *messagesFR[5] = {" DOIT PRATIQUER DAVANTAGE SON ", "ENVOUTEMENT.", " MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
-		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.", "EXORCISME."};
+	Common::String messagesEN[4] = {
+		" NEEDS MORE PRACTICE WITH THIS ",
+		" SPELL.",
+		" MUMBLES A MEANINGLESS SPELL.",
+		" NEEDS AN EMPTY FLASK IN HAND FOR POTION."
+	};
+	Common::String messagesDE[4] = {
+		" BRAUCHT MEHR UEBUNG MIT DIESEM ",
+		" ZAUBERSPRUCH.",
+		" MURMELT EINEN SINNLOSEN ZAUBERSPRUCH.",
+		" MUSS FUER DEN TRANK EINE LEERE FLASCHE BEREITHALTEN."
+	};
+	Common::String messagesFR[5] = {
+		" DOIT PRATIQUER DAVANTAGE SON ",
+		"ENVOUTEMENT.",
+		" MARMONNE UNE CONJURATION IMCOMPREHENSIBLE.",
+		" DOIT AVOIR UN FLACON VIDE EN MAIN POUR LA POTION.",
+		"EXORCISME."
+	};
 
 	if (skillIndex > kDMSkillWizard)
 		skillIndex = (skillIndex - 4) / 4;
@@ -750,7 +764,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 	_vm->_textMan->printLineFeed();
 	_vm->_textMan->printMessage(k4_ColorCyan, champ->_name);
 
-	const char **messages;
+	Common::String *messages;
 	switch (_vm->getGameLanguage()) { // localized
 	case Common::DE_DEU:
 		messages = messagesDE;
@@ -763,10 +777,10 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 		break;
 	}
 
-	const char *message = nullptr;
+	Common::String message;
 	switch (failureType) {
 	case kDMFailureNeedsMorePractice:
-		_vm->_textMan->printMessage(k4_ColorCyan, messages[0]);
+		_vm->_textMan->printMessage(k4_ColorCyan, messages[0].c_str());
 		_vm->_textMan->printMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
 		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == kDMSkillWizard)
 			message = messages[1];
@@ -783,7 +797,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 	default:
 		break;
 	}
-	_vm->_textMan->printMessage(k4_ColorCyan, message);
+	_vm->_textMan->printMessage(k4_ColorCyan, message.c_str());
 }
 
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
