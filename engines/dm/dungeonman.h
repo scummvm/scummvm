@@ -214,17 +214,19 @@ enum JunkType {
 	kDMJunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
 };
 
-#define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL
-#define k1_ExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME
-#define k2_ExplosionType_LightningBolt 2 // @ C002_EXPLOSION_LIGHTNING_BOLT
-#define k3_ExplosionType_HarmNonMaterial 3 // @ C003_EXPLOSION_HARM_NON_MATERIAL
-#define k4_ExplosionType_OpenDoor 4 // @ C004_EXPLOSION_OPEN_DOOR
-#define k6_ExplosionType_PoisonBolt 6 // @ C006_EXPLOSION_POISON_BOLT
-#define k7_ExplosionType_PoisonCloud 7 // @ C007_EXPLOSION_POISON_CLOUD
-#define k40_ExplosionType_Smoke 40 // @ C040_EXPLOSION_SMOKE
-#define k50_ExplosionType_Fluxcage 50 // @ C050_EXPLOSION_FLUXCAGE
-#define k100_ExplosionType_RebirthStep1 100 // @ C100_EXPLOSION_REBIRTH_STEP1
-#define k101_ExplosionType_RebirthStep2 101 // @ C101_EXPLOSION_REBIRTH_STEP2
+enum ExplosionType {
+	kDMExplosionTypeFireball = 0, // @ C000_EXPLOSION_FIREBALL
+	kDMExplosionTypeSlime = 1, // @ C001_EXPLOSION_SLIME
+	kDMExplosionTypeLightningBolt = 2, // @ C002_EXPLOSION_LIGHTNING_BOLT
+	kDMExplosionTypeHarmNonMaterial = 3, // @ C003_EXPLOSION_HARM_NON_MATERIAL
+	kDMExplosionTypeOpenDoor = 4, // @ C004_EXPLOSION_OPEN_DOOR
+	kDMExplosionTypePoisonBolt = 6, // @ C006_EXPLOSION_POISON_BOLT
+	kDMExplosionTypePoisonCloud = 7, // @ C007_EXPLOSION_POISON_CLOUD
+	kDMExplosionTypeSmoke = 40, // @ C040_EXPLOSION_SMOKE
+	kDMExplosionTypeFluxcage = 50, // @ C050_EXPLOSION_FLUXCAGE
+	kDMExplosionTypeRebirthStep1 = 100, // @ C100_EXPLOSION_REBIRTH_STEP1
+	kDMExplosionTypeRebirthStep2 = 101 // @ C101_EXPLOSION_REBIRTH_STEP2
+};
 
 enum SquareMask {
 	k0x0001_WallWestRandOrnAllowed = 0x1, // @ MASK0x0001_WALL_WEST_RANDOM_ORNAMENT_ALLOWED

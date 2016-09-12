@@ -3633,21 +3633,21 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 		if (thingParam.getType() == kDMThingTypeExplosion) {
 			AL_2_cellPurpleMan = thingParam.getCell();
 			Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(thingParam);
-			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= k100_ExplosionType_RebirthStep1);
+			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= kDMExplosionTypeRebirthStep1);
 			if (rebirthExplosion && ((AL_1_viewSquareExplosionIndex < k3_ViewSquare_D3C_Explosion) || (AL_1_viewSquareExplosionIndex > k9_ViewSquare_D1C_Explosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
 				continue;
 			bool smoke = false;
-			if ((AL_4_explosionType == k0_ExplosionType_Fireball) || (AL_4_explosionType == k2_ExplosionType_LightningBolt) || (AL_4_explosionType == k101_ExplosionType_RebirthStep2)) {
+			if ((AL_4_explosionType == kDMExplosionTypeFireball) || (AL_4_explosionType == kDMExplosionTypeLightningBolt) || (AL_4_explosionType == kDMExplosionTypeRebirthStep2)) {
 				AL_4_explosionAspectIndex = k0_ExplosionAspectFire;
 			} else {
-				if ((AL_4_explosionType == k6_ExplosionType_PoisonBolt) || (AL_4_explosionType == k7_ExplosionType_PoisonCloud)) {
+				if ((AL_4_explosionType == kDMExplosionTypePoisonBolt) || (AL_4_explosionType == kDMExplosionTypePoisonCloud)) {
 					AL_4_explosionAspectIndex = k2_ExplosionAspectPoison;
 				} else {
-					if (AL_4_explosionType == k40_ExplosionType_Smoke) {
+					if (AL_4_explosionType == kDMExplosionTypeSmoke) {
 						smoke = true;
 						AL_4_explosionAspectIndex = k3_ExplosionAspectSmoke;
 					} else {
-						if (AL_4_explosionType == k100_ExplosionType_RebirthStep1) {
+						if (AL_4_explosionType == kDMExplosionTypeRebirthStep1) {
 							objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-_vm->_dungeonMan->getProjectileAspect(Thing::_explLightningBolt))];
 							bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (k316_FirstProjectileGraphicIndice + 1));
 							explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
@@ -3659,7 +3659,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 							}
 							goto T0115200_DrawExplosion;
 						}
-						if (AL_4_explosionType == k50_ExplosionType_Fluxcage) {
+						if (AL_4_explosionType == kDMExplosionTypeFluxcage) {
 							if (AL_1_viewSquareExplosionIndex >= k4_ViewSquare_D3L_Explosion) {
 								fluxcageExplosion = explosion;
 							}

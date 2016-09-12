@@ -920,7 +920,7 @@ void DMEngine::fuseSequence() {
 		while (curThing != Thing::_endOfList) {
 			if (curThing.getType() == kDMThingTypeExplosion) {
 				Explosion *curExplosion = (Explosion*)_dungeonMan->getThingData(curThing);
-				if (curExplosion->getType() == k50_ExplosionType_Fluxcage) {
+				if (curExplosion->getType() == kDMExplosionTypeFluxcage) {
 					_dungeonMan->unlinkThingFromList(curThing, Thing(0), fluxCageMapX, fluxcageMapY);
 					curExplosion->setNextThing(Thing::_none);
 					continue;

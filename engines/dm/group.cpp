@@ -1082,7 +1082,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 		while (curThing != Thing::_endOfList) {
 			if ((curThing).getType() == kDMThingTypeExplosion) {
 				Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getThingData(curThing);
-				if (((Explosion *)curTeleporter)->setType(k50_ExplosionType_Fluxcage)) {
+				if (((Explosion *)curTeleporter)->setType(kDMExplosionTypeFluxcage)) {
 					_fluxCages[dir] = true;
 					_fluxCageCount++;
 					_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
@@ -1885,7 +1885,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 		return;
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
-	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(k50_ExplosionType_Fluxcage);
+	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(kDMExplosionTypeFluxcage);
 	TimelineEvent newEvent;
 	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
@@ -1938,7 +1938,7 @@ bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 
 	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 	while (thing != Thing::_endOfList) {
-		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == k50_ExplosionType_Fluxcage))
+		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == kDMExplosionTypeFluxcage))
 			return true;
 
 		thing = _vm->_dungeonMan->getNextThing(thing);
