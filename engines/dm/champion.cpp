@@ -2430,9 +2430,9 @@ void ChampionMan::renameChampion(Champion *champ) {
 				Common::Point mousePos = _vm->_eventMan->getMousePos();
 				if ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
 					int16 characterIndexBackup = curCharacterIndex;
-					char L0821_ac_ChampionNameBackupString[8];
+					char championNameBackupString[8];
 					renamedChampionString = champ->_name;
-					strcpy(L0821_ac_ChampionNameBackupString, renamedChampionString);
+					strcpy(championNameBackupString, renamedChampionString);
 					curCharacterIndex = strlen(renamedChampionString);
 					// Replace space characters on the right of the champion name by '\0' characters
 					while (renamedChampionString[--curCharacterIndex] == ' ')
@@ -2452,7 +2452,7 @@ void ChampionMan::renameChampion(Champion *champ) {
 					if (renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE)
 						renamedChampionString = champ->_title;
 
-					strcpy(renamedChampionString = champ->_name, L0821_ac_ChampionNameBackupString);
+					strcpy(renamedChampionString = champ->_name, championNameBackupString);
 					curCharacterIndex = characterIndexBackup;
 				} else {
 					if ((mousePos.x >= 107) && (mousePos.x <= 175) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'BACKSPACE' button */
