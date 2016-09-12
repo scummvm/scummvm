@@ -1257,7 +1257,7 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		break;
 	case kDMThingTypeJunk:
 		weight = junkInfo[junk->getType()];
-		if (junk->getType() == k1_JunkTypeWaterskin)
+		if (junk->getType() == kDMJunkTypeWaterskin)
 			weight += junk->getChargeCount() << 1;
 
 		break;
@@ -1270,7 +1270,7 @@ uint16 DungeonMan::getObjectWeight(Thing thing) {
 		}
 		break;
 	case kDMThingTypePotion:
-		if (((Potion *)junk)->getType() == k20_PotionTypeEmptyFlask)
+		if (((Potion *)junk)->getType() == kDMPotionTypeEmptyFlask)
 			weight = 1;
 		else
 			weight = 3;
@@ -1627,7 +1627,7 @@ Thing DungeonMan::getObjForProjectileLaucherOrObjGen(uint16 iconIndex) {
 		junkType = kDMWeaponRock;
 		break;
 	case kDMIconIndiceJunkBoulder:
-		junkType = k25_JunkTypeBoulder;
+		junkType = kDMJunkTypeBoulder;
 		thingType = kDMThingTypeJunk;
 		break;
 	case kDMIconIndiceWeaponArrow:

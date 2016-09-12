@@ -1214,7 +1214,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 						if ((iconIdx >= kDMIconIndiceJunkWater) && (iconIdx <= kDMIconIndiceJunkWaterSkin))
 							junkPtr->setChargeCount(3); /* Full */
 						else if (iconIdx == kDMIconIndicePotionEmptyFlask)
-							((Potion*)junkPtr)->setType(k15_PotionTypeWaterFlask);
+							((Potion*)junkPtr)->setType(kDMPotionTypeWaterFlask);
 						else {
 							commandProcessType80ClickInDungeonViewTouchFrontWall();
 							return;

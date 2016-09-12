@@ -84,8 +84,8 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 	if (projectileAssociatedThingType == kDMThingTypePotion) {
 		Group *projectileAssociatedGroup = (Group *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 		PotionType potionType = ((Potion *)projectileAssociatedGroup)->getType();
-		if ((potionType == k3_PotionTypeVen) || (potionType == k19_PotionTypeFulBomb)) {
-			explosionThing = (potionType == k3_PotionTypeVen) ? Thing::_explPoisonCloud: Thing::_explFireBall;
+		if ((potionType == kDMPotionTypeVen) || (potionType == kDMPotionTypeFulBomb)) {
+			explosionThing = (potionType == kDMPotionTypeVen) ? Thing::_explPoisonCloud: Thing::_explFireBall;
 			removePotion = true;
 			potionPower = ((Potion *)projectileAssociatedGroup)->getPower();
 			potion = (Potion *)projectileAssociatedGroup;

@@ -191,39 +191,39 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		0
 	};
 	static uint16 fixedPossessionCreature7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
-		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder,
-		kDMObjectInfoIndexFirstJunk + k25_JunkTypeBoulder | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeBoulder,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeBoulder | kDMMaskRandomDrop,
 		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
 		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
-		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank,
-		kDMObjectInfoIndexFirstJunk + k35_JunkTypeDrumstickShank | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDrumstickShank,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDrumstickShank | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
-		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice,
-		kDMObjectInfoIndexFirstJunk + k33_JunkTypeScreamerSlice | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeScreamerSlice,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeScreamerSlice | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
-		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound,
-		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstJunk + k34_JunkTypeWormRound | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstJunk + k36_JunkTypeDragonSteak | kDMMaskRandomDrop, 0};
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak | kDMMaskRandomDrop,
+		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak | kDMMaskRandomDrop, 0};
 
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;

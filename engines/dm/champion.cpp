@@ -1472,7 +1472,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	uint16 curCell = 0;
 	if (unusedThing != Thing::_none) {
 		Junk *L0966_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(unusedThing);
-		L0966_ps_Junk->setType(k5_JunkTypeBones);
+		L0966_ps_Junk->setType(kDMJunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
 		curCell = curChampion->_cell;

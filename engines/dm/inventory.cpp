@@ -931,25 +931,25 @@ void InventoryMan::clickOnMouth() {
 		uint16 adjustedPotionPower = (potionPower / 25) + 8; /* Value between 8 and 18 */
 
 		switch (((Potion *)junkData)->getType()) {
-		case k6_PotionTypeRos:
+		case kDMPotionTypeRos:
 			adjustStatisticCurrentValue(curChampion, kDMStatDexterity, adjustedPotionPower);
 			break;
-		case k7_PotionTypeKu:
+		case kDMPotionTypeKu:
 			adjustStatisticCurrentValue(curChampion, kDMStatStrength, (((Potion *)junkData)->getPower() / 35) + 5); /* Value between 5 and 12 */
 			break;
-		case k8_PotionTypeDane:
+		case kDMPotionTypeDane:
 			adjustStatisticCurrentValue(curChampion, kDMStatWisdom, adjustedPotionPower);
 			break;
-		case k9_PotionTypeNeta:
+		case kDMPotionTypeNeta:
 			adjustStatisticCurrentValue(curChampion, kDMStatVitality, adjustedPotionPower);
 			break;
-		case k10_PotionTypeAntivenin:
+		case kDMPotionTypeAntivenin:
 			_vm->_championMan->unpoison(championIndex);
 			break;
-		case k11_PotionTypeMon:
+		case kDMPotionTypeMon:
 			curChampion->_currStamina += MIN(curChampion->_maxStamina - curChampion->_currStamina, curChampion->_maxStamina / counter);
 			break;
-		case k12_PotionTypeYa: {
+		case kDMPotionTypeYa: {
 			adjustedPotionPower += adjustedPotionPower >> 1;
 			if (curChampion->_shieldDefense > 50)
 				adjustedPotionPower >>= 2;
@@ -964,7 +964,7 @@ void InventoryMan::clickOnMouth() {
 			setFlag(curChampion->_attributes, kDMAttributeStatusBox);
 			}
 			break;
-		case k13_PotionTypeEe: {
+		case kDMPotionTypeEe: {
 			uint16 mana = MIN(900, (curChampion->_currMana + adjustedPotionPower) + (adjustedPotionPower - 8));
 			if (mana > curChampion->_maxMana)
 				mana -= (mana - MAX(curChampion->_currMana, curChampion->_maxMana)) >> 1;
@@ -972,7 +972,7 @@ void InventoryMan::clickOnMouth() {
 			curChampion->_currMana = mana;
 			}
 			break;
-		case k14_PotionTypeVi: {
+		case kDMPotionTypeVi: {
 			uint16 healWoundIterationCount = MAX(1, (((Potion *)junkData)->getPower() / 42));
 			curChampion->_currHealth += curChampion->_maxHealth / counter;
 			int16 wounds = curChampion->_wounds;
@@ -988,13 +988,13 @@ void InventoryMan::clickOnMouth() {
 			setFlag(curChampion->_attributes, kDMAttributeLoad | kDMAttributeWounds);
 			}
 			break;
-		case k15_PotionTypeWaterFlask:
+		case kDMPotionTypeWaterFlask:
 			curChampion->_water = MIN(curChampion->_water + 1600, 2048);
 			break;
 		default:
 			break;
 		}
-		((Potion *)junkData)->setType(k20_PotionTypeEmptyFlask);
+		((Potion *)junkData)->setType(kDMPotionTypeEmptyFlask);
 	} else if ((iconIndex >= kDMIconIndiceJunkApple) && (iconIndex < kDMIconIndiceJunkIronKey))
 		curChampion->_food = MIN(curChampion->_food + foodAmounts[iconIndex - kDMIconIndiceJunkApple], 2048);
 

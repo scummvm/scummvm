@@ -655,7 +655,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				break;
 
 			Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(unusedObject);
-			junkData->setType(k51_JunkTypeZokathra);
+			junkData->setType(kDMJunkTypeZokathra);
 			ChampionSlot slotIndex;
 			if (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)
 				slotIndex = kDMSlotReadyHand;
@@ -1300,11 +1300,11 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionFreezeLife: {
 		int16 freezeTicks;
-		if (weaponInHand->getType() == (int)k42_JunkTypeMagicalBoxBlue) {
+		if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxBlue) {
 			freezeTicks = 30;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);
-		} else if (weaponInHand->getType() == (int)k43_JunkTypeMagicalBoxGreen) {
+		} else if (weaponInHand->getType() == (int)kDMJunkTypeMagicalBoxGreen) {
 			freezeTicks = 125;
 			_vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotActionHand);
 			weaponInHand->setNextThing(Thing::_none);

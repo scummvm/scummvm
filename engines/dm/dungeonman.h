@@ -186,38 +186,40 @@ enum ArmourType {
 };
 
 enum PotionType {
-	k3_PotionTypeVen = 3, // @ C03_POTION_VEN_POTION,
-	k6_PotionTypeRos = 6, // @ C06_POTION_ROS_POTION,
-	k7_PotionTypeKu = 7, // @ C07_POTION_KU_POTION,
-	k8_PotionTypeDane = 8, // @ C08_POTION_DANE_POTION,
-	k9_PotionTypeNeta = 9, // @ C09_POTION_NETA_POTION,
-	k10_PotionTypeAntivenin = 10, // @ C10_POTION_ANTIVENIN,
-	k11_PotionTypeMon = 11, // @ C11_POTION_MON_POTION,
-	k12_PotionTypeYa = 12, // @ C12_POTION_YA_POTION,
-	k13_PotionTypeEe = 13, // @ C13_POTION_EE_POTION,
-	k14_PotionTypeVi = 14, // @ C14_POTION_VI_POTION,
-	k15_PotionTypeWaterFlask = 15, // @ C15_POTION_WATER_FLASK,
-	k19_PotionTypeFulBomb = 19, // @ C19_POTION_FUL_BOMB,
-	k20_PotionTypeEmptyFlask = 20 // @ C20_POTION_EMPTY_FLASK,
+	kDMPotionTypeVen = 3, // @ C03_POTION_VEN_POTION,
+	kDMPotionTypeRos = 6, // @ C06_POTION_ROS_POTION,
+	kDMPotionTypeKu = 7, // @ C07_POTION_KU_POTION,
+	kDMPotionTypeDane = 8, // @ C08_POTION_DANE_POTION,
+	kDMPotionTypeNeta = 9, // @ C09_POTION_NETA_POTION,
+	kDMPotionTypeAntivenin = 10, // @ C10_POTION_ANTIVENIN,
+	kDMPotionTypeMon = 11, // @ C11_POTION_MON_POTION,
+	kDMPotionTypeYa = 12, // @ C12_POTION_YA_POTION,
+	kDMPotionTypeEe = 13, // @ C13_POTION_EE_POTION,
+	kDMPotionTypeVi = 14, // @ C14_POTION_VI_POTION,
+	kDMPotionTypeWaterFlask = 15, // @ C15_POTION_WATER_FLASK,
+	kDMPotionTypeFulBomb = 19, // @ C19_POTION_FUL_BOMB,
+	kDMPotionTypeEmptyFlask = 20 // @ C20_POTION_EMPTY_FLASK,
 };
 
 enum JunkType {
-	k1_JunkTypeWaterskin = 1, // @ C01_JUNK_WATERSKIN,
-	k5_JunkTypeBones = 5, // @ C05_JUNK_BONES,
-	k25_JunkTypeBoulder = 25, // @ C25_JUNK_BOULDER,
-	k33_JunkTypeScreamerSlice = 33, // @ C33_JUNK_SCREAMER_SLICE,
-	k34_JunkTypeWormRound = 34, // @ C34_JUNK_WORM_ROUND,
-	k35_JunkTypeDrumstickShank = 35, // @ C35_JUNK_DRUMSTICK_SHANK,
-	k36_JunkTypeDragonSteak = 36, // @ C36_JUNK_DRAGON_STEAK,
-	k42_JunkTypeMagicalBoxBlue = 42, // @ C42_JUNK_MAGICAL_BOX_BLUE,
-	k43_JunkTypeMagicalBoxGreen = 43, // @ C43_JUNK_MAGICAL_BOX_GREEN,
-	k51_JunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
+	kDMJunkTypeWaterskin = 1, // @ C01_JUNK_WATERSKIN,
+	kDMJunkTypeBones = 5, // @ C05_JUNK_BONES,
+	kDMJunkTypeBoulder = 25, // @ C25_JUNK_BOULDER,
+	kDMJunkTypeScreamerSlice = 33, // @ C33_JUNK_SCREAMER_SLICE,
+	kDMJunkTypeWormRound = 34, // @ C34_JUNK_WORM_ROUND,
+	kDMJunkTypeDrumstickShank = 35, // @ C35_JUNK_DRUMSTICK_SHANK,
+	kDMJunkTypeDragonSteak = 36, // @ C36_JUNK_DRAGON_STEAK,
+	kDMJunkTypeMagicalBoxBlue = 42, // @ C42_JUNK_MAGICAL_BOX_BLUE,
+	kDMJunkTypeMagicalBoxGreen = 43, // @ C43_JUNK_MAGICAL_BOX_GREEN,
+	kDMJunkTypeZokathra = 51 // @ C51_JUNK_ZOKATHRA,
 };
 
-#define kM1_soundModeDoNotPlaySound -1 // @ CM1_MODE_DO_NOT_PLAY_SOUND
-#define k0_soundModePlayImmediately 0 // @ C00_MODE_PLAY_IMMEDIATELY
-#define k1_soundModePlayIfPrioritized 1 // @ C01_MODE_PLAY_IF_PRIORITIZED
-#define k2_soundModePlayOneTickLater 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
+enum SoundMode {
+	kM1_soundModeDoNotPlaySound = -1, // @ CM1_MODE_DO_NOT_PLAY_SOUND
+	k0_soundModePlayImmediately = 0, // @ C00_MODE_PLAY_IMMEDIATELY
+	k1_soundModePlayIfPrioritized = 1, // @ C01_MODE_PLAY_IF_PRIORITIZED
+	k2_soundModePlayOneTickLater = 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
+};
 
 #define k0_ExplosionType_Fireball 0 // @ C000_EXPLOSION_FIREBALL
 #define k1_ExplosionType_Slime 1 // @ C001_EXPLOSION_SLIME
