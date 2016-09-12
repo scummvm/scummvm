@@ -866,10 +866,30 @@ void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 by
 }
 
 void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box& box,
-													int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
-													int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
-	// make sure to take care of inclusive boundaries, color can have 0x8000 flag to not use mask
-	warning("STUB: blitBoxFilledWithMaskedBitmap");
+											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
+											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
+	
+	// FIXME: does not produce the same effect as the original
+
+	byte nextUnitIndex = firstUnitIndex;
+	bool useMask = !(transparent & k0x0080_BlitDoNotUseMask);
+	transparent = (Color)(transparent & ~(k0x0080_BlitDoNotUseMask)); // clear flag 0x0080
+	for (byte next_y = box._y1; next_y <= box._y2; next_y++) { // '<=' for inclusive boundaries
+		for (byte next_x = box._x1; next_x <= box._x2; next_x++) { // '<=' for inclusive boundaries
+			byte *nextDestPixel = dest + next_y * destByteWidth * 2 + next_x;
+			byte nextSrcPixel = src[nextUnitIndex];
+
+			if (nextSrcPixel != transparent) {
+				if (useMask && mask && *mask++) {
+					*nextDestPixel = *mask & nextSrcPixel;
+				} else
+					*nextDestPixel = nextSrcPixel;
+			}
+
+			if (++nextUnitIndex >= lastUnitIndex)
+				nextUnitIndex = 0; // 0 is not an error
+		}
+	}
 }
 
 void DisplayMan::flipBitmapHorizontal(byte *bitmap, uint16 byteWidth, uint16 height) {
