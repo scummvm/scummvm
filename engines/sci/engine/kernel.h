@@ -488,6 +488,7 @@ reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv);
 reg_t kSaveRestore32(EngineState *s, int argc, reg_t *argv);
 reg_t kSaveList32(EngineState *s, int argc, reg_t *argv);
 reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveMakeFileName32(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);

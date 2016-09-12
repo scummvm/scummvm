@@ -51,6 +51,7 @@ extern FileHandle *getFileFromHandle(EngineState *s, uint handle);
 extern int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
 extern void listSavegames(Common::Array<SavegameDesc> &saves);
 extern int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId);
+extern bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc);
 
 /**
  * Writes the cwd to the supplied address and returns the address in acc.
@@ -270,7 +271,10 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		if (name == "autosave.cat") {
 			exists = !saveFileMan->listSavefiles(g_sci->getSavegameName(0)).empty();
 		} else {
-			exists = !saveFileMan->listSavefiles(g_sci->getSavegamePattern()).empty();
+			// There will always be one save game in Torin, the "new game" game,
+			// which should be ignored when deciding if there are any save games
+			// to open
+			exists = saveFileMan->listSavefiles(g_sci->getSavegamePattern()).size() > 1;
 		}
 
 		if (exists) {
@@ -1049,9 +1053,36 @@ reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv) {
 			// Autosave slot 1 is a "new game" save
 			saveNo = kNewGameId;
 		}
-	}
+	} else if (saveNo == 0) {
+		// SSCI save games normally start from save number 0, but this is
+		// reserved for the autosave game in ScummVM. So, any time a game tries
+		// to save to slot 0 (and it isn't an autosave), it should instead go to
+		// the next highest free ID
+		Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+		Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
+		Common::sort(saveNames.begin(), saveNames.end());
+		if (saveNames.size()) {
+			int lastId = 0;
+			for (int i = 0; i < (int)saveNames.size(); ++i) {
+				const int id = strtol(saveNames[i].end() - 3, NULL, 10);
+				if (id == 0) {
+					continue;
+				}
 
-	assert(gameName == "Autosave" || gameName == "Autosv" || saveNo > 0);
+				if (id != lastId + 1) {
+					saveNo = lastId + 1;
+					break;
+				}
+
+				++lastId;
+			}
+		}
+
+		// There was no gap, so this save goes to a brand new slot
+		if (saveNo == 0) {
+			saveNo = saveNames.size() + 1;
+		}
+	}
 
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	const Common::String filename = g_sci->getSavegameName(saveNo);
@@ -1118,12 +1149,14 @@ reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	const int16 saveIndex = findSavegame(saves, saveNo);
-	if (saveIndex == -1) {
-		return NULL_REG;
+	if ((gameName == "Autosave" || gameName == "Autosv") && saveNo == 1) {
+		saveNo = kNewGameId;
 	}
 
-	const SavegameDesc &save = saves[saveIndex];
+	SavegameDesc save;
+	if (!fillSavegameDesc(g_sci->getSavegameName(saveNo), &save)) {
+		return NULL_REG;
+	}
 
 	if (save.version < MINIMUM_SAVEGAME_VERSION ||
 		save.version > CURRENT_SAVEGAME_VERSION ||
@@ -1167,24 +1200,11 @@ reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
-	// Creates a savegame name from a slot number. Used when deleting saved games.
-	// Param 0: the output buffer (same as in kMakeSaveCatName)
-	// Param 1: a string with game parameters, ignored
-	// Param 2: the selected slot
-
-	SciArray *resultString = s->_segMan->lookupArray(argv[0]);
-	uint16 virtualId = argv[2].toUint16();
-	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kMakeSaveFileName: invalid savegame ID specified");
-	uint saveSlot = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-
-	Common::String filename = g_sci->getSavegameName(saveSlot);
-	resultString->fromString(filename);
-
+reg_t kSaveMakeFileName32(EngineState *s, int argc, reg_t *argv) {
+	SciArray &outFileName = *s->_segMan->lookupArray(argv[0]);
+	// argv[1] is the game name, which is not used by ScummVM
+	int16 saveNo = argv[2].toSint16();
+	outFileName.fromString(g_sci->getSavegameName(saveNo));
 	return argv[0];
 }
 

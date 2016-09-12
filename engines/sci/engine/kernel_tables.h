@@ -362,7 +362,7 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 	// Subop 4 hasn't been encountered yet
 	{ SIG_SCI32,           5, MAP_CALL(SaveList32),                "rrr",                  NULL },
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
-	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
+	{ SIG_SCI32,           7, MAP_CALL(SaveMakeFileName32),        "rri",                  NULL },
 	{ SIG_SCI32,           8, MAP_EMPTY(GameIsRestarting),         ".*",                   NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
@@ -686,7 +686,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
 	{ MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ MAP_CALL(GetSaveDir),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "",              NULL,            NULL },
+	{ MAP_CALL(GetSaveDir),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(r)",           NULL,            NULL },
 #endif
 	{ MAP_CALL(GetSaveDir),        SIG_SCI16, SIGFOR_ALL,    "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
@@ -871,7 +871,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
-	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
+	{ "MakeSaveFileName", kSaveMakeFileName32, SIG_UNTIL_SCI21MID, SIGFOR_ALL, "rri", NULL,            NULL },
 	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiii(i)(i)",           NULL,            NULL },
 	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "(.*)",                  kPalCycle_subops, NULL },
 
