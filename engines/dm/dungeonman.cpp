@@ -1584,7 +1584,8 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 	Thing currThing = getNextThing(thingInList);
 	while (currThing.getTypeAndIndex() != thingToUnlink.toUint16()) {
 		if ((currThing == Thing::_endOfList) || (currThing == Thing::_none)) {
-			*thingPtr = Thing::_endOfList;
+			if (thingPtr)
+				*thingPtr = Thing::_endOfList;
 			return;
 		}
 		currThing = getNextThing(thingInList = currThing);
