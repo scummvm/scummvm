@@ -48,93 +48,33 @@ void scene29_initScene(Scene *sc) {
 	g_vars->scene29_shooter2 = sc->getStaticANIObject1ById(ANI_SHOOTER2, -1);
 	g_vars->scene29_ass = sc->getStaticANIObject1ById(ANI_ASS, -1);
 
-	g_vars->scene29_balls.numBalls = 0;
-	g_vars->scene29_balls.pTail = 0;
-	g_vars->scene29_balls.field_8 = 0;
-	g_vars->scene29_balls.pHead = 0;
+	g_vars->scene29_balls.clear();
+	g_vars->scene29_greenBalls.clear();
 
-	free(g_vars->scene29_balls.cPlex);
-	g_vars->scene29_balls.cPlex = 0;
-
-	StaticANIObject *ani;
-
-	g_vars->scene29_greenBalls.numBalls = 0;
-	g_vars->scene29_greenBalls.pTail = 0;
-	g_vars->scene29_greenBalls.field_8 = 0;
-	g_vars->scene29_greenBalls.pHead = 0;
-
-	free(g_vars->scene29_greenBalls.cPlex);
-	g_vars->scene29_greenBalls.cPlex = 0;
-
-	ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
-	Ball *b = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
-	b->ani = ani;
-
-	if (g_vars->scene29_balls.field_8)
-		g_vars->scene29_balls.field_8->p0 = b;
-	else
-		g_vars->scene29_balls.pHead = b;
-
-	g_vars->scene29_balls.field_8 = b;
+	StaticANIObject *ani = sc->getStaticANIObject1ById(ANI_SHELL_GREEN, -1);
+	g_vars->scene29_balls.push_back(ani);
 
 	for (int i = 0; i < 2; i++) {
 		StaticANIObject *newani = new StaticANIObject(ani);
 
 		sc->addStaticANIObject(newani, 1);
 
-		b = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
-		b->ani = ani;
-
-		if (g_vars->scene29_balls.field_8)
-			g_vars->scene29_balls.field_8->p0 = b;
-		else
-			g_vars->scene29_balls.pHead = b;
-
-		g_vars->scene29_balls.field_8 = b;
+		g_vars->scene29_balls.push_back(newani);
 	}
 
-	g_vars->scene29_redBalls.numBalls = 0;
-	g_vars->scene29_redBalls.pTail = 0;
-	g_vars->scene29_redBalls.field_8 = 0;
-	g_vars->scene29_redBalls.pHead = 0;
-
-	free(g_vars->scene29_redBalls.cPlex);
-	g_vars->scene29_redBalls.cPlex = 0;
-
-	g_vars->scene29_flyingRedBalls.numBalls = 0;
-	g_vars->scene29_flyingRedBalls.pTail = 0;
-	g_vars->scene29_flyingRedBalls.field_8 = 0;
-	g_vars->scene29_flyingRedBalls.pHead = 0;
-
-	free(g_vars->scene29_flyingRedBalls.cPlex);
-	g_vars->scene29_flyingRedBalls.cPlex = 0;
+	g_vars->scene29_redBalls.clear();
+	g_vars->scene29_flyingRedBalls.clear();
 
 	ani = sc->getStaticANIObject1ById(ANI_SHELL_RED, -1);
 
-	b = g_vars->scene29_redBalls.sub04(g_vars->scene29_redBalls.field_8, 0);
-	b->ani = ani;
-
-	if (g_vars->scene29_redBalls.field_8)
-		g_vars->scene29_redBalls.field_8->p0 = b;
-	else
-		g_vars->scene29_redBalls.pHead = b;
-
-	g_vars->scene29_redBalls.field_8 = b;
+	g_vars->scene29_redBalls.push_back(ani);
 
 	for (int i = 0; i < 2; i++) {
 		StaticANIObject *newani = new StaticANIObject(ani);
 
 		sc->addStaticANIObject(newani, 1);
 
-		b = g_vars->scene29_redBalls.sub04(g_vars->scene29_redBalls.field_8, 0);
-		b->ani = ani;
-
-		if (g_vars->scene29_redBalls.field_8)
-			g_vars->scene29_redBalls.field_8->p0 = b;
-		else
-			g_vars->scene29_redBalls.pHead = b;
-
-		g_vars->scene29_redBalls.field_8 = b;
+		g_vars->scene29_redBalls.push_back(newani);
 	}
 
 	g_vars->scene29_bearders.clear();
@@ -177,76 +117,23 @@ void sceneHandler29_winArcade() {
 		g_vars->scene29_shooter2->_flags &= 0xFFFB;
 
 		StaticANIObject *ani;
-		Ball *newball, *ball, *oldp0;
 
-		while (g_vars->scene29_greenBalls.numBalls) {
-			ball = g_vars->scene29_greenBalls.pHead;
-			ani = g_vars->scene29_greenBalls.pHead->ani;
-			oldp0 = g_vars->scene29_greenBalls.pHead->p0;
-			g_vars->scene29_greenBalls.pHead = g_vars->scene29_greenBalls.pHead->p0;
+		while (g_vars->scene29_greenBalls.size()) {
+			ani = g_vars->scene29_greenBalls.front();
+			g_vars->scene29_greenBalls.remove_at(0);
 
-			if (g_vars->scene29_greenBalls.pHead)
-				oldp0->p1 = 0;
-			else
-				g_vars->scene29_greenBalls.field_8 = 0;
-
-			ball->p0 = g_vars->scene29_greenBalls.pTail;
-			g_vars->scene29_greenBalls.pTail = ball;
-			g_vars->scene29_greenBalls.numBalls--;
-
-			if (!g_vars->scene29_greenBalls.numBalls)
-				g_vars->scene29_greenBalls.reset();
+			g_vars->scene29_balls.push_back(ani);
 
 			ani->hide();
-
-			newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
-			newball->ani = ani;
-
-			if (g_vars->scene29_balls.field_8)
-				g_vars->scene29_balls.field_8->p0 = newball;
-			else
-				g_vars->scene29_balls.pHead = newball;
-
-			g_vars->scene29_balls.field_8 = newball;
 		}
 
-		while (g_vars->scene29_flyingRedBalls.numBalls) {
-			ball = g_vars->scene29_flyingRedBalls.pHead;
-			ani = g_vars->scene29_flyingRedBalls.pHead->ani;
-			oldp0 = g_vars->scene29_flyingRedBalls.pHead->p0;
-			g_vars->scene29_flyingRedBalls.pHead = g_vars->scene29_flyingRedBalls.pHead->p0;
+		while (g_vars->scene29_flyingRedBalls.size()) {
+			ani = g_vars->scene29_flyingRedBalls.front();
+			g_vars->scene29_flyingRedBalls.remove_at(0);
 
-			if (g_vars->scene29_flyingRedBalls.pHead)
-				oldp0->p1 = 0;
-			else
-				g_vars->scene29_flyingRedBalls.field_8 = 0;
-
-			ball->p0 = g_vars->scene29_flyingRedBalls.pTail;
-			g_vars->scene29_flyingRedBalls.pTail = ball;
-			g_vars->scene29_flyingRedBalls.numBalls--;
-
-			if (!g_vars->scene29_flyingRedBalls.numBalls) {
-				g_vars->scene29_flyingRedBalls.numBalls = 0;
-				g_vars->scene29_flyingRedBalls.pTail = 0;
-				g_vars->scene29_flyingRedBalls.field_8 = 0;
-				g_vars->scene29_flyingRedBalls.pHead = 0;
-
-				free(g_vars->scene29_flyingRedBalls.cPlex);
-
-				g_vars->scene29_flyingRedBalls.cPlex = 0;
-			}
+			g_vars->scene29_balls.push_back(ani);
 
 			ani->hide();
-
-			newball = g_vars->scene29_redBalls.sub04(g_vars->scene29_redBalls.field_8, 0);
-			newball->ani = ani;
-
-			if (g_vars->scene29_redBalls.field_8)
-				g_vars->scene29_redBalls.field_8->p0 = newball;
-			else
-				g_vars->scene29_redBalls.pHead = newball;
-
-			g_vars->scene29_redBalls.field_8 = newball;
 		}
 
 		g_vars->scene29_ass->queueMessageQueue(0);
@@ -259,148 +146,30 @@ void sceneHandler29_winArcade() {
 }
 
 void sceneHandler29_shootGreen() {
-	if (g_vars->scene29_balls.numBalls) {
+	if (g_vars->scene29_balls.size()) {
 		int x = g_vars->scene29_shooter1->_ox - 113;
 		int y = g_vars->scene29_shooter1->_oy - 48;
-		StaticANIObject *ani = g_vars->scene29_balls.pHead->ani;
-		Ball *oldhead = g_vars->scene29_balls.pHead;
-		Ball *oldp0 = g_vars->scene29_balls.pHead->p0;
-
-		g_vars->scene29_balls.pHead = g_vars->scene29_balls.pHead->p0;
-
-		if (g_vars->scene29_balls.pHead)
-			oldp0->p1 = 0;
-		else
-			g_vars->scene29_balls.field_8 = 0;
-
-		oldhead->p0 = g_vars->scene29_balls.pTail;
-
-		g_vars->scene29_balls.pTail = oldhead;
-		g_vars->scene29_balls.numBalls--;
-
-		if (!g_vars->scene29_balls.numBalls) {
-			g_vars->scene29_balls.numBalls = 0;
-			g_vars->scene29_balls.pTail = 0;
-			g_vars->scene29_balls.field_8 = 0;
-			g_vars->scene29_balls.pHead = 0;
-
-			free(g_vars->scene29_balls.cPlex);
-			g_vars->scene29_balls.cPlex = 0;
-		}
+		StaticANIObject *ani = g_vars->scene29_balls.front();
+		g_vars->scene29_balls.remove_at(0);
 
 		ani->show1(x, y, MV_SHG_NORM, 0);
 		ani->_priority = 5;
 
-		Ball *runPtr = g_vars->scene29_greenBalls.pTail;
-		Ball *lastP = g_vars->scene29_greenBalls.field_8;
-
-		if (!g_vars->scene29_greenBalls.pTail) {
-			g_vars->scene29_greenBalls.cPlex = (byte *)calloc(g_vars->scene29_greenBalls.cPlexLen, sizeof(Ball));
-
-			byte *p1 = g_vars->scene29_greenBalls.cPlex + (g_vars->scene29_greenBalls.cPlexLen - 1) * sizeof(Ball);
-
-			if (g_vars->scene29_greenBalls.cPlexLen - 1 < 0) {
-				runPtr = g_vars->scene29_greenBalls.pTail;
-			} else {
-				runPtr = g_vars->scene29_greenBalls.pTail;
-
-				for (int j = 0; j < g_vars->scene29_greenBalls.cPlexLen; j++) {
-					((Ball *)p1)->p1 = runPtr;
-					runPtr = (Ball *)p1;
-
-					p1 -= sizeof(Ball);
-				}
-
-				g_vars->scene29_greenBalls.pTail = runPtr;
-			}
-		}
-		g_vars->scene29_greenBalls.pTail = runPtr->p0;
-		runPtr->p1 = lastP;
-		runPtr->p0 = 0;
-		runPtr->ani = ani;
-
-		g_vars->scene29_greenBalls.numBalls++;
-
-		if (g_vars->scene29_greenBalls.field_8) {
-			g_vars->scene29_greenBalls.field_8->p0 = runPtr;
-			g_vars->scene29_greenBalls.field_8 = runPtr;
-		} else {
-			g_vars->scene29_greenBalls.pHead = runPtr;
-			g_vars->scene29_greenBalls.field_8 = runPtr;
-		}
+		g_vars->scene29_greenBalls.push_back(ani);
 	}
 }
 
 void sceneHandler29_shootRed() {
-	if (g_vars->scene29_balls.numBalls) {
+	if (g_vars->scene29_balls.size()) {
 		int x = g_vars->scene29_shooter1->_ox - 101;
 		int y = g_vars->scene29_shooter1->_oy - 14;
-		StaticANIObject *ani = g_vars->scene29_balls.pHead->ani;
-		Ball *oldhead = g_vars->scene29_balls.pHead;
-		Ball *oldp0 = g_vars->scene29_balls.pHead->p0;
-
-		g_vars->scene29_balls.pHead = g_vars->scene29_balls.pHead->p0;
-
-		if (g_vars->scene29_balls.pHead)
-			oldp0->p1 = 0;
-		else
-			g_vars->scene29_balls.field_8 = 0;
-
-		oldhead->p0 = g_vars->scene29_balls.pTail;
-
-		g_vars->scene29_balls.pTail = oldhead;
-		g_vars->scene29_balls.numBalls--;
-
-		if (!g_vars->scene29_balls.numBalls) {
-			g_vars->scene29_balls.numBalls = 0;
-			g_vars->scene29_balls.pTail = 0;
-			g_vars->scene29_balls.field_8 = 0;
-			g_vars->scene29_balls.pHead = 0;
-
-			free(g_vars->scene29_balls.cPlex);
-			g_vars->scene29_balls.cPlex = 0;
-		}
+		StaticANIObject *ani = g_vars->scene29_balls.front();
+		g_vars->scene29_balls.remove_at(0);
 
 		ani->show1(x, y, MV_SHR_NORM, 0);
 		ani->_priority = 5;
 
-		Ball *runPtr = g_vars->scene29_flyingRedBalls.pTail;
-		Ball *lastP = g_vars->scene29_flyingRedBalls.field_8;
-
-		if (!g_vars->scene29_flyingRedBalls.pTail) {
-			g_vars->scene29_flyingRedBalls.cPlex = (byte *)calloc(g_vars->scene29_flyingRedBalls.cPlexLen, sizeof(Ball));
-
-			byte *p1 = g_vars->scene29_flyingRedBalls.cPlex + (g_vars->scene29_flyingRedBalls.cPlexLen - 1) * sizeof(Ball);
-
-			if (g_vars->scene29_flyingRedBalls.cPlexLen - 1 < 0) {
-				runPtr = g_vars->scene29_flyingRedBalls.pTail;
-			} else {
-				runPtr = g_vars->scene29_flyingRedBalls.pTail;
-
-				for (int j = 0; j < g_vars->scene29_flyingRedBalls.cPlexLen; j++) {
-					((Ball *)p1)->p1 = runPtr;
-					runPtr = (Ball *)p1;
-
-					p1 -= sizeof(Ball);
-				}
-
-				g_vars->scene29_flyingRedBalls.pTail = runPtr;
-			}
-		}
-		g_vars->scene29_flyingRedBalls.pTail = runPtr->p0;
-		runPtr->p1 = lastP;
-		runPtr->p0 = 0;
-		runPtr->ani = ani;
-
-		g_vars->scene29_flyingRedBalls.numBalls++;
-
-		if (g_vars->scene29_flyingRedBalls.field_8) {
-			g_vars->scene29_flyingRedBalls.field_8->p0 = runPtr;
-			g_vars->scene29_flyingRedBalls.field_8 = runPtr;
-		} else {
-			g_vars->scene29_flyingRedBalls.pHead = runPtr;
-			g_vars->scene29_flyingRedBalls.field_8 = runPtr;
-		}
+		g_vars->scene29_flyingRedBalls.push_back(ani);
 	}
 }
 
@@ -550,138 +319,72 @@ void sceneHandler29_assHitGreen() {
 }
 
 void sceneHandler29_ballHitCheck() {
-	Ball *ball = g_vars->scene29_greenBalls.pHead;
-	Ball *newball;
 	int x, y;
 
-	while (ball) {
-		x = ball->ani->_ox - 30;
-		y = ball->ani->_oy;
+	for (int i = (int)g_vars->scene29_greenBalls.size() - 1; i >= 0; i--) {
+		StaticANIObject *ani = g_vars->scene29_greenBalls[i];
+
+		x = ani->_ox - 30;
+		y = ani->_oy;
 
 		if (x >= 186) {
-			if (sceneHandler29_checkGreenBallHit(ball->ani, x)) {
-				newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
-				newball->ani = ball->ani;
+			if (sceneHandler29_checkGreenBallHit(ani, x)) {
+				g_vars->scene29_balls.push_back(ani);
 
-				if (g_vars->scene29_balls.field_8)
-					g_vars->scene29_balls.field_8->p0 = newball;
-				else
-					g_vars->scene29_balls.pHead = newball;
-
-				g_vars->scene29_balls.field_8 = newball;
-
-				if (ball == g_vars->scene29_greenBalls.pHead)
-					g_vars->scene29_greenBalls.pHead = ball->p0;
-				else
-					ball->p1->p0 = ball->p0;
-
-				if (ball == g_vars->scene29_greenBalls.field_8)
-					g_vars->scene29_greenBalls.field_8 = ball->p1;
-				else
-					ball->p0->p1 = ball->p1;
-
-				g_vars->scene29_greenBalls.init(&ball);
+				g_vars->scene29_greenBalls.remove_at(i);
 
 				sceneHandler29_manHit();
 
 				g_fp->playSound(SND_29_014, 0);
 
-				ball->ani->startAnim(MV_SHG_HITMAN, 0, -1);
+				ani->startAnim(MV_SHG_HITMAN, 0, -1);
 
-				g_vars->scene29_hitBall = ball->ani->_id;
+				g_vars->scene29_hitBall = ani->_id;
 			} else {
-				ball->ani->setOXY(x, y);
+				ani->setOXY(x, y);
 			}
 		} else {
-			newball = g_vars->scene29_balls.sub04(g_vars->scene29_balls.field_8, 0);
-			newball->ani = ball->ani;
+			g_vars->scene29_balls.push_back(ani);
 
-			if (g_vars->scene29_balls.field_8)
-				g_vars->scene29_balls.field_8->p0 = newball;
-			else
-				g_vars->scene29_balls.pHead = newball;
+			ani->hide();
 
-			g_vars->scene29_balls.field_8 = newball;
-
-			ball->ani->hide();
-
-			if (ball == g_vars->scene29_greenBalls.pHead)
-				g_vars->scene29_greenBalls.pHead = ball->p0;
-			else
-				ball->p1->p0 = ball->p0;
-
-			if (ball == g_vars->scene29_greenBalls.field_8)
-				g_vars->scene29_greenBalls.field_8 = ball->p1;
-			else
-				ball->p0->p1 = ball->p1;
-
-			g_vars->scene29_greenBalls.init(&ball);
+			g_vars->scene29_greenBalls.remove_at(i);
 
 			sceneHandler29_assHitGreen();
 		}
-
-		ball = ball->p0;
 	}
 
-	ball = g_vars->scene29_flyingRedBalls.pHead;
+	for (int i = (int)g_vars->scene29_flyingRedBalls.size() - 1; i >= 0; i--) {
+		StaticANIObject *ani = g_vars->scene29_flyingRedBalls[i];
 
-	while (ball) {
-		x = ball->ani->_ox - 30;
-		y = ball->ani->_oy;
+		x = ani->_ox - 30;
+		y = ani->_oy;
 
 		if (x >= 147) {
-			if (sceneHandler29_checkRedBallHit(ball->ani, x)) {
-				newball = g_vars->scene29_redBalls.sub04(g_vars->scene29_redBalls.field_8, 0);
-				newball->ani = ball->ani;
+			if (sceneHandler29_checkRedBallHit(ani, x)) {
+				g_vars->scene29_balls.push_back(ani);
 
-				if (g_vars->scene29_redBalls.field_8)
-					g_vars->scene29_redBalls.field_8->p0 = newball;
-				else
-					g_vars->scene29_redBalls.pHead = newball;
-
-				g_vars->scene29_redBalls.field_8 = newball;
-
-				g_vars->scene29_flyingRedBalls.removeBall(ball);
+				g_vars->scene29_flyingRedBalls.remove_at(i);
 
 				sceneHandler29_manHit();
 
 				g_fp->playSound(SND_29_027, 0);
 
-				ball->ani->startAnim(MV_SHR_HITMAN, 0, -1);
+				ani->startAnim(MV_SHR_HITMAN, 0, -1);
 
-				g_vars->scene29_hitBall = ball->ani->_id;
+				g_vars->scene29_hitBall = ani->_id;
 			} else {
-				ball->ani->setOXY(x, y);
+				ani->setOXY(x, y);
 			}
 		} else {
-			newball = g_vars->scene29_redBalls.sub04(g_vars->scene29_redBalls.field_8, 0);
-			newball->ani = ball->ani;
+			g_vars->scene29_balls.push_back(ani);
 
-			if (g_vars->scene29_redBalls.field_8)
-				g_vars->scene29_redBalls.field_8->p0 = newball;
-			else
-				g_vars->scene29_redBalls.pHead = newball;
+			ani->hide();
 
-			g_vars->scene29_redBalls.field_8 = newball;
-
-			ball->ani->hide();
-
-			if (ball == g_vars->scene29_flyingRedBalls.pHead)
-				g_vars->scene29_flyingRedBalls.pHead = ball->p0;
-			else
-				ball->p1->p0 = ball->p0;
-
-			if (ball == g_vars->scene29_flyingRedBalls.field_8)
-				g_vars->scene29_flyingRedBalls.field_8 = ball->p1;
-			else
-				ball->p0->p1 = ball->p1;
-
-			g_vars->scene29_flyingRedBalls.init(&ball);
+			g_vars->scene29_flyingRedBalls.remove_at(i);
 
 			sceneHandler29_assHitRed();
 		}
-
-		ball = ball->p0;
 	}
 }
 
@@ -972,9 +675,9 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTRED:
-		if (g_vars->scene29_redBalls.numBalls) { // original uses scene29_balls which looks like a copy/paste error
-			g_vars->scene29_redBalls.field_8->ani->show1(-1, -1, -1, 0);
-			g_vars->scene29_redBalls.field_8->ani->startAnim(MV_SHR_HITASS, 0, -1);
+		if (g_vars->scene29_redBalls.size()) { // original uses scene29_balls which looks like a copy/paste error
+			g_vars->scene29_redBalls.back()->show1(-1, -1, -1, 0);
+			g_vars->scene29_redBalls.back()->startAnim(MV_SHR_HITASS, 0, -1);
 		}
 
 		break;
@@ -988,9 +691,9 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTGREEN:
-		if (g_vars->scene29_balls.numBalls) {
-			g_vars->scene29_balls.field_8->ani->show1(-1, -1, -1, 0);
-			g_vars->scene29_balls.field_8->ani->startAnim(MV_SHG_HITASS, 0, -1);
+		if (g_vars->scene29_balls.size()) {
+			g_vars->scene29_balls.back()->show1(-1, -1, -1, 0);
+			g_vars->scene29_balls.back()->startAnim(MV_SHG_HITASS, 0, -1);
 		}
 
 		break;
