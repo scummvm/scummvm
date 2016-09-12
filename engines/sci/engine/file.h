@@ -41,8 +41,8 @@ enum {
 
 #ifdef ENABLE_SCI32
 enum {
-	kAutoSaveId = 0,
-	kNewGameId = 100
+	kAutoSaveId = 0, ///< The save game slot number for autosaves
+	kNewGameId = 999 ///< The save game slot number for a "new game" save
 };
 #endif
 
