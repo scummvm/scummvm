@@ -311,52 +311,57 @@ static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) 
 	return (l.time > r.time);
 }
 
-// Create a sorted array containing all found savedgames
+bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+	Common::SeekableReadStream *in;
+	if ((in = saveFileMan->openForLoading(filename)) == nullptr) {
+		return false;
+	}
+
+	SavegameMetadata meta;
+	if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
+		// invalid
+		delete in;
+		return false;
+	}
+	delete in;
+
+	const int id = strtol(filename.end() - 3, NULL, 10);
+	desc->id = id;
+	desc->date = meta.saveDate;
+	// We need to fix date in here, because we save DDMMYYYY instead of
+	// YYYYMMDD, so sorting wouldn't work
+	desc->date = ((desc->date & 0xFFFF) << 16) | ((desc->date & 0xFF0000) >> 8) | ((desc->date & 0xFF000000) >> 24);
+	desc->time = meta.saveTime;
+	desc->version = meta.version;
+	desc->gameVersion = meta.gameVersion;
+
+	if (meta.name.lastChar() == '\n')
+		meta.name.deleteLastChar();
+
+	Common::strlcpy(desc->name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+
+	return desc;
+}
+
+// Create an array containing all found savedgames, sorted by creation date
 void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-
-	// Load all saves
 	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
 
 	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
-		Common::String filename = *iter;
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
-				// invalid
-				delete in;
-				continue;
-			}
-			delete in;
-
-			const int id = strtol(filename.end() - 3, NULL, 10);
+		const Common::String &filename = *iter;
 
 #ifdef ENABLE_SCI32
-			if (id == kNewGameId) {
-				continue;
-			}
+		const int id = strtol(filename.end() - 3, NULL, 10);
+		if (id == kNewGameId) {
+			continue;
+		}
 #endif
 
-			SavegameDesc desc;
-			desc.id = id;
-			desc.date = meta.saveDate;
-			// We need to fix date in here, because we save DDMMYYYY instead of
-			// YYYYMMDD, so sorting wouldn't work
-			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.saveTime;
-			desc.version = meta.version;
-			desc.gameVersion = meta.gameVersion;
-
-			if (meta.name.lastChar() == '\n')
-				meta.name.deleteLastChar();
-
-			Common::strlcpy(desc.name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
-
-			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
-
-			saves.push_back(desc);
-		}
+		SavegameDesc desc;
+		fillSavegameDesc(filename, &desc);
+		saves.push_back(desc);
 	}
 
 	// Sort the list by creation date of the saves
