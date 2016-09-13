@@ -238,6 +238,8 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 
+	assert(name != "");
+
 	int mode = argv[1].toUint16();
 	bool unwrapFilename = true;
 
@@ -380,7 +382,7 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 	if (handle >= VIRTUALFILE_HANDLE_START) {
 		// it's a virtual handle? ignore it
-		return SIGNAL_REG;
+		return getSciVersion() >= SCI_VERSION_2 ? TRUE_REG : SIGNAL_REG;
 	}
 
 	FileHandle *f = getFileFromHandle(s, handle);
@@ -388,7 +390,7 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 		f->close();
 		if (getSciVersion() <= SCI_VERSION_0_LATE)
 			return s->r_acc;	// SCI0 semantics: no value returned
-		return SIGNAL_REG;
+		return getSciVersion() >= SCI_VERSION_2 ? TRUE_REG : SIGNAL_REG;
 	}
 
 	if (getSciVersion() <= SCI_VERSION_0_LATE)
@@ -420,18 +422,37 @@ reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
 	uint16 size = argv[2].toUint16();
+
+#ifdef ENABLE_SCI32
+	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
+		return make_reg(0, size);
+	}
+#endif
+
 	char *buf = new char[size];
+	uint bytesWritten = 0;
 	bool success = false;
 	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (f) {
-		f->_out->write(buf, size);
-		success = true;
+		bytesWritten = f->_out->write(buf, size);
+		success = !f->_out->err();
 	}
 
 	delete[] buf;
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		if (!success) {
+			return make_reg(0, -1);
+		}
+
+		return make_reg(0, bytesWritten);
+	}
+#endif
+
 	if (success)
 		return NULL_REG;
 	return make_reg(0, 6); // DOS - invalid handle
@@ -461,6 +482,7 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		int savedir_nr = saves[slotNum].id;
 		name = g_sci->getSavegameName(savedir_nr);
 		result = saveFileMan->removeSavefile(name);
+#ifdef ENABLE_SCI32
 	} else if (getSciVersion() >= SCI_VERSION_2) {
 		// The file name may be already wrapped, so check both cases
 		result = saveFileMan->removeSavefile(name);
@@ -468,12 +490,20 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 			const Common::String wrappedName = g_sci->wrapFilename(name);
 			result = saveFileMan->removeSavefile(wrappedName);
 		}
+#endif
 	} else {
 		const Common::String wrappedName = g_sci->wrapFilename(name);
 		result = saveFileMan->removeSavefile(wrappedName);
 	}
 
 	debugC(kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		return make_reg(0, result);
+	}
+#endif
+
 	if (result)
 		return NULL_REG;
 	return make_reg(0, 2); // DOS - file not found error code
