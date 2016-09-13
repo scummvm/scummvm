@@ -256,6 +256,12 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		return SIGNAL_REG;
 	}
 
+#ifdef ENABLE_SCI32
+	// See kMakeSaveCatName
+	if (name == "fake.cat") {
+		return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+	}
+
 	// Torin's autosave system checks for the presence of autosave.cat
 	// by opening it. Since we don't use .cat files, we instead check
 	// for the autosave game.
@@ -285,6 +291,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			return SIGNAL_REG;
 		}
 	}
+#endif
 
 	if (name.empty()) {
 		// Happens many times during KQ1 (e.g. when typing something)
@@ -1039,7 +1046,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 }
 
 #ifdef ENABLE_SCI32
-reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv) {
+reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	const Common::String saveDescription = s->_segMan->getString(argv[2]);
@@ -1111,7 +1118,7 @@ reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;
 }
 
-reg_t kSaveRestore32(EngineState *s, int argc, reg_t *argv) {
+reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
@@ -1141,7 +1148,7 @@ reg_t kSaveRestore32(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;
 }
 
-reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv) {
+reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	const Common::String gameName = s->_segMan->getString(argv[0]);
 	int16 saveNo = argv[1].toSint16();
 	const Common::String gameVersion = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
@@ -1168,7 +1175,7 @@ reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv) {
 	return TRUE_REG;
 }
 
-reg_t kSaveList32(EngineState *s, int argc, reg_t *argv) {
+reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 	// argv[0] is gameName, used in SSCI as the name of the save game catalogue
 	// but unused here since ScummVM does not support multiple catalogues
 	SciArray &descriptions = *s->_segMan->lookupArray(argv[1]);
@@ -1179,8 +1186,8 @@ reg_t kSaveList32(EngineState *s, int argc, reg_t *argv) {
 
 	// Normally SSCI limits to 20 games per directory, but ScummVM allows more
 	// than that
-	descriptions.resize(SCI_MAX_SAVENAME_LENGTH * saves.size() + 1);
-	saveIds.resize(saves.size());
+	descriptions.resize(SCI_MAX_SAVENAME_LENGTH * saves.size() + 1, true);
+	saveIds.resize(saves.size(), true);
 
 	for (uint i = 0; i < saves.size(); ++i) {
 		const SavegameDesc &save = saves[i];
@@ -1189,18 +1196,22 @@ reg_t kSaveList32(EngineState *s, int argc, reg_t *argv) {
 		saveIds.int16At(i) = save.id;
 	}
 
+	descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * saves.size()) = '\0';
+
 	return make_reg(0, saves.size());
 }
 
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv) {
-	// Normally, this creates the name of the save catalogue/directory to save into.
-	// First parameter is the string to save the result into. Second is a string
-	// with game parameters. We don't have a use for this at all, as we have our own
-	// savegame directory management, thus we always return an empty string.
+	// ScummVM does not use SCI catalogues for save games, but game scripts try
+	// to write out catalogues manually after a save game is deleted, so we need
+	// to be able to identify and ignore these IO operations by always giving
+	// back a fixed catalogue name and then ignoring it in kFileIO
+	SciArray &outCatName = *s->_segMan->lookupArray(argv[0]);
+	outCatName.fromString("fake.cat");
 	return argv[0];
 }
 
-reg_t kSaveMakeFileName32(EngineState *s, int argc, reg_t *argv) {
+reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	SciArray &outFileName = *s->_segMan->lookupArray(argv[0]);
 	// argv[1] is the game name, which is not used by ScummVM
 	int16 saveNo = argv[2].toSint16();
