@@ -484,11 +484,12 @@ reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
-reg_t kSaveSave32(EngineState *s, int argc, reg_t *argv);
-reg_t kSaveRestore32(EngineState *s, int argc, reg_t *argv);
-reg_t kSaveList32(EngineState *s, int argc, reg_t *argv);
-reg_t kSaveCheck32(EngineState *s, int argc, reg_t *argv);
-reg_t kSaveMakeFileName32(EngineState *s, int argc, reg_t *argv);
+reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv);
+reg_t kRestoreGame32(EngineState *s, int argc, reg_t *argv);
+reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv);
+reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
+reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv);
@@ -591,8 +592,6 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
 
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
-reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
-reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv);
