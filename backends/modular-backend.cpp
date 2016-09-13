@@ -241,18 +241,6 @@ void ModularBackend::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
 
-void ModularBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
-	_graphicsManager->copyRectToOSD(buf, pitch, x, y, w, h);
-}
-
-void ModularBackend::clearOSD() {
-	_graphicsManager->clearOSD();
-}
-
-Graphics::PixelFormat ModularBackend::getOSDFormat() {
-	return _graphicsManager->getOSDFormat();
-}
-
 void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	_graphicsManager->displayActivityIconOnOSD(icon);
 }
