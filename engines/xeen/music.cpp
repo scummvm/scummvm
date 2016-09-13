@@ -27,10 +27,15 @@
 
 namespace Xeen {
 
-#define ADLIB_CHANNEL_COUNT 9
 #define CALLBACKS_PER_SECOND 60
 
-Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _effectsData(nullptr) {
+Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _effectsData(nullptr),
+		_musicPtr1(nullptr), _musicPtr2(nullptr), _lowMusicIgnored(false),
+		_fieldF(false), _field109(0), _field10B(0), _field114(0), 
+		_field115(0), _field117(0) {
+	_channels.resize(ADLIB_CHANNEL_COUNT);
+	Common::fill(&_field10D[0], &_field10D[7], 0);
+	
 	_mixer = mixer;
 	_opl = OPL::Config::create();
 	_opl->init();
@@ -72,6 +77,10 @@ void Music::onTimer() {
 	flush();
 }
 
+void Music::write(int reg, int val) {
+	_queue.push(RegisterValue(reg, val));
+}
+
 void Music::flush() {
 	Common::StackLock slock(_driverMutex);
 
@@ -84,5 +93,50 @@ void Music::flush() {
 void Music::update() {
 	// TODO
 }
+
+void Music::playEffect(uint effectId) {
+	if (!_lowMusicIgnored || effectId < 7 || effectId >= 11) {
+		if (effectId < _effectsOffsets.size()) {
+			_musicPtr1 = _musicPtr2 = &_effectsData[_effectsOffsets[effectId]];
+			_field117 = 0;
+			_field115 = 0;
+			_field114 = 0;
+			reset();
+			_lowMusicIgnored = true;
+		}
+	}
+}
+
+void Music::reset() {
+	if (!_fieldF) {
+		_field109 = 0;
+		setFrequency(7, 0);
+		_channels[7]._outputLevel = 63;
+		setOutputLevel(7, 63);
+	}
+
+	_field10B = 0;
+	setFrequency(8, 0);
+	_channels[8]._outputLevel = 63;
+	setOutputLevel(8, 63);
+}
+
+void Music::setFrequency(byte operatorNum, uint frequency) {
+	write(0xA0 + operatorNum, frequency & 0xff);
+	write(0xB0 + operatorNum, (frequency >> 8));
+}
+
+void Music::setOutputLevel(byte channelNum, uint level) {
+	write(0x40 + OPERATOR2_INDEXES[channelNum], level |
+		(_channels[channelNum]._scalingValue & 0xC0));
+}
+
+const byte Music::OPERATOR1_INDEXES[ADLIB_CHANNEL_COUNT] = {
+	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
+};
+
+const byte Music::OPERATOR2_INDEXES[ADLIB_CHANNEL_COUNT] = {
+	3, 4, 5, 0xB, 0xC, 0xD, 0x13, 0x14, 0x15
+};
 
 } // End of namespace Xeen
