@@ -54,13 +54,17 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that could cause a crash in The Case of the Serrated Scalpel.
    - Fixed a bug that caused game lockups in the inventory of The Case of the Rose Tattoo.
 
+ Amiga port:
+   - Added support for AmiUpdate autoupdates.
+
+ Linux port:
+   - Added basic support for the snap packaging system.
+
  Windows port:
    - Fixed taskbar support on Windows 10 onwards.
    - Fixed keymapping for non-QWERTY keyboards.
    - Added support for WinSparkle updater.
 
- Linux port:
-   - Added basic support for the snap packaging system.
 
 1.8.1 (2016-05-25)
  New ports:
