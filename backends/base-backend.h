@@ -33,6 +33,7 @@ public:
 	virtual void initBackend();
 
 	virtual void displayMessageOnOSD(const char *msg);
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) {}
 	virtual void fillScreen(uint32 col);
 };
 
