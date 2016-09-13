@@ -598,7 +598,7 @@
 				<widget name = 'RootPathButton'
 						type = 'Button'
 				/>
-				<widget name = 'RootPathPath'
+				<widget name = 'RootPath'
 						height = 'Globals.Line.Height'
 				/>
 				<widget name = 'RootPathClearButton'
