@@ -37,6 +37,10 @@ namespace OPL {
 
 namespace Xeen {
 
+class Music;
+
+typedef bool (Music::*CommandFn)(const byte *&srcP, byte nextByte);
+
 struct RegisterValue {
 	uint8 _regNum;
 	uint8 _value;
@@ -56,6 +60,8 @@ class Music {
 private:
 	static const byte OPERATOR1_INDEXES[ADLIB_CHANNEL_COUNT];
 	static const byte OPERATOR2_INDEXES[ADLIB_CHANNEL_COUNT];
+	static const CommandFn COMMAND_TABLE1[16];
+	static const CommandFn COMMAND_TABLE2[16];
 private:
 	OPL::OPL *_opl;
 	Common::Mutex _driverMutex;
@@ -64,13 +70,17 @@ private:
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
 	const byte *_musicPtr1, *_musicPtr2;
+	const byte *_dataPtr;
 	bool _fieldF;
+	bool _field1C;
+	bool _field1E;
 	uint _fieldFB[7];
 	int _field109;
 	int _field10B;
 	byte _field10D[7];
 	int _field114;
 	int _field115;
+	int _field116;
 	int _field117;
 	bool _lowMusicIgnored;
 private:
@@ -124,6 +134,39 @@ private:
 	 * Sets the output level for a channel
 	 */
 	void setOutputLevel(byte channelNum, uint level);
+
+	/**
+	 * Post-process
+	 */
+	void postProcess();
+
+	/**
+	 * Update command methods
+	 */
+	bool cmd1(const byte *&srcP, byte nextByte);
+	bool cmd2(const byte *&srcP, byte nextByte);
+	bool cmd3(const byte *&srcP, byte nextByte);
+	bool cmd4(const byte *&srcP, byte nextByte);
+	bool cmd5(const byte *&srcP, byte nextByte);
+	bool cmd6(const byte *&srcP, byte nextByte);
+	bool cmd7(const byte *&srcP, byte nextByte);
+	bool cmd8(const byte *&srcP, byte nextByte);
+	bool cmd9(const byte *&srcP, byte nextByte);
+	bool cmd10(const byte *&srcP, byte nextByte);
+	bool cmd11(const byte *&srcP, byte nextByte);
+	bool cmd12(const byte *&srcP, byte nextByte);
+	bool cmd13(const byte *&srcP, byte nextByte);
+	bool cmd14(const byte *&srcP, byte nextByte);
+	bool cmd15(const byte *&srcP, byte nextByte);
+	bool cmd16(const byte *&srcP, byte nextByte);
+	bool cmd17(const byte *&srcP, byte nextByte);
+	bool cmd18(const byte *&srcP, byte nextByte);
+	bool cmd19(const byte *&srcP, byte nextByte);
+	bool cmd20(const byte *&srcP, byte nextByte);
+	bool cmd21(const byte *&srcP, byte nextByte);
+	bool cmd22(const byte *&srcP, byte nextByte);
+	bool cmd23(const byte *&srcP, byte nextByte);
+	bool cmd24(const byte *&srcP, byte nextByte);
 protected:
 	Audio::Mixer *_mixer;
 public:

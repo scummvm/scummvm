@@ -30,9 +30,10 @@ namespace Xeen {
 #define CALLBACKS_PER_SECOND 72
 
 Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _effectsData(nullptr),
-		_musicPtr1(nullptr), _musicPtr2(nullptr), _lowMusicIgnored(false),
-		_fieldF(false), _field109(0), _field10B(0), _field114(0), 
-		_field115(0), _field117(0) {
+		_musicPtr1(nullptr), _musicPtr2(nullptr), _dataPtr(nullptr),
+		_lowMusicIgnored(false),
+		_fieldF(false), _field1C(false), _field1E(false), _field109(0),
+		_field10B(0), _field114(0), _field115(0), _field116(0), _field117(0) {
 	_channels.resize(ADLIB_CHANNEL_COUNT);
 	Common::fill(&_fieldFB[0], &_fieldFB[7], 0);
 	Common::fill(&_field10D[0], &_field10D[7], 0);
@@ -102,7 +103,35 @@ void Music::flush() {
 }
 
 void Music::update() {
-	// TODO
+	const byte *srcP = _dataPtr;
+
+	bool flag = !_field1E;
+	if (!flag) {
+		_field1C = 0;
+		if (_field116 && --_field116 == 0)
+			flag = true;
+	}
+	if (flag && _lowMusicIgnored) {
+		srcP = _musicPtr1;
+		_field1C = 1;
+		if (!_field117 || --_field117 == 0)
+			flag = false;
+	}
+
+	if (flag) {
+		postProcess();
+		return;
+	}
+
+	// Main loop
+	bool breakFlag = false;
+	while (!breakFlag) {
+		byte nextByte = *srcP++;
+		int cmd = (nextByte >> 3) & 15;
+
+		CommandFn fn = (_field1C == 1) ? COMMAND_TABLE2[cmd] : COMMAND_TABLE1[cmd];
+		breakFlag = (this->*fn)(srcP, nextByte);
+	}
 }
 
 void Music::playEffect(uint effectId) {
@@ -143,6 +172,120 @@ void Music::setFrequency(byte operatorNum, uint frequency) {
 	write(0xA0 + operatorNum, frequency & 0xff);
 	write(0xB0 + operatorNum, (frequency >> 8));
 }
+
+void Music::postProcess() {
+	// TODO
+}
+
+bool Music::cmd1(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd2(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd3(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd4(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd5(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd6(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd7(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd8(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd9(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd10(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd11(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd12(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd13(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd14(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd15(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd16(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd17(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd18(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd19(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd20(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd21(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd22(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd23(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+bool Music::cmd24(const byte *&srcP, byte nextByte) {
+	return false;  // TODO
+}
+
+const CommandFn Music::COMMAND_TABLE1[16] = {
+	&Music::cmd1,  &Music::cmd2,  &Music::cmd3,  &Music::cmd4,
+	&Music::cmd5,  &Music::cmd5,  &Music::cmd6,  &Music::cmd4,
+	&Music::cmd7,  &Music::cmd8,  &Music::cmd9,  &Music::cmd10,
+	&Music::cmd11, &Music::cmd12, &Music::cmd13, &Music::cmd14
+};
+
+const CommandFn Music::COMMAND_TABLE2[16] = {
+	&Music::cmd15, &Music::cmd16, &Music::cmd17, &Music::cmd18,
+	&Music::cmd4,  &Music::cmd4,  &Music::cmd19, &Music::cmd20,
+	&Music::cmd21, &Music::cmd22, &Music::cmd4,  &Music::cmd4,
+	&Music::cmd23, &Music::cmd12, &Music::cmd13, &Music::cmd24
+};
 
 void Music::setOutputLevel(byte channelNum, uint level) {
 	write(0x40 + OPERATOR2_INDEXES[channelNum], level |
