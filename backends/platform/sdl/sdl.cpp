@@ -477,8 +477,9 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
-	if (text == nullptr) return "";
-	return text;
+	Common::String strText = text;
+	SDL_free(text);
+	return strText;
 #else
 	return "";
 #endif
