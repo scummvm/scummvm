@@ -39,7 +39,11 @@ CloudIcon::CloudIcon():
 	initIcons();
 }
 
-CloudIcon::~CloudIcon() {}
+CloudIcon::~CloudIcon() {
+	_icon.free();
+	_disabledIcon.free();
+	_alphaIcon.free();
+}
 
 bool CloudIcon::draw() {
 	bool stop = false;
@@ -48,7 +52,6 @@ bool CloudIcon::draw() {
 	if (CloudMan.isWorking() || _disabledFrames > 0) {
 		if (g_system) {
 			if (!_wasVisible) {
-				g_system->clearOSD();
 				_wasVisible = true;
 			}
 			--_disabledFrames;
@@ -81,13 +84,11 @@ bool CloudIcon::draw() {
 	}
 
 	if (g_system) {
-		Graphics::TransparentSurface *surface = &_icon;
-		makeAlphaIcon((_showingDisabled ? _disabledIcon : _icon), _currentAlpha);
-		if (_alphaIcon.getPixels())
-			surface = &_alphaIcon;
-		if (surface && surface->getPixels()) {
-			int x = g_system->getOverlayWidth() - surface->w - 10, y = 10;
-			g_system->copyRectToOSD(surface->getPixels(), surface->pitch, x, y, surface->w, surface->h);
+		if (!stop) {
+			makeAlphaIcon((_showingDisabled ? _disabledIcon : _icon), _currentAlpha);
+			g_system->displayActivityIconOnOSD(&_alphaIcon);
+		} else {
+			g_system->displayActivityIconOnOSD(nullptr);
 		}
 	}
 
@@ -112,36 +113,17 @@ void CloudIcon::initIcons() {
 	_iconsInited = true;
 }
 
-void CloudIcon::loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size) {
+void CloudIcon::loadIcon(Graphics::Surface &icon, byte *data, uint32 size) {
 	Image::PNGDecoder decoder;
 	Common::MemoryReadStream stream(data, size);
 	if (!decoder.loadStream(stream))
 		error("CloudIcon::loadIcon: error decoding PNG");
 
-	Graphics::TransparentSurface *s = new Graphics::TransparentSurface(*decoder.getSurface(), true);
-	if (s) {
-		Graphics::PixelFormat f = g_system->getOSDFormat();
-		if (f != s->format) {
-			// Graphics::TransparentSurface::convertTo(f) errors out if the format is not 2Bpp or 4Bpp.
-			// We don't need to error out as we can recover from it. So check the format before calling convertTo(f);
-			Graphics::TransparentSurface *s2 = nullptr;
-			if (f.bytesPerPixel == 2 || f.bytesPerPixel == 4)
-				s2 = s->convertTo(f);
-			if (s2)
-				icon.copyFrom(*s2);
-			else
-				warning("CloudIcon::loadIcon: failed converting TransparentSurface");
-			delete s2;
-		} else {
-			icon.copyFrom(*s);
-		}
-		delete s;
-	} else {
-		warning("CloudIcon::loadIcon: failed reading TransparentSurface from PNGDecoder");
-	}
+	const Graphics::Surface *s = decoder.getSurface();
+	return icon.copyFrom(*s);
 }
 
-void CloudIcon::makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha) {
+void CloudIcon::makeAlphaIcon(Graphics::Surface &icon, float alpha) {
 	_alphaIcon.copyFrom(icon);
 
 	byte *pixels = (byte *)_alphaIcon.getPixels();

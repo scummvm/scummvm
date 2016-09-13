@@ -1102,43 +1102,23 @@ public:
 	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
-	* Blit a bitmap to the 'on screen display'.
-	*
-	* If the current pixel format has one byte per pixel, the graphics data
-	* uses 8 bits per pixel, using the palette specified via setPalette.
-	* If more than one byte per pixel is in use, the graphics data uses the
-	* pixel format returned by getScreenFormat.
-	*
-	* @param buf		the buffer containing the graphics data source
-	* @param pitch		the pitch of the buffer (number of bytes in a scanline)
-	* @param x			the x coordinate of the destination rectangle
-	* @param y			the y coordinate of the destination rectangle
-	* @param w			the width of the destination rectangle
-	* @param h			the height of the destination rectangle
-	*
-	* @note The specified destination rectangle must be completly contained
-	*       in the visible screen space, and must be non-empty. If not, a
-	*       backend may or may not perform clipping, trigger an assert or
-	*       silently corrupt memory.
-	*
-	* @see updateScreen
-	* @see getScreenFormat
-	* @see copyRectToScreen
-	*/
-
-	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) = 0;
-
-	/**
-	* Clears 'on screen display' from everything drawn on it.
-	*/
-
-	virtual void clearOSD() = 0;
-
-	/**
-	* Returns 'on screen display' pixel format.
-	*/
-
-	virtual Graphics::PixelFormat getOSDFormat() = 0;
+	 * Display an icon indicating background activity
+	 *
+	 * The icon is displayed in an 'on screen display'. It is visible above
+	 * the regular screen content or near it.
+	 *
+	 * The caller keeps ownership of the icon. It is acceptable to free
+	 * the surface just after the call.
+	 *
+	 * There is no preferred pixel format for the icon. The backend should
+	 * convert its copy of the icon to an appropriate format.
+	 *
+	 * The caller must call this method again with a null pointer
+	 * as a parameter to indicate the icon should no longer be displayed.
+	 *
+	 * @param icon the icon to display on screen
+	 */
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
 
 	/**
 	 * Return the SaveFileManager, used to store and load savestates
