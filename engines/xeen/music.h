@@ -65,6 +65,7 @@ private:
 	Common::Array<uint16> _effectsOffsets;
 	const byte *_musicPtr1, *_musicPtr2;
 	bool _fieldF;
+	uint _fieldFB[7];
 	int _field109;
 	int _field10B;
 	byte _field10D[7];
@@ -73,6 +74,11 @@ private:
 	int _field117;
 	bool _lowMusicIgnored;
 private:
+	/**
+	 * Initializes the state of the Adlib OPL driver
+	 */
+	void initialize();
+
 	/**
 	 * Loads effects data that was embedded in the music driver
 	 */
@@ -103,6 +109,11 @@ private:
 	 * Does a reset
 	 */
 	void reset();
+
+	/**
+	 * Resets all the output frequencies
+	 */
+	void resetFrequencies();
 
 	/**
 	 * Sets the frequency for an operator

@@ -27,19 +27,21 @@
 
 namespace Xeen {
 
-#define CALLBACKS_PER_SECOND 60
+#define CALLBACKS_PER_SECOND 72
 
 Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _effectsData(nullptr),
 		_musicPtr1(nullptr), _musicPtr2(nullptr), _lowMusicIgnored(false),
 		_fieldF(false), _field109(0), _field10B(0), _field114(0), 
 		_field115(0), _field117(0) {
 	_channels.resize(ADLIB_CHANNEL_COUNT);
+	Common::fill(&_fieldFB[0], &_fieldFB[7], 0);
 	Common::fill(&_field10D[0], &_field10D[7], 0);
-	
+
 	_mixer = mixer;
 	_opl = OPL::Config::create();
 	_opl->init();
 	_opl->start(new Common::Functor0Mem<void, Music>(this, &Music::onTimer), CALLBACKS_PER_SECOND);
+	initialize();
 
 	loadEffectsData();
 }
@@ -48,6 +50,15 @@ Music::~Music() {
 	_opl->stop();
 	delete _opl;
 	delete[] _effectsData;
+}
+
+void Music::initialize() {
+	write(1, 0x20);
+	write(8, 0);
+	write(0xBD, 0);
+
+	resetFrequencies();
+	reset();
 }
 
 void Music::loadEffectsData() {
@@ -119,6 +130,13 @@ void Music::reset() {
 	setFrequency(8, 0);
 	_channels[8]._outputLevel = 63;
 	setOutputLevel(8, 63);
+}
+
+void Music::resetFrequencies() {
+	for (int opNum = 6; opNum >= 0; --opNum) {
+		_fieldFB[opNum] = 0;
+		setFrequency(opNum, 0);
+	}
 }
 
 void Music::setFrequency(byte operatorNum, uint frequency) {
