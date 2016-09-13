@@ -253,6 +253,10 @@ Graphics::PixelFormat ModularBackend::getOSDFormat() {
 	return _graphicsManager->getOSDFormat();
 }
 
+void ModularBackend::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+	_graphicsManager->displayActivityIconOnOSD(icon);
+}
+
 void ModularBackend::quit() {
 	exit(0);
 }
