@@ -31,12 +31,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated Italian EOB1 translation.
    - Fixed a bug that caused a crash in Lands of Lore.
 
- Mohawk:
-   - Fixed visual glitches in the Spanish version of Myst.
-   - Changed the cancel button in the options dialog of Riven not to save the settings.
-   - Riven savegames created by ScummVM are now loadable in the original game.
-   - Fixed missing mouse cursor in Myst after loading a savegame while the intro is playing.
-
  SCI:
    - Fixed a missing dialog line in QfG3 which awards the player with 3 additional
      points. This is a bug in the original game interpreter. Due to this bug,
