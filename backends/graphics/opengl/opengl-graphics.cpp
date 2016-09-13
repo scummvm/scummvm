@@ -821,7 +821,8 @@ void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *ic
 	_osdIconChangeRequest = true;
 
 	_osdIconNextData.free();
-	_osdIconNextData.copyFrom(*icon);
+	if (icon)
+		_osdIconNextData.copyFrom(*icon);
 #endif
 }
 
