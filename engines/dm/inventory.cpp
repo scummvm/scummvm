@@ -882,7 +882,7 @@ void InventoryMan::clickOnMouth() {
 
 		_vm->_eventMan->_ignoreMouseMovements = true;
 		_vm->_pressingMouth = true;
-		if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
+		if (!_vm->_eventMan->isMouseButtonDown(kDMMouseButtonLeft)) {
 			_vm->_eventMan->_ignoreMouseMovements = false;
 			_vm->_pressingMouth = false;
 			_vm->_stopPressingMouth = false;
@@ -1049,7 +1049,7 @@ void InventoryMan::adjustStatisticCurrentValue(Champion *champ, uint16 statIndex
 void InventoryMan::clickOnEye() {
 	_vm->_eventMan->_ignoreMouseMovements = true;
 	_vm->_pressingEye = true;
-	if (!_vm->_eventMan->isMouseButtonDown(k1_LeftMouseButton)) {
+	if (!_vm->_eventMan->isMouseButtonDown(kDMMouseButtonLeft)) {
 		_vm->_eventMan->_ignoreMouseMovements = false;
 		_vm->_pressingEye = false;
 		_vm->_stopPressingEye = false;

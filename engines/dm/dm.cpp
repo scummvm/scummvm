@@ -540,7 +540,7 @@ void DMEngine::processEntrance() {
 			_eventMan->processCommandQueue();
 			_displayMan->updateScreen();
 		} while (_newGameFl == k99_modeWaitingOnEntrance);
-	} while (_newGameFl == k202_CommandEntranceDrawCredits);
+	} while (_newGameFl == kDMCommandEntranceDrawCredits);
 
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
 	_sound->play(k01_soundSWITCH, 112, 0x40, 0x40);
