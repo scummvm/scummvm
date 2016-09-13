@@ -843,25 +843,18 @@ void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
 		return;
 
 	Common::Rect sub(0, 0, _width, _height);
+	sub.translate(x, y);
+	sub.clip(g_fp->_sceneRect);
+	sub.translate(-x, -y);
 
-	if (x1 < 0) {
-		sub.left = -x1;
-		x1 = 0;
-	}
-
-	if (y1 < 0) {
-		sub.top = -y1;
-		y1 = 0;
-	}
-
-	if (x1 + sub.width() > 799)
-		sub.right -= x1 + sub.width() - 799;
-
-	if (y1 + sub.height() > 599)
-		sub.bottom -= y1 + sub.height() - 599;
-
-	if (sub.width() <= 0 || sub.height() <= 0)
+	if (sub.isEmpty())
 		return;
+
+	if (x1 < 0)
+		x1 = 0;
+
+	if (y1 < 0)
+		y1 = 0;
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
