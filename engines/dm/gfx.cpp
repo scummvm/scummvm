@@ -1184,7 +1184,7 @@ void DisplayMan::drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 map
 		return;
 
 	int16 mapSquare = _vm->_dungeonMan->_dungeonMapData[mapIndex][mapX][mapY];
-	if ((Square(mapSquare).getType() == k2_PitElemType) && getFlag(mapSquare, k0x0008_PitOpen)) {
+	if ((Square(mapSquare).getType() == kDMElementTypePit) && getFlag(mapSquare, kDMSquareMaskPitOpen)) {
 		if (flipHorizontal)
 			drawFloorPitOrStairsBitmapFlippedHorizontally(nativeBitmapIndex, *frame);
 		else
@@ -1245,7 +1245,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	bool skip = false;
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
-	case k19_StairsFrontElemType:
+	case kDMElementTypeStairsFront:
 		if (squareAspect[kDMSquareAspectStairsUp])
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexUpFrontD3L, frameStairsUpFrontD3L);
 		else
@@ -1254,7 +1254,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k0_viewFloor_D3L);
 		break;
-	case k0_WallElemType:
+	case kDMElementTypeWall:
 		drawWallSetBitmap(_bitmapWallSetD3LCR, _frameWalls163[k1_ViewSquare_D3L]);
 		isDrawnWallOrnAnAlcove(squareAspect[kDMSquareAspectRightWallOrnOrd], k0_ViewWall_D3L_RIGHT);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], k2_ViewWall_D3L_FRONT))
@@ -1424,7 +1424,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 			return;
 
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k1_viewFloor_D3C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k0_ViewSquare_D3C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
@@ -1442,7 +1442,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(k50_FloorPit_D3C_GraphicIndice, frameFloorPitD3C);
 	// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k1_viewFloor_D3C); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
@@ -1505,11 +1505,11 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeStairsSide:
 		drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD2L, frameStairsSideD2L);
 		// No break on purpose
-	case k16_DoorSideElemType:
+	case kDMElementTypeDoorSide:
 		order = k0x0342_CellOrder_BackRight_FrontLeft_FrontRight;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k3_viewFloor_D2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k3_viewFloor_D2L);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k4_ViewSquare_D2L, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2L);
@@ -1522,7 +1522,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 										frameFloorPitD2L);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k3_viewFloor_D2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		break;
@@ -1590,13 +1590,13 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypeStairsSide:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(_stairsNativeBitmapIndexSideD2L, frameStairsSideD2R);
 		// No break on purpose
-	case k16_DoorSideElemType:
+	case kDMElementTypeDoorSide:
 		order = k0x0431_CellOrder_BackLeft_FrontRight_FrontLeft;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k5_viewFloor_D2R);
 		drawCeilingPit(k63_ceilingPit_D2L_GraphicIndice, &frameCeilingPitD2R, posX, posY, true);
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k5_ViewSquare_D2R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k5_ViewSquare_D2R, k0x0128_CellOrder_DoorPass1_BackRight_BackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2R);
@@ -1609,7 +1609,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 			squareAspect[kDMSquareAspectPitInvisible] ? k57_FloorPir_Invisible_D2L_GraphicIndice : k51_FloorPit_D2L_GraphicIndice, frameFloorPitD2R);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k5_viewFloor_D2R);
@@ -1673,7 +1673,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		else
 			return;
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k4_viewFloor_D2C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k3_ViewSquare_D2C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD2LCR, doorFrameTopD2C);
@@ -1691,7 +1691,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? k58_FloorPit_invisible_D2C_GraphicIndice : k52_FloorPit_D2C_GraphicIndice, frameFloorPitD2C);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k4_viewFloor_D2C);
@@ -1758,13 +1758,13 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		else
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexDownSideD1L, frameStairsDownSideD1L);
 		// No break on purpose
-	case k16_DoorSideElemType:
+	case kDMElementTypeDoorSide:
 		order = k0x0032_CellOrder_BackRight_FrontRight;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k6_viewFloor_D1L);
 		drawCeilingPit(k65_ceilingPitD1L_GraphicIndice, &frameCeilingPitD1L, posX, posY, false);
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k6_viewFloor_D1L);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k7_ViewSquare_D1L, k0x0028_CellOrder_DoorPass1_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1L);
@@ -1776,7 +1776,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? k59_floorPit_invisible_D1L_GraphicIndice : k53_FloorPit_D1L_GraphicIndice, frameFloorPitD1L);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x0032_CellOrder_BackRight_FrontRight;
 		 /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k6_viewFloor_D1L);
@@ -1843,12 +1843,12 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmapFlippedHorizontally(_stairsNativeBitmapIndexDownSideD1L, frameStairsDownSideD1R);
 
 		// No break on purpose
-	case k16_DoorSideElemType:
+	case kDMElementTypeDoorSide:
 		order = k0x0041_CellOrder_BackLeft_FrontLeft;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k8_viewFloor_D1R); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawCeilingPit(k65_ceilingPitD1L_GraphicIndice, &frameCeilingPitD1R, posX, posY, true);
 		break;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k8_viewFloor_D1R);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k8_ViewSquare_D1R, k0x0018_CellOrder_DoorPass1_BackLeft);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1R);
@@ -1861,7 +1861,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 														   : k53_FloorPit_D1L_GraphicIndice, frameFloorPitD1R);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x0041_CellOrder_BackLeft_FrontLeft;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k8_viewFloor_D1R); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawCeilingPit(k65_ceilingPitD1L_GraphicIndice, &frameCeilingPitD1R, posX, posY, true);
@@ -1928,7 +1928,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 			releaseBlock(k1_DerivedBitmapThievesEyeVisibleArea | 0x8000);
 		}
 		return;
-	case k17_DoorFrontElemType:
+	case kDMElementTypeDoorFront:
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k7_viewFloor_D1C);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k6_ViewSquare_D1C, k0x0218_CellOrder_DoorPass1_BackLeft_BackRight);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1C);
@@ -1945,7 +1945,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? k60_floorPitInvisibleD1C_GraphicIndice : k54_FloorPit_D1C_GraphicIndice, frameFloorPitD1C);
 		// No break on purpose
 	case kDMElementTypeTeleporter:
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 		order = k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], k7_viewFloor_D1C);
@@ -1971,17 +1971,17 @@ void DisplayMan::drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
-	case k0_WallElemType:
+	case kDMElementTypeWall:
 		drawWallSetBitmap(bitmapWallSetWallD0L, _frameWalls163[k10_ViewSquare_D0L]);
 		break;
-	case k1_CorridorElemType:
-	case k5_TeleporterElemType:
-	case k16_DoorSideElemType:
+	case kDMElementTypeCorridor:
+	case kDMElementTypeTeleporter:
+	case kDMElementTypeDoorSide:
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k10_ViewSquare_D0L, k0x0002_CellOrder_BackRight);
 		break;
-	case k2_PitElemType:
+	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? k61_floorPitInvisibleD0L_GraphicIndice : k55_FloorPit_D0L_GraphicIndice, frameFloorPitD0L);
-	case k18_StairsSideElemType:
+	case kDMElementTypeStairsSide:
 		if (squareAspect[kDMSquareAspectStairsUp])
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD0L, frameStairsSideD0L);
 		break;
@@ -2009,8 +2009,8 @@ void DisplayMan::drawSquareD0R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[kDMSquareAspectPitInvisible] ? k61_floorPitInvisibleD0L_GraphicIndice
 														   : k55_FloorPit_D0L_GraphicIndice, frameFloorPitD0R);
-	case k1_CorridorElemType:
-	case k16_DoorSideElemType:
+	case kDMElementTypeCorridor:
+	case kDMElementTypeDoorSide:
 	case kDMElementTypeTeleporter:
 		drawCeilingPit(k67_ceilingPitD0L_grahicIndice, &frameCeilingPitD0R, posX, posY, true);
 		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, k11_ViewSquare_D0R, k0x0001_CellOrder_BackLeft);
@@ -2037,7 +2037,7 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
-	case k16_DoorSideElemType:
+	case kDMElementTypeDoorSide:
 		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
 			blitToBitmap(getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
@@ -2098,10 +2098,10 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapFloor, floorFrame);
 	}
 
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == k0_WallElemType)
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kDMElementTypeWall)
 		drawWallSetBitmap(_bitmapWallSetD3L2, frameWallD3L2);
 
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == k0_WallElemType)
+	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kDMElementTypeWall)
 		drawWallSetBitmap(_bitmapWallSetD3R2, _frameWallD3R2);
 
 	int16 tmpPosX = posX;

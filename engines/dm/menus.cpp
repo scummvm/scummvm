@@ -1105,7 +1105,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	case kDMActionKick:
 	case kDMActionSwing:
 	case kDMActionChop:
-		if ((Square(targetSquare).getType() == k4_DoorElemType) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
+		if ((Square(targetSquare).getType() == kDMElementTypeDoor) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
 			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, kDMSlotActionHand), false, 2);
@@ -1287,7 +1287,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
 		nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((_vm->_dungeonMan->getSquare(nextMapX, nextMapY).getType() == k2_PitElemType) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
+		if ((_vm->_dungeonMan->getSquare(nextMapX, nextMapY).getType() == kDMElementTypePit) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether
 			   the pit is open before moving the party over the pit. This is not consistent with the behavior when using the
 			   rope in front of a corridor where nothing happens */

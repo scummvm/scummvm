@@ -1468,7 +1468,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 		_vm->_inventoryMan->toggleInventory(kDMChampionCloseInventory);
 	}
 	dropAllObjects(champIndex);
-	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(k0x8000_championBones | kDMThingTypeJunk);
+	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMMaskChampionBones | kDMThingTypeJunk);
 	uint16 curCell = 0;
 	if (unusedThing != Thing::_none) {
 		Junk *L0966_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(unusedThing);
@@ -1898,7 +1898,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 
 	char L0807_ac_DecodedChampionText[77];
 	char *decodedStringPtr = L0807_ac_DecodedChampionText;
-	_vm->_dungeonMan->decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | k0x8000_DecodeEvenIfInvisible));
+	_vm->_dungeonMan->decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
 
 	uint16 charIdx = 0;
 	char tmpChar;

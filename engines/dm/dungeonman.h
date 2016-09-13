@@ -229,44 +229,27 @@ enum ExplosionType {
 };
 
 enum SquareMask {
-	k0x0001_WallWestRandOrnAllowed = 0x1, // @ MASK0x0001_WALL_WEST_RANDOM_ORNAMENT_ALLOWED
-	k0x0002_WallSouthRandOrnAllowed = 0x2, // @ MASK0x0002_WALL_SOUTH_RANDOM_ORNAMENT_ALLOWED
-	k0x0004_WallEastRandOrnAllowed = 0x4, // @ MASK0x0004_WALL_EAST_RANDOM_ORNAMENT_ALLOWED
-	k0x0008_WallNorthRandOrnAllowed = 0x8, // @ MASK0x0008_WALL_NORTH_RANDOM_ORNAMENT_ALLOWED
-	k0x0008_CorridorRandOrnAllowed = 0x8, // @ MASK0x0008_CORRIDOR_RANDOM_ORNAMENT_ALLOWED
-	k0x0001_PitImaginary = 0x1, // @ MASK0x0001_PIT_IMAGINARY
-	k0x0004_PitInvisible = 0x4, // @ MASK0x0004_PIT_INVISIBLE
-	k0x0008_PitOpen = 0x8, // @ MASK0x0008_PIT_OPEN
-	k0x0004_StairsUp = 0x4, // @ MASK0x0004_STAIRS_UP
-	k0x0008_StairsNorthSouthOrient = 0x8, // @ MASK0x0008_STAIRS_NORTH_SOUTH_ORIENTATION
-	k0x0008_DoorNorthSouthOrient = 0x8, // @ MASK0x0008_DOOR_NORTH_SOUTH_ORIENTATION
-	k0x0004_TeleporterVisible = 0x4, // @ MASK0x0004_TELEPORTER_VISIBLE
-	k0x0008_TeleporterOpen = 0x8, // @ MASK0x0008_TELEPORTER_OPEN
-	k0x0001_FakeWallImaginary = 0x1, // @ MASK0x0001_FAKEWALL_IMAGINARY
-	k0x0004_FakeWallOpen = 0x4, // @ MASK0x0004_FAKEWALL_OPEN
-	k0x0008_FakeWallRandOrnOrFootPAllowed = 0x8, // @ MASK0x0008_FAKEWALL_RANDOM_ORNAMENT_OR_FOOTPRINTS_ALLOWED
-	k0x0010_ThingListPresent = 0x10, // @ MASK0x0010_THING_LIST_PRESENT
-	k0x8000_DecodeEvenIfInvisible = 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
+	kDMSquareMaskWallWestRandOrnament = 0x1, // @ MASK0x0001_WALL_WEST_RANDOM_ORNAMENT_ALLOWED
+	kDMSquareMaslWallSouthRandOrnament = 0x2, // @ MASK0x0002_WALL_SOUTH_RANDOM_ORNAMENT_ALLOWED
+	kDMSquareMaskWallEastRandOrnament = 0x4, // @ MASK0x0004_WALL_EAST_RANDOM_ORNAMENT_ALLOWED
+	kDMSquareMaskWallNorthRandOrnament = 0x8, // @ MASK0x0008_WALL_NORTH_RANDOM_ORNAMENT_ALLOWED
+	kDMSquareMaskCorridorRandOrnament = 0x8, // @ MASK0x0008_CORRIDOR_RANDOM_ORNAMENT_ALLOWED
+	kDMSquareMaskPitImaginary = 0x1, // @ MASK0x0001_PIT_IMAGINARY
+	kDMSquareMaskPitInvisible = 0x4, // @ MASK0x0004_PIT_INVISIBLE
+	kDMSquareMaskPitOpen = 0x8, // @ MASK0x0008_PIT_OPEN
+	kDMSquareMaskStairsUp = 0x4, // @ MASK0x0004_STAIRS_UP
+	kDMSquareMaskStairsNorthSouth = 0x8, // @ MASK0x0008_STAIRS_NORTH_SOUTH_ORIENTATION
+	kDMSquareMaskDoorNorthSouth = 0x8, // @ MASK0x0008_DOOR_NORTH_SOUTH_ORIENTATION
+	kDMSquareMaskTeleporterVisible = 0x4, // @ MASK0x0004_TELEPORTER_VISIBLE
+	kDMSquareMaskTeleporterOpen = 0x8, // @ MASK0x0008_TELEPORTER_OPEN
+	kDMSquareMaskFakeWallImaginary = 0x1, // @ MASK0x0001_FAKEWALL_IMAGINARY
+	kDMSquareMaskFakeWallOpen = 0x4, // @ MASK0x0004_FAKEWALL_OPEN
+	kDMSquareMaskFakeWallRandOrnamentOrFootprintsAllowed = 0x8, // @ MASK0x0008_FAKEWALL_RANDOM_ORNAMENT_OR_FOOTPRINTS_ALLOWED
+	kDMSquareMaskThingListPresent = 0x10 // @ MASK0x0010_THING_LIST_PRESENT
 };
 
-enum SquareType {
-	kM2_ChampionElemType = -2, // @ CM2_ELEMENT_CHAMPION
-	kM1_CreatureElemType = -1, // @ CM1_ELEMENT_CREATURE
-	k0_WallElemType = 0, // @ C00_ELEMENT_WALL
-	k1_CorridorElemType = 1, // @ C01_ELEMENT_CORRIDOR
-	k2_PitElemType = 2, // @ C02_ELEMENT_PIT
-	k3_StairsElemType = 3, // @ C03_ELEMENT_STAIRS
-	k4_DoorElemType = 4, // @ C04_ELEMENT_DOOR
-	k5_TeleporterElemType = 5, // @ C05_ELEMENT_TELEPORTER
-	k6_FakeWallElemType = 6, // @ C06_ELEMENT_FAKEWALL
-	k16_DoorSideElemType = 16, // @ C16_ELEMENT_DOOR_SIDE
-	k17_DoorFrontElemType = 17, // @ C17_ELEMENT_DOOR_FRONT
-	k18_StairsSideElemType = 18, // @ C18_ELEMENT_STAIRS_SIDE
-	k19_StairsFrontElemType = 19 // @ C19_ELEMENT_STAIRS_FRONT
-}; // @ C[-2..19]_ELEMENT_...
-
-#define k0x8000_championBones 0x8000 // @ MASK0x8000_CHAMPION_BONES
-#define k0x7FFF_thingType 0x7FFF // @ MASK0x7FFF_THING_TYPE
+#define kDMMaskChampionBones 0x8000 // @ MASK0x8000_CHAMPION_BONES
+#define kDMMaskThingType 0x7FFF // @ MASK0x7FFF_THING_TYPE
 
 class ObjectInfoIndex {
 public:
@@ -567,15 +550,15 @@ class Square {
 	byte _data;
 public:
 	explicit Square(byte dat = 0) : _data(dat) {}
-	explicit Square(SquareType type) { setType(type); }
+	explicit Square(ElementType type) { setType(type); }
 	explicit Square(byte element, byte mask) : _data((element << 5) | mask) {}
 	Square &set(byte dat) { this->_data = dat; return *this; }
 	Square &set(SquareMask mask) { _data |= mask; return *this; }
 	byte get(SquareMask mask) { return _data & mask; }
 	byte getDoorState() { return _data & 0x7; } // @ M36_DOOR_STATE
 	void setDoorState(byte state) { _data = ((_data & ~0x7) | state); } // @ M37_SET_DOOR_STATE
-	SquareType getType() { return (SquareType)(_data >> 5); } // @ M34_SQUARE_TYPE
-	void setType(SquareType type) { _data = (_data & 0x1F) | type << 5; }
+	ElementType getType() { return (ElementType)(_data >> 5); } // @ M34_SQUARE_TYPE
+	void setType(ElementType type) { _data = (_data & 0x1F) | type << 5; }
 	byte toByte() { return _data; } // I don't like 'em casts
 }; // wrapper for bytes which are used as squares
 
@@ -655,7 +638,7 @@ public:
 
 	bool isWallOrnAnAlcove(int16 wallOrnIndex); // @ F0149_DUNGEON_IsWallOrnamentAnAlcove
 	void mapCoordsAfterRelMovement(Direction dir, int16 stepsForward, int16 stepsRight, int16 &posX, int16 &posY); // @ F0150_DUNGEON_UpdateMapCoordinatesAfterRelativeMovement
-	SquareType getRelSquareType(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
+	ElementType getRelSquareType(Direction dir, int16 stepsForward, int16 stepsRight, int16 posX, int16 posY) {
 		return Square(getRelSquare(dir, stepsForward, stepsRight, posX, posY)).getType();
 	} // @ F0153_DUNGEON_GetRelativeSquareType
 	void setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY); // @ F0172_DUNGEON_SetSquareAspect

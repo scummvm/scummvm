@@ -801,21 +801,21 @@ Square DungeonMan::getSquare(int16 mapX, int16 mapY) {
 		return Square(_currMapData[mapX][mapY]);
 
 	if (isMapYInBounds) {
-		SquareType squareType = Square(_currMapData[0][mapY]).getType();
-		if (((mapX == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
-			return Square(kDMElementTypeWall, k0x0004_WallEastRandOrnAllowed);
+		ElementType squareType = Square(_currMapData[0][mapY]).getType();
+		if (((mapX == -1) && (squareType == kDMElementTypeCorridor)) || (squareType == kDMElementTypePit))
+			return Square(kDMElementTypeWall, kDMSquareMaskWallEastRandOrnament);
 
 		squareType = Square(_currMapData[_currMapWidth - 1][mapY]).getType();
-		if (((mapX == _currMapWidth) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
-			return Square(kDMElementTypeWall, k0x0001_WallWestRandOrnAllowed);
+		if (((mapX == _currMapWidth) && (squareType == kDMElementTypeCorridor)) || (squareType == kDMElementTypePit))
+			return Square(kDMElementTypeWall, kDMSquareMaskWallWestRandOrnament);
 	} else if (isMapXInBounds) {
-		SquareType squareType = Square(_currMapData[mapX][0]).getType();
-		if (((mapY == -1) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
-			return Square(kDMElementTypeWall, k0x0002_WallSouthRandOrnAllowed);
+		ElementType squareType = Square(_currMapData[mapX][0]).getType();
+		if (((mapY == -1) && (squareType == kDMElementTypeCorridor)) || (squareType == kDMElementTypePit))
+			return Square(kDMElementTypeWall, kDMSquareMaslWallSouthRandOrnament);
 
 		squareType = Square(_currMapData[mapX][_currMapHeight - 1]).getType();
-		if (((mapY == _currMapHeight) && (squareType == k1_CorridorElemType)) || (squareType == k2_PitElemType))
-			return Square(kDMElementTypeWall, k0x0008_WallNorthRandOrnAllowed);
+		if (((mapY == _currMapHeight) && (squareType == kDMElementTypeCorridor)) || (squareType == kDMElementTypePit))
+			return Square(kDMElementTypeWall, kDMSquareMaskWallNorthRandOrnament);
 	}
 	return Square(kDMElementTypeWall, 0);
 }
@@ -827,13 +827,13 @@ Square DungeonMan::getRelSquare(Direction dir, int16 stepsForward, int16 stepsRi
 
 int16 DungeonMan::getSquareFirstThingIndex(int16 mapX, int16 mapY) {
 	unsigned char *curSquare = _currMapData[mapX];
-	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight) || !getFlag(curSquare[mapY], k0x0010_ThingListPresent))
+	if ((mapX < 0) || (mapX >= _currMapWidth) || (mapY < 0) || (mapY >= _currMapHeight) || !getFlag(curSquare[mapY], kDMSquareMaskThingListPresent))
 		return -1;
 
 	int16 curMapY = 0;
 	uint16 thingIndex = _currMapColCumulativeSquareFirstThingCount[mapX];
 	while (curMapY++ != mapY) {
-		if (getFlag(*curSquare++, k0x0010_ThingListPresent))
+		if (getFlag(*curSquare++, kDMSquareMaskThingListPresent))
 			thingIndex++;
 	}
 	return thingIndex;
@@ -867,24 +867,24 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 	case kDMElementTypeWall:
 		switch (dir) {
 		case kDMDirNorth:
-			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
-			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
-			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallEastRandOrnament);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaslWallSouthRandOrnament);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallWestRandOrnament);
 			break;
 		case kDMDirEast:
-			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
-			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
-			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaslWallSouthRandOrnament);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallWestRandOrnament);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallNorthRandOrnament);
 			break;
 		case kDMDirSouth:
-			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0001_WallWestRandOrnAllowed);
-			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
-			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallWestRandOrnament);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallNorthRandOrnament);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallEastRandOrnament);
 			break;
 		case kDMDirWest:
-			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_WallNorthRandOrnAllowed);
-			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0004_WallEastRandOrnAllowed);
-			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0002_WallSouthRandOrnAllowed);
+			leftRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallNorthRandOrnament);
+			frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskWallEastRandOrnament);
+			rightRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaslWallSouthRandOrnament);
 			break;
 		default:
 			assert(false);
@@ -918,31 +918,31 @@ T0172010_ClosedFakeWall:
 		}
 		break;
 	case kDMElementTypeFakeWall:
-		if (!getFlag(AL0307_uc_Square, k0x0004_FakeWallOpen)) {
+		if (!getFlag(AL0307_uc_Square, kDMSquareMaskFakeWallOpen)) {
 			aspectArray[kDMSquareAspectElement] = kDMElementTypeWall;
-			leftRandomWallOrnamentAllowed = rightRandomWallOrnamentAllowed = frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed);
+			leftRandomWallOrnamentAllowed = rightRandomWallOrnamentAllowed = frontRandomWallOrnamentAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskFakeWallRandOrnamentOrFootprintsAllowed);
 			squareIsFakeWall = true;
 			goto T0172010_ClosedFakeWall;
 		}
-		aspectArray[kDMSquareAspectElement] = k1_CorridorElemType;
-		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, k0x0008_FakeWallRandOrnOrFootPAllowed) ? 8 : 0;
+		aspectArray[kDMSquareAspectElement] = kDMElementTypeCorridor;
+		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskFakeWallRandOrnamentOrFootprintsAllowed) ? 8 : 0;
 		// No break on purpose
-	case k1_CorridorElemType:
+	case kDMElementTypeCorridor:
 	case kDMElementTypePit:
 	case kDMElementTypeTeleporter:
-		if (aspectArray[kDMSquareAspectElement] == k1_CorridorElemType) {
-			aspectArray[kDMSquareAspectFloorOrn] = getRandomOrnOrdinal(getFlag(AL0307_uc_Square, k0x0008_CorridorRandOrnAllowed), _currMap->_randFloorOrnCount, mapX, mapY, 30);
+		if (aspectArray[kDMSquareAspectElement] == kDMElementTypeCorridor) {
+			aspectArray[kDMSquareAspectFloorOrn] = getRandomOrnOrdinal(getFlag(AL0307_uc_Square, kDMSquareMaskCorridorRandOrnament), _currMap->_randFloorOrnCount, mapX, mapY, 30);
 			AL0307_uc_FootprintsAllowed = true;
 		} else if (aspectArray[kDMSquareAspectElement] == kDMElementTypePit) {
-			if (getFlag(AL0307_uc_Square, k0x0008_PitOpen)) {
-				aspectArray[kDMSquareAspectPitInvisible] = getFlag(AL0307_uc_Square, k0x0004_PitInvisible);
+			if (getFlag(AL0307_uc_Square, kDMSquareMaskPitOpen)) {
+				aspectArray[kDMSquareAspectPitInvisible] = getFlag(AL0307_uc_Square, kDMSquareMaskPitInvisible);
 				AL0307_uc_FootprintsAllowed &= 0x0001;
 			} else {
-				aspectArray[kDMSquareAspectElement] = k1_CorridorElemType;
+				aspectArray[kDMSquareAspectElement] = kDMElementTypeCorridor;
 				AL0307_uc_FootprintsAllowed = true;
 			}
 		} else { // k5_ElementTypeTeleporter
-			aspectArray[kDMSquareAspectTeleporterVisible] = getFlag(AL0307_uc_Square, k0x0008_TeleporterOpen) && getFlag(AL0307_uc_Square, k0x0004_TeleporterVisible);
+			aspectArray[kDMSquareAspectTeleporterVisible] = getFlag(AL0307_uc_Square, kDMSquareMaskTeleporterOpen) && getFlag(AL0307_uc_Square, kDMSquareMaskTeleporterVisible);
 			AL0307_uc_FootprintsAllowed = true;
 		}
 
@@ -960,17 +960,17 @@ T0172010_ClosedFakeWall:
 
 		break;
 	case kDMElementTypeStairs:
-		aspectArray[kDMSquareAspectElement] = (bool((getFlag(AL0307_uc_Square, k0x0008_StairsNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) ? kDMElementTypeStairsSide : kDMElementTypeStairsFront;
-		aspectArray[kDMSquareAspectStairsUp] = getFlag(AL0307_uc_Square, k0x0004_StairsUp);
+		aspectArray[kDMSquareAspectElement] = (bool((getFlag(AL0307_uc_Square, kDMSquareMaskStairsNorthSouth) >> 3)) == _vm->isOrientedWestEast(dir)) ? kDMElementTypeStairsSide : kDMElementTypeStairsFront;
+		aspectArray[kDMSquareAspectStairsUp] = getFlag(AL0307_uc_Square, kDMSquareMaskStairsUp);
 		AL0307_uc_FootprintsAllowed = false;
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 		break;
-	case k4_DoorElemType:
-		if (bool((getFlag(AL0307_uc_Square, (byte) k0x0008_DoorNorthSouthOrient) >> 3)) == _vm->isOrientedWestEast(dir)) {
-			aspectArray[kDMSquareAspectElement] = k16_DoorSideElemType;
+	case kDMElementTypeDoor:
+		if (bool((getFlag(AL0307_uc_Square, (byte) kDMSquareMaskDoorNorthSouth) >> 3)) == _vm->isOrientedWestEast(dir)) {
+			aspectArray[kDMSquareAspectElement] = kDMElementTypeDoorSide;
 		} else {
-			aspectArray[kDMSquareAspectElement] = k17_DoorFrontElemType;
+			aspectArray[kDMSquareAspectElement] = kDMElementTypeDoorFront;
 			aspectArray[kDMSquareAspectDoorState] = Square(AL0307_uc_Square).getDoorState();
 			aspectArray[kDMSquareAspectDoorThingIndex] = getSquareFirstThing(mapX, mapY).getIndex();
 		}
@@ -1118,8 +1118,8 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 	};
 
 	TextString textString(_thingData[kDMstringTypeText] + thing.getIndex() * _thingDataWordCount[kDMstringTypeText]);
-	if ((textString.isVisible()) || (type & k0x8000_DecodeEvenIfInvisible)) {
-		type = (TextType)(type & ~k0x8000_DecodeEvenIfInvisible);
+	if ((textString.isVisible()) || (type & kDMMaskDecodeEvenIfInvisible)) {
+		type = (TextType)(type & ~kDMMaskDecodeEvenIfInvisible);
 		char sepChar;
 		if (type == kDMTextTypeMessage) {
 			*destString++ = '\n';
@@ -1181,8 +1181,8 @@ void DungeonMan::decodeText(char *destString, Thing thing, TextType type) {
 }
 
 Thing DungeonMan::getUnusedThing(uint16 thingType) {
-	int16 thingCount = _dungeonFileHeader._thingCounts[getFlag(thingType, k0x7FFF_thingType)];
-	if (thingType == (k0x8000_championBones | kDMThingTypeJunk)) {
+	int16 thingCount = _dungeonFileHeader._thingCounts[getFlag(thingType, kDMMaskThingType)];
+	if (thingType == (kDMMaskChampionBones | kDMThingTypeJunk)) {
 		thingType = kDMThingTypeJunk;
 	} else if (thingType == kDMThingTypeJunk)
 		thingCount -= 3; /* Always keep 3 unused JUNK things for the bones of dead champions */
@@ -1314,10 +1314,10 @@ void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 map
 	/* If mapX >= 0 then the thing is linked to the list of things on the specified square else it is linked at the end of the specified thing list */
 	if (mapX >= 0) {
 		byte *currSquare = &_currMapData[mapX][mapY];
-		if (getFlag(*currSquare, k0x0010_ThingListPresent)) {
+		if (getFlag(*currSquare, kDMSquareMaskThingListPresent)) {
 			thingInList = getSquareFirstThing(mapX, mapY);
 		} else {
-			setFlag(*currSquare, k0x0010_ThingListPresent);
+			setFlag(*currSquare, kDMSquareMaskThingListPresent);
 			uint16 *tmp = _currMapColCumulativeSquareFirstThingCount + mapX + 1;
 			uint16 currColumn = _dungeonColumCount - (_dungeonMapsFirstColumnIndex[_currMapIndex] + mapX) - 1;
 			while (currColumn--) { /* For each column starting from and after the column containing the square where the thing is added */
@@ -1327,7 +1327,7 @@ void DungeonMan::linkThingToList(Thing thingToLink, Thing thingInList, int16 map
 			currSquare -= mapY;
 			uint16 currSquareFirstThingIndex = _currMapColCumulativeSquareFirstThingCount[mapX];
 			while (currMapY++ != mapY) {
-				if (getFlag(*currSquare++, k0x0010_ThingListPresent))
+				if (getFlag(*currSquare++, kDMSquareMaskThingListPresent))
 					currSquareFirstThingIndex++;
 			}
 			Thing *currThing = &_squareFirstThings[currSquareFirstThingIndex];
@@ -1435,7 +1435,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 		
 		for (int16 currMapX = 0; currMapX <= mapWidth; currMapX++) {
 			for (int16 currMapY = 0; currMapY <= mapHeight; currMapY++) {
-				if (getFlag(*currSquare++, k0x0010_ThingListPresent)) {
+				if (getFlag(*currSquare++, kDMSquareMaskThingListPresent)) {
 					Thing squareThing = *squareFirstThing++;
 					if ((mapIndex == _partyMapIndex) && ((currMapX - _partyMapX + 5) <= 10) && ((currMapY - _partyMapY + 5) <= 10)) /* If square is too close to the party */
 						continue;
@@ -1559,7 +1559,7 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 		uint16 firstThingIndex = getSquareFirstThingIndex(mapX, mapY);
 		Thing *currThing = &_squareFirstThings[firstThingIndex]; /* BUG0_01 Coding error without consequence. The engine does not check that there are things at the specified square coordinates. f160_getSquareFirstThingIndex would return -1 for an empty square. No consequence as the function is never called with the coordinates of an empty square (except in the case of BUG0_59) */
 		if ((*thingPtr == Thing::_endOfList) && (((Thing *)currThing)->getTypeAndIndex() == thingToUnlink.toUint16())) { /* If the thing to unlink is the last thing on the square */
-			clearFlag(_currMapData[mapX][mapY], k0x0010_ThingListPresent);
+			clearFlag(_currMapData[mapX][mapY], kDMSquareMaskThingListPresent);
 			uint16 squareFirstThingIdx = _dungeonFileHeader._squareFirstThingCount - 1;
 			for (uint16 i = 0; i < squareFirstThingIdx - firstThingIndex; ++i)
 				currThing[i] = currThing[i + 1];
@@ -1597,7 +1597,7 @@ void DungeonMan::unlinkThingFromList(Thing thingToUnlink, Thing thingInList, int
 }
 
 int16 DungeonMan::getStairsExitDirection(int16 mapX, int16 mapY) {
-	bool northSouthOrientedStairs = !getFlag(getSquare(mapX, mapY).toByte(), k0x0008_StairsNorthSouthOrient);
+	bool northSouthOrientedStairs = !getFlag(getSquare(mapX, mapY).toByte(), kDMSquareMaskStairsNorthSouth);
 
 	if (northSouthOrientedStairs) {
 		mapX = mapX + _vm->_dirIntoStepCountEast[kDMDirEast];

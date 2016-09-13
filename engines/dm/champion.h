@@ -387,7 +387,6 @@ enum SpellType {
 
 #define kDMMaskNoSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
 #define kDMMaskSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
-#define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
 class Skill {
 public:

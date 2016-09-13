@@ -449,7 +449,7 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 effect = event->_Cu.A._effect;
 	if (effect == kDMSensorEffectToggle)
-		effect = getFlag(*curSquare, k0x0004_FakeWallOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
+		effect = getFlag(*curSquare, kDMSquareMaskFakeWallOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
 	if (effect == kDMSensorEffectClear) {
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY)) {
@@ -461,10 +461,10 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 				event->_mapTime++;
 				addEventGetEventIndex(event);
 			} else
-				clearFlag(*curSquare, k0x0004_FakeWallOpen);
+				clearFlag(*curSquare, kDMSquareMaskFakeWallOpen);
 		}
 	} else
-		setFlag(*curSquare, k0x0004_FakeWallOpen);
+		setFlag(*curSquare, kDMSquareMaskFakeWallOpen);
 }
 
 void Timeline::processEventDoorDestruction(TimelineEvent *event) {
@@ -493,13 +493,13 @@ void Timeline::processEventSquarePit(TimelineEvent *event) {
 
 	byte *square = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	if (event->_Cu.A._effect == kDMSensorEffectToggle)
-		event->_Cu.A._effect = getFlag(*square, k0x0008_PitOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
+		event->_Cu.A._effect = getFlag(*square, kDMSquareMaskPitOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
 	if (event->_Cu.A._effect == kDMSensorEffectSet) {
-		setFlag(*square, k0x0008_PitOpen);
+		setFlag(*square, kDMSquareMaskPitOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
-		clearFlag(*square, k0x0008_PitOpen);
+		clearFlag(*square, kDMSquareMaskPitOpen);
 }
 
 void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
@@ -560,13 +560,13 @@ void Timeline::processEventSquareTeleporter(TimelineEvent *event) {
 
 	byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
 	if (event->_Cu.A._effect == kDMSensorEffectToggle)
-		event->_Cu.A._effect = getFlag(*curSquare, k0x0008_TeleporterOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
+		event->_Cu.A._effect = getFlag(*curSquare, kDMSquareMaskTeleporterOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 
 	if (event->_Cu.A._effect == kDMSensorEffectSet) {
-		setFlag(*curSquare, k0x0008_TeleporterOpen);
+		setFlag(*curSquare, kDMSquareMaskTeleporterOpen);
 		moveTeleporterOrPitSquareThings(mapX, mapY);
 	} else
-		clearFlag(*curSquare, k0x0008_TeleporterOpen);
+		clearFlag(*curSquare, kDMSquareMaskTeleporterOpen);
 }
 
 void Timeline::processEventSquareWall(TimelineEvent *event) {

@@ -754,9 +754,9 @@ void DMEngine::drawEntrance() {
 
 	for (int16 idx = 0; idx < 5; idx++) {
 		microDungeonCurrentMapData[idx] = (byte*)&microDungeonSquares[idx * 5];
-		microDungeonSquares[idx + 10] = Square(k1_CorridorElemType, 0);
+		microDungeonSquares[idx + 10] = Square(kDMElementTypeCorridor, 0);
 	}
-	microDungeonSquares[7] = Square(k1_CorridorElemType, 0);
+	microDungeonSquares[7] = Square(kDMElementTypeCorridor, 0);
 	_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 
 	// note, a global variable is used here in the original
@@ -986,7 +986,7 @@ void DMEngine::fuseSequence() {
 	while (textStringThingCount--) {
 		for (int16 idx = 0; idx < maxCount; idx++) {
 			char decodedString[200];
-			_dungeonMan->decodeText(decodedString, textStringThings[idx], (TextType)(kDMTextTypeMessage | k0x8000_DecodeEvenIfInvisible));
+			_dungeonMan->decodeText(decodedString, textStringThings[idx], (TextType)(kDMTextTypeMessage | kDMMaskDecodeEvenIfInvisible));
 			if (decodedString[1] == textFirstChar) {
 				_textMan->clearAllRows();
 				decodedString[1] = '\n'; /* New line */

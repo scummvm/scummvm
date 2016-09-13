@@ -968,7 +968,7 @@ T0209096_SetBehavior0_Wander:
 					}
 					/* If 1/8 chance and the creature is not adjacent to the party and is a quarter square sized creature then process projectile impacts and update the creature cell if still alive. When the creature is not in front of the party, it has 7/8 chances of dodging a projectile by moving to another cell or staying in the center of the square */
 					if (!(AL0446_i_GroupCellsCriteria & 0x0038) && (distanceToVisibleParty != 1) && (creatureSize == k0_MaskCreatureSizeQuarter)) {
-						if (_vm->_projexpl->projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
+						if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
 							return;
 						activeGroup->_cells = _vm->normalizeModulo4(AL0446_i_GroupCellsCriteria);
 					}
@@ -998,7 +998,7 @@ T0209096_SetBehavior0_Wander:
 								AL0446_i_Cell = _vm->normalizeModulo4(AL0446_i_Cell);
 								if (!getCreatureOrdinalInCell(curGroup, AL0446_i_Cell) ||
 									(_vm->getRandomNumber(2) && !getCreatureOrdinalInCell(curGroup, AL0446_i_Cell = _vm->returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
-									if (_vm->_projexpl->projectileGetImpactCount(kM1_CreatureElemType, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
+									if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
 										return;
 									if (_vm->_projexpl->_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
 										activeGroup->_cells = getGroupValueUpdatedWithCreatureValue(activeGroup->_cells, AL0447_i_CreatureIndex, AL0446_i_Cell);
@@ -1071,8 +1071,8 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 		 ((mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight)) &&
 		  (curSquareType != kDMElementTypeWall) &&
 		  (curSquareType != kDMElementTypeStairs) &&
-		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, k0x0001_PitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, k0x0008_PitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
-		 ((curSquareType != kDMElementTypeFakeWall) || getFlag(curSquare, k0x0004_FakeWallOpen) || (getFlag(curSquare, k0x0001_FakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
+		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, kDMSquareMaskPitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, kDMSquareMaskPitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
+		 ((curSquareType != kDMElementTypeFakeWall) || getFlag(curSquare, kDMSquareMaskFakeWallOpen) || (getFlag(curSquare, kDMSquareMaskFakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
 
 	if (_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
 		return false;
@@ -1092,7 +1092,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 			curThing = _vm->_dungeonMan->getNextThing(curThing);
 		}
 	}
-	if ((curSquareType == kDMElementTypeTeleporter) && getFlag(curSquare, k0x0008_TeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
+	if ((curSquareType == kDMElementTypeTeleporter) && getFlag(curSquare, kDMSquareMaskTeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		if (getFlag(curTeleporter->getScope(), kDMTeleporterScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
 			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
@@ -1104,7 +1104,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	if (_groupMovementBlockedByParty)
 		return false;
 
-	if (curSquareType == k4_DoorElemType) {
+	if (curSquareType == kDMElementTypeDoor) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			_groupMovementBlockedByDoor = true;
@@ -1234,12 +1234,12 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
 	int16 curSquareType = Square(curSquare).getType();
-	if (curSquareType == k4_DoorElemType) {
+	if (curSquareType == kDMElementTypeDoor) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		int16 curDoorState = Square(curSquare).getDoorState();
 		return ((curDoorState == k3_doorState_FOURTH) || (curDoorState == k4_doorState_CLOSED)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
 	}
-	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, k0x0004_FakeWallOpen));
+	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, kDMSquareMaskFakeWallOpen));
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
@@ -1369,7 +1369,7 @@ bool GroupMan::isSmellPartyBlocked(uint16 mapX, uint16 mapY) {
 	int16 squareType = Square(square).getType();
 
 	return ( (squareType) == kDMElementTypeWall) || ((squareType == kDMElementTypeFakeWall)
-		  && !getFlag(square, k0x0004_FakeWallOpen));
+		  && !getFlag(square, kDMSquareMaskFakeWallOpen));
 }
 
 int16 GroupMan::getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 mapX, int16 mapY, bool allowMovementOverImaginaryPitsAndFakeWalls) {
@@ -1708,7 +1708,7 @@ void GroupMan::addAllActiveGroups() {
 	Thing *squareCurThing = &_vm->_dungeonMan->_squareFirstThings[_vm->_dungeonMan->_currMapColCumulativeSquareFirstThingCount[0]];
 	for (uint16 mapX = 0; mapX < _vm->_dungeonMan->_currMapWidth; mapX++) {
 		for (uint16 mapY = 0; mapY < _vm->_dungeonMan->_currMapHeight; mapY++) {
-			if (getFlag(*curSquare++, k0x0010_ThingListPresent)) {
+			if (getFlag(*curSquare++, kDMSquareMaskThingListPresent)) {
 				Thing curThing = *squareCurThing++;
 				do {
 					if (curThing.getType() == kDMThingTypeGroup) {
@@ -1770,8 +1770,8 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 bool GroupMan::isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY) {
 	int16 squareType = Square(_vm->_dungeonMan->getSquare(mapX, mapY)).getType();
 
-	return ((squareType == k1_CorridorElemType) || (squareType == kDMElementTypeTeleporter)
-		 || (squareType == kDMElementTypePit) || (squareType == k4_DoorElemType));
+	return ((squareType == kDMElementTypeCorridor) || (squareType == kDMElementTypeTeleporter)
+		 || (squareType == kDMElementTypePit) || (squareType == kDMElementTypeDoor));
 }
 
 int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 partyY, uint16 champCell) {
@@ -1876,8 +1876,8 @@ T0231016:
 }
 
 void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
-	SquareType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
-	if ((squareType == k0_WallElemType) || (squareType == k3_StairsElemType))
+	ElementType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	if ((squareType == kDMElementTypeWall) || (squareType == kDMElementTypeStairs))
 		return;
 
 	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeExplosion);
@@ -1932,8 +1932,8 @@ uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
 }
 
 bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
-	SquareType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
-	if ((squareType == k0_WallElemType) || (squareType == k3_StairsElemType))
+	ElementType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	if ((squareType == kDMElementTypeWall) || (squareType == kDMElementTypeStairs))
 		return false;
 
 	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);

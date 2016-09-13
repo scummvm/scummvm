@@ -145,6 +145,9 @@ enum MapIndice {
 	kDMMapIndexEntrance = 255 // @ C255_MAP_INDEX_ENTRANCE 
 };
 
+#define kDMMaskDecodeEvenIfInvisible 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
+#define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
+
 struct DMADGameDescription {
 	ADGameDescription _desc;
 

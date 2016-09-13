@@ -258,9 +258,9 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 		/* No more than 1000 chained moves at once (in a chain of teleporters and pits for example) */
 		for (int16 chainedMoveCount = 1000; --chainedMoveCount; ) {
 			destinationSquareData = _vm->_dungeonMan->_currMapData[destMapX][destMapY];
-			SquareType destinationSquareType = Square(destinationSquareData).getType();
+			ElementType destinationSquareType = Square(destinationSquareData).getType();
 			if (destinationSquareType == (int)kDMElementTypeTeleporter) {
-				if (!getFlag(destinationSquareData, k0x0008_TeleporterOpen))
+				if (!getFlag(destinationSquareData, kDMSquareMaskTeleporterOpen))
 					break;
 
 				Teleporter *teleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(destMapX, destMapY);
@@ -302,7 +302,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				if (destinationIsTeleporterTarget)
 					break;
 			} else {
-				if ((destinationSquareType == (int)kDMElementTypePit) && !thingLevitates && getFlag(destinationSquareData, k0x0008_PitOpen) && !getFlag(destinationSquareData, k0x0001_PitImaginary)) {
+				if ((destinationSquareType == (int)kDMElementTypePit) && !thingLevitates && getFlag(destinationSquareData, kDMSquareMaskPitOpen) && !getFlag(destinationSquareData, kDMSquareMaskPitImaginary)) {
 					if (drawDungeonViewWhileFalling && !_useRopeToClimbDownPit) {
 						drawDungeonViewWhileFalling = true;
 						if (traversedPitCount) {
@@ -342,7 +342,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 							_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
 					}
 				} else if ((destinationSquareType == (int)kDMElementTypeStairs) && (thing != Thing::_party) && (thingType != kDMThingTypeProjectile)) {
-					if (!getFlag(destinationSquareData, k0x0004_StairsUp)) {
+					if (!getFlag(destinationSquareData, kDMSquareMaskStairsUp)) {
 						mapIndexDestination = _vm->_dungeonMan->getLocationAfterLevelChange(mapIndexDestination, 1, &destMapX, &destMapY);
 						_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
 					}
@@ -513,15 +513,15 @@ bool MovesensMan::moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, i
 	for (int16 i = 0; i < 4; ++i)
 		championOrCreatureOrdinalInCell[i] = 0;
 
-	SquareType impactType;
+	ElementType impactType;
 	if (thing == Thing::_party) {
-		impactType = kM2_ChampionElemType;
+		impactType = kDMElementTypeChampion;
 		for (uint16 cellIdx = kDMCellNorthWest; cellIdx < kDMCellSouthWest + 1; cellIdx++) {
 			if (_vm->_championMan->getIndexInCell((ViewCell)cellIdx) >= 0)
 				championOrCreatureOrdinalInCell[cellIdx] = _vm->indexToOrdinal(cellIdx);
 		}
 	} else {
-		impactType = kM1_CreatureElemType;
+		impactType = kDMElementTypeCreature;
 		Group *curGroup = (Group *)_vm->_dungeonMan->getThingData(thing);
 		int16 creatureAlive = 0;
 		for (uint16 cellIdx = kDMCellNorthWest; cellIdx < kDMCellSouthWest + 1; cellIdx++) {
@@ -707,7 +707,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 
 	Square curSquare = Square(_vm->_dungeonMan->_currMapData[mapX][mapY]);
 	int16 sensorTriggeredCell;
-	if (curSquare.getType() == k0_WallElemType)
+	if (curSquare.getType() == kDMElementTypeWall)
 		sensorTriggeredCell = thing.getCell();
 	else
 		sensorTriggeredCell = kDMCellAny; // this will wrap around
@@ -781,7 +781,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 						continue;
 					break;
 				case kDMSensorFloorPartyOnStairs:
-					if ((thingType != kDMThingTypeParty) || (curSquare.getType() != k3_StairsElemType))
+					if ((thingType != kDMThingTypeParty) || (curSquare.getType() != kDMElementTypeStairs))
 						continue;
 					break;
 				case kDMSensorFloorGroupGenerator:
@@ -909,9 +909,9 @@ void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX,
 	else {
 		int16 targetMapX = sensor->getActionTargetMapX();
 		int16 targetMapY = sensor->getActionTargetMapY();
-		SquareType curSquareType = Square(_vm->_dungeonMan->_currMapData[targetMapX][targetMapY]).getType();
+		ElementType curSquareType = Square(_vm->_dungeonMan->_currMapData[targetMapX][targetMapY]).getType();
 		Cell targetCell;
-		if (curSquareType == k0_WallElemType)
+		if (curSquareType == kDMElementTypeWall)
 			targetCell = sensor->getActionTargetCell();
 		else
 			targetCell = kDMCellNorthWest;

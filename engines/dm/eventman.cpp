@@ -935,8 +935,8 @@ void EventManager::commandTurnParty(CommandType cmdType) {
 		commandHighlightBoxEnable(291, 318, 125, 145);
 
 	uint16 partySquare = _vm->_dungeonMan->getSquare(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY).toByte();
-	if (Square(partySquare).getType() == k3_StairsElemType) {
-		commandTakeStairs(getFlag(partySquare, k0x0004_StairsUp));
+	if (Square(partySquare).getType() == kDMElementTypeStairs) {
+		commandTakeStairs(getFlag(partySquare, kDMSquareMaskStairsUp));
 		return;
 	}
 
@@ -981,9 +981,9 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	int16 partyMapY = _vm->_dungeonMan->_partyMapY;
 
 	Square curSquare = _vm->_dungeonMan->getSquare(partyMapX, partyMapY);
-	bool isStairsSquare = (curSquare.getType() == k3_StairsElemType);
+	bool isStairsSquare = (curSquare.getType() == kDMElementTypeStairs);
 	if (isStairsSquare && (movementArrowIdx == 2)) { /* If moving backward while in stairs */
-		commandTakeStairs(getFlag(curSquare.toByte(), k0x0004_StairsUp));
+		commandTakeStairs(getFlag(curSquare.toByte(), kDMSquareMaskStairsUp));
 		return;
 	}
 
@@ -991,7 +991,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	curSquare = _vm->_dungeonMan->getSquare(partyMapX, partyMapY);
 
 	bool isMovementBlocked = false;
-	SquareType partySquareType = curSquare.getType();
+	ElementType partySquareType = curSquare.getType();
 	switch (partySquareType){
 	case kDMElementTypeWall:
 		isMovementBlocked = true;
@@ -1001,17 +1001,17 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 		_vm->_dungeonMan->_partyMapX = partyMapX;
 		_vm->_dungeonMan->_partyMapY = partyMapY;
 		byte stairState = curSquare.toByte();
-		commandTakeStairs(getFlag(stairState, k0x0004_StairsUp));
+		commandTakeStairs(getFlag(stairState, kDMSquareMaskStairsUp));
 		return;
 		}
-	case k4_DoorElemType: {
+	case kDMElementTypeDoor: {
 		byte doorState = curSquare.getDoorState();
 		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
 		}
 		break;
 	case kDMElementTypeFakeWall: {
 		byte wallState = curSquare.toByte();
-		isMovementBlocked = (!getFlag(wallState, k0x0004_FakeWallOpen) && !getFlag(wallState, k0x0001_FakeWallImaginary));
+		isMovementBlocked = (!getFlag(wallState, kDMSquareMaskFakeWallOpen) && !getFlag(wallState, kDMSquareMaskFakeWallImaginary));
 		}
 		break;
 	default:

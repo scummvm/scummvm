@@ -112,7 +112,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 	int16 attack = 0;
 	int16 championIndex = 0;
 	switch (impactType) {
-	case k4_DoorElemType: {
+	case kDMElementTypeDoor: {
 		byte curSquare = _vm->_dungeonMan->_currMapData[projectileTargetMapX][projectileTargetMapY];
 		int16 curDoorState = Square(curSquare).getDoorState();
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(projectileTargetMapX, projectileTargetMapY);
@@ -149,14 +149,14 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		_vm->_groupMan->groupIsDoorDestoryedByAttack(projectileTargetMapX, projectileTargetMapY, attack + _vm->getRandomNumber(attack), false, 0);
 		}
 		break;
-	case kM2_ChampionElemType:
+	case kDMElementTypeChampion:
 		championIndex = _vm->_championMan->getIndexInCell(cell);
 		if (championIndex < 0)
 			return false;
 
 		championAttack = attack = getProjectileImpactAttack(projectileThingData, projectileAssociatedThing);
 		break;
-	case kM1_CreatureElemType: {
+	case kDMElementTypeCreature: {
 		Group *curGroup = (Group *)_vm->_dungeonMan->getThingData(_vm->_groupMan->groupGetThing(projectileTargetMapX, projectileTargetMapY));
 		uint16 curCreatureIndex = _vm->_groupMan->getCreatureOrdinalInCell(curGroup, cell);
 		if (!curCreatureIndex)
@@ -356,7 +356,7 @@ int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 map
 			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
 			projectileDeleteEvent(curThing);
 			impactCount++;
-			if ((impactType == kM1_CreatureElemType) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
+			if ((impactType == kDMElementTypeCreature) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
 				break;
 
 			curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
@@ -404,10 +404,10 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		curEvent->_type = k49_TMEventTypeMoveProjectile;
 	else {
 		uint16 projectileCurCell = projectileThingNewCell.getCell();
-		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (destinationMapX == _vm->_dungeonMan->_partyMapX) && (destinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kM2_ChampionElemType, destinationMapX, destinationMapY, projectileCurCell, projectileThingNewCell))
+		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (destinationMapX == _vm->_dungeonMan->_partyMapX) && (destinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kDMElementTypeChampion, destinationMapX, destinationMapY, projectileCurCell, projectileThingNewCell))
 			return;
 
-		if ((_vm->_groupMan->groupGetThing(destinationMapX, destinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kM1_CreatureElemType, destinationMapX, destinationMapY, projectileCurCell, projectileThing))
+		if ((_vm->_groupMan->groupGetThing(destinationMapX, destinationMapY) != Thing::_endOfList) && hasProjectileImpactOccurred(kDMElementTypeCreature, destinationMapX, destinationMapY, projectileCurCell, projectileThing))
 			return;
 
 		uint16 stepEnergy = curEvent->_Cu._projectile.getStepEnergy();
@@ -431,10 +431,10 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		sourceMapY = destinationMapY;
 		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection], destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
 		Square destSquare = _vm->_dungeonMan->getSquare(destinationMapX, destinationMapY);
-		SquareType destSquareType = destSquare.getType();
-		if ((destSquareType == k0_WallElemType) ||
-			((destSquareType == k6_FakeWallElemType) && !getFlag(destSquare.toByte(), (k0x0001_FakeWallImaginary | k0x0004_FakeWallOpen))) ||
-			((destSquareType == k3_StairsElemType) && (Square(_vm->_dungeonMan->_currMapData[sourceMapX][sourceMapY]).getType() == k3_StairsElemType))) {
+		ElementType destSquareType = destSquare.getType();
+		if ((destSquareType == kDMElementTypeWall) ||
+			((destSquareType == kDMElementTypeFakeWall) && !getFlag(destSquare.toByte(), (kDMSquareMaskFakeWallImaginary | kDMSquareMaskFakeWallOpen))) ||
+			((destSquareType == kDMElementTypeStairs) && (Square(_vm->_dungeonMan->_currMapData[sourceMapX][sourceMapY]).getType() == kDMElementTypeStairs))) {
 			if (hasProjectileImpactOccurred(destSquare.getType(), sourceMapX, sourceMapY, projectileNewCell, projectileThingNewCell)) {
 				return;
 			}
@@ -455,7 +455,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		projectileThingNewCell = _vm->thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
 		M31_setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
-		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == k4_DoorElemType) && hasProjectileImpactOccurred(k4_DoorElemType, destinationMapX, destinationMapY, projectileNewCell, projectileThing))
+		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == kDMElementTypeDoor) && hasProjectileImpactOccurred(kDMElementTypeDoor, destinationMapX, destinationMapY, projectileNewCell, projectileThing))
 			return;
 
 		_vm->_dungeonMan->unlinkThingFromList(projectileThingNewCell, Thing(0), destinationMapX, destinationMapY);
@@ -503,7 +503,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		if (!(attack >>= 1))
 			break;
 	case 0xFF80:
-		if (curSquareType == k4_DoorElemType)
+		if (curSquareType == kDMElementTypeDoor)
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(mapX, mapY, attack, true, 0);
 
 		break;
