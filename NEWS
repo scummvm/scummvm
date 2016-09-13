@@ -60,9 +60,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that could cause a crash in The Case of the Serrated Scalpel.
    - Fixed a bug that caused game lockups in the inventory of The Case of the Rose Tattoo.
 
- WAGE:
-   - Closed memory leak.
-
  Windows port:
    - Fixed taskbar support on Windows 10 onwards.
    - Fixed keymapping for non-QWERTY keyboards.
