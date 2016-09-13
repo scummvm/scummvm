@@ -389,6 +389,8 @@ void sceneHandler29_ballHitCheck() {
 }
 
 void sceneHandler29_manFromL() {
+	debugC(2, kDebugSceneLogic, "scene29: manFromL");
+
 	if (g_vars->scene29_manX < 497 && !g_vars->scene29_scrollingDisabled) {
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
@@ -403,6 +405,8 @@ void sceneHandler29_manFromL() {
 }
 
 void sceneHandler29_manFromR() {
+	debugC(2, kDebugSceneLogic, "scene29: manFromR");
+
 	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
@@ -424,6 +428,8 @@ int sceneHandler29_updateScreenCallback() {
 }
 
 void sceneHandler29_manToL() {
+	debugC(2, kDebugSceneLogic, "scene29: manToL");
+
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
@@ -440,6 +446,8 @@ void sceneHandler29_manToL() {
 }
 
 void sceneHandler29_manToR() {
+	debugC(2, kDebugSceneLogic, "scene29: manToR");
+
 	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
@@ -521,7 +529,9 @@ void sceneHandler29_shootersEscape() {
 		g_fp->_aniMan->setOXY(g_vars->scene29_manX, g_vars->scene29_manY);
 
 		if (g_vars->scene29_manX > 1310 && !g_vars->scene29_shooter1->_movement && !g_vars->scene29_shooter2->_movement
-			&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
+				&& g_vars->scene29_shooter1->_statics->_staticsId == ST_STR1_RIGHT) {
+			debugC(2, kDebugSceneLogic, "scene29: shootersEscape");
+
 			g_vars->scene29_shootCountdown = 0;
 
 			g_vars->scene29_shooter1->changeStatics2(ST_STR1_STAND);
