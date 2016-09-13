@@ -657,7 +657,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
 		int16 relativeRotation = _vm->normalizeModulo4(4 + updatedGroupDirections - groupDirections);
 		for (int16 creatureIdx = 0; creatureIdx <= group->getCount(); creatureIdx++) {
-			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? rotation : _vm->normalizeModulo4(groupDirections + rotation));
+			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? (uint16)rotation : _vm->normalizeModulo4(groupDirections + rotation));
 			if (creatureSize == k0_MaskCreatureSizeQuarter) {
 				relativeRotation = absoluteRotation ? 1 : 0;
 				if (relativeRotation)

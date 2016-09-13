@@ -825,7 +825,7 @@ public:
 
 private:
 	void initConstants();
-	uint16 bitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
+	uint16 getBitmapByteCount(uint16 pixelWidth, uint16 height);  // @ M75_BITMAP_BYTE_COUNT
 };
 
 }

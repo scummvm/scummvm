@@ -1518,9 +1518,9 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 }
 
 bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, int16 mapX, int16 mapY) {
-	bool isGroupFrightenedByAction = false;
+	bool retVal = false;
 	if (_actionTargetGroupThing == Thing::_endOfList)
-		return isGroupFrightenedByAction;
+		return retVal;
 
 	uint16 experience = 0;
 	int16 frightAmount = 0;
@@ -1561,11 +1561,11 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 		}
 		targetGroup->setBehaviour(k5_behavior_FLEE);
 		activeGroup->_delayFleeingFromTarget = ((16 - fearResistance) << 2) / creatureInfo->_movementTicks;
-		isGroupFrightenedByAction = true;
+		retVal = true;
 	}
 	_vm->_championMan->addSkillExperience(champIndex, kDMSkillInfluence, experience);
 
-	return isGroupFrightenedByAction;
+	return retVal;
 }
 
 void MenuMan::printMessageAfterReplacements(const char *str) {

@@ -1096,9 +1096,9 @@ bool ChampionMan::isLucky(Champion *champ, uint16 percentage) {
 		return true;
 
 	unsigned char *curStat = champ->_statistics[kDMStatLuck];
-	bool isLucky = (_vm->getRandomNumber(curStat[kDMStatCurrent]) > percentage);
-	curStat[kDMStatCurrent] = CLIP<unsigned char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (isLucky ? -2 : 2), curStat[kDMStatMaximum]);
-	return isLucky;
+	bool retVal = (_vm->getRandomNumber(curStat[kDMStatCurrent]) > percentage);
+	curStat[kDMStatCurrent] = CLIP<unsigned char>(curStat[kDMStatMinimum], curStat[kDMStatCurrent] + (retVal ? -2 : 2), curStat[kDMStatMaximum]);
+	return retVal;
 }
 
 void ChampionMan::championPoison(int16 champIndex, uint16 attack) {

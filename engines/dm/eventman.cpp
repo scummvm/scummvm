@@ -1146,8 +1146,8 @@ void EventManager::commandSetLeader(ChampionIndex champIndex) {
 }
 
 void EventManager::commandProcessType80ClickInDungeonViewTouchFrontWall() {
-	uint16 mapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
-	uint16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+	int16 mapX = _vm->_dungeonMan->_partyMapX + _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
+	int16 mapY = _vm->_dungeonMan->_partyMapY + _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 
 	if ((mapX >= 0) && (mapX < _vm->_dungeonMan->_currMapWidth)
 		&& (mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight))
