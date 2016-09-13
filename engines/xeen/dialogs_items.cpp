@@ -772,7 +772,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
@@ -1044,7 +1044,7 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 		ItemsMode mode) {
 	XeenItem &item = c._items[category][itemIndex];
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (category == CATEGORY_WEAPON && item._id == 34) {
 		sound.playFX(21);

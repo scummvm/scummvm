@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	interface.o \
 	interface_map.o \
 	map.o \
+	music.o \
 	party.o \
 	resources.o \
 	saves.o \

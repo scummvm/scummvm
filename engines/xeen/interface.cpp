@@ -265,7 +265,7 @@ void Interface::perform() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 
@@ -621,7 +621,7 @@ void Interface::chargeStep() {
 
 void Interface::stepTime() {
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	doStepCode();
 	
 	if (++party._ctr24 == 24)
@@ -926,7 +926,7 @@ void Interface::startFalling(bool flag) {
 bool Interface::checkMoveDirection(int key) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Direction dir = party._mazeDirection;
 
 	switch (key) {
@@ -1027,7 +1027,7 @@ void Interface::rest() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	map.cellFlagLookup(party._mazePosition);
 
@@ -1158,7 +1158,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map._isOutdoors)
 		return;
@@ -1310,7 +1310,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 void Interface::handleFalling() {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[3];
 	File voc1("scream.voc");
 	File voc2("unnh.voc");
@@ -1866,7 +1866,7 @@ void Interface::doCombat() {
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Spells &spells = *_vm->_spells;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool upDoorText = _upDoorText;
 	bool reloadMap = false;
 	
@@ -2244,7 +2244,7 @@ void Interface::spellFX(Character *c) {
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	// Ensure there's no alraedy running effect for the given character
 	uint charIndex;

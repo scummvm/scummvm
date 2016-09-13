@@ -44,7 +44,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	loadButtons();
@@ -780,7 +780,7 @@ bool LloydsBeacon::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[10];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	Character &c = *combat._oldCharacter;
@@ -990,7 +990,7 @@ void IdentifyMonster::execute() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[17];
 	Common::String monsterDesc[3];
 

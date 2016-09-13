@@ -69,7 +69,7 @@ int Town::townAction(int actionId) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (actionId == 12) {
@@ -548,7 +548,7 @@ Character *Town::doBlacksmithOptions(Character *c) {
 Character *Town::doGuildOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
@@ -584,7 +584,7 @@ Character *Town::doTavernOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Screen &screen = *_vm->_screen;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int idx = 0;
@@ -788,7 +788,7 @@ Character *Town::doTavernOptions(Character *c) {
 Character *Town::doTempleOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	
 	switch (_buttonValue) {
 	case Common::KEYCODE_F1:
@@ -888,7 +888,7 @@ Character *Town::doTempleOptions(Character *c) {
 Character *Town::doTrainingOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	switch (_buttonValue) {
@@ -956,7 +956,7 @@ Character *Town::doTrainingOptions(Character *c) {
 void Town::depositWithdrawl(int choice) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	int gold, gems;
 
 	if (choice) {
@@ -1057,7 +1057,7 @@ void Town::depositWithdrawl(int choice) {
 void Town::drawTownAnim(bool flag) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (_townActionId == 1) {

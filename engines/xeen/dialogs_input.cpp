@@ -135,7 +135,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Window &w = screen._windows[6];
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	int result = 0;
 
 	w.open();

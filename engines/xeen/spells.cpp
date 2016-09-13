@@ -244,7 +244,7 @@ void Spells::addSpellCost(Character &c, int spellId) {
 
 void Spells::acidSpray() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 15;
 	combat._damageType = DT_POISON;
@@ -256,7 +256,7 @@ void Spells::acidSpray() {
 void Spells::awaken() {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		Character &c = party._activeParty[idx];
@@ -271,7 +271,7 @@ void Spells::awaken() {
 
 void Spells::beastMaster() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_BEASTMASTER;
@@ -283,7 +283,7 @@ void Spells::beastMaster() {
 void Spells::bless() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	sound.playFX(30);
 	party._blessed = combat._oldCharacter->getCurrentLevel();
@@ -296,7 +296,7 @@ void Spells::clairvoyance() {
 
 void Spells::coldRay() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = _vm->getRandomNumber(2, 4) * combat._oldCharacter->getCurrentLevel();
 	combat._damageType = DT_COLD;
@@ -307,7 +307,7 @@ void Spells::coldRay() {
 
 void Spells::createFood() { 
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	party._food += party._activeParty.size();
 	sound.playFX(20);
@@ -315,7 +315,7 @@ void Spells::createFood() {
 
 void Spells::cureDisease() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_CureDisease);
 	if (!c)
@@ -329,7 +329,7 @@ void Spells::cureDisease() {
 
 void Spells::cureParalysis() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_CureParalysis);
 	if (!c)
@@ -343,7 +343,7 @@ void Spells::cureParalysis() {
 
 void Spells::curePoison() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_CurePoison);
 	if (!c)
@@ -356,7 +356,7 @@ void Spells::curePoison() {
 }
 
 void Spells::cureWounds() {
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_CureWounds);
 	if (!c)
@@ -372,7 +372,7 @@ void Spells::cureWounds() {
 
 void Spells::dancingSword() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = _vm->getRandomNumber(6, 14) * combat._oldCharacter->getCurrentLevel();
 	combat._damageType = DT_PHYSICAL;
@@ -384,7 +384,7 @@ void Spells::dancingSword() {
 void Spells::dayOfProtection() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	int lvl = combat._oldCharacter->getCurrentLevel();
 	party._walkOnWaterActive = true;
@@ -402,7 +402,7 @@ void Spells::dayOfProtection() {
 void Spells::dayOfSorcery() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	int lvl = combat._oldCharacter->getCurrentLevel();
 	party._powerShield = lvl;
@@ -416,7 +416,7 @@ void Spells::dayOfSorcery() {
 
 void Spells::deadlySwarm() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 40;
 	combat._damageType = DT_PHYSICAL;
@@ -431,7 +431,7 @@ void Spells::detectMonster() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[19];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int grid[7][7];
@@ -477,7 +477,7 @@ void Spells::divineIntervention() {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Character &castChar = *combat._oldCharacter;
 
 	if ((castChar._tempAge + 5) > 250) {
@@ -499,7 +499,7 @@ void Spells::divineIntervention() {
 
 void Spells::dragonSleep() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_DRAGONSLEEP;
@@ -510,7 +510,7 @@ void Spells::dragonSleep() {
 
 void Spells::elementalStorm() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	static const int STORM_FX_LIST[4] = { 13, 14, 15, 17 };
 	static const int STORM_MA_LIST[4] = { 0, 5, 9, 10 };
 
@@ -535,7 +535,7 @@ void Spells::enchantItem() {
 
 void Spells::energyBlast() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
 	combat._damageType = DT_ENERGY;
@@ -547,7 +547,7 @@ void Spells::energyBlast() {
 void Spells::etherialize() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Common::Point pt = party._mazePosition + Common::Point(
 		SCREEN_POSITIONING_X[party._mazeDirection][7],
 		SCREEN_POSITIONING_Y[party._mazeDirection][7]
@@ -564,7 +564,7 @@ void Spells::etherialize() {
 
 void Spells::fantasticFreeze() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 40;
 	combat._damageType = DT_COLD;
@@ -575,7 +575,7 @@ void Spells::fantasticFreeze() {
 
 void Spells::fieryFlail() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 100;
 	combat._damageType = DT_FIRE;
@@ -586,7 +586,7 @@ void Spells::fieryFlail() {
 
 void Spells::fingerOfDeath() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_FINGEROFDEATH;
@@ -597,7 +597,7 @@ void Spells::fingerOfDeath() {
 
 void Spells::fireball() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = _vm->getRandomNumber(3, 7) * combat._oldCharacter->getCurrentLevel();
 	combat._damageType = DT_FIRE;
@@ -607,7 +607,7 @@ void Spells::fireball() {
 }
 
 void Spells::firstAid() {
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_FirstAid);
 	if (!c)
@@ -623,7 +623,7 @@ void Spells::firstAid() {
 
 void Spells::flyingFist() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 6;
 	combat._damageType = DT_PHYSICAL;
@@ -634,7 +634,7 @@ void Spells::flyingFist() {
 
 void Spells::frostbite() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 35;
 	combat._damageType = DT_COLD;
@@ -645,7 +645,7 @@ void Spells::frostbite() {
 
 void Spells::golemStopper() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_GOLEMSTOPPER;
@@ -657,7 +657,7 @@ void Spells::golemStopper() {
 void Spells::heroism() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	sound.playFX(30);
 	party._heroism = combat._oldCharacter->getCurrentLevel();
@@ -666,7 +666,7 @@ void Spells::heroism() {
 void Spells::holyBonus() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	sound.playFX(30);
 	party._holyBonus = combat._oldCharacter->getCurrentLevel();
@@ -674,7 +674,7 @@ void Spells::holyBonus() {
 
 void Spells::holyWord() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_HOLYWORD;
@@ -685,7 +685,7 @@ void Spells::holyWord() {
 
 void Spells::hypnotize() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_HYPNOTIZE;
@@ -707,7 +707,7 @@ void Spells::identifyMonster() {
 
 void Spells::implosion() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 1000;
 	combat._damageType = DT_ENERGY;
@@ -718,7 +718,7 @@ void Spells::implosion() {
 
 void Spells::incinerate() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 250;
 	combat._damageType = DT_FIRE;
@@ -729,7 +729,7 @@ void Spells::incinerate() {
 
 void Spells::inferno() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 250;
 	combat._damageType = DT_FIRE;
@@ -740,7 +740,7 @@ void Spells::inferno() {
 
 void Spells::insectSpray() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_INSECT_SPRAY;
@@ -766,7 +766,7 @@ void Spells::itemToGold() {
 void Spells::jump() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map._isOutdoors) {
 		map.getCell(7);
@@ -809,7 +809,7 @@ void Spells::levitate() {
 void Spells::light() { 
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	++party._lightCount;
 	if (intf._intrIndex1)
@@ -819,7 +819,7 @@ void Spells::light() {
 
 void Spells::lightningBolt() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = _vm->getRandomNumber(4, 6) * combat._oldCharacter->getCurrentLevel();
 	combat._damageType = DT_ELECTRICAL;
@@ -847,7 +847,7 @@ void Spells::magicArrow() {
 
 void Spells::massDistortion() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_MASS_DISTORTION;
@@ -858,7 +858,7 @@ void Spells::massDistortion() {
 
 void Spells::megaVolts() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 150;
 	combat._damageType = DT_ELECTRICAL;
@@ -871,7 +871,7 @@ void Spells::moonRay() {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 30;
 	combat._damageType = DT_ENERGY;
@@ -888,7 +888,7 @@ void Spells::moonRay() {
 }
 
 void Spells::naturesCure() {
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_NaturesCure);
 	if (!c)
@@ -904,7 +904,7 @@ void Spells::naturesCure() {
 
 void Spells::pain() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_PHYSICAL;
@@ -915,7 +915,7 @@ void Spells::pain() {
 
 void Spells::poisonVolley() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 10;
 	combat._damageType = DT_POISON_VOLLEY;
@@ -925,7 +925,7 @@ void Spells::poisonVolley() {
 }
 
 void Spells::powerCure() {
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_PowerCure);
 	if (!c)
@@ -942,7 +942,7 @@ void Spells::powerCure() {
 void Spells::powerShield() {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	sound.playFX(20);
 	party._powerShield = combat._oldCharacter->getCurrentLevel();
@@ -950,7 +950,7 @@ void Spells::powerShield() {
 
 void Spells::prismaticLight() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 80;
 	combat._damageType = (DamageType)_vm->getRandomNumber(DT_PHYSICAL, DT_ENERGY);
@@ -963,7 +963,7 @@ void Spells::protectionFromElements() {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Character &c = *combat._oldCharacter;
 	int resist = MIN(c.getCurrentLevel() * 2 + 5, (uint)200);
 	
@@ -993,7 +993,7 @@ void Spells::protectionFromElements() {
 
 void Spells::raiseDead() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_RaiseDead);
 	if (!c)
@@ -1027,7 +1027,7 @@ void Spells::rechargeItem() {
 
 void Spells::resurrection() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_RaiseDead);
 	if (!c)
@@ -1054,7 +1054,7 @@ void Spells::resurrection() {
 
 void Spells::revitalize() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_Revitalize);
 	if (!c)
@@ -1068,7 +1068,7 @@ void Spells::revitalize() {
 
 void Spells::shrapMetal() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
 	combat._damageType = DT_PHYSICAL;
@@ -1079,7 +1079,7 @@ void Spells::shrapMetal() {
 
 void Spells::sleep() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_SLEEP;
@@ -1090,7 +1090,7 @@ void Spells::sleep() {
 
 void Spells::sparks() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = combat._oldCharacter->getCurrentLevel() * 2;
 	combat._damageType = DT_ELECTRICAL;
@@ -1101,7 +1101,7 @@ void Spells::sparks() {
 
 void Spells::starBurst() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 500;
 	combat._damageType = DT_FIRE;
@@ -1112,7 +1112,7 @@ void Spells::starBurst() {
 
 void Spells::stoneToFlesh() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_StoneToFlesh);
 	if (!c)
@@ -1126,7 +1126,7 @@ void Spells::stoneToFlesh() {
 
 void Spells::sunRay() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 200;
 	combat._damageType = DT_ENERGY;
@@ -1138,7 +1138,7 @@ void Spells::sunRay() {
 void Spells::superShelter() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map.mazeData()._mazeFlags & RESTRICTION_SUPER_SHELTER) {
 		spellFailed();
@@ -1153,7 +1153,7 @@ void Spells::superShelter() {
 
 void Spells::suppressDisease() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_SuppressDisease);
 	if (!c)
@@ -1173,7 +1173,7 @@ void Spells::suppressDisease() {
 
 void Spells::suppressPoison() {
 	Interface &intf = *_vm->_interface;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Character *c = SpellOnWho::show(_vm, MS_FirstAid);
 	if (!c)
@@ -1194,7 +1194,7 @@ void Spells::suppressPoison() {
 
 void Spells::teleport() {
 	Map &map = *_vm->_map;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map.mazeData()._mazeFlags & RESTRICTION_TELPORT) {
 		spellFailed();
@@ -1216,7 +1216,7 @@ void Spells::timeDistortion() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map.mazeData()._mazeFlags & RESTRICTION_TIME_DISTORTION) {
 		spellFailed();
@@ -1230,7 +1230,7 @@ void Spells::timeDistortion() {
 void Spells::townPortal() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (map.mazeData()._mazeFlags & RESTRICTION_TOWN_PORTAL) {
 		spellFailed();
@@ -1278,7 +1278,7 @@ void Spells::townPortal() {
 
 void Spells::toxicCloud() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 10;
 	combat._damageType = DT_POISON;
@@ -1289,7 +1289,7 @@ void Spells::toxicCloud() {
 
 void Spells::turnUndead() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	combat._monsterDamage = 0;
 	combat._damageType = DT_UNDEAD;
@@ -1300,7 +1300,7 @@ void Spells::turnUndead() {
 
 void Spells::walkOnWater() {
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	party._walkOnWaterActive = true;
 	sound.playFX(20);
@@ -1308,7 +1308,7 @@ void Spells::walkOnWater() {
 
 void Spells::wizardEye() {
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	party._wizardEyeActive = true;
 	party._automapOn = false;
@@ -1317,7 +1317,7 @@ void Spells::wizardEye() {
 
 void Spells::frostbite2() {
 	Combat &combat = *_vm->_combat;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	
 	combat._monsterDamage = 35;
 	combat._damageType = DT_COLD;

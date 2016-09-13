@@ -132,7 +132,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	int charIndex1 = charIndex + 1;
 	int selectedIndex1 = 0;
 	int selectedIndex2 = 0;
@@ -262,7 +262,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
 	// Attacked characters are automatically woken up
@@ -539,7 +539,7 @@ void Combat::monstersAttack() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	int powNum = -1;
 	MonsterStruct *monsterData = nullptr;
 	OutdoorDrawList &outdoorList = intf._outdoorList;
@@ -769,7 +769,7 @@ void Combat::doMonsterTurn(int monsterId) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (_monstersAttacking) {
 		int monsterIndex;
@@ -1376,7 +1376,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
 	MonsterStruct &monsterData = *monster._monsterData;
@@ -1592,7 +1592,7 @@ void Combat::quickFight() {
 
 void Combat::run() {
 	Map &map = *_vm->_map;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (_vm->getRandomNumber(1, 100) < map.mazeData()._difficulties._chance2Run) {
 		// Remove the character from the combat party
@@ -1804,7 +1804,7 @@ void Combat::multiAttack(int powNum) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	if (_damageType == DT_POISON_VOLLEY) {
 		_damageType = DT_POISON;

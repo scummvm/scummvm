@@ -92,7 +92,7 @@ void CantCast::show(XeenEngine *vm, int spellId, int componentNum) {
 
 void CantCast::execute(int spellId, int componentNum) {
 	EventsManager &events = *_vm->_events;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Window &w = _vm->_screen->_windows[6];
 	Mode oldMode = _vm->_mode;

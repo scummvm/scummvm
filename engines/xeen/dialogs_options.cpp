@@ -121,7 +121,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 void OptionsMenu::showTitles2() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	File voc("elect.voc");
 	SpriteResource titleSprites("title2b.raw");

@@ -560,7 +560,7 @@ void Party::giveTreasure() {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[10];
 
 	if (!_treasure._gold && !_treasure._gems)
@@ -694,7 +694,7 @@ bool Party::arePacksFull() const {
 void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int itemIndex) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[10];
 	XeenItem &treasureItem = _treasure._categories[category][itemIndex];
 	sound.playFX(20);

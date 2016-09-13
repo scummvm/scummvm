@@ -30,7 +30,7 @@ namespace Xeen {
 bool DarkSideCutscenes::showDarkSideTitle() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	// TODO: Starting method, and sound
 	//sub_28F40
@@ -137,7 +137,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 bool DarkSideCutscenes::showDarkSideIntro() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	const int XLIST1[] = {
 		0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62
 	};
@@ -236,13 +236,13 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 bool DarkSideCutscenes::showDarkSideEnding() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	Voc voc("ido2.voc");
-	Music newBright("newbrigh.m");
+//	Music newBright("newbrigh.m");
 	SpriteResource box("box.vga");
 
-	newBright.play();
+//	newBright.play();
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
 	screen.update();

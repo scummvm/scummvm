@@ -114,7 +114,7 @@ int Scripts::checkEvents() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	Town &town = *_vm->_town;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
@@ -257,7 +257,7 @@ void Scripts::openGrate(int wallVal, int action) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if ((wallVal != 13 || map._currentGrateUnlocked) && (!isDarkCc || wallVal != 9 ||
@@ -420,7 +420,7 @@ void Scripts::cmdTeleport(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
 	screen.closeWindows();
 
@@ -1094,7 +1094,7 @@ void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
 }
 
 void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	sound.playSample(nullptr, 0);
 	File f(EVENT_SAMPLES[params[0]]);
 	sound.playSample(&f, 1);

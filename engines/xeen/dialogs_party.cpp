@@ -48,7 +48,7 @@ void PartyDialog::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	SoundManager &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 	bool modeFlag = false;
 	int startingChar = 0;
 

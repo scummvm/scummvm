@@ -286,7 +286,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 }
 
 void WeaponItems::enchantItem(int itemIndex, int amount) {
-	SoundManager &sound = *getVm()->_sound;
+	Sound &sound = *getVm()->_sound;
 	XeenItem &item = operator[](itemIndex);
 	Character tempCharacter;
 
@@ -445,7 +445,7 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 }
 
 void ArmorItems::enchantItem(int itemIndex, int amount) {
-	SoundManager &sound = *getVm()->_sound;
+	Sound &sound = *getVm()->_sound;
 	XeenItem &item = operator[](itemIndex);
 	Character tempCharacter;
 
@@ -1775,7 +1775,7 @@ void Character::addHitPoints(int amount) {
 }
 
 void Character::subtractHitPoints(int amount) {
-	SoundManager &sound = *Party::_vm->_sound;
+	Sound &sound = *Party::_vm->_sound;
 	_currentHp -= amount;
 	bool flag = _currentHp <= 10;
 

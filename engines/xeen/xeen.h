@@ -147,7 +147,7 @@ public:
 	SavesManager *_saves;
 	Screen *_screen;
 	Scripts *_scripts;
-	SoundManager *_sound;
+	Sound *_sound;
 	Spells *_spells;
 	Town *_town;
 	Mode _mode;
