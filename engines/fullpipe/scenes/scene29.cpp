@@ -131,7 +131,7 @@ void sceneHandler29_winArcade() {
 			ani = g_vars->scene29_flyingRedBalls.front();
 			g_vars->scene29_flyingRedBalls.remove_at(0);
 
-			g_vars->scene29_greenBalls.push_back(ani);
+			g_vars->scene29_redBalls.push_back(ani);
 
 			ani->hide();
 		}
@@ -160,11 +160,11 @@ void sceneHandler29_shootGreen() {
 }
 
 void sceneHandler29_shootRed() {
-	if (g_vars->scene29_greenBalls.size()) {
+	if (g_vars->scene29_redBalls.size()) {
 		int x = g_vars->scene29_shooter1->_ox - 101;
 		int y = g_vars->scene29_shooter1->_oy - 14;
-		StaticANIObject *ani = g_vars->scene29_greenBalls.front();
-		g_vars->scene29_greenBalls.remove_at(0);
+		StaticANIObject *ani = g_vars->scene29_redBalls.front();
+		g_vars->scene29_redBalls.remove_at(0);
 
 		ani->show1(x, y, MV_SHR_NORM, 0);
 		ani->_priority = 5;
@@ -362,7 +362,7 @@ void sceneHandler29_ballHitCheck() {
 
 		if (x >= 147) {
 			if (sceneHandler29_checkRedBallHit(ani, x)) {
-				g_vars->scene29_greenBalls.push_back(ani);
+				g_vars->scene29_redBalls.push_back(ani);
 
 				g_vars->scene29_flyingRedBalls.remove_at(i);
 
@@ -377,7 +377,7 @@ void sceneHandler29_ballHitCheck() {
 				ani->setOXY(x, y);
 			}
 		} else {
-			g_vars->scene29_greenBalls.push_back(ani);
+			g_vars->scene29_redBalls.push_back(ani);
 
 			ani->hide();
 
@@ -675,7 +675,7 @@ int sceneHandler29(ExCommand *cmd) {
 		break;
 
 	case MSG_SC29_SHOWLASTRED:
-		if (g_vars->scene29_redBalls.size()) { // original uses scene29_greenBalls which looks like a copy/paste error
+		if (g_vars->scene29_redBalls.size()) { // original checks size of the scene29_greenBalls which looks like a copy/paste error
 			g_vars->scene29_redBalls.back()->show1(-1, -1, -1, 0);
 			g_vars->scene29_redBalls.back()->startAnim(MV_SHR_HITASS, 0, -1);
 		}
