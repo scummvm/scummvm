@@ -23,7 +23,7 @@
 #ifndef BACKENDS_NETWORKING_CURL_CLOUDICON_H
 #define BACKENDS_NETWORKING_CURL_CLOUDICON_H
 
-#include "graphics/transparent_surface.h"
+#include "graphics/surface.h"
 
 namespace Networking {
 
@@ -31,14 +31,14 @@ class CloudIcon {
 	static const float ALPHA_STEP, ALPHA_MAX, ALPHA_MIN;
 
 	bool _wasVisible, _iconsInited, _showingDisabled;
-	Graphics::TransparentSurface _icon, _disabledIcon, _alphaIcon;
+	Graphics::Surface _icon, _disabledIcon, _alphaIcon;
 	float _currentAlpha;
 	bool _alphaRising;
 	int _disabledFrames;
 
 	void initIcons();
-	void loadIcon(Graphics::TransparentSurface &icon, byte *data, uint32 size);
-	void makeAlphaIcon(Graphics::TransparentSurface &icon, float alpha);
+	void loadIcon(Graphics::Surface &icon, byte *data, uint32 size);
+	void makeAlphaIcon(Graphics::Surface &icon, float alpha);
 
 public:
 	CloudIcon();
