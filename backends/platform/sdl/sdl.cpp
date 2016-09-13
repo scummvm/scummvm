@@ -479,6 +479,9 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 	char *text = SDL_GetClipboardText();
 	Common::String strText = text;
 	SDL_free(text);
+
+	// FIXME: The string returned by SDL is in UTF-8, it is not clear
+	// what encoding should be used for the returned string.
 	return strText;
 #else
 	return "";
