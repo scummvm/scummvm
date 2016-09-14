@@ -58,9 +58,11 @@ enum DoorState {
 	kDMDoorStateDestroyed = 5 // @ C5_DOOR_STATE_DESTROYED 
 };
 
-#define k0_ViewDoorOrnament_D3LCR 0 // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
-#define k1_ViewDoorOrnament_D2LCR 1 // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
-#define k2_ViewDoorOrnament_D1LCR 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
+enum DoorOrnament {
+	kDMDoorOrnamentD3LCR = 0, // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
+	kDMDoorOrnamentD2LCR = 1, // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
+	kDMDoorOrnamentD1LCR = 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
+};
 
 #define k0_viewDoorButton_D3R 0 // @ C0_VIEW_DOOR_BUTTON_D3R
 #define k1_viewDoorButton_D3C 1 // @ C1_VIEW_DOOR_BUTTON_D3C
@@ -725,8 +727,8 @@ public:
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
 	void drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
-					   int16 viewDoorOrnIndex, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
-	void drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
+					   DoorOrnament doorOrnament, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
+	void drawDoorOrnament(int16 doorOrnOdinal, DoorOrnament doorOrnament); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
 
 	void blitToViewport(byte *bitmap, Box &box, int16 byteWidth, Color transparent, int16 height); // @ F0020_MAIN_BlitToViewport
