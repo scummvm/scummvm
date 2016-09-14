@@ -1,7 +1,10 @@
-#pragma once
+#ifndef CRYO_PLATDEFS_H
+#define CRYO_PLATDEFS_H
 
 #if 1
 #include "common/file.h"
+
+namespace Cryo {
 
 typedef Common::File file_t;
 
@@ -22,5 +25,9 @@ const int space_width = 4;
 #endif
 const int subtitles_x_width = (320 - subtitles_x_margin * 2);
 const int subtitles_x_center = subtitles_x_width / 2;
+
+#endif
+
+} // End of namespace Cryo
 
 #endif

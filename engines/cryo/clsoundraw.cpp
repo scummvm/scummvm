@@ -1,4 +1,6 @@
-#include "cryolib.h"
+#include "cryo/cryolib.h"
+
+namespace Cryo {
 
 sound_t *CLSoundRaw_New(short arg1, float rate, short sampleSize, short mode) {
 	sound_t *sound;
@@ -49,3 +51,5 @@ void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int l
 //	if(sound->reversed && sound->sampleSize == 16)
 //		ReverseBlock16(buf, length);
 }
+
+} // End of namespace Cryo

@@ -1,5 +1,5 @@
-#ifndef CRYO_H
-#define CRYO_H
+#ifndef CRYO_CRYO_H
+#define CRYO_CRYO_H
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"

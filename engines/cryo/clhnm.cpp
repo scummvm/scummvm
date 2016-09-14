@@ -1,4 +1,8 @@
-#include "cryolib.h"
+#include "common/debug.h"
+
+#include "cryo/cryolib.h"
+
+namespace Cryo {
 
 static short safe_palette = 0;
 static short pred_r = 0, pred_l = 0;
@@ -744,3 +748,5 @@ void CLHNM_Desentrelace320(unsigned char *frame_buffer, unsigned char *final_buf
 		line1 += 320 / 4;
 	}
 }
+
+} // End of namespace Cryo

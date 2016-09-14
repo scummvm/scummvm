@@ -1,9 +1,15 @@
 MODULE := engines/cryo
 
 MODULE_OBJS = \
+	clerror.o \
+	clhnm.o \
+	clsoundgroup.o \
+	clsoundraw.o \
+	cryolib.o \
 	eden.o \
 	cryo.o \
-	detection.o
+	detection.o \
+	staticdata.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRYO), DYNAMIC_PLUGIN)

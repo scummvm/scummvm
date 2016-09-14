@@ -1,4 +1,6 @@
-#include "cryolib.h"
+#include "cryo/cryolib.h"
+
+namespace Cryo {
 
 soundgroup_t *CLSoundGroup_New(short numSounds, short arg4, short sampleSize, float rate, short mode) {
 	soundgroup_t *sg;
@@ -103,3 +105,5 @@ void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch) {
 		sg->playIndex++;
 
 }
+
+} // End of namespace Cryo

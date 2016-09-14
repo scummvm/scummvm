@@ -1,3 +1,13 @@
+#include "common/system.h"
+#include "common/events.h"
+#include "common/timer.h"
+
+#include "graphics/palette.h"
+
+#include "cryo/cryo.h"
+#include "cryo/cryolib.h"
+
+namespace Cryo {
 
 ///// Mac APIs
 typedef short OSErr;
@@ -389,10 +399,6 @@ void CLSound_SetWantsDesigned(short designed) {
 void CLSound_SetLength(sound_t *sound, int length) {
 }
 
-///// CLSoundRaw
-// sound from memory buffer
-#include "CLSouNdRaw.c"
-
 ///// CLSoundChannel
 /// sound output device that plays queue of sounds
 soundchannel_t *CLSoundChannel_New(int arg1) {
@@ -436,10 +442,6 @@ void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, short volume) {
 		return;
 	ch->volumeLeft = volume;
 }
-
-///// CLSoundGroup
-/// a queue of sounds of same format
-#include "CLSoundGroup.c"
 
 ///// CLTimer
 void CLTimer_Action(void *arg) {
@@ -497,8 +499,4 @@ short CLComputer_Has68040() {
 void CLDesktop_TestOpenFileAtStartup() {
 }
 
-///// CLHNM
-#include "CLHNM.c"
-
-///// CLError
-#include "CLError.c"
+} // End of namespace Cryo
