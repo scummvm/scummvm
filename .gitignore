@@ -207,3 +207,6 @@ dists/msvc*/**
 #Ignore Xcode output/project files
 out/
 scummvm.xcodeproj
+
+#Ignore gmon.out created by gprof
+gmon.out
