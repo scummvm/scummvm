@@ -34,6 +34,8 @@
 #include "fullpipe/behavior.h"
 
 
+#define DEBUG 0
+
 namespace Fullpipe {
 
 struct WalkingBearder {
@@ -202,6 +204,10 @@ void sceneHandler29_manBend() {
 }
 
 bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
+#if DEBUG
+	return false;
+#endif
+
 	if (!g_vars->scene29_arcadeIsOn || g_vars->scene29_manIsHit)
 		return false;
 
@@ -222,6 +228,10 @@ bool sceneHandler29_checkRedBallHit(StaticANIObject *ani, int maxx) {
 }
 
 bool sceneHandler29_checkGreenBallHit(StaticANIObject *ani, int maxx) {
+#if DEBUG
+	return false;
+#endif
+
 	if (!g_vars->scene29_arcadeIsOn || g_vars->scene29_manIsHit)
 		return false;
 
