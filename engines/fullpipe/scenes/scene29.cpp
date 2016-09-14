@@ -686,6 +686,8 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_SHOWLASTRED:
 		if (g_vars->scene29_redBalls.size()) { // original checks size of the scene29_greenBalls which looks like a copy/paste error
+			debugC(2, kDebugSceneLogic, "scene29: showLastRed");
+
 			g_vars->scene29_redBalls.back()->show1(-1, -1, -1, 0);
 			g_vars->scene29_redBalls.back()->startAnim(MV_SHR_HITASS, 0, -1);
 		}
@@ -702,6 +704,8 @@ int sceneHandler29(ExCommand *cmd) {
 
 	case MSG_SC29_SHOWLASTGREEN:
 		if (g_vars->scene29_greenBalls.size()) {
+			debugC(2, kDebugSceneLogic, "scene29: showLastGreen");
+
 			g_vars->scene29_greenBalls.back()->show1(-1, -1, -1, 0);
 			g_vars->scene29_greenBalls.back()->startAnim(MV_SHG_HITASS, 0, -1);
 		}
@@ -713,6 +717,8 @@ int sceneHandler29(ExCommand *cmd) {
 		g_vars->scene29_arcadeIsOn = false;
 		g_vars->scene29_reachedFarRight = false;
 		g_vars->scene29_rideBackEnabled = false;
+
+		debugC(2, kDebugSceneLogic, "scene29: stopRide");
 
 		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
