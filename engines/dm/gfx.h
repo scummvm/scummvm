@@ -37,15 +37,17 @@
 
 namespace DM {
 
-#define k0_viewFloor_D3L 0 // @ C0_VIEW_FLOOR_D3L
-#define k1_viewFloor_D3C 1 // @ C1_VIEW_FLOOR_D3C
-#define k2_viewFloor_D3R 2 // @ C2_VIEW_FLOOR_D3R
-#define k3_viewFloor_D2L 3 // @ C3_VIEW_FLOOR_D2L
-#define k4_viewFloor_D2C 4 // @ C4_VIEW_FLOOR_D2C
-#define k5_viewFloor_D2R 5 // @ C5_VIEW_FLOOR_D2R
-#define k6_viewFloor_D1L 6 // @ C6_VIEW_FLOOR_D1L
-#define k7_viewFloor_D1C 7 // @ C7_VIEW_FLOOR_D1C
-#define k8_viewFloor_D1R 8 // @ C8_VIEW_FLOOR_D1R
+enum ViewFloor {
+	kDMViewFloorD3L = 0, // @ C0_VIEW_FLOOR_D3L
+	kDMViewFloorD3C = 1, // @ C1_VIEW_FLOOR_D3C
+	kDMViewFloorD3R = 2, // @ C2_VIEW_FLOOR_D3R
+	kDMViewFloorD2L = 3, // @ C3_VIEW_FLOOR_D2L
+	kDMViewFloorD2C = 4, // @ C4_VIEW_FLOOR_D2C
+	kDMViewFloorD2R = 5, // @ C5_VIEW_FLOOR_D2R
+	kDMViewFloorD1L = 6, // @ C6_VIEW_FLOOR_D1L
+	kDMViewFloorD1C = 7, // @ C7_VIEW_FLOOR_D1C
+	kDMViewFloorD1R = 8 // @ C8_VIEW_FLOOR_D1R
+};
 
 #define k0_doorState_OPEN 0 // @ C0_DOOR_STATE_OPEN 
 #define k1_doorState_FOURTH 1 // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
@@ -719,7 +721,7 @@ public:
 	uint16 getPixelHeight(uint16 index);
 
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
-	void drawFloorOrnament(uint16 floorOrnOrdinal, uint16 viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
+	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
 	void drawDoor(uint16 doorThingIndex, uint16 doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
 					   int16 viewDoorOrnIndex, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
 	void drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
