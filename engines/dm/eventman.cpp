@@ -1006,7 +1006,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 		}
 	case kDMElementTypeDoor: {
 		byte doorState = curSquare.getDoorState();
-		isMovementBlocked = (doorState != k0_doorState_OPEN) && (doorState != k1_doorState_FOURTH) && (doorState != k5_doorState_DESTROYED);
+		isMovementBlocked = (doorState != kDMDoorStateOpen) && (doorState != kDMDoorStateOneFourth) && (doorState != kDMDoorStateDestroyed);
 		}
 		break;
 	case kDMElementTypeFakeWall: {

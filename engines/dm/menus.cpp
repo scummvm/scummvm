@@ -1105,7 +1105,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	case kDMActionKick:
 	case kDMActionSwing:
 	case kDMActionChop:
-		if ((Square(targetSquare).getType() == kDMElementTypeDoor) && (Square(targetSquare).getDoorState() == k4_doorState_CLOSED)) {
+		if ((Square(targetSquare).getType() == kDMElementTypeDoor) && (Square(targetSquare).getDoorState() == kDMDoorStateClosed)) {
 			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, kDMSlotActionHand), false, 2);

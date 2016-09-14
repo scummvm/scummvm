@@ -357,7 +357,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 
 	if (attack >= _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._defense) {
 		byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
-		if (Square(*curSquare).getDoorState() == k4_doorState_CLOSED) {
+		if (Square(*curSquare).getDoorState() == kDMDoorStateClosed) {
 			if (ticks) {
 				TimelineEvent newEvent;
 				_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
@@ -367,7 +367,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 				newEvent._Bu._location._mapY = mapY;
 				_vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
-				((Square *)curSquare)->setDoorState(k5_doorState_DESTROYED);
+				((Square *)curSquare)->setDoorState(kDMDoorStateDestroyed);
 			}
 			return true;
 		}
@@ -1106,7 +1106,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 
 	if (curSquareType == kDMElementTypeDoor) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != k5_doorState_DESTROYED) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != kDMDoorStateDestroyed) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
 			_groupMovementBlockedByDoor = true;
 			return false;
 		}
@@ -1237,7 +1237,7 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 	if (curSquareType == kDMElementTypeDoor) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		int16 curDoorState = Square(curSquare).getDoorState();
-		return ((curDoorState == k3_doorState_FOURTH) || (curDoorState == k4_doorState_CLOSED)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
+		return ((curDoorState == kDMDoorStateThreeFourth) || (curDoorState == kDMDoorStateClosed)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
 	}
 	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, kDMSquareMaskFakeWallOpen));
 }

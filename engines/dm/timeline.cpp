@@ -383,8 +383,8 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	uint16 mapX = event->_Bu._location._mapX;
 	uint16 mapY = event->_Bu._location._mapY;
 	Square *curSquare = (Square *)&_vm->_dungeonMan->_currMapData[mapX][mapY];
-	int16 doorState = Square(*curSquare).getDoorState();
-	if (doorState == k5_doorState_DESTROYED)
+	DoorState doorState = (DoorState)(*curSquare).getDoorState();
+	if (doorState == kDMDoorStateDestroyed)
 		return;
 
 	event->_mapTime++;
@@ -393,9 +393,9 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		bool verticalDoorFl = curDoor->opensVertically();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX)
-		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != k0_doorState_OPEN)) {
+		 && (mapY == _vm->_dungeonMan->_partyMapY) && (doorState != kDMDoorStateOpen)) {
 			if (_vm->_championMan->_partyChampionCount > 0) {
-				curSquare->setDoorState(k0_doorState_OPEN);
+				curSquare->setDoorState(kDMDoorStateOpen);
 
 				// Strangerke
 				// Original bug fixed - A closing horizontal door wounds champions to the head instead of to the hands. Missing parenthesis in the condition cause all doors to wound the head in addition to the torso
@@ -415,7 +415,8 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 
-				doorState = (doorState == k0_doorState_OPEN) ? k0_doorState_OPEN : (doorState - 1);
+				int16 nextState = doorState - 1;
+				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState) nextState;
 				curSquare->setDoorState(doorState);
 				_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, kDMSoundModePlayIfPrioritized);
 				event->_mapTime++;
@@ -424,20 +425,22 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 			}
 		}
 	}
-	if ((sensorEffect == kDMSensorEffectSet) && (doorState == k0_doorState_OPEN))
+	if ((sensorEffect == kDMSensorEffectSet) && (doorState == kDMDoorStateOpen))
 		return;
 
-	if ((sensorEffect == kDMSensorEffectClear) && (doorState == k4_doorState_CLOSED))
+	if ((sensorEffect == kDMSensorEffectClear) && (doorState == kDMDoorStateClosed))
 		return;
 
-	doorState += (sensorEffect == kDMSensorEffectSet) ? -1 : 1;
+	int16 nextDoorEffect = doorState + 1;
+	int16 prevDoorEffect = doorState - 1;
+	doorState = (DoorState) ((sensorEffect == kDMSensorEffectSet) ? prevDoorEffect : nextDoorEffect);
 	curSquare->setDoorState(doorState);
 	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 	if (sensorEffect == kDMSensorEffectSet) {
-		if (doorState == k0_doorState_OPEN)
+		if (doorState == kDMDoorStateOpen)
 			return;
-	} else if (doorState == k4_doorState_CLOSED)
+	} else if (doorState == kDMDoorStateClosed)
 		return;
 
 	addEventGetEventIndex(event);
@@ -469,18 +472,18 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 
 void Timeline::processEventDoorDestruction(TimelineEvent *event) {
 	Square *square = (Square *)&_vm->_dungeonMan->_currMapData[event->_Bu._location._mapX][event->_Bu._location._mapY];
-	square->setDoorState(k5_doorState_DESTROYED);
+	square->setDoorState(kDMDoorStateDestroyed);
 }
 
 void Timeline::processEventSquareDoor(TimelineEvent *event) {
 	int16 doorState = Square(_vm->_dungeonMan->_currMapData[event->_Bu._location._mapX][event->_Bu._location._mapY]).getDoorState();
-	if (doorState == k5_doorState_DESTROYED)
+	if (doorState == kDMDoorStateDestroyed)
 		return;
 
 	if (event->_Cu.A._effect == kDMSensorEffectToggle)
-		event->_Cu.A._effect = (doorState == k0_doorState_OPEN) ? kDMSensorEffectClear : kDMSensorEffectSet;
+		event->_Cu.A._effect = (doorState == kDMDoorStateOpen) ? kDMSensorEffectClear : kDMSensorEffectSet;
 	else if (event->_Cu.A._effect == kDMSensorEffectSet) {
-		if ((doorState == k0_doorState_OPEN) || (doorState == k4_doorState_CLOSED))
+		if ((doorState == kDMDoorStateOpen) || (doorState == kDMDoorStateClosed))
 			return;
 	}
 	event->_type = k1_TMEventTypeDoorAnimation;

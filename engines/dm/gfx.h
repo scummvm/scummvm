@@ -49,12 +49,14 @@ enum ViewFloor {
 	kDMViewFloorD1R = 8 // @ C8_VIEW_FLOOR_D1R
 };
 
-#define k0_doorState_OPEN 0 // @ C0_DOOR_STATE_OPEN 
-#define k1_doorState_FOURTH 1 // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
-#define k2_doorState_HALF 2 // @ k2_DoorStateAspect_CLOSED_HALF 
-#define k3_doorState_FOURTH 3 // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
-#define k4_doorState_CLOSED 4 // @ C4_DOOR_STATE_CLOSED 
-#define k5_doorState_DESTROYED 5 // @ C5_DOOR_STATE_DESTROYED 
+enum DoorState {
+	kDMDoorStateOpen = 0, // @ C0_DOOR_STATE_OPEN 
+	kDMDoorStateOneFourth = 1, // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
+	kDMDoorStateHalf = 2, // @ k2_DoorStateAspect_CLOSED_HALF 
+	kDMDoorStateThreeFourth = 3, // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
+	kDMDoorStateClosed = 4, // @ C4_DOOR_STATE_CLOSED 
+	kDMDoorStateDestroyed = 5 // @ C5_DOOR_STATE_DESTROYED 
+};
 
 #define k0_ViewDoorOrnament_D3LCR 0 // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
 #define k1_ViewDoorOrnament_D2LCR 1 // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
@@ -722,7 +724,7 @@ public:
 
 	void copyBitmapAndFlipHorizontal(byte *srcBitmap, byte *destBitmap, uint16 byteWidth, uint16 height); // @ F0099_DUNGEONVIEW_CopyBitmapAndFlipHorizontal
 	void drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIndex); // @ F0108_DUNGEONVIEW_DrawFloorOrnament
-	void drawDoor(uint16 doorThingIndex, uint16 doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
+	void drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount,
 					   int16 viewDoorOrnIndex, DoorFrames *doorFrames); // @ F0111_DUNGEONVIEW_DrawDoor
 	void drawDoorOrnament(int16 doorOrnOdinal, int16 viewDoorOrnIndex); // @ F0109_DUNGEONVIEW_DrawDoorOrnament
 	void drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal); // @ F0112_DUNGEONVIEW_DrawCeilingPit
