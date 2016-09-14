@@ -59,6 +59,7 @@ public:
 	bool _singleton;
 public:
 	CInputHandler(CGameManager *owner);
+	~CInputHandler();
 
 	void setTranslator(CInputTranslator *translator);
 

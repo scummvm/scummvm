@@ -36,6 +36,10 @@ CInputHandler::CInputHandler(CGameManager *owner) :
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
+CInputHandler::~CInputHandler() {
+	CScreenManager::_screenManagerPtr->_inputHandler = nullptr;
+}
+
 void CInputHandler::setTranslator(CInputTranslator *translator) {
 	_inputTranslator = translator;
 }
