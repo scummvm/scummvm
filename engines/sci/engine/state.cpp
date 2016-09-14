@@ -159,11 +159,11 @@ void EngineState::initGlobals() {
 }
 
 uint16 EngineState::currentRoomNumber() const {
-	return variables[VAR_GLOBAL][13].toUint16();
+	return variables[VAR_GLOBAL][kNewRoomNo].toUint16();
 }
 
 void EngineState::setRoomNumber(uint16 roomNumber) {
-	variables[VAR_GLOBAL][13] = make_reg(0, roomNumber);
+	variables[VAR_GLOBAL][kNewRoomNo] = make_reg(0, roomNumber);
 }
 
 void EngineState::shrinkStackToBase() {
