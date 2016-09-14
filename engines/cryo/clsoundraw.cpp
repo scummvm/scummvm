@@ -24,7 +24,7 @@
 
 namespace Cryo {
 
-sound_t *CLSoundRaw_New(short arg1, float rate, short sampleSize, short mode) {
+sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 	sound_t *sound;
 	CLBeginCheck;
 

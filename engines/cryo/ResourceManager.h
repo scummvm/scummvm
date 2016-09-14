@@ -12,11 +12,11 @@ namespace Cryo {
 template<typename T>
 class CryoArray {
 private:
-	unsigned char *_data;
+	byte *_data;
 	bool _ownData;
-	unsigned short ElementOffset(int num) {
+	uint16 ElementOffset(int num) {
 		assert(_data && num < Count())
-		return (static_cast<unsigned short *>_data)[num];
+		return (static_cast<uint16 *>_data)[num];
 	}
 public:
 	CryoArray(void *data, bool ownData) : _data(data), _ownData(ownData) {
@@ -25,7 +25,7 @@ public:
 		if (_ownData)
 			delete data;
 	}
-	unsigned short Count() {
+	uint16 Count() {
 		return ElementOffset(0) / 2;
 	}
 	const T *operator[](int index) {
@@ -39,7 +39,7 @@ private:
 		char _name[16];
 		unsigned int _size;
 		unsigned int _offset;
-		unsigned char _flag;
+		byte _flag;
 	};
 
 	Common::Array<DatFileEntry> _files;

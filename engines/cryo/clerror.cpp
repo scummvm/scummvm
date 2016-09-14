@@ -24,6 +24,6 @@
 
 namespace Cryo {
 
-short __debug, __libError, __osError;
+int16 __debug, __libError, __osError;
 
 } // End of namespace Cryo

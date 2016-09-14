@@ -24,9 +24,9 @@
 
 namespace Cryo {
 
-soundgroup_t *CLSoundGroup_New(short numSounds, short arg4, short sampleSize, float rate, short mode) {
+soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode) {
 	soundgroup_t *sg;
-	short i;
+	int16 i;
 
 	sg = (soundgroup_t *)CLMemory_Alloc(sizeof(*sg));
 	if (numSounds < CL_MAX_SOUNDS)
@@ -50,14 +50,14 @@ soundgroup_t *CLSoundGroup_New(short numSounds, short arg4, short sampleSize, fl
 }
 
 void CLSoundGroup_Free(soundgroup_t *sg) {
-	short i;
+	int16 i;
 	for (i = 0; i < sg->numSounds; i++)
 		CLSoundRaw_Free(sg->sound[i]);
 	CLMemory_Free(sg);
 }
 
 void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
-	short i;
+	int16 i;
 	for (i = 0; i < sg->numSounds; i++)
 		sg->sound[i]->reversed = 1;
 }
@@ -69,7 +69,7 @@ void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg) {
 	return ((char *)(*sound->sndHandle)) + sound->headerLen;
 }
 
-short CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, short isSigned) {
+int16 CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, int16 isSigned) {
 	sound_t *sound = sg->sound[sg->soundIndex];
 	if (sg->ff_106)
 		while (sound->locked) ;
@@ -90,7 +90,7 @@ short CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, short
 	return 1;
 }
 
-short CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, short isSigned) {
+int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSigned) {
 	void *buffer;
 	sound_t *sound = sg->sound[sg->soundIndex];
 	if (length >= sound->ff_1A) {

@@ -20,9 +20,9 @@ bool ResourceManager::LoadDatFile(const Common::String &datFileName) {
 
 	assert(_datFile.open(datFileName));
 
-	unsigned short numFiles = _datFile.readUint16LE();
+	uint16 numFiles = _datFile.readUint16LE();
 
-	for (unsigned short i = 0; i < numFiles; i++) {
+	for (uint16 i = 0; i < numFiles; i++) {
 		DatFileEntry entry;
 
 		_datFile.read(entry._name, sizeof(entry._name));
@@ -76,7 +76,7 @@ void *ResourceManager::StreamToBuffer(Common::SeekableReadStream *stream, unsign
 		return nullptr;
 
 	unsigned int readSize = stream->size();
-	unsigned char *data = new unsigned char[readSize + 1];
+	byte *data = new byte[readSize + 1];
 	readSize = stream->read(data, readSize);
 
 	if (size)

@@ -52,7 +52,7 @@ suiveur_t suiveurs_list[] = {
 
 */
 
-unsigned char kLabyrinthPath[] = {
+byte kLabyrinthPath[] = {
 // each nibble tells wich direction to choose to exit the labyrinth
 	0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
 	0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
@@ -239,7 +239,7 @@ goto_t gotos[] = {
 #define SUB_LINE(start, end) \
 	(start), (end) | 0x8000
 
-short tab_2D24C[] = {
+int16 tab_2D24C[] = {
 	SUB_LINE(68, 120),
 	123, 32964,
 	199, 33042,
@@ -259,13 +259,13 @@ short tab_2D24C[] = {
 	-1
 };
 
-short tab_2D28E[] = {
+int16 tab_2D28E[] = {
 	99, 32923,
 	157, 33024,
 	-1
 };
 
-short tab_2D298[] = {
+int16 tab_2D298[] = {
 	106, 32941,
 	175, 33012,
 	246, 33118,
@@ -273,7 +273,7 @@ short tab_2D298[] = {
 	-1
 };
 
-short tab_2D2AA[] = {
+int16 tab_2D2AA[] = {
 	126, 32944,
 	178, 33035,
 	269, 33110,
@@ -283,7 +283,7 @@ short tab_2D2AA[] = {
 	-1
 };
 
-short tab_2D2C4[] = {
+int16 tab_2D2C4[] = {
 	101, 32981,
 	215, 33121,
 	355, 33223,
@@ -344,7 +344,7 @@ object_t objects[] = {
 	{ 42, 0,  3, 0x8000,     0, 0}      // Tablet #6 (Castra)
 };
 
-short kObjectLocations[100] = {
+int16 kObjectLocations[100] = {
 	0x112, -1,
 	0x202, -1,
 	0x120, -1,
@@ -496,7 +496,7 @@ cita_t cita_list[] = {
 };
 
 
-short tab_2CB16[] = { 2075, 2080, 2119, -1};
+int16 tab_2CB16[] = { 2075, 2080, 2119, -1};
 
 char tab_2CB1E[8][4] = {
 	{ 0x10, 0x81,    1, 0x90},
@@ -509,7 +509,7 @@ char tab_2CB1E[8][4] = {
 	{ 0x81, 0x90,    1, 0x10}
 };
 
-prect_t perso_rects[] = {   //TODO: just an array of shorts?
+prect_t perso_rects[] = {   //TODO: just an array of int16s?
 	{  93,  69, 223, 176},
 	{ 102,  86, 162, 126},
 	{  88, 103, 168, 163},
@@ -531,7 +531,7 @@ prect_t perso_rects[] = {   //TODO: just an array of shorts?
 	{ 188,  83, 251, 158}
 };
 
-unsigned char tab_persxx[][5] = {   //TODO: struc?
+byte tab_persxx[][5] = {   //TODO: struc?
 	{  8, 15, 23, 25, -1},
 	{  0,  9, -1        },
 	{  0,  9, -1        },
@@ -569,21 +569,21 @@ area_t kAreasTable[] = {
 	{ Areas::arMoorkusLair  , AreaType::atCave   ,                           0, 127, 0, 12}
 };
 
-short tab_2CEF0[64] = {
+int16 tab_2CEF0[64] = {
 	25, 257,  0,   0, 37, 258, 38, 259,  0,   0, 24, 260, 0, 0, 0, 0,
 	0,   0, 53, 265,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
 	39, 261,  0,   0, 40, 262, 62, 263,  0,   0, 63, 264, 0, 0, 0, 0,
 	18, 275,  0,   0, 35, 254, 36, 255, 19, 318, 23, 256, 0, 0, 0, 0
 };
 
-short tab_2CF70[64] = {
+int16 tab_2CF70[64] = {
 	65, 266,  0,   0, 66, 267, 67, 268,  0,   0, 68, 269, 0, 0, 0, 0,
 	0,   0, 73, 274,  0,   0,  0,   0,  0,   0,  0,   0, 0, 0, 0, 0,
 	69, 270,  0,   0, 70, 271, 71, 272,  0,   0, 72, 273, 0, 0, 0, 0,
 	18, 275,  0,   0, 35, 254, 36, 255, 19, 318, 23, 256, 0, 0, 0, 0,
 };
 
-short kActionCursors[299] = {
+int16 kActionCursors[299] = {
 	3, 1, 2, 4, 5, 5, 5, 0, 5, 5,
 	5, 5, 5, 3, 2, 5, 5, 5, 3, 2,
 	4, 5, 7, 7, 4, 5, 5, 0, 0, 0,
@@ -623,7 +623,7 @@ float flt_2DF84 =   200;
 // Cube faces to texture coords mapping
 // each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
 
-short cube_texcoords[3][6 * 2 * 3 * 2] = {
+int16 cube_texcoords[3][6 * 2 * 3 * 2] = {
 	{
 		32, 32,  0, 32,  0,  0,
 		32, 32,  0,  0, 32,  0,

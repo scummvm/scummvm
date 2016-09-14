@@ -26,32 +26,32 @@
 
 namespace Cryo {
 
-static short safe_palette = 0;
-static short pred_r = 0, pred_l = 0;
-static short use_adpcm = 0;
+static int16 safe_palette = 0;
+static int16 pred_r = 0, pred_l = 0;
+static int16 use_adpcm = 0;
 static float hnm_rate = 0.0;
 static float next_frame_time = 0.0;
 static float expected_frame_time = 0.0;
 static float time_drift = 0.0;
-static short use_mono = 0;
-static short use_sound = 0;
-static short use_sound_sync = 0;
-static short pending_sounds = 0;
-static short sound_started = 0;
-static short preserve_color0 = 0;
+static int16 use_mono = 0;
+static int16 use_sound = 0;
+static int16 use_sound_sync = 0;
+static int16 pending_sounds = 0;
+static int16 sound_started = 0;
+static int16 preserve_color0 = 0;
 static soundchannel_t *soundChannel_adpcm = 0;
 static soundgroup_t *soundGroup_adpcm = 0;
 static soundchannel_t *soundChannel = 0;
 static soundgroup_t *soundGroup = 0;
-static void (*custom_chunk_handler)(unsigned char *buffer, int size, short id, char h6, char h7) = 0;
-static short use_preload = 0;
-static short decomp_table[256];
+static void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7) = 0;
+static int16 use_preload = 0;
+static int16 decomp_table[256];
 
-void CLHNM_Desentrelace320(unsigned char *frame_buffer, unsigned char *final_buffer, unsigned short height);
+void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 
-void CLHNM_DecompLempelZiv(unsigned char *buffer, unsigned char *output) {
-	unsigned char *inp = buffer;
-	unsigned char *out = output;
+void CLHNM_DecompLempelZiv(byte *buffer, byte *output) {
+	byte *inp = buffer;
+	byte *out = output;
 
 	unsigned int queue = 0;
 	int qpos = -1;
@@ -66,7 +66,7 @@ void CLHNM_DecompLempelZiv(unsigned char *buffer, unsigned char *output) {
 			int l, o;
 			if (GetBit()) {
 				l = *inp & 7;
-				o = *(unsigned short *)inp >> 3;
+				o = *(uint16 *)inp >> 3;
 				inp += 2;
 				o -= 8192;
 				if (!l)
@@ -90,14 +90,14 @@ void CLHNM_DecompLempelZiv(unsigned char *buffer, unsigned char *output) {
 	return;
 }
 
-void CLHNM_DecompUBA(unsigned char *output, unsigned char *curr_buffer, unsigned char *prev_buffer,
-                     unsigned char *input, int width, char flags) {
+void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
+                     byte *input, int width, char flags) {
 	unsigned int code;
 	char mode, count, color;
-	unsigned short offs;
-	unsigned char *ref;
-	unsigned char *out_start = output;
-	unsigned char swap;
+	uint16 offs;
+	byte *ref;
+	byte *out_start = output;
+	byte swap;
 	int shft1, shft2;
 //	return;
 	if ((flags & 1) == 0) {
@@ -123,8 +123,8 @@ void CLHNM_DecompUBA(unsigned char *output, unsigned char *curr_buffer, unsigned
 					shft2 = 1;
 				}
 				while (count--) {
-					unsigned char b0 = ref[shft1];
-					unsigned char b1 = ref[shft2];
+					byte b0 = ref[shft1];
+					byte b1 = ref[shft2];
 					output[swap] = b0;
 					output[swap ^ 1] = b1;
 					output += 2;
@@ -215,14 +215,14 @@ void CLHNM_WaitLoop(hnm_t *hnm) {
 	time_drift = TimerTicks - next_frame_time;
 }
 
-void CLHNM_SetupSound(short numSounds, short arg4, short sampleSize, float rate, short mode) {
+void CLHNM_SetupSound(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode) {
 	soundChannel = CLSoundChannel_New(mode);
 	soundGroup = CLSoundGroup_New(numSounds, arg4, sampleSize, rate, mode);
 	if (sampleSize == 16)
 		CLSoundGroup_Reverse16All(soundGroup);
 }
 
-void CLHNM_SetupSoundADPCM(short numSounds, short arg4, short sampleSize, float rate, short mode) {
+void CLHNM_SetupSoundADPCM(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode) {
 	soundChannel_adpcm = CLSoundChannel_New(mode);
 	soundGroup_adpcm = CLSoundGroup_New(numSounds, arg4, sampleSize, rate, mode);
 }
@@ -248,13 +248,13 @@ void CLHNM_CloseSound() {
 	}
 }
 
-void CLHNM_SetForceZero2Black(short forceblack) {
+void CLHNM_SetForceZero2Black(int16 forceblack) {
 	preserve_color0 = forceblack;
 }
 
 hnm_t *CLHNM_New(int preload_size) {
 	hnm_t *hnm;
-	short i;
+	int16 i;
 
 	preload_size = 0;   //TODO: let's ignore it for now
 
@@ -308,7 +308,7 @@ void CLHNM_SetFile(hnm_t *hnm, file_t *file) {
 	CLNoError;
 }
 
-void CLHNM_SetFinalBuffer(hnm_t *hnm, unsigned char *buffer) {
+void CLHNM_SetFinalBuffer(hnm_t *hnm, byte *buffer) {
 	hnm->final_buffer = buffer;
 	CLNoError;
 }
@@ -316,13 +316,13 @@ void CLHNM_SetFinalBuffer(hnm_t *hnm, unsigned char *buffer) {
 void CLHNM_AllocMemory(hnm_t *hnm) {
 	CLBeginCheck;
 
-	hnm->work_buffer[0] = (unsigned char *)CLMemory_Alloc(hnm->header.buffersize + 2);
+	hnm->work_buffer[0] = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
 	CLCheckError();
 
 	if (!hnm->work_buffer[0])
 		goto fin;
 
-	hnm->work_buffer[1] = (unsigned char *)CLMemory_Alloc(hnm->header.buffersize + 2);
+	hnm->work_buffer[1] = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
 	CLCheckError();
 
 	if (!hnm->work_buffer[1]) {
@@ -333,7 +333,7 @@ void CLHNM_AllocMemory(hnm_t *hnm) {
 	}
 
 	if (!use_preload) {
-		hnm->read_buffer = (unsigned char *)CLMemory_Alloc(hnm->header.buffersize + 2);
+		hnm->read_buffer = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
 //		CLCheckError();
 		if (!hnm->read_buffer) {
 			CLMemory_Free(hnm->work_buffer[0]);
@@ -387,7 +387,7 @@ void CLHNM_GiveTime(hnm_t *hnm) {
 	}
 }
 
-void CLHNM_CanLoop(hnm_t *hnm, short can_loop) {
+void CLHNM_CanLoop(hnm_t *hnm, int16 can_loop) {
 	hnm->can_loop = can_loop;
 }
 
@@ -402,13 +402,13 @@ void CLHNM_SelectBuffers(hnm_t *hnm) {
 }
 
 void CLHNM_ChangePalette(hnm_t *hnm) {
-	short mincolor, maxcolor;
-	unsigned short fst, cnt;
-	unsigned char *pal;
+	int16 mincolor, maxcolor;
+	uint16 fst, cnt;
+	byte *pal;
 	color_t *color;
 	CLPalette_GetLastPalette(hnm->palette);
 	pal = hnm->data_ptr;
-	if (*(unsigned short *)pal == 0xFFFF)
+	if (*(uint16 *)pal == 0xFFFF)
 		return;
 	mincolor = 255;
 	maxcolor = 0;
@@ -426,12 +426,12 @@ void CLHNM_ChangePalette(hnm_t *hnm) {
 		color = hnm->palette + fst;
 		if (safe_palette) {
 			while (cnt--) {
-				unsigned char r = *pal++;
-				unsigned char g = *pal++;
-				unsigned char b = *pal++;
-				short rr = r << 10;
-				short gg = g << 10;
-				short bb = b << 10;
+				byte r = *pal++;
+				byte g = *pal++;
+				byte b = *pal++;
+				int16 rr = r << 10;
+				int16 gg = g << 10;
+				int16 bb = b << 10;
 				if (color->r != rr || color->g != gg || color->b != bb)
 					CLBlitter_OneBlackFlash();
 				color->r = rr;
@@ -441,9 +441,9 @@ void CLHNM_ChangePalette(hnm_t *hnm) {
 			}
 		} else {
 			while (cnt--) {
-				unsigned char r = *pal++;
-				unsigned char g = *pal++;
-				unsigned char b = *pal++;
+				byte r = *pal++;
+				byte g = *pal++;
+				byte b = *pal++;
 				color->r = r << 10;
 				color->g = g << 10;
 				color->b = b << 10;
@@ -451,7 +451,7 @@ void CLHNM_ChangePalette(hnm_t *hnm) {
 			}
 		}
 
-	} while (*(unsigned short *)pal != 0xFFFF);
+	} while (*(uint16 *)pal != 0xFFFF);
 #if 0
 	if (preserve_color0) {
 		hnm->palette[0].r = 0;
@@ -491,7 +491,7 @@ soundchannel_t *CLHNM_GetSoundChannel() {
 
 
 void CLHNM_TryRead(hnm_t *hnm, int size) {
-	short err;
+	int16 err;
 	do {
 		CLHNM_Read(hnm, size);
 		err = __libError == -6;
@@ -515,7 +515,7 @@ void CLHNM_Reset(hnm_t *hnm) {
 	CLNoError;
 }
 
-short CLHNM_LoadFrame(hnm_t *hnm) {
+int16 CLHNM_LoadFrame(hnm_t *hnm) {
 	int chunk;
 	CLBeginCheck;
 	CLHNM_TryRead(hnm, 4);
@@ -546,21 +546,21 @@ short CLHNM_LoadFrame(hnm_t *hnm) {
 	return 1;
 }
 
-void CLHNM_WantsSound(short sound) {
+void CLHNM_WantsSound(int16 sound) {
 	use_sound = sound;
 }
 
-void CLHNM_LoadDecompTable(short *buffer) {
-	short i;
-	short e;
+void CLHNM_LoadDecompTable(int16 *buffer) {
+	int16 i;
+	int16 e;
 	for (i = 0; i < 256; i++) {
 		e = *buffer++;
 		decomp_table[i] = LE16(e);
 	}
 }
 
-void CLHNM_DecompADPCM(unsigned char *buffer, short *output, int size) {
-	short l = pred_l, r = pred_r;
+void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size) {
+	int16 l = pred_l, r = pred_r;
 	size &= ~1;
 	while (size--) {
 		*output++ = l += decomp_table[*buffer++];
@@ -572,19 +572,19 @@ void CLHNM_DecompADPCM(unsigned char *buffer, short *output, int size) {
 	pred_r = r;
 }
 
-void CLHNM_SoundInADPCM(short is_adpcm) {
+void CLHNM_SoundInADPCM(int16 is_adpcm) {
 	use_adpcm = is_adpcm;
 }
 
-void CLHNM_SoundMono(short is_mono) {
+void CLHNM_SoundMono(int16 is_mono) {
 	use_mono = is_mono;
 }
 
-short CLHNM_NextElement(hnm_t *hnm) {
+int16 CLHNM_NextElement(hnm_t *hnm) {
 	int sz;
-	short id;
+	int16 id;
 	char h6, h7;
-	short i;
+	int16 i;
 	if (hnm->frame == 0) {
 		CLHNM_ResetInternalTimer();
 		pred_l = pred_r = 0;
@@ -596,7 +596,7 @@ short CLHNM_NextElement(hnm_t *hnm) {
 	for (;;) {
 		sz = PLE32(hnm->data_ptr) & 0xFFFFFF;
 		hnm->data_ptr += 4;
-		id = *(short *)hnm->data_ptr;
+		id = *(int16 *)hnm->data_ptr;
 		hnm->data_ptr += 2;
 		h6 = *hnm->data_ptr;
 		hnm->data_ptr += 1;
@@ -667,10 +667,10 @@ short CLHNM_NextElement(hnm_t *hnm) {
 						else
 							pending_sounds++;
 					} else {
-						short *sound_buffer = (short *)CLSoundGroup_GetNextBuffer(soundGroup_adpcm);
+						int16 *sound_buffer = (int16 *)CLSoundGroup_GetNextBuffer(soundGroup_adpcm);
 						if (!pending_sounds) {
-							const int kDecompTableSize = 256 * sizeof(short);
-							CLHNM_LoadDecompTable((short *)hnm->data_ptr);
+							const int kDecompTableSize = 256 * sizeof(int16);
+							CLHNM_LoadDecompTable((int16 *)hnm->data_ptr);
 							CLHNM_DecompADPCM(hnm->data_ptr + kDecompTableSize, sound_buffer, sound_size - kDecompTableSize);
 							CLSoundGroup_AssignDatas(soundGroup_adpcm, sound_buffer, (sound_size - kDecompTableSize) * 2, 0);
 						} else {
@@ -723,7 +723,7 @@ void CLHNM_ReadHeader(hnm_t *hnm) {
 	hnm->header.buffersize += 4096; //TODO: checkme
 }
 
-short CLHNM_GetVersion(hnm_t *hnm) {
+int16 CLHNM_GetVersion(hnm_t *hnm) {
 	CLNoError;
 	if (hnm->header.id == BE32('HNM4'))
 		return 4;
@@ -747,13 +747,13 @@ void CLHNM_SetPosIntoFile(hnm_t *hnm, long pos) {
 	CLFile_SetPosition(*hnm->file, 1, pos);
 }
 
-void CLHNM_Desentrelace320(unsigned char *frame_buffer, unsigned char *final_buffer, unsigned short height) {
+void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height) {
 	unsigned int *input = (unsigned int *)frame_buffer;
 	unsigned int *line0 = (unsigned int *)final_buffer;
 	unsigned int *line1 = (unsigned int *)(final_buffer + 320);
 	int count = (height) / 2;
 	while (count--) {
-		short i;
+		int16 i;
 		for (i = 0; i < 320 / 4; i++) {
 			unsigned int p0 = *input++;
 			unsigned int p4 = *input++;

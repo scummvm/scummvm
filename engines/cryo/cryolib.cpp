@@ -32,24 +32,24 @@
 namespace Cryo {
 
 ///// Mac APIs
-typedef short OSErr;
+typedef int16 OSErr;
 
-short MemError() {
+int16 MemError() {
 	return 0;
 }
 
 void SysBeep(int x) {
 }
 
-OSErr SetFPos(short handle, short mode, long pos) {
+OSErr SetFPos(int16 handle, int16 mode, long pos) {
 	return 0;
 }
 
-OSErr FSRead(short handle, long *size, void *buffer) {
+OSErr FSRead(int16 handle, long *size, void *buffer) {
 	return 0;
 }
 
-void FlushEvents(short arg1, short arg2) {
+void FlushEvents(int16 arg1, int16 arg2) {
 }
 
 char *c2pstr(char *s) {
@@ -96,7 +96,7 @@ void CLView_Free(view_t *view) {
 		CLMemory_Free(view);
 }
 void CLView_InitDatas(view_t *view, int w, int h, void *buffer) {
-	view->p_buffer = (unsigned char *)buffer;
+	view->p_buffer = (byte *)buffer;
 	view->width = w;
 	view->height = h;
 	view->pitch = w;
@@ -117,7 +117,7 @@ void CLView_InitDatas(view_t *view, int w, int h, void *buffer) {
 view_t *CLView_New(int w, int h) {
 	view_t *view = (view_t *)CLMemory_Alloc(sizeof(view_t));
 	if (view) {
-		void *buffer = (unsigned char *)CLMemory_Alloc(w * h);
+		void *buffer = (byte *)CLMemory_Alloc(w * h);
 		if (buffer) {
 			view->allocated = 1;
 			CLView_InitDatas(view, w, h, buffer);
@@ -150,35 +150,35 @@ void CLScreenView_CenterIn(view_t *view) {
 }
 
 ///// CLPalette
-unsigned short gIntervalLast, gIntervalFirst, gIntervalSet;
-short gMacintize = 0;
+uint16 gIntervalLast, gIntervalFirst, gIntervalSet;
+int16 gMacintize = 0;
 color_t black_palette[256];
 color_t last_palette[256];
 void CLPalette_Init() {
-	short i;
+	int16 i;
 	for (i = 0; i < 256; i++)
 		black_palette[i].r = black_palette[i].g = black_palette[i].b = 0;
 }
-void CLPalette_SetLastPalette(color_t *palette, short first, short count) {
-	short i;
+void CLPalette_SetLastPalette(color_t *palette, int16 first, int16 count) {
+	int16 i;
 	for (i = first; i < first + count; i++)
 		last_palette[i] = palette[i];
 }
 void CLPalette_GetLastPalette(color_t *palette) {
-	short i;
+	int16 i;
 	for (i = 0; i < 256; i++)
 		palette[i] = last_palette[i];
 }
-void CLPalette_SetRGBColor(color_t *palette, unsigned short index, color3_t *rgb) {
+void CLPalette_SetRGBColor(color_t *palette, uint16 index, color3_t *rgb) {
 	palette[index].r = rgb->r;
 	palette[index].g = rgb->g;
 	palette[index].b = rgb->b;
 	palette[index].a = 0;
 }
-void CLPalette_Macintize(short macintize) {
+void CLPalette_Macintize(int16 macintize) {
 	gMacintize = macintize;
 }
-void CLPalette_SetInterval(unsigned short first, unsigned short last) {
+void CLPalette_SetInterval(uint16 first, uint16 last) {
 	gIntervalFirst = first;
 	gIntervalSet = 1;
 	gIntervalLast = last;
@@ -186,9 +186,9 @@ void CLPalette_SetInterval(unsigned short first, unsigned short last) {
 void CLPalette_DeactivateInterval() {
 	gIntervalSet = 0;
 }
-void CLPalette_Send2Screen(struct color_t *palette, unsigned short first, unsigned short count) {
+void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) {
 	OSErr err;
-	short i;
+	int16 i;
 	if (gMacintize) {
 		palette[0].r = palette[0].g = palette[0].b = 0xFFFF;
 		palette[255].r = palette[255].g = palette[255].b = 0;
@@ -219,9 +219,9 @@ void CLPalette_BeSystem() {
 }
 
 ///// CLBlitter
-static unsigned short newPaletteCount, newPaletteFirst;
+static uint16 newPaletteCount, newPaletteFirst;
 static color_t *pNewPalette;
-static unsigned short useNewPalette;
+static uint16 useNewPalette;
 
 void CLBlitter_CopyViewRect(view_t *view1, view_t *view2, rect_t *rect1, rect_t *rect2) {
 	int sy, dy = rect2->sy, x, w = rect1->ex - rect1->sx + 1;
@@ -231,13 +231,13 @@ void CLBlitter_CopyViewRect(view_t *view1, view_t *view2, rect_t *rect1, rect_t 
 	//      (rect1->ex - rect1->sx == rect2->ex - rect2->sx && rect1->ey - rect1->sy == rect2->ey - rect2->sy) ? "ok" : "BAD");
 	assert(rect1->ex - rect1->sx == rect2->ex - rect2->sx && rect1->ey - rect1->sy == rect2->ey - rect2->sy);
 	for (sy = rect1->sy; sy <= rect1->ey; sy++, dy++) {
-		unsigned char *s = view1->p_buffer + sy * view1->pitch + rect1->sx;
-		unsigned char *d = view2->p_buffer + dy * view2->pitch + rect2->sx;
+		byte *s = view1->p_buffer + sy * view1->pitch + rect1->sx;
+		byte *d = view2->p_buffer + dy * view2->pitch + rect2->sx;
 		for (x = 0; x < w; x++)
 			*d++ = *s++;
 	}
 }
-void CLBlitter_Send2ScreenNextCopy(color_t *palette, unsigned short first, unsigned short count) {
+void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count) {
 	pNewPalette = palette;
 	useNewPalette = 1;
 	newPaletteFirst = first;
@@ -245,9 +245,9 @@ void CLBlitter_Send2ScreenNextCopy(color_t *palette, unsigned short first, unsig
 }
 void CLBlitter_OneBlackFlash() {
 }
-void CLBlitter_CopyView2ViewSimpleSize(unsigned char *src, short srcw, short srcp, short srch,
-                                       unsigned char *dst, short dstw, short dstp, short dsth) {
-	short x, y;
+void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
+                                       byte *dst, int16 dstw, int16 dstp, int16 dsth) {
+	int16 x, y;
 	for (y = 0; y < srch; y++) {
 		for (x = 0; x < srcw; x++)
 			*dst++ = *src++;
@@ -258,8 +258,8 @@ void CLBlitter_CopyView2ViewSimpleSize(unsigned char *src, short srcw, short src
 void CLBlitter_CopyView2ScreenCUSTOM(view_t *view) {
 	view_t *dest = &ScreenView;
 	if (!view->doubled) {
-		short srcpitch = view->pitch;
-		short dstpitch = dest->pitch;
+		int16 srcpitch = view->pitch;
+		int16 dstpitch = dest->pitch;
 
 		//      this is not quite correct?
 		//      CLBlitter_CopyView2ViewSimpleSize(view->p_buffer + view->norm.src_top * srcpitch + view->norm.src_left, view->norm.width, srcpitch, view->norm.height,
@@ -292,8 +292,8 @@ void CLBlitter_UpdateScreen() {
 	CLBlitter_CopyView2Screen(nullptr);
 }
 void CLBlitter_FillView(view_t *view, unsigned int fill) {
-	short x, y;
-	unsigned char *d = view->p_buffer;
+	int16 x, y;
+	byte *d = view->p_buffer;
 	assert((fill & 0xFF) * 0x01010101 == fill);
 	for (y = 0; y < view->height; y++) {
 		for (x = 0; x < view->width; x++)
@@ -345,16 +345,16 @@ void pollEvents() {
 
 
 ///// CLKeyboard
-short CLKeyboard_HasCmdDown() {
+int16 CLKeyboard_HasCmdDown() {
 	return 0;
 }
 void CLKeyboard_Read() {
 	pollEvents();
 }
-unsigned char CLKeyboard_GetLastASCII() {
+byte CLKeyboard_GetLastASCII() {
 	return 0;
 }
-short CLKeyboard_IsScanCodeDown(short scancode) {
+int16 CLKeyboard_IsScanCodeDown(int16 scancode) {
 	return 0;
 }
 
@@ -363,14 +363,14 @@ void CLMouse_Hide() {
 }
 void CLMouse_Show() {
 }
-void CLMouse_GetPosition(short *x, short *y) {
+void CLMouse_GetPosition(int16 *x, int16 *y) {
 	*x = g_system->getEventManager()->getMousePos().x;
 	*y = g_system->getEventManager()->getMousePos().y;
 }
-void CLMouse_SetPosition(short x, short y) {
+void CLMouse_SetPosition(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 }
-unsigned short CLMouse_IsDown() {
+uint16 CLMouse_IsDown() {
 	pollEvents();
 	return _mouseButton != 0;
 }
@@ -389,13 +389,13 @@ void CLFile_MakeStruct(int a3, int a4, char *name, filespec_t *fs) {
 void CLFile_Create(filespec_t *fs) {
 	fs->create = 1;
 }
-void CLFile_Open(filespec_t *fs, short mode, file_t &handle) {
+void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle) {
 	handle.open(fs->name);
 }
 void CLFile_Close(file_t &handle) {
 	handle.close();
 }
-void CLFile_SetPosition(file_t &handle, short mode, long pos) {
+void CLFile_SetPosition(file_t &handle, int16 mode, long pos) {
 	assert(mode == 1);
 	handle.seek(pos, 0);
 }
@@ -408,7 +408,7 @@ void CLFile_Write(file_t &handle, void *buffer, long *size) {
 
 ///// CLSound
 // base sound
-void CLSound_PrepareSample(sound_t *sound, short mode) {
+void CLSound_PrepareSample(sound_t *sound, int16 mode) {
 	sound->mode = mode;
 	sound->locked = 0;
 	sound->loopTimes = 0;
@@ -416,7 +416,7 @@ void CLSound_PrepareSample(sound_t *sound, short mode) {
 	sound->ff_32 = 0;
 	sound->volume = 255;
 }
-void CLSound_SetWantsDesigned(short designed) {
+void CLSound_SetWantsDesigned(int16 designed) {
 }
 void CLSound_SetLength(sound_t *sound, int length) {
 }
@@ -424,7 +424,7 @@ void CLSound_SetLength(sound_t *sound, int length) {
 ///// CLSoundChannel
 /// sound output device that plays queue of sounds
 soundchannel_t *CLSoundChannel_New(int arg1) {
-	short i;
+	int16 i;
 	soundchannel_t *ch = (soundchannel_t *)CLMemory_Alloc(sizeof(*ch));
 	if (!ch)
 		return 0;
@@ -445,21 +445,21 @@ void CLSoundChannel_Stop(soundchannel_t *ch) {
 }
 void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound) {
 }
-short CLSoundChannel_GetVolume(soundchannel_t *ch) {
+int16 CLSoundChannel_GetVolume(soundchannel_t *ch) {
 	return (ch->volumeLeft + ch->volumeRight) / 2;
 }
-void CLSoundChannel_SetVolume(soundchannel_t *ch, short volume) {
+void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 	ch->volumeLeft = volume;
 	ch->volumeRight = volume;
 }
-void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, short volume) {
+void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 	ch->volumeRight = volume;
 }
-void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, short volume) {
+void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
 	ch->volumeLeft = volume;
@@ -498,7 +498,7 @@ void CRYOLib_ManagersInit() {
 void CRYOLib_ManagersDone() {
 	CLTimer_Done();
 }
-void CRYOLib_SetDebugMode(short enable) {
+void CRYOLib_SetDebugMode(int16 enable) {
 }
 void CRYOLib_InstallEmergencyExit(void(*proc)()) {
 }
@@ -510,10 +510,10 @@ void CRYOLib_TestConfig() {
 }
 
 ///// CLComputer
-short CLComputer_Has68030() {
+int16 CLComputer_Has68030() {
 	return 0;
 }
-short CLComputer_Has68040() {
+int16 CLComputer_Has68040() {
 	return 0;
 }
 

@@ -30,12 +30,12 @@ namespace Cryo {
 #define GetElem(array, idx) \
 	( (char*)(array) + PLE16((idx) * 2 + (char*)(array)) )
 /*
-static inline void* AGetElem(unsigned char *arr, short index)
+static inline void* AGetElem(byte *arr, int16 index)
 {
-    unsigned char *p = arr + num * 2;
-    unsigned char o0 = *p++;
-    unsigned char o1 = *p++;
-    unsigned short ofs = (o1 << 8) | o0;
+    byte *p = arr + num * 2;
+    byte o0 = *p++;
+    byte o1 = *p++;
+    uint16 ofs = (o1 << 8) | o0;
     return arr + ofs;
 }
 */
@@ -318,26 +318,26 @@ enum PersonFlags {
 
 #pragma pack(push, 1)
 struct perso_t {
-	unsigned short  roomNum;    // room this person currently in
-	unsigned short  actionId;   // TODO: checkme
-	unsigned short  party;      // party bit mask
-	unsigned char   id;         // character
-	unsigned char   flags;      // flags and kind
-	unsigned char   roomBankIdx;// index in kPersoRoomBankTable for specific room banks
-	unsigned char   bank;       // sprite bank
-	unsigned short  items;      // inventory
-	unsigned short  powers;     // obj of power bitmask
-	unsigned char   targetLoc;  // For party member this is mini sprite index
-	unsigned char   lastLoc;    // For party member this is mini sprite x offset
-	unsigned char   speed;      // num ticks per step
-	unsigned char   steps;      // current ticks
+	uint16  roomNum;    // room this person currently in
+	uint16  actionId;   // TODO: checkme
+	uint16  party;      // party bit mask
+	byte   id;         // character
+	byte   flags;      // flags and kind
+	byte   roomBankIdx;// index in kPersoRoomBankTable for specific room banks
+	byte   bank;       // sprite bank
+	uint16  items;      // inventory
+	uint16  powers;     // obj of power bitmask
+	byte   targetLoc;  // For party member this is mini sprite index
+	byte   lastLoc;    // For party member this is mini sprite x offset
+	byte   speed;      // num ticks per step
+	byte   steps;      // current ticks
 };
 typedef struct perso_t perso_t;
 
 class EdenGame;
 
 struct phase_t {
-	short           id;
+	int16           id;
 	void (EdenGame::*disp)();
 };
 typedef struct phase_t phase_t;
@@ -351,12 +351,12 @@ enum ObjectFlags {
 
 #define MAX_OBJECTS 42
 struct object_t {
-	unsigned char   id;
-	unsigned char   flags;
+	byte   id;
+	byte   flags;
 	int             locations;      // index in kObjectLocations
-	short           itemMask;
-	short           powerMask;          // object of power bitmask
-	short           count;
+	int16           itemMask;
+	int16           powerMask;          // object of power bitmask
+	int16           count;
 };
 typedef struct object_t object_t;
 
@@ -389,11 +389,11 @@ struct dial_t {
 typedef struct dial_t dial_t;
 
 struct tape_t {
-	short       textNum;
+	int16       textNum;
 	perso_t     *perso;
-	short       party;
-	short       roomNum;
-	short       bgBankNum;
+	int16       party;
+	int16       roomNum;
+	int16       bgBankNum;
 	dial_t      *dialog;
 };
 typedef struct tape_t tape_t;
@@ -401,33 +401,33 @@ typedef struct tape_t tape_t;
 struct suiveur_t {      // Characters on Mirror screen
 	char        id;         // character
 	char        image;      // sprite number
-	short       sx;
-	short       sy;
-	short       ex;
-	short       ey;
-	short       bank;
-	short       ff_C;
-	short       ff_E;
+	int16       sx;
+	int16       sy;
+	int16       ex;
+	int16       ey;
+	int16       bank;
+	int16       ff_C;
+	int16       ff_E;
 };
 typedef struct suiveur_t suiveur_t;
 
 struct icon_t {
-	short       sx;
-	short       sy;
-	short       ex;
-	short       ey;
-	unsigned short  cursor_id;          // & 0x8000 - inactive/hidden
+	int16       sx;
+	int16       sy;
+	int16       ex;
+	int16       ey;
+	uint16  cursor_id;          // & 0x8000 - inactive/hidden
 	unsigned int    action_id;
 	unsigned int    object_id;
 };
 typedef struct icon_t icon_t;
 
 struct goto_t {
-	unsigned char   areaNum;    // target area
-	unsigned char   curAreaNum; // current area
-	unsigned char   departVid;
-	unsigned char   travelTime;     // time to skip while in travel
-	unsigned char   arriveVid;
+	byte   areaNum;    // target area
+	byte   curAreaNum; // current area
+	byte   departVid;
+	byte   travelTime;     // time to skip while in travel
+	byte   arriveVid;
 };
 typedef struct goto_t goto_t;
 
@@ -445,15 +445,15 @@ enum RoomFlags {
 }
 
 struct room_t {
-	unsigned char   ff_0;
-	unsigned char   exits[4];   //TODO: signed?
-	unsigned char   flags;
-	unsigned short  bank;
-	unsigned short  party;
-	unsigned char   level;      // Citadel level
-	unsigned char   video;
-	unsigned char   location;
-	unsigned char   background; // bg/mirror image number (relative)
+	byte   ff_0;
+	byte   exits[4];   //TODO: signed?
+	byte   flags;
+	uint16  bank;
+	uint16  party;
+	byte   level;      // Citadel level
+	byte   video;
+	byte   location;
+	byte   background; // bg/mirror image number (relative)
 };
 typedef struct room_t room_t;
 
@@ -484,14 +484,14 @@ enum AreaType {
 }
 
 struct area_t {
-	unsigned char   num;
-	unsigned char   type;
-	unsigned short  flags;
-	unsigned short  firstRoomIndex;
-	unsigned char   citadelLevel;
-	unsigned char   salNum;
+	byte   num;
+	byte   type;
+	uint16  flags;
+	uint16  firstRoomIndex;
+	byte   citadelLevel;
+	byte   salNum;
 	room_t          *citadelRoom;
-	short           visitCount;
+	int16           visitCount;
 };
 typedef struct area_t area_t;
 
@@ -600,87 +600,87 @@ enum GameFlags {
 }
 
 struct global_t {
-	unsigned char   areaNum;
-	unsigned char   areaVisitCount;
-	unsigned char   menuItemIdLo;
-	unsigned char   menuItemIdHi;   //TODO: pad?
-	unsigned short  randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
-	unsigned short  gameTime;
-	unsigned short  gameDays;
-	unsigned short  chrono;
-	unsigned short  eloiDepartureDay;
-	unsigned short  roomNum;        // current room number
-	unsigned short  newRoomNum;     // target room number selected on world map
-	unsigned short  phaseNum;
-	unsigned short  metPersonsMask1;
-	unsigned short  party;
-	unsigned short  partyOutside;
-	unsigned short  metPersonsMask2;
-	unsigned short  __UNUSED_1C;    //TODO: write-only?
-	unsigned short  phaseActionsCount;
-	unsigned short  curAreaFlags;
-	unsigned short  curItemsMask;
-	unsigned short  curPowersMask;
-	unsigned short  curPersoItems;
-	unsigned short  curPersoPowers;
-	unsigned short  wonItemsMask;
-	unsigned short  wonPowersMask;
-	unsigned short  stepsToFindAppleFast;
-	unsigned short  stepsToFindAppleNormal;
-	unsigned short  roomPersoItems; //TODO: write-only?
-	unsigned short  roomPersoPowers;    //TODO: write-only?
-	unsigned short  gameFlags;
-	unsigned short  curVideoNum;
-	unsigned short  morkusSpyVideoNum1; //TODO: pad?
-	unsigned short  morkusSpyVideoNum2; //TODO: pad?
-	unsigned short  morkusSpyVideoNum3; //TODO: pad?
-	unsigned short  morkusSpyVideoNum4; //TODO: pad?
-	unsigned char   newMusicType;
-	unsigned char   ff_43;
-	unsigned char   videoSubtitleIndex;
-	unsigned char   partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
-	unsigned char   monkGotRing;
-	unsigned char   chrono_on;
-	unsigned char   curRoomFlags;
-	unsigned char   endGameFlag;
-	unsigned char   last_info;
-	unsigned char   autoDialog;
-	unsigned char   worldTyrannSighted;
-	unsigned char   ff_4D;
-	unsigned char   ff_4E;
-	unsigned char   worldGaveGold;
-	unsigned char   worldHasTriceraptors;
-	unsigned char   worldHasVelociraptors;
-	unsigned char   worldHasTyrann;
-	unsigned char   ff_53;
-	unsigned char   ff_54;
-	unsigned char   ff_55;  //TODO: pad?
-	unsigned char   ff_56;
-	unsigned char   textToken1;
-	unsigned char   textToken2; //TODO: pad?
-	unsigned char   eloiHaveNews;
-	unsigned char   dialogFlags;
-	unsigned char   curAreaType;
-	unsigned char   curCitadelLevel;
-	unsigned char   newLocation;
-	unsigned char   prevLocation;
-	unsigned char   curPersoFlags;
-	unsigned char   ff_60;
-	unsigned char   eventType;
-	unsigned char   ff_62;  //TODO: pad?
-	unsigned char   curObjectId;
-	unsigned char   curObjectFlags;
-	unsigned char   ff_65;  //TODO: pad?
-	unsigned char   roomPersoType;
-	unsigned char   roomPersoFlags;
-	unsigned char   narratorSequence;
-	unsigned char   ff_69;
-	unsigned char   ff_6A;
-	unsigned char   fresqNumber;
-	unsigned char   ff_6C;  //TODO: pad?
-	unsigned char   ff_6D;  //TODO: pad?
-	unsigned char   labyrinthDirections;
-	unsigned char   labyrinthRoom;
+	byte   areaNum;
+	byte   areaVisitCount;
+	byte   menuItemIdLo;
+	byte   menuItemIdHi;   //TODO: pad?
+	uint16  randomNumber;   //TODO: this is randomized in pc ver and used by some conds. always zero on mac
+	uint16  gameTime;
+	uint16  gameDays;
+	uint16  chrono;
+	uint16  eloiDepartureDay;
+	uint16  roomNum;        // current room number
+	uint16  newRoomNum;     // target room number selected on world map
+	uint16  phaseNum;
+	uint16  metPersonsMask1;
+	uint16  party;
+	uint16  partyOutside;
+	uint16  metPersonsMask2;
+	uint16  __UNUSED_1C;    //TODO: write-only?
+	uint16  phaseActionsCount;
+	uint16  curAreaFlags;
+	uint16  curItemsMask;
+	uint16  curPowersMask;
+	uint16  curPersoItems;
+	uint16  curPersoPowers;
+	uint16  wonItemsMask;
+	uint16  wonPowersMask;
+	uint16  stepsToFindAppleFast;
+	uint16  stepsToFindAppleNormal;
+	uint16  roomPersoItems; //TODO: write-only?
+	uint16  roomPersoPowers;    //TODO: write-only?
+	uint16  gameFlags;
+	uint16  curVideoNum;
+	uint16  morkusSpyVideoNum1; //TODO: pad?
+	uint16  morkusSpyVideoNum2; //TODO: pad?
+	uint16  morkusSpyVideoNum3; //TODO: pad?
+	uint16  morkusSpyVideoNum4; //TODO: pad?
+	byte   newMusicType;
+	byte   ff_43;
+	byte   videoSubtitleIndex;
+	byte   partyInstruments;   // &1 - Bell for Monk, &2 - Drum for Thugg
+	byte   monkGotRing;
+	byte   chrono_on;
+	byte   curRoomFlags;
+	byte   endGameFlag;
+	byte   last_info;
+	byte   autoDialog;
+	byte   worldTyrannSighted;
+	byte   ff_4D;
+	byte   ff_4E;
+	byte   worldGaveGold;
+	byte   worldHasTriceraptors;
+	byte   worldHasVelociraptors;
+	byte   worldHasTyrann;
+	byte   ff_53;
+	byte   ff_54;
+	byte   ff_55;  //TODO: pad?
+	byte   ff_56;
+	byte   textToken1;
+	byte   textToken2; //TODO: pad?
+	byte   eloiHaveNews;
+	byte   dialogFlags;
+	byte   curAreaType;
+	byte   curCitadelLevel;
+	byte   newLocation;
+	byte   prevLocation;
+	byte   curPersoFlags;
+	byte   ff_60;
+	byte   eventType;
+	byte   ff_62;  //TODO: pad?
+	byte   curObjectId;
+	byte   curObjectFlags;
+	byte   ff_65;  //TODO: pad?
+	byte   roomPersoType;
+	byte   roomPersoFlags;
+	byte   narratorSequence;
+	byte   ff_69;
+	byte   ff_6A;
+	byte   fresqNumber;
+	byte   ff_6C;  //TODO: pad?
+	byte   ff_6D;  //TODO: pad?
+	byte   labyrinthDirections;
+	byte   labyrinthRoom;
 	void            *__UNUSED_70;   //TODO: pad?
 	dial_t          *dialog_ptr;
 	tape_t          *tape_ptr;
@@ -688,9 +688,9 @@ struct global_t {
 	dial_t          *narrator_dialog_ptr;
 	dial_t          *last_dialog_ptr;
 	icon_t          *nextRoomIcon;
-	unsigned char   *phraseBufferPtr;
-	unsigned char   *__UNUSED_90;   //TODO: write-only?
-	unsigned char   *__UNUSED_94;   //TODO: write-only?
+	byte   *phraseBufferPtr;
+	byte   *__UNUSED_90;   //TODO: write-only?
+	byte   *__UNUSED_94;   //TODO: write-only?
 	room_t          *room_ptr;
 	area_t          *area_ptr;
 	area_t          *last_area_ptr;
@@ -698,72 +698,72 @@ struct global_t {
 	room_t          *cita_area_firstRoom;
 	perso_t         *perso_ptr;
 	perso_t         *room_perso;
-	unsigned char   last_info_idx;
-	unsigned char   next_info_idx;
-	unsigned char   *persoSpritePtr;
-	unsigned char   *persoSpritePtr2;
-	unsigned char   *curPersoAnimPtr;
-	unsigned char   *ff_C2; //TODO: image desc arr
-	short           iconsIndex;
-	short           curObjectCursor;    // TODO: useless?
-	short           ff_CA;
-	short           __UNUSED_CC;        //TODO: unused/pad
-	short           perso_img_bank; //TODO: unsigned?
-	unsigned short  roomImgBank;
-	unsigned short  persoBackgroundBankIdx;
-	unsigned short  ff_D4;  //TODO: unsigned?
-	unsigned short  fresqWidth;
-	unsigned short  fresqImgBank;
-	unsigned short  ff_DA;  //TODO: pad?
-	unsigned short  ff_DC;  //TODO: pad?
-	unsigned short  room_x_base;
-	unsigned short  ff_E0;  //TODO: pad?
-	unsigned short  dialogType;
-	unsigned short  ff_E4;  //TODO: pad?
-	unsigned short  currentMusicNum;
-	short           textNum;
-	unsigned short  travelTime;
-	unsigned short  ff_EC;  //TODO: pad?
-	unsigned char   displayFlags;
-	unsigned char   oldDisplayFlags;
-	unsigned char   drawFlags;
-	unsigned char   ff_F1;
-	unsigned char   ff_F2;
-	unsigned char   menuFlags;
-	unsigned char   ff_F4;  //TODO: write-only?
-	unsigned char   ff_F5;
-	unsigned char   ff_F6;
-	unsigned char   ff_F7;
-	unsigned char   ff_F8;  //TODO: pad?
-	unsigned char   ff_F9;  //TODO: pad?
-	unsigned char   ff_FA;  //TODO: pad?
-	unsigned char   animationFlags;
-	unsigned char   __UNUSED_FC;    //TODO: pad?
-	unsigned char   giveobj1;
-	unsigned char   giveobj2;
-	unsigned char   giveobj3;
-	unsigned char   ff_100;
-	unsigned char   roomVidNum;
-	unsigned char   ff_102;
-	unsigned char   ff_103;
-	unsigned char   roomBgBankNum;
-	unsigned char   valleyVidNum;
-	unsigned char   updatePaletteFlag;
-	unsigned char   inventoryScrollPos;
-	unsigned char   obj_count;
-	unsigned char   ff_109; //TODO: write-only?
-	unsigned char   textBankIndex;
-	unsigned char   pref_language;
-	unsigned char   pref_10C[2];    //TODO: volume
-	unsigned char   pref_10E[2];    // -//-
-	unsigned char   pref_110[2];    // -//-
-	unsigned char   cita_area_num;
-	unsigned char   ff_113;
-	unsigned char   lastSalNum;
-	unsigned char   save_end;
-	short           textWidthLimit;
-	unsigned char   numGiveObjs;
-	unsigned char   ff_119;     // unused
+	byte   last_info_idx;
+	byte   next_info_idx;
+	byte   *persoSpritePtr;
+	byte   *persoSpritePtr2;
+	byte   *curPersoAnimPtr;
+	byte   *ff_C2; //TODO: image desc arr
+	int16           iconsIndex;
+	int16           curObjectCursor;    // TODO: useless?
+	int16           ff_CA;
+	int16           __UNUSED_CC;        //TODO: unused/pad
+	int16           perso_img_bank; //TODO: unsigned?
+	uint16  roomImgBank;
+	uint16  persoBackgroundBankIdx;
+	uint16  ff_D4;  //TODO: unsigned?
+	uint16  fresqWidth;
+	uint16  fresqImgBank;
+	uint16  ff_DA;  //TODO: pad?
+	uint16  ff_DC;  //TODO: pad?
+	uint16  room_x_base;
+	uint16  ff_E0;  //TODO: pad?
+	uint16  dialogType;
+	uint16  ff_E4;  //TODO: pad?
+	uint16  currentMusicNum;
+	int16           textNum;
+	uint16  travelTime;
+	uint16  ff_EC;  //TODO: pad?
+	byte   displayFlags;
+	byte   oldDisplayFlags;
+	byte   drawFlags;
+	byte   ff_F1;
+	byte   ff_F2;
+	byte   menuFlags;
+	byte   ff_F4;  //TODO: write-only?
+	byte   ff_F5;
+	byte   ff_F6;
+	byte   ff_F7;
+	byte   ff_F8;  //TODO: pad?
+	byte   ff_F9;  //TODO: pad?
+	byte   ff_FA;  //TODO: pad?
+	byte   animationFlags;
+	byte   __UNUSED_FC;    //TODO: pad?
+	byte   giveobj1;
+	byte   giveobj2;
+	byte   giveobj3;
+	byte   ff_100;
+	byte   roomVidNum;
+	byte   ff_102;
+	byte   ff_103;
+	byte   roomBgBankNum;
+	byte   valleyVidNum;
+	byte   updatePaletteFlag;
+	byte   inventoryScrollPos;
+	byte   obj_count;
+	byte   ff_109; //TODO: write-only?
+	byte   textBankIndex;
+	byte   pref_language;
+	byte   pref_10C[2];    //TODO: volume
+	byte   pref_10E[2];    // -//-
+	byte   pref_110[2];    // -//-
+	byte   cita_area_num;
+	byte   ff_113;
+	byte   lastSalNum;
+	byte   save_end;
+	int16           textWidthLimit;
+	byte   numGiveObjs;
+	byte   ff_119;     // unused
 };
 typedef struct global_t global_t;
 
@@ -776,15 +776,15 @@ struct pakfile_t {
 typedef struct pakfile_t pakfile_t;
 
 struct pak_t {
-	unsigned short  count;
+	uint16  count;
 	pakfile_t       files[10];
 };
 typedef struct pak_t pak_t;
 #pragma pack(pop)
 
 struct cita_t {
-	short   ff_0;
-	short   ff_2[8 * 2];
+	int16   ff_0;
+	int16   ff_2[8 * 2];
 };
 typedef struct cita_t cita_t;
 
@@ -807,7 +807,7 @@ enum {
 	LAB_W
 };
 
-extern unsigned char kLabyrinthPath[];
+extern byte kLabyrinthPath[];
 
 extern char kDinoSpeedForCitaLevel[16];
 
@@ -818,46 +818,46 @@ extern char kPersoRoomBankTable[];
 
 // area transition descriptors
 extern goto_t gotos[];
-extern short tab_2D24C[];
-extern short tab_2D28E[];
-extern short tab_2D298[];
-extern short tab_2D2AA[];
-extern short tab_2D2C4[];
+extern int16 tab_2D24C[];
+extern int16 tab_2D28E[];
+extern int16 tab_2D298[];
+extern int16 tab_2D2AA[];
+extern int16 tab_2D2C4[];
 extern object_t objects[];
-extern short kObjectLocations[100];
+extern int16 kObjectLocations[100];
 extern perso_t kPersons[];
 extern cita_t cita_list[];
-extern short tab_2CB16[];
+extern int16 tab_2CB16[];
 extern char tab_2CB1E[8][4];
 
 struct prect_t {
-	short   sx, sy, ex, ey;
+	int16   sx, sy, ex, ey;
 };
 typedef struct prect_t prect_t;
 
 extern prect_t perso_rects[];
-extern unsigned char tab_persxx[][5];
+extern byte tab_persxx[][5];
 extern area_t kAreasTable[];
-extern short tab_2CEF0[64];
-extern short tab_2CF70[64];
-extern short kActionCursors[299];
+extern int16 tab_2CEF0[64];
+extern int16 tab_2CF70[64];
+extern int16 kActionCursors[299];
 
 struct cubeface_t {
 	int             tri;
 	char            ff_4;
 	char            ff_5;
 
-	unsigned char   *texptr;
-	unsigned short  *indices;
-	short           *uv;
+	byte   *texptr;
+	uint16  *indices;
+	int16           *uv;
 };
 typedef struct cubeface_t cubeface_t;
 
 struct cube_t {
 	int             num;
 	cubeface_t      **faces;
-	short           *projection;    // projected XYZ coords
-	short           *vertices;
+	int16           *projection;    // projected XYZ coords
+	int16           *vertices;
 };
 typedef struct cube_t cube_t;
 
@@ -868,7 +868,7 @@ extern float flt_2DF84;
 // Cube faces to texture coords mapping
 // each entry is num_polys(6) * num_faces_per_poly(2) * vertex_per_face(3) * uv(2)
 
-extern short cube_texcoords[3][6 * 2 * 3 * 2];
+extern int16 cube_texcoords[3][6 * 2 * 3 * 2];
 extern char tab_2E138[4 * 3];
 
 } // End of namespace Cryo
