@@ -251,16 +251,22 @@ void TattooJournal::handleButtons() {
 
 	// If they're dragging the scrollbar thumb, keep it selected whilst the button is being held
 	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL) {
-		// FIgure out the left of the scrollbar scroll area and paging data
-		const int scrollingWidth = JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6;
-		const int scrollingLeft = (SHERLOCK_SCREEN_WIDTH - JOURNAL_BAR_WIDTH) / 2 + BUTTON_SIZE + 3;
+		// Scrolling area including left/right buttons at the edges
+		Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
+		r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
+		// Thumbnail sliding area of the scrolling area
+		Common::Rect scrollRect(r.left + (BUTTON_SIZE + 3), r.top,
+			r.right - (BUTTON_SIZE + 3), r.bottom);
+
 		const int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
+		const int barWidth = CLIP(scrollRect.width() / numPages,
+			BUTTON_SIZE, (int)scrollRect.width());
 		if (numPages == 1)
 			return;
 
-		const int barWidth = CLIP(scrollingWidth / numPages, BUTTON_SIZE, JOURNAL_BAR_WIDTH - BUTTON_SIZE * 2 - 6);
-		const int scrollOffset = mousePos.x - scrollingLeft;
-		const int page = scrollOffset * FIXED_INT_MULTIPLIER / ((scrollingWidth - barWidth) * (FIXED_INT_MULTIPLIER / (numPages - 1))) + 1;
+		const int scrollOffset = (mousePos.x + (barWidth / 2)) - scrollRect.left;
+		const int page = CLIP(scrollOffset * (numPages - 1) / (scrollRect.width() - barWidth) + 1,
+			1, numPages);
 
 		if (page != _page) {
 			if (page < _page)
@@ -556,20 +562,25 @@ void TattooJournal::highlightJournalControls(bool slamIt) {
 	Events &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos();
+
+	// Scrolling area including left/right buttons at the edges
 	Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 	r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
+	// Thumbnail sliding area of the scrolling area
+	Common::Rect scrollRect(r.left + (BUTTON_SIZE + 3), r.top,
+		r.right - (BUTTON_SIZE + 3), r.bottom);
 
 	if ((events._pressed || events._released) && _selector == JH_THUMBNAIL) {
 		if (events._released)
 			_selector = JH_NONE;
 	} else {
 		// Calculate the Scroll Position Bar
-		int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
-		int barWidth = (r.width() - BUTTON_SIZE * 2 - 6) / numPages;
-		barWidth = CLIP(barWidth, BUTTON_SIZE, r.width() - BUTTON_SIZE * 2 - 6);
+		const int numPages = (_maxPage + LINES_PER_PAGE - 1) / LINES_PER_PAGE;
+		const int barWidth = CLIP(scrollRect.width() / numPages,
+			BUTTON_SIZE, (int)scrollRect.width());
 
-		int barX = (numPages <= 1) ? r.left + 3 + BUTTON_SIZE : (r.width() - BUTTON_SIZE * 2 - 6 - barWidth)
-			* FIXED_INT_MULTIPLIER / (numPages - 1) * (_page - 1) / FIXED_INT_MULTIPLIER + r.left + 3 + BUTTON_SIZE;
+		int barX = (numPages <= 1) ? scrollRect.left : (scrollRect.width() - barWidth)
+			* FIXED_INT_MULTIPLIER / (numPages - 1) * (_page - 1) / FIXED_INT_MULTIPLIER + scrollRect.left;
 
 		// See if the mouse is over any of the Journal Controls
 		Common::Rect bounds(r.left, r.top, r.right - 3, r.top + screen.fontHeight() + 7);
