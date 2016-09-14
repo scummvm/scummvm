@@ -46,28 +46,30 @@ enum ViewFloor {
 	kDMViewFloorD2R = 5, // @ C5_VIEW_FLOOR_D2R
 	kDMViewFloorD1L = 6, // @ C6_VIEW_FLOOR_D1L
 	kDMViewFloorD1C = 7, // @ C7_VIEW_FLOOR_D1C
-	kDMViewFloorD1R = 8 // @ C8_VIEW_FLOOR_D1R
+	kDMViewFloorD1R = 8  // @ C8_VIEW_FLOOR_D1R
 };
 
 enum DoorState {
-	kDMDoorStateOpen = 0, // @ C0_DOOR_STATE_OPEN 
-	kDMDoorStateOneFourth = 1, // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
-	kDMDoorStateHalf = 2, // @ k2_DoorStateAspect_CLOSED_HALF 
+	kDMDoorStateOpen = 0,        // @ C0_DOOR_STATE_OPEN 
+	kDMDoorStateOneFourth = 1,   // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
+	kDMDoorStateHalf = 2,        // @ k2_DoorStateAspect_CLOSED_HALF 
 	kDMDoorStateThreeFourth = 3, // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
-	kDMDoorStateClosed = 4, // @ C4_DOOR_STATE_CLOSED 
-	kDMDoorStateDestroyed = 5 // @ C5_DOOR_STATE_DESTROYED 
+	kDMDoorStateClosed = 4,      // @ C4_DOOR_STATE_CLOSED 
+	kDMDoorStateDestroyed = 5    // @ C5_DOOR_STATE_DESTROYED 
 };
 
 enum DoorOrnament {
 	kDMDoorOrnamentD3LCR = 0, // @ C0_VIEW_DOOR_ORNAMENT_D3LCR
 	kDMDoorOrnamentD2LCR = 1, // @ C1_VIEW_DOOR_ORNAMENT_D2LCR
-	kDMDoorOrnamentD1LCR = 2 // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
+	kDMDoorOrnamentD1LCR = 2  // @ C2_VIEW_DOOR_ORNAMENT_D1LCR
 };
 
-#define k0_viewDoorButton_D3R 0 // @ C0_VIEW_DOOR_BUTTON_D3R
-#define k1_viewDoorButton_D3C 1 // @ C1_VIEW_DOOR_BUTTON_D3C
-#define k2_viewDoorButton_D2C 2 // @ C2_VIEW_DOOR_BUTTON_D2C
-#define k3_viewDoorButton_D1C 3 // @ C3_VIEW_DOOR_BUTTON_D1C
+enum DoorButton {
+	kDMDoorButtonD3R = 0, // @ C0_VIEW_DOOR_BUTTON_D3R
+	kDMDoorButtonD3C = 1, // @ C1_VIEW_DOOR_BUTTON_D3C
+	kDMDoorButtonD2C = 2, // @ C2_VIEW_DOOR_BUTTON_D2C
+	kDMDoorButtonD1C = 3  // @ C3_VIEW_DOOR_BUTTON_D1C
+};
 
 #define k0x0001_MaskDoorInfo_CraturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
 #define k0x0002_MaskDoorInfo_ProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
@@ -717,7 +719,7 @@ public:
 	void allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
 	void drawDoorBitmap(Frame *frame);// @ F0102_DUNGEONVIEW_DrawDoorBitmap
 	void drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *frame); // @ F0103_DUNGEONVIEW_DrawDoorFrameBitmapFlippedHorizontally
-	void drawDoorButton(int16 doorButtonOrdinal, int16 viewDoorButtonIndex); // @ F0110_DUNGEONVIEW_DrawDoorButton
+	void drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton); // @ F0110_DUNGEONVIEW_DrawDoorButton
 
 	/// Gives the width of an IMG0 type item
 	uint16 getPixelWidth(uint16 index);
