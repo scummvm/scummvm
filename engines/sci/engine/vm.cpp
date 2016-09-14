@@ -179,7 +179,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 		// stopGroop object, which points to ego, to the new ego object. If this is not
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
+		if (index == kEgo && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {
 			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
@@ -200,9 +200,9 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
-		if (type == VAR_GLOBAL && index == 90) {
+		if (type == VAR_GLOBAL && index == kMessageType) {
 			// The game is trying to change its speech/subtitle settings
-			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][4] == TRUE_REG) {
+			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kQuit] == TRUE_REG) {
 				// ScummVM audio options haven't been applied yet, so apply them.
 				// We also force the ScummVM audio options when loading a game from
 				// the launcher.
