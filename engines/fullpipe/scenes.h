@@ -211,33 +211,6 @@ int sceneHandlerFinal(ExCommand *cmd);
 void sceneDbgMenu_initScene(Scene *sc);
 int sceneHandlerDbgMenu(ExCommand *cmd);
 
-struct Ball {
-	Ball *p0;
-	Ball *p1;
-	StaticANIObject *ani;
-
-	Ball() : p0(0), p1(0), ani(0) {}
-};
-
-typedef Common::Array<StaticANIObject *> BallArray;
-
-struct BallChain {
-	Ball *pHead;
-	Ball *field_8;
-	int numBalls;
-	Ball *pTail;
-	byte *cPlex;
-	int cPlexLen;
-
-	BallChain() : pHead(0), field_8(0), pTail(0), numBalls(0), cPlex(0), cPlexLen(0) {}
-	~BallChain() { free(cPlex); }
-
-	void init(Ball **ball);
-	Ball *sub04(Ball *ballP, Ball *ballN);
-	void removeBall(Ball *ball);
-	void reset() { pHead = 0; pTail = 0; field_8 = 0; numBalls = 0; free(cPlex); cPlex = 0; cPlexLen = 0; }
-};
-
 class Vars {
 public:
 	Vars();
