@@ -126,7 +126,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			return false;
 
 		DoorInfo curDoorInfo = _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()];
-		if (getFlag(curDoorInfo._attributes, k0x0002_MaskDoorInfo_ProjectilesCanPassThrough)) {
+		if (getFlag(curDoorInfo._attributes, kDMMaskDoorInfoProjectilesCanPassThrough)) {
 			if (projectileAssociatedThingType == kDMThingTypeExplosion) {
 				if (projectileAssociatedThing.toUint16() >= Thing::_explHarmNonMaterial.toUint16())
 					return false;

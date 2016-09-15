@@ -71,10 +71,48 @@ enum DoorButton {
 	kDMDoorButtonD1C = 3  // @ C3_VIEW_DOOR_BUTTON_D1C
 };
 
-#define k0x0001_MaskDoorInfo_CraturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
-#define k0x0002_MaskDoorInfo_ProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
-#define k0x0004_MaskDoorInfo_Animated 0x0004 // @ MASK0x0004_ANIMATED                    
+/* View lanes */
+enum ViewLane {
+	kDMViewLaneCenter = 0, // @ C0_VIEW_LANE_CENTER 
+	kDMViewLaneLeft = 1,   // @ C1_VIEW_LANE_LEFT   
+	kDMViewLaneRight = 2   // @ C2_VIEW_LANE_RIGHT  
+};
 
+/* Explosion aspects */
+enum ExplosionAspectEnum {
+	kDMExplosionAspectFire = 0,   // @ C0_EXPLOSION_ASPECT_FIRE  
+	kDMExplosionAspectSpell = 1,  // @ C1_EXPLOSION_ASPECT_SPELL 
+	k2_ExplosionAspectPoison = 2, // @ C2_EXPLOSION_ASPECT_POISON
+	k3_ExplosionAspectSmoke = 3   // @ C3_EXPLOSION_ASPECT_SMOKE 
+};
+
+enum WallSet {
+	kDMWallSetStone = 0 // @ C0_WALL_SET_STONE
+};
+
+enum FloorSet {
+	kDMFloorSetStone = 0 // @ C0_FLOOR_SET_STONE
+};
+
+enum ViewWall {
+	kDMViewWallD3LRight = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
+	kDMViewWallD3RLeft = 1, // @ C01_VIEW_WALL_D3R_LEFT  
+	kDMViewWallD3LFront = 2, // @ C02_VIEW_WALL_D3L_FRONT 
+	kDMViewWallD3CFront = 3, // @ C03_VIEW_WALL_D3C_FRONT 
+	kDMViewWallD3RFront = 4, // @ C04_VIEW_WALL_D3R_FRONT 
+	kDMViewWallD2LRight = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
+	kDMViewWallD2RLeft = 6, // @ C06_VIEW_WALL_D2R_LEFT  
+	kDMViewWallD2LFront = 7, // @ C07_VIEW_WALL_D2L_FRONT 
+	kDMViewWallD2CFront = 8, // @ C08_VIEW_WALL_D2C_FRONT 
+	kDMViewWallD2RFront = 9, // @ C09_VIEW_WALL_D2R_FRONT 
+	kDMViewWallD1LRight = 10, // @ C10_VIEW_WALL_D1L_RIGHT
+	kDMViewWallD1RLeft = 11, // @ C11_VIEW_WALL_D1R_LEFT 
+	kDMViewWallD1CFront = 12  // @ C12_VIEW_WALL_D1C_FRONT
+};
+
+#define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
+#define kDMMaskDoorInfoProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
+#define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED                    
 
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
@@ -87,14 +125,6 @@ enum DoorButton {
 #define k4_ExplosionAspectCount 4 // @ C004_EXPLOSION_ASPECT_COUNT
 #define k14_ProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
 #define k85_ObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
-
-#define k0_NativeBitmapIndex 0 // @ C0_NATIVE_BITMAP_INDEX
-#define k1_CoordinateSet 1 // @ C1_COORDINATE_SET
-
-/* View lanes */
-#define k0_ViewLaneCenter 0 // @ C0_VIEW_LANE_CENTER 
-#define k1_ViewLaneLeft 1 // @ C1_VIEW_LANE_LEFT   
-#define k2_ViewLaneRight 2 // @ C2_VIEW_LANE_RIGHT  
 
 #define k0_HalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN  
 #define k1_HalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN 
@@ -128,12 +158,6 @@ enum DoorButton {
 #define k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft 0x0439 // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT         
 #define k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
 #define k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
-
-/* Explosion aspects */
-#define k0_ExplosionAspectFire 0 // @ C0_EXPLOSION_ASPECT_FIRE  
-#define k1_ExplosionAspectSpell 1 // @ C1_EXPLOSION_ASPECT_SPELL 
-#define k2_ExplosionAspectPoison 2 // @ C2_EXPLOSION_ASPECT_POISON
-#define k3_ExplosionAspectSmoke 3 // @ C3_EXPLOSION_ASPECT_SMOKE 
 
 /* Creature info GraphicInfo */
 #define k0x0003_CreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
@@ -367,30 +391,6 @@ public:
 		_srcByteWidth(srcWidth), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
 };
 
-enum WallSet {
-	k0_WallSetStone = 0 // @ C0_WALL_SET_STONE
-};
-
-enum FloorSet {
-	k0_FloorSetStone = 0 // @ C0_FLOOR_SET_STONE
-};
-
-enum ViewWall {
-	k0_ViewWall_D3L_RIGHT = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
-	k1_ViewWall_D3R_LEFT = 1, // @ C01_VIEW_WALL_D3R_LEFT  
-	k2_ViewWall_D3L_FRONT = 2, // @ C02_VIEW_WALL_D3L_FRONT 
-	k3_ViewWall_D3C_FRONT = 3, // @ C03_VIEW_WALL_D3C_FRONT 
-	k4_ViewWall_D3R_FRONT = 4, // @ C04_VIEW_WALL_D3R_FRONT 
-	k5_ViewWall_D2L_RIGHT = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
-	k6_ViewWall_D2R_LEFT = 6, // @ C06_VIEW_WALL_D2R_LEFT  
-	k7_ViewWall_D2L_FRONT = 7, // @ C07_VIEW_WALL_D2L_FRONT 
-	k8_ViewWall_D2C_FRONT = 8, // @ C08_VIEW_WALL_D2C_FRONT 
-	k9_ViewWall_D2R_FRONT = 9, // @ C09_VIEW_WALL_D2R_FRONT 
-	k10_ViewWall_D1L_RIGHT = 10, // @ C10_VIEW_WALL_D1L_RIGHT
-	k11_ViewWall_D1R_LEFT = 11, // @ C11_VIEW_WALL_D1R_LEFT 
-	k12_ViewWall_D1C_FRONT = 12  // @ C12_VIEW_WALL_D1C_FRONT
-};
-
 enum Color {
 	kM1_ColorNoTransparency = -1,
 	k0_ColorBlack = 0,
@@ -507,6 +507,10 @@ public:
 	}
 }; // @ CREATURE_REPLACEMENT_COLOR_SET
 
+struct OrnamentInfo {
+	int16 nativeIndice;
+	int16 coordinateSet;
+};
 
 #define k0_DoorButton 0 // @ C0_DOOR_BUTTON
 #define k0_WallOrnInscription 0 // @ C0_WALL_ORNAMENT_INSCRIPTION
@@ -783,9 +787,9 @@ public:
 	int16 _championPortraitOrdinal; // @ G0289_i_DungeonView_ChampionPortraitOrdinal
 	int16 _currMapAlcoveOrnIndices[k3_AlcoveOrnCount]; // @ G0267_ai_CurrentMapAlcoveOrnamentIndices
 	int16 _currMapFountainOrnIndices[k1_FountainOrnCount]; // @ G0268_ai_CurrentMapFountainOrnamentIndices
-	int16 _currMapWallOrnInfo[16][2]; // @ G0101_aai_CurrentMapWallOrnamentsInfo
-	int16 _currMapFloorOrnInfo[16][2]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
-	int16 _currMapDoorOrnInfo[17][2]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
+	OrnamentInfo _currMapWallOrnInfo[16]; // @ G0101_aai_CurrentMapWallOrnamentsInfo
+	OrnamentInfo _currMapFloorOrnInfo[16]; // @ G0102_aai_CurrentMapFloorOrnamentsInfo
+	OrnamentInfo _currMapDoorOrnInfo[17]; // @ G0103_aai_CurrentMapDoorOrnamentsInfo
 	byte *_currMapAllowedCreatureTypes; // @ G0264_puc_CurrentMapAllowedCreatureTypes
 	byte _currMapWallOrnIndices[16]; // @ G0261_auc_CurrentMapWallOrnamentIndices
 	byte _currMapFloorOrnIndices[16]; // @ G0262_auc_CurrentMapFloorOrnamentIndices

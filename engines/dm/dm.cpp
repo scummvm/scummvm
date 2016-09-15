@@ -234,8 +234,8 @@ void DMEngine::initializeGame() {
 	initMemoryManager();
 	_displayMan->loadGraphics();
 	_displayMan->initializeGraphicData();
-	_displayMan->loadFloorSet(k0_FloorSetStone);
-	_displayMan->loadWallSet(k0_WallSetStone);
+	_displayMan->loadFloorSet(kDMFloorSetStone);
+	_displayMan->loadWallSet(kDMWallSetStone);
 
 	_sound->loadSounds(); // @ F0506_AMIGA_AllocateData
 

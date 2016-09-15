@@ -1237,7 +1237,7 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 	if (curSquareType == kDMElementTypeDoor) {
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
 		int16 curDoorState = Square(curSquare).getDoorState();
-		return ((curDoorState == kDMDoorStateThreeFourth) || (curDoorState == kDMDoorStateClosed)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, k0x0001_MaskDoorInfo_CraturesCanSeeThrough);
+		return ((curDoorState == kDMDoorStateThreeFourth) || (curDoorState == kDMDoorStateClosed)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, kDMMaskDoorInfoCreaturesCanSeeThrough);
 	}
 	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, kDMSquareMaskFakeWallOpen));
 }
