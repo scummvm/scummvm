@@ -2731,7 +2731,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DANDROIDSDL"
 			_unix=yes
 			_seq_midi=no
-			_mt32emu=no
 			_timidity=no
 			_backend="androidsdl"
 			_port_mk="backends/platform/androidsdl/androidsdl.mk"
