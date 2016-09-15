@@ -545,6 +545,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	while (0 != ConfMan.getActiveDomain()) {
 		saveLastLaunchedTarget(ConfMan.getActiveDomainName());
 
+		EngineMan.upgradeTargetIfNecessary(ConfMan.getActiveDomainName());
+
 		// Try to find a plugin which feels responsible for the specified game.
 		const Plugin *plugin = detectPlugin();
 		if (plugin) {

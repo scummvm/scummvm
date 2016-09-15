@@ -295,12 +295,19 @@ public:
 	 * Returns the created target name.
 	 */
 	Common::String createTargetForGame(const DetectedGame &game);
+
+	/** Upgrade a target to the current configuration format */
+	void upgradeTargetIfNecessary(const Common::String &target) const;
+
 private:
 	/** Find a game across all loaded plugins */
 	PlainGameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
 
 	/** Find a loaded plugin with the given engine ID */
 	const Plugin *findLoadedPlugin(const Common::String &engineId) const;
+
+	/** Use heuristics to complete a target lacking an engine ID */
+	void upgradeTargetForEngineId(const Common::String &target) const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */

@@ -481,6 +481,8 @@ void LauncherDialog::loadGame(int item) {
 	String target = _domains[item];
 	target.toLowercase();
 
+	EngineMan.upgradeTargetIfNecessary(target);
+
 	// Look for the plugin
 	const Plugin *plugin = nullptr;
 	EngineMan.findTarget(target, &plugin);

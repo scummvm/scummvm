@@ -769,6 +769,7 @@ static Common::Error listSaves(const Common::String &target) {
 		const Plugin *plugin = nullptr;
 		PlainGameDescriptor game;
 		if (domain) {
+			EngineMan.upgradeTargetIfNecessary(target);
 			game = EngineMan.findTarget(target, &plugin);
 		} else {
 			game = EngineMan.findGame(target, &plugin);
