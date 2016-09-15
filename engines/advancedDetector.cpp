@@ -82,8 +82,6 @@ static Common::String generatePreferredTarget(const ADGameDescription *desc) {
 DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) const {
 	const ADGameDescription *desc = adGame.desc;
 
-	const char *gameId = _singleId ? _singleId : desc->gameId;
-
 	const char *title;
 	const char *extra;
 	if (desc->flags & ADGF_USEEXTRAASTITLE) {
@@ -99,7 +97,7 @@ DetectedGame AdvancedMetaEngine::toDetectedGame(const ADDetectedGame &adGame) co
 		extra = desc->extra;
 	}
 
-	DetectedGame game(gameId, title, desc->language, desc->platform, extra);
+	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra);
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 	game.preferredTarget = generatePreferredTarget(desc);
@@ -264,7 +262,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	ADDetectedGame agdDesc;
 	for (uint i = 0; i < matches.size(); i++) {
-		if ((_singleId || matches[i].desc->gameId == gameid) && !matches[i].hasUnknownFiles) {
+		if (matches[i].desc->gameId == gameid && !matches[i].hasUnknownFiles) {
 			agdDesc = matches[i];
 			break;
 		}
@@ -277,7 +275,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		if (agdDesc.desc) {
 			// Seems we found a fallback match. But first perform a basic
 			// sanity check: the gameid must match.
-			if (!_singleId && agdDesc.desc->gameId != gameid)
+			if (agdDesc.desc->gameId != gameid)
 				agdDesc = ADDetectedGame();
 		}
 	}
@@ -556,21 +554,6 @@ ADDetectedGame AdvancedMetaEngine::detectGameFilebased(const FileMap &allFiles, 
 }
 
 PlainGameList AdvancedMetaEngine::getSupportedGames() const {
-	if (_singleId != NULL) {
-		PlainGameList gl;
-
-		const PlainGameDescriptor *g = _gameIds;
-		while (g->gameId) {
-			if (0 == scumm_stricmp(_singleId, g->gameId)) {
-				gl.push_back(*g);
-
-				return gl;
-			}
-			g++;
-		}
-		error("Engine %s doesn't have its singleid specified in ids list", _singleId);
-	}
-
 	return PlainGameList(_gameIds);
 }
 
@@ -589,7 +572,6 @@ AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, con
 	  _extraGuiOptions(extraGuiOptions) {
 
 	_md5Bytes = 5000;
-	_singleId = NULL;
 	_flags = 0;
 	_guiOptions = GUIO_NONE;
 	_maxScanDepth = 1;

@@ -123,7 +123,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			gameList.push_back(GlkDetectedGame(desc.gameId, desc.description, filename, md5, filesize));
 		} else {
 			GameDescriptor gameDesc = findGame(p->_gameId);
-			DetectedGame gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
+			DetectedGame gd = DetectedGame("glk", p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
 			gd.setGUIOptions(p->_guiOptions);
 
 			gd.addExtraEntry("filename", filename);

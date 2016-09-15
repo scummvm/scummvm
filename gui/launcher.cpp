@@ -269,8 +269,9 @@ void LauncherDialog::updateListing() {
 
 		if (gameid.empty())
 			gameid = iter->_key;
+
 		if (description.empty()) {
-			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			PlainGameDescriptor g = EngineMan.findTarget(iter->_key);
 			if (g.description)
 				description = g.description;
 		}
@@ -416,9 +417,6 @@ void LauncherDialog::editGame(int item) {
 	// This is useful because e.g. MonkeyVGA needs AdLib music to have decent
 	// music support etc.
 	assert(item >= 0);
-	String gameId(ConfMan.get("gameid", _domains[item]));
-	if (gameId.empty())
-		gameId = _domains[item];
 
 	EditGameDialog editDialog(_domains[item]);
 	if (editDialog.runModal() > 0) {
@@ -480,16 +478,12 @@ void LauncherDialog::recordGame(int item) {
 #endif
 
 void LauncherDialog::loadGame(int item) {
-	String gameId = ConfMan.get("gameid", _domains[item]);
-	if (gameId.empty())
-		gameId = _domains[item];
-
-	const Plugin *plugin = nullptr;
-
-	EngineMan.findGame(gameId, &plugin);
-
 	String target = _domains[item];
 	target.toLowercase();
+
+	// Look for the plugin
+	const Plugin *plugin = nullptr;
+	EngineMan.findTarget(target, &plugin);
 
 	if (plugin) {
 		const MetaEngine &metaEngine = plugin->get<MetaEngine>();

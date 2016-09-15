@@ -287,14 +287,14 @@ void PluginManagerUncached::init() {
 
 /**
  * Try to load the plugin by searching in the ConfigManager for a matching
- * gameId under the domain 'plugin_files'.
+ * engine ID under the domain 'engine_plugin_files'.
  **/
-bool PluginManagerUncached::loadPluginFromGameId(const Common::String &gameId) {
-	Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
+bool PluginManagerUncached::loadPluginFromEngineId(const Common::String &engineId) {
+	Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
 
 	if (domain) {
-		if (domain->contains(gameId)) {
-			Common::String filename = (*domain)[gameId];
+		if (domain->contains(engineId)) {
+			Common::String filename = (*domain)[engineId];
 
 			if (loadPluginByFileName(filename)) {
 				return true;
@@ -326,17 +326,17 @@ bool PluginManagerUncached::loadPluginByFileName(const Common::String &filename)
 
 /**
  * Update the config manager with a plugin file name that we found can handle
- * the game.
+ * the engine.
  **/
-void PluginManagerUncached::updateConfigWithFileName(const Common::String &gameId) {
+void PluginManagerUncached::updateConfigWithFileName(const Common::String &engineId) {
 	// Check if we have a filename for the current plugin
 	if ((*_currentPlugin)->getFileName()) {
-		if (!ConfMan.hasMiscDomain("plugin_files"))
-			ConfMan.addMiscDomain("plugin_files");
+		if (!ConfMan.hasMiscDomain("engine_plugin_files"))
+			ConfMan.addMiscDomain("engine_plugin_files");
 
-		Common::ConfigManager::Domain *domain = ConfMan.getDomain("plugin_files");
+		Common::ConfigManager::Domain *domain = ConfMan.getDomain("engine_plugin_files");
 		assert(domain);
-		(*domain)[gameId] = (*_currentPlugin)->getFileName();
+		(*domain)[engineId] = (*_currentPlugin)->getFileName();
 
 		ConfMan.flushToDisk();
 	}
@@ -490,24 +490,12 @@ PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, cons
 		return result;
 	}
 
-	// Now look for the game using the gameId. This is much faster than scanning plugin
-	// by plugin
-	if (PluginMan.loadPluginFromGameId(gameName))  {
-		result = findGameInLoadedPlugins(gameName, plugin);
-		if (result.gameId) {
-			return result;
-		}
-	}
-
-	// We failed to find it using the gameid. Scan the list of plugins
+	// We failed to find it in memory. Scan the list of plugins
 	PluginMan.loadFirstPlugin();
 	do {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (result.gameId) {
-			// Update with new plugin file name
-			PluginMan.updateConfigWithFileName(gameName);
+		if (result.gameId)
 			break;
-		}
 	} while (PluginMan.loadNextPlugin());
 
 	return result;
@@ -551,7 +539,6 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 			DetectedGames engineCandidates = metaEngine.detectGames(fslist);
 
 			for (uint i = 0; i < engineCandidates.size(); i++) {
-				engineCandidates[i].engineName = metaEngine.getName();
 				engineCandidates[i].path = fslist.begin()->getParent().getPath();
 				engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
 				candidates.push_back(engineCandidates[i]);
@@ -597,6 +584,7 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	ConfMan.addGameDomain(domain);
 
 	// Copy all non-empty relevant values into the new domain
+	addStringToConf("engineid", game.engineId, domain);
 	addStringToConf("gameid", game.gameId, domain);
 	addStringToConf("description", game.description, domain);
 	addStringToConf("language", Common::getLanguageCode(game.language), domain);
@@ -621,6 +609,70 @@ Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
 	// a description which contains extended information like language, etc.).
 
 	return domain;
+}
+
+const Plugin *EngineManager::findLoadedPlugin(const Common::String &engineId) const {
+	const PluginList &plugins = getPlugins();
+
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
+		if (engineId == (*iter)->get<MetaEngine>().getEngineId())
+			return *iter;
+
+	return 0;
+}
+
+const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
+	// First look for the game using the plugins in memory. This is critical
+	// for calls coming from inside games
+	const Plugin *plugin = findLoadedPlugin(engineId);
+	if (plugin)
+		return plugin;
+
+	// Now look for the plugin using the engine ID. This is much faster than scanning plugin
+	// by plugin
+	if (PluginMan.loadPluginFromEngineId(engineId))  {
+		plugin = findLoadedPlugin(engineId);
+		if (plugin)
+			return plugin;
+	}
+
+	// We failed to find it using the engine ID. Scan the list of plugins
+	PluginMan.loadFirstPlugin();
+	do {
+		plugin = findLoadedPlugin(engineId);
+		if (plugin) {
+			// Update with new plugin file name
+			PluginMan.updateConfigWithFileName(engineId);
+			return plugin;
+		}
+	} while (PluginMan.loadNextPlugin());
+
+	return 0;
+}
+
+PlainGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
+	// Ignore empty targets
+	if (target.empty())
+		return PlainGameDescriptor();
+
+	// Lookup the domain. If we have no domain, fallback on the old function [ultra-deprecated].
+	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
+	if (!domain || !domain->contains("gameid") || !domain->contains("engineid"))
+		return PlainGameDescriptor();
+
+	// Look for the engine ID
+	const Plugin *foundPlugin = findPlugin(domain->getVal("engineid"));
+	if (!foundPlugin) {
+		return PlainGameDescriptor();
+	}
+
+	// Make sure it does support the game ID
+	PlainGameDescriptor desc = foundPlugin->get<MetaEngine>().findGame(domain->getVal("gameid").c_str());
+
+	if (desc.gameId && plugin)
+		*plugin = foundPlugin;
+
+	return desc;
 }
 
 // Music plugins

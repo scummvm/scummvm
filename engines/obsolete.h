@@ -69,8 +69,7 @@ void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList);
 PlainGameDescriptor findGameID(
 	const char *gameid,
 	const PlainGameDescriptor *gameids,
-	const ObsoleteGameID *obsoleteList = 0
-	);
+	const ObsoleteGameID *obsoleteList = 0);
 
 
 } // End of namespace Engines

@@ -752,7 +752,7 @@ bool Level9MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			continue;
 
 		// Found the game, add a detection entry
-		DetectedGame gd = DetectedGame(game->gameId, game->name, Common::UNK_LANG,
+		DetectedGame gd = DetectedGame("glk", game->gameId, game->name, Common::UNK_LANG,
 			Common::kPlatformUnknown, game->extra);
 		gd.addExtraEntry("filename", filename);
 		gameList.push_back(gd);

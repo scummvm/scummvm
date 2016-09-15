@@ -206,19 +206,6 @@ protected:
 	uint _md5Bytes;
 
 	/**
-	 * Name of single gameid (optional).
-	 *
-	 * Used to override gameid.
-	 * This is a recommended setting to prevent global gameid pollution.
-	 * With this option set, the gameid effectively turns into engineid.
-	 *
-	 * FIXME: This field actually removes a feature (gameid) in order to
-	 * address a more generic problem. We should find a better way to
-	 * disambiguate gameids.
-	 */
-	const char *_singleId;
-
-	/**
 	 * A bitmask of flags which can be used to configure the behavior
 	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
 	 * that can be ORed together and passed here.
