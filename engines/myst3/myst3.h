@@ -44,23 +44,9 @@ struct Event;
 namespace Myst3 {
 
 enum GameVersionFlags {
-	kFlagNone      = 0,
-	kFlagVersion10 = (1 << 0), // v1.0
-	kFlagDVD       = (1 << 1)  // DVD version
-};
-
-typedef uint32 SafeDiskKey[4];
-
-struct ExecutableVersion {
-	const char *description;
-	int flags;
-	const char *executable;
-	uint32 baseOffset;
-	uint32 ageTableOffset;
-	uint32 nodeInitScriptOffset;
-	uint32 soundNamesOffset;
-	uint32 ambientCuesOffset;
-	const SafeDiskKey *safeDiskKey;
+	kFlagNone        = 0,
+	kFlagDVD         = (1 << 1), // DVD version
+	kFlagMonolingual = (1 << 2)  // Monolingual version
 };
 
 // Engine Debug Flags
@@ -129,9 +115,10 @@ public:
 
 	bool hasFeature(EngineFeature f) const override;
 	Common::Platform getPlatform() const;
-	Common::Language getDefaultLanguage() const;
+	Common::Language getGameLanguage() const;
+	int16 getGameLanguageCode() const;
 	bool isMonolingual() const;
-	const ExecutableVersion *getExecutableVersion() const;
+	bool isDVDVersion() const;
 
 	bool canLoadGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
