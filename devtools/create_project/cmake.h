@@ -53,11 +53,18 @@ protected:
 	const char *getProjectExtension();
 
 private:
+	enum SDLVersion {
+		kSDLVersionAny,
+		kSDLVersion1,
+		kSDLVersion2
+	};
+
 	/**
 	 * CMake properties for a library required by a feature
 	 */
 	struct Library {
 		const char *feature;
+		SDLVersion sdlVersion;
 		const char *module;
 		const char *package;
 		const char *includesVar;
@@ -65,7 +72,7 @@ private:
 		const char *libraries;
 	};
 
-	const Library *getLibraryFromFeature(const char *feature) const;
+	const Library *getLibraryFromFeature(const char *feature, bool useSDL2) const;
 
 	void writeWarnings(std::ofstream &output) const;
 	void writeDefines(const BuildSetup &setup, std::ofstream &output) const;
@@ -75,7 +82,7 @@ private:
 	void writeGeneratePluginsTable(std::ofstream &workspace) const;
 	void writeEnginesLibrariesHandling(const BuildSetup &setup, std::ofstream &workspace) const;
 	void writeEngineDefinitions(std::ofstream &workspace) const;
-	void writeFeatureLibSearch(std::ofstream &workspace, const char *feature) const;
+	void writeFeatureLibSearch(const BuildSetup &setup, std::ofstream &workspace, const char *feature) const;
 	bool featureExcluded(const char *name) const;
 	const EngineDesc &findEngineDesc(const std::string &name, const EngineDescList &engines) const;
 };
