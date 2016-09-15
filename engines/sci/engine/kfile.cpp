@@ -1250,7 +1250,7 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 	// Normally SSCI limits to 20 games per directory, but ScummVM allows more
 	// than that
 	descriptions.resize(SCI_MAX_SAVENAME_LENGTH * saves.size() + 1, true);
-	saveIds.resize(saves.size(), true);
+	saveIds.resize(saves.size() + 1, true);
 
 	for (uint i = 0; i < saves.size(); ++i) {
 		const SavegameDesc &save = saves[i];
@@ -1260,6 +1260,7 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * saves.size()) = '\0';
+	saveIds.int16At(saves.size()) = 0;
 
 	return make_reg(0, saves.size());
 }
