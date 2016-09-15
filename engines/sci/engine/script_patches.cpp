@@ -141,6 +141,59 @@ enum ScriptPatcherSelectors {
 #endif
 };
 
+#ifdef ENABLE_SCI32
+// Save game script hardcodes the maximum number of save games to 20, but
+// this is an artificial constraint that does not apply to ScummVM
+static const uint16 sci2NumSavesSignature1[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x02,                    // lsl local[2]
+	0x35, 0x14,                    // ldi 20
+	0x22,                          // lt?
+	SIG_END
+};
+
+static const uint16 sci2NumSavesPatch1[] = {
+	PATCH_ADDTOOFFSET(+2),         // lsl local[2]
+	0x35, 0x63,                    // ldi 99
+	PATCH_END
+};
+
+static const uint16 sci2NumSavesSignature2[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x02,                    // lsl local[2]
+	0x35, 0x14,                    // ldi 20
+	0x1a,                          // eq?
+	SIG_END
+};
+
+static const uint16 sci2NumSavesPatch2[] = {
+	PATCH_ADDTOOFFSET(+2),         // lsl local[2]
+	0x35, 0x63,                    // ldi 99
+	PATCH_END
+};
+
+// Phantasmagoria & SQ6 try to initialize the first entry of an int16 array
+// using an empty string, which is not valid (it should be a number)
+static const uint16 sci21IntArraySignature[] = {
+	0x38, SIG_SELECTOR16(newWith), // pushi newWith
+	0x7a,                          // push2
+	0x39, 0x04,                    // pushi $4
+	0x72, SIG_ADDTOOFFSET(+2),     // lofsa string ""
+	SIG_MAGICDWORD,
+	0x36,                          // push
+	0x51, 0x0b,                    // class IntArray
+	0x4a, 0x8,                     // send $8
+	SIG_END
+};
+
+static const uint16 sci21IntArrayPatch[] = {
+	PATCH_ADDTOOFFSET(+6),      // push $b9; push2; pushi $4
+	0x76,                       // push0
+	0x34, PATCH_UINT16(0x0001), // ldi 0001 (waste bytes)
+	PATCH_END
+};
+#endif
+
 // ===========================================================================
 // Conquests of Camelot
 // At the bazaar in Jerusalem, it's possible to see a girl taking a shower.
@@ -621,6 +674,10 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Gabriel Knight 1
+
 // ===========================================================================
 // daySixBeignet::changeState (4) is called when the cop goes out and sets cycles to 220.
 //  this is not enough time to get to the door, so we patch that to 23 seconds
@@ -925,8 +982,22 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "day 6 police beignet timer issue",            1, gk1SignatureDay6PoliceBeignet,    gk1PatchDay6PoliceBeignet },
 	{  true,   230, "day 6 police sleep timer issue",              1, gk1SignatureDay6PoliceSleep,      gk1PatchDay6PoliceSleep },
 	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
+
+#pragma mark -
+#pragma mark Gabriel Knight 2
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry gk2Signatures[] = {
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#endif
 
 // ===========================================================================
 // at least during harpy scene export 29 of script 0 is called in kq5cd and
@@ -2086,6 +2157,19 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Leisure Suit Larry 6 Hires
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry larry6HiresSignatures[] = {
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#endif
+
 // ===========================================================================
 // Laura Bow 1 - Colonel's Bequest
 //
@@ -2708,27 +2792,6 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 };
 
 #ifdef ENABLE_SCI32
-// Phantasmagoria & SQ6 try to initialize the first entry of an int16 array
-// using an empty string, which is not valid (it should be a number)
-static const uint16 sci21IntArraySignature[] = {
-	0x38, SIG_SELECTOR16(newWith), // pushi newWith
-	0x7a,                          // push2
-	0x39, 0x04,                    // pushi $4
-	0x72, SIG_ADDTOOFFSET(+2),     // lofsa string ""
-	SIG_MAGICDWORD,
-	0x36,                          // push
-	0x51, 0x0b,                    // class IntArray
-	0x4a, 0x8,                     // send $8
-	SIG_END
-};
-
-static const uint16 sci21IntArrayPatch[] = {
-	PATCH_ADDTOOFFSET(+6),      // push $b9; push2; pushi $4
-	0x76,                       // push0
-	0x34, PATCH_UINT16(0x0001), // ldi 0001 (waste bytes)
-	PATCH_END
-};
-
 #pragma mark -
 #pragma mark Phantasmagoria
 
@@ -2738,7 +2801,6 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
-#pragma mark -
 #endif
 
 // ===========================================================================
@@ -2881,6 +2943,19 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
+
+#ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Police Quest 4
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry pq4Signatures[] = {
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#endif
 
 // ===========================================================================
 //  At the healer's house there is a bird's nest up on the tree.
@@ -3849,6 +3924,19 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+#pragma mark -
+#pragma mark Quest for Glory 4
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry qfg4Signatures[] = {
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+#endif
+
 // ===========================================================================
 //  script 298 of sq4/floppy has an issue. object "nest" uses another property
 //   which isn't included in property count. We return 0 in that case, the game
@@ -4422,10 +4510,21 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
 #pragma mark -
+#pragma mark Torin's Passage
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry torinSignatures[] = {
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
 #endif
 
 // =================================================================================
@@ -4859,18 +4958,25 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_FREDDYPHARKAS:
 		signatureTable = freddypharkasSignatures;
 		break;
+#ifdef ENABLE_SCI32
 	case GID_GK1:
 		signatureTable = gk1Signatures;
 		break;
+	case GID_GK2:
+		signatureTable = gk2Signatures;
+		break;
+#endif
 	case GID_KQ5:
 		signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
 		break;
+#ifdef ENABLE_SCI32
 	case GID_KQ7:
 		signatureTable = kq7Signatures;
 		break;
+#endif
 	case GID_LAURABOW:
 		signatureTable = laurabow1Signatures;
 		break;
@@ -4889,6 +4995,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_LSL6:
 		signatureTable = larry6Signatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_LSL6HIRES:
+		signatureTable = larry6HiresSignatures;
+		break;
+#endif
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
 		break;
@@ -4900,6 +5011,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_PQ1:
 		signatureTable = pq1vgaSignatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_PQ4:
+		signatureTable = pq4Signatures;
+		break;
+#endif
 	case GID_QFG1:
 		signatureTable = qfg1egaSignatures;
 		break;
@@ -4912,6 +5028,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 	case GID_QFG3:
 		signatureTable = qfg3Signatures;
 		break;
+#ifdef ENABLE_SCI32
+	case GID_QFG4:
+		signatureTable = qfg4Signatures;
+		break;
+#endif
 	case GID_SQ1:
 		signatureTable = sq1vgaSignatures;
 		break;
@@ -4924,6 +5045,10 @@ void ScriptPatcher::processScript(uint16 scriptNr, byte *scriptData, const uint3
 #ifdef ENABLE_SCI32
 	case GID_SQ6:
 		signatureTable = sq6Signatures;
+		break;
+	case GID_TORIN:
+		signatureTable = torinSignatures;
+		break;
 #endif
 	default:
 		break;
