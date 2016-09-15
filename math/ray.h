@@ -38,10 +38,10 @@ public:
 	Ray();
 	Ray(const Vector3d &origin, const Vector3d &direction);
 
-	Vector3d& origin() { return _origin; }
-	Vector3d origin() const { return _origin; }
-	Vector3d& direction() { return _direction; }
-	Vector3d direction() const { return _direction; }
+	Vector3d& getOrigin() { return _origin; }
+	Vector3d getOrigin() const { return _origin; }
+	Vector3d& getDirection() { return _direction; }
+	Vector3d getDirection() const { return _direction; }
 
 	/**
 	 * Apply a transformation to the ray
