@@ -120,6 +120,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	const char *getEngineId() const {
+		return "illusions";
+	}
+
 	virtual const char *getName() const {
 		return "Illusions";
 	}

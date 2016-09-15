@@ -88,6 +88,10 @@ public:
 		_singleId = "tinsel";
 	}
 
+	const char *getEngineId() const {
+		return "tinsel";
+	}
+
 	virtual const char *getName() const {
 		return "Tinsel";
 	}

@@ -91,6 +91,10 @@ public:
 		_singleId = "teenagent";
 	}
 
+	const char *getEngineId() const {
+		return "teenagent";
+	}
+
 	virtual const char *getName() const {
 		return "TeenAgent";
 	}

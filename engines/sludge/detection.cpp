@@ -83,6 +83,10 @@ public:
 		_maxScanDepth = 1;
 	}
 
+	const char *getEngineId() const {
+		return "sludge";
+	}
+
 	virtual const char *getName() const {
 		return "Sludge";
 	}

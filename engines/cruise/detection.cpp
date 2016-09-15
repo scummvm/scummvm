@@ -200,6 +200,10 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
+	const char *getEngineId() const {
+		return "cruise";
+	}
+
 	virtual const char *getName() const {
 		return "Cinematique evo 2";
 	}

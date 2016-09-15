@@ -215,6 +215,10 @@ public:
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
+	const char *getEngineId() const {
+		return "lure";
+	}
+
 	virtual const char *getName() const {
 		return "Lure of the Temptress";
 	}

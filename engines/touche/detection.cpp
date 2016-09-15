@@ -137,6 +137,10 @@ public:
 		return detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback);
 	}
 
+	const char *getEngineId() const {
+		return "touche";
+	}
+
 	virtual const char *getName() const {
 		return "Touche: The Adventures of the Fifth Musketeer";
 	}

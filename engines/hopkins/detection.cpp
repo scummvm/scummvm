@@ -106,6 +106,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	virtual const char *getEngineId() const {
+		return "hopkins";
+	}
+
 	virtual const char *getName() const {
 		return "Hopkins FBI";
 	}

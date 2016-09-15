@@ -324,6 +324,10 @@ public:
 		_singleId = "startrek";
 	}
 
+	const char *getEngineId() const {
+		return "startrek";
+	}
+
 	virtual const char *getName() const {
 		return "Star Trek";
 	}

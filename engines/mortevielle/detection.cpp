@@ -60,6 +60,11 @@ public:
 		// (i.e. use or not of the game data file).
 		_flags = kADFlagUseExtraAsHint;
 	}
+
+	const char *getEngineId() const {
+		return "mortevielle";
+	}
+
 	virtual const char *getName() const {
 		return "Mortville Manor";
 	}

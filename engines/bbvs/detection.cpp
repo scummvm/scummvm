@@ -74,6 +74,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	const char *getEngineId() const {
+		return "bbvs";
+	}
+
 	virtual const char *getName() const {
 		return "MTV's Beavis and Butt-head in Virtual Stupidity";
 	}

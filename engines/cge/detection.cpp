@@ -118,6 +118,10 @@ public:
 		_singleId = "soltys";
 	}
 
+	const char *getEngineId() const {
+		return "cge";
+	}
+
 	virtual const char *getName() const {
 		return "CGE";
 	}

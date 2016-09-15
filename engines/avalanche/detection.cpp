@@ -78,6 +78,10 @@ public:
 	AvalancheMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AvalancheGameDescription), avalancheGames) {
 	}
 
+	const char *getEngineId() const {
+		return "avalanche";
+	}
+
 	const char *getName() const {
 		return "Avalanche";
 	}

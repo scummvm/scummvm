@@ -52,6 +52,10 @@ public:
 		_singleId = "testbed";
 	}
 
+	const char *getEngineId() const {
+		return "testbed";
+	}
+
 	virtual const char *getName() const {
 		return "TestBed: The Backend Testing Framework";
 	}

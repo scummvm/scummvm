@@ -144,6 +144,10 @@ public:
 		_maxScanDepth = 3;
 	}
 
+	virtual const char *getEngineId() const {
+		return "mads";
+	}
+
 	virtual const char *getName() const {
 		return "MADS";
 	}

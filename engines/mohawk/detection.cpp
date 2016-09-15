@@ -205,6 +205,10 @@ public:
 		return detectGameFilebased(allFiles, fslist, Mohawk::fileBased);
 	}
 
+	const char *getEngineId() const {
+		return "mohawk";
+	}
+
 	const char *getName() const override {
 		return "Mohawk";
 	}

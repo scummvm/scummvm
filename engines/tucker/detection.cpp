@@ -128,6 +128,10 @@ public:
 		_singleId = "tucker";
 	}
 
+	const char *getEngineId() const {
+		return "tucker";
+	}
+
 	virtual const char *getName() const {
 		return "Bud Tucker in Double Trouble";
 	}

@@ -122,6 +122,10 @@ public:
 		_flags = kADFlagUseExtraAsHint;
 	}
 
+	const char *getEngineId() const {
+		return "lab";
+	}
+
 	virtual const char *getName() const {
 		return "Labyrinth of Time";
 	}

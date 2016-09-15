@@ -170,6 +170,10 @@ public:
 		_singleId = "hdb";
 	}
 
+	const char *getEngineId() const {
+		return "hdb";
+	}
+
 	virtual const char *getName() const {
 		return "Hyperspace Delivery Boy!";
 	}

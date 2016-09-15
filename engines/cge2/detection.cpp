@@ -124,6 +124,10 @@ public:
 		_singleId = "sfinx";
 	}
 
+	const char *getEngineId() const {
+		return "cge2";
+	}
+
 	virtual const char *getName() const {
 		return "CGE2";
 	}

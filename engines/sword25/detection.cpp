@@ -56,6 +56,11 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	const char *getEngineId() const {
+		return "sword25";
+	}
+
 	virtual const char *getName() const {
 		return "Broken Sword 2.5";
 	}

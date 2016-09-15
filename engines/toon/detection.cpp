@@ -146,6 +146,10 @@ public:
 		return detectGameFilebased(allFiles, fslist, Toon::fileBasedFallback);
 	}
 
+	const char *getEngineId() const {
+		return "toon";
+	}
+
 	virtual const char *getName() const {
 		return "Toonstruck";
 	}

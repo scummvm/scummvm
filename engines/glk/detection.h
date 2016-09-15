@@ -41,6 +41,10 @@ public:
 		return "Glk";
 	}
 
+        const char *getEngineId() const {
+                return "glk";
+        }
+
 	virtual const char *getOriginalCopyright() const {
 		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
 	}

@@ -88,6 +88,10 @@ public:
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
+	const char *getEngineId() const {
+		return "cine";
+	}
+
 	virtual const char *getName() const {
 		return "Cinematique evo 1";
 	}

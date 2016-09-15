@@ -70,6 +70,10 @@ public:
 		_maxScanDepth = 3;
 	}
 
+	virtual const char *getEngineId() const {
+		return "voyeur";
+	}
+
 	virtual const char *getName() const {
 		return "Voyeur";
 	}

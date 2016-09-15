@@ -485,6 +485,10 @@ public:
 		_singleId = "queen";
 	}
 
+	const char *getEngineId() const {
+		return "queen";
+	}
+
 	virtual const char *getName() const {
 		return "Flight of the Amazon Queen";
 	}

@@ -136,6 +136,10 @@ public:
 	HugoMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(HugoGameDescription), hugoGames) {
 	}
 
+	const char *getEngineId() const {
+		return "hugo";
+	}
+
 	const char *getName() const {
 		return "Hugo";
 	}

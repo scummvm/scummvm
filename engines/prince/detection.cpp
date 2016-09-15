@@ -153,9 +153,13 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-        virtual const char *getName() const {
-                return "The Prince and the Coward";
+        const char *getEngineId() const {
+                return "prince";
         }
+
+	virtual const char *getName() const {
+                return "The Prince and the Coward";
+	}
 
 	virtual const char *getOriginalCopyright() const {
 		return "The Prince and the Coward (C) 1996-97 Metropolis";

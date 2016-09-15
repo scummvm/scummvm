@@ -133,6 +133,10 @@ public:
 		_singleId = "fullpipe";
 	}
 
+	const char *getEngineId() const {
+		return "fullpipe";
+	}
+
 	virtual const char *getName() const {
 		return "Full Pipe";
 	}

@@ -75,6 +75,10 @@ public:
 	virtual const char *getName() const;
 	virtual const char *getOriginalCopyright() const;
 
+	const char *getEngineId() const {
+		return "sky";
+	}
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	PlainGameList getSupportedGames() const override;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;

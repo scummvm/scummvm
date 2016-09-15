@@ -64,6 +64,10 @@ public:
 		_singleId = "zvision";
 	}
 
+	const char *getEngineId() const {
+		return "zvision";
+	}
+
 	virtual const char *getName() const {
 		return "Z-Vision";
 	}

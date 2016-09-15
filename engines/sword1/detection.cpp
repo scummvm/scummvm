@@ -79,6 +79,10 @@ static const char *const g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files h
 
 class SwordMetaEngine : public MetaEngine {
 public:
+	virtual const char *getEngineId() const {
+		return "sword1";
+	}
+
 	virtual const char *getName() const {
 		return "Broken Sword: The Shadow of the Templars";
 	}

@@ -129,6 +129,10 @@ public:
 		return detectGameFilebased(allFiles, fslist, CryOmni3D::fileBased);
 	}
 
+	const char *getEngineId() const {
+		return "cryomni3d";
+	}
+
 	virtual const char *getName() const {
 		return "Cryo Omni3D";
 	}

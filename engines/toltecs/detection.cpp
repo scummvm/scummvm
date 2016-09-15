@@ -223,6 +223,10 @@ public:
 		_singleId = "toltecs";
 	}
 
+	const char *getEngineId() const {
+		return "toltecs";
+	}
+
 	virtual const char *getName() const {
 		return "3 Skulls of the Toltecs";
 	}
