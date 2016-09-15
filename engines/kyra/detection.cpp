@@ -156,6 +156,11 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	const char *getEngineId() const {
+		return "kyra";
+	}
+
 	const char *getName() const {
 		return "Kyra";
 	}

@@ -82,6 +82,10 @@ public:
 		_maxScanDepth = 3;
 	}
 
+	virtual const char *getEngineId() const {
+		return "gnap";
+	}
+
 	virtual const char *getName() const {
 		return "Gnap";
 	}

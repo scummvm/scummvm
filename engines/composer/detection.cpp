@@ -485,6 +485,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	const char *getEngineId() const {
+		return "composer";
+	}
+
 	virtual const char *getName() const {
 		return "Magic Composer";
 	}

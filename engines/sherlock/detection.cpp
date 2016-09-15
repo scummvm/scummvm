@@ -136,6 +136,10 @@ public:
 	SherlockMetaEngine() : AdvancedMetaEngine(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
+	virtual const char *getEngineId() const {
+		return "sherlock";
+	}
+
 	virtual const char *getName() const {
 		return "Sherlock";
 	}

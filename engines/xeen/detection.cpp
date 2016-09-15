@@ -121,6 +121,10 @@ public:
 		_maxScanDepth = 3;
 	}
 
+	virtual const char *getEngineId() const {
+		return "xeen";
+	}
+
 	virtual const char *getName() const {
 		return "Xeen";
 	}

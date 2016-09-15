@@ -109,6 +109,10 @@ public:
 		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
+	const char *getEngineId() const {
+		return "saga";
+	}
+
 	virtual const char *getName() const {
 		return "SAGA ["
 

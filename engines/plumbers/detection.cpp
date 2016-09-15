@@ -76,6 +76,10 @@ public:
 		_singleId = "plumbers";
 	}
 
+	const char *getEngineId() const {
+		return "plumbers";
+	}
+
 	virtual const char *getName() const {
 		return "Plumbers Don't Wear Ties";
 	}

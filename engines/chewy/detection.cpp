@@ -118,6 +118,10 @@ public:
 		_singleId = "chewy";
 	}
 
+	const char *getEngineId() const {
+		return "chewy";
+	}
+
 	virtual const char *getName() const {
 		return "Chewy: Esc from F5";
 	}

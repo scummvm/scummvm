@@ -84,6 +84,10 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 
 class Sword2MetaEngine : public MetaEngine {
 public:
+	virtual const char *getEngineId() const {
+		return "sword2";
+	}
+
 	virtual const char *getName() const {
 		return "Broken Sword II: The Smoking Mirror";
 	}

@@ -564,6 +564,10 @@ public:
 		_matchFullPaths = true;
 	}
 
+	const char *getEngineId() const {
+		return "sci";
+	}
+
 	virtual const char *getName() const {
 		return "SCI ["
 #ifdef ENABLE_SCI32

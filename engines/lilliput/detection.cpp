@@ -126,6 +126,10 @@ public:
 	LilliputMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(LilliputGameDescription), lilliputGames) {
 	}
 
+	const char *getEngineId() const {
+		return "lilliput";
+	}
+
 	const char *getName() const {
 		return "Lilliput";
 	}

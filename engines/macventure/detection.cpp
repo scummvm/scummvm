@@ -66,7 +66,16 @@ public:
 	const char *getName() const {
 		return "MacVenture";
 	}
-	const char *getOriginalCopyright() const {
+
+	const char *getEngineId() const override {
+		return "macventure";
+	}
+
+	const char *getName() const override {
+		return "MacVenture";
+	}
+
+	const char *getOriginalCopyright() const override {
 		return "(C) ICOM Simulations";
 	}
 

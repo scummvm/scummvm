@@ -93,6 +93,11 @@ public:
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
+
+	const char *getEngineId() const {
+		return "wintermute";
+	}
+
 	virtual const char *getName() const {
 		return "Wintermute";
 	}

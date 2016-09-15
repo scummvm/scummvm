@@ -202,6 +202,10 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
 
+	const char *getEngineId() const {
+		return "neverhood";
+	}
+
 	virtual const char *getName() const {
 		return "The Neverhood Chronicles";
 	}

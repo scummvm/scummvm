@@ -35,6 +35,10 @@ public:
 
 	PlainGameDescriptor findGame(const char *gameId) const override;
 
+	const char *getEngineId() const {
+		return "gob";
+	}
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
 	virtual const char *getName() const;

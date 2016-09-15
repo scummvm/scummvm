@@ -59,6 +59,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
+	virtual const char *getEngineId() const {
+		return "wage";
+	}
+
+
 	virtual const char *getName() const {
 		return "World Adventure Game Engine";
 	}

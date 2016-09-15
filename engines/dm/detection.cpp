@@ -101,6 +101,10 @@ public:
 		_singleId = "dm";
 	}
 
+	virtual const char *getEngineId() const {
+		return "dm";
+	}
+
 	virtual const char *getName() const {
 		return "Dungeon Master";
 	}

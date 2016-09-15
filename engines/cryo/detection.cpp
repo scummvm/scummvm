@@ -136,6 +136,10 @@ public:
 		_singleId = "losteden";
 	}
 
+	const char *getEngineId() const {
+		return "cryo";
+	}
+
 	virtual const char *getName() const {
 		return "Cryo";
 	}

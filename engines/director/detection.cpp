@@ -104,6 +104,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	virtual const char *getEngineId() const {
+		return "director";
+	}
+
 	virtual const char *getName() const {
 		return "Macromedia Director";
 	}

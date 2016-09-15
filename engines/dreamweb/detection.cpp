@@ -75,6 +75,10 @@ public:
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
+	const char *getEngineId() const {
+		return "dreamweb";
+	}
+
 	virtual const char *getName() const {
 		return "DreamWeb";
 	}

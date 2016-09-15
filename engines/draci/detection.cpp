@@ -87,6 +87,10 @@ public:
 		_singleId = "draci";
 	}
 
+	const char *getEngineId() const {
+		return "draci";
+	}
+
 	virtual const char *getName() const {
 		return "Draci Historie";
 	}

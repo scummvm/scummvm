@@ -351,6 +351,10 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
+	const char *getEngineId() const {
+		return "groovie";
+	}
+
 	const char *getName() const {
 		return "Groovie";
 	}

@@ -71,6 +71,10 @@ public:
 	TonyMetaEngine() : AdvancedMetaEngine(Tony::gameDescriptions, sizeof(Tony::TonyGameDescription), tonyGames) {
 	}
 
+	virtual const char *getEngineId() const {
+		return "tony";
+	}
+
 	virtual const char *getName() const {
 		return "Tony Tough and the Night of Roasted Moths";
 	}

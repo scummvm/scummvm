@@ -223,6 +223,10 @@ public:
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
+	virtual const char *getEngineId() const {
+		return "parallaction";
+	}
+
 	virtual const char *getName() const {
 		return "Parallaction";
 	}

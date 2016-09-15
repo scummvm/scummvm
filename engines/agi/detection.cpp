@@ -206,9 +206,14 @@ public:
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
+	const char *getEngineId() const {
+		return "agi";
+	}
+
 	virtual const char *getName() const {
 		return "AGI preAGI + v2 + v3";
 	}
+
 	virtual const char *getOriginalCopyright() const {
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
