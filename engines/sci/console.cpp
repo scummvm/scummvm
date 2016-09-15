@@ -2802,10 +2802,49 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
 				case SEG_TYPE_ARRAY: {
-					debugPrintf("SCI32 array:\n");
-					// TODO: Different prints for different types
 					const SciArray *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					hexDumpReg((reg_t *)array->getRawData(), array->size(), 4, 0, true);
+					const char *arrayType;
+					switch (array->getType()) {
+						case kArrayTypeID:
+							arrayType = "reg_t";
+							break;
+						case kArrayTypeByte:
+							arrayType = "byte";
+							break;
+						case kArrayTypeInt16:
+							arrayType = "int16";
+							break;
+						case kArrayTypeString:
+							arrayType = "string";
+							break;
+						default:
+							arrayType = "invalid";
+							break;
+					}
+					debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array->size());
+					switch (array->getType()) {
+					case kArrayTypeID:
+						hexDumpReg((reg_t *)array->getRawData(), array->size(), 4, 0, true);
+						break;
+					case kArrayTypeByte:
+					case kArrayTypeString: {
+						Common::hexdump((byte *)array->getRawData(), array->size(), 16, 0);
+						break;
+					}
+					case kArrayTypeInt16: {
+						const int16 *data = (const int16 *)array->getRawData();
+						for (int i = 0; i < array->size(); ++i) {
+							debugN("% 6d ", *data++);
+							if ((i % 8) == 0) {
+								debugN("\n");
+							}
+						}
+						break;
+					}
+					default:
+						break;
+					}
+
 					break;
 				}
 				case SEG_TYPE_BITMAP: {
