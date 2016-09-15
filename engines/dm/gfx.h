@@ -50,12 +50,12 @@ enum ViewFloor {
 };
 
 enum DoorState {
-	kDMDoorStateOpen = 0,        // @ C0_DOOR_STATE_OPEN 
-	kDMDoorStateOneFourth = 1,   // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH 
-	kDMDoorStateHalf = 2,        // @ k2_DoorStateAspect_CLOSED_HALF 
+	kDMDoorStateOpen = 0,        // @ C0_DOOR_STATE_OPEN
+	kDMDoorStateOneFourth = 1,   // @ C1_DOOR_STATE_CLOSED_ONE_FOURTH
+	kDMDoorStateHalf = 2,        // @ k2_DoorStateAspect_CLOSED_HALF
 	kDMDoorStateThreeFourth = 3, // @ C3_DOOR_STATE_CLOSED_THREE_FOURTH
-	kDMDoorStateClosed = 4,      // @ C4_DOOR_STATE_CLOSED 
-	kDMDoorStateDestroyed = 5    // @ C5_DOOR_STATE_DESTROYED 
+	kDMDoorStateClosed = 4,      // @ C4_DOOR_STATE_CLOSED
+	kDMDoorStateDestroyed = 5    // @ C5_DOOR_STATE_DESTROYED
 };
 
 enum DoorOrnament {
@@ -73,17 +73,17 @@ enum DoorButton {
 
 /* View lanes */
 enum ViewLane {
-	kDMViewLaneCenter = 0, // @ C0_VIEW_LANE_CENTER 
-	kDMViewLaneLeft = 1,   // @ C1_VIEW_LANE_LEFT   
-	kDMViewLaneRight = 2   // @ C2_VIEW_LANE_RIGHT  
+	kDMViewLaneCenter = 0, // @ C0_VIEW_LANE_CENTER
+	kDMViewLaneLeft = 1,   // @ C1_VIEW_LANE_LEFT
+	kDMViewLaneRight = 2   // @ C2_VIEW_LANE_RIGHT
 };
 
 /* Explosion aspects */
 enum ExplosionAspectEnum {
-	kDMExplosionAspectFire = 0,   // @ C0_EXPLOSION_ASPECT_FIRE  
-	kDMExplosionAspectSpell = 1,  // @ C1_EXPLOSION_ASPECT_SPELL 
-	k2_ExplosionAspectPoison = 2, // @ C2_EXPLOSION_ASPECT_POISON
-	k3_ExplosionAspectSmoke = 3   // @ C3_EXPLOSION_ASPECT_SMOKE 
+	kDMExplosionAspectFire = 0,   // @ C0_EXPLOSION_ASPECT_FIRE
+	kDMExplosionAspectSpell = 1,  // @ C1_EXPLOSION_ASPECT_SPELL
+	kDMExplosionAspectPoison = 2, // @ C2_EXPLOSION_ASPECT_POISON
+	kDMExplosionAspectSmoke = 3   // @ C3_EXPLOSION_ASPECT_SMOKE
 };
 
 enum WallSet {
@@ -95,24 +95,48 @@ enum FloorSet {
 };
 
 enum ViewWall {
-	kDMViewWallD3LRight = 0, // @ C00_VIEW_WALL_D3L_RIGHT 
-	kDMViewWallD3RLeft = 1, // @ C01_VIEW_WALL_D3R_LEFT  
-	kDMViewWallD3LFront = 2, // @ C02_VIEW_WALL_D3L_FRONT 
-	kDMViewWallD3CFront = 3, // @ C03_VIEW_WALL_D3C_FRONT 
-	kDMViewWallD3RFront = 4, // @ C04_VIEW_WALL_D3R_FRONT 
-	kDMViewWallD2LRight = 5, // @ C05_VIEW_WALL_D2L_RIGHT 
-	kDMViewWallD2RLeft = 6, // @ C06_VIEW_WALL_D2R_LEFT  
-	kDMViewWallD2LFront = 7, // @ C07_VIEW_WALL_D2L_FRONT 
-	kDMViewWallD2CFront = 8, // @ C08_VIEW_WALL_D2C_FRONT 
-	kDMViewWallD2RFront = 9, // @ C09_VIEW_WALL_D2R_FRONT 
+	kDMViewWallD3LRight = 0, // @ C00_VIEW_WALL_D3L_RIGHT
+	kDMViewWallD3RLeft = 1, // @ C01_VIEW_WALL_D3R_LEFT
+	kDMViewWallD3LFront = 2, // @ C02_VIEW_WALL_D3L_FRONT
+	kDMViewWallD3CFront = 3, // @ C03_VIEW_WALL_D3C_FRONT
+	kDMViewWallD3RFront = 4, // @ C04_VIEW_WALL_D3R_FRONT
+	kDMViewWallD2LRight = 5, // @ C05_VIEW_WALL_D2L_RIGHT
+	kDMViewWallD2RLeft = 6, // @ C06_VIEW_WALL_D2R_LEFT
+	kDMViewWallD2LFront = 7, // @ C07_VIEW_WALL_D2L_FRONT
+	kDMViewWallD2CFront = 8, // @ C08_VIEW_WALL_D2C_FRONT
+	kDMViewWallD2RFront = 9, // @ C09_VIEW_WALL_D2R_FRONT
 	kDMViewWallD1LRight = 10, // @ C10_VIEW_WALL_D1L_RIGHT
-	kDMViewWallD1RLeft = 11, // @ C11_VIEW_WALL_D1R_LEFT 
+	kDMViewWallD1RLeft = 11, // @ C11_VIEW_WALL_D1R_LEFT
 	kDMViewWallD1CFront = 12  // @ C12_VIEW_WALL_D1C_FRONT
 };
 
-#define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH   
+enum CellOrder {
+	kDMCellOrderAlcove = 0x0000,                                  // @ C0000_CELL_ORDER_ALCOVE
+	kDMCellOrderBackLeft = 0x0001,                                // @ C0001_CELL_ORDER_BACKLEFT
+	kDMCellOrderBackRight = 0x0002,                               // @ C0002_CELL_ORDER_BACKRIGHT
+	kDMCellOrderDoorPass1BackLeft = 0x0018,                      // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT
+	kDMCellOrderBackLeftBackRight = 0x0021,                      // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT
+	kDMCellOrderDoorPass1BackRight = 0x0028,                     // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT
+	kDMCellOrderBackRightFrontRight = 0x0032,                    // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT
+	kDMCellOrderDoorPass2FrontRight = 0x0039,                    // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT
+	kDMCellOrderBackLeftFrontLeft = 0x0041,                      // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT
+	kDMCellOrderDoorPass2FrontLeft = 0x0049,                     // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT
+	kDMCellOrderDoorPass1BackRightBackLeft = 0x0128,            // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT
+	kDMCellOrderDoorPass1BackLeftBackRight = 0x0218,            // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT
+	kDMCellOrderBackLeftBackRightFrontRight = 0x0321,           // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT
+	kDMCellOrderBackRightFrontLeftFrontRight = 0x0342,          // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT
+	kDMCellOrderDoorPass2FrontLeftFrontRight = 0x0349,          // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT
+	kDMCellOrderBackRightBackLeftFrontLeft = 0x0412,            // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT
+	kDMCellOrderBackLeftFrontRightFrontLeft = 0x0431,           // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT
+	kDMCellOrderDoorPass2FrontRightFrontLeft = 0x0439,          // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT
+	kDMCellOrderBackLeftBackRightFrontLeftFrontRight = 0x3421, // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
+	kDMCellOrderBackRightBackLeftFrontRightFrontLeft = 0x4312, // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
+};
+
+#define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH
 #define kDMMaskDoorInfoProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
-#define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED                    
+#define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED
+#define kDMMaskDoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT
 
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
@@ -126,49 +150,27 @@ enum ViewWall {
 #define k14_ProjectileAspectCount 14 // @ C014_PROJECTILE_ASPECT_COUNT
 #define k85_ObjAspectCount 85 // @ C085_OBJECT_ASPECT_COUNT
 
-#define k0_HalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN  
-#define k1_HalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN 
-#define k2_HalfSizedViewCell_BackRow 2 // @ C02_VIEW_CELL_BACK_ROW     
+#define k0_HalfSizedViewCell_LeftColumn 0 // @ C00_VIEW_CELL_LEFT_COLUMN
+#define k1_HalfSizedViewCell_RightColumn 1 // @ C01_VIEW_CELL_RIGHT_COLUMN
+#define k2_HalfSizedViewCell_BackRow 2 // @ C02_VIEW_CELL_BACK_ROW
 #define k3_HalfSizedViewCell_CenterColumn 3 // @ C03_VIEW_CELL_CENTER_COLUMN
-#define k4_HalfSizedViewCell_FrontRow 4 // @ C04_VIEW_CELL_FRONT_ROW    
+#define k4_HalfSizedViewCell_FrontRow 4 // @ C04_VIEW_CELL_FRONT_ROW
 
 /* Shift sets */
 #define k0_ShiftSet_D0BackD1Front 0 // @ C0_SHIFT_SET_D0_BACK_OR_D1_FRONT
 #define k1_ShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
 #define k2_ShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
 
-#define k0x0008_CellOrder_DoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT                                   
-#define k0x0000_CellOrder_Alcove 0x0000 // @ C0000_CELL_ORDER_ALCOVE                                 
-#define k0x0001_CellOrder_BackLeft 0x0001 // @ C0001_CELL_ORDER_BACKLEFT                               
-#define k0x0002_CellOrder_BackRight 0x0002 // @ C0002_CELL_ORDER_BACKRIGHT                              
-#define k0x0018_CellOrder_DoorPass1_BackLeft 0x0018 // @ C0018_CELL_ORDER_DOORPASS1_BACKLEFT                     
-#define k0x0021_CellOrder_BackLeft_BackRight 0x0021 // @ C0021_CELL_ORDER_BACKLEFT_BACKRIGHT                     
-#define k0x0028_CellOrder_DoorPass1_BackRight 0x0028 // @ C0028_CELL_ORDER_DOORPASS1_BACKRIGHT                    
-#define k0x0032_CellOrder_BackRight_FrontRight 0x0032 // @ C0032_CELL_ORDER_BACKRIGHT_FRONTRIGHT                   
-#define k0x0039_CellOrder_DoorPass2_FrontRight 0x0039 // @ C0039_CELL_ORDER_DOORPASS2_FRONTRIGHT                   
-#define k0x0041_CellOrder_BackLeft_FrontLeft 0x0041 // @ C0041_CELL_ORDER_BACKLEFT_FRONTLEFT                     
-#define k0x0049_CellOrder_DoorPass2_FrontLeft 0x0049 // @ C0049_CELL_ORDER_DOORPASS2_FRONTLEFT                    
-#define k0x0128_CellOrder_DoorPass1_BackRight_BackLeft 0x0128 // @ C0128_CELL_ORDER_DOORPASS1_BACKRIGHT_BACKLEFT           
-#define k0x0218_CellOrder_DoorPass1_BackLeft_BackRight 0x0218 // @ C0218_CELL_ORDER_DOORPASS1_BACKLEFT_BACKRIGHT           
-#define k0x0321_CellOrder_BackLeft_BackRight_FrontRight 0x0321 // @ C0321_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTRIGHT          
-#define k0x0342_CellOrder_BackRight_FrontLeft_FrontRight 0x0342 // @ C0342_CELL_ORDER_BACKRIGHT_FRONTLEFT_FRONTRIGHT         
-#define k0x0349_CellOrder_DoorPass2_FrontLeft_FrontRight 0x0349 // @ C0349_CELL_ORDER_DOORPASS2_FRONTLEFT_FRONTRIGHT         
-#define k0x0412_CellOrder_BackRight_BackLeft_FrontLeft 0x0412 // @ C0412_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTLEFT           
-#define k0x0431_CellOrder_BackLeft_FrontRight_FrontLeft 0x0431 // @ C0431_CELL_ORDER_BACKLEFT_FRONTRIGHT_FRONTLEFT          
-#define k0x0439_CellOrder_DoorPass2_FrontRight_FrontLeft 0x0439 // @ C0439_CELL_ORDER_DOORPASS2_FRONTRIGHT_FRONTLEFT         
-#define k0x3421_CellOrder_BackLeft_BackRight_FrontLeft_FrontRight 0x3421 // @ C3421_CELL_ORDER_BACKLEFT_BACKRIGHT_FRONTLEFT_FRONTRIGHT
-#define k0x4312_CellOrder_BackRight_BackLeft_FrontRight_FrontLeft 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
-
 /* Creature info GraphicInfo */
-#define k0x0003_CreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL                        
-#define k0x0004_CreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK                  
-#define k0x0008_CreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE                             
-#define k0x0010_CreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK                             
-#define k0x0020_CreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK                           
-#define k0x0080_CreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT                                                                               
-#define k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT 
-#define k0x0200_CreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK                      
-#define k0x0400_CreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK               
+#define k0x0003_CreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL
+#define k0x0004_CreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK
+#define k0x0008_CreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE
+#define k0x0010_CreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK
+#define k0x0020_CreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK
+#define k0x0080_CreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT
+#define k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT
+#define k0x0200_CreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK
+#define k0x0400_CreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK
 
 #define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
 #define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
@@ -181,9 +183,9 @@ enum ViewWall {
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
 /* Field Aspect Mask */
-#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK 
+#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK
 #define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
-#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK            
+#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK
 
 enum ViewSquare {
 	kM3_ViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
@@ -221,43 +223,43 @@ extern ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount]; // @ G021
 extern byte g215_ProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
 
 
-#define k0_DerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT                    
-#define k1_DerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA    
-#define k2_DerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM   
-#define k3_DerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL    
-#define k4_DerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT         
-#define k68_DerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3     
-#define k69_DerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2    
-#define k102_DerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON         
-#define k104_DerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT              
-#define k282_DerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE          
-#define k438_DerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION           
-#define k495_DerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE            
+#define k0_DerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT
+#define k1_DerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA
+#define k2_DerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM
+#define k3_DerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL
+#define k4_DerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT
+#define k68_DerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3
+#define k69_DerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2
+#define k102_DerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON
+#define k104_DerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT
+#define k282_DerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE
+#define k438_DerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION
+#define k495_DerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE
 
 
-#define k16_Scale_D3 16 // @ C16_SCALE_D3 
-#define k20_Scale_D2 20 // @ C20_SCALE_D2 
+#define k16_Scale_D3 16 // @ C16_SCALE_D3
+#define k20_Scale_D2 20 // @ C20_SCALE_D2
 
 /* Object aspect GraphicInfo */
-#define k0x0001_ObjectFlipOnRightMask 0x0001 // @ MASK0x0001_FLIP_ON_RIGHT 
-#define k0x0010_ObjectAlcoveMask 0x0010 // @ MASK0x0010_ALCOVE        
+#define k0x0001_ObjectFlipOnRightMask 0x0001 // @ MASK0x0001_FLIP_ON_RIGHT
+#define k0x0010_ObjectAlcoveMask 0x0010 // @ MASK0x0010_ALCOVE
 
 /* Projectile aspect GraphicInfo */
-#define k0x0010_ProjectileSideMask 0x0010 // @ MASK0x0010_SIDE                      
-#define k0x0100_ProjectileScaleWithKineticEnergyMask 0x0100 // @ MASK0x0100_SCALE_WITH_KINETIC_ENERGY 
-#define k0x0003_ProjectileAspectTypeMask 0x0003 // @ MASK0x0003_ASPECT_TYPE               
+#define k0x0010_ProjectileSideMask 0x0010 // @ MASK0x0010_SIDE
+#define k0x0100_ProjectileScaleWithKineticEnergyMask 0x0100 // @ MASK0x0100_SCALE_WITH_KINETIC_ENERGY
+#define k0x0003_ProjectileAspectTypeMask 0x0003 // @ MASK0x0003_ASPECT_TYPE
 
 /* Projectile aspect type */
-#define k0_ProjectileAspectHasBackGraphicRotation 0 // @ C0_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_ROTATION   
+#define k0_ProjectileAspectHasBackGraphicRotation 0 // @ C0_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_ROTATION
 #define k1_ProjectileAspectBackGraphic 1 // @ C1_PROJECTILE_ASPECT_TYPE_HAS_BACK_GRAPHIC_AND_NO_ROTATION
-#define k2_ProjectileAspectHasRotation 2 // @ C2_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_ROTATION    
-#define k3_ProjectileAspectHasNone 3 // @ C3_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_NO_ROTATION 
+#define k2_ProjectileAspectHasRotation 2 // @ C2_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_ROTATION
+#define k3_ProjectileAspectHasNone 3 // @ C3_PROJECTILE_ASPECT_TYPE_NO_BACK_GRAPHIC_AND_NO_ROTATION
 
 /* Projectile aspects */
-#define k3_ProjectileAspectExplosionLightningBolt 3 // @ C03_PROJECTILE_ASPECT_EXPLOSION_LIGHTNING_BOLT           
-#define k10_ProjectileAspectExplosionFireBall 10 // @ C10_PROJECTILE_ASPECT_EXPLOSION_FIREBALL                
-#define k11_ProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT                 
-#define k12_ProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME                   
+#define k3_ProjectileAspectExplosionLightningBolt 3 // @ C03_PROJECTILE_ASPECT_EXPLOSION_LIGHTNING_BOLT
+#define k10_ProjectileAspectExplosionFireBall 10 // @ C10_PROJECTILE_ASPECT_EXPLOSION_FIREBALL
+#define k11_ProjectileAspectExplosionDefault 11 // @ C11_PROJECTILE_ASPECT_EXPLOSION_DEFAULT
+#define k12_ProjectileAspectExplosionSlime 12 // @ C12_PROJECTILE_ASPECT_EXPLOSION_SLIME
 #define k13_ProjectileAspectExplosionPoisonBoltCloud 13 // @ C13_PROJECTILE_ASPECT_EXPLOSION_POISON_BOLT_POISON_CLOUD
 
 #define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
@@ -301,13 +303,13 @@ enum GraphicIndice {
 	k30_FoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
 	k31_WaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
 	k32_PoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
-	k33_SlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL                   
-	k34_SlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED                  
+	k33_SlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL
+	k34_SlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED
 	k35_SlotBoxActingHandIndice = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
 	k37_BorderPartyShieldIndice = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
 	k38_BorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
 	k39_BorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
-	k40_PanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE 
+	k40_PanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE
 	k41_holeInWall_GraphicIndice = 41, // @ C041_GRAPHIC_HOLE_IN_WALL
 	k42_ObjectIcons_000_TO_031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
 	k43_ObjectIcons_032_TO_063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
@@ -343,12 +345,12 @@ enum GraphicIndice {
 	k241_FloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
 	k301_DoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
 	k315_firstDoorButton_GraphicIndice = 315, // @ C315_GRAPHIC_FIRST_DOOR_BUTTON
-	k316_FirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE 
+	k316_FirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE
 	k348_FirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
-	k351_FirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN 
+	k351_FirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN
 	k360_FirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
 	k446_FirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
-	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT 
+	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT
 };
 
 
@@ -485,7 +487,7 @@ public:
 		_firstNativeBitmapRelativeIndex(firstN), _firstDerivedBitmapRelativeIndex(firstD),
 		_byteWidth(byteWidth), _height(h), _graphicInfo(grap) {}
 
-	ProjectileAspect() : _firstNativeBitmapRelativeIndex(0), 
+	ProjectileAspect() : _firstNativeBitmapRelativeIndex(0),
 		_firstDerivedBitmapRelativeIndex(0), _byteWidth(0), _height(0), _graphicInfo(0) {}
 }; // @ PROJECTIL_ASPECT
 
@@ -518,16 +520,16 @@ struct OrnamentInfo {
 #define k15_DoorOrnDestroyedMask 15 // @ C15_DOOR_ORNAMENT_DESTROYED_MASK
 #define k16_DoorOrnThivesEyeMask 16 // @ C16_DOOR_ORNAMENT_THIEVES_EYE_MASK
 
-#define k0_viewportNotDungeonView 0 // @ C0_VIEWPORT_NOT_DUNGEON_VIEW               
-#define k1_viewportDungeonView 1 // @ C1_VIEWPORT_DUNGEON_VIEW                   
-#define k2_viewportAsBeforeSleepOrFreezeGame 2 // @ C2_VIEWPORT_AS_BEFORE_SLEEP_OR_FREEZE_GAME 
+#define k0_viewportNotDungeonView 0 // @ C0_VIEWPORT_NOT_DUNGEON_VIEW
+#define k1_viewportDungeonView 1 // @ C1_VIEWPORT_DUNGEON_VIEW
+#define k2_viewportAsBeforeSleepOrFreezeGame 2 // @ C2_VIEWPORT_AS_BEFORE_SLEEP_OR_FREEZE_GAME
 
 
 #define k112_byteWidthViewport 112 // @ C112_BYTE_WIDTH_VIEWPORT
-#define k136_heightViewport 136 // @ C136_HEIGHT_VIEWPORT 
+#define k136_heightViewport 136 // @ C136_HEIGHT_VIEWPORT
 
 #define k160_byteWidthScreen 160 // @ C160_BYTE_WIDTH_SCREEN
-#define k200_heightScreen 200 // @ C200_HEIGHT_SCREEN   
+#define k200_heightScreen 200 // @ C200_HEIGHT_SCREEN
 
 #define k8_byteWidth 8 // @ C008_BYTE_WIDTH
 #define k16_byteWidth 16 // @ C016_BYTE_WIDTH
@@ -656,7 +658,7 @@ class DisplayMan {
 public:
 	byte *_bitmapWallSetD1LCR; // @ G0700_puc_Bitmap_WallSet_Wall_D1LCR
 private:
-	Box _boxThievesEyeViewPortVisibleArea; // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea 
+	Box _boxThievesEyeViewPortVisibleArea; // @ G0106_s_Graphic558_Box_ThievesEye_ViewportVisibleArea
 	byte _palChangesDoorButtonAndWallOrnD3[16]; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
 	byte _palChangesDoorButtonAndWallOrnD2[16]; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
 
@@ -717,7 +719,7 @@ public:
 
 	void loadIntoBitmap(uint16 index, byte *destBitmap); // @ F0466_EXPAND_GraphicToBitmap
 	void setUpScreens(uint16 width, uint16 height);
-	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader	
+	void loadGraphics(); // @ F0479_MEMORY_ReadGraphicsDatHeader
 	void initializeGraphicData(); // @ F0460_START_InitializeGraphicData
 	void loadCurrentMapGraphics(); // @ F0096_DUNGEONVIEW_LoadCurrentMapGraphics_CPSDF
 	void allocateFlippedWallBitmaps(); // @ F0461_START_AllocateFlippedWallBitmaps
@@ -779,7 +781,7 @@ public:
 	int16 getScaledDimension(int16 dimension, int16 scale); // @ M78_SCALED_DIMENSION
 	void drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Direction directionParam,
 					  int16 mapXpos, int16 mapYpos, int16 viewSquareIndex,
-					  uint16 orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+					  CellOrder orderedViewCellOrdinals); // @ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	uint16 getNormalizedByteWidth(uint16 byteWidth); // @ M77_NORMALIZED_BYTE_WIDTH
 	uint16 getVerticalOffsetM23(uint16 val); // @ M23_VERTICAL_OFFSET
 	uint16 getHorizontalOffsetM22(uint16 val); // @ M22_HORIZONTAL_OFFSET
