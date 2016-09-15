@@ -104,27 +104,27 @@
 namespace Glk {
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename) :
-		DetectedGame(id, desc, Common::EN_ANY, Common::kPlatformUnknown) {
+		DetectedGame("glk", id, desc, Common::EN_ANY, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
-		Common::Language lang) : DetectedGame(id, desc, lang, Common::kPlatformUnknown) {
+		Common::Language lang) : DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const char *xtra,
 		const Common::String &filename, Common::Language lang) :
-		DetectedGame(id, desc, lang, Common::kPlatformUnknown, xtra) {
+		DetectedGame("glk", id, desc, lang, Common::kPlatformUnknown, xtra) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 }
 
 GlkDetectedGame::GlkDetectedGame(const char *id, const char *desc, const Common::String &filename,
 		const Common::String &md5, size_t filesize) :
-		DetectedGame(id, desc, Common::UNK_LANG, Common::kPlatformUnknown) {
+		DetectedGame("glk", id, desc, Common::UNK_LANG, Common::kPlatformUnknown) {
 	setGUIOptions(GUIO3(GUIO_NOSPEECH, GUIO_NOMUSIC, GUIO_NOSUBTITLES));
 	addExtraEntry("filename", filename);
 

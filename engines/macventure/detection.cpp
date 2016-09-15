@@ -63,10 +63,6 @@ public:
 		_md5Bytes = 5000000; // TODO: Upper limit, adjust it once all games are added
 	}
 
-	const char *getName() const {
-		return "MacVenture";
-	}
-
 	const char *getEngineId() const override {
 		return "macventure";
 	}

@@ -189,12 +189,12 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		if (sv->dinnerTableEntries) {
 			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
 
-			DetectedGame game = DetectedGame(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			DetectedGame game = DetectedGame(getEngineId(), skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
 			game.setGUIOptions(sv->guioptions);
 
 			detectedGames.push_back(game);
 		} else {
-			detectedGames.push_back(DetectedGame(skySetting.gameId, skySetting.description));
+			detectedGames.push_back(DetectedGame(getEngineId(), skySetting.gameId, skySetting.description));
 		}
 	}
 

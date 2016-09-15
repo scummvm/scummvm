@@ -705,9 +705,8 @@ static void listTargets() {
 	printf("Target               Description                                           \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	using namespace Common;
-	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	ConfigManager::DomainMap::const_iterator iter;
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter;
 
 	Common::Array<Common::String> targets;
 	targets.reserve(domains.size());
@@ -716,15 +715,15 @@ static void listTargets() {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.getVal("description"));
 
+		// If there's no description, fallback on the default description.
 		if (description.empty()) {
-			// FIXME: At this point, we should check for a "gameid" override
-			// to find the proper desc. In fact, the platform probably should
-			// be taken into account, too.
-			const Common::String &gameid = name;
-			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			PlainGameDescriptor g = EngineMan.findTarget(name);
 			if (g.description)
 				description = g.description;
 		}
+		// If there's still no description, we cannot come up with one. Insert some dummy text.
+		if (description.empty())
+			description = "<Unknown game>";
 
 		targets.push_back(Common::String::format("%-20s %s", name.c_str(), description.c_str()));
 	}
@@ -766,24 +765,21 @@ static Common::Error listSaves(const Common::String &target) {
 		// target specific savepath will be checked
 		ConfMan.setActiveDomain(*i);
 
-		// Grab the gameid from the domain resp. use the target as gameid
-		Common::String gameid;
-		if (domain)
-			gameid = domain->getVal("gameid");
-		if (gameid.empty())
-			gameid = *i;
-		gameid.toLowercase(); // Normalize it to lower case
-
-		// Find the plugin that will handle the specified gameid
+		// Look for a game matching the target
 		const Plugin *plugin = nullptr;
-		EngineMan.findGame(gameid, &plugin);
+		PlainGameDescriptor game;
+		if (domain) {
+			game = EngineMan.findTarget(target, &plugin);
+		} else {
+			game = EngineMan.findGame(target, &plugin);
+		}
 
 		if (!plugin) {
 			// If the target was specified, treat this as an error, and otherwise skip it.
 			if (!target.empty())
 				return Common::Error(Common::kEnginePluginNotFound,
-				                     Common::String::format("target '%s', gameid '%s", i->c_str(), gameid.c_str()));
-			printf("Plugin could not be loaded for target '%s', gameid '%s", i->c_str(), gameid.c_str());
+				                     Common::String::format("target '%s', gameid '%s", i->c_str(), game.gameId));
+			printf("Plugin could not be loaded for target '%s', gameid '%s", i->c_str(), game.gameId);
 			continue;
 		}
 
@@ -794,7 +790,7 @@ static Common::Error listSaves(const Common::String &target) {
 			if (!target.empty())
 				// TODO: Include more info about the target (desc, engine name, ...) ???
 				return Common::Error(Common::kEnginePluginNotSupportSaves,
-				                     Common::String::format("target '%s', gameid '%s", i->c_str(), gameid.c_str()));
+				                     Common::String::format("target '%s', gameid '%s", i->c_str(), game.gameId));
 			continue;
 		}
 
@@ -805,7 +801,7 @@ static Common::Error listSaves(const Common::String &target) {
 			// TODO: Include more info about the target (desc, engine name, ...) ???
 			if (atLeastOneFound)
 				printf("\n");
-			printf("Save states for target '%s' (gameid '%s'):\n", i->c_str(), gameid.c_str());
+			printf("Save states for target '%s' (gameid '%s'):\n", i->c_str(), game.gameId);
 			printf("  Slot Description                                           \n"
 					   "  ---- ------------------------------------------------------\n");
 
@@ -817,7 +813,7 @@ static Common::Error listSaves(const Common::String &target) {
 		} else {
 			// If the target was specified, indicate no save games were found for it. Otherwise just skip it.
 			if (!target.empty())
-				printf("There are no save states for target '%s' (gameid '%s'):\n", i->c_str(), gameid.c_str());
+				printf("There are no save states for target '%s' (gameid '%s'):\n", i->c_str(), game.gameId);
 		}
 	}
 
@@ -916,10 +912,14 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 		return Common::String();
 	}
 	// TODO this is not especially pretty
-	printf("ID             Description                                                Full Path\n");
-	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
+	printf("EngineID       GameID         Description                                                Full Path\n");
+	printf("-------------- -------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
 	for (DetectedGames::const_iterator v = candidates.begin(); v != candidates.end(); ++v) {
-		printf("%-14s %-58s %s\n", v->gameId.c_str(), v->description.c_str(), v->path.c_str());
+		printf("%-14s %-14s %-58s %s\n",
+		       v->engineId.c_str(),
+		       v->gameId.c_str(),
+		       v->description.c_str(),
+		       v->path.c_str());
 	}
 
 	return candidates[0].gameId;
@@ -1010,7 +1010,7 @@ static void runDetectorTest() {
 		bool gameidDiffers = false;
 		DetectedGames::const_iterator x;
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
-			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameId.c_str()) != 0);
+			gameidDiffers |= !gameid.equalsIgnoreCase(x->gameId);
 		}
 
 		if (candidates.empty()) {
@@ -1120,7 +1120,8 @@ void upgradeTargets() {
 		// At this point, g points to a GameDescriptor which we can use to update
 		// the target referred to by dom. We update several things
 
-		// Always set the gameid explicitly (in case of legacy targets)
+		// Always set the engine ID and game ID explicitly (in case of legacy targets)
+		dom["engineid"] = g->engineId;
 		dom["gameid"] = g->gameId;
 
 		// Always set the GUI options. The user should not modify them, and engines might
@@ -1149,7 +1150,7 @@ void upgradeTargets() {
 		// ScummVM still generates an incorrect description string. So, the description
 		// should only be updated if the user explicitly requests this.
 #if 0
-		if (desc != g->description()) {
+		if (desc != g->description) {
 			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description.c_str());
 			dom["description"] = g->description;
 		}
@@ -1248,9 +1249,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	// domain (i.e. a target) matching this argument, or alternatively
 	// whether there is a gameid matching that name.
 	if (!command.empty()) {
-		PlainGameDescriptor gd = EngineMan.findGame(command);
-		if (ConfMan.hasGameDomain(command) || gd.gameId) {
-			bool idCameFromCommandLine = false;
+		PlainGameDescriptor gd;
+		const Plugin *plugin = nullptr;
+		if (ConfMan.hasGameDomain(command)) {
+			// Command is a known target
+			ConfMan.setActiveDomain(command);
+		} else if (gd = EngineMan.findGame(command, &plugin), gd.gameId) {
+			// Command is a known game ID
+			ConfMan.setActiveDomain(command);
+
+			ConfMan.set("gameid", gd.gameId);
+			ConfMan.set("engineid", plugin->get<MetaEngine>().getEngineId());
 
 			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
 			// undefined target adds launcher entry"
@@ -1258,15 +1267,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 			// We designate gameids which come strictly from command line
 			// so AdvancedDetector will not save config file with invalid
 			// gameid in case target autoupgrade was performed
-			if (!ConfMan.hasGameDomain(command)) {
-				idCameFromCommandLine = true;
-			}
-
-			ConfMan.setActiveDomain(command);
-
-			if (idCameFromCommandLine)
-				ConfMan.set("id_came_from_command_line", "1");
-
+			ConfMan.set("id_came_from_command_line", "1");
 		} else {
 #ifndef DISABLE_COMMAND_LINE
 			usage("Unrecognized game target '%s'", command.c_str());

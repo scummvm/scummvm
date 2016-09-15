@@ -673,14 +673,12 @@ MenuActionLoadGame::MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIn
 }
 
 void MenuActionLoadGame::execute() {
-	const Plugin *plugin = NULL;
-	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
-	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	slot = dialog->runModalWithCurrentTarget();
 
 	delete dialog;
 
@@ -698,14 +696,12 @@ MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIn
 }
 
 void MenuActionSaveGame::execute() {
-	const Plugin *plugin = NULL;
-	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString().c_str();
 
 	delete dialog;

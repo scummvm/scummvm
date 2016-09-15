@@ -58,8 +58,7 @@ void upgradeTargetIfNecessary(const ObsoleteGameID *obsoleteList) {
 PlainGameDescriptor findGameID(
 	const char *gameid,
 	const PlainGameDescriptor *gameids,
-	const ObsoleteGameID *obsoleteList
-	) {
+	const ObsoleteGameID *obsoleteList) {
 	// First search the list of supported gameids for a match.
 	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, gameids);
 	if (g)

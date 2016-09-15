@@ -110,7 +110,7 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			gameList.push_back(GlkDetectedGame(desc._gameId, desc._description, filename, md5, filesize));
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+			gd = DetectedGame("glk", p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
 			gd.addExtraEntry("filename", filename);
 			gameList.push_back(gd);
 		}
