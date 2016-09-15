@@ -244,12 +244,12 @@ void sceneHandler28_lift6Start() {
 		chainQueue(QU_SC28_LIFT6_START, 1);
 }
 
-void sceneHandler28_clickLift(int keycode) {
+void sceneHandler28_clickLift(int numLift) {
 	int x = 0;
 
-	debugC(2, kDebugSceneLogic, "scene28: clickLift(%d)", keycode);
+	debugC(2, kDebugSceneLogic, "scene28: clickLift(%d)", numLift);
 
-	switch (keycode) {
+	switch (numLift) {
 	case 0: x = 600; break;
 	case 1: x = 824; break;
 	case 2: x = 1055; break;
@@ -268,14 +268,14 @@ void sceneHandler28_clickLift(int keycode) {
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
-			ex->_param = keycode;
+			ex->_param = numLift;
 
 			mq->addExCommandToEnd(ex);
 
 			postExCommand(g_fp->_aniMan->_id, 2, x, 472, 0, -1);
 		}
 	} else {
-		switch (keycode) {
+		switch (numLift) {
 		case 0:
 			sceneHandler28_lift0Start();
 			break;
