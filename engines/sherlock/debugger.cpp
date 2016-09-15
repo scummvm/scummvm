@@ -47,6 +47,7 @@ Debugger::Debugger(SherlockEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("listfiles",     WRAP_METHOD(Debugger, cmdListFiles));
 	registerCmd("dumpfile",      WRAP_METHOD(Debugger, cmdDumpFile));
 	registerCmd("locations",     WRAP_METHOD(Debugger, cmdLocations));
+	registerCmd("flag",          WRAP_METHOD(Debugger, cmdFlag));
 }
 
 void Debugger::postEnter() {
@@ -159,5 +160,27 @@ bool Debugger::cmdLocations(int argc, const char **argv) {
 	return false;
 }
 
+bool Debugger::cmdFlag(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Format: flag <number> [set | clear | toggle]\n");
+	} else {
+		int flagNum = strToInt(argv[1]);
+
+		if (argc == 2) {
+			debugPrintf("Flag %d is %s\n", flagNum, _vm->_flags[flagNum] ? "Set" : "Clear");
+		} else {
+			if (!strcmp(argv[2], "set"))
+				_vm->_flags[flagNum] = true;
+			else if (!strcmp(argv[2], "clear"))
+				_vm->_flags[flagNum] = false;
+			else if (!strcmp(argv[2], "toggle"))
+				_vm->_flags[flagNum] = !_vm->_flags[flagNum];
+
+			debugPrintf("Flag %d is now %s\n", flagNum, _vm->_flags[flagNum] ? "Set" : "Clear");
+		}
+	}
+
+	return true;
+}
 
 } // End of namespace Sherlock
