@@ -22,7 +22,6 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "gob/gob.h"
 #include "gob/dataio.h"
@@ -32,8 +31,6 @@
 class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine();
-
-	PlainGameDescriptor findGame(const char *gameId) const override;
 
 	const char *getEngineId() const {
 		return "gob";
@@ -59,12 +56,7 @@ private:
 GobMetaEngine::GobMetaEngine() :
 	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
-	_singleId   = "gob";
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
-}
-
-PlainGameDescriptor GobMetaEngine::findGame(const char *gameId) const {
-	return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 }
 
 ADDetectedGame GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -180,7 +172,6 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 	return AdvancedMetaEngine::createInstance(syst, engine);
 }
 

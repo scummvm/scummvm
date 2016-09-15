@@ -137,7 +137,6 @@ static const char * const directoryGlobs[] = {
 class ToonMetaEngine : public AdvancedMetaEngine {
 public:
 	ToonMetaEngine() : AdvancedMetaEngine(Toon::gameDescriptions, sizeof(ADGameDescription), toonGames) {
-		_singleId = "toon";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 	}

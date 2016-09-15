@@ -49,7 +49,6 @@ class TestbedMetaEngine : public AdvancedMetaEngine {
 public:
 	TestbedMetaEngine() : AdvancedMetaEngine(testbedDescriptions, sizeof(ADGameDescription), testbed_setting) {
 		_md5Bytes = 512;
-		_singleId = "testbed";
 	}
 
 	const char *getEngineId() const {

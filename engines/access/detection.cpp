@@ -75,7 +75,6 @@ Common::Platform AccessEngine::getPlatform() const {
 } // End of namespace Access
 
 static const PlainGameDescriptor AccessGames[] = {
-	{"Access", "Access"},
 	{"amazon", "Amazon: Guardians of Eden"},
 	{"martian", "Martian Memorandum"},
 	{0, 0}

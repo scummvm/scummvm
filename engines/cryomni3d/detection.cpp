@@ -104,7 +104,6 @@ class CryOmni3DMetaEngine : public AdvancedMetaEngine {
 public:
 	CryOmni3DMetaEngine() : AdvancedMetaEngine(CryOmni3D::gameDescriptions,
 		        sizeof(CryOmni3DGameDescription), cryomni3DGames, optionsList) {
-		//_singleId = "cryomni3d";
 		_maxScanDepth = 1;
 	}
 

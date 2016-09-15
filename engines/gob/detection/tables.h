@@ -41,7 +41,6 @@ using namespace Common;
 
 // Game IDs and proper names
 static const PlainGameDescriptor gobGames[] = {
-	{"gob", "Gob engine game"},
 	{"gob1", "Gobliiins"},
 	{"gob1cd", "Gobliiins CD"},
 	{"gob2", "Gobliins 2"},
@@ -79,13 +78,6 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adibou2", "Adibou 2"},
 	{"adibou1", "Adibou 1"},
 	{0, 0}
-};
-
-// Obsolete IDs we don't want anymore
-static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"gob1", "gob", kPlatformUnknown},
-	{"gob2", "gob", kPlatformUnknown},
-	{0, 0, kPlatformUnknown}
 };
 
 namespace Gob {

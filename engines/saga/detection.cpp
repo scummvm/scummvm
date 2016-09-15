@@ -28,7 +28,6 @@
 
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 
@@ -81,7 +80,6 @@ const ADGameFileDescription *SagaEngine::getFilesDescriptions() const { return _
 }
 
 static const PlainGameDescriptor sagaGames[] = {
-	{"saga", "SAGA Engine game"},
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
 	{"dino", "Dinotopia"},
@@ -89,24 +87,11 @@ static const PlainGameDescriptor sagaGames[] = {
 	{0, 0}
 };
 
-static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"ite", "saga", Common::kPlatformUnknown},
-	{"ihnm", "saga", Common::kPlatformUnknown},
-	{"dino", "saga", Common::kPlatformUnknown},
-	{"fta2", "saga", Common::kPlatformUnknown},
-	{0, 0, Common::kPlatformUnknown}
-};
-
 #include "saga/detection_tables.h"
 
 class SagaMetaEngine : public AdvancedMetaEngine {
 public:
 	SagaMetaEngine() : AdvancedMetaEngine(Saga::gameDescriptions, sizeof(Saga::SAGAGameDescription), sagaGames) {
-		_singleId = "saga";
-	}
-
-	PlainGameDescriptor findGame(const char *gameId) const override {
-		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	const char *getEngineId() const {
@@ -142,7 +127,6 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;

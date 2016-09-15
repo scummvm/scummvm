@@ -58,7 +58,6 @@ Common::String TSageEngine::getPrimaryFilename() const {
 } // End of namespace TsAGE
 
 static const PlainGameDescriptor tSageGameTitles[] = {
-	{ "tsage", "Tsunami TsAGE-based Game" },
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
 	{ "blueforce", "Blue Force" },
 	{ "ringworld2", "Return to Ringworld" },
@@ -75,7 +74,6 @@ enum {
 class TSageMetaEngine : public AdvancedMetaEngine {
 public:
 	TSageMetaEngine() : AdvancedMetaEngine(TsAGE::gameDescriptions, sizeof(TsAGE::tSageGameDescription), tSageGameTitles) {
-		_singleId = "tsage";
 	}
 
 	const char *getEngineId() const {

@@ -74,7 +74,6 @@ bool TinselEngine::isV1CD() const {
 } // End of namespace Tinsel
 
 static const PlainGameDescriptor tinselGames[] = {
-	{"tinsel", "Tinsel engine game"},
 	{"dw", "Discworld"},
 	{"dw2", "Discworld 2: Missing Presumed ...!?"},
 	{0, 0}
@@ -85,7 +84,6 @@ static const PlainGameDescriptor tinselGames[] = {
 class TinselMetaEngine : public AdvancedMetaEngine {
 public:
 	TinselMetaEngine() : AdvancedMetaEngine(Tinsel::gameDescriptions, sizeof(Tinsel::TinselGameDescription), tinselGames) {
-		_singleId = "tinsel";
 	}
 
 	const char *getEngineId() const {

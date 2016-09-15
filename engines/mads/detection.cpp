@@ -69,7 +69,6 @@ Common::Platform MADSEngine::getPlatform() const {
 } // End of namespace MADS
 
 static const PlainGameDescriptor MADSGames[] = {
-	{"MADS", "MADS"},
 	{"dragonsphere", "Dragonsphere"},
 	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
 	{"phantom", "Return of the Phantom"},

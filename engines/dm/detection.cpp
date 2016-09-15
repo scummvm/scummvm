@@ -98,7 +98,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class DMMetaEngine : public AdvancedMetaEngine {
 public:
 	DMMetaEngine() : AdvancedMetaEngine(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
-		_singleId = "dm";
 	}
 
 	virtual const char *getEngineId() const {

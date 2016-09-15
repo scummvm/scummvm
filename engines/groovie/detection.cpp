@@ -42,8 +42,6 @@ static const PlainGameDescriptor groovieGames[] = {
 	{"tlc", "Tender Loving Care"},
 #endif
 
-	// Unknown
-	{"groovie", "Groovie engine game"},
 	{0, 0}
 };
 
@@ -333,8 +331,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
 	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
-		_singleId = "groovie";
-
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
 		// its "Making of" as well as the Clandestiny Trailer; they all share
 		// the same MD5.

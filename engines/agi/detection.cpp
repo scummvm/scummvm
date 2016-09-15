@@ -202,7 +202,6 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
-		_singleId = "agi";
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
