@@ -965,6 +965,10 @@ bool ResourceManager::addAudioSources() {
 }
 
 void ResourceManager::changeAudioDirectory(Common::String path) {
+	// TODO: This implementation is broken.
+	return;
+
+#if 0
 	// Remove all of the audio map resource sources, as well as the audio resource sources
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
 		ResourceSource *source = *it;
@@ -1007,6 +1011,7 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 
 	// Rescan the newly added resources
 	scanNewSources();
+#endif
 }
 
 } // End of namespace Sci
