@@ -178,27 +178,42 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 	}
 }
 
+void MusicDriver::playSong(const byte *data) {
+	_musDataPtr = data;
+	_musSubroutines.clear();
+	_musCountdownTimer = 0;
+	_field1E = true;
+}
+
+int MusicDriver::songCommand(uint commandId, byte volume) {
+	if (RESTART_MUSIC == 1) {
+		_musDataPtr = nullptr;
+		_musSubroutines.clear();
+	}
+
+	return 0;
+}
 
 const CommandFn MusicDriver::MUSIC_COMMANDS[16] = {
-	&MusicDriver::musCallSubroutine,		&MusicDriver::musSetCountdown,
+	&MusicDriver::musCallSubroutine,	&MusicDriver::musSetCountdown,
 	&MusicDriver::musSetInstrument,		&MusicDriver::cmdNoOperation,
 	&MusicDriver::musSetPitchWheel,		&MusicDriver::musSkipWord,
 	&MusicDriver::musSetPanning,		&MusicDriver::cmdNoOperation,
 	&MusicDriver::musFade,				&MusicDriver::musStartNote,
 	&MusicDriver::musSetVolume,			&MusicDriver::musInjectMidi,
 	&MusicDriver::musPlayInstrument,	&MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,			&MusicDriver::musEndSubroutine
+	&MusicDriver::cmdChangeFrequency,	&MusicDriver::musEndSubroutine
 };
 
 const CommandFn MusicDriver::FX_COMMANDS[16] = {
-	&MusicDriver::fxCallSubroutine,	&MusicDriver::fxSetCountdown,
-	&MusicDriver::fxSetInstrument,	&MusicDriver::fxSetVolume,
-	&MusicDriver::fxMidiReset,		&MusicDriver::fxMidiDword,
-	&MusicDriver::fxSetPanning,		&MusicDriver::fxChannelOff,
-	&MusicDriver::fxFade,			&MusicDriver::fxStartNote,
-	&MusicDriver::cmdNoOperation,	&MusicDriver::fxInjectMidi,
-	&MusicDriver::fxPlayInstrument,	&MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,		&MusicDriver::fxEndSubroutine
+	&MusicDriver::fxCallSubroutine,		&MusicDriver::fxSetCountdown,
+	&MusicDriver::fxSetInstrument,		&MusicDriver::fxSetVolume,
+	&MusicDriver::fxMidiReset,			&MusicDriver::fxMidiDword,
+	&MusicDriver::fxSetPanning,			&MusicDriver::fxChannelOff,
+	&MusicDriver::fxFade,				&MusicDriver::fxStartNote,
+	&MusicDriver::cmdNoOperation,		&MusicDriver::fxInjectMidi,
+	&MusicDriver::fxPlayInstrument,		&MusicDriver::cmdFreezeFrequency,
+	&MusicDriver::cmdChangeFrequency,	&MusicDriver::fxEndSubroutine
 };
 
 /*------------------------------------------------------------------------*/
@@ -237,6 +252,36 @@ void AdlibMusicDriver::initialize() {
 void AdlibMusicDriver::playFX(uint effectId, const byte *data) {
 	Common::StackLock slock(_driverMutex);
 	MusicDriver::playFX(effectId, data);
+}
+
+void AdlibMusicDriver::playSong(const byte *data) {
+	Common::StackLock slock(_driverMutex);
+	MusicDriver::playSong(data);
+	_field180 = 0;
+}
+
+int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
+	Common::StackLock slock(_driverMutex);
+
+	if (commandId == STOP_MUSIC) {
+		_field1E = 0;
+		_field180 = 0;
+		resetFrequencies();
+	} else if (commandId == RESTART_MUSIC) {
+		_field180 = 0;
+		_field1E = true;
+	} else if (commandId < 0x100) {
+		if (_field1E) {
+			_field180 = commandId;
+			_field182 = 63;
+		}
+	} else if (commandId == SET_VOLUME) {
+		_volume = volume;
+	} else if (commandId == GET_STATUS) {
+		return _field180;
+	}
+
+	return 0;
 }
 
 void AdlibMusicDriver::write(int reg, int val) {
@@ -531,7 +576,8 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 
 /*------------------------------------------------------------------------*/
 
-Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _musicDriver(nullptr) {
+Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _musicDriver(nullptr),
+		_songData(nullptr) {
 	_mixer = mixer;
 	_musicDriver = new AdlibMusicDriver();
 	loadEffectsData();
@@ -540,6 +586,7 @@ Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _musicDriver(nullptr) {
 Music::~Music() {
 	delete _musicDriver;
 	delete[] _effectsData;
+	delete[] _songData;
 }
 
 void Music::loadEffectsData() {
@@ -563,11 +610,38 @@ void Music::loadEffectsData() {
 		_effectsOffsets[idx] = READ_LE_UINT16(&effectsData[EFFECTS_OFFSET + idx * 2]);
 }
 
-void Music::playEffect(uint effectId) {
+void Music::playFX(uint effectId) {
 	if (effectId < _effectsOffsets.size()) {
 		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
 		_musicDriver->playFX(effectId, dataP);
 	}
+}
+
+int Music::songCommand(uint commandId, byte volume) {
+	int result = _musicDriver->songCommand(commandId, volume);
+	if (commandId == STOP_MUSIC) {
+		delete[] _songData;
+		_songData = nullptr;
+	}
+
+	return result;
+}
+
+void Music::playSong(Common::SeekableReadStream &stream) {
+	if (_songData)
+		stopMusic();
+
+	byte *songData = new byte[stream.size()];
+	stream.seek(0);
+	stream.read(songData, stream.size());
+	_songData = songData;
+
+	_musicDriver->playSong(_songData);
+}
+
+void Music::playSong(const Common::String &name) {
+	File f(name);
+	playSong(f);
 }
 
 } // End of namespace Xeen

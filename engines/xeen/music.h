@@ -38,6 +38,11 @@ namespace OPL {
 
 namespace Xeen {
 
+enum MusicCommand {
+	STOP_MUSIC = 0, RESTART_MUSIC = 1, SET_VOLUME = 0x100,
+	GET_STATUS = 0xFFE0
+};
+
 class MusicDriver;
 
 typedef bool (MusicDriver::*CommandFn)(const byte *&srcP, byte param);
@@ -149,6 +154,16 @@ public:
 	 * Starts an special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
+
+	/**
+	 * Plays a song
+	 */
+	virtual void playSong(const byte *data);
+
+	/**
+	 * Executes special music command
+	 */
+	virtual int songCommand(uint commandId, byte volume = 0);
 };
 
 class AdlibMusicDriver : public MusicDriver {
@@ -265,14 +280,24 @@ public:
 	 * Starts an special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
-};
 
+	/**
+	 * Plays a song
+	 */
+	virtual void playSong(const byte *data);
+
+	/**
+	 * Executes special music command
+	 */
+	virtual int songCommand(uint commandId, byte volume = 0);
+};
 
 class Music {
 private:
 	MusicDriver *_musicDriver;
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
+	const byte *_songData;
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver
@@ -293,7 +318,32 @@ public:
 	/**
 	 * Starts an effect playing
 	 */
-	void playEffect(uint effectId);
+	void playFX(uint effectId);
+
+	/**
+	 * Executes special music command
+	 */
+	int songCommand(uint commandId, byte volume = 0);
+
+	/**
+	 * Stops any currently playing music
+	 */
+	void stopMusic() { songCommand(STOP_MUSIC); }
+
+	/**
+	 * Restart the music
+	 */
+	void restartMusic() { songCommand(RESTART_MUSIC); }
+
+	/**
+	 * Plays a song
+	 */
+	void playSong(Common::SeekableReadStream &stream);
+
+	/**
+	 * Plays a song
+	 */
+	void playSong(const Common::String &name);
 };
 
 } // End of namespace Xeen
