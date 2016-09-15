@@ -68,6 +68,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
+	"  --list-engines           Display list of suppported engines and exit\n"
 	"  --list-saves             Display a list of saved games for the target specified\n"
 	"                           with --game=TARGET, or all targets if none is specified\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
@@ -441,6 +442,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-engines")
+			END_COMMAND
+
 			DO_COMMAND('a', "add")
 			END_COMMAND
 
@@ -688,16 +692,44 @@ unknownOption:
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames() {
-	printf("Game ID              Full Title                                            \n"
-	       "-------------------- ------------------------------------------------------\n");
+	printf("Engine ID       Game ID              Full Title                                            \n"
+	       "--------------- -------------------- ------------------------------------------------------\n");
+
+	Common::Array<Common::String> games;
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		PlainGameList list = (*iter)->get<MetaEngine>().getSupportedGames();
-		for (PlainGameList::iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-20s %s\n", v->gameId, v->description);
+		MetaEngine &metaengine = (*iter)->get<MetaEngine>();
+
+		PlainGameList list = metaengine.getSupportedGames();
+		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
+			games.push_back(Common::String::format("%-15s %-20s %s", metaengine.getEngineId(), v->gameId, v->description));
 		}
 	}
+
+	Common::sort(games.begin(), games.end());
+
+	for (Common::Array<Common::String>::const_iterator i = games.begin(), end = games.end(); i != end; ++i)
+		printf("%s\n", i->c_str());
+}
+
+/** List all supported engines, i.e. all loaded plugins. */
+static void listEngines() {
+	printf("Engine ID       Engine Name                                           \n"
+	       "--------------- ------------------------------------------------------\n");
+
+	Common::Array<Common::String> engines;
+
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+		engines.push_back(Common::String::format("%-15s %s", metaEngine.getEngineId(), metaEngine.getName()));
+	}
+
+	Common::sort(engines.begin(), engines.end());
+
+	for (Common::Array<Common::String>::const_iterator i = engines.begin(), end = engines.end(); i != end; ++i)
+		printf("%s\n", i->c_str());
 }
 
 /** List all targets which are configured in the config file. */
@@ -1187,6 +1219,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "list-games") {
 		listGames();
+		return true;
+	} else if (command == "list-engines") {
+		listEngines();
 		return true;
 	} else if (command == "list-saves") {
 		err = listSaves(settings["game"]);
