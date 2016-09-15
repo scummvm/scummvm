@@ -201,11 +201,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "CruisE";
+		return "Cinematique evo 2";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Cruise for a Corpse (C) Delphine Software";
+		return "Cinematique evo 2 (C) Delphine Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

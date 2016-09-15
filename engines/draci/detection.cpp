@@ -88,11 +88,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Draci";
+		return "Draci Historie";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Copyright (C) 1995 NoSense";
+		return "Draci Historie (C) 1995 NoSense";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

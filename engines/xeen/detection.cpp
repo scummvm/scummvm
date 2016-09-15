@@ -114,11 +114,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Xeen Engine";
+		return "Xeen";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Xeen Engine (c) 1992-1993 New World Computing, Inc.";
+		return "Xeen (c) 1992-1993 New World Computing, Inc.";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

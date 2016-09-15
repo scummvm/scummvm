@@ -145,11 +145,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "MADS Engine";
+		return "MADS";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "MADS (C)";
+		return "MADS (c) Microprose";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

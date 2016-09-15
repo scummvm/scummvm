@@ -90,7 +90,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Access Engine";
+		return "Access";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -138,11 +138,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Touche";
+		return "Touche: The Adventures of the Fifth Musketeer";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
+		return "Touche: The Adventures of the Fifth Musketeer (C) Clipper Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

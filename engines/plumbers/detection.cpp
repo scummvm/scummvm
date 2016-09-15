@@ -77,7 +77,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Plumbers Don't Wear Ties' Engine";
+		return "Plumbers Don't Wear Ties";
 	}
 
 	virtual const char *getOriginalCopyright() const {

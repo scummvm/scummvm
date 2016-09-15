@@ -119,11 +119,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Chewy Engine";
+		return "Chewy: Esc from F5";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Chewy Engine New Generation Software (C) 1995";
+		return "Chewy: Esc from F5 (C) 1995 New Generation Software";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

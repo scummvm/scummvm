@@ -123,7 +123,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Lab";
+		return "Labyrinth of Time";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -47,11 +47,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Pink Panther Engine";
+		return "Pink Panther";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Pink Panther Engine (C) Wanderlust Interactive";
+		return "Pink Panther (C) Wanderlust Interactive";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

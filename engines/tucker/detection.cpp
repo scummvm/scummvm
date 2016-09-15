@@ -120,7 +120,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Tucker";
+		return "Bud Tucker in Double Trouble";
 	}
 
 	virtual const char *getOriginalCopyright() const {

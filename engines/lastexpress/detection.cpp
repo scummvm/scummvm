@@ -232,11 +232,11 @@ public:
 	}
 
 	const char *getName() const {
-		return "Lastexpress";
+		return "The Last Express";
 	}
 
 	const char *getOriginalCopyright() const {
-		return "LastExpress Engine (C) 1997 Smoking Car Productions";
+		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
 
 protected:

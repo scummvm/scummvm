@@ -63,7 +63,7 @@ BladeRunnerMetaEngine::BladeRunnerMetaEngine()
 
 
 const char *BladeRunnerMetaEngine::getName() const {
-	return "Blade Runner Engine";
+	return "Blade Runner";
 }
 
 const char *BladeRunnerMetaEngine::getOriginalCopyright() const {
