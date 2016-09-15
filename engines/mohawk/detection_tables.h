@@ -179,7 +179,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	// From clone2727
 	{
 		{
-			"MakingOfMyst",
+			"makingofmyst",
 			"",
 			AD_ENTRY1("MAKING.DAT", "f6387e8f0f7b8a3e42c95294315d6a0e"),
 			Common::EN_ANY,
@@ -197,7 +197,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	// From clone2727
 	{
 		{
-			"MakingOfMyst",
+			"makingofmyst",
 			"",
 			AD_ENTRY1("MAKING.DAT", "03ff62607e64419ab2b6ebf7b7bcdf63"),
 			Common::JA_JPN,
@@ -2764,7 +2764,7 @@ static const MohawkGameDescription fallbackDescs[] = {
 
 	{
 		{
-			"MakingOfMyst",
+			"makingofmyst",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			Common::UNK_LANG,
