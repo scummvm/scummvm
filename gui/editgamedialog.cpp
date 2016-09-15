@@ -100,6 +100,8 @@ protected:
 
 EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
+	EngineMan.upgradeTargetIfNecessary(domain);
+
 	// Retrieve all game specific options.
 	const Plugin *plugin = nullptr;
 	// To allow for game domains without a gameid.
