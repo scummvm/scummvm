@@ -46,6 +46,7 @@ typedef bool (MusicDriver::*CommandFn)(const byte *&srcP, byte param);
  * Base class for music drivers
  */
 class MusicDriver {
+protected:
 	struct Subroutine {
 		const byte *_returnP;
 		const byte *_jumpP;
@@ -53,22 +54,28 @@ class MusicDriver {
 		Subroutine(const byte *returnP, const byte *endP) :
 			_returnP(returnP), _jumpP(endP) {}
 	};
+	struct Channel {
+		bool _changeFrequency;
+		int _freqCtrChange;
+		int _freqChange;
+		int _freqCtr;
+		byte _volume;
+		byte _scalingValue;
+		uint _frequency;
+		Channel() : _changeFrequency(false), _freqCtr(0), _freqCtrChange(0),
+			_freqChange(0), _volume(0), _scalingValue(0), _frequency(0) {}
+	};
 private:
 	static const CommandFn FX_COMMANDS[16];
 	static const CommandFn MUSIC_COMMANDS[16];
 private:
 	Common::Stack<Subroutine> _musSubroutines, _fxSubroutines;
-	bool _field1E;
 	int _musCountdownTimer;
 	int _fxCountdownTimer;
 	bool _lowMusicIgnored;
 	const byte *_fxDataPtr, *_musDataPtr;
 	const byte *_fxStartPtr;
 	const byte *_musStartPtr;
-	bool _flags[CHANNEL_COUNT];
-	byte _field15C[CHANNEL_COUNT];
-	byte _field165[CHANNEL_COUNT];
-	byte _field177[CHANNEL_COUNT];
 private:
 	/**
 	 * Executes the next command
@@ -77,7 +84,9 @@ private:
 	 */
 	bool command(const byte *&srcP);
 protected:
+	Common::Array<Channel> _channels;
 	bool _fieldF;
+	bool _field1E;
 protected:
 	/**
 	 * Executes a series of commands until instructed to stop
@@ -97,8 +106,8 @@ protected:
 	virtual bool musSetVolume(const byte *&srcP, byte param) = 0;
 	virtual bool musInjectMidi(const byte *&srcP, byte param) = 0;
 	virtual bool musPlayInstrument(const byte *&srcP, byte param) = 0;
-	virtual bool cmdClearFlag(const byte *&srcP, byte param);
-	virtual bool cmdWibbly(const byte *&srcP, byte param);
+	virtual bool cmdFreezeFrequency(const byte *&srcP, byte param);
+	virtual bool cmdChangeFrequency(const byte *&srcP, byte param);
 	virtual bool musEndSubroutine(const byte *&srcP, byte param);
 
 	// FX commands
@@ -116,7 +125,10 @@ protected:
 	virtual bool fxPlayInstrument(const byte *&srcP, byte param) = 0;
 	virtual bool fxEndSubroutine(const byte *&srcP, byte param);
 
-	virtual void postProcess() = 0;
+	/**
+	 * Post-processing done when a pause countdown starts or is in progress
+	 */
+	virtual void pausePostProcess() = 0;
 
 	/**
 	 * Does a reset of any sound effect
@@ -136,7 +148,7 @@ public:
 	/**
 	 * Starts an special effect playing
 	 */
-	void playFX(uint effectId, const byte *data);
+	virtual void playFX(uint effectId, const byte *data);
 };
 
 class AdlibMusicDriver : public MusicDriver {
@@ -156,12 +168,10 @@ private:
 	OPL::OPL *_opl;
 	Common::Queue<RegisterValue> _queue;
 	Common::Mutex _driverMutex;
-	byte _volumes[CHANNEL_COUNT];
-	byte _scalingValues[CHANNEL_COUNT];
 	const byte *_musInstrumentPtrs[16];
 	const byte *_fxInstrumentPtrs[16];
-	uint _frequencies[7];
 	int _field180;
+	int _field181;
 	int _field182;
 	int _volume;
 private:
@@ -232,6 +242,11 @@ protected:
 	virtual bool fxPlayInstrument(const byte *&srcP, byte param);
 
 	/**
+	 * Post-processing done when a pause countdown starts or is in progress
+	 */
+	virtual void pausePostProcess();
+
+	/**
 	 * Does a reset of any sound effect
 	 */
 	virtual void resetFX();
@@ -245,6 +260,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~AdlibMusicDriver();
+
+	/**
+	 * Starts an special effect playing
+	 */
+	virtual void playFX(uint effectId, const byte *data);
 };
 
 

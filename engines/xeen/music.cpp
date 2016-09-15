@@ -34,10 +34,7 @@ namespace Xeen {
 MusicDriver::MusicDriver() : _fieldF(false), _field1E(false), _lowMusicIgnored(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr) {
-	Common::fill(&_flags[0], &_flags[CHANNEL_COUNT], false);
-	Common::fill(&_field15C[0], &_field15C[CHANNEL_COUNT], 0);
-	Common::fill(&_field165[0], &_field165[CHANNEL_COUNT], 0);
-	Common::fill(&_field177[0], &_field177[CHANNEL_COUNT], 0);
+	_channels.resize(CHANNEL_COUNT);
 }
 
 void MusicDriver::execute() {
@@ -57,7 +54,8 @@ void MusicDriver::execute() {
 	}
 
 	if (flag) {
-		postProcess();
+		// Do paused handling and exit immediately
+		pausePostProcess();
 		return;
 	}
 
@@ -92,8 +90,8 @@ bool MusicDriver::musSetCountdown(const byte *&srcP, byte param) {
 	_musCountdownTimer = param;
 	_musDataPtr = srcP;
 
-	// Do post-processing and stop processing
-	postProcess();
+	// Do paused handling and break out of processing loop
+	pausePostProcess();
 	return true;
 }
 
@@ -107,17 +105,17 @@ bool MusicDriver::musSkipWord(const byte *&srcP, byte param) {
 }
 
 
-bool MusicDriver::cmdClearFlag(const byte *&srcP, byte param) {
-	_flags[param] = false;
+bool MusicDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
+	_channels[param]._changeFrequency = false;
 	return false;
 }
 
-bool MusicDriver::cmdWibbly(const byte *&srcP, byte param) {
+bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 	if (param != 7 || !_fieldF) {
-		_field15C[param] = *srcP++;
-		_field177[param] = 0xFF;
-		_flags[param] = true;
-		_field165[param] = READ_BE_UINT16(srcP);
+		_channels[param]._freqCtrChange = (int8)*srcP++;
+		_channels[param]._freqCtr = 0xFF;
+		_channels[param]._changeFrequency = true;
+		_channels[param]._freqChange = (int16)READ_BE_UINT16(srcP);
 		srcP += 2;
 	} else {
 		srcP += 3;
@@ -154,8 +152,8 @@ bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	_fxCountdownTimer = param;
 	_musDataPtr = srcP;
 
-	// Do post-processing and stop processing
-	postProcess();
+	// Do paused handling and break out of processing loop
+	pausePostProcess();
 	return true;
 }
 
@@ -174,7 +172,7 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 		_musStartPtr = nullptr;
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
-		_flags[7] = _flags[8] = 0;
+		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
 		resetFX();
 		_lowMusicIgnored = true;
 	}
@@ -188,8 +186,8 @@ const CommandFn MusicDriver::MUSIC_COMMANDS[16] = {
 	&MusicDriver::musSetPanning,		&MusicDriver::cmdNoOperation,
 	&MusicDriver::musFade,				&MusicDriver::musStartNote,
 	&MusicDriver::musSetVolume,			&MusicDriver::musInjectMidi,
-	&MusicDriver::musPlayInstrument,	&MusicDriver::cmdClearFlag,
-	&MusicDriver::cmdWibbly,			&MusicDriver::musEndSubroutine
+	&MusicDriver::musPlayInstrument,	&MusicDriver::cmdFreezeFrequency,
+	&MusicDriver::cmdChangeFrequency,			&MusicDriver::musEndSubroutine
 };
 
 const CommandFn MusicDriver::FX_COMMANDS[16] = {
@@ -199,18 +197,16 @@ const CommandFn MusicDriver::FX_COMMANDS[16] = {
 	&MusicDriver::fxSetPanning,		&MusicDriver::fxChannelOff,
 	&MusicDriver::fxFade,			&MusicDriver::fxStartNote,
 	&MusicDriver::cmdNoOperation,	&MusicDriver::fxInjectMidi,
-	&MusicDriver::fxPlayInstrument,	&MusicDriver::cmdClearFlag,
-	&MusicDriver::cmdWibbly,		&MusicDriver::fxEndSubroutine
+	&MusicDriver::fxPlayInstrument,	&MusicDriver::cmdFreezeFrequency,
+	&MusicDriver::cmdChangeFrequency,		&MusicDriver::fxEndSubroutine
 };
 
 /*------------------------------------------------------------------------*/
 
-AdlibMusicDriver::AdlibMusicDriver() : _field180(0), _field182(0), _volume(127) {
+AdlibMusicDriver::AdlibMusicDriver() : _field180(0), _field181(0), _field182(0),
+		_volume(127) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
-	Common::fill(&_frequencies[0], &_frequencies[7], 0);
-	Common::fill(&_volumes[0], &_volumes[CHANNEL_COUNT], 0);
-	Common::fill(&_scalingValues[0], &_scalingValues[CHANNEL_COUNT], 0);
 
 	_opl = OPL::Config::create();
 	_opl->init();
@@ -238,6 +234,11 @@ void AdlibMusicDriver::initialize() {
 	AdlibMusicDriver::resetFX();
 }
 
+void AdlibMusicDriver::playFX(uint effectId, const byte *data) {
+	Common::StackLock slock(_driverMutex);
+	MusicDriver::playFX(effectId, data);
+}
+
 void AdlibMusicDriver::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
 }
@@ -251,23 +252,74 @@ void AdlibMusicDriver::flush() {
 	}
 }
 
+void AdlibMusicDriver::pausePostProcess() {
+	if (_field180 && ((_field181 += _field180) < 0)) {
+		if (--_field182 < 0) {
+			_field1E = false;
+			_field180 = 0;
+			resetFrequencies();
+		} else {
+			for (int channelNum = 6; channelNum >= 0; --channelNum) {
+				if (_channels[channelNum]._volume < 63)
+					setOutputLevel(channelNum, ++_channels[channelNum]._volume);
+			}
+		}
+	}
+
+	for (int channelNum = 8; channelNum != 6 || (channelNum == 7 && _fieldF); --channelNum) {
+		Channel &chan = _channels[channelNum];
+		if (!chan._changeFrequency || (chan._freqCtr += chan._freqCtrChange) >= 0)
+			continue;
+
+		uint freq = chan._frequency & 0x3FF;
+		uint val = chan._frequency >> 8;
+		byte val1 = val & 0x20;
+		byte val2 = val & 0x1C;
+
+		freq += chan._freqChange;
+		if (chan._freqChange < 0) {
+			if (freq <= 388) {
+				freq <<= 1;
+				if (!(freq & 0x3FF))
+					--freq;
+			}
+
+			val2 = (val2 - 4) & 0x1C;
+		} else {
+			if (freq >= 734) {
+				freq >>= 1;
+				if (!(freq & 0x3FF))
+					++freq;
+			}
+
+			val2 = (val2 + 4) & 0x1C;
+		}
+
+		freq &= 0x3FF;
+		freq |= (val2 << 8);
+		freq |= val1;
+		chan._frequency = freq;
+		setFrequency(channelNum, freq);
+	}
+}
+
 void AdlibMusicDriver::resetFX() {
 	if (!_fieldF) {
-		_frequencies[7] = 0;
+		_channels[7]._frequency = 0;
 		setFrequency(7, 0);
-		_volumes[7] = 63;
+		_channels[7]._volume = 63;
 		setOutputLevel(7, 63);
 	}
 
-	_frequencies[8] = 0;
+	_channels[8]._frequency = 0;
 	setFrequency(8, 0);
-	_volumes[8] = 63;
+	_channels[8]._volume = 63;
 	setOutputLevel(8, 63);
 }
 
 void AdlibMusicDriver::resetFrequencies() {
 	for (int opNum = 6; opNum >= 0; --opNum) {
-		_frequencies[opNum] = 0;
+		_channels[opNum]._frequency = 0;
 		setFrequency(opNum, 0);
 	}
 }
@@ -283,7 +335,7 @@ uint AdlibMusicDriver::calcFrequency(byte note) {
 
 void AdlibMusicDriver::setOutputLevel(byte channelNum, uint level) {
 	write(0x40 + OPERATOR2_INDEXES[channelNum], level |
-		(_scalingValues[channelNum] & 0xC0));
+		(_channels[channelNum]._scalingValue & 0xC0));
 }
 
 void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
@@ -298,7 +350,7 @@ void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
 	write(0x20 + op2, *data++);
 
 	int scalingVal = *data++;
-	_scalingValues[channelNum] = scalingVal;
+	_channels[channelNum]._scalingValue = scalingVal;
 	scalingVal += (127 - _volume) / 2;
 
 	if (scalingVal > 63) {
@@ -336,7 +388,7 @@ bool AdlibMusicDriver::musSetPanning(const byte *&srcP, byte param) {
 bool AdlibMusicDriver::musFade(const byte *&srcP, byte param) {
 	++srcP;
 	if (param < 7)
-		setFrequency(param, _frequencies[param]);
+		setFrequency(param, _channels[param]._frequency);
 
 	return false;
 }
@@ -347,7 +399,7 @@ bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
 		++srcP;		// Second byte is fade, which is unused by Adlib
 		uint freq = calcFrequency(note);
 		setFrequency(param, freq);
-		_frequencies[param] = freq | 0x2000;
+		_channels[param]._frequency = freq | 0x2000;
 		setFrequency(param, freq);
 	} else {
 		srcP += 2;
@@ -358,7 +410,7 @@ bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
 
 bool AdlibMusicDriver::musSetVolume(const byte *&srcP, byte param) {
 	if (*srcP++ == 2 && !_field180) {
-		_volumes[param] = *srcP;
+		_channels[param]._volume = *srcP;
 		setOutputLevel(param, *srcP);
 	}
 
@@ -391,7 +443,7 @@ bool AdlibMusicDriver::fxSetInstrument(const byte *&srcP, byte param) {
 
 bool AdlibMusicDriver::fxSetVolume(const byte *&srcP, byte param) {
 	if (!_field180 && (!_fieldF || param != 7)) {
-		_volumes[param] = *srcP;
+		_channels[param]._volume = *srcP;
 		setOutputLevel(param, *srcP);
 	}
 
@@ -412,22 +464,22 @@ bool AdlibMusicDriver::fxSetPanning(const byte *&srcP, byte param) {
 	if (!_fieldF || param != 7) {
 		uint freq = calcFrequency(note);
 		setFrequency(param, freq);
-		_frequencies[param] = freq;
+		_channels[param]._frequency = freq;
 	}
 
 	return false;
 }
 
 bool AdlibMusicDriver::fxChannelOff(const byte *&srcP, byte param) {
-	_frequencies[param] &= ~0x2000;
-	write(0xB0 + param, _frequencies[param]);
+	_channels[param]._frequency &= ~0x2000;
+	write(0xB0 + param, _channels[param]._frequency);
 	return false;
 }
 
 bool AdlibMusicDriver::fxFade(const byte *&srcP, byte param) {
 	uint freq = calcFrequency(*srcP++);
 	if (!_fieldF || param != 7) {
-		_frequencies[param] = freq;
+		_channels[param]._frequency = freq;
 		setFrequency(param, freq);
 	}
 
@@ -439,7 +491,7 @@ bool AdlibMusicDriver::fxStartNote(const byte *&srcP, byte param) {
 		byte note = *srcP++;
 		uint freq = calcFrequency(note);
 		setFrequency(param, freq);
-		_frequencies[param] = freq | 0x2000;
+		_channels[param]._frequency = freq | 0x2000;
 		setFrequency(param, freq);
 	} else {
 		++srcP;
@@ -462,6 +514,7 @@ bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	return false;
 }
 
+
 const byte AdlibMusicDriver::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
 	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
 };
@@ -480,10 +533,12 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 
 Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _musicDriver(nullptr) {
 	_mixer = mixer;
+	_musicDriver = new AdlibMusicDriver();
 	loadEffectsData();
 }
 
 Music::~Music() {
+	delete _musicDriver;
 	delete[] _effectsData;
 }
 
