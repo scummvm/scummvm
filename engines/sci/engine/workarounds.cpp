@@ -325,8 +325,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSE256, -1,   992,  0,             "AIPath", "init",                            NULL,     0, { WORKAROUND_FAKE,   0 } }, // Happens in the demo and full version. In the demo, it happens when walking two screens from mother goose's house to the north. In the full version, it happens in rooms 7 and 23 - bug #5269
 	{ GID_MOTHERGOOSE256, 90,    90,  0,        "introScript", "changeState",                     NULL,    65, { WORKAROUND_FAKE,   0 } }, // SCI1(CD): At the very end, after the game is completed and restarted - bug #5626
 	{ GID_MOTHERGOOSE256, 94,    94,  0,            "sunrise", "changeState",                     NULL,   367, { WORKAROUND_FAKE,   0 } }, // At the very end, after the game is completed - bug #5294
-	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
-	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // see above
+	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
+	{ GID_MOTHERGOOSEHIRES,-1,64950, -1,               "View", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",                          NULL,     3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #5154
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
 	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",                          NULL,     1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
@@ -711,7 +711,7 @@ const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kSetCursor_workarounds[] = {
 	{ GID_KQ5,            -1,   768,  0,           "KQCursor", "init",                      NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // CD: gets called with 4 additional "900d" parameters
-	{ GID_MOTHERGOOSEHIRES,0,     0, -1,                 "MG", "setCursor",                 NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // At the start of the game, an object is passed as the cel number
+	{ GID_MOTHERGOOSEHIRES,-1,    0, -1,                 "MG", "setCursor",                 NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // At the start of the game, an object is passed as the cel number
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
