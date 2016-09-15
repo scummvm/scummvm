@@ -128,7 +128,6 @@ class ToucheMetaEngine : public AdvancedMetaEngine {
 public:
 	ToucheMetaEngine() : AdvancedMetaEngine(Touche::gameDescriptions, sizeof(ADGameDescription), toucheGames) {
 		_md5Bytes = 4096;
-		_singleId = "touche";
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

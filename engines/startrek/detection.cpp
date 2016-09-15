@@ -60,7 +60,6 @@ Common::Language StarTrekEngine::getLanguage() const {
 } // End of Namespace StarTrek
 
 static const PlainGameDescriptor starTrekGames[] = {
-	{"startrek", "Star Trek game"},
 	{"st25", "Star Trek: 25th Anniversary"},
 	{"stjr", "Star Trek: Judgment Rites"},
 	{0, 0}
@@ -321,7 +320,6 @@ static const StarTrekGameDescription gameDescriptions[] = {
 class StarTrekMetaEngine : public AdvancedMetaEngine {
 public:
 	StarTrekMetaEngine() : AdvancedMetaEngine(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
-		_singleId = "startrek";
 	}
 
 	const char *getEngineId() const {

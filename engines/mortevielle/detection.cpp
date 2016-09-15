@@ -55,7 +55,6 @@ public:
 	MortevielleMetaEngine() : AdvancedMetaEngine(Mortevielle::MortevielleGameDescriptions, sizeof(Mortevielle::MortevielleGameDescription),
 		MortevielleGame) {
 		_md5Bytes = 512;
-		_singleId = "mortevielle";
 		// Use kADFlagUseExtraAsHint to distinguish between original and improved versions
 		// (i.e. use or not of the game data file).
 		_flags = kADFlagUseExtraAsHint;

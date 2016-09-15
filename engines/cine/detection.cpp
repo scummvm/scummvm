@@ -23,7 +23,6 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-#include "engines/obsolete.h"
 
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -49,16 +48,9 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 } // End of namespace Cine
 
 static const PlainGameDescriptor cineGames[] = {
-	{"cine", "Cinematique evo.1 engine game"},
 	{"fw", "Future Wars"},
 	{"os", "Operation Stealth"},
 	{0, 0}
-};
-
-static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
-	{"fw", "cine", Common::kPlatformUnknown},
-	{"os", "cine", Common::kPlatformUnknown},
-	{0, 0, Common::kPlatformUnknown}
 };
 
 #include "cine/detection_tables.h"
@@ -80,12 +72,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
-		_singleId = "cine";
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
-	}
-
-	PlainGameDescriptor findGame(const char *gameId) const override {
-		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	const char *getEngineId() const {
@@ -101,7 +88,6 @@ public:
 	}
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const {
-		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;

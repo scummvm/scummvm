@@ -79,7 +79,6 @@ static char s_fallbackFileNameBuffer[51];
 class SludgeMetaEngine : public AdvancedMetaEngine {
 public:
 	SludgeMetaEngine() : AdvancedMetaEngine(Sludge::gameDescriptions, sizeof(Sludge::SludgeGameDescription), sludgeGames) {
-		_singleId = "sludge";
 		_maxScanDepth = 1;
 	}
 

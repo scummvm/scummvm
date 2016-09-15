@@ -46,7 +46,6 @@ uint16 MadeEngine::getVersion() const {
 }
 
 static const PlainGameDescriptor madeGames[] = {
-	{"made", "MADE engine game"},
 	{"manhole", "The Manhole"},
 	{"rtz", "Return to Zork"},
 	{"lgop2", "Leather Goddesses of Phobos 2"},
@@ -57,7 +56,6 @@ static const PlainGameDescriptor madeGames[] = {
 class MadeMetaEngine : public AdvancedMetaEngine {
 public:
 	MadeMetaEngine() : AdvancedMetaEngine(Made::gameDescriptions, sizeof(Made::MadeGameDescription), madeGames) {
-		_singleId = "made";
 	}
 
 	const char *getEngineId() const {

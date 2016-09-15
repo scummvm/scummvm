@@ -48,7 +48,6 @@ Common::Platform CruiseEngine::getPlatform() const {
 }
 
 static const PlainGameDescriptor cruiseGames[] = {
-	{"cruise", "Cinematique evo.2 engine game"},
 	{"cruise", "Cruise for a Corpse"},
 	{0, 0}
 };
@@ -196,7 +195,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 class CruiseMetaEngine : public AdvancedMetaEngine {
 public:
 	CruiseMetaEngine() : AdvancedMetaEngine(Cruise::gameDescriptions, sizeof(Cruise::CRUISEGameDescription), cruiseGames) {
-		_singleId = "cruise";
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 

@@ -558,7 +558,6 @@ static const char *directoryGlobs[] = {
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
-		_singleId = "sci";
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		_matchFullPaths = true;

@@ -135,7 +135,6 @@ static const PegasusGameDescription gameDescriptions[] = {
 class PegasusMetaEngine : public AdvancedMetaEngine {
 public:
 	PegasusMetaEngine() : AdvancedMetaEngine(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
-		_singleId = "pegasus";
 	}
 
 	virtual const char *getEngineId() const {

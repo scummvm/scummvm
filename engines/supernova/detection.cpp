@@ -100,7 +100,6 @@ static const ADGameDescription gameDescriptions[] = {
 class SupernovaMetaEngine: public AdvancedMetaEngine {
 public:
 	SupernovaMetaEngine() : AdvancedMetaEngine(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
-//		_singleId = "supernova";
 	}
 
 	const char *getEngineId() const {

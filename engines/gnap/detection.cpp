@@ -78,7 +78,6 @@ static const ADGameDescription gameDescriptions[] = {
 class GnapMetaEngine : public AdvancedMetaEngine {
 public:
 	GnapMetaEngine() : AdvancedMetaEngine(Gnap::gameDescriptions, sizeof(ADGameDescription), gnapGames) {
-		_singleId = "gnap";
 		_maxScanDepth = 3;
 	}
 

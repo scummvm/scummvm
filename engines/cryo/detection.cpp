@@ -133,7 +133,6 @@ static const ADGameDescription gameDescriptions[] = {
 class CryoMetaEngine : public AdvancedMetaEngine {
 public:
 	CryoMetaEngine() : AdvancedMetaEngine(Cryo::gameDescriptions, sizeof(ADGameDescription), cryoGames) {
-		_singleId = "losteden";
 	}
 
 	const char *getEngineId() const {

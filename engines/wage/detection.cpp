@@ -55,7 +55,6 @@ class WageMetaEngine : public AdvancedMetaEngine {
 public:
 	WageMetaEngine() : AdvancedMetaEngine(Wage::gameDescriptions, sizeof(ADGameDescription), wageGames) {
 		_md5Bytes = 2 * 1024 * 1024;
-		_singleId = "wage";
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 

@@ -76,7 +76,6 @@ bool XeenEngine::getIsCD() const {
 } // End of namespace Xeen
 
 static const PlainGameDescriptor XeenGames[] = {
-	{ "xeen", "Xeen" },
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },
 	{ "darksideofxeen", "Might and Magic V: Dark Side of Xeen" },
 	{ "worldofxeen", "Might and Magic: World of Xeen" },

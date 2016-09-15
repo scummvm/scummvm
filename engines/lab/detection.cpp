@@ -115,8 +115,6 @@ uint32 LabEngine::getFeatures() const {
 class LabMetaEngine : public AdvancedMetaEngine {
 public:
 	LabMetaEngine() : AdvancedMetaEngine(labDescriptions, sizeof(ADGameDescription), lab_setting) {
-		_singleId = "lab";
-
 		_maxScanDepth = 4;
 		_directoryGlobs = directoryGlobs;
 		_flags = kADFlagUseExtraAsHint;
