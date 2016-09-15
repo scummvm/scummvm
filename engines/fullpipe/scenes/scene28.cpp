@@ -268,6 +268,7 @@ void sceneHandler28_clickLift(int keycode) {
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
+			ex->_param = keycode;
 
 			mq->addExCommandToEnd(ex);
 
