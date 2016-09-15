@@ -155,7 +155,7 @@ Database::Database(Myst3Engine *vm) :
 	preloadCommonRooms();
 	initializeZipBitIndexTable();
 
-	if (isWindowMacVersion && !_vm->isDVDVersion() && _vm->getGameLanguage() != Common::Language::EN_ANY) {
+	if (isWindowMacVersion && !_vm->isDVDVersion() && _vm->getGameLanguage() != Common::EN_ANY) {
 		patchLanguageMenu();
 	}
 }
