@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -260,11 +261,12 @@ SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const cha
 }
 
 SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
+	Common::String gameId = ConfMan.get("gameid", target);
 	SaveStateList saveList;
 
 	// Loading games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
-	if (strstr(target, "myst")) {
+	if (gameId == "myst") {
 		saveList = listSavesForPrefix("myst", "mys");
 
 		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
@@ -276,7 +278,7 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 	}
 #endif
 #ifdef ENABLE_RIVEN
-	if (strstr(target, "riven")) {
+	if (gameId == "riven") {
 		saveList = listSavesForPrefix("riven", "rvn");
 
 		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
@@ -292,28 +294,31 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 }
 
 void MohawkMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String gameId = ConfMan.get("gameid", target);
 
 	// Removing saved games is only supported in Myst/Riven currently.
 #ifdef ENABLE_MYST
-	if (strstr(target, "myst")) {
+	if (gameId == "myst") {
 		Mohawk::MystGameState::deleteSave(slot);
 	}
 #endif
 #ifdef ENABLE_RIVEN
-	if (strstr(target, "riven")) {
+	if (gameId == "riven") {
 		Mohawk::RivenSaveLoad::deleteSave(slot);
 	}
 #endif
 }
 
 SaveStateDescriptor MohawkMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String gameId = ConfMan.get("gameid", target);
+
 #ifdef ENABLE_MYST
-	if (strstr(target, "myst")) {
+	if (gameId == "myst") {
 		return Mohawk::MystGameState::querySaveMetaInfos(slot);
 	}
 #endif
 #ifdef ENABLE_RIVEN
-	if (strstr(target, "riven")) {
+	if (gameId == "riven") {
 		return Mohawk::RivenSaveLoad::querySaveMetaInfos(slot);
 	} else
 #endif
