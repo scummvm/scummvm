@@ -185,6 +185,8 @@ void sceneHandler28_turnOn2() {
 }
 
 void sceneHandler28_startWork1() {
+	debugC(2, kDebugSceneLogic, "scene28: startWork");
+
 	g_fp->_aniMan->hide();
 
 	StaticANIObject *man = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
@@ -245,6 +247,8 @@ void sceneHandler28_lift6Start() {
 void sceneHandler28_clickLift(int keycode) {
 	int x = 0;
 
+	debugC(2, kDebugSceneLogic, "scene28: clickLift(%d)", keycode);
+
 	switch (keycode) {
 	case 0: x = 600; break;
 	case 1: x = 824; break;
@@ -258,6 +262,8 @@ void sceneHandler28_clickLift(int keycode) {
 	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement
 		|| g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
+		debugC(2, kDebugSceneLogic, "scene28: clickLift: overwrite");
+
 		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
