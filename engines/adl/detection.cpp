@@ -145,11 +145,13 @@ static const AdlGameDescription gameDescriptions[] = {
 			"hires4", 0,
 			{
 				{ "ULYS1A.XFD", 0, "26365d2b06509fd21e7a7919e33f7199", 92160 },
-				// FIXME: Add sides 1B and 2C
+				{ "ULYS1B.XFD", 0, "37919c72a4103e6f897ee7daa8261d1d", 92160 },
+				// Load 'N' Go Software release XAG-0646 appears to be missing the second disk
+				{ "ULYS2C.XFD", 0, "00000000000000000000000000000000", 92160 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformAtariST, // FIXME
+			Common::kPlatformAtari8Bit,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
