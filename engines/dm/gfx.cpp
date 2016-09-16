@@ -707,7 +707,7 @@ void DisplayMan::unpackGraphics() {
 	loadFNT1intoBitmap(k557_FontGraphicIndice, _bitmaps[k557_FontGraphicIndice]);
 }
 
-void DisplayMan::loadFNT1intoBitmap(uint16 index, byte * destBitmap) {
+void DisplayMan::loadFNT1intoBitmap(uint16 index, byte *destBitmap) {
 	uint8 *data = _packedBitmaps + _packedItemPos[index];
 
 	for (uint16 i = 0; i < 6; i++) {
@@ -730,7 +730,7 @@ void DisplayMan::allocateFlippedWallBitmaps() {
 	_bitmapWallD0RFlipped = new byte[32 * 136];
 }
 
-void DisplayMan::drawDoorBitmap(Frame* frame) {
+void DisplayMan::drawDoorBitmap(Frame *frame) {
 	if (frame->_srcByteWidth) {
 		blitToBitmap(_tmpBitmap, _bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
 						  frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
@@ -789,12 +789,13 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 			}
 			bitmap = getDerivedBitmap(doorButtonOrdinal);
 		}
-		blitToBitmap(bitmap, _bitmapViewport, *(Box *)coordSetRedEagle, 0, 0,
+		Box blitBox(coordSetRedEagle[0], coordSetRedEagle[1], coordSetRedEagle[2], coordSetRedEagle[3]);
+		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0,
 						  coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
 	}
 }
 
-void DisplayMan::viewportSetPalette(uint16* middleScreenPalette, uint16* topAndBottomScreen) {
+void DisplayMan::viewportSetPalette(uint16 *middleScreenPalette, uint16 *topAndBottomScreen) {
 	if (middleScreenPalette && topAndBottomScreen)
 		buildPaletteChangeCopperList(middleScreenPalette, topAndBottomScreen);
 
@@ -1088,15 +1089,15 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		} else
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
-		blitToBitmap(bitmap, _bitmapViewport,
-						  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, kDMColorFlesh, coordSets[5], k136_heightViewport);
+		Box blitBox(coordSets[0], coordSets[1], coordSets[2], coordSets[3]);
+		blitToBitmap(bitmap, _bitmapViewport, blitBox, 0, 0, coordSets[4], k112_byteWidthViewport, kDMColorFlesh, coordSets[5], k136_heightViewport);
 	}
 
 	if (drawFootprints)
 		drawFloorOrnament(_vm->indexToOrdinal(k15_FloorOrnFootprints), viewFloorIndex);
 }
 
-void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16* doorNativeBitmapIndices, int16 byteCount, DoorOrnament doorOrnament, DoorFrames* doorFrames) {
+void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doorNativeBitmapIndices, int16 byteCount, DoorOrnament doorOrnament, DoorFrames *doorFrames) {
 	if (doorState == kDMDoorStateOpen)
 		return;
 
@@ -1579,7 +1580,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		Frame(160, 183, 24, 82, 32, 61, 8, 0),	/* Left Horizontal Closed three fourth */
 		Frame(216, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed one fourth */
 		Frame(208, 223, 24, 82, 32, 61, 32, 0),	/* Right Horizontal Closed half */
-		Frame(200, 223, 24, 82, 32, 61, 32, 0)		/* Right Horizontal Closed three fourth */
+		Frame(200, 223, 24, 82, 32, 61, 32, 0)  /* Right Horizontal Closed three fourth */
 	);
 
 	CellOrder order;
@@ -2818,7 +2819,7 @@ uint32 DisplayMan::getCompressedDataSize(uint16 index) {
 	return _packedItemPos[index + 1] - _packedItemPos[index];
 }
 
-void DisplayMan::drawField(FieldAspect* fieldAspect, Box& box) {
+void DisplayMan::drawField(FieldAspect *fieldAspect, Box& box) {
 	byte *bitmapMask = nullptr;
 
 	if (fieldAspect->_mask != kMaskFieldAspectNoMask) {
@@ -2865,7 +2866,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 #define AL_4_projectileAspect     L0127_i_Multiple
 #define AL_4_explosionType        L0127_i_Multiple
 #define AL_4_explosionAspectIndex L0127_i_Multiple
-	ObjectAspect* objectAspect;
+	ObjectAspect *objectAspect;
 	uint32 remainingViewCellOrdinalsToProcess;
 	byte *coordinateSet;
 	int16 derivedBitmapIndex = -1;
@@ -2889,7 +2890,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	uint16 L0150_ui_Multiple = 0;
 #define AL_8_shiftSetIndex        L0150_ui_Multiple
 #define AL_8_projectileScaleIndex L0150_ui_Multiple
-	CreatureAspect* creatureAspectStruct;
+	CreatureAspect *creatureAspectStruct = nullptr;
 	int16 creatureSize = 0;
 	int16 creatureDirectionDelta;
 	int16 creatureGraphicInfoGreen = 0;
@@ -3182,7 +3183,7 @@ T0115015_DrawProjectileAsObject:
 				} else {
 					drawingGrabbableObject = false;
 					derivedBitmapIndex = kDMDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
-					byte* paletteChanges;
+					byte *paletteChanges;
 					if ((viewSquareIndex >= kDMViewSquareD1C) || ((viewSquareIndex >= kDMViewSquareD2C) && (AL_2_viewCell >= kDMViewCellBackRight))) {
 						derivedBitmapIndex++;
 						AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
@@ -3436,7 +3437,7 @@ T0115077_DrawSecondHalfSquareCreature:
 			if (useFlippedHorizontallyCreatureFrontImage)
 				derivedBitmapIndex++; /* Skip front D1 image in additional graphics */
 
-			byte* paletteChanges;
+			byte *paletteChanges;
 			if (viewSquareIndex >= kDMViewSquareD2C) { /* Creature is on D2 */
 				derivedBitmapIndex++; /* Skip front D3 image in additional graphics */
 				AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
@@ -3816,7 +3817,7 @@ bool DisplayMan::isDerivedBitmapInCache(int16 derivedBitmapIndex) {
 	return true;
 }
 
-byte* DisplayMan::getDerivedBitmap(int16 derivedBitmapIndex) {
+byte *DisplayMan::getDerivedBitmap(int16 derivedBitmapIndex) {
 	return _derivedBitmaps[derivedBitmapIndex];
 }
 
@@ -3841,7 +3842,7 @@ uint16 DisplayMan::getDarkenedColor(uint16 RGBcolor) {
 	return RGBcolor;
 }
 
-void DisplayMan::startEndFadeToPalette(uint16* P0849_pui_Palette) {
+void DisplayMan::startEndFadeToPalette(uint16 *P0849_pui_Palette) {
 	uint16 *paletteRegister = _paletteFadeTemporary;
 
 	for (int16 i = 0; i < 16; i++)
@@ -3896,7 +3897,7 @@ void DisplayMan::startEndFadeToPalette(uint16* P0849_pui_Palette) {
 	}
 }
 
-void DisplayMan::buildPaletteChangeCopperList(uint16* middleScreen, uint16* topAndBottom) {
+void DisplayMan::buildPaletteChangeCopperList(uint16 *middleScreen, uint16 *topAndBottom) {
 	_paletteFadeFrom = topAndBottom;
 	byte colorPalette[32 * 3];
 	for (int i = 0; i < 16; ++i) {
