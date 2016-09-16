@@ -31,7 +31,7 @@ namespace Xeen {
 
 /*------------------------------------------------------------------------*/
 
-MusicDriver::MusicDriver() : _fieldF(false), _field1E(false), _lowMusicIgnored(false),
+MusicDriver::MusicDriver() : _fieldF(false), _musicPlaying(false), _fxPlaying(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr) {
 	_channels.resize(CHANNEL_COUNT);
@@ -39,27 +39,31 @@ MusicDriver::MusicDriver() : _fieldF(false), _field1E(false), _lowMusicIgnored(f
 
 void MusicDriver::execute() {
 	bool isFX = false;
-	bool flag = !_field1E;
-	const byte *srcP = _musDataPtr;
+	const byte *srcP = nullptr;
 
-	if (!flag) {
-		if (_musCountdownTimer && --_musCountdownTimer == 0)
-			flag = true;
-	}
-	if (flag && _lowMusicIgnored) {
-		srcP = _fxDataPtr;
-		isFX = true;
-		if (!_fxCountdownTimer || --_fxCountdownTimer == 0)
-			flag = false;
-	}
+	// Single iteration loop to avoid use of GOTO
+	do {
+		if (_musicPlaying) {
+			srcP = _musDataPtr;
+			isFX = false;
+			if (_musCountdownTimer == 0 || --_musCountdownTimer == 0)
+				break;
+		}
 
-	if (flag) {
-		// Do paused handling and exit immediately
+		if (_fxPlaying) {
+			srcP = _fxDataPtr;
+			isFX = true;
+			if (_fxCountdownTimer == 0 || --_fxCountdownTimer == 0)
+				break;
+		}
+
 		pausePostProcess();
 		return;
-	}
+	} while (0);
 
 	// Main loop
+	debugC(kDebugSound, 8, "MusicDriver frame starting");
+
 	bool breakFlag = false;
 	while (!breakFlag) {
 		byte nextByte = *srcP++;
@@ -126,10 +130,12 @@ bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 
 bool MusicDriver::musEndSubroutine(const byte *&srcP, byte param) {
 	if (param != 15) {
-		_field1E = 0;
+		// Music has ended, so flag it stopped
+		_musicPlaying = false;
 		return true;
 	}
 
+	// Returning from subroutine, or looping back to start of music
 	srcP = _musSubroutines.empty() ? _musStartPtr : _musSubroutines.pop()._returnP;
 	return false;
 }
@@ -159,7 +165,8 @@ bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
 
 bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 	if (param != 15) {
-		_lowMusicIgnored = false;
+		// FX has ended, so flag it stopped
+		_fxPlaying = false;
 		return true;
 	}
 
@@ -168,21 +175,24 @@ bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 }
 
 void MusicDriver::playFX(uint effectId, const byte *data) {
-	if (!_lowMusicIgnored || effectId < 7 || effectId >= 11) {
+	if (!_fxPlaying || effectId < 7 || effectId >= 11) {
 		_musStartPtr = nullptr;
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
 		resetFX();
-		_lowMusicIgnored = true;
+		_fxPlaying = true;
 	}
+
+	debugC(1, kDebugSound, "Starting FX");
 }
 
 void MusicDriver::playSong(const byte *data) {
 	_musDataPtr = _musStartPtr = data;
 	_musSubroutines.clear();
 	_musCountdownTimer = 0;
-	_field1E = true;
+	_musicPlaying = true;
+	debugC(1, kDebugSound, "Starting song");
 }
 
 int MusicDriver::songCommand(uint commandId, byte volume) {
@@ -258,20 +268,21 @@ void AdlibMusicDriver::playSong(const byte *data) {
 	Common::StackLock slock(_driverMutex);
 	MusicDriver::playSong(data);
 	_field180 = 0;
+	resetFrequencies();
 }
 
 int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
 	Common::StackLock slock(_driverMutex);
 
 	if (commandId == STOP_MUSIC) {
-		_field1E = 0;
+		_musicPlaying = false;
 		_field180 = 0;
 		resetFrequencies();
 	} else if (commandId == RESTART_MUSIC) {
 		_field180 = 0;
-		_field1E = true;
+		_musicPlaying = true;
 	} else if (commandId < 0x100) {
-		if (_field1E) {
+		if (_musicPlaying) {
 			_field180 = commandId;
 			_field182 = 63;
 		}
@@ -286,6 +297,7 @@ int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
 
 void AdlibMusicDriver::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
+	debugC(9, kDebugSound, "%.2x %2x", reg, val);
 }
 
 void AdlibMusicDriver::flush() {
@@ -300,7 +312,7 @@ void AdlibMusicDriver::flush() {
 void AdlibMusicDriver::pausePostProcess() {
 	if (_field180 && ((_field181 += _field180) < 0)) {
 		if (--_field182 < 0) {
-			_field1E = false;
+			_musicPlaying = false;
 			_field180 = 0;
 			resetFrequencies();
 		} else {
@@ -386,7 +398,7 @@ void AdlibMusicDriver::setOutputLevel(byte channelNum, uint level) {
 void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
 	byte op1 = OPERATOR1_INDEXES[channelNum];
 	byte op2 = OPERATOR2_INDEXES[channelNum];
-
+	debugC(2, kDebugSound, "---START-playInstrument - %d", channelNum);
 	write(0x20 + op1, *data++);
 	write(0x40 + op1, *data++);
 	write(0x60 + op1, *data++);
@@ -408,7 +420,9 @@ void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
 	write(0x60 + op2, *data++);
 	write(0x80 + op2, *data++);
 	write(0xE0 + op2, *data++);
-	write(0xC0 + op2, *data++);
+	write(0xC0 + channelNum, *data++);
+
+	debugC(2, kDebugSound, "---END-playInstrument");
 }
 
 bool AdlibMusicDriver::musSetInstrument(const byte *&srcP, byte param) {
@@ -454,7 +468,7 @@ bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
 }
 
 bool AdlibMusicDriver::musSetVolume(const byte *&srcP, byte param) {
-	if (*srcP++ == 2 && !_field180) {
+	if (*srcP++ == 5 && !_field180) {
 		_channels[param]._volume = *srcP;
 		setOutputLevel(param, *srcP);
 	}

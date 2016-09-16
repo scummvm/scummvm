@@ -56,6 +56,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.fadeIn(4);
 
 	// **DEBUG**: Testing music
+	sound.setMusicVolume(0x5f);
 	File f("bigtheme.m", *_vm->_files->_sideArchives[1]);
 	byte *data = new byte[f.size()];
 	f.read(data, f.size());

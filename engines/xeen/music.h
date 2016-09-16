@@ -77,7 +77,6 @@ private:
 	Common::Stack<Subroutine> _musSubroutines, _fxSubroutines;
 	int _musCountdownTimer;
 	int _fxCountdownTimer;
-	bool _lowMusicIgnored;
 	const byte *_fxDataPtr, *_musDataPtr;
 	const byte *_fxStartPtr;
 	const byte *_musStartPtr;
@@ -91,7 +90,8 @@ private:
 protected:
 	Common::Array<Channel> _channels;
 	bool _fieldF;
-	bool _field1E;
+	bool _musicPlaying;
+	bool _fxPlaying;
 protected:
 	/**
 	 * Executes a series of commands until instructed to stop
@@ -332,6 +332,11 @@ public:
 	 * Restart the music
 	 */
 	void restartMusic() { songCommand(RESTART_MUSIC); }
+
+	/**
+	 * Sets the music volume
+	 */
+	void setMusicVolume(byte volume) { songCommand(SET_VOLUME, volume); }
 
 	/**
 	 * Plays a song
