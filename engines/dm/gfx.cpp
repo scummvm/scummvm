@@ -2686,8 +2686,10 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 						characterCount++;
 					}
 					Frame blitFrame;
-					blitFrame._box._rect.right = (blitFrame._box._rect.left = 112 - (characterCount << 2)) + 7;
-					blitFrame._box._rect.top = (blitFrame._box._rect.bottom = inscriptionLineY[textLineIndex++]) - 7;
+					blitFrame._box._rect.left = 112 - (characterCount << 2);
+					blitFrame._box._rect.right = blitFrame._box._rect.left + 7;
+					blitFrame._box._rect.bottom = inscriptionLineY[textLineIndex++];
+					blitFrame._box._rect.top = blitFrame._box._rect.bottom - 7;
 					while (characterCount--) {
 						blitToBitmap(L0092_puc_Bitmap, _bitmapViewport, blitFrame._box, *inscrString++ << 3, 0, k144_byteWidth, k112_byteWidthViewport, kDMColorFlesh, 8, k136_heightViewport);
 						blitFrame._box._rect.left += 8;
@@ -2732,7 +2734,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 				coordinateSetOffset = -6;
 		}
 		blitPosX = (ornCoordSet + coordinateSetOffset)[1] - (ornCoordSet + coordinateSetOffset)[0];
-		if (!isDerivedBitmapInCache(wallOrnamentIndex = kDMDerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
+		wallOrnamentIndex = kDMDerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex];
+		if (!isDerivedBitmapInCache(wallOrnamentIndex)) {
 			byte *blitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
 			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), ornBlitBitmap[4] << 1, ornBlitBitmap[5], ornCoordSet[4] << 1, ornCoordSet[5], (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
 			addDerivedBitmap(wallOrnamentIndex);
@@ -3107,7 +3110,8 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	} else
 		doorFrontViewDrawingPass = 0; /* The function call is not to draw objects on a door square viewed from the front */
 
-	L0135_B_DrawAlcoveObjects = !(remainingViewCellOrdinalsToProcess = orderedViewCellOrdinals);
+	remainingViewCellOrdinalsToProcess = orderedViewCellOrdinals;
+	L0135_B_DrawAlcoveObjects = !(remainingViewCellOrdinalsToProcess);
 	AL_10_viewSquareIndexBackup = viewSquareIndex;
 	viewLane = (ViewLane)((viewSquareIndex + 3) % 3);
 	bool twoHalfSquareCreaturesFrontView;
@@ -3132,7 +3136,8 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 		objectShiftIndex += (cellYellowBear & 0x0001) << 3;
 		drawProjectileAsObject = false;
 		do {
-			if ((AL_4_thingType = thingParam.getType()) == kDMThingTypeGroup) {
+			AL_4_thingType = thingParam.getType();
+			if (AL_4_thingType == kDMThingTypeGroup) {
 				groupThing = thingParam;
 				continue;
 			}
@@ -3200,7 +3205,8 @@ T0115015_DrawProjectileAsObject:
 						bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 					else {
 						bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-						blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex), objectAspect->_byteWidth << 1, objectAspect->_height, byteWidth << 1, heightRedEagle, paletteChanges);
+						bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+						blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, objectAspect->_byteWidth << 1, objectAspect->_height, byteWidth << 1, heightRedEagle, paletteChanges);
 						if (flipHorizontal)
 							flipBitmapHorizontal(bitmapRedBanana, getNormalizedByteWidth(byteWidth), heightRedEagle);
 
@@ -3240,7 +3246,8 @@ T0115015_DrawProjectileAsObject:
 
 					if (AL_6_box->_rect.left == 255) { /* If the grabbable object is the first */
 						*AL_6_box = boxByteGreen;
-						if ((heightGreenGoat = AL_6_box->_rect.bottom - AL_6_box->_rect.top) < 14) { /* If the box is too small then enlarge it a little */
+						heightGreenGoat = AL_6_box->_rect.bottom - AL_6_box->_rect.top;
+						if (heightGreenGoat < 14) { /* If the box is too small then enlarge it a little */
 							heightGreenGoat = heightGreenGoat >> 1;
 							AL_6_box->_rect.top += heightGreenGoat - 7;
 							if (heightGreenGoat < 4)
@@ -3292,7 +3299,8 @@ T0115015_DrawProjectileAsObject:
 
 		creatureDirectionDelta = _vm->normalizeModulo4(directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
-		if ((AL_4_groupCells = activeGroup->_cells) == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
+		AL_4_groupCells = activeGroup->_cells;
+		if (AL_4_groupCells == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
 				goto T0115129_DrawProjectiles; /* Do not draw a single centered creature now, wait until second pass (for a front view door) or until all cells have been drawn so the creature is drawn over all the objects on the floor */
 
@@ -3319,7 +3327,8 @@ T0115015_DrawProjectileAsObject:
 						creatureIndexGreen = 0;
 
 					twoHalfSquareCreaturesFrontView = group->getCount();
-					if (((AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed)) == directionParam) || (AL_4_groupCells == _vm->turnDirLeft(directionParam)))
+					AL_4_groupCells = _vm->_groupMan->getCreatureValue(AL_4_groupCells, AL_0_creatureIndexRed);
+					if ((AL_4_groupCells == directionParam) || (AL_4_groupCells == _vm->turnDirLeft(directionParam)))
 						AL_2_viewCell = k0_HalfSizedViewCell_LeftColumn;
 					else
 						AL_2_viewCell = k1_HalfSizedViewCell_RightColumn;
@@ -3417,9 +3426,10 @@ T0115077_DrawSecondHalfSquareCreature:
 				bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 			else {
 				bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-				if (getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack))
-					copyBitmapAndFlipHorizontal(bitmapGreenAnt, bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex), byteWidth, heightRedEagle);
-
+				if (getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack)) {
+					bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+					copyBitmapAndFlipHorizontal(bitmapGreenAnt, bitmapRedBanana, byteWidth, heightRedEagle);
+				}
 				addDerivedBitmap(derivedBitmapIndex);
 			}
 		} else { /* Creature is on D2 or D3 */
@@ -3449,7 +3459,8 @@ T0115077_DrawSecondHalfSquareCreature:
 				bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 			else {
 				bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-				blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex), sourceByteWidth << 1, sourceHeight, byteWidth << 1, heightRedEagle, paletteChanges);
+				bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
+				blitToBitmapShrinkWithPalChange(bitmapGreenAnt, bitmapRedBanana, sourceByteWidth << 1, sourceHeight, byteWidth << 1, heightRedEagle, paletteChanges);
 				addDerivedBitmap(derivedBitmapIndex);
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
@@ -3522,7 +3533,8 @@ T0115129_DrawProjectiles:
 		do {
 			if ((thingParam.getType() == kDMThingTypeProjectile) && (thingParam.getCell() == cellYellowBear)) {
 				Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(thingParam);
-				if ((AL_4_projectileAspect = _vm->_dungeonMan->getProjectileAspect(projectile->_slot)) < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
+				AL_4_projectileAspect = _vm->_dungeonMan->getProjectileAspect(projectile->_slot);
+				if (AL_4_projectileAspect < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
 					objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
 					AL_4_nativeBitmapIndex = ((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + k316_FirstProjectileGraphicIndice;
 					projectileAspectType = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0003_ProjectileAspectTypeMask);
@@ -3557,7 +3569,8 @@ T0115129_DrawProjectiles:
 
 						if (projectileAspectTypeHasBackGraphicAndRotation) {
 							flipHorizontal = (AL_2_viewCell == kDMViewCellFronLeft) || (AL_2_viewCell == kDMViewCellBackLeft);
-							if (!(flipVertical = projectileFlipVertical))
+							flipVertical = projectileFlipVertical;
+							if (!flipVertical)
 								flipHorizontal = !flipHorizontal;
 						} else {
 							flipVertical = false;
@@ -3581,7 +3594,8 @@ T0115129_DrawProjectiles:
 						if (flipHorizontal)
 							paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
 
-						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex = kDMDerivedBitmapFirstProjectile + ((ProjectileAspect *)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex)) {
+						derivedBitmapIndex = kDMDerivedBitmapFirstProjectile + ((ProjectileAspect *)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex;
+						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex)) {
 							bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 						} else {
 							bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
@@ -3651,7 +3665,8 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 		if (thingParam.getType() == kDMThingTypeExplosion) {
 			AL_2_cellPurpleMan = thingParam.getCell();
 			Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(thingParam);
-			bool rebirthExplosion = ((uint16)(AL_4_explosionType = explosion->getType()) >= kDMExplosionTypeRebirthStep1);
+			AL_4_explosionType = explosion->getType();
+			bool rebirthExplosion = ((uint16)AL_4_explosionType >= kDMExplosionTypeRebirthStep1);
 			if (rebirthExplosion && ((AL_1_viewSquareExplosionIndex < kDMViewSquareD3CExplosion) || (AL_1_viewSquareExplosionIndex > kDMViewSquareD1CExplosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
 				continue;
 			bool smoke = false;

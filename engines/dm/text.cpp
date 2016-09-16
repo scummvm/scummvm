@@ -198,7 +198,8 @@ void TextMan::clearExpiredRows() {
 		int32 expirationTime = _messageAreaRowExpirationTime[rowIndex];
 		if ((expirationTime == -1) || (expirationTime > _vm->_gameTime) || _isScrolling)
 			continue;
-		displayBox._rect.bottom = (displayBox._rect.top = 172 + (rowIndex * 7)) + 6;
+		displayBox._rect.top = 172 + (rowIndex * 7);
+		displayBox._rect.bottom = displayBox._rect.top + 6;
 		isTextScrolling(&_textScroller, true);
 		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapScreen, displayBox, kDMColorBlack, k160_byteWidthScreen, k200_heightScreen);
 		_messageAreaRowExpirationTime[rowIndex] = -1;
