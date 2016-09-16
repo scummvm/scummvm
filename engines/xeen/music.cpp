@@ -179,7 +179,7 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 }
 
 void MusicDriver::playSong(const byte *data) {
-	_musDataPtr = data;
+	_musDataPtr = _musStartPtr = data;
 	_musSubroutines.clear();
 	_musCountdownTimer = 0;
 	_field1E = true;
@@ -473,8 +473,9 @@ bool AdlibMusicDriver::musInjectMidi(const byte *&srcP, byte param) {
 }
 
 bool AdlibMusicDriver::musPlayInstrument(const byte *&srcP, byte param) {
+	byte instrument = *srcP++;
 	if (param < 7)
-		playInstrument(param, _musInstrumentPtrs[param]);
+		playInstrument(param, _musInstrumentPtrs[instrument]);
 
 	return false;
 }
@@ -576,9 +577,7 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 
 /*------------------------------------------------------------------------*/
 
-Music::Music(Audio::Mixer *mixer) : _mixer(mixer), _musicDriver(nullptr),
-		_songData(nullptr) {
-	_mixer = mixer;
+Music::Music() : _musicDriver(nullptr), _songData(nullptr) {
 	_musicDriver = new AdlibMusicDriver();
 	loadEffectsData();
 }

@@ -55,6 +55,19 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.draw();
 	screen.fadeIn(4);
 
+	// **DEBUG**: Testing music
+	File f("bigtheme.m", *_vm->_files->_sideArchives[1]);
+	byte *data = new byte[f.size()];
+	f.read(data, f.size());
+	f.close();
+
+	sound.playSong(data);
+
+	events.updateGameCounter();
+	events.wait(1000, true);
+
+	delete[] data;
+	/*
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
 	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
@@ -128,9 +141,10 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.fadeOut(8);
 	screen.draw();
 	screen.fadeIn(4);
-
+	
 	events.updateGameCounter();
 	events.wait(60, true);
+	*/
 	return true;
 }
 

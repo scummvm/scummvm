@@ -308,11 +308,9 @@ private:
 	 * Updates any playing music
 	 */
 	void update();
-
 protected:
-	Audio::Mixer *_mixer;
 public:
-	Music(Audio::Mixer *mixer);
+	Music();
 	~Music();
 
 	/**
@@ -344,6 +342,13 @@ public:
 	 * Plays a song
 	 */
 	void playSong(const Common::String &name);
+	
+	/**
+	 * Plays a song
+	 */
+	void playSong(const byte *data) {
+		_musicDriver->playSong(data);
+	}
 };
 
 } // End of namespace Xeen

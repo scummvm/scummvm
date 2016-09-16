@@ -47,8 +47,7 @@ void Voc::stop() {
 
 /*------------------------------------------------------------------------*/
 
-Sound::Sound(XeenEngine *vm, Audio::Mixer *mixer): Music(mixer) {
-
+Sound::Sound(XeenEngine *vm, Audio::Mixer *mixer): Music(), _mixer(mixer) {
 }
 
 void Sound::proc2(Common::SeekableReadStream &f) {
@@ -67,10 +66,6 @@ void Sound::playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHa
 	Audio::Mixer::SoundType soundType) {
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(s, 0);
 	_mixer->playStream(soundType, &soundHandle, stream);		
-}
-
-void Sound::playMusic(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle) {
-	// TODO
 }
 
 void Sound::stopSound(Audio::SoundHandle &soundHandle) {

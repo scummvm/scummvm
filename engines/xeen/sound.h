@@ -56,6 +56,8 @@ public:
 };
 
 class Sound : public Music {
+private:
+	Audio::Mixer *_mixer;
 public:
 	Sound(XeenEngine *vm, Audio::Mixer *mixer);
 
@@ -67,18 +69,11 @@ public:
 
 	void stopMusic(int id);
 
-	void playSong(Common::SeekableReadStream &f) {}
-
 	/**
 	 * Play a given sound
 	 */
 	void playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle,
 		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
-
-	/**
-	 * Play a given music
-	 */
-	void playMusic(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle);
 
 	/**
 	 * Stop playing a sound
@@ -88,8 +83,6 @@ public:
 	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
 
 	bool playSample(int v1, int v2) { return false; }
-
-	void playFX(int id) {}
 };
 
 } // End of namespace Xeen
