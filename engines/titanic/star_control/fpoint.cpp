@@ -21,8 +21,17 @@
  */
 
 #include "titanic/star_control/fpoint.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
+void FPoint::normalize() {
+	double hyp = sqrt(_x * _x + _y * _y);
+	assert(hyp != 0.0);
+
+	double fraction = 1.0 / hyp;
+	_x *= fraction;
+	_y *= fraction;
+}
 
 } // End of namespace Titanic
