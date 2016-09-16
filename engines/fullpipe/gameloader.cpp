@@ -66,7 +66,7 @@ GameLoader::GameLoader() {
 	_field_F8 = 0;
 	_sceneSwitcher = 0;
 	_preloadCallback = 0;
-	_readSavegameCallback = 0;
+	_savegameCallback = 0;
 	_gameVar = 0;
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
@@ -614,7 +614,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (!v) {
-//		v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarAsInt("SAVEGAME", 0);
+		v = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0);
 
 		if (!v) {
 			warning("No state to save");
@@ -626,8 +626,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	v->setSubVarAsInt("Scene", sc->_sceneId);
 
-#if 0
-	saveScenePicAniInfos(this, sc->_sceneId);
+	saveScenePicAniInfos(sc->_sceneId);
 	memset(&header, 0, sizeof(header));
 
 	header.saveSize = 48;
@@ -636,68 +635,55 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	header.unkField = 1;
 
 	// open save for reading
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
+
 	v = _gameVar->getSubVarByName("OBJSTATES");
 
-	MfcArchive archive;
-
-	sca = 0;
-	filenamea = 0;
+	GameVar *nxt = 0;
+	GameVar *prv = 0;
+	GameVar *par;
 	if (v) {
-		v12 = v11->_nextVarObj;
-		v13 = (char *)v11->prevVarObj;
-		v9 = v11->parentVarObj;
-		v11->parentVarObj = 0;
-		sca = (Scene *)v12;
-		v11->_nextVarObj = 0;
-		filenamea = v13;
-		v11->prevVarObj = 0;
+		nxt = v->_nextVarObj;
+		prv = v->_prevVarObj;
+		par = v->_parentVarObj;
+		v->_parentVarObj = 0;
+		v->_nextVarObj = 0;
+		v->_prevVarObj = 0;
 	}
 
-	carchive->writeObject(v);
-	if (v11) {
-		v11->parentVarObj = v9;
-		v11->_nextVarObj = (GameVar *)sca;
-		v11->prevVarObj = (GameVar *)filenamea;
+	writeObject(saveFile, v);
+
+	if (v) {
+		v->_parentVarObj = par;
+		v->_nextVarObj = nxt;
+		v->_prevVarObj = prv;
 	}
-	v14 = getGameLoaderInventory();
-	Inventory2_SerializePartially(v14, &carchive);
-	v15 = this->_sc2array.objs.m_nSize;
-	if  (unsigned int)(carchive.m_lpBufCur + 4) > carchive.m_lpBufMax)
-		CArchive::Flush(&carchive);
-	*(_DWORD *)carchive.m_lpBufCur = v15;
-	v16 = 0;
-	carchive.m_lpBufCur += 4;
-	while (1) {
-		scb = (Scene *)v16;
-		if ( v16 >= this->_sc2array.objs.m_nSize )
-			break;
-		v17 = v16;
-		v18 = this->_sc2array.objs.m_pData[v16].picAniInfosCount;
-		if ( (unsigned int)(carchive.m_lpBufCur + 4) > carchive.m_lpBufMax ) {
-			CArchive::Flush(&carchive);
-			v16 = (int)scb;
+
+	getGameLoaderInventory()->writePartial(saveFile);
+
+	saveFile->writeUint32LE(_sc2array.size());
+
+	for (uint i = 0; i < _sc2array.size(); i++) {
+		saveFile->writeUint32LE(_sc2array[i]._picAniInfosCount);
+
+		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j]->save(saveFile);
 		}
-		*(_DWORD *)carchive.m_lpBufCur = v18;
-		v19 = &this->_sc2array.objs.m_pData[v17];
-		carchive.m_lpBufCur += 4;
-		v20 = v19->picAniInfosCount;
-		if ( v20 > 0 ) {
-			CArchive::Write(&carchive, v19->picAniInfos, 44 * v20);
-			v16 = (int)scb;
-		}
-		++v16;
 	}
-	CArchive::Close(&carchive);
-	header.encSize = GameLoader_encryptSavegame((GameLoader *)header.unkField, (int)&cmemfile);
-	CFile::Write((int)&cfile, (int)&header, header.saveSize);
-	v21 = (void *)CMemFile::Detach(&cmemfile);
-	CFile::Write((int)&cfile, (int)v21, header.encSize);
-	free(v21);
-	v22 = (void (__fastcall *)(char *, signed int))this->_readSavegameCallback;
-	if ( v22 )
-		v22(&cfile, 1);
-	CFile::Close(&cfile);
-#endif
+
+	//header.encSize = GameLoader_encryptSavegame((GameLoader *)header.unkField, (int)&cmemfile);
+	//CFile::Write((int)&cfile, (int)&header, header.saveSize);
+
+	//if (_savegameCallback)
+	//	_savegameCallback(saveFile, 1);
+
+	saveFile->finalize();
+
+	delete saveFile;
+}
+
+void GameLoader::writeObject(Common::WriteStream *stream, GameVar *) {
+	warning("STUB: GameLoader::writeObject()");
 }
 
 Sc2::Sc2() {

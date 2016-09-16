@@ -61,6 +61,7 @@ struct PicAniInfo {
 	int32 someDynamicPhaseIndex;
 
 	bool load(MfcArchive &file);
+	bool save(Common::WriteStream *file);
 
 	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };

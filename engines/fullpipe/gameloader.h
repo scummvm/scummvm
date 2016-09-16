@@ -101,6 +101,8 @@ class GameLoader : public CObject {
 	void readSavegame(const char *fname);
 	void writeSavegame(Scene *sc, const char *fname);
 
+	void writeObject(Common::WriteStream *stream, GameVar *);
+
 	void restoreDefPicAniInfos();
 
 	GameProject *_gameProject;
@@ -110,7 +112,7 @@ class GameLoader : public CObject {
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	bool (*_preloadCallback)(PreloadItem &pre, int flag);
-	void *_readSavegameCallback;
+	void *_savegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;

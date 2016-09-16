@@ -60,7 +60,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
-	// _readSavegameCallback = gameLoaderReadSavegameCallback; // TODO
+	// _savegameCallback = gameLoaderSavegameCallback; // TODO
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;

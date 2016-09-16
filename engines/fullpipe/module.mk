@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	scenes.o \
 	sound.o \
 	stateloader.o \
+	statesaver.o \
 	statics.o \
 	utils.o \
 	scenes/sceneIntro.o \
