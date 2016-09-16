@@ -1271,13 +1271,13 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 			aspect |= (offset << 3);
 		}
 		if (isAttacking) {
-			if (getFlag(creatureGraphicInfo, k0x0200_CreatureInfoGraphicMaskFlipAttack)) {
+			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipAttack)) {
 				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
-				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, k0x0400_CreatureInfoGraphicMaskFlipDuringAttack)) {
+				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, kDMCreatureMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
 						setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 					else
@@ -1288,7 +1288,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 
 			setFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
 		} else {
-			if (getFlag(creatureGraphicInfo, k0x0004_CreatureInfoGraphicMaskFlipNonAttack)) {
+			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipNonAttack)) {
 				if (creatureType == k13_CreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);

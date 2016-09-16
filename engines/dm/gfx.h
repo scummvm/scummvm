@@ -138,6 +138,16 @@ enum CellOrder {
 #define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED
 #define kDMMaskDoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT
 
+#define kDMCreatureMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL
+#define kDMCreatureMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK
+#define kDMCreatureMaskSide 0x0008 // @ MASK0x0008_SIDE
+#define kDMCreatureMaskBack 0x0010 // @ MASK0x0010_BACK
+#define kDMCreatureMaskAttack 0x0020 // @ MASK0x0020_ATTACK
+#define kDMCreatureMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT
+#define kDMCreatureMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT
+#define kDMCreatureMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK
+#define kDMCreatureMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK
+
 #define k2_FloorSetGraphicCount 2 // @ C002_FLOOR_SET_GRAPHIC_COUNT
 #define k13_WallSetGraphicCount 13 // @ C013_WALL_SET_GRAPHIC_COUNT
 #define k18_StairsGraphicCount 18 // @ C018_STAIRS_GRAPHIC_COUNT
@@ -161,17 +171,6 @@ enum CellOrder {
 #define k1_ShiftSet_D1BackD2Front 1 // @ C1_SHIFT_SET_D1_BACK_OR_D2_FRONT
 #define k2_ShiftSet_D2BackD3Front 2 // @ C2_SHIFT_SET_D2_BACK_OR_D3_FRONT
 
-/* Creature info GraphicInfo */
-#define k0x0003_CreatureInfoGraphicMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL
-#define k0x0004_CreatureInfoGraphicMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK
-#define k0x0008_CreatureInfoGraphicMaskSide 0x0008 // @ MASK0x0008_SIDE
-#define k0x0010_CreatureInfoGraphicMaskBack 0x0010 // @ MASK0x0010_BACK
-#define k0x0020_CreatureInfoGraphicMaskAttack 0x0020 // @ MASK0x0020_ATTACK
-#define k0x0080_CreatureInfoGraphicMaskSpecialD2Front 0x0080 // @ MASK0x0080_SPECIAL_D2_FRONT
-#define k0x0100_CreatureInfoGraphicMaskSpecialD2FrontIsFlipped 0x0100 // @ MASK0x0100_SPECIAL_D2_FRONT_IS_FLIPPED_FRONT
-#define k0x0200_CreatureInfoGraphicMaskFlipAttack 0x0200 // @ MASK0x0200_FLIP_ATTACK
-#define k0x0400_CreatureInfoGraphicMaskFlipDuringAttack 0x0400 // @ MASK0x0400_FLIP_DURING_ATTACK
-
 #define k75_FirstFloorSet 75 // @ C075_GRAPHIC_FIRST_FLOOR_SET
 #define k77_FirstWallSet 77 // @ C077_GRAPHIC_FIRST_WALL_SET
 #define k90_FirstStairs 90 // @ C090_GRAPHIC_FIRST_STAIRS
@@ -188,25 +187,25 @@ enum CellOrder {
 #define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK
 
 enum ViewSquare {
-	kM3_ViewSquare_D4C = -3, // @ CM3_VIEW_SQUARE_D4C
-	kM2_ViewSquare_D4L = -2, // @ CM2_VIEW_SQUARE_D4L
-	kM1_ViewSquare_D4R = -1, // @ CM1_VIEW_SQUARE_D4R
-	k0_ViewSquare_D3C = 0, // @ C00_VIEW_SQUARE_D3C
-	k1_ViewSquare_D3L = 1, // @ C01_VIEW_SQUARE_D3L
-	k2_ViewSquare_D3R = 2, // @ C02_VIEW_SQUARE_D3R
-	k3_ViewSquare_D2C = 3, // @ C03_VIEW_SQUARE_D2C
-	k4_ViewSquare_D2L = 4, // @ C04_VIEW_SQUARE_D2L
-	k5_ViewSquare_D2R = 5, // @ C05_VIEW_SQUARE_D2R
-	k6_ViewSquare_D1C = 6, // @ C06_VIEW_SQUARE_D1C
-	k7_ViewSquare_D1L = 7, // @ C07_VIEW_SQUARE_D1L
-	k8_ViewSquare_D1R = 8, // @ C08_VIEW_SQUARE_D1R
-	k9_ViewSquare_D0C = 9, // @ C09_VIEW_SQUARE_D0C
-	k10_ViewSquare_D0L = 10, // @ C10_VIEW_SQUARE_D0L
-	k11_ViewSquare_D0R = 11, // @ C11_VIEW_SQUARE_D0R
-	k3_ViewSquare_D3C_Explosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
-	k4_ViewSquare_D3L_Explosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
-	k9_ViewSquare_D1C_Explosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
-	k12_ViewSquare_D0C_Explosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
+	kDMViewSquareD4C = -3, // @ CM3_VIEW_SQUARE_D4C
+	kViewSquareD4L = -2, // @ CM2_VIEW_SQUARE_D4L
+	kDMViewSquareD4R = -1, // @ CM1_VIEW_SQUARE_D4R
+	kDMViewSquareD3C = 0, // @ C00_VIEW_SQUARE_D3C
+	kDMViewSquareD3L = 1, // @ C01_VIEW_SQUARE_D3L
+	kDMViewSquareD3R = 2, // @ C02_VIEW_SQUARE_D3R
+	kDMViewSquareD2C = 3, // @ C03_VIEW_SQUARE_D2C
+	kDMViewSquareD2L = 4, // @ C04_VIEW_SQUARE_D2L
+	kDMViewSquareD2R = 5, // @ C05_VIEW_SQUARE_D2R
+	kDMViewSquareD1C = 6, // @ C06_VIEW_SQUARE_D1C
+	kDMViewSquareD1L = 7, // @ C07_VIEW_SQUARE_D1L
+	kDMViewSquareD1R = 8, // @ C08_VIEW_SQUARE_D1R
+	kDMViewSquareD0C = 9, // @ C09_VIEW_SQUARE_D0C
+	kDMViewSquareD0L = 10, // @ C10_VIEW_SQUARE_D0L
+	kDMViewSquareD0R = 11, // @ C11_VIEW_SQUARE_D0R
+	kDMViewSquareD3CExplosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
+	kDMViewSquareD3LExplosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
+	kDMViewSquareD1CExplosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
+	kDMViewSquareD0CExplosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
 };
 
 class ExplosionAspect {
