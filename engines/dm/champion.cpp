@@ -1394,13 +1394,13 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			int16 textPosY;
 
 			Box blitBox;
-			blitBox._y1 = 0;
+			blitBox._rect.top = 0;
 			_vm->_eventMan->showMouse();
 
 			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
-				blitBox._y2 = 28;
-				blitBox._x1 = textPosX + 7;
-				blitBox._x2 = blitBox._x1 + 31; /* Box is over the champion portrait in the status box */
+				blitBox._rect.bottom = 28;
+				blitBox._rect.left = textPosX + 7;
+				blitBox._rect.right = blitBox._rect.left + 31; /* Box is over the champion portrait in the status box */
 				_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k16_damageToChampionBig), &blitBox, k16_byteWidth, kDMColorFlesh, 29);
 				// Check the number of digits and sets the position accordingly.
 				if (pendingDamage < 10) // 1 digit
@@ -1412,9 +1412,9 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 				textPosY = 16;
 			} else {
-				blitBox._y2 = 6;
-				blitBox._x1 = textPosX;
-				blitBox._x2 = blitBox._x1 + 47; /* Box is over the champion name in the status box */
+				blitBox._rect.bottom = 6;
+				blitBox._rect.left = textPosX;
+				blitBox._rect.right = blitBox._rect.left + 47; /* Box is over the champion name in the status box */
 				_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k15_damageToChampionSmallIndice), &blitBox, k24_byteWidth, kDMColorFlesh, 7);
 				// Check the number of digits and sets the position accordingly.
 				if (pendingDamage < 10) // 1 digit
@@ -2064,24 +2064,24 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 
 	// Strangerke - TO CHECK: if portraits, maybe the old (assembly) code is required for older versions
 	Box box;
-	box._x1 = champIndex * k69_ChampionStatusBoxSpacing + 46;
-	box._x2 = box._x1 + 3;
-	box._y1 = 2;
-	box._y2 = 26;
+	box._rect.left = champIndex * k69_ChampionStatusBoxSpacing + 46;
+	box._rect.right = box._rect.left + 3;
+	box._rect.top = 2;
+	box._rect.bottom = 26;
 	for (int16 barGraphIndex = 0; barGraphIndex < 3; barGraphIndex++) {
 		int16 barGraphHeight = barGraphHeights[barGraphIndex];
 		if (barGraphHeight < 25) {
-			box._y1 = 2;
-			box._y2 = 27 - barGraphHeight;
+			box._rect.top = 2;
+			box._rect.bottom = 27 - barGraphHeight;
 			_vm->_displayMan->fillScreenBox(box, kDMColorDarkestGray);
 		}
 		if (barGraphHeight) {
-			box._y1 = 27 - barGraphHeight;
-			box._y2 = 26;
+			box._rect.top = 27 - barGraphHeight;
+			box._rect.bottom = 26;
 			_vm->_displayMan->fillScreenBox(box, _championColor[champIndex]);
 		}
-		box._x1 += 7;
-		box._x2 += 7;
+		box._rect.left += 7;
+		box._rect.right += 7;
 	}
 	_vm->_eventMan->hideMouse();
 }
@@ -2127,10 +2127,10 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	_vm->_eventMan->showMouse();
 	if (getFlag(championAttributes, kDMAttributeStatusBox)) {
 		Box box;
-		box._y1 = 0;
-		box._y2 = 28;
-		box._x1 = championStatusBoxX;
-		box._x2 = box._x1 + 66;
+		box._rect.top = 0;
+		box._rect.bottom = 28;
+		box._rect.left = championStatusBoxX;
+		box._rect.right = box._rect.left + 66;
 		if (curChampion->_currHealth) {
 			_vm->_displayMan->fillScreenBox(box, kDMColorDarkestGray);
 			int16 nativeBitmapIndices[3];
@@ -2185,10 +2185,10 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			setFlag(championAttributes, kDMAttributeViewport);
 		} else {
 			Box box;
-			box._y1 = 0;
-			box._y2 = 6;
-			box._x1 = championStatusBoxX;
-			box._x2 = box._x1 + 42;
+			box._rect.top = 0;
+			box._rect.bottom = 6;
+			box._rect.left = championStatusBoxX;
+			box._rect.right = box._rect.left + 42;
 			_vm->_displayMan->fillScreenBox(box, kDMColorDarkGary);
 			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, kDMColorDarkGary, curChampion->_name);
 		}
@@ -2319,10 +2319,10 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 
 	SlotBox *slotBox = &_vm->_objectMan->_slotBoxes[slotBoxIndex];
 	Box box;
-	box._x1 = slotBox->_x - 1;
-	box._y1 = slotBox->_y - 1;
-	box._x2 = box._x1 + 17;
-	box._y2 = box._y1 + 17;
+	box._rect.left = slotBox->_x - 1;
+	box._rect.top = slotBox->_y - 1;
+	box._rect.right = box._rect.left + 17;
+	box._rect.bottom = box._rect.top + 17;
 
 	if (!isInventoryChamp)
 		_vm->_eventMan->hideMouse();
@@ -2385,10 +2385,10 @@ void ChampionMan::renameChampion(Champion *champ) {
 	static const char reincarnateSpecialCharacters[6] = {',', '.', ';', ':', ' '};
 
 	Box displayBox;
-	displayBox._y1 = 3;
-	displayBox._y2 = 8;
-	displayBox._x1 = 3;
-	displayBox._x2 = displayBox._x1 + 167;
+	displayBox._rect.top = 3;
+	displayBox._rect.bottom = 8;
+	displayBox._rect.left = 3;
+	displayBox._rect.right = displayBox._rect.left + 167;
 
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, displayBox, kDMColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k27_PanelRenameChampionIndice), _vm->_inventoryMan->_boxPanel, k72_byteWidth, kDMColorCyan, 73);

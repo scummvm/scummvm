@@ -371,25 +371,25 @@ public:
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {
 public:
-	int16 _x1;
-	int16 _x2;
-	int16 _y1;
-	int16 _y2;
+	Common::Rect _rect;
 
-	Box(int16 x1, int16 x2, int16 y1, int16 y2) : _x1(x1), _x2(x2), _y1(y1), _y2(y2) {}
+	Box(int16 x1, int16 x2, int16 y1, int16 y2) {
+		// +1 because Rect.constains is not inclusive for right and bottom, at the opposite of the isPointInside
+		_rect = Common::Rect(x1, y1, x2, y2);
+	}
+
 	Box() {}
-	template <typename T>
-	explicit Box(T *ptr) {
-		_x1 = *ptr++;
-		_x2 = *ptr++;
-		_y1 = *ptr++;
-		_y2 = *ptr++;
-	}
+
 	bool isPointInside(Common::Point point) {
-		return (_x1 <= point.x) && (point.x <= _x2) && (_y1 <= point.y) && (point.y <= _y2); // <= because incluseive boundaries
+		// not using Common::Rect::contains() because we need both boundaries to be included
+		return (_rect.left <= point.x) && (point.x <= _rect.right) && (_rect.top <= point.y) && (point.y <= _rect.bottom);
 	}
-	bool isPointInside(int16 x, int16 y) { return isPointInside(Common::Point(x, y)); }
-	void setToZero() { _x1 = _x2 = _y1 = _y2 = 0; }
+
+	bool isPointInside(int16 x, int16 y) {
+		return isPointInside(Common::Point(x, y));
+	}
+
+	void setToZero() { _rect = Common::Rect(0, 0, 0, 0); }
 }; // @ BOX_BYTE, BOX_WORD
 
 extern Box g2_BoxMovementArrows; // @ G0002_s_Graphic562_Box_MovementArrows

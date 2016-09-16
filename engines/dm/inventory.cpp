@@ -166,19 +166,19 @@ void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	DisplayMan &dispMan = *_vm->_displayMan;
 	dispMan._useByteBoxCoordinates = false;
 	Box box;
-	box._y1 = 0;
-	box._y2 = 28;
-	box._x1 = championIndex * k69_ChampionStatusBoxSpacing + 7;
-	box._x2 = box._x1 + 31;
+	box._rect.top = 0;
+	box._rect.bottom = 28;
+	box._rect.left = championIndex * k69_ChampionStatusBoxSpacing + 7;
+	box._rect.right = box._rect.left + 31;
 	dispMan.blitToScreen(_vm->_championMan->_champions[championIndex]._portrait, &box, k16_byteWidth, kDMColorNoTransparency, 29);
 }
 
 void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
 	Box box;
-	box._x1 = x;
-	box._x2 = box._x1 + pixelWidth;
-	box._y1 = y;
-	box._y2 = box._y1 + 6;
+	box._rect.left = x;
+	box._rect.right = box._rect.left + pixelWidth;
+	box._rect.top = y;
+	box._rect.bottom = box._rect.top + 6;
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, box, color, k112_byteWidthViewport, k136_heightViewport);
 }

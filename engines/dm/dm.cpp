@@ -520,11 +520,11 @@ void DMEngine::processEntrance() {
 	Box displayBox(0, 100, 0, 160);
 	for (uint16 idx = 1; idx < 4; idx++) {
 		_displayMan->blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kDMColorNoTransparency, 161, 161);
-		displayBox._x2 -= 4;
+		displayBox._rect.right -= 4;
 	}
-	displayBox._x2 = 127;
+	displayBox._rect.right = 127;
 	for (uint16 idx = 5; idx < 8; idx++) {
-		displayBox._x1 += 4;
+		displayBox._rect.left += 4;
 		_displayMan->blitToBitmap(_entranceDoorAnimSteps[4], _entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kDMColorNoTransparency, 161, 161);
 	}
 
@@ -643,10 +643,10 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 					Common::String displStr = Common::String::format("%s %s", _inventoryMan->_skillLevelNames[skillLevel - 2], _championMan->_baseSkillName[idx]);
 					_textMan->printEndGameString(105, textPosY = textPosY + 8, kDMColorLightestGray, displStr.c_str());
 				}
-				championMirrorBox._y1 += 48;
-				championMirrorBox._y2 += 48;
-				championPortraitBox._y1 += 48;
-				championPortraitBox._y1 += 48;
+				championMirrorBox._rect.top += 48;
+				championMirrorBox._rect.bottom += 48;
+				championPortraitBox._rect.top += 48;
+				championPortraitBox._rect.top += 48;
 			}
 			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 			_engineShouldQuit = true;
@@ -798,9 +798,9 @@ void DMEngine::openEntranceDoors() {
 		_eventMan->discardAllInput();
 		_displayMan->updateScreen();
 
-		leftDoorBox._x2 -= 4;
+		leftDoorBox._rect.right -= 4;
 		leftDoorBlitFrom += 4;
-		rightDoorBox._x1 += 4;
+		rightDoorBox._rect.left += 4;
 
 		delay(3);
 	}
@@ -869,7 +869,7 @@ void DMEngine::drawTittle() {
 	delay(1);
 	for (int16 i = 0; i < 18; i++) {
 		delay(2);
-		Box box(blitCoordinates[i]);
+		Box box(blitCoordinates[i][0], blitCoordinates[i][1], blitCoordinates[i][2], blitCoordinates[i][3]);
 		_displayMan->blitToBitmap(shrinkedTitle[i], _displayMan->_bitmapScreen, box, 0, 0, blitCoordinates[i][4], k160_byteWidthScreen, kDMColorNoTransparency, blitCoordinates[i][3] - blitCoordinates[i][2] + 1, k200_heightScreen);
 	}
 	delay(25);

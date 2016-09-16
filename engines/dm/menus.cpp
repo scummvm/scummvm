@@ -191,10 +191,10 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	Champion &champion = _vm->_championMan->_champions[championIndex];
 
 	Box box;
-	box._x1 = championIndex * 22 + 233;
-	box._x2 = box._x1 + 19;
-	box._y1 = 86;
-	box._y2 = 120;
+	box._rect.left = championIndex * 22 + 233;
+	box._rect.right = box._rect.left + 19;
+	box._rect.top = 86;
+	box._rect.bottom = 120;
 	dm._useByteBoxCoordinates = false;
 	if (!champion._currHealth) {
 		dm.fillScreenBox(box, kDMColorBlack);
@@ -216,10 +216,10 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 T0386006:
 	dm.fillScreenBox(box, kDMColorCyan);
 	Box box2;
-	box2._x1 = box._x1 + 2;
-	box2._x2 = box._x2 - 2;
-	box2._y1 = 95;
-	box2._y2 = 110;
+	box2._rect.left = box._rect.left + 2;
+	box2._rect.right = box._rect.right - 2;
+	box2._rect.top = 95;
+	box2._rect.bottom = 110;
 	dm.blitToScreen(bitmapIcon, &box2, k8_byteWidth, kDMColorNoTransparency, 16);
 	if (champion.getAttributes(kDMAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
 		_vm->_displayMan->shadeScreenBox(&box, kDMColorBlack);

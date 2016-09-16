@@ -976,7 +976,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 	}
 	uint16 movementArrowIdx = cmdType - kDMCommandMoveForward;
 	Box *highlightBox = &boxMovementArrows[movementArrowIdx];
-	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
+	commandHighlightBoxEnable(highlightBox->_rect.left, highlightBox->_rect.right, highlightBox->_rect.top, highlightBox->_rect.bottom);
 	int16 partyMapX = _vm->_dungeonMan->_partyMapX;
 	int16 partyMapY = _vm->_dungeonMan->_partyMapY;
 
@@ -1255,10 +1255,10 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		}
 		champMan._partyChampionCount--;
 		Box box;
-		box._y1 = 0;
-		box._y2 = 28;
-		box._x1 = championIndex * k69_ChampionStatusBoxSpacing;
-		box._x2 = box._x1 + 66;
+		box._rect.top = 0;
+		box._rect.bottom = 28;
+		box._rect.left = championIndex * k69_ChampionStatusBoxSpacing;
+		box._rect.right = box._rect.left + 66;
 		dispMan._useByteBoxCoordinates = false;
 		dispMan.fillScreenBox(box, kDMColorBlack);
 		dispMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[champMan.getChampionIconIndex(champ->_cell, dunMan._partyDir) * 2], kDMColorBlack);
@@ -1479,9 +1479,9 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 		memset(tmpBitmap, 0, 32 * 18);
 		Box *curChampionIconBox = &_vm->_championMan->_boxChampionIcons[champIconIndex];
 
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
 		_vm->_displayMan->blitToBitmapShrinkWithPalChange(tmpBitmap, _mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, _mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_x1, curChampionIconBox->_y1, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, _mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
 		_vm->_displayMan->fillScreenBox(*curChampionIconBox, kDMColorBlack);
 		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(champIconIndex);
 	} else {
@@ -1587,7 +1587,7 @@ void EventManager::commandProcessTypes101To108_clickInSpellSymbolsArea(CommandTy
 
 	uint16 symbolIndex = cmdType - kDMCommandClickInSpellAreaSymbol1;
 	Box *highlightBox = &spellSymbolsAndDelete[symbolIndex];
-	commandHighlightBoxEnable(highlightBox->_x1, highlightBox->_x2, highlightBox->_y1, highlightBox->_y2);
+	commandHighlightBoxEnable(highlightBox->_rect.left, highlightBox->_rect.right, highlightBox->_rect.top, highlightBox->_rect.bottom);
 	_vm->delay(1);
 	highlightBoxDisable();
 
@@ -1665,7 +1665,7 @@ void EventManager::commandHighlightBoxEnable(int16 x1, int16 x2, int16 y1, int16
 
 void EventManager::highlightBoxDisable() {
 	if (_highlightBoxEnabled == true) {
-		highlightScreenBox(_highlightScreenBox._x1, _highlightScreenBox._x2, _highlightScreenBox._y1, _highlightScreenBox._y2);
+		highlightScreenBox(_highlightScreenBox._rect.left, _highlightScreenBox._rect.right, _highlightScreenBox._rect.top, _highlightScreenBox._rect.bottom);
 		_highlightBoxEnabled = false;
 	}
 }

@@ -205,10 +205,10 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		return;
 
 	Box blitBox;
-	blitBox._x1 = slotBox->_x;
-	blitBox._x2 = blitBox._x1 + 15;
-	blitBox._y1 = slotBox->_y;
-	blitBox._y2 = blitBox._y1 + 15;
+	blitBox._rect.left = slotBox->_x;
+	blitBox._rect.right = blitBox._rect.left + 15;
+	blitBox._rect.top = slotBox->_y;
+	blitBox._rect.bottom = blitBox._rect.top + 15;
 
 	uint16 iconGraphicIndex;
 	for (iconGraphicIndex = 0; iconGraphicIndex < 7; iconGraphicIndex++) {

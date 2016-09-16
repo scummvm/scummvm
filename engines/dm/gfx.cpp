@@ -769,10 +769,10 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		if (doorButton == kDMDoorButtonD1C) {
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._x1 = coordSetRedEagle[0];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._x2 = coordSetRedEagle[1];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._y1 = coordSetRedEagle[2];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.left = coordSetRedEagle[0];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.right = coordSetRedEagle[1];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.top = coordSetRedEagle[2];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.bottom = coordSetRedEagle[3];
 		} else {
 			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
@@ -862,27 +862,27 @@ void DisplayMan::blitToBitmap(byte *srcBitmap, byte *destBitmap, const Box &box,
 								   uint16 destByteWidth, Color transparent, int16 srcHeight, int16 destHight) {
 	uint16 srcWidth = srcByteWidth * 2;
 	uint16 destWidth = destByteWidth * 2;
-	for (uint16 y = 0; y < box._y2 + 1 - box._y1; ++y) { // + 1 for inclusive boundaries
-		for (uint16 x = 0; x < box._x2 + 1 - box._x1; ++x) { // + 1 for inclusive boundaries
+	for (uint16 y = 0; y < box._rect.bottom + 1 - box._rect.top; ++y) { // + 1 for inclusive boundaries
+		for (uint16 x = 0; x < box._rect.right + 1 - box._rect.left; ++x) { // + 1 for inclusive boundaries
 			if (srcX + x < srcWidth && y + srcY < srcHeight
-				&& box._x1 + x < destWidth && y + box._y1 < destHight) {
+				&& box._rect.left + x < destWidth && y + box._rect.top < destHight) {
 				byte srcPixel = srcBitmap[srcWidth * (y + srcY) + srcX + x];
 				if (srcPixel != transparent)
-					destBitmap[destWidth * (y + box._y1) + box._x1 + x] = srcPixel;
+					destBitmap[destWidth * (y + box._rect.top) + box._rect.left + x] = srcPixel;
 			}
 		}
 	}
 }
 
 void DisplayMan::fillScreenBox(Box &box, Color color) {
-	uint16 width = box._x2 + 1 - box._x1; // + 1 for inclusive boundaries
-	for (int16 y = box._y1; y < box._y2 + 1; ++y) // + 1 for inclusive boundaries
-		memset(_bitmapScreen + y * _screenWidth + box._x1, color, sizeof(byte) * width);
+	uint16 width = box._rect.right + 1 - box._rect.left; // + 1 for inclusive boundaries
+	for (int16 y = box._rect.top; y < box._rect.bottom + 1; ++y) // + 1 for inclusive boundaries
+		memset(_bitmapScreen + y * _screenWidth + box._rect.left, color, sizeof(byte) * width);
 }
 
 void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 byteWidth, int16 height) {
-	for (int16 y = box._y1; y < box._y2 + 1; ++y) // + 1 for inclusive boundaries
-		memset(destBitmap + y * byteWidth * 2 + box._x1, color, sizeof(byte) * (box._x2 - box._x1 + 1)); // + 1 for inclusive boundaries
+	for (int16 y = box._rect.top; y < box._rect.bottom + 1; ++y) // + 1 for inclusive boundaries
+		memset(destBitmap + y * byteWidth * 2 + box._rect.left, color, sizeof(byte) * (box._rect.right - box._rect.left + 1)); // + 1 for inclusive boundaries
 }
 
 void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box& box,
@@ -894,8 +894,8 @@ void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask
 	byte nextUnitIndex = firstUnitIndex;
 	bool useMask = !(transparent & k0x0080_BlitDoNotUseMask);
 	transparent = (Color)(transparent & ~(k0x0080_BlitDoNotUseMask)); // clear flag 0x0080
-	for (byte next_y = box._y1; next_y <= box._y2; next_y++) { // '<=' for inclusive boundaries
-		for (byte next_x = box._x1; next_x <= box._x2; next_x++) { // '<=' for inclusive boundaries
+	for (byte next_y = box._rect.top; next_y <= box._rect.bottom; next_y++) { // '<=' for inclusive boundaries
+		for (byte next_x = box._rect.left; next_x <= box._rect.right; next_x++) { // '<=' for inclusive boundaries
 			byte *nextDestPixel = dest + next_y * destByteWidth * 2 + next_x;
 			byte nextSrcPixel = src[nextUnitIndex];
 
@@ -1930,7 +1930,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			isDerivedBitmapInCache(kDMDerivedBitmapThievesEyeVisibleArea);
 			blitToBitmap(_bitmapViewport, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
-							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._x1, _boxThievesEyeViewPortVisibleArea._y1,
+							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._rect.left, _boxThievesEyeViewPortVisibleArea._rect.top,
 							  k112_byteWidthViewport, 48, kDMColorNoTransparency, 136, 95);
 			byte *bitmap = getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice);
 			blitToBitmap(bitmap, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
@@ -2061,7 +2061,7 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 		if (_vm->_championMan->_party._event73Count_ThievesEye) {
 			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
 			blitToBitmap(getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
-							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._x1 - _boxThievesEyeViewPortVisibleArea._x1,
+							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._rect.left - _boxThievesEyeViewPortVisibleArea._rect.left,
 							  0, 48, 16, kDMColorGold, 95, 123);
 			drawWallSetBitmap(_tmpBitmap, doorFrameD0C);
 		} else
@@ -2099,7 +2099,7 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_dungeonViewClickableBoxes[i].setToZero();
 
 	for (uint16 i = 0; i < 6; ++i)
-		_vm->_dungeonMan->_dungeonViewClickableBoxes[i]._x1 = 255;
+		_vm->_dungeonMan->_dungeonViewClickableBoxes[i]._rect.left = 255;
 
 	_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1;
 	if (_useFlippedWallAndFootprintsBitmap) {
@@ -2530,7 +2530,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		46, 57, 68    /* D1L Right, D1R Left */
 	};
 
-	static byte g205_WallOrnCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
+	static byte wallOrnamentCoordSets[8][13][6] = { // @ G0205_aaauc_Graphic558_WallOrnamentCoordinateSets
 		/* { X1, X2, Y1, Y2, ByteWidth, Height } */
 		{
 			{80,  83, 41,  45,  8,   5},   /* D3L */
@@ -2662,7 +2662,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	int16 wallOrnamentIndex = wallOrnOrd;
 	int16 ornNativeBitmapIndex = _currMapWallOrnInfo[wallOrnamentIndex].nativeIndice;
 	int16 wallOrnamentCoordinateSetIndex = _currMapWallOrnInfo[wallOrnamentIndex].coordinateSet;
-	byte *ornCoordSet = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
+	byte *ornCoordSet = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
 	bool isAlcove = _vm->_dungeonMan->isWallOrnAnAlcove(wallOrnamentIndex);
 	unsigned char inscriptionString[70];
 	bool isInscription = (wallOrnamentIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex);
@@ -2686,18 +2686,18 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 						characterCount++;
 					}
 					Frame blitFrame;
-					blitFrame._box._x2 = (blitFrame._box._x1 = 112 - (characterCount << 2)) + 7;
-					blitFrame._box._y1 = (blitFrame._box._y2 = inscriptionLineY[textLineIndex++]) - 7;
+					blitFrame._box._rect.right = (blitFrame._box._rect.left = 112 - (characterCount << 2)) + 7;
+					blitFrame._box._rect.top = (blitFrame._box._rect.bottom = inscriptionLineY[textLineIndex++]) - 7;
 					while (characterCount--) {
 						blitToBitmap(L0092_puc_Bitmap, _bitmapViewport, blitFrame._box, *inscrString++ << 3, 0, k144_byteWidth, k112_byteWidthViewport, kDMColorFlesh, 8, k136_heightViewport);
-						blitFrame._box._x1 += 8;
-						blitFrame._box._x2 += 8;
+						blitFrame._box._rect.left += 8;
+						blitFrame._box._rect.right += 8;
 					}
 				} while (*inscrString++ != 129); /* Hexadecimal: 0x81 (Megamax C does not support hexadecimal character constants) */
 				return isAlcove;
 			}
 			ornNativeBitmapIndex++;
-			Box tmpBox(ornCoordSet);
+			Box tmpBox(ornCoordSet[0], ornCoordSet[1], ornCoordSet[2], ornCoordSet[3]);
 			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn] = tmpBox;
 			_vm->_dungeonMan->_isFacingAlcove = isAlcove;
 			_vm->_dungeonMan->_isFacingViAltar =
@@ -2720,12 +2720,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		int16 coordinateSetOffset = 0;
 		bool flipHorizontal = (viewWallIndex == kDMViewWallD2RLeft) || (viewWallIndex == kDMViewWallD3RLeft);
 		if (flipHorizontal)
-			ornBlitBitmap = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1RLeft];
+			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1RLeft];
 		else if ((viewWallIndex == kDMViewWallD2LRight) || (viewWallIndex == kDMViewWallD3LRight))
-			ornBlitBitmap = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1LRight];
+			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1LRight];
 		else {
 			ornNativeBitmapIndex++;
-			ornBlitBitmap = g205_WallOrnCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1CFront];
+			ornBlitBitmap = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][kDMViewWallD1CFront];
 			if (viewWallIndex == kDMViewWallD2LFront)
 				coordinateSetOffset = 6;
 			else if (viewWallIndex == kDMViewWallD2RFront)
@@ -2767,9 +2767,8 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 		}
 	}
 
-	Box tmpBox(ornCoordSet);
-	blitToBitmap(ornBlitBitmap, _bitmapViewport, tmpBox,
-		blitPosX, 0,
+	Box tmpBox(ornCoordSet[0], ornCoordSet[1], ornCoordSet[2], ornCoordSet[3]);
+	blitToBitmap(ornBlitBitmap, _bitmapViewport, tmpBox, blitPosX, 0,
 		ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
 
 	if ((viewWallIndex == kDMViewWallD1CFront) && _championPortraitOrdinal--) {
@@ -3209,10 +3208,10 @@ T0115015_DrawProjectileAsObject:
 					}
 				}
 				AL_4_xPos = coordinateSet[0];
-				boxByteGreen._y2 = coordinateSet[1];
+				boxByteGreen._rect.bottom = coordinateSet[1];
 				if (!drawProjectileAsObject) { /* If drawing an object that is not a projectile */
 					AL_4_xPos += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][0]];
-					boxByteGreen._y2 += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][1]];
+					boxByteGreen._rect.bottom += shiftSets[AL_8_shiftSetIndex][objectPileShiftSetIndices[objectShiftIndex][1]];
 					objectShiftIndex++; /* The next object drawn will use the next shift values */
 					if (L0135_B_DrawAlcoveObjects) {
 						if (objectShiftIndex >= 14)
@@ -3220,13 +3219,13 @@ T0115015_DrawProjectileAsObject:
 					} else
 						objectShiftIndex &= 0x000F;
 				}
-				boxByteGreen._y1 = boxByteGreen._y2 - (heightRedEagle - 1);
-				if (boxByteGreen._y2 > 135)
-					boxByteGreen._y2 = 135;
+				boxByteGreen._rect.top = boxByteGreen._rect.bottom - (heightRedEagle - 1);
+				if (boxByteGreen._rect.bottom > 135)
+					boxByteGreen._rect.bottom = 135;
 
-				boxByteGreen._x2 = MIN(223, AL_4_xPos + byteWidth);
-				boxByteGreen._x1 = MAX(0, AL_4_xPos - byteWidth + 1);
-				if (boxByteGreen._x1) {
+				boxByteGreen._rect.right = MIN(223, AL_4_xPos + byteWidth);
+				boxByteGreen._rect.left = MAX(0, AL_4_xPos - byteWidth + 1);
+				if (boxByteGreen._rect.left) {
 					if (flipHorizontal)
 						AL_4_xPos = paddingPixelCount;
 					else
@@ -3239,19 +3238,19 @@ T0115015_DrawProjectileAsObject:
 
 					Box *AL_6_box = &_vm->_dungeonMan->_dungeonViewClickableBoxes[AL_2_viewCell];
 
-					if (AL_6_box->_x1 == 255) { /* If the grabbable object is the first */
+					if (AL_6_box->_rect.left == 255) { /* If the grabbable object is the first */
 						*AL_6_box = boxByteGreen;
-						if ((heightGreenGoat = AL_6_box->_y2 - AL_6_box->_y1) < 14) { /* If the box is too small then enlarge it a little */
+						if ((heightGreenGoat = AL_6_box->_rect.bottom - AL_6_box->_rect.top) < 14) { /* If the box is too small then enlarge it a little */
 							heightGreenGoat = heightGreenGoat >> 1;
-							AL_6_box->_y1 += heightGreenGoat - 7;
+							AL_6_box->_rect.top += heightGreenGoat - 7;
 							if (heightGreenGoat < 4)
-								AL_6_box->_y2 -= heightGreenGoat - 3;
+								AL_6_box->_rect.bottom -= heightGreenGoat - 3;
 						}
 					} else { /* If there are several grabbable objects then enlarge the box so it includes all objects */
-						AL_6_box->_x1 = MIN(AL_6_box->_x1, boxByteGreen._x1);
-						AL_6_box->_x2 = MAX(AL_6_box->_x2, boxByteGreen._x2);
-						AL_6_box->_y1 = MIN(AL_6_box->_y1, boxByteGreen._y1);
-						AL_6_box->_y2 = MAX(AL_6_box->_y2, boxByteGreen._y2);
+						AL_6_box->_rect.left = MIN(AL_6_box->_rect.left, boxByteGreen._rect.left);
+						AL_6_box->_rect.right = MAX(AL_6_box->_rect.right, boxByteGreen._rect.right);
+						AL_6_box->_rect.top = MIN(AL_6_box->_rect.top, boxByteGreen._rect.top);
+						AL_6_box->_rect.bottom = MAX(AL_6_box->_rect.bottom, boxByteGreen._rect.bottom);
 					}
 					bitmapRedBanana = bitmapGreenAnt;
 					_vm->_dungeonMan->_pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
@@ -3471,8 +3470,8 @@ T0115077_DrawSecondHalfSquareCreature:
 		}
 		AL_4_yPos = coordinateSet[1];
 		AL_4_yPos += shiftSets[AL_8_shiftSetIndex][getVerticalOffsetM23(creatureAspectInt)];
-		boxByteGreen._y2 = MIN(AL_4_yPos, (int16)135);
-		boxByteGreen._y1 = MAX(0, AL_4_yPos - (heightRedEagle - 1));
+		boxByteGreen._rect.bottom = MIN(AL_4_yPos, (int16)135);
+		boxByteGreen._rect.top = MAX(0, AL_4_yPos - (heightRedEagle - 1));
 		AL_4_xPos = coordinateSet[0];
 		AL_4_xPos += shiftSets[AL_8_shiftSetIndex][getHorizontalOffsetM22(creatureAspectInt)];
 
@@ -3481,14 +3480,14 @@ T0115077_DrawSecondHalfSquareCreature:
 		else if (viewLane != kDMViewLaneCenter) /* Lane right */
 			AL_4_xPos += 100;
 
-		boxByteGreen._x2 = CLIP(0, AL_4_xPos + byteWidth, 223);
+		boxByteGreen._rect.right = CLIP(0, AL_4_xPos + byteWidth, 223);
 
-		if (!boxByteGreen._x2)
+		if (!boxByteGreen._rect.right)
 			goto T0115126_CreatureNotVisible;
 		int16 AL_0_creaturePosX;
-		boxByteGreen._x1 = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
-		if (boxByteGreen._x1) {
-			if (boxByteGreen._x1 == 223)
+		boxByteGreen._rect.left = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
+		if (boxByteGreen._rect.left) {
+			if (boxByteGreen._rect.left == 223)
 				goto T0115126_CreatureNotVisible;
 			AL_0_creaturePosX = creaturePaddingPixelCount;
 		} else
@@ -3609,11 +3608,11 @@ T0115129_DrawProjectiles:
 						if (flipHorizontal)
 							flipBitmapHorizontal(bitmapRedBanana, AL_4_normalizdByteWidth, heightRedEagle);
 					}
-					boxByteGreen._y2 = (heightRedEagle >> 1) + 47;
-					boxByteGreen._y1 = 47 - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001);
-					boxByteGreen._x2 = MIN(223, projectilePosX + byteWidth);
-					boxByteGreen._x1 = MAX(0, projectilePosX - byteWidth + 1);
-					if (boxByteGreen._x1) {
+					boxByteGreen._rect.bottom = (heightRedEagle >> 1) + 47;
+					boxByteGreen._rect.top = 47 - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001);
+					boxByteGreen._rect.right = MIN(223, projectilePosX + byteWidth);
+					boxByteGreen._rect.left = MAX(0, projectilePosX - byteWidth + 1);
+					if (boxByteGreen._rect.left) {
 						if (flipHorizontal)
 							AL_4_xPos = paddingPixelCount;
 						else
@@ -3732,19 +3731,19 @@ T0115200_DrawExplosion:
 				if (flipHorizontal)
 					paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1; /* Number of unused pixels in the units on the right of the bitmap */
 
-				boxByteGreen._y2 = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1));
+				boxByteGreen._rect.bottom = MIN(135, explosionCoordinates[1] + (heightRedEagle >> 1));
 				AL_4_yPos = MAX(0, explosionCoordinates[1] - (heightRedEagle >> 1) + !(heightRedEagle & 0x0001));
 				if (AL_4_yPos >= 136)
 					continue;
-				boxByteGreen._y1 = AL_4_yPos;
+				boxByteGreen._rect.top = AL_4_yPos;
 				AL_4_xPos = MIN(223, explosionCoordinates[0] + byteWidth);
 				if (AL_4_xPos < 0)
 					continue;
-				boxByteGreen._x2 = AL_4_xPos;
+				boxByteGreen._rect.right = AL_4_xPos;
 				AL_4_xPos = explosionCoordinates[0];
-				boxByteGreen._x1 = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
+				boxByteGreen._rect.left = CLIP(0, AL_4_xPos - byteWidth + 1, 223);
 
-				if (boxByteGreen._x1)
+				if (boxByteGreen._rect.left)
 					AL_4_xPos = paddingPixelCount;
 				else {
 					AL_4_xPos = MAX(paddingPixelCount, int16(byteWidth - AL_4_xPos - 1)); /* BUG0_07 Graphical glitch when drawing explosions. If an explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is not flipped horizontally (flipHorizontal = false) then the variable paddingPixelCount is not set before being used here. Its previous value (defined while drawing something else) is used and may cause an incorrect bitmap to be drawn */
@@ -3752,7 +3751,7 @@ T0115200_DrawExplosion:
 																				   /* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = true) then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 				}
 
-				if (boxByteGreen._x2 <= boxByteGreen._x1)
+				if (boxByteGreen._rect.right <= boxByteGreen._rect.left)
 					continue;
 
 				byteWidth = getNormalizedByteWidth(byteWidth);
