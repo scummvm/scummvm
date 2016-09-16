@@ -330,6 +330,17 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		}
 		s.syncAsUint32LE(obj.playTime);
 	}
+
+	if (s.getVersion() >= 38) {
+		if (s.isSaving()) {
+			obj.score = g_sci->getEngineState()->variables[VAR_GLOBAL][kScore].toUint16();
+			if (g_sci->getGameId() == GID_SHIVERS) {
+				obj.score |= g_sci->getEngineState()->variables[VAR_GLOBAL][kShivers1Score].toUint16() << 16;
+			}
+		}
+
+		s.syncAsUint32LE(obj.score);
+	}
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {

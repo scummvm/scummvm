@@ -328,50 +328,42 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef ENABLE_SCI32
-	// Shivers is trying to store savegame descriptions and current spots in
-	// separate .SG files, which are hardcoded in the scripts.
-	// Essentially, there is a normal save file, created by the executable
-	// and an extra hardcoded save file, created by the game scripts, probably
-	// because they didn't want to modify the save/load code to add the extra
-	// information.
-	// Each slot in the book then has two strings, the save description and a
-	// description of the current spot that the player is at.
-	// For now, we don't allow the creation of these files, which means that
-	// all the spot descriptions next to each slot description will be empty.
-	// Until a viable solution is found to handle these
-	// extra files and until the spot description strings are initialized
-	// correctly, we resort to virtual files in order to make the load screen
-	// useable. Without this code it is unusable, as the extra information is
-	// always saved to 0.SG for some reason, but on restore the correct file is
-	// used. Perhaps the virtual ID is not taken into account when saving.
-	//
-	// Future TODO: maintain spot descriptions and show them too, ideally without
-	// having to return to this logic of extra hardcoded files.
+	// Shivers stores the name and score of save games in separate %d.SG files,
+	// which are used by the save/load screen
 	if (g_sci->getGameId() == GID_SHIVERS && name.hasSuffix(".SG")) {
 		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
-			// Game scripts are trying to create a file with the save
-			// description, stop them here
+			// Suppress creation of the SG file, since it is not necessary
 			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
 			return SIGNAL_REG;
 		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 			// Create a virtual file containing the save game description
 			// and slot number, as the game scripts expect.
-			int slotNumber;
-			sscanf(name.c_str(), "%d.SG", &slotNumber);
+			int saveNo;
+			sscanf(name.c_str(), "%d.SG", &saveNo);
 
-			Common::Array<SavegameDesc> saves;
-			listSavegames(saves);
-			int savegameNr = findSavegame(saves, slotNumber);
-			assert(savegameNr >= 0);
+			SavegameDesc save;
+			fillSavegameDesc(g_sci->getSavegameName(saveNo), &save);
+			Common::String score;
+			const uint16 lowScore = save.score & 0xFFFF;
+			const uint16 highScore = save.score >> 16;
 
-			int size = strlen(saves[savegameNr].name) + 2;
-			char *buf = (char *)malloc(size);
-			strcpy(buf, saves[savegameNr].name);
-			buf[size - 1] = 0; // Spot description (empty)
+			if (!highScore) {
+				score = Common::String::format("%u", lowScore);
+			} else {
+				score = Common::String::format("%u%03u", highScore, lowScore);
+			}
 
-			uint handle = findFreeFileHandle(s);
+			const uint nameLength = strlen(save.name);
+			const uint size = nameLength + /* \r\n */ 2 + score.size();
+			char *buffer = (char *)malloc(size);
+			memcpy(buffer, save.name, nameLength);
+			buffer[nameLength] = '\r';
+			buffer[nameLength + 1] = '\n';
+			memcpy(buffer + nameLength + 2, score.c_str(), score.size());
 
-			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buf, size, DisposeAfterUse::YES);
+			const uint handle = findFreeFileHandle(s);
+
+			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buffer, size, DisposeAfterUse::YES);
 			s->_fileHandles[handle]._out = nullptr;
 			s->_fileHandles[handle]._name = "";
 
