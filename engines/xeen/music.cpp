@@ -297,7 +297,7 @@ int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
 
 void AdlibMusicDriver::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
-	debugC(9, kDebugSound, "%.2x %2x", reg, val);
+	debugC(9, kDebugSound, "%.2x %.2x", reg, val);
 }
 
 void AdlibMusicDriver::flush() {
