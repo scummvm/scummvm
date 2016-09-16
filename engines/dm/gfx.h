@@ -111,6 +111,7 @@ enum ViewWall {
 };
 
 enum CellOrder {
+	kDMCellOrderNone = 0xFFFF,
 	kDMCellOrderAlcove = 0x0000,                                  // @ C0000_CELL_ORDER_ALCOVE
 	kDMCellOrderBackLeft = 0x0001,                                // @ C0001_CELL_ORDER_BACKLEFT
 	kDMCellOrderBackRight = 0x0002,                               // @ C0002_CELL_ORDER_BACKRIGHT

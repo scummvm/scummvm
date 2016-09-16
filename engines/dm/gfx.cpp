@@ -1337,7 +1337,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 		Frame(180, 197, 28, 67, 24, 41, 24, 0)	/* Right Horizontal Closed three fourth */
 	);
 
-	CellOrder order;
+	CellOrder order = kDMCellOrderNone;
 	uint16 squareAspect[5];
 	bool skip = false;
 
@@ -2890,9 +2890,9 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 #define AL_8_shiftSetIndex        L0150_ui_Multiple
 #define AL_8_projectileScaleIndex L0150_ui_Multiple
 	CreatureAspect* creatureAspectStruct;
-	int16 creatureSize;
+	int16 creatureSize = 0;
 	int16 creatureDirectionDelta;
-	int16 creatureGraphicInfoGreen;
+	int16 creatureGraphicInfoGreen = 0;
 	int16 creatureGraphicInfoRed;
 	int16 creatureAspectInt;
 	int16 creatureIndexGreen;
@@ -2906,7 +2906,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	bool useFlippedHorizontallyCreatureFrontImage;
 	bool drawCreaturesCompleted; /* Set to true when the last creature that the function should draw is being drawn. This is used to avoid processing the code to draw creatures for the remaining square cells */
 	int16 doorFrontViewDrawingPass; /* Value 0, 1 or 2 */
-	int16 projectilePosX;
+	int16 projectilePosX = 0;
 	int16 projectileDirection;
 	int16 projectileAspectType;
 	int16 projectileBitmapIndexDelta;
@@ -3115,8 +3115,8 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	AL_10_viewSquareIndexBackup = viewSquareIndex;
 	viewLane = (ViewLane)((viewSquareIndex + 3) % 3);
 	bool twoHalfSquareCreaturesFrontView;
-	byte *bitmapRedBanana;
-	byte *bitmapGreenAnt;
+	byte *bitmapRedBanana = nullptr;
+	byte *bitmapGreenAnt = nullptr;
 	do {
 		/* Draw objects */
 		if (L0135_B_DrawAlcoveObjects) {
