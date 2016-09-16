@@ -272,7 +272,7 @@ public:
 	void commandProcessCommands160To162ClickInResurrectReincarnatePanel(CommandType commandType); // @ F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
 	void commandProcess81ClickInPanel(int16 x, int16 y); // @ F0378_COMMAND_ProcessType81_ClickInPanel
 	void processType80_clickInDungeonView_grabLeaderHandObject(uint16 viewCell); // @ F0373_COMMAND_ProcessType80_ClickInDungeonView_GrabLeaderHandObject
-	void processType80_clickInDungeonViewDropLeaderHandObject(uint16 viewCell); // @ F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject
+	void clickInDungeonViewDropLeaderHandObject(uint16 viewCell); // @ F0374_COMMAND_ProcessType80_ClickInDungeonView_DropLeaderHandObject
 
 	bool hasPendingClick(Common::Point &point, MouseButton button); // @ F0360_COMMAND_ProcessPendingClick
 	void drawSleepScreen(); // @ F0379_COMMAND_DrawSleepScreen

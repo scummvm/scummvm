@@ -133,10 +133,81 @@ enum CellOrder {
 	kDMCellOrderBackRightBackLeftFrontRightFrontLeft = 0x4312 // @ C4312_CELL_ORDER_BACKRIGHT_BACKLEFT_FRONTRIGHT_FRONTLEFT
 };
 
+enum DerivedBitmap {
+	kDMDerivedBitmapViewport = 0, // @ C000_DERIVED_BITMAP_VIEWPORT
+	kDMDerivedBitmapThievesEyeVisibleArea = 1, // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA
+	kDMDerivedBitmapDamageToCreatureMedium = 2, // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM
+	kDMDerivedBitmapDamageToCreatureSmall = 3, // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL
+	kDMDerivedBitmapFirstWallOrnament = 4, // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT
+	kDMDerivedBitmapFirstDoorOrnamentD3 = 68, // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3
+	kDMDerivedBitmapFirstDoorOrnamentD2 = 69, // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2
+	kDMDerivedBitmapFirstDoorButton = 102, // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON
+	kDMDerivedBitmapFirstObject = 104, // @ C104_DERIVED_BITMAP_FIRST_OBJECT
+	kDMDerivedBitmapFirstProjectile = 282, // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE
+	kDMDerivedBitmapFirstExplosion = 438, // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION
+	kDMDerivedBitmapFirstCreature = 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE
+};
+
+enum ViewSquare {
+	kDMViewSquareD4C = -3, // @ CM3_VIEW_SQUARE_D4C
+	kViewSquareD4L = -2, // @ CM2_VIEW_SQUARE_D4L
+	kDMViewSquareD4R = -1, // @ CM1_VIEW_SQUARE_D4R
+	kDMViewSquareD3C = 0, // @ C00_VIEW_SQUARE_D3C
+	kDMViewSquareD3L = 1, // @ C01_VIEW_SQUARE_D3L
+	kDMViewSquareD3R = 2, // @ C02_VIEW_SQUARE_D3R
+	kDMViewSquareD2C = 3, // @ C03_VIEW_SQUARE_D2C
+	kDMViewSquareD2L = 4, // @ C04_VIEW_SQUARE_D2L
+	kDMViewSquareD2R = 5, // @ C05_VIEW_SQUARE_D2R
+	kDMViewSquareD1C = 6, // @ C06_VIEW_SQUARE_D1C
+	kDMViewSquareD1L = 7, // @ C07_VIEW_SQUARE_D1L
+	kDMViewSquareD1R = 8, // @ C08_VIEW_SQUARE_D1R
+	kDMViewSquareD0C = 9, // @ C09_VIEW_SQUARE_D0C
+	kDMViewSquareD0L = 10, // @ C10_VIEW_SQUARE_D0L
+	kDMViewSquareD0R = 11, // @ C11_VIEW_SQUARE_D0R
+	kDMViewSquareD3CExplosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
+	kDMViewSquareD3LExplosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
+	kDMViewSquareD1CExplosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
+	kDMViewSquareD0CExplosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
+};
+
+enum ViewCell {
+	kDMViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
+	kDMViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
+	kDMViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
+	kDMViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
+	kDMViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
+	kDMViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
+};
+
+enum Color {
+	kDMColorNoTransparency = -1,
+	kDMColorBlack = 0,
+	kDMColorDarkGary = 1,
+	kDMColorLightGray = 2,
+	kDMColorDarkBrown = 3,
+	kDMColorCyan = 4,
+	kDMColorLightBrown = 5,
+	kDMColorDarkGreen = 6,
+	kDMColorLightGreen = 7,
+	kDMColorRed = 8,
+	kDMColorGold = 9,
+	kDMColorFlesh = 10,
+	kDMColorYellow = 11,
+	kDMColorDarkestGray = 12,
+	kDMColorLightestGray = 13,
+	kDMColorBlue = 14,
+	kDMColorWhite = 15
+};
+
 #define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH
 #define kDMMaskDoorInfoProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
 #define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED
 #define kDMMaskDoorFront 0x0008 // @ MASK0x0008_DOOR_FRONT
+
+/* Field Aspect Mask */
+#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK
+#define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
+#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK
 
 #define kDMCreatureMaskAdditional 0x0003 // @ MASK0x0003_ADDITIONAL
 #define kDMCreatureMaskFlipNonAttack 0x0004 // @ MASK0x0004_FLIP_NON_ATTACK
@@ -181,61 +252,6 @@ enum CellOrder {
 #define k303_FirstDoorOrn 303 // @ C303_GRAPHIC_FIRST_DOOR_ORNAMENT
 #define k730_DerivedBitmapMaximumCount 730 // @ C730_DERIVED_BITMAP_MAXIMUM_COUNT
 
-/* Field Aspect Mask */
-#define kMaskFieldAspectFlipMask 0x0080 // @ MASK0x0080_FLIP_MASK
-#define kMaskFieldAspectIndex 0x007F // @ MASK0x007F_MASK_INDEX
-#define kMaskFieldAspectNoMask 255 // @ C255_NO_MASK
-
-enum ViewSquare {
-	kDMViewSquareD4C = -3, // @ CM3_VIEW_SQUARE_D4C
-	kViewSquareD4L = -2, // @ CM2_VIEW_SQUARE_D4L
-	kDMViewSquareD4R = -1, // @ CM1_VIEW_SQUARE_D4R
-	kDMViewSquareD3C = 0, // @ C00_VIEW_SQUARE_D3C
-	kDMViewSquareD3L = 1, // @ C01_VIEW_SQUARE_D3L
-	kDMViewSquareD3R = 2, // @ C02_VIEW_SQUARE_D3R
-	kDMViewSquareD2C = 3, // @ C03_VIEW_SQUARE_D2C
-	kDMViewSquareD2L = 4, // @ C04_VIEW_SQUARE_D2L
-	kDMViewSquareD2R = 5, // @ C05_VIEW_SQUARE_D2R
-	kDMViewSquareD1C = 6, // @ C06_VIEW_SQUARE_D1C
-	kDMViewSquareD1L = 7, // @ C07_VIEW_SQUARE_D1L
-	kDMViewSquareD1R = 8, // @ C08_VIEW_SQUARE_D1R
-	kDMViewSquareD0C = 9, // @ C09_VIEW_SQUARE_D0C
-	kDMViewSquareD0L = 10, // @ C10_VIEW_SQUARE_D0L
-	kDMViewSquareD0R = 11, // @ C11_VIEW_SQUARE_D0R
-	kDMViewSquareD3CExplosion = 3, // @ C03_VIEW_SQUARE_D3C_EXPLOSION
-	kDMViewSquareD3LExplosion = 4, // @ C04_VIEW_SQUARE_D3L_EXPLOSION
-	kDMViewSquareD1CExplosion = 9, // @ C09_VIEW_SQUARE_D1C_EXPLOSION
-	kDMViewSquareD0CExplosion = 12 // @ C12_VIEW_SQUARE_D0C_EXPLOSION
-};
-
-class ExplosionAspect {
-public:
-	uint16 _byteWidth;
-	uint16 _height;
-
-	ExplosionAspect(uint16 byteWidth, uint16 height) :_byteWidth(byteWidth), _height(height) {}
-	ExplosionAspect() : _byteWidth(0), _height(0) {}
-}; // @ EXPLOSION_ASPECT
-
-extern ExplosionAspect g211_ExplosionAspects[k4_ExplosionAspectCount]; // @ G0211_as_Graphic558_ExplosionAspects
-
-extern byte g215_ProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
-
-
-#define k0_DerivedBitmapViewport 0 // @ C000_DERIVED_BITMAP_VIEWPORT
-#define k1_DerivedBitmapThievesEyeVisibleArea 1 // @ C001_DERIVED_BITMAP_THIEVES_EYE_VISIBLE_AREA
-#define k2_DerivedBitmapDamageToCreatureMedium 2 // @ C002_DERIVED_BITMAP_DAMAGE_TO_CREATURE_MEDIUM
-#define k3_DerivedBitmapDamageToCreatureSmall 3 // @ C003_DERIVED_BITMAP_DAMAGE_TO_CREATURE_SMALL
-#define k4_DerivedBitmapFirstWallOrnament 4 // @ C004_DERIVED_BITMAP_FIRST_WALL_ORNAMENT
-#define k68_DerivedBitmapFirstDoorOrnament_D3 68 // @ C068_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D3
-#define k69_DerivedBitmapFirstDoorOrnament_D2 69 // @ C069_DERIVED_BITMAP_FIRST_DOOR_ORNAMENT_D2
-#define k102_DerivedBitmapFirstDoorButton 102 // @ C102_DERIVED_BITMAP_FIRST_DOOR_BUTTON
-#define k104_DerivedBitmapFirstObject 104 // @ C104_DERIVED_BITMAP_FIRST_OBJECT
-#define k282_DerivedBitmapFirstProjectile 282 // @ C282_DERIVED_BITMAP_FIRST_PROJECTILE
-#define k438_DerivedBitmapFirstExplosion 438 // @ C438_DERIVED_BITMAP_FIRST_EXPLOSION
-#define k495_DerivedBitmapFirstCreature 495 // @ C495_DERIVED_BITMAP_FIRST_CREATURE
-
-
 #define k16_Scale_D3 16 // @ C16_SCALE_D3
 #define k20_Scale_D2 20 // @ C20_SCALE_D2
 
@@ -263,15 +279,6 @@ extern byte g215_ProjectileScales[7]; // @ G0215_auc_Graphic558_ProjectileScales
 
 #define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
 #define kScaleThreshold 32768
-
-enum ViewCell {
-	k0_ViewCellFronLeft = 0, // @ C00_VIEW_CELL_FRONT_LEFT
-	k1_ViewCellFrontRight = 1, // @ C01_VIEW_CELL_FRONT_RIGHT
-	k2_ViewCellBackRight = 2, // @ C02_VIEW_CELL_BACK_RIGHT
-	k3_ViewCellBackLeft = 3, // @ C03_VIEW_CELL_BACK_LEFT
-	k4_ViewCellAlcove = 4, // @ C04_VIEW_CELL_ALCOVE
-	k5_ViewCellDoorButtonOrWallOrn = 5 // @ C05_VIEW_CELL_DOOR_BUTTON_OR_WALL_ORNAMENT
-};
 
 enum GraphicIndice {
 	k0_dialogBoxGraphicIndice = 0, // @ C000_GRAPHIC_DIALOG_BOX
@@ -352,6 +359,14 @@ enum GraphicIndice {
 	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT
 };
 
+class ExplosionAspect {
+public:
+	uint16 _byteWidth;
+	uint16 _height;
+
+	ExplosionAspect(uint16 byteWidth, uint16 height) :_byteWidth(byteWidth), _height(height) {}
+	ExplosionAspect() : _byteWidth(0), _height(0) {}
+}; // @ EXPLOSION_ASPECT
 
 // in all cases, where a function takes a Box, it expects it to contain inclusive boundaries
 class Box {
@@ -390,26 +405,6 @@ public:
 		  uint16 srcWidth, uint16 srcHeight, uint16 srcX, uint16 srcY) :
 		_box(destFromX, destToX, destFromY, destToY),
 		_srcByteWidth(srcWidth), _srcHeight(srcHeight), _srcX(srcX), _srcY(srcY) {}
-};
-
-enum Color {
-	kM1_ColorNoTransparency = -1,
-	k0_ColorBlack = 0,
-	k1_ColorDarkGary = 1,
-	k2_ColorLightGray = 2,
-	k3_ColorDarkBrown = 3,
-	k4_ColorCyan = 4,
-	k5_ColorLightBrown = 5,
-	k6_ColorDarkGreen = 6,
-	k7_ColorLightGreen = 7,
-	k8_ColorRed = 8,
-	k9_ColorGold = 9,
-	k10_ColorFlesh = 10,
-	k11_ColorYellow = 11,
-	k12_ColorDarkestGray = 12,
-	k13_ColorLightestGray = 13,
-	k14_ColorBlue = 14,
-	k15_ColorWhite = 15
 };
 
 class FieldAspect {
@@ -550,18 +545,7 @@ public:
 	Frame _rightHorizontal[3];
 	DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
 			   Frame f3_1, Frame f3_2, Frame f3_3,
-			   Frame f4_1, Frame f4_2, Frame f4_3) {
-		_closedOrDestroyed = f1;
-		_vertical[0] = f2_1;
-		_vertical[1] = f2_2;
-		_vertical[2] = f2_3;
-		_leftHorizontal[0] = f3_1;
-		_leftHorizontal[1] = f3_2;
-		_leftHorizontal[2] = f3_3;
-		_rightHorizontal[0] = f4_1;
-		_rightHorizontal[1] = f4_2;
-		_rightHorizontal[2] = f4_3;
-	}
+			   Frame f4_1, Frame f4_2, Frame f4_3);
 }; // @ DOOR_FRAMES
 
 #define D00_RGB_BLACK                                0x0000

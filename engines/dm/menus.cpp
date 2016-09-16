@@ -168,7 +168,7 @@ MenuMan::~MenuMan() {
 void MenuMan::drawMovementArrows() {
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
-									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kM1_ColorNoTransparency, 45);
+									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kDMColorNoTransparency, 45);
 	_vm->_eventMan->hideMouse();
 }
 void MenuMan::clearActingChampion() {
@@ -197,7 +197,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	box._y2 = 120;
 	dm._useByteBoxCoordinates = false;
 	if (!champion._currHealth) {
-		dm.fillScreenBox(box, k0_ColorBlack);
+		dm.fillScreenBox(box, kDMColorBlack);
 		return;
 	}
 	byte *bitmapIcon = dm._tmpBitmap;
@@ -208,21 +208,21 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	} else if (_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
-		dm.fillBitmap(bitmapIcon, k4_ColorCyan, 16, 16);
+		dm.fillBitmap(bitmapIcon, kDMColorCyan, 16, 16);
 		goto T0386006;
 	}
 	_vm->_objectMan->extractIconFromBitmap(iconIndex, bitmapIcon);
 	dm.blitToBitmapShrinkWithPalChange(bitmapIcon, bitmapIcon, 16, 16, 16, 16, palChangesActionAreaObjectIcon);
 T0386006:
-	dm.fillScreenBox(box, k4_ColorCyan);
+	dm.fillScreenBox(box, kDMColorCyan);
 	Box box2;
 	box2._x1 = box._x1 + 2;
 	box2._x2 = box._x2 - 2;
 	box2._y1 = 95;
 	box2._y2 = 110;
-	dm.blitToScreen(bitmapIcon, &box2, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	dm.blitToScreen(bitmapIcon, &box2, k8_byteWidth, kDMColorNoTransparency, 16);
 	if (champion.getAttributes(kDMAttributeDisableAction) || _vm->_championMan->_candidateChampionOrdinal || _vm->_championMan->_partyIsSleeping) {
-		_vm->_displayMan->shadeScreenBox(&box, k0_ColorBlack);
+		_vm->_displayMan->shadeScreenBox(&box, kDMColorBlack);
 	}
 }
 
@@ -235,10 +235,10 @@ void MenuMan::drawDisabledMenu() {
 				_vm->_inventoryMan->closeChest();
 			}
 		} else {
-			_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, k0_ColorBlack);
+			_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, kDMColorBlack);
 		}
-		_vm->_displayMan->shadeScreenBox(&_boxSpellArea, k0_ColorBlack);
-		_vm->_displayMan->shadeScreenBox(&_boxActionArea, k0_ColorBlack);
+		_vm->_displayMan->shadeScreenBox(&_boxSpellArea, kDMColorBlack);
+		_vm->_displayMan->shadeScreenBox(&_boxActionArea, kDMColorBlack);
 		_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
 	}
 }
@@ -305,7 +305,7 @@ void MenuMan::drawActionArea() {
 
 	_vm->_eventMan->hideMouse();
 	dispMan._useByteBoxCoordinates = false;
-	dispMan.fillScreenBox(_boxActionArea, k0_ColorBlack);
+	dispMan.fillScreenBox(_boxActionArea, kDMColorBlack);
 	if (_actionAreaContainsIcons) {
 		for (uint16 champIndex = kDMChampionFirst; champIndex < champMan._partyChampionCount; ++champIndex)
 			drawActionIcon((ChampionIndex)champIndex);
@@ -316,12 +316,12 @@ void MenuMan::drawActionArea() {
 		if (_actionList._actionIndices[1] == kDMActionNone)
 			box = _boxActionArea1ActionMenu;
 		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
-								 &box, k48_byteWidth, kM1_ColorNoTransparency, 45);
+								 &box, k48_byteWidth, kDMColorNoTransparency, 45);
 		textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
-											235, 83, k0_ColorBlack, k4_ColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
+											235, 83, kDMColorBlack, kDMColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
 											k7_ChampionNameMaximumLength, k200_heightScreen);
 		for (uint16 actionListIndex = 0; actionListIndex < 3; actionListIndex++) {
-			textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, k4_ColorCyan, k0_ColorBlack,
+			textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen, 241, 93 + actionListIndex * 12, kDMColorCyan, kDMColorBlack,
 												getActionName(_actionList._actionIndices[actionListIndex]),
 												k12_ActionNameMaximumLength, k200_heightScreen);
 		}
@@ -355,12 +355,12 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 	int16 champHP2 = _vm->_championMan->_champions[2]._currHealth;
 	int16 champHP3 = _vm->_championMan->_champions[3]._currHealth;
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxSpellAreaControls, kDMColorBlack);
 
 	switch (champIndex) {
 	case 0:
 		_vm->_eventMan->highlightScreenBox(233, 277, 42, 49);
-		_vm->_textMan->printToLogicalScreen(235, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(235, 48, kDMColorBlack, kDMColorCyan, champ->_name);
 		if (_vm->_championMan->_partyChampionCount > 1) {
 			if (champHP1)
 				_vm->_eventMan->highlightScreenBox(280, 291, 42, 48);
@@ -379,7 +379,7 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 			_vm->_eventMan->highlightScreenBox(233, 244, 42, 48);
 
 		_vm->_eventMan->highlightScreenBox(247, 291, 42, 49);
-		_vm->_textMan->printToLogicalScreen(249, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(249, 48, kDMColorBlack, kDMColorCyan, champ->_name);
 		if (_vm->_championMan->_partyChampionCount > 2) {
 			if (champHP2)
 				_vm->_eventMan->highlightScreenBox(294, 305, 42, 48);
@@ -396,7 +396,7 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 			_vm->_eventMan->highlightScreenBox(247, 258, 42, 48);
 
 		_vm->_eventMan->highlightScreenBox(261, 305, 42, 49);
-		_vm->_textMan->printToLogicalScreen(263, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(263, 48, kDMColorBlack, kDMColorCyan, champ->_name);
 		if ((_vm->_championMan->_partyChampionCount > 3) && champHP3)
 			_vm->_eventMan->highlightScreenBox(308, 319, 42, 48);
 		break;
@@ -412,7 +412,7 @@ void MenuMan::drawSpellAreaControls(ChampionIndex champIndex) {
 			_vm->_eventMan->highlightScreenBox(261, 272, 42, 48);
 
 		_vm->_eventMan->highlightScreenBox(275, 319, 42, 49);
-		_vm->_textMan->printToLogicalScreen(277, 48, k0_ColorBlack, k4_ColorCyan, champ->_name);
+		_vm->_textMan->printToLogicalScreen(277, 48, kDMColorBlack, kDMColorCyan, champ->_name);
 		break;
 	default:
 		break;
@@ -427,23 +427,23 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 	Champion *magicChampion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
 	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
-		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
+		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kDMColorNoTransparency, 36, 12);
 		int16 x = 1;
 		char character = 96 + (6 * magicChampion->_symbolStep);
 		for (uint16 symbolIndex = 0; symbolIndex < 6; symbolIndex++) {
 			spellSymbolString[0] = character++;
 			x += 14;
-			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, kDMColorCyan, kDMColorBlack, spellSymbolString, 12);
 		}
 	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
-		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kM1_ColorNoTransparency, 36, 12);
+		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kDMColorNoTransparency, 36, 12);
 		int16 x = 8;
 		for (uint16 symbolIndex = 0; symbolIndex < 4; symbolIndex++) {
 			if ((spellSymbolString[0] = magicChampion->_symbols[symbolIndex]) == '\0')
 				break;
 			x += 9;
-			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, k4_ColorCyan, k0_ColorBlack, spellSymbolString, 12);
+			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, kDMColorCyan, kDMColorBlack, spellSymbolString, 12);
 		}
 	}
 }
@@ -458,14 +458,14 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 
 	if (_vm->_championMan->_magicCasterChampionIndex == kDMChampionNone) {
 		_vm->_eventMan->showMouse();
-		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kM1_ColorNoTransparency, 33);
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kDMColorNoTransparency, 33);
 		_vm->_eventMan->hideMouse();
 	}
 	if (champIndex == kDMChampionNone) {
 		_vm->_championMan->_magicCasterChampionIndex = kDMChampionNone;
 		_vm->_eventMan->showMouse();
 		_vm->_displayMan->_useByteBoxCoordinates = false;
-		_vm->_displayMan->fillScreenBox(_boxSpellArea, k0_ColorBlack);
+		_vm->_displayMan->fillScreenBox(_boxSpellArea, kDMColorBlack);
 		_vm->_eventMan->hideMouse();
 		return;
 	}
@@ -473,9 +473,9 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 	buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	drawSpellAreaControls(champIndex);
-	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kDMColorNoTransparency, 12);
 	buildSpellAreaLine(k3_SpellAreaChampionSymbols);
-	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kM1_ColorNoTransparency, 12);
+	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kDMColorNoTransparency, 12);
 	_vm->_eventMan->hideMouse();
 }
 
@@ -762,7 +762,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 		skillIndex = (skillIndex - 4) / 4;
 
 	_vm->_textMan->printLineFeed();
-	_vm->_textMan->printMessage(k4_ColorCyan, champ->_name);
+	_vm->_textMan->printMessage(kDMColorCyan, champ->_name);
 
 	Common::String *messages;
 	switch (_vm->getGameLanguage()) { // localized
@@ -780,8 +780,8 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 	Common::String message;
 	switch (failureType) {
 	case kDMFailureNeedsMorePractice:
-		_vm->_textMan->printMessage(k4_ColorCyan, messages[0].c_str());
-		_vm->_textMan->printMessage(k4_ColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
+		_vm->_textMan->printMessage(kDMColorCyan, messages[0].c_str());
+		_vm->_textMan->printMessage(kDMColorCyan, _vm->_championMan->_baseSkillName[skillIndex]);
 		if (_vm->getGameLanguage() != Common::FR_FRA || skillIndex == kDMSkillWizard)
 			message = messages[1];
 		else
@@ -797,7 +797,7 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 	default:
 		break;
 	}
-	_vm->_textMan->printMessage(k4_ColorCyan, message.c_str());
+	_vm->_textMan->printMessage(kDMColorCyan, message.c_str());
 }
 
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
@@ -865,7 +865,7 @@ void MenuMan::drawAvailableSymbols(uint16 symbolStep) {
 	for (uint16 L1214_ui_Counter = 0; L1214_ui_Counter < 6; L1214_ui_Counter++) {
 		displayBuffer[0] = curCharacter++;
 		textPosX += 14;
-		_vm->_textMan->printToLogicalScreen(textPosX, 58, k4_ColorCyan, k0_ColorBlack, displayBuffer);
+		_vm->_textMan->printToLogicalScreen(textPosX, 58, kDMColorCyan, kDMColorBlack, displayBuffer);
 	}
 }
 
@@ -882,7 +882,7 @@ void MenuMan::drawChampionSymbols(Champion *champ) {
 			displayBuffer[0] = champ->_symbols[symbolIndex];
 
 		textPosX += 9;
-		_vm->_textMan->printToLogicalScreen(textPosX, 70, k4_ColorCyan, k0_ColorBlack, displayBuffer);
+		_vm->_textMan->printToLogicalScreen(textPosX, 70, kDMColorCyan, kDMColorBlack, displayBuffer);
 	}
 }
 
@@ -1491,9 +1491,9 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 	if (targetCreatureOrdinal) {
 		uint16 viewCell = _vm->normalizeModulo4(championCell + 4 - champ->_dir);
 		switch (viewCell) {
-		case k2_ViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
-		case k3_ViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
-			uint16 cellDelta = (viewCell == k2_ViewCellBackRight) ? 3 : 1;
+		case kDMViewCellBackRight: /* Champion is on the back right of the square and tries to attack a creature in the front right of its square */
+		case kDMViewCellBackLeft: /* Champion is on the back left of the square and tries to attack a creature in the front left of its square */
+			uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
 			/* Check if there is another champion in front */
 			if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
 				_actionDamage = kM1_damageCantReach;
@@ -1593,7 +1593,7 @@ void MenuMan::printMessageAfterReplacements(const char *str) {
 	*curCharacter = '\0';
 
 	if (outputString[1]) /* If the string is not empty (the first character is a new line \n) */
-		_vm->_textMan->printMessage(k4_ColorCyan, outputString);
+		_vm->_textMan->printMessage(kDMColorCyan, outputString);
 }
 
 void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
@@ -1718,7 +1718,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 
 	_vm->_eventMan->showMouse();
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_vm->_displayMan->fillScreenBox(_boxActionArea, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(_boxActionArea, kDMColorBlack);
 	if (damage < 0) {
 		static const char *messagesEN[2] = {"CAN'T REACH", "NEED AMMO"};
 		static const char *messagesDE[2] = {"ZU WEIT WEG", "MEHR MUNITION"};
@@ -1752,7 +1752,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 			textPosX = pos[1];
 			displayString = message[1];
 		}
-		_vm->_textMan->printToLogicalScreen(textPosX, 100, k4_ColorCyan, k0_ColorBlack, displayString);
+		_vm->_textMan->printToLogicalScreen(textPosX, 100, kDMColorCyan, kDMColorBlack, displayString);
 	} else {
 		int16 byteWidth;
 		byte *blitBitmap;
@@ -1767,12 +1767,12 @@ void MenuMan::drawActionDamage(int16 damage) {
 			uint16 derivedBitmapIndex;
 			int16 destPixelWidth;
 			if (damage > 15) {
-				derivedBitmapIndex = k2_DerivedBitmapDamageToCreatureMedium;
+				derivedBitmapIndex = kDMDerivedBitmapDamageToCreatureMedium;
 				destPixelWidth = 64;
 				byteWidth = k32_byteWidth;
 				blitBox = &actionAreaMediumDamage;
 			} else {
-				derivedBitmapIndex = k3_DerivedBitmapDamageToCreatureSmall;
+				derivedBitmapIndex = kDMDerivedBitmapDamageToCreatureSmall;
 				destPixelWidth = 42;
 				byteWidth = k24_byteWidth;
 				blitBox = &actionAreaSmallDamage;
@@ -1787,7 +1787,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 				blitBitmap = _vm->_displayMan->getDerivedBitmap(derivedBitmapIndex);
 			}
 		}
-		_vm->_displayMan->blitToScreen(blitBitmap, blitBox, byteWidth, kM1_ColorNoTransparency, displayHeight);
+		_vm->_displayMan->blitToScreen(blitBitmap, blitBox, byteWidth, kDMColorNoTransparency, displayHeight);
 		/* Convert damage value to string */
 		uint16 charIndex = 5;
 		int16 textPosX = 274;
@@ -1797,7 +1797,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 			scoreString[--charIndex] = '0' + (damage % 10);
 			textPosX -= 3;
 		} while (damage /= 10);
-		_vm->_textMan->printToLogicalScreen(textPosX, 100, k4_ColorCyan, k0_ColorBlack, &scoreString[charIndex]);
+		_vm->_textMan->printToLogicalScreen(textPosX, 100, kDMColorCyan, kDMColorBlack, &scoreString[charIndex]);
 	}
 	_vm->_eventMan->hideMouse();
 }

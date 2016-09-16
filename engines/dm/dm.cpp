@@ -200,7 +200,7 @@ bool DMEngine::hasFeature(EngineFeature f) const {
 
 Common::Error DMEngine::loadGameState(int slot) {
 	if (loadgame(slot) != kDMLoadgameFailure) {
-		_displayMan->fillScreen(k0_ColorBlack);
+		_displayMan->fillScreen(kDMColorBlack);
 		_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 		_newGameFl = k0_modeLoadSavedGame;
 
@@ -313,14 +313,14 @@ void DMEngine::startGame() {
 		_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 		_displayMan->_useByteBoxCoordinates = false;
 		delay(1);
-		_displayMan->fillScreenBox(boxScreenTop, k0_ColorBlack);
-		_displayMan->fillScreenBox(boxScreenRight, k0_ColorBlack);
-		_displayMan->fillScreenBox(boxScreenBottom, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenTop, kDMColorBlack);
+		_displayMan->fillScreenBox(boxScreenRight, kDMColorBlack);
+		_displayMan->fillScreenBox(boxScreenBottom, kDMColorBlack);
 	} else {
 		_displayMan->_useByteBoxCoordinates = false;
-		_displayMan->fillScreenBox(boxScreenTop, k0_ColorBlack);
-		_displayMan->fillScreenBox(boxScreenRight, k0_ColorBlack);
-		_displayMan->fillScreenBox(boxScreenBottom, k0_ColorBlack);
+		_displayMan->fillScreenBox(boxScreenTop, kDMColorBlack);
+		_displayMan->fillScreenBox(boxScreenRight, kDMColorBlack);
+		_displayMan->fillScreenBox(boxScreenBottom, kDMColorBlack);
 	}
 
 	_displayMan->buildPaletteChangeCopperList(_displayMan->_palDungeonView[0], _displayMan->_paletteTopAndBottomScreen);
@@ -416,7 +416,7 @@ void DMEngine::gameloop() {
 
 		if (!_inventoryMan->_inventoryChampionOrdinal && !_championMan->_partyIsSleeping) {
 			Box box(0, 223, 0, 135);
-			_displayMan->fillBoxBitmap(_displayMan->_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
+			_displayMan->fillBoxBitmap(_displayMan->_bitmapViewport, box, kDMColorBlack, k112_byteWidthViewport, k136_heightViewport); // (possibly dummy code)
 			_displayMan->drawDungeon(_dungeonMan->_partyDir, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 			if (_setMousePointerToObjectInMainLoop) {
 				_setMousePointerToObjectInMainLoop = false;
@@ -519,13 +519,13 @@ void DMEngine::processEntrance() {
 	_displayMan->_useByteBoxCoordinates = false;
 	Box displayBox(0, 100, 0, 160);
 	for (uint16 idx = 1; idx < 4; idx++) {
-		_displayMan->blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		_displayMan->blitToBitmap(_entranceDoorAnimSteps[0], _entranceDoorAnimSteps[idx], displayBox, idx << 2, 0, k64_byteWidth, k64_byteWidth, kDMColorNoTransparency, 161, 161);
 		displayBox._x2 -= 4;
 	}
 	displayBox._x2 = 127;
 	for (uint16 idx = 5; idx < 8; idx++) {
 		displayBox._x1 += 4;
-		_displayMan->blitToBitmap(_entranceDoorAnimSteps[4], _entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kM1_ColorNoTransparency, 161, 161);
+		_displayMan->blitToBitmap(_entranceDoorAnimSteps[4], _entranceDoorAnimSteps[idx], displayBox, 0, 0, k64_byteWidth, k64_byteWidth, kDMColorNoTransparency, 161, 161);
 	}
 
 	do {
@@ -622,26 +622,26 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 	if (doNotDrawCreditsOnly) {
 		if (_gameWon) {
 			// Strangerke: Related to portraits. Game data could be missing for earlier versions of the game.
-			_displayMan->fillScreen(k12_ColorDarkestGray);
+			_displayMan->fillScreen(kDMColorDarkestGray);
 			for (int16 championIndex = kDMChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
 				int16 textPosY = championIndex * 48;
 				Champion *curChampion = &_championMan->_champions[championIndex];
-				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, k10_ColorFlesh, 43);
-				_displayMan->blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, k1_ColorDarkGary, 29);
-				_textMan->printEndGameString(87, textPosY += 14, k9_ColorGold, curChampion->_name);
+				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, kDMColorFlesh, 43);
+				_displayMan->blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, kDMColorDarkGary, 29);
+				_textMan->printEndGameString(87, textPosY += 14, kDMColorGold, curChampion->_name);
 				int textPosX = (6 * strlen(curChampion->_name)) + 87;
 				char championTitleFirstCharacter = curChampion->_title[0];
 				if ((championTitleFirstCharacter != ',') && (championTitleFirstCharacter != ';') && (championTitleFirstCharacter != '-'))
 					textPosX += 6;
 
-				_textMan->printEndGameString(textPosX, textPosY++, k9_ColorGold, curChampion->_title);
+				_textMan->printEndGameString(textPosX, textPosY++, kDMColorGold, curChampion->_title);
 				for (int16 idx = kDMSkillFighter; idx <= kDMSkillWizard; idx++) {
 					uint16 skillLevel = MIN<uint16>(16, _championMan->getSkillLevel(championIndex, idx | (kDMIgnoreObjectModifiers | kDMIgnoreTemporaryExperience)));
 					if (skillLevel == 1)
 						continue;
 
 					Common::String displStr = Common::String::format("%s %s", _inventoryMan->_skillLevelNames[skillLevel - 2], _championMan->_baseSkillName[idx]);
-					_textMan->printEndGameString(105, textPosY = textPosY + 8, k13_ColorLightestGray, displStr.c_str());
+					_textMan->printEndGameString(105, textPosY = textPosY + 8, kDMColorLightestGray, displStr.c_str());
 				}
 				championMirrorBox._y1 += 48;
 				championMirrorBox._y2 += 48;
@@ -653,8 +653,8 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 			return;
 		}
 T0444017:
-		_displayMan->fillScreen(k0_ColorBlack);
-		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kM1_ColorNoTransparency, 14);
+		_displayMan->fillScreen(kDMColorBlack);
+		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kDMColorNoTransparency, 14);
 		for (uint16 i = 0; i < 16; ++i)
 			darkBluePalette[i] = D01_RGB_DARK_BLUE;
 		uint16 curPalette[16];
@@ -668,19 +668,19 @@ T0444017:
 
 		if (_restartGameAllowed) {
 			_displayMan->_useByteBoxCoordinates = false;
-			_displayMan->fillScreenBox(restartOuterBox, k12_ColorDarkestGray);
-			_displayMan->fillScreenBox(restartInnerBox, k0_ColorBlack);
+			_displayMan->fillScreenBox(restartOuterBox, kDMColorDarkestGray);
+			_displayMan->fillScreenBox(restartInnerBox, kDMColorBlack);
 
 			switch (getGameLanguage()) { // localized
 			default:
 			case Common::EN_ANY:
-				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RESTART THIS GAME");
+				_textMan->printToLogicalScreen(110, 154, kDMColorCyan, kDMColorBlack, "RESTART THIS GAME");
 				break;
 			case Common::DE_DEU:
-				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "DIESES SPIEL NEU STARTEN");
+				_textMan->printToLogicalScreen(110, 154, kDMColorCyan, kDMColorBlack, "DIESES SPIEL NEU STARTEN");
 				break;
 			case Common::FR_FRA:
-				_textMan->printToLogicalScreen(110, 154, k4_ColorCyan, k0_ColorBlack, "RECOMMENCER CE JEU");
+				_textMan->printToLogicalScreen(110, 154, kDMColorCyan, kDMColorBlack, "RECOMMENCER CE JEU");
 				break;
 			}
 
@@ -696,7 +696,7 @@ T0444017:
 			_eventMan->showMouse();
 			if (_restartGameRequest) {
 				_displayMan->startEndFadeToPalette(darkBluePalette);
-				_displayMan->fillScreen(k0_ColorBlack);
+				_displayMan->fillScreen(kDMColorBlack);
 				_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
 				_newGameFl = k0_modeLoadSavedGame;
 				if (loadgame(1) != kDMLoadgameFailure) {
@@ -712,7 +712,7 @@ T0444017:
 		_displayMan->startEndFadeToPalette(darkBluePalette);
 	}
 	Box box(0, 319, 0, 199);
-	_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen);
+	_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kDMColorNoTransparency, k200_heightScreen);
 
 	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	_eventMan->waitForMouseOrKeyActivity();
@@ -767,11 +767,11 @@ void DMEngine::drawEntrance() {
 		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];
 	memcpy(_savedScreenForOpenEntranceDoors, _displayMan->_bitmapScreen, 320 * 200);
 
-	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
-	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kM1_ColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
 
-	_displayMan->blitToScreen(_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
-	_displayMan->blitToScreen(_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kM1_ColorNoTransparency, 161);
+	_displayMan->blitToScreen(_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kDMColorNoTransparency, 161);
+	_displayMan->blitToScreen(_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kDMColorNoTransparency, 161);
 	_displayMan->startEndFadeToPalette(palEntrance);
 }
 
@@ -790,11 +790,11 @@ void DMEngine::openEntranceDoors() {
 			_sound->play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
 		}
 
-		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kM1_ColorNoTransparency, 200);
+		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kDMColorNoTransparency, 200);
 		_displayMan->blitToBitmap(leftDoorBitmap, _displayMan->_bitmapScreen, leftDoorBox, leftDoorBlitFrom, 0, 64, k160_byteWidthScreen,
-								  kM1_ColorNoTransparency, 161, k200_heightScreen);
+								  kDMColorNoTransparency, 161, k200_heightScreen);
 		_displayMan->blitToBitmap(rightDoorBitmap, _displayMan->_bitmapScreen, rightDoorBox, 0, 0, 64, k160_byteWidthScreen,
-								  kM1_ColorNoTransparency, 161, k200_heightScreen);
+								  kDMColorNoTransparency, 161, k200_heightScreen);
 		_eventMan->discardAllInput();
 		_displayMan->updateScreen();
 
@@ -827,16 +827,16 @@ void DMEngine::drawTittle() {
 		blitPalette[i] = D01_RGB_DARK_BLUE;
 
 	_displayMan->startEndFadeToPalette(blitPalette);
-	_displayMan->fillScreen(k0_ColorBlack);
+	_displayMan->fillScreen(kDMColorBlack);
 	// uncomment this to draw 'Presents'
 	//_displayMan->f132_blitToBitmap(L1384_puc_Bitmap_Title, _displayMan->_g348_bitmapScreen, G0005_s_Graphic562_Box_Title_Presents, 0, 137, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, k200_heightScreen, k200_heightScreen);
 	blitPalette[15] = D09_RGB_WHITE;
 	_displayMan->startEndFadeToPalette(blitPalette);
 	byte *masterStrikesBack = titleSteps;
-	_displayMan->blitToBitmap(bitmapTitle, masterStrikesBack, boxTitleStrikesBackSource, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 57);
+	_displayMan->blitToBitmap(bitmapTitle, masterStrikesBack, boxTitleStrikesBackSource, 0, 80, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 57);
 	titleSteps += 320 * 57;
 	byte *bitmapDungeonChaos = titleSteps; /* Unreferenced on Atari ST */
-	_displayMan->blitToBitmap(bitmapTitle, bitmapDungeonChaos, boxTitleDungeonChaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 80);
+	_displayMan->blitToBitmap(bitmapTitle, bitmapDungeonChaos, boxTitleDungeonChaos, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 80);
 	titleSteps += 320 * 80;
 	bitmapTitle = bitmapDungeonChaos;
 	uint16 destinationHeight = 12;
@@ -856,7 +856,7 @@ void DMEngine::drawTittle() {
 	}
 	blitPalette[15] = D01_RGB_DARK_BLUE;
 	_displayMan->startEndFadeToPalette(blitPalette);
-	_displayMan->fillScreen(k0_ColorBlack);
+	_displayMan->fillScreen(kDMColorBlack);
 	blitPalette[3] = D05_RGB_DARK_GOLD;
 	blitPalette[4] = D02_RGB_LIGHT_BROWN;
 	blitPalette[5] = D06_RGB_GOLD;
@@ -870,10 +870,10 @@ void DMEngine::drawTittle() {
 	for (int16 i = 0; i < 18; i++) {
 		delay(2);
 		Box box(blitCoordinates[i]);
-		_displayMan->blitToBitmap(shrinkedTitle[i], _displayMan->_bitmapScreen, box, 0, 0, blitCoordinates[i][4], k160_byteWidthScreen, kM1_ColorNoTransparency, blitCoordinates[i][3] - blitCoordinates[i][2] + 1, k200_heightScreen);
+		_displayMan->blitToBitmap(shrinkedTitle[i], _displayMan->_bitmapScreen, box, 0, 0, blitCoordinates[i][4], k160_byteWidthScreen, kDMColorNoTransparency, blitCoordinates[i][3] - blitCoordinates[i][2] + 1, k200_heightScreen);
 	}
 	delay(25);
-	_displayMan->blitToBitmap(masterStrikesBack, _displayMan->_bitmapScreen, boxTitleStrikesBackDestination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, k0_ColorBlack, 57, k200_heightScreen);
+	_displayMan->blitToBitmap(masterStrikesBack, _displayMan->_bitmapScreen, boxTitleStrikesBackDestination, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorBlack, 57, k200_heightScreen);
 	blitPalette[10] = D00_RGB_BLACK;
 	blitPalette[12] = D07_RGB_RED;
 	_displayMan->startEndFadeToPalette(blitPalette);
@@ -990,7 +990,7 @@ void DMEngine::fuseSequence() {
 			if (decodedString[1] == textFirstChar) {
 				_textMan->clearAllRows();
 				decodedString[1] = '\n'; /* New line */
-				_textMan->printMessage(k15_ColorWhite, &decodedString[1]);
+				_textMan->printMessage(kDMColorWhite, &decodedString[1]);
 				fuseSequenceUpdate();
 				delay(780);
 				textFirstChar++;

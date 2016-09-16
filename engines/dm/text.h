@@ -60,7 +60,7 @@ public:
 	void printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 destX, int16 destY,
 							   Color textColor, Color bgColor, const char *text, uint16 destHeight); // @ F0040_TEXT_Print
 	void printToLogicalScreen(uint16 destX, uint16 destY, Color textColor, Color bgColor, const char *text); // @ F0053_TEXT_PrintToLogicalScreen
-	void printToViewport(int16 posX, int16 posY, Color textColor, const char *text, Color bgColor = k12_ColorDarkestGray); // @ F0052_TEXT_PrintToViewport
+	void printToViewport(int16 posX, int16 posY, Color textColor, const char *text, Color bgColor = kDMColorDarkestGray); // @ F0052_TEXT_PrintToViewport
 	void printWithTrailingSpaces(byte *destBitmap, int16 destByteWidth, int16 destX, int16 destY, Color textColor, Color bgColor,
 									 const char *text, int16 strLenght, int16 destHeight); // @ F0041_TEXT_PrintWithTrailingSpaces
 	void printLineFeed(); // @ F0051_TEXT_MESSAGEAREA_PrintLineFeed

@@ -79,7 +79,7 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 		uint16 srcX = (1 + 5) * *begin; // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 
 		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight - 1);
-		_vm->_displayMan->blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, kM1_ColorNoTransparency,
+		_vm->_displayMan->blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, kDMColorNoTransparency,
 									   k6_LetterHeight, destHeight);
 
 		nextX += k5_LetterWidth + 1;
@@ -103,7 +103,7 @@ void TextMan::printWithTrailingSpaces(byte *destBitmap, int16 destByteWidth, int
 }
 
 void TextMan::printLineFeed() {
-	printMessage(k0_ColorBlack, "\n");
+	printMessage(kDMColorBlack, "\n");
 }
 
 void TextMan::printMessage(Color color, const char *string, bool printWithScroll) {
@@ -141,7 +141,7 @@ void TextMan::printMessage(Color color, const char *string, bool printWithScroll
 void TextMan::createNewRow() {
 	if (_messageAreaCursorRow == 3) {
 		isTextScrolling(&_textScroller, true);
-		memset(_bitmapMessageAreaNewRow, k0_ColorBlack, 320 * 7);
+		memset(_bitmapMessageAreaNewRow, kDMColorBlack, 320 * 7);
 		_isScrolling = true;
 		setScrollerCommand(&_textScroller, 1);
 
@@ -156,9 +156,9 @@ void TextMan::createNewRow() {
 void TextMan::printString(Color color, const char* string) {
 	int16 stringLength = strlen(string);
 	if (isTextScrolling(&_textScroller, false))
-		printToLogicalScreen(_messageAreaCursorColumn * 6, (_messageAreaCursorRow * 7 - 1) + 177, color, k0_ColorBlack, string);
+		printToLogicalScreen(_messageAreaCursorColumn * 6, (_messageAreaCursorRow * 7 - 1) + 177, color, kDMColorBlack, string);
 	else {
-		printTextToBitmap(_bitmapMessageAreaNewRow, k160_byteWidthScreen, _messageAreaCursorColumn * 6, 0, color, k0_ColorBlack, string, 7);
+		printTextToBitmap(_bitmapMessageAreaNewRow, k160_byteWidthScreen, _messageAreaCursorColumn * 6, 0, color, kDMColorBlack, string, 7);
 		_isScrolling = true;
 		if (isTextScrolling(&_textScroller, false))
 			setScrollerCommand(&_textScroller, 1);
@@ -200,7 +200,7 @@ void TextMan::clearExpiredRows() {
 			continue;
 		displayBox._y2 = (displayBox._y1 = 172 + (rowIndex * 7)) + 6;
 		isTextScrolling(&_textScroller, true);
-		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapScreen, displayBox, k0_ColorBlack, k160_byteWidthScreen, k200_heightScreen);
+		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapScreen, displayBox, kDMColorBlack, k160_byteWidthScreen, k200_heightScreen);
 		_messageAreaRowExpirationTime[rowIndex] = -1;
 	}
 }
@@ -217,14 +217,14 @@ void TextMan::printEndGameString(int16 x, int16 y, Color textColor, const char* 
 		wrkStringPtr++;
 		*wrkStringPtr = *text++;
 	}
-	printToLogicalScreen(x, y, textColor, k12_ColorDarkestGray, modifiedString);
+	printToLogicalScreen(x, y, textColor, kDMColorDarkestGray, modifiedString);
 }
 
 void TextMan::clearAllRows() {
 	isTextScrolling(&_textScroller, true);
 
 	Box tmpBox(0, 319, 169, 199);
-	_vm->_displayMan->fillScreenBox(tmpBox, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(tmpBox, kDMColorBlack);
 
 	_messageAreaCursorRow = 3;
 	_messageAreaCursorColumn = 0;

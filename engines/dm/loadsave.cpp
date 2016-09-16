@@ -133,7 +133,7 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		if (fadePalette) {
 			_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 			delay(1);
-			_displayMan->fillScreen(k0_ColorBlack);
+			_displayMan->fillScreen(kDMColorBlack);
 			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 		}
 	} else {

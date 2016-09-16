@@ -195,7 +195,7 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 	iconIndex -= _iconGraphicFirstIndex[counter];
 	_vm->_displayMan->_useByteBoxCoordinates = true;
 	Box blitBox(0, 15, 0, 15);
-	_vm->_displayMan->blitToBitmap(iconBitmap, destBitmap, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kM1_ColorNoTransparency, _iconGraphicHeight[counter], 16);
+	_vm->_displayMan->blitToBitmap(iconBitmap, destBitmap, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, 128, 8, kDMColorNoTransparency, _iconGraphicHeight[counter], 16);
 }
 
 void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
@@ -231,7 +231,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 		destHeight = 200;
 	}
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_vm->_displayMan->blitToBitmap(iconBitmap, blitDestination, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, byteWidth, kM1_ColorNoTransparency, _iconGraphicHeight[iconGraphicIndex], destHeight);
+	_vm->_displayMan->blitToBitmap(iconBitmap, blitDestination, blitBox, (iconIndex & 0x000F) << 4, iconIndex & 0x0FF0, k128_byteWidth, byteWidth, kDMColorNoTransparency, _iconGraphicHeight[iconGraphicIndex], destHeight);
 }
 
 void ObjectMan::drawLeaderObjectName(Thing thing) {
@@ -257,7 +257,7 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	} else
 		objectName = Common::String(_objectNames[iconIndex]);
 
-	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, k4_ColorCyan, k0_ColorBlack, objectName.c_str(), k14_ObjectNameMaximumLength, k200_heightScreen);
+	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, kDMColorCyan, kDMColorBlack, objectName.c_str(), k14_ObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
@@ -266,13 +266,13 @@ IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
 
 void ObjectMan::clearLeaderObjectName() {
 	static Box boxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
-	_vm->_displayMan->fillScreenBox(boxLeaderHandObjectName, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxLeaderHandObjectName, kDMColorBlack);
 }
 
 void ObjectMan::drawIconToScreen(int16 iconIndex, int16 posX, int16 posY) {
 	static byte iconBitmap[16 * 16];
 	Box blitBox(posX, posX + 15, posY, posY + 15);
 	extractIconFromBitmap(iconIndex, iconBitmap);
-	_vm->_displayMan->blitToScreen(iconBitmap, &blitBox, k8_byteWidth, kM1_ColorNoTransparency, 16);
+	_vm->_displayMan->blitToScreen(iconBitmap, &blitBox, k8_byteWidth, kDMColorNoTransparency, 16);
 }
 }

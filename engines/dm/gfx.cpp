@@ -41,6 +41,22 @@
 #include "dm/text.h"
 
 namespace DM {
+
+DoorFrames::DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
+		Frame f3_1, Frame f3_2, Frame f3_3,
+		Frame f4_1, Frame f4_2, Frame f4_3) {
+	_closedOrDestroyed = f1;
+	_vertical[0] = f2_1;
+	_vertical[1] = f2_2;
+	_vertical[2] = f2_3;
+	_leftHorizontal[0] = f3_1;
+	_leftHorizontal[1] = f3_2;
+	_leftHorizontal[2] = f3_3;
+	_rightHorizontal[0] = f4_1;
+	_rightHorizontal[1] = f4_2;
+	_rightHorizontal[2] = f4_3;
+}
+	
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_bitmapScreen = nullptr;
 	_bitmaps = nullptr;
@@ -475,7 +491,7 @@ void DisplayMan::setUpScreens(uint16 width, uint16 height) {
 	delete[] _tmpBitmap;
 	delete[] _bitmapScreen;
 	_bitmapScreen = new byte[_screenWidth * _screenHeight];
-	fillScreen(k0_ColorBlack);
+	fillScreen(kDMColorBlack);
 
 	_tmpBitmap = new byte[_screenWidth * _screenHeight];
 }
@@ -509,17 +525,17 @@ void DisplayMan::initializeGraphicData() {
 			_derivedBitmaps[i] = nullptr;
 	}
 
-	_derivedBitmapByteCount[k0_DerivedBitmapViewport] = 112 * 136;
-	_derivedBitmapByteCount[k1_DerivedBitmapThievesEyeVisibleArea] = 48 * 95;
-	_derivedBitmapByteCount[k2_DerivedBitmapDamageToCreatureMedium] = 32 * 37;
-	_derivedBitmapByteCount[k3_DerivedBitmapDamageToCreatureSmall] = 24 * 37;
+	_derivedBitmapByteCount[kDMDerivedBitmapViewport] = 112 * 136;
+	_derivedBitmapByteCount[kDMDerivedBitmapThievesEyeVisibleArea] = 48 * 95;
+	_derivedBitmapByteCount[kDMDerivedBitmapDamageToCreatureMedium] = 32 * 37;
+	_derivedBitmapByteCount[kDMDerivedBitmapDamageToCreatureSmall] = 24 * 37;
 
 	for (int16 doorOrnamentIndex = k15_DoorOrnDestroyedMask; doorOrnamentIndex <= k16_DoorOrnThivesEyeMask; doorOrnamentIndex++) {
 		_currMapDoorOrnInfo[doorOrnamentIndex].nativeIndice = doorOrnamentIndex + (k301_DoorMaskDestroyedIndice - k15_DoorOrnDestroyedMask);
 		_currMapDoorOrnInfo[doorOrnamentIndex].coordinateSet = 1;
 
-		_derivedBitmapByteCount[doorOrnamentIndex * 2 + k68_DerivedBitmapFirstDoorOrnament_D3] = 24 * 41;
-		_derivedBitmapByteCount[doorOrnamentIndex * 2 + k69_DerivedBitmapFirstDoorOrnament_D2] = 32 * 61;
+		_derivedBitmapByteCount[doorOrnamentIndex * 2 + kDMDerivedBitmapFirstDoorOrnamentD3] = 24 * 41;
+		_derivedBitmapByteCount[doorOrnamentIndex * 2 + kDMDerivedBitmapFirstDoorOrnamentD2] = 32 * 61;
 	}
 
 	_currMapFloorOrnInfo[k15_FloorOrnFootprints].nativeIndice = k241_FloorOrn_15_D3L_footprints;
@@ -528,7 +544,7 @@ void DisplayMan::initializeGraphicData() {
 	ObjectAspect *objectAspect = _objectAspects209;
 	int16 derivedBitmapIndex;
 	for (int16 objectAspectIndex = 0; objectAspectIndex < k85_ObjAspectCount; ++objectAspectIndex, ++objectAspect) {
-		derivedBitmapIndex = k104_DerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
+		derivedBitmapIndex = kDMDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
 
 		_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapByteCount(objectAspect->_byteWidth, objectAspect->_height, k16_Scale_D3);
 		_derivedBitmapByteCount[derivedBitmapIndex++] = getScaledBitmapByteCount(objectAspect->_byteWidth, objectAspect->_height, k20_Scale_D2);
@@ -550,7 +566,7 @@ void DisplayMan::initializeGraphicData() {
 	ProjectileAspect *projectileAspect = _projectileAspect;
 	for (int16 projectileAspectIndex = 0; projectileAspectIndex < k14_ProjectileAspectCount; projectileAspectIndex++, projectileAspect++) {
 		if (!getFlag(projectileAspect->_graphicInfo, k0x0100_ProjectileScaleWithKineticEnergyMask)) {
-			derivedBitmapIndex = k282_DerivedBitmapFirstProjectile + projectileAspect->_firstDerivedBitmapRelativeIndex;
+			derivedBitmapIndex = kDMDerivedBitmapFirstProjectile + projectileAspect->_firstDerivedBitmapRelativeIndex;
 
 			for (int16 projectileScaleIndex = 0; projectileScaleIndex < 6; projectileScaleIndex++) {
 				int16 bitmapByteCount = getScaledBitmapByteCount(projectileAspect->_byteWidth, projectileAspect->_height, _projectileScales[projectileScaleIndex]);
@@ -570,7 +586,7 @@ void DisplayMan::initializeGraphicData() {
 	_palChangesProjectile[1] = _palChangesFloorOrnD2;
 	_palChangesProjectile[2] = _palChangesProjectile[3] = _palChangesNoChanges;
 
-	derivedBitmapIndex = k438_DerivedBitmapFirstExplosion;
+	derivedBitmapIndex = kDMDerivedBitmapFirstExplosion;
 	ExplosionAspect *expAsp = _explosionAspects;
 	for (uint16 expAspIndex = 0; expAspIndex < k4_ExplosionAspectCount; ++expAspIndex, expAsp++) {
 		for (int16 scale = 4; scale < 32; scale += 2)
@@ -580,7 +596,7 @@ void DisplayMan::initializeGraphicData() {
 			_derivedBitmapByteCount[derivedBitmapIndex++] = expAsp->_byteWidth * expAsp->_height;
 	}
 
-	derivedBitmapIndex = k495_DerivedBitmapFirstCreature;
+	derivedBitmapIndex = kDMDerivedBitmapFirstCreature;
 	CreatureAspect *creatureAsp;
 	for (int16 creatureIndex = 0; creatureIndex < k27_CreatureTypeCount; creatureIndex++) {
 		creatureAsp = &_creatureAspects219[creatureIndex];
@@ -696,7 +712,7 @@ void DisplayMan::loadFNT1intoBitmap(uint16 index, byte * destBitmap) {
 
 	for (uint16 i = 0; i < 6; i++) {
 		for (uint16 w = 0; w < 128; ++w) {
-			*destBitmap++ = k0_ColorBlack;
+			*destBitmap++ = kDMColorBlack;
 
 			uint16 nextByte = *data++;
 			for (int16 pixel = 4; pixel >= 0; --pixel) {
@@ -717,7 +733,7 @@ void DisplayMan::allocateFlippedWallBitmaps() {
 void DisplayMan::drawDoorBitmap(Frame* frame) {
 	if (frame->_srcByteWidth) {
 		blitToBitmap(_tmpBitmap, _bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
-						  frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
+						  frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
 	}
 }
 
@@ -725,7 +741,7 @@ void DisplayMan::drawDoorFrameBitmapFlippedHorizontally(byte *bitmap, Frame *fra
 	if (frame->_srcByteWidth) {
 		flipBitmapHorizontal(bitmap, frame->_srcByteWidth, frame->_srcHeight);
 		blitToBitmap(bitmap, _bitmapViewport, frame->_box, frame->_srcX, frame->_srcY,
-						  frame->_srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, frame->_srcHeight, k136_heightViewport);
+						  frame->_srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, frame->_srcHeight, k136_heightViewport);
 	}
 }
 
@@ -753,12 +769,12 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		if (doorButton == kDMDoorButtonD1C) {
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x1 = coordSetRedEagle[0];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._x2 = coordSetRedEagle[1];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y1 = coordSetRedEagle[2];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._x1 = coordSetRedEagle[0];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._x2 = coordSetRedEagle[1];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._y1 = coordSetRedEagle[2];
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._y2 = coordSetRedEagle[3];
 		} else {
-			doorButtonOrdinal = k102_DerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
+			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
 				uint16 *coordSetBlueGoat = doorButtonCoordSets[coordSet][kDMDoorButtonD1C];
 				byte *bitmapNative = getNativeBitmapOrGraphic(nativeBitmapIndex);
@@ -774,7 +790,7 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 			bitmap = getDerivedBitmap(doorButtonOrdinal);
 		}
 		blitToBitmap(bitmap, _bitmapViewport, *(Box *)coordSetRedEagle, 0, 0,
-						  coordSetRedEagle[4], k112_byteWidthViewport, k10_ColorFlesh, coordSetRedEagle[5], k136_heightViewport);
+						  coordSetRedEagle[4], k112_byteWidthViewport, kDMColorFlesh, coordSetRedEagle[5], k136_heightViewport);
 	}
 }
 
@@ -788,7 +804,7 @@ void DisplayMan::viewportSetPalette(uint16* middleScreenPalette, uint16* topAndB
 void DisplayMan::viewportBlitToScreen() {
 	Box box(0, 223, 33, 168);
 
-	blitToBitmap(_bitmapViewport, _bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kM1_ColorNoTransparency,
+	blitToBitmap(_bitmapViewport, _bitmapScreen, box, 0, 0, k112_byteWidthViewport, k160_byteWidthScreen, kDMColorNoTransparency,
 					  k136_heightViewport, k200_heightScreen);
 }
 
@@ -924,7 +940,7 @@ byte *DisplayMan::getExplosionBitmap(uint16 explosionAspIndex, uint16 scale, int
 	int16 pixelWidth = getScaledDimension(explAsp->_byteWidth, scale);
 	int16 height = getScaledDimension(explAsp->_height, scale);
 	byte *bitmap;
-	int16 derBitmapIndex = (explosionAspIndex * 14) + scale / 2 + k438_DerivedBitmapFirstExplosion - 2;
+	int16 derBitmapIndex = (explosionAspIndex * 14) + scale / 2 + kDMDerivedBitmapFirstExplosion - 2;
 	if ((scale == 32) && (explosionAspIndex != kDMExplosionAspectSmoke))
 		bitmap = getNativeBitmapOrGraphic(explosionAspIndex + k348_FirstExplosionGraphicIndice);
 	else if (isDerivedBitmapInCache(derBitmapIndex))
@@ -1073,7 +1089,7 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
 		blitToBitmap(bitmap, _bitmapViewport,
-						  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, k10_ColorFlesh, coordSets[5], k136_heightViewport);
+						  *(Box *)coordSets, 0, 0, coordSets[4], k112_byteWidthViewport, kDMColorFlesh, coordSets[5], k136_heightViewport);
 	}
 
 	if (drawFootprints)
@@ -1160,7 +1176,7 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 		byteWidth = k48_byteWidth;
 		height = 88;
 	} else {
-		height = k68_DerivedBitmapFirstDoorOrnament_D3 + (height * 2) + doorOrnament;
+		height = kDMDerivedBitmapFirstDoorOrnamentD3 + (height * 2) + doorOrnament;
 		if (!isDerivedBitmapInCache(height)) {
 			uint16 *coordSetRedEagle = &doorOrnCoordSets[coordSetGreenToad][kDMDoorOrnamentD1LCR][0];
 			byte *nativeBitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
@@ -1178,7 +1194,7 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 	}
 
 	Box box(coordSetOrangeElk[0], coordSetOrangeElk[1], coordSetOrangeElk[2], coordSetOrangeElk[3]);
-	blitToBitmap(blitBitmap, _tmpBitmap, box, 0, 0, coordSetOrangeElk[4], byteWidth, k9_ColorGold, coordSetOrangeElk[5], height);
+	blitToBitmap(blitBitmap, _tmpBitmap, box, 0, 0, coordSetOrangeElk[4], byteWidth, kDMColorGold, coordSetOrangeElk[5], height);
 }
 
 void DisplayMan::drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal) {
@@ -1214,14 +1230,14 @@ void DisplayMan::drawWallSetBitmapWithoutTransparency(byte *bitmap, Frame &f) {
 	if (!f._srcByteWidth)
 		return;
 
-	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency, f._srcHeight, k136_heightViewport);
+	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorNoTransparency, f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::drawWallSetBitmap(byte *bitmap, Frame &f) {
 	if (!f._srcByteWidth)
 		return;
 
-	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, f._srcHeight, k136_heightViewport);
+	blitToBitmap(bitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 
@@ -1912,24 +1928,24 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_isFacingViAltar = false;
 		_vm->_dungeonMan->_isFacingFountain = false;
 		if (_vm->_championMan->_party._event73Count_ThievesEye) {
-			isDerivedBitmapInCache(k1_DerivedBitmapThievesEyeVisibleArea);
-			blitToBitmap(_bitmapViewport, getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
+			isDerivedBitmapInCache(kDMDerivedBitmapThievesEyeVisibleArea);
+			blitToBitmap(_bitmapViewport, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
 							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._x1, _boxThievesEyeViewPortVisibleArea._y1,
-							  k112_byteWidthViewport, 48, kM1_ColorNoTransparency, 136, 95);
+							  k112_byteWidthViewport, 48, kDMColorNoTransparency, 136, 95);
 			byte *bitmap = getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice);
-			blitToBitmap(bitmap, getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
-							  boxThievesEyeVisibleArea, 0, 0, 48, 48, k10_ColorFlesh, 95, 95);
+			blitToBitmap(bitmap, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
+							  boxThievesEyeVisibleArea, 0, 0, 48, 48, kDMColorFlesh, 95, 95);
 		}
 		drawWallSetBitmapWithoutTransparency(_bitmapWallSetD1LCR, _frameWalls163[kDMViewSquareD1C]);
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD1CFront))
 			drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1C, kDMCellOrderAlcove);
 
 		if (_vm->_championMan->_party._event73Count_ThievesEye) {
-			blitToBitmap(getDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea),
+			blitToBitmap(getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
 							  _bitmapViewport, _boxThievesEyeViewPortVisibleArea, 0, 0,
-							  48, k112_byteWidthViewport, k9_ColorGold, 95, k136_heightViewport); /* BUG0_74 */
-			addDerivedBitmap(k1_DerivedBitmapThievesEyeVisibleArea);
-			releaseBlock(k1_DerivedBitmapThievesEyeVisibleArea | 0x8000);
+							  48, k112_byteWidthViewport, kDMColorGold, 95, k136_heightViewport); /* BUG0_74 */
+			addDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea);
+			releaseBlock(kDMDerivedBitmapThievesEyeVisibleArea | 0x8000);
 		}
 		return;
 	case kDMElementTypeDoorFront:
@@ -2046,7 +2062,7 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
 			blitToBitmap(getNativeBitmapOrGraphic(k41_holeInWall_GraphicIndice),
 							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._x1 - _boxThievesEyeViewPortVisibleArea._x1,
-							  0, 48, 16, k9_ColorGold, 95, 123);
+							  0, 48, 16, kDMColorGold, 95, 123);
 			drawWallSetBitmap(_tmpBitmap, doorFrameD0C);
 		} else
 			drawWallSetBitmap(_bitmapWallSetDoorFrameFront, doorFrameD0C);
@@ -2181,7 +2197,7 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 
 void DisplayMan::drawFloorAndCeiling() {
 	Box box(0, 223, 0, 36);
-	fillBoxBitmap(_bitmapViewport, box, k0_ColorBlack, k112_byteWidthViewport, k136_heightViewport);
+	fillBoxBitmap(_bitmapViewport, box, kDMColorBlack, k112_byteWidthViewport, k136_heightViewport);
 	_drawFloorAndCeilingRequested = false;
 }
 
@@ -2334,13 +2350,13 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD3LCRNative = _bitmapWallSetD3LCR, _tmpBitmap,
 									_frameWalls163[kDMViewSquareD3C]._srcByteWidth, _frameWalls163[kDMViewSquareD3C]._srcHeight);
-	fillBitmap(_bitmapWallD3LCRFlipped, k10_ColorFlesh, 64, 51);
-	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, 64, 64, kM1_ColorNoTransparency, 51, 51);
+	fillBitmap(_bitmapWallD3LCRFlipped, kDMColorFlesh, 64, 51);
+	blitToBitmap(_tmpBitmap, _bitmapWallD3LCRFlipped, boxWallD3LCR, 11, 0, 64, 64, kDMColorNoTransparency, 51, 51);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD2LCRNative = _bitmapWallSetD2LCR, _tmpBitmap,
 									_frameWalls163[kDMViewSquareD2C]._srcByteWidth, _frameWalls163[kDMViewSquareD2C]._srcHeight);
-	fillBitmap(_bitmapWallD2LCRFlipped, k10_ColorFlesh, 72, 71);
-	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, 72, 72, kM1_ColorNoTransparency, 71, 71);
+	fillBitmap(_bitmapWallD2LCRFlipped, kDMColorFlesh, 72, 71);
+	blitToBitmap(_tmpBitmap, _bitmapWallD2LCRFlipped, boxWallD2LCR, 8, 0, 72, 72, kDMColorNoTransparency, 71, 71);
 
 	copyBitmapAndFlipHorizontal(_bitmapWallD1LCRNative = _bitmapWallSetD1LCR, _bitmapWallD1LCRFlipped,
 									_frameWalls163[kDMViewSquareD1C]._srcByteWidth, _frameWalls163[kDMViewSquareD1C]._srcHeight);
@@ -2471,14 +2487,14 @@ void DisplayMan::applyCreatureReplColors(int replacedColor, int replacementColor
 void DisplayMan::drawFloorPitOrStairsBitmap(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth)
 		blitToBitmap(getNativeBitmapOrGraphic(nativeIndex), _bitmapViewport, f._box, f._srcX, f._srcY,
-						f._srcByteWidth, k112_byteWidthViewport, k10_ColorFlesh, f._srcHeight, k136_heightViewport);
+						f._srcByteWidth, k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 }
 
 void DisplayMan::drawFloorPitOrStairsBitmapFlippedHorizontally(uint16 nativeIndex, Frame &f) {
 	if (f._srcByteWidth) {
 		copyBitmapAndFlipHorizontal(getNativeBitmapOrGraphic(nativeIndex), _tmpBitmap, f._srcByteWidth, f._srcHeight);
 		blitToBitmap(_tmpBitmap, _bitmapViewport, f._box, f._srcX, f._srcY, f._srcByteWidth,
-						k112_byteWidthViewport, k10_ColorFlesh, f._srcHeight, k136_heightViewport);
+						k112_byteWidthViewport, kDMColorFlesh, f._srcHeight, k136_heightViewport);
 	}
 }
 
@@ -2659,7 +2675,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	if (viewWallIndex >= kDMViewWallD1LRight) {
 		if (viewWallIndex == kDMViewWallD1CFront) {
 			if (isInscription) {
-				blitToBitmap(_bitmapWallSetD1LCR, _bitmapViewport, boxWallPatchBehindInscription, 94, 28, _frameWalls163[kDMViewSquareD1C]._srcByteWidth, k112_byteWidthViewport, kM1_ColorNoTransparency, _frameWalls163[kDMViewSquareD1C]._srcHeight, k136_heightViewport);
+				blitToBitmap(_bitmapWallSetD1LCR, _bitmapViewport, boxWallPatchBehindInscription, 94, 28, _frameWalls163[kDMViewSquareD1C]._srcByteWidth, k112_byteWidthViewport, kDMColorNoTransparency, _frameWalls163[kDMViewSquareD1C]._srcHeight, k136_heightViewport);
 				byte *inscrString = inscriptionString;
 				byte *L0092_puc_Bitmap = getNativeBitmapOrGraphic(k120_InscriptionFont);
 				int16 textLineIndex = 0;
@@ -2673,7 +2689,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 					blitFrame._box._x2 = (blitFrame._box._x1 = 112 - (characterCount << 2)) + 7;
 					blitFrame._box._y1 = (blitFrame._box._y2 = inscriptionLineY[textLineIndex++]) - 7;
 					while (characterCount--) {
-						blitToBitmap(L0092_puc_Bitmap, _bitmapViewport, blitFrame._box, *inscrString++ << 3, 0, k144_byteWidth, k112_byteWidthViewport, k10_ColorFlesh, 8, k136_heightViewport);
+						blitToBitmap(L0092_puc_Bitmap, _bitmapViewport, blitFrame._box, *inscrString++ << 3, 0, k144_byteWidth, k112_byteWidthViewport, kDMColorFlesh, 8, k136_heightViewport);
 						blitFrame._box._x1 += 8;
 						blitFrame._box._x2 += 8;
 					}
@@ -2682,7 +2698,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			}
 			ornNativeBitmapIndex++;
 			Box tmpBox(ornCoordSet);
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[k5_ViewCellDoorButtonOrWallOrn] = tmpBox;
+			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn] = tmpBox;
 			_vm->_dungeonMan->_isFacingAlcove = isAlcove;
 			_vm->_dungeonMan->_isFacingViAltar =
 				(wallOrnamentIndex == _currMapViAltarIndex);
@@ -2716,7 +2732,7 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 				coordinateSetOffset = -6;
 		}
 		blitPosX = (ornCoordSet + coordinateSetOffset)[1] - (ornCoordSet + coordinateSetOffset)[0];
-		if (!isDerivedBitmapInCache(wallOrnamentIndex = k4_DerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
+		if (!isDerivedBitmapInCache(wallOrnamentIndex = kDMDerivedBitmapFirstWallOrnament + (wallOrnamentIndex << 2) + wallOrnDerivedBitmapIndexIncrement[viewWallIndex])) {
 			byte *blitBitmap = getNativeBitmapOrGraphic(ornNativeBitmapIndex);
 			blitToBitmapShrinkWithPalChange(blitBitmap, getDerivedBitmap(wallOrnamentIndex), ornBlitBitmap[4] << 1, ornBlitBitmap[5], ornCoordSet[4] << 1, ornCoordSet[5], (viewWallIndex <= kDMViewWallD3RFront) ? _palChangesDoorButtonAndWallOrnD3 : _palChangesDoorButtonAndWallOrnD2);
 			addDerivedBitmap(wallOrnamentIndex);
@@ -2754,12 +2770,12 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 	Box tmpBox(ornCoordSet);
 	blitToBitmap(ornBlitBitmap, _bitmapViewport, tmpBox,
 		blitPosX, 0,
-		ornCoordSet[4], k112_byteWidthViewport, k10_ColorFlesh, ornCoordSet[5], k136_heightViewport);
+		ornCoordSet[4], k112_byteWidthViewport, kDMColorFlesh, ornCoordSet[5], k136_heightViewport);
 
 	if ((viewWallIndex == kDMViewWallD1CFront) && _championPortraitOrdinal--) {
 		blitToBitmap(getNativeBitmapOrGraphic(k26_ChampionPortraitsIndice), _bitmapViewport, boxChampionPortraitOnWall,
 			(_championPortraitOrdinal & 0x0007) << 5, (_championPortraitOrdinal >> 3) * 29,
-			k128_byteWidth, k112_byteWidthViewport, k1_ColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
+			k128_byteWidth, k112_byteWidthViewport, kDMColorDarkGary, 87, k136_heightViewport); /* A portrait is 32x29 pixels */
 	}
 
 	return isAlcove;
@@ -2812,13 +2828,13 @@ void DisplayMan::drawField(FieldAspect* fieldAspect, Box& box) {
 		}
 	}
 
-	isDerivedBitmapInCache(k0_DerivedBitmapViewport);
+	isDerivedBitmapInCache(kDMDerivedBitmapViewport);
 	byte *bitmap = getNativeBitmapOrGraphic(k73_FieldTeleporterGraphicIndice + fieldAspect->_nativeBitmapRelativeIndex);
-	blitBoxFilledWithMaskedBitmap(bitmap, _bitmapViewport, bitmapMask, getDerivedBitmap(k0_DerivedBitmapViewport), box,
+	blitBoxFilledWithMaskedBitmap(bitmap, _bitmapViewport, bitmapMask, getDerivedBitmap(kDMDerivedBitmapViewport), box,
 									   _vm->getRandomNumber(2) + fieldAspect->_baseStartUnitIndex, _vm->getRandomNumber(32), k112_byteWidthViewport,
 									   (Color)fieldAspect->_transparentColor, fieldAspect->_xPos, 0, 136, fieldAspect->_bitplaneWordCount);
-	addDerivedBitmap(k0_DerivedBitmapViewport);
-	releaseBlock(k0_DerivedBitmapViewport | 0x8000);
+	addDerivedBitmap(kDMDerivedBitmapViewport);
+	releaseBlock(kDMDerivedBitmapViewport | 0x8000);
 }
 
 int16 DisplayMan::getScaledBitmapByteCount(int16 byteWidth, int16 height, int16 scale) {
@@ -3101,7 +3117,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	do {
 		/* Draw objects */
 		if (L0135_B_DrawAlcoveObjects) {
-			AL_2_viewCell = k4_ViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
+			AL_2_viewCell = kDMViewCellAlcove; /* Index of coordinates to draw objects in alcoves */
 			cellYellowBear = _vm->returnOppositeDir(directionParam); /* Alcove is on the opposite direction of the viewing direction */
 			objectShiftIndex = 2;
 		} else {
@@ -3145,11 +3161,11 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 T0115015_DrawProjectileAsObject:
 				flipHorizontal = getFlag(objectAspect->_graphicInfo, k0x0001_ObjectFlipOnRightMask) &&
 					!useAlcoveObjectImage &&
-					((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
+					((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == kDMViewCellFrontRight) || (AL_2_viewCell == kDMViewCellBackRight))));
 				/* Flip horizontally if object graphic requires it and is not being drawn in an alcove and the object is either on the right lane or on the right column of the center lane */
 				paddingPixelCount = 0;
 
-				if ((viewSquareIndex == kDMViewSquareD0C) || ((viewSquareIndex >= kDMViewSquareD1C) && (AL_2_viewCell >= k2_ViewCellBackRight))) {
+				if ((viewSquareIndex == kDMViewSquareD0C) || ((viewSquareIndex >= kDMViewSquareD1C) && (AL_2_viewCell >= kDMViewCellBackRight))) {
 					drawingGrabbableObject = ((viewLane == kDMViewLaneCenter) && !drawProjectileAsObject); /* If object is in the center lane (only D0C or D1C with condition above) and is not a projectile */
 					AL_8_shiftSetIndex = k0_ShiftSet_D0BackD1Front;
 					bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex); /* Use base graphic, no resizing */
@@ -3161,9 +3177,9 @@ T0115015_DrawProjectileAsObject:
 					}
 				} else {
 					drawingGrabbableObject = false;
-					derivedBitmapIndex = k104_DerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
+					derivedBitmapIndex = kDMDerivedBitmapFirstObject + objectAspect->_firstDerivedBitmapRelativeIndex;
 					byte* paletteChanges;
-					if ((viewSquareIndex >= kDMViewSquareD1C) || ((viewSquareIndex >= kDMViewSquareD2C) && (AL_2_viewCell >= k2_ViewCellBackRight))) {
+					if ((viewSquareIndex >= kDMViewSquareD1C) || ((viewSquareIndex >= kDMViewSquareD2C) && (AL_2_viewCell >= kDMViewCellBackRight))) {
 						derivedBitmapIndex++;
 						AL_8_shiftSetIndex = k1_ShiftSet_D1BackD2Front;
 						byteWidth = getScaledDimension(objectAspect->_byteWidth, k20_Scale_D2);
@@ -3240,17 +3256,17 @@ T0115015_DrawProjectileAsObject:
 					bitmapRedBanana = bitmapGreenAnt;
 					_vm->_dungeonMan->_pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
 				}
-				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, k10_ColorFlesh, heightRedEagle, k136_heightViewport);
+				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
 			}
 		} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam)) != Thing::_endOfList);
-		if (AL_2_viewCell == k4_ViewCellAlcove)
+		if (AL_2_viewCell == kDMViewCellAlcove)
 			break; /* End of processing when drawing objects in an alcove */
 		if (viewSquareIndex < kDMViewSquareD3C)
 			break; /* End of processing if square is too far away at D4 */
 				   /* Draw creatures */
-		drawingLastBackRowCell = ((AL_2_viewCell <= k1_ViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
+		drawingLastBackRowCell = ((AL_2_viewCell <= kDMViewCellFrontRight) || (cellCounter == 1)) && (!remainingViewCellOrdinalsToProcess || ((remainingViewCellOrdinalsToProcess & 0x0000000F) >= 3)); /* If (draw cell on the back row or second cell being processed) and (no more cells to draw or next cell to draw is a cell on the front row) */
 		if ((groupThing == Thing::_none) || drawCreaturesCompleted)
 			goto T0115129_DrawProjectiles; /* Skip code to draw creatures */
 
@@ -3541,7 +3557,7 @@ T0115129_DrawProjectiles:
 							projectileBitmapIndexDelta = 2;
 
 						if (projectileAspectTypeHasBackGraphicAndRotation) {
-							flipHorizontal = (AL_2_viewCell == k0_ViewCellFronLeft) || (AL_2_viewCell == k3_ViewCellBackLeft);
+							flipHorizontal = (AL_2_viewCell == kDMViewCellFronLeft) || (AL_2_viewCell == kDMViewCellBackLeft);
 							if (!(flipVertical = projectileFlipVertical))
 								flipHorizontal = !flipHorizontal;
 						} else {
@@ -3554,8 +3570,8 @@ T0115129_DrawProjectiles:
 						else
 							projectileBitmapIndexDelta = 1;
 
-						flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < k2_ViewCellBackRight);
-						flipHorizontal = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == k1_ViewCellFrontRight) || (AL_2_viewCell == k2_ViewCellBackRight))));
+						flipVertical = projectileAspectTypeHasBackGraphicAndRotation && (AL_2_viewCell < kDMViewCellBackRight);
+						flipHorizontal = getFlag(((ProjectileAspect *)objectAspect)->_graphicInfo, k0x0010_ProjectileSideMask) && !((viewLane == kDMViewLaneRight) || ((viewLane == kDMViewLaneCenter) && ((AL_2_viewCell == kDMViewCellFrontRight) || (AL_2_viewCell == kDMViewCellBackRight))));
 					}
 
 					AL_4_nativeBitmapIndex += projectileBitmapIndexDelta;
@@ -3566,7 +3582,7 @@ T0115129_DrawProjectiles:
 						if (flipHorizontal)
 							paddingPixelCount = (7 - ((byteWidth - 1) & 0x0007)) << 1;
 
-						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex = k282_DerivedBitmapFirstProjectile + ((ProjectileAspect *)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex)) {
+						if (doNotScaleWithKineticEnergy && isDerivedBitmapInCache(derivedBitmapIndex = kDMDerivedBitmapFirstProjectile + ((ProjectileAspect *)objectAspect)->_firstDerivedBitmapRelativeIndex + (projectileBitmapIndexDelta * 6) + AL_8_projectileScaleIndex)) {
 							bitmapRedBanana = getDerivedBitmap(derivedBitmapIndex);
 						} else {
 							bitmapGreenAnt = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
@@ -3605,7 +3621,7 @@ T0115129_DrawProjectiles:
 					} else
 						AL_4_xPos = MAX(paddingPixelCount, int16(byteWidth - projectilePosX - 1)); /* BUG0_06 Graphical glitch when drawing projectiles or explosions. If a projectile or explosion bitmap is cropped because it is only partly visible on the left side of the viewport (boxByteGreen.X1 = 0) and the bitmap is flipped horizontally (flipHorizontal = true) then a wrong part of the bitmap is drawn on screen. To fix this bug, "+ paddingPixelCount" must be added to the second parameter of this function call */
 
-					blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, k10_ColorFlesh, heightRedEagle, k136_heightViewport);
+					blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 				} else { /* Positive value: projectile aspect is the index of a OBJECT_ASPECT */
 					useAlcoveObjectImage = false;
 					byte projectileCoordinates[2];
@@ -3680,14 +3696,14 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					if (AL_2_explosionSize > 3)
 						AL_4_explosionAspectIndex++; /* Use third graphic in the pattern for large explosion attack */
 				}
-				isDerivedBitmapInCache(k0_DerivedBitmapViewport);
+				isDerivedBitmapInCache(kDMDerivedBitmapViewport);
 				bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_explosionAspectIndex + k351_FirstExplosionPatternGraphicIndice);
 				if (smoke) {
 					blitToBitmapShrinkWithPalChange(bitmapRedBanana, _tmpBitmap, 48, 32, 48, 32, _palChangeSmoke);
 					bitmapRedBanana = _tmpBitmap;
 				}
-				blitBoxFilledWithMaskedBitmap(bitmapRedBanana, _bitmapViewport, 0, getDerivedBitmap(k0_DerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | k10_ColorFlesh), 0, 0, 136, 93);
-				addDerivedBitmap(k0_DerivedBitmapViewport);
+				blitBoxFilledWithMaskedBitmap(bitmapRedBanana, _bitmapViewport, 0, getDerivedBitmap(kDMDerivedBitmapViewport), boxExplosionPatternD0C, _vm->getRandomNumber(4) + 87, _vm->getRandomNumber(64), k112_byteWidthViewport, Color(k0x0080_BlitDoNotUseMask | kDMColorFlesh), 0, 0, 136, 93);
+				addDerivedBitmap(kDMDerivedBitmapViewport);
 				warning("DISABLED CODE: f480_releaseBlock in drawObjectsCreaturesProjectilesExplosions");
 				//f480_releaseBlock(k0_DerivedBitmapViewport | 0x8000);
 			} else {
@@ -3700,9 +3716,9 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 						explosionCoordinates = centeredExplosionCoordinates[AL_1_viewSquareExplosionIndex];
 					} else {
 						if ((AL_2_cellPurpleMan == directionParam) || (AL_2_cellPurpleMan == _vm->turnDirLeft(directionParam)))
-							AL_2_viewCell = k0_ViewCellFronLeft;
+							AL_2_viewCell = kDMViewCellFronLeft;
 						else
-							AL_2_viewCell = k1_ViewCellFrontRight;
+							AL_2_viewCell = kDMViewCellFrontRight;
 
 						explosionCoordinates = explosionCoordinatesArray[AL_1_viewSquareExplosionIndex][AL_2_viewCell];
 					}
@@ -3751,7 +3767,7 @@ T0115200_DrawExplosion:
 				if (flipVertical)
 					flipBitmapVertical(bitmapRedBanana, byteWidth, heightRedEagle);
 
-				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, k10_ColorFlesh, heightRedEagle, k136_heightViewport);
+				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
 	} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam))!= Thing::_endOfList);

@@ -46,7 +46,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 	_vm->_displayMan->loadIntoBitmap(k0_dialogBoxGraphicIndice, _vm->_displayMan->_bitmapViewport);
 	//Strangerke: the version should be replaced by a ScummVM/RogueVM (?) string
 	// TODO: replace with ScummVM version string
-	_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 192, 7, k2_ColorLightGray, k1_ColorDarkGary, "V2.2", k136_heightViewport);
+	_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 192, 7, kDMColorLightGray, kDMColorDarkGary, "V2.2", k136_heightViewport);
 	int16 choiceCount = 1;
 	if (choice2)
 		choiceCount++;
@@ -61,16 +61,16 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		_vm->_displayMan->startEndFadeToPalette(_vm->_displayMan->_blankBuffer);
 
 	if (clearScreen)
-		_vm->_displayMan->fillScreen(k0_ColorBlack);
+		_vm->_displayMan->fillScreen(kDMColorBlack);
 
 	_vm->_displayMan->_useByteBoxCoordinates = false;
 	if (choiceCount == 1) {
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox1, 0, 64, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox2, 0, 39, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox3, 0, 14, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox1, 0, 64, k112_byteWidthViewport, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox2, 0, 39, k112_byteWidthViewport, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, constBox3, 0, 14, k112_byteWidthViewport, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice1, 112, 114);
 	} else if (choiceCount == 2) {
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, dialog2ChoicesPatch, 102, 52, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, dialog2ChoicesPatch, 102, 52, k112_byteWidthViewport, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice1, 112, 77);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice2, 112, 114);
 	} else if (choiceCount == 3) {
@@ -78,7 +78,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice2, 59, 114);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice3, 166, 114);
 	} else if (choiceCount == 4) {
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, dialog4ChoicesPatch, 102, 99, k112_byteWidthViewport, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport, k136_heightViewport);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapViewport, dialog4ChoicesPatch, 102, 99, k112_byteWidthViewport, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport, k136_heightViewport);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice1, 59, 77);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice2, 166, 77);
 		printCenteredChoice(_vm->_displayMan->_bitmapViewport, choice3, 59, 114);
@@ -93,14 +93,14 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		if (isMessageOnTwoLines(msg1, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosY = 21;
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorYellow, kDMColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
 			textPosY += 8;
 			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorYellow, kDMColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
 			textPosY += 8;
 		} else {
 			textPosX = 113 - ((strlen(msg1) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k11_ColorYellow, k5_ColorLightBrown, msg1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorYellow, kDMColorLightBrown, msg1, k136_heightViewport);
 			textPosY += 8;
 		}
 	}
@@ -109,13 +109,13 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		char L1313_ac_StringPart2[70];
 		if (isMessageOnTwoLines(msg2, L1312_ac_StringPart1, L1313_ac_StringPart2)) {
 			textPosX = 113 - ((strlen(L1312_ac_StringPart1) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorGold, kDMColorLightBrown, L1312_ac_StringPart1, k136_heightViewport);
 			textPosY += 8;
 			textPosX = 113 - ((strlen(L1313_ac_StringPart2) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorGold, kDMColorLightBrown, L1313_ac_StringPart2, k136_heightViewport);
 		} else {
 			textPosX = 113 - ((strlen(msg2) * 6) >> 1);
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, k9_ColorGold, k5_ColorLightBrown, msg2, k136_heightViewport);
+			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, textPosX, textPosY, kDMColorGold, kDMColorLightBrown, msg2, k136_heightViewport);
 		}
 	}
 	if (screenDialog) {
@@ -125,7 +125,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 		displayBox._x1 = 47;
 		displayBox._x2 = 270;
 		_vm->_eventMan->showMouse();
-		_vm->_displayMan->blitToScreen(_vm->_displayMan->_bitmapViewport, &displayBox, k112_byteWidthViewport, kM1_ColorNoTransparency, k136_heightViewport);
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->_bitmapViewport, &displayBox, k112_byteWidthViewport, kDMColorNoTransparency, k136_heightViewport);
 		_vm->_eventMan->hideMouse();
 	} else {
 		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
@@ -142,7 +142,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 void DialogMan::printCenteredChoice(byte *bitmap, const char *str, int16 posX, int16 posY) {
 	if (str) {
 		posX -= (strlen(str) * 6) >> 1;
-		_vm->_textMan->printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, k9_ColorGold, k5_ColorLightBrown, str, k136_heightViewport);
+		_vm->_textMan->printTextToBitmap(bitmap, k112_byteWidthViewport, posX, posY, kDMColorGold, kDMColorLightBrown, str, k136_heightViewport);
 	}
 }
 
@@ -195,56 +195,56 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	_vm->_displayMan->_drawFloorAndCeilingRequested = true;
 	Box boxB(0, 0, boxA._x2 - boxA._x1 + 3, boxA._y2 - boxA._y1 + 3);
 	_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, _vm->_displayMan->_bitmapViewport,
-										boxB, boxA._x1, boxA._y1, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 200, 25);
+										boxB, boxA._x1, boxA._y1, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 200, 25);
 	_vm->delay(1);
 	boxB = boxA;
 	boxB._y2 = boxB._y1;
-	_vm->_displayMan->fillScreenBox(boxB, k5_ColorLightBrown);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightBrown);
 	boxB = boxA;
 	boxB._x2 = boxB._x1;
 	boxB._y2--;
-	_vm->_displayMan->fillScreenBox(boxB, k5_ColorLightBrown);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightBrown);
 	boxB = boxA;
 	boxB._y2--;
 	boxB._y1 = boxB._y2;
 	boxB._x1 -= 2;
-	_vm->_displayMan->fillScreenBox(boxB, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorBlack);
 	boxB = boxA;
 	boxB._x1 = boxB._x2;
-	_vm->_displayMan->fillScreenBox(boxB, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorBlack);
 	_vm->delay(2);
 	boxB = boxA;
 	boxB._y1++;
 	boxB._y2 = boxB._y1;
 	boxB._x2 -= 2;
-	_vm->_displayMan->fillScreenBox(boxB, k5_ColorLightBrown);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightBrown);
 	boxB = boxA;
 	boxB._x1++;
 	boxB._x2 = boxB._x1;
 	boxB._y2--;
-	_vm->_displayMan->fillScreenBox(boxB, k5_ColorLightBrown);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightBrown);
 	boxB = boxA;
 	boxB._x2--;
 	boxB._x1 = boxB._x2;
-	_vm->_displayMan->fillScreenBox(boxB, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorBlack);
 	boxB = boxA;
 	boxB._y1 = boxB._y2 = boxB._y2 - 2;
 	boxB._x1++;
-	_vm->_displayMan->fillScreenBox(boxB, k0_ColorBlack);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorBlack);
 	boxB = boxA;
 	boxB._y1 = boxB._y2 = boxB._y2 + 2;
 	boxB._x1--;
 	boxB._x2 += 2;
-	_vm->_displayMan->fillScreenBox(boxB, k13_ColorLightestGray);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightestGray);
 	boxB = boxA;
 	boxB._x1 = boxB._x2 = boxB._x2 + 3;
 	boxB._y2 += 2;
-	_vm->_displayMan->fillScreenBox(boxB, k13_ColorLightestGray);
+	_vm->_displayMan->fillScreenBox(boxB, kDMColorLightestGray);
 	_vm->delay(2);
 	boxA._x2 += 3;
 	boxA._y2 += 3;
 	_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapViewport, _vm->_displayMan->_bitmapScreen,
-										boxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kM1_ColorNoTransparency, 25, k200_heightScreen);
+										boxA, 0, 0, k160_byteWidthScreen, k160_byteWidthScreen, kDMColorNoTransparency, 25, k200_heightScreen);
 	_vm->_eventMan->hideMouse();
 	_vm->_eventMan->_primaryMouseInput = primaryMouseInputBackup;
 	_vm->_eventMan->_secondaryMouseInput = secondaryMouseInputBackup;
