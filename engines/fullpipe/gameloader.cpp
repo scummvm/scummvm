@@ -602,8 +602,102 @@ void GameLoader::readSavegame(const char *fname) {
 	warning("STUB: readSavegame(%s)", fname);
 }
 
+struct SaveHeader {
+	int32 saveSize;
+	char magic[32];
+	int32 updateCounter;
+	int32 unkField;
+	int32 encSize;
+};
+
 void GameLoader::writeSavegame(Scene *sc, const char *fname) {
-	warning("STUB: writeSavegame(sc, %s)", fname);
+	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (!v) {
+//		v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarAsInt("SAVEGAME", 0);
+
+		if (!v) {
+			warning("No state to save");
+			return;
+		}
+	}
+
+	SaveHeader header;
+
+	v->setSubVarAsInt("Scene", sc->_sceneId);
+
+#if 0
+	saveScenePicAniInfos(this, sc->_sceneId);
+	memset(&header, 0, sizeof(header));
+
+	header.saveSize = 48;
+	strcpy(header.magic, "FullPipe Savegame");
+	header.updateCounter = _updateCounter;
+	header.unkField = 1;
+
+	// open save for reading
+	v = _gameVar->getSubVarByName("OBJSTATES");
+
+	MfcArchive archive;
+
+	sca = 0;
+	filenamea = 0;
+	if (v) {
+		v12 = v11->_nextVarObj;
+		v13 = (char *)v11->prevVarObj;
+		v9 = v11->parentVarObj;
+		v11->parentVarObj = 0;
+		sca = (Scene *)v12;
+		v11->_nextVarObj = 0;
+		filenamea = v13;
+		v11->prevVarObj = 0;
+	}
+
+	carchive->writeObject(v);
+	if (v11) {
+		v11->parentVarObj = v9;
+		v11->_nextVarObj = (GameVar *)sca;
+		v11->prevVarObj = (GameVar *)filenamea;
+	}
+	v14 = getGameLoaderInventory();
+	Inventory2_SerializePartially(v14, &carchive);
+	v15 = this->_sc2array.objs.m_nSize;
+	if  (unsigned int)(carchive.m_lpBufCur + 4) > carchive.m_lpBufMax)
+		CArchive::Flush(&carchive);
+	*(_DWORD *)carchive.m_lpBufCur = v15;
+	v16 = 0;
+	carchive.m_lpBufCur += 4;
+	while (1) {
+		scb = (Scene *)v16;
+		if ( v16 >= this->_sc2array.objs.m_nSize )
+			break;
+		v17 = v16;
+		v18 = this->_sc2array.objs.m_pData[v16].picAniInfosCount;
+		if ( (unsigned int)(carchive.m_lpBufCur + 4) > carchive.m_lpBufMax ) {
+			CArchive::Flush(&carchive);
+			v16 = (int)scb;
+		}
+		*(_DWORD *)carchive.m_lpBufCur = v18;
+		v19 = &this->_sc2array.objs.m_pData[v17];
+		carchive.m_lpBufCur += 4;
+		v20 = v19->picAniInfosCount;
+		if ( v20 > 0 ) {
+			CArchive::Write(&carchive, v19->picAniInfos, 44 * v20);
+			v16 = (int)scb;
+		}
+		++v16;
+	}
+	CArchive::Close(&carchive);
+	header.encSize = GameLoader_encryptSavegame((GameLoader *)header.unkField, (int)&cmemfile);
+	CFile::Write((int)&cfile, (int)&header, header.saveSize);
+	v21 = (void *)CMemFile::Detach(&cmemfile);
+	CFile::Write((int)&cfile, (int)v21, header.encSize);
+	free(v21);
+	v22 = (void (__fastcall *)(char *, signed int))this->_readSavegameCallback;
+	if ( v22 )
+		v22(&cfile, 1);
+	CFile::Close(&cfile);
+#endif
 }
 
 Sc2::Sc2() {
