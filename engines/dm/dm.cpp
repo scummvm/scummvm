@@ -138,7 +138,6 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst
 	_stopWaitingForPlayerInput = true;
 	_gameTimeTicking = false;
 	_restartGameAllowed = false;
-	_gameId = 0;
 	_pressingEye = false;
 	_stopPressingEye = false;
 	_pressingMouth = false;

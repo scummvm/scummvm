@@ -56,24 +56,19 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		int32 _saveVersion;
 		OriginalSaveFormat _saveFormat;
 		OriginalSavePlatform _savePlatform;
-
-		int32 _gameId;
 		uint16 _dungeonId;
 	} dmSaveHeader;
-
-	if (!_newGameFl) {
-		fileName = getSavefileName(slot);
-		saveFileManager = _system->getSavefileManager();
-		file = saveFileManager->openForLoading(fileName);
-	}
 
 	if (_newGameFl) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_restartGameAllowed = false;
 		_championMan->_partyChampionCount = 0;
 		_championMan->_leaderHandObject = Thing::_none;
-		_gameId = ((int32)getRandomNumber(65536)) * getRandomNumber(65536);
 	} else {
+		fileName = getSavefileName(slot);
+		saveFileManager = _system->getSavefileManager();
+		file = saveFileManager->openForLoading(fileName);
+
 		SaveGameHeader header;
 		readSaveGameHeader(file, &header);
 
@@ -83,10 +78,10 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		dmSaveHeader._saveVersion = file->readSint32BE();
 		dmSaveHeader._saveFormat = (OriginalSaveFormat)file->readSint32BE();
 		dmSaveHeader._savePlatform = (OriginalSavePlatform)file->readSint32BE();
-		dmSaveHeader._gameId = file->readSint32BE();
-		dmSaveHeader._dungeonId = file->readUint16BE();
 
-		_gameId = dmSaveHeader._gameId;
+		// Skip _gameId, which was useless
+		file->readSint32BE();
+		dmSaveHeader._dungeonId = file->readUint16BE();
 
 		_gameTime = file->readSint32BE();
 		// G0349_ul_LastRandomNumber = L1371_s_GlobalData.LastRandomNumber;
@@ -121,6 +116,8 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		// read sentinel
 		uint32 sentinel = file->readUint32BE();
 		assert(sentinel == 0x6f85e3d3);
+
+		_dungeonId = dmSaveHeader._dungeonId;
 	}
 
 	_dungeonMan->loadDungeonFile(file);
@@ -137,20 +134,17 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 			_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 		}
 	} else {
-		_dungeonId = dmSaveHeader._dungeonId;
-
 		_restartGameAllowed = true;
 
 		switch (getGameLanguage()) { // localized
-		default:
-		case Common::EN_ANY:
-			_dialog->dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
-			break;
 		case Common::DE_DEU:
 			_dialog->dialogDraw(nullptr, "SPIEL WIRD GELADEN . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		case Common::FR_FRA:
 			_dialog->dialogDraw(nullptr, "CHARGEMENT DU JEU . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
+			break;
+		default:
+			_dialog->dialogDraw(nullptr, "LOADING GAME . . .", nullptr, nullptr, nullptr, nullptr, true, true, true);
 			break;
 		}
 	}
@@ -298,7 +292,9 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->writeSint32BE(1); // save version
 	file->writeSint32BE(_gameVersion->_origSaveFormatToWrite);
 	file->writeSint32BE(_gameVersion->_origPlatformToWrite);
-	file->writeSint32BE(_gameId);
+
+	// Was _gameID, useless.
+	file->writeSint32BE(0);
 	file->writeUint16BE(_dungeonId);
 
 	// write C0_SAVE_PART_GLOBAL_DATA part

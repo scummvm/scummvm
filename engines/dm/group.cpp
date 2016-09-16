@@ -199,7 +199,7 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 	};
 	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDrumstickShank,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDrumstickShank | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeDrumstickShank) | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
@@ -393,7 +393,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 
 	if (group->_health[creatureIndex] <= damage) {
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
-		uint16 cell = (groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex);
+		uint16 cell = (groupCells == k255_CreatureTypeSingleCenteredCreature) ? (uint16)k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex);
 		uint16 creatureCount = group->getCount();
 		uint16 retVal;
 

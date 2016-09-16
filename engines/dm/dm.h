@@ -304,7 +304,6 @@ public:
 	bool _stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput
 	bool _gameTimeTicking; // @ G0301_B_GameTimeTicking
 	bool _restartGameAllowed; // @ G0524_B_RestartGameAllowed
-	int32 _gameId; // @ G0525_l_GameID, probably useless here
 	bool _pressingEye; // @ G0331_B_PressingEye
 	bool _stopPressingEye; // @ G0332_B_StopPressingEye
 	bool _pressingMouth; // @ G0333_B_PressingMouth
