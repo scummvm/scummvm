@@ -145,7 +145,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
 		do {
 			dropCreatureFixedPossessions(creatureType, mapX, mapY,
-				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), soundMode);
+				(groupCells == k255_CreatureTypeSingleCenteredCreature) ? (uint16)k255_CreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), soundMode);
 		} while (creatureIndex--);
 	}
 
@@ -192,9 +192,9 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 	};
 	static uint16 fixedPossessionCreature7rockRockPile[5] = { // @ G0249_aui_Graphic559_FixedPossessionsCreature07Rock_RockPile
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeBoulder,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeBoulder | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstWeapon + kDMWeaponRock | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeBoulder) | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstWeapon + kDMWeaponRock) | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstWeapon + kDMWeaponRock) | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature4PainRatHellHound[3] = { // @ G0250_aui_Graphic559_FixedPossessionsCreature04PainRat_Hellhound
@@ -204,13 +204,13 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 	};
 	static uint16 fixedPossessionCreature6screamer[3] = { // @ G0251_aui_Graphic559_FixedPossessionsCreature06Screamer
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeScreamerSlice,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeScreamerSlice | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeScreamerSlice) | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature15MagnetaWormWorm[4] = { // @ G0252_aui_Graphic559_FixedPossessionsCreature15MagentaWorm_Worm
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound) | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeWormRound) | kDMMaskRandomDrop,
 		0
 	};
 	static uint16 fixedPossessionCreature24RedDragon[11] = { // @ G0253_aui_Graphic559_FixedPossessionsCreature24RedDragon
@@ -222,8 +222,10 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
 		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak | kDMMaskRandomDrop,
-		kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak | kDMMaskRandomDrop, 0};
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak) | kDMMaskRandomDrop,
+		(kDMObjectInfoIndexFirstJunk + kDMJunkTypeDragonSteak) | kDMMaskRandomDrop,
+		0
+	};
 
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;
