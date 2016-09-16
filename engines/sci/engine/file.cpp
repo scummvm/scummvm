@@ -335,6 +335,7 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
 	desc->time = meta.saveTime;
 	desc->version = meta.version;
 	desc->gameVersion = meta.gameVersion;
+	desc->score = meta.score;
 
 	if (meta.name.lastChar() == '\n')
 		meta.name.deleteLastChar();

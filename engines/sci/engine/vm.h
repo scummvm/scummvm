@@ -147,8 +147,10 @@ enum GlobalVar {
 	kCurrentRoomNo  = 11,
 	kPreviousRoomNo = 12,
 	kNewRoomNo      = 13,
+	kScore          = 15,
 	kFastCast       = 84, // SCI16
-	kMessageType    = 90
+	kMessageType    = 90,
+	kShivers1Score  = 349
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */

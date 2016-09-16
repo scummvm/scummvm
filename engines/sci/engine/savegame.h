@@ -37,7 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
- *      38 - SCI32 cursor, accurate SCI32 arrays/strings
+ *      38 - SCI32 cursor, accurate SCI32 arrays/strings, score metadata
  *      37 - Segment entry data changed to pointers
  *      36 - SCI32 bitmap segment
  *      35 - SCI32 remap
@@ -77,6 +77,10 @@ struct SavegameMetadata {
 	uint32 playTime;
 	uint16 gameObjectOffset;
 	uint16 script0Size;
+#ifdef ENABLE_SCI32
+	// Used by Shivers 1
+	uint32 score;
+#endif
 };
 
 /**
