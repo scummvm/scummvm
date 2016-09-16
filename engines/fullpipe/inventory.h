@@ -101,7 +101,7 @@ class Inventory2 : public Inventory {
 	virtual ~Inventory2();
 
 	bool loadPartial(MfcArchive &file);
-	bool writePartial(Common::WriteStream *file);
+	bool savePartial(Common::WriteStream *file);
 	void addItem(int itemId, int count);
 	void addItem2(StaticANIObject *obj);
 	void removeItem(int itemId, int count);

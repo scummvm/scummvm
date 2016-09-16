@@ -659,7 +659,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		v->_prevVarObj = prv;
 	}
 
-	getGameLoaderInventory()->writePartial(saveFile);
+	getGameLoaderInventory()->savePartial(saveFile);
 
 	saveFile->writeUint32LE(_sc2array.size());
 

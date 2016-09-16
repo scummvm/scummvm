@@ -106,8 +106,14 @@ bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartiall
 	return true;
 }
 
-bool Inventory2::writePartial(Common::WriteStream *file) {
-	warning("STUB: nventory2::writePartial()");
+bool Inventory2::savePartial(Common::WriteStream *saveFile) {
+	saveFile->writeUint32LE(_inventoryItems.size());
+
+	for (uint i = 0; i < _inventoryItems.size(); i++) {
+		saveFile->writeUint16LE(_inventoryItems[i]->itemId);
+		saveFile->writeUint16LE(_inventoryItems[i]->count);
+	}
+
 	return true;
 }
 
