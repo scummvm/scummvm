@@ -98,7 +98,6 @@ void XeenEngine::initialize() {
 	_sound = new Sound(this, _mixer);
 	_spells = new Spells(this);
 	_town = new Town(this);
-	Voc::init(this);
 
 	File f("029.obj");
 	_eventData = f.readStream(f.size());

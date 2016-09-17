@@ -799,8 +799,7 @@ void Combat::doMonsterTurn(int monsterId) {
 		intf.draw3d(true);
 		intf.draw3d(true);
 
-		File f(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
-		sound.playSample(&f, 0);
+		sound.playSound(Common::String::format("%s.voc", monsterData._attackVoc.c_str()));
 		monsterId = monster._spriteId;
 	}
 
@@ -1386,7 +1385,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		damage = 0;
 
 	if (!damage) {
-		sound.playSample(&_missVoc, 1);
+		sound.playSound(_missVoc, 1);
 		sound.playFX(6);
 	} else {
 		if (!isDarkCc && monster._spriteId == 89)
@@ -1449,17 +1448,17 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		}
 		
 		if (damage < 1) {
-			sound.playSample(&_missVoc, 1);
+			sound.playSound(_missVoc, 1);
 			sound.playFX(6);
 		} else {
 			_monsterScale[_monsterIndex] = getDamageScale(damage);
 			intf.draw3d(true);
 			
-			sound.playSample(nullptr, 0);
+			sound.stopSound();
 			File powVoc(Common::String::format("pow%d.voc",
 				POW_WEAPON_VOCS[_attackWeaponId]));
 			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeaponId]);
-			sound.playSample(&powVoc, 1);
+			sound.playSound(powVoc, 1);
 
 			if (monster._hp > damage) {
 				monster._hp -= damage;

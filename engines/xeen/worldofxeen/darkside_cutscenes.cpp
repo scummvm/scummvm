@@ -39,7 +39,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
 		SpriteResource("nwc3.int"), SpriteResource("nwc4.int")
 	};
-	Voc voc[3];
+	File voc[3];
 	voc[0].open("dragon1.voc");
 	voc[1].open("dragon2.voc");
 	voc[2].open("dragon3.voc");
@@ -55,21 +55,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.draw();
 	screen.fadeIn(4);
 
-	// **DEBUG**: Testing music
-	sound.setMusicVolume(0x5f);
-	File f("bigtheme.m", *_vm->_files->_sideArchives[1]);
-	byte *data = new byte[f.size()];
-	f.read(data, f.size());
-	f.close();
-
-	sound.playSong(data);
-
-	events.updateGameCounter();
-	events.wait(1000, true);
-
-	sound.stopSong();
-	delete[] data;
-	/*
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
 	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
@@ -81,7 +66,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 		switch (idx) {
 		case 17:
-			voc[0].play();
+			sound.playSound(voc[0]);
 			break;
 		case 34:
 		case 44:
@@ -89,7 +74,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			nwcFrame = 0;
 			break;
 		case 35:
-			voc[1].play();
+			sound.playSound(voc[1]);
 			break;
 		default:
 			++nwcFrame;
@@ -108,19 +93,19 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 		switch (idx) {
 		case 3:
-			sound.startMusic(40);
+			sound.playFX(40);
 			break;
 		case 11:
-			sound.startMusic(0);
+			sound.playFX(0);
 		case 27:
 		case 30:
-			sound.startMusic(3);
+			sound.playFX(3);
 			break;
 		case 31:
-			sound.proc2(voc[2]);
+			sound.playSound(voc[2]);
 			break;
 		case 33:
-			sound.startMusic(2);
+			sound.playFX(2);
 			break;
 		default:
 			break;
@@ -134,10 +119,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	if (events.wait(10, true))
 		return false;
 
-	voc[0].stop();
-	voc[1].stop();
-	voc[2].stop();
-	sound.stopMusic(95);
+	sound.songCommand(95);
 
 	screen.loadBackground("jvc.raw");
 	screen.fadeOut(8);
@@ -146,7 +128,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	
 	events.updateGameCounter();
 	events.wait(60, true);
-	*/
 	return true;
 }
 
@@ -174,7 +155,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	SpriteResource sprites[3] = {
 		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
 	};
-	Voc voc[2];
+	File voc[2];
 	voc[0].open("pharoh1a.voc");
 	voc[1].open("pharoh1b.voc");
 
@@ -254,8 +235,8 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	Voc voc("ido2.voc");
-//	Music newBright("newbrigh.m");
+	//Voc voc("ido2.voc");
+	//	Music newBright("newbrigh.m");
 	SpriteResource box("box.vga");
 
 //	newBright.play();

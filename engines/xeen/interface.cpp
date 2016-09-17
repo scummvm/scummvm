@@ -1088,17 +1088,13 @@ void Interface::rest() {
 			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
 				events.pollEventsAndWait();
 
-			File f("dreams2.voc");
-			sound.playSample(&f, 1);
-			while (!_vm->shouldQuit() && sound.playSample(1, 0))
+			sound.playSound("dreams2.voc", 1);
+			while (!_vm->shouldQuit() && sound.isPlaying())
 				events.pollEventsAndWait();
-			f.close();
 
-			f.openFile("laff1.voc");
-			sound.playSample(&f, 1);
-			while (!_vm->shouldQuit() && sound.playSample(1, 0))
+			sound.playSound("laff1.voc", 1);
+			while (!_vm->shouldQuit() && sound.isPlaying())
 				events.pollEventsAndWait();
-			f.close();
 
 			events.updateGameCounter();
 			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
@@ -1312,8 +1308,6 @@ void Interface::handleFalling() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Window &w = screen._windows[3];
-	File voc1("scream.voc");
-	File voc2("unnh.voc");
 	saveFall();
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
@@ -1323,7 +1317,7 @@ void Interface::handleFalling() {
 
 	screen._windows[33].update();
 	sound.playFX(11);
-	sound.playSample(&voc1, 0);
+	sound.playSound("scream.voc");
 
 	for (int idx = 0, incr = 2; idx < 133; ++incr, idx += incr) {
 		fall(idx);
@@ -1335,8 +1329,8 @@ void Interface::handleFalling() {
 	assembleBorder();
 	w.update();
 
-	sound.playSample(nullptr, 0);
-	sound.playSample(&voc2, 0);
+	sound.stopSound();
+	sound.playSound("unnh.voc");
 	sound.playFX(31);
 
 	fall(127);

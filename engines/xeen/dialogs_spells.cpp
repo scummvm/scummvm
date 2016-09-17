@@ -59,10 +59,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	do {
 		if (!isCasting) {
 			if (!c->guildMember()) {
-				sound.playSample(nullptr, 0);
+				sound.stopSound();
 				intf._overallFrame = 5;
-				File f(isDarkCc ? "skull1.voc" : "guild11.voc");
-				sound.playSample(&f, 1);
+				sound.playSound(isDarkCc ? "skull1.voc" : "guild11.voc", 1);
 				break;
 			}
 
@@ -239,10 +238,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {
 						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {
 							++c->_spells[spellIndex];
-							sound.playSample(nullptr, 0);
+							sound.stopSound();
 							intf._overallFrame = 0;
-							File f(isDarkCc ? "guild12.voc" : "parrot2.voc");
-							sound.playSample(&f, 1);
+							sound.playSound(isDarkCc ? "guild12.voc" : "parrot2.voc", 1);
 						} else {
 							sound.playFX(21);
 						}

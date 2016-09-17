@@ -32,51 +32,35 @@
 
 namespace Xeen {
 
-class Sound;
-
-class Voc: public Common::File {
-private:
-	static Sound *_sound;
-	Audio::SoundHandle _soundHandle;
-public:
-	Voc() {}
-	Voc(const Common::String &name);
-	virtual ~Voc() { stop(); }
-	static void init(XeenEngine *vm);
-
-	/**
-	 * Start playing the sound
-	 */
-	void play();
-
-	/**
-	 * Stop playing the sound
-	 */
-	void stop();
-};
-
 class Sound : public Music {
 private:
 	Audio::Mixer *_mixer;
+	Audio::SoundHandle _soundHandle;
 public:
 	Sound(XeenEngine *vm, Audio::Mixer *mixer);
-
-	void proc2(Common::SeekableReadStream &f);
+	virtual ~Sound();
 
 	/**
 	 * Play a given sound
 	 */
-	void playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+	void playSound(Common::SeekableReadStream &s, int unused = 0);
+
+	/**
+	 * Play a given sound
+	 */
+	void playSound(const Common::String &name, int unused = 0);
 
 	/**
 	 * Stop playing a sound
+	 * @remarks		In the original, passing 1 to playSound stopped the sound
 	 */
-	void stopSound(Audio::SoundHandle &soundHandle);
+	void stopSound();
 
-	void playSample(const Common::SeekableReadStream *stream, int v2 = 1) {}
-
-	bool playSample(int v1, int v2) { return false; }
+	/**
+	 * Returns true if a sound is currently playing
+	 * @remarks		In the original, passing 0 to playSound returned play status
+	 */
+	bool isPlaying() const;
 };
 
 } // End of namespace Xeen

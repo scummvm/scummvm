@@ -907,9 +907,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 						desc.c_str(), cost))) {
 					if (party.subtract(0, cost, 0, WT_FREEZE_WAIT)) {
 						if (isDarkCc) {
-							sound.playSample(0, 0);
-							File f("choice2.voc");
-							sound.playSample(&f, 0);
+							sound.stopSound();
+							sound.playSound("choice2.voc");
 						}
 
 						// Add entry to the end of the list

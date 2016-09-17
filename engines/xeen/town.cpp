@@ -101,7 +101,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
 		intf._overallFrame = 1;
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "bank1.voc" : "banker.voc";
 		break;
 	
@@ -114,7 +114,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(234, 74, 308, 82), 0);
 		addButton(Common::Rect(234, 84, 308, 92), 0);
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "see2.voc" : "whaddayo.voc";
 		break;
 
@@ -129,7 +129,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(234, 84, 308, 92), 0);
 		_vm->_mode = MODE_17;
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "parrot1.voc" : "guild10.voc";
 		break;
 
@@ -145,7 +145,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
 		_vm->_mode = MODE_17;
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "hello1.voc" : "hello.voc";
 		break;
 
@@ -158,7 +158,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
 		addButton(Common::Rect(234, 84, 308, 92), 0);
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "help2.voc" : "maywe2.voc";
 		break;
 
@@ -171,7 +171,7 @@ int Town::townAction(int actionId) {
 		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
 		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t);
 
-		sound.playSample(nullptr, 0);
+		sound.stopSound();
 		vocName = isDarkCc ? "training.voc" : "youtrn1.voc";
 		break;
 
@@ -239,8 +239,7 @@ int Town::townAction(int actionId) {
 	if (actionId == 0)
 		intf._overallFrame = 2;
 
-	File voc(vocName);
-	sound.playSample(&voc, 1);
+	sound.playSound(vocName, 1);
 
 	do {
 		townWait();
@@ -253,17 +252,15 @@ int Town::townAction(int actionId) {
 	case 1:
 		// Leave blacksmith
 		if (isDarkCc) {
-			sound.playSample(nullptr, 0);
-			File f("come1.voc");
-			sound.playSample(&f, 1);
+			sound.stopSound();
+			sound.playSound("come1.voc", 1);
 		}
 		break;
 
 	case 3: {
 		// Leave Tavern
-		sound.playSample(nullptr, 0);
-		File f(isDarkCc ? "gdluck1.voc" : "goodbye.voc");
-		sound.playSample(&f, 1);
+		sound.stopSound();
+		sound.playSound(isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
 
 		map.mazeData()._mazeNumber = party._mazeId;
 		break;
@@ -559,10 +556,9 @@ Character *Town::doGuildOptions(Character *c) {
 			intf.highlightChar(_buttonValue);
 
 			if (!c->guildMember()) {
-				sound.playSample(nullptr, 0);
+				sound.stopSound();
 				intf._overallFrame = 5;
-				File f(isDarkCc ? "skull1.voc" : "guild11.voc");
-				sound.playSample(&f, 1);
+				sound.playSound(isDarkCc ? "skull1.voc" : "guild11.voc", 1);
 			}
 		}
 	} else if (_buttonValue == Common::KEYCODE_s) {
@@ -608,9 +604,8 @@ Character *Town::doTavernOptions(Character *c) {
 		// Drink
 		if (!c->noActions()) {
 			if (party.subtract(0, 1, 0, WT_2)) {
-				sound.playSample(nullptr, 0);
-				File f("gulp.voc");
-				sound.playSample(&f, 0);
+				sound.stopSound();
+				sound.playSound("gulp.voc");
 				_v21 = 1;
 
 				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
@@ -668,9 +663,8 @@ Character *Town::doTavernOptions(Character *c) {
 				ErrorScroll::show(_vm, FOOD_PACKS_FULL, WT_2);
 			} else if (party.subtract(0, _v23, 0, WT_2)) {
 				party._food = _v22;
-				sound.playSample(nullptr, 0);
-				File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
-				sound.playSample(&f, 1);
+				sound.stopSound();
+				sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 			}
 		}
 
@@ -747,9 +741,8 @@ Character *Town::doTavernOptions(Character *c) {
 					screen._windows[10].update();
 					townWait();
 				} else if (party.subtract(0, 1, 0, WT_2)) {
-					sound.playSample(nullptr, 0);
-					File f(isDarkCc ? "thanks2.voc" : "thankyou.voc");
-					sound.playSample(&f, 1);
+					sound.stopSound();
+					sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 
 					if (party._mazeId == (isDarkCc ? 29 : 28)) {
 						_v24 = 30;
@@ -808,9 +801,8 @@ Character *Town::doTempleOptions(Character *c) {
 
 	case Common::KEYCODE_d:
 		if (_donation && party.subtract(0, _donation, 0, WT_2)) {
-			sound.playSample(nullptr, 0);
-			File f("coina.voc");
-			sound.playSample(&f, 1);
+			sound.stopSound();
+			sound.playSound("coina.voc", 1);
 			_dayOfWeek = (_dayOfWeek + 1) / 10;
 
 			if (_dayOfWeek == (party._day / 10)) {
@@ -824,9 +816,8 @@ Character *Town::doTempleOptions(Character *c) {
 				party._blessed = amt;
 
 				intf.drawParty(true);
-				sound.playSample(nullptr, 0);
-				Voc voc("ahh.voc");
-				voc.play();
+				sound.stopSound();
+				sound.playSound("ahh.voc");
 				_flag1 = true;
 				_donation = 0;
 			}
@@ -855,9 +846,8 @@ Character *Town::doTempleOptions(Character *c) {
 
 			_v1 = 1440;
 			intf.drawParty(true);
-			sound.playSample(nullptr, 0);
-			File f("ahh.voc");
-			sound.playSample(&f, 1);
+			sound.stopSound();
+			sound.playSound("ahh.voc", 1);
 		}
 		break;
 
@@ -872,9 +862,8 @@ Character *Town::doTempleOptions(Character *c) {
 
 			_v1 = 1440;
 			intf.drawParty(true);
-			sound.playSample(nullptr, 0);
-			File f("ahh.voc");
-			sound.playSample(&f, 1);
+			sound.stopSound();
+			sound.playSound("ahh.voc", 1);
 		}
 		break;
 
@@ -909,7 +898,7 @@ Character *Town::doTrainingOptions(Character *c) {
 
 	case Common::KEYCODE_t:
 		if (_experienceToNextLevel) {
-			sound.playSample(nullptr, 0);
+			sound.stopSound();
 			_drawFrameIndex = 0;
 
 			Common::String name;
@@ -919,15 +908,13 @@ Character *Town::doTrainingOptions(Character *c) {
 				name = isDarkCc ? "gtlost.voc" : "trainin0.voc";
 			}
 
-			File f(name);
-			sound.playSample(&f);
+			sound.playSound(name);
 
 		} else if (!c->noActions()) {
 			if (party.subtract(0, (c->_level._permanent * c->_level._permanent) * 10, 0, WT_2)) {
 				_drawFrameIndex = 0;
-				sound.playSample(nullptr, 0);
-				File f(isDarkCc ? "prtygd.voc" : "trainin2.voc");
-				sound.playSample(&f, 1);
+				sound.stopSound();
+				sound.playSound(isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
 
 				c->_experience -=  c->nextExperienceLevel() - 
 					(c->getCurrentExperience() - c->_experience);
@@ -983,7 +970,7 @@ void Town::depositWithdrawl(int choice) {
 	drawButtons(&screen._windows[35]);
 	screen._windows[35].update();
 
-	sound.playSample(nullptr, 0);
+	sound.stopSound();
 	File voc("coina.voc");
 	bool flag = false;
 
@@ -1038,7 +1025,7 @@ void Town::depositWithdrawl(int choice) {
 				gems = party._gems;
 			}
 
-			sound.playSample(&voc, 0);
+			sound.playSound(voc);
 			msg = Common::String::format(GOLD_GEMS_2, DEPOSIT_WITHDRAWL[choice],
 				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
 			screen._windows[35].writeString(msg);
@@ -1061,7 +1048,7 @@ void Town::drawTownAnim(bool flag) {
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (_townActionId == 1) {
-		if (sound.playSample(1, 0)) {
+		if (sound.isPlaying()) {
 			if (isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 				_townSprites[2].draw(screen, _vm->getRandomNumber(11) == 1 ? 9 : 10,
@@ -1085,9 +1072,9 @@ void Town::drawTownAnim(bool flag) {
 
 	switch (_townActionId) {
 	case 0:
-		if (sound.playSample(1, 0) || (isDarkCc && intf._overallFrame)) {
+		if (sound.isPlaying() || (isDarkCc && intf._overallFrame)) {
 			if (isDarkCc) {
-				if (sound.playSample(1, 0) || intf._overallFrame == 1) {
+				if (sound.isPlaying() || intf._overallFrame == 1) {
 					_townSprites[4].draw(screen, _vm->getRandomNumber(13, 18),
 						Common::Point(8, 30));
 				} else if (intf._overallFrame > 1) {
@@ -1103,7 +1090,7 @@ void Town::drawTownAnim(bool flag) {
 		break;
 
 	case 2:
-		if (sound.playSample(1, 0)) {
+		if (sound.isPlaying()) {
 			if (isDarkCc) {
 				if (intf._overallFrame) {
 					intf._overallFrame ^= 1;
@@ -1116,19 +1103,19 @@ void Town::drawTownAnim(bool flag) {
 		break;
 
 	case 3:
-		if (sound.playSample(1, 0) && isDarkCc) {
+		if (sound.isPlaying() && isDarkCc) {
 			_townSprites[4].draw(screen, _vm->getRandomNumber(7), Common::Point(153, 49));
 		}
 		break;
 	case 4:
-		if (sound.playSample(1, 0)) {
+		if (sound.isPlaying()) {
 			_townSprites[3].draw(screen, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
 
 		}
 		break;
 
 	case 5:
-		if (sound.playSample(1, 0)) {
+		if (sound.isPlaying()) {
 			if (isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(screen, _drawFrameIndex % 8, _townPos);
 			}
@@ -1169,8 +1156,7 @@ void Town::drawTownAnim(bool flag) {
 			sound.playFX(45);
 
 		if (_townActionId == 5 && _drawFrameIndex == 23) {
-			File f("spit1.voc");
-			sound.playSample(&f, 0);
+			sound.playSound("spit1.voc");
 		}
 	} else {
 		if (_townMaxId == 32 && _drawFrameIndex == 0)

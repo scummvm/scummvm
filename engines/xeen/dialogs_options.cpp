@@ -123,7 +123,6 @@ void OptionsMenu::showTitles2() {
 	EventsManager &events = *_vm->_events;
 	Sound &sound = *_vm->_sound;
 
-	File voc("elect.voc");
 	SpriteResource titleSprites("title2b.raw");
 	SpriteResource kludgeSprites("kludge.int");
 	SpriteResource title2Sprites[8] = {
@@ -135,7 +134,7 @@ void OptionsMenu::showTitles2() {
 
 	kludgeSprites.draw(screen, 0);
 	screen.saveBackground();
-	sound.playSample(&voc, 0);
+	sound.playSound("elect.voc");
 
 	for (int i = 0; i < 30 && !_vm->shouldQuit(); ++i) {
 		events.updateGameCounter();
@@ -144,7 +143,7 @@ void OptionsMenu::showTitles2() {
 		screen._windows[0].update();
 
 		if (i == 19)
-			sound.playSample(nullptr, 0);
+			sound.stopSound();
 
 		while (!_vm->shouldQuit() && events.timeElapsed() < 2)
 			events.pollEventsAndWait();

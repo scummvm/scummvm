@@ -1095,9 +1095,8 @@ void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
 
 void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {
 	Sound &sound = *_vm->_sound;
-	sound.playSample(nullptr, 0);
-	File f(EVENT_SAMPLES[params[0]]);
-	sound.playSample(&f, 1);
+	sound.stopSound();
+	sound.playSound(EVENT_SAMPLES[params[0]], 1);
 
 	cmdNoAction(params);
 }
