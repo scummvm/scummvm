@@ -45,7 +45,7 @@ namespace Myst3 {
 
 enum GameVersionFlags {
 	kFlagNone        = 0,
-	kFlagDVD         = (1 << 1), // DVD version
+	kFlagMulti6      = (1 << 1), // 6 languages version
 	kFlagMonolingual = (1 << 2)  // Monolingual version
 };
 
@@ -118,7 +118,7 @@ public:
 	Common::Language getGameLanguage() const;
 	int16 getGameLanguageCode() const;
 	bool isMonolingual() const;
-	bool isDVDVersion() const;
+	bool isMulti6Version() const;
 	bool isWideScreenModEnabled() const;
 
 	bool canLoadGameStateCurrently() override;

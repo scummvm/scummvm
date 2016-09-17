@@ -133,9 +133,9 @@ Database::Database(Myst3Engine *vm) :
 	bool isXboxVersion = _vm->getPlatform() == Common::kPlatformXbox;
 
 	readScriptIndex(_datFile, isWindowMacVersion);                                                  // Main scripts
-	readScriptIndex(_datFile, isWindowMacVersion && _vm->isDVDVersion());                           // Menu scripts DVD version
-	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isDVDVersion() && !_vm->isMonolingual()); // Menu scripts international CD version
-	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isDVDVersion() && _vm->isMonolingual());  // Menu scripts english CD version
+	readScriptIndex(_datFile, isWindowMacVersion && _vm->isMulti6Version());                           // Menu scripts 6 languages version
+	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isMulti6Version() && !_vm->isMonolingual()); // Menu scripts 2 languages CD version
+	readScriptIndex(_datFile, isWindowMacVersion && !_vm->isMulti6Version() && _vm->isMonolingual());  // Menu scripts english CD version
 	readScriptIndex(_datFile, isXboxVersion);                                                       // Main scripts Xbox version
 	readScriptIndex(_datFile, isXboxVersion && !_vm->isMonolingual());                              // Menu scripts PAL Xbox version
 	readScriptIndex(_datFile, isXboxVersion && _vm->isMonolingual());                               // Menu scripts NTSC Xbox version
@@ -155,7 +155,7 @@ Database::Database(Myst3Engine *vm) :
 	preloadCommonRooms();
 	initializeZipBitIndexTable();
 
-	if (isWindowMacVersion && !_vm->isDVDVersion() && !_vm->isMonolingual()) {
+	if (isWindowMacVersion && !_vm->isMulti6Version() && !_vm->isMonolingual()) {
 		patchLanguageMenu();
 	}
 }

@@ -279,7 +279,7 @@ void Myst3Engine::openArchives() {
 		break;
 	}
 
-	if (isDVDVersion()) {
+	if (isMulti6Version()) {
 		switch (ConfMan.getInt("text_language")) {
 		case kDutch:
 			textLanguage = "DUTCH";
@@ -305,8 +305,12 @@ void Myst3Engine::openArchives() {
 		if (isMonolingual() || ConfMan.getInt("text_language")) {
 			textLanguage = menuLanguage;
 		} else {
-			textLanguage = "ENGLISHjp";
+			textLanguage = "ENGLISH";
 		}
+	}
+
+	if (!isMonolingual() && getPlatform() != Common::kPlatformXbox && textLanguage == "ENGLISH") {
+		textLanguage = "ENGLISHjp";
 	}
 
 	if (getPlatform() == Common::kPlatformXbox) {
@@ -323,7 +327,7 @@ void Myst3Engine::openArchives() {
 
 	addArchive(textLanguage + ".m3t", true);
 
-	if (isDVDVersion() || !isMonolingual())
+	if (!isMonolingual() || getPlatform() == Common::kPlatformXbox)
 		if (!addArchive("language.m3u", false))
 			addArchive(menuLanguage + ".m3u", true);
 
@@ -1649,7 +1653,7 @@ void Myst3Engine::settingsInitDefaults() {
 	int defaultLanguage = getGameLanguageCode();
 
 	int defaultTextLanguage;
-	if (isDVDVersion())
+	if (isMulti6Version())
 		defaultTextLanguage = defaultLanguage;
 	else
 		defaultTextLanguage = getGameLanguage() != Common::EN_ANY;

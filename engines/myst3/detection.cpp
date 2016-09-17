@@ -50,21 +50,21 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-#define MYST3ENTRY(platform, lang, extra, exe, md5exe, flags)    				\
-{																				\
-	{																			\
-		"myst3",																\
-		extra,																	\
-		{																		\
-			{ "RSRC.m3r", 0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },		\
-			{ exe, 0, md5exe, -1 },												\
-		},																		\
-		lang,																	\
-		platform,																\
-		ADGF_NO_FLAGS,															\
-		GUIO_NONE																\
-	},																			\
-	flags,			    														\
+#define MYST3ENTRY(lang, langFile, md5lang, extra, flags)                       \
+{                                                                               \
+	{                                                                           \
+		"myst3",                                                                \
+		extra,                                                                  \
+		{                                                                       \
+			{ "RSRC.m3r", 0, "a2c8ed69800f60bf5667e5c76a88e481", 1223862 },     \
+			{ langFile, 0, md5lang, -1 },                                       \
+		},                                                                      \
+		lang,                                                                   \
+		Common::kPlatformWindows,                                               \
+		ADGF_NO_FLAGS,                                                          \
+		GUIO_NONE                                                               \
+	},                                                                          \
+	flags                                                                       \
 },
 
 #define MYST3ENTRY_XBOX(lang, langFile, md5lang) 								\
@@ -81,53 +81,43 @@ static const char *directoryGlobs[] = {
 		ADGF_UNSTABLE,															\
 		GUIO_NONE																\
 	},																			\
-	kFlagDVD																	\
+	kFlagMulti6																	\
 },
 
 
 static const Myst3GameDescription gameDescriptions[] = {
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "f8ab52da2815c1342eeb42b1bcad5441", kFlagMonolingual) // 1.0
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "0f2b2703fc79be043007ab4e603d54b8", kFlagMonolingual) // 1.1
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "314f4d2a3c9d22787719219419dcd480", kFlagMonolingual) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", kFlagNone) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "89f4ceb295420c01116bc4bee7bcd9c4", kFlagNone) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::NL_NLD, 0,     "M3.exe", "fe3429350ce30e2a828c888ae5a39f8b", kFlagNone) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "7a4eaea5f19f621e05e732d657c15fe3", kFlagMonolingual) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::RU_RUS, 0,     "M3R.exe","4ce43b84c1d0869a84b5f361f8914a9f", kFlagNone) // 1.2
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "6dbe2eed529684c7fb64f0801462b89c", kFlagMonolingual) // 1.21
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "c8ca22d347f947cd52d95229d0f6a3f3", kFlagMonolingual) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "9d76f2f836ef9382e45f354a532f042d", kFlagMonolingual) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "f24da8790cf46e3b289569960299b0da", kFlagNone) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::DE_DEU, 0,     "M3.exe", "9e26a4d1762b21fac7a35d7ee441fd75", kFlagNone) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::DE_DEU, 0,     "M3.exe", "8ed262713e49eb07a03e0c4f148476e0", kFlagNone) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::PL_POL, 0,     "M3.exe", "5d3dd344c27c07b6db63a5b58e1e2a25", kFlagNone) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::ES_ESP, 0,     "M3.exe", "d6802549deccc2f7833c4859b210cf7d", kFlagNone) // 1.22
-	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "1a3a050413777adcdae967da7a188cc0", kFlagNone) // 1.24
-	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, "DVD", "M3.exe", "708da0c48c8972025f165df59d823a6b", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, "DVD", "M3.exe", "b6c35e49d5a416cf4aa34f6439e8d544", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformWindows, Common::NL_NLD, "DVD", "M3.exe", "819cdb78736fbdef9c9372c1050585d7", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformWindows, Common::DE_DEU, "DVD", "M3.exe", "ec01ddbd45b4f7879571be7ac4f4a54d", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformWindows, Common::IT_ITA, "DVD", "M3.exe", "e5e0ca7a6703c3aee5438f9602214ac9", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformWindows, Common::ES_ESP, "DVD", "M3.exe", "1c30c1d2e06bab8dcd483f5c49ef1a65", kFlagDVD)
+	// Initial US release (English only)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3t",  "3ca92b097c4319a2ace7fd6e911d6b0f", 0, kFlagMonolingual)
 
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst III Exile",                "13d36737421e7dbc5ac453491935d0f5", kFlagMonolingual)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::JA_JPN, 0,     "Myst3 Exile JP",                "fd212d71d70fb4e8cacbdce175ebeb81", kFlagNone)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, 0,     "Myst3",                         "bedd73588f94f0aa287084b2ee5d4f12", kFlagNone)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, "DVD", "Myst III Exile for Mac OS 8-9", "820f34ab68643b60f05e819e45f93cd2", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, "DVD", "Myst III Exile for Mac OS 8-9", "2f074a705b56ce42f2a4019e1c01e483", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::NL_NLD, "DVD", "Myst III Exile for Mac OS 8-9", "9440c777480ce17cd6114ab4a6be6fac", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::DE_DEU, "DVD", "Myst III Exile for Mac OS 8-9", "52f547897d3e2b1edea0003096521088", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::IT_ITA, "DVD", "Myst III Exile for Mac OS 8-9", "9b08e5b5c748b9226e7350d99106d2bd", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::ES_ESP, "DVD", "Myst III Exile for Mac OS 8-9", "ddc0612abbbede1b03540454084aefa9", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, 0,     "Myst3 OS X US",                 "9bae830cd6a35b4d53edcad101ac4f1b", kFlagMonolingual) // CD version
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, 0,     "Myst III Exile for Mac OS X",   "4fe7a9ee4ecd469b60fac4865ae9397c", kFlagNone) // CD version
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::DE_DEU, 0,     "Myst III Exile for Mac OS X",   "e19a260340368e70140a9dd58e23d0b4", kFlagNone) // CD version
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::EN_ANY, "DVD", "Myst III Exile for Mac OS X",   "d5903cae8c0d07bf7c7a462e53cd5c45", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::FR_FRA, "DVD", "Myst III Exile for Mac OS X",   "39a51a5ff94ca3afbab30addc6ee97aa", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::NL_NLD, "DVD", "Myst III Exile for Mac OS X",   "e628b7ec5d7aab55ec71f011771e3bd0", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::DE_DEU, "DVD", "Myst III Exile for Mac OS X",   "2f2682815504d94378ab82bac0e89b6b", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::IT_ITA, "DVD", "Myst III Exile for Mac OS X",   "1265e9ea6a6001a943b217ca92d83ee6", kFlagDVD)
-	MYST3ENTRY(Common::kPlatformMacintosh, Common::ES_ESP, "DVD", "Myst III Exile for Mac OS X",   "05f37c98a0378c57190da5a4687b7e41", kFlagDVD)
+	// European releases (Country language + English) (1.2)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "0e8019cfaeb58c2de00ac114cf122220", 0, kFlagNone)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "3a7e270c686806dfc31c2091e09c03ec", 0, kFlagNone)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "00000000000000000000000000000000", 0, kFlagNone)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "00000000000000000000000000000000", 0, kFlagNone)
+	MYST3ENTRY(Common::PL_POL, "POLISH.m3u",   "00000000000000000000000000000000", 0, kFlagNone)
+
+	// Russian release (Russian only) (1.2)
+	MYST3ENTRY(Common::RU_RUS, "ENGLISH.m3t",  "57d36d8610043fda554a0708d71d2681", 0, kFlagMonolingual)
+
+	// Japanese release (1.2)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "21bbd040bcfadd13b9dc84360c3de01d", 0, kFlagNone)
+	MYST3ENTRY(Common::JA_JPN, "JAPANESE.m3u", "1e7c3156417978a1187fa6bc0e2cfafc", "Subtitles only", kFlagNone)
+
+	// Multilingual CD release (1.21)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "b62ca55aa17724cddbbcc78cba988337", 0, kFlagMulti6)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "73519070cba1c7bea599adbddeae304f", 0, kFlagMulti6)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "c4a8d8fb0eb3fecb9c435a8517bc1f9a", 0, kFlagMulti6)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "5b3be343dd20f03ebdf16381b873f035", 0, kFlagMulti6)
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "73db43aac3fe8671e2c4e227977fbb61", 0, kFlagMulti6)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "55ceb165dad02211ef2d25946c3aac8e", 0, kFlagMulti6)
+
+	// DVD releases (1.27)
+	MYST3ENTRY(Common::EN_ANY, "ENGLISH.m3u",  "e200b416f43e70fee76148a80d195d5c", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::FR_FRA, "FRENCH.m3u",   "5679ce65c5e9af8899835ef9af398f1a", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::NL_NLD, "DUTCH.m3u",    "2997afdb4306c573153fdbb391ed2fff", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::DE_DEU, "GERMAN.m3u",   "09f32e6ceb414463e8fc22ca1a9564d3", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::IT_ITA, "ITALIAN.m3u",  "51fb02f6bf37dde811d7cde648365260", "DVD", kFlagMulti6)
+	MYST3ENTRY(Common::ES_ESP, "SPANISH.m3u",  "e27e610fe8ce35223a3239ff170a85ec", "DVD", kFlagMulti6)
 
 	// Myst 3 Xbox (PAL)
 	MYST3ENTRY_XBOX(Common::EN_ANY, "ENGLISHX.m3t", "c4d012ab02b8ca7d0c7e79f4dbd4e676")
@@ -318,8 +308,8 @@ Common::Language Myst3Engine::getGameLanguage() const {
 	return _gameDescription->desc.language;
 }
 
-bool Myst3Engine::isDVDVersion() const {
-	return (_gameDescription->flags & kFlagDVD) != 0;
+bool Myst3Engine::isMulti6Version() const {
+	return (_gameDescription->flags & kFlagMulti6) != 0;
 }
 
 bool Myst3Engine::isMonolingual() const {
