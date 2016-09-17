@@ -474,14 +474,14 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 	case 16:
 		// Gold
-		msg = Common::String::format(IN_PARTY_IN_BANK, STAT_NAMES[attrib],
+		msg = Common::String::format(IN_PARTY_IN_BANK, CONSUMABLE_NAMES[0],
 			party._gold, party._bankGold);
 		bounds.setHeight(43);
 		break;
 
 	case 17:
 		// Gems
-		msg = Common::String::format(IN_PARTY_IN_BANK, STAT_NAMES[attrib],
+		msg = Common::String::format(IN_PARTY_IN_BANK, CONSUMABLE_NAMES[1],
 			party._gems, party._bankGems);
 		bounds.setHeight(43);
 		break;
@@ -489,7 +489,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	case 18: {
 		// Food
 		int food = (party._food / party._activeParty.size()) / 3;
-		msg = Common::String::format(FOOD_TEXT, STAT_NAMES[attrib],
+		msg = Common::String::format(FOOD_TEXT, CONSUMABLE_NAMES[2],
 			party._food, food, food != 1 ? "s" : "");
 		break;
 	}
@@ -528,7 +528,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			lines[19] = Common::String::format(HEROISM, party._heroism);
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
+			CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
 			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
 			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),

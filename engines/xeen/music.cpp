@@ -123,9 +123,8 @@ bool MusicDriver::musSkipWord(const byte *&srcP, byte param) {
 	return false;
 }
 
-
 bool MusicDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
-	debugC(3, kDebugSound, "cmdFreezeFrequency %d");
+	debugC(3, kDebugSound, "cmdFreezeFrequency %d", param);
 	_channels[param]._changeFrequency = false;
 	return false;
 }
