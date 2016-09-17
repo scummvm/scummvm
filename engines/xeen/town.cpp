@@ -203,7 +203,7 @@ int Town::townAction(int actionId) {
 		break;
 	}
 
-	sound.loadMusic(TOWN_ACTION_MUSIC[actionId], 223);
+	sound.playSong(TOWN_ACTION_MUSIC[actionId], 223);
 
 	_townSprites.resize(TOWN_ACTION_FILES[isDarkCc][actionId]);
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {

@@ -39,7 +39,7 @@ namespace OPL {
 namespace Xeen {
 
 enum MusicCommand {
-	STOP_MUSIC = 0, RESTART_MUSIC = 1, SET_VOLUME = 0x100,
+	STOP_SONG = 0, RESTART_SONG = 1, SET_VOLUME = 0x100,
 	GET_STATUS = 0xFFE0
 };
 
@@ -148,7 +148,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~MusicDriver() {}
+	virtual ~MusicDriver();
 
 	/**
 	 * Starts an special effect playing
@@ -326,12 +326,12 @@ public:
 	/**
 	 * Stops any currently playing music
 	 */
-	void stopMusic() { songCommand(STOP_MUSIC); }
+	void stopSong() { songCommand(STOP_SONG); }
 
 	/**
-	 * Restart the music
+	 * Restart a previously playing song (which must still be loaded)
 	 */
-	void restartMusic() { songCommand(RESTART_MUSIC); }
+	void restartSong() { songCommand(RESTART_SONG); }
 
 	/**
 	 * Sets the music volume
@@ -346,7 +346,7 @@ public:
 	/**
 	 * Plays a song
 	 */
-	void playSong(const Common::String &name);
+	void playSong(const Common::String &name, int param = 0);
 	
 	/**
 	 * Plays a song

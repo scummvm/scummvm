@@ -67,6 +67,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	events.updateGameCounter();
 	events.wait(1000, true);
 
+	sound.stopSong();
 	delete[] data;
 	/*
 	// Initial loop for dragon roaring
@@ -236,7 +237,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		screen.draw();
 
 		if (idx == 2)
-			sound.stopMusic(48);
+			sound.setMusicVolume(48);
 		if (events.wait(2, true))
 			return false;
 	}

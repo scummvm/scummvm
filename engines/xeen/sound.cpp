@@ -54,14 +54,6 @@ void Sound::proc2(Common::SeekableReadStream &f) {
 	// TODO
 }
 
-void Sound::startMusic(int v1) {
-	// TODO
-}
-
-void Sound::stopMusic(int id) {
-	// TODO
-}
-
 void Sound::playSound(Common::SeekableReadStream *s, Audio::SoundHandle &soundHandle,
 	Audio::Mixer::SoundType soundType) {
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(s, 0);

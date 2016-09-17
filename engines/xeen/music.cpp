@@ -37,6 +37,11 @@ MusicDriver::MusicDriver() : _fieldF(false), _musicPlaying(false), _fxPlaying(fa
 	_channels.resize(CHANNEL_COUNT);
 }
 
+MusicDriver::~MusicDriver() {
+	_musicPlaying = _fxPlaying = false;
+	_musCountdownTimer = _fxCountdownTimer = 0;
+}
+
 void MusicDriver::execute() {
 	bool isFX = false;
 	const byte *srcP = nullptr;
@@ -90,7 +95,7 @@ bool MusicDriver::musCallSubroutine(const byte *&srcP, byte param) {
 bool MusicDriver::musSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
-		param = *++srcP;
+		param = *srcP++;
 	_musCountdownTimer = param;
 	_musDataPtr = srcP;
 
@@ -154,7 +159,7 @@ bool MusicDriver::fxCallSubroutine(const byte *&srcP, byte param) {
 bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
-		param = *++srcP;
+		param = *srcP++;
 	_fxCountdownTimer = param;
 	_musDataPtr = srcP;
 
@@ -196,7 +201,10 @@ void MusicDriver::playSong(const byte *data) {
 }
 
 int MusicDriver::songCommand(uint commandId, byte volume) {
-	if (RESTART_MUSIC == 1) {
+	if (commandId == STOP_SONG) {
+		_musicPlaying = false;
+	} else if (commandId == RESTART_SONG) {
+		_musicPlaying = true;
 		_musDataPtr = nullptr;
 		_musSubroutines.clear();
 	}
@@ -273,12 +281,12 @@ void AdlibMusicDriver::playSong(const byte *data) {
 
 int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
 	Common::StackLock slock(_driverMutex);
+	MusicDriver::songCommand(commandId, volume);
 
-	if (commandId == STOP_MUSIC) {
-		_musicPlaying = false;
+	if (commandId == STOP_SONG) {
 		_field180 = 0;
 		resetFrequencies();
-	} else if (commandId == RESTART_MUSIC) {
+	} else if (commandId == RESTART_SONG) {
 		_field180 = 0;
 		_musicPlaying = true;
 	} else if (commandId < 0x100) {
@@ -597,6 +605,7 @@ Music::Music() : _musicDriver(nullptr), _songData(nullptr) {
 }
 
 Music::~Music() {
+	stopSong();
 	delete _musicDriver;
 	delete[] _effectsData;
 	delete[] _songData;
@@ -632,7 +641,7 @@ void Music::playFX(uint effectId) {
 
 int Music::songCommand(uint commandId, byte volume) {
 	int result = _musicDriver->songCommand(commandId, volume);
-	if (commandId == STOP_MUSIC) {
+	if (commandId == STOP_SONG) {
 		delete[] _songData;
 		_songData = nullptr;
 	}
@@ -641,8 +650,7 @@ int Music::songCommand(uint commandId, byte volume) {
 }
 
 void Music::playSong(Common::SeekableReadStream &stream) {
-	if (_songData)
-		stopMusic();
+	stopSong();
 
 	byte *songData = new byte[stream.size()];
 	stream.seek(0);
@@ -652,7 +660,7 @@ void Music::playSong(Common::SeekableReadStream &stream) {
 	_musicDriver->playSong(_songData);
 }
 
-void Music::playSong(const Common::String &name) {
+void Music::playSong(const Common::String &name, int param) {
 	File f(name);
 	playSong(f);
 }

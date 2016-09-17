@@ -63,12 +63,6 @@ public:
 
 	void proc2(Common::SeekableReadStream &f);
 
-	void loadMusic(const Common::String &name, int v2) {}
-
-	void startMusic(int v1);
-
-	void stopMusic(int id);
-
 	/**
 	 * Play a given sound
 	 */
