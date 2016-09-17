@@ -163,7 +163,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			return false;
 
 		curCreatureIndex--;
-		uint16 curCreatureType = curGroup->_type;
+		CreatureType curCreatureType = curGroup->_type;
 		CreatureInfo *curCreatureInfo = &_vm->_dungeonMan->_creatureInfos[curCreatureType];
 		if ((projectileAssociatedThing == Thing::_explFireBall) && (curCreatureType == kDMCreatureTypeBlackFlame)) {
 			uint16 *curCreatureHealth = &curGroup->_health[curCreatureIndex];
@@ -480,7 +480,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	Group *group = nullptr;
 	CreatureInfo *creatureInfo = nullptr;
 
-	uint16 creatureType = 0;
+	CreatureType creatureType;
 	if (groupThing != Thing::_endOfList) {
 		group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 		creatureType = group->_type;

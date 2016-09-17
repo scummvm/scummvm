@@ -139,7 +139,7 @@ uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 
 void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode soundMode) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
-	uint16 creatureType = group->_type;
+	CreatureType creatureType = group->_type;
 	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
@@ -167,7 +167,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 	}
 }
 
-void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell, SoundMode soundMode) {
+void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 mapX, int16 mapY, uint16 cell, SoundMode soundMode) {
 	static uint16 fixedPossessionCreature12Skeleton[3] = { // @ G0245_aui_Graphic559_FixedPossessionsCreature12Skeleton
 		kDMObjectInfoIndexFirstWeapon + kDMWeaponFalchion,
 		kDMObjectInfoIndexFirstArmour + kDMArmourWoodenShield,
@@ -386,7 +386,7 @@ Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 }
 
 int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
-	uint16 creatureType = group->_type;
+	CreatureType creatureType = group->_type;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
 	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
 		return k0_outcomeKilledNoCreaturesInGroup;
@@ -546,8 +546,8 @@ int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 map
 	return k0_outcomeKilledNoCreaturesInGroup;
 }
 
-int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack) {
-	int16 poisonResistance = _vm->_dungeonMan->_creatureInfos[creatreType].getPoisonResistance();
+int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType, int16 poisonAttack) {
+	int16 poisonResistance = _vm->_dungeonMan->_creatureInfos[creatureType].getPoisonResistance();
 
 	if (!poisonAttack || (poisonResistance == kDMImmuneToPoison))
 		return 0;
@@ -1246,7 +1246,7 @@ bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
 	Group *group = &(((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[activeGroup->_groupThingIndex]);
-	uint16 creatureType = group->_type;
+	CreatureType creatureType = group->_type;
 	uint16 creatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[creatureType]._graphicInfo;
 	bool processGroup = (creatureIndex < 0);
 	if (processGroup) /* If the creature index is negative then all creatures in the group are processed */
@@ -1415,7 +1415,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 
 	_vm->_projexpl->_lastCreatureAttackTime = _vm->_gameTime;
 	ActiveGroup activeGroup = _activeGroups[group->getActiveGroupIndex()];
-	uint16 creatureType = group->_type;
+	CreatureType creatureType = group->_type;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
 	uint16 primaryDirectionToParty = _currGroupPrimaryDirToParty;
 
@@ -1632,7 +1632,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 mapY) {
 	if (_dropMovingCreatureFixedPossCellCount) {
 		Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
-		int16 creatureType = group->_type;
+		CreatureType creatureType = group->_type;
 		while (_dropMovingCreatureFixedPossCellCount) {
 			dropCreatureFixedPossessions(creatureType, mapX, mapY, _dropMovingCreatureFixedPossessionsCell[--_dropMovingCreatureFixedPossCellCount], kDMSoundModePlayOneTickLater);
 		}
@@ -1726,7 +1726,7 @@ void GroupMan::addAllActiveGroups() {
 	}
 }
 
-Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
+Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
 	Thing groupThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeGroup);
 	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex))
 		|| (groupThing == Thing::_none)) {
@@ -1745,7 +1745,8 @@ Thing GroupMan::groupGetGenerated(int16 creatureType, int16 healthMultiplier, ui
 	else
 		groupCells = k255_CreatureTypeSingleCenteredCreature;
 
-	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type = creatureType];
+	group->_type = creatureType;
+	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 	uint16 baseHealth = creatureInfo->_baseHealth;
 	do {
 		group->_health[creatureCount] = (baseHealth * healthMultiplier) + _vm->getRandomNumber((baseHealth >> 2) + 1);

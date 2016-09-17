@@ -1535,7 +1535,7 @@ void DungeonMan::setGroupDirections(Group *group, int16 dir, uint16 mapIndex) {
 }
 
 bool DungeonMan::isCreatureAllowedOnMap(Thing thing, uint16 mapIndex) {
-	int16 creatureType = ((Group *)getThingData(thing))->_type;
+	CreatureType creatureType = ((Group *)getThingData(thing))->_type;
 	Map *map = &_dungeonMaps[mapIndex];
 	byte *allowedCreatureType = _dungeonMapData[mapIndex][map->_width] + map->_height + 1;
 	for (int16 L0234_i_Counter = map->_creatureTypeCount; L0234_i_Counter > 0; L0234_i_Counter--) {

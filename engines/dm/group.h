@@ -118,13 +118,13 @@ class Group {
 public:
 	Thing _nextThing;
 	Thing _slot;
-	uint16 _type;
+	CreatureType _type;
 	uint16 _cells;
 	uint16 _health[4];
 	uint16 _flags;
 public:
-	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _type(rawDat[2]),
-		_cells(rawDat[3]), _flags(rawDat[8]) {
+	explicit Group(uint16 *rawDat) : _nextThing(rawDat[0]), _slot(rawDat[1]), _cells(rawDat[3]), _flags(rawDat[8]) {
+		_type = (CreatureType)rawDat[2];
 		_health[0] = rawDat[4];
 		_health[1] = rawDat[5];
 		_health[2] = rawDat[6];
@@ -194,7 +194,7 @@ public:
 	int16 getCreatureOrdinalInCell(Group *group, uint16 cell); // @ F0176_GROUP_GetCreatureOrdinalInCell
 	uint16 getCreatureValue(uint16 groupVal, uint16 creatureIndex); // @ M50_CREATURE_VALUE
 	void dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode mode); // @ F0188_GROUP_DropGroupPossessions
-	void dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int16 mapY, uint16 cell,
+	void dropCreatureFixedPossessions(CreatureType creatureType, int16 mapX, int16 mapY, uint16 cell,
 										   SoundMode soundMode); // @ F0186_GROUP_DropCreatureFixedPossessions
 	int16 getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY,
 												   int16 destMapX, int16 destMapY); // @ F0228_GROUP_GetDirectionsWhereDestinationIsVisibleFromSource
@@ -209,7 +209,7 @@ public:
 	void groupDeleteEvents(int16 mapX, int16 mapY); // @ F0181_GROUP_DeleteEvents
 	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatureVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
 	int16 getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
-	int16 groupGetResistanceAdjustedPoisonAttack(uint16 creatreType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
+	int16 groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
 	void processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
 	bool isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
 								 uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
@@ -243,7 +243,7 @@ public:
 	void removeActiveGroup(uint16 activeGroupIndex); // @ F0184_GROUP_RemoveActiveGroup
 	void removeAllActiveGroups(); // @ F0194_GROUP_RemoveAllActiveGroups
 	void addAllActiveGroups(); // @ F0195_GROUP_AddAllActiveGroups
-	Thing groupGetGenerated(int16 creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
+	Thing groupGetGenerated(CreatureType creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY); // @ F0185_GROUP_GetGenerated
 	bool isSquareACorridorTeleporterPitOrDoor(int16 mapX, int16 mapY); // @ F0223_GROUP_IsSquareACorridorTeleporterPitOrDoor
 	int16 getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 partyX, int16 paryY,
 											 uint16 champCell); // @ F0177_GROUP_GetMeleeTargetCreatureOrdinal
