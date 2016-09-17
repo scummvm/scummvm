@@ -460,10 +460,23 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 }
 
 void MfcArchive::writeObject(CObject *obj) {
-	if (obj == NULL)
+	if (obj == NULL) {
 		writeUint16LE(0);
-	else
+	} else if (_objectHash.contains(obj)) {
+		int32 idx = _objectHash[obj];
+
+		if (idx < 0x7fff) {
+			writeUint16LE(idx);
+		} else {
+			writeUint16LE(0x7fff);
+			writeUint32LE(idx);
+		}
+	} else {
+		writeUint16LE(0xffff); // New class
+		_objectHash[obj] = _lastIndex++;
+
 		obj->save(*this);
+	}
 }
 
 char *genFileName(int superId, int sceneId, const char *ext) {

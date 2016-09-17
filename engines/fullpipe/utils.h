@@ -32,12 +32,30 @@ namespace Fullpipe {
 class CObject;
 class NGIArchive;
 
+struct Pointer_EqualTo {
+	bool operator()(const void *x, const void *y) const { return x == y; }
+};
+
+struct Pointer_Hash {
+	uint operator()(const void *x) const {
+#ifdef SCUMM_64BITS
+		uint64 v = (uint64)x;
+		return (v >> 32) ^ (v & 0xffffffff);
+#else
+		return (uint)x;
+#endif
+	}
+};
+
+typedef Common::HashMap<void *, int, Pointer_Hash, Pointer_EqualTo> ObjHash;
+
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
 class MfcArchive : public Common::SeekableReadStream, public Common::WriteStream {
 	ClassMap _classMap;
 	Common::Array<CObject *> _objectMap;
 	Common::Array<int> _objectIdMap;
+	ObjHash _objectHash;
 
 	int _lastIndex;
 	int _level;
