@@ -651,7 +651,6 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		v->_parentVarObj = 0;
 		v->_nextVarObj = 0;
 		v->_prevVarObj = 0;
-		warning("NULLIFIED");
 	}
 
 	archive->writeObject(v);
@@ -682,6 +681,8 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	// Now dump it into save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
+
+	saveFile->write(&header, sizeof(header));
 
 	saveFile->write(stream.getData(), stream.size());
 
