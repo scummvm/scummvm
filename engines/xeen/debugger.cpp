@@ -47,6 +47,7 @@ static int strToInt(const char *s) {
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
+	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 
 	_spellId = -1;
 }
@@ -76,6 +77,36 @@ bool Debugger::cmdSpell(int argc, const char **argv) {
 		if (spellId >= MS_AcidSpray && spellId <= MS_WizardEye) {
 			_spellId = spellId;
 			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Debugger::cmdDump(int argc, const char **argv) {
+	File f;
+
+	if (argc < 2) {
+		debugPrintf("Format: spell <resource name>\n");
+	} else {
+		if (argc == 2)
+			f.open(argv[1]);
+		else
+			f.open(argv[1], *_vm->_files->_sideArchives[strToInt(argv[2]) == 0 ? 0 : 1]);
+
+		if (f.isOpen()) {
+			Common::DumpFile df;
+			df.open(argv[1]);
+			byte *data = new byte[f.size()];
+			f.read(data, f.size());
+			df.write(data, f.size());
+
+			f.close();
+			df.close();
+			delete[] data;
+			debugPrintf("Saved\n");
+		} else {
+			debugPrintf("Could not find resource with that name\n");
 		}
 	}
 
