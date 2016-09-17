@@ -2,7 +2,8 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	chewy.o \
-	detection.o
+	detection.o \
+	resource.o
 
 
 # This module can be built as a plugin

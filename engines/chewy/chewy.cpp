@@ -20,12 +20,16 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/error.h"
+#include "common/events.h"
+#include "common/system.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
 
 #include "chewy/chewy.h"
+#include "chewy/resource.h"
 
 namespace Chewy {
 
@@ -33,6 +37,16 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 	: Engine(syst),
 	_gameDescription(gameDesc),
 	_rnd("chewy") {
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "back");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "cut");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "err");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "misc");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "room");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "txt");
 }
 
 ChewyEngine::~ChewyEngine() {
@@ -43,6 +57,28 @@ Common::Error ChewyEngine::run() {
 	initGraphics(320, 200, false);
 
 	initialize();
+
+	Resource *res = new Resource("comic.tgp");
+	TBFChunk *cur = res->getChunk(1);
+	
+	debug("Chunk 1: packed %d, type %d, pos %d, mode %d, comp %d, unpacked %d, width %d, height %d",
+		cur->packedSize, cur->type, cur->pos, cur->screenMode, cur->compressionFlag, cur->unpackedSize,
+		cur->width, cur->height
+	);
+
+	delete res;
+
+	// Run a dummy loop
+	Common::Event event;
+
+	while (!shouldQuit()) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				g_engine->quitGame();
+		}
+
+		g_system->delayMillis(10);
+	}
 
 	return Common::kNoError;
 }
