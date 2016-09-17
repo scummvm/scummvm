@@ -1182,7 +1182,7 @@ msgstr "ScummVM mentésekhez használt hely ezen a tárolón"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr "Utolsó szinkronizálás ideje:"
+msgstr "Utolsó szinkron:"
 
 #: gui/options.cpp:1314
 msgid "When the last saves sync for this storage occured"
