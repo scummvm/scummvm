@@ -1675,8 +1675,9 @@ int MctlGraph::getDirByStatics(int idx, int staticsId) {
 
 int MctlGraph::getDirByMovement(int idx, int movId) {
 	for (int i = 0; i < 4; i++)
-		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId || _items2[idx]->_subItems[i]._turn[0]._movementId == movId ||
-			_items2[idx]->_subItems[i]._turnS[0]._movementId == movId)
+		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId
+		 || _items2[idx]->_subItems[i]._walk[1]._movementId == movId
+		 || _items2[idx]->_subItems[i]._walk[2]._movementId == movId)
 			return i;
 
 	return -1;
