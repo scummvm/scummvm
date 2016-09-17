@@ -177,7 +177,7 @@ bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	if (!param)
 		param = *srcP++;
 	_fxCountdownTimer = param;
-	_musDataPtr = srcP;
+	_fxDataPtr = srcP;
 	debugC(3, kDebugSound, "fxSetCountdown %d", param);
 
 	// Do paused handling and break out of processing loop
@@ -208,7 +208,7 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 		_fxPlaying = true;
 	}
 
-	debugC(1, kDebugSound, "Starting FX");
+	debugC(1, kDebugSound, "Starting FX %d", effectId);
 }
 
 void MusicDriver::playSong(const byte *data) {
