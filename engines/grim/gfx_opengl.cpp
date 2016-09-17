@@ -1587,6 +1587,9 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 	if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 8, 16, 24, 0)) {
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_INT_8_8_8_8;
+	} else if (frame->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0)) {
+		format = GL_BGRA;
+		dataType = GL_UNSIGNED_INT_8_8_8_8_REV;
 	} else if (frame->format == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {
 		format = GL_RGB;
 		dataType = GL_UNSIGNED_SHORT_5_6_5;
