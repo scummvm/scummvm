@@ -290,8 +290,8 @@ LABEL_38:
 			return false;
 		}
 
-		subj->_flags |= 1;
-		obj->_flags |= 1;
+		subj->_flags |= 0x100;
+		obj->_flags |= 0x100;
 	} else {
 		bool someFlag = false;
 		PicAniInfo aniInfo;
@@ -389,7 +389,7 @@ LABEL_38:
 				ani->queueMessageQueue(mq);
 			}
 		} else {
-			obj->_flags |= 1;
+			obj->_flags |= 0x100;
 
 			if (inter->_flags & 0x10000)
 				return true;

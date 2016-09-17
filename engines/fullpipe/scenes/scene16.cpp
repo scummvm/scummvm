@@ -269,7 +269,7 @@ void sceneHandler16_drink() {
 							mq->setFlags(mq->getFlags() | 1);
 							mq->chain(0);
 						} else {
-							g_fp->_aniMan->_flags |= 1;
+							g_fp->_aniMan->_flags |= 0x100;
 
 							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_MANDRINK), 0, 1);
 

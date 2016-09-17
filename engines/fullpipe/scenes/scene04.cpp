@@ -413,7 +413,7 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->changeStatics2(ST_MAN_LADDERDOWN);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
@@ -527,7 +527,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 
 		if (mq->chain(g_fp->_aniMan)) {
 			g_fp->_aniMan->_priority = 12;
-			g_fp->_aniMan->_flags |= 1;
+			g_fp->_aniMan->_flags |= 0x100;
 		} else {
 			delete mq;
 		}

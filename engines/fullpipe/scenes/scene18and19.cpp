@@ -538,7 +538,7 @@ void sceneHandler18and19_girlJumpTo() {
 
 void sceneHandler18and19_manStandArmchair() {
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 	g_fp->_aniMan->_priority = 35;
 	g_fp->_aniMan->startAnim(MV_MAN18_STANDKRESLO, 0, -1);
 }

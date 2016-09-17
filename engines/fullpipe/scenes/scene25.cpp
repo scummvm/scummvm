@@ -516,7 +516,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 		ani->restartMessageQueue(mq);
 	}
 
-	ani->_flags |= 1;
+	ani->_flags |= 0x100;
 }
 
 bool sceneHandler25_isOnLadder(ExCommand *cmd) {

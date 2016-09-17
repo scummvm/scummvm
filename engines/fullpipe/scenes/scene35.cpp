@@ -88,7 +88,7 @@ void sceneHandler35_startFlow() {
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
 
 			g_vars->scene35_bellyInflater->changeStatics2(ST_PDV_SMALL);
-			g_vars->scene35_bellyInflater->_flags &= 0xFEFF;
+			g_vars->scene35_bellyInflater->_flags &= ~0x100;
 
 			MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC35_EATHOZE), 0, 0);
 
@@ -105,7 +105,7 @@ void sceneHandler35_startFlow() {
 			if (!mq->chain(g_vars->scene35_bellyInflater))
 				delete mq;
 
-			g_vars->scene35_bellyInflater->_flags |= 1;
+			g_vars->scene35_bellyInflater->_flags |= 0x100;
 
 			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing, 1);
 
