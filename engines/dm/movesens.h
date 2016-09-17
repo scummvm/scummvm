@@ -30,7 +30,7 @@
 #define DM_MOVESENS_H
 
 #include "dm/dm.h"
-
+#include "dm/group.h"
 enum SensorEffect {
 	kDMSensorEffectNone = -1, // @ CM1_EFFECT_NONE
 	kDMSensorEffectSet = 0, // @ C00_EFFECT_SET
@@ -65,7 +65,7 @@ public:
 	bool isLevitating(Thing thing); // @ F0264_MOVE_IsLevitating
 	bool moveIsKilledByProjectileImpact(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY, Thing thing); // @ F0266_MOVE_IsKilledByProjectileImpact
 	void addEvent(byte type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time); // @ F0268_SENSOR_AddEvent
-	int16 getSound(byte creatureType); // @ F0514_MOVE_GetSound
+	int16 getSound(CreatureType creatureType); // @ F0514_MOVE_GetSound
 	int16 getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing thing, uint16 mapIndex);// @ F0262_MOVE_GetTeleporterRotatedGroupResult
 	Thing getTeleporterRotatedProjectileThing(Teleporter *teleporter, Thing projectileThing); // @ F0263_MOVE_GetTeleporterRotatedProjectileThing
 	void processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing);// @ F0276_SENSOR_ProcessThingAdditionOrRemoval

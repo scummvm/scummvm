@@ -940,7 +940,7 @@ void DMEngine::fuseSequence() {
 		fuseSequenceUpdate();
 	}
 	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
-	lordGroup->_type = k25_CreatureTypeLordOrder;
+	lordGroup->_type = kDMCreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
 		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
@@ -949,7 +949,7 @@ void DMEngine::fuseSequence() {
 	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
 		for (int16 switchCount = 4; switchCount > 0; switchCount--) {
 			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
-			lordGroup->_type = (switchCount & 0x0001) ? k25_CreatureTypeLordOrder : k23_CreatureTypeLordChaos;
+			lordGroup->_type = (switchCount & 0x0001) ? kDMCreatureTypeLordOrder : kDMCreatureTypeLordChaos;
 			for (int16 fuseSequenceUpdateCount = cycleCount - 1; fuseSequenceUpdateCount >= 0; fuseSequenceUpdateCount--)
 				fuseSequenceUpdate();
 		}
@@ -957,7 +957,7 @@ void DMEngine::fuseSequence() {
 	_projexpl->createExplosion(Thing::_explFireBall, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
 	fuseSequenceUpdate();
-	lordGroup->_type = k26_CreatureTypeGreyLord;
+	lordGroup->_type = kDMCreatureTypeGreyLord;
 	fuseSequenceUpdate();
 	_displayMan->_doNotDrawFluxcagesDuringEndgame = true;
 	fuseSequenceUpdate();

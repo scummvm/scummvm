@@ -165,7 +165,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		curCreatureIndex--;
 		uint16 curCreatureType = curGroup->_type;
 		CreatureInfo *curCreatureInfo = &_vm->_dungeonMan->_creatureInfos[curCreatureType];
-		if ((projectileAssociatedThing == Thing::_explFireBall) && (curCreatureType == k11_CreatureTypeBlackFlame)) {
+		if ((projectileAssociatedThing == Thing::_explFireBall) && (curCreatureType == kDMCreatureTypeBlackFlame)) {
 			uint16 *curCreatureHealth = &curGroup->_health[curCreatureIndex];
 			*curCreatureHealth = MIN(1000, *curCreatureHealth + getProjectileImpactAttack(projectileThingData, projectileAssociatedThing));
 			goto T0217044;
@@ -509,7 +509,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 		break;
 	case 0xFF83:
 		if ((groupThing != Thing::_endOfList) && getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
-			if ((creatureType == k19_CreatureTypeMaterializerZytaz) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) {
+			if ((creatureType == kDMCreatureTypeMaterializerZytaz) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) {
 				int16 nonMaterialAdditionalAttack = attack >> 3;
 				attack -= nonMaterialAdditionalAttack;
 				nonMaterialAdditionalAttack <<= 1;

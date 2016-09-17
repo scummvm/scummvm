@@ -230,32 +230,32 @@ void GroupMan::dropCreatureFixedPossessions(uint16 creatureType, int16 mapX, int
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;
 	switch (creatureType) {
-	case k4_CreatureTypePainRatHellHound:
+	case kDMCreatureTypePainRat:
 		fixedPossessions = fixedPossessionCreature4PainRatHellHound;
 		break;
-	case k6_CreatureTypeScreamer:
+	case kDMCreatureTypeScreamer:
 		fixedPossessions = fixedPossessionCreature6screamer;
 		break;
-	case k7_CreatureTypeRockpile:
+	case kDMCreatureTypeRockpile:
 		fixedPossessions = fixedPossessionCreature7rockRockPile;
 		break;
-	case k9_CreatureTypeStoneGolem:
+	case kDMCreatureTypeStoneGolem:
 		fixedPossessions = fixedPossessionCreature9StoneGolem;
 		break;
-	case k12_CreatureTypeSkeleton:
+	case kDMCreatureTypeSkeleton:
 		fixedPossessions = fixedPossessionCreature12Skeleton;
 		break;
-	case k16_CreatureTypeTrolinAntman:
+	case kDMCreatureTypeAntman:
 		fixedPossessions = fixedPossessionCreatur16TrolinAntman;
 		break;
-	case k15_CreatureTypeMagnetaWormWorm:
+	case kCreatureTypeMagentaWorm:
 		fixedPossessions = fixedPossessionCreature15MagnetaWormWorm;
 		break;
-	case k18_CreatureTypeAnimatedArmourDethKnight:
+	case kDMCreatureTypeAnimatedArmour:
 		cursedPossessions = true;
 		fixedPossessions = fixedPossessionCreature18AnimatedArmourDethKnight;
 		break;
-	case k24_CreatureTypeRedDragon:
+	case kDMCreatureTypeRedDragon:
 		fixedPossessions = fixedPossessionCreature24RedDragon;
 		break;
 	default:
@@ -468,7 +468,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 
 		uint16 creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
 		uint16 attack;
-		if (creatureSize == k0_MaskCreatureSizeQuarter)
+		if (creatureSize == kDMCreatureSizeQuarter)
 			attack = 110;
 		else if (creatureSize == k1_MaskCreatureSizeHalf)
 			attack = 190;
@@ -969,7 +969,7 @@ T0209096_SetBehavior0_Wander:
 							AL0446_i_GroupCellsCriteria = _vm->normalizeModulo4(_vm->normalizeModulo4(activeGroup->_cells) + ((AL0446_i_GroupCellsCriteria & 0x0001) ? 1 : -1));
 					}
 					/* If 1/8 chance and the creature is not adjacent to the party and is a quarter square sized creature then process projectile impacts and update the creature cell if still alive. When the creature is not in front of the party, it has 7/8 chances of dodging a projectile by moving to another cell or staying in the center of the square */
-					if (!(AL0446_i_GroupCellsCriteria & 0x0038) && (distanceToVisibleParty != 1) && (creatureSize == k0_MaskCreatureSizeQuarter)) {
+					if (!(AL0446_i_GroupCellsCriteria & 0x0038) && (distanceToVisibleParty != 1) && (creatureSize == kDMCreatureSizeQuarter)) {
 						if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
 							return;
 						activeGroup->_cells = _vm->normalizeModulo4(AL0446_i_GroupCellsCriteria);
@@ -985,7 +985,7 @@ T0209096_SetBehavior0_Wander:
 						(AL0446_i_Range <= (_vm->getRandomNumber(16) + 1))) {
 						if ((AL0446_i_Range == 1) &&
 							(!getFlag(AL0446_i_CreatureAttributes = creatureInfo._attributes, k0x0008_MaskCreatureInfo_preferBackRow) || !_vm->getRandomNumber(4) || !getFlag(AL0446_i_CreatureAttributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) &&
-							(creatureSize == k0_MaskCreatureSizeQuarter) &&
+							(creatureSize == kDMCreatureSizeQuarter) &&
 							(activeGroup->_cells != k255_CreatureTypeSingleCenteredCreature) &&
 							((AL0446_i_Cell = getCreatureValue(activeGroup->_cells, AL0447_i_CreatureIndex)) != primaryDirectionToOrFromParty) &&
 							(AL0446_i_Cell != _vm->turnDirRight(primaryDirectionToOrFromParty))) { /* If the creature cannot cast spells (range = 1) and is not on a cell where it can attack the party directly and is a quarter square sized creature not in the center of the square then the creature moves to another cell and attack does not occur immediately */
@@ -1274,7 +1274,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 		}
 		if (isAttacking) {
 			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipAttack)) {
-				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == k18_CreatureTypeAnimatedArmourDethKnight)) {
+				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == kDMCreatureTypeAnimatedArmour)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
 						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
@@ -1291,10 +1291,10 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 			setFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
 		} else {
 			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipNonAttack)) {
-				if (creatureType == k13_CreatureTypeCouatl) {
+				if (creatureType == kDMCreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
-						uint16 soundIndex = _vm->_moveSens->getSound(k13_CreatureTypeCouatl);
+						uint16 soundIndex = _vm->_moveSens->getSound(kDMCreatureTypeCouatl);
 						if (soundIndex <= k34_D13_soundCount)
 							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
@@ -1432,8 +1432,8 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		Thing projectileThing = Thing::_none;
 
 		switch (creatureType) {
-		case k14_CreatureTypeVexirk:
-		case k23_CreatureTypeLordChaos:
+		case kDMCreatureTypeVexirk:
+		case kDMCreatureTypeLordChaos:
 			if (_vm->getRandomNumber(2)) {
 				projectileThing = Thing::_explFireBall;
 			} else {
@@ -1452,23 +1452,23 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 				}
 			}
 			break;
-		case k1_CreatureTypeSwampSlimeSlime:
+		case kDMCreatureTypeSwampSlime:
 			projectileThing = Thing::_explSlime;
 			break;
-		case k3_CreatureTypeWizardEyeFlyingEye:
+		case kDMCreatureTypeWizardEye:
 			if (_vm->getRandomNumber(8)) {
 				projectileThing = Thing::_explLightningBolt;
 			} else {
 				projectileThing = Thing::_explOpenDoor;
 			}
 			break;
-		case k19_CreatureTypeMaterializerZytaz:
+		case kDMCreatureTypeMaterializerZytaz:
 			if (_vm->getRandomNumber(2)) {
 				projectileThing = Thing::_explPoisonCloud;
 				break;
 			}
-		case k22_CreatureTypeDemon:
-		case k24_CreatureTypeRedDragon:
+		case kDMCreatureTypeDemon:
+		case kDMCreatureTypeRedDragon:
 			projectileThing = Thing::_explFireBall;
 		} /* BUG0_13 The game may crash when 'Lord Order' or 'Grey Lord' cast spells. This cannot happen with the original dungeons as they do not contain any groups of these types. 'Lord Order' and 'Grey Lord' creatures can cast spells (attack range > 1) but no projectile type is defined for them in the code. If these creatures are present in a dungeon they will cast projectiles containing undefined things because the variable is not initialized */
 		int16 kineticEnergy = (creatureInfo->_attack >> 2) + 1;
@@ -1492,7 +1492,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 				return false;
 		}
 
-		if (creatureType == k2_CreatureTypeGiggler)
+		if (creatureType == kDMCreatureTypeGiggler)
 			stealFromChampion(group, championIndex);
 		else {
 			int16 damage = getChampionDamage(group, championIndex) + 1;
@@ -1927,7 +1927,7 @@ uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
 		return 0;
 
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(thing);
-	if (group->_type == k23_CreatureTypeLordChaos)
+	if (group->_type == kDMCreatureTypeLordChaos)
 		return thing.toUint16();
 
 	return 0;

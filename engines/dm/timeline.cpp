@@ -778,7 +778,7 @@ T0252001:
 		if (!randomDirectionMoveRetried) {
 			randomDirectionMoveRetried = true;
 			Group *group = (Group *)_vm->_dungeonMan->getThingData(Thing(event->_Cu._slot));
-			if ((group->_type == k23_CreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
+			if ((group->_type == kDMCreatureTypeLordChaos) && !_vm->getRandomNumber(4)) {
 				switch (_vm->getRandomNumber(4)) {
 				case 0:
 					mapX--;

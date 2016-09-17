@@ -442,7 +442,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					createEventMoveGroup(thing, destMapX, destMapY, mapIndexDestination, audibleTeleporter);
 					return true; /* The specified group thing cannot be moved because the party or another group is on the destination square */
 				}
-				uint16 movementSoundIndex = getSound(((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[thing.getIndex()]._type);
+				Group *tmpGroup = (Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup];
+				uint16 movementSoundIndex = getSound((CreatureType)tmpGroup[thing.getIndex()]._type);
 				if (movementSoundIndex < k34_D13_soundCount)
 					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
@@ -594,45 +595,45 @@ void MovesensMan::addEvent(byte type, byte mapX, byte mapY, Cell cell, SensorEff
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 }
 
-int16 MovesensMan::getSound(byte creatureType) {
+int16 MovesensMan::getSound(CreatureType creatureType) {
 	if (_vm->_championMan->_partyIsSleeping)
 		return 35;
 
 	switch (creatureType) {
-	case k3_CreatureTypeWizardEyeFlyingEye:
-	case k8_CreatureTypeGhostRive:
-	case k11_CreatureTypeBlackFlame:
-	case k19_CreatureTypeMaterializerZytaz:
-	case k23_CreatureTypeLordChaos:
-	case k25_CreatureTypeLordOrder:
-	case k26_CreatureTypeGreyLord:
+	case kDMCreatureTypeWizardEye:
+	case kDMCreatureTypeGhostRive:
+	case kDMCreatureTypeBlackFlame:
+	case kDMCreatureTypeMaterializerZytaz:
+	case kDMCreatureTypeLordChaos:
+	case kDMCreatureTypeLordOrder:
+	case kDMCreatureTypeGreyLord:
 		return 35;
-	case k2_CreatureTypeGiggler:
-	case k9_CreatureTypeStoneGolem:
-	case k10_CreatureTypeMummy:
-	case k14_CreatureTypeVexirk:
-	case k16_CreatureTypeTrolinAntman:
-	case k22_CreatureTypeDemon:
+	case kDMCreatureTypeGiggler:
+	case kDMCreatureTypeStoneGolem:
+	case kDMCreatureTypeMummy:
+	case kDMCreatureTypeVexirk:
+	case kDMCreatureTypeAntman:
+	case kDMCreatureTypeDemon:
 		return k24_soundMOVE_MUMMY_TROLIN_ANTMAN_STONE_GOLEM_GIGGLER_VEXIRK_DEMON;
-	case k0_CreatureTypeGiantScorpionScorpion:
-	case k4_CreatureTypePainRatHellHound:
-	case k5_CreatureTypeRuster:
-	case k6_CreatureTypeScreamer:
-	case k7_CreatureTypeRockpile:
-	case k15_CreatureTypeMagnetaWormWorm:
-	case k21_CreatureTypeOitu:
+	case kDMCreatureTypeGiantScorpion:
+	case kDMCreatureTypePainRat:
+	case kDMCreatureTypeRuster:
+	case kDMCreatureTypeScreamer:
+	case kDMCreatureTypeRockpile:
+	case kCreatureTypeMagentaWorm:
+	case kDMCreatureTypeOitu:
 		return k26_soundMOVE_SCREAMER_ROCK_ROCKPILE_MAGENTA_WORM_WORM_PAIN_RAT_HELLHOUND_RUSTER_GIANT_SCORPION_SCORPION_OITU;
-	case k24_CreatureTypeRedDragon:
+	case kDMCreatureTypeRedDragon:
 		return k32_soundMOVE_RED_DRAGON;
-	case k12_CreatureTypeSkeleton:
+	case kDMCreatureTypeSkeleton:
 		return k33_soundMOVE_SKELETON;
-	case k18_CreatureTypeAnimatedArmourDethKnight:
+	case kDMCreatureTypeAnimatedArmour:
 		return k22_soundMOVE_ANIMATED_ARMOUR_DETH_KNIGHT;
-	case k1_CreatureTypeSwampSlimeSlime:
-	case k20_CreatureTypeWaterElemental:
+	case kDMCreatureTypeSwampSlime:
+	case kDMCreatureTypeWaterElemental:
 		return k27_soundMOVE_SWAMP_SLIME_SLIME_DEVIL_WATER_ELEMENTAL;
-	case k13_CreatureTypeCouatl:
-	case k17_CreatureTypeGiantWaspMuncher:
+	case kDMCreatureTypeCouatl:
+	case kDMCreatureTypeGiantWasp:
 		return k23_soundMOVE_COUATL_GIANT_WASP_MUNCHER;
 	}
 
@@ -658,7 +659,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 		int16 relativeRotation = _vm->normalizeModulo4(4 + updatedGroupDirections - groupDirections);
 		for (int16 creatureIdx = 0; creatureIdx <= group->getCount(); creatureIdx++) {
 			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? (uint16)rotation : _vm->normalizeModulo4(groupDirections + rotation));
-			if (creatureSize == k0_MaskCreatureSizeQuarter) {
+			if (creatureSize == kDMCreatureSizeQuarter) {
 				relativeRotation = absoluteRotation ? 1 : 0;
 				if (relativeRotation)
 					relativeRotation = rotation;

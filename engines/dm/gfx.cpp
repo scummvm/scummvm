@@ -3336,7 +3336,7 @@ T0115015_DrawProjectileAsObject:
 				}
 			} else
 				goto T0115129_DrawProjectiles;
-		} else if (creatureSize != k0_MaskCreatureSizeQuarter)
+		} else if (creatureSize != kDMCreatureSizeQuarter)
 			goto T0115129_DrawProjectiles;
 
 		creatureAspectInt = activeGroup->_aspect[creatureIndexGreen];
