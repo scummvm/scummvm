@@ -34,7 +34,7 @@ class NGIArchive;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
-class MfcArchive : public Common::SeekableReadStream {
+class MfcArchive : public Common::SeekableReadStream, Common::WriteStream {
 	ClassMap _classMap;
 	Common::Array<CObject *> _objectMap;
 	Common::Array<int> _objectIdMap;
@@ -43,9 +43,11 @@ class MfcArchive : public Common::SeekableReadStream {
 	int _level;
 
 	Common::SeekableReadStream *_stream;
+	Common::WriteStream *_wstream;
 
- public:
+public:
 	MfcArchive(Common::SeekableReadStream *file);
+	MfcArchive(Common::WriteStream *file);
 
 	char *readPascalString(bool twoByte = false);
 	int readCount();
@@ -59,9 +61,14 @@ class MfcArchive : public Common::SeekableReadStream {
 
 	virtual bool eos() const { return _stream->eos(); }
 	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	virtual int32 pos() const { return _stream->pos(); }
+	virtual int32 pos() const { return _stream ? _stream->pos() : _wstream->pos(); }
 	virtual int32 size() const { return _stream->size(); }
 	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) { return _wstream->write(dataPtr, dataSize); }
+
+private:
+	void init();
 };
 
 enum ObjType {

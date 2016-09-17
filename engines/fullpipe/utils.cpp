@@ -347,14 +347,26 @@ static CObject *createObject(int objectId) {
 }
 
 MfcArchive::MfcArchive(Common::SeekableReadStream *stream) {
+	_stream = stream;
+	_wstream = 0;
+
+	init();
+}
+
+MfcArchive::MfcArchive(Common::WriteStream *stream) {
+	_wstream = stream;
+	_stream = 0;
+
+	init();
+}
+
+void MfcArchive::init() {
 	for (int i = 0; classMap[i].name; i++) {
 		_classMap[classMap[i].name] = classMap[i].id;
 	}
 
 	_lastIndex = 1;
 	_level = 0;
-
-	_stream = stream;
 
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
