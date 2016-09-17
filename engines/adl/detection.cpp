@@ -147,7 +147,7 @@ static const AdlGameDescription gameDescriptions[] = {
 				{ "ULYS1A.XFD", 0, "26365d2b06509fd21e7a7919e33f7199", 92160 },
 				{ "ULYS1B.XFD", 0, "37919c72a4103e6f897ee7daa8261d1d", 92160 },
 				// Load 'N' Go Software release XAG-0646 appears to be missing the second disk
-				{ "ULYS2C.XFD", 0, "00000000000000000000000000000000", 92160 },
+				{ "ULYS2C.XFD", 0, "ff33830246e65dc71c954acb7fd5621a", 92160 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
