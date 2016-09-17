@@ -82,12 +82,6 @@ XeenEngine::~XeenEngine() {
 }
 
 void XeenEngine::initialize() {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
-
 	// Create sub-objects of the engine
 	_files = new FileManager(this);
 	_resources = new Resources();

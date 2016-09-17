@@ -80,6 +80,7 @@ private:
 	const byte *_fxDataPtr, *_musDataPtr;
 	const byte *_fxStartPtr;
 	const byte *_musStartPtr;
+	uint _frameCtr;
 private:
 	/**
 	 * Executes the next command
@@ -89,7 +90,7 @@ private:
 	bool command(const byte *&srcP);
 protected:
 	Common::Array<Channel> _channels;
-	bool _fieldF;
+	bool _exclude7;
 	bool _musicPlaying;
 	bool _fxPlaying;
 protected:
