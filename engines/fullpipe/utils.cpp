@@ -109,6 +109,17 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	return tmp;
 }
 
+void MfcArchive::writePascalString(char *str, bool twoByte) {
+	int len = strlen(str);
+
+	if (twoByte)
+		writeUint16LE(len);
+	else
+		writeByte(len);
+
+	write(str, len);
+}
+
 MemoryObject::MemoryObject() {
 	_memfilename = 0;
 	_mfield_8 = 0;
@@ -391,7 +402,9 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 
 	debugC(7, kDebugLoading, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
 
-	if (obTag == 0xffff) {
+	if (obTag == 0x0000) {
+		return NULL;
+	} else if (obTag == 0xffff) {
 		int schema = readUint16LE();
 
 		debugC(7, kDebugLoading, "parseClass::schema = %d", schema);
@@ -444,6 +457,13 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 	}
 
 	return res;
+}
+
+void MfcArchive::writeObject(CObject *obj) {
+	if (obj == NULL)
+		writeUint16LE(0);
+	else
+		obj->save(*this);
 }
 
 char *genFileName(int superId, int sceneId, const char *ext) {

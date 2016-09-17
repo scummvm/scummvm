@@ -61,7 +61,7 @@ struct PicAniInfo {
 	int32 someDynamicPhaseIndex;
 
 	bool load(MfcArchive &file);
-	bool save(Common::WriteStream *file);
+	void save(MfcArchive &file);
 
 	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };
@@ -88,6 +88,7 @@ class GameVar : public CObject {
 	virtual ~GameVar();
 
 	virtual bool load(MfcArchive &file);
+	virtual void save(MfcArchive &file);
 	GameVar *getSubVarByName(const char *name);
 	bool setSubVarAsInt(const char *name, int value);
 	int getSubVarAsInt(const char *name);

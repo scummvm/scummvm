@@ -26,26 +26,55 @@
 
 namespace Fullpipe {
 
-bool PicAniInfo::save(Common::WriteStream *file) {
+void PicAniInfo::save(MfcArchive &file) {
 	debugC(5, kDebugLoading, "PicAniInfo::save()");
 
-	file->writeUint32LE(type);
-	file->writeUint16LE(objectId);
-	file->writeUint16LE(field_6);
-	file->writeUint32LE(field_8);
-	file->writeUint16LE(sceneId);
-	file->writeUint16LE(field_E);
-	file->writeSint32LE(ox);
-	file->writeSint32LE(oy);
-	file->writeUint32LE(priority);
-	file->writeUint16LE(staticsId);
-	file->writeUint16LE(movementId);
-	file->writeUint16LE(dynamicPhaseIndex);
-	file->writeUint16LE(flags);
-	file->writeUint32LE(field_24);
-	file->writeUint32LE(someDynamicPhaseIndex);
+	file.writeUint32LE(type);
+	file.writeUint16LE(objectId);
+	file.writeUint16LE(field_6);
+	file.writeUint32LE(field_8);
+	file.writeUint16LE(sceneId);
+	file.writeUint16LE(field_E);
+	file.writeSint32LE(ox);
+	file.writeSint32LE(oy);
+	file.writeUint32LE(priority);
+	file.writeUint16LE(staticsId);
+	file.writeUint16LE(movementId);
+	file.writeUint16LE(dynamicPhaseIndex);
+	file.writeUint16LE(flags);
+	file.writeUint32LE(field_24);
+	file.writeUint32LE(someDynamicPhaseIndex);
+}
 
-	return true;
+void GameVar::save(MfcArchive &file) {
+	warning("Saving: %s", transCyrillic((byte *)_varName));
+	file.writePascalString(_varName);
+	file.writeUint32LE(_varType);
+
+	switch (_varType) {
+	case 0:
+		file.writeUint32LE(_value.intValue);
+		break;
+	case 1:
+		file.writeUint32LE(_value.intValue); // FIXME
+		break;
+	case 2:
+		file.writePascalString(_value.stringValue);
+		break;
+	default:
+		error("Unknown var type: %d (0x%x)", _varType, _varType);
+	}
+
+	warning("Saving: %s, _parent", transCyrillic((byte *)_varName));
+	file.writeObject(_parentVarObj);
+	warning("Saving: %s, _prev", transCyrillic((byte *)_varName));
+	file.writeObject(_prevVarObj);
+	warning("Saving: %s, _next", transCyrillic((byte *)_varName));
+	file.writeObject(_nextVarObj);
+	warning("Saving: %s, _field", transCyrillic((byte *)_varName));
+	file.writeObject(_field_14);
+	warning("Saving: %s, _subs", transCyrillic((byte *)_varName));
+	file.writeObject(_subVars);
 }
 
 } // End of namespace Fullpipe

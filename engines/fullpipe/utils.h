@@ -34,7 +34,7 @@ class NGIArchive;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
-class MfcArchive : public Common::SeekableReadStream, Common::WriteStream {
+class MfcArchive : public Common::SeekableReadStream, public Common::WriteStream {
 	ClassMap _classMap;
 	Common::Array<CObject *> _objectMap;
 	Common::Array<int> _objectIdMap;
@@ -50,10 +50,13 @@ public:
 	MfcArchive(Common::WriteStream *file);
 
 	char *readPascalString(bool twoByte = false);
+	void writePascalString(char *str, bool twoByte = false);
 	int readCount();
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
 	CObject *readClass();
+
+	void writeObject(CObject *obj);
 
 	void incLevel() { _level++; }
 	void decLevel() { _level--; }
@@ -91,6 +94,7 @@ public:
 
 	CObject() : _objtype(kObjTypeDefault) {}
 	virtual bool load(MfcArchive &in) { return true; }
+	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
 
 	bool loadFile(const char *fname);

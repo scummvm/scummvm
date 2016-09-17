@@ -21,6 +21,7 @@
  */
 
 #include "fullpipe/fullpipe.h"
+#include "common/memstream.h"
 #include "graphics/thumbnail.h"
 
 #include "fullpipe/gameloader.h"
@@ -634,8 +635,9 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	header.updateCounter = _updateCounter;
 	header.unkField = 1;
 
-	// open save for reading
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
+	Common::MemoryWriteStreamDynamic stream;
+
+	MfcArchive *archive = new MfcArchive(&stream);
 
 	v = _gameVar->getSubVarByName("OBJSTATES");
 
@@ -649,9 +651,10 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		v->_parentVarObj = 0;
 		v->_nextVarObj = 0;
 		v->_prevVarObj = 0;
+		warning("NULLIFIED");
 	}
 
-	writeObject(saveFile, v);
+	archive->writeObject(v);
 
 	if (v) {
 		v->_parentVarObj = par;
@@ -659,15 +662,15 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		v->_prevVarObj = prv;
 	}
 
-	getGameLoaderInventory()->savePartial(saveFile);
+	getGameLoaderInventory()->savePartial(*archive);
 
-	saveFile->writeUint32LE(_sc2array.size());
+	archive->writeUint32LE(_sc2array.size());
 
 	for (uint i = 0; i < _sc2array.size(); i++) {
-		saveFile->writeUint32LE(_sc2array[i]._picAniInfosCount);
+		archive->writeUint32LE(_sc2array[i]._picAniInfosCount);
 
 		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j]->save(saveFile);
+			_sc2array[i]._picAniInfos[j]->save(*archive);
 		}
 	}
 
@@ -676,6 +679,11 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	//if (_savegameCallback)
 	//	_savegameCallback(saveFile, 1);
+
+	// Now dump it into save file
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
+
+	saveFile->write(stream.getData(), stream.size());
 
 	saveFile->finalize();
 
