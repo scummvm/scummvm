@@ -338,6 +338,17 @@ void Myst3Engine::closeArchives() {
 }
 
 bool Myst3Engine::checkDatafiles() {
+	if (!SearchMan.hasFile("OVER101.m3o")) {
+		static const char *updateMessage =
+				_("This version of Myst III has not been updated with the latest official patch.\n"
+						  "Please install the official update corresponding to your game's language.\n"
+						  "The updates can be downloaded from:\n"
+						  "http://www.residualvm.org/downloads/");
+		warning(updateMessage);
+		GUI::displayErrorDialog(updateMessage);
+		return false;
+	}
+
 	return true;
 }
 
