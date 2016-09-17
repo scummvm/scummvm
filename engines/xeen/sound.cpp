@@ -20,6 +20,7 @@
  *
  */
 
+#include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "xeen/sound.h"
 #include "xeen/xeen.h"
@@ -39,7 +40,8 @@ void Sound::playSound(Common::SeekableReadStream &s, int unused) {
 	stopSound();
 
 	Common::SeekableReadStream *srcStream = s.readStream(s.size());
-	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream, 0, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 }
 
