@@ -191,9 +191,9 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 		Movement *newmov;
 
 		if (src->_movements[i]->_currMovement) {
-			// WORKAROUND: Original uses weird construction here:
-			//	new Movement(getMovementById(src->getMovementIdById(mov->_id)), this);
-			newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
+			// This is weird code. Logically it should be
+			// newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
+			newmov = new Movement(getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
 			newmov->_id = src->_movements[i]->_id;
 		} else {
 			newmov = new Movement(src->_movements[i], 0, -1, this);
