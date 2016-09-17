@@ -492,7 +492,8 @@ bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
 		debugC(3, kDebugSound, "musStartNote %x -> %x", note, freq);
 
 		setFrequency(param, freq);
-		_channels[param]._frequency = freq | 0x2000;
+		freq |= 0x2000;
+		_channels[param]._frequency = freq;
 		setFrequency(param, freq);
 	} else {
 		srcP += 2;
