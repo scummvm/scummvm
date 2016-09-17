@@ -440,7 +440,7 @@ int StaticANIObject::getMovementIdById(int itemId) {
 
 		if (mov->_currMovement) {
 			if (mov->_id == itemId)
-				return mov->_id;
+				return mov->_currMovement->_id;
 
 			if (mov->_currMovement->_id == itemId)
 				return mov->_id;
