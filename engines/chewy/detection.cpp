@@ -50,6 +50,10 @@ static const PlainGameDescriptor chewyGames[] = {
 	{0, 0}
 };
 
+static const char *directoryGlobs[] = {
+	"back",
+	0
+};
 
 namespace Chewy {
 
@@ -59,7 +63,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			0,
-			AD_ENTRY1s("XXX", "00000000000000000", 1),
+			AD_ENTRY1s("comic.tgp", "4f03228838663ddecebd750c04687a08", 6529814),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -75,6 +79,8 @@ static const ChewyGameDescription gameDescriptions[] = {
 class ChewyMetaEngine : public AdvancedMetaEngine {
 public:
 	ChewyMetaEngine() : AdvancedMetaEngine(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 		_singleId = "chewy";
 	}
 
