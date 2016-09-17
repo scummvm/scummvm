@@ -622,9 +622,11 @@ bool AdlibMusicDriver::fxInjectMidi(const byte *&srcP, byte param) {
 }
 
 bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
-	debugC(3, kDebugSound, "musPlayInstrument %d", param);
+	byte instrument = *srcP++;
+	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
+
 	if (!_exclude7 || param != 7)
-		playInstrument(param, _fxInstrumentPtrs[param]);
+		playInstrument(param, _fxInstrumentPtrs[instrument]);
 
 	return false;
 }
