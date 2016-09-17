@@ -233,25 +233,25 @@ int MusicDriver::songCommand(uint commandId, byte volume) {
 }
 
 const CommandFn MusicDriver::MUSIC_COMMANDS[16] = {
-	&MusicDriver::musCallSubroutine,	&MusicDriver::musSetCountdown,
-	&MusicDriver::musSetInstrument,		&MusicDriver::cmdNoOperation,
-	&MusicDriver::musSetPitchWheel,		&MusicDriver::musSkipWord,
-	&MusicDriver::musSetPanning,		&MusicDriver::cmdNoOperation,
-	&MusicDriver::musFade,				&MusicDriver::musStartNote,
-	&MusicDriver::musSetVolume,			&MusicDriver::musInjectMidi,
-	&MusicDriver::musPlayInstrument,	&MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,	&MusicDriver::musEndSubroutine
+	&MusicDriver::musCallSubroutine,   &MusicDriver::musSetCountdown,
+	&MusicDriver::musSetInstrument,    &MusicDriver::cmdNoOperation,
+	&MusicDriver::musSetPitchWheel,    &MusicDriver::musSkipWord,
+	&MusicDriver::musSetPanning,       &MusicDriver::cmdNoOperation,
+	&MusicDriver::musFade,             &MusicDriver::musStartNote,
+	&MusicDriver::musSetVolume,        &MusicDriver::musInjectMidi,
+	&MusicDriver::musPlayInstrument,   &MusicDriver::cmdFreezeFrequency,
+	&MusicDriver::cmdChangeFrequency,  &MusicDriver::musEndSubroutine
 };
 
 const CommandFn MusicDriver::FX_COMMANDS[16] = {
-	&MusicDriver::fxCallSubroutine,		&MusicDriver::fxSetCountdown,
-	&MusicDriver::fxSetInstrument,		&MusicDriver::fxSetVolume,
-	&MusicDriver::fxMidiReset,			&MusicDriver::fxMidiDword,
-	&MusicDriver::fxSetPanning,			&MusicDriver::fxChannelOff,
-	&MusicDriver::fxFade,				&MusicDriver::fxStartNote,
-	&MusicDriver::cmdNoOperation,		&MusicDriver::fxInjectMidi,
-	&MusicDriver::fxPlayInstrument,		&MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,	&MusicDriver::fxEndSubroutine
+	&MusicDriver::fxCallSubroutine,    &MusicDriver::fxSetCountdown,
+	&MusicDriver::fxSetInstrument,     &MusicDriver::fxSetVolume,
+	&MusicDriver::fxMidiReset,         &MusicDriver::fxMidiDword,
+	&MusicDriver::fxSetPanning,        &MusicDriver::fxChannelOff,
+	&MusicDriver::fxFade,              &MusicDriver::fxStartNote,
+	&MusicDriver::cmdNoOperation,      &MusicDriver::fxInjectMidi,
+	&MusicDriver::fxPlayInstrument,    &MusicDriver::cmdFreezeFrequency,
+	&MusicDriver::cmdChangeFrequency,  &MusicDriver::fxEndSubroutine
 };
 
 /*------------------------------------------------------------------------*/
