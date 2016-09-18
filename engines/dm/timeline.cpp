@@ -410,7 +410,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		}
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
-		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
 				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
@@ -460,7 +460,7 @@ void Timeline::processEventSquareFakewall(TimelineEvent *event) {
 			addEventGetEventIndex(event);
 		} else {
 			Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
-			if ((groupThing != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(groupThing), k0x0040_MaskCreatureInfo_nonMaterial)) {
+			if ((groupThing != Thing::_endOfList) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(groupThing), kDMCreatureMaskNonMaterial)) {
 				event->_mapTime++;
 				addEventGetEventIndex(event);
 			} else

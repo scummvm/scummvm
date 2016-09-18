@@ -110,7 +110,7 @@ int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
 
 	int retval = 0;
 	byte creatureIndex = group->getCount();
-	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf) {
+	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize) == k1_MaskCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = _vm->turnDirLeft(cell);
 
@@ -140,7 +140,7 @@ uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode soundMode) {
 	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	CreatureType creatureType = group->_type;
-	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, kDMCreatureMaskDropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
 		do {
@@ -388,7 +388,7 @@ Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
 int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
 	CreatureType creatureType = group->_type;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
-	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) /* Lord Chaos cannot be damaged */
+	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) /* Lord Chaos cannot be damaged */
 		return k0_outcomeKilledNoCreaturesInGroup;
 
 	if (group->_health[creatureIndex] <= damage) {
@@ -405,7 +405,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			retVal = k2_outcomeKilledAllCreaturesInGroup;
 		} else { /* If there are several creatures in the group */
 			uint16 groupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
-			if (getFlag(creatureInfo->_attributes, k0x0200_MaskCreatureInfo_dropFixedPoss)) {
+			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskDropFixedPoss)) {
 				if (notMoving)
 					dropCreatureFixedPossessions(creatureType, mapX, mapY, cell, kDMSoundModePlayOneTickLater);
 				else
@@ -466,7 +466,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			retVal = k1_outcomeKilledSomeCreaturesInGroup;
 		}
 
-		uint16 creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
+		uint16 creatureSize = getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
 		uint16 attack;
 		if (creatureSize == kDMCreatureSizeQuarter)
 			attack = 110;
@@ -619,7 +619,7 @@ T0209005_AddEventAndReturn:
 		return;
 	}
 	/* If the creature is Lord Chaos then ignore the event if the game is won. Initialize data to analyze Fluxcages */
-	bool isArchEnemy = getFlag(creatureInfo._attributes, k0x2000_MaskCreatureInfo_archenemy);
+	bool isArchEnemy = getFlag(creatureInfo._attributes, kDMCreatureMaskArchenemy);
 	if (isArchEnemy) {
 		if (_vm->_gameWon)
 			return;
@@ -662,7 +662,7 @@ T0209005_AddEventAndReturn:
 	}
 	AL0447_i_Behavior = curGroup->getBehaviour();
 	uint16 creatureCount = curGroup->getCount();
-	int16 creatureSize = getFlag(creatureInfo._attributes, k0x0003_MaskCreatureInfo_size);
+	int16 creatureSize = getFlag(creatureInfo._attributes, kDMCreatureMaskSize);
 	AL0450_i_DistanceXToParty = ABS(eventMapX - _vm->_dungeonMan->_partyMapX);
 	AL0451_i_DistanceYToParty = ABS(eventMapY - _vm->_dungeonMan->_partyMapY);
 	_currentGroupMapX = eventMapX;
@@ -977,14 +977,14 @@ T0209096_SetBehavior0_Wander:
 				}
 				/* If the creature can see the party and is looking in the party direction or can attack in all direction */
 				if (distanceToVisibleParty &&
-					(getFlag(creatureInfo._attributes, k0x0004_MaskCreatureInfo_sideAttack) ||
+					(getFlag(creatureInfo._attributes, kDMCreatureMaskSideAttack) ||
 					 getCreatureValue(activeGroup->_directions, AL0447_i_CreatureIndex) == primaryDirectionToOrFromParty)) {
 					/* If the creature is in range to attack the party and random test succeeds */
 					if ((distanceToVisibleParty <= (AL0446_i_Range = creatureInfo.getAttackRange())) &&
 						(!AL0450_i_DistanceXToParty || !AL0451_i_DistanceYToParty) &&
 						(AL0446_i_Range <= (_vm->getRandomNumber(16) + 1))) {
 						if ((AL0446_i_Range == 1) &&
-							(!getFlag(AL0446_i_CreatureAttributes = creatureInfo._attributes, k0x0008_MaskCreatureInfo_preferBackRow) || !_vm->getRandomNumber(4) || !getFlag(AL0446_i_CreatureAttributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) &&
+							(!getFlag(AL0446_i_CreatureAttributes = creatureInfo._attributes, kDMCreatureMaskPreferBackRow) || !_vm->getRandomNumber(4) || !getFlag(AL0446_i_CreatureAttributes, kDMCreatureMaskAttackAnyChamp)) &&
 							(creatureSize == kDMCreatureSizeQuarter) &&
 							(activeGroup->_cells != k255_CreatureTypeSingleCenteredCreature) &&
 							((AL0446_i_Cell = getCreatureValue(activeGroup->_cells, AL0447_i_CreatureIndex)) != primaryDirectionToOrFromParty) &&
@@ -1073,13 +1073,13 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 		 ((mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight)) &&
 		  (curSquareType != kDMElementTypeWall) &&
 		  (curSquareType != kDMElementTypeStairs) &&
-		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, kDMSquareMaskPitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, kDMSquareMaskPitOpen) || getFlag(creatureInfo->_attributes, k0x0020_MaskCreatureInfo_levitation)) &&
+		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, kDMSquareMaskPitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, kDMSquareMaskPitOpen) || getFlag(creatureInfo->_attributes, kDMCreatureMaskLevitation)) &&
 		 ((curSquareType != kDMElementTypeFakeWall) || getFlag(curSquare, kDMSquareMaskFakeWallOpen) || (getFlag(curSquare, kDMSquareMaskFakeWallImaginary) && allowMovementOverImaginaryPitsAndFakeWalls)));
 
 	if (_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter)
 		return false;
 
-	if (getFlag(creatureInfo->_attributes, k0x2000_MaskCreatureInfo_archenemy)) {
+	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) {
 		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
 		while (curThing != Thing::_endOfList) {
 			if ((curThing).getType() == kDMThingTypeExplosion) {
@@ -1108,7 +1108,7 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 
 	if (curSquareType == kDMElementTypeDoor) {
 		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != kDMDoorStateDestroyed) && !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != kDMDoorStateDestroyed) && !getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)) {
 			_groupMovementBlockedByDoor = true;
 			return false;
 		}
@@ -1125,13 +1125,13 @@ int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 de
 int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
 	uint16 groupDirections;
 	CreatureInfo *groupCreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, k0x0800_MaskCreatureInfo_seeInvisible))
+	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskSeeInvisible))
 		return 0;
 
 	bool alwaysSee = false;
 	int16 checkDirectionsCount; /* Count of directions to test in L0425_ai_CreatureViewDirections */
 	int16 creatureViewDirections[4]; /* List of directions to test */
-	if (getFlag(groupCreatureInfo->_attributes, k0x0004_MaskCreatureInfo_sideAttack)) { /* If creature can see in all directions */
+	if (getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskSideAttack)) { /* If creature can see in all directions */
 		alwaysSee = true;
 		checkDirectionsCount = 1;
 		creatureViewDirections[0] = kDMDirNorth;
@@ -1161,7 +1161,7 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 	while (checkDirectionsCount--) {
 		if (alwaysSee || isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
 			int16 sightRange = groupCreatureInfo->getSightRange();
-			if (!getFlag(groupCreatureInfo->_attributes, k0x1000_MaskCreatureInfo_nightVision))
+			if (!getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskNightVision))
 				sightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
 
 			if (_currGroupDistanceToParty > MAX<int16>(1, sightRange))
@@ -1478,7 +1478,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, CLIP<byte>(20, kineticEnergy, 255), creatureInfo->_dexterity, 8);
 	} else {
 		int16 championIndex;
-		if (getFlag(creatureInfo->_attributes, k0x0010_MaskCreatureInfo_attackAnyChamp)) {
+		if (getFlag(creatureInfo->_attributes, kDMCreatureMaskAttackAnyChamp)) {
 			championIndex = _vm->getRandomNumber(4);
 			int cpt;
 			for (cpt = 0; (cpt < 4) && !_vm->_championMan->_champions[championIndex]._currHealth; cpt++)
@@ -1752,7 +1752,7 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 		group->_health[creatureCount] = (baseHealth * healthMultiplier) + _vm->getRandomNumber((baseHealth >> 2) + 1);
 		if (severalCreaturesInGroup) {
 			groupCells = getGroupValueUpdatedWithCreatureValue(groupCells, creatureCount, cell++);
-			if (getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size) == k1_MaskCreatureSizeHalf)
+			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskSize) == k1_MaskCreatureSizeHalf)
 				cell++;
 
 			cell &= 0x0003;
@@ -1814,7 +1814,7 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 	if (actionHitsNonMaterialCreatures)
 		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
 
-	if ((!getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) || actionHitsNonMaterialCreatures) &&
+	if ((!getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial) || actionHitsNonMaterialCreatures) &&
 		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + creatureInfo->_dexterity + doubledMapDifficulty - 16)) ||
 		(!_vm->getRandomNumber(4)) ||
 		 (_vm->_championMan->isLucky(champ, 75 - actionHitProbability)))) {
@@ -1854,7 +1854,7 @@ T0231009:
 		L0565_i_Damage >>= 2;
 		L0565_i_Damage += _vm->getRandomNumber(4) + 1;
 		if ((actionHandObjectIconIndex == kDMIconIndiceWeaponVorpalBlade)
-			&& !getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)
+			&& !getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)
 			&& !(L0565_i_Damage >>= 1))
 			goto T0231015;
 

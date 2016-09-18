@@ -29,6 +29,7 @@
 #define DM_GROUP_H
 
 #include "dm/dm.h"
+#include "dm/sounds.h"
 
 namespace DM {
 	class Champion;
@@ -73,29 +74,21 @@ enum CreatureSize {
 	k2_MaskCreatureSizeFull = 2 // @ C2_SIZE_FULL_SQUARE   
 };
 
-#define k0x0003_MaskCreatureInfo_size 0x0003 // @ MASK0x0003_SIZE                     
-#define k0x0004_MaskCreatureInfo_sideAttack 0x0004 // @ MASK0x0004_SIDE_ATTACK              
-#define k0x0008_MaskCreatureInfo_preferBackRow 0x0008 // @ MASK0x0008_PREFER_BACK_ROW          
-#define k0x0010_MaskCreatureInfo_attackAnyChamp 0x0010 // @ MASK0x0010_ATTACK_ANY_CHAMPION      
-#define k0x0020_MaskCreatureInfo_levitation 0x0020 // @ MASK0x0020_LEVITATION               
-#define k0x0040_MaskCreatureInfo_nonMaterial 0x0040 // @ MASK0x0040_NON_MATERIAL             
-#define k0x0200_MaskCreatureInfo_dropFixedPoss 0x0200 // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
-#define k0x0400_MaskCreatureInfo_keepThrownSharpWeapon 0x0400 // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
-#define k0x0800_MaskCreatureInfo_seeInvisible 0x0800 // @ MASK0x0800_SEE_INVISIBLE            
-#define k0x1000_MaskCreatureInfo_nightVision 0x1000 // @ MASK0x1000_NIGHT_VISION             
-#define k0x2000_MaskCreatureInfo_archenemy 0x2000 // @ MASK0x2000_ARCHENEMY                
-#define k0x4000_MaskCreatureInfo_magicmap 0x4000 // @ MASK0x4000_MAGICMAP  
-
+#define kDMCreatureMaskSize 0x0003 // @ MASK0x0003_SIZE                     
+#define kDMCreatureMaskSideAttack 0x0004 // @ MASK0x0004_SIDE_ATTACK              
+#define kDMCreatureMaskPreferBackRow 0x0008 // @ MASK0x0008_PREFER_BACK_ROW          
+#define kDMCreatureMaskAttackAnyChamp 0x0010 // @ MASK0x0010_ATTACK_ANY_CHAMPION      
+#define kDMCreatureMaskLevitation 0x0020 // @ MASK0x0020_LEVITATION               
+#define kDMCreatureMaskNonMaterial 0x0040 // @ MASK0x0040_NON_MATERIAL             
+#define kDMCreatureMaskDropFixedPoss 0x0200 // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
+#define kDMCreatureMaskKeepThrownSharpWeapon 0x0400 // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
+#define kDMCreatureMaskSeeInvisible 0x0800 // @ MASK0x0800_SEE_INVISIBLE            
+#define kDMCreatureMaskNightVision 0x1000 // @ MASK0x1000_NIGHT_VISION             
+#define kDMCreatureMaskArchenemy 0x2000 // @ MASK0x2000_ARCHENEMY                
+#define kDMCreatureMaskMagicMap 0x4000 // @ MASK0x4000_MAGICMAP  
 
 #define k0x0040_MaskActiveGroupFlipBitmap 0x0040 // @ MASK0x0040_FLIP_BITMAP  
 #define k0x0080_MaskActiveGroupIsAttacking 0x0080 // @ MASK0x0080_IS_ATTACKING 
-
-enum SoundMode {
-	kDMSoundModeDoNotPlaySound = -1, // @ CM1_MODE_DO_NOT_PLAY_SOUND
-	kDMSoundModePlayImmediately = 0, // @ C00_MODE_PLAY_IMMEDIATELY
-	kDMSoundModePlayIfPrioritized = 1, // @ C01_MODE_PLAY_IF_PRIORITIZED
-	kDMSoundModePlayOneTickLater = 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
-};
 
 class ActiveGroup {
 public:

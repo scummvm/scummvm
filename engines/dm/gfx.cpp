@@ -3283,7 +3283,7 @@ T0115015_DrawProjectileAsObject:
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
 			CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
-			creatureSize = getFlag(creatureInfo->_attributes, k0x0003_MaskCreatureInfo_size);
+			creatureSize = getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
 		}
 		objectAspect = (ObjectAspect *)creatureAspectStruct;

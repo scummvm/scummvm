@@ -170,7 +170,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			*curCreatureHealth = MIN(1000, *curCreatureHealth + getProjectileImpactAttack(projectileThingData, projectileAssociatedThing));
 			goto T0217044;
 		}
-		if (getFlag(curCreatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial) && (projectileAssociatedThing != Thing::_explHarmNonMaterial))
+		if (getFlag(curCreatureInfo->_attributes, kDMCreatureMaskNonMaterial) && (projectileAssociatedThing != Thing::_explHarmNonMaterial))
 			return false;
 
 		attack = (uint16)((unsigned long)getProjectileImpactAttack(projectileThingData, projectileAssociatedThing) << 6) / curCreatureInfo->_defense;
@@ -182,7 +182,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 			_creatureDamageOutcome = outcome;
 			if (!createExplosionOnImpact && (outcome == k0_outcomeKilledNoCreaturesInGroup)
 			&& (projectileAssociatedThingType == kDMThingTypeWeapon)
-			&& getFlag(curCreatureInfo->_attributes, k0x0400_MaskCreatureInfo_keepThrownSharpWeapon)) {
+			&& getFlag(curCreatureInfo->_attributes, kDMCreatureMaskKeepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
 				WeaponType weaponType = weapon->getType();
 				if ((weaponType == kDMWeaponDagger) || (weaponType == kDMWeaponArrow)
@@ -334,7 +334,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 					CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureGroup->_type];
 					int16 creatureFireResistance = creatureInfo->getFireResistance();
 					if (creatureFireResistance != kDMImmuneToFire) {
-						if (getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial))
+						if (getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial))
 							attack >>= 2;
 
 						if ((attack -= _vm->getRandomNumber((creatureFireResistance << 1) + 1)) > 0)
@@ -508,7 +508,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 
 		break;
 	case 0xFF83:
-		if ((groupThing != Thing::_endOfList) && getFlag(creatureInfo->_attributes, k0x0040_MaskCreatureInfo_nonMaterial)) {
+		if ((groupThing != Thing::_endOfList) && getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)) {
 			if ((creatureType == kDMCreatureTypeMaterializerZytaz) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex)) {
 				int16 nonMaterialAdditionalAttack = attack >> 3;
 				attack -= nonMaterialAdditionalAttack;

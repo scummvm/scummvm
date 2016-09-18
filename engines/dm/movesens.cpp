@@ -487,7 +487,7 @@ bool MovesensMan::isLevitating(Thing thing) {
 	ThingType thingType = thing.getType();
 	bool retVal = false;
 	if (thingType == kDMThingTypeGroup)
-		retVal = getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), k0x0020_MaskCreatureInfo_levitation);
+		retVal = getFlag(_vm->_dungeonMan->getCreatureAttributes(thing), kDMCreatureMaskLevitation);
 	else if ((thingType == kDMThingTypeProjectile) || (thingType == kDMThingTypeExplosion))
 	// Fix original bug involving explosions falling in pits
 		retVal = true;
@@ -655,7 +655,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 	uint16 updatedGroupCells = _vm->_groupMan->getGroupCells(group, mapIndex);
 	if (updatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
 		int16 groupCells = updatedGroupCells;
-		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, k0x0003_MaskCreatureInfo_size);
+		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize);
 		int16 relativeRotation = _vm->normalizeModulo4(4 + updatedGroupDirections - groupDirections);
 		for (int16 creatureIdx = 0; creatureIdx <= group->getCount(); creatureIdx++) {
 			updatedGroupDirections = _vm->_groupMan->getGroupValueUpdatedWithCreatureValue(updatedGroupDirections, creatureIdx, absoluteRotation ? (uint16)rotation : _vm->normalizeModulo4(groupDirections + rotation));

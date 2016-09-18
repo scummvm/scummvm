@@ -1502,7 +1502,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 			break;
 		}
 
-		if ((actionIndex == kDMActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), k0x0040_MaskCreatureInfo_nonMaterial))
+		if ((actionIndex == kDMActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), kDMCreatureMaskNonMaterial))
 			return false;
 
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];

@@ -32,6 +32,13 @@
 
 namespace DM {
 
+enum SoundMode {
+	kDMSoundModeDoNotPlaySound = -1, // @ CM1_MODE_DO_NOT_PLAY_SOUND
+	kDMSoundModePlayImmediately = 0, // @ C00_MODE_PLAY_IMMEDIATELY
+	kDMSoundModePlayIfPrioritized = 1, // @ C01_MODE_PLAY_IF_PRIORITIZED
+	kDMSoundModePlayOneTickLater = 2 // @ C02_MODE_PLAY_ONE_TICK_LATER
+};
+
 #define k34_D13_soundCount 34 // @ D13_SOUND_COUNT
 
 class SoundData {
