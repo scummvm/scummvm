@@ -123,6 +123,7 @@ Common::Error XeenEngine::run() {
 	showIntro();
 	if (shouldQuit())
 		return Common::kNoError;
+	File::setCurrentArchive(GAME_ARCHIVE);
 
 	showMainMenu();
 	if (shouldQuit())

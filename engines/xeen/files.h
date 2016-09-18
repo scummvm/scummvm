@@ -81,15 +81,16 @@ public:
 class File : public Common::File {
 public:
 	static ArchiveType _currentArchive;
+
+	/**
+	 * Sets which archive is used by default
+	 */
+	static void setCurrentArchive(ArchiveType arcType) { _currentArchive = arcType; }
 public:
 	File() : Common::File() {}
-	File(const Common::String &filename) { File::open(filename); }
-	File(const Common::String &filename, ArchiveType archiveType) {
-		File::open(filename, archiveType);
-	}
-	File(const Common::String &filename, Common::Archive &archive) {
-		open(filename, archive);
-	}
+	File(const Common::String &filename);
+	File(const Common::String &filename, ArchiveType archiveType);
+	File(const Common::String &filename, Common::Archive &archive);
 	virtual ~File() {}
 
 	/**

@@ -189,6 +189,7 @@ FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 	int sideNum = 0;
 
+	File::_currentArchive = ANY_ARCHIVE;
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
 	_archives[0] = _archives[1] = _archives[2] = nullptr;
 
@@ -207,8 +208,6 @@ FileManager::FileManager(XeenEngine *vm) {
 		_archives[2] = new CCArchive("intro.cc", "intro", true);
 		SearchMan.add("intro", _archives[2]);
 	}
-
-	File::_currentArchive = GAME_ARCHIVE;
 }
 
 void FileManager::setGameCc(bool isDarkCc) {
@@ -220,11 +219,20 @@ void FileManager::setGameCc(bool isDarkCc) {
 
 ArchiveType File::_currentArchive;
 
+File::File(const Common::String &filename) {
+	File::open(filename);
+}
+
+File::File(const Common::String &filename, ArchiveType archiveType) {
+	File::open(filename, archiveType);
+}
+
+File::File(const Common::String &filename, Common::Archive &archive) {
+	File::open(filename, archive);
+}
+
 bool File::open(const Common::String &filename) {
-	CCArchive &arc = *FileManager::_archives[_currentArchive];
-	if (!Common::File::open(filename))
-		error("Could not open file - %s", filename.c_str());
-	return true;
+	return File::open(filename, _currentArchive);
 }
 
 bool File::open(const Common::String &filename, ArchiveType archiveType) {
@@ -232,7 +240,10 @@ bool File::open(const Common::String &filename, ArchiveType archiveType) {
 		Common::File::open(filename);
 	} else {
 		CCArchive &archive = *FileManager::_archives[archiveType];
-		Common::File::open(filename, archive);
+		if (!Common::File::open(filename, archive))
+			// If not in the designated archive, try opening from any archive,
+			// or as a standalone file in the filesystem
+			Common::File::open(filename);
 	}
 
 	if (!isOpen())
@@ -243,6 +254,7 @@ bool File::open(const Common::String &filename, ArchiveType archiveType) {
 bool File::open(const Common::String &filename, Common::Archive &archive) {
 	if (!Common::File::open(filename, archive))
 		error("Could not open file - %s", filename.c_str());
+	return true;
 }
 
 Common::String File::readString() {

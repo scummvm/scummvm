@@ -54,9 +54,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.fadeIn(4);
 
 	sound.setMusicVolume(0x5f);
-	sound.playFX(2);
-	events.wait(1000, true);
-	int64 v = 0;
+	sound.playFX(1);
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;

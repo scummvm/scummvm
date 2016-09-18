@@ -34,6 +34,8 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 }
 
 void WorldOfXeenEngine::showIntro() {
+	File::setCurrentArchive(INTRO_ARCHIVE);
+
 	// **DEBUG**
 	if (gDebugLevel == 0)
 		return;

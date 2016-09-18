@@ -34,7 +34,7 @@ namespace Xeen {
 MusicDriver::MusicDriver() : _musicPlaying(false), _fxPlaying(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr),
-		_exclude7(0), _frameCtr(0) {
+		_exclude7(false), _frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
 }
 
@@ -204,11 +204,19 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
-		stopFX();
+		resetFX();
 		_fxPlaying = true;
 	}
 
 	debugC(1, kDebugSound, "Starting FX %d", effectId);
+}
+
+void MusicDriver::stopFX() {
+	if (_fxPlaying) {
+		resetFX();
+		_fxPlaying = false;
+		_fxStartPtr = _fxDataPtr = nullptr;
+	}
 }
 
 void MusicDriver::playSong(const byte *data) {
@@ -283,7 +291,7 @@ void AdlibMusicDriver::initialize() {
 	write(0xBD, 0);
 
 	resetFrequencies();
-	AdlibMusicDriver::stopFX();
+	AdlibMusicDriver::resetFX();
 }
 
 void AdlibMusicDriver::playFX(uint effectId, const byte *data) {
@@ -387,7 +395,7 @@ void AdlibMusicDriver::pausePostProcess() {
 	}
 }
 
-void AdlibMusicDriver::stopFX() {
+void AdlibMusicDriver::resetFX() {
 	if (!_exclude7) {
 		_channels[7]._frequency = 0;
 		setFrequency(7, 0);
@@ -399,7 +407,6 @@ void AdlibMusicDriver::stopFX() {
 	setFrequency(8, 0);
 	_channels[8]._volume = 63;
 	setOutputLevel(8, 63);
-	_fxPlaying = false;
 }
 
 void AdlibMusicDriver::resetFrequencies() {
@@ -604,7 +611,8 @@ bool AdlibMusicDriver::fxStartNote(const byte *&srcP, byte param) {
 		debugC(3, kDebugSound, "fxStartNote %x -> %x", note, freq);
 
 		setFrequency(param, freq);
-		_channels[param]._frequency = freq | 0x2000;
+		freq |= 0x2000;
+		_channels[param]._frequency = freq;
 		setFrequency(param, freq);
 	} else {
 		++srcP;
@@ -626,7 +634,7 @@ bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	byte instrument = *srcP++;
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
-	if (_exclude7 != 2 || param != 7)
+	if (!_exclude7 || param != 7)
 		playInstrument(param, _fxInstrumentPtrs[instrument]);
 
 	return false;
@@ -667,33 +675,45 @@ void Music::loadEffectsData() {
 		return;
 
 	// Stop any prior FX
-	_musicDriver->stopFX();
+	stopFX();
+	delete[] _effectsData;
+	_archiveType = File::_currentArchive;
 
-
-	// Load in the entire driver so we have quick access to the effects data
+	// Load in an entire driver so we have quick access to the effects data
 	// that's hardcoded within it
-	File file("promus");
+	File file("blastmus");
 	byte *effectsData = new byte[file.size()];
 	file.seek(0);
 	file.read(effectsData, file.size());
 	file.close();
 	_effectsData = effectsData;
 
+	// Locate the playFX routine
+	const byte *playFX = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
+	assert(READ_BE_UINT16(playFX + 28) == 0x81FB);
+	uint numEffects = READ_LE_UINT16(playFX + 30);
+
+	assert(READ_BE_UINT16(playFX + 36) == 0x8B87);
+	const byte *table = effectsData + READ_LE_UINT16(playFX + 38);
+
 	// Extract the effects offsets
-	_effectsOffsets.resize(180);
-	const int EFFECTS_OFFSET = 0x91D;
-	for (int idx = 0; idx < 180; ++idx)
-		_effectsOffsets[idx] = READ_LE_UINT16(&effectsData[EFFECTS_OFFSET + idx * 2]);
+	_effectsOffsets.resize(numEffects);
+	for (uint idx = 0; idx < numEffects; ++idx)
+		_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
 }
 
 void Music::playFX(uint effectId) {
-	_musicDriver->stopFX();
+	stopFX();
 	loadEffectsData();
 
 	if (effectId < _effectsOffsets.size()) {
 		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
 		_musicDriver->playFX(effectId, dataP);
 	}
+}
+
+void Music::stopFX() {
+	_musicDriver->stopFX();
 }
 
 int Music::songCommand(uint commandId, byte volume) {

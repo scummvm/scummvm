@@ -91,7 +91,7 @@ private:
 	bool command(const byte *&srcP);
 protected:
 	Common::Array<Channel> _channels;
-	int _exclude7;
+	bool _exclude7;
 	bool _musicPlaying;
 	bool _fxPlaying;
 protected:
@@ -136,6 +136,11 @@ protected:
 	 * Post-processing done when a pause countdown starts or is in progress
 	 */
 	virtual void pausePostProcess() = 0;
+
+	/**
+	 * Does a reset of any sound effect
+	 */
+	virtual void resetFX() = 0;
 public:
 	/**
 	 * Constructor
@@ -153,9 +158,9 @@ public:
 	virtual void playFX(uint effectId, const byte *data);
 
 	/**
-	 * Does a reset of any sound effect
+	 * Stop any playing FX
 	 */
-	virtual void stopFX() = 0;
+	void stopFX();
 
 	/**
 	 * Plays a song
@@ -262,6 +267,11 @@ protected:
 	 * Post-processing done when a pause countdown starts or is in progress
 	 */
 	virtual void pausePostProcess();
+
+	/**
+	 * Does a reset of any sound effect
+	 */
+	virtual void resetFX();
 public:
 	/**
 	 * Constructor
@@ -277,11 +287,6 @@ public:
 	 * Starts an special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
-
-	/**
-	 * Does a reset of any sound effect
-	 */
-	virtual void stopFX();
 
 	/**
 	 * Plays a song
@@ -320,6 +325,11 @@ public:
 	 * Starts an effect playing
 	 */
 	void playFX(uint effectId);
+
+	/**
+	 * Stops any currently playing FX
+	 */
+	void stopFX();
 
 	/**
 	 * Executes special music command
