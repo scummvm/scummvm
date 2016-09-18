@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/serializer.h"
+#include "common/str-array.h"
 #include "graphics/surface.h"
 
 namespace Xeen {
@@ -109,6 +110,17 @@ public:
 	virtual bool open(const Common::String &filename, Common::Archive &archive);
 
 	Common::String readString();
+};
+
+class StringArray : public Common::StringArray {
+public:
+	StringArray() {}
+	StringArray(const Common::String &name) { load(name); }
+
+	/**
+	 * Loads a string array from the specified file
+	 */
+	void load(const Common::String &name);
 };
 
 class XeenSerializer : public Common::Serializer {

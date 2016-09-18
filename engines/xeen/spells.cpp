@@ -467,7 +467,7 @@ void Spells::detectMonster() {
 		events.updateGameCounter();
 		intf.draw3d(true);
 
-		events.wait(1);
+		events.wait(1, false);
 	} while (!events.isKeyMousePressed());
 
 	w.close();

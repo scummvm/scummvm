@@ -29,7 +29,8 @@ namespace Xeen {
 
 /*------------------------------------------------------------------------*/
 
-Sound::Sound(XeenEngine *vm, Audio::Mixer *mixer): Music(), _mixer(mixer) {
+Sound::Sound(XeenEngine *vm, Audio::Mixer *mixer): Music(),
+		_mixer(mixer), _soundOn(true) {
 }
 
 Sound::~Sound() {

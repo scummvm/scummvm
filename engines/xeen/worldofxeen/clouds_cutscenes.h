@@ -23,17 +23,14 @@
 #ifndef XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 #define XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 
+#include "xeen/worldofxeen/cutscenes.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-class XeenEngine;
-
-class CloudsCutscenes {
-private:
-	XeenEngine *_vm;
+class CloudsCutscenes : public Cutscenes {
 public:
-	CloudsCutscenes(XeenEngine *vm) : _vm(vm) {}
+	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
 	/**
 	 * Shows the Clouds of Xeen title screen

@@ -20,56 +20,60 @@
  *
  */
 
-#ifndef XEEN_SOUND_H
-#define XEEN_SOUND_H
+#ifndef XEEN_WORLDOFXEEN_CUTSCENES_H
+#define XEEN_WORLDOFXEEN_CUTSCENES_H
 
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
-//#include "common/scummsys.h"
-//#include "common/system.h"
 #include "xeen/files.h"
-#include "xeen/music.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
 
-class Sound : public Music {
-private:
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
-public:
-	bool _soundOn;
-public:
-	Sound(XeenEngine *vm, Audio::Mixer *mixer);
-	virtual ~Sound();
+class XeenEngine;
+
+class Cutscenes {
+protected:
+	XeenEngine *_vm;
+	StringArray _subtitles;
+	SpriteResource *_boxSprites;
+	uint _timeElapsed;
+	Common::String _subtitleLine;
+	uint _subtitleLineNum, _subtitleSize;
+protected:
+	Cutscenes(XeenEngine *vm) : _vm(vm), _timeElapsed(0), _boxSprites(nullptr),
+		_subtitleLineNum(0), _subtitleSize(0) {}
 
 	/**
-	 * Play a given sound
+	 * Resets the subtitles position
 	 */
-	void playSound(Common::SeekableReadStream &s, int unused = 0);
+	void resetSubtitles();
 
 	/**
-	 * Play a given sound
+	 * Free subtitles
 	 */
-	void playSound(const Common::String &name, int unused = 0);
+	void freeSubtitles();
 
 	/**
-	 * Stop playing a sound
-	 * @remarks		In the original, passing 1 to playSound stopped the sound
+	 * Shows subtitles
 	 */
-	void stopSound();
+	void showSubtitles(uint windowIndex = 0);
 
 	/**
-	 * Returns true if a sound is currently playing
-	 * @remarks		In the original, passing 0 to playSound returned play status
+	 * Delays either the specified number of frames, or until
+	 * an entire subtitle line is shown if subtitles are on
 	 */
-	bool isPlaying() const;
+	bool subtitlesWait(uint minTime);
 
 	/**
-	 * Stops all playing music, FX, and sound samples
+	 * Records the current execution time
 	 */
-	void stopAllAudio();
+	void recordTime();
+
+	/**
+	 * Returns the number of ticks since the last recordTime
+	 */
+	uint timeElapsed();
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_SOUND_H */
+#endif /* XEEN_WORLDOFXEEN_CUTSCENES_H */

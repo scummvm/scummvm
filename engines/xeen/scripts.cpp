@@ -230,7 +230,7 @@ int Scripts::checkEvents() {
 		do {
 			intf.draw3d(true);
 			events.updateGameCounter();
-			events.wait(1, true);
+			events.wait(1);
 		} while (!events.isKeyMousePressed());
 		events.clearEvents();
 
@@ -1759,7 +1759,7 @@ void Scripts::display(bool justifyFlag, int var46) {
 			events.updateGameCounter();
 			intf.draw3d(true);
 
-			events.wait(1, true);
+			events.wait(1);
 		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 
 		w.writeString(justifyFlag ? "\r" : "\r\x3""c");

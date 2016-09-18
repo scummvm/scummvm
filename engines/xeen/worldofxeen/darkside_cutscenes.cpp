@@ -81,7 +81,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			++nwcFrame;
 		}
 
-		if (events.wait(2, true))
+		if (events.wait(2))
 			return false;
 	}
 
@@ -112,14 +112,14 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			break;
 		}
 
-		if (events.wait(2, true))
+		if (events.wait(2))
 			return false;
 	}
 	if (_vm->shouldQuit())
 		return false;
 
 	// Pause for a bit
-	if (events.wait(10, true))
+	if (events.wait(10))
 		return false;
 
 	sound.setMusicVolume(95);
@@ -130,7 +130,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.fadeIn(4);
 	
 	events.updateGameCounter();
-	events.wait(60, true);
+	events.wait(60);
 	return true;
 }
 
@@ -149,6 +149,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	};
 
 	screen.fadeOut(8);
+	screen.loadPalette("dark.pal");
 	screen.loadBackground("pyramid2.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
@@ -158,13 +159,13 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	SpriteResource sprites[3] = {
 		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
 	};
-	File voc[2];
-	voc[0].open("pharoh1a.voc");
-	voc[1].open("pharoh1b.voc");
 
 	screen.vertMerge(SCREEN_HEIGHT);
 	screen.loadPage(0);
 	screen.loadPage(1);
+
+	// Play the intro music
+	sound.playSong("bigtheme.m");
 
 	// Show Might and Magic Darkside of Xeen title, and gradualy scroll
 	// the background vertically down to show the Pharoah's base
@@ -196,7 +197,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		yCtr -= timeExpired;
 		yp = MIN((uint)(yp + timeExpired), (uint)200);
 
-		if (events.wait(1, true))
+		if (events.wait(1))
 			return false;
 
 		if (fadeFlag) {
@@ -211,7 +212,8 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	screen.freePages();
 
 	events.updateGameCounter();
-	events.wait(30, true);
+	if (events.wait(30))
+		return false;
 
 	// Zoom into the Pharoah's base closeup view
 	for (int idx = 14; idx >= 0; --idx) {
@@ -222,13 +224,9 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 
 		if (idx == 2)
 			sound.setMusicVolume(48);
-		if (events.wait(2, true))
+		if (events.wait(2))
 			return false;
 	}
-
-	// TODO: More
-	sound.playSong(voc[0]);
-	sound.playSong(voc[1]);
 
 	return true;
 }
@@ -236,22 +234,64 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 bool DarkSideCutscenes::showDarkSideEnding() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-//	Sound &sound = *_vm->_sound;
+	Sound &sound = *_vm->_sound;
 
-	//Voc voc("ido2.voc");
-	//	Music newBright("newbrigh.m");
+	File ido2("ido2.voc");
 	SpriteResource box("box.vga");
 
-//	newBright.play();
+	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
 	screen.update();
 
 	screen.fadeIn(4);
 	events.updateGameCounter();
+	if (events.wait(30))
+		return false;
 
-	// TODO
+	screen.loadBackground("scene2-b.raw");
+	screen.update();
+	screen.saveBackground();
+
+	SpriteResource faceEnd("face.end");
+	events.updateGameCounter();
+	screen.restoreBackground();
+	faceEnd.draw(screen, 0, Common::Point(29, 76), SPRFLAG_4000);
+	screen.update();
+
+	screen.fadeIn(4);
+	if (events.wait(1, false))
+		return false;
+
+	_subtitles.load("special.bin");
+	recordTime();
+	resetSubtitles();
+
+	// Alamar stands up
+	for (int idx = 74; idx > 20; idx -= 2) {
+		if (idx == 60)
+			sound.songCommand(207);
+		else if (idx == 22)
+			sound.stopSong();
+
+		events.updateGameCounter();
+		screen.restoreBackground();
+		faceEnd.draw(screen, 0, Common::Point(29, idx), SPRFLAG_4000);
+		screen.update();
+
+		if (events.wait(2))
+			return false;
+	}
+
+	// Alamar says "Come to me"
+	sound.playSound("come2.voc");
+	if (!subtitlesWait(27))
+		return false;
+
+		// TODO
 	events.wait(5000);
+
+	freeSubtitles();
 	return true;
 }
 

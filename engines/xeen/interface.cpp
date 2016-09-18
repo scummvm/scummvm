@@ -1300,7 +1300,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	}
 
 	if (!skipDelay)
-		events.wait(2);
+		events.wait(2, false);
 }
 
 void Interface::handleFalling() {
@@ -2274,7 +2274,7 @@ void Interface::spellFX(Character *c) {
 			draw3d(false);
 
 		screen._windows[0].update();
-		events.wait(screen._windows[11]._enabled ? 2 : 1);
+		events.wait(screen._windows[11]._enabled ? 2 : 1,false);
 	}
 
 	drawParty(true);

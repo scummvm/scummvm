@@ -1248,7 +1248,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 				clearButtons();
 
 			do {
-				events.wait(3, true);
+				events.wait(3);
 				checkEvents(_vm);
 				if (_vm->shouldQuit())
 					return false;

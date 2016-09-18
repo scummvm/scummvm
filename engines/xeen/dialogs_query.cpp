@@ -136,7 +136,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 			//numFrames = 1;
 		}
 
-		events.wait(3, true);
+		events.wait(3);
 		checkEvents(_vm);
 		if (!_buttonValue)
 			continue;

@@ -1019,7 +1019,7 @@ void IdentifyMonster::execute() {
 		w.frame();
 		screen._windows[3].update();
 
-		events.wait(1);
+		events.wait(1, false);
 	} while (!events.isKeyMousePressed());
 
 	w.close();

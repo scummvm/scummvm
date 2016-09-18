@@ -40,9 +40,12 @@ void WorldOfXeenEngine::showIntro() {
 	if (gDebugLevel == 0)
 		return;
 
+	showDarkSideEnding();
+	/*
 	bool completed = showDarkSideTitle();
 	if (!_seenDarkSideIntro && completed)
 		showDarkSideIntro();
+		*/
 }
 
 } // End of namespace Xeen

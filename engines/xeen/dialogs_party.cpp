@@ -887,7 +887,7 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 	w.update();
 
 	// Wait for keypress
-	events.wait(1, true);
+	events.wait(1);
 	checkEvents(_vm);
 }
 

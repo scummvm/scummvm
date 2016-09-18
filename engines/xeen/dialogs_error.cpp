@@ -60,7 +60,7 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 			events.updateGameCounter();
 			_vm->_interface->draw3d(true);
 
-			events.wait(1, true);
+			events.wait(1);
 			if (checkEvents(_vm))
 				break;
 		} while (!_vm->shouldQuit() && !_buttonValue);

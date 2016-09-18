@@ -97,7 +97,7 @@ Common::KeyCode Input::doCursor(const Common::String &msg) {
 		if (flag)
 			screen._windows[3].update();
 
-		events.wait(1, true);
+		events.wait(1);
 		if (events.isKeyPending()) {
 			Common::KeyState keyState;
 			events.getKey(keyState);
@@ -233,7 +233,7 @@ int Choose123::execute(int numOptions) {
 				delay = 1;
 			}
 
-			events.wait(delay, true);
+			events.wait(delay);
 			if (_vm->shouldQuit())
 				return 0;
 		} while (!_buttonValue);

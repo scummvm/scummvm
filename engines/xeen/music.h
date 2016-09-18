@@ -316,7 +316,8 @@ private:
 	 * Updates any playing music
 	 */
 	void update();
-protected:
+public:
+	bool _musicOn;
 public:
 	Music();
 	~Music();

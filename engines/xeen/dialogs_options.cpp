@@ -114,7 +114,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 		screen.restoreBackground();
 		sprites.draw(screen, frameNum);
 
-		events.wait(4, true);
+		events.wait(4);
 	}
 }
 

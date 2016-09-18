@@ -23,15 +23,15 @@
 #ifndef XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H
 #define XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H
 
+#include "xeen/worldofxeen/cutscenes.h"
+
 namespace Xeen {
 
 class XeenEngine;
 
-class DarkSideCutscenes {
-private:
-	XeenEngine *_vm;
+class DarkSideCutscenes : public Cutscenes {
 public:
-	DarkSideCutscenes(XeenEngine *vm) : _vm(vm) {}
+	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
 	/**
 	 * Shows the Dark Side of Xeen title screen

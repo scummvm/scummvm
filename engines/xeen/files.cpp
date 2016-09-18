@@ -267,4 +267,13 @@ Common::String File::readString() {
 	return result;
 }
 
+/*------------------------------------------------------------------------*/
+
+void StringArray::load(const Common::String &name) {
+	File f(name);
+	clear();
+	while (f.pos() < f.size())
+		push_back(f.readString());
+}
+
 } // End of namespace Xeen

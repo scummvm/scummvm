@@ -656,7 +656,7 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 /*------------------------------------------------------------------------*/
 
 Music::Music() : _musicDriver(nullptr), _songData(nullptr),
-		_archiveType(ANY_ARCHIVE), _effectsData(nullptr) {
+		_archiveType(ANY_ARCHIVE), _effectsData(nullptr), _musicOn(true) {
 	_musicDriver = new AdlibMusicDriver();
 }
 
