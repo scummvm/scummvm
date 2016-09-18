@@ -3181,10 +3181,41 @@ static const uint16 qfg1vgaPatchWhiteStagDagger[] = {
 	PATCH_END
 };
 
+// The dagger range has a script bug that can freeze the game or cause Brutus to kill you even after you've killed him.
+// This is a bug in the original game.
+//
+// When Bruno leaves, a 300 tick countdown starts. If you kill Brutus or leave room 73 within those 300 ticks then
+// the game is left in a broken state. For the rest of the game, if you ever return to the dagger range from the
+// east or west during the first half of the day then the game will freeze or Brutus will come back to life
+// and kill you, even if you already killed him.
+//
+// Special thanks, credits and kudos to sluicebox, who did a ton of research on this and even found this game bug originally.
+//
+// Applies to at least: English floppy, Mac floppy
+// Responsible method: brutusWaits::changeState
+// Fixes bug #9558
+static const uint16 qfg1vgaSignatureBrutusScriptFreeze[] = {
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x144),            // pushi 144h (324d)
+	0x45, 0x05, 0x02,                   // call export 5 of script 0
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x12c),            // ldi 12Ch (300d)
+	0x65, 0x20,                         // aTop ticks
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
+	0x34, PATCH_UINT16(0),              // ldi 0 (waste 7 bytes)
+	0x35, 0x00,                         // ldi 0
+	0x35, 0x00,                         // ldi 0
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
+	{  true,    73, "brutus script freeze glitch",                 1, qfg1vgaSignatureBrutusScriptFreeze,  qfg1vgaPatchBrutusScriptFreeze },
 	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
