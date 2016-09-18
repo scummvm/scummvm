@@ -98,7 +98,7 @@ void ObjectMan::initConstants() {
 }
 
 ObjectMan::ObjectMan(DMEngine *vm) : _vm(vm) {
-	for (uint16 i = 0; i < k199_ObjectNameCount; ++i)
+	for (uint16 i = 0; i < kDMObjectNameCount; ++i)
 		_objectNames[i] = nullptr;
 
 	_objectIconForMousePointer = nullptr;
@@ -116,10 +116,10 @@ void ObjectMan::loadObjectNames() {
 
 	_objectIconForMousePointer = new byte[16 * 16];
 
-	char *objectNames = new char[dispMan.getCompressedDataSize(k556_ObjectNamesGraphicIndice) + k199_ObjectNameCount];
-	Common::MemoryReadStream stream = dispMan.getCompressedData(k556_ObjectNamesGraphicIndice);
+	char *objectNames = new char[dispMan.getCompressedDataSize(kDMObjectNamesGraphicIndice) + kDMObjectNameCount];
+	Common::MemoryReadStream stream = dispMan.getCompressedData(kDMObjectNamesGraphicIndice);
 
-	for (uint16 objNameIndex = 0; objNameIndex < k199_ObjectNameCount; ++objNameIndex) {
+	for (uint16 objNameIndex = 0; objNameIndex < kDMObjectNameCount; ++objNameIndex) {
 		_objectNames[objNameIndex] = objectNames;
 
 		byte tmpByte;
@@ -221,7 +221,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 	int16 byteWidth;
 	byte* blitDestination;
 	int16 destHeight;
-	if (slotBoxIndex >= k8_SlotBoxInventoryFirstSlot) {
+	if (slotBoxIndex >= kDMSlotBoxInventoryFirstSlot) {
 		blitDestination = _vm->_displayMan->_bitmapViewport;
 		byteWidth = k112_byteWidthViewport;
 		destHeight = 136;
@@ -257,7 +257,7 @@ void ObjectMan::drawLeaderObjectName(Thing thing) {
 	} else
 		objectName = Common::String(_objectNames[iconIndex]);
 
-	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, kDMColorCyan, kDMColorBlack, objectName.c_str(), k14_ObjectNameMaximumLength, k200_heightScreen);
+	_vm->_textMan->printWithTrailingSpaces(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, 233, 37, kDMColorCyan, kDMColorBlack, objectName.c_str(), kDMObjectNameMaximumLength, k200_heightScreen);
 }
 
 IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {

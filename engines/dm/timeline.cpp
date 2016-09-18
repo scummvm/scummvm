@@ -412,7 +412,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		uint16 creatureAttributes = _vm->_dungeonMan->getCreatureAttributes(groupThing);
 		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
-				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != k2_outcomeKilledAllCreaturesInGroup)
+				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
 					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 
 				int16 nextState = doorState - 1;

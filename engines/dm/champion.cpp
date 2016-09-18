@@ -440,7 +440,7 @@ bool ChampionMan::hasObjectIconInSlotBoxChanged(int16 slotBoxIndex, Thing thing)
 		|| (currIconIndex == kDMIconIndicePotionEmptyFlask)) {
 		IconIndice newIconIndex = objMan.getIconIndex(thing);
 		if (newIconIndex != currIconIndex) {
-			if ((slotBoxIndex < k8_SlotBoxInventoryFirstSlot) && !_mousePointerHiddenToDrawChangedObjIconOnScreen) {
+			if ((slotBoxIndex < kDMSlotBoxInventoryFirstSlot) && !_mousePointerHiddenToDrawChangedObjIconOnScreen) {
 				_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
 				_vm->_eventMan->hideMouse();
 			}
@@ -496,7 +496,7 @@ void ChampionMan::drawChangedObjectIcons() {
 		uint16 drawViewport = 0;
 
 		for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++, thing++) {
-			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + k8_SlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
+			uint16 objIconChanged = hasObjectIconInSlotBoxChanged(slotIndex + kDMSlotBoxInventoryFirstSlot, *thing) ? 1 : 0;
 			drawViewport |= objIconChanged;
 			if (objIconChanged && (slotIndex == kDMSlotActionHand)) {
 				menuMan.drawActionIcon((ChampionIndex)_vm->ordinalToIndex(invChampOrdinal));
@@ -1294,7 +1294,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 	uint16 champIndex;
 	uint16 slotIndex;
 
-	if (slotBoxIndex < k8_SlotBoxInventoryFirstSlot) {
+	if (slotBoxIndex < kDMSlotBoxInventoryFirstSlot) {
 		if (_candidateChampionOrdinal)
 			return;
 
@@ -1305,7 +1305,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 		slotIndex = getHandSlotIndex(slotBoxIndex);
 	} else {
 		champIndex = _vm->ordinalToIndex(_vm->_inventoryMan->_inventoryChampionOrdinal);
-		slotIndex = slotBoxIndex - k8_SlotBoxInventoryFirstSlot;
+		slotIndex = slotBoxIndex - kDMSlotBoxInventoryFirstSlot;
 	}
 
 	Thing leaderHandObject = _leaderHandObject;
@@ -2309,7 +2309,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 			return;
 		slotBoxIndex = (champIndex << 1) + slotIndex;
 	} else
-		slotBoxIndex = k8_SlotBoxInventoryFirstSlot + slotIndex;
+		slotBoxIndex = kDMSlotBoxInventoryFirstSlot + slotIndex;
 
 	Thing thing;
 	if (slotIndex >= kDMSlotChest1)

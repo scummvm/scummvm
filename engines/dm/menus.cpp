@@ -425,7 +425,7 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 
 	char spellSymbolString[2] = {'\0', '\0'};
 	Champion *magicChampion = &_vm->_championMan->_champions[_vm->_championMan->_magicCasterChampionIndex];
-	if (spellAreaBitmapLine == k2_SpellAreaAvailableSymbols) {
+	if (spellAreaBitmapLine == kDMSpellAreaAvailableSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 12, k48_byteWidth, k48_byteWidth, kDMColorNoTransparency, 36, 12);
 		int16 x = 1;
@@ -435,7 +435,7 @@ void MenuMan::buildSpellAreaLine(int16 spellAreaBitmapLine) {
 			x += 14;
 			_vm->_textMan->printTextToBitmap(_bitmapSpellAreaLine, 48, x, 8, kDMColorCyan, kDMColorBlack, spellSymbolString, 12);
 		}
-	} else if (spellAreaBitmapLine == k3_SpellAreaChampionSymbols) {
+	} else if (spellAreaBitmapLine == kDMSpellAreaChampionSymbols) {
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		_vm->_displayMan->blitToBitmap(_bitmapSpellAreaLines, _bitmapSpellAreaLine, boxSpellAreaLine, 0, 24, k48_byteWidth, k48_byteWidth, kDMColorNoTransparency, 36, 12);
 		int16 x = 8;
@@ -470,11 +470,11 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 		return;
 	}
 	_vm->_championMan->_magicCasterChampionIndex = champIndex;
-	buildSpellAreaLine(k2_SpellAreaAvailableSymbols);
+	buildSpellAreaLine(kDMSpellAreaAvailableSymbols);
 	_vm->_eventMan->showMouse();
 	drawSpellAreaControls(champIndex);
 	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine2, k48_byteWidth, kDMColorNoTransparency, 12);
-	buildSpellAreaLine(k3_SpellAreaChampionSymbols);
+	buildSpellAreaLine(kDMSpellAreaChampionSymbols);
 	_vm->_displayMan->blitToScreen(_bitmapSpellAreaLine, &boxSpellAreaLine3, k48_byteWidth, kDMColorNoTransparency, 12);
 	_vm->_eventMan->hideMouse();
 }
@@ -1144,7 +1144,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionShoot: {
 		if (Thing(curChampion->_slots[kDMSlotReadyHand]).getType() != kDMThingTypeWeapon) {
-			_actionDamage = kM2_damageNoAmmunition;
+			_actionDamage = kDMDamageNoAmmunition;
 			actionExperienceGain = 0;
 			actionPerformed = false;
 			break;
@@ -1157,7 +1157,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		int16 stepEnergy = actionHandWeaponClass;
 		if ((actionHandWeaponClass >= kDMWeaponClassFirstBow) && (actionHandWeaponClass <= kDMWeaponClassLastBow)) {
 			if (readyHandWeaponClass != kDMWeaponClassBowAmmunition) {
-				_actionDamage = kM2_damageNoAmmunition;
+				_actionDamage = kDMDamageNoAmmunition;
 				actionExperienceGain = 0;
 				actionPerformed = false;
 				break;
@@ -1165,7 +1165,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			stepEnergy -= kDMWeaponClassFirstBow;
 		} else if ((actionHandWeaponClass >= kDMWeaponClassFirstSling) && (actionHandWeaponClass <= kDMWeaponClassLastSling)) {
 			if (readyHandWeaponClass != kDMWeaponClassSlingAmmunition) {
-				_actionDamage = kM2_damageNoAmmunition;
+				_actionDamage = kDMDamageNoAmmunition;
 				actionExperienceGain = 0;
 				actionPerformed = false;
 				break;
@@ -1496,7 +1496,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 			uint16 cellDelta = (viewCell == kDMViewCellBackRight) ? 3 : 1;
 			/* Check if there is another champion in front */
 			if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(championCell + cellDelta)) != kDMChampionNone) {
-				_actionDamage = kM1_damageCantReach;
+				_actionDamage = kDMDamageCantReach;
 				return false;
 			}
 			break;
@@ -1508,7 +1508,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
 		uint16 actionDamageFactor = actionDamageFactorArray[actionIndex];
 		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == kDMActionDisrupt)) {
-			setFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
+			setFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 		}
 		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
 		return true;
@@ -1681,10 +1681,10 @@ void MenuMan::setActionList(ActionSet *actionSet) {
 			continue;
 
 		uint16 minimumSkillLevel = actionSet->_actionProperties[idx - 1];
-		if (getFlag(minimumSkillLevel, k0x0080_actionRequiresCharge) && !getActionObjectChargeCount())
+		if (getFlag(minimumSkillLevel, kDMActionMaskRequiresCharge) && !getActionObjectChargeCount())
 			continue;
 
-		clearFlag(minimumSkillLevel, k0x0080_actionRequiresCharge);
+		clearFlag(minimumSkillLevel, kDMActionMaskRequiresCharge);
 		if (_vm->_championMan->getSkillLevel(_vm->ordinalToIndex(_vm->_championMan->_actingChampionOrdinal), _actionSkillIndex[actionIndex]) >= minimumSkillLevel) {
 			_actionList._actionIndices[nextAvailableActionListIndex] = (ChampionAction)actionIndex;
 			_actionList._minimumSkillLevel[nextAvailableActionListIndex] = minimumSkillLevel;
@@ -1745,7 +1745,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 
 		const char *displayString;
 		int16 textPosX;
-		if (damage == kM1_damageCantReach) {
+		if (damage == kDMDamageCantReach) {
 			textPosX = pos[0];
 			displayString = message[0];
 		} else {

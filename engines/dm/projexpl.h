@@ -31,9 +31,11 @@
 
 namespace DM {
 
-#define k0_outcomeKilledNoCreaturesInGroup 0 // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP   
-#define k1_outcomeKilledSomeCreaturesInGroup 1 // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP 
-#define k2_outcomeKilledAllCreaturesInGroup 2 // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP  
+enum KillOutcome {
+	kDMKillOutcomeNoCreaturesInGroup = 0,   // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP   
+	kDMKillOutcomeSomeCreaturesInGroup = 1, // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP 
+	kDMKillOutcomeAllCreaturesInGroup = 2   // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP  
+};
 
 #define k00_soundMETALLIC_THUD 0 // @ C00_SOUND_METALLIC_THUD
 #define k01_soundSWITCH 1 // @ C01_SOUND_SWITCH

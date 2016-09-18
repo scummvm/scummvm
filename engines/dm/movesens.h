@@ -77,7 +77,6 @@ public:
 	void createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible); // @ F0265_MOVE_CreateEvent60To61_MoveGroup
 	Thing getObjectOfTypeInCell(int16 mapX, int16 mapY, int16 cell, int16 objectType); // @ F0273_SENSOR_GetObjectOfTypeInCell
 };
-
 }
 
 #endif

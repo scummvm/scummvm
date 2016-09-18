@@ -76,7 +76,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 	Projectile *projectileThingData = (Projectile *)_vm->_dungeonMan->getThingData(Thing(projectileThing));
 	bool removePotion = false;
 	int16 potionPower = 0;
-	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
+	_creatureDamageOutcome = kDMKillOutcomeNoCreaturesInGroup;
 	Thing projectileAssociatedThing = projectileThingData->_slot;
 	int16 projectileAssociatedThingType = projectileAssociatedThing.getType();
 	Potion *potion = nullptr;
@@ -176,11 +176,11 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		attack = (uint16)((unsigned long)getProjectileImpactAttack(projectileThingData, projectileAssociatedThing) << 6) / curCreatureInfo->_defense;
 		if (attack) {
 			int16 outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(curGroup, curCreatureIndex, projectileTargetMapX, projectileTargetMapY, attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(curCreatureType, _projectilePoisonAttack), true);
-			if (outcome != k0_outcomeKilledNoCreaturesInGroup)
+			if (outcome != kDMKillOutcomeNoCreaturesInGroup)
 				_vm->_groupMan->processEvents29to41(projectileTargetMapX, projectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
 
 			_creatureDamageOutcome = outcome;
-			if (!createExplosionOnImpact && (outcome == k0_outcomeKilledNoCreaturesInGroup)
+			if (!createExplosionOnImpact && (outcome == kDMKillOutcomeNoCreaturesInGroup)
 			&& (projectileAssociatedThingType == kDMThingTypeWeapon)
 			&& getFlag(curCreatureInfo->_attributes, kDMCreatureMaskKeepThrownSharpWeapon)) {
 				Weapon *weapon = (Weapon *)_vm->_dungeonMan->getThingData(projectileAssociatedThing);
@@ -349,14 +349,14 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 
 int16 ProjExpl::projectileGetImpactCount(int16 impactType, int16 mapX, int16 mapY, int16 cell) {
 	int16 impactCount = 0;
-	_creatureDamageOutcome = k0_outcomeKilledNoCreaturesInGroup;
+	_creatureDamageOutcome = kDMKillOutcomeNoCreaturesInGroup;
 
 	for (Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY); curThing != Thing::_endOfList; ) {
 		if (((curThing).getType() == kDMThingTypeProjectile) && ((curThing).getCell() == cell) &&
 			hasProjectileImpactOccurred(impactType, mapX, mapY, cell, curThing)) {
 			projectileDeleteEvent(curThing);
 			impactCount++;
-			if ((impactType == kDMElementTypeCreature) && (_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup))
+			if ((impactType == kDMElementTypeCreature) && (_creatureDamageOutcome == kDMKillOutcomeAllCreaturesInGroup))
 				break;
 
 			curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
@@ -539,7 +539,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 			_vm->_championMan->getDamagedChampionCount(attack, kDMWoundNone, kDMAttackTypeNormal);
 		else if ((groupThing != Thing::_endOfList)
 			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
-			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != k2_outcomeKilledAllCreaturesInGroup)
+			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != kDMKillOutcomeAllCreaturesInGroup)
 			&& (attack > 2)) {
 			_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
 		}

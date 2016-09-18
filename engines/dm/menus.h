@@ -34,13 +34,20 @@
 
 namespace DM {
 
-#define kM1_damageCantReach -1 // @ CM1_DAMAGE_CANT_REACH    
-#define kM2_damageNoAmmunition -2 // @ CM2_DAMAGE_NO_AMMUNITION 
-#define k2_SpellAreaAvailableSymbols 2 // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
-#define k3_SpellAreaChampionSymbols 3 // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
+enum Damage {
+	kDMDamageCantReach = -1,   // @ CM1_DAMAGE_CANT_REACH    
+	kDMDamageNoAmmunition = -2 // @ CM2_DAMAGE_NO_AMMUNITION 
+};
 
-#define k0x0080_actionRequiresCharge 0x0080 // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
-#define k0x8000_hitNonMaterialCreatures 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
+enum SpellArea {
+	kDMSpellAreaAvailableSymbols = 2, // @ C2_SPELL_AREA_AVAILABLE_SYMBOLS
+	kDMSpellAreaChampionSymbols = 3   // @ C3_SPELL_AREA_CHAMPION_SYMBOLS
+};
+
+enum ActionMask {
+	kDMActionMaskRequiresCharge = 0x0080,         // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
+	kDMActionMaskHitNonMaterialCreatures = 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
+};
 
 class ActionList {
 public:
@@ -129,7 +136,6 @@ public:
 
 	void initConstants();
 };
-
 }
 
 #endif // DM_MENUS_H

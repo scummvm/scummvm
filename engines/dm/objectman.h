@@ -33,12 +33,9 @@
 
 namespace DM {
 
-#define k8_SlotBoxInventoryFirstSlot 8 // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT   
-#define k9_SlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
-
-#define k14_ObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
-#define k199_ObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
-#define k556_ObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
+#define kDMObjectNameMaximumLength 14 // @ C014_OBJECT_NAME_MAXIMUM_LENGTH
+#define kDMObjectNameCount 199 // @ C199_OBJECT_NAME_COUNT
+#define kDMObjectNamesGraphicIndice 556 // @ C556_GRAPHIC_OBJECT_NAMES
 
 class SlotBox {
 public:
@@ -58,7 +55,7 @@ public:
 	void loadObjectNames();	// @ F0031_OBJECT_LoadNames
 
 	SlotBox _slotBoxes[46]; // @ G0030_as_Graphic562_SlotBoxes;
-	char *_objectNames[k199_ObjectNameCount]; // @ G0352_apc_ObjectNames
+	char *_objectNames[kDMObjectNameCount]; // @ G0352_apc_ObjectNames
 	byte *_objectIconForMousePointer; // @ G0412_puc_Bitmap_ObjectIconForMousePointer
 
 	IconIndice getObjectType(Thing thing); // @ F0032_OBJECT_GetType
@@ -75,7 +72,6 @@ public:
 
 	void initConstants();
 };
-
 }
 
 #endif

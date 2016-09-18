@@ -218,7 +218,7 @@ bool Console::Cmd_listItems(int argc, const char** argv) {
 	if(strstr(_vm->_objectMan->_objectNames[0], searchedString.c_str()) != nullptr)
 		debugPrintf("| %s", _vm->_objectMan->_objectNames[0]);
 
-	for (uint16 i = 1; i < k199_ObjectNameCount; ++i) {
+	for (uint16 i = 1; i < kDMObjectNameCount; ++i) {
 		const char *name = _vm->_objectMan->_objectNames[i - 1];
 		const char *prevName = _vm->_objectMan->_objectNames[i];
 

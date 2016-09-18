@@ -390,7 +390,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 	CreatureType creatureType = group->_type;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
 	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) /* Lord Chaos cannot be damaged */
-		return k0_outcomeKilledNoCreaturesInGroup;
+		return kDMKillOutcomeNoCreaturesInGroup;
 
 	if (group->_health[creatureIndex] <= damage) {
 		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
@@ -403,7 +403,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 				dropGroupPossessions(mapX, mapY, groupGetThing(mapX, mapY), kDMSoundModePlayOneTickLater);
 				groupDelete(mapX, mapY);
 			}
-			retVal = k2_outcomeKilledAllCreaturesInGroup;
+			retVal = kDMKillOutcomeAllCreaturesInGroup;
 		} else { /* If there are several creatures in the group */
 			uint16 groupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
 			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskDropFixedPoss)) {
@@ -464,7 +464,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			_vm->_dungeonMan->setGroupCells(group, groupCells, _vm->_dungeonMan->_currMapIndex);
 			_vm->_dungeonMan->setGroupDirections(group, groupDirections, _vm->_dungeonMan->_currMapIndex);
 			group->setCount(group->getCount() - 1);
-			retVal = k1_outcomeKilledSomeCreaturesInGroup;
+			retVal = kDMKillOutcomeSomeCreaturesInGroup;
 		}
 
 		CreatureSize creatureSize = (CreatureSize)getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
@@ -483,7 +483,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 	if (damage > 0)
 		group->_health[creatureIndex] -= damage;
 
-	return k0_outcomeKilledNoCreaturesInGroup;
+	return kDMKillOutcomeNoCreaturesInGroup;
 }
 
 void GroupMan::groupDelete(int16 mapX, int16 mapY) {
@@ -538,13 +538,13 @@ int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 map
 			killedSomeCreatures = killedSomeCreatures || outcomeVal;
 		} while (creatureIndex--);
 		if (killedAllCreatures)
-			return k2_outcomeKilledAllCreaturesInGroup;
+			return kDMKillOutcomeAllCreaturesInGroup;
 
 		if (killedSomeCreatures)
-			return k1_outcomeKilledSomeCreaturesInGroup;
+			return kDMKillOutcomeSomeCreaturesInGroup;
 	}
 
-	return k0_outcomeKilledNoCreaturesInGroup;
+	return kDMKillOutcomeNoCreaturesInGroup;
 }
 
 int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType, int16 poisonAttack) {
@@ -971,7 +971,7 @@ T0209096_SetBehavior0_Wander:
 					}
 					/* If 1/8 chance and the creature is not adjacent to the party and is a quarter square sized creature then process projectile impacts and update the creature cell if still alive. When the creature is not in front of the party, it has 7/8 chances of dodging a projectile by moving to another cell or staying in the center of the square */
 					if (!(AL0446_i_GroupCellsCriteria & 0x0038) && (distanceToVisibleParty != 1) && (creatureSize == kDMCreatureSizeQuarter)) {
-						if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
+						if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == kDMKillOutcomeAllCreaturesInGroup)) /* This call to F0218_PROJECTILE_GetImpactCount works fine because there is a single creature in the group so L0445_ps_ActiveGroup->Cells contains only one cell index */
 							return;
 						activeGroup->_cells = _vm->normalizeModulo4(AL0446_i_GroupCellsCriteria);
 					}
@@ -1001,9 +1001,9 @@ T0209096_SetBehavior0_Wander:
 								AL0446_i_Cell = _vm->normalizeModulo4(AL0446_i_Cell);
 								if (!getCreatureOrdinalInCell(curGroup, AL0446_i_Cell) ||
 									(_vm->getRandomNumber(2) && !getCreatureOrdinalInCell(curGroup, AL0446_i_Cell = _vm->returnOppositeDir((Direction)AL0446_i_Cell)))) { /* If the selected cell (or the opposite cell) is not already occupied by a creature */
-									if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
+									if (_vm->_projexpl->projectileGetImpactCount(kDMElementTypeCreature, eventMapX, eventMapY, activeGroup->_cells) && (_vm->_projexpl->_creatureDamageOutcome == kDMKillOutcomeAllCreaturesInGroup)) /* BUG0_70 A projectile impact on a creature may be ignored. The function F0218_PROJECTILE_GetImpactCount to detect projectile impacts when a quarter square sized creature moves inside a group (to another cell on the same square) may fail if there are several creatures in the group because the function expects a single cell index for its last parameter. The function should be called once for each cell where there is a creature */
 										return;
-									if (_vm->_projexpl->_creatureDamageOutcome != k1_outcomeKilledSomeCreaturesInGroup) {
+									if (_vm->_projexpl->_creatureDamageOutcome != kDMKillOutcomeSomeCreaturesInGroup) {
 										activeGroup->_cells = getGroupValueUpdatedWithCreatureValue(activeGroup->_cells, AL0447_i_CreatureIndex, AL0446_i_Cell);
 									}
 								}
@@ -1811,9 +1811,9 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
 	int16 actionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]);
-	bool actionHitsNonMaterialCreatures = getFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
+	bool actionHitsNonMaterialCreatures = getFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 	if (actionHitsNonMaterialCreatures)
-		clearFlag(actionHitProbability, k0x8000_hitNonMaterialCreatures);
+		clearFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 
 	if ((!getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial) || actionHitsNonMaterialCreatures) &&
 		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + creatureInfo->_dexterity + doubledMapDifficulty - 16)) ||
@@ -1869,11 +1869,11 @@ T0231009:
 	}
 T0231015:
 	L0565_i_Damage = 0;
-	L0569_i_Outcome = k0_outcomeKilledNoCreaturesInGroup;
+	L0569_i_Outcome = kDMKillOutcomeNoCreaturesInGroup;
 	_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
 T0231016:
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
-	if (L0569_i_Outcome != k2_outcomeKilledAllCreaturesInGroup) {
+	if (L0569_i_Outcome != kDMKillOutcomeAllCreaturesInGroup) {
 		processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
 	}
 	return L0565_i_Damage;

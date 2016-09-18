@@ -334,11 +334,11 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						_vm->_dungeonMan->setCurrentMap(mapIndexSource);
 						uint16 outcome = _vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(thing), mapX, mapY, 20, false);
 						_vm->_dungeonMan->setCurrentMap(mapIndexDestination);
-						fallKilledGroup = (outcome == k2_outcomeKilledAllCreaturesInGroup);
+						fallKilledGroup = (outcome == kDMKillOutcomeAllCreaturesInGroup);
 						if (fallKilledGroup)
 							break;
 
-						if (outcome == k1_outcomeKilledSomeCreaturesInGroup)
+						if (outcome == kDMKillOutcomeSomeCreaturesInGroup)
 							_vm->_groupMan->dropMovingCreatureFixedPossession(thing, destMapX, destMapY);
 					}
 				} else if ((destinationSquareType == (int)kDMElementTypeStairs) && (thing != Thing::_party) && (thingType != kDMThingTypeProjectile)) {
@@ -564,7 +564,7 @@ T0266017_CheckProjectileImpacts:
 			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
 			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
 				_vm->_projexpl->projectileDeleteEvent(curThing);
-				if (_vm->_projexpl->_creatureDamageOutcome == k2_outcomeKilledAllCreaturesInGroup)
+				if (_vm->_projexpl->_creatureDamageOutcome == kDMKillOutcomeAllCreaturesInGroup)
 					return true;
 
 				goto T0266017_CheckProjectileImpacts;

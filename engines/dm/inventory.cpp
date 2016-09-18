@@ -365,7 +365,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 
 	_openChest = thingToOpen;
 	if (!isPressingEye) {
-		objMan.drawIconInSlotBox(k9_SlotBoxInventoryActionHand, kDMIconIndiceContainerChestOpen);
+		objMan.drawIconInSlotBox(kDMSlotBoxInventoryActionHand, kDMIconIndiceContainerChestOpen);
 	}
 	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k25_PanelOpenChestIndice),
 							   _boxPanel, k72_byteWidth, kDMColorRed, 73);
