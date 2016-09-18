@@ -1954,7 +1954,7 @@ bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
 }
 
 void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
-	if ((mapX < 0) || (mapX >= _vm->_dungeonMan->_currMapWidth) || (mapY < 0) || (mapY >= _vm->_dungeonMan->_currMapHeight))
+	if ((mapX >= _vm->_dungeonMan->_currMapWidth) || (mapY >= _vm->_dungeonMan->_currMapHeight))
 		return;
 
 	_vm->_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, mapX, mapY, kDMCreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
