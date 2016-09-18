@@ -330,7 +330,8 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 		//parse timestamp
 		uint32 timestamp = buffer.asUint64();
 		if (buffer == "" || timestamp == 0) break;
-		timestamps[filename] = timestamp;
+		if (timestamps.contains(filename))
+			timestamps[filename] = timestamp;
 	}
 
 	delete file;
