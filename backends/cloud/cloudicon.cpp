@@ -20,23 +20,21 @@
  *
  */
 
-#include "backends/networking/curl/cloudicon.h"
-#include "backends/cloud/cloudmanager.h"
+#include "backends/cloud/cloudicon.h"
 #include "common/memstream.h"
-#include "gui/ThemeEngine.h"
-#include "gui/gui-manager.h"
+#include "common/system.h"
 #include "image/png.h"
 
-namespace Networking {
+namespace Cloud {
 
-const float CloudIcon::ALPHA_STEP = 0.025;
+const float CloudIcon::ALPHA_SPEED = 0.0005;
 const float CloudIcon::ALPHA_MAX = 1;
 const float CloudIcon::ALPHA_MIN = 0.6;
 
-CloudIcon::CloudIcon():
-	_wasVisible(false), _iconsInited(false), _showingDisabled(false),
-	_currentAlpha(0), _alphaRising(true), _disabledFrames(0) {
+CloudIcon::CloudIcon() {
 	initIcons();
+	hide();
+	_lastUpdateTime = g_system->getMillis();
 }
 
 CloudIcon::~CloudIcon() {
@@ -45,72 +43,95 @@ CloudIcon::~CloudIcon() {
 	_alphaIcon.free();
 }
 
-bool CloudIcon::draw() {
-	bool stop = false;
-	initIcons();
+void CloudIcon::show(CloudIcon::Type icon, int duration) {
+	if (_type == icon) {
+		return; // Nothing to do
+	}
 
-	if (CloudMan.isWorking() || _disabledFrames > 0) {
-		if (g_system) {
-			if (!_wasVisible) {
-				_wasVisible = true;
-			}
-			--_disabledFrames;
-			if (_alphaRising) {
-				if (_currentAlpha < ALPHA_MIN)
-					_currentAlpha += 5 * ALPHA_STEP;
-				else
-					_currentAlpha += ALPHA_STEP;
-				if (_currentAlpha > ALPHA_MAX) {
-					_currentAlpha = ALPHA_MAX;
-					_alphaRising = false;
-				}
-			} else {
-				_currentAlpha -= ALPHA_STEP;
-				if (_currentAlpha < ALPHA_MIN) {
-					_currentAlpha = ALPHA_MIN;
-					_alphaRising = true;
-				}
-			}
+	if (icon != kNone) {
+		_state = kShown;
+		_type = icon;
+
+		if (duration) {
+			_hideTime = g_system->getMillis() + duration;
 		} else {
-			_wasVisible = false;
+			_hideTime = 0;
 		}
 	} else {
-		_wasVisible = false;
-		_currentAlpha -= 5 * ALPHA_STEP;
-		if (_currentAlpha <= 0) {
-			_currentAlpha = 0;
-			stop = true;
-		}
+		_state = kGoingToHide;
 	}
+}
 
-	if (g_system) {
-		if (!stop) {
-			makeAlphaIcon((_showingDisabled ? _disabledIcon : _icon), _currentAlpha);
-			g_system->displayActivityIconOnOSD(&_alphaIcon);
+void CloudIcon::hide() {
+	_state = kHidden;
+	_type = kNone;
+	_hideTime = 0;
+	_currentAlpha = 0;
+	_alphaRising = true;
+}
+
+CloudIcon::Type CloudIcon::getShownType() const {
+	return _type;
+}
+
+bool CloudIcon::needsUpdate() const {
+	uint32 delaySinceLastUpdate = g_system->getMillis() - _lastUpdateTime;
+	return delaySinceLastUpdate >= UPDATE_DELAY_MIN_MILLIS;
+}
+
+void CloudIcon::update() {
+	uint32 currentTime = g_system->getMillis();
+	uint32 delaySinceLastUpdate = currentTime - _lastUpdateTime;
+	_lastUpdateTime = currentTime;
+
+	switch (_state) {
+	case kHidden:
+		return; // Nothing to do
+	case kShown:
+		if (_alphaRising) {
+			if (_currentAlpha < ALPHA_MIN)
+				_currentAlpha += 5 * ALPHA_SPEED * delaySinceLastUpdate;
+			else
+				_currentAlpha += ALPHA_SPEED * delaySinceLastUpdate;
+			if (_currentAlpha > ALPHA_MAX) {
+				_currentAlpha = ALPHA_MAX;
+				_alphaRising = false;
+			}
 		} else {
-			g_system->displayActivityIconOnOSD(nullptr);
+			_currentAlpha -= ALPHA_SPEED * delaySinceLastUpdate;
+			if (_currentAlpha < ALPHA_MIN) {
+				_currentAlpha = ALPHA_MIN;
+				_alphaRising = true;
+			}
 		}
+
+		if (_hideTime != 0 && _hideTime <= currentTime) {
+			_hideTime = 0;
+			_state = kGoingToHide;
+		}
+		break;
+	case kGoingToHide:
+		_currentAlpha -= 5 * ALPHA_SPEED * delaySinceLastUpdate;
+		if (_currentAlpha <= 0) {
+			hide();
+		}
+		break;
 	}
 
-	if (stop)
-		_showingDisabled = false;
-	return stop;
+	if (_state != kHidden) {
+		makeAlphaIcon((_type == kDisabled ? _disabledIcon : _icon), _currentAlpha);
+		g_system->displayActivityIconOnOSD(&_alphaIcon);
+	} else {
+		g_system->displayActivityIconOnOSD(nullptr);
+	}
 }
 
-void CloudIcon::showDisabled() {
-	_showingDisabled = true;
-	_disabledFrames = 20 * 3; //3 seconds 20 fps
-}
-
-#include "backends/networking/curl/cloudicon_data.h"
-#include "backends/networking/curl/cloudicon_disabled_data.h"
+#include "backends/cloud/cloudicon_data.h"
+#include "backends/cloud/cloudicon_disabled_data.h"
 
 void CloudIcon::initIcons() {
-	if (_iconsInited)
-		return;
 	loadIcon(_icon, cloudicon_data, ARRAYSIZE(cloudicon_data));
 	loadIcon(_disabledIcon, cloudicon_disabled_data, ARRAYSIZE(cloudicon_disabled_data));
-	_iconsInited = true;
 }
 
 void CloudIcon::loadIcon(Graphics::Surface &icon, byte *data, uint32 size) {
@@ -123,7 +144,7 @@ void CloudIcon::loadIcon(Graphics::Surface &icon, byte *data, uint32 size) {
 	return icon.copyFrom(*s);
 }
 
-void CloudIcon::makeAlphaIcon(Graphics::Surface &icon, float alpha) {
+void CloudIcon::makeAlphaIcon(const Graphics::Surface &icon, float alpha) {
 	_alphaIcon.copyFrom(icon);
 
 	byte *pixels = (byte *)_alphaIcon.getPixels();
@@ -154,4 +175,4 @@ void CloudIcon::makeAlphaIcon(Graphics::Surface &icon, float alpha) {
 	}
 }
 
-} // End of namespace Networking
+} // End of namespace Cloud

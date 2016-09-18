@@ -229,7 +229,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 	if (!CloudMan.isSyncing()) {
 		if (hasSavepathOverride) {
-			ConnMan.showCloudDisabledIcon();
+			CloudMan.showCloudDisabledIcon();
 		} else {
 			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
 			if (request)
