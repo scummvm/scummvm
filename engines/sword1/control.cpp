@@ -861,7 +861,7 @@ void Control::checkForOldSaveGames() {
 
 	GUI::MessageDialog dialog0(
 	    _("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
-	      "The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
@@ -1159,7 +1159,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	uint saveHeader = inf->readUint32LE();
 	if (saveHeader != SAVEGAME_HEADER) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Save game '%s' is corrupt", fName);
+		displayMessage(0, "Saved game '%s' is corrupt", fName);
 		return false;
 	}
 
@@ -1167,7 +1167,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	uint8 saveVersion = inf->readByte();
 
 	if (saveVersion > SAVEGAME_VERSION) {
-		warning("Different save game version");
+		warning("Different saved game version");
 		return false;
 	}
 
@@ -1229,8 +1229,8 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 	if (testSave) {
 		delete testSave;
 
-		Common::String msg = Common::String::format(_("Target new save game already exists!\n"
-		                     "Would you like to keep the old save game (%s) or the new one (%s)?\n"),
+		Common::String msg = Common::String::format(_("Target new saved game already exists!\n"
+		                     "Would you like to keep the old saved game (%s) or the new one (%s)?\n"),
 		                     oldFileName, newFileName);
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 
