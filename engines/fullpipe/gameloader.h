@@ -112,7 +112,7 @@ class GameLoader : public CObject {
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	bool (*_preloadCallback)(PreloadItem &pre, int flag);
-	void *_savegameCallback;
+	void (*_savegameCallback)(MfcArchive *archive, bool mode);
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;

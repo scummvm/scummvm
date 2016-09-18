@@ -673,11 +673,14 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		}
 	}
 
-	//header.encSize = GameLoader_encryptSavegame((GameLoader *)header.unkField, (int)&cmemfile);
-	//CFile::Write((int)&cfile, (int)&header, header.saveSize);
+	header.encSize = stream.size();
 
-	//if (_savegameCallback)
-	//	_savegameCallback(saveFile, 1);
+	// Now obfuscate the data
+	for (uint i = 0; i < header.encSize; i++)
+		stream.getData()[i] += i & 0x7f;
+
+	if (_savegameCallback)
+		_savegameCallback(archive, true);
 
 	// Now dump it into save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);

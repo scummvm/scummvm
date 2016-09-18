@@ -37,6 +37,15 @@
 
 namespace Fullpipe {
 
+void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
+	if (mode)
+		for (int i = 0; i < 200; i++)
+			archive->writeUint32LE(g_fp->_mapTable[i]);
+	else
+		for (int i = 0; i < 200; i++)
+			g_fp->_mapTable[i] = archive->readUint32LE();
+}
+
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_gameLoader = new GameLoader();
 
@@ -60,7 +69,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
-	// _savegameCallback = gameLoaderSavegameCallback; // TODO
+	_gameLoader->_savegameCallback = gameLoaderSavegameCallback;
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
