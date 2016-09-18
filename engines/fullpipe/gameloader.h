@@ -80,6 +80,14 @@ struct FullpipeSavegameHeader {
 	Graphics::Surface *thumbnail;
 };
 
+struct SaveHeader {
+	int32 saveSize;
+	char magic[32];
+	int32 updateCounter;
+	int32 unkField;
+	int32 encSize;
+};
+
 class GameLoader : public CObject {
  public:
 	GameLoader();
@@ -100,8 +108,6 @@ class GameLoader : public CObject {
 
 	void readSavegame(const char *fname);
 	void writeSavegame(Scene *sc, const char *fname);
-
-	void writeObject(Common::WriteStream *stream, GameVar *);
 
 	void restoreDefPicAniInfos();
 

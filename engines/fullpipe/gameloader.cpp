@@ -21,7 +21,6 @@
  */
 
 #include "fullpipe/fullpipe.h"
-#include "common/memstream.h"
 #include "graphics/thumbnail.h"
 
 #include "fullpipe/gameloader.h"
@@ -597,105 +596,6 @@ void GameLoader::updateSystems(int counterdiff) {
 		processMessages();
 		preloadScene(_preloadSceneId, _preloadEntranceId);
 	}
-}
-
-void GameLoader::readSavegame(const char *fname) {
-	warning("STUB: readSavegame(%s)", fname);
-}
-
-struct SaveHeader {
-	int32 saveSize;
-	char magic[32];
-	int32 updateCounter;
-	int32 unkField;
-	int32 encSize;
-};
-
-void GameLoader::writeSavegame(Scene *sc, const char *fname) {
-	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
-
-	if (!v) {
-		v = _gameVar->getSubVarByName("OBJSTATES")->addSubVarAsInt("SAVEGAME", 0);
-
-		if (!v) {
-			warning("No state to save");
-			return;
-		}
-	}
-
-	SaveHeader header;
-
-	v->setSubVarAsInt("Scene", sc->_sceneId);
-
-	saveScenePicAniInfos(sc->_sceneId);
-	memset(&header, 0, sizeof(header));
-
-	header.saveSize = 48;
-	strcpy(header.magic, "FullPipe Savegame");
-	header.updateCounter = _updateCounter;
-	header.unkField = 1;
-
-	Common::MemoryWriteStreamDynamic stream;
-
-	MfcArchive *archive = new MfcArchive(&stream);
-
-	v = _gameVar->getSubVarByName("OBJSTATES");
-
-	GameVar *nxt = 0;
-	GameVar *prv = 0;
-	GameVar *par;
-	if (v) {
-		nxt = v->_nextVarObj;
-		prv = v->_prevVarObj;
-		par = v->_parentVarObj;
-		v->_parentVarObj = 0;
-		v->_nextVarObj = 0;
-		v->_prevVarObj = 0;
-	}
-
-	archive->writeObject(v);
-
-	if (v) {
-		v->_parentVarObj = par;
-		v->_nextVarObj = nxt;
-		v->_prevVarObj = prv;
-	}
-
-	getGameLoaderInventory()->savePartial(*archive);
-
-	archive->writeUint32LE(_sc2array.size());
-
-	for (uint i = 0; i < _sc2array.size(); i++) {
-		archive->writeUint32LE(_sc2array[i]._picAniInfosCount);
-
-		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j]->save(*archive);
-		}
-	}
-
-	header.encSize = stream.size();
-
-	// Now obfuscate the data
-	for (uint i = 0; i < header.encSize; i++)
-		stream.getData()[i] += i & 0x7f;
-
-	if (_savegameCallback)
-		_savegameCallback(archive, true);
-
-	// Now dump it into save file
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
-
-	saveFile->write(&header, sizeof(header));
-
-	saveFile->write(stream.getData(), stream.size());
-
-	saveFile->finalize();
-
-	delete saveFile;
-}
-
-void GameLoader::writeObject(Common::WriteStream *stream, GameVar *) {
-	warning("STUB: GameLoader::writeObject()");
 }
 
 Sc2::Sc2() {

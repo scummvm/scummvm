@@ -37,6 +37,10 @@
 
 namespace Fullpipe {
 
+void GameLoader::readSavegame(const char *fname) {
+	warning("STUB: readSavegame(%s)", fname);
+}
+
 void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
 	if (mode)
 		for (int i = 0; i < 200; i++)
