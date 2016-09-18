@@ -25,6 +25,7 @@
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/memstream.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
@@ -38,7 +39,139 @@
 namespace Fullpipe {
 
 void GameLoader::readSavegame(const char *fname) {
-	warning("STUB: readSavegame(%s)", fname);
+	SaveHeader header;
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
+
+	header.version = saveFile->readUint32LE();
+	saveFile->read(header.magic, 32);
+	header.updateCounter = saveFile->readUint32LE();
+	header.unkField = saveFile->readUint32LE();
+	header.encSize = saveFile->readUint32LE();
+
+	if (header.version != 48)
+		return;
+
+	_updateCounter = header.updateCounter;
+
+	byte *data = (byte *)malloc(header.encSize);
+	saveFile->read(data, header.encSize);
+
+	byte *map = (byte *)malloc(800);
+	saveFile->read(map, 800);
+
+	MfcArchive temp(new Common::MemoryReadStream(map, 800));
+
+	if (_savegameCallback)
+		_savegameCallback(&temp, false);
+
+	delete saveFile;
+
+	// Deobfuscate the data
+	for (uint i = 0; i < header.encSize; i++)
+		data[i] -= i & 0x7f;
+
+	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
+
+	GameVar var;
+
+	var.load(*archive);
+
+	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
+
+	if (!v) {
+		v = _gameVar->addSubVarAsInt("OBJSTATES", 0);
+
+		if (!v) {
+			warning("No state to save");
+			delete archive;
+			return;
+		}
+	}
+
+	addVar(&var, v);
+
+	getGameLoaderInventory()->loadPartial(*archive);
+
+	int32 arrSize = archive->readUint32LE();
+
+	for (uint i = 0; i < arrSize; i++) {
+		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
+
+		free(_sc2array[i]._picAniInfos);
+		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
+
+		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
+			_sc2array[i]._picAniInfos[j]->load(*archive);
+		}
+	}
+
+	delete archive;
+
+	getGameLoaderInventory()->rebuildItemRects();
+
+	PreloadItem preloadItem;
+
+	v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (v) {
+		if (g_fp->_currentScene)
+			preloadItem.preloadId1 = g_fp->_currentScene->_sceneId & 0xffff;
+		else
+			preloadItem.preloadId1 = 0;
+
+		preloadItem.param = v->getSubVarAsInt("Entrance");
+		preloadItem.preloadId2 = 0;
+		preloadItem.sceneId = v->getSubVarAsInt("Scene");
+
+		if (_preloadCallback) {
+			if (!_preloadCallback(preloadItem, 0))
+				return;
+		}
+
+		clearGlobalMessageQueueList1();
+
+		if (g_fp->_currentScene)
+			unloadScene(g_fp->_currentScene->_sceneId);
+
+		g_fp->_currentScene = 0;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 50);
+
+		loadScene(preloadItem.sceneId);
+
+		ExCommand *ex = new ExCommand(preloadItem.sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags = 2;
+		ex->_param = preloadItem.param;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 100);
+
+		ex->postMessage();
+	}
+}
+
+void GameLoader::addVar(GameVar *var, GameVar *subvar) {
+	if (var && subvar) {
+		int type = var->_varType;
+		if (type == subvar->_varType && (!type || type == 1))
+			subvar->_value.intValue = var->_value.intValue;
+
+		for (GameVar *v = var->_subVars; v; v = v->_nextVarObj) {
+			GameVar *nv = subvar->getSubVarByName(v->_varName);
+			if (!nv) {
+				nv = new GameVar;
+				nv->_varName = (char *)calloc(strlen(v->_varName) + 1, 1);
+				strcpy(nv->_varName, v->_varName);
+				nv->_varType = v->_varType;
+
+				subvar->addSubVar(nv);
+			}
+
+			addVar(v, nv);
+		}
+	}
 }
 
 void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {

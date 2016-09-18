@@ -81,7 +81,7 @@ struct FullpipeSavegameHeader {
 };
 
 struct SaveHeader {
-	int32 saveSize;
+	int32 version;
 	char magic[32];
 	int32 updateCounter;
 	int32 unkField;
@@ -108,6 +108,8 @@ class GameLoader : public CObject {
 
 	void readSavegame(const char *fname);
 	void writeSavegame(Scene *sc, const char *fname);
+
+	void addVar(GameVar *var, GameVar *subvar);
 
 	void restoreDefPicAniInfos();
 

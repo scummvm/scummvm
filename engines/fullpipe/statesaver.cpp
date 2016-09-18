@@ -48,7 +48,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	saveScenePicAniInfos(sc->_sceneId);
 	memset(&header, 0, sizeof(header));
 
-	header.saveSize = 48;
+	header.version = 48; // '0'
 	strcpy(header.magic, "FullPipe Savegame");
 	header.updateCounter = _updateCounter;
 	header.unkField = 1;
@@ -103,13 +103,18 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	// Now dump it into save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
 
-	saveFile->write(&header, sizeof(header));
+	saveFile->writeUint32LE(header.version);
+	saveFile->write(header.magic, 32);
+	saveFile->writeUint32LE(header.updateCounter);
+	saveFile->writeUint32LE(header.unkField);
+	saveFile->writeUint32LE(header.encSize);
 
 	saveFile->write(stream.getData(), stream.size());
 
 	saveFile->finalize();
 
 	delete saveFile;
+	delete archive;
 }
 
 
