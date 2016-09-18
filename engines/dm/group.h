@@ -66,29 +66,34 @@ enum CreatureType {
 	kDMCreatureTypeLordOrder = 25, // @ C25_CREATURE_LORD_ORDER                 
 	kDMCreatureTypeGreyLord = 26 // @ C26_CREATURE_GREY_LORD                  
 };
+
 #define k255_CreatureTypeSingleCenteredCreature 255 // @ C255_SINGLE_CENTERED_CREATURE
 
 enum CreatureSize {
 	kDMCreatureSizeQuarter = 0, // @ C0_SIZE_QUARTER_SQUARE
-	k1_MaskCreatureSizeHalf = 1, // @ C1_SIZE_HALF_SQUARE   
-	k2_MaskCreatureSizeFull = 2 // @ C2_SIZE_FULL_SQUARE   
+	kDMCreatureSizeHalf = 1,    // @ C1_SIZE_HALF_SQUARE   
+	kDMCreatureSizeFull = 2     // @ C2_SIZE_FULL_SQUARE   
 };
 
-#define kDMCreatureMaskSize 0x0003 // @ MASK0x0003_SIZE                     
-#define kDMCreatureMaskSideAttack 0x0004 // @ MASK0x0004_SIDE_ATTACK              
-#define kDMCreatureMaskPreferBackRow 0x0008 // @ MASK0x0008_PREFER_BACK_ROW          
-#define kDMCreatureMaskAttackAnyChamp 0x0010 // @ MASK0x0010_ATTACK_ANY_CHAMPION      
-#define kDMCreatureMaskLevitation 0x0020 // @ MASK0x0020_LEVITATION               
-#define kDMCreatureMaskNonMaterial 0x0040 // @ MASK0x0040_NON_MATERIAL             
-#define kDMCreatureMaskDropFixedPoss 0x0200 // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
-#define kDMCreatureMaskKeepThrownSharpWeapon 0x0400 // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
-#define kDMCreatureMaskSeeInvisible 0x0800 // @ MASK0x0800_SEE_INVISIBLE            
-#define kDMCreatureMaskNightVision 0x1000 // @ MASK0x1000_NIGHT_VISION             
-#define kDMCreatureMaskArchenemy 0x2000 // @ MASK0x2000_ARCHENEMY                
-#define kDMCreatureMaskMagicMap 0x4000 // @ MASK0x4000_MAGICMAP  
+enum CreatureMask {
+	kDMCreatureMaskSize = 0x0003,           // @ MASK0x0003_SIZE                     
+	kDMCreatureMaskSideAttack = 0x0004,     // @ MASK0x0004_SIDE_ATTACK              
+	kDMCreatureMaskPreferBackRow = 0x0008,  // @ MASK0x0008_PREFER_BACK_ROW          
+	kDMCreatureMaskAttackAnyChamp = 0x0010, // @ MASK0x0010_ATTACK_ANY_CHAMPION      
+	kDMCreatureMaskLevitation = 0x0020,     // @ MASK0x0020_LEVITATION               
+	kDMCreatureMaskNonMaterial = 0x0040,    // @ MASK0x0040_NON_MATERIAL             
+	kDMCreatureMaskDropFixedPoss = 0x0200,  // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
+	kDMCreatureMaskKeepThrownSharpWeapon = 0x0400, // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
+	kDMCreatureMaskSeeInvisible = 0x0800,   // @ MASK0x0800_SEE_INVISIBLE            
+	kDMCreatureMaskNightVision = 0x1000,    // @ MASK0x1000_NIGHT_VISION             
+	kDMCreatureMaskArchenemy = 0x2000,      // @ MASK0x2000_ARCHENEMY                
+	kDMCreatureMaskMagicMap = 0x4000        // @ MASK0x4000_MAGICMAP  
+};
 
-#define k0x0040_MaskActiveGroupFlipBitmap 0x0040 // @ MASK0x0040_FLIP_BITMAP  
-#define k0x0080_MaskActiveGroupIsAttacking 0x0080 // @ MASK0x0080_IS_ATTACKING 
+enum aspectMask {
+	kDMAspectMaskActiveGroupFlipBitmap = 0x0040, // @ MASK0x0040_FLIP_BITMAP  
+	kDMAspectMaskActiveGroupIsAttacking = 0x0080 // @ MASK0x0080_IS_ATTACKING 
+};
 
 class ActiveGroup {
 public:

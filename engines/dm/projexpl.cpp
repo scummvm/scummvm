@@ -516,7 +516,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 				nonMaterialAdditionalAttack++;
 				int16 creatureCount = group->getCount();
 				do {
-					if (getFlag(_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._aspect[creatureCount], k0x0080_MaskActiveGroupIsAttacking)) /* Materializer / Zytaz can only be damaged while they are attacking */
+					if (getFlag(_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()]._aspect[creatureCount], kDMAspectMaskActiveGroupIsAttacking)) /* Materializer / Zytaz can only be damaged while they are attacking */
 						_vm->_groupMan->groupGetDamageCreatureOutcome(group, creatureCount, mapX, mapY, attack + _vm->getRandomNumber(nonMaterialAdditionalAttack) + _vm->getRandomNumber(4), true);
 				} while (--creatureCount >= 0);
 			} else

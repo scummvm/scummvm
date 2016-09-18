@@ -71,7 +71,7 @@ void InventoryMan::initConstants() {
 
 InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_inventoryChampionOrdinal = 0;
-	_panelContent = k0_PanelContentFoodWaterPoisoned;
+	_panelContent = kDMPanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
 		_chestSlots[i] = Thing(0);
 	_openChest = Thing::_none;
@@ -168,7 +168,7 @@ void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	Box box;
 	box._rect.top = 0;
 	box._rect.bottom = 28;
-	box._rect.left = championIndex * k69_ChampionStatusBoxSpacing + 7;
+	box._rect.left = championIndex * kDMChampionStatusBoxSpacing + 7;
 	box._rect.right = box._rect.left + 31;
 	dispMan.blitToScreen(_vm->_championMan->_champions[championIndex]._portrait, &box, k16_byteWidth, kDMColorNoTransparency, 29);
 }
@@ -233,7 +233,7 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 }
 
 void InventoryMan::drawPanelResurrectReincarnate() {
-	_panelContent = k5_PanelContentResurrectReincarnate;
+	_panelContent = kDMPanelContentResurrectReincarnate;
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(k40_PanelResurectReincaranteIndice),
 										 _boxPanel, k72_byteWidth, kDMColorDarkGreen, 73);
 }
@@ -249,13 +249,13 @@ void InventoryMan::drawPanel() {
 
 	Thing thing = cm._champions[_vm->ordinalToIndex(_inventoryChampionOrdinal)].getSlot(kDMSlotActionHand);
 
-	_panelContent = k0_PanelContentFoodWaterPoisoned;
+	_panelContent = kDMPanelContentFoodWaterPoisoned;
 	switch (thing.getType()) {
 	case kDMThingTypeContainer:
-		_panelContent = k4_PanelContentChest;
+		_panelContent = kDMPanelContentChest;
 		break;
 	case kDMThingTypeScroll:
-		_panelContent = k2_PanelContentScroll;
+		_panelContent = kDMPanelContentScroll;
 		break;
 	default:
 		thing = Thing::_none;
@@ -376,12 +376,12 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
-		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, objMan.getIconIndex(thing));
+		objMan.drawIconInSlotBox(chestSlotIndex + kDMSlotBoxChestFirstSlot, objMan.getIconIndex(thing));
 		_chestSlots[chestSlotIndex++] = thing;
 		thing = _vm->_dungeonMan->getNextThing(thing);
 	}
 	while (chestSlotIndex < 8) {
-		objMan.drawIconInSlotBox(chestSlotIndex + k38_SlotBoxChestFirstSlot, kDMIconIndiceNone);
+		objMan.drawIconInSlotBox(chestSlotIndex + kDMSlotBoxChestFirstSlot, kDMIconIndiceNone);
 		_chestSlots[chestSlotIndex++] = Thing::_none;
 	}
 }
@@ -535,7 +535,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		uint16 actualAttribMask = 0;
 		switch (thingType) {
 		case kDMThingTypeWeapon: {
-			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0002_DescriptionMaskPoisoned | k0x0004_DescriptionMaskBroken;
+			potentialAttribMask = kDMDescriptionMaskCursed | kDMDescriptionMaskPoisoned | kDMDescriptionMaskBroken;
 			Weapon *weapon = (Weapon *)rawThingPtr;
 			actualAttribMask = (weapon->getCursed() << 3) | (weapon->getPoisoned() << 1) | (weapon->getBroken() << 2);
 			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit)
@@ -558,13 +558,13 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			break;
 		}
 		case kDMThingTypeArmour: {
-			potentialAttribMask = k0x0008_DescriptionMaskCursed | k0x0004_DescriptionMaskBroken;
+			potentialAttribMask = kDMDescriptionMaskCursed | kDMDescriptionMaskBroken;
 			Armour *armour = (Armour *)rawThingPtr;
 			actualAttribMask = (armour->getCursed() << 3) | (armour->getBroken() << 2);
 			break;
 		}
 		case kDMThingTypePotion: {
-			potentialAttribMask = k0x0001_DescriptionMaskConsumable;
+			potentialAttribMask = kDMDescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
 			actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
@@ -615,7 +615,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 				drawPanelObjectDescriptionString(str.c_str());
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
-				potentialAttribMask = k0x0001_DescriptionMaskConsumable;
+				potentialAttribMask = kDMDescriptionMaskConsumable;
 				actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
@@ -877,7 +877,7 @@ void InventoryMan::clickOnMouth() {
 	};
 
 	if (_vm->_championMan->_leaderEmptyHanded) {
-		if (_panelContent == k0_PanelContentFoodWaterPoisoned)
+		if (_panelContent == kDMPanelContentFoodWaterPoisoned)
 			return;
 
 		_vm->_eventMan->_ignoreMouseMovements = true;
@@ -1021,7 +1021,7 @@ void InventoryMan::clickOnMouth() {
 	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 
-	if (_panelContent == k0_PanelContentFoodWaterPoisoned)
+	if (_panelContent == kDMPanelContentFoodWaterPoisoned)
 		setFlag(curChampion->_attributes, kDMAttributePanel);
 
 	_vm->_championMan->drawChampionState((ChampionIndex)championIndex);

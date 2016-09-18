@@ -35,20 +35,21 @@
 
 namespace DM {
 
-#define k0x0001_DescriptionMaskConsumable 0x0001 // @ MASK0x0001_DESCRIPTION_CONSUMABLE
-#define k0x0002_DescriptionMaskPoisoned 0x0002 // @ MASK0x0002_DESCRIPTION_POISONED  
-#define k0x0004_DescriptionMaskBroken 0x0004 // @ MASK0x0004_DESCRIPTION_BROKEN    
-#define k0x0008_DescriptionMaskCursed 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
-
-#define k69_ChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
-#define k38_SlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
+enum DescriptionMask {
+	kDMDescriptionMaskConsumable = 0x0001, // @ MASK0x0001_DESCRIPTION_CONSUMABLE
+	kDMDescriptionMaskPoisoned = 0x0002, // @ MASK0x0002_DESCRIPTION_POISONED  
+	kDMDescriptionMaskBroken = 0x0004, // @ MASK0x0004_DESCRIPTION_BROKEN    
+	kDMDescriptionMaskCursed = 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
+};
 
 enum PanelContent {
-	k0_PanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
-	k2_PanelContentScroll = 2, // @ C02_PANEL_SCROLL
-	k4_PanelContentChest = 4, // @ C04_PANEL_CHEST
-	k5_PanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
+	kDMPanelContentFoodWaterPoisoned = 0, // @ C00_PANEL_FOOD_WATER_POISONED
+	kDMPanelContentScroll = 2, // @ C02_PANEL_SCROLL
+	kDMPanelContentChest = 4, // @ C04_PANEL_CHEST
+	kDMPanelContentResurrectReincarnate = 5 // @ C05_PANEL_RESURRECT_REINCARNATE
 };
+
+#define kDMChampionStatusBoxSpacing 69 // @ C69_CHAMPION_STATUS_BOX_SPACING
 
 class InventoryMan {
 	DMEngine *_vm;
@@ -93,7 +94,6 @@ public:
 	void adjustStatisticCurrentValue(Champion *champ, uint16 statIndex, int16 valueDelta); // @ F0348_INVENTORY_AdjustStatisticCurrentValue
 	void clickOnEye(); // @ F0352_INVENTORY_ProcessCommand71_ClickOnEye
 };
-
 }
 
 #endif

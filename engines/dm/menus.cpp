@@ -231,7 +231,7 @@ void MenuMan::drawDisabledMenu() {
 		_vm->_eventMan->highlightBoxDisable();
 		_vm->_displayMan->_useByteBoxCoordinates = false;
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal) {
-			if (_vm->_inventoryMan->_panelContent == k4_PanelContentChest) {
+			if (_vm->_inventoryMan->_panelContent == kDMPanelContentChest) {
 				_vm->_inventoryMan->closeChest();
 			}
 		} else {

@@ -1257,7 +1257,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 		Box box;
 		box._rect.top = 0;
 		box._rect.bottom = 28;
-		box._rect.left = championIndex * k69_ChampionStatusBoxSpacing;
+		box._rect.left = championIndex * kDMChampionStatusBoxSpacing;
 		box._rect.right = box._rect.left + 66;
 		dispMan._useByteBoxCoordinates = false;
 		dispMan.fillScreenBox(box, kDMColorBlack);
@@ -1334,14 +1334,14 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 
 	CommandType commandType;
 	switch (invMan._panelContent) {
-	case k4_PanelContentChest:
+	case kDMPanelContentChest:
 		if (champMan._leaderIndex == kDMChampionNone) // if no leader
 			return;
 		commandType = getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), kDMMouseButtonLeft);
 		if (commandType != kDMCommandNone)
 			_vm->_championMan->clickOnSlotBox(commandType - kDMCommandClickOnSlotBoxChampion0StatusBoxReadyHand);
 		break;
-	case k5_PanelContentResurrectReincarnate:
+	case kDMPanelContentResurrectReincarnate:
 		if (!champMan._leaderEmptyHanded)
 			break;
 		commandType = getCommandTypeFromMouseInput(_mouseInputPanelResurrectReincarnateCancel, Common::Point(x, y), kDMMouseButtonLeft);

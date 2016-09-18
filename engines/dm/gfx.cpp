@@ -3292,7 +3292,7 @@ T0115015_DrawProjectileAsObject:
 		if (AL_0_creatureIndexRed) { /* If there is a creature on the cell being processed */
 			AL_0_creatureIndexRed--; /* Convert ordinal to index */
 			creatureIndexGreen = AL_0_creatureIndexRed;
-		} else if (creatureSize == k1_MaskCreatureSizeHalf) {
+		} else if (creatureSize == kDMCreatureSizeHalf) {
 			AL_0_creatureIndexRed = 0;
 			creatureIndexGreen = -1;
 		} else
@@ -3306,11 +3306,11 @@ T0115015_DrawProjectileAsObject:
 				goto T0115129_DrawProjectiles; /* Do not draw a single centered creature now, wait until second pass (for a front view door) or until all cells have been drawn so the creature is drawn over all the objects on the floor */
 
 			drawCreaturesCompleted = true;
-			if ((creatureSize == k1_MaskCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) /* Side view of half square creature */
+			if ((creatureSize == kDMCreatureSizeHalf) && (creatureDirectionDelta & 0x0001)) /* Side view of half square creature */
 				AL_2_viewCell = k3_HalfSizedViewCell_CenterColumn;
 			else
 				AL_2_viewCell = k4_HalfSizedViewCell_FrontRow;
-		} else if ((creatureSize == k1_MaskCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
+		} else if ((creatureSize == kDMCreatureSizeHalf) && (drawingLastBackRowCell || !remainingViewCellOrdinalsToProcess || (creatureIndexGreen < 0))) {
 			if (drawingLastBackRowCell && (doorFrontViewDrawingPass != 2)) {
 				if ((creatureIndexGreen >= 0) && (creatureDirectionDelta & 0x0001))
 					AL_2_viewCell = k2_HalfSizedViewCell_BackRow; /* Side view of a half square creature on the back row. Drawn during pass 1 for a door square */
@@ -3362,7 +3362,7 @@ T0115077_DrawSecondHalfSquareCreature:
 		} else {
 			useCreatureBackBitmap = getFlag(creatureGraphicInfoRed, kDMCreatureMaskBack) && (creatureDirectionDelta == 0);
 			useCreatureAttackBitmap = !useCreatureBackBitmap;
-			if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0080_MaskActiveGroupIsAttacking) && getFlag(creatureGraphicInfoRed, kDMCreatureMaskAttack)) {
+			if (useCreatureAttackBitmap && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupIsAttacking) && getFlag(creatureGraphicInfoRed, kDMCreatureMaskAttack)) {
 				useFlippedHorizontallyCreatureFrontImage = false;
 				sourceByteWidth = byteWidth = ((CreatureAspect *)objectAspect)->_byteWidthAttack;
 				sourceHeight = heightRedEagle = ((CreatureAspect *)objectAspect)->_heightAttack;
@@ -3390,7 +3390,7 @@ T0115077_DrawSecondHalfSquareCreature:
 						derivedBitmapIndex += 2;
 					}
 				} else {
-					useFlippedHorizontallyCreatureFrontImage = getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack) && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap);
+					useFlippedHorizontallyCreatureFrontImage = getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack) && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupFlipBitmap);
 					if (useFlippedHorizontallyCreatureFrontImage) {
 						derivedBitmapIndex += 2;
 						if (getFlag(creatureGraphicInfoRed, kDMCreatureMaskSide))
@@ -3419,7 +3419,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				}
 			} else if (useCreatureBackBitmap || !useFlippedHorizontallyCreatureFrontImage) {
 				bitmapRedBanana = getNativeBitmapOrGraphic(AL_4_nativeBitmapIndex);
-				if (useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) {
+				if (useCreatureAttackBitmap && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupFlipBitmap)) {
 					copyBitmapAndFlipHorizontal(bitmapRedBanana, _tmpBitmap, byteWidth, heightRedEagle);
 					bitmapRedBanana = _tmpBitmap;
 				}
@@ -3465,7 +3465,7 @@ T0115077_DrawSecondHalfSquareCreature:
 				addDerivedBitmap(derivedBitmapIndex);
 			}
 			if ((useCreatureSideBitmap && (creatureDirectionDelta == 1)) || /* If creature is viewed from the right, the side view must be flipped */
-				(useCreatureAttackBitmap && getFlag(creatureAspectInt, k0x0040_MaskActiveGroupFlipBitmap)) ||
+				(useCreatureAttackBitmap && getFlag(creatureAspectInt, kDMAspectMaskActiveGroupFlipBitmap)) ||
 				(useCreatureSpecialD2FrontBitmap && getFlag(creatureGraphicInfoRed, kDMCreatureMaskSpecialD2FrontIsFlipped)) ||
 				(useFlippedHorizontallyCreatureFrontImage && getFlag(creatureGraphicInfoRed, kDMCreatureMaskFlipNonAttack))) { /* If the graphic should be flipped */
 				if (!useFlippedHorizontallyCreatureFrontImage || !derivedBitmapInCache) {

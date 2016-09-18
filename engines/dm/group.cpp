@@ -110,7 +110,7 @@ int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
 
 	int retval = 0;
 	byte creatureIndex = group->getCount();
-	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize) == k1_MaskCreatureSizeHalf) {
+	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize) == kDMCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = _vm->turnDirLeft(cell);
 
@@ -466,11 +466,11 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			retVal = k1_outcomeKilledSomeCreaturesInGroup;
 		}
 
-		uint16 creatureSize = getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
+		CreatureSize creatureSize = (CreatureSize)getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
 		uint16 attack;
 		if (creatureSize == kDMCreatureSizeQuarter)
 			attack = 110;
-		else if (creatureSize == k1_MaskCreatureSizeHalf)
+		else if (creatureSize == kDMCreatureSizeHalf)
 			attack = 190;
 		else
 			attack = 255;
@@ -721,7 +721,7 @@ T0209005_AddEventAndReturn:
 		}
 		if (AL0447_i_Behavior == k6_behavior_ATTACK) {
 			AL0446_i_CreatureAspectIndex = eventType - k33_TMEventTypeUpdateAspectCreature_0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
-			nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0446_i_CreatureAspectIndex, getFlag(activeGroup->_aspect[AL0446_i_CreatureAspectIndex], k0x0080_MaskActiveGroupIsAttacking));
+			nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0446_i_CreatureAspectIndex, getFlag(activeGroup->_aspect[AL0446_i_CreatureAspectIndex], kDMAspectMaskActiveGroupIsAttacking));
 			goto T0209136;
 		}
 		if ((AL0450_i_DistanceXToParty > 3) || (AL0451_i_DistanceYToParty > 3)) {
@@ -751,7 +751,7 @@ T0209044_SetBehavior6_Attack:
 						for (AL0447_i_CreatureIndex = creatureCount; AL0447_i_CreatureIndex >= 0; AL0447_i_CreatureIndex--) {
 							if ((getCreatureValue(activeGroup->_directions, AL0447_i_CreatureIndex) != AL0446_i_Direction) &&
 								((!AL0447_i_CreatureIndex) || (!_vm->getRandomNumber(2)))) {
-								setGroupDirection(activeGroup, AL0446_i_Direction, AL0447_i_CreatureIndex, creatureCount && (creatureSize == k1_MaskCreatureSizeHalf));
+								setGroupDirection(activeGroup, AL0446_i_Direction, AL0447_i_CreatureIndex, creatureCount && (creatureSize == kDMCreatureSizeHalf));
 								M32_setTime(nextEvent._mapTime, _vm->_gameTime + _vm->getRandomNumber(4) + 2); /* Random delay represents the time for the creature to turn */
 							} else {
 								M32_setTime(nextEvent._mapTime, _vm->_gameTime + 1);
@@ -943,7 +943,7 @@ T0209096_SetBehavior0_Wander:
 				goto T0209094_FleeFromTarget;
 			}
 			/* If the creature is attacking, then compute the next aspect update time and the next attack time */
-			if (getFlag(activeGroup->_aspect[AL0447_i_CreatureIndex = eventType - k38_TMEventTypeUpdateBehaviour_0], k0x0080_MaskActiveGroupIsAttacking)) {
+			if (getFlag(activeGroup->_aspect[AL0447_i_CreatureIndex = eventType - k38_TMEventTypeUpdateBehaviour_0], kDMAspectMaskActiveGroupIsAttacking)) {
 				nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0447_i_CreatureIndex, false);
 				nextEvent._mapTime += ((AL0447_i_Ticks = creatureInfo._attackTicks) + _vm->getRandomNumber(4) - 1);
 				if (AL0447_i_Ticks > 15)
@@ -960,7 +960,7 @@ T0209096_SetBehavior0_Wander:
 					activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 				}
 				/* If there is a single creature in the group that is not full square sized and 1/4 chance */
-				if (!creatureCount && (creatureSize != k2_MaskCreatureSizeFull) && !((AL0446_i_GroupCellsCriteria = _vm->getRandomNumber(65536)) & 0x00C0)) {
+				if (!creatureCount && (creatureSize != kDMCreatureSizeFull) && !((AL0446_i_GroupCellsCriteria = _vm->getRandomNumber(65536)) & 0x00C0)) {
 					if (activeGroup->_cells != k255_CreatureTypeSingleCenteredCreature) {
 						/* If the creature is not already on the center of the square then change its cell */
 						if (AL0446_i_GroupCellsCriteria & 0x0038) /* 7/8 chances of changing cell to the center of the square */
@@ -1025,7 +1025,7 @@ T0209096_SetBehavior0_Wander:
 					if (groupGetDistanceToVisibleParty(curGroup, kM1_wholeCreatureGroup, eventMapX, eventMapY)) {
 						activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 						activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
-						setGroupDirection(activeGroup, primaryDirectionToOrFromParty, AL0447_i_CreatureIndex, creatureCount && (creatureSize == k1_MaskCreatureSizeHalf));
+						setGroupDirection(activeGroup, primaryDirectionToOrFromParty, AL0447_i_CreatureIndex, creatureCount && (creatureSize == kDMCreatureSizeHalf));
 						nextEvent._mapTime += 2;
 						nextAspectUpdateTime = _vm->filterTime(nextEvent._mapTime);
 					} else { /* If the party is not visible, move to the target (last known party location) */
@@ -1254,7 +1254,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 
 	do {
 		uint16 aspect = activeGroup->_aspect[creatureIndex];
-		aspect &= k0x0080_MaskActiveGroupIsAttacking | k0x0040_MaskActiveGroupFlipBitmap;
+		aspect &= kDMAspectMaskActiveGroupIsAttacking | kDMAspectMaskActiveGroupFlipBitmap;
 		int16 offset = ((creatureGraphicInfo >> 12) & 0x3);
 		if (offset) {
 			offset = _vm->getRandomNumber(offset);
@@ -1274,38 +1274,38 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 		}
 		if (isAttacking) {
 			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipAttack)) {
-				if (getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) && (creatureType == kDMCreatureTypeAnimatedArmour)) {
+				if (getFlag(aspect, kDMAspectMaskActiveGroupIsAttacking) && (creatureType == kDMCreatureTypeAnimatedArmour)) {
 					if (_vm->getRandomNumber(2)) {
-						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						toggleFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
-				} else if (!getFlag(aspect, k0x0080_MaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, kDMCreatureMaskFlipDuringAttack)) {
+				} else if (!getFlag(aspect, kDMAspectMaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, kDMCreatureMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
-						setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						setFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 					else
-						clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						clearFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 				}
 			} else
-				clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+				clearFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 
-			setFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
+			setFlag(aspect, kDMAspectMaskActiveGroupIsAttacking);
 		} else {
 			if (getFlag(creatureGraphicInfo, kDMCreatureMaskFlipNonAttack)) {
 				if (creatureType == kDMCreatureTypeCouatl) {
 					if (_vm->getRandomNumber(2)) {
-						toggleFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+						toggleFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 						uint16 soundIndex = _vm->_moveSens->getSound(kDMCreatureTypeCouatl);
 						if (soundIndex <= k34_D13_soundCount)
 							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
-					setFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+					setFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 				else
-					clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+					clearFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 			} else
-				clearFlag(aspect, k0x0040_MaskActiveGroupFlipBitmap);
+				clearFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 
-			clearFlag(aspect, k0x0080_MaskActiveGroupIsAttacking);
+			clearFlag(aspect, kDMAspectMaskActiveGroupIsAttacking);
 		}
 		activeGroup->_aspect[creatureIndex] = aspect;
 	} while (processGroup && (creatureIndex--));
@@ -1384,7 +1384,7 @@ int16 GroupMan::getFirstPossibleMovementDirOrdinal(CreatureInfo *info, int16 map
 }
 
 void GroupMan::setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIndex, int16 creatureSize) {
-	bool twoHalfSquareSizedCreatures = creatureIndex && (creatureSize == k1_MaskCreatureSizeHalf);
+	bool twoHalfSquareSizedCreatures = creatureIndex && (creatureSize == kDMCreatureSizeHalf);
 
 	if (twoHalfSquareSizedCreatures)
 		creatureIndex--;
@@ -1397,7 +1397,7 @@ void GroupMan::setDirGroup(ActiveGroup *activeGroup, int16 dir, int16 creatureIn
 
 void GroupMan::stopAttacking(ActiveGroup *group, int16 mapX, int16 mapY) {
 	for (int16 creatureIndex = 0; creatureIndex < 4; creatureIndex++)
-		clearFlag(group->_aspect[creatureIndex++], k0x0080_MaskActiveGroupIsAttacking);
+		clearFlag(group->_aspect[creatureIndex++], kDMAspectMaskActiveGroupIsAttacking);
 
 	groupDeleteEvents(mapX, mapY);
 }
@@ -1752,7 +1752,7 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 		group->_health[creatureCount] = (baseHealth * healthMultiplier) + _vm->getRandomNumber((baseHealth >> 2) + 1);
 		if (severalCreaturesInGroup) {
 			groupCells = getGroupValueUpdatedWithCreatureValue(groupCells, creatureCount, cell++);
-			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskSize) == k1_MaskCreatureSizeHalf)
+			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskSize) == kDMCreatureSizeHalf)
 				cell++;
 
 			cell &= 0x0003;

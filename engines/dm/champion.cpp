@@ -503,10 +503,10 @@ void ChampionMan::drawChangedObjectIcons() {
 			}
 		}
 
-		if (invMan._panelContent == k4_PanelContentChest) {
+		if (invMan._panelContent == kDMPanelContentChest) {
 			thing = invMan._chestSlots;
 			for (int16 slotIndex = 0; slotIndex < 8; ++slotIndex, thing++) {
-				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + k38_SlotBoxChestFirstSlot, *thing) ? 1 : 0);
+				drawViewport |= (hasObjectIconInSlotBoxChanged(slotIndex + kDMSlotBoxChestFirstSlot, *thing) ? 1 : 0);
 			}
 		}
 
@@ -1108,7 +1108,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 	Champion *curChampion = &_champions[champIndex];
 	addPendingDamageAndWounds_getDamage(champIndex, MAX(1, attack >> 6), kDMWoundNone, kDMAttackTypeNormal);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
-	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) && (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
+	if ((_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) && (_vm->_inventoryMan->_panelContent == kDMPanelContentFoodWaterPoisoned)) {
 		setFlag(curChampion->_attributes, kDMAttributePanel);
 	}
 
@@ -1390,7 +1390,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 				setFlag(championPtr->_attributes, kDMAttributeWounds);
 			}
 
-			int16 textPosX = championIndex * k69_ChampionStatusBoxSpacing;
+			int16 textPosX = championIndex * kDMChampionStatusBoxSpacing;
 			int16 textPosY;
 
 			Box blitBox;
@@ -1685,7 +1685,7 @@ void ChampionMan::applyTimeEffects() {
 			}
 			setFlag(championPtr->_attributes, kDMAttributeStatistics);
 			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
-				if (_vm->_pressingMouth || _vm->_pressingEye || (_vm->_inventoryMan->_panelContent == k0_PanelContentFoodWaterPoisoned)) {
+				if (_vm->_pressingMouth || _vm->_pressingEye || (_vm->_inventoryMan->_panelContent == kDMPanelContentFoodWaterPoisoned)) {
 					setFlag(championPtr->_attributes, kDMAttributePanel);
 				}
 			}
@@ -2064,7 +2064,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 
 	// Strangerke - TO CHECK: if portraits, maybe the old (assembly) code is required for older versions
 	Box box;
-	box._rect.left = champIndex * k69_ChampionStatusBoxSpacing + 46;
+	box._rect.left = champIndex * kDMChampionStatusBoxSpacing + 46;
 	box._rect.right = box._rect.left + 3;
 	box._rect.top = 2;
 	box._rect.bottom = 26;
@@ -2116,7 +2116,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 	static Box boxMouth = Box(55, 72, 12, 29); // @ G0048_s_Graphic562_Box_Mouth
 	static Box boxEye = Box(11, 28, 12, 29); // @ G0049_s_Graphic562_Box_Eye
 
-	int16 championStatusBoxX = champIndex * k69_ChampionStatusBoxSpacing;
+	int16 championStatusBoxX = champIndex * kDMChampionStatusBoxSpacing;
 	Champion *curChampion = &_champions[champIndex];
 	uint16 championAttributes = curChampion->_attributes;
 	if (!getFlag(championAttributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand))

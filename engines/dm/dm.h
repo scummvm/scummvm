@@ -148,6 +148,8 @@ enum MapIndice {
 #define kDMMaskDecodeEvenIfInvisible 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
 #define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
+#define kDMSlotBoxChestFirstSlot 38 // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
+
 struct DMADGameDescription {
 	ADGameDescription _desc;
 
