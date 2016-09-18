@@ -58,7 +58,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _forceRedraw(false), _scissorOverride(3)
 #ifdef USE_OSD
       , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
-      _osdIconChangeRequest(false), _osdIconSurface(nullptr)
+      _osdIconSurface(nullptr)
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -72,7 +72,6 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 #ifdef USE_OSD
 	delete _osdMessageSurface;
 	delete _osdIconSurface;
-	_osdIconNextData.free();
 #endif
 #if !USE_FORCED_GLES
 	ShaderManager::destroy();
@@ -368,14 +367,13 @@ void OpenGLGraphicsManager::updateScreen() {
 #ifdef USE_OSD
 	{
 		Common::StackLock lock(_osdMutex);
-
 		if (_osdMessageChangeRequest) {
 			osdMessageUpdateSurface();
 		}
+	}
 
-		if (_osdIconChangeRequest) {
-			osdIconUpdateSurface();
-		}
+	if (_osdIconSurface) {
+		_osdIconSurface->updateGLTexture();
 	}
 #endif
 
@@ -810,30 +808,11 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 
 void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 #ifdef USE_OSD
-	// HACK: Actually no client code should use graphics functions from
-	// another thread. But the MT-32 emulator and network synchronization still do,
-	// thus we need to make sure this doesn't happen while a updateScreen call is done.
-	// HACK: We can't make OpenGL calls outside of the main thread. This method
-	// stores a copy of the icon. The main thread will pick up the changed icon,
-	// and copy it to an OpenGL texture.
-	Common::StackLock lock(_osdMutex);
-
-	_osdIconChangeRequest = true;
-
-	_osdIconNextData.free();
-	if (icon)
-		_osdIconNextData.copyFrom(*icon);
-#endif
-}
-
-#ifdef USE_OSD
-void OpenGLGraphicsManager::osdIconUpdateSurface() {
 	delete _osdIconSurface;
 	_osdIconSurface = nullptr;
 
-	if (_osdIconNextData.getPixels()) {
-		Graphics::Surface *converted = _osdIconNextData.convertTo(_defaultFormatAlpha);
-		_osdIconNextData.free();
+	if (icon) {
+		Graphics::Surface *converted = icon->convertTo(_defaultFormatAlpha);
 
 		_osdIconSurface = createSurface(_defaultFormatAlpha);
 		assert(_osdIconSurface);
@@ -851,13 +830,9 @@ void OpenGLGraphicsManager::osdIconUpdateSurface() {
 
 		converted->free();
 		delete converted;
-
-		_osdIconSurface->updateGLTexture();
 	}
-
-	_osdIconChangeRequest = false;
-}
 #endif
+}
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
 	assert(_gameScreen->hasPalette());

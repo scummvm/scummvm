@@ -587,24 +587,6 @@ private:
 	};
 
 	/**
-	 * Request for the OSD icon surface to be updated.
-	 */
-	bool _osdIconChangeRequest;
-
-	/**
-	 * The next OSD background activity icon.
-	 *
-	 * The OSD icon will be updated with this data on the next frame.
-	 * Can be an unallocated surface if the OSD icon should not be displayed.
-	 */
-	Graphics::Surface _osdIconNextData;
-
-	/**
-	 * Set the OSD icon surface with the value of the next OSD icon.
-	 */
-	void osdIconUpdateSurface();
-
-	/**
 	 * The OSD background activity icon's contents.
 	 */
 	Surface *_osdIconSurface;
