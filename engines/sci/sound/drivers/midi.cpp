@@ -67,6 +67,7 @@ public:
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(int8 reverb);
+	void setDefaultReverb();
 	void playSwitch(bool play);
 
 private:
@@ -111,6 +112,7 @@ private:
 	int _masterVolume;
 
 	byte _reverbConfig[kReverbConfigNr][3];
+	int8 _defaultReverb;
 	Channel _channels[16];
 	uint8 _percussionMap[128];
 	int8 _keyShift[128];
@@ -127,7 +129,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -388,6 +390,11 @@ void MidiPlayer_Midi::setReverb(int8 reverb) {
 	_reverb = reverb;
 }
 
+void MidiPlayer_Midi::setDefaultReverb() {
+	if (_defaultReverb >= 0)
+		setReverb(_defaultReverb);
+}
+
 void MidiPlayer_Midi::playSwitch(bool play) {
 	_playSwitch = play;
 	if (play)
@@ -509,7 +516,7 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	byte reverb = str->readByte();
+	_defaultReverb = str->readByte();
 
 	_hasReverb = true;
 
@@ -550,7 +557,7 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 
 	// Reverb for SCI0
 	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(reverb);
+		setReverb(_defaultReverb);
 
 	// Send after-SysEx text
 	str->seek(0);
@@ -679,7 +686,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		if (size == 2771) {
 			// MT32.DRV in LSL2 early contains more data, like a normal patch
-			byte reverb = f.readByte();
+			_defaultReverb = f.readByte();
 
 			_hasReverb = true;
 
@@ -699,7 +706,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			sendMt32SysEx(0x50000, static_cast<Common::SeekableReadStream *>(&f), 256);
 			sendMt32SysEx(0x50200, static_cast<Common::SeekableReadStream *>(&f), 128);
 
-			setReverb(reverb);
+			setReverb(_defaultReverb);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);

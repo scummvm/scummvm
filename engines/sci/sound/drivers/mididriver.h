@@ -110,6 +110,7 @@ public:
 	int8 getReverb() const { return _reverb; }
 	// Sets the current reverb, used mainly in MT-32
 	virtual void setReverb(int8 reverb) { _reverb = reverb; }
+	virtual void setDefaultReverb() { }
 
 	virtual void playSwitch(bool play) {
 		if (!play) {
