@@ -1471,6 +1471,9 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		case kDMCreatureTypeDemon:
 		case kDMCreatureTypeRedDragon:
 			projectileThing = Thing::_explFireBall;
+			break;
+		default:
+			break;
 		} /* BUG0_13 The game may crash when 'Lord Order' or 'Grey Lord' cast spells. This cannot happen with the original dungeons as they do not contain any groups of these types. 'Lord Order' and 'Grey Lord' creatures can cast spells (attack range > 1) but no projectile type is defined for them in the code. If these creatures are present in a dungeon they will cast projectiles containing undefined things because the variable is not initialized */
 		int16 kineticEnergy = (creatureInfo->_attack >> 2) + 1;
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
