@@ -808,8 +808,13 @@ void OpenGLGraphicsManager::osdMessageUpdateSurface() {
 
 void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 #ifdef USE_OSD
-	delete _osdIconSurface;
-	_osdIconSurface = nullptr;
+	if (_osdIconSurface) {
+		delete _osdIconSurface;
+		_osdIconSurface = nullptr;
+
+		// Make sure the icon is cleared on the next update
+		_forceRedraw = true;
+	}
 
 	if (icon) {
 		Graphics::Surface *converted = icon->convertTo(_defaultFormatAlpha);
