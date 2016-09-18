@@ -2175,6 +2175,12 @@ void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
+	if (_osdIconSurface && !icon) {
+		// Add a dirty rect to clear the icon on the next update
+		SDL_Rect dstRect = getOSDIconRect();
+		addDirtyRect(dstRect.x, dstRect.y, dstRect.w, dstRect.h, true);
+	}
+
 	if (_osdIconSurface) {
 		SDL_FreeSurface(_osdIconSurface);
 		_osdIconSurface = nullptr;
