@@ -1018,7 +1018,7 @@ void InventoryMan::clickOnMouth() {
 		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
 		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, kDMAttributeLoad);
 	}
-	_vm->_sound->requestPlay(k08_soundSWALLOW, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
+	_vm->_sound->requestPlay(kDMSoundIndexSwallow, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 
 	if (_panelContent == kDMPanelContentFoodWaterPoisoned)

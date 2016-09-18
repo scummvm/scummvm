@@ -1106,10 +1106,10 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	case kDMActionSwing:
 	case kDMActionChop:
 		if ((Square(targetSquare).getType() == kDMElementTypeDoor) && (Square(targetSquare).getDoorState() == kDMDoorStateClosed)) {
-			_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, _vm->_championMan->getStrength(champIndex, kDMSlotActionHand), false, 2);
-			_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
+			_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
 			break;
 		}
 	case kDMActionDisrupt:
@@ -1136,9 +1136,9 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	case kDMActionBrandish:
 	case kDMActionBlowHorn:
 		if (actionIndex == kDMActionWarCry)
-			_vm->_sound->requestPlay(k28_soundWAR_CRY, nextMapX, nextMapY, kDMSoundModePlayImmediately);
+			_vm->_sound->requestPlay(kDMSoundIndexWarCry, nextMapX, nextMapY, kDMSoundModePlayImmediately);
 		else if (actionIndex == kDMActionBlowHorn)
-			_vm->_sound->requestPlay(k25_soundBLOW_HORN, nextMapX, nextMapY, kDMSoundModePlayImmediately);
+			_vm->_sound->requestPlay(kDMSoundIndexBlowHorn, nextMapX, nextMapY, kDMSoundModePlayImmediately);
 
 		actionPerformed = isGroupFrightenedByAction(champIndex, actionIndex, nextMapX, nextMapY);
 		break;
@@ -1175,7 +1175,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 
 		setChampionDirectionToPartyDirection(curChampion);
 		Thing removedObject = _vm->_championMan->getObjectRemovedFromSlot(champIndex, kDMSlotReadyHand);
-		_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 		_vm->_championMan->championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + _vm->_championMan->getSkillLevel(champIndex, kDMSkillShoot)) << 1, stepEnergy);
 		}
 		break;
@@ -1482,7 +1482,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		0   /* FUSE */
 	};
 
-	_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 	if (_actionTargetGroupThing == Thing::_endOfList)
 		return false;
 

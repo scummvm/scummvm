@@ -542,7 +542,7 @@ void DMEngine::processEntrance() {
 	} while (_newGameFl == kDMCommandEntranceDrawCredits);
 
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
-	_sound->play(k01_soundSWITCH, 112, 0x40, 0x40);
+	_sound->play(kDMSoundIndexSwitch, 112, 0x40, 0x40);
 	delay(20);
 	_eventMan->showMouse();
 	if (_newGameFl)
@@ -595,7 +595,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 	_eventMan->_primaryKeyboardInput = nullptr;
 	_eventMan->_secondaryKeyboardInput = nullptr;
 	if (doNotDrawCreditsOnly && !_gameWon) {
-		_sound->requestPlay(k06_soundSCREAM, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
+		_sound->requestPlay(kDMSoundIndexScream, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 		delay(240);
 	}
 
@@ -786,7 +786,7 @@ void DMEngine::openEntranceDoors() {
 	for (uint16 animStep = 1; animStep < 32; ++animStep) {
 		if ((animStep % 3) == 1) {
 			// Strangerke: CHECKME: Earlier versions of the game were using G0565_puc_Graphic535_Sound02DoorRattle instead of k02_soundDOOR_RATTLE 2
-			_sound->play(k02_soundDOOR_RATTLE, 145, 0x40, 0x40);
+			_sound->play(kDMSoundIndexDoorRattle, 145, 0x40, 0x40);
 		}
 
 		_displayMan->blitToScreen(_savedScreenForOpenEntranceDoors, &screenBox, 160, kDMColorNoTransparency, 200);
@@ -939,7 +939,7 @@ void DMEngine::fuseSequence() {
 		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
-	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
+	_sound->requestPlay(kDMSoundIndexBuzz, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 	lordGroup->_type = kDMCreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
@@ -948,7 +948,7 @@ void DMEngine::fuseSequence() {
 	}
 	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
 		for (int16 switchCount = 4; switchCount > 0; switchCount--) {
-			_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
+			_sound->requestPlay(kDMSoundIndexBuzz, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 			lordGroup->_type = (switchCount & 0x0001) ? kDMCreatureTypeLordOrder : kDMCreatureTypeLordChaos;
 			for (int16 fuseSequenceUpdateCount = cycleCount - 1; fuseSequenceUpdateCount >= 0; fuseSequenceUpdateCount--)
 				fuseSequenceUpdate();

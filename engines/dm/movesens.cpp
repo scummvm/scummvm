@@ -182,7 +182,7 @@ bool MovesensMan::sensorIsTriggeredByClickOnWall(int16 mapX, int16 mapY, uint16 
 			if (!doNotTriggerSensor) {
 				atLeastOneSensorWasTriggered = true;
 				if (currentSensor->getAttrAudibleA())
-					_vm->_sound->requestPlay(k01_soundSWITCH, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(kDMSoundIndexSwitch, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
 
 				if (!_vm->_championMan->_leaderEmptyHanded && ((processedSensorType == kDMSensorWallOrnClickWithSpecObjRemoved) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedRotateSensors) || (processedSensorType == kDMSensorWallOrnClickWithSpecObjRemovedSensor))) {
 					Thing *leaderThing = (Thing *)_vm->_dungeonMan->getThingData(leaderHandObject);
@@ -279,7 +279,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 					_vm->_dungeonMan->_partyMapX = destMapX;
 					_vm->_dungeonMan->_partyMapY = destMapY;
 					if (teleporter->isAudible())
-						_vm->_sound->requestPlay(k17_soundBUZZ, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
+						_vm->_sound->requestPlay(kDMSoundIndexBuzz, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 
 					drawDungeonViewWhileFalling = true;
 					if (teleporter->getAbsoluteRotation())
@@ -289,7 +289,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				} else {
 					if (thingType == kDMThingTypeGroup) {
 						if (teleporter->isAudible())
-							_vm->_sound->requestPlay(k17_soundBUZZ, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(kDMSoundIndexBuzz, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
 						moveGroupResult = getTeleporterRotatedGroupResult(teleporter, thing, mapIndexSource);
 					} else {
@@ -327,7 +327,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 										_vm->_championMan->decrementStamina(championIdx, ((curChampion->_load * 25) / _vm->_championMan->getMaximumLoad(curChampion)) + 1);
 								}
 							} else if (_vm->_championMan->getDamagedChampionCount(20, kDMWoundLegs | kDMWoundFeet, kDMAttackTypeSelf))
-								_vm->_sound->requestPlay(k06_soundSCREAM, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
+								_vm->_sound->requestPlay(kDMSoundIndexScream, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 						}
 						_useRopeToClimbDownPit = false;
 					} else if (thingType == kDMThingTypeGroup) {
@@ -614,7 +614,7 @@ int16 MovesensMan::getSound(CreatureType creatureType) {
 	case kDMCreatureTypeVexirk:
 	case kDMCreatureTypeAntman:
 	case kDMCreatureTypeDemon:
-		return k24_soundMOVE_MUMMY_TROLIN_ANTMAN_STONE_GOLEM_GIGGLER_VEXIRK_DEMON;
+		return kDMSoundIndexMoveMummyTrolinAntmanStoneGolemGiggleVexirkDemon;
 	case kDMCreatureTypeGiantScorpion:
 	case kDMCreatureTypePainRat:
 	case kDMCreatureTypeRuster:
@@ -622,19 +622,19 @@ int16 MovesensMan::getSound(CreatureType creatureType) {
 	case kDMCreatureTypeRockpile:
 	case kDMCreatureTypeMagentaWorm:
 	case kDMCreatureTypeOitu:
-		return k26_soundMOVE_SCREAMER_ROCK_ROCKPILE_MAGENTA_WORM_WORM_PAIN_RAT_HELLHOUND_RUSTER_GIANT_SCORPION_SCORPION_OITU;
+		return kDMSoundIndexMoveScreamerRocksWormPainRatHellHoundRusterScorpionsOitu;
 	case kDMCreatureTypeRedDragon:
-		return k32_soundMOVE_RED_DRAGON;
+		return kDMSoundIndexMoveRedDragon;
 	case kDMCreatureTypeSkeleton:
-		return k33_soundMOVE_SKELETON;
+		return kDMSoundIndexMoveSkeletton;
 	case kDMCreatureTypeAnimatedArmour:
-		return k22_soundMOVE_ANIMATED_ARMOUR_DETH_KNIGHT;
+		return kDMSoundIndexMoveAnimatedArmorDethKnight;
 	case kDMCreatureTypeSwampSlime:
 	case kDMCreatureTypeWaterElemental:
-		return k27_soundMOVE_SWAMP_SLIME_SLIME_DEVIL_WATER_ELEMENTAL;
+		return kDMSoundIndexMoveSlimesDevilWaterElemental;
 	case kDMCreatureTypeCouatl:
 	case kDMCreatureTypeGiantWasp:
-		return k23_soundMOVE_COUATL_GIANT_WASP_MUNCHER;
+		return kDMSoundIndexMoveCouatlGiantWaspMuncher;
 	}
 
 	return 35;
@@ -840,7 +840,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				continue;
 
 			if (curSensor->getAttrAudibleA())
-				_vm->_sound->requestPlay(k01_soundSWITCH, mapX, mapY, kDMSoundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(kDMSoundIndexSwitch, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 			triggerEffect(curSensor, curSensorEffect, mapX, mapY, (uint16)kDMCellAny); // this will wrap around
 			continue;

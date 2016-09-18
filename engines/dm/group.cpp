@@ -164,7 +164,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 		} while ((currentThing = nextThing) != Thing::_endOfList);
 
 		if (soundMode != kDMSoundModeDoNotPlaySound)
-			_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, soundMode);
+			_vm->_sound->requestPlay(weaponDropped ? kDMSoundIndexMetallicThud : kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, soundMode);
 	}
 }
 
@@ -294,7 +294,7 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 		_vm->_moveSens->getMoveResult(nextUnusedThing, kDMMapXNotOnASquare, 0, mapX, mapY);
 		currFixedPossession = *fixedPossessions++;
 	}
-	_vm->_sound->requestPlay(weaponDropped ? k00_soundMETALLIC_THUD : k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, soundMode);
+	_vm->_sound->requestPlay(weaponDropped ? kDMSoundIndexMetallicThud : kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, soundMode);
 }
 
 int16 GroupMan::getDirsWhereDestIsVisibleFromSource(int16 srcMapX, int16 srcMapY, int16 destMapX, int16 destMapY) {
@@ -893,7 +893,7 @@ T0209089_DoubleSquareMove:
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
 							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
-							_vm->_sound->requestPlay(k17_soundBUZZ, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, kDMSoundModePlayIfPrioritized);
+							_vm->_sound->requestPlay(kDMSoundIndexBuzz, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, kDMSoundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
 					}
@@ -1278,7 +1278,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 				if (getFlag(aspect, kDMAspectMaskActiveGroupIsAttacking) && (creatureType == kDMCreatureTypeAnimatedArmour)) {
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
-						_vm->_sound->requestPlay(k16_soundCOMBAT_ATTACK_SKELETON_ANIMATED_ARMOUR_DETH_KNIGHT, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
+						_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
 				} else if (!getFlag(aspect, kDMAspectMaskActiveGroupIsAttacking) || !getFlag(creatureGraphicInfo, kDMCreatureMaskFlipDuringAttack)) {
 					if (_vm->getRandomNumber(2))
@@ -1475,7 +1475,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		int16 kineticEnergy = (creatureInfo->_attack >> 2) + 1;
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
 		kineticEnergy += _vm->getRandomNumber(kineticEnergy);
-		_vm->_sound->requestPlay(k13_soundSPELL, mapX, mapY, kDMSoundModePlayImmediately);
+		_vm->_sound->requestPlay(kDMSoundIndexSpell, mapX, mapY, kDMSoundModePlayImmediately);
 		_vm->_projexpl->createProjectile(projectileThing, mapX, mapY, targetCell, (Direction)_currGroupPrimaryDirToParty, CLIP<byte>(20, kineticEnergy, 255), creatureInfo->_dexterity, 8);
 	} else {
 		int16 championIndex;
@@ -1615,7 +1615,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 		int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
 		if (damage) {
-			_vm->_sound->requestPlay(k09_soundCHAMPION_0_DAMAGED + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
+			_vm->_sound->requestPlay(kDMSoundIndexChampion0Damaged + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
@@ -1767,7 +1767,7 @@ Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultipl
 		   (in which case the thing is referenced in the event) */
 		return Thing::_none;
 	}
-	_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, kDMSoundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 	return groupThing;
 }
 

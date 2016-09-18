@@ -402,7 +402,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 				// See BUG0_78
 				int16 wounds = kDMWoundTorso | (verticalDoorFl ? kDMWoundHead : kDMWoundReadHand | kDMWoundActionHand);
 				if (_vm->_championMan->getDamagedChampionCount(5, wounds, kDMAttackTypeSelf))
-					_vm->_sound->requestPlay(k18_soundPARTY_DAMAGED, mapX, mapY, kDMSoundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(kDMSoundIndexPartyDamaged, mapX, mapY, kDMSoundModePlayIfPrioritized);
 			}
 			event->_mapTime++;
 			addEventGetEventIndex(event);
@@ -418,7 +418,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 				int16 nextState = doorState - 1;
 				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState) nextState;
 				curSquare->setDoorState(doorState);
-				_vm->_sound->requestPlay(k04_soundWOODEN_THUD_ATTACK_TROLIN_ANTMAN_STONE_GOLEM, mapX, mapY, kDMSoundModePlayIfPrioritized);
+				_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, mapX, mapY, kDMSoundModePlayIfPrioritized);
 				event->_mapTime++;
 				addEventGetEventIndex(event);
 				return;
@@ -435,7 +435,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 	int16 prevDoorEffect = doorState - 1;
 	doorState = (DoorState) ((sensorEffect == kDMSensorEffectSet) ? prevDoorEffect : nextDoorEffect);
 	curSquare->setDoorState(doorState);
-	_vm->_sound->requestPlay(k02_soundDOOR_RATTLE, mapX, mapY, kDMSoundModePlayIfPrioritized);
+	_vm->_sound->requestPlay(kDMSoundIndexDoorRattle, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 	if (sensorEffect == kDMSensorEffectSet) {
 		if (doorState == kDMDoorStateOpen)
@@ -736,7 +736,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 
 				_vm->_groupMan->groupGetGenerated((CreatureType)curSensor->getData(), healthMultiplier, creatureCount, (Direction)_vm->getRandomNumber(4), mapX, mapY);
 				if (curSensor->getAttrAudibleA())
-					_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, kDMSoundModePlayIfPrioritized);
+					_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 				if (curSensor->getAttrOnlyOnce())
 					curSensor->setTypeDisabled();
@@ -771,7 +771,7 @@ void Timeline::processEventsMoveGroup(TimelineEvent *event) {
 T0252001:
 	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
 		if (event->_type == k61_TMEventTypeMoveGroupAudible)
-			_vm->_sound->requestPlay(k17_soundBUZZ, mapX, mapY, kDMSoundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 		_vm->_moveSens->getMoveResult(Thing(event->_Cu._slot), kDMMapXNotOnASquare, 0, mapX, mapY);
 	} else {
