@@ -87,12 +87,12 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	File f;
 
 	if (argc < 2) {
-		debugPrintf("Format: spell <resource name>\n");
+		debugPrintf("Format: dump <resource name>\n");
 	} else {
 		if (argc == 2)
 			f.open(argv[1]);
 		else
-			f.open(argv[1], *_vm->_files->_sideArchives[strToInt(argv[2]) == 0 ? 0 : 1]);
+			f.open(argv[1], (ArchiveType)strToInt(argv[2]));
 
 		if (f.isOpen()) {
 			Common::DumpFile df;
