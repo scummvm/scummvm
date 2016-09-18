@@ -61,4 +61,10 @@ bool Sound::isPlaying() const {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
+void Sound::stopAllAudio() {
+	stopSong();
+	stopFX();
+	stopSound();
+}
+
 } // End of namespace Xeen

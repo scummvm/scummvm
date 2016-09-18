@@ -212,11 +212,9 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 }
 
 void MusicDriver::stopFX() {
-	if (_fxPlaying) {
-		resetFX();
-		_fxPlaying = false;
-		_fxStartPtr = _fxDataPtr = nullptr;
-	}
+	resetFX();
+	_fxPlaying = false;
+	_fxStartPtr = _fxDataPtr = nullptr;
 }
 
 void MusicDriver::playSong(const byte *data) {

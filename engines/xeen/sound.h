@@ -61,6 +61,11 @@ public:
 	 * @remarks		In the original, passing 0 to playSound returned play status
 	 */
 	bool isPlaying() const;
+
+	/**
+	 * Stops all playing music, FX, and sound samples
+	 */
+	void stopAllAudio();
 };
 
 } // End of namespace Xeen

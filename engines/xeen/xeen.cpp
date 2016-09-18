@@ -124,6 +124,7 @@ Common::Error XeenEngine::run() {
 	if (shouldQuit())
 		return Common::kNoError;
 	File::setCurrentArchive(GAME_ARCHIVE);
+	_sound->stopAllAudio();
 
 	showMainMenu();
 	if (shouldQuit())
