@@ -183,35 +183,64 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 
 /*------------------------------------------------------------------------*/
 
+CCArchive *FileManager::_archives[3];
+
 FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 	int sideNum = 0;
 
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
-	_sideArchives[0] = _sideArchives[1] = nullptr;
+	_archives[0] = _archives[1] = _archives[2] = nullptr;
 
 	if (vm->getGameID() != GType_DarkSide) {
-		_sideArchives[0] = new CCArchive("xeen.cc", "xeen", true);
-		SearchMan.add("xeen", _sideArchives[0]);
+		_archives[0] = new CCArchive("xeen.cc", "xeen", true);
+		SearchMan.add("xeen", _archives[0]);
 		sideNum = 1;
 	}
 
 	if (vm->getGameID() == GType_DarkSide || vm->getGameID() == GType_WorldOfXeen) {
-		_sideArchives[sideNum] = new CCArchive("dark.cc", "dark", true);
-		SearchMan.add("dark", _sideArchives[sideNum]);
+		_archives[sideNum] = new CCArchive("dark.cc", "dark", true);
+		SearchMan.add("dark", _archives[sideNum]);
 	}
 
-	SearchMan.add("intro", new CCArchive("intro.cc", "intro", true));
+	if (f.exists("intro.cc")) {
+		_archives[2] = new CCArchive("intro.cc", "intro", true);
+		SearchMan.add("intro", _archives[2]);
+	}
+
+	File::_currentArchive = GAME_ARCHIVE;
+}
+
+void FileManager::setGameCc(bool isDarkCc) {
+	_isDarkCc = isDarkCc;
+	File::_currentArchive = isDarkCc ? ALTSIDE_ARCHIVE : GAME_ARCHIVE;
 }
 
 /*------------------------------------------------------------------------*/
 
-void File::openFile(const Common::String &filename) {
+ArchiveType File::_currentArchive;
+
+bool File::open(const Common::String &filename) {
+	CCArchive &arc = *FileManager::_archives[_currentArchive];
 	if (!Common::File::open(filename))
 		error("Could not open file - %s", filename.c_str());
+	return true;
 }
 
-void File::openFile(const Common::String &filename, Common::Archive &archive) {
+bool File::open(const Common::String &filename, ArchiveType archiveType) {
+	if (archiveType == ANY_ARCHIVE) {
+		Common::File::open(filename);
+	} else {
+		CCArchive &archive = *FileManager::_archives[archiveType];
+		Common::File::open(filename, archive);
+	}
+
+	if (!isOpen())
+		error("Could not open file - %s", filename.c_str());
+	return true;
+}
+
+bool File::open(const Common::String &filename, Common::Archive &archive) {
 	if (!Common::File::open(filename, archive))
 		error("Could not open file - %s", filename.c_str());
 }
@@ -225,6 +254,5 @@ Common::String File::readString() {
 
 	return result;
 }
-
 
 } // End of namespace Xeen

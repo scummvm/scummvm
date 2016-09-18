@@ -245,7 +245,7 @@ void Quests::addButtons() {
 }
 
 void Quests::loadQuestNotes() {
-	File f("qnotes.bin", *_vm->_files->_sideArchives[_vm->getGameID() == GType_Clouds ? 0 : 1]);
+	File f("qnotes.bin", _vm->getGameID() == GType_Clouds ? GAME_ARCHIVE : ALTSIDE_ARCHIVE);
 	while (f.pos() < f.size())
 		_questNotes.push_back(f.readString());
 	f.close();

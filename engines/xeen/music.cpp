@@ -34,7 +34,7 @@ namespace Xeen {
 MusicDriver::MusicDriver() : _musicPlaying(false), _fxPlaying(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr),
-		_exclude7(false), _frameCtr(0) {
+		_exclude7(0), _frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
 }
 
@@ -204,7 +204,7 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
-		resetFX();
+		stopFX();
 		_fxPlaying = true;
 	}
 
@@ -283,7 +283,7 @@ void AdlibMusicDriver::initialize() {
 	write(0xBD, 0);
 
 	resetFrequencies();
-	AdlibMusicDriver::resetFX();
+	AdlibMusicDriver::stopFX();
 }
 
 void AdlibMusicDriver::playFX(uint effectId, const byte *data) {
@@ -387,7 +387,7 @@ void AdlibMusicDriver::pausePostProcess() {
 	}
 }
 
-void AdlibMusicDriver::resetFX() {
+void AdlibMusicDriver::stopFX() {
 	if (!_exclude7) {
 		_channels[7]._frequency = 0;
 		setFrequency(7, 0);
@@ -399,6 +399,7 @@ void AdlibMusicDriver::resetFX() {
 	setFrequency(8, 0);
 	_channels[8]._volume = 63;
 	setOutputLevel(8, 63);
+	_fxPlaying = false;
 }
 
 void AdlibMusicDriver::resetFrequencies() {
@@ -625,7 +626,7 @@ bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	byte instrument = *srcP++;
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
-	if (!_exclude7 || param != 7)
+	if (_exclude7 != 2 || param != 7)
 		playInstrument(param, _fxInstrumentPtrs[instrument]);
 
 	return false;
@@ -648,9 +649,9 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 
 /*------------------------------------------------------------------------*/
 
-Music::Music() : _musicDriver(nullptr), _songData(nullptr) {
+Music::Music() : _musicDriver(nullptr), _songData(nullptr),
+		_archiveType(ANY_ARCHIVE), _effectsData(nullptr) {
 	_musicDriver = new AdlibMusicDriver();
-	loadEffectsData();
 }
 
 Music::~Music() {
@@ -661,13 +662,17 @@ Music::~Music() {
 }
 
 void Music::loadEffectsData() {
-	File file("admus");
-	Common::String md5str = Common::computeStreamMD5AsString(file, 8192);
+	// Check whether it's the first load, or switching from intro to game data
+	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
+		return;
 
-	if (md5str != "be8989a5e868913f0e53963046e3ea13")
-		error("Unknown music driver encountered");
+	// Stop any prior FX
+	_musicDriver->stopFX();
 
-	// Load in the driver data
+
+	// Load in the entire driver so we have quick access to the effects data
+	// that's hardcoded within it
+	File file("promus");
 	byte *effectsData = new byte[file.size()];
 	file.seek(0);
 	file.read(effectsData, file.size());
@@ -682,6 +687,9 @@ void Music::loadEffectsData() {
 }
 
 void Music::playFX(uint effectId) {
+	_musicDriver->stopFX();
+	loadEffectsData();
+
 	if (effectId < _effectsOffsets.size()) {
 		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
 		_musicDriver->playFX(effectId, dataP);

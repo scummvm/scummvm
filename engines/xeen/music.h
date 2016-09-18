@@ -29,6 +29,7 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 #include "common/stack.h"
+#include "xeen/files.h"
 
 #define CHANNEL_COUNT 9
 
@@ -90,7 +91,7 @@ private:
 	bool command(const byte *&srcP);
 protected:
 	Common::Array<Channel> _channels;
-	bool _exclude7;
+	int _exclude7;
 	bool _musicPlaying;
 	bool _fxPlaying;
 protected:
@@ -135,11 +136,6 @@ protected:
 	 * Post-processing done when a pause countdown starts or is in progress
 	 */
 	virtual void pausePostProcess() = 0;
-
-	/**
-	 * Does a reset of any sound effect
-	 */
-	virtual void resetFX() = 0;
 public:
 	/**
 	 * Constructor
@@ -155,6 +151,11 @@ public:
 	 * Starts an special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
+
+	/**
+	 * Does a reset of any sound effect
+	 */
+	virtual void stopFX() = 0;
 
 	/**
 	 * Plays a song
@@ -261,11 +262,6 @@ protected:
 	 * Post-processing done when a pause countdown starts or is in progress
 	 */
 	virtual void pausePostProcess();
-
-	/**
-	 * Does a reset of any sound effect
-	 */
-	virtual void resetFX();
 public:
 	/**
 	 * Constructor
@@ -281,6 +277,11 @@ public:
 	 * Starts an special effect playing
 	 */
 	virtual void playFX(uint effectId, const byte *data);
+
+	/**
+	 * Does a reset of any sound effect
+	 */
+	virtual void stopFX();
 
 	/**
 	 * Plays a song
@@ -299,6 +300,7 @@ private:
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
 	const byte *_songData;
+	ArchiveType _archiveType;
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver

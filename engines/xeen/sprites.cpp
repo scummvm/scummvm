@@ -71,8 +71,8 @@ void SpriteResource::load(const Common::String &filename) {
 	load(f);
 }
 
-void SpriteResource::load(const Common::String &filename, Common::Archive &archive) {
-	File f(filename, archive);
+void SpriteResource::load(const Common::String &filename, ArchiveType archiveType) {
+	File f(filename, archiveType);
 	load(f);
 }
 

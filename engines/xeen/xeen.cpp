@@ -34,6 +34,8 @@
 
 namespace Xeen {
 
+XeenEngine *g_vm = nullptr;
+
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
 	// Set up debug channels
@@ -61,6 +63,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_noDirectionSense = false;
 	_mode = MODE_0;
 	_startupWindowActive = false;
+	g_vm = this;
 }
 
 XeenEngine::~XeenEngine() {
@@ -79,6 +82,7 @@ XeenEngine::~XeenEngine() {
 	delete _eventData;
 	delete _resources;
 	delete _files;
+	g_vm = nullptr;
 }
 
 void XeenEngine::initialize() {

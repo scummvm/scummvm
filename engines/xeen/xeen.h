@@ -208,6 +208,8 @@ public:
 	static Common::String printK2(uint value);
 };
 
+extern XeenEngine *g_vm;
+
 } // End of namespace Xeen
 
 #endif /* XEEN_XEEN_H */

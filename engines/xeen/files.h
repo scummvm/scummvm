@@ -28,12 +28,17 @@
 #include "common/file.h"
 #include "common/serializer.h"
 #include "graphics/surface.h"
-#include "xeen/xsurface.h"
 
 namespace Xeen {
 
+enum ArchiveType { 
+	ANY_ARCHIVE = -1, GAME_ARCHIVE = 0, ALTSIDE_ARCHIVE = 1,
+	INTRO_ARCHIVE = 2
+};
+
 class XeenEngine;
 class CCArchive;
+class File;
 
 #define SYNC_AS(SUFFIX,STREAM,TYPE,SIZE) \
 	template<typename T> \
@@ -48,20 +53,26 @@ class CCArchive;
 		} \
 		_bytesSynced += SIZE; \
 	}
+
 /*
  * Main resource manager
  */
 class FileManager {
+	friend class File;
+private:
+	static CCArchive *_archives[3];
 public:
 	bool _isDarkCc;
-	CCArchive *_sideArchives[2];
 public:
 	/**
 	 * Instantiates the resource manager
 	 */
 	FileManager(XeenEngine *vm);
 
-	void setGameCc(bool isDarkCc) { _isDarkCc = isDarkCc; }
+	/**
+	 * Set which game side files to use
+	 */
+	void setGameCc(bool isDarkCc);
 };
 
 /**
@@ -69,22 +80,32 @@ public:
  */
 class File : public Common::File {
 public:
+	static ArchiveType _currentArchive;
+public:
 	File() : Common::File() {}
-	File(const Common::String &filename) { openFile(filename); }
+	File(const Common::String &filename) { File::open(filename); }
+	File(const Common::String &filename, ArchiveType archiveType) {
+		File::open(filename, archiveType);
+	}
 	File(const Common::String &filename, Common::Archive &archive) {
-		openFile(filename, archive);
+		open(filename, archive);
 	}
 	virtual ~File() {}
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	void openFile(const Common::String &filename);
+	virtual bool open(const Common::String &filename);
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	void openFile(const Common::String &filename, Common::Archive &archive);
+	virtual bool open(const Common::String &filename, ArchiveType archiveType);
+
+	/**
+	 * Opens the given file, throwing an error if it can't be opened
+	 */
+	virtual bool open(const Common::String &filename, Common::Archive &archive);
 
 	Common::String readString();
 };

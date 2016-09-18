@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "graphics/surface.h"
+#include "xeen/files.h"
 #include "xeen/xsurface.h"
 
 namespace Xeen {
@@ -88,7 +89,7 @@ public:
 	/**
 	 * Load a sprite resource from a given file and archive
 	 */
-	void load(const Common::String &filename, Common::Archive &archive);
+	void load(const Common::String &filename, ArchiveType archiveType);
 
 	/**
 	 * Clears the sprite resource

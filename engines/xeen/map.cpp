@@ -1069,27 +1069,27 @@ void Map::load(int mapId) {
 
 		// Read in the object sprites
 		_mobData._objectSprites[i]._sprites.load(filename,
-			*_vm->_files->_sideArchives[_sideObjects]);
+			_sideObjects ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
 	}
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
-		CCArchive *archive = _vm->_files->_sideArchives[
+		ArchiveType archiveType = 
 			_mobData._monsterSprites[i]._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
-			0 : _sideMonsters];
+			ALTSIDE_ARCHIVE : GAME_ARCHIVE;
 
 		filename = Common::String::format("%03d.mon", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._sprites.load(filename, *archive);
+		_mobData._monsterSprites[i]._sprites.load(filename, archiveType);
 
 		filename = Common::String::format("%03d.att", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._attackSprites.load(filename, *archive);
+		_mobData._monsterSprites[i]._attackSprites.load(filename, archiveType);
 	}
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
 		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
 		_mobData._wallItemSprites[i]._sprites.load(filename,
-			*_vm->_files->_sideArchives[_sidePictures]);
+			_sidePictures ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
 	}
 
 	// Handle loading miscellaneous sprites for the map

@@ -32,8 +32,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	// TODO: Starting method, and sound
-	//sub_28F40
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
 		SpriteResource("nwc1.int"), SpriteResource("nwc2.int"),
@@ -54,6 +52,11 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.horizMerge(0);
 	screen.draw();
 	screen.fadeIn(4);
+
+	sound.setMusicVolume(0x5f);
+	sound.playFX(2);
+	events.wait(1000, true);
+	int64 v = 0;
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
@@ -114,12 +117,14 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 		if (events.wait(2, true))
 			return false;
 	}
+	if (_vm->shouldQuit())
+		return false;
 
 	// Pause for a bit
 	if (events.wait(10, true))
 		return false;
 
-	sound.songCommand(95);
+	sound.setMusicVolume(95);
 
 	screen.loadBackground("jvc.raw");
 	screen.fadeOut(8);
