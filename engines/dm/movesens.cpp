@@ -620,7 +620,7 @@ int16 MovesensMan::getSound(CreatureType creatureType) {
 	case kDMCreatureTypeRuster:
 	case kDMCreatureTypeScreamer:
 	case kDMCreatureTypeRockpile:
-	case kCreatureTypeMagentaWorm:
+	case kDMCreatureTypeMagentaWorm:
 	case kDMCreatureTypeOitu:
 		return k26_soundMOVE_SCREAMER_ROCK_ROCKPILE_MAGENTA_WORM_WORM_PAIN_RAT_HELLHOUND_RUSTER_GIANT_SCORPION_SCORPION_OITU;
 	case kDMCreatureTypeRedDragon:
@@ -653,7 +653,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 		updatedGroupDirections = _vm->normalizeModulo4(groupDirections + rotation);
 
 	uint16 updatedGroupCells = _vm->_groupMan->getGroupCells(group, mapIndex);
-	if (updatedGroupCells != k255_CreatureTypeSingleCenteredCreature) {
+	if (updatedGroupCells != kDMCreatureTypeSingleCenteredCreature) {
 		int16 groupCells = updatedGroupCells;
 		int16 creatureSize = getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize);
 		int16 relativeRotation = _vm->normalizeModulo4(4 + updatedGroupDirections - groupDirections);
@@ -673,7 +673,7 @@ int16 MovesensMan::getTeleporterRotatedGroupResult(Teleporter *teleporter, Thing
 	}
 	_vm->_dungeonMan->setGroupDirections(group, updatedGroupDirections, mapIndex);
 	_vm->_dungeonMan->setGroupCells(group, updatedGroupCells, mapIndex);
-	if ((mapIndex == _vm->_dungeonMan->_partyMapIndex) && (group->setBehaviour(k6_behavior_ATTACK)))
+	if ((mapIndex == _vm->_dungeonMan->_partyMapIndex) && (group->setBehaviour(kDMBehaviorAttack)))
 		return group->getActiveGroupIndex() + 2;
 
 	return 1;

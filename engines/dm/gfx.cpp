@@ -3301,7 +3301,7 @@ T0115015_DrawProjectileAsObject:
 		creatureDirectionDelta = _vm->normalizeModulo4(directionParam - _vm->_groupMan->getCreatureValue(activeGroup->_directions, AL_0_creatureIndexRed));
 		twoHalfSquareCreaturesFrontView = false;
 		AL_4_groupCells = activeGroup->_cells;
-		if (AL_4_groupCells == k255_CreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
+		if (AL_4_groupCells == kDMCreatureTypeSingleCenteredCreature) { /* If there is a single centered creature in the group */
 			if (remainingViewCellOrdinalsToProcess || (doorFrontViewDrawingPass == 1))
 				goto T0115129_DrawProjectiles; /* Do not draw a single centered creature now, wait until second pass (for a front view door) or until all cells have been drawn so the creature is drawn over all the objects on the floor */
 

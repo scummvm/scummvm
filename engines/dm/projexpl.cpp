@@ -208,7 +208,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		}
 		if ((projectileAssociatedThing == Thing::_explLightningBolt) && !(explosionAttack >>= 1))
 			goto T0217044;
-		createExplosion(projectileAssociatedThing, explosionAttack, mapXCombo, mapYCombo, (projectileAssociatedThing == Thing::_explPoisonCloud) ? (uint16)k255_CreatureTypeSingleCenteredCreature : cell);
+		createExplosion(projectileAssociatedThing, explosionAttack, mapXCombo, mapYCombo, (projectileAssociatedThing == Thing::_explPoisonCloud) ? (uint16)kDMCreatureTypeSingleCenteredCreature : cell);
 	} else {
 		uint16 soundIndex;
 		if ((projectileAssociatedThing).getType() == kDMThingTypeWeapon)
@@ -294,7 +294,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 		projectileMapY >>= 8;
 	}
 
-	if (cell == k255_CreatureTypeSingleCenteredCreature)
+	if (cell == kDMCreatureTypeSingleCenteredCreature)
 		explosion->setCentered(true);
 	else {
 		explosion->setCentered(false);

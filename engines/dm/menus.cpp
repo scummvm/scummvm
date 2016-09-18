@@ -1551,15 +1551,15 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 	Group *targetGroup = (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
 	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[targetGroup->_type];
 	uint16 fearResistance = creatureInfo->getFearResistance();
-	if ((fearResistance > _vm->getRandomNumber(frightAmount)) || (fearResistance == k15_immuneToFear)) {
+	if ((fearResistance > _vm->getRandomNumber(frightAmount)) || (fearResistance == kDMImmuneToFear)) {
 		experience >>= 1;
 	} else {
 		ActiveGroup *activeGroup = &_vm->_groupMan->_activeGroups[targetGroup->getActiveGroupIndex()];
-		if (targetGroup->getBehaviour() == k6_behavior_ATTACK) {
+		if (targetGroup->getBehaviour() == kDMBehaviorAttack) {
 			_vm->_groupMan->stopAttacking(activeGroup, mapX, mapY);
 			_vm->_groupMan->startWandering(mapX, mapY);
 		}
-		targetGroup->setBehaviour(k5_behavior_FLEE);
+		targetGroup->setBehaviour(kDMBehaviorFlee);
 		activeGroup->_delayFleeingFromTarget = ((16 - fearResistance) << 2) / creatureInfo->_movementTicks;
 		retVal = true;
 	}

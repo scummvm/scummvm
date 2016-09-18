@@ -53,7 +53,7 @@ enum CreatureType {
 	kDMCreatureTypeSkeleton = 12, // @ C12_CREATURE_SKELETON                   
 	kDMCreatureTypeCouatl = 13, // @ C13_CREATURE_COUATL                     
 	kDMCreatureTypeVexirk = 14, // @ C14_CREATURE_VEXIRK                     
-	kCreatureTypeMagentaWorm = 15, // @ C15_CREATURE_MAGENTA_WORM_WORM          
+	kDMCreatureTypeMagentaWorm = 15, // @ C15_CREATURE_MAGENTA_WORM_WORM          
 	kDMCreatureTypeAntman = 16, // @ C16_CREATURE_TROLIN_ANTMAN              
 	kDMCreatureTypeGiantWasp = 17, // @ C17_CREATURE_GIANT_WASP_MUNCHER         
 	kDMCreatureTypeAnimatedArmour = 18, // @ C18_CREATURE_ANIMATED_ARMOUR_DETH_KNIGHT
@@ -67,13 +67,26 @@ enum CreatureType {
 	kDMCreatureTypeGreyLord = 26 // @ C26_CREATURE_GREY_LORD                  
 };
 
-#define k255_CreatureTypeSingleCenteredCreature 255 // @ C255_SINGLE_CENTERED_CREATURE
-
 enum CreatureSize {
 	kDMCreatureSizeQuarter = 0, // @ C0_SIZE_QUARTER_SQUARE
 	kDMCreatureSizeHalf = 1,    // @ C1_SIZE_HALF_SQUARE   
 	kDMCreatureSizeFull = 2     // @ C2_SIZE_FULL_SQUARE   
 };
+
+enum Behavior {
+	kDMBehaviorWander = 0,   // @ C0_BEHAVIOR_WANDER
+	kDMBehaviorUnknown2 = 2, // @ C2_BEHAVIOR_USELESS
+	kDMBehaviorUnknown3 = 3, // @ C3_BEHAVIOR_USELESS
+	kDMBehaviorUnknown4 = 4, // @ C4_BEHAVIOR_USELESS
+	kDMBehaviorFlee = 5,     // @ C5_BEHAVIOR_FLEE
+	kDMBehaviorAttack = 6,   // @ C6_BEHAVIOR_ATTACK
+	kDMBehaviorApproach = 7  // @ C7_BEHAVIOR_APPROACH
+};
+
+#define kDMImmuneToFear 15 // @ C15_IMMUNE_TO_FEAR
+#define kDMMovementTicksImmobile 255 // @ C255_IMMOBILE
+#define kDMWholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP 
+#define kDMCreatureTypeSingleCenteredCreature 255 // @ C255_SINGLE_CENTERED_CREATURE
 
 enum CreatureMask {
 	kDMCreatureMaskSize = 0x0003,           // @ MASK0x0003_SIZE                     
@@ -111,7 +124,6 @@ public:
 	byte _aspect[4];
 }; // @ ACTIVE_GROUP
 
-
 class Group {
 public:
 	Thing _nextThing;
@@ -141,23 +153,6 @@ public:
 	void setDoNotDiscard(bool val) { _flags = (_flags & ~(1 << 10)) | ((val & 1) << 10); }
 }; // @ GROUP
 
-#define k0_behavior_WANDER 0 // @ C0_BEHAVIOR_WANDER
-#define k2_behavior_USELESS 2 // @ C2_BEHAVIOR_USELESS
-#define k3_behavior_USELESS 3 // @ C3_BEHAVIOR_USELESS
-#define k4_behavior_USELESS 4 // @ C4_BEHAVIOR_USELESS
-#define k5_behavior_FLEE 5 // @ C5_BEHAVIOR_FLEE
-#define k6_behavior_ATTACK 6 // @ C6_BEHAVIOR_ATTACK
-#define k7_behavior_APPROACH 7 // @ C7_BEHAVIOR_APPROACH
-
-#define k15_immuneToFear 15 // @ C15_IMMUNE_TO_FEAR
-
-#define k255_immobile 255 // @ C255_IMMOBILE
-#define kM1_wholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP 
-
-
-int32 M32_setTime(int32 &map_time, int32 time); // @ M32_SET_TIME
-
-
 class GroupMan {
 	DMEngine *_vm;
 	byte _dropMovingCreatureFixedPossessionsCell[4]; // @ G0392_auc_DropMovingCreatureFixedPossessionsCells
@@ -178,6 +173,7 @@ class GroupMan {
 	bool _groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter; // @ G0387_B_GroupMovementBlockedByWallStairsPitFakeWallFluxcageTeleporter
 	int32 twoHalfSquareSizedCreaturesGroupLastDirectionSetTime; // @ G0395_l_TwoHalfSquareSizedCreaturesGroupLastDirectionSetTime
 	uint16 toggleFlag(uint16 &val, uint16 mask); // @ M10_TOGGLE
+	int32 setTime(int32 &map_time, int32 time); // @ M32_SET_TIME
 
 public:
 	uint16 _maxActiveGroupCount; // @ G0376_ui_MaximumActiveGroupCount
@@ -254,7 +250,6 @@ public:
 	void saveActiveGroupPart(Common::OutSaveFile *file);
 	void loadActiveGroupPart(Common::InSaveFile *file);
 };
-
 }
 
 #endif

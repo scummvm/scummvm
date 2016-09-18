@@ -907,7 +907,7 @@ void DMEngine::fuseSequence() {
 	Thing lordChaosThing = _groupMan->groupGetThing(lordChaosMapX, lordChaosMapY);
 	Group *lordGroup = (Group*)_dungeonMan->getThingData(lordChaosThing);
 	lordGroup->_health[0] = 10000;
-	_dungeonMan->setGroupCells(lordGroup, k255_CreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
+	_dungeonMan->setGroupCells(lordGroup, kDMCreatureTypeSingleCenteredCreature, _dungeonMan->_partyMapIndex);
 	_dungeonMan->setGroupDirections(lordGroup, returnOppositeDir(_dungeonMan->_partyDir), _dungeonMan->_partyMapIndex);
 
 	bool removeFluxcagesFromLordChaosSquare = true;
@@ -936,14 +936,14 @@ void DMEngine::fuseSequence() {
 	}
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explFireBall, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	_sound->requestPlay(k17_soundBUZZ, lordChaosMapX, lordChaosMapY, kDMSoundModePlayIfPrioritized);
 	lordGroup->_type = kDMCreatureTypeLordOrder;
 	fuseSequenceUpdate();
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 	for (int16 cycleCount = 3; cycleCount > 0; cycleCount--) {
@@ -954,8 +954,8 @@ void DMEngine::fuseSequence() {
 				fuseSequenceUpdate();
 		}
 	}
-	_projexpl->createExplosion(Thing::_explFireBall, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
-	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explFireBall, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
+	_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 	fuseSequenceUpdate();
 	lordGroup->_type = kDMCreatureTypeGreyLord;
 	fuseSequenceUpdate();
@@ -999,7 +999,7 @@ void DMEngine::fuseSequence() {
 	}
 
 	for (int16 attackId = 55; attackId <= 255; attackId += 40) {
-		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, k255_CreatureTypeSingleCenteredCreature);
+		_projexpl->createExplosion(Thing::_explHarmNonMaterial, attackId, lordChaosMapX, lordChaosMapY, kDMCreatureTypeSingleCenteredCreature);
 		fuseSequenceUpdate();
 	}
 
