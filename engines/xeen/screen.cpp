@@ -438,6 +438,8 @@ void Screen::fadeInner(int step) {
 
 		_vm->_events->pollEventsAndWait();
 	}
+
+	update();
 }
 
 void Screen::updatePalette() {

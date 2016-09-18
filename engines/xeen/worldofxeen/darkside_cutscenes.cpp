@@ -124,8 +124,8 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 	sound.setMusicVolume(95);
 
-	screen.loadBackground("jvc.raw");
 	screen.fadeOut(8);
+	screen.loadBackground("jvc.raw");
 	screen.draw();
 	screen.fadeIn(4);
 	
@@ -236,7 +236,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 bool DarkSideCutscenes::showDarkSideEnding() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+//	Sound &sound = *_vm->_sound;
 
 	//Voc voc("ido2.voc");
 	//	Music newBright("newbrigh.m");
