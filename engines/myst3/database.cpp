@@ -298,7 +298,7 @@ Common::Array<NodePtr> Database::loadRoomScripts(const RoomData *room) {
 
 void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes) {
 	uint zipIndex = 0;
-	while (1) {
+	while (!file->eos()) {
 		int16 id = file->readUint16LE();
 
 		// End of list
@@ -344,7 +344,7 @@ void Database::loadRoomNodeScripts(Common::SeekableReadStream *file, Common::Arr
 }
 
 void Database::loadRoomSoundScripts(Common::SeekableReadStream *file, Common::Array<NodePtr> &nodes, bool background) {
-	while (1) {
+	while (!file->eos()) {
 		int16 id = file->readUint16LE();
 
 		// End of list
@@ -443,7 +443,7 @@ void Database::setCurrentRoom(const uint32 roomID) {
 Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &s) {
 	Common::Array<CondScript> scripts;
 
-	while (1) {
+	while (!s.eos()) {
 		CondScript script = loadCondScript(s);
 
 		if (!script.condition)
@@ -458,7 +458,7 @@ Common::Array<CondScript> Database::loadCondScripts(Common::SeekableReadStream &
 Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) {
 	Common::Array<HotSpot> scripts;
 
-	while (1) {
+	while (!s.eos()) {
 		HotSpot hotspot = loadHotspot(s);
 
 		if (!hotspot.condition)
@@ -473,7 +473,7 @@ Common::Array<HotSpot> Database::loadHotspots(Common::SeekableReadStream &s) {
 Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) {
 	Common::Array<Opcode> script;
 
-	while (1) {
+	while (!s.eos()) {
 		Opcode opcode;
 		uint16 code = s.readUint16LE();
 
@@ -488,9 +488,6 @@ Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) {
 		}
 
 		script.push_back(opcode);
-
-		if (s.eos())
-			break;
 	}
 
 	return script;
@@ -572,7 +569,7 @@ Common::Array<PolarRect> Database::loadRects(Common::SeekableReadStream &s) {
 		}
 
 		rects.push_back(rect);
-	} while (!lastRect);
+	} while (!lastRect && !s.eos());
 
 	return rects;
 }
@@ -618,7 +615,7 @@ Common::String Database::getSoundName(uint32 id) {
 void Database::loadAmbientCues(Common::ReadStream *s) {
 	_ambientCues.clear();
 
-	while (1) {
+	while (!s->eos()) {
 		uint16 id = s->readUint16LE();
 
 		if (!id)
