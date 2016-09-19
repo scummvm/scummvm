@@ -480,7 +480,7 @@ int MidiPlayer_Midi::getVolume() {
 }
 
 void MidiPlayer_Midi::onNewSound() {
-	if (_version <= SCI_VERSION_0_LATE && _defaultReverb >= 0)
+	if (_defaultReverb >= 0)
 		// SCI0 in combination with MT-32 requires a reset of the reverb to
 		// the default value that is present in either the MT-32 patch data
 		// or MT32.DRV itself.

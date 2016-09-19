@@ -392,6 +392,8 @@ void MidiParser_SCI::sendInitCommands() {
 	// Set initial voice count
 	if (_pSnd) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			((MidiPlayer *)_driver)->onNewSound();
+			
 			for (int i = 0; i < 15; ++i) {
 				byte voiceCount = 0;
 				if (_channelUsed[i]) {
@@ -419,8 +421,6 @@ void MidiParser_SCI::sendInitCommands() {
 			sendToDriver(0xE0 | i,    0, 64);	// Reset pitch wheel to center
 		}
 	}
-
-	((MidiPlayer *)_driver)->onNewSound();
 }
 
 void MidiParser_SCI::unloadMusic() {
