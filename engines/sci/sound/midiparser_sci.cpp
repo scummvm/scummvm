@@ -420,11 +420,7 @@ void MidiParser_SCI::sendInitCommands() {
 		}
 	}
 
-	// SCI0 in combination with MT-32 requires a reset of the reverb to
-	// the default value that is present in either the MT-32 patch data
-	// or MT32.DRV itself.
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		((MidiPlayer *)_driver)->setDefaultReverb();
+	((MidiPlayer *)_driver)->onNewSound();
 }
 
 void MidiParser_SCI::unloadMusic() {
