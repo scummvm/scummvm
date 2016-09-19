@@ -52,7 +52,13 @@ namespace BladeRunner {
 bool Script::open(const Common::String &name) {
 	delete _currentScript;
 
+
 	if (name == "RC01") { _currentScript = new ScriptRC01(_vm); return true; }
+	if (name == "RC02") { _currentScript = new ScriptRC02(_vm); return true; }
+	if (name == "RC03") { _currentScript = new ScriptRC03(_vm); return true; }
+	if (name == "RC04") { _currentScript = new ScriptRC04(_vm); return true; }
+	if (name == "RC51") { _currentScript = new ScriptRC51(_vm); return true; }
+
 
 	return false;
 }
@@ -792,40 +798,61 @@ void ScriptBase::Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a
 }
 
 void ScriptBase::Sound_Left_Footstep_Walk(int actorId) {
-	//TODO
-	warning("Sound_Left_Footstep_Walk(%d)", actorId);
+	int walkboxId = _vm->_actors[actorId]->getWalkbox();
+	if (walkboxId < 0) {
+		walkboxId = 0;
+	}
+
+	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundWalkLeft(walkboxId);
+	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
+	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
 }
 
 void ScriptBase::Sound_Right_Footstep_Walk(int actorId) {
-	//TODO
-	warning("Sound_Right_Footstep_Walk(%d)", actorId);
+	int walkboxId = _vm->_actors[actorId]->getWalkbox();
+	if (walkboxId < 0) {
+		walkboxId = 0;
+	}
+
+	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundWalkRight(walkboxId);
+	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
+	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
 }
 
 void ScriptBase::Sound_Left_Footstep_Run(int actorId) {
-	//TODO
-	warning("Sound_Left_Footstep_Run(%d)", actorId);
+	int walkboxId = _vm->_actors[actorId]->getWalkbox();
+	if (walkboxId < 0) {
+		walkboxId = 0;
+	}
+
+	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundRunLeft(walkboxId);
+	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
+	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
 }
 
 void ScriptBase::Sound_Right_Footstep_Run(int actorId) {
-	//TODO
-	warning("Sound_Right_Footstep_Run(%d)", actorId);
+	int walkboxId = _vm->_actors[actorId]->getWalkbox();
+	if (walkboxId < 0) {
+		walkboxId = 0;
+	}
+
+	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundRunRight(walkboxId);
+	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
+	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
 }
 
 // ScriptBase::Sound_Walk_Shuffle_Stop
 
 void ScriptBase::Footstep_Sounds_Set(int walkboxId, int stepSound) {
-	//TODO
-	warning("Footstep_Sounds_Set(%d, %d)", walkboxId, stepSound);
+	_vm->_scene->_set->setWalkboxStepSound(walkboxId, stepSound);
 }
 
 void ScriptBase::Footstep_Sound_Override_On(int footstepSoundOverride) {
-	//TODO
-	warning("Footstep_Sound_Override_On(%d)", footstepSoundOverride);
+	_vm->_scene->_set->setFoodstepSoundOverride(footstepSoundOverride);
 }
 
 void ScriptBase::Footstep_Sound_Override_Off() {
-	//TODO
-	warning("Footstep_Sound_Override_Off()");
+	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
 bool ScriptBase::Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {

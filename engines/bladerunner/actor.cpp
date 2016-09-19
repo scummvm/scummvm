@@ -365,7 +365,7 @@ bool Actor::tick(bool forceDraw) {
 				float originalZ = this->_position.z;
 
 				this->_position.x = this->_position.x + positionChange.x * cosx - positionChange.y * sinx;
-				this->_position.z = this->_position.z - positionChange.x * sinx - positionChange.y * cosx; //why minus?
+				this->_position.z = this->_position.z + positionChange.x * sinx + positionChange.y * cosx;
 				this->_position.y = this->_position.y + positionChange.z;
 
 				if (_vm->_sceneObjects->existsOnXZ(this->_id, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
@@ -492,6 +492,12 @@ void Actor::setBoundingBox(Vector3 position, bool retired) {
 		              position.y + 72.0f,
 		              position.z + 12.0f);
 	}
+}
+
+float Actor::distanceFromView(View *view) {
+	float xDist = this->_position.x - view->_cameraPosition.x;
+	float zDist = this->_position.z - view->_cameraPosition.z;
+	return sqrt(xDist * xDist + zDist * zDist);
 }
 
 bool Actor::isWalking() {
@@ -801,6 +807,16 @@ void Actor::copyClues(int actorId) {
 			otherActor->acquireClue(i, 0, fromActorId);
 		}
 	}
+}
+
+int Actor::soundVolume() {
+	float dist = distanceFromView(_vm->_view);
+	return 255.0f * MAX(MIN(dist / 1200.0f, 1.0f), 0.0f);
+}
+
+int Actor::soundBalance() {
+	Vector2 screenPosition = _vm->_view->calculateScreenPosition(_position);
+	return 127.0f * (MAX(MIN(screenPosition.x / 640.0f, 1.0f), 0.0f) * 2.0f - 1.0f);
 }
 
 void Actor::countdownTimerStart(int timerId, int interval) {

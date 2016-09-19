@@ -38,6 +38,10 @@ struct Region
 
 class Regions
 {
+#ifdef _DEBUG
+	friend class BladeRunnerEngine;
+#endif
+
 private:
 	Region* _regions;
 	bool _enabled;

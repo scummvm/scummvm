@@ -500,6 +500,36 @@ void BladeRunnerEngine::gameLoop() {
 	} while (_gameIsRunning);
 }
 
+#if _DEBUG
+
+void drawBBox(Vector3 start, Vector3 end, View* view, Graphics::Surface *surface, int color) {
+	Vector2 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
+	Vector2 bfr = view->calculateScreenPosition(Vector3(start.x, end.y, start.z));
+	Vector2 bbr = view->calculateScreenPosition(Vector3(end.x, end.y, start.z));
+	Vector2 bbl = view->calculateScreenPosition(Vector3(end.x, start.y, start.z));
+
+	Vector2 tfl = view->calculateScreenPosition(Vector3(start.x, start.y, end.z));
+	Vector2 tfr = view->calculateScreenPosition(Vector3(start.x, end.y, end.z));
+	Vector2 tbr = view->calculateScreenPosition(Vector3(end.x, end.y, end.z));
+	Vector2 tbl = view->calculateScreenPosition(Vector3(end.x, start.y, end.z));
+
+	surface->drawLine(bfl.x, bfl.y, bfr.x, bfr.y, color);
+	surface->drawLine(bfr.x, bfr.y, bbr.x, bbr.y, color);
+	surface->drawLine(bbr.x, bbr.y, bbl.x, bbl.y, color);
+	surface->drawLine(bbl.x, bbl.y, bfl.x, bfl.y, color);
+
+	surface->drawLine(tfl.x, tfl.y, tfr.x, tfr.y, color);
+	surface->drawLine(tfr.x, tfr.y, tbr.x, tbr.y, color);
+	surface->drawLine(tbr.x, tbr.y, tbl.x, tbl.y, color);
+	surface->drawLine(tbl.x, tbl.y, tfl.x, tfl.y, color);
+
+	surface->drawLine(bfl.x, bfl.y, tfl.x, tfl.y, color);
+	surface->drawLine(bfr.x, bfr.y, tfr.x, tfr.y, color);
+	surface->drawLine(bbr.x, bbr.y, tbr.x, tbr.y, color);
+	surface->drawLine(bbl.x, bbl.y, tbl.x, tbl.y, color);
+}
+#endif
+
 void BladeRunnerEngine::gameTick() {
 	handleEvents();
 
@@ -554,11 +584,10 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: Tick Actor AI and Timers
 
 		if (_settings->getNewScene() == -1 || _script->_inScriptCounter /* || in_ai */) {
-
 			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
-			int setId = _scene->_setId;
+			//int setId = _scene->_setId;
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 				//if (_actors[i]->getSetId() == setId) {
 					if (i == 0 || i == 23){ // Currently limited to McCoy and Officer Leroy
@@ -576,6 +605,98 @@ void BladeRunnerEngine::gameTick() {
 
 			// TODO: Process AUD
 			// TODO: Footstep sound
+
+			if (_walkSoundId >= 0)
+			{
+				const char *name = _gameInfo->getSfxTrack(_walkSoundId);
+				_audioPlayer->playAud(name, _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
+				_walkSoundId = -1;
+			}
+
+#if _DEBUG
+			//draw scene objects
+			int count = _sceneObjects->_count;
+			if (count > 0) {
+				for (int i = 0; i < count; i++) {
+					SceneObject *sceneObject = &_sceneObjects->_sceneObjects[_sceneObjects->_sceneObjectsSortedByDistance[i]];
+
+					BoundingBox *bbox = &sceneObject->_boundingBox;
+					Vector3 a, b;
+					bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+
+					int color = 0b111111111111111;
+					if (sceneObject->_sceneObjectType == SceneObjectTypeActor) {
+						color = 0b111110000000000;
+					}
+					if (sceneObject->_sceneObjectType == SceneObjectTypeObject) {
+						color = 0b011110111101111;
+						//if (sceneObject->_isObstacle)
+						//	color += 0b100000000000000;
+						if (sceneObject->_isClickable)
+							color = 0b000001111100000;
+						//if (sceneObject->_isTarget)
+						//	color += 0b000000000010000;
+					}
+
+					sceneObject->_sceneObjectId;
+					drawBBox(a, b, _view, &_surface2, color);
+				}
+			}
+			
+			//draw regions
+			for (int i = 0; i < 10; i++) {
+				Region* region  =  &_scene->_regions->_regions[i];
+				if (!region->_present) continue;
+				_surface2.frameRect(region->_rectangle, 0b000000000011111);
+			}
+
+			for (int i = 0; i < 10; i++) {
+				Region* region = &_scene->_exits->_regions[i];
+				if (!region->_present) continue;
+				_surface2.frameRect(region->_rectangle, 0b111111111111111);
+			}
+
+			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
+				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
+				
+				for(int j = 0; j < walkbox->_vertexCount; j++) {
+					Vector2 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
+					Vector2 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
+					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
+					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
+				}
+				
+			}
+
+			for (Light* light = _lights->_lights; light != nullptr; light->_next) {
+
+				Matrix4x3 matrix = light->_matrix;
+
+				// this is all wrong
+
+//					matrix = matrix * rotationMatrixX(float(M_PI) / 2.0f);
+
+//					Matrix4x3 a(
+//						-1.0f, 0.0f, 0.0f, 0.0f,
+//						0.0f, -1.0f, 0.0f, 0.0f,
+//						0.0f, 0.0f, 1.0f, 0.0f);
+
+				//matrix = a * matrix;
+//					matrix = invertMatrix(matrix);
+
+				int colorR = (light->_color.r * 31.0f);
+				int colorG = (light->_color.g * 31.0f);
+				int colorB = (light->_color.b * 31.0f);
+				int color = (colorR << 10) + (colorG << 5) + colorB;
+				drawBBox(
+					Vector3(matrix(0, 3) - 5.0f, matrix(1, 3) - 5.0f, matrix(2, 3) - 5.0f),
+					Vector3(matrix(0, 3) + 5.0f, matrix(1, 3) + 5.0f, matrix(2, 3) + 5.0f),
+					_view, &_surface2, color
+				);
+				light = light->_next;
+
+			}
+#endif
 
 			_system->copyRectToScreen((const byte *)_surface2.getBasePtr(0, 0), _surface2.pitch, 0, 0, 640, 480);
 			_system->updateScreen();
@@ -614,7 +735,7 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	int isTarget;
 
 	int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
-	int exitIndex     = _scene->_exits->getTypeAtXY(x, y);
+	int exitIndex     = _scene->_exits->getRegionAtXY(x, y);
 
 	debug("%d %d", sceneObjectId, exitIndex);
 

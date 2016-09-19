@@ -62,6 +62,9 @@ struct SceneObject
 };
 
 class SceneObjects {
+#if _DEBUG
+	friend class BladeRunnerEngine;
+#endif
 	BladeRunnerEngine *_vm;
 
 private:

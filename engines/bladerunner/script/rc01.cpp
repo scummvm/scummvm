@@ -25,9 +25,13 @@
 namespace BladeRunner {
 
 void ScriptRC01::InitializeScene() {
+#if _DEBUG
 	//TODO: not part of game, remove
 	Game_Flag_Set(24); // force skip intro
 	// Game_Flag_Set(9); // Force flag 9 so McCoy will be in view
+
+	Footstep_Sound_Override_On(0);
+#endif
 
 	if (!Game_Flag_Query(24)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);

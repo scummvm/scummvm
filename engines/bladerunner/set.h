@@ -49,15 +49,20 @@ struct Object {
 struct Walkbox {
 	char    _name[20];
 	float   _altitude;
-	uint32  _vertexCount;
+	int     _vertexCount;
 	Vector3 _vertices[8];
 };
 
 class Set {
+#if _DEBUG
+	friend class BladeRunnerEngine;
+#endif
+
 	BladeRunnerEngine *_vm;
 
-	uint32      _objectCount;
-	uint32      _walkboxCount;
+	bool        _loaded;
+	int         _objectCount;
+	int         _walkboxCount;
 	Object     *_objects;
 	Walkbox    *_walkboxes;
 	int         _walkboxStepSound[85];
@@ -86,6 +91,15 @@ public:
 	void objectSetIsObstacle(int objectId, bool isObstacle);
 	void objectSetIsTarget(int objectId, bool isTarget);
 	const char *objectGetName(int objectId);
+
+	void setWalkboxStepSound(int walkboxId, int soundId);
+	void setFoodstepSoundOverride(int soundId);
+	void resetFoodstepSoundOverride();
+	int getWalkboxSoundWalkLeft(int walkboxId);
+	int getWalkboxSoundWalkRight(int walkboxId);
+	int getWalkboxSoundRunLeft(int walkboxId);
+	int getWalkboxSoundRunRight(int walkboxId);
+	
 };
 
 } // End of namespace BladeRunner

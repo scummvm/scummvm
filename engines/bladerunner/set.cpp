@@ -44,6 +44,7 @@ Set::Set(BladeRunnerEngine *vm) : _vm(vm) {
 	_walkboxes = new Walkbox[95];
 	_footstepSoundOverride = -1;
 	_effects = new SetEffects(vm);
+	_loaded = false;
 }
 
 Set::~Set() {
@@ -64,7 +65,7 @@ bool Set::open(const Common::String &name) {
 	_objectCount = s->readUint32LE();
 	assert(_objectCount <= 85);
 
-	for (uint32 i = 0; i != _objectCount; ++i) {
+	for (int i = 0; i < _objectCount; ++i) {
 		s->read(_objects[i]._name, 20);
 
 		float x0, y0, z0, x1, y1, z1;
@@ -89,7 +90,7 @@ bool Set::open(const Common::String &name) {
 	_walkboxCount = s->readUint32LE();
 	assert(_walkboxCount <= 95);
 
-	for (uint32 i = 0; i != _walkboxCount; ++i) {
+	for (int i = 0; i < _walkboxCount; ++i) {
 		float x, y, z;
 
 		s->read(_walkboxes[i]._name, 20);
@@ -98,7 +99,7 @@ bool Set::open(const Common::String &name) {
 
 		assert(_walkboxes[i]._vertexCount <= 8);
 
-		for (uint32 j = 0; j != _walkboxes[i]._vertexCount; ++j) {
+		for (int j = 0; j < _walkboxes[i]._vertexCount; ++j) {
 			x = s->readFloatLE();
 			z = s->readFloatLE();
 
@@ -115,13 +116,18 @@ bool Set::open(const Common::String &name) {
 	_effects->read(s.get(), framesCount);
 	_vm->_sliceRenderer->setSetEffects(_effects);
 
+	// _vm->_sliceRenderer->set_setColors(&this->colors);
+	_loaded = true;
+
+	for (int i = 0; i < _walkboxCount; ++i) {
+		this->setWalkboxStepSound(i, 0);
+	}
+
 	return true;
 }
 
-void Set::addObjectsToScene(SceneObjects* sceneObjects)
-{
-	uint32 i;
-	for (i = 0; i < _objectCount; i++) {
+void Set::addObjectsToScene(SceneObjects *sceneObjects) {
+	for (int i = 0; i < _objectCount; i++) {
 		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isTarget);
 	}
 }
@@ -146,14 +152,12 @@ bool pointInWalkbox(float x, float z, const Walkbox &w)
 }
 */
 
-static
-bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
+static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 	int found = 0;
-	int i;
 
 	float lastX = walkbox._vertices[walkbox._vertexCount - 1].x;
 	float lastZ = walkbox._vertices[walkbox._vertexCount - 1].z;
-	for (i = 0; i < (int)walkbox._vertexCount; i++) {
+	for (int i = 0; i < walkbox._vertexCount; i++) {
 		float currentX = walkbox._vertices[i].x;
 		float currentZ = walkbox._vertices[i].z;
 
@@ -171,7 +175,7 @@ float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) {
 	float altitude = _walkboxes[0]._altitude;
 	*inWalkbox = false;
 
-	for (uint32 i = 0; i != _walkboxCount; ++i) {
+	for (int i = 0; i < _walkboxCount; ++i) {
 		const Walkbox &w = _walkboxes[i];
 
 		if (isXZInWalkbox(x, z, w)) {
@@ -188,7 +192,7 @@ float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) {
 int Set::findWalkbox(float x, float z) {
 	int result = -1;
 
-	for (uint32 i = 0; i != _walkboxCount; ++i) {
+	for (int i = 0; i < _walkboxCount; ++i) {
 		const Walkbox &w = _walkboxes[i];
 
 		if (isXZInWalkbox(x, z, w)) {
@@ -215,7 +219,7 @@ int Set::findObject(const char *objectName) {
 }
 
 bool Set::objectSetHotMouse(int objectId) {
-	if(!_objects || objectId < 0 || objectId >= (int)_objectCount) {
+	if (!_objects || objectId < 0 || objectId >= (int)_objectCount) {
 		return false;
 	}
 
@@ -254,4 +258,71 @@ const char *Set::objectGetName(int objectId) {
 	return _objects[objectId]._name;
 }
 
+void Set::setWalkboxStepSound(int walkboxId, int stepSound) {
+	this->_walkboxStepSound[walkboxId] = stepSound;
+}
+
+void Set::setFoodstepSoundOverride(int soundId) {
+	_footstepSoundOverride = soundId;
+}
+
+void Set::resetFoodstepSoundOverride() {
+	_footstepSoundOverride = -1;
+}
+
+int Set::getWalkboxSoundWalkLeft(int walkboxId) {
+	int soundId;
+	if (this->_footstepSoundOverride >= 0) {
+		soundId = this->_footstepSoundOverride;
+	} else {
+		soundId = this->_walkboxStepSound[walkboxId];
+	}
+
+	if (soundId == 0) { //stone floor
+		return _vm->_rnd.getRandomNumberRng(160, 164);
+	}
+	if (soundId == 1) { //gravel floor
+		return _vm->_rnd.getRandomNumberRng(164, 170);
+	}
+	if (soundId == 2) { //wooden floor
+		return _vm->_rnd.getRandomNumberRng(476, 480);
+	}
+	if (soundId == 3) { //metal floor
+		return _vm->_rnd.getRandomNumberRng(466, 470);
+	}
+
+	return -1;
+}
+
+int Set::getWalkboxSoundWalkRight(int walkboxId) {
+	int soundId;
+	if (this->_footstepSoundOverride >= 0) {
+		soundId = this->_footstepSoundOverride;
+	} else {
+		soundId = this->_walkboxStepSound[walkboxId];
+	}
+
+	if (soundId == 0) { //stone floor
+		return _vm->_rnd.getRandomNumberRng(165, 169);
+	}
+	if (soundId == 1) { //gravel floor
+		return _vm->_rnd.getRandomNumberRng(169, 175);
+	}
+	if (soundId == 2) { //wooden floor
+		return _vm->_rnd.getRandomNumberRng(481, 485);
+	}
+	if (soundId == 3) { //metal floor
+		return _vm->_rnd.getRandomNumberRng(471, 475);
+	}
+
+	return -1;
+}
+
+int Set::getWalkboxSoundRunLeft(int walkboxId) {
+	return getWalkboxSoundWalkLeft(walkboxId);
+}
+
+int Set::getWalkboxSoundRunRight(int walkboxId) {
+	return getWalkboxSoundWalkRight(walkboxId);
+}
 } // End of namespace BladeRunner

@@ -38,6 +38,9 @@ class Lights;
 
 class Light
 {
+#if _DEBUG
+	friend class BladeRunnerEngine;
+#endif
 	friend class Lights;
 
 	char _name[20];

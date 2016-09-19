@@ -32,6 +32,9 @@
 namespace BladeRunner {
 
 class Lights {
+#if _DEBUG
+	friend class BladeRunnerEngine;
+#endif
 	BladeRunnerEngine *_vm;
 
 	Color _ambientLightColor;

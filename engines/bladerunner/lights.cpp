@@ -10,7 +10,7 @@ Lights::Lights(BladeRunnerEngine *vm)
 	_ambientLightColor.g = 0.0;
 	_ambientLightColor.b = 0.0;
 
-	_lights = NULL;
+	_lights = nullptr;
 	_frame = 0;
 }
 

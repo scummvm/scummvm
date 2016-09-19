@@ -49,7 +49,7 @@ bool View::read(Common::ReadStream *stream) {
 void View::setFovX(float fovX) {
 	_fovX = fovX;
 
-	_viewportHalfWidth  = 320.0f;
+	_viewportHalfWidth = 320.0f;
 	_viewportHalfHeight = 240.0f;
 
 	_viewportDistance = 320.0f / tanf(_fovX / 2.0f);
@@ -60,17 +60,16 @@ void View::calculateSliceViewMatrix() {
 
 	m = m * rotationMatrixX(float(M_PI) / 2.0f);
 
-	Matrix4x3 a( -1.0f,  0.0f,  0.0f,  0.0f,
-	              0.0f, -1.0f,  0.0f,  0.0f,
-	              0.0f,  0.0f,  1.0f,  0.0f);
+	Matrix4x3 a(-1.0f, 0.0f, 0.0f, 0.0f,
+	            0.0f, -1.0f, 0.0f, 0.0f,
+	            0.0f, 0.0f, 1.0f, 0.0f);
 
 	m = a * m;
 
 	_sliceViewMatrix = m;
 }
 
-void View::calculateCameraPosition()
-{
+void View::calculateCameraPosition() {
 	Matrix4x3 invertedMatrix = invertMatrix(_sliceViewMatrix);
 
 	_cameraPosition.x = invertedMatrix(0, 3);
@@ -78,5 +77,12 @@ void View::calculateCameraPosition()
 	_cameraPosition.z = invertedMatrix(2, 3);
 }
 
+Vector2 View::calculateScreenPosition(Vector3 worldPosition) {
+	Vector3 viewPosition = _frameViewMatrix * worldPosition;
+	return Vector2(
+		this->_viewportHalfWidth - viewPosition.x / viewPosition.z * _viewportDistance,
+		this->_viewportHalfHeight - viewPosition.y / viewPosition.z * _viewportDistance
+	);
+}
 
 } // End of namespace BladeRunner

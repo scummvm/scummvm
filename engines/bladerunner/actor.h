@@ -35,6 +35,7 @@ class ActorWalk;
 class BladeRunnerEngine;
 class BoundingBox;
 class MovementTrack;
+class View;
 
 class Actor {
 	friend class ScriptBase;
@@ -138,6 +139,7 @@ public:
 	void setSetId(int setId);
 	BoundingBox* getBoundingBox() { return _bbox; }
 	Common::Rect* getScreenRectangle() { return &_screenRectangle; }
+	int getWalkbox() { return _walkboxId; }
 	bool isRetired() { return _isRetired; }
 	bool isTargetable() { return _isTargetable; }
 	void setTargetable(bool targetable);
@@ -191,9 +193,13 @@ public:
 	void loseClue(int clueId);
 	bool hasClue(int clueId);
 	void copyClues(int actorId);
+
+	int soundVolume();
+	int soundBalance();
 private:
 	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(Vector3 position, bool retired);
+	float distanceFromView(View* view);
 };
 
 } // End of namespace BladeRunner

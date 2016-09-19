@@ -120,6 +120,10 @@ public:
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
 
+	int _walkSoundId = -1;
+	int _walkSoundVolume = 0;
+	int _walkSoundBalance = 0;
+
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];

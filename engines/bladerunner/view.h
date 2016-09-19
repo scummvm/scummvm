@@ -45,6 +45,7 @@ public:
 	float     _viewportDistance;
 
 	bool read(Common::ReadStream *stream);
+	Vector2 calculateScreenPosition(Vector3 worldPosition);
 
 private:
 	void setFovX(float fovX);
