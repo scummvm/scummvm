@@ -40,6 +40,7 @@ Sound::~Sound() {
 void Sound::playSound(Common::SeekableReadStream &s, int unused) {
 	stopSound();
 
+	s.seek(0);
 	Common::SeekableReadStream *srcStream = s.readStream(s.size());
 	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
 		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);

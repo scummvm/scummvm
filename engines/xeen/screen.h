@@ -169,7 +169,7 @@ public:
 	/**
 	 * Merge the two pages along a horizontal split point
 	 */
-	void horizMerge(int xp);
+	void horizMerge(int xp = 0);
 
 	/**
 	 * Merge the two pages along a vertical split point

@@ -236,9 +236,6 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	File ido2("ido2.voc");
-	SpriteResource box("box.vga");
-
 	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
@@ -249,6 +246,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	if (events.wait(30))
 		return false;
 
+	screen.fadeOut(4);
 	screen.loadBackground("scene2-b.raw");
 	screen.update();
 	screen.saveBackground();
@@ -282,11 +280,98 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		if (events.wait(2))
 			return false;
 	}
+	faceEnd.clear();
 
 	// Alamar says "Come to me"
 	sound.playSound("come2.voc");
 	if (!subtitlesWait(27))
 		return false;
+
+	// Show the entire throne room
+	screen.loadBackground("mainback.raw");
+	SpriteResource sc03a("sc03a.end"), sc03b("sc03b.end"), sc03c("sc03c.end");
+	sc03a.draw(screen, 0, Common::Point(250, 0));
+
+	screen.saveBackground();
+	screen.update();
+	events.updateGameCounter();
+	if (events.wait(30))
+		return false;
+
+	// Silhouette of door opening
+	sound.playSound("door.voc");
+	for (int idx = 0; idx < 6; ++idx) {
+		events.updateGameCounter();
+		screen.restoreBackground();
+		sc03b.draw(screen, idx, Common::Point(72, 125));
+		screen.update();
+
+		if (events.wait(4))
+			return false;
+	}
+
+	// Silhouette of playing entering
+	for (int idx = 0; idx < 19; ++idx) {
+		events.updateGameCounter();
+		screen.restoreBackground();
+		sc03c.draw(screen, idx, Common::Point(72, 125));
+		screen.update();
+
+		if (idx == 3 || idx == 11)
+			sound.playFX(7);
+		if (idx == 7 || idx == 16)
+			sound.playFX(8);
+
+		if (events.wait(4))
+			return false;
+	}
+
+	sc03a.clear();
+	sc03b.clear();
+	sc03c.clear();
+
+	// Box throwing
+	screen.loadBackground("scene4.raw");
+	screen.loadPage(0);
+	screen.loadBackground("scene4-1.raw");
+	screen.loadPage(1);
+	SpriteResource disk("disk.end");
+	File whoosh("whoosh.voc");
+
+	screen.horizMerge();
+	int yp = 101, ctr = 0, frameNum = 0;
+	for (int xp = 0; xp < 320; xp += 2) {
+		events.updateGameCounter();
+		screen.horizMerge(xp);
+
+		disk.draw(screen, frameNum, Common::Point(xp / 2, yp));
+		if (xp < 44)
+			disk.draw(screen, 11, Common::Point(-xp, 22), SPRFLAG_800);
+		disk.draw(screen, 10, Common::Point(0, 134));
+
+		if (!(xp % 22))
+			sound.playSound(whoosh);
+		events.wait(1);
+
+		if (++ctr % 2)
+			frameNum = (frameNum + 1) % 10;
+
+		if (xp < 100)
+			--yp;
+		else if (xp > 150)
+			++yp;
+	}
+
+	// Play landing thud
+	if (events.wait(10))
+		return false;
+
+	sound.playSound("thud.voc");
+	while (!_vm->shouldQuit() && !events.isKeyMousePressed()
+			&& sound.isPlaying()) {
+		events.pollEventsAndWait();
+	}
+
 
 		// TODO
 	events.wait(5000);

@@ -106,7 +106,7 @@ public:
 	uint32 timeElapsed4() const { return _frameCounter - _gameCounters[4]; }
 	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
 
-	bool wait(uint numFrames, bool interruptable = false);
+	bool wait(uint numFrames, bool interruptable = true);
 
 	void ipause(uint amount);
 };
