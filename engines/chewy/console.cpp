@@ -20,51 +20,44 @@
  *
  */
 
-#ifndef CHEWY_H
-#define CHEWY_H
-
-
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-
-#include "engines/engine.h"
 #include "chewy/console.h"
+#include "gui/debugger.h"
+#include "chewy/chewy.h"
+#include "chewy/resource.h"
 
 namespace Chewy {
 
-struct ChewyGameDescription;
+	Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
+	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
+}
 
-class ChewyEngine : public Engine {
+Console::~Console() {
+}
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
+bool Console::Cmd_Dump(int argc, const char **argv) {
+	if (argc < 4) {
+		debugPrintf("Usage: dump <file> <resource number> <dump file name>\n");
+		return true;
+	}
 
-	void shutdown();
+	Common::String filename = argv[1];
+	int resNum = atoi(argv[2]);
+	Common::String dumpFilename = argv[3];
 
-	void initialize();
+	Resource *res = new Resource(filename);
+	TBFChunk *chunk = res->getChunk(resNum);
+	byte *data = res->getChunkData(resNum);
 
-	Console *_console;
+	Common::DumpFile outFile;
+	outFile.open(dumpFilename);
+	outFile.write(data, chunk->unpackedSize);
+	outFile.flush();
+	outFile.close();
 
-public:
-	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
-	virtual ~ChewyEngine();
+	delete[] data;
+	delete res;
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	return true;
+}
 
-	const ChewyGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
-};
-
-} // End of namespace Chewy
-
-#endif
+} // End of namespace Drascula

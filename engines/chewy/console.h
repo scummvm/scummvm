@@ -20,51 +20,25 @@
  *
  */
 
-#ifndef CHEWY_H
-#define CHEWY_H
+#ifndef CHEWY_CONSOLE_H
+#define CHEWY_CONSOLE_H
 
-
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-
-#include "engines/engine.h"
-#include "chewy/console.h"
+#include "gui/debugger.h"
 
 namespace Chewy {
 
-struct ChewyGameDescription;
+class ChewyEngine;
 
-class ChewyEngine : public Engine {
-
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-
-	void shutdown();
-
-	void initialize();
-
-	Console *_console;
-
+class Console : public GUI::Debugger {
 public:
-	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
-	virtual ~ChewyEngine();
+	Console(ChewyEngine *vm);
+	virtual ~Console(void);
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+private:
+	ChewyEngine *_vm;
 
-	const ChewyGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
+	bool Cmd_Dump(int argc, const char **argv);
 };
 
-} // End of namespace Chewy
-
+} // End of namespace Drascula
 #endif

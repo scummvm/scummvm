@@ -2,6 +2,7 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	chewy.o \
+	console.o \
 	detection.o \
 	resource.o
 

@@ -38,6 +38,8 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 	_gameDescription(gameDesc),
 	_rnd("chewy") {
 
+	_console = new Console(this);
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "back");
@@ -75,8 +77,11 @@ Common::Error ChewyEngine::run() {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				g_engine->quitGame();
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.flags & Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d)
+				_console->attach();
 		}
 
+		_console->onFrame();
 		g_system->delayMillis(10);
 	}
 
