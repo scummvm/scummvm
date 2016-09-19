@@ -51,7 +51,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	// Draw the screen and fade it in
 	screen.horizMerge(0);
 	screen.draw();
-	screen.fadeIn(4);
+	screen.fadeIn();
 
 	sound.setMusicVolume(0x5f);
 	sound.playFX(1);
@@ -60,7 +60,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	int nwcIndex = 0, nwcFrame = 0;
 	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
 		// Render the next frame
-		events.updateGameCounter();
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(screen, nwcFrame);
 		screen.draw();
@@ -81,13 +80,11 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			++nwcFrame;
 		}
 
-		if (events.wait(2))
-			return false;
+		WAIT(2);
 	}
 
 	// Loop for dragon using flyspray
 	for (int idx = 0; idx < 42 && !_vm->shouldQuit(); ++idx) {
-		events.updateGameCounter();
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(screen, idx);
 		screen.draw();
@@ -112,25 +109,22 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 			break;
 		}
 
-		if (events.wait(2))
-			return false;
+		WAIT(2);
 	}
 	if (_vm->shouldQuit())
 		return false;
 
 	// Pause for a bit
-	if (events.wait(10))
-		return false;
+	WAIT(10);
 
 	sound.setMusicVolume(95);
 
 	screen.fadeOut(8);
 	screen.loadBackground("jvc.raw");
 	screen.draw();
-	screen.fadeIn(4);
+	screen.fadeIn();
 	
-	events.updateGameCounter();
-	events.wait(60);
+	WAIT(60);
 	return true;
 }
 
@@ -177,7 +171,6 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	bool fadeFlag = true;
 
 	for (int yCtr = SCREEN_HEIGHT; yCtr > 0; ) {
-		events.updateGameCounter();
 		screen.vertMerge(yp);
 
 		sprites[0].draw(screen, 0);
@@ -197,11 +190,10 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		yCtr -= timeExpired;
 		yp = MIN((uint)(yp + timeExpired), (uint)200);
 
-		if (events.wait(1))
-			return false;
+		WAIT(1);
 
 		if (fadeFlag) {
-			screen.fadeIn(4);
+			screen.fadeIn();
 			fadeFlag = false;
 		}
 	}
@@ -211,21 +203,17 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	screen.draw();
 	screen.freePages();
 
-	events.updateGameCounter();
-	if (events.wait(30))
-		return false;
+	WAIT(30);
 
 	// Zoom into the Pharoah's base closeup view
 	for (int idx = 14; idx >= 0; --idx) {
-		events.updateGameCounter();
 		sprites[1].draw(screen, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
 		sprites[1].draw(screen, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
 		screen.draw();
 
 		if (idx == 2)
 			sound.setMusicVolume(48);
-		if (events.wait(2))
-			return false;
+		WAIT(2);
 	}
 
 	return true;
@@ -236,34 +224,31 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	sound.playSong("dngon3.m");
+	//sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
 	screen.update();
+/*
+	screen.fadeIn();
+	WAIT(30);
 
-	screen.fadeIn(4);
-	events.updateGameCounter();
-	if (events.wait(30))
-		return false;
-
-	screen.fadeOut(4);
+	screen.fadeOut();
 	screen.loadBackground("scene2-b.raw");
 	screen.update();
 	screen.saveBackground();
 
 	SpriteResource faceEnd("face.end");
-	events.updateGameCounter();
 	screen.restoreBackground();
 	faceEnd.draw(screen, 0, Common::Point(29, 76), SPRFLAG_4000);
 	screen.update();
 
-	screen.fadeIn(4);
-	if (events.wait(1, false))
-		return false;
+	screen.fadeIn();
+	WAIT(1);
 
 	_subtitles.load("special.bin");
 	recordTime();
 	resetSubtitles();
+	_subtitleLineNum = 21;
 
 	// Alamar stands up
 	for (int idx = 74; idx > 20; idx -= 2) {
@@ -272,20 +257,17 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		else if (idx == 22)
 			sound.stopSong();
 
-		events.updateGameCounter();
 		screen.restoreBackground();
 		faceEnd.draw(screen, 0, Common::Point(29, idx), SPRFLAG_4000);
 		screen.update();
 
-		if (events.wait(2))
-			return false;
+		WAIT(2);
 	}
 	faceEnd.clear();
 
 	// Alamar says "Come to me"
 	sound.playSound("come2.voc");
-	if (!subtitlesWait(27))
-		return false;
+	WAIT(27);
 
 	// Show the entire throne room
 	screen.loadBackground("mainback.raw");
@@ -294,25 +276,20 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	screen.saveBackground();
 	screen.update();
-	events.updateGameCounter();
-	if (events.wait(30))
-		return false;
+	WAIT(30);
 
 	// Silhouette of door opening
 	sound.playSound("door.voc");
 	for (int idx = 0; idx < 6; ++idx) {
-		events.updateGameCounter();
 		screen.restoreBackground();
 		sc03b.draw(screen, idx, Common::Point(72, 125));
 		screen.update();
 
-		if (events.wait(4))
-			return false;
+		WAIT(4);
 	}
 
 	// Silhouette of playing entering
 	for (int idx = 0; idx < 19; ++idx) {
-		events.updateGameCounter();
 		screen.restoreBackground();
 		sc03c.draw(screen, idx, Common::Point(72, 125));
 		screen.update();
@@ -322,8 +299,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		if (idx == 7 || idx == 16)
 			sound.playFX(8);
 
-		if (events.wait(4))
-			return false;
+		WAIT(4);
 	}
 
 	sc03a.clear();
@@ -341,7 +317,6 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.horizMerge();
 	int yp = 101, ctr = 0, frameNum = 0;
 	for (int xp = 0; xp < 320; xp += 2) {
-		events.updateGameCounter();
 		screen.horizMerge(xp);
 
 		disk.draw(screen, frameNum, Common::Point(xp / 2, yp));
@@ -351,8 +326,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 		if (!(xp % 22))
 			sound.playSound(whoosh);
-		if (events.wait(1))
-			return false;
+		WAIT(1);
 
 		if (++ctr % 2)
 			frameNum = (frameNum + 1) % 10;
@@ -362,8 +336,9 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		else if (xp > 150)
 			++yp;
 	}
-	if (events.wait(10))
-		return false;
+
+	whoosh.close();
+	WAIT(10);
 
 	// Play landing thud
 	sound.playSound("thud.voc");
@@ -372,8 +347,299 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		events.pollEventsAndWait();
 	}
 
+	// Fade over to box opening background
+	events.updateGameCounter();
+	screen.freePages();
+	screen.fadeOut();
+	screen.loadBackground("sc050001.raw");
+	screen.update();
+	screen.saveBackground();
+	screen.fadeIn();
+	events.updateGameCounter();
 
-		// TODO
+	// Box opening
+	SpriteResource diskOpen[5] = {
+		SpriteResource("diska.end"), SpriteResource("diskb.end"),
+		SpriteResource("diskc.end"), SpriteResource("diskd.end"),
+		SpriteResource("diske.end")
+	};
+	File click("click.voc");
+
+	for (int idx = 0; idx < 34; ++idx) {
+		screen.restoreBackground();
+		diskOpen[idx / 8].draw(screen, idx % 8, Common::Point(28, 11));
+
+		WAIT(3);
+		if (idx == 0 || idx == 2 || idx == 4 || idx == 6)
+			sound.playSound(click);
+		else if (idx == 18)
+			sound.playSound("explosio.voc");
+		else if (idx == 9 || idx == 10 || idx == 11 || idx == 12)
+			sound.playFX(30);
+		else if (idx == 13)
+			sound.playFX(14);
+	}
+	click.close();
+	for (int idx = 0; idx < 5; ++idx)
+		diskOpen[idx].clear();
+
+	SpriteResource sc06[2] = {
+		SpriteResource("sc06a.end"), SpriteResource("sc06b.end")
+	};
+	screen.loadBackground("mainback.raw");
+	screen.saveBackground();
+	sc06[0].draw(screen, 0);
+	screen.update();
+	sound.playSound("alien2.voc");
+
+	// Zoomed out throneroom view of beam coming out of box
+	for (int idx = 0; idx < 20; ++idx) {
+		if (idx == 6 || idx == 8 || idx == 9 || idx == 10
+				|| idx == 13 || idx == 15 || idx == 16)
+			sound.playFX(3);
+
+		screen.restoreBackground();
+		sc06[idx / 10].draw(screen, idx % 10);
+		screen.update();
+
+		WAIT(3);
+	}
+
+	screen.fadeOut();
+	sc06[0].clear();
+	sc06[1].clear();
+
+	// Corak appearing
+	SpriteResource sc07[8] = {
+		SpriteResource("sc07a.end"), SpriteResource("sc07b.end"),
+		SpriteResource("sc07c.end"), SpriteResource("sc07d.end"),
+		SpriteResource("sc07e.end"), SpriteResource("sc07f.end"),
+		SpriteResource("sc07g.end"), SpriteResource("sc07h.end")
+	};
+
+	screen.loadBackground("sc070001.raw");
+	screen.saveBackground();
+	screen.update();
+	screen.fadeIn();
+	WAIT(2);
+
+	resetSubtitles();
+	_subtitleLineNum = 22;
+	recordTime();
+
+	for (int idx = 0; idx < 45; ++idx) {
+		screen.restoreBackground();
+		sc07[idx / 6].draw(screen, idx % 6, Common::Point(61, 12));
+
+		if (_subtitleSize == 0)
+			screen.update();
+		else
+			showSubtitles();
+
+		WAIT(2);
+		if (idx == 40)
+			_subtitleSize = 1;
+		else if (idx == 1 || idx == 19)
+			// Wind storm
+			sound.playSound("windstor.voc");
+	}
+
+	for (int idx = 0; idx < 8; ++idx)
+		sc07[idx].clear();
+
+	// Corak?!
+	sound.playSound("corak2.voc");
+	subtitlesWait(30);
+
+	// Yep, that's my name, don't wear it out
+	SpriteResource sc08("sc08.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 23;
+	_subtitleSize = 1;
+	sound.playFX(0);
+
+	for (int idx = 0; idx < 15; ++idx) {
+		if (idx == 2)
+			sound.playSound("yes1.voc");
+
+		// Animate Corak speaking
+		sc08.draw(screen, sound.isPlaying() ? getSpeakingFrame(0, 2) : 0);
+		showSubtitles();
+		WAIT(3);
+	}
+
+	do {
+		sc08.draw(screen, 0);
+		showSubtitles();
+	} while (_subtitleSize);
+		
+	sc08.clear();
+
+	// Nowhere to run to
+	SpriteResource sc09("sc09.end");
+
+	screen.loadBackground("sc090001.raw");
+	screen.saveBackground();
+	screen.update();
+
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 24;
+	_subtitleSize = 1;
+
+	for (int idx = 0; idx < 15; ++idx) {
+		if (idx == 2)
+			sound.playSound("nowre1.voc");
+
+		screen.restoreBackground();
+		sc09.draw(screen, getSpeakingFrame(0, 8));
+		showSubtitles();
+		WAIT(3);
+	}
+
+	do {
+		screen.restoreBackground();
+		showSubtitles();
+	} while (_subtitleSize);
+	sc09.clear();
+
+	// Nor do you!
+	SpriteResource sc10("sc10.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 25;
+	_subtitleSize = 1;
+
+	for (int idx = 0; idx < 15; ++idx) {
+		if (idx == 3)
+			sound.playSound("nordo2.voc");
+
+		screen.restoreBackground();
+		sc09.draw(screen, getSpeakingFrame(0, 1));
+		showSubtitles();
+		WAIT(3);
+	}
+
+	do {
+		screen.restoreBackground();
+		showSubtitles();
+	} while (_subtitleSize);
+	sc10.clear();
+	*/_subtitles.load("special.bin");
+
+	// Closeup of side of Alamar's helmet
+	SpriteResource sc11("sc11.end");
+	sound.setMusicVolume(95);
+	sound.playSong("dngon2.m");
+	screen.fadeOut();
+	screen.loadBackground("blank.raw");
+	screen.saveBackground();
+
+	for (int idx = 0; idx < 15; ++idx) {
+		screen.restoreBackground();
+		sc11.draw(screen, idx, Common::Point(100, 44));
+
+		if (idx == 0)
+			screen.fadeIn();
+		WAIT(3);
+
+		if (idx == 3)
+			sound.playSound("click.voc");
+		else if (idx == 5)
+			sound.playSound("airmon.voc");
+	}
+
+	screen.fadeOut();
+
+	// Helmet raises, we see the face appear
+	for (int idx = 80; idx > 20; idx -= 2) {
+		screen.restoreBackground();
+		sc11.draw(screen, 15, Common::Point(60, 80));
+		sc11.draw(screen, 16, Common::Point(61, idx));
+		sc11.draw(screen, 17);
+		screen.update();
+
+		if (idx == 80)
+			screen.fadeIn();
+
+		WAIT(3);
+	}
+
+	// Sheltem is revealed
+	sc11.clear();
+	screen.fadeOut();
+	screen.loadBackground("scene12.raw");
+	screen.update();
+	screen.fadeIn();
+	WAIT(30);
+	screen.fadeOut();
+
+	// I'm ready for you this time
+	SpriteResource sc13("sc13.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 26;
+	_subtitleSize = 1;
+	sound.setMusicVolume(48);
+
+	for (int idx = 0; idx < 16; ++idx) {
+		if (idx == 1)
+			sound.playSound("ready2.voc");
+
+		sc13.draw(screen, getSpeakingFrame(0, 3));
+		showSubtitles();
+
+		if (idx == 0)
+			screen.fadeIn();
+		WAIT(3);
+	}
+
+	do {
+		sc13.draw(screen, 0);
+		showSubtitles();
+		events.pollEventsAndWait();
+	} while (_subtitleSize);
+
+	sc13.clear();
+
+	// This fight will be your last
+	SpriteResource sc14("sc14.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 27;
+	_subtitleSize = 1;
+	screen.fadeOut();
+	screen.loadBackground("blank.raw");
+	screen.saveBackground();
+
+	sc14.draw(screen, 0, Common::Point(37, 37));
+	screen.update();
+	screen.fadeIn();
+
+	for (int waveNum = 0; waveNum < 3; ++waveNum) {
+		for (int idx = 0; idx < 10; ++idx) {
+			if (waveNum == 0 && idx == 3)
+				sound.playSound("fight2.voc");
+
+			screen.restoreBackground();
+			sc14.draw(screen, idx, Common::Point(37, 37));
+			showSubtitles();
+			WAIT(3);
+		}
+	}
+
+	while (_subtitleSize) {
+		showSubtitles();
+		events.pollEventsAndWait();
+		showSubtitles();
+	}
+	sc14.clear();
+
+	// Fighting start
+
+
+	// TODO
 	events.wait(5000);
 
 	freeSubtitles();

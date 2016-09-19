@@ -304,7 +304,7 @@ void XeenEngine::play() {
 
 	_interface->startup();
 	if (_mode == MODE_0) {
-//		_screen->fadeOut(4);
+//		_screen->fadeOut();
 	}
 
 	_screen->_windows[0].update();
@@ -315,7 +315,7 @@ void XeenEngine::play() {
 	_combat->_moveMonsters = true;
 	if (_mode == MODE_0) {
 		_mode = MODE_1;
-		_screen->fadeIn(4);
+		_screen->fadeIn();
 	}
 
 	_combat->_moveMonsters = true;

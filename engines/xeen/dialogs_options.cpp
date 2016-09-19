@@ -186,7 +186,7 @@ void WorldOptionsMenu::startup(Common::String &title1, Common::String &title2) {
 	title2 = "start.icn";
 
 	Screen &screen = *_vm->_screen;
-	screen.fadeOut(4);
+	screen.fadeOut();
 	screen.loadPalette("dark.pal");
 	_vm->_events->clearEvents();
 }
@@ -197,7 +197,7 @@ void WorldOptionsMenu::setBackground(bool doFade) {
 	screen.saveBackground();
 
 	if (doFade)
-		screen.fadeIn(4);	
+		screen.fadeIn();
 }
 
 void WorldOptionsMenu::openWindow() {

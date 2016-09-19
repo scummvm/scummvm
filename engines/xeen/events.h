@@ -105,6 +105,7 @@ public:
 	uint32 timeElapsed3() const { return _frameCounter - _gameCounters[3]; }
 	uint32 timeElapsed4() const { return _frameCounter - _gameCounters[4]; }
 	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
+	uint32 getTicks() { return _frameCounter; }
 
 	bool wait(uint numFrames, bool interruptable = true);
 

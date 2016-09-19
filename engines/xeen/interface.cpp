@@ -1077,12 +1077,12 @@ void Interface::rest() {
 		if (_vm->getRandomNumber(1, 20) == 1) {
 			// Show dream
 			screen.saveBackground();
-			screen.fadeOut(4);
+			screen.fadeOut();
 			events.hideCursor();
 
 			screen.loadBackground("scene1.raw");
 			screen._windows[0].update();
-			screen.fadeIn(4);
+			screen.fadeIn();
 
 			events.updateGameCounter();
 			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
@@ -1100,12 +1100,12 @@ void Interface::rest() {
 			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
 				events.pollEventsAndWait();
 
-			screen.fadeOut(4);
+			screen.fadeOut();
 			events.setCursor(0);
 			screen.restoreBackground();
 			screen._windows[0].update();
 
-			screen.fadeIn(4);
+			screen.fadeIn();
 		}
 
 		party.resetTemps();

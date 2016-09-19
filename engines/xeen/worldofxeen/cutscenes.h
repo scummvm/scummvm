@@ -28,6 +28,10 @@
 
 namespace Xeen {
 
+#define WAIT(time) events.updateGameCounter(); \
+	if (events.wait(time)) \
+		return false
+
 class XeenEngine;
 
 class Cutscenes {
@@ -72,6 +76,11 @@ protected:
 	 * Returns the number of ticks since the last recordTime
 	 */
 	uint timeElapsed();
+
+	/**
+	 * Get a speaking frame from a range
+	 */
+	uint getSpeakingFrame(uint minFrame, uint maxFrame);
 };
 
 } // End of namespace Xeen

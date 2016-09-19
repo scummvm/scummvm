@@ -35,7 +35,7 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	if (sound._soundOn) {
+	if (sound._soundOn || _vm->shouldQuit()) {
 		// Sound is on, so subtitles aren't needed
 		resetSubtitles();
 	} else {
@@ -96,5 +96,9 @@ uint Cutscenes::timeElapsed() {
 	return _vm->_events->timeElapsed1();
 }
 
+uint Cutscenes::getSpeakingFrame(uint minFrame, uint maxFrame) {
+	uint interval = g_system->getMillis() / 100;
+	return minFrame + interval % (maxFrame + 1 - minFrame);
+}
 
 } // End of namespace Xeen

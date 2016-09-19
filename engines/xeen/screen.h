@@ -178,9 +178,9 @@ public:
 
 	void draw(void *data = nullptr);
 
-	void fadeIn(int step);
+	void fadeIn(int step = 4);
 
-	void fadeOut(int step);
+	void fadeOut(int step = 4);
 
 	void saveBackground(int slot = 1);
 

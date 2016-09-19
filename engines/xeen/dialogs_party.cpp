@@ -86,10 +86,10 @@ void PartyDialog::execute() {
 		if (modeFlag) {
 			screen._windows[0].update();
 			events.setCursor(0);
-			screen.fadeIn(4);
+			screen.fadeIn();
 		} else {
 			if (_vm->getGameID() == GType_DarkSide) {
-				screen.fadeOut(4);
+				screen.fadeOut();
 				screen._windows[0].update();
 			}
 
@@ -97,7 +97,7 @@ void PartyDialog::execute() {
 			events.setCursor(0);
 
 			if (_vm->getGameID() == GType_DarkSide) {
-				screen.fadeIn(4);
+				screen.fadeIn();
 			}
 		}
 
@@ -200,14 +200,14 @@ void PartyDialog::execute() {
 				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
 					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
 				} else {
-					screen.fadeOut(4);
+					screen.fadeOut();
 					w.close();
 
 					createChar();
 
 					party.copyPartyToRoster();
 					_vm->_saves->writeCharFile();
-					screen.fadeOut(4);
+					screen.fadeOut();
 					modeFlag = true;
 					breakFlag = true;
 				}
@@ -498,7 +498,7 @@ void PartyDialog::createChar() {
 			// Draw the dice
 			drawDice(dice);
 			if (!hasFadedIn) {
-				screen.fadeIn(4);
+				screen.fadeIn();
 				hasFadedIn = true;
 			}
 
