@@ -137,7 +137,7 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst
 	_engineShouldQuit = false;
 	_dungeonId = 0;
 
-	_newGameFl = 0;
+	_gameMode = k0_modeLoadSavedGame;
 	_restartGameRequest = false;
 	_stopWaitingForPlayerInput = true;
 	_gameTimeTicking = false;
@@ -205,7 +205,7 @@ Common::Error DMEngine::loadGameState(int slot) {
 	if (loadgame(slot) != kDMLoadgameFailure) {
 		_displayMan->fillScreen(kDMColorBlack);
 		_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
-		_newGameFl = k0_modeLoadSavedGame;
+		_gameMode = k0_modeLoadSavedGame;
 
 		startGame();
 		_restartGameRequest = false;
@@ -259,7 +259,7 @@ void DMEngine::initializeGame() {
 			if (_engineShouldQuit)
 				return;
 
-			if (_newGameFl == k0_modeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
+			if (_gameMode == k0_modeLoadSavedGame) { // if resume was clicked, bring up ScummVM load screen
 				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 				saveSlot = dialog->runModalWithCurrentTarget();
 				delete dialog;
@@ -273,7 +273,7 @@ void DMEngine::initializeGame() {
 	_displayMan->allocateFlippedWallBitmaps();
 
 	startGame();
-	if (_newGameFl)
+	if (_gameMode != k0_modeLoadSavedGame)
 		_moveSens->getMoveResult(Thing::_party, kDMMapXNotOnASquare, 0, _dungeonMan->_partyMapX, _dungeonMan->_partyMapY);
 	_eventMan->showMouse();
 	_eventMan->discardAllInput();
@@ -312,7 +312,7 @@ void DMEngine::startGame() {
 
 	processNewPartyMap(_dungeonMan->_partyMapIndex);
 
-	if (!_newGameFl) {
+	if (_gameMode == k0_modeLoadSavedGame) {
 		_displayMan->startEndFadeToPalette(_displayMan->_paletteTopAndBottomScreen);
 		_displayMan->_useByteBoxCoordinates = false;
 		delay(1);
@@ -535,21 +535,21 @@ void DMEngine::processEntrance() {
 		drawEntrance();
 		_eventMan->showMouse();
 		_eventMan->discardAllInput();
-		_newGameFl = k99_modeWaitingOnEntrance;
+		_gameMode = k99_modeWaitingOnEntrance;
 		do {
 			_eventMan->processInput();
 			if (_engineShouldQuit)
 				return;
 			_eventMan->processCommandQueue();
 			_displayMan->updateScreen();
-		} while (_newGameFl == k99_modeWaitingOnEntrance);
-	} while (_newGameFl == kDMCommandEntranceDrawCredits);
+		} while (_gameMode == k99_modeWaitingOnEntrance);
+	} while (_gameMode == kDMCommandEntranceDrawCredits);
 
 	//Strangerke: CHECKME: Earlier versions were using G0566_puc_Graphic534_Sound01Switch
 	_sound->play(kDMSoundIndexSwitch, 112, 0x40, 0x40);
 	delay(20);
 	_eventMan->showMouse();
-	if (_newGameFl)
+	if (_gameMode != k0_modeLoadSavedGame)
 		openEntranceDoors();
 
 	delete[] _entranceDoorAnimSteps[0];
@@ -701,7 +701,7 @@ T0444017:
 				_displayMan->startEndFadeToPalette(darkBluePalette);
 				_displayMan->fillScreen(kDMColorBlack);
 				_displayMan->startEndFadeToPalette(_displayMan->_palDungeonView[0]);
-				_newGameFl = k0_modeLoadSavedGame;
+				_gameMode = k0_modeLoadSavedGame;
 				if (loadgame(1) != kDMLoadgameFailure) {
 					startGame();
 					_restartGameRequest = false;
@@ -891,7 +891,7 @@ void DMEngine::entranceDrawCredits() {
 	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	delay(50);
 	_eventMan->waitForMouseOrKeyActivity();
-	_newGameFl = k202_modeEntranceDrawCredits;
+	_gameMode = k202_modeEntranceDrawCredits;
 }
 
 void DMEngine::fuseSequence() {

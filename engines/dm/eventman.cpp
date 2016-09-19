@@ -904,12 +904,12 @@ void EventManager::processCommandQueue() {
 	}
 
 	if (cmdType == kDMCommandEntranceEnterDungeon) {
-		_vm->_newGameFl = k1_modeLoadDungeon;
+		_vm->_gameMode = k1_modeLoadDungeon;
 		return;
 	}
 
 	if (cmdType == kDMCommandEntranceResume) {
-		_vm->_newGameFl = k0_modeLoadSavedGame;
+		_vm->_gameMode = k0_modeLoadSavedGame;
 		return;
 	}
 

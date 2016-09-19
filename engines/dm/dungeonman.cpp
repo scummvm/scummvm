@@ -562,7 +562,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		50    /* Explosion */
 	};
 
-	if (_vm->_newGameFl)
+	if (_vm->_gameMode != k0_modeLoadSavedGame)
 		decompressDungeonFile();
 
 	Common::ReadStream *dunDataStream = nullptr;
@@ -587,7 +587,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_dungeonFileHeader._thingCounts[i] = dunDataStream->readUint16BE();
 
 	// init party position and mapindex
-	if (_vm->_newGameFl) {
+	if (_vm->_gameMode != k0_modeLoadSavedGame) {
 		uint16 startLoc = _dungeonFileHeader._partyStartLocation;
 		_partyDir = (Direction)((startLoc >> 10) & 3);
 		_partyMapX = startLoc & 0x1F;
@@ -643,7 +643,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	_dungeonColumCount = columCount;
 
 	uint32 actualSquareFirstThingCount = _dungeonFileHeader._squareFirstThingCount;
-	if (_vm->_newGameFl)
+	if (_vm->_gameMode != k0_modeLoadSavedGame)
 		_dungeonFileHeader._squareFirstThingCount += 300;
 
 	if (!_vm->_restartGameRequest) {
@@ -662,7 +662,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < actualSquareFirstThingCount; ++i)
 		_squareFirstThings[i].set(dunDataStream->readUint16BE());
 
-	if (_vm->_newGameFl) {
+	if (_vm->_gameMode != k0_modeLoadSavedGame) {
 		for (uint16 i = 0; i < 300; ++i)
 			_squareFirstThings[actualSquareFirstThingCount + i] = Thing::_none;
 	}
@@ -676,13 +676,13 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _dungeonFileHeader._textDataWordCount; ++i)
 		_dungeonTextData[i] = dunDataStream->readUint16BE();
 
-	if (_vm->_newGameFl)
+	if (_vm->_gameMode != k0_modeLoadSavedGame)
 		_vm->_timeline->_eventMaxCount = 100;
 
 	// load things
 	for (uint16 thingType = kDMThingTypeDoor; thingType < kDMThingTypeTotal; ++thingType) {
 		uint16 thingCount = _dungeonFileHeader._thingCounts[thingType];
-		if (_vm->_newGameFl)
+		if (_vm->_gameMode != k0_modeLoadSavedGame)
 			_dungeonFileHeader._thingCounts[thingType] = MIN((thingType == kDMThingTypeExplosion) ? 768 : 1024, thingCount + additionalThingCounts[thingType]);
 
 		uint16 thingStoreWordCount = _thingDataWordCount[thingType];
@@ -713,7 +713,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			}
 		}
 
-		if (_vm->_newGameFl) {
+		if (_vm->_gameMode != k0_modeLoadSavedGame) {
 			if ((thingType == kDMThingTypeGroup) || thingType >= kDMThingTypeProjectile)
 				_vm->_timeline->_eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
 

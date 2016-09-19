@@ -1828,7 +1828,7 @@ ChampionIndex ChampionMan::getIndexInCell(int16 cell) {
 }
 
 void ChampionMan::resetDataToStartGame() {
-	if (!_vm->_newGameFl) {
+	if (_vm->_gameMode = k0_modeLoadSavedGame) {
 		Thing handThing = _leaderHandObject;
 		if (handThing == Thing::_none) {
 			_leaderEmptyHanded = true;

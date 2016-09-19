@@ -43,7 +43,7 @@
 namespace DM {
 
 LoadgameResult DMEngine::loadgame(int16 slot) {
-	if (slot == -1 && _newGameFl == k0_modeLoadSavedGame)
+	if (slot == -1 && _gameMode == k0_modeLoadSavedGame)
 		return kDMLoadgameFailure;
 
 	bool fadePalette = true;
@@ -59,7 +59,7 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		uint16 _dungeonId;
 	} dmSaveHeader;
 
-	if (_newGameFl) {
+	if (_gameMode != k0_modeLoadSavedGame) {
 		//L1366_B_FadePalette = !F0428_DIALOG_RequireGameDiskInDrive_NoDialogDrawn(C0_DO_NOT_FORCE_DIALOG_DM_CSB, true);
 		_restartGameAllowed = false;
 		_championMan->_partyChampionCount = 0;
@@ -123,7 +123,7 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 	_dungeonMan->loadDungeonFile(file);
 	delete file;
 
-	if (_newGameFl) {
+	if (_gameMode != k0_modeLoadSavedGame) {
 		_timeline->initTimeline();
 		_groupMan->initActiveGroups();
 

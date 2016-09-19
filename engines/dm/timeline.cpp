@@ -110,7 +110,7 @@ Timeline::~Timeline() {
 void Timeline::initTimeline() {
 	_events = new TimelineEvent[_eventMaxCount];
 	_timeline = new uint16[_eventMaxCount];
-	if (_vm->_newGameFl) {
+	if (_vm->_gameMode != k0_modeLoadSavedGame) {
 		for (int16 i = 0; i < _eventMaxCount; ++i)
 			_events[i]._type = k0_TMEventTypeNone;
 		_eventCount = 0;

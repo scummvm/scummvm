@@ -304,7 +304,7 @@ public:
 	bool _engineShouldQuit;
 	int _loadSaveSlotAtRuntime;
 
-	int16 _newGameFl; // @ G0298_B_NewGame
+	GameMode _gameMode; // @ G0298_B_NewGame
 	bool _restartGameRequest; // @ G0523_B_RestartGameRequested
 
 	bool _stopWaitingForPlayerInput; // @ G0321_B_StopWaitingForPlayerInput

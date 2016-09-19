@@ -63,26 +63,26 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k557_FontGraphicIndice);
 
 	byte *tmp = _vm->_displayMan->_tmpBitmap;
-	for (uint16 i = 0; i < (k5_LetterWidth + 1) * k6_LetterHeight * 128; ++i)
+	for (uint16 i = 0; i < (kDMFontLetterWidth + 1) * kDMFontLetterHeight * 128; ++i)
 		tmp[i] = srcBitmap[i] ? textColor : bgColor;
 
 	srcBitmap = tmp;
 
 	for (const char *begin = text, *end = text + textLength; begin != end; ++begin) {
-		if (nextX + k5_LetterWidth + 1 >= destPixelWidth || (*begin == '\n')) {
+		if (nextX + kDMFontLetterWidth + 1 >= destPixelWidth || (*begin == '\n')) {
 			nextX = destX;
-			nextY += k6_LetterHeight + 1;
+			nextY += kDMFontLetterHeight + 1;
 		}
-		if (nextY + k6_LetterHeight >= destHeight)
+		if (nextY + kDMFontLetterHeight >= destHeight)
 			break;
 
 		uint16 srcX = (1 + 5) * *begin; // 1 + 5 is not the letter width, arbitrary choice of the unpacking code
 
-		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + k5_LetterWidth + 1, nextY, nextY + k6_LetterHeight - 1);
+		Box box((nextX == destX) ? (nextX + 1) : nextX, nextX + kDMFontLetterWidth + 1, nextY, nextY + kDMFontLetterHeight - 1);
 		_vm->_displayMan->blitToBitmap(srcBitmap, destBitmap, box, (nextX == destX) ? (srcX + 1) : srcX, 0, 6 * 128 / 2, destByteWidth, kDMColorNoTransparency,
-									   k6_LetterHeight, destHeight);
+									   kDMFontLetterHeight, destHeight);
 
-		nextX += k5_LetterWidth + 1;
+		nextX += kDMFontLetterWidth + 1;
 	}
 }
 

@@ -37,8 +37,8 @@ struct TextScroller {
 	// Placeholder, empty for now
 }; // @ Text_Scroller
 
-#define k5_LetterWidth 5
-#define k6_LetterHeight 6
+#define kDMFontLetterWidth 5
+#define kDMFontLetterHeight 6
 
 class TextMan {
 	DMEngine *_vm;
