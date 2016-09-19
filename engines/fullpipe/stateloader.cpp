@@ -78,8 +78,6 @@ void GameLoader::readSavegame(const char *fname) {
 	for (uint i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
-	//Common::hexdump(data, 48);
-
 	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
 
 	GameVar *var = (GameVar *)archive->readClass();

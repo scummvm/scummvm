@@ -475,9 +475,11 @@ void MfcArchive::writeObject(CObject *obj) {
 		writeUint16LE(0xffff); // New class
 		_objectHash[obj] = _lastIndex++;
 
+		writeUint16LE(1); // schema
+
 		switch (obj->_objtype) {
 		case kObjTypeGameVar:
-			writePascalString(lookupObjectId(kGameVar));
+			writePascalString(lookupObjectId(kGameVar), true); // Two byte counter
 			break;
 		default:
 			error("Unhandled save for object type: %d", obj->_objtype);
