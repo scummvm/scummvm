@@ -1622,7 +1622,7 @@ char *ModalSaveGame::getSaveName() {
 	if (_queryRes < 0)
 		return 0;
 
-	return _files[_queryRes]->filename;
+	return _files[_queryRes - 1]->filename;
 }
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {

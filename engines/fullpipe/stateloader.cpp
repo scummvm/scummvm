@@ -42,6 +42,11 @@ void GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
 
+	if (!saveFile) {
+		warning("Cannot open save %s for loading", fname);
+		return;
+	}
+
 	header.version = saveFile->readUint32LE();
 	saveFile->read(header.magic, 32);
 	header.updateCounter = saveFile->readUint32LE();
