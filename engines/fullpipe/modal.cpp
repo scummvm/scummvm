@@ -1601,7 +1601,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 		} else {
 			w = 0;
 
-			for (int j = 0; j < 16; j++) {
+			for (uint j = 0; j < _arrayL.size(); j++) {
 				_arrayL[j]->getDimensions(&point);
 				w += point.x + 2;
 			}
@@ -1640,7 +1640,11 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	SaveStateDescriptor desc(slot, header.saveName);
 	char res[17];
 
-	snprintf(res, 17, "%s  %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+	// FIXME. HACK. TODO: Set proper dates
+	desc.setSaveDate(2016, 9, 18);
+	desc.setSaveTime(9, 56);
+
+	snprintf(res, 17, "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
 	for (int i = 0; i < 16; i++) {
 		switch(res[i]) {

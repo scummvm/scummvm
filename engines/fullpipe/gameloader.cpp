@@ -712,7 +712,8 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	// Read in the string
 	header.saveName.clear();
 	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);
