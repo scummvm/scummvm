@@ -40,5 +40,5 @@ private:
 	bool Cmd_Dump(int argc, const char **argv);
 };
 
-} // End of namespace Drascula
+} // End of namespace Chewy
 #endif

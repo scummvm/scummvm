@@ -60,4 +60,4 @@ bool Console::Cmd_Dump(int argc, const char **argv) {
 	return true;
 }
 
-} // End of namespace Drascula
+} // End of namespace Chewy
