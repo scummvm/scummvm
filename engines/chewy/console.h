@@ -38,6 +38,7 @@ private:
 	ChewyEngine *_vm;
 
 	bool Cmd_Dump(int argc, const char **argv);
+	bool Cmd_Draw(int argc, const char **argv);
 };
 
 } // End of namespace Chewy

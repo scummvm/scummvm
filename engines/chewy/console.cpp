@@ -20,15 +20,18 @@
  *
  */
 
-#include "chewy/console.h"
 #include "gui/debugger.h"
+
 #include "chewy/chewy.h"
+#include "chewy/console.h"
+#include "chewy/graphics.h"
 #include "chewy/resource.h"
 
 namespace Chewy {
 
-	Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
+Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("draw",			WRAP_METHOD(Console, Cmd_Draw));
 }
 
 Console::~Console() {
@@ -58,6 +61,22 @@ bool Console::Cmd_Dump(int argc, const char **argv) {
 	delete res;
 
 	return true;
+}
+
+bool Console::Cmd_Draw(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Usage: draw <file> <resource number>\n");
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	int resNum = atoi(argv[2]);
+	
+	Graphics *g = new Graphics();
+	g->drawImage(filename, resNum);
+	delete g;
+
+	return false;
 }
 
 } // End of namespace Chewy
