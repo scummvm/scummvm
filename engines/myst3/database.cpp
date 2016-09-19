@@ -488,6 +488,9 @@ Common::Array<Opcode> Database::loadOpcodes(Common::SeekableReadStream &s) {
 		}
 
 		script.push_back(opcode);
+
+		if (s.eos())
+			break;
 	}
 
 	return script;
