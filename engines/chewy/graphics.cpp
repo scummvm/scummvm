@@ -30,8 +30,8 @@ namespace Chewy {
 
 void Graphics::drawImage(Common::String filename, int imageNum) {
 	Resource *res = new Resource("comic.tgp");
-	TBFChunk *cur = res->getChunk(0);
-	byte *buf = res->getChunkData(0);
+	TBFChunk *cur = res->getChunk(imageNum);
+	byte *buf = res->getChunkData(imageNum);
 
 	g_system->getPaletteManager()->setPalette(cur->palette, 0, 256);
 	g_system->copyRectToScreen(buf, cur->width, 0, 0, cur->width, cur->height);
