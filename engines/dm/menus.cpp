@@ -610,7 +610,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_championMan->_party._event73Count_ThievesEye++;
 			spellPower = (spellPower >> 1);
 			uint16 spellTicks = spellPower * spellPower;
-			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -618,7 +618,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			newEvent._type = k71_TMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
-			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -631,7 +631,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			_vm->_championMan->_party._shieldDefense += newEvent._Bu._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
 			uint16 spellTicks = spellPower * spellPower;
-			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -645,7 +645,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				_vm->_championMan->_party._lastScentIndex = 0;
 
 			uint16 spellTicks = spellPower * spellPower;
-			_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -815,7 +815,7 @@ void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	TimelineEvent newEvent;
 	newEvent._type = k70_TMEventTypeLight;
 	newEvent._Bu._lightPower = lightPower;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	newEvent._priority = 0;
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	_vm->_inventoryMan->setDungeonViewPalette();
@@ -850,7 +850,7 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShie
 		_vm->_championMan->_party._fireShieldDefense += newEvent._Bu._defense;
 	}
 	newEvent._priority = 0;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	_vm->_timeline->addEventGetEventIndex(&newEvent);
 	_vm->_timeline->refreshAllChampionStatusBoxes();
 
@@ -1275,7 +1275,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
 		newEvent._type = k73_TMEventTypeThievesEye;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
+		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		_vm->_championMan->_party._event73Count_ThievesEye++;
 		decrementCharges(curChampion);

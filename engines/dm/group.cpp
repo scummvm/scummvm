@@ -363,7 +363,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 		if (Square(*curSquare).getDoorState() == kDMDoorStateClosed) {
 			if (ticks) {
 				TimelineEvent newEvent;
-				_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
+				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
 				newEvent._type = k2_TMEventTypeDoorDestruction;
 				newEvent._priority = 0;
 				newEvent._Bu._location._mapX = mapX;
@@ -595,7 +595,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[curGroup->_type];
 	/* Update the event */
 	TimelineEvent nextEvent;
-	_vm->setMapAndTime(nextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime);
+	nextEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime);
 	nextEvent._priority = kDMMovementTicksImmobile - creatureInfo._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Bu._location._mapX = eventMapX;
 	nextEvent._Bu._location._mapY = eventMapY;
@@ -1296,7 +1296,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 					if (_vm->getRandomNumber(2)) {
 						toggleFlag(aspect, kDMAspectMaskActiveGroupFlipBitmap);
 						uint16 soundIndex = _vm->_moveSens->getSound(kDMCreatureTypeCouatl);
-						if (soundIndex <= k34_D13_soundCount)
+						if (soundIndex <= kDMSoundCount)
 							_vm->_sound->requestPlay(soundIndex, _currentGroupMapX, _currentGroupMapY, kDMSoundModePlayIfPrioritized);
 					}
 				} else if (_vm->getRandomNumber(2))
@@ -1649,7 +1649,7 @@ void GroupMan::startWandering(int16 mapX, int16 mapY) {
 		L0332_ps_Group->setBehaviour(kDMBehaviorWander);
 	}
 	TimelineEvent nextEvent;
-	_vm->setMapAndTime(nextEvent._mapTime, _vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
+	nextEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
 	nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
 	nextEvent._priority = kDMMovementTicksImmobile - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Cu._ticks = 0;
@@ -1894,7 +1894,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
 	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(kDMExplosionTypeFluxcage);
 	TimelineEvent newEvent;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = k24_TMEventTypeRemoveFluxcage;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();

@@ -52,7 +52,7 @@ SoundMan *SoundMan::getSoundMan(DMEngine *vm, const DMADGameDescription *gameVer
 }
 
 void SoundMan::initConstants() {
-	Sound sounds[k34_D13_soundCount] = {
+	Sound sounds[kDMSoundCount] = {
 		Sound(533, 112,  11, 3, 6), /* k00_soundMETALLIC_THUD 0 */
 		Sound(534, 112,  15, 0, 3), /* k01_soundSWITCH 1 */
 		Sound(535, 112,  72, 3, 6), /* k02_soundDOOR_RATTLE 2 */
@@ -88,7 +88,7 @@ void SoundMan::initConstants() {
 		Sound(573, 138,  29, 0, 4), /* k32_soundMOVE_RED_DRAGON 32 Atari ST: not present */
 		Sound(574, 150,  22, 0, 4)  /* k33_soundMOVE_SKELETON 33 Atari ST: not present */
 	};
-	for (int i = 0; i < k34_D13_soundCount; i++)
+	for (int i = 0; i < kDMSoundCount; i++)
 		_sounds[i] = sounds[i];
 }
 
@@ -97,12 +97,12 @@ SoundMan::SoundMan(DMEngine *vm) : _vm(vm) {
 }
 
 SoundMan::~SoundMan() {
-	for (uint16 i = 0; i < k34_D13_soundCount; ++i)
+	for (uint16 i = 0; i < kDMSoundCount; ++i)
 		delete[] _soundData[i]._firstSample;
 }
 
 void SoundMan::loadSounds() {
-	for (uint16 soundIndex = 0; soundIndex < k34_D13_soundCount; ++soundIndex) {
+	for (uint16 soundIndex = 0; soundIndex < kDMSoundCount; ++soundIndex) {
 		SoundData *soundData = _soundData + soundIndex;
 
 		uint16 graphicIndex = _sounds[soundIndex]._graphicIndex;
@@ -203,7 +203,7 @@ void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode 
 	Sound *sound = &_sounds[soundIndex];
 	if (soundMode == kDMSoundModePlayOneTickLater) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent newEvent;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + soundMode - 1);
+		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + soundMode - 1);
 		newEvent._type = k20_TMEventTypePlaySound;
 		newEvent._priority = sound->_priority;
 		newEvent._Cu._soundIndex = soundIndex;

@@ -57,7 +57,7 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	projectilePtr->_attack = attack;
 	_vm->_dungeonMan->linkThingToList(projectileThing, Thing(0), mapX, mapY); /* Projectiles are added on the square and not 'moved' onto the square. In the case of a projectile launcher sensor, this means that the new projectile traverses the square in front of the launcher without any trouble: there is no impact if it is a wall, the projectile direction is not changed if it is a teleporter. Impacts with creatures and champions are still processed */
 	TimelineEvent newEvent;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
 	if (_createLauncherProjectile)
 		newEvent._type = k49_TMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
 	else
@@ -311,7 +311,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), projectileMapX, projectileMapY);
 	TimelineEvent newEvent;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
 	newEvent._type = k25_TMEventTypeExplosion;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();
@@ -453,7 +453,7 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 		curEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 		curEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
 		projectileThingNewCell = _vm->thingWithNewCell(projectileThingNewCell, _vm->_moveSens->_moveResultCell);
-		M31_setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
+		_vm->setMap(curEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 	} else {
 		if ((Square(_vm->_dungeonMan->getSquare(destinationMapX, destinationMapY)).getType() == kDMElementTypeDoor) && hasProjectileImpactOccurred(kDMElementTypeDoor, destinationMapX, destinationMapY, projectileNewCell, projectileThing))
 			return;

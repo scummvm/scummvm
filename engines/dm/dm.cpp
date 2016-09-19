@@ -95,12 +95,16 @@ int32 DMEngine::filterTime(int32 mapTime) {
 	return mapTime & 0x00FFFFFF;
 }
 
-int32 DMEngine::setMapAndTime(int32 &mapTime, uint32 map, uint32 time) {
-	return (mapTime) = ((time) | (((long)(map)) << 24));
+int32 DMEngine::setMapAndTime(uint32 map, uint32 time) {
+	return (time | (map << 24));
 }
 
 uint16 DMEngine::getMap(int32 mapTime) {
-	return ((uint16)((mapTime) >> 24));
+	return ((uint16)(mapTime >> 24));
+}
+
+int32 DMEngine::setMap(int32 mapTime, uint32 map) {
+	return ((mapTime & 0x00FFFFFF) | (map << 24));
 }
 
 Thing DMEngine::thingWithNewCell(Thing thing, int16 cell) {

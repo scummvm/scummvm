@@ -541,7 +541,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 			newEvent->_Cu._projectile.setMapY(_vm->_moveSens->_moveResultMapY);
 			newEvent->_Cu._projectile.setDir((Direction)_vm->_moveSens->_moveResultDir);
 			newEvent->_Bu._slot = _vm->thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
-			M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
+			_vm->setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 		} else if (curThingType == kDMThingTypeExplosion) {
 			TimelineEvent *newEvent = _events;
 			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
@@ -549,7 +549,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 					newEvent->_Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
 					newEvent->_Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 					newEvent->_Cu._slot = _vm->thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
-					M31_setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
+					_vm->setMap(newEvent->_mapTime, _vm->_moveSens->_moveResultMapIndex);
 				}
 			}
 		}
@@ -749,7 +749,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 
 						TimelineEvent newEvent;
 						newEvent._type = k65_TMEventTypeEnableGroupGenerator;
-						_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
+						newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
 						newEvent._priority = 0;
 						newEvent._Bu._location._mapX = mapX;
 						newEvent._Bu._location._mapY = mapY;
@@ -900,7 +900,7 @@ void Timeline::processEventLight(TimelineEvent *event) {
 		TimelineEvent newEvent;
 		newEvent._type = k70_TMEventTypeLight;
 		newEvent._Bu._lightPower = weakerLightPower;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
+		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		newEvent._priority = 0;
 		addEventGetEventIndex(&newEvent);
 	}

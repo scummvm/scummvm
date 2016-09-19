@@ -1397,7 +1397,7 @@ void EventManager::clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 	if (droppingIntoAnAlcove && _vm->_dungeonMan->_isFacingViAltar && (_vm->_objectMan->getIconIndex(removedThing) == kDMIconIndiceJunkChampionBones)) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
 		TimelineEvent newEvent;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
+		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
 		newEvent._type = k13_TMEventTypeViAltarRebirth;
 		newEvent._priority = removedJunk->getChargeCount();
 		newEvent._Bu._location._mapX = mapX;

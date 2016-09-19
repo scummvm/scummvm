@@ -265,11 +265,13 @@ public:
 	bool isOrientedWestEast(int16 dir);	// @ M16_IS_ORIENTED_WEST_EAST
 	uint16 normalizeModulo4(int16 dir); // @ M21_NORMALIZE
 
-	int32 filterTime(int32 map_time); // @ M30_TIME
-	int32 setMapAndTime(int32 &map_time, uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
-	uint16 getMap(int32 map_time); // @ M29_MAP
+	int32 filterTime(int32 mapTime); // @ M30_TIME
+	int32 setMapAndTime(uint32 map, uint32 time); // @ M33_SET_MAP_AND_TIME
+	uint16 getMap(int32 mapTime); // @ M29_MAP
 	Thing thingWithNewCell(Thing thing, int16 cell); // @ M15_THING_WITH_NEW_CELL
-	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2);// @ M38_DISTANCE
+	int16 getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2); // @ M38_DISTANCE
+	int32 setMap(int32 mapTime, uint32 map); // @ M31_setMap
+
 
 private:
 	uint16 _dungeonId; // @ G0526_ui_DungeonID

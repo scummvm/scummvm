@@ -444,7 +444,7 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 				}
 				Group *tmpGroup = (Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup];
 				uint16 movementSoundIndex = getSound((CreatureType)tmpGroup[thing.getIndex()]._type);
-				if (movementSoundIndex < k34_D13_soundCount)
+				if (movementSoundIndex < kDMSoundCount)
 					_vm->_sound->requestPlay(movementSoundIndex, destMapX, destMapY, kDMSoundModePlayIfPrioritized);
 
 				if (groupOnPartyMap && (mapIndexDestination != _vm->_dungeonMan->_partyMapIndex)) { /* If the group leaves the party map */
@@ -585,7 +585,7 @@ T0266017_CheckProjectileImpacts:
 
 void MovesensMan::addEvent(byte type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time) {
 	TimelineEvent newEvent;
-	_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_currMapIndex, time);
+	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, time);
 	newEvent._type = type;
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;
@@ -983,7 +983,7 @@ void MovesensMan::processRotationEffect() {
 
 void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible) {
 	TimelineEvent newEvent;
-	_vm->setMapAndTime(newEvent._mapTime, mapIndex, _vm->_gameTime + 5);
+	newEvent._mapTime = _vm->setMapAndTime(mapIndex, _vm->_gameTime + 5);
 	newEvent._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;

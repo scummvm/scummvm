@@ -942,7 +942,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 		setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeDisableAction);
 		drawChampionState((ChampionIndex)champIndex);
 	}
-	_vm->setMapAndTime(curEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
+	curEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, updatedEnableActionEventTime);
 	curChampion->_enableActionEventIndex = _vm->_timeline->addEventGetEventIndex(&curEvent);
 }
 
@@ -1117,7 +1117,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 		TimelineEvent newEvent;
 		newEvent._type = k75_TMEventTypePoisonChampion;
 		newEvent._priority = champIndex;
-		_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
+		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
 		newEvent._Bu._attack = attack;
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 	}
@@ -1432,12 +1432,12 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			if (eventIndex == -1) {
 				TimelineEvent newEvent;
 				newEvent._type = k12_TMEventTypeHideDamageReceived;
-				_vm->setMapAndTime(newEvent._mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
+				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				newEvent._priority = championIndex;
 				championPtr->_hideDamageReceivedIndex = _vm->_timeline->addEventGetEventIndex(&newEvent);
 			} else {
 				TimelineEvent *curEvent = &_vm->_timeline->_events[eventIndex];
-				_vm->setMapAndTime(curEvent->_mapTime, _vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
+				curEvent->_mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 			}
 			drawChampionState((ChampionIndex)championIndex);
