@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/debug.h"
+#include "common/stream.h"
 #include "common/textconsole.h"
 
 #include "chewy/chewy.h"
@@ -41,9 +41,8 @@ Resource::Resource(Common::String filename) {
 
 	for (uint i = 0; i < _chunkCount; i++) {
 		TBFChunk cur;
-		cur.packedSize = _stream.readUint32LE();
+		cur.packedSize = _stream.readUint32LE() - TBF_CHUNK_HEADER_SIZE;
 		cur.type = _stream.readUint16LE();
-		cur.pos = _stream.pos();
 		if (_stream.readUint32BE() != tbfID)
 			error("Corrupt resource %s", filename.c_str());
 
@@ -52,15 +51,13 @@ Resource::Resource(Common::String filename) {
 		cur.unpackedSize = _stream.readUint32LE();
 		cur.width = _stream.readUint16LE();
 		cur.height = _stream.readUint16LE();
-		_stream.read(cur.palette, 3 * 256);
-		_stream.skip(cur.packedSize - TBF_CHUNK_HEADER_SIZE);
+		for (int j = 0; j < 3 * 256; j++)
+			cur.palette[j] = _stream.readByte() << 2;
+		cur.pos = _stream.pos();
+
+		_stream.skip(cur.packedSize);
 
 		_tbfChunkList.push_back(cur);
-
-		/*debug("Chunk %d: packed %d, type %d, pos %d, mode %d, comp %d, unpacked %d, width %d, height %d",
-			i, cur.packedSize, cur.type, cur.pos, cur.screenMode, cur.compressionFlag, cur.unpackedSize,
-			cur.width, cur.height
-		);*/
 	}
 
 }
@@ -74,9 +71,30 @@ TBFChunk *Resource::getChunk(int num) {
 	return &_tbfChunkList[num];
 }
 
-Common::SeekableReadStream *Resource::getChunkData(int num) {
-	// TODO
-	return nullptr;
+byte *Resource::getChunkData(int num) {
+	TBFChunk *chunk = &_tbfChunkList[num];
+	byte *data = new byte[chunk->unpackedSize];
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	if (!chunk->compressionFlag) {
+		_stream.read(data, chunk->packedSize);
+	} else {
+		// Compressed resources are packed using a very simple RLE compression
+		byte count;
+		byte value;
+		uint32 outPos = 0;
+
+		for (uint i = 0; i < (chunk->packedSize) / 2 && outPos < chunk->unpackedSize; i++) {
+			count = _stream.readByte();
+			value = _stream.readByte();
+			for (byte j = 0; j < count; j++) {
+				data[outPos++] = value;
+			}
+		}
+	}
+
+	return data;
 }
 
 } // End of namespace Chewy

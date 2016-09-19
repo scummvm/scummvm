@@ -40,7 +40,6 @@ namespace Chewy {
 struct TBFChunk {
 	uint32 packedSize;	// includes header
 	uint16 type;
-	uint32 pos;	// extra field
 
 	// TBF chunk header
 	// ID (TBF, followed by a zero)
@@ -49,7 +48,9 @@ struct TBFChunk {
 	uint32 unpackedSize;
 	uint16 width;
 	uint16 height;
-	char palette[3 * 256];
+	byte palette[3 * 256];
+
+	uint32 pos;	// position of the actual data
 };
 
 typedef Common::Array<TBFChunk> TBFChunkList;
@@ -60,7 +61,7 @@ public:
 	~Resource();
 
 	TBFChunk *getChunk(int num);
-	Common::SeekableReadStream *getChunkData(int num);
+	byte *getChunkData(int num);
 
 private:
 	Common::File _stream;
