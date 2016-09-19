@@ -78,11 +78,11 @@ void GameLoader::readSavegame(const char *fname) {
 	for (uint i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
+	//Common::hexdump(data, 48);
+
 	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
 
-	GameVar var;
-
-	var.load(*archive);
+	GameVar *var = (GameVar *)archive->readClass();
 
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
 
@@ -96,7 +96,7 @@ void GameLoader::readSavegame(const char *fname) {
 		}
 	}
 
-	addVar(&var, v);
+	addVar(var, v);
 
 	getGameLoaderInventory()->loadPartial(*archive);
 
@@ -313,6 +313,8 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+
+	_objtype = kObjTypeGameVar;
 }
 
 GameVar::~GameVar() {

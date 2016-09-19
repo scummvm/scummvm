@@ -97,6 +97,8 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	for (uint i = 0; i < header.encSize; i++)
 		stream.getData()[i] += i & 0x7f;
 
+	//Common::hexdump(stream.getData(), 48);
+
 	if (_savegameCallback)
 		_savegameCallback(archive, true);
 

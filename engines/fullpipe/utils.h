@@ -68,7 +68,7 @@ public:
 	MfcArchive(Common::WriteStream *file);
 
 	char *readPascalString(bool twoByte = false);
-	void writePascalString(char *str, bool twoByte = false);
+	void writePascalString(const char *str, bool twoByte = false);
 	int readCount();
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
@@ -103,7 +103,8 @@ enum ObjType {
 	kObjTypeMctlCompound,
 	kObjTypeObjstateCommand,
 	kObjTypePictureObject,
-	kObjTypeStaticANIObject
+	kObjTypeStaticANIObject,
+	kObjTypeGameVar
 };
 
 class CObject {

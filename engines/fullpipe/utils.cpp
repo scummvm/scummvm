@@ -109,7 +109,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	return tmp;
 }
 
-void MfcArchive::writePascalString(char *str, bool twoByte) {
+void MfcArchive::writePascalString(const char *str, bool twoByte) {
 	int len = strlen(str);
 
 	if (twoByte)
@@ -474,6 +474,14 @@ void MfcArchive::writeObject(CObject *obj) {
 	} else {
 		writeUint16LE(0xffff); // New class
 		_objectHash[obj] = _lastIndex++;
+
+		switch (obj->_objtype) {
+		case kObjTypeGameVar:
+			writePascalString(lookupObjectId(kGameVar));
+			break;
+		default:
+			error("Unhandled save for object type: %d", obj->_objtype);
+		}
 
 		obj->save(*this);
 	}
