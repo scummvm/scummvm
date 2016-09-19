@@ -38,7 +38,7 @@
 
 namespace Image {
 
-PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _stream(0) {
+PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -86,15 +86,11 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 #ifdef USE_PNG
 	destroy();
 
-	_stream = &stream;
-
 	// First, check the PNG signature
-	if (_stream->readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
-		delete _stream;
+	if (stream.readUint32BE() != MKTAG(0x89, 'P', 'N', 'G')) {
 		return false;
 	}
-	if (_stream->readUint32BE() != MKTAG(0x0d, 0x0a, 0x1a, 0x0a)) {
-		delete _stream;
+	if (stream.readUint32BE() != MKTAG(0x0d, 0x0a, 0x1a, 0x0a)) {
 		return false;
 	}
 
@@ -104,26 +100,23 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// along with the png-loading code used in the sword25-engine.
 	png_structp pngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!pngPtr) {
-		delete _stream;
 		return false;
 	}
 	png_infop infoPtr = png_create_info_struct(pngPtr);
 	if (!infoPtr) {
 		png_destroy_read_struct(&pngPtr, NULL, NULL);
-		delete _stream;
 		return false;
 	}
 	png_infop endInfo = png_create_info_struct(pngPtr);
 	if (!endInfo) {
 		png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
-		delete _stream;
 		return false;
 	}
 
 	png_set_error_fn(pngPtr, NULL, pngError, pngWarning);
 	// TODO: The manual says errors should be handled via setjmp
 
-	png_set_read_fn(pngPtr, _stream, pngReadFromStream);
+	png_set_read_fn(pngPtr, &stream, pngReadFromStream);
 	png_set_crc_action(pngPtr, PNG_CRC_DEFAULT, PNG_CRC_WARN_USE);
 	// We already verified the PNG-header
 	png_set_sig_bytes(pngPtr, 8);
@@ -232,9 +225,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 	// Destroy libpng structures
 	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
-
-	// We no longer need the file stream, thus close it here
-	_stream = 0;
 
 	return true;
 #else

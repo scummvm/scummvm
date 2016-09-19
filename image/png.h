@@ -56,7 +56,6 @@ public:
 	const byte *getPalette() const { return _palette; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 private:
-	Common::SeekableReadStream *_stream;
 	byte *_palette;
 	uint16 _paletteColorCount;
 
