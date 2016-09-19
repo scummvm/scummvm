@@ -65,9 +65,9 @@ public:
 	int getFirstChannel() const;
 	int getLastChannel() const;
 	void setVolume(byte volume);
+	void onNewSound();
 	int getVolume();
 	void setReverb(int8 reverb);
-	void setDefaultReverb();
 	void playSwitch(bool play);
 
 private:
@@ -381,6 +381,14 @@ int MidiPlayer_Midi::getVolume() {
 	return _masterVolume;
 }
 
+void MidiPlayer_Midi::onNewSound() {
+	if (_version <= SCI_VERSION_0_LATE && _defaultReverb >= 0)
+		// SCI0 in combination with MT-32 requires a reset of the reverb to
+		// the default value that is present in either the MT-32 patch data
+		// or MT32.DRV itself.
+		setReverb(_defaultReverb);
+}
+
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
@@ -388,11 +396,6 @@ void MidiPlayer_Midi::setReverb(int8 reverb) {
 		sendMt32SysEx(0x100001, _reverbConfig[reverb], 3, true);
 
 	_reverb = reverb;
-}
-
-void MidiPlayer_Midi::setDefaultReverb() {
-	if (_defaultReverb >= 0)
-		setReverb(_defaultReverb);
 }
 
 void MidiPlayer_Midi::playSwitch(bool play) {
@@ -555,10 +558,6 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 		sendMt32SysEx(0x100004, str, 9);
 	}
 
-	// Reverb for SCI0
-	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(_defaultReverb);
-
 	// Send after-SysEx text
 	str->seek(0);
 	sendMt32SysEx(0x200000, str, 20);
@@ -705,8 +704,6 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			// Patches 1-48
 			sendMt32SysEx(0x50000, static_cast<Common::SeekableReadStream *>(&f), 256);
 			sendMt32SysEx(0x50200, static_cast<Common::SeekableReadStream *>(&f), 128);
-
-			setReverb(_defaultReverb);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);
