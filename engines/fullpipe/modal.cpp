@@ -233,8 +233,6 @@ void ModalIntro::finish() {
 }
 
 void ModalVideoPlayer::play(const char *filename) {
-	// TODO: Videos are encoded using Intel Indeo 5 (IV50), which isn't supported yet
-
 	Video::AVIDecoder *aviDecoder = new Video::AVIDecoder();
 
 	if (!aviDecoder->loadFile(filename))
