@@ -171,10 +171,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			
 			// Initialize the array to hold the temporary data for the line. We do this to make it simpler
 			// to handle both deciding which pixels to draw in a scaled image, as well as when images
-			// have been horizontally flipped
-			int tempLine[SCREEN_WIDTH];
-			Common::fill(&tempLine[0], &tempLine[SCREEN_WIDTH], -1);
-			int *lineP = flipped ? &tempLine[width - 1 - xOffset] : &tempLine[xOffset];
+			// have been horizontally flipped. Note that we allocate an extra line for before and after our
+			// work line, just in case the sprite is screwed up and overruns the line
+			int tempLine[SCREEN_WIDTH * 3];
+			Common::fill(&tempLine[SCREEN_WIDTH], &tempLine[SCREEN_WIDTH * 3], -1);
+			int *lineP = flipped ? &tempLine[SCREEN_WIDTH + width - 1 - xOffset] : &tempLine[SCREEN_WIDTH + xOffset];
 
 			// Build up the line
 			int byteCount, opr1, opr2;
@@ -259,7 +260,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			// Handle drawing out the line
 			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
 			int16 xp = destPos.x;
-			lineP = &tempLine[0];
+			lineP = &tempLine[SCREEN_WIDTH];
 
 			for (int xCtr = 0; xCtr < width; ++xCtr, ++lineP) {
 				bit = (scaleMaskX >> 15) & 1;
