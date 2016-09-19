@@ -150,7 +150,7 @@ bool EventsManager::wait(uint numFrames, bool interruptable) {
 			return true;
 	}
 
-	return false;
+	return _vm->shouldQuit();
 }
 
 void EventsManager::ipause(uint amount) {

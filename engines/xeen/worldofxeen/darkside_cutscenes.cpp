@@ -351,7 +351,8 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 		if (!(xp % 22))
 			sound.playSound(whoosh);
-		events.wait(1);
+		if (events.wait(1))
+			return false;
 
 		if (++ctr % 2)
 			frameNum = (frameNum + 1) % 10;
@@ -361,11 +362,10 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		else if (xp > 150)
 			++yp;
 	}
-
-	// Play landing thud
 	if (events.wait(10))
 		return false;
 
+	// Play landing thud
 	sound.playSound("thud.voc");
 	while (!_vm->shouldQuit() && !events.isKeyMousePressed()
 			&& sound.isPlaying()) {

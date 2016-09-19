@@ -369,14 +369,17 @@ void Screen::horizMerge(int xp) {
 
 	for (int y = 0; y < SCREEN_HEIGHT; ++y) {
 		byte *destP = (byte *)getBasePtr(0, y);
-		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
+		const byte *srcP = (const byte *)_pages[0].getBasePtr(xp, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH - xp, destP);
 
 		if (xp != 0) {
+			destP = (byte *)getBasePtr(SCREEN_WIDTH - xp, y);
 			srcP = (const byte *)_pages[1].getBasePtr(0, y);
-			Common::copy(srcP + SCREEN_WIDTH - xp, srcP + SCREEN_WIDTH, destP + SCREEN_WIDTH - xp);
+			Common::copy(srcP, srcP + xp, destP);
 		}
 	}
+
+	markAllDirty();
 }
 
 void Screen::vertMerge(int yp) {
@@ -389,11 +392,13 @@ void Screen::vertMerge(int yp) {
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
 
-	for (int y = SCREEN_HEIGHT - yp; y < SCREEN_HEIGHT; ++y) {
+	for (int y = 0; y < (SCREEN_HEIGHT - yp); ++y) {
 		const byte *srcP = (const byte *)_pages[1].getBasePtr(0, y);
-		byte *destP = (byte *)getBasePtr(0, y);
+		byte *destP = (byte *)getBasePtr(0, SCREEN_HEIGHT - yp + y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
+
+	markAllDirty();
 }
 
 void Screen::draw(void *data) {
