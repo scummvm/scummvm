@@ -29,7 +29,7 @@
 namespace Chewy {
 
 void Graphics::drawImage(Common::String filename, int imageNum) {
-	Resource *res = new Resource("comic.tgp");
+	Resource *res = new Resource(filename);
 	TBFChunk *cur = res->getChunk(imageNum);
 	byte *buf = res->getChunkData(imageNum);
 
