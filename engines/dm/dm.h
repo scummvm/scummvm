@@ -129,10 +129,10 @@ enum Cell {
 };
 
 enum GameMode {
-	k0_modeLoadSavedGame = 0, // @ C000_MODE_LOAD_SAVED_GAME        
-	k1_modeLoadDungeon = 1, // @ C001_MODE_LOAD_DUNGEON           
-	k99_modeWaitingOnEntrance = 99, // @ C099_MODE_WAITING_ON_ENTRANCE   
-	k202_modeEntranceDrawCredits = 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
+	kDMModeLoadSavedGame = 0, // @ C000_MODE_LOAD_SAVED_GAME        
+	kDMModeLoadDungeon = 1, // @ C001_MODE_LOAD_DUNGEON           
+	kDMModeWaitingOnEntrance = 99, // @ C099_MODE_WAITING_ON_ENTRANCE   
+	kDMModeEntranceDrawCredits = 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
 };
 
 enum LoadgameResult {

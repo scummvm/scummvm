@@ -76,7 +76,7 @@ uint16 GroupMan::toggleFlag(uint16& val, uint16 mask) {
 }
 
 void GroupMan::initActiveGroups() {
-	if (_vm->_gameMode != k0_modeLoadSavedGame)
+	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		_maxActiveGroupCount = 60;
 
 	if (_activeGroups)
