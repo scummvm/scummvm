@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	chewy.o \
 	console.o \
 	detection.o \
+	graphics.o \
 	resource.o
 
 

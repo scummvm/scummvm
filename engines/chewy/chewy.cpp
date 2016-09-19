@@ -24,11 +24,13 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 
 #include "engines/engine.h"
 #include "engines/util.h"
 
 #include "chewy/chewy.h"
+#include "chewy/graphics.h"
 #include "chewy/resource.h"
 
 namespace Chewy {
@@ -56,19 +58,13 @@ ChewyEngine::~ChewyEngine() {
 
 Common::Error ChewyEngine::run() {
 	// Initialize backend
-	initGraphics(320, 200, false);
+	initGraphics(640, 480, true);
 
 	initialize();
 
-	Resource *res = new Resource("comic.tgp");
-	TBFChunk *cur = res->getChunk(1);
-	
-	debug("Chunk 1: packed %d, type %d, pos %d, mode %d, comp %d, unpacked %d, width %d, height %d",
-		cur->packedSize, cur->type, cur->pos, cur->screenMode, cur->compressionFlag, cur->unpackedSize,
-		cur->width, cur->height
-	);
-
-	delete res;
+	Graphics *g = new Graphics();
+	g->drawImage("comic.tgp", 0);
+	delete g;
 
 	// Run a dummy loop
 	Common::Event event;
