@@ -20,54 +20,32 @@
  *
  */
 
-#ifndef CHEWY_H
-#define CHEWY_H
+#ifndef CHEWY_SOUND_H
+#define CHEWY_SOUND_H
 
-
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-
-#include "engines/engine.h"
+#include "audio/mixer.h"
+#include "chewy/chewy.h"
 
 namespace Chewy {
 
-struct ChewyGameDescription;
-class Console;
-class Graphics;
-class Sound;
+class Resource;
 
-class ChewyEngine : public Engine {
-
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-
-	void shutdown();
-
-	void initialize();
-
-	Console *_console;
-
+class Sound {
 public:
-	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
-	virtual ~ChewyEngine();
+	Sound();
+	~Sound();
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	void playSound(int num, bool loop = false);
+	void playMusic(int num, bool loop = false);
+	void playSpeech(int num);
 
-	const ChewyGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
+private:
+	Audio::SoundHandle _soundHandle;
+	Audio::SoundHandle _musicHandle;
+	Audio::SoundHandle _speechHandle;
 
-	Graphics *_graphics;
-	Sound *_sound;
+	Resource *_speechRes;
+	Resource *_soundRes;
 };
 
 } // End of namespace Chewy

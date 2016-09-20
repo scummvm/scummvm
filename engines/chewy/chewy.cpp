@@ -30,8 +30,10 @@
 #include "engines/util.h"
 
 #include "chewy/chewy.h"
+#include "chewy/console.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
@@ -39,8 +41,6 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 	: Engine(syst),
 	_gameDescription(gameDesc),
 	_rnd("chewy") {
-
-	_console = new Console(this);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -54,17 +54,28 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 }
 
 ChewyEngine::~ChewyEngine() {
+	delete _console;
+	delete _sound;
+	delete _graphics;
+}
+
+void ChewyEngine::initialize() {
+	_console = new Console(this);
+	_graphics = new Graphics();
+	_sound = new Sound();
 }
 
 Common::Error ChewyEngine::run() {
 	// Initialize backend
-	initGraphics(640, 480, true);
+	//initGraphics(640, 480, true);
+	initGraphics(320, 200, false);
 
 	initialize();
 
-	Graphics *g = new Graphics();
-	g->drawImage("comic.tgp", 0);
-	delete g;
+	_graphics->drawImage("episode1.tgp", 0);
+	//_sound->playSpeech(1);
+	//_sound->playSound(1);
+	//_sound->playMusic(2);
 
 	// Run a dummy loop
 	Common::Event event;
@@ -82,9 +93,6 @@ Common::Error ChewyEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-void ChewyEngine::initialize() {
 }
 
 } // End of namespace Chewy

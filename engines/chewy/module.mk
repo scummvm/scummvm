@@ -5,8 +5,8 @@ MODULE_OBJS = \
 	console.o \
 	detection.o \
 	graphics.o \
-	resource.o
-
+	resource.o \
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)
