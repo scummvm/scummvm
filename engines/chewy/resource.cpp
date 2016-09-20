@@ -226,4 +226,25 @@ Common::String TextResource::getText(uint num) {
 	return str;
 }
 
+VideoChunk *VideoResource::getVideoHeader(uint num) {
+	assert(num < _chunkList.size());
+
+	Chunk *chunk = &_chunkList[num];
+	VideoChunk *vid = new VideoChunk();
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	if (_stream.readUint32BE() != MKTAG('C', 'F', 'O', '\0'))
+		error("Corrupt video resource");
+
+	vid->size = _stream.readUint32LE();	// always 0
+	vid->frameCount = _stream.readUint16LE();
+	vid->width = _stream.readUint16LE();
+	vid->height = _stream.readUint16LE();
+	vid->frameDelay = _stream.readUint32LE();
+	vid->firstFrameOffset = _stream.readUint32LE();	// always 22
+
+	return vid;
+}
+
 } // End of namespace Chewy

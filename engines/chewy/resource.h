@@ -94,6 +94,17 @@ struct SoundChunk {
 	byte *data;
 };
 
+// Video chunk header
+struct VideoChunk {
+	// ID (CFA, followed by a zero)
+	uint32 size;
+	uint16 frameCount;
+	uint16 width;
+	uint16 height;
+	uint32 frameDelay;	// in ms
+	uint32 firstFrameOffset;
+};
+
 typedef Common::Array<Chunk> ChunkList;
 typedef Common::Array<TBFChunk> TBFChunkList;
 
@@ -111,7 +122,7 @@ protected:
 	Common::File _stream;
 	uint16 _chunkCount;
 	ResourceType _resType;
-	byte _encrypted;
+	bool _encrypted;
 
 	ChunkList _chunkList;
 };
@@ -138,6 +149,14 @@ public:
 	~TextResource() {}
 
 	Common::String getText(uint num);
+};
+
+class VideoResource : public Resource {
+public:
+	VideoResource(Common::String filename) : Resource(filename) {}
+	~VideoResource() {}
+
+	VideoChunk *getVideoHeader(uint num);
 };
 
 } // End of namespace Chewy

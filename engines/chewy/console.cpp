@@ -37,6 +37,8 @@ Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("play_sound",	WRAP_METHOD(Console, Cmd_PlaySound));
 	registerCmd("play_speech",	WRAP_METHOD(Console, Cmd_PlaySpeech));
 	registerCmd("play_music",	WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("play_video",	WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("video_info",	WRAP_METHOD(Console, Cmd_VideoInfo));
 	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
 }
 
@@ -145,6 +147,35 @@ bool Console::Cmd_PlayMusic(int argc, const char **argv) {
 
 	int resNum = atoi(argv[1]);
 	_vm->_sound->playMusic(resNum);
+
+	return true;
+}
+
+bool Console::Cmd_PlayVideo(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_video <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	debugPrintf("TODO: Play video %d", resNum);
+	// TODO
+
+	return true;
+}
+
+bool Console::Cmd_VideoInfo(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: video_info <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	VideoResource *res = new VideoResource("cut.tap");
+	VideoChunk *header = res->getVideoHeader(resNum);
+	debugPrintf("Size: %d, %d x %d, %d frames, %d ms frame delay, first frame at %d\n", header->size, header->width, header->height, header->frameCount, header->frameDelay, header->firstFrameOffset);
+	delete header;
+	delete res;
 
 	return true;
 }
