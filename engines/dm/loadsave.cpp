@@ -183,6 +183,7 @@ void DMEngine::saveGame() {
 	if (saveAndPlayChoice == kLoad) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		int loadSlot = dialog->runModalWithCurrentTarget();
+		delete dialog;
 		if (loadSlot >= 0) {
 			_loadSaveSlotAtRuntime = loadSlot;
 			return;

@@ -163,6 +163,7 @@ MenuMan::MenuMan(DMEngine *vm) : _vm(vm) {
 
 MenuMan::~MenuMan() {
 	delete[] _bitmapSpellAreaLine;
+	delete[] _bitmapSpellAreaLines;
 }
 
 void MenuMan::drawMovementArrows() {
