@@ -1587,4 +1587,33 @@ const char *const EVENT_SAMPLES[6] = {
 	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
 };
 
+const char *const DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
+	"\n"
+	"Your Final Score is:\n"
+	"\n"
+	"%010lu\n"
+	"\x3" "l\n"
+	"Please send this score to the Ancient's Headquarters "
+	"where you'll be added to the Hall of Legends!\n"
+	"\n"
+	"Ancient's Headquarters\n"
+	"New World Computing, Inc.\n"
+	"P.O. Box 4302\n"
+	"Hollywood, CA 90078";
+
+const char *const DARKSIDE_ENDING2 = "\n"
+	"Adventurers,\n"
+	"\n"
+	"I have saved your game in Castleview.\n"
+	"\n"
+	"The World of Xeen still needs you!\n"
+	"\n"
+	"Load your game and come visit me in the Great Pyramid "
+	"for further instructions";
+
+const char *const PHAROAH_ENDING_TEXT1 = "\xC" "d\xB"
+	"001\x9" "001%s\x3" "c\x9" "000\xB" "180Press a Key!\x3" "l";
+const char *const PHAROAH_ENDING_TEXT2 = "\xC" "04\xB"
+	"000\x9" "000%s\x3" "c\x9" "000\xB" "180Press a Key!\x3" "l\xC" "d";
+
 } // End of namespace Xeen

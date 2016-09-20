@@ -62,6 +62,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_quitMode = 0;
 	_noDirectionSense = false;
 	_mode = MODE_0;
+	_endingScore = 0;
 	_startupWindowActive = false;
 	g_vm = this;
 }

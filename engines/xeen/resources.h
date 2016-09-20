@@ -564,6 +564,12 @@ extern const char *const IDENTIFY_MONSTERS;
 
 extern const char *const EVENT_SAMPLES[6];
 
+extern const char *const DARKSIDE_ENDING1;
+extern const char *const DARKSIDE_ENDING2;
+
+extern const char *const PHAROAH_ENDING_TEXT1;
+extern const char *const PHAROAH_ENDING_TEXT2;
+
 } // End of namespace Xeen
 
 #endif	/* XEEN_RESOURCES_H */

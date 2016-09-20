@@ -156,6 +156,7 @@ public:
 	int _quitMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;
+	uint _endingScore;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

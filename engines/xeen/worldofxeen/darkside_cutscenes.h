@@ -30,6 +30,11 @@ namespace Xeen {
 class XeenEngine;
 
 class DarkSideCutscenes : public Cutscenes {
+protected:
+	/**
+	 * Shows the Pharaoh ending screen where score text is shown
+	 */
+	void showPharaohEndText(const char *msg1, const char *msg2 = nullptr, const char *msg3 = nullptr);
 public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
@@ -47,6 +52,11 @@ public:
 	 * Shows the Dark Side of Xeen ending sequence
 	 */
 	bool showDarkSideEnding();
+
+	/**
+	 * Show the ending score
+	 */
+	void showDarkSideScore();
 };
 
 } // End of namespace Xeen

@@ -22,10 +22,20 @@
 
 #include "xeen/worldofxeen/darkside_cutscenes.h"
 #include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/resources.h"
 #include "xeen/sound.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
+
+static const int CUTSCENES_XLIST[32] = {
+	146, 145, 143, 141, 141, 141, 141, 141, 141, 141, 141, 142, 143, 144, 145, 146,
+	146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146
+};
+static const int CUTSCENES_YLIST[32] = {
+	143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143,
+	143, 143, 144, 145, 145, 145, 145, 145, 145, 145, 145, 144, 143, 143, 143, 143
+};
 
 bool DarkSideCutscenes::showDarkSideTitle() {
 	EventsManager &events = *_vm->_events;
@@ -1070,11 +1080,84 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		}
 	}
 
+	screen.fadeOut();
+	sound.stopSong();
 	for (int idx = 0; idx < 6; ++idx)
 		sc29[idx].clear();
 
 	freeSubtitles();
 	return true;
+}
+
+void DarkSideCutscenes::showDarkSideScore() {
+	Common::String str = Common::String::format(DARKSIDE_ENDING1, _vm->_endingScore);
+	showPharaohEndText(str.c_str(), DARKSIDE_ENDING2);
+}
+
+void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
+	const int YLIST[32] = {
+		-3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
+		-1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3
+	};
+	const int FRAMES[32] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 2, 1,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+	const int XLIST2[32] = {
+		223, 222, 220, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,
+		219, 219, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 221
+	};
+	const int YLIST2[32] = {
+		116, 116, 116, 117, 117, 117, 117, 117, 118, 118, 118, 118, 118, 118, 118, 118,
+		118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118
+	};
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	SpriteResource claw("claw.int");
+	SpriteResource dragon1("dragon1.int");
+	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
+	const char *const text[3] = { msg1, msg2, msg3 };
+
+	screen.loadBackground("3room.raw");
+	screen.saveBackground();
+	screen.loadPalette("dark.pal");
+	claw.draw(screen, 5, Common::Point(CUTSCENES_XLIST[0], CUTSCENES_YLIST[0]), SPRFLAG_800);
+	claw.draw(screen, 6, Common::Point(149, 184));
+	dragon1.draw(screen, FRAMES[0], Common::Point(139, YLIST[0]), SPRFLAG_800);
+	claw.draw(screen, 0, Common::Point(XLIST2[0], YLIST2[0]), SPRFLAG_800);
+	screen.update();
+	screen.fadeIn();
+	events.clearEvents();
+
+	// Iterate through showing the pages
+	int idx = 1;
+	for (int pageNum = 0; !_vm->shouldQuit() && pageNum < numPages; ++pageNum) {
+		// Show each page until a key is pressed
+		do {
+			// Draw the dragon pharoah
+			screen.restoreBackground();
+			claw.draw(screen, 5, Common::Point(CUTSCENES_XLIST[idx], CUTSCENES_YLIST[idx]), SPRFLAG_800);
+			claw.draw(screen, 6, Common::Point(145, 185));
+			dragon1.draw(screen, FRAMES[idx], Common::Point(139, YLIST[idx]), SPRFLAG_800);
+			claw.draw(screen, idx % 5, Common::Point(XLIST2[idx], YLIST2[idx]), SPRFLAG_800);
+
+			// Form the text string to display the text
+			Common::String str1 = Common::String::format(PHAROAH_ENDING_TEXT1,
+				text[pageNum]);
+			screen._windows[39].writeString(str1);
+
+			Common::String str2 = Common::String::format(PHAROAH_ENDING_TEXT2,
+				text[pageNum]);
+			screen._windows[39].writeString(str2);
+
+			idx = (idx + 1) % 32;
+			screen.update();
+			
+			events.pollEventsAndWait();
+		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+
+		events.clearEvents();
+	}
 }
 
 } // End of namespace Xeen
