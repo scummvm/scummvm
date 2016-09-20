@@ -43,6 +43,7 @@ private:
 	bool Cmd_PlaySound(int argc, const char **argv);
 	bool Cmd_PlaySpeech(int argc, const char **argv);
 	bool Cmd_PlayMusic(int argc, const char **argv);
+	bool Cmd_Text(int argc, const char **argv);
 };
 
 } // End of namespace Chewy

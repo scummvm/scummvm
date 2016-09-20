@@ -70,6 +70,7 @@ enum ResourceType {
 // Generic chunk header
 struct Chunk {
 	uint32 size;
+	uint16 num;	// same as the type below, used in chunks where the type is substituted with count
 	ResourceType type;
 	uint32 pos;	// position of the actual data
 };
@@ -103,13 +104,14 @@ public:
 
 	ResourceType getType() const { return _resType; }
 	uint32 getChunkCount() const;
-	Chunk *getChunk(int num);
-	virtual byte *getChunkData(int num);
+	Chunk *getChunk(uint num);
+	virtual byte *getChunkData(uint num);
 
 protected:
 	Common::File _stream;
 	uint16 _chunkCount;
 	ResourceType _resType;
+	byte _encrypted;
 
 	ChunkList _chunkList;
 };
@@ -119,7 +121,7 @@ public:
 	BackgroundResource(Common::String filename) : Resource(filename) {}
 	~BackgroundResource() {}
 
-	TBFChunk *getImage(int num);
+	TBFChunk *getImage(uint num);
 };
 
 class SoundResource : public Resource {
@@ -127,7 +129,15 @@ public:
 	SoundResource(Common::String filename) : Resource(filename) {}
 	~SoundResource() {}
 
-	SoundChunk *getSound(int num);
+	SoundChunk *getSound(uint num);
+};
+
+class TextResource : public Resource {
+public:
+	TextResource(Common::String filename) : Resource(filename) {}
+	~TextResource() {}
+
+	Common::String getText(uint num);
 };
 
 } // End of namespace Chewy

@@ -30,17 +30,37 @@
 namespace Chewy {
 
 Resource::Resource(Common::String filename) {
+	const uint32 headerGeneric = MKTAG('N', 'G', 'S', '\0');
+	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
+	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
+
 	_stream.open(filename);
-	uint32 magicBytes = MKTAG('N', 'G', 'S', '\0');
-	if (_stream.readUint32BE() != magicBytes)
+
+	uint32 header = _stream.readUint32BE();
+	bool isText = header == headerTxtDec || header == headerTxtEnc;
+
+	if (header != headerGeneric && !isText)
 		error("Invalid resource - %s", filename.c_str());
-	_resType = (ResourceType)_stream.readUint16LE();
+
+	if (isText) {
+		_resType = kResourceTCF;
+		_encrypted = (header == headerTxtEnc);
+	} else {
+		_resType = (ResourceType)_stream.readUint16LE();
+		_encrypted = false;
+	}
+
 	_chunkCount = _stream.readUint16LE();
 
 	for (uint i = 0; i < _chunkCount; i++) {
 		Chunk cur;
 		cur.size = _stream.readUint32LE();
-		cur.type = (ResourceType)_stream.readUint16LE();
+
+		if (!isText)
+			cur.type = (ResourceType)_stream.readUint16LE();
+		else
+			cur.num = _stream.readUint16LE();
+
 		cur.pos = _stream.pos();
 
 		_stream.skip(cur.size);
@@ -57,11 +77,15 @@ uint32 Resource::getChunkCount() const {
 	return _chunkList.size();
 }
 
-Chunk *Resource::getChunk(int num) {
+Chunk *Resource::getChunk(uint num) {
+	assert(num < _chunkList.size());
+
 	return &_chunkList[num];
 }
 
-byte *Resource::getChunkData(int num) {
+byte *Resource::getChunkData(uint num) {
+	assert(num < _chunkList.size());
+
 	Chunk *chunk = &_chunkList[num];
 	byte *data = new byte[chunk->size];
 
@@ -71,7 +95,9 @@ byte *Resource::getChunkData(int num) {
 	return data;
 }
 
-TBFChunk *BackgroundResource::getImage(int num) {
+TBFChunk *BackgroundResource::getImage(uint num) {
+	assert(num < _chunkList.size());
+
 	Chunk *chunk = &_chunkList[num];
 	TBFChunk *tbf = new TBFChunk();
 
@@ -111,7 +137,9 @@ TBFChunk *BackgroundResource::getImage(int num) {
 	return tbf;
 }
 
-SoundChunk *SoundResource::getSound(int num) {
+SoundChunk *SoundResource::getSound(uint num) {
+	assert(num < _chunkList.size());
+
 	Chunk *chunk = &_chunkList[num];
 	SoundChunk *sound = new SoundChunk();
 
@@ -153,6 +181,32 @@ SoundChunk *SoundResource::getSound(int num) {
 	} while (blocksRemaining > 1);
 
 	return sound;
+}
+
+Common::String TextResource::getText(uint num) {
+	assert(num < _chunkList.size());
+
+	Chunk *chunk = &_chunkList[num];
+	Common::String str;
+	byte *data = new byte[chunk->size];
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	_stream.read(data, chunk->size);
+
+	if (_encrypted) {
+		byte *c = data;
+
+		for (uint i = 0; i < chunk->size; i++) {
+			*c = -(*c);
+			++c;
+		}
+	}
+
+	str = (char *)data;
+	delete[] data;
+
+	return str;
 }
 
 } // End of namespace Chewy

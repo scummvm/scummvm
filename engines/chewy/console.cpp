@@ -37,6 +37,7 @@ Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("play_sound",	WRAP_METHOD(Console, Cmd_PlaySound));
 	registerCmd("play_speech",	WRAP_METHOD(Console, Cmd_PlaySpeech));
 	registerCmd("play_music",	WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
 }
 
 Console::~Console() {
@@ -144,6 +145,23 @@ bool Console::Cmd_PlayMusic(int argc, const char **argv) {
 
 	int resNum = atoi(argv[1]);
 	_vm->_sound->playMusic(resNum);
+
+	return true;
+}
+
+bool Console::Cmd_Text(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: <file> <text number>\n");
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	int resNum = atoi(argv[2]);
+
+	TextResource *res = new TextResource(filename);
+	Common::String str = res->getText(resNum);
+	this->debugPrintf("Text: %s\n", str.c_str());
+	delete res;
 
 	return true;
 }
