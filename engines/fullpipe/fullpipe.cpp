@@ -284,10 +284,18 @@ Common::Error FullpipeEngine::run() {
 
 	_gameContinue = true;
 
+	int time1 = g_fp->_system->getMillis();
+
 	while (_gameContinue) {
 		updateEvents();
 
-		updateScreen();
+		int time2 = g_fp->_system->getMillis();
+
+		// 30fps
+		if (time2 - time1 >= 33 || !_normalSpeed) {
+			time1 = time2;
+			updateScreen();
+		}
 
 		if (_needRestart) {
 			if (_modalObject) {
@@ -303,8 +311,7 @@ Common::Error FullpipeEngine::run() {
 			_needRestart = false;
 		}
 
-		if (_normalSpeed)
-			_system->delayMillis(10);
+		_system->delayMillis(5);
 		_system->updateScreen();
 	}
 
