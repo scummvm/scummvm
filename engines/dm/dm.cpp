@@ -165,6 +165,7 @@ DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : Engine(syst
 	_saveThumbnail = nullptr;
 	_canLoadFromGMM = false;
 	_loadSaveSlotAtRuntime = -1;
+	_dialog = nullptr;
 }
 
 DMEngine::~DMEngine() {

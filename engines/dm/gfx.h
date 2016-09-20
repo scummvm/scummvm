@@ -418,10 +418,8 @@ public:
 	uint16 _height;
 	uint16 _xPos;
 	uint16 _bitplaneWordCount;
-	FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
-		: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
-		_byteWidth(byteWidth), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
-	FieldAspect() {}
+	FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane);
+	FieldAspect();
 }; // @ FIELD_ASPECT
 
 class CreatureAspect {

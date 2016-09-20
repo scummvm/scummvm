@@ -443,10 +443,20 @@ DungeonMan::DungeonMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_isFacingViAltar = false;
 	_isFacingFountain = false;
 	_squareAheadElement = (ElementType)0;
+
+	_dungeonFileHeader._ornamentRandomSeed = 0;
+	_dungeonFileHeader._rawMapDataSize = 0;
+	_dungeonFileHeader._mapCount = 0;
+	_dungeonFileHeader._textDataWordCount = 0;
+	_dungeonFileHeader._partyStartLocation = 0;
+	_dungeonFileHeader._squareFirstThingCount = 0;
+
 	for (uint16 i = 0; i < 5; ++i)
 		_pileTopObject[i] = Thing(0);
 	for (uint16 i = 0; i < 2; ++i)
 		_currMapDoorInfo[i].resetToZero();
+	for (uint16 i = 0; i < 16; i++)
+		_dungeonFileHeader._thingCounts[i] = 0;
 
 	setupConstants();
 }

@@ -42,6 +42,13 @@
 
 namespace DM {
 
+FieldAspect::FieldAspect(uint16 native, uint16 base, uint16 transparent, byte mask, uint16 byteWidth, uint16 height, uint16 xPos, uint16 bitplane)
+	: _nativeBitmapRelativeIndex(native), _baseStartUnitIndex(base), _transparentColor(transparent), _mask(mask),
+	_byteWidth(byteWidth), _height(height), _xPos(xPos), _bitplaneWordCount(bitplane) {}
+
+FieldAspect::FieldAspect() : _nativeBitmapRelativeIndex(0), _baseStartUnitIndex(0), _transparentColor(0),
+	_mask(0), _byteWidth(0), _height(0), _xPos(0), _bitplaneWordCount(0) {}
+
 DoorFrames::DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
 		Frame f3_1, Frame f3_2, Frame f3_3,
 		Frame f4_1, Frame f4_2, Frame f4_3) {
