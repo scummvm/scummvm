@@ -700,6 +700,13 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	char saveIdentBuffer[6];
 	header.thumbnail = NULL;
 
+	uint oldPos = in->pos();
+
+	in->seek(4, SEEK_END);
+	uint headerOffset = in->readUint32LE();
+
+	in->seek(headerOffset, SEEK_SET);
+
 	// Validate the header Id
 	in->read(saveIdentBuffer, 6);
 	if (strcmp(saveIdentBuffer, "SVMCR"))
@@ -717,6 +724,9 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);
+
+	in->seek(oldPos, SEEK_SET); // Rewind the file
+
 	if (!header.thumbnail)
 		return false;
 
