@@ -28,7 +28,7 @@
 
 namespace Chewy {
 
-class Resource;
+class SoundResource;
 
 class Sound {
 public:
@@ -44,8 +44,8 @@ private:
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;
 
-	Resource *_speechRes;
-	Resource *_soundRes;
+	SoundResource *_speechRes;
+	SoundResource *_soundRes;
 };
 
 } // End of namespace Chewy

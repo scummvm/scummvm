@@ -36,12 +36,12 @@ namespace Chewy {
 
 enum ResourceType {
 	kResourcePCX = 0,		// unused
-	kResourceTBF = 1,		// contained in TGPs
+	kResourceTBF = 1,		// background art, contained in TGPs
 	kResourceTAF = 2,
 	kResourceTFF = 3,
-	kResourceVOC = 4,		// contained in TVPs
+	kResourceVOC = 4,		// speech and SFX, contained in TVPs
 	kResourceTPF = 5,		// unused
-	kResourceTMF = 6,		// unused
+	kResourceTMF = 6,		// music, similar to a MOD file, contained in details.tap
 	kResourceMOD = 7,		// unused
 	kResourceRAW = 8,		// unused
 	kResourceLBM = 9,		// unused
@@ -56,10 +56,10 @@ enum ResourceType {
 	kResourceAAD = 18,		// unused
 	kResourceADS = 19,		// unused
 	kResourceADH = 20,		// used in txt/diah.adh
-	kResourceTGP = 21,		// background, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
-	kResourceTVP = 22,		// speech, used in sound/speech.tvp
+	kResourceTGP = 21,		// container for background art, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
+	kResourceTVP = 22,		// container for speech, used in sound/speech.tvp
 	kResourceTTP = 23,		// unused
-	kResourceTAP = 24,		// sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
+	kResourceTAP = 24,		// container for sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
 	kResourceCFO = 25,		// unused
 	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
 };
@@ -67,21 +67,30 @@ enum ResourceType {
 // 4 + 2 + 2 + 4 + 2 + 2 + 768 = 784 bytes
 #define TBF_CHUNK_HEADER_SIZE 784
 
+// Generic chunk header
 struct Chunk {
 	uint32 size;
 	ResourceType type;
 	uint32 pos;	// position of the actual data
 };
 
+// TBF (background) chunk header
 struct TBFChunk {
 	// TBF chunk header
 	// ID (TBF, followed by a zero)
 	uint16 screenMode;
 	uint16 compressionFlag;
-	uint32 unpackedSize;
+	uint32 size;
 	uint16 width;
 	uint16 height;
 	byte palette[3 * 256];
+	byte *data;
+};
+
+// Sound chunk header
+struct SoundChunk {
+	uint32 size;
+	byte *data;
 };
 
 typedef Common::Array<Chunk> ChunkList;
@@ -90,24 +99,35 @@ typedef Common::Array<TBFChunk> TBFChunkList;
 class Resource {
 public:
 	Resource(Common::String filename);
-	~Resource();
+	virtual ~Resource();
 
 	ResourceType getType() const { return _resType; }
 	uint32 getChunkCount() const;
 	Chunk *getChunk(int num);
-	TBFChunk *getTBFChunk(int num);
-	byte *getChunkData(int num);
+	virtual byte *getChunkData(int num);
 
 protected:
 	Common::File _stream;
 	uint16 _chunkCount;
 	ResourceType _resType;
 
-private:
-	void readTBFChunk();
-
 	ChunkList _chunkList;
-	TBFChunkList _tbfChunkList;
+};
+
+class BackgroundResource : public Resource {
+public:
+	BackgroundResource(Common::String filename) : Resource(filename) {}
+	~BackgroundResource() {}
+
+	TBFChunk *getImage(int num);
+};
+
+class SoundResource : public Resource {
+public:
+	SoundResource(Common::String filename) : Resource(filename) {}
+	~SoundResource() {}
+
+	SoundChunk *getSound(int num);
 };
 
 } // End of namespace Chewy

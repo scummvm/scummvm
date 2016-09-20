@@ -38,6 +38,7 @@ private:
 	ChewyEngine *_vm;
 
 	bool Cmd_Dump(int argc, const char **argv);
+	bool Cmd_DumpBg(int argc, const char **argv);
 	bool Cmd_Draw(int argc, const char **argv);
 	bool Cmd_PlaySound(int argc, const char **argv);
 	bool Cmd_PlaySpeech(int argc, const char **argv);

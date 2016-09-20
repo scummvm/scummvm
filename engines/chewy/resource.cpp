@@ -43,12 +43,6 @@ Resource::Resource(Common::String filename) {
 		cur.type = (ResourceType)_stream.readUint16LE();
 		cur.pos = _stream.pos();
 
-		if (cur.type == kResourceTBF) {
-			cur.pos += TBF_CHUNK_HEADER_SIZE;
-			cur.size -= TBF_CHUNK_HEADER_SIZE;
-			readTBFChunk();
-		}
-
 		_stream.skip(cur.size);
 		_chunkList.push_back(cur);
 	}
@@ -56,24 +50,7 @@ Resource::Resource(Common::String filename) {
 
 Resource::~Resource() {
 	_chunkList.clear();
-	_tbfChunkList.clear();
 	_stream.close();
-}
-
-void Resource::readTBFChunk() {
-	TBFChunk cur;
-	if (_stream.readUint32BE() != MKTAG('T', 'B', 'F', '\0'))
-		error("Corrupt TBF resource");
-
-	cur.screenMode = _stream.readUint16LE();
-	cur.compressionFlag = _stream.readUint16LE();
-	cur.unpackedSize = _stream.readUint32LE();
-	cur.width = _stream.readUint16LE();
-	cur.height = _stream.readUint16LE();
-	for (int j = 0; j < 3 * 256; j++)
-		cur.palette[j] = _stream.readByte() << 2;
-
-	_tbfChunkList.push_back(cur);
 }
 
 uint32 Resource::getChunkCount() const {
@@ -84,77 +61,98 @@ Chunk *Resource::getChunk(int num) {
 	return &_chunkList[num];
 }
 
-TBFChunk *Resource::getTBFChunk(int num) {
-	assert(_resType == kResourceTGP);
-	return &_tbfChunkList[num];
-}
-
 byte *Resource::getChunkData(int num) {
 	Chunk *chunk = &_chunkList[num];
-	byte *data;
+	byte *data = new byte[chunk->size];
+
+	_stream.seek(chunk->pos, SEEK_SET);
+	_stream.read(data, chunk->size);
+
+	return data;
+}
+
+TBFChunk *BackgroundResource::getImage(int num) {
+	Chunk *chunk = &_chunkList[num];
+	TBFChunk *tbf = new TBFChunk();
 
 	_stream.seek(chunk->pos, SEEK_SET);
 
-	if (chunk->type == kResourceTBF) {
-		TBFChunk *tbfChunk = &_tbfChunkList[num];
-		data = new byte[tbfChunk->unpackedSize];
+	if (_stream.readUint32BE() != MKTAG('T', 'B', 'F', '\0'))
+		error("Corrupt TBF resource");
 
-		if (!tbfChunk->compressionFlag) {
-			_stream.read(data, chunk->size);
-		} else {
-			// Compressed images are packed using a very simple RLE compression
-			byte count;
-			byte value;
-			uint32 outPos = 0;
+	tbf->screenMode = _stream.readUint16LE();
+	tbf->compressionFlag = _stream.readUint16LE();
+	tbf->size = _stream.readUint32LE();
+	tbf->width = _stream.readUint16LE();
+	tbf->height = _stream.readUint16LE();
+	for (int j = 0; j < 3 * 256; j++)
+		tbf->palette[j] = _stream.readByte() << 2;
 
-			for (uint i = 0; i < (chunk->size) / 2 && outPos < tbfChunk->unpackedSize; i++) {
-				count = _stream.readByte();
-				value = _stream.readByte();
-				for (byte j = 0; j < count; j++) {
-					data[outPos++] = value;
-				}
+	tbf->data = new byte[tbf->size];
+
+	if (!tbf->compressionFlag) {
+		_stream.read(tbf->data, chunk->size);
+	}
+	else {
+		// Compressed images are packed using a very simple RLE compression
+		byte count;
+		byte value;
+		uint32 outPos = 0;
+
+		for (uint i = 0; i < (chunk->size) / 2 && outPos < tbf->size; i++) {
+			count = _stream.readByte();
+			value = _stream.readByte();
+			for (byte j = 0; j < count; j++) {
+				tbf->data[outPos++] = value;
 			}
 		}
-	} else if (chunk->type == kResourceVOC) {
-		// Voice files are split in blocks, so reassemble them here
-		byte blocksRemaining;
-		uint32 totalLength = 0;
-		uint32 blockSize;
-		
-		// Find the total length of the voice file
-		do {
-			blocksRemaining = _stream.readByte();
-			blockSize =
-				_stream.readByte() +
-				(_stream.readByte() << 8) +
-				(_stream.readByte() << 16);
-
-			totalLength += blockSize;
-			_stream.skip(blockSize);
-		} while (blocksRemaining > 1);
-
-		// Read the voice data
-		data = new byte[totalLength];
-		byte *ptr = data;
-
-		_stream.seek(chunk->pos, SEEK_SET);
-
-		do {
-			blocksRemaining = _stream.readByte();
-			blockSize =
-				 _stream.readByte() +
-				(_stream.readByte() << 8) +
-				(_stream.readByte() << 16);
-			
-			_stream.read(ptr, blockSize);
-			ptr += blockSize;
-		} while (blocksRemaining > 1);
-	} else {
-		data = new byte[chunk->size];
-		_stream.read(data, chunk->size);
 	}
 
-	return data;
+	return tbf;
+}
+
+SoundChunk *SoundResource::getSound(int num) {
+	Chunk *chunk = &_chunkList[num];
+	SoundChunk *sound = new SoundChunk();
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	// Voice files are split in blocks, so reassemble them here
+	byte blocksRemaining;
+	uint32 totalLength = 0;
+	uint32 blockSize;
+
+	// Find the total length of the voice file
+	do {
+		blocksRemaining = _stream.readByte();
+		blockSize =
+			_stream.readByte() +
+			(_stream.readByte() << 8) +
+			(_stream.readByte() << 16);
+
+		totalLength += blockSize;
+		_stream.skip(blockSize);
+	} while (blocksRemaining > 1);
+
+	// Read the voice data
+	sound->size = totalLength;
+	sound->data = new byte[totalLength];
+	byte *ptr = sound->data;
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	do {
+		blocksRemaining = _stream.readByte();
+		blockSize =
+			_stream.readByte() +
+			(_stream.readByte() << 8) +
+			(_stream.readByte() << 16);
+
+		_stream.read(ptr, blockSize);
+		ptr += blockSize;
+	} while (blocksRemaining > 1);
+
+	return sound;
 }
 
 } // End of namespace Chewy

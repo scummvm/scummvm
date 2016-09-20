@@ -29,13 +29,15 @@
 namespace Chewy {
 
 void Graphics::drawImage(Common::String filename, int imageNum) {
-	Resource *res = new Resource(filename);
-	TBFChunk *cur = res->getTBFChunk(imageNum);
-	byte *buf = res->getChunkData(imageNum);
+	BackgroundResource *res = new BackgroundResource(filename);
+	TBFChunk *image = res->getImage(imageNum);
 
-	g_system->getPaletteManager()->setPalette(cur->palette, 0, 256);
-	g_system->copyRectToScreen(buf, cur->width, 0, 0, cur->width, cur->height);
+	g_system->getPaletteManager()->setPalette(image->palette, 0, 256);
+	g_system->copyRectToScreen(image->data, image->width, 0, 0, image->width, image->height);
 	g_system->updateScreen();
+
+	delete[] image->data;
+	delete image;
 	delete res;
 }
 

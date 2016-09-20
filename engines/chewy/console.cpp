@@ -32,6 +32,7 @@ namespace Chewy {
 
 Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("dump_bg",		WRAP_METHOD(Console, Cmd_DumpBg));
 	registerCmd("draw",			WRAP_METHOD(Console, Cmd_Draw));
 	registerCmd("play_sound",	WRAP_METHOD(Console, Cmd_PlaySound));
 	registerCmd("play_speech",	WRAP_METHOD(Console, Cmd_PlaySpeech));
@@ -55,10 +56,6 @@ bool Console::Cmd_Dump(int argc, const char **argv) {
 	Chunk *chunk = res->getChunk(resNum);
 	byte *data = res->getChunkData(resNum);
 	uint32 size = chunk->size;
-	if (chunk->type == kResourceTBF) {
-		TBFChunk *tbf = res->getTBFChunk(resNum);
-		size = tbf->unpackedSize;
-	}
 
 	Common::DumpFile outFile;
 	outFile.open(dumpFilename);
@@ -71,6 +68,33 @@ bool Console::Cmd_Dump(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Console::Cmd_DumpBg(int argc, const char **argv) {
+	if (argc < 4) {
+		debugPrintf("Usage: dump_bg <file> <resource number> <dump file name>\n");
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	int resNum = atoi(argv[2]);
+	Common::String dumpFilename = argv[3];
+
+	BackgroundResource *res = new BackgroundResource(filename);
+	TBFChunk *image = res->getImage(resNum);
+
+	Common::DumpFile outFile;
+	outFile.open(dumpFilename);
+	outFile.write(image->data, image->size);
+	outFile.flush();
+	outFile.close();
+
+	delete[] image->data;
+	delete image;
+	delete res;
+
+	return true;
+}
+
 
 bool Console::Cmd_Draw(int argc, const char **argv) {
 	if (argc < 3) {

@@ -31,8 +31,8 @@
 namespace Chewy {
 
 Sound::Sound() {
-	_speechRes = new Resource("speech.tvp");
-	_soundRes = new Resource("details.tap");
+	_speechRes = new SoundResource("speech.tvp");
+	_soundRes = new SoundResource("details.tap");
 }
 
 Sound::~Sound() {
@@ -41,16 +41,20 @@ Sound::~Sound() {
 }
 
 void Sound::playSound(int num, bool loop) {
-	Chunk *chunk = _soundRes->getChunk(num);
-	byte *data = _soundRes->getChunkData(num);
+	SoundChunk *sound = _soundRes->getSound(num);
+	byte *data = (byte *)malloc(sound->size);
+	memcpy(data, sound->data, sound->size);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(data,
-		chunk->size, 22050, Audio::FLAG_UNSIGNED,
+		sound->size, 22050, Audio::FLAG_UNSIGNED,
 		DisposeAfterUse::NO),
 		loop ? 0 : 1);
 
 	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
+
+	delete[] sound->data;
+	delete sound;
 }
 
 void Sound::playMusic(int num, bool loop) {
@@ -72,16 +76,20 @@ void Sound::playMusic(int num, bool loop) {
 }
 
 void Sound::playSpeech(int num) {
-	Chunk *chunk = _speechRes->getChunk(num);
-	byte *data = _speechRes->getChunkData(num);
+	SoundChunk *sound = _speechRes->getSound(num);
+	byte *data = (byte *)malloc(sound->size);
+	memcpy(data, sound->data, sound->size);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(data,
-		chunk->size, 22050, Audio::FLAG_UNSIGNED,
+		sound->size, 22050, Audio::FLAG_UNSIGNED,
 		DisposeAfterUse::NO),
 		1);
 
 	g_engine->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
+
+	delete[] sound->data;
+	delete sound;
 }
 
 } // End of namespace Chewy
