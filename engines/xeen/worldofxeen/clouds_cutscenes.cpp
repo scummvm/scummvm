@@ -26,12 +26,69 @@
 namespace Xeen {
 
 bool CloudsCutscenes::showCloudsTitle() {
-	// TODO
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+
+	// Initial logo display
+	screen.loadPalette("intro1.pal");
+	screen.loadBackground("logobak.raw");
+	screen.saveBackground();
+	screen.update();
+	screen.fadeIn(128);
+
+	SpriteResource logo[2] = {
+		SpriteResource("logo.vga"), SpriteResource("logo1.vga")
+	};
+	sound.playFX(1);
+
+	for (int idx = 0; idx < 80; ++idx) {
+		screen.restoreBackground();
+		logo[idx / 65].draw(screen, idx % 65);
+		screen.update();
+
+		switch (idx) {
+		case 37:
+			sound.playFX(0);
+			sound.playFX(53);
+			sound.playSound("fire.voc");
+			break;
+		case 52:
+		case 60:
+			sound.playFX(3);
+			break;
+		case 64:
+			sound.playFX(2);
+			break;
+		case 66:
+			sound.playFX(52);
+			sound.playSound("meangro&.voc");
+			break;
+		default:
+			break;
+		}
+
+		WAIT(2);
+	}
+
+	screen.restoreBackground();
+	screen.update();
+	WAIT(30);
+
+	screen.fadeOut(8);
+	logo[0].clear();
+	logo[1].clear();
+
 	return true;
 }
 
 bool CloudsCutscenes::showCloudsIntro() {
 	// TODO
+	EventsManager &events = *_vm->_events;
+	Sound &sound = *_vm->_sound;
+	sound.playSong("mm4theme.m");
+
+	events.wait(5000);
 	return true;
 }
 
