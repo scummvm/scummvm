@@ -560,7 +560,7 @@ T0266017_CheckProjectileImpacts:
 	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(projectileMapX, projectileMapY);
 	while (curThing != Thing::_endOfList) {
 		if ((curThing.getType() == kDMThingTypeProjectile) &&
-			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[kDMThingTypeProjectile])[curThing.getIndex()])._eventIndex]._type != k48_TMEventTypeMoveProjectileIgnoreImpacts)) {
+			(_vm->_timeline->_events[(((Projectile *)_vm->_dungeonMan->_thingData[kDMThingTypeProjectile])[curThing.getIndex()])._eventIndex]._type != kDMEventTypeMoveProjectileIgnoreImpacts)) {
 			int16 championOrCreatureOrdinal = championOrCreatureOrdinalInCell[curThing.getCell()];
 			if (championOrCreatureOrdinal && _vm->_projexpl->hasProjectileImpactOccurred(impactType, srcMapX, srcMapY, _vm->ordinalToIndex(championOrCreatureOrdinal), curThing)) {
 				_vm->_projexpl->projectileDeleteEvent(curThing);
@@ -892,13 +892,13 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 
 void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell) {
 	TimelineEventType squareTypeToEventTypeArray[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
-		k6_TMEventTypeWall,
-		k5_TMEventTypeCorridor,
-		k9_TMEventTypePit,
-		k0_TMEventTypeNone,
-		k10_TMEventTypeDoor,
-		k8_TMEventTypeTeleporter,
-		k7_TMEventTypeFakeWall
+		kDMEventTypeWall,
+		kDMEventTypeCorridor,
+		kDMEventTypePit,
+		kDMEventTypeNone,
+		kDMEventTypeDoor,
+		kDMEventTypeTeleporter,
+		kDMEventTypeFakeWall
 	};
 
 	if (sensor->getAttrOnlyOnce())
@@ -984,7 +984,7 @@ void MovesensMan::processRotationEffect() {
 void MovesensMan::createEventMoveGroup(Thing groupThing, int16 mapX, int16 mapY, int16 mapIndex, bool audible) {
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(mapIndex, _vm->_gameTime + 5);
-	newEvent._type = audible ? k61_TMEventTypeMoveGroupAudible : k60_TMEventTypeMoveGroupSilent;
+	newEvent._type = audible ? kDMEventTypeMoveGroupAudible : kDMEventTypeMoveGroupSilent;
 	newEvent._priority = 0;
 	newEvent._Bu._location._mapX = mapX;
 	newEvent._Bu._location._mapY = mapY;

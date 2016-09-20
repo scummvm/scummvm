@@ -364,7 +364,7 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 			if (ticks) {
 				TimelineEvent newEvent;
 				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
-				newEvent._type = k2_TMEventTypeDoorDestruction;
+				newEvent._type = kDMEventTypeDoorDestruction;
 				newEvent._priority = 0;
 				newEvent._Bu._location._mapX = mapX;
 				newEvent._Bu._location._mapY = mapY;
@@ -424,13 +424,13 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 					if ((_vm->getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
 						(curEvent->_Bu._location._mapX == mapX) &&
 						(curEvent->_Bu._location._mapY == mapY) &&
-						(curEventType > k32_TMEventTypeUpdateAspectGroup) &&
-						(curEventType < k41_TMEventTypeUpdateBehaviour_3 + 1)) {
+						(curEventType > kDMEventTypeUpdateAspectGroup) &&
+						(curEventType < kDMEventTypeUpdateBehavior3 + 1)) {
 						uint16 nextCreatureIndex;
-						if (curEventType < k37_TMEventTypeUpdateBehaviourGroup)
-							nextCreatureIndex = curEventType - k33_TMEventTypeUpdateAspectCreature_0; /* Get creature index for events 33 to 36 */
+						if (curEventType < kDMEventTypeUpdateBehaviourGroup)
+							nextCreatureIndex = curEventType - kDMEventTypeUpdateAspectCreature0; /* Get creature index for events 33 to 36 */
 						else
-							nextCreatureIndex = curEventType - k38_TMEventTypeUpdateBehaviour_0; /* Get creature index for events 38 to 41 */
+							nextCreatureIndex = curEventType - kDMEventTypeUpdateBehavior0; /* Get creature index for events 38 to 41 */
 
 						if (nextCreatureIndex == creatureIndex)
 							_vm->_timeline->deleteEvent(eventIndex);
@@ -508,7 +508,7 @@ void GroupMan::groupDeleteEvents(int16 mapX, int16 mapY) {
 	for (int16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventIndex++) {
 		uint16 curEventType = curEvent->_type;
 		if ((_vm->getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
-			(curEventType > k29_TMEventTypeGroupReactionDangerOnSquare - 1) && (curEventType < k41_TMEventTypeUpdateBehaviour_3 + 1) &&
+			(curEventType > kDMEventTypeGroupReactionDangerOnSquare - 1) && (curEventType < kDMEventTypeUpdateBehavior3 + 1) &&
 			(curEvent->_Bu._location._mapX == mapX) && (curEvent->_Bu._location._mapY == mapY)) {
 			_vm->_timeline->deleteEvent(eventIndex);
 		}
@@ -582,8 +582,8 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 
 	/* If the party is not on the map specified in the event and the event type is not one of 32, 33, 37, 38 then the event is ignored */
 	if ((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex)
-	 && (eventType != k37_TMEventTypeUpdateBehaviourGroup) && (eventType != k32_TMEventTypeUpdateAspectGroup)
-	 && (eventType != k38_TMEventTypeUpdateBehaviour_0) && (eventType != k33_TMEventTypeUpdateAspectCreature_0))
+	 && (eventType != kDMEventTypeUpdateBehaviourGroup) && (eventType != kDMEventTypeUpdateAspectGroup)
+	 && (eventType != kDMEventTypeUpdateBehavior0) && (eventType != kDMEventTypeUpdateAspectCreature0))
 		return;
 
 	Thing groupThing = groupGetThing(eventMapX, eventMapY);
@@ -611,7 +611,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 event
 			nextEvent._Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
 			nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 		}
-		nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
+		nextEvent._type = kDMEventTypeUpdateBehaviourGroup;
 		AL0446_i_Ticks = MAX(ABS(_vm->_dungeonMan->_currMapIndex - _vm->_dungeonMan->_partyMapIndex) << 4, creatureInfo._movementTicks << 1);
 		/* BUG0_68 A group moves or acts with a wrong timing. Event is added below but L0465_s_NextEvent.C.Ticks has not been initialized. No consequence while the group is not on the party map. When the party enters the group map the first group event may have a wrong timing */
 T0209005_AddEventAndReturn:
@@ -651,8 +651,8 @@ T0209005_AddEventAndReturn:
 	For event kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, the reaction time is 1 tick
 	For event kM2_TMEventTypeCreateReactionEvent30HitByProjectile and kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, the reaction time may be 1 tick or slower: slow moving creatures react more slowly. The more recent is the last creature move, the slower the reaction */
 	if (eventType < 0) {
-		nextEvent._type = eventType + k32_TMEventTypeUpdateAspectGroup;
-		if (eventType == kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent) {
+		nextEvent._type = eventType + kDMEventTypeUpdateAspectGroup;
+		if (eventType == kDMEventTypeCreateReactionPartyIsAdjacent) {
 			AL0446_i_Ticks = 1; /* Retry in 1 tick */
 		} else {
 			 AL0446_i_Ticks = ((movementTicks + 2) >> 2) - ticksSinceLastMove;
@@ -680,9 +680,9 @@ T0209005_AddEventAndReturn:
 	bool moveToPriorLocation = false;
 	int16 distanceToVisibleParty = 0;
 
-	if (eventType <= k31_TMEventTypeGroupReactionPartyIsAdjecent) { /* Process Reaction events 29 to 31 */
-		switch (eventType = eventType - k32_TMEventTypeUpdateAspectGroup) {
-		case kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent: /* This event is used when the party bumps into a group or attacks a group physically (not with a spell). It causes the creature behavior to change to attack if it is not already attacking the party or fleeing from target */
+	if (eventType <= kDMEventTypeGroupReactionPartyIsAdjecent) { /* Process Reaction events 29 to 31 */
+		switch (eventType = eventType - kDMEventTypeUpdateAspectGroup) {
+		case kDMEventTypeCreateReactionPartyIsAdjacent: /* This event is used when the party bumps into a group or attacks a group physically (not with a spell). It causes the creature behavior to change to attack if it is not already attacking the party or fleeing from target */
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
 				groupDeleteEvents(eventMapX, eventMapY);
 				goto T0209044_SetBehavior6_Attack;
@@ -690,7 +690,7 @@ T0209005_AddEventAndReturn:
 			activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
 			activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 			return;
-		case kM2_TMEventTypeCreateReactionEvent30HitByProjectile: /* This event is used for the reaction of a group after a projectile impacted with one creature in the group (some creatures may have been killed) */
+		case kDMEventTypeCreateReactionHitByProjectile: /* This event is used for the reaction of a group after a projectile impacted with one creature in the group (some creatures may have been killed) */
 			if ((AL0447_i_Behavior == kDMBehaviorAttack) || (AL0447_i_Behavior == kDMBehaviorFlee)) /* If the creature is attacking the party or fleeing from the target then there is no reaction */
 				return;
 			AL0446_i_Behavior2Or3 = ((AL0447_i_Behavior == kDMBehaviorUnknown3) || (AL0447_i_Behavior == kDMBehaviorUnknown2));
@@ -702,13 +702,13 @@ T0209005_AddEventAndReturn:
 				if (AL0446_i_Behavior2Or3 || (_vm->getRandomNumber(4))) /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is thus: if 3/4 chances then no reaction */
 					return;
 			} /* No 'break': proceed to instruction after the next 'case' below. Reaction is to move in a random direction to try and avoid other projectiles */
-		case kM3_TMEventTypeCreateReactionEvent29DangerOnSquare: /* This event is used when some creatures in the group were killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by 3 Fluxcages. It causes the creature to move in a random direction to avoid the danger */
+		case kDMEventTypeCreateReactionDangerOnSquare: /* This event is used when some creatures in the group were killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by 3 Fluxcages. It causes the creature to move in a random direction to avoid the danger */
 			approachAfterReaction = (AL0447_i_Behavior == kDMBehaviorAttack); /* If the creature behavior is 'Attack' and it has to move to avoid danger then it will change its behavior to 'Approach' after the movement */
 			newGroupDirectionFound = false;
 			goto T0209058_MoveInRandomDirection;
 		}
 	}
-	if (eventType < k37_TMEventTypeUpdateBehaviourGroup) { /* Process Update Aspect events 32 to 36 */
+	if (eventType < kDMEventTypeUpdateBehaviourGroup) { /* Process Update Aspect events 32 to 36 */
 		nextEvent._type = eventType + 5;
 		if (groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY)) {
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
@@ -721,7 +721,7 @@ T0209005_AddEventAndReturn:
 			activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
 		}
 		if (AL0447_i_Behavior == kDMBehaviorAttack) {
-			AL0446_i_CreatureAspectIndex = eventType - k33_TMEventTypeUpdateAspectCreature_0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
+			AL0446_i_CreatureAspectIndex = eventType - kDMEventTypeUpdateAspectCreature0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
 			nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0446_i_CreatureAspectIndex, getFlag(activeGroup->_aspect[AL0446_i_CreatureAspectIndex], kDMAspectMaskActiveGroupIsAttacking));
 			goto T0209136;
 		}
@@ -735,14 +735,14 @@ T0209005_AddEventAndReturn:
 		if (ticks)
 			nextAspectUpdateTime = _vm->_gameTime;
 
-		if (eventType == k37_TMEventTypeUpdateBehaviourGroup) { /* Process event 37, Update Group Behavior */
+		if (eventType == kDMEventTypeUpdateBehaviourGroup) { /* Process event 37, Update Group Behavior */
 			bool allowMovementOverFakePitsAndFakeWalls;
 			if ((AL0447_i_Behavior == kDMBehaviorWander) || (AL0447_i_Behavior == kDMBehaviorUnknown2) || (AL0447_i_Behavior == kDMBehaviorUnknown3)) { /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
 				distanceToVisibleParty = groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY);
 				if (distanceToVisibleParty) {
 					if ((distanceToVisibleParty <= (creatureInfo.getAttackRange())) && ((!AL0450_i_DistanceXToParty) || (!AL0451_i_DistanceYToParty))) { /* If the creature is in range for attack and on the same row or column as the party on the map */
 T0209044_SetBehavior6_Attack:
-						if (eventType == kM2_TMEventTypeCreateReactionEvent30HitByProjectile) {
+						if (eventType == kDMEventTypeCreateReactionHitByProjectile) {
 							groupDeleteEvents(eventMapX, eventMapY);
 						}
 						activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
@@ -760,7 +760,7 @@ T0209044_SetBehavior6_Attack:
 							if (notUpdateBehaviorFl) {
 								nextEvent._mapTime += MIN((uint16)((creatureInfo._attackTicks >> 1) + _vm->getRandomNumber(4)), ticks);
 							}
-							nextEvent._type = k38_TMEventTypeUpdateBehaviour_0 + AL0447_i_CreatureIndex;
+							nextEvent._type = kDMEventTypeUpdateBehavior0 + AL0447_i_CreatureIndex;
 							addGroupEvent(&nextEvent, getCreatureAspectUpdateTime(activeGroup, AL0447_i_CreatureIndex, false));
 						}
 						return;
@@ -812,7 +812,7 @@ T0209061_MoveGroup:
 									break;
 								}
 								if (_groupMovementBlockedByParty) {
-									if ((eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare) &&
+									if ((eventType != kDMEventTypeCreateReactionDangerOnSquare) &&
 										((curGroup->getBehaviour() != kDMBehaviorFlee) ||
 										 !getFirstPossibleMovementDirOrdinal(&creatureInfo, eventMapX, eventMapY, false) ||
 										 _vm->getRandomNumber(2)))
@@ -826,11 +826,11 @@ T0209061_MoveGroup:
 						if (!newGroupDirectionFound &&
 							(ticksSinceLastMove != -1) &&
 							isArchEnemy &&
-							((eventType == kM3_TMEventTypeCreateReactionEvent29DangerOnSquare) || !_vm->getRandomNumber(4))) { /* BUG0_15 The game hangs when you close a door on Lord Chaos. A condition is missing in the code to manage creatures and this may create an infinite loop between two parts in the code */
+							((eventType == kDMEventTypeCreateReactionDangerOnSquare) || !_vm->getRandomNumber(4))) { /* BUG0_15 The game hangs when you close a door on Lord Chaos. A condition is missing in the code to manage creatures and this may create an infinite loop between two parts in the code */
 							_vm->_projexpl->_secondaryDirToOrFromParty = _vm->turnDirRight(primaryDirectionToOrFromParty = _vm->getRandomNumber(4));
 							goto T0209089_DoubleSquareMove; /* BUG0_69 Memory corruption when you close a door on Lord Chaos. The local variable (L0454_i_PrimaryDirectionToOrFromParty) containing the direction where Lord Chaos tries to move may be used as an array index without being initialized and cause memory corruption */
 						}
-						if (newGroupDirectionFound || ((!_vm->getRandomNumber(4) || (distanceToVisibleParty <= creatureInfo.getSmellRange())) && (eventType != kM3_TMEventTypeCreateReactionEvent29DangerOnSquare))) {
+						if (newGroupDirectionFound || ((!_vm->getRandomNumber(4) || (distanceToVisibleParty <= creatureInfo.getSmellRange())) && (eventType != kDMEventTypeCreateReactionDangerOnSquare))) {
 T0209073_SetDirectionGroup:
 							if (!newGroupDirectionFound && (ticksSinceLastMove >= 0)) { /* If direction is not found yet then look around in a random direction */
 								AL0446_i_Direction = _vm->getRandomNumber(4);
@@ -838,7 +838,7 @@ T0209073_SetDirectionGroup:
 							setDirGroup(activeGroup, AL0446_i_Direction, creatureCount, creatureSize);
 						}
 						/* If event is kM3_TMEventTypeCreateReactionEvent29DangerOnSquare or kM2_TMEventTypeCreateReactionEvent30HitByProjectile */
-						if (eventType < kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent) {
+						if (eventType < kDMEventTypeCreateReactionPartyIsAdjacent) {
 							if (!newGroupDirectionFound)
 								return;
 							if (approachAfterReaction)
@@ -944,7 +944,7 @@ T0209096_SetBehavior0_Wander:
 				goto T0209094_FleeFromTarget;
 			}
 			/* If the creature is attacking, then compute the next aspect update time and the next attack time */
-			if (getFlag(activeGroup->_aspect[AL0447_i_CreatureIndex = eventType - k38_TMEventTypeUpdateBehaviour_0], kDMAspectMaskActiveGroupIsAttacking)) {
+			if (getFlag(activeGroup->_aspect[AL0447_i_CreatureIndex = eventType - kDMEventTypeUpdateBehavior0], kDMAspectMaskActiveGroupIsAttacking)) {
 				nextAspectUpdateTime = getCreatureAspectUpdateTime(activeGroup, AL0447_i_CreatureIndex, false);
 				nextEvent._mapTime += ((AL0447_i_Ticks = creatureInfo._attackTicks) + _vm->getRandomNumber(4) - 1);
 				if (AL0447_i_Ticks > 15)
@@ -1043,7 +1043,7 @@ T0209096_SetBehavior0_Wander:
 		}
 		nextEvent._mapTime += MAX(1, _vm->getRandomNumber(4) + movementTicks - 1);
 T0209134_SetEvent37:
-		nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
+		nextEvent._type = kDMEventTypeUpdateBehaviourGroup;
 	}
 T0209135:
 	if (!nextAspectUpdateTime) {
@@ -1650,7 +1650,7 @@ void GroupMan::startWandering(int16 mapX, int16 mapY) {
 	}
 	TimelineEvent nextEvent;
 	nextEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
-	nextEvent._type = k37_TMEventTypeUpdateBehaviourGroup;
+	nextEvent._type = kDMEventTypeUpdateBehaviourGroup;
 	nextEvent._priority = kDMMovementTicksImmobile - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Cu._ticks = 0;
 	nextEvent._Bu._location._mapX = mapX;
@@ -1877,7 +1877,7 @@ T0231015:
 T0231016:
 	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != kDMKillOutcomeAllCreaturesInGroup) {
-		processEvents29to41(mapX, mapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+		processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionPartyIsAdjacent, 0);
 	}
 	return L0565_i_Damage;
 }
@@ -1895,7 +1895,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(kDMExplosionTypeFluxcage);
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
-	newEvent._type = k24_TMEventTypeRemoveFluxcage;
+	newEvent._type = kDMEventTypeRemoveFluxcage;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();
 	newEvent._Bu._location._mapX = mapX;
@@ -1923,7 +1923,7 @@ void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
 		fluxcageCount = 0;
 
 	if (fluxcageCount == 2)
-		processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+		processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 }
 
 uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {

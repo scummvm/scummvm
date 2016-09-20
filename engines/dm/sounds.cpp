@@ -204,7 +204,7 @@ void SoundMan::requestPlay(uint16 soundIndex, int16 mapX, int16 mapY, SoundMode 
 	if (soundMode == kDMSoundModePlayOneTickLater) { /* Add an event in the timeline to play the sound (mode - 1) ticks later */
 		TimelineEvent newEvent;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + soundMode - 1);
-		newEvent._type = k20_TMEventTypePlaySound;
+		newEvent._type = kDMEventTypePlaySound;
 		newEvent._priority = sound->_priority;
 		newEvent._Cu._soundIndex = soundIndex;
 		newEvent._Bu._location._mapX = mapX;

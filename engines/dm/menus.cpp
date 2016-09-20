@@ -606,7 +606,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			}
 			break;
 		case kDMSpellTypeOtherThievesEye: {
-			newEvent._type = k73_TMEventTypeThievesEye;
+			newEvent._type = kDMEventTypeThievesEye;
 			_vm->_championMan->_party._event73Count_ThievesEye++;
 			spellPower = (spellPower >> 1);
 			uint16 spellTicks = spellPower * spellPower;
@@ -615,7 +615,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			}
 			break;
 		case kDMSpellTypeOtherInvisibility: {
-			newEvent._type = k71_TMEventTypeInvisibility;
+			newEvent._type = kDMEventTypeInvisibility;
 			_vm->_championMan->_party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
 			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
@@ -623,7 +623,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			}
 			break;
 		case kDMSpellTypeOtherPartyShield: {
-			newEvent._type = k74_TMEventTypePartyShield;
+			newEvent._type = kDMEventTypePartyShield;
 			newEvent._Bu._defense = spellPower;
 			if (_vm->_championMan->_party._shieldDefense > 50)
 				newEvent._Bu._defense >>= 2;
@@ -636,7 +636,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			}
 			break;
 		case kDMSpellTypeOtherFootprints: {
-			newEvent._type = k79_TMEventTypeFootprints;
+			newEvent._type = kDMEventTypeFootprints;
 			_vm->_championMan->_party._event79Count_Footprints++;
 			_vm->_championMan->_party._firstScentIndex = _vm->_championMan->_party._scentCount;
 			if (powerSymbolOrdinal < 3)
@@ -813,7 +813,7 @@ Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
 
 void MenuMan::createEvent70_light(int16 lightPower, int16 ticks) {
 	TimelineEvent newEvent;
-	newEvent._type = k70_TMEventTypeLight;
+	newEvent._type = kDMEventTypeLight;
 	newEvent._Bu._lightPower = lightPower;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + ticks);
 	newEvent._priority = 0;
@@ -837,13 +837,13 @@ bool MenuMan::isPartySpellOrFireShieldSuccessful(Champion *champ, bool spellShie
 	TimelineEvent newEvent;
 	newEvent._Bu._defense = ticks >> 5;
 	if (spellShield) {
-		newEvent._type = k77_TMEventTypeSpellShield;
+		newEvent._type = kDMEventTypeSpellShield;
 		if (_vm->_championMan->_party._spellShieldDefense > 50)
 			newEvent._Bu._defense >>= 2;
 
 		_vm->_championMan->_party._spellShieldDefense += newEvent._Bu._defense;
 	} else {
-		newEvent._type = k78_TMEventTypeFireShield;
+		newEvent._type = kDMEventTypeFireShield;
 		if (_vm->_championMan->_party._fireShieldDefense > 50)
 			newEvent._Bu._defense >>= 2;
 
@@ -1274,7 +1274,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		int16 windowTicks = _vm->getRandomNumber(_vm->_championMan->getSkillLevel(champIndex, actionSkillIndex) + 8) + 5;
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
-		newEvent._type = k73_TMEventTypeThievesEye;
+		newEvent._type = kDMEventTypeThievesEye;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		_vm->_championMan->_party._event73Count_ThievesEye++;

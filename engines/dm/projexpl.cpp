@@ -59,9 +59,9 @@ void ProjExpl::createProjectile(Thing thing, int16 mapX, int16 mapY, uint16 cell
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 1);
 	if (_createLauncherProjectile)
-		newEvent._type = k49_TMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
+		newEvent._type = kDMEventTypeMoveProjectile; /* Launcher projectiles can impact immediately */
 	else
-		newEvent._type = k48_TMEventTypeMoveProjectileIgnoreImpacts; /* Projectiles created by champions or creatures ignore impacts on their first movement */
+		newEvent._type = kDMEventTypeMoveProjectileIgnoreImpacts; /* Projectiles created by champions or creatures ignore impacts on their first movement */
 
 	newEvent._priority = 0;
 	newEvent._Bu._slot = projectileThing.toUint16();
@@ -118,7 +118,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(projectileTargetMapX, projectileTargetMapY);
 		if ((curDoorState != kDMDoorStateDestroyed) && (projectileAssociatedThing == Thing::_explOpenDoor)) {
 			if (curDoor->hasButton())
-				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, projectileTargetMapX, projectileTargetMapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
+				_vm->_moveSens->addEvent(kDMEventTypeDoor, projectileTargetMapX, projectileTargetMapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
 			break;
 		}
 
@@ -177,7 +177,7 @@ bool ProjExpl::hasProjectileImpactOccurred(int16 impactType, int16 mapXCombo, in
 		if (attack) {
 			int16 outcome = _vm->_groupMan->groupGetDamageCreatureOutcome(curGroup, curCreatureIndex, projectileTargetMapX, projectileTargetMapY, attack + _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(curCreatureType, _projectilePoisonAttack), true);
 			if (outcome != kDMKillOutcomeNoCreaturesInGroup)
-				_vm->_groupMan->processEvents29to41(projectileTargetMapX, projectileTargetMapY, kM2_TMEventTypeCreateReactionEvent30HitByProjectile, 0);
+				_vm->_groupMan->processEvents29to41(projectileTargetMapX, projectileTargetMapY, kDMEventTypeCreateReactionHitByProjectile, 0);
 
 			_creatureDamageOutcome = outcome;
 			if (!createExplosionOnImpact && (outcome == kDMKillOutcomeNoCreaturesInGroup)
@@ -312,7 +312,7 @@ void ProjExpl::createExplosion(Thing explThing, uint16 attack, uint16 mapXCombo,
 	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), projectileMapX, projectileMapY);
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ((explThing == Thing::_explRebirthStep1) ? 5 : 1));
-	newEvent._type = k25_TMEventTypeExplosion;
+	newEvent._type = kDMEventTypeExplosion;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();
 	newEvent._Bu._location._mapX = projectileMapX;
@@ -400,8 +400,8 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	int16 destinationMapX = curEvent->_Cu._projectile.getMapX();
 	int16 destinationMapY = curEvent->_Cu._projectile.getMapY();
 
-	if (curEvent->_type == k48_TMEventTypeMoveProjectileIgnoreImpacts)
-		curEvent->_type = k49_TMEventTypeMoveProjectile;
+	if (curEvent->_type == kDMEventTypeMoveProjectileIgnoreImpacts)
+		curEvent->_type = kDMEventTypeMoveProjectile;
 	else {
 		uint16 projectileCurCell = projectileThingNewCell.getCell();
 		if ((_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (destinationMapX == _vm->_dungeonMan->_partyMapX) && (destinationMapY == _vm->_dungeonMan->_partyMapY) && hasProjectileImpactOccurred(kDMElementTypeChampion, destinationMapX, destinationMapY, projectileCurCell, projectileThingNewCell))
@@ -541,7 +541,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 			&& (attack = _vm->_groupMan->groupGetResistanceAdjustedPoisonAttack(creatureType, attack))
 			&& (_vm->_groupMan->getDamageAllCreaturesOutcome(group, mapX, mapY, attack, true) != kDMKillOutcomeAllCreaturesInGroup)
 			&& (attack > 2)) {
-			_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+			_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 		}
 		if (explosion->getAttack() >= 6) {
 			explosion->setAttack(explosion->getAttack() - 3);

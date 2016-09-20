@@ -925,7 +925,7 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 	int32 updatedEnableActionEventTime = _vm->_gameTime + ticks;
 
 	TimelineEvent curEvent;
-	curEvent._type = k11_TMEventTypeEnableChampionAction;
+	curEvent._type = kDMEventTypeEnableChampionAction;
 	curEvent._priority = champIndex;
 	curEvent._Bu._slotOrdinal = 0;
 
@@ -1115,7 +1115,7 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 	if (--attack) {
 		curChampion->_poisonEventCount++;
 		TimelineEvent newEvent;
-		newEvent._type = k75_TMEventTypePoisonChampion;
+		newEvent._type = kDMEventTypePoisonChampion;
 		newEvent._priority = champIndex;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 36);
 		newEvent._Bu._attack = attack;
@@ -1431,7 +1431,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
 			if (eventIndex == -1) {
 				TimelineEvent newEvent;
-				newEvent._type = k12_TMEventTypeHideDamageReceived;
+				newEvent._type = kDMEventTypeHideDamageReceived;
 				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 5);
 				newEvent._priority = championIndex;
 				championPtr->_hideDamageReceivedIndex = _vm->_timeline->addEventGetEventIndex(&newEvent);
@@ -1563,7 +1563,7 @@ void ChampionMan::unpoison(int16 champIndex) {
 
 	TimelineEvent *eventPtr = _vm->_timeline->_events;
 	for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventPtr++, eventIndex++) {
-		if ((eventPtr->_type == k75_TMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
+		if ((eventPtr->_type == kDMEventTypePoisonChampion) && (eventPtr->_priority == champIndex))
 			_vm->_timeline->deleteEvent(eventIndex);
 	}
 	_champions[champIndex]._poisonEventCount = 0;

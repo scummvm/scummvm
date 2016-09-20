@@ -1032,7 +1032,7 @@ void EventManager::commandMoveParty(CommandType cmdType) {
 		} else {
 			isMovementBlocked = (_vm->_groupMan->groupGetThing(partyMapX, partyMapY) != Thing::_endOfList);
 			if (isMovementBlocked)
-				_vm->_groupMan->processEvents29to41(partyMapX, partyMapY, kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, 0);
+				_vm->_groupMan->processEvents29to41(partyMapX, partyMapY, kDMEventTypeCreateReactionPartyIsAdjacent, 0);
 		}
 	}
 
@@ -1175,7 +1175,7 @@ void EventManager::commandProcessType80ClickInDungeonView(int16 posX, int16 posY
 			if ((((Door*)junkPtr)->hasButton()) && _vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn].isPointInside(posX, posY - 33)) {
 				_vm->_stopWaitingForPlayerInput = true;
 				_vm->_sound->requestPlay(kDMSoundIndexSwitch, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
-				_vm->_moveSens->addEvent(k10_TMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
+				_vm->_moveSens->addEvent(kDMEventTypeDoor, mapX, mapY, kDMCellNorthWest, kDMSensorEffectToggle, _vm->_gameTime + 1);
 				return;
 			}
 		} else if (isLeaderHandObjThrown(posX, posY))
@@ -1398,7 +1398,7 @@ void EventManager::clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 		Junk *removedJunk = (Junk*)_vm->_dungeonMan->getThingData(removedThing);
 		TimelineEvent newEvent;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 1);
-		newEvent._type = k13_TMEventTypeViAltarRebirth;
+		newEvent._type = kDMEventTypeViAltarRebirth;
 		newEvent._priority = removedJunk->getChargeCount();
 		newEvent._Bu._location._mapX = mapX;
 		newEvent._Bu._location._mapY = mapY;

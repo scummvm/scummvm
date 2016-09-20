@@ -112,14 +112,14 @@ void Timeline::initTimeline() {
 	_timeline = new uint16[_eventMaxCount];
 	if (_vm->_gameMode != kDMModeLoadSavedGame) {
 		for (int16 i = 0; i < _eventMaxCount; ++i)
-			_events[i]._type = k0_TMEventTypeNone;
+			_events[i]._type = kDMEventTypeNone;
 		_eventCount = 0;
 		_firstUnusedEventIndex = 0;
 	}
 }
 
 void Timeline::deleteEvent(uint16 eventIndex) {
-	_events[eventIndex]._type = k0_TMEventTypeNone;
+	_events[eventIndex]._type = kDMEventTypeNone;
 	if (eventIndex < _firstUnusedEventIndex)
 		_firstUnusedEventIndex = eventIndex;
 
@@ -199,16 +199,16 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 	if (_eventCount == _eventMaxCount)
 		error("Too many events");
 
-	if ((event->_type >= k5_TMEventTypeCorridor) && (event->_type <= k10_TMEventTypeDoor)) {
+	if ((event->_type >= kDMEventTypeCorridor) && (event->_type <= kDMEventTypeDoor)) {
 		TimelineEvent *curEvent = _events;
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
-			if ((curEvent->_type >= k5_TMEventTypeCorridor) && (curEvent->_type <= k10_TMEventTypeDoor)) {
-				if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY()) && ((curEvent->_type != k6_TMEventTypeWall) || (curEvent->_Cu.A._cell == event->_Cu.A._cell))) {
+			if ((curEvent->_type >= kDMEventTypeCorridor) && (curEvent->_type <= kDMEventTypeDoor)) {
+				if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY()) && ((curEvent->_type != kDMEventTypeWall) || (curEvent->_Cu.A._cell == event->_Cu.A._cell))) {
 					curEvent->_Cu.A._effect = event->_Cu.A._effect;
 					return eventIndex;
 				}
 				continue;
-			} else if ((curEvent->_type == k1_TMEventTypeDoorAnimation) && (event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
+			} else if ((curEvent->_type == kDMEventTypeDoorAnimation) && (event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
 				if (event->_Cu.A._effect == kDMSensorEffectToggle)
 					event->_Cu.A._effect = 1 - curEvent->_Cu.A._effect;
 
@@ -216,27 +216,27 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 				break;
 			}
 		}
-	} else if (event->_type == k1_TMEventTypeDoorAnimation) {
+	} else if (event->_type == kDMEventTypeDoorAnimation) {
 		TimelineEvent *curEvent = _events;
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
 			if ((event->_mapTime == curEvent->_mapTime) && (event->getMapXY() == curEvent->getMapXY())) {
-				if (curEvent->_type == k10_TMEventTypeDoor) {
+				if (curEvent->_type == kDMEventTypeDoor) {
 					if (curEvent->_Cu.A._effect == kDMSensorEffectToggle)
 						curEvent->_Cu.A._effect = 1 - event->_Cu.A._effect;
 
 					return eventIndex;
 				}
-				if (curEvent->_type == k1_TMEventTypeDoorAnimation) {
+				if (curEvent->_type == kDMEventTypeDoorAnimation) {
 					curEvent->_Cu.A._effect = event->_Cu.A._effect;
 					return eventIndex;
 				}
 			}
 		}
-	} else if (event->_type == k2_TMEventTypeDoorDestruction) {
+	} else if (event->_type == kDMEventTypeDoorDestruction) {
 		TimelineEvent *curEvent = _events;
 		for (uint16 eventIndex = 0; eventIndex < _eventMaxCount; eventIndex++, curEvent++) {
 			if ((event->getMapXY() == curEvent->getMapXY()) && (_vm->getMap(event->_mapTime) == _vm->getMap(curEvent->_mapTime))) {
-				if ((curEvent->_type == k1_TMEventTypeDoorAnimation) || (curEvent->_type == k10_TMEventTypeDoor))
+				if ((curEvent->_type == kDMEventTypeDoorAnimation) || (curEvent->_type == kDMEventTypeDoor))
 					deleteEvent(eventIndex);
 			}
 		}
@@ -248,7 +248,7 @@ uint16 Timeline::addEventGetEventIndex(TimelineEvent *event) {
 		if (_firstUnusedEventIndex == _eventMaxCount)
 			break;
 		_firstUnusedEventIndex++;
-	} while ((_events[_firstUnusedEventIndex])._type != k0_TMEventTypeNone);
+	} while ((_events[_firstUnusedEventIndex])._type != kDMEventTypeNone);
 	_timeline[_eventCount] = newEventIndex;
 	fixChronology(_eventCount++);
 	return newEventIndex;
@@ -261,106 +261,106 @@ void Timeline::processTimeline() {
 		extractFirstEvent(curEvent);
 		_vm->_dungeonMan->setCurrentMap(_vm->getMap(newEvent._mapTime));
 		uint16 curEventType = newEvent._type;
-		if ((curEventType > (k29_TMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (k41_TMEventTypeUpdateBehaviour_3 + 1)))
+		if ((curEventType > (kDMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (kDMEventTypeUpdateBehavior3 + 1)))
 			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._Cu._ticks);
 		else {
 			switch (curEventType) {
-			case k48_TMEventTypeMoveProjectileIgnoreImpacts:
-			case k49_TMEventTypeMoveProjectile:
+			case kDMEventTypeMoveProjectileIgnoreImpacts:
+			case kDMEventTypeMoveProjectile:
 				_vm->_projexpl->processEvents48To49(curEvent);
 				break;
-			case k1_TMEventTypeDoorAnimation:
+			case kDMEventTypeDoorAnimation:
 				processEventDoorAnimation(curEvent);
 				break;
-			case k25_TMEventTypeExplosion:
+			case kDMEventTypeExplosion:
 				_vm->_projexpl->processEvent25(curEvent);
 				break;
-			case k7_TMEventTypeFakeWall:
+			case kDMEventTypeFakeWall:
 				processEventSquareFakewall(curEvent);
 				break;
-			case k2_TMEventTypeDoorDestruction:
+			case kDMEventTypeDoorDestruction:
 				processEventDoorDestruction(curEvent);
 				break;
-			case k10_TMEventTypeDoor:
+			case kDMEventTypeDoor:
 				processEventSquareDoor(curEvent);
 				break;
-			case k9_TMEventTypePit:
+			case kDMEventTypePit:
 				processEventSquarePit(curEvent);
 				break;
-			case k8_TMEventTypeTeleporter:
+			case kDMEventTypeTeleporter:
 				processEventSquareTeleporter(curEvent);
 				break;
-			case k6_TMEventTypeWall:
+			case kDMEventTypeWall:
 				processEventSquareWall(curEvent);
 				break;
-			case k5_TMEventTypeCorridor:
+			case kDMEventTypeCorridor:
 				processEventSquareCorridor(curEvent);
 				break;
-			case k60_TMEventTypeMoveGroupSilent:
-			case k61_TMEventTypeMoveGroupAudible:
+			case kDMEventTypeMoveGroupSilent:
+			case kDMEventTypeMoveGroupAudible:
 				processEventsMoveGroup(curEvent);
 				break;
-			case k65_TMEventTypeEnableGroupGenerator:
+			case kDMEventTypeEnableGroupGenerator:
 				procesEventEnableGroupGenerator(curEvent);
 				break;
-			case k20_TMEventTypePlaySound:
+			case kDMEventTypePlaySound:
 				_vm->_sound->requestPlay(newEvent._Cu._soundIndex, newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, kDMSoundModePlayIfPrioritized);
 				break;
-			case k24_TMEventTypeRemoveFluxcage:
+			case kDMEventTypeRemoveFluxcage:
 				if (!_vm->_gameWon) {
 					_vm->_dungeonMan->unlinkThingFromList(Thing(newEvent._Cu._slot), Thing(0), newEvent._Bu._location._mapX, newEvent._Bu._location._mapY);
 					curEvent = (TimelineEvent *)_vm->_dungeonMan->getThingData(Thing(newEvent._Cu._slot));
 					((Explosion *)curEvent)->setNextThing(Thing::_none);
 				}
 				break;
-			case k11_TMEventTypeEnableChampionAction:
+			case kDMEventTypeEnableChampionAction:
 				processEventEnableChampionAction(newEvent._priority);
 				if (newEvent._Bu._slotOrdinal)
 					processEventMoveWeaponFromQuiverToSlot(newEvent._priority, _vm->ordinalToIndex(newEvent._Bu._slotOrdinal));
 
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
-			case k12_TMEventTypeHideDamageReceived:
+			case kDMEventTypeHideDamageReceived:
 				processEventHideDamageReceived(newEvent._priority);
 				break;
-			case k70_TMEventTypeLight:
+			case kDMEventTypeLight:
 				_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
 				processEventLight(curEvent);
 				_vm->_inventoryMan->setDungeonViewPalette();
 				break;
-			case k71_TMEventTypeInvisibility:
+			case kDMEventTypeInvisibility:
 				_vm->_championMan->_party._event71Count_Invisibility--;
 				break;
-			case k72_TMEventTypeChampionShield:
+			case kDMEventTypeChampionShield:
 				_vm->_championMan->_champions[newEvent._priority]._shieldDefense -= newEvent._Bu._defense;
 				setFlag(_vm->_championMan->_champions[newEvent._priority]._attributes, kDMAttributeStatusBox);
 				_vm->_championMan->drawChampionState((ChampionIndex)newEvent._priority);
 				break;
-			case k73_TMEventTypeThievesEye:
+			case kDMEventTypeThievesEye:
 				_vm->_championMan->_party._event73Count_ThievesEye--;
 				break;
-			case k74_TMEventTypePartyShield:
+			case kDMEventTypePartyShield:
 				_vm->_championMan->_party._shieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
-			case k77_TMEventTypeSpellShield:
+			case kDMEventTypeSpellShield:
 				_vm->_championMan->_party._spellShieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
-			case k78_TMEventTypeFireShield:
+			case kDMEventTypeFireShield:
 				_vm->_championMan->_party._fireShieldDefense -= newEvent._Bu._defense;
 				refreshAllChampionStatusBoxes();
 				break;
-			case k75_TMEventTypePoisonChampion: {
+			case kDMEventTypePoisonChampion: {
 				uint16 championIndex = newEvent._priority;
 				_vm->_championMan->_champions[championIndex = newEvent._priority]._poisonEventCount--;
 				_vm->_championMan->championPoison(championIndex, newEvent._Bu._attack);
 				}
 				break;
-			case k13_TMEventTypeViAltarRebirth:
+			case kDMEventTypeViAltarRebirth:
 				processEventViAltarRebirth(curEvent);
 				break;
-			case k79_TMEventTypeFootprints:
+			case kDMEventTypeFootprints:
 				_vm->_championMan->_party._event79Count_Footprints--;
 			}
 		}
@@ -413,7 +413,7 @@ void Timeline::processEventDoorAnimation(TimelineEvent *event) {
 		if ((groupThing != Thing::_endOfList) && !getFlag(creatureAttributes, kDMCreatureMaskNonMaterial)) {
 			if (doorState >= (verticalDoorFl ? CreatureInfo::getHeight(creatureAttributes) : 1)) { /* Creature height or 1 */
 				if (_vm->_groupMan->getDamageAllCreaturesOutcome((Group *)_vm->_dungeonMan->getThingData(groupThing), mapX, mapY, 5, true) != kDMKillOutcomeAllCreaturesInGroup)
-					_vm->_groupMan->processEvents29to41(mapX, mapY, kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, 0);
+					_vm->_groupMan->processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionDangerOnSquare, 0);
 
 				int16 nextState = doorState - 1;
 				doorState = (doorState == kDMDoorStateOpen) ? kDMDoorStateOpen : (DoorState) nextState;
@@ -486,7 +486,7 @@ void Timeline::processEventSquareDoor(TimelineEvent *event) {
 		if ((doorState == kDMDoorStateOpen) || (doorState == kDMDoorStateClosed))
 			return;
 	}
-	event->_type = k1_TMEventTypeDoorAnimation;
+	event->_type = kDMEventTypeDoorAnimation;
 	addEventGetEventIndex(event);
 }
 
@@ -545,7 +545,7 @@ void Timeline::moveTeleporterOrPitSquareThings(uint16 mapX, uint16 mapY) {
 		} else if (curThingType == kDMThingTypeExplosion) {
 			TimelineEvent *newEvent = _events;
 			for (uint16 i = 0; i < _eventMaxCount; newEvent++, i++) {
-				if ((newEvent->_type == k25_TMEventTypeExplosion) && (newEvent->_Cu._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
+				if ((newEvent->_type == kDMEventTypeExplosion) && (newEvent->_Cu._slot == curThing.toUint16())) { /* BUG0_23 A Fluxcage explosion remains on a square forever. If you open a pit or teleporter on a square where there is a Fluxcage explosion, the Fluxcage explosion is moved but the associated event is not updated (because Fluxcage explosions do not use k25_TMEventTypeExplosion but rather k24_TMEventTypeRemoveFluxcage) causing the Fluxcage explosion to remain in the dungeon forever on its destination square. When the k24_TMEventTypeRemoveFluxcage expires the explosion thing is not removed, but it is marked as unused. Consequently, any objects placed on the Fluxcage square after it was moved but before it expires become orphans upon expiration. After expiration, any object placed on the fluxcage square is cloned when picked up */
 					newEvent->_Bu._location._mapX = _vm->_moveSens->_moveResultMapX;
 					newEvent->_Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 					newEvent->_Cu._slot = _vm->thingWithNewCell(curThing, _vm->_moveSens->_moveResultCell).toUint16();
@@ -725,8 +725,8 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 			Sensor *curSensor = (Sensor *)_vm->_dungeonMan->getThingData(curThing);
 			if (curSensor->getType() == kDMSensorFloorGroupGenerator) {
 				int16 creatureCount = curSensor->getAttrValue();
-				if (getFlag(creatureCount, k0x0008_randomizeGeneratedCreatureCount))
-					creatureCount = _vm->getRandomNumber(getFlag(creatureCount, k0x0007_generatedCreatureCount));
+				if (getFlag(creatureCount, kDMMaskRandomizeGeneratedCreatureCount))
+					creatureCount = _vm->getRandomNumber(getFlag(creatureCount, kDMMaskGeneratedCreatureCount));
 				else
 					creatureCount--;
 
@@ -748,7 +748,7 @@ void Timeline::processEventSquareCorridor(TimelineEvent *event) {
 							actionTicks = (actionTicks - 126) << 6;
 
 						TimelineEvent newEvent;
-						newEvent._type = k65_TMEventTypeEnableGroupGenerator;
+						newEvent._type = kDMEventTypeEnableGroupGenerator;
 						newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + actionTicks);
 						newEvent._priority = 0;
 						newEvent._Bu._location._mapX = mapX;
@@ -770,7 +770,7 @@ void Timeline::processEventsMoveGroup(TimelineEvent *event) {
 
 T0252001:
 	if (((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) || (mapX != _vm->_dungeonMan->_partyMapX) || (mapY != _vm->_dungeonMan->_partyMapY)) && (_vm->_groupMan->groupGetThing(mapX, mapY) == Thing::_endOfList)) { /* BUG0_24 Lord Chaos may teleport into one of the Black Flames and become invisible until the Black Flame is killed. In this case, _vm->_groupMan->f175_groupGetThing returns the Black Flame thing and the Lord Chaos thing is not moved into the dungeon until the Black Flame is killed */
-		if (event->_type == k61_TMEventTypeMoveGroupAudible)
+		if (event->_type == kDMEventTypeMoveGroupAudible)
 			_vm->_sound->requestPlay(kDMSoundIndexBuzz, mapX, mapY, kDMSoundModePlayIfPrioritized);
 
 		_vm->_moveSens->getMoveResult(Thing(event->_Cu._slot), kDMMapXNotOnASquare, 0, mapX, mapY);
@@ -898,7 +898,7 @@ void Timeline::processEventLight(TimelineEvent *event) {
 	_vm->_championMan->_party._magicalLightAmount += lightAmount;
 	if (weakerLightPower) {
 		TimelineEvent newEvent;
-		newEvent._type = k70_TMEventTypeLight;
+		newEvent._type = kDMEventTypeLight;
 		newEvent._Bu._lightPower = weakerLightPower;
 		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + 4);
 		newEvent._priority = 0;
