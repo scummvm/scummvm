@@ -29,6 +29,23 @@
 
 namespace Chewy {
 
+// Resource files - TODO:
+// ======================
+// back/episode1.gep
+// cut/blende.rnd
+// cut/cut.tap
+// misc/*.taf, room/*.taf
+// misc/exit.eib
+// misc/inventar.iib
+// misc/inventar.sib
+// room/csp.int
+// room/test.rdi
+// txt/*.tff
+// txt/*.tap
+// txt/diah.adh
+// txt/inv_st.s and txt/room_st.s
+// txt/inv_use.idx
+
 Resource::Resource(Common::String filename) {
 	const uint32 headerGeneric = MKTAG('N', 'G', 'S', '\0');
 	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
