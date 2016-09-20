@@ -42,7 +42,7 @@ void sceneDbgMenu_initScene(Scene *sc) {
 
 GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
 	if (g_fp->_currentScene)
-		for (uint i = 0; i < g_fp->_currentScene->_picObjList.size(); i++) {
+		for (uint i = 1; i < g_fp->_currentScene->_picObjList.size(); i++) {
 			PictureObject *pic = (PictureObject *)g_fp->_currentScene->_picObjList[i];
 
 			if (x >= pic->_ox && y >= pic->_oy) {
