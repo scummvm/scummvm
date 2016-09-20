@@ -435,7 +435,8 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 						if (nextCreatureIndex == creatureIndex)
 							_vm->_timeline->deleteEvent(eventIndex);
 						else if (nextCreatureIndex > creatureIndex) {
-							curEvent->_type -= 1;
+							int16 curType = curEvent->_type - 1;
+							curEvent->_type = (TimelineEventType)curType;
 							_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 						}
 					}
@@ -556,7 +557,7 @@ int16 GroupMan::groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType
 	return ((poisonAttack + _vm->getRandomNumber(4)) << 3) / (poisonResistance + 1);
 }
 
-void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks) {
+void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEventType eventType, uint16 ticks) {
 	int16 L0446_i_Multiple = 0;
 #define AL0446_i_Direction           L0446_i_Multiple
 #define AL0446_i_Ticks               L0446_i_Multiple
@@ -651,7 +652,8 @@ T0209005_AddEventAndReturn:
 	For event kM1_TMEventTypeCreateReactionEvent31ParyIsAdjacent, the reaction time is 1 tick
 	For event kM2_TMEventTypeCreateReactionEvent30HitByProjectile and kM3_TMEventTypeCreateReactionEvent29DangerOnSquare, the reaction time may be 1 tick or slower: slow moving creatures react more slowly. The more recent is the last creature move, the slower the reaction */
 	if (eventType < 0) {
-		nextEvent._type = eventType + kDMEventTypeUpdateAspectGroup;
+		int16 nextType = eventType + kDMEventTypeUpdateAspectGroup;
+		nextEvent._type = (TimelineEventType)nextType;
 		if (eventType == kDMEventTypeCreateReactionPartyIsAdjacent) {
 			AL0446_i_Ticks = 1; /* Retry in 1 tick */
 		} else {
@@ -681,7 +683,9 @@ T0209005_AddEventAndReturn:
 	int16 distanceToVisibleParty = 0;
 
 	if (eventType <= kDMEventTypeGroupReactionPartyIsAdjecent) { /* Process Reaction events 29 to 31 */
-		switch (eventType = eventType - kDMEventTypeUpdateAspectGroup) {
+		int16 tmpType = eventType - kDMEventTypeUpdateAspectGroup;
+		eventType = (TimelineEventType) tmpType;
+		switch (eventType) {
 		case kDMEventTypeCreateReactionPartyIsAdjacent: /* This event is used when the party bumps into a group or attacks a group physically (not with a spell). It causes the creature behavior to change to attack if it is not already attacking the party or fleeing from target */
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
 				groupDeleteEvents(eventMapX, eventMapY);
@@ -709,7 +713,8 @@ T0209005_AddEventAndReturn:
 		}
 	}
 	if (eventType < kDMEventTypeUpdateBehaviourGroup) { /* Process Update Aspect events 32 to 36 */
-		nextEvent._type = eventType + 5;
+		int16 nextType = eventType + 5;
+		nextEvent._type = (TimelineEventType)nextType;
 		if (groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY)) {
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
 				if (_vm->getDistance(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, eventMapX, eventMapY) <= 1)
@@ -760,7 +765,8 @@ T0209044_SetBehavior6_Attack:
 							if (notUpdateBehaviorFl) {
 								nextEvent._mapTime += MIN((uint16)((creatureInfo._attackTicks >> 1) + _vm->getRandomNumber(4)), ticks);
 							}
-							nextEvent._type = kDMEventTypeUpdateBehavior0 + AL0447_i_CreatureIndex;
+							int16 nextType = kDMEventTypeUpdateBehavior0 + AL0447_i_CreatureIndex;
+							nextEvent._type = (TimelineEventType)nextType;
 							addGroupEvent(&nextEvent, getCreatureAspectUpdateTime(activeGroup, AL0447_i_CreatureIndex, false));
 						}
 						return;
@@ -1341,7 +1347,8 @@ void GroupMan::setGroupDirection(ActiveGroup *activeGroup, int16 dir, int16 crea
 void GroupMan::addGroupEvent(TimelineEvent *event, uint32 time) {
 	warning("potentially dangerous cast to uint32 below");
 	if (time < (uint32)_vm->filterTime(event->_mapTime)) {
-		event->_type -= 5;
+		int16 tmpType = event->_type - 5;
+		event->_type = (TimelineEventType)tmpType;
 		event->_Cu._ticks = _vm->filterTime(event->_mapTime) - time;
 		setTime(event->_mapTime, time);
 	} else

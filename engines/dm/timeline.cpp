@@ -260,7 +260,7 @@ void Timeline::processTimeline() {
 		TimelineEvent *curEvent = &newEvent;
 		extractFirstEvent(curEvent);
 		_vm->_dungeonMan->setCurrentMap(_vm->getMap(newEvent._mapTime));
-		uint16 curEventType = newEvent._type;
+		TimelineEventType curEventType = newEvent._type;
 		if ((curEventType > (kDMEventTypeGroupReactionDangerOnSquare - 1)) && (curEventType < (kDMEventTypeUpdateBehavior3 + 1)))
 			_vm->_groupMan->processEvents29to41(newEvent._Bu._location._mapX, newEvent._Bu._location._mapY, curEventType, newEvent._Cu._ticks);
 		else {
@@ -974,7 +974,7 @@ void Timeline::loadEventsPart(Common::InSaveFile *file) {
 	for (uint16 i = 0; i < _eventMaxCount; ++i) {
 		TimelineEvent *event = &_events[i];
 		event->_mapTime = file->readSint32BE();
-		event->_type = file->readByte();
+		event->_type = (TimelineEventType)file->readByte();
 		event->_priority = file->readByte();
 		event->_Bu._location._mapX = file->readByte();
 		event->_Bu._location._mapY = file->readByte();

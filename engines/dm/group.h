@@ -30,6 +30,7 @@
 
 #include "dm/dm.h"
 #include "dm/sounds.h"
+#include "dm/timeline.h"
 
 namespace DM {
 	class Champion;
@@ -204,7 +205,7 @@ public:
 	uint16 getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 creatureIndex, uint16 creatureVal); // @ F0178_GROUP_GetGroupValueUpdatedWithCreatureValue
 	int16 getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving); // @ F0191_GROUP_GetDamageAllCreaturesOutcome
 	int16 groupGetResistanceAdjustedPoisonAttack(CreatureType creatureType, int16 poisonAttack); // @ F0192_GROUP_GetResistanceAdjustedPoisonAttack
-	void processEvents29to41(int16 eventMapX, int16 eventMapY, int16 eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
+	void processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEventType eventType, uint16 ticks); // @ F0209_GROUP_ProcessEvents29to41
 	bool isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 mapY,
 								 uint16 dir, bool allowMovementOverImaginaryPitsAndFakeWalls); // @ F0202_GROUP_IsMovementPossible
 	int16 getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 destMapX,

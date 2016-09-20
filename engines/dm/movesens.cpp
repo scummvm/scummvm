@@ -583,7 +583,7 @@ T0266017_CheckProjectileImpacts:
 	return false;
 }
 
-void MovesensMan::addEvent(byte type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time) {
+void MovesensMan::addEvent(TimelineEventType type, byte mapX, byte mapY, Cell cell, SensorEffect effect, int32 time) {
 	TimelineEvent newEvent;
 	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, time);
 	newEvent._type = type;
