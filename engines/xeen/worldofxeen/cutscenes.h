@@ -65,7 +65,7 @@ protected:
 	 * Delays either the specified number of frames, or until
 	 * an entire subtitle line is shown if subtitles are on
 	 */
-	bool subtitlesWait(uint minTime);
+	bool subtitlesWait(uint minTime = 0);
 
 	/**
 	 * Records the current execution time

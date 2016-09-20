@@ -224,11 +224,11 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	//sound.playSong("dngon3.m");
+	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
 	screen.loadPalette("endgame.pal");
 	screen.update();
-/*
+
 	screen.fadeIn();
 	WAIT(30);
 
@@ -315,7 +315,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	File whoosh("whoosh.voc");
 
 	screen.horizMerge();
-	int yp = 101, ctr = 0, frameNum = 0;
+	int yp = 101, tCtr = 0, frameNum = 0;
 	for (int xp = 0; xp < 320; xp += 2) {
 		screen.horizMerge(xp);
 
@@ -328,7 +328,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound(whoosh);
 		WAIT(1);
 
-		if (++ctr % 2)
+		if (++tCtr % 2)
 			frameNum = (frameNum + 1) % 10;
 
 		if (xp < 100)
@@ -502,6 +502,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		screen.restoreBackground();
 		showSubtitles();
 	} while (_subtitleSize);
+	
 	sc09.clear();
 
 	// Nor do you!
@@ -516,7 +517,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("nordo2.voc");
 
 		screen.restoreBackground();
-		sc09.draw(screen, getSpeakingFrame(0, 1));
+		sc10.draw(screen, getSpeakingFrame(0, 1));
 		showSubtitles();
 		WAIT(3);
 	}
@@ -525,8 +526,8 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		screen.restoreBackground();
 		showSubtitles();
 	} while (_subtitleSize);
+
 	sc10.clear();
-	*/_subtitles.load("special.bin");
 
 	// Closeup of side of Alamar's helmet
 	SpriteResource sc11("sc11.end");
@@ -617,7 +618,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.update();
 	screen.fadeIn();
 
-	for (int waveNum = 0; waveNum < 3; ++waveNum) {
+	for (int waveNum = 0; waveNum < 2; ++waveNum) {
 		for (int idx = 0; idx < 10; ++idx) {
 			if (waveNum == 0 && idx == 3)
 				sound.playSound("fight2.voc");
@@ -637,10 +638,440 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	sc14.clear();
 
 	// Fighting start
+	SpriteResource sc15("sc15.end");
+	screen.loadBackground("mainback.raw");
+	screen.saveBackground();
+	sc15.draw(screen, 0, Common::Point(52, 84));
+	screen.update();
 
+	for (int idx = 0; idx < 21; ++idx) {
+		screen.restoreBackground();
+		sc15.draw(screen, idx, Common::Point(52, 84));
+		screen.update();
+		WAIT(3);
 
-	// TODO
-	events.wait(5000);
+		if (idx == 4)
+			sound.playSound("disint.voc");
+		else if (idx == 12)
+			sound.playSound("explosio.voc");
+	}
+
+	sc15.clear();
+	sound.stopSound();
+
+	// I can not fail
+	SpriteResource sc16("sc16.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 28;
+	_subtitleSize = 1;
+
+	screen.loadBackground("scene4.raw");
+	screen.loadPage(0);
+	screen.loadBackground("scene4-1.raw");
+	screen.loadPage(1);
+	screen.loadBackground("sc170001.raw");
+	screen.saveBackground();
+	screen.horizMerge(0);
+	sc16.draw(screen, 0, Common::Point(7, 29));	
+	showSubtitles();
+	sound.playSound("fail1.voc");
+
+	for (int idx = 0; idx < 5; ++idx) {
+		screen.horizMerge(0);
+		sc16.draw(screen, idx, Common::Point(7, 29));
+		showSubtitles();
+		WAIT(4);
+	}
+
+	// Force sphere goes horizontally
+	int val = 5;
+	for (int idx = 0; idx < 320; idx += 16) {
+		screen.horizMerge(idx);
+		sc16.draw(screen, (val >= 12) ? 11 : val++,
+			Common::Point(idx * -1 + 7, 29));
+
+		if (val > 10)
+			sc16.draw(screen, 12, Common::Point(273, 70));
+
+		showSubtitles();
+		WAIT(2);
+
+		if (idx == 48)
+			sound.playSound("alien2.voc");
+	}
+
+	screen.freePages();
+	sc16.clear();
+
+	// Sheltem protects himself with cloak
+	SpriteResource sc17[2] = {
+		SpriteResource("sc17xa.end"), SpriteResource("sc17xb.end")
+	};
+	screen.restoreBackground();
+	screen.update();
+
+	for (int idx = 0; idx < 16; ++idx) {
+		screen.restoreBackground();
+		sc17[idx / 8].draw(screen, idx % 8, Common::Point(44, 19));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 9)
+			sound.playSound("thud1.voc");
+	}
+
+	screen.fadeOut();
+	sc17[0].clear();
+	sc17[1].clear();
+
+	// Sheltem fires on Corak
+	SpriteResource sc18[4] = {
+		SpriteResource("sc18a.end"), SpriteResource("sc18b.end"),
+		SpriteResource("sc18c.end"), SpriteResource("sc18d.end")
+	};
+	screen.loadBackground("sc180001.raw");
+	screen.saveBackground();
+	screen.update();
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 31; ++idx) {
+		screen.restoreBackground();
+		sc18[idx / 8].draw(screen, idx % 8, Common::Point(29, 12));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 2)
+			sound.playSound("gascompr.voc");
+	}
+
+	for (int idx = 0; idx < 4; ++idx)
+		sc18[idx].clear();
+	
+	// Closeup of Corak bleeding
+	SpriteResource sc19("sc19.end");
+	screen.loadBackground("sc190001.raw");
+	screen.saveBackground();
+	screen.update();
+
+	for (int idx = 0; idx < 28; ++idx) {
+		if (idx == 20)
+			sound.songCommand(207);
+
+		screen.restoreBackground();
+		sc19.draw(screen, idx, Common::Point(33, 10));
+		WAIT(3);
+	}
+
+	sc19.clear();
+	sound.stopSong();
+	screen.fadeOut();
+
+	// Corak waving his hands
+	SpriteResource sc20("sc20.end");
+	sound.setMusicVolume(95);
+	sound.playSong("sf17.m");
+	screen.loadBackground("blank.raw");
+	screen.saveBackground();
+	screen.update();
+	screen.fadeIn();
+
+	for (int waveNum = 0; waveNum < 2; ++waveNum) {
+		sound.playSound("cast.voc");
+
+		for (int idx = 0; idx < 9; ++idx) {
+			screen.restoreBackground();
+			sc20.draw(screen, idx, Common::Point(80, 18));
+			screen.update();
+			WAIT(3);
+		}
+	}
+
+	sc20.clear();
+
+	// Sheltem bounces back bolts that Corak fires
+	SpriteResource sc21("sc21.end");
+	File alien2("alien2.voc");
+	screen.loadBackground("mainback.raw");
+	screen.saveBackground();
+	sc21.draw(screen, 0, Common::Point(133, 81));
+	screen.update();
+
+	for (int boltNum = 0; boltNum < 4; ++boltNum) {
+		sound.playSound(alien2);
+
+		for (int idx = (boltNum == 0) ? 0 : 3; idx < 13; ++idx) {
+			screen.restoreBackground();
+			sc21.draw(screen, idx, Common::Point(133, 81));
+			WAIT(2);
+		}
+	}
+
+	screen.restoreBackground();
+	sc21.draw(screen, 0, Common::Point(133, 81));
+	screen.update();
+
+	sc21.clear();
+	alien2.close();
+
+	// Sheltem fires force sphere at Corak
+	SpriteResource sc22("sc22.end");
+	screen.loadBackground("scene4.raw");
+	screen.loadPage(0);
+	screen.loadBackground("scene4-1.raw");
+	screen.loadPage(1);
+	screen.loadBackground("sc230001.raw");
+	screen.saveBackground();
+	screen.horizMerge(SCREEN_WIDTH);
+
+	while (sound.isPlaying()) {
+		WAIT(1);
+	}
+
+	sc22.draw(screen, 0, Common::Point(156, 28));
+	screen.update();
+	sound.playSound("cast.voc");
+
+	for (int idx = 0; idx < 5; ++idx) {
+		screen.horizMerge(SCREEN_WIDTH);
+		sc22.draw(screen, idx, Common::Point(156, 28));
+		screen.update();
+		WAIT(3);
+	}
+
+	// The sphere travels horizontally
+	sound.playSound("gascompr.voc");
+
+	int ctr = 5;
+	for (int idx = SCREEN_WIDTH, xOffset = 0; idx >= 0; idx -= 16, xOffset += 16) {
+		screen.horizMerge(idx);
+		sc22.draw(screen, (ctr >= 8) ? 7 : ctr++,
+			Common::Point(xOffset + 156, 28), SPRFLAG_800);
+		if (ctr > 7)
+			sc22.draw(screen, 8, Common::Point(136, 64));
+		screen.update();
+
+		WAIT(2);
+	}
+
+	screen.freePages();
+	sc22.clear();
+
+	// Corak raises shield and blocks sphere
+	SpriteResource sc23[2] = {
+		SpriteResource("sc23a.end"), SpriteResource("sc23b.end")
+	};
+
+	screen.restoreBackground();
+	screen.update();
+	sound.playSound("cast.voc");
+
+	for (int idx = 0; idx < 19; ++idx) {
+		screen.restoreBackground();
+		sc23[idx / 12].draw(screen, idx % 12, Common::Point(72, 4));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 5)
+			sound.playSound("padspell.voc");
+		else if (idx == 11)
+			sound.playFX(9);
+	}
+
+	screen.restoreBackground();
+	sc23[0].draw(screen, 0, Common::Point(72, 4));
+	screen.update();
+	screen.fadeOut();
+
+	sc23[0].clear();
+	sc23[1].clear();
+
+	// Corak does a ricochet shot on Sheltem
+	SpriteResource sc24[2] = {
+		SpriteResource("sc24a.end"), SpriteResource("sc24b.end")
+	};
+
+	screen.loadBackground("mainback.raw");
+	screen.saveBackground();
+	sc24[0].draw(screen, 0, Common::Point(148, 0));
+	screen.update();
+	screen.fadeIn(4);
+	sound.playSound("cast.voc");
+
+	for (int idx = 0; idx < 30; ++idx) {
+		screen.restoreBackground();
+		sc24[idx / 15].draw(screen, idx % 15, Common::Point(148, 0));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 6)
+			sound.playSound("padspell.voc");
+		else if (idx == 11 || idx == 14)
+			sound.playSound("click.voc");
+		else if (idx == 17)
+			sound.playSound("thud1.voc");
+	}
+
+	sc24[0].clear();
+	sc24[1].clear();
+
+	// Admit your defeat Corak
+	// Interestingly, the original also has a sc25b.end here, which was of
+	// Corak speaking here. It seems this was ditched in favor of the
+	// following closeup of him speaking "I do"
+	SpriteResource sc25("sc25a.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 29;
+	_subtitleSize = 1;
+
+	screen.loadBackground("sc250001.raw");
+	screen.saveBackground();
+	sc25.draw(screen, 0, Common::Point(27, 30));
+	screen.update();
+	
+	for (int struggleNum = 0; struggleNum < 2; ++struggleNum) {
+		for (int idx = 0; idx < 9; ++idx) {
+			if (struggleNum == 0 && idx == 2)
+				sound.playSound("admit2.voc");
+
+			sc25.draw(screen, idx, Common::Point(27, 30));
+			showSubtitles();
+			WAIT(3);
+		}
+	}
+	subtitlesWait();
+	sc25.clear();
+
+	// I do. Kamakazi time
+	SpriteResource sc26[4] = {
+		SpriteResource("sc26a.end"), SpriteResource("sc26b.end"),
+		SpriteResource("sc26c.end"), SpriteResource("sc26d.end")
+	};
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 30;
+	_subtitleSize = 1;
+
+	screen.loadBackground("sc260001.raw");
+	screen.saveBackground();
+	showSubtitles();
+	sound.playSound("ido2.voc");
+
+	for (int idx = 0; sound.isPlaying() || _subtitleSize; ) {
+		screen.restoreBackground();
+		sc26[idx / 8].draw(screen, idx % 8, Common::Point(58, 25));
+		WAIT(2);
+
+		idx = (idx == 31) ? 22 : idx + 1;
+	}
+
+	screen.loadBackground("sc270001.raw");
+	screen.saveBackground();
+
+	while (sound.isPlaying() && !_vm->shouldQuit()) {
+		events.pollEventsAndWait();
+		if (events.isKeyMousePressed())
+			return false;
+	}
+
+	for (int idx = 0; idx < 4; ++idx)
+		sc26[idx].clear();
+
+	// What? No!
+	SpriteResource sc27("sc27.end");
+	resetSubtitles();
+	recordTime();
+	_subtitleLineNum = 31;
+	_subtitleSize = 1;
+	showSubtitles();
+
+	for (int idx = 0; idx < 12; ++idx) {
+		if (idx == 1)
+			sound.playSound("what3.voc");
+
+		screen.restoreBackground();
+		sc27.draw(screen, idx, Common::Point(65, 22));
+		showSubtitles();
+		WAIT(3);
+	}
+
+	subtitlesWait();
+	sc27.clear();
+
+	// Vortex is opened and the two are sucked in, obliterating them
+	SpriteResource sc28[11] = {
+		SpriteResource("sca28.end"), SpriteResource("scb28.end"),
+		SpriteResource("scc28.end"), SpriteResource("scd28.end"),
+		SpriteResource("sce28.end"), SpriteResource("scf28.end"),
+		SpriteResource("scg28.end"), SpriteResource("sch28.end"),
+		SpriteResource("sci28.end"), SpriteResource("sck28.end"),
+		SpriteResource("sck28.end")
+	};
+
+	sound.playSong("dungeon2.m");
+	screen.fadeOut();
+	screen.loadBackground("mainback.raw");
+	screen.saveBackground();
+
+	sc28[0].draw(screen, 0, Common::Point(74, 0));
+	screen.update();
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 44; ++idx) {
+		screen.restoreBackground();
+		sc28[idx / 4].draw(screen, idx % 4, Common::Point(74, 0));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 0 || idx == 10 || idx == 18)
+			sound.playSound("rumble.voc");
+		else if (idx == 27)
+			sound.playSound("airmon.voc");
+		else if (idx == 38)
+			sound.playSound("explosio.voc");
+	}
+
+	screen.fadeOut();
+	for (int idx = 0; idx < 11; ++idx)
+		sc28[idx].clear();
+
+	// Longshot of castle blowing up
+	SpriteResource sc29[6] = {
+		SpriteResource("sc29a.end"), SpriteResource("sc29b.end"),
+		SpriteResource("sc29c.end"), SpriteResource("sc29d.end"),
+		SpriteResource("sc29e.end"), SpriteResource("sc29f.end")
+	};
+
+	screen.loadBackground("sc290001.raw");
+	screen.saveBackground();
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 54; ++idx) {
+		screen.restoreBackground();
+		if (idx == 40)
+			sound.songCommand(207);
+
+		sc29[idx / 10].draw(screen, idx % 10, Common::Point(92, 10));
+		screen.update();
+		WAIT(3);
+
+		if (idx == 1 || idx == 5 || idx == 11 || idx == 19 || idx == 34 || idx == 35)
+			sound.playSound("explosio.voc");
+	}
+
+	// Final bit of smoke from destroyed castle
+	for (int loopNum = 0; loopNum < 4; ++loopNum) {
+		for (int idx = 49; idx < 54; ++idx) {
+			screen.restoreBackground();
+			sc29[idx / 10].draw(screen, idx % 10, Common::Point(92, 10));
+			screen.update();
+			WAIT(3);
+		}
+	}
+
+	for (int idx = 0; idx < 6; ++idx)
+		sc29[idx].clear();
 
 	freeSubtitles();
 	return true;
