@@ -94,6 +94,11 @@ Inventory2::~Inventory2() {
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
+	for (uint i = 0; i < _inventoryItems.size(); i++)
+		delete _inventoryItems[i];
+
+	_inventoryItems.clear();
+
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
