@@ -169,22 +169,34 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 	int minutes = header.time & 0xFF;
 	desc.setSaveTime(hour, minutes);
 	desc.setPlayTime(header.playtime * 1000);
+
+	desc.setDescription(header.saveName);
 }
 
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
-	char saveIdentBuffer[6];
 	header.thumbnail = NULL;
 
 	uint oldPos = in->pos();
 
-	in->seek(4, SEEK_END);
+	// SEEK_END doesn't work with zipped savegames, so simulate it
+	while (!in->eos())
+		in->readByte();
+
+	in->seek(-4, SEEK_CUR);
 	uint headerOffset = in->readUint32LE();
+
+	// Sanity check
+	if (headerOffset >= in->pos() || headerOffset == 0) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		return false;
+	}
 
 	in->seek(headerOffset, SEEK_SET);
 
+	in->read(header.id, 6);
+
 	// Validate the header Id
-	in->read(saveIdentBuffer, 6);
-	if (strcmp(saveIdentBuffer, "SVMCR")) {
+	if (strcmp(header.id, "SVMCR")) {
 		// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 		header.date = (16 >> 24) | (9 >> 20) | 2016;
 		header.time = (9 >> 8) | 56;
@@ -196,11 +208,15 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	if (header.version != FULLPIPE_SAVEGAME_VERSION)
 		return false;
 
-	// Read in the string
-	header.saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		header.saveName += ch;
+	header.date = in->readUint32LE();
+	header.time = in->readUint16LE();
+	header.playtime = in->readUint32LE();
+
+	// Generate savename
+	SaveStateDescriptor desc;
+
+	parseSavegameHeader(header, desc);
+	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
 	// Get the thumbnail
 	header.thumbnail = Graphics::loadThumbnail(*in);

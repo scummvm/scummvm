@@ -22,6 +22,8 @@
 
 #include "common/memstream.h"
 
+#include "graphics/thumbnail.h"
+
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/gameloader.h"
@@ -113,6 +115,30 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
 
 	saveFile->write(stream.getData(), stream.size());
+
+	uint headerPos = saveFile->pos();
+	FullpipeSavegameHeader header2;
+
+	strcpy(header2.id, "SVMCR");
+	header2.version = FULLPIPE_SAVEGAME_VERSION;
+
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	header2.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	header2.time = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
+
+	header2.playtime = g_fp->getTotalPlayTime() / 1000;
+
+	saveFile->write(header2.id, 6);
+	saveFile->writeByte(header2.version);
+	saveFile->writeUint32LE(header2.date);
+	saveFile->writeUint16LE(header2.time);
+	saveFile->writeUint32LE(header2.playtime);
+
+	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
+
+	saveFile->writeUint32LE(headerPos);	// Store where the header starts
 
 	saveFile->finalize();
 

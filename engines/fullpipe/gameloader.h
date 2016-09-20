@@ -77,6 +77,7 @@ class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
 };
 
 struct FullpipeSavegameHeader {
+	char id[6];
 	uint8 version;
 	Common::String saveName;
 	uint32 date;
