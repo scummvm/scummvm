@@ -26,12 +26,16 @@
 #include "chewy/console.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
+#include "chewy/sound.h"
 
 namespace Chewy {
 
 Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
 	registerCmd("draw",			WRAP_METHOD(Console, Cmd_Draw));
+	registerCmd("play_sound",	WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("play_speech",	WRAP_METHOD(Console, Cmd_PlaySpeech));
+	registerCmd("play_music",	WRAP_METHOD(Console, Cmd_PlayMusic));
 }
 
 Console::~Console() {
@@ -82,6 +86,42 @@ bool Console::Cmd_Draw(int argc, const char **argv) {
 	delete g;
 
 	return false;
+}
+
+bool Console::Cmd_PlaySound(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_sound <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	_vm->_sound->playSound(resNum);
+
+	return true;
+}
+
+bool Console::Cmd_PlaySpeech(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_speech <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	_vm->_sound->playSpeech(resNum);
+
+	return true;
+}
+
+bool Console::Cmd_PlayMusic(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: play_music <number>\n");
+		return true;
+	}
+
+	int resNum = atoi(argv[1]);
+	_vm->_sound->playMusic(resNum);
+
+	return true;
 }
 
 } // End of namespace Chewy

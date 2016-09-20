@@ -39,6 +39,9 @@ private:
 
 	bool Cmd_Dump(int argc, const char **argv);
 	bool Cmd_Draw(int argc, const char **argv);
+	bool Cmd_PlaySound(int argc, const char **argv);
+	bool Cmd_PlaySpeech(int argc, const char **argv);
+	bool Cmd_PlayMusic(int argc, const char **argv);
 };
 
 } // End of namespace Chewy
