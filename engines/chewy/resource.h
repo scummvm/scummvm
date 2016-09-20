@@ -34,13 +34,46 @@
 
 namespace Chewy {
 
+enum ResourceType {
+	kResourcePCX = 0,		// unused
+	kResourceTBF = 1,		// contained in TGPs
+	kResourceTAF = 2,
+	kResourceTFF = 3,
+	kResourceVOC = 4,		// contained in TVPs
+	kResourceTPF = 5,		// unused
+	kResourceTMF = 6,		// unused
+	kResourceMOD = 7,		// unused
+	kResourceRAW = 8,		// unused
+	kResourceLBM = 9,		// unused
+	kResourceRDI = 10,
+	kResourceTXT = 11,
+	kResourceIIB = 12,
+	kResourceSIB = 13,
+	kResourceEIB = 14,
+	kResourceATS = 15,		// unused
+	kResourceSAA = 16,		// unused
+	kResourceFLC = 17,		// unused
+	kResourceAAD = 18,		// unused
+	kResourceADS = 19,		// unused
+	kResourceADH = 20,		// used in txt/diah.adh
+	kResourceTGP = 21,		// background, used in back/comic.tgp, back/episode1.tgp and back/gbook.tgp
+	kResourceTVP = 22,		// speech, used in sound/speech.tvp
+	kResourceTTP = 23,		// unused
+	kResourceTAP = 24,		// sound effects, music and cutscenes, used in sound/details.tap and cut/cut.tap
+	kResourceCFO = 25,		// unused
+	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
+};
+
 // 4 + 2 + 2 + 4 + 2 + 2 + 768 = 784 bytes
 #define TBF_CHUNK_HEADER_SIZE 784
 
-struct TBFChunk {
-	uint32 packedSize;	// includes header
-	uint16 type;
+struct Chunk {
+	uint32 size;
+	ResourceType type;
+	uint32 pos;	// position of the actual data
+};
 
+struct TBFChunk {
 	// TBF chunk header
 	// ID (TBF, followed by a zero)
 	uint16 screenMode;
@@ -49,10 +82,9 @@ struct TBFChunk {
 	uint16 width;
 	uint16 height;
 	byte palette[3 * 256];
-
-	uint32 pos;	// position of the actual data
 };
 
+typedef Common::Array<Chunk> ChunkList;
 typedef Common::Array<TBFChunk> TBFChunkList;
 
 class Resource {
@@ -60,12 +92,21 @@ public:
 	Resource(Common::String filename);
 	~Resource();
 
-	TBFChunk *getChunk(int num);
+	ResourceType getType() const { return _resType; }
+	uint32 getChunkCount() const;
+	Chunk *getChunk(int num);
+	TBFChunk *getTBFChunk(int num);
 	byte *getChunkData(int num);
 
-private:
+protected:
 	Common::File _stream;
 	uint16 _chunkCount;
+	ResourceType _resType;
+
+private:
+	void readTBFChunk();
+
+	ChunkList _chunkList;
 	TBFChunkList _tbfChunkList;
 };
 

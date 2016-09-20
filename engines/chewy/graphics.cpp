@@ -30,7 +30,7 @@ namespace Chewy {
 
 void Graphics::drawImage(Common::String filename, int imageNum) {
 	Resource *res = new Resource(filename);
-	TBFChunk *cur = res->getChunk(imageNum);
+	TBFChunk *cur = res->getTBFChunk(imageNum);
 	byte *buf = res->getChunkData(imageNum);
 
 	g_system->getPaletteManager()->setPalette(cur->palette, 0, 256);

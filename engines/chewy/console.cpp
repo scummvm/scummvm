@@ -48,12 +48,17 @@ bool Console::Cmd_Dump(int argc, const char **argv) {
 	Common::String dumpFilename = argv[3];
 
 	Resource *res = new Resource(filename);
-	TBFChunk *chunk = res->getChunk(resNum);
+	Chunk *chunk = res->getChunk(resNum);
 	byte *data = res->getChunkData(resNum);
+	uint32 size = chunk->size;
+	if (chunk->type == kResourceTBF) {
+		TBFChunk *tbf = res->getTBFChunk(resNum);
+		size = tbf->unpackedSize;
+	}
 
 	Common::DumpFile outFile;
 	outFile.open(dumpFilename);
-	outFile.write(data, chunk->unpackedSize);
+	outFile.write(data, size);
 	outFile.flush();
 	outFile.close();
 
