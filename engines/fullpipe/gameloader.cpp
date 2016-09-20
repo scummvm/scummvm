@@ -696,6 +696,17 @@ const char *getSavegameFile(int saveGameIdx) {
 	return buffer;
 }
 
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
+	int day = (header.date >> 24) & 0xFF;
+	int month = (header.date >> 16) & 0xFF;
+	int year = header.date & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+	int hour = (header.time >> 8) & 0xFF;
+	int minutes = header.time & 0xFF;
+	desc.setSaveTime(hour, minutes);
+	desc.setPlayTime(header.playtime * 1000);
+}
+
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
 	char saveIdentBuffer[6];
 	header.thumbnail = NULL;
@@ -709,8 +720,13 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, 6);
-	if (strcmp(saveIdentBuffer, "SVMCR"))
+	if (strcmp(saveIdentBuffer, "SVMCR")) {
+		// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
+		header.date = (16 >> 24) | (9 >> 20) | 2016;
+		header.time = (9 >> 8) | 56;
+		header.playtime = 1000;
 		return false;
+	}
 
 	header.version = in->readByte();
 	if (header.version != FULLPIPE_SAVEGAME_VERSION)

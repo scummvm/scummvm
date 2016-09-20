@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_GAMELOADER_H
 #define FULLPIPE_GAMELOADER_H
 
+#include "engines/savestate.h"
+
 #include "fullpipe/objects.h"
 #include "fullpipe/inventory.h"
 #include "fullpipe/messages.h"
@@ -77,6 +79,9 @@ class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
 struct FullpipeSavegameHeader {
 	uint8 version;
 	Common::String saveName;
+	uint32 date;
+	uint16 time;
+	uint32 playtime;
 	Graphics::Surface *thumbnail;
 };
 
@@ -134,6 +139,7 @@ class GameLoader : public CObject {
 
 const char *getSavegameFile(int saveGameIdx);
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header);
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
 
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();
