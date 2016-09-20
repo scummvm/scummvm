@@ -472,7 +472,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = true;
 				break;
-			case Common::KEYCODE_TILDE:
+			case Common::KEYCODE_BACKQUOTE: // tilde, used to trigger the easter eggs
 				_inputTildePressed = true;
 				break;
 			case Common::KEYCODE_F5:
@@ -506,7 +506,7 @@ void Myst3Engine::processInput(bool lookOnly) {
 			case Common::KEYCODE_SPACE:
 				_inputSpacePressed = false;
 				break;
-			case Common::KEYCODE_TILDE:
+			case Common::KEYCODE_BACKQUOTE:
 				_inputTildePressed = false;
 				break;
 			default:
