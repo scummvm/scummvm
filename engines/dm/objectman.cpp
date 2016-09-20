@@ -265,7 +265,7 @@ IconIndice ObjectMan::getIconIndexInSlotBox(uint16 slotBoxIndex) {
 }
 
 void ObjectMan::clearLeaderObjectName() {
-	static Box boxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName 
+	static Box boxLeaderHandObjectName(233, 319, 33, 38); // @ G0028_s_Graphic562_Box_LeaderHandObjectName
 	_vm->_displayMan->fillScreenBox(boxLeaderHandObjectName, kDMColorBlack);
 }
 

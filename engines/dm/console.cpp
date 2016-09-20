@@ -139,7 +139,7 @@ bool Console::Cmd_pos(int argc, const char** argv) {
 
 		Map &currMap = *_vm->_dungeonMan->_currMap;
 		// not >= because dimensions are inslucsive
-		if (x < currMap._offsetMapX || x > currMap._width + currMap._offsetMapX 
+		if (x < currMap._offsetMapX || x > currMap._width + currMap._offsetMapX
 			|| y < currMap._offsetMapY || y > currMap._height + currMap._offsetMapY) {
 			debugPrintf("Position (%d, %d) is out of bounds, possible values: ([1-%d],[1-%d])\n", x, y,
 						currMap._width + currMap._offsetMapX, currMap._height + currMap._offsetMapY);

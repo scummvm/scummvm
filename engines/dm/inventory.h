@@ -37,9 +37,9 @@ namespace DM {
 
 enum DescriptionMask {
 	kDMDescriptionMaskConsumable = 0x0001, // @ MASK0x0001_DESCRIPTION_CONSUMABLE
-	kDMDescriptionMaskPoisoned = 0x0002, // @ MASK0x0002_DESCRIPTION_POISONED  
-	kDMDescriptionMaskBroken = 0x0004, // @ MASK0x0004_DESCRIPTION_BROKEN    
-	kDMDescriptionMaskCursed = 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED    
+	kDMDescriptionMaskPoisoned = 0x0002, // @ MASK0x0002_DESCRIPTION_POISONED
+	kDMDescriptionMaskBroken = 0x0004, // @ MASK0x0004_DESCRIPTION_BROKEN
+	kDMDescriptionMaskCursed = 0x0008 // @ MASK0x0008_DESCRIPTION_CURSED
 };
 
 enum PanelContent {
@@ -60,7 +60,7 @@ public:
 	explicit InventoryMan(DMEngine *vm);
 
 	int16 _inventoryChampionOrdinal; // @ G0423_i_InventoryChampionOrdinal
-	PanelContent _panelContent; // @ G0424_i_PanelContent 
+	PanelContent _panelContent; // @ G0424_i_PanelContent
 	Thing _chestSlots[8]; // @ G0425_aT_ChestSlots
 	Thing _openChest; // @ G0426_T_OpenChest
 	int16 _objDescTextXpos; // @ G0421_i_ObjectDescriptionTextX
@@ -71,7 +71,7 @@ public:
 	void toggleInventory(ChampionIndex championIndex); // @ F0355_INVENTORY_Toggle_CPSE
 	void drawStatusBoxPortrait(ChampionIndex championIndex); // @ F0354_INVENTORY_DrawStatusBoxPortrait
 	void drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color); // @ F0343_INVENTORY_DrawPanel_HorizontalBar
-	void drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar 
+	void drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color); // @ F0344_INVENTORY_DrawPanel_FoodOrWaterBar
 	void drawPanelFoodWaterPoisoned(); // @ F0345_INVENTORY_DrawPanel_FoodWaterPoisoned
 	void drawPanelResurrectReincarnate(); // @ F0346_INVENTORY_DrawPanel_ResurrectReincarnate
 	void drawPanel(); // @ F0347_INVENTORY_DrawPanel

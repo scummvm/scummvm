@@ -175,7 +175,7 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 		_vm->_eventMan->processCommandQueue();
 		_vm->delay(1);
 		_vm->_displayMan->updateScreen();
-		if ((_selectedDialogChoice == 99) && (choiceCount == 1) 
+		if ((_selectedDialogChoice == 99) && (choiceCount == 1)
 			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
 			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
 			_selectedDialogChoice = kDMDialogChoice1;

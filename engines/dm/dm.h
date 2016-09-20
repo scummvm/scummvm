@@ -76,11 +76,11 @@ enum OriginalSavePlatform {
 	kDMSavePlatformAcceptAny = -1,
 	kDMSavePlatformEndOfList = 0,
 	kDMSavePlatformNone = 0,
-	kDMSavePlatformAtariSt = 1, // @ C1_PLATFORM_ATARI_ST   
-	kDMSavePlatformAppleIIgs = 2, // @ C2_PLATFORM_APPLE_IIGS 
-	kDMSavePlatformAmiga = 3, // @ C3_PLATFORM_AMIGA      
-	kDMSavePlatformPC98 = 5, // @ C5_PLATFORM_PC98       
-	kDMSavePlatformX68000 = 6, // @ C6_PLATFORM_X68000     
+	kDMSavePlatformAtariSt = 1, // @ C1_PLATFORM_ATARI_ST
+	kDMSavePlatformAppleIIgs = 2, // @ C2_PLATFORM_APPLE_IIGS
+	kDMSavePlatformAmiga = 3, // @ C3_PLATFORM_AMIGA
+	kDMSavePlatformPC98 = 5, // @ C5_PLATFORM_PC98
+	kDMSavePlatformX68000 = 6, // @ C6_PLATFORM_X68000
 	kDMSavePlatformFmTownsEN = 7, // @ C7_PLATFORM_FM_TOWNS_EN
 	kDMSavePlatformFmTownsJP = 8, // @ C8_PLATFORM_FM_TOWNS_JP
 	kDMSavePlatformPC = 9, // @ C9_PLATFORM_PC
@@ -104,35 +104,35 @@ enum Direction {
 
 enum ThingType {
 	kDMThingTypeParty = -1,  // @ CM1_THING_TYPE_PARTY
-	kDMThingTypeDoor = 0, // @ C00_THING_TYPE_DOOR       
-	kDMThingTypeTeleporter = 1, // @ C01_THING_TYPE_TELEPORTER 
-	kDMstringTypeText = 2, // @ C02_THING_TYPE_TEXTSTRING 
-	kDMThingTypeSensor = 3,  // @ C03_THING_TYPE_SENSOR     
-	kDMThingTypeGroup = 4, // @ C04_THING_TYPE_GROUP 
+	kDMThingTypeDoor = 0, // @ C00_THING_TYPE_DOOR
+	kDMThingTypeTeleporter = 1, // @ C01_THING_TYPE_TELEPORTER
+	kDMstringTypeText = 2, // @ C02_THING_TYPE_TEXTSTRING
+	kDMThingTypeSensor = 3,  // @ C03_THING_TYPE_SENSOR
+	kDMThingTypeGroup = 4, // @ C04_THING_TYPE_GROUP
 	kDMThingTypeWeapon = 5, // @ C05_THING_TYPE_WEAPON
 	kDMThingTypeArmour = 6, // @ C06_THING_TYPE_ARMOUR
-	kDMThingTypeScroll = 7,  // @ C07_THING_TYPE_SCROLL     
-	kDMThingTypePotion = 8,  // @ C08_THING_TYPE_POTION     
-	kDMThingTypeContainer = 9,  // @ C09_THING_TYPE_CONTAINER  
-	kDMThingTypeJunk = 10,  // @ C10_THING_TYPE_JUNK      
+	kDMThingTypeScroll = 7,  // @ C07_THING_TYPE_SCROLL
+	kDMThingTypePotion = 8,  // @ C08_THING_TYPE_POTION
+	kDMThingTypeContainer = 9,  // @ C09_THING_TYPE_CONTAINER
+	kDMThingTypeJunk = 10,  // @ C10_THING_TYPE_JUNK
 	kDMThingTypeProjectile = 14,  // @ C14_THING_TYPE_PROJECTILE
-	kDMThingTypeExplosion = 15,  // @ C15_THING_TYPE_EXPLOSION 
+	kDMThingTypeExplosion = 15,  // @ C15_THING_TYPE_EXPLOSION
 	kDMThingTypeTotal = 16 // +1 than the last (explosionThingType)
 }; // @ C[00..15]_THING_TYPE_...
 
 enum Cell {
-	kDMCellAny = -1, // @ CM1_CELL_ANY      
-	kDMCellNorthWest = 0, // @ C00_CELL_NORTHWEST 
-	kDMCellNorthEast = 1, // @ C01_CELL_NORTHEAST 
-	kDMCellSouthEast = 2, // @ C02_CELL_SOUTHEAST 
-	kDMCellSouthWest = 3 // @ C03_CELL_SOUTHWEST 
+	kDMCellAny = -1, // @ CM1_CELL_ANY
+	kDMCellNorthWest = 0, // @ C00_CELL_NORTHWEST
+	kDMCellNorthEast = 1, // @ C01_CELL_NORTHEAST
+	kDMCellSouthEast = 2, // @ C02_CELL_SOUTHEAST
+	kDMCellSouthWest = 3 // @ C03_CELL_SOUTHWEST
 };
 
 enum GameMode {
-	kDMModeLoadSavedGame = 0, // @ C000_MODE_LOAD_SAVED_GAME        
-	kDMModeLoadDungeon = 1, // @ C001_MODE_LOAD_DUNGEON           
-	kDMModeWaitingOnEntrance = 99, // @ C099_MODE_WAITING_ON_ENTRANCE   
-	kDMModeEntranceDrawCredits = 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS 
+	kDMModeLoadSavedGame = 0, // @ C000_MODE_LOAD_SAVED_GAME
+	kDMModeLoadDungeon = 1, // @ C001_MODE_LOAD_DUNGEON
+	kDMModeWaitingOnEntrance = 99, // @ C099_MODE_WAITING_ON_ENTRANCE
+	kDMModeEntranceDrawCredits = 202 // @ C202_MODE_ENTRANCE_DRAW_CREDITS
 };
 
 enum LoadgameResult {
@@ -141,15 +141,15 @@ enum LoadgameResult {
 };
 
 enum MapIndice {
-	kDMMapIndexNone = -1, // @ CM1_MAP_INDEX_NONE       
-	kDMMapIndexEntrance = 255 // @ C255_MAP_INDEX_ENTRANCE 
+	kDMMapIndexNone = -1, // @ CM1_MAP_INDEX_NONE
+	kDMMapIndexEntrance = 255 // @ C255_MAP_INDEX_ENTRANCE
 };
 
 #define kDMMaskDecodeEvenIfInvisible 0x8000 // @ MASK0x8000_DECODE_EVEN_IF_INVISIBLE
 #define kDMMaskMergeCycles 0x8000 // @ MASK0x8000_MERGE_CYCLES
 
-#define kDMSlotBoxInventoryFirstSlot 8  // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT   
-#define kDMSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND  
+#define kDMSlotBoxInventoryFirstSlot 8  // @ C08_SLOT_BOX_INVENTORY_FIRST_SLOT
+#define kDMSlotBoxInventoryActionHand 9 // @ C09_SLOT_BOX_INVENTORY_ACTION_HAND
 #define kDMSlotBoxChestFirstSlot 38     // @ C38_SLOT_BOX_CHEST_FIRST_SLOT
 
 struct DMADGameDescription {
@@ -169,19 +169,19 @@ public:
 	uint16 _data;
 	static const Thing _none; // @ C0xFFFF_THING_NONE
 	static const Thing _endOfList; // @ C0xFFFE_THING_ENDOFLIST
-	static const Thing _firstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION            
-	static const Thing _explFireBall; // @ C0xFF80_THING_EXPLOSION_FIREBALL         
-	static const Thing _explSlime; // @ C0xFF81_THING_EXPLOSION_SLIME            
-	static const Thing _explLightningBolt; // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT   
+	static const Thing _firstExplosion; // @ C0xFF80_THING_FIRST_EXPLOSION
+	static const Thing _explFireBall; // @ C0xFF80_THING_EXPLOSION_FIREBALL
+	static const Thing _explSlime; // @ C0xFF81_THING_EXPLOSION_SLIME
+	static const Thing _explLightningBolt; // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
 	static const Thing _explHarmNonMaterial; // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
-	static const Thing _explOpenDoor; // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR        
-	static const Thing _explPoisonBolt; // @ C0xFF86_THING_EXPLOSION_POISON_BOLT      
-	static const Thing _explPoisonCloud; // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD     
-	static const Thing _explSmoke; // @ C0xFFA8_THING_EXPLOSION_SMOKE            
-	static const Thing _explFluxcage; // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE         
-	static const Thing _explRebirthStep1; // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1    
-	static const Thing _explRebirthStep2; // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2    
-	static const Thing _party; // @ C0xFFFF_THING_PARTY  
+	static const Thing _explOpenDoor; // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
+	static const Thing _explPoisonBolt; // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
+	static const Thing _explPoisonCloud; // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
+	static const Thing _explSmoke; // @ C0xFFA8_THING_EXPLOSION_SMOKE
+	static const Thing _explFluxcage; // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
+	static const Thing _explRebirthStep1; // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
+	static const Thing _explRebirthStep2; // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
+	static const Thing _party; // @ C0xFFFF_THING_PARTY
 
 	Thing() : _data(0) {}
 	Thing(const Thing &other) { set(other._data); }
@@ -278,7 +278,7 @@ private:
 	byte *_entranceDoorAnimSteps[10]; // @ G0562_apuc_Bitmap_EntranceDoorAnimationSteps
 	byte *_interfaceCredits; // @ G0564_puc_Graphic5_InterfaceCredits
 	Common::RandomSource *_rnd;
-	
+
 	byte *_savedScreenForOpenEntranceDoors; // ad-hoc HACK
 	const DMADGameDescription *_gameVersion;
 	bool _canLoadFromGMM;

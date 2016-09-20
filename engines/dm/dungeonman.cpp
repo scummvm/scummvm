@@ -528,19 +528,19 @@ void DungeonMan::decompressDungeonFile() {
 
 const Thing Thing::_none(0); // @ C0xFFFF_THING_NONE
 const Thing Thing::_endOfList(0xFFFE); // @ C0xFFFE_THING_ENDOFLIST
-const Thing Thing::_firstExplosion(0xFF80); // @ C0xFF80_THING_FIRST_EXPLOSION            
-const Thing Thing::_explFireBall(0xFF80); // @ C0xFF80_THING_EXPLOSION_FIREBALL         
-const Thing Thing::_explSlime(0xFF81); // @ C0xFF81_THING_EXPLOSION_SLIME            
-const Thing Thing::_explLightningBolt(0xFF82); // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT   
+const Thing Thing::_firstExplosion(0xFF80); // @ C0xFF80_THING_FIRST_EXPLOSION
+const Thing Thing::_explFireBall(0xFF80); // @ C0xFF80_THING_EXPLOSION_FIREBALL
+const Thing Thing::_explSlime(0xFF81); // @ C0xFF81_THING_EXPLOSION_SLIME
+const Thing Thing::_explLightningBolt(0xFF82); // @ C0xFF82_THING_EXPLOSION_LIGHTNING_BOLT
 const Thing Thing::_explHarmNonMaterial(0xFF83); // @ C0xFF83_THING_EXPLOSION_HARM_NON_MATERIAL
-const Thing Thing::_explOpenDoor(0xFF84); // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR        
-const Thing Thing::_explPoisonBolt(0xFF86); // @ C0xFF86_THING_EXPLOSION_POISON_BOLT      
-const Thing Thing::_explPoisonCloud(0xFF87); // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD     
-const Thing Thing::_explSmoke(0xFFA8); // @ C0xFFA8_THING_EXPLOSION_SMOKE            
-const Thing Thing::_explFluxcage(0xFFB2); // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE         
-const Thing Thing::_explRebirthStep1(0xFFE4); // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1    
-const Thing Thing::_explRebirthStep2(0xFFE5); // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2    
-const Thing Thing::_party(0xFFFF); // @ C0xFFFF_THING_PARTY          
+const Thing Thing::_explOpenDoor(0xFF84); // @ C0xFF84_THING_EXPLOSION_OPEN_DOOR
+const Thing Thing::_explPoisonBolt(0xFF86); // @ C0xFF86_THING_EXPLOSION_POISON_BOLT
+const Thing Thing::_explPoisonCloud(0xFF87); // @ C0xFF87_THING_EXPLOSION_POISON_CLOUD
+const Thing Thing::_explSmoke(0xFFA8); // @ C0xFFA8_THING_EXPLOSION_SMOKE
+const Thing Thing::_explFluxcage(0xFFB2); // @ C0xFFB2_THING_EXPLOSION_FLUXCAGE
+const Thing Thing::_explRebirthStep1(0xFFE4); // @ C0xFFE4_THING_EXPLOSION_REBIRTH_STEP1
+const Thing Thing::_explRebirthStep2(0xFFE5); // @ C0xFFE5_THING_EXPLOSION_REBIRTH_STEP2
+const Thing Thing::_party(0xFFFF); // @ C0xFFFF_THING_PARTY
 
 void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 	static const byte additionalThingCounts[16] = { // @ G0236_auc_Graphic559_AdditionalThingCounts{
@@ -567,7 +567,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 
 	Common::ReadStream *dunDataStream = nullptr;
 	if (file) {
-		// if loading a save 
+		// if loading a save
 		dunDataStream = file;
 	} else {
 		// else read dungeon.dat
@@ -606,7 +606,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		dunDataStream->readUint32BE(); // discard 4 bytes
 		_dungeonMaps[i]._offsetMapX = dunDataStream->readByte();
 		_dungeonMaps[i]._offsetMapY = dunDataStream->readByte();
-		
+
 		uint16 tmp = dunDataStream->readUint16BE();
 		_dungeonMaps[i]._height = tmp >> 11;
 		_dungeonMaps[i]._width = (tmp >> 6) & 0x1F;
@@ -695,7 +695,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 			_thingData[thingType] = new uint16[_dungeonFileHeader._thingCounts[thingType] * thingStoreWordCount];
 		}
 
-		if ((thingType == kDMThingTypeGroup || thingType == kDMThingTypeProjectile) && !file) { // !file because save files have diff. structure than dungeon.dat 
+		if ((thingType == kDMThingTypeGroup || thingType == kDMThingTypeProjectile) && !file) { // !file because save files have diff. structure than dungeon.dat
 			for (uint16 i = 0; i < thingCount; ++i) {
 				uint16 *nextSlot = _thingData[thingType] + i *thingStoreWordCount;
 				for (uint16 j = 0; j < thingStoreWordCount; ++j) {
@@ -846,7 +846,7 @@ Thing DungeonMan::getSquareFirstThing(int16 mapX, int16 mapY) {
 	return _squareFirstThings[index];
 }
 
-void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {	
+void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX, int16 mapY) {
 	unsigned char L0307_uc_Multiple;
 #define AL0307_uc_Square            L0307_uc_Multiple
 #define AL0307_uc_FootprintsAllowed L0307_uc_Multiple
@@ -889,7 +889,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 		default:
 			assert(false);
 		}
-		_vm->_displayMan->_championPortraitOrdinal = 0; 
+		_vm->_displayMan->_championPortraitOrdinal = 0;
 		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
@@ -1432,7 +1432,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 		uint16 mapHeight = _dungeonMaps[mapIndex]._height;
 		byte *currSquare = _dungeonMapData[mapIndex][0];
 		Thing *squareFirstThing = &_squareFirstThings[_dungeonColumnsCumulativeSquareThingCount[_dungeonMapsFirstColumnIndex[mapIndex]]];
-		
+
 		for (int16 currMapX = 0; currMapX <= mapWidth; currMapX++) {
 			for (int16 currMapY = 0; currMapY <= mapHeight; currMapY++) {
 				if (getFlag(*currSquare++, kDMSquareMaskThingListPresent)) {

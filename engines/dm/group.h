@@ -39,39 +39,39 @@ namespace DM {
 
 /* Creature types */
 enum CreatureType {
-	kDMCreatureTypeGiantScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION     
-	kDMCreatureTypeSwampSlime = 1, // @ C01_CREATURE_SWAMP_SLIME_SLIME_DEVIL     
-	kDMCreatureTypeGiggler = 2, // @ C02_CREATURE_GIGGLER                     
-	kDMCreatureTypeWizardEye = 3, // @ C03_CREATURE_WIZARD_EYE_FLYING_EYE       
-	kDMCreatureTypePainRat = 4, // @ C04_CREATURE_PAIN_RAT_HELLHOUND          
-	kDMCreatureTypeRuster = 5, // @ C05_CREATURE_RUSTER                      
-	kDMCreatureTypeScreamer = 6, // @ C06_CREATURE_SCREAMER                    
-	kDMCreatureTypeRockpile = 7, // @ C07_CREATURE_ROCK_ROCKPILE               
-	kDMCreatureTypeGhostRive = 8, // @ C08_CREATURE_GHOST_RIVE                  
-	kDMCreatureTypeStoneGolem = 9, // @ C09_CREATURE_STONE_GOLEM                 
-	kDMCreatureTypeMummy = 10, // @ C10_CREATURE_MUMMY                      
-	kDMCreatureTypeBlackFlame = 11, // @ C11_CREATURE_BLACK_FLAME                
-	kDMCreatureTypeSkeleton = 12, // @ C12_CREATURE_SKELETON                   
-	kDMCreatureTypeCouatl = 13, // @ C13_CREATURE_COUATL                     
-	kDMCreatureTypeVexirk = 14, // @ C14_CREATURE_VEXIRK                     
-	kDMCreatureTypeMagentaWorm = 15, // @ C15_CREATURE_MAGENTA_WORM_WORM          
-	kDMCreatureTypeAntman = 16, // @ C16_CREATURE_TROLIN_ANTMAN              
-	kDMCreatureTypeGiantWasp = 17, // @ C17_CREATURE_GIANT_WASP_MUNCHER         
+	kDMCreatureTypeGiantScorpion = 0, // @ C00_CREATURE_GIANT_SCORPION_SCORPION
+	kDMCreatureTypeSwampSlime = 1, // @ C01_CREATURE_SWAMP_SLIME_SLIME_DEVIL
+	kDMCreatureTypeGiggler = 2, // @ C02_CREATURE_GIGGLER
+	kDMCreatureTypeWizardEye = 3, // @ C03_CREATURE_WIZARD_EYE_FLYING_EYE
+	kDMCreatureTypePainRat = 4, // @ C04_CREATURE_PAIN_RAT_HELLHOUND
+	kDMCreatureTypeRuster = 5, // @ C05_CREATURE_RUSTER
+	kDMCreatureTypeScreamer = 6, // @ C06_CREATURE_SCREAMER
+	kDMCreatureTypeRockpile = 7, // @ C07_CREATURE_ROCK_ROCKPILE
+	kDMCreatureTypeGhostRive = 8, // @ C08_CREATURE_GHOST_RIVE
+	kDMCreatureTypeStoneGolem = 9, // @ C09_CREATURE_STONE_GOLEM
+	kDMCreatureTypeMummy = 10, // @ C10_CREATURE_MUMMY
+	kDMCreatureTypeBlackFlame = 11, // @ C11_CREATURE_BLACK_FLAME
+	kDMCreatureTypeSkeleton = 12, // @ C12_CREATURE_SKELETON
+	kDMCreatureTypeCouatl = 13, // @ C13_CREATURE_COUATL
+	kDMCreatureTypeVexirk = 14, // @ C14_CREATURE_VEXIRK
+	kDMCreatureTypeMagentaWorm = 15, // @ C15_CREATURE_MAGENTA_WORM_WORM
+	kDMCreatureTypeAntman = 16, // @ C16_CREATURE_TROLIN_ANTMAN
+	kDMCreatureTypeGiantWasp = 17, // @ C17_CREATURE_GIANT_WASP_MUNCHER
 	kDMCreatureTypeAnimatedArmour = 18, // @ C18_CREATURE_ANIMATED_ARMOUR_DETH_KNIGHT
-	kDMCreatureTypeMaterializerZytaz = 19, // @ C19_CREATURE_MATERIALIZER_ZYTAZ         
-	kDMCreatureTypeWaterElemental = 20, // @ C20_CREATURE_WATER_ELEMENTAL            
-	kDMCreatureTypeOitu = 21, // @ C21_CREATURE_OITU                       
-	kDMCreatureTypeDemon = 22, // @ C22_CREATURE_DEMON                      
-	kDMCreatureTypeLordChaos = 23, // @ C23_CREATURE_LORD_CHAOS                 
-	kDMCreatureTypeRedDragon = 24, // @ C24_CREATURE_RED_DRAGON                 
-	kDMCreatureTypeLordOrder = 25, // @ C25_CREATURE_LORD_ORDER                 
-	kDMCreatureTypeGreyLord = 26 // @ C26_CREATURE_GREY_LORD                  
+	kDMCreatureTypeMaterializerZytaz = 19, // @ C19_CREATURE_MATERIALIZER_ZYTAZ
+	kDMCreatureTypeWaterElemental = 20, // @ C20_CREATURE_WATER_ELEMENTAL
+	kDMCreatureTypeOitu = 21, // @ C21_CREATURE_OITU
+	kDMCreatureTypeDemon = 22, // @ C22_CREATURE_DEMON
+	kDMCreatureTypeLordChaos = 23, // @ C23_CREATURE_LORD_CHAOS
+	kDMCreatureTypeRedDragon = 24, // @ C24_CREATURE_RED_DRAGON
+	kDMCreatureTypeLordOrder = 25, // @ C25_CREATURE_LORD_ORDER
+	kDMCreatureTypeGreyLord = 26 // @ C26_CREATURE_GREY_LORD
 };
 
 enum CreatureSize {
 	kDMCreatureSizeQuarter = 0, // @ C0_SIZE_QUARTER_SQUARE
-	kDMCreatureSizeHalf = 1,    // @ C1_SIZE_HALF_SQUARE   
-	kDMCreatureSizeFull = 2     // @ C2_SIZE_FULL_SQUARE   
+	kDMCreatureSizeHalf = 1,    // @ C1_SIZE_HALF_SQUARE
+	kDMCreatureSizeFull = 2     // @ C2_SIZE_FULL_SQUARE
 };
 
 enum Behavior {
@@ -86,27 +86,27 @@ enum Behavior {
 
 #define kDMImmuneToFear 15 // @ C15_IMMUNE_TO_FEAR
 #define kDMMovementTicksImmobile 255 // @ C255_IMMOBILE
-#define kDMWholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP 
+#define kDMWholeCreatureGroup -1 // @ CM1_WHOLE_CREATURE_GROUP
 #define kDMCreatureTypeSingleCenteredCreature 255 // @ C255_SINGLE_CENTERED_CREATURE
 
 enum CreatureMask {
-	kDMCreatureMaskSize = 0x0003,           // @ MASK0x0003_SIZE                     
-	kDMCreatureMaskSideAttack = 0x0004,     // @ MASK0x0004_SIDE_ATTACK              
-	kDMCreatureMaskPreferBackRow = 0x0008,  // @ MASK0x0008_PREFER_BACK_ROW          
-	kDMCreatureMaskAttackAnyChamp = 0x0010, // @ MASK0x0010_ATTACK_ANY_CHAMPION      
-	kDMCreatureMaskLevitation = 0x0020,     // @ MASK0x0020_LEVITATION               
-	kDMCreatureMaskNonMaterial = 0x0040,    // @ MASK0x0040_NON_MATERIAL             
-	kDMCreatureMaskDropFixedPoss = 0x0200,  // @ MASK0x0200_DROP_FIXED_POSSESSIONS   
+	kDMCreatureMaskSize = 0x0003,           // @ MASK0x0003_SIZE
+	kDMCreatureMaskSideAttack = 0x0004,     // @ MASK0x0004_SIDE_ATTACK
+	kDMCreatureMaskPreferBackRow = 0x0008,  // @ MASK0x0008_PREFER_BACK_ROW
+	kDMCreatureMaskAttackAnyChamp = 0x0010, // @ MASK0x0010_ATTACK_ANY_CHAMPION
+	kDMCreatureMaskLevitation = 0x0020,     // @ MASK0x0020_LEVITATION
+	kDMCreatureMaskNonMaterial = 0x0040,    // @ MASK0x0040_NON_MATERIAL
+	kDMCreatureMaskDropFixedPoss = 0x0200,  // @ MASK0x0200_DROP_FIXED_POSSESSIONS
 	kDMCreatureMaskKeepThrownSharpWeapon = 0x0400, // @ MASK0x0400_KEEP_THROWN_SHARP_WEAPONS
-	kDMCreatureMaskSeeInvisible = 0x0800,   // @ MASK0x0800_SEE_INVISIBLE            
-	kDMCreatureMaskNightVision = 0x1000,    // @ MASK0x1000_NIGHT_VISION             
-	kDMCreatureMaskArchenemy = 0x2000,      // @ MASK0x2000_ARCHENEMY                
-	kDMCreatureMaskMagicMap = 0x4000        // @ MASK0x4000_MAGICMAP  
+	kDMCreatureMaskSeeInvisible = 0x0800,   // @ MASK0x0800_SEE_INVISIBLE
+	kDMCreatureMaskNightVision = 0x1000,    // @ MASK0x1000_NIGHT_VISION
+	kDMCreatureMaskArchenemy = 0x2000,      // @ MASK0x2000_ARCHENEMY
+	kDMCreatureMaskMagicMap = 0x4000        // @ MASK0x4000_MAGICMAP
 };
 
 enum aspectMask {
-	kDMAspectMaskActiveGroupFlipBitmap = 0x0040, // @ MASK0x0040_FLIP_BITMAP  
-	kDMAspectMaskActiveGroupIsAttacking = 0x0080 // @ MASK0x0080_IS_ATTACKING 
+	kDMAspectMaskActiveGroupFlipBitmap = 0x0040, // @ MASK0x0040_FLIP_BITMAP
+	kDMAspectMaskActiveGroupIsAttacking = 0x0080 // @ MASK0x0080_IS_ATTACKING
 };
 
 class ActiveGroup {

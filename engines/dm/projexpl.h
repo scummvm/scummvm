@@ -32,9 +32,9 @@
 namespace DM {
 
 enum KillOutcome {
-	kDMKillOutcomeNoCreaturesInGroup = 0,   // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP   
-	kDMKillOutcomeSomeCreaturesInGroup = 1, // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP 
-	kDMKillOutcomeAllCreaturesInGroup = 2   // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP  
+	kDMKillOutcomeNoCreaturesInGroup = 0,   // @ C0_OUTCOME_KILLED_NO_CREATURES_IN_GROUP
+	kDMKillOutcomeSomeCreaturesInGroup = 1, // @ C1_OUTCOME_KILLED_SOME_CREATURES_IN_GROUP
+	kDMKillOutcomeAllCreaturesInGroup = 2   // @ C2_OUTCOME_KILLED_ALL_CREATURES_IN_GROUP
 };
 
 class TimelineEvent;

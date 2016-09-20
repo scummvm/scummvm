@@ -189,14 +189,14 @@ public:
 
 class DMEngine;
 
-#define k0_pointerArrow 0 // @ C0_POINTER_ARROW 
-#define k1_pointerHand 1 // @ C1_POINTER_HAND  
+#define k0_pointerArrow 0 // @ C0_POINTER_ARROW
+#define k1_pointerHand 1 // @ C1_POINTER_HAND
 
-#define k0_pointerTypeArrow 0 // @ C0_POINTER_TYPE_ARROW         
-#define k1_pointerTypeObjectIcon 1 // @ C1_POINTER_TYPE_OBJECT_ICON   
-#define k2_pointerTypeChampionIcon 2 // @ C2_POINTER_TYPE_CHAMPION_ICON 
-#define k3_pointerTypeHand 3 // @ C3_POINTER_TYPE_HAND          
-#define k4_pointerTypeAutoselect 4 // @ C4_POINTER_TYPE_AUTOSELECT    
+#define k0_pointerTypeArrow 0 // @ C0_POINTER_TYPE_ARROW
+#define k1_pointerTypeObjectIcon 1 // @ C1_POINTER_TYPE_OBJECT_ICON
+#define k2_pointerTypeChampionIcon 2 // @ C2_POINTER_TYPE_CHAMPION_ICON
+#define k3_pointerTypeHand 3 // @ C3_POINTER_TYPE_HAND
+#define k4_pointerTypeAutoselect 4 // @ C4_POINTER_TYPE_AUTOSELECT
 
 class EventManager {
 	DMEngine *_vm;

@@ -35,8 +35,8 @@
 namespace DM {
 
 enum Damage {
-	kDMDamageCantReach = -1,   // @ CM1_DAMAGE_CANT_REACH    
-	kDMDamageNoAmmunition = -2 // @ CM2_DAMAGE_NO_AMMUNITION 
+	kDMDamageCantReach = -1,   // @ CM1_DAMAGE_CANT_REACH
+	kDMDamageNoAmmunition = -2 // @ CM2_DAMAGE_NO_AMMUNITION
 };
 
 enum SpellArea {
@@ -45,8 +45,8 @@ enum SpellArea {
 };
 
 enum ActionMask {
-	kDMActionMaskRequiresCharge = 0x0080,         // @ MASK0x0080_ACTION_REQUIRES_CHARGE 
-	kDMActionMaskHitNonMaterialCreatures = 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES 
+	kDMActionMaskRequiresCharge = 0x0080,         // @ MASK0x0080_ACTION_REQUIRES_CHARGE
+	kDMActionMaskHitNonMaterialCreatures = 0x8000 // @ MASK0x8000_HIT_NON_MATERIAL_CREATURES
 };
 
 class ActionList {
@@ -129,7 +129,7 @@ public:
 	Box _boxActionArea3ActionMenu; // @ G0499_s_Graphic560_Box_ActionArea3ActionsMenu
 	Box _boxActionArea2ActionMenu; // @ G0500_s_Graphic560_Box_ActionArea2ActionsMenu
 	Box _boxActionArea1ActionMenu; // @ G0501_s_Graphic560_Box_ActionArea1ActionMenu
-	Box _boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea 
+	Box _boxActionArea; // @ G0001_s_Graphic562_Box_ActionArea
 	Box _boxSpellArea;
 	unsigned char _actionSkillIndex[44]; // @ G0496_auc_Graphic560_ActionSkillIndex
 	unsigned char _actionDisabledTicks[44];

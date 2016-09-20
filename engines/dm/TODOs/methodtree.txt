@@ -7,28 +7,28 @@ F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
 	F0114_DUNGEONVIEW_GetExplosionBitmap // done
 	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
 	F0141_DUNGEON_GetObjectInfoIndex // done
-	F0142_DUNGEON_GetProjectileAspect // done 
+	F0142_DUNGEON_GetProjectileAspect // done
 		F0158_DUNGEON_GetWeaponInfo // done
 		M66_PROJECTILE_ASPECT_ORDINAL // done
 	F0176_GROUP_GetCreatureOrdinalInCell // done
 		F0145_DUNGEON_GetGroupCells // done
 		F0147_DUNGEON_GetGroupDirections // done
-		GROUP // done 
-		CreatureType // done 
+		GROUP // done
+		CreatureType // done
 	G0077_B_DoNotDrawFluxcagesDuringEndgame // done
 	G0105_s_Graphic558_Box_ExplosionPattern_D0C // one
 	G0188_as_Graphic558_FieldAspects // done
 	G0216_auc_Graphic558_ExplosionBaseScales // done
-	G0217_aauc_Graphic558_ObjectPileShiftSetIndices // done 
-	G0218_aaaauc_Graphic558_ObjectCoordinateSets // done 
+	G0217_aauc_Graphic558_ObjectPileShiftSetIndices // done
+	G0218_aaaauc_Graphic558_ObjectCoordinateSets // done
 	G0223_aac_Graphic558_ShiftSets // done
-	G0224_aaaauc_Graphic558_CreatureCoordinateSets // done 
+	G0224_aaaauc_Graphic558_CreatureCoordinateSets // done
 	G0225_aai_Graphic558_CenteredExplosionCoordinates // done
 	G0226_aaai_Graphic558_ExplosionCoordinates // done
 	G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates // done
 	G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates // done
 	G0292_aT_PileTopObject // done
-	G0370_ps_Events // done 
+	G0370_ps_Events // done
 
 
 
@@ -39,7 +39,7 @@ F0380_COMMAND_ProcessQueue_CPSC // in progress
 			F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall // done so-so
 				F0275_SENSOR_IsTriggeredByClickOnWall // done so-so
 					F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
-	
+
 
 F0378_COMMAND_ProcessType81_ClickInPanel // done so-so
 	F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel // done
@@ -76,9 +76,9 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 			F0345_INVENTORY_DrawPanel_FoodWaterPoisoned // done
 				F0344_INVENTORY_DrawPanel_FoodOrWaterBar // done
 						F0343_INVENTORY_DrawPanel_HorizontalBar // done
-				G0032_s_Graphic562_Box_Panel // done 
-				G0035_s_Graphic562_Box_Food // done 
-				G0036_s_Graphic562_Box_Water // done 
+				G0032_s_Graphic562_Box_Panel // done
+				G0035_s_Graphic562_Box_Food // done
+				G0036_s_Graphic562_Box_Water // done
 				G0037_s_Graphic562_Box_Poisoned // done
 			F0351_INVENTORY_DrawChampionSkillsAndStatistics // skip -----------------
 			F0347_INVENTORY_DrawPanel // done
@@ -87,12 +87,12 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 						F0340_INVENTORY_DrawPanel_ScrollTextLine // done
 					F0333_INVENTORY_OpenAndDrawChest // done
 					F0303_CHAMPION_GetSkillLevel // done
-					F0332_INVENTORY_DrawIconToViewport // done 
+					F0332_INVENTORY_DrawIconToViewport // done
 					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString // done
-					F0335_INVENTORY_DrawPanel_ObjectDescriptionString // done 
+					F0335_INVENTORY_DrawPanel_ObjectDescriptionString // done
 						G0421_i_ObjectDescriptionTextX // done
 						G0422_i_ObjectDescriptionTextY // done
-					F0339_INVENTORY_DrawPanel_ArrowOrEye // done 
+					F0339_INVENTORY_DrawPanel_ArrowOrEye // done
 					G0430_apc_DirectionNames // done
 					G0034_s_Graphic562_Box_ObjectDescriptionCircle // done
 					G0032_s_Graphic562_Box_Panel // done
@@ -116,8 +116,8 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		F0292_CHAMPION_DrawState // done
 		G0508_B_RefreshActionArea // done
 		G0506_ui_ActingChampionOrdinal // done
-	F0386_MENUS_DrawActionIcon // done								
-		F0141_DUNGEON_GetObjectInfoIndex // done 
+	F0386_MENUS_DrawActionIcon // done
+		F0141_DUNGEON_GetObjectInfoIndex // done
 		F0033_OBJECT_GetIconIndex // done
 			F0032_OBJECT_GetType // done
 				G0237_as_Graphic559_ObjectInfo // done
@@ -126,7 +126,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		F0134_VIDEO_FillBitmap // done
 		D24_FillScreenBox // done
 		F0036_OBJECT_ExtractIconFromBitmap // done
-			G0026_ai_Graphic562_IconGraphicFirstIconIndex // done 
+			G0026_ai_Graphic562_IconGraphicFirstIconIndex // done
 		F0129_VIDEO_BlitShrinkWithPaletteChanges // eeeh
 		F0136_VIDEO_ShadeScreenBox // skip
 		G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon // done
@@ -134,18 +134,18 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		G0509_B_ActionAreaContainsIcons // done
 	F0301_CHAMPION_AddObjectInSlot // done
 		F0299_CHAMPION_ApplyObjectModifiersToStatistics // done
-		F0296_CHAMPION_DrawChangedObjectIcons // done 
+		F0296_CHAMPION_DrawChangedObjectIcons // done
 			F0068_MOUSE_SetPointerToObject // skip
 			F0077_MOUSE_HidePointer_CPSE // skip
 			F0078_MOUSE_ShowPointer // skip
 			F0034_OBJECT_DrawLeaderHandObjectName // done
 			F0386_MENUS_DrawActionIcon // done
-			F0295_CHAMPION_HasObjectIconInSlotBoxChanged // done 	
-				F0039_OBJECT_GetIconIndexInSlotBox // done 
+			F0295_CHAMPION_HasObjectIconInSlotBoxChanged // done
+				F0039_OBJECT_GetIconIndexInSlotBox // done
 			M70_HAND_SLOT_INDEX // done
 			G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen // done
 			G0412_puc_Bitmap_ObjectIconForMousePointer // done
-			G0413_i_LeaderHandObjectIconIndex // done 
+			G0413_i_LeaderHandObjectIconIndex // done
 			G0414_T_LeaderHandObject // done
 		F0337_INVENTORY_SetDungeonViewPalette // skip
 		G0407_s_Party // done
@@ -166,7 +166,7 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 		G0326_B_RefreshMousePointerInMainLoop  // lol you wat m8
 		G0002_s_Graphic562_Box_MovementArrows // done
 		G0041_s_Graphic562_Box_ViewportFloppyZzzCross // done
-		G0296_puc_Bitmap_Viewport // done 
+		G0296_puc_Bitmap_Viewport // done
 		G0598_B_MousePointerBitmapUpdated // done
 	F0456_START_DrawDisabledMenus // done
 	G0415_B_LeaderEmptyHanded // done
@@ -174,15 +174,15 @@ F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
 	G0578_B_UseByteBoxCoordinates // done
 	G0047_s_Graphic562_Box_ChampionPortrait // done
 	G0308_i_PartyDirection // done
-	G0306_i_PartyMapX // done 
+	G0306_i_PartyMapX // done
 	G0307_i_PartyMapY // done
 	G0299_ui_CandidateChampionOrdinal // done
 	G0508_B_RefreshActionArea // done
-	G0233_ai_Graphic559_DirectionToStepEastCount // done 
+	G0233_ai_Graphic559_DirectionToStepEastCount // done
 	G0234_ai_Graphic559_DirectionToStepNorthCount // done
 	G0237_as_Graphic559_ObjectInfo // done
 	G0038_ai_Graphic562_SlotMasks // done
-						
+
 
 F0462_START_StartGame_CPSF
 	F0003_MAIN_ProcessNewPartyMap_CPSE // partially done

@@ -35,8 +35,8 @@
 
 namespace DM {
 
-#define kDMIgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS     
-#define kDMIgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE 
+#define kDMIgnoreObjectModifiers 0x4000 // @ MASK0x4000_IGNORE_OBJECT_MODIFIERS
+#define kDMIgnoreTemporaryExperience 0x8000 // @ MASK0x8000_IGNORE_TEMPORARY_EXPERIENCE
 
 class Scent {
 	uint16 _scent;
@@ -349,50 +349,50 @@ enum AttackType {
 };
 
 enum SpellCastResult {
-	kDMSpellCastFailure = 0, // @ C0_SPELL_CAST_FAILURE             
-	kDMSpellCastSuccess = 1, // @ C1_SPELL_CAST_SUCCESS             
-	kDMSpellCastFailureNeedsFlask = 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK 
+	kDMSpellCastFailure = 0, // @ C0_SPELL_CAST_FAILURE
+	kDMSpellCastSuccess = 1, // @ C1_SPELL_CAST_SUCCESS
+	kDMSpellCastFailureNeedsFlask = 3 // @ C3_SPELL_CAST_FAILURE_NEEDS_FLASK
 };
 
 enum SpellFailure {
-	kDMFailureNeedsMorePractice = 0, // @ C00_FAILURE_NEEDS_MORE_PRACTICE      
-	kDMFailureMeaninglessSpell = 1, // @ C01_FAILURE_MEANINGLESS_SPELL        
-	kDMFailureNeedsFlaskInHand = 10, // @ C10_FAILURE_NEEDS_FLASK_IN_HAND     
-	kDMFailureNeedsMagicMapInHand = 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND 
+	kDMFailureNeedsMorePractice = 0, // @ C00_FAILURE_NEEDS_MORE_PRACTICE
+	kDMFailureMeaninglessSpell = 1, // @ C01_FAILURE_MEANINGLESS_SPELL
+	kDMFailureNeedsFlaskInHand = 10, // @ C10_FAILURE_NEEDS_FLASK_IN_HAND
+	kDMFailureNeedsMagicMapInHand = 11 // @ C11_FAILURE_NEEDS_MAGIC_MAP_IN_HAND
 };
 
 enum SpellKind {
-	kDMSpellKindPotion = 1, // @ C1_SPELL_KIND_POTION    
+	kDMSpellKindPotion = 1, // @ C1_SPELL_KIND_POTION
 	kDMSpellKindProjectile = 2, // @ C2_SPELL_KIND_PROJECTILE
-	kDMSpellKindOther = 3, // @ C3_SPELL_KIND_OTHER     
-	kDMSpellKindMagicMap = 4 // @ C4_SPELL_KIND_MAGIC_MAP 
+	kDMSpellKindOther = 3, // @ C3_SPELL_KIND_OTHER
+	kDMSpellKindMagicMap = 4 // @ C4_SPELL_KIND_MAGIC_MAP
 };
 
 enum SpellType {
 	kDMSpellTypeProjectileOpenDoor = 4, // @ C4_SPELL_TYPE_PROJECTILE_OPEN_DOOR
-	kDMSpellTypeOtherLight = 0, // @ C0_SPELL_TYPE_OTHER_LIGHT         
-	kDMSpellTypeOtherDarkness = 1, // @ C1_SPELL_TYPE_OTHER_DARKNESS      
-	kDMSpellTypeOtherThievesEye = 2, // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE   
-	kDMSpellTypeOtherInvisibility = 3, // @ C3_SPELL_TYPE_OTHER_INVISIBILITY  
-	kDMSpellTypeOtherPartyShield = 4, // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD  
-	kDMSpellTypeOtherMagicTorch = 5, // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH   
-	kDMSpellTypeOtherFootprints = 6, // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS    
-	kDMSpellTypeOtherZokathra = 7, // @ C7_SPELL_TYPE_OTHER_ZOKATHRA      
-	kDMSpellTypeOtherFireshield = 8, // @ C8_SPELL_TYPE_OTHER_FIRESHIELD    
-	kDMSpellTypeMagicMap0 = 0, // @ C0_SPELL_TYPE_MAGIC_MAP           
-	kDMSpellTypeMagicMap1 = 1, // @ C1_SPELL_TYPE_MAGIC_MAP           
-	kDMSpellTypeMagicMap2 = 2, // @ C2_SPELL_TYPE_MAGIC_MAP           
-	kDMSpellTypeMagicMap3 = 3 // @ C3_SPELL_TYPE_MAGIC_MAP           
+	kDMSpellTypeOtherLight = 0, // @ C0_SPELL_TYPE_OTHER_LIGHT
+	kDMSpellTypeOtherDarkness = 1, // @ C1_SPELL_TYPE_OTHER_DARKNESS
+	kDMSpellTypeOtherThievesEye = 2, // @ C2_SPELL_TYPE_OTHER_THIEVES_EYE
+	kDMSpellTypeOtherInvisibility = 3, // @ C3_SPELL_TYPE_OTHER_INVISIBILITY
+	kDMSpellTypeOtherPartyShield = 4, // @ C4_SPELL_TYPE_OTHER_PARTY_SHIELD
+	kDMSpellTypeOtherMagicTorch = 5, // @ C5_SPELL_TYPE_OTHER_MAGIC_TORCH
+	kDMSpellTypeOtherFootprints = 6, // @ C6_SPELL_TYPE_OTHER_FOOTPRINTS
+	kDMSpellTypeOtherZokathra = 7, // @ C7_SPELL_TYPE_OTHER_ZOKATHRA
+	kDMSpellTypeOtherFireshield = 8, // @ C8_SPELL_TYPE_OTHER_FIRESHIELD
+	kDMSpellTypeMagicMap0 = 0, // @ C0_SPELL_TYPE_MAGIC_MAP
+	kDMSpellTypeMagicMap1 = 1, // @ C1_SPELL_TYPE_MAGIC_MAP
+	kDMSpellTypeMagicMap2 = 2, // @ C2_SPELL_TYPE_MAGIC_MAP
+	kDMSpellTypeMagicMap3 = 3 // @ C3_SPELL_TYPE_MAGIC_MAP
 };
 
-#define kDMMaskNoSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE 
-#define kDMMaskSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE        
+#define kDMMaskNoSharpDefense 0x0000 // @ MASK0x0000_DO_NOT_USE_SHARP_DEFENSE
+#define kDMMaskSharpDefense 0x8000 // @ MASK0x8000_USE_SHARP_DEFENSE
 
 class Skill {
 public:
 	int16 _temporaryExperience;
 	int32 _experience;
-	
+
 	void resetToZero() { _temporaryExperience = _experience = 0; }
 }; // @ SKILL
 
@@ -524,7 +524,7 @@ public:
 	void addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex); // @ F0301_CHAMPION_AddObjectInSlot
 	int16 getScentOrdinal(int16 mapX, int16 mapY); // @ F0315_CHAMPION_GetScentOrdinal
 	Thing getObjectRemovedFromLeaderHand(); // @ F0298_CHAMPION_GetObjectRemovedFromLeaderHand
-	uint16 getStrength(int16 champIndex, int16 slotIndex); // @ F0312_CHAMPION_GetStrength 
+	uint16 getStrength(int16 champIndex, int16 slotIndex); // @ F0312_CHAMPION_GetStrength
 	Thing getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex); // @ F0300_CHAMPION_GetObjectRemovedFromSlot
 	void decrementStamina(int16 championIndex, int16 decrement); // @ F0325_CHAMPION_DecrementStamina
 	int16 addPendingDamageAndWounds_getDamage(int16 champIndex, int16 attack, int16 allowedWounds,
