@@ -58,7 +58,7 @@ struct DrawStruct {
 
 class Window: public XSurface {
 private:
-	XeenEngine *_vm;
+	static XeenEngine *_vm;
 	Common::Rect _bounds;
 	Common::Rect _innerBounds;
 	XSurface _savedArea;
@@ -71,12 +71,14 @@ private:
 public:
 	bool _enabled;
 public:
-	virtual void addDirtyRect(const Common::Rect &r);
+	static void init(XeenEngine *vm);
 public:
 	Window();
 	Window(const Window &src);
-	Window(XeenEngine *vm, const Common::Rect &bounds, int a, int border,
+	Window(const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH);
+
+	virtual void addDirtyRect(const Common::Rect &r);
 
 	void setBounds(const Common::Rect &r);
 
