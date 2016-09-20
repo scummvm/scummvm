@@ -1197,7 +1197,7 @@ bool ModalMainMenu::isSaveAllowed() {
 }
 
 void ModalMainMenu::enableDebugMenu(char c) {
-	const char deb[] = "DEBUGER";
+	const char deb[] = "debuger";
 
 	if (c == deb[_debugKeyCount]) {
 		_debugKeyCount++;
