@@ -27,6 +27,8 @@
 #include "common/list.h"
 #include "common/memstream.h"
 
+#include "graphics/thumbnail.h"
+
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
@@ -156,6 +158,59 @@ void GameLoader::readSavegame(const char *fname) {
 
 		ex->postMessage();
 	}
+}
+
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
+	int day = (header.date >> 24) & 0xFF;
+	int month = (header.date >> 16) & 0xFF;
+	int year = header.date & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+	int hour = (header.time >> 8) & 0xFF;
+	int minutes = header.time & 0xFF;
+	desc.setSaveTime(hour, minutes);
+	desc.setPlayTime(header.playtime * 1000);
+}
+
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+	char saveIdentBuffer[6];
+	header.thumbnail = NULL;
+
+	uint oldPos = in->pos();
+
+	in->seek(4, SEEK_END);
+	uint headerOffset = in->readUint32LE();
+
+	in->seek(headerOffset, SEEK_SET);
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, 6);
+	if (strcmp(saveIdentBuffer, "SVMCR")) {
+		// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
+		header.date = (16 >> 24) | (9 >> 20) | 2016;
+		header.time = (9 >> 8) | 56;
+		header.playtime = 1000;
+		return false;
+	}
+
+	header.version = in->readByte();
+	if (header.version != FULLPIPE_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header.saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+
+	in->seek(oldPos, SEEK_SET); // Rewind the file
+
+	if (!header.thumbnail)
+		return false;
+
+	return true;
 }
 
 void GameLoader::addVar(GameVar *var, GameVar *subvar) {
