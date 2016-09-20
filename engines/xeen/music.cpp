@@ -687,12 +687,12 @@ void Music::loadEffectsData() {
 	_effectsData = effectsData;
 
 	// Locate the playFX routine
-	const byte *playFX = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
-	assert(READ_BE_UINT16(playFX + 28) == 0x81FB);
-	uint numEffects = READ_LE_UINT16(playFX + 30);
+	const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
+	assert(READ_BE_UINT16(fx + 28) == 0x81FB);
+	uint numEffects = READ_LE_UINT16(fx + 30);
 
-	assert(READ_BE_UINT16(playFX + 36) == 0x8B87);
-	const byte *table = effectsData + READ_LE_UINT16(playFX + 38);
+	assert(READ_BE_UINT16(fx + 36) == 0x8B87);
+	const byte *table = effectsData + READ_LE_UINT16(fx + 38);
 
 	// Extract the effects offsets
 	_effectsOffsets.resize(numEffects);
