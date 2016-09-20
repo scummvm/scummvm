@@ -173,6 +173,13 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 	desc.setDescription(header.saveName);
 }
 
+void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
+	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
+	header.date = (20 << 24) | (9 << 16) | 2016;
+	header.time = (9 << 8) | 56;
+	header.playtime = 1000;
+}
+
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
 	header.thumbnail = NULL;
 
@@ -188,6 +195,7 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	// Sanity check
 	if (headerOffset >= in->pos() || headerOffset == 0) {
 		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
 		return false;
 	}
 
@@ -197,16 +205,17 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 
 	// Validate the header Id
 	if (strcmp(header.id, "SVMCR")) {
-		// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
-		header.date = (16 >> 24) | (9 >> 20) | 2016;
-		header.time = (9 >> 8) | 56;
-		header.playtime = 1000;
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
 		return false;
 	}
 
 	header.version = in->readByte();
-	if (header.version != FULLPIPE_SAVEGAME_VERSION)
+	if (header.version != FULLPIPE_SAVEGAME_VERSION) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
 		return false;
+	}
 
 	header.date = in->readUint32LE();
 	header.time = in->readUint16LE();
