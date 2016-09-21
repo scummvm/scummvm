@@ -791,7 +791,7 @@ namespace {
 			return Common::String::format("%s", format);
 		}
 	}
-};
+}
 
 Common::String format(const Common::String &source, int argc, const reg_t *argv) {
 	Common::String out;

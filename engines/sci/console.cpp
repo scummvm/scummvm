@@ -2824,11 +2824,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 					debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array->size());
 					switch (array->getType()) {
 					case kArrayTypeID:
-						hexDumpReg((reg_t *)array->getRawData(), array->size(), 4, 0, true);
+						hexDumpReg((const reg_t *)array->getRawData(), array->size(), 4, 0, true);
 						break;
 					case kArrayTypeByte:
 					case kArrayTypeString: {
-						Common::hexdump((byte *)array->getRawData(), array->size(), 16, 0);
+						Common::hexdump((const byte *)array->getRawData(), array->size(), 16, 0);
 						break;
 					}
 					case kArrayTypeInt16: {
