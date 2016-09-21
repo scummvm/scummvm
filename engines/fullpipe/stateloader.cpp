@@ -185,8 +185,7 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 
 	uint oldPos = in->pos();
 
-	// SEEK_END doesn't work with zipped savegames, so simulate it
-	in->seek(in->size() - 4, SEEK_SET);
+	in->seek(-4, SEEK_END);
 
 	uint headerOffset = in->readUint32LE();
 
