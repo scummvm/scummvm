@@ -1696,6 +1696,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
 #pragma mark -
 #pragma mark King's Quest 7
 
@@ -1859,6 +1860,8 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true, 64928, "subtitle fix 3/3",                            1, kq7SignatureSubtitleFix3,                 kq7PatchSubtitleFix3 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
+
+#endif
 
 // ===========================================================================
 // Script 210 in the German version of Longbow handles the case where Robin

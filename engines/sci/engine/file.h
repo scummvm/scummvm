@@ -65,12 +65,11 @@ struct SavegameDesc {
 	char name[SCI_MAX_SAVENAME_LENGTH];
 	Common::String gameVersion;
 #ifdef ENABLE_SCI32
-	union {
-		// Used by Shivers 1
-		uint32 score;
-		// Used by MGDX
-		uint8 avatarId;
-	};
+	// Used by Shivers 1
+	uint16 lowScore;
+	uint16 highScore;
+	// Used by MGDX
+	uint8 avatarId;
 #endif
 };
 
