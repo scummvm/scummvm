@@ -459,6 +459,14 @@ reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+extern Common::String format(const Common::String &source, int argc, const reg_t *argv);
+
+reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv) {
+	const Common::String debugString = s->_segMan->getString(argv[0]);
+	debugC(kDebugLevelGame, "%s", format(debugString, argc - 1, argv + 1).c_str());
+	return s->r_acc;
+}
+
 #endif
 
 // kIconBar is really a subop of kMacPlatform for SCI1.1 Mac
