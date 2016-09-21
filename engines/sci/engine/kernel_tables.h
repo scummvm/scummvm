@@ -363,7 +363,7 @@ static const SciKernelMapSubEntry kSave_subops[] = {
 	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles32),            "rrr",                  NULL },
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
-	{ SIG_SCI32,           8, MAP_EMPTY(GameIsRestarting),         ".*",                   NULL },
+	{ SIG_SCI32,           8, MAP_EMPTY(GameIsRestarting),         "(.*)",                 NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -509,7 +509,7 @@ static const SciKernelMapSubEntry kArray_subops[] = {
 	{ SIG_SCI32,           0, MAP_CALL(ArrayNew),                  "ii",                   NULL },
 	{ SIG_SCI32,           1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
 	{ SIG_SCI32,           2, MAP_CALL(ArrayGetElement),           "ri",                   NULL },
-	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri.*",                 kArraySetElements_workarounds },
+	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri(.*)",               kArraySetElements_workarounds },
 	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "r",                    NULL },
 	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 NULL },
 	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
@@ -537,8 +537,8 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
 	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[0or]",                NULL },
 	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLength),              "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringFormat),              "r.*",                  NULL },
-	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringFormatAt),            "r[ro].*",              NULL },
+	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringFormat),              "r(.*)",                NULL },
+	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringFormatAt),            "r[ro](.*)",            NULL },
 	{ SIG_UNTIL_SCI21MID, 13, MAP_CALL(StringToInteger),           "r",                    NULL },
 	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "ri(i)",                NULL },
 	{ SIG_UNTIL_SCI21MID, 15, MAP_CALL(StringToUpperCase),         "r",                    NULL },
@@ -547,8 +547,8 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_UNTIL_SCI21MID, 18, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
 
 	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLength),              "r",                    NULL },
-	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "r.*",                  NULL },
-	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "rr.*",                 NULL },
+	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "r(.*)",                NULL },
+	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "rr(.*)",               NULL },
 	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringToInteger),           "r",                    NULL },
 	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "ri(i)",                NULL },
 	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringToUpperCase),         "r",                    NULL },
