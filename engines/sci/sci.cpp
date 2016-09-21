@@ -593,6 +593,7 @@ void SciEngine::patchGameSaveRestore() {
 	case GID_KQ7: // has custom save/load code
 	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
 	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
+	case GID_MOTHERGOOSEHIRES: // has custom save/load code
 	case GID_PHANTASMAGORIA: // has custom save/load code
 	case GID_PQSWAT: // has custom save/load code
 	case GID_SHIVERS: // has custom save/load code

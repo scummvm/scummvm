@@ -78,8 +78,12 @@ struct SavegameMetadata {
 	uint16 gameObjectOffset;
 	uint16 script0Size;
 #ifdef ENABLE_SCI32
-	// Used by Shivers 1
-	uint32 score;
+	union {
+		// Used by Shivers 1
+		uint32 score;
+		// Used by MGDX
+		uint8 avatarId;
+	};
 #endif
 };
 
