@@ -105,6 +105,11 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	// Now dump it into save file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(fname);
 
+	if (!saveFile) {
+		warning("Cannot open file for writing: %s", fname);
+		return;
+	}
+
 	saveFile->writeUint32LE(header.version);
 	saveFile->write(header.magic, 32);
 	saveFile->writeUint32LE(header.updateCounter);
