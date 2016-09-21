@@ -308,9 +308,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		unwrapFilename = false;
 	}
 
-	// Shivers stores the name and score of save games in separate %d.SG files,
-	// which are used by the save/load screen
 	if (g_sci->getGameId() == GID_SHIVERS && name.hasSuffix(".SG")) {
+		// Shivers stores the name and score of save games in separate %d.SG
+		// files, which are used by the save/load screen
 		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
 			// Suppress creation of the SG file, since it is not necessary
 			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
@@ -350,9 +350,41 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 			return make_reg(0, handle);
 		}
-	}
+	} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES && name.hasSuffix(".DTA")) {
+		// MGDX stores the name and avatar ID in separate %d.DTA files, which
+		// are used by the save/load screen
+		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
+			// Suppress creation of the DTA file, since it is not necessary
+			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
+			return SIGNAL_REG;
+		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+			// Create a virtual file containing the save game description
+			// and slot number, as the game scripts expect.
+			int saveNo;
+			sscanf(name.c_str(), "%d.DTA", &saveNo);
+			saveNo += kSaveIdShift;
 
-	if (g_sci->getGameId() == GID_KQ7) {
+			SavegameDesc save;
+			fillSavegameDesc(g_sci->getSavegameName(saveNo), &save);
+
+			const Common::String avatarId = Common::String::format("%02d", save.avatarId);
+			const uint nameLength = strlen(save.name);
+			const uint size = nameLength + /* \r\n */ 2 + avatarId.size() + 1;
+			char *buffer = (char *)malloc(size);
+			memcpy(buffer, save.name, nameLength);
+			buffer[nameLength] = '\r';
+			buffer[nameLength + 1] = '\n';
+			memcpy(buffer + nameLength + 2, avatarId.c_str(), avatarId.size() + 1);
+
+			const uint handle = findFreeFileHandle(s);
+
+			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buffer, size, DisposeAfterUse::YES);
+			s->_fileHandles[handle]._out = nullptr;
+			s->_fileHandles[handle]._name = "";
+
+			return make_reg(0, handle);
+		}
+	} else if (g_sci->getGameId() == GID_KQ7) {
 		// KQ7 creates a temp.tmp file to perform an atomic rewrite of the
 		// catalogue, but since we do not create catalogues for most SCI32
 		// games, ignore the write
