@@ -833,7 +833,7 @@ void Bitmap::decode(int32 *palette) {
 		putDibCB(palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
+void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
