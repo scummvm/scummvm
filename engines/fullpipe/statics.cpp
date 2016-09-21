@@ -538,11 +538,6 @@ void Movement::draw(bool flipFlag, int angle) {
 	if (_currDynamicPhase->getPaletteData())
 		g_fp->_globalPalette = _currDynamicPhase->getPaletteData();
 
-	if (_currDynamicPhase->getAlpha() < 0xFF) {
-		warning("Movement::draw: alpha < 0xff: %d", _currDynamicPhase->getAlpha());
-		//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, _currDynamicPhase->getAlpha());
-	}
-
 	Bitmap *bmp;
 	if (_currMovement) {
 		bmp = _currDynamicPhase->getPixelData()->reverseImage();
