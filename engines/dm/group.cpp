@@ -710,6 +710,8 @@ T0209005_AddEventAndReturn:
 			approachAfterReaction = (AL0447_i_Behavior == kDMBehaviorAttack); /* If the creature behavior is 'Attack' and it has to move to avoid danger then it will change its behavior to 'Approach' after the movement */
 			newGroupDirectionFound = false;
 			goto T0209058_MoveInRandomDirection;
+		default:
+			break;
 		}
 	}
 	if (eventType < kDMEventTypeUpdateBehaviourGroup) { /* Process Update Aspect events 32 to 36 */
