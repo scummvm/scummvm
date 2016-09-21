@@ -30,10 +30,9 @@ namespace Xeen {
 
 class InfoDialog : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	Common::StringArray _lines;
 
-	InfoDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	InfoDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 

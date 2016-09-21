@@ -30,10 +30,9 @@ namespace Xeen {
 
 class ExchangeDialog : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	ExchangeDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	ExchangeDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(Character *&c, int &charIndex);
 

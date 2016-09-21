@@ -1,12 +1,12 @@
 MODULE := engines/xeen
 
 MODULE_OBJS := \
-	worldofxeen/cutscenes.o \
 	worldofxeen/clouds_cutscenes.o \
 	worldofxeen/darkside_cutscenes.o \
 	worldofxeen/worldofxeen.o \
 	character.o \
 	combat.o \
+	cutscenes.o \
 	debugger.o \
 	detection.o \
 	dialogs.o \

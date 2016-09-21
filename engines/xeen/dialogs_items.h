@@ -37,15 +37,13 @@ enum ItemsMode {
 
 class ItemsDialog : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 	SpriteResource _equipSprites;
 	Character _itemsCharacter;
 	Character *_oldCharacter;
 	DrawStruct _itemsDrawList[INV_ITEMS_TOTAL];
 
-	ItemsDialog(XeenEngine *vm) : ButtonContainer(), 
-		_vm(vm), _oldCharacter(nullptr) {}
+	ItemsDialog(XeenEngine *vm) : ButtonContainer(vm), _oldCharacter(nullptr) {}
 
 	Character *execute(Character *c, ItemsMode mode);
 

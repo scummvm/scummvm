@@ -37,7 +37,6 @@ class TownMessage;
 class Town: public ButtonContainer {
 	friend class TownMessage;
 private:
-	XeenEngine *_vm;
 	SpriteResource _icons1, _icons2;
 	Common::StringArray _textStrings;
 	Common::Array<SpriteResource> _townSprites;
@@ -114,10 +113,9 @@ public:
 
 class TownMessage : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	TownMessage(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	TownMessage(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute(int portrait, const Common::String &name, 
 		const Common::String &text, int confirm);

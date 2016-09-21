@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/stack.h"
 #include "common/rect.h"
+#include "xeen/cutscenes.h"
 #include "xeen/sprites.h"
 #include "xeen/xsurface.h"
 
@@ -46,21 +47,21 @@ public:
 	UIButton() : _value(0), _sprites(nullptr), _draw(false) {}
 };
 
-class ButtonContainer {
+class ButtonContainer : public Cutscenes {
 private:
 	Common::Stack< Common::Array<UIButton> > _savedButtons;
 protected:
 	Common::Array<UIButton> _buttons;
 	int _buttonValue;
 
+	bool checkEvents(XeenEngine *vm);
+
 	/**
 	 * Draws the scroll in the background
 	 */
-	void doScroll(XeenEngine *vm, bool drawFlag, bool doFade);
-
-	bool checkEvents(XeenEngine *vm);
+	virtual void doScroll(bool drawFlag, bool doFade);
 public:
-	ButtonContainer() : _buttonValue(0) {}
+	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
 
 	/**
 	 * Saves the current list of buttons
@@ -85,20 +86,16 @@ public:
 
 class SettingsBaseDialog : public ButtonContainer {
 protected:
-	XeenEngine *_vm;
-
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:
-	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	SettingsBaseDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	virtual ~SettingsBaseDialog() {}
 };
 
 class CreditsScreen: public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	CreditsScreen(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	CreditsScreen(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 public:

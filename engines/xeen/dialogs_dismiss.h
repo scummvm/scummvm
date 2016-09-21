@@ -30,10 +30,9 @@ namespace Xeen {
 
 class Dismiss : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	Dismiss(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Dismiss(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 

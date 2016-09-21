@@ -30,11 +30,10 @@ namespace Xeen {
 
 class Quests : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 	Common::StringArray _questNotes;
 
-	Quests(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Quests(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 

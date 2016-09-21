@@ -32,7 +32,7 @@
 
 namespace Xeen {
 
-PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(), 
+PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(vm), 
 		PartyDrawer(vm), _vm(vm) {
 	initDrawStructs();
 }
@@ -93,7 +93,7 @@ void PartyDialog::execute() {
 				screen._windows[0].update();
 			}
 
-			doScroll(_vm, false, false);
+			doScroll(false, false);
 			events.setCursor(0);
 
 			if (_vm->getGameID() == GType_DarkSide) {

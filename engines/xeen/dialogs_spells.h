@@ -41,12 +41,11 @@ struct SpellEntry {
 
 class SpellsDialog : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 	SpriteResource _scrollSprites;
 	Common::Array<SpellEntry> _spells;
 
-	SpellsDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	SpellsDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	Character *execute(ButtonContainer *priorDialog, Character *c, int isCasting);
 
@@ -60,10 +59,9 @@ public:
 
 class CastSpell : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	CastSpell(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	CastSpell(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(Character *&c);
 
@@ -75,9 +73,7 @@ public:
 
 class SpellOnWho : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	SpellOnWho(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	SpellOnWho(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int spellId);
 public:
@@ -86,10 +82,9 @@ public:
 
 class SelectElement : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	SelectElement(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	SelectElement(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int spellId);
 
@@ -100,9 +95,7 @@ public:
 
 class NotWhileEngaged : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	NotWhileEngaged(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	NotWhileEngaged(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(int spellId);
 public:
@@ -111,10 +104,9 @@ public:
 
 class LloydsBeacon : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	LloydsBeacon(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	LloydsBeacon(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute();
 
@@ -125,10 +117,9 @@ public:
 
 class Teleport : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	Teleport(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Teleport(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute();
 public:
@@ -137,9 +128,7 @@ public:
 
 class TownPortal : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	TownPortal(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	TownPortal(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute();
 public:
@@ -148,9 +137,7 @@ public:
 
 class IdentifyMonster : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	IdentifyMonster(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	IdentifyMonster(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 public:

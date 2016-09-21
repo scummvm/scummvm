@@ -31,12 +31,11 @@ namespace Xeen {
 
 class CharacterInfo : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 	DrawStruct _drawList[24];
 	int _cursorCell;
 
-	CharacterInfo(XeenEngine *vm) : ButtonContainer(), _vm(vm), _cursorCell(0) {}
+	CharacterInfo(XeenEngine *vm) : ButtonContainer(vm), _cursorCell(0) {}
 
 	void execute(int charIndex);
 

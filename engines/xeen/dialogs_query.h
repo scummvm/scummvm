@@ -29,9 +29,7 @@ namespace Xeen {
 
 class Confirm : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	Confirm(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Confirm(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute(const Common::String &msg, int mode);
 public:
@@ -40,9 +38,7 @@ public:
 
 class YesNo : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	YesNo(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	YesNo(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	bool execute(bool type, bool townFlag);
 public:

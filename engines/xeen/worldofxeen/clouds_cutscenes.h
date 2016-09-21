@@ -23,7 +23,7 @@
 #ifndef XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 #define XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 
-#include "xeen/worldofxeen/cutscenes.h"
+#include "xeen/cutscenes.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {

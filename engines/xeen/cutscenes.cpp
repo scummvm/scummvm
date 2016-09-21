@@ -20,7 +20,7 @@
  *
  */
 
-#include "xeen/worldofxeen/cutscenes.h"
+#include "xeen/cutscenes.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -101,6 +101,100 @@ uint Cutscenes::timeElapsed() {
 uint Cutscenes::getSpeakingFrame(uint minFrame, uint maxFrame) {
 	uint interval = g_system->getMillis() / 100;
 	return minFrame + interval % (maxFrame + 1 - minFrame);
+}
+
+void Cutscenes::doScroll(bool drawFlag, bool doFade) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+
+	if (_vm->getGameID() != GType_Clouds) {
+		if (doFade) {
+			screen.fadeIn(2);
+		}
+		return;
+	}
+
+	const int SCROLL_L[8] = { 29, 23, 15, 251, 245, 233, 207, 185 };
+	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
+
+	screen.saveBackground();
+
+	// Load hand vga files
+	SpriteResource *hand[16];
+	for (int i = 0; i < 16; ++i) {
+		Common::String name = Common::String::format("hand%02d.vga", i);
+		hand[i] = new SpriteResource(name);
+	}
+
+	// Load marb vga files
+	SpriteResource *marb[5];
+	for (int i = 1; i < 5; ++i) {
+		Common::String name = Common::String::format("marb%02d.vga", i);
+		marb[i] = new SpriteResource(name);
+	}
+
+	if (drawFlag) {
+		for (int i = 22; i > 0; --i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i > 0 && i <= 14) {
+				hand[i - 1]->draw(screen, 0);
+			} else {
+				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[i - 14], 0), SPRFLAG_800);
+				marb[15]->draw(screen, 0, Common::Point(SCROLL_R[i - 14], 0), SPRFLAG_800);
+			}
+
+			if (i <= 20) {
+				marb[i / 5]->draw(screen, i % 5);
+			}
+
+			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			screen._windows[0].update();
+			if (i == 0 && doFade)
+				screen.fadeIn(2);
+		}
+	} else {
+		for (int i = 0; i < 22 && !events.isKeyMousePressed(); ++i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i < 14) {
+				hand[i]->draw(screen, 0);
+			} else {
+				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[i - 7], 0), SPRFLAG_800);
+				marb[15]->draw(screen, 0, Common::Point(SCROLL_R[i - 7], 0), SPRFLAG_800);
+			}
+
+			if (i < 20) {
+				marb[i / 5]->draw(screen, i % 5);
+			}
+
+			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			screen._windows[0].update();
+			if (i == 0 && doFade)
+				screen.fadeIn(2);
+		}
+	}
+
+	if (drawFlag) {
+		hand[0]->draw(screen, 0);
+		marb[0]->draw(screen, 0);
+	} else {
+		screen.restoreBackground();
+	}
+
+	screen._windows[0].update();
+
+	// Free resources
+	for (int i = 1; i < 5; ++i)
+		delete marb[i];
+	for (int i = 0; i < 16; ++i)
+		delete hand[i];
 }
 
 } // End of namespace Xeen

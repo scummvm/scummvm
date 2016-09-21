@@ -33,9 +33,7 @@ enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
 
 class ErrorDialog : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	ErrorDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	ErrorDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(const Common::String &msg, ErrorWaitType waitType);
 public:
@@ -51,9 +49,7 @@ public:
 
 class CantCast: public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	CantCast(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	CantCast(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(int spellId, int componentNum);
 public:

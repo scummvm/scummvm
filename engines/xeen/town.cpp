@@ -30,7 +30,7 @@
 
 namespace Xeen {
 
-Town::Town(XeenEngine *vm) : _vm(vm) {
+Town::Town(XeenEngine *vm) : ButtonContainer(vm) {
 	Common::fill(&_arr1[0], &_arr1[6], 0);
 	_townMaxId = 0;
 	_townActionId = 0;

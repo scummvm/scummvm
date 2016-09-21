@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_WORLDOFXEEN_CUTSCENES_H
-#define XEEN_WORLDOFXEEN_CUTSCENES_H
+#ifndef XEEN_CUTSCENES_H
+#define XEEN_CUTSCENES_H
 
 #include "xeen/files.h"
 #include "xeen/sprites.h"
@@ -81,8 +81,13 @@ protected:
 	 * Get a speaking frame from a range
 	 */
 	uint getSpeakingFrame(uint minFrame, uint maxFrame);
+
+	/**
+	 * Draws the scroll in the background
+	 */
+	virtual void doScroll(bool drawFlag, bool doFade);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_WORLDOFXEEN_CUTSCENES_H */
+#endif /* XEEN_CUTSCENES_H */

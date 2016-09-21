@@ -29,9 +29,7 @@ namespace Xeen {
 
 class FightOptions : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	FightOptions(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	FightOptions(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 public:

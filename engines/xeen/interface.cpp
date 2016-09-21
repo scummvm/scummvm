@@ -130,7 +130,7 @@ void PartyDrawer::resetHighlight() {
 }
 /*------------------------------------------------------------------------*/
 
-Interface::Interface(XeenEngine *vm) : ButtonContainer(), InterfaceMap(vm), 
+Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceMap(vm), 
 		PartyDrawer(vm), _vm(vm) {
 	_buttonsLoaded = false;
 	_intrIndex1 = 0;

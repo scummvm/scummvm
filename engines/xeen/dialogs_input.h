@@ -36,7 +36,6 @@ private:
 	 */
 	Common::KeyCode doCursor(const Common::String &msg);
 protected:
-	XeenEngine *_vm;
 	Window *_window;
 
 	/**
@@ -44,7 +43,7 @@ protected:
 	 */
 	int getString(Common::String &line, uint maxLen, int maxWidth, bool isNumeric);
 
-	Input(XeenEngine *vm, Window *window) : _vm(vm), _window(window) {}
+	Input(XeenEngine *vm, Window *window) : ButtonContainer(vm), _window(window) {}
 public:
 	static int show(XeenEngine *vm, Window *window, Common::String &line, 
 		uint maxLen, int maxWidth, bool isNumeric = false);
@@ -72,10 +71,9 @@ public:
 
 class Choose123 : public ButtonContainer {
 private:
-	XeenEngine *_vm;
 	SpriteResource _iconSprites;
 
-	Choose123(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	Choose123(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int numOptions);
 

@@ -31,9 +31,7 @@ class XeenEngine;
 
 class AutoMapDialog: public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	AutoMapDialog(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	AutoMapDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
 public:

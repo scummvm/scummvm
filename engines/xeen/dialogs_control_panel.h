@@ -29,9 +29,7 @@ namespace Xeen {
 
 class ControlPanel : public ButtonContainer {
 private:
-	XeenEngine *_vm;
-
-	ControlPanel(XeenEngine *vm) : ButtonContainer(), _vm(vm) {}
+	ControlPanel(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute();
 public:
