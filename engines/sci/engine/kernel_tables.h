@@ -632,7 +632,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoAudio),           SCI_VERSION_NONE, SCI_VERSION_2, SIGFOR_ALL, "i(.*)", NULL,         NULL }, // subop
 #ifdef ENABLE_SCI32
-	{ "DoAudio", kDoAudio32,       SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",          kDoAudio_subops, NULL },
+	{ "DoAudio", kDoAudio32,       SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kDoAudio_subops, NULL },
 #endif
 	{ MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -921,10 +921,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
-	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,             "ii",                  NULL,            NULL },
+	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
 	// Debug function called whenever the current room changes
-	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	{ MAP_EMPTY(NewRoom),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2.1 unused functions, always mapped to kDummy
 
