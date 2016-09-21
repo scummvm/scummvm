@@ -1180,15 +1180,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 		if (y != -1)
 			ny = y;
 
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
-		}
-
-		_bitmap->putDib(nx, ny, 0, 0xff);
-
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
-		}
+		_bitmap->putDib(nx, ny, 0, _alpha);
 	}
 }
 
