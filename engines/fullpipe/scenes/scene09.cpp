@@ -379,6 +379,11 @@ void sceneHandler09_checkHangerCollide() {
 				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y);
 
 				if (hit) {
+					for (int k = 0; k < 20; k++) {
+						debugCN(2, kDebugSceneLogic, "%c", k == g_vars->scene09_hangerOffsets[j].x ? '@' : g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + k, ball->_oy + -15) ? '-' : ' ');
+					}
+					debugC(2, kDebugSceneLogic, "");
+
 					sceneHandler09_ballExplode(b);
 					break;
 				}
