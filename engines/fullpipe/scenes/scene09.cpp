@@ -106,9 +106,6 @@ void scene09_initScene(Scene *sc) {
 		g_vars->scene09_hangers.push_back(hng);
 	}
 
-	for (uint i = 0; i < g_vars->scene09_sceneBalls.size(); i++)
-		delete g_vars->scene09_sceneBalls[i];
-
 	g_vars->scene09_sceneBalls.clear();
 
 	StaticANIObject *newball = new StaticANIObject(sc->getStaticANIObject1ById(ANI_BALL9, -1));
