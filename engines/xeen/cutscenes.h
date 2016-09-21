@@ -69,6 +69,11 @@ protected:
 	bool subtitlesWait(uint minTime = 0);
 
 	/**
+	 * Wait for the end of currently playing sound or subtitles line
+	 */
+	bool waitForLineOrSound();
+
+	/**
 	 * Records the current execution time
 	 */
 	void recordTime();

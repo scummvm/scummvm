@@ -90,6 +90,17 @@ bool Cutscenes::subtitlesWait(uint minTime) {
 	return true;
 }
 
+bool Cutscenes::waitForLineOrSound() {
+	while (_vm->_sound->isPlaying() || _subtitleSize) {
+		showSubtitles();
+		_vm->_events->pollEventsAndWait();
+		if (_vm->_events->isKeyMousePressed())
+			return false;
+	}
+
+	return true;
+}
+
 void Cutscenes::recordTime() {
 	_vm->_events->timeMark1();
 }

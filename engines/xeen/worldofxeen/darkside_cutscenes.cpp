@@ -152,6 +152,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
 	};
 
+	_subtitles.load("special.bin");
 	screen.fadeOut(8);
 	screen.loadPalette("dark.pal");
 	screen.loadBackground("pyramid2.raw");
@@ -160,12 +161,13 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	screen.loadBackground("pyramid3.raw");
 	screen.saveBackground(1);
 
-	SpriteResource sprites[3] = {
-		SpriteResource("title.int"), SpriteResource("pyratop.int"), SpriteResource("pyramid.int")
-	};
+	SpriteResource title("title.int");
+	SpriteResource pyraTop("pyratop.int");
+	SpriteResource pyramid("pyramid.int");
 
 	screen.vertMerge(SCREEN_HEIGHT);
 	screen.loadPage(0);
+	screen.restoreBackground();
 	screen.loadPage(1);
 
 	// Play the intro music
@@ -174,18 +176,17 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	// Show Might and Magic Darkside of Xeen title, and gradualy scroll
 	// the background vertically down to show the Pharoah's base
 	int yp = 0;
-	int frameNum = 0;
 	int idx1 = 0;
 	bool skipElapsed = false;
 	uint32 timeExpired = 0;
 	bool fadeFlag = true;
 
-	for (int yCtr = SCREEN_HEIGHT; yCtr > 0; ) {
+	for (int yCtr = SCREEN_HEIGHT, frameNum = 0; yCtr > 0; ) {
 		screen.vertMerge(yp);
 
-		sprites[0].draw(screen, 0);
+		title.draw(screen, 0);
 		if (frameNum)
-			sprites[0].draw(screen, frameNum);
+			title.draw(screen, frameNum);
 
 		idx1 = (idx1 + 1) % 4;
 		if (!idx1)
@@ -217,13 +218,106 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 
 	// Zoom into the Pharoah's base closeup view
 	for (int idx = 14; idx >= 0; --idx) {
-		sprites[1].draw(screen, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
-		sprites[1].draw(screen, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
+		pyraTop.draw(screen, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
+		pyraTop.draw(screen, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
 		screen.draw();
 
 		if (idx == 2)
 			sound.setMusicVolume(48);
 		WAIT(2);
+	}
+
+	// Inconceivable, the royal pyramid besieged
+	screen.saveBackground();
+	sound.playSound("pharoh1a.voc");
+
+	recordTime();
+	resetSubtitles(0);
+	_subtitleLineNum = 0;
+
+	bool phar2 = false;
+	for (int idx = 0; idx < 19; ++idx) {
+		screen.restoreBackground();
+		pyramid.draw(screen, idx, Common::Point(132, 62));
+		showSubtitles();
+
+		if (!sound.isPlaying() && !phar2)
+			sound.playSound("pharoh1b.voc");
+
+		events.updateGameCounter();
+		while (timeElapsed() < 4) {
+			showSubtitles();
+			events.pollEventsAndWait();
+			if (events.isKeyMousePressed())
+				return false;
+		}
+	}
+
+	waitForLineOrSound();
+	screen.fadeOut();
+	screen.freePages();
+	title.clear();
+	pyraTop.clear();
+	pyramid.clear();
+	
+	//
+	SpriteResource dragon("dragon.int");
+	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
+	const int YLIST3[10] = { 30, 29, 28, 27, 26, 25, 24, 25, 26, 28 };
+	const int FRAMES3[70] = {
+		9, 9, 9, 9, 9, 8, 8, 8, 8, 9, 9, 9, 9, 9, 0,
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 8, 8,
+		8, 8, 9, 9, 9, 9, 165, 149, 126, 106, 92, 80, 66, 55, 42,
+		29, 10,  -6, -26, -40, -56, -72, -83, 154, 141, 125, 105, 94, 83, 74,
+		69, 68, 70, 73, 77, 83, 89, 94, 99, 109
+	};
+	const char *const PHAR2_VOC[5] = {
+		"pharoh2a.voc", "pharoh2b.voc", "pharoh2c.voc", "pharoh2d.voc", "pharoh2e.voc"
+	};
+	recordTime();
+	resetSubtitles(0);
+	_subtitleLineNum = 0;
+	_subtitleSize = 25;
+
+	screen.loadBackground("2room.raw");
+	screen.loadPage(1);
+	screen.loadBackground("3room.raw");
+	screen.loadPage(0);
+	screen.loadBackground("1room.raw");
+	screen.horizMerge(SCREEN_WIDTH);
+	dragon.draw(screen, 0, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
+
+	int posNum = 0, phar2Index = 0, ctr = 0;
+	for (int idx = SCREEN_WIDTH, frameNum = 0; idx >= 0; --idx) {
+		events.updateGameCounter();
+		screen.horizMerge(idx);
+		dragon.draw(screen, FRAMES3[frameNum], Common::Point(XLIST3[posNum], YLIST3[posNum]), SPRFLAG_800);
+		showSubtitles();
+		events.pollEventsAndWait();
+		if (events.isKeyMousePressed())
+			return false;
+
+		if (idx == SCREEN_WIDTH)
+			sound.playSound(PHAR2_VOC[0]);
+		if (!sound.isPlaying() && phar2Index < 4)
+			sound.playSound(PHAR2_VOC[1 + phar2Index++]);
+
+		if (phar2Index == 4) {
+			if (!sound.isPlaying() && !_subtitleSize)
+				break;
+		}
+
+		if (++ctr > 2) {
+			if (posNum == 5)
+				sound.playFX(7);
+			else if (posNum == 0)
+				sound.playFX(8);
+
+			posNum = (posNum + 1) % 10;
+			frameNum = (frameNum + 1) % 36;
+		}
+
+		WAIT(1);
 	}
 
 	return true;
