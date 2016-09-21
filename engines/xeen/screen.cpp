@@ -393,12 +393,12 @@ void Screen::vertMerge(int yp) {
 		return;
 
 	for (int y = 0; y < SCREEN_HEIGHT - yp; ++y) {
-		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, y);
+		const byte *srcP = (const byte *)_pages[0].getBasePtr(0, yp + y);
 		byte *destP = (byte *)getBasePtr(0, y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
 	}
 
-	for (int y = 0; y < (SCREEN_HEIGHT - yp); ++y) {
+	for (int y = 0; y < yp; ++y) {
 		const byte *srcP = (const byte *)_pages[1].getBasePtr(0, y);
 		byte *destP = (byte *)getBasePtr(0, SCREEN_HEIGHT - yp + y);
 		Common::copy(srcP, srcP + SCREEN_WIDTH, destP);
