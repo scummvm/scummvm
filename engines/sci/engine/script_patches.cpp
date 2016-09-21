@@ -1696,6 +1696,9 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+#pragma mark -
+#pragma mark King's Quest 7
+
 // ===========================================================================
 
 // King's Quest 7 has really weird subtitles. It seems as if the subtitles were
