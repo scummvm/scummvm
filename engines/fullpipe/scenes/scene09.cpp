@@ -379,6 +379,9 @@ void sceneHandler09_checkHangerCollide() {
 				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y);
 
 				if (hit) {
+					uint32 pixel;
+					g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
+					debugC(2, kDebugSceneLogic, "%x", pixel);
 					for (int k = 0; k < 20; k++) {
 						debugCN(2, kDebugSceneLogic, "%c", k == g_vars->scene09_hangerOffsets[j].x ? '@' : g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + k, ball->_oy + -15) ? '-' : ' ');
 					}

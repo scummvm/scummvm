@@ -475,7 +475,7 @@ void sceneHandler06_catchBall() {
 }
 
 void sceneHandler06_checkBallTarget(int par) {
-	int pixel;
+	uint32 pixel;
 
 	if (g_vars->scene06_ballY <= 475) {
 		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY, &pixel)) {
