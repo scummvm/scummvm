@@ -378,7 +378,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 				byte *out = buffer;
 				for (uint i = 0; i < numSaves; ++i) {
-					WRITE_UINT16(out, saves[i].id);
+					WRITE_UINT16(out, saves[i].id - kSaveIdShift);
 					Common::strlcpy((char *)out + sizeof(int16), saves[i].name, SCI_MAX_SAVENAME_LENGTH);
 					out += recordSize;
 				}
@@ -542,6 +542,13 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		result = saveFileMan->removeSavefile(name);
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() >= SCI_VERSION_2) {
+		// Special case for KQ7, basically identical to the SQ4 case above,
+		// where the game hardcodes its save game names
+		if (name.hasPrefix("kq7cdsg.")) {
+			int saveNo = atoi(name.c_str() + name.size() - 3);
+			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
+		}
+
 		// The file name may be already wrapped, so check both cases
 		result = saveFileMan->removeSavefile(name);
 		if (!result) {
