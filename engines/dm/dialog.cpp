@@ -43,7 +43,7 @@ void DialogMan::dialogDraw(const char *msg1, const char *msg2, const char *choic
 	static Box dialog2ChoicesPatch = Box(102, 122, 89, 125);
 	static Box dialog4ChoicesPatch = Box(102, 122, 62, 97);
 
-	_vm->_displayMan->loadIntoBitmap(k0_dialogBoxGraphicIndice, _vm->_displayMan->_bitmapViewport);
+	_vm->_displayMan->loadIntoBitmap(kDMGraphicIdxDialogBox, _vm->_displayMan->_bitmapViewport);
 	//Strangerke: the version should be replaced by a ScummVM/RogueVM (?) string
 	// TODO: replace with ScummVM version string
 	_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 192, 7, kDMColorLightGray, kDMColorDarkGary, "V2.2", k136_heightViewport);

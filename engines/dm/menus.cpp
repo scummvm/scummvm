@@ -168,7 +168,7 @@ MenuMan::~MenuMan() {
 
 void MenuMan::drawMovementArrows() {
 	_vm->_eventMan->showMouse();
-	_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k13_MovementArrowsIndice),
+	_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMovementArrows),
 									   &_vm->_displayMan->_boxMovementArrows, k48_byteWidth, kDMColorNoTransparency, 45);
 	_vm->_eventMan->hideMouse();
 }
@@ -316,7 +316,7 @@ void MenuMan::drawActionArea() {
 			box = _boxActionArea2ActionMenu;
 		if (_actionList._actionIndices[1] == kDMActionNone)
 			box = _boxActionArea1ActionMenu;
-		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k10_MenuActionAreaIndice),
+		dispMan.blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMenuActionArea),
 								 &box, k48_byteWidth, kDMColorNoTransparency, 45);
 		textMan.printWithTrailingSpaces(dispMan._bitmapScreen, k160_byteWidthScreen,
 											235, 83, kDMColorBlack, kDMColorCyan, champMan._champions[_vm->ordinalToIndex(champMan._actingChampionOrdinal)]._name,
@@ -459,7 +459,7 @@ void MenuMan::setMagicCasterAndDrawSpellArea(ChampionIndex champIndex) {
 
 	if (_vm->_championMan->_magicCasterChampionIndex == kDMChampionNone) {
 		_vm->_eventMan->showMouse();
-		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(k9_MenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kDMColorNoTransparency, 33);
+		_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxMenuSpellAreaBackground), &_boxSpellArea, k48_byteWidth, kDMColorNoTransparency, 33);
 		_vm->_eventMan->hideMouse();
 	}
 	if (champIndex == kDMChampionNone) {
@@ -1761,7 +1761,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 		int16 displayHeight;
 		if (damage > 40) {
 			blitBox = &_boxActionArea3ActionMenu;
-			blitBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+			blitBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxDamageToCreature);
 			byteWidth = k48_byteWidth;
 			displayHeight = 45;
 		} else {
@@ -1780,7 +1780,7 @@ void MenuMan::drawActionDamage(int16 damage) {
 			}
 			displayHeight = 37;
 			if (!_vm->_displayMan->isDerivedBitmapInCache(derivedBitmapIndex)) {
-				byte *nativeBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k14_damageToCreatureIndice);
+				byte *nativeBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxDamageToCreature);
 				blitBitmap = _vm->_displayMan->getDerivedBitmap(derivedBitmapIndex);
 				_vm->_displayMan->blitToBitmapShrinkWithPalChange(nativeBitmap, blitBitmap, 96, 45, destPixelWidth, 37, _vm->_displayMan->_palChangesNoChanges);
 				_vm->_displayMan->addDerivedBitmap(derivedBitmapIndex);

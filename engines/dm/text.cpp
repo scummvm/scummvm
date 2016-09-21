@@ -60,7 +60,7 @@ void TextMan::printTextToBitmap(byte *destBitmap, uint16 destByteWidth, int16 de
 	uint16 textLength = strlen(text);
 	uint16 nextX = destX;
 	uint16 nextY = destY;
-	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k557_FontGraphicIndice);
+	byte *srcBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFont);
 
 	byte *tmp = _vm->_displayMan->_tmpBitmap;
 	for (uint16 i = 0; i < (kDMFontLetterWidth + 1) * kDMFontLetterHeight * 128; ++i)

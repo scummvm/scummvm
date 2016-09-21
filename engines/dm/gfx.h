@@ -200,6 +200,85 @@ enum Color {
 	kDMColorWhite = 15
 };
 
+enum GraphicIndice {
+	kDMGraphicIdxDialogBox = 0, // @ C000_GRAPHIC_DIALOG_BOX
+	kDMGraphicIdxTitle = 1, // @ C001_GRAPHIC_TITLE
+	kDMGraphicIdxEntranceLeftDoor = 2, // @ C002_GRAPHIC_ENTRANCE_LEFT_DOOR
+	kDMGraphicIdxEntranceRightDoor = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
+	kDMGraphicIdxEntrance = 4, // @ C004_GRAPHIC_ENTRANCE
+	kDMGraphicIdxCredits = 5, // @ C005_GRAPHIC_CREDITS
+	kDMGraphicIdxTheEnd = 6, // @ C006_GRAPHIC_THE_END
+	kDMGraphicIdxStatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
+	kDMGraphicIdxMenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
+	kDMGraphicIdxMenuActionArea = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
+	kDMGraphicIdxMenuSpellAreLines = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
+	kDMGraphicIdxMovementArrows = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
+	kDMGraphicIdxDamageToCreature = 14, // @ C014_GRAPHIC_DAMAGE_TO_CREATURE
+	kDMGraphicIdxDamageToChampionSmall = 15, // @ C015_GRAPHIC_DAMAGE_TO_CHAMPION_SMALL
+	kDMGraphicIdxDamageToChampionBig = 16, // @ C016_GRAPHIC_DAMAGE_TO_CHAMPION_BIG
+	kDMGraphicIdxInventory = 17, // @ C017_GRAPHIC_INVENTORY
+	kDMGraphicIdxArrowForChestContent = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
+	kDMGraphicIdxEyeForObjectDescription = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
+	kDMGraphicIdxPanelEmpty = 20, // @ C020_GRAPHIC_PANEL_EMPTY
+	kDMGraphicIdxPanelOpenScroll = 23, // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
+	kDMGraphicIdxPanelOpenChest = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
+	kDMGraphicIdxChampionPortraits = 26, // @ C026_GRAPHIC_CHAMPION_PORTRAITS
+	kDMGraphicIdxPanelRenameChampion = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
+	kDMGraphicIdxChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
+	kDMGraphicIdxObjectDescCircle = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
+	kDMGraphicIdxFoodLabel = 30, // @ C030_GRAPHIC_FOOD_LABEL
+	kDMGraphicIdxWaterLabel = 31, // @ C031_GRAPHIC_WATER_LABEL
+	kDMGraphicIdxPoisionedLabel = 32, // @ C032_GRAPHIC_POISONED_LABEL
+	kDMGraphicIdxSlotBoxNormal = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL
+	kDMGraphicIdxSlotBoxWounded = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED
+	kDMGraphicIdxSlotBoxActingHand = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
+	kDMGraphicIdxBorderPartyShield = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
+	kDMGraphicIdxBorderPartyFireshield = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
+	kDMGraphicIdxBorderPartySpellshield = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
+	kDMGraphicIdxPanelResurectReincarnate = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE
+	kDMGraphicIdxHoleInWall = 41, // @ C041_GRAPHIC_HOLE_IN_WALL
+	kDMGraphicIdxObjectIcons000To031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
+	kDMGraphicIdxObjectIcons032To063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
+	kDMGraphicIdxObjectIcons064To095 = 44, // @ C044_GRAPHIC_OBJECT_ICONS_064_TO_095
+	kDMGraphicIdxObjectIcons096To127 = 45, // @ C045_GRAPHIC_OBJECT_ICONS_096_TO_127
+	kDMGraphicIdxObjectIcons128To159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
+	kDMGraphicIdxObjectIcons160To191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
+	kDMGraphicIdxObjectIcons192To223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
+	kDMGraphicIdxFloorPitD3L = 49, // @ C049_GRAPHIC_FLOOR_PIT_D3L
+	kDMGraphicIdxFloorPitD3C = 50, // @ C050_GRAPHIC_FLOOR_PIT_D3C
+	kDMGraphicIdxFloorPitD2L = 51, // @ C051_GRAPHIC_FLOOR_PIT_D2L
+	kDMGraphicIdxFloorPitD2C = 52, // @ C052_GRAPHIC_FLOOR_PIT_D2C
+	kDMGraphicIdxFloorPitD1L = 53, // @ C053_GRAPHIC_FLOOR_PIT_D1L
+	kDMGraphicIdxFloorPitD1C = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
+	kDMGraphicIdxFloorPitD0L = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
+	kDMGraphicIdxFloorPitD0C = 56, // @ C056_GRAPHIC_FLOOR_PIT_D0C
+	kDMGraphicIdxFloorPitInvisibleD2L = 57, // @ C057_GRAPHIC_FLOOR_PIT_INVISIBLE_D2L
+	kDMGraphicIdxFloorPitInvisibleD2C = 58, // @ C058_GRAPHIC_FLOOR_PIT_INVISIBLE_D2C
+	kDMGraphicIdxFloorPitInvisibleD1L = 59, // @ C059_GRAPHIC_FLOOR_PIT_INVISIBLE_D1L
+	kDMGraphicIdxFloorPitInvisibleD1C = 60, // @ C060_GRAPHIC_FLOOR_PIT_INVISIBLE_D1C
+	kDMGraphicIdxFloorPitInvisibleD0L = 61, // @ C061_GRAPHIC_FLOOR_PIT_INVISIBLE_D0L
+	kDMGraphicIdxFloorPitInvisibleD0C = 62, // @ C062_GRAPHIC_FLOOR_PIT_INVISIBLE_D0C
+	kDMGraphicIdxCeilingPitD2L = 63, // @ C063_GRAPHIC_CEILING_PIT_D2L
+	kDMGraphicIdxCeilingPitD2C = 64, // @ C064_GRAPHIC_CEILING_PIT_D2C
+	kDMGraphicIdxCeilingPitD1L = 65, // @ C065_GRAPHIC_CEILING_PIT_D1L
+	kDMGraphicIdxCeilingPitD1C = 66, // @ C066_GRAPHIC_CEILING_PIT_D1C
+	kDMGraphicIdxCeilingPitD0L = 67, // @ C067_GRAPHIC_CEILING_PIT_D0L
+	kDMGraphicIdxCeilingPitD0C = 68, // @ C068_GRAPHIC_CEILING_PIT_D0C
+	kDMGraphicIdxFieldMaskD3R = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
+	kDMGraphicIdxFieldTeleporter = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
+	kDMGraphicIdxInscriptionFont = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
+	kDMGraphicIdxWallOrnChampMirror = 208, // @ C208_GRAPHIC_WALL_ORNAMENT_43_CHAMPION_MIRROR
+	kDMGraphicIdxFloorOrnD3LFootprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
+	kDMGraphicIdxDoorMaskDestroyed = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
+	kDMGraphicIdxFirstDoorButton = 315, // @ C315_GRAPHIC_FIRST_DOOR_BUTTON
+	kDMGraphicIdxFirstProjectile = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE
+	kDMGraphicIdxFirstExplosion = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
+	kDMGraphicIdxFirstExplosionPattern = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN
+	kDMGraphicIdxFirstObject = 360, // @ C360_GRAPHIC_FIRST_OBJECT
+	kDMGraphicIdxFirstCreature = 446, // @ C446_GRAPHIC_FIRST_CREATURE
+	kDMGraphicIdxFont = 557 // @ C557_GRAPHIC_FONT
+};
+
 #define kDMMaskDoorInfoCreaturesCanSeeThrough 0x0001 // @ MASK0x0001_CREATURES_CAN_SEE_THROUGH
 #define kDMMaskDoorInfoProjectilesCanPassThrough 0x0002 // @ MASK0x0002_PROJECTILES_CAN_PASS_THROUGH
 #define kDMMaskDoorInfoAnimated 0x0004 // @ MASK0x0004_ANIMATED
@@ -280,85 +359,6 @@ enum Color {
 
 #define k0x0080_BlitDoNotUseMask 0x0080 // @ MASK0x0080_DO_NOT_USE_MASK
 #define kScaleThreshold 32768
-
-enum GraphicIndice {
-	k0_dialogBoxGraphicIndice = 0, // @ C000_GRAPHIC_DIALOG_BOX
-	k1_titleGraphicsIndice = 1, // @ C001_GRAPHIC_TITLE
-	k2_entranceLeftDoorGraphicIndice = 2, // @ C002_GRAPHIC_ENTRANCE_LEFT_DOOR
-	k3_entranceRightDoorGraphicIndice = 3, // @ C003_GRAPHIC_ENTRANCE_RIGHT_DOOR
-	k4_entranceGraphicIndice = 4, // @ C004_GRAPHIC_ENTRANCE
-	k5_creditsGraphicIndice = 5, // @ C005_GRAPHIC_CREDITS
-	k6_theEndIndice = 6, // @ C006_GRAPHIC_THE_END
-	k8_StatusBoxDeadChampion = 8, // @ C008_GRAPHIC_STATUS_BOX_DEAD_CHAMPION
-	k9_MenuSpellAreaBackground = 9, // @ C009_GRAPHIC_MENU_SPELL_AREA_BACKGROUND
-	k10_MenuActionAreaIndice = 10, // @ C010_GRAPHIC_MENU_ACTION_AREA
-	k11_MenuSpellAreLinesIndice = 11, // @ C011_GRAPHIC_MENU_SPELL_AREA_LINES
-	k13_MovementArrowsIndice = 13, // @ C013_GRAPHIC_MOVEMENT_ARROWS
-	k14_damageToCreatureIndice = 14, // @ C014_GRAPHIC_DAMAGE_TO_CREATURE
-	k15_damageToChampionSmallIndice = 15, // @ C015_GRAPHIC_DAMAGE_TO_CHAMPION_SMALL
-	k16_damageToChampionBig = 16, // @ C016_GRAPHIC_DAMAGE_TO_CHAMPION_BIG
-	k17_InventoryGraphicIndice = 17, // @ C017_GRAPHIC_INVENTORY
-	k18_ArrowForChestContentIndice = 18, // @ C018_GRAPHIC_ARROW_FOR_CHEST_CONTENT
-	k19_EyeForObjectDescriptionIndice = 19, // @ C019_GRAPHIC_EYE_FOR_OBJECT_DESCRIPTION
-	k20_PanelEmptyIndice = 20, // @ C020_GRAPHIC_PANEL_EMPTY
-	k23_PanelOpenScrollIndice = 23, // @ C023_GRAPHIC_PANEL_OPEN_SCROLL
-	k25_PanelOpenChestIndice = 25, // @ C025_GRAPHIC_PANEL_OPEN_CHEST
-	k26_ChampionPortraitsIndice = 26, // @ C026_GRAPHIC_CHAMPION_PORTRAITS
-	k27_PanelRenameChampionIndice = 27, // @ C027_GRAPHIC_PANEL_RENAME_CHAMPION
-	k28_ChampionIcons = 28, // @ C028_GRAPHIC_CHAMPION_ICONS
-	k29_ObjectDescCircleIndice = 29, // @ C029_GRAPHIC_OBJECT_DESCRIPTION_CIRCLE
-	k30_FoodLabelIndice = 30, // @ C030_GRAPHIC_FOOD_LABEL
-	k31_WaterLabelIndice = 31, // @ C031_GRAPHIC_WATER_LABEL
-	k32_PoisionedLabelIndice = 32, // @ C032_GRAPHIC_POISONED_LABEL
-	k33_SlotBoxNormalIndice = 33, // @ C033_GRAPHIC_SLOT_BOX_NORMAL
-	k34_SlotBoxWoundedIndice = 34, // @ C034_GRAPHIC_SLOT_BOX_WOUNDED
-	k35_SlotBoxActingHandIndice = 35, // @ C035_GRAPHIC_SLOT_BOX_ACTING_HAND
-	k37_BorderPartyShieldIndice = 37, // @ C037_GRAPHIC_BORDER_PARTY_SHIELD
-	k38_BorderPartyFireshieldIndice = 38, // @ C038_GRAPHIC_BORDER_PARTY_FIRESHIELD
-	k39_BorderPartySpellshieldIndice = 39, // @ C039_GRAPHIC_BORDER_PARTY_SPELLSHIELD
-	k40_PanelResurectReincaranteIndice = 40, // @ C040_GRAPHIC_PANEL_RESURRECT_REINCARNATE
-	k41_holeInWall_GraphicIndice = 41, // @ C041_GRAPHIC_HOLE_IN_WALL
-	k42_ObjectIcons_000_TO_031 = 42, // @ C042_GRAPHIC_OBJECT_ICONS_000_TO_031
-	k43_ObjectIcons_032_TO_063 = 43, // @ C043_GRAPHIC_OBJECT_ICONS_032_TO_063
-	k44_ObjectIcons_064_TO_095 = 44, // @ C044_GRAPHIC_OBJECT_ICONS_064_TO_095
-	k45_ObjectIcons_096_TO_127 = 45, // @ C045_GRAPHIC_OBJECT_ICONS_096_TO_127
-	k46_ObjectIcons_128_TO_159 = 46, // @ C046_GRAPHIC_OBJECT_ICONS_128_TO_159
-	k47_ObjectIcons_160_TO_191 = 47, // @ C047_GRAPHIC_OBJECT_ICONS_160_TO_191
-	k48_ObjectIcons_192_TO_223 = 48, // @ C048_GRAPHIC_OBJECT_ICONS_192_TO_223
-	k49_FloorPit_D3L_GraphicIndice = 49, // @ C049_GRAPHIC_FLOOR_PIT_D3L
-	k50_FloorPit_D3C_GraphicIndice = 50, // @ C050_GRAPHIC_FLOOR_PIT_D3C
-	k51_FloorPit_D2L_GraphicIndice = 51, // @ C051_GRAPHIC_FLOOR_PIT_D2L
-	k52_FloorPit_D2C_GraphicIndice = 52, // @ C052_GRAPHIC_FLOOR_PIT_D2C
-	k53_FloorPit_D1L_GraphicIndice = 53, // @ C053_GRAPHIC_FLOOR_PIT_D1L
-	k54_FloorPit_D1C_GraphicIndice = 54, // @ C054_GRAPHIC_FLOOR_PIT_D1C
-	k55_FloorPit_D0L_GraphicIndice = 55, // @ C055_GRAPHIC_FLOOR_PIT_D0L
-	k56_FloorPit_D0C_GraphicIndice = 56, // @ C056_GRAPHIC_FLOOR_PIT_D0C
-	k57_FloorPir_Invisible_D2L_GraphicIndice = 57, // @ C057_GRAPHIC_FLOOR_PIT_INVISIBLE_D2L
-	k58_FloorPit_invisible_D2C_GraphicIndice = 58, // @ C058_GRAPHIC_FLOOR_PIT_INVISIBLE_D2C
-	k59_floorPit_invisible_D1L_GraphicIndice = 59, // @ C059_GRAPHIC_FLOOR_PIT_INVISIBLE_D1L
-	k60_floorPitInvisibleD1C_GraphicIndice = 60, // @ C060_GRAPHIC_FLOOR_PIT_INVISIBLE_D1C
-	k61_floorPitInvisibleD0L_GraphicIndice = 61, // @ C061_GRAPHIC_FLOOR_PIT_INVISIBLE_D0L
-	k62_flootPitInvisibleD0C_graphicIndice = 62, // @ C062_GRAPHIC_FLOOR_PIT_INVISIBLE_D0C
-	k63_ceilingPit_D2L_GraphicIndice = 63, // @ C063_GRAPHIC_CEILING_PIT_D2L
-	k64_ceilingPitD2C_GraphicIndice = 64, // @ C064_GRAPHIC_CEILING_PIT_D2C
-	k65_ceilingPitD1L_GraphicIndice = 65, // @ C065_GRAPHIC_CEILING_PIT_D1L
-	k66_ceilingPitD1C_GraphicIndice = 66, // @ C066_GRAPHIC_CEILING_PIT_D1C
-	k67_ceilingPitD0L_grahicIndice = 67, // @ C067_GRAPHIC_CEILING_PIT_D0L
-	k68_ceilingPitD0C_graphicIndice = 68, // @ C068_GRAPHIC_CEILING_PIT_D0C
-	k69_FieldMask_D3R_GraphicIndice = 69, // @ C069_GRAPHIC_FIELD_MASK_D3R
-	k73_FieldTeleporterGraphicIndice = 73, // @ C073_GRAPHIC_FIELD_TELEPORTER
-	k120_InscriptionFontIndice = 120, // @ C120_GRAPHIC_INSCRIPTION_FONT
-	k208_wallOrn_43_champMirror = 208, // @ C208_GRAPHIC_WALL_ORNAMENT_43_CHAMPION_MIRROR
-	k241_FloorOrn_15_D3L_footprints = 241, // @ C241_GRAPHIC_FLOOR_ORNAMENT_15_D3L_FOOTPRINTS
-	k301_DoorMaskDestroyedIndice = 301, // @ C301_GRAPHIC_DOOR_MASK_DESTROYED
-	k315_firstDoorButton_GraphicIndice = 315, // @ C315_GRAPHIC_FIRST_DOOR_BUTTON
-	k316_FirstProjectileGraphicIndice = 316, // @ C316_GRAPHIC_FIRST_PROJECTILE
-	k348_FirstExplosionGraphicIndice = 348, // @ C348_GRAPHIC_FIRST_EXPLOSION
-	k351_FirstExplosionPatternGraphicIndice = 351, // @ C351_GRAPHIC_FIRST_EXPLOSION_PATTERN
-	k360_FirstObjectGraphicIndice = 360, // @ C360_GRAPHIC_FIRST_OBJECT
-	k446_FirstCreatureGraphicIndice = 446, // @ C446_GRAPHIC_FIRST_CREATURE
-	k557_FontGraphicIndice = 557 // @ C557_GRAPHIC_FONT
-};
 
 class ExplosionAspect {
 public:

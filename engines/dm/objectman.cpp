@@ -191,7 +191,7 @@ void ObjectMan::extractIconFromBitmap(uint16 iconIndex, byte *destBitmap) {
 			break;
 	}
 	--counter;
-	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(k42_ObjectIcons_000_TO_031 + counter);
+	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxObjectIcons000To031 + counter);
 	iconIndex -= _iconGraphicFirstIndex[counter];
 	_vm->_displayMan->_useByteBoxCoordinates = true;
 	Box blitBox(0, 15, 0, 15);
@@ -216,7 +216,7 @@ void ObjectMan::drawIconInSlotBox(uint16 slotBoxIndex, int16 iconIndex) {
 			break;
 	}
 	iconGraphicIndex--;
-	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + k42_ObjectIcons_000_TO_031);
+	byte *iconBitmap = _vm->_displayMan->getNativeBitmapOrGraphic(iconGraphicIndex + kDMGraphicIdxObjectIcons000To031);
 	iconIndex -= _iconGraphicFirstIndex[iconGraphicIndex];
 	int16 byteWidth;
 	byte* blitDestination;

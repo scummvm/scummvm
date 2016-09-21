@@ -268,7 +268,7 @@ void DMEngine::initializeGame() {
 		}
 	} while (loadgame(saveSlot) != kDMLoadgameSuccess);
 
-	_displayMan->loadIntoBitmap(k11_MenuSpellAreLinesIndice, _menuMan->_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
+	_displayMan->loadIntoBitmap(kDMGraphicIdxMenuSpellAreLines, _menuMan->_bitmapSpellAreaLines); // @ F0396_MENUS_LoadSpellAreaLinesBitmap
 
 	// There was some memory wizardy for the Amiga platform, I skipped that part
 	_displayMan->allocateFlippedWallBitmaps();
@@ -517,9 +517,9 @@ void DMEngine::processEntrance() {
 	_entranceDoorAnimSteps[8] = _entranceDoorAnimSteps[7] + 128 * 161;
 	_entranceDoorAnimSteps[9] = _entranceDoorAnimSteps[8] + 128 * 161 * 2;
 
-	_displayMan->loadIntoBitmap(k3_entranceRightDoorGraphicIndice, _entranceDoorAnimSteps[4]);
-	_displayMan->loadIntoBitmap(k2_entranceLeftDoorGraphicIndice, _entranceDoorAnimSteps[0]);
-	_interfaceCredits = _displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice);
+	_displayMan->loadIntoBitmap(kDMGraphicIdxEntranceRightDoor, _entranceDoorAnimSteps[4]);
+	_displayMan->loadIntoBitmap(kDMGraphicIdxEntranceLeftDoor, _entranceDoorAnimSteps[0]);
+	_interfaceCredits = _displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxCredits);
 	_displayMan->_useByteBoxCoordinates = false;
 	Box displayBox(0, 100, 0, 160);
 	for (uint16 idx = 1; idx < 4; idx++) {
@@ -630,7 +630,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 			for (int16 championIndex = kDMChampionFirst; championIndex < _championMan->_partyChampionCount; championIndex++) {
 				int16 textPosY = championIndex * 48;
 				Champion *curChampion = &_championMan->_champions[championIndex];
-				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k208_wallOrn_43_champMirror), &championMirrorBox, k32_byteWidth, kDMColorFlesh, 43);
+				_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxWallOrnChampMirror), &championMirrorBox, k32_byteWidth, kDMColorFlesh, 43);
 				_displayMan->blitToScreen(curChampion->_portrait, &championPortraitBox, k16_byteWidth, kDMColorDarkGary, 29);
 				_textMan->printEndGameString(87, textPosY += 14, kDMColorGold, curChampion->_name);
 				int textPosX = (6 * strlen(curChampion->_name)) + 87;
@@ -658,7 +658,7 @@ void DMEngine::endGame(bool doNotDrawCreditsOnly) {
 		}
 T0444017:
 		_displayMan->fillScreen(kDMColorBlack);
-		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k6_theEndIndice), &theEndBox, k40_byteWidth, kDMColorNoTransparency, 14);
+		_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxTheEnd), &theEndBox, k40_byteWidth, kDMColorNoTransparency, 14);
 		for (uint16 i = 0; i < 16; ++i)
 			darkBluePalette[i] = D01_RGB_DARK_BLUE;
 		uint16 curPalette[16];
@@ -716,7 +716,7 @@ T0444017:
 		_displayMan->startEndFadeToPalette(darkBluePalette);
 	}
 	Box box(0, 319, 0, 199);
-	_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(k5_creditsGraphicIndice), &box, k160_byteWidthScreen, kDMColorNoTransparency, k200_heightScreen);
+	_displayMan->blitToScreen(_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxCredits), &box, k160_byteWidthScreen, kDMColorNoTransparency, k200_heightScreen);
 
 	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	_eventMan->waitForMouseOrKeyActivity();
@@ -764,7 +764,7 @@ void DMEngine::drawEntrance() {
 	_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
 
 	// note, a global variable is used here in the original
-	_displayMan->loadIntoBitmap(k4_entranceGraphicIndice, _displayMan->_bitmapScreen);
+	_displayMan->loadIntoBitmap(kDMGraphicIdxEntrance, _displayMan->_bitmapScreen);
 	_displayMan->drawDungeon(kDMDirSouth, 2, 0);
 
 	if (!_savedScreenForOpenEntranceDoors)
@@ -781,10 +781,10 @@ void DMEngine::drawEntrance() {
 
 void DMEngine::openEntranceDoors() {
 	Box rightDoorBox(109, 231, 30, 193);
-	byte *rightDoorBitmap = _displayMan->getNativeBitmapOrGraphic(k3_entranceRightDoorGraphicIndice);
+	byte *rightDoorBitmap = _displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxEntranceRightDoor);
 	Box leftDoorBox(0, 100, 30, 193);
 	uint16 leftDoorBlitFrom = 0;
-	byte *leftDoorBitmap = _displayMan->getNativeBitmapOrGraphic(k2_entranceLeftDoorGraphicIndice);
+	byte *leftDoorBitmap = _displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxEntranceLeftDoor);
 
 	Box screenBox(0, 319, 0, 199);
 
@@ -823,7 +823,7 @@ void DMEngine::drawTittle() {
 	byte *allocatedMem = new byte[145600 * 2];
 	byte *titleSteps = allocatedMem;
 	byte *bitmapTitle = titleSteps;
-	_displayMan->loadIntoBitmap(k1_titleGraphicsIndice, titleSteps);
+	_displayMan->loadIntoBitmap(kDMGraphicIdxTitle, titleSteps);
 
 	titleSteps += 320 * 200;
 	uint16 blitPalette[16];
@@ -888,7 +888,7 @@ void DMEngine::drawTittle() {
 void DMEngine::entranceDrawCredits() {
 	_eventMan->showMouse();
 	_displayMan->startEndFadeToPalette(_displayMan->_blankBuffer);
-	_displayMan->loadIntoBitmap(k5_creditsGraphicIndice, _displayMan->_bitmapScreen);
+	_displayMan->loadIntoBitmap(kDMGraphicIdxCredits, _displayMan->_bitmapScreen);
 	_displayMan->startEndFadeToPalette(_displayMan->_palCredits);
 	delay(50);
 	_eventMan->waitForMouseOrKeyActivity();
