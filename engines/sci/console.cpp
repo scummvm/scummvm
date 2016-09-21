@@ -3778,7 +3778,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		debugPrintf("Usage: %s <script number> <export number\n", argv[0]);
+		debugPrintf("Usage: %s <script number> <export number>\n", argv[0]);
 		return true;
 	}
 
