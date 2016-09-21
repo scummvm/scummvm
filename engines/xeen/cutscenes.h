@@ -45,6 +45,7 @@ protected:
 protected:
 	Cutscenes(XeenEngine *vm) : _vm(vm), _timeElapsed(0), _boxSprites(nullptr),
 		_subtitleLineNum(0), _subtitleSize(0) {}
+	virtual ~Cutscenes() {}
 
 	/**
 	 * Resets the subtitles position
