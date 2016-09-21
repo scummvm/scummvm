@@ -335,11 +335,14 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc) {
 	desc->time = meta.saveTime;
 	desc->version = meta.version;
 	desc->gameVersion = meta.gameVersion;
+#ifdef ENABLE_SCI32
 	if (g_sci->getGameId() == GID_SHIVERS) {
-		desc->score = meta.score;
+		desc->lowScore = meta.lowScore;
+		desc->highScore = meta.highScore;
 	} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 		desc->avatarId = meta.avatarId;
 	}
+#endif
 
 	if (meta.name.lastChar() == '\n')
 		meta.name.deleteLastChar();

@@ -324,14 +324,12 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 			SavegameDesc save;
 			fillSavegameDesc(g_sci->getSavegameName(saveNo), &save);
-			Common::String score;
-			const uint16 lowScore = save.score & 0xFFFF;
-			const uint16 highScore = save.score >> 16;
 
-			if (!highScore) {
-				score = Common::String::format("%u", lowScore);
+			Common::String score;
+			if (!save.highScore) {
+				score = Common::String::format("%u", save.lowScore);
 			} else {
-				score = Common::String::format("%u%03u", highScore, lowScore);
+				score = Common::String::format("%u%03u", save.highScore, save.lowScore);
 			}
 
 			const uint nameLength = strlen(save.name);

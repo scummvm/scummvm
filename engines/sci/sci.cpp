@@ -495,6 +495,7 @@ static byte patchGameRestoreSave[] = {
 	0x48,              // ret
 };
 
+#ifdef ENABLE_SCI32
 // SCI2 version: Same as above, but the second parameter to callk is a word
 // and third parameter is a string reference
 static byte patchGameRestoreSci2[] = {
@@ -537,6 +538,7 @@ static byte patchGameSaveSci21[] = {
 	0x43, 0xff, 0x0a, 0x00, // callk kSave (0xFF will be overwritten by patcher)
 	0x48,                   // ret
 };
+#endif
 
 static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
 	Script *script = segMan->getScript(methodAddress.getSegment());

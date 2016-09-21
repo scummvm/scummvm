@@ -331,20 +331,26 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		s.syncAsUint32LE(obj.playTime);
 	}
 
-	// Some games require additional metadata to display the load screen
+	// Some games require additional metadata to display their restore screens
 	// correctly
 	if (s.getVersion() >= 38) {
 		if (s.isSaving()) {
 			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
 			if (g_sci->getGameId() == GID_SHIVERS) {
-				obj.score = globals[kScore].toUint16();
-				obj.score |= globals[kShivers1Score].toUint16() << 16;
+				obj.lowScore = globals[kScore].toUint16();
+				obj.highScore = globals[kShivers1Score].toUint16();
+				obj.avatarId = 0;
 			} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+				obj.lowScore = obj.highScore = 0;
 				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kEgo], SELECTOR(view));
+			} else {
+				obj.lowScore = obj.highScore = obj.avatarId = 0;
 			}
 		}
 
-		s.syncAsUint32LE(obj.score);
+		s.syncAsUint16LE(obj.lowScore);
+		s.syncAsUint16LE(obj.highScore);
+		s.syncAsByte(obj.avatarId);
 	}
 }
 
