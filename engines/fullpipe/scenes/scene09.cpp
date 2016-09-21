@@ -376,17 +376,14 @@ void sceneHandler09_checkHangerCollide() {
 
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
-				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y);
+				int x1 = newx + g_vars->scene09_hangerOffsets[j].x;
+				int y1 = ball->_oy + g_vars->scene09_hangerOffsets[j].y;
+
+				// Check 2 pixels to compensate cord width
+				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1, y1)
+							&& g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1 + 10, y1);
 
 				if (hit) {
-					uint32 pixel;
-					g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
-					debugC(2, kDebugSceneLogic, "%x", pixel);
-					for (int k = 0; k < 20; k++) {
-						debugCN(2, kDebugSceneLogic, "%c", k == g_vars->scene09_hangerOffsets[j].x ? '@' : g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(newx + k, ball->_oy + -15) ? '-' : ' ');
-					}
-					debugC(2, kDebugSceneLogic, "");
-
 					sceneHandler09_ballExplode(b);
 					break;
 				}
