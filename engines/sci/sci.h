@@ -125,7 +125,8 @@ enum kDebugLevels {
 	kDebugLevelDebugMode     = 1 << 21,
 	kDebugLevelScriptPatcher = 1 << 22,
 	kDebugLevelWorkarounds   = 1 << 23,
-	kDebugLevelVideo         = 1 << 24
+	kDebugLevelVideo         = 1 << 24,
+	kDebugLevelGame          = 1 << 25
 };
 
 enum SciGameId {
