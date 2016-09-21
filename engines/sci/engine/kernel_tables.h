@@ -67,8 +67,8 @@ struct SciKernelMapSubEntry {
 #define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
 #define SIG_SCI2             SCI_VERSION_2, SCI_VERSION_2
 #define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
-#define SIG_UNTIL_SCI21EARLY SCI_VERSION_2, SCI_VERSION_2_1_EARLY
-#define SIG_UNTIL_SCI21MID   SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
+#define SIG_THRU_SCI21EARLY  SCI_VERSION_2, SCI_VERSION_2_1_EARLY
+#define SIG_THRU_SCI21MID    SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
 #define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
 #define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
 #define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
@@ -525,26 +525,26 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	// every single copy of script 64918 in SCI2 through 2.1mid calls StringNew
 	// with a second type argument which is unused (new strings are always type
 	// 3)
-	{ SIG_UNTIL_SCI21MID,  0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
-	{ SIG_UNTIL_SCI21MID,  1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID,  2, MAP_CALL(StringGetChar),             "ri",                   NULL },
-	{ SIG_UNTIL_SCI21MID,  3, MAP_CALL(ArraySetElements),          "rii*",                 kArraySetElements_workarounds },
-	{ SIG_UNTIL_SCI21MID,  4, MAP_CALL(StringFree),                "[0r]",                 NULL },
-	{ SIG_UNTIL_SCI21MID,  5, MAP_CALL(ArrayFill),                 "rii",                  NULL },
-	{ SIG_UNTIL_SCI21MID,  6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	{ SIG_THRU_SCI21MID,   0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
+	{ SIG_THRU_SCI21MID,   1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
+	{ SIG_THRU_SCI21MID,   2, MAP_CALL(StringGetChar),             "ri",                   NULL },
+	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "rii*",                 kArraySetElements_workarounds },
+	{ SIG_THRU_SCI21MID,   4, MAP_CALL(StringFree),                "[0r]",                 NULL },
+	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "rii",                  NULL },
+	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
 	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "rr(i)",                NULL },
 
-	{ SIG_UNTIL_SCI21MID,  8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID,  9, MAP_CALL(StringGetData),             "[0or]",                NULL },
-	{ SIG_UNTIL_SCI21MID, 10, MAP_CALL(StringLength),              "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID, 11, MAP_CALL(StringFormat),              "r(.*)",                NULL },
-	{ SIG_UNTIL_SCI21MID, 12, MAP_CALL(StringFormatAt),            "r[ro](.*)",            NULL },
-	{ SIG_UNTIL_SCI21MID, 13, MAP_CALL(StringToInteger),           "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID, 14, MAP_CALL(StringTrim),                "ri(i)",                NULL },
-	{ SIG_UNTIL_SCI21MID, 15, MAP_CALL(StringToUpperCase),         "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID, 16, MAP_CALL(StringToLowerCase),         "r",                    NULL },
-	{ SIG_UNTIL_SCI21MID, 17, MAP_CALL(StringReplaceSubstring),    "rrrr",                 NULL },
-	{ SIG_UNTIL_SCI21MID, 18, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
+	{ SIG_THRU_SCI21MID,   8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
+	{ SIG_THRU_SCI21MID,   9, MAP_CALL(StringGetData),             "[0or]",                NULL },
+	{ SIG_THRU_SCI21MID,  10, MAP_CALL(StringLength),              "r",                    NULL },
+	{ SIG_THRU_SCI21MID,  11, MAP_CALL(StringFormat),              "r(.*)",                NULL },
+	{ SIG_THRU_SCI21MID,  12, MAP_CALL(StringFormatAt),            "r[ro](.*)",            NULL },
+	{ SIG_THRU_SCI21MID,  13, MAP_CALL(StringToInteger),           "r",                    NULL },
+	{ SIG_THRU_SCI21MID,  14, MAP_CALL(StringTrim),                "ri(i)",                NULL },
+	{ SIG_THRU_SCI21MID,  15, MAP_CALL(StringToUpperCase),         "r",                    NULL },
+	{ SIG_THRU_SCI21MID,  16, MAP_CALL(StringToLowerCase),         "r",                    NULL },
+	{ SIG_THRU_SCI21MID,  17, MAP_CALL(StringReplaceSubstring),    "rrrr",                 NULL },
+	{ SIG_THRU_SCI21MID,  18, MAP_CALL(StringReplaceSubstringEx),  "rrrr",                 NULL },
 
 	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLength),              "r",                    NULL },
 	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "r(.*)",                NULL },
@@ -629,11 +629,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ "CelHigh", kCelHigh32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
 	{ "CelWide", kCelWide32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            kCelWide_workarounds },
 #endif
-	{ MAP_CALL(CheckFreeSpace),    SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r(i)",          NULL,            NULL },
+	{ MAP_CALL(CheckFreeSpace),    SIG_THRU_SCI21EARLY, SIGFOR_ALL, "r(i)",           NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI16, SIGFOR_ALL,    "r",                     NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "CheckSaveGame", kCheckSaveGame32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri[r0]",  NULL,            NULL },
+	{ "CheckSaveGame", kCheckSaveGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0]",   NULL,            NULL },
 #endif
 	{ MAP_CALL(CheckSaveGame),     SIG_SCI16, SIGFOR_ALL,    ".*",                    NULL,            NULL },
 	{ MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -686,11 +686,11 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
 	{ MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ MAP_CALL(GetSaveDir),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(r)",           NULL,            NULL },
+	{ MAP_CALL(GetSaveDir),        SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(r)",            NULL,            NULL },
 #endif
 	{ MAP_CALL(GetSaveDir),        SIG_SCI16, SIGFOR_ALL,    "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "GetSaveFiles", kGetSaveFiles32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "rrr",       NULL,            NULL },
+	{ "GetSaveFiles", kGetSaveFiles32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rrr",        NULL,            NULL },
 #endif
 	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
@@ -754,12 +754,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "RestoreGame", kRestoreGame32, SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "[r0]i[r0]",   NULL,            NULL },
+	{ "RestoreGame", kRestoreGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "[r0]i[r0]",    NULL,            NULL },
 #endif
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "SaveGame", kSaveGame32,     SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "[r0]i[r0][r0]", NULL,            NULL },
+	{ "SaveGame", kSaveGame32,     SIG_THRU_SCI21EARLY, SIGFOR_ALL, "[r0]i[r0][r0]",  NULL,            NULL },
 #endif
 	{ MAP_CALL(SaveGame),          SIG_SCI16, SIGFOR_ALL,    "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
@@ -835,9 +835,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
 	// TODO: whoever knows his way through those calls, fix the signatures.
-	{ "TextSize", kTextSize32,     SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "r[r0]i(i)",     NULL,            NULL },
-	{ MAP_DUMMY(TextColors),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
-	{ MAP_DUMMY(TextFonts),        SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+	{ "TextSize", kTextSize32,     SIG_THRU_SCI21EARLY, SIGFOR_ALL, "r[r0]i(i)",      NULL,            NULL },
+	{ MAP_DUMMY(TextColors),       SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
+	{ MAP_DUMMY(TextFonts),        SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
 
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -870,8 +870,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(MakeSaveCatName),   SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "rr",            NULL,            NULL },
-	{ MAP_CALL(MakeSaveFileName),  SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "rri",           NULL,            NULL },
+	{ MAP_CALL(MakeSaveCatName),   SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rr",             NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rri",            NULL,            NULL },
 	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiii(i)(i)",           NULL,            NULL },
 	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "(.*)",                  kPalCycle_subops, NULL },
 
@@ -909,9 +909,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InvertRect),       SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "(.*)",          NULL,            NULL },
+	{ MAP_DUMMY(InvertRect),       SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(TextWidth),         SIG_UNTIL_SCI21EARLY, SIGFOR_ALL, "ri",            NULL,            NULL },
+	{ MAP_CALL(TextWidth),         SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri",             NULL,            NULL },
 	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
