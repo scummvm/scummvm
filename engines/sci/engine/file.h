@@ -41,8 +41,13 @@ enum {
 
 #ifdef ENABLE_SCI32
 enum {
-	kAutoSaveId = 0, ///< The save game slot number for autosaves
-	kNewGameId = 999 ///< The save game slot number for a "new game" save
+	kAutoSaveId = 0,  ///< The save game slot number for autosaves
+	kNewGameId = 999, ///< The save game slot number for a "new game" save
+
+	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
+	// reserved for autosave, so non-autosave games get their IDs shifted up
+	// when saving or restoring, and shifted down when enumerating save games
+	kSaveIdShift = 1
 };
 #endif
 
