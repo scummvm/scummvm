@@ -355,7 +355,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 #ifdef ENABLE_SCI32
 		const int id = strtol(filename.end() - 3, NULL, 10);
-		if (id == kNewGameId) {
+		if (id == kNewGameId || id == kAutoSaveId) {
 			continue;
 		}
 #endif
