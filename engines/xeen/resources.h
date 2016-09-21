@@ -564,6 +564,8 @@ extern const char *const IDENTIFY_MONSTERS;
 
 extern const char *const EVENT_SAMPLES[6];
 
+extern const char *const CLOUDS_INTRO1;
+
 extern const char *const DARKSIDE_ENDING1;
 extern const char *const DARKSIDE_ENDING2;
 

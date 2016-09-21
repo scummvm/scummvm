@@ -256,9 +256,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	WAIT(1);
 
 	_subtitles.load("special.bin");
-	recordTime();
-	resetSubtitles();
-	_subtitleLineNum = 21;
+	resetSubtitles(21, 0);
 
 	// Alamar stands up
 	for (int idx = 74; idx > 20; idx -= 2) {
@@ -433,9 +431,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.fadeIn();
 	WAIT(2);
 
-	resetSubtitles();
-	_subtitleLineNum = 22;
-	recordTime();
+	resetSubtitles(22, 0);
 
 	for (int idx = 0; idx < 45; ++idx) {
 		screen.restoreBackground();
@@ -463,10 +459,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// Yep, that's my name, don't wear it out
 	SpriteResource sc08("sc08.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 23;
-	_subtitleSize = 1;
+	resetSubtitles(23);
 	sound.playFX(0);
 
 	for (int idx = 0; idx < 15; ++idx) {
@@ -493,10 +486,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.saveBackground();
 	screen.update();
 
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 24;
-	_subtitleSize = 1;
+	resetSubtitles(24);
 
 	for (int idx = 0; idx < 15; ++idx) {
 		if (idx == 2)
@@ -517,10 +507,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// Nor do you!
 	SpriteResource sc10("sc10.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 25;
-	_subtitleSize = 1;
+	resetSubtitles(25);
 
 	for (int idx = 0; idx < 15; ++idx) {
 		if (idx == 3)
@@ -588,10 +575,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// I'm ready for you this time
 	SpriteResource sc13("sc13.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 26;
-	_subtitleSize = 1;
+	resetSubtitles(26);
 	sound.setMusicVolume(48);
 
 	for (int idx = 0; idx < 16; ++idx) {
@@ -616,10 +600,8 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// This fight will be your last
 	SpriteResource sc14("sc14.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 27;
-	_subtitleSize = 1;
+	resetSubtitles(27);
+
 	screen.fadeOut();
 	screen.loadBackground("blank.raw");
 	screen.saveBackground();
@@ -671,10 +653,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// I can not fail
 	SpriteResource sc16("sc16.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 28;
-	_subtitleSize = 1;
+	resetSubtitles(28);
 
 	screen.loadBackground("scene4.raw");
 	screen.loadPage(0);
@@ -930,10 +909,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Corak speaking here. It seems this was ditched in favor of the
 	// following closeup of him speaking "I do"
 	SpriteResource sc25("sc25a.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 29;
-	_subtitleSize = 1;
+	resetSubtitles(29);
 
 	screen.loadBackground("sc250001.raw");
 	screen.saveBackground();
@@ -958,10 +934,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		SpriteResource("sc26a.end"), SpriteResource("sc26b.end"),
 		SpriteResource("sc26c.end"), SpriteResource("sc26d.end")
 	};
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 30;
-	_subtitleSize = 1;
+	resetSubtitles(30);
 
 	screen.loadBackground("sc260001.raw");
 	screen.saveBackground();
@@ -990,10 +963,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// What? No!
 	SpriteResource sc27("sc27.end");
-	resetSubtitles();
-	recordTime();
-	_subtitleLineNum = 31;
-	_subtitleSize = 1;
+	resetSubtitles(31);
 	showSubtitles();
 
 	for (int idx = 0; idx < 12; ++idx) {

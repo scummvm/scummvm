@@ -49,7 +49,7 @@ protected:
 	/**
 	 * Resets the subtitles position
 	 */
-	void resetSubtitles();
+	void resetSubtitles(uint lineNum, uint defaultSize = 1);
 
 	/**
 	 * Free subtitles

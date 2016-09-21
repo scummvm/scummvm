@@ -27,8 +27,10 @@ namespace Xeen {
 
 static const char *SUBTITLE_LINE = "\xC" "35\x3" "c\xB" "190\x9" "000%s";
 
-void Cutscenes::resetSubtitles() {
-	_subtitleLineNum = _subtitleSize = 0;
+void Cutscenes::resetSubtitles(uint lineNum, uint defaultSize) {
+	_subtitleLineNum = lineNum;
+	_subtitleSize = defaultSize;
+	recordTime();
 }
 
 void Cutscenes::showSubtitles(uint windowIndex) {
@@ -37,7 +39,7 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 
 	if (sound._soundOn || _vm->shouldQuit()) {
 		// Sound is on, so subtitles aren't needed
-		resetSubtitles();
+		resetSubtitles(0, 0);
 	} else {
 		if (timeElapsed() > 1) {
 			++_subtitleSize;

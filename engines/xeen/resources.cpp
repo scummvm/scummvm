@@ -1587,6 +1587,10 @@ const char *const EVENT_SAMPLES[6] = {
 	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
 };
 
+const char *const CLOUDS_INTRO1 = "\xC" "00\xB" "082\x9" "040\x3"
+	"cKing Burlock\xB" "190\x9" "040Peasants\xB" "082\x9" "247"
+	"Lord Xeen\xB" "190\x9" "258Xeen's Pet\xB" "179\x9" "150Crodo";
+
 const char *const DARKSIDE_ENDING1 = "\n\x3" "cCongratulations\n"
 	"\n"
 	"Your Final Score is:\n"
