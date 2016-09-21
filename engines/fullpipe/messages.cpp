@@ -502,6 +502,9 @@ bool MessageQueue::checkGlobalExCommandList1() {
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27)
 				continue;
 
+			if (ex1->_parentId != ex->_parentId)
+				continue;
+
 			if (ex1->_param != ex->_param && ex1->_param != -1 && ex->_param != -1)
 				continue;
 
@@ -529,6 +532,11 @@ bool MessageQueue::checkGlobalExCommandList2() {
 			ex1 = *it;
 
 			if (ex1->_messageKind != 1 && ex1->_messageKind != 20 && ex1->_messageKind != 5 && ex1->_messageKind != 27) {
+				it++;
+				continue;
+			}
+
+			if (ex1->_parentId != ex->_parentId) {
 				it++;
 				continue;
 			}
