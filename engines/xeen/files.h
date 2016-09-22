@@ -121,6 +121,11 @@ public:
 	 * Loads a string array from the specified file
 	 */
 	void load(const Common::String &name);
+
+	/**
+	 * Loads a string array from the specified file
+	 */
+	void load(const Common::String &name, ArchiveType archiveType);
 };
 
 class XeenSerializer : public Common::Serializer {

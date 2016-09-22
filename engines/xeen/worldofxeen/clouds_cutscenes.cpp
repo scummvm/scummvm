@@ -91,7 +91,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
-	_subtitles.load("special.bin");
+	_subtitles.load("special.bin", GAME_ARCHIVE);
 
 	// Show the production splash screen
 	sound.playSong("mm4theme.m");
@@ -217,7 +217,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 	crodo.draw(screen, 0, Common::Point(0, -5));
 	screen._windows[0].writeString(CLOUDS_INTRO1);
 	
-	doScroll(false, true);
+	// Unroll a scroll
+	if (doScroll(false, true))
+		return false;
+
 	sound.setMusicVolume(75);
 	screen.restoreBackground();
 	screen.update();
@@ -226,11 +229,11 @@ bool CloudsCutscenes::showCloudsIntro() {
 	// Loop through each spoken line
 	int ctr1 = 0, ctr2 = 0, ctr3 = 0, ctr4 = 0, ctr5 = 0, totalCtr = 0;
 	for (int lineCtr = 0; lineCtr < 14; ++lineCtr) {
-		if (lineCtr != 6 || lineCtr != 7) {
+		if (lineCtr != 6 && lineCtr != 7) {
 			sound.playSound(_INTRO_VOCS[lineCtr]);
 		}
 
-		for (int frameNum = 0, lookup = 0; sound.isPlaying() || _subtitleSize; ) {
+		for (int frameCtr = 0, lookup = 0; sound.isPlaying() || _subtitleSize; ) {
 			groupo.draw(screen, 0);
 			groupo.draw(screen, 1, Common::Point(160, 0));
 
@@ -289,10 +292,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 			}
 
 			default:
-				crodo.draw(screen, frameNum, Common::Point(0, -5));
+				crodo.draw(screen, frameCtr, Common::Point(0, -5));
 				if (lookup > 30)
 					lookup = 30;
-				frameNum = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
+				frameCtr = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
 				screen._windows[0].writeString(CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
@@ -302,11 +305,14 @@ bool CloudsCutscenes::showCloudsIntro() {
 			}
 
 			events.updateGameCounter();
-			while (events.timeElapsed() < _INTRO_FRAMES_MAX[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup]
-					|| sound.isPlaying()) {
-				WAIT(1);
+			while (events.timeElapsed() < _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup]
+					&& sound.isPlaying()) {
+				events.pollEventsAndWait();
+				if (events.isKeyMousePressed())
+					return false;
 			}
 
+			++lookup;
 			if (!sound._soundOn && lookup > 30)
 				lookup = 0;
 		}
@@ -320,6 +326,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 			sound.playSound(_INTRO_VOCS[7]);
 	}
 
+	// Roll up the scroll again
 	sound.songCommand(50);
 	doScroll(true, false);
 
@@ -366,7 +373,7 @@ const int CloudsCutscenes::_INTRO_FRAMES_VALS[8][32] = {
 	}
 };
 
-const int CloudsCutscenes::_INTRO_FRAMES_MAX[8][32] = {
+const uint CloudsCutscenes::_INTRO_FRAMES_WAIT[8][32] = {
 	{
 		 2,  5,  6,  9, 10, 11, 12, 13, 14, 23, 25, 29, 31, 35, 38, 41,
 		42, 45, 50, 52, 55, 56, 57,  0,  0,  0,  0,  0,  0,  0,  0,  0

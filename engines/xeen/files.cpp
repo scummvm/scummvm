@@ -270,10 +270,15 @@ Common::String File::readString() {
 /*------------------------------------------------------------------------*/
 
 void StringArray::load(const Common::String &name) {
-	File f(name);
+	load(name, ANY_ARCHIVE);
+}
+
+void StringArray::load(const Common::String &name, ArchiveType archiveType) {
+	File f(name, archiveType);
 	clear();
 	while (f.pos() < f.size())
 		push_back(f.readString());
 }
+
 
 } // End of namespace Xeen
