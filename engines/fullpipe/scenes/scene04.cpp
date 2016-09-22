@@ -67,7 +67,7 @@ void scene04_springCallback(int *phase) {
 void scene04_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene04_initScene()");
 
-#if 1
+#if 0
 	Inventory2 *inv = getGameLoaderInventory();
 	inv->addItem(ANI_INV_COIN, 1);
 	inv->rebuildItemRects();
