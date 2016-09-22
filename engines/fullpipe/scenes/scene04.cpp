@@ -67,7 +67,7 @@ void scene04_springCallback(int *phase) {
 void scene04_initScene(Scene *sc) {
 	debugC(1, kDebugSceneLogic, "scene04_initScene()");
 
-#if 0
+#if 1
 	Inventory2 *inv = getGameLoaderInventory();
 	inv->addItem(ANI_INV_COIN, 1);
 	inv->rebuildItemRects();
@@ -573,6 +573,8 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
 
+	debugC(2, kDebugSceneLogic, "scene04: kozFly3 (OK)");
+
 	aniHandler.attachObject(ANI_KOZAWKA);
 
 	mkQueue.ani = ani;
@@ -621,6 +623,8 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
+
+	debugC(2, kDebugSceneLogic, "scene04: kozFly5 (OK)");
 
 	aniHandler.attachObject(ANI_KOZAWKA);
 
@@ -693,6 +697,8 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
 
+	debugC(2, kDebugSceneLogic, "scene04: kozFly6 (OK)");
+
 	aniHandler.attachObject(ANI_KOZAWKA);
 
 	mkQueue.ani = ani;
@@ -750,6 +756,8 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
+
+	debugC(2, kDebugSceneLogic, "scene04: kozFly7");
 
 	aniHandler.attachObject(ANI_KOZAWKA);
 
@@ -870,7 +878,7 @@ void sceneHandler04_shootKozyawka() {
 						else
 							mq = sceneHandler04_kozFly7(g_vars->scene04_walkingKozyawka, (double)(phase - 6) * 0.3333333333333333);
 					} else {
-						mq = sceneHandler04_kozFly5(g_vars->scene04_walkingKozyawka, (double)(phase - 2) * 0.3333333333333333);
+						mq = sceneHandler04_kozFly7(g_vars->scene04_walkingKozyawka, (double)(phase - 2) * 0.3333333333333333);
 					}
 				} else {
 					mq = sceneHandler04_kozFly3(g_vars->scene04_walkingKozyawka, (double)phase * 0.5);
@@ -1179,6 +1187,8 @@ void sceneHandler04_handTake() {
 }
 
 void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
+	debugC(2, kDebugSceneLogic, "scene04: putKozyawkaBack");
+
 	g_vars->scene04_bottleObjList.push_back(ani);
 	g_vars->scene04_kozyawkiAni.push_back(ani);
 
