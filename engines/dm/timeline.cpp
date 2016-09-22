@@ -362,6 +362,9 @@ void Timeline::processTimeline() {
 				break;
 			case kDMEventTypeFootprints:
 				_vm->_championMan->_party._event79Count_Footprints--;
+				break;
+			default:
+				break;
 			}
 		}
 		_vm->_dungeonMan->setCurrentMap(_vm->_dungeonMan->_partyMapIndex);
