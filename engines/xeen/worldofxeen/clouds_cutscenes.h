@@ -29,6 +29,11 @@
 namespace Xeen {
 
 class CloudsCutscenes : public Cutscenes {
+private:
+	static const char *const _INTRO_VOCS[14];
+	static const int _INTRO_FRAMES_LOOKUP[14];
+	static const int _INTRO_FRAMES_VALS[8][32];
+	static const int _INTRO_FRAMES_MAX[8][32];
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

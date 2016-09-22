@@ -90,8 +90,11 @@ protected:
 
 	/**
 	 * Draws the scroll in the background
+	 * @param rollUp	If true, rolls up the scroll. If false, unrolls.
+	 * @param fadeIn	If true, does an initial fade in
+	 * @returns		True if key or mouse pressed
 	 */
-	virtual void doScroll(bool drawFlag, bool doFade);
+	virtual bool doScroll(bool rollUp, bool fadeIn);
 };
 
 } // End of namespace Xeen

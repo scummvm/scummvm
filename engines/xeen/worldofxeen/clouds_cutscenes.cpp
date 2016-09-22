@@ -91,6 +91,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
+	_subtitles.load("special.bin");
 
 	// Show the production splash screen
 	sound.playSong("mm4theme.m");
@@ -207,23 +208,121 @@ bool CloudsCutscenes::showCloudsIntro() {
 	lake3.clear();
 	xeen1.clear();
 
-	//
-	const char *const VOCS[14] = {
-		"crodo1.voc", "crodo2.voc", "iamking.voc", "crodo3.voc",
-		"ya1.voc", "crodo4a.voc", "crodo4b.voc", "crodo4c.voc",
-		"xeenlaff.voc", "tiger2&.voc", "crodo5.voc", "crodo6.voc",
-		"xeenlaff.voc", "tiger2&.voc"
-	};
-	SpriteResource groupo("groupo.vga"), group("group.vga"), crodo("crodo.vga");
+	// All the lines whilst the scroll is open
+	SpriteResource groupo("groupo.vga"), group("group.vga"),
+		crodo("crodo.vga"), box("box.vga");
 
 	groupo.draw(screen, 0);
 	groupo.draw(screen, 1, Common::Point(160, 0));
 	crodo.draw(screen, 0, Common::Point(0, -5));
 	screen._windows[0].writeString(CLOUDS_INTRO1);
+	
+	doScroll(false, true);
+	sound.setMusicVolume(75);
+	screen.restoreBackground();
+	screen.update();
+	resetSubtitles(0, 1);
 
-	// TODO
+	// Loop through each spoken line
+	int ctr1 = 0, ctr2 = 0, ctr3 = 0, ctr4 = 0, ctr5 = 0, totalCtr = 0;
+	for (int lineCtr = 0; lineCtr < 14; ++lineCtr) {
+		if (lineCtr != 6 || lineCtr != 7) {
+			sound.playSound(_INTRO_VOCS[lineCtr]);
+		}
 
-	events.wait(5000);
+		for (int frameNum = 0, lookup = 0; sound.isPlaying() || _subtitleSize; ) {
+			groupo.draw(screen, 0);
+			groupo.draw(screen, 1, Common::Point(160, 0));
+
+			switch (lineCtr) {
+			case 2:
+				ctr1 = (ctr1 + 1) % 5;
+				group.draw(screen, ctr1);
+				ctr4 = (ctr4 + 1) % 9;
+				break;
+
+			case 4:
+				ctr4 = (ctr4 + 1) % 9 + 9;
+				break;
+
+			case 8:
+			case 12:
+				ctr2 = (ctr2 + 1) % 3;
+				ctr4 = (ctr4 + 1) % 9;
+				ctr3 = (ctr3 + 1) % 6 + 3;
+				break;
+
+			case 9:
+			case 13:
+				ctr3 = (ctr3 + 1) % 3;
+				group.draw(screen, ctr3 + 43, Common::Point(178, 134));
+				ctr4 = (ctr4 + 1) % 9;
+				ctr2 = (ctr2 % 15) + 3;
+				break;
+
+			default:
+				ctr4 = (ctr4 + 1) % 9;
+				ctr2 = (ctr2 + 1) % 15 + 3;
+				ctr3 = (ctr3 + 1) % 6 + 3;
+				break;
+			}
+
+			group.draw(screen, ctr4 + 5, Common::Point(0, 99));
+			group.draw(screen, ctr2 + 24, Common::Point(202, 12));			
+			if ((++totalCtr % 30) == 0)
+				group.draw(screen, 43, Common::Point(178, 134));
+		
+			switch (lineCtr) {
+			case 2:
+			case 4:
+			case 8:
+			case 9:
+			case 12:
+			case 13: {
+				crodo.draw(screen, 0, Common::Point(0, -5));
+				screen._windows[0].writeString(CLOUDS_INTRO1);
+
+				ctr5 = (ctr5 + 1) % 19;
+				WAIT(1);
+				showSubtitles();
+				continue;
+			}
+
+			default:
+				crodo.draw(screen, frameNum, Common::Point(0, -5));
+				if (lookup > 30)
+					lookup = 30;
+				frameNum = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
+				screen._windows[0].writeString(CLOUDS_INTRO1);
+
+				ctr5 = (ctr5 + 1) % 19;
+				WAIT(1);
+				showSubtitles();
+				break;
+			}
+
+			events.updateGameCounter();
+			while (events.timeElapsed() < _INTRO_FRAMES_MAX[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup]
+					|| sound.isPlaying()) {
+				WAIT(1);
+			}
+
+			if (!sound._soundOn && lookup > 30)
+				lookup = 0;
+		}
+
+		if (!sound._soundOn)
+			lineCtr = 20;
+
+		if (lineCtr == 5)
+			sound.playSound(_INTRO_VOCS[6]);
+		else if (lineCtr == 6)
+			sound.playSound(_INTRO_VOCS[7]);
+	}
+
+	sound.songCommand(50);
+	doScroll(true, false);
+
 	return true;
 }
 
@@ -231,5 +330,68 @@ bool CloudsCutscenes::showCloudsEnding() {
 	// TODO
 	return true;
 }
+
+const char *const CloudsCutscenes::_INTRO_VOCS[14] = {
+	"crodo1.voc", "crodo2.voc", "iamking.voc", "crodo3.voc",
+	"ya1.voc", "crodo4a.voc", "crodo4b.voc", "crodo4c.voc",
+	"xeenlaff.voc", "tiger2&.voc", "crodo5.voc", "crodo6.voc",
+	"xeenlaff.voc", "tiger2&.voc"
+};
+const int CloudsCutscenes::_INTRO_FRAMES_LOOKUP[14] = { 0, 1, 0, 2, 0, 3, 4, 5, 0, 0, 6, 7, 0, 0 };
+const int CloudsCutscenes::_INTRO_FRAMES_VALS[8][32] = {
+	{
+		4, 2, 3, 0, 2, 3, 2, 0, 1, 1, 3, 4, 3, 2, 4, 2,
+		3, 4, 3, 4, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	},{
+		3, 2, 3, 2, 4, 3, 0, 3, 2, 2, 3, 1, 2, 3, 3, 3,
+		2, 3, 2, 3, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 2, 4
+	},{
+		3, 1, 2, 3, 0, 3, 4, 3, 2, 3, 0, 3, 2, 3, 2, 1,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 3
+	},{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 3
+	},{
+		4, 2, 2, 3, 2, 3, 3, 4, 2, 4, 2, 0, 3, 2, 3, 2,
+		3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 2, 3
+	},{
+		2, 0, 2, 3, 2, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 2, 3, 1
+	},{
+		3, 2, 0, 2, 4, 2, 3, 2, 3, 2, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 3, 4, 0, 2
+	},{
+		3, 2, 4, 1, 2, 4, 3, 2, 3, 0, 2, 2, 0, 3, 2, 3,
+		2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	}
+};
+
+const int CloudsCutscenes::_INTRO_FRAMES_MAX[8][32] = {
+	{
+		 2,  5,  6,  9, 10, 11, 12, 13, 14, 23, 25, 29, 31, 35, 38, 41,
+		42, 45, 50, 52, 55, 56, 57,  0,  0,  0,  0,  0,  0,  0,  0,  0
+	}, {
+		 1,  4,  6,  8,  9, 11, 13, 15, 17, 18, 19, 22, 28, 29, 30, 31,
+		 0, 39,  0, 44,  0, 50, 51,  0, 54,  0,  0,  0,  0,  0,  0,  4
+	}, {
+		 6,  9, 11, 13, 15, 19, 21, 23, 25, 27, 28, 31, 35, 39, 40,  0,
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  5,  7
+	}, {
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  3,  4
+	}, {
+		 5,  9, 10, 11, 13, 15, 18, 23, 26, 31, 33, 36, 37, 41, 43, 45,
+		48,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  9,  0, 12
+	}, {
+		14, 17, 20, 23, 27, 29,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  4,  8, 11, 13
+	}, {
+		15, 16, 17, 19, 21, 24, 24, 27, 34, 35,  0,  0,  0,  0,  0,  0,
+		 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  5,  7, 10, 11, 13
+	}, {
+		17, 19, 22, 23, 26, 30, 32, 34, 40, 43, 47, 52, 53, 55, 57, 60,
+		62,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+	}
+};
 
 } // End of namespace Xeen

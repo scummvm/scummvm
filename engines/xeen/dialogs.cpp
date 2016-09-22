@@ -107,14 +107,15 @@ void ButtonContainer::drawButtons(XSurface *surface) {
 	}
 }
 
-void ButtonContainer::doScroll(bool drawFlag, bool doFade) {
-	if (_vm->getGameID() == GType_Clouds) {
+bool ButtonContainer::doScroll(bool rollUp, bool fadeIn) {
+	if (_vm->_files->_isDarkCc) {
+		return Cutscenes::doScroll(rollUp, fadeIn);
+	} else {
 		saveButtons();
 		clearButtons();
-		Cutscenes::doScroll(drawFlag, doFade);
+		bool result = Cutscenes::doScroll(rollUp, fadeIn);
 		restoreButtons();
-	} else {
-		Cutscenes::doScroll(drawFlag, doFade);
+		return result;
 	}
 }
 

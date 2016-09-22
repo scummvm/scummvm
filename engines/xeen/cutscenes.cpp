@@ -114,98 +114,100 @@ uint Cutscenes::getSpeakingFrame(uint minFrame, uint maxFrame) {
 	return minFrame + interval % (maxFrame + 1 - minFrame);
 }
 
-void Cutscenes::doScroll(bool drawFlag, bool doFade) {
+bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-
-	if (_vm->getGameID() != GType_Clouds) {
-		if (doFade) {
-			screen.fadeIn(2);
-		}
-		return;
-	}
-
-	const int SCROLL_L[8] = { 29, 23, 15, 251, 245, 233, 207, 185 };
+	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
 	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
+
+	if (_vm->_files->_isDarkCc) {
+		if (fadeIn)
+			screen.fadeIn(2);
+		return _vm->shouldQuit();
+	}
 
 	screen.saveBackground();
 
-	// Load hand vga files
+	// Load hand sprites
 	SpriteResource *hand[16];
 	for (int i = 0; i < 16; ++i) {
 		Common::String name = Common::String::format("hand%02d.vga", i);
 		hand[i] = new SpriteResource(name);
 	}
 
-	// Load marb vga files
+	// Load marb sprites
 	SpriteResource *marb[5];
-	for (int i = 1; i < 5; ++i) {
-		Common::String name = Common::String::format("marb%02d.vga", i);
+	for (int i = 0; i < 4; ++i) {
+		Common::String name = Common::String::format("marb%02d.vga", i + 1);
 		marb[i] = new SpriteResource(name);
 	}
 
-	if (drawFlag) {
-		for (int i = 22; i > 0; --i) {
+	if (rollUp) {
+		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
+				&& !_vm->shouldQuit(); --i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
-			if (i > 0 && i <= 14) {
+			if (i > 14) {
+				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(screen, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				--ctr;
+			} else if (i != 0) {
 				hand[i - 1]->draw(screen, 0);
-			} else {
-				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[i - 14], 0), SPRFLAG_800);
-				marb[15]->draw(screen, 0, Common::Point(SCROLL_R[i - 14], 0), SPRFLAG_800);
 			}
 
-			if (i <= 20) {
-				marb[i / 5]->draw(screen, i % 5);
-			}
+			if (i <= 20)
+				marb[(i - 1) / 5]->draw(screen, (i - 1) % 5);
+			screen.update();
 
 			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
-			screen._windows[0].update();
-			if (i == 0 && doFade)
+			if (i == 0 && fadeIn)
 				screen.fadeIn(2);
 		}
 	} else {
-		for (int i = 0; i < 22 && !events.isKeyMousePressed(); ++i) {
+		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
+				&& !_vm->shouldQuit(); ++i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
 			if (i < 14) {
 				hand[i]->draw(screen, 0);
 			} else {
-				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[i - 7], 0), SPRFLAG_800);
-				marb[15]->draw(screen, 0, Common::Point(SCROLL_R[i - 7], 0), SPRFLAG_800);
+				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(screen, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				++ctr;
 			}
 
 			if (i < 20) {
 				marb[i / 5]->draw(screen, i % 5);
 			}
+			screen.update();
 
 			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
-			screen._windows[0].update();
-			if (i == 0 && doFade)
+			if (i == 0 && fadeIn)
 				screen.fadeIn(2);
 		}
 	}
 
-	if (drawFlag) {
+	if (rollUp) {
 		hand[0]->draw(screen, 0);
 		marb[0]->draw(screen, 0);
 	} else {
 		screen.restoreBackground();
 	}
-
-	screen._windows[0].update();
+	screen.update();
 
 	// Free resources
-	for (int i = 1; i < 5; ++i)
+	for (int i = 0; i < 4; ++i)
 		delete marb[i];
 	for (int i = 0; i < 16; ++i)
 		delete hand[i];
+
+	return _vm->shouldQuit() || events.isKeyMousePressed();
 }
 
 } // End of namespace Xeen
