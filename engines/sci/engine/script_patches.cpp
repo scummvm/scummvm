@@ -142,6 +142,27 @@ enum ScriptPatcherSelectors {
 };
 
 #ifdef ENABLE_SCI32
+// It is not possible to change the directory for ScummVM save games, so disable
+// the "change directory" button in the standard save dialogue
+static const uint16 sci2ChangeDirSignature[] = {
+	0x72, SIG_ADDTOOFFSET(+2), // lofsa changeDirI
+	0x4a, SIG_UINT16(0x04),    // send 4
+	SIG_MAGICDWORD,
+	0x36,                      // push
+	0x35, 0xF7,                // ldi $f7
+	0x12,                      // and
+	0x36,                      // push
+	SIG_END
+};
+
+static const uint16 sci2ChangeDirPatch[] = {
+	PATCH_ADDTOOFFSET(+3),    // lofsa changeDirI
+	PATCH_ADDTOOFFSET(+3),    // send 4
+	PATCH_ADDTOOFFSET(+1),    // push
+	0x35, 0x00,               // ldi 0
+	PATCH_END
+};
+
 // Save game script hardcodes the maximum number of save games to 20, but
 // this is an artificial constraint that does not apply to ScummVM
 static const uint16 sci2NumSavesSignature1[] = {
@@ -984,6 +1005,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   808, "day 10 gabriel dress up infinite turning",    1, gk1SignatureDay10GabrielDressUp,  gk1PatchDay10GabrielDressUp },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -994,6 +1016,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 static const SciScriptPatcherEntry gk2Signatures[] = {
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2171,6 +2194,7 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2958,6 +2982,7 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -3938,6 +3963,7 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4518,6 +4544,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,          sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
