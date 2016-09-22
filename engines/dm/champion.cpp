@@ -76,9 +76,9 @@ void Champion::setAttributeFlag(ChampionAttribute flag, bool value) {
 }
 
 void ChampionMan::initConstants() {
-	static const char *g417_baseSkillName_EN_ANY[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
-	static const char *g417_baseSkillName_DE_DEU[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
-	static const char *g417_baseSkillName_FR_FRA[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
+	static const char *baseSkillNameEN[4] = {"FIGHTER", "NINJA", "PRIEST", "WIZARD"};
+	static const char *baseSkillNameDE[4] = {"KAEMPFER", "NINJA", "PRIESTER", "MAGIER"};
+	static const char *baseSkillNameFR[4] = {"GUERRIER", "NINJA", "PRETRE", "SORCIER"};
 	static Box boxChampionIcons[4] = {
 		Box(281, 299,  0, 13),
 		Box(301, 319,  0, 13),
@@ -135,13 +135,13 @@ void ChampionMan::initConstants() {
 	const char **baseSkillName;
 	switch (_vm->getGameLanguage()) { // localized
 	case Common::EN_ANY:
-		baseSkillName = g417_baseSkillName_EN_ANY;
+		baseSkillName = baseSkillNameEN;
 		break;
 	case Common::DE_DEU:
-		baseSkillName = g417_baseSkillName_DE_DEU;
+		baseSkillName = baseSkillNameDE;
 		break;
 	case Common::FR_FRA:
-		baseSkillName = g417_baseSkillName_FR_FRA;
+		baseSkillName = baseSkillNameFR;
 		break;
 	default:
 		error("Unexpected language used");
@@ -217,14 +217,15 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 			return false;
 	}
 
-	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 	decrementStamina(champIndex, getThrowingStaminaCost(curThing));
 	disableAction(champIndex, 4);
 	int16 experience = 8;
 	int16 weaponKineticEnergy = 1;
 	if (curThing.getType() == kDMThingTypeWeapon) {
 		experience += 4;
-		WeaponInfo *curWeapon = _vm->_dungeonMan->getWeaponInfo(curThing);
+		WeaponInfo *curWeapon = dungeon.getWeaponInfo(curThing);
 		if (curWeapon->_class <= kDMWeaponClassPoisinDart) {
 			weaponKineticEnergy = curWeapon->_kineticEnergy;
 			experience += weaponKineticEnergy >> 2;
@@ -236,11 +237,11 @@ bool ChampionMan::isObjectThrown(uint16 champIndex, int16 slotIndex, int16 side)
 	kineticEnergy += _vm->getRandomNumber(16) + (kineticEnergy >> 1) + skillLevel;
 	int16 attack = CLIP<int16>(40, ((skillLevel << 3) + _vm->getRandomNumber(32)), 200);
 	int16 stepEnergy = MAX(5, 11 - skillLevel);
-	_vm->_projexpl->createProjectile(curThing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY,
-										  _vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + side),
-										  _vm->_dungeonMan->_partyDir, kineticEnergy, attack, stepEnergy);
+	_vm->_projexpl->createProjectile(curThing, dungeon._partyMapX, dungeon._partyMapY,
+										  _vm->normalizeModulo4(dungeon._partyDir + side),
+										  dungeon._partyDir, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
-	_vm->_lastProjectileDisabledMovementDirection = _vm->_dungeonMan->_partyDir;
+	_vm->_lastProjectileDisabledMovementDirection = dungeon._partyDir;
 	drawChampionState((ChampionIndex)champIndex);
 	return true;
 }
@@ -456,6 +457,7 @@ void ChampionMan::drawChangedObjectIcons() {
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 	MenuMan &menuMan = *_vm->_menuMan;
+	EventManager &eventMan = *_vm->_eventMan;
 
 	uint16 invChampOrdinal = invMan._inventoryChampionOrdinal;
 	if (_candidateChampionOrdinal && !invChampOrdinal)
@@ -470,9 +472,9 @@ void ChampionMan::drawChangedObjectIcons() {
 		IconIndice iconIndex = objMan.getIconIndex(_leaderHandObject);
 		if (iconIndex != leaderHandObjIconIndex) {
 			_mousePointerHiddenToDrawChangedObjIconOnScreen = true;
-			_vm->_eventMan->hideMouse();
+			eventMan.hideMouse();
 			objMan.extractIconFromBitmap(iconIndex, objMan._objectIconForMousePointer);
-			_vm->_eventMan->setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
+			eventMan.setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
 			_leaderHandObjectIconIndex = iconIndex;
 			objMan.drawLeaderObjectName(_leaderHandObject);
 		}
@@ -517,25 +519,23 @@ void ChampionMan::drawChangedObjectIcons() {
 	}
 
 	if (_mousePointerHiddenToDrawChangedObjIconOnScreen)
-		_vm->_eventMan->showMouse();
+		eventMan.showMouse();
 }
 
 void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, ChampionSlot slotIndex) {
+	if (thing == Thing::_none)
+		return;
+
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 	MenuMan &menuMan = *_vm->_menuMan;
-
-	if (thing == Thing::_none)
-		return;
-
 	Champion *champ = &_champions[champIndex];
 
-	if (slotIndex >= kDMSlotChest1) {
+	if (slotIndex >= kDMSlotChest1)
 		invMan._chestSlots[slotIndex - kDMSlotChest1] = thing;
-	} else {
+	else
 		champ->setSlot(slotIndex, thing);
-	}
 
 	champ->_load += dunMan.getObjectWeight(thing);
 	champ->setAttributeFlag(kDMAttributeLoad, true);
@@ -558,7 +558,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 
 		if (iconIndex == kDMIconIndiceWeaponTorchUnlit) {
 			((Weapon *)rawObjPtr)->setLit(true);
-			_vm->_inventoryMan->setDungeonViewPalette();
+			invMan.setDungeonViewPalette();
 			drawChangedObjectIcons();
 		} else if (isInventoryChampion && (slotIndex == kDMSlotActionHand) &&
 			((iconIndex == kDMIconIndiceContainerChestClosed) || ((iconIndex >= kDMIconIndiceScrollOpen) && (iconIndex <= kDMIconIndiceScrollClosed)))) {
@@ -568,7 +568,7 @@ void ChampionMan::addObjectInSlot(ChampionIndex champIndex, Thing thing, Champio
 		if ((iconIndex >= kDMIconIndiceJunkIllumuletUnequipped) && (iconIndex <= kDMIconIndiceJunkIllumuletEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
 			_party._magicalLightAmount += _lightPowerToLightAmount[2];
-			_vm->_inventoryMan->setDungeonViewPalette();
+			invMan.setDungeonViewPalette();
 			iconIndex = (IconIndice)(iconIndex + 1);
 		} else if ((iconIndex >= kDMIconIndiceJunkJewelSymalUnequipped) && (iconIndex <= kDMIconIndiceJunkJewelSymalEquipped)) {
 			((Junk *)rawObjPtr)->setChargeCount(1);
@@ -592,25 +592,25 @@ int16 ChampionMan::getScentOrdinal(int16 mapX, int16 mapY) {
 		uint16 searchedScentRedEagle = searchedScent.toUint16();
 		Scent *scent = &_party._scents[scentIndex--];
 		do {
-			if ((*(--scent)).toUint16() == searchedScentRedEagle) {
+			if ((*(--scent)).toUint16() == searchedScentRedEagle)
 				return _vm->indexToOrdinal(scentIndex);
-			}
 		} while (scentIndex--);
 	}
 	return 0;
 }
 
 Thing ChampionMan::getObjectRemovedFromLeaderHand() {
+	EventManager &eventMan = *_vm->_eventMan;
 	_leaderEmptyHanded = true;
 	Thing leaderHandObject = _leaderHandObject;
 
 	if (leaderHandObject != Thing::_none) {
 		_leaderHandObject = Thing::_none;
 		_leaderHandObjectIconIndex = kDMIconIndiceNone;
-		_vm->_eventMan->showMouse();
+		eventMan.showMouse();
 		_vm->_objectMan->clearLeaderObjectName();
-		_vm->_eventMan->setMousePointer();
-		_vm->_eventMan->hideMouse();
+		eventMan.setMousePointer();
+		eventMan.hideMouse();
 		if (_leaderIndex != kDMChampionNone) {
 			_champions[_leaderIndex]._load -= _vm->_dungeonMan->getObjectWeight(leaderHandObject);
 			setFlag(_champions[_leaderIndex]._attributes, kDMAttributeLoad);
@@ -627,36 +627,36 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	uint16 objectWeight = _vm->_dungeonMan->getObjectWeight(curThing);
 	uint16 oneSixteenthMaximumLoad = getMaximumLoad(curChampion) >> 4;
 
-	if (objectWeight <= oneSixteenthMaximumLoad) {
+	if (objectWeight <= oneSixteenthMaximumLoad)
 		strength += objectWeight - 12;
-	} else {
+	else {
 		int16 loadThreshold = oneSixteenthMaximumLoad + ((oneSixteenthMaximumLoad - 12) >> 1);
-		if (objectWeight <= loadThreshold) {
+		if (objectWeight <= loadThreshold)
 			strength += (objectWeight - oneSixteenthMaximumLoad) >> 1;
-		} else {
+		else
 			strength -= (objectWeight - loadThreshold) << 1;
-		}
 	}
+
 	if (curThing.getType() == kDMThingTypeWeapon) {
 		WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(curThing);
 		strength += weaponInfo->_strength;
 		uint16 skillLevel = 0;
 		uint16 weaponClass = weaponInfo->_class;
-		if ((weaponClass == kDMWeaponClassSwingWeapon) || (weaponClass == kDMWeaponClassDaggerAndAxes)) {
+		if ((weaponClass == kDMWeaponClassSwingWeapon) || (weaponClass == kDMWeaponClassDaggerAndAxes))
 			skillLevel = getSkillLevel(champIndex, kDMSkillSwing);
-		}
-		if ((weaponClass != kDMWeaponClassSwingWeapon) && (weaponClass < kDMWeaponClassFirstBow)) {
+
+		if ((weaponClass != kDMWeaponClassSwingWeapon) && (weaponClass < kDMWeaponClassFirstBow))
 			skillLevel += getSkillLevel(champIndex, kDMSkillThrow);
-		}
-		if ((weaponClass >= kDMWeaponClassFirstBow) && (weaponClass < kDMWeaponClassFirstMagicWeapon)) {
+
+		if ((weaponClass >= kDMWeaponClassFirstBow) && (weaponClass < kDMWeaponClassFirstMagicWeapon))
 			skillLevel += getSkillLevel(champIndex, kDMSkillShoot);
-		}
+
 		strength += skillLevel << 1;
 	}
 	strength = getStaminaAdjustedValue(curChampion, strength);
-	if (getFlag(curChampion->_wounds, (slotIndex == kDMSlotReadyHand) ? kDMWoundReadHand : kDMWoundActionHand)) {
+	if (getFlag(curChampion->_wounds, (slotIndex == kDMSlotReadyHand) ? kDMWoundReadHand : kDMWoundActionHand))
 		strength >>= 1;
-	}
+
 	return CLIP(0, strength >> 1, 100);
 }
 
