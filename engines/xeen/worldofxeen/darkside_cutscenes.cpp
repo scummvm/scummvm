@@ -41,6 +41,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	_vm->_files->_isDarkCc = true;
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -152,6 +153,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
 	};
 
+	_vm->_files->_isDarkCc = true;
 	_subtitles.load("special.bin");
 	screen.fadeOut(8);
 	screen.loadPalette("dark.pal");
@@ -327,6 +329,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	_vm->_files->_isDarkCc = true;
 
 	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");

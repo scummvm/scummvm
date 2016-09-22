@@ -40,7 +40,7 @@ void WorldOfXeenEngine::showIntro() {
 	if (gDebugLevel == 0)
 		return;
 
-	showCloudsIntro();
+	showCloudsEnding();
 	/*
 	bool completed = showDarkSideTitle();
 	if (!_seenDarkSideIntro && completed)

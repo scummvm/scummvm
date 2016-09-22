@@ -92,6 +92,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
 	_subtitles.load("special.bin", GAME_ARCHIVE);
+	_vm->_files->_isDarkCc = false;
 
 	// Show the production splash screen
 	sound.playSong("mm4theme.m");
@@ -334,7 +335,71 @@ bool CloudsCutscenes::showCloudsIntro() {
 }
 
 bool CloudsCutscenes::showCloudsEnding() {
+	EventsManager &events = *_vm->_events;
+	FileManager &files = *_vm->_files;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+
+	files._isDarkCc = false;
+	File::setCurrentArchive(GAME_ARCHIVE);
+
+	// Show the castle with swirling clouds and lightning
+	SpriteResource prec[42];
+	prec[0].load("prec.end");
+	for (int idx = 1; idx < 42; ++idx)
+		prec[idx].load(Common::String::format("prec00%02u.frm", idx));
+
+	screen.loadBackground("blank.raw");
+	screen.loadPalette("mm4e.pal");
+	prec[0].draw(screen, 0);
+	prec[0].draw(screen, 1, Common::Point(160, 0));
+	screen.update();
+	screen.fadeIn();
+	WAIT(15);
+
+	sound.playFX(1);
+	sound.playFX(34);
+
+	for (int idx = 1; idx < 42; ++idx) {
+		prec[idx].draw(screen, 0);
+		prec[idx].draw(screen, 1, Common::Point(160, 0));
+		screen.update();
+
+		switch (idx) {
+		case 8:
+		case 18:
+		case 21:
+			sound.playFX(33);
+			break;
+
+		case 19:
+		case 25:
+			sound.playFX(34);
+			break;
+
+		default:
+			break;
+		}
+
+		WAIT(3);
+	}
+
+	for (int idx = 0; idx < 42; ++idx)
+		prec[idx].clear();
+
+	// Closeup of castle
+	SpriteResource vort[21], cast[6], darkLord[4];
+	for (int idx = 1; idx < 21; ++idx)
+		vort[idx].load(Common::String::format("vort%02u.frm", idx));
+	for (int idx = 1; idx < 7; ++idx)
+		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
+	for (int idx = 1; idx < 4; ++idx)
+		darkLord[idx].load(Common::String::format("darklrd%d.end", idx));
+
+
+
 	// TODO
+	WAIT(5000);
 	return true;
 }
 
