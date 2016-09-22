@@ -951,9 +951,15 @@ void sceneHandler04_walkKozyawka() {
 
 void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
-		GameObject *obj = *it;
+		if ((*it)->_objtype == kObjTypeStaticANIObject) {
+			StaticANIObject *st = (StaticANIObject *)*it;
 
-		obj->setOXY(obj->_ox, off + obj->_oy);
+			st->setOXY(st->_ox, off + st->_oy);
+		} else {
+			GameObject *obj = *it;
+
+			obj->setOXY(obj->_ox, off + obj->_oy);
+		}
 	}
 }
 
