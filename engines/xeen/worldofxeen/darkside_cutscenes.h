@@ -29,6 +29,8 @@ namespace Xeen {
 
 class XeenEngine;
 
+namespace WorldOfXeen {
+
 class DarkSideCutscenes : public Cutscenes {
 protected:
 	/**
@@ -59,6 +61,7 @@ public:
 	void showDarkSideScore();
 };
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
 
 #endif /* XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H */

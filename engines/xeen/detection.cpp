@@ -116,7 +116,7 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Xeen::GType_Clouds:
 	case Xeen::GType_DarkSide:
 	case Xeen::GType_WorldOfXeen:
-		*engine = new Xeen::WorldOfXeenEngine(syst, gd);
+		*engine = new Xeen::WorldOfXeen::WorldOfXeenEngine(syst, gd);
 		break;
 	default:
 		break;

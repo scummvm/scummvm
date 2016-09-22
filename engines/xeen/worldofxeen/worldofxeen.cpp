@@ -26,6 +26,7 @@
 #include "xeen/sound.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: XeenEngine(syst, gameDesc), CloudsCutscenes(this), 
@@ -48,4 +49,5 @@ void WorldOfXeenEngine::showIntro() {
 		*/
 }
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen

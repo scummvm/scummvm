@@ -27,6 +27,7 @@
 #include "xeen/xeen.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
 class CloudsCutscenes : public Cutscenes {
 private:
@@ -52,6 +53,8 @@ public:
 	 */
 	bool showCloudsEnding();
 };
+
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
 
 #endif /* XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H */

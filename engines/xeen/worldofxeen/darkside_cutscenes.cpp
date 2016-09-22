@@ -27,6 +27,7 @@
 #include "xeen/xeen.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
 static const int CUTSCENES_XLIST[32] = {
 	146, 145, 143, 141, 141, 141, 141, 141, 141, 141, 141, 142, 143, 144, 145, 146,
@@ -1227,4 +1228,5 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	}
 }
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen

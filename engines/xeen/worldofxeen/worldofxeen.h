@@ -28,6 +28,7 @@
 #include "xeen/worldofxeen/darkside_cutscenes.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
 /**
  * Implements a descendant of the base Xeen engine to handle 
@@ -45,6 +46,7 @@ public:
 	virtual ~WorldOfXeenEngine() {}
 };
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
 
 #endif /* XEEN_WORLDOFXEEN_WORLDOFXEEN_H */

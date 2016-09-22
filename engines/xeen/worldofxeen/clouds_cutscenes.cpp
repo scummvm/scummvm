@@ -25,6 +25,7 @@
 #include "xeen/sound.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
 bool CloudsCutscenes::showCloudsTitle() {
 	EventsManager &events = *_vm->_events;
@@ -466,4 +467,5 @@ const uint CloudsCutscenes::_INTRO_FRAMES_WAIT[8][32] = {
 	}
 };
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
