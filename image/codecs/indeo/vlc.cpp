@@ -203,7 +203,7 @@ void VLC::freeVlc() {
 }
 
 int VLC::compareVlcSpec(const void *a, const void *b) {
-	const VLCcode *sa = (VLCcode *)a, *sb = (VLCcode *)b;
+	const VLCcode *sa = (const VLCcode *)a, *sb = (const VLCcode *)b;
 	return (sa->code >> 1) - (sb->code >> 1);
 }
 
