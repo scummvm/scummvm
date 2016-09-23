@@ -469,10 +469,18 @@ bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	if (((const GameObject *)p1)->_priority > ((const GameObject *)p2)->_priority)
 		return true;
 
+	if (((const GameObject *)p1)->_priority == ((const GameObject *)p2)->_priority)
+		if (((const GameObject *)p1)->_cnum > ((const GameObject *)p2)->_cnum)
+			return true;
+
 	return false;
 }
 
 void Scene::objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bool skipFirst) {
+	// Ensure the sort is stable
+	for (uint i = 0; i < list.size(); i++)
+		list[i]->_cnum = i;
+
 	if (skipFirst) {
 		Common::Array<StaticANIObject *>::iterator s = list.begin();
 
@@ -485,6 +493,10 @@ void Scene::objectList_sortByPriority(Common::Array<StaticANIObject *> &list, bo
 }
 
 void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool skipFirst) {
+	// Ensure the sort is stable
+	for (uint i = 0; i < list.size(); i++)
+		list[i]->_cnum = i;
+
 	if (skipFirst) {
 		Common::Array<PictureObject *>::iterator s = list.begin();
 

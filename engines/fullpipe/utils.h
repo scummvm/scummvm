@@ -110,8 +110,9 @@ enum ObjType {
 class CObject {
 public:
 	ObjType _objtype;
+	uint _cnum;
 
-	CObject() : _objtype(kObjTypeDefault) {}
+	CObject() : _objtype(kObjTypeDefault), _cnum(0) {}
 	virtual bool load(MfcArchive &in) { return true; }
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
