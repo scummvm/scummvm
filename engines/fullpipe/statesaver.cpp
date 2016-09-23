@@ -85,8 +85,12 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	archive->writeUint32LE(_sc2array.size());
 
+	debugC(3, kDebugLoading, "Saving %d infos", _sc2array.size());
+
 	for (uint i = 0; i < _sc2array.size(); i++) {
 		archive->writeUint32LE(_sc2array[i]._picAniInfosCount);
+
+		debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
 
 		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
 			_sc2array[i]._picAniInfos[j]->save(*archive);

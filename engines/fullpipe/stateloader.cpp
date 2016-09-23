@@ -102,8 +102,11 @@ void GameLoader::readSavegame(const char *fname) {
 
 	int32 arrSize = archive->readUint32LE();
 
+	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
+
 	for (uint i = 0; i < arrSize; i++) {
 		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
+		debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
 
 		free(_sc2array[i]._picAniInfos);
 		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
