@@ -581,7 +581,7 @@ void ItemsDialog::blackData2CharData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int slotIndex = 0;
-	while (party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
+	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
 		++slotIndex;
 	if (slotIndex == 4)
 		slotIndex = 0;
@@ -598,7 +598,7 @@ void ItemsDialog::charData2BlackData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int slotIndex = 0;
-	while (party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
+	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
 		++slotIndex;
 	if (slotIndex == 4)
 		slotIndex = 0;
