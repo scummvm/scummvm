@@ -76,7 +76,7 @@ void MusicDriver::execute() {
 	// Main loop
 	bool breakFlag = false;
 	while (!breakFlag) {
-		debugCN(3, kDebugSound, "MUSCODE %.4x - %.2x  ", (srcP - startP), *srcP);
+		debugCN(3, kDebugSound, "MUSCODE %.4x - %.2x  ", (uint)(srcP - startP), (uint)*srcP);
 		byte nextByte = *srcP++;
 		int cmd = (nextByte >> 4) & 15;
 		int param = (nextByte & 15);
