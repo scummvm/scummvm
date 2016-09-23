@@ -622,9 +622,10 @@ Thing ChampionMan::getObjectRemovedFromLeaderHand() {
 
 uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	Champion *curChampion = &_champions[champIndex];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	int16 strength = _vm->getRandomNumber(16) + curChampion->_statistics[kDMStatStrength][kDMStatCurrent];
 	Thing curThing = curChampion->_slots[slotIndex];
-	uint16 objectWeight = _vm->_dungeonMan->getObjectWeight(curThing);
+	uint16 objectWeight = dungeon.getObjectWeight(curThing);
 	uint16 oneSixteenthMaximumLoad = getMaximumLoad(curChampion) >> 4;
 
 	if (objectWeight <= oneSixteenthMaximumLoad)
@@ -638,7 +639,7 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 	}
 
 	if (curThing.getType() == kDMThingTypeWeapon) {
-		WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(curThing);
+		WeaponInfo *weaponInfo = dungeon.getWeaponInfo(curThing);
 		strength += weaponInfo->_strength;
 		uint16 skillLevel = 0;
 		uint16 weaponClass = weaponInfo->_class;
@@ -662,6 +663,7 @@ uint16 ChampionMan::getStrength(int16 champIndex, int16 slotIndex) {
 
 Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex) {
 	Champion *curChampion = &_champions[champIndex];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Thing curThing;
 
 	if (slotIndex >= kDMSlotChest1) {
@@ -680,7 +682,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 	// Remove object modifiers
 	applyModifiersToStatistics(curChampion, slotIndex, curIconIndex, -1, curThing);
 
-	Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(curThing);
+	Weapon *curWeapon = (Weapon *)dungeon.getThingData(curThing);
 	if (slotIndex == kDMSlotNeck) {
 		if ((curIconIndex >= kDMIconIndiceJunkIllumuletUnequipped) && (curIconIndex <= kDMIconIndiceJunkIllumuletEquipped)) {
 			((Junk *)curWeapon)->setChargeCount(0);
@@ -727,7 +729,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 			}
 		}
 	}
-	curChampion->_load -= _vm->_dungeonMan->getObjectWeight(curThing);
+	curChampion->_load -= dungeon.getObjectWeight(curThing);
 	setFlag(curChampion->_attributes, kDMAttributeLoad);
 	return curThing;
 }
@@ -743,9 +745,8 @@ void ChampionMan::decrementStamina(int16 championIndex, int16 decrement) {
 	if (stamina <= 0) {
 		curChampion->_currStamina = 0;
 		addPendingDamageAndWounds_getDamage(championIndex, (-stamina) >> 1, kDMWoundNone, kDMAttackTypeNormal);
-	} else if (stamina > curChampion->_maxStamina) {
+	} else if (stamina > curChampion->_maxStamina)
 		curChampion->_currStamina = curChampion->_maxStamina;
-	}
 
 	setFlag(curChampion->_attributes, kDMAttributeLoad | kDMAttributeStatistics);
 }
@@ -775,11 +776,10 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 		case kDMAttackTypePsychic:
 		{
 			int16 wisdomFactor = 115 - curChampion->_statistics[kDMStatWisdom][kDMStatCurrent];
-			if (wisdomFactor <= 0) {
+			if (wisdomFactor <= 0)
 				attack = 0;
-			} else {
+			else
 				attack = _vm->getScaledProduct(attack, 6, wisdomFactor);
-			}
 
 			skipScaling = true;
 		}
@@ -842,6 +842,7 @@ int16 ChampionMan::addPendingDamageAndWounds_getDamage(int16 champIndex, int16 a
 int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	static const byte woundDefenseFactor[6] = {5, 5, 4, 6, 3, 1}; // @ G0050_auc_Graphic562_WoundDefenseFactor
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Champion *curChampion = &_champions[champIndex];
 	bool useSharpDefense = getFlag(woundIndex, kDMMaskSharpDefense);
 	if (useSharpDefense)
@@ -851,10 +852,10 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	for (int16 slotIndex = kDMSlotReadyHand; slotIndex <= kDMSlotActionHand; slotIndex++) {
 		Thing curThing = curChampion->_slots[slotIndex];
 		if (curThing.getType() == kDMThingTypeArmour) {
-			ArmourInfo *armorInfo = (ArmourInfo *)_vm->_dungeonMan->getThingData(curThing);
-			armorInfo = &_vm->_dungeonMan->_armourInfos[((Armour *)armorInfo)->getType()];
+			ArmourInfo *armorInfo = (ArmourInfo *)dungeon.getThingData(curThing);
+			armorInfo = &dungeon._armourInfos[((Armour *)armorInfo)->getType()];
 			if (getFlag(armorInfo->_attributes, kDMArmourAttributeShield))
-				armorShieldDefense += ((getStrength(champIndex, slotIndex) + _vm->_dungeonMan->getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
+				armorShieldDefense += ((getStrength(champIndex, slotIndex) + dungeon.getArmourDefense(armorInfo, useSharpDefense)) * woundDefenseFactor[woundIndex]) >> ((slotIndex == woundIndex) ? 4 : 5);
 		}
 	}
 
@@ -866,8 +867,8 @@ int16 ChampionMan::getWoundDefense(int16 champIndex, uint16 woundIndex) {
 	if (woundIndex > kDMSlotActionHand) {
 		Thing curThing = curChampion->_slots[woundIndex];
 		if (curThing.getType() == kDMThingTypeArmour) {
-			ArmourInfo *armourInfo = (ArmourInfo *)_vm->_dungeonMan->getThingData(curThing);
-			woundDefense += _vm->_dungeonMan->getArmourDefense(&_vm->_dungeonMan->_armourInfos[((Armour *)armourInfo)->getType()], useSharpDefense);
+			ArmourInfo *armourInfo = (ArmourInfo *)dungeon.getThingData(curThing);
+			woundDefense += dungeon.getArmourDefense(&dungeon._armourInfos[((Armour *)armourInfo)->getType()], useSharpDefense);
 		}
 	}
 
@@ -932,11 +933,10 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 	int16 eventIndex = curChampion->_enableActionEventIndex;
 	if (eventIndex >= 0) {
 		int32 currentEnableActionEventTime = _vm->filterTime(_vm->_timeline->_events[eventIndex]._mapTime);
-		if (updatedEnableActionEventTime >= currentEnableActionEventTime) {
+		if (updatedEnableActionEventTime >= currentEnableActionEventTime)
 			updatedEnableActionEventTime += (currentEnableActionEventTime - _vm->_gameTime) >> 1;
-		} else {
+		else
 			updatedEnableActionEventTime = currentEnableActionEventTime + (ticks >> 1);
-		}
 		_vm->_timeline->deleteEvent(eventIndex);
 	} else {
 		setFlag(curChampion->_attributes, kDMAttributeActionHand | kDMAttributeDisableAction);
@@ -947,12 +947,13 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 }
 
 void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	if ((skillIndex >= kDMSkillSwing) && (skillIndex <= kDMSkillShoot) && (_vm->_projexpl->_lastCreatureAttackTime < _vm->_gameTime - 150))
 		exp >>= 1;
 
 	if (exp) {
-		if (_vm->_dungeonMan->_currMap->_difficulty)
-			exp *= _vm->_dungeonMan->_currMap->_difficulty;
+		if (dungeon._currMap->_difficulty)
+			exp *= dungeon._currMap->_difficulty;
 
 		Champion *curChampion = &_champions[champIndex];
 		uint16 baseSkillIndex;
@@ -1070,9 +1071,11 @@ int16 ChampionMan::getDamagedChampionCount(uint16 attack, int16 wounds, int16 at
 }
 
 int16 ChampionMan::getTargetChampionIndex(int16 mapX, int16 mapY, uint16 cell) {
-	if (_partyChampionCount && (_vm->getDistance(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	if (_partyChampionCount && (_vm->getDistance(mapX, mapY, dungeon._partyMapX, dungeon._partyMapY) <= 1)) {
 		signed char orderedCellsToAttack[4];
-		_vm->_groupMan->setOrderedCellsToAttack(orderedCellsToAttack, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, mapX, mapY, cell);
+		_vm->_groupMan->setOrderedCellsToAttack(orderedCellsToAttack, dungeon._partyMapX, dungeon._partyMapY, mapX, mapY, cell);
 		for (uint16 i = 0; i < 4; i++) {
 			int16 championIndex = getIndexInCell(orderedCellsToAttack[i]);
 			if (championIndex >= 0)
@@ -1126,10 +1129,12 @@ void ChampionMan::championPoison(int16 champIndex, uint16 attack) {
 }
 
 void ChampionMan::setPartyDirection(int16 dir) {
-	if (dir == _vm->_dungeonMan->_partyDir)
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	if (dir == dungeon._partyDir)
 		return;
 
-	int16 dirDiff = dir - _vm->_dungeonMan->_partyDir;
+	int16 dirDiff = dir - dungeon._partyDir;
 	if (dirDiff < 0)
 		dirDiff += 4;
 
@@ -1140,7 +1145,7 @@ void ChampionMan::setPartyDirection(int16 dir) {
 		curChampion++;
 	}
 
-	_vm->_dungeonMan->_partyDir = (Direction)dir;
+	dungeon._partyDir = (Direction)dir;
 	drawChangedObjectIcons();
 }
 
@@ -1246,11 +1251,13 @@ int16 ChampionMan::getMovementTicks(Champion *champ) {
 
 bool ChampionMan::isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 weaponSlotIndex, uint16 ammunitionSlotIndex) {
 	Champion *curChampion = &_champions[champIndex];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Thing curThing = curChampion->_slots[weaponSlotIndex];
+
 	if (curThing.getType() != kDMThingTypeWeapon)
 		return false;
 
-	WeaponInfo *weaponInfo = _vm->_dungeonMan->getWeaponInfo(curThing);
+	WeaponInfo *weaponInfo = dungeon.getWeaponInfo(curThing);
 	int16 weaponClass = kDMWeaponClassNone;
 
 	if ((weaponInfo->_class >= kDMWeaponClassFirstBow) && (weaponInfo->_class <= kDMWeaponClassLastBow))
@@ -1262,7 +1269,7 @@ bool ChampionMan::isAmmunitionCompatibleWithWeapon(uint16 champIndex, uint16 wea
 		return false;
 
 	curThing = curChampion->_slots[ammunitionSlotIndex];
-	weaponInfo = _vm->_dungeonMan->getWeaponInfo(curThing);
+	weaponInfo = dungeon.getWeaponInfo(curThing);
 	return ((curThing.getType() == kDMThingTypeWeapon) && (weaponInfo->_class == weaponClass));
 }
 
@@ -1308,18 +1315,18 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 		slotIndex = slotBoxIndex - kDMSlotBoxInventoryFirstSlot;
 	}
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Thing leaderHandObject = _leaderHandObject;
 	Thing slotThing;
-	if (slotIndex >= kDMSlotChest1) {
+	if (slotIndex >= kDMSlotChest1)
 		slotThing = _vm->_inventoryMan->_chestSlots[slotIndex - kDMSlotChest1];
-	} else {
+	else
 		slotThing = _champions[champIndex]._slots[slotIndex];
-	}
 
 	if ((slotThing == Thing::_none) && (leaderHandObject == Thing::_none))
 		return;
 
-	if ((leaderHandObject != Thing::_none) && (!(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
+	if ((leaderHandObject != Thing::_none) && (!(dungeon._objectInfos[dungeon.getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
 	_vm->_eventMan->showMouse();
@@ -1357,7 +1364,8 @@ bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 ki
 
 void ChampionMan::championShootProjectile(Champion *champ, Thing thing, int16 kineticEnergy, int16 attack, int16 stepEnergy) {
 	Direction newDirection = champ->_dir;
-	_vm->_projexpl->createProjectile(thing, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, _vm->normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+	_vm->_projexpl->createProjectile(thing, dungeon._partyMapX, dungeon._partyMapY, _vm->normalizeModulo4((((champ->_cell - newDirection + 1) & 0x0002) >> 1) + newDirection), newDirection, kineticEnergy, attack, stepEnergy);
 	_vm->_projectileDisableMovementTicks = 4;
 	_vm->_lastProjectileDisabledMovementDirection = newDirection;
 }
@@ -1381,14 +1389,13 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 		if (_vm->_console->_debugGodmodeHP == false)
 			curHealth -= pendingDamage;
 
-		if (curHealth <= 0) {
+		if (curHealth <= 0)
 			championKill(championIndex);
-		} else {
+		else {
 			championPtr->_currHealth = curHealth;
 			setFlag(championPtr->_attributes, kDMAttributeStatistics);
-			if (pendingWounds) {
+			if (pendingWounds)
 				setFlag(championPtr->_attributes, kDMAttributeWounds);
-			}
 
 			int16 textPosX = championIndex * kDMChampionStatusBoxSpacing;
 			int16 textPosY;
@@ -1447,7 +1454,9 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 }
 
 void ChampionMan::championKill(uint16 champIndex) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Champion *curChampion = &_champions[champIndex];
+
 	curChampion->_currHealth = 0;
 	setFlag(curChampion->_attributes, kDMAttributeStatusBox);
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
@@ -1468,21 +1477,21 @@ void ChampionMan::championKill(uint16 champIndex) {
 		_vm->_inventoryMan->toggleInventory(kDMChampionCloseInventory);
 	}
 	dropAllObjects(champIndex);
-	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMMaskChampionBones | kDMThingTypeJunk);
+	Thing unusedThing = dungeon.getUnusedThing(kDMMaskChampionBones | kDMThingTypeJunk);
 	uint16 curCell = 0;
 	if (unusedThing != Thing::_none) {
-		Junk *L0966_ps_Junk = (Junk *)_vm->_dungeonMan->getThingData(unusedThing);
+		Junk *L0966_ps_Junk = (Junk *)dungeon.getThingData(unusedThing);
 		L0966_ps_Junk->setType(kDMJunkTypeBones);
 		L0966_ps_Junk->setDoNotDiscard(true);
 		L0966_ps_Junk->setChargeCount(champIndex);
 		curCell = curChampion->_cell;
-		_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(unusedThing, curCell), kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+		_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(unusedThing, curCell), kDMMapXNotOnASquare, 0, dungeon._partyMapX, dungeon._partyMapY);
 	}
 	curChampion->_symbolStep = 0;
 	curChampion->_symbols[0] = '\0';
-	curChampion->_dir = _vm->_dungeonMan->_partyDir;
+	curChampion->_dir = dungeon._partyDir;
 	curChampion->_maximumDamageReceived = 0;
-	uint16 curChampionIconIndex = getChampionIconIndex(curCell, _vm->_dungeonMan->_partyDir);
+	uint16 curChampionIconIndex = getChampionIconIndex(curCell, dungeon._partyDir);
 	if (_vm->indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap) {
 		_vm->_eventMan->_mousePointerBitmapUpdated = true;
 		_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
@@ -1550,10 +1559,11 @@ void ChampionMan::dropAllObjects(uint16 champIndex) {
 	};
 
 	uint16 curCell = _champions[champIndex]._cell;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	for (uint16 slotIndex = kDMSlotReadyHand; slotIndex < kDMSlotChest1; slotIndex++) {
 		Thing curThing = getObjectRemovedFromSlot(champIndex, slotDropOrder[slotIndex]);
 		if (curThing != Thing::_none)
-			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+			_vm->_moveSens->getMoveResult(_vm->thingWithNewCell(curThing, curCell), kDMMapXNotOnASquare, 0, dungeon._partyMapX, dungeon._partyMapY);
 	}
 }
 
@@ -1573,10 +1583,11 @@ void ChampionMan::applyTimeEffects() {
 	if (!_partyChampionCount)
 		return;
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Scent checkScent;
-	checkScent.setMapX(_vm->_dungeonMan->_partyMapX);
-	checkScent.setMapY(_vm->_dungeonMan->_partyMapY);
-	checkScent.setMapIndex(_vm->_dungeonMan->_partyMapIndex);
+	checkScent.setMapX(dungeon._partyMapX);
+	checkScent.setMapY(dungeon._partyMapY);
+	checkScent.setMapIndex(dungeon._partyMapIndex);
 
 	for (byte loopScentIndex = 0; loopScentIndex + 1 < _party._scentCount; loopScentIndex++) {
 		if (&_party._scents[loopScentIndex] != &checkScent) {
@@ -1678,8 +1689,8 @@ void ChampionMan::applyTimeEffects() {
 						curStatistic[kDMStatCurrent] -= curStatistic[kDMStatCurrent] / statisticMaximum;
 				}
 			}
-			if (!_partyIsSleeping && (championPtr->_dir != _vm->_dungeonMan->_partyDir) && (_vm->_projexpl->_lastCreatureAttackTime + 60 < _vm->_gameTime)) {
-				championPtr->_dir = _vm->_dungeonMan->_partyDir;
+			if (!_partyIsSleeping && (championPtr->_dir != dungeon._partyDir) && (_vm->_projexpl->_lastCreatureAttackTime + 60 < _vm->_gameTime)) {
+				championPtr->_dir = dungeon._partyDir;
 				championPtr->_maximumDamageReceived = 0;
 				setFlag(championPtr->_attributes, kDMAttributeIcon);
 			}
@@ -1870,6 +1881,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	if (_partyChampionCount == 4)
 		return;
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	uint16 previousPartyChampionCount = _partyChampionCount;
 	Champion *championPtr = &_champions[previousPartyChampionCount];
 	championPtr->resetToZero();
@@ -1879,26 +1891,26 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	championPtr->_actionIndex = kDMActionNone;
 	championPtr->_enableActionEventIndex = -1;
 	championPtr->_hideDamageReceivedIndex = -1;
-	championPtr->_dir = _vm->_dungeonMan->_partyDir;
+	championPtr->_dir = dungeon._partyDir;
 	uint16 viewCell = kDMViewCellFronLeft;
-	while (getIndexInCell(_vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir)) != kDMChampionNone)
+	while (getIndexInCell(_vm->normalizeModulo4(viewCell + dungeon._partyDir)) != kDMChampionNone)
 		viewCell++;
 
-	championPtr->_cell = (ViewCell)_vm->normalizeModulo4(viewCell + _vm->_dungeonMan->_partyDir);
+	championPtr->_cell = (ViewCell)_vm->normalizeModulo4(viewCell + dungeon._partyDir);
 	championPtr->_attributes = kDMAttributeIcon;
-	championPtr->_directionMaximumDamageReceived = _vm->_dungeonMan->_partyDir;
+	championPtr->_directionMaximumDamageReceived = dungeon._partyDir;
 	championPtr->_food = 1500 + _vm->getRandomNumber(256);
 	championPtr->_water = 1500 + _vm->getRandomNumber(256);
 	for (int16 slotIdx = kDMSlotReadyHand; slotIdx < kDMSlotChest1; slotIdx++)
 		championPtr->_slots[slotIdx] = Thing::_none;
 
-	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+	Thing curThing = dungeon.getSquareFirstThing(dungeon._partyMapX, dungeon._partyMapY);
 	while (curThing.getType() != kDMstringTypeText)
-		curThing = _vm->_dungeonMan->getNextThing(curThing);
+		curThing = dungeon.getNextThing(curThing);
 
 	char L0807_ac_DecodedChampionText[77];
 	char *decodedStringPtr = L0807_ac_DecodedChampionText;
-	_vm->_dungeonMan->decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
+	dungeon.decodeText(decodedStringPtr, curThing, (TextType)(kDMTextTypeScroll | kDMMaskDecodeEvenIfInvisible));
 
 	uint16 charIdx = 0;
 	char tmpChar;
@@ -1958,16 +1970,16 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 		_vm->_menuMan->drawActionIcon((ChampionIndex)(_partyChampionCount - 1));
 	}
 
-	int16 curMapX = _vm->_dungeonMan->_partyMapX;
-	int16 curMapY = _vm->_dungeonMan->_partyMapY;
-	uint16 championObjectsCell = _vm->returnOppositeDir(_vm->_dungeonMan->_partyDir);
-	curMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], curMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
-	curThing = _vm->_dungeonMan->getSquareFirstThing(curMapX, curMapY);
+	int16 curMapX = dungeon._partyMapX;
+	int16 curMapY = dungeon._partyMapY;
+	uint16 championObjectsCell = _vm->returnOppositeDir(dungeon._partyDir);
+	curMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir], curMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
+	curThing = dungeon.getSquareFirstThing(curMapX, curMapY);
 	int16 slotIdx = kDMSlotBackpackLine1_1;
 	while (curThing != Thing::_endOfList) {
 		ThingType thingType = curThing.getType();
 		if ((thingType > kDMThingTypeSensor) && (curThing.getCell() == championObjectsCell)) {
-			int16 objectAllowedSlots = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(curThing)]._allowedSlots;
+			int16 objectAllowedSlots = dungeon._objectInfos[dungeon.getObjectInfoIndex(curThing)]._allowedSlots;
 			uint16 curSlotIndex = kDMSlotReadyHand;
 			switch (thingType) {
 			case kDMThingTypeArmour: {
@@ -2028,7 +2040,7 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 			}
 			addObjectInSlot((ChampionIndex)previousPartyChampionCount, curThing, (ChampionSlot)curSlotIndex);
 		}
-		curThing = _vm->_dungeonMan->getNextThing(curThing);
+		curThing = dungeon.getNextThing(curThing);
 	}
 	_vm->_inventoryMan->toggleInventory((ChampionIndex)previousPartyChampionCount);
 	_vm->_menuMan->drawDisabledMenu();;
@@ -2258,10 +2270,11 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		_vm->_textMan->printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
 		setFlag(championAttributes, kDMAttributeViewport);
 	}
-	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, _vm->_dungeonMan->_partyDir);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, dungeon._partyDir);
 	if (getFlag(championAttributes, kDMAttributeIcon) && (_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
 		_vm->_displayMan->fillScreenBox(_boxChampionIcons[championIconIndex], _championColor[champIndex]);
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxChampionIcons), _vm->_displayMan->_bitmapScreen, _boxChampionIcons[championIconIndex], getChampionIconIndex(curChampion->_dir, _vm->_dungeonMan->_partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, kDMColorDarkestGray, 14, k200_heightScreen);
+		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxChampionIcons), _vm->_displayMan->_bitmapScreen, _boxChampionIcons[championIconIndex], getChampionIconIndex(curChampion->_dir, dungeon._partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, kDMColorDarkestGray, 14, k200_heightScreen);
 	}
 	if (getFlag(championAttributes, kDMAttributePanel) && isInventoryChampion) {
 		if (_vm->_pressingMouth)
