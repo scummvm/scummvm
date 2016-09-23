@@ -1429,8 +1429,7 @@ void Interface::drawMiniMap() {
 		// Draw the direction arrow
 		res._globalSprites.draw(window1, party._mazeDirection + 1,
 			Common::Point(267, 36));
-	}
-	else {
+	} else {
 		frame2 = (frame2 + 2) % 8;
 
 		// First draw the default surface bases for each cell to show

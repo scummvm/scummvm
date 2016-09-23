@@ -42,46 +42,46 @@ bool CloudsCutscenes::showCloudsTitle() {
 	SpriteResource logo[2] = {
 		SpriteResource("logo.vga"), SpriteResource("logo1.vga")
 	};
-sound.playFX(1);
+	sound.playFX(1);
 
-for (int idx = 0; idx < 80; ++idx) {
-	screen.restoreBackground();
-	logo[idx / 65].draw(screen, idx % 65);
-	screen.update();
+	for (int idx = 0; idx < 80; ++idx) {
+		screen.restoreBackground();
+		logo[idx / 65].draw(screen, idx % 65);
+		screen.update();
 
-	switch (idx) {
-	case 37:
-		sound.playFX(0);
-		sound.playFX(53);
-		sound.playSound("fire.voc");
-		break;
-	case 52:
-	case 60:
-		sound.playFX(3);
-		break;
-	case 64:
-		sound.playFX(2);
-		break;
-	case 66:
-		sound.playFX(52);
-		sound.playSound("meangro&.voc");
-		break;
-	default:
-		break;
+		switch (idx) {
+		case 37:
+			sound.playFX(0);
+			sound.playFX(53);
+			sound.playSound("fire.voc");
+			break;
+		case 52:
+		case 60:
+			sound.playFX(3);
+			break;
+		case 64:
+			sound.playFX(2);
+			break;
+		case 66:
+			sound.playFX(52);
+			sound.playSound("meangro&.voc");
+			break;
+		default:
+			break;
+		}
+
+		WAIT(2);
 	}
 
-	WAIT(2);
-}
+	screen.restoreBackground();
+	screen.update();
+	WAIT(30);
 
-screen.restoreBackground();
-screen.update();
-WAIT(30);
+	screen.fadeOut(8);
+	logo[0].clear();
+	logo[1].clear();
 
-screen.fadeOut(8);
-logo[0].clear();
-logo[1].clear();
-
-return true;
+	return true;
 }
 
 bool CloudsCutscenes::showCloudsIntro() {
@@ -410,30 +410,34 @@ const char *const CloudsCutscenes::_INTRO_VOCS[14] = {
 	"xeenlaff.voc", "tiger2&.voc", "crodo5.voc", "crodo6.voc",
 	"xeenlaff.voc", "tiger2&.voc"
 };
-const int CloudsCutscenes::_INTRO_FRAMES_LOOKUP[14] = { 0, 1, 0, 2, 0, 3, 4, 5, 0, 0, 6, 7, 0, 0 };
+
+const int CloudsCutscenes::_INTRO_FRAMES_LOOKUP[14] = {
+	0, 1, 0, 2, 0, 3, 4, 5, 0, 0, 6, 7, 0, 0
+};
+
 const int CloudsCutscenes::_INTRO_FRAMES_VALS[8][32] = {
 	{
 		4, 2, 3, 0, 2, 3, 2, 0, 1, 1, 3, 4, 3, 2, 4, 2,
 		3, 4, 3, 4, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	},{
+	}, {
 		3, 2, 3, 2, 4, 3, 0, 3, 2, 2, 3, 1, 2, 3, 3, 3,
 		2, 3, 2, 3, 2, 0, 3, 2, 0, 0, 0, 0, 0, 0, 2, 4
-	},{
+	}, {
 		3, 1, 2, 3, 0, 3, 4, 3, 2, 3, 0, 3, 2, 3, 2, 1,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 3
-	},{
+	}, {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 2, 3
-	},{
+	}, {
 		4, 2, 2, 3, 2, 3, 3, 4, 2, 4, 2, 0, 3, 2, 3, 2,
 		3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 2, 3
-	},{
+	}, {
 		2, 0, 2, 3, 2, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 2, 3, 1
-	},{
+	}, {
 		3, 2, 0, 2, 4, 2, 3, 2, 3, 2, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 3, 4, 0, 2
-	},{
+	}, {
 		3, 2, 4, 1, 2, 4, 3, 2, 3, 0, 2, 2, 0, 3, 2, 3,
 		2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	}
