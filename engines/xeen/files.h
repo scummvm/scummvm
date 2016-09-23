@@ -109,6 +109,20 @@ public:
 	 */
 	virtual bool open(const Common::String &filename, Common::Archive &archive);
 
+	/**
+	 * Opens the given file
+	 */
+	virtual bool open(const Common::FSNode &node) {
+		return Common::File::open(node);
+	}
+
+	/**
+	 * Opens the given file
+	 */
+	virtual bool open(SeekableReadStream *stream, const Common::String &name) {
+		return Common::File::open(stream, name);
+	}
+
 	Common::String readString();
 };
 
