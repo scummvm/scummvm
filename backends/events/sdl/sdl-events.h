@@ -125,7 +125,7 @@ protected:
 	/**
 	 * Maps the ASCII value of key
 	 */
-	int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
 
 	/**
 	 * Configures the key modifiers flags status
