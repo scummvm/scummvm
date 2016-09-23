@@ -878,7 +878,7 @@ void sceneHandler04_shootKozyawka() {
 						else
 							mq = sceneHandler04_kozFly7(g_vars->scene04_walkingKozyawka, (double)(phase - 6) * 0.3333333333333333);
 					} else {
-						mq = sceneHandler04_kozFly7(g_vars->scene04_walkingKozyawka, (double)(phase - 2) * 0.3333333333333333);
+						mq = sceneHandler04_kozFly5(g_vars->scene04_walkingKozyawka, (double)(phase - 2) * 0.3333333333333333);
 					}
 				} else {
 					mq = sceneHandler04_kozFly3(g_vars->scene04_walkingKozyawka, (double)phase * 0.5);
