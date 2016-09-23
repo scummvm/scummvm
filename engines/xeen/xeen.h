@@ -104,15 +104,17 @@ private:
 	Common::RandomSource _randomSource;
 	int _loadSaveSlot;
 
-	void showMainMenu();
-
 	void play();
 
 	void pleaseWait();
 
 	void gameLoop();
 protected:
-	virtual void showIntro() = 0;
+	/**
+	 * Outer gameplay loop responsible for dispatching control to game-specific
+	 * intros, main menus, or to play the actual game
+	 */
+	virtual void outerGameLoop() = 0;
 
 	/**
 	 * Play the game

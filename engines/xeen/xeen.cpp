@@ -121,17 +121,7 @@ void XeenEngine::initialize() {
 Common::Error XeenEngine::run() {
 	initialize();
 
-	showIntro();
-	if (shouldQuit())
-		return Common::kNoError;
-	File::setCurrentArchive(GAME_ARCHIVE);
-	_sound->stopAllAudio();
-
-	showMainMenu();
-	if (shouldQuit())
-		return Common::kNoError;
-
-	playGame();
+	outerGameLoop();
 
 	return Common::kNoError;
 }
@@ -273,18 +263,14 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 //	out->writeUint32LE(_events->getFrameCounter());
 }
 
-void XeenEngine::showMainMenu() {
-	//OptionsMenu::show(this);
-}
-
 void XeenEngine::playGame() {
 	_saves->reset();
+	File::setCurrentArchive(GAME_ARCHIVE);
+	_sound->stopAllAudio();
+
 	play();
 }
 
-/*
- * Secondary method for handling the actual gameplay
- */
 void XeenEngine::play() {
 	// TODO: Init variables
 	_quitMode = 0;

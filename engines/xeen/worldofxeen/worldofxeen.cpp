@@ -34,19 +34,50 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 	_seenDarkSideIntro = false;
 }
 
-void WorldOfXeenEngine::showIntro() {
-	File::setCurrentArchive(INTRO_ARCHIVE);
+void WorldOfXeenEngine::outerGameLoop() {
+	_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
 
-	// **DEBUG**
-	if (gDebugLevel == 0)
-		return;
+	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
+		switch (_pendingAction) {
+		case WOX_CLOUDS_INTRO:
+			if (showCloudsTitle())
+				showCloudsIntro();
+			_pendingAction = WOX_MENU;
+			break;
 
-	showCloudsEnding();
-	/*
-	bool completed = showDarkSideTitle();
-	if (!_seenDarkSideIntro && completed)
-		showDarkSideIntro();
-		*/
+		case WOX_CLOUDS_ENDING:
+			showCloudsEnding();
+			_pendingAction = WOX_MENU;
+			break;
+
+		case WOX_DARKSIDE_INTRO:
+			if (showDarkSideTitle())
+				showDarkSideIntro();
+			_pendingAction = WOX_MENU;
+			break;
+
+		case WOX_DARKSIDE_ENDING:
+			showDarkSideEnding();
+			_pendingAction = WOX_MENU;
+			break;
+
+		case WOX_WORLD_ENDING:
+			// TODO
+			return;
+
+		case WOX_MENU:
+			// TODO
+			_pendingAction = WOX_PLAY_GAME;
+			break;
+
+		case WOX_PLAY_GAME:
+			playGame();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 } // End of namespace WorldOfXeen
