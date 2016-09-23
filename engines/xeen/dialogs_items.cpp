@@ -718,7 +718,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		if (i._material < 37)
 			amount2 = Res.ELEMENTAL_DAMAGE[i._material] * 100;
 		else if (i._material > 58)
-			amount3 = Res.METAL_BASE_MULTIPLIERS[i._material - 37] * 100;
+			amount3 = Res.ELEMENTAL_DAMAGE[i._material - 59 + 7] * 100;
 		
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:

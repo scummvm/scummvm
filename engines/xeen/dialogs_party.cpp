@@ -382,10 +382,10 @@ void PartyDialog::createChar() {
 	bool restartFlag = true;
 	uint attribs[TOTAL_ATTRIBUTES];
 	bool allowedClasses[TOTAL_CLASSES];
-	Race race;
-	Sex sex;
+	Race race = HUMAN;
+	Sex sex = MALE;
 	Common::String msg;
-	int charIndex;
+	int charIndex = 0;
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_4;
