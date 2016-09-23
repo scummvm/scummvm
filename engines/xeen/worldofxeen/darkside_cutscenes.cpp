@@ -20,11 +20,11 @@
  *
  */
 
-#include "xeen/worldofxeen/darkside_cutscenes.h"
-#include "xeen/worldofxeen/worldofxeen.h"
-#include "xeen/resources.h"
 #include "xeen/sound.h"
 #include "xeen/xeen.h"
+#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/worldofxeen/worldofxeen_resources.h"
 
 namespace Xeen {
 namespace WorldOfXeen {

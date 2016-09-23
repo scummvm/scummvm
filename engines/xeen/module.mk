@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	worldofxeen/clouds_cutscenes.o \
 	worldofxeen/darkside_cutscenes.o \
 	worldofxeen/worldofxeen.o \
+	worldofxeen/worldofxeen_resources.o \
 	character.o \
 	combat.o \
 	cutscenes.o \

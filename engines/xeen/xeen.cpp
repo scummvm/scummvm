@@ -89,7 +89,7 @@ XeenEngine::~XeenEngine() {
 void XeenEngine::initialize() {
 	// Create sub-objects of the engine
 	_files = new FileManager(this);
-	_resources = new Resources();
+	_resources = Resources::init(this);
 	_combat = new Combat(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);

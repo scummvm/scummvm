@@ -33,7 +33,11 @@ namespace Xeen {
 
 #define Res (*g_resources)
 
+class XeenEngine;
+
 class Resources {
+protected:
+	Resources();
 public:
 	SpriteResource _globalSprites;
 	Common::StringArray _maeNames;		// Magic and equipment names
@@ -338,13 +342,11 @@ public:
 	static const char *const MONSTER_SPECIAL_ATTACKS[23];
 	static const char *const IDENTIFY_MONSTERS;
 	static const char *const EVENT_SAMPLES[6];
-	static const char *const CLOUDS_INTRO1;
-	static const char *const DARKSIDE_ENDING1;
-	static const char *const DARKSIDE_ENDING2;
-	static const char *const PHAROAH_ENDING_TEXT1;
-	static const char *const PHAROAH_ENDING_TEXT2;
 public:
-	Resources();
+	/**
+	 * Initializes an instnace of the resources
+	 */
+	static Resources *init(XeenEngine *vm);
 };
 
 extern Resources *g_resources;
