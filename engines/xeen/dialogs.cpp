@@ -56,7 +56,7 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val) {
 
 void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 	for (uint idx = 0; idx < MAX_ACTIVE_PARTY; ++idx) {
-		addButton(Common::Rect(CHAR_FACES_X[idx], 150, CHAR_FACES_X[idx] + 32, 182),
+		addButton(Common::Rect(Res.CHAR_FACES_X[idx], 150, Res.CHAR_FACES_X[idx] + 32, 182),
 			Common::KEYCODE_F1 + idx);
 	}
 }
@@ -143,7 +143,7 @@ void CreditsScreen::execute() {
 	screen._windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
-	screen._windows[0].writeString(CREDITS);
+	screen._windows[0].writeString(Res.CREDITS);
 	doScroll(false, false);
 	
 	events.setCursor(0);
@@ -163,7 +163,7 @@ void PleaseWait::show(XeenEngine *vm) {
 	if (vm->_mode != MODE_0) {
 		Window &w = vm->_screen->_windows[9];
 		w.open();
-		w.writeString(PLEASE_WAIT);
+		w.writeString(Res.PLEASE_WAIT);
 		w.update();
 	}
 }

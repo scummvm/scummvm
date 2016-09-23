@@ -72,7 +72,7 @@ void PartyDialog::execute() {
 		Window &w = screen._windows[11];
 		w.open();
 		setupFaces(startingChar, false);
-		w.writeString(Common::String::format(PARTY_DIALOG_TEXT, _partyDetails.c_str()));
+		w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
 		w.drawList(&_faceDrawStructs[0], 4);
 
 		_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -114,7 +114,7 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_e:
 			case Common::KEYCODE_x:
 				if (party._activeParty.size() == 0) {
-					ErrorScroll::show(_vm, NO_ONE_TO_ADVENTURE_WITH);
+					ErrorScroll::show(_vm, Res.NO_ONE_TO_ADVENTURE_WITH);
 				} else {
 					if (_vm->_mode != MODE_0) {
 						for (int idx = 4; idx >= 0; --idx) {
@@ -166,7 +166,7 @@ void PartyDialog::execute() {
 					if (idx == party._activeParty.size()) {
 						if (party._activeParty.size() == MAX_ACTIVE_PARTY) {
 							sound.playFX(21);
-							ErrorScroll::show(_vm, YOUR_PARTY_IS_FULL);
+							ErrorScroll::show(_vm, Res.YOUR_PARTY_IS_FULL);
 						} else {
 							// Add the character to the active party
 							party._activeParty.push_back(party._roster[
@@ -198,7 +198,7 @@ void PartyDialog::execute() {
 			case Common::KEYCODE_c:
 				// Create
 				if (_charList.size() == XEEN_TOTAL_CHARACTERS) {
-					ErrorScroll::show(_vm, YOUR_ROSTER_IS_FULL);
+					ErrorScroll::show(_vm, Res.YOUR_ROSTER_IS_FULL);
 				} else {
 					screen.fadeOut();
 					w.close();
@@ -221,10 +221,10 @@ void PartyDialog::execute() {
 						int charIndex = charButtonValue - Common::KEYCODE_1 + startingChar;
 						Character &c = party._roster[_charList[charIndex]];
 						if (c.hasSpecialItem()) {
-							ErrorScroll::show(_vm, HAS_SLAYER_SWORD);
+							ErrorScroll::show(_vm, Res.HAS_SLAYER_SWORD);
 						} else {
-							Common::String msg = Common::String::format(SURE_TO_DELETE_CHAR,
-								c._name.c_str(), CLASS_NAMES[c._class]);
+							Common::String msg = Common::String::format(Res.SURE_TO_DELETE_CHAR,
+								c._name.c_str(), Res.CLASS_NAMES[c._class]);
 							if (Confirm::show(_vm, msg)) {
 								// If the character is in the party, remove it
 								for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
@@ -327,10 +327,10 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 		Common::Rect &b = _buttons[7 + posIndex]._bounds;
 		b.moveTo((posIndex & 1) ? 117 : 16, b.top);
 		Character &ps = party._roster[_charList[firstDisplayChar + posIndex]];
-		charNames[posIndex] = isInParty ? IN_PARTY : ps._name;
-		charRaces[posIndex] = RACE_NAMES[ps._race];
-		charSex[posIndex] = SEX_NAMES[ps._sex];
-		charClasses[posIndex] = CLASS_NAMES[ps._class];
+		charNames[posIndex] = isInParty ? Res.IN_PARTY : ps._name;
+		charRaces[posIndex] = Res.RACE_NAMES[ps._race];
+		charSex[posIndex] = Res.SEX_NAMES[ps._sex];
+		charClasses[posIndex] = Res.CLASS_NAMES[ps._class];
 	}
 
 	drawParty(updateFlag);
@@ -344,7 +344,7 @@ void PartyDialog::setupFaces(int firstDisplayChar, bool updateFlag) {
 				_charList[firstDisplayChar + posIndex]]._faceSprites;
 	}
 
-	_partyDetails = Common::String::format(PARTY_DETAILS,
+	_partyDetails = Common::String::format(Res.PARTY_DETAILS,
 		charNames[0].c_str(), charRaces[0].c_str(), charSex[0].c_str(), charClasses[0].c_str(),
 		charNames[1].c_str(), charRaces[1].c_str(), charSex[1].c_str(), charClasses[1].c_str(),
 		charNames[2].c_str(), charRaces[2].c_str(), charSex[2].c_str(), charClasses[2].c_str(),
@@ -356,7 +356,7 @@ void PartyDialog::startingCharChanged(int firstDisplayChar) {
 	Window &w = _vm->_screen->_windows[11];
 
 	setupFaces(firstDisplayChar, true);
-	w.writeString(Common::String::format(PARTY_DIALOG_TEXT, _partyDetails.c_str()));
+	w.writeString(Common::String::format(Res.PARTY_DIALOG_TEXT, _partyDetails.c_str()));
 	w.drawList(_faceDrawStructs, 4);
 
 	_uiSprites.draw(w, 0, Common::Point(16, 100));
@@ -701,8 +701,8 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 
 	w.setBounds(Common::Rect(50, isDelete ? 112 : 76, 266, isDelete ? 148 : 112));
 	w.open();
-	w.writeString(Common::String::format(REMOVE_OR_DELETE_WHICH,
-		REMOVE_DELETE[isDelete ? 1 : 0]));
+	w.writeString(Common::String::format(Res.REMOVE_OR_DELETE_WHICH,
+		Res.REMOVE_DELETE[isDelete ? 1 : 0]));
 	iconSprites.draw(w, 0, Common::Point(225, isDelete ? 120 : 84));
 	w.update();
 
@@ -808,19 +808,19 @@ int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 	Common::String skillStr, classStr, raceSkillStr;
 
 	// If a selected class is provided, set the default skill for that class
-	if (classId != -1 && NEW_CHAR_SKILLS[classId] != -1) {
-		const char *skillP = SKILL_NAMES[NEW_CHAR_SKILLS[classId]];
-		skillStr = Common::String(skillP, skillP + NEW_CHAR_SKILLS_LEN[classId]);
+	if (classId != -1 && Res.NEW_CHAR_SKILLS[classId] != -1) {
+		const char *skillP = Res.SKILL_NAMES[Res.NEW_CHAR_SKILLS[classId]];
+		skillStr = Common::String(skillP, skillP + Res.NEW_CHAR_SKILLS_LEN[classId]);
 	}
 
 	// If a class is provided, set the class name
 	if (classId != -1) {
-		classStr = Common::String::format("\t062\v168%s", CLASS_NAMES[classId]);
+		classStr = Common::String::format("\t062\v168%s", Res.CLASS_NAMES[classId]);
 	}
 
 	// Set up default skill for the race, if any
-	if (NEW_CHAR_RACE_SKILLS[race] != -1) {
-		raceSkillStr = SKILL_NAMES[NEW_CHAR_RACE_SKILLS[race]];
+	if (Res.NEW_CHAR_RACE_SKILLS[race] != -1) {
+		raceSkillStr = Res.SKILL_NAMES[Res.NEW_CHAR_RACE_SKILLS[race]];
 	}
 
 	// Set up color to use for each skill string to be displayed, based
@@ -836,7 +836,7 @@ int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 	}
 
 	// Return stats details and character class
-	msg = Common::String::format(NEW_CHAR_STATS, RACE_NAMES[race], SEX_NAMES[sex],
+	msg = Common::String::format(Res.NEW_CHAR_STATS, Res.RACE_NAMES[race], Res.SEX_NAMES[sex],
 		attribs[MIGHT], attribs[INTELLECT], attribs[PERSONALITY],
 		attribs[ENDURANCE], attribs[SPEED], attribs[ACCURACY], attribs[LUCK],
 		classColors[CLASS_KNIGHT], classColors[CLASS_PALADIN],
@@ -909,7 +909,7 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 
 	Window &w = screen._windows[26];
 	w.open();
-	w.writeString(Common::String::format(EXCHANGE_ATTR_WITH, STAT_NAMES[srcAttr - 1]));
+	w.writeString(Common::String::format(Res.EXCHANGE_ATTR_WITH, Res.STAT_NAMES[srcAttr - 1]));
 	icons.draw(w, 0, Common::Point(118, 58));
 	w.update();
 
@@ -969,7 +969,7 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 bool PartyDialog::saveCharacter(Character &c, int classId,
 		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
 	if (classId == -1) {
-		ErrorScroll::show(_vm, SELECT_CLASS_BEFORE_SAVING);
+		ErrorScroll::show(_vm, Res.SELECT_CLASS_BEFORE_SAVING);
 		return false;
 	}
 
@@ -982,7 +982,7 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	saveButtons();
-	w.writeString(NAME_FOR_NEW_CHARACTER);
+	w.writeString(Res.NAME_FOR_NEW_CHARACTER);
 
 	result = Input::show(_vm, &w, name, 10, 200);
 	w.close();
@@ -1008,12 +1008,12 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 	c._accuracy._permanent = attribs[ACCURACY];
 	c._luck._permanent = attribs[LUCK];
 
-	c._magicResistence._permanent = RACE_MAGIC_RESISTENCES[race];
-	c._fireResistence._permanent = RACE_FIRE_RESISTENCES[race];
-	c._electricityResistence._permanent = RACE_ELECTRIC_RESISTENCES[race];
-	c._coldResistence._permanent = RACE_COLD_RESISTENCES[race];
-	c._energyResistence._permanent = RACE_ENERGY_RESISTENCES[race];
-	c._poisonResistence._permanent = RACE_POISON_RESISTENCES[race];
+	c._magicResistence._permanent = Res.RACE_MAGIC_RESISTENCES[race];
+	c._fireResistence._permanent = Res.RACE_FIRE_RESISTENCES[race];
+	c._electricityResistence._permanent = Res.RACE_ELECTRIC_RESISTENCES[race];
+	c._coldResistence._permanent = Res.RACE_COLD_RESISTENCES[race];
+	c._energyResistence._permanent = Res.RACE_ENERGY_RESISTENCES[race];
+	c._poisonResistence._permanent = Res.RACE_POISON_RESISTENCES[race];
 
 	c._birthYear = party._year - 18;
 	c._birthDay = party._day;
@@ -1022,18 +1022,18 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 
 	// Set up any default spells for the character's class
 	for (int idx = 0; idx < 4; ++idx) {
-		if (NEW_CHARACTER_SPELLS[c._class][idx] != -1) {
+		if (Res.NEW_CHARACTER_SPELLS[c._class][idx] != -1) {
 			c._hasSpells = true;
-			c._currentSpell = NEW_CHARACTER_SPELLS[c._class][idx];
+			c._currentSpell = Res.NEW_CHARACTER_SPELLS[c._class][idx];
 			c._spells[c._currentSpell] = 1;
 		}
 	}
 
-	int classSkill = NEW_CHAR_SKILLS[c._class];
+	int classSkill = Res.NEW_CHAR_SKILLS[c._class];
 	if (classSkill != -1)
 		c._skills[classSkill] = 1;
 
-	int raceSkill = NEW_CHAR_RACE_SKILLS[c._race];
+	int raceSkill = Res.NEW_CHAR_RACE_SKILLS[c._race];
 	if (raceSkill != -1)
 		c._skills[raceSkill] = 1;
 

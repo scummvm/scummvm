@@ -56,7 +56,7 @@ void CharacterInfo::execute(int charIndex) {
 	do {
 		if (redrawFlag) {
 			Common::String charDetails = loadCharacterDetails(*c);
-			w.writeString(Common::String::format(CHARACTER_TEMPLATE, charDetails.c_str()));
+			w.writeString(Common::String::format(Res.CHARACTER_TEMPLATE, charDetails.c_str()));
 			w.drawList(_drawList, 24);
 			w.update();
 			redrawFlag = false;
@@ -175,7 +175,7 @@ void CharacterInfo::execute(int charIndex) {
 
 		case Common::KEYCODE_e:
 			if (oldMode == MODE_COMBAT) {
-				ErrorScroll::show(_vm, EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
+				ErrorScroll::show(_vm, Res.EXCHANGING_IN_COMBAT, WT_FREEZE_WAIT);
 			} else {
 				_vm->_mode = oldMode;
 				ExchangeDialog::show(_vm, c, charIndex);
@@ -285,9 +285,9 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c._energyResistence._permanent + c.itemScan(15) + c._energyResistence._temporary +
 		c._magicResistence._permanent + c.itemScan(16) + c._magicResistence._temporary;
 
-	return Common::String::format(CHARACTER_DETAILS,
-		PARTY_GOLD, c._name.c_str(), SEX_NAMES[c._sex],
-		RACE_NAMES[c._race], CLASS_NAMES[c._class],
+	return Common::String::format(Res.CHARACTER_DETAILS,
+		Res.PARTY_GOLD, c._name.c_str(), Res.SEX_NAMES[c._sex],
+		Res.RACE_NAMES[c._race], Res.CLASS_NAMES[c._class],
 		c.statColor(c.getStat(MIGHT), c.getStat(MIGHT, true)), c.getStat(MIGHT),
 		c.statColor(c.getStat(ACCURACY), c.getStat(ACCURACY, true)), c.getStat(ACCURACY),
 		c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
@@ -307,11 +307,11 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 		c.statColor(c.getStat(SPEED), c.getStat(SPEED, true)), c.getStat(SPEED),
 		c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
 		c.getNumAwards(),
-		CONDITION_COLORS[condition], CONDITION_NAMES[condition],
-		condition == NO_CONDITION && party._blessed ? PLUS_14 : "",
-		condition == NO_CONDITION && party._powerShield ? PLUS_14 : "",
-		condition == NO_CONDITION && party._holyBonus ? PLUS_14 : "",
-		condition == NO_CONDITION && party._heroism ? PLUS_14 : ""
+		Res.CONDITION_COLORS[condition], Res.CONDITION_NAMES[condition],
+		condition == NO_CONDITION && party._blessed ? Res.PLUS_14 : "",
+		condition == NO_CONDITION && party._powerShield ? Res.PLUS_14 : "",
+		condition == NO_CONDITION && party._holyBonus ? Res.PLUS_14 : "",
+		condition == NO_CONDITION && party._heroism ? Res.PLUS_14 : ""
 	);
 }
 
@@ -356,18 +356,18 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		stat1 = c.getStat((Attribute)attrib, false);
 		stat2 = c.getStat((Attribute)attrib, true);
 		idx = 0;
-		while (STAT_VALUES[idx] <= stat1)
+		while (Res.STAT_VALUES[idx] <= stat1)
 			++idx;
 
-		msg = Common::String::format(CURRENT_MAXIMUM_RATING_TEXT, STAT_NAMES[attrib],
-			stat1, stat2, RATING_TEXT[idx]);
+		msg = Common::String::format(Res.CURRENT_MAXIMUM_RATING_TEXT, Res.STAT_NAMES[attrib],
+			stat1, stat2, Res.RATING_TEXT[idx]);
 		break;
 
 	case 7:
 		// Age
 		stat1 = c.getAge(false);
 		stat2 = c.getAge(true);
-		msg = Common::String::format(AGE_TEXT, STAT_NAMES[attrib],
+		msg = Common::String::format(Res.AGE_TEXT, Res.STAT_NAMES[attrib],
 			stat1, stat2, c._birthDay, c._birthYear);
 		break;
 
@@ -376,7 +376,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		const int CLASS_ATTACK_GAINS[10] = { 5, 6, 6, 7, 8, 6, 5, 4, 7, 6 };
 		idx = c.getCurrentLevel() / CLASS_ATTACK_GAINS[c._class] + 1;
 
-		msg = Common::String::format(LEVEL_TEXT, STAT_NAMES[attrib], 
+		msg = Common::String::format(Res.LEVEL_TEXT, Res.STAT_NAMES[attrib],
 			c.getCurrentLevel(), c._level._permanent,
 			idx, idx > 1 ? "s" : "",
 			c._level._permanent);
@@ -387,7 +387,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Armor Class
 		stat1 = c.getArmorClass(false);
 		stat2 = c.getArmorClass(true);
-		msg = Common::String::format(CURRENT_MAXIMUM_TEXT, STAT_NAMES[attrib], 
+		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
 			stat1, stat2);
 		bounds.setHeight(42);
 		break;
@@ -396,7 +396,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Hit Points
 		stat1 = c._currentHp;
 		stat2 = c.getMaxHP();
-		msg = Common::String::format(CURRENT_MAXIMUM_TEXT, STAT_NAMES[attrib], 
+		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
 			stat1, stat2);
 		bounds.setHeight(42);
 		break;
@@ -405,14 +405,14 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Spell Points
 		stat1 = c._currentSp;
 		stat2 = c.getMaxSP();
-		msg = Common::String::format(CURRENT_MAXIMUM_TEXT, STAT_NAMES[attrib], 
+		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
 			stat1, stat2);
 		bounds.setHeight(42);
 		break;
 
 	case 12:
 		// Resistences
-		msg = Common::String::format(RESISTENCES_TEXT, STAT_NAMES[attrib],
+		msg = Common::String::format(Res.RESISTENCES_TEXT, Res.STAT_NAMES[attrib],
 			c._fireResistence._permanent + c.itemScan(11) + c._fireResistence._temporary,
 			c._coldResistence._permanent + c.itemScan(13) + c._coldResistence._temporary,
 			c._electricityResistence._permanent + c.itemScan(12) + c._electricityResistence._temporary,
@@ -431,19 +431,19 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 				if (c._skills[skill]) {
 					if (skill == THIEVERY) {
 						lines[0] = Common::String::format("\n\t020%s%u",
-							SKILL_NAMES[THIEVERY], c.getThievery());
+							Res.SKILL_NAMES[THIEVERY], c.getThievery());
 					} else {
-						lines[skill] = Common::String::format("\n\t020%s", SKILL_NAMES[skill]);
+						lines[skill] = Common::String::format("\n\t020%s", Res.SKILL_NAMES[skill]);
 					}
 				}
 			}
 		} else {
-			lines[0] = NONE;
+			lines[0] = Res.NONE;
 			numLines = 1;
 		}
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-			STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
+			Res.STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
 			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
 			lines[17].c_str(), lines[6].c_str(), lines[7].c_str(), lines[8].c_str(),
 			lines[9].c_str(), lines[10].c_str(), lines[11].c_str(), lines[12].c_str(),
@@ -465,23 +465,23 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		// Experience
 		stat1 = c.getCurrentExperience();
 		stat2 = c.experienceToNextLevel();
-		msg = Common::String::format(EXPERIENCE_TEXT,
-			STAT_NAMES[attrib], stat1,
-			stat2 == 0 ? ELIGIBLE : Common::String::format("%d", stat2).c_str()
+		msg = Common::String::format(Res.EXPERIENCE_TEXT,
+			Res.STAT_NAMES[attrib], stat1,
+			stat2 == 0 ? Res.ELIGIBLE : Common::String::format("%d", stat2).c_str()
 		);
 		bounds.setHeight(43);
 		break;
 
 	case 16:
 		// Gold
-		msg = Common::String::format(IN_PARTY_IN_BANK, CONSUMABLE_NAMES[0],
+		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[0],
 			party._gold, party._bankGold);
 		bounds.setHeight(43);
 		break;
 
 	case 17:
 		// Gems
-		msg = Common::String::format(IN_PARTY_IN_BANK, CONSUMABLE_NAMES[1],
+		msg = Common::String::format(Res.IN_PARTY_IN_BANK, Res.CONSUMABLE_NAMES[1],
 			party._gems, party._bankGems);
 		bounds.setHeight(43);
 		break;
@@ -489,7 +489,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	case 18: {
 		// Food
 		int food = (party._food / party._activeParty.size()) / 3;
-		msg = Common::String::format(FOOD_TEXT, CONSUMABLE_NAMES[2],
+		msg = Common::String::format(Res.FOOD_TEXT, Res.CONSUMABLE_NAMES[2],
 			party._food, food, food != 1 ? "s" : "");
 		break;
 	}
@@ -502,10 +502,10 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			if (c._conditions[condition]) {
 				if (condition >= UNCONSCIOUS) {
 					lines[condition] = Common::String::format("\n\t020%s",
-						CONDITION_NAMES[condition]);
+						Res.CONDITION_NAMES[condition]);
 				} else {
 					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						CONDITION_NAMES[condition], c._conditions[condition]);
+						Res.CONDITION_NAMES[condition], c._conditions[condition]);
 				}
 
 				++total;
@@ -514,21 +514,21 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 		Condition condition = c.worstCondition();
 		if (condition == NO_CONDITION) {
-			lines[0] = Common::String::format("\n\t020%s", GOOD);
+			lines[0] = Common::String::format("\n\t020%s", Res.GOOD);
 			++total;
 		}
 
 		if (party._blessed)
-			lines[16] = Common::String::format(BLESSED, party._blessed);
+			lines[16] = Common::String::format(Res.BLESSED, party._blessed);
 		if (party._powerShield)
-			lines[17] = Common::String::format(POWER_SHIELD, party._powerShield);
+			lines[17] = Common::String::format(Res.POWER_SHIELD, party._powerShield);
 		if (party._holyBonus)
-			lines[18] = Common::String::format(HOLY_BONUS, party._holyBonus);
+			lines[18] = Common::String::format(Res.HOLY_BONUS, party._holyBonus);
 		if (party._heroism)
-			lines[19] = Common::String::format(HEROISM, party._heroism);
+			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
+			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
 			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
 			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),

@@ -217,7 +217,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	groupo.draw(screen, 0);
 	groupo.draw(screen, 1, Common::Point(160, 0));
 	crodo.draw(screen, 0, Common::Point(0, -5));
-	screen._windows[0].writeString(CLOUDS_INTRO1);
+	screen._windows[0].writeString(Res.CLOUDS_INTRO1);
 	
 	// Unroll a scroll
 	if (doScroll(false, true))
@@ -285,7 +285,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 			case 12:
 			case 13: {
 				crodo.draw(screen, 0, Common::Point(0, -5));
-				screen._windows[0].writeString(CLOUDS_INTRO1);
+				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
@@ -298,7 +298,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 				if (lookup > 30)
 					lookup = 30;
 				frameCtr = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
-				screen._windows[0].writeString(CLOUDS_INTRO1);
+				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);

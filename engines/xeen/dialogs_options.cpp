@@ -215,7 +215,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 
 	// Draw the basic frame for the optitons menu and title text
 	screen._windows[GAME_WINDOW].frame();
-	screen._windows[GAME_WINDOW].writeString(OPTIONS_TITLE);
+	screen._windows[GAME_WINDOW].writeString(Res.OPTIONS_TITLE);
 
 	drawButtons(&screen._windows[0]);
 

@@ -41,7 +41,7 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 
 	Window &w = screen._windows[31];
 	w.open();
-	w.writeString(EXCHANGE_WITH_WHOM);
+	w.writeString(Res.EXCHANGE_WITH_WHOM);
 	_iconSprites.draw(w, 0, Common::Point(225, 120));
 	w.update();
 

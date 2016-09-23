@@ -58,7 +58,7 @@ void Quests::execute() {
 		windowFlag = true;
 	}
 
-	screen._windows[29].writeString(QUESTS_DIALOG_TEXT);
+	screen._windows[29].writeString(Res.QUESTS_DIALOG_TEXT);
 	drawButtons(&screen);
 
 	while (!_vm->shouldQuit()) {
@@ -74,10 +74,10 @@ void Quests::execute() {
 			for (int idx = 0; idx < TOTAL_QUEST_ITEMS; ++idx) {
 				if (party._questItems[idx]) {
 					if (!count && !headerShown && idx < 35) {
-						lines[count++] = CLOUDS_OF_XEEN_LINE;
+						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
 					}
 					if (idx >= 35 && !headerShown) {
-						lines[count++] = DARKSIDE_OF_XEEN_LINE;
+						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
 
@@ -91,20 +91,20 @@ void Quests::execute() {
 					case 83:
 					case 84:
 						lines[count++] = Common::String::format("%d %s%c",
-							party._questItems[idx], QUEST_ITEM_NAMES[idx],
+							party._questItems[idx], Res.QUEST_ITEM_NAMES[idx],
 							party._questItems[idx] == 1 ? ' ' : 's');
 						break;
 					default:
-						lines[count++] = QUEST_ITEM_NAMES[idx];
+						lines[count++] = Res.QUEST_ITEM_NAMES[idx];
 						break;
 					}
 				}
 			}
 
 			if (count == 0) {
-				screen._windows[30].writeString(NO_QUEST_ITEMS);
+				screen._windows[30].writeString(Res.NO_QUEST_ITEMS);
 			} else {
-				screen._windows[30].writeString(Common::String::format(QUEST_ITEMS_DATA,
+				screen._windows[30].writeString(Common::String::format(Res.QUEST_ITEMS_DATA,
 					lines[topRow].c_str(), lines[topRow + 1].c_str(),
 					lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
 					lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
@@ -123,10 +123,10 @@ void Quests::execute() {
 			for (int idx = 0; idx < TOTAL_QUEST_FLAGS; ++idx) {
 				if (party._quests[idx]) {
 					if (!count && !headerShown && idx < 29) {
-						lines[count++] = CLOUDS_OF_XEEN_LINE;
+						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
 					}
 					if (idx > 28 && !headerShown) {
-						lines[count++] = DARKSIDE_OF_XEEN_LINE;
+						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
 
@@ -135,9 +135,9 @@ void Quests::execute() {
 			}
 
 			if (count == 0)
-				lines[1] = NO_CURRENT_QUESTS;
+				lines[1] = Res.NO_CURRENT_QUESTS;
 
-			screen._windows[30].writeString(Common::String::format(CURRENT_QUESTS_DATA,
+			screen._windows[30].writeString(Common::String::format(Res.CURRENT_QUESTS_DATA,
 				lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()));
 			break;
 
@@ -150,10 +150,10 @@ void Quests::execute() {
 			for (int idx = 0; idx < MAX_DIALOG_LINES; ++idx) {
 				if (party._worldFlags[idx]) {
 					if (!count && !headerShown && idx < 72) {
-						lines[count++] = CLOUDS_OF_XEEN_LINE;
+						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
 					}
 					if (idx >= 72 && !headerShown) {
-						lines[count++] = DARKSIDE_OF_XEEN_LINE;
+						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
 
@@ -162,9 +162,9 @@ void Quests::execute() {
 			}
 
 			if (count == 0)
-				lines[1] = NO_AUTO_NOTES;
+				lines[1] = Res.NO_AUTO_NOTES;
 
-			screen._windows[30].writeString(Common::String::format(AUTO_NOTES_DATA,
+			screen._windows[30].writeString(Common::String::format(Res.AUTO_NOTES_DATA,
 				lines[topRow].c_str(), lines[topRow + 1].c_str(),
 				lines[topRow + 2].c_str(), lines[topRow + 3].c_str(),
 				lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),

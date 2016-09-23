@@ -84,18 +84,18 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			Common::String msg;
 			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_8 && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				msg = Common::String::format(ITEMS_DIALOG_TEXT1,
-					BTN_SELL, BTN_IDENTIFY, BTN_FIX);
+				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT1,
+					Res.BTN_SELL, Res.BTN_IDENTIFY, Res.BTN_FIX);
 			} else if (mode != ITEMMODE_ENCHANT  && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				msg = Common::String::format(ITEMS_DIALOG_TEXT1,
-					category == 3 ? BTN_USE : BTN_EQUIP, 
-					BTN_REMOVE, BTN_DISCARD, BTN_QUEST);
+				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT1,
+					category == 3 ? Res.BTN_USE : Res.BTN_EQUIP, 
+					Res.BTN_REMOVE, Res.BTN_DISCARD, Res.BTN_QUEST);
 			} else if (mode == ITEMMODE_ENCHANT) {
-				msg = Common::String::format(ITEMS_DIALOG_TEXT2, BTN_ENCHANT);
+				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_ENCHANT);
 			} else if (mode == ITEMMODE_RECHARGE) {
-				msg = Common::String::format(ITEMS_DIALOG_TEXT2, BTN_RECHARGE);
+				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_RECHARGE);
 			} else {
-				msg = Common::String::format(ITEMS_DIALOG_TEXT2, BTN_GOLD);
+				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_GOLD);
 			}
 
 			screen._windows[29].writeString(msg);
@@ -147,11 +147,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					if (i._id) {
 						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
 								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
-							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE1, 
+							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE1, 
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str()));
 						} else {
-							lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
+							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE2,
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
 								calcItemCost(c, idx, mode,
@@ -167,7 +167,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						else
 							ds._frame = 14;
 					} else if (_itemsDrawList[idx]._sprites == nullptr) {
-						lines.push_back(NO_ITEMS_AVAILABLE);
+						lines.push_back(Res.NO_ITEMS_AVAILABLE);
 					}
 					break;
 				}
@@ -179,7 +179,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					if (i._material == 0) {
 						// No item
 						if (idx == 0) {
-							lines.push_back(NO_ITEMS_AVAILABLE);
+							lines.push_back(Res.NO_ITEMS_AVAILABLE);
 						}
 					} else {
 						ItemsMode tempMode = mode;
@@ -192,7 +192,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							skill = 1;
 						}
 
-						lines.push_back(Common::String::format(ITEMS_DIALOG_LINE2,
+						lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE2,
 							arr[idx], idx + 1,
 							c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
 							calcItemCost(c, idx, tempMode, skill, category)
@@ -212,10 +212,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			switch (mode) {
 			case ITEMMODE_CHAR_INFO:
 			case ITEMMODE_8:
-				screen._windows[30].writeString(Common::String::format(X_FOR_THE_Y,
+				screen._windows[30].writeString(Common::String::format(Res.X_FOR_THE_Y,
 					category == CATEGORY_MISC ? "\x3l" : "\x3c",
-					CATEGORY_NAMES[category], c->_name.c_str(), CLASS_NAMES[c->_class],
-					category == CATEGORY_MISC ? FMT_CHARGES : " ",
+					Res.CATEGORY_NAMES[category], c->_name.c_str(), Res.CLASS_NAMES[c->_class],
+					category == CATEGORY_MISC ? Res.FMT_CHARGES : " ",
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
@@ -224,8 +224,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_BLACKSMITH: {
 				// Original uses var in this block that's never set?!
 				const int v1 = 0;
-				screen._windows[30].writeString(Common::String::format(AVAILABLE_GOLD_COST,
-					CATEGORY_NAMES[category], 
+				screen._windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
+					Res.CATEGORY_NAMES[category], 
 					v1 ? "" : "s", party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
@@ -240,9 +240,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_REPAIR:
 			case ITEMMODE_IDENTIFY:
 			case ITEMMODE_TO_GOLD:
-				screen._windows[30].writeString(Common::String::format(X_FOR_Y,
-					CATEGORY_NAMES[category], startingChar->_name.c_str(),
-					(mode == ITEMMODE_RECHARGE || mode == ITEMMODE_ENCHANT) ? CHARGES : COST,
+				screen._windows[30].writeString(Common::String::format(Res.X_FOR_Y,
+					Res.CATEGORY_NAMES[category], startingChar->_name.c_str(),
+					(mode == ITEMMODE_RECHARGE || mode == ITEMMODE_ENCHANT) ? Res.CHARGES : Res.COST,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
@@ -251,8 +251,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			case ITEMMODE_3:
 			case ITEMMODE_5:
-				screen._windows[30].writeString(Common::String::format(X_FOR_Y_GOLD,
-					CATEGORY_NAMES[category], c->_name.c_str(), party._gold, CHARGES,
+				screen._windows[30].writeString(Common::String::format(Res.X_FOR_Y_GOLD,
+					Res.CATEGORY_NAMES[category], c->_name.c_str(), party._gold, Res.CHARGES,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
@@ -356,10 +356,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						XeenItem &srcItem = srcItems[itemIndex];
 
 						if (srcItem._bonusFlags & ITEMFLAG_CURSED)
-							ErrorScroll::show(_vm, CANNOT_REMOVE_CURSED_ITEM);
+							ErrorScroll::show(_vm, Res.CANNOT_REMOVE_CURSED_ITEM);
 						else if (destItems[INV_ITEMS_TOTAL - 1]._id)
 							ErrorScroll::show(_vm, Common::String::format(
-							CATEGORY_BACKPACK_IS_FULL[category], c->_name.c_str()));
+								Res.CATEGORY_BACKPACK_IS_FULL[category], c->_name.c_str()));
 						else {
 							destItem = srcItem;
 							srcItem.clear();
@@ -581,7 +581,7 @@ void ItemsDialog::blackData2CharData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int slotIndex = 0;
-	while (party._mazeId != (int)BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
+	while (party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
 		++slotIndex;
 	if (slotIndex == 4)
 		slotIndex = 0;
@@ -598,7 +598,7 @@ void ItemsDialog::charData2BlackData() {
 	Party &party = *_vm->_party;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	int slotIndex = 0;
-	while (party._mazeId != (int)BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
+	while (party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex] && slotIndex < 4)
 		++slotIndex;
 	if (slotIndex == 4)
 		slotIndex = 0;
@@ -692,8 +692,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		// 0=Weapons, 1=Armor, 2=Accessories
 		XeenItem &i = (mode == 0) ? c->_weapons[itemIndex] :
 			(mode == 1 ? c->_armor[itemIndex] : c->_accessories[itemIndex]);
-		amount1 = (mode == 0) ? WEAPON_BASE_COSTS[i._id] :
-			(mode == 1 ? ARMOR_BASE_COSTS[i._id] : ACCESSORY_BASE_COSTS[i._id]);
+		amount1 = (mode == 0) ? Res.WEAPON_BASE_COSTS[i._id] :
+			(mode == 1 ? Res.ARMOR_BASE_COSTS[i._id] : Res.ACCESSORY_BASE_COSTS[i._id]);
 		
 		if (i._material > 36 && i._material < 59) {
 			switch (i._material) {
@@ -710,15 +710,15 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 				amount1 /= 4;
 				break;
 			default:
-				amount1 *= METAL_BASE_MULTIPLIERS[i._material - 37];
+				amount1 *= Res.METAL_BASE_MULTIPLIERS[i._material - 37];
 				break;
 			}
 		}
 
 		if (i._material < 37)
-			amount2 = ELEMENTAL_DAMAGE[i._material] * 100;
+			amount2 = Res.ELEMENTAL_DAMAGE[i._material] * 100;
 		else if (i._material > 58)
-			amount3 = METAL_BASE_MULTIPLIERS[i._material - 37] * 100;
+			amount3 = Res.METAL_BASE_MULTIPLIERS[i._material - 37] * 100;
 		
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
@@ -726,7 +726,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		case ITEMMODE_REPAIR:
 		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
-			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
+			result = (amount1 + amount2 + amount3 + amount4) / Res.ITEM_SKILL_DIVISORS[level];
 			if (!result)
 				result = 1;
 			break;
@@ -739,8 +739,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	case 3: {
 		// Misc
 		XeenItem &i = c->_misc[itemIndex];
-		amount1 = MISC_MATERIAL_COSTS[i._material];
-		amount4 = MISC_BASE_COSTS[i._id];
+		amount1 = Res.MISC_MATERIAL_COSTS[i._material];
+		amount4 = Res.MISC_BASE_COSTS[i._id];
 		
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
@@ -748,7 +748,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		case ITEMMODE_REPAIR:
 		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
-			result = (amount1 + amount2 + amount3 + amount4) / ITEM_SKILL_DIVISORS[level];
+			result = (amount1 + amount2 + amount3 + amount4) / Res.ITEM_SKILL_DIVISORS[level];
 			if (!result)
 				result = 1;
 			break;
@@ -800,7 +800,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
 
 		w.open();
-		w.writeString(Common::String::format(WHICH_ITEM, ITEM_ACTIONS[actionIndex]));
+		w.writeString(Common::String::format(Res.WHICH_ITEM, Res.ITEM_ACTIONS[actionIndex]));
 		_iconSprites.draw(screen, 0, Common::Point(235, 111));
 		w.update();
 
@@ -845,7 +845,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				break;
 			case 2:
 				if (!party._mazeId) {
-					ErrorScroll::show(_vm, WHATS_YOUR_HURRY);
+					ErrorScroll::show(_vm, Res.WHATS_YOUR_HURRY);
 				} else {
 					XeenItem &i = c._misc[itemIndex];
 
@@ -857,11 +857,11 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					case DEAD:
 					case STONED:
 					case ERADICATED:
-						ErrorScroll::show(_vm, Common::String::format(IN_NO_CONDITION, c._name.c_str()));
+						ErrorScroll::show(_vm, Common::String::format(Res.IN_NO_CONDITION, c._name.c_str()));
 						break;
 					default:
 						if (combat._itemFlag) {
-							ErrorScroll::show(_vm, USE_ITEM_IN_COMBAT);
+							ErrorScroll::show(_vm, Res.USE_ITEM_IN_COMBAT);
 						} else if (i._id && (i._bonusFlags & ITEMFLAG_BONUS_MASK)
 								&& !(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
 							int charges = (i._bonusFlags & ITEMFLAG_BONUS_MASK) - 1;
@@ -879,7 +879,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 								c._items[category].sort();
 							}
 						} else {
-							ErrorScroll::show(_vm, Common::String::format(NO_SPECIAL_ABILITIES,
+							ErrorScroll::show(_vm, Common::String::format(Res.NO_SPECIAL_ABILITIES,
 								c._items[category].getFullDescription(itemIndex).c_str()
 							));
 						}
@@ -898,12 +898,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			InventoryItems &invItems = _oldCharacter->_items[category];
 			if (invItems[INV_ITEMS_TOTAL - 1]._id) {
 				// If the last slot is in use, it means the list is full
-				ErrorScroll::show(_vm, Common::String::format(BACKPACK_IS_FULL,
+				ErrorScroll::show(_vm, Common::String::format(Res.BACKPACK_IS_FULL,
 					_oldCharacter->_name.c_str()));
 			} else {
 				int cost = calcItemCost(_oldCharacter, itemIndex, mode, 0, category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
-				if (Confirm::show(_vm, Common::String::format(BUY_X_FOR_Y_GOLD,
+				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
 						desc.c_str(), cost))) {
 					if (party.subtract(0, cost, 0, WT_FREEZE_WAIT)) {
 						if (isDarkCc) {
@@ -935,12 +935,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			}
 
 			if (noNeed) {
-				ErrorScroll::show(_vm, Common::String::format(NO_NEED_OF_THIS,
+				ErrorScroll::show(_vm, Common::String::format(Res.NO_NEED_OF_THIS,
 					c._items[category].getFullDescription(itemIndex).c_str()));
 			} else {
 				int cost = calcItemCost(&c, itemIndex, mode, c._skills[MERCHANT], category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
-				Common::String msg = Common::String::format(SELL_X_FOR_Y_GOLD,
+				Common::String msg = Common::String::format(Res.SELL_X_FOR_Y_GOLD,
 					desc.c_str(), cost);
 
 				if (Confirm::show(_vm, msg)) {
@@ -958,7 +958,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			if (category != CATEGORY_MISC || c._misc[itemIndex]._material > 9
 					|| c._misc[itemIndex]._id == 53 || c._misc[itemIndex]._id == 0) {
 				sound.playFX(21);
-				ErrorScroll::show(_vm, Common::String::format(NOT_RECHARGABLE, SPELL_FAILED));
+				ErrorScroll::show(_vm, Common::String::format(Res.NOT_RECHARGABLE, Res.SPELL_FAILED));
 			} else {
 				int charges = MIN(63, _vm->getRandomNumber(1, 6) +
 					(c._misc[itemIndex]._bonusFlags & ITEMFLAG_BONUS_MASK));
@@ -978,11 +978,11 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 
 		case ITEMMODE_REPAIR:
 			if (!(item._bonusFlags & ITEMFLAG_BROKEN)) {
-				ErrorScroll::show(_vm, ITEM_NOT_BROKEN);
+				ErrorScroll::show(_vm, Res.ITEM_NOT_BROKEN);
 			} else {
 				int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
-				Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
-					FIX_IDENTIFY[0],
+				Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
+					Res.FIX_IDENTIFY[0],
 					c._items[category].getFullDescription(itemIndex).c_str(),
 					cost);
 
@@ -994,15 +994,15 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 
 		case ITEMMODE_IDENTIFY: {
 			int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
-			Common::String msg = Common::String::format(FIX_IDENTIFY_GOLD,
-				FIX_IDENTIFY[1],
+			Common::String msg = Common::String::format(Res.FIX_IDENTIFY_GOLD,
+				Res.FIX_IDENTIFY[1],
 				c._items[category].getFullDescription(itemIndex).c_str(),
 				cost);
 
 			if (Confirm::show(_vm, msg) && party.subtract(0, cost, 0)) {
 				Common::String details = c._items[category].getIdentifiedDetails(itemIndex);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
-				Common::String str = Common::String::format(IDENTIFY_ITEM_MSG,
+				Common::String str = Common::String::format(Res.IDENTIFY_ITEM_MSG,
 					desc.c_str(), details.c_str());
 
 				Window &win = screen._windows[14];
@@ -1048,7 +1048,7 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 	if (category == CATEGORY_WEAPON && item._id == 34) {
 		sound.playFX(21);
 		ErrorScroll::show(_vm, Common::String::format("\v012\t000\x03c%s",
-			SPELL_FAILED));
+			Res.SPELL_FAILED));
 	} else if (item._id != 0) {
 		// There is a valid item present
 		// Calculate cost of item and add it to the party's total

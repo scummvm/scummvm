@@ -59,13 +59,13 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	for (uint idx = 0; idx < partyCount; ++idx) {
 		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
 		Condition charCondition = ps.worstCondition();
-		int charFrame = FACE_CONDITION_FRAMES[charCondition];
+		int charFrame = Res.FACE_CONDITION_FRAMES[charCondition];
 		
 		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
 		if (charFrame > 4)
 			charFrame -= 5;
 
-		sprites->draw(screen, charFrame, Common::Point(CHAR_FACES_X[idx], 150));
+		sprites->draw(screen, charFrame, Common::Point(Res.CHAR_FACES_X[idx], 150));
 	}
 
 	for (uint idx = 0; idx < partyCount; ++idx) {
@@ -85,11 +85,11 @@ void PartyDrawer::drawParty(bool updateFlag) {
 		else
 			frame = 1;
 
-		_hpSprites.draw(screen, frame, Common::Point(HP_BARS_X[idx], 182));
+		_hpSprites.draw(screen, frame, Common::Point(Res.HP_BARS_X[idx], 182));
 	}
 
 	if (_hiliteChar != -1)
-		res._globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+		res._globalSprites.draw(screen, 8, Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 
 	if (updateFlag)
 		screen._windows[33].update();
@@ -103,11 +103,11 @@ void PartyDrawer::highlightChar(int charId) {
 		// Handle deselecting any previusly selected char
 		if (_hiliteChar != -1) {
 			res._globalSprites.draw(screen, 9 + _hiliteChar,
-				Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+				Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		}
 
 		// Highlight new character
-		res._globalSprites.draw(screen, 8, Common::Point(CHAR_FACES_X[charId] - 1, 149));
+		res._globalSprites.draw(screen, 8, Common::Point(Res.CHAR_FACES_X[charId] - 1, 149));
 		_hiliteChar = charId;
 		screen._windows[33].update();
 	}
@@ -119,7 +119,7 @@ void PartyDrawer::unhighlightChar() {
 
 	if (_hiliteChar != -1) {
 		res._globalSprites.draw(screen, _hiliteChar + 9,
-			Common::Point(CHAR_FACES_X[_hiliteChar] - 1, 149));
+			Common::Point(Res.CHAR_FACES_X[_hiliteChar] - 1, 149));
 		_hiliteChar = -1;
 		screen._windows[33].update();
 	}
@@ -286,7 +286,7 @@ void Interface::perform() {
 
 	if (_buttonValue == Common::KEYCODE_SPACE) {
 		int lookupId = map.mazeLookup(party._mazePosition, 
-			WALL_SHIFTS[party._mazeDirection][2]);
+			Res.WALL_SHIFTS[party._mazeDirection][2]);
 
 		bool eventsFlag = true;
 		switch (lookupId) {
@@ -1033,7 +1033,7 @@ void Interface::rest() {
 
 	if ((map._currentCantRest || (map.mazeData()._mazeFlags & RESTRICTION_REST))
 			&& _vm->_mode != MODE_12) {
-		ErrorScroll::show(_vm, TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
+		ErrorScroll::show(_vm, Res.TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
 	} else {
 		// Check whether any character is in danger of dying
 		bool dangerFlag = false;
@@ -1045,7 +1045,7 @@ void Interface::rest() {
 		}
 
 		if (dangerFlag) {
-			if (!Confirm::show(_vm, SOME_CHARS_MAY_DIE))
+			if (!Confirm::show(_vm, Res.SOME_CHARS_MAY_DIE))
 				return;
 		}
 
@@ -1142,8 +1142,8 @@ void Interface::rest() {
 		doStepCode();
 		draw3d(true);
 
-		ErrorScroll::show(_vm, Common::String::format(REST_COMPLETE,
-			starving ? PARTY_IS_STARVING : HIT_SPELL_POINTS_RESTORED,
+		ErrorScroll::show(_vm, Common::String::format(Res.REST_COMPLETE,
+			starving ? Res.PARTY_IS_STARVING : Res.HIT_SPELL_POINTS_RESTORED,
 			foodConsumed));
 		party.checkPartyDead();
 	}
@@ -1179,18 +1179,18 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 
 	party._activeParty[charNum1 - 1].subtractHitPoints(2);
 	_charPowSprites.draw(screen._windows[0], 0, 
-		Common::Point(CHAR_FACES_X[charNum1 - 1], 150));
+		Common::Point(Res.CHAR_FACES_X[charNum1 - 1], 150));
 	screen._windows[0].update();
 
 	if (charNum2) {
 		party._activeParty[charNum2 - 1].subtractHitPoints(2);
 		_charPowSprites.draw(screen._windows[0], 0,
-			Common::Point(CHAR_FACES_X[charNum2 - 1], 150));
+			Common::Point(Res.CHAR_FACES_X[charNum2 - 1], 150));
 		screen._windows[0].update();
 	}
 
-	int cell = map.mazeLookup(Common::Point(pt.x + SCREEN_POSITIONING_X[direction][7],
-		pt.y + SCREEN_POSITIONING_Y[direction][7]), 0, 0xffff);
+	int cell = map.mazeLookup(Common::Point(pt.x + Res.SCREEN_POSITIONING_X[direction][7],
+		pt.y + Res.SCREEN_POSITIONING_Y[direction][7]), 0, 0xffff);
 	if (cell != INVALID_CELL) {
 		int v = map.getCell(2);
 
@@ -1312,7 +1312,7 @@ void Interface::handleFalling() {
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		party._activeParty[idx]._faceSprites->draw(screen._windows[0], 4,
-			Common::Point(CHAR_FACES_X[idx], 150));
+			Common::Point(Res.CHAR_FACES_X[idx], 150));
 	}
 
 	screen._windows[33].update();
@@ -1841,7 +1841,7 @@ void Interface::assembleBorder() {
 
 	// Draw direction character if direction sense is active
 	if (_vm->_party->checkSkill(DIRECTION_SENSE) && !_vm->_noDirectionSense) {
-		const char *dirText = DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
+		const char *dirText = Res.DIRECTION_TEXT_UPPER[_vm->_party->_mazeDirection];
 		Common::String msg = Common::String::format(
 			"\002""08\003""c\013""139\011""116%c\014""d\001", *dirText);
 		screen._windows[0].writeString(msg);
@@ -2268,7 +2268,7 @@ void Interface::spellFX(Character *c) {
 	for (int frameNum = 0; frameNum < 4; ++frameNum) {
 		events.updateGameCounter();
 		_spellFxSprites.draw(screen, frameNum, Common::Point(
-			CHAR_FACES_X[charIndex], 150));
+			Res.CHAR_FACES_X[charIndex], 150));
 
 		if (!screen._windows[11]._enabled)
 			draw3d(false);

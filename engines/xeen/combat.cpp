@@ -218,7 +218,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			// Draw the attack effect on the character sprite
 			sound.playFX(fx);
 			_powSprites.draw(screen, frame,
-				Common::Point(CHAR_FACES_X[selectedIndex1], 150));
+				Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
 			screen._windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
@@ -317,7 +317,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	}
 
 	sound.playFX(fx);
-	intf._charPowSprites.draw(screen, frame, Common::Point(CHAR_FACES_X[charNum], 150));
+	intf._charPowSprites.draw(screen, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
 	screen._windows[33].update();
 
 	damage -= party._powerShield;
@@ -485,12 +485,12 @@ void Combat::moveMonsters() {
 							switch (party._mazeDirection) {
 							case DIR_NORTH:
 							case DIR_SOUTH:
-								if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									// Move the monster
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								} else {
-									if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+									if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 										idx)) {
@@ -505,7 +505,7 @@ void Combat::moveMonsters() {
 
 							case DIR_EAST:
 							case DIR_WEST:
-								if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 									arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 									arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 									idx)) {
@@ -514,7 +514,7 @@ void Combat::moveMonsters() {
 									} else {
 										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
 									}
-								} else if (monsterCanMove(pt, MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								} else if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								}
@@ -1162,7 +1162,7 @@ Common::String Combat::getMonsterDescriptions() {
 		_monsterIndex = 0;
 	}
 
-	return Common::String::format(COMBAT_DETAILS, lines[0].c_str(),
+	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
 		lines[1].c_str(), lines[2].c_str());
 }
 
@@ -1575,7 +1575,7 @@ void Combat::quickFight() {
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
-			spells.castSpell(c, (MagicSpell)SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+			spells.castSpell(c, (MagicSpell)Res.SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
 		}
 		break;
 	case QUICK_BLOCK:
@@ -1673,15 +1673,15 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 				_attackWeapon = &c._weapons[idx];
 
 				if (c._weapons[idx]._material >= 37 && c._weapons[idx]._material < 59) {
-					_hitChanceBonus = METAL_DAMAGE_PERCENT[c._weapons[idx]._material - 37];
-					_weaponDamage = METAL_DAMAGE[c._weapons[idx]._material - 37];
+					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[c._weapons[idx]._material - 37];
+					_weaponDamage = Res.METAL_DAMAGE[c._weapons[idx]._material - 37];
 				}
 			}
 
 			_hitChanceBonus += party._heroism;
 			_attackWeaponId = c._weapons[idx]._id;
-			_weaponDice = WEAPON_DAMAGE_BASE[_attackWeaponId];
-			_weaponDie = WEAPON_DAMAGE_MULTIPLIER[_attackWeaponId];
+			_weaponDice = Res.WEAPON_DAMAGE_BASE[_attackWeaponId];
+			_weaponDie = Res.WEAPON_DAMAGE_MULTIPLIER[_attackWeaponId];
 
 			for (int diceIdx = 0; diceIdx < _weaponDice; ++diceIdx)
 				_weaponDamage += _vm->getRandomNumber(1, _weaponDie);
@@ -1744,7 +1744,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 		}
 	} else {
 		int material = !_attackWeapon ? 0 : _attackWeapon->_material;
-		damage = ELEMENTAL_DAMAGE[material];
+		damage = Res.ELEMENTAL_DAMAGE[material];
 
 		if (material != 0) {
 			if (material < 9)

@@ -77,7 +77,7 @@ int Town::townAction(int actionId) {
 		return 0;
 	}
 
-	_townMaxId = TOWN_MAXES[_vm->_files->_isDarkCc][actionId];
+	_townMaxId = Res.TOWN_MAXES[_vm->_files->_isDarkCc][actionId];
 	_townActionId = actionId;
 	_drawFrameIndex = 0;
 	_v1 = 0;
@@ -203,12 +203,12 @@ int Town::townAction(int actionId) {
 		break;
 	}
 
-	sound.playSong(TOWN_ACTION_MUSIC[actionId], 223);
+	sound.playSong(Res.TOWN_ACTION_MUSIC[actionId], 223);
 
-	_townSprites.resize(TOWN_ACTION_FILES[isDarkCc][actionId]);
+	_townSprites.resize(Res.TOWN_ACTION_FILES[isDarkCc][actionId]);
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			TOWN_ACTION_SHAPES[actionId], idx + 1);
+			Res.TOWN_ACTION_SHAPES[actionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -336,25 +336,25 @@ Common::String Town::createTownText(Character &ch) {
 	switch (_townActionId) {
 	case 0:
 		// Bank
-		return Common::String::format(BANK_TEXT,
+		return Common::String::format(Res.BANK_TEXT,
 			XeenEngine::printMil(party._bankGold).c_str(),
 			XeenEngine::printMil(party._bankGems).c_str(),
 			XeenEngine::printMil(party._gold).c_str(),
 			XeenEngine::printMil(party._gems).c_str());
 	case 1:
 		// Blacksmith
-		return Common::String::format(BLACKSMITH_TEXT,
+		return Common::String::format(Res.BLACKSMITH_TEXT,
 			XeenEngine::printMil(party._gold).c_str());
 
 	case 2:
 		// Guild
-		return !ch.guildMember() ? GUILD_NOT_MEMBER_TEXT :
-			Common::String::format(GUILD_TEXT, ch._name.c_str());
+		return !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
+			Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
 
 	case 3:
 		// Tavern
-		return Common::String::format(TAVERN_TEXT, ch._name.c_str(),
-			FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
+		return Common::String::format(Res.TAVERN_TEXT, ch._name.c_str(),
+			Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
 
 	case 4:
 		// Temple
@@ -421,7 +421,7 @@ Common::String Town::createTownText(Character &ch) {
 		_donation = _flag1 ? 0 : _v14;
 		_healCost += _v6 + _v5;
 
-		return Common::String::format(TEMPLE_TEXT, ch._name.c_str(),
+		return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
 			_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
 			XeenEngine::printMil(party._gold).c_str());
 
@@ -460,17 +460,17 @@ Common::String Town::createTownText(Character &ch) {
 
 		if (_experienceToNextLevel >= 0x10000 && ch._level._permanent < _v20) {
 			int nextLevel = ch._level._permanent + 1;
-			return Common::String::format(EXPERIENCE_FOR_LEVEL,
+			return Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
 				ch._name.c_str(), _experienceToNextLevel, nextLevel);
 		} else if (ch._level._permanent >= 20) {
 			_experienceToNextLevel = 1;
-			msg = Common::String::format(LEARNED_ALL, ch._name.c_str());
+			msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
 		} else {
-			msg = Common::String::format(ELIGIBLE_FOR_LEVEL,
+			msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
 				ch._name.c_str(), ch._level._permanent + 1);
 		}
 
-		return Common::String::format(TRAINING_TEXT,
+		return Common::String::format(Res.TRAINING_TEXT,
 			XeenEngine::printMil(party._gold).c_str());
 
 	default:
@@ -608,8 +608,8 @@ Character *Town::doTavernOptions(Character *c) {
 				sound.playSound("gulp.voc");
 				_v21 = 1;
 
-				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
-					c->_name.c_str(), GOOD_STUFF,
+				screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+					c->_name.c_str(), Res.GOOD_STUFF,
 					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&screen._windows[0]);
 				screen._windows[10].update();
@@ -660,7 +660,7 @@ Character *Town::doTavernOptions(Character *c) {
 
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
-				ErrorScroll::show(_vm, FOOD_PACKS_FULL, WT_2);
+				ErrorScroll::show(_vm, Res.FOOD_PACKS_FULL, WT_2);
 			} else if (party.subtract(0, _v23, 0, WT_2)) {
 				party._food = _v22;
 				sound.stopSound();
@@ -700,8 +700,8 @@ Character *Town::doTavernOptions(Character *c) {
 		// Sign In
 		idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
-		party._mazePosition.x = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
-		party._mazePosition.y = TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][1];
+		party._mazePosition.x = Res.TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
+		party._mazePosition.y = Res.TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][1];
 
 		if (!isDarkCc || party._mazeId == 29)
 			party._mazeDirection = DIR_WEST;
@@ -725,8 +725,8 @@ Character *Town::doTavernOptions(Character *c) {
 	case Common::KEYCODE_t:
 		if (!c->noActions()) {
 			if (!_v21) {
-				screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
-					c->_name.c_str(), HAVE_A_DRINK,
+				screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+					c->_name.c_str(), Res.HAVE_A_DRINK,
 					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&screen);
 				screen._windows[10].update();
@@ -734,8 +734,8 @@ Character *Town::doTavernOptions(Character *c) {
 			} else {
 				_v21 = 0;
 				if (c->_conditions[DRUNK]) {
-					screen._windows[10].writeString(Common::String::format(TAVERN_TEXT,
-						c->_name.c_str(), YOURE_DRUNK,
+					screen._windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
+						c->_name.c_str(), Res.YOURE_DRUNK,
 						XeenEngine::printMil(party._gold).c_str()));
 					drawButtons(&screen);
 					screen._windows[10].update();
@@ -960,8 +960,8 @@ void Town::depositWithdrawl(int choice) {
 	_buttons[1]._value = Common::KEYCODE_e;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
 
-	Common::String msg = Common::String::format(GOLD_GEMS,
-		DEPOSIT_WITHDRAWL[choice],
+	Common::String msg = Common::String::format(Res.GOLD_GEMS,
+		Res.DEPOSIT_WITHDRAWL[choice],
 		XeenEngine::printMil(gold).c_str(),
 		XeenEngine::printMil(gems).c_str());
 
@@ -994,7 +994,7 @@ void Town::depositWithdrawl(int choice) {
 			(!choice && !party._gold && !flag)) {
 			party.notEnough(flag, choice, 1, WT_2);
 		} else {
-			screen._windows[35].writeString(AMOUNT);
+			screen._windows[35].writeString(Res.AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
@@ -1026,7 +1026,7 @@ void Town::depositWithdrawl(int choice) {
 			}
 
 			sound.playSound(voc);
-			msg = Common::String::format(GOLD_GEMS_2, DEPOSIT_WITHDRAWL[choice],
+			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[choice],
 				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
 			screen._windows[35].writeString(msg);
 			screen._windows[35].update();

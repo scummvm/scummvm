@@ -45,18 +45,18 @@ void InfoDialog::execute() {
 
 	Common::String gameName;
 	if (_vm->getGameID() == GType_Swords)
-		gameName = SWORDS_GAME_TEXT;
+		gameName = Res.SWORDS_GAME_TEXT;
 	else if (_vm->getGameID() == GType_Clouds)
-		gameName = CLOUDS_GAME_TEXT;
+		gameName = Res.CLOUDS_GAME_TEXT;
 	else if (_vm->getGameID() == GType_DarkSide)
-		gameName = DARKSIDE_GAME_TEXT;
+		gameName = Res.DARKSIDE_GAME_TEXT;
 	else
-		gameName = WORLD_GAME_TEXT;
+		gameName = Res.WORLD_GAME_TEXT;
 
 	// Form the display message
 	int hour = party._minutes / 60;
-	Common::String details = Common::String::format(GAME_INFORMATION,
-		gameName.c_str(), WEEK_DAY_STRINGS[party._day % 10],
+	Common::String details = Common::String::format(Res.GAME_INFORMATION,
+		gameName.c_str(), Res.WEEK_DAY_STRINGS[party._day % 10],
 		(hour > 12) ? hour - 12 : (!hour ? 12 : hour),
 		party._minutes % 60, (hour > 11) ? 'p' : 'a',
 		party._day, party._year, statusText.c_str());
@@ -86,41 +86,41 @@ void InfoDialog::protectionText() {
 	const char *const AA_R124 = "\x3r\x9""124";
 
 	if (party._lightCount) {
-		_lines.push_back(Common::String::format(LIGHT_COUNT_TEXT, party._lightCount));
+		_lines.push_back(Common::String::format(Res.LIGHT_COUNT_TEXT, party._lightCount));
 	}
 
 	if (party._fireResistence) {
-		_lines.push_back(Common::String::format(FIRE_RESISTENCE_TEXT,
+		_lines.push_back(Common::String::format(Res.FIRE_RESISTENCE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._fireResistence));
 	}
 
 	if (party._electricityResistence) {
-		_lines.push_back(Common::String::format(ELECRICITY_RESISTENCE_TEXT,
+		_lines.push_back(Common::String::format(Res.ELECRICITY_RESISTENCE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._electricityResistence));
 	}
 
 	if (party._coldResistence) {
-		_lines.push_back(Common::String::format(COLD_RESISTENCE_TEXT,
+		_lines.push_back(Common::String::format(Res.COLD_RESISTENCE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._coldResistence));
 	}
 
 	if (party._poisonResistence) {
-		_lines.push_back(Common::String::format(POISON_RESISTENCE_TEXT,
+		_lines.push_back(Common::String::format(Res.POISON_RESISTENCE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124, party._poisonResistence));
 	}
 
 	if (party._clairvoyanceActive) {
-		_lines.push_back(Common::String::format(CLAIRVOYANCE_TEXT,
+		_lines.push_back(Common::String::format(Res.CLAIRVOYANCE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
 	if (party._levitateActive) {
-		_lines.push_back(Common::String::format(LEVITATE_TEXT,
+		_lines.push_back(Common::String::format(Res.LEVITATE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
 	if (party._walkOnWaterActive) {
-		_lines.push_back(Common::String::format(WALK_ON_WATER_TEXT,
+		_lines.push_back(Common::String::format(Res.WALK_ON_WATER_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 }

@@ -46,21 +46,21 @@ void QuickReferenceDialog::execute() {
 		Character &c = combat._globalCombat == 2 ? *combat._combatParty[idx] :
 			party._activeParty[idx];
 		Condition condition = c.worstCondition();
-		lines[idx] = Common::String::format(QUICK_REF_LINE,
+		lines[idx] = Common::String::format(Res.QUICK_REF_LINE,
 			idx * 10 + 24, idx + 1, c._name.c_str(),
-			CLASS_NAMES[c._class][0], CLASS_NAMES[c._class][1], CLASS_NAMES[c._class][2],
+			Res.CLASS_NAMES[c._class][0], Res.CLASS_NAMES[c._class][1], Res.CLASS_NAMES[c._class][2],
 			c.statColor(c.getCurrentLevel(), c._level._permanent), c._level._permanent,
 			c.statColor(c._currentHp, c.getMaxHP()), c._currentHp,
 			c.statColor(c._currentSp, c.getMaxSP()), c._currentSp,
 			c.statColor(c.getArmorClass(), c.getArmorClass(true)), c.getArmorClass(),
-			CONDITION_COLORS[condition],
-			CONDITION_NAMES[condition][0], CONDITION_NAMES[condition][1],
-			CONDITION_NAMES[condition][2], CONDITION_NAMES[condition][3]
+			Res.CONDITION_COLORS[condition],
+			Res.CONDITION_NAMES[condition][0], Res.CONDITION_NAMES[condition][1],
+			Res.CONDITION_NAMES[condition][2], Res.CONDITION_NAMES[condition][3]
 		);
 	}
 
 	int food = (party._food / party._activeParty.size()) / 3;
-	Common::String msg = Common::String::format(QUICK_REFERENCE,
+	Common::String msg = Common::String::format(Res.QUICK_REFERENCE,
 		lines[0].c_str(), lines[1].c_str(), lines[2].c_str(),
 		lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
 		lines[6].c_str(), lines[7].c_str(),

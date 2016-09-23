@@ -51,9 +51,9 @@ int WhoWill::execute(int message, int action, bool type) {
 	screen._windows[38].close();
 	screen._windows[12].close();
 
-	Common::String actionStr = type ? map._events._text[action] : WHO_WILL_ACTIONS[action];
-	Common::String msg = Common::String::format(WHO_WILL, actionStr.c_str(),
-		WHO_ACTIONS[message], party._activeParty.size());
+	Common::String actionStr = type ? map._events._text[action] : Res.WHO_WILL_ACTIONS[action];
+	Common::String msg = Common::String::format(Res.WHO_WILL, actionStr.c_str(),
+		Res.WHO_ACTIONS[message], party._activeParty.size());
 
 	screen._windows[36].open();
 	screen._windows[36].writeString(msg);

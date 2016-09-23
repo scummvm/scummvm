@@ -405,7 +405,7 @@ void Party::addTime(int numMinutes) {
 						_activeParty[idx]._conditions[WEAK]++;
 				}
 
-				ErrorScroll::show(_vm, THE_PARTY_NEEDS_REST, WT_NONFREEZED_WAIT);
+				ErrorScroll::show(_vm, Res.THE_PARTY_NEEDS_REST, WT_NONFREEZED_WAIT);
 			}
 
 			_vm->_interface->drawParty(true);
@@ -529,8 +529,8 @@ int Party::subtract(int mode, uint amount, int whereId, ErrorWaitType wait) {
 
 void Party::notEnough(int consumableId, int whereId, bool mode, ErrorWaitType wait) {
 	Common::String msg = Common::String::format(
-		mode ? NO_X_IN_THE_Y : NOT_ENOUGH_X_IN_THE_Y,
-		CONSUMABLE_NAMES[consumableId], WHERE_NAMES[whereId]);
+		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,
+		Res.CONSUMABLE_NAMES[consumableId], Res.WHERE_NAMES[whereId]);
 	ErrorScroll::show(_vm, msg, wait);
 }
 
@@ -583,14 +583,14 @@ void Party::giveTreasure() {
 	events.clearEvents();
 	w.close();
 	w.open();
-	w.writeString(Common::String::format(PARTY_FOUND, _treasure._gold, _treasure._gems));
+	w.writeString(Common::String::format(Res.PARTY_FOUND, _treasure._gold, _treasure._gems));
 	w.update();
 
 	if (_vm->_mode != MODE_COMBAT)
 		_vm->_mode = MODE_7;
 
 	if (arePacksFull())
-		ErrorScroll::show(_vm, BACKPACKS_FULL_PRESS_KEY, WT_NONFREEZED_WAIT);
+		ErrorScroll::show(_vm, Res.BACKPACKS_FULL_PRESS_KEY, WT_NONFREEZED_WAIT);
 
 	for (int categoryNum = 0; categoryNum < NUM_ITEM_CATEGORIES; ++categoryNum) {
 		for (int itemNum = 0; itemNum < MAX_TREASURE_ITEMS; ++itemNum) {
@@ -647,7 +647,7 @@ void Party::giveTreasure() {
 		}
 	}
 
-	w.writeString(HIT_A_KEY);
+	w.writeString(Res.HIT_A_KEY);
 	w.update();
 
 	do {
@@ -705,12 +705,12 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 		c._items[category].sort();
 	}
 
-	w.writeString(GIVE_TREASURE_FORMATTING);
+	w.writeString(Res.GIVE_TREASURE_FORMATTING);
 	w.update();
 	events.ipause(5);
 
-	w.writeString(Common::String::format(X_FOUND_Y, c._name.c_str(),
-		ITEM_NAMES[category][treasureItem._id]));
+	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(),
+		Res.ITEM_NAMES[category][treasureItem._id]));
 	w.update();
 
 	events.ipause(5);

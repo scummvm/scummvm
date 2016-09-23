@@ -100,8 +100,8 @@ void CantCast::execute(int spellId, int componentNum) {
 
 	sound.playFX(21);
 	w.open();
-	w.writeString(Common::String::format(NOT_ENOUGH_TO_CAST,
-		SPELL_CAST_COMPONENTS[componentNum - 1],
+	w.writeString(Common::String::format(Res.NOT_ENOUGH_TO_CAST,
+		Res.SPELL_CAST_COMPONENTS[componentNum - 1],
 		spells._spellNames[spellId].c_str()
 	));
 	w.update();

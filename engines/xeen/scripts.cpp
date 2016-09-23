@@ -224,7 +224,7 @@ int Scripts::checkEvents() {
 	} else {
 		Window &w = screen._windows[38];
 		w.open();
-		w.writeString(NOTHING_HERE);
+		w.writeString(Res.NOTHING_HERE);
 		w.update();
 
 		do {
@@ -874,7 +874,7 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 	} else if (params[3]) {
 		msg2 = "";
 	} else {
-		msg2 = WHATS_THE_PASSWORD;
+		msg2 = Res.WHATS_THE_PASSWORD;
 	}
 
 	int result = StringInput::show(_vm, params[0], msg1, msg2,_event->_opcode);
@@ -1096,7 +1096,7 @@ void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
 void Scripts::cmdPlayEventVoc(Common::Array<byte> &params) {
 	Sound &sound = *_vm->_sound;
 	sound.stopSound();
-	sound.playSound(EVENT_SAMPLES[params[0]], 1);
+	sound.playSound(Res.EVENT_SAMPLES[params[0]], 1);
 
 	cmdNoAction(params);
 }
@@ -1434,7 +1434,7 @@ bool Scripts::ifProc(int action, uint32 mask, int mode, int charIndex) {
 
 		// Check if the character class can cast the particular spell
 		for (int idx = 0; idx < 39; ++idx) {
-			if (SPELLS_ALLOWED[category][idx] == mask) {
+			if (Res.SPELLS_ALLOWED[category][idx] == mask) {
 				// Can cast it. Check if the player has it in their spellbook
 				if (ps._spells[idx])
 					v = mask;

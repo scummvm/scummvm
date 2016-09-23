@@ -1158,8 +1158,8 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 }
 
 void DarkSideCutscenes::showDarkSideScore() {
-	Common::String str = Common::String::format(DARKSIDE_ENDING1, _vm->_endingScore);
-	showPharaohEndText(str.c_str(), DARKSIDE_ENDING2);
+	Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, _vm->_endingScore);
+	showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
 }
 
 void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
@@ -1210,11 +1210,11 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 			claw.draw(screen, idx % 5, Common::Point(XLIST2[idx], YLIST2[idx]), SPRFLAG_800);
 
 			// Form the text string to display the text
-			Common::String str1 = Common::String::format(PHAROAH_ENDING_TEXT1,
+			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,
 				text[pageNum]);
 			screen._windows[39].writeString(str1);
 
-			Common::String str2 = Common::String::format(PHAROAH_ENDING_TEXT2,
+			Common::String str2 = Common::String::format(Res.PHAROAH_ENDING_TEXT2,
 				text[pageNum]);
 			screen._windows[39].writeString(str2);
 

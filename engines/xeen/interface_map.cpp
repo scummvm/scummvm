@@ -402,7 +402,7 @@ void InterfaceMap::drawMap() {
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &mazeObject = map._mobData._objects[idx];
 		AnimationEntry &animEntry = map._animationInfo[mazeObject._spriteId];
-		int directionIndex = DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
+		int directionIndex = Res.DIRECTION_ANIM_POSITIONS[mazeObject._direction][partyDirection];
 
 		if (_isAnimReset) {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
@@ -413,8 +413,7 @@ void InterfaceMap::drawMap() {
 				objObject._spriteId == 58 || objObject._spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
 					mazeObject._frame = 1;
-			}
-			else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
+			} else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
 				mazeObject._frame = animEntry._frame1._frames[directionIndex];
 			}
 		}
@@ -425,7 +424,7 @@ void InterfaceMap::drawMap() {
 	if (map._isOutdoors) {
 		// Outdoors drawing
 		for (int idx = 0; idx < 44; ++idx)
-			_outdoorList[OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+			_outdoorList[Res.OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
 
 		if (combat._monstersAttacking) {
 			for (int idx = 0; idx < 8; ++idx) {
@@ -2318,40 +2317,40 @@ void InterfaceMap::setIndoorsMonsters() {
 		}
 
 		// The following long sequence sets up monsters in the various positions
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][2]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][2])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[0] == -1) {
 				combat._attackMonsters[0] = monsterIdx;
-				setMonsterSprite(_indoorList[156], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+				setMonsterSprite(_indoorList[156], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[0]);
 			} else if (combat._attackMonsters[1] == -1) {
 				combat._attackMonsters[1] = monsterIdx;
-				setMonsterSprite(_indoorList[150], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+				setMonsterSprite(_indoorList[150], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[0]);
 			} else if (combat._attackMonsters[2] == -1) {
 				combat._attackMonsters[2] = monsterIdx;
-				setMonsterSprite(_indoorList[153], monster, sprites, frame, INDOOR_MONSTERS_Y[0]);
+				setMonsterSprite(_indoorList[153], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[0]);
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][7]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][7])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
 			monster._isAttacking = true;
 			if (!_wo[27]) {
 				if (combat._attackMonsters[3] == -1) {
 					combat._attackMonsters[3] = monsterIdx;
-					setMonsterSprite(_indoorList[132], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+					setMonsterSprite(_indoorList[132], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[1]);
 				} else if (combat._attackMonsters[4] == -1) {
 					combat._attackMonsters[4] = monsterIdx;
-					setMonsterSprite(_indoorList[130], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+					setMonsterSprite(_indoorList[130], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[1]);
 				} else if (combat._attackMonsters[2] == -1) {
 					combat._attackMonsters[5] = monsterIdx;
-					setMonsterSprite(_indoorList[131], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+					setMonsterSprite(_indoorList[131], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[1]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][5]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][5])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
 			if (_wo[27] && _wo[25]) {
 			} else if (_wo[27] && _wo[28]) {
 			} else if (_wo[23] & _wo[25]) {
@@ -2361,13 +2360,13 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[12] == -1) {
 					combat._attackMonsters[12] = monsterIdx;
-					setMonsterSprite(_indoorList[128], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+					setMonsterSprite(_indoorList[128], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[1]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][9]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][9])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
 			if (_wo[27] && _wo[26]) {
 			} else if (_wo[27] && _wo[29]) {
 			} else if (_wo[24] & _wo[26]) {
@@ -2377,31 +2376,31 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[13] == -1) {
 					combat._attackMonsters[13] = monsterIdx;
-					setMonsterSprite(_indoorList[129], monster, sprites, frame, INDOOR_MONSTERS_Y[1]);
+					setMonsterSprite(_indoorList[129], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[1]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][14]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][14])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
 			monster._isAttacking = true;
 
 			if (!_wo[22] && !_wo[27]) {
 				if (combat._attackMonsters[6] == -1) {
 					combat._attackMonsters[6] = monsterIdx;
-					setMonsterSprite(_indoorList[106], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[106], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				} else  if (combat._attackMonsters[7] == -1) {
 					combat._attackMonsters[7] = monsterIdx;
-					setMonsterSprite(_indoorList[104], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[104], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				} else if (combat._attackMonsters[8] == -1) {
 					combat._attackMonsters[8] = monsterIdx;
-					setMonsterSprite(_indoorList[105], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[105], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][12]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][12])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[22] & _wo[20]) {
@@ -2411,16 +2410,16 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[14] == -1) {
 					combat._attackMonsters[14] = monsterIdx;
-					setMonsterSprite(_indoorList[100], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[100], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				} else if (combat._attackMonsters[20] == -1) {
 					combat._attackMonsters[20] = monsterIdx;
-					setMonsterSprite(_indoorList[101], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[101], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][16]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][16])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[22] & _wo[21]) {
@@ -2431,34 +2430,34 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[15] == -1) {
 					combat._attackMonsters[15] = monsterIdx;
-					setMonsterSprite(_indoorList[102], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[102], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				} else if (combat._attackMonsters[21] == -1) {
 					combat._attackMonsters[21] = monsterIdx;
-					setMonsterSprite(_indoorList[103], monster, sprites, frame, INDOOR_MONSTERS_Y[2]);
+					setMonsterSprite(_indoorList[103], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[2]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][27]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][27])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
 			if (!_wo[27] && !_wo[22] && !_wo[15]) {
 				monster._isAttacking = true;
 
 				if (combat._attackMonsters[9] == -1) {
 					combat._attackMonsters[9] = monsterIdx;
-					setMonsterSprite(_indoorList[70], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[70], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[10] == -1) {
 					combat._attackMonsters[10] = monsterIdx;
-					setMonsterSprite(_indoorList[68], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[68], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[11] == -1) {
 					combat._attackMonsters[11] = monsterIdx;
-					setMonsterSprite(_indoorList[69], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[69], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][25]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][25])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[17]) {
 			} else if (_wo[15] && _wo[12]) {
@@ -2469,19 +2468,19 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[16] == -1) {
 					combat._attackMonsters[16] = monsterIdx;
-					setMonsterSprite(_indoorList[62], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[62], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[22] == -1) {
 					combat._attackMonsters[22] = monsterIdx;
-					setMonsterSprite(_indoorList[60], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[60], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[24] == -1) {
 					combat._attackMonsters[24] = monsterIdx;
-					setMonsterSprite(_indoorList[61], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[61], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][23]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][23])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[22] && _wo[23]) {
@@ -2493,13 +2492,13 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[18] == -1) {
 					combat._attackMonsters[18] = monsterIdx;
-					setMonsterSprite(_indoorList[66], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[66], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][29]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][29])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[19]) {
 			} else if (_wo[15] && _wo[14]) {
@@ -2510,19 +2509,19 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[17] == -1) {
 					combat._attackMonsters[17] = monsterIdx;
-					setMonsterSprite(_indoorList[65], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[65], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[23] == -1) {
 					combat._attackMonsters[23] = monsterIdx;
-					setMonsterSprite(_indoorList[63], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[63], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[25] == -1) {
 					combat._attackMonsters[25] = monsterIdx;
-					setMonsterSprite(_indoorList[64], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[64], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				}
 			}
 		}
 
-		if (monster._position.x == (mazePos.x + SCREEN_POSITIONING_X[dir][31]) &&
-				monster._position.y == (mazePos.y + SCREEN_POSITIONING_Y[dir][31])) {
+		if (monster._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				monster._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[22] && _wo[24]) {
@@ -2534,13 +2533,13 @@ void InterfaceMap::setIndoorsMonsters() {
 
 				if (combat._attackMonsters[19] == -1) {
 					combat._attackMonsters[19] = monsterIdx;
-					setMonsterSprite(_indoorList[67], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[67], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[23] == -1) {
 					combat._attackMonsters[23] = monsterIdx;
-					setMonsterSprite(_indoorList[63], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[63], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				} else if (combat._attackMonsters[25] == -1) {
 					combat._attackMonsters[25] = monsterIdx;
-					setMonsterSprite(_indoorList[64], monster, sprites, frame, INDOOR_MONSTERS_Y[3]);
+					setMonsterSprite(_indoorList[64], monster, sprites, frame, Res.INDOOR_MONSTERS_Y[3]);
 				}
 			}
 		}
@@ -2619,15 +2618,15 @@ void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster
 	drawStruct._y = defaultY;
 
 	if (flying) {
-		drawStruct._x = COMBAT_FLOAT_X[_combatFloatCounter];
-		drawStruct._y = COMBAT_FLOAT_Y[_combatFloatCounter];
+		drawStruct._x = Res.COMBAT_FLOAT_X[_combatFloatCounter];
+		drawStruct._y = Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 	} else {
 		drawStruct._x = 0;
 	}
 
 	drawStruct._flags &= ~0xFFF;
 	if (monster._effect2)
-		drawStruct._flags = MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
+		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 }
 
 void InterfaceMap::setIndoorsObjects() {
@@ -2649,11 +2648,11 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 1
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][2]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][2]) == mazeObject._position.y
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][2]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][2]) == mazeObject._position.y
 			&& _indoorList._objects0._frame == -1) {
-			_indoorList._objects0._x = INDOOR_OBJECT_X[listOffset][0];
-			_indoorList._objects0._y = MAP_OBJECT_Y[listOffset][0];
+			_indoorList._objects0._x = Res.INDOOR_OBJECT_X[listOffset][0];
+			_indoorList._objects0._y = Res.MAP_OBJECT_Y[listOffset][0];
 			_indoorList._objects0._frame = mazeObject._frame;
 			_indoorList._objects0._sprites = mazeObject._sprites;
 			_indoorList._objects0._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2663,11 +2662,11 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 2
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][7]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][7]) == mazeObject._position.y
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][7]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][7]) == mazeObject._position.y
 			&& !_wo[27] && _indoorList._objects1._frame == -1) {
-			_indoorList._objects1._x = INDOOR_OBJECT_X[listOffset][1];
-			_indoorList._objects1._y = MAP_OBJECT_Y[listOffset][1];
+			_indoorList._objects1._x = Res.INDOOR_OBJECT_X[listOffset][1];
+			_indoorList._objects1._y = Res.MAP_OBJECT_Y[listOffset][1];
 			_indoorList._objects1._frame = mazeObject._frame;
 			_indoorList._objects1._sprites = mazeObject._sprites;
 			_indoorList._objects1._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2676,15 +2675,15 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 3
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][5]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][5]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][5]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][5]) == mazeObject._position.y) {
 			if (_wo[27] && _wo[25]) {
 			} else if (_wo[27] && _wo[28]) {
 			} else if (_wo[23] && _wo[25]) {
 			} else if (_wo[23] && _wo[28]) {
 			} else if (_indoorList._objects2._frame == -1) {
-				_indoorList._objects2._x = INDOOR_OBJECT_X[listOffset][2];
-				_indoorList._objects2._y = MAP_OBJECT_Y[listOffset][2];
+				_indoorList._objects2._x = Res.INDOOR_OBJECT_X[listOffset][2];
+				_indoorList._objects2._y = Res.MAP_OBJECT_Y[listOffset][2];
 				_indoorList._objects2._frame = mazeObject._frame;
 				_indoorList._objects2._sprites = mazeObject._sprites;
 				_indoorList._objects2._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2694,15 +2693,15 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 4
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][9]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][9]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][9]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][9]) == mazeObject._position.y) {
 			if (_wo[27] && _wo[26]) {
 			} else if (_wo[27] && _wo[29]) {
 			} else if (_wo[24] && _wo[26]) {
 			} else if (_wo[24] && _wo[29]) {
 			} else if (_indoorList._objects3._frame == -1) {
-				_indoorList._objects3._x = INDOOR_OBJECT_X[listOffset][3];
-				_indoorList._objects3._y = MAP_OBJECT_Y[listOffset][3];
+				_indoorList._objects3._x = Res.INDOOR_OBJECT_X[listOffset][3];
+				_indoorList._objects3._y = Res.MAP_OBJECT_Y[listOffset][3];
 				_indoorList._objects3._frame = mazeObject._frame;
 				_indoorList._objects3._sprites = mazeObject._sprites;
 				_indoorList._objects3._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2712,11 +2711,11 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 5
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][14]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][14]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][14]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][14]) == mazeObject._position.y) {
 			if (!_wo[22] && !_wo[27] && _indoorList._objects4._frame == -1) {
-				_indoorList._objects4._x = INDOOR_OBJECT_X[listOffset][4];
-				_indoorList._objects4._y = MAP_OBJECT_Y[listOffset][4];
+				_indoorList._objects4._x = Res.INDOOR_OBJECT_X[listOffset][4];
+				_indoorList._objects4._y = Res.MAP_OBJECT_Y[listOffset][4];
 				_indoorList._objects4._frame = mazeObject._frame;
 				_indoorList._objects4._sprites = mazeObject._sprites;
 				_indoorList._objects4._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2726,16 +2725,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 6
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][12]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][12]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12]) == mazeObject._position.y) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[23] && _wo[17]) {
 			} else if (_wo[20] && _wo[17]) {
 			} else if (_indoorList._objects5._frame == -1) {
-				_indoorList._objects5._x = INDOOR_OBJECT_X[listOffset][5];
-				_indoorList._objects5._y = MAP_OBJECT_Y[listOffset][5];
+				_indoorList._objects5._x = Res.INDOOR_OBJECT_X[listOffset][5];
+				_indoorList._objects5._y = Res.MAP_OBJECT_Y[listOffset][5];
 				_indoorList._objects5._frame = mazeObject._frame;
 				_indoorList._objects5._sprites = mazeObject._sprites;
 				_indoorList._objects5._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2745,16 +2744,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 7
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][16]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][16]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16]) == mazeObject._position.y) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[24] && _wo[19]) {
 			} else if (_wo[21] && _wo[19]) {
 			} else if (_indoorList._objects6._frame == -1) {
-				_indoorList._objects6._x = INDOOR_OBJECT_X[listOffset][6];
-				_indoorList._objects6._y = MAP_OBJECT_Y[listOffset][6];
+				_indoorList._objects6._x = Res.INDOOR_OBJECT_X[listOffset][6];
+				_indoorList._objects6._y = Res.MAP_OBJECT_Y[listOffset][6];
 				_indoorList._objects6._frame = mazeObject._frame;
 				_indoorList._objects6._sprites = mazeObject._sprites;
 				_indoorList._objects6._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2764,11 +2763,11 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 8
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][27]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][27]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][27]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][27]) == mazeObject._position.y) {
 			if (!_wo[27] && !_wo[22] && !_wo[15] && _indoorList._objects7._frame == -1) {
-				_indoorList._objects7._x = INDOOR_OBJECT_X[listOffset][7];
-				_indoorList._objects7._y = MAP_OBJECT_Y[listOffset][7];
+				_indoorList._objects7._x = Res.INDOOR_OBJECT_X[listOffset][7];
+				_indoorList._objects7._y = Res.MAP_OBJECT_Y[listOffset][7];
 				_indoorList._objects7._frame = mazeObject._frame;
 				_indoorList._objects7._sprites = mazeObject._sprites;
 				_indoorList._objects7._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2778,16 +2777,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 9
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][25]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][25]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][25]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][25]) == mazeObject._position.y) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[17]) {
 			} else if (_wo[15] && _wo[12]) {
 			} else if (_wo[12] && _wo[7]) {
 			} else if (_wo[17] && _wo[7]) {
 			} else if (_indoorList._objects8._frame == -1) {
-				_indoorList._objects8._x = INDOOR_OBJECT_X[listOffset][8];
-				_indoorList._objects8._y = MAP_OBJECT_Y[listOffset][8];
+				_indoorList._objects8._x = Res.INDOOR_OBJECT_X[listOffset][8];
+				_indoorList._objects8._y = Res.MAP_OBJECT_Y[listOffset][8];
 				_indoorList._objects8._frame = mazeObject._frame;
 				_indoorList._objects8._sprites = mazeObject._sprites;
 				_indoorList._objects8._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2797,16 +2796,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Position 10
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][23]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][23]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23]) == mazeObject._position.y) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[20] && _wo[17]) {
 			} else if (_wo[23] && _wo[17]) {
 			} else if (!_wo[12] && !_wo[8] && _indoorList._objects9._frame == -1) {
-				_indoorList._objects9._x = INDOOR_OBJECT_X[listOffset][10];
-				_indoorList._objects9._y = MAP_OBJECT_Y[listOffset][10];
+				_indoorList._objects9._x = Res.INDOOR_OBJECT_X[listOffset][10];
+				_indoorList._objects9._y = Res.MAP_OBJECT_Y[listOffset][10];
 				_indoorList._objects9._frame = mazeObject._frame;
 				_indoorList._objects9._sprites = mazeObject._sprites;
 				_indoorList._objects9._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2816,16 +2815,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Block 11
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][29]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][29]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][29]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][29]) == mazeObject._position.y) {
 			if (_wo[27]) {
 			} else if (_wo[15] && _wo[19]) {
 			} else if (_wo[15] && _wo[14]) {
 			} else if (_wo[14] && _wo[9]) {
 			} else if (_wo[19] && _wo[9]) {
 			} else if (_indoorList._objects10._frame == -1) {
-				_indoorList._objects10._x = INDOOR_OBJECT_X[listOffset][9];
-				_indoorList._objects10._y = MAP_OBJECT_Y[listOffset][9];
+				_indoorList._objects10._x = Res.INDOOR_OBJECT_X[listOffset][9];
+				_indoorList._objects10._y = Res.MAP_OBJECT_Y[listOffset][9];
 				_indoorList._objects10._frame = mazeObject._frame;
 				_indoorList._objects10._sprites = mazeObject._sprites;
 				_indoorList._objects10._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2835,16 +2834,16 @@ void InterfaceMap::setIndoorsObjects() {
 		}
 
 		// Block 12
-		if ((mazePos.x + SCREEN_POSITIONING_X[dir][31]) == mazeObject._position.x
-			&& (mazePos.y + SCREEN_POSITIONING_Y[dir][31]) == mazeObject._position.y) {
+		if ((mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) == mazeObject._position.x
+			&& (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31]) == mazeObject._position.y) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[21] && _wo[19]) {
 			} else if (_wo[24] && _wo[19]) {
 			} else if (!_wo[14] && !_wo[10] && _indoorList._objects11._frame == -1) {
-				_indoorList._objects11._x = INDOOR_OBJECT_X[listOffset][11];
-				_indoorList._objects11._y = MAP_OBJECT_Y[listOffset][11];
+				_indoorList._objects11._x = Res.INDOOR_OBJECT_X[listOffset][11];
+				_indoorList._objects11._y = Res.MAP_OBJECT_Y[listOffset][11];
 				_indoorList._objects11._frame = mazeObject._frame;
 				_indoorList._objects11._sprites = mazeObject._sprites;
 				_indoorList._objects11._flags &= ~SPRFLAG_HORIZ_FLIPPED;
@@ -2867,16 +2866,16 @@ void InterfaceMap::setIndoorsWallPics() {
 		if (wallItem._direction != dir)
 			continue;
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][2]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][2])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
 			if (_wp[1] == -1) {
 				_indoorList[148]._frame = wallItem._frame;
 				_indoorList[148]._sprites = wallItem._sprites;
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][7]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][7])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
 			if (!_wo[27] && _wp[1] == -1) {
 				_indoorList[123]._frame = wallItem._frame;
 				_indoorList[123]._sprites = wallItem._sprites;
@@ -2884,8 +2883,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][5]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][5])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
 			if (_wo[27] && _wo[25]) {
 			} else if (_wo[27] && _wo[28]) {
 			} else if (_wo[23] && _wo[25]) {
@@ -2897,8 +2896,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][9]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][9])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
 			if (_wo[27] && _wo[26]) {
 			} else if (_wo[27] && _wo[29]) {
 			} else if (_wo[24] && _wo[26]) {
@@ -2910,8 +2909,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][14]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][14])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
 			if (!_wo[22] && !_wo[27] && !_wp[8]) {
 				_indoorList[94]._frame = wallItem._frame;
 				_indoorList[94]._sprites = wallItem._sprites;
@@ -2919,8 +2918,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][12])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[22] && _wo[20]) {
@@ -2933,8 +2932,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][16])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[22] && _wo[21]) {
@@ -2947,8 +2946,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][12])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[25] && _wo[28]) {
 			} else if (_wo[20] && _wo[16]) {
@@ -2959,8 +2958,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][16])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (!_wo[26] && !_wo[29] && !_wo[21] && !_wo[18] && _wp[10] == -1) {
 				_indoorList[96]._frame = wallItem._frame;
 				_indoorList[96]._sprites = wallItem._sprites;
@@ -2968,8 +2967,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][27]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][27])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
 			if (!_wo[27] && !_wo[22] && !_wo[15] && _wp[15] == -1) {
 				_indoorList[50]._frame = wallItem._frame;
 				_indoorList[50]._sprites = wallItem._sprites;
@@ -2977,8 +2976,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][25]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][25])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
 			if (_wo[27]) {
 			} else if (_wo[27] && _wo[22]) {
 			} else if (_wo[15] && _wo[17]) {
@@ -2992,8 +2991,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[22] && _wo[23]) {
@@ -3007,8 +3006,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][29]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][29])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[19]) {
 			} else if (_wo[15] && _wo[14]) {
@@ -3021,8 +3020,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[22] && _wo[24]) {
@@ -3035,8 +3034,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[27] && !_wo[20] && !_wo[12] && !_wo[23] && !_wo[8] && !_wo[30]) {
 				if (_wp[12] == -1) {
 					_indoorList[47]._frame = wallItem._frame;
@@ -3046,8 +3045,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[27] && !_wo[21] && !_wo[14] && !_wo[24] && !_wo[10] && !_wo[31]) {
 				if (_wp[18] == -1) {
 					_indoorList[53]._frame = wallItem._frame;
@@ -3057,8 +3056,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][23])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[25] && !_wo[28] && !_wo[20] && !_wo[11] && !_wo[16] && !_wo[30] && !_wo[32]) {
 				if (_wp[11] == -1) {
 					_indoorList[46]._frame = wallItem._frame;
@@ -3068,8 +3067,8 @@ void InterfaceMap::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + SCREEN_POSITIONING_Y[dir][31])) {
+		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[26] && !_wo[20] && !_wo[21] && !_wo[13] && !_wo[18] && !_wo[31] && !_wo[33]) {
 				if (_wp[19] == -1) {
 					_indoorList[54]._frame = wallItem._frame;
@@ -3091,8 +3090,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][2]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][2])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[0] == -1) {
 				_outdoorList[118]._frame = idx;
@@ -3106,8 +3105,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][7]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][7])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[3] == -1) {
 				_outdoorList[94]._frame = idx;
@@ -3121,8 +3120,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][5]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][5])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[12] == -1) {
 				_outdoorList[90]._frame = idx;
@@ -3130,8 +3129,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][9]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][9])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[13] == -1) {
 				_outdoorList[91]._frame = idx;
@@ -3139,8 +3138,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][14]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][14])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[6] == -1) {
 				_outdoorList[75]._frame = idx;
@@ -3154,8 +3153,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][12]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][12])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[14] == -1) {
 				_outdoorList[69]._frame = idx;
@@ -3166,8 +3165,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][16]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][16])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[15] == -1) {
 				_outdoorList[71]._frame = idx;
@@ -3178,8 +3177,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][27]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][27])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[9] == -1) {
 				_outdoorList[52]._frame = idx;
@@ -3193,8 +3192,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][25]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][25])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[16] == -1) {
 				_outdoorList[44]._frame = idx;
@@ -3208,8 +3207,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][23]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][23])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[18] == -1) {
 				_outdoorList[48]._frame = idx;
@@ -3217,8 +3216,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][29]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][29])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[17] == -1) {
 				_outdoorList[47]._frame = idx;
@@ -3232,8 +3231,8 @@ void InterfaceMap::setOutdoorsMonsters() {
 			}
 		}
 
-		if (monster._position.x == (pt.x + SCREEN_POSITIONING_X[dir][31]) &&
-				monster._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][31])) {
+		if (monster._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				monster._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			monster._isAttacking = true;
 			if (combat._attackMonsters[19] == -1) {
 				_outdoorList[49]._frame = idx;
@@ -3301,7 +3300,7 @@ void InterfaceMap::setOutdoorsMonsters() {
 	}
 
 	for (int idx = 0; idx < 26; ++idx) {
-		DrawStruct &ds = _outdoorList[OUTDOOR_MONSTER_INDEXES[idx]];
+		DrawStruct &ds = _outdoorList[Res.OUTDOOR_MONSTER_INDEXES[idx]];
 
 		if (ds._frame != -1) {
 			ds._flags &= ~0xfff;
@@ -3313,7 +3312,7 @@ void InterfaceMap::setOutdoorsMonsters() {
 			ds._frame = monster._frame;
 
 			if (monster._effect2) {
-				ds._flags = MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
+				ds._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
 			}
 
 			if (monster._frame > 7) {
@@ -3323,11 +3322,11 @@ void InterfaceMap::setOutdoorsMonsters() {
 				ds._sprites = monster._sprites;
 			}
 
-			ds._y = OUTDOOR_MONSTERS_Y[idx];
+			ds._y = Res.OUTDOOR_MONSTERS_Y[idx];
 
 			if (monsterData._flying) {
-				ds._x += COMBAT_FLOAT_X[_combatFloatCounter];
-				ds._y += COMBAT_FLOAT_Y[_combatFloatCounter];
+				ds._x += Res.COMBAT_FLOAT_X[_combatFloatCounter];
+				ds._y += Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 			}
 		}
 	}
@@ -3350,12 +3349,12 @@ void InterfaceMap::setOutdoorsObjects() {
 			posIndex = obj._spriteId == 113 ? 1 : 0;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][2]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][2]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][2]) &&
 				_outdoorList[111]._frame == -1) {
 			DrawStruct &ds = _outdoorList[111];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][0];
-			ds._y = MAP_OBJECT_Y[posIndex][0];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][0];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][0];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3365,12 +3364,12 @@ void InterfaceMap::setOutdoorsObjects() {
 			_objNumber = idx;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][7]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][7]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][7]) &&
 				_outdoorList[87]._frame == -1) {
 			DrawStruct &ds = _outdoorList[87];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][1];
-			ds._y = MAP_OBJECT_Y[posIndex][1];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][1];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][1];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3379,12 +3378,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][5]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][5]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][5]) &&
 				_outdoorList[88]._frame == -1) {
 			DrawStruct &ds = _outdoorList[88];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][2];
-			ds._y = MAP_OBJECT_Y[posIndex][2];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][2];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][2];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3393,12 +3392,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][9]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][9]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][9]) &&
 				_outdoorList[89]._frame == -1) {
 			DrawStruct &ds = _outdoorList[89];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][3];
-			ds._y = MAP_OBJECT_Y[posIndex][3];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][3];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][3];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3407,12 +3406,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][14]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][14]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][14]) &&
 				_outdoorList[66]._frame == -1) {
 			DrawStruct &ds = _outdoorList[66];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][4];
-			ds._y = MAP_OBJECT_Y[posIndex][4];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][4];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][4];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3421,12 +3420,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][12]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][12]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][12]) &&
 				_outdoorList[67]._frame == -1) {
 			DrawStruct &ds = _outdoorList[67];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][5];
-			ds._y = MAP_OBJECT_Y[posIndex][5];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][5];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][5];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3435,12 +3434,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][16]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][16]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][16]) &&
 				_outdoorList[68]._frame == -1) {
 			DrawStruct &ds = _outdoorList[68];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][6];
-			ds._y = MAP_OBJECT_Y[posIndex][6];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][6];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][6];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3449,12 +3448,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][27]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][27]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][27]) &&
 				_outdoorList[37]._frame == -1) {
 			DrawStruct &ds = _outdoorList[37];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][7];
-			ds._y = MAP_OBJECT_Y[posIndex][7];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][7];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][7];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3463,12 +3462,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][25]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][25]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][25]) &&
 				_outdoorList[38]._frame == -1) {
 			DrawStruct &ds = _outdoorList[38];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][8];
-			ds._y = MAP_OBJECT_Y[posIndex][8];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][8];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][8];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3477,12 +3476,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][23]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][23]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][23]) &&
 				_outdoorList[40]._frame == -1) {
 			DrawStruct &ds = _outdoorList[40];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][10];
-			ds._y = MAP_OBJECT_Y[posIndex][10];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][10];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][10];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3491,12 +3490,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][29]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][29]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][29]) &&
 				_outdoorList[39]._frame == -1) {
 			DrawStruct &ds = _outdoorList[39];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][9];
-			ds._y = MAP_OBJECT_Y[posIndex][9];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][9];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][9];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3505,12 +3504,12 @@ void InterfaceMap::setOutdoorsObjects() {
 				ds._flags |= SPRFLAG_HORIZ_FLIPPED;
 		}
 
-		if (obj._position.x == (pt.x + SCREEN_POSITIONING_X[dir][31]) &&
-				obj._position.y == (pt.y + SCREEN_POSITIONING_Y[dir][31]) &&
+		if (obj._position.x == (pt.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				obj._position.y == (pt.y + Res.SCREEN_POSITIONING_Y[dir][31]) &&
 				_outdoorList[41]._frame == -1) {
 			DrawStruct &ds = _outdoorList[41];
-			ds._x = OUTDOOR_OBJECT_X[posIndex][11];
-			ds._y = MAP_OBJECT_Y[posIndex][11];
+			ds._x = Res.OUTDOOR_OBJECT_X[posIndex][11];
+			ds._y = Res.MAP_OBJECT_Y[posIndex][11];
 			ds._frame = obj._frame;
 			ds._sprites = obj._sprites;
 
@@ -3527,7 +3526,7 @@ void InterfaceMap::drawIndoors() {
 
 	// Draw any surface tiles on top of the default ground
 	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
-		map.getCell(DRAW_NUMBERS[cellIndex]);
+		map.getCell(Res.DRAW_NUMBERS[cellIndex]);
 
 		DrawStruct &drawStruct = _indoorList._groundTiles[cellIndex];
 		SpriteResource &sprites = map._surfaceSprites[map._currentSurfaceId];
@@ -3536,10 +3535,10 @@ void InterfaceMap::drawIndoors() {
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA || 
 				surfaceId == SURFTYPE_SEWER) {
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
+			drawStruct._frame = Res.DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
 			drawStruct._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 		} else {
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
+			drawStruct._frame = Res.DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
 			drawStruct._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
 		}
 	}
@@ -4338,9 +4337,9 @@ void InterfaceMap::drawIndoors() {
 
 	if (_openDoor) {
 		Common::Point pt(
-			_vm->_party->_mazePosition.x + SCREEN_POSITIONING_X[
+			_vm->_party->_mazePosition.x + Res.SCREEN_POSITIONING_X[
 				_vm->_party->_mazeDirection][_vm->_party->_mazePosition.x],
-			_vm->_party->_mazePosition.y + SCREEN_POSITIONING_Y[
+			_vm->_party->_mazePosition.y + Res.SCREEN_POSITIONING_Y[
 				_vm->_party->_mazeDirection][_vm->_party->_mazePosition.y]
 			);
 		map.cellFlagLookup(pt);
@@ -4375,7 +4374,7 @@ void InterfaceMap::drawOutdoors() {
 
 	// Draw any surface tiles on top of the default ground
 	for (int cellIndex = 0; cellIndex < 25; ++cellIndex) {
-		map.getCell(cellIndex == 24 ? 2 : DRAW_NUMBERS[cellIndex]);
+		map.getCell(cellIndex == 24 ? 2 : Res.DRAW_NUMBERS[cellIndex]);
 
 		DrawStruct &drawStruct = _outdoorList._groundTiles[cellIndex];
 		SpriteResource &sprites = map._surfaceSprites[map._currentSurfaceId];
@@ -4383,10 +4382,10 @@ void InterfaceMap::drawOutdoors() {
 
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 		if (surfaceId == SURFTYPE_DWATER || surfaceId == SURFTYPE_LAVA) {
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
+			drawStruct._frame = Res.DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
 			drawStruct._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 		} else {
-			drawStruct._frame = DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
+			drawStruct._frame = Res.DRAW_FRAMES[cellIndex][_flipGround ? 1 : 0];
 			drawStruct._flags = _flipGround ? SPRFLAG_HORIZ_FLIPPED : 0;
 		}
 	}

@@ -892,7 +892,7 @@ void Map::load(int mapId) {
 	if (intf._falling) {
 		Window &w = screen._windows[9];
 		w.open();
-		w.writeString(OOPS);
+		w.writeString(Res.OOPS);
 	} else {
 		PleaseWait::show(_vm);
 	}
@@ -1107,43 +1107,43 @@ void Map::load(int mapId) {
 
 			if (_mazeData[0]._wallTypes[i] != 0) {
 				_wallSprites._surfaces[i].load(Common::String::format("%s.wal",
-					SURFACE_TYPE_NAMES[_mazeData[0]._wallTypes[i]]));
+					Res.SURFACE_TYPE_NAMES[_mazeData[0]._wallTypes[i]]));
 			}
 
 			_surfaceSprites[i].clear();
 			if (i != 0 && _mazeData[0]._surfaceTypes[i] != 0)
-				_surfaceSprites[i].load(SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
+				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
 		warning("TODO");	// Sound loading
 
 		_skySprites[1].load(Common::String::format("%s.sky",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_tileSprites.load(Common::String::format("%s.til",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 
 		for (int i = 0; i < TOTAL_SURFACES; ++i) {
 			_surfaceSprites[i].clear();
 
 			if (_mazeData[0]._surfaceTypes[i] != 0 || i == 4)
-				_surfaceSprites[i].load(SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
+				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 
 		for (int i = 0; i < TOTAL_SURFACES; ++i)
 			_wallSprites._surfaces[i].clear();
 
 		_wallSprites._fwl1.load(Common::String::format("f%s1.fwl",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_wallSprites._fwl2.load(Common::String::format("f%s2.fwl",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_wallSprites._fwl3.load(Common::String::format("f%s3.fwl",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_wallSprites._fwl4.load(Common::String::format("f%s4.fwl",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_wallSprites._swl.load(Common::String::format("s%s.swl",
-			TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 
 		// Set entries in the indoor draw list to the correct sprites
 		// for drawing various parts of the background
@@ -1388,15 +1388,15 @@ void Map::setWall(const Common::Point &pt, Direction dir, int v) {
 	Common::Point mapPos(pt.x & 15, pt.y & 15);
 	MazeWallLayers &wallLayer = _mazeData[_mazeDataIndex]._wallData[mapPos.y][mapPos.x];
 	wallLayer._data &= XOR_MASKS[dir];
-	wallLayer._data |= v << WALL_SHIFTS[dir][2];
+	wallLayer._data |= v << Res.WALL_SHIFTS[dir][2];
 }
 
 int Map::getCell(int idx) {
 	int mapId = _vm->_party->_mazeId;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt(
-		_vm->_party->_mazePosition.x + SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
-		_vm->_party->_mazePosition.y + SCREEN_POSITIONING_Y[_vm->_party->_mazeDirection][idx]
+		_vm->_party->_mazePosition.x + Res.SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
+		_vm->_party->_mazePosition.y + Res.SCREEN_POSITIONING_Y[_vm->_party->_mazeDirection][idx]
 	);
 
 	if (pt.x > 31 || pt.y > 31) {
@@ -1512,7 +1512,7 @@ int Map::getCell(int idx) {
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 
 		_currentWall = wallData;
-		return (_currentWall >> WALL_SHIFTS[dir][idx]) & 0xF;
+		return (_currentWall >> Res.WALL_SHIFTS[dir][idx]) & 0xF;
 	}
 
 	return _currentWall;

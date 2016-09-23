@@ -411,9 +411,9 @@ void AutoMapDialog::execute() {
 			events.updateGameCounter();
 		}
 
-		screen._windows[5].writeString(Common::String::format(MAP_TEXT,
+		screen._windows[5].writeString(Common::String::format(Res.MAP_TEXT,
 			map._mazeName.c_str(), party._mazePosition.x,
-			party._mazePosition.y, DIRECTION_TEXT[party._mazeDirection]));
+			party._mazePosition.y, Res.DIRECTION_TEXT[party._mazeDirection]));
 		screen._windows[5].update();
 		screen._windows[3].update();
 

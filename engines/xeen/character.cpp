@@ -46,7 +46,7 @@ void XeenItem::synchronize(Common::Serializer &s) {
 
 ElementalCategory XeenItem::getElementalCategory() const {
 	int idx;
-	for (idx = 0; ELEMENTAL_CATEGORIES[idx] < _material; ++idx)
+	for (idx = 0; Res.ELEMENTAL_CATEGORIES[idx] < _material; ++idx)
 		;
 
 	return (ElementalCategory)idx;
@@ -55,7 +55,7 @@ ElementalCategory XeenItem::getElementalCategory() const {
 AttributeCategory XeenItem::getAttributeCategory() const {
 	int m = _material - 59;
 	int idx;
-	for (idx = 0; ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
+	for (idx = 0; Res.ATTRIBUTE_CATEGORIES[idx] < m; ++idx)
 		;
 
 	return (AttributeCategory)idx;
@@ -67,10 +67,7 @@ InventoryItems::InventoryItems(Character *character, ItemCategory category):
 		_character(character), _category(category) {
 	resize(INV_ITEMS_TOTAL);
 
-	static const char *const *NAMES[4] = { 
-		WEAPON_NAMES, ARMOR_NAMES, ACCESSORY_NAMES, MISC_NAMES 
-	};
-	_names = NAMES[category];
+	_names = Res.ITEM_NAMES[category];
 }
 
 void InventoryItems::clear() {
@@ -94,7 +91,7 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 	case CLASS_BARBARIAN:
 	case CLASS_DRUID:
 	case CLASS_RANGER: {
-		if (!(ITEM_RESTRICTIONS[itemId + RESTRICTION_OFFSETS[_category]] &
+		if (!(Res.ITEM_RESTRICTIONS[itemId + Res.RESTRICTION_OFFSETS[_category]] &
 			(1 << (charClass - CLASS_ARCHER))))
 			return true;
 		break;
@@ -106,8 +103,8 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 
 	Common::String name = _names[itemId];
 	if (showError) {
-		Common::String msg = Common::String::format(NOT_PROFICIENT,
-			CLASS_NAMES[charClass], name.c_str());
+		Common::String msg = Common::String::format(Res.NOT_PROFICIENT,
+			Res.CLASS_NAMES[charClass], name.c_str());
 		ErrorScroll::show(Party::_vm, msg, WT_FREEZE_WAIT);
 	}
 
@@ -125,14 +122,14 @@ Common::String InventoryItems::getIdentifiedDetails(int itemIndex) {
 	Common::String classes;
 	for (int charClass = CLASS_KNIGHT; charClass <= CLASS_RANGER; ++charClass) {
 		if (passRestrictions(charClass, true)) {
-			const char *const name = CLASS_NAMES[charClass];
+			const char *const name = Res.CLASS_NAMES[charClass];
 			classes += name[0];
 			classes += name[1];
 			classes += " ";
 		}
 	}
 	if (classes.size() == 30)
-		classes = ALL;
+		classes = Res.ALL;
 
 	return getAttributes(item, classes);
 }
@@ -142,10 +139,10 @@ bool InventoryItems::discardItem(int itemIndex) {
 	XeenEngine *vm = Party::_vm;
 
 	if (item._bonusFlags & ITEMFLAG_CURSED) {
-		ErrorScroll::show(vm, CANNOT_DISCARD_CURSED_ITEM);
+		ErrorScroll::show(vm, Res.CANNOT_DISCARD_CURSED_ITEM);
 	} else {
 		Common::String itemDesc = getFullDescription(itemIndex, 4);
-		Common::String msg = Common::String::format(PERMANENTLY_DISCARD, itemDesc.c_str());
+		Common::String msg = Common::String::format(Res.PERMANENTLY_DISCARD, itemDesc.c_str());
 
 		if (Confirm::show(vm, msg)) {
 			operator[](itemIndex).clear();
@@ -182,7 +179,7 @@ void InventoryItems::removeItem(int itemIndex) {
 	XeenEngine *vm = Party::_vm;
 
 	if (item._bonusFlags & ITEMFLAG_CURSED)
-		ErrorScroll::show(vm, CANNOT_REMOVE_CURSED_ITEM);
+		ErrorScroll::show(vm, Res.CANNOT_REMOVE_CURSED_ITEM);
 	else
 		item._frame = 0;
 }
@@ -199,18 +196,18 @@ void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int item
 		Common::String itemName1 = _character->_items[category1].getName(itemIndex1);
 		Common::String itemName2 = _character->_items[category2].getName(itemIndex2);
 
-		ErrorDialog::show(vm, Common::String::format(REMOVE_X_TO_EQUIP_Y,
+		ErrorDialog::show(vm, Common::String::format(Res.REMOVE_X_TO_EQUIP_Y,
 			itemName1.c_str(), itemName2.c_str()));
 	} else {
-		ErrorDialog::show(vm, Common::String::format(EQUIPPED_ALL_YOU_CAN,
-			(itemIndex1 == -1) ? RING : MEDAL));
+		ErrorDialog::show(vm, Common::String::format(Res.EQUIPPED_ALL_YOU_CAN,
+			(itemIndex1 == -1) ? Res.RING : Res.MEDAL));
 	}
 }
 
 void InventoryItems::enchantItem(int itemIndex, int amount) {
 	XeenEngine *vm = Party::_vm;
 	vm->_sound->playFX(21);
-	ErrorScroll::show(vm, Common::String::format(NOT_ENCHANTABLE, SPELL_FAILED));
+	ErrorScroll::show(vm, Common::String::format(Res.NOT_ENCHANTABLE, Res.SPELL_FAILED));
 }
 
 bool InventoryItems::isFull() const {
@@ -275,11 +272,11 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
 		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		WEAPON_NAMES[i._id],
-		!i._bonusFlags ? "" : BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
+		Res.WEAPON_NAMES[i._id],
+		!i._bonusFlags ? "" : Res.BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -307,45 +304,45 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
  */
 Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &classes) {
 	Common::String attrBonus, elemDamage, physDamage, toHit, specialPower;
-	attrBonus = elemDamage = physDamage = toHit = specialPower = FIELD_NONE;
+	attrBonus = elemDamage = physDamage = toHit = specialPower = Res.FIELD_NONE;
 
 	// First calculate physical damage
-	int minVal = WEAPON_DAMAGE_BASE[item._id];
-	int maxVal = minVal * WEAPON_DAMAGE_MULTIPLIER[item._id];
+	int minVal = Res.WEAPON_DAMAGE_BASE[item._id];
+	int maxVal = minVal * Res.WEAPON_DAMAGE_MULTIPLIER[item._id];
 
 	if (item._material >= 37 && item._material <= 58) {
-		minVal += METAL_DAMAGE[item._material - 37];
-		maxVal += METAL_DAMAGE[item._material - 37];
-		toHit = Common::String::format("%+d", METAL_DAMAGE_PERCENT[item._material - 37]);
+		minVal += Res.METAL_DAMAGE[item._material - 37];
+		maxVal += Res.METAL_DAMAGE[item._material - 37];
+		toHit = Common::String::format("%+d", Res.METAL_DAMAGE_PERCENT[item._material - 37]);
 	}
 	
-	physDamage = Common::String::format(DAMAGE_X_TO_Y, minVal, maxVal);
+	physDamage = Common::String::format(Res.DAMAGE_X_TO_Y, minVal, maxVal);
 
 	// Next handle elemental/attribute damage
 	if (item._material < 37) {
-		int damage = ELEMENTAL_DAMAGE[item._material];
+		int damage = Res.ELEMENTAL_DAMAGE[item._material];
 		if (damage > 0) {
 			ElementalCategory elemCategory = item.getElementalCategory();
-			elemDamage = Common::String::format(ELEMENTAL_XY_DAMAGE,
-				damage, ELEMENTAL_NAMES[elemCategory]);
+			elemDamage = Common::String::format(Res.ELEMENTAL_XY_DAMAGE,
+				damage, Res.ELEMENTAL_NAMES[elemCategory]);
 		}
 	} else if (item._material >= 59) {
-		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
 		AttributeCategory attrCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
-			ATTRIBUTE_NAMES[attrCategory]);
+		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
+			Res.ATTRIBUTE_NAMES[attrCategory]);
 	}
 
 	// Handle weapon effective against
 	int effective = item._bonusFlags & ITEMFLAG_BONUS_MASK;
 	if (effective) {
-		specialPower = Common::String::format(EFFECTIVE_AGAINST,
-			EFFECTIVENESS_NAMES[effective]);
+		specialPower = Common::String::format(Res.EFFECTIVE_AGAINST,
+			Res.EFFECTIVENESS_NAMES[effective]);
 	}
 
-	return Common::String::format(ITEM_DETAILS, classes.c_str(),
+	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
 		toHit.c_str(), physDamage.c_str(), elemDamage.c_str(),
-		FIELD_NONE, FIELD_NONE, attrBonus.c_str(), specialPower.c_str()
+		Res.FIELD_NONE, Res.FIELD_NONE, attrBonus.c_str(), specialPower.c_str()
 	);
 }
 
@@ -435,10 +432,10 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -466,34 +463,34 @@ void ArmorItems::enchantItem(int itemIndex, int amount) {
 */
 Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &classes) {
 	Common::String elemResist, attrBonus, acBonus;
-	elemResist = attrBonus = acBonus = FIELD_NONE;
+	elemResist = attrBonus = acBonus = Res.FIELD_NONE;
 
 	if (item._material < 36) {
-		int resistence = ELEMENTAL_RESISTENCES[item._material];
+		int resistence = Res.ELEMENTAL_RESISTENCES[item._material];
 		if (resistence > 0) {
 			int eCategory = ELEM_FIRE;
-			while (eCategory < ELEM_MAGIC && ELEMENTAL_CATEGORIES[eCategory] < item._material)
+			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
 				++eCategory;
 				
-			elemResist = Common::String::format(ATTR_XY_BONUS, resistence,
-				ELEMENTAL_NAMES[eCategory]);
+			elemResist = Common::String::format(Res.ATTR_XY_BONUS, resistence,
+				Res.ELEMENTAL_NAMES[eCategory]);
 		}
 	} else if (item._material >= 59) {
-		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
 		AttributeCategory aCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
-			ATTRIBUTE_NAMES[aCategory]);
+		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
+			Res.ATTRIBUTE_NAMES[aCategory]);
 	}
 
-	int strength = ARMOR_STRENGTHS[item._id];
+	int strength = Res.ARMOR_STRENGTHS[item._id];
 	if (item._material >= 37 && item._material <= 58) {
-		strength += METAL_LAC[item._material - 37];
+		strength += Res.METAL_LAC[item._material - 37];
 	}
 	acBonus = Common::String::format("%+d", strength);
 
-	return Common::String::format(ITEM_DETAILS, classes.c_str(),
-		FIELD_NONE, FIELD_NONE, FIELD_NONE,
-		elemResist.c_str(), acBonus.c_str(), attrBonus.c_str(), FIELD_NONE);
+	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
+		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
+		elemResist.c_str(), acBonus.c_str(), attrBonus.c_str(), Res.FIELD_NONE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -552,10 +549,10 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -566,28 +563,28 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 */
 Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::String &classes) {
 	Common::String elemResist, attrBonus;
-	elemResist = attrBonus = FIELD_NONE;
+	elemResist = attrBonus = Res.FIELD_NONE;
 
 	if (item._material < 36) {
-		int resistence = ELEMENTAL_RESISTENCES[item._material];
+		int resistence = Res.ELEMENTAL_RESISTENCES[item._material];
 		if (resistence > 0) {
 			int eCategory = ELEM_FIRE;
-			while (eCategory < ELEM_MAGIC && ELEMENTAL_CATEGORIES[eCategory] < item._material)
+			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
 				++eCategory;
 
-			elemResist = Common::String::format(ATTR_XY_BONUS, resistence,
-				ELEMENTAL_NAMES[eCategory]);
+			elemResist = Common::String::format(Res.ATTR_XY_BONUS, resistence,
+				Res.ELEMENTAL_NAMES[eCategory]);
 		}
 	} else if (item._material >= 59) {
-		int bonus = ATTRIBUTE_BONUSES[item._material - 59];
+		int bonus = Res.ATTRIBUTE_BONUSES[item._material - 59];
 		AttributeCategory aCategory = item.getAttributeCategory();
-		attrBonus = Common::String::format(ATTR_XY_BONUS, bonus,
-			ATTRIBUTE_NAMES[aCategory]);
+		attrBonus = Common::String::format(Res.ATTR_XY_BONUS, bonus,
+			Res.ATTRIBUTE_NAMES[aCategory]);
 	}
 
-	return Common::String::format(ITEM_DETAILS, classes.c_str(),
-		FIELD_NONE, FIELD_NONE, FIELD_NONE,
-		elemResist.c_str(), FIELD_NONE, attrBonus.c_str(), FIELD_NONE);
+	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
+		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
+		elemResist.c_str(), Res.FIELD_NONE, attrBonus.c_str(), Res.FIELD_NONE);
 }
 
 /*------------------------------------------------------------------------*/
@@ -598,10 +595,10 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._id ? "\b " : ""
 	);
@@ -612,16 +609,16 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 * Returns a text string listing all the stats/attributes of a given item
 */
 Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &classes) {
-	Common::String specialPower = FIELD_NONE;
+	Common::String specialPower = Res.FIELD_NONE;
 	Spells &spells = *getVm()->_spells;
 
 	if (item._id) {
-		specialPower = spells._spellNames[MISC_SPELL_INDEX[item._id]];
+		specialPower = spells._spellNames[Res.MISC_SPELL_INDEX[item._id]];
 	}
 
-	return Common::String::format(ITEM_DETAILS, classes.c_str(),
-		FIELD_NONE, FIELD_NONE, FIELD_NONE, FIELD_NONE, FIELD_NONE, 
-		FIELD_NONE, specialPower.c_str());
+	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
+		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, 
+		Res.FIELD_NONE, specialPower.c_str());
 }
 /*------------------------------------------------------------------------*/
 
@@ -836,9 +833,9 @@ int Character::getAge(bool ignoreTemp) const {
 }
 
 int Character::getMaxHP() const {
-	int hp = BASE_HP_BY_CLASS[_class];
+	int hp = Res.BASE_HP_BY_CLASS[_class];
 	hp += statBonus(getStat(ENDURANCE));
-	hp += RACE_HP_BONUSES[_race];
+	hp += Res.RACE_HP_BONUSES[_race];
 	if (_skills[BODYBUILDER])
 		++hp;
 	if (hp < 1)
@@ -873,7 +870,7 @@ int Character::getMaxSP() const {
 	for (;;) {
 		// Get the base number of spell points
 		result = statBonus(getStat(attrib)) + 3;
-		result += RACE_SP_BONUSES[_race][attrib - 1];
+		result += Res.RACE_SP_BONUSES[_race][attrib - 1];
 
 		if (_skills[skill])
 			result += 2;
@@ -942,10 +939,10 @@ uint Character::getStat(Attribute attrib, bool baseOnly) const {
 	if (mode < 2) {
 		int age = getAge(false);
 		int ageIndex = 0;
-		while (AGE_RANGES[ageIndex] <= age)
+		while (Res.AGE_RANGES[ageIndex] <= age)
 			++ageIndex;
 
-		attr._permanent += AGE_RANGES_ADJUST[mode][ageIndex];
+		attr._permanent += Res.AGE_RANGES_ADJUST[mode][ageIndex];
 	}
 
 
@@ -974,10 +971,10 @@ int Character::statColor(int amount, int threshold) {
 
 int Character::statBonus(uint statValue) const {
 	int idx;
-	for (idx = 0; STAT_VALUES[idx] <= statValue; ++idx)
+	for (idx = 0; Res.STAT_VALUES[idx] <= statValue; ++idx)
 		;
 
-	return STAT_BONUSES[idx];
+	return Res.STAT_BONUSES[idx];
 }
 
 bool Character::charSavingThrow(DamageType attackType) const {
@@ -1027,7 +1024,7 @@ bool Character::noActions() {
 	case INSANE:
 	case IN_LOVE:
 	case DRUNK: {
-		Common::String msg = Common::String::format(IN_NO_CONDITION, _name.c_str());
+		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
 		ErrorScroll::show(Party::_vm, msg, 
 			Party::_vm->_mode == 17 ? WT_2 : WT_NONFREEZED_WAIT);
 		return true;
@@ -1119,7 +1116,7 @@ int Character::itemScan(int itemId) const {
 						++mIndex;
 
 					if (mIndex == itemId)
-						result += ATTRIBUTE_BONUSES[item._material - 59];
+						result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 				}
 			}
 			break;
@@ -1135,22 +1132,22 @@ int Character::itemScan(int itemId) const {
 							++mIndex;
 
 						if (mIndex == itemId)
-							result += ATTRIBUTE_BONUSES[item._material - 59];
+							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 					}
 
 					if (itemId > 10 && item._material < 37) {
 						int mIndex = item.getElementalCategory() + 11;
 
 						if (mIndex == itemId) {
-							result += ELEMENTAL_RESISTENCES[item._material];
+							result += Res.ELEMENTAL_RESISTENCES[item._material];
 						}
 					}
 
 					if (itemId == 9) {
-						result += ARMOR_STRENGTHS[item._id];
+						result += Res.ARMOR_STRENGTHS[item._id];
 
 						if (item._material >= 37 && item._material <= 58)
-							result += METAL_LAC[item._material - 37];
+							result += Res.METAL_LAC[item._material - 37];
 					}
 				}
 			}
@@ -1167,7 +1164,7 @@ int Character::itemScan(int itemId) const {
 							++mIndex;
 
 						if (mIndex == itemId) {
-							result += ATTRIBUTE_BONUSES[item._material - 59];
+							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 						}
 					}
 
@@ -1175,7 +1172,7 @@ int Character::itemScan(int itemId) const {
 						int mIndex = item.getElementalCategory() + 11;
 						
 						if (mIndex == itemId)
-							result += ELEMENTAL_RESISTENCES[item._material];
+							result += Res.ELEMENTAL_RESISTENCES[item._material];
 					}
 				}
 			}
@@ -1469,7 +1466,7 @@ uint Character::nextExperienceLevel() const {
 		shift = _level._permanent - 1;
 	}
 
-	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift);
+	return (base * 1024000) + (Res.CLASS_EXP_LEVELS[_class] << shift);
 }
 
 uint Character::getCurrentExperience() const {
@@ -1487,7 +1484,7 @@ uint Character::getCurrentExperience() const {
 		shift = lev - 1;
 	}
 
-	return (base * 1024000) + (CLASS_EXP_LEVELS[_class] << shift) +
+	return (base * 1024000) + (Res.CLASS_EXP_LEVELS[_class] << shift) +
 		_experience;
 }
 
@@ -1679,8 +1676,8 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 				mult = 5;
 			}
 
-			v12 = MAKE_ITEM_ARR1[vm->getRandomNumber(MAKE_ITEM_ARR2[mult][p1][0],
-				MAKE_ITEM_ARR2[mult][p1][1])];
+			v12 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR2[mult][p1][0],
+				Res.MAKE_ITEM_ARR2[mult][p1][1])];
 			break;
 
 		case 2:
@@ -1707,18 +1704,18 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 				mult = 9;
 			}
 
-			v12 = MAKE_ITEM_ARR1[vm->getRandomNumber(MAKE_ITEM_ARR3[mult][p1][0],
-				MAKE_ITEM_ARR3[mult][p1][1])];
+			v12 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR3[mult][p1][0],
+				Res.MAKE_ITEM_ARR3[mult][p1][1])];
 			break;
 
 		case 3:
 			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
-			v16 = vm->getRandomNumber(MAKE_ITEM_ARR4[mult][p1][0],
-				MAKE_ITEM_ARR4[mult][p1][1]);
+			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1][0],
+				Res.MAKE_ITEM_ARR4[mult][p1][1]);
 			break;
 
 		case 4:
-			miscBonus = vm->getRandomNumber(MAKE_ITEM_ARR5[p1][0], MAKE_ITEM_ARR5[p1][1]);
+			miscBonus = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
 			break;
 
 		default:

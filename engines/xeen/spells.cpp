@@ -43,13 +43,13 @@ void Spells::load() {
 }
 
 int Spells::calcSpellCost(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
+	int amount = Res.SPELL_COSTS[spellId];
 	return (amount >= 0) ? (amount * 100) << expenseFactor :
 		(amount * -500) << expenseFactor;
 }
 
 int Spells::calcSpellPoints(int spellId, int expenseFactor) const {
-	int amount = SPELL_COSTS[spellId];
+	int amount = Res.SPELL_COSTS[spellId];
 	return (amount >= 0) ? amount : amount * -1 * expenseFactor;
 }
 
@@ -89,7 +89,7 @@ void Spells::executeSpell(MagicSpell spellId) {
 }
 
 void Spells::spellFailed() {
-	ErrorScroll::show(_vm, SPELL_FAILED, WT_NONFREEZED_WAIT);
+	ErrorScroll::show(_vm, Res.SPELL_FAILED, WT_NONFREEZED_WAIT);
 }
 
 void Spells::castItemSpell(int itemSpellId) {
@@ -210,8 +210,8 @@ int Spells::castSpell(Character *c, MagicSpell spellId) {
 
 int Spells::subSpellCost(Character &c, int spellId) {
 	Party &party = *_vm->_party;
-	int gemCost = SPELL_GEM_COST[spellId];
-	int spCost = SPELL_COSTS[spellId];
+	int gemCost = Res.SPELL_GEM_COST[spellId];
+	int spCost = Res.SPELL_COSTS[spellId];
 
 	// Negative SP costs indicate it's dependent on the character's level
 	if (spCost <= 0) {
@@ -232,8 +232,8 @@ int Spells::subSpellCost(Character &c, int spellId) {
 
 void Spells::addSpellCost(Character &c, int spellId) {
 	Party &party = *_vm->_party;
-	int gemCost = SPELL_GEM_COST[spellId];
-	int spCost = SPELL_COSTS[spellId];
+	int gemCost = Res.SPELL_GEM_COST[spellId];
+	int spCost = Res.SPELL_COSTS[spellId];
 
 	if (spCost < 1)
 		spCost *= -1 * c.getCurrentLevel();
@@ -440,7 +440,7 @@ void Spells::detectMonster() {
 	Common::fill(&grid[0][0], &grid[7][7], 0);
 
 	w.open();
-	w.writeString(DETECT_MONSTERS);
+	w.writeString(Res.DETECT_MONSTERS);
 	sprites.draw(w, 0, Common::Point(243, 80));
 
 	for (int yDiff = 3; yDiff >= -3; --yDiff) {
@@ -549,8 +549,8 @@ void Spells::etherialize() {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Common::Point pt = party._mazePosition + Common::Point(
-		SCREEN_POSITIONING_X[party._mazeDirection][7],
-		SCREEN_POSITIONING_Y[party._mazeDirection][7]
+		Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
+		Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]
 	);
 
 	if ((map.mazeData()._mazeFlags & RESTRICTION_ETHERIALIZE) ||
@@ -774,8 +774,8 @@ void Spells::jump() {
 			map.getCell(14);
 			if (map._currentSurfaceId != 0 && map._currentWall != 1) {
 				party._mazePosition += Common::Point(
-					SCREEN_POSITIONING_X[party._mazeDirection][14],
-					SCREEN_POSITIONING_Y[party._mazeDirection][14]
+					Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+					Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
 					);
 				sound.playFX(51);
 				party._stepped = true;
@@ -784,13 +784,13 @@ void Spells::jump() {
 		}
 	} else {
 		Common::Point pt = party._mazePosition + Common::Point(
-			SCREEN_POSITIONING_X[party._mazeDirection][7],
-			SCREEN_POSITIONING_Y[party._mazeDirection][7]);
-		if (!map.mazeLookup(party._mazePosition, MONSTER_GRID_BITMASK[party._mazeDirection]) &&
-			!map.mazeLookup(pt, MONSTER_GRID_BITMASK[party._mazeDirection])) {
+			Res.SCREEN_POSITIONING_X[party._mazeDirection][7],
+			Res.SCREEN_POSITIONING_Y[party._mazeDirection][7]);
+		if (!map.mazeLookup(party._mazePosition, Res.MONSTER_GRID_BITMASK[party._mazeDirection]) &&
+			!map.mazeLookup(pt, Res.MONSTER_GRID_BITMASK[party._mazeDirection])) {
 			party._mazePosition += Common::Point(
-				SCREEN_POSITIONING_X[party._mazeDirection][14],
-				SCREEN_POSITIONING_Y[party._mazeDirection][14]
+				Res.SCREEN_POSITIONING_X[party._mazeDirection][14],
+				Res.SCREEN_POSITIONING_Y[party._mazeDirection][14]
 			);
 			sound.playFX(51);
 			party._stepped = true;
@@ -1244,7 +1244,7 @@ void Spells::townPortal() {
 	sound.playFX(51);
 	map._loadDarkSide = map._sideTownPortal;
 	_vm->_files->_isDarkCc = map._sideTownPortal > 0;
-	map.load(TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
+	map.load(Res.TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
 
 	if (!_vm->_files->_isDarkCc) {
 		party.moveToRunLocation();

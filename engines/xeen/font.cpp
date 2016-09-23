@@ -38,7 +38,7 @@ FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr),
 }
 
 void FontSurface::writeSymbol(int symbolId) {
-	const byte *srcP = &SYMBOLS[symbolId][0];
+	const byte *srcP = &Res.SYMBOLS[symbolId][0];
 
 	for (int yp = 0; yp < FONT_HEIGHT; ++yp) {
 		byte *destP = (byte *)getBasePtr(_writePos.x, _writePos.y + yp);
@@ -306,7 +306,7 @@ int FontSurface::fontAtoi(int len) {
 }
 
 void FontSurface::setTextColor(int idx) {
-	const byte *colP = &TEXT_COLORS[idx][0];
+	const byte *colP = &Res.TEXT_COLORS[idx][0];
 	Common::copy(colP, colP + 4, &_textColors[0]);
 }
 

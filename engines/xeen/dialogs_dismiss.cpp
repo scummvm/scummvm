@@ -68,7 +68,7 @@ void Dismiss::execute() {
 			if (_buttonValue < (int)party._activeParty.size()) {
 				if (party._activeParty.size() == 1) {
 					w.close();
-					ErrorScroll::show(_vm, CANT_DISMISS_LAST_CHAR, WT_NONFREEZED_WAIT);
+					ErrorScroll::show(_vm, Res.CANT_DISMISS_LAST_CHAR, WT_NONFREEZED_WAIT);
 					w.open();
 				} else {
 					// Remove the character from the party
