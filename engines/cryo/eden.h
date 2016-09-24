@@ -25,6 +25,13 @@
 
 #include "cryo/defs.h"
 
+enum Direction {
+	kCryoNorth = 0,
+	kCryoEast = 1,
+	kCryoSouth = 2,
+	kCryoWest = 3
+};
+
 #define EDEN_DEBUG
 
 namespace Cryo {
@@ -53,8 +60,8 @@ private:
 	void clicplanval();
 	void gotolieu(goto_t *go);
 	void deplaval(uint16 roomNum);
-	void deplacement(int16 dir);
-	void deplacement2(int16 dir);
+	void deplacement(Direction dir);
+	void deplacement2(Direction dir);
 	void dinosoufle();
 	void plaquemonk();
 	void fresquesgraa();

@@ -425,7 +425,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 	}
 }
 
-void EdenGame::deplacement(int16 dir) {
+void EdenGame::deplacement(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
 	debug("deplacement: from room %4X", roomNum);
@@ -434,38 +434,38 @@ void EdenGame::deplacement(int16 dir) {
 	afficher();
 	p_global->prevLocation = roomNum & 0xFF;
 	switch (dir) {
-	case 0:
+	case kCryoNorth:
 		newLoc = room->exits[0];
 		break;
-	case 1:
+	case kCryoEast:
 		newLoc = room->exits[1];
 		break;
-	case 2:
+	case kCryoSouth:
 		newLoc = room->exits[2];
 		break;
-	case 3:
+	case kCryoWest:
 		newLoc = room->exits[3];
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
 }
 
-void EdenGame::deplacement2(int16 dir) {
+void EdenGame::deplacement2(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
 	char newLoc;
 	p_global->prevLocation = roomNum & 0xFF;
 	switch (dir) {
-	case 0:
+	case kCryoNorth:
 		newLoc = room->exits[0];
 		break;
-	case 1:
+	case kCryoEast:
 		newLoc = room->exits[1];
 		break;
-	case 2:
+	case kCryoSouth:
 		newLoc = room->exits[2];
 		break;
-	case 3:
+	case kCryoWest:
 		newLoc = room->exits[3];
 		break;
 	}
@@ -523,17 +523,17 @@ void EdenGame::pushpierre() {
 	if (p_global->curObjectId == 0) {
 		gameRooms[22].exits[0] = 17;
 		gameRooms[26].exits[2] = 9;
-		deplacement(0);
+		deplacement(kCryoNorth);
 	}
 }
 
 void EdenGame::tetemomie() {
 	if (p_global->curObjectId == Objects::obTooth) {
 		p_global->gameFlags |= GameFlags::gfMummyOpened;
-		deplacement(0);
+		deplacement(kCryoNorth);
 	} else if (p_global->curObjectId == 0) {
 		if (p_global->gameFlags & GameFlags::gfMummyOpened)
-			deplacement(0);
+			deplacement(kCryoNorth);
 		else {
 			p_global->eventType = EventType::etEvent6;
 			persoparle(PersonId::pidMonk);
@@ -548,7 +548,7 @@ void EdenGame::tetesquel() {
 		gameRooms[26].exits[2] = 13;
 		gameIcons[16].cursor_id |= 0x8000;
 		loseobject(Objects::obTooth);
-		deplacement(0);
+		deplacement(kCryoNorth);
 	}
 }
 
@@ -617,7 +617,7 @@ void EdenGame::roiparle1() {
 		p_global->gameFlags |= GameFlags::gfFlag80;
 		bars_out();
 		playhnm(76);
-		deplacement2(0);
+		deplacement2(kCryoNorth);
 	} else {
 		p_global->fresqNumber = 1;
 		roiparle();
@@ -822,22 +822,22 @@ void EdenGame::final() {
 
 void EdenGame::goto_nord() {
 	if (p_global->curObjectId == 0)
-		deplacement(0);
+		deplacement(kCryoNorth);
 }
 
 void EdenGame::goto_est() {
 	if (p_global->curObjectId == 0)
-		deplacement(1);
+		deplacement(kCryoEast);
 }
 
 void EdenGame::goto_sud() {
 	if (p_global->curObjectId == 0)
-		deplacement(2);
+		deplacement(kCryoSouth);
 }
 
 void EdenGame::goto_ouest() {
 	if (p_global->curObjectId == 0)
-		deplacement(3);
+		deplacement(kCryoWest);
 }
 
 void EdenGame::afficher() {
