@@ -771,8 +771,10 @@ void DMEngine::drawEntrance() {
 		_savedScreenForOpenEntranceDoors = new byte[k200_heightScreen * k160_byteWidthScreen * 2];
 	memcpy(_savedScreenForOpenEntranceDoors, _displayMan->_bitmapScreen, 320 * 200);
 
-	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
-	_displayMan->_useByteBoxCoordinates = false, _displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false;
+	_displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsUpperHalfBox, 0, 30, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
+	_displayMan->_useByteBoxCoordinates = false;
+	_displayMan->blitToBitmap(_displayMan->_bitmapScreen, _entranceDoorAnimSteps[8], doorsLowerHalfBox, 0, 111, k160_byteWidthScreen, k128_byteWidth, kDMColorNoTransparency, 200, 161);
 
 	_displayMan->blitToScreen(_entranceDoorAnimSteps[0], &closedDoorLeftBox, k64_byteWidth, kDMColorNoTransparency, 161);
 	_displayMan->blitToScreen(_entranceDoorAnimSteps[4], &closedDoorRightBox, k64_byteWidth, kDMColorNoTransparency, 161);
