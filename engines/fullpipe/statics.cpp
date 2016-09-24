@@ -1893,11 +1893,11 @@ int Movement::calcDuration() {
 
 	if (_currMovement)
 		for (uint i = 0; i < _currMovement->_dynamicPhases.size(); i++) {
-			res += _currMovement->_dynamicPhases[i]->_initialCountdown;
+			res += _currMovement->_dynamicPhases[i]->_initialCountdown + 1;
 		}
 	else
 		for (uint i = 0; i < _dynamicPhases.size(); i++) {
-			res += _dynamicPhases[i]->_initialCountdown;
+			res += _dynamicPhases[i]->_initialCountdown + 1;
 		}
 
 	return res;
