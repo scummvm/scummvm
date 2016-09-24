@@ -6,7 +6,8 @@ MODULE_OBJS = \
 	detection.o \
 	graphics.o \
 	resource.o \
-	sound.o
+	sound.o \
+	video/cfo_decoder.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CHEWY), DYNAMIC_PLUGIN)

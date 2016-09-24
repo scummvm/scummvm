@@ -157,11 +157,14 @@ bool Console::Cmd_PlayVideo(int argc, const char **argv) {
 		return true;
 	}
 
+	detach();	// close the console
+	
 	int resNum = atoi(argv[1]);
-	debugPrintf("TODO: Play video %d", resNum);
-	// TODO
+	Graphics *g = new Graphics();
+	g->playVideo(resNum);
+	delete g;
 
-	return true;
+	return false;
 }
 
 bool Console::Cmd_VideoInfo(int argc, const char **argv) {

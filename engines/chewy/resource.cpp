@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 
 #include "chewy/chewy.h"
@@ -245,6 +246,13 @@ VideoChunk *VideoResource::getVideoHeader(uint num) {
 	vid->firstFrameOffset = _stream.readUint32LE();	// always 22
 
 	return vid;
+}
+
+Common::SeekableReadStream *VideoResource::getVideoStream(uint num) {
+	assert(num < _chunkList.size());
+
+	Chunk *chunk = &_chunkList[num];
+	return new Common::SeekableSubReadStream(&_stream, chunk->pos, chunk->pos + chunk->size);
 }
 
 } // End of namespace Chewy

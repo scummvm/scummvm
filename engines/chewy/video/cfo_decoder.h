@@ -20,22 +20,38 @@
  *
  */
 
-#ifndef CHEWY_GRAPHICS_H
-#define CHEWY_GRAPHICS_H
+#ifndef CHEWY_VIDEO_CFO_DECODER_H
+#define CHEWY_VIDEO_CFO_DECODER_H
 
-#include "chewy/chewy.h"
+
+#include "graphics/surface.h"
+#include "video/flic_decoder.h"
 
 namespace Chewy {
 
-class Graphics {
+// A FLIC decoder, with a modified header and additional custom frames
+class CfoDecoder : public Video::FlicDecoder {
 public:
-	Graphics() {}
-	~Graphics() {}
+	CfoDecoder() : Video::FlicDecoder() {}
+	virtual ~CfoDecoder() {}
 
-	void drawImage(Common::String filename, int imageNum);
-	void playVideo(uint num);
-private:
+	bool loadStream(Common::SeekableReadStream *stream);
 
+protected:
+	class CfoVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
+	public:
+		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
+		~CfoVideoTrack() {}
+
+		void readHeader();
+
+		bool isRewindable() const { return false; }
+		bool rewind() { return false; }
+
+		const ::Graphics::Surface *decodeNextFrame();
+		void handleFrame();
+		void handleCustomFrame();
+	};
 };
 
 } // End of namespace Chewy

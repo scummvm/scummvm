@@ -72,6 +72,7 @@ Common::Error ChewyEngine::run() {
 
 	initialize();
 
+	//_graphics->playVideo(0);
 	_graphics->drawImage("episode1.tgp", 0);
 	//_sound->playSpeech(1);
 	//_sound->playSound(1);

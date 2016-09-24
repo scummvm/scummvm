@@ -31,6 +31,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/stream.h"
 
 namespace Chewy {
 
@@ -105,6 +106,11 @@ struct VideoChunk {
 	uint32 firstFrameOffset;
 };
 
+enum VideoFrameType {
+	kVideoFrameNormal = 0xF1FA,
+	kVideoFrameCustom = 0xFAF1
+};
+
 typedef Common::Array<Chunk> ChunkList;
 typedef Common::Array<TBFChunk> TBFChunkList;
 
@@ -157,6 +163,7 @@ public:
 	~VideoResource() {}
 
 	VideoChunk *getVideoHeader(uint num);
+	Common::SeekableReadStream *getVideoStream(uint num);
 };
 
 } // End of namespace Chewy

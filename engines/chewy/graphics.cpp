@@ -21,10 +21,12 @@
  */
 
 #include "common/system.h"
+#include "common/events.h"
 #include "graphics/palette.h"
 
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
+#include "chewy/video/cfo_decoder.h"
 
 namespace Chewy {
 
@@ -41,4 +43,43 @@ void Graphics::drawImage(Common::String filename, int imageNum) {
 	delete res;
 }
 
+void Graphics::playVideo(uint num) {
+	CfoDecoder *cfoDecoder = new CfoDecoder();
+	VideoResource *videoResource = new VideoResource("cut.tap");
+	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
+
+	if (!cfoDecoder->loadStream(videoStream)) {
+		delete videoResource;
+		delete cfoDecoder;
+		return;
+	}
+
+	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
+	bool skipVideo = false;
+
+	cfoDecoder->start();
+
+	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo) {
+		if (cfoDecoder->needsUpdate()) {
+			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
+			if (frame) {
+				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, frame->w, frame->h);
+
+				if (cfoDecoder->hasDirtyPalette())
+					g_system->getPaletteManager()->setPalette(cfoDecoder->getPalette(), 0, 256);
+
+				g_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
+
+		g_system->delayMillis(10);
+	}
+}
 } // End of namespace Chewy
