@@ -2225,9 +2225,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 	}
 
 	if (obj->_ox == xpos && obj->_oy == ypos) {
-		g_fp->_globalMessageQueueList->compact();
-
-		MessageQueue *mq = new MessageQueue();
+		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
 			int idxwalk = getDirByStatics(idx, staticsId);
