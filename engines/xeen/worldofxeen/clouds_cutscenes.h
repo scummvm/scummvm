@@ -35,6 +35,10 @@ private:
 	static const int _INTRO_FRAMES_LOOKUP[14];
 	static const int _INTRO_FRAMES_VALS[8][32];
 	static const uint _INTRO_FRAMES_WAIT[8][32];
+	static const byte _DECODE_TABLE1[256];
+	static const byte _DECODE_TABLE2[256];
+private:
+	void loadScreen(const Common::String &name);
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

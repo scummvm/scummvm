@@ -345,15 +345,14 @@ bool CloudsCutscenes::showCloudsEnding() {
 	File::setCurrentArchive(GAME_ARCHIVE);
 
 	// Show the castle with swirling clouds and lightning
-	SpriteResource prec[42];
-	prec[0].load("prec.end");
-	for (int idx = 1; idx < 42; ++idx)
-		prec[idx].load(Common::String::format("prec00%02u.frm", idx));
-
+	SpriteResource prec;
+	prec.load("prec.end");
 	screen.loadBackground("blank.raw");
 	screen.loadPalette("mm4e.pal");
-	prec[0].draw(screen, 0);
-	prec[0].draw(screen, 1, Common::Point(160, 0));
+
+	loadScreen(Common::String::format("prec00%02u.frm", 1));
+	prec.draw(screen, 0);
+	prec.draw(screen, 1, Common::Point(160, 0));
 	screen.update();
 	screen.fadeIn();
 	WAIT(15);
@@ -362,8 +361,12 @@ bool CloudsCutscenes::showCloudsEnding() {
 	sound.playFX(34);
 
 	for (int idx = 1; idx < 42; ++idx) {
-		prec[idx].draw(screen, 0);
-		prec[idx].draw(screen, 1, Common::Point(160, 0));
+		// Load up the background of swirling clouds
+		loadScreen(Common::String::format("prec00%02u.frm", idx));
+
+		// Render castle in front of it
+		prec.draw(screen, 0);
+		prec.draw(screen, 1, Common::Point(160, 0));
 		screen.update();
 
 		switch (idx) {
@@ -385,8 +388,7 @@ bool CloudsCutscenes::showCloudsEnding() {
 		WAIT(3);
 	}
 
-	for (int idx = 0; idx < 42; ++idx)
-		prec[idx].clear();
+	prec.clear();
 
 	// Closeup of castle
 	SpriteResource vort[21], cast[6], darkLord[4];
@@ -402,6 +404,202 @@ bool CloudsCutscenes::showCloudsEnding() {
 	// TODO
 	WAIT(5000);
 	return true;
+}
+
+void CloudsCutscenes::loadScreen(const Common::String &name) {
+	Screen &screen = *_vm->_screen;
+	File fIn(name);
+
+	// Read in the resource data, and form src and dest pointers
+	byte *srcData = new byte[fIn.size()];
+	fIn.read(srcData, fIn.size());
+	fIn.close();
+	const byte *srcP = srcData;
+	byte *destP = (byte *)screen.getPixels();
+
+	// Setup reference arrays
+	#define ARRAY_SIZE 314
+	#define ARRAY_LAST1 ((ARRAY_SIZE - 1) * 2)
+	#define ARRAY_LAST2 ((ARRAY_SIZE - 1) * 2 + 1)
+	int array1[ARRAY_SIZE], array2[ARRAY_SIZE * 2];
+	int array3[ARRAY_SIZE * 2], array4[ARRAY_SIZE * 2 - 1];
+	byte buffer[4164];
+
+	for (int idx = 0; idx < ARRAY_SIZE; ++idx) {
+		array3[idx] = 1;
+		array1[idx] = idx * 2;
+		array2[idx] = idx * 2 + (ARRAY_SIZE * 4 - 2);
+	}
+
+	for (int idx = 0, idx2 = ARRAY_SIZE; idx < (ARRAY_SIZE - 1); idx += 2, ++idx2) {
+		array3[idx2] = array3[idx] + array3[idx + 1];
+		array2[idx2] = idx * 2;
+		array4[idx] = array4[idx + 1] = idx2 * 2;
+	}
+	array4[ARRAY_LAST1] = 0;
+	array3[ARRAY_LAST2] = -1;
+	array2[ARRAY_LAST2] = 4036;
+
+	uint16 bits = 0x8000;
+	byte *bufferP = &buffer[0];
+	WRITE_LE_UINT16(bufferP, READ_LE_UINT16(srcP));
+	bufferP += 2;
+
+	int count = srcP[2];
+	srcP += 4;
+	int vCx = 0;
+
+	for (int byteIdx = 0; byteIdx < count; ) {
+		int vMin = array2[(ARRAY_SIZE - 1) * 2];
+		int vThreshold = (ARRAY_SIZE - 1) * 4;
+		while (vMin < vThreshold) {
+			vCx = 0;
+			bool flag = (bits & 0x8000);
+			bits <<= 1;
+
+			if (!vCx) {
+				bits = READ_BE_UINT16(srcP);
+				srcP += 2;
+				flag = (bits & 0x8000);
+				bits = (bits << 1) | 1;
+			}
+
+			vMin = array2[vMin / 2 + flag ? 2 : 0];
+		}
+
+		vMin -= vThreshold;
+
+		if (!(array3[ARRAY_LAST1] & 0x8000)) {
+			for (int ctr = 0, ctr2 = 0; ctr < (ARRAY_SIZE * 2); ++ctr) {
+				if (array2[ctr] >= (ARRAY_SIZE * 4 - 1)) {
+					array3[ctr2] = (array3[ctr] + 1) / 2;
+					array2[ctr2] = array2[ctr];
+					++ctr2;
+				}
+			}
+
+			for (int ctr = 0, ctr2 = ARRAY_SIZE; ctr < ARRAY_SIZE; ctr += 2, ++ctr2) {
+				int currVal = array3[ctr] + array3[ctr + 1];
+				array3[ctr2] = currVal;
+				int ctr3 = ctr2;
+				do {
+					--ctr3;
+				} while (array3[ctr3] >= array3[ctr2]);
+				++ctr3;
+
+				int diff = ctr2 - ctr3;
+				int *pDest = &array3[ctr2];
+				Common::copy(pDest - 1, pDest - 1 + diff, pDest);
+				array3[ctr3] = currVal;
+
+				pDest = &array2[ctr2];
+				Common::copy(pDest - 1, pDest - 1 + diff, pDest);
+				array2[ctr3] = ctr * 2;
+			}
+
+			int *arrEndP = &array4[ARRAY_SIZE * 2 - 1];
+			for (int ctr = 0, val = 0; ctr < ARRAY_SIZE * 2; ++ctr, val += 2) {
+				int *arrP = &array4[array2[ctr] / 2];
+				if (arrP < arrEndP)
+					*arrP = val;
+			}
+		}
+
+		for (int offset = array1[vMin / 2]; offset; offset = array4[offset / 2]) {
+			int *arrP = &array3[offset / 2];
+			int threshold = ++arrP[0];
+			if (threshold <= arrP[1])
+				continue;
+
+			int *currP = arrP + 2;
+			while (threshold > *currP)
+				++currP;
+			--currP;
+
+			*arrP = *currP;
+			*currP = threshold;
+			int offset4 = array2[offset / 2];
+			int newIndex = currP - array3;
+			array4[offset4 / 2] = newIndex * 2;
+			if (offset4 < (ARRAY_SIZE * 4 - 2))
+				array4[offset4 / 2 + 1] = newIndex * 2;
+
+			int newIndex2 = array2[newIndex] / 2;
+			array2[newIndex] = offset4 / 2;
+			array4[newIndex2] = offset;
+			if ((newIndex2 * 2) <= (ARRAY_SIZE * 4 - 2))
+				array4[newIndex2 + 1] = offset;
+
+			array2[offset / 2] = newIndex2 * 2;
+			offset = newIndex * 2;
+		}
+
+		vMin /= 2;
+		if (vMin < 256) {
+			// Single byte write to destination
+			*destP++ = (byte)vMin;
+			int buffOffset = array2[ARRAY_LAST2];
+			array2[ARRAY_LAST2] = (buffOffset + 1) & 0xfff;
+			buffer[buffOffset] = (byte)vMin;
+			++byteIdx;
+			continue;
+		}
+
+		uint16 bitsLow = bits, bitsHigh = 0;
+		for (int ctr = 8; ctr >= 0; --ctr) {
+			bool highBit = bitsLow & 0x8000;
+			bitsLow <<= 1;
+
+			if (bitsLow) {
+				bitsHigh = (bitsHigh << 1) | (highBit ? 1 : 0);
+			} else {
+				bitsLow = READ_BE_UINT16(srcP);
+				srcP += 2;
+
+				byte loBit = 1;
+				do {
+					bitsHigh = (bitsHigh << 1) | ((bitsLow & 0x8000) ? 1 : 0);
+					bitsLow = (bitsLow << 1) | (loBit ? 1 : 0);
+					loBit = 0;
+				} while (--count > 0);
+				break;
+			}
+		}
+		bits = bitsLow;
+
+		int t2Val = _DECODE_TABLE2[bitsHigh] << 6;
+		int tCount = _DECODE_TABLE1[bitsHigh] - 2;
+
+		for (int ctr = 0; ctr < tCount; ++ctr) {
+			bool highBit = bitsLow & 0x8000;
+			bitsLow <<= 1;
+			if (!bitsLow) {
+				bitsLow = READ_BE_UINT16(srcP);
+				srcP += 2;
+				highBit = bitsLow & 0x8000;
+				bits = bitsLow = (bitsLow << 1) | 1;
+			}
+
+			bitsHigh = (bitsHigh << 1) | (highBit ? 1 : 0);
+		}
+
+		t2Val |= (bitsHigh & 0x3F);
+		int buffOffset = array2[ARRAY_SIZE * 4 - 1] - t2Val - 1;
+
+
+		for (int ctr = 0; ctr < vMin - 253; ++ctr, ++buffOffset) {
+			buffOffset &= 0xfff;
+			byte b = buffer[buffOffset];
+			*destP++ = b;
+
+			int &buffOffset2 = array2[ARRAY_SIZE * 4 - 1];
+			buffer[buffOffset2++] = b;
+			++byteIdx;
+		}
+	}
+
+	delete[] srcData;
+	screen.markAllDirty();
 }
 
 const char *const CloudsCutscenes::_INTRO_VOCS[14] = {
@@ -469,6 +667,44 @@ const uint CloudsCutscenes::_INTRO_FRAMES_WAIT[8][32] = {
 		17, 19, 22, 23, 26, 30, 32, 34, 40, 43, 47, 52, 53, 55, 57, 60,
 		62,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
 	}
+};
+
+const byte CloudsCutscenes::_DECODE_TABLE1[256] = {
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+	7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
+};
+
+const byte CloudsCutscenes::_DECODE_TABLE2[256] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5,
+	6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7,
+	8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9,
+	10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11,
+	12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
+	16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19,
+	20, 20, 20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 23,
+	24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 30, 31, 31,
+	32, 32, 33, 33, 34, 34, 35, 35, 36, 36, 37, 37, 38, 38, 39, 39,
+	40, 40, 41, 41, 42, 42, 43, 43, 44, 44, 45, 45, 46, 46, 47, 47,
+	48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63
 };
 
 } // End of namespace WorldOfXeen
