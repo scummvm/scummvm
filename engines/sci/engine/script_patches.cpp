@@ -4551,8 +4551,30 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark -
 #pragma mark Torin's Passage
 
+// Torin initializes the inventory with an int16 array, which happens to work
+// in SSCI because object references are int16s, but in ScummVM object
+// references are reg_ts, so this array needs to be created as an IDArray
+// instead
+static const uint16 torinInventItemSlotsSignature[] = {
+	0x38, SIG_UINT16(0x8d), // pushi $8d (new)
+	0x78,                   // push1
+	SIG_MAGICDWORD,
+	0x67, 0x2e,             // pTos $2e (invSlotsTot)
+	0x51, 0x0b,             // class IntArray
+	SIG_END
+};
+
+static const uint16 torinInventItemSlotsPatch[] = {
+	PATCH_ADDTOOFFSET(+3),  // pushi $8d (new)
+	PATCH_ADDTOOFFSET(+1),  // push1
+	PATCH_ADDTOOFFSET(+2),  // pTos $2e (invSlotsTot)
+	0x51, 0x0c,             // class IDArray
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
+	{  true, 64895, "fix inventory array type",                    1, torinInventItemSlotsSignature,    torinInventItemSlotsPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
