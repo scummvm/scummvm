@@ -440,31 +440,29 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 	array3[ARRAY_LAST2] = -1;
 	array2[ARRAY_LAST2] = 4036;
 
+	// Get the decompressed size and default buffer contents
 	uint16 bits = 0x8000;
 	byte *bufferP = &buffer[0];
-	WRITE_LE_UINT16(bufferP, READ_LE_UINT16(srcP));
-	bufferP += 2;
-
-	int count = srcP[2];
+	Common::fill((uint16 *)buffer, (uint16 *)(buffer + 4164),
+		*((uint16 *)srcP));
+	int count = READ_BE_UINT16(&srcP[2]);
 	srcP += 4;
-	int vCx = 0;
 
 	for (int byteIdx = 0; byteIdx < count; ) {
 		int vMin = array2[(ARRAY_SIZE - 1) * 2];
 		int vThreshold = (ARRAY_SIZE - 1) * 4;
 		while (vMin < vThreshold) {
-			vCx = 0;
 			bool flag = (bits & 0x8000);
 			bits <<= 1;
 
-			if (!vCx) {
+			if (!bits) {
 				bits = READ_BE_UINT16(srcP);
 				srcP += 2;
 				flag = (bits & 0x8000);
 				bits = (bits << 1) | 1;
 			}
 
-			vMin = array2[vMin / 2 + flag ? 2 : 0];
+			vMin = array2[vMin / 2 + (flag ? 2 : 0)];
 		}
 
 		vMin -= vThreshold;
@@ -584,15 +582,14 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 		}
 
 		t2Val |= (bitsHigh & 0x3F);
-		int buffOffset = array2[ARRAY_SIZE * 4 - 1] - t2Val - 1;
-
+		int buffOffset = array2[ARRAY_LAST2] - t2Val - 1;
 
 		for (int ctr = 0; ctr < vMin - 253; ++ctr, ++buffOffset) {
 			buffOffset &= 0xfff;
 			byte b = buffer[buffOffset];
 			*destP++ = b;
 
-			int &buffOffset2 = array2[ARRAY_SIZE * 4 - 1];
+			int &buffOffset2 = array2[ARRAY_LAST2];
 			buffer[buffOffset2++] = b;
 			++byteIdx;
 		}
