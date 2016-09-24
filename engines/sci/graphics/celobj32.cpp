@@ -35,9 +35,6 @@ namespace Sci {
 CelScaler *CelObj::_scaler = nullptr;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-
 	for (int i = 0; i < ARRAYSIZE(_scaleTables); ++i) {
 		if (_scaleTables[i].scaleX == scaleX && _scaleTables[i].scaleY == scaleY) {
 			_activeIndex = i;
@@ -50,14 +47,12 @@ void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	CelScalerTable &table = _scaleTables[i];
 
 	if (table.scaleX != scaleX) {
-		assert(screenWidth <= ARRAYSIZE(table.valuesX));
-		buildLookupTable(table.valuesX, scaleX, screenWidth);
+		buildLookupTable(table.valuesX, scaleX, kCelScalerTableSize);
 		table.scaleX = scaleX;
 	}
 
 	if (table.scaleY != scaleY) {
-		assert(screenHeight <= ARRAYSIZE(table.valuesY));
-		buildLookupTable(table.valuesY, scaleY, screenHeight);
+		buildLookupTable(table.valuesY, scaleY, kCelScalerTableSize);
 		table.scaleY = scaleY;
 	}
 }
@@ -164,8 +159,8 @@ struct SCALER_Scale {
 	const byte *_row;
 	READER _reader;
 	int16 _x;
-	static int16 _valuesX[4096];
-	static int16 _valuesY[4096];
+	static int16 _valuesX[kCelScalerTableSize];
+	static int16 _valuesY[kCelScalerTableSize];
 
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
 	_row(nullptr),
@@ -249,9 +244,9 @@ struct SCALER_Scale {
 };
 
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesX[4096];
+int16 SCALER_Scale<FLIP, READER>::_valuesX[kCelScalerTableSize];
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesY[4096];
+int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 
 #pragma mark -
 #pragma mark CelObj - Resource readers
@@ -283,7 +278,7 @@ public:
 struct READER_Compressed {
 private:
 	const byte *const _resource;
-	byte _buffer[4096];
+	byte _buffer[kCelScalerTableSize];
 	uint32 _controlOffset;
 	uint32 _dataOffset;
 	uint32 _uncompressedDataOffset;

@@ -141,13 +141,20 @@ typedef Common::Array<CelCacheEntry> CelCache;
 #pragma mark -
 #pragma mark CelScaler
 
+enum {
+	/**
+	 * The maximum size of a row/column of scaled pixel data.
+	 */
+	kCelScalerTableSize = 4096
+};
+
 struct CelScalerTable {
 	/**
 	 * A lookup table of indexes that should be used to find
 	 * the correct column to read from the source bitmap
 	 * when drawing a scaled version of the source bitmap.
 	 */
-	int valuesX[4096];
+	int valuesX[kCelScalerTableSize];
 
 	/**
 	 * The ratio used to generate the x-values.
@@ -159,7 +166,7 @@ struct CelScalerTable {
 	 * the correct row to read from a source bitmap when
 	 * drawing a scaled version of the source bitmap.
 	 */
-	int valuesY[4096];
+	int valuesY[kCelScalerTableSize];
 
 	/**
 	 * The ratio used to generate the y-values.
