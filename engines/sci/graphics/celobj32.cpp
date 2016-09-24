@@ -154,6 +154,7 @@ struct SCALER_NoScale {
 template<bool FLIP, typename READER>
 struct SCALER_Scale {
 #ifndef NDEBUG
+	int16 _minX;
 	int16 _maxX;
 #endif
 	const byte *_row;
@@ -165,6 +166,7 @@ struct SCALER_Scale {
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
 	_row(nullptr),
 #ifndef NDEBUG
+	_minX(targetRect.left),
 	_maxX(targetRect.right - 1),
 #endif
 	// The maximum width of the scaled object may not be as
@@ -234,11 +236,11 @@ struct SCALER_Scale {
 	inline void setTarget(const int16 x, const int16 y) {
 		_row = _reader.getRow(_valuesY[y]);
 		_x = x;
-		assert(_x >= 0 && _x <= _maxX);
+		assert(_x >= _minX && _x <= _maxX);
 	}
 
 	inline byte read() {
-		assert(_x >= 0 && _x <= _maxX);
+		assert(_x >= _minX && _x <= _maxX);
 		return _row[_valuesX[_x++]];
 	}
 };
