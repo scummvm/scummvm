@@ -2237,7 +2237,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 				return 0;
 			}
 
-			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
+			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._turnS[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_field_24 = 1;
 			ex->_param = picAniInfo.field_8;
