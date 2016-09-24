@@ -1080,13 +1080,13 @@ void DisplayMan::drawFloorOrnament(uint16 floorOrnOrdinal, ViewFloor viewFloorIn
 		return;
 
 	bool drawFootprints = (getFlag(floorOrnOrdinal, kDMMaskFootprints) ? true : false);
-	byte *bitmap;
 	if (!drawFootprints || clearFlag(floorOrnOrdinal, kDMMaskFootprints)) {
 		floorOrnOrdinal--;
 		uint16 floorOrnIndex = floorOrnOrdinal;
 		int16 nativeBitmapIndex = _currMapFloorOrnInfo[floorOrnIndex].nativeIndice
 			+ g191_floorOrnNativeBitmapndexInc[viewFloorIndex];
 		uint16 *coordSets = g206_floorOrnCoordSets[_currMapFloorOrnInfo[floorOrnIndex].coordinateSet][viewFloorIndex];
+		byte *bitmap;
 		if ((viewFloorIndex == kDMViewFloorD1R) || (viewFloorIndex == kDMViewFloorD2R)
 			|| (viewFloorIndex == kDMViewFloorD3R)
 			|| ((floorOrnIndex == k15_FloorOrnFootprints) && _useFlippedWallAndFootprintsBitmap &&

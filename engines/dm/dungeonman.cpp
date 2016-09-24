@@ -638,6 +638,9 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_dungeonMaps[i]._doorSet0 = (tmp >> 8) & 0xF;
 		_dungeonMaps[i]._wallSet = (WallSet)((tmp >> 4) & 0xF);
 		_dungeonMaps[i]._floorSet = (FloorSet)(tmp & 0xF);
+
+		if (!file)
+			delete dunDataStream;
 	}
 
 	// load column stuff thingy

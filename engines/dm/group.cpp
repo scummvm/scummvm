@@ -525,14 +525,15 @@ uint16 GroupMan::getGroupValueUpdatedWithCreatureValue(uint16 groupVal, uint16 c
 }
 
 int16 GroupMan::getDamageAllCreaturesOutcome(Group *group, int16 mapX, int16 mapY, int16 attack, bool notMoving) {
-	bool killedSomeCreatures = false;
-	bool killedAllCreatures = true;
 	_dropMovingCreatureFixedPossCellCount = 0;
 	if (attack > 0) {
 		int16 creatureIndex = group->getCount();
 		uint16 randomAttackSeed = (attack >> 3) + 1;
 		attack -= randomAttackSeed;
 		randomAttackSeed <<= 1;
+
+		bool killedSomeCreatures = false;
+		bool killedAllCreatures = true;
 		do {
 			int16 outcomeVal = groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, attack + _vm->getRandomNumber(randomAttackSeed), notMoving);
 			killedAllCreatures = outcomeVal && killedAllCreatures;
