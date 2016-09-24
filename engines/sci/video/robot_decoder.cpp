@@ -445,7 +445,7 @@ void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, co
 	if (scale != 128) {
 		_scaleInfo.x = scale;
 		_scaleInfo.y = scale;
-		_scaleInfo.signal = kScaleSignalDoScaling32;
+		_scaleInfo.signal = kScaleSignalManual;
 	}
 
 	_plane = g_sci->_gfxFrameout->getPlanes().findByObject(plane);
@@ -1391,7 +1391,7 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 
 // TODO: Version 6 robot?
 //		int scaleXRemainder;
-		if (_scaleInfo.signal == kScaleSignalDoScaling32) {
+		if (_scaleInfo.signal == kScaleSignalManual) {
 			position.x = (position.x * _scaleInfo.x) / 128;
 // TODO: Version 6 robot?
 //			scaleXRemainder = (position.x * _scaleInfo.x) % 128;

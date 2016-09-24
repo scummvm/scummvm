@@ -263,16 +263,13 @@ void ScreenItem::calcRects(const Plane &plane) {
 	}
 
 	Ratio scaleX, scaleY;
-
-	if (_scale.signal & kScaleSignalDoScaling32) {
-		if (_scale.signal & kScaleSignalUseVanishingPoint) {
-			int num = _scale.max * (_position.y - plane._vanishingPoint.y) / (scriptWidth - plane._vanishingPoint.y);
-			scaleX = Ratio(num, 128);
-			scaleY = Ratio(num, 128);
-		} else {
-			scaleX = Ratio(_scale.x, 128);
-			scaleY = Ratio(_scale.y, 128);
-		}
+	if (_scale.signal == kScaleSignalManual) {
+		scaleX = Ratio(_scale.x, 128);
+		scaleY = Ratio(_scale.y, 128);
+	} else if (_scale.signal == kScaleSignalVanishingPoint) {
+		int num = _scale.max * (_position.y - plane._vanishingPoint.y) / (scriptWidth - plane._vanishingPoint.y);
+		scaleX = Ratio(num, 128);
+		scaleY = Ratio(num, 128);
 	}
 
 	if (scaleX.getNumerator() && scaleY.getNumerator()) {
@@ -593,15 +590,13 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
 	Ratio scaleX, scaleY;
-	if (_scale.signal & kScaleSignalDoScaling32) {
-		if (_scale.signal & kScaleSignalUseVanishingPoint) {
-			int num = _scale.max * (_position.y - plane._vanishingPoint.y) / (scriptWidth - plane._vanishingPoint.y);
-			scaleX = Ratio(num, 128);
-			scaleY = Ratio(num, 128);
-		} else {
-			scaleX = Ratio(_scale.x, 128);
-			scaleY = Ratio(_scale.y, 128);
-		}
+	if (_scale.signal == kScaleSignalManual) {
+		scaleX = Ratio(_scale.x, 128);
+		scaleY = Ratio(_scale.y, 128);
+	} else if (_scale.signal == kScaleSignalVanishingPoint) {
+		int num = _scale.max * (_position.y - plane._vanishingPoint.y) / (scriptWidth - plane._vanishingPoint.y);
+		scaleX = Ratio(num, 128);
+		scaleY = Ratio(num, 128);
 	}
 
 	if (scaleX.getNumerator() == 0 || scaleY.getNumerator() == 0) {
