@@ -30,13 +30,9 @@
 namespace Sci {
 
 enum ScaleSignals32 {
-	kScaleSignalNone                    = 0,
-	// TODO: rename to 'manual'
-	kScaleSignalDoScaling32				= 1, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalUseVanishingPoint       = 2,
-	// TODO: Is this actually a thing? I have not seen it and
-	// the original engine masks &3 where it uses scale signals.
-	kScaleSignalDisableGlobalScaling32	= 4
+	kScaleSignalNone           = 0,
+	kScaleSignalManual         = 1,
+	kScaleSignalVanishingPoint = 2
 };
 
 struct ScaleInfo {

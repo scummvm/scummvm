@@ -689,12 +689,12 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		if (_doublePixels) {
 			vmdScaleInfo.x = 256;
 			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalDoScaling32;
+			vmdScaleInfo.signal = kScaleSignalManual;
 			vmdRect.right += vmdRect.width();
 			vmdRect.bottom += vmdRect.height();
 		} else if (_stretchVertical) {
 			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalDoScaling32;
+			vmdScaleInfo.signal = kScaleSignalManual;
 			vmdRect.bottom += vmdRect.height();
 		}
 
