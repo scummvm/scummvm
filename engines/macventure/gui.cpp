@@ -1129,12 +1129,11 @@ Common::Point Gui::localizeTravelledDistance(Common::Point point, WindowReferenc
 
 void Gui::removeInventoryWindow(WindowReference ref) {
 	_inventoryWindows.remove_at(ref - kInventoryStart);
-	bool found = false;
 	Common::List<WindowData>::iterator it;
-	for (it = _windowData->begin(); it != _windowData->end() && !found; it++) {
+	for (it = _windowData->begin(); it != _windowData->end(); it++) {
 		if (it->refcon == ref) {
 			_windowData->erase(it);
-			found = true;
+			break;
 		}
 	}
 }
