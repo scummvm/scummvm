@@ -221,17 +221,17 @@ struct SCALER_Scale {
 		} else {
 			if (FLIP) {
 				const int lastIndex = celObj._width - 1;
-				for (int16 x = 0; x < targetRect.width(); ++x) {
-					_valuesX[targetRect.left + x] = lastIndex - table->valuesX[x];
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = lastIndex - table->valuesX[x - scaledPosition.x];
 				}
 			} else {
-				for (int16 x = 0; x < targetRect.width(); ++x) {
-					_valuesX[targetRect.left + x] = table->valuesX[x];
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = table->valuesX[x - scaledPosition.x];
 				}
 			}
 
-			for (int16 y = 0; y < targetRect.height(); ++y) {
-				_valuesY[targetRect.top + y] = table->valuesY[y];
+			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+				_valuesY[y] = table->valuesY[y - scaledPosition.y];
 			}
 		}
 	}
