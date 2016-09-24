@@ -437,7 +437,7 @@ void Spells::detectMonster() {
 	int grid[7][7];
 
 	SpriteResource sprites(isDarkCc ? "detectmn.icn" : "detctmon.icn");
-	Common::fill(&grid[0][0], &grid[7][7], 0);
+	Common::fill(&grid[0][0], &grid[6][6], 0);
 
 	w.open();
 	w.writeString(Res.DETECT_MONSTERS);
