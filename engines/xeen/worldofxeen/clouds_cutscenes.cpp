@@ -408,26 +408,22 @@ bool CloudsCutscenes::showCloudsEnding() {
 
 void CloudsCutscenes::loadScreen(const Common::String &name) {
 	Screen &screen = *_vm->_screen;
-	File fIn(name);
-
-	// Read in the resource data, and form src and dest pointers
-	byte *srcData = new byte[fIn.size()];
-	fIn.read(srcData, fIn.size());
-	fIn.close();
-	const byte *srcP = srcData;
+	File fSrc(name);
 	byte *destP = (byte *)screen.getPixels();
+	byte *destEndP = (byte *)destP + SCREEN_WIDTH * SCREEN_HEIGHT;
 
 	// Setup reference arrays
 	#define ARRAY_SIZE 314
 	#define ARRAY_LAST1 ((ARRAY_SIZE - 1) * 2)
 	#define ARRAY_LAST2 ((ARRAY_SIZE - 1) * 2 + 1)
-	uint array1[ARRAY_SIZE], array2[ARRAY_SIZE * 2];
-	uint array3[ARRAY_SIZE * 2], array4[ARRAY_SIZE * 2 - 1];
-	byte buffer[4164];
+	#define BUFFER_SIZE 0x1000
+	uint array2[ARRAY_SIZE * 2], array3[ARRAY_SIZE * 2];
+	uint array4[ARRAY_SIZE * 3];
+	byte buffer[BUFFER_SIZE];
 
 	for (int idx = 0; idx < ARRAY_SIZE; ++idx) {
 		array3[idx] = 1;
-		array1[idx] = idx * 2;
+		array4[idx + 627] = idx * 2;
 		array2[idx] = idx * 2 + (ARRAY_SIZE * 4 - 2);
 	}
 
@@ -439,15 +435,19 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 	array4[ARRAY_LAST1] = 0;
 	array3[ARRAY_LAST2] = (uint)-1;
 	array2[ARRAY_LAST2] = 4036;
+	uint16 bits = 0x8000;
 
 	// Get the decompressed size and default buffer contents
-	uint16 bits = 0x8000;
-	Common::fill((uint16 *)buffer, (uint16 *)(buffer + 4164),
-		*((uint16 *)srcP));
-	int count = READ_BE_UINT16(&srcP[2]);
-	srcP += 4;
+	uint16 bytePair;
+	fSrc.read((byte *)&bytePair, 2);
+	Common::fill((uint16 *)buffer, (uint16 *)(buffer + BUFFER_SIZE),
+		bytePair);
+
+	int count = fSrc.readUint16BE();
+	assert(count == (SCREEN_WIDTH * SCREEN_HEIGHT));
 
 	for (int byteIdx = 0; byteIdx < count; ) {
+		assert(fSrc.pos() < fSrc.size());
 		int vMin = array2[(ARRAY_SIZE - 1) * 2];
 		int vThreshold = ARRAY_SIZE * 4 - 2;
 		while (vMin < vThreshold) {
@@ -455,8 +455,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 			bits <<= 1;
 
 			if (!bits) {
-				bits = READ_BE_UINT16(srcP);
-				srcP += 2;
+				bits = fSrc.readUint16BE();
 				flag = (bits & 0x8000);
 				bits = (bits << 1) | 1;
 			}
@@ -502,7 +501,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 			}
 		}
 
-		for (int offset = array1[vMin / 2]; offset; offset = array4[offset / 2]) {
+		for (int offset = array4[627 + vMin / 2]; offset; offset = array4[offset / 2]) {
 			uint *arrP = &array3[offset / 2];
 			uint threshold = ++arrP[0];
 			if (threshold <= arrP[1])
@@ -522,7 +521,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 				array4[offset4 / 2 + 1] = newIndex * 2;
 
 			int newIndex2 = array2[newIndex] / 2;
-			array2[newIndex] = offset4 / 2;
+			array2[newIndex] = offset4;
 			array4[newIndex2] = offset;
 			if ((newIndex2 * 2) <= (ARRAY_SIZE * 4 - 2))
 				array4[newIndex2 + 1] = offset;
@@ -550,8 +549,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 			if (bitsLow) {
 				bitsHigh = (bitsHigh << 1) | (highBit ? 1 : 0);
 			} else {
-				bitsLow = READ_BE_UINT16(srcP);
-				srcP += 2;
+				bitsLow = fSrc.readUint16BE();
 
 				byte loBit = 1;
 				do {
@@ -571,8 +569,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 			bool highBit = bits & 0x8000;
 			bits <<= 1;
 			if (!bits) {
-				bits = READ_BE_UINT16(srcP);
-				srcP += 2;
+				bits = fSrc.readUint16BE();
 				highBit = bits & 0x8000;
 				bits = (bits << 1) | 1;
 			}
@@ -595,7 +592,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 		}
 	}
 
-	delete[] srcData;
+	assert(destP == destEndP);
 	screen.markAllDirty();
 }
 
