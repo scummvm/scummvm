@@ -766,9 +766,30 @@ reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
-	// viewId, loopNo, celNo, skipColor, backColor, useRemap, source overlay bitmap
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	const uint8 skipColor = argc > 3 && argv[3].toSint16() != -1 ? argv[3].toSint16() : view._transparentColor;
+	const uint8 backColor = argc > 4 && argv[4].toSint16() != -1 ? argv[4].toSint16() : view._transparentColor;
+	const bool useRemap = argc > 5 ? (bool)argv[5].toSint16() : false;
 
-	return kStub(s, argc + 1, argv - 1);
+	reg_t bitmapId;
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, view._width, view._height, skipColor, 0, 0, view._scaledWidth, view._scaledHeight, 0, useRemap, true);
+	Buffer &buffer = bitmap.getBuffer();
+
+	const Common::Rect viewRect(view._width, view._height);
+	buffer.fillRect(viewRect, backColor);
+	view.draw(buffer, viewRect, Common::Point(0, 0), view._mirrorX);
+
+	if (argc > 6 && !argv[6].isNull()) {
+		reg_t clutHandle = argv[6];
+		if (s->_segMan->isObject(clutHandle)) {
+			clutHandle = readSelector(s->_segMan, clutHandle, SELECTOR(data));
+		}
+
+		SciArray &clut = *s->_segMan->lookupArray(clutHandle);
+		bitmap.applyRemap(clut);
+	}
+
+	return bitmapId;
 }
 
 reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv) {
@@ -784,12 +805,24 @@ reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
-	// bitmap
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 
-	// argc 1 = get width
-	// argc 2 = pixel at row 0 col n
-	// argc 3 = pixel at row n col n
-	return kStub(s, argc + 1, argv - 1);
+	if (argc == 1) {
+		return make_reg(0, bitmap.getWidth());
+	}
+
+	int32 offset;
+	if (argc == 2) {
+		offset = argv[1].toUint16();
+	} else {
+		const int16 x = argv[1].toSint16();
+		const int16 y = argv[2].toSint16();
+		offset = y * bitmap.getWidth() + x;
+	}
+
+	assert(offset >= 0 && offset < bitmap.getWidth() * bitmap.getHeight());
+	const uint8 color = bitmap.getPixels()[offset];
+	return make_reg(0, color);
 }
 
 reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv) {
