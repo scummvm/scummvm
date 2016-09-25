@@ -101,7 +101,7 @@ void SpriteResource::clear() {
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
-		const Common::Rect &bounds, int flags, int scale) {
+		const Common::Rect &clipRect, int flags, int scale) {
 	static const uint SCALE_TABLE[] = { 
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
@@ -130,9 +130,11 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	destPos.y = pt.y + getScaledVal(yOffset, scaleMaskY);
 	
 	// If the flags allow the dest surface to be resized, ensure dest surface is big enough
+	Common::Rect bounds = clipRect;
 	if (flags & SPRFLAG_RESIZE) {
 		if (dest.w < (xOffset + width) || dest.h < (yOffset + height))
 			dest.create(xOffset + width, yOffset + height);
+		bounds = Common::Rect(0, 0, dest.w, dest.h);
 	}
 	
 	uint16 scaleMaskXCopy = scaleMaskX;

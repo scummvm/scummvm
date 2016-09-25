@@ -67,7 +67,7 @@ private:
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
-		const Common::Rect &bounds, int flags, int scale);
+		const Common::Rect &clipRect, int flags, int scale);
 
 	/**
 	 * Scale a co-ordinate value based on the passed scaling mask
