@@ -44,12 +44,12 @@ private:
 	void RemoveConsole();
 	void scroll();
 	void resetscroll();
-	void scrollfresques();
+	void scrollFrescoes();
 	void afffresques();
 	void gametofresques();
 	void dofresques();
 	void finfresques();
-	void scrollmiroir();
+	void scrollMirror();
 	void scrollpano();
 	void affsuiveur(suiveur_t *suiveur, int16 x, int16 y);
 	void persoinmiroir();
@@ -122,7 +122,7 @@ private:
 	void sauvefondbouche();
 	void restaurefondbouche();
 	void blackbars();
-	void afftopscr();
+	void drawTopScreen();
 	void affplanval();
 	void affrepere(int16 index, int16 location);
 	void affrepereadam(int16 location);
@@ -331,7 +331,7 @@ private:
 	void fademusica0(int16 delay);
 	object_t *getobjaddr(int16 id);
 	void countobjects();
-	void showobjects();
+	void showObjects();
 	void winobject(int16 id);
 	void loseobject(int16 id);
 	void lostobject();
@@ -556,7 +556,7 @@ private:
 	int             dword_30B04;
 
 	char            lastPhrasesFile;
-	char            dialogSkipFlags;
+	byte dialogSkipFlags;
 
 	color3_t        newColor;
 	color_t         oldPalette[256];    // TODO palette_t ?

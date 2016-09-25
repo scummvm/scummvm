@@ -187,7 +187,6 @@ void CLPalette_DeactivateInterval() {
 	gIntervalSet = 0;
 }
 void CLPalette_Send2Screen(struct color_t *palette, uint16 first, uint16 count) {
-	OSErr err;
 	int16 i;
 	if (gMacintize) {
 		palette[0].r = palette[0].g = palette[0].b = 0xFFFF;
