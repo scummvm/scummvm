@@ -1120,6 +1120,15 @@ public:
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	void applyRemap(SciArray &clut) {
+		const int length = getWidth() * getHeight();
+		uint8 *pixel = getPixels();
+		for (int i = 0; i < length; ++i) {
+			uint8 color = clut.int16At(*pixel);
+			*pixel++ = color;
+		}
+	}
 };
 
 struct BitmapTable : public SegmentObjTable<SciBitmap> {
