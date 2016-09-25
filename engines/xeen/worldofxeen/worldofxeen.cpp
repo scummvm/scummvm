@@ -23,6 +23,7 @@
 #include "xeen/worldofxeen/worldofxeen.h"
 #include "xeen/worldofxeen/darkside_cutscenes.h"
 #include "xeen/worldofxeen/clouds_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen_menu.h"
 #include "xeen/sound.h"
 
 namespace Xeen {
@@ -35,8 +36,8 @@ WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *g
 }
 
 void WorldOfXeenEngine::outerGameLoop() {
-	_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
-
+	//_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
+	_pendingAction = WOX_MENU;
 	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
 		switch (_pendingAction) {
 		case WOX_CLOUDS_INTRO:
@@ -66,8 +67,7 @@ void WorldOfXeenEngine::outerGameLoop() {
 			return;
 
 		case WOX_MENU:
-			// TODO
-			_pendingAction = WOX_PLAY_GAME;
+			WorldOfXeenMenu::show(this);
 			break;
 
 		case WOX_PLAY_GAME:

@@ -66,10 +66,11 @@ void WorldOfXeenMenu::execute() {
 	bool firstTime = true, doFade = true;
 	while (!_vm->shouldQuit()) {
 		setBackground(doFade);
-		events.setCursor(0);
 
 		if (firstTime) {
 			firstTime = false;
+			events.setCursor(0);
+			events.showCursor();
 			warning("TODO: Read existing save file");
 		}
 
@@ -219,11 +220,11 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	screen._windows[GAME_WINDOW].writeString(Res.OPTIONS_TITLE);
 
 	drawButtons(&screen._windows[0]);
+	screen.update();
 
 	if (waitFlag) {
-		screen._windows[0].update();
-
 		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
+			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}
 	}
