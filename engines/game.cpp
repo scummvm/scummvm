@@ -49,6 +49,20 @@ PlainGameDescriptor PlainGameDescriptor::of(const char *gameId, const char *desc
 	return pgd;
 }
 
+QualifiedGameDescriptor::QualifiedGameDescriptor() :
+		PlainGameDescriptor() {
+	engineId    = nullptr;
+	gameId      = nullptr;
+	description = nullptr;
+}
+
+QualifiedGameDescriptor::QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd) :
+		PlainGameDescriptor() {
+	engineId    = engine;
+	gameId      = pgd.gameId;
+	description = pgd.description;
+}
+
 DetectedGame::DetectedGame() :
 		hasUnknownFiles(false),
 		canBeAdded(true),
