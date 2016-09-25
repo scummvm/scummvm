@@ -87,6 +87,8 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	static Box boxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
+	DisplayMan &display = *_vm->_displayMan;
+
 	if ((championIndex != kDMChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth)
 		return;
 
@@ -118,19 +120,19 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 			_vm->_eventMan->_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
 			_vm->_eventMan->_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
 			_vm->_eventMan->discardAllInput();
-			_vm->_displayMan->drawFloorAndCeiling();
+			display.drawFloorAndCeiling();
 			return;
 		}
 	}
-	_vm->_displayMan->_useByteBoxCoordinates = false;
+	display._useByteBoxCoordinates = false;
 	_inventoryChampionOrdinal = _vm->indexToOrdinal(championIndex);
 	if (!inventoryChampionOrdinal)
-		_vm->_displayMan->shadeScreenBox(&_vm->_displayMan->_boxMovementArrows, kDMColorBlack);
+		display.shadeScreenBox(&display._boxMovementArrows, kDMColorBlack);
 
 	Champion *champion = &_vm->_championMan->_champions[championIndex];
-	_vm->_displayMan->loadIntoBitmap(kDMGraphicIdxInventory, _vm->_displayMan->_bitmapViewport);
+	display.loadIntoBitmap(kDMGraphicIdxInventory, display._bitmapViewport);
 	if (_vm->_championMan->_candidateChampionOrdinal)
-		_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, boxFloppyZzzCross, kDMColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
+		display.fillBoxBitmap(display._bitmapViewport, boxFloppyZzzCross, kDMColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
@@ -164,6 +166,7 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 
 void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 	DisplayMan &dispMan = *_vm->_displayMan;
+
 	dispMan._useByteBoxCoordinates = false;
 	Box box;
 	box._rect.top = 0;
@@ -174,13 +177,14 @@ void InventoryMan::drawStatusBoxPortrait(ChampionIndex championIndex) {
 }
 
 void InventoryMan::drawPanelHorizontalBar(int16 x, int16 y, int16 pixelWidth, Color color) {
+	DisplayMan &display = *_vm->_displayMan;
 	Box box;
 	box._rect.left = x;
 	box._rect.right = box._rect.left + pixelWidth;
 	box._rect.top = y;
 	box._rect.bottom = box._rect.top + 6;
-	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, box, color, k112_byteWidthViewport, k136_heightViewport);
+	display._useByteBoxCoordinates = false;
+	display.fillBoxBitmap(display._bitmapViewport, box, color, k112_byteWidthViewport, k136_heightViewport);
 }
 
 void InventoryMan::drawPanelFoodOrWaterBar(int16 amount, int16 y, Color color) {
@@ -206,26 +210,27 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 	Champion &champ = _vm->_championMan->_champions[_inventoryChampionOrdinal];
 	closeChest();
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty), _boxPanel, k72_byteWidth, kDMColorRed, 73);
+
+	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty), _boxPanel, k72_byteWidth, kDMColorRed, 73);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k24_byteWidth, kDMColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k24_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k24_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k24_byteWidth, kDMColorDarkestGray, 9);
 		break;
 	case Common::DE_DEU:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k32_byteWidth, kDMColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k32_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k32_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k32_byteWidth, kDMColorDarkestGray, 9);
 		break;
 	case Common::FR_FRA:
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k48_byteWidth, kDMColorDarkestGray, 9);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k24_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxFoodLabel), boxFood, k48_byteWidth, kDMColorDarkestGray, 9);
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxWaterLabel), boxWater, k24_byteWidth, kDMColorDarkestGray, 9);
 		break;
 	}
 
 	if (champ._poisonEventCount)
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPoisionedLabel),
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPoisionedLabel),
 								   boxPoisoned, k48_byteWidth, kDMColorDarkestGray, 15);
 
 	drawPanelFoodOrWaterBar(champ._food, 69, kDMColorLightBrown);
@@ -233,8 +238,10 @@ void InventoryMan::drawPanelFoodWaterPoisoned() {
 }
 
 void InventoryMan::drawPanelResurrectReincarnate() {
+	DisplayMan &display = *_vm->_displayMan;
+
 	_panelContent = kDMPanelContentResurrectReincarnate;
-	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelResurectReincarnate),
+	display.blitToViewport(display.getNativeBitmapOrGraphic(kDMGraphicIdxPanelResurectReincarnate),
 										 _boxPanel, k72_byteWidth, kDMColorDarkGreen, 73);
 }
 
@@ -315,7 +322,7 @@ void InventoryMan::drawPanelScroll(Scroll *scroll) {
 		charRed++;
 
 	*charRed = '\0';
-	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenScroll),
+	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenScroll),
 							   _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 lineCount = 1;
 	charRed++;
@@ -367,7 +374,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 	if (!isPressingEye) {
 		objMan.drawIconInSlotBox(kDMSlotBoxInventoryActionHand, kDMIconIndiceContainerChestOpen);
 	}
-	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenChest),
+	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelOpenChest),
 							   _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
@@ -470,7 +477,7 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 	static Box boxArrowOrEye(83, 98, 57, 65); // @ G0033_s_Graphic562_Box_ArrowOrEye
 
 	DisplayMan &dispMan = *_vm->_displayMan;
-	dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(pressingEye ? kDMGraphicIdxEyeForObjectDescription : kDMGraphicIdxArrowForChestContent),
+	dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(pressingEye ? kDMGraphicIdxEyeForObjectDescription : kDMGraphicIdxArrowForChestContent),
 							   boxArrowOrEye, k8_byteWidth, kDMColorRed, 9);
 }
 
@@ -495,9 +502,9 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		openAndDrawChest(thingToDraw, (Container *)rawThingPtr, pressingEye);
 	else {
 		IconIndice iconIndex = objMan.getIconIndex(thingToDraw);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty),
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty),
 								   _boxPanel, k72_byteWidth, kDMColorRed, 73);
-		dispMan.blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxObjectDescCircle),
+		dispMan.blitToViewport(dispMan.getNativeBitmapOrGraphic(kDMGraphicIdxObjectDescCircle),
 								   boxObjectDescCircle, k16_byteWidth, kDMColorDarkestGray, 27);
 
 		Common::String descString;
@@ -679,9 +686,10 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 
 void InventoryMan::setDungeonViewPalette() {
 	static const int16 palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
+	DisplayMan &display = *_vm->_displayMan;
 
 	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
-		_vm->_displayMan->_dungeonViewPaletteIndex = 0; /* Brightest color palette index */
+		display._dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
 		int16 counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
@@ -743,10 +751,10 @@ void InventoryMan::setDungeonViewPalette() {
 		} else {
 			paletteIndex = 5; /* Darkest color palette index */
 		}
-		_vm->_displayMan->_dungeonViewPaletteIndex = paletteIndex;
+		display._dungeonViewPaletteIndex = paletteIndex;
 	}
 
-	_vm->_displayMan->_refreshDungeonViewPaleteRequested = true;
+	display._refreshDungeonViewPaleteRequested = true;
 }
 
 void InventoryMan::decreaseTorchesLightPower() {
@@ -784,6 +792,7 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 	static const char *statisticNamesDE[7] = {"L", "STAERKE", "FLINKHEIT", "WEISHEIT", "VITALITAET", "ANTI-MAGIE", "ANTI-FEUER"};
 	static const char *statisticNamesFR[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
 
+	DisplayMan &display = *_vm->_displayMan;
 	const char **statisticNames;
 
 	switch (_vm->getGameLanguage()) { // localized
@@ -801,7 +810,7 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 	closeChest();
 	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
 	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
-	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty), _boxPanel, k72_byteWidth, kDMColorRed, 73);
+	display.blitToViewport(display.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty), _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 textPosY = 58;
 	for (uint16 idx = kDMSkillFighter; idx <= kDMSkillWizard; idx++) {
 		int16 skillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(championIndex, idx | kDMIgnoreTemporaryExperience));
@@ -876,6 +885,8 @@ void InventoryMan::clickOnMouth() {
 		1400    /* Dragon steak */
 	};
 
+	DisplayMan &display = *_vm->_displayMan;
+
 	if (_vm->_championMan->_leaderEmptyHanded) {
 		if (_panelContent == kDMPanelContentFoodWaterPoisoned)
 			return;
@@ -890,7 +901,7 @@ void InventoryMan::clickOnMouth() {
 			_vm->_eventMan->showMouse();
 			_vm->_eventMan->_hideMousePointerRequestCount = 1;
 			drawPanelFoodWaterPoisoned();
-			_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
+			display.drawViewport(k0_viewportNotDungeonView);
 		}
 		return;
 	}
@@ -1011,7 +1022,7 @@ void InventoryMan::clickOnMouth() {
 			_vm->_eventMan->discardAllInput();
 			if (_vm->_engineShouldQuit)
 				return;
-			_vm->_displayMan->updateScreen();
+			display.updateScreen();
 		}
 	} else {
 		_vm->_championMan->drawChangedObjectIcons();
