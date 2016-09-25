@@ -263,11 +263,13 @@ int16 ChampionMan::getDecodedValue(char *string, uint16 characterCount) {
 }
 
 void ChampionMan::drawHealthOrStaminaOrManaValue(int16 posY, int16 currVal, int16 maxVal) {
+	TextMan &txtMan = *_vm->_textMan;
+
 	Common::String tmp = getStringFromInteger(currVal, true, 3);
-	_vm->_textMan->printToViewport(55, posY, kDMColorLightestGray, tmp.c_str());
-	_vm->_textMan->printToViewport(73, posY, kDMColorLightestGray, "/");
+	txtMan.printToViewport(55, posY, kDMColorLightestGray, tmp.c_str());
+	txtMan.printToViewport(73, posY, kDMColorLightestGray, "/");
 	tmp = getStringFromInteger(maxVal, true, 3);
-	_vm->_textMan->printToViewport(79, posY, kDMColorLightestGray, tmp.c_str());
+	txtMan.printToViewport(79, posY, kDMColorLightestGray, tmp.c_str());
 }
 
 uint16 ChampionMan::getHandSlotIndex(uint16 slotBoxIndex) {
@@ -898,16 +900,18 @@ uint16 ChampionMan::getStatisticAdjustedAttack(Champion *champ, uint16 statIndex
 }
 
 void ChampionMan::wakeUp() {
+	EventManager &evtMan = *_vm->_eventMan;
+
 	_vm->_stopWaitingForPlayerInput = true;
 	_partyIsSleeping = false;
 	_vm->_waitForInputMaxVerticalBlankCount = 10;
 	_vm->delay(10);
 	_vm->_displayMan->drawFloorAndCeiling();
-	_vm->_eventMan->_primaryMouseInput = _vm->_eventMan->_primaryMouseInputInterface;
-	_vm->_eventMan->_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputMovement;
-	_vm->_eventMan->_primaryKeyboardInput = _vm->_eventMan->_primaryKeyboardInputInterface;
-	_vm->_eventMan->_secondaryKeyboardInput = _vm->_eventMan->_secondaryKeyboardInputMovement;
-	_vm->_eventMan->discardAllInput();
+	evtMan._primaryMouseInput = evtMan._primaryMouseInputInterface;
+	evtMan._secondaryMouseInput = evtMan._secondaryMouseInputMovement;
+	evtMan._primaryKeyboardInput = evtMan._primaryKeyboardInputInterface;
+	evtMan._secondaryKeyboardInput = evtMan._secondaryKeyboardInputMovement;
+	evtMan.discardAllInput();
 	_vm->_menuMan->drawEnabledMenus();
 }
 
@@ -948,6 +952,8 @@ void ChampionMan::disableAction(uint16 champIndex, uint16 ticks) {
 
 void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint16 exp) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
+	TextMan &txtMan = *_vm->_textMan;
+
 	if ((skillIndex >= kDMSkillSwing) && (skillIndex <= kDMSkillShoot) && (_vm->_projexpl->_lastCreatureAttackTime < _vm->_gameTime - 150))
 		exp >>= 1;
 
@@ -1032,24 +1038,36 @@ void ChampionMan::addSkillExperience(uint16 champIndex, uint16 skillIndex, uint1
 
 			setFlag(curChampion->_attributes, kDMAttributeStatistics);
 			drawChampionState((ChampionIndex)champIndex);
-			_vm->_textMan->printLineFeed();
+			txtMan.printLineFeed();
 			Color curChampionColor = _championColor[champIndex];
-			_vm->_textMan->printMessage(curChampionColor, curChampion->_name);
+			txtMan.printMessage(curChampionColor, curChampion->_name);
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _vm->_textMan->printMessage(curChampionColor, " JUST GAINED A "); break;
-			case Common::DE_DEU: _vm->_textMan->printMessage(curChampionColor, " HAT SOEBEN STUFE"); break;
-			case Common::FR_FRA: _vm->_textMan->printMessage(curChampionColor, " VIENT DE DEVENIR "); break;
+			case Common::EN_ANY:
+				txtMan.printMessage(curChampionColor, " JUST GAINED A ");
+				break;
+			case Common::DE_DEU:
+				txtMan.printMessage(curChampionColor, " HAT SOEBEN STUFE");
+				break;
+			case Common::FR_FRA:
+				txtMan.printMessage(curChampionColor, " VIENT DE DEVENIR ");
+				break;
 			}
 
-			_vm->_textMan->printMessage(curChampionColor, _baseSkillName[baseSkillIndex]);
+			txtMan.printMessage(curChampionColor, _baseSkillName[baseSkillIndex]);
 
 			switch (_vm->getGameLanguage()) { // localized
 			default:
-			case Common::EN_ANY: _vm->_textMan->printMessage(curChampionColor, "!"); break;
-			case Common::DE_DEU: _vm->_textMan->printMessage(curChampionColor, " LEVEL!"); break;
-			case Common::FR_FRA: _vm->_textMan->printMessage(curChampionColor, " ERREICHT!"); break;
+			case Common::EN_ANY:
+				txtMan.printMessage(curChampionColor, "!");
+				break;
+			case Common::DE_DEU:
+				txtMan.printMessage(curChampionColor, " LEVEL!");
+				break;
+			case Common::FR_FRA:
+				txtMan.printMessage(curChampionColor, " ERREICHT!");
+				break;
 			}
 		}
 	}
@@ -1200,17 +1218,19 @@ void ChampionMan::putObjectInLeaderHand(Thing thing, bool setMousePointer) {
 	if (thing == Thing::_none)
 		return;
 
+	EventManager &evtMan = *_vm->_eventMan;
+
 	_leaderEmptyHanded = false;
 	_vm->_objectMan->extractIconFromBitmap(_leaderHandObjectIconIndex = _vm->_objectMan->getIconIndex(_leaderHandObject = thing), _vm->_objectMan->_objectIconForMousePointer);
-	_vm->_eventMan->showMouse();
+	evtMan.showMouse();
 	_vm->_objectMan->drawLeaderObjectName(thing);
 
 	if (setMousePointer)
 		_vm->_setMousePointerToObjectInMainLoop = true;
 	else
-		_vm->_eventMan->setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
+		evtMan.setPointerToObject(_vm->_objectMan->_objectIconForMousePointer);
 
-	_vm->_eventMan->hideMouse();
+	evtMan.hideMouse();
 	if (_leaderIndex != kDMChampionNone) {
 		_champions[_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(thing);
 		setFlag(_champions[_leaderIndex]._attributes, kDMAttributeLoad);
@@ -1329,7 +1349,8 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 	if ((leaderHandObject != Thing::_none) && (!(dungeon._objectInfos[dungeon.getObjectInfoIndex(leaderHandObject)]._allowedSlots & _slotMasks[slotIndex])))
 		return;
 
-	_vm->_eventMan->showMouse();
+	EventManager &evtMan = *_vm->_eventMan;
+	evtMan.showMouse();
 	if (leaderHandObject != Thing::_none)
 		getObjectRemovedFromLeaderHand();
 
@@ -1342,7 +1363,7 @@ void ChampionMan::clickOnSlotBox(uint16 slotBoxIndex) {
 		addObjectInSlot((ChampionIndex)champIndex, leaderHandObject, (ChampionSlot)slotIndex);
 
 	drawChampionState((ChampionIndex)champIndex);
-	_vm->_eventMan->hideMouse();
+	evtMan.hideMouse();
 }
 
 bool ChampionMan::isProjectileSpellCast(uint16 champIndex, Thing thing, int16 kineticEnergy, uint16 requiredManaAmount) {
@@ -1372,6 +1393,9 @@ void ChampionMan::championShootProjectile(Champion *champ, Thing thing, int16 ki
 
 void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 	Champion *championPtr = _champions;
+	EventManager &evtMan = *_vm->_eventMan;
+	TextMan &txtMan = *_vm->_textMan;
+
 	for (uint16 championIndex = kDMChampionFirst; championIndex < _partyChampionCount; championIndex++, championPtr++) {
 		int16 pendingWounds = _championPendingWounds[championIndex];
 		setFlag(championPtr->_wounds, pendingWounds);
@@ -1402,7 +1426,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 			Box blitBox;
 			blitBox._rect.top = 0;
-			_vm->_eventMan->showMouse();
+			evtMan.showMouse();
 
 			if (_vm->indexToOrdinal(championIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 				blitBox._rect.bottom = 28;
@@ -1433,7 +1457,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 
 				textPosY = 5;
 			}
-			_vm->_textMan->printToLogicalScreen(textPosX, textPosY, kDMColorWhite, kDMColorRed, getStringFromInteger(pendingDamage, false, 3).c_str());
+			txtMan.printToLogicalScreen(textPosX, textPosY, kDMColorWhite, kDMColorRed, getStringFromInteger(pendingDamage, false, 3).c_str());
 
 			int16 eventIndex = championPtr->_hideDamageReceivedIndex;
 			if (eventIndex == -1) {
@@ -1448,7 +1472,7 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 				_vm->_timeline->fixChronology(_vm->_timeline->getIndex(eventIndex));
 			}
 			drawChampionState((ChampionIndex)championIndex);
-			_vm->_eventMan->hideMouse();
+			evtMan.hideMouse();
 		}
 	}
 }
@@ -1456,23 +1480,24 @@ void ChampionMan::applyAndDrawPendingDamageAndWounds() {
 void ChampionMan::championKill(uint16 champIndex) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Champion *curChampion = &_champions[champIndex];
+	EventManager &evtMan = *_vm->_eventMan;
 
 	curChampion->_currHealth = 0;
 	setFlag(curChampion->_attributes, kDMAttributeStatusBox);
 	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
 		if (_vm->_pressingEye) {
 			_vm->_pressingEye = false;
-			_vm->_eventMan->_ignoreMouseMovements = false;
+			evtMan._ignoreMouseMovements = false;
 			if (!_leaderEmptyHanded) {
 				_vm->_objectMan->drawLeaderObjectName(_leaderHandObject);
 			}
-			_vm->_eventMan->_hideMousePointerRequestCount = 1;
-			_vm->_eventMan->hideMouse();
+			evtMan._hideMousePointerRequestCount = 1;
+			evtMan.hideMouse();
 		} else if (_vm->_pressingMouth) {
 			_vm->_pressingMouth = false;
-			_vm->_eventMan->_ignoreMouseMovements = false;
-			_vm->_eventMan->_hideMousePointerRequestCount = 1;
-			_vm->_eventMan->hideMouse();
+			evtMan._ignoreMouseMovements = false;
+			evtMan._hideMousePointerRequestCount = 1;
+			evtMan.hideMouse();
 		}
 		_vm->_inventoryMan->toggleInventory(kDMChampionCloseInventory);
 	}
@@ -1492,9 +1517,9 @@ void ChampionMan::championKill(uint16 champIndex) {
 	curChampion->_dir = dungeon._partyDir;
 	curChampion->_maximumDamageReceived = 0;
 	uint16 curChampionIconIndex = getChampionIconIndex(curCell, dungeon._partyDir);
-	if (_vm->indexToOrdinal(curChampionIconIndex) == _vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap) {
-		_vm->_eventMan->_mousePointerBitmapUpdated = true;
-		_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
+	if (_vm->indexToOrdinal(curChampionIconIndex) == evtMan._useChampionIconOrdinalAsMousePointerBitmap) {
+		evtMan._mousePointerBitmapUpdated = true;
+		evtMan._useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 	}
 
 	if (curChampion->_poisonEventCount)
@@ -1516,7 +1541,7 @@ void ChampionMan::championKill(uint16 champIndex) {
 	}
 
 	if (champIndex == _leaderIndex)
-		_vm->_eventMan->commandSetLeader(aliveChampionIndex);
+		evtMan.commandSetLeader(aliveChampionIndex);
 
 	if (champIndex == _magicCasterChampionIndex)
 		_vm->_menuMan->setMagicCasterAndDrawSpellArea(aliveChampionIndex);
@@ -1841,10 +1866,12 @@ ChampionIndex ChampionMan::getIndexInCell(int16 cell) {
 void ChampionMan::resetDataToStartGame() {
 	if (_vm->_gameMode == kDMModeLoadSavedGame) {
 		Thing handThing = _leaderHandObject;
+		EventManager &evtMan = *_vm->_eventMan;
+
 		if (handThing == Thing::_none) {
 			_leaderEmptyHanded = true;
 			_leaderHandObjectIconIndex = kDMIconIndiceNone;
-			_vm->_eventMan->setMousePointer();
+			evtMan.setMousePointer();
 		} else
 			putObjectInLeaderHand(handThing, true); /* This call will add the weight of the leader hand object to the Load of the leader a first time */
 
@@ -1858,7 +1885,7 @@ void ChampionMan::resetDataToStartGame() {
 		ChampionIndex championIndex = _leaderIndex;
 		if (championIndex != kDMChampionNone) {
 			_leaderIndex = kDMChampionNone;
-			_vm->_eventMan->commandSetLeader(championIndex);
+			evtMan.commandSetLeader(championIndex);
 		}
 
 		championIndex = _magicCasterChampionIndex;
@@ -2047,8 +2074,10 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 }
 
 void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
-	int16 barGraphHeights[3];
 	Champion *champ = &_champions[champIndex];
+	EventManager &evtMan = *_vm->_eventMan;
+
+	int16 barGraphHeights[3];
 	int16 barGraphIdx = 0;
 	if (champ->_currHealth > 0) {
 		int32 barGraphHeight = (((int32)champ->_currHealth << 10) * 25) / champ->_maxHealth;
@@ -2072,7 +2101,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 	} else {
 		barGraphHeights[barGraphIdx] = 0;
 	}
-	_vm->_eventMan->showMouse();
+	evtMan.showMouse();
 
 	// Strangerke - TO CHECK: if portraits, maybe the old (assembly) code is required for older versions
 	Box box;
@@ -2095,7 +2124,7 @@ void ChampionMan::drawChampionBarGraphs(ChampionIndex champIndex) {
 		box._rect.left += 7;
 		box._rect.right += 7;
 	}
-	_vm->_eventMan->hideMouse();
+	evtMan.hideMouse();
 }
 
 
@@ -2130,13 +2159,16 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 	int16 championStatusBoxX = champIndex * kDMChampionStatusBoxSpacing;
 	Champion *curChampion = &_champions[champIndex];
+	EventManager &evtMan = *_vm->_eventMan;
+	TextMan &txtMan = *_vm->_textMan;
+
 	uint16 championAttributes = curChampion->_attributes;
 	if (!getFlag(championAttributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand))
 		return;
 
 	bool isInventoryChampion = (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal);
 	_vm->_displayMan->_useByteBoxCoordinates = false;
-	_vm->_eventMan->showMouse();
+	evtMan.showMouse();
 	if (getFlag(championAttributes, kDMAttributeStatusBox)) {
 		Box box;
 		box._rect.top = 0;
@@ -2169,17 +2201,17 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 				setFlag(championAttributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeWounds | kDMAttributeActionHand);
 		} else {
 			_vm->_displayMan->blitToScreen(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxStatusBoxDeadChampion), &box, k40_byteWidth, kDMColorNoTransparency, 29);
-			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, kDMColorLightestGray, kDMColorDarkGary, curChampion->_name);
+			txtMan.printToLogicalScreen(championStatusBoxX + 1, 5, kDMColorLightestGray, kDMColorDarkGary, curChampion->_name);
 			_vm->_menuMan->drawActionIcon(champIndex);
 
 			clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
-			_vm->_eventMan->hideMouse();
+			evtMan.hideMouse();
 			return;
 		}
 	}
 	if (!(curChampion->_currHealth)) {
 		clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
-		_vm->_eventMan->hideMouse();
+		evtMan.hideMouse();
 		return;
 	}
 
@@ -2187,13 +2219,13 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		Color nameColor = (champIndex == _leaderIndex) ? kDMColorGold : kDMColorLightestGray;
 		if (isInventoryChampion) {
 			char *championName = curChampion->_name;
-			_vm->_textMan->printToViewport(3, 7, nameColor, championName);
+			txtMan.printToViewport(3, 7, nameColor, championName);
 			int16 championTitleX = 6 * strlen(championName) + 3;
 			char titleFirstCharacter = curChampion->_title[0];
 			if ((titleFirstCharacter != ',') && (titleFirstCharacter != ';') && (titleFirstCharacter != '-'))
 				championTitleX += 6;
 
-			_vm->_textMan->printToViewport(championTitleX, 7, nameColor, curChampion->_title);
+			txtMan.printToViewport(championTitleX, 7, nameColor, curChampion->_title);
 			setFlag(championAttributes, kDMAttributeViewport);
 		} else {
 			Box box;
@@ -2202,7 +2234,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 			box._rect.left = championStatusBoxX;
 			box._rect.right = box._rect.left + 42;
 			_vm->_displayMan->fillScreenBox(box, kDMColorDarkGary);
-			_vm->_textMan->printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, kDMColorDarkGary, curChampion->_name);
+			txtMan.printToLogicalScreen(championStatusBoxX + 1, 5, nameColor, kDMColorDarkGary, curChampion->_name);
 		}
 	}
 	if (getFlag(championAttributes, kDMAttributeStatistics)) {
@@ -2246,9 +2278,15 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
-		case Common::EN_ANY: _vm->_textMan->printToViewport(104, 132, loadColor, "LOAD "); break;
-		case Common::DE_DEU: _vm->_textMan->printToViewport(104, 132, loadColor, "LAST "); break;
-		case Common::FR_FRA: _vm->_textMan->printToViewport(104, 132, loadColor, "CHARGE "); break;
+		case Common::EN_ANY:
+			txtMan.printToViewport(104, 132, loadColor, "LOAD ");
+			break;
+		case Common::DE_DEU:
+			txtMan.printToViewport(104, 132, loadColor, "LAST ");
+			break;
+		case Common::FR_FRA:
+			txtMan.printToViewport(104, 132, loadColor, "CHARGE ");
+			break;
 		}
 
 		maxLoad = curChampion->_load / 10;
@@ -2267,12 +2305,12 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		maxLoad = (getMaximumLoad(curChampion) + 5) / 10;
 		strcat(_vm->_stringBuildBuffer, getStringFromInteger(maxLoad, true, 3).c_str());
 		strcat(_vm->_stringBuildBuffer, " KG");
-		_vm->_textMan->printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
+		txtMan.printToViewport(148, 132, loadColor, _vm->_stringBuildBuffer);
 		setFlag(championAttributes, kDMAttributeViewport);
 	}
 	DungeonMan &dungeon = *_vm->_dungeonMan;
 	uint16 championIconIndex = getChampionIconIndex(curChampion->_cell, dungeon._partyDir);
-	if (getFlag(championAttributes, kDMAttributeIcon) && (_vm->_eventMan->_useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
+	if (getFlag(championAttributes, kDMAttributeIcon) && (evtMan._useChampionIconOrdinalAsMousePointerBitmap != _vm->indexToOrdinal(championIconIndex))) {
 		_vm->_displayMan->fillScreenBox(_boxChampionIcons[championIconIndex], _championColor[champIndex]);
 		_vm->_displayMan->blitToBitmap(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxChampionIcons), _vm->_displayMan->_bitmapScreen, _boxChampionIcons[championIconIndex], getChampionIconIndex(curChampion->_dir, dungeon._partyDir) * 19, 0, k40_byteWidth, k160_byteWidthScreen, kDMColorDarkestGray, 14, k200_heightScreen);
 	}
@@ -2297,7 +2335,7 @@ void ChampionMan::drawChampionState(ChampionIndex champIndex) {
 		_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 
 	clearFlag(curChampion->_attributes, kDMAttributeNameTitle | kDMAttributeStatistics | kDMAttributeLoad | kDMAttributeIcon | kDMAttributePanel | kDMAttributeStatusBox | kDMAttributeWounds | kDMAttributeViewport | kDMAttributeActionHand);
-	_vm->_eventMan->hideMouse();
+	evtMan.hideMouse();
 }
 
 uint16 ChampionMan::getChampionIconIndex(int16 val, Direction dir) {
@@ -2311,8 +2349,10 @@ void ChampionMan::drawHealthStaminaManaValues(Champion *champ) {
 }
 
 void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
-	int16 nativeBitmapIndex = -1;
 	Champion *champ = &_champions[champIndex];
+	EventManager &evtMan = *_vm->_eventMan;
+
+	int16 nativeBitmapIndex = -1;
 	bool isInventoryChamp = (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex));
 
 	uint16 slotBoxIndex;
@@ -2338,7 +2378,7 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 	box._rect.bottom = box._rect.top + 17;
 
 	if (!isInventoryChamp)
-		_vm->_eventMan->hideMouse();
+		evtMan.hideMouse();
 
 	int16 iconIndex;
 	if (thing == Thing::_none) {
@@ -2387,15 +2427,18 @@ void ChampionMan::drawSlot(uint16 champIndex, int16 slotIndex) {
 	_vm->_objectMan->drawIconInSlotBox(slotBoxIndex, iconIndex);
 
 	if (!isInventoryChamp)
-		_vm->_eventMan->showMouse();
+		evtMan.showMouse();
 }
 
 void ChampionMan::renameChampion(Champion *champ) {
-#define k1_RENAME_CHAMPION_NAME 1
-#define k2_RENAME_CHAMPION_TITLE 2
+#define kDMRenameChampionName 1
+#define kDMRenameChampionTitle 2
 	static const char underscoreCharacterString[2] = "_";
 	static char renameChampionInputCharacterString[2] = " ";
 	static const char reincarnateSpecialCharacters[6] = {',', '.', ';', ':', ' '};
+
+	EventManager &evtMan = *_vm->_eventMan;
+	TextMan &txtMan = *_vm->_textMan;
 
 	Box displayBox;
 	displayBox._rect.top = 3;
@@ -2405,32 +2448,32 @@ void ChampionMan::renameChampion(Champion *champ) {
 
 	_vm->_displayMan->fillBoxBitmap(_vm->_displayMan->_bitmapViewport, displayBox, kDMColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 	_vm->_displayMan->blitToViewport(_vm->_displayMan->getNativeBitmapOrGraphic(kDMGraphicIdxPanelRenameChampion), _vm->_inventoryMan->_boxPanel, k72_byteWidth, kDMColorCyan, 73);
-	_vm->_textMan->printToViewport(177, 58, kDMColorLightestGray, "_______");
-	_vm->_textMan->printToViewport(105, 76, kDMColorLightestGray, "___________________");
-	_vm->_eventMan->showMouse();
+	txtMan.printToViewport(177, 58, kDMColorLightestGray, "_______");
+	txtMan.printToViewport(105, 76, kDMColorLightestGray, "___________________");
+	evtMan.showMouse();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
-	_vm->_eventMan->setMousePointerToNormal(k0_pointerArrow);
-	_vm->_eventMan->hideMouse();
+	evtMan.setMousePointerToNormal(k0_pointerArrow);
+	evtMan.hideMouse();
 	uint16 curCharacterIndex = 0;
 	champ->_name[curCharacterIndex] = '\0';
 	champ->_title[0] = '\0';
-	int16 renamedChampionStringMode = k1_RENAME_CHAMPION_NAME;
+	int16 renamedChampionStringMode = kDMRenameChampionName;
 	char *renamedChampionString = champ->_name;
 	int16 textPosX = 177;
 	int16 textPosY = 91;
 
 	for (;;) { /*_Infinite loop_*/
-		bool championTitleIsFull = ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE) && (curCharacterIndex == 19));
+		bool championTitleIsFull = ((renamedChampionStringMode == kDMRenameChampionTitle) && (curCharacterIndex == 19));
 		if (!championTitleIsFull) {
-			_vm->_eventMan->showMouse();
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorGold, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-			_vm->_eventMan->hideMouse();
+			evtMan.showMouse();
+			txtMan.printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorGold, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+			evtMan.hideMouse();
 		}
 
 		int16 curCharacter = 256;
 		while (curCharacter == 256) {
 			Common::Event event;
-			Common::EventType eventType = _vm->_eventMan->processInput(&event, &event);
+			Common::EventType eventType = evtMan.processInput(&event, &event);
 			_vm->_displayMan->updateScreen();
 			if (_vm->_engineShouldQuit)
 				return;
@@ -2440,8 +2483,8 @@ void ChampionMan::renameChampion(Champion *champ) {
 			if (eventType == Common::EVENT_LBUTTONDOWN) {
 				// If left mouse button status has changed
 
-				Common::Point mousePos = _vm->_eventMan->getMousePos();
-				if ((renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
+				Common::Point mousePos = evtMan.getMousePos();
+				if ((renamedChampionStringMode == kDMRenameChampionTitle || (curCharacterIndex > 0)) && (mousePos.x >= 197) && (mousePos.x <= 215) && (mousePos.y >= 147) && (mousePos.y <= 155)) { /* Coordinates of 'OK' button */
 					int16 characterIndexBackup = curCharacterIndex;
 					char championNameBackupString[8];
 					renamedChampionString = champ->_name;
@@ -2462,7 +2505,7 @@ void ChampionMan::renameChampion(Champion *champ) {
 					if (!found)
 						return;
 
-					if (renamedChampionStringMode == k2_RENAME_CHAMPION_TITLE)
+					if (renamedChampionStringMode == kDMRenameChampionTitle)
 						renamedChampionString = champ->_title;
 
 					strcpy(renamedChampionString = champ->_name, championNameBackupString);
@@ -2507,14 +2550,14 @@ void ChampionMan::renameChampion(Champion *champ) {
 			if ((curCharacter != ' ') || curCharacterIndex != 0) {
 				if (!championTitleIsFull) {
 					renameChampionInputCharacterString[0] = curCharacter;
-					_vm->_eventMan->showMouse();
-					_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
-					_vm->_eventMan->hideMouse();
+					evtMan.showMouse();
+					txtMan.printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, renameChampionInputCharacterString, k200_heightScreen);
+					evtMan.hideMouse();
 					renamedChampionString[curCharacterIndex++] = curCharacter;
 					renamedChampionString[curCharacterIndex] = '\0';
 					textPosX += 6;
-					if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex == 7)) {
-						renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
+					if ((renamedChampionStringMode == kDMRenameChampionName) && (curCharacterIndex == 7)) {
+						renamedChampionStringMode = kDMRenameChampionTitle;
 						renamedChampionString = champ->_title;
 						textPosX = 105;
 						textPosY = 109;
@@ -2523,29 +2566,29 @@ void ChampionMan::renameChampion(Champion *champ) {
 				}
 			}
 		} else if (curCharacter == '\r') { // Carriage return
-			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex > 0)) {
-				_vm->_eventMan->showMouse();
-				_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-				_vm->_eventMan->hideMouse();
-				renamedChampionStringMode = k2_RENAME_CHAMPION_TITLE;
+			if ((renamedChampionStringMode == kDMRenameChampionName) && (curCharacterIndex > 0)) {
+				evtMan.showMouse();
+				txtMan.printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				evtMan.hideMouse();
+				renamedChampionStringMode = kDMRenameChampionTitle;
 				renamedChampionString = champ->_title;
 				textPosX = 105;
 				textPosY = 109;
 				curCharacterIndex = 0;
 			}
 		} else if (curCharacter == '\b') { // Backspace
-			if ((renamedChampionStringMode == k1_RENAME_CHAMPION_NAME) && (curCharacterIndex == 0))
+			if ((renamedChampionStringMode == kDMRenameChampionName) && (curCharacterIndex == 0))
 				continue;
 
 			if (!championTitleIsFull) {
-				_vm->_eventMan->showMouse();
-				_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
-				_vm->_eventMan->hideMouse();
+				evtMan.showMouse();
+				txtMan.printTextToBitmap(_vm->_displayMan->_bitmapScreen, k160_byteWidthScreen, textPosX, textPosY, kDMColorLightestGray, kDMColorDarkestGray, underscoreCharacterString, k200_heightScreen);
+				evtMan.hideMouse();
 			}
 			if (curCharacterIndex == 0) {
 				renamedChampionString = champ->_name;
 				curCharacterIndex = strlen(renamedChampionString) - 1;
-				renamedChampionStringMode = k1_RENAME_CHAMPION_NAME;
+				renamedChampionStringMode = kDMRenameChampionName;
 				textPosX = 177 + (curCharacterIndex * 6);
 				textPosY = 91;
 			} else {

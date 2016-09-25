@@ -701,6 +701,7 @@ Thing MovesensMan::getTeleporterRotatedProjectileThing(Teleporter *teleporter, T
 
 void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing thing, bool partySquare, bool addThing) {
 	DungeonMan &dungeon = *_vm->_dungeonMan;
+	TextMan &txtMan = *_vm->_textMan;
 
 	int16 thingType;
 	IconIndice objectType;
@@ -734,7 +735,7 @@ void MovesensMan::processThingAdditionOrRemoval(uint16 mapX, uint16 mapY, Thing 
 				squareContainsGroup = true;
 			else if ((curThingType == kDMstringTypeText) && (thingType == kDMThingTypeParty) && addThing && !partySquare) {
 				dungeon.decodeText(_vm->_stringBuildBuffer, curThing, kDMTextTypeMessage);
-				_vm->_textMan->printMessage(kDMColorWhite, _vm->_stringBuildBuffer);
+				txtMan.printMessage(kDMColorWhite, _vm->_stringBuildBuffer);
 			} else if ((curThingType > kDMThingTypeGroup) && (curThingType < kDMThingTypeProjectile)) {
 				squareContainsObject = true;
 				squareContainsThingOfSameType |= (_vm->_objectMan->getObjectType(curThing) == objectType);

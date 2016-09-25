@@ -786,23 +786,24 @@ void DungeonMan::setCurrentMap(uint16 mapIndex) {
 }
 
 void DungeonMan::setCurrentMapAndPartyMap(uint16 mapIndex) {
-	setCurrentMap(_partyMapIndex = mapIndex);
+	DisplayMan &displMan = *_vm->_displayMan;
 
+	setCurrentMap(_partyMapIndex = mapIndex);
 	byte *metaMapData = _currMapData[_currMapWidth - 1] + _currMapHeight;
 
-	_vm->_displayMan->_currMapAllowedCreatureTypes = metaMapData;
+	displMan._currMapAllowedCreatureTypes = metaMapData;
 	metaMapData += _currMap->_creatureTypeCount;
 
-	memcpy(_vm->_displayMan->_currMapWallOrnIndices, metaMapData, _currMap->_wallOrnCount);
+	memcpy(displMan._currMapWallOrnIndices, metaMapData, _currMap->_wallOrnCount);
 	metaMapData += _currMap->_wallOrnCount;
 
-	memcpy(_vm->_displayMan->_currMapFloorOrnIndices, metaMapData, _currMap->_floorOrnCount);
+	memcpy(displMan._currMapFloorOrnIndices, metaMapData, _currMap->_floorOrnCount);
 	metaMapData += _currMap->_floorOrnCount;
 
-	memcpy(_vm->_displayMan->_currMapDoorOrnIndices, metaMapData, _currMap->_doorOrnCount);
+	memcpy(displMan._currMapDoorOrnIndices, metaMapData, _currMap->_doorOrnCount);
 
 	_currMapInscriptionWallOrnIndex = _currMap->_wallOrnCount;
-	_vm->_displayMan->_currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
+	displMan._currMapWallOrnIndices[_currMapInscriptionWallOrnIndex] = k0_WallOrnInscription;
 }
 
 
@@ -865,6 +866,8 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 #define AL0307_uc_FootprintsAllowed L0307_uc_Multiple
 #define AL0307_uc_ScentOrdinal      L0307_uc_Multiple
 
+	DisplayMan &displMan = *_vm->_displayMan;
+
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
 
@@ -902,7 +905,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 		default:
 			assert(false);
 		}
-		_vm->_displayMan->_championPortraitOrdinal = 0;
+		displMan._championPortraitOrdinal = 0;
 		squareIsFakeWall = false;
 T0172010_ClosedFakeWall:
 		setSquareAspectOrnOrdinals(aspectArray, leftRandomWallOrnamentAllowed, frontRandomWallOrnamentAllowed, rightRandomWallOrnamentAllowed, dir, mapX, mapY, squareIsFakeWall);
@@ -914,12 +917,12 @@ T0172010_ClosedFakeWall:
 				if (curThingType == kDMstringTypeText) {
 					if (((TextString *)curSensor)->isVisible()) {
 						aspectArray[AL0310_i_SideIndex + 1] = _currMapInscriptionWallOrnIndex + 1;
-						_vm->_displayMan->_inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
+						displMan._inscriptionThing = curThing; /* BUG0_76 The same text is drawn on multiple sides of a wall square. The engine stores only a single text to draw on a wall in a global variable. Even if different texts are placed on different sides of the wall, the same text is drawn on each affected side */
 					}
 				} else {
 					aspectArray[AL0310_i_SideIndex + 1] = curSensor->getAttrOrnOrdinal();
 					if (curSensor->getType() == kDMSensorWallChampionPortrait) {
-						_vm->_displayMan->_championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
+						displMan._championPortraitOrdinal = _vm->indexToOrdinal(curSensor->getData());
 					}
 				}
 			}
@@ -1027,8 +1030,9 @@ int16 DungeonMan::getRandomOrnOrdinal(bool allowed, int16 count, int16 mapX, int
 
 bool DungeonMan::isWallOrnAnAlcove(int16 wallOrnIndex) {
 	if (wallOrnIndex >= 0) {
+		DisplayMan &displMan = *_vm->_displayMan;
 		for (uint16 i = 0; i < k3_AlcoveOrnCount; ++i) {
-			if (_vm->_displayMan->_currMapAlcoveOrnIndices[i] == wallOrnIndex)
+			if (displMan._currMapAlcoveOrnIndices[i] == wallOrnIndex)
 				return true;
 		}
 	}

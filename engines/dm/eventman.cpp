@@ -449,31 +449,35 @@ void EventManager::setPointerToObject(byte *bitmap) {
 	static Box boxMousePointerObjectShadow(2, 17, 2, 17); // @ G0619_s_Box_MousePointer_ObjectShadow
 	static Box boxMousePointerObject(0, 15, 0, 15); // @ G0620_s_Box_MousePointer_Object
 
+	DisplayMan &displMan = *_vm->_displayMan;
+
 	_preventBuildPointerScreenArea = true;
 	_useObjectAsMousePointerBitmap = true;
 	_useHandAsMousePointerBitmap = false;
 	_mousePointerBitmapUpdated = true;
-	_vm->_displayMan->_useByteBoxCoordinates = true;
+	displMan._useByteBoxCoordinates = true;
 	byte *L0051_puc_Bitmap = _mousePointerOriginalColorsObject;
 	memset(L0051_puc_Bitmap, 0, 32 * 18);
 
-	_vm->_displayMan->blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousepointerOjbectIconShadow);
-	_vm->_displayMan->blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kDMColorNoTransparency, 16, 18);
-	_vm->_displayMan->blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
-	_vm->_displayMan->blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, kDMColorBlack, 16, 18);
+	displMan.blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousepointerOjbectIconShadow);
+	displMan.blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObjectShadow, 0, 0, 8, 16, kDMColorNoTransparency, 16, 18);
+	displMan.blitToBitmapShrinkWithPalChange(bitmap, _mousePointerTempBuffer, 16, 16, 16, 16, palChangesMousePointerIcon);
+	displMan.blitToBitmap(_mousePointerTempBuffer, L0051_puc_Bitmap, boxMousePointerObject, 0, 0, 8, 16, kDMColorBlack, 16, 18);
 
 	_preventBuildPointerScreenArea = false;
 	buildpointerScreenArea(_mousePos.x, _mousePos.y);
 }
 
 void EventManager::mouseDropChampionIcon() {
+	DisplayMan &displMan = *_vm->_displayMan;
+
 	_preventBuildPointerScreenArea = true;
 	uint16 championIconIndex = _vm->ordinalToIndex(_useChampionIconOrdinalAsMousePointerBitmap);
 	_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(kDMChampionNone);
 	_mousePointerBitmapUpdated = true;
-	bool useByteBoxCoordinatesBackup = _vm->_displayMan->_useByteBoxCoordinates;
-	_vm->_displayMan->blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, kDMColorDarkestGray, 18);
-	_vm->_displayMan->_useByteBoxCoordinates = useByteBoxCoordinatesBackup;
+	bool useByteBoxCoordinatesBackup = displMan._useByteBoxCoordinates;
+	displMan.blitToScreen(_mousePointerOriginalColorsChampionIcon, &_vm->_championMan->_boxChampionIcons[championIconIndex << 2], 16, kDMColorDarkestGray, 18);
+	displMan._useByteBoxCoordinates = useByteBoxCoordinatesBackup;
 	_preventBuildPointerScreenArea = false;
 }
 
@@ -719,6 +723,9 @@ void EventManager::processCommandQueue() {
 	static MouseInput *primaryMouseInputBackup;
 	static MouseInput *secondaryMouseInputBackup;
 
+	DisplayMan &displMan = *_vm->_displayMan;
+	TextMan &txtMan = *_vm->_textMan;
+
 	_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) { /* If the command queue is empty */
 		_isCommandQueueLocked = false;
@@ -836,7 +843,7 @@ void EventManager::processCommandQueue() {
 			_vm->_menuMan->drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;
 			drawSleepScreen();
-			_vm->_displayMan->drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
+			displMan.drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 			_vm->_waitForInputMaxVerticalBlankCount = 0;
 			_primaryMouseInput = _primaryMouseInputPartySleeping;
 			_secondaryMouseInput = 0;
@@ -862,24 +869,24 @@ void EventManager::processCommandQueue() {
 	if (cmdType == kDMCommandFreezeGame) {
 		_vm->_gameTimeTicking = false;
 		_vm->_menuMan->drawDisabledMenu();
-		_vm->_displayMan->fillBitmap(_vm->_displayMan->_bitmapViewport, kDMColorBlack, 112, 136);
+		displMan.fillBitmap(displMan._bitmapViewport, kDMColorBlack, 112, 136);
 
 		switch (_vm->getGameLanguage()) { // localized
 		default:
 		case Common::EN_ANY:
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 81, 69, kDMColorCyan, kDMColorBlack,
+			txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 81, 69, kDMColorCyan, kDMColorBlack,
 												 "GAME FROZEN", k136_heightViewport);
 			break;
 		case Common::DE_DEU:
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 66, 69, kDMColorCyan, kDMColorBlack,
+			txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 66, 69, kDMColorCyan, kDMColorBlack,
 												 "SPIEL ANGEHALTEN", k136_heightViewport);
 			break;
 		case Common::FR_FRA:
-			_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 84, 69, kDMColorCyan, kDMColorBlack,
+			txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 84, 69, kDMColorCyan, kDMColorBlack,
 												 "JEU BLOQUE", k136_heightViewport);
 			break;
 		}
-		_vm->_displayMan->drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
+		displMan.drawViewport(k2_viewportAsBeforeSleepOrFreezeGame);
 		primaryMouseInputBackup = _primaryMouseInput;
 		secondaryMouseInputBackup = _secondaryMouseInput;
 		primaryKeyboardInputBackup = _primaryKeyboardInput;
@@ -1244,6 +1251,7 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	InventoryMan &invMan = *_vm->_inventoryMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
 	DungeonMan &dunMan = *_vm->_dungeonMan;
+	TextMan &txtMan = *_vm->_textMan;
 
 	uint16 championIndex = champMan._partyChampionCount - 1;
 	Champion *champ = &champMan._champions[championIndex];
@@ -1306,20 +1314,20 @@ void EventManager::commandProcessCommands160To162ClickInResurrectReincarnatePane
 	} else
 		_vm->_menuMan->drawSpellAreaControls(champMan._magicCasterChampionIndex);
 
-	_vm->_textMan->printLineFeed();
+	txtMan.printLineFeed();
 	Color champColor = _vm->_championMan->_championColor[championIndex];
-	_vm->_textMan->printMessage(champColor, champ->_name);
+	txtMan.printMessage(champColor, champ->_name);
 
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_vm->_textMan->printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
+		txtMan.printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " RESURRECTED." : " REINCARNATED.");
 		break;
 	case Common::DE_DEU:
-		_vm->_textMan->printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
+		txtMan.printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " VOM TODE ERWECKT." : " REINKARNIERT.");
 		break;
 	case Common::FR_FRA:
-		_vm->_textMan->printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " RESSUSCITE." : " REINCARNE.");
+		txtMan.printMessage(champColor, (commandType == kDMCommandClickInPanelResurrect) ? " RESSUSCITE." : " REINCARNE.");
 		break;
 	}
 
@@ -1339,7 +1347,7 @@ void EventManager::commandProcess81ClickInPanel(int16 x, int16 y) {
 			return;
 		commandType = getCommandTypeFromMouseInput(_mouseInputPanelChest, Common::Point(x, y), kDMMouseButtonLeft);
 		if (commandType != kDMCommandNone)
-			_vm->_championMan->clickOnSlotBox(commandType - kDMCommandClickOnSlotBoxChampion0StatusBoxReadyHand);
+			champMan.clickOnSlotBox(commandType - kDMCommandClickOnSlotBoxChampion0StatusBoxReadyHand);
 		break;
 	case kDMPanelContentResurrectReincarnate:
 		if (!champMan._leaderEmptyHanded)
@@ -1417,17 +1425,20 @@ bool EventManager::hasPendingClick(Common::Point& point, MouseButton button) {
 }
 
 void EventManager::drawSleepScreen() {
-	_vm->_displayMan->fillBitmap(_vm->_displayMan->_bitmapViewport, kDMColorBlack, 112, 136);
+	DisplayMan &displMan = *_vm->_displayMan;
+	TextMan &txtMan = *_vm->_textMan;
+
+	displMan.fillBitmap(displMan._bitmapViewport, kDMColorBlack, 112, 136);
 	switch (_vm->getGameLanguage()) { // localized
 	default:
 	case Common::EN_ANY:
-		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 93, 69, kDMColorCyan, kDMColorBlack, "WAKE UP", k136_heightViewport);
+		txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 93, 69, kDMColorCyan, kDMColorBlack, "WAKE UP", k136_heightViewport);
 		break;
 	case Common::DE_DEU:
-		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 96, 69, kDMColorCyan, kDMColorBlack, "WECKEN", k136_heightViewport);
+		txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 96, 69, kDMColorCyan, kDMColorBlack, "WECKEN", k136_heightViewport);
 		break;
 	case Common::FR_FRA:
-		_vm->_textMan->printTextToBitmap(_vm->_displayMan->_bitmapViewport, k112_byteWidthViewport, 72, 69, kDMColorCyan, kDMColorBlack, "REVEILLEZ-VOUS", k136_heightViewport);
+		txtMan.printTextToBitmap(displMan._bitmapViewport, k112_byteWidthViewport, 72, 69, kDMColorCyan, kDMColorBlack, "REVEILLEZ-VOUS", k136_heightViewport);
 		break;
 	}
 }
@@ -1466,6 +1477,8 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 	static Box championIconBox = Box(0, 18, 0, 13);
 	static byte mousePointerIconShadowBox[16] = {0, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 0, 120, 120, 120};
 
+	DisplayMan &displMan = *_vm->_displayMan;
+
 	_preventBuildPointerScreenArea = true;
 	if (!_useChampionIconOrdinalAsMousePointerBitmap) {
 		if (_vm->_championMan->getIndexInCell(_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir)) == kDMChampionNone) {
@@ -1474,15 +1487,15 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 		}
 		_mousePointerBitmapUpdated = true;
 		_useChampionIconOrdinalAsMousePointerBitmap = true;
-		_vm->_displayMan->_useByteBoxCoordinates = false;
+		displMan._useByteBoxCoordinates = false;
 		byte *tmpBitmap = _mousePointerTempBuffer;
 		memset(tmpBitmap, 0, 32 * 18);
 		Box *curChampionIconBox = &_vm->_championMan->_boxChampionIcons[champIconIndex];
 
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
-		_vm->_displayMan->blitToBitmapShrinkWithPalChange(tmpBitmap, _mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
-		_vm->_displayMan->blitToBitmap(_vm->_displayMan->_bitmapScreen, _mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
-		_vm->_displayMan->fillScreenBox(*curChampionIconBox, kDMColorBlack);
+		displMan.blitToBitmap(displMan._bitmapScreen, tmpBitmap, championIconShadowBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
+		displMan.blitToBitmapShrinkWithPalChange(tmpBitmap, _mousePointerOriginalColorsChampionIcon, 32, 18, 32, 18, mousePointerIconShadowBox);
+		displMan.blitToBitmap(displMan._bitmapScreen, _mousePointerOriginalColorsChampionIcon, championIconBox, curChampionIconBox->_rect.left, curChampionIconBox->_rect.top, k160_byteWidthScreen, k16_byteWidth, kDMColorBlack, 200, 18);
+		displMan.fillScreenBox(*curChampionIconBox, kDMColorBlack);
 		_useChampionIconOrdinalAsMousePointerBitmap = _vm->indexToOrdinal(champIconIndex);
 	} else {
 		_mousePointerBitmapUpdated = true;
@@ -1499,7 +1512,7 @@ void EventManager::mouseProcessCommands125To128_clickOnChampionIcon(uint16 champ
 				setFlag(_vm->_championMan->_champions[championIndex]._attributes, kDMAttributeIcon);
 				_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
 			} else
-				_vm->_displayMan->fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], kDMColorBlack);
+				displMan.fillScreenBox(_vm->_championMan->_boxChampionIcons[championIconIndex], kDMColorBlack);
 
 			_vm->_championMan->_champions[championCellIndex]._cell = (ViewCell)_vm->normalizeModulo4(champIconIndex + _vm->_dungeonMan->_partyDir);
 			setFlag(_vm->_championMan->_champions[championCellIndex]._attributes, kDMAttributeIcon);
@@ -1639,6 +1652,7 @@ void EventManager::resetPressingEyeOrMouth() {
 void EventManager::waitForMouseOrKeyActivity() {
 	discardAllInput();
 	Common::Event event;
+	DisplayMan &displMan = *_vm->_displayMan;
 	while (true) {
 		if (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -1653,7 +1667,7 @@ void EventManager::waitForMouseOrKeyActivity() {
 			}
 		}
 		_vm->delay(1);
-		_vm->_displayMan->updateScreen();
+		displMan.updateScreen();
 	}
 }
 
