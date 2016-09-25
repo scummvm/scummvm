@@ -5456,7 +5456,7 @@ void EdenGame::run() {
 	// CRYOLib_InstallEmergencyExit(EmergencyExit);
 	CRYOLib_SetupEnvironment();
 	CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0 , 0);
-	CLHNM_SetForceZero2Black(1);
+	CLHNM_SetForceZero2Black(true);
 	CLHNM_SetupTimer(12.5);
 	voiceSound = CLSoundRaw_New(0, 11025 * 65536.0, 8, 0);
 	hnmsound_ch = CLHNM_GetSoundChannel();

@@ -26,19 +26,19 @@
 
 namespace Cryo {
 
-static int16 safe_palette = 0;
+static bool safe_palette = false;
 static int16 pred_r = 0, pred_l = 0;
-static int16 use_adpcm = 0;
+static bool use_adpcm = false;
 static float hnm_rate = 0.0;
 static float next_frame_time = 0.0;
 static float expected_frame_time = 0.0;
 static float time_drift = 0.0;
-static int16 use_mono = 0;
-static int16 use_sound = 0;
-static int16 use_sound_sync = 0;
+static bool use_mono = false;
+static bool use_sound = false;
+static bool use_sound_sync = false;
 static int16 pending_sounds = 0;
-static int16 sound_started = 0;
-static int16 preserve_color0 = 0;
+static bool sound_started = false;
+static bool preserve_color0 = false;
 static soundchannel_t *soundChannel_adpcm = 0;
 static soundgroup_t *soundGroup_adpcm = 0;
 static soundchannel_t *soundChannel = 0;
@@ -193,7 +193,7 @@ void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
 void CLHNM_Init() {
 	use_preload = 0;
 	custom_chunk_handler = 0;
-	preserve_color0 = 0;
+	preserve_color0 = false;
 	CLNoError;
 }
 
@@ -210,7 +210,7 @@ void CLHNM_WaitLoop(hnm_t *hnm) {
 	expected_frame_time += hnm_rate;
 	next_frame_time = expected_frame_time - time_drift;
 	if (use_sound_sync && TimerTicks > 1000.0 + next_frame_time)
-		use_sound = 0;
+		use_sound = false;
 	while (TimerTicks < next_frame_time) ;  // waste time
 	time_drift = TimerTicks - next_frame_time;
 }
@@ -248,7 +248,7 @@ void CLHNM_CloseSound() {
 	}
 }
 
-void CLHNM_SetForceZero2Black(int16 forceblack) {
+void CLHNM_SetForceZero2Black(bool forceblack) {
 	preserve_color0 = forceblack;
 }
 
@@ -262,10 +262,9 @@ hnm_t *CLHNM_New(int preload_size) {
 	hnm = (hnm_t *)CLMemory_Alloc(sizeof(*hnm));
 	CLCheckError();
 	if (hnm) {
-		if (preload_size) {
+		if (preload_size)
 			use_preload = 1;
 
-		}
 		if (!__libError) {
 			hnm->frame = 0;
 			hnm->ff_4 = 0;
@@ -293,7 +292,6 @@ void CLHNM_Dispose(hnm_t *hnm) {
 	CLBeginCheck;
 
 	if (use_preload) {
-
 	}
 
 	CLMemory_Free(hnm);
@@ -377,7 +375,6 @@ void CLHNM_Read(hnm_t *hnm, int size) {
 	long _size = size;
 	if (!use_preload) {
 		CLFile_Read(*hnm->file, hnm->read_buffer, &_size);
-	} else {
 	}
 }
 
@@ -509,7 +506,7 @@ void CLHNM_Reset(hnm_t *hnm) {
 	hnm->frame = 0;
 	hnm->ff_4 = 0;
 	hnm->total_read = 0;
-	sound_started = 0;
+	sound_started = false;
 	pending_sounds = 0;
 	CLHNM_ResetInternalTimer();
 	CLNoError;
@@ -546,7 +543,7 @@ int16 CLHNM_LoadFrame(hnm_t *hnm) {
 	return 1;
 }
 
-void CLHNM_WantsSound(int16 sound) {
+void CLHNM_WantsSound(bool sound) {
 	use_sound = sound;
 }
 
@@ -572,12 +569,12 @@ void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size) {
 	pred_r = r;
 }
 
-void CLHNM_SoundInADPCM(int16 is_adpcm) {
-	use_adpcm = is_adpcm;
+void CLHNM_SoundInADPCM(bool isAdpcm) {
+	use_adpcm = isAdpcm;
 }
 
-void CLHNM_SoundMono(int16 is_mono) {
-	use_mono = is_mono;
+void CLHNM_SoundMono(bool isMono) {
+	use_mono = isMono;
 }
 
 int16 CLHNM_NextElement(hnm_t *hnm) {
@@ -632,14 +629,12 @@ int16 CLHNM_NextElement(hnm_t *hnm) {
 				if (!sound_started) {
 					for (i = 0; i < pending_sounds; i++)
 						CLSoundGroup_PlayNextSample(soundGroup_adpcm, soundChannel);
-					sound_started = 1;
+					sound_started = true;
 				}
-			} else {
-				if (!sound_started) {
-					for (i = 0; i < pending_sounds; i++)
-						CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
-					sound_started = 1;
-				}
+			} else if (!sound_started) {
+				for (i = 0; i < pending_sounds; i++)
+					CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
+				sound_started = true;
 			}
 			goto end_frame;
 		case BE16('IU'):

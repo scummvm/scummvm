@@ -327,7 +327,7 @@ void CLHNM_WaitLoop(hnm_t *hnm);
 void CLHNM_SetupSound(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
 void CLHNM_SetupSoundADPCM(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
 void CLHNM_CloseSound();
-void CLHNM_SetForceZero2Black(int16 forceblack);
+void CLHNM_SetForceZero2Black(bool forceblack);
 hnm_t *CLHNM_New(int preload_size);
 void CLHNM_Dispose(hnm_t *hnm);
 void CLHNM_SetFile(hnm_t *hnm, file_t *file);
