@@ -1924,7 +1924,7 @@ msgstr ""
 
 #: engines/engine.cpp:549
 msgid "Start anyway"
-msgstr "Jouer quand même"
+msgstr "Je comprends"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
