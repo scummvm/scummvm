@@ -749,13 +749,13 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	}
 
 	CGameManager *gameManager = getGameManager();
-	if (gameManager) {
+	if (gameManager && !name.empty()) {
 		g_vm->_filesManager->preload(name);
 
 		gameManager->_sound.playSound(name, prox);
 	}
 
-	return 0;
+	return -1;
 }
 
 int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated) {
