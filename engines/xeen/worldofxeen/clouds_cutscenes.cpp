@@ -361,7 +361,7 @@ bool CloudsCutscenes::showCloudsEnding() {
 	sound.playFX(34);
 
 	for (int idx = 1; idx < 42; ++idx) {
-		// Load up the background of swirling clouds
+		// Load up the background frame of swirling clouds
 		loadScreen(Common::String::format("prec00%02u.frm", idx));
 
 		// Render castle in front of it
@@ -390,16 +390,18 @@ bool CloudsCutscenes::showCloudsEnding() {
 
 	prec.clear();
 
-	// Closeup of castle
+	// Show swirling vortex
 	SpriteResource vort[21], cast[6], darkLord[4];
-	for (int idx = 1; idx < 21; ++idx)
-		vort[idx].load(Common::String::format("vort%02u.frm", idx));
 	for (int idx = 1; idx < 7; ++idx)
 		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
 	for (int idx = 1; idx < 4; ++idx)
 		darkLord[idx].load(Common::String::format("darklrd%d.end", idx));
 
-
+	for (int idx = 1; idx < 16; ++idx) {
+		loadScreen(Common::String::format("vort%02u.frm", idx));
+		cast[0].draw(screen, 0);
+		cast[idx - 1].draw(screen, 0, Common::Point(0, 100));
+	}
 
 	// TODO
 	WAIT(5000);
