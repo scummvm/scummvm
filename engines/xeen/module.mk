@@ -3,6 +3,7 @@ MODULE := engines/xeen
 MODULE_OBJS := \
 	worldofxeen/clouds_cutscenes.o \
 	worldofxeen/darkside_cutscenes.o \
+	worldofxeen/worldofxeen_menu.o \
 	worldofxeen/worldofxeen.o \
 	worldofxeen/worldofxeen_resources.o \
 	character.o \
@@ -18,7 +19,6 @@ MODULE_OBJS := \
 	dialogs_error.o \
 	dialogs_exchange.o \
 	dialogs_fight_options.o \
-	dialogs_options.o \
 	dialogs_info.o \
 	dialogs_input.o \
 	dialogs_items.o \

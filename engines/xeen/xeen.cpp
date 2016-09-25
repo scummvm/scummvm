@@ -28,7 +28,6 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
-#include "xeen/dialogs_options.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
 

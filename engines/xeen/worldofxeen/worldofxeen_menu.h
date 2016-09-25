@@ -20,19 +20,20 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_OPTIONS_H
-#define XEEN_DIALOGS_OPTIONS_H
+#ifndef XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
+#define XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 
 #include "xeen/xeen.h"
 #include "xeen/dialogs.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
-class OptionsMenu : public SettingsBaseDialog {
+class WorldOfXeenMenu : public SettingsBaseDialog {
 private:
 	void execute();
 protected:
-	OptionsMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
+	WorldOfXeenMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2) = 0;
 
@@ -46,25 +47,25 @@ protected:
 
 	virtual void openWindow() {}
 public:
-	virtual ~OptionsMenu() {}
+	virtual ~WorldOfXeenMenu() {}
 
 	static void show(XeenEngine *vm);
 };
 
-class CloudsOptionsMenu : public OptionsMenu {
+class CloudsOptionsMenu : public WorldOfXeenMenu {
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 public:
-	CloudsOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
+	CloudsOptionsMenu(XeenEngine *vm) : WorldOfXeenMenu(vm) {}
 
 	virtual ~CloudsOptionsMenu() {}
 };
 
-class DarkSideOptionsMenu : public OptionsMenu {
+class DarkSideOptionsMenu : public WorldOfXeenMenu {
 protected:
 	virtual void startup(Common::String &title1, Common::String &title2);
 public:
-	DarkSideOptionsMenu(XeenEngine *vm) : OptionsMenu(vm) {}
+	DarkSideOptionsMenu(XeenEngine *vm) : WorldOfXeenMenu(vm) {}
 
 	virtual ~DarkSideOptionsMenu() {}
 };
@@ -90,6 +91,7 @@ public:
 	virtual ~WorldOptionsMenu() {}
 };
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_DIALOGS_H */
+#endif /* XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H */

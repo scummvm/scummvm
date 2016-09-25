@@ -21,13 +21,14 @@
  */
 
 #include "common/scummsys.h"
-#include "xeen/dialogs_options.h"
+#include "xeen/worldofxeen/worldofxeen_menu.h"
 #include "xeen/resources.h"
 
 namespace Xeen {
+namespace WorldOfXeen {
 
-void OptionsMenu::show(XeenEngine *vm) {
-	OptionsMenu *menu;
+void WorldOfXeenMenu::show(XeenEngine *vm) {
+	WorldOfXeenMenu *menu;
 
 	switch (vm->getGameID()) {
 	case GType_Clouds:
@@ -48,7 +49,7 @@ void OptionsMenu::show(XeenEngine *vm) {
 	delete menu;
 }
 
-void OptionsMenu::execute() {
+void WorldOfXeenMenu::execute() {
 	SpriteResource special("special.icn");
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
@@ -102,7 +103,7 @@ void OptionsMenu::execute() {
 	}
 }
 
-void OptionsMenu::showTitles1(SpriteResource &sprites) {
+void WorldOfXeenMenu::showTitles1(SpriteResource &sprites) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 
@@ -118,7 +119,7 @@ void OptionsMenu::showTitles1(SpriteResource &sprites) {
 	}
 }
 
-void OptionsMenu::showTitles2() {
+void WorldOfXeenMenu::showTitles2() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Sound &sound = *_vm->_sound;
@@ -153,7 +154,7 @@ void OptionsMenu::showTitles2() {
 	screen._windows[0].update();
 }
 
-void OptionsMenu::setupButtons(SpriteResource *buttons) {
+void WorldOfXeenMenu::setupButtons(SpriteResource *buttons) {
 	addButton(Common::Rect(124, 87, 124 + 53, 87 + 10), 'S');
 	addButton(Common::Rect(126, 98, 126 + 47, 98 + 10), 'L');
 	addButton(Common::Rect(91, 110, 91 + 118, 110 + 10), 'C');
@@ -228,4 +229,5 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	}
 }
 
+} // End of namespace WorldOfXeen
 } // End of namespace Xeen
