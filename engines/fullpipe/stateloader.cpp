@@ -117,6 +117,8 @@ void GameLoader::readSavegame(const char *fname) {
 			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
 			_sc2array[i]._picAniInfos[j]->load(*archive);
 		}
+
+		_sc2array[i]._isLoaded = 0;
 	}
 
 	int num = 2;
