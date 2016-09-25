@@ -599,7 +599,7 @@ void EventRecorder::setFileHeader() {
 		return;
 	}
 	TimeDate t;
-	PlainGameDescriptor desc = EngineMan.findTarget(ConfMan.getActiveDomainName());
+	QualifiedGameDescriptor desc = EngineMan.findTarget(ConfMan.getActiveDomainName());
 	g_system->getTimeAndDate(t);
 	if (_author.empty()) {
 		setAuthor("Unknown Author");

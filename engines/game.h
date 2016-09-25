@@ -64,6 +64,18 @@ public:
 };
 
 /**
+ * The description of a game supported by an engine
+ */
+struct QualifiedGameDescriptor : public PlainGameDescriptor {
+	const char *engineId;
+
+	QualifiedGameDescriptor();
+	QualifiedGameDescriptor(const char *engine, const PlainGameDescriptor &pgd);
+};
+
+typedef Common::Array<QualifiedGameDescriptor> QualifiedGameList;
+
+/**
  * Ths is an enum to describe how done a game is. This also indicates what level of support is expected.
  */
 enum GameSupportLevel {

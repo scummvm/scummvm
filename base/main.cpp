@@ -219,7 +219,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
-		PlainGameDescriptor game = EngineMan.findTarget(ConfMan.getActiveDomainName());
+		QualifiedGameDescriptor game = EngineMan.findTarget(ConfMan.getActiveDomainName());
 		if (game.description) {
 			caption = game.description;
 		}

@@ -479,50 +479,54 @@ DECLARE_SINGLETON(EngineManager);
  * This function works for both cached and uncached PluginManagers.
  * For the cached version, most of the logic here will short circuit.
  *
- * For the uncached version, we first try to find the plugin using the gameId
+ * For the uncached version, we first try to find the plugin using the engineId
  * and only if we can't find it there, we loop through the plugins.
  **/
-PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
-	// First look for the game using the plugins in memory. This is critical
-	// for calls coming from inside games
-	PlainGameDescriptor result = findGameInLoadedPlugins(gameName, plugin);
-	if (result.gameId) {
-		return result;
+QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineId, const Common::String &gameId) const {
+	QualifiedGameList results;
+
+	if (!engineId.empty()) {
+		// If we got an engine name, look for THE game only in that engine
+		const Plugin *p = EngineMan.findPlugin(engineId);
+		if (p) {
+			const MetaEngine &engine = p->get<MetaEngine>();
+
+			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
+			if (pluginResult.gameId) {
+				results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
+			}
+		}
+	} else {
+		// This is a slow path, we have to scan the list of plugins
+		PluginMan.loadFirstPlugin();
+		do {
+			results.push_back(findGameInLoadedPlugins(gameId));
+		} while (PluginMan.loadNextPlugin());
 	}
 
-	// We failed to find it in memory. Scan the list of plugins
-	PluginMan.loadFirstPlugin();
-	do {
-		result = findGameInLoadedPlugins(gameName, plugin);
-		if (result.gameId)
-			break;
-	} while (PluginMan.loadNextPlugin());
-
-	return result;
+	return results;
 }
 
 /**
  * Find the game within the plugins loaded in memory
  **/
-PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
+QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &gameId) const {
 	// Find the GameDescriptor for this target
 	const PluginList &plugins = getPlugins();
 
-	if (plugin)
-		*plugin = 0;
-
+	QualifiedGameList results;
 	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		PlainGameDescriptor pgd = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
-		if (pgd.gameId) {
-			if (plugin)
-				*plugin = *iter;
-			return pgd;
+		const MetaEngine &engine = (*iter)->get<MetaEngine>();
+		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
+
+		if (pluginResult.gameId) {
+			results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
 		}
 	}
 
-	return PlainGameDescriptor::empty();
+	return results;
 }
 
 DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
@@ -650,29 +654,33 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	return 0;
 }
 
-PlainGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
+QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, const Plugin **plugin) const {
 	// Ignore empty targets
 	if (target.empty())
-		return PlainGameDescriptor();
+		return QualifiedGameDescriptor();
 
 	// Lookup the domain. If we have no domain, fallback on the old function [ultra-deprecated].
 	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
 	if (!domain || !domain->contains("gameid") || !domain->contains("engineid"))
-		return PlainGameDescriptor();
+		return QualifiedGameDescriptor();
 
 	// Look for the engine ID
 	const Plugin *foundPlugin = findPlugin(domain->getVal("engineid"));
 	if (!foundPlugin) {
-		return PlainGameDescriptor();
+		return QualifiedGameDescriptor();
 	}
 
 	// Make sure it does support the game ID
-	PlainGameDescriptor desc = foundPlugin->get<MetaEngine>().findGame(domain->getVal("gameid").c_str());
+	const MetaEngine &engine = foundPlugin->get<MetaEngine>();
+	PlainGameDescriptor desc = engine.findGame(domain->getVal("gameid").c_str());
+	if (!desc.gameId) {
+		return QualifiedGameDescriptor();
+	}
 
-	if (desc.gameId && plugin)
+	if (plugin)
 		*plugin = foundPlugin;
 
-	return desc;
+	return QualifiedGameDescriptor(engine.getEngineId(), desc);
 }
 
 void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const {
@@ -734,10 +742,13 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 
 	// Next, try to find an engine with the game ID in its supported games list
 	if (engineId.empty()) {
-		PlainGameDescriptor pgd = findGame(oldGameId, &plugin);
-		if (plugin) {
-			engineId = plugin->get<MetaEngine>().getEngineId();
-			newGameId = pgd.gameId;
+		QualifiedGameList candidates = findGamesMatching("", oldGameId);
+		if (candidates.size() > 1) {
+			warning("Multiple matching engines were found when upgrading target '%s'", target.c_str());
+			return;
+		} else if (!candidates.empty()) {
+			engineId = candidates[0].engineId;
+			newGameId = candidates[0].gameId;
 		}
 	}
 

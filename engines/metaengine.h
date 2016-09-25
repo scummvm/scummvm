@@ -284,10 +284,16 @@ public:
 	const PluginList &getPlugins() const;
 
 	/** Find a target */ // TODO: Expand on description
-	PlainGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
+	QualifiedGameDescriptor findTarget(const Common::String &target, const Plugin **plugin = NULL) const;
 
-	/** Find a game across all plugins */ // TODO: Naming, this should be gameId
-	PlainGameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	/**
+	 * List games matching the specified criteria
+	 *
+	 * If the engine id is not specified, this scans all the plugins,
+	 * loading them from disk if necessary. This is a slow operation on
+	 * some platforms and should not be used for the happy path.
+	 */
+	QualifiedGameList findGamesMatching(const Common::String &engineId, const Common::String &gameId) const;
 
 	/**
 	 * Create a target from the supplied game descriptor
@@ -301,7 +307,7 @@ public:
 
 private:
 	/** Find a game across all loaded plugins */
-	PlainGameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	QualifiedGameList findGameInLoadedPlugins(const Common::String &gameId) const;
 
 	/** Find a loaded plugin with the given engine ID */
 	const Plugin *findLoadedPlugin(const Common::String &engineId) const;

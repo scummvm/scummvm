@@ -166,7 +166,7 @@ void RecorderDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kRecordCmd: {
 		TimeDate t;
-		PlainGameDescriptor desc = EngineMan.findTarget(_target);
+		QualifiedGameDescriptor desc = EngineMan.findTarget(_target);
 		g_system->getTimeAndDate(t);
 		EditRecordDialog editDlg(_("Unknown Author"), Common::String::format("%.2d.%.2d.%.4d ", t.tm_mday, t.tm_mon, 1900 + t.tm_year) + desc.description, "");
 		if (editDlg.runModal() != kOKCmd) {

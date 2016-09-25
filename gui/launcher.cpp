@@ -271,7 +271,7 @@ void LauncherDialog::updateListing() {
 			gameid = iter->_key;
 
 		if (description.empty()) {
-			PlainGameDescriptor g = EngineMan.findTarget(iter->_key);
+			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
 			if (g.description)
 				description = g.description;
 		}
