@@ -98,14 +98,6 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 		}
 	}
 
-	int num = 2;
-	for (int k = 0; k < _sc2array[num]._picAniInfosCount; k++) {
-		debugC(4, kDebugLoading, "num: %d", k);
-		debugC(4, kDebugLoading, "type: %d id: %d", _sc2array[num]._picAniInfos[k]->type, _sc2array[num]._picAniInfos[k]->objectId);
-		debugC(4, kDebugLoading, "staticsId: %d movid: %d movphase: %d", _sc2array[num]._picAniInfos[k]->staticsId,
-				_sc2array[num]._picAniInfos[k]->movementId, _sc2array[num]._picAniInfos[k]->dynamicPhaseIndex);
-	}
-
 	header.encSize = stream.size();
 
 	// Now obfuscate the data
@@ -178,8 +170,6 @@ void PicAniInfo::save(MfcArchive &file) {
 	file.writeSint32LE(oy);
 	file.writeUint32LE(priority);
 	file.writeUint16LE(staticsId);
-	if (objectId == 334)
-		warning("objid: %d stid: %d", objectId, staticsId);
 	file.writeUint16LE(movementId);
 	file.writeUint16LE(dynamicPhaseIndex);
 	file.writeUint16LE(flags);
