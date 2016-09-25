@@ -106,7 +106,9 @@ void GameLoader::readSavegame(const char *fname) {
 
 	for (uint i = 0; i < arrSize; i++) {
 		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
-		debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+
+		if (_sc2array[i]._picAniInfosCount)
+			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
 
 		free(_sc2array[i]._picAniInfos);
 		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
@@ -115,6 +117,14 @@ void GameLoader::readSavegame(const char *fname) {
 			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
 			_sc2array[i]._picAniInfos[j]->load(*archive);
 		}
+	}
+
+	int num = 2;
+	for (int k = 0; k < _sc2array[num]._picAniInfosCount; k++) {
+		debugC(4, kDebugLoading, "num: %d", k);
+		debugC(4, kDebugLoading, "type: %d id: %d", _sc2array[num]._picAniInfos[k]->type, _sc2array[num]._picAniInfos[k]->objectId);
+		debugC(4, kDebugLoading, "staticsId: %d movid: %d movphase: %d", _sc2array[num]._picAniInfos[k]->staticsId,
+				_sc2array[num]._picAniInfos[k]->movementId, _sc2array[num]._picAniInfos[k]->dynamicPhaseIndex);
 	}
 
 	delete archive;
@@ -588,6 +598,8 @@ bool PicAniInfo::load(MfcArchive &file) {
 	oy = file.readSint32LE();
 	priority = file.readUint32LE();
 	staticsId = file.readUint16LE();
+	if (objectId == 334)
+		warning("objid: %d stid: %d", objectId, staticsId);
 	movementId = file.readUint16LE();
 	dynamicPhaseIndex = file.readUint16LE();
 	flags = file.readUint16LE();
