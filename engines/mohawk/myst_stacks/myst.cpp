@@ -3271,7 +3271,7 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 			color = pf.RGBToColor(0xFF, 0, 0); // Red
 	} else {
 		if (!_towerRotationOverSpot)
-			color = 0x00; // White
+			color = 0xFF; // White
 		else
 			color = 0xF9; // Red
 	}
