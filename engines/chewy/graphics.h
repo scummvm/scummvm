@@ -34,6 +34,9 @@ public:
 
 	void drawImage(Common::String filename, int imageNum);
 	void playVideo(uint num);
+	void setCursor(uint num);
+	void showCursor();
+	void hideCursor();
 private:
 
 };

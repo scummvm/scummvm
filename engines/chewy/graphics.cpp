@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
 #include "chewy/graphics.h"
@@ -83,6 +84,25 @@ void Graphics::playVideo(uint num) {
 	}
 
 	cfoDecoder->close();
+}
+
+void Graphics::setCursor(uint num) {
+	SpriteResource *res = new SpriteResource("cursor.taf");
+	TAFChunk *cursor = res->getSprite(num);
+
+	CursorMan.replaceCursor(cursor->data, cursor->width, cursor->height, 0, 0, 0);
+
+	delete[] cursor->data;
+	delete cursor;
+	delete res;
+}
+
+void Graphics::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void Graphics::hideCursor() {
+	CursorMan.showMouse(false);
 }
 
 } // End of namespace Chewy

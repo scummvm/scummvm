@@ -79,22 +79,35 @@ Common::Error ChewyEngine::run() {
 
 	//_graphics->playVideo(0);
 	_graphics->drawImage("episode1.tgp", 0);
+	_graphics->showCursor();
+	_graphics->setCursor(0);
 	//_sound->playSpeech(1);
 	//_sound->playSound(1);
 	//_sound->playMusic(2);
 
 	// Run a dummy loop
 	Common::Event event;
+	uint curCursor = 0;
+	const uint maxCursors = 41;
 
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				g_engine->quitGame();
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_SPACE) || event.type == Common::EVENT_RBUTTONUP) {
+				curCursor++;
+				if (curCursor == maxCursors)
+					curCursor = 0;
+				_graphics->setCursor(curCursor);
+			}
+
 			if (event.type == Common::EVENT_KEYDOWN && event.kbd.flags & Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d)
 				_console->attach();
 		}
 
 		_console->onFrame();
+
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 

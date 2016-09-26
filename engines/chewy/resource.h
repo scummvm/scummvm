@@ -65,9 +65,6 @@ enum ResourceType {
 	kResourceTCF = 26		// error messages, used in err/err_e.tcf (English) and err/err_d.tcf (German)
 };
 
-// 4 + 2 + 2 + 4 + 2 + 2 + 768 = 784 bytes
-#define TBF_CHUNK_HEADER_SIZE 784
-
 // Generic chunk header
 struct Chunk {
 	uint32 size;
@@ -86,6 +83,30 @@ struct TBFChunk {
 	uint16 width;
 	uint16 height;
 	byte palette[3 * 256];
+	byte *data;
+};
+
+// TAF (sprite) chunk header
+/*struct TAFHeader {
+	// TAF chunk header
+	// ID (TAF, followed by a zero)
+	uint16 screenMode;
+	uint16 spriteCount;
+	uint32 size;	// total size (width * height) of all sprites
+	byte palette[3 * 256];
+	uint32 nextSpriteOffset;
+	uint16 correctionTable;
+	// 1 byte padding
+};*/
+
+// TAF (sprite) image data chunk header - 15 bytes
+struct TAFChunk {
+	uint16 compressionFlag;
+	uint16 width;
+	uint16 height;
+	// 4 bytes next sprite offset
+	// 4 bytes sprite image offset
+	// 1 byte padding
 	byte *data;
 };
 
@@ -125,12 +146,23 @@ public:
 	virtual byte *getChunkData(uint num);
 
 protected:
+	void initSprite(Common::String filename);
+	void unpackRLE(byte *buffer, uint32 compressedSize, uint32 uncompressedSize);
+
 	Common::File _stream;
 	uint16 _chunkCount;
 	ResourceType _resType;
 	bool _encrypted;
 
 	ChunkList _chunkList;
+};
+
+class SpriteResource : public Resource {
+public:
+	SpriteResource(Common::String filename) : Resource(filename) {}
+	~SpriteResource() {}
+
+	TAFChunk *getSprite(uint num);
 };
 
 class BackgroundResource : public Resource {

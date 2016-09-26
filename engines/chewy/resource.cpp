@@ -50,18 +50,23 @@ Resource::Resource(Common::String filename) {
 	const uint32 headerGeneric = MKTAG('N', 'G', 'S', '\0');
 	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
 	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
+	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
 
 	_stream.open(filename);
 
 	uint32 header = _stream.readUint32BE();
-	bool isText = header == headerTxtDec || header == headerTxtEnc;
+	bool isText = (header == headerTxtDec || header == headerTxtEnc);
+	bool isSprite = (header == headerSprite);
 
-	if (header != headerGeneric && !isText)
+	if (header != headerGeneric && !isSprite && !isText)
 		error("Invalid resource - %s", filename.c_str());
 
 	if (isText) {
 		_resType = kResourceTCF;
 		_encrypted = (header == headerTxtEnc);
+	} else if (isSprite) {
+		initSprite(filename);
+		return;
 	} else {
 		_resType = (ResourceType)_stream.readUint16LE();
 		_encrypted = false;
@@ -112,6 +117,83 @@ byte *Resource::getChunkData(uint num) {
 	return data;
 }
 
+void Resource::initSprite(Common::String filename) {
+	uint16 screenMode;;
+	uint32 nextSpriteOffset;
+
+	// TAF (sprite) resources are much different than the rest, so we have a
+	// separate initializer for them here
+
+	_resType = kResourceTAF;
+	_encrypted = false;
+	screenMode = _stream.readUint16LE();
+	_chunkCount = _stream.readUint16LE();
+	_stream.skip(4);		// total size of all sprites
+	_stream.skip(3 * 256);	// palette
+	nextSpriteOffset = _stream.readUint32LE();
+	_stream.skip(2 + 1);	// correction table, padding
+	if ((int32)nextSpriteOffset != _stream.pos())
+		error("Invalid sprite resource - %s", filename.c_str());
+
+	for (uint i = 0; i < _chunkCount; i++) {
+		Chunk cur;
+
+		cur.pos = _stream.pos();
+		cur.type = kResourceTAF;
+
+		_stream.skip(2 + 2 + 2);	// compression flag, width, height
+		uint32 nextSpriteOffset = _stream.readUint32LE();
+		uint32 spriteImageOffset = _stream.readUint32LE();
+		_stream.skip(1);	// padding
+
+		if ((int32)spriteImageOffset != _stream.pos())
+			error("Invalid sprite resource - %s", filename.c_str());
+
+		cur.size = nextSpriteOffset - cur.pos - 15; // 15 = sizeof(TAFChunk)
+
+		_stream.skip(cur.size);
+		_chunkList.push_back(cur);
+	}
+}
+
+void Resource::unpackRLE(byte *buffer, uint32 compressedSize, uint32 uncompressedSize) {
+	// Compressed images are packed using a very simple RLE compression
+	byte count;
+	byte value;
+	uint32 outPos = 0;
+
+	for (uint i = 0; i < (compressedSize) / 2 && outPos < uncompressedSize; i++) {
+		count = _stream.readByte();
+		value = _stream.readByte();
+		for (byte j = 0; j < count; j++) {
+			buffer[outPos++] = value;
+		}
+	}
+}
+
+TAFChunk *SpriteResource::getSprite(uint num) {
+	assert(num < _chunkList.size());
+
+	Chunk *chunk = &_chunkList[num];
+	TAFChunk *taf = new TAFChunk();
+
+	_stream.seek(chunk->pos, SEEK_SET);
+
+	taf->compressionFlag = _stream.readUint16LE();
+	taf->width = _stream.readUint16LE();
+	taf->height = _stream.readUint16LE();
+	_stream.skip(4 + 4 + 1);	// nextSpriteOffset, spriteImageOffset, padding
+
+	taf->data = new byte[taf->width * taf->height];
+
+	if (!taf->compressionFlag)
+		_stream.read(taf->data, chunk->size);
+	else
+		unpackRLE(taf->data, chunk->size, taf->width * taf->height);
+
+	return taf;
+}
+
 TBFChunk *BackgroundResource::getImage(uint num) {
 	assert(num < _chunkList.size());
 
@@ -133,23 +215,10 @@ TBFChunk *BackgroundResource::getImage(uint num) {
 
 	tbf->data = new byte[tbf->size];
 
-	if (!tbf->compressionFlag) {
+	if (!tbf->compressionFlag)
 		_stream.read(tbf->data, chunk->size);
-	}
-	else {
-		// Compressed images are packed using a very simple RLE compression
-		byte count;
-		byte value;
-		uint32 outPos = 0;
-
-		for (uint i = 0; i < (chunk->size) / 2 && outPos < tbf->size; i++) {
-			count = _stream.readByte();
-			value = _stream.readByte();
-			for (byte j = 0; j < count; j++) {
-				tbf->data[outPos++] = value;
-			}
-		}
-	}
+	else
+		unpackRLE(tbf->data, chunk->size, tbf->size);
 
 	return tbf;
 }
