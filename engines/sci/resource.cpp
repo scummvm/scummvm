@@ -948,7 +948,7 @@ void ResourceManager::init() {
 	// cache, leading to constant decompression of picture resources
 	// and making the renderer very slow.
 	if (getSciVersion() >= SCI_VERSION_2) {
-		_maxMemoryLRU = 2048 * 1024; // 2MiB
+		_maxMemoryLRU = 4096 * 1024; // 4MiB
 	}
 
 	switch (_viewType) {
