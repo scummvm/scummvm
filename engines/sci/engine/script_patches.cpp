@@ -4536,10 +4536,30 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 #pragma mark -
 #pragma mark Space Quest 6
 
+// When pressing number buttons on the Holocabana controls, View objects are
+// put in an int16 array. This happens to work in SSCI, but ScummVM requires a
+// proper IDArray because reg_t is larger than 16 bits.
+static const uint16 sq6HoloIntArraySignature[] = {
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x76,                      // push0
+	0x51, 0x0b,                // class IntArray
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x04),    // send 4
+	0xa3, 0x06,                // sal local[6]
+	SIG_END
+};
+
+static const uint16 sq6HoloIntArrayPatch[] = {
+	PATCH_ADDTOOFFSET(+4),      // pushi new; push0
+	0x51, 0x0c,                 // class IDArray
+	PATCH_END
+};
+
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    15, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
+	{  true,   400, "invalid array type",                          1, sq6HoloIntArraySignature,        sq6HoloIntArrayPatch },
 	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
