@@ -664,7 +664,9 @@ public:
 			const reg_t *source = values;
 			int16 *target = (int16 *)_data + index;
 			while (count--) {
-				assert(source->isNumber());
+				if (!source->isNumber()) {
+					error("Non-number %04x:%04x sent to int16 array", PRINT_REG(*source));
+				}
 				*target++ = source->toSint16();
 				++source;
 			}
@@ -683,7 +685,9 @@ public:
 			const reg_t *source = values;
 			byte *target = (byte *)_data + index;
 			while (count--) {
-				assert(source->isNumber());
+				if (!source->isNumber()) {
+					error("Non-number %04x:%04x sent to byte or string array", PRINT_REG(*source));
+				}
 				*target++ = source->getOffset();
 				++source;
 			}
