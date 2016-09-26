@@ -69,11 +69,11 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 width = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
 
-	addTrack(new CfoVideoTrack(stream, frameCount, width, height));
+	addTrack(new CfoVideoTrack(stream, frameCount, width, height, _mixer));
 	return true;
 }
 
-CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height) :
+CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Audio::Mixer *mixer) :
 	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true) {
 	readHeader();
 
@@ -81,10 +81,12 @@ CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uin
 		_soundEffects[i] = nullptr;
 		_soundEffectSize[i] = 0;
 	}
+
+	_mixer = mixer;
 }
 
 CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
-	g_engine->_mixer->stopAll();
+	_mixer->stopAll();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
 		delete[] _soundEffects[i];
@@ -222,17 +224,17 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			error("Unused chunk kChunkPlayPattern found");
 			break;
 		case kChunkStopMusic:
-			g_engine->_mixer->stopHandle(_musicHandle);
+			_mixer->stopHandle(_musicHandle);
 			break;
 		case kChunkWaitMusicEnd:
 			do {
 				g_system->delayMillis(10);
-			} while (g_engine->_mixer->isSoundHandleActive(_musicHandle));
+			} while (_mixer->isSoundHandleActive(_musicHandle));
 			break;
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 
-			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
 			break;
 		case kChunkSetLoopMode:
 			error("Unused chunk kChunkSetLoopMode found");
@@ -254,20 +256,20 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				DisposeAfterUse::NO),
 				(repeat == 0) ? 1 : repeat);
 
-			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
-			g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
+			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 			break;
 		case kChunkSetSoundVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 
-			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
 			break;
 		case kChunkSetChannelVolume:
 			channel = _fileStream->readUint16LE();
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 			assert(channel < MAX_SOUND_EFFECTS);
 
-			g_engine->_mixer->setChannelVolume(_soundHandle[channel], volume);
+			_mixer->setChannelVolume(_soundHandle[channel], volume);
 			break;
 		case kChunkFreeSoundEffect:
 			number = _fileStream->readUint16LE();
@@ -290,7 +292,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			balance = (_fileStream->readUint16LE() * 2) - 127;
 			assert(channel < MAX_SOUND_EFFECTS);
 
-			g_engine->_mixer->setChannelBalance(_soundHandle[channel], balance);
+			_mixer->setChannelBalance(_soundHandle[channel], balance);
 			break;
 		case kChunkSetSpeed:
 			error("Unused chunk kChunkSetSpeed found");

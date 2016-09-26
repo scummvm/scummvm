@@ -108,9 +108,7 @@ bool Console::Cmd_Draw(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	int resNum = atoi(argv[2]);
 	
-	Graphics *g = new Graphics();
-	g->drawImage(filename, resNum);
-	delete g;
+	_vm->_graphics->drawImage(filename, resNum);
 
 	return false;
 }
@@ -157,12 +155,8 @@ bool Console::Cmd_PlayVideo(int argc, const char **argv) {
 		return true;
 	}
 
-	detach();	// close the console
-	
 	int resNum = atoi(argv[1]);
-	Graphics *g = new Graphics();
-	g->playVideo(resNum);
-	delete g;
+	_vm->setPlayVideo(resNum);
 
 	return false;
 }

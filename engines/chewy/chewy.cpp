@@ -31,6 +31,7 @@
 
 #include "chewy/chewy.h"
 #include "chewy/console.h"
+#include "chewy/events.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
@@ -54,18 +55,21 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 }
 
 ChewyEngine::~ChewyEngine() {
-	delete _console;
+	delete _events;
 	delete _sound;
 	delete _graphics;
+	delete _console;
 }
 
 void ChewyEngine::initialize() {
 	_console = new Console(this);
-	_graphics = new Graphics();
-	_sound = new Sound();
+	_graphics = new Graphics(this);
+	_sound = new Sound(_mixer);
+	_events = new Events(this, _graphics, _console);
 
 	_curCursor = 0;
 	_elapsedFrames = 0;
+	_videoNum = -1;
 }
 
 Common::Error ChewyEngine::run() {
@@ -90,20 +94,18 @@ Common::Error ChewyEngine::run() {
 
 	// Run a dummy loop
 	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(_event)) {
-			if (_event.type == Common::EVENT_KEYDOWN && _event.kbd.keycode == Common::KEYCODE_ESCAPE)
-				g_engine->quitGame();
-			if ((_event.type == Common::EVENT_KEYDOWN && _event.kbd.keycode == Common::KEYCODE_SPACE) || _event.type == Common::EVENT_RBUTTONUP)
-				_graphics->nextCursor();
-			if (_event.type == Common::EVENT_KEYDOWN && _event.kbd.flags & Common::KBD_CTRL && _event.kbd.keycode == Common::KEYCODE_d)
-				_console->attach();
-		}
+		_events->processEvents();
 
 		_console->onFrame();
 
 		// Cursor animation
 		if (_elapsedFrames % 30 == 0)
 			_graphics->animateCursor();
+
+		if (_videoNum >= 0) {
+			_graphics->playVideo(_videoNum);
+			_videoNum = -1;
+		}
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);

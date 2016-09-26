@@ -34,15 +34,17 @@ namespace Chewy {
 // A FLIC decoder, with a modified header and additional custom frames
 class CfoDecoder : public Video::FlicDecoder {
 public:
-	CfoDecoder() : Video::FlicDecoder() {}
+	CfoDecoder(Audio::Mixer *mixer) : Video::FlicDecoder() { _mixer = mixer; }
 	virtual ~CfoDecoder() {}
 
 	bool loadStream(Common::SeekableReadStream *stream);
 
 private:
+	Audio::Mixer *_mixer;
+
 	class CfoVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
 	public:
-		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
+		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Audio::Mixer *mixer);
 		virtual ~CfoVideoTrack();
 
 		void readHeader();
@@ -56,6 +58,7 @@ private:
 		void handleFrame();
 		void handleCustomFrame();
 
+		Audio::Mixer *_mixer;
 		Audio::SoundHandle _musicHandle;
 		Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
 		byte *_soundEffects[MAX_SOUND_EFFECTS];

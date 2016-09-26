@@ -49,7 +49,7 @@ const byte _cursorFrames[] = {
 	1				// gun
 };
 
-Graphics::Graphics() {
+Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
 	_curCursor = 0;
 	_curCursorFrame = 0;
 	_cursorSprites = new SpriteResource("cursor.taf");
@@ -73,7 +73,7 @@ void Graphics::drawImage(Common::String filename, int imageNum) {
 }
 
 void Graphics::playVideo(uint num) {
-	CfoDecoder *cfoDecoder = new CfoDecoder();
+	CfoDecoder *cfoDecoder = new CfoDecoder(_vm->_mixer);
 	VideoResource *videoResource = new VideoResource("cut.tap");
 	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
 
@@ -87,9 +87,11 @@ void Graphics::playVideo(uint num) {
 	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
 	bool skipVideo = false;
 
+	hideCursor();
+
 	cfoDecoder->start();
 
-	while (!g_engine->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo) {
+	while (!_vm->shouldQuit() && !cfoDecoder->endOfVideo() && !skipVideo) {
 		if (cfoDecoder->needsUpdate()) {
 			const ::Graphics::Surface *frame = cfoDecoder->decodeNextFrame();
 			if (frame) {
@@ -112,6 +114,8 @@ void Graphics::playVideo(uint num) {
 	}
 
 	cfoDecoder->close();
+
+	showCursor();
 }
 
 void Graphics::setCursor(uint num, bool newCursor) {

@@ -30,7 +30,8 @@
 
 namespace Chewy {
 
-Sound::Sound() {
+Sound::Sound(Audio::Mixer *mixer) {
+	_mixer = mixer;
 	_speechRes = new SoundResource("speech.tvp");
 	_soundRes = new SoundResource("details.tap");
 }
@@ -51,7 +52,7 @@ void Sound::playSound(int num, bool loop) {
 		DisposeAfterUse::NO),
 		loop ? 0 : 1);
 
-	g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
 
 	delete[] sound->data;
 	delete sound;
@@ -72,7 +73,7 @@ void Sound::playMusic(int num, bool loop) {
 		DisposeAfterUse::NO),
 		loop ? 0 : 1);
 
-	g_engine->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
 }
 
 void Sound::playSpeech(int num) {
@@ -86,7 +87,7 @@ void Sound::playSpeech(int num) {
 		DisposeAfterUse::NO),
 		1);
 
-	g_engine->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 
 	delete[] sound->data;
 	delete sound;

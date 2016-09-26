@@ -20,36 +20,43 @@
  *
  */
 
-#ifndef CHEWY_GRAPHICS_H
-#define CHEWY_GRAPHICS_H
+#include "common/system.h"
+#include "common/events.h"
 
 #include "chewy/chewy.h"
+#include "chewy/console.h"
+#include "chewy/events.h"
+#include "chewy/graphics.h"
 
 namespace Chewy {
 
-class SpriteResource;
+Events::Events(ChewyEngine *vm, Graphics *graphics, Console *console) :
+	_vm(vm), _graphics(graphics), _console(console) {
 
-class Graphics {
-public:
-	Graphics(ChewyEngine *vm);
-	~Graphics();
+	_eventManager = g_system->getEventManager();
+}
 
-	void drawImage(Common::String filename, int imageNum);
-	void playVideo(uint num);
-	void setCursor(uint num, bool newCursor = true);
-	void showCursor();
-	void hideCursor();
-	void animateCursor();
-	void nextCursor();
-
-private:
-	ChewyEngine *_vm;
-
-	uint _curCursor;
-	uint _curCursorFrame;
-	SpriteResource *_cursorSprites;
-};
+void Events::processEvents() {
+	while (_eventManager->pollEvent(_event)) {
+		if (_event.type == Common::EVENT_KEYDOWN) {
+			switch (_event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				_vm->quitGame();
+				break;
+			case Common::KEYCODE_SPACE:
+				_graphics->nextCursor();
+				break;
+			case Common::KEYCODE_d:
+				if (_event.kbd.flags & Common::KBD_CTRL)
+					_console->attach();
+				break;
+			default:
+				break;
+			}
+		} else if (_event.type == Common::EVENT_RBUTTONUP) {
+			_graphics->nextCursor();
+		}
+	}
+}
 
 } // End of namespace Chewy
-
-#endif

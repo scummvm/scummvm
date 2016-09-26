@@ -32,7 +32,7 @@ class SoundResource;
 
 class Sound {
 public:
-	Sound();
+	Sound(Audio::Mixer *mixer);
 	~Sound();
 
 	void playSound(int num, bool loop = false);
@@ -40,6 +40,7 @@ public:
 	void playSpeech(int num);
 
 private:
+	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _speechHandle;

@@ -20,60 +20,30 @@
  *
  */
 
-#ifndef CHEWY_H
-#define CHEWY_H
+#ifndef CHEWY_EVENTS_H
+#define CHEWY_EVENTS_H
 
-
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/util.h"
-#include "common/str.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/random.h"
-
-#include "engines/engine.h"
+#include "common/events.h"
 
 namespace Chewy {
 
-struct ChewyGameDescription;
-class Console;
-class Events;
+class ChewyEngine;
 class Graphics;
-class Sound;
+class Console;
 
-class ChewyEngine : public Engine {
+class Events {
 public:
-	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
-	virtual ~ChewyEngine();
+	Events(ChewyEngine *vm, Graphics *graphics, Console *console);
+	~Events() {}
 
-	int getGameType() const;
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	Common::Platform getPlatform() const;
+	void processEvents();
 
-	const ChewyGameDescription *_gameDescription;
-	Common::RandomSource _rnd;
-
-	void setPlayVideo(uint num) { _videoNum = num; }
-
+private:
+	Common::Event _event;
+	Common::EventManager *_eventManager;
+	ChewyEngine *_vm;
 	Graphics *_graphics;
-	Sound *_sound;
-
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-
-	void initialize();
-	void shutdown();
-
 	Console *_console;
-	Events *_events;
-
-	uint _curCursor;
-	uint _elapsedFrames;
-	int _videoNum;
 };
 
 } // End of namespace Chewy
