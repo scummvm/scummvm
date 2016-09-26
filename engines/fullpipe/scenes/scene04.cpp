@@ -43,6 +43,8 @@ static const int scene04_speakerPhases[] = {
 	0, 2, -1, -1, -1, -1
 };
 
+void sceneHandler04_putKozyawkaBack(StaticANIObject *ani);
+
 void scene04_speakerCallback(int *phase) {
 	if (g_vars->scene04_soundPlaying) {
 		if (g_vars->scene04_speakerPhase >= 0) {
