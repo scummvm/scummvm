@@ -34,7 +34,7 @@ class Console;
 class Events {
 public:
 	Events(ChewyEngine *vm, Graphics *graphics, Console *console);
-	~Events() {}
+	virtual ~Events() {}
 
 	void processEvents();
 

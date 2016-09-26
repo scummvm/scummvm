@@ -33,7 +33,7 @@ class SoundResource;
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer);
-	~Sound();
+	virtual ~Sound();
 
 	void playSound(int num, bool loop = false);
 	void playMusic(int num, bool loop = false);

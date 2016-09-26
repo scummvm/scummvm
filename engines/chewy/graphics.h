@@ -32,7 +32,7 @@ class SpriteResource;
 class Graphics {
 public:
 	Graphics(ChewyEngine *vm);
-	~Graphics();
+	virtual ~Graphics();
 
 	void drawImage(Common::String filename, int imageNum);
 	void playVideo(uint num);

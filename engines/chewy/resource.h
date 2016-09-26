@@ -86,19 +86,6 @@ struct TBFChunk {
 	byte *data;
 };
 
-// TAF (sprite) chunk header
-/*struct TAFHeader {
-	// TAF chunk header
-	// ID (TAF, followed by a zero)
-	uint16 screenMode;
-	uint16 spriteCount;
-	uint32 size;	// total size (width * height) of all sprites
-	byte palette[3 * 256];
-	uint32 nextSpriteOffset;
-	uint16 correctionTable;
-	// 1 byte padding
-};*/
-
 // TAF (sprite) image data chunk header - 15 bytes
 struct TAFChunk {
 	uint16 compressionFlag;
@@ -160,7 +147,7 @@ protected:
 class SpriteResource : public Resource {
 public:
 	SpriteResource(Common::String filename) : Resource(filename) {}
-	~SpriteResource() {}
+	virtual ~SpriteResource() {}
 
 	TAFChunk *getSprite(uint num);
 };
@@ -168,7 +155,7 @@ public:
 class BackgroundResource : public Resource {
 public:
 	BackgroundResource(Common::String filename) : Resource(filename) {}
-	~BackgroundResource() {}
+	virtual ~BackgroundResource() {}
 
 	TBFChunk *getImage(uint num);
 };
@@ -176,7 +163,7 @@ public:
 class SoundResource : public Resource {
 public:
 	SoundResource(Common::String filename) : Resource(filename) {}
-	~SoundResource() {}
+	virtual ~SoundResource() {}
 
 	SoundChunk *getSound(uint num);
 };
@@ -184,7 +171,7 @@ public:
 class TextResource : public Resource {
 public:
 	TextResource(Common::String filename) : Resource(filename) {}
-	~TextResource() {}
+	virtual ~TextResource() {}
 
 	Common::String getText(uint num);
 };
@@ -192,7 +179,7 @@ public:
 class VideoResource : public Resource {
 public:
 	VideoResource(Common::String filename) : Resource(filename) {}
-	~VideoResource() {}
+	virtual ~VideoResource() {}
 
 	VideoChunk *getVideoHeader(uint num);
 	Common::SeekableReadStream *getVideoStream(uint num);
