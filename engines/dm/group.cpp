@@ -593,6 +593,8 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 	if (groupThing == Thing::_endOfList)
 		return;
 
+	ChampionMan &championMan = *_vm->_championMan;
+
 	Group *curGroup = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[curGroup->_type];
 	/* Update the event */
@@ -641,7 +643,7 @@ T0209005_AddEventAndReturn:
 	if (movementTicks == kDMMovementTicksImmobile)
 		movementTicks = 100;
 
-	if (_vm->_championMan->_party._freezeLifeTicks && !isArchEnemy) { /* If life is frozen and the creature is not Lord Chaos (Lord Chaos is immune to Freeze Life) then reschedule the event later (except for reactions which are ignored when life if frozen) */
+	if (championMan._party._freezeLifeTicks && !isArchEnemy) { /* If life is frozen and the creature is not Lord Chaos (Lord Chaos is immune to Freeze Life) then reschedule the event later (except for reactions which are ignored when life if frozen) */
 		if (eventType < 0)
 			return;
 		nextEvent._type = eventType;
@@ -1134,8 +1136,10 @@ int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 de
 
 int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
 	uint16 groupDirections;
+	ChampionMan &championMan = *_vm->_championMan;
+
 	CreatureInfo *groupCreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
-	if (_vm->_championMan->_party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskSeeInvisible))
+	if (championMan._party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskSeeInvisible))
 		return 0;
 
 	bool alwaysSee = false;
@@ -1365,14 +1369,16 @@ int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int
 	if (!smellRange)
 		return 0;
 
+	ChampionMan &championMan = *_vm->_championMan;
+
 	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
 		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
 
-	int16 scentOrdinal = _vm->_championMan->getScentOrdinal(mapY, mapX);
-	if (scentOrdinal && ((_vm->_championMan->_party._scentStrengths[_vm->ordinalToIndex(scentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (smellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
-		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, _vm->_championMan->_party._scents[scentOrdinal].getMapX(), _vm->_championMan->_party._scents[scentOrdinal].getMapY()));
+	int16 scentOrdinal = championMan.getScentOrdinal(mapY, mapX);
+	if (scentOrdinal && ((championMan._party._scentStrengths[_vm->ordinalToIndex(scentOrdinal)] + _vm->getRandomNumber(4)) > (30 - (smellRange << 1)))) { /* If there is a fresh enough party scent on the group square */
+		return _vm->indexToOrdinal(getDirsWhereDestIsVisibleFromSource(mapY, mapX, championMan._party._scents[scentOrdinal].getMapX(), championMan._party._scents[scentOrdinal].getMapY()));
 	}
 	return 0;
 }
@@ -1423,6 +1429,8 @@ bool GroupMan::isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX,
 
 bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 creatureIndex) {
 	static const uint8 creatureAttackSounds[11] = { 3, 7, 14, 15, 19, 21, 29, 30, 31, 4, 16 }; /* Atari ST: { 3, 7, 14, 15, 19, 21, 4, 16 } */
+
+	ChampionMan &championMan = *_vm->_championMan;
 
 	_vm->_projexpl->_lastCreatureAttackTime = _vm->_gameTime;
 	ActiveGroup activeGroup = _activeGroups[group->getActiveGroupIndex()];
@@ -1495,13 +1503,13 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 		if (getFlag(creatureInfo->_attributes, kDMCreatureMaskAttackAnyChamp)) {
 			championIndex = _vm->getRandomNumber(4);
 			int cpt;
-			for (cpt = 0; (cpt < 4) && !_vm->_championMan->_champions[championIndex]._currHealth; cpt++)
+			for (cpt = 0; (cpt < 4) && !championMan._champions[championIndex]._currHealth; cpt++)
 				championIndex = _vm->turnDirRight(championIndex);
 
 			if (cpt == 4)
 				return false;
 		} else {
-			championIndex = _vm->_championMan->getTargetChampionIndex(mapX, mapY, targetCell);
+			championIndex = championMan.getTargetChampionIndex(mapX, mapY, targetCell);
 			if (championIndex < 0)
 				return false;
 		}
@@ -1510,7 +1518,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 			stealFromChampion(group, championIndex);
 		else {
 			int16 damage = getChampionDamage(group, championIndex) + 1;
-			Champion *damagedChampion = &_vm->_championMan->_champions[championIndex];
+			Champion *damagedChampion = &championMan._champions[championIndex];
 			if (damage > damagedChampion->_maximumDamageReceived) {
 				damagedChampion->_maximumDamageReceived = damage;
 				damagedChampion->_directionMaximumDamageReceived = _vm->returnOppositeDir((Direction)primaryDirectionToParty);
@@ -1547,12 +1555,13 @@ void GroupMan::setOrderedCellsToAttack(signed char *orderedCellsToAttack, int16 
 
 void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 	static unsigned char G0394_auc_StealFromSlotIndices[8]; /* Initialized with 0 bytes by C loader */
+	ChampionMan &championMan = *_vm->_championMan;
 
 	bool objectStolen = false;
-	Champion *champion = &_vm->_championMan->_champions[championIndex];
-	int16 percentage = 100 - _vm->_championMan->getDexterity(champion);
+	Champion *champion = &championMan._champions[championIndex];
+	int16 percentage = 100 - championMan.getDexterity(champion);
 	uint16 slotIdx = _vm->getRandomNumber(8);
-	while ((percentage > 0) && !_vm->_championMan->isLucky(champion, percentage)) {
+	while ((percentage > 0) && !championMan.isLucky(champion, percentage)) {
 		uint16 stealFromSlotIndex = G0394_auc_StealFromSlotIndices[slotIdx];
 		if (stealFromSlotIndex == kDMSlotBackpackLine1_1)
 			stealFromSlotIndex += _vm->getRandomNumber(17); /* Select a random slot in the backpack */
@@ -1560,7 +1569,7 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 		Thing slotThing = champion->_slots[stealFromSlotIndex];
 		if ((slotThing != Thing::_none)) {
 			objectStolen = true;
-			slotThing = _vm->_championMan->getObjectRemovedFromSlot(championIndex, stealFromSlotIndex);
+			slotThing = championMan.getObjectRemovedFromSlot(championIndex, stealFromSlotIndex);
 			if (group->_slot == Thing::_endOfList) {
 				group->_slot = slotThing;
 				/* BUG0_12 An object is cloned and appears at two different locations in the dungeon and/or inventory. The game may crash when interacting with this object. If a Giggler with no possessions steals an object that was previously in a chest and was not the last object in the chest then the objects that followed it are cloned. In the chest, the object is part of a linked list of objects that is not reset when the object is removed from the chest and placed in the inventory (but not in the dungeon), nor when it is stolen and added as the first Giggler possession. If the Giggler already has a possession before stealing the object then this does not create a cloned object.
@@ -1569,7 +1578,7 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 			} else {
 				_vm->_dungeonMan->linkThingToList(slotThing, group->_slot, kDMMapXNotOnASquare, 0);
 			}
-			_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
+			championMan.drawChampionState((ChampionIndex)championIndex);
 		}
 		++slotIdx;
 		slotIdx &= 0x0007;
@@ -1583,21 +1592,22 @@ void GroupMan::stealFromChampion(Group *group, uint16 championIndex) {
 
 int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 	unsigned char allowedWoundMasks[4] = {32, 16, 8, 4}; // @ G0024_auc_Graphic562_WoundProbabilityIndexToWoundMask
+	ChampionMan &championMan = *_vm->_championMan;
 
-	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
-	if (champIndex >= _vm->_championMan->_partyChampionCount)
+	Champion *curChampion = &championMan._champions[champIndex];
+	if (champIndex >= championMan._partyChampionCount)
 		return 0;
 
 	if (!curChampion->_currHealth)
 		return 0;
 
-	if (_vm->_championMan->_partyIsSleeping)
-		_vm->_championMan->wakeUp();
+	if (championMan._partyIsSleeping)
+		championMan.wakeUp();
 
 	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
 	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
-	_vm->_championMan->addSkillExperience(champIndex, kDMSkillParry, creatureInfo.getExperience());
-	if (_vm->_championMan->_partyIsSleeping || (((_vm->_championMan->getDexterity(curChampion) < (_vm->getRandomNumber(32) + creatureInfo._dexterity + doubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !_vm->_championMan->isLucky(curChampion, 60))) {
+	championMan.addSkillExperience(champIndex, kDMSkillParry, creatureInfo.getExperience());
+	if (championMan._partyIsSleeping || (((championMan.getDexterity(curChampion) < (_vm->getRandomNumber(32) + creatureInfo._dexterity + doubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !championMan.isLucky(curChampion, 60))) {
 		uint16 allowedWound;
 		uint16 woundTest = _vm->getRandomNumber(65536);
 		if (woundTest & 0x0070) {
@@ -1611,7 +1621,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 		} else
 			allowedWound = woundTest & 0x0001; /* 0 (Ready hand) or 1 (action hand) */
 
-		int16 attack = (_vm->getRandomNumber(16) + creatureInfo._attack + doubledMapDifficulty) - (_vm->_championMan->getSkillLevel(champIndex, kDMSkillParry) << 1);
+		int16 attack = (_vm->getRandomNumber(16) + creatureInfo._attack + doubledMapDifficulty) - (championMan.getSkillLevel(champIndex, kDMSkillParry) << 1);
 		if (attack <= 1) {
 			if (_vm->getRandomNumber(2))
 				return 0;
@@ -1626,15 +1636,15 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 		if (_vm->getRandomNumber(2))
 			attack -= _vm->getRandomNumber((attack >> 1) + 1) - 1;
 
-		int16 damage = _vm->_championMan->addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
+		int16 damage = championMan.addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
 		if (damage) {
 			_vm->_sound->requestPlay(kDMSoundIndexChampion0Damaged + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
-				poisonAttack = _vm->_championMan->getStatisticAdjustedAttack(curChampion, kDMStatVitality, poisonAttack);
+				poisonAttack = championMan.getStatisticAdjustedAttack(curChampion, kDMStatVitality, poisonAttack);
 				if (poisonAttack >= 0)
-					_vm->_championMan->championPoison(champIndex, poisonAttack);
+					championMan.championPoison(champIndex, poisonAttack);
 			}
 			return damage;
 		}
@@ -1812,10 +1822,12 @@ int16 GroupMan::getMeleeTargetCreatureOrdinal(int16 groupX, int16 groupY, int16 
 int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *group, int16 creatureIndex, int16 mapX, int16 mapY, uint16 actionHitProbability, uint16 actionDamageFactor, int16 skillIndex) {
 	int16 L0565_i_Damage = 0;
 	int16 L0566_i_Damage = 0;
-	int16 L0568_i_Defense;
+	int16 defense;
 	int16 L0569_i_Outcome;
 
-	if (champIndex >= _vm->_championMan->_partyChampionCount)
+	ChampionMan &championMan = *_vm->_championMan;
+
+	if (champIndex >= championMan._partyChampionCount)
 		return 0;
 
 	if (!champ->_currHealth)
@@ -1829,23 +1841,22 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 		clearFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 
 	if ((!getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial) || actionHitsNonMaterialCreatures) &&
-		((_vm->_championMan->getDexterity(champ) > (_vm->getRandomNumber(32) + creatureInfo->_dexterity + doubledMapDifficulty - 16)) ||
-		(!_vm->getRandomNumber(4)) ||
-		 (_vm->_championMan->isLucky(champ, 75 - actionHitProbability)))) {
+		((championMan.getDexterity(champ) > (_vm->getRandomNumber(32) + creatureInfo->_dexterity + doubledMapDifficulty - 16)) ||
+		(!_vm->getRandomNumber(4)) || (championMan.isLucky(champ, 75 - actionHitProbability)))) {
 
-		L0565_i_Damage = _vm->_championMan->getStrength(champIndex, kDMSlotActionHand);
+		L0565_i_Damage = championMan.getStrength(champIndex, kDMSlotActionHand);
 		if (!(L0565_i_Damage))
 			goto T0231009;
 
 		L0565_i_Damage += _vm->getRandomNumber((L0565_i_Damage >> 1) + 1);
 		L0565_i_Damage = ((long)L0565_i_Damage * (long)actionDamageFactor) >> 5;
-		L0568_i_Defense = _vm->getRandomNumber(32) + creatureInfo->_defense + doubledMapDifficulty;
+		defense = _vm->getRandomNumber(32) + creatureInfo->_defense + doubledMapDifficulty;
 		if (actionHandObjectIconIndex == kDMIconIndiceWeaponDiamondEdge)
-			L0568_i_Defense -= L0568_i_Defense >> 2;
+			defense -= defense >> 2;
 		else if (actionHandObjectIconIndex == kDMIconIndiceWeaponHardcleaveExecutioner)
-			L0568_i_Defense -= L0568_i_Defense >> 3;
+			defense -= defense >> 3;
 
-		L0565_i_Damage += _vm->getRandomNumber(32) - L0568_i_Defense;
+		L0565_i_Damage += _vm->getRandomNumber(32) - defense;
 		L0566_i_Damage = L0565_i_Damage;
 		if (L0566_i_Damage <= 1) {
 T0231009:
@@ -1872,20 +1883,20 @@ T0231009:
 			&& !(L0565_i_Damage >>= 1))
 			goto T0231015;
 
-		if (_vm->getRandomNumber(64) < _vm->_championMan->getSkillLevel(champIndex, skillIndex))
+		if (_vm->getRandomNumber(64) < championMan.getSkillLevel(champIndex, skillIndex))
 			L0565_i_Damage += L0565_i_Damage + 10;
 
 		L0569_i_Outcome = groupGetDamageCreatureOutcome(group, creatureIndex, mapX, mapY, L0565_i_Damage, true);
-		_vm->_championMan->addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * creatureInfo->getExperience() >> 4) + 3);
-		_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
+		championMan.addSkillExperience(champIndex, skillIndex, (L0565_i_Damage * creatureInfo->getExperience() >> 4) + 3);
+		championMan.decrementStamina(champIndex, _vm->getRandomNumber(4) + 4);
 		goto T0231016;
 	}
 T0231015:
 	L0565_i_Damage = 0;
 	L0569_i_Outcome = kDMKillOutcomeNoCreaturesInGroup;
-	_vm->_championMan->decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
+	championMan.decrementStamina(champIndex, _vm->getRandomNumber(2) + 2);
 T0231016:
-	_vm->_championMan->drawChampionState((ChampionIndex)champIndex);
+	championMan.drawChampionState((ChampionIndex)champIndex);
 	if (L0569_i_Outcome != kDMKillOutcomeAllCreaturesInGroup) {
 		processEvents29to41(mapX, mapY, kDMEventTypeCreateReactionPartyIsAdjacent, 0);
 	}

@@ -868,14 +868,15 @@ bool Timeline::hasWeaponMovedSlot(int16 champIndex, Champion *champ, uint16 sour
 }
 
 void Timeline::processEventHideDamageReceived(uint16 champIndex) {
+	InventoryMan &inventory = *_vm->_inventoryMan;
 	Champion *curChampion = &_vm->_championMan->_champions[champIndex];
 	curChampion->_hideDamageReceivedIndex = -1;
 	if (!curChampion->_currHealth)
 		return;
 
-	if (_vm->indexToOrdinal(champIndex) == _vm->_inventoryMan->_inventoryChampionOrdinal) {
+	if (_vm->indexToOrdinal(champIndex) == inventory._inventoryChampionOrdinal) {
 		_vm->_eventMan->showMouse();
-		_vm->_inventoryMan->drawStatusBoxPortrait((ChampionIndex)champIndex);
+		inventory.drawStatusBoxPortrait((ChampionIndex)champIndex);
 		_vm->_eventMan->hideMouse();
 	} else {
 		setFlag(curChampion->_attributes, kDMAttributeNameTitle);

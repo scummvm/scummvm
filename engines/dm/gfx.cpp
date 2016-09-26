@@ -1108,6 +1108,7 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 	if (doorState == kDMDoorStateOpen)
 		return;
 
+	ChampionMan &championMan = *_vm->_championMan;
 	DoorFrames *doorFramesTemp = doorFrames;
 	Door *door = (Door *)(_vm->_dungeonMan->_thingData[kDMThingTypeDoor]) + doorThingIndex;
 	uint16 doorType = door->getType();
@@ -1121,7 +1122,7 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 			flipBitmapVertical(_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 	}
 
-	if ((doorFramesTemp == _doorFrameD1C) && _vm->_championMan->_party._event73Count_ThievesEye)
+	if ((doorFramesTemp == _doorFrameD1C) && championMan._party._event73Count_ThievesEye)
 		drawDoorOrnament(_vm->indexToOrdinal(k16_DoorOrnThivesEyeMask), kDMDoorOrnamentD1LCR);
 
 	if (doorState == kDMDoorStateClosed)
@@ -1914,6 +1915,8 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD1C = Frame(32, 191, 8, 16, 80, 9, 0, 0); // @ G0156_s_Graphic558_Frame_CeilingPit_D1C
 	static Box boxThievesEyeVisibleArea(0, 95, 0, 94); // @ G0107_s_Graphic558_Box_ThievesEye_VisibleArea
 
+	ChampionMan &championMan = *_vm->_championMan;
+
 	CellOrder order;
 	uint16 squareAspect[5];
 	bool skip = false;
@@ -1935,7 +1938,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		_vm->_dungeonMan->_isFacingAlcove = false;
 		_vm->_dungeonMan->_isFacingViAltar = false;
 		_vm->_dungeonMan->_isFacingFountain = false;
-		if (_vm->_championMan->_party._event73Count_ThievesEye) {
+		if (championMan._party._event73Count_ThievesEye) {
 			isDerivedBitmapInCache(kDMDerivedBitmapThievesEyeVisibleArea);
 			blitToBitmap(_bitmapViewport, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
 							  boxThievesEyeVisibleArea, _boxThievesEyeViewPortVisibleArea._rect.left, _boxThievesEyeViewPortVisibleArea._rect.top,
@@ -1948,7 +1951,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		if (isDrawnWallOrnAnAlcove(squareAspect[kDMSquareFrontWallOrnOrd], kDMViewWallD1CFront))
 			drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD1C, kDMCellOrderAlcove);
 
-		if (_vm->_championMan->_party._event73Count_ThievesEye) {
+		if (championMan._party._event73Count_ThievesEye) {
 			blitToBitmap(getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
 							  _bitmapViewport, _boxThievesEyeViewPortVisibleArea, 0, 0,
 							  48, k112_byteWidthViewport, kDMColorGold, 95, k136_heightViewport); /* BUG0_74 */
@@ -2061,12 +2064,14 @@ void DisplayMan::drawSquareD0C(Direction dir, int16 posX, int16 posY) {
 	static Frame frameCeilingPitD0C = Frame(16, 207, 0, 3, 96, 4, 0, 0); // @ G0159_s_Graphic558_Frame_CeilingPit_D0C
 	static Box boxThievesEyeHoleInDoorFrame(0, 31, 19, 113); // @ G0108_s_Graphic558_Box_ThievesEye_HoleInDoorFrame
 
+	ChampionMan &championMan = *_vm->_championMan;
+
 	uint16 squareAspect[5];
 
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeDoorSide:
-		if (_vm->_championMan->_party._event73Count_ThievesEye) {
+		if (championMan._party._event73Count_ThievesEye) {
 			memmove(_tmpBitmap, _bitmapWallSetDoorFrameFront, 32 * 123);
 			blitToBitmap(getNativeBitmapOrGraphic(kDMGraphicIdxHoleInWall),
 							  _tmpBitmap, boxThievesEyeHoleInDoorFrame, doorFrameD0C._box._rect.left - _boxThievesEyeViewPortVisibleArea._rect.left,

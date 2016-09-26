@@ -725,6 +725,7 @@ void EventManager::processCommandQueue() {
 
 	DisplayMan &displMan = *_vm->_displayMan;
 	TextMan &txtMan = *_vm->_textMan;
+	InventoryMan &inventory = *_vm->_inventoryMan;
 
 	_isCommandQueueLocked = true;
 	if (_commandQueue.empty()) { /* If the command queue is empty */
@@ -787,14 +788,14 @@ void EventManager::processCommandQueue() {
 
 		int16 championIndex = cmdType - kDMCommandToggleInventoryChampion0;
 		if (((championIndex == kDMChampionCloseInventory) || (championIndex < _vm->_championMan->_partyChampionCount)) && !_vm->_championMan->_candidateChampionOrdinal)
-			_vm->_inventoryMan->toggleInventory((ChampionIndex)championIndex);
+			inventory.toggleInventory((ChampionIndex)championIndex);
 
 		return;
 	}
 
 	if (cmdType == kDMCommandToggleInventoryLeader) {
 		if (_vm->_championMan->_leaderIndex != kDMChampionNone)
-			_vm->_inventoryMan->toggleInventory(_vm->_championMan->_leaderIndex);
+			inventory.toggleInventory(_vm->_championMan->_leaderIndex);
 
 		return;
 	}
@@ -814,12 +815,12 @@ void EventManager::processCommandQueue() {
 	}
 
 	if (cmdType == kDMCommandClickOnMouth) {
-		_vm->_inventoryMan->clickOnMouth();
+		inventory.clickOnMouth();
 		return;
 	}
 
 	if (cmdType == kDMCommandClickOnEye) {
-		_vm->_inventoryMan->clickOnEye();
+		inventory.clickOnEye();
 		return;
 	}
 
@@ -837,8 +838,8 @@ void EventManager::processCommandQueue() {
 
 	if (cmdType == kDMCommandSleep) {
 		if (!_vm->_championMan->_candidateChampionOrdinal) {
-			if (_vm->_inventoryMan->_inventoryChampionOrdinal)
-				_vm->_inventoryMan->toggleInventory(kDMChampionCloseInventory);
+			if (inventory._inventoryChampionOrdinal)
+				inventory.toggleInventory(kDMChampionCloseInventory);
 
 			_vm->_menuMan->drawDisabledMenu();
 			_vm->_championMan->_partyIsSleeping = true;

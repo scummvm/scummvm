@@ -867,6 +867,7 @@ void DungeonMan::setSquareAspect(uint16 *aspectArray, Direction dir, int16 mapX,
 #define AL0307_uc_ScentOrdinal      L0307_uc_Multiple
 
 	DisplayMan &displMan = *_vm->_displayMan;
+	ChampionMan &championMan = *_vm->_championMan;
 
 	for (uint16 i = 0; i < 5; ++i)
 		aspectArray[i] = 0;
@@ -970,8 +971,8 @@ T0172010_ClosedFakeWall:
 			curThing = getNextThing(curThing);
 		}
 
-		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
+		AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY);
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
 			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 
 		break;
@@ -995,8 +996,8 @@ T0172010_ClosedFakeWall:
 		while ((curThing != Thing::_endOfList) && (curThing.getType() <= kDMThingTypeSensor))
 			curThing = getNextThing(curThing);
 
-		AL0307_uc_ScentOrdinal = _vm->_championMan->getScentOrdinal(mapX, mapY);
-		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= _vm->_championMan->_party._firstScentIndex) && (AL0307_uc_ScentOrdinal < _vm->_championMan->_party._lastScentIndex))
+		AL0307_uc_ScentOrdinal = championMan.getScentOrdinal(mapX, mapY);
+		if (AL0307_uc_FootprintsAllowed && (AL0307_uc_ScentOrdinal) && (--AL0307_uc_ScentOrdinal >= championMan._party._firstScentIndex) && (AL0307_uc_ScentOrdinal < championMan._party._lastScentIndex))
 			setFlag(aspectArray[kDMSquareAspectFloorOrn], kDMMaskFootprints);
 		break;
 	}

@@ -88,8 +88,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	static Box boxFloppyZzzCross(174, 218, 2, 12); // @ G0041_s_Graphic562_Box_ViewportFloppyZzzCross
 
 	DisplayMan &display = *_vm->_displayMan;
+	ChampionMan &championMan = *_vm->_championMan;
 
-	if ((championIndex != kDMChampionCloseInventory) && !_vm->_championMan->_champions[championIndex]._currHealth)
+	if ((championIndex != kDMChampionCloseInventory) && !championMan._champions[championIndex]._currHealth)
 		return;
 
 	if (_vm->_pressingMouth || _vm->_pressingEye)
@@ -104,12 +105,12 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	if (inventoryChampionOrdinal) {
 		_inventoryChampionOrdinal = _vm->indexToOrdinal(kDMChampionNone);
 		closeChest();
-		Champion *champion = &_vm->_championMan->_champions[_vm->ordinalToIndex(inventoryChampionOrdinal)];
-		if (champion->_currHealth && !_vm->_championMan->_candidateChampionOrdinal) {
+		Champion *champion = &championMan._champions[_vm->ordinalToIndex(inventoryChampionOrdinal)];
+		if (champion->_currHealth && !championMan._candidateChampionOrdinal) {
 			setFlag(champion->_attributes, kDMAttributeStatusBox);
-			_vm->_championMan->drawChampionState((ChampionIndex)_vm->ordinalToIndex(inventoryChampionOrdinal));
+			championMan.drawChampionState((ChampionIndex)_vm->ordinalToIndex(inventoryChampionOrdinal));
 		}
-		if (_vm->_championMan->_partyIsSleeping) {
+		if (championMan._partyIsSleeping) {
 			_vm->_eventMan->hideMouse();
 			return;
 		}
@@ -129,9 +130,9 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	if (!inventoryChampionOrdinal)
 		display.shadeScreenBox(&display._boxMovementArrows, kDMColorBlack);
 
-	Champion *champion = &_vm->_championMan->_champions[championIndex];
+	Champion *champion = &championMan._champions[championIndex];
 	display.loadIntoBitmap(kDMGraphicIdxInventory, display._bitmapViewport);
-	if (_vm->_championMan->_candidateChampionOrdinal)
+	if (championMan._candidateChampionOrdinal)
 		display.fillBoxBitmap(display._bitmapViewport, boxFloppyZzzCross, kDMColorDarkestGray, k112_byteWidthViewport, k136_heightViewport);
 
 	switch (_vm->getGameLanguage()) { // localized
@@ -153,10 +154,10 @@ void InventoryMan::toggleInventory(ChampionIndex championIndex) {
 	_vm->_textMan->printToViewport(5, 132, kDMColorLightestGray, "MANA");
 
 	for (uint16 i = kDMSlotReadyHand; i < kDMSlotChest1; i++)
-		_vm->_championMan->drawSlot(championIndex, i);
+		championMan.drawSlot(championIndex, i);
 
 	setFlag(champion->_attributes, kDMAttributeViewport | kDMAttributeStatusBox | kDMAttributePanel | kDMAttributeLoad | kDMAttributeStatistics | kDMAttributeNameTitle);
-	_vm->_championMan->drawChampionState(championIndex);
+	championMan.drawChampionState(championIndex);
 	_vm->_eventMan->_mousePointerBitmapUpdated = true;
 	_vm->_eventMan->hideMouse();
 	_vm->_eventMan->_secondaryMouseInput = _vm->_eventMan->_secondaryMouseInputChampionInventory;
@@ -687,13 +688,14 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 void InventoryMan::setDungeonViewPalette() {
 	static const int16 palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 	DisplayMan &display = *_vm->_displayMan;
+	ChampionMan &championMan = *_vm->_championMan;
 
 	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
 		display._dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
 		int16 counter = 4; /* BUG0_01 Coding error without consequence. The hands of four champions are inspected even if there are less champions in the party. No consequence as the data in unused champions is set to 0 and _vm->_objectMan->f32_getObjectType then returns -1 */
-		Champion *curChampion = _vm->_championMan->_champions;
+		Champion *curChampion = championMan._champions;
 		int16 torchesLightPower[8];
 		int16 *curTorchLightPower = torchesLightPower;
 		while (counter--) {
@@ -735,12 +737,12 @@ void InventoryMan::setDungeonViewPalette() {
 		curTorchLightPower = torchesLightPower;
 		while (torchIndex--) {
 			if (*curTorchLightPower) {
-				totalLightAmount += (_vm->_championMan->_lightPowerToLightAmount[*curTorchLightPower] << torchLightAmountMultiplier) >> 6;
+				totalLightAmount += (championMan._lightPowerToLightAmount[*curTorchLightPower] << torchLightAmountMultiplier) >> 6;
 				torchLightAmountMultiplier = MAX(0, torchLightAmountMultiplier - 1);
 			}
 			curTorchLightPower++;
 		}
-		totalLightAmount += _vm->_championMan->_party._magicalLightAmount;
+		totalLightAmount += championMan._party._magicalLightAmount;
 		/* Select palette corresponding to the total light amount */
 		const int16 *curLightAmount = palIndexToLightAmmount;
 		int16 paletteIndex;
@@ -758,12 +760,13 @@ void InventoryMan::setDungeonViewPalette() {
 }
 
 void InventoryMan::decreaseTorchesLightPower() {
+	ChampionMan &championMan = *_vm->_championMan;
 	bool torchChargeCountChanged = false;
-	int16 championCount = _vm->_championMan->_partyChampionCount;
-	if (_vm->_championMan->_candidateChampionOrdinal)
+	int16 championCount = championMan._partyChampionCount;
+	if (championMan._candidateChampionOrdinal)
 		championCount--;
 
-	Champion *curChampion = _vm->_championMan->_champions;
+	Champion *curChampion = championMan._champions;
 	while (championCount--) {
 		int16 slotIndex = kDMSlotActionHand + 1;
 		while (slotIndex--) {
@@ -783,7 +786,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 
 	if (torchChargeCountChanged) {
 		setDungeonViewPalette();
-		_vm->_championMan->drawChangedObjectIcons();
+		championMan.drawChangedObjectIcons();
 	}
 }
 
@@ -793,6 +796,7 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 	static const char *statisticNamesFR[7] = {"L", "FORCE", "DEXTERITE", "SAGESSE", "VITALITE", "ANTI-MAGIE", "ANTI-FEU"};
 
 	DisplayMan &display = *_vm->_displayMan;
+	ChampionMan &championMan = *_vm->_championMan;
 	const char **statisticNames;
 
 	switch (_vm->getGameLanguage()) { // localized
@@ -809,11 +813,11 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 
 	closeChest();
 	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
-	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
+	Champion *curChampion = &championMan._champions[championIndex];
 	display.blitToViewport(display.getNativeBitmapOrGraphic(kDMGraphicIdxPanelEmpty), _boxPanel, k72_byteWidth, kDMColorRed, 73);
 	int16 textPosY = 58;
 	for (uint16 idx = kDMSkillFighter; idx <= kDMSkillWizard; idx++) {
-		int16 skillLevel = MIN((uint16)16, _vm->_championMan->getSkillLevel(championIndex, idx | kDMIgnoreTemporaryExperience));
+		int16 skillLevel = MIN((uint16)16, championMan.getSkillLevel(championIndex, idx | kDMIgnoreTemporaryExperience));
 		if (skillLevel == 1)
 			continue;
 
@@ -822,10 +826,10 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 		switch (_vm->getGameLanguage()) { // localized
 		case Common::FR_FRA:
 			// Fix original bug: Due to a copy&paste error, the string was concatenate then overwritten be the last part
-			displayString = Common::String::format("%s %s", _vm->_championMan->_baseSkillName[idx], _skillLevelNames[skillLevel - 2]);
+			displayString = Common::String::format("%s %s", championMan._baseSkillName[idx], _skillLevelNames[skillLevel - 2]);
 			break;
 		default: // English and German versions are built the same way
-			displayString = Common::String::format("%s %s", _skillLevelNames[skillLevel - 2], _vm->_championMan->_baseSkillName[idx]);
+			displayString = Common::String::format("%s %s", _skillLevelNames[skillLevel - 2], championMan._baseSkillName[idx]);
 			break;
 		}
 		_vm->_textMan->printToViewport(108, textPosY, kDMColorLightestGray, displayString.c_str());
@@ -844,8 +848,8 @@ void InventoryMan::drawChampionSkillsAndStatistics() {
 		else
 			statisticColor = kDMColorLightestGray;
 
-		_vm->_textMan->printToViewport(174, textPosY, (Color)statisticColor, _vm->_championMan->getStringFromInteger(statisticCurrentValue, true, 3).c_str());
-		Common::String displayString = "/" + _vm->_championMan->getStringFromInteger(statisticMaximumValue, true, 3);
+		_vm->_textMan->printToViewport(174, textPosY, (Color)statisticColor, championMan.getStringFromInteger(statisticCurrentValue, true, 3).c_str());
+		Common::String displayString = "/" + championMan.getStringFromInteger(statisticMaximumValue, true, 3);
 		_vm->_textMan->printToViewport(192, textPosY, kDMColorLightestGray, displayString.c_str());
 		textPosY += 7;
 	}
@@ -886,8 +890,9 @@ void InventoryMan::clickOnMouth() {
 	};
 
 	DisplayMan &display = *_vm->_displayMan;
+	ChampionMan &championMan = *_vm->_championMan;
 
-	if (_vm->_championMan->_leaderEmptyHanded) {
+	if (championMan._leaderEmptyHanded) {
 		if (_panelContent == kDMPanelContentFoodWaterPoisoned)
 			return;
 
@@ -906,10 +911,10 @@ void InventoryMan::clickOnMouth() {
 		return;
 	}
 
-	if (_vm->_championMan->_candidateChampionOrdinal)
+	if (championMan._candidateChampionOrdinal)
 		return;
 
-	Thing handThing = _vm->_championMan->_leaderHandObject;
+	Thing handThing = championMan._leaderHandObject;
 	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(handThing)]._allowedSlots, kDMMaskMouth))
 		return;
 
@@ -917,7 +922,7 @@ void InventoryMan::clickOnMouth() {
 	uint16 handThingType = handThing.getType();
 	uint16 handThingWeight = _vm->_dungeonMan->getObjectWeight(handThing);
 	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
-	Champion *curChampion = &_vm->_championMan->_champions[championIndex];
+	Champion *curChampion = &championMan._champions[championIndex];
 	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(handThing);
 	bool removeObjectFromLeaderHand;
 	if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
@@ -935,7 +940,7 @@ void InventoryMan::clickOnMouth() {
 	}
 	_vm->_eventMan->showMouse();
 	if (removeObjectFromLeaderHand)
-		_vm->_championMan->getObjectRemovedFromLeaderHand();
+		championMan.getObjectRemovedFromLeaderHand();
 
 	if (handThingType == kDMThingTypePotion) {
 		uint16 potionPower = ((Potion *)junkData)->getPower();
@@ -956,7 +961,7 @@ void InventoryMan::clickOnMouth() {
 			adjustStatisticCurrentValue(curChampion, kDMStatVitality, adjustedPotionPower);
 			break;
 		case kDMPotionTypeAntivenin:
-			_vm->_championMan->unpoison(championIndex);
+			championMan.unpoison(championIndex);
 			break;
 		case kDMPotionTypeMon:
 			curChampion->_currStamina += MIN(curChampion->_maxStamina - curChampion->_currStamina, curChampion->_maxStamina / counter);
@@ -1025,9 +1030,9 @@ void InventoryMan::clickOnMouth() {
 			display.updateScreen();
 		}
 	} else {
-		_vm->_championMan->drawChangedObjectIcons();
-		_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
-		setFlag(_vm->_championMan->_champions[_vm->_championMan->_leaderIndex]._attributes, kDMAttributeLoad);
+		championMan.drawChangedObjectIcons();
+		championMan._champions[championMan._leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
+		setFlag(championMan._champions[championMan._leaderIndex]._attributes, kDMAttributeLoad);
 	}
 	_vm->_sound->requestPlay(kDMSoundIndexSwallow, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
@@ -1035,7 +1040,7 @@ void InventoryMan::clickOnMouth() {
 	if (_panelContent == kDMPanelContentFoodWaterPoisoned)
 		setFlag(curChampion->_attributes, kDMAttributePanel);
 
-	_vm->_championMan->drawChampionState((ChampionIndex)championIndex);
+	championMan.drawChampionState((ChampionIndex)championIndex);
 	_vm->_eventMan->hideMouse();
 }
 
@@ -1058,6 +1063,8 @@ void InventoryMan::adjustStatisticCurrentValue(Champion *champ, uint16 statIndex
 }
 
 void InventoryMan::clickOnEye() {
+	ChampionMan &championMan = *_vm->_championMan;
+
 	_vm->_eventMan->_ignoreMouseMovements = true;
 	_vm->_pressingEye = true;
 	if (!_vm->_eventMan->isMouseButtonDown(kDMMouseButtonLeft)) {
@@ -1072,11 +1079,11 @@ void InventoryMan::clickOnEye() {
 	_vm->_eventMan->hideMouse();
 	_vm->delay(8);
 	drawIconToViewport(kDMIconIndiceEyeLooking, 12, 13);
-	if (_vm->_championMan->_leaderEmptyHanded)
+	if (championMan._leaderEmptyHanded)
 		drawChampionSkillsAndStatistics();
 	else {
 		_vm->_objectMan->clearLeaderObjectName();
-		drawPanelObject(_vm->_championMan->_leaderHandObject, true);
+		drawPanelObject(championMan._leaderHandObject, true);
 	}
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 }
