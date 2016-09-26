@@ -81,5 +81,8 @@ void Graphics::playVideo(uint num) {
 
 		g_system->delayMillis(10);
 	}
+
+	cfoDecoder->close();
 }
+
 } // End of namespace Chewy
