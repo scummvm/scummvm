@@ -20,6 +20,7 @@
  *
  */
 
+#include "sci/console.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
@@ -118,6 +119,7 @@ void GfxTransitions32::processShowStyles() {
 
 		if (doFrameOut) {
 			g_sci->_gfxFrameout->frameOut(true);
+			g_sci->getSciDebugger()->onFrame();
 			throttle();
 		}
 	} while(continueProcessing && doFrameOut);
