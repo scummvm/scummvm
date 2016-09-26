@@ -9,6 +9,7 @@ SECTIONS
   . = 0;
   .text           :
   {
+    ___dso_handle = .;
     *(.text .stub .text.* .gnu.linkonce.t.*)
     *(.gnu.warning)
   } :plugin =0
