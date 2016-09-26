@@ -841,7 +841,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  kArray_subops,   NULL },
+	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "i(.*)",                 kArray_subops,   NULL },
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
