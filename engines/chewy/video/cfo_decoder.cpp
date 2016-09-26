@@ -33,27 +33,27 @@
 namespace Chewy {
 
 enum CustomSubChunk {
-	kChunkFadeIn = 0,
+	kChunkFadeIn = 0,				// unused
 	kChunkFadeOut = 1,
 	kChunkLoadMusic = 2,
-	kChunkLoadRaw = 3,
+	kChunkLoadRaw = 3,				// unused
 	kChunkLoadVoc = 4,
 	kChunkPlayMusic = 5,
-	kChunkPlaySeq = 6,
-	kChunkPlayPattern = 7,
+	kChunkPlaySeq = 6,				// unused
+	kChunkPlayPattern = 7,			// unused
 	kChunkStopMusic = 8,
 	kChunkWaitMusicEnd = 9,
 	kChunkSetMusicVolume = 10,
-	kChunkSetLoopMode = 11,
-	kChunkPlayRaw = 12,
+	kChunkSetLoopMode = 11,			// unused
+	kChunkPlayRaw = 12,				// unused
 	kChunkPlayVoc = 13,
 	kChunkSetSoundVolume = 14,
 	kChunkSetChannelVolume = 15,
 	kChunkFreeSoundEffect = 16,
-	kChunkMusicFadeIn = 17,
+	kChunkMusicFadeIn = 17,			// unused
 	kChunkMusicFadeOut = 18,
 	kChunkSetBalance = 19,
-	kChunkSetSpeed = 20,
+	kChunkSetSpeed = 20,			// unused
 	kChunkClearScreen = 21
 };
 
@@ -182,18 +182,17 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 
 		switch (frameType) {
 		case kChunkFadeIn:
-			delay = _fileStream->readUint16LE();
-
-			warning("kChunkFadeIn, delay %d", delay);
-			// TODO
+			error("Unused chunk kChunkFadeIn found");
 			break;
 		case kChunkFadeOut:
+			// Used in video 0
 			delay = _fileStream->readUint16LE();
 
 			warning("kChunkFadeOut, delay %d", delay);
 			// TODO
 			break;
 		case kChunkLoadMusic:
+			// Used in videos 0, 18, 34, 71
 			warning("kChunkLoadMusic");
 			// TODO
 			_fileStream->skip(frameSize);
@@ -211,19 +210,16 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			_fileStream->read(_soundEffects[number], frameSize - 2);
 			break;
 		case kChunkPlayMusic:
+			// Used in videos 0, 18, 34, 71
 			warning("kChunkPlayMusic");
 			// TODO
 			_fileStream->skip(frameSize);
 			break;
 		case kChunkPlaySeq:
-			warning("kChunkPlaySeq");
-			// TODO
-			_fileStream->skip(frameSize);
+			error("Unused chunk kChunkPlaySeq found");
 			break;
 		case kChunkPlayPattern:
-			warning("kChunkPlayPattern");
-			// TODO
-			_fileStream->skip(frameSize);
+			error("Unused chunk kChunkPlayPattern found");
 			break;
 		case kChunkStopMusic:
 			g_engine->_mixer->stopHandle(_musicHandle);
@@ -239,9 +235,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
 			break;
 		case kChunkSetLoopMode:
-			warning("kChunkSetLoopMode");
-			// TODO
-			_fileStream->skip(frameSize);
+			error("Unused chunk kChunkSetLoopMode found");
 			break;
 		case kChunkPlayRaw:
 			error("Unused chunk kChunkPlayRaw found");
@@ -283,11 +277,10 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			_soundEffects[number] = nullptr;
 			break;
 		case kChunkMusicFadeIn:
-			warning("kChunkMusicFadeIn");
-			// TODO
-			_fileStream->skip(frameSize);
+			error("Unused chunk kChunkMusicFadeIn found");
 			break;
 		case kChunkMusicFadeOut:
+			// Used in videos 0, 71
 			warning("kChunkMusicFadeOut");
 			// TODO
 			_fileStream->skip(frameSize);
@@ -300,9 +293,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			g_engine->_mixer->setChannelBalance(_soundHandle[channel], balance);
 			break;
 		case kChunkSetSpeed:
-			warning("kChunkSetSpeed");
-			// TODO
-			_fileStream->skip(frameSize);
+			error("Unused chunk kChunkSetSpeed found");
 			break;
 		case kChunkClearScreen:
 			g_system->fillScreen(0);

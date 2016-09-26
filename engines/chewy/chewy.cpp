@@ -72,6 +72,11 @@ Common::Error ChewyEngine::run() {
 
 	initialize();
 
+	/*for (uint i = 0; i < 161; i++) {
+		debug("Video %d", i);
+		_graphics->playVideo(i);
+	}*/
+
 	//_graphics->playVideo(0);
 	_graphics->drawImage("episode1.tgp", 0);
 	//_sound->playSpeech(1);

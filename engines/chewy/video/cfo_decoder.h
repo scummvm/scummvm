@@ -29,7 +29,7 @@
 
 namespace Chewy {
 
-#define MAX_SOUND_EFFECTS 10
+#define MAX_SOUND_EFFECTS 14
 
 // A FLIC decoder, with a modified header and additional custom frames
 class CfoDecoder : public Video::FlicDecoder {
