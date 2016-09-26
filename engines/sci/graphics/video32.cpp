@@ -121,8 +121,8 @@ void SEQPlayer::renderFrame() const {
 	}
 
 	g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-	g_sci->getSciDebugger()->onFrame();
 	g_sci->_gfxFrameout->frameOut(true);
+	g_sci->getSciDebugger()->onFrame();
 }
 
 #pragma mark -
@@ -409,8 +409,8 @@ void AVIPlayer::renderFrame() const {
 		}
 
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->frameOut(true);
+		g_sci->getSciDebugger()->onFrame();
 	} else {
 		assert(surface->format.bytesPerPixel == 4);
 
@@ -856,8 +856,8 @@ void VMDPlayer::renderFrame() const {
 		}
 	} else {
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->frameOut(true);
+		g_sci->getSciDebugger()->onFrame();
 	}
 }
 
