@@ -518,7 +518,7 @@ enum DisplayFlags {
 	dfFlag2 = 2,
 	dfMirror = 4,
 	dfPerson = 8,
-	dfFresques = 0x10,
+	dfFrescoes = 0x10,
 	dfPanable = 0x20,
 	dfFlag40 = 0x40,
 	dfFlag80 = 0x80
@@ -676,7 +676,7 @@ struct global_t {
 	byte   narratorSequence;
 	byte   ff_69;
 	byte   ff_6A;
-	byte   fresqNumber;
+	byte   frescoNumber;
 	byte   ff_6C;  //TODO: pad?
 	byte   ff_6D;  //TODO: pad?
 	byte   labyrinthDirections;

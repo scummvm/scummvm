@@ -41,27 +41,27 @@ public:
 	void run();
 
 private:
-	void RemoveConsole();
+	void removeConsole();
 	void scroll();
-	void resetscroll();
+	void resetScroll();
 	void scrollFrescoes();
-	void afffresques();
+	void displayFrescoes();
 	void gametofresques();
-	void dofresques();
-	void finfresques();
+	void doFrescoes();
+	void endFrescoes();
 	void scrollMirror();
 	void scrollpano();
 	void affsuiveur(suiveur_t *suiveur, int16 x, int16 y);
 	void persoinmiroir();
 	void gametomiroir(byte arg1);
-	void flipmode();
-	void quitmiroir();
+	void flipMode();
+	void quitMirror();
 	void clictimbre();
 	void clicplanval();
 	void gotolieu(goto_t *go);
 	void deplaval(uint16 roomNum);
-	void deplacement(Direction dir);
-	void deplacement2(Direction dir);
+	void move(Direction dir);
+	void move2(Direction dir);
 	void dinosoufle();
 	void plaquemonk();
 	void fresquesgraa();
@@ -190,7 +190,7 @@ private:
 	void citadelle();
 	void choixzone();
 	void showevents1();
-	void showevents();
+	void showEvents();
 	void parle_mfin();
 	void parlemoi_normal();
 	void parle_moi();
@@ -319,8 +319,8 @@ private:
 	void update_cursor();
 	void mouse();
 	void showfilm(char arg1);
-	void playhnm(int16 num);
-	void bullehnm();
+	void playHNM(int16 num);
+	void displayHNMSubtitles();
 	void musique();
 	void startmusique(byte num);
 	void musicspy();
@@ -333,7 +333,7 @@ private:
 	void countobjects();
 	void showObjects();
 	void winobject(int16 id);
-	void loseobject(int16 id);
+	void loseObject(int16 id);
 	void lostobject();
 	char objecthere(int16 id);
 	void objectmain(int16 id);
@@ -503,11 +503,11 @@ private:
 private:
 	int16           old_scroll_pos, scroll_pos;
 	int16           word_2F514;
-	byte   fresqTalk;
+	bool   frescoTalk;
 	byte   keep01, keep02, keep10, keep11, keep12, keep13, keep21, keep22;
 	byte   curs_keepbuf[2500];
 	int16           curs_keepy, curs_keepx;
-	int16           torchCursor;
+	bool            torchCursor;
 	int16           cur_bank_num;
 	int16           glow_h;
 	int16           glow_w;
@@ -627,7 +627,7 @@ private:
 	byte   *p_hnmview_buf;
 	byte   showVideoSubtitle;
 	byte   videoCanceled;  //TODO: hnm_canceled
-	byte   specialTextMode;
+	bool   specialTextMode;
 	int             hnm_position;
 	int             voiceSamplesSize;   //TODO: perso vox sample data len
 	int16           mus_vol_right;

@@ -58,17 +58,16 @@ struct {
 	int16   x, y;
 } saved_repadam = { -1, -1 };
 
-void EdenGame::RemoveConsole() {
+void EdenGame::removeConsole() {
 }
 
 void EdenGame::scroll() {
 	restaurefrises();
 	p_mainview->norm.src_left = scroll_pos;
 	p_mainview->zoom.src_left = scroll_pos;
-
 }
 
-void EdenGame::resetscroll() {
+void EdenGame::resetScroll() {
 	old_scroll_pos = scroll_pos;
 	scroll_pos = 0;
 	restaurefrises();   //TODO: inlined scroll() ?
@@ -85,10 +84,10 @@ void EdenGame::scrollFrescoes() {
 		}
 	}
 	scroll();
-
 }
 
-void EdenGame::afffresques() {
+// Original name: afffresques
+void EdenGame::displayFrescoes() {
 	use_bank(p_global->fresqImgBank);
 	noclipax(0, 0, 16);
 	use_bank(p_global->fresqImgBank + 1);
@@ -97,16 +96,17 @@ void EdenGame::afffresques() {
 }
 
 void EdenGame::gametofresques() {
-	fresqTalk = 0;
+	frescoTalk = false;
 	rundcurs();
 	sauvefrises();
-	afffresques();
-	p_global->displayFlags = DisplayFlags::dfFresques;
+	displayFrescoes();
+	p_global->displayFlags = DisplayFlags::dfFrescoes;
 }
 
-void EdenGame::dofresques() {
+// Original name: dofresques
+void EdenGame::doFrescoes() {
 	curs_saved = 0;
-	torchCursor = 1;
+	torchCursor = true;
 	glow_x = -1;
 	glow_y = -1;
 	p_global->gameFlags |= GameFlags::gfFlag20;
@@ -115,20 +115,21 @@ void EdenGame::dofresques() {
 	p_global->iconsIndex = 13;
 	p_global->autoDialog = false;
 	gametofresques();
-	p_global->fresqNumber = 3;
+	p_global->frescoNumber = 3;
 }
 
-void EdenGame::finfresques() {
-	torchCursor = 0;
+// Original name: finfresques
+void EdenGame::endFrescoes() {
+	torchCursor = false;
 	curs_saved = 1;
 	p_global->displayFlags = DisplayFlags::dfFlag1;
-	resetscroll();
+	resetScroll();
 	p_global->ff_100 = 0xFF;
 	maj_salle(p_global->roomNum);
 	if (p_global->phaseNum == 114)
 		p_global->narratorSequence = 1;
 	p_global->eventType = EventType::etEvent8;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::scrollMirror() {
@@ -245,7 +246,7 @@ void EdenGame::gametomiroir(byte arg1) {
 	p_global->ff_102 = arg1;
 }
 
-void EdenGame::flipmode() {
+void EdenGame::flipMode() {
 	if (personTalking) {
 		endpersovox();
 		if (p_global->displayFlags == DisplayFlags::dfPerson) {
@@ -262,12 +263,12 @@ void EdenGame::flipmode() {
 			af_subtitle();
 		persovox();
 	} else {
-		if (p_global->displayFlags != DisplayFlags::dfFresques && p_global->displayFlags != DisplayFlags::dfFlag2) {
+		if (p_global->displayFlags != DisplayFlags::dfFrescoes && p_global->displayFlags != DisplayFlags::dfFlag2) {
 			closesalle();
 			if (p_global->displayFlags & DisplayFlags::dfFlag1)
 				gametomiroir(1);
 			else {
-				quitmiroir();
+				quitMirror();
 				maj_salle(p_global->roomNum);
 				if (byte_31D64) {
 					dialautoon();
@@ -279,10 +280,11 @@ void EdenGame::flipmode() {
 	}
 }
 
-void EdenGame::quitmiroir() {
+// Original name: quitmiroir
+void EdenGame::quitMirror() {
 	rundcurs();
 	afficher();
-	resetscroll();
+	resetScroll();
 	sauvefrises();
 	p_global->displayFlags = DisplayFlags::dfFlag1;
 	p_global->ff_100 = 0xFF;
@@ -291,12 +293,12 @@ void EdenGame::quitmiroir() {
 }
 
 void EdenGame::clictimbre() {
-	flipmode();
+	flipMode();
 }
 
 void EdenGame::clicplanval() {
 	if ((p_global->partyOutside & PersonMask::pmDina) && p_global->phaseNum == 371) {
-		quitmiroir();
+		quitMirror();
 		maj_salle(p_global->roomNum);
 		return;
 	}
@@ -305,7 +307,7 @@ void EdenGame::clicplanval() {
 	rundcurs();
 	afficher();
 	if (p_global->displayFlags == DisplayFlags::dfMirror)
-		quitmiroir();
+		quitMirror();
 	deplaval((p_global->roomNum & 0xFF00) | 1); //TODO: check me
 }
 
@@ -315,7 +317,7 @@ void EdenGame::gotolieu(goto_t *go) {
 	p_global->stepsToFindAppleFast = 0;
 	p_global->eventType = EventType::etEvent2;
 	init_oui();
-	showevents();
+	showEvents();
 	if (!verif_oui())
 		return;
 	if (p_global->ff_113) {
@@ -325,7 +327,7 @@ void EdenGame::gotolieu(goto_t *go) {
 	}
 	if (go->departVid) {
 		bars_out();
-		playhnm(go->departVid);
+		playHNM(go->departVid);
 		needToFade = 1;
 	}
 	initlieu(p_global->newRoomNum);
@@ -363,7 +365,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 		p_global->displayFlags = DisplayFlags::dfFlag1;
 		init_oui();
 		p_global->eventType = EventType::etEvent1;
-		showevents();
+		showEvents();
 		if (!verif_oui())
 			return;
 		if (p_global->ff_113) {
@@ -395,7 +397,7 @@ void EdenGame::deplaval(uint16 roomNum) {
 	}
 	if (c1 == 0xFF) {
 		p_global->eventType = EventType::etEventE;
-		showevents();
+		showEvents();
 		if (!kPersons[PER_MESSAGER].roomNum) {
 			if (eloirevientq())
 				chronoon(800);
@@ -417,15 +419,17 @@ void EdenGame::deplaval(uint16 roomNum) {
 		gotolieu(&gotos[0]);
 	else {
 		goto_t *go;
-		for (go = gotos + 1; go->curAreaNum != 0xFF; go++)
+		for (go = gotos + 1; go->curAreaNum != 0xFF; go++) {
 			if (go->curAreaNum == curAreaNum) {
 				gotolieu(go);
 				break;
 			}
+		}
 	}
 }
 
-void EdenGame::deplacement(Direction dir) {
+// Original name: deplacement
+void EdenGame::move(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
 	debug("deplacement: from room %4X", roomNum);
@@ -450,7 +454,8 @@ void EdenGame::deplacement(Direction dir) {
 	deplaval((roomNum & 0xFF00) | newLoc);
 }
 
-void EdenGame::deplacement2(Direction dir) {
+// Original name: deplacement2
+void EdenGame::move2(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
 	char newLoc = 0;
@@ -475,7 +480,7 @@ void EdenGame::deplacement2(Direction dir) {
 void EdenGame::dinosoufle() {
 	if (p_global->curObjectId == 0) {
 		bars_out();
-		playhnm(148);
+		playHNM(148);
 		maj2();
 	}
 }
@@ -483,21 +488,21 @@ void EdenGame::dinosoufle() {
 void EdenGame::plaquemonk() {
 	if (p_global->curObjectId != 0) {
 		if (p_global->curObjectId == Objects::obPrism) {
-			loseobject(Objects::obPrism);
+			loseObject(Objects::obPrism);
 			bars_out();
-			specialTextMode = 1;
-			playhnm(89);
+			specialTextMode = true;
+			playHNM(89);
 			word_2F514 |= 0x8000;
 			maj2();
 			p_global->eventType = EventType::etEventB;
-			showevents();
+			showEvents();
 		}
 	} else {
 		bars_out();
-		playhnm(7);
+		playHNM(7);
 		maj2();
 		p_global->eventType = EventType::etEvent4;
-		showevents();
+		showEvents();
 	}
 }
 
@@ -505,7 +510,7 @@ void EdenGame::fresquesgraa() {
 	if (p_global->curObjectId == 0) {
 		p_global->fresqWidth = 320;
 		p_global->fresqImgBank = 113;
-		dofresques();
+		doFrescoes();
 		dinaparle();
 	}
 }
@@ -514,7 +519,7 @@ void EdenGame::fresqueslasc() {
 	if (p_global->curObjectId == 0) {
 		p_global->fresqWidth = 112;
 		p_global->fresqImgBank = 315;
-		dofresques();
+		doFrescoes();
 	}
 }
 
@@ -522,17 +527,17 @@ void EdenGame::pushpierre() {
 	if (p_global->curObjectId == 0) {
 		gameRooms[22].exits[0] = 17;
 		gameRooms[26].exits[2] = 9;
-		deplacement(kCryoNorth);
+		move(kCryoNorth);
 	}
 }
 
 void EdenGame::tetemomie() {
 	if (p_global->curObjectId == Objects::obTooth) {
 		p_global->gameFlags |= GameFlags::gfMummyOpened;
-		deplacement(kCryoNorth);
+		move(kCryoNorth);
 	} else if (p_global->curObjectId == 0) {
 		if (p_global->gameFlags & GameFlags::gfMummyOpened)
-			deplacement(kCryoNorth);
+			move(kCryoNorth);
 		else {
 			p_global->eventType = EventType::etEvent6;
 			persoparle(PersonId::pidMonk);
@@ -546,14 +551,14 @@ void EdenGame::tetesquel() {
 		gameRooms[22].exits[0] = 16;
 		gameRooms[26].exits[2] = 13;
 		gameIcons[16].cursor_id |= 0x8000;
-		loseobject(Objects::obTooth);
-		deplacement(kCryoNorth);
+		loseObject(Objects::obTooth);
+		move(kCryoNorth);
 	}
 }
 
 void EdenGame::squelmoorkong() {
 	p_global->eventType = EventType::etEvent9;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::choisir() {
@@ -586,27 +591,27 @@ void EdenGame::dinaparle() {
 	char res;
 	perso_t *perso = &kPersons[PER_DINA];
 	if (perso->party & (p_global->party | p_global->partyOutside)) {
-		if (p_global->fresqNumber < 3)
-			p_global->fresqNumber = 3;
-		p_global->fresqNumber++;
-		if (p_global->fresqNumber < 15) {
+		if (p_global->frescoNumber < 3)
+			p_global->frescoNumber = 3;
+		p_global->frescoNumber++;
+		if (p_global->frescoNumber < 15) {
 			endpersovox();
-			if (p_global->fresqNumber == 7 && p_global->phaseNum == 113)
+			if (p_global->frescoNumber == 7 && p_global->phaseNum == 113)
 				incphase1();
 			p_global->perso_ptr = perso;
 			p_global->dialogType = DialogType::dtInspect;
 			num = (perso->id << 3) | DialogType::dtInspect; //TODO: combine
 			res = dialoscansvmas((dial_t *)GetElem(gameDialogs, num));
-			fresqTalk = 0;
+			frescoTalk = false;
 			if (res) {
 				restaurefondbulle();
-				fresqTalk = 1;
+				frescoTalk = true;
 				persovox();
 			}
 			p_global->ff_CA = 0;
 			p_global->dialogType = 0;
 		} else
-			finfresques();
+			endFrescoes();
 	}
 }
 
@@ -619,21 +624,21 @@ void EdenGame::roiparle1() {
 	if (p_global->curObjectId == Objects::obSword) {
 		p_global->gameFlags |= GameFlags::gfFlag80;
 		bars_out();
-		playhnm(76);
-		deplacement2(kCryoNorth);
+		playHNM(76);
+		move2(kCryoNorth);
 	} else {
-		p_global->fresqNumber = 1;
+		p_global->frescoNumber = 1;
 		roiparle();
 	}
 }
 
 void EdenGame::roiparle2() {
-	p_global->fresqNumber = 2;
+	p_global->frescoNumber = 2;
 	roiparle();
 }
 
 void EdenGame::roiparle3() {
-	p_global->fresqNumber = 3;
+	p_global->frescoNumber = 3;
 	roiparle();
 }
 
@@ -643,13 +648,13 @@ void EdenGame::getcouteau() {
 		getobject(Objects::obKnife);
 	}
 	p_global->eventType = EventType::etEvent7;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::getprisme() {
 	getobject(Objects::obPrism);
 	p_global->eventType = EventType::etEvent7;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::getchampb() {
@@ -689,7 +694,7 @@ void EdenGame::getcorne() {
 		return;
 	getobject(Objects::obHorn);
 	p_global->eventType = EventType::etEvent7;
-	showevents();
+	showEvents();
 	bigphase1();
 	setpersohere();
 	p_global->room_ptr = getsalle(p_global->roomNum);
@@ -727,7 +732,7 @@ void EdenGame::getplaque() {
 	showObjects();
 	gameRooms[131].video = 0;
 	bars_out();
-	playhnm(149);
+	playHNM(149);
 	p_global->ff_F1 = RoomFlags::rf04;
 	p_global->drawFlags = DrawFlags::drDrawFlag20;
 	normalCursor = 1;
@@ -756,12 +761,12 @@ void EdenGame::voirlac() {
 	}
 	debug("sea monster: room = %X, d0 = %X\n", p_global->roomNum, p_global->roomImgBank);
 	bars_out();
-	playhnm(vid);
+	playHNM(vid);
 	maj_salle(p_global->roomNum);           //TODO: getting memory trashed here?
 	if (p_global->curObjectId == Objects::obApple)
-		loseobject(Objects::obApple);
+		loseObject(Objects::obApple);
 	p_global->eventType = EventType::etEventF;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::gotohall() {
@@ -805,7 +810,7 @@ void EdenGame::gotoval() {
 
 void EdenGame::visiter() {
 	bars_out();
-	playhnm(144);
+	playHNM(144);
 	p_global->ff_F1 = RoomFlags::rf04;
 	maj2();
 }
@@ -816,31 +821,31 @@ void EdenGame::final() {
 	bars_out();
 	*(int16 *)(gameRooms + 0x6DC) = 319; //TODO
 	p_global->roomImgBank = 319;
-	playhnm(97);
+	playHNM(97);
 	maj2();
 	p_global->eventType = EventType::etEvent12;
-	showevents();
+	showEvents();
 	p_global->narratorSequence = 54;
 }
 
 void EdenGame::goto_nord() {
 	if (p_global->curObjectId == 0)
-		deplacement(kCryoNorth);
+		move(kCryoNorth);
 }
 
 void EdenGame::goto_est() {
 	if (p_global->curObjectId == 0)
-		deplacement(kCryoEast);
+		move(kCryoEast);
 }
 
 void EdenGame::goto_sud() {
 	if (p_global->curObjectId == 0)
-		deplacement(kCryoSouth);
+		move(kCryoSouth);
 }
 
 void EdenGame::goto_ouest() {
 	if (p_global->curObjectId == 0)
-		deplacement(kCryoWest);
+		move(kCryoWest);
 }
 
 void EdenGame::afficher() {
@@ -2604,7 +2609,7 @@ void EdenGame::show_perso() {
 		closesalle();
 		if (p_global->displayFlags != DisplayFlags::dfPerson) {
 			if (p_global->displayFlags & DisplayFlags::dfMirror)
-				resetscroll();
+				resetScroll();
 			p_global->oldDisplayFlags = p_global->displayFlags;
 			p_global->displayFlags = DisplayFlags::dfPerson;
 			load_perso(perso);
@@ -2995,7 +3000,7 @@ void EdenGame::showevents1() {
 	perso_ici(3);
 }
 
-void EdenGame::showevents() {
+void EdenGame::showEvents() {
 	if (p_global->eventType && p_global->displayFlags != DisplayFlags::dfPerson)
 		showevents1();
 }
@@ -3012,7 +3017,7 @@ void EdenGame::parle_mfin() {
 		if (p_global->dialogType == DialogType::dtDinoItem)
 			perso = p_global->room_perso;
 		if (verif_oui()) {
-			loseobject(p_global->curObjectId);
+			loseObject(p_global->curObjectId);
 			perso->powers |= obj->powerMask;
 		}
 		perso->items |= obj->itemMask;
@@ -3310,7 +3315,7 @@ void EdenGame::adam() {
 	char *objvid;
 	object_t *object;
 	int16 vid;
-	resetscroll();
+	resetScroll();
 	switch (p_global->curObjectId) {
 	case Objects::obNone:
 		gotopanel();
@@ -3319,13 +3324,13 @@ void EdenGame::adam() {
 		if (p_global->roomNum == 2817
 		        && p_global->phaseNum > 496 && p_global->phaseNum < 512) {
 			bigphase1();
-			loseobject(Objects::obRoot);
+			loseObject(Objects::obRoot);
 			p_global->ff_100 = 0xFF;
-			quitmiroir();
+			quitMirror();
 			maj_salle(p_global->roomNum);
 			reste_ici(5);
 			p_global->eventType = EventType::etEvent3;
-			showevents();
+			showEvents();
 			waitendspeak();
 			if (pomme_q)
 				return;
@@ -3350,7 +3355,7 @@ void EdenGame::adam() {
 	case Objects::obFlute:
 	case Objects::obTrumpet:
 		if (p_global->roomPersoType) {
-			quitmiroir();
+			quitMirror();
 			maj_salle(p_global->roomNum);
 			dino();
 		} else
@@ -3371,8 +3376,8 @@ void EdenGame::adam() {
 		if (!object->count)
 			vid = *objvid;
 		bars_out();
-		specialTextMode = 1;
-		playhnm(vid);
+		specialTextMode = true;
+		playHNM(vid);
 		needPaletteUpdate = 1;
 		p_global->ff_102 = 16;
 		bars_in();
@@ -3487,7 +3492,7 @@ void EdenGame::SpcSac(perso_t *perso) {
 	if (p_global->textToken1 != 3)
 		return;
 	if (perso == &kPersons[PER_KABUKA] || perso == &kPersons[PER_MAMMI_3])
-		loseobject(currentSpecialObject->id);
+		loseObject(currentSpecialObject->id);
 }
 
 void EdenGame::SpcTrompet(perso_t *perso) {
@@ -3682,7 +3687,7 @@ void EdenGame::narrateur() {
 		deplaval(139);
 	}
 	p_global->eventType = EventType::etEventD;
-	showevents();
+	showEvents();
 	p_global->ff_F5 &= ~0x80;
 skip:
 	;
@@ -3904,7 +3909,7 @@ void EdenGame::stay_here() {
 
 void EdenGame::mort(int16 vid) {
 	bars_out();
-	playhnm(vid);
+	playHNM(vid);
 	fadetoblack(2);
 	CLBlitter_FillScreenView(0);
 	CLBlitter_FillView(p_mainview, 0);
@@ -3959,7 +3964,7 @@ void EdenGame::evenchrono() {
 	} else
 		eloirevient();
 	p_global->eventType = EventType::etEvent10;
-	showevents();
+	showEvents();
 }
 
 void EdenGame::chronoon(int16 t) {
@@ -4880,7 +4885,7 @@ void EdenGame::init_globals() {
 	p_global->narratorSequence = 0;
 	p_global->ff_69 = 0;
 	p_global->ff_6A = 0;
-	p_global->fresqNumber = 0;
+	p_global->frescoNumber = 0;
 	p_global->ff_6C = 0;
 	p_global->ff_6D = 0;
 	p_global->labyrinthDirections = 0;
@@ -4999,7 +5004,7 @@ void EdenGame::initrect() {
 void EdenGame::closesalle() {
 	if (p_global->displayFlags & DisplayFlags::dfPanable) {
 		p_global->displayFlags &= ~DisplayFlags::dfPanable;
-		resetscroll();
+		resetScroll();
 	}
 }
 
@@ -5168,7 +5173,7 @@ void EdenGame::specialin() {
 		incphase1();
 		if (p_global->curItemsMask & 0x2000) { // Morkus' tablet
 			bars_out();
-			playhnm(92);
+			playHNM(92);
 			gameRooms[129].exits[0] = 0;
 			gameRooms[129].exits[2] = 1;
 			p_global->roomNum = 3074;
@@ -5210,7 +5215,7 @@ void EdenGame::animpiece() {
 				p_global->ff_102 = 0;
 			if (!needToFade)
 				needToFade = room->flags & RoomFlags::rf02;
-			playhnm(p_global->roomVidNum);
+			playHNM(p_global->roomVidNum);
 			return;
 		}
 	}
@@ -5346,7 +5351,7 @@ void EdenGame::maj2() {
 		showObjects();
 	}
 	bars_in();
-	showevents();
+	showEvents();
 	p_global->labyrinthDirections = 0;
 	specialin();
 }
@@ -5475,7 +5480,7 @@ void EdenGame::run() {
 			init_globals();
 			quit_flag3 = 0;
 			normalCursor = 1;
-			torchCursor = 0;
+			torchCursor = false;
 			curs_keepy = -1;
 			curs_keepx = -1;
 			CLDesktop_TestOpenFileAtStartup();
@@ -5489,7 +5494,7 @@ void EdenGame::run() {
 			afficher();
 			fadetoblack(3);
 			ClearScreen();
-			playhnm(95);
+			playHNM(95);
 			if (p_global->endGameFlag == 50) {
 				loadrestart();
 				gameLoaded = 0;
@@ -5548,7 +5553,7 @@ void EdenGame::edmain() {
 			scrollpano();
 		if ((p_global->displayFlags & DisplayFlags::dfMirror) && (p_global->displayFlags != DisplayFlags::dfPerson))
 			scrollMirror();
-		if ((p_global->displayFlags & DisplayFlags::dfFresques) && (p_global->displayFlags != DisplayFlags::dfPerson))
+		if ((p_global->displayFlags & DisplayFlags::dfFrescoes) && (p_global->displayFlags != DisplayFlags::dfPerson))
 			scrollFrescoes();
 		if (p_global->displayFlags & DisplayFlags::dfFlag2)
 			noclicpanel();
@@ -5586,21 +5591,21 @@ void EdenGame::intro() {
 			allow_doubled = 0;
 	}
 	if (machine_speed < 3)
-		playhnm(98);
+		playHNM(98);
 	else {
 		CLSoundChannel_Stop(hnmsound_ch);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
 		hnmsound_ch = CLHNM_GetSoundChannel();
-		playhnm(2012);
+		playHNM(2012);
 	}
-	playhnm(171);
+	playHNM(171);
 	CLBlitter_FillScreenView(0);
-	specialTextMode = 0;
+	specialTextMode = false;
 	if (machine_speed < 3)
-		playhnm(170);
+		playHNM(170);
 	else {
-		playhnm(2001);
+		playHNM(2001);
 		CLSoundChannel_Stop(hnmsound_ch);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
@@ -5690,7 +5695,7 @@ void EdenGame::FRDevents() {
 	if (curs_y > max_y)
 		curs_y = max_y;
 	curs_x_pan = curs_x;
-	if (curs_y >= 10 && curs_y <= 164 && !(p_global->displayFlags & DisplayFlags::dfFresques))
+	if (curs_y >= 10 && curs_y <= 164 && !(p_global->displayFlags & DisplayFlags::dfFrescoes))
 		curs_x_pan += scroll_pos;
 	if (normalCursor) {
 		current_cursor = 0;
@@ -5716,17 +5721,17 @@ void EdenGame::FRDevents() {
 	}
 	if (p_global->displayFlags == DisplayFlags::dfFlag2 && current_spot)
 		current_spot2 = current_spot;
-	if (p_global->displayFlags & DisplayFlags::dfFresques) {
-		if (fresqTalk)
+	if (p_global->displayFlags & DisplayFlags::dfFrescoes) {
+		if (frescoTalk)
 			restaurefondbulle();
 		if (current_cursor == 9 && !torchCursor) {
 			rundcurs();
-			torchCursor = 1;
+			torchCursor = true;
 			glow_x = -1;
 		}
-		if (current_cursor != 9 && torchCursor == 1) {
+		if (current_cursor != 9 && torchCursor) {
 			unglow();
-			torchCursor = 0;
+			torchCursor = false;
 			curs_saved = 0;
 		}
 	}
@@ -5815,7 +5820,7 @@ void EdenGame::update_cursor() {
 		unglow();
 		glow(word_2C302);
 		noclipax(word_2C304, curs_x + scroll_pos, curs_y);
-		if (fresqTalk)
+		if (frescoTalk)
 			af_subtitle();
 	}
 }
@@ -5962,7 +5967,7 @@ void EdenGame::mouse() {
 		nullptr,
 		&EdenGame::getplaque,
 		&EdenGame::clicplanval,
-		&EdenGame::finfresques,
+		&EdenGame::endFrescoes,
 		&EdenGame::choisir,
 		nullptr,
 		nullptr,
@@ -6142,7 +6147,7 @@ void EdenGame::showfilm(char arg1) {
 		CLHNM_WaitLoop(p_hnmcontext);
 		playing = CLHNM_NextElement(p_hnmcontext);
 		if (specialTextMode)
-			bullehnm();
+			displayHNMSubtitles();
 		else
 			musicspy();
 		CLBlitter_CopyView2Screen(p_hnmview);
@@ -6173,7 +6178,7 @@ void EdenGame::showfilm(char arg1) {
 	CLHNM_DeallocMemory(p_hnmcontext);
 }
 
-void EdenGame::playhnm(int16 num) {
+void EdenGame::playHNM(int16 num) {
 	perso_t *perso = nullptr;
 	int16 oldDialogType = -1;
 	p_global->curVideoNum = num;
@@ -6213,7 +6218,7 @@ void EdenGame::playhnm(int16 num) {
 		musicspy();
 		p_global->perso_ptr = perso;
 		p_global->dialogType = oldDialogType;
-		specialTextMode = 0;
+		specialTextMode = false;
 	}
 	if (videoCanceled)
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
@@ -6229,7 +6234,8 @@ void EdenGame::playhnm(int16 num) {
 		p_global->ff_F1 = RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01;
 }
 
-void EdenGame::bullehnm() {
+// Original name bullehnm
+void EdenGame::displayHNMSubtitles() {
 	int16 *frames;
 	perso_t *perso;
 	switch (p_global->curVideoNum) {
@@ -6539,7 +6545,7 @@ void EdenGame::winobject(int16 id) {
 	p_global->wonPowersMask |= object->powerMask;
 }
 
-void EdenGame::loseobject(int16 id) {
+void EdenGame::loseObject(int16 id) {
 	object_t *object = getobjaddr(id);
 	if (object->count > 0)
 		object->count--;
@@ -6555,13 +6561,13 @@ void EdenGame::loseobject(int16 id) {
 	object->flags &= ~ObjectFlags::ofInHands;
 	normalCursor = 1;
 	current_cursor = 0;
-	torchCursor = 0;
+	torchCursor = false;
 }
 
 void EdenGame::lostobject() {
 	byte_30AFE = 1;
 	if (p_global->curObjectId)
-		loseobject(p_global->curObjectId);
+		loseObject(p_global->curObjectId);
 }
 
 char EdenGame::objecthere(int16 id) {
@@ -6800,7 +6806,7 @@ void EdenGame::generique() {
 	fadetoblack(3);
 	ClearScreen();
 	oldmusic = p_global->currentMusicNum;
-	playhnm(95);
+	playHNM(95);
 	affpanel();
 	afftoppano();
 	needPaletteUpdate = 1;
@@ -6818,7 +6824,7 @@ void EdenGame::cancel2() {
 void EdenGame::testvoice() {
 	char res;   //TODO: useless?
 	int16 num;
-	p_global->fresqNumber = 0;
+	p_global->frescoNumber = 0;
 	p_global->perso_ptr = kPersons;
 	p_global->dialogType = DialogType::dtInspect;
 	num = (kPersons[0].id << 3) | p_global->dialogType;
@@ -7275,22 +7281,22 @@ void EdenGame::limitezonecurs(int16 xmin, int16 xmax, int16 ymin, int16 ymax) {
 
 void EdenGame::PommeQ() {
 	icon_t *icon = &gameIcons[85];
-	if (p_global->displayFlags & DisplayFlags::dfFresques) {
-		torchCursor = 0;
+	if (p_global->displayFlags & DisplayFlags::dfFrescoes) {
+		torchCursor = false;
 		curs_saved = 1;
 		if (p_global->displayFlags & DisplayFlags::dfPerson)
 			close_perso();
 		p_global->displayFlags = DisplayFlags::dfFlag1;
-		resetscroll();
+		resetScroll();
 		p_global->ff_100 = 0xFF;
 		maj_salle(p_global->roomNum);
 	}
 	if (p_global->displayFlags & DisplayFlags::dfPerson)
 		close_perso();
 	if (p_global->displayFlags & DisplayFlags::dfPanable)
-		resetscroll();
+		resetScroll();
 	if (p_global->displayFlags & DisplayFlags::dfMirror)
-		resetscroll();
+		resetScroll();
 	if (p_global->drawFlags & DrawFlags::drDrawFlag8)
 		stoptape();
 	if (personTalking)
@@ -7615,7 +7621,7 @@ void EdenGame::phase385() {
 }
 
 void EdenGame::phase418() {
-	loseobject(Objects::obHorn);
+	loseObject(Objects::obHorn);
 	dialautoon();
 	suis_moi(4);
 }
@@ -7830,7 +7836,7 @@ void EdenGame::phase320() {
 void EdenGame::phase336() {
 	gameRooms[288].exits[0] = 135;
 	gameRooms[289].exits[0] = 135;
-	loseobject(p_global->curObjectId);
+	loseObject(p_global->curObjectId);
 	dialautoon();
 }
 
