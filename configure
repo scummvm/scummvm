@@ -127,8 +127,8 @@ done
 #
 # Default lib behavior yes/no/auto
 _vorbis=auto
-_sdlnet=auto
-_libcurl=auto
+_sdlnet=no
+_libcurl=no
 _tremor=auto
 _tremolo=no
 _flac=auto
