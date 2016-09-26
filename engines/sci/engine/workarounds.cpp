@@ -683,6 +683,19 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
+const SciWorkaroundEntry kNumCels_workarounds[] = {
+	{ GID_GK1,           808, 64998, -1,          "sDJEnters", "changeState",               NULL,    -1, { WORKAROUND_FAKE, 6 } }, //
+	{ GID_GK2,           470, 64998, -1,        "pLookieLoos", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 50 } }, // random background movement in the crime scene in Munich city centre
+	{ GID_GK2,           470, 64998, -1,          "pNewsCrew", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 18 } }, // random background movement in the crime scene in Munich city centre
+	{ GID_GK2,           470, 64998, -1,        "pLeberGroup", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 22 } }, // random background movement in the crime scene in Munich city centre
+	{ GID_SQ6,           270, 64998, -1,           "offWorld", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 3 } }, // when exiting the kidnapping room
+	{ GID_SQ6,           320, 64998, -1,          "wandererB", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 8 } }, // random background movement on Polysorbate LX street 3
+	{ GID_SQ6,           340, 64998, -1,          "wandererB", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 8 } }, // random background movement on Polysorbate LX street 1
+	{ GID_SQ6,           530, 64998, -1,           "monitors", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 5 } }, // random background movement during cutscene
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kPalVarySetPercent_workarounds[] = {
 	{ GID_GK1,           370,   370,  0,        "graceComeOut", "changeState",              NULL,     0, { WORKAROUND_STILLCALL, 0 } }, // there's an extra parameter in GK1, when changing chapters. This extra parameter seems to be a bug or just unimplemented functionality, as there's no visible change from the original in the chapter change room
 	SCI_WORKAROUNDENTRY_TERMINATOR

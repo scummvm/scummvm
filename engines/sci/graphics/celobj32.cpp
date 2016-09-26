@@ -28,6 +28,7 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/engine/workarounds.h"
 
 namespace Sci {
 #pragma mark CelScaler
@@ -819,8 +820,18 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
 	// explicitly trap the bad condition here and report it so that any other
 	// game scripts relying on this broken behavior can be fixed as well
 	if (loopNo == loopCount) {
-		const SciCallOrigin origin = g_sci->getEngineState()->getCurrentCallOrigin();
-		error("[CelObjView::getNumCels]: loop number is equal to loop count in method %s::%s (room %d, script %d, localCall %x)", origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
+		SciCallOrigin origin;
+		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kNumCels_workarounds, &origin);
+		switch (solution.type) {
+		case WORKAROUND_NONE:
+			error("[CelObjView::getNumCels]: loop number is equal to loop count in method %s::%s (room %d, script %d, localCall %x)", origin.objectName.c_str(), origin.methodName.c_str(), origin.roomNr, origin.scriptNr, origin.localCallOffset);
+		case WORKAROUND_FAKE:
+			return (int16)solution.value;
+		case WORKAROUND_IGNORE:
+			return 0;
+		case WORKAROUND_STILLCALL:
+			break;
+		}
 	}
 
 	if (loopNo > loopCount || loopNo < 0) {
