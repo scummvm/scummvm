@@ -113,7 +113,7 @@ void EdenGame::dofresques() {
 	p_global->ff_D4 = 0;
 	p_global->curObjectId = 0;
 	p_global->iconsIndex = 13;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 	gametofresques();
 	p_global->fresqNumber = 3;
 }
@@ -240,7 +240,7 @@ void EdenGame::gametomiroir(byte arg1) {
 	persoinmiroir();
 	needPaletteUpdate = 1;
 	p_global->iconsIndex = 16;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 	p_global->displayFlags = DisplayFlags::dfMirror;
 	p_global->ff_102 = arg1;
 }
@@ -273,7 +273,7 @@ void EdenGame::flipmode() {
 					dialautoon();
 					parle_moi();
 				}
-				byte_31D64 = 0;
+				byte_31D64 = false;
 			}
 		}
 	}
@@ -429,7 +429,7 @@ void EdenGame::deplacement(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
 	debug("deplacement: from room %4X", roomNum);
-	char newLoc;
+	char newLoc = 0;
 	rundcurs();
 	afficher();
 	p_global->prevLocation = roomNum & 0xFF;
@@ -453,7 +453,7 @@ void EdenGame::deplacement(Direction dir) {
 void EdenGame::deplacement2(Direction dir) {
 	room_t *room = p_global->room_ptr;
 	int16 roomNum = p_global->roomNum;
-	char newLoc;
+	char newLoc = 0;
 	p_global->prevLocation = roomNum & 0xFF;
 	switch (dir) {
 	case kCryoNorth:
@@ -470,7 +470,6 @@ void EdenGame::deplacement2(Direction dir) {
 		break;
 	}
 	deplaval((roomNum & 0xFF00) | newLoc);
-
 }
 
 void EdenGame::dinosoufle() {
@@ -558,7 +557,8 @@ void EdenGame::squelmoorkong() {
 }
 
 void EdenGame::choisir() {
-	byte obj, objid = current_spot2->object_id;
+	byte objid = current_spot2->object_id;
+	byte obj;
 	switch (objid) {
 	case 0:
 		obj = p_global->giveobj1;
@@ -569,11 +569,14 @@ void EdenGame::choisir() {
 	case 2:
 		obj = p_global->giveobj3;
 		break;
+	default:
+		warning("Unexpected object_id in choisir()");
+		return;
 	}
 	objectmain(obj);
 	winobject(obj);
 	p_global->iconsIndex = 16;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 	p_global->ff_60 = 0;
 	parle_moi();
 }
@@ -2983,7 +2986,7 @@ void EdenGame::choixzone() {
 		p_global->iconsIndex = 6;
 	else
 		p_global->iconsIndex = 10;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 	putobject();
 }
 
@@ -3591,13 +3594,13 @@ void EdenGame::SpecialObjets(perso_t *perso, char objid) {
 
 void EdenGame::dialautoon() {
 	p_global->iconsIndex = 4;
-	p_global->autoDialog = 0xFF;
+	p_global->autoDialog = true;
 	putobject();
 }
 
 void EdenGame::dialautooff() {
 	p_global->iconsIndex = 0x10;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 }
 
 void EdenGame::follow() {
@@ -3616,7 +3619,7 @@ void EdenGame::follow() {
 
 void EdenGame::dialonfollow() {
 	p_global->iconsIndex = 4;
-	p_global->autoDialog = 0xFF;
+	p_global->autoDialog = true;
 	follow();
 }
 
@@ -4276,7 +4279,7 @@ void EdenGame::ClearScreen() {
 
 void EdenGame::colimacon(int16 pattern[16]) {
 	byte *scr, *pix;
-	int16 x, y, xx, yy;
+	int16 x, y;
 	int16 w, h, ww;
 	int16 i, j, p, r27, r25;
 	w = ScreenView.width;
@@ -4441,9 +4444,9 @@ void EdenGame::wait(int howlong) {
 void EdenGame::effetpix() {
 	debug(__FUNCTION__);
 	byte *scr, *pix;
-	int16 x, y, xx, yy;
+	int16 x, y;
 	int16 w, h, ww;
-	int16 i, j, p, r25, r18, r31, r30;  //TODO: change to xx/yy
+	int16 r25, r18, r31, r30;  //TODO: change to xx/yy
 	byte r24, r23;         //TODO: change to p0/p1
 	int16 r26, r27, r20;
 	w = ScreenView.width;
@@ -4606,7 +4609,6 @@ void EdenGame::loadfile(uint16 num, void *buffer) {
 }
 
 void EdenGame::shnmfl(uint16 num) {
-	int res;
 	assert(num + 484 < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num + 484];
 	int size = PLE32(&file->size);
@@ -4616,7 +4618,6 @@ void EdenGame::shnmfl(uint16 num) {
 }
 
 int EdenGame::ssndfl(uint16 num) {
-	int res;
 	assert(num + 660 < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num + 660];
 	long size = PLE32(&file->size);
@@ -4692,7 +4693,6 @@ char EdenGame::ReadDataSync(uint16 num) {
 }
 
 void EdenGame::loadpartoffile(uint16 num, void *buffer, long pos, long len) {
-	int16 res;
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
 	long offs = PLE32(&file->offs);
@@ -4848,7 +4848,7 @@ void EdenGame::init_globals() {
 	p_global->curRoomFlags = 0;
 	p_global->endGameFlag = 0;
 	p_global->last_info = 0;
-	p_global->autoDialog = 0;
+	p_global->autoDialog = false;
 	p_global->worldTyrannSighted = 0;
 	p_global->ff_4D = 0;
 	p_global->ff_4E = 0;
@@ -5040,7 +5040,7 @@ void EdenGame::afsalle1(room_t *room) {
 					debug("add object %d", b0 - 100);
 					if (objecthere(b0 - 100)) {
 						addIcon = 1;
-						p_global->ff_F7 = -1;
+						p_global->ff_F7 = 0xFF;
 					}
 				} else
 					addIcon = 1;
@@ -5112,7 +5112,7 @@ void EdenGame::aflieu() {
 	no_perso();
 	if (!pomme_q) {
 		p_global->iconsIndex = 16;
-		p_global->autoDialog = 0;
+		p_global->autoDialog = false;
 	}
 	p_global->nextRoomIcon = &gameIcons[28];
 	afsalle();
@@ -5311,7 +5311,6 @@ void EdenGame::initlieu(int16 roomNum) {
 
 void EdenGame::maj2() {
 	char r9, r30;
-	room_t *room = p_global->room_ptr;  //TODO: unused
 	aflieu();
 	assert(ScreenView.pitch == 320);
 	if (p_global->roomNum == 273 && p_global->prevLocation == 18)
@@ -5627,7 +5626,7 @@ void EdenGame::entergame() {
 		p_global->currentMusicNum = 0;
 		startmusique(1);
 	} else {
-		flag = p_global->autoDialog == 0xFF;    //TODO
+		flag = p_global->autoDialog;    //TODO
 		initafterload();
 		lastMusicNum = p_global->currentMusicNum;   //TODO: ???
 		p_global->currentMusicNum = 0;
@@ -5643,7 +5642,7 @@ void EdenGame::entergame() {
 	maj_salle(p_global->roomNum);
 	if (flag) {
 		p_global->iconsIndex = 4;
-		p_global->autoDialog = 0xFF;
+		p_global->autoDialog = true;
 		parle_moi();
 	}
 }
@@ -6175,8 +6174,8 @@ void EdenGame::showfilm(char arg1) {
 }
 
 void EdenGame::playhnm(int16 num) {
-	perso_t *perso;
-	int16 oldDialogType;
+	perso_t *perso = nullptr;
+	int16 oldDialogType = -1;
 	p_global->curVideoNum = num;
 	if (num != 2001 && num != 2012 && num != 98 && num != 171) {
 		byte oldMusicType = p_global->newMusicType;
@@ -6231,7 +6230,7 @@ void EdenGame::playhnm(int16 num) {
 }
 
 void EdenGame::bullehnm() {
-	int16 *frames, *frames_start, frame, num;
+	int16 *frames;
 	perso_t *perso;
 	switch (p_global->curVideoNum) {
 	case 170:
@@ -6257,7 +6256,8 @@ void EdenGame::bullehnm() {
 	default:
 		return;
 	}
-	frames_start = frames;
+	int16 *frames_start = frames;
+	int16 frame;
 	while ((frame = *frames++) != -1) {
 		if ((frame & ~0x8000) == hnm_position)
 			break;
@@ -6273,7 +6273,7 @@ void EdenGame::bullehnm() {
 		p_global->videoSubtitleIndex = (frames - frames_start) / 2 + 1;
 		p_global->perso_ptr = perso;
 		p_global->dialogType = DialogType::dtInspect;
-		num = (perso->id << 3) | p_global->dialogType;
+		int16 num = (perso->id << 3) | p_global->dialogType;
 		dialoscansvmas((dial_t *)GetElem(gameDialogs, num));
 		showVideoSubtitle = 1;
 	}
@@ -6362,13 +6362,11 @@ void EdenGame::musicspy() {
 }
 
 int EdenGame::loadmusicfile(int16 num) {
-	int16 res;
-	long numread;
 	pakfile_t *file = &bigfile_header->files[num + 435];
 	long size = PLE32(&file->size);
 	long offs = PLE32(&file->offs);
 	CLFile_SetPosition(h_bigfile, 1, offs);
-	numread = size;
+	long numread = size;
 	if (numread > 0x140000)     //TODO: const
 		numread = 0x140000;
 	CLFile_Read(h_bigfile, music_buf, &numread);
@@ -6734,7 +6732,7 @@ void EdenGame::newor() {
 
 void EdenGame::gotopanel() {
 	if (pomme_q)
-		byte_31D64 = p_global->autoDialog == 0xFF;  //TODO: check me
+		byte_31D64 = p_global->autoDialog;  //TODO: check me
 	no_palette = 0;
 	p_global->iconsIndex = 85;
 	p_global->perso_ptr = 0;
@@ -6849,7 +6847,7 @@ void EdenGame::load() {
 		loadgame(name);
 	}
 	CLMouse_Hide();
-	CLBlitter_FillScreenView(-1);
+	CLBlitter_FillScreenView(0xFFFFFFFF);
 	fadetoblack(3);
 	CLBlitter_FillScreenView(0);
 	if (!gameLoaded) {
@@ -6866,7 +6864,7 @@ void EdenGame::load() {
 		mus_fade_flags = 3;
 		musicspy();
 	}
-	talk = p_global->autoDialog == 0xFF;    //TODO check me
+	talk = p_global->autoDialog;    //TODO check me
 	initafterload();
 	fadetoblack(3);
 	CLBlitter_FillScreenView(0);
@@ -6877,7 +6875,7 @@ void EdenGame::load() {
 	maj_salle(p_global->roomNum);
 	if (talk) {
 		p_global->iconsIndex = 4;
-		p_global->autoDialog = -1;
+		p_global->autoDialog = true;
 		parle_moi();
 	}
 
@@ -6927,7 +6925,7 @@ void EdenGame::save() {
 
 void EdenGame::desktopcolors() {
 	fadetoblack(3);
-	CLBlitter_FillScreenView(-1);
+	CLBlitter_FillScreenView(0xFFFFFFFF);
 	CLPalette_BeSystem();
 	CLMouse_Show();
 }
@@ -7356,7 +7354,7 @@ void EdenGame::followme(perso_t *perso) {
 }
 
 void EdenGame::rangermammi(perso_t *perso, room_t *room) {
-	room_t *found_room;
+	room_t *found_room = nullptr;
 	if (!(perso->party & PersonMask::pmLeader))
 		return;
 	for (; room->ff_0 != 0xFF; room++) {
@@ -7367,7 +7365,7 @@ void EdenGame::rangermammi(perso_t *perso, room_t *room) {
 		if (room->party != 0xFFFF && (room->party & PersonMask::pmLeader))
 			found_room = room;  //TODO: no brk?
 	}
-	if (!found_room)    //TODO not zeroed?
+	if (!found_room)
 		return;
 	perso->roomNum &= ~0xFF;
 	perso->roomNum |= found_room->location;
@@ -7599,8 +7597,8 @@ void EdenGame::phase371() {
 	gameIcons[129].cursor_id &= ~0x8000;
 	gameIcons[127].cursor_id |= 0x8000;
 	p_global->persoBackgroundBankIdx = 59;
-	gameRooms[334].exits[0] = -1;
-	gameRooms[335].exits[0] = -1;
+	gameRooms[334].exits[0] = 0xFF;
+	gameRooms[335].exits[0] = 0xFF;
 	gameIcons[123].object_id = 9;
 	gameIcons[124].object_id = 26;
 	gameIcons[125].object_id = 42;
@@ -7637,7 +7635,7 @@ void EdenGame::phase434() {
 	gameRooms[18].bank = 44;
 	gameIcons[132].cursor_id &= ~0x8000;
 	p_global->persoBackgroundBankIdx = 61;
-	gameRooms[118].exits[2] = -1;
+	gameRooms[118].exits[2] = 0xFF;
 	abortdial();
 	gameRooms[7].bank = 322;
 	reste_ici(7);
@@ -7842,8 +7840,8 @@ void EdenGame::phase352() {
 	kPersons[PER_EVE].targetLoc = 8;
 	suiveurs_list[13].image = 2;
 	dialautoon();
-	gameRooms[288].exits[0] = -1;
-	gameRooms[289].exits[0] = -1;
+	gameRooms[288].exits[0] = 0xFF;
+	gameRooms[289].exits[0] = 0xFF;
 	gameRooms[288].flags &= ~RoomFlags::rf02;
 	gameRooms[289].flags &= ~RoomFlags::rf02;
 }
@@ -7885,7 +7883,7 @@ void EdenGame::phase432() {
 	kPersons[PER_MAMMI_4].flags |= PersonFlags::pf80;
 	kPersons[PER_BOURREAU].flags |= PersonFlags::pf80;
 	kPersons[PER_MESSAGER].roomNum = 257;
-	gameRooms[0].exits[0] = -1;
+	gameRooms[0].exits[0] = 0xFF;
 	p_global->drawFlags |= DrawFlags::drDrawTopScreen;
 }
 
@@ -8166,7 +8164,6 @@ char EdenGame::testcondition(int16 index) {
 	byte op;
 	uint16 value, value2;
 	uint16 stack[32], *sp = stack, *sp2;
-	uint16 ofs;
 	assert(index > 0);
 	code_ptr = (byte *)GetElem(gameConditions, (index - 1));
 	do {

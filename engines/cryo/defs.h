@@ -644,7 +644,7 @@ struct global_t {
 	byte   curRoomFlags;
 	byte   endGameFlag;
 	byte   last_info;
-	byte   autoDialog;
+	bool   autoDialog;
 	byte   worldTyrannSighted;
 	byte   ff_4D;
 	byte   ff_4E;

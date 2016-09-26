@@ -647,7 +647,7 @@ private:
 	soundgroup_t    *mus_queue_grp;
 	int16           *pCurrentObjectLocation;
 	byte   own_objects[128];
-	byte   byte_31D64;
+	bool   byte_31D64;
 
 	byte   no_palette;
 	byte   gameLoaded;
