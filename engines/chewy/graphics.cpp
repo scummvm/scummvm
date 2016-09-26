@@ -93,10 +93,10 @@ void Graphics::loadFont(Common::String filename) {
 
 void Graphics::drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uint16 height, byte transparentColor) {
 	::Graphics::Surface *screen = g_system->lockScreen();
-	for (uint textX = 0; textX < width; textX++) {
-		for (uint textY = 0; textY < height; textY++) {
-			byte *src = data + (textY * width) + textX;
-			byte *dst = (byte *)screen->getBasePtr(textX + x, textY + y);
+	for (uint curX = 0; curX < width; curX++) {
+		for (uint curY = 0; curY < height; curY++) {
+			byte *src = data + (curY * width) + curX;
+			byte *dst = (byte *)screen->getBasePtr(curX + x, curY + y);
 			if (*src != transparentColor)
 				*dst = *src;
 		}
