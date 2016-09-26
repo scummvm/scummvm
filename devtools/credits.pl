@@ -496,14 +496,6 @@ begin_credits("Credits");
 			end_persons();
 		end_section();
 
-		begin_section("Core Team");
-			begin_persons();
-				add_person("Willem Jan Palenstijn", "wjp", "");
-				add_person("Eugene Sandulenko", "sev", "");
-				add_person("Johannes Schickel", "LordHoto", "");
-			end_persons();
-		end_section();
-
 		begin_section("Retired Project Leaders");
 			begin_persons();
 				add_person("James Brown", "ender", "");
@@ -649,7 +641,7 @@ begin_credits("Credits");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Florian Kagerer", "athrxx", "");
 				add_person("Gregory Montoir", "cyx", "(retired)");
-				add_person("Johannes Schickel", "LordHoto", "");
+				add_person("Johannes Schickel", "LordHoto", "(retired)");
 			end_section();
 
 			begin_section("Lastexpress");
@@ -918,13 +910,13 @@ begin_credits("Credits");
 			begin_section("Infrastructure");
 				add_person("Max Horn", "Fingolfin", "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc. (retired)");
 				add_person("Eugene Sandulenko", "sev", "");
-				add_person("Johannes Schickel", "LordHoto", "");
+				add_person("Johannes Schickel", "LordHoto", "(retired)");
 			end_section();
 
 			begin_section("GUI");
 				add_person("Vicent Marti", "tanoku", "");
 				add_person("Eugene Sandulenko", "sev", "");
-				add_person("Johannes Schickel", "LordHoto", "");
+				add_person("Johannes Schickel", "LordHoto", "(retired)");
 			end_section();
 
 			begin_section("Miscellaneous");
@@ -1052,7 +1044,7 @@ begin_credits("Credits");
 
 			begin_section("Win64");
 				add_person("Chris Gray", "Psychoid", "(retired)");
-				add_person("Johannes Schickel", "LordHoto", "");
+				add_person("Johannes Schickel", "LordHoto", "(retired)");
 			end_section();
 		end_section();
 

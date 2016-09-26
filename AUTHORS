@@ -10,12 +10,6 @@ ScummVM Team
                                     Administrator
      Eugene Sandulenko            - Project Leader
 
-  Core Team
-  ---------
-     Willem Jan Palenstijn
-     Eugene Sandulenko
-     Johannes Schickel
-
   Retired Project Leaders
   -----------------------
      James Brown
@@ -142,7 +136,7 @@ ScummVM Team
        Oystein Eftevaag
        Florian Kagerer
        Gregory Montoir              - (retired)
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     Lastexpress:
        Matthew Hoops                - (retired)
@@ -362,12 +356,12 @@ ScummVM Team
                                       mixer, audiostreams, data structures,
                                       etc. (retired)
        Eugene Sandulenko
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     GUI:
        Vicent Marti
        Eugene Sandulenko
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
     Miscellaneous:
        David Corrales-Lopez         - Filesystem access improvements (GSoC
@@ -480,7 +474,7 @@ Other contributions
 
     Win64:
        Chris Gray                   - (retired)
-       Johannes Schickel
+       Johannes Schickel            - (retired)
 
   GUI Translations
   ----------------
