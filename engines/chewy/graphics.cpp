@@ -31,6 +31,34 @@
 
 namespace Chewy {
 
+const byte _cursorFrames[] = {
+	4, 1, 1, 1,		// walk
+	4, 1, 1, 1,		// pick up / use
+	1, 1, 1, 1, 1,
+	4, 1, 1, 1,		// look
+	4, 1, 1, 1,		// talk
+	4, 1, 1, 1,		// open
+	1,
+	1, 1, 1, 1,		// left, right, up, down
+	1,				// save
+	1,
+	5, 1, 1, 1, 1,
+	1,
+	1,				// use (inventory)
+	1,				// look (inventory)
+	1				// gun
+};
+
+Graphics::Graphics() {
+	_curCursor = 0;
+	_curCursorFrame = 0;
+	_cursorSprites = new SpriteResource("cursor.taf");
+}
+
+Graphics::~Graphics() {
+	delete _cursorSprites;
+}
+
 void Graphics::drawImage(Common::String filename, int imageNum) {
 	BackgroundResource *res = new BackgroundResource(filename);
 	TBFChunk *image = res->getImage(imageNum);
@@ -86,15 +114,15 @@ void Graphics::playVideo(uint num) {
 	cfoDecoder->close();
 }
 
-void Graphics::setCursor(uint num) {
-	SpriteResource *res = new SpriteResource("cursor.taf");
-	TAFChunk *cursor = res->getSprite(num);
+void Graphics::setCursor(uint num, bool newCursor) {
+	TAFChunk *cursor = _cursorSprites->getSprite(num);
+	if (newCursor)
+		_curCursor = num;
 
 	CursorMan.replaceCursor(cursor->data, cursor->width, cursor->height, 0, 0, 0);
 
 	delete[] cursor->data;
 	delete cursor;
-	delete res;
 }
 
 void Graphics::showCursor() {
@@ -103,6 +131,32 @@ void Graphics::showCursor() {
 
 void Graphics::hideCursor() {
 	CursorMan.showMouse(false);
+}
+
+void Graphics::animateCursor() {
+	if (_cursorFrames[_curCursor] > 1) {
+		_curCursorFrame++;
+
+		if (_curCursorFrame >= _cursorFrames[_curCursor])
+			_curCursorFrame = 0;
+
+		setCursor(_curCursor + _curCursorFrame, false);
+	}
+}
+
+void Graphics::nextCursor() {
+	uint maxCursors = ARRAYSIZE(_cursorFrames);
+
+	if (_cursorFrames[_curCursor] > 0)
+		_curCursor += _cursorFrames[_curCursor];
+	else
+		_curCursor++;
+
+	if (_curCursor >= maxCursors)
+		_curCursor = 0;
+
+	_curCursorFrame = 0;
+	setCursor(_curCursor);
 }
 
 } // End of namespace Chewy

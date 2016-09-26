@@ -25,6 +25,7 @@
 
 
 #include "common/scummsys.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/str.h"
@@ -42,18 +43,6 @@ class Graphics;
 class Sound;
 
 class ChewyEngine : public Engine {
-
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
-
-	void shutdown();
-
-	void initialize();
-
-	Console *_console;
-
 public:
 	ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc);
 	virtual ~ChewyEngine();
@@ -68,6 +57,20 @@ public:
 
 	Graphics *_graphics;
 	Sound *_sound;
+
+protected:
+	// Engine APIs
+	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const;
+
+	void initialize();
+	void shutdown();
+
+	Console *_console;
+
+	Common::Event _event;
+	uint _curCursor;
+	uint _elapsedFrames;
 };
 
 } // End of namespace Chewy

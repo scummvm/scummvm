@@ -63,6 +63,9 @@ void ChewyEngine::initialize() {
 	_console = new Console(this);
 	_graphics = new Graphics();
 	_sound = new Sound();
+
+	_curCursor = 0;
+	_elapsedFrames = 0;
 }
 
 Common::Error ChewyEngine::run() {
@@ -86,29 +89,26 @@ Common::Error ChewyEngine::run() {
 	//_sound->playMusic(2);
 
 	// Run a dummy loop
-	Common::Event event;
-	uint curCursor = 0;
-	const uint maxCursors = 41;
-
 	while (!shouldQuit()) {
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+		while (g_system->getEventManager()->pollEvent(_event)) {
+			if (_event.type == Common::EVENT_KEYDOWN && _event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				g_engine->quitGame();
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_SPACE) || event.type == Common::EVENT_RBUTTONUP) {
-				curCursor++;
-				if (curCursor == maxCursors)
-					curCursor = 0;
-				_graphics->setCursor(curCursor);
-			}
-
-			if (event.type == Common::EVENT_KEYDOWN && event.kbd.flags & Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d)
+			if ((_event.type == Common::EVENT_KEYDOWN && _event.kbd.keycode == Common::KEYCODE_SPACE) || _event.type == Common::EVENT_RBUTTONUP)
+				_graphics->nextCursor();
+			if (_event.type == Common::EVENT_KEYDOWN && _event.kbd.flags & Common::KBD_CTRL && _event.kbd.keycode == Common::KEYCODE_d)
 				_console->attach();
 		}
 
 		_console->onFrame();
 
+		// Cursor animation
+		if (_elapsedFrames % 30 == 0)
+			_graphics->animateCursor();
+
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+
+		_elapsedFrames++;
 	}
 
 	return Common::kNoError;

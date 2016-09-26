@@ -27,18 +27,24 @@
 
 namespace Chewy {
 
+class SpriteResource;
+
 class Graphics {
 public:
-	Graphics() {}
-	~Graphics() {}
+	Graphics();
+	~Graphics();
 
 	void drawImage(Common::String filename, int imageNum);
 	void playVideo(uint num);
-	void setCursor(uint num);
+	void setCursor(uint num, bool newCursor = true);
 	void showCursor();
 	void hideCursor();
+	void animateCursor();
+	void nextCursor();
 private:
-
+	uint _curCursor;
+	uint _curCursorFrame;
+	SpriteResource *_cursorSprites;
 };
 
 } // End of namespace Chewy
