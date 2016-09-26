@@ -53,7 +53,7 @@ suiveur_t suiveurs_list[] = {
 */
 
 byte kLabyrinthPath[] = {
-// each nibble tells wich direction to choose to exit the labyrinth
+// each nibble tells which direction to choose to exit the labyrinth
 	0x11, 0x11, 0x11, 0x22, 0x33, 0x55, 0x25, 0x44, 0x25, 0x11, 0x11, 0x11,
 	0x11, 0x35, 0x55, 0x45, 0x45, 0x44, 0x44, 0x34, 0x44, 0x34, 0x32, 0x52,
 	0x33, 0x23, 0x24, 0x44, 0x24, 0x22, 0x54, 0x22, 0x54, 0x54, 0x44, 0x22,
@@ -240,56 +240,56 @@ goto_t gotos[] = {
 	(start), (end) | 0x8000
 
 int16 tab_2D24C[] = {
-	SUB_LINE(68, 120),
-	123, 32964,
-	199, 33042,
-	276, 33138,
-	799, 33653,
-	888, 33708,
-	947, 33768,
-	1319, 34146,
-	1380, 34208,
-	1854, 34666,
-	1900, 34728,
-	2116, 34952,
-	2186, 35020,
-	2254, 35088,
-	3038, 35862,
-	3096, 35928,
+	SUB_LINE(  68,  120),
+	SUB_LINE( 123,  196),
+	SUB_LINE( 199,  274),
+	SUB_LINE( 276,  370),
+	SUB_LINE( 799,  885),
+	SUB_LINE( 888,  940),
+	SUB_LINE( 947, 1000),
+	SUB_LINE(1319, 1378),
+	SUB_LINE(1380, 1440),
+	SUB_LINE(1854, 1898),
+	SUB_LINE(1900, 1960),
+	SUB_LINE(2116, 2184),
+	SUB_LINE(2186, 2252),
+	SUB_LINE(2254, 2320),
+	SUB_LINE(3038, 3094),
+	SUB_LINE(3096, 3160),
 	-1
 };
 
 int16 tab_2D28E[] = {
-	99, 32923,
-	157, 33024,
+	SUB_LINE(99, 155),
+	SUB_LINE(157, 256),
 	-1
 };
 
 int16 tab_2D298[] = {
-	106, 32941,
-	175, 33012,
-	246, 33118,
-	352, 33235,
+	SUB_LINE(106, 173),
+	SUB_LINE(175, 244),
+	SUB_LINE(246, 350),
+	SUB_LINE(352, 467),
 	-1
 };
 
 int16 tab_2D2AA[] = {
-	126, 32944,
-	178, 33035,
-	269, 33110,
-	344, 33166,
-	400, 33226,
-	460, 33326,
+	SUB_LINE(126, 176),
+	SUB_LINE(178, 267),
+	SUB_LINE(269, 342),
+	SUB_LINE(344, 398),
+	SUB_LINE(400, 458),
+	SUB_LINE(460, 558),
 	-1
 };
 
 int16 tab_2D2C4[] = {
-	101, 32981,
-	215, 33121,
-	355, 33223,
-	457, 33286,
-	520, 33428,
-	662, 33536,
+	SUB_LINE(101, 213),
+	SUB_LINE(215, 353),
+	SUB_LINE(355, 455),
+	SUB_LINE(457, 518),
+	SUB_LINE(520, 660),
+	SUB_LINE(662, 768),
 	-1
 };
 #undef SUB_LINE
