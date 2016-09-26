@@ -24,6 +24,7 @@
 #include "common/events.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
@@ -53,10 +54,24 @@ Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
 	_curCursor = 0;
 	_curCursorFrame = 0;
 	_cursorSprites = new SpriteResource("cursor.taf");
+	_font = nullptr;
 }
 
 Graphics::~Graphics() {
+	delete _font;
 	delete _cursorSprites;
+}
+
+void Graphics::drawSprite(Common::String filename, int spriteNum, uint x, uint y) {
+	SpriteResource *res = new SpriteResource(filename);
+	TAFChunk *sprite = res->getSprite(spriteNum);
+
+	drawTransparent(x, y, sprite->data, sprite->width, sprite->height, 0);
+	g_system->updateScreen();
+
+	delete[] sprite->data;
+	delete sprite;
+	delete res;
 }
 
 void Graphics::drawImage(Common::String filename, int imageNum) {
@@ -70,6 +85,32 @@ void Graphics::drawImage(Common::String filename, int imageNum) {
 	delete[] image->data;
 	delete image;
 	delete res;
+}
+
+void Graphics::loadFont(Common::String filename) {
+	_font = new Font(filename);
+}
+
+void Graphics::drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uint16 height, byte transparentColor) {
+	::Graphics::Surface *screen = g_system->lockScreen();
+	for (uint textX = 0; textX < width; textX++) {
+		for (uint textY = 0; textY < height; textY++) {
+			byte *src = data + (textY * width) + textX;
+			byte *dst = (byte *)screen->getBasePtr(textX + x, textY + y);
+			if (*src != transparentColor)
+				*dst = *src;
+		}
+	}
+	g_system->unlockScreen();
+}
+
+void Graphics::drawText(Common::String text, uint x, uint y) {
+	::Graphics::Surface *textSurface = _font->getLine(text);
+
+	drawTransparent(x, y, (byte *)textSurface->getPixels(), textSurface->pitch, textSurface->h, 0xFF);
+
+	textSurface->free();
+	delete textSurface;
 }
 
 void Graphics::playVideo(uint num) {

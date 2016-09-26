@@ -32,6 +32,7 @@
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/stream.h"
+#include "graphics/surface.h"
 
 namespace Chewy {
 
@@ -183,6 +184,19 @@ public:
 
 	VideoChunk *getVideoHeader(uint num);
 	Common::SeekableReadStream *getVideoStream(uint num);
+};
+
+class Font {
+public:
+	Font(Common::String filename);
+	virtual ~Font();
+
+	::Graphics::Surface *getLine(Common::String text);
+
+private:
+	uint16 _count, _first, _last, _width, _height;
+
+	::Graphics::Surface _fontSurface;
 };
 
 } // End of namespace Chewy

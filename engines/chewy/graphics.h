@@ -28,6 +28,7 @@
 namespace Chewy {
 
 class SpriteResource;
+class Font;
 
 class Graphics {
 public:
@@ -35,7 +36,11 @@ public:
 	virtual ~Graphics();
 
 	void drawImage(Common::String filename, int imageNum);
+	void drawSprite(Common::String filename, int spriteNum, uint x, uint y);
 	void playVideo(uint num);
+	void loadFont(Common::String filename);
+	void drawText(Common::String text, uint x, uint y);
+
 	void setCursor(uint num, bool newCursor = true);
 	void showCursor();
 	void hideCursor();
@@ -43,11 +48,14 @@ public:
 	void nextCursor();
 
 private:
+	void drawTransparent(uint16 x, uint16 y, byte *data, uint16 width, uint16 height, byte transparentColor);
+
 	ChewyEngine *_vm;
 
 	uint _curCursor;
 	uint _curCursorFrame;
 	SpriteResource *_cursorSprites;
+	Font *_font;
 };
 
 } // End of namespace Chewy

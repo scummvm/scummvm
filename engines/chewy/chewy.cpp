@@ -86,6 +86,9 @@ Common::Error ChewyEngine::run() {
 
 	//_graphics->playVideo(0);
 	_graphics->drawImage("episode1.tgp", 0);
+	_graphics->drawSprite("det1.taf", 0, 200, 100);
+	_graphics->loadFont("6x8.tff");
+	_graphics->drawText("This is a test", 200, 80);
 	_graphics->showCursor();
 	_graphics->setCursor(0);
 	//_sound->playSpeech(1);
