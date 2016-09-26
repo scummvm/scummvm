@@ -42,7 +42,9 @@ class Light
 	friend class BladeRunnerEngine;
 #endif
 	friend class Lights;
+	friend class SliceRenderer;
 
+protected:
 	char _name[20];
 	int _framesCount;
 	int _animated;
@@ -77,35 +79,42 @@ class Light
 
 public:
 	Light();
-	~Light();
+	virtual ~Light();
 
 	void read(Common::ReadStream *stream, int framesCount, int frame, int animated);
 	void readVqa(Common::ReadStream *stream, int framesCount, int frame, int animated);
 
 	void setupFrame(int frame);
 
-private:
-	static float attenuation(float min, float max, float distance);
+	virtual float calculate(Vector3 start, Vector3 end);
+	virtual void calculateColor(Color *outColor, Vector3 position);
+
+protected:
+	float calculateCoeficient(Vector3 start, Vector3 end, float a3, float a4);
+	float attenuation(float min, float max, float distance);
 };
 
 class Light1 : public Light {
-
+	float calculate(Vector3 start, Vector3 end);
+	void calculateColor(Color *outColor, Vector3 position);
 };
 
 class Light2 : public Light {
-
+	float calculate(Vector3 start, Vector3 end);
+	void calculateColor(Color *outColor, Vector3 position);
 };
 
 class Light3 : public Light {
-
+	void calculateColor(Color *outColor, Vector3 position);
 };
 
 class Light4 : public Light {
-
+	void calculateColor(Color *outColor, Vector3 position);
 };
 
 class Light5 : public Light {
-
+	float calculate(Vector3 start, Vector3 end);
+	void calculateColor(Color *outColor, Vector3 position);
 };
 
 } // End of namespace BladeRunner

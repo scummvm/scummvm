@@ -55,6 +55,7 @@ void dump(const char *str, Matrix4x3 m) {
 
 SliceRenderer::SliceRenderer(BladeRunnerEngine* vm) {
 	_vm = vm;
+	_pixelFormat = createRGB555();
 	int i;
 
 	for (i = 0; i < 942; i++) { // yes, its going just to 942 and not 997
@@ -88,8 +89,8 @@ void SliceRenderer::setupFrame(int animation, int frame, Vector3 position, float
 
 	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
 
-	_frameFront.x      = stream.readFloatLE();
-	_frameFront.y      = stream.readFloatLE();
+	_frameScale.x      = stream.readFloatLE();
+	_frameScale.y      = stream.readFloatLE();
 	_frameSliceHeight  = stream.readFloatLE();
 	_framePos.x        = stream.readFloatLE();
 	_framePos.y        = stream.readFloatLE();
@@ -144,31 +145,33 @@ void SliceRenderer::calculateBoundingRect() {
 	Matrix3x2 m4(_view._viewportDistance / bottom.z,  0.0f, 0.0f,
 	                                           0.0f, 25.5f, 0.0f);
 
-	Matrix3x2 m2(_frameFront.x,          0.0f, _framePos.x,
-	                      0.0f, _frameFront.y, _framePos.y);
+	Matrix3x2 m2(_frameScale.x,          0.0f, _framePos.x,
+	                      0.0f, _frameScale.y, _framePos.y);
 
 	_field_109E = m4 * (facingRotation * m2);
 
-	Vector4 B6(_view._viewportHalfWidth   + top.x / top.z * _view._viewportDistance,
+	Vector4 startScreenVector(
+	           _view._viewportHalfWidth   + top.x / top.z * _view._viewportDistance,
 	           _view._viewportHalfHeight  + top.y / top.z * _view._viewportDistance,
 	           1.0f / top.z,
 	           _frameSliceCount * (1.0f / top.z));
 
-	Vector4 C2(_view._viewportHalfWidth   + bottom.x / bottom.z * _view._viewportDistance,
+	Vector4 endScreenVector(
+	           _view._viewportHalfWidth   + bottom.x / bottom.z * _view._viewportDistance,
 	           _view._viewportHalfHeight  + bottom.y / bottom.z * _view._viewportDistance,
 	           1.0f / bottom.z,
 	           0.0f);
 
-	_field_10B6.x = B6.x;
-	_field_10B6.y = B6.y;
-	_field_10B6.z = B6.z;
-	_field_10C2.x = C2.x;
-	_field_10C2.y = C2.y;
-	_field_10C2.z = C2.z;
-	_field_10CE   = B6.w;
-	_field_10D2   = C2.w;
+	_startScreenVector.x = startScreenVector.x;
+	_startScreenVector.y = startScreenVector.y;
+	_startScreenVector.z = startScreenVector.z;
+	_endScreenVector.x   = endScreenVector.x;
+	_endScreenVector.y   = endScreenVector.y;
+	_endScreenVector.z   = endScreenVector.z;
+	_startSlice          = startScreenVector.w;
+	_endSlice            = endScreenVector.w;
 
-	Vector4 delta = C2 - B6;
+	Vector4 delta = endScreenVector - startScreenVector;
 
 	if (delta.y == 0.0f)
 		return;
@@ -180,37 +183,37 @@ void SliceRenderer::calculateBoundingRect() {
 	float screenMinY =   0.0f;
 	float screenMaxY = 479.0f;
 
-	if (B6.y < screenMinY) {
-		if (C2.y < screenMinY)
+	if (startScreenVector.y < screenMinY) {
+		if (endScreenVector.y < screenMinY)
 			return;
 
-		float f = (screenMinY - B6.y) / delta.y;
-		B6 = B6 + f * delta;
-	} else if (B6.y > screenMaxY) {
-		if (C2.y >= screenMaxY)
+		float f = (screenMinY - startScreenVector.y) / delta.y;
+		startScreenVector = startScreenVector + f * delta;
+	} else if (startScreenVector.y > screenMaxY) {
+		if (endScreenVector.y >= screenMaxY)
 			return;
 
-		float f = (screenMaxY - B6.y) / delta.y;
-		B6 = B6 + f * delta;
+		float f = (screenMaxY - startScreenVector.y) / delta.y;
+		startScreenVector = startScreenVector + f * delta;
 	}
 
-	if (C2.y < screenMinY) {
-		float f = (screenMinY - C2.y) / delta.y;
-		C2 = C2 + f * delta;
-	} else if (C2.y > screenMaxY) {
-		float f = (screenMaxY - C2.y) / delta.y;
-		C2 = C2 + f * delta;
+	if (endScreenVector.y < screenMinY) {
+		float f = (screenMinY - endScreenVector.y) / delta.y;
+		endScreenVector = endScreenVector + f * delta;
+	} else if (endScreenVector.y > screenMaxY) {
+		float f = (screenMaxY - endScreenVector.y) / delta.y;
+		endScreenVector = endScreenVector + f * delta;
 	}
 
-	int bbox_min_y = (int)MIN(B6.y, C2.y);
-	int bbox_max_y = (int)MAX(B6.y, C2.y) + 1;
+	int bbox_min_y = (int)MIN(startScreenVector.y, endScreenVector.y);
+	int bbox_max_y = (int)MAX(startScreenVector.y, endScreenVector.y) + 1;
 
 	/*
 	 * Calculate min and max X
 	 */
 
-	Matrix3x2 mB6 = _field_109E + Vector2(B6.x, 25.5f / B6.z);
-	Matrix3x2 mC2 = _field_109E + Vector2(C2.x, 25.5f / C2.z);
+	Matrix3x2 mB6 = _field_109E + Vector2(startScreenVector.x, 25.5f / startScreenVector.z);
+	Matrix3x2 mC2 = _field_109E + Vector2(endScreenVector.x,   25.5f / endScreenVector.z);
 
 	float min_x =  640.0f;
 	float max_x =    0.0f;
@@ -234,14 +237,14 @@ void SliceRenderer::calculateBoundingRect() {
 	int bbox_min_x = MIN(MAX((int)min_x,     0), 640);
 	int bbox_max_x = MIN(MAX((int)max_x + 1, 0), 640);
 
-	_field_10B6.x = B6.x;
-	_field_10B6.y = B6.y;
-	_field_10B6.z = B6.z;
-	_field_10C2.x = C2.x;
-	_field_10C2.y = C2.y;
-	_field_10C2.z = C2.z;
-	_field_10CE   = B6.w;
-	_field_10D2   = C2.w;
+	_startScreenVector.x = startScreenVector.x;
+	_startScreenVector.y = startScreenVector.y;
+	_startScreenVector.z = startScreenVector.z;
+	_endScreenVector.x   = endScreenVector.x;
+	_endScreenVector.y   = endScreenVector.y;
+	_endScreenVector.z   = endScreenVector.z;
+	_startSlice          = startScreenVector.w;
+	_endSlice            = endScreenVector.w;
 
 	_minX = bbox_min_x;
 	_minY = bbox_min_y;
@@ -250,72 +253,74 @@ void SliceRenderer::calculateBoundingRect() {
 }
 
 struct SliceLineIterator {
-	int _field_00[2][3];
-	int _field_18;
-	int _field_1C;
+	int _sliceMatrix[2][3];
+	int _startY;
+	int _endY;
 
-	float _field_20;
-	float _field_24;
-	float _field_28;
-	float _field_2C;
-	float _field_30;
-	float _field_34;
+	float _currentZ;
+	float _stepZ;
+	float _currentSlice;
+	float _stepSlice;
+	float _currentX;
+	float _stepX;
 	int   _field_38;
-	int   _field_3C;
+	int   _currentY;
 
-	void setup(float arg_1,  float arg_2,  float arg_3,
-	           float arg_4,  float arg_5,  float arg_6,
-	           float arg_7,  float arg_8,
-	           Matrix3x2 arg_9);
+	void setup(float endScreenX,   float endScreenY,   float endScreenZ,
+	           float startScreenX, float startScreenY, float startScreenZ,
+	           float endSlice,     float startSlice,
+	           Matrix3x2 m);
 	float line();
 	void advance();
 };
 
 void SliceLineIterator::setup(
-	float arg_1,  float arg_2,  float arg_3,
-	float arg_4,  float arg_5,  float arg_6,
-	float arg_7,  float arg_8,
-	Matrix3x2 arg_9)
+	float endScreenX,   float endScreenY,   float endScreenZ,
+	float startScreenX, float startScreenY, float startScreenZ,
+	float endSlice,     float startSlice,
+	Matrix3x2 m)
 {
-	_field_18 = (int)arg_5;
-	_field_1C = (int)arg_2;
+	_startY = (int)startScreenY;
+	_endY   = (int)endScreenY;
 
-	float var_3 = arg_2 - arg_5;
+	float size = endScreenY - startScreenY;
 
-	if (var_3 <= 0.0f || arg_6 <= 0.0f)
-		_field_3C = _field_1C + 1;
+	if (size <= 0.0f || startScreenZ <= 0.0f)
+		_currentY = _endY + 1;
 
-	_field_20 = arg_6;
-	_field_24 = (arg_3 - arg_6) / var_3;
-	_field_2C = (arg_7 - arg_8) / var_3;
-	_field_28 = arg_8 - (arg_5 - floor(arg_5) - 1.0f) * _field_2C;
+	_currentZ  = startScreenZ;
+	_stepZ     = (endScreenZ - startScreenZ) / size;
 
-	_field_30 = arg_4;
-	_field_34 = (arg_1 - arg_4) / var_3;
-	_field_38 = (int)((25.5f / var_3) * (1.0f / arg_3 - 1.0f / arg_6) * 64.0);
-	_field_3C = _field_18;
+	_stepSlice     = (endSlice - startSlice) / size;
+	_currentSlice  = startSlice - (startScreenY - floor(startScreenY) - 1.0f) * _stepSlice;
 
-	float var_54 =         _field_30;
-	float var_55 = 25.5f / _field_20;
+	_currentX = startScreenX;
+	_stepX    = (endScreenX - startScreenX) / size;
 
-	Matrix3x2 translate_matrix = Matrix3x2(1.0f, 0.0f, var_54,
-	                                       0.0f, 1.0f, var_55);
+	_field_38 = (int)((25.5f / size) * (1.0f / endScreenZ - 1.0f / startScreenZ) * 64.0);
+	_currentY = _startY;
+
+	float offsetX =         _currentX;
+	float offsetZ = 25.5f / _currentZ;
+
+	Matrix3x2 translate_matrix = Matrix3x2(1.0f, 0.0f, offsetX,
+	                                       0.0f, 1.0f, offsetZ);
 
 	Matrix3x2 scale_matrix = Matrix3x2(65536.0f,  0.0f, 0.0f,
 	                                       0.0f, 64.0f, 0.0f);
 
-	arg_9 = scale_matrix * (translate_matrix * arg_9);
+	m = scale_matrix * (translate_matrix * m);
 
 	for (int r = 0; r != 2; ++r)
 		for (int c = 0; c != 3; ++c)
-			_field_00[r][c] = arg_9(r, c);
+			_sliceMatrix[r][c] = m(r, c);
 }
 
 float SliceLineIterator::line() {
 	float var_0 = 0.0f;
 
-	if (_field_20 != 0.0f)
-		var_0 = _field_28 / _field_20;
+	if (_currentZ != 0.0f)
+		var_0 = _currentSlice / _currentZ;
 
 	if (var_0 < 0.0)
 		var_0 = 0.0f;
@@ -324,12 +329,12 @@ float SliceLineIterator::line() {
 }
 
 void SliceLineIterator::advance() {
-	_field_20 += _field_24;
-	_field_28 += _field_2C;
-	_field_30 += _field_34;
-	_field_3C += 1;
-	_field_00[0][2] += (int)(65536.0f * _field_34);
-	_field_00[1][2] += _field_38;
+	_currentZ          += _stepZ;
+	_currentSlice      += _stepSlice;
+	_currentX          += _stepX;
+	_currentY          += 1;
+	_sliceMatrix[0][2] += (int)(65536.0f * _stepX);
+	_sliceMatrix[1][2] += _field_38;
 }
 
 static
@@ -341,38 +346,87 @@ void setupLookupTable(int t[256], int inc) {
 	}
 }
 
-void SliceRenderer::drawFrame(Graphics::Surface &surface, uint16 *zbuffer) {
+void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
 	assert(_sliceFramePtr);
 	assert(_lights);
 	assert(_setEffects);
 	//assert(_view);
 
+	_vm->_sliceRenderer->setupFrame(animationId, animationFrame, position, facing);
+
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
-		_field_10C2.x, _field_10C2.y, _field_10C2.z,
-		_field_10B6.x, _field_10B6.y, _field_10B6.z,
-		_field_10D2, _field_10CE, // 2 floats
+		_endScreenVector.x,   _endScreenVector.y,   _endScreenVector.z,
+		_startScreenVector.x, _startScreenVector.y, _startScreenVector.z,
+		_endSlice,            _startSlice,
 		_field_109E              // 3x2 matrix
-		);
+	);
+
+	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
 
 	_lights->setupFrame(_view._frame);
 	_setEffects->setupFrame(_view._frame);
 
-	setupLookupTable(_t1, sliceLineIterator._field_00[0][0]);
-	setupLookupTable(_t2, sliceLineIterator._field_00[0][1]);
-	setupLookupTable(_t4, sliceLineIterator._field_00[1][0]);
-	setupLookupTable(_t5, sliceLineIterator._field_00[1][1]);
+	float sliceLine = sliceLineIterator.line();
 
-	int frameY = sliceLineIterator._field_18;
+	sliceRendererLights.calculateColorBase(
+		Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
+		Vector3(_position.x, _position.y, _position.z + _frameBottomZ),
+		sliceLineIterator._endY - sliceLineIterator._startY);
+	
+	float setEffectsColorCoeficient;
+	Color setEffectColor;
+	_setEffects->calculateColor(
+		_view._cameraPosition,
+		Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
+		&setEffectsColorCoeficient,
+		&setEffectColor);
+
+	_lightsColor.r = setEffectsColorCoeficient * sliceRendererLights._finalColor.r * 65536.0f;
+	_lightsColor.g = setEffectsColorCoeficient * sliceRendererLights._finalColor.g * 65536.0f;
+	_lightsColor.b = setEffectsColorCoeficient * sliceRendererLights._finalColor.b * 65536.0f;
+
+	_setEffectColor.r = setEffectColor.r * 31.0f * 65536.0f;
+	_setEffectColor.g = setEffectColor.g * 31.0f * 65536.0f;
+	_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
+
+	setupLookupTable(_m11lookup, sliceLineIterator._sliceMatrix[0][0]);
+	setupLookupTable(_m12lookup, sliceLineIterator._sliceMatrix[0][1]);
+	setupLookupTable(_m21lookup, sliceLineIterator._sliceMatrix[1][0]);
+	setupLookupTable(_m22lookup, sliceLineIterator._sliceMatrix[1][1]);
+
+	if(_animationsShadowEnabled[_animation]) {
+		//TODO: draw shadows
+	}
+
+	int frameY = sliceLineIterator._startY;
 
 	uint16 *frameLinePtr  = (uint16*)surface.getPixels() + 640 * frameY;
 	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
 
-	while (sliceLineIterator._field_3C <= sliceLineIterator._field_1C) {
-		_c3 = sliceLineIterator._field_00[0][2];
-		_c6 = sliceLineIterator._field_00[1][2];
+	while (sliceLineIterator._currentY <= sliceLineIterator._endY) {
+		_m13 = sliceLineIterator._sliceMatrix[0][2];
+		_m23 = sliceLineIterator._sliceMatrix[1][2];
 
-		float sliceLine = sliceLineIterator.line();
+		sliceLine = sliceLineIterator.line();
+
+		sliceRendererLights.calculateColorSlice(Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight));
+
+		if (sliceLineIterator._currentY & 1) {
+			_setEffects->calculateColor(
+				_view._cameraPosition,
+				Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
+				&setEffectsColorCoeficient,
+				&setEffectColor);
+		}
+
+		_lightsColor.r = setEffectsColorCoeficient * sliceRendererLights._finalColor.r * 65536.0f;
+		_lightsColor.g = setEffectsColorCoeficient * sliceRendererLights._finalColor.g * 65536.0f;
+		_lightsColor.b = setEffectsColorCoeficient * sliceRendererLights._finalColor.b * 65536.0f;
+
+		_setEffectColor.r = setEffectColor.r * 31.0f * 65536.0f;
+		_setEffectColor.g = setEffectColor.g * 31.0f * 65536.0f;
+		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
 		if (frameY >= 0 && frameY < 480)
 			drawSlice((int)sliceLine, frameLinePtr, zBufferLinePtr);
@@ -406,21 +460,30 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 			continue;
 
 		uint32 lastVertex = vertexCount - 1;
-		int lastVertexX = MAX((_t1[p[3*lastVertex]] + _t2[p[3*lastVertex+1]] + _c3) >> 16, 0);
+		int lastVertexX = MAX((_m11lookup[p[3*lastVertex]] + _m12lookup[p[3*lastVertex+1]] + _m13) >> 16, 0);
 
 		int previousVertexX = lastVertexX;
 
 		while (vertexCount--) {
-			int vertexX = CLIP((_t1[p[0]] + _t2[p[1]] + _c3) >> 16, 0, 640);
+			int vertexX = CLIP((_m11lookup[p[0]] + _m12lookup[p[1]] + _m13) >> 16, 0, 640);
 
 			if (vertexX > previousVertexX) {
-				int vertexZ = (_t4[p[0]] + _t5[p[1]] + _c6) >> 6;
+				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) >> 6;
 
 				if (vertexZ >= 0 && vertexZ < 65536) {
+					Color256 color = palette.color[p[2]];
+
+					float hackMul = 8.0f; //not part of game
+
+					color.r = (int)(_setEffectColor.r + hackMul * _lightsColor.r * color.r) >> 13; // >> 16,
+					color.g = (int)(_setEffectColor.g + hackMul * _lightsColor.g * color.g) >> 13;
+					color.b = (int)(_setEffectColor.b + hackMul * _lightsColor.b * color.b) >> 13;
+
+					int color555 = _pixelFormat.RGBToColor(color.r/* * 8*/, color.g/* * 8*/, color.b/* * 8*/);
+
 					for (int x = previousVertexX; x != vertexX; ++x) {
-						// debug("\t%04x < %04x", vertexZ, zbufLinePtr[x]);
 						if (vertexZ < zbufLinePtr[x]) {
-							frameLinePtr[x] = palette[p[2]];
+							frameLinePtr[x] = color555;
 							zbufLinePtr[x] = (uint16)vertexZ;
 						}
 					}
@@ -443,6 +506,104 @@ void SliceRenderer::disableShadows(int animationsIdsList[], int listSize) {
 	int i;
 	for (i = 0; i < listSize; i++) {
 		_animationsShadowEnabled[animationsIdsList[i]] = false;
+	}
+}
+
+SliceRenderer::SliceRendererLights::SliceRendererLights(Lights *lights) {
+	_finalColor.r = 0.0f;
+	_finalColor.g = 0.0f;
+	_finalColor.b = 0.0f;
+
+	_lights = lights;
+
+	for(int i = 0; i < 20; i++) {
+		_colors[i].r = 0.0f;
+		_colors[i].g = 0.0f;
+		_colors[i].b = 0.0f;
+	}
+}
+
+
+void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position2, float height) {
+	_finalColor.r = 0.0f;
+	_finalColor.g = 0.0f;
+	_finalColor.b = 0.0f;
+	_hmm3 = 0;
+	if (_lights) {
+		Light *light = _lights->_lights;
+		int i = 0;
+		if (light) {
+			do {
+				if (i < 20) {
+					float v8 = light->calculate(position1, position2/*, height*/);
+
+					this->_hmm2[i] = v8;
+					this->_hmm[i] = v8;
+					
+					Color v22;
+					light->calculateColor(&v22, position1);
+					_colors[i] = v22;
+					_finalColor.r += v22.r;
+					_finalColor.g += v22.g;
+					_finalColor.b += v22.b;
+				}
+				else
+				{
+					Color v23;
+					light->calculateColor(&v23, position1);
+					_finalColor.r += v23.r;
+					_finalColor.g += v23.g;
+					_finalColor.b += v23.b;
+				}
+				light = light->_next;
+				i++;
+			} while (light);
+		}
+
+		_finalColor.r += _lights->_ambientLightColor.r;
+		_finalColor.g += _lights->_ambientLightColor.g;
+		_finalColor.b += _lights->_ambientLightColor.b;
+	}
+}
+
+void SliceRenderer::SliceRendererLights::calculateColorSlice(Vector3 position) {
+	_finalColor.r = 0.0f;
+	_finalColor.g = 0.0f;
+	_finalColor.b = 0.0f;
+
+	if (_lights) {
+		Light *light = _lights->_lights;
+		int i = 0;
+		if (light) {
+			do {
+				if (i < 20) {
+					_hmm[i] = _hmm[i] - 1.0f;
+
+					if (_hmm[i] <= 0.0f) {
+						do {
+							_hmm[i] = _hmm[i] + _hmm2[i];
+						} while (_hmm[i] <= 0.0f);
+						light->calculateColor(&_colors[i], position);
+						_hmm3++;
+					} 
+					_finalColor.r += _colors[i].r;
+					_finalColor.g += _colors[i].g;
+					_finalColor.b += _colors[i].b;
+				} else {
+					Color color;
+					light->calculateColor(&color, position);
+					_hmm3++;
+					_finalColor.r += color.r;
+					_finalColor.g += color.g;
+					_finalColor.b += color.b;
+				}
+				light = light->_next;
+				i++;
+			} while (light);
+		}
+		_finalColor.r += _lights->_ambientLightColor.r;
+		_finalColor.g += _lights->_ambientLightColor.g;
+		_finalColor.b += _lights->_ambientLightColor.b;
 	}
 }
 

@@ -51,11 +51,15 @@ bool SliceAnimations::open(const Common::String &name) {
 			uint8 color_g = file.readByte();
 			uint8 color_b = file.readByte();
 
+			_palettes[i].color[j].r = color_r;
+			_palettes[i].color[j].g = color_g;
+			_palettes[i].color[j].b = color_b;
+
 			uint16 rgb555 = ((uint16)color_r << 10) |
 			                ((uint16)color_g <<  5) |
 			                 (uint16)color_b;
 
-			_palettes[i][j] = rgb555;
+			_palettes[i].color555[j] = rgb555;
 		}
 	}
 

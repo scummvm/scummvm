@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_SLICE_RENDERER_H
 #define BLADERUNNER_SLICE_RENDERER_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
 #include "bladerunner/matrix.h"
@@ -55,7 +56,7 @@ class SliceRenderer {
 	void       *_sliceFramePtr;
 
 	// Animation frame data
-	Vector2 _frameFront;
+	Vector2 _frameScale;
 	float   _frameBottomZ;
 	Vector2 _framePos;
 	float   _frameSliceHeight;
@@ -63,23 +64,28 @@ class SliceRenderer {
 	uint32  _frameSliceCount;
 
 	Matrix3x2 _field_109E;
-	Vector3   _field_10B6;
-	Vector3   _field_10C2;
-	float     _field_10CE;
-	float     _field_10D2;
+	Vector3   _startScreenVector;
+	Vector3   _endScreenVector;
+	float     _startSlice;
+	float     _endSlice;
 	int       _minX;
 	int       _maxX;
 	int       _minY;
 	int       _maxY;
 
-	int _t1[256];
-	int _t2[256];
-	int _c3;
-	int _t4[256];
-	int _t5[256];
-	int _c6;
+	int _m11lookup[256];
+	int _m12lookup[256];
+	int _m13;
+	int _m21lookup[256];
+	int _m22lookup[256];
+	int _m23;
 
 	bool _animationsShadowEnabled[997];
+
+	Color _setEffectColor;
+	Color _lightsColor;
+
+	Graphics::PixelFormat _pixelFormat;
 
 	Matrix3x2 calculateFacingRotationMatrix();
 	void drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr);
@@ -95,11 +101,29 @@ public:
 	void setupFrame(int animation, int frame, Vector3 position, float facing, float scale = 1.0f);
 	void calculateBoundingRect();
 
-	void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
+	//void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
+	void drawFrame(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
 
 	void preload(int animationId);
 
-	void disableShadows(int* animationsIdsList, int listSize);
+	void disableShadows(int *animationsIdsList, int listSize);
+
+private:
+	class SliceRendererLights {
+		Lights *_lights;
+		Color   _colors[20];
+		float   _hmm[20];
+		float   _hmm2[20];
+		int     _hmm3;
+	public: 
+		Color   _finalColor;
+
+	public:
+		SliceRendererLights(Lights *lights);
+
+		void calculateColorBase(Vector3 position1, Vector3 position2, float height);
+		void calculateColorSlice(Vector3 position);
+	};
 };
 
 } // End of namespace BladeRunner

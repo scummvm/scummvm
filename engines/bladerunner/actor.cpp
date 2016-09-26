@@ -399,12 +399,11 @@ bool Actor::tick(bool forceDraw) {
 void Actor::draw() {
 	Vector3 draw_position(_position.x, -_position.z, _position.y + 2.0);
 	float draw_facing = M_PI - _facing * M_PI / 512.0;
-	// float   draw_scale  = _scale;
+	float draw_scale  = _scale;
 
 	// TODO: Handle SHORTY mode
-
-	_vm->_sliceRenderer->setupFrame(_animationId, _animationFrame, draw_position, draw_facing);
-	_vm->_sliceRenderer->drawFrame(_vm->_surface2, _vm->_zBuffer2);
+	
+	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, draw_position, draw_facing, draw_scale, _vm->_surface2, _vm->_zBuffer2);
 }
 
 int Actor::getSetId() {

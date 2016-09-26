@@ -23,13 +23,27 @@
 #ifndef BLADERUNNER_COLOR_H
 #define BLADERUNNER_COLOR_H
 
+#include "common/system.h"
+
 namespace BladeRunner {
 
-struct Color
-{
+struct Color {
 	float r;
 	float g;
 	float b;
+
+
+	Color() {
+	}
+
+	Color(float r, float g, float b) : r(r), g(g), b(b) {
+	}
+};
+
+struct Color256 {
+	uint8 r;
+	uint8 g;
+	uint8 b;
 };
 
 } // End of namespace BladeRunner

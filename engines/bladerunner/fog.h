@@ -71,7 +71,7 @@ public:
 	virtual ~Fog();
 
 	virtual void read(Common::ReadStream *stream, int framesCount) = 0;
-
+	virtual void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) = 0;
 	void reset();
 
 	void setupFrame(int frame);
@@ -85,16 +85,19 @@ protected:
 class FogCone : public Fog
 {
 	void read(Common::ReadStream *stream, int framesCount);
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 class FogSphere : public Fog
 {
 	void read(Common::ReadStream *stream, int framesCount);
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 class FogBox : public Fog
 {
 	void read(Common::ReadStream *stream, int framesCount);
+	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 } // End of namespace BladeRunner

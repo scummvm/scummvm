@@ -27,16 +27,20 @@
 #include "common/file.h"
 #include "common/str.h"
 #include "common/types.h"
-#include "vector.h"
+
+#include "bladerunner/color.h"
+#include "bladerunner/vector.h"
+
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 
 struct SlicePalette {
-	uint16 color[256];
+	uint16 color555[256];
+	Color256 color[256];
 
-	uint16 &operator[](size_t i) { return color[i]; }
+//	uint16 &operator[](size_t i) { return color555[i]; }
 };
 
 class SliceAnimations {

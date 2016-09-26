@@ -57,6 +57,8 @@ public:
 	void setFadeDensity(float density);
 	void setFogColor(char* fogName, float r, float g, float b);
 	void setFogDensity(char* fogName, float density);
+
+	void calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor);
 private:
 
 	Fog* findFog(char* fogName);

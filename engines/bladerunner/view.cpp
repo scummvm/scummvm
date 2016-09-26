@@ -60,9 +60,9 @@ void View::calculateSliceViewMatrix() {
 
 	m = m * rotationMatrixX(float(M_PI) / 2.0f);
 
-	Matrix4x3 a(-1.0f, 0.0f, 0.0f, 0.0f,
-	            0.0f, -1.0f, 0.0f, 0.0f,
-	            0.0f, 0.0f, 1.0f, 0.0f);
+	Matrix4x3 a(-1.0f,  0.0f, 0.0f, 0.0f,
+	             0.0f, -1.0f, 0.0f, 0.0f,
+	             0.0f,  0.0f, 1.0f, 0.0f);
 
 	m = a * m;
 

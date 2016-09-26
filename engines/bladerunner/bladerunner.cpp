@@ -613,7 +613,7 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if _DEBUG
+#if 0 //_DEBUG
 			//draw scene objects
 			int count = _sceneObjects->_count;
 			if (count > 0) {
@@ -666,35 +666,6 @@ void BladeRunnerEngine::gameTick() {
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 				}
 				
-			}
-
-			for (Light* light = _lights->_lights; light != nullptr; light->_next) {
-
-				Matrix4x3 matrix = light->_matrix;
-
-				// this is all wrong
-
-//					matrix = matrix * rotationMatrixX(float(M_PI) / 2.0f);
-
-//					Matrix4x3 a(
-//						-1.0f, 0.0f, 0.0f, 0.0f,
-//						0.0f, -1.0f, 0.0f, 0.0f,
-//						0.0f, 0.0f, 1.0f, 0.0f);
-
-				//matrix = a * matrix;
-//					matrix = invertMatrix(matrix);
-
-				int colorR = (light->_color.r * 31.0f);
-				int colorG = (light->_color.g * 31.0f);
-				int colorB = (light->_color.b * 31.0f);
-				int color = (colorR << 10) + (colorG << 5) + colorB;
-				drawBBox(
-					Vector3(matrix(0, 3) - 5.0f, matrix(1, 3) - 5.0f, matrix(2, 3) - 5.0f),
-					Vector3(matrix(0, 3) + 5.0f, matrix(1, 3) + 5.0f, matrix(2, 3) + 5.0f),
-					_view, &_surface2, color
-				);
-				light = light->_next;
-
 			}
 #endif
 
@@ -751,6 +722,7 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	}
 
 	if (sceneObjectId == -1) {
+		_actors[0]->loopWalkToXYZ(mousePosition);
 		debug("Clicked on nothing");
 		return;
 	} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {

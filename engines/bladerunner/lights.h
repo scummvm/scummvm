@@ -35,6 +35,8 @@ class Lights {
 #if _DEBUG
 	friend class BladeRunnerEngine;
 #endif
+	friend class SliceRenderer;
+
 	BladeRunnerEngine *_vm;
 
 	Color _ambientLightColor;

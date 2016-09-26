@@ -58,6 +58,20 @@ public:
 	{}
 
 	float length() { return sqrtf(x * x + y * y + z * z); }
+	Vector3 normalize() {
+		float len = length();
+		if (len == 0) {
+			return Vector3(0.0f, 0.0f, 0.0f);
+		}
+		return Vector3(x / len, y / len, z / len);
+	}
+
+	static Vector3 cross(Vector3 a, Vector3 b) {
+		return Vector3(
+			a.y * b.z - a.z * b.y,
+			a.z * b.x - a.x * b.z,
+			a.x * b.y - a.y * b.x);
+	}
 };
 
 inline
