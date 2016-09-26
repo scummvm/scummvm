@@ -34,7 +34,6 @@ namespace Chewy {
 // ======================
 // back/episode1.gep
 // cut/blende.rnd
-// cut/cut.tap
 // misc/*.taf, room/*.taf
 // misc/exit.eib
 // misc/inventar.iib

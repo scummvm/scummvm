@@ -20,7 +20,12 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/raw.h"
 #include "common/stream.h"
+#include "common/system.h"
+#include "engines/engine.h"
 #include "video/flic_decoder.h"
 
 #include "chewy/video/cfo_decoder.h"
@@ -47,7 +52,7 @@ enum CustomSubChunk {
 	kChunkFreeSoundEffect = 16,
 	kChunkMusicFadeIn = 17,
 	kChunkMusicFadeOut = 18,
-	kChunkSetStero = 19,
+	kChunkSetBalance = 19,
 	kChunkSetSpeed = 20,
 	kChunkClearScreen = 21
 };
@@ -71,6 +76,19 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height) :
 	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true) {
 	readHeader();
+
+	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
+		_soundEffects[i] = nullptr;
+		_soundEffectSize[i] = 0;
+	}
+}
+
+CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
+	g_engine->_mixer->stopAll();
+
+	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
+		delete[] _soundEffects[i];
+	}
 }
 
 void CfoDecoder::CfoVideoTrack::readHeader() {
@@ -154,107 +172,145 @@ void CfoDecoder::CfoVideoTrack::handleFrame() {
 void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	uint16 chunkCount = _fileStream->readUint16LE();
 
+	uint16 delay, number, channel, volume, repeat, balance;
+	Audio::AudioStream *stream;
+
 	// Read subchunks
 	for (uint32 i = 0; i < chunkCount; ++i) {
 		uint32 frameSize = _fileStream->readUint32LE();
 		uint16 frameType = _fileStream->readUint16LE();
-		uint8 *data = new uint8[frameSize];
-		_fileStream->read(data, frameSize);
 
 		switch (frameType) {
 		case kChunkFadeIn:
-			warning("kChunkFadeIn");
+			delay = _fileStream->readUint16LE();
+
+			warning("kChunkFadeIn, delay %d", delay);
 			// TODO
 			break;
 		case kChunkFadeOut:
-			warning("kChunkFadeOut");
+			delay = _fileStream->readUint16LE();
+
+			warning("kChunkFadeOut, delay %d", delay);
 			// TODO
 			break;
 		case kChunkLoadMusic:
 			warning("kChunkLoadMusic");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkLoadRaw:
-			warning("kChunkLoadRaw");
-			// TODO
+			error("Unused chunk kChunkLoadRaw found");
 			break;
 		case kChunkLoadVoc:
-			warning("kChunkLoadVoc");
-			// TODO
+			number = _fileStream->readUint16LE();
+			assert(number < MAX_SOUND_EFFECTS);
+			delete[] _soundEffects[number];
+
+			_soundEffectSize[number] = frameSize - 2;
+			_soundEffects[number] = (byte *)malloc(frameSize - 2);
+			_fileStream->read(_soundEffects[number], frameSize - 2);
 			break;
 		case kChunkPlayMusic:
 			warning("kChunkPlayMusic");
+			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkPlaySeq:
 			warning("kChunkPlaySeq");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkPlayPattern:
 			warning("kChunkPlayPattern");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkStopMusic:
-			warning("kChunkStopMusic");
-			// TODO
+			g_engine->_mixer->stopHandle(_musicHandle);
 			break;
 		case kChunkWaitMusicEnd:
-			warning("kChunkWaitMusicEnd");
-			// TODO
+			do {
+				g_system->delayMillis(10);
+			} while (g_engine->_mixer->isSoundHandleActive(_musicHandle));
 			break;
 		case kChunkSetMusicVolume:
-			warning("kChunkSetMusicVolume");
-			// TODO
+			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
+
+			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
 			break;
 		case kChunkSetLoopMode:
 			warning("kChunkSetLoopMode");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkPlayRaw:
-			warning("kChunkPlayRaw");
-			// TODO
+			error("Unused chunk kChunkPlayRaw found");
 			break;
 		case kChunkPlayVoc:
-			warning("kChunkPlayVoc");
-			// TODO
+			number = _fileStream->readUint16LE();
+			channel = _fileStream->readUint16LE();
+			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
+			repeat = _fileStream->readUint16LE();
+			assert(number < MAX_SOUND_EFFECTS);
+			assert(channel < MAX_SOUND_EFFECTS);
+
+			stream = Audio::makeLoopingAudioStream(
+				Audio::makeRawStream(_soundEffects[number],
+				_soundEffectSize[number], 22050, Audio::FLAG_UNSIGNED,
+				DisposeAfterUse::NO),
+				(repeat == 0) ? 1 : repeat);
+
+			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
+			g_engine->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 			break;
 		case kChunkSetSoundVolume:
-			warning("kChunkSetSoundVolume");
-			// TODO
+			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
+
+			g_engine->_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
 			break;
 		case kChunkSetChannelVolume:
-			warning("kChunkSetChannelVolume");
-			// TODO
+			channel = _fileStream->readUint16LE();
+			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
+			assert(channel < MAX_SOUND_EFFECTS);
+
+			g_engine->_mixer->setChannelVolume(_soundHandle[channel], volume);
 			break;
 		case kChunkFreeSoundEffect:
-			warning("kChunkFreeSoundEffect");
-			// TODO
+			number = _fileStream->readUint16LE();
+			assert(number < MAX_SOUND_EFFECTS);
+
+			delete[] _soundEffects[number];
+			_soundEffects[number] = nullptr;
 			break;
 		case kChunkMusicFadeIn:
 			warning("kChunkMusicFadeIn");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkMusicFadeOut:
 			warning("kChunkMusicFadeOut");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
-		case kChunkSetStero:
-			warning("kChunkSetStero");
-			// TODO
+		case kChunkSetBalance:
+			channel = _fileStream->readUint16LE();
+			balance = (_fileStream->readUint16LE() * 2) - 127;
+			assert(channel < MAX_SOUND_EFFECTS);
+
+			g_engine->_mixer->setChannelBalance(_soundHandle[channel], balance);
 			break;
 		case kChunkSetSpeed:
 			warning("kChunkSetSpeed");
 			// TODO
+			_fileStream->skip(frameSize);
 			break;
 		case kChunkClearScreen:
-			warning("kChunkClearScreen");
-			// TODO
+			g_system->fillScreen(0);
 			break;
 		default:
 			error("Unknown subchunk: %d", frameType);
 			break;
 		}
-
-		delete[] data;
 	}
 }
 
