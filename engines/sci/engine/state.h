@@ -104,6 +104,10 @@ struct SciCallOrigin {
 	Common::String methodName; //< The name of the method being called
 	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
 	int roomNr; //< The room that was loaded at the time of the call
+
+	Common::String toString() const {
+		return Common::String::format("method %s::%s (room %d, script %d, localCall %x)", objectName.c_str(), methodName.c_str(), roomNr, scriptNr, localCallOffset);
+	}
 };
 
 struct EngineState : public Common::Serializable {
