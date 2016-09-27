@@ -577,7 +577,7 @@ void CLHNM_SoundMono(bool isMono) {
 	use_mono = isMono;
 }
 
-int16 CLHNM_NextElement(hnm_t *hnm) {
+bool CLHNM_NextElement(hnm_t *hnm) {
 	int sz;
 	int16 id;
 	char h6, h7;
@@ -587,9 +587,9 @@ int16 CLHNM_NextElement(hnm_t *hnm) {
 		pred_l = pred_r = 0;
 	}
 	if (hnm->frame == hnm->header.nframe)
-		return 0;
+		return false;
 	if (!CLHNM_LoadFrame(hnm))
-		return 0;
+		return false;
 	for (;;) {
 		sz = PLE32(hnm->data_ptr) & 0xFFFFFF;
 		hnm->data_ptr += 4;
@@ -694,7 +694,7 @@ end_frame:
 	;
 	if (use_preload) {
 	}
-	return 1;
+	return true;
 }
 
 void CLHNM_ReadHeader(hnm_t *hnm) {

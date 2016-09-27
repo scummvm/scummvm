@@ -62,7 +62,7 @@ void EdenGame::removeConsole() {
 }
 
 void EdenGame::scroll() {
-	restaurefrises();
+	restoreFriezes();
 	p_mainview->norm.src_left = scroll_pos;
 	p_mainview->zoom.src_left = scroll_pos;
 }
@@ -70,7 +70,7 @@ void EdenGame::scroll() {
 void EdenGame::resetScroll() {
 	old_scroll_pos = scroll_pos;
 	scroll_pos = 0;
-	restaurefrises();   //TODO: inlined scroll() ?
+	restoreFriezes();   //TODO: inlined scroll() ?
 	p_mainview->norm.src_left = 0;
 	p_mainview->zoom.src_left = 0;
 }
@@ -98,7 +98,7 @@ void EdenGame::displayFrescoes() {
 void EdenGame::gametofresques() {
 	frescoTalk = false;
 	rundcurs();
-	sauvefrises();
+	saveFriezes();
 	displayFrescoes();
 	p_global->displayFlags = DisplayFlags::dfFrescoes;
 }
@@ -226,10 +226,10 @@ void EdenGame::gametomiroir(byte arg1) {
 	int16 bank;
 	if (p_global->displayFlags != DisplayFlags::dfFlag2) {
 		rundcurs();
-		restaurefrises();
+		restoreFriezes();
 		drawTopScreen();
 		showObjects();
-		sauvefrises();
+		saveFriezes();
 	}
 	bank = p_global->roomBgBankNum;
 	if (bank == 76 || bank == 128)
@@ -285,7 +285,7 @@ void EdenGame::quitMirror() {
 	rundcurs();
 	afficher();
 	resetScroll();
-	sauvefrises();
+	saveFriezes();
 	p_global->displayFlags = DisplayFlags::dfFlag1;
 	p_global->ff_100 = 0xFF;
 	p_global->eventType = EventType::etEventC;
@@ -828,22 +828,26 @@ void EdenGame::final() {
 	p_global->narratorSequence = 54;
 }
 
-void EdenGame::goto_nord() {
+// Original name: goto_nord
+void EdenGame::moveNorth() {
 	if (p_global->curObjectId == 0)
 		move(kCryoNorth);
 }
 
-void EdenGame::goto_est() {
+// Original name: goto_est
+void EdenGame::moveEast() {
 	if (p_global->curObjectId == 0)
 		move(kCryoEast);
 }
 
-void EdenGame::goto_sud() {
+// Original name: goto_sud
+void EdenGame::moveSouth() {
 	if (p_global->curObjectId == 0)
 		move(kCryoSouth);
 }
 
-void EdenGame::goto_ouest() {
+// Original name: goto_ouest
+void EdenGame::moveWest() {
 	if (p_global->curObjectId == 0)
 		move(kCryoWest);
 }
@@ -880,12 +884,14 @@ void EdenGame::afficher128() {
 	}
 }
 
-void EdenGame::sauvefrises() {
-	sauvefriseshaut(0);
-	sauvefrisesbas();
+// Original name: sauvefrises
+void EdenGame::saveFriezes() {
+	saveTopFrieze(0);
+	saveBottomFrieze();
 }
 
-void EdenGame::sauvefriseshaut(int16 x) { // Save top bar
+// Original name: sauvefriseshaut
+void EdenGame::saveTopFrieze(int16 x) { // Save top bar
 	underTopBarScreenRect.sy = 0;       //TODO: wrong fields order?
 	underTopBarScreenRect.sx = x;
 	underTopBarScreenRect.ex = x + 320 - 1;
@@ -897,24 +903,28 @@ void EdenGame::sauvefriseshaut(int16 x) { // Save top bar
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underTopBarScreenRect, &underTopBarBackupRect);
 }
 
-void EdenGame::sauvefrisesbas() {         // Save bottom bar
+// Original name: sauvefrisesbas
+void EdenGame::saveBottomFrieze() {         // Save bottom bar
 	underBottomBarScreenRect.sx = 0;
 	underBottomBarScreenRect.ex = 320 - 1;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underBottomBarScreenRect, &underBottomBarBackupRect);
 }
 
-void EdenGame::restaurefrises() {
-	restaurefriseshaut();
-	restaurefrisesbas();
+// Original name: restaurefrises
+void EdenGame::restoreFriezes() {
+	restoreTopFrieze();
+	restoreBottomFrieze();
 }
 
-void EdenGame::restaurefriseshaut() {
+// Original name: restaurefriseshaut
+void EdenGame::restoreTopFrieze() {
 	underTopBarScreenRect.sx = scroll_pos;
 	underTopBarScreenRect.ex = scroll_pos + 320 - 1;
 	CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarBackupRect, &underTopBarScreenRect);
 }
 
-void EdenGame::restaurefrisesbas() {
+// Original name: restaurefrisesbas
+void EdenGame::restoreBottomFrieze() {
 	underBottomBarScreenRect.sx = scroll_pos;
 	underBottomBarScreenRect.ex = scroll_pos + 320 - 1;
 	CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underBottomBarBackupRect, &underBottomBarScreenRect);
@@ -1490,14 +1500,14 @@ void EdenGame::affplanval() { // Draw mini-map
 		}
 		if (p_global->area_ptr->citadelLevel)
 			affrepere(34, p_global->area_ptr->citadelRoom->location);
-		sauvefriseshaut(0);
+		saveTopFrieze(0);
 		loc = p_global->roomNum & 0xFF;
 		if (loc >= 16)
 			affrepereadam(loc);
-		restaurefriseshaut();
+		restoreTopFrieze();
 	} else {
-		sauvefriseshaut(0);
-		restaurefriseshaut();
+		saveTopFrieze(0);
+		restoreTopFrieze();
 	}
 }
 
@@ -5094,7 +5104,7 @@ void EdenGame::afsalle() {
 			p_global->displayFlags |= DisplayFlags::dfPanable;
 			p_global->ff_F4 = 0;
 			rundcurs();
-			sauvefrises();
+			saveFriezes();
 			use_bank(room->bank - 1);
 			noclipax_avecnoir(0, 0, 16);
 			use_bank(room->bank);
@@ -5641,7 +5651,7 @@ void EdenGame::entergame() {
 	}
 	showObjects();
 	drawTopScreen();
-	sauvefrises();
+	saveFriezes();
 	showBlackBars = 1;
 	p_global->ff_102 = 1;
 	maj_salle(p_global->roomNum);
@@ -5827,16 +5837,16 @@ void EdenGame::update_cursor() {
 
 void EdenGame::mouse() {
 	static void (EdenGame::*mouse_actions[])() = {
-		&EdenGame::goto_nord,
-		&EdenGame::goto_est,
-		&EdenGame::goto_sud,
-		&EdenGame::goto_ouest,
+		&EdenGame::moveNorth,
+		&EdenGame::moveEast,
+		&EdenGame::moveSouth,
+		&EdenGame::moveWest,
 		&EdenGame::plaquemonk,
 		&EdenGame::fresquesgraa,
 		&EdenGame::pushpierre,
 		&EdenGame::tetesquel,
 		&EdenGame::tetemomie,
-		&EdenGame::goto_nord,
+		&EdenGame::moveNorth,
 		&EdenGame::roiparle1,
 		&EdenGame::roiparle2,
 		&EdenGame::roiparle3,
@@ -5849,8 +5859,8 @@ void EdenGame::mouse() {
 		&EdenGame::ret,
 		&EdenGame::ret,
 		&EdenGame::final,
-		&EdenGame::goto_nord,
-		&EdenGame::goto_sud,
+		&EdenGame::moveNorth,
+		&EdenGame::moveSouth,
 		&EdenGame::visiter,
 		&EdenGame::dinosoufle,
 		&EdenGame::fresqueslasc,
@@ -6116,8 +6126,8 @@ void EdenGame::mouse() {
 }
 
 ////// film.c
-void EdenGame::showfilm(char arg1) {
-	int16 playing;
+// Original name: showfilm
+void EdenGame::showMovie(char arg1) {
 	CLHNM_Prepare2Read(p_hnmcontext, 0);
 	CLHNM_ReadHeader(p_hnmcontext);
 	if (p_global->curVideoNum == 92) {
@@ -6125,7 +6135,7 @@ void EdenGame::showfilm(char arg1) {
 		CLSoundChannel_SetVolumeLeft(hnmsound_ch, 0);
 		CLSoundChannel_SetVolumeRight(hnmsound_ch, 0);
 	}
-	playing = 1;
+	bool playing = true;
 	if (CLHNM_GetVersion(p_hnmcontext) != 4)
 		return;
 	CLHNM_AllocMemory(p_hnmcontext);
@@ -6208,9 +6218,9 @@ void EdenGame::playHNM(int16 num) {
 		needToFade = 0;
 	}
 	if (num == 2012 || num == 98 || num == 171)
-		showfilm(0);
+		showMovie(0);
 	else
-		showfilm(1);
+		showMovie(1);
 	curs_keepx = curs_keepy = -1;
 	p_mainview->doubled = doubled;
 	if (specialTextMode) {
@@ -6530,7 +6540,7 @@ void EdenGame::showObjects() {
 	}
 	needPaletteUpdate = 1;
 	if ((p_global->displayFlags & DisplayFlags::dfMirror) || (p_global->displayFlags & DisplayFlags::dfPanable)) {
-		sauvefrisesbas();
+		saveBottomFrieze();
 		scroll();
 	}
 }
@@ -6974,7 +6984,7 @@ void EdenGame::panelrestart() {
 	CLBlitter_FillView(p_mainview, 0);
 	drawTopScreen();
 	showObjects();
-	sauvefrises();
+	saveFriezes();
 	showBlackBars = 1;
 	maj_salle(p_global->roomNum);
 }

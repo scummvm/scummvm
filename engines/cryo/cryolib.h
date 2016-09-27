@@ -351,7 +351,7 @@ void CLHNM_LoadDecompTable(int16 *buffer);
 void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size);
 void CLHNM_SoundInADPCM(int16 is_adpcm);
 void CLHNM_SoundMono(int16 is_mono);
-int16 CLHNM_NextElement(hnm_t *hnm);
+bool CLHNM_NextElement(hnm_t *hnm);
 void CLHNM_ReadHeader(hnm_t *hnm);
 int16 CLHNM_GetVersion(hnm_t *hnm);
 int CLHNM_GetFrameNum(hnm_t *hnm);
