@@ -317,6 +317,9 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
 
+	if (scene == -1)
+		return true;
+
 	if (scene) {
 		_gameLoader->loadScene(726);
 		_gameLoader->gotoScene(726, TrubaLeft);

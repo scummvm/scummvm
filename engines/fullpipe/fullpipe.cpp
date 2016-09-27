@@ -275,8 +275,15 @@ Common::Error FullpipeEngine::run() {
 	if (ConfMan.hasKey("boot_param"))
 		scene = convertScene(ConfMan.getInt("boot_param"));
 
+	if (ConfMan.hasKey("save_slot"))
+		scene = -1;
+
 	if (!loadGam("fullpipe.gam", scene))
 		return Common::kNoGameDataFoundError;
+
+	if (ConfMan.hasKey("save_slot")) {
+		_gameLoader->readSavegame(getSavegameFile(ConfMan.getInt("save_slot")));
+	}
 
 #if 0
 	loadAllScenes();
