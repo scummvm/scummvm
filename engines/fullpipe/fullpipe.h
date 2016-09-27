@@ -332,8 +332,12 @@ public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &description);
+
+	virtual bool canLoadGameStateCurrently() { return true; }
+	virtual bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	virtual bool hasFeature(EngineFeature f) const;
 
 };
 

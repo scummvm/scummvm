@@ -40,13 +40,13 @@
 
 namespace Fullpipe {
 
-void GameLoader::readSavegame(const char *fname) {
+bool GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
 
 	if (!saveFile) {
 		warning("Cannot open save %s for loading", fname);
-		return;
+		return false;
 	}
 
 	header.version = saveFile->readUint32LE();
@@ -59,7 +59,7 @@ void GameLoader::readSavegame(const char *fname) {
 			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
 
 	if (header.version != 48)
-		return;
+		return false;
 
 	_updateCounter = header.updateCounter;
 
@@ -92,7 +92,7 @@ void GameLoader::readSavegame(const char *fname) {
 		if (!v) {
 			warning("No state to save");
 			delete archive;
-			return;
+			return false;
 		}
 	}
 
@@ -141,7 +141,7 @@ void GameLoader::readSavegame(const char *fname) {
 
 		if (_preloadCallback) {
 			if (!_preloadCallback(preloadItem, 0))
-				return;
+				return false;
 		}
 
 		clearGlobalMessageQueueList1();
@@ -165,6 +165,8 @@ void GameLoader::readSavegame(const char *fname) {
 
 		ex->postMessage();
 	}
+
+	return true;
 }
 
 void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {

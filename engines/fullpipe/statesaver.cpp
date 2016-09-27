@@ -31,7 +31,7 @@
 
 namespace Fullpipe {
 
-void GameLoader::writeSavegame(Scene *sc, const char *fname) {
+bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (!v) {
@@ -39,7 +39,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 		if (!v) {
 			warning("No state to save");
-			return;
+			return false;
 		}
 	}
 
@@ -112,7 +112,7 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	if (!saveFile) {
 		warning("Cannot open file for writing: %s", fname);
-		return;
+		return false;
 	}
 
 	saveFile->writeUint32LE(header.version);
@@ -154,6 +154,8 @@ void GameLoader::writeSavegame(Scene *sc, const char *fname) {
 
 	delete saveFile;
 	delete archive;
+
+	return true;
 }
 
 

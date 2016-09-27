@@ -112,8 +112,8 @@ class GameLoader : public CObject {
 	void saveScenePicAniInfos(int sceneId);
 	PicAniInfo **savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount);
 
-	void readSavegame(const char *fname);
-	void writeSavegame(Scene *sc, const char *fname);
+	bool readSavegame(const char *fname);
+	bool writeSavegame(Scene *sc, const char *fname);
 
 	void addVar(GameVar *var, GameVar *subvar);
 

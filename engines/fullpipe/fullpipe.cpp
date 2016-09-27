@@ -256,6 +256,20 @@ void FullpipeEngine::restartGame() {
 	}
 }
 
+Common::Error FullpipeEngine::loadGameState(int slot) {
+	if (_gameLoader->readSavegame(getSavegameFile(slot)))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+Common::Error FullpipeEngine::saveGameState(int slot, const Common::String &description) {
+	if (_gameLoader->writeSavegame(_currentScene, getSavegameFile(slot)))
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
+}
+
+
 Common::Error FullpipeEngine::run() {
 	const Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	// Initialize backend
@@ -282,7 +296,7 @@ Common::Error FullpipeEngine::run() {
 		return Common::kNoGameDataFoundError;
 
 	if (ConfMan.hasKey("save_slot")) {
-		_gameLoader->readSavegame(getSavegameFile(ConfMan.getInt("save_slot")));
+		loadGameState(ConfMan.getInt("save_slot"));
 	}
 
 #if 0

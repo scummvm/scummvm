@@ -106,6 +106,13 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
+bool Fullpipe::FullpipeEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
