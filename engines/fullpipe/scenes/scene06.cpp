@@ -261,8 +261,7 @@ void sceneHandler06_buttonPush() {
 
 void sceneHandler06_showNextBall() {
 	if (g_vars->scene06_balls.size()) {
-		g_vars->scene06_currentBall = new StaticANIObject(g_vars->scene06_balls.front());
-		g_vars->scene06_balls.remove_at(0);
+		g_vars->scene06_currentBall = g_vars->scene06_balls.remove_at(0);
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
