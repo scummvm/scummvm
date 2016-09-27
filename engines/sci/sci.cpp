@@ -1123,9 +1123,9 @@ void SciEngine::syncIngameAudioOptions() {
 
 		if (useGlobal90) {
 			if (subtitlesOn && !speechOn) {
-				_gamestate->variables[VAR_GLOBAL][kMessageType] = make_reg(0, 1);	// subtitles
+				_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 1);	// subtitles
 			} else if (!subtitlesOn && speechOn) {
-				_gamestate->variables[VAR_GLOBAL][kMessageType] = make_reg(0, 2);	// speech
+				_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 2);	// speech
 			} else if (subtitlesOn && speechOn) {
 				// Is it a game that supports simultaneous speech and subtitles?
 				switch (_gameId) {
@@ -1146,11 +1146,11 @@ void SciEngine::syncIngameAudioOptions() {
 				// Phantasmagoria does not support simultaneous speech + subtitles
 				// Mixed Up Mother Goose Deluxe does not support simultaneous speech + subtitles
 #endif // ENABLE_SCI32
-					_gamestate->variables[VAR_GLOBAL][kMessageType] = make_reg(0, 3);	// speech + subtitles
+					_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 3);	// speech + subtitles
 					break;
 				default:
 					// Game does not support speech and subtitles, set it to speech
-					_gamestate->variables[VAR_GLOBAL][kMessageType] = make_reg(0, 2);	// speech
+					_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 2);	// speech
 				}
 			}
 		}
@@ -1161,7 +1161,7 @@ void SciEngine::updateScummVMAudioOptions() {
 	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
 	// depending on the in-game settings
 	if (isCD() && getSciVersion() == SCI_VERSION_1_1) {
-		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][kMessageType].getOffset();
+		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType].getOffset();
 
 		switch (ingameSetting) {
 		case 1:
