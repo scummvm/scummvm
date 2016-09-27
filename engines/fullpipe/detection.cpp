@@ -102,7 +102,8 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSupportsLoadingDuringStartup);
+		(f == kSupportsLoadingDuringStartup) ||
+		(f == kSimpleSavesNames);
 }
 
 SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
