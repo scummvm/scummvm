@@ -509,7 +509,6 @@ template<typename T>
 void Scene::objectList_sortByPriority(Common::Array<T *> &list, int startIndex) {
 	if (list.size() > startIndex) {
 		int lastIndex = list.size() - 1;
-		int count = lastIndex - startIndex;
 		bool changed;
 		do {
 			changed = false;
@@ -524,7 +523,7 @@ void Scene::objectList_sortByPriority(Common::Array<T *> &list, int startIndex) 
 				} else
 					refElement = curElement;
 			}
-			count--;
+			lastIndex--;
 		} while (changed);
 	}
 }
