@@ -40,7 +40,6 @@ namespace Chewy {
 // misc/exit.eib
 // misc/inventar.iib
 // misc/inventar.sib
-// room/csp.int
 // room/test.rdi
 // txt/*.tap
 // txt/diah.adh
@@ -375,8 +374,8 @@ Font::~Font() {
 	line->create(text.size() * _width, _height, ::Graphics::PixelFormat::createFormatCLUT8());
 
 	for (uint i = 0; i < text.size(); i++) {
-		int c = text[i];
-		line->copyRectToSurface(_fontSurface, i * _width, 0, Common::Rect((c - _first) * _width, 0, (c - _first) * _width + _width, _height));
+		uint x = (text[i] - _first) * _width;
+		line->copyRectToSurface(_fontSurface, i * _width, 0, Common::Rect(x, 0, x + _width, _height));
 	}
 
 	return line;
