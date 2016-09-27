@@ -572,6 +572,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		50    /* Explosion */
 	};
 
+	Timeline &timeline = *_vm->_timeline;
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
 		decompressDungeonFile();
 
@@ -690,7 +691,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 		_dungeonTextData[i] = dunDataStream->readUint16BE();
 
 	if (_vm->_gameMode != kDMModeLoadSavedGame)
-		_vm->_timeline->_eventMaxCount = 100;
+		timeline._eventMaxCount = 100;
 
 	// load things
 	for (uint16 thingType = kDMThingTypeDoor; thingType < kDMThingTypeTotal; ++thingType) {
@@ -728,7 +729,7 @@ void DungeonMan::loadDungeonFile(Common::InSaveFile *file) {
 
 		if (_vm->_gameMode != kDMModeLoadSavedGame) {
 			if ((thingType == kDMThingTypeGroup) || thingType >= kDMThingTypeProjectile)
-				_vm->_timeline->_eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
+				timeline._eventMaxCount += _dungeonFileHeader._thingCounts[thingType];
 
 			for (uint16 i = 0; i < additionalThingCounts[thingType]; ++i)
 				(_thingData[thingType] + (thingCount + i) * thingStoreWordCount)[0] = Thing::_none.toUint16();
@@ -1439,6 +1440,9 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 	if (thingType == kDMThingTypeExplosion)
 		return Thing::_none;
 
+	GroupMan &groupMan = *_vm->_groupMan;
+	ProjExpl &projExpl = *_vm->_projexpl;
+
 	int16 currentMapIdx = _currMapIndex;
 	uint16 mapIndex = lastDiscardedThingMapIndex[thingType];
 	if ((mapIndex == _partyMapIndex) && (++mapIndex >= _dungeonFileHeader._mapCount))
@@ -1473,12 +1477,12 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 							case kDMThingTypeProjectile:
 								setCurrentMap(mapIndex);
 								if (thingType == kDMThingTypeGroup) {
-									_vm->_groupMan->dropGroupPossessions(currMapX, currMapY, squareThing, kDMSoundModeDoNotPlaySound);
-									_vm->_groupMan->groupDelete(currMapX, currMapY);
+									groupMan.dropGroupPossessions(currMapX, currMapY, squareThing, kDMSoundModeDoNotPlaySound);
+									groupMan.groupDelete(currMapX, currMapY);
 								} else {
-									_vm->_projexpl->projectileDeleteEvent(squareThing);
+									projExpl.projectileDeleteEvent(squareThing);
 									unlinkThingFromList(squareThing, Thing(0), currMapX, currMapY);
-									_vm->_projexpl->projectileDelete(squareThing, 0, currMapX, currMapY);
+									projExpl.projectileDelete(squareThing, 0, currMapX, currMapY);
 								}
 								break;
 							case kDMThingTypeArmour:

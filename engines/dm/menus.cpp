@@ -190,6 +190,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 		return;
 	DisplayMan &dm = *_vm->_displayMan;
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	Champion &champion = championMan._champions[championIndex];
 
 	Box box;
@@ -207,7 +208,7 @@ void MenuMan::drawActionIcon(ChampionIndex championIndex) {
 	IconIndice iconIndex;
 	if (thing == Thing::_none) {
 		iconIndex = kDMIconIndiceActionEmptyHand;
-	} else if (_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thing)]._actionSetIndex) {
+	} else if (dungeon._objectInfos[dungeon.getObjectInfoIndex(thing)]._actionSetIndex) {
 		iconIndex = _vm->_objectMan->getIconIndex(thing);
 	} else {
 		dm.fillBitmap(bitmapIcon, kDMColorCyan, 16, 16);
@@ -534,7 +535,7 @@ int16 MenuMan::getClickOnSpellCastResult() {
 
 int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 	ChampionMan &championMan = *_vm->_championMan;
-
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	if (champIndex >= championMan._partyChampionCount)
 		return kDMSpellCastFailure;
 
@@ -569,10 +570,10 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			menusPrintSpellFailureMessage(curChampion, kDMFailureNeedsFlaskInHand, 0);
 			return kDMSpellCastFailureNeedsFlask;
 		}
-		uint16 emptyFlaskWeight = _vm->_dungeonMan->getObjectWeight(newObject);
+		uint16 emptyFlaskWeight = dungeon.getObjectWeight(newObject);
 		newPotion->setType((PotionType)curSpell->getType());
 		newPotion->setPower(_vm->getRandomNumber(16) + (powerSymbolOrdinal * 40));
-		curChampion->_load += _vm->_dungeonMan->getObjectWeight(newObject) - emptyFlaskWeight;
+		curChampion->_load += dungeon.getObjectWeight(newObject) - emptyFlaskWeight;
 		championMan.drawChangedObjectIcons();
 		if (_vm->_inventoryMan->_inventoryChampionOrdinal == _vm->indexToOrdinal(champIndex)) {
 			setFlag(curChampion->_attributes, kDMAttributeLoad);
@@ -581,8 +582,8 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 		}
 		break;
 	case kDMSpellKindProjectile:
-		if (curChampion->_dir != _vm->_dungeonMan->_partyDir) {
-			curChampion->_dir = _vm->_dungeonMan->_partyDir;
+		if (curChampion->_dir != dungeon._partyDir) {
+			curChampion->_dir = dungeon._partyDir;
 			setFlag(curChampion->_attributes, kDMAttributeIcon);
 			championMan.drawChampionState((ChampionIndex)champIndex);
 		}
@@ -624,7 +625,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			championMan._party._event73Count_ThievesEye++;
 			spellPower = (spellPower >> 1);
 			uint16 spellTicks = spellPower * spellPower;
-			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -632,7 +633,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			newEvent._type = kDMEventTypeInvisibility;
 			championMan._party._event71Count_Invisibility++;
 			uint16 spellTicks = spellPower;
-			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -645,7 +646,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 			championMan._party._shieldDefense += newEvent._Bu._defense;
 			_vm->_timeline->refreshAllChampionStatusBoxes();
 			uint16 spellTicks = spellPower * spellPower;
-			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
@@ -659,16 +660,16 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				championMan._party._lastScentIndex = 0;
 
 			uint16 spellTicks = spellPower * spellPower;
-			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + spellTicks);
+			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + spellTicks);
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
 			}
 			break;
 		case kDMSpellTypeOtherZokathra: {
-			Thing unusedObject = _vm->_dungeonMan->getUnusedThing(kDMThingTypeJunk);
+			Thing unusedObject = dungeon.getUnusedThing(kDMThingTypeJunk);
 			if (unusedObject == Thing::_none)
 				break;
 
-			Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(unusedObject);
+			Junk *junkData = (Junk *)dungeon.getThingData(unusedObject);
 			junkData->setType(kDMJunkTypeZokathra);
 			ChampionSlot slotIndex;
 			if (curChampion->_slots[kDMSlotReadyHand] == Thing::_none)
@@ -682,7 +683,7 @@ int16 MenuMan::getChampionSpellCastResult(uint16 champIndex) {
 				championMan.addObjectInSlot((ChampionIndex)champIndex, unusedObject, slotIndex);
 				championMan.drawChampionState((ChampionIndex)champIndex);
 			} else
-				_vm->_moveSens->getMoveResult(unusedObject, kDMMapXNotOnASquare, 0, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+				_vm->_moveSens->getMoveResult(unusedObject, kDMMapXNotOnASquare, 0, dungeon._partyMapX, dungeon._partyMapY);
 
 			}
 			break;
@@ -815,11 +816,12 @@ void MenuMan::menusPrintSpellFailureMessage(Champion *champ, uint16 failureType,
 }
 
 Potion *MenuMan::getEmptyFlaskInHand(Champion *champ, Thing *potionThing) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	for (int16 slotIndex = kDMSlotHead; --slotIndex >= kDMSlotReadyHand; ) {
 		Thing curThing = champ->_slots[slotIndex];
 		if ((curThing != Thing::_none) && (_vm->_objectMan->getIconIndex(curThing) == kDMIconIndicePotionEmptyFlask)) {
 			*potionThing = curThing;
-			return (Potion *)_vm->_dungeonMan->getThingData(curThing);
+			return (Potion *)dungeon.getThingData(curThing);
 		}
 	}
 	return nullptr;
@@ -1077,10 +1079,12 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	if (!curChampion->_currHealth)
 		return false;
 
-	Weapon *weaponInHand = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[kDMSlotActionHand]);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	int16 nextMapX = _vm->_dungeonMan->_partyMapX;
-	int16 nextMapY = _vm->_dungeonMan->_partyMapY;
+	Weapon *weaponInHand = (Weapon *)dungeon.getThingData(curChampion->_slots[kDMSlotActionHand]);
+
+	int16 nextMapX = dungeon._partyMapX;
+	int16 nextMapY = dungeon._partyMapY;
 	nextMapX += _vm->_dirIntoStepCountEast[curChampion->_dir];
 	nextMapY += _vm->_dirIntoStepCountNorth[curChampion->_dir];
 	_actionTargetGroupThing = _vm->_groupMan->groupGetThing(nextMapX, nextMapY);
@@ -1088,7 +1092,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	int16 actionSkillIndex = _actionSkillIndex[actionIndex];
 	int16 actionStamina = actionStaminaArray[actionIndex] + _vm->getRandomNumber(2);
 	int16 actionExperienceGain = actionExperienceGainArray[actionIndex];
-	uint16 targetSquare = _vm->_dungeonMan->getSquare(nextMapX, nextMapY).toByte();
+	uint16 targetSquare = dungeon.getSquare(nextMapX, nextMapY).toByte();
 
 	int16 requiredManaAmount = 0;
 	if (((actionSkillIndex >= kDMSkillFire) && (actionSkillIndex <= kDMSkillWater)) || (actionSkillIndex == kDMSkillWizard))
@@ -1126,10 +1130,10 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 	case kDMActionSwing:
 	case kDMActionChop:
 		if ((Square(targetSquare).getType() == kDMElementTypeDoor) && (Square(targetSquare).getDoorState() == kDMDoorStateClosed)) {
-			_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+			_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 			actionDisabledTicks = 6;
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(nextMapX, nextMapY, championMan.getStrength(champIndex, kDMSlotActionHand), false, 2);
-			_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
+			_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayOneTickLater);
 			break;
 		}
 	case kDMActionDisrupt:
@@ -1170,8 +1174,8 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			break;
 		}
 
-		WeaponInfo *weaponInfoActionHand = &_vm->_dungeonMan->_weaponInfos[weaponInHand->getType()];
-		WeaponInfo *weaponInfoReadyHand = _vm->_dungeonMan->getWeaponInfo(curChampion->_slots[kDMSlotReadyHand]);
+		WeaponInfo *weaponInfoActionHand = &dungeon._weaponInfos[weaponInHand->getType()];
+		WeaponInfo *weaponInfoReadyHand = dungeon.getWeaponInfo(curChampion->_slots[kDMSlotReadyHand]);
 		int16 actionHandWeaponClass = weaponInfoActionHand->_class;
 		int16 readyHandWeaponClass = weaponInfoReadyHand->_class;
 		int16 stepEnergy = actionHandWeaponClass;
@@ -1195,7 +1199,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 
 		setChampionDirectionToPartyDirection(curChampion);
 		Thing removedObject = championMan.getObjectRemovedFromSlot(champIndex, kDMSlotReadyHand);
-		_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+		_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 		championMan.championShootProjectile(curChampion, removedObject, weaponInfoActionHand->_kineticEnergy + weaponInfoReadyHand->_kineticEnergy, (weaponInfoActionHand->getShootAttack() + championMan.getSkillLevel(champIndex, kDMSkillShoot)) << 1, stepEnergy);
 		}
 		break;
@@ -1257,9 +1261,9 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionFuse:
 		setChampionDirectionToPartyDirection(curChampion);
-		nextMapX = _vm->_dungeonMan->_partyMapX;
-		nextMapY = _vm->_dungeonMan->_partyMapY;
-		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		nextMapX = dungeon._partyMapX;
+		nextMapY = dungeon._partyMapY;
+		nextMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir], nextMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 		_vm->_groupMan->fuseAction(nextMapX, nextMapY);
 		break;
 	case kDMActionHeal: {
@@ -1295,24 +1299,24 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		TimelineEvent newEvent;
 		newEvent._priority = 0;
 		newEvent._type = kDMEventTypeThievesEye;
-		newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + windowTicks);
+		newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + windowTicks);
 		_vm->_timeline->addEventGetEventIndex(&newEvent);
 		championMan._party._event73Count_ThievesEye++;
 		decrementCharges(curChampion);
 		}
 		break;
 	case kDMActionClimbDown:
-		nextMapX = _vm->_dungeonMan->_partyMapX;
-		nextMapY = _vm->_dungeonMan->_partyMapY;
-		nextMapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
-		nextMapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		nextMapX = dungeon._partyMapX;
+		nextMapY = dungeon._partyMapY;
+		nextMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir];
+		nextMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 		/* CHANGE6_00_FIX The presence of a group over the pit is checked so that you cannot climb down a pit with the rope if there is a group levitating over it */
-		if ((_vm->_dungeonMan->getSquare(nextMapX, nextMapY).getType() == kDMElementTypePit) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
+		if ((dungeon.getSquare(nextMapX, nextMapY).getType() == kDMElementTypePit) && (_vm->_groupMan->groupGetThing(nextMapX, nextMapY) == Thing::_endOfList)) {
 			/* BUG0_77 The party moves forward when using the rope in front of a closed pit. The engine does not check whether
 			   the pit is open before moving the party over the pit. This is not consistent with the behavior when using the
 			   rope in front of a corridor where nothing happens */
 			_vm->_moveSens->_useRopeToClimbDownPit = true;
-			_vm->_moveSens->getMoveResult(Thing::_party, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, nextMapX, nextMapY);
+			_vm->_moveSens->getMoveResult(Thing::_party, dungeon._partyMapX, dungeon._partyMapY, nextMapX, nextMapY);
 			_vm->_moveSens->_useRopeToClimbDownPit = false;
 		} else {
 			actionDisabledTicks = 0;
@@ -1342,7 +1346,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 		break;
 	case kDMActionThrow:
 		setChampionDirectionToPartyDirection(curChampion);
-		actionPerformed = championMan.isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == (ViewCell)_vm->turnDirRight(_vm->_dungeonMan->_partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(_vm->_dungeonMan->_partyDir)));
+		actionPerformed = championMan.isObjectThrown(champIndex, kDMSlotActionHand, (curChampion->_cell == (ViewCell)_vm->turnDirRight(dungeon._partyDir)) || (curChampion->_cell == (ViewCell)_vm->returnOppositeDir(dungeon._partyDir)));
 		if (actionPerformed)
 			_vm->_timeline->_events[curChampion->_enableActionEventIndex]._Bu._slotOrdinal = _vm->indexToOrdinal(kDMSlotActionHand);
 		break;
@@ -1377,8 +1381,10 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 }
 
 void MenuMan::setChampionDirectionToPartyDirection(Champion *champ) {
-	if (champ->_dir != _vm->_dungeonMan->_partyDir) {
-		champ->_dir = _vm->_dungeonMan->_partyDir;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	if (champ->_dir != dungeon._partyDir) {
+		champ->_dir = dungeon._partyDir;
 		setFlag(champ->_attributes, kDMAttributeIcon);
 	}
 }
@@ -1502,12 +1508,13 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		0   /* FUSE */
 	};
 
-	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayIfPrioritized);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+	_vm->_sound->requestPlay(kDMSoundIndexAttackSkelettonAnimatedArmorDethKnight, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayIfPrioritized);
 	if (_actionTargetGroupThing == Thing::_endOfList)
 		return false;
 
 	uint16 championCell = champ->_cell;
-	int16 targetCreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, championCell);
+	int16 targetCreatureOrdinal = _vm->_groupMan->getMeleeTargetCreatureOrdinal(targetMapX, targetMapY, dungeon._partyMapX, dungeon._partyMapY, championCell);
 	if (targetCreatureOrdinal) {
 		uint16 viewCell = _vm->normalizeModulo4(championCell + 4 - champ->_dir);
 		switch (viewCell) {
@@ -1522,7 +1529,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 			break;
 		}
 
-		if ((actionIndex == kDMActionDisrupt) && !getFlag(_vm->_dungeonMan->getCreatureAttributes(_actionTargetGroupThing), kDMCreatureMaskNonMaterial))
+		if ((actionIndex == kDMActionDisrupt) && !getFlag(dungeon.getCreatureAttributes(_actionTargetGroupThing), kDMCreatureMaskNonMaterial))
 			return false;
 
 		uint16 actionHitProbability = actionHitProbabilityArray[actionIndex];
@@ -1530,7 +1537,7 @@ bool MenuMan::isMeleeActionPerformed(int16 champIndex, Champion *champ, int16 ac
 		if ((_vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]) == kDMIconIndiceWeaponVorpalBlade) || (actionIndex == kDMActionDisrupt)) {
 			setFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 		}
-		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
+		_actionDamage = _vm->_groupMan->getMeleeActionDamage(champ, champIndex, (Group *)dungeon.getThingData(_actionTargetGroupThing), _vm->ordinalToIndex(targetCreatureOrdinal), targetMapX, targetMapY, actionHitProbability, actionDamageFactor, skillIndex);
 		return true;
 	}
 
@@ -1543,6 +1550,7 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 		return retVal;
 
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	uint16 experience = 0;
 	int16 frightAmount = 0;
@@ -1569,9 +1577,10 @@ bool MenuMan::isGroupFrightenedByAction(int16 champIndex, uint16 actionIndex, in
 		experience = 45;
 		break;
 	}
+
 	frightAmount += championMan.getSkillLevel(champIndex, kDMSkillInfluence);
-	Group *targetGroup = (Group *)_vm->_dungeonMan->getThingData(_actionTargetGroupThing);
-	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[targetGroup->_type];
+	Group *targetGroup = (Group *)dungeon.getThingData(_actionTargetGroupThing);
+	CreatureInfo *creatureInfo = &dungeon._creatureInfos[targetGroup->_type];
 	uint16 fearResistance = creatureInfo->getFearResistance();
 	if ((fearResistance > _vm->getRandomNumber(frightAmount)) || (fearResistance == kDMImmuneToFear)) {
 		experience >>= 1;
@@ -1674,13 +1683,15 @@ void MenuMan::processCommands116To119_setActingChampion(uint16 champIndex) {
 	if (getFlag(curChampion->_attributes, kDMAttributeDisableAction) || !curChampion->_currHealth)
 		return;
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	uint16 actionSetIndex;
 	Thing slotActionThing = curChampion->_slots[kDMSlotActionHand];
 
 	if (slotActionThing == Thing::_none)
 		actionSetIndex = 2; /* Actions Punch, Kick and War Cry */
 	else {
-		actionSetIndex = _vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(slotActionThing)]._actionSetIndex;
+		actionSetIndex = dungeon._objectInfos[dungeon.getObjectInfoIndex(slotActionThing)]._actionSetIndex;
 		if (actionSetIndex == 0)
 			return;
 	}

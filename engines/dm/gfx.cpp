@@ -763,6 +763,8 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		}
 	};
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	if (doorButtonOrdinal) {
 		doorButtonOrdinal--;
 
@@ -776,10 +778,10 @@ void DisplayMan::drawDoorButton(int16 doorButtonOrdinal, DoorButton doorButton) 
 		if (doorButton == kDMDoorButtonD1C) {
 			bitmap = getNativeBitmapOrGraphic(nativeBitmapIndex);
 
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.left = coordSetRedEagle[0];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.right = coordSetRedEagle[1];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.top = coordSetRedEagle[2];
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.bottom = coordSetRedEagle[3];
+			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.left = coordSetRedEagle[0];
+			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.right = coordSetRedEagle[1];
+			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.top = coordSetRedEagle[2];
+			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn]._rect.bottom = coordSetRedEagle[3];
 		} else {
 			doorButtonOrdinal = kDMDerivedBitmapFirstDoorButton + (doorButtonOrdinal * 2) + ((doorButton != kDMDoorButtonD3R) ? 0 : (int16)doorButton - 1);
 			if (!isDerivedBitmapInCache(doorButtonOrdinal)) {
@@ -1109,12 +1111,14 @@ void DisplayMan::drawDoor(uint16 doorThingIndex, DoorState doorState, int16 *doo
 		return;
 
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	DoorFrames *doorFramesTemp = doorFrames;
-	Door *door = (Door *)(_vm->_dungeonMan->_thingData[kDMThingTypeDoor]) + doorThingIndex;
+	Door *door = (Door *)(dungeon._thingData[kDMThingTypeDoor]) + doorThingIndex;
 	uint16 doorType = door->getType();
 	memmove(_tmpBitmap, getNativeBitmapOrGraphic(doorNativeBitmapIndices[doorType]), byteCount * 2);
 	drawDoorOrnament(door->getOrnOrdinal(), doorOrnament);
-	if (getFlag(_vm->_dungeonMan->_currMapDoorInfo[doorType]._attributes, kDMMaskDoorInfoAnimated)) {
+	if (getFlag(dungeon._currMapDoorInfo[doorType]._attributes, kDMMaskDoorInfoAnimated)) {
 		if (_vm->getRandomNumber(2))
 			flipBitmapHorizontal(_tmpBitmap, doorFramesTemp->_closedOrDestroyed._srcByteWidth, doorFramesTemp->_closedOrDestroyed._srcHeight);
 
@@ -1207,12 +1211,14 @@ void DisplayMan::drawDoorOrnament(int16 doorOrnOrdinal, DoorOrnament doorOrnamen
 }
 
 void DisplayMan::drawCeilingPit(int16 nativeBitmapIndex, Frame *frame, int16 mapX, int16 mapY, bool flipHorizontal) {
-	int16 mapIndex = _vm->_dungeonMan->getLocationAfterLevelChange(_vm->_dungeonMan->_currMapIndex, -1, &mapX, &mapY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	int16 mapIndex = dungeon.getLocationAfterLevelChange(dungeon._currMapIndex, -1, &mapX, &mapY);
 
 	if (mapIndex < 0)
 		return;
 
-	int16 mapSquare = _vm->_dungeonMan->_dungeonMapData[mapIndex][mapX][mapY];
+	int16 mapSquare = dungeon._dungeonMapData[mapIndex][mapX][mapY];
 	if ((Square(mapSquare).getType() == kDMElementTypePit) && getFlag(mapSquare, kDMSquareMaskPitOpen)) {
 		if (flipHorizontal)
 			drawFloorPitOrStairsBitmapFlippedHorizontally(nativeBitmapIndex, *frame);
@@ -1272,7 +1278,9 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	CellOrder order;
 	bool skip = false;
-	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	dungeon.setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeStairsFront:
 		if (squareAspect[kDMSquareAspectStairsUp])
@@ -1434,7 +1442,9 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	CellOrder order;
 	bool skip = false;
 
-	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	dungeon.setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeStairsFront:
 		if (squareAspect[kDMSquareAspectStairsUp])
@@ -1459,7 +1469,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD3C, doorFrameLeftD3C);
 		memmove(_tmpBitmap, _bitmapWallSetDoorFrameLeftD3C, 32 * 44);
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD3C);
-		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
+		if (((Door *)dungeon._thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD3C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
@@ -1682,7 +1692,8 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	bool skip = false;
 
-	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+	dungeon.setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeStairsFront:
 		if (squareAspect[kDMSquareAspectStairsUp])
@@ -1709,7 +1720,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD2C, doorFrameLeftD2C);
 		memcpy(_tmpBitmap, _bitmapWallSetDoorFrameLeftD2C, 48 * 65);
 		drawDoorFrameBitmapFlippedHorizontally(_tmpBitmap, &doorFrameRightD2C);
-		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
+		if (((Door *)dungeon._thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD2C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
@@ -1921,8 +1932,10 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	bool skip = false;
 
-	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
-	switch (_vm->_dungeonMan->_squareAheadElement = (ElementType)squareAspect[kDMSquareAspectElement]) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	dungeon.setSquareAspect(squareAspect, dir, posX, posY);
+	switch (dungeon._squareAheadElement = (ElementType)squareAspect[kDMSquareAspectElement]) {
 	case kDMElementTypeStairsFront:
 		if (squareAspect[kDMSquareAspectStairsUp])
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexUpFrontD1C, frameStairsUpFrontD1C);
@@ -1935,9 +1948,9 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		drawCeilingPit(kDMGraphicIdxCeilingPitD1C, &frameCeilingPitD1C, posX, posY, false);
 		break;
 	case kDMElementTypeWall:
-		_vm->_dungeonMan->_isFacingAlcove = false;
-		_vm->_dungeonMan->_isFacingViAltar = false;
-		_vm->_dungeonMan->_isFacingFountain = false;
+		dungeon._isFacingAlcove = false;
+		dungeon._isFacingViAltar = false;
+		dungeon._isFacingFountain = false;
 		if (championMan._party._event73Count_ThievesEye) {
 			isDerivedBitmapInCache(kDMDerivedBitmapThievesEyeVisibleArea);
 			blitToBitmap(_bitmapViewport, getDerivedBitmap(kDMDerivedBitmapThievesEyeVisibleArea),
@@ -1965,7 +1978,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapWallSetDoorFrameTopD1LCR, doorFrameTopD1C);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameLeftD1C, _doorFrameLeftD1C);
 		drawWallSetBitmap(_bitmapWallSetDoorFrameRightD1C, _doorFrameRightD1C);
-		if (((Door *)_vm->_dungeonMan->_thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
+		if (((Door *)dungeon._thingData[kDMThingTypeDoor])[squareAspect[kDMSquareAspectDoorThingIndex]].hasButton())
 			drawDoorButton(_vm->indexToOrdinal(k0_DoorButton), kDMDoorButtonD1C);
 
 		drawDoor(squareAspect[kDMSquareAspectDoorThingIndex], (DoorState)squareAspect[kDMSquareAspectDoorState],
@@ -2104,15 +2117,17 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 	static Frame floorFrame(0, 223, 66, 135, 112, 70, 0, 0); // @ K0013_s_Frame_Floor
 	static Frame frameWallD3L2 = Frame(0, 15, 25, 73, 8, 49, 0, 0); // @ G0711_s_Graphic558_Frame_Wall_D3L2
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	if (_drawFloorAndCeilingRequested)
 		drawFloorAndCeiling();
 
 	_useByteBoxCoordinates = true;
 	for (int16 i = 0; i < 6; ++i)
-		_vm->_dungeonMan->_dungeonViewClickableBoxes[i].setToZero();
+		dungeon._dungeonViewClickableBoxes[i].setToZero();
 
 	for (uint16 i = 0; i < 6; ++i)
-		_vm->_dungeonMan->_dungeonViewClickableBoxes[i]._rect.left = 255;
+		dungeon._dungeonViewClickableBoxes[i]._rect.left = 255;
 
 	_useFlippedWallAndFootprintsBitmap = (posX + posY + dir) & 1;
 	if (_useFlippedWallAndFootprintsBitmap) {
@@ -2131,67 +2146,67 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		drawWallSetBitmap(_bitmapFloor, floorFrame);
 	}
 
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, -2, posX, posY) == kDMElementTypeWall)
+	if (dungeon.getRelSquareType(dir, 3, -2, posX, posY) == kDMElementTypeWall)
 		drawWallSetBitmap(_bitmapWallSetD3L2, frameWallD3L2);
 
-	if (_vm->_dungeonMan->getRelSquareType(dir, 3, 2, posX, posY) == kDMElementTypeWall)
+	if (dungeon.getRelSquareType(dir, 3, 2, posX, posY) == kDMElementTypeWall)
 		drawWallSetBitmap(_bitmapWallSetD3R2, _frameWallD3R2);
 
 	int16 tmpPosX = posX;
 	int16 tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 4, -1, tmpPosX, tmpPosY);
-	drawObjectsCreaturesProjectilesExplosions(_vm->_dungeonMan->getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kViewSquareD4L, kDMCellOrderBackLeft);
+	dungeon.mapCoordsAfterRelMovement(dir, 4, -1, tmpPosX, tmpPosY);
+	drawObjectsCreaturesProjectilesExplosions(dungeon.getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kViewSquareD4L, kDMCellOrderBackLeft);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 4, 1, tmpPosX, tmpPosY);
-	drawObjectsCreaturesProjectilesExplosions(_vm->_dungeonMan->getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kDMViewSquareD4R, kDMCellOrderBackLeft);
+	dungeon.mapCoordsAfterRelMovement(dir, 4, 1, tmpPosX, tmpPosY);
+	drawObjectsCreaturesProjectilesExplosions(dungeon.getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kDMViewSquareD4R, kDMCellOrderBackLeft);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 4, 0, tmpPosX, tmpPosY);
-	drawObjectsCreaturesProjectilesExplosions(_vm->_dungeonMan->getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kDMViewSquareD4C, kDMCellOrderBackLeft);
+	dungeon.mapCoordsAfterRelMovement(dir, 4, 0, tmpPosX, tmpPosY);
+	drawObjectsCreaturesProjectilesExplosions(dungeon.getSquareFirstObject(tmpPosX, tmpPosY), dir, tmpPosX, tmpPosY, kDMViewSquareD4C, kDMCellOrderBackLeft);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, -1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 3, -1, tmpPosX, tmpPosY);
 	drawSquareD3L(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, 1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 3, 1, tmpPosX, tmpPosY);
 	drawSquareD3R(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 3, 0, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 3, 0, tmpPosX, tmpPosY);
 	drawSquareD3C(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, -1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 2, -1, tmpPosX, tmpPosY);
 	drawSquareD2L(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, 1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 2, 1, tmpPosX, tmpPosY);
 	drawSquareD2R(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 2, 0, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 2, 0, tmpPosX, tmpPosY);
 	drawSquareD2C(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, -1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 1, -1, tmpPosX, tmpPosY);
 	drawSquareD1L(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, 1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 1, 1, tmpPosX, tmpPosY);
 	drawSquareD1R(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 1, 0, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 1, 0, tmpPosX, tmpPosY);
 	drawSquareD1C(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 0, -1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 0, -1, tmpPosX, tmpPosY);
 	drawSquareD0L(dir, tmpPosX, tmpPosY);
 	tmpPosX = posX;
 	tmpPosY = posY;
-	_vm->_dungeonMan->mapCoordsAfterRelMovement(dir, 0, 1, tmpPosX, tmpPosY);
+	dungeon.mapCoordsAfterRelMovement(dir, 0, 1, tmpPosX, tmpPosY);
 	drawSquareD0R(dir, tmpPosX, tmpPosY);
 	drawSquareD0C(dir, posX, posY);
 
@@ -2203,8 +2218,8 @@ void DisplayMan::drawDungeon(Direction dir, int16 posX, int16 posY) {
 		_bitmapWallSetWallD0R = _bitmapWallD0RNative;
 	}
 
-	drawViewport((_vm->_dungeonMan->_partyMapIndex != kDMMapIndexEntrance) ? 1 : 0);
-	if (_vm->_dungeonMan->_partyMapIndex != kDMMapIndexEntrance)
+	drawViewport((dungeon._partyMapIndex != kDMMapIndexEntrance) ? 1 : 0);
+	if (dungeon._partyMapIndex != kDMMapIndexEntrance)
 		drawFloorAndCeiling();
 }
 
@@ -2356,8 +2371,10 @@ void DisplayMan::loadCurrentMapGraphics() {
 		3};  /* Arched Alcove */
 	static int16 g193_FountainOrnIndices[k1_FountainOrnCount] = {35}; // @ G0193_ai_Graphic558_FountainOrnamentIndices
 
-	loadFloorSet(_vm->_dungeonMan->_currMap->_floorSet);
-	loadWallSet(_vm->_dungeonMan->_currMap->_wallSet);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	loadFloorSet(dungeon._currMap->_floorSet);
+	loadWallSet(dungeon._currMap->_wallSet);
 
 	_useByteBoxCoordinates = true;
 
@@ -2378,7 +2395,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 	copyBitmapAndFlipHorizontal(_bitmapWallD0RNative = _bitmapWallSetWallD0R, _bitmapWallD0LFlipped,
 									_frameWalls163[kDMViewSquareD0L]._srcByteWidth, _frameWalls163[kDMViewSquareD0L]._srcHeight);
 
-	int16 val = _vm->_dungeonMan->_currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
+	int16 val = dungeon._currMap->_wallSet * k18_StairsGraphicCount + k90_FirstStairs;
 	_stairsNativeBitmapIndexUpFrontD3L = val++;
 	_stairsNativeBitmapIndexUpFrontD3C = val++;
 	_stairsNativeBitmapIndexUpFrontD2L = val++;
@@ -2405,8 +2422,8 @@ void DisplayMan::loadCurrentMapGraphics() {
 		_currMapFountainOrnIndices[i] = -1;
 
 	uint16 doorSets[2];
-	doorSets[0] = _vm->_dungeonMan->_currMap->_doorSet0;
-	doorSets[1] = _vm->_dungeonMan->_currMap->_doorSet1;
+	doorSets[0] = dungeon._currMap->_doorSet0;
+	doorSets[1] = dungeon._currMap->_doorSet1;
 	for (uint16 doorSet = 0; doorSet <= 1; doorSet++) {
 		int16 counter = k108_FirstDoorSet + (doorSets[doorSet] * k3_DoorSetGraphicsCount);
 		_doorNativeBitmapIndexFrontD3LCR[doorSet] = counter++;
@@ -2416,7 +2433,7 @@ void DisplayMan::loadCurrentMapGraphics() {
 
 	uint16 alcoveCount = 0;
 	uint16 fountainCount = 0;
-	Map &currMap = *_vm->_dungeonMan->_currMap;
+	Map &currMap = *dungeon._currMap;
 
 	_currMapViAltarIndex = -1;
 
@@ -2671,16 +2688,20 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 
 	if (!wallOrnOrd)
 		return false;
+
 	wallOrnOrd--;
 	int16 wallOrnamentIndex = wallOrnOrd;
 	int16 ornNativeBitmapIndex = _currMapWallOrnInfo[wallOrnamentIndex].nativeIndice;
 	int16 wallOrnamentCoordinateSetIndex = _currMapWallOrnInfo[wallOrnamentIndex].coordinateSet;
 	byte *ornCoordSet = wallOrnamentCoordSets[wallOrnamentCoordinateSetIndex][viewWallIndex];
-	bool isAlcove = _vm->_dungeonMan->isWallOrnAnAlcove(wallOrnamentIndex);
+
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	bool isAlcove = dungeon.isWallOrnAnAlcove(wallOrnamentIndex);
 	unsigned char inscriptionString[70];
-	bool isInscription = (wallOrnamentIndex == _vm->_dungeonMan->_currMapInscriptionWallOrnIndex);
+	bool isInscription = (wallOrnamentIndex == dungeon._currMapInscriptionWallOrnIndex);
 	if (isInscription)
-		_vm->_dungeonMan->decodeText((char *)inscriptionString, _inscriptionThing, kDMTextTypeInscription);
+		dungeon.decodeText((char *)inscriptionString, _inscriptionThing, kDMTextTypeInscription);
 
 	int16 blitPosX;
 	byte *ornBlitBitmap;
@@ -2713,14 +2734,13 @@ bool DisplayMan::isDrawnWallOrnAnAlcove(int16 wallOrnOrd, ViewWall viewWallIndex
 			}
 			ornNativeBitmapIndex++;
 			Box tmpBox(ornCoordSet[0], ornCoordSet[1], ornCoordSet[2], ornCoordSet[3]);
-			_vm->_dungeonMan->_dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn] = tmpBox;
-			_vm->_dungeonMan->_isFacingAlcove = isAlcove;
-			_vm->_dungeonMan->_isFacingViAltar =
-				(wallOrnamentIndex == _currMapViAltarIndex);
-			_vm->_dungeonMan->_isFacingFountain = false;
+			dungeon._dungeonViewClickableBoxes[kDMViewCellDoorButtonOrWallOrn] = tmpBox;
+			dungeon._isFacingAlcove = isAlcove;
+			dungeon._isFacingViAltar = (wallOrnamentIndex == _currMapViAltarIndex);
+			dungeon._isFacingFountain = false;
 			for (int16 idx = 0; idx < k1_FountainOrnCount; idx++) {
 				if (_currMapFountainOrnIndices[idx] == wallOrnamentIndex) {
-					_vm->_dungeonMan->_isFacingFountain = true;
+					dungeon._isFacingFountain = true;
 					break;
 				}
 			}
@@ -3110,6 +3130,8 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 	if (thingParam == Thing::_endOfList)
 		return;
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	int16 orderedViewCellOrdinals = cellOrder;
 	Group *group = nullptr;
 	Thing groupThing = Thing::_none;
@@ -3166,7 +3188,7 @@ void DisplayMan::drawObjectsCreaturesProjectilesExplosions(Thing thingParam, Dir
 			}
 
 			if ((viewSquareIndex >= kDMViewSquareD3C) && (viewSquareIndex <= kDMViewSquareD0C) && (thingParam.getCell() == cellYellowBear)) { /* Square where objects are visible and object is located on cell being processed */
-				objectAspect = &(_objectAspects209[_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(thingParam)]._objectAspectIndex]);
+				objectAspect = &(_objectAspects209[dungeon._objectInfos[dungeon.getObjectInfoIndex(thingParam)]._objectAspectIndex]);
 				AL_4_nativeBitmapIndex = kDMGraphicIdxFirstObject + objectAspect->_firstNativeBitmapRelativeIndex;
 				useAlcoveObjectImage = (L0135_B_DrawAlcoveObjects && getFlag(objectAspect->_graphicInfo, k0x0010_ObjectAlcoveMask) && (viewLane == kDMViewLaneCenter));
 				if (useAlcoveObjectImage)
@@ -3255,7 +3277,7 @@ T0115015_DrawProjectileAsObject:
 				if (drawingGrabbableObject) {
 					bitmapGreenAnt = bitmapRedBanana;
 
-					Box *AL_6_box = &_vm->_dungeonMan->_dungeonViewClickableBoxes[AL_2_viewCell];
+					Box *AL_6_box = &dungeon._dungeonViewClickableBoxes[AL_2_viewCell];
 
 					if (AL_6_box->_rect.left == 255) { /* If the grabbable object is the first */
 						*AL_6_box = boxByteGreen;
@@ -3273,13 +3295,13 @@ T0115015_DrawProjectileAsObject:
 						AL_6_box->_rect.bottom = MAX(AL_6_box->_rect.bottom, boxByteGreen._rect.bottom);
 					}
 					bitmapRedBanana = bitmapGreenAnt;
-					_vm->_dungeonMan->_pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
+					dungeon._pileTopObject[AL_2_viewCell] = thingParam; /* The object is at the top of the pile */
 				}
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, getNormalizedByteWidth(byteWidth), k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 				if (drawProjectileAsObject)
 					goto T0115171_BackFromT0115015_DrawProjectileAsObject;
 			}
-		} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
 		if (AL_2_viewCell == kDMViewCellAlcove)
 			break; /* End of processing when drawing objects in an alcove */
 		if (viewSquareIndex < kDMViewSquareD3C)
@@ -3291,9 +3313,9 @@ T0115015_DrawProjectileAsObject:
 
 		ActiveGroup *activeGroup;
 		if (group == nullptr) { /* If all creature data and info has not already been gathered */
-			group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
+			group = (Group *)dungeon.getThingData(groupThing);
 			activeGroup = &_vm->_groupMan->_activeGroups[group->getActiveGroupIndex()];
-			CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
+			CreatureInfo *creatureInfo = &dungeon._creatureInfos[group->_type];
 			creatureAspectStruct = &_creatureAspects219[creatureInfo->_creatureAspectIndex];
 			creatureSize = getFlag(creatureInfo->_attributes, kDMCreatureMaskSize);
 			creatureGraphicInfoGreen = creatureInfo->_graphicInfo;
@@ -3545,8 +3567,8 @@ T0115129_DrawProjectiles:
 		thingParam = firstThingToDraw; /* Restart processing list of objects from the beginning. The next loop draws only projectile objects among the list */
 		do {
 			if ((thingParam.getType() == kDMThingTypeProjectile) && (thingParam.getCell() == cellYellowBear)) {
-				Projectile *projectile = (Projectile *)_vm->_dungeonMan->getThingData(thingParam);
-				AL_4_projectileAspect = _vm->_dungeonMan->getProjectileAspect(projectile->_slot);
+				Projectile *projectile = (Projectile *)dungeon.getThingData(thingParam);
+				AL_4_projectileAspect = dungeon.getProjectileAspect(projectile->_slot);
 				if (AL_4_projectileAspect < 0) { /* Negative value: projectile aspect is the ordinal of a PROJECTIL_ASPECT */
 					objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-AL_4_projectileAspect)];
 					AL_4_nativeBitmapIndex = ((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + kDMGraphicIdxFirstProjectile;
@@ -3661,7 +3683,7 @@ T0115129_DrawProjectiles:
 				}
 			}
 T0115171_BackFromT0115015_DrawProjectileAsObject:;
-		} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam)) != Thing::_endOfList);
+		} while ((thingParam = dungeon.getNextThing(thingParam)) != Thing::_endOfList);
 	} while (remainingViewCellOrdinalsToProcess);
 
 	/* Draw explosions */
@@ -3677,7 +3699,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 	do {
 		if (thingParam.getType() == kDMThingTypeExplosion) {
 			AL_2_cellPurpleMan = thingParam.getCell();
-			Explosion *explosion = (Explosion *)_vm->_dungeonMan->getThingData(thingParam);
+			Explosion *explosion = (Explosion *)dungeon.getThingData(thingParam);
 			AL_4_explosionType = explosion->getType();
 			bool rebirthExplosion = ((uint16)AL_4_explosionType >= kDMExplosionTypeRebirthStep1);
 			if (rebirthExplosion && ((AL_1_viewSquareExplosionIndex < kDMViewSquareD3CExplosion) || (AL_1_viewSquareExplosionIndex > kDMViewSquareD1CExplosion) || (AL_2_cellPurpleMan != cellYellowBear))) /* If explosion is rebirth and is not visible */
@@ -3693,7 +3715,7 @@ T0115171_BackFromT0115015_DrawProjectileAsObject:;
 					AL_4_explosionAspectIndex = kDMExplosionAspectSmoke;
 				} else {
 					if (AL_4_explosionType == kDMExplosionTypeRebirthStep1) {
-						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-_vm->_dungeonMan->getProjectileAspect(Thing::_explLightningBolt))];
+						objectAspect = (ObjectAspect *)&_projectileAspect[_vm->ordinalToIndex(-dungeon.getProjectileAspect(Thing::_explLightningBolt))];
 						bitmapRedBanana = getNativeBitmapOrGraphic(((ProjectileAspect *)objectAspect)->_firstNativeBitmapRelativeIndex + (kDMGraphicIdxFirstProjectile + 1));
 						explosionCoordinates = rebirthStep1ExplosionCoordinates[AL_1_viewSquareExplosionIndex - 3];
 						byteWidth = getScaledDimension((((ProjectileAspect *)objectAspect)->_byteWidth), explosionCoordinates[2]);
@@ -3797,7 +3819,7 @@ T0115200_DrawExplosion:
 				blitToBitmap(bitmapRedBanana, _bitmapViewport, boxByteGreen, AL_4_xPos, 0, byteWidth, k112_byteWidthViewport, kDMColorFlesh, heightRedEagle, k136_heightViewport);
 			}
 		}
-	} while ((thingParam = _vm->_dungeonMan->getNextThing(thingParam))!= Thing::_endOfList);
+	} while ((thingParam = dungeon.getNextThing(thingParam))!= Thing::_endOfList);
 
 	if ((fluxcageExplosion != 0) && (doorFrontViewDrawingPass != 1) && !_doNotDrawFluxcagesDuringEndgame) { /* Fluxcage is an explosion displayed as a field (like teleporters), above all other graphics */
 		AL_1_viewSquareExplosionIndex -= 3; /* Convert square index for explosions back to square index */

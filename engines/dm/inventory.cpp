@@ -485,7 +485,7 @@ void InventoryMan::drawPanelArrowOrEye(bool pressingEye) {
 void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	static Box boxObjectDescCircle(105, 136, 53, 79); // @ G0034_s_Graphic562_Box_ObjectDescriptionCircle
 
-	DungeonMan &dunMan = *_vm->_dungeonMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 	ObjectMan &objMan = *_vm->_objectMan;
 	DisplayMan &dispMan = *_vm->_displayMan;
 	ChampionMan &champMan = *_vm->_championMan;
@@ -494,7 +494,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 	if (_vm->_pressingEye || _vm->_pressingMouth)
 		closeChest();
 
-	uint16 *rawThingPtr = dunMan.getThingData(thingToDraw);
+	uint16 *rawThingPtr = dungeon.getThingData(thingToDraw);
 	drawPanelObjectDescriptionString("\f"); // form feed
 	ThingType thingType = thingToDraw.getType();
 	if (thingType == kDMThingTypeScroll)
@@ -574,7 +574,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 		case kDMThingTypePotion: {
 			potentialAttribMask = kDMDescriptionMaskConsumable;
 			Potion *potion = (Potion *)rawThingPtr;
-			actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
+			actualAttribMask = dungeon._objectInfos[kDMObjectInfoIndexFirstPotion + potion->getType()].getAllowedSlots();
 			break;
 		}
 		case kDMThingTypeJunk: {
@@ -624,7 +624,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			} else {
 				Junk *junk = (Junk *)rawThingPtr;
 				potentialAttribMask = kDMDescriptionMaskConsumable;
-				actualAttribMask = _vm->_dungeonMan->_objectInfos[kDMObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
+				actualAttribMask = dungeon._objectInfos[kDMObjectInfoIndexFirstJunk + junk->getType()].getAllowedSlots();
 			}
 			break;
 		}
@@ -655,7 +655,7 @@ void InventoryMan::drawPanelObject(Thing thingToDraw, bool pressingEye) {
 			drawPanelObjectDescriptionString(destString);
 		}
 
-		uint16 weight = dunMan.getObjectWeight(thingToDraw);
+		uint16 weight = dungeon.getObjectWeight(thingToDraw);
 		switch (_vm->getGameLanguage()) { // localized
 		case Common::DE_DEU:
 			str = "WIEGT " + champMan.getStringFromInteger(weight / 10, false, 3) + ",";
@@ -689,8 +689,9 @@ void InventoryMan::setDungeonViewPalette() {
 	static const int16 palIndexToLightAmmount[6] = {99, 75, 50, 25, 1, 0}; // @ G0040_ai_Graphic562_PaletteIndexToLightAmount
 	DisplayMan &display = *_vm->_displayMan;
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	if (_vm->_dungeonMan->_currMap->_difficulty == 0) {
+	if (dungeon._currMap->_difficulty == 0) {
 		display._dungeonViewPaletteIndex = 0; /* Brightest color palette index */
 	} else {
 		/* Get torch light power from both hands of each champion in the party */
@@ -704,7 +705,7 @@ void InventoryMan::setDungeonViewPalette() {
 				Thing slotThing = curChampion->_slots[slotIndex];
 				if ((_vm->_objectMan->getObjectType(slotThing) >= kDMIconIndiceWeaponTorchUnlit) &&
 					(_vm->_objectMan->getObjectType(slotThing) <= kDMIconIndiceWeaponTorchLit)) {
-					Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(slotThing);
+					Weapon *curWeapon = (Weapon *)dungeon.getThingData(slotThing);
 					*curTorchLightPower = curWeapon->getChargeCount();
 				} else {
 					*curTorchLightPower = 0;
@@ -761,6 +762,8 @@ void InventoryMan::setDungeonViewPalette() {
 
 void InventoryMan::decreaseTorchesLightPower() {
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	bool torchChargeCountChanged = false;
 	int16 championCount = championMan._partyChampionCount;
 	if (championMan._candidateChampionOrdinal)
@@ -772,7 +775,7 @@ void InventoryMan::decreaseTorchesLightPower() {
 		while (slotIndex--) {
 			int16 iconIndex = _vm->_objectMan->getIconIndex(curChampion->_slots[slotIndex]);
 			if ((iconIndex >= kDMIconIndiceWeaponTorchUnlit) && (iconIndex <= kDMIconIndiceWeaponTorchLit)) {
-				Weapon *curWeapon = (Weapon *)_vm->_dungeonMan->getThingData(curChampion->_slots[slotIndex]);
+				Weapon *curWeapon = (Weapon *)dungeon.getThingData(curChampion->_slots[slotIndex]);
 				if (curWeapon->getChargeCount()) {
 					if (curWeapon->setChargeCount(curWeapon->getChargeCount() - 1) == 0) {
 						curWeapon->setDoNotDiscard(false);
@@ -891,6 +894,8 @@ void InventoryMan::clickOnMouth() {
 
 	DisplayMan &display = *_vm->_displayMan;
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 
 	if (championMan._leaderEmptyHanded) {
 		if (_panelContent == kDMPanelContentFoodWaterPoisoned)
@@ -915,15 +920,15 @@ void InventoryMan::clickOnMouth() {
 		return;
 
 	Thing handThing = championMan._leaderHandObject;
-	if (!getFlag(_vm->_dungeonMan->_objectInfos[_vm->_dungeonMan->getObjectInfoIndex(handThing)]._allowedSlots, kDMMaskMouth))
+	if (!getFlag(dungeon._objectInfos[dungeon.getObjectInfoIndex(handThing)]._allowedSlots, kDMMaskMouth))
 		return;
 
 	uint16 iconIndex = _vm->_objectMan->getIconIndex(handThing);
 	uint16 handThingType = handThing.getType();
-	uint16 handThingWeight = _vm->_dungeonMan->getObjectWeight(handThing);
+	uint16 handThingWeight = dungeon.getObjectWeight(handThing);
 	uint16 championIndex = _vm->ordinalToIndex(_inventoryChampionOrdinal);
 	Champion *curChampion = &championMan._champions[championIndex];
-	Junk *junkData = (Junk *)_vm->_dungeonMan->getThingData(handThing);
+	Junk *junkData = (Junk *)dungeon.getThingData(handThing);
 	bool removeObjectFromLeaderHand;
 	if ((iconIndex >= kDMIconIndiceJunkWater) && (iconIndex <= kDMIconIndiceJunkWaterSkin)) {
 		if (!(junkData->getChargeCount()))
@@ -974,7 +979,7 @@ void InventoryMan::clickOnMouth() {
 			curChampion->_shieldDefense += adjustedPotionPower;
 			TimelineEvent newEvent;
 			newEvent._type = kDMEventTypeChampionShield;
-			newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_partyMapIndex, _vm->_gameTime + (adjustedPotionPower * adjustedPotionPower));
+			newEvent._mapTime = _vm->setMapAndTime(dungeon._partyMapIndex, _vm->_gameTime + (adjustedPotionPower * adjustedPotionPower));
 			newEvent._priority = championIndex;
 			newEvent._Bu._defense = adjustedPotionPower;
 			_vm->_timeline->addEventGetEventIndex(&newEvent);
@@ -1031,10 +1036,10 @@ void InventoryMan::clickOnMouth() {
 		}
 	} else {
 		championMan.drawChangedObjectIcons();
-		championMan._champions[championMan._leaderIndex]._load += _vm->_dungeonMan->getObjectWeight(handThing) - handThingWeight;
+		championMan._champions[championMan._leaderIndex]._load += dungeon.getObjectWeight(handThing) - handThingWeight;
 		setFlag(championMan._champions[championMan._leaderIndex]._attributes, kDMAttributeLoad);
 	}
-	_vm->_sound->requestPlay(kDMSoundIndexSwallow, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayImmediately);
+	_vm->_sound->requestPlay(kDMSoundIndexSwallow, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayImmediately);
 	setFlag(curChampion->_attributes, kDMAttributeStatistics);
 
 	if (_panelContent == kDMPanelContentFoodWaterPoisoned)

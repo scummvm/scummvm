@@ -104,14 +104,16 @@ uint16 GroupMan::getGroupDirections(Group *group, int16 mapIndex) {
 }
 
 int16 GroupMan::getCreatureOrdinalInCell(Group *group, uint16 cell) {
-	uint16 currMapIndex = _vm->_dungeonMan->_currMapIndex;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	uint16 currMapIndex = dungeon._currMapIndex;
 	byte groupCells = getGroupCells(group, currMapIndex);
 	if (groupCells == kDMCreatureTypeSingleCenteredCreature)
 		return _vm->indexToOrdinal(0);
 
 	int retval = 0;
 	byte creatureIndex = group->getCount();
-	if (getFlag(_vm->_dungeonMan->_creatureInfos[group->_type]._attributes, kDMCreatureMaskSize) == kDMCreatureSizeHalf) {
+	if (getFlag(dungeon._creatureInfos[group->_type]._attributes, kDMCreatureMaskSize) == kDMCreatureSizeHalf) {
 		if ((getGroupDirections(group, currMapIndex) & 1) == (cell & 1))
 			cell = _vm->turnDirLeft(cell);
 
@@ -139,11 +141,13 @@ uint16 GroupMan::getCreatureValue(uint16 groupVal, uint16 creatureIndex) {
 }
 
 void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, SoundMode soundMode) {
-	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Group *group = (Group *)dungeon.getThingData(groupThing);
 	CreatureType creatureType = group->_type;
-	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(_vm->_dungeonMan->_creatureInfos[creatureType]._attributes, kDMCreatureMaskDropFixedPoss)) {
+	if ((soundMode != kDMSoundModeDoNotPlaySound) && getFlag(dungeon._creatureInfos[creatureType]._attributes, kDMCreatureMaskDropFixedPoss)) {
 		int16 creatureIndex = group->getCount();
-		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
+		uint16 groupCells = getGroupCells(group, dungeon._currMapIndex);
 		do {
 			dropCreatureFixedPossessions(creatureType, mapX, mapY,
 				(groupCells == kDMCreatureTypeSingleCenteredCreature) ? (uint16)kDMCreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex), soundMode);
@@ -155,7 +159,7 @@ void GroupMan::dropGroupPossessions(int16 mapX, int16 mapY, Thing groupThing, So
 		bool weaponDropped = false;
 		Thing nextThing;
 		do {
-			nextThing = _vm->_dungeonMan->getNextThing(currentThing);
+			nextThing = dungeon.getNextThing(currentThing);
 			currentThing = _vm->thingWithNewCell(currentThing, _vm->getRandomNumber(4));
 			if ((currentThing).getType() == kDMThingTypeWeapon) {
 				weaponDropped = true;
@@ -228,6 +232,8 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 		0
 	};
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	uint16 *fixedPossessions;
 	bool cursedPossessions = false;
 	switch (creatureType) {
@@ -282,11 +288,11 @@ void GroupMan::dropCreatureFixedPossessions(CreatureType creatureType, int16 map
 			currFixedPossession -= kDMObjectInfoIndexFirstWeapon;
 		}
 
-		Thing nextUnusedThing = _vm->_dungeonMan->getUnusedThing(currThingType);
+		Thing nextUnusedThing = dungeon.getUnusedThing(currThingType);
 		if ((nextUnusedThing) == Thing::_none)
 			continue;
 
-		Weapon *currWeapon = (Weapon *)_vm->_dungeonMan->getThingData(nextUnusedThing);
+		Weapon *currWeapon = (Weapon *)dungeon.getThingData(nextUnusedThing);
 		/* The same pointer type is used no matter the actual type k5_WeaponThingType, k6_ArmourThingType or k10_JunkThingType */
 		currWeapon->setType(currFixedPossession);
 		currWeapon->setCursed(cursedPossessions);
@@ -354,16 +360,18 @@ bool GroupMan::isDestVisibleFromSource(uint16 dir, int16 srcMapX, int16 srcMapY,
 }
 
 bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 attack, bool magicAttack, int16 ticks) {
-	Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Door *curDoor = (Door *)dungeon.getSquareFirstThingData(mapX, mapY);
 	if ((magicAttack && !curDoor->isMagicDestructible()) || (!magicAttack && !curDoor->isMeleeDestructible()))
 		return false;
 
-	if (attack >= _vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._defense) {
-		byte *curSquare = &_vm->_dungeonMan->_currMapData[mapX][mapY];
+	if (attack >= dungeon._currMapDoorInfo[curDoor->getType()]._defense) {
+		byte *curSquare = &dungeon._currMapData[mapX][mapY];
 		if (Square(*curSquare).getDoorState() == kDMDoorStateClosed) {
 			if (ticks) {
 				TimelineEvent newEvent;
-				newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + ticks);
+				newEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime + ticks);
 				newEvent._type = kDMEventTypeDoorDestruction;
 				newEvent._priority = 0;
 				newEvent._Bu._location._mapX = mapX;
@@ -379,21 +387,25 @@ bool GroupMan::groupIsDoorDestoryedByAttack(uint16 mapX, uint16 mapY, int16 atta
 }
 
 Thing GroupMan::groupGetThing(int16 mapX, int16 mapY) {
-	Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Thing curThing = dungeon.getSquareFirstThing(mapX, mapY);
 	while ((curThing != Thing::_endOfList) && (curThing.getType() != kDMThingTypeGroup))
-		curThing = _vm->_dungeonMan->getNextThing(curThing);
+		curThing = dungeon.getNextThing(curThing);
 
 	return curThing;
 }
 
 int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex, int16 mapX, int16 mapY, int16 damage, bool notMoving) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	CreatureType creatureType = group->_type;
-	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[creatureType];
+	CreatureInfo *creatureInfo = &dungeon._creatureInfos[creatureType];
 	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) /* Lord Chaos cannot be damaged */
 		return kDMKillOutcomeNoCreaturesInGroup;
 
 	if (group->_health[creatureIndex] <= damage) {
-		uint16 groupCells = getGroupCells(group, _vm->_dungeonMan->_currMapIndex);
+		uint16 groupCells = getGroupCells(group, dungeon._currMapIndex);
 		uint16 cell = (groupCells == kDMCreatureTypeSingleCenteredCreature) ? (uint16)kDMCreatureTypeSingleCenteredCreature : getCreatureValue(groupCells, creatureIndex);
 		uint16 creatureCount = group->getCount();
 		uint16 retVal;
@@ -405,14 +417,14 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 			}
 			retVal = kDMKillOutcomeAllCreaturesInGroup;
 		} else { /* If there are several creatures in the group */
-			uint16 groupDirections = getGroupDirections(group, _vm->_dungeonMan->_currMapIndex);
+			uint16 groupDirections = getGroupDirections(group, dungeon._currMapIndex);
 			if (getFlag(creatureInfo->_attributes, kDMCreatureMaskDropFixedPoss)) {
 				if (notMoving)
 					dropCreatureFixedPossessions(creatureType, mapX, mapY, cell, kDMSoundModePlayOneTickLater);
 				else
 					_dropMovingCreatureFixedPossessionsCell[_dropMovingCreatureFixedPossCellCount++] = cell;
 			}
-			bool currentMapIsPartyMap = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex);
+			bool currentMapIsPartyMap = (dungeon._currMapIndex == dungeon._partyMapIndex);
 			ActiveGroup *activeGroup = nullptr;
 			if (currentMapIsPartyMap)
 				activeGroup = &_activeGroups[group->getActiveGroupIndex()];
@@ -421,7 +433,7 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 				TimelineEvent *curEvent = _vm->_timeline->_events;
 				for (uint16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventIndex++) {
 					uint16 curEventType = curEvent->_type;
-					if ((_vm->getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
+					if ((_vm->getMap(curEvent->_mapTime) == dungeon._currMapIndex) &&
 						(curEvent->_Bu._location._mapX == mapX) &&
 						(curEvent->_Bu._location._mapY == mapY) &&
 						(curEventType > kDMEventTypeUpdateAspectGroup) &&
@@ -462,8 +474,8 @@ int16 GroupMan::groupGetDamageCreatureOutcome(Group *group, uint16 creatureIndex
 					activeGroup->_aspect[curCreatureIndex] = activeGroup->_aspect[nextCreatureIndex];
 			}
 			groupCells &= 0x003F;
-			_vm->_dungeonMan->setGroupCells(group, groupCells, _vm->_dungeonMan->_currMapIndex);
-			_vm->_dungeonMan->setGroupDirections(group, groupDirections, _vm->_dungeonMan->_currMapIndex);
+			dungeon.setGroupCells(group, groupCells, dungeon._currMapIndex);
+			dungeon.setGroupDirections(group, groupDirections, dungeon._currMapIndex);
 			group->setCount(group->getCount() - 1);
 			retVal = kDMKillOutcomeSomeCreaturesInGroup;
 		}
@@ -492,12 +504,14 @@ void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 	if (groupThing == Thing::_endOfList)
 		return;
 
-	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Group *group = (Group *)dungeon.getThingData(groupThing);
 	for (uint16 i = 0; i < 4; ++i)
 		group->_health[i] = 0;
 	_vm->_moveSens->getMoveResult(groupThing, mapX, mapY, kDMMapXNotOnASquare, 0);
 	group->_nextThing = Thing::_none;
-	if (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) {
+	if (dungeon._currMapIndex == dungeon._partyMapIndex) {
 		_activeGroups[group->getActiveGroupIndex()]._groupThingIndex = -1;
 		_currActiveGroupCount--;
 	}
@@ -505,10 +519,12 @@ void GroupMan::groupDelete(int16 mapX, int16 mapY) {
 }
 
 void GroupMan::groupDeleteEvents(int16 mapX, int16 mapY) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	TimelineEvent *curEvent = _vm->_timeline->_events;
 	for (int16 eventIndex = 0; eventIndex < _vm->_timeline->_eventMaxCount; eventIndex++) {
 		uint16 curEventType = curEvent->_type;
-		if ((_vm->getMap(curEvent->_mapTime) == _vm->_dungeonMan->_currMapIndex) &&
+		if ((_vm->getMap(curEvent->_mapTime) == dungeon._currMapIndex) &&
 			(curEventType > kDMEventTypeGroupReactionDangerOnSquare - 1) && (curEventType < kDMEventTypeUpdateBehavior3 + 1) &&
 			(curEvent->_Bu._location._mapX == mapX) && (curEvent->_Bu._location._mapY == mapY)) {
 			_vm->_timeline->deleteEvent(eventIndex);
@@ -582,8 +598,10 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 #define AL0451_i_DistanceYToParty L0451_i_Multiple
 #define AL0451_i_TargetMapY       L0451_i_Multiple
 
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	/* If the party is not on the map specified in the event and the event type is not one of 32, 33, 37, 38 then the event is ignored */
-	if ((_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex)
+	if ((dungeon._currMapIndex != dungeon._partyMapIndex)
 	 && (eventType != kDMEventTypeUpdateBehaviourGroup) && (eventType != kDMEventTypeUpdateAspectGroup)
 	 && (eventType != kDMEventTypeUpdateBehavior0) && (eventType != kDMEventTypeUpdateAspectCreature0))
 		return;
@@ -595,16 +613,16 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 
 	ChampionMan &championMan = *_vm->_championMan;
 
-	Group *curGroup = (Group *)_vm->_dungeonMan->getThingData(groupThing);
-	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[curGroup->_type];
+	Group *curGroup = (Group *)dungeon.getThingData(groupThing);
+	CreatureInfo creatureInfo = dungeon._creatureInfos[curGroup->_type];
 	/* Update the event */
 	TimelineEvent nextEvent;
-	nextEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime);
+	nextEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime);
 	nextEvent._priority = kDMMovementTicksImmobile - creatureInfo._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Bu._location._mapX = eventMapX;
 	nextEvent._Bu._location._mapY = eventMapY;
 	/* If the creature is not on the party map then try and move the creature in a random direction and place a new event 37 in the timeline for the next creature movement */
-	if (_vm->_dungeonMan->_currMapIndex != _vm->_dungeonMan->_partyMapIndex) {
+	if (dungeon._currMapIndex != dungeon._partyMapIndex) {
 		if (isMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->getRandomNumber(4), false)) { /* BUG0_67 A group that is not on the party map may wrongly move or not move into a teleporter. Normally, a creature type with Wariness >= 10 (Vexirk, Materializer / Zytaz, Demon, Lord Chaos, Red Dragon / Dragon) would only move into a teleporter if the creature type is allowed on the destination map. However, the variable G0380_T_CurrentGroupThing identifying the group is not set before being used by F0139_DUNGEON_IsCreatureAllowedOnMap called by f202_isMovementPossible so the check to see if the creature type is allowed may operate on another creature type and thus return an incorrect result, causing the creature to teleport while it should not, or not to teleport while it should */
 			AL0450_i_DestinationMapX = eventMapX;
 			AL0451_i_DestinationMapY = eventMapY;
@@ -616,7 +634,7 @@ void GroupMan::processEvents29to41(int16 eventMapX, int16 eventMapY, TimelineEve
 			nextEvent._Bu._location._mapY = _vm->_moveSens->_moveResultMapY;
 		}
 		nextEvent._type = kDMEventTypeUpdateBehaviourGroup;
-		AL0446_i_Ticks = MAX(ABS(_vm->_dungeonMan->_currMapIndex - _vm->_dungeonMan->_partyMapIndex) << 4, creatureInfo._movementTicks << 1);
+		AL0446_i_Ticks = MAX(ABS(dungeon._currMapIndex - dungeon._partyMapIndex) << 4, creatureInfo._movementTicks << 1);
 		/* BUG0_68 A group moves or acts with a wrong timing. Event is added below but L0465_s_NextEvent.C.Ticks has not been initialized. No consequence while the group is not on the party map. When the party enters the group map the first group event may have a wrong timing */
 T0209005_AddEventAndReturn:
 		nextEvent._mapTime += AL0446_i_Ticks;
@@ -669,14 +687,14 @@ T0209005_AddEventAndReturn:
 	AL0447_i_Behavior = curGroup->getBehaviour();
 	uint16 creatureCount = curGroup->getCount();
 	int16 creatureSize = getFlag(creatureInfo._attributes, kDMCreatureMaskSize);
-	AL0450_i_DistanceXToParty = ABS(eventMapX - _vm->_dungeonMan->_partyMapX);
-	AL0451_i_DistanceYToParty = ABS(eventMapY - _vm->_dungeonMan->_partyMapY);
+	AL0450_i_DistanceXToParty = ABS(eventMapX - dungeon._partyMapX);
+	AL0451_i_DistanceYToParty = ABS(eventMapY - dungeon._partyMapY);
 	_currentGroupMapX = eventMapX;
 	_currentGroupMapY = eventMapY;
 	_currGroupThing = groupThing;
 	_groupMovementTestedDirections[0] = 0;
-	_currGroupDistanceToParty = getDistanceBetweenSquares(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
-	_currGroupPrimaryDirToParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY);
+	_currGroupDistanceToParty = getDistanceBetweenSquares(eventMapX, eventMapY, dungeon._partyMapX, dungeon._partyMapY);
+	_currGroupPrimaryDirToParty = getDirsWhereDestIsVisibleFromSource(eventMapX, eventMapY, dungeon._partyMapX, dungeon._partyMapY);
 	_currGroupSecondaryDirToParty = _vm->_projexpl->_secondaryDirToOrFromParty;
 	int32 nextAspectUpdateTime = 0;
 	bool notUpdateBehaviorFl = true;
@@ -694,8 +712,8 @@ T0209005_AddEventAndReturn:
 				groupDeleteEvents(eventMapX, eventMapY);
 				goto T0209044_SetBehavior6_Attack;
 			}
-			activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-			activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+			activeGroup->_targetMapX = dungeon._partyMapX;
+			activeGroup->_targetMapY = dungeon._partyMapY;
 			return;
 		case kDMEventTypeCreateReactionHitByProjectile: /* This event is used for the reaction of a group after a projectile impacted with one creature in the group (some creatures may have been killed) */
 			if ((AL0447_i_Behavior == kDMBehaviorAttack) || (AL0447_i_Behavior == kDMBehaviorFlee)) /* If the creature is attacking the party or fleeing from the target then there is no reaction */
@@ -722,13 +740,13 @@ T0209005_AddEventAndReturn:
 		nextEvent._type = (TimelineEventType)nextType;
 		if (groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY)) {
 			if ((AL0447_i_Behavior != kDMBehaviorAttack) && (AL0447_i_Behavior != kDMBehaviorFlee)) {
-				if (_vm->getDistance(_vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, eventMapX, eventMapY) <= 1)
+				if (_vm->getDistance(dungeon._partyMapX, dungeon._partyMapY, eventMapX, eventMapY) <= 1)
 					goto T0209044_SetBehavior6_Attack;
 				if (((AL0447_i_Behavior == kDMBehaviorWander) || (AL0447_i_Behavior == kDMBehaviorUnknown3)) && (AL0447_i_Behavior != kDMBehaviorApproach)) /* BUG0_00 Useless code. Behavior cannot be 3 because this value is never used. Moreover, the second condition in the && is redundant (if the value is 0 or 3, it cannot be 7). The actual condition is: if (AL0447_i_Behavior == k0_behavior_WANDER) */
 					goto T0209054_SetBehavior7_Approach;
 			}
-			activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-			activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+			activeGroup->_targetMapX = dungeon._partyMapX;
+			activeGroup->_targetMapY = dungeon._partyMapY;
 		}
 		if (AL0447_i_Behavior == kDMBehaviorAttack) {
 			AL0446_i_CreatureAspectIndex = eventType - kDMEventTypeUpdateAspectCreature0; /* Value -1 for event 32, meaning aspect will be updated for all creatures in the group */
@@ -755,8 +773,8 @@ T0209044_SetBehavior6_Attack:
 						if (eventType == kDMEventTypeCreateReactionHitByProjectile) {
 							groupDeleteEvents(eventMapX, eventMapY);
 						}
-						activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-						activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+						activeGroup->_targetMapX = dungeon._partyMapX;
+						activeGroup->_targetMapY = dungeon._partyMapY;
 						curGroup->setBehaviour(kDMBehaviorAttack);
 						AL0446_i_Direction = _currGroupPrimaryDirToParty;
 						for (AL0447_i_CreatureIndex = creatureCount; AL0447_i_CreatureIndex >= 0; AL0447_i_CreatureIndex--) {
@@ -779,8 +797,8 @@ T0209044_SetBehavior6_Attack:
 					if (AL0447_i_Behavior != kDMBehaviorUnknown2) { /* BUG0_00 Useless code. Behavior cannot be 2 because this value is never used */
 T0209054_SetBehavior7_Approach:
 						curGroup->setBehaviour(kDMBehaviorApproach);
-						activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-						activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+						activeGroup->_targetMapX = dungeon._partyMapX;
+						activeGroup->_targetMapY = dungeon._partyMapY;
 						nextEvent._mapTime += 1;
 						goto T0209134_SetEvent37;
 					}
@@ -828,8 +846,8 @@ T0209061_MoveGroup:
 										 !getFirstPossibleMovementDirOrdinal(&creatureInfo, eventMapX, eventMapY, false) ||
 										 _vm->getRandomNumber(2)))
 										goto T0209044_SetBehavior6_Attack;
-									activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-									activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+									activeGroup->_targetMapX = dungeon._partyMapX;
+									activeGroup->_targetMapY = dungeon._partyMapY;
 								}
 								AL0446_i_Direction = _vm->turnDirRight(AL0446_i_Direction);
 							} while (AL0446_i_Direction != AL0447_i_ReferenceDirection);
@@ -868,8 +886,8 @@ T0209073_SetDirectionGroup:
 T0209081_RunTowardParty:
 						movementTicks++;
 						movementTicks = movementTicks >> 1; /* Running speed is half the movement ticks */
-						AL0450_i_TargetMapX = (activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX);
-						AL0451_i_TargetMapY = (activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY);
+						AL0450_i_TargetMapX = (activeGroup->_targetMapX = dungeon._partyMapX);
+						AL0451_i_TargetMapY = (activeGroup->_targetMapY = dungeon._partyMapY);
 					} else {
 T0209082_WalkTowardTarget:
 						AL0450_i_TargetMapX = activeGroup->_targetMapX;
@@ -916,8 +934,8 @@ T0209094_FleeFromTarget:
 						/* If the creature can see the party then update target coordinates */
 						distanceToVisibleParty = groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY);
 						if (distanceToVisibleParty) {
-							AL0450_i_TargetMapX = (activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX);
-							AL0451_i_TargetMapY = (activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY);
+							AL0450_i_TargetMapX = (activeGroup->_targetMapX = dungeon._partyMapX);
+							AL0451_i_TargetMapY = (activeGroup->_targetMapY = dungeon._partyMapY);
 						} else {
 							if (!(--(activeGroup->_delayFleeingFromTarget))) { /* If the creature is not afraid anymore then stop fleeing from target */
 T0209096_SetBehavior0_Wander:
@@ -928,7 +946,7 @@ T0209096_SetBehavior0_Wander:
 							if (_vm->getRandomNumber(2)) {
 								/* If the creature cannot move and the party is adjacent then stop fleeing */
 								if (!getFirstPossibleMovementDirOrdinal(&creatureInfo, eventMapX, eventMapY, false)) {
-									if (_vm->getDistance(eventMapX, eventMapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY) <= 1)
+									if (_vm->getDistance(eventMapX, eventMapY, dungeon._partyMapX, dungeon._partyMapY) <= 1)
 										goto T0209096_SetBehavior0_Wander;
 								}
 								/* Set creature target to the home square where the creature was located when the party entered the map */
@@ -968,8 +986,8 @@ T0209096_SetBehavior0_Wander:
 				distanceToVisibleParty = groupGetDistanceToVisibleParty(curGroup, AL0447_i_CreatureIndex, eventMapX, eventMapY);
 				/* If the party is visible, update the target coordinates */
 				if (distanceToVisibleParty) {
-					activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-					activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+					activeGroup->_targetMapX = dungeon._partyMapX;
+					activeGroup->_targetMapY = dungeon._partyMapY;
 				}
 				/* If there is a single creature in the group that is not full square sized and 1/4 chance */
 				if (!creatureCount && (creatureSize != kDMCreatureSizeFull) && !((AL0446_i_GroupCellsCriteria = _vm->getRandomNumber(65536)) & 0x00C0)) {
@@ -1035,8 +1053,8 @@ T0209096_SetBehavior0_Wander:
 				} else {
 					/* If the party is visible, update target coordinates */
 					if (groupGetDistanceToVisibleParty(curGroup, kDMWholeCreatureGroup, eventMapX, eventMapY)) {
-						activeGroup->_targetMapX = _vm->_dungeonMan->_partyMapX;
-						activeGroup->_targetMapY = _vm->_dungeonMan->_partyMapY;
+						activeGroup->_targetMapX = dungeon._partyMapX;
+						activeGroup->_targetMapY = dungeon._partyMapY;
 						setGroupDirection(activeGroup, primaryDirectionToOrFromParty, AL0447_i_CreatureIndex, creatureCount && (creatureSize == kDMCreatureSizeHalf));
 						nextEvent._mapTime += 2;
 						nextAspectUpdateTime = _vm->filterTime(nextEvent._mapTime);
@@ -1077,12 +1095,15 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 	if (creatureInfo->_movementTicks == kDMMovementTicksImmobile)
 		return false;
 
-	_vm->_dungeonMan->mapCoordsAfterRelMovement((Direction)dir, 1, 0, mapX, mapY);
-	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+
+	dungeon.mapCoordsAfterRelMovement((Direction)dir, 1, 0, mapX, mapY);
+	uint16 curSquare = dungeon._currMapData[mapX][mapY];
 	int16 curSquareType = Square(curSquare).getType();
 	_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter =
-		!(((mapX >= 0) && (mapX < _vm->_dungeonMan->_currMapWidth)) &&
-		 ((mapY >= 0) && (mapY < _vm->_dungeonMan->_currMapHeight)) &&
+		!(((mapX >= 0) && (mapX < dungeon._currMapWidth)) &&
+		 ((mapY >= 0) && (mapY < dungeon._currMapHeight)) &&
 		  (curSquareType != kDMElementTypeWall) &&
 		  (curSquareType != kDMElementTypeStairs) &&
 		 ((curSquareType != kDMElementTypePit) || (getFlag(curSquare, kDMSquareMaskPitImaginary) && allowMovementOverImaginaryPitsAndFakeWalls) || !getFlag(curSquare, kDMSquareMaskPitOpen) || getFlag(creatureInfo->_attributes, kDMCreatureMaskLevitation)) &&
@@ -1092,10 +1113,10 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 		return false;
 
 	if (getFlag(creatureInfo->_attributes, kDMCreatureMaskArchenemy)) {
-		Thing curThing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+		Thing curThing = dungeon.getSquareFirstThing(mapX, mapY);
 		while (curThing != Thing::_endOfList) {
 			if ((curThing).getType() == kDMThingTypeExplosion) {
-				Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getThingData(curThing);
+				Teleporter *curTeleporter = (Teleporter *)dungeon.getThingData(curThing);
 				if (((Explosion *)curTeleporter)->setType(kDMExplosionTypeFluxcage)) {
 					_fluxCages[dir] = true;
 					_fluxCageCount++;
@@ -1103,23 +1124,23 @@ bool GroupMan::isMovementPossible(CreatureInfo *creatureInfo, int16 mapX, int16 
 					return false;
 				}
 			}
-			curThing = _vm->_dungeonMan->getNextThing(curThing);
+			curThing = dungeon.getNextThing(curThing);
 		}
 	}
 	if ((curSquareType == kDMElementTypeTeleporter) && getFlag(curSquare, kDMSquareMaskTeleporterOpen) && (creatureInfo->getWariness() >= 10)) {
-		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
-		if (getFlag(curTeleporter->getScope(), kDMTeleporterScopeCreatures) && !_vm->_dungeonMan->isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
+		Teleporter *curTeleporter = (Teleporter *)dungeon.getSquareFirstThingData(mapX, mapY);
+		if (getFlag(curTeleporter->getScope(), kDMTeleporterScopeCreatures) && !dungeon.isCreatureAllowedOnMap(_currGroupThing, curTeleporter->getTargetMapIndex())) {
 			_groupMovBlockedByWallStairsPitFakeWalFluxCageTeleporter = true;
 			return false;
 		}
 	}
 
-	_groupMovementBlockedByParty = (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex) && (mapX == _vm->_dungeonMan->_partyMapX) && (mapY == _vm->_dungeonMan->_partyMapY);
+	_groupMovementBlockedByParty = (dungeon._currMapIndex == dungeon._partyMapIndex) && (mapX == dungeon._partyMapX) && (mapY == dungeon._partyMapY);
 	if (_groupMovementBlockedByParty)
 		return false;
 
 	if (curSquareType == kDMElementTypeDoor) {
-		Teleporter *curTeleporter = (Teleporter *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		Teleporter *curTeleporter = (Teleporter *)dungeon.getSquareFirstThingData(mapX, mapY);
 		if (((Square(curSquare).getDoorState()) > (((Door *)curTeleporter)->opensVertically() ? CreatureInfo::getHeight(creatureInfo->_attributes) : 1)) && ((Square(curSquare).getDoorState()) != kDMDoorStateDestroyed) && !getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)) {
 			_groupMovementBlockedByDoor = true;
 			return false;
@@ -1137,8 +1158,9 @@ int16 GroupMan::getDistanceBetweenSquares(int16 srcMapX, int16 srcMapY, int16 de
 int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex, int16 mapX, int16 mapY) {
 	uint16 groupDirections;
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	CreatureInfo *groupCreatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
+	CreatureInfo *groupCreatureInfo = &dungeon._creatureInfos[group->_type];
 	if (championMan._party._event71Count_Invisibility && !getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskSeeInvisible))
 		return 0;
 
@@ -1173,7 +1195,7 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 	}
 
 	while (checkDirectionsCount--) {
-		if (alwaysSee || isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY)) {
+		if (alwaysSee || isDestVisibleFromSource(creatureViewDirections[checkDirectionsCount], mapX, mapY, dungeon._partyMapX, dungeon._partyMapY)) {
 			int16 sightRange = groupCreatureInfo->getSightRange();
 			if (!getFlag(groupCreatureInfo->_attributes, kDMCreatureMaskNightVision))
 				sightRange -= _vm->_displayMan->_dungeonViewPaletteIndex >> 1;
@@ -1181,7 +1203,7 @@ int16 GroupMan::groupGetDistanceToVisibleParty(Group *group, int16 creatureIndex
 			if (_currGroupDistanceToParty > MAX<int16>(1, sightRange))
 				return 0;
 
-			return getDistanceBetweenUnblockedSquares(mapX, mapY, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isViewPartyBlocked);
+			return getDistanceBetweenUnblockedSquares(mapX, mapY, dungeon._partyMapX, dungeon._partyMapY, &GroupMan::isViewPartyBlocked);
 		}
 	}
 	return 0;
@@ -1248,20 +1270,24 @@ int16 GroupMan::getDistanceBetweenUnblockedSquares(int16 srcMapX, int16 srcMapY,
 }
 
 bool GroupMan::isViewPartyBlocked(uint16 mapX, uint16 mapY) {
-	uint16 curSquare = _vm->_dungeonMan->_currMapData[mapX][mapY];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	uint16 curSquare = dungeon._currMapData[mapX][mapY];
 	int16 curSquareType = Square(curSquare).getType();
 	if (curSquareType == kDMElementTypeDoor) {
-		Door *curDoor = (Door *)_vm->_dungeonMan->getSquareFirstThingData(mapX, mapY);
+		Door *curDoor = (Door *)dungeon.getSquareFirstThingData(mapX, mapY);
 		int16 curDoorState = Square(curSquare).getDoorState();
-		return ((curDoorState == kDMDoorStateThreeFourth) || (curDoorState == kDMDoorStateClosed)) && !getFlag(_vm->_dungeonMan->_currMapDoorInfo[curDoor->getType()]._attributes, kDMMaskDoorInfoCreaturesCanSeeThrough);
+		return ((curDoorState == kDMDoorStateThreeFourth) || (curDoorState == kDMDoorStateClosed)) && !getFlag(dungeon._currMapDoorInfo[curDoor->getType()]._attributes, kDMMaskDoorInfoCreaturesCanSeeThrough);
 	}
 	return (curSquareType == kDMElementTypeWall) || ((curSquareType == kDMElementTypeFakeWall) && !getFlag(curSquare, kDMSquareMaskFakeWallOpen));
 }
 
 int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 creatureIndex, bool isAttacking) {
-	Group *group = &(((Group *)_vm->_dungeonMan->_thingData[kDMThingTypeGroup])[activeGroup->_groupThingIndex]);
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Group *group = &(((Group *)dungeon._thingData[kDMThingTypeGroup])[activeGroup->_groupThingIndex]);
 	CreatureType creatureType = group->_type;
-	uint16 creatureGraphicInfo = _vm->_dungeonMan->_creatureInfos[creatureType]._graphicInfo;
+	uint16 creatureGraphicInfo = dungeon._creatureInfos[creatureType]._graphicInfo;
 	bool processGroup = (creatureIndex < 0);
 	if (processGroup) /* If the creature index is negative then all creatures in the group are processed */
 		creatureIndex = group->getCount();
@@ -1323,7 +1349,7 @@ int32 GroupMan::getCreatureAspectUpdateTime(ActiveGroup *activeGroup, int16 crea
 		}
 		activeGroup->_aspect[creatureIndex] = aspect;
 	} while (processGroup && (creatureIndex--));
-	uint16 animationTicks = _vm->_dungeonMan->_creatureInfos[group->_type]._animationTicks;
+	uint16 animationTicks = dungeon._creatureInfos[group->_type]._animationTicks;
 	return _vm->_gameTime + (isAttacking ? ((animationTicks >> 8) & 0xF) : ((animationTicks >> 4) & 0xF)) + _vm->getRandomNumber(2);
 }
 
@@ -1370,8 +1396,9 @@ int16 GroupMan::getSmelledPartyPrimaryDirOrdinal(CreatureInfo *creatureInfo, int
 		return 0;
 
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
-	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, &GroupMan::isSmellPartyBlocked)) {
+	if ((((smellRange + 1) >> 1) >= _currGroupDistanceToParty) && getDistanceBetweenUnblockedSquares(mapY, mapX, dungeon._partyMapX, dungeon._partyMapY, &GroupMan::isSmellPartyBlocked)) {
 		_vm->_projexpl->_secondaryDirToOrFromParty = _currGroupSecondaryDirToParty;
 		return _vm->indexToOrdinal(_currGroupPrimaryDirToParty);
 	}
@@ -1604,8 +1631,10 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 	if (championMan._partyIsSleeping)
 		championMan.wakeUp();
 
-	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	CreatureInfo creatureInfo = _vm->_dungeonMan->_creatureInfos[group->_type];
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	int16 doubledMapDifficulty = dungeon._currMap->_difficulty << 1;
+	CreatureInfo creatureInfo = dungeon._creatureInfos[group->_type];
 	championMan.addSkillExperience(champIndex, kDMSkillParry, creatureInfo.getExperience());
 	if (championMan._partyIsSleeping || (((championMan.getDexterity(curChampion) < (_vm->getRandomNumber(32) + creatureInfo._dexterity + doubledMapDifficulty - 16)) || !_vm->getRandomNumber(4)) && !championMan.isLucky(curChampion, 60))) {
 		uint16 allowedWound;
@@ -1638,7 +1667,7 @@ int16 GroupMan::getChampionDamage(Group *group, uint16 champIndex) {
 
 		int16 damage = championMan.addPendingDamageAndWounds_getDamage(champIndex, attack, allowedWound, creatureInfo._attackType);
 		if (damage) {
-			_vm->_sound->requestPlay(kDMSoundIndexChampion0Damaged + champIndex, _vm->_dungeonMan->_partyMapX, _vm->_dungeonMan->_partyMapY, kDMSoundModePlayOneTickLater);
+			_vm->_sound->requestPlay(kDMSoundIndexChampion0Damaged + champIndex, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayOneTickLater);
 
 			uint16 poisonAttack = creatureInfo._poisonAttack;
 			if (poisonAttack && _vm->getRandomNumber(2)) {
@@ -1664,14 +1693,16 @@ void GroupMan::dropMovingCreatureFixedPossession(Thing thing, int16 mapX, int16 
 }
 
 void GroupMan::startWandering(int16 mapX, int16 mapY) {
-	Group *L0332_ps_Group = (Group *)_vm->_dungeonMan->getThingData(groupGetThing(mapX, mapY));
-	if (L0332_ps_Group->getBehaviour() >= kDMBehaviorUnknown4) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Group *L0332_ps_Group = (Group *)dungeon.getThingData(groupGetThing(mapX, mapY));
+	if (L0332_ps_Group->getBehaviour() >= kDMBehaviorUnknown4)
 		L0332_ps_Group->setBehaviour(kDMBehaviorWander);
-	}
+
 	TimelineEvent nextEvent;
-	nextEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, (_vm->_gameTime + 1));
+	nextEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, (_vm->_gameTime + 1));
 	nextEvent._type = kDMEventTypeUpdateBehaviourGroup;
-	nextEvent._priority = kDMMovementTicksImmobile - _vm->_dungeonMan->_creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
+	nextEvent._priority = kDMMovementTicksImmobile - dungeon._creatureInfos[L0332_ps_Group->_type]._movementTicks; /* The fastest creatures (with small MovementTicks value) get higher event priority */
 	nextEvent._Cu._ticks = 0;
 	nextEvent._Bu._location._mapX = mapX;
 	nextEvent._Bu._location._mapY = mapY;
@@ -1679,6 +1710,8 @@ void GroupMan::startWandering(int16 mapX, int16 mapY) {
 }
 
 void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
 	ActiveGroup *activeGroup = _activeGroups;
 	int16 activeGroupIndex = 0;
 	while (activeGroup->_groupThingIndex >= 0) {
@@ -1690,8 +1723,8 @@ void GroupMan::addActiveGroup(Thing thing, int16 mapX, int16 mapY) {
 	_currActiveGroupCount++;
 
 	activeGroup->_groupThingIndex = (thing).getIndex();
-	Group *curGroup = (Group *)(_vm->_dungeonMan->_thingData[kDMThingTypeGroup] +
-		_vm->_dungeonMan->_thingDataWordCount[kDMThingTypeGroup] * activeGroup->_groupThingIndex);
+	Group *curGroup = (Group *)(dungeon._thingData[kDMThingTypeGroup] +
+		dungeon._thingDataWordCount[kDMThingTypeGroup] * activeGroup->_groupThingIndex);
 
 	activeGroup->_cells = curGroup->_cells;
 	curGroup->getActiveGroupIndex() = activeGroupIndex;
@@ -1730,10 +1763,12 @@ void GroupMan::removeAllActiveGroups() {
 }
 
 void GroupMan::addAllActiveGroups() {
-	byte *curSquare = _vm->_dungeonMan->_currMapData[0];
-	Thing *squareCurThing = &_vm->_dungeonMan->_squareFirstThings[_vm->_dungeonMan->_currMapColCumulativeSquareFirstThingCount[0]];
-	for (uint16 mapX = 0; mapX < _vm->_dungeonMan->_currMapWidth; mapX++) {
-		for (uint16 mapY = 0; mapY < _vm->_dungeonMan->_currMapHeight; mapY++) {
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	byte *curSquare = dungeon._currMapData[0];
+	Thing *squareCurThing = &dungeon._squareFirstThings[dungeon._currMapColCumulativeSquareFirstThingCount[0]];
+	for (uint16 mapX = 0; mapX < dungeon._currMapWidth; mapX++) {
+		for (uint16 mapY = 0; mapY < dungeon._currMapHeight; mapY++) {
 			if (getFlag(*curSquare++, kDMSquareMaskThingListPresent)) {
 				Thing curThing = *squareCurThing++;
 				do {
@@ -1743,7 +1778,7 @@ void GroupMan::addAllActiveGroups() {
 						startWandering(mapX, mapY);
 						break;
 					}
-					curThing = _vm->_dungeonMan->getNextThing(curThing);
+					curThing = dungeon.getNextThing(curThing);
 				} while (curThing != Thing::_endOfList);
 			}
 		}
@@ -1751,12 +1786,14 @@ void GroupMan::addAllActiveGroups() {
 }
 
 Thing GroupMan::groupGetGenerated(CreatureType creatureType, int16 healthMultiplier, uint16 creatureCount, Direction dir, int16 mapX, int16 mapY) {
-	Thing groupThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeGroup);
-	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (_vm->_dungeonMan->_currMapIndex == _vm->_dungeonMan->_partyMapIndex))
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	Thing groupThing = dungeon.getUnusedThing(kDMThingTypeGroup);
+	if (((_currActiveGroupCount >= (_maxActiveGroupCount - 5)) && (dungeon._currMapIndex == dungeon._partyMapIndex))
 		|| (groupThing == Thing::_none)) {
 		return Thing::_none;
 	}
-	Group *group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
+	Group *group = (Group *)dungeon.getThingData(groupThing);
 	group->_slot = Thing::_endOfList;
 	group->setDoNotDiscard(false);
 	group->setDir(dir);
@@ -1826,6 +1863,7 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 	int16 L0569_i_Outcome;
 
 	ChampionMan &championMan = *_vm->_championMan;
+	DungeonMan &dungeon = *_vm->_dungeonMan;
 
 	if (champIndex >= championMan._partyChampionCount)
 		return 0;
@@ -1833,8 +1871,8 @@ int16 GroupMan::getMeleeActionDamage(Champion *champ, int16 champIndex, Group *g
 	if (!champ->_currHealth)
 		return 0;
 
-	int16 doubledMapDifficulty = _vm->_dungeonMan->_currMap->_difficulty << 1;
-	CreatureInfo *creatureInfo = &_vm->_dungeonMan->_creatureInfos[group->_type];
+	int16 doubledMapDifficulty = dungeon._currMap->_difficulty << 1;
+	CreatureInfo *creatureInfo = &dungeon._creatureInfos[group->_type];
 	int16 actionHandObjectIconIndex = _vm->_objectMan->getIconIndex(champ->_slots[kDMSlotActionHand]);
 	bool actionHitsNonMaterialCreatures = getFlag(actionHitProbability, kDMActionMaskHitNonMaterialCreatures);
 	if (actionHitsNonMaterialCreatures)
@@ -1904,18 +1942,20 @@ T0231016:
 }
 
 void GroupMan::fluxCageAction(int16 mapX, int16 mapY) {
-	ElementType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	ElementType squareType = dungeon.getSquare(mapX, mapY).getType();
 	if ((squareType == kDMElementTypeWall) || (squareType == kDMElementTypeStairs))
 		return;
 
-	Thing unusedThing = _vm->_dungeonMan->getUnusedThing(kDMThingTypeExplosion);
+	Thing unusedThing = dungeon.getUnusedThing(kDMThingTypeExplosion);
 	if (unusedThing == Thing::_none)
 		return;
 
-	_vm->_dungeonMan->linkThingToList(unusedThing, Thing(0), mapX, mapY);
-	(((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(kDMExplosionTypeFluxcage);
+	dungeon.linkThingToList(unusedThing, Thing(0), mapX, mapY);
+	(((Explosion *)dungeon._thingData[kDMThingTypeExplosion])[unusedThing.getIndex()]).setType(kDMExplosionTypeFluxcage);
 	TimelineEvent newEvent;
-	newEvent._mapTime = _vm->setMapAndTime(_vm->_dungeonMan->_currMapIndex, _vm->_gameTime + 100);
+	newEvent._mapTime = _vm->setMapAndTime(dungeon._currMapIndex, _vm->_gameTime + 100);
 	newEvent._type = kDMEventTypeRemoveFluxcage;
 	newEvent._priority = 0;
 	newEvent._Cu._slot = unusedThing.toUint16();
@@ -1960,22 +2000,26 @@ uint16 GroupMan::isLordChaosOnSquare(int16 mapX, int16 mapY) {
 }
 
 bool GroupMan::isFluxcageOnSquare(int16 mapX, int16 mapY) {
-	ElementType squareType = _vm->_dungeonMan->getSquare(mapX, mapY).getType();
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	ElementType squareType = dungeon.getSquare(mapX, mapY).getType();
 	if ((squareType == kDMElementTypeWall) || (squareType == kDMElementTypeStairs))
 		return false;
 
-	Thing thing = _vm->_dungeonMan->getSquareFirstThing(mapX, mapY);
+	Thing thing = dungeon.getSquareFirstThing(mapX, mapY);
 	while (thing != Thing::_endOfList) {
-		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)_vm->_dungeonMan->_thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == kDMExplosionTypeFluxcage))
+		if ((thing.getType() == kDMThingTypeExplosion) && (((Explosion *)dungeon._thingData[kDMThingTypeExplosion])[thing.getIndex()].getType() == kDMExplosionTypeFluxcage))
 			return true;
 
-		thing = _vm->_dungeonMan->getNextThing(thing);
+		thing = dungeon.getNextThing(thing);
 	}
 	return false;
 }
 
 void GroupMan::fuseAction(uint16 mapX, uint16 mapY) {
-	if ((mapX >= _vm->_dungeonMan->_currMapWidth) || (mapY >= _vm->_dungeonMan->_currMapHeight))
+	DungeonMan &dungeon = *_vm->_dungeonMan;
+
+	if ((mapX >= dungeon._currMapWidth) || (mapY >= dungeon._currMapHeight))
 		return;
 
 	_vm->_projexpl->createExplosion(Thing::_explHarmNonMaterial, 255, mapX, mapY, kDMCreatureTypeSingleCenteredCreature); /* BUG0_17 The game crashes after the Fuse action is performed while looking at a wall on a map boundary. An explosion thing is created on the square in front of the party but there is no check to ensure the square coordinates are in the map bounds. This corrupts a memory location and leads to a game crash */
