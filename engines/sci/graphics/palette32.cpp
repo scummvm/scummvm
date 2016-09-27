@@ -810,21 +810,20 @@ void GfxPalette32::applyCycles() {
 #pragma mark -
 #pragma mark Fading
 
-// NOTE: There are some game scripts (like SQ6 Sierra logo and main menu) that call
-// setFade with numColorsToFade set to 256, but other parts of the engine like
-// processShowStyleNone use 255 instead of 256. It is not clear if this is because
-// the last palette entry is intentionally left unmodified, or if this is a bug
-// in the engine. It certainly seems confused because all other places that accept
-// color ranges typically receive values in the range of 0–255.
-void GfxPalette32::setFade(uint16 percent, uint8 fromColor, uint16 numColorsToFade) {
-	if (fromColor > numColorsToFade) {
+void GfxPalette32::setFade(uint16 percent, uint8 fromColor, uint16 toColor) {
+	if (fromColor > toColor) {
 		return;
 	}
 
-	assert(numColorsToFade <= ARRAYSIZE(_fadeTable));
+	// Some game scripts (like SQ6 Sierra logo and main menu) incorrectly call
+	// setFade with toColor set to 256
+	if (toColor > 255) {
+		toColor = 255;
+	}
 
-	for (int i = fromColor; i < numColorsToFade; i++)
+	for (int i = fromColor; i <= toColor; i++) {
 		_fadeTable[i] = percent;
+	}
 }
 
 void GfxPalette32::fadeOff() {
