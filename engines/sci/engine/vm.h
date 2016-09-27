@@ -137,20 +137,19 @@ enum {
 };
 
 enum GlobalVar {
-	kEgo            = 0,
-	kGame           = 1,
-	kCurrentRoom    = 2,
-	kSpeed          = 3,  // SCI16
-	kDefaultPlane   = 3,  // SCI32
-	kQuit           = 4,
-	kPlanes         = 10, // SCI32
-	kCurrentRoomNo  = 11,
-	kPreviousRoomNo = 12,
-	kNewRoomNo      = 13,
-	kScore          = 15,
-	kFastCast       = 84, // SCI16
-	kMessageType    = 90,
-	kShivers1Score  = 349
+	kGlobalEgo            = 0,
+	kGlobalCurrentRoom    = 2,
+	kGlobalSpeed          = 3,  // SCI16
+	kGlobalDefaultPlane   = 3,  // SCI32
+	kGlobalQuit           = 4,
+	kGlobalPlanes         = 10, // SCI32
+	kGlobalCurrentRoomNo  = 11,
+	kGlobalPreviousRoomNo = 12,
+	kGlobalNewRoomNo      = 13,
+	kGlobalScore          = 15,
+	kGlobalFastCast       = 84, // SCI16
+	kGlobalMessageType    = 90,
+	kGlobalShivers1Score  = 349
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */

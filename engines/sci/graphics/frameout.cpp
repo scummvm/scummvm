@@ -141,7 +141,7 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 		return;
 
 	// Get planes list object
-	reg_t planesListObject = engineState->variables[VAR_GLOBAL][kPlanes];
+	reg_t planesListObject = engineState->variables[VAR_GLOBAL][kGlobalPlanes];
 	reg_t planesListElements = readSelector(segMan, planesListObject, SELECTOR(elements));
 
 	List *planesList = segMan->lookupList(planesListElements);
@@ -565,7 +565,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	Palette sourcePalette(_palette->getNextPalette());
 	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
 
-	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][kPreviousRoomNo].toSint16();
+	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][kGlobalPreviousRoomNo].toSint16();
 
 	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
 	_showList.add(rect);

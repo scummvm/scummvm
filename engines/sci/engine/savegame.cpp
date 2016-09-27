@@ -337,12 +337,12 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 		if (s.isSaving()) {
 			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
 			if (g_sci->getGameId() == GID_SHIVERS) {
-				obj.lowScore = globals[kScore].toUint16();
-				obj.highScore = globals[kShivers1Score].toUint16();
+				obj.lowScore = globals[kGlobalScore].toUint16();
+				obj.highScore = globals[kGlobalShivers1Score].toUint16();
 				obj.avatarId = 0;
 			} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
 				obj.lowScore = obj.highScore = 0;
-				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kEgo], SELECTOR(view));
+				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kGlobalEgo], SELECTOR(view));
 			} else {
 				obj.lowScore = obj.highScore = obj.avatarId = 0;
 			}
