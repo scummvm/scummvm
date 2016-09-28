@@ -364,8 +364,8 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
 	
-	_lights->setupFrame(_frame);
-	_setEffects->setupFrame(_frame);
+	_lights->setupFrame(_view._frame);
+	_setEffects->setupFrame(_view._frame);
 
 	float sliceLine = sliceLineIterator.line();
 

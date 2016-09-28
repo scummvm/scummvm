@@ -28,8 +28,7 @@
 namespace BladeRunner {
 
 bool View::read(Common::ReadStream *stream) {
-	uint32 frame;
-	frame = stream->readUint32LE();
+	_frame = stream->readUint32LE();
 
 	float d[12];
 	for (int i = 0; i != 12; ++i)
