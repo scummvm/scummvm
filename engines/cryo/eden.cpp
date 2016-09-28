@@ -105,7 +105,7 @@ void EdenGame::gametofresques() {
 
 // Original name: dofresques
 void EdenGame::doFrescoes() {
-	curs_saved = 0;
+	curs_saved = false;
 	torchCursor = true;
 	glow_x = -1;
 	glow_y = -1;
@@ -121,7 +121,7 @@ void EdenGame::doFrescoes() {
 // Original name: finfresques
 void EdenGame::endFrescoes() {
 	torchCursor = false;
-	curs_saved = 1;
+	curs_saved = true;
 	p_global->displayFlags = DisplayFlags::dfFlag1;
 	resetScroll();
 	p_global->ff_100 = 0xFF;
@@ -878,7 +878,7 @@ void EdenGame::afficher128() {
 		ClearScreen();
 		fadetoblack128(1);
 		if (showBlackBars)
-			blackbars();
+			drawBlackBars();
 		CLBlitter_CopyView2Screen(p_mainview);
 		fadefromblack128(1);
 	}
@@ -939,34 +939,33 @@ void EdenGame::use_bank(int16 bank) {
 		debug("attempt to load bad bank %d", bank);
 	bank_data_ptr = bank_data_buf;
 	if (cur_bank_num != bank) {
-		loadfile(bank, bank_data_buf);
+		loadFile(bank, bank_data_buf);
 		verifh(bank_data_buf);
 		cur_bank_num = bank;
 	}
 }
 
 void EdenGame::sundcurs(int16 x, int16 y) {
-	byte *scr, *keep = curs_keepbuf;
-	int16 w, h;
+	byte *keep = curs_keepbuf;
 	curs_keepx = x - 4;
 	curs_keepy = y - 4;
-	scr = p_mainview_buf + curs_keepx + curs_keepy * 640;
-	for (h = 48; h--;) {
-		for (w = 48; w--;)
+	byte *scr = p_mainview_buf + curs_keepx + curs_keepy * 640;
+	for (int16 h = 48; h--;) {
+		for (int16 w = 48; w--;)
 			*keep++ = *scr++;
 		scr += 640 - 48;
 	}
-	curs_saved = 1;
+	curs_saved = true;
 }
 
 void EdenGame::rundcurs() {
-	byte *scr, *keep = curs_keepbuf;
-	int16 w, h;
-	scr = p_mainview_buf + curs_keepx + curs_keepy * 640;
+	byte *keep = curs_keepbuf;
+	byte *scr = p_mainview_buf + curs_keepx + curs_keepy * 640;
 	if (!curs_saved || (curs_keepx == -1 && curs_keepy == -1))  //TODO ...
 		return;
-	for (h = 48; h--;) {
-		for (w = 48; w--;)
+
+	for (int16 h = 48; h--;) {
+		for (int16 w = 48; w--;)
 			*scr++ = *keep++;
 		scr += 640 - 48;
 	}
@@ -980,7 +979,7 @@ void EdenGame::noclipax(int16 index, int16 x, int16 y) {
 	int16 w, h;
 	if (cur_bank_num != 117 && !no_palette) {
 		if (PLE16(pix) > 2)
-			readpalette(pix + 2);
+			readPalette(pix + 2);
 	}
 	pix += PLE16(pix);
 	pix += PLE16(pix + index * 2);
@@ -1064,7 +1063,7 @@ void EdenGame::noclipax_avecnoir(int16 index, int16 x, int16 y) {
 	int16 w, h;
 	if (cur_bank_num != 117) {
 		if (PLE16(pix) > 2)
-			readpalette(pix + 2);
+			readPalette(pix + 2);
 	}
 	pix += PLE16(pix);
 	pix += PLE16(pix + index * 2);
@@ -1224,8 +1223,8 @@ void EdenGame::glow(int16 index) {
 	}
 }
 
-void EdenGame::readpalette(byte *ptr) {
-	int doit = 1;
+void EdenGame::readPalette(byte *ptr) {
+	bool doit = true;
 	while (doit) {
 		uint16 idx = *ptr++;
 		if (idx != 0xFF) {
@@ -1245,36 +1244,33 @@ void EdenGame::readpalette(byte *ptr) {
 				idx++;
 			}
 		} else
-			doit = 0;
+			doit = false;
 	}
 }
 
-void EdenGame::spritesurbulle(int16 index, int16 x, int16 y) {
+// Original name: spritesurbulle
+void EdenGame::spriteOnSubtitle(int16 index, int16 x, int16 y) {
 	byte *pix = bank_data_ptr;
 	byte *scr = p_subtitlesview_buf + x + y * subtitles_x_width;
-	byte h0, h1, mode;
-	int16 w, h;
-	if (cur_bank_num != 117) {
-		if (PLE16(pix) > 2)
-			readpalette(pix + 2);
-	}
+	if ((cur_bank_num != 117) && (PLE16(pix) > 2))
+		readPalette(pix + 2);
+
 	pix += PLE16(pix);
 	pix += PLE16(pix + index * 2);
 	//  int16   height:9
 	//  int16   pad:6;
 	//  int16   flag:1;
-	h0 = *pix++;
-	h1 = *pix++;
-	w = ((h1 & 1) << 8) | h0;
-	h = *pix++;
-	mode = *pix++;
+	byte h0 = *pix++;
+	byte h1 = *pix++;
+	int16 w = ((h1 & 1) << 8) | h0;
+	int16 h = *pix++;
+	byte mode = *pix++;
 	if (mode != 0xFF && mode != 0xFE)
 		return;
 	if (h1 & 0x80) {
 		// compressed
 		for (; h-- > 0;) {
-			int16 ww;
-			for (ww = w; ww > 0;) {
+			for (int16 ww = w; ww > 0;) {
 				byte c = *pix++;
 				if (c >= 0x80) {
 					if (c == 0x80) {
@@ -1296,9 +1292,10 @@ void EdenGame::spritesurbulle(int16 index, int16 x, int16 y) {
 						ww -= run;
 						if (fill == 0)
 							scr += run;
-						else
+						else {
 							for (; run--;)
 								*scr++ = fill;
+						}
 					}
 				} else {
 					byte run = c + 1;
@@ -1317,8 +1314,7 @@ void EdenGame::spritesurbulle(int16 index, int16 x, int16 y) {
 	} else {
 		// uncompressed
 		for (; h--;) {
-			int16 ww;
-			for (ww = w; ww--;) {
+			for (int16 ww = w; ww--;) {
 				byte p = *pix++;
 				if (p == 0)
 					scr++;
@@ -1331,7 +1327,7 @@ void EdenGame::spritesurbulle(int16 index, int16 x, int16 y) {
 }
 
 void EdenGame::bars_out() {
-	int16 i, r19, r20, r25, r24;
+	int16 i;
 	unsigned int *scr40, *scr41, *scr42;
 	if (showBlackBars)
 		return;
@@ -1342,10 +1338,10 @@ void EdenGame::bars_out() {
 	underBottomBarScreenRect.sx = underTopBarScreenRect.sx;
 	underBottomBarScreenRect.ex = underTopBarScreenRect.ex;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underBottomBarScreenRect, &underBottomBarBackupRect);
-	r19 = 14;   // TODO - init in decl?
-	r20 = 176;
-	r25 = 14;
-	r24 = 21;
+	int16 r19 = 14;   // TODO - init in decl?
+	int16 r20 = 176;
+	int16 r25 = 14;
+	int16 r24 = 21;
 	underTopBarScreenRect.sx = 0;
 	underTopBarScreenRect.ex = 320 - 1;
 	underTopBarBackupRect.sx = scroll_pos;
@@ -1399,16 +1395,17 @@ void EdenGame::bars_out() {
 	}
 	afficher();
 	initrect();
-	showBlackBars = 1;
+	showBlackBars = true;
 }
 
-void EdenGame::bars_in() {
-	int16 r29, r28;
+// Original name: bars_in
+void EdenGame::showBars() {
 	if (!showBlackBars)
 		return;
-	blackbars();
-	r29 = 2;
-	r28 = 2;
+
+	drawBlackBars();
+	int16 r29 = 2;
+	int16 r28 = 2;
 	underTopBarScreenRect.sx = 0;
 	underTopBarScreenRect.ex = 320 - 1;
 	underTopBarBackupRect.sx = scroll_pos;
@@ -1431,7 +1428,7 @@ void EdenGame::bars_in() {
 		afficher();
 	}
 	initrect();
-	showBlackBars = 0;
+	showBlackBars = false;
 }
 
 void EdenGame::sauvefondbouche() {
@@ -1459,15 +1456,15 @@ void EdenGame::restaurefondbouche() {
 	CLBlitter_CopyViewRect(p_mainview, p_mainview, &rect_dst, &rect_src);
 }
 
-void EdenGame::blackbars() {
+// Original name : blackbars
+void EdenGame::drawBlackBars() {
 	byte *scr = p_mainview_buf;
-	int16 x, y;
-	for (y = 0; y < 16; y++)
-		for (x = 0; x < 640; x++)
+	for (int16 y = 0; y < 16; y++)
+		for (int16 x = 0; x < 640; x++)
 			*scr++ = 0;
 	scr += 640 * (200 - 16 - 24);
-	for (y = 0; y < 24; y++)
-		for (x = 0; x < 640; x++)
+	for (int16 y = 0; y < 24; y++)
+		for (int16 x = 0; x < 640; x++)
 			*scr++ = 0;
 }
 
@@ -2342,7 +2339,7 @@ void EdenGame::af_image() {
 		int16 w, h;
 		index--;
 		if (PLE16(pix) > 2)
-			readpalette(pix + 2);
+			readPalette(pix + 2);
 		pix += PLE16(pix);
 		pix += PLE16(pix + index * 2);
 		//  int16   height:9
@@ -2837,8 +2834,8 @@ void EdenGame::my_bulle() {
 		byte x = *icons++;
 		byte y = *icons++;
 		byte s = *icons++;
-		spritesurbulle(52, x + subtitles_x_center, y - 1);
-		spritesurbulle(s + 9, x + subtitles_x_center + 1, y);
+		spriteOnSubtitle(52, x + subtitles_x_center, y - 1);
+		spriteOnSubtitle(s + 9, x + subtitles_x_center + 1, y);
 	}
 }
 
@@ -3390,7 +3387,7 @@ void EdenGame::adam() {
 		playHNM(vid);
 		needPaletteUpdate = 1;
 		p_global->ff_102 = 16;
-		bars_in();
+		showBars();
 		gametomiroir(0);
 		break;
 	case Objects::obApple:
@@ -3723,7 +3720,7 @@ void EdenGame::vrf_phrases_file() {
 		return;
 	lastPhrasesFile = num;
 	num += 404;
-	loadfile(num, gamePhrases);
+	loadFile(num, gamePhrases);
 	verifh(gamePhrases);
 }
 
@@ -3923,7 +3920,7 @@ void EdenGame::mort(int16 vid) {
 	fadetoblack(2);
 	CLBlitter_FillScreenView(0);
 	CLBlitter_FillView(p_mainview, 0);
-	bars_in();
+	showBars();
 	p_global->narratorSequence = 51;
 	p_global->newMusicType = MusicType::mtNormal;
 	musique();
@@ -4607,20 +4604,14 @@ void EdenGame::closebigfile() {
 	CLFile_Close(h_bigfile);
 }
 
-void EdenGame::loadfile(uint16 num, void *buffer) {
-	int16 retry, res = 1;
+void EdenGame::loadFile(uint16 num, void *buffer) {
 	assert(num < bigfile_header->count);
-	for (retry = 0; res && retry < 5; retry++) {
-		pakfile_t *file = &bigfile_header->files[num];
-		long size = PLE32(&file->size);
-		long offs = PLE32(&file->offs);
-		debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
-		CLFile_SetPosition(h_bigfile, fsFromStart, offs);
-		CLFile_Read(h_bigfile, buffer, &size);
-		res = 0;
-	}
-	if (res)
-		quit_flag = 1;
+	pakfile_t *file = &bigfile_header->files[num];
+	long size = PLE32(&file->size);
+	long offs = PLE32(&file->offs);
+	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
+	CLFile_SetPosition(h_bigfile, fsFromStart, offs);
+	CLFile_Read(h_bigfile, buffer, &size);
 }
 
 void EdenGame::shnmfl(uint16 num) {
@@ -4684,13 +4675,13 @@ void EdenGame::ConvertMacToPC() {
 #endif
 
 void EdenGame::loadpermfiles() {
-	loadfile(2498, gameIcons);
-	loadfile(2497, gameRooms);
-	loadfile(2486, gameLipsync);
-	loadfile(0, main_bank_buf);
-	loadfile(402, gameFont);
-	loadfile(404, gameDialogs);
-	loadfile(403, gameConditions);
+	loadFile(2498, gameIcons);
+	loadFile(2497, gameRooms);
+	loadFile(2486, gameLipsync);
+	loadFile(0, main_bank_buf);
+	loadFile(402, gameFont);
+	loadFile(404, gameDialogs);
+	loadFile(403, gameConditions);
 #if 1
 	ConvertMacToPC();
 #endif
@@ -5138,7 +5129,7 @@ void EdenGame::loadsal(int16 num) {
 	if (num == p_global->lastSalNum)
 		return;
 	p_global->lastSalNum = num;
-	loadfile(num + 419, sal_buf);
+	loadFile(num + 419, sal_buf);
 }
 
 void EdenGame::specialoutside() {
@@ -5343,13 +5334,13 @@ void EdenGame::maj2() {
 	if (p_global->ff_102 || p_global->ff_103)
 		afficher();
 	else if (p_global->ff_F1 == (RoomFlags::rf40 | RoomFlags::rf04 | RoomFlags::rf01)) {
-		blackbars();
+		drawBlackBars();
 		effet1();
 	} else if (p_global->ff_F1 && !(p_global->ff_F1 & RoomFlags::rf04) && !r30) {
 		if (!(p_global->displayFlags & DisplayFlags::dfPanable))
-			blackbars();
+			drawBlackBars();
 		else if (p_global->valleyVidNum)
-			blackbars();
+			drawBlackBars();
 		effet1();
 	} else if (r30 && !(p_global->ff_F1 & RoomFlags::rf04))
 		effetpix();
@@ -5360,7 +5351,7 @@ void EdenGame::maj2() {
 		drawTopScreen();
 		showObjects();
 	}
-	bars_in();
+	showBars();
 	showEvents();
 	p_global->labyrinthDirections = 0;
 	specialin();
@@ -5382,8 +5373,9 @@ void EdenGame::maj_salle(uint16 roomNum) {
 	majsalle1(roomNum);
 }
 
-void EdenGame::initbuf() {
-#define ALLOC(ptr, size, typ) if (!((ptr) = (typ*)malloc(size))) quit_flag = 1;
+// Original name: initbuf
+void EdenGame::allocateBuffers() {
+#define ALLOC(ptr, size, typ) if (!((ptr) = (typ*)malloc(size))) bufferAllocationErrorFl = true;
 	ALLOC(bigfile_header, 0x10000, pak_t);
 	ALLOC(gameRooms, 0x4000, room_t);
 	ALLOC(gameIcons, 0x4000, icon_t);
@@ -5477,18 +5469,18 @@ void EdenGame::run() {
 	music_channel = CLSoundChannel_New(0);
 	CLSound_SetWantsDesigned(1);
 
-	initbuf();
+	allocateBuffers();
 	openbigfile();
 	openwindow();
 	loadpermfiles();
 
-	if (!quit_flag) {
+	if (!bufferAllocationErrorFl) {
 		LostEdenMac_InitPrefs();
 		init_cube();
 		p_mainview->doubled = doubled;
 		while (!quit_flag2) {
 			init_globals();
-			quit_flag3 = 0;
+			quit_flag3 = false;
 			normalCursor = 1;
 			torchCursor = false;
 			curs_keepy = -1;
@@ -5497,10 +5489,8 @@ void EdenGame::run() {
 			if (!gameLoaded)
 				intro();
 			edmain();
-			if (quit_flag)
-				goto quit;
 			startmusique(1);
-			blackbars();
+			drawBlackBars();
 			afficher();
 			fadetoblack(3);
 			ClearScreen();
@@ -5517,8 +5507,7 @@ void EdenGame::run() {
 		}
 		// LostEdenMac_SavePrefs();
 	}
-quit:
-	;
+
 	fadetoblack(4);
 	closebigfile();
 	freebuf();
@@ -5531,7 +5520,7 @@ quit:
 void EdenGame::edmain() {
 	//TODO
 	entergame();
-	while (!quit_flag && !quit_flag3 && p_global->endGameFlag != 50) {
+	while (!bufferAllocationErrorFl && !quit_flag3 && p_global->endGameFlag != 50) {
 		if (!gameStarted) {
 			// if in demo mode, reset game after a while
 			demoCurrentTicks = TimerTicks;
@@ -5632,7 +5621,7 @@ void EdenGame::entergame() {
 	currentTime = TimerTicks / 100;
 	p_global->gameTime = currentTime;
 	demoStartTicks = TimerTicks;
-	gameStarted = 0;
+	gameStarted = false;
 	if (!gameLoaded) {
 		p_global->roomNum = 279;
 		p_global->areaNum = Areas::arMo;
@@ -5647,12 +5636,12 @@ void EdenGame::entergame() {
 		p_global->currentMusicNum = 0;
 		startmusique(lastMusicNum);
 		p_global->inventoryScrollPos = 0;
-		gameStarted = 1;
+		gameStarted = true;
 	}
 	showObjects();
 	drawTopScreen();
 	saveFriezes();
-	showBlackBars = 1;
+	showBlackBars = true;
 	p_global->ff_102 = 1;
 	maj_salle(p_global->roomNum);
 	if (flag) {
@@ -5742,13 +5731,13 @@ void EdenGame::FRDevents() {
 		if (current_cursor != 9 && torchCursor) {
 			unglow();
 			torchCursor = false;
-			curs_saved = 0;
+			curs_saved = false;
 		}
 	}
 	if (CLMouse_IsDown()) {
 		if (!mouse_held) {
 			mouse_held = 1;
-			gameStarted = 1;
+			gameStarted = true;
 			mouse();
 		}
 	} else
@@ -6811,7 +6800,7 @@ skip:
 
 void EdenGame::generique() {
 	int oldmusic;
-	blackbars();
+	drawBlackBars();
 	afficher();
 	fadetoblack(3);
 	ClearScreen();
@@ -6985,13 +6974,13 @@ void EdenGame::panelrestart() {
 	drawTopScreen();
 	showObjects();
 	saveFriezes();
-	showBlackBars = 1;
+	showBlackBars = true;
 	maj_salle(p_global->roomNum);
 }
 
 void EdenGame::reallyquit() {
-	quit_flag3 = 1; //TODO: byte
-	quit_flag2 = 1;
+	quit_flag3 = true;
+	quit_flag2 = true;
 }
 
 void EdenGame::confirmer(char mode, char yesId) {
@@ -7293,7 +7282,7 @@ void EdenGame::PommeQ() {
 	icon_t *icon = &gameIcons[85];
 	if (p_global->displayFlags & DisplayFlags::dfFrescoes) {
 		torchCursor = false;
-		curs_saved = 1;
+		curs_saved = true;
 		if (p_global->displayFlags & DisplayFlags::dfPerson)
 			close_perso();
 		p_global->displayFlags = DisplayFlags::dfFlag1;

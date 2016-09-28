@@ -115,13 +115,13 @@ private:
 	void getglow(int16 x, int16 y, int16 w, int16 h);
 	void unglow();
 	void glow(int16 index);
-	void readpalette(byte *ptr);
-	void spritesurbulle(int16 index, int16 x, int16 y);
+	void readPalette(byte *ptr);
+	void spriteOnSubtitle(int16 index, int16 x, int16 y);
 	void bars_out();
-	void bars_in();
+	void showBars();
 	void sauvefondbouche();
 	void restaurefondbouche();
-	void blackbars();
+	void drawBlackBars();
 	void drawTopScreen();
 	void affplanval();
 	void affrepere(int16 index, int16 location);
@@ -272,7 +272,7 @@ private:
 	void verifh(void *ptr);
 	void openbigfile();
 	void closebigfile();
-	void loadfile(uint16 num, void *buffer);
+	void loadFile(uint16 num, void *buffer);
 	void shnmfl(uint16 num);
 	int ssndfl(uint16 num);
 	void ConvertIcons(icon_t *icon, int count);
@@ -304,7 +304,7 @@ private:
 	void maj2();
 	void majsalle1(int16 roomNum);
 	void maj_salle(uint16 roomNum);
-	void initbuf();
+	void allocateBuffers();
 	void freebuf();
 	void openwindow();
 	void EmergencyExit();
@@ -514,8 +514,8 @@ private:
 	int16           glow_y;
 	int16           glow_x;
 	byte   needPaletteUpdate;
-	byte   curs_saved;
-	byte   showBlackBars;
+	bool   curs_saved;
+	bool   showBlackBars;
 	byte   fond_saved;
 	byte   *bank_data_ptr;
 	color3_t        pal_entry;
@@ -584,15 +584,14 @@ private:
 	byte   *gameFont;  //TODO: rename to font?
 	byte   *p_subtitlesview_buf;
 	byte   *p_underSubtitlesView_buf;
-	global_t        *p_global;
+	global_t *p_global;
 	uint16  mouse_y_center, mouse_x_center;
-	int             quit_flag3;     //TODO: some obsolete error flag?
 	uint16  machine_speed;
-	byte   quit_flag;
+	bool    bufferAllocationErrorFl;
+	bool    quit_flag2;
+	bool    quit_flag3;
+	bool    gameStarted;
 
-	byte   gameStarted;
-
-	byte   quit_flag2;
 	byte   soundAllocated;
 	soundchannel_t  *music_channel;
 	soundchannel_t  *hnmsound_ch;
