@@ -51,10 +51,10 @@ protected:
 	int _animatedParameters;
 	Matrix4x3 _matrix;
 	Color _color;
-	float _field16;
-	float _field17;
-	float _field18;
-	float _field19;
+	float _falloffStart;
+	float _falloffEnd;
+	float _angleStart;
+	float _angleEnd;
 	float *_animationData;
 	float *_m11ptr;
 	float *_m12ptr;
@@ -71,11 +71,11 @@ protected:
 	float *_colorRPtr;
 	float *_colorGPtr;
 	float *_colorBPtr;
-	float *_field16ptr;
-	float *_field17ptr;
-	float *_field18ptr;
-	float *_field19ptr;
-	Light *_next;
+	float *_falloffStartPtr;
+	float *_falloffEndPtr;
+	float *_angleStartPtr;
+	float *_angleEndPtr;
+//	Light *_next;
 
 public:
 	Light();
@@ -90,7 +90,7 @@ public:
 	virtual void calculateColor(Color *outColor, Vector3 position);
 
 protected:
-	float calculateCoeficient(Vector3 start, Vector3 end, float a3, float a4);
+	float calculateCoefficient(Vector3 start, Vector3 end, float a3, float a4);
 	float attenuation(float min, float max, float distance);
 };
 
@@ -112,7 +112,7 @@ class Light4 : public Light {
 	void calculateColor(Color *outColor, Vector3 position);
 };
 
-class Light5 : public Light {
+class LightAmbient : public Light {
 	float calculate(Vector3 start, Vector3 end);
 	void calculateColor(Color *outColor, Vector3 position);
 };

@@ -723,7 +723,7 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 
 	if (sceneObjectId == -1) {
 		_actors[0]->loopWalkToXYZ(mousePosition);
-		debug("Clicked on nothing");
+		debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
 		return;
 	} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {
 		handleMouseClickActor(x, y, sceneObjectId);

@@ -363,9 +363,9 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 	);
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
-
-	_lights->setupFrame(_view._frame);
-	_setEffects->setupFrame(_view._frame);
+	
+	_lights->setupFrame(_frame);
+	_setEffects->setupFrame(_frame);
 
 	float sliceLine = sliceLineIterator.line();
 
@@ -460,7 +460,7 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 			continue;
 
 		uint32 lastVertex = vertexCount - 1;
-		int lastVertexX = MAX((_m11lookup[p[3*lastVertex]] + _m12lookup[p[3*lastVertex+1]] + _m13) >> 16, 0);
+		int lastVertexX = MAX((_m11lookup[p[3 * lastVertex]] + _m12lookup[p[3 * lastVertex + 1]] + _m13) >> 16, 0);
 
 		int previousVertexX = lastVertexX;
 
@@ -473,13 +473,13 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 				if (vertexZ >= 0 && vertexZ < 65536) {
 					Color256 color = palette.color[p[2]];
 
-					float hackMul = 8.0f; //not part of game
+					color.r = (int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16;
+					color.g = (int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16;
+					color.b = (int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16;
 
-					color.r = (int)(_setEffectColor.r + hackMul * _lightsColor.r * color.r) >> 13; // >> 16,
-					color.g = (int)(_setEffectColor.g + hackMul * _lightsColor.g * color.g) >> 13;
-					color.b = (int)(_setEffectColor.b + hackMul * _lightsColor.b * color.b) >> 13;
+					int bladeToScummVmConstant = 256 / 32;
 
-					int color555 = _pixelFormat.RGBToColor(color.r/* * 8*/, color.g/* * 8*/, color.b/* * 8*/);
+					int color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
 
 					for (int x = previousVertexX; x != vertexX; ++x) {
 						if (vertexZ < zbufLinePtr[x]) {
@@ -530,34 +530,27 @@ void SliceRenderer::SliceRendererLights::calculateColorBase(Vector3 position1, V
 	_finalColor.b = 0.0f;
 	_hmm3 = 0;
 	if (_lights) {
-		Light *light = _lights->_lights;
-		int i = 0;
-		if (light) {
-			do {
-				if (i < 20) {
-					float v8 = light->calculate(position1, position2/*, height*/);
+		for(uint i = 0; i < _lights->_lights.size(); i++) {
+			Light *light = _lights->_lights[i];
+			if (i < 20) {
+				float v8 = light->calculate(position1, position2/*, height*/);
 
-					this->_hmm2[i] = v8;
-					this->_hmm[i] = v8;
-					
-					Color v22;
-					light->calculateColor(&v22, position1);
-					_colors[i] = v22;
-					_finalColor.r += v22.r;
-					_finalColor.g += v22.g;
-					_finalColor.b += v22.b;
-				}
-				else
-				{
-					Color v23;
-					light->calculateColor(&v23, position1);
-					_finalColor.r += v23.r;
-					_finalColor.g += v23.g;
-					_finalColor.b += v23.b;
-				}
-				light = light->_next;
-				i++;
-			} while (light);
+				this->_hmm2[i] = v8;
+				this->_hmm[i] = v8;
+
+				Color v22;
+				light->calculateColor(&v22, position1);
+				_colors[i] = v22;
+				_finalColor.r += v22.r;
+				_finalColor.g += v22.g;
+				_finalColor.b += v22.b;
+			} else {
+				Color v23;
+				light->calculateColor(&v23, position1);
+				_finalColor.r += v23.r;
+				_finalColor.g += v23.g;
+				_finalColor.b += v23.b;
+			}
 		}
 
 		_finalColor.r += _lights->_ambientLightColor.r;
@@ -572,34 +565,29 @@ void SliceRenderer::SliceRendererLights::calculateColorSlice(Vector3 position) {
 	_finalColor.b = 0.0f;
 
 	if (_lights) {
-		Light *light = _lights->_lights;
-		int i = 0;
-		if (light) {
-			do {
-				if (i < 20) {
-					_hmm[i] = _hmm[i] - 1.0f;
+		for (uint i = 0; i < _lights->_lights.size(); i++) {
+			Light *light = _lights->_lights[i];
+			if (i < 20) {
+				_hmm[i] = _hmm[i] - 1.0f;
 
-					if (_hmm[i] <= 0.0f) {
-						do {
-							_hmm[i] = _hmm[i] + _hmm2[i];
-						} while (_hmm[i] <= 0.0f);
-						light->calculateColor(&_colors[i], position);
-						_hmm3++;
-					} 
-					_finalColor.r += _colors[i].r;
-					_finalColor.g += _colors[i].g;
-					_finalColor.b += _colors[i].b;
-				} else {
-					Color color;
-					light->calculateColor(&color, position);
+				if (_hmm[i] <= 0.0f) {
+					do {
+						_hmm[i] = _hmm[i] + _hmm2[i];
+					} while (_hmm[i] <= 0.0f);
+					light->calculateColor(&_colors[i], position);
 					_hmm3++;
-					_finalColor.r += color.r;
-					_finalColor.g += color.g;
-					_finalColor.b += color.b;
 				}
-				light = light->_next;
-				i++;
-			} while (light);
+				_finalColor.r += _colors[i].r;
+				_finalColor.g += _colors[i].g;
+				_finalColor.b += _colors[i].b;
+			} else {
+				Color color;
+				light->calculateColor(&color, position);
+				_hmm3++;
+				_finalColor.r += color.r;
+				_finalColor.g += color.g;
+				_finalColor.b += color.b;
+			}
 		}
 		_finalColor.r += _lights->_ambientLightColor.r;
 		_finalColor.g += _lights->_ambientLightColor.g;

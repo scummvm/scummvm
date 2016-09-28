@@ -8,9 +8,9 @@ Lights::Lights(BladeRunnerEngine *vm) {
 	_ambientLightColor.r = 1.0;
 	_ambientLightColor.g = 0.0;
 	_ambientLightColor.b = 0.0;
-
-	_lights = nullptr;
+	
 	_lightsCount = 0;
+	_lights.clear();
 	_frame = 0;
 }
 
@@ -42,34 +42,22 @@ void Lights::read(Common::ReadStream *stream, int framesCount) {
 			light = new Light4();
 			break;
 		case 5:
-			light = new Light5();
+			light = new LightAmbient();
 			break;
 		default:
 			light = new Light();
 		}
 
 		light->read(stream, framesCount, _frame, 0);
-		light->_next = _lights;
-		_lights = light;
+		_lights.push_back(light);
 	}
 }
 
 void Lights::removeAnimated() {
-	Light **nextLight;
-	Light *light;
-
-	nextLight = &this->_lights;
-	light = this->_lights;
-	if (light) {
-		do {
-			if (light->_animated) {
-				*nextLight = light->_next;
-				delete light;
-			} else {
-				nextLight = &light->_next;
-			}
-			light = *nextLight;
-		} while (*nextLight);
+	for (int i = (int)(_lights.size() - 1); i > 0; i--) {
+		if (_lights[i]->_animated) {
+			delete _lights.remove_at(i);
+		}
 	}
 }
 
@@ -85,7 +73,7 @@ void Lights::readVqa(Common::ReadStream *stream) {
 		Light *light;
 		switch (lightType) {
 		case 5:
-			light = new Light5();
+			light = new LightAmbient();
 			break;
 		case 4:
 			light = new Light4();
@@ -101,40 +89,27 @@ void Lights::readVqa(Common::ReadStream *stream) {
 			break;
 		default:
 			light = new Light();
-		}
+		}		
 		light->readVqa(stream, framesCount, _frame, 1);
-		light->_next = _lights;
-		_lights = light;
+		_lights.push_back(light);
 	}
 }
 
 void Lights::setupFrame(int frame) {
-	Light *light;
-
-	if (frame == _frame)
+	if (frame == _frame) {
 		return;
+	}
 
-	if (!_lights)
-		return;
-
-	for (light = _lights; light; light = light->_next) {
-		light->setupFrame(frame);
+	for (uint i = 0; i < _lights.size(); i++) {
+		_lights[i]->setupFrame(frame);
 	}
 }
 
 void Lights::reset() {
-	Light *light;
-	Light *nextLight;
-
-	if (!_lights)
-		return;
-
-	do {
-		light = _lights;
-		nextLight = light->_next;
-		delete light;
-		_lights = nextLight;
-	} while (nextLight);
+	for (int i = (int)(_lights.size() - 1); i > 0; i--) {
+		delete _lights.remove_at(i);
+	}
+	_lights.clear();
 }
 
 } // End of namespace BladeRunner

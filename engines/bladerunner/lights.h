@@ -41,8 +41,8 @@ class Lights {
 
 	Color _ambientLightColor;
 
-	int _lightsCount;
-	Light *_lights;
+	int                   _lightsCount;
+	Common::Array<Light*> _lights;
 
 	int _frame;
 	//char gap[28];
