@@ -556,7 +556,10 @@ void GfxPalette32::setCycle(const uint8 fromColor, const uint8 toColor, const in
 		clearCycleMap(cycler->fromColor, cycler->numColorsToCycle);
 	}
 
-	const uint16 numColorsToCycle = toColor - fromColor + 1;
+	uint16 numColorsToCycle = toColor - fromColor;
+	if (getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7) {
+		numColorsToCycle += 1;
+	}
 	cycler->fromColor = fromColor;
 	cycler->numColorsToCycle = numColorsToCycle;
 	cycler->currentCycle = fromColor;
