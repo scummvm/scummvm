@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Fixed audio corruption in the MS ADPCM decoder.
+   - Fixed audio pitch in the CMS/GameBlaster emulation.
    - Switched SDL backend to SDL2 by default. SDL1 is still a fallback.
 
  AGI:
