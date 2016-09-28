@@ -10,6 +10,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - Probleme mit dem MS ADPCM-Decoder behoben.
+   - Fehlerhafte Tonhöhe der CMS/GameBlaster-Emulation korrigiert.
    - SDL-Backend verwendet jetzt SDL2 als Standard. SDL1 ist eine Rückfalloption.
 
  AGI:
