@@ -1481,11 +1481,12 @@ void EdenGame::drawTopScreen() {  // Draw  top bar (location / party / map)
 	}
 	saved_repadam.x = -1;
 	saved_repadam.y = -1;
-	affplanval();
+	displayValleyMap();
 	needPaletteUpdate = 1;
 }
 
-void EdenGame::affplanval() { // Draw mini-map
+// Original name: affplanval
+void EdenGame::displayValleyMap() { // Draw mini-map
 	int16 loc;
 	perso_t *perso;
 	if (p_global->area_ptr->type == AreaType::atValley) {
@@ -1493,14 +1494,14 @@ void EdenGame::affplanval() { // Draw mini-map
 		for (perso = &kPersons[PER_UNKN_18C]; perso->roomNum != 0xFFFF; perso++) {
 			if (((perso->roomNum >> 8) == p_global->areaNum)
 			        && !(perso->flags & PersonFlags::pf80) && (perso->flags & PersonFlags::pf20))
-				affrepere(33, perso->roomNum & 0xFF);
+				displayMapMark(33, perso->roomNum & 0xFF);
 		}
 		if (p_global->area_ptr->citadelLevel)
-			affrepere(34, p_global->area_ptr->citadelRoom->location);
+			displayMapMark(34, p_global->area_ptr->citadelRoom->location);
 		saveTopFrieze(0);
 		loc = p_global->roomNum & 0xFF;
 		if (loc >= 16)
-			affrepereadam(loc);
+			displayAdamMapMark(loc);
 		restoreTopFrieze();
 	} else {
 		saveTopFrieze(0);
@@ -1508,22 +1509,22 @@ void EdenGame::affplanval() { // Draw mini-map
 	}
 }
 
-void EdenGame::affrepere(int16 index, int16 location) {
+// Original name: affrepere
+void EdenGame::displayMapMark(int16 index, int16 location) {
 	noclipax(index, 269 + location % 16 * 4, 2 + (location - 16) / 16 * 3);
 }
 
-void EdenGame::affrepereadam(int16 location) {
+// Original name: affrepereadam
+void EdenGame::displayAdamMapMark(int16 location) {
 	int16 x = 269;
 	int16 y = 2;
-	int16 w;
-	byte *pix;
-	rest_repadam();
+	restoreAdamMapMark();
 	if (location > 15 && location < 76) {
 		x += (location & 15) * 4;
 		y += ((location - 16) >> 4) * 3;
-		save_repadam(x, y);
-		pix = p_underBarsView->p_buffer;
-		w = p_underBarsView->width;
+		saveAdamMapMark(x, y);
+		byte *pix = p_underBarsView->p_buffer;
+		int16 w = p_underBarsView->width;
 		pix += x + w * y;
 		pix[1] = 0xC3;
 		pix[2] = 0xC3;
@@ -1538,15 +1539,15 @@ void EdenGame::affrepereadam(int16 location) {
 	}
 }
 
-void EdenGame::rest_repadam() {
-	int16 x, y, w;
-	byte *pix;
+// Original name: rest_repadam
+void EdenGame::restoreAdamMapMark() {
 	if (saved_repadam.x == -1 && saved_repadam.y == -1)
 		return;
-	x = saved_repadam.x;
-	y = saved_repadam.y;
-	pix = p_underBarsView->p_buffer;
-	w = p_underBarsView->width;
+
+	int16 x = saved_repadam.x;
+	int16 y = saved_repadam.y;
+	byte *pix = p_underBarsView->p_buffer;
+	int16 w = p_underBarsView->width;
 	pix += x + w * y;
 	pix[1] = keep01;    //TODO keep is array?
 	pix[2] = keep02;
@@ -1560,13 +1561,12 @@ void EdenGame::rest_repadam() {
 	pix[2] = keep22;
 }
 
-void EdenGame::save_repadam(int16 x, int16 y) {
-	int16 w;
-	byte *pix;
+// Original name: save_repadam
+void EdenGame::saveAdamMapMark(int16 x, int16 y) {
 	saved_repadam.x = x;
 	saved_repadam.y = y;
-	pix = p_underBarsView->p_buffer;
-	w = p_underBarsView->width;
+	byte *pix = p_underBarsView->p_buffer;
+	int16 w = p_underBarsView->width;
 	pix += x + w * y;
 	keep01 = pix[1];
 	keep02 = pix[2];
@@ -1580,23 +1580,22 @@ void EdenGame::save_repadam(int16 x, int16 y) {
 	keep22 = pix[2];
 }
 
-char EdenGame::istrice(int16 roomNum) {
+bool EdenGame::istrice(int16 roomNum) {
 	char loc = roomNum & 0xFF;
 	int16 area = roomNum & 0xFF00;
-	perso_t *perso;
-	for (perso = &kPersons[PER_UNKN_18C]; perso != &kPersons[PER_UNKN_372]; perso++) {
+	for (perso_t *perso = &kPersons[PER_UNKN_18C]; perso != &kPersons[PER_UNKN_372]; perso++) {
 		if ((perso->flags & PersonFlags::pf80) || (perso->flags & PersonFlags::pfTypeMask) != PersonFlags::pftTriceraptor)
 			continue;
 		if (perso->roomNum == (area | (loc - 16)))
-			return 1;
+			return true;
 		if (perso->roomNum == (area | (loc + 16)))
-			return 1;
+			return true;
 		if (perso->roomNum == (area | (loc - 1)))
-			return 1;
+			return true;
 		if (perso->roomNum == (area | (loc + 1)))
-			return 1;
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 char EdenGame::istyran(int16 roomNum) {
@@ -1636,7 +1635,7 @@ void EdenGame::istyranval(area_t *area) {
 	}
 }
 
-char EdenGame::getdirection(perso_t *perso) {
+char EdenGame::getDirection(perso_t *perso) {
 	char dir = -1;
 	byte trgLoc = perso->targetLoc;
 	byte curLoc = perso->roomNum & 0xFF;   //TODO name
@@ -1661,19 +1660,19 @@ char EdenGame::getdirection(perso_t *perso) {
 	return dir;
 }
 
-char EdenGame::caselibre(char loc, perso_t *perso) {
-	int16 roomNum;
+// Original name: caselibre
+bool EdenGame::canMoveThere(char loc, perso_t *perso) {
 	room_t *room = p_global->cita_area_firstRoom;
 	if (loc <= 0x10 || loc > 76 || (loc & 0xF) >= 12 || loc == perso->lastLoc)
-		return 0;
-	roomNum = (perso->roomNum & ~0xFF) | loc;   //TODO: danger! signed
+		return false;
+	int16 roomNum = (perso->roomNum & ~0xFF) | loc;   //TODO: danger! signed
 	if (roomNum == p_global->roomNum)
-		return 0;
+		return false;
 	for (; room->ff_0 != 0xFF; room++) {
 		if (room->location != loc)
 			continue;
 		if (!(room->flags & RoomFlags::rf01))
-			return 0;
+			return false;
 		for (perso = &kPersons[PER_UNKN_18C]; perso->roomNum != 0xFFFF; perso++) {
 			if (perso->flags & PersonFlags::pf80)
 				continue;
@@ -1681,59 +1680,49 @@ char EdenGame::caselibre(char loc, perso_t *perso) {
 				break;
 		}
 		if (perso->roomNum != 0xFFFF)
-			return 0;
-		return 1;
+			return false;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-void EdenGame::melange1(char elem[4]) {
-	if (g_ed->_rnd->getRandomNumber(1) & 1) {
-		char e1 = elem[1];
-		char e2 = elem[2];
-		elem[1] = e2;
-		elem[2] = e1;
-	}
+// Original name: melange1
+void EdenGame::scramble1(char elem[4]) {
+	if (g_ed->_rnd->getRandomNumber(1) & 1)
+		SWAP(elem[1], elem[2]);
 }
 
-void EdenGame::melange2(char elem[4]) {
-	if (g_ed->_rnd->getRandomNumber(1) & 1) {
-		char e0 = elem[0];
-		char e1 = elem[1];
-		elem[0] = e1;
-		elem[1] = e0;
-	}
-	if (g_ed->_rnd->getRandomNumber(1) & 1) {
-		char e2 = elem[2];
-		char e3 = elem[3];
-		elem[2] = e3;
-		elem[3] = e2;
-	}
+// Original name melange2
+void EdenGame::scramble2(char elem[4]) {
+	if (g_ed->_rnd->getRandomNumber(1) & 1)
+		SWAP(elem[0], elem[1]);
+
+	if (g_ed->_rnd->getRandomNumber(1) & 1)
+		SWAP(elem[2], elem[3]);
 }
 
 void EdenGame::melangedir() {
-	melange1(tab_2CB1E[0]);
-	melange1(tab_2CB1E[1]);
-	melange1(tab_2CB1E[2]);
-	melange2(tab_2CB1E[3]);
-	melange2(tab_2CB1E[4]);
-	melange1(tab_2CB1E[5]);
-	melange2(tab_2CB1E[6]);
-	melange2(tab_2CB1E[7]);
+	scramble1(tab_2CB1E[0]);
+	scramble1(tab_2CB1E[1]);
+	scramble1(tab_2CB1E[2]);
+	scramble2(tab_2CB1E[3]);
+	scramble2(tab_2CB1E[4]);
+	scramble1(tab_2CB1E[5]);
+	scramble2(tab_2CB1E[6]);
+	scramble2(tab_2CB1E[7]);
 }
 
-char EdenGame::naitredino(char persoType) {
-	perso_t *perso;
-	for (perso = &kPersons[PER_MORKUS]; (++perso)->roomNum != 0xFFFF;) {
+bool EdenGame::naitredino(char persoType) {
+	for (perso_t *perso = &kPersons[PER_MORKUS]; (++perso)->roomNum != 0xFFFF;) {
 		char areaNum = perso->roomNum >> 8;
 		if (areaNum != p_global->cita_area_num)
 			continue;
 		if ((perso->flags & PersonFlags::pf80) && (perso->flags & PersonFlags::pfTypeMask) == persoType) {
 			perso->flags &= ~PersonFlags::pf80;
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 void EdenGame::newcita(char arg1, int16 arg2, room_t *room) {
@@ -1837,22 +1826,20 @@ void EdenGame::citatombe(char level) {
 }
 
 void EdenGame::constcita() {
-	byte level;
-	room_t *room;
-	byte loc;
 	//	room_t *room = p_global->cur_area_ptr->room_ptr; //TODO: wrong? chk below
 	//	byte id = room->ff_C;
 	if (!p_global->cur_area_ptr->citadelLevel || !p_global->cur_area_ptr->citadelRoom)
 		return;
-	room = p_global->cur_area_ptr->citadelRoom; //TODO: copied here by me
-	loc = room->location;
+
+	room_t *room = p_global->cur_area_ptr->citadelRoom; //TODO: copied here by me
+	byte loc = room->location;
 	tyranPtr = &kPersons[PER_UNKN_372];
 	if (istyran((p_global->cita_area_num << 8) | loc)) {
 		if (!(p_global->cur_area_ptr->flags & AreaFlags::TyrannSighted)) {
 			ajouinfo(p_global->cita_area_num + ValleyNews::vnTyrannIn);
 			p_global->cur_area_ptr->flags |= AreaFlags::TyrannSighted;
 		}
-		level = room->level - 1;
+		byte level = room->level - 1;
 		if (level < 32)
 			level = 32;
 		room->level = level;
@@ -1864,40 +1851,38 @@ void EdenGame::constcita() {
 }
 
 void EdenGame::depladino(perso_t *perso) {
-	char *dirs, dir, dir2;
-	byte loc;
-	dir = getdirection(perso);
+	char dir = getDirection(perso);
 	if (dir != -1) {
 		melangedir();
-		dirs = tab_2CB1E[dir];
-		loc = perso->roomNum & 0xFF;
-		dir2 = *dirs++;
+		char *dirs = tab_2CB1E[dir];
+		byte loc = perso->roomNum & 0xFF;
+		char dir2 = *dirs++;
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
-		if (caselibre(dir2, perso))
+		if (canMoveThere(dir2, perso))
 			goto ok;
 		dir2 = *dirs++;
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
-		if (caselibre(dir2, perso))
+		if (canMoveThere(dir2, perso))
 			goto ok;
 		dir2 = *dirs++;
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
-		if (caselibre(dir2, perso))
+		if (canMoveThere(dir2, perso))
 			goto ok;
 		dir2 = *dirs++;
 		if (dir2 & 0x80)
 			dir2 = -(dir2 & ~0x80);
 		dir2 += loc;
-		if (caselibre(dir2, perso))
+		if (canMoveThere(dir2, perso))
 			goto ok;
 		dir2 = perso->lastLoc;
 		perso->lastLoc = 0;
-		if (!caselibre(dir2, perso))
+		if (!canMoveThere(dir2, perso))
 			return;
 	ok:
 		;
@@ -1962,22 +1947,22 @@ char EdenGame::whereiscita() {
 	return res;
 }
 
-char EdenGame::iscita(int16 loc) {
+bool EdenGame::iscita(int16 loc) {
 	room_t *room = p_global->cita_area_firstRoom;
 	loc &= 0xFF;
 	for (; room->ff_0 != 0xFF; room++) {
 		if (!(room->flags & RoomFlags::rfHasCitadel))
 			continue;
 		if (room->location == loc + 16)
-			return 1;
+			return true;
 		if (room->location == loc - 16)
-			return 1;
+			return true;
 		if (room->location == loc - 1)
-			return 1;
+			return true;
 		if (room->location == loc + 1)
-			return 1;
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 void EdenGame::lieuvava(area_t *area) {
@@ -2019,7 +2004,6 @@ void EdenGame::lieuvava(area_t *area) {
 }
 
 void EdenGame::vivredino() {
-	char cita;
 	perso_t *perso = &kPersons[PER_UNKN_18C];
 	for (; perso->roomNum != 0xFFFF; perso++) {
 		if (((perso->roomNum >> 8) & 0xFF) != p_global->cita_area_num)
@@ -2031,7 +2015,7 @@ void EdenGame::vivredino() {
 			if (iscita(perso->roomNum))
 				perso->targetLoc = 0;
 			else if (!perso->targetLoc) {
-				cita = whereiscita();
+				char cita = whereiscita();
 				if (cita != -1) {
 					perso->targetLoc = cita;
 					perso->speed = 2;
@@ -2044,7 +2028,7 @@ void EdenGame::vivredino() {
 				if (iscita(perso->roomNum))
 					perso->targetLoc = 0;
 				else if (!perso->targetLoc) {
-					cita = whereiscita();
+					char cita = whereiscita();
 					if (cita != -1) {
 						perso->targetLoc = cita;
 						perso->speed = 3;
@@ -2100,7 +2084,7 @@ void EdenGame::vivredino() {
 					loc = (g_ed->_rnd->getRandomNumber(63) & 63) + 16;
 					if ((loc & 0xF) >= 12)
 						loc &= ~4;  //TODO: ??? same as -= 4
-				} while (!caselibre(loc, perso));
+				} while (!canMoveThere(loc, perso));
 				perso->targetLoc = loc;
 				perso->steps = 1;
 			}
@@ -5715,7 +5699,7 @@ void EdenGame::FRDevents() {
 		//fix me here or above?
 		if (current_spot) { // ok, plug it here
 			current_spot2 = current_spot;
-			affrepereadam(current_spot2->action_id - 14);
+			displayAdamMapMark(current_spot2->action_id - 14);
 		}
 	}
 	if (p_global->displayFlags == DisplayFlags::dfFlag2 && current_spot)
