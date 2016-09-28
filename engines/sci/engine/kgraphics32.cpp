@@ -961,17 +961,17 @@ reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
-	uint16 fromColor = argv[0].toUint16();
-	uint16 toColor = argv[1].toUint16();
-	uint16 percent = argv[2].toUint16();
+	const uint16 fromColor = argv[0].toUint16();
+	const uint16 toColor = argv[1].toUint16();
+	const uint16 percent = argv[2].toUint16();
 	g_sci->_gfxPalette32->setFade(percent, fromColor, toColor);
 	return s->r_acc;
 }
 
 reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[0].toUint16();
-	int time = argc > 1 ? argv[1].toSint16() * 60 : 0;
-	int16 percent = argc > 2 ? argv[2].toSint16() : 100;
+	const GuiResourceId paletteId = argv[0].toUint16();
+	const int32 time = argc > 1 ? argv[1].toSint16() * 60 : 0;
+	const int16 percent = argc > 2 ? argv[2].toSint16() : 100;
 	int16 fromColor;
 	int16 toColor;
 
@@ -987,9 +987,9 @@ reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
-	int time = argc > 0 ? argv[0].toSint16() * 60 : 0;
-	int16 percent = argc > 1 ? argv[1].toSint16() : 0;
-	g_sci->_gfxPalette32->setVaryPercent(percent, time, -1, -1);
+	const int32 time = argc > 0 ? argv[0].toSint16() * 60 : 0;
+	const int16 percent = argc > 1 ? argv[1].toSint16() : 0;
+	g_sci->_gfxPalette32->setVaryPercent(percent, time);
 	return s->r_acc;
 }
 
@@ -1003,31 +1003,31 @@ reg_t kPalVaryOff(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[0].toUint16();
+	const GuiResourceId paletteId = argv[0].toUint16();
 	g_sci->_gfxPalette32->kernelPalVaryMergeTarget(paletteId);
 	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
 reg_t kPalVarySetTime(EngineState *s, int argc, reg_t *argv) {
-	int time = argv[0].toSint16() * 60;
+	const int32 time = argv[0].toSint16() * 60;
 	g_sci->_gfxPalette32->setVaryTime(time);
 	return s->r_acc;
 }
 
 reg_t kPalVarySetTarget(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[0].toUint16();
+	const GuiResourceId paletteId = argv[0].toUint16();
 	g_sci->_gfxPalette32->kernelPalVarySetTarget(paletteId);
 	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
 reg_t kPalVarySetStart(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[0].toUint16();
+	const GuiResourceId paletteId = argv[0].toUint16();
 	g_sci->_gfxPalette32->kernelPalVarySetStart(paletteId);
 	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
 reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[0].toUint16();
+	const GuiResourceId paletteId = argv[0].toUint16();
 	g_sci->_gfxPalette32->kernelPalVaryMergeStart(paletteId);
 	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
@@ -1043,7 +1043,6 @@ reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv) {
 	const uint16 toColor = argv[1].toUint16();
 	const int16 direction = argv[2].toSint16();
 	const uint16 delay = argc > 3 ? argv[3].toUint16() : 0;
-
 	g_sci->_gfxPalette32->setCycle(fromColor, toColor, direction, delay);
 	return s->r_acc;
 }
@@ -1051,7 +1050,6 @@ reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalCycleDoCycle(EngineState *s, int argc, reg_t *argv) {
 	const uint16 fromColor = argv[0].toUint16();
 	const int16 speed = argc > 1 ? argv[1].toSint16() : 1;
-
 	g_sci->_gfxPalette32->doCycle(fromColor, speed);
 	return s->r_acc;
 }
