@@ -285,6 +285,13 @@ struct PathfindingState {
 static Common::Point readPoint(SegmentRef list_r, int offset) {
 	Common::Point point;
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		point.x = READ_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 0);
+		point.y = READ_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
+	} else
+#endif
+
 	if (list_r.isRaw) {	// dynmem blocks are raw
 		point.x = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE);
 		point.y = (int16)READ_SCIENDIAN_UINT16(list_r.raw + offset * POLY_POINT_SIZE + 2);
@@ -296,6 +303,12 @@ static Common::Point readPoint(SegmentRef list_r, int offset) {
 }
 
 static void writePoint(SegmentRef ref, int offset, const Common::Point &point) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		WRITE_UINT16(ref.raw + offset * POLY_POINT_SIZE + 0, point.x);
+		WRITE_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
+	} else
+#endif
 	if (ref.isRaw) {	// dynmem blocks are raw
 		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE, point.x);
 		WRITE_SCIENDIAN_UINT16(ref.raw + offset * POLY_POINT_SIZE + 2, point.y);
@@ -1397,10 +1410,8 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SciArray<reg_t> *array = segMan->allocateArray(&addr);
+		SciArray *array = segMan->allocateArray(kArrayTypeInt16, size * 2, &addr);
 		assert(array);
-		array->setType(0);
-		array->setSize(size * 2);
 		return addr;
 	}
 #endif

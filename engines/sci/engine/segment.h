@@ -24,7 +24,7 @@
 #define SCI_ENGINE_SEGMENT_H
 
 #include "common/serializer.h"
-
+#include "common/str.h"
 #include "sci/engine/object.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
@@ -70,7 +70,7 @@ enum SegmentType {
 
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
-	SEG_TYPE_STRING = 12,
+	// 12 used to be string, now obsolete
 	SEG_TYPE_BITMAP = 13,
 #endif
 
@@ -408,141 +408,462 @@ public:
 
 #ifdef ENABLE_SCI32
 
-template<typename T>
-class SciArray {
-public:
-	SciArray() : _type(-1), _data(NULL), _size(0), _actualSize(0) { }
+#pragma mark -
+#pragma mark Arrays
 
-	SciArray(const SciArray<T> &array) {
+enum SciArrayType {
+	kArrayTypeInt16   = 0,
+	kArrayTypeID      = 1,
+	kArrayTypeByte    = 2,
+	kArrayTypeString  = 3,
+	// Type 4 was for 32-bit integers; never used
+	kArrayTypeInvalid = 5
+};
+
+enum SciArrayTrim {
+	kArrayTrimRight  = 1, ///< Trim whitespace after the last non-whitespace character
+	kArrayTrimCenter = 2, ///< Trim whitespace between non-whitespace characters
+	kArrayTrimLeft   = 4  ///< Trim whitespace before the first non-whitespace character
+};
+
+class SciArray : public Common::Serializable {
+public:
+	SciArray() :
+		_type(kArrayTypeInvalid),
+		_size(0),
+		_data(nullptr) {}
+
+	SciArray(const SciArray &array) {
 		_type = array._type;
 		_size = array._size;
-		_actualSize = array._actualSize;
-		_data = new T[_actualSize];
+		_elementSize = array._elementSize;
+		_data = malloc(_elementSize * _size);
 		assert(_data);
-		memcpy(_data, array._data, _size * sizeof(T));
+		memcpy(_data, array._data, _elementSize * _size);
 	}
 
-	SciArray<T>& operator=(const SciArray<T> &array) {
+	SciArray &operator=(const SciArray &array) {
 		if (this == &array)
 			return *this;
 
-		delete[] _data;
+		free(_data);
 		_type = array._type;
 		_size = array._size;
-		_actualSize = array._actualSize;
-		_data = new T[_actualSize];
+		_elementSize = array._elementSize;
+		_data = malloc(_elementSize * _size);
 		assert(_data);
-		memcpy(_data, array._data, _size * sizeof(T));
+		memcpy(_data, array._data, _elementSize * _size);
 
 		return *this;
 	}
 
 	virtual ~SciArray() {
-		destroy();
+		free(_data);
+		_size = 0;
+		_type = kArrayTypeInvalid;
 	}
 
-	virtual void destroy() {
-		delete[] _data;
-		_data = NULL;
-		_type = -1;
-		_size = _actualSize = 0;
+	void saveLoadWithSerializer(Common::Serializer &s);
+
+	/**
+	 * Returns the type of this array.
+	 */
+	SciArrayType getType() const {
+		return _type;
 	}
 
-	void setType(byte type) {
-		if (_type >= 0)
-			error("SciArray::setType(): Type already set");
-
+	/**
+	 * Sets the type of this array. The type of the array may only be set once.
+	 */
+	void setType(SciArrayType type) {
+		assert(_type == kArrayTypeInvalid);
+		switch(type) {
+		case kArrayTypeID:
+			_elementSize = sizeof(reg_t);
+			break;
+		case kArrayTypeInt16:
+			_elementSize = sizeof(int16);
+			break;
+		case kArrayTypeString:
+			_elementSize = sizeof(char);
+			break;
+		case kArrayTypeByte:
+			_elementSize = sizeof(byte);
+			break;
+		default:
+			error("Invalid array type %d", type);
+		}
 		_type = type;
 	}
 
-	void setSize(uint32 size) {
-		if (_type < 0)
-			error("SciArray::setSize(): No type set");
+	/**
+	 * Returns the size of the array, in elements.
+	 */
+	uint16 size() const {
+		return _size;
+	}
 
-		// Check if we don't have to do anything
-		if (_size == size)
-			return;
+	/**
+	 * Returns the size of the array, in bytes.
+	 */
+	uint16 byteSize() const {
+		return _size * _elementSize;
+	}
 
-		// Check if we don't have to expand the array
-		if (size <= _actualSize) {
-			_size = size;
+	/**
+	 * Ensures the array is large enough to store at least the given number of
+	 * values given in `newSize`. If `force` is true, the array will be resized
+	 * to store exactly `newSize` values. New values are initialized to zero.
+	 */
+	void resize(uint16 newSize, const bool force = false) {
+		if (force || newSize > _size) {
+			_data = realloc(_data, _elementSize * newSize);
+			if (newSize > _size) {
+				memset((byte *)_data + _elementSize * _size, 0, (newSize - _size) * _elementSize);
+			}
+			_size = newSize;
+		}
+	}
+
+	/**
+	 * Shrinks a string array to its optimal size.
+	 */
+	void snug() {
+		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
+		resize(strlen((char *)_data) + 1, true);
+	}
+
+	/**
+	 * Returns a pointer to the array's raw data storage.
+	 */
+	void *getRawData() { return _data; }
+	const void *getRawData() const { return _data; }
+
+	/**
+	 * Gets the value at the given index as a reg_t.
+	 */
+	reg_t getAsID(const uint16 index) {
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		switch(_type) {
+		case kArrayTypeInt16:
+			return make_reg(0, ((int16 *)_data)[index]);
+		case kArrayTypeByte:
+		case kArrayTypeString:
+			return make_reg(0, ((byte *)_data)[index]);
+		case kArrayTypeID:
+			return ((reg_t *)_data)[index];
+		default:
+			error("Invalid array type %d", _type);
+		}
+	}
+
+	/**
+	 * Sets the value at the given index from a reg_t.
+	 */
+	void setFromID(const uint16 index, const reg_t value) {
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		switch(_type) {
+		case kArrayTypeInt16:
+			((int16 *)_data)[index] = value.toSint16();
+			break;
+		case kArrayTypeByte:
+		case kArrayTypeString:
+			((byte *)_data)[index] = value.toSint16();
+			break;
+		case kArrayTypeID:
+			((reg_t *)_data)[index] = value;
+			break;
+		default:
+			error("Invalid array type %d", _type);
+		}
+	}
+
+	/**
+	 * Returns a reference to the byte at the given index. Only valid for
+	 * string and byte arrays.
+	 */
+	byte &byteAt(const uint16 index) {
+		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		return ((byte *)_data)[index];
+	}
+
+	/**
+	 * Returns a reference to the char at the given index. Only valid for
+	 * string and byte arrays.
+	 */
+	char &charAt(const uint16 index) {
+		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		return ((char *)_data)[index];
+	}
+
+	/**
+	 * Returns a reference to the int16 at the given index. Only valid for int16
+	 * arrays.
+	 */
+	int16 &int16At(const uint16 index) {
+		assert(_type == kArrayTypeInt16);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		return ((int16 *)_data)[index];
+	}
+
+	/**
+	 * Returns a reference to the reg_t at the given index. Only valid for ID
+	 * arrays.
+	 */
+	reg_t &IDAt(const uint16 index) {
+		assert(_type == kArrayTypeID);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		return ((reg_t *)_data)[index];
+	}
+
+	/**
+	 * Reads values from the given reg_t pointer and sets them in the array,
+	 * growing the array if needed to store all values.
+	 */
+	void setElements(const uint16 index, uint16 count, const reg_t *values) {
+		resize(index + count);
+
+		switch (_type) {
+		case kArrayTypeInt16: {
+			const reg_t *source = values;
+			int16 *target = (int16 *)_data + index;
+			while (count--) {
+				if (!source->isNumber()) {
+					error("Non-number %04x:%04x sent to int16 array", PRINT_REG(*source));
+				}
+				*target++ = source->toSint16();
+				++source;
+			}
+			break;
+		}
+		case kArrayTypeID: {
+			const reg_t *source = values;
+			reg_t *target = (reg_t *)_data + index;
+			while (count--) {
+				*target++ = *source++;
+			}
+			break;
+		}
+		case kArrayTypeByte:
+		case kArrayTypeString: {
+			const reg_t *source = values;
+			byte *target = (byte *)_data + index;
+			while (count--) {
+				if (!source->isNumber()) {
+					error("Non-number %04x:%04x sent to byte or string array", PRINT_REG(*source));
+				}
+				*target++ = source->getOffset();
+				++source;
+			}
+			break;
+		}
+		default:
+			error("Attempted write to SciArray with invalid type %d", _type);
+		}
+	}
+
+	/**
+	 * Fills the array with the given value. Existing values will be
+	 * overwritten. The array will be grown if needed to store all values.
+	 */
+	void fill(const uint16 index, uint16 count, const reg_t value) {
+		if (count == 65535 /* -1 */) {
+			count = size() - index;
+		}
+
+		if (!count) {
 			return;
 		}
 
-		// So, we're going to have to create an array of some sort
-		T *newArray = new T[size];
-		memset(newArray, 0, size * sizeof(T));
+		resize(index + count);
 
-		// Check if we never created an array before
-		if (!_data) {
-			_size = _actualSize = size;
-			_data = newArray;
+		switch (_type) {
+		case kArrayTypeInt16: {
+			const int16 fillValue = value.toSint16();
+			int16 *target = (int16 *)_data + index;
+			while (count--) {
+				*target++ = fillValue;
+			}
+			break;
+		}
+		case kArrayTypeID: {
+			reg_t *target = (reg_t *)_data + index;
+			while (count--) {
+				*target = value;
+			}
+			break;
+		}
+		case kArrayTypeByte:
+		case kArrayTypeString: {
+			byte *target = (byte *)_data + index;
+			const byte fillValue = value.getOffset();
+			while (count--) {
+				*target = fillValue;
+			}
+			break;
+		}
+		case kArrayTypeInvalid:
+			error("Attempted write to uninitialized SciArray");
+		}
+	}
+
+	/**
+	 * Copies values from the source array. Both arrays will be grown if needed
+	 * to prevent out-of-bounds reads/writes.
+	 */
+	void copy(SciArray &source, const uint16 sourceIndex, const uint16 targetIndex, uint16 count) {
+		if (count == 65535 /* -1 */) {
+			count = source.size() - sourceIndex;
+		}
+
+		if (!count) {
 			return;
 		}
 
-		// Copy data from the old array to the new
-		memcpy(newArray, _data, _size * sizeof(T));
+		resize(targetIndex + count);
+		source.resize(sourceIndex + count);
 
-		// Now set the new array to the old and set the sizes
-		delete[] _data;
-		_data = newArray;
-		_size = _actualSize = size;
+		assert(source._elementSize == _elementSize);
+
+		const byte *sourceData = (byte *)source._data + sourceIndex * source._elementSize;
+		byte *targetData = (byte *)_data + targetIndex * _elementSize;
+		memmove(targetData, sourceData, count * _elementSize);
 	}
 
-	T getValue(uint16 index) const {
-		if (index >= _size)
-			error("SciArray::getValue(): %d is out of bounds (%d)", index, _size);
-
-		return _data[index];
+	void byteCopy(const SciArray &source, const uint16 sourceOffset, const uint16 targetOffset, const uint16 count) {
+		error("SciArray::byteCopy not implemented");
 	}
 
-	void setValue(uint16 index, T value) {
-		if (index >= _size)
-			error("SciArray::setValue(): %d is out of bounds (%d)", index, _size);
+	/**
+	 * Removes whitespace from string data held in this array.
+	 */
+	void trim(const int8 flags, const char showChar) {
+		enum {
+			kWhitespaceBoundary = 32,
+			kAsciiBoundary = 128
+		};
 
-		_data[index] = value;
+		byte *data = (byte *)_data;
+		byte *source;
+		byte *target;
+
+		if (flags & kArrayTrimLeft) {
+			target = data;
+			source = data;
+			while (*source != '\0' && *source != showChar && *source <= kWhitespaceBoundary) {
+				++source;
+			}
+			strcpy((char *)target, (char *)source);
+		}
+
+		if (flags & kArrayTrimRight) {
+			source = data + strlen((char *)data) - 1;
+			while (source > data && *source != showChar && *source <= kWhitespaceBoundary) {
+				--source;
+			}
+			*source = '\0';
+		}
+
+		if (flags & kArrayTrimCenter) {
+			target = data;
+			while (*target && *target <= kWhitespaceBoundary && *target != showChar) {
+				++target;
+			}
+
+			if (*target) {
+				while (*target && (*target > kWhitespaceBoundary || *target == showChar)) {
+					++target;
+				}
+
+				if (*target) {
+					source = target;
+					while (*source) {
+						while (*source && *source <= kWhitespaceBoundary && *source != showChar) {
+							++source;
+						}
+
+						while (*source && (*source > kWhitespaceBoundary || *source == showChar)) {
+							*target++ = *source++;
+						}
+					}
+
+					--source;
+					while (source > target && (*source <= kWhitespaceBoundary || *source >= kAsciiBoundary) && *source != showChar) {
+						--source;
+					}
+					++source;
+
+					memmove(target, source, strlen((char *)source) + 1);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Copies the string data held by this array into a new Common::String.
+	 */
+	Common::String toString() const {
+		assert(_type == kArrayTypeString);
+		return Common::String((char *)_data);
 	}
 
-	byte getType() const { return _type; }
-	uint32 getSize() const { return _size; }
-	T *getRawData() { return _data; }
-	const T *getRawData() const { return _data; }
+	/**
+	 * Copies the string from the given Common::String into this array.
+	 */
+	void fromString(const Common::String &string) {
+		// At least LSL6hires uses a byte-type array to hold string data
+		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
+		resize(string.size() + 1, true);
+		Common::strlcpy((char *)_data, string.c_str(), string.size() + 1);
+	}
 
 protected:
-	int8 _type;
-	T *_data;
-	uint32 _size; // _size holds the number of entries that the scripts have requested
-	uint32 _actualSize; // _actualSize is the actual numbers of entries allocated
+	void *_data;
+	SciArrayType _type;
+	uint16 _size;
+	uint8 _elementSize;
 };
 
-class SciString : public SciArray<char> {
-public:
-	SciString() : SciArray<char>() { setType(3); }
+struct ArrayTable : public SegmentObjTable<SciArray> {
+	ArrayTable() : SegmentObjTable<SciArray>(SEG_TYPE_ARRAY) {}
 
-	// We overload destroy to ensure the string type is 3 after destroying
-	void destroy() { SciArray<char>::destroy(); _type = 3; }
-
-	Common::String toString() const;
-	void fromString(const Common::String &string);
-};
-
-struct ArrayTable : public SegmentObjTable<SciArray<reg_t> > {
-	ArrayTable() : SegmentObjTable<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
-
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
-
-	void saveLoadWithSerializer(Common::Serializer &ser);
-	SegmentRef dereference(reg_t pointer);
-};
-
-struct StringTable : public SegmentObjTable<SciString> {
-	StringTable() : SegmentObjTable<SciString>(SEG_TYPE_STRING) {}
-
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-		at(sub_addr.getOffset()).destroy();
-		freeEntry(sub_addr.getOffset());
-	}
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);
@@ -803,6 +1124,15 @@ public:
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	void applyRemap(SciArray &clut) {
+		const int length = getWidth() * getHeight();
+		uint8 *pixel = getPixels();
+		for (int i = 0; i < length; ++i) {
+			uint8 color = clut.int16At(*pixel);
+			*pixel++ = color;
+		}
+	}
 };
 
 struct BitmapTable : public SegmentObjTable<SciBitmap> {

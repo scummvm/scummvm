@@ -102,66 +102,6 @@ void syncWithSerializer(Common::Serializer &s, Node &obj) {
 	syncWithSerializer(s, obj.value);
 }
 
-#ifdef ENABLE_SCI32
-void syncWithSerializer(Common::Serializer &s, SciArray<reg_t> &obj) {
-	byte type = 0;
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		type = (byte)obj.getType();
-		size = obj.getSize();
-	}
-	s.syncAsByte(type);
-	s.syncAsUint32LE(size);
-	if (s.isLoading()) {
-		obj.setType((int8)type);
-
-		// HACK: Skip arrays that have a negative type
-		if ((int8)type < 0)
-			return;
-
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		reg_t value;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		syncWithSerializer(s, value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-void syncWithSerializer(Common::Serializer &s, SciString &obj) {
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		size = obj.getSize();
-		s.syncAsUint32LE(size);
-	} else {
-		s.syncAsUint32LE(size);
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		char value = 0;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		s.syncAsByte(value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-#endif
-
 #pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
@@ -292,9 +232,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (type == SEG_TYPE_ARRAY) {
 			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
-		} else if (type == SEG_TYPE_STRING) {
-			// Set the correct segment for SCI32 strings
-			_stringSegId = i;
 		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
 			_bitmapSegId = i;
 #endif
@@ -392,6 +329,28 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 			obj.playTime = g_engine->getTotalPlayTime() / 1000;
 		}
 		s.syncAsUint32LE(obj.playTime);
+	}
+
+	// Some games require additional metadata to display their restore screens
+	// correctly
+	if (s.getVersion() >= 38) {
+		if (s.isSaving()) {
+			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
+			if (g_sci->getGameId() == GID_SHIVERS) {
+				obj.lowScore = globals[kGlobalScore].toUint16();
+				obj.highScore = globals[kGlobalShivers1Score].toUint16();
+				obj.avatarId = 0;
+			} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+				obj.lowScore = obj.highScore = 0;
+				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kGlobalEgo], SELECTOR(view));
+			} else {
+				obj.lowScore = obj.highScore = obj.avatarId = 0;
+			}
+		}
+
+		s.syncAsUint16LE(obj.lowScore);
+		s.syncAsUint16LE(obj.highScore);
+		s.syncAsByte(obj.avatarId);
 	}
 }
 
@@ -707,11 +666,39 @@ void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 	sync_Table<ArrayTable>(ser, *this);
 }
 
-void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
-	if (ser.getVersion() < 18)
-		return;
+void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
+	uint16 size;
 
-	sync_Table<StringTable>(ser, *this);
+	if (s.isSaving()) {
+		size = _size;
+	}
+
+	s.syncAsByte(_type);
+	s.syncAsByte(_elementSize);
+	s.syncAsUint16LE(size);
+
+	if (s.isLoading()) {
+		resize(size);
+	}
+
+	switch (_type) {
+	case kArrayTypeByte:
+	case kArrayTypeString:
+		s.syncBytes((byte *)_data, size);
+		break;
+	case kArrayTypeInt16:
+		for (int i = 0; i < size; ++i) {
+			s.syncAsUint16LE(((int16 *)_data)[i]);
+		}
+		break;
+	case kArrayTypeID:
+		for (int i = 0; i < size; ++i) {
+			syncWithSerializer(s, ((reg_t *)_data)[i]);
+		}
+		break;
+	default:
+		error("Attempt to sync invalid SciArray type %d", _type);
+	}
 }
 
 void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
@@ -1044,10 +1031,11 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
-	if (s->executionStackBase) {
-		warning("Cannot save from below kernel function");
-		return false;
-	}
+// TODO: This breaks Torin autosave, is there actually any reason for it?
+//	if (s->executionStackBase) {
+//		warning("Cannot save from below kernel function");
+//		return false;
+//	}
 
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);

@@ -67,9 +67,6 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_ARRAY:
 		mem = new ArrayTable();
 		break;
-	case SEG_TYPE_STRING:
-		mem = new StringTable();
-		break;
 	case SEG_TYPE_BITMAP:
 		mem = new BitmapTable();
 		break;
@@ -254,63 +251,39 @@ SegmentRef DynMem::dereference(reg_t pointer) {
 
 SegmentRef ArrayTable::dereference(reg_t pointer) {
 	SegmentRef ret;
-	ret.isRaw = false;
-	ret.maxSize = at(pointer.getOffset()).getSize() * 2;
-	ret.reg = at(pointer.getOffset()).getRawData();
-	return ret;
-}
 
-void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
-	at(sub_addr.getOffset()).destroy();
-	freeEntry(sub_addr.getOffset());
+	SciArray &array = at(pointer.getOffset());
+	const bool isRaw = array.getType() != kArrayTypeID;
+
+	ret.isRaw = isRaw;
+	ret.maxSize = isRaw ? array.byteSize() : array.size();
+	if (isRaw) {
+		ret.raw = (byte *)array.getRawData();
+	} else {
+		ret.reg = (reg_t *)array.getRawData();
+	}
+	return ret;
 }
 
 Common::Array<reg_t> ArrayTable::listAllOutgoingReferences(reg_t addr) const {
-	Common::Array<reg_t> tmp;
+	Common::Array<reg_t> refs;
 	if (!isValidEntry(addr.getOffset())) {
-		error("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
+		// Scripts may still hold references to array memory that has been
+		// explicitly freed; ignore these references
+		return refs;
 	}
 
-	const SciArray<reg_t> *array = &at(addr.getOffset());
-
-	for (uint32 i = 0; i < array->getSize(); i++) {
-		reg_t value = array->getValue(i);
-		if (value.getSegment() != 0)
-			tmp.push_back(value);
+	SciArray &array = const_cast<SciArray &>(at(addr.getOffset()));
+	if (array.getType() == kArrayTypeID) {
+		for (uint16 i = 0; i < array.size(); ++i) {
+			const reg_t value = array.getAsID(i);
+			if (value.isPointer()) {
+				refs.push_back(value);
+			}
+		}
 	}
 
-	return tmp;
-}
-
-Common::String SciString::toString() const {
-	if (_type != 3)
-		error("SciString::toString(): Array is not a string");
-
-	Common::String string;
-	for (uint32 i = 0; i < _size && _data[i] != 0; i++)
-		string += _data[i];
-
-	return string;
-}
-
-void SciString::fromString(const Common::String &string) {
-	if (_type != 3)
-		error("SciString::fromString(): Array is not a string");
-
-	setSize(string.size() + 1);
-
-	for (uint32 i = 0; i < string.size(); i++)
-		_data[i] = string[i];
-
-	_data[string.size()] = 0;
-}
-
-SegmentRef StringTable::dereference(reg_t pointer) {
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = at(pointer.getOffset()).getSize();
-	ret.raw = (byte *)at(pointer.getOffset()).getRawData();
-	return ret;
+	return refs;
 }
 
 #endif

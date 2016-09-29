@@ -124,21 +124,17 @@ static reg_t read_var(EngineState *s, int type, int index) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
 				//  We need to find correct replacements for each situation manually
-				SciTrackOriginReply originReply;
+				SciCallOrigin originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
 					// If we are running an official ScummVM release -> fake 0 in unknown cases
-					warning("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
-					originReply.scriptNr, originReply.localCallOffset);
+					warning("Uninitialized read for temp %d from %s", index, originReply.toString().c_str());
 
 					s->variables[type][index] = NULL_REG;
 					break;
 #else
-					error("Uninitialized read for temp %d from method %s::%s (room %d, script %d, localCall %x)",
-					index, originReply.objectName.c_str(), originReply.methodName.c_str(), s->currentRoomNumber(),
-					originReply.scriptNr, originReply.localCallOffset);
+					error("Uninitialized read for temp %d from %s", index, originReply.toString().c_str());
 #endif
 				}
 				assert(solution.type == WORKAROUND_FAKE);
@@ -179,7 +175,7 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 		// stopGroop object, which points to ego, to the new ego object. If this is not
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
+		if (index == kGlobalEgo && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {
 			reg_t stopGroopPos = s->_segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
@@ -200,9 +196,9 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 
 		s->variables[type][index] = value;
 
-		if (type == VAR_GLOBAL && index == 90) {
+		if (type == VAR_GLOBAL && index == kGlobalMessageType) {
 			// The game is trying to change its speech/subtitle settings
-			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][4] == TRUE_REG) {
+			if (!g_sci->getEngineState()->_syncedAudioOptions || s->variables[VAR_GLOBAL][kGlobalQuit] == TRUE_REG) {
 				// ScummVM audio options haven't been applied yet, so apply them.
 				// We also force the ScummVM audio options when loading a game from
 				// the launcher.
@@ -361,16 +357,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	if (kernelCall.signature
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
-		SciTrackOriginReply originReply;
+		SciCallOrigin originReply;
 		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
 		switch (solution.type) {
 		case WORKAROUND_NONE: {
 			Common::String signatureDetailsStr;
 			kernel->signatureDebug(signatureDetailsStr, kernelCall.signature, argc, argv);
-			error("\n%s[VM] k%s[%x]: signature mismatch in method %s::%s (room %d, script %d, localCall 0x%x)",
-				signatureDetailsStr.c_str(),
-				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(),
-				s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+			error("\n%s[VM] k%s[%x]: signature mismatch in %s", signatureDetailsStr.c_str(), kernelCall.name, kernelCallNr, originReply.toString().c_str());
 			break;
 			}
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
@@ -429,7 +422,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
-			SciTrackOriginReply originReply;
+			SciCallOrigin originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
 			switch (solution.type) {
 			case WORKAROUND_NONE: {
@@ -438,15 +431,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("\n%s[VM] k%s(%s): signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
-						signatureDetailsStr.c_str(),
-						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(),
-						s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+					error("\n%s[VM] k%s(%s): signature mismatch in %s",
+						signatureDetailsStr.c_str(), kernelCall.name, subCallName,
+						originReply.toString().c_str());
 				}
-				error("\n%s[VM] k%s: signature mismatch in method %s::%s (room %d, script %d, localCall %x)",
-					signatureDetailsStr.c_str(),
-					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(),
-					s->currentRoomNumber(), originReply.scriptNr, originReply.localCallOffset);
+				error("\n%s[VM] k%s: signature mismatch in %s",
+					signatureDetailsStr.c_str(), kernelSubCall.name,
+					originReply.toString().c_str());
 				break;
 			}
 			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone

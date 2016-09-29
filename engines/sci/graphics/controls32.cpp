@@ -313,8 +313,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 	if (textChanged) {
 		editor.text.trim();
-		SciString *string = _segMan->lookupString(textObject);
-		string->fromString(editor.text);
+		SciArray &string = *_segMan->lookupArray(textObject);
+		string.fromString(editor.text);
 	}
 
 	return make_reg(0, textChanged);
@@ -441,6 +441,11 @@ void ScrollWindow::show() {
 	}
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(_plane);
+
+	if (plane == nullptr) {
+		error("[ScrollWindow::show]: Plane %04x:%04x not found", PRINT_REG(_plane));
+	}
+
 	plane->_screenItemList.add(_screenItem);
 
 	_visible = true;

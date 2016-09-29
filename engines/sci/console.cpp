@@ -2075,10 +2075,6 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				debugPrintf("A  SCI32 arrays (%d)", (*(ArrayTable *)mobj).entries_used);
 				break;
 
-			case SEG_TYPE_STRING:
-				debugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
-				break;
-
 			case SEG_TYPE_BITMAP:
 				debugPrintf("T  SCI32 bitmaps (%d)", (*(BitmapTable *)mobj).entries_used);
 				break;
@@ -2210,9 +2206,6 @@ bool Console::segmentInfo(int nr) {
 	break;
 
 #ifdef ENABLE_SCI32
-	case SEG_TYPE_STRING:
-		debugPrintf("SCI32 strings\n");
-		break;
 	case SEG_TYPE_ARRAY:
 		debugPrintf("SCI32 arrays\n");
 		break;
@@ -2808,16 +2801,50 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
-				case SEG_TYPE_STRING: {
-					debugPrintf("SCI32 string\n");
-					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
-					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
-					break;
-				}
 				case SEG_TYPE_ARRAY: {
-					debugPrintf("SCI32 array:\n");
-					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					hexDumpReg(array->getRawData(), array->getSize(), 4, 0, true);
+					const SciArray *array = _engine->_gamestate->_segMan->lookupArray(reg);
+					const char *arrayType;
+					switch (array->getType()) {
+						case kArrayTypeID:
+							arrayType = "reg_t";
+							break;
+						case kArrayTypeByte:
+							arrayType = "byte";
+							break;
+						case kArrayTypeInt16:
+							arrayType = "int16";
+							break;
+						case kArrayTypeString:
+							arrayType = "string";
+							break;
+						default:
+							arrayType = "invalid";
+							break;
+					}
+					debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array->size());
+					switch (array->getType()) {
+					case kArrayTypeID:
+						hexDumpReg((const reg_t *)array->getRawData(), array->size(), 4, 0, true);
+						break;
+					case kArrayTypeByte:
+					case kArrayTypeString: {
+						Common::hexdump((const byte *)array->getRawData(), array->size(), 16, 0);
+						break;
+					}
+					case kArrayTypeInt16: {
+						const int16 *data = (const int16 *)array->getRawData();
+						for (int i = 0; i < array->size(); ++i) {
+							debugN("% 6d ", *data++);
+							if ((i % 8) == 0) {
+								debugN("\n");
+							}
+						}
+						break;
+					}
+					default:
+						break;
+					}
+
 					break;
 				}
 				case SEG_TYPE_BITMAP: {
@@ -3778,7 +3805,7 @@ bool Console::cmdBreakpointKernel(int argc, const char **argv) {
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		debugPrintf("Usage: %s <script number> <export number\n", argv[0]);
+		debugPrintf("Usage: %s <script number> <export number>\n", argv[0]);
 		return true;
 	}
 

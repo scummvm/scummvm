@@ -136,6 +136,22 @@ enum {
 	VAR_PARAM = 3
 };
 
+enum GlobalVar {
+	kGlobalEgo            = 0,
+	kGlobalCurrentRoom    = 2,
+	kGlobalSpeed          = 3,  // SCI16
+	kGlobalDefaultPlane   = 3,  // SCI32
+	kGlobalQuit           = 4,
+	kGlobalPlanes         = 10, // SCI32
+	kGlobalCurrentRoomNo  = 11,
+	kGlobalPreviousRoomNo = 12,
+	kGlobalNewRoomNo      = 13,
+	kGlobalScore          = 15,
+	kGlobalFastCast       = 84, // SCI16
+	kGlobalMessageType    = 90,
+	kGlobalShivers1Score  = 349
+};
+
 /** Number of kernel calls in between gcs; should be < 50000 */
 enum {
 	GC_INTERVAL = 0x8000

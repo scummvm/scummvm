@@ -159,11 +159,11 @@ void EngineState::initGlobals() {
 }
 
 uint16 EngineState::currentRoomNumber() const {
-	return variables[VAR_GLOBAL][13].toUint16();
+	return variables[VAR_GLOBAL][kGlobalNewRoomNo].toUint16();
 }
 
 void EngineState::setRoomNumber(uint16 roomNumber) {
-	variables[VAR_GLOBAL][13] = make_reg(0, roomNumber);
+	variables[VAR_GLOBAL][kGlobalNewRoomNo] = make_reg(0, roomNumber);
 }
 
 void EngineState::shrinkStackToBase() {
@@ -378,6 +378,48 @@ void SciEngine::checkVocabularySwitch() {
 		_vocabulary->reset();
 		_vocabularyLanguage = parserLanguage;
 	}
+}
+
+SciCallOrigin EngineState::getCurrentCallOrigin() const {
+	// IMPORTANT: This method must always return values that match *exactly* the
+	// values in the workaround tables in workarounds.cpp, or workarounds will
+	// be broken
+
+	Common::String curObjectName = _segMan->getObjectName(xs->sendp);
+	Common::String curMethodName;
+	const Script *localScript = _segMan->getScriptIfLoaded(xs->local_segment);
+	int curScriptNr = localScript->getScriptNumber();
+
+	if (xs->debugLocalCallOffset != -1) {
+		// if lastcall was actually a local call search back for a real call
+		Common::List<ExecStack>::const_iterator callIterator = _executionStack.end();
+		while (callIterator != _executionStack.begin()) {
+			callIterator--;
+			const ExecStack &loopCall = *callIterator;
+			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
+				xs->debugSelector = loopCall.debugSelector;
+				xs->debugExportId = loopCall.debugExportId;
+				break;
+			}
+		}
+	}
+
+	if (xs->type == EXEC_STACK_TYPE_CALL) {
+		if (xs->debugSelector != -1) {
+			curMethodName = g_sci->getKernel()->getSelectorName(xs->debugSelector);
+		} else if (xs->debugExportId != -1) {
+			curObjectName = "";
+			curMethodName = Common::String::format("export %d", xs->debugExportId);
+		}
+	}
+
+	SciCallOrigin reply;
+	reply.objectName = curObjectName;
+	reply.methodName = curMethodName;
+	reply.scriptNr = curScriptNr;
+	reply.localCallOffset = xs->debugLocalCallOffset;
+	reply.roomNr = currentRoomNumber();
+	return reply;
 }
 
 } // End of namespace Sci

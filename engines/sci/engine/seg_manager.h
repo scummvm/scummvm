@@ -433,14 +433,10 @@ public:
 	reg_t getParserPtr() const { return _parserPtr; }
 
 #ifdef ENABLE_SCI32
-	SciArray<reg_t> *allocateArray(reg_t *addr);
-	SciArray<reg_t> *lookupArray(reg_t addr);
+	SciArray *allocateArray(SciArrayType type, uint16 size, reg_t *addr);
+	SciArray *lookupArray(reg_t addr);
 	void freeArray(reg_t addr);
-
-	SciString *allocateString(reg_t *addr);
-	SciString *lookupString(reg_t addr);
-	void freeString(reg_t addr);
-	SegmentId getStringSegmentId() { return _stringSegId; }
+	bool isArray(reg_t addr) const;
 
 	SciBitmap *allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor = kDefaultSkipColor, const int16 displaceX = 0, const int16 displaceY = 0, const int16 scaledWidth = kLowResX, const int16 scaledHeight = kLowResY, const uint32 paletteSize = 0, const bool remap = false, const bool gc = true);
 	SciBitmap *lookupBitmap(reg_t addr);
@@ -469,7 +465,6 @@ private:
 
 #ifdef ENABLE_SCI32
 	SegmentId _arraysSegId;
-	SegmentId _stringSegId;
 	SegmentId _bitmapSegId;
 #endif
 

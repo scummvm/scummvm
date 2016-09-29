@@ -28,6 +28,7 @@
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
+#include "sci/engine/workarounds.h"
 
 namespace Sci {
 #pragma mark CelScaler
@@ -35,9 +36,6 @@ namespace Sci {
 CelScaler *CelObj::_scaler = nullptr;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-
 	for (int i = 0; i < ARRAYSIZE(_scaleTables); ++i) {
 		if (_scaleTables[i].scaleX == scaleX && _scaleTables[i].scaleY == scaleY) {
 			_activeIndex = i;
@@ -50,14 +48,12 @@ void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	CelScalerTable &table = _scaleTables[i];
 
 	if (table.scaleX != scaleX) {
-		assert(screenWidth <= ARRAYSIZE(table.valuesX));
-		buildLookupTable(table.valuesX, scaleX, screenWidth);
+		buildLookupTable(table.valuesX, scaleX, kCelScalerTableSize);
 		table.scaleX = scaleX;
 	}
 
 	if (table.scaleY != scaleY) {
-		assert(screenHeight <= ARRAYSIZE(table.valuesY));
-		buildLookupTable(table.valuesY, scaleY, screenHeight);
+		buildLookupTable(table.valuesY, scaleY, kCelScalerTableSize);
 		table.scaleY = scaleY;
 	}
 }
@@ -159,17 +155,19 @@ struct SCALER_NoScale {
 template<bool FLIP, typename READER>
 struct SCALER_Scale {
 #ifndef NDEBUG
+	int16 _minX;
 	int16 _maxX;
 #endif
 	const byte *_row;
 	READER _reader;
 	int16 _x;
-	static int16 _valuesX[4096];
-	static int16 _valuesY[4096];
+	static int16 _valuesX[kCelScalerTableSize];
+	static int16 _valuesY[kCelScalerTableSize];
 
 	SCALER_Scale(const CelObj &celObj, const Common::Rect &targetRect, const Common::Point &scaledPosition, const Ratio scaleX, const Ratio scaleY) :
 	_row(nullptr),
 #ifndef NDEBUG
+	_minX(targetRect.left),
 	_maxX(targetRect.right - 1),
 #endif
 	// The maximum width of the scaled object may not be as
@@ -221,17 +219,17 @@ struct SCALER_Scale {
 		} else {
 			if (FLIP) {
 				const int lastIndex = celObj._width - 1;
-				for (int16 x = 0; x < targetRect.width(); ++x) {
-					_valuesX[targetRect.left + x] = lastIndex - table->valuesX[x];
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = lastIndex - table->valuesX[x - scaledPosition.x];
 				}
 			} else {
-				for (int16 x = 0; x < targetRect.width(); ++x) {
-					_valuesX[targetRect.left + x] = table->valuesX[x];
+				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+					_valuesX[x] = table->valuesX[x - scaledPosition.x];
 				}
 			}
 
-			for (int16 y = 0; y < targetRect.height(); ++y) {
-				_valuesY[targetRect.top + y] = table->valuesY[y];
+			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+				_valuesY[y] = table->valuesY[y - scaledPosition.y];
 			}
 		}
 	}
@@ -239,19 +237,19 @@ struct SCALER_Scale {
 	inline void setTarget(const int16 x, const int16 y) {
 		_row = _reader.getRow(_valuesY[y]);
 		_x = x;
-		assert(_x >= 0 && _x <= _maxX);
+		assert(_x >= _minX && _x <= _maxX);
 	}
 
 	inline byte read() {
-		assert(_x >= 0 && _x <= _maxX);
+		assert(_x >= _minX && _x <= _maxX);
 		return _row[_valuesX[_x++]];
 	}
 };
 
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesX[4096];
+int16 SCALER_Scale<FLIP, READER>::_valuesX[kCelScalerTableSize];
 template<bool FLIP, typename READER>
-int16 SCALER_Scale<FLIP, READER>::_valuesY[4096];
+int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 
 #pragma mark -
 #pragma mark CelObj - Resource readers
@@ -283,7 +281,7 @@ public:
 struct READER_Compressed {
 private:
 	const byte *const _resource;
-	byte _buffer[4096];
+	byte _buffer[kCelScalerTableSize];
 	uint32 _controlOffset;
 	uint32 _dataOffset;
 	uint32 _uncompressedDataOffset;
@@ -570,7 +568,7 @@ uint8 CelObj::readPixel(uint16 x, const uint16 y, bool mirrorX) const {
 
 void CelObj::submitPalette() const {
 	if (_hunkPaletteOffset) {
-		HunkPalette palette(getResPointer() + _hunkPaletteOffset);
+		const HunkPalette palette(getResPointer() + _hunkPaletteOffset);
 		g_sci->_gfxPalette32->submit(palette);
 	}
 }
@@ -812,7 +810,31 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
 	const byte *const data = resource->data;
 
 	const uint16 loopCount = data[2];
-	if (loopNo >= loopCount || loopNo < 0) {
+
+	// Every version of SCI32 has a logic error in this function that causes
+	// random memory to be read if a script requests the cel count for one
+	// past the maximum loop index. At least GK1 room 800 does this, and gets
+	// stuck in an infinite loop because the game script expects this method
+	// to return a non-zero value.
+	// The scope of this bug means it is likely to pop up in other games, so we
+	// explicitly trap the bad condition here and report it so that any other
+	// game scripts relying on this broken behavior can be fixed as well
+	if (loopNo == loopCount) {
+		SciCallOrigin origin;
+		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kNumCels_workarounds, &origin);
+		switch (solution.type) {
+		case WORKAROUND_NONE:
+			error("[CelObjView::getNumCels]: loop number is equal to loop count in %s", origin.toString().c_str());
+		case WORKAROUND_FAKE:
+			return (int16)solution.value;
+		case WORKAROUND_IGNORE:
+			return 0;
+		case WORKAROUND_STILLCALL:
+			break;
+		}
+	}
+
+	if (loopNo > loopCount || loopNo < 0) {
 		return 0;
 	}
 

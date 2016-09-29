@@ -772,8 +772,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				SaveStateDescriptor descriptor(slotNr, meta.name);
 
 				if (slotNr == 0) {
-					// ScummVM auto-save slot, not used by SCI
-					// SCI does not support auto-saving, but slot 0 is reserved for auto-saving in ScummVM.
+					// ScummVM auto-save slot
 					descriptor.setWriteProtectedFlag(true);
 				} else {
 					descriptor.setWriteProtectedFlag(false);
@@ -795,9 +794,8 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 	SaveStateDescriptor descriptor(slotNr, "");
 
-	// Do not allow save slot 0 (used for auto-saving) to be deleted or
-	// overwritten. SCI does not support auto-saving, but slot 0 is reserved for auto-saving in ScummVM.
 	if (slotNr == 0) {
+		// ScummVM auto-save slot
 		descriptor.setWriteProtectedFlag(true);
 		descriptor.setDeletableFlag(false);
 	} else {

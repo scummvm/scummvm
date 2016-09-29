@@ -24,6 +24,7 @@
 #define SCI_ENGINE_WORKAROUNDS_H
 
 #include "sci/engine/vm_types.h"
+#include "sci/engine/state.h"
 #include "sci/sci.h"
 
 namespace Sci {
@@ -33,13 +34,6 @@ enum SciWorkaroundType {
 	WORKAROUND_IGNORE,    // ignore kernel call
 	WORKAROUND_STILLCALL, // still do kernel call
 	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
-};
-
-struct SciTrackOriginReply {
-	int scriptNr;
-	Common::String objectName;
-	Common::String methodName;
-	int localCallOffset;
 };
 
 struct SciWorkaroundSolution {
@@ -76,6 +70,7 @@ extern const SciWorkaroundEntry kDirLoop_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundPlay_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
+extern const SciWorkaroundEntry kFileIOOpen_workarounds[];
 extern const SciWorkaroundEntry kFindKey_workarounds[];
 extern const SciWorkaroundEntry kDeleteKey_workarounds[];
 extern const SciWorkaroundEntry kGetAngle_workarounds[];
@@ -90,20 +85,22 @@ extern const SciWorkaroundEntry kIsObject_workarounds[];
 extern const SciWorkaroundEntry kMemory_workarounds[];
 extern const SciWorkaroundEntry kMoveCursor_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];
+extern const SciWorkaroundEntry kNumCels_workarounds[];
 extern const SciWorkaroundEntry kPalVarySetPercent_workarounds[];
 extern const SciWorkaroundEntry kRandom_workarounds[];
 extern const SciWorkaroundEntry kReadNumber_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
 extern const SciWorkaroundEntry kSetCursor_workarounds[];
+extern const SciWorkaroundEntry kArraySetElements_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kStrAt_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
 extern const SciWorkaroundEntry kStrLen_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
-extern const SciWorkaroundEntry kStringPutAt_workarounds[];
+extern const SciWorkaroundEntry kStringNew_workarounds[];
 extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 
-extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
+extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin);
 
 } // End of namespace Sci
 

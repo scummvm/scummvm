@@ -57,10 +57,6 @@ enum AbortGameState {
 	kAbortQuitGame = 3
 };
 
-// slot 0 is the ScummVM auto-save slot, which is not used by us, but is still reserved
-#define SAVEGAMESLOT_FIRST 1
-#define SAVEGAMESLOT_LAST 99
-
 // We assume that scripts give us savegameId 0->99 for creating a new save slot
 //  and savegameId 100->199 for existing save slots. Refer to kfile.cpp
 enum {
@@ -96,6 +92,21 @@ struct VideoState {
 	void reset() {
 		fileName = "";
 		x = y = flags = 0;
+	}
+};
+
+/**
+ * Trace information about a VM function call.
+ */
+struct SciCallOrigin {
+	int scriptNr; //< The source script of the function
+	Common::String objectName; //< The name of the object being called
+	Common::String methodName; //< The name of the method being called
+	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
+	int roomNr; //< The room that was loaded at the time of the call
+
+	Common::String toString() const {
+		return Common::String::format("method %s::%s (room %d, script %d, localCall %x)", objectName.c_str(), methodName.c_str(), roomNr, scriptNr, localCallOffset);
 	}
 };
 
@@ -209,6 +220,11 @@ public:
 	 * Resets the engine state.
 	 */
 	void reset(bool isRestoring);
+
+	/**
+	 * Finds and returns the origin of the current call.
+	 */
+	SciCallOrigin getCurrentCallOrigin() const;
 };
 
 } // End of namespace Sci

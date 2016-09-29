@@ -44,6 +44,12 @@ private:
 	GfxPalette32 *_palette;
 	SegManager *_segMan;
 
+	/**
+	 * Determines whether the current game should be rendered in
+	 * high resolution.
+	 */
+	bool gameIsHiRes() const;
+
 public:
 	GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor);
 	~GfxFrameout();
