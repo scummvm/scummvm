@@ -1105,7 +1105,7 @@ void WMACodec::calculateMDCTCoefficients(int bSize, bool *hasChannel,
 
 			// Very high freqs: Noise
 			const int   n     = _blockLen - _coefsEnd[bSize];
-			const float mult1 = mult * exponents[(-1 << bSize) >> eSize];
+			const float mult1 = mult * exponents[(-(1 << bSize)) >> eSize];
 
 			for (int j = 0; j < n; j++) {
 				*coefs++    = _noiseTable[_noiseIndex] * mult1;
