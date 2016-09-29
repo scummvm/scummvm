@@ -84,7 +84,7 @@ void CMouseCursor::loadCursorImages() {
 		
 		Graphics::ManagedSurface *frameSurface = movie.duplicateFrame();
 		_cursors[idx]._frameSurface = frameSurface;
-		surface->setMovieFrameSurface(frameSurface);
+		surface->setTransparencySurface(frameSurface);
 	}
 }
 

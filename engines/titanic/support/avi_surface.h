@@ -168,9 +168,9 @@ public:
 	}
 
 	/**
-	 * Duplicates the secondary frame, if the movie has a second video track
+	 * Duplicates the transparency mask for the frame, if the movie includes it
 	 */
-	Graphics::ManagedSurface *duplicateSecondaryFrame() const;
+	Graphics::ManagedSurface *duplicateTransparency() const;
 
 	/**
 	 * Returns true if it's time for the next

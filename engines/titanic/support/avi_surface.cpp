@@ -39,15 +39,16 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack() {
 }
 
 /**
- * Track filter for AVIDecoder that filters out any secondary video track
+ * Track filter for AVIDecoder that filters out any secondary
+ * video track some videos have to hold transparency masks
  */
 static bool primaryTrackSelect(bool isVideo, int trackCounter) {
 	return !isVideo || trackCounter == 0;
 }
 
 /**
- * Track filter for AVIDecoder that only accepts the secondary video track
- * for a video, if present
+ * Track filter for AVIDecoder that only accepts the secondary
+ * transparency msak video track for a video, if present
  */
 static bool secondaryTrackSelect(bool isVideo, int trackCounter) {
 	return isVideo && trackCounter > 0;
@@ -348,7 +349,7 @@ Graphics::ManagedSurface *AVISurface::getSecondarySurface() {
 	return _streamCount <= 1 ? nullptr : _movieFrameSurface[1];
 }
 
-Graphics::ManagedSurface *AVISurface::duplicateSecondaryFrame() const {
+Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 	if (_streamCount <= 1) {
 		return nullptr;
 	} else {

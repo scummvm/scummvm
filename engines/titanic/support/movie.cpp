@@ -157,7 +157,7 @@ void OSMovie::addEvent(int frameNumber, CGameObject *obj) {
 
 void OSMovie::setFrame(uint frameNumber) {
 	_aviSurface.setFrame(frameNumber);
-	_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
+	_videoSurface->setTransparencySurface(_aviSurface.getSecondarySurface());
 }
 
 bool OSMovie::handleEvents(CMovieEventList &events) {
@@ -169,7 +169,7 @@ bool OSMovie::handleEvents(CMovieEventList &events) {
 	// Handle updating the frame
 	while (_aviSurface.isPlaying() && _aviSurface.isNextFrame()) {
 		_aviSurface.handleEvents(events);
-		_videoSurface->setMovieFrameSurface(_aviSurface.getSecondarySurface());
+		_videoSurface->setTransparencySurface(_aviSurface.getSecondarySurface());
 	}
 
 	// Flag there's a video frame
@@ -204,7 +204,7 @@ void OSMovie::setFrameRate(double rate) {
 }
 
 Graphics::ManagedSurface *OSMovie::duplicateFrame() const {
-	return _aviSurface.duplicateSecondaryFrame();
+	return _aviSurface.duplicateTransparency();
 }
 
 } // End of namespace Titanic

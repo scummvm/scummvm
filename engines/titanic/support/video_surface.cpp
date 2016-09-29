@@ -32,8 +32,8 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
-		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
-		_freeMovieSurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
+		_transparencySurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
+		_freeTransparencySurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
 
@@ -42,8 +42,8 @@ CVideoSurface::~CVideoSurface() {
 		_videoSurfaceCounter -= freeSurface();
 	--_videoSurfaceCounter;
 
-	if (_freeMovieSurface == DisposeAfterUse::YES)
-		delete _movieFrameSurface;
+	if (_freeTransparencySurface == DisposeAfterUse::YES)
+		delete _transparencySurface;
 }
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
@@ -138,8 +138,8 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 
 	if (src->_fastBlitFlag) {
 		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
-	} else if (getMovieFrameSurface()) {
-		movieBlitRect(srcRect, destRect, src);
+	} else if (getTransparencySurface()) {
+		transBlitRect(srcRect, destRect, src);
 	} else {
 		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect, src->getTransparencyColor());
 	}
@@ -149,8 +149,8 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 }
 
 void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
-	if (getMovieFrameSurface()) {
-		movieBlitRect(srcRect, destRect, src);
+	if (getTransparencySurface()) {
+		transBlitRect(srcRect, destRect, src);
 	} else {
 		src->lock();
 		lock();
@@ -162,7 +162,7 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 	}
 }
 
-void CVideoSurface::movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	if (lock()) {
 		if (src->lock()) {
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;

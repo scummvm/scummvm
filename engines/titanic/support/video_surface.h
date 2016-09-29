@@ -57,15 +57,15 @@ private:
 
 	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
-	Graphics::ManagedSurface *_movieFrameSurface;
-	DisposeAfterUse::Flag _freeMovieSurface;
+	Graphics::ManagedSurface *_transparencySurface;
+	DisposeAfterUse::Flag _freeTransparencySurface;
 	int _videoSurfaceNum;
 	bool _hasFrame;
 	int _lockCount;
@@ -295,14 +295,14 @@ public:
 	void blitFrom(const Point &destPos, const Graphics::Surface *src);
 
 	/**
-	 * Sets the movie frame surface containing frame data from an active movie
+	 * Sets a raw surface to use as a transparency mask for the surface
 	 */
-	void setMovieFrameSurface(Graphics::ManagedSurface *frameSurface) { _movieFrameSurface = frameSurface; }
+	void setTransparencySurface(Graphics::ManagedSurface *surface) { _transparencySurface = surface; }
 
 	/**
-	 * Get the previously set movie frame surface
+	 * Get the previously set transparency mask surface
 	 */
-	Graphics::ManagedSurface *getMovieFrameSurface() const { return _movieFrameSurface; }
+	Graphics::ManagedSurface *getTransparencySurface() const { return _transparencySurface; }
 
 	/**
 	 * Get the pixels associated with the surface. Only valid when the
