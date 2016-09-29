@@ -407,6 +407,12 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 		return 0;
 
 	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
+		if (_transparencySurface) {
+			const byte *pixelP = (const byte *)_transparencySurface->getBasePtr(pt.x, pt.y);
+			if (*pixelP != 0xF0)
+				return getTransparencyColor();
+		}
+
 		lock();
 		uint16 pixel = *(uint16 *)_rawSurface->getBasePtr(pt.x, pt.y);
 		unlock();
