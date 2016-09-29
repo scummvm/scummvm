@@ -146,6 +146,8 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	saveFile->writeUint16LE(header2.time);
 	saveFile->writeUint32LE(header2.playtime);
 
+	g_fp->_currentScene->draw();
+
 	Graphics::saveThumbnail(*saveFile); // FIXME. Render proper screen
 
 	saveFile->writeUint32LE(headerPos);	// Store where the header starts
