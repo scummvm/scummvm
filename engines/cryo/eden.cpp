@@ -892,14 +892,8 @@ void EdenGame::saveFriezes() {
 
 // Original name: sauvefriseshaut
 void EdenGame::saveTopFrieze(int16 x) { // Save top bar
-	underTopBarScreenRect.top = 0;       //TODO: wrong fields order?
-	underTopBarScreenRect.left = x;
-	underTopBarScreenRect.right = x + 320 - 1;
-	underTopBarScreenRect.bottom = 15;
-	underTopBarBackupRect.top = 0;
-	underTopBarBackupRect.left = 0;
-	underTopBarBackupRect.right = 320 - 1;
-	underTopBarBackupRect.bottom = 15;
+	underTopBarScreenRect = Common::Rect(x, 0, x + 320 - 1, 15);
+	underTopBarBackupRect = Common::Rect(0, 0, 320 - 1, 15);
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underTopBarScreenRect, &underTopBarBackupRect);
 }
 
@@ -4965,25 +4959,10 @@ void EdenGame::init_globals() {
 }
 
 void EdenGame::initrect() {
-	underTopBarScreenRect.top = 0;
-	underTopBarScreenRect.left = 0;
-	underTopBarScreenRect.right = 320 - 1;
-	underTopBarScreenRect.bottom = 16 - 1;
-
-	underTopBarBackupRect.top = 0;
-	underTopBarBackupRect.left = 0;
-	underTopBarBackupRect.right = 320 - 1;
-	underTopBarBackupRect.bottom = 16 - 1;
-
-	underBottomBarScreenRect.top = 176;
-	underBottomBarScreenRect.left = 0;
-	underBottomBarScreenRect.right = 320 - 1;
-	underBottomBarScreenRect.bottom = 200 - 1;  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
-
-	underBottomBarBackupRect.top = 16;
-	underBottomBarBackupRect.left = 0;
-	underBottomBarBackupRect.right = 320 - 1;
-	underBottomBarBackupRect.bottom = 40 - 1;
+	underTopBarScreenRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
+	underTopBarBackupRect = Common::Rect(0, 0, 320 - 1, 16 - 1);
+	underBottomBarScreenRect = Common::Rect(0, 176, 320 - 1, 200 - 1);  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
+	underBottomBarBackupRect = Common::Rect(0, 16, 320 - 1, 40 - 1);
 }
 
 void EdenGame::closesalle() {
