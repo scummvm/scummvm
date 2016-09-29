@@ -99,6 +99,17 @@ struct VideoState {
 	}
 };
 
+/**
+ * Trace information about a VM function call.
+ */
+struct SciCallOrigin {
+	int scriptNr; //< The source script of the function
+	Common::String objectName; //< The name of the object being called
+	Common::String methodName; //< The name of the method being called
+	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
+	int roomNr; //< The room that was loaded at the time of the call
+};
+
 struct EngineState : public Common::Serializable {
 public:
 	EngineState(SegManager *segMan);
@@ -209,6 +220,11 @@ public:
 	 * Resets the engine state.
 	 */
 	void reset(bool isRestoring);
+
+	/**
+	 * Finds and returns the origin of the current call.
+	 */
+	SciCallOrigin getCurrentCallOrigin() const;
 };
 
 } // End of namespace Sci

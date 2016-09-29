@@ -541,7 +541,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int a
 			break;
 
 		default:
-			SciTrackOriginReply originReply;
+			SciCallOrigin originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
 			if (solution.type == WORKAROUND_NONE)
 				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)",

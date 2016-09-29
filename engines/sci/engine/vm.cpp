@@ -124,7 +124,7 @@ static reg_t read_var(EngineState *s, int type, int index) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
 				//  We need to find correct replacements for each situation manually
-				SciTrackOriginReply originReply;
+				SciCallOrigin originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
 				if (solution.type == WORKAROUND_NONE) {
 #ifdef RELEASE_BUILD
@@ -361,7 +361,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	if (kernelCall.signature
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
-		SciTrackOriginReply originReply;
+		SciCallOrigin originReply;
 		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
 		switch (solution.type) {
 		case WORKAROUND_NONE: {
@@ -429,7 +429,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
-			SciTrackOriginReply originReply;
+			SciCallOrigin originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
 			switch (solution.type) {
 			case WORKAROUND_NONE: {
