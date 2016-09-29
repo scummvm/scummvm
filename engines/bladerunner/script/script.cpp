@@ -574,7 +574,7 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 
 void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int running) {
 	//TODO
-	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, a3, running);
+	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, a3, running);
 }
 
 void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a5, bool running) {
@@ -1075,7 +1075,7 @@ void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2,
 
 void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
 	//TODO
-	warning("Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, %x, %d)", itemId,  startX,  startY,  startZ,  endX,  endY,  endZ,  steps,  data,  a10);
+	warning("Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", itemId,  startX,  startY,  startZ,  endX,  endY,  endZ,  steps,  (void *)data,  a10);
 	
 }
 

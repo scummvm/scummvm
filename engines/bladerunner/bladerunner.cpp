@@ -73,6 +73,10 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_settings = new Settings(this);
 	_lights = new Lights(this);
 	_combat = new Combat(this);
+
+	_walkSoundId = -1;
+	_walkSoundVolume = 0;
+	_walkSoundBalance = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {

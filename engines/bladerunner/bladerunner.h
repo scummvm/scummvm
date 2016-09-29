@@ -120,9 +120,9 @@ public:
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
 
-	int _walkSoundId = -1;
-	int _walkSoundVolume = 0;
-	int _walkSoundBalance = 0;
+	int _walkSoundId;
+	int _walkSoundVolume;
+	int _walkSoundBalance;
 
 private:
 	static const int kArchiveCount = 10;
