@@ -762,12 +762,24 @@ reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
-	// viewId, loopNo, celNo, skipColor, backColor, useRemap, source overlay bitmap
+	// viewId, loopNo, celNo, skipColor, backColor, mirror, CLUT for remapping
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	int16 skipColor = argv[3].toSint16() == -1 ? view._transparentColor : argv[3].toSint16();
+	int16 backColor = argv[4].toSint16() == -1 ? view._transparentColor : argv[4].toSint16();
+	bool mirror = argc >= 6 ? argv[5].toSint16() : false;
+	if (argc >= 7)
+		warning("kBitmapCreateFromView: remapping is not implemented yet");
 
-	return kStub(s, argc + 1, argv - 1);
+	reg_t bitmapId;
+	uint16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	uint16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, view._width, view._height, skipColor, 0, 0, screenWidth, screenHeight, 0, false, true);
+	memset(bitmap.getPixels(), backColor, view._width * view._height);
+	view.draw(bitmap.getBuffer(), Common::Rect(0, 0, view._width - 1, view._height - 1), Common::Point(0, 0), mirror);
+	return bitmapId;
 }
 
-reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv) {
+reg_t kBitmapRemap(EngineState *s, int argc, reg_t *argv) {
 	// target bitmap, source bitmap
 
 	return kStubNull(s, argc + 1, argv - 1);
@@ -779,13 +791,19 @@ reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv) {
 	return kStub(s, argc + 1, argv - 1);
 }
 
-reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
-	// bitmap
+reg_t kBitmapGetColor(EngineState *s, int argc, reg_t *argv) {
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
 
-	// argc 1 = get width
-	// argc 2 = pixel at row 0 col n
-	// argc 3 = pixel at row n col n
-	return kStub(s, argc + 1, argv - 1);
+	if (argc == 1) {
+		return make_reg(0, bitmap.getWidth());
+	} else {
+		uint16 x = (argc > 1) ? argv[1].getOffset() : 0;
+		uint16 y = (argc > 2) ? argv[2].getOffset() : 0;
+		uint16 offset = x + y * bitmap.getWidth();
+		assert(offset < bitmap.getWidth() * bitmap.getHeight());
+		byte pixelValue = *(bitmap.getPixels() + offset);
+		return make_reg(0, (uint16)pixelValue);
+	}
 }
 
 reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv) {
@@ -793,7 +811,7 @@ reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv) {
 	return kStubNull(s, argc + 1, argv - 1);
 }
 
-reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv) {
+reg_t kBitmapLoadBMP(EngineState *s, int argc, reg_t *argv) {
 	// TODO: SCI3
 	return kStub(s, argc + 1, argv - 1);
 }

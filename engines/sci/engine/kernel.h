@@ -549,11 +549,11 @@ reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapRemap(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapGetColor(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapLoadBMP(EngineState *s, int argc, reg_t *argv);
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv);
