@@ -25,6 +25,8 @@
 #include "common/memstream.h"
 #include "graphics/cursorman.h"     // for CursorMan
 #include "graphics/maccursor.h"
+#include "sci/engine/state.h"
+#include "sci/engine/segment.h"		// for SciArray
 #include "sci/graphics/celobj32.h"  // for CelObjView, CelInfo32, Ratio
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"  // for GfxFrameout
@@ -34,7 +36,10 @@ namespace Sci {
 GfxCursor32::GfxCursor32() :
 	_hideCount(0),
 	_position(0, 0),
-	_writeToVMAP(false) {
+	_writeToVMAP(false),
+	_hotRectanglesEnabled(false),
+	_curHotRectIndex(-1),
+	_hotRectangleEvent(false) {
 	CursorMan.showMouse(false);
 }
 
@@ -437,6 +442,52 @@ void GfxCursor32::move() {
 
 		paint(_drawBuff2, _cursor);
 		drawToHardware(_drawBuff2);
+	}
+
+	if (_hotRectanglesEnabled)
+		checkHotRectangles();
+}
+
+void GfxCursor32::setupHotRectangles(uint16 rectCount, reg_t hotRects) {
+	SciArray<reg_t> *r = g_sci->getEngineState()->_segMan->lookupArray(hotRects);
+	assert(r->getSize() == rectCount * 4);
+
+	_hotRectangles.clear();
+
+	for (uint16 i = 0; i < r->getSize(); i += 4) {
+		_hotRectangles.push_back(
+			Common::Rect(
+				r->getValue(i    ).toUint16(),
+				r->getValue(i + 1).toUint16(),
+				r->getValue(i + 2).toUint16(),
+				r->getValue(i + 3).toUint16()
+			)
+		);
+	}
+}
+
+void GfxCursor32::checkHotRectangles() {
+	int index = 0;
+	int lastHotRectangleIndex = _curHotRectIndex;
+	_curHotRectIndex = -1;
+
+	for (Common::List<Common::Rect>::iterator iter = _hotRectangles.begin(); iter != _hotRectangles.end(); ++iter) {
+		Common::Rect cur = *iter;
+		if (cur.contains(_position)) {
+			_curHotRectIndex = index;
+			if (_curHotRectIndex != lastHotRectangleIndex) {
+				_hotRectangleEvent = true;
+				break;
+			}
+			lastHotRectangleIndex = _curHotRectIndex;
+		}
+		index++;
+	}
+
+	// Check if the mouse has moved away from a hot rectangle
+	if (lastHotRectangleIndex != _curHotRectIndex && lastHotRectangleIndex != -1) {
+		_curHotRectIndex = -1;
+		_hotRectangleEvent = true;
 	}
 }
 

@@ -631,6 +631,7 @@ reg_t kFont(EngineState *s, int argc, reg_t *argv);
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv);
 
 // Phantasmagoria Mac Special Kernel Function
 reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv);
