@@ -81,62 +81,63 @@ void CLMemory_Free(void *ptr) {
 volatile long TimerTicks = 0;   // incremented in realtime
 
 ///// CLView
-void CLView_SetSrcZoomValues(view_t *view, int x, int y) {
-	view->zoom.src_left = x;
-	view->zoom.src_top = y;
+void CLView_SetSrcZoomValues(View *view, int x, int y) {
+	view->_zoom._srcLeft = x;
+	view->_zoom._srcTop = y;
 }
-void CLView_SetDisplayZoomValues(view_t *view, int w, int h) {
-	view->zoom.width = w;
-	view->zoom.height = h;
+void CLView_SetDisplayZoomValues(View *view, int w, int h) {
+	view->_zoom._width = w;
+	view->_zoom._height = h;
 }
-void CLView_Free(view_t *view) {
-	if (view->p_buffer && view->allocated)
-		CLMemory_Free(view->p_buffer);
+void CLView_Free(View *view) {
+	if (view->_bufferPtr && view->_allocated)
+		CLMemory_Free(view->_bufferPtr);
 	if (view)
 		CLMemory_Free(view);
 }
-void CLView_InitDatas(view_t *view, int w, int h, void *buffer) {
-	view->p_buffer = (byte *)buffer;
-	view->width = w;
-	view->height = h;
-	view->pitch = w;
-	view->doubled = 0;
-	view->norm.src_left = 0;
-	view->norm.src_top = 0;
-	view->norm.dst_left = 0;
-	view->norm.dst_top = 0;
-	view->norm.width = w;
-	view->norm.height = h;
-	view->zoom.src_left = 0;
-	view->zoom.src_top = 0;
-	view->zoom.dst_left = 0;
-	view->zoom.dst_top = 0;
-	view->zoom.width = w;
-	view->zoom.height = h;
+void CLView_InitDatas(View *view, int w, int h, void *buffer) {
+	view->_bufferPtr = (byte *)buffer;
+	view->_width = w;
+	view->_height = h;
+	view->_pitch = w;
+	view->_doubled = false;
+	view->_normal._srcLeft = 0;
+	view->_normal._srcTop = 0;
+	view->_normal._dstLeft = 0;
+	view->_normal._dstTop = 0;
+	view->_normal._width = w;
+	view->_normal._height = h;
+	view->_zoom._srcLeft = 0;
+	view->_zoom._srcTop = 0;
+	view->_zoom._dstLeft = 0;
+	view->_zoom._dstTop = 0;
+	view->_zoom._width = w;
+	view->_zoom._height = h;
 }
-view_t *CLView_New(int w, int h) {
-	view_t *view = (view_t *)CLMemory_Alloc(sizeof(view_t));
+View *CLView_New(int w, int h) {
+	View *view = (View *)CLMemory_Alloc(sizeof(View));
 	if (view) {
 		void *buffer = (byte *)CLMemory_Alloc(w * h);
 		if (buffer) {
-			view->allocated = 1;
+			view->_allocated = true;
 			CLView_InitDatas(view, w, h, buffer);
 		} else {
+			view->_allocated = false;
 			CLMemory_Free(view);
 			view = 0;
 		}
 	}
 	return view;
 }
-void CLView_CenterIn(view_t *parent, view_t *child) {
-	child->norm.dst_left = (parent->width - child->norm.width) / 2;
-	child->norm.dst_top = (parent->height - child->norm.height) / 2;
-	child->zoom.dst_left = (parent->width - child->zoom.width) / 2;
-	child->zoom.dst_top = (parent->height - child->zoom.height) / 2;
+void CLView_CenterIn(View *parent, View *child) {
+	child->_normal._dstLeft = (parent->_width - child->_normal._width) / 2;
+	child->_normal._dstTop = (parent->_height - child->_normal._height) / 2;
+	child->_zoom._dstLeft = (parent->_width - child->_zoom._width) / 2;
+	child->_zoom._dstTop = (parent->_height - child->_zoom._height) / 2;
 }
 
 ///// CLScreenView
-view_t ScreenView;
+View ScreenView;
 
 void CLScreenView_Init() {
 	// ScreenView is the game's target screen (a pc display)
@@ -145,7 +146,7 @@ void CLScreenView_Init() {
 	CLView_InitDatas(&ScreenView, g_ed->_screen.w, g_ed->_screen.h, g_ed->_screen.getPixels());
 }
 
-void CLScreenView_CenterIn(view_t *view) {
+void CLScreenView_CenterIn(View *view) {
 	CLView_CenterIn(&ScreenView, view);
 }
 
@@ -222,16 +223,16 @@ static uint16 newPaletteCount, newPaletteFirst;
 static color_t *pNewPalette;
 static uint16 useNewPalette;
 
-void CLBlitter_CopyViewRect(view_t *view1, view_t *view2, rect_t *rect1, rect_t *rect2) {
-	int sy, dy = rect2->sy, x, w = rect1->ex - rect1->sx + 1;
+void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2) {
+	int sy, dy = rect2->top, x, w = rect1->right - rect1->left + 1;
 	//  debug("- Copy rect %3d:%3d-%3d:%3d -> %3d:%3d-%3d:%3d - %s",
 	//      rect1->sx, rect1->sy, rect1->ex, rect1->ey,
 	//      rect2->sx, rect2->sy, rect2->ex, rect2->ey,
 	//      (rect1->ex - rect1->sx == rect2->ex - rect2->sx && rect1->ey - rect1->sy == rect2->ey - rect2->sy) ? "ok" : "BAD");
-	assert(rect1->ex - rect1->sx == rect2->ex - rect2->sx && rect1->ey - rect1->sy == rect2->ey - rect2->sy);
-	for (sy = rect1->sy; sy <= rect1->ey; sy++, dy++) {
-		byte *s = view1->p_buffer + sy * view1->pitch + rect1->sx;
-		byte *d = view2->p_buffer + dy * view2->pitch + rect2->sx;
+	assert(rect1->right - rect1->left == rect2->right - rect2->left && rect1->bottom - rect1->top == rect2->bottom - rect2->top);
+	for (sy = rect1->top; sy <= rect1->bottom; sy++, dy++) {
+		byte *s = view1->_bufferPtr + sy * view1->_pitch + rect1->left;
+		byte *d = view2->_bufferPtr + dy * view2->_pitch + rect2->left;
 		for (x = 0; x < w; x++)
 			*d++ = *s++;
 	}
@@ -254,24 +255,24 @@ void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 
 		dst += dstp - dstw;
 	}
 }
-void CLBlitter_CopyView2ScreenCUSTOM(view_t *view) {
-	view_t *dest = &ScreenView;
-	if (!view->doubled) {
-		int16 srcpitch = view->pitch;
-		int16 dstpitch = dest->pitch;
+void CLBlitter_CopyView2ScreenCUSTOM(View *view) {
+	View *dest = &ScreenView;
+	if (!view->_doubled) {
+		int16 srcpitch = view->_pitch;
+		int16 dstpitch = dest->_pitch;
 
 		//      this is not quite correct?
-		//      CLBlitter_CopyView2ViewSimpleSize(view->p_buffer + view->norm.src_top * srcpitch + view->norm.src_left, view->norm.width, srcpitch, view->norm.height,
-		//          dest->p_buffer + dest->norm.dst_top * dstpitch + dest->norm.dst_left, dest->norm.width, dstpitch, dest->norm.height);
+		//      CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal.src_top * srcpitch + view->_normal._srcLeft, view->_normal._width, srcpitch, view->_normal._height,
+		//          dest->_bufferPtr + dest->_normal._dstTop * dstpitch + dest->_normal._dstLeft, dest->_normal._width, dstpitch, dest->_normal._height);
 
-		CLBlitter_CopyView2ViewSimpleSize(view->p_buffer + view->norm.src_top * srcpitch + view->norm.src_left, view->norm.width, srcpitch, view->norm.height,
-		                                  dest->p_buffer + (dest->norm.dst_top + view->norm.dst_top) * dstpitch + dest->norm.dst_left + view->norm.dst_left, dest->norm.width, dstpitch, dest->norm.height);
+		CLBlitter_CopyView2ViewSimpleSize(view->_bufferPtr + view->_normal._srcTop * srcpitch + view->_normal._srcLeft, view->_normal._width, srcpitch, view->_normal._height,
+		                                  dest->_bufferPtr + (dest->_normal._dstTop + view->_normal._dstTop) * dstpitch + dest->_normal._dstLeft + view->_normal._dstLeft, dest->_normal._width, dstpitch, dest->_normal._height);
 
 	} else {
 		assert(0);
 	}
 }
-void CLBlitter_CopyView2Screen(view_t *view) {
+void CLBlitter_CopyView2Screen(View *view) {
 
 	if (useNewPalette) {
 		color_t palette[256];
@@ -284,20 +285,20 @@ void CLBlitter_CopyView2Screen(view_t *view) {
 	if (view)
 		CLBlitter_CopyView2ScreenCUSTOM(view);
 
-	g_system->copyRectToScreen(ScreenView.p_buffer, ScreenView.pitch, 0, 0, ScreenView.width, ScreenView.height);
+	g_system->copyRectToScreen(ScreenView._bufferPtr, ScreenView._pitch, 0, 0, ScreenView._width, ScreenView._height);
 	g_system->updateScreen();
 }
 void CLBlitter_UpdateScreen() {
 	CLBlitter_CopyView2Screen(nullptr);
 }
-void CLBlitter_FillView(view_t *view, unsigned int fill) {
+void CLBlitter_FillView(View *view, unsigned int fill) {
 	int16 x, y;
-	byte *d = view->p_buffer;
+	byte *d = view->_bufferPtr;
 	assert((fill & 0xFF) * 0x01010101 == fill);
-	for (y = 0; y < view->height; y++) {
-		for (x = 0; x < view->width; x++)
+	for (y = 0; y < view->_height; y++) {
+		for (x = 0; x < view->_width; x++)
 			*d++ = fill;
-		d += view->pitch - view->width;
+		d += view->_pitch - view->_width;
 	}
 }
 void CLBlitter_FillScreenView(unsigned int fill) {

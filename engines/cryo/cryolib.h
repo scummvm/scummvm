@@ -24,6 +24,7 @@
 #define CRYO_CRYOLIB_H
 
 #include "audio/mixer.h"
+#include "common/system.h"
 
 #include "cryo/platdefs.h"
 
@@ -73,28 +74,25 @@ extern int16 __debug, __libError, __osError;
 		DebugStr(c2pstr(buffer_));   \
 	};
 
-struct rect_t {
-	int sy, sx, ey, ex;
+struct BlitView{
+	int     _srcLeft;
+	int     _srcTop;
+	int     _dstLeft;
+	int     _dstTop;
+	int     _width;
+	int     _height;
 };
-typedef struct rect_t rect_t;
 
-struct view_t {
-	byte   *p_buffer;
-	int     width;
-	int     height;
-	int16   pitch;
-	int16   doubled;
-	int16   allocated;
-	struct {
-		int     src_left;
-		int     src_top;
-		int     dst_left;
-		int     dst_top;
-		int     width;
-		int     height;
-	} norm, zoom;
+struct View {
+	byte    *_bufferPtr;
+	int      _width;
+	int      _height;
+	int16    _pitch;
+	bool     _doubled;
+	bool     _allocated;
+	BlitView _normal;
+	BlitView _zoom;
 };
-typedef struct view_t view_t;
 
 struct color3_t {
 	int16   r, g, b;
@@ -112,32 +110,32 @@ struct palette_t {
 typedef struct palette_t palette_t;
 
 #pragma pack(push, 1)
-struct hnmheader_t {
-	int             id;
-	char            flag1;
-	char            flag2;
-	char            reseverd;
-	char            bpp;
-	uint16  width;
-	uint16  height;
-	int             filesize;
-	int             nframe;
-	int             table_offset;
-	int16           speed;
-	int16           maxbuffer;
-	int             buffersize;
-	int16           ff_20;
-	char            reserved2[14];
-	char            copyright[16];
+struct HNMHeader {
+	int     _signature;
+	char    _unusedFlag1;
+	char    _unusedFlag2;
+	char    _unusedReserved;
+	char    _unusedBpp;
+	uint16  _width;
+	uint16  _height;
+	int     _unusedFileSize;
+	int     _numbFrame;
+	int     _unusedTableOffset;
+	int16   _unusedSpeed;
+	int16   _unusedMaxBuffer;
+	int     _bufferSize;
+	int16   _unusedUnknown;
+	char    _unusedReserved2[14];
+	char    _unusedCopyright[16];
 };
-typedef struct hnmheader_t hnmheader_t;
+typedef struct HNMHeader HNMHeader;
 #pragma pack(pop)
 
 struct hnm_t {
 	int             frame;
 	int             ff_4;
 	file_t         *file;
-	hnmheader_t     header;
+	HNMHeader     _header;
 	byte   *work_buffer[2];
 	byte   *final_buffer;
 	byte   *new_frame_buffer;
@@ -208,7 +206,7 @@ struct soundchannel_t {
 typedef struct soundchannel_t soundchannel_t;
 
 extern volatile long TimerTicks;
-extern view_t ScreenView;
+extern View ScreenView;
 
 
 soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, float rate, int16 mode);
@@ -232,15 +230,15 @@ void SysBeep(int x);
 long TickCount();
 void FlushEvents(int16 arg1, int16 arg2);
 
-void CLBlitter_CopyViewRect(view_t *view1, view_t *view2, rect_t *rect1, rect_t *rect2);
+void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2);
 void CLBlitter_Send2ScreenNextCopy(color_t *palette, uint16 first, uint16 count);
 void CLBlitter_OneBlackFlash();
 void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
                                        byte *dst, int16 dstw, int16 dstp, int16 dsth);
-void CLBlitter_CopyView2ScreenCUSTOM(view_t *view);
-void CLBlitter_CopyView2Screen(view_t *view);
+void CLBlitter_CopyView2ScreenCUSTOM(View *view);
+void CLBlitter_CopyView2Screen(View *view);
 void CLBlitter_UpdateScreen();
-void CLBlitter_FillView(view_t *view, unsigned int fill);
+void CLBlitter_FillView(View *view, unsigned int fill);
 void CLBlitter_FillScreenView(unsigned int fill);
 
 void CLPalette_Init();
@@ -289,15 +287,15 @@ void CLMouse_GetPosition(int16 *x, int16 *y);
 void CLMouse_SetPosition(int16 x, int16 y);
 uint16 CLMouse_IsDown();
 
-void CLView_SetSrcZoomValues(view_t *view, int x, int y);
-void CLView_SetDisplayZoomValues(view_t *view, int w, int h);
-void CLView_Free(view_t *view);
-void CLView_InitDatas(view_t *view, int w, int h, void *buffer);
-view_t *CLView_New(int w, int h);
-void CLView_CenterIn(view_t *parent, view_t *child);
+void CLView_SetSrcZoomValues(View *view, int x, int y);
+void CLView_SetDisplayZoomValues(View *view, int w, int h);
+void CLView_Free(View *view);
+void CLView_InitDatas(View *view, int w, int h, void *buffer);
+View *CLView_New(int w, int h);
+void CLView_CenterIn(View *parent, View *child);
 
 void CLScreenView_Init();
-void CLScreenView_CenterIn(view_t *view);
+void CLScreenView_CenterIn(View *view);
 
 void CRYOLib_InstallExitPatch();
 void CRYOLib_RemoveExitPatch();

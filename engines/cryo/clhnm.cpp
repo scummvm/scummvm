@@ -314,13 +314,13 @@ void CLHNM_SetFinalBuffer(hnm_t *hnm, byte *buffer) {
 void CLHNM_AllocMemory(hnm_t *hnm) {
 	CLBeginCheck;
 
-	hnm->work_buffer[0] = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
+	hnm->work_buffer[0] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
 	CLCheckError();
 
 	if (!hnm->work_buffer[0])
 		goto fin;
 
-	hnm->work_buffer[1] = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
+	hnm->work_buffer[1] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
 	CLCheckError();
 
 	if (!hnm->work_buffer[1]) {
@@ -331,7 +331,7 @@ void CLHNM_AllocMemory(hnm_t *hnm) {
 	}
 
 	if (!use_preload) {
-		hnm->read_buffer = (byte *)CLMemory_Alloc(hnm->header.buffersize + 2);
+		hnm->read_buffer = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
 //		CLCheckError();
 		if (!hnm->read_buffer) {
 			CLMemory_Free(hnm->work_buffer[0]);
@@ -461,9 +461,9 @@ void CLHNM_ChangePalette(hnm_t *hnm) {
 }
 
 void CLHNM_Desentrelace(hnm_t *hnm) {
-	switch (hnm->header.width) {
+	switch (hnm->_header._width) {
 	case 320:
-		CLHNM_Desentrelace320(hnm->new_frame_buffer, hnm->final_buffer, hnm->header.height);
+		CLHNM_Desentrelace320(hnm->new_frame_buffer, hnm->final_buffer, hnm->_header._height);
 		CLNoError;
 		break;
 //	case 480:
@@ -525,7 +525,7 @@ int16 CLHNM_LoadFrame(hnm_t *hnm) {
 
 	if (use_preload) {
 	} else {
-		if (chunk - 4 > hnm->header.buffersize) {
+		if (chunk - 4 > hnm->_header._bufferSize) {
 			__libError = -3;
 			__osError = 0;
 			CLCheckError();
@@ -586,7 +586,7 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 		CLHNM_ResetInternalTimer();
 		pred_l = pred_r = 0;
 	}
-	if (hnm->frame == hnm->header.nframe)
+	if (hnm->frame == hnm->_header._numbFrame)
 		return false;
 	if (!CLHNM_LoadFrame(hnm))
 		return false;
@@ -609,13 +609,13 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 			hnm->frame++;
 			CLHNM_SelectBuffers(hnm);
 			CLHNM_DecompLempelZiv(hnm->data_ptr + 4, hnm->new_frame_buffer);
-			switch (hnm->header.width) {
+			switch (hnm->_header._width) {
 //			case 320: CLBlitter_RawCopy320ASM(hnm->new_frame_buffer, hnm->old_frame_buffer, hnm->header.height); break;
 //			case 480: CLBlitter_RawCopy480ASM(hnm->new_frame_buffer, hnm->old_frame_buffer, hnm->header.height); break;
 //			case 640: CLBlitter_RawCopy640ASM(hnm->new_frame_buffer, hnm->old_frame_buffer, hnm->header.height); break;
 //			default: memcpy(hnm->old_frame_buffer, hnm->new_frame_buffer, hnm->header.width * hnm->header.height);
 			default:
-				memcpy(hnm->old_frame_buffer, hnm->new_frame_buffer, hnm->header.buffersize);  //TODO strange buffer size here
+				memcpy(hnm->old_frame_buffer, hnm->new_frame_buffer, hnm->_header._bufferSize);  //TODO strange buffer size here
 			}
 			if (!(h6 & 1))
 				CLHNM_Desentrelace(hnm);
@@ -623,7 +623,7 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 //				if(hnm->header.width == 640)
 //					CLBlitter_RawCopy640(hnm->new_frame_buffer, hnm->final_buffer, hnm->header.height);
 //				else
-				memcpy(hnm->final_buffer, hnm->new_frame_buffer, hnm->header.height);   //TODO: wrong size?
+				memcpy(hnm->final_buffer, hnm->new_frame_buffer, hnm->_header._height);   //TODO: wrong size?
 			}
 			if (use_adpcm) {
 				if (!sound_started) {
@@ -640,14 +640,14 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 		case BE16('IU'):
 			hnm->frame++;
 			CLHNM_SelectBuffers(hnm);
-			CLHNM_DecompUBA(hnm->new_frame_buffer, hnm->new_frame_buffer, hnm->old_frame_buffer, hnm->data_ptr, hnm->header.width, h6);
+			CLHNM_DecompUBA(hnm->new_frame_buffer, hnm->new_frame_buffer, hnm->old_frame_buffer, hnm->data_ptr, hnm->_header._width, h6);
 			if (!(h6 & 1))
 				CLHNM_Desentrelace(hnm);
 			else {
 //				if(hnm->header.width == 640)
 //					CLBlitter_RawCopy640(hnm->new_frame_buffer, hnm->final_buffer, hnm->header.height);
 //				else
-				memcpy(hnm->final_buffer, hnm->new_frame_buffer, hnm->header.width * hnm->header.height);
+				memcpy(hnm->final_buffer, hnm->new_frame_buffer, hnm->_header._width * hnm->_header._height);
 			}
 			goto end_frame;
 		case BE16('sd'):
@@ -700,27 +700,27 @@ end_frame:
 void CLHNM_ReadHeader(hnm_t *hnm) {
 	CLBeginCheck;
 	if (!use_preload) {
-		long size = sizeof(hnm->header);
-		CLFile_Read(*hnm->file, &hnm->header, &size);
+		long size = sizeof(hnm->_header);
+		CLFile_Read(*hnm->file, &hnm->_header, &size);
 	} else
 		;
 	CLCheckError();
 	CLEndCheck;
-	hnm->header.width = LE16(hnm->header.width);
-	hnm->header.height = LE16(hnm->header.height);
-	hnm->header.filesize = LE32(hnm->header.filesize);
-	hnm->header.nframe = LE32(hnm->header.nframe);
-	hnm->header.table_offset = LE32(hnm->header.table_offset);
-	hnm->header.speed = LE16(hnm->header.speed);
-	hnm->header.maxbuffer = LE16(hnm->header.maxbuffer);
-	hnm->header.buffersize = LE32(hnm->header.buffersize);
-	hnm->header.ff_20 = LE16(hnm->header.ff_20);
-	hnm->header.buffersize += 4096; //TODO: checkme
+	hnm->_header._width = LE16(hnm->_header._width);
+	hnm->_header._height = LE16(hnm->_header._height);
+	hnm->_header._unusedFileSize = LE32(hnm->_header._unusedFileSize);
+	hnm->_header._numbFrame = LE32(hnm->_header._numbFrame);
+	hnm->_header._unusedTableOffset = LE32(hnm->_header._unusedTableOffset);
+	hnm->_header._unusedSpeed = LE16(hnm->_header._unusedSpeed);
+	hnm->_header._unusedMaxBuffer = LE16(hnm->_header._unusedMaxBuffer);
+	hnm->_header._bufferSize = LE32(hnm->_header._bufferSize);
+	hnm->_header._unusedUnknown = LE16(hnm->_header._unusedUnknown);
+	hnm->_header._bufferSize += 4096; //TODO: checkme
 }
 
 int16 CLHNM_GetVersion(hnm_t *hnm) {
 	CLNoError;
-	if (hnm->header.id == BE32('HNM4'))
+	if (hnm->_header._signature == BE32('HNM4'))
 		return 4;
 	return -1;
 }

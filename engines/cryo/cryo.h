@@ -64,7 +64,7 @@ public:
 	Common::RandomSource *_rnd;
 
 	Graphics::Surface _screen;
-	EdenGame game;
+	EdenGame _game;
 
 private:
 	Console *_console;

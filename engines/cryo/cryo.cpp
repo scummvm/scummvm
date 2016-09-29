@@ -95,7 +95,7 @@ Common::Error CryoEngine::run() {
 	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 	debugC(3, kCryoDebugExample | kCryoDebugExample2, "Example debug call two");
 
-	game.run();
+	_game.run();
 
 	return Common::kNoError;
 }

@@ -561,7 +561,7 @@ private:
 	color3_t        newColor;
 	color_t         oldPalette[256];    // TODO palette_t ?
 	color_t         newPalette[256];
-	rect_t          rect_dst, rect_src;
+	Common::Rect          rect_dst, rect_src;
 	void            *voiceSamplesBuffer;    //TODO: sound sample buffer
 	file_t          h_bigfile;
 	byte   info_list[16];
@@ -597,22 +597,22 @@ private:
 	soundchannel_t  *hnmsound_ch;
 	sound_t         *voiceSound;
 
-	view_t          *p_view2;
-	view_t          *p_underSubtitlesView;
-	view_t          *p_subtitlesview;
-	view_t          *p_underBarsView;
-	view_t          *p_mainview;
-	view_t          *p_hnmview;
-	hnm_t           *p_hnmcontext;
+	View          *p_view2;
+	View          *p_underSubtitlesView;
+	View          *p_subtitlesview;
+	View          *p_underBarsView;
+	View          *p_mainview;
+	View          *p_hnmview;
+	hnm_t           *_hnmContext;
 	filespec_t      bigfilespec;
-	rect_t          underSubtitlesBackupRect, underSubtitlesScreenRect, underBottomBarBackupRect, underBottomBarScreenRect,
+	Common::Rect          underSubtitlesBackupRect, underSubtitlesScreenRect, underBottomBarBackupRect, underBottomBarScreenRect,
 	                underTopBarBackupRect, underTopBarScreenRect, rect_31C7A;
 	int             demoCurrentTicks;
 	int             demoStartTicks;
 	int             currentTime;
 	int16           mouse_y;
 	int16           mouse_x;
-	int16           doubled;
+	bool   doubled;
 	int16           curs_x_pan;
 	int16           inventoryScrollDelay;
 	int16           curs_y, curs_x;

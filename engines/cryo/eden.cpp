@@ -63,16 +63,16 @@ void EdenGame::removeConsole() {
 
 void EdenGame::scroll() {
 	restoreFriezes();
-	p_mainview->norm.src_left = scroll_pos;
-	p_mainview->zoom.src_left = scroll_pos;
+	p_mainview->_normal._srcLeft = scroll_pos;
+	p_mainview->_zoom._srcLeft = scroll_pos;
 }
 
 void EdenGame::resetScroll() {
 	old_scroll_pos = scroll_pos;
 	scroll_pos = 0;
 	restoreFriezes();   //TODO: inlined scroll() ?
-	p_mainview->norm.src_left = 0;
-	p_mainview->zoom.src_left = 0;
+	p_mainview->_normal._srcLeft = 0;
+	p_mainview->_zoom._srcLeft = 0;
 }
 
 void EdenGame::scrollFrescoes() {
@@ -892,21 +892,21 @@ void EdenGame::saveFriezes() {
 
 // Original name: sauvefriseshaut
 void EdenGame::saveTopFrieze(int16 x) { // Save top bar
-	underTopBarScreenRect.sy = 0;       //TODO: wrong fields order?
-	underTopBarScreenRect.sx = x;
-	underTopBarScreenRect.ex = x + 320 - 1;
-	underTopBarScreenRect.ey = 15;
-	underTopBarBackupRect.sy = 0;
-	underTopBarBackupRect.sx = 0;
-	underTopBarBackupRect.ex = 320 - 1;
-	underTopBarBackupRect.ey = 15;
+	underTopBarScreenRect.top = 0;       //TODO: wrong fields order?
+	underTopBarScreenRect.left = x;
+	underTopBarScreenRect.right = x + 320 - 1;
+	underTopBarScreenRect.bottom = 15;
+	underTopBarBackupRect.top = 0;
+	underTopBarBackupRect.left = 0;
+	underTopBarBackupRect.right = 320 - 1;
+	underTopBarBackupRect.bottom = 15;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underTopBarScreenRect, &underTopBarBackupRect);
 }
 
 // Original name: sauvefrisesbas
 void EdenGame::saveBottomFrieze() {         // Save bottom bar
-	underBottomBarScreenRect.sx = 0;
-	underBottomBarScreenRect.ex = 320 - 1;
+	underBottomBarScreenRect.left = 0;
+	underBottomBarScreenRect.right = 320 - 1;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underBottomBarScreenRect, &underBottomBarBackupRect);
 }
 
@@ -918,15 +918,15 @@ void EdenGame::restoreFriezes() {
 
 // Original name: restaurefriseshaut
 void EdenGame::restoreTopFrieze() {
-	underTopBarScreenRect.sx = scroll_pos;
-	underTopBarScreenRect.ex = scroll_pos + 320 - 1;
+	underTopBarScreenRect.left = scroll_pos;
+	underTopBarScreenRect.right = scroll_pos + 320 - 1;
 	CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarBackupRect, &underTopBarScreenRect);
 }
 
 // Original name: restaurefrisesbas
 void EdenGame::restoreBottomFrieze() {
-	underBottomBarScreenRect.sx = scroll_pos;
-	underBottomBarScreenRect.ex = scroll_pos + 320 - 1;
+	underBottomBarScreenRect.left = scroll_pos;
+	underBottomBarScreenRect.right = scroll_pos + 320 - 1;
 	CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underBottomBarBackupRect, &underBottomBarScreenRect);
 }
 
@@ -1332,26 +1332,26 @@ void EdenGame::bars_out() {
 	if (showBlackBars)
 		return;
 	afficher();
-	underTopBarScreenRect.sx = scroll_pos;
-	underTopBarScreenRect.ex = scroll_pos + 320 - 1;
+	underTopBarScreenRect.left = scroll_pos;
+	underTopBarScreenRect.right = scroll_pos + 320 - 1;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underTopBarScreenRect, &underTopBarBackupRect);
-	underBottomBarScreenRect.sx = underTopBarScreenRect.sx;
-	underBottomBarScreenRect.ex = underTopBarScreenRect.ex;
+	underBottomBarScreenRect.left = underTopBarScreenRect.left;
+	underBottomBarScreenRect.right = underTopBarScreenRect.right;
 	CLBlitter_CopyViewRect(p_mainview, p_underBarsView, &underBottomBarScreenRect, &underBottomBarBackupRect);
 	int16 r19 = 14;   // TODO - init in decl?
 	int16 r20 = 176;
 	int16 r25 = 14;
 	int16 r24 = 21;
-	underTopBarScreenRect.sx = 0;
-	underTopBarScreenRect.ex = 320 - 1;
-	underTopBarBackupRect.sx = scroll_pos;
-	underTopBarBackupRect.ex = scroll_pos + 320 - 1;
+	underTopBarScreenRect.left = 0;
+	underTopBarScreenRect.right = 320 - 1;
+	underTopBarBackupRect.left = scroll_pos;
+	underTopBarBackupRect.right = scroll_pos + 320 - 1;
 	while (r24 > 0) {
 		if (r25 > 0) {
-			underTopBarScreenRect.sy = 16 - r25;
-			underTopBarScreenRect.ey = 16 - 1;
-			underTopBarBackupRect.sy = 0;
-			underTopBarBackupRect.ey = r25 - 1;
+			underTopBarScreenRect.top = 16 - r25;
+			underTopBarScreenRect.bottom = 16 - 1;
+			underTopBarBackupRect.top = 0;
+			underTopBarBackupRect.bottom = r25 - 1;
 			CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarScreenRect, &underTopBarBackupRect);
 			scr40 = ((unsigned int *)p_mainview_buf) + r19 * 640 / 4;
 			scr41 = scr40 + 640 / 4;
@@ -1360,10 +1360,10 @@ void EdenGame::bars_out() {
 				*scr41++ = 0;
 			}
 		}
-		underTopBarScreenRect.sy = 16;
-		underTopBarScreenRect.ey = r24 + 16 - 1;
-		underTopBarBackupRect.sy = 200 - r24;
-		underTopBarBackupRect.ey = 200 - 1;
+		underTopBarScreenRect.top = 16;
+		underTopBarScreenRect.bottom = r24 + 16 - 1;
+		underTopBarBackupRect.top = 200 - r24;
+		underTopBarBackupRect.bottom = 200 - 1;
 		CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarScreenRect, &underTopBarBackupRect);
 		scr40 = ((unsigned int *)p_mainview_buf) + r20 * 640 / 4;
 		scr41 = scr40 + 640 / 4;
@@ -1406,22 +1406,22 @@ void EdenGame::showBars() {
 	drawBlackBars();
 	int16 r29 = 2;
 	int16 r28 = 2;
-	underTopBarScreenRect.sx = 0;
-	underTopBarScreenRect.ex = 320 - 1;
-	underTopBarBackupRect.sx = scroll_pos;
-	underTopBarBackupRect.ex = scroll_pos + 320 - 1;
+	underTopBarScreenRect.left = 0;
+	underTopBarScreenRect.right = 320 - 1;
+	underTopBarBackupRect.left = scroll_pos;
+	underTopBarBackupRect.right = scroll_pos + 320 - 1;
 	while (r28 < 24) {
 		if (r29 <= 16) {
-			underTopBarScreenRect.sy = 16 - r29;
-			underTopBarScreenRect.ey = 16 - 1;
-			underTopBarBackupRect.sy = 0;
-			underTopBarBackupRect.ey = r29 - 1;
+			underTopBarScreenRect.top = 16 - r29;
+			underTopBarScreenRect.bottom = 16 - 1;
+			underTopBarBackupRect.top = 0;
+			underTopBarBackupRect.bottom = r29 - 1;
 			CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarScreenRect, &underTopBarBackupRect);
 		}
-		underTopBarScreenRect.sy = 16;
-		underTopBarScreenRect.ey = 16 + r28;
-		underTopBarBackupRect.sy = 200 - 1 - r28;
-		underTopBarBackupRect.ey = 200 - 1;
+		underTopBarScreenRect.top = 16;
+		underTopBarScreenRect.bottom = 16 + r28;
+		underTopBarBackupRect.top = 200 - 1 - r28;
+		underTopBarBackupRect.bottom = 200 - 1;
 		CLBlitter_CopyViewRect(p_underBarsView, p_mainview, &underTopBarScreenRect, &underTopBarBackupRect);
 		r29 += 2;
 		r28 += 3;
@@ -1432,27 +1432,27 @@ void EdenGame::showBars() {
 }
 
 void EdenGame::sauvefondbouche() {
-	rect_src.sx = cur_perso_rect->sx;
-	rect_src.sy = cur_perso_rect->sy;
-	rect_src.ex = cur_perso_rect->ex;
-	rect_src.ey = cur_perso_rect->ey;
-	rect_dst.sx = cur_perso_rect->sx + 320;
-	rect_dst.sy = cur_perso_rect->sy;
-	rect_dst.ex = cur_perso_rect->ex + 320;
-	rect_dst.ey = cur_perso_rect->ey;
+	rect_src.left = cur_perso_rect->sx;
+	rect_src.top = cur_perso_rect->sy;
+	rect_src.right = cur_perso_rect->ex;
+	rect_src.bottom = cur_perso_rect->ey;
+	rect_dst.left = cur_perso_rect->sx + 320;
+	rect_dst.top = cur_perso_rect->sy;
+	rect_dst.right = cur_perso_rect->ex + 320;
+	rect_dst.bottom = cur_perso_rect->ey;
 	CLBlitter_CopyViewRect(p_mainview, p_mainview, &rect_src, &rect_dst);
 	fond_saved = 1;
 }
 
 void EdenGame::restaurefondbouche() {
-	rect_src.sx = cur_perso_rect->sx;
-	rect_src.sy = cur_perso_rect->sy;
-	rect_src.ex = cur_perso_rect->ex;
-	rect_src.ey = cur_perso_rect->ey;
-	rect_dst.sx = cur_perso_rect->sx + 320;
-	rect_dst.sy = cur_perso_rect->sy;
-	rect_dst.ex = cur_perso_rect->ex + 320;
-	rect_dst.ey = cur_perso_rect->ey;
+	rect_src.left = cur_perso_rect->sx;
+	rect_src.top = cur_perso_rect->sy;
+	rect_src.right = cur_perso_rect->ex;
+	rect_src.bottom = cur_perso_rect->ey;
+	rect_dst.left = cur_perso_rect->sx + 320;
+	rect_dst.top = cur_perso_rect->sy;
+	rect_dst.right = cur_perso_rect->ex + 320;
+	rect_dst.bottom = cur_perso_rect->ey;
 	CLBlitter_CopyViewRect(p_mainview, p_mainview, &rect_dst, &rect_src);
 }
 
@@ -1523,8 +1523,8 @@ void EdenGame::displayAdamMapMark(int16 location) {
 		x += (location & 15) * 4;
 		y += ((location - 16) >> 4) * 3;
 		saveAdamMapMark(x, y);
-		byte *pix = p_underBarsView->p_buffer;
-		int16 w = p_underBarsView->width;
+		byte *pix = p_underBarsView->_bufferPtr;
+		int16 w = p_underBarsView->_width;
 		pix += x + w * y;
 		pix[1] = 0xC3;
 		pix[2] = 0xC3;
@@ -1546,8 +1546,8 @@ void EdenGame::restoreAdamMapMark() {
 
 	int16 x = saved_repadam.x;
 	int16 y = saved_repadam.y;
-	byte *pix = p_underBarsView->p_buffer;
-	int16 w = p_underBarsView->width;
+	byte *pix = p_underBarsView->_bufferPtr;
+	int16 w = p_underBarsView->_width;
 	pix += x + w * y;
 	pix[1] = keep01;    //TODO keep is array?
 	pix[2] = keep02;
@@ -1565,8 +1565,8 @@ void EdenGame::restoreAdamMapMark() {
 void EdenGame::saveAdamMapMark(int16 x, int16 y) {
 	saved_repadam.x = x;
 	saved_repadam.y = y;
-	byte *pix = p_underBarsView->p_buffer;
-	int16 w = p_underBarsView->width;
+	byte *pix = p_underBarsView->_bufferPtr;
+	int16 w = p_underBarsView->_width;
 	pix += x + w * y;
 	keep01 = pix[1];
 	keep02 = pix[2];
@@ -2927,12 +2927,12 @@ void EdenGame::af_subtitle() {
 }
 
 void EdenGame::sauvefondbulle(int16 y) {
-	underSubtitlesScreenRect.sy = y - num_text_lines * FONT_HEIGHT;
-	underSubtitlesScreenRect.sx = scroll_pos + subtitles_x_scr_margin;
-	underSubtitlesScreenRect.ex = scroll_pos + subtitles_x_scr_margin + subtitles_x_width - 1;
-	underSubtitlesScreenRect.ey = y;
-	underSubtitlesBackupRect.sy = 0;
-	underSubtitlesBackupRect.ey = num_text_lines * FONT_HEIGHT;
+	underSubtitlesScreenRect.top = y - num_text_lines * FONT_HEIGHT;
+	underSubtitlesScreenRect.left = scroll_pos + subtitles_x_scr_margin;
+	underSubtitlesScreenRect.right = scroll_pos + subtitles_x_scr_margin + subtitles_x_width - 1;
+	underSubtitlesScreenRect.bottom = y;
+	underSubtitlesBackupRect.top = 0;
+	underSubtitlesBackupRect.bottom = num_text_lines * FONT_HEIGHT;
 	CLBlitter_CopyViewRect(p_mainview, p_underSubtitlesView, &underSubtitlesScreenRect, &underSubtitlesBackupRect);
 	savedUnderSubtitles = 1;
 }
@@ -3984,9 +3984,9 @@ void EdenGame::effet1() {
 	rectanglenoir32();
 	if (!doubled) {
 		setRS1(0, 0, 16 - 1, 4 - 1);
-		y = p_mainview->norm.dst_top;
+		y = p_mainview->_normal._dstTop;
 		for (i = 16; i <= 96; i += 4) {
-			for (x = p_mainview->norm.dst_left; x < p_mainview->norm.dst_left + 320; x += 16) {
+			for (x = p_mainview->_normal._dstLeft; x < p_mainview->_normal._dstLeft + 320; x += 16) {
 				setRD1(x, y + i, x + 16 - 1, y + i + 4 - 1);
 				CLBlitter_CopyViewRect(p_view2, &ScreenView, &rect_src, &rect_dst);
 				setRD1(x, y + 192 - i, x + 16 - 1, y + 192 - i + 4 - 1);
@@ -3997,9 +3997,9 @@ void EdenGame::effet1() {
 		}
 	} else {
 		setRS1(0, 0, 16 * 2 - 1, 4 * 2 - 1);
-		y = p_mainview->zoom.dst_top;
+		y = p_mainview->_zoom._dstTop;
 		for (i = 16 * 2; i <= 96 * 2; i += 4 * 2) {
-			for (x = p_mainview->zoom.dst_left; x < p_mainview->zoom.dst_left + 320 * 2; x += 16 * 2) {
+			for (x = p_mainview->_zoom._dstLeft; x < p_mainview->_zoom._dstLeft + 320 * 2; x += 16 * 2) {
 				setRD1(x, y + i, x + 16 * 2 - 1, y + i + 4 * 2 - 1);
 				CLBlitter_CopyViewRect(p_view2, &ScreenView, &rect_src, &rect_dst);
 				setRD1(x, y + 192 * 2 - i, x + 16 * 2 - 1, y + 192 * 2 - i + 4 * 2 - 1);
@@ -4009,30 +4009,30 @@ void EdenGame::effet1() {
 		}
 	}
 	CLPalette_Send2Screen(global_palette, 0, 256);
-	p_mainview->norm.height = 2;
-	p_mainview->zoom.height = 4;
-	ny = p_mainview->norm.dst_top;
-	dy = p_mainview->zoom.dst_top;
+	p_mainview->_normal._height = 2;
+	p_mainview->_zoom._height = 4;
+	ny = p_mainview->_normal._dstTop;
+	dy = p_mainview->_zoom._dstTop;
 	for (i = 0; i < 100; i += 2) {
-		p_mainview->norm.src_top = 99 - i;
-		p_mainview->zoom.src_top = 99 - i;
-		p_mainview->norm.dst_top = 99 - i + ny;
-		p_mainview->zoom.dst_top = (99 - i) * 2 + dy;
+		p_mainview->_normal._srcTop = 99 - i;
+		p_mainview->_zoom._srcTop = 99 - i;
+		p_mainview->_normal._dstTop = 99 - i + ny;
+		p_mainview->_zoom._dstTop = (99 - i) * 2 + dy;
 		CLBlitter_CopyView2Screen(p_mainview);
-		p_mainview->norm.src_top = 100 + i;
-		p_mainview->zoom.src_top = 100 + i;
-		p_mainview->norm.dst_top = 100 + i + ny;
-		p_mainview->zoom.dst_top = (100 + i) * 2 + dy;
+		p_mainview->_normal._srcTop = 100 + i;
+		p_mainview->_zoom._srcTop = 100 + i;
+		p_mainview->_normal._dstTop = 100 + i + ny;
+		p_mainview->_zoom._dstTop = (100 + i) * 2 + dy;
 		CLBlitter_CopyView2Screen(p_mainview);
 		CLBlitter_UpdateScreen();
 		wait(1);
 	}
-	p_mainview->norm.height = 200;
-	p_mainview->zoom.height = 400;
-	p_mainview->norm.src_top = 0;
-	p_mainview->zoom.src_top = 0;
-	p_mainview->norm.dst_top = ny;
-	p_mainview->zoom.dst_top = dy;
+	p_mainview->_normal._height = 200;
+	p_mainview->_zoom._height = 400;
+	p_mainview->_normal._srcTop = 0;
+	p_mainview->_zoom._srcTop = 0;
+	p_mainview->_normal._dstTop = ny;
+	p_mainview->_zoom._dstTop = dy;
 	p_global->ff_F1 = 0;
 }
 
@@ -4103,16 +4103,16 @@ void EdenGame::effet4() {
 	int16 w, h, ww;
 	int16 r17, r23, r16, r18, r19, r22, r27, r31;
 	CLPalette_Send2Screen(global_palette, 0, 256);
-	w = ScreenView.width;
-	h = ScreenView.height;
-	ww = ScreenView.pitch;
+	w = ScreenView._width;
+	h = ScreenView._height;
+	ww = ScreenView._pitch;
 	if (!doubled) {
-		x = p_mainview->norm.dst_left;
-		y = p_mainview->norm.dst_top;
+		x = p_mainview->_normal._dstLeft;
+		y = p_mainview->_normal._dstTop;
 		for (i = 32; i > 0; i -= 2) {
-			scr = ScreenView.p_buffer;
+			scr = ScreenView._bufferPtr;
 			scr += (y + 16) * ww + x;
-			pix = p_mainview->p_buffer + 16 * 640;
+			pix = p_mainview->_bufferPtr + 16 * 640;
 			r17 = 320 / i;
 			r23 = 320 - 320 / i * i;  //TODO: 320 % i ?
 			r16 = 160 / i;
@@ -4171,12 +4171,12 @@ void EdenGame::effet4() {
 			wait(3);
 		}
 	} else {
-		x = p_mainview->zoom.dst_left;
-		y = p_mainview->zoom.dst_top;
+		x = p_mainview->_zoom._dstLeft;
+		y = p_mainview->_zoom._dstTop;
 		for (i = 32; i > 0; i -= 2) {
-			scr = ScreenView.p_buffer;
+			scr = ScreenView._bufferPtr;
 			scr += (y + 16 * 2) * ww + x;
-			pix = p_mainview->p_buffer + 16 * 640;
+			pix = p_mainview->_bufferPtr + 16 * 640;
 			r17 = 320 / i;
 			r23 = 320 % i;
 			r16 = 160 / i;
@@ -4241,13 +4241,13 @@ void EdenGame::ClearScreen() {
 	byte *scr;
 	int16 x, y, xx, yy;
 	int16 w, h, ww;
-	w = ScreenView.width;
-	h = ScreenView.height;
-	ww = ScreenView.pitch;
+	w = ScreenView._width;
+	h = ScreenView._height;
+	ww = ScreenView._pitch;
 	if (!doubled) {
-		x = p_mainview->norm.dst_left;
-		y = p_mainview->norm.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_normal._dstLeft;
+		y = p_mainview->_normal._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (yy = 0; yy < 160; yy++) {
 			for (xx = 0; xx < 320; xx++)
@@ -4255,9 +4255,9 @@ void EdenGame::ClearScreen() {
 			scr += ww - 320;
 		}
 	} else {
-		x = p_mainview->zoom.dst_left;
-		y = p_mainview->zoom.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_zoom._dstLeft;
+		y = p_mainview->_zoom._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 32) * ww + x;
 		for (yy = 0; yy < 160; yy++) {
 			for (xx = 0; xx < 320; xx++) {
@@ -4278,13 +4278,13 @@ void EdenGame::colimacon(int16 pattern[16]) {
 	int16 x, y;
 	int16 w, h, ww;
 	int16 i, j, p, r27, r25;
-	w = ScreenView.width;
-	h = ScreenView.height;
-	ww = ScreenView.pitch;
+	w = ScreenView._width;
+	h = ScreenView._height;
+	ww = ScreenView._pitch;
 	if (!doubled) {
-		x = p_mainview->norm.dst_left;
-		y = p_mainview->norm.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_normal._dstLeft;
+		y = p_mainview->_normal._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4295,9 +4295,9 @@ void EdenGame::colimacon(int16 pattern[16]) {
 			wait(1);
 		}
 	} else {
-		x = p_mainview->zoom.dst_left;
-		y = p_mainview->zoom.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_zoom._dstLeft;
+		y = p_mainview->_zoom._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		for (i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4314,11 +4314,11 @@ void EdenGame::colimacon(int16 pattern[16]) {
 	}
 	CLPalette_Send2Screen(global_palette, 0, 256);
 	if (!doubled) {
-		pix = p_mainview->p_buffer;
-		x = p_mainview->norm.dst_left;
-		y = p_mainview->norm.dst_top;
+		pix = p_mainview->_bufferPtr;
+		x = p_mainview->_normal._dstLeft;
+		y = p_mainview->_normal._dstTop;
 		pix += 640 * 16;
-		scr = ScreenView.p_buffer;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
 		for (i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4331,11 +4331,11 @@ void EdenGame::colimacon(int16 pattern[16]) {
 			wait(1);
 		}
 	} else {
-		pix = p_mainview->p_buffer;
-		x = p_mainview->zoom.dst_left;
-		y = p_mainview->zoom.dst_top;
+		pix = p_mainview->_bufferPtr;
+		x = p_mainview->_zoom._dstLeft;
+		y = p_mainview->_zoom._dstTop;
 		pix += 640 * 16;
-		scr = ScreenView.p_buffer;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		for (i = 0; i < 16; i++) {
 			p = pattern[i];
@@ -4416,17 +4416,17 @@ void EdenGame::rectanglenoir32() {
 }
 
 void EdenGame::setRS1(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_src.sx = sx;
-	rect_src.sy = sy;
-	rect_src.ex = ex;
-	rect_src.ey = ey;
+	rect_src.left = sx;
+	rect_src.top = sy;
+	rect_src.right = ex;
+	rect_src.bottom = ey;
 }
 
 void EdenGame::setRD1(int16 sx, int16 sy, int16 ex, int16 ey) {
-	rect_dst.sx = sx;
-	rect_dst.sy = sy;
-	rect_dst.ex = ex;
-	rect_dst.ey = ey;
+	rect_dst.left = sx;
+	rect_dst.top = sy;
+	rect_dst.right = ex;
+	rect_dst.bottom = ey;
 }
 
 void EdenGame::wait(int howlong) {
@@ -4445,21 +4445,21 @@ void EdenGame::effetpix() {
 	int16 r25, r18, r31, r30;  //TODO: change to xx/yy
 	byte r24, r23;         //TODO: change to p0/p1
 	int16 r26, r27, r20;
-	w = ScreenView.width;
-	h = ScreenView.height;
-	ww = ScreenView.pitch;
+	w = ScreenView._width;
+	h = ScreenView._height;
+	ww = ScreenView._pitch;
 	r25 = ww * 80;
 	r18 = 640 * 80;
-	pix = p_mainview->p_buffer + 16 * 640;
+	pix = p_mainview->_bufferPtr + 16 * 640;
 	if (!doubled) {
-		x = p_mainview->norm.dst_left;
-		y = p_mainview->norm.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_normal._dstLeft;
+		y = p_mainview->_normal._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16) * ww + x;
 	} else {
-		x = p_mainview->zoom.dst_left;
-		y = p_mainview->zoom.dst_top;
-		scr = ScreenView.p_buffer;
+		x = p_mainview->_zoom._dstLeft;
+		y = p_mainview->_zoom._dstTop;
+		scr = ScreenView._bufferPtr;
 		scr += (y + 16 * 2) * ww + x;
 		r25 *= 2;
 	}
@@ -4542,7 +4542,7 @@ void EdenGame::effetpix() {
 			}
 		}
 	} while (r27 != 1);
-	assert(ScreenView.pitch == 320);
+	assert(ScreenView._pitch == 320);
 }
 
 ////// datfile.c
@@ -4580,8 +4580,8 @@ void EdenGame::openbigfile() {
 	CLFile_MakeStruct(0, 0, "EDEN.DAT", &bigfilespec);
 	CLFile_Open(&bigfilespec, 1, h_bigfile);
 	CLFile_Read(h_bigfile, bigfile_header, &size);
-	p_hnmcontext = CLHNM_New(128);
-	CLHNM_SetFile(p_hnmcontext, &h_bigfile);
+	_hnmContext = CLHNM_New(128);
+	CLHNM_SetFile(_hnmContext, &h_bigfile);
 }
 
 void EdenGame::closebigfile() {
@@ -4604,7 +4604,7 @@ void EdenGame::shnmfl(uint16 num) {
 	int size = PLE32(&file->size);
 	int offs = PLE32(&file->offs);
 	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
-	CLHNM_SetPosIntoFile(p_hnmcontext, offs);
+	CLHNM_SetPosIntoFile(_hnmContext, offs);
 }
 
 int EdenGame::ssndfl(uint16 num) {
@@ -4946,44 +4946,44 @@ void EdenGame::init_globals() {
 	p_global->persoSpritePtr = 0;
 	p_global->numGiveObjs = 0;
 
-	rect_31C7A.sy = 0;          //TODO: unused?
-	rect_31C7A.sx = 0;
-	rect_31C7A.ex = 320 - 1;
-	rect_31C7A.ey = 200 - 1;
+	rect_31C7A.top = 0;          //TODO: unused?
+	rect_31C7A.left = 0;
+	rect_31C7A.right = 320 - 1;
+	rect_31C7A.bottom = 200 - 1;
 
 	initrect();
 
-	underSubtitlesScreenRect.sy = 0;
-	underSubtitlesScreenRect.sx = subtitles_x_scr_margin;
-	underSubtitlesScreenRect.ex = subtitles_x_scr_margin + subtitles_x_width - 1;
-	underSubtitlesScreenRect.ey = 176 - 1;
+	underSubtitlesScreenRect.top = 0;
+	underSubtitlesScreenRect.left = subtitles_x_scr_margin;
+	underSubtitlesScreenRect.right = subtitles_x_scr_margin + subtitles_x_width - 1;
+	underSubtitlesScreenRect.bottom = 176 - 1;
 
-	underSubtitlesBackupRect.sy = 0;
-	underSubtitlesBackupRect.sx = subtitles_x_scr_margin;
-	underSubtitlesBackupRect.ex = subtitles_x_scr_margin + subtitles_x_width - 1;
-	underSubtitlesBackupRect.ey = 60 - 1;
+	underSubtitlesBackupRect.top = 0;
+	underSubtitlesBackupRect.left = subtitles_x_scr_margin;
+	underSubtitlesBackupRect.right = subtitles_x_scr_margin + subtitles_x_width - 1;
+	underSubtitlesBackupRect.bottom = 60 - 1;
 }
 
 void EdenGame::initrect() {
-	underTopBarScreenRect.sy = 0;
-	underTopBarScreenRect.sx = 0;
-	underTopBarScreenRect.ex = 320 - 1;
-	underTopBarScreenRect.ey = 16 - 1;
+	underTopBarScreenRect.top = 0;
+	underTopBarScreenRect.left = 0;
+	underTopBarScreenRect.right = 320 - 1;
+	underTopBarScreenRect.bottom = 16 - 1;
 
-	underTopBarBackupRect.sy = 0;
-	underTopBarBackupRect.sx = 0;
-	underTopBarBackupRect.ex = 320 - 1;
-	underTopBarBackupRect.ey = 16 - 1;
+	underTopBarBackupRect.top = 0;
+	underTopBarBackupRect.left = 0;
+	underTopBarBackupRect.right = 320 - 1;
+	underTopBarBackupRect.bottom = 16 - 1;
 
-	underBottomBarScreenRect.sy = 176;
-	underBottomBarScreenRect.sx = 0;
-	underBottomBarScreenRect.ex = 320 - 1;
-	underBottomBarScreenRect.ey = 200 - 1;  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
+	underBottomBarScreenRect.top = 176;
+	underBottomBarScreenRect.left = 0;
+	underBottomBarScreenRect.right = 320 - 1;
+	underBottomBarScreenRect.bottom = 200 - 1;  //TODO: original bug? this cause crash in copyrect (this, underBottomBarBackupRect)
 
-	underBottomBarBackupRect.sy = 16;
-	underBottomBarBackupRect.sx = 0;
-	underBottomBarBackupRect.ex = 320 - 1;
-	underBottomBarBackupRect.ey = 40 - 1;
+	underBottomBarBackupRect.top = 16;
+	underBottomBarBackupRect.left = 0;
+	underBottomBarBackupRect.right = 320 - 1;
+	underBottomBarBackupRect.bottom = 40 - 1;
 }
 
 void EdenGame::closesalle() {
@@ -5094,7 +5094,7 @@ void EdenGame::afsalle() {
 		debug("drawroom: room 0x%X using bank %d", p_global->roomNum, p_global->roomImgBank);
 		use_bank(p_global->roomImgBank);
 		afsalle1(room);
-		assert(ScreenView.pitch == 320);
+		assert(ScreenView._pitch == 320);
 	}
 }
 
@@ -5302,7 +5302,7 @@ void EdenGame::initlieu(int16 roomNum) {
 void EdenGame::maj2() {
 	char r9, r30;
 	aflieu();
-	assert(ScreenView.pitch == 320);
+	assert(ScreenView._pitch == 320);
 	if (p_global->roomNum == 273 && p_global->prevLocation == 18)
 		p_global->ff_102 = 1;
 	if (p_global->eventType == EventType::etEventC) {
@@ -5310,7 +5310,7 @@ void EdenGame::maj2() {
 		showObjects();
 	}
 	FRDevents();
-	assert(ScreenView.pitch == 320);
+	assert(ScreenView._pitch == 320);
 	r9 = 0;
 	if (p_global->curAreaType == AreaType::atValley && !(p_global->displayFlags & DisplayFlags::dfPanable))
 		r9 = 1;
@@ -5396,27 +5396,27 @@ void EdenGame::freebuf() {
 
 void EdenGame::openwindow() {
 	p_underBarsView = CLView_New(320, 40);
-	p_underBarsView->norm.width = 320;
+	p_underBarsView->_normal._width = 320;
 
 	p_view2 = CLView_New(32, 32);
-	p_view2_buf = p_view2->p_buffer;
+	p_view2_buf = p_view2->_bufferPtr;
 
 	p_subtitlesview = CLView_New(subtitles_x_width, 60);
-	p_subtitlesview_buf = p_subtitlesview->p_buffer;
+	p_subtitlesview_buf = p_subtitlesview->_bufferPtr;
 
 	p_underSubtitlesView = CLView_New(subtitles_x_width, 60);
-	p_underSubtitlesView_buf = p_underSubtitlesView->p_buffer;
+	p_underSubtitlesView_buf = p_underSubtitlesView->_bufferPtr;
 
 	p_mainview = CLView_New(640, 200);
-	p_mainview->norm.width = 320;
+	p_mainview->_normal._width = 320;
 	CLBlitter_FillView(p_mainview, 0xFFFFFFFF);
 	CLView_SetSrcZoomValues(p_mainview, 0, 0);
 	CLView_SetDisplayZoomValues(p_mainview, 640, 400);
 	CLScreenView_CenterIn(p_mainview);
-	p_mainview_buf = p_mainview->p_buffer;
+	p_mainview_buf = p_mainview->_bufferPtr;
 
-	mouse_x_center = p_mainview->norm.dst_left + p_mainview->norm.width / 2;
-	mouse_y_center = p_mainview->norm.dst_top + p_mainview->norm.height / 2;
+	mouse_x_center = p_mainview->_normal._dstLeft + p_mainview->_normal._width / 2;
+	mouse_y_center = p_mainview->_normal._dstTop + p_mainview->_normal._height / 2;
 	CLMouse_SetPosition(mouse_x_center, mouse_y_center);
 	CLMouse_Hide();
 
@@ -5461,7 +5461,7 @@ void EdenGame::run() {
 	if (!bufferAllocationErrorFl) {
 		LostEdenMac_InitPrefs();
 		init_cube();
-		p_mainview->doubled = doubled;
+		p_mainview->_doubled = doubled;
 		while (!quit_flag2) {
 			init_globals();
 			quit_flag3 = false;
@@ -5568,9 +5568,9 @@ void EdenGame::intro() {
 		machine_speed = speed;
 	}
 	if (machine_speed == 1) {
-		doubled = 0;
-		p_mainview->doubled = doubled;
-		if (ScreenView.width < 640 || ScreenView.height < 400)
+		doubled = false;
+		p_mainview->_doubled = doubled;
+		if (ScreenView._width < 640 || ScreenView._height < 400)
 			allow_doubled = 0;
 	}
 	if (machine_speed < 3)
@@ -5655,7 +5655,7 @@ void EdenGame::FRDevents() {
 		if (CLKeyboard_IsScanCodeDown(0x30)) { //TODO: const
 			if (!keybd_held) {
 				doubled = !doubled;
-				p_mainview->doubled = doubled;
+				p_mainview->_doubled = doubled;
 				CLBlitter_FillScreenView(0);
 				keybd_held = 1;
 			}
@@ -6101,46 +6101,46 @@ void EdenGame::mouse() {
 ////// film.c
 // Original name: showfilm
 void EdenGame::showMovie(char arg1) {
-	CLHNM_Prepare2Read(p_hnmcontext, 0);
-	CLHNM_ReadHeader(p_hnmcontext);
+	CLHNM_Prepare2Read(_hnmContext, 0);
+	CLHNM_ReadHeader(_hnmContext);
 	if (p_global->curVideoNum == 92) {
-		p_hnmcontext->header.flag2 = 0;
+		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
 		CLSoundChannel_SetVolumeLeft(hnmsound_ch, 0);
 		CLSoundChannel_SetVolumeRight(hnmsound_ch, 0);
 	}
 	bool playing = true;
-	if (CLHNM_GetVersion(p_hnmcontext) != 4)
+	if (CLHNM_GetVersion(_hnmContext) != 4)
 		return;
-	CLHNM_AllocMemory(p_hnmcontext);
-	p_hnmview = CLView_New(p_hnmcontext->header.width, p_hnmcontext->header.height);
+	CLHNM_AllocMemory(_hnmContext);
+	p_hnmview = CLView_New(_hnmContext->_header._width, _hnmContext->_header._height);
 	CLView_SetSrcZoomValues(p_hnmview, 0, 0);
-	CLView_SetDisplayZoomValues(p_hnmview, p_hnmcontext->header.width * 2, p_hnmcontext->header.height * 2);
+	CLView_SetDisplayZoomValues(p_hnmview, _hnmContext->_header._width * 2, _hnmContext->_header._height * 2);
 	CLScreenView_CenterIn(p_hnmview);
-	p_hnmview_buf = p_hnmview->p_buffer;
+	p_hnmview_buf = p_hnmview->_bufferPtr;
 	if (arg1) {
-		p_hnmview->norm.height = 160;
-		p_hnmview->zoom.height = 320;   //TODO: width??
-		p_hnmview->norm.dst_top = p_mainview->norm.dst_top + 16;
-		p_hnmview->zoom.dst_top = p_mainview->zoom.dst_top + 32;
+		p_hnmview->_normal._height = 160;
+		p_hnmview->_zoom._height = 320;   //TODO: width??
+		p_hnmview->_normal._dstTop = p_mainview->_normal._dstTop + 16;
+		p_hnmview->_zoom._dstTop = p_mainview->_zoom._dstTop + 32;
 	}
-	CLHNM_SetFinalBuffer(p_hnmcontext, p_hnmview->p_buffer);
-	p_hnmview->doubled = doubled;
+	CLHNM_SetFinalBuffer(_hnmContext, p_hnmview->_bufferPtr);
+	p_hnmview->_doubled = doubled;
 	do {
-		hnm_position = CLHNM_GetFrameNum(p_hnmcontext);
-		CLHNM_WaitLoop(p_hnmcontext);
-		playing = CLHNM_NextElement(p_hnmcontext);
+		hnm_position = CLHNM_GetFrameNum(_hnmContext);
+		CLHNM_WaitLoop(_hnmContext);
+		playing = CLHNM_NextElement(_hnmContext);
 		if (specialTextMode)
 			displayHNMSubtitles();
 		else
 			musicspy();
 		CLBlitter_CopyView2Screen(p_hnmview);
-		assert(ScreenView.pitch == 320);
+		assert(ScreenView._pitch == 320);
 		CLKeyboard_Read();
 		if (allow_doubled) {
 			if (CLKeyboard_IsScanCodeDown(0x30)) { //TODO: const
 				if (!keybd_held) {
 					doubled = !doubled;
-					p_hnmview->doubled = doubled;   //TODO: but mainview ?
+					p_hnmview->_doubled = doubled;   //TODO: but mainview ?
 					CLBlitter_FillScreenView(0);
 					keybd_held = 1;
 				}
@@ -6158,7 +6158,7 @@ void EdenGame::showMovie(char arg1) {
 		}
 	} while (playing && !videoCanceled);
 	CLView_Free(p_hnmview);
-	CLHNM_DeallocMemory(p_hnmcontext);
+	CLHNM_DeallocMemory(_hnmContext);
 }
 
 void EdenGame::playHNM(int16 num) {
@@ -6183,8 +6183,8 @@ void EdenGame::playHNM(int16 num) {
 	showVideoSubtitle = 0;
 	videoCanceled = 0;
 	shnmfl(num);
-	CLHNM_Reset(p_hnmcontext);
-	CLHNM_FlushPreloadBuffer(p_hnmcontext);
+	CLHNM_Reset(_hnmContext);
+	CLHNM_FlushPreloadBuffer(_hnmContext);
 	if (needToFade) {
 		fadetoblack(4);
 		ClearScreen();
@@ -6195,7 +6195,7 @@ void EdenGame::playHNM(int16 num) {
 	else
 		showMovie(1);
 	curs_keepx = curs_keepy = -1;
-	p_mainview->doubled = doubled;
+	p_mainview->_doubled = doubled;
 	if (specialTextMode) {
 		mus_fade_flags = 3;
 		musicspy();
@@ -8605,7 +8605,7 @@ void EdenGame::affiche_polygone_mapping(cube_t *cube, cubeface_t *face) {
 	if (r31 > ymax)
 		ymax = r31;
 	trace_ligne_mapping(r20, r30, r26, r31, r19, r18, r25, r24, lines);
-	affiche_ligne_mapping(ymin, ymax, p_mainview->p_buffer, face->texptr);
+	affiche_ligne_mapping(ymin, ymax, p_mainview->_bufferPtr, face->texptr);
 }
 
 void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *lines) {
@@ -8673,7 +8673,7 @@ void EdenGame::affiche_ligne_mapping(int16 r3, int16 r4, byte *target, byte *tex
 	int r22;
 	uint16 r31, r30;
 	int16 height = r4 - r3;
-	byte *trg, *trg_line = p_mainview->p_buffer + r3 * 640;    //TODO: target??
+	byte *trg, *trg_line = p_mainview->_bufferPtr + r3 * 640;    //TODO: target??
 	int16 *line = &lines[r3 * 8];
 	//	debug("curs: beg draw %d - %d", r3, r4);
 	for (r22 = height; r22; r22--, line += 8, trg_line += 640) {
@@ -8718,7 +8718,7 @@ int16 EdenGame::OpenDialog(void *arg1, void *arg2) {
 
 void EdenGame::LostEdenMac_InitPrefs() {
 	p_global->pref_language = 1;
-	doubled = 0;    // TODO: set to 1
+	doubled = false;    // TODO: set to true
 	p_global->pref_10C[0] = 192;
 	p_global->pref_10C[1] = 192;
 	p_global->pref_10E[0] = 255;
