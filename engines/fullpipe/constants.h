@@ -591,7 +591,7 @@ namespace Fullpipe {
 #define ST_NBL_NORM 1076
 
 // Scene 7
-#define ANI_CORNERSITTER 71
+#define ANI_CORNERSITTER 711
 #define ANI_HOOLIGAN 808
 #define ANI_LUKE 803
 #define ANI_PLUSMINUS 2938
