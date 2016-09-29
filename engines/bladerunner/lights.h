@@ -39,12 +39,9 @@ class Lights {
 
 	BladeRunnerEngine *_vm;
 
-	Color _ambientLightColor;
-
-	int                   _lightsCount;
+	Color                 _ambientLightColor;
 	Common::Array<Light*> _lights;
-
-	int _frame;
+	int                   _frame;
 	//char gap[28];
 
 public:

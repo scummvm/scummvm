@@ -32,14 +32,14 @@ namespace BladeRunner {
 GameInfo::GameInfo(BladeRunnerEngine *vm)
 	: _vm(vm)
 {
-	_set_names    = nullptr;
+	_scene_names    = nullptr;
 	_sfx_tracks   = nullptr;
 	_music_tracks = nullptr;
 	_outtakes     = nullptr;
 }
 
 GameInfo::~GameInfo() {
-	delete[] _set_names;
+	delete[] _scene_names;
 	delete[] _sfx_tracks;
 	delete[] _music_tracks;
 	delete[] _outtakes;
@@ -73,9 +73,9 @@ bool GameInfo::open(const Common::String &name) {
 
 	(void)unk;
 
-	_set_names = new char[_set_names_count][5];
+	_scene_names = new char[_set_names_count][5];
 	for (uint32 i = 0; i != _set_names_count; ++i)
-		s->read(_set_names[i], 5);
+		s->read(_scene_names[i], 5);
 
 	_sfx_tracks = new char[_sfx_track_count][13];
 	for (uint32 i = 0; i != _sfx_track_count; ++i)
@@ -97,7 +97,7 @@ bool GameInfo::open(const Common::String &name) {
 
 	if (false) {
 		for (uint32 i = 0; i != _set_names_count; ++i)
-			debug("%3d: %s", i, _set_names[i]);
+			debug("%3d: %s", i, _scene_names[i]);
 		for (uint32 i = 0; i != _sfx_track_count; ++i)
 			debug("%3d: %s", i, _sfx_tracks[i]);
 		for (uint32 i = 0; i != _music_track_count; ++i)

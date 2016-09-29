@@ -32,7 +32,6 @@
 #include "bladerunner/slice_renderer.h"
 
 #include "common/str.h"
-#include "common/stream.h"
 
 namespace BladeRunner {
 
@@ -44,7 +43,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	_setId = setId;
 	_sceneId = sceneId;
 
-	const Common::String setName = _vm->_gameInfo->getSetName(_sceneId);
+	const Common::String setName = _vm->_gameInfo->getSceneName(_sceneId);
 
 	if (isLoadingGame) {
 		// TODO: Set up overlays
@@ -70,10 +69,15 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		vqaName = Common::String::format("%s_%d.VQA", setName.c_str(), MIN(currentResourceId, 3));
 	}
 
-	if (!_vqaPlayer.open(vqaName))
+	if (_vqaPlayer != nullptr)
+		delete _vqaPlayer;
+
+	_vqaPlayer = new VQAPlayer(_vm);
+
+	if (!_vqaPlayer->open(vqaName))
 		return false;
 
-	Common::String sceneName = _vm->_gameInfo->getSetName(sceneId);
+	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
 	if (!_vm->_script->open(sceneName))
 		return false;
 
@@ -124,20 +128,44 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	// TODO: add all items to scene
 	// TODO: calculate walking obstacles??
 
-	// if (_playerWalkedIn) { // TODO: Not _playerWalkedIn
-	// 	_vm->_script->PlayerWalkedIn();
-	// }
+	 if (_specialLoopMode) {
+	 	_vm->_script->PlayerWalkedIn();
+	 }
 
 	return true;
 }
 
+bool Scene::close(bool isLoadingGame) {
+	bool result = true;
+	if (getSetId() == -1) {
+		return true;
+	}
+
+	//_vm->_policeMaze->clear(!isLoadingGame);
+	if (isLoadingGame) {
+		_vm->_script->PlayerWalkedOut();
+	}	
+//	if (SceneScript_isLoaded() && !SceneScript_unload()) {
+//		result = false;
+//	}
+	if (_vqaPlayer != nullptr) {
+		//_vqaPlayer->stop();
+		delete _vqaPlayer;
+		_vqaPlayer = nullptr;
+	}
+	_sceneId = -1;
+	_setId = -1;
+
+	return result;
+}
+
 int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
-	int frame = _vqaPlayer.update();
+	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
-		surface.copyFrom(*_vqaPlayer.getSurface());
-		memcpy(zBuffer, _vqaPlayer.getZBuffer(), 640*480*2);
-		_vqaPlayer.updateView(_vm->_view);
-		_vqaPlayer.updateLights(_vm->_lights);
+		surface.copyFrom(*_vqaPlayer->getSurface());
+		memcpy(zBuffer, _vqaPlayer->getZBuffer(), 640*480*2);
+		_vqaPlayer->updateView(_vm->_view);
+		_vqaPlayer->updateLights(_vm->_lights);
 	}
 
 	if (frame < 0) {
@@ -145,12 +173,12 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	}
 	_frame = frame;
 
-	if (_specialLoopMode == 0 && frame == _vqaPlayer.getLoopEndFrame(_specialLoop)) {
+	if (_specialLoopMode == 0 && frame == _vqaPlayer->getLoopEndFrame(_specialLoop)) {
 		_playerWalkedIn = true;
 		_specialLoopMode = -1;
 	}
 	if (_specialLoopMode == 0 && !_defaultLoopSet) {
-		_vqaPlayer.setLoop(_defaultLoop + 1);
+		_vqaPlayer->setLoop(_defaultLoop + 1);
 		_defaultLoopSet = true;
 	}
 

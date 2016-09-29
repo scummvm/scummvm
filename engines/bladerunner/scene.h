@@ -41,7 +41,7 @@ public:
 	Set        *_set;
 	int         _setId;
 	int         _sceneId;
-	VQAPlayer   _vqaPlayer;
+	VQAPlayer  *_vqaPlayer;
 
 	int         _defaultLoop;
 	int         _defaultLoopSet;
@@ -69,7 +69,7 @@ public:
 		  _set(new Set(vm)),
 		  _setId(-1),
 		  _sceneId(-1),
-		  _vqaPlayer(vm),
+		  _vqaPlayer(nullptr),
 		  _defaultLoop(0),
 		  _nextSetId(-1),
 		  _nextSceneId(-1),
@@ -83,9 +83,13 @@ public:
 		delete _set;
 		delete _regions;
 		delete _exits;
+		if (_vqaPlayer != nullptr) {
+			delete _vqaPlayer;
+		}
 	}
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
+	bool close(bool isLoadingGame);
 	int  advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer);
 	void setActorStart(Vector3 position, int facing);
 

@@ -9,7 +9,6 @@ Lights::Lights(BladeRunnerEngine *vm) {
 	_ambientLightColor.g = 0.0;
 	_ambientLightColor.b = 0.0;
 	
-	_lightsCount = 0;
 	_lights.clear();
 	_frame = 0;
 }
@@ -23,9 +22,8 @@ void Lights::read(Common::ReadStream *stream, int framesCount) {
 	_ambientLightColor.g = stream->readFloatLE();
 	_ambientLightColor.b = stream->readFloatLE();
 
-	_lightsCount = stream->readUint32LE();
-	int i;
-	for (i = 0; i < _lightsCount; i++) {
+	uint _lightsCount = stream->readUint32LE();
+	for (uint i = 0; i < _lightsCount; i++) {
 		Light *light;
 		int type = stream->readUint32LE();
 		switch (type) {
@@ -54,7 +52,7 @@ void Lights::read(Common::ReadStream *stream, int framesCount) {
 }
 
 void Lights::removeAnimated() {
-	for (int i = (int)(_lights.size() - 1); i > 0; i--) {
+	for (int i = (int)(_lights.size() - 1); i >= 0; i--) {
 		if (_lights[i]->_animated) {
 			delete _lights.remove_at(i);
 		}
@@ -106,7 +104,7 @@ void Lights::setupFrame(int frame) {
 }
 
 void Lights::reset() {
-	for (int i = (int)(_lights.size() - 1); i > 0; i--) {
+	for (int i = (int)(_lights.size() - 1); i >= 0; i--) {
 		delete _lights.remove_at(i);
 	}
 	_lights.clear();

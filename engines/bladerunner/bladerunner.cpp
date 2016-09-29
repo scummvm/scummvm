@@ -613,7 +613,7 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if 0 //_DEBUG
+#if _DEBUG
 			//draw scene objects
 			int count = _sceneObjects->_count;
 			if (count > 0) {
@@ -666,6 +666,19 @@ void BladeRunnerEngine::gameTick() {
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 				}
 				
+			}
+
+			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
+				Light *light = _lights->_lights[i];
+				Matrix4x3 m = light->_matrix;
+				Vector3 pos = Vector3(m(0, 3), m(1, 3), m(2, 3));
+				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
+				int colorR = (light->_color.r * 31.0f);
+				int colorG = (light->_color.g * 31.0f);
+				int colorB = (light->_color.b * 31.0f);
+				int color = (colorR << 10) + (colorG << 5) + colorB;
+				drawBBox(pos-size, pos+size, _view, &_surface2, color);
+
 			}
 #endif
 

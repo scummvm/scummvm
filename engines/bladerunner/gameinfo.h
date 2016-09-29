@@ -49,7 +49,7 @@ class GameInfo {
 	uint32 _cover_waypoint_count;
 	uint32 _flee_waypoint_count;
 
-	char (*_set_names)[5];
+	char (*_scene_names)[5];
 	char (*_sfx_tracks)[13];
 	char (*_music_tracks)[13];
 	char (*_outtakes)[13];
@@ -75,7 +75,7 @@ public:
 	uint32 getCoverWaypointCount() { return _cover_waypoint_count; }
 	uint32 getFleeWaypointCount()  { return _flee_waypoint_count; }
 
-	const char *getSetName(int i)    { return _set_names[i]; }
+	const char *getSceneName(int i)  { return _scene_names[i]; }
 	const char *getSfxTrack(int i)   { return _sfx_tracks[i]; }
 	const char *getMusicTrack(int i) { return _music_tracks[i]; }
 	const char *getOuttake(int i)    { return _outtakes[i]; }

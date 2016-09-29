@@ -95,7 +95,8 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 			samplesRead += 2 * bytesConsumed;
 		}
 	} else {
-		assert(0 && "readBuffer: Unimplemented");
+		//assert(0 && "readBuffer: Unimplemented");
+		warning("AudStream::readBuffer unknown compression type %d", _compressionType);
 	}
 
 	return samplesRead;

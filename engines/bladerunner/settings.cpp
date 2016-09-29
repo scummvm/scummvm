@@ -57,6 +57,9 @@ bool Settings::openNewScene() {
 
 	if (_startingGame) {
 		// Stop ambient audio and music
+//		ambient::removeAllNonLoopingSounds(Ambient, 1);
+//		ambient::removeAllLoopingSounds(Ambient, 1);
+//		music::stop(Music, 2);
 	}
 
 	int currentSet = _vm->_scene->_setId;
@@ -65,7 +68,9 @@ bool Settings::openNewScene() {
 
 	_newSet = -1;
 	_newScene = -1;
-
+	if (currentSet != -1) {
+		_vm->_scene->close(!_loadingGame && !_startingGame);
+	}
 	if (_chapterChanged) {
 		if (_vm->_chapters->hasOpenResources())
 			_vm->_chapters->closeResources();
