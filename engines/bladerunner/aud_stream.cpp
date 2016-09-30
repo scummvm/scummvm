@@ -95,7 +95,7 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 			samplesRead += 2 * bytesConsumed;
 		}
 	} else {
-		int bytesToCopy = MIN(2 * numSamples, _end - _p);
+		int bytesToCopy = MIN(2 * numSamples, (int)(_end - _p));
 		memcpy(buffer, _p, bytesToCopy);
 		_p += bytesToCopy;
 		samplesRead = bytesToCopy / 2;
