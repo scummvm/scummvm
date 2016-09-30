@@ -802,6 +802,16 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		++_version;
+
+		for (int i = 0; i < kNumCyclers; ++i) {
+			delete _cyclers[i];
+			_cyclers[i] = nullptr;
+		}
+
+		delete _varyTargetPalette;
+		_varyTargetPalette = nullptr;
+		delete _varyStartPalette;
+		_varyStartPalette = nullptr;
 	}
 
 	s.syncAsSint16LE(_varyDirection);
