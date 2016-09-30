@@ -55,6 +55,7 @@ private:
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
+	Graphics::ManagedSurface *_framePixels;
 	bool _isReversed;
 	int _currentFrame;
 private:

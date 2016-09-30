@@ -58,6 +58,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
 	_movieFrameSurface[0] = _movieFrameSurface[1] = nullptr;
+	_framePixels = nullptr;
 
 	// Reset current frame. We need to keep track of frames separately from the decoders,
 	// since it needs to be able to go beyond the frame count or to negative to allow
@@ -86,6 +87,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 AVISurface::~AVISurface() {
 	if (_videoSurface)
 		_videoSurface->_transBlitFlag = false;
+	delete _framePixels;
 	delete _movieFrameSurface[0];
 	delete _movieFrameSurface[1];
 	delete _decoders[0];
@@ -257,11 +259,37 @@ void AVISurface::setupDecompressor() {
 
 		// Setup frame surface
 		_movieFrameSurface[idx] = new Graphics::ManagedSurface(decoder.getWidth(), decoder.getHeight(),
-			g_system->getScreenFormat());
+			decoder.getVideoTrack().getPixelFormat());
 
-		// TODO: See whether this simplified form of original works
-		if (idx == 1)
+		bool flag = false;
+		if (idx == 0 && _videoSurface) {
+			const Graphics::PixelFormat &ff = decoder.getVideoTrack().getPixelFormat();
+			const int vDepth = _videoSurface->getPixelDepth();
+
+			switch (ff.bpp()) {
+			case 15:
+				flag = vDepth == 1;
+				break;
+
+			case 16:
+				flag = vDepth == 1 || vDepth == 2;
+				break;
+
+			case 24:
+				flag = vDepth == 3;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		if (!flag) {
+			_framePixels = new Graphics::ManagedSurface(decoder.getWidth(), decoder.getHeight(),
+				decoder.getVideoTrack().getPixelFormat());
+		} else if (idx == 0) {
 			_videoSurface->_transBlitFlag = true;
+		}
 	}
 }
 
@@ -295,26 +323,33 @@ bool AVISurface::renderFrame() {
 	if (!_decoders[0]->needsUpdate())
 		return false;
 
-	// Decode each decoder's video stream into the appropriate surface
+	// Make a copy of each decoder's video frame
 	for (int idx = 0; idx < _streamCount; ++idx) {
 		const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
-			
-		if (_movieFrameSurface[idx]->format == frame->format) {
-			_movieFrameSurface[idx]->blitFrom(*frame);
-		} else {
-			// Format mis-match, so we need to convert the frame
-			Graphics::Surface *s = frame->convertTo(_movieFrameSurface[idx]->format,
-				_decoders[idx]->getPalette());
-			_movieFrameSurface[idx]->blitFrom(*s);
-			s->free();
-			delete s;
-		}
+
+		assert(_movieFrameSurface[idx]->format == frame->format);
+		_movieFrameSurface[idx]->blitFrom(*frame);
 	}
 
-	// Blit the primary video frame onto the main overall surface
-	_videoSurface->lock();
-	_videoSurface->getRawSurface()->blitFrom(*_movieFrameSurface[0]);
-	_videoSurface->unlock();
+	if (!_framePixels) {
+		if (_videoSurface->lock()) {
+			if (_streamCount == 1) {
+				// Original seems to call a stubbed empty method here.
+				// Likely this form of blitting to surface wasn't needed
+			}
+
+			_videoSurface->unlock();
+		}
+	} else {
+		// Blit the primary video track's frame to the video surface
+		Graphics::Surface *s = _movieFrameSurface[0]->rawSurface().convertTo(
+			g_system->getScreenFormat(), _decoders[0]->getPalette());
+		_videoSurface->lock();
+		_videoSurface->getRawSurface()->blitFrom(*s);
+		_videoSurface->unlock();
+		s->free();
+		delete s;
+	}
 
 	return false;
 }
