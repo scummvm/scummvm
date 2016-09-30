@@ -40,6 +40,8 @@ class EdenGame {
 public:
 	void run();
 
+	EdenGame::EdenGame();
+
 private:
 	void removeConsole();
 	void scroll();
@@ -288,7 +290,7 @@ private:
 	void delinfo(byte info);
 	void updateinfolist();
 	void init_globals();
-	void initrect();
+	void initRects();
 	void closesalle();
 	void afsalle1(room_t *room);
 	void afsalle();
@@ -501,12 +503,13 @@ private:
 	void LostEdenMac_InitPrefs();
 
 private:
-	int16           old_scroll_pos, scroll_pos;
-	int16           word_2F514;
-	bool   frescoTalk;
-	byte   keep01, keep02, keep10, keep11, keep12, keep13, keep21, keep22;
-	byte   curs_keepbuf[2500];
-	int16           curs_keepy, curs_keepx;
+	int16  _scrollPos;
+	int16  _oldScrollPos;
+	bool   _frescoTalk;
+	byte   _oldPix[8];
+	Common::Point _adamMapMarkPos;
+	byte   _cursKeepBuf[2500];
+	Common::Point _cursKeepPos;
 	bool            torchCursor;
 	int16           cur_bank_num;
 	int16           glow_h;
@@ -605,22 +608,24 @@ private:
 	View          *p_hnmview;
 	hnm_t           *_hnmContext;
 	filespec_t      bigfilespec;
-	Common::Rect          underSubtitlesBackupRect, underSubtitlesScreenRect, underBottomBarBackupRect, underBottomBarScreenRect,
-	                underTopBarBackupRect, underTopBarScreenRect, rect_31C7A;
-	int             demoCurrentTicks;
-	int             demoStartTicks;
-	int             currentTime;
-	int16           mouse_y;
-	int16           mouse_x;
-	bool   doubled;
+	Common::Rect _underSubtitlesBackupRect;
+	Common::Rect _underSubtitlesScreenRect;
+	Common::Rect _underBottomBarBackupRect;
+	Common::Rect _underBottomBarScreenRect;
+	Common::Rect _underTopBarBackupRect;
+	Common::Rect _underTopBarScreenRect;
+	int    demoCurrentTicks;
+	int    demoStartTicks;
+	int    currentTime;
+	bool   _doubledScreen;
 	int16           curs_x_pan;
-	int16           inventoryScrollDelay;
+	int16           _inventoryScrollDelay;
 	int16           curs_y, curs_x;
 	int16           current_cursor;
 	icon_t          *current_spot;
 	icon_t          *current_spot2;
 	byte   pomme_q;
-	byte   keybd_held;
+	bool   keybd_held;
 	byte   mouse_held;
 	byte   normalCursor;
 	byte   *p_hnmview_buf;
