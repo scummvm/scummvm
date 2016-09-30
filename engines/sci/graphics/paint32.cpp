@@ -88,8 +88,13 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	LineProperties &properties = *static_cast<LineProperties *>(data);
 	byte *pixels = properties.bitmap->getPixels();
 
-	if (x >= 0 && x < properties.bitmap->getWidth() && y >= 0 && y < properties.bitmap->getHeight()) {
-		const uint32 index = properties.bitmap->getWidth() * y + x;
+	const uint16 bitmapWidth  = properties.bitmap->getWidth();
+	const uint16 bitmapHeight = properties.bitmap->getHeight();
+	const uint32 index = bitmapWidth * y + x;
+	
+	// Only draw the points in the bitmap, and ignore the rest. SSCI scripts
+	// can draw lines ending outside the visible area (e.g. negative coordinates)
+	if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight) {
 		if (properties.solid) {
 			pixels[index] = (uint8)color;
 			return;
@@ -116,8 +121,8 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, uint16 pattern, uint8 thickness, Common::Rect &outRect) {
 	const uint8 skipColor = color != kDefaultSkipColor ? kDefaultSkipColor : 0;
 
-	// Thickness is expected to be 2n+1
-	thickness = ((MAX<uint8>(1, thickness) - 1) | 1);
+	// Line thickness is expected to be 2 * thickness + 1
+	thickness = (MAX<uint8>(1, thickness) - 1) | 1;
 	const uint8 halfThickness = thickness >> 1;
 
 	const uint16 scriptWidth  = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
@@ -125,8 +130,9 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 
 	outRect.left   = MIN<int16>(startPoint.x, endPoint.x);
 	outRect.top    = MIN<int16>(startPoint.y, endPoint.y);
-	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1;
-	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1;
+	outRect.right  = MAX<int16>(startPoint.x, endPoint.x) + 1 + 1;	// rect lower edge + thickness offset
+	outRect.bottom = MAX<int16>(startPoint.y, endPoint.y) + 1 + 1;	// rect lower edge + thickness offset
+
 	outRect.grow(halfThickness);
 	outRect.clip(Common::Rect(scriptWidth, scriptHeight));
 
@@ -153,6 +159,7 @@ reg_t GfxPaint32::makeLineBitmap(const Common::Point &startPoint, const Common::
 		break;
 	}
 
+	// Change coordinates to be relative to the bitmap
 	const int16 x1 = startPoint.x - outRect.left;
 	const int16 y1 = startPoint.y - outRect.top;
 	const int16 x2 =   endPoint.x - outRect.left;
