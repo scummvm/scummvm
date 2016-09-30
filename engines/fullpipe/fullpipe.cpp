@@ -584,8 +584,10 @@ void FullpipeEngine::disableSaves(ExCommand *ex) {
 		}
 
 		// Original was makeing a save on every room entering
-		//if (_currentScene)
-		//	_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+		if (_currentScene) {
+			_gameLoader->saveScenePicAniInfos(_currentScene->_sceneId);
+			//	_gameLoader->writeSavegame(_currentScene, "savetmp.sav");
+		}
 	}
 }
 
