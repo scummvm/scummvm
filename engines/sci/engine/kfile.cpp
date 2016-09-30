@@ -534,7 +534,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		if (!success) {
-			return make_reg(0, -1);
+			return SIGNAL_REG;
 		}
 
 		return make_reg(0, bytesWritten);

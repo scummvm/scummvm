@@ -75,10 +75,7 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	CelObjView celObj(viewId, loopNo, celNo);
 
 	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-
 	const Ratio scaleX(scriptWidth, celObj._scaledWidth);
-	const Ratio scaleY(scriptHeight, celObj._scaledHeight);
 
 	int16 brLeft;
 

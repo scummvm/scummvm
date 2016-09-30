@@ -667,32 +667,32 @@ void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 
 void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
-	uint16 size;
+	uint16 savedSize;
 
 	if (s.isSaving()) {
-		size = _size;
+		savedSize = _size;
 	}
 
 	s.syncAsByte(_type);
 	s.syncAsByte(_elementSize);
-	s.syncAsUint16LE(size);
+	s.syncAsUint16LE(savedSize);
 
 	if (s.isLoading()) {
-		resize(size);
+		resize(savedSize);
 	}
 
 	switch (_type) {
 	case kArrayTypeByte:
 	case kArrayTypeString:
-		s.syncBytes((byte *)_data, size);
+		s.syncBytes((byte *)_data, savedSize);
 		break;
 	case kArrayTypeInt16:
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < savedSize; ++i) {
 			s.syncAsUint16LE(((int16 *)_data)[i]);
 		}
 		break;
 	case kArrayTypeID:
-		for (int i = 0; i < size; ++i) {
+		for (int i = 0; i < savedSize; ++i) {
 			syncWithSerializer(s, ((reg_t *)_data)[i]);
 		}
 		break;
