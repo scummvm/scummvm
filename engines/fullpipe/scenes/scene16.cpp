@@ -65,7 +65,7 @@ void scene16_initScene(Scene *sc) {
 
 			idx++;
 
-			if (idx >= 2)
+			if (idx > 1)
 				idx = 0;
 		}
 
@@ -76,7 +76,7 @@ void scene16_initScene(Scene *sc) {
 
 			idx++;
 
-			if (idx >= 2)
+			if (idx > 1)
 				idx = 0;
 		}
 	} else {
@@ -460,7 +460,7 @@ int sceneHandler16(ExCommand *cmd) {
 		if (g_vars->scene16_placeIsOccupied) {
 			g_vars->scene16_walkingCount++;
 
-			if (g_vars->scene16_walkingCount < 280) {
+			if (g_vars->scene16_walkingCount >= 280) {
 				sceneHandler16_putOnWheel();
 
 				g_vars->scene16_walkingCount = 0;
