@@ -65,7 +65,7 @@ int scene10_updateCursor() {
 	if (g_fp->_objectIdAtCursor == ANI_PACHKA || g_fp->_objectIdAtCursor == ANI_GUM) {
 		if (g_fp->_cursorId == PIC_CSR_ITN) {
 			if (g_vars->scene10_hasGum)
-				g_fp->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_RED : PIC_CSR_ITN_GREEN;
+				g_fp->_cursorId = (sceneHandler10_inflaterIsBlind() != 0) ? PIC_CSR_ITN_GREEN : PIC_CSR_ITN_RED;
 			else
 				g_fp->_cursorId = PIC_CSR_DEFAULT;
 		}
