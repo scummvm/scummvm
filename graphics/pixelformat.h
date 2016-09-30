@@ -215,6 +215,10 @@ struct PixelFormat {
 		return (8 - aLoss);
 	}
 
+	inline byte bpp() const {
+		return rBits() + gBits() + bBits() + aBits();
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	// Convenience functions for getting color components' maximum values //
 	////////////////////////////////////////////////////////////////////////
