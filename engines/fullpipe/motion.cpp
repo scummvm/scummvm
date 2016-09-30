@@ -3055,13 +3055,13 @@ void ReactPolygonal::getBBox(Common::Rect *rect) {
 		if (rect->left > _points[i]->x)
 			rect->left = _points[i]->x;
 
-		if (rect->top < _points[i]->y)
+		if (rect->top > _points[i]->y)
 			rect->top = _points[i]->y;
 
 		if (rect->right < _points[i]->x)
 			rect->right = _points[i]->x;
 
-		if (rect->bottom > _points[i]->y)
+		if (rect->bottom < _points[i]->y)
 			rect->bottom = _points[i]->y;
 	}
 
