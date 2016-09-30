@@ -62,9 +62,9 @@ AudStream::~AudStream() {
 int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 	int samplesRead = 0;
 
-	assert(numSamples % 2 == 0);
-
 	if (_compressionType == 99) {
+		assert(numSamples % 2 == 0);
+
 		while (samplesRead < numSamples) {
 			if (_deafBlockRemain == 0) {
 				if (_end - _p == 0)
@@ -95,8 +95,10 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 			samplesRead += 2 * bytesConsumed;
 		}
 	} else {
-		//assert(0 && "readBuffer: Unimplemented");
-		warning("AudStream::readBuffer unknown compression type %d", _compressionType);
+		int bytesToCopy = MIN(2 * numSamples, _end - _p);
+		memcpy(buffer, _p, bytesToCopy);
+		_p += bytesToCopy;
+		samplesRead = bytesToCopy / 2;
 	}
 
 	return samplesRead;

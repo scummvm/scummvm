@@ -93,16 +93,15 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (isLoadingGame) {
 		// TODO: Advance VQA frame
 		if (sceneId >= 73 && sceneId <= 76)
-			_vm->_script->InitializeScene();
+			_vm->_script->SceneLoaded();
 		return true;
 	}
 
 	// TODO: set VQADecoder parameters
+	//_vm->_scene->advanceFrame(0, 0);
 
-	// TODO: Set actor position from scene info
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
-
-	// TODO: Set actor set
+	//_vm->_playerActor->setSetId(setId);
 
 	_vm->_script->SceneLoaded();
 
