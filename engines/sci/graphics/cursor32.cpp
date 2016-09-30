@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "graphics/cursorman.h"     // for CursorMan
 #include "graphics/maccursor.h"
+#include "sci/event.h"
 #include "sci/graphics/celobj32.h"  // for CelObjView, CelInfo32, Ratio
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"  // for GfxFrameout
@@ -122,7 +123,7 @@ void GfxCursor32::drawToHardware(const DrawRegion &source) {
 	byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
 
 	g_system->copyRectToScreen(sourcePixel, source.rect.width(), drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
-	g_system->updateScreen();
+	g_sci->getEventManager()->updateScreen();
 }
 
 void GfxCursor32::unhide() {

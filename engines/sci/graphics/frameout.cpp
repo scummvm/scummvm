@@ -35,6 +35,7 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
+#include "sci/event.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -1123,7 +1124,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 
 void GfxFrameout::showBits() {
 	if (!_showList.size()) {
-		g_system->updateScreen();
+		g_sci->getEventManager()->updateScreen();
 		return;
 	}
 
@@ -1162,7 +1163,7 @@ void GfxFrameout::showBits() {
 	_cursor->donePainting();
 
 	_showList.clear();
-	g_system->updateScreen();
+	g_sci->getEventManager()->updateScreen();
 }
 
 void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges) {
