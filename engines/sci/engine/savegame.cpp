@@ -771,7 +771,7 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 #ifdef ENABLE_SCI32
-void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
+static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 	s.syncAsUint32LE(palette->timestamp);
 	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
 		s.syncAsByte(palette->colors[i].used);
@@ -781,7 +781,7 @@ void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 	}
 }
 
-void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
 	bool hasPalette;
 	if (s.isSaving()) {
 		hasPalette = (*palette != nullptr);
