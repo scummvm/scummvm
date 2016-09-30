@@ -1224,6 +1224,8 @@ void ModalMainMenu::enableDebugMenuButton() {
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 	_areas.push_back(area);
+
+	g_fp->_mainMenu_debugEnabled = true;
 }
 
 void ModalMainMenu::setSliderPos() {
