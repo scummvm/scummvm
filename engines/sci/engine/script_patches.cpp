@@ -1721,7 +1721,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 
 #ifdef ENABLE_SCI32
 #pragma mark -
-#pragma mark King's Quest 7
+#pragma mark Kings Quest 7
 
 // ===========================================================================
 
@@ -4569,7 +4569,7 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 };
 
 #pragma mark -
-#pragma mark Torin's Passage
+#pragma mark Torins Passage
 
 // Torin initializes the inventory with an int16 array, which happens to work
 // in SSCI because object references are int16s, but in ScummVM object
