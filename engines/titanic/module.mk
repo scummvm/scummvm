@@ -474,6 +474,7 @@ MODULE_OBJS := \
 	support/movie_range_info.o \
 	support/movie_manager.o \
 	support/credit_text.o \
+	support/raw_surface.o \
 	support/rect.o \
 	support/screen_manager.o \
 	support/simple_file.o \

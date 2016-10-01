@@ -30,16 +30,12 @@
 #include "titanic/support/direct_draw.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/movie_range_info.h"
+#include "titanic/support/raw_surface.h"
 #include "titanic/support/rect.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {
-
-enum TransparencyMode {
-	TRANS_MASK0 = 0, TRANS_MASK255 = 1, TRANS_ALPHA0 = 2,
-	TRANS_ALPHA255 = 3, TRANS_DEFAULT = 4
-};
 
 class CScreenManager;
 class CJPEGDecode;
