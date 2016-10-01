@@ -94,17 +94,17 @@ void sceneHandler26_showChi() {
 }
 
 void sceneHandler26_updatePool() {
-	if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Valve1_26))
+	if (g_fp->getObjectState(sO_Valve1_26) == g_fp->getObjectEnumState(sO_Valve1_26, sO_Opened))
 		g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Overfull));
 	else if (g_fp->getObjectState(sO_Pool) == g_fp->getObjectEnumState(sO_Pool, sO_Overfull))
 		g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Full));
 
-	if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Valve1_26)) {
+	if (g_fp->getObjectState(sO_Valve2_26) == g_fp->getObjectEnumState(sO_Valve2_26, sO_Opened)) {
 		if (g_fp->getObjectState(sO_Pool) >= g_fp->getObjectEnumState(sO_Pool, sO_Full))
 			g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_HalfFull));
 	}
 
-	if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Valve1_26)) {
+	if (g_fp->getObjectState(sO_Valve3_26) == g_fp->getObjectEnumState(sO_Valve3_26, sO_Opened)) {
 		if (g_fp->getObjectState(sO_Pool) >= g_fp->getObjectEnumState(sO_Pool, sO_HalfFull))
 			g_fp->setObjectState(sO_Pool, g_fp->getObjectEnumState(sO_Pool, sO_Empty));
 	}
