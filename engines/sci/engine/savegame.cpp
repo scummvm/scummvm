@@ -333,7 +333,7 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 
 	// Some games require additional metadata to display their restore screens
 	// correctly
-	if (s.getVersion() >= 38) {
+	if (s.getVersion() >= 39) {
 		if (s.isSaving()) {
 			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
 			if (g_sci->getGameId() == GID_SHIVERS) {
