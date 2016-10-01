@@ -824,7 +824,7 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, const int16 loopNo) {
 		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kNumCels_workarounds, &origin);
 		switch (solution.type) {
 		case WORKAROUND_NONE:
-			error("[CelObjView::getNumCels]: loop number is equal to loop count in %s", origin.toString().c_str());
+			error("[CelObjView::getNumCels]: loop number %d is equal to loop count in view %u, %s", loopNo, viewId, origin.toString().c_str());
 		case WORKAROUND_FAKE:
 			return (int16)solution.value;
 		case WORKAROUND_IGNORE:
