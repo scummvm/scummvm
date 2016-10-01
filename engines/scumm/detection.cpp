@@ -1124,7 +1124,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
-				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, Common::kPlatformUnknown).c_str(),
+				generateFilenameForDetection(res.fp.pattern, res.fp.genMethod, res.game.platform).c_str(),
 				res.md5.c_str());
 
 		g_system->logMessage(LogMessageType::kWarning, md5Warning.c_str());
