@@ -53,7 +53,7 @@ private:
 
 	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flag);
+	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag);
 protected:
 	static int _videoSurfaceCounter;
 protected:

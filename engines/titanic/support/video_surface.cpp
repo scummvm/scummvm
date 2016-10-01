@@ -163,14 +163,14 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 	}
 }
 
-void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flag) {
+void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag) {
 	if (lock()) {
 		if (src->lock()) {
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
 
-			const uint16 *srcPtr = flag ?
+			const uint16 *srcPtr = flipFlag ?
 				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.top) :
 				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.bottom);
 			uint16 *destPtr = (uint16 *)destSurface->getBasePtr(destArea.w, destArea.h - 1);
@@ -179,7 +179,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				src->_transparencyMode == TRANS_ALPHA255;
 
 			CRawSurface rawSurface(src->getTransparencySurface(), src->_transparencyMode);
-			if (flag)
+			if (flipFlag)
 				rawSurface.setRow(srcRect.top);
 			else
 				rawSurface.setRow(src->getHeight() - srcRect.bottom);
@@ -191,7 +191,8 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				rawSurface.resetPitch();
 				rawSurface.setCol(srcRect.left);
 
-				for (int srcX = 0; srcX < srcRect.width(); ++srcX) {
+				int srcWidth = srcRect.width();
+				while (srcWidth > 0) {
 					int move = rawSurface.moveX(0);
 
 					if (move <= 1) {
@@ -200,13 +201,27 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 								is16Bit, isAlpha);
 						}
 					} else {
-						// TODO
+						if (move > srcWidth)
+							move = srcWidth;
+
+						if (rawSurface.isPixelTransparent1()) {
+							Common::copy(lineSrcP, lineSrcP + move, lineDestP);
+						} else if (!rawSurface.isPixelTransparent2()) {
+							byte transVal = rawSurface.getPixel() >> 3;
+							for (int idx = 0; idx < move; ++idx) {
+								copyPixel(lineDestP + idx, lineSrcP + idx, transVal, is16Bit, isAlpha);
+							}
+						}
 					}
+
+					lineSrcP += move;
+					lineDestP += move;
+					srcWidth -= move;
 				}
 
 				// Move to next line
 				rawSurface.skipPitch();
-				srcPtr = flag ? srcPtr + getWidth() : srcPtr - getWidth();
+				srcPtr = flipFlag ? srcPtr + getWidth() : srcPtr - getWidth();
 				destPtr -= destArea.w;
 			}
 
