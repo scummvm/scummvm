@@ -241,7 +241,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 	}
 
 	if (qId) {
-		MessageQueue *mq = g_fp->_currentScene->getMessageQueueById(qId);
+		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(qId), 0, 0);
 
 		mq->setFlags(mq->getFlags() | 1);
 		mq->chain(0);
@@ -249,7 +249,7 @@ void sceneHandler26_animateVents(StaticANIObject *ani) {
 }
 
 void sceneHandler26_clickVent(StaticANIObject *ani, ExCommand *cmd) {
-	if (ani->_odelay || g_fp->getObjectState(sO_Hatch_26) == g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
+	if (ani->_odelay || g_fp->getObjectState(sO_Hatch_26) != g_fp->getObjectEnumState(sO_Hatch_26, sO_Opened)) {
 		if (g_fp->_aniMan->isIdle() && !(g_fp->_aniMan->_flags & 0x100)) {
 			g_vars->scene26_activeVent = ani;
 
