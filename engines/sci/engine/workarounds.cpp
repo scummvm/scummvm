@@ -684,6 +684,7 @@ const SciWorkaroundEntry kNewWindow_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name, local-call-signature, index,                workaround
 const SciWorkaroundEntry kNumCels_workarounds[] = {
+	{ GID_GK1,           460, 64998, -1,              "GKEgo", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 5 } }, // when Gabriel clicks "ask" on the bartender from a distance
 	{ GID_GK1,           808, 64998, -1,          "sDJEnters", "changeState",               NULL,    -1, { WORKAROUND_FAKE, 6 } }, //
 	{ GID_GK2,           470, 64998, -1,        "pLookieLoos", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 50 } }, // random background movement in the crime scene in Munich city centre
 	{ GID_GK2,           470, 64998, -1,          "pNewsCrew", "lastCel",                   NULL,    -1, { WORKAROUND_FAKE, 18 } }, // random background movement in the crime scene in Munich city centre
