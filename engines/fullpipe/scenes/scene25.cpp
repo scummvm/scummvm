@@ -100,7 +100,7 @@ int scene25_updateCursor() {
 		int inv = getGameLoaderInventory()->getSelectedItemId();
 
 		if (g_fp->_objectIdAtCursor == ANI_WATER25) {
-			if (g_vars->scene25_boardIsSelectable && ((!inv || inv == ANI_INV_BOARD) || (g_vars->scene25_dudeIsOnBoard && (inv == ANI_INV_LOPAT || !inv))))
+			if ((g_vars->scene25_boardIsSelectable && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_dudeIsOnBoard && (inv == ANI_INV_LOPAT || !inv)))
 				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
 		} else if (g_fp->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
 			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
