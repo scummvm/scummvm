@@ -622,15 +622,12 @@ void sceneHandler14_arcadeLogic() {
 }
 
 void sceneHandler14_animateBall() {
-	int x = g_vars->scene14_ballDeltaX + g_vars->scene14_ballX;
-	int y = g_vars->scene14_ballDeltaY + g_vars->scene14_ballY;
-
-	g_vars->scene14_ballX += g_vars->scene14_ballDeltaX;
-	g_vars->scene14_ballY += g_vars->scene14_ballDeltaY;
+	int x = g_vars->scene14_ballX += g_vars->scene14_ballDeltaX;
+	int y = g_vars->scene14_ballY += g_vars->scene14_ballDeltaY;
 
 	g_vars->scene14_ballDeltaY++;
 
-	if (g_vars->scene14_ballDeltaY - 1 + g_vars->scene14_ballY > 517) {
+	if (g_vars->scene14_ballY <= 517) {
 		if (x <= g_vars->scene14_dudeX - 16 ) {
 			if ( g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65 || x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102 ) {
 				if (g_vars->scene14_flyingBall->_movement)
