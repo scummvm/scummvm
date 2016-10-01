@@ -488,13 +488,13 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "monkey2", "mi2demo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
 	{ "atlantis", "atlantis.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "atlantis", "atlantis.%03d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformWindows, "Steam" },
-	{ "atlantis", "atlantis.%03d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 	{ "atlantis", "fate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "atlantis", "playfate.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "atlantis", "indy4.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" },
 	{ "atlantis", "indydemo.%03d", kGenDiskNum, Common::JA_JPN, Common::kPlatformFMTowns, "FM-TOWNS" },
 	{ "atlantis", "Fate of Atlantis Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "atlantis", "atlantis.%03d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformWindows, "Steam" },
+	{ "atlantis", "atlantis.%03d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 
 	{ "tentacle", "tentacle.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "tentacle", "dottdemo.%03d", kGenDiskNum, UNK_LANG, UNK, 0 },
@@ -513,11 +513,11 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 #ifdef ENABLE_SCUMM_7_8
 	{ "dig", "dig.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
-	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformWindows, "Steam" },
-	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 	{ "dig", "thedig.la%d", kGenDiskNum, UNK_LANG, UNK, "Demo" }, // Used by an alternate version of the demo
 	{ "dig", "The Dig Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "dig", "The Dig Demo Data", kGenUnchanged, UNK_LANG, Common::kPlatformMacintosh, "Demo" },
+	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformWindows, "Steam" },
+	{ "dig", "dig.la%d", kGenDiskNumSteam, UNK_LANG, Common::kPlatformMacintosh, "Steam" },
 
 	{ "ft", "ft.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 	{ "ft", "ft.%03d", kGenDiskNum, UNK_LANG, UNK, "Demo" },    // Used by PC version of Full Throttle demo
