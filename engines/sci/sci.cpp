@@ -1121,6 +1121,12 @@ void SciEngine::syncIngameAudioOptions() {
 		bool subtitlesOn = ConfMan.getBool("subtitles");
 		bool speechOn = !ConfMan.getBool("speech_mute");
 
+#ifdef ENABLE_SCI32
+		if (getSciVersion() >= SCI_VERSION_2) {
+			_gamestate->variables[VAR_GLOBAL][kGlobalVarTextSpeed] = make_reg(0, 8 - ConfMan.getInt("talkspeed") * 8 / 255);
+		}
+#endif
+
 		if (useGlobal90) {
 			if (subtitlesOn && !speechOn) {
 				_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 1);	// subtitles

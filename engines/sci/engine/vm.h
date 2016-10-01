@@ -148,6 +148,7 @@ enum GlobalVar {
 	kGlobalVarScore          = 15,
 	kGlobalVarFastCast       = 84, // SCI16
 	kGlobalVarMessageType    = 90,
+	kGlobalVarTextSpeed      = 94, // SCI32; 0 is fastest, 8 is slowest
 	kGlobalVarShivers1Score  = 349
 };
 

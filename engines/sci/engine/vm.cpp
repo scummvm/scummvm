@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 
@@ -209,6 +210,12 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 				g_sci->updateScummVMAudioOptions();
 			}
 		}
+
+#ifdef ENABLE_SCI32
+		if (type == VAR_GLOBAL && index == kGlobalVarTextSpeed && getSciVersion() >= SCI_VERSION_2) {
+			ConfMan.setInt("talkspeed", (8 - value.toSint16()) * 255 / 8);
+		}
+#endif
 	}
 }
 
