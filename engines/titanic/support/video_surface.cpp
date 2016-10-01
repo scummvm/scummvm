@@ -29,6 +29,8 @@
 namespace Titanic {
 
 int CVideoSurface::_videoSurfaceCounter = 0;
+byte CVideoSurface::_palette1[32][32];
+byte CVideoSurface::_palette2[32][32];
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
@@ -45,6 +47,24 @@ CVideoSurface::~CVideoSurface() {
 
 	if (_freeTransparencySurface == DisposeAfterUse::YES)
 		delete _transparencySurface;
+}
+
+void CVideoSurface::setupPalette(byte palette[32][32], byte val) {
+	for (uint idx1 = 0; idx1 < 32; ++idx1) {
+		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += idx1) {
+			int64 v = 0x84210843;
+			v *= base;
+			uint v2 = (v >> 36);
+			v = ((v2 >> 31) + v2) & 0xff;
+			palette[idx1][idx2] = v << 3;
+
+			if (val != 0xff && v != idx2) {
+				v = 0x80808081 * v * val;
+				v2 = v >> 39;
+				palette[idx1][idx2] = ((v2 >> 31) + v2) << 3;
+			}
+		}
+	}
 }
 
 void CVideoSurface::setSurface(CScreenManager *screenManager, DirectDrawSurface *surface) {
@@ -250,10 +270,33 @@ bool CVideoSurface::hasFrame() {
 	}
 }
 
-/*------------------------------------------------------------------------*/
+void CVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) {
+	const Graphics::PixelFormat srcFormat = is16Bit ?
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) :
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	const Graphics::PixelFormat destFormat = _ddSurface->getFormat();
+	transVal &= 0xff;
+	assert(transVal < 32);
 
-byte OSVideoSurface::_palette1[32][32];
-byte OSVideoSurface::_palette2[32][32];
+	// Get the color
+	byte r, g, b;
+	srcFormat.colorToRGB(*srcP, r, g, b);
+	if (isAlpha) {
+		r = _palette1[31 - transVal][r >> 3];
+		g = _palette1[31 - transVal][g >> 3];
+		b = _palette1[31 - transVal][b >> 3];
+	}
+
+	byte r2, g2, b2;
+	destFormat.colorToRGB(*destP, r2, g2, b2);
+	r2 = _palette1[transVal][r2 >> 3];
+	g2 = _palette1[transVal][g2 >> 3];
+	b2 = _palette1[transVal][b2 >> 3];
+
+	*destP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
+}
+
+/*------------------------------------------------------------------------*/
 
 OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface) :
 		CVideoSurface(screenManager) {
@@ -270,24 +313,6 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 	} else {
 		_resourceKey = key;
 		load();
-	}
-}
-
-void OSVideoSurface::setupPalette(byte palette[32][32], byte val) {
-	for (uint idx1 = 0; idx1 < 32; ++idx1) {
-		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += idx1) {
-			int64 v = 0x84210843;
-			v *= base;
-			uint v2 = (v >> 36);
-			v = ((v2 >> 31) + v2) & 0xff;
-			palette[idx1][idx2] = v << 3;
-
-			if (val != 0xff && v != idx2) {
-				v = 0x80808081 * v * val;
-				v2 = v >> 39;
-				palette[idx1][idx2] = ((v2 >> 31) + v2) << 3;
-			}
-		}
 	}
 }
 
@@ -486,32 +511,6 @@ void OSVideoSurface::setPixel(const Point &pt, uint pixel) {
 
 	uint16 *pixelP = (uint16 *)_rawSurface->getBasePtr(pt.x, pt.y);
 	*pixelP = pixel;
-}
-
-void OSVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) {
-	const Graphics::PixelFormat srcFormat = is16Bit ?
-		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) :
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	const Graphics::PixelFormat destFormat = _ddSurface->getFormat();
-	transVal &= 0xff;
-	assert(transVal < 32);
-
-	// Get the color
-	byte r, g, b;
-	srcFormat.colorToRGB(*srcP, r, g, b);
-	if (isAlpha) {
-		r = _palette1[31 - transVal][r >> 3];
-		g = _palette1[31 - transVal][g >> 3];
-		b = _palette1[31 - transVal][b >> 3];
-	}
-
-	byte r2, g2, b2;
-	destFormat.colorToRGB(*destP, r2, g2, b2);
-	r2 = _palette1[transVal][r2 >> 3];
-	g2 = _palette1[transVal][g2 >> 3];
-	b2 = _palette1[transVal][b2 >> 3];
-
-	*destP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
 }
 
 void OSVideoSurface::shiftColors() {

@@ -45,6 +45,22 @@ class CVideoSurface : public ListItem {
 	friend class CJPEGDecode;
 	friend class CTargaDecode;
 private:
+	static byte _palette1[32][32];
+	static byte _palette2[32][32];
+
+	/**
+	 * Setup the shading palettes
+	 */
+	static void setupPalette(byte palette[32][32], byte val);
+public:
+	/**
+	 * Setup statics
+	 */
+	static void setup() {
+		setupPalette(_palette1, 0xff);
+		setupPalette(_palette2, 0xe0);
+	}
+private:
 	/**
 	 * Calculates blitting bounds
 	 */
@@ -182,11 +198,6 @@ public:
 	virtual void setPixel(const Point &pt, uint pixel) = 0;
 
 	/**
-	 * Copies a pixel, handling transparency
-	 */
-	virtual void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) = 0;
-
-	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
@@ -318,26 +329,15 @@ public:
 	 * Returns the transparent color
 	 */
 	uint getTransparencyColor();
+
+	/**
+	 * Copies a pixel, handling transparency
+	 */
+	void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha);
 };
 
 class OSVideoSurface : public CVideoSurface {
 	friend class OSMovie;
-private:
-	static byte _palette1[32][32];
-	static byte _palette2[32][32];
-
-	/**
-	 * Setup the shading palettes
-	 */
-	static void setupPalette(byte palette[32][32], byte val);
-public:
-	/**
-	 * Setup statics
-	 */
-	static void setup() {
-		setupPalette(_palette1, 0xff);
-		setupPalette(_palette2, 0xe0);
-	}
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
@@ -433,11 +433,6 @@ public:
 	 * Sets a pixel at a specified position within the surface
 	 */
 	virtual void setPixel(const Point &pt, uint pixel);
-
-	/**
-	 * Copies a pixel, handling transparency
-	 */
-	virtual void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
