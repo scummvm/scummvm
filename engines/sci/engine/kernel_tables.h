@@ -528,7 +528,7 @@ static const SciKernelMapSubEntry kString_subops[] = {
 	{ SIG_THRU_SCI21MID,   0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
 	{ SIG_THRU_SCI21MID,   1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
 	{ SIG_THRU_SCI21MID,   2, MAP_CALL(StringGetChar),             "ri",                   NULL },
-	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "rii*",                 kArraySetElements_workarounds },
+	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "ri(i*)",               kArraySetElements_workarounds },
 	{ SIG_THRU_SCI21MID,   4, MAP_CALL(StringFree),                "[0r]",                 NULL },
 	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "rii",                  NULL },
 	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
