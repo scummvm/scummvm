@@ -25,32 +25,32 @@
 
 namespace Titanic {
 
-CRawSurface::CRawSurface(Graphics::Surface *surface, TransparencyMode transMode) {
+CRawSurface::CRawSurface(const Graphics::Surface *surface, TransparencyMode transMode) {
 	_width = surface->w;
 	_pixelsBaseP = (byte *)surface->getPixels();
 	_pixelsP = nullptr;
 	_pitch = 0;
-	_fieldC = 0;
-	_field10 = false;
-	_field18 = 0;
-	_field1C = 0xFF;
+	_runLength = 0;
+	_flag = false;
+	_flag1 = false;
+	_flag2 = true;
 
 	switch (transMode) {
 	case TRANS_MASK0:
 	case TRANS_ALPHA0:
-		_field1C = 0;
-		_field18 = 0xFF;
+		_flag2 = false;
+		_flag1 = true;
 		break;
 	case TRANS_MASK255:
 	case TRANS_ALPHA255:
-		_field1C = 0xFF;
-		_field18 = 0;
+		_flag2 = true;
+		_flag1 = false;
 		break;
 	case TRANS_DEFAULT:
 		if ((_pixelsBaseP[0] == 0 && _pixelsBaseP[2] < 0x80) ||
 				(_pixelsBaseP[0] != 0 && _pixelsBaseP[1] < 0x80)) {
-			_field18 = 0xFF;
-			_field1C = 0;
+			_flag1 = true;
+			_flag2 = false;
 		}
 		break;
 	default:
@@ -75,55 +75,55 @@ void CRawSurface::skipPitch() {
 }
 
 int CRawSurface::moveX(int xp) {
-	if (_fieldC) {
-		if (!_field10) {
-			--_fieldC;
+	if (_runLength) {
+		if (!_flag) {
+			--_runLength;
 			--_pitch;
 			++_pixelsP;
 			return 1;
 		}
 	} else {
 		while (!*_pixelsBaseP) {
-			_fieldC = *++_pixelsBaseP;
+			_runLength = *++_pixelsBaseP;
 			++_pixelsBaseP;
 
-			if (_fieldC) {
+			if (_runLength) {
 				_pixelsP = _pixelsBaseP;
-				_pixelsBaseP += _fieldC;
-				if (_fieldC & 1)
+				_pixelsBaseP += _runLength;
+				if (_runLength & 1)
 					++_pixelsBaseP;
 
-				_field10 = 0;
+				_flag = false;
 				--_pitch;
-				--_fieldC;
+				--_runLength;
 				return 1;
 			}
 		}
 
-		_fieldC = *_pixelsBaseP++;
+		_runLength = *_pixelsBaseP++;
 		++_pixelsBaseP;
-		_field10 = true;
+		_flag = true;
 	}
 
 	if (xp < 0 || xp > _pitch)
 		xp = _pitch;
 
-	int len = MIN(_fieldC, xp);
+	int len = MIN(_runLength, xp);
 	_pitch -= len;
-	_fieldC -= len;
+	_runLength -= len;
 	return len;
 }
 
 uint CRawSurface::getPixel() const {
-	return _field18 ? 0xFF - *_pixelsP : *_pixelsP;
+	return _flag1 ? 0xFF - *_pixelsP : *_pixelsP;
 }
 
 bool CRawSurface::isPixelTransparent1() const {
-	return _field18 ? *_pixelsP == 0xF0 : *_pixelsP == 0x10;
+	return _flag1 ? *_pixelsP == 0xF0 : *_pixelsP == 0x10;
 }
 
 bool CRawSurface::isPixelTransparent2() const {
-	return _field18 ? *_pixelsP == 0xF0 : *_pixelsP == 0x10;
+	return _flag2 ? *_pixelsP == 0xF0 : *_pixelsP == 0x10;
 }
 
 void CRawSurface::resetPitch() {

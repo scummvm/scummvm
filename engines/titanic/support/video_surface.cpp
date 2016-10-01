@@ -22,6 +22,7 @@
 
 #include "titanic/support/video_surface.h"
 #include "titanic/support/image_decoders.h"
+#include "titanic/support/raw_surface.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
@@ -408,8 +409,13 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 
 	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
 		if (_transparencySurface) {
-			const byte *pixelP = (const byte *)_transparencySurface->getBasePtr(pt.x, pt.y);
-			if (*pixelP != 0xF0)
+			CRawSurface rawSurface(&_transparencySurface->rawSurface(), _transparencyMode);
+			rawSurface.setRow(_transBlitFlag ? pt.y : getHeight() - pt.y - 1);
+			rawSurface.resetPitch();
+			rawSurface.setCol(pt.x);
+			rawSurface.moveX(0);
+
+			if (rawSurface.isPixelTransparent2())
 				return getTransparencyColor();
 		}
 

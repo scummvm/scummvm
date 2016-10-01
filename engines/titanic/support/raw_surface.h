@@ -34,18 +34,16 @@ enum TransparencyMode {
 
 class CRawSurface {
 private:
-	byte *_pixelsBaseP;
-	byte *_pixelsP;
+	const byte *_pixelsBaseP;
+	const byte *_pixelsP;
 	int _pitch;
-	int _fieldC;
-	bool _field10;
+	int _runLength;
+	bool _flag;
 	int _width;
-	int _field18;
-	int _field1C;
-private:
-	int moveX(int xp);
+	bool _flag1;
+	bool _flag2;
 public:
-	CRawSurface(Graphics::Surface *surface, TransparencyMode transMode);
+	CRawSurface(const Graphics::Surface *surface, TransparencyMode transMode);
 
 	void setRow(int yp);
 
@@ -60,6 +58,8 @@ public:
 	bool isPixelTransparent2() const;
 
 	void resetPitch();
+
+	int moveX(int xp);
 };
 
 } // End of namespace Titanic
