@@ -2735,16 +2735,16 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 			double n1y = lnk->_graphSrc->_y;
 			double n2x = lnk->_graphDst->_x;
 			double n2y = lnk->_graphDst->_y;
-			double n1dx = n1x - x;
+			double n1dx = x - n1x;
 			double n1dy = n1y - y;
 			double dst1 = sqrt(n1dy * n1dy + n1dx * n1dx);
 			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_length / dst1;
 			double dst3 = coeff1 * dst1;
 			double dst2 = sqrt(1.0 - coeff1 * coeff1) * dst1;
 
-			if (coeff1 * dst1 < 0.0) {
+			if (dst3 < 0.0) {
 				dst3 = 0.0;
-				dst2 = sqrt(n1dy * n1dy + n1dx * n1dx);
+				dst2 = sqrt((n1x - x) * (n1x - x) + (n1y - y) * (n1y - y));
 			}
 			if (dst3 > lnk->_length) {
 				dst3 = lnk->_length;
