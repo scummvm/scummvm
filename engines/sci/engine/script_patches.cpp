@@ -995,8 +995,32 @@ static const uint16 gk1PatchDay10GabrielDressUp[] = {
 	PATCH_END
 };
 
+// GK1 initializes the global interrogation array with an int16 array, which
+// happens to work in SSCI because object references are int16s, but in ScummVM
+// object references are reg_ts, so this array needs to be created as an IDArray
+// instead
+static const uint16 gk1SignatureInterrogationArray1[] = {
+	0x38, SIG_SELECTOR16(new), // pushi new
+	0x78,                      // push1
+	SIG_MAGICDWORD,
+	0x39, 0x0f,                // pushi 15
+	0x51, 0x0a,                // class IntArray
+	SIG_END
+};
+
+static const uint16 gk1PatchInterrogationArray1[] = {
+	PATCH_ADDTOOFFSET(+3),  // pushi new
+	PATCH_ADDTOOFFSET(+1),  // push1
+	PATCH_ADDTOOFFSET(+2),  // pushi 15
+	0x51, 0x0b,             // class IDArray
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
+	{  true,    10, "fix interrogation array type 1/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
+	{  true,    50, "fix interrogation array type 2/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
+	{  true,    93, "fix interrogation array type 3/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
 	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,     gk1PatchInterrogationBug },
 	{  true,   212, "day 5 drum book dialogue error",              1, gk1SignatureDay5DrumBookDialogue, gk1PatchDay5DrumBookDialogue },
 	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,      gk1PatchDay5PhoneFreeze },
