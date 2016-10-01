@@ -636,7 +636,7 @@ public:
 
 	Common::Array<Ring *> scene37_rings;
 	int scene37_lastDudeX;
-	bool scene37_cursorIsLocked;
+	bool scene37_pipeIsOpen;
 	StaticANIObject *scene37_plusMinus1;
 	StaticANIObject *scene37_plusMinus2;
 	StaticANIObject *scene37_plusMinus3;

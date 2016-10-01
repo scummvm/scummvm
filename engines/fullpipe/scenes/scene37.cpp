@@ -96,7 +96,7 @@ void scene37_initScene(Scene *sc) {
 
 	g_fp->_currentScene = sc;
 
-	g_vars->scene37_cursorIsLocked = false;
+	g_vars->scene37_pipeIsOpen = false;
 
 	g_vars->scene37_plusMinus1 = sc->getStaticANIObject1ById(ANI_PLUSMINUS, 1);
 
@@ -149,7 +149,7 @@ int scene37_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC37_MASK) {
-		if (g_vars->scene37_cursorIsLocked)
+		if (g_vars->scene37_pipeIsOpen)
 			g_fp->_cursorId = PIC_CSR_GOL;
 	}
 
@@ -175,20 +175,22 @@ void sceneHandler37_updateRing(int ringNum) {
 		}
 	}
 
-	g_vars->scene37_cursorIsLocked = true;
+	g_vars->scene37_pipeIsOpen = true;
 
 	for (uint j = 0; j < g_vars->scene37_rings.size(); j++) {
-		for (int i = 0; i < g_vars->scene37_rings[ringNum]->numSubRings; i++) {
+		for (int i = 0; i < g_vars->scene37_rings[j]->numSubRings; i++) {
 			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[j]->subRings[i]);
 
-			if ((ani->_movement && ani->_movement->_id != MV_RNG_CLOSE) || ani->_statics->_staticsId != ST_RNG_CLOSED2)
-				g_vars->scene37_cursorIsLocked = false;
+			if ((ani->_movement && ani->_movement->_id == MV_RNG_CLOSE) || ani->_statics->_staticsId == ST_RNG_CLOSED2)
+				g_vars->scene37_pipeIsOpen = false;
 		}
 	}
 
+	debugC(1, kDebugSceneLogic, "Pipe is: %s", g_vars->scene37_pipeIsOpen ? "open" : "closed");
+
 	int state;
 
-	if (g_vars->scene37_cursorIsLocked)
+	if (g_vars->scene37_pipeIsOpen)
 		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsOpened);
 	else
 		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed);

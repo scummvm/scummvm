@@ -445,7 +445,7 @@ Vars::Vars() {
 
 	scene37_rings.clear();
 	scene37_lastDudeX = -1;
-	scene37_cursorIsLocked = 0;
+	scene37_pipeIsOpen = 0;
 	scene37_plusMinus1 = 0;
 	scene37_plusMinus2 = 0;
 	scene37_plusMinus3 = 0;
