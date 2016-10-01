@@ -53,7 +53,7 @@ private:
 
 	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
 	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flag);
 protected:
 	static int _videoSurfaceCounter;
 protected:
@@ -182,9 +182,9 @@ public:
 	virtual void setPixel(const Point &pt, uint pixel) = 0;
 
 	/**
-	 * Change a pixel
+	 * Copies a pixel, handling transparency
 	 */
-	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true) = 0;
+	virtual void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) = 0;
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
@@ -298,7 +298,9 @@ public:
 	/**
 	 * Get the previously set transparency mask surface
 	 */
-	Graphics::ManagedSurface *getTransparencySurface() const { return _transparencySurface; }
+	const Graphics::Surface *getTransparencySurface() const {
+		return _transparencySurface ? &_transparencySurface->rawSurface() : nullptr;
+	}
 
 	/**
 	 * Get the pixels associated with the surface. Only valid when the
@@ -433,9 +435,9 @@ public:
 	virtual void setPixel(const Point &pt, uint pixel);
 
 	/**
-	 * Change a pixel
+	 * Copies a pixel, handling transparency
 	 */
-	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true);
+	virtual void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha);
 
 	/**
 	 * Shifts the colors of the surface.. maybe greys it out?

@@ -140,9 +140,9 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 	if (src->_fastBlitFlag) {
 		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
 	} else if (getTransparencySurface()) {
-		transBlitRect(srcRect, destRect, src);
+		transBlitRect(srcRect, destRect, src, false);
 	} else {
-		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect, src->getTransparencyColor());
+		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect, src->getTransparencyColor(), 1);
 	}
 
 	src->unlock();
@@ -151,7 +151,7 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 
 void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	if (getTransparencySurface()) {
-		transBlitRect(srcRect, destRect, src);
+		transBlitRect(srcRect, destRect, src, true);
 	} else {
 		src->lock();
 		lock();
@@ -163,14 +163,52 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 	}
 }
 
-void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flag) {
 	if (lock()) {
 		if (src->lock()) {
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
-			
-			// TODO: Handle the transparency mode correctly
-			destSurface->blitFrom(*srcSurface, srcRect, Point(srcRect.left, srcRect.top));
+			Graphics::Surface destArea = destSurface->getSubArea(destRect);
+
+			const uint16 *srcPtr = flag ?
+				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.top) :
+				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.bottom);
+			uint16 *destPtr = (uint16 *)destSurface->getBasePtr(destArea.w, destArea.h - 1);
+			bool is16Bit = src->getPixelDepth() == 2;
+			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
+				src->_transparencyMode == TRANS_ALPHA255;
+
+			CRawSurface rawSurface(src->getTransparencySurface(), src->_transparencyMode);
+			if (flag)
+				rawSurface.setRow(srcRect.top);
+			else
+				rawSurface.setRow(src->getHeight() - srcRect.bottom);
+
+			for (int srcY = srcRect.top; srcY < srcRect.bottom; ++srcY) {
+				// Prepare for copying the line
+				const uint16 *lineSrcP = srcPtr;
+				uint16 *lineDestP = destPtr;
+				rawSurface.resetPitch();
+				rawSurface.setCol(srcRect.left);
+
+				for (int srcX = 0; srcX < srcRect.width(); ++srcX) {
+					int move = rawSurface.moveX(0);
+
+					if (move <= 1) {
+						if (!rawSurface.isPixelTransparent2()) {
+							copyPixel(lineDestP, lineSrcP, rawSurface.getPixel() >> 3,
+								is16Bit, isAlpha);
+						}
+					} else {
+						// TODO
+					}
+				}
+
+				// Move to next line
+				rawSurface.skipPitch();
+				srcPtr = flag ? srcPtr + getWidth() : srcPtr - getWidth();
+				destPtr -= destArea.w;
+			}
 
 			src->unlock();
 		}
@@ -435,27 +473,30 @@ void OSVideoSurface::setPixel(const Point &pt, uint pixel) {
 	*pixelP = pixel;
 }
 
-void OSVideoSurface::changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag) {
-	assert(getPixelDepth() == 2);
-	const Graphics::PixelFormat &destFormat = _ddSurface->getFormat();
-	const Graphics::PixelFormat srcFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+void OSVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) {
+	const Graphics::PixelFormat srcFormat = is16Bit ?
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) :
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	const Graphics::PixelFormat destFormat = _ddSurface->getFormat();
+	transVal &= 0xff;
+	assert(transVal < 32);
 
 	// Get the color
 	byte r, g, b;
-	srcFormat.colorToRGB(*color, r, g, b);
-	if (remapFlag) {
-		r = _palette1[31 - srcVal][r >> 3];
-		g = _palette1[31 - srcVal][g >> 3];
-		b = _palette1[31 - srcVal][b >> 3];
+	srcFormat.colorToRGB(*srcP, r, g, b);
+	if (isAlpha) {
+		r = _palette1[31 - transVal][r >> 3];
+		g = _palette1[31 - transVal][g >> 3];
+		b = _palette1[31 - transVal][b >> 3];
 	}
 
 	byte r2, g2, b2;
-	destFormat.colorToRGB(*pixelP, r2, g2, b2);
-	r2 = _palette1[srcVal][r2 >> 3];
-	g2 = _palette1[srcVal][g2 >> 3];
-	b2 = _palette1[srcVal][b2 >> 3];
+	destFormat.colorToRGB(*destP, r2, g2, b2);
+	r2 = _palette1[transVal][r2 >> 3];
+	g2 = _palette1[transVal][g2 >> 3];
+	b2 = _palette1[transVal][b2 >> 3];
 
-	*pixelP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
+	*destP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
 }
 
 void OSVideoSurface::shiftColors() {
