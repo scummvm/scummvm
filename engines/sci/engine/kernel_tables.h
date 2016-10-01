@@ -248,7 +248,7 @@ static const SciKernelMapSubEntry kDoAudio_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
-	{ SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+	// 1 - load bits
 	{ SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
 	// 3 - set palette via resource
 	{ SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          kGraphDrawLine_workarounds },
@@ -698,7 +698,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	{ "GlobalToLocal", kGlobalToLocal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
 #endif
-	{ MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
+	{ MAP_CALL(Graph),             SIG_SCI16, SIGFOR_ALL,    NULL,                    kGraph_subops,   NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_EMPTY(Graph),            SIG_SCI32, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
+#endif
 	{ MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
