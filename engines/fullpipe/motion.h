@@ -222,7 +222,7 @@ class MovGraphLink : public CObject {
 	MovGraphNode *_graphDst;
 	DWordArray _dwordArray1;
 	DWordArray _dwordArray2;
-	int _flags;
+	uint32 _flags;
 	int _field_38;
 	int _field_3C;
 	double _length;
