@@ -28,7 +28,6 @@
 #include "common/array.h"
 #include "common/random.h"
 #include "common/stream.h"
-#include "common/types.h"
 
 #include "engines/engine.h"
 

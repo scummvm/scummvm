@@ -23,44 +23,52 @@
 #ifndef BLADERUNNER_ITEM_H
 #define BLADERUNNER_ITEM_H
 
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
+#include "bladerunner/vector.h"
 
-#include "common/array.h"
 #include "common/rect.h"
 
 namespace BladeRunner {
-	class Items;
 
-	class Item {
-		friend class Items;
-	private:
-		int          _itemId;
-		int          _setId;
+class BladeRunnerEngine;
+class Items;
 
-		BoundingBox  _boundingBox;
-		Common::Rect _screenRectangle;
-		int          _animationId;
-		Vector3      _position;
-		int          _facing;
-		float        _angle;
-		int          _width;
-		int          _height;
-		//int field_1C8;
-		int          _target;
-		//float field_1D0;
-		int          _targetable;
-		int          _spinning;
-		int          _angleChange;
-		float        _cameraAngle;
-		int          _obstacle;
-		//int field_1E8;
-	public:
-		Item();
-		~Item();
+class Item {
+	BladeRunnerEngine *_vm;
 
-		void getXYZ(float *x, float *y, float *z);
-	};
+	friend class Items;
+
+private:
+	int          _itemId;
+	int          _setId;
+
+	BoundingBox  _boundingBox;
+	Common::Rect _screenRectangle;
+	int          _animationId;
+	Vector3      _position;
+	int          _facing;
+	float        _angle;
+	int          _width;
+	int          _height;
+	int          _screenX;
+	int          _screenY;
+	float        _depth;
+	bool         _isTargetable;
+	bool         _isSpinning;
+	int          _facingChange;
+	bool         _isVisible;
+	bool         _isPoliceMazeEnemy;
+
+public:
+	Item(BladeRunnerEngine* vm);
+	~Item();
+
+	void getXYZ(float *x, float *y, float *z);
+	bool isTargetable();
+	void tick(bool special);
+	void setXYZ(Vector3 position);
+	void init(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy);
+};
 
 }
 

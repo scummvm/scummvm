@@ -119,7 +119,7 @@ protected:
 	void Actor_Clues_Transfer_New_From_Mainframe(int actorId);
 	void Actor_Set_Invisible(int actorId, bool isInvisible);
 	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
-	void Item_Add_To_World(int itemId, int animationId, int sceneIndex, float x, float y, float z, signed int angle, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);
+	void Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);
 	void Item_Remove_From_World(int itemId);
 	void Item_Spin_In_World(int itemId);
 	void Item_Flag_As_Target(int itemId);

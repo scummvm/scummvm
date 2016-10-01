@@ -507,15 +507,15 @@ void BladeRunnerEngine::gameLoop() {
 #if _DEBUG
 
 void drawBBox(Vector3 start, Vector3 end, View* view, Graphics::Surface *surface, int color) {
-	Vector2 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
-	Vector2 bfr = view->calculateScreenPosition(Vector3(start.x, end.y, start.z));
-	Vector2 bbr = view->calculateScreenPosition(Vector3(end.x, end.y, start.z));
-	Vector2 bbl = view->calculateScreenPosition(Vector3(end.x, start.y, start.z));
+	Vector3 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
+	Vector3 bfr = view->calculateScreenPosition(Vector3(start.x, end.y, start.z));
+	Vector3 bbr = view->calculateScreenPosition(Vector3(end.x, end.y, start.z));
+	Vector3 bbl = view->calculateScreenPosition(Vector3(end.x, start.y, start.z));
 
-	Vector2 tfl = view->calculateScreenPosition(Vector3(start.x, start.y, end.z));
-	Vector2 tfr = view->calculateScreenPosition(Vector3(start.x, end.y, end.z));
-	Vector2 tbr = view->calculateScreenPosition(Vector3(end.x, end.y, end.z));
-	Vector2 tbl = view->calculateScreenPosition(Vector3(end.x, start.y, end.z));
+	Vector3 tfl = view->calculateScreenPosition(Vector3(start.x, start.y, end.z));
+	Vector3 tfr = view->calculateScreenPosition(Vector3(start.x, end.y, end.z));
+	Vector3 tbr = view->calculateScreenPosition(Vector3(end.x, end.y, end.z));
+	Vector3 tbl = view->calculateScreenPosition(Vector3(end.x, start.y, end.z));
 
 	surface->drawLine(bfl.x, bfl.y, bfr.x, bfr.y, color);
 	surface->drawLine(bfr.x, bfr.y, bbr.x, bbr.y, color);
@@ -599,7 +599,8 @@ void BladeRunnerEngine::gameTick() {
 				}
 			}
 
-			// TODO: Draw items
+			_items->tick();
+			
 			// TODO: Draw item pickup
 			// TODO: Draw dialogue menu
 
@@ -664,8 +665,8 @@ void BladeRunnerEngine::gameTick() {
 				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
 				
 				for(int j = 0; j < walkbox->_vertexCount; j++) {
-					Vector2 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
-					Vector2 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
+					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
+					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
 					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 				}

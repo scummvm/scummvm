@@ -46,6 +46,7 @@
 
 #include "bladerunner/script/ai_00_mccoy.h"
 #include "bladerunner/script/aiscript_officer_leroy.h"
+#include "bladerunner/items.h"
 
 namespace BladeRunner {
 
@@ -631,9 +632,8 @@ void ScriptBase::Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune) {
 	_vm->_actors[actorId]->setImmunityToObstacles(isImmune);
 }
 
-void ScriptBase::Item_Add_To_World(int itemId, int animationId, int sceneIndex, float x, float y, float z, signed int angle, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly) {
-	//TODO
-	warning("Item_Add_To_World(%d, %d, %d, %f, %f, %f, %d, %d, %d, %d, %d, %d, %d)", itemId, animationId, sceneIndex, x, y, z, angle, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly);
+void ScriptBase::Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly) {
+	_vm->_items->add(itemId, animationId, setId, Vector3(x, y, z), facing, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly == 0);
 }
 
 void ScriptBase::Item_Remove_From_World(int itemId) {

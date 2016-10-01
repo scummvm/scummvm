@@ -176,8 +176,8 @@ void Actor::processMovement() {
 	}*/
 }
 
-void Actor::setAtXYZ(Vector3 pos, int facing, bool snapFacing, bool moving, bool retired) {
-	_position = pos;
+void Actor::setAtXYZ(Vector3 position, int facing, bool snapFacing, bool moving, bool retired) {
+	_position = position;
 	setFacing(facing, snapFacing);
 
 	if (_vm->_scene->_setId == _setId) {
@@ -404,6 +404,7 @@ void Actor::draw() {
 	// TODO: Handle SHORTY mode
 	
 	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, draw_position, draw_facing, draw_scale, _vm->_surface2, _vm->_zBuffer2);
+	//todo udpate screenrect
 }
 
 int Actor::getSetId() {
@@ -814,7 +815,7 @@ int Actor::soundVolume() {
 }
 
 int Actor::soundBalance() {
-	Vector2 screenPosition = _vm->_view->calculateScreenPosition(_position);
+	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	return 127.0f * (MAX(MIN(screenPosition.x / 640.0f, 1.0f), 0.0f) * 2.0f - 1.0f);
 }
 

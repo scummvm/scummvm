@@ -27,22 +27,21 @@
 #include "bladerunner/item.h"
 
 #include "common/array.h"
-#include "common/rect.h"
 
 namespace BladeRunner {
 
 class Items {
 	BladeRunnerEngine *_vm;
 
-private:
-	Common::Array<Item> _items;
+	Common::Array<Item*> _items;
 
 public:
 	Items(BladeRunnerEngine *vm);
 	~Items();
 
 	void getXYZ(int itemId, float *x, float *y, float *z);
-
+	void tick();
+	bool add(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy, bool b);
 private:
 	int findItem(int itemId);
 };

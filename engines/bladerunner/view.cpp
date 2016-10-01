@@ -76,11 +76,12 @@ void View::calculateCameraPosition() {
 	_cameraPosition.z = invertedMatrix(2, 3);
 }
 
-Vector2 View::calculateScreenPosition(Vector3 worldPosition) {
+Vector3 View::calculateScreenPosition(Vector3 worldPosition) {
 	Vector3 viewPosition = _frameViewMatrix * worldPosition;
-	return Vector2(
+	return Vector3(
 		this->_viewportHalfWidth - viewPosition.x / viewPosition.z * _viewportDistance,
-		this->_viewportHalfHeight - viewPosition.y / viewPosition.z * _viewportDistance
+		this->_viewportHalfHeight - viewPosition.y / viewPosition.z * _viewportDistance,
+		viewPosition.z
 	);
 }
 

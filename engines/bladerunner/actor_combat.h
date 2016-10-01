@@ -34,27 +34,27 @@ class ActorCombat
 	BladeRunnerEngine *_vm;
 
 private:
-	int _actorId;
-	int _combatOn;
-	int _field2;
-	int _field3;
-	int _otherActorId;
-	int _field5;
-	int _field6;
-	int _field7;
-	int _field8;
-	int _field9;
-	int _field10;
-	int _field11;
-	int _field12;
-	int _actorHp;
-	int _field14;
-	int _field15;
+//	int _actorId;
+//	int _combatOn;
+//	int _field2;
+//	int _field3;
+//	int _otherActorId;
+//	int _field5;
+//	int _field6;
+//	int _field7;
+//	int _field8;
+//	int _field9;
+//	int _field10;
+//	int _field11;
+//	int _field12;
+//	int _actorHp;
+//	int _field14;
+//	int _field15;
 	Vector3 actorPosition;
 	Vector3 otherActorPosition;
-	int _availableCoversCount;
-	int _availableFleeWaypointsCount;
-	int _field24;
+//	int _availableCoversCount;
+//	int _availableFleeWaypointsCount;
+//	int _field24;
 
 public:
 	ActorCombat(BladeRunnerEngine *vm);
