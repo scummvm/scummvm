@@ -103,7 +103,7 @@ void ScriptMA06::DialogueQueueFlushed(int a1) {
 }
 
 bool ScriptMA06::sub_4012C0() {
-	return Game_Flag_Query(37) && !Game_Flag_Query(38) || Game_Flag_Query(33) && !Game_Flag_Query(34) || Game_Flag_Query(57) && !Game_Flag_Query(58);
+	return (Game_Flag_Query(37) && !Game_Flag_Query(38)) || (Game_Flag_Query(33) && !Game_Flag_Query(34)) || (Game_Flag_Query(57) && !Game_Flag_Query(58));
 }
 
 void ScriptMA06::sub_4014E4() {

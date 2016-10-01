@@ -150,7 +150,7 @@ bool ScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Voice_Over(870, 99);
 					Actor_Voice_Over(880, 99);
 					Actor_Clue_Acquire(0, 76, 1, 13);
-					if (Query_Difficulty_Level()) {
+					if (Query_Difficulty_Level() != 0) {
 						Global_Variable_Increment(2, 200);
 					}
 				}

@@ -101,7 +101,7 @@ bool ScriptUG10::ClickedOnExit(int exitId) {
 	float x, y, z;
 	Actor_Query_XYZ(0, &x, &y, &z);
 	if (exitId == 0) {
-		if (!Game_Flag_Query(474) && x > 125.0f || Game_Flag_Query(474)) {
+		if ((!Game_Flag_Query(474) && x > 125.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(0, 235.0f, 1.15f, 29.0f, 0, 1, false, 0)) {
 				Game_Flag_Set(317);
 				Set_Enter(74, 86);
@@ -111,7 +111,7 @@ bool ScriptUG10::ClickedOnExit(int exitId) {
 			Actor_Says(0, 8521, 3);
 		}
 	} else if (exitId == 1) {
-		if (!Game_Flag_Query(474) && x < 120.0f || Game_Flag_Query(474)) {
+		if ((!Game_Flag_Query(474) && x < 120.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(0, -1.83f, 1.15f, -410.8f, 0, 1, false, 0)) {
 				Actor_Face_Heading(0, 0, false);
 				Loop_Actor_Travel_Stairs(0, 9, 1, 0);
@@ -124,7 +124,7 @@ bool ScriptUG10::ClickedOnExit(int exitId) {
 			Actor_Says(0, 6165, 3);
 		}
 	} else if (exitId == 2) {
-		if (!Game_Flag_Query(474) && x < 120.0f || Game_Flag_Query(474)) {
+		if ((!Game_Flag_Query(474) && x < 120.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(0, -385.0f, 1.15f, 57.44f, 0, 1, false, 0)) {
 				Actor_Face_Heading(0, 1001, false);
 				Loop_Actor_Travel_Ladder(0, 1, 1, 0);
@@ -136,7 +136,7 @@ bool ScriptUG10::ClickedOnExit(int exitId) {
 			Actor_Says(0, 6165, 3);
 		}
 	} else if (exitId == 3) {
-		if (!Game_Flag_Query(474) && x < 120.0f || Game_Flag_Query(474)) {
+		if ((!Game_Flag_Query(474) && x < 120.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(0, 2.5f, 1.15f, 405.0f, 0, 1, false, 0)) {
 				Game_Flag_Set(347);
 				Set_Enter(86, 98);

@@ -106,7 +106,7 @@ bool ScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(32, 180, 13);
 				Actor_Clue_Acquire(0, 257, 1, 32);
 				Item_Pickup_Spin_Effect(975, 229, 215);
-			} else if (Actor_Clue_Query(0, 122) && !Actor_Clue_Query(0, 131) && Global_Variable_Query(2) > 20 || Query_Difficulty_Level() == 0) {
+			} else if (Actor_Clue_Query(0, 122) && !Actor_Clue_Query(0, 131) && (Global_Variable_Query(2) > 20 || Query_Difficulty_Level() == 0)) {
 				Actor_Clue_Acquire(0, 131, 1, 32);
 				Actor_Says(0, 1230, 13);
 				Actor_Says(32, 20, 12);
@@ -119,7 +119,7 @@ bool ScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Change_Animation_Mode(0, 23);
 				Delay(1500);
 				Actor_Says_With_Pause(32, 50, 1.6f, 17);
-				if (Query_Difficulty_Level()) {
+				if (Query_Difficulty_Level() != 0) {
 					Global_Variable_Decrement(2, 20);
 				}
 				Actor_Says(0, 1245, 13);
@@ -131,7 +131,7 @@ bool ScriptHC02::ClickedOnActor(int actorId) {
 					Game_Flag_Set(405);
 				}
 				if (Global_Variable_Query(2) > 5 || Query_Difficulty_Level() == 0) {
-					if (Query_Difficulty_Level()) {
+					if (Query_Difficulty_Level() != 0) {
 						Global_Variable_Decrement(2, 5);
 					}
 					Global_Variable_Increment(42, 1);

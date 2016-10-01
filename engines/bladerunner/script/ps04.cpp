@@ -183,7 +183,7 @@ void ScriptPS04::sub_4017E4() {
 			Actor_Says(4, 260, 33);
 			Actor_Says(4, 270, 32);
 			Game_Flag_Set(159);
-			if (Query_Difficulty_Level()) {
+			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Increment(2, 200);
 			}
 			Game_Flag_Set(723);
@@ -252,7 +252,7 @@ void ScriptPS04::sub_4017E4() {
 		Actor_Says(4, 550, 32);
 		Actor_Says(0, 4065, 18);
 		Actor_Says(4, 560, 34);
-		if (Query_Difficulty_Level()) {
+		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Increment(2, 100);
 		}
 		break;

@@ -126,7 +126,7 @@ bool ScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 void ScriptCT04::sub_401D4C() {
 	Dialogue_Menu_Clear_List();
-	if (Global_Variable_Query(2) > 10 || !Query_Difficulty_Level()) {
+	if (Global_Variable_Query(2) > 10 || Query_Difficulty_Level() == 0) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(420, 2, 6, 8);
@@ -137,7 +137,7 @@ void ScriptCT04::sub_401D4C() {
 		Actor_Says(12, 10, 14);
 		Actor_Says(12, 20, 14);
 		Actor_Modify_Friendliness_To_Other(12, 0, 5);
-		if (Query_Difficulty_Level()) {
+		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Decrement(2, 10);
 		}
 	} else if (answer == 420) {

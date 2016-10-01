@@ -480,18 +480,18 @@ void ScriptCT01::sub_40269C() {
 		break;
 	case 70:
 		Actor_Says(0, 290, 13);
-		if (Actor_Query_Friendliness_To_Other(28, 0) <= 49 || Global_Variable_Query(2) <= 10 && Query_Difficulty_Level()) {
-			Actor_Says(28, 130, 15);
-		} else {
+		if (Actor_Query_Friendliness_To_Other(28, 0) > 49 && (Global_Variable_Query(2) > 10 || Query_Difficulty_Level() == 0)) {
 			Actor_Says(28, 50, 3);
 			Actor_Says(28, 60, 3);
 			Actor_Face_Actor(28, 0, true);
 			Actor_Says(28, 70, 16);
 			Actor_Says(0, 325, 13);
-			if (Query_Difficulty_Level()) {
+			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Decrement(2, 10);
 			}
 			Game_Flag_Set(192);
+		} else {
+			Actor_Says(28, 130, 15);
 		}
 		break;
 	case 80:

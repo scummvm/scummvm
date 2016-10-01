@@ -280,7 +280,7 @@ void ScriptMA04::PlayerWalkedIn() {
 		//return false;
 		return;
 	}
-	if (Game_Flag_Query(40) || Game_Flag_Query(41) && !Game_Flag_Query(146)) {
+	if ((Game_Flag_Query(40) || Game_Flag_Query(41)) && !Game_Flag_Query(146)) {
 		Music_Play(2, 52, 0, 2, -1, 0, 0);
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(0, -7199.0f, 955.0f, 1677.0f, 0, 1, false, 0);
@@ -291,9 +291,7 @@ void ScriptMA04::PlayerWalkedIn() {
 		Game_Flag_Set(146);
 		Async_Actor_Walk_To_XYZ(0, -7204.0f, 956.17f, 1568.0f, 0, false);
 		Set_Enter(51, 51);
-		//return true;
 	}
-	//return false;
 }
 
 void ScriptMA04::PlayerWalkedOut() {
@@ -316,7 +314,7 @@ bool ScriptMA04::sub_402758() {
 }
 
 bool ScriptMA04::sub_402820() {
-	return Actor_Clue_Query(5, 222) && !Game_Flag_Query(649) || Actor_Clue_Query(6, 215) && !Game_Flag_Query(650);
+	return (Actor_Clue_Query(5, 222) && !Game_Flag_Query(649)) || (Actor_Clue_Query(6, 215) && !Game_Flag_Query(650));
 }
 
 bool ScriptMA04::sub_402888() {
@@ -552,7 +550,7 @@ void ScriptMA04::sub_403DA8() {
 			Game_Flag_Set(678);
 			Global_Variable_Set(1, 2);
 			Chapter_Enter(2, 10, 50);
-			if (Query_Difficulty_Level()) {
+			if (Query_Difficulty_Level() != 0) {
 				if (!Game_Flag_Query(723)) {
 					Global_Variable_Increment(2, 200);
 				}

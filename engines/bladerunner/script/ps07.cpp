@@ -71,7 +71,7 @@ bool ScriptPS07::ClickedOnActor(int actorId) {
 		if (!Game_Flag_Query(111)) {
 			Actor_Says(0, 4115, 13);
 		}
-		if (!Game_Flag_Query(111) && Game_Flag_Query(125) || Game_Flag_Query(126) || Game_Flag_Query(127) || Game_Flag_Query(128)) {
+		if (!Game_Flag_Query(111) && (Game_Flag_Query(125) || Game_Flag_Query(126) || Game_Flag_Query(127) || Game_Flag_Query(128))) {
 			Actor_Face_Actor(30, 0, true);
 			Actor_Says(30, 30, 12);
 			Game_Flag_Set(111);

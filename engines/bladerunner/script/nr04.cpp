@@ -145,7 +145,7 @@ bool ScriptNR04::ClickedOnExit(int exitId) {
 }
 
 bool ScriptNR04::ClickedOn2DRegion(int region) {
-	if (region == 0 || region == 1 || region == 2 && Actor_Query_Which_Set_In(18) != 12 && Actor_Query_Animation_Mode(0) != 53 && !Loop_Actor_Walk_To_Waypoint(0, 445, 0, 1, false)) {
+	if ((region == 0 || region == 1 || region == 2) && Actor_Query_Which_Set_In(18) != 12 && Actor_Query_Animation_Mode(0) != 53 && !Loop_Actor_Walk_To_Waypoint(0, 445, 0, 1, false)) {
 		Actor_Face_Heading(0, 49, false);
 		Actor_Change_Animation_Mode(0, 85);
 		Delay(2500);

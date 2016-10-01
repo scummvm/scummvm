@@ -253,7 +253,7 @@ void ScriptHC01::sub_402384() {
 		} else {
 			Actor_Says(7, 250, 13);
 			Actor_Modify_Friendliness_To_Other(7, 0, -1);
-			if (Actor_Query_Friendliness_To_Other(7, 0) < 47 && !Query_Difficulty_Level()) {
+			if (Actor_Query_Friendliness_To_Other(7, 0) < 47 && Query_Difficulty_Level() == 0) {
 				sub_40346C();
 			}
 		}

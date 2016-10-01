@@ -46,7 +46,7 @@ void ScriptKP03::InitializeScene() {
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Set(421);
 	}
-	if (Actor_Query_Goal_Number(1) != 599 && !Game_Flag_Query(422) && !Game_Flag_Query(484) && (Game_Flag_Query(653) && Game_Flag_Query(420) || !Game_Flag_Query(653) && Game_Flag_Query(417))) {
+	if ((Actor_Query_Goal_Number(1) != 599 && !Game_Flag_Query(422) && !Game_Flag_Query(484)) && ((Game_Flag_Query(653) && Game_Flag_Query(420)) || (!Game_Flag_Query(653) && Game_Flag_Query(417)))) {
 		Actor_Put_In_Set(1, 46);
 		Actor_Set_At_XYZ(1, -300.0f, -36.55f, 26.0f, 350);
 	}
@@ -162,17 +162,17 @@ void ScriptKP03::SceneFrameAdvanced(int frame) {
 		v1 = -1;
 		if (!Game_Flag_Query(422)) {
 			Actor_Query_XYZ(0, &x, &y, &z);
-			if (Game_Flag_Query(417) && -130.0f < x || Game_Flag_Query(420) && -130.0f > x) {
+			if ((Game_Flag_Query(417) && -130.0f < x) || (Game_Flag_Query(420) && -130.0f > x)) {
 				v1 = 0;
 			}
 		}
 		if (!Game_Flag_Query(422)) { //todo ? same condition as before
 			Actor_Query_XYZ(1, &x, &y, &z);
 			if (Game_Flag_Query(653) && Actor_Query_Which_Set_In(1) == 46) {
-				if (Game_Flag_Query(417) && -130.0f > x || Game_Flag_Query(420) && -130.0f < x) {
+				if ((Game_Flag_Query(417) && -130.0f > x) || (Game_Flag_Query(420) && -130.0f < x)) {
 					v1 = 1;
 				}
-			} else if (Game_Flag_Query(417) && -130.0f < x || Game_Flag_Query(420) && -130.0f > x) {
+			} else if ((Game_Flag_Query(417) && -130.0f < x) || (Game_Flag_Query(420) && -130.0f > x)) {
 				v1 = 1;
 			}
 		}

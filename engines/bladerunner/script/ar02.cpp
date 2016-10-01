@@ -300,7 +300,7 @@ void ScriptAR02::sub_402694() {
 
 void ScriptAR02::sub_402AE0() {
 	Dialogue_Menu_Clear_List();
-	if (Global_Variable_Query(2) >= 15 || !Query_Difficulty_Level()) {
+	if (Global_Variable_Query(2) >= 15 || Query_Difficulty_Level() == 0) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(540, 3, 5, 7);
@@ -309,7 +309,7 @@ void ScriptAR02::sub_402AE0() {
 	Dialogue_Menu_Disappear();
 	if (answerValue == 530) {
 		Actor_Says(0, 120, 12);
-		if (Query_Difficulty_Level()) {
+		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Decrement(2, 15);
 		}
 		Actor_Clue_Acquire(0, 75, 1, 16);

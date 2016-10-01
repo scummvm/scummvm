@@ -250,8 +250,8 @@ protected:
 	void Un_Combat_Target_Object(const char *objectName);
 	void Set_Fade_Color(float r, float g, float b);
 	void Set_Fade_Density(float density);
-	void Set_Fog_Color(char* fogName, float r, float g, float b);
-	void Set_Fog_Density(char* fogName, float density);
+	void Set_Fog_Color(const char* fogName, float r, float g, float b);
+	void Set_Fog_Density(const char* fogName, float density);
 	void ADQ_Flush();
 	void ADQ_Add(int a1, int a2, int a3);
 	void ADQ_Add_Pause(int delay);

@@ -329,7 +329,7 @@ void ScriptHF05::sub_402AE4() {
 	if (Actor_Clue_Query(0, 13) == 1 && Actor_Query_Goal_Number(6) != 599) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2);
 	}
-	if (Actor_Clue_Query(0, 237) == 1 || Actor_Clue_Query(0, 99) == 1 && Global_Variable_Query(1) == 3) {
+	if (Actor_Clue_Query(0, 237) == 1 || (Actor_Clue_Query(0, 99) == 1 && Global_Variable_Query(1) == 3)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1220, -1, 2, 8);
 	}
 	if (Actor_Clue_Query(0, 113) == 1 || Actor_Clue_Query(0, 115) == 1) {

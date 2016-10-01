@@ -57,7 +57,7 @@ bool ScriptPS15::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool ScriptPS15::ClickedOnActor(int actorId) {
 	if (actorId == 34) {
-		if (Actor_Clue_Query(0, 80) || Actor_Clue_Query(0, 83) && !Actor_Clue_Query(0, 81)) {
+		if ((Actor_Clue_Query(0, 80) || Actor_Clue_Query(0, 83)) && !Actor_Clue_Query(0, 81)) {
 			if (!Loop_Actor_Walk_To_XYZ(0, -256.0f, -113.43f, 43.51f, 0, 1, false, 0)) {
 				Actor_Face_Actor(0, 34, true);
 				Actor_Face_Actor(34, 0, true);

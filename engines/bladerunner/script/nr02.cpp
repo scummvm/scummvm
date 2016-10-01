@@ -121,7 +121,7 @@ bool ScriptNR02::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool ScriptNR02::ClickedOnExit(int exitId) {
-	if (!exitId == 0) {
+	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(0, -283.0f, -24.0f, 326.0f, 0, 1, false, 0)) {
 			if (Actor_Query_Goal_Number(2) < 230 || Actor_Query_Goal_Number(2) > 250) {
 				Music_Stop(2);

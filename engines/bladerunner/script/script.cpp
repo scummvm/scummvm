@@ -1280,11 +1280,11 @@ void ScriptBase::Set_Fade_Density(float density) {
 	_vm->_scene->_set->_effects->setFadeDensity(density);
 }
 
-void ScriptBase::Set_Fog_Color(char* fogName, float r, float g, float b) {
+void ScriptBase::Set_Fog_Color(const char* fogName, float r, float g, float b) {
 	_vm->_scene->_set->_effects->setFogColor(fogName, r, g, b);
 }
 
-void ScriptBase::Set_Fog_Density(char* fogName, float density) {
+void ScriptBase::Set_Fog_Density(const char* fogName, float density) {
 	_vm->_scene->_set->_effects->setFogDensity(fogName, density);
 }
 

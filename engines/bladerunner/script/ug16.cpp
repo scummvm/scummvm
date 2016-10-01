@@ -98,19 +98,19 @@ bool ScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 	if (Object_Query_Click("SCREEN 01", objectName) && !Loop_Actor_Walk_To_XYZ(0, 194.0f, -35.0f, 160.8f, 0, 1, false, 0)) {
 		Actor_Face_Heading(0, 870, false);
-		if (Game_Flag_Query(595) || !Actor_Query_Is_In_Current_Set(10) && !Actor_Clue_Query(0, 151) && !Game_Flag_Query(568)) {
-			Delay(2000);
-			Actor_Face_Heading(0, 1016, false);
-			Delay(2000);
-			Actor_Says(0, 5725, 14);
-			Delay(1000);
-			Item_Pickup_Spin_Effect(941, 418, 305);
-			Actor_Clue_Acquire(0, 151, 1, -1);
-			return true;
+		if ((!Game_Flag_Query(595) && Actor_Query_Is_In_Current_Set(10)) || Actor_Clue_Query(0, 151) || Game_Flag_Query(568)) {
+			Actor_Says(0, 8525, 12);
+			Actor_Says(0, 8526, 12);
+			return false;
 		}
-		Actor_Says(0, 8525, 12);
-		Actor_Says(0, 8526, 12);
-		return false;
+		Delay(2000);
+		Actor_Face_Heading(0, 1016, false);
+		Delay(2000);
+		Actor_Says(0, 5725, 14);
+		Delay(1000);
+		Item_Pickup_Spin_Effect(941, 418, 305);
+		Actor_Clue_Acquire(0, 151, 1, -1);
+		return true;
 	}
 	return false;
 }

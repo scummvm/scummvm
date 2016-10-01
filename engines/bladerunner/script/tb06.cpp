@@ -114,7 +114,7 @@ bool ScriptTB06::ClickedOnItem(int itemId, bool a2) {
 		Actor_Says(0, 5285, 3);
 		return true;
 	}
-	if (itemId == 103 || itemId == 104 || itemId == 105 && !Loop_Actor_Walk_To_Item(0, 103, 24, 1, false)) {
+	if ((itemId == 103 || itemId == 104 || itemId == 105) && !Loop_Actor_Walk_To_Item(0, 103, 24, 1, false)) {
 		Actor_Face_Item(0, 103, true);
 		Actor_Voice_Over(2380, 99);
 		Actor_Voice_Over(2390, 99);

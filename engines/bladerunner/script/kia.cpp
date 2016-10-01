@@ -232,7 +232,7 @@ void ScriptKIA::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId) {
 		break;
 	case 53:
 		KIA_Play_Slice_Model(955);
-		if (Query_Difficulty_Level() <= 0) {
+		if (Query_Difficulty_Level() == 0) {
 			KIA_Play_Actor_Dialogue(99, 4140);
 		} else {
 			KIA_Play_Actor_Dialogue(99, 4150);
@@ -869,7 +869,7 @@ void ScriptKIA::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId) {
 		break;
 	case 263:
 		KIA_Play_Photograph(29);
-		if (Query_Difficulty_Level() <= 0) {
+		if (Query_Difficulty_Level() == 0) {
 			KIA_Play_Actor_Dialogue(99, 4140);
 		} else {
 			KIA_Play_Actor_Dialogue(99, 4150);

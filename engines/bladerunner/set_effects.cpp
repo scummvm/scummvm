@@ -82,7 +82,7 @@ void SetEffects::setFadeDensity(float density) {
 	_fadeDensity = density;
 }
 
-void SetEffects::setFogColor(char *fogName, float r, float g, float b) {
+void SetEffects::setFogColor(const char *fogName, float r, float g, float b) {
 	Fog *fog = findFog(fogName);
 	if (fog == nullptr)
 		return;
@@ -92,7 +92,7 @@ void SetEffects::setFogColor(char *fogName, float r, float g, float b) {
 	fog->_fogColor.b = b;
 }
 
-void SetEffects::setFogDensity(char *fogName, float density) {
+void SetEffects::setFogDensity(const char *fogName, float density) {
 	Fog *fog = findFog(fogName);
 	if (fog == nullptr)
 		return;
@@ -127,7 +127,7 @@ void SetEffects::calculateColor(Vector3 viewPosition, Vector3 position, float *o
 	outColor->b = outColor->b * (1.0f - this->_fadeDensity) + this->_fadeColor.b * this->_fadeDensity;
 }
 
-Fog *SetEffects::findFog(char *fogName) {
+Fog *SetEffects::findFog(const char *fogName) {
 	if (!_fogs)
 		return nullptr;
 

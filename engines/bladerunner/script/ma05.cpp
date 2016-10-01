@@ -105,7 +105,7 @@ void ScriptMA05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool cu
 
 void ScriptMA05::PlayerWalkedIn() {
 	Music_Play(2, 52, 0, 2, -1, 0, 0);
-	if ((Random_Query(0, 4) == 1 || Game_Flag_Query(146) && !Game_Flag_Query(61)) && Global_Variable_Query(1) == 1) {
+	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(146) == 1 && !Game_Flag_Query(61))) && Global_Variable_Query(1) == 1) {
 		Scene_Loop_Set_Default(1);
 		Scene_Loop_Start_Special(2, 3, 1);
 		Sound_Play(69, 100, 0, 0, 50);

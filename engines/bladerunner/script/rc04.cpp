@@ -222,7 +222,7 @@ void ScriptRC04::sub_401DF4() {
 		Actor_Says(14, 2120, 31);
 		if (Global_Variable_Query(2) > 40 || Query_Difficulty_Level() == 0) {
 			Actor_Says(0, 4940, 13);
-			if (Query_Difficulty_Level()) {
+			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Decrement(2, 40);
 			}
 			Item_Pickup_Spin_Effect(995, 405, 192);
@@ -274,7 +274,7 @@ void ScriptRC04::sub_401DF4() {
 		Actor_Says(14, 880, 34);
 		Actor_Clue_Acquire(14, 110, 1, 0);
 		Actor_Modify_Friendliness_To_Other(14, 0, 8);
-		if (Query_Difficulty_Level()) {
+		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Increment(2, 60);
 		}
 		break;
@@ -330,7 +330,7 @@ bool ScriptRC04::ClickedOnActor(int actorId) {
 			Actor_Says(14, 2010, 35);
 			if (Global_Variable_Query(2) > 50 || Query_Difficulty_Level() == 0) {
 				Actor_Says(0, 8975, 16);
-				if (Query_Difficulty_Level()) {
+				if (Query_Difficulty_Level() != 0) {
 					Global_Variable_Decrement(2, 50);
 				}
 				Delay(3000);
