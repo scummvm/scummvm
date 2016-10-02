@@ -52,6 +52,11 @@ void scene37_initScene(Scene *sc) {
 	Ring *ring;
 	StaticANIObject *ani;
 
+	for (uint i = 0; i < g_vars->scene37_rings.size(); i++)
+		delete g_vars->scene37_rings[i];
+
+	g_vars->scene37_rings.clear();
+
 	g_vars->scene37_lastDudeX = -1;
 
 	ring = new Ring();
