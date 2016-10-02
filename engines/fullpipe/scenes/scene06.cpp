@@ -474,15 +474,11 @@ void sceneHandler06_catchBall() {
 }
 
 void sceneHandler06_checkBallTarget(int par) {
-	uint32 pixel;
-
 	if (g_vars->scene06_ballY <= 475) {
-		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY, &pixel)) {
-			if (pixel) {
-				chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
+		if (g_vars->scene06_mumsy->isPixelHitAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY)) {
+			chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
 
-				sceneHandler06_catchBall();
-			}
+			sceneHandler06_catchBall();
 		}
 	} else {
 		sceneHandler06_fallBall();
