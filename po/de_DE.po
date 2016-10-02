@@ -3146,9 +3146,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
 
 #: engines/mohawk/mohawk.cpp:60
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Spielpause.  Zum Weiterspielen Leertaste drücken."
+msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
