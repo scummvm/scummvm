@@ -24,6 +24,7 @@
 #include "common/error.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "mohawk/mohawk.h"
 #include "mohawk/cursors.h"
