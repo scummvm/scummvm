@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CHEWY_H
-#define CHEWY_H
+#ifndef CHEWY_CHEWY_H
+#define CHEWY_CHEWY_H
 
 
 #include "common/scummsys.h"
