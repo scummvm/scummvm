@@ -641,136 +641,95 @@ int sceneHandler11(ExCommand *cmd) {
 	case 33:
 		{
 			int res = 0;
-			int x, y;
 
-			if (!g_fp->_aniMan2)
-				goto LABEL_27;
+			if (g_fp->_aniMan2) {
+				int x, y;
+				x = g_fp->_aniMan2->_ox;
+				y = g_fp->_aniMan2->_oy;
 
-			x = g_fp->_aniMan2->_ox;
-			y = g_fp->_aniMan2->_oy;
+				g_vars->scene11_dudeX = x;
+				g_vars->scene11_dudeY = y;
 
-			g_vars->scene11_dudeX = x;
-			g_vars->scene11_dudeY = y;
+				if (g_vars->scene11_scrollIsEnabled) {
+					if (x > g_fp->_sceneRect.right - 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 200;
+				} else if (g_vars->scene11_scrollIsMaximized) {
+					g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
 
-			if (g_vars->scene11_scrollIsEnabled) {
-				if (x > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
-				goto LABEL_26;
+					if (g_vars->scene11_dudeX < 910)
+						g_vars->scene11_scrollIsMaximized = false;
+				} else {
+					if (x < g_fp->_sceneRect.left + 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+					else if (x > g_fp->_sceneRect.right - 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+
+					if (y < g_fp->_sceneRect.top + 200)
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.top - 300;
+					if (y > g_fp->_sceneRect.bottom - 300)
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
+
+					if (x >= 940)
+						g_vars->scene11_scrollIsMaximized = true;
+				}
+				res = 1;
 			}
 
-			if (g_vars->scene11_scrollIsMaximized) {
-				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
-
-				if (g_vars->scene11_dudeX < 910)
-					g_vars->scene11_scrollIsMaximized = false;
-
-			LABEL_26:
-				res = 1;
-			LABEL_27:
-				if (g_vars->scene11_swingieStands) {
-					if (g_fp->_sceneRect.left >= 534 && g_vars->scene11_swingieScreenEdge < 534)
+			if (g_vars->scene11_swingieStands) {
+				if (g_fp->_sceneRect.left >= 534 && g_vars->scene11_swingieScreenEdge < 534)
 						sceneHandler11_swingieSit();
 
-					g_vars->scene11_swingieScreenEdge = g_fp->_sceneRect.left;
-				}
+				g_vars->scene11_swingieScreenEdge = g_fp->_sceneRect.left;
+			}
 
-				if (!g_vars->scene11_arcadeIsOn)
-					goto LABEL_50;
-
-				int dir1;
-				int dir2;
-
-				dir2 = g_vars->scene11_swingCounterPrevTurn;
-
-				if (g_vars->scene11_swingCounterPrevTurn <= 0 || g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn <= 72) {
-					dir1 = g_vars->scene11_swingDirectionPrevTurn;
-				} else {
+			if (g_vars->scene11_arcadeIsOn) {
+				if (g_vars->scene11_swingCounterPrevTurn > 0 && g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn > 72) {
 					sceneHandler11_swing0();
-					dir1 = 0;
-					dir2 = 0;
 					g_vars->scene11_swingDirectionPrevTurn = 0;
 					g_vars->scene11_swingCounterPrevTurn = 0;
 				}
-
-				if (!g_vars->scene11_arcadeIsOn)
-					goto LABEL_50;
-
-				if (g_vars->scene11_swingDirection == dir1 || dir2 <= 0 || g_vars->scene11_swingCounter - dir2 <= 2) {
-				LABEL_49:
-					if (g_vars->scene11_arcadeIsOn) {
-				LABEL_61:
-						g_fp->_behaviorManager->updateBehaviors();
-						g_fp->startSceneTrack();
-						return res;
-					}
-				LABEL_50:
-					if (g_vars->scene11_swingIsSwinging
-							|| (0.0 == g_vars->scene11_swingSpeed
-								&& g_vars->scene11_dudeOnSwing->_movement
-								&& g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45)) {
-						g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC);
-						if (!g_vars->scene11_arcadeIsOn && g_vars->scene11_swingIsSwinging) {
-							if (!g_vars->scene11_swingie->_movement) {
-								if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
-									sceneHandler11_swingieJumpDown();
-
-									g_fp->_behaviorManager->updateBehaviors();
-									g_fp->startSceneTrack();
-									return res;
-								}
-							}
-							g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
-						}
-					}
-					goto LABEL_61;
-				}
-
-				if (dir1 == 1) {
-					if (!g_vars->scene11_swingDirection) {
-						sceneHandler11_swing1();
-				LABEL_48:
-						g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
-						goto LABEL_49;
-					}
-				} else {
-					if (dir1 != 2)
-						goto LABEL_48;
-
-					if (!g_vars->scene11_swingDirection) {
-						sceneHandler11_swing2();
-						goto LABEL_48;
-					}
-				}
-
-				sceneHandler11_swing0();
-				goto LABEL_48;
 			}
-			if (x >= g_fp->_sceneRect.left + 200) {
-				if (x <= g_fp->_sceneRect.right - 200) {
-				LABEL_18:
-					if (y < g_fp->_sceneRect.top + 200) {
-						g_fp->_currentScene->_y = y - g_fp->_sceneRect.top - 300;
-						y = g_vars->scene11_dudeY;
-						x = g_vars->scene11_dudeX;
+
+			if (g_vars->scene11_arcadeIsOn) {
+				if (g_vars->scene11_swingDirection != g_vars->scene11_swingDirectionPrevTurn
+					&& g_vars->scene11_swingCounterPrevTurn > 0 && g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn > 2) {
+
+					if (g_vars->scene11_swingDirectionPrevTurn == 1) {
+						if (g_vars->scene11_swingDirection == 0)
+							sceneHandler11_swing1();
+						else
+							sceneHandler11_swing0();
+					} else if (g_vars->scene11_swingDirectionPrevTurn == 2) {
+						if (g_vars->scene11_swingDirection == 0)
+							sceneHandler11_swing2();
+						else
+							sceneHandler11_swing0();
 					}
-					if (y > g_fp->_sceneRect.bottom - 300) {
-						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
-						x = g_vars->scene11_dudeX;
-					}
-					if (x >= 940)
-						g_vars->scene11_scrollIsMaximized = true;
-					goto LABEL_26;
+
+					g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
 				}
-				g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
-			} else {
-				g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
 			}
-			y = g_vars->scene11_dudeY;
-			x = g_vars->scene11_dudeX;
-			goto LABEL_18;
+
+			if (!g_vars->scene11_arcadeIsOn && !g_vars->scene11_swingIsSwinging) {
+				if (g_vars->scene11_swingSpeed == 0.0
+					&& g_vars->scene11_dudeOnSwing->_movement && g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45) {
+					g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC);
+				}
+			}
+
+			if (!g_vars->scene11_arcadeIsOn && g_vars->scene11_swingIsSwinging) {
+				if (!g_vars->scene11_swingie->_movement) {
+					if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2)
+						sceneHandler11_swingieJumpDown();
+					else
+						g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
+				}
+			}
+
+			g_fp->_behaviorManager->updateBehaviors();
+			g_fp->startSceneTrack();
+			return res;
 		}
-
-		break;
 
 	case 29:
 		if (g_vars->scene11_swingIsSwinging) {
