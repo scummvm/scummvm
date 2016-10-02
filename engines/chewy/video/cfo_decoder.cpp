@@ -234,7 +234,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 
-			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 			break;
 		case kChunkSetLoopMode:
 			error("Unused chunk kChunkSetLoopMode found");
@@ -256,13 +256,13 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				DisposeAfterUse::NO),
 				(repeat == 0) ? 1 : repeat);
 
-			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
 			break;
 		case kChunkSetSoundVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 
-			_mixer->setVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType, volume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 			break;
 		case kChunkSetChannelVolume:
 			channel = _fileStream->readUint16LE();
