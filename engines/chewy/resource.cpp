@@ -118,7 +118,6 @@ byte *Resource::getChunkData(uint num) {
 }
 
 void Resource::initSprite(Common::String filename) {
-	uint16 screenMode;;
 	uint32 nextSpriteOffset;
 
 	// TAF (sprite) resources are much different than the rest, so we have a
@@ -126,7 +125,7 @@ void Resource::initSprite(Common::String filename) {
 
 	_resType = kResourceTAF;
 	_encrypted = false;
-	screenMode = _stream.readUint16LE();
+	/*screenMode = */_stream.readUint16LE();
 	_chunkCount = _stream.readUint16LE();
 	_stream.skip(4);		// total size of all sprites
 	_stream.skip(3 * 256);	// palette
@@ -142,7 +141,7 @@ void Resource::initSprite(Common::String filename) {
 		cur.type = kResourceTAF;
 
 		_stream.skip(2 + 2 + 2);	// compression flag, width, height
-		uint32 nextSpriteOffset = _stream.readUint32LE();
+		nextSpriteOffset = _stream.readUint32LE();
 		uint32 spriteImageOffset = _stream.readUint32LE();
 		_stream.skip(1);	// padding
 
