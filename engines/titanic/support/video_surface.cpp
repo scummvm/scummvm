@@ -159,7 +159,7 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 
 	if (src->_fastBlitFlag) {
 		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
-	} else if (getTransparencySurface()) {
+	} else if (src->getTransparencySurface()) {
 		transBlitRect(srcRect, destRect, src, false);
 	} else {
 		_rawSurface->transBlitFrom(*src->_rawSurface, srcRect, destRect, src->getTransparencyColor(), 1);
@@ -170,7 +170,7 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 }
 
 void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
-	if (getTransparencySurface()) {
+	if (src->getTransparencySurface()) {
 		transBlitRect(srcRect, destRect, src, true);
 	} else {
 		src->lock();
