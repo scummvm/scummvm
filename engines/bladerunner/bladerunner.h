@@ -36,6 +36,7 @@
 namespace BladeRunner {
 
 class Actor;
+class ADQ;
 class AIScripts;
 class AmbientSounds;
 class AudioPlayer;
@@ -65,6 +66,7 @@ public:
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
 
+	ADQ             *_adq;
 	AIScripts       *_aiScripts;
 	AmbientSounds   *_ambientSounds;
 	AudioPlayer     *_audioPlayer;

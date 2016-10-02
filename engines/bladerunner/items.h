@@ -42,6 +42,7 @@ public:
 	void getXYZ(int itemId, float *x, float *y, float *z);
 	void tick();
 	bool add(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy, bool b);
+	bool remove(int itemId);
 private:
 	int findItem(int itemId);
 };

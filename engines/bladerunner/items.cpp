@@ -37,18 +37,34 @@ bool Items::add(int itemId, int animationId, int setId, Vector3 position, int fa
 	if (_items.size() >= 100) {
 		return false;
 	}
-	int i = findItem(itemId);
-	if(i == -1) {
-		i = _items.size();
+	int itemIndex = findItem(itemId);
+	if(itemIndex == -1) {
+		itemIndex = _items.size();
 	}
 
 	Item *item = new Item(_vm);
-	item->init(itemId, setId, animationId, position, facing, height, width, isTargetable, isVisible, isPoliceMazeEnemy);
+	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetable, isVisible, isPoliceMazeEnemy);
 	_items.push_back(item);
 
 	if(addToSet && setId == _vm->_scene->getSetId()) {
 		return _vm->_sceneObjects->addItem(itemId + SCENE_OBJECTS_ITEMS_OFFSET, &item->_boundingBox, &item->_screenRectangle, isTargetable, isVisible);
 	}
+	return true;
+}
+
+bool Items::remove(int itemId) {
+	if (_items.size() == 0) {
+		return false;
+	}
+	int itemIndex = findItem(itemId);
+	if(itemIndex == -1) {
+		return false;
+	}
+
+	if (_items[itemIndex]->_setId == _vm->_scene->getSetId()) {
+		_vm->_sceneObjects->remove(itemId + SCENE_OBJECTS_ITEMS_OFFSET);
+	}
+	_items.remove_at(itemIndex);
 	return true;
 }
 

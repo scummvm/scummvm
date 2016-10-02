@@ -24,6 +24,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/adq.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
@@ -68,11 +69,12 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_gameIsRunning  = true;
 	_playerLosesControlCounter = 0;
 
-	_clues = NULL;
+	_clues = nullptr;
 	_script = new Script(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
 	_combat = new Combat(this);
+	_adq = new ADQ(this);
 
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
@@ -99,7 +101,10 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
-
+	
+	delete _adq;
+	delete _combat;
+	delete _lights;
 	delete _settings;
 	delete _script;
 }
@@ -345,7 +350,7 @@ void BladeRunnerEngine::shutdown() {
 	// TODO: Shutdown Esper
 
 	delete _mouse;
-	_mouse = 0;
+	_mouse = nullptr;
 
 	for (uint i = 0; i != _shapes.size(); ++i) {
 		delete _shapes[i];
@@ -359,38 +364,38 @@ void BladeRunnerEngine::shutdown() {
 		if (_chapters->hasOpenResources())
 			_chapters->closeResources();
 		delete _chapters;
-		_chapters = 0;
+		_chapters = nullptr;
 	}
 
 	delete _clues;
-	_clues = 0;
+	_clues = nullptr;
 
 	delete _sliceRenderer;
-	_sliceRenderer = 0;
+	_sliceRenderer = nullptr;
 
 	delete _sliceAnimations;
-	_sliceAnimations = 0;
+	_sliceAnimations = nullptr;
 
 	delete _textActorNames;
-	_textActorNames = 0;
+	_textActorNames = nullptr;
 
 	delete _textCrimes;
-	_textCrimes = 0;
+	_textCrimes = nullptr;
 
 	delete _textCluetype;
-	_textCluetype = 0;
+	_textCluetype = nullptr;
 
 	delete _textKIA;
-	_textKIA = 0;
+	_textKIA = nullptr;
 
 	delete _textSpindest;
-	_textSpindest = 0;
+	_textSpindest = nullptr;
 
 	delete _textVK;
-	_textVK = 0;
+	_textVK = nullptr;
 
 	delete _textOptions;
-	_textOptions = 0;
+	_textOptions = nullptr;
 
 	// TODO: Delete dialogue menu
 
@@ -418,26 +423,26 @@ void BladeRunnerEngine::shutdown() {
 	// TODO: Delete KIA6PT.FON
 
 	delete _items;
-	_items = 0;
+	_items = nullptr;
 
 	delete _gameFlags;
-	_gameFlags = 0;
+	_gameFlags = nullptr;
 
 	delete _view;
-	_view = 0;
+	_view = nullptr;
 
 	delete _sceneObjects;
-	_sceneObjects = 0;
+	_sceneObjects = nullptr;
 
 	// TODO: Delete sine and cosine lookup tables
 
 	// TODO: Unload AI dll
 
 	delete[] _gameVars;
-	_gameVars = 0;
+	_gameVars = nullptr;
 
 	delete _waypoints;
-	_waypoints = 0;
+	_waypoints = nullptr;
 
 	// TODO: Delete Cover waypoints
 
@@ -459,13 +464,13 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete proper ZBuf class
 	delete[] _zBuffer1;
-	_zBuffer1 = 0;
+	_zBuffer1 = nullptr;
 
 	delete[] _zBuffer2;
-	_zBuffer2 = 0;
+	_zBuffer2 = nullptr;
 
 	delete _gameInfo;
-	_gameInfo = 0;
+	_gameInfo = nullptr;
 
 	// TODO: Delete graphics surfaces here
 	_surface1.free();
@@ -548,7 +553,8 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: VK
 		// TODO: Elevators
 		// TODO: Scores
-
+		
+		_adq->tick();
 		if (_scene->didPlayerWalkIn()) {
 			_script->PlayerWalkedIn();
 		}

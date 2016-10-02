@@ -253,7 +253,7 @@ protected:
 	void Set_Fog_Color(const char* fogName, float r, float g, float b);
 	void Set_Fog_Density(const char* fogName, float density);
 	void ADQ_Flush();
-	void ADQ_Add(int a1, int a2, int a3);
+	void ADQ_Add(int actorId, int sentenceId, int animationMode);
 	void ADQ_Add_Pause(int delay);
 	bool Game_Over();
 	void Autosave_Game(int textId);

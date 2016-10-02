@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/adq.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/scene_objects.h"
@@ -37,7 +38,7 @@ namespace BladeRunner {
 
 bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (!isLoadingGame) {
-		// flush ADQ
+		_vm->_adq->flush(1, false);
 	}
 
 	_setId = setId;

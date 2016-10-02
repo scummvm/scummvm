@@ -26,6 +26,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/actor_combat.h"
+#include "bladerunner/adq.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
@@ -351,14 +352,14 @@ void ScriptBase::Actor_Set_Targetable(int actorId, bool targetable) {
 
 void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode){
 	_vm->loopActorSpeaking();
-	//_vm->ADQ->flush(1,1)
+	_vm->_adq->flush(1, true);
 	Actor_Says_With_Pause(actorId, sentenceId, 0.5f, animationMode);
 }
 
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
-	//_vm->ADQ->flush(1,1)
+	_vm->_adq->flush(1, true);
 
 	Actor *actor = _vm->_actors[actorId];
 
@@ -432,8 +433,8 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
-	//_vm->ADQ->flush(1,1)
-
+	_vm->_adq->flush(1, true);
+	
 	Actor *actor = _vm->_actors[actorId];
 
 	actor->speechPlay(sentenceId, true);
@@ -637,8 +638,7 @@ void ScriptBase::Item_Add_To_World(int itemId, int animationId, int setId, float
 }
 
 void ScriptBase::Item_Remove_From_World(int itemId) {
-	//TODO
-	warning("Item_Remove_From_World(%d)", itemId);
+	_vm->_items->remove(itemId);
 }
 
 void ScriptBase::Item_Spin_In_World(int itemId) {
@@ -930,6 +930,8 @@ int ScriptBase::Ambient_Sounds_Play_Sound(int a1, int a2, int a3, int a4, int a5
 // ScriptBase::Ambient_Sounds_Play_Speech_Sound
 
 void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time) {
+	//TODO
+	warning("Ambient_Sounds_Remove_All_Non_Looping_Sounds(%d)", time);
 	// _vm->_ambientSounds->removeAllNonLoopingSounds(time);
 }
 
@@ -948,6 +950,8 @@ void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int id, bool a2){
 }
 
 void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int time) {
+	//TODO
+	warning("Ambient_Sounds_Remove_All_Looping_Sounds(%d)", time);
 	// _vm->_ambientSounds->removeAllLoopingSounds(time);
 }
 
@@ -1289,18 +1293,15 @@ void ScriptBase::Set_Fog_Density(const char* fogName, float density) {
 }
 
 void ScriptBase::ADQ_Flush() {
-	//TODO
-	warning("ADQ_Flush()");
+	_vm->_adq->flush(0, true);
 }
 
-void ScriptBase::ADQ_Add(int a1, int a2, int a3) {
-	//TODO
-	warning("ADQ_Add(%d, %d, %d)", a1, a2, a3);
+void ScriptBase::ADQ_Add(int actorId, int sentenceId, int animationMode) {
+	_vm->_adq->add(actorId, sentenceId, animationMode);
 }
 
 void ScriptBase::ADQ_Add_Pause(int delay) {
-	//TODO
-	warning("ADQ_Add_Pause(%d)", delay);
+	_vm->_adq->addPause(delay);
 }
 
 bool ScriptBase::Game_Over() {

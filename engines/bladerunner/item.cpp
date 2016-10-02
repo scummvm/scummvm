@@ -1,7 +1,7 @@
 #include "bladerunner/item.h"
 
 #include "bladerunner/bladerunner.h"
-//#include "bladerunner/slice_animations.h"
+
 #include "bladerunner/slice_renderer.h"
 
 namespace BladeRunner {
@@ -94,7 +94,7 @@ void Item::setXYZ(Vector3 position) {
 	_depth = screenPosition.z * 25.5f;
 }
 
-void Item::init(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy) {
+void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy) {
 	_itemId = itemId;
 	_setId = setId;
 	_animationId = animationId;
