@@ -114,7 +114,7 @@ void scene11_initScene(Scene *sc) {
 	g_vars->scene11_swingOldAngle = 0.0;
 	g_vars->scene11_swingSpeed = 0.0;
 	g_vars->scene11_swingAngleDiff = 0.0;
-	g_vars->scene11_swingInertia = 1.28; //1.9849218750000000;
+	g_vars->scene11_swingInertia = 0.01; //1.9849218750000000;
 	g_vars->scene11_swingCounter = 0;
 	g_vars->scene11_swingCounterPrevTurn = 0;
 	g_vars->scene11_swingDirection = 0;
@@ -242,7 +242,7 @@ void sceneHandler11_manToSwing() {
 	g_fp->_aniMan2->hide();
 
 	g_vars->scene11_swingCounter = 0;
-	g_vars->scene11_swingInertia = 1.28; //1.9849218;
+	g_vars->scene11_swingInertia = 0.01; //1.9849218;
 
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
 	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);

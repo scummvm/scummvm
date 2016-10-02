@@ -199,7 +199,7 @@ Vars::Vars() {
 	scene11_swingOldAngle = 1.0;
 	scene11_swingSpeed = 1.0;
 	scene11_swingAngleDiff = 1.0;
-	scene11_swingInertia = 0.0;
+	scene11_swingInertia = 0.01;
 	scene11_swingCounter = 0;
 	scene11_swingCounterPrevTurn = 0;
 	scene11_swingDirection = 0;
