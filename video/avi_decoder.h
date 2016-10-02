@@ -75,6 +75,7 @@ public:
 	bool isRewindable() const { return true; }
 	bool isSeekable() const;
 
+	const Graphics::Surface *decodeNextTransparency();
 protected:
 	// VideoDecoder API
 	void readNextPacket();

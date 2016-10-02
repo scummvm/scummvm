@@ -45,12 +45,20 @@ public:
 	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
 		Video::AVIDecoder(frameRateOverride, soundType) {}
 	
-	Video::AVIDecoder::AVIVideoTrack &getVideoTrack();
+	/**
+	 * Returns the number of video tracks the decoder has
+	 */
+	uint videoTrackCount() const { return _videoTracks.size(); }
+	
+	/**
+	 * Returns the specified video track
+	 */
+	Video::AVIDecoder::AVIVideoTrack &getVideoTrack(uint idx);
 };
 
 class AVISurface {
 private:
-	AVIDecoder *_decoders[2];
+	AVIDecoder *_decoder;
 	CVideoSurface *_videoSurface;
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
@@ -114,7 +122,7 @@ public:
 	/**
 	 * Return true if a video is currently playing
 	 */
-	virtual bool isPlaying() const { return _decoders[0]->isPlaying(); }
+	virtual bool isPlaying() const { return _decoder->isPlaying(); }
 
 	/**
 	 * Handle any movie events relevent for the frame

@@ -111,6 +111,14 @@ bool AVIDecoder::isSeekable() const {
 	return isVideoLoaded() && !_indexEntries.empty();
 }
 
+const Graphics::Surface *AVIDecoder::decodeNextTransparency() {
+	if (_videoTracks.size() != 2)
+		return nullptr;
+
+	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks[1].track);
+	return track->decodeNextFrame();
+}
+
 bool AVIDecoder::parseNextChunk() {
 	uint32 tag = _fileStream->readUint32BE();
 	uint32 size = _fileStream->readUint32LE();
@@ -362,15 +370,26 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		status.index = index;
 		status.chunkSearchOffset = _movieListStart;
 
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
-			_videoTracks.push_back(status);
-		else
+		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
 			_audioTracks.push_back(status);
-	}
+		} else if (_videoTracks.empty()) {
+			_videoTracks.push_back(status);
+		} else {
+			// Secondary video track. Figure out the starting chunk offset,
+			// by iteratiing through the frames of the primary one
+			assert(_videoTracks.size() == 1);
+			stream->seek(_movieListStart);
 
-	if (_videoTracks.size() != 1) {
-		close();
-		return false;
+			for (uint idx = 0; idx < _header.totalFrames; ++idx) {
+				_fileStream->readUint32BE();
+				uint32 size = _fileStream->readUint32LE();
+				_fileStream->seek(size, SEEK_CUR);
+			}
+
+			status.chunkSearchOffset = _fileStream->pos();
+			assert(status.chunkSearchOffset < _movieListEnd);
+			_videoTracks.push_back(status);
+		}
 	}
 
 	// Check if this is a special Duck Truemotion video
@@ -401,12 +420,13 @@ void AVIDecoder::readNextPacket() {
 	if (_videoTracks.empty())
 		return;
 
-	// Get the video frame first
-	handleNextPacket(_videoTracks[0]);
+	// Handle the video first
+	for (uint idx = 0; idx < _videoTracks.size(); ++idx)
+		handleNextPacket(_videoTracks[idx]);
 
 	// Handle audio tracks next
-	for (uint32 i = 0; i < _audioTracks.size(); i++)
-		handleNextPacket(_audioTracks[i]);
+	for (uint idx = 0; idx < _audioTracks.size(); ++idx)
+		handleNextPacket(_audioTracks[idx]);
 }
 
 void AVIDecoder::handleNextPacket(TrackStatus &status) {
