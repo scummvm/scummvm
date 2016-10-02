@@ -334,11 +334,12 @@ void sceneHandler11_jumpFromSwing() {
 }
 
 void sceneHandler11_swing0() {
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 0;
 	g_vars->scene11_swingMaxAngle = 45;
@@ -346,11 +347,12 @@ void sceneHandler11_swing0() {
 }
 
 void sceneHandler11_swing1() {
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_1, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 1;
 	g_vars->scene11_swingMaxAngle = 42;
@@ -358,11 +360,12 @@ void sceneHandler11_swing1() {
 }
 
 void sceneHandler11_swing2() {
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_2, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 2;
 	g_vars->scene11_swingMaxAngle = 48;
@@ -370,6 +373,7 @@ void sceneHandler11_swing2() {
 }
 
 void sceneHandler11_emptySwing() {
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	if (g_vars->scene11_swingDirection)
 		sceneHandler11_swing0();
 
@@ -379,7 +383,7 @@ void sceneHandler11_emptySwing() {
 	g_vars->scene11_dudeOnSwing->show1(-1, -1, -1, 0);
 	g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_EMPTY);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_KCH_MOVE2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingInertia = 0.03; //1.9881250;
 }
