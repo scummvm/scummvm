@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "common/events.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "engines/engine.h"
@@ -228,6 +229,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkWaitMusicEnd:
 			do {
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
+				g_system->updateScreen();
 				g_system->delayMillis(10);
 			} while (_mixer->isSoundHandleActive(_musicHandle));
 			break;
