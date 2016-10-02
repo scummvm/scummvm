@@ -232,6 +232,8 @@ int sceneHandler11_updateScreenCallback() {
 }
 
 void sceneHandler11_manToSwing() {
+	debugC(1, kDebugSceneLogic, "sceneHandler11_manToSwing()");
+
 	g_vars->scene11_arcadeIsOn = true;
 
 	getCurrSceneSc2MotionController()->deactivate();
@@ -696,6 +698,7 @@ int sceneHandler11(ExCommand *cmd) {
 				if (g_vars->scene11_swingDirection == dir1 || dir2 <= 0 || g_vars->scene11_swingCounter - dir2 <= 2) {
 				LABEL_49:
 					if (g_vars->scene11_arcadeIsOn) {
+				LABEL_61:
 						g_fp->_behaviorManager->updateBehaviors();
 						g_fp->startSceneTrack();
 						return res;
@@ -719,9 +722,7 @@ int sceneHandler11(ExCommand *cmd) {
 							g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
 						}
 					}
-					g_fp->_behaviorManager->updateBehaviors();
-					g_fp->startSceneTrack();
-					return res;
+					goto LABEL_61;
 				}
 
 				if (dir1 == 1) {
@@ -777,14 +778,16 @@ int sceneHandler11(ExCommand *cmd) {
 				&& cmd->_param == ANI_INV_BOOT)
 				sceneHandler11_putBoot();
 		} else {
-			if (g_vars->scene11_arcadeIsOn) {
-				sceneHandler11_setSwingDirection();
+			if (!g_vars->scene11_arcadeIsOn)
+				goto LABEL_69;
 
-				g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
-			}
+			sceneHandler11_setSwingDirection();
+
+			g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
 		}
 
 		if (!g_vars->scene11_arcadeIsOn) {
+		LABEL_69:
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
