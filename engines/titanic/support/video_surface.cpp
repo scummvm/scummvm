@@ -22,8 +22,8 @@
 
 #include "titanic/support/video_surface.h"
 #include "titanic/support/image_decoders.h"
-#include "titanic/support/raw_surface.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -198,39 +198,27 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
 				src->_transparencyMode == TRANS_ALPHA255;
 
-			CRawSurface rawSurface(src->getTransparencySurface(), src->_transparencyMode);
+			CTransparencySurface transSurface(src->getTransparencySurface(), src->_transparencyMode);
 			if (flipFlag)
-				rawSurface.setRow(srcRect.top);
+				transSurface.setRow(srcRect.top);
 			else
-				rawSurface.setRow(src->getHeight() - srcRect.bottom);
+				transSurface.setRow(src->getHeight() - srcRect.bottom);
 
 			for (int srcY = srcRect.top; srcY < srcRect.bottom; ++srcY) {
 				// Prepare for copying the line
 				const uint16 *lineSrcP = srcPtr;
 				uint16 *lineDestP = destPtr;
-				rawSurface.resetPitch();
-				rawSurface.setCol(srcRect.left);
+				transSurface.setRow(srcY);
+				transSurface.setCol(srcRect.left);
 
 				int srcWidth = srcRect.width();
 				while (srcWidth > 0) {
-					int move = rawSurface.moveX(0);
+					int move = transSurface.moveX();
 
 					if (move <= 1) {
-						if (!rawSurface.isPixelTransparent2()) {
-							copyPixel(lineDestP, lineSrcP, rawSurface.getPixel() >> 3,
+						if (!transSurface.isPixelTransparent2()) {
+							copyPixel(lineDestP, lineSrcP, transSurface.getPixel() >> 3,
 								is16Bit, isAlpha);
-						}
-					} else {
-						if (move > srcWidth)
-							move = srcWidth;
-
-						if (rawSurface.isPixelTransparent1()) {
-							Common::copy(lineSrcP, lineSrcP + move, lineDestP);
-						} else if (!rawSurface.isPixelTransparent2()) {
-							byte transVal = rawSurface.getPixel() >> 3;
-							for (int idx = 0; idx < move; ++idx) {
-								copyPixel(lineDestP + idx, lineSrcP + idx, transVal, is16Bit, isAlpha);
-							}
 						}
 					}
 
@@ -240,7 +228,6 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				}
 
 				// Move to next line
-				rawSurface.skipPitch();
 				srcPtr = flipFlag ? srcPtr + getWidth() : srcPtr - getWidth();
 				destPtr -= destArea.w;
 			}
@@ -487,13 +474,11 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 
 	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
 		if (_transparencySurface) {
-			CRawSurface rawSurface(&_transparencySurface->rawSurface(), _transparencyMode);
-			rawSurface.setRow(_transBlitFlag ? pt.y : getHeight() - pt.y - 1);
-			rawSurface.resetPitch();
-			rawSurface.setCol(pt.x);
-			rawSurface.moveX(0);
+			CTransparencySurface transSurface(&_transparencySurface->rawSurface(), _transparencyMode);
+			transSurface.setRow(_transBlitFlag ? pt.y : getHeight() - pt.y - 1);
+			transSurface.setCol(pt.x);
 
-			if (rawSurface.isPixelTransparent2())
+			if (transSurface.isPixelTransparent2())
 				return getTransparencyColor();
 		}
 
@@ -637,8 +622,8 @@ void OSVideoSurface::transPixelate() {
 	unlock();
 }
 
-Graphics::ManagedSurface *OSVideoSurface::dupMovieFrame() const {
-	return _movie ? _movie->duplicateFrame() : nullptr;
+Graphics::ManagedSurface *OSVideoSurface::dupMovieTransparency() const {
+	return _movie ? _movie->duplicateTransparency() : nullptr;
 }
 
 int OSVideoSurface::freeSurface() {

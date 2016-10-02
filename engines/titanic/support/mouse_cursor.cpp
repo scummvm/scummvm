@@ -32,6 +32,8 @@
 
 namespace Titanic {
 
+#define CURSOR_SIZE 64
+
 static const int CURSOR_DATA[NUM_CURSORS][4] = {
 	{ 1, 136, 19, 18 },
 	{ 2, 139, 1, 1 },
@@ -52,7 +54,7 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 
 CMouseCursor::CursorEntry::~CursorEntry() {
 	delete _videoSurface;
-	delete _frameSurface;
+	delete _transSurface;
 }
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
@@ -75,16 +77,16 @@ void CMouseCursor::loadCursorImages() {
 			CURSOR_DATA[idx][3]);
 
 		// Create the surface
-		CVideoSurface *surface = _screenManager->createSurface(64, 64);
+		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
 		_cursors[idx]._videoSurface = surface;
 
 		// Open the cursors video and move to the given frame
 		OSMovie movie(key, surface);
 		movie.setFrame(idx);
 		
-		Graphics::ManagedSurface *frameSurface = movie.duplicateFrame();
-		_cursors[idx]._frameSurface = frameSurface;
-		surface->setTransparencySurface(frameSurface);
+		Graphics::ManagedSurface *transSurface = movie.duplicateTransparency();
+		_cursors[idx]._transSurface = transSurface;
+		surface->setTransparencySurface(transSurface);
 	}
 }
 
@@ -101,12 +103,23 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 	if (cursorId != _cursorId) {
 		CursorEntry &ce = _cursors[cursorId - 1];
-		CVideoSurface &surface = *ce._videoSurface;
-		surface.lock();
+		CVideoSurface &srcSurface = *ce._videoSurface;
+		srcSurface.lock();
 
-		CursorMan.replaceCursor(surface.getPixels(), surface.getWidth(), surface.getHeight(),
-			ce._centroid.x, ce._centroid.y, 0, false, &g_vm->_screen->format);
-		surface.unlock();
+		CVideoSurface *surface = CScreenManager::_currentScreenManagerPtr->createSurface(
+			CURSOR_SIZE, CURSOR_SIZE);
+		Rect srcRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
+		surface->lock();
+		surface->getRawSurface()->fillRect(srcRect, srcSurface.getTransparencyColor());
+		surface->blitFrom(Point(0, 0), &srcSurface, &srcRect);
+
+		CursorMan.replaceCursor(surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			ce._centroid.x, ce._centroid.y, surface->getTransparencyColor(),
+			false, &g_vm->_screen->format);
+
+		srcSurface.unlock();
+		surface->unlock();
+		delete surface;
 
 		_cursorId = cursorId;
 	}
