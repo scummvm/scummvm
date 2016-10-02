@@ -169,12 +169,12 @@ public:
 	SoundChunk *getSound(uint num);
 };
 
-class TextResource : public Resource {
+class ErrorMessage : public Resource {
 public:
-	TextResource(Common::String filename) : Resource(filename) {}
-	virtual ~TextResource() {}
+	ErrorMessage(Common::String filename) : Resource(filename) {}
+	virtual ~ErrorMessage() {}
 
-	Common::String getText(uint num);
+	Common::String getErrorMessage(uint num);
 };
 
 class VideoResource : public Resource {

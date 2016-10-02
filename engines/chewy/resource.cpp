@@ -268,7 +268,7 @@ SoundChunk *SoundResource::getSound(uint num) {
 	return sound;
 }
 
-Common::String TextResource::getText(uint num) {
+Common::String ErrorMessage::getErrorMessage(uint num) {
 	assert(num < _chunkList.size());
 
 	Chunk *chunk = &_chunkList[num];

@@ -45,7 +45,7 @@ private:
 	bool Cmd_PlayMusic(int argc, const char **argv);
 	bool Cmd_PlayVideo(int argc, const char **argv);
 	bool Cmd_VideoInfo(int argc, const char **argv);
-	bool Cmd_Text(int argc, const char **argv);
+	bool Cmd_ErrorMessage(int argc, const char **argv);
 };
 
 } // End of namespace Chewy

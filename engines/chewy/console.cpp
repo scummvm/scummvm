@@ -31,15 +31,15 @@
 namespace Chewy {
 
 Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("dump",			WRAP_METHOD(Console, Cmd_Dump));
-	registerCmd("dump_bg",		WRAP_METHOD(Console, Cmd_DumpBg));
-	registerCmd("draw",			WRAP_METHOD(Console, Cmd_Draw));
-	registerCmd("play_sound",	WRAP_METHOD(Console, Cmd_PlaySound));
-	registerCmd("play_speech",	WRAP_METHOD(Console, Cmd_PlaySpeech));
-	registerCmd("play_music",	WRAP_METHOD(Console, Cmd_PlayMusic));
-	registerCmd("play_video",	WRAP_METHOD(Console, Cmd_PlayVideo));
-	registerCmd("video_info",	WRAP_METHOD(Console, Cmd_VideoInfo));
-	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("dump",			 WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("dump_bg",		 WRAP_METHOD(Console, Cmd_DumpBg));
+	registerCmd("draw",			 WRAP_METHOD(Console, Cmd_Draw));
+	registerCmd("play_sound",	 WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("play_speech",	 WRAP_METHOD(Console, Cmd_PlaySpeech));
+	registerCmd("play_music",	 WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("play_video",	 WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("video_info",	 WRAP_METHOD(Console, Cmd_VideoInfo));
+	registerCmd("error_message", WRAP_METHOD(Console, Cmd_ErrorMessage));
 }
 
 Console::~Console() {
@@ -177,18 +177,18 @@ bool Console::Cmd_VideoInfo(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_Text(int argc, const char **argv) {
+bool Console::Cmd_ErrorMessage(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: <file> <text number>\n");
+		debugPrintf("Usage: error_message <file> <message number>\n");
 		return true;
 	}
 
 	Common::String filename = argv[1];
 	int resNum = atoi(argv[2]);
 
-	TextResource *res = new TextResource(filename);
-	Common::String str = res->getText(resNum);
-	this->debugPrintf("Text: %s\n", str.c_str());
+	ErrorMessage *res = new ErrorMessage(filename);
+	Common::String str = res->getErrorMessage(resNum);
+	this->debugPrintf("Error message: %s\n", str.c_str());
 	delete res;
 
 	return true;
