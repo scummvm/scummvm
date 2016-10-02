@@ -57,7 +57,7 @@ MohawkEngine::~MohawkEngine() {
 
 Common::Error MohawkEngine::run() {
 	_video = new VideoManager(this);
-	_pauseDialog = new PauseDialog(this, "The game is paused. Press any key to continue.");
+	_pauseDialog = new PauseDialog(this, _("The game is paused. Press any key to continue."));
 
 	return Common::kNoError;
 }
