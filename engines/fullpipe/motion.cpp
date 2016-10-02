@@ -38,7 +38,31 @@ bool MotionController::load(MfcArchive &file) {
 }
 
 void MotionController::enableLinks(const char *linkName, bool enable) {
-	warning("STUB: MotionController::enableLinks()");
+	if (_objtype != kObjTypeMctlCompound)
+		return;
+
+	MctlCompound *obj = (MctlCompound *)this;
+
+	for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
+		MotionController *con = obj->getMotionController(i);
+
+		if (con->_objtype == kObjTypeMovGraph) {
+			MovGraph *gr = (MovGraph *)con;
+
+			for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+				assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+
+				MovGraphLink *lnk = (MovGraphLink *)*l;
+
+				if (!strcmp(lnk->_name, linkName)) {
+					if (enable)
+						lnk->_flags |= 0x20000000;
+					else
+						lnk->_flags &= 0xDFFFFFFF;
+				}
+			}
+		}
+	}
 }
 
 MovGraphLink *MotionController::getLinkByName(const char *name) {
