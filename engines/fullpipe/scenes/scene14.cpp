@@ -807,9 +807,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene14_arcadeIsOn) {
-			uint32 pixel;
-
-			if (g_vars->scene14_dudeCanKick && g_fp->_aniMan->getPixelAtPos(cmd->_sceneClickX, cmd->_sceneClickY, &pixel) && !g_fp->_aniMan->_movement) {
+			if (g_vars->scene14_dudeCanKick && g_fp->_aniMan->isPixelHitAtPos(cmd->_sceneClickX, cmd->_sceneClickY) && !g_fp->_aniMan->_movement) {
 				sceneHandler14_dudeDecline();
 				break;
 			}
