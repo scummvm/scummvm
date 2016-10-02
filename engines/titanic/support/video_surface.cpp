@@ -184,16 +184,17 @@ void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoS
 }
 
 void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag) {
+	assert(srcRect.width() == destRect.width() && srcRect.height() == destRect.height());
+
 	if (lock()) {
 		if (src->lock()) {
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
 
-			const uint16 *srcPtr = flipFlag ?
-				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.top) :
-				(const uint16 *)srcSurface->getBasePtr(srcRect.left, srcRect.bottom);
-			uint16 *destPtr = (uint16 *)destSurface->getBasePtr(destArea.w, destArea.h - 1);
+			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
+				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
+			uint16 *destPtr = (uint16 *)destSurface->getBasePtr(0, destArea.h - 1);
 			bool is16Bit = src->getPixelDepth() == 2;
 			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
 				src->_transparencyMode == TRANS_ALPHA255;
@@ -204,27 +205,23 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			else
 				transSurface.setRow(src->getHeight() - srcRect.bottom);
 
-			for (int srcY = srcRect.top; srcY < srcRect.bottom; ++srcY) {
+			for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
 				// Prepare for copying the line
 				const uint16 *lineSrcP = srcPtr;
 				uint16 *lineDestP = destPtr;
-				transSurface.setRow(srcY);
+				transSurface.setRow(flipFlag ? srcRect.top + yCtr : srcRect.bottom - yCtr - 1);
 				transSurface.setCol(srcRect.left);
 
-				int srcWidth = srcRect.width();
-				while (srcWidth > 0) {
-					int move = transSurface.moveX();
+				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
+					transSurface.moveX();
 
-					if (move <= 1) {
-						if (!transSurface.isPixelTransparent2()) {
-							copyPixel(lineDestP, lineSrcP, transSurface.getPixel() >> 3,
-								is16Bit, isAlpha);
-						}
+					if (!transSurface.isPixelTransparent2()) {
+						copyPixel(lineDestP, lineSrcP, transSurface.getPixel() >> 3,
+							is16Bit, isAlpha);
 					}
 
-					lineSrcP += move;
-					lineDestP += move;
-					srcWidth -= move;
+					++lineSrcP;
+					++lineDestP;
 				}
 
 				// Move to next line
