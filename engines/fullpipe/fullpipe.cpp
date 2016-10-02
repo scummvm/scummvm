@@ -307,6 +307,9 @@ Common::Error FullpipeEngine::run() {
 
 	int time1 = g_fp->_system->getMillis();
 
+	// Center mouse
+	_system->warpMouse(400, 300);
+
 	while (_gameContinue) {
 		updateEvents();
 
