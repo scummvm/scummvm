@@ -210,7 +210,7 @@ TBFChunk *BackgroundResource::getImage(uint num) {
 	tbf->width = _stream.readUint16LE();
 	tbf->height = _stream.readUint16LE();
 	for (int j = 0; j < 3 * 256; j++)
-		tbf->palette[j] = _stream.readByte() << 2;
+		tbf->palette[j] = (_stream.readByte() << 2) & 0xff;
 
 	tbf->data = new byte[tbf->size];
 
