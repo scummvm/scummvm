@@ -62,10 +62,8 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	typedef bool(*SelectTrackFn)(bool isVideo, int trackNumber);
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
-		SelectTrackFn trackFn = nullptr);
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -287,7 +285,6 @@ protected:
 
 	int _videoTrackCounter, _audioTrackCounter;
 	Track *_lastAddedTrack;
-	SelectTrackFn _selectTrackFn;
 
 	void initCommon();
 

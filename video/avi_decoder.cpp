@@ -76,13 +76,13 @@ enum {
 };
 
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType, SelectTrackFn trackFn) : 
-		_frameRateOverride(0), _soundType(soundType), _selectTrackFn(trackFn) {
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType) :
+		_frameRateOverride(0), _soundType(soundType) {
 	initCommon();
 }
 
-AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType,
-		SelectTrackFn trackFn) : _frameRateOverride(frameRateOverride), _soundType(soundType), _selectTrackFn(trackFn) {
+AVIDecoder::AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType) :
+	_frameRateOverride(frameRateOverride), _soundType(soundType) {
 	initCommon();
 }
 
@@ -293,14 +293,8 @@ void AVIDecoder::handleStreamHeader(uint32 size) {
 }
 
 void AVIDecoder::addTrack(Track *track, bool isExternal) {
-	if (!_selectTrackFn ||
-			(dynamic_cast<AVIVideoTrack *>(track) && _selectTrackFn(true, _videoTrackCounter++)) ||
-			(dynamic_cast<AVIAudioTrack *>(track) && _selectTrackFn(false, _audioTrackCounter++))) {
-		VideoDecoder::addTrack(track, isExternal);
-		_lastAddedTrack = track;
-	} else {
-		_lastAddedTrack = nullptr;
-	}
+	VideoDecoder::addTrack(track, isExternal);
+	_lastAddedTrack = track;
 }
 
 void AVIDecoder::readStreamName(uint32 size) {

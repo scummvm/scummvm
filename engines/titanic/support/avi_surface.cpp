@@ -38,22 +38,6 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack() {
 	error("Could not find video track");
 }
 
-/**
- * Track filter for AVIDecoder that filters out any secondary
- * video track some videos have to hold transparency masks
- */
-static bool primaryTrackSelect(bool isVideo, int trackCounter) {
-	return !isVideo || trackCounter == 0;
-}
-
-/**
- * Track filter for AVIDecoder that only accepts the secondary
- * transparency msak video track for a video, if present
- */
-static bool secondaryTrackSelect(bool isVideo, int trackCounter) {
-	return isVideo && trackCounter > 0;
-}
-
 AVISurface::AVISurface(const CResourceKey &key) {
 	_videoSurface = nullptr;
 	_streamCount = 0;
@@ -66,13 +50,13 @@ AVISurface::AVISurface(const CResourceKey &key) {
 	_currentFrame = -1;
 	_isReversed = false;
 
-	// Create a decoder for the audio (if any) and primary video track
-	_decoders[0] = new AVIDecoder(Audio::Mixer::kPlainSoundType, primaryTrackSelect);
+	// Create a decoder
+	_decoders[0] = new AVIDecoder(Audio::Mixer::kPlainSoundType);
 	if (!_decoders[0]->loadFile(key.getString()))
 		error("Could not open video - %s", key.getString().c_str());
 
 	_streamCount = 1;
-
+/*
 	// Create a decoder for any secondary video track
 	AVIDecoder *decoder2 = new AVIDecoder(Audio::Mixer::kPlainSoundType, secondaryTrackSelect);
 	if (decoder2->loadFile(key.getString())) {
@@ -82,6 +66,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 		delete decoder2;
 		_decoders[1] = nullptr;
 	}
+	*/
 }
 
 AVISurface::~AVISurface() {

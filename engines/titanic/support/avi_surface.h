@@ -40,10 +40,10 @@ enum MovieFlag {
 
 class AVIDecoder : public Video::AVIDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr) :
-		Video::AVIDecoder(soundType, trackFn) {}
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
-		SelectTrackFn trackFn = nullptr) : Video::AVIDecoder(frameRateOverride, soundType, trackFn) {}
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
+		Video::AVIDecoder(soundType) {}
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
+		Video::AVIDecoder(frameRateOverride, soundType) {}
 	
 	Video::AVIDecoder::AVIVideoTrack &getVideoTrack();
 };
