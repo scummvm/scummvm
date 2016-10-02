@@ -100,8 +100,9 @@ int CRawSurface::moveX(int xp) {
 			}
 		}
 
-		_runLength = *_pixelsBaseP++;
-		++_pixelsBaseP;
+		_runLength = *_pixelsBaseP;
+		_pixelsP = _pixelsBaseP + 1;
+		_pixelsBaseP += 2;
 		_flag = true;
 	}
 
