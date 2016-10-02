@@ -481,7 +481,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 void sceneHandler14_grandmaThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
-	MessageQueue *mq = new MessageQueue;
+	MessageQueue *mq = new MessageQueue(0);
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
@@ -521,7 +521,7 @@ void sceneHandler14_passToGrandma() {
 void sceneHandler14_grandmaJumpThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
-	MessageQueue *mq = new MessageQueue;
+	MessageQueue *mq = new MessageQueue(0);
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
