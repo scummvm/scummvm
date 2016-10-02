@@ -177,12 +177,19 @@ void sceneHandler37_updateRing(int ringNum) {
 
 	g_vars->scene37_pipeIsOpen = true;
 
-	for (uint j = 0; j < g_vars->scene37_rings.size(); j++) {
-		for (int i = 0; i < g_vars->scene37_rings[j]->numSubRings; i++) {
-			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[j]->subRings[i]);
+	for (uint i = 0; i < g_vars->scene37_rings.size(); i++) {
+		for (int j = 0; j < g_vars->scene37_rings[i]->numSubRings; j++) {
+			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[i]->subRings[j]);
 
-			if ((ani->_movement && ani->_movement->_id == MV_RNG_CLOSE) || ani->_statics->_staticsId == ST_RNG_CLOSED2)
-				g_vars->scene37_pipeIsOpen = false;
+			debugC(2, kDebugSceneLogic, "ring[%d][%d]: mov: %d st: %d", i, j, (ani->_movement ? ani->_movement->_id : 0), ani->_statics->_staticsId);
+
+			if (ani->_movement) {
+				if (ani->_movement->_id == MV_RNG_CLOSE)
+					g_vars->scene37_pipeIsOpen = false;
+			} else {
+				if (ani->_statics->_staticsId == ST_RNG_CLOSED2)
+					g_vars->scene37_pipeIsOpen = false;
+			}
 		}
 	}
 
