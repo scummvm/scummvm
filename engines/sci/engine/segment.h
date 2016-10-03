@@ -475,14 +475,12 @@ public:
 	/**
 	 * Sets the type of this array. The type of the array may only be set once.
 	 */
-	void setType(SciArrayType type) {
+	void setType(const SciArrayType type) {
 		assert(_type == kArrayTypeInvalid);
 		switch(type) {
+		case kArrayTypeInt16:
 		case kArrayTypeID:
 			_elementSize = sizeof(reg_t);
-			break;
-		case kArrayTypeInt16:
-			_elementSize = sizeof(int16);
 			break;
 		case kArrayTypeString:
 			_elementSize = sizeof(char);
@@ -551,12 +549,11 @@ public:
 
 		switch(_type) {
 		case kArrayTypeInt16:
-			return make_reg(0, ((int16 *)_data)[index]);
+		case kArrayTypeID:
+			return ((reg_t *)_data)[index];
 		case kArrayTypeByte:
 		case kArrayTypeString:
 			return make_reg(0, ((byte *)_data)[index]);
-		case kArrayTypeID:
-			return ((reg_t *)_data)[index];
 		default:
 			error("Invalid array type %d", _type);
 		}
@@ -574,18 +571,48 @@ public:
 
 		switch(_type) {
 		case kArrayTypeInt16:
-			((int16 *)_data)[index] = value.toSint16();
+		case kArrayTypeID:
+			((reg_t *)_data)[index] = value;
 			break;
 		case kArrayTypeByte:
 		case kArrayTypeString:
 			((byte *)_data)[index] = value.toSint16();
 			break;
-		case kArrayTypeID:
-			((reg_t *)_data)[index] = value;
-			break;
 		default:
 			error("Invalid array type %d", _type);
 		}
+	}
+
+	/**
+	 * Gets the value at the given index as an int16.
+	 */
+	int16 getAsInt16(const uint16 index) {
+		assert(_type == kArrayTypeInt16);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index);
+		} else {
+			assert(index < _size);
+		}
+
+		const reg_t value = ((reg_t *)_data)[index];
+		assert(value.isNumber());
+		return value.toSint16();
+	}
+
+	/**
+	 * Sets the value at the given index from an int16.
+	 */
+	void setFromInt16(const uint16 index, const int16 value) {
+		assert(_type == kArrayTypeInt16);
+
+		if (getSciVersion() >= SCI_VERSION_3) {
+			resize(index + 1);
+		} else {
+			assert(index < _size);
+		}
+
+		((reg_t *)_data)[index] = make_reg(0, value);
 	}
 
 	/**
@@ -621,27 +648,11 @@ public:
 	}
 
 	/**
-	 * Returns a reference to the int16 at the given index. Only valid for int16
-	 * arrays.
-	 */
-	int16 &int16At(const uint16 index) {
-		assert(_type == kArrayTypeInt16);
-
-		if (getSciVersion() >= SCI_VERSION_3) {
-			resize(index);
-		} else {
-			assert(index < _size);
-		}
-
-		return ((int16 *)_data)[index];
-	}
-
-	/**
 	 * Returns a reference to the reg_t at the given index. Only valid for ID
-	 * arrays.
+	 * and int16 arrays.
 	 */
 	reg_t &IDAt(const uint16 index) {
-		assert(_type == kArrayTypeID);
+		assert(_type == kArrayTypeID || _type == kArrayTypeInt16);
 
 		if (getSciVersion() >= SCI_VERSION_3) {
 			resize(index);
@@ -660,18 +671,7 @@ public:
 		resize(index + count);
 
 		switch (_type) {
-		case kArrayTypeInt16: {
-			const reg_t *source = values;
-			int16 *target = (int16 *)_data + index;
-			while (count--) {
-				if (!source->isNumber()) {
-					error("Non-number %04x:%04x sent to int16 array", PRINT_REG(*source));
-				}
-				*target++ = source->toSint16();
-				++source;
-			}
-			break;
-		}
+		case kArrayTypeInt16:
 		case kArrayTypeID: {
 			const reg_t *source = values;
 			reg_t *target = (reg_t *)_data + index;
@@ -714,14 +714,7 @@ public:
 		resize(index + count);
 
 		switch (_type) {
-		case kArrayTypeInt16: {
-			const int16 fillValue = value.toSint16();
-			int16 *target = (int16 *)_data + index;
-			while (count--) {
-				*target++ = fillValue;
-			}
-			break;
-		}
+		case kArrayTypeInt16:
 		case kArrayTypeID: {
 			reg_t *target = (reg_t *)_data + index;
 			while (count--) {
@@ -1129,8 +1122,9 @@ public:
 		const int length = getWidth() * getHeight();
 		uint8 *pixel = getPixels();
 		for (int i = 0; i < length; ++i) {
-			uint8 color = clut.int16At(*pixel);
-			*pixel++ = color;
+			const int16 color = clut.getAsInt16(*pixel);
+			assert(color >= 0 && color <= 255);
+			*pixel++ = (uint8)color;
 		}
 	}
 };

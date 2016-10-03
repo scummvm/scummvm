@@ -685,19 +685,15 @@ void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	switch (_type) {
-	case kArrayTypeByte:
-	case kArrayTypeString:
-		s.syncBytes((byte *)_data, savedSize);
-		break;
 	case kArrayTypeInt16:
-		for (int i = 0; i < savedSize; ++i) {
-			s.syncAsUint16LE(((int16 *)_data)[i]);
-		}
-		break;
 	case kArrayTypeID:
 		for (int i = 0; i < savedSize; ++i) {
 			syncWithSerializer(s, ((reg_t *)_data)[i]);
 		}
+		break;
+	case kArrayTypeByte:
+	case kArrayTypeString:
+		s.syncBytes((byte *)_data, savedSize);
 		break;
 	default:
 		error("Attempt to sync invalid SciArray type %d", _type);

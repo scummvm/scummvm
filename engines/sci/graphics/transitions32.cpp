@@ -280,7 +280,7 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 				if (rangeCount > 0) {
 					entry->fadeColorRanges = new uint16[rangeCount];
 					for (size_t i = 0; i < rangeCount; ++i) {
-						entry->fadeColorRanges[i] = table.int16At(i);
+						entry->fadeColorRanges[i] = table.getAsInt16(i);
 					}
 				}
 			}

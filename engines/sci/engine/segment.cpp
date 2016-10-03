@@ -253,10 +253,10 @@ SegmentRef ArrayTable::dereference(reg_t pointer) {
 	SegmentRef ret;
 
 	SciArray &array = at(pointer.getOffset());
-	const bool isRaw = array.getType() != kArrayTypeID;
+	const bool isRaw = array.getType() == kArrayTypeByte || array.getType() == kArrayTypeString;
 
 	ret.isRaw = isRaw;
-	ret.maxSize = isRaw ? array.byteSize() : array.size();
+	ret.maxSize = array.byteSize();
 	if (isRaw) {
 		ret.raw = (byte *)array.getRawData();
 	} else {

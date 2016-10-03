@@ -2812,7 +2812,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 							arrayType = "byte";
 							break;
 						case kArrayTypeInt16:
-							arrayType = "int16";
+							arrayType = "int16 (as reg_t)";
 							break;
 						case kArrayTypeString:
 							arrayType = "string";
@@ -2823,22 +2823,14 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 					}
 					debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array->size());
 					switch (array->getType()) {
-					case kArrayTypeID:
+					case kArrayTypeInt16:
+					case kArrayTypeID: {
 						hexDumpReg((const reg_t *)array->getRawData(), array->size(), 4, 0, true);
 						break;
+					}
 					case kArrayTypeByte:
 					case kArrayTypeString: {
 						Common::hexdump((const byte *)array->getRawData(), array->size(), 16, 0);
-						break;
-					}
-					case kArrayTypeInt16: {
-						const int16 *data = (const int16 *)array->getRawData();
-						for (int i = 0; i < array->size(); ++i) {
-							debugN("% 6d ", *data++);
-							if ((i % 8) == 0) {
-								debugN("\n");
-							}
-						}
 						break;
 					}
 					default:

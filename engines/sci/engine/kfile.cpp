@@ -1327,11 +1327,11 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 		const SavegameDesc &save = saves[i];
 		char *target = &descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * i);
 		Common::strlcpy(target, save.name, SCI_MAX_SAVENAME_LENGTH);
-		saveIds.int16At(i) = save.id - kSaveIdShift;
+		saveIds.setFromInt16(i, save.id - kSaveIdShift);
 	}
 
 	descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * saves.size()) = '\0';
-	saveIds.int16At(saves.size()) = 0;
+	saveIds.setFromInt16(saves.size(), 0);
 
 	return make_reg(0, saves.size());
 }

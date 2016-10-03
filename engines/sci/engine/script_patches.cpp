@@ -995,32 +995,8 @@ static const uint16 gk1PatchDay10GabrielDressUp[] = {
 	PATCH_END
 };
 
-// GK1 initializes the global interrogation array with an int16 array, which
-// happens to work in SSCI because object references are int16s, but in ScummVM
-// object references are reg_ts, so this array needs to be created as an IDArray
-// instead
-static const uint16 gk1SignatureInterrogationArray1[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x78,                      // push1
-	SIG_MAGICDWORD,
-	0x39, 0x0f,                // pushi 15
-	0x51, 0x0a,                // class IntArray
-	SIG_END
-};
-
-static const uint16 gk1PatchInterrogationArray1[] = {
-	PATCH_ADDTOOFFSET(+3),  // pushi new
-	PATCH_ADDTOOFFSET(+1),  // push1
-	PATCH_ADDTOOFFSET(+2),  // pushi 15
-	0x51, 0x0b,             // class IDArray
-	PATCH_END
-};
-
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
-	{  true,    10, "fix interrogation array type 1/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
-	{  true,    50, "fix interrogation array type 2/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
-	{  true,    93, "fix interrogation array type 3/3",            1, gk1SignatureInterrogationArray1,  gk1PatchInterrogationArray1 },
 	{  true,    51, "interrogation bug",                           1, gk1SignatureInterrogationBug,     gk1PatchInterrogationBug },
 	{  true,   212, "day 5 drum book dialogue error",              1, gk1SignatureDay5DrumBookDialogue, gk1PatchDay5DrumBookDialogue },
 	{  true,   212, "day 5 phone freeze",                          1, gk1SignatureDay5PhoneFreeze,      gk1PatchDay5PhoneFreeze },
@@ -4560,30 +4536,10 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 #pragma mark -
 #pragma mark Space Quest 6
 
-// When pressing number buttons on the Holocabana controls, View objects are
-// put in an int16 array. This happens to work in SSCI, but ScummVM requires a
-// proper IDArray because reg_t is larger than 16 bits.
-static const uint16 sq6HoloIntArraySignature[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x76,                      // push0
-	0x51, 0x0b,                // class IntArray
-	SIG_MAGICDWORD,
-	0x4a, SIG_UINT16(0x04),    // send 4
-	0xa3, 0x06,                // sal local[6]
-	SIG_END
-};
-
-static const uint16 sq6HoloIntArrayPatch[] = {
-	PATCH_ADDTOOFFSET(+4),      // pushi new; push0
-	0x51, 0x0c,                 // class IDArray
-	PATCH_END
-};
-
 //          script, description,                                      signature                        patch
 static const SciScriptPatcherEntry sq6Signatures[] = {
 	{  true,    15, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,    22, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
-	{  true,   400, "invalid array type",                          1, sq6HoloIntArraySignature,        sq6HoloIntArrayPatch },
 	{  true,   460, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true,   510, "invalid array construction",                  1, sci21IntArraySignature,          sci21IntArrayPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,          sci2NumSavesPatch1 },
@@ -4595,30 +4551,8 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 #pragma mark -
 #pragma mark Torins Passage
 
-// Torin initializes the inventory with an int16 array, which happens to work
-// in SSCI because object references are int16s, but in ScummVM object
-// references are reg_ts, so this array needs to be created as an IDArray
-// instead
-static const uint16 torinInventItemSlotsSignature[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x78,                      // push1
-	SIG_MAGICDWORD,
-	0x67, 0x2e,                // pTos $2e (invSlotsTot)
-	0x51, 0x0b,                // class IntArray
-	SIG_END
-};
-
-static const uint16 torinInventItemSlotsPatch[] = {
-	PATCH_ADDTOOFFSET(+3),  // pushi new
-	PATCH_ADDTOOFFSET(+1),  // push1
-	PATCH_ADDTOOFFSET(+2),  // pTos $2e (invSlotsTot)
-	0x51, 0x0c,             // class IDArray
-	PATCH_END
-};
-
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry torinSignatures[] = {
-	{  true, 64895, "fix inventory array type",                    1, torinInventItemSlotsSignature,    torinInventItemSlotsPatch },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games",               1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
