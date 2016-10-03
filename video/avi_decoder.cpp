@@ -385,7 +385,7 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 		TrackStatus status;
 		status.track = *it;
 		status.index = index;
-		status.chunkSearchOffset = _movieListStart;
+		status.chunkSearchOffset = 0;
 
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio) {
 			_audioTracks.push_back(status);
@@ -393,38 +393,21 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 			_videoTracks.push_back(status);
 		} else {
 			// Secondary video track. Figure out the starting chunk offset,
-			// by iteratiing through the frames of the primary one
+			// by iteratiing through the index
 			assert(_videoTracks.size() == 1);
-			stream->seek(_movieListStart);
 
-			for (uint idx = 0; idx < _header.totalFrames; ++idx) {
-				_fileStream->readUint32BE();
-				uint32 size = _fileStream->readUint32LE();
-				_fileStream->seek(size, SEEK_CUR);
+			// Find the index entry for the frame and move to it
+			for (uint idx = 0; idx < _indexEntries.size(); ++idx) {
+				if (_indexEntries[idx].id != ID_REC &&
+					getStreamIndex(_indexEntries[idx].id) == index) {
+					status.chunkSearchOffset = _indexEntries[idx].offset;
+					break;
+				}
 			}
+			assert(status.chunkSearchOffset != 0);
 
-			// Set the chunk offset, and force the stream num to 10,
-			// to avoid conflicting with any other audio track
-			status.index = 10;
-			status.chunkSearchOffset = _fileStream->pos();
-			assert(status.chunkSearchOffset < _movieListEnd);
+			// Add the video track to the list
 			_videoTracks.push_back(status);
-
-			// Build up index entries for the secondary video track, so we
-			// can seek in at at the same time as the primary video track
-			for (uint idx = 0; idx < _header.totalFrames; ++idx) {
-				uint chunkPos = _fileStream->pos();
-				_fileStream->seek(4, SEEK_CUR);
-				uint chunkSize = _fileStream->readUint32LE();
-				_fileStream->seek(chunkSize, SEEK_CUR);
-
-				OldIndex indexEntry;
-				indexEntry.flags = 0;
-				indexEntry.id = MKTAG('0', 'A', 'd', 'b');
-				indexEntry.offset = chunkPos;
-				indexEntry.size = chunkSize;
-				_indexEntries.push_back(indexEntry);
-			}
 		}
 	}
 
