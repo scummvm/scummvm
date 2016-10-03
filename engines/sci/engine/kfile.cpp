@@ -306,6 +306,11 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	// their game version from the VERSION file
 	if (name.compareToIgnoreCase("version") == 0) {
 		unwrapFilename = false;
+
+		// LSL6hires version is in a file with an empty extension
+		if (Common::File::exists(name + ".")) {
+			name += ".";
+		}
 	}
 
 	if (g_sci->getGameId() == GID_SHIVERS && name.hasSuffix(".SG")) {
