@@ -40,7 +40,7 @@ class EdenGame {
 public:
 	void run();
 
-	EdenGame::EdenGame();
+	EdenGame();
 
 private:
 	void removeConsole();
