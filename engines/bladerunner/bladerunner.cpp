@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -101,7 +100,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
-	
+
 	delete _adq;
 	delete _combat;
 	delete _lights;
@@ -553,7 +552,7 @@ void BladeRunnerEngine::gameTick() {
 		// TODO: VK
 		// TODO: Elevators
 		// TODO: Scores
-		
+
 		_adq->tick();
 		if (_scene->didPlayerWalkIn()) {
 			_script->PlayerWalkedIn();
@@ -606,7 +605,7 @@ void BladeRunnerEngine::gameTick() {
 			}
 
 			_items->tick();
-			
+
 			// TODO: Draw item pickup
 			// TODO: Draw dialogue menu
 
@@ -653,7 +652,7 @@ void BladeRunnerEngine::gameTick() {
 					drawBBox(a, b, _view, &_surface2, color);
 				}
 			}
-			
+
 			//draw regions
 			for (int i = 0; i < 10; i++) {
 				Region* region  =  &_scene->_regions->_regions[i];
@@ -669,14 +668,14 @@ void BladeRunnerEngine::gameTick() {
 
 			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
 				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
-				
+
 				for(int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
 					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
 					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 				}
-				
+
 			}
 
 			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
@@ -788,7 +787,7 @@ void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId)
 }
 
 void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId)
-{	
+{
 	debug("Clicked on actor %d", actorId);
 	_script->ClickedOnActor(actorId);
 }

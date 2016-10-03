@@ -1,3 +1,25 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
 #include "bladerunner/light.h"
 #include "common/util.h"
 #include "common/debug.h"
@@ -188,7 +210,7 @@ void Light1::calculateColor(Color *outColor, Vector3 position) {
 	if (positionT.z < 0.0f) {
 		float v12 = attenuation(_angleStart, _angleEnd, atan2(sqrt(positionT.x * positionT.x + positionT.y * positionT.y), -positionT.z));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
-	
+
 		outColor->r = v12 * v13 * _color.r;
 		outColor->g = v12 * v13 * _color.g;
 		outColor->b = v12 * v13 * _color.b;
@@ -268,7 +290,7 @@ void Light4::calculateColor(Color *outColor, Vector3 position) {
 		float v11 = attenuation(_angleStart, _angleEnd, fabs(positionT.y));
 		float v12 = attenuation(_angleStart, _angleEnd, fabs(positionT.x));
 		float v13 = attenuation(_falloffStart, _falloffEnd, positionT.length());
-		
+
 		outColor->r = v11 * v12 * v13 * _color.r;
 		outColor->g = v11 * v12 * v13 * _color.g;
 		outColor->b = v11 * v12 * v13 * _color.b;
