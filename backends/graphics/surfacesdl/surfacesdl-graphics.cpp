@@ -2176,9 +2176,8 @@ void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
 	if (_osdIconSurface && !icon) {
-		// Add a dirty rect to clear the icon on the next update
-		SDL_Rect dstRect = getOSDIconRect();
-		addDirtyRect(dstRect.x, dstRect.y, dstRect.w, dstRect.h, true);
+		// Force a redraw to clear the icon on the next update
+		_forceFull = true;
 	}
 
 	if (_osdIconSurface) {
@@ -2249,6 +2248,7 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
 			}
 			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdMessageAlpha);
+			_forceFull = true;
 		}
 
 		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
@@ -2256,14 +2256,9 @@ void SurfaceSdlGraphicsManager::updateOSD() {
 		}
 	}
 
-	if (_osdMessageSurface) {
-		SDL_Rect dstRect = getOSDMessageRect();
-		addDirtyRect(dstRect.x, dstRect.y, dstRect.w, dstRect.h, true);
-	}
-
 	if (_osdIconSurface) {
-		SDL_Rect dstRect = getOSDIconRect();
-		addDirtyRect(dstRect.x, dstRect.y, dstRect.w, dstRect.h, true);
+		// Redraw the area below the icon for the transparent blit to give correct results.
+		_forceFull = true;
 	}
 }
 
