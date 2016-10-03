@@ -59,25 +59,25 @@ void CLSoundGroup_Free(soundgroup_t *sg) {
 void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
 	int16 i;
 	for (i = 0; i < sg->numSounds; i++)
-		sg->sound[i]->reversed = 1;
+		sg->sound[i]->_reversed = true;
 }
 
 void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg) {
 	sound_t *sound = sg->sound[sg->soundIndex];
 	if (sg->ff_106)
-		while (sound->locked) ;
-	return ((char *)(*sound->sndHandle)) + sound->headerLen;
+		while (sound->_locked) ;
+	return sound->sndHandle + sound->_headerLen;
 }
 
 int16 CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, int16 isSigned) {
 	sound_t *sound = sg->sound[sg->soundIndex];
 	if (sg->ff_106)
-		while (sound->locked) ;
-	else if (sound->locked)
+		while (sound->_locked) ;
+	else if (sound->_locked)
 		return 0;
-	sound->buffer = (char *)buffer;
+	sound->_buffer = (char *)buffer;
 	CLSound_SetLength(sound, length);
-	sound->length = length;
+	sound->_length = length;
 //	if(sound->reversed && sound->sampleSize == 16)
 //		ReverseBlock16(buffer, length);
 //	if(isSigned)
@@ -99,14 +99,14 @@ int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSi
 		CLCheckError();
 	}
 	if (sg->ff_106)
-		while (sound->locked) ;
-	else if (sound->locked)
+		while (sound->_locked) ;
+	else if (sound->_locked)
 		return 0;
-	buffer = ((char *)(*sound->sndHandle)) + sound->headerLen;
-	sound->buffer = (char *)buffer;
+	buffer = sound->sndHandle + sound->_headerLen;
+	sound->_buffer = (char *)buffer;
 	memcpy(buffer, data, length);
 	CLSound_SetLength(sound, length);
-	sound->length = length;
+	sound->_length = length;
 //	if(sound->reversed && sound->sampleSize == 16)
 //		ReverseBlock16(buffer, length);
 //	if(isSigned)

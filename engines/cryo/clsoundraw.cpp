@@ -31,9 +31,9 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 	sound = (sound_t *)CLMemory_Alloc(sizeof(*sound));
 	if (sound) {
 		sound->ff_1A = arg1;
-		sound->rate = rate;
-		sound->sampleSize = sampleSize;
-		sound->buffer = 0;
+		sound->_rate = rate;
+		sound->_sampleSize = sampleSize;
+		sound->_buffer = nullptr;
 //		sound->sndHandle = CLMemory_AllocHandle(arg1 + 100);
 //		if(!sound->sndHandle)
 //		{
@@ -57,7 +57,7 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 }
 
 void CLSoundRaw_Free(sound_t *sound) {
-	while (sound->locked) ;
+	while (sound->_locked) ;
 //	CLMemory_FreeHandle(sound->sndHandle);
 	CLMemory_Free(sound);
 }
@@ -65,11 +65,11 @@ void CLSoundRaw_Free(sound_t *sound) {
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {
 	char *buf;
 	CLSound_SetLength(sound, length);
-	sound->length = length;
+	sound->_length = length;
 	buf = bufferOffs + (char *)buffer;
 //	if(CLSound_GetWantsDesigned())
 //		CLSound_Signed2NonSigned(buf, length);
-	sound->buffer = buf;
+	sound->_buffer = buf;
 //	if(sound->reversed && sound->sampleSize == 16)
 //		ReverseBlock16(buf, length);
 }

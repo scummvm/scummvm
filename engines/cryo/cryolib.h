@@ -48,8 +48,6 @@ namespace Cryo {
 #define PLE16(p) ( (((byte*)(p))[1] << 8) | ((byte*)(p))[0] )
 #define PLE32(p) ( (((byte*)(p))[3] << 24) | (((byte*)(p))[2] << 16) | (((byte*)(p))[1] << 8) | ((byte*)(p))[0] )
 
-typedef void *SndChannel;
-typedef char *Handle;
 enum {
 	fsFromStart = 1
 };
@@ -104,11 +102,6 @@ struct color_t {
 };
 typedef struct color_t color_t;
 
-struct palette_t {
-	color_t colors[256];
-};
-typedef struct palette_t palette_t;
-
 #pragma pack(push, 1)
 struct HNMHeader {
 	int     _signature;
@@ -132,47 +125,42 @@ typedef struct HNMHeader HNMHeader;
 #pragma pack(pop)
 
 struct hnm_t {
-	int             frame;
-	int             ff_4;
-	file_t         *file;
+	int  _frameNum;
+	int  ff_4;
+	file_t  *_file;
 	HNMHeader     _header;
-	byte   *work_buffer[2];
-	byte   *final_buffer;
-	byte   *new_frame_buffer;
-	byte   *old_frame_buffer;
-	byte   *read_buffer;
-	byte   *data_ptr;
-	color_t         palette[256];
+	byte   *tmpBuffer[2];
+	byte   *finalBuffer;
+	byte   *_newFrameBuffer;
+	byte   *_oldFrameBuffer;
+	byte   *_readBuffer;
+	byte   *_dataPtr;
+	color_t  _palette[256];
 
-	int16           can_loop;
-
-	int16           ff_896;
-	int16           chunk_id;
-	int             total_read;
+	bool  _canLoop;
+	int16 ff_896;
+	int16 _chunkId;
+	int   _totalRead;
 };
 typedef struct hnm_t hnm_t;
 
-//struct filespec_t {
-//char  puff;
-//};
-
 struct sound_t {
-	Handle  sndHandle;
-	int16   headerLen;
-	long    headerOffset;
+	char *sndHandle;
+	int16 _headerLen;
+	long  _headerOffset;
 	int16   ff_A;
 
-	char    *buffer;
+	char    *_buffer;
 	int     ff_16;
 	int16   ff_1A;
-	float   rate;
-	int16   sampleSize;
-	int     length;
-	int16   mode;
-	volatile int16  locked;
-	long    loopStart;
-	int16   loopTimes;
-	int16   reversed;
+	float   _rate;
+	int16   _sampleSize;
+	int     _length;
+	int16   _mode;
+	volatile int16  _locked;
+	long    _loopStart;
+	int16   _loopTimes;
+	bool   _reversed;
 	int16   ff_32;
 	int16   volume;
 };
@@ -334,7 +322,7 @@ void CLHNM_AllocMemory(hnm_t *hnm);
 void CLHNM_DeallocMemory(hnm_t *hnm);
 void CLHNM_Read(hnm_t *hnm, int size);
 void CLHNM_GiveTime(hnm_t *hnm);
-void CLHNM_CanLoop(hnm_t *hnm, int16 can_loop);
+void CLHNM_CanLoop(hnm_t *hnm, bool canLoop);
 void CLHNM_SelectBuffers(hnm_t *hnm);
 void CLHNM_ChangePalette(hnm_t *hnm);
 void CLHNM_Desentrelace(hnm_t *hnm);

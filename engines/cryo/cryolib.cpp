@@ -409,10 +409,10 @@ void CLFile_Write(file_t &handle, void *buffer, long *size) {
 ///// CLSound
 // base sound
 void CLSound_PrepareSample(sound_t *sound, int16 mode) {
-	sound->mode = mode;
-	sound->locked = 0;
-	sound->loopTimes = 0;
-	sound->reversed = 0;
+	sound->_mode = mode;
+	sound->_locked = 0;
+	sound->_loopTimes = 0;
+	sound->_reversed = false;
 	sound->ff_32 = 0;
 	sound->volume = 255;
 }
