@@ -41,9 +41,9 @@ namespace Chewy {
 // misc/inventar.iib
 // misc/inventar.sib
 // room/test.rdi
-// txt/*.tap
+// txt/atds.tap (game texts)
 // txt/diah.adh
-// txt/inv_st.s and txt/room_st.s
+// txt/inv_st.s and txt/room_st.s (inventory/room control bytes)
 // txt/inv_use.idx
 
 Resource::Resource(Common::String filename) {
@@ -52,6 +52,7 @@ Resource::Resource(Common::String filename) {
 	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
 	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
 
+	filename.toLowercase();
 	_stream.open(filename);
 
 	uint32 header = _stream.readUint32BE();
@@ -71,6 +72,9 @@ Resource::Resource(Common::String filename) {
 		_resType = (ResourceType)_stream.readUint16LE();
 		_encrypted = false;
 	}
+
+	if (filename == "atds.tap")
+		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
 
@@ -113,6 +117,8 @@ byte *Resource::getChunkData(uint num) {
 
 	_stream.seek(chunk->pos, SEEK_SET);
 	_stream.read(data, chunk->size);
+	if (_encrypted)
+		decrypt(data, chunk->size);
 
 	return data;
 }
@@ -167,6 +173,15 @@ void Resource::unpackRLE(byte *buffer, uint32 compressedSize, uint32 uncompresse
 		for (byte j = 0; j < count; j++) {
 			buffer[outPos++] = value;
 		}
+	}
+}
+
+void Resource::decrypt(byte *data, uint32 size) {
+	byte *c = data;
+
+	for (uint i = 0; i < size; i++) {
+		*c = -(*c);
+		++c;
 	}
 }
 
@@ -276,17 +291,9 @@ Common::String ErrorMessage::getErrorMessage(uint num) {
 	byte *data = new byte[chunk->size];
 
 	_stream.seek(chunk->pos, SEEK_SET);
-
 	_stream.read(data, chunk->size);
-
-	if (_encrypted) {
-		byte *c = data;
-
-		for (uint i = 0; i < chunk->size; i++) {
-			*c = -(*c);
-			++c;
-		}
-	}
+	if (_encrypted)
+		decrypt(data, chunk->size);
 
 	str = (char *)data;
 	delete[] data;

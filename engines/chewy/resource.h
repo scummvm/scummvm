@@ -136,6 +136,7 @@ public:
 protected:
 	void initSprite(Common::String filename);
 	void unpackRLE(byte *buffer, uint32 compressedSize, uint32 uncompressedSize);
+	void decrypt(byte *data, uint32 size);
 
 	Common::File _stream;
 	uint16 _chunkCount;
