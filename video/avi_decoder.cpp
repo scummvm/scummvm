@@ -94,6 +94,23 @@ AVIDecoder::AVIAudioTrack *AVIDecoder::createAudioTrack(AVIStreamHeader sHeader,
 	return new AVIAudioTrack(sHeader, wvInfo, _soundType);
 }
 
+bool AVIDecoder::seekToFrame(uint frame) {
+	if (!isSeekable())
+		return false;
+
+	// If we didn't find a video track, we can't seek by frame (of course)
+	if (_videoTracks.empty())
+		return false;
+
+	AVIVideoTrack *track = static_cast<AVIVideoTrack *>(_videoTracks.front().track);
+	Audio::Timestamp time = track->getFrameTime(frame);
+
+	if (time < 0)
+		return false;
+
+	return seek(time);
+}
+
 void AVIDecoder::initCommon() {
 	_decodedHeader = false;
 	_foundMovieList = false;
@@ -386,9 +403,28 @@ bool AVIDecoder::loadStream(Common::SeekableReadStream *stream) {
 				_fileStream->seek(size, SEEK_CUR);
 			}
 
+			// Set the chunk offset, and force the stream num to 10,
+			// to avoid conflicting with any other audio track
+			status.index = 10;
 			status.chunkSearchOffset = _fileStream->pos();
 			assert(status.chunkSearchOffset < _movieListEnd);
 			_videoTracks.push_back(status);
+
+			// Build up index entries for the secondary video track, so we
+			// can seek in at at the same time as the primary video track
+			for (uint idx = 0; idx < _header.totalFrames; ++idx) {
+				uint chunkPos = _fileStream->pos();
+				_fileStream->seek(4, SEEK_CUR);
+				uint chunkSize = _fileStream->readUint32LE();
+				_fileStream->seek(chunkSize, SEEK_CUR);
+
+				OldIndex indexEntry;
+				indexEntry.flags = 0;
+				indexEntry.id = MKTAG('0', 'A', 'd', 'b');
+				indexEntry.offset = chunkPos;
+				indexEntry.size = chunkSize;
+				_indexEntries.push_back(indexEntry);
+			}
 		}
 	}
 
@@ -678,6 +714,32 @@ bool AVIDecoder::seekIntern(const Audio::Timestamp &time) {
 			chunk = _fileStream->readStream(_indexEntries[i].size);
 
 		videoTrack->decodeFrame(chunk);
+	}
+
+	// Update any secondary video track for transparencies
+	if (_videoTracks.size() == 2) {
+		AVIVideoTrack *videoTrack2 = static_cast<AVIVideoTrack *>(_videoTracks.back().track);
+
+		// Set it's frame number
+		videoTrack2->setCurFrame((int)frame - 1);
+
+		// Find the index entry for the frame and move to it
+		for (uint i = 0, frameNum = 0; i < _indexEntries.size(); ++i) {
+			if (_indexEntries[i].id != ID_REC &&
+					getStreamIndex(_indexEntries[i].id) == _videoTracks.back().index) {
+				if (frameNum++ == frame) {
+					Common::SeekableReadStream *chunk = nullptr;
+					_fileStream->seek(_indexEntries[i].offset + 8);
+					_videoTracks.back().chunkSearchOffset = _indexEntries[i].offset;
+
+					if (_indexEntries[i].size != 0)
+						chunk = _fileStream->readStream(_indexEntries[i].size);
+
+					videoTrack2->decodeFrame(chunk);
+					break;
+				}
+			}
+		}
 	}
 
 	// Set the video track's frame

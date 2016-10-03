@@ -304,6 +304,14 @@ protected:
 
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
+
+	/**
+	 * Seek to a given frame.
+	 *
+	 * This only works when the video track(s) supports getFrameTime().
+	 * This calls seek() internally.
+	 */
+	virtual bool seekToFrame(uint frame);
 };
 
 } // End of namespace Video
