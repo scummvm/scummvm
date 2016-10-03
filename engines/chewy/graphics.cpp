@@ -28,6 +28,7 @@
 
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
+#include "chewy/text.h"
 #include "chewy/video/cfo_decoder.h"
 
 namespace Chewy {

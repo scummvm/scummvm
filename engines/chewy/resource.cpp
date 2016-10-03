@@ -21,7 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "common/rect.h"
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/textconsole.h"
@@ -283,24 +282,6 @@ SoundChunk *SoundResource::getSound(uint num) {
 	return sound;
 }
 
-Common::String ErrorMessage::getErrorMessage(uint num) {
-	assert(num < _chunkList.size());
-
-	Chunk *chunk = &_chunkList[num];
-	Common::String str;
-	byte *data = new byte[chunk->size];
-
-	_stream.seek(chunk->pos, SEEK_SET);
-	_stream.read(data, chunk->size);
-	if (_encrypted)
-		decrypt(data, chunk->size);
-
-	str = (char *)data;
-	delete[] data;
-
-	return str;
-}
-
 VideoChunk *VideoResource::getVideoHeader(uint num) {
 	assert(num < _chunkList.size());
 
@@ -327,64 +308,6 @@ Common::SeekableReadStream *VideoResource::getVideoStream(uint num) {
 
 	Chunk *chunk = &_chunkList[num];
 	return new Common::SeekableSubReadStream(&_stream, chunk->pos, chunk->pos + chunk->size);
-}
-
-Font::Font(Common::String filename) {
-	const uint32 headerFont = MKTAG('T', 'F', 'F', '\0');
-	Common::File stream;
-
-	stream.open(filename);
-
-	uint32 header = stream.readUint32BE();
-
-	if (header != headerFont)
-		error("Invalid resource - %s", filename.c_str());
-
-	stream.skip(4);	// total memory
-	_count = stream.readUint16LE();
-	_first = stream.readUint16LE();
-	_last = stream.readUint16LE();
-	_width = stream.readUint16LE();
-	_height = stream.readUint16LE();
-
-	_fontSurface.create(_width * _count, _height, ::Graphics::PixelFormat::createFormatCLUT8());
-
-	byte cur;
-	int bitIndex = 7;
-	byte *p;
-
-	cur = stream.readByte();
-
-	for (uint n = 0; n < _count; n++) {
-		for (uint y = 0; y < _height; y++) {
-			for (uint x = n * _width; x < n * _width + _width; x++) {
-				p = (byte *)_fontSurface.getBasePtr(x, y);
-				*p = (cur & (1 << bitIndex)) ? 0 : 0xFF;
-
-				bitIndex--;
-				if (bitIndex < 0) {
-					bitIndex = 7;
-					cur = stream.readByte();
-				}
-			}
-		}
-	}
-}
-
-Font::~Font() {
-	_fontSurface.free();
-}
-
-::Graphics::Surface *Font::getLine(Common::String text) {
-	::Graphics::Surface *line = new ::Graphics::Surface();
-	line->create(text.size() * _width, _height, ::Graphics::PixelFormat::createFormatCLUT8());
-
-	for (uint i = 0; i < text.size(); i++) {
-		uint x = (text[i] - _first) * _width;
-		line->copyRectToSurface(_fontSurface, i * _width, 0, Common::Rect(x, 0, x + _width, _height));
-	}
-
-	return line;
 }
 
 } // End of namespace Chewy

@@ -170,14 +170,6 @@ public:
 	SoundChunk *getSound(uint num);
 };
 
-class ErrorMessage : public Resource {
-public:
-	ErrorMessage(Common::String filename) : Resource(filename) {}
-	virtual ~ErrorMessage() {}
-
-	Common::String getErrorMessage(uint num);
-};
-
 class VideoResource : public Resource {
 public:
 	VideoResource(Common::String filename) : Resource(filename) {}
@@ -185,19 +177,6 @@ public:
 
 	VideoChunk *getVideoHeader(uint num);
 	Common::SeekableReadStream *getVideoStream(uint num);
-};
-
-class Font {
-public:
-	Font(Common::String filename);
-	virtual ~Font();
-
-	::Graphics::Surface *getLine(Common::String text);
-
-private:
-	uint16 _count, _first, _last, _width, _height;
-
-	::Graphics::Surface _fontSurface;
 };
 
 } // End of namespace Chewy

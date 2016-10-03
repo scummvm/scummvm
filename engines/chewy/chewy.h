@@ -41,6 +41,7 @@ class Console;
 class Events;
 class Graphics;
 class Sound;
+class Text;
 
 class ChewyEngine : public Engine {
 public:
@@ -59,6 +60,7 @@ public:
 
 	Graphics *_graphics;
 	Sound *_sound;
+	Text *_text;
 
 protected:
 	// Engine APIs

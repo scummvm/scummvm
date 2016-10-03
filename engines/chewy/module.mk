@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	graphics.o \
 	resource.o \
 	sound.o \
+	text.o \
 	video/cfo_decoder.o
 
 # This module can be built as a plugin

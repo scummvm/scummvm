@@ -35,6 +35,7 @@
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
+#include "chewy/text.h"
 
 namespace Chewy {
 
@@ -56,6 +57,7 @@ ChewyEngine::ChewyEngine(OSystem *syst, const ChewyGameDescription *gameDesc)
 
 ChewyEngine::~ChewyEngine() {
 	delete _events;
+	delete _text;
 	delete _sound;
 	delete _graphics;
 	delete _console;
@@ -65,6 +67,7 @@ void ChewyEngine::initialize() {
 	_console = new Console(this);
 	_graphics = new Graphics(this);
 	_sound = new Sound(_mixer);
+	_text = new Text();
 	_events = new Events(this, _graphics, _console);
 
 	_curCursor = 0;

@@ -27,19 +27,21 @@
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
+#include "chewy/text.h"
 
 namespace Chewy {
 
 Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("dump",			 WRAP_METHOD(Console, Cmd_Dump));
-	registerCmd("dump_bg",		 WRAP_METHOD(Console, Cmd_DumpBg));
-	registerCmd("draw",			 WRAP_METHOD(Console, Cmd_Draw));
-	registerCmd("play_sound",	 WRAP_METHOD(Console, Cmd_PlaySound));
-	registerCmd("play_speech",	 WRAP_METHOD(Console, Cmd_PlaySpeech));
-	registerCmd("play_music",	 WRAP_METHOD(Console, Cmd_PlayMusic));
-	registerCmd("play_video",	 WRAP_METHOD(Console, Cmd_PlayVideo));
-	registerCmd("video_info",	 WRAP_METHOD(Console, Cmd_VideoInfo));
+	registerCmd("dump",          WRAP_METHOD(Console, Cmd_Dump));
+	registerCmd("dump_bg",       WRAP_METHOD(Console, Cmd_DumpBg));
+	registerCmd("draw",          WRAP_METHOD(Console, Cmd_Draw));
+	registerCmd("play_sound",    WRAP_METHOD(Console, Cmd_PlaySound));
+	registerCmd("play_speech",   WRAP_METHOD(Console, Cmd_PlaySpeech));
+	registerCmd("play_music",    WRAP_METHOD(Console, Cmd_PlayMusic));
+	registerCmd("play_video",    WRAP_METHOD(Console, Cmd_PlayVideo));
+	registerCmd("video_info",    WRAP_METHOD(Console, Cmd_VideoInfo));
 	registerCmd("error_message", WRAP_METHOD(Console, Cmd_ErrorMessage));
+	registerCmd("dialog",        WRAP_METHOD(Console, Cmd_Dialog));
 }
 
 Console::~Console() {
@@ -178,7 +180,7 @@ bool Console::Cmd_VideoInfo(int argc, const char **argv) {
 }
 
 bool Console::Cmd_ErrorMessage(int argc, const char **argv) {
-	if (argc < 2) {
+	if (argc < 3) {
 		debugPrintf("Usage: error_message <file> <message number>\n");
 		return true;
 	}
@@ -190,6 +192,27 @@ bool Console::Cmd_ErrorMessage(int argc, const char **argv) {
 	Common::String str = res->getErrorMessage(resNum);
 	this->debugPrintf("Error message: %s\n", str.c_str());
 	delete res;
+
+	return true;
+}
+
+bool Console::Cmd_Dialog(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Usage: dialog <dialog> <entry>\n");
+		return true;
+	}
+
+	int dialogNum = atoi(argv[1]);
+	int entryNum  = atoi(argv[2]);
+	uint cur = 0;
+	DialogList *d = _vm->_text->getDialog(dialogNum, entryNum);
+
+	for (DialogList::iterator it = d->begin(); it != d->end(); ++it) {
+		this->debugPrintf("Entry %d: speech %d, text '%s'\n", cur, (*it).speechId, (*it).text.c_str());
+	}
+
+	d->clear();
+	delete d;
 
 	return true;
 }
