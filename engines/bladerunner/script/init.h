@@ -32,8 +32,8 @@ class BladeRunnerEngine;
 class ScriptInit : ScriptBase {
 public:
 	ScriptInit(BladeRunnerEngine *vm)
-		: ScriptBase(vm)
-	{}
+		: ScriptBase(vm) {
+	}
 
 	void SCRIPT_Initialize_Game();
 

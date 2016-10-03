@@ -31,7 +31,7 @@
 #include "graphics/surface.h"
 
 namespace Common {
-	class MemoryReadStream;
+class MemoryReadStream;
 }
 
 namespace BladeRunner {
@@ -115,7 +115,8 @@ private:
 		float   _hmm[20];
 		float   _hmm2[20];
 		int     _hmm3;
-	public: 
+
+	public:
 		Color   _finalColor;
 
 	public:

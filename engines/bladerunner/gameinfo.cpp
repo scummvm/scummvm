@@ -30,8 +30,7 @@
 namespace BladeRunner {
 
 GameInfo::GameInfo(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+		: _vm(vm) {
 	_scene_names    = nullptr;
 	_sfx_tracks   = nullptr;
 	_music_tracks = nullptr;
@@ -78,15 +77,13 @@ bool GameInfo::open(const Common::String &name) {
 		s->read(_scene_names[i], 5);
 
 	_sfx_tracks = new char[_sfx_track_count][13];
-	for (uint32 i = 0; i != _sfx_track_count; ++i)
-	{
+	for (uint32 i = 0; i != _sfx_track_count; ++i) {
 		s->read(_sfx_tracks[i], 9);
 		strcat(_sfx_tracks[i], ".AUD");
 	}
 
 	_music_tracks = new char[_music_track_count][13];
-	for (uint32 i = 0; i != _music_track_count; ++i)
-	{
+	for (uint32 i = 0; i != _music_track_count; ++i) {
 		s->read(_music_tracks[i], 9);
 		strcat(_music_tracks[i], ".AUD");
 	}

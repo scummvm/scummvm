@@ -28,9 +28,7 @@
 
 namespace BladeRunner {
 
-Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, int clueCount)
-	: _clueCount(clueCount)
-{
+Clues::Clues(BladeRunnerEngine *vm, const char *cluesResource, int clueCount) : _clueCount(clueCount) {
 	// reset();
 
 	_crimes     = new int[_clueCount];

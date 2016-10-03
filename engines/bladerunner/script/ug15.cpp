@@ -195,7 +195,6 @@ void ScriptUG15::PlayerWalkedIn() {
 }
 
 void ScriptUG15::PlayerWalkedOut() {
-
 }
 
 void ScriptUG15::DialogueQueueFlushed(int a1) {

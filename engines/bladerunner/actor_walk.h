@@ -29,14 +29,12 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-struct ActorWalkEntry
-{
+struct ActorWalkEntry {
 	int _actorId;
 	int _present;
 };
 
-class ActorWalk
-{
+class ActorWalk {
 	BladeRunnerEngine *_vm;
 
 private:

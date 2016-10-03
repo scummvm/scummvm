@@ -25,11 +25,10 @@
 namespace BladeRunner {
 
 AIScript_Officer_Leroy::AIScript_Officer_Leroy(BladeRunnerEngine *vm)
-	: AIScriptBase(vm)
-{}
+	: AIScriptBase(vm) {
+}
 
-void AIScript_Officer_Leroy::Initialize()
-{
+void AIScript_Officer_Leroy::Initialize() {
 	var_45D5B0_animation_state = 0;
 	var_45D5B4_frame = 0;
 	var_45D5B8 = 0;
@@ -84,14 +83,12 @@ bool AIScript_Officer_Leroy::GoalChanged(int currentGoalNumber, int newGoalNumbe
 	return false;
 }
 
-bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
-{
+bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame) {
 	if (var_45D5B8 == 0) {
 		*animation = 589;
 		var_45D5B4_frame++;
 
-		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(589))
-		{
+		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(589)) {
 			var_45D5B4_frame = 0;
 			var_45D5B8 = Random_Query(0, 2);
 		}
@@ -99,8 +96,7 @@ bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
 		*animation = 590;
 		var_45D5B4_frame++;
 
-		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(590))
-		{
+		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(590)) {
 			var_45D5B4_frame = 0;
 			var_45D5B8 = Random_Query(0, 2);
 		}
@@ -108,8 +104,7 @@ bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
 		*animation = 591;
 		var_45D5B4_frame++;
 
-		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(591))
-		{
+		if (var_45D5B4_frame >= Slice_Animation_Query_Number_Of_Frames(591)) {
 			var_45D5B4_frame = 0;
 			var_45D5B8 = Random_Query(0, 2);
 		}
@@ -118,13 +113,11 @@ bool AIScript_Officer_Leroy::UpdateAnimation(int *animation, int *frame)
 	return true;
 }
 
-bool AIScript_Officer_Leroy::ChangeAnimationMode(int mode)
-{
-	switch (mode)
-	{
-		case 1:
-			var_45D5B0_animation_state = 32;
-			break;
+bool AIScript_Officer_Leroy::ChangeAnimationMode(int mode) {
+	switch (mode) {
+	case 1:
+		var_45D5B0_animation_state = 32;
+		break;
 	}
 	return true;
 }

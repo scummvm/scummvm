@@ -218,10 +218,8 @@ void SliceRenderer::calculateBoundingRect() {
 	float min_x =  640.0f;
 	float max_x =    0.0f;
 
-	for (float i = 0.0f; i <= 256.0f; i += 255.0f)
-	{
-		for (float j = 0.0f; j <= 256.0f; j += 255.0f)
-		{
+	for (float i = 0.0f; i <= 256.0f; i += 255.0f) {
+		for (float j = 0.0f; j <= 256.0f; j += 255.0f) {
 			Vector2 v1 = mB6 * Vector2(i, j);
 
 			min_x = MIN(min_x, v1.x);
@@ -275,11 +273,10 @@ struct SliceLineIterator {
 };
 
 void SliceLineIterator::setup(
-	float endScreenX,   float endScreenY,   float endScreenZ,
-	float startScreenX, float startScreenY, float startScreenZ,
-	float endSlice,     float startSlice,
-	Matrix3x2 m)
-{
+		float endScreenX,   float endScreenY,   float endScreenZ,
+		float startScreenX, float startScreenY, float startScreenZ,
+		float endSlice,     float startSlice,
+		Matrix3x2 m) {
 	_startY = (int)startScreenY;
 	_endY   = (int)endScreenY;
 
@@ -337,8 +334,7 @@ void SliceLineIterator::advance() {
 	_sliceMatrix[1][2] += _field_38;
 }
 
-static
-void setupLookupTable(int t[256], int inc) {
+static void setupLookupTable(int t[256], int inc) {
 	int v = 0;
 	for (int i = 0; i != 256; ++i) {
 		t[i] = v;
@@ -363,7 +359,7 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 	);
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
-	
+
 	_lights->setupFrame(_view._frame);
 	_setEffects->setupFrame(_view._frame);
 
@@ -373,7 +369,7 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 		Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
 		Vector3(_position.x, _position.y, _position.z + _frameBottomZ),
 		sliceLineIterator._endY - sliceLineIterator._startY);
-	
+
 	float setEffectsColorCoeficient;
 	Color setEffectColor;
 	_setEffects->calculateColor(

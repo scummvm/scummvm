@@ -27,35 +27,25 @@
 
 namespace BladeRunner {
 
-class Vector2
-{
+class Vector2 {
 public:
 	float x;
 	float y;
 
-	Vector2()
-		: x(0.0), y(0.0)
-	{}
+	Vector2() : x(0.0), y(0.0) {}
 
-	Vector2(float ax, float ay)
-		: x(ax), y(ay)
-	{}
+	Vector2(float ax, float ay) : x(ax), y(ay) {}
 };
 
-class Vector3
-{
+class Vector3 {
 public:
 	float x;
 	float y;
 	float z;
 
-	Vector3()
-		: x(0.0), y(0.0), z(0.0)
-	{}
+	Vector3() : x(0.0), y(0.0), z(0.0) {}
 
-	Vector3(float ax, float ay, float az)
-		: x(ax), y(ay), z(az)
-	{}
+	Vector3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
 
 	float length() { return sqrtf(x * x + y * y + z * z); }
 	Vector3 normalize() {
@@ -74,68 +64,47 @@ public:
 	}
 };
 
-inline
-Vector3 operator+(Vector3 a, Vector3 b)
-{
+inline Vector3 operator+(Vector3 a, Vector3 b) {
 	return Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-inline
-Vector3 operator-(Vector3 a, Vector3 b)
-{
+inline Vector3 operator-(Vector3 a, Vector3 b) {
 	return Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-inline
-Vector3 operator*(float f, Vector3 v)
-{
+inline Vector3 operator*(float f, Vector3 v) {
 	return Vector3(f * v.x, f * v.y, f * v.z);
 }
 
-class Vector4
-{
+class Vector4 {
 public:
 	float x;
 	float y;
 	float z;
 	float w;
 
-	Vector4()
-		: x(0.0), y(0.0), z(0.0), w(0.0)
-	{}
+	Vector4() : x(0.0), y(0.0), z(0.0), w(0.0) {}
 
-	Vector4(float ax, float ay, float az, float aw)
-		: x(ax), y(ay), z(az), w(aw)
-	{}
+	Vector4(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 };
 
-inline
-Vector4 operator+(Vector4 a, Vector4 b)
-{
+inline Vector4 operator+(Vector4 a, Vector4 b) {
 	return Vector4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
 }
 
-inline
-Vector4 operator-(Vector4 a, Vector4 b)
-{
+inline Vector4 operator-(Vector4 a, Vector4 b) {
 	return Vector4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
 }
 
-inline
-Vector4 operator*(float f, Vector4 v)
-{
+inline Vector4 operator*(float f, Vector4 v) {
 	return Vector4(f * v.x, f * v.y, f * v.z, f * v.w);
 }
 
-inline
-Vector4 operator*(Vector4 v, float f)
-{
+inline Vector4 operator*(Vector4 v, float f) {
 	return Vector4(f * v.x, f * v.y, f * v.z, f * v.w);
 }
 
-inline
-Vector4 operator/(Vector4 a, Vector4 b)
-{
+inline Vector4 operator/(Vector4 a, Vector4 b) {
 	return Vector4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
 }
 

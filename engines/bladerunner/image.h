@@ -36,6 +36,7 @@ class BladeRunnerEngine;
 class Image {
 	BladeRunnerEngine *_vm;
 	Graphics::Surface  _surface;
+
 public:
 	Image(BladeRunnerEngine *vm);
 	~Image();

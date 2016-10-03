@@ -199,7 +199,6 @@ bool ScriptDR06::ClickedOn2DRegion(int region) {
 }
 
 void ScriptDR06::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptDR06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

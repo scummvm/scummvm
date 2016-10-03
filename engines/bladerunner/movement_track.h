@@ -30,8 +30,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class BoundingBox;
 
-struct MovementTrackEntry
-{
+struct MovementTrackEntry {
 	int waypointId;
 	int delay;
 	int angle;

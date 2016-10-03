@@ -84,7 +84,7 @@ void Script::SceneLoaded() {
 bool Script::MouseClick(int x, int y) {
 	if (_inScriptCounter > 0)
 		return true;
-	
+
 	_inScriptCounter++;
 	//MouseX = x;
 	//MouseY = y;
@@ -434,7 +434,7 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
 	_vm->_adq->flush(1, true);
-	
+
 	Actor *actor = _vm->_actors[actorId];
 
 	actor->speechPlay(sentenceId, true);
@@ -1080,7 +1080,7 @@ void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2,
 void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
 	//TODO
 	warning("Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", itemId,  startX,  startY,  startZ,  endX,  endY,  endZ,  steps,  (void *)data,  a10);
-	
+
 }
 
 // ScriptBase::Police_Maze_Query_Score
@@ -1184,7 +1184,7 @@ bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
 int ScriptBase::Elevator_Activate(int elevator) {
 	//TODO
 	warning("Elevator_Activate(%d)", elevator);
-	return 0;	
+	return 0;
 }
 
 void ScriptBase::View_Score_Board() {
@@ -1387,10 +1387,7 @@ void ScriptBase::ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int
 	warning("ESPER_Define_Special_Region(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)",  a1,  a2,  a3,  a4,  a5,  a6,  a7,  a8,  a9,  a10,  a11,  a12,  a13, name);
 }
 
-AIScripts::AIScripts(BladeRunnerEngine *vm)
-	: _vm(vm),
-	  _inScriptCounter(0)
-{
+AIScripts::AIScripts(BladeRunnerEngine *vm) : _vm(vm), _inScriptCounter(0) {
 	for (int i = 0; i != 100; ++i)
 		_AIScripts[i] = 0;
 
@@ -1398,22 +1395,19 @@ AIScripts::AIScripts(BladeRunnerEngine *vm)
 	_AIScripts[23] = new AIScript_Officer_Leroy(_vm);
 }
 
-void AIScripts::Initialize(int actor)
-{
+void AIScripts::Initialize(int actor) {
 	if (_AIScripts[actor])
 		_AIScripts[actor]->Initialize();
 }
 
-void AIScripts::UpdateAnimation(int actor, int *animation, int *frame)
-{
+void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
 	_inScriptCounter++;
 	if (_AIScripts[actor])
 		_AIScripts[actor]->UpdateAnimation(animation, frame);
 	_inScriptCounter--;
 }
 
-void AIScripts::ChangeAnimationMode(int actor, int mode)
-{
+void AIScripts::ChangeAnimationMode(int actor, int mode) {
 	_inScriptCounter++;
 	if (_AIScripts[actor])
 		_AIScripts[actor]->ChangeAnimationMode(mode);

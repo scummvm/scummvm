@@ -137,8 +137,8 @@ public:
 
 	int getSetId();
 	void setSetId(int setId);
-	BoundingBox* getBoundingBox() { return _bbox; }
-	Common::Rect* getScreenRectangle() { return &_screenRectangle; }
+	BoundingBox *getBoundingBox() { return _bbox; }
+	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
 	int getWalkbox() { return _walkboxId; }
 	bool isRetired() { return _isRetired; }
 	bool isTargetable() { return _isTargetable; }

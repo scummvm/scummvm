@@ -29,15 +29,13 @@
 
 namespace BladeRunner {
 
-struct Region
-{
+struct Region {
 	Common::Rect _rectangle;
 	int _type;
 	int _present;
 };
 
-class Regions
-{
+class Regions {
 #ifdef _DEBUG
 	friend class BladeRunnerEngine;
 #endif

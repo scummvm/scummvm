@@ -121,8 +121,7 @@ int32 tlk_id(const Common::String &name) {
 uint32 MIXArchive::indexForId(int32 id) const {
 	uint32 lo = 0, hi = _entry_count;
 
-	while (lo < hi)
-	{
+	while (lo < hi) {
 		uint32 mid = lo + (hi - lo) / 2;
 
 		if (id > _entries[mid].id)

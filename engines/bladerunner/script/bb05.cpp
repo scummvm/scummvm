@@ -140,7 +140,6 @@ bool ScriptBB05::ClickedOn2DRegion(int region) {
 }
 
 void ScriptBB05::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptBB05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -206,7 +205,6 @@ void ScriptBB05::PlayerWalkedIn() {
 }
 
 void ScriptBB05::PlayerWalkedOut() {
-
 }
 
 void ScriptBB05::DialogueQueueFlushed(int a1) {

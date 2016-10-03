@@ -110,7 +110,6 @@ bool ScriptCT03::ClickedOn2DRegion(int region) {
 }
 
 void ScriptCT03::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptCT03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

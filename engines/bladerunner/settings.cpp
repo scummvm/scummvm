@@ -30,9 +30,7 @@
 
 namespace BladeRunner {
 
-Settings::Settings(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+Settings::Settings(BladeRunnerEngine *vm) : _vm(vm) {
 	_chapter = 1;
 	_gamma = 1.0f;
 

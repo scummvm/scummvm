@@ -33,11 +33,10 @@ class ADPCMWestwoodDecoder {
 
 public:
 	ADPCMWestwoodDecoder()
-		: _stepIndex(0), _predictor(0)
-	{}
+		: _stepIndex(0), _predictor(0) {
+	}
 
-	void setParameters(int16 stepIndex, int32 predictor)
-	{
+	void setParameters(int16 stepIndex, int32 predictor) {
 		_stepIndex = stepIndex;
 		_predictor = predictor;
 	}

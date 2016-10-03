@@ -31,8 +31,7 @@
 namespace BladeRunner {
 
 Image::Image(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+	: _vm(vm) {
 }
 
 Image::~Image() {

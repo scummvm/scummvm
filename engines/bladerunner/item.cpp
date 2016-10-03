@@ -133,4 +133,5 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_screenRectangle.top = -1;
 	_screenRectangle.left = -1;
 }
+
 } // End of namespace BladeRunner

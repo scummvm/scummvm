@@ -33,8 +33,7 @@
 namespace BladeRunner {
 
 Shape::Shape(BladeRunnerEngine *vm)
-	: _vm(vm), _data(0)
-{
+	: _vm(vm), _data(0) {
 }
 
 Shape::~Shape() {
@@ -125,7 +124,7 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) {
 		}
 
 		src_p += 2 * (_width - rect_w);
-		dst_p += surface.pitch - 2*rect_w;
+		dst_p += surface.pitch - 2 * rect_w;
 	}
 }
 

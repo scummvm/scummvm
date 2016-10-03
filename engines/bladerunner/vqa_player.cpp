@@ -113,13 +113,11 @@ const uint16 *VQAPlayer::getZBuffer() const {
 	return _zBuffer;
 }
 
-void VQAPlayer::updateView(View* view)
-{
+void VQAPlayer::updateView(View *view) {
 	_decoder.decodeView(view);
 }
 
-void VQAPlayer::updateLights(Lights* lights)
-{
+void VQAPlayer::updateLights(Lights *lights) {
 	_decoder.decodeLights(lights);
 }
 

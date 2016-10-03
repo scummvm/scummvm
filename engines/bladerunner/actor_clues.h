@@ -29,8 +29,7 @@
 
 namespace BladeRunner {
 
-struct ActorClue
-{
+struct ActorClue {
 	int _clueId;
 	int _field1;
 	int _fromActorId;
@@ -43,8 +42,7 @@ struct ActorClue
 	unsigned char _flags;
 };
 
-class ActorClues
-{
+class ActorClues {
 	BladeRunnerEngine *_vm;
 
 private:

@@ -32,8 +32,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class View;
 
-enum SceneObjectType
-{
+enum SceneObjectType {
 	SceneObjectTypeUnknown = -1,
 	SceneObjectTypeActor = 0,
 	SceneObjectTypeObject = 1,
@@ -45,8 +44,7 @@ enum SceneObjectType
 #define SCENE_OBJECTS_ITEMS_OFFSET 74
 #define SCENE_OBJECTS_OBJECTS_OFFSET 198
 
-struct SceneObject
-{
+struct SceneObject {
 	int             _sceneObjectId;
 	SceneObjectType _sceneObjectType;
 	BoundingBox     _boundingBox;

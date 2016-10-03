@@ -169,7 +169,6 @@ void ScriptBB06::PlayerWalkedIn() {
 }
 
 void ScriptBB06::PlayerWalkedOut() {
-
 }
 
 void ScriptBB06::DialogueQueueFlushed(int a1) {

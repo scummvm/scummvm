@@ -126,9 +126,7 @@ void AudioCache::decRef(int32 hash) {
 	assert(0 && "AudioCache::decRef: hash not found");
 }
 
-AudioPlayer::AudioPlayer(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) : _vm(vm) {
 	_cache = new AudioCache();
 
 	for (int i = 0; i != 6; ++i) {
@@ -141,23 +139,20 @@ AudioPlayer::~AudioPlayer() {
 	delete _cache;
 }
 
-bool AudioPlayer::isTrackActive(Track *track)
-{
+bool AudioPlayer::isTrackActive(Track *track) {
 	if (!track->isMaybeActive)
 		return false;
 
 	return track->isMaybeActive = _vm->_mixer->isSoundHandleActive(track->soundHandle);
 }
 
-void AudioPlayer::stopAll()
-{
+void AudioPlayer::stopAll() {
 	for (int i = 0; i != TRACKS; ++i) {
 		_vm->_mixer->stopHandle(_tracks[i].soundHandle);
 	}
 }
 
-void AudioPlayer::fadeAndStopTrack(Track *track, int time)
-{
+void AudioPlayer::fadeAndStopTrack(Track *track, int time) {
 	(void)time;
 
 	_vm->_mixer->stopHandle(track->soundHandle);

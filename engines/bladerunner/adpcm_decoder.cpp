@@ -30,8 +30,7 @@ static const
 int16 imaIndexTable[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
 
 static const
-uint16 imaStepTable[712] =
-{
+uint16 imaStepTable[712] = {
  0x0000,0x0001,0x0003,0x0004,0x0007,0x0008,0x000a,0x000b,
  0x0001,0x0003,0x0005,0x0007,0x0009,0x000b,0x000d,0x000f,
  0x0001,0x0003,0x0005,0x0007,0x000a,0x000c,0x000e,0x0010,
@@ -123,19 +122,16 @@ uint16 imaStepTable[712] =
  0x0fff,0x2ffe,0x4ffe,0x6ffd,0x8ffe,0xaffd,0xcffd,0xeffc
 };
 
-void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out)
-{
+void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out) {
 	uint8 *end = in + size;
 
 	int16 stepIndex = _stepIndex;
 	int32 predictor = _predictor;
 
-	while (in != end)
-	{
+	while (in != end) {
 		uint16 bl = *in++;
 
-		for (int n = 0; n != 2; ++n)
-		{
+		for (int n = 0; n != 2; ++n) {
 			uint8 nibble = (bl >> (4 * n)) & 0x0f;
 			uint8 code = nibble & 0x07;
 			uint8 sign = nibble & 0x08;

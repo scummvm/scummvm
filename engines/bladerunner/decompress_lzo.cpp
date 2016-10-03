@@ -24,10 +24,9 @@
 
 namespace BladeRunner {
 
-static inline
-uint32 decode_count(const uint8 **pp) {
+static inline uint32 decode_count(const uint8 **pp) {
 	uint32 v = 0;
-	for (;!**pp;(*pp)++)
+	for (; !**pp; (*pp)++)
 		v += 255;
 
 	v += **pp;
@@ -36,8 +35,7 @@ uint32 decode_count(const uint8 **pp) {
 	return v;
 }
 
-static inline
-void copy(uint8 **dst, const uint8 **src, int count) {
+static inline void copy(uint8 **dst, const uint8 **src, int count) {
 	assert(count > 0);
 
 	uint8 *d = *dst;
@@ -87,22 +85,17 @@ first_literal_run:
 
 		for (;;) {
 match:
-			if (t >= 64)
-			{
+			if (t >= 64) {
 				m_pos = op - 1 - ((t >> 2) & 7) - (*ip++ << 3);
 				t = (t >> 5) - 1;
 				goto copy_match;
-			}
-			else if (t >= 32)
-			{
+			} else if (t >= 32) {
 				t &= 31;
 				if (t == 0)
 					t = 31 + decode_count(&ip);
 				m_pos = op - 1 - (ip[0] >> 2) - (ip[1] << 6);
 				ip += 2;
-			}
-			else if (t >= 16)
-			{
+			} else if (t >= 16) {
 				m_pos = op - ((t & 8) << 11);
 				t &= 7;
 				if (t == 0)
@@ -112,9 +105,7 @@ match:
 				if (m_pos == op)
 					goto eof_found;
 				m_pos -= 0x4000;
-			}
-			else
-			{
+			} else {
 				m_pos = op - 1 - (t >> 2) - (*ip++ << 2);
 				copy(&op, &m_pos, 2);
 				goto match_done;

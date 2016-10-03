@@ -29,8 +29,7 @@
 
 namespace BladeRunner {
 
-class ActorCombat
-{
+class ActorCombat {
 	BladeRunnerEngine *_vm;
 
 private:

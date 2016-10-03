@@ -41,8 +41,7 @@ namespace BladeRunner {
 class Lights;
 class View;
 
-class VQADecoder
-{
+class VQADecoder {
 public:
 	VQADecoder();
 	~VQADecoder();
@@ -72,8 +71,7 @@ public:
 protected:
 
 private:
-	struct Header
-	{
+	struct Header {
 		uint16 version;     // 0x00
 		uint16 flags;       // 0x02
 		uint16 numFrames;   // 0x04
@@ -109,23 +107,18 @@ private:
 		{}
 	};
 
-	struct LoopInfo
-	{
+	struct LoopInfo {
 		uint16  loopCount;
 		uint32  flags;
 		Loop   *loops;
 
-		LoopInfo()
-			: loopCount(0),
-			  loops(nullptr)
-		{}
+		LoopInfo() : loopCount(0), loops(nullptr) {}
 		~LoopInfo() {
 			delete[] loops;
 		}
 	};
 
-	struct ClipInfo
-	{
+	struct ClipInfo {
 		uint16 clipCount;
 	};
 

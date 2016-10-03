@@ -136,7 +136,6 @@ void ScriptHF02::PlayerWalkedIn() {
 }
 
 void ScriptHF02::PlayerWalkedOut() {
-
 }
 
 void ScriptHF02::DialogueQueueFlushed(int a1) {

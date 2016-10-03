@@ -31,9 +31,7 @@ namespace BladeRunner {
 
 #define BUFFER_SIZE 200000
 
-AudioSpeech::AudioSpeech(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) : _vm(vm) {
 	_volume = 50;
 	_isMaybeActive = false;
 	_data = new byte[BUFFER_SIZE];

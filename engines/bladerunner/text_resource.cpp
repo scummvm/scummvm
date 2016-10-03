@@ -30,9 +30,7 @@
 
 namespace BladeRunner {
 
-TextResource::TextResource(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+TextResource::TextResource(BladeRunnerEngine *vm) : _vm(vm) {
 	_count   = 0;
 	_ids     = nullptr;
 	_offsets = nullptr;

@@ -31,9 +31,7 @@
 
 namespace BladeRunner {
 
-Mouse::Mouse(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+Mouse::Mouse(BladeRunnerEngine *vm) : _vm(vm) {
 	_cursor = 0;
 	_frame = 3;
 	_hotspotX = 0;
@@ -248,8 +246,7 @@ void Mouse::updateCursorFrame() {
 	}
 }
 
-void Mouse::tick(int x, int y)
-{
+void Mouse::tick(int x, int y) {
 	if (!_vm->playerHasControl() || isDisabled())
 		return;
 
@@ -288,8 +285,7 @@ void Mouse::tick(int x, int y)
 	if (true /* not in combat */) {
 		if (sceneObjectId == 0
 		 || (sceneObjectId >= 0 && isClickable)
-		 || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0)
-		{
+		 || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
 			cursorId = 1;
 		}
 		setCursor(cursorId);
@@ -300,8 +296,7 @@ void Mouse::tick(int x, int y)
 }
 
 // TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]
-Vector3 Mouse::getXYZ(int x, int y)
-{
+Vector3 Mouse::getXYZ(int x, int y) {
 	if (_vm->_scene->getSetId() == -1)
 		return Vector3();
 

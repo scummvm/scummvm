@@ -34,8 +34,7 @@ namespace BladeRunner {
 
 class SetEffects;
 
-class Fog
-{
+class Fog {
 	friend class SetEffects;
 
 protected:
@@ -82,20 +81,17 @@ protected:
 
 };
 
-class FogCone : public Fog
-{
+class FogCone : public Fog {
 	void read(Common::ReadStream *stream, int framesCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
-class FogSphere : public Fog
-{
+class FogSphere : public Fog {
 	void read(Common::ReadStream *stream, int framesCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
-class FogBox : public Fog
-{
+class FogBox : public Fog {
 	void read(Common::ReadStream *stream, int framesCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };

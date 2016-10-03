@@ -35,9 +35,7 @@ class OuttakePlayer {
 	BladeRunnerEngine *_vm;
 
 public:
-	OuttakePlayer(BladeRunnerEngine *vm) :
-		_vm(vm)
-	{}
+	OuttakePlayer(BladeRunnerEngine *vm) : _vm(vm) {}
 
 	void play(const Common::String &name, bool noLocalization, int container);
 };

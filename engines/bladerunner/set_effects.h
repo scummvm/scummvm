@@ -31,8 +31,7 @@
 
 namespace BladeRunner {
 
-class SetEffects
-{
+class SetEffects {
 	BladeRunnerEngine *_vm;
 
 private:
@@ -61,7 +60,7 @@ public:
 	void calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor);
 private:
 
-	Fog* findFog(const char* fogName);
+	Fog *findFog(const char* fogName);
 
 };
 

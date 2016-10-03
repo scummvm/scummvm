@@ -61,9 +61,8 @@
 namespace BladeRunner {
 
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
-	: Engine(syst),
-	  _rnd("bladerunner")
-{
+		: Engine(syst),
+		  _rnd("bladerunner") {
 	_windowIsActive = true;
 	_gameIsRunning  = true;
 	_playerLosesControlCounter = 0;
@@ -616,8 +615,7 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Process AUD
 			// TODO: Footstep sound
 
-			if (_walkSoundId >= 0)
-			{
+			if (_walkSoundId >= 0) {
 				const char *name = _gameInfo->getSfxTrack(_walkSoundId);
 				_audioPlayer->playAud(name, _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
 				_walkSoundId = -1;
@@ -669,7 +667,7 @@ void BladeRunnerEngine::gameTick() {
 			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
 				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
 
-				for(int j = 0; j < walkbox->_vertexCount; j++) {
+				for (int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
 					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
 					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
@@ -709,11 +707,11 @@ void BladeRunnerEngine::handleEvents() {
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_RBUTTONDOWN:
-				handleMouseClick(event.mouse.x, event.mouse.y);
-			default:
-				;
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+			handleMouseClick(event.mouse.x, event.mouse.y);
+		default:
+			;
 		}
 	}
 }
@@ -760,34 +758,29 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	}
 }
 
-void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex)
-{
+void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex) {
 	// clickedOnExit(exitType, x, y);
 	debug("clicked on exit %d %d %d", exitIndex, x, y);
 	_script->ClickedOnExit(exitIndex);
 }
 
-void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex)
-{
+void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex) {
 	debug("clicked on region %d %d %d", regionIndex, x, y);
 	_script->ClickedOn2DRegion(regionIndex);
 }
 
-void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget)
-{
+void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget) {
 	const char *objectName = _scene->objectGetName(objectId);
 	debug("Clicked on object %s", objectName);
 	_script->ClickedOn3DObject(objectName, false);
 }
 
-void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId)
-{
+void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
 	debug("Clicked on item %d", itemId);
 	_script->ClickedOnItem(itemId, false);
 }
 
-void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId)
-{
+void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
 	debug("Clicked on actor %d", actorId);
 	_script->ClickedOnActor(actorId);
 }

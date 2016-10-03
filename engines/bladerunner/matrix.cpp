@@ -26,15 +26,13 @@
 
 namespace BladeRunner {
 
-Matrix3x2::Matrix3x2()
-{
+Matrix3x2::Matrix3x2() {
 	for (int r = 0; r != 2; ++r)
 		for (int c = 0; c != 3; ++c)
 			_m[r][c] = (r == c) ? 1.0f : 0.0f;
 }
 
-Matrix3x2::Matrix3x2(float d[6])
-{
+Matrix3x2::Matrix3x2(float d[6]) {
 	for (int r = 0; r != 2; ++r)
 		for (int c = 0; c != 3; ++c)
 			_m[r][c] = d[r*3+c];
@@ -42,8 +40,7 @@ Matrix3x2::Matrix3x2(float d[6])
 
 Matrix3x2::Matrix3x2(
 	float m00, float m01, float m02,
-	float m10, float m11, float m12)
-{
+	float m10, float m11, float m12) {
 	_m[0][0] = m00;
 	_m[0][1] = m01;
 	_m[0][2] = m02;
@@ -52,15 +49,13 @@ Matrix3x2::Matrix3x2(
 	_m[1][2] = m12;
 }
 
-Matrix4x3::Matrix4x3()
-{
+Matrix4x3::Matrix4x3() {
 	for (int r = 0; r != 3; ++r)
 		for (int c = 0; c != 4; ++c)
 			_m[r][c] = (r == c) ? 1.0f : 0.0f;
 }
 
-Matrix4x3::Matrix4x3(float d[12])
-{
+Matrix4x3::Matrix4x3(float d[12]) {
 	for (int r = 0; r != 3; ++r)
 		for (int c = 0; c != 4; ++c)
 			_m[r][c] = d[r*4+c];
@@ -69,8 +64,7 @@ Matrix4x3::Matrix4x3(float d[12])
 Matrix4x3::Matrix4x3(
 	float m00, float m01, float m02, float m03,
 	float m10, float m11, float m12, float m13,
-	float m20, float m21, float m22, float m23)
-{
+	float m20, float m21, float m22, float m23) {
 	_m[0][0] = m00;
 	_m[0][1] = m01;
 	_m[0][2] = m02;
@@ -85,8 +79,7 @@ Matrix4x3::Matrix4x3(
 	_m[2][3] = m23;
 }
 
-Matrix4x3 rotationMatrixX(float angle)
-{
+Matrix4x3 rotationMatrixX(float angle) {
 	float ca = cos(angle);
 	float sa = sin(angle);
 
@@ -95,33 +88,25 @@ Matrix4x3 rotationMatrixX(float angle)
 	                  0.0f,  -sa,   ca, 0.0f );
 }
 
-static inline
-void swapRows(double *r1, double *r2)
-{
-	for (int c = 0; c != 8; ++c)
-	{
+static inline void swapRows(double *r1, double *r2) {
+	for (int c = 0; c != 8; ++c) {
 		double t = r1[c];
 		r1[c] = r2[c];
 		r2[c] = t;
 	}
 }
 
-static inline
-void subtractRow(double *r1, double factor, double *r2)
-{
+static inline void subtractRow(double *r1, double factor, double *r2) {
 	for (int c = 0; c != 8; ++c)
 		r1[c] -= factor * r2[c];
 }
 
-static inline
-void divideRow(double *r1, double d)
-{
+static inline void divideRow(double *r1, double d) {
 	for (int c = 0; c != 8; ++c)
 		r1[c] /= d;
 }
 
-Matrix4x3 invertMatrix(const Matrix4x3 &m)
-{
+Matrix4x3 invertMatrix(const Matrix4x3 &m) {
 	double w[3][8];
 
 	for (int r = 0; r != 3; ++r) {
@@ -166,8 +151,7 @@ Matrix4x3 invertMatrix(const Matrix4x3 &m)
 	return result;
 }
 
-void Matrix4x3::unknown()
-{
+void Matrix4x3::unknown() {
 	Matrix4x3 t;
 
 	// Transpose the 3x3 top left submatrix

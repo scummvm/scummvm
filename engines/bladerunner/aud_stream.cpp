@@ -28,22 +28,18 @@
 
 namespace BladeRunner {
 
-AudStream::AudStream(byte *data)
-	: _cache(nullptr)
-{
+AudStream::AudStream(byte *data) : _cache(nullptr) {
 	init(data);
 }
 
 AudStream::AudStream(AudioCache *cache, int32 hash)
-	: _cache(cache), _hash(hash)
-{
+		: _cache(cache), _hash(hash) {
 	_cache->incRef(_hash);
 
 	init(_cache->findByHash(_hash));
 }
 
-void AudStream::init(byte *data)
-{
+void AudStream::init(byte *data) {
 	_data = data;
 	_end = _data + READ_LE_UINT32(_data + 2) + 12;
 	assert(_end - _data >= 12);

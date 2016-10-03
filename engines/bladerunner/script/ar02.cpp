@@ -224,7 +224,6 @@ bool ScriptAR02::ClickedOn2DRegion(int region) {
 }
 
 void ScriptAR02::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptAR02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -385,6 +384,5 @@ void ScriptAR02::sub_402CE4() {
 		break;
 	}
 }
-
 
 } // End of namespace BladeRunner

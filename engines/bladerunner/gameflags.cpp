@@ -27,8 +27,7 @@
 namespace BladeRunner {
 
 GameFlags::GameFlags()
-	: flags(NULL), flagCount(0)
-{
+	: flags(NULL), flagCount(0) {
 }
 
 GameFlags::~GameFlags() {

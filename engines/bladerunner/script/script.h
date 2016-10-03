@@ -34,11 +34,8 @@ protected:
 	BladeRunnerEngine *_vm;
 
 public:
-	ScriptBase(BladeRunnerEngine *vm)
-		: _vm(vm)
-	{}
-	virtual ~ScriptBase()
-	{}
+	ScriptBase(BladeRunnerEngine *vm) : _vm(vm) {}
+	virtual ~ScriptBase() {}
 
 protected:
 	void Preload(int animationId);
@@ -285,9 +282,7 @@ protected:
 
 class SceneScriptBase : public ScriptBase {
 public:
-	SceneScriptBase(BladeRunnerEngine *vm)
-		: ScriptBase(vm)
-	{}
+	SceneScriptBase(BladeRunnerEngine *vm) : ScriptBase(vm) {}
 
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
@@ -317,8 +312,8 @@ public:
 	Script(BladeRunnerEngine *vm)
 		: _vm(vm),
 		  _inScriptCounter(0),
-		  _currentScript(nullptr)
-	{}
+		  _currentScript(nullptr) {
+	}
 	~Script();
 
 	bool open(const Common::String &name);
@@ -327,10 +322,10 @@ public:
 	void SceneLoaded();
 	bool MouseClick(int x, int y);
 	bool ClickedOn3DObject(const char *objectName, bool a2);
-	bool ClickedOnActor(int actorId); 
+	bool ClickedOnActor(int actorId);
 	bool ClickedOnItem(int itemId, bool a2);
-	bool ClickedOnExit(int exitId); 
-	bool ClickedOn2DRegion(int region); 
+	bool ClickedOnExit(int exitId);
+	bool ClickedOn2DRegion(int region);
 	void SceneFrameAdvanced(int frame);
 	void ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet);
 	void PlayerWalkedIn();
@@ -817,9 +812,7 @@ END_SCRIPT
 
 class AIScriptBase : public ScriptBase {
 public:
-	AIScriptBase(BladeRunnerEngine *vm)
-		: ScriptBase(vm)
-	{}
+	AIScriptBase(BladeRunnerEngine *vm) : ScriptBase(vm) {}
 
 	virtual void Initialize() = 0;
 	virtual bool Update() = 0;

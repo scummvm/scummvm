@@ -131,7 +131,6 @@ bool ScriptPS15::ClickedOn2DRegion(int region) {
 }
 
 void ScriptPS15::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -166,7 +165,6 @@ void ScriptPS15::PlayerWalkedIn() {
 }
 
 void ScriptPS15::PlayerWalkedOut() {
-
 }
 
 void ScriptPS15::DialogueQueueFlushed(int a1) {

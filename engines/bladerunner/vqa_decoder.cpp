@@ -81,8 +81,7 @@ int32 remain(Common::SeekableReadStream *s) {
 	return size - pos;
 }
 
-struct IFFChunkHeader
-{
+struct IFFChunkHeader {
 	IFFChunkHeader()
 		: id(0), size(0)
 	{}
@@ -91,9 +90,7 @@ struct IFFChunkHeader
 	uint32 size;
 };
 
-static
-bool readIFFChunkHeader(Common::SeekableReadStream *s, IFFChunkHeader *ts)
-{
+static bool readIFFChunkHeader(Common::SeekableReadStream *s, IFFChunkHeader *ts) {
 	if (remain(s) < 8)
 		return false;
 
@@ -103,13 +100,11 @@ bool readIFFChunkHeader(Common::SeekableReadStream *s, IFFChunkHeader *ts)
 	return true;
 }
 
-static inline uint32 roundup(uint32 v)
-{
+static inline uint32 roundup(uint32 v) {
 	return (v + 1) & ~1u;
 }
 
-const char *strTag(uint32 tag)
-{
+const char *strTag(uint32 tag) {
 	static char s[5];
 
 	sprintf(s, "%c%c%c%c",
@@ -121,15 +116,13 @@ const char *strTag(uint32 tag)
 	return s;
 }
 
-VQADecoder::VQADecoder()
-	: _s(nullptr),
+VQADecoder::VQADecoder() : _s(nullptr),
 	  _frameInfo(nullptr),
 	  _videoTrack(nullptr),
 	  _audioTrack(nullptr),
 	  _maxVIEWChunkSize(0),
 	  _maxZBUFChunkSize(0),
-	  _maxAESCChunkSize(0)
-{
+	  _maxAESCChunkSize(0) {
 }
 
 VQADecoder::~VQADecoder() {
@@ -160,20 +153,19 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 			return false;
 
 		rc = false;
-		switch (chd.id)
-		{
-			case kCINF: rc = readCINF(s, chd.size); break;
-			case kCLIP: rc = readCLIP(s, chd.size); break;
-			case kFINF: rc = readFINF(s, chd.size); break;
-			case kLINF: rc = readLINF(s, chd.size); break;
-			case kLNIN: rc = readLNIN(s, chd.size); break;
-			case kMFCI: rc = readMFCI(s, chd.size); break;
-			case kMSCI: rc = readMSCI(s, chd.size); break;
-			case kVQHD: rc = readVQHD(s, chd.size); break;
-			default:
-				warning("Unhandled chunk '%s'", strTag(chd.id));
-				s->skip(roundup(chd.size));
-				rc = true;
+		switch (chd.id) {
+		case kCINF: rc = readCINF(s, chd.size); break;
+		case kCLIP: rc = readCLIP(s, chd.size); break;
+		case kFINF: rc = readFINF(s, chd.size); break;
+		case kLINF: rc = readLINF(s, chd.size); break;
+		case kLNIN: rc = readLNIN(s, chd.size); break;
+		case kMFCI: rc = readMFCI(s, chd.size); break;
+		case kMSCI: rc = readMSCI(s, chd.size); break;
+		case kVQHD: rc = readVQHD(s, chd.size); break;
+		default:
+			warning("Unhandled chunk '%s'", strTag(chd.id));
+			s->skip(roundup(chd.size));
+			rc = true;
 		}
 
 		if (!rc) {
@@ -209,13 +201,11 @@ Audio::SeekableAudioStream *VQADecoder::decodeAudioFrame() {
 	return _audioTrack->decodeAudioFrame();
 }
 
-void VQADecoder::decodeView(View* view)
-{
+void VQADecoder::decodeView(View *view) {
 	_videoTrack->decodeView(view);
 }
 
-void VQADecoder::decodeLights(Lights *lights)
-{
+void VQADecoder::decodeLights(Lights *lights) {
 	_videoTrack->decodeLights(lights);
 }
 
@@ -235,20 +225,20 @@ void VQADecoder::readNextPacket() {
 
 		bool rc = false;
 		switch (chd.id) {
-			// Video track
-			case kAESC: rc = _videoTrack->readAESC(_s, chd.size); break;
-			case kLITE: rc = _videoTrack->readLITE(_s, chd.size); break;
-			case kVIEW: rc = _videoTrack->readVIEW(_s, chd.size); break;
-			case kVQFL: rc = _videoTrack->readVQFL(_s, chd.size); break;
-			case kVQFR: rc = _videoTrack->readVQFR(_s, chd.size); break;
-			case kZBUF: rc = _videoTrack->readZBUF(_s, chd.size); break;
-			// Sound track
-			case kSN2J: rc = _audioTrack->readSN2J(_s, chd.size); break;
-			case kSND2: rc = _audioTrack->readSND2(_s, chd.size); break;
+		// Video track
+		case kAESC: rc = _videoTrack->readAESC(_s, chd.size); break;
+		case kLITE: rc = _videoTrack->readLITE(_s, chd.size); break;
+		case kVIEW: rc = _videoTrack->readVIEW(_s, chd.size); break;
+		case kVQFL: rc = _videoTrack->readVQFL(_s, chd.size); break;
+		case kVQFR: rc = _videoTrack->readVQFR(_s, chd.size); break;
+		case kZBUF: rc = _videoTrack->readZBUF(_s, chd.size); break;
+		// Sound track
+		case kSN2J: rc = _audioTrack->readSN2J(_s, chd.size); break;
+		case kSND2: rc = _audioTrack->readSND2(_s, chd.size); break;
 
-			default:
-				_s->skip(roundup(chd.size));
-				rc = false;
+		default:
+			_s->skip(roundup(chd.size));
+			rc = false;
 		}
 
 		if (!rc) {
@@ -268,8 +258,7 @@ void VQADecoder::readPacket(int frame) {
 	readNextPacket();
 }
 
-bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size) {
 	if (size != 42)
 		return false;
 
@@ -295,14 +284,12 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
 	_header.maxCBFZSize = s->readUint32LE();
 	_header.unk5        = s->readUint32LE();
 
-	if (_header.offsetX || _header.offsetY)
-	{
+	if (_header.offsetX || _header.offsetY) {
 		debug("_header.offsetX, _header.offsetY: %d %d", _header.offsetX, _header.offsetY);
 	}
 
 	// if (_header.unk3 || _header.unk4 != 4 || _header.unk5 || _header.flags != 0x0014)
-	if (false)
-	{
+	if (false) {
 		debug("_header.version      %d", _header.version);
 		debug("_header.flags        %04x", _header.flags);
 		debug("_header.numFrames    %d", _header.numFrames);
@@ -338,27 +325,23 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
-bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 size) {
 	IFFChunkHeader chd;
 
-	while (size >= 8)
-	{
+	while (size >= 8) {
 		if (!readIFFChunkHeader(s, &chd))
 			return false;
 		size -= roundup(chd.size) + 8;
 
 		bool rc = false;
-		switch (chd.id)
-		{
+		switch (chd.id) {
 		case kCBFZ: rc = readCBFZ(s, chd.size); break;
 		case kVPTR: rc = readVPTR(s, chd.size); break;
 		default:
 			s->skip(roundup(chd.size));
 		}
 
-		if (!rc)
-		{
+		if (!rc) {
 			debug("VQFR: error handling chunk %s", strTag(chd.id));
 			return false;
 		}
@@ -367,8 +350,7 @@ bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size) {
 	IFFChunkHeader chd;
 	readIFFChunkHeader(_s, &chd);
 
@@ -384,14 +366,12 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size)
 	if (chd.id != kMSCT || chd.size != count * 0x10)
 		return false;
 
-	for (uint32 i = 0; i < count; ++i)
-	{
+	for (uint32 i = 0; i < count; ++i) {
 		uint32 tag, max_size;
 		tag  = s->readUint32BE();
 		max_size = s->readUint32LE();
 
-		switch (tag)
-		{
+		switch (tag) {
 		case kVIEW:
 			_maxVIEWChunkSize = max_size;
 			break;
@@ -413,8 +393,7 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
-bool VQADecoder::readLINF(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readLINF(Common::SeekableReadStream *s, uint32 size) {
 	IFFChunkHeader chd;
 	readIFFChunkHeader(_s, &chd);
 
@@ -432,8 +411,7 @@ bool VQADecoder::readLINF(Common::SeekableReadStream *s, uint32 size)
 		return false;
 
 	_loopInfo.loops = new Loop[_loopInfo.loopCount];
-	for (int i = 0; i != _loopInfo.loopCount; ++i)
-	{
+	for (int i = 0; i != _loopInfo.loopCount; ++i) {
 		_loopInfo.loops[i].begin = s->readUint16LE();
 		_loopInfo.loops[i].end   = s->readUint16LE();
 
@@ -443,8 +421,7 @@ bool VQADecoder::readLINF(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
-bool VQADecoder::readCINF(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readCINF(Common::SeekableReadStream *s, uint32 size) {
 	IFFChunkHeader chd;
 
 	readIFFChunkHeader(_s, &chd);
@@ -458,8 +435,7 @@ bool VQADecoder::readCINF(Common::SeekableReadStream *s, uint32 size)
 	if (chd.id != kCIND || chd.size != 6u * _clipInfo.clipCount)
 		return false;
 
-	for (int i = 0; i != _clipInfo.clipCount; ++i)
-	{
+	for (int i = 0; i != _clipInfo.clipCount; ++i) {
 		uint16 a;
 		uint32 b;
 		a = s->readUint16LE();
@@ -469,8 +445,7 @@ bool VQADecoder::readCINF(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
-bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size) {
 	if (size != 4u * _header.numFrames)
 		return false;
 
@@ -481,8 +456,7 @@ bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size)
 
 	if (false) {
 		uint32 last = 0;
-		for (uint32 i = 0; i != _header.numFrames; ++i)
-		{
+		for (uint32 i = 0; i != _header.numFrames; ++i) {
 			uint32 diff = _frameInfo[i] - last;
 			debug("_frameInfo[%4d] = 0x%08x   - %08x", i, _frameInfo[i], diff);
 			last = _frameInfo[i];
@@ -492,8 +466,7 @@ bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size)
 	return true;
 }
 
-bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	IFFChunkHeader chd;
 
 	readIFFChunkHeader(_s, &chd);
@@ -696,42 +669,34 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-static
-int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
-{
+static int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen) {
 	uint32 dstSize = 640 * 480; // This is taken from global variables?
 	uint32 dstRemain = dstSize;
 
 	uint16 *curzp = curZBUF;
 	uint16 *inp = (uint16*)src;
 
-	while (dstRemain && (inp - (uint16*)src) < (std::ptrdiff_t)srcLen)
-	{
+	while (dstRemain && (inp - (uint16*)src) < (std::ptrdiff_t)srcLen) {
 		uint32 count = FROM_LE_16(*inp++);
 
-		if (count & 0x8000)
-		{
+		if (count & 0x8000) {
 			count = MIN(count & 0x7fff, dstRemain);
 			dstRemain -= count;
 
-			while (count--)
-			{
+			while (count--) {
 				uint16 value = FROM_LE_16(*inp++);
 				if (value)
 					*curzp = value;
 				++curzp;
 			}
-		}
-		else
-		{
+		} else {
 			count = MIN(count, dstRemain);
 			dstRemain -= count;
 			uint16 value = FROM_LE_16(*inp++);
 
-			if (!value)
+			if (!value) {
 				curzp += count;
-			else
-			{
+			} else {
 				while (count--)
 					*curzp++ = value;
 			}
@@ -740,8 +705,7 @@ int decodeZBUF_partial(uint8 *src, uint16 *curZBUF, uint32 srcLen)
 	return dstSize - dstRemain;
 }
 
-bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size) {
 	if (size > _maxZBUFChunkSize) {
 		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
 		s->skip(roundup(size));
@@ -756,8 +720,7 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 
 	uint32 remain = size - 16;
 
-	if (_width != width || _height != height)
-	{
+	if (_width != width || _height != height) {
 		debug("%d, %d, %d, %d", width, height, complete, unk0);
 		s->skip(roundup(remain));
 		return false;
@@ -770,8 +733,7 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
-{
+const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer() {
 	if (_maxZBUFChunkSize == 0)
 		return nullptr;
 
@@ -788,8 +750,7 @@ const uint16 *VQADecoder::VQAVideoTrack::decodeZBuffer()
 	return _zbuffer;
 }
 
-bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 size) {
 	if (size != 56)
 		return false;
 
@@ -805,8 +766,7 @@ bool VQADecoder::VQAVideoTrack::readVIEW(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-void VQADecoder::VQAVideoTrack::decodeView(View* view)
-{
+void VQADecoder::VQAVideoTrack::decodeView(View *view) {
 	if (!view || !_viewData)
 		return;
 
@@ -817,16 +777,14 @@ void VQADecoder::VQAVideoTrack::decodeView(View* view)
 	_viewData = nullptr;
 }
 
-bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readAESC(Common::SeekableReadStream *s, uint32 size) {
 	debug("VQADecoder::readAESC(%d)", size);
 
 	s->skip(roundup(size));
 	return true;
 }
 
-bool VQADecoder::VQAVideoTrack::readLITE(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readLITE(Common::SeekableReadStream *s, uint32 size) {
 	if (_lightsData) {
 		delete[] _lightsData;
 		_lightsData = nullptr;
@@ -840,8 +798,7 @@ bool VQADecoder::VQAVideoTrack::readLITE(Common::SeekableReadStream *s, uint32 s
 }
 
 
-void VQADecoder::VQAVideoTrack::decodeLights(Lights *lights)
-{
+void VQADecoder::VQAVideoTrack::decodeLights(Lights *lights) {
 	if (!lights || !_lightsData)
 		return;
 
@@ -853,8 +810,7 @@ void VQADecoder::VQAVideoTrack::decodeLights(Lights *lights)
 }
 
 
-bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 size) {
 	if (size > _maxVPTRSize)
 		return false;
 
@@ -869,8 +825,7 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha)
-{
+void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha) {
 	uint16 frame_width  = _width;
 	uint32 frame_stride = 640;
 	uint16 block_width  = _blockW;
@@ -881,8 +836,7 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBl
 
 	int blocks_per_line = frame_width / block_width;
 
-	do
-	{
+	do {
 		uint32 frame_x = dstBlock % blocks_per_line * block_width  + _offsetX / 2;
 		uint32 frame_y = dstBlock / blocks_per_line * block_height + _offsetY;
 
@@ -892,11 +846,9 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBl
 		uint16      *__restrict dst = frame + dst_offset;
 
 		unsigned int block_y;
-		for (block_y = 0; block_y != block_height; ++block_y)
-		{
+		for (block_y = 0; block_y != block_height; ++block_y) {
 			unsigned int block_x;
-			for (block_x = 0; block_x != block_width; ++block_x)
-			{
+			for (block_x = 0; block_x != block_width; ++block_x) {
 				uint16 rgb555 = src[0] | (src[1] << 8);
 				src += 2;
 
@@ -908,12 +860,10 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(uint16 *frame, unsigned int dstBl
 		}
 
 		++dstBlock;
-	}
-	while (--count);
+	} while (--count);
 }
 
-bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
-{
+bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame) {
 	if (!_codebook || !_vpointer)
 		return false;
 
@@ -923,14 +873,12 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
 	uint16 count, srcBlock, dstBlock = 0;
 	(void)srcBlock;
 
-	while (end - src >= 2)
-	{
+	while (end - src >= 2) {
 		uint16 command = src[0] | (src[1] << 8);
 		uint8  prefix = command >> 13;
 		src += 2;
 
-		switch (prefix)
-		{
+		switch (prefix) {
 		case 0:
 			count = command & 0x1fff;
 			dstBlock += count;
@@ -949,8 +897,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(uint16 *frame)
 			VPTRWriteBlock(frame, dstBlock, srcBlock, 1);
 			++dstBlock;
 
-			for (int i = 0; i < count; ++i)
-			{
+			for (int i = 0; i < count; ++i) {
 				srcBlock = *src++;
 				VPTRWriteBlock(frame, dstBlock, srcBlock, 1);
 				++dstBlock;
@@ -998,8 +945,7 @@ Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
 	return Audio::makeRawStream((byte*)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
 }
 
-bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size) {
 	if (size != 735) {
 		warning("audio frame size: %d", size);
 		return false;
@@ -1010,8 +956,7 @@ bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 s
 	return true;
 }
 
-bool VQADecoder::VQAAudioTrack::readSN2J(Common::SeekableReadStream *s, uint32 size)
-{
+bool VQADecoder::VQAAudioTrack::readSN2J(Common::SeekableReadStream *s, uint32 size) {
 	if (size != 6)
 		return false;
 

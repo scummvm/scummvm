@@ -46,8 +46,7 @@ struct SlicePalette {
 class SliceAnimations {
 	friend class SliceRenderer;
 
-	struct Animation
-	{
+	struct Animation {
 		uint32 frameCount;
 		uint32 frameSize;
 		float  fps;
@@ -60,9 +59,7 @@ class SliceAnimations {
 		void   *_data;
 		uint32 _lastAccess;
 
-		Page()
-			: _data(nullptr)
-		{}
+		Page() : _data(nullptr) {}
 	};
 
 	struct PageFile {
@@ -70,9 +67,7 @@ class SliceAnimations {
 		Common::File         _file;
 		Common::Array<int32> _pageOffsets;
 
-		PageFile(SliceAnimations *sliceAnimations)
-			: _sliceAnimations(sliceAnimations)
-		{}
+		PageFile(SliceAnimations *sliceAnimations) : _sliceAnimations(sliceAnimations) {}
 
 		bool  open(const Common::String &name);
 		void *loadPage(uint32 page);
@@ -96,8 +91,8 @@ public:
 	SliceAnimations(BladeRunnerEngine *vm)
 		: _vm(vm),
 		  _coreAnimPageFile(this),
-		  _framesPageFile(this)
-	{}
+		  _framesPageFile(this) {
+	}
 	~SliceAnimations();
 
 	bool open(const Common::String &name);

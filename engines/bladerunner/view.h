@@ -26,7 +26,7 @@
 #include "matrix.h"
 
 namespace Common {
-	class ReadStream;
+class ReadStream;
 }
 
 namespace BladeRunner {

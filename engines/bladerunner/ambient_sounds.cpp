@@ -34,9 +34,7 @@ namespace BladeRunner {
 #define NON_LOOPING_SOUNDS 25
 #define LOOPING_SOUNDS      3
 
-AmbientSounds::AmbientSounds(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) : _vm(vm) {
 	_nonLoopingSounds = new NonLoopingSound[NON_LOOPING_SOUNDS];
 	_loopingSounds = new LoopingSound[LOOPING_SOUNDS];
 	_ambientVolume = 65;
@@ -66,13 +64,12 @@ static inline void sort(int &a, int &b) {
 }
 
 void AmbientSounds::addSound(
-	int id,
-	int timeRangeBegin, int timeRangeEnd,
-	int volumeRangeBegin, int volumeRangeEnd,
-	int unk1RangeBegin, int unk1RangeEnd,
-	int unk2RangeBegin, int unk2RangeEnd,
-	int priority, int unk3)
-{
+		int id,
+		int timeRangeBegin, int timeRangeEnd,
+		int volumeRangeBegin, int volumeRangeEnd,
+		int unk1RangeBegin, int unk1RangeEnd,
+		int unk2RangeBegin, int unk2RangeEnd,
+		int priority, int unk3) {
 	const char *name = _vm->_gameInfo->getSfxTrack(id);
 
 	sort(volumeRangeBegin, volumeRangeEnd);
@@ -187,8 +184,7 @@ void AmbientSounds::addSoundByName(
 		int volumeRangeBegin, int volumeRangeEnd,
 		int pan1begin, int pan1end,
 		int pan2begin, int pan2end,
-		int priority, int unk3)
-{
+		int priority, int unk3) {
 	int i = findAvailableNonLoopingTrack();
 	if (i < 0)
 		return;

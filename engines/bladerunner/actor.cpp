@@ -402,7 +402,7 @@ void Actor::draw() {
 	float draw_scale  = _scale;
 
 	// TODO: Handle SHORTY mode
-	
+
 	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, draw_position, draw_facing, draw_scale, _vm->_surface2, _vm->_zBuffer2);
 	//todo udpate screenrect
 }
@@ -798,8 +798,7 @@ bool Actor::hasClue(int clueId) {
 
 void Actor::copyClues(int actorId) {
 	Actor *otherActor = _vm->_actors[actorId];
-	int i;
-	for (i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
+	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
 		if (hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
 			if (_id == 99)

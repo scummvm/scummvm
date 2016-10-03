@@ -69,8 +69,8 @@ public:
 		  _loopEnd(-1),
 		  _nextFrameTime(0),
 		  _hasAudio(false),
-		  _audioStarted(false)
-	{}
+		  _audioStarted(false) {
+	}
 
 	~VQAPlayer() {
 		close();

@@ -28,14 +28,12 @@
 
 namespace BladeRunner {
 
-ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType)
-{
+ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType) {
 	_vm = vm;
 	_count = 0;
 	_maxCount = 0;
 	_clues = 0;
-	switch (cluesType)
-	{
+	switch (cluesType) {
 	case 4:
 		_maxCount = _vm->_gameInfo->getClueCount();
 		break;
@@ -66,8 +64,7 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType)
 		_maxCount = 0;
 }
 
-ActorClues::~ActorClues()
-{
+ActorClues::~ActorClues() {
 	if (_clues)
 		delete[] _clues;
 
@@ -75,8 +72,7 @@ ActorClues::~ActorClues()
 	_count = 0;
 }
 
-void ActorClues::acquire(int clueId, char flag2, int fromActorId)
-{
+void ActorClues::acquire(int clueId, char flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
 	_clues[clueIndex]._flags |= 0x01;
 	_clues[_count]._flags = (_clues[_count]._flags & ~0x02) | ((flag2 << 1) & 0x02);
@@ -85,14 +81,12 @@ void ActorClues::acquire(int clueId, char flag2, int fromActorId)
 	debug("Actor acquired clue: \"%s\" from %d", _vm->_clues->getClueText(clueId), fromActorId);
 }
 
-void ActorClues::lose(int clueId)
-{
+void ActorClues::lose(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	_clues[clueIndex]._flags = 0;
 }
 
-bool ActorClues::isAcquired(int clueId)
-{
+bool ActorClues::isAcquired(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1)
 		return 0;
@@ -100,8 +94,7 @@ bool ActorClues::isAcquired(int clueId)
 	return _clues[clueIndex]._flags & 0x01;
 }
 
-int ActorClues::getFromActorId(int clueId)
-{
+int ActorClues::getFromActorId(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1)
 		return  -1;
@@ -109,8 +102,7 @@ int ActorClues::getFromActorId(int clueId)
 	return _clues[clueIndex]._fromActorId;
 }
 
-bool ActorClues::isFlag2(int clueId)
-{
+bool ActorClues::isFlag2(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1)
 		return 0;
@@ -118,8 +110,7 @@ bool ActorClues::isFlag2(int clueId)
 	return (_clues[clueIndex]._flags & 0x02) >> 1;
 }
 
-bool ActorClues::isFlag3(int clueId)
-{
+bool ActorClues::isFlag3(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1)
 		return 0;
@@ -127,8 +118,7 @@ bool ActorClues::isFlag3(int clueId)
 	return (_clues[clueIndex]._flags & 0x04) >> 2;
 }
 
-bool ActorClues::isFlag4(int clueId)
-{
+bool ActorClues::isFlag4(int clueId) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1)
 		return 0;
@@ -136,8 +126,7 @@ bool ActorClues::isFlag4(int clueId)
 	return (_clues[clueIndex]._flags & 0x08) >> 3;
 }
 
-int ActorClues::getField1(int clueId)
-{
+int ActorClues::getField1(int clueId) {
 	if (!_count)
 		return 0;
 
@@ -148,21 +137,18 @@ int ActorClues::getField1(int clueId)
 	return _clues[clueIndex]._field1;
 }
 
-int ActorClues::getCount()
-{
+int ActorClues::getCount() {
 	return _count;
 }
 
-void ActorClues::removeAll()
-{
+void ActorClues::removeAll() {
 	_count = 0;
 	for (int i = 0; i < _maxCount; ++i) {
 		remove(i);
 	}
 }
 
-int ActorClues::findClueIndex(int clueId)
-{
+int ActorClues::findClueIndex(int clueId) {
 	for (int i = 0; i < _count; i++) {
 		if (clueId == _clues[i]._clueId) {
 			return i;
@@ -171,8 +157,7 @@ int ActorClues::findClueIndex(int clueId)
 	return -1;
 }
 
-void ActorClues::add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId)
-{
+void ActorClues::add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId) {
 	assert(_count < _maxCount);
 
 	debug("Actor %d added clue: \"%s\" from %d", actorId, _vm->_clues->getClueText(clueId), fromActorId);
@@ -188,8 +173,7 @@ void ActorClues::add(int actorId, int clueId, int unknown, bool acquired, bool u
 	++_count;
 }
 
-void ActorClues::remove(int index)
-{
+void ActorClues::remove(int index) {
 	if (_vm->_clues)
 		debug("Actor removed clue: \"%s\"", _vm->_clues->getClueText(_clues[index]._clueId));
 
@@ -206,8 +190,7 @@ void ActorClues::remove(int index)
 	_clues[index]._field8 = 0;
 }
 
-bool ActorClues::exists(int clueId)
-{
+bool ActorClues::exists(int clueId) {
 	return findClueIndex(clueId) != -1;
 }
 

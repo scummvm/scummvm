@@ -24,24 +24,20 @@
 
 namespace BladeRunner {
 
-MovementTrack::MovementTrack()
-{
+MovementTrack::MovementTrack() {
 	reset();
 }
 
-MovementTrack::~MovementTrack()
-{
+MovementTrack::~MovementTrack() {
 	reset();
 }
 
-void MovementTrack::reset()
-{
+void MovementTrack::reset() {
 	_currentIndex = -1;
 	_lastIndex = -1;
 	_hasNext = 0;
 	_paused = 0;
-	for (int i = 0; i < 100; i++)
-	{
+	for (int i = 0; i < 100; i++) {
 		_entries[i].waypointId = -1;
 		_entries[i].delay = -1;
 		_entries[i].angle = -1;
@@ -49,13 +45,11 @@ void MovementTrack::reset()
 	}
 }
 
-int MovementTrack::append(int waypointId, int delay, int running)
-{
+int MovementTrack::append(int waypointId, int delay, int running) {
 	return append(waypointId, delay, -1, running);
 }
 
-int MovementTrack::append(int waypointId, int delay, int angle, int running)
-{
+int MovementTrack::append(int waypointId, int delay, int angle, int running) {
 	if (_lastIndex > ARRAYSIZE(_entries))
 		return 0;
 
@@ -70,41 +64,34 @@ int MovementTrack::append(int waypointId, int delay, int angle, int running)
 	return 1;
 }
 
-void MovementTrack::flush()
-{
+void MovementTrack::flush() {
 	reset();
 }
 
-void MovementTrack::repeat()
-{
+void MovementTrack::repeat() {
 	_currentIndex = 0;
 	_hasNext = 1;
 }
 
-int MovementTrack::pause()
-{
+int MovementTrack::pause() {
 	_paused = 1;
 	return 1;
 }
 
-int MovementTrack::unpause()
-{
+int MovementTrack::unpause() {
 	_paused = 0;
 	return 1;
 }
 
-int MovementTrack::isPaused()
-{
+int MovementTrack::isPaused() {
 	return _paused;
 }
 
-int MovementTrack::hasNext()
-{
+int MovementTrack::hasNext() {
 	return _hasNext;
 }
 
-int MovementTrack::next(int *waypointId, int *delay, int *angle, int *running)
-{
+int MovementTrack::next(int *waypointId, int *delay, int *angle, int *running) {
 	if (_currentIndex < _lastIndex && this->_hasNext)
 	{
 		*waypointId = _entries[_currentIndex].waypointId;
@@ -112,9 +99,7 @@ int MovementTrack::next(int *waypointId, int *delay, int *angle, int *running)
 		*angle = _entries[_currentIndex].angle;
 		*running = _entries[_currentIndex++].running;
 		return 1;
-	}
-	else
-	{
+	} else {
 		*waypointId = -1;
 		*delay = -1;
 		*angle = -1;

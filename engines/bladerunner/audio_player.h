@@ -58,8 +58,8 @@ public:
 	AudioCache() :
 		_totalSize(0),
 		_maxSize(2457600),
-		_accessCounter(0)
-	{}
+		_accessCounter(0) {
+	}
 	~AudioCache();
 
 	bool  canAllocate(uint32 size);
@@ -82,9 +82,7 @@ class AudioPlayer {
 		int32              hash;
 		int                volume;
 
-		Track()
-			: isMaybeActive(false)
-		{}
+		Track() : isMaybeActive(false) {}
 	};
 
 	Track _tracks[TRACKS];

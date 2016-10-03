@@ -128,7 +128,6 @@ bool ScriptUG03::ClickedOn2DRegion(int region) {
 }
 
 void ScriptUG03::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptUG03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

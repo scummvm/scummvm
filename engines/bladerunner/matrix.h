@@ -27,8 +27,7 @@
 
 namespace BladeRunner {
 
-class Matrix3x2
-{
+class Matrix3x2 {
 public:
 	float _m[2][3];
 
@@ -42,9 +41,7 @@ public:
 	const float &operator()(int r, int c) const { assert(r >= 0 && r < 2); assert(c >= 0 && c < 3); return _m[r][c]; }
 };
 
-inline
-Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b)
-{
+inline Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b) {
 	Matrix3x2 t;
 
 	t(0,0) = a(0,0)*b(0,0) + a(0,1)*b(1,0);
@@ -57,9 +54,7 @@ Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b)
 	return t;
 }
 
-inline
-Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b)
-{
+inline Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b) {
 	Matrix3x2 t(a);
 
 	t(0,2) += b.x;
@@ -68,9 +63,7 @@ Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b)
 	return t;
 }
 
-inline
-Vector2 operator*(const Matrix3x2 &a, Vector2 b)
-{
+inline Vector2 operator*(const Matrix3x2 &a, Vector2 b) {
 	Vector2 t;
 
 	t.x = a(0,0) * b.x + a(0,1) * b.y + a(0,2);
@@ -79,8 +72,7 @@ Vector2 operator*(const Matrix3x2 &a, Vector2 b)
 	return t;
 }
 
-class Matrix4x3
-{
+class Matrix4x3 {
 public:
 	float _m[3][4];
 
@@ -100,13 +92,10 @@ public:
 Matrix4x3 invertMatrix(const Matrix4x3 &m);
 Matrix4x3 rotationMatrixX(float angle);
 
-inline
-Matrix4x3 operator*(const Matrix4x3 &a, const Matrix4x3 &b)
-{
+inline Matrix4x3 operator*(const Matrix4x3 &a, const Matrix4x3 &b) {
 	Matrix4x3 t;
 
-	for (int i = 0; i !=3; ++i)
-	{
+	for (int i = 0; i !=3; ++i) {
 		// printf("t(%d,0) = %7.2f*%7.2f + %7.2f*%7.2f + %7.2f*%7.2f\n", i, a(i,0), b(0,0), a(i,0), b(1,0), a(i,0), b(2,0));
 		t(i,0) = a(i,0)*b(0,0) + a(i,1)*b(1,0) + a(i,2)*b(2,0);
 		t(i,1) = a(i,0)*b(0,1) + a(i,1)*b(1,1) + a(i,2)*b(2,1);
@@ -117,9 +106,7 @@ Matrix4x3 operator*(const Matrix4x3 &a, const Matrix4x3 &b)
 	return t;
 }
 
-inline
-Vector3 operator*(const Matrix4x3 &m, const Vector3 &v)
-{
+inline Vector3 operator*(const Matrix4x3 &m, const Vector3 &v) {
 	Vector3 r;
 
 	r.x = m(0, 0) * v.x + m(0, 1) * v.y + m(0, 2) * v.z + m(0, 3);

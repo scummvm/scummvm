@@ -46,28 +46,23 @@ ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 ActorWalk::~ActorWalk() {
 }
 
-int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, int *unk2)
-{
+int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, int *unk2) {
 	Vector3 next;
 
 	*unk2 = 0;
 	int r = nextOnPath(actorId, from, to, &next);
 
 	if (r == 0) {
-		if (actorId != 0)
-		{
+		if (actorId != 0) {
 			_current = from;
 			_destination = to;
 			stop(actorId, false);
-		}
-		else
-		{
+		} else {
 			stop(actorId, true);
 		}
 		return 0;
 	}
-	if (r == -1)
-	{
+	if (r == -1) {
 		stop(actorId, true);
 		*unk2 = 1;
 		return 0;
@@ -77,18 +72,14 @@ int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, i
 	// TODO: Update screen index
 	// Set actor field e8
 
-	if (_running)
-	{
+	if (_running) {
 		run = true;
 	}
 
 	int animationMode;
-	if (_vm->_actors[actorId]->inCombat())
-	{
+	if (_vm->_actors[actorId]->inCombat()) {
 		animationMode = run ? 8 : 7;
-	}
-	else
-	{
+	} else {
 		animationMode = run ? 2 : 1;
 	}
 
@@ -98,8 +89,7 @@ int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, i
 	_current = from;
 	_next = next;
 
-	if (next.x != _current.x || next.z != _current.z)
-	{
+	if (next.x != _current.x || next.z != _current.z) {
 		_facing = angle_1024(_current, next);
 		_walking = true;
 		_running = run;
@@ -112,26 +102,21 @@ int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, i
 	return 0;
 }
 
-bool ActorWalk::tick(int actorId, float stepDistance, bool flag)
-{
-	if (_status == 5)
-	{
-		if (flag)
-		{
+bool ActorWalk::tick(int actorId, float stepDistance, bool flag) {
+	if (_status == 5) {
+		if (flag) {
 			stop(actorId, true);
 			return true;
 		}
 
-		if (actorId != 0 && _vm->_rnd.getRandomNumberRng(1, 15) != 1)
-		{
+		if (actorId != 0 && _vm->_rnd.getRandomNumberRng(1, 15) != 1) {
 			return false;
 		}
 		_status = 3;
 	}
 	// TODO: Handle collisions?
 
-	if (stepDistance > distance(_current, _destination))
-	{
+	if (stepDistance > distance(_current, _destination)) {
 		stop(actorId, true);
 		_current = _destination;
 		// TODO: Update y from walkbox
@@ -149,14 +134,12 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool flag)
 	return false;
 }
 
-void ActorWalk::getCurrentPosition(int actorId, Vector3 *pos, int *facing)
-{
+void ActorWalk::getCurrentPosition(int actorId, Vector3 *pos, int *facing) {
 	*pos    = _current;
 	*facing = _facing;
 }
 
-void ActorWalk::setRunning()
-{
+void ActorWalk::setRunning() {
 	_running = true;
 	// TODO: Set animation mode
 }
@@ -182,10 +165,8 @@ void ActorWalk::stop(int actorId, bool unknown, int animationMode, int notused) 
 	}
 }
 
-int ActorWalk::nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next)
-{
-	if (distance(from, to) < 6.0)
-	{
+int ActorWalk::nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next) {
+	if (distance(from, to) < 6.0) {
 		return -1;
 	}
 
@@ -197,25 +178,20 @@ int ActorWalk::nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next)
 	error("TODO!");
 }
 
-static
-int angle_1024(float x1, float z1, float x2, float z2)
-{
+static int angle_1024(float x1, float z1, float x2, float z2) {
 	float angle_rad = atan2(x2 - x1, z1 - z2);
 	int a = int(512.0 * angle_rad / M_PI);
 	return (a + 1024) % 1024;
 }
 
-static
-int angle_1024(Vector3 &v1, Vector3 &v2)
-{
+static int angle_1024(Vector3 &v1, Vector3 &v2) {
 	return angle_1024(v1.x, v1.z, v2.x, v2.z);
 }
 
-float distance(float x1, float z1, float x2, float z2)
-{
+float distance(float x1, float z1, float x2, float z2) {
 	float dx = x1 - x2;
 	float dz = z1 - z2;
-	float d = sqrt(dx*dx + dz*dz);
+	float d = sqrt(dx * dx + dz * dz);
 
 	float int_part = (int)d;
 	float frac_part = d - int_part;
@@ -226,8 +202,7 @@ float distance(float x1, float z1, float x2, float z2)
 	return int_part + frac_part;
 }
 
-float distance(Vector3 &v1, Vector3 &v2)
-{
+float distance(Vector3 &v1, Vector3 &v2) {
 	return distance(v1.x, v1.z, v2.x, v2.z);
 }
 

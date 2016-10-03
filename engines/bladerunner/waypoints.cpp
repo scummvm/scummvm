@@ -23,7 +23,7 @@
 #include "bladerunner/waypoints.h"
 namespace BladeRunner {
 
-Waypoints::Waypoints(BladeRunnerEngine* vm, int count) {
+Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
 	_count = count;
 	_waypoints = new Waypoint[count];
 }

@@ -127,7 +127,6 @@ bool ScriptUG18::ClickedOn2DRegion(int region) {
 }
 
 void ScriptUG18::SceneFrameAdvanced(int frame) {
-
 }
 
 void ScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -186,7 +185,6 @@ void ScriptUG18::PlayerWalkedIn() {
 }
 
 void ScriptUG18::PlayerWalkedOut() {
-
 }
 
 void ScriptUG18::DialogueQueueFlushed(int a1) {

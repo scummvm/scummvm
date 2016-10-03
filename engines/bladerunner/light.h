@@ -36,8 +36,7 @@ namespace BladeRunner {
 
 class Lights;
 
-class Light
-{
+class Light {
 #if _DEBUG
 	friend class BladeRunnerEngine;
 #endif
