@@ -26,6 +26,7 @@
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/titanic.h"
@@ -102,26 +103,31 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 	++_setCursorCount;
 
 	if (cursorId != _cursorId) {
+		// The original cursors supported partial alpha when rendering the cursor.
+		// Since we're using the ScummVM CursorMan, we can't do that, so we need
+		// to build up a surface of the cursor with even partially transparent
+		// pixels as wholy transparent
 		CursorEntry &ce = _cursors[cursorId - 1];
 		CVideoSurface &srcSurface = *ce._videoSurface;
 		srcSurface.lock();
 
-		CVideoSurface *surface = CScreenManager::_currentScreenManagerPtr->createSurface(
-			CURSOR_SIZE, CURSOR_SIZE);
-		Rect srcRect(0, 0, CURSOR_SIZE, CURSOR_SIZE);
-		surface->lock();
-		surface->getRawSurface()->fillRect(srcRect, srcSurface.getTransparencyColor());
-		surface->blitFrom(Point(0, 0), &srcSurface, &srcRect);
+		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
+		const uint16 *srcP = srcSurface.getPixels();
+		const byte *maskP = (const byte *)ce._transSurface->getPixels();
+		uint16 *destP = (uint16 *)surface.getPixels();
 
-		CursorMan.replaceCursor(surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			ce._centroid.x, ce._centroid.y, surface->getTransparencyColor(),
-			false, &g_vm->_screen->format);
+		for (int y = 0; y < CURSOR_SIZE; ++y) {
+			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++maskP, ++destP) {
+				*destP = ((*maskP >> 4) == 0) ? srcSurface.getTransparencyColor() : *srcP;
+			}
+		}
 
 		srcSurface.unlock();
-		surface->unlock();
-		delete surface;
 
+		// Set the cursor
 		_cursorId = cursorId;
+		CursorMan.replaceCursor(surface.getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			ce._centroid.x, ce._centroid.y, srcSurface.getTransparencyColor(), false, &g_vm->_screen->format);
 	}
 }
 
