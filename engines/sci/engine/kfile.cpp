@@ -1350,7 +1350,7 @@ reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv) {
 	SciArray &outFileName = *s->_segMan->lookupArray(argv[0]);
 	// argv[1] is the game name, which is not used by ScummVM
 	const int16 saveNo = argv[2].toSint16();
-	outFileName.fromString(g_sci->getSavegameName(saveNo));
+	outFileName.fromString(g_sci->getSavegameName(saveNo + kSaveIdShift));
 	return argv[0];
 }
 
