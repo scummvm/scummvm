@@ -205,7 +205,7 @@ SciEvent EventManager::getScummVMEvent() {
 
 		return noEvent;
 	}
-	if (ev.type == Common::EVENT_QUIT) {
+	if (ev.type == Common::EVENT_QUIT || ev.type == Common::EVENT_RTL) {
 		input.type = SCI_EVENT_QUIT;
 		return input;
 	}
