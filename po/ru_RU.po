@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Выбрать"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Выберите директорию с файлами игры"
+msgstr "Выберите директорию для скачивания данных игры"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -88,30 +87,32 @@ msgstr "Выберите директорию с файлами игры"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "От: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "К: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Прервать загрузку"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Прервать"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Спрятать"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Похоже, что ваше соединение ограничено. Вы действительно хотите загрузить "
+"файлы?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -146,6 +147,9 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Не удалось создать директорию для загрузки, так как указанная диретория уже "
+"содержит файл с таким же именем."
+
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -173,16 +177,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" уже существует в указанной дректории.\n"
+"Вы действительно хотите загрузить файлы в эту директорию?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Загружено %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Поиск закончен!"
+msgstr "Скорость загрузки: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -410,6 +416,9 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Синхронизация сохранений игр не работает с директориями не по умолчанию. Если "
+"вы хотите, чтобы ваши сохранения игр синхронизировались, используйте директорию "
+"по умолчанию."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -697,6 +706,7 @@ msgstr ""
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"Эта директория пока не может быть использована. В неё сейчас загружаются данные!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -1147,24 +1157,24 @@ msgstr "Проверить сейчас"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Облако"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Облако"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Облако:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Активное облачное хранилище"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<нет>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1172,101 +1182,96 @@ msgstr "Пользователь:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Имя пользователя в этом облаке"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Используемы объём"
 
 #: gui/options.cpp:1311
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Объём, занимаемый сохранениями игр ScumьVM на этом облаке"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Последняя синхронизация:"
 
 #: gui/options.cpp:1314
 msgid "When the last saved games sync for this storage occured"
-msgstr ""
+msgstr "Когда производилась последняя синхронизация с этим облаком"
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Подключить"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Открывает диалог для установки подключения к облаку"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Обновить"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Обновляет текущую информацию об облаке (имя пользователя и объём)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Вниз"
+msgstr "Загрузить"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Открывает менеджер загрузок"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Запустить сервер"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Запускает локальный веб-сервер"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Ошибка запуска игры:"
+msgstr "Не запущен"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Доп. путь:"
+msgstr "Корневая директория:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Указывает путь к сохранениям игры"
+msgstr "Указывает путь к директории, куда будет иметь доступ Менеджер файлов"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Доп. путь:"
+msgstr "Корень:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Сервер:"
+msgstr "Порт сервера:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Номер порта, используемый сервером\n"
+"Установление доступа работает только с портом по умолчанию"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Вы должны перезапустить ScummVM, чтобы применить изменения."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Не удалось сохранить игру"
+msgstr "Не удалось сменить облако!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Уже активно другое облачное хранилище."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1285,9 +1290,8 @@ msgid "Select directory for plugins"
 msgstr "Выберите директорию с плагинами"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Выберите директорию с дополнительными файлами"
+msgstr "Выберите директорию для корня в Менеджере файлов"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1300,31 +1304,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu байт"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<сейчас>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Никогда"
+msgstr "<никогда>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Сервер:"
+msgstr "Остановить сервер"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Останавливает локальный веб-сервер"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Ошибка запроса.\n"
+"Проверьте ваше интернет-соединение."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1398,9 +1402,8 @@ msgid "Unknown Author"
 msgstr "Неизвестный автор"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM не может открыть указанную директорию!"
+msgstr "ScummVM не имеет доступа к указанной директории!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1470,72 +1473,73 @@ msgstr "Введите описание слота %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Диалог подключения к облаку %s"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Перейдите по следующему URL:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Получите код от облака, а затем введите его"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "в поля, расположенные ниже и нажмите 'Подключить':"
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Открыть URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Вставить"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Вставляет содержимое буфера обмена в поля"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Сейчас вы будете перенаправлены на страницу ScummVM,"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "где вам нужно будет разрешить доступ к вашему облаку."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Подождите, пока текущее облако завершит работу и попробуйте снова."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Поле %s сожержит ошибку"
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Поля %s содержат ошибки."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Всё OK!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Код неверен"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Не удалось открыть URL!\n"
+"Пожалуйсте, перейдите вручную по указанному URL."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -2016,19 +2020,20 @@ msgid "C64 Audio Emulator"
 msgstr "Эмулятор звука C64"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "Поиск закончен!"
+msgstr "Синхронизация сохранений игр завершена."
 
 #: backends/cloud/storage.cpp:221
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Синхронизация сохранений игр была прервана."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Ошибка синхронизации созранений игр.\n"
+"Проверьте ваше соединение с интернет."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2036,16 +2041,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Загрузка заверщена.\n"
+"Не удалось загрузить %u файлов."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Поиск закончен!"
+msgstr "Загрузка завершена."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Загрузить файл"
+msgstr "Ошибка загрузки."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2703,22 +2708,20 @@ msgid "Check for Updates..."
 msgstr "Проверить обновления..."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Режим без цвета"
+msgstr "Режим цвета"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Использовать цветную графику"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Скан-линии"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Показывать строку объектов"
+msgstr "Показывать скан-линии"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -3106,9 +3109,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "~Э~ффекты воды включены"
 
 #: engines/mohawk/mohawk.cpp:60
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Игра остановлена.  Нажмите пробел, чтобы продолжить."
+msgstr "Игра остановлена. Нажмите любую кнопку, чтобы продолжить."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3248,11 +3250,11 @@ msgstr "Включить графику и контент высокого рарешения"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "Включить видео с линиями"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Рисует чёрные линии поверъ видео, увеличивая таким образом видимую чёткость"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -4241,7 +4243,3 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Использовать MPEG-видео из DVD-версии вместо видео низкого разрешения в "
 "формате AVI"
-
-#, fuzzy
-#~ msgid "Specifies where Files Manager can access to"
-#~ msgstr "Указывает путь к сохранениям игры"
