@@ -20,9 +20,10 @@
  *
  */
 
-#ifndef TITANIC_RAW_SURFACE_H
-#define TITANIC_RAW_SURFACE_H
+#ifndef TITANIC_TRANSPARENCY_SURFACE_H
+#define TITANIC_TRANSPARENCY_SURFACE_H
 
+#include "common/rect.h"
 #include "graphics/surface.h"
 
 namespace Titanic {
@@ -32,24 +33,21 @@ enum TransparencyMode {
 	TRANS_ALPHA255 = 3, TRANS_DEFAULT = 4
 };
 
-class CRawSurface {
+class CTransparencySurface {
 private:
-	const byte *_pixelsBaseP;
-	const byte *_pixelsP;
+	const Graphics::Surface *_surface;
+	Common::Point _pos;
 	int _pitch;
 	int _runLength;
 	bool _flag;
-	int _width;
 	bool _flag1;
 	bool _flag2;
 public:
-	CRawSurface(const Graphics::Surface *surface, TransparencyMode transMode);
+	CTransparencySurface(const Graphics::Surface *surface, TransparencyMode transMode);
 
-	void setRow(int yp);
+	void setRow(int yp) { _pos.y = yp; }
 
-	void setCol(int xp);
-
-	void skipPitch();
+	void setCol(int xp) { _pos.x = xp; }
 
 	uint getPixel() const;
 
@@ -57,11 +55,9 @@ public:
 
 	bool isPixelTransparent2() const;
 
-	void resetPitch();
-
-	int moveX(int xp);
+	int moveX();
 };
 
 } // End of namespace Titanic
 
-#endif /* TITANIC_RAW_SURFACE_H */
+#endif /* TITANIC_TRANSPARENCY_SURFACE_H */

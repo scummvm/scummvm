@@ -203,7 +203,7 @@ void OSMovie::setFrameRate(double rate) {
 	_aviSurface.setFrameRate(rate);
 }
 
-Graphics::ManagedSurface *OSMovie::duplicateFrame() const {
+Graphics::ManagedSurface *OSMovie::duplicateTransparency() const {
 	return _aviSurface.duplicateTransparency();
 }
 

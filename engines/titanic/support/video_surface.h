@@ -30,8 +30,8 @@
 #include "titanic/support/direct_draw.h"
 #include "titanic/support/movie.h"
 #include "titanic/support/movie_range_info.h"
-#include "titanic/support/raw_surface.h"
 #include "titanic/support/rect.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 
@@ -277,9 +277,9 @@ public:
 	virtual bool hasFrame();
 
 	/**
-	 * Duplicates movie frame surface
+	 * Duplicates movie transparency surface
 	 */
-	virtual Graphics::ManagedSurface *dupMovieFrame() const = 0;
+	virtual Graphics::ManagedSurface *dupMovieTransparency() const = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -509,10 +509,9 @@ public:
 	virtual void transPixelate();
 
 	/**
-	 * Duplicates movie frame surface
+	 * Duplicates movie transparency surface
 	 */
-	virtual Graphics::ManagedSurface *dupMovieFrame() const;
-
+	virtual Graphics::ManagedSurface *dupMovieTransparency() const;
 
 	/**
 	 * Frees the underlying surface

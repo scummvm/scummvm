@@ -184,7 +184,7 @@ public:
 	 * This only works when one video track is present, and that track
 	 * supports getFrameTime(). This calls seek() internally.
 	 */
-	bool seekToFrame(uint frame);
+	virtual bool seekToFrame(uint frame);
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
