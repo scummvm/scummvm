@@ -6,11 +6,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2013-05-05 14:16+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
-"Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
+"Language-Team: Catalan <scummvm-devel@lists.scummvm.org>\n"
 "Language: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -851,7 +851,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Modes de tramat especials suportats per alguns jocs"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Mode pantalla completa"
 
@@ -2177,19 +2177,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (no escalat)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "S'ha activat la correcció de la relació d'aspecte"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "S'ha desactivat la correcció de la relació d'aspecte"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Mode de finestra"
 
@@ -3101,7 +3101,7 @@ msgstr "~M~enú Principal"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fecte de l'aigua activat"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
 msgstr "Joc pausat.  Premeu ESPAI per continuar."

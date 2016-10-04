@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2016-02-25 23:06+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
@@ -847,7 +847,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Speciella gitterlägen stödda av vissa spel"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Fullskärmsläge"
 
@@ -2162,19 +2162,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normalt (ingen skalning)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande på"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Korrektion av bildförhållande av"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Aktivt grafikfilter:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Fönsterläge"
 
@@ -3101,7 +3101,7 @@ msgstr "Huvud~m~eny"
 msgid "~W~ater Effect Enabled"
 msgstr "~V~atteneffekt aktiverad"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
 msgstr "Spelet pausat. Tryck MELLANSLAG för att fortsätta."
