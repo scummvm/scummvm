@@ -46,7 +46,11 @@ CTransparencySurface::CTransparencySurface(const Graphics::Surface *surface,
 		_flag1 = false;
 		break;
 	case TRANS_DEFAULT:
-		error("TRANS_DEFAULT not supported in transparency surface");
+		if (*(byte *)surface->getPixels() < 0x80) {
+			_flag1 = true;
+			_flag2 = false;
+		}
+		break;
 	default:
 		break;
 	}

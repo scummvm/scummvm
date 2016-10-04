@@ -200,10 +200,6 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				src->_transparencyMode == TRANS_ALPHA255;
 
 			CTransparencySurface transSurface(src->getTransparencySurface(), src->_transparencyMode);
-			if (flipFlag)
-				transSurface.setRow(srcRect.top);
-			else
-				transSurface.setRow(src->getHeight() - srcRect.bottom);
 
 			for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
 				// Prepare for copying the line
@@ -225,8 +221,9 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				}
 
 				// Move to next line
-				srcPtr = flipFlag ? srcPtr + getWidth() : srcPtr - getWidth();
-				destPtr -= destArea.w;
+				srcPtr = flipFlag ? srcPtr + (src->getPitch() / 2) : 
+					srcPtr - (src->getPitch() / 2);
+				destPtr -= destArea.pitch / 2;
 			}
 
 			src->unlock();
