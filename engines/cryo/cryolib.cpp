@@ -414,7 +414,7 @@ void CLSound_PrepareSample(sound_t *sound, int16 mode) {
 	sound->_loopTimes = 0;
 	sound->_reversed = false;
 	sound->ff_32 = 0;
-	sound->volume = 255;
+	sound->_volume = 255;
 }
 void CLSound_SetWantsDesigned(int16 designed) {
 }
@@ -429,11 +429,11 @@ soundchannel_t *CLSoundChannel_New(int arg1) {
 	if (!ch)
 		return 0;
 
-	ch->volumeLeft = ch->volumeRight = 255;
-	ch->numSounds = 0;
+	ch->_volumeLeft = ch->_volumeRight = 255;
+	ch->_numSounds = 0;
 
-	for (i = 0; i < CL_MAX_CH_SOUNDS; i++)
-		ch->sounds[i] = 0;
+	for (i = 0; i < kCryoMaxChSounds; i++)
+		ch->_sounds[i] = 0;
 
 	return ch;
 }
@@ -446,23 +446,23 @@ void CLSoundChannel_Stop(soundchannel_t *ch) {
 void CLSoundChannel_Play(soundchannel_t *ch, sound_t *sound) {
 }
 int16 CLSoundChannel_GetVolume(soundchannel_t *ch) {
-	return (ch->volumeLeft + ch->volumeRight) / 2;
+	return (ch->_volumeLeft + ch->_volumeRight) / 2;
 }
 void CLSoundChannel_SetVolume(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->volumeLeft = volume;
-	ch->volumeRight = volume;
+	ch->_volumeLeft = volume;
+	ch->_volumeRight = volume;
 }
 void CLSoundChannel_SetVolumeRight(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->volumeRight = volume;
+	ch->_volumeRight = volume;
 }
 void CLSoundChannel_SetVolumeLeft(soundchannel_t *ch, int16 volume) {
 	if (volume < 0 || volume > 255)
 		return;
-	ch->volumeLeft = volume;
+	ch->_volumeLeft = volume;
 }
 
 ///// CLTimer

@@ -6306,9 +6306,9 @@ void EdenGame::musicspy() {
 	mus_vol_right = p_global->pref_10C[1];
 	if (mus_fade_flags & 3)
 		fademusicup();
-	if (personTalking && !hnmsound_ch->numSounds)
+	if (personTalking && !hnmsound_ch->_numSounds)
 		mus_fade_flags = 3;
-	if (music_channel->numSounds < 3) {
+	if (music_channel->_numSounds < 3) {
 		patnum = mus_sequence_ptr[musicSequencePos];
 		if (patnum == 0xFF) {
 			// rewind
@@ -6348,17 +6348,17 @@ void EdenGame::persovox() {
 	vol_l = p_global->pref_110[0];
 	vol_r = p_global->pref_110[1];
 	step_l = -1;
-	if (music_channel->volumeLeft < vol_l)
+	if (music_channel->_volumeLeft < vol_l)
 		step_l = 1;
 	step_r = -1;
-	if (music_channel->volumeRight < vol_r)
+	if (music_channel->_volumeRight < vol_r)
 		step_r = 1;
 	do {
-		if (vol_l != music_channel->volumeLeft)
-			CLSoundChannel_SetVolumeLeft(music_channel, music_channel->volumeLeft + step_l);
-		if (vol_r != music_channel->volumeRight)
-			CLSoundChannel_SetVolumeRight(music_channel, music_channel->volumeRight + step_r);
-	} while (music_channel->volumeLeft != vol_l || music_channel->volumeRight != vol_r);
+		if (vol_l != music_channel->_volumeLeft)
+			CLSoundChannel_SetVolumeLeft(music_channel, music_channel->_volumeLeft + step_l);
+		if (vol_r != music_channel->_volumeRight)
+			CLSoundChannel_SetVolumeRight(music_channel, music_channel->_volumeRight + step_r);
+	} while (music_channel->_volumeLeft != vol_l || music_channel->_volumeRight != vol_r);
 	vol_l = p_global->pref_10E[0];
 	vol_r = p_global->pref_10E[1];
 	CLSoundChannel_SetVolumeLeft(hnmsound_ch, vol_l);
@@ -6387,7 +6387,7 @@ void EdenGame::endpersovox() {
 void EdenGame::fademusicup() {
 	int16 vol;
 	if (mus_fade_flags & 2) {
-		vol = music_channel->volumeLeft;
+		vol = music_channel->_volumeLeft;
 		if (vol < mus_vol_left) {
 			vol += 8;
 			if (vol > mus_vol_left)
@@ -6402,7 +6402,7 @@ void EdenGame::fademusicup() {
 			mus_fade_flags &= ~2;
 	}
 	if (mus_fade_flags & 1) {
-		vol = music_channel->volumeRight;
+		vol = music_channel->_volumeRight;
 		if (vol < mus_vol_right) {
 			vol += 8;
 			if (vol > mus_vol_right)

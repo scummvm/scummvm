@@ -29,21 +29,21 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, fl
 	int16 i;
 
 	sg = (soundgroup_t *)CLMemory_Alloc(sizeof(*sg));
-	if (numSounds < CL_MAX_SOUNDS)
-		sg->numSounds = numSounds;
+	if (numSounds < kCryoMaxClSounds)
+		sg->_numSounds = numSounds;
 	else {
 		__libError = -3;
 		__osError = 0;
 		CLCheckError();
-		sg->numSounds = CL_MAX_SOUNDS;
+		sg->_numSounds = kCryoMaxClSounds;
 	}
-	for (i = 0; i < sg->numSounds; i++) {
+	for (i = 0; i < sg->_numSounds; i++) {
 		sound_t *sound = CLSoundRaw_New(arg4, rate, sampleSize, mode);
-		sg->sound[i] = sound;
+		sg->_sound[i] = sound;
 		sound->ff_1A = arg4;
 	}
-	sg->soundIndex = 0;
-	sg->playIndex = 0;
+	sg->_soundIndex = 0;
+	sg->_playIndex = 0;
 	sg->ff_106 = 1;
 
 	return sg;
@@ -51,26 +51,26 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, fl
 
 void CLSoundGroup_Free(soundgroup_t *sg) {
 	int16 i;
-	for (i = 0; i < sg->numSounds; i++)
-		CLSoundRaw_Free(sg->sound[i]);
+	for (i = 0; i < sg->_numSounds; i++)
+		CLSoundRaw_Free(sg->_sound[i]);
 	CLMemory_Free(sg);
 }
 
 void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
 	int16 i;
-	for (i = 0; i < sg->numSounds; i++)
-		sg->sound[i]->_reversed = true;
+	for (i = 0; i < sg->_numSounds; i++)
+		sg->_sound[i]->_reversed = true;
 }
 
 void *CLSoundGroup_GetNextBuffer(soundgroup_t *sg) {
-	sound_t *sound = sg->sound[sg->soundIndex];
+	sound_t *sound = sg->_sound[sg->_soundIndex];
 	if (sg->ff_106)
 		while (sound->_locked) ;
 	return sound->sndHandle + sound->_headerLen;
 }
 
 int16 CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, int16 isSigned) {
-	sound_t *sound = sg->sound[sg->soundIndex];
+	sound_t *sound = sg->_sound[sg->_soundIndex];
 	if (sg->ff_106)
 		while (sound->_locked) ;
 	else if (sound->_locked)
@@ -82,17 +82,17 @@ int16 CLSoundGroup_AssignDatas(soundgroup_t *sg, void *buffer, int length, int16
 //		ReverseBlock16(buffer, length);
 //	if(isSigned)
 //		CLSound_Signed2NonSigned(buffer, length);
-	if (sg->soundIndex == sg->numSounds - 1)
-		sg->soundIndex = 0;
+	if (sg->_soundIndex == sg->_numSounds - 1)
+		sg->_soundIndex = 0;
 	else
-		sg->soundIndex++;
+		sg->_soundIndex++;
 
 	return 1;
 }
 
 int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSigned) {
 	void *buffer;
-	sound_t *sound = sg->sound[sg->soundIndex];
+	sound_t *sound = sg->_sound[sg->_soundIndex];
 	if (length >= sound->ff_1A) {
 		__libError = -10;
 		__osError = 0;
@@ -111,20 +111,20 @@ int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSi
 //		ReverseBlock16(buffer, length);
 //	if(isSigned)
 //		CLSound_Signed2NonSigned(buffer, length);
-	if (sg->soundIndex == sg->numSounds - 1)
-		sg->soundIndex = 0;
+	if (sg->_soundIndex == sg->_numSounds - 1)
+		sg->_soundIndex = 0;
 	else
-		sg->soundIndex++;
+		sg->_soundIndex++;
 
 	return 1;
 }
 
 void CLSoundGroup_PlayNextSample(soundgroup_t *sg, soundchannel_t *ch) {
-	CLSoundChannel_Play(ch, sg->sound[sg->playIndex]);
-	if (sg->playIndex == sg->numSounds - 1)
-		sg->playIndex = 0;
+	CLSoundChannel_Play(ch, sg->_sound[sg->_playIndex]);
+	if (sg->_playIndex == sg->_numSounds - 1)
+		sg->_playIndex = 0;
 	else
-		sg->playIndex++;
+		sg->_playIndex++;
 
 }
 

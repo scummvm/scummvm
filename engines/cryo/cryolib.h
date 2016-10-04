@@ -162,32 +162,32 @@ struct sound_t {
 	int16   _loopTimes;
 	bool   _reversed;
 	int16   ff_32;
-	int16   volume;
+	int16   _volume;
 };
 typedef struct sound_t sound_t;
 
-#define CL_MAX_SOUNDS 64
+#define kCryoMaxClSounds 64
 
 struct soundgroup_t {
-	sound_t *sound[CL_MAX_SOUNDS];
-	int16   numSounds;
-	int16   soundIndex;
-	int16   playIndex;
+	sound_t *_sound[kCryoMaxClSounds];
+	int16   _numSounds;
+	int16   _soundIndex;
+	int16   _playIndex;
 	int16   ff_106;
 };
 typedef struct soundgroup_t soundgroup_t;
 
-#define CL_MAX_CH_SOUNDS 10
+#define kCryoMaxChSounds 10
 
 struct soundchannel_t {
 	Audio::SoundHandle ch;
 	int     xx;
 
-	int16   volumeLeft;
-	int16   volumeRight;
-	int16   numSounds;
+	int16   _volumeLeft;
+	int16   _volumeRight;
+	int16   _numSounds;
 
-	sound_t *sounds[CL_MAX_CH_SOUNDS];
+	sound_t *_sounds[kCryoMaxChSounds];
 
 	int16   ff_536;
 };
