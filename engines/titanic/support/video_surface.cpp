@@ -172,13 +172,33 @@ void CVideoSurface::blitRect(const Rect &srcRect, const Rect &destRect, CVideoSu
 void CVideoSurface::flippedBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	if (src->getTransparencySurface()) {
 		transBlitRect(srcRect, destRect, src, true);
-	} else {
-		src->lock();
-		lock();
+	} else if (lock()) {
+		if (src->lock()) {
+			const Graphics::ManagedSurface *srcSurface = src->_rawSurface;
+			Graphics::ManagedSurface *destSurface = _rawSurface;
+			Graphics::Surface destArea = destSurface->getSubArea(destRect);
+			const uint transColor = src->getTransparencyColor();
 
-		_rawSurface->blitFrom(*src->_rawSurface, srcRect, Point(destRect.left, destRect.top));
+			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
+				srcRect.left, srcRect.top);
+			uint16 *destPtr = (uint16 *)destArea.getBasePtr(0, destArea.h - 1);
 
-		src->unlock();
+			for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr,
+					srcPtr += src->getPitch() / 2,
+					destPtr -= destArea.pitch / 2) {
+				// Prepare for copying the line
+				const uint16 *lineSrcP = srcPtr;
+				uint16 *lineDestP = destPtr;
+
+				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX, ++lineSrcP, ++lineDestP) {
+					if (*lineSrcP != transColor)
+						*lineDestP = *lineSrcP;
+				}
+			}
+
+			src->unlock();
+		}
+
 		unlock();
 	}
 }
@@ -194,7 +214,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
 				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
-			uint16 *destPtr = (uint16 *)destSurface->getBasePtr(0, destArea.h - 1);
+			uint16 *destPtr = (uint16 *)destArea.getBasePtr(0, destArea.h - 1);
 			bool is16Bit = src->getPixelDepth() == 2;
 			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
 				src->_transparencyMode == TRANS_ALPHA255;
