@@ -62,12 +62,16 @@ private:
 public:
 	Item(BladeRunnerEngine* vm);
 	~Item();
-
+	
 	void getXYZ(float *x, float *y, float *z);
+	void setXYZ(Vector3 position);
+	void getWidthHeight(int * width, int * height);
+
 	bool isTargetable();
 	void tick(bool special);
-	void setXYZ(Vector3 position);
+
 	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetable, bool isVisible, bool isPoliceMazeEnemy);
+	
 };
 
 }

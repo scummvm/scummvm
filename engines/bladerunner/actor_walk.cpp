@@ -25,14 +25,13 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/obstacles.h"
+#include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/set.h"
+
 
 namespace BladeRunner {
-
-static int angle_1024(float x1, float z1, float x2, float z2);
-static int angle_1024(Vector3 &v1, Vector3 &v2);
-float distance(float x1, float x2, float z1, float z2);
-float distance(Vector3 &v1, Vector3 &v2);
 
 ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 	_vm = vm;
@@ -41,36 +40,38 @@ ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 	_running =  0;
 	_facing  = -1;
 	_status  =  0;
+
+	_entries.clear();
 }
 
 ActorWalk::~ActorWalk() {
 }
 
-int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, int *unk2) {
+bool ActorWalk::setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *stopped) {
 	Vector3 next;
 
-	*unk2 = 0;
+	*stopped = false;
 	int r = nextOnPath(actorId, from, to, &next);
 
 	if (r == 0) {
 		if (actorId != 0) {
 			_current = from;
 			_destination = to;
-			stop(actorId, false);
+			stop(actorId, false, 4, 0);
 		} else {
-			stop(actorId, true);
+			stop(actorId, true, 4, 0);
 		}
-		return 0;
+		return false;
 	}
 	if (r == -1) {
-		stop(actorId, true);
-		*unk2 = 1;
-		return 0;
+		stop(actorId, true, 4, 0);
+		*stopped = true;
+		return false;
 	}
 
-	// TODO: Init array
-	// TODO: Update screen index
-	// Set actor field e8
+	resetList();
+	_vm->_sceneObjects->setMoving(actorId + SCENE_OBJECTS_ACTORS_OFFSET, true);
+	_vm->_actors[actorId]->setMoving(true);
 
 	if (_running) {
 		run = true;
@@ -95,17 +96,17 @@ int ActorWalk::setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, i
 		_running = run;
 		_status = 2;
 
-		return 1;
+		return true;
 	}
 
-	stop(actorId, true);
-	return 0;
+	stop(actorId, true, 4, 0);
+	return false;
 }
 
 bool ActorWalk::tick(int actorId, float stepDistance, bool flag) {
 	if (_status == 5) {
 		if (flag) {
-			stop(actorId, true);
+			stop(actorId, true, 4, 0);
 			return true;
 		}
 
@@ -117,7 +118,7 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool flag) {
 	// TODO: Handle collisions?
 
 	if (stepDistance > distance(_current, _destination)) {
-		stop(actorId, true);
+		stop(actorId, true, 4, 0);
 		_current = _destination;
 		// TODO: Update y from walkbox
 		return true;
@@ -127,7 +128,7 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool flag) {
 
 	_current = Vector3(
 		_current.x + stepDistance * sinf(angle_rad),
-		_current.y,                    // TODO: Update from walkbox
+		_current.y, // TODO: Update from walkbox
 		_current.z - stepDistance * cosf(angle_rad)
 	);
 
@@ -135,7 +136,7 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool flag) {
 }
 
 void ActorWalk::getCurrentPosition(int actorId, Vector3 *pos, int *facing) {
-	*pos    = _current;
+	*pos = _current;
 	*facing = _facing;
 }
 
@@ -144,14 +145,14 @@ void ActorWalk::setRunning() {
 	// TODO: Set animation mode
 }
 
-void ActorWalk::stop(int actorId, bool unknown, int animationMode, int notused) {
-	_vm->_sceneObjects->setMoving(actorId, 0);
-	_vm->_actors[actorId]->setMoving(0);
+void ActorWalk::stop(int actorId, bool unknown, int combatAnimationMode, int animationMode) {
+	_vm->_sceneObjects->setMoving(actorId, false);
+	_vm->_actors[actorId]->setMoving(false);
 
 	if (_vm->_actors[actorId]->inCombat()) {
-		_vm->_actors[actorId]->changeAnimationMode(animationMode, 0);
+		_vm->_actors[actorId]->changeAnimationMode(combatAnimationMode, false);
 	} else {
-		_vm->_actors[actorId]->changeAnimationMode(notused, 0);
+		_vm->_actors[actorId]->changeAnimationMode(animationMode, false);
 	}
 
 	if (unknown) {
@@ -165,45 +166,111 @@ void ActorWalk::stop(int actorId, bool unknown, int animationMode, int notused) 
 	}
 }
 
-int ActorWalk::nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next) {
+bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) {
+	if (_vm->_scene->_set->findWalkbox(x, z) == -1) {
+		return true;
+	}
+	if (_vm->_actors[actorId]->isImmuneToObstacles()) {
+		return false;
+	}
+	return _vm->_sceneObjects->existsOnXZ(actorId, x, z, false, false);
+}
+
+int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
+	float cos, sin;
+	bool inWalkbox;
+
+	int facingFound = -1;
+	float distFound = -1.0f;
+	float x = 0.0f;
+	float z = 0.0f;
+
+	out->x = 0.0f;
+	out->y = 0.0f;
+	out->z = 0.0f;
+
+	for (int facing = 0; facing < 1024; facing += 128) {
+		sin = sin_1024(facing);
+		cos = cos_1024(facing);
+		x = to.x + sin * dist;
+		z = to.z + cos * dist;
+		float dist2 = distance(x, z, _vm->_actors[actorId]->getX(), _vm->_actors[actorId]->getZ());
+
+		if (distFound == -1.0f || distFound > dist2) {
+			distFound = dist2;
+			facingFound = facing;
+		}
+	}
+
+	int v23 = facingFound;
+	int v24 = facingFound;
+	int v25 = -1024;
+	while (v25 < 0) {
+		sin = sin_1024(v24);
+		cos = cos_1024(v24);
+		x = to.x + sin * dist;
+		z = to.z + cos * dist;
+
+		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
+			break;
+		}
+
+		sin = sin_1024(v23);
+		cos = cos_1024(v23);
+		x = to.x + sin * dist;
+		z = to.z + cos * dist;
+
+		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
+			break;
+		}
+
+		v24 -= 64;
+		if (v24 < 0) {
+			v24 += 1024;
+		}
+		v23 += 64;
+		if (v23 >= 1024) {
+			v23 -= 1024;
+		}
+		v25 += 64;
+	}
+
+	float y = _vm->_scene->_set->getAltitudeAtXZ(x, z, &inWalkbox);
+	if (inWalkbox) {
+		out->x = x;
+		out->y = y;
+		out->z = z;
+		return true;
+	}
+	return false;
+}
+
+int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, Vector3 *next) {
+	*next = from;
+
 	if (distance(from, to) < 6.0) {
 		return -1;
 	}
 
-	// if (_vm->_actors[actorId]->getImmunityToObstacles()) {
+	if (_vm->_actors[actorId]->isImmuneToObstacles()) {
 		*next = to;
 		return 1;
-	// }
-
-	error("TODO!");
+	}
+	if (_vm->_scene->_set->findWalkbox(to.x, to.z) == -1) {
+		return 0;
+	}
+	if (_vm->_sceneObjects->existsOnXZ(actorId, to.x, to.z, false, false)) {
+		return 0;
+	}
+	Vector3 next1;
+	if (_vm->_obstacles->find(from, to, &next1)) {
+		*next = next1;
+		return 1;
+	}
+	return 0;
 }
 
-static int angle_1024(float x1, float z1, float x2, float z2) {
-	float angle_rad = atan2(x2 - x1, z1 - z2);
-	int a = int(512.0 * angle_rad / M_PI);
-	return (a + 1024) % 1024;
+void ActorWalk::resetList() {
+	_entries.clear();
 }
-
-static int angle_1024(Vector3 &v1, Vector3 &v2) {
-	return angle_1024(v1.x, v1.z, v2.x, v2.z);
-}
-
-float distance(float x1, float z1, float x2, float z2) {
-	float dx = x1 - x2;
-	float dz = z1 - z2;
-	float d = sqrt(dx * dx + dz * dz);
-
-	float int_part = (int)d;
-	float frac_part = d - int_part;
-
-	if (frac_part < 0.001)
-		frac_part = 0.0;
-
-	return int_part + frac_part;
-}
-
-float distance(Vector3 &v1, Vector3 &v2) {
-	return distance(v1.x, v1.z, v2.x, v2.z);
-}
-
 } // End of namespace BladeRunner

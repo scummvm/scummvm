@@ -22,7 +22,11 @@
 
 #include "bladerunner/scene_objects.h"
 
+#include "bladerunner/bladerunner.h"
+
+#include "bladerunner/obstacles.h"
 #include "bladerunner/view.h"
+
 
 namespace BladeRunner {
 
@@ -280,8 +284,18 @@ void SceneObjects::setIsTarget(int sceneObjectId, bool isTarget) {
 }
 
 
-void SceneObjects::updateWalkpath() {
-	//TODO: implement
+void SceneObjects::updateObstacles() {
+	_vm->_obstacles->clear();
+	for(int i = 0; i < _count; i++) {
+		int index = _sceneObjectsSortedByDistance[i];
+		SceneObject sceneObject = _sceneObjects[index];
+		if(sceneObject._isObstacle) {
+			float x0, y0, z0, x1, y1, z1;
+			sceneObject._boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+			_vm->_obstacles->add(x0, z0, x1, z1);
+		}
+	}
+	_vm->_obstacles->process();
 }
 
 } // End of namespace BladeRunner

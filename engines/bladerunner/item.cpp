@@ -66,6 +66,11 @@ void Item::getXYZ(float *x, float *y, float *z) {
 	*z = _position.z;
 }
 
+void Item::getWidthHeight(int *width, int *height) {
+	*width = _width;
+	*height = _height;
+}
+
 bool Item::isTargetable() {
 	return _isTargetable;
 }
@@ -84,7 +89,7 @@ void Item::tick(bool special) {
 			} else if (_facing < 0) {
 				_facing += 1024;
 			}
-			_angle = M_PI / 512.0f * _facing;
+			_angle = _facing * (M_PI / 512.0f);
 
 			if (_facingChange > 0) {
 				_facingChange = _facingChange - 20;
@@ -108,7 +113,7 @@ void Item::tick(bool special) {
 void Item::setXYZ(Vector3 position) {
 	_position = position;
 	int halfWidth = _width / 2;
-	_boundingBox.setXYZ(_position.x - halfWidth, _position.y,           _position.z - halfWidth,
+	_boundingBox.setXYZ(_position.x - halfWidth, _position.y, _position.z - halfWidth,
 	                    _position.x + halfWidth, _position.y + _height, _position.z + halfWidth);
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	_screenX = screenPosition.x;
@@ -121,7 +126,7 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_setId = setId;
 	_animationId = animationId;
 	_facing = facing;
-	_angle = M_PI / 512.0f * facing;
+	_angle = facing * (M_PI / 512.0f);
 	_width = width;
 	_height = height;
 	_isTargetable = isTargetable;

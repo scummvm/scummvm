@@ -205,7 +205,7 @@ void ScriptNR05::sub_401F74(int frame) {
 	float x = 6.0f * s - 80.0f * c + -450.0f;
 	float z = 80.0f * s + 6.0f * c + -531.0f;
 
-	int facing = angle * (1024.0f / (2.0f * M_PI));
+	int facing = angle * (512.0f / M_PI);
 	facing = facing + 765;
 	if (facing < 0) {
 		facing = facing + 1789;

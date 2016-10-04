@@ -28,21 +28,20 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
+struct ADQEntry {
+	bool _isNotPause;
+	bool _isPause;
+	int _actorId;
+	int _sentenceId;
+	int _animationMode;
+	int _delay;
+
+	ADQEntry();
+};
+
 // actor dialogue queue??
 class ADQ {
 	BladeRunnerEngine *_vm;
-
-	class ADQEntry {
-	public:
-		bool _isNotPause;
-		bool _isPause;
-		int _actorId;
-		int _sentenceId;
-		int _animationMode;
-		int _delay;
-
-		ADQEntry();
-	};
 
 	Common::Array<ADQEntry> _entries;
 

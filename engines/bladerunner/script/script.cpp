@@ -540,48 +540,75 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 	return _vm->_actors[actorId]->getAnimationMode();
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool running) {
+bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool run) {
 	//TODO
-	warning("Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, a3, a4, running);
+	warning("Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, a3, a4, run);
 	return false;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool running) {
+bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool run) {
 	//TODO
-	warning("Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, a3, a4, running);
+	warning("Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, a3, a4, run);
 	return false;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, bool running) {
+bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int destinationOffset, bool a4, bool run) {
 	_vm->gameWaitForActive();
 
-	_vm->_actors[actorId]->loopWalkToSceneObject(objectName);
-
-	return false;
+	if(_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+	bool isRunning;
+	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, a4, run, true, &isRunning);
+	if(isRunning == 1) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(37, actorId);
+	Global_Variable_Set(38, isRunning);
+	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int a4, bool running) {
+bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int a4, bool run) {
 	//TODO
-	warning("Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, a3, a4, running);
+	warning("Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, destinationOffset, a4, run);
 	return false;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, bool running, int a7) {
+bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, int a5, bool run, int a7) {
 	_vm->gameWaitForActive();
 
-	_vm->_actors[actorId]->loopWalkToXYZ(x, y, z, a4, a5, running, 1);
+	if(_vm->_walkingActorId == actorId) {
+		if(a7) {
+			_vm->_walkingActorId = -1;
+		} else {
+			run = true;
+		}
+	}
+	//TODO:
+	//PlayerActorIdle = 0;
+	bool isRunning;
+	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, a5, run, 1, &isRunning);
 
-	return false;
+//	if (PlayerActorIdle == 1) {
+//		result = 1;
+//		PlayerActorIdle = 0;
+//	}
+	if(isRunning) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(37, actorId);
+	Global_Variable_Set(38, isRunning);
+	return result;
 }
 
-void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int running) {
+void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int run) {
 	//TODO
-	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, a3, running);
+	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, destinationOffset, run);
 }
 
-void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a5, bool running) {
+void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run) {
 	//TODO
-	warning("Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, a5, running);
+	warning("Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, destinationOffset, run);
 }
 
 void ScriptBase::Actor_Force_Stop_Walking(int actorId) {
@@ -692,11 +719,11 @@ void ScriptBase::Delay(int miliseconds) {
 }
 
 void ScriptBase::Player_Loses_Control() {
-		_vm->playerLosesControl();
+	_vm->playerLosesControl();
 }
 
 void ScriptBase::Player_Gains_Control() {
-		_vm->playerGainsControl();
+	_vm->playerGainsControl();
 }
 
 void ScriptBase::Player_Set_Combat_Mode(bool activate) {

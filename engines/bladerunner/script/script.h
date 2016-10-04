@@ -99,12 +99,12 @@ protected:
 	void Actor_Change_Animation_Mode(int actorId, int animationMode);
 	int Actor_Query_Animation_Mode(int actorId);
 	bool Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int a3, int a4, bool running);
-	bool Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool running);
-	bool Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, int a4, bool running);
-	bool Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int a4, bool running);
-	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, bool running, int a7);
-	void Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int running);
-	void Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a5, bool running);
+	bool Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4, bool run);
+	bool Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int distance, bool a4, bool run);
+	bool Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int a4, bool run);
+	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a4, int a5, bool run, int a7);
+	void Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int a3, int run);
+	void Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int a5, bool run);
 	void Actor_Force_Stop_Walking(int actorId);
 	bool Loop_Actor_Travel_Stairs(int actorId, int a2, int a3, int a4);
 	bool Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4);

@@ -215,7 +215,7 @@ bool ScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("HYDRANT02", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "HYDRANT02", 60, 1, false)) {
+		if (!Loop_Actor_Walk_To_Scene_Object(0, "HYDRANT02", 60, true, false)) {
 			if (Actor_Clue_Query(0, 26)) {
 				Actor_Says(0, 6975, 3);
 			} else {
@@ -230,7 +230,7 @@ bool ScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("DOOR LEFT", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "DOOR LEFT", 48, 1, false)) {
+		if (!Loop_Actor_Walk_To_Scene_Object(0, "DOOR LEFT", 48, true, false)) {
 			Actor_Face_Object(0, "DOOR LEFT", true);
 			if (!Actor_Clue_Query(0, 2) && Actor_Query_In_Set(23, 69) && Global_Variable_Query(1)) {
 				Actor_Set_Goal_Number(23, 0);
@@ -247,7 +247,7 @@ bool ScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("T-CAN01", objectName)) {
-		if (!Loop_Actor_Walk_To_Scene_Object(0, "T-CAN01", 24, 1, false)) {
+		if (!Loop_Actor_Walk_To_Scene_Object(0, "T-CAN01", 24, true, false)) {
 			Actor_Face_Object(0, "T-CAN01", true);
 			Actor_Voice_Over(1810, 99);
 			Actor_Voice_Over(1820, 99);
@@ -530,7 +530,7 @@ bool ScriptRC01::ClickedOnExit(int exitId) {
 }
 
 void ScriptRC01::sub_403850() {
-	if (!Game_Flag_Query(186) && !Loop_Actor_Walk_To_Scene_Object(0, "BARICADE03", 36, 1, false)) {
+	if (!Game_Flag_Query(186) && !Loop_Actor_Walk_To_Scene_Object(0, "BARICADE03", 36, true, false)) {
 		Actor_Set_Goal_Number(23, 0);
 		Actor_Face_Object(0, "BARICADE03", true);
 		Loop_Actor_Walk_To_Actor(23, 0, 36, 1, false);

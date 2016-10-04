@@ -37,6 +37,7 @@
 #include "bladerunner/lights.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/outtake.h"
+#include "bladerunner/obstacles.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/init.h"
@@ -73,6 +74,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_lights = new Lights(this);
 	_combat = new Combat(this);
 	_adq = new ADQ(this);
+	_obstacles = new Obstacles(this);
 
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
@@ -100,6 +102,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
 
+	delete _obstacles;
 	delete _adq;
 	delete _combat;
 	delete _lights;
@@ -743,7 +746,8 @@ void BladeRunnerEngine::handleMouseClick(int x, int y) {
 	}
 
 	if (sceneObjectId == -1) {
-		_actors[0]->loopWalkToXYZ(mousePosition);
+		bool isRunning;
+		_playerActor->loopWalkToXYZ(mousePosition, 0, false, false, false, &isRunning);
 		debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
 		return;
 	} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {

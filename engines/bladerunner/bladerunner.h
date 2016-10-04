@@ -49,6 +49,7 @@ class GameInfo;
 class Items;
 class Lights;
 class Mouse;
+class Obstacles;
 class Scene;
 class SceneObjects;
 class Script;
@@ -65,7 +66,7 @@ public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
-
+	
 	ADQ             *_adq;
 	AIScripts       *_aiScripts;
 	AmbientSounds   *_ambientSounds;
@@ -73,9 +74,13 @@ public:
 	AudioSpeech     *_audioSpeech;
 	Chapters        *_chapters;
 	Clues           *_clues;
+	Combat          *_combat;
 	GameFlags       *_gameFlags;
 	GameInfo        *_gameInfo;
+	Items           *_items;
+	Lights          *_lights;
 	Mouse           *_mouse;
+	Obstacles       *_obstacles;
 	Scene           *_scene;
 	SceneObjects    *_sceneObjects;
 	Script          *_script;
@@ -83,13 +88,9 @@ public:
 	SliceAnimations *_sliceAnimations;
 	SliceRenderer   *_sliceRenderer;
 	View            *_view;
-	int             *_gameVars;
-
-	Lights          *_lights;
 	Waypoints       *_waypoints;
-	Items           *_items;
-	Combat          *_combat;
-
+	int             *_gameVars;
+	
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
 	TextResource    *_textCluetype;
@@ -124,6 +125,7 @@ public:
 	int _walkSoundId;
 	int _walkSoundVolume;
 	int _walkSoundBalance;
+	int _walkingActorId;
 
 private:
 	static const int kArchiveCount = 10;

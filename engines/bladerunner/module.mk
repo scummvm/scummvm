@@ -31,6 +31,7 @@ MODULE_OBJS = \
 	matrix.o \
 	mouse.o \
 	movement_track.o \
+	obstacles.o \
 	outtake.o \
 	regions.o \
 	scene.o \

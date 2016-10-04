@@ -87,7 +87,7 @@ public:
 	void setIsClickable(int sceneObjectId, bool isClickable);
 	void setIsObstacle(int sceneObjectId, bool isObstacle);
 	void setIsTarget(int sceneObjectId, bool isTarget);
-	void updateWalkpath();
+	void updateObstacles();
 
 private:
 	int findById(int sceneObjectId);

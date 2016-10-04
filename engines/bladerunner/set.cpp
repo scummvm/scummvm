@@ -91,10 +91,10 @@ bool Set::open(const Common::String &name) {
 	assert(_walkboxCount <= 95);
 
 	for (int i = 0; i < _walkboxCount; ++i) {
-		float x, y, z;
+		float x, z;
 
 		s->read(_walkboxes[i]._name, 20);
-		y = s->readFloatLE();
+		_walkboxes[i]._altitude = s->readFloatLE();
 		_walkboxes[i]._vertexCount = s->readUint32LE();
 
 		assert(_walkboxes[i]._vertexCount <= 8);
@@ -103,7 +103,7 @@ bool Set::open(const Common::String &name) {
 			x = s->readFloatLE();
 			z = s->readFloatLE();
 
-			_walkboxes[i]._vertices[j] = Vector3(x, y, z);
+			_walkboxes[i]._vertices[j] = Vector3(x, _walkboxes[i]._altitude, z);
 		}
 
 		// debug("WALKBOX: %s", _walkboxes[i]._name);
@@ -166,7 +166,8 @@ static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 			if (x < lineX)
 				found++;
 		}
-
+		lastX = currentX;
+		lastZ = currentZ;
 	}
 	return found & 1;
 }

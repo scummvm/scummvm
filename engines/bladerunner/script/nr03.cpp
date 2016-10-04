@@ -305,7 +305,7 @@ void ScriptNR03::sub_40259C(int frame) {
 	float z = -60.21f * s + 36.49f * c + -408.79f;
 
 	if (Actor_Query_Goal_Number(4) == 201) {
-		facing = angle * (1024.0f / (2.0f * M_PI));
+		facing = angle * (512.0f / M_PI);
 		facing = facing + 144;
 		if (facing < 0) {
 			facing = facing + 1168;
@@ -315,7 +315,7 @@ void ScriptNR03::sub_40259C(int frame) {
 		}
 		Actor_Set_At_XYZ(4, x, -70.19f, z, facing);
 	} else {
-		facing = angle * (1024.0f / (2.0f * M_PI));
+		facing = angle * (512.0f / M_PI);
 		facing = facing + 400;
 		if (facing < 0) {
 			facing = facing + 1424;

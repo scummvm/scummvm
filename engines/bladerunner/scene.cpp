@@ -236,7 +236,7 @@ void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded,
 	if (sceneLoaded) {
 		_vm->_sceneObjects->setIsObstacle(objectId + 198, isObstacle);
 		if(updateWalkpath) {
-			_vm->_sceneObjects->updateWalkpath();
+			_vm->_sceneObjects->updateObstacles();
 		}
 	}
 }

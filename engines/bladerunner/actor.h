@@ -72,6 +72,7 @@ private:
 	bool _isTargetable;
 	bool _isInvisible;
 	bool _isImmuneToObstacles;
+	bool _inWalkLoop;
 	bool _isRetired;
 	bool _inCombat;
 	bool _isMoving;
@@ -106,7 +107,7 @@ public:
 
 	void setup(int actorId);
 
-	void setAtXYZ(Vector3 pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
+	void setAtXYZ(const Vector3 &pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
 	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
 	float getX();
@@ -123,9 +124,11 @@ public:
 
 	void processMovement();
 
-	void loopWalkToXYZ(Vector3 destination);
-	void loopWalkToXYZ(float x, float y, float z, int a4, int a5, int a6, int a7);
-	void loopWalkToSceneObject(const char *objectName, int destinationOffset = 0);
+	bool loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
+	bool loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
+	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning);
+	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning);
+	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning);
 
 	bool tick(bool forceUpdate);
 	void draw();
@@ -141,8 +144,9 @@ public:
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
 	int getWalkbox() { return _walkboxId; }
 	bool isRetired() { return _isRetired; }
-	bool isTargetable() { return _isTargetable; }
+	bool isTargetable() { return _isTargetable; }	
 	void setTargetable(bool targetable);
+	bool isImmuneToObstacles() { return _isImmuneToObstacles; }
 	bool inCombat() { return _inCombat; }
 	bool isMoving() { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
@@ -198,8 +202,16 @@ public:
 	int soundBalance();
 private:
 	void setFacing(int facing, bool halfOrSet = true);
-	void setBoundingBox(Vector3 position, bool retired);
+	void setBoundingBox(const Vector3 &position, bool retired);
 	float distanceFromView(View* view);
+	
+	bool loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
+	bool walkTo(bool run, const Vector3 &destination, bool a3);
+
+	bool walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float a3, Vector3 *newDestination);
+	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
+	bool walkToU(const Vector3 &destination, float distance);
+	//bool walkFindU3(int actorId, Vector3 from, int distance, Vector3 *out);
 };
 
 } // End of namespace BladeRunner

@@ -24,6 +24,7 @@
 #define BLADERUNNER_ACTOR_WALK_H
 
 #include "bladerunner/vector.h"
+#include "common/array.h"
 
 namespace BladeRunner {
 
@@ -45,8 +46,7 @@ private:
 	Vector3 _current;
 	Vector3 _next;
 	int     _facing;
-	ActorWalkEntry _actors[20];
-	int     _actorsCount;
+	Common::Array<ActorWalk> _entries;
 	int     _field15;
 	int     _status;
 
@@ -54,7 +54,8 @@ public:
 	ActorWalk(BladeRunnerEngine *vm);
 	~ActorWalk();
 
-	int setup(int actorId, int run, Vector3 from, Vector3 to, int unk1, int *unk2);
+	
+	bool setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *stopped);
 	void getCurrentPosition(int actorId, Vector3 *pos, int *facing);
 	bool tick(int actorId, float stepDistance, bool flag);
 
@@ -62,10 +63,15 @@ public:
 	bool isRunning() { return _running; }
 	void setRunning();
 
-	void stop(int actorId, bool unknown, int animationMode = 4, int notused = 0);
+	void stop(int actorId, bool unknown, int combatAnimationMode, int animationMode);
 	// void setWalkingMode(int actorId, int active, int unk2 = 4, int unk3 = 0);
 
-	int nextOnPath(int actorId, Vector3 from, Vector3 to, Vector3 *next);
+	int nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, Vector3 *next);
+
+	void resetList();
+
+	bool isXYZEmpty(float x, float y, float z, int actorId);
+	int findU1(int actorId, const Vector3 &to, int distance, Vector3 *out);
 };
 
 } // End of namespace BladeRunner

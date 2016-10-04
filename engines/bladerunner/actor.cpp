@@ -31,6 +31,7 @@
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/items.h"
+#include "bladerunner/mouse.h"
 #include "bladerunner/movement_track.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
@@ -38,8 +39,6 @@
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/waypoints.h"
-
-#include "common/system.h"
 
 namespace BladeRunner {
 
@@ -176,7 +175,21 @@ void Actor::processMovement() {
 	}*/
 }
 
-void Actor::setAtXYZ(Vector3 position, int facing, bool snapFacing, bool moving, bool retired) {
+bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
+	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, isRunning, false);
+}
+
+bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
+	float x, y, z;
+	int width, height;
+	_vm->_items->getXYZ(itemId, &x, &y, &z);
+	_vm->_items->getWidthHeight(itemId, &width, &height);
+	Vector3 itemPosition(x, y, z);
+
+	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, isRunning, false);
+}
+
+void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool moving, bool retired) {
 	_position = position;
 	setFacing(facing, snapFacing);
 
@@ -201,76 +214,170 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
 }
 
-void Actor::loopWalkToXYZ(float x, float y, float z, int a4, int a5, int a6, int a7) {
-	this->loopWalkToXYZ(Vector3(x, y, z));
-}
+bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *isRunning, bool async) {
+	if (true) { // simple walking
+		*isRunning = false;
+		bool stopped;
+		_walkInfo->setup(_id, false, _position, destination, false, &stopped);
 
-void Actor::loopWalkToXYZ(Vector3 destination) {
-	int unk1;
-	_walkInfo->setup(_id, false, _position, destination, 0, &unk1);
+		for (;;) {
+			_vm->gameTick();
+			if (!_walkInfo->isWalking() && !_walkInfo->isRunning())
+				break;
+			if (!_vm->_gameIsRunning)
+				break;
+		}
+		return false;
+	} else { 
+		//TODO:
+		// original code, not yet working
+		*isRunning = false;
 
-	for (;;) {
-		_vm->gameTick();
-		if (!_walkInfo->isWalking() && !_walkInfo->isRunning())
-			break;
-		if (!_vm->_gameIsRunning)
-			break;
+		if (destinationOffset > 0) {
+			float dist = distance(_position, destination);
+			if (dist - targetSize <= destinationOffset) {
+				return false;
+			}
+		}
+
+		if (a8 && !async && _id && destinationOffset <= 24) {
+			if (distance(_vm->_playerActor->_position, destination) <= 24.0f) {
+				_vm->_playerActor->walkToU(destination, 48.0f);
+			}
+		}
+
+		if (_id) {
+			a3 = false;
+		}
+
+		Vector3 destinationX(destination);
+
+		if (destinationOffset > 0) {
+			walkFindU2(&destinationX, targetWidth, destinationOffset, targetSize, _position, destination);
+		}
+
+		bool walking = walkTo(run, destinationX, a8);
+
+		if (async) {
+			return false;
+		}
+
+		if (!walking && destinationOffset > 0) {
+			walking = walkTo(run, destination, a8);
+		}
+
+		if (!walking) {
+			return false;
+		}
+
+		if (async) {
+			return false;
+		}
+		if (_id) {
+			_vm->_mouse->disable();
+		}
+		if (a3) {
+			//			TODO:
+			//			dword_482990 = 1;
+			//			dword_482994 = 0;
+		} else {
+			_vm->playerLosesControl();
+		}
+
+		if (a8) {
+			_inWalkLoop = true;
+		}
+
+		bool v46 = false;
+		while (_walkInfo->isWalking() && _vm->_gameIsRunning) {
+			if (_walkInfo->isRunning()) {
+				*isRunning = true;
+			}
+			_vm->gameTick();
+			if (_id == 0 && a3 /*&& dword_482994*/) {
+				stopWalking(false);
+				v46 = true;
+			}
+		}
+		if (a8) {
+			_inWalkLoop = false;
+		}
+		if (a3) {
+			//			dword_482990 = 1;
+		} else {
+			_vm->playerGainsControl();
+		}
+		if (!v46 && destinationOffset == 0 /* && !PlayerActorIdle*/) {
+			setAtXYZ(destination, _facing, true, false, false);
+		}
+		if (_id) {
+			_vm->_mouse->enable();
+		}
+		return v46;
 	}
 }
 
-float distance(float, float, float, float);
-float distance(Vector3 &v1, Vector3 &v2);
+bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
+	bool isRunning;
 
-void Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset) {
+	return _walkInfo->setup(_id, run, _position, destination, a3, &isRunning);
+}
+
+bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning) {
+	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
+}
+
+bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *isRunning) {
 	int sceneObject = _vm->_scene->_set->findObject(objectName);
-	if (sceneObject < 0)
-		return;
+	if (sceneObject < 0) {
+		return true;
+	}
 
 	BoundingBox bbox;
-	if (!_vm->_scene->_set->objectGetBoundingBox(sceneObject, &bbox))
-		return;
+	if (!_vm->_scene->_set->objectGetBoundingBox(sceneObject, &bbox)) {
+		return true;
+	}
 
 	float x0, y0, z0, x1, y1, z1;
 	bbox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 
-	// debug("[%f %f] -> [%f %f %f, %f %f %f]", _position.x, _position.z, x0, y0, z0, x1, y1, z1);
-
-	float closest_distance = distance(_position.x, _position.z, x0, z0);
-	float closest_x = x0;
-	float closest_z = z0;
+	float closestDistance = distance(_position.x, _position.z, x0, z0);
+	float closestX = x0;
+	float closestZ = z0;
 
 	float d = distance(_position.x, _position.z, x1, z0);
-	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
-	if (d < closest_distance) {
-		closest_x = x1;
-		closest_z = z0;
-		closest_distance = d;
+	if (d < closestDistance) {
+		closestX = x1;
+		closestZ = z0;
+		closestDistance = d;
 	}
 
 	d = distance(_position.x, _position.z, x1, z1);
-	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
-	if (d < closest_distance) {
-		closest_x = x1;
-		closest_z = z1;
-		closest_distance = d;
+	if (d < closestDistance) {
+		closestX = x1;
+		closestZ = z1;
+		closestDistance = d;
 	}
 
 	d = distance(_position.x, _position.z, x0, z1);
-	// debug("%f - %f %f %f %f", d, _position.x, _position.z, x1, z0);
-	if (d < closest_distance) {
-		closest_x = x0;
-		closest_z = z1;
-		closest_distance = d;
+	if (d < closestDistance) {
+		closestX = x0;
+		closestZ = z1;
+		closestDistance = d;
 	}
+	bool inWalkbox;
+	float y = _vm->_scene->_set->getAltitudeAtXZ(closestX, closestZ, &inWalkbox);
+	Vector3 destination(closestX, y, closestZ);
 
-	// debug("%f = %f %f %f %f", closest_distance, _position.x, _position.z, closest_x, closest_z);
+	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
+}
 
-	Vector3 destination(closest_x, _position.y, closest_z);
+bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *isRunning) {
+	float x, y, z;
+	_vm->_waypoints->getXYZ(waypointId, &x, &y, &z);
+	Vector3 waypointPosition(x, y, z);
 
-	// Vector3 properDestination(-124.2592, -0.3046913, 204.0923);
-	// debug("delta: %f\n", distance(destination, properDestination));
-
-	loopWalkToXYZ(destination);
+	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, isRunning, false);
 }
 
 bool Actor::tick(bool forceDraw) {
@@ -299,7 +406,7 @@ bool Actor::tick(bool forceDraw) {
 		_animationFrame = newFrame;
 
 		Vector3 positionChange = _vm->_sliceAnimations->getPositionChange(_animationId);
-		float facingChange = _vm->_sliceAnimations->getFacingChange(_animationId);
+		float angleChange = _vm->_sliceAnimations->getFacingChange(_animationId);
 
 		if (_id == 47) {
 			positionChange.x = 0.0f;
@@ -331,10 +438,10 @@ bool Actor::tick(bool forceDraw) {
 				}
 			}
 		} else {
-			if (facingChange != 0.0f) {
-				int v27 = (512.0f / M_PI) * facingChange;
-				if (v27 != 0) {
-					this->_facing = this->_facing - v27;
+			if (angleChange != 0.0f) {
+				int facingChange = angleChange * (512.0f / M_PI);
+				if (facingChange != 0) {
+					this->_facing = this->_facing - facingChange;
 					if (this->_facing < 0) {
 						this->_facing += 1024;
 					}
@@ -356,9 +463,9 @@ bool Actor::tick(bool forceDraw) {
 					positionChange.z = positionChange.z * this->_actorSpeed.z;
 				}
 
-				float facing = (_facing / 512.0f) * M_PI;
-				float sinx = sin(facing);
-				float cosx = cos(facing);
+				float angle = _facing * (M_PI / 512.0f);
+				float sinx = sin(angle);
+				float cosx = cos(angle);
 
 				float originalX = this->_position.x;
 				float originalY = this->_position.y;
@@ -397,13 +504,13 @@ bool Actor::tick(bool forceDraw) {
 }
 
 void Actor::draw() {
-	Vector3 draw_position(_position.x, -_position.z, _position.y + 2.0);
-	float draw_facing = M_PI - _facing * M_PI / 512.0;
-	float draw_scale  = _scale;
+	Vector3 drawPosition(_position.x, -_position.z, _position.y + 2.0);
+	float drawAngle = M_PI - _facing * (M_PI / 512.0f);
+	float drawScale = _scale;
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, draw_position, draw_facing, draw_scale, _vm->_surface2, _vm->_zBuffer2);
+	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zBuffer2);
 	//todo udpate screenrect
 }
 
@@ -421,16 +528,16 @@ void Actor::setSetId(int setId) {
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				// TODO: actorScript->OtherAgentExitedThisScene( i, _id);
+				// TODO: _vm->_aiScripts->OtherAgentExitedThisScene( i, _id);
 			}
 		}
 	}
 	_setId = setId;
-	// TODO: actorScript->EnteredScene(_id, set);
+	// TODO: _vm->_aiScripts->EnteredScene(_id, set);
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				// TODO: actorScript->OtherAgentEnteredThisScene(i, _id);
+				// TODO: _vm->_aiScripts->OtherAgentEnteredThisScene(i, _id);
 			}
 		}
 	}
@@ -474,7 +581,7 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 	_facing = (_facing + offset) % 1024;
 }
 
-void Actor::setBoundingBox(Vector3 position, bool retired) {
+void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 	if (retired) {
 		_bbox->setXYZ(position.x - (_retiredWidth / 2.0f),
 		              position.y,
@@ -510,11 +617,11 @@ void Actor::stopWalking(bool value) {
 	}
 
 	if (isWalking()) {
-		_walkInfo->stop(_id, 1, _combatAnimationMode, 0);
+		_walkInfo->stop(_id, true, _combatAnimationMode, 0);
 	} else if (inCombat()) {
-		changeAnimationMode(_combatAnimationMode, 0);
+		changeAnimationMode(_combatAnimationMode, false);
 	} else {
-		changeAnimationMode(0, 0);
+		changeAnimationMode(0, false);
 	}
 }
 
@@ -563,13 +670,13 @@ void Actor::faceWaypoint(int waypointId, bool animate) {
 
 void Actor::faceXYZ(float x, float y, float z, bool animate) {
 	if (isWalking()) {
-		stopWalking(0);
+		stopWalking(false);
 	}
 	if (x == _position.x && z == _position.z) {
 		return;
 	}
 
-	int heading = int(512.0f * atan2f(_position.x - x, _position.z - z) / M_PI) % 1024;
+	int heading = angle_1024(_position.x, _position.z, x, z);
 	faceHeading(heading, animate);
 }
 
@@ -622,7 +729,7 @@ void Actor::setImmunityToObstacles(bool isImmune) {
 void Actor::modifyCurrentHP(signed int change) {
 	_currentHP = MIN(MAX(_currentHP + change, 0), 100);
 	if (_currentHP > 0)
-		retire(0, 0, 0, -1);
+		retire(false, 0, 0, -1);
 }
 
 void Actor::modifyMaxHP(signed int change) {
@@ -674,7 +781,7 @@ void Actor::setHealth(int hp, int maxHp) {
 	_currentHP = hp;
 	_maxHP = maxHp;
 	if (hp > 0) {
-		retire(0, 0, 0, -1);
+		retire(false, 0, 0, -1);
 	}
 }
 
@@ -685,8 +792,8 @@ void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int combatAni
 	_inCombat = true;
 	if (_id > 0)
 		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
-	stopWalking(0);
-	changeAnimationMode(_combatAnimationMode, 0);
+	stopWalking(false);
+	changeAnimationMode(_combatAnimationMode, false);
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];
@@ -700,8 +807,8 @@ void Actor::combatModeOff() {
 	if (_id > 0)
 		_combatInfo->combatOff();
 	_inCombat = false;
-	stopWalking(0);
-	changeAnimationMode(0, 0);
+	stopWalking(false);
+	changeAnimationMode(0, false);
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];
@@ -866,6 +973,86 @@ void Actor::countdownTimerUpdate(int timerId) {
 			break;
 		}
 	}
+}
+
+bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *newDestination) {
+	newDestination->x = 0.0f;
+	newDestination->y = 0.0f;
+	newDestination->z = 0.0f;
+	int facing = angle_1024(targetPosition, startPosition);
+	int facing1 = 0;
+
+	int facing2 = facing;
+	int facing3 = 0;
+	while (true) {
+		float cos = cos_1024(facing);
+		float sin = sin_1024(facing);
+		float rotatedX = size * sin + targetPosition.x;
+		float rotatedZ = size * cos + targetPosition.z;
+
+		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
+			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
+				newDestination->x = rotatedX;
+				newDestination->y = targetPosition.y;
+				newDestination->z = rotatedZ;
+				return true;
+			}
+		} else {
+			facing += 20;
+			if (facing > 1024) {
+				facing -= 1024;
+			}
+			facing3 += 20;
+		}
+
+		cos = cos_1024(facing2);
+		sin = sin_1024(facing2);
+		rotatedX = size * sin + targetPosition.x;
+		rotatedZ = size * cos + targetPosition.z;
+
+		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
+			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
+				newDestination->x = rotatedX;
+				newDestination->y = targetPosition.y;
+				newDestination->z = rotatedZ;
+				return true;
+			}
+		} else {
+			facing2 -= 20;
+			if (facing2 < 0) {
+				facing2 += 1024;
+			}
+			facing1 += 20;
+		}
+
+		if (facing3 > 1024 && facing1 > 1024) {
+			return false;
+		}
+	}
+}
+
+bool Actor::walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition) {
+	newDestination->x = 0.0f;
+	newDestination->y = 0.0f;
+	newDestination->z = 0.0f;
+	float size = destinationOffset + targetSize * 0.5f + targetWidth * 0.5f;
+	float distance = (startPosition - targetPosition).length() - targetWidth * 0.5f - targetSize * 0.5f;
+	if (size < distance) {
+		return walkFindU1(startPosition, targetPosition, size, newDestination);
+	} else {
+		*newDestination = targetPosition;
+		return true;
+	}
+}
+
+bool Actor::walkToU(const Vector3 &destination, float distance) {
+	Vector3 out;
+	bool isRunning;
+	if (_walkInfo->findU1(_id, destination, distance, &out)) {
+		loopWalk(out, 0, false, false, _position, 0.0f, 24.0f, false, &isRunning, false);
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace BladeRunner

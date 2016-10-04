@@ -32,7 +32,7 @@
 
 namespace BladeRunner {
 
-ADQ::ADQEntry::ADQEntry() {
+ADQEntry::ADQEntry() {
 	this->_isNotPause = false;
 	this->_isPause = false;
 	this->_actorId = -1;
