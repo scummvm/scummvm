@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2014-07-03 17:59-0600\n"
 "Last-Translator: Matteo 'Maff' Angelino <matteo.maff at gmail dot com>\n"
 "Language-Team: Italian\n"
@@ -849,7 +849,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Modalità di resa grafica speciali supportate da alcuni giochi"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Modalità a schermo intero"
 
@@ -2174,19 +2174,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normale (no ridim.)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Correzione proporzioni attivata"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Correzione proporzioni disattivata"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Filtro grafico attivo:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Modalità finestra"
 
@@ -3100,7 +3100,7 @@ msgstr "~M~enu principale"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~ffetto acqua attivo"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
 msgstr "Gioco in pausa. Premere SPAZIO per continuare."

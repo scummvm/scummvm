@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -843,7 +843,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Joko batzuk onarturiko lausotze-modu bereziak"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Pantaila osoa"
 
@@ -2157,19 +2157,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normala"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Leiho modua"
 
@@ -3096,7 +3096,7 @@ msgstr "Menu ~n~agusia"
 msgid "~W~ater Effect Enabled"
 msgstr "~U~r-efektua gaituta"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
 msgstr "Joko pausatua. Sakatu ZURIUNEA jarraitzeko."

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2016-03-15 04:09-0700\n"
 "Last-Translator: Chenbo Li <lichenbo1949@gmail.com>\n"
 "Language-Team: Chenbo Li <lichenbo1949@gmail.com>\n"
@@ -840,7 +840,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Youxi Zhichi Teshu de Doudong Moshi"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Quanping Moshi"
 
@@ -2151,19 +2151,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Putong"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Qiyong Bili Jiaozheng"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Jinyong Bili Jiaozheng"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Huodong de Tuxing Guolvqi:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Chuangkou Moshi"
 
@@ -3084,7 +3084,7 @@ msgstr "~M~Zhucaidan"
 msgid "~W~ater Effect Enabled"
 msgstr "~W~Qiyong Shuimian Xiaoguo"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 #, fuzzy
 msgid "The game is paused. Press any key to continue."
 msgstr "Youxi Zanting. An Kongge Yi jixu."

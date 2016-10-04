@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-10-02 20:53+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2016-05-22 17:04+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -149,7 +149,6 @@ msgid ""
 msgstr ""
 "Не удалось создать директорию для загрузки, так как указанная диретория уже "
 "содержит файл с таким же именем."
-
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -416,9 +415,9 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"Синхронизация сохранений игр не работает с директориями не по умолчанию. Если "
-"вы хотите, чтобы ваши сохранения игр синхронизировались, используйте директорию "
-"по умолчанию."
+"Синхронизация сохранений игр не работает с директориями не по умолчанию. "
+"Если вы хотите, чтобы ваши сохранения игр синхронизировались, используйте "
+"директорию по умолчанию."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -706,7 +705,8 @@ msgstr ""
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Эта директория пока не может быть использована. В неё сейчас загружаются данные!"
+"Эта директория пока не может быть использована. В неё сейчас загружаются "
+"данные!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -854,7 +854,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Специальные режимы рендеринга, поддерживаемые некоторыми играми"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2394
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
@@ -2172,19 +2172,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без увеличения"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2295
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон включена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2301
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Коррекция соотношения сторон выключена"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2355
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Активный графический фильтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2396
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
@@ -3108,7 +3108,7 @@ msgstr "Главное мен~ю~"
 msgid "~W~ater Effect Enabled"
 msgstr "~Э~ффекты воды включены"
 
-#: engines/mohawk/mohawk.cpp:60
+#: engines/mohawk/mohawk.cpp:61
 msgid "The game is paused. Press any key to continue."
 msgstr "Игра остановлена. Нажмите любую кнопку, чтобы продолжить."
 
@@ -3254,7 +3254,8 @@ msgstr "Включить видео с линиями"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "Рисует чёрные линии поверъ видео, увеличивая таким образом видимую чёткость"
+msgstr ""
+"Рисует чёрные линии поверъ видео, увеличивая таким образом видимую чёткость"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
