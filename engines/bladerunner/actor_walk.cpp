@@ -177,7 +177,6 @@ bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) {
 }
 
 int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
-	float cos, sin;
 	bool inWalkbox;
 
 	int facingFound = -1;
@@ -190,10 +189,8 @@ int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
 	out->z = 0.0f;
 
 	for (int facing = 0; facing < 1024; facing += 128) {
-		sin = sin_1024(facing);
-		cos = cos_1024(facing);
-		x = to.x + sin * dist;
-		z = to.z + cos * dist;
+		x = to.x + sin_1024(facing) * dist;
+		z = to.z + cos_1024(facing) * dist;
 		float dist2 = distance(x, z, _vm->_actors[actorId]->getX(), _vm->_actors[actorId]->getZ());
 
 		if (distFound == -1.0f || distFound > dist2) {
@@ -206,19 +203,15 @@ int ActorWalk::findU1(int actorId, const Vector3 &to, int dist, Vector3 *out) {
 	int v24 = facingFound;
 	int v25 = -1024;
 	while (v25 < 0) {
-		sin = sin_1024(v24);
-		cos = cos_1024(v24);
-		x = to.x + sin * dist;
-		z = to.z + cos * dist;
+		x = to.x + sin_1024(v24) * dist;
+		z = to.z + cos_1024(v24) * dist;
 
 		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;
 		}
 
-		sin = sin_1024(v23);
-		cos = cos_1024(v23);
-		x = to.x + sin * dist;
-		z = to.z + cos * dist;
+		x = to.x + sin_1024(v23) * dist;
+		z = to.z + cos_1024(v23) * dist;
 
 		if (!_vm->_sceneObjects->existsOnXZ(actorId, x, z, true, true) && _vm->_scene->_set->findWalkbox(x, z) >= 0) {
 			break;

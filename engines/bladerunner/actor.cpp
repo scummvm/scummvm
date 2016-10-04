@@ -985,10 +985,8 @@ bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPositi
 	int facing2 = facing;
 	int facing3 = 0;
 	while (true) {
-		float cos = cos_1024(facing);
-		float sin = sin_1024(facing);
-		float rotatedX = size * sin + targetPosition.x;
-		float rotatedZ = size * cos + targetPosition.z;
+		float rotatedX = size * sin_1024(facing) + targetPosition.x;
+		float rotatedZ = size * cos_1024(facing) + targetPosition.z;
 
 		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
@@ -1005,10 +1003,8 @@ bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPositi
 			facing3 += 20;
 		}
 
-		cos = cos_1024(facing2);
-		sin = sin_1024(facing2);
-		rotatedX = size * sin + targetPosition.x;
-		rotatedZ = size * cos + targetPosition.z;
+		rotatedX = size * sin_1024(facing2) + targetPosition.x;
+		rotatedZ = size * cos_1024(facing2) + targetPosition.z;
 
 		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {

@@ -108,26 +108,20 @@ inline Vector4 operator/(Vector4 a, Vector4 b) {
 	return Vector4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
 }
 
-inline
-int angle_1024(float x1, float z1, float x2, float z2)
-{
+inline int angle_1024(float x1, float z1, float x2, float z2) {
 	float angle_rad = atan2(x2 - x1, z1 - z2);
 	int a = int(512.0 * angle_rad / M_PI);
 	return (a + 1024) % 1024;
 }
 
-inline
-int angle_1024(const Vector3 &v1, const Vector3 &v2)
-{
+inline int angle_1024(const Vector3 &v1, const Vector3 &v2) {
 	return angle_1024(v1.x, v1.z, v2.x, v2.z);
 }
 
-inline
-float distance(float x1, float z1, float x2, float z2)
-{
+inline float distance(float x1, float z1, float x2, float z2) {
 	float dx = x1 - x2;
 	float dz = z1 - z2;
-	float d = sqrt(dx*dx + dz*dz);
+	float d = sqrt(dx * dx + dz * dz);
 
 	float int_part = (int)d;
 	float frac_part = d - int_part;
@@ -138,24 +132,17 @@ float distance(float x1, float z1, float x2, float z2)
 	return int_part + frac_part;
 }
 
-inline
-float distance(const Vector3 &v1, const Vector3 &v2)
-{
+inline float distance(const Vector3 &v1, const Vector3 &v2) {
 	return distance(v1.x, v1.z, v2.x, v2.z);
 }
 
-inline
-float cos_1024(int angle1024) {
+inline float cos_1024(int angle1024) {
 	return cos(angle1024 * (M_PI / 512.0f));
 }
 
-inline
-float sin_1024(int angle1024) {
+inline float sin_1024(int angle1024) {
 	return sin(angle1024 * (M_PI / 512.0f));
 }
-
-
-
 } // End of namespace BladeRunner
 
 #endif
