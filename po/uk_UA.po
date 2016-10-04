@@ -416,6 +416,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Запис станів ігор працює тільки з папкою за замовченням. Якщо ви хочете, щоб "
+"ваші стани ігр синхронізувалися, використовуйте папку за замовченням."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -702,7 +704,7 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Цю папку ще не можна використовувати, в неї іде завантаження!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -1243,21 +1245,21 @@ msgid "Specifies which directory the Files Manager can access"
 msgstr "Вказує шлях до якого можна мати доступ через Керування файлами"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Додатк. шлях:"
+msgstr "Корінний шлях:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Сервер:"
+msgstr "Порт сервера:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Порт, который будет использован сервером\n"
+"Аутентификация с сервером доступна только для порта по умолчанию"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
@@ -1269,7 +1271,7 @@ msgstr "Не вдалося змінити змарне середовище!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Другое облако уже активно."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1471,19 +1473,19 @@ msgstr "Введіть опис для слоту %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Діалог підключення до хмари %s"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Перейдіть за наступним URL:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Після отримання коду від хмарного середовища, введіть"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "його до комірок нижче і натисніть 'Під'єднатись'"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1495,47 +1497,49 @@ msgstr "Вставити"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Вставляє вміст буфера обміну до комірки"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Вас буде перенаправлено до сторінки ScummVM, де"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "вам буде потрібно дозволити доступ до вашої хмари."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Активна інше хмарне середовище. Чи ви хочете припинити процес?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Комірка %s має похибку."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Комірки %s мають похибки."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Все добре!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Невірний код"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Не вдалося відкрити URL!\n"
+"Будь-ласка, перейдіть вручну на вказану сторінку."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -3103,9 +3107,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "Ефекти води увімкнено"
 
 #: engines/mohawk/mohawk.cpp:61
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Ігру призупинено.  Натисніть пробіл для продовження."
+msgstr "Ігру призупинено. Натисніть будь-яку клавішу для продовження."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
