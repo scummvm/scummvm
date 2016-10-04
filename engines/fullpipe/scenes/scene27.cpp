@@ -53,9 +53,6 @@ void scene27_initScene(Scene *sc) {
 	g_vars->scene27_maid = sc->getStaticANIObject1ById(ANI_MAID, -1);
 	g_vars->scene27_batHandler = sc->getStaticANIObject1ById(ANI_BITAHANDLER, -1);
 
-	for (uint i = 0; i < g_vars->scene27_balls.size(); i++)
-		delete g_vars->scene27_balls[i];
-
 	g_vars->scene27_balls.clear();
 	g_vars->scene27_bats.clear();
 	g_vars->scene27_var07.clear();
