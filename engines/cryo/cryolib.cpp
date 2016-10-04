@@ -34,10 +34,6 @@ namespace Cryo {
 ///// Mac APIs
 typedef int16 OSErr;
 
-int16 MemError() {
-	return 0;
-}
-
 void SysBeep(int x) {
 }
 
@@ -50,13 +46,6 @@ OSErr FSRead(int16 handle, long *size, void *buffer) {
 }
 
 void FlushEvents(int16 arg1, int16 arg2) {
-}
-
-char *c2pstr(char *s) {
-	return s;
-}
-
-void DebugStr(char *s) {
 }
 
 // from mw lib???

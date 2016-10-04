@@ -35,15 +35,9 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 		sound->_buffer = nullptr;
 //		sound->sndHandle = CLMemory_AllocHandle(arg1 + 100);
 //		if(!sound->sndHandle)
-//		{
-//			__libError = -1;
-//			__osError = MemError();
-//			CLCheckError();
-//		}
+//			error("CLSoundRaw_New - Not enough memory");
 //		else
-		{
 			CLSound_PrepareSample(sound, mode);
-		}
 	} else
 		error("CLSoundRaw_New - Not enough memory");
 

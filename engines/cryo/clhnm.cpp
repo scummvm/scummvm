@@ -44,7 +44,6 @@ static soundgroup_t *soundGroup_adpcm = 0;
 static soundchannel_t *soundChannel = 0;
 static soundgroup_t *soundGroup = 0;
 static void (*custom_chunk_handler)(byte *buffer, int size, int16 id, char h6, char h7) = 0;
-static int16 use_preload = 0;
 static int16 decomp_table[256];
 
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
@@ -191,7 +190,6 @@ void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
 }
 
 void CLHNM_Init() {
-	use_preload = 0;
 	custom_chunk_handler = 0;
 	preserve_color0 = false;
 }
@@ -250,22 +248,28 @@ void CLHNM_SetForceZero2Black(bool forceblack) {
 }
 
 hnm_t *CLHNM_New(int preload_size) {
-	hnm_t *hnm;
+	hnm_t *hnm = (hnm_t *)CLMemory_Alloc(sizeof(*hnm));
 
-	preload_size = 0;   //TODO: let's ignore it for now
-
-	hnm = (hnm_t *)CLMemory_Alloc(sizeof(*hnm));
-	if (hnm) {
-		if (preload_size)
-			use_preload = 1;
+	hnm->_frameNum = 0;
+	hnm->ff_4 = 0;
+	hnm->_file = nullptr;
+	hnm->tmpBuffer[0] = nullptr;
+	hnm->tmpBuffer[1] = nullptr;
+	hnm->finalBuffer = nullptr;
+	hnm->_readBuffer = nullptr;
+	hnm->ff_896 = 0;
+	hnm->_totalRead = 0;
+	for (int i = 0; i < 256; i++) {
+		hnm->_palette[i].a = 0;
+		hnm->_palette[i].r = 0;
+		hnm->_palette[i].g = 0;
+		hnm->_palette[i].b = 0;
 	}
+
 	return hnm;
 }
 
 void CLHNM_Dispose(hnm_t *hnm) {
-	if (use_preload) {
-	}
-
 	CLMemory_Free(hnm);
 }
 
@@ -282,28 +286,23 @@ void CLHNM_AllocMemory(hnm_t *hnm) {
 	hnm->tmpBuffer[0] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
 
 	if (!hnm->tmpBuffer[0])
-		goto fin;
+		return;
 
 	hnm->tmpBuffer[1] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
 
 	if (!hnm->tmpBuffer[1]) {
 		CLMemory_Free(hnm->tmpBuffer[0]);
 		hnm->tmpBuffer[0] = nullptr;
-		goto fin;
+		return;
 	}
 
-	if (!use_preload) {
-		hnm->_readBuffer = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
-//		CLCheckError();
-		if (!hnm->_readBuffer) {
-			CLMemory_Free(hnm->tmpBuffer[0]);
-			hnm->tmpBuffer[0] = nullptr;
-			CLMemory_Free(hnm->tmpBuffer[1]);
-			hnm->tmpBuffer[1] = nullptr;
-		}
+	hnm->_readBuffer = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
+	if (!hnm->_readBuffer) {
+		CLMemory_Free(hnm->tmpBuffer[0]);
+		hnm->tmpBuffer[0] = nullptr;
+		CLMemory_Free(hnm->tmpBuffer[1]);
+		hnm->tmpBuffer[1] = nullptr;
 	}
-fin:
-	;
 }
 
 void CLHNM_DeallocMemory(hnm_t *hnm) {
@@ -317,25 +316,18 @@ void CLHNM_DeallocMemory(hnm_t *hnm) {
 		hnm->tmpBuffer[1] = nullptr;
 	}
 
-	if (!use_preload) {
-		if (hnm->_readBuffer) {
-			CLMemory_Free(hnm->_readBuffer);
-			hnm->_readBuffer = nullptr;
-		}
+	if (hnm->_readBuffer) {
+		CLMemory_Free(hnm->_readBuffer);
+		hnm->_readBuffer = nullptr;
 	}
 }
 
 void CLHNM_Read(hnm_t *hnm, int size) {
 	long _size = size;
-	if (!use_preload) {
-		CLFile_Read(*hnm->_file, hnm->_readBuffer, &_size);
-	}
+	CLFile_Read(*hnm->_file, hnm->_readBuffer, &_size);
 }
 
 void CLHNM_GiveTime(hnm_t *hnm) {
-	if (use_preload) {
-		//stuff preload_buffer from disk
-	}
 }
 
 void CLHNM_CanLoop(hnm_t *hnm, bool canLoop) {
@@ -428,8 +420,6 @@ void CLHNM_Desentrelace(hnm_t *hnm) {
 }
 
 void CLHNM_FlushPreloadBuffer(hnm_t *hnm) {
-	if (use_preload) {
-	}
 }
 
 soundchannel_t *CLHNM_GetSoundChannel() {
@@ -464,10 +454,8 @@ int16 CLHNM_LoadFrame(hnm_t *hnm) {
 	if (!chunk)
 		return 0;
 
-	if (use_preload) {
-	} else if (chunk - 4 > hnm->_header._bufferSize) {
+	if (chunk - 4 > hnm->_header._bufferSize)
 		error("CLHNM_LoadFrame - Chunk size");
-	}
 
 	CLHNM_TryRead(hnm, chunk - 4);
 	hnm->_dataPtr = hnm->_readBuffer;
@@ -495,7 +483,7 @@ void CLHNM_DecompADPCM(byte *buffer, int16 *output, int size) {
 		*output++ = l += decomp_table[*buffer++];
 		*output++ = r += decomp_table[*buffer++];
 		if (l > 512 || r > 512)
-			DebugStr(" coucou");
+			error("CLHNM_DecompADPCM - Unexpected values");
 	}
 	pred_l = l;
 	pred_r = r;
@@ -520,8 +508,10 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 	}
 	if (hnm->_frameNum == hnm->_header._numbFrame)
 		return false;
+
 	if (!CLHNM_LoadFrame(hnm))
 		return false;
+
 	for (;;) {
 		sz = PLE32(hnm->_dataPtr) & 0xFFFFFF;
 		hnm->_dataPtr += 4;
@@ -568,7 +558,8 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 					CLSoundGroup_PlayNextSample(soundGroup, soundChannel);
 				sound_started = true;
 			}
-			goto end_frame;
+
+			return true;
 		case BE16('IU'):
 			hnm->_frameNum++;
 			CLHNM_SelectBuffers(hnm);
@@ -581,7 +572,8 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 //				else
 				memcpy(hnm->finalBuffer, hnm->_newFrameBuffer, hnm->_header._width * hnm->_header._height);
 			}
-			goto end_frame;
+			return true;
+
 		case BE16('sd'):
 		case BE16('SD'):
 			if (use_sound) {
@@ -619,18 +611,12 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 			hnm->_dataPtr += sz - 8;
 		}
 	}
-end_frame:
-	;
-	if (use_preload) {
-	}
 	return true;
 }
 
 void CLHNM_ReadHeader(hnm_t *hnm) {
-	if (!use_preload) {
-		long size = sizeof(hnm->_header);
-		CLFile_Read(*hnm->_file, &hnm->_header, &size);
-	}
+	long size = sizeof(hnm->_header);
+	CLFile_Read(*hnm->_file, &hnm->_header, &size);
 
 	hnm->_header._width = LE16(hnm->_header._width);
 	hnm->_header._height = LE16(hnm->_header._height);
@@ -655,12 +641,9 @@ int CLHNM_GetFrameNum(hnm_t *hnm) {
 }
 
 void CLHNM_DeactivatePreloadBuffer() {
-	use_preload = 0;
 }
 
 void CLHNM_Prepare2Read(hnm_t *hnm, int mode) {
-	if (use_preload) {
-	}
 }
 
 void CLHNM_SetPosIntoFile(hnm_t *hnm, long pos) {
