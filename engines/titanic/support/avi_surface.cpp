@@ -58,7 +58,7 @@ AVISurface::AVISurface(const CResourceKey &key) {
 
 AVISurface::~AVISurface() {
 	if (_videoSurface)
-		_videoSurface->_transBlitFlag = false;
+		_videoSurface->_flipVertically = false;
 	delete _framePixels;
 	delete _movieFrameSurface[0];
 	delete _movieFrameSurface[1];
@@ -248,7 +248,7 @@ void AVISurface::setupDecompressor() {
 			_framePixels = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
 				_decoder->getVideoTrack(0).getPixelFormat());
 		} else if (idx == 0) {
-			_videoSurface->_transBlitFlag = true;
+			_videoSurface->_flipVertically = true;
 		}
 	}
 }

@@ -67,8 +67,16 @@ private:
 	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
 		const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
-	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	/**
+	 * Copies a rect from a given source surface
+	 */
+	void blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+
+	/**
+	 * Copies a rect from a given source surface and draws it vertically flipped
+	 */
+	void flippedBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+
 	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag);
 protected:
 	static int _videoSurfaceCounter;
@@ -85,7 +93,7 @@ public:
 	CMovie *_movie;
 	DirectDrawSurface *_ddSurface;
 	bool _fastBlitFlag;
-	bool _transBlitFlag;
+	bool _flipVertically;
 	CResourceKey _resourceKey;
 	TransparencyMode _transparencyMode;
 public:

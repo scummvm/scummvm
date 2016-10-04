@@ -34,7 +34,7 @@ byte CVideoSurface::_palette2[32][32];
 
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
-		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
+		_pendingLoad(false), _flipVertically(false), _fastBlitFlag(false),
 		_transparencySurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
 		_freeTransparencySurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
@@ -77,10 +77,10 @@ void CVideoSurface::blitFrom(const Point &destPos, CVideoSurface *src, const Rec
 		Rect srcBounds, destBounds;
 		clipBounds(srcBounds, destBounds, src, srcRect, &destPos);
 
-		if (src->_transBlitFlag)
-			blitRect2(srcBounds, destBounds, src);
+		if (src->_flipVertically)
+			flippedBlitRect(srcBounds, destBounds, src);
 		else
-			blitRect1(srcBounds, destBounds, src);
+			blitRect(srcBounds, destBounds, src);
 	}
 }
 
@@ -153,7 +153,7 @@ void CVideoSurface::clipBounds(Rect &srcRect, Rect &destRect,
 		error("Invalid rect");
 }
 
-void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	src->lock();
 	lock();
 
@@ -169,7 +169,7 @@ void CVideoSurface::blitRect1(const Rect &srcRect, const Rect &destRect, CVideoS
 	unlock();
 }
 
-void CVideoSurface::blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
+void CVideoSurface::flippedBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src) {
 	if (src->getTransparencySurface()) {
 		transBlitRect(srcRect, destRect, src, true);
 	} else {
@@ -469,7 +469,7 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
 		if (_transparencySurface) {
 			CTransparencySurface transSurface(&_transparencySurface->rawSurface(), _transparencyMode);
-			transSurface.setRow(_transBlitFlag ? pt.y : getHeight() - pt.y - 1);
+			transSurface.setRow(_flipVertically ? pt.y : getHeight() - pt.y - 1);
 			transSurface.setCol(pt.x);
 
 			if (transSurface.isPixelTransparent2())
@@ -550,7 +550,7 @@ const CMovieRangeInfoList *OSVideoSurface::getMovieRangeInfo() const {
 }
 
 void OSVideoSurface::flipVertically(bool needsLock) {
-	if (!loadIfReady() || !_transBlitFlag)
+	if (!loadIfReady() || !_flipVertically)
 		return;
 
 	if (needsLock)
@@ -569,7 +569,7 @@ void OSVideoSurface::flipVertically(bool needsLock) {
 		Common::copy(lineBuffer, lineBuffer + pitch, line1P);
 	}
 
-	_transBlitFlag = false;
+	_flipVertically = false;
 	if (needsLock)
 		unlock();
 }
