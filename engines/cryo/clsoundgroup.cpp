@@ -31,12 +31,9 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, fl
 	sg = (soundgroup_t *)CLMemory_Alloc(sizeof(*sg));
 	if (numSounds < kCryoMaxClSounds)
 		sg->_numSounds = numSounds;
-	else {
-		__libError = -3;
-		__osError = 0;
-		CLCheckError();
-		sg->_numSounds = kCryoMaxClSounds;
-	}
+	else
+		error("CLSoundGroup_New - numSounds >= kCryoMaxClSounds");
+
 	for (i = 0; i < sg->_numSounds; i++) {
 		sound_t *sound = CLSoundRaw_New(arg4, rate, sampleSize, mode);
 		sg->_sound[i] = sound;
@@ -94,9 +91,7 @@ int16 CLSoundGroup_SetDatas(soundgroup_t *sg, void *data, int length, int16 isSi
 	void *buffer;
 	sound_t *sound = sg->_sound[sg->_soundIndex];
 	if (length >= sound->ff_1A) {
-		__libError = -10;
-		__osError = 0;
-		CLCheckError();
+		error("CLSoundGroup_SetDatas - Unexpected length");
 	}
 	if (sg->ff_106)
 		while (sound->_locked) ;

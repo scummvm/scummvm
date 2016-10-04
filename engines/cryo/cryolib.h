@@ -52,26 +52,6 @@ enum {
 	fsFromStart = 1
 };
 
-extern int16 __debug2;
-
-extern int16 __debug, __libError, __osError;
-
-#define CLBeginCheck    { int16 __oldDebug = __debug; __debug = -1;
-#define CLEndCheck      __debug = __oldDebug; }
-#define CLNoError       __libError = 0;
-
-#define CLCheckError() if(__debug && __libError){   \
-		char buffer_[260];           \
-		sprintf(buffer_, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
-		DebugStr(c2pstr(buffer_));   \
-	};
-
-#define CLAssert(x) if(!(x)) {  \
-		char buffer_[260];           \
-		sprintf(buffer_, "File %s at line %d, with __libError = %d and __osError = %d", __FILE__, __LINE__, __libError, __osError);  \
-		DebugStr(c2pstr(buffer_));   \
-	};
-
 struct BlitView{
 	int     _srcLeft;
 	int     _srcTop;

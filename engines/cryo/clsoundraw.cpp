@@ -26,7 +26,6 @@ namespace Cryo {
 
 sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 	sound_t *sound;
-	CLBeginCheck;
 
 	sound = (sound_t *)CLMemory_Alloc(sizeof(*sound));
 	if (sound) {
@@ -44,15 +43,10 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 //		else
 		{
 			CLSound_PrepareSample(sound, mode);
-			CLNoError;
 		}
-	} else {
-		__libError = -1;
-		__osError = MemError();
-		CLCheckError();
-	}
+	} else
+		error("CLSoundRaw_New - Not enough memory");
 
-	CLEndCheck;
 	return sound;
 }
 
