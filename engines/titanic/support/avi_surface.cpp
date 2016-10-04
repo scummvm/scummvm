@@ -221,7 +221,8 @@ void AVISurface::setupDecompressor() {
 			_decoder->getVideoTrack(idx).getPixelFormat());
 
 		bool flag = false;
-		if (idx == 0 && _videoSurface) {
+		if (idx == 0 && _videoSurface && 
+				_videoSurface->getPitch() == _movieFrameSurface[idx]->pitch) {
 			const Graphics::PixelFormat &ff = _decoder->getVideoTrack(0).getPixelFormat();
 			const int vDepth = _videoSurface->getPixelDepth();
 
@@ -293,11 +294,10 @@ bool AVISurface::renderFrame() {
 
 	if (!_framePixels) {
 		if (_videoSurface->lock()) {
-			if (_streamCount == 1) {
-				// Original seems to call a stubbed empty method here.
-				// Likely this form of blitting to surface wasn't needed
-			}
-
+			// Blit the frame directly to the video surface
+			assert(_streamCount == 1);
+			_videoSurface->blitFrom(Point(0, 0), &_movieFrameSurface[0]->rawSurface());
+			
 			_videoSurface->unlock();
 		}
 	} else {
