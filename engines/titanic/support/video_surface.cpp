@@ -511,8 +511,10 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 
 	if (pt.x >= 0 && pt.y >= 0 && pt.x < getWidth() && pt.y < getHeight()) {
 		if (_transparencySurface) {
+			// WORKAROUND: Original had the setRow _flipVertically check in reverse.
+			// Pretty sure putting it the way is below is the correct way
 			CTransparencySurface transSurface(&_transparencySurface->rawSurface(), _transparencyMode);
-			transSurface.setRow(_flipVertically ? pt.y : getHeight() - pt.y - 1);
+			transSurface.setRow(_flipVertically ? getHeight() - pt.y - 1 : pt.y);
 			transSurface.setCol(pt.x);
 
 			if (transSurface.isPixelTransparent2())
