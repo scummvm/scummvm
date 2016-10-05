@@ -318,7 +318,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6,          820,    82,  0,                   "", "export 0",                        NULL,    -1, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence - bug #5103
 	{ GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",                          NULL,     0, { WORKAROUND_FAKE,   0 } }, // washcloth in inventory
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",                       NULL,     0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-	{ GID_LSL6HIRES,       0,    85,  0,             "LL6Inv", "init",                            NULL,     0, { WORKAROUND_FAKE,   0 } }, // on startup
+	{ GID_LSL6HIRES,      -1,    85,  0,             "LL6Inv", "init",                            NULL,     0, { WORKAROUND_FAKE,   0 } }, // when creating a new game
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",                     NULL,     0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",                            NULL,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_MOTHERGOOSE256, -1,     0,  0,                 "MG", "doit",                            NULL,     5, { WORKAROUND_FAKE,   0 } }, // SCI1.1: When moving the cursor all the way to the left during the game - bug #5224
