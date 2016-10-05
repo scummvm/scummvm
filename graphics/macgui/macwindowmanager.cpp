@@ -347,15 +347,20 @@ void MacWindowManager::loadFonts() {
 
 		delete stream;
 
-		Common::String fontName = (*it)->getName();
+		Common::String fontName;
+		if (font->getFaceName() && *font->getFaceName()) {
+			fontName = font->getFaceName();
+		} else { // Get it from the file name
+			fontName = (*it)->getName();
 
-		// Trim the .bdf extension
-		for (int i = fontName.size() - 1; i >= 0; --i) {
-			if (fontName[i] == '.') {
-				while ((uint)i < fontName.size()) {
-					fontName.deleteLastChar();
+			// Trim the .bdf extension
+			for (int i = fontName.size() - 1; i >= 0; --i) {
+				if (fontName[i] == '.') {
+					while ((uint)i < fontName.size()) {
+						fontName.deleteLastChar();
+					}
+					break;
 				}
-				break;
 			}
 		}
 
