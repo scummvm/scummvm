@@ -402,7 +402,8 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 }
 
 void CGameObject::loadFrame(int frameNumber) {
-	if (frameNumber != -1 && !_resource.empty())
+	_frameNumber = -1;
+	if (!_resource.empty())
 		loadResource(_resource);
 	
 	if (_surface)
