@@ -148,6 +148,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("5ma", "",
 		WME_ENTRY2s("english.dcp", "2f97bca09260ba23b645da9f0855ce7f", 893681,
 					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::EN_ANY, ADGF_UNSTABLE, WME_1_7_0),
+	// Five Magical Amulets (German)
+	WME_WINENTRY("5ma", "",
+		WME_ENTRY2s("german.dcp", "bfa74aae81672803d0d0748ac0a532b7", 885150,
+					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::DE_DEU, ADGF_UNSTABLE, WME_1_7_0),
 	// Five Magical Amulets (Polish)
 	WME_WINENTRY("5ma", "",
 		WME_ENTRY2s("polish.dcp", "bb877d48795471a17f25b0b5109100d1", 1132197,
