@@ -248,7 +248,7 @@ void CLHNM_SetForceZero2Black(bool forceblack) {
 }
 
 hnm_t *CLHNM_New(int preload_size) {
-	hnm_t *hnm = (hnm_t *)CLMemory_Alloc(sizeof(*hnm));
+	hnm_t *hnm = (hnm_t *)malloc(sizeof(*hnm));
 
 	hnm->_frameNum = 0;
 	hnm->ff_4 = 0;
@@ -270,7 +270,7 @@ hnm_t *CLHNM_New(int preload_size) {
 }
 
 void CLHNM_Dispose(hnm_t *hnm) {
-	CLMemory_Free(hnm);
+	free(hnm);
 }
 
 
@@ -283,43 +283,36 @@ void CLHNM_SetFinalBuffer(hnm_t *hnm, byte *buffer) {
 }
 
 void CLHNM_AllocMemory(hnm_t *hnm) {
-	hnm->tmpBuffer[0] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
+	hnm->tmpBuffer[0] = (byte *)malloc(hnm->_header._bufferSize + 2);
 
 	if (!hnm->tmpBuffer[0])
 		return;
 
-	hnm->tmpBuffer[1] = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
+	hnm->tmpBuffer[1] = (byte *)malloc(hnm->_header._bufferSize + 2);
 
 	if (!hnm->tmpBuffer[1]) {
-		CLMemory_Free(hnm->tmpBuffer[0]);
+		free(hnm->tmpBuffer[0]);
 		hnm->tmpBuffer[0] = nullptr;
 		return;
 	}
 
-	hnm->_readBuffer = (byte *)CLMemory_Alloc(hnm->_header._bufferSize + 2);
+	hnm->_readBuffer = (byte *)malloc(hnm->_header._bufferSize + 2);
 	if (!hnm->_readBuffer) {
-		CLMemory_Free(hnm->tmpBuffer[0]);
+		free(hnm->tmpBuffer[0]);
 		hnm->tmpBuffer[0] = nullptr;
-		CLMemory_Free(hnm->tmpBuffer[1]);
+		free(hnm->tmpBuffer[1]);
 		hnm->tmpBuffer[1] = nullptr;
 	}
 }
 
 void CLHNM_DeallocMemory(hnm_t *hnm) {
-	if (hnm->tmpBuffer[0]) {
-		CLMemory_Free(hnm->tmpBuffer[0]);
-		hnm->tmpBuffer[0] = nullptr;
-	}
+	free(hnm->tmpBuffer[0]);
+	free(hnm->tmpBuffer[1]);
+	free(hnm->_readBuffer);
 
-	if (hnm->tmpBuffer[1]) {
-		CLMemory_Free(hnm->tmpBuffer[1]);
-		hnm->tmpBuffer[1] = nullptr;
-	}
-
-	if (hnm->_readBuffer) {
-		CLMemory_Free(hnm->_readBuffer);
-		hnm->_readBuffer = nullptr;
-	}
+	hnm->tmpBuffer[0] = nullptr;
+	hnm->tmpBuffer[1] = nullptr;
+	hnm->_readBuffer = nullptr;
 }
 
 void CLHNM_Read(hnm_t *hnm, int size) {

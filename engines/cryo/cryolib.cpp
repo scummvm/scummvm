@@ -53,19 +53,6 @@ long TickCount() {
 	return g_system->getMillis();
 }
 
-///// CLMemory
-void *CLMemory_Alloc(int size) {
-	return malloc(size);
-}
-void CLMemory_Free(void *ptr) {
-	//TODO: due to a bug in ssndfl() sometimes a null ptr passed, skip it
-	if (!ptr)
-		return;
-
-	free(ptr);
-}
-
-
 ///// CLTimer
 volatile long TimerTicks = 0;   // incremented in realtime
 
@@ -80,9 +67,9 @@ void CLView_SetDisplayZoomValues(View *view, int w, int h) {
 }
 void CLView_Free(View *view) {
 	if (view->_bufferPtr && view->_allocated)
-		CLMemory_Free(view->_bufferPtr);
+		free(view->_bufferPtr);
 	if (view)
-		CLMemory_Free(view);
+		free(view);
 }
 void CLView_InitDatas(View *view, int w, int h, void *buffer) {
 	view->_bufferPtr = (byte *)buffer;
@@ -104,15 +91,15 @@ void CLView_InitDatas(View *view, int w, int h, void *buffer) {
 	view->_zoom._height = h;
 }
 View *CLView_New(int w, int h) {
-	View *view = (View *)CLMemory_Alloc(sizeof(View));
+	View *view = (View *)malloc(sizeof(View));
 	if (view) {
-		void *buffer = (byte *)CLMemory_Alloc(w * h);
+		void *buffer = (byte *)malloc(w * h);
 		if (buffer) {
 			view->_allocated = true;
 			CLView_InitDatas(view, w, h, buffer);
 		} else {
 			view->_allocated = false;
-			CLMemory_Free(view);
+			free(view);
 			view = 0;
 		}
 	}
@@ -414,7 +401,7 @@ void CLSound_SetLength(sound_t *sound, int length) {
 /// sound output device that plays queue of sounds
 soundchannel_t *CLSoundChannel_New(int arg1) {
 	int16 i;
-	soundchannel_t *ch = (soundchannel_t *)CLMemory_Alloc(sizeof(*ch));
+	soundchannel_t *ch = (soundchannel_t *)malloc(sizeof(*ch));
 	if (!ch)
 		return 0;
 
@@ -427,7 +414,7 @@ soundchannel_t *CLSoundChannel_New(int arg1) {
 	return ch;
 }
 void CLSoundChannel_Free(soundchannel_t *ch) {
-	CLMemory_Free(ch);
+	free(ch);
 }
 void CLSoundChannel_Stop(soundchannel_t *ch) {
 	//  g_ed->_mixer->stopHandle(ch->ch);

@@ -27,7 +27,7 @@ namespace Cryo {
 sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 	sound_t *sound;
 
-	sound = (sound_t *)CLMemory_Alloc(sizeof(*sound));
+	sound = (sound_t *)malloc(sizeof(*sound));
 	if (sound) {
 		sound->ff_1A = arg1;
 		sound->_rate = rate;
@@ -47,7 +47,7 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode) {
 void CLSoundRaw_Free(sound_t *sound) {
 	while (sound->_locked) ;
 //	CLMemory_FreeHandle(sound->sndHandle);
-	CLMemory_Free(sound);
+	free(sound);
 }
 
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length) {

@@ -247,7 +247,7 @@ void EdenGame::gametomiroir(byte arg1) {
 }
 
 void EdenGame::flipMode() {
-	if (personTalking) {
+	if (_personTalking) {
 		endpersovox();
 		if (p_global->displayFlags == DisplayFlags::dfPerson) {
 			if (p_global->perso_ptr == &kPersons[PER_THOO] && p_global->phaseNum >= 80)
@@ -2139,10 +2139,10 @@ void EdenGame::anim_perso() {
 		load_perso(p_global->perso_ptr);
 	restaurefondbulle();
 	if (restartAnimation) {
-		last_anim_ticks = TimerTicks;
+		_lastAnimTicks = TimerTicks;
 		restartAnimation = 0;
 	}
-	cur_anim_frame_num = (TimerTicks - last_anim_ticks) >> 2;   // TODO: check me!!!
+	cur_anim_frame_num = (TimerTicks - _lastAnimTicks) >> 2;   // TODO: check me!!!
 	if (cur_anim_frame_num > num_anim_frames)               // TODO: bug?
 		animateTalking = 0;
 	if (p_global->curPersoAnimPtr && !p_global->animationFlags && cur_anim_frame_num != last_anim_frame_num) {
@@ -2175,7 +2175,7 @@ void EdenGame::anim_perso() {
 			if (!fond_saved)
 				sauvefondbouche();
 		}
-		if (!personTalking)
+		if (!_personTalking)
 			cur_anim_frame_num = num_anim_frames - 1;
 		animationIndex = animationTable[cur_anim_frame_num];
 		if (animationIndex == 0xFF)
@@ -2215,7 +2215,7 @@ void EdenGame::getanimrnd() {
 
 void EdenGame::addanim() {
 	lastAnimationIndex = 0xFF;
-	last_anim_ticks = 0;
+	_lastAnimTicks = 0;
 	p_global->animationFlags = 0xC0;
 	p_global->curPersoAnimPtr = p_global->persoSpritePtr;
 	getanimrnd();
@@ -2906,7 +2906,7 @@ void EdenGame::af_subtitle() {
 		y = 174;
 		dst += 640 * (y - num_text_lines * FONT_HEIGHT) + _scrollPos + subtitles_x_scr_margin;
 	}
-	if (animationActive && !personTalking)
+	if (animationActive && !_personTalking)
 		return;
 	sauvefondbulle(y);
 	for (h = 0; h < num_text_lines * FONT_HEIGHT + 1; h++) {
@@ -4606,12 +4606,13 @@ int EdenGame::ssndfl(uint16 num) {
 	pakfile_t *file = &bigfile_header->files[num + 660];
 	long size = PLE32(&file->size);
 	long offs = PLE32(&file->offs);
-	if (soundAllocated) {
-		CLMemory_Free(voiceSamplesBuffer);
-		soundAllocated = 0; //TODO: bug??? no alloc
+	if (_soundAllocated) {
+		free(voiceSamplesBuffer);
+		voiceSamplesBuffer = nullptr;
+		_soundAllocated = false; //TODO: bug??? no alloc
 	} else {
-		voiceSamplesBuffer = CLMemory_Alloc(size);
-		soundAllocated = 1;
+		voiceSamplesBuffer = malloc(size);
+		_soundAllocated = true;
 	}
 	CLFile_SetPosition(h_bigfile, 1, offs);
 	CLFile_Read(h_bigfile, voiceSamplesBuffer, &size);
@@ -5424,7 +5425,7 @@ void EdenGame::run() {
 	CLHNM_SetupTimer(12.5);
 	voiceSound = CLSoundRaw_New(0, 11025 * 65536.0, 8, 0);
 	hnmsound_ch = CLHNM_GetSoundChannel();
-	music_channel = CLSoundChannel_New(0);
+	_musicChannel = CLSoundChannel_New(0);
 	CLSound_SetWantsDesigned(1);
 
 	allocateBuffers();
@@ -5457,7 +5458,7 @@ void EdenGame::run() {
 				gameLoaded = 0;
 			}
 			fademusica0(2);
-			CLSoundChannel_Stop(music_channel);
+			CLSoundChannel_Stop(_musicChannel);
 			CLSoundGroup_Free(mus_queue_grp);
 			musicPlaying = 0;
 			mus_queue_grp = 0;
@@ -5488,7 +5489,7 @@ void EdenGame::edmain() {
 				fadetoblack(3);
 				CLBlitter_FillScreenView(0);
 				CLBlitter_FillView(p_mainview, 0);
-				CLSoundChannel_Stop(music_channel);
+				CLSoundChannel_Stop(_musicChannel);
 				CLSoundGroup_Free(mus_queue_grp);
 				musicPlaying = 0;
 				mus_queue_grp = 0;
@@ -6153,7 +6154,7 @@ void EdenGame::playHNM(int16 num) {
 		oldDialogType = p_global->dialogType;
 		prechargephrases(num);
 		fademusica0(1);
-		CLSoundChannel_Stop(music_channel);
+		CLSoundChannel_Stop(_musicChannel);
 	}
 	showVideoSubtitle = 0;
 	videoCanceled = 0;
@@ -6172,7 +6173,7 @@ void EdenGame::playHNM(int16 num) {
 	_cursKeepPos = Common::Point(-1, -1);
 	p_mainview->_doubled = _doubledScreen;
 	if (specialTextMode) {
-		mus_fade_flags = 3;
+		_musicFadeFlag = 3;
 		musicspy();
 		p_global->perso_ptr = perso;
 		p_global->dialogType = oldDialogType;
@@ -6275,7 +6276,7 @@ void EdenGame::startmusique(byte num) {
 		return;
 	if (musicPlaying) {
 		fademusica0(1);
-		CLSoundChannel_Stop(music_channel);
+		CLSoundChannel_Stop(_musicChannel);
 		CLSoundGroup_Free(mus_queue_grp);
 	}
 	loadmusicfile(num);
@@ -6293,8 +6294,8 @@ void EdenGame::startmusique(byte num) {
 	musicSequencePos = 0;
 	mus_vol_left = p_global->pref_10C[0];
 	mus_vol_right = p_global->pref_10C[1];
-	CLSoundChannel_SetVolumeLeft(music_channel, mus_vol_left);
-	CLSoundChannel_SetVolumeRight(music_channel, mus_vol_right);
+	CLSoundChannel_SetVolumeLeft(_musicChannel, mus_vol_left);
+	CLSoundChannel_SetVolumeRight(_musicChannel, mus_vol_right);
 }
 
 void EdenGame::musicspy() {
@@ -6304,11 +6305,11 @@ void EdenGame::musicspy() {
 		return;
 	mus_vol_left = p_global->pref_10C[0];
 	mus_vol_right = p_global->pref_10C[1];
-	if (mus_fade_flags & 3)
+	if (_musicFadeFlag & 3)
 		fademusicup();
-	if (personTalking && !hnmsound_ch->_numSounds)
-		mus_fade_flags = 3;
-	if (music_channel->_numSounds < 3) {
+	if (_personTalking && !hnmsound_ch->_numSounds)
+		_musicFadeFlag = 3;
+	if (_musicChannel->_numSounds < 3) {
 		patnum = mus_sequence_ptr[musicSequencePos];
 		if (patnum == 0xFF) {
 			// rewind
@@ -6320,7 +6321,7 @@ void EdenGame::musicspy() {
 		ofs = patptr[0] + (patptr[1] << 8) + (patptr[2] << 16);
 		len = patptr[3] + (patptr[4] << 8) + (patptr[5] << 16);
 		CLSoundGroup_AssignDatas(mus_queue_grp, mus_samples_ptr + ofs, len, 0);
-		CLSoundGroup_PlayNextSample(mus_queue_grp, music_channel);
+		CLSoundGroup_PlayNextSample(mus_queue_grp, _musicChannel);
 		musicPlaying = 1;
 	}
 }
@@ -6338,56 +6339,56 @@ int EdenGame::loadmusicfile(int16 num) {
 }
 
 void EdenGame::persovox() {
-	int16 vol_l, vol_r, step_l, step_r;
 	int16 num = p_global->textNum;
 	if (p_global->textBankIndex != 1)
 		num += 565;
 	if (p_global->textBankIndex == 3)
 		num += 707;
 	voiceSamplesSize = ssndfl(num);
-	vol_l = p_global->pref_110[0];
-	vol_r = p_global->pref_110[1];
-	step_l = -1;
-	if (music_channel->_volumeLeft < vol_l)
-		step_l = 1;
-	step_r = -1;
-	if (music_channel->_volumeRight < vol_r)
-		step_r = 1;
+	int16 volumeLeft = p_global->pref_110[0];
+	int16 volumeRight = p_global->pref_110[1];
+	int16 stepLeft = -1;
+	if (_musicChannel->_volumeLeft < volumeLeft)
+		stepLeft = 1;
+	int16 stepRight = -1;
+	if (_musicChannel->_volumeRight < volumeRight)
+		stepRight = 1;
 	do {
-		if (vol_l != music_channel->_volumeLeft)
-			CLSoundChannel_SetVolumeLeft(music_channel, music_channel->_volumeLeft + step_l);
-		if (vol_r != music_channel->_volumeRight)
-			CLSoundChannel_SetVolumeRight(music_channel, music_channel->_volumeRight + step_r);
-	} while (music_channel->_volumeLeft != vol_l || music_channel->_volumeRight != vol_r);
-	vol_l = p_global->pref_10E[0];
-	vol_r = p_global->pref_10E[1];
-	CLSoundChannel_SetVolumeLeft(hnmsound_ch, vol_l);
-	CLSoundChannel_SetVolumeRight(hnmsound_ch, vol_r);
+		if (volumeLeft != _musicChannel->_volumeLeft)
+			CLSoundChannel_SetVolumeLeft(_musicChannel, _musicChannel->_volumeLeft + stepLeft);
+		if (volumeRight != _musicChannel->_volumeRight)
+			CLSoundChannel_SetVolumeRight(_musicChannel, _musicChannel->_volumeRight + stepRight);
+	} while (_musicChannel->_volumeLeft != volumeLeft || _musicChannel->_volumeRight != volumeRight);
+	volumeLeft = p_global->pref_10E[0];
+	volumeRight = p_global->pref_10E[1];
+	CLSoundChannel_SetVolumeLeft(hnmsound_ch, volumeLeft);
+	CLSoundChannel_SetVolumeRight(hnmsound_ch, volumeRight);
 	CLSound_SetWantsDesigned(0);
 	CLSoundRaw_AssignBuffer(voiceSound, voiceSamplesBuffer, 0, voiceSamplesSize);
 	CLSoundChannel_Play(hnmsound_ch, voiceSound);
-	personTalking = 1;
-	mus_fade_flags = 0;
-	last_anim_ticks = TimerTicks;
+	_personTalking = true;
+	_musicFadeFlag = 0;
+	_lastAnimTicks = TimerTicks;
 }
 
 void EdenGame::endpersovox() {
 	restaurefondbulle();
-	if (personTalking) {
+	if (_personTalking) {
 		CLSoundChannel_Stop(hnmsound_ch);
-		personTalking = 0;
-		mus_fade_flags = 3;
+		_personTalking = false;
+		_musicFadeFlag = 3;
 	}
-	if (soundAllocated) {
-		CLMemory_Free(voiceSamplesBuffer);
-		soundAllocated = 0;
+
+	if (_soundAllocated) {
+		free(voiceSamplesBuffer);
+		voiceSamplesBuffer = nullptr;
+		_soundAllocated = false;
 	}
 }
 
 void EdenGame::fademusicup() {
-	int16 vol;
-	if (mus_fade_flags & 2) {
-		vol = music_channel->_volumeLeft;
+	if (_musicFadeFlag & 2) {
+		int16 vol = _musicChannel->_volumeLeft;
 		if (vol < mus_vol_left) {
 			vol += 8;
 			if (vol > mus_vol_left)
@@ -6397,12 +6398,12 @@ void EdenGame::fademusicup() {
 			if (vol < mus_vol_left)
 				vol = mus_vol_left;
 		}
-		CLSoundChannel_SetVolumeLeft(music_channel, vol);
+		CLSoundChannel_SetVolumeLeft(_musicChannel, vol);
 		if (vol == mus_vol_left)
-			mus_fade_flags &= ~2;
+			_musicFadeFlag &= ~2;
 	}
-	if (mus_fade_flags & 1) {
-		vol = music_channel->_volumeRight;
+	if (_musicFadeFlag & 1) {
+		int16 vol = _musicChannel->_volumeRight;
 		if (vol < mus_vol_right) {
 			vol += 8;
 			if (vol > mus_vol_right)
@@ -6412,19 +6413,19 @@ void EdenGame::fademusicup() {
 			if (vol < mus_vol_right)
 				vol = mus_vol_right;
 		}
-		CLSoundChannel_SetVolumeRight(music_channel, vol);
+		CLSoundChannel_SetVolumeRight(_musicChannel, vol);
 		if (vol == mus_vol_right)
-			mus_fade_flags &= ~1;
+			_musicFadeFlag &= ~1;
 	}
 }
 
 void EdenGame::fademusica0(int16 delay) {
 	int16 volume;
-	while ((volume = CLSoundChannel_GetVolume(music_channel)) > 2) {
+	while ((volume = CLSoundChannel_GetVolume(_musicChannel)) > 2) {
 		volume -= 2;
 		if (volume < 2)
 			volume = 2;
-		CLSoundChannel_SetVolume(music_channel, volume);
+		CLSoundChannel_SetVolume(_musicChannel, volume);
 		wait(delay);
 	}
 }
@@ -6432,17 +6433,18 @@ void EdenGame::fademusica0(int16 delay) {
 //// obj.c
 object_t *EdenGame::getobjaddr(int16 id) {
 	int i;
-	for (i = 0; i < MAX_OBJECTS; i++)
+	for (i = 0; i < MAX_OBJECTS; i++) {
 		if (objects[i].id == id)
 			break;
+	}
+
 	return objects + i;
 }
 
 void EdenGame::countobjects() {
 	int16 index = 0;
 	byte total = 0;
-	int i;
-	for (i = 0; i < MAX_OBJECTS; i++) {
+	for (int i = 0; i < MAX_OBJECTS; i++) {
 		int16 count = objects[i].count;
 #ifdef EDEN_DEBUG
 		count = 1;
@@ -6815,7 +6817,7 @@ void EdenGame::load() {
 	fadetoblack(3);
 	CLBlitter_FillScreenView(0);
 	if (!gameLoaded) {
-		mus_fade_flags = 3;
+		_musicFadeFlag = 3;
 		musicspy();
 		needPaletteUpdate = 1;
 		return;
@@ -6825,7 +6827,7 @@ void EdenGame::load() {
 		p_global->currentMusicNum = 0;
 		startmusique(oldMusic);
 	} else {
-		mus_fade_flags = 3;
+		_musicFadeFlag = 3;
 		musicspy();
 	}
 	talk = p_global->autoDialog;    //TODO check me
@@ -6882,7 +6884,7 @@ void EdenGame::save() {
 	CLBlitter_FillScreenView(0xFFFFFFFF);
 	fadetoblack(3);
 	CLBlitter_FillScreenView(0);
-	mus_fade_flags = 3;
+	_musicFadeFlag = 3;
 	musicspy();
 	needPaletteUpdate = 1;
 }
@@ -7028,8 +7030,8 @@ void EdenGame::newvol(byte *volptr, int16 delta) {
 	if (vol > 63)
 		vol = 63;
 	*volptr = vol * 4;
-	CLSoundChannel_SetVolumeLeft(music_channel, p_global->pref_10C[0]); //TODO: this val only?
-	CLSoundChannel_SetVolumeRight(music_channel, p_global->pref_10C[1]);
+	CLSoundChannel_SetVolumeLeft(_musicChannel, p_global->pref_10C[0]); //TODO: this val only?
+	CLSoundChannel_SetVolumeRight(_musicChannel, p_global->pref_10C[1]);
 }
 
 void EdenGame::playtape() {
@@ -7257,7 +7259,7 @@ void EdenGame::PommeQ() {
 		resetScroll();
 	if (p_global->drawFlags & DrawFlags::drDrawFlag8)
 		stoptape();
-	if (personTalking)
+	if (_personTalking)
 		endpersovox();
 	p_global->ff_103 = 0;
 	p_global->ff_102 = 0;

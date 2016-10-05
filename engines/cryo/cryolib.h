@@ -189,8 +189,6 @@ sound_t *CLSoundRaw_New(int16 arg1, float rate, int16 sampleSize, int16 mode);
 void CLSoundRaw_Free(sound_t *sound);
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length);
 
-void *CLMemory_Alloc(int size);
-void CLMemory_Free(void *ptr);
 void SysBeep(int x);
 long TickCount();
 void FlushEvents(int16 arg1, int16 arg2);

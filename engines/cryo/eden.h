@@ -526,7 +526,7 @@ private:
 	perso_t         *tyranPtr;
 	int             last_anim_frame_num;
 	int             cur_anim_frame_num;
-	int             last_anim_ticks;
+	int             _lastAnimTicks;
 	prect_t         *cur_perso_rect;
 	int16           num_anim_frames;
 	int16           max_perso_desc;
@@ -594,9 +594,9 @@ private:
 	bool    quit_flag2;
 	bool    quit_flag3;
 	bool    gameStarted;
+	bool _soundAllocated;
 
-	byte   soundAllocated;
-	soundchannel_t  *music_channel;
+	soundchannel_t  *_musicChannel;
 	soundchannel_t  *hnmsound_ch;
 	sound_t         *voiceSound;
 
@@ -639,8 +639,8 @@ private:
 
 
 	byte   animateTalking;
-	byte   personTalking;
-	byte   mus_fade_flags;
+	bool _personTalking;
+	byte   _musicFadeFlag;
 
 	char            musicSequencePos;
 	byte   musicPlaying;

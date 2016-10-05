@@ -28,7 +28,7 @@ soundgroup_t *CLSoundGroup_New(int16 numSounds, int16 arg4, int16 sampleSize, fl
 	soundgroup_t *sg;
 	int16 i;
 
-	sg = (soundgroup_t *)CLMemory_Alloc(sizeof(*sg));
+	sg = (soundgroup_t *)malloc(sizeof(*sg));
 	if (numSounds < kCryoMaxClSounds)
 		sg->_numSounds = numSounds;
 	else
@@ -50,7 +50,7 @@ void CLSoundGroup_Free(soundgroup_t *sg) {
 	int16 i;
 	for (i = 0; i < sg->_numSounds; i++)
 		CLSoundRaw_Free(sg->_sound[i]);
-	CLMemory_Free(sg);
+	free(sg);
 }
 
 void CLSoundGroup_Reverse16All(soundgroup_t *sg) {
