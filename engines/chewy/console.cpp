@@ -42,6 +42,7 @@ Console::Console(ChewyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("video_info",    WRAP_METHOD(Console, Cmd_VideoInfo));
 	registerCmd("error_message", WRAP_METHOD(Console, Cmd_ErrorMessage));
 	registerCmd("dialog",        WRAP_METHOD(Console, Cmd_Dialog));
+	registerCmd("text",          WRAP_METHOD(Console, Cmd_Text));
 }
 
 Console::~Console() {
@@ -205,13 +206,30 @@ bool Console::Cmd_Dialog(int argc, const char **argv) {
 	int dialogNum = atoi(argv[1]);
 	int entryNum  = atoi(argv[2]);
 	uint cur = 0;
-	DialogList *d = _vm->_text->getDialog(dialogNum, entryNum);
+	TextEntryList *d = _vm->_text->getDialog(dialogNum, entryNum);
 
-	for (DialogList::iterator it = d->begin(); it != d->end(); ++it) {
+	for (TextEntryList::iterator it = d->begin(); it != d->end(); ++it) {
 		this->debugPrintf("Entry %d: speech %d, text '%s'\n", cur, (*it).speechId, (*it).text.c_str());
 	}
 
 	d->clear();
+	delete d;
+
+	return true;
+}
+
+bool Console::Cmd_Text(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Usage: text <dialog> <entry>\n");
+		return true;
+	}
+
+	int dialogNum = atoi(argv[1]);
+	int entryNum = atoi(argv[2]);
+	TextEntry *d = _vm->_text->getText(dialogNum, entryNum);
+
+	debugPrintf("Speech %d, text '%s'\n", d->speechId, d->text.c_str());
+
 	delete d;
 
 	return true;

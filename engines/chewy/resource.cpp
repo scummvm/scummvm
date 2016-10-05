@@ -40,7 +40,6 @@ namespace Chewy {
 // misc/inventar.iib
 // misc/inventar.sib
 // room/test.rdi
-// txt/atds.tap (game texts)
 // txt/diah.adh
 // txt/inv_st.s and txt/room_st.s (inventory/room control bytes)
 // txt/inv_use.idx

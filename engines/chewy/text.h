@@ -38,11 +38,11 @@ namespace Chewy {
  * USE - use action texts, 100 entries max
  */
 enum MaxTextTypes {
-	kADSTextMax = 500,
-	kATSTextMax = 100,
-	kAADTextMax = 100,
-	kINVTextMax = 100,
-	kUSETextMax = 100
+	kADSTextMax = 500,	//   0 - 499
+	kATSTextMax = 100,	// 500 - 599
+	kAADTextMax = 100,	// 600 - 699
+	kINVTextMax = 100,	// 700 - 799
+	kUSETextMax = 100	// 800 - 899
 };
 
 /**
@@ -59,12 +59,12 @@ enum TextEntryMarkers {
 
 #define VOICE_OFFSET 20
 
-struct Dialog {
+struct TextEntry {
 	uint16 speechId;
 	Common::String text;
 };
 
-typedef Common::List<Dialog> DialogList;
+typedef Common::List<TextEntry> TextEntryList;
 
 
 class Text : public Resource {
@@ -72,11 +72,19 @@ public:
 	Text();
 	virtual ~Text();
 
-	DialogList *getDialog(uint dialogNum, uint entryNum);
-	// TODO: getText()
-	// TODO: getAutoDialog()
-	// TODO: getInvDesc()
-	// TODO: getUseText()
+	/**
+	 * Gets a list of lines for a specific dialog entry
+	 */
+	TextEntryList *getDialog(uint dialogNum, uint entryNum);
+
+	/**
+	* Gets a line of text of the following types:
+	* - text (ATS) - 500 - 599
+	* - auto dialog (AAD) - 600 - 699
+	* - inventory text (INV) - 700 - 799
+	* - use text (USE) - 800 - 899
+	*/
+	TextEntry *getText(uint dialogNum, uint entryNum);
 };
 
 class ErrorMessage : public Resource {
