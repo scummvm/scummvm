@@ -197,6 +197,15 @@ int global_messageHandler1(ExCommand *cmd) {
 					g_fp->openHelp();
 				cmd->_messageKind = 0;
 				break;
+			case '8':
+				{
+					int num = 32;
+					for (uint i = 0; i < g_fp->_gameLoader->_sc2array[num]._picAniInfosCount; i++) {
+						debug("pic %d, %d:", num, i);
+						g_fp->_gameLoader->_sc2array[num]._picAniInfos[i]->print();
+					}
+				}
+				break;
 			default:
 				break;
 			}

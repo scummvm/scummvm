@@ -181,6 +181,13 @@ void PicAniInfo::save(MfcArchive &file) {
 	file.writeUint32LE(someDynamicPhaseIndex);
 }
 
+void PicAniInfo::print() {
+	debug("type: %d objectId: %d field_6: %d field_8: %d", type, objectId, field_6, field_8);
+	debug("sceneId: %d field_E: %d ox: %d oy: %d priority: %d", sceneId, field_E, ox, oy, priority);
+	debug("staticsId: %d movementId: %d dynamicPhaseIndex: %d flags: %x field_24: %d someDynamicPhaseIndex: %d",
+			staticsId, movementId, dynamicPhaseIndex, flags, field_24, someDynamicPhaseIndex);
+}
+
 void GameVar::save(MfcArchive &file) {
 	file.writePascalString(_varName);
 	file.writeUint32LE(_varType);

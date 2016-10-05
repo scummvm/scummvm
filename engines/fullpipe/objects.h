@@ -62,6 +62,7 @@ struct PicAniInfo {
 
 	bool load(MfcArchive &file);
 	void save(MfcArchive &file);
+	void print();
 
 	PicAniInfo() { memset(this, 0, sizeof(PicAniInfo)); }
 };
