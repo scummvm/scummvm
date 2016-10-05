@@ -162,9 +162,10 @@ Font::Font(Common::String filename) {
 
 	for (uint n = 0; n < _count; n++) {
 		for (uint y = 0; y < _height; y++) {
+			p = (byte *)_fontSurface.getBasePtr(n * _width, y);
+
 			for (uint x = n * _width; x < n * _width + _width; x++) {
-				p = (byte *)_fontSurface.getBasePtr(x, y);
-				*p = (cur & (1 << bitIndex)) ? 0 : 0xFF;
+				*p++ = (cur & (1 << bitIndex)) ? 0 : 0xFF;
 
 				bitIndex--;
 				if (bitIndex < 0) {
