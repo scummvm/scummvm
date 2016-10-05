@@ -30,7 +30,7 @@
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
-#include "bladerunner/clues.h"
+#include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
@@ -1122,62 +1122,51 @@ void ScriptBase::Police_Maze_Set_Pause_State(int a1) {
 }
 
 void ScriptBase::CDB_Set_Crime(int crimeId, int value) {
-	//TODO
-	warning("CDB_Set_Crime(%d, %d)", crimeId, value);
+	_vm->_crimesDatabase->setCrime(crimeId, value);
 }
 
 void ScriptBase::CDB_Set_Clue_Asset_Type(int assetId, int type) {
-	//TODO
-	warning("CDB_Set_Clue_Asset_Type(%d, %d)", assetId, type);
+	_vm->_crimesDatabase->setAssetType(assetId, type);
 }
 
-void ScriptBase::SDB_Set_Actor(int actorId, int a2) {
-	//TODO
-	warning("SDB_Set_Actor(%d, %d)", actorId, a2);
+void ScriptBase::SDB_Set_Actor(int suspectId, int actorId) {
+	_vm->_suspectsDatabase->get(suspectId)->setActor(actorId);
 }
 
-void ScriptBase::SDB_Add_Photo_Clue(int actorId, int a2, int a3) {
-	//TODO
-	warning("SDB_Add_Photo_Clue(%d, %d, %d)", actorId, a2, a3);
+bool ScriptBase::SDB_Add_Photo_Clue(int suspectId, int a2, int a3) {
+	return _vm->_suspectsDatabase->get(suspectId)->addPhotoClue(a2, a3);
 }
 
 void ScriptBase::SDB_Set_Name(int actorId) {
 	// not implemented in game
 }
 
-void ScriptBase::SDB_Set_Sex(int actorId, int a2) {
-	//TODO
-	warning("SDB_Set_Sex(%d, %d)", actorId, a2);
+void ScriptBase::SDB_Set_Sex(int suspectId, int sex) {
+	_vm->_suspectsDatabase->get(suspectId)->setSex(sex);
 }
 
-void ScriptBase::SDB_Add_Identity_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_Identity_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_Identity_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addIdentityClue(clueId);
 }
 
-void ScriptBase::SDB_Add_MO_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_MO_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_MO_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addMOClue(clueId);
 }
 
-void ScriptBase::SDB_Add_Whereabouts_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_Whereabouts_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_Whereabouts_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addWhereaboutsClue(clueId);
 }
 
-void ScriptBase::SDB_Add_Replicant_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_Replicant_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_Replicant_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addReplicantClue(clueId);
 }
 
-void ScriptBase::SDB_Add_Non_Replicant_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_Non_Replicant_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_Non_Replicant_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addNonReplicantClue(clueId);
 }
 
-void ScriptBase::SDB_Add_Other_Clue(int actorId, int a2) {
-	//TODO
-	warning("SDB_Add_Other_Clue(%d, %d)", actorId, a2);
+bool ScriptBase::SDB_Add_Other_Clue(int suspectId, int clueId) {
+	return _vm->_suspectsDatabase->get(suspectId)->addOtherClue(clueId);
 }
 
 void ScriptBase::Spinner_Set_Selectable_Destination_Flag(int a1, int a2) {

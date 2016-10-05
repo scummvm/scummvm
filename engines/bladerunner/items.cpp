@@ -32,7 +32,7 @@ Items::Items(BladeRunnerEngine *vm) {
 }
 
 Items::~Items() {
-	for(int i = _items.size() -1; i >= 0; i--) {
+	for(int i = _items.size() - 1; i >= 0; i--) {
 		delete _items.remove_at(i);
 	}
 }

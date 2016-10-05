@@ -46,6 +46,7 @@ class GameInfo {
 	uint32 _sfx_track_count;
 	uint32 _music_track_count;
 	uint32 _outtake_count;
+	uint32 _suspectsDatabaseSize;
 	uint32 _cover_waypoint_count;
 	uint32 _flee_waypoint_count;
 
@@ -53,27 +54,28 @@ class GameInfo {
 	char (*_sfx_tracks)[13];
 	char (*_music_tracks)[13];
 	char (*_outtakes)[13];
-
+	
 public:
 	GameInfo(BladeRunnerEngine *vm);
 	~GameInfo();
 
 	bool open(const Common::String &name);
 
-	uint32 getActorCount()         { return _actor_count; }
-	uint32 getPlayerId()           { return _player_id; }
-	uint32 getFlagCount()          { return _flag_count; }
-	uint32 getClueCount()          { return _clue_count; }
-	uint32 getGlobalVarCount()     { return _global_var_count; }
-	uint32 getSetNamesCount()      { return _set_names_count; }
-	uint32 getInitialSceneId()     { return _initial_scene_id; }
-	uint32 getInitialSetId()       { return _initial_set_id; }
-	uint32 getWaypointCount()      { return _waypoint_count; }
-	uint32 getSfxTrackCount()      { return _sfx_track_count; }
-	uint32 getMusicTrackCount()    { return _music_track_count; }
-	uint32 getOuttakeCount()       { return _outtake_count; }
-	uint32 getCoverWaypointCount() { return _cover_waypoint_count; }
-	uint32 getFleeWaypointCount()  { return _flee_waypoint_count; }
+	uint32 getActorCount()           { return _actor_count; }
+	uint32 getPlayerId()             { return _player_id; }
+	uint32 getFlagCount()            { return _flag_count; }
+	uint32 getClueCount()            { return _clue_count; }
+	uint32 getGlobalVarCount()       { return _global_var_count; }
+	uint32 getSetNamesCount()        { return _set_names_count; }
+	uint32 getInitialSceneId()       { return _initial_scene_id; }
+	uint32 getInitialSetId()         { return _initial_set_id; }
+	uint32 getWaypointCount()        { return _waypoint_count; }
+	uint32 getSfxTrackCount()        { return _sfx_track_count; }
+	uint32 getMusicTrackCount()      { return _music_track_count; }
+	uint32 getOuttakeCount()         { return _outtake_count; }
+	uint32 getSuspectsDatabaseSize() { return _suspectsDatabaseSize; }
+	uint32 getCoverWaypointCount()   { return _cover_waypoint_count; }
+	uint32 getFleeWaypointCount()    { return _flee_waypoint_count; }
 
 	const char *getSceneName(int i)  { return _scene_names[i]; }
 	const char *getSfxTrack(int i)   { return _sfx_tracks[i]; }

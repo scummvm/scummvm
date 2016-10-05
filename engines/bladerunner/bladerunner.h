@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 
 #include "graphics/surface.h"
+#include "suspects_database.h"
 
 namespace BladeRunner {
 
@@ -42,7 +43,7 @@ class AmbientSounds;
 class AudioPlayer;
 class AudioSpeech;
 class Chapters;
-class Clues;
+class CrimesDatabase;
 class Combat;
 class GameFlags;
 class GameInfo;
@@ -67,29 +68,30 @@ public:
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
 	
-	ADQ             *_adq;
-	AIScripts       *_aiScripts;
-	AmbientSounds   *_ambientSounds;
-	AudioPlayer     *_audioPlayer;
-	AudioSpeech     *_audioSpeech;
-	Chapters        *_chapters;
-	Clues           *_clues;
-	Combat          *_combat;
-	GameFlags       *_gameFlags;
-	GameInfo        *_gameInfo;
-	Items           *_items;
-	Lights          *_lights;
-	Mouse           *_mouse;
-	Obstacles       *_obstacles;
-	Scene           *_scene;
-	SceneObjects    *_sceneObjects;
-	Script          *_script;
-	Settings        *_settings;
-	SliceAnimations *_sliceAnimations;
-	SliceRenderer   *_sliceRenderer;
-	View            *_view;
-	Waypoints       *_waypoints;
-	int             *_gameVars;
+	ADQ              *_adq;
+	AIScripts        *_aiScripts;
+	AmbientSounds    *_ambientSounds;
+	AudioPlayer      *_audioPlayer;
+	AudioSpeech      *_audioSpeech;
+	Chapters         *_chapters;
+	CrimesDatabase   *_crimesDatabase;
+	Combat           *_combat;
+	GameFlags        *_gameFlags;
+	GameInfo         *_gameInfo;
+	Items            *_items;
+	Lights           *_lights;
+	Mouse            *_mouse;
+	Obstacles        *_obstacles;
+	Scene            *_scene;
+	SceneObjects     *_sceneObjects;
+	Script           *_script;
+	Settings         *_settings;
+	SliceAnimations  *_sliceAnimations;
+	SliceRenderer    *_sliceRenderer;
+	SuspectsDatabase *_suspectsDatabase;
+	View             *_view;
+	Waypoints        *_waypoints;
+	int              *_gameVars;
 	
 	TextResource    *_textActorNames;
 	TextResource    *_textCrimes;
@@ -125,8 +127,7 @@ public:
 	int _walkSoundId;
 	int _walkSoundVolume;
 	int _walkSoundBalance;
-	int _walkingActorId;
-
+	int _walkingActorId;	
 private:
 	static const int kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];

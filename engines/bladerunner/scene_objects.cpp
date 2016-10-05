@@ -295,7 +295,7 @@ void SceneObjects::updateObstacles() {
 			_vm->_obstacles->add(x0, z0, x1, z1);
 		}
 	}
-	_vm->_obstacles->process();
+	_vm->_obstacles->backup();
 }
 
 } // End of namespace BladeRunner

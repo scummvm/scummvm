@@ -28,8 +28,8 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/chapters.h"
-#include "bladerunner/clues.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/crimes_database.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
@@ -58,6 +58,7 @@
 #include "engines/util.h"
 
 #include "graphics/pixelformat.h"
+#include "suspects_database.h"
 
 namespace BladeRunner {
 
@@ -68,7 +69,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_gameIsRunning  = true;
 	_playerLosesControlCounter = 0;
 
-	_clues = nullptr;
+	_crimesDatabase = nullptr;
 	_script = new Script(this);
 	_settings = new Settings(this);
 	_lights = new Lights(this);
@@ -267,7 +268,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Dialogue Menu (DLGMENU.TRE)
 
-	// TODO: SDB
+	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectsDatabaseSize());
 
 	// TODO: KIA
 
@@ -312,7 +313,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_sliceRenderer = new SliceRenderer(this);
 
-	_clues = new Clues(this, "CLUES", _gameInfo->getClueCount());
+	_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
 
 	// TODO: Scene
 	_scene = new Scene(this);
@@ -368,8 +369,8 @@ void BladeRunnerEngine::shutdown() {
 		_chapters = nullptr;
 	}
 
-	delete _clues;
-	_clues = nullptr;
+	delete _crimesDatabase;
+	_crimesDatabase = nullptr;
 
 	delete _sliceRenderer;
 	_sliceRenderer = nullptr;

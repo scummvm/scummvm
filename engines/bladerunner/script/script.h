@@ -213,16 +213,16 @@ protected:
 	void Police_Maze_Set_Pause_State(int a1);
 	void CDB_Set_Crime(int crimeId, int value);
 	void CDB_Set_Clue_Asset_Type(int assetId, int type);
-	void SDB_Set_Actor(int actorId, int a2);
-	void SDB_Add_Photo_Clue(int actorId, int a2, int a3);
-	void SDB_Set_Name(int actorId);
-	void SDB_Set_Sex(int actorId, int a2);
-	void SDB_Add_Identity_Clue(int actorId, int a2);
-	void SDB_Add_MO_Clue(int actorId, int a2);
-	void SDB_Add_Whereabouts_Clue(int actorId, int a2);
-	void SDB_Add_Replicant_Clue(int actorId, int a2);
-	void SDB_Add_Non_Replicant_Clue(int actorId, int a2);
-	void SDB_Add_Other_Clue(int actorId, int a2);
+	void SDB_Set_Actor(int suspectId, int actorId);
+	bool SDB_Add_Photo_Clue(int suspectId, int a2, int a3);
+	void SDB_Set_Name(int suspectId);
+	void SDB_Set_Sex(int suspectId, int sex);
+	bool SDB_Add_Identity_Clue(int suspectId, int clueId);
+	bool SDB_Add_MO_Clue(int suspectId, int clueId);
+	bool SDB_Add_Whereabouts_Clue(int suspectId, int clueId);
+	bool SDB_Add_Replicant_Clue(int suspectId, int clueId);
+	bool SDB_Add_Non_Replicant_Clue(int suspectId, int clueId);
+	bool SDB_Add_Other_Clue(int suspectId, int clueId);
 	void Spinner_Set_Selectable_Destination_Flag(int a1, int a2);
 	// Spinner_Query_Selectable_Destination_Flag
 	int Spinner_Interface_Choose_Dest(int a1, int a2);

@@ -66,7 +66,7 @@ bool GameInfo::open(const Common::String &name) {
 	_music_track_count    = s->readUint32LE();   /* 12 */
 	_outtake_count        = s->readUint32LE();   /* 13 */
 	unk                   = s->readUint32LE();   /* 14 */
-	unk                   = s->readUint32LE();   /* 15 */
+	_suspectsDatabaseSize = s->readUint32LE();   /* 15 */
 	_cover_waypoint_count = s->readUint32LE();   /* 16 */
 	_flee_waypoint_count  = s->readUint32LE();   /* 17 */
 

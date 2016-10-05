@@ -28,15 +28,15 @@ namespace BladeRunner {
 
 Obstacles::Obstacles(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_polygons  = new ObstaclesPolygon[50];
-	_polygons2 = new ObstaclesPolygon[50];
-	_unknown   = new int[50];
+	_polygons       = new ObstaclesPolygon[50];
+	_polygonsBackup = new ObstaclesPolygon[50];
+	_vertices       = new Vector2[150];
 	clear();
 }
 
 Obstacles::~Obstacles() {
-	delete[] _unknown;
-	delete[] _polygons2;
+	delete[] _vertices;
+	delete[] _polygonsBackup;
 	delete[] _polygons;
 }
 
@@ -49,12 +49,12 @@ void Obstacles::clear() {
 			_polygons[i]._vertices[j].y = 0.0f;
 		}
 	}
+	_verticesCount = 0;
+	_backup = false;
 	_count = 0;
-	_processed = false;
 }
 
 void Obstacles::add(float x0, float z0, float x1, float z1) {
-
 }
 
 bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) {
@@ -63,6 +63,8 @@ bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) {
 	return true;
 }
 
-void Obstacles::process() {
+void Obstacles::backup() {
 }
+
+
 } // End of namespace BladeRunner

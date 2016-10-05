@@ -20,23 +20,29 @@
  *
  */
 
-#ifndef BLADERUNNER_CLUES_H
-#define BLADERUNNER_CLUES_H
+#ifndef BLADERUNNER_CRIMES_DATABASE_H
+#define BLADERUNNER_CRIMES_DATABASE_H
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 class TextResource;
 
-class Clues {
-	int           _clueCount;
+class CrimesDatabase {
+	int           _crimesCount;
 	int          *_crimes;
 	int          *_assetTypes;
 	TextResource *_cluesText;
 
 public:
-	Clues(BladeRunnerEngine *vm, const char *cluesResource, int clueCount);
-	~Clues();
+	CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimesCount);
+	~CrimesDatabase();
+
+	void setCrime(int crimeId, int value);
+	int getCrime(int crimeId);
+
+	void setAssetType(int assetId, int assetType);
+	int getAssetType(int assetId);
 
 	const char *getClueText(int id);
 };

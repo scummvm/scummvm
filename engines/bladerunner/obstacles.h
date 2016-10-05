@@ -45,10 +45,11 @@ class Obstacles {
 
 private:
 	ObstaclesPolygon *_polygons;
-	ObstaclesPolygon *_polygons2;
-	int              *_unknown;
+	ObstaclesPolygon *_polygonsBackup;
+	Vector2          *_vertices;
+	int               _verticesCount;
 	int               _count;
-	bool              _processed;
+	bool              _backup;
 
 public:
 	Obstacles(BladeRunnerEngine *vm);
@@ -57,7 +58,8 @@ public:
 	void clear();
 	void add(float x0, float z0, float x1, float z1);
 	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next);
-	void process();
+	void backup();
+	void restore();
 };
 
 } // End of namespace BladeRunner
