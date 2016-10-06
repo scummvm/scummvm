@@ -3122,9 +3122,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "~E~ffets de l'Eau Activés"
 
 #: engines/mohawk/mohawk.cpp:61
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Jeu en pause. Appuyer sur Espace pour Reprendre."
+msgstr "Jeu en pause. Appuyer sur une touche pour Reprendre."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
