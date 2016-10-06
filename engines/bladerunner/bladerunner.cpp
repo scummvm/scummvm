@@ -30,6 +30,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/font.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
@@ -278,9 +279,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Scores
 
-	// TODO: Font
-
-	// TODO: KIA6PT.FON
+	_mainFont = new Font(this);
+	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
+	_mainFont->setSpacing(1, 0);	
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
@@ -422,7 +423,11 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("SPCHSFX.TLK"))
 		closeArchive("SPCHSFX.TLK");
 
-	// TODO: Delete KIA6PT.FON
+	if(_mainFont) {
+		_mainFont->close();
+		delete _mainFont;
+		_mainFont = nullptr;
+	}
 
 	delete _items;
 	_items = nullptr;
@@ -652,6 +657,19 @@ void BladeRunnerEngine::gameTick() {
 
 					sceneObject->_sceneObjectId;
 					drawBBox(a, b, _view, &_surface2, color);
+
+					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
+					switch(sceneObject->_sceneObjectType) {
+					case SceneObjectTypeActor:
+						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surface2, pos.x, pos.y, color);
+						break;
+					case SceneObjectTypeItem:
+						_mainFont->draw("item", _surface2, pos.x, pos.y);
+						break;
+					case SceneObjectTypeObject:
+						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surface2, pos.x, pos.y, color);
+						break;
+					}
 				}
 			}
 
@@ -673,9 +691,11 @@ void BladeRunnerEngine::gameTick() {
 
 				for (int j = 0; j < walkbox->_vertexCount; j++) {
 					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
-					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j+1) % walkbox->_vertexCount]);
+					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j + 1) % walkbox->_vertexCount]);
 					//debug("walkbox[%i][%i] =  x=%f y=%f x=%f y=%f", i, j, start.x, start.y, end.x, end.y);
 					_surface2.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
+					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
+					_mainFont->drawColor(walkbox->_name, _surface2, pos.x, pos.y, 0b111111111100000);
 				}
 
 			}

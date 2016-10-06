@@ -23,7 +23,7 @@
 #ifndef BLADERUNNER_SHAPE_H
 #define BLADERUNNER_SHAPE_H
 
-#include "common/substream.h"
+#include "common/str.h"
 
 namespace Graphics {
 	struct Surface;

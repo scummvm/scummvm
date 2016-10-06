@@ -45,6 +45,7 @@ class AudioSpeech;
 class Chapters;
 class CrimesDatabase;
 class Combat;
+class Font;
 class GameFlags;
 class GameInfo;
 class Items;
@@ -80,6 +81,7 @@ public:
 	GameInfo         *_gameInfo;
 	Items            *_items;
 	Lights           *_lights;
+	Font             *_mainFont;
 	Mouse            *_mouse;
 	Obstacles        *_obstacles;
 	Scene            *_scene;

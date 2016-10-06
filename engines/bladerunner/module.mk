@@ -21,6 +21,7 @@ MODULE_OBJS = \
 	decompress_lzo.o \
 	detection.o \
 	fog.o \
+	font.o \
 	gameflags.o \
 	gameinfo.o \
 	image.o \
