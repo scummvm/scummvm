@@ -164,14 +164,14 @@ int main(int argc, char *argv[]) {
 			memset(font.bitmaps, 0, sizeof(unsigned char *) * font.numCharacters);
 			font.advances = new unsigned char[font.numCharacters];
 			font.boxes = new BdfBoundingBox[font.numCharacters];
-		} else if (hasPrefix(line, "FACE_NAME \"")) {
+		} else if (hasPrefix(line, "FAMILY_NAME \"")) {
 			font.familyName = new char[line.size()]; // We will definitely fit here
-			strncpy(font.familyName, &line.c_str()[11], line.size() - 1);
+			strncpy(font.familyName, &line.c_str()[13], line.size() - 1);
 			char *p = &font.familyName[strlen(font.familyName)];
 			while (p != font.familyName && *p != '"')
 				p--;
 			if (p == font.familyName)
-				error("Invalid FACE_NAME");
+				error("Invalid FAMILY_NAME");
 			*p = '\0'; // Remove last quote
 		} else if (hasPrefix(line, "FONT_ASCENT ")) {
 			if (sscanf(line.c_str(), "FONT_ASCENT %d", &font.ascent) != 1)
