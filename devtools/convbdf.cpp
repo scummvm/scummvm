@@ -38,7 +38,7 @@ struct BdfBoundingBox {
 };
 
 struct BdfFont {
-	char *faceName;
+	char *familyName;
 	int maxAdvance;
 	int height;
 	BdfBoundingBox defaultBox;
@@ -63,7 +63,7 @@ struct BdfFont {
 		delete[] bitmaps;
 		delete[] advances;
 		delete[] boxes;
-		delete[] faceName;
+		delete[] familyName;
 	}
 };
 
@@ -162,12 +162,12 @@ int main(int argc, char *argv[]) {
 			font.advances = new unsigned char[font.numCharacters];
 			font.boxes = new BdfBoundingBox[font.numCharacters];
 		} else if (hasPrefix(line, "FACE_NAME \"")) {
-			font.faceName = new char[line.size()]; // We will definitely fit here
-			strncpy(font.faceName, &line.c_str()[11], line.size() - 1);
-			char *p = &font.faceName[strlen(font.faceName)];
-			while (p != font.faceName && *p != '"')
+			font.familyName = new char[line.size()]; // We will definitely fit here
+			strncpy(font.familyName, &line.c_str()[11], line.size() - 1);
+			char *p = &font.familyName[strlen(font.familyName)];
+			while (p != font.familyName && *p != '"')
 				p--;
-			if (p == font.faceName)
+			if (p == font.familyName)
 				error("Invalid FACE_NAME");
 			*p = '\0'; // Remove last quote
 		} else if (hasPrefix(line, "FONT_ASCENT ")) {
@@ -503,7 +503,7 @@ int main(int argc, char *argv[]) {
 	       "\t%d, // Characters\n"
 	       "\n"
 	       "\tbitmapTable, // Bitmaps\n",
-	       font.faceName, font.maxAdvance, font.height, font.defaultBox.width,
+	       font.familyName, font.maxAdvance, font.height, font.defaultBox.width,
 	       font.defaultBox.height, font.defaultBox.xOffset, font.defaultBox.yOffset,
 	       font.ascent, font.firstCharacter, font.defaultCharacter, font.numCharacters);
 

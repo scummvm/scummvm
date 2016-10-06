@@ -41,12 +41,12 @@ BdfFont::~BdfFont() {
 		delete[] _data.bitmaps;
 		delete[] _data.advances;
 		delete[] _data.boxes;
-		delete[] _data.faceName;
+		delete[] _data.familyName;
 	}
 }
 
-const char *BdfFont::getFaceName() const {
-	return _data.faceName;
+const char *BdfFont::getFamilyName() const {
+	return _data.familyName;
 }
 
 int BdfFont::getFontHeight() const {
@@ -290,7 +290,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	memset(bitmaps, 0, sizeof(byte *) * font.numCharacters);
 	byte *advances = new byte[font.numCharacters];
 	BdfBoundingBox *boxes = new BdfBoundingBox[font.numCharacters];
-	char *faceName;
+	char *familyName;
 
 	int descent = -1;
 
@@ -316,7 +316,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 
@@ -331,7 +331,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 		} else if (line.hasPrefix("FONT_DESCENT ")) {
@@ -341,7 +341,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 		} else if (line.hasPrefix("DEFAULT_CHAR ")) {
@@ -351,7 +351,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 		} else if (line.hasPrefix("STARTCHAR ")) {
@@ -376,7 +376,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 
@@ -385,19 +385,19 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				advances[encoding] = advance;
 				boxes[encoding] = box;
 			}
-		} else if (line.hasPrefix("FACE_NAME \"")) {
-			faceName = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(faceName, &line.c_str()[11], line.size());
-			char *p = &faceName[strlen(faceName)];
-			while (p != faceName && *p != '"')
+		} else if (line.hasPrefix("FAMILY_NAME \"")) {
+			familyName = new char[line.size()]; // We will definitely fit here
+			Common::strlcpy(familyName, &line.c_str()[11], line.size());
+			char *p = &familyName[strlen(familyName)];
+			while (p != familyName && *p != '"')
 				p--;
-			if (p == faceName) {
-				warning("BdfFont::loadFont: Invalid FACE_NAME");
+			if (p == familyName) {
+				warning("BdfFont::loadFont: Invalid FAMILY_NAME");
 				freeBitmaps(bitmaps, font.numCharacters);
 				delete[] bitmaps;
 				delete[] advances;
 				delete[] boxes;
-				delete[] faceName;
+				delete[] familyName;
 				return 0;
 			}
 			*p = '\0'; // Remove last quote
@@ -412,7 +412,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 		delete[] bitmaps;
 		delete[] advances;
 		delete[] boxes;
-		delete[] faceName;
+		delete[] familyName;
 		return 0;
 	}
 
@@ -421,7 +421,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	font.bitmaps = bitmaps;
 	font.advances = advances;
 	font.boxes = boxes;
-	font.faceName = faceName;
+	font.familyName = familyName;
 
 	int firstCharacter = font.numCharacters;
 	int lastCharacter = -1;
@@ -454,7 +454,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 		delete[] font.bitmaps;
 		delete[] font.advances;
 		delete[] font.boxes;
-		delete[] faceName;
+		delete[] familyName;
 		return 0;
 	}
 

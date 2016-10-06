@@ -348,8 +348,8 @@ void MacWindowManager::loadFonts() {
 		delete stream;
 
 		Common::String fontName;
-		if (font->getFaceName() && *font->getFaceName()) {
-			fontName = font->getFaceName();
+		if (font->getFamilyName() && *font->getFamilyName()) {
+			fontName = font->getFamilyName();
 		} else { // Get it from the file name
 			fontName = (*it)->getName();
 
