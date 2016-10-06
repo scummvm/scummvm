@@ -40,6 +40,7 @@ struct BdfBoundingBox {
 struct BdfFont {
 	char *familyName;
 	int maxAdvance;
+	int size;
 	int height;
 	BdfBoundingBox defaultBox;
 	int ascent;
@@ -140,7 +141,9 @@ int main(int argc, char *argv[]) {
 			error("Premature end of file");
 
 		if (hasPrefix(line, "SIZE ")) {
-			// Ignore
+			int hDpi, vDpi;
+			if (sscanf(line.c_str(), "SIZE %d %d %d", &font.size, &hDpi, &vDpi) != 3)
+				error("Invalid SIZE");
 		} else if (hasPrefix(line, "FONT ")) {
 			fontName = line.substr(5);
 		} else if (hasPrefix(line, "COPYRIGHT ")) {
@@ -492,8 +495,9 @@ int main(int argc, char *argv[]) {
 
 	printf("// Font structure\n"
 	       "static const BdfFontData desc = {\n"
-		   "\"%s\", // Face name\n"
+		   "\t\"%s\", // Family name\n"
 	       "\t%d, // Max advance\n"
+		   "\t%d, // Size\n"
 	       "\t%d, // Height\n"
 	       "\t{ %d, %d, %d, %d }, // Bounding box\n"
 	       "\t%d, // Ascent\n"
@@ -503,7 +507,7 @@ int main(int argc, char *argv[]) {
 	       "\t%d, // Characters\n"
 	       "\n"
 	       "\tbitmapTable, // Bitmaps\n",
-	       font.familyName, font.maxAdvance, font.height, font.defaultBox.width,
+	       font.familyName, font.maxAdvance, font.size, font.height, font.defaultBox.width,
 	       font.defaultBox.height, font.defaultBox.xOffset, font.defaultBox.yOffset,
 	       font.ascent, font.firstCharacter, font.defaultCharacter, font.numCharacters);
 

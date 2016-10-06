@@ -53,6 +53,10 @@ int BdfFont::getFontHeight() const {
 	return _data.height;
 }
 
+int BdfFont::getFontSize() const {
+	return _data.size;
+}
+
 int BdfFont::getMaxCharWidth() const {
 	return _data.maxAdvance;
 }
@@ -324,6 +328,17 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			font.defaultBox.height = height;
 			font.defaultBox.xOffset = xOffset;
 			font.defaultBox.yOffset = yOffset;
+		} else if (line.hasPrefix("SIZE ")) {
+			int hDpi, vDpi;
+			if (sscanf(line.c_str(), "SIZE %d %d %d", &font.size, &hDpi, &vDpi) != 3) {
+				warning("BdfFont::loadFont: Invalid SIZE");
+				freeBitmaps(bitmaps, font.numCharacters);
+				delete[] bitmaps;
+				delete[] advances;
+				delete[] boxes;
+				delete[] familyName;
+				return 0;
+			}
 		} else if (line.hasPrefix("FONT_ASCENT ")) {
 			if (sscanf(line.c_str(), "FONT_ASCENT %d", &font.ascent) != 1) {
 				warning("BdfFont::loadFont: Invalid FONT_ASCENT");

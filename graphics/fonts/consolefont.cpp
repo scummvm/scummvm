@@ -5850,8 +5850,9 @@ const byte *const bitmapTable[] = {
 
 // Font structure
 static const BdfFontData desc = {
-	"Fixed", // Face name
+	"Fixed", // Family name
 	5, // Max advance
+	8, // Size
 	8, // Height
 	{ 5, 8, 0, -1 }, // Bounding box
 	7, // Ascent

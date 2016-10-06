@@ -5829,8 +5829,9 @@ static const BdfBoundingBox boxes[] = {
 
 // Font structure
 static const BdfFontData desc = {
-	"Helvetica", // Face name
+	"Helvetica", // Family name
 	13, // Max advance
+	12, // Size
 	14, // Height
 	{ 13, 15, -1, -3 }, // Bounding box
 	11, // Ascent
