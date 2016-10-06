@@ -402,7 +402,7 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
 			familyName = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(familyName, &line.c_str()[11], line.size());
+			Common::strlcpy(familyName, &line.c_str()[13], line.size());
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
