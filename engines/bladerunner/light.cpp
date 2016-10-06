@@ -43,8 +43,11 @@ void Light::read(Common::ReadStream *stream, int framesCount, int frame, int ani
 
 	_animatedParameters = stream->readUint32LE();
 
-	_animationData = new float[size / sizeof(float)];
-	stream->read(_animationData, size);
+	int floatsCount = size / 4;
+	_animationData = new float[floatsCount];
+	for (int i = 0; i < floatsCount; i++) {
+		_animationData[i] = stream->readFloatLE();
+	}
 
 	_m11ptr          = _animationData;
 	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? framesCount : 1);
@@ -77,8 +80,11 @@ void Light::readVqa(Common::ReadStream *stream, int framesCount, int frame, int 
 
 	int size = stream->readUint32LE();
 
-	_animationData = new float[size / sizeof(float)];
-	stream->read(_animationData, size);
+	int floatsCount = size / 4;
+	_animationData = new float[floatsCount];
+	for (int i = 0; i < floatsCount; i++) {
+		_animationData[i] = stream->readFloatLE();
+	}
 
 	_m11ptr          = _animationData;
 	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? framesCount : 1);

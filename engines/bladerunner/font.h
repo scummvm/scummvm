@@ -33,17 +33,13 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-#include "common/pack-start.h"
-
 struct FontCharacter {
 	int _x;
 	int _y;
 	int _width;
 	int _height;
 	int _dataOffset;
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"
+};
 
 class Font {
 	BladeRunnerEngine *_vm;

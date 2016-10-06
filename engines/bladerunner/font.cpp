@@ -61,8 +61,16 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		return false;
 	}
 
-	stream->read(_characters, _characterCount * sizeof(FontCharacter));
-	stream->read(_data, _dataSize * sizeof(uint16));
+	for (int i = 0; i < _characterCount; i++) {
+		_characters[i]._x = stream->readUint32LE();
+		_characters[i]._y = stream->readUint32LE();
+		_characters[i]._width = stream->readUint32LE();
+		_characters[i]._height = stream->readUint32LE();
+		_characters[i]._dataOffset = stream->readUint32LE();
+	}
+	for(int i = 0; i < _dataSize; i++) {
+		_data[i] = stream->readUint16LE();
+	}
 	return true;
 }
 
@@ -88,28 +96,30 @@ void Font::setColor(uint16 color) {
 }
 
 void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, int y) {
-	if (_data) {
-		if (x < 0) {
-			x = 0;
-		}
-		if (y < 0) {
-			y = 0;
-		}
+	if (!_data) {
+		return;
+	}
 
-		int textWidth = getTextWidth(text);
-		if (textWidth + x >= _screenWidth) {
-			x = _screenWidth - (textWidth + 1);
-		}
-		if (_maxHeight + y >= _screenHeight) {
-			y = _screenHeight - _maxHeight;
-		}
+	if (x < 0) {
+		x = 0;
+	}
+	if (y < 0) {
+		y = 0;
+	}
 
-		const char *character = text.c_str();
-		while (*character != 0) {
-			drawCharacter(*character, surface, x, y);
-			x += _spacing1 + _characters[*character + 1]._width;
-			character++;
-		}
+	int textWidth = getTextWidth(text);
+	if (textWidth + x >= _screenWidth) {
+		x = _screenWidth - (textWidth + 1);
+	}
+	if (_maxHeight + y >= _screenHeight) {
+		y = _screenHeight - _maxHeight;
+	}
+
+	const char *character = text.c_str();
+	while (*character != 0) {
+		drawCharacter(*character, surface, x, y);
+		x += _spacing1 + _characters[*character + 1]._width;
+		character++;
 	}
 
 }
@@ -151,7 +161,7 @@ void Font::reset() {
 	_color = 0x7FFF;
 	_intersperse = 0;
 
-	memset(_characters, 0, 5120);
+	memset(_characters, 0, 256 * sizeof(FontCharacter));
 }
 
 void Font::replaceColor(uint16 oldColor, uint16 newColor) {
@@ -166,7 +176,7 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 }
 
 void Font::drawCharacter(const char character, Graphics::Surface &surface, int x, int y) {
-	if (x < 0 || x >= this->_screenWidth || y < 0 || y >= _screenHeight || !_data || character + 1 >= _characterCount) {
+	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || character + 1 >= _characterCount) {
 		return;
 	}
 

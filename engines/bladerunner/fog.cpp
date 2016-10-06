@@ -44,8 +44,12 @@ int Fog::readCommon(Common::ReadStream *stream) {
 
 void Fog::readAnimationData(Common::ReadStream *stream, int size) {
 	_animatedParameters = stream->readUint32LE();
-	_animationData = new float[size / sizeof(float)];
-	stream->read(_animationData, size);
+	
+	int floatsCount = size / 4;
+	_animationData = new float[floatsCount];
+	for (int i = 0; i < floatsCount; i++) {
+		_animationData[i] = stream->readFloatLE();
+	}
 
 	_m11ptr = _animationData;
 	_m12ptr = _m11ptr + (_animatedParameters & 0x1 ? _framesCount : 1);
