@@ -27,8 +27,8 @@
 
 namespace Cryo {
 
-#define GetElem(array, idx) \
-	( (char*)(array) + PLE16((idx) * 2 + (char*)(array)) )
+#define getElem(array, idx) \
+	( (char *)(array) + PLE16((idx) * 2 + (char *)(array)) )
 /*
 static inline void* AGetElem(byte *arr, int16 index)
 {
@@ -318,26 +318,26 @@ enum PersonFlags {
 
 #pragma pack(push, 1)
 struct perso_t {
-	uint16  roomNum;    // room this person currently in
-	uint16  actionId;   // TODO: checkme
-	uint16  party;      // party bit mask
-	byte   id;         // character
-	byte   flags;      // flags and kind
-	byte   roomBankIdx;// index in kPersoRoomBankTable for specific room banks
-	byte   bank;       // sprite bank
-	uint16  items;      // inventory
-	uint16  powers;     // obj of power bitmask
-	byte   targetLoc;  // For party member this is mini sprite index
-	byte   lastLoc;    // For party member this is mini sprite x offset
-	byte   speed;      // num ticks per step
-	byte   steps;      // current ticks
+	uint16  _roomNum;    // room this person currently in
+	uint16  _actionId;   // TODO: checkme
+	uint16  _partyMask;      // party bit mask
+	byte   _id;         // character
+	byte   _flags;      // flags and kind
+	byte   _roomBankId;// index in kPersoRoomBankTable for specific room banks
+	byte   _spriteBank;       // sprite bank
+	uint16  _items;      // inventory
+	uint16  _powers;     // obj of power bitmask
+	byte   _targetLoc;  // For party member this is mini sprite index
+	byte   _lastLoc;    // For party member this is mini sprite x offset
+	byte   _speed;      // num ticks per step
+	byte   _steps;      // current ticks
 };
 typedef struct perso_t perso_t;
 
 class EdenGame;
 
 struct phase_t {
-	int16           id;
+	int16           _id;
 	void (EdenGame::*disp)();
 };
 typedef struct phase_t phase_t;
@@ -351,12 +351,12 @@ enum ObjectFlags {
 
 #define MAX_OBJECTS 42
 struct object_t {
-	byte   id;
-	byte   flags;
-	int             locations;      // index in kObjectLocations
-	int16           itemMask;
-	int16           powerMask;          // object of power bitmask
-	int16           count;
+	byte   _id;
+	byte   _flags;
+	int    _locations;      // index in kObjectLocations
+	int16  _itemMask;
+	int16  _powerMask;          // object of power bitmask
+	int16  _count;
 };
 typedef struct object_t object_t;
 
@@ -381,10 +381,10 @@ enum DialogType {
 }
 
 struct dial_t {
-	char        flags;          // 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
-	char        condNumLow;     // condition index low bits
-	char        textCondHiMask; // 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
-	char        textNumLow;     // text line index low bits
+	char        _flags;          // 0-3 - action index, 4 - highest bit of contidion index, rest is DialogFlags
+	char        _condNumLow;     // condition index low bits
+	char        _textCondHiMask; // 0-1 text index hi bits, 2-5 - perso mask num, 6-7 condition index hi bits
+	char        _textNumLow;     // text line index low bits
 };
 typedef struct dial_t dial_t;
 
