@@ -89,6 +89,11 @@ private:
 	 * Item handling
 	 */
 	bool cmdItem(int argc, const char **argv);
+
+	/**
+	 * Shows a movie
+	 */
+	bool cmdMovie(int argc, const char **argv);
 protected:
 	TitanicEngine *_vm;
 public:

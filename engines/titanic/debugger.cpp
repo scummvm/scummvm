@@ -23,7 +23,9 @@
 #include "titanic/debugger.h"
 #include "titanic/titanic.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/game/movie_tester.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/movie.h"
 
 namespace Titanic {
 
@@ -33,6 +35,7 @@ Debugger::Debugger(TitanicEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Debugger, cmdRoom));
 	registerCmd("pet",			WRAP_METHOD(Debugger, cmdPET));
 	registerCmd("item",			WRAP_METHOD(Debugger, cmdItem));
+	registerCmd("movie",		WRAP_METHOD(Debugger, cmdMovie));
 }
 
 int Debugger::strToInt(const char *s) {
@@ -258,6 +261,37 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdMovie(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("movie filename.avi [startFrame endFrame]\n");
+		return true;
+	}
+
+	CViewItem *view = g_vm->_window->_gameManager->getView();
+	CMovieTester *tester = static_cast<CMovieTester *>(
+		view->findChildInstanceOf(CMovieTester::_type));
+	if (!tester) {
+		// No movie tester present, so create one
+		tester = new CMovieTester();
+		tester->addUnder(view);
+	}
+
+	CString filename(argv[1]);
+	if (!filename.hasSuffix(".avi"))
+		filename += ".avi";
+	tester->loadMovie(filename);
+
+	if (argc == 2) {
+		tester->playMovie(MOVIE_STOP_PREVIOUS);
+	} else {
+		uint startFrame = strToInt(argv[2]);
+		uint endFrame = strToInt(argv[2]);
+		tester->playMovie(startFrame, endFrame, MOVIE_STOP_PREVIOUS);
+	}
+
+	return false;
 }
 
 } // End of namespace Titanic
