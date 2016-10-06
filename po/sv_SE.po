@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-04 13:52+0200\n"
-"PO-Revision-Date: 2016-02-25 23:06+0100\n"
+"PO-Revision-Date: 2016-10-06 19:01+0200\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
 "Language: Svenska\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Välj"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Välj katalog med speldata"
+msgstr "Välj katalogen där du vill ladda ner speldata"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -88,30 +87,32 @@ msgstr "Välj katalog med speldata"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Från:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Till:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Avbryt nedladdning"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Avbryt nedladdning "
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Göm"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Det verkar som att din anslutning är begränsad. Vill du verkligen använda "
+"den för att ladda ner filer?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -146,6 +147,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Kan inte skapa katalog för nedladdning - den angivna katalogen innehåller en "
+"fil med samma namn."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -173,16 +176,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" existerar redan i den angivna katalogen. Vill du verkligen ladda ner "
+"filer i den katalogen?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Laddar ner %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Scanning färdig!"
+msgstr "Nedladdningshastighet: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -411,6 +416,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Synkfunktionen för sparade data fungerar endast med standardkataloger. Om du "
+"vill synka dina sparade data måste du använda standardkatalogen."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -699,6 +706,7 @@ msgstr ""
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
+"Den här katalogen kan inte användas än, eftersom något laddas ner i den!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -1133,36 +1141,36 @@ msgstr "Språk för ScummVM:s användargränssnitt"
 
 #: gui/options.cpp:1264
 msgid "Update check:"
-msgstr ""
+msgstr "Uppdateringskoll:"
 
 #: gui/options.cpp:1264
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Hur ofta ScummVM kollar efter uppdateringar"
 
 #: gui/options.cpp:1276
 msgid "Check now"
-msgstr ""
+msgstr "Kolla nu"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Moln"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Moln"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Lager:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Aktivera molnlagring"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<ingen>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1170,101 +1178,97 @@ msgstr "Anv. namn:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Användarnamn som används av detta lager"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Utnyttjat utrymme:"
 
 #: gui/options.cpp:1311
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Utrymme som används av ScummVM:s sparade data på det här lagret"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Senast synkad:"
 
 #: gui/options.cpp:1314
 msgid "When the last saved games sync for this storage occured"
-msgstr ""
+msgstr "När sparade data synkades senast för det här lagret"
 
 #: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Anslut"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Öppna anslutningsguiden för att ansluta ditt molnlagerkonto"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Uppdatera"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
+"Uppdaterar informationen om aktuellt molnlager (användarnamn och användning)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Ned"
+msgstr "Nedladdning"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Öppna fönstret för nedladdningshantering"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Starta server"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Starta lokal webbserver"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Fel under körning av spel:"
+msgstr "Ej aktiv"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Sökv. extra:"
+msgstr "/root/-sökväg:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Bestämmer var dina spardata lagras"
+msgstr "Bestämmer vilken katalog filhanteraren har åtkomst till"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Sökv. extra:"
+msgstr "/root/-sökväg:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Serverport:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Vilken port används av servern\n"
+"Serverautorisering är endast tillgänglig med standardporten"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Du måste starta om ScummVM för att ändringarna ska få effekt."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Kunde inte spara spelet."
+msgstr "Kunde inte ändra molnlager!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Ett annat molnlager är redan aktivt."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1284,9 +1288,8 @@ msgid "Select directory for plugins"
 msgstr "Välj katalog för tillägg"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Välj katalog för extra filer"
+msgstr "Välj katalog för filhanterarens /root/"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1299,31 +1302,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bytes"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<nu direkt>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Aldrig"
+msgstr "<aldrig>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Stoppa server"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Stoppa lokal webbserver"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Försöket misslyckades.\n"
+"Kontrollera din internetanslutning."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1397,9 +1400,8 @@ msgid "Unknown Author"
 msgstr "Okänd skapare"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM kunde inte öppna den valda katalogen!"
+msgstr "ScummVM kunde inte öppna katalogen!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1469,73 +1471,73 @@ msgstr "Ange en beskrivning för position %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "%s lageranslutningsguide"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Navigera till följande webbadress:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Hämta koden från lagret, ange den"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "i följande fält och tryck på \"Anslut\":"
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Öppna adress"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Klistra in"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Klistrar in innehållet från urklipp i fälten"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Du kommer att föras till ScummVM:s sida"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "där du borde kunna komma åt ditt lager."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Ett annat lager är aktivt. Vill du avbryta det?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Vänta tills det nuvarande lagret är färdigt och försök igen."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "%s-fältet innehåller ett misstag."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Följande fält innehåller misstag: %s."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Allt okej!"
 
 #: gui/storagewizarddialog.cpp:201
-#, fuzzy
 msgid "Invalid code"
-msgstr "Ogiltig sökväg"
+msgstr "Ogiltig kod"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Kunde inte öppna adressen!\n"
+"Var god navigera till sidan manuellt."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1573,19 +1575,23 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM stöder nu automatisk uppdateringskontroll,\n"
+"vilket kräver en internetanslutning.\n"
+"\n"
+"Vill du aktivera den här funktionen?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
 msgstr ""
+"(Du kan alltid aktivera den under \"Diverse\"-fliken i inställningarna)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Sök efter uppdateringar..."
+msgstr "Kolla efter uppdateringar automatiskt"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Fortsätt"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
@@ -1716,20 +1722,19 @@ msgstr "Herkules bärnsten"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Dagligen"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Varje vecka"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Varje månad"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Töm sökfältet"
+msgstr "<Dåligt värde>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -2011,36 +2016,35 @@ msgid "C64 Audio Emulator"
 msgstr "C64 ljudemulator"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "Scanning färdig!"
+msgstr "Synkningen av sparade speldata är färdig."
 
 #: backends/cloud/storage.cpp:221
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Synkningen av sparade speldata avbröts."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Synkningen av sparade speldata misslyckades. Kontrollera din "
+"internetanslutning."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
 msgid ""
 "Download complete.\n"
 "Failed to download %u files."
-msgstr ""
+msgstr "Nedladdningen är färdig. Kunde inte ladda ner %u filer."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Scanning färdig!"
+msgstr "Nedladdning färdig!"
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Ladda spel:"
+msgstr "Nedladdningen misslyckades."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2701,22 +2705,20 @@ msgid "Check for Updates..."
 msgstr "Sök efter uppdateringar..."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Färgblint läge"
+msgstr "Färgläge"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Använd färggrafik"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Avsökningslinjer"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Visa etiketter"
+msgstr "Visa avsökningslinjer"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2756,23 +2758,25 @@ msgstr ""
 "spelmenyer."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Herkules grön"
+msgstr "Använd högupplöst typsnitt för Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
+"Använd högupplöst typsnitt för Herkules när typsnittsfilen är tillgänglig."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pausa när kommandon anges"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Visar ett fönster med en textruta och pausar spelet (som i SCI-spel) "
+"istället för inmatning i realtid."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -3067,11 +3071,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Spela flygvideon i Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Flygvideon i Myst visades inte i originalspelet."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -3088,12 +3092,10 @@ msgid "~D~rop Page"
 msgstr "Släpp si~d~a"
 
 #: engines/mohawk/dialogs.cpp:188
-#, fuzzy
 msgid "Show ~M~ap"
 msgstr "~V~isa karta"
 
 #: engines/mohawk/dialogs.cpp:194
-#, fuzzy
 msgid "Main Men~u~"
 msgstr "Huvud~m~eny"
 
@@ -3102,9 +3104,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "~V~atteneffekt aktiverad"
 
 #: engines/mohawk/mohawk.cpp:61
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Spelet pausat. Tryck MELLANSLAG för att fortsätta."
+msgstr "Spelet pausat. Tryck på valfri tangent för att fortsätta."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3132,18 +3133,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
-#, fuzzy
 msgid "Load file"
-msgstr "Ladda spel:"
+msgstr "Ladda fil"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
 msgstr "Laddar speldata..."
 
 #: engines/parallaction/saveload.cpp:209
-#, fuzzy
 msgid "Save file"
-msgstr "Spara spelet:"
+msgstr "Spara fil"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
@@ -3243,13 +3242,12 @@ msgid "Enable high resolution graphics/content"
 msgstr "Aktivera högupplöst grafik/innehåll"
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Aktivera Roland GS-läge"
+msgstr "Aktivera videoränder"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Rita svarta linjer över videor för att få dem att se skarpare ut"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3300,13 +3298,12 @@ msgstr ""
 "Använd de alternativa silverpekarna istället för de normala guldpekarna"
 
 #: engines/scumm/detection.cpp:1341
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Visa etiketter"
+msgstr "Visa objektrad"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Visa namnen på objekt på botten av skärmen"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -4163,12 +4160,12 @@ msgstr "Visar etiketter för objekten som musen pekar på"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Använd engelskt tal"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr ""
+msgstr "Använd engelskt tal istället för tyska för alla språk utom tyska"
 
 #: engines/teenagent/resources.cpp:96
 msgid ""
