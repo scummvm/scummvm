@@ -33,6 +33,7 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "image/bmp.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
@@ -266,7 +267,7 @@ const WindowData &Gui::getWindowData(WindowReference reference) {
 }
 
 const Graphics::Font &Gui::getCurrentFont() {
-	return *_wm.getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+	return *_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
 void Gui::bringToFront(WindowReference winID) {

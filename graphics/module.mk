@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	maccursor.o \
+	macgui/macfontmanager.o \
 	macgui/macmenu.o \
 	macgui/macwindow.o \
 	macgui/macwindowborder.o \

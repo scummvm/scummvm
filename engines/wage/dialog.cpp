@@ -48,6 +48,7 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "wage/wage.h"
@@ -92,7 +93,7 @@ Dialog::~Dialog() {
 }
 
 const Graphics::Font *Dialog::getDialogFont() {
-	return _gui->_wm.getFont(_gui->_wm.getFontName(0, 12), Graphics::FontManager::kBigGUIFont); // Default is Chicago
+	return _gui->_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
 void Dialog::paint() {

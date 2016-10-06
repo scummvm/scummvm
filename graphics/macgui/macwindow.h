@@ -23,6 +23,8 @@
 #ifndef GRAPHICS_MACGUI_MACWINDOW_H
 #define GRAPHICS_MACGUI_MACWINDOW_H
 
+#include "common/stream.h"
+
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
 #include "graphics/nine_patch.h"

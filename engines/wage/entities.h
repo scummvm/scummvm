@@ -50,6 +50,7 @@
 
 namespace Graphics {
 	class ManagedSurface;
+	class MacFont;
 }
 
 namespace Wage {
@@ -308,8 +309,7 @@ public:
 	Script *_script;
 	Common::String _text;
 	Common::Rect *_textBounds;
-	int _fontSize;
-	int _fontType; // 3 => Geneva, 22 => Courier, param to TextFont() function
+	Graphics::MacFont *_font;
 	bool _blocked[4];
 	Common::String _messages[4];
 	int _soundFrequency; // times a minute, max 3600
@@ -334,7 +334,7 @@ public:
 
 	void paint(Graphics::ManagedSurface *screen, int x, int y);
 
-	const char *getFontName();
+	const Graphics::MacFont *getFont() { return _font; }
 };
 
 } // End of namespace Wage

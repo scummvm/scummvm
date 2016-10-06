@@ -54,6 +54,7 @@
 
 #include "common/memstream.h"
 #include "graphics/managed_surface.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace Wage {
 
@@ -86,8 +87,7 @@ Scene::Scene() {
 	_script = NULL;
 	_design = NULL;
 	_textBounds = NULL;
-	_fontSize = 0;
-	_fontType = 0;
+	_font = NULL;
 
 	for (int i = 0; i < 4; i++)
 		_blocked[i] = false;
@@ -111,8 +111,7 @@ Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
 
 	_script = NULL;
 	_textBounds = NULL;
-	_fontSize = 0;
-	_fontType = 0;
+	_font = NULL;
 
 	setDesignBounds(readRect(data));
 	_worldY = data->readSint16BE();
@@ -138,6 +137,7 @@ Scene::Scene(Common::String name, Common::SeekableReadStream *data) {
 Scene::~Scene() {
 	delete _script;
 	delete _textBounds;
+	delete _font;
 }
 
 void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
@@ -155,15 +155,6 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 		debug(2, "painting Chr: %s", (*it)->_name.c_str());
 		(*it)->_design->paint(surface, *((WageEngine *)g_engine)->_world->_patterns, x, y);
 	}
-}
-
-const char *Scene::getFontName() {
-	const char *name = ((WageEngine *)g_engine)->_gui->_wm.getFontName(_fontType, _fontSize);
-
-	if (!name)
-		return "Unknown";
-
-	return name;
 }
 
 Designed *Scene::lookUpEntity(int x, int y) {

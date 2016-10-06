@@ -25,6 +25,7 @@
 
 #include "graphics/primitives.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
@@ -112,7 +113,7 @@ Menu::~Menu() {
 }
 
 void Menu::addStaticMenus(const MenuData *data) {
-	MenuItem *about = new MenuItem(_wm->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
+	MenuItem *about = new MenuItem(_wm->_fontMan->hasBuiltInFonts() ? "\xa9" : "\xf0"); // (c) Symbol as the most resembling apple
 	_items.push_back(about);
 
 	for (int i = 0; data[i].menunum; i++) {
@@ -154,7 +155,7 @@ void Menu::calcDimensions() {
 			_items[i]->bbox.left = x - kMenuLeftMargin;
 			_items[i]->bbox.top = y;
 			_items[i]->bbox.right = x + w + kMenuSpacing - kMenuLeftMargin;
-			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_wm->hasBuiltInFonts() ? 3 : 2);
+			_items[i]->bbox.bottom = y + _font->getFontHeight() + (_wm->_fontMan->hasBuiltInFonts() ? 3 : 2);
 		}
 
 		calcMenuBounds(_items[i]);
@@ -244,7 +245,7 @@ void Menu::createSubMenuFromString(int id, const char *str) {
 }
 
 const Font *Menu::getMenuFont() {
-	return _wm->getFont("Chicago-12", FontManager::kBigGUIFont);
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 }
 
 const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
@@ -252,7 +253,7 @@ const char *Menu::getAcceleratorString(MenuSubItem *item, const char *prefix) {
 	*res = 0;
 
 	if (item->shortcut != 0)
-		sprintf(res, "%s%c%c", prefix, (_wm->hasBuiltInFonts() ? '^' : '\x11'), item->shortcut);
+		sprintf(res, "%s%c%c", prefix, (_wm->_fontMan->hasBuiltInFonts() ? '^' : '\x11'), item->shortcut);
 
 	return res;
 }
@@ -339,7 +340,7 @@ bool Menu::draw(ManagedSurface *g, bool forceRedraw) {
 				renderSubmenu(it);
 		}
 
-		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_wm->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
+		_font->drawString(&_screen, it->name, it->bbox.left + kMenuLeftMargin, it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1), it->bbox.width(), color);
 	}
 
 	g->transBlitFrom(_screen, kColorGreen);
@@ -372,7 +373,7 @@ void Menu::renderSubmenu(MenuItem *menu) {
 		int color = kColorBlack;
 		if (i == (uint)_activeSubItem && !text.empty() && menu->subitems[i]->enabled) {
 			color = kColorWhite;
-			Common::Rect trect(r->left, y - (_wm->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
+			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
 			_screen.fillRect(trect, kColorBlack);
 		}

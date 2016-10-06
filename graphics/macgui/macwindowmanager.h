@@ -26,7 +26,6 @@
 #include "common/array.h"
 #include "common/list.h"
 #include "common/events.h"
-#include "common/archive.h"
 
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
@@ -62,6 +61,8 @@ class ManagedSurface;
 
 class Menu;
 
+class MacFontManager;
+
 typedef Common::Array<byte *> MacPatterns;
 
 /**
@@ -79,27 +80,6 @@ public:
 	 * @param screen Surface on which the desktop will be drawn.
 	 */
 	void setScreen(ManagedSurface *screen) { _screen = screen; }
-	/**
-	 * Accessor method to check the presence of built-in fonts.
-	 * @return True if there are bult-in fonts.
-	 */
-	bool hasBuiltInFonts() { return _builtInFonts; }
-	/**
-	 * Retrieve a font from the available ones.
-	 * @param name Name of the desired font.
-	 * @param fallback Fallback policy in case the desired font isn't there.
-	 * @return The requested font or the fallback.
-	 */
-	const Font *getFont(const char *name, FontManager::FontUsage fallback);
-
-	/**
-	 * Return font name from standard ID
-	 * @param id ID of the font
-	 * @param size size of the font
-	 * @return the font name or NULL if ID goes beyond the mapping
-	 */
-	const char *getFontName(int id, int size);
-
 	/**
 	 * Create a window with the given parameters.
 	 * Note that this method allocates the necessary memory for the window.
@@ -168,9 +148,11 @@ public:
 	void pushArrowCursor();
 	void popCursor();
 
+public:
+	MacFontManager *_fontMan;
+
 private:
 	void drawDesktop();
-	void loadFonts();
 
 	void removeMarked();
 	void removeFromStack(BaseMacWindow *target);
@@ -194,7 +176,6 @@ private:
 
 	Menu *_menu;
 
-	bool _builtInFonts;
 	bool _cursorIsArrow;
 };
 

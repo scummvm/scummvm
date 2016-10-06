@@ -51,6 +51,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/palette.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -65,7 +66,7 @@ namespace Wage {
 const Graphics::Font *Gui::getConsoleFont() {
 	Scene *scene = _engine->_world->_player->_currentScene;
 
-	return _wm.getFont(scene->getFontName(), Graphics::FontManager::kConsoleFont);
+	return _wm._fontMan->getFont(*scene->getFont());
 }
 
 void Gui::clearOutput() {
