@@ -206,7 +206,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 			scene->_textBounds = readRect(res);
 			int fontType = res->readUint16BE();
 			int fontSize = res->readUint16BE();
-			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::FontManager::kConsoleFont);
+			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::kMacFontRegular, Graphics::FontManager::kConsoleFont);
 
 			Common::String text;
 			while (res->pos() < res->size()) {

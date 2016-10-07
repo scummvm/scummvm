@@ -72,6 +72,7 @@ void MacFontManager::loadFonts() {
 		}
 
 		FontMan.assignFontToName(fontName, font);
+		_fontRegistry.setVal(fontName, font);
 
 		debug(2, " %s", fontName.c_str());
 	}
@@ -86,7 +87,10 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 
 	if (!_builtInFonts) {
 		if (macFont.getName().empty())
-			macFont.setName(getFontName(macFont.getId(), macFont.getSize()));
+			macFont.setName(getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant()));
+
+		if (!_fontRegistry.contains(macFont.getName()))
+			generateFontSubstitute(macFont);
 
 		font = FontMan.getFontByName(macFont.getName());
 
@@ -170,6 +174,28 @@ const char *MacFontManager::getFontName(int id, int size, int slant) {
 	snprintf(name, 128, "%s-%s-%d", fontNames[id], sslant, size);
 
 	return name;
+}
+
+const char *MacFontManager::getFontName(MacFont &font) {
+	return getFontName(font.getId(), font.getSize(), font.getSlant());
+}
+
+void MacFontManager::generateFontSubstitute(MacFont &macFont) {
+	if (_fontRegistry.contains(getFontName(macFont.getId(), macFont.getSize() * 2, macFont.getSlant()))) {
+		generateFont(macFont, MacFont(macFont.getId(), macFont.getSize() * 2, macFont.getSlant()));
+
+		return;
+	}
+
+	if (_fontRegistry.contains(getFontName(macFont.getId(), macFont.getSize() / 2, macFont.getSlant()))) {
+		generateFont(macFont, MacFont(macFont.getId(), macFont.getSize() / 2, macFont.getSlant()));
+
+		return;
+	}
+}
+
+void MacFontManager::generateFont(MacFont fromFont, MacFont toFont) {
+	warning("Found font substitute from font %s to %s", getFontName(fromFont), getFontName(toFont));
 }
 
 } // End of namespace Graphics

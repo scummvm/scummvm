@@ -37,16 +37,20 @@ enum {
 	kMacFontItalic
 };
 
+class BdfFont;
+
 class MacFont {
 public:
-	MacFont(int id = kMacFontChicago, int size = 12, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
+	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
 		_id = id;
 		_size = size;
+		_slant = slant;
 		_fallback = fallback;
 	}
 
 	int getId() { return _id; };
 	int getSize() { return _size; }
+	int getSlant() { return _slant; }
 	Common::String getName() { return _name; }
 	void setName(Common::String &name) { _name = name; }
 	void setName(const char *name) { _name = name; }
@@ -55,6 +59,7 @@ public:
 private:
 	int _id;
 	int _size;
+	int _slant;
 	Common::String _name;
 	FontManager::FontUsage _fallback;
 };
@@ -86,9 +91,14 @@ private:
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
 	const char *getFontName(int id, int size, int slant = kMacFontRegular);
+	const char *getFontName(MacFont &font);
+
+	void generateFontSubstitute(MacFont &macFont);
+	void generateFont(MacFont fromFont, MacFont toFont);
 
 private:
 	bool _builtInFonts;
+	Common::HashMap<Common::String, BdfFont *> _fontRegistry;
 };
 
 } // End of namespace Graphics
