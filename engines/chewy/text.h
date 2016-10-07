@@ -100,7 +100,7 @@ public:
 	Font(Common::String filename);
 	virtual ~Font();
 
-	::Graphics::Surface *getLine(Common::String text);
+	::Graphics::Surface *getLine(const Common::String text);
 
 private:
 	uint16 _count, _first, _last, _width, _height;
