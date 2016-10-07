@@ -209,7 +209,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			delete[] _soundEffects[number];
 
 			_soundEffectSize[number] = frameSize - 2;
-			_soundEffects[number] = (byte *)malloc(frameSize - 2);
+			_soundEffects[number] = new byte[frameSize - 2];
 			_fileStream->read(_soundEffects[number], frameSize - 2);
 			break;
 		case kChunkPlayMusic:
