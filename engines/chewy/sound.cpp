@@ -49,7 +49,7 @@ void Sound::playSound(int num, bool loop) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(data,
 		sound->size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::NO),
+		DisposeAfterUse::YES),
 		loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream);
@@ -70,7 +70,7 @@ void Sound::playMusic(int num, bool loop) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(data,
 		chunk->size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::NO),
+		DisposeAfterUse::YES),
 		loop ? 0 : 1);
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
@@ -84,7 +84,7 @@ void Sound::playSpeech(int num) {
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(data,
 		sound->size, 22050, Audio::FLAG_UNSIGNED,
-		DisposeAfterUse::NO),
+		DisposeAfterUse::YES),
 		1);
 
 	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
