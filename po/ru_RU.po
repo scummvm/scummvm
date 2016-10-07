@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-04 13:52+0200\n"
-"PO-Revision-Date: 2016-05-22 17:04+0300\n"
+"PO-Revision-Date: 2016-10-07 19:14+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: gui/about.cpp:94
 #, c-format
@@ -147,7 +147,7 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"Не удалось создать директорию для загрузки, так как указанная диретория уже "
+"Не удалось создать директорию для загрузки, так как указанная директория уже "
 "содержит файл с таким же именем."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
@@ -176,7 +176,7 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"\"%s\" уже существует в указанной дректории.\n"
+"\"%s\" уже существует в указанной директории.\n"
 "Вы действительно хотите загрузить файлы в эту директорию?"
 
 #: gui/downloaddialog.cpp:251
@@ -1186,11 +1186,11 @@ msgstr "Имя пользователя в этом облаке"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr "Используемы объём"
+msgstr "Используемый объём"
 
 #: gui/options.cpp:1311
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr "Объём, занимаемый сохранениями игр ScumьVM на этом облаке"
+msgstr "Объём, занимаемый сохранениями игр ScummVM на этом облаке"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
@@ -1328,7 +1328,7 @@ msgid ""
 "Check your Internet connection."
 msgstr ""
 "Ошибка запроса.\n"
-"Проверьте ваше интернет-соединение."
+"Проверьте ваше Интернет-соединение."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1485,7 +1485,7 @@ msgstr "Получите код от облака, а затем введите его"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "в поля, расположенные ниже и нажмите 'Подключить':"
+msgstr "в поля, расположенные ниже, и нажмите 'Подключить':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1513,12 +1513,12 @@ msgstr "Другое облако уже активно. Вы хотите прервать процесс?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Подождите, пока текущее облако завершит работу и попробуйте снова."
+msgstr "Подождите, пока текущее облако завершит работу, и попробуйте снова."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr "Поле %s сожержит ошибку"
+msgstr "Поле %s содержит ошибку."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
@@ -1539,7 +1539,7 @@ msgid ""
 "Please navigate to this page manually."
 msgstr ""
 "Не удалось открыть URL!\n"
-"Пожалуйсте, перейдите вручную по указанному URL."
+"Пожалуйста, перейдите вручную по указанному URL."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -2032,8 +2032,8 @@ msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"Ошибка синхронизации созранений игр.\n"
-"Проверьте ваше соединение с интернет."
+"Ошибка синхронизации сохранений игр.\n"
+"Проверьте ваше соединение с Интернетом."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2041,7 +2041,7 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Загрузка заверщена.\n"
+"Загрузка завершена.\n"
 "Не удалось загрузить %u файлов."
 
 #: backends/cloud/storage.cpp:329
@@ -3255,7 +3255,7 @@ msgstr "Включить видео с линиями"
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
-"Рисует чёрные линии поверъ видео, увеличивая таким образом видимую чёткость"
+"Рисует чёрные линии поверх видео, увеличивая таким образом видимую чёткость"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
