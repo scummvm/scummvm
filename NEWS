@@ -6,6 +6,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Myst.
    - Added support for Myst: Masterpiece Edition.
    - Added support for U.F.O.s.
+   - Added support for Hi-Res Adventure #0: Mission Asteroid.
+   - Added support for Hi-Res Adventure #1: Mystery House.
+   - Added support for Hi-Res Adventure #2: The Wizard and the Princess.
 
  General:
    - Fixed audio corruption in the MS ADPCM decoder.
