@@ -31,6 +31,12 @@ enum {
 	kMacFontChicago = 0
 };
 
+enum {
+	kMacFontRegular,
+	kMacFontBold,
+	kMacFontItalic
+};
+
 class MacFont {
 public:
 	MacFont(int id = kMacFontChicago, int size = 12, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
@@ -79,7 +85,7 @@ private:
 	 * @param size size of the font
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
-	const char *getFontName(int id, int size);
+	const char *getFontName(int id, int size, int slant = kMacFontRegular);
 
 private:
 	bool _builtInFonts;

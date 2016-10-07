@@ -56,7 +56,7 @@ void MacFontManager::loadFonts() {
 
 		Common::String fontName;
 		if (font->getFamilyName() && *font->getFamilyName()) {
-			fontName = Common::String::format("%s-%d", font->getFamilyName(), font->getFontSize());
+			fontName = Common::String::format("%s-%s-%d", font->getFamilyName(), font->getFontSlant(), font->getFontSize());
 		} else { // Get it from the file name
 			fontName = (*it)->getName();
 
@@ -147,13 +147,27 @@ static const char *const fontNames[] = {
 	"New Century Schoolbook"
 };
 
-const char *MacFontManager::getFontName(int id, int size) {
+const char *MacFontManager::getFontName(int id, int size, int slant) {
 	static char name[128];
+	const char *sslant;
+
+	switch (slant) {
+	case kMacFontItalic:
+		sslant = "I";
+		break;
+	case kMacFontBold:
+		sslant = "B";
+		break;
+	case kMacFontRegular:
+	default:
+		sslant = "R";
+		break;
+	}
 
 	if (id > ARRAYSIZE(fontNames))
 		return NULL;
 
-	snprintf(name, 128, "%s-%d", fontNames[id], size);
+	snprintf(name, 128, "%s-%s-%d", fontNames[id], sslant, size);
 
 	return name;
 }
