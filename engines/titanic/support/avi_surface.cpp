@@ -223,10 +223,10 @@ void AVISurface::setupDecompressor() {
 		bool flag = false;
 		if (idx == 0 && _videoSurface && 
 				_videoSurface->getPitch() == _movieFrameSurface[idx]->pitch) {
-			const Graphics::PixelFormat &ff = _decoder->getVideoTrack(0).getPixelFormat();
+			const uint bitCount = _decoder->getVideoTrack(0).getBitCount();
 			const int vDepth = _videoSurface->getPixelDepth();
 
-			switch (ff.bpp()) {
+			switch (bitCount) {
 			case 15:
 				flag = vDepth == 1;
 				break;
@@ -248,6 +248,9 @@ void AVISurface::setupDecompressor() {
 			_framePixels = new Graphics::ManagedSurface(_decoder->getWidth(), _decoder->getHeight(),
 				_decoder->getVideoTrack(0).getPixelFormat());
 		} else if (idx == 0) {
+			// The original developers used a vertical flipped playback to indicate
+			// an incompatibility between source video and dest surface bit-depths,
+			// which would result in poor playback performance
 			_videoSurface->_flipVertically = true;
 		}
 	}
