@@ -189,6 +189,7 @@ protected:
 
 		uint16 getWidth() const { return _bmInfo.width; }
 		uint16 getHeight() const { return _bmInfo.height; }
+		uint16 getBitCount() const { return _bmInfo.bitCount; }
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
