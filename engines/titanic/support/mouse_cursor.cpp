@@ -22,6 +22,7 @@
 
 #include "graphics/cursorman.h"
 #include "titanic/support/mouse_cursor.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/support/video_surface.h"
 #include "titanic/titanic.h"
 
@@ -107,12 +108,16 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 
 		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
 		const uint16 *srcP = srcSurface.getPixels();
-		const byte *maskP = (const byte *)ce._transSurface->getPixels();
+		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_DEFAULT);
 		uint16 *destP = (uint16 *)surface.getPixels();
 
 		for (int y = 0; y < CURSOR_SIZE; ++y) {
-			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++maskP, ++destP) {
-				*destP = ((*maskP >> 4) == 0) ? srcSurface.getTransparencyColor() : *srcP;
+			transSurface.setRow(y);
+			transSurface.setCol(0);
+
+			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++destP) {
+				*destP = transSurface.isPixelTransparent() ? srcSurface.getTransparencyColor() : *srcP;
+				transSurface.moveX();
 			}
 		}
 

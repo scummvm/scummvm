@@ -52,8 +52,7 @@ CVideoSurface::~CVideoSurface() {
 void CVideoSurface::setupPalette(byte palette[32][32], byte val) {
 	for (uint idx1 = 0; idx1 < 32; ++idx1) {
 		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += idx1) {
-			int64 v = 0x84210843;
-			v *= base;
+			uint v = base / 31;
 			uint v2 = (v >> 36);
 			v = ((v2 >> 31) + v2) & 0xff;
 			palette[idx1][idx2] = v << 3;
@@ -252,15 +251,13 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				transSurface.setCol(srcRect.left);
 
 				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
-					transSurface.moveX();
-
-					if (!transSurface.isPixelTransparent2()) {
-						copyPixel(lineDestP, lineSrcP, transSurface.getPixel() >> 3,
-							is16Bit, isAlpha);
+					if (!transSurface.isPixelTransparent()) {
+						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha(), is16Bit, isAlpha);
 					}
 
 					++lineSrcP;
 					++lineDestP;
+					transSurface.moveX();
 				}
 
 				// Move to next line
@@ -517,7 +514,7 @@ uint16 OSVideoSurface::getPixel(const Common::Point &pt) {
 			transSurface.setRow(_flipVertically ? getHeight() - pt.y - 1 : pt.y);
 			transSurface.setCol(pt.x);
 
-			if (transSurface.isPixelTransparent2())
+			if (transSurface.isPixelTransparent())
 				return getTransparencyColor();
 		}
 

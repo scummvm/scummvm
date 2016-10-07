@@ -43,19 +43,40 @@ private:
 	bool _flag1;
 	bool _flag2;
 public:
+	/**
+	 * Constructor
+	 */
 	CTransparencySurface(const Graphics::Surface *surface, TransparencyMode transMode);
 
+	/**
+	 * Sets the row to get transparencies from
+	 */
 	void setRow(int yp) { _pos.y = yp; }
 
+	/**
+	 * Sets the column to get transparencies from
+	 */
 	void setCol(int xp) { _pos.x = xp; }
 
+	/**
+	 * Moves reading position horizontally by a single pixel
+	 */
+	int moveX();
+
+	/**
+	 * Returns a byte from the transparency surface
+	 */
 	uint getPixel() const;
 
-	bool isPixelTransparent1() const;
+	/**
+	 * Returns the alpha value for the pixel (0-31)
+	 */
+	uint getAlpha() const { return getPixel() >> 3; }
 
-	bool isPixelTransparent2() const;
-
-	int moveX();
+	/**
+	 * Returns true if the pixel is completely transparent
+	 */
+	bool isPixelTransparent() const { return getAlpha() == 0; }
 };
 
 } // End of namespace Titanic
