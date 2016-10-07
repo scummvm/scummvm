@@ -251,10 +251,11 @@ SoundChunk *SoundResource::getSound(uint num) {
 	// Find the total length of the voice file
 	do {
 		blocksRemaining = _stream.readByte();
-		blockSize =
-			_stream.readByte() +
-			(_stream.readByte() << 8) +
-			(_stream.readByte() << 16);
+
+		byte b1 = _stream.readByte();
+		byte b2 = _stream.readByte();
+		byte b3 = _stream.readByte();
+		blockSize = b1 + (b2 << 8) + (b3 << 16);
 
 		totalLength += blockSize;
 		_stream.skip(blockSize);
@@ -269,10 +270,11 @@ SoundChunk *SoundResource::getSound(uint num) {
 
 	do {
 		blocksRemaining = _stream.readByte();
-		blockSize =
-			_stream.readByte() +
-			(_stream.readByte() << 8) +
-			(_stream.readByte() << 16);
+
+		byte b1 = _stream.readByte();
+		byte b2 = _stream.readByte();
+		byte b3 = _stream.readByte();
+		blockSize = b1 + (b2 << 8) + (b3 << 16);
 
 		_stream.read(ptr, blockSize);
 		ptr += blockSize;
