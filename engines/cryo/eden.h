@@ -53,7 +53,7 @@ private:
 	void endFrescoes();
 	void scrollMirror();
 	void scrollpano();
-	void affsuiveur(suiveur_t *suiveur, int16 x, int16 y);
+	void displayFollower(Follower *follower, int16 x, int16 y);
 	void persoinmiroir();
 	void gametomiroir(byte arg1);
 	void flipMode();
@@ -109,7 +109,7 @@ private:
 	void restoreTopFrieze();
 	void restoreBottomFrieze();
 	void use_main_bank();
-	void use_bank(int16 bank);
+	void useBank(int16 bank);
 	void sundcurs(int16 x, int16 y);
 	void rundcurs();
 	void noclipax(int16 index, int16 x, int16 y);
@@ -171,7 +171,7 @@ private:
 	void fin_perso();
 	void no_perso();
 	void close_perso();
-	void af_fondsuiveur();
+	void displayBackgroundFollower();
 	void af_fondperso1();
 	void af_fondperso();
 	void setpersoicon();
@@ -292,17 +292,17 @@ private:
 	void init_globals();
 	void initRects();
 	void closesalle();
-	void afsalle1(room_t *room);
-	void afsalle();
-	void aflieu();
-	void loadsal(int16 num);
+	void displaySingleRoom(room_t *room);
+	void displayRoom();
+	void displayPlace();
+	void loadPlace(int16 num);
 	void specialoutside();
 	void specialout();
 	void specialin();
 	void animpiece();
 	void getdino(room_t *room);
 	room_t *getsalle(int16 loc);
-	void initlieu(int16 roomNum);
+	void initPlace(int16 roomNum);
 	void maj2();
 	void majsalle1(int16 roomNum);
 	void maj_salle(uint16 roomNum);
@@ -401,7 +401,7 @@ private:
 	void reste_ici5();
 	void reste_ici(int16 index);
 	void eloipart();
-	char eloirevientq();
+	bool eloirevientq();
 	void eloirevient();
 	void incphase1();
 	void incphase();
@@ -511,7 +511,7 @@ private:
 	byte   _cursKeepBuf[2500];
 	Common::Point _cursKeepPos;
 	bool            torchCursor;
-	int16           cur_bank_num;
+	int16           _curBankNum;
 	int16           glow_h;
 	int16           glow_w;
 	int16           glow_y;
@@ -576,11 +576,11 @@ private:
 	byte   *gamePhrases;
 	byte   *gameDialogs;   //TODO: rename to dialogs?
 	byte   *gameConditions;
-	void            *sal_buf;   //TODO: fixme
+	void   *sal_buf;   //TODO: fixme
 	byte   *bank_data_buf;
-	icon_t          *gameIcons;
-	room_t          *gameRooms;
-	pak_t           *bigfile_header;
+	icon_t *gameIcons;
+	room_t *gameRooms;
+	pak_t  *bigfile_header;
 	byte   *glow_buffer;
 	byte   *p_mainview_buf;
 	byte   *p_view2_buf;

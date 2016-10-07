@@ -389,27 +389,27 @@ struct dial_t {
 typedef struct dial_t dial_t;
 
 struct tape_t {
-	int16       textNum;
-	perso_t     *perso;
-	int16       party;
-	int16       roomNum;
-	int16       bgBankNum;
-	dial_t      *dialog;
+	int16       _textNum;
+	perso_t     *_perso;
+	int16       _party;
+	int16       _roomNum;
+	int16       _bgBankNum;
+	dial_t      *_dialog;
 };
 typedef struct tape_t tape_t;
 
-struct suiveur_t {      // Characters on Mirror screen
-	char        id;         // character
-	char        image;      // sprite number
+struct Follower {      // Characters on Mirror screen
+	char        _id;         // character
+	char        _spriteNum;      // sprite number
 	int16       sx;
 	int16       sy;
 	int16       ex;
 	int16       ey;
-	int16       bank;
+	int16       _spriteBank;
 	int16       ff_C;
 	int16       ff_E;
 };
-typedef struct suiveur_t suiveur_t;
+typedef struct Follower Follower;
 
 struct icon_t {
 	int16       sx;
@@ -790,7 +790,7 @@ typedef struct cita_t cita_t;
 
 /////////////// vars
 
-extern suiveur_t suiveurs_list[];
+extern Follower followerList[];
 
 
 /*

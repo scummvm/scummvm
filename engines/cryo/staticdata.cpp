@@ -25,7 +25,7 @@
 
 namespace Cryo {
 
-suiveur_t suiveurs_list[] = {
+Follower followerList[] = {
 //            char,                 X,  sx, sy,  ex,  ey,bank,
 	{ PersonId::pidGregor,          5, 211,  9, 320, 176, 228,   0,  0 },
 	{ PersonId::pidEloi,            4, 162, 47, 223, 176, 228, 112, 78 },
