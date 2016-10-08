@@ -1022,7 +1022,7 @@ void EdenGame::sundcurs(int16 x, int16 y) {
 void EdenGame::rundcurs() {
 	byte *keep = _cursKeepBuf;
 	byte *scr = p_mainview_buf + _cursKeepPos.x + _cursKeepPos.y * 640;
-	if (!curs_saved || (_cursKeepPos != Common::Point(-1, -1)))  //TODO ...
+	if (!curs_saved || (_cursKeepPos == Common::Point(-1, -1)))  //TODO ...
 		return;
 
 	for (int16 h = 48; h--;) {
