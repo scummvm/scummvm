@@ -58,6 +58,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Sherlock:
    - Fehler behoben, der einen Absturz in "The Case of the Serrated Scalpel" verursachen konnte.
+   - Problem mit Item-Hotspots in "The Case of the Serrated Scalpel" behoben.
    - Fehler behoben, der in "The Case of the Rose Tattoo" dazu führt, dass sich das Spiel aufhängt.
 
  Amiga-Portierung:
