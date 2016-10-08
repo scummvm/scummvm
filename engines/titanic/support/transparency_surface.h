@@ -71,12 +71,12 @@ public:
 	/**
 	 * Returns the alpha value for the pixel (0-31)
 	 */
-	uint getAlpha() const { return getPixel() >> 3; }
+	uint getAlpha() const { return 31 - (getPixel() >> 3); }
 
 	/**
 	 * Returns true if the pixel is completely transparent
 	 */
-	bool isPixelTransparent() const { return getAlpha() == 0; }
+	bool isPixelTransparent() const { return getAlpha() == 31; }
 };
 
 } // End of namespace Titanic

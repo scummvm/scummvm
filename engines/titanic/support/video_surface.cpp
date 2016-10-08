@@ -53,14 +53,10 @@ void CVideoSurface::setupPalette(byte palette[32][32], byte val) {
 	for (uint idx1 = 0; idx1 < 32; ++idx1) {
 		for (uint idx2 = 0, base = 0; idx2 < 32; ++idx2, base += idx1) {
 			uint v = base / 31;
-			uint v2 = (v >> 36);
-			v = ((v2 >> 31) + v2) & 0xff;
-			palette[idx1][idx2] = v << 3;
+			palette[idx1][idx2] = (byte)v;
 
 			if (val != 0xff && v != idx2) {
-				v = 0x80808081 * v * val;
-				v2 = v >> 39;
-				palette[idx1][idx2] = ((v2 >> 31) + v2) << 3;
+				assert(0);
 			}
 		}
 	}
@@ -237,7 +233,6 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
 				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
 			uint16 *destPtr = (uint16 *)destArea.getBasePtr(0, destArea.h - 1);
-			bool is16Bit = src->getPixelDepth() == 2;
 			bool isAlpha = src->_transparencyMode == TRANS_ALPHA0 ||
 				src->_transparencyMode == TRANS_ALPHA255;
 
@@ -252,7 +247,7 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 
 				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
 					if (!transSurface.isPixelTransparent()) {
-						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha(), is16Bit, isAlpha);
+						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha(), srcSurface->format, isAlpha);
 					}
 
 					++lineSrcP;
@@ -291,30 +286,37 @@ bool CVideoSurface::hasFrame() {
 	}
 }
 
-void CVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha) {
-	const Graphics::PixelFormat srcFormat = is16Bit ?
-		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) :
-		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+#define RGB_SHIFT 3
+void CVideoSurface::copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
+		const Graphics::PixelFormat &srcFormat, bool isAlpha) {
 	const Graphics::PixelFormat destFormat = _ddSurface->getFormat();
-	transVal &= 0xff;
-	assert(transVal < 32);
+	alpha &= 0xff;
+	assert(alpha < 32);
 
-	// Get the color
+	// Get the source color
 	byte r, g, b;
 	srcFormat.colorToRGB(*srcP, r, g, b);
+	r >>= RGB_SHIFT;
+	g >>= RGB_SHIFT;
+	b >>= RGB_SHIFT;
+
 	if (isAlpha) {
-		r = _palette1[31 - transVal][r >> 3];
-		g = _palette1[31 - transVal][g >> 3];
-		b = _palette1[31 - transVal][b >> 3];
+		r = _palette1[31 - alpha][r];
+		g = _palette1[31 - alpha][g];
+		b = _palette1[31 - alpha][b];
 	}
 
 	byte r2, g2, b2;
 	destFormat.colorToRGB(*destP, r2, g2, b2);
-	r2 = _palette1[transVal][r2 >> 3];
-	g2 = _palette1[transVal][g2 >> 3];
-	b2 = _palette1[transVal][b2 >> 3];
+	r2 >>= RGB_SHIFT;
+	g2 >>= RGB_SHIFT;
+	b2 >>= RGB_SHIFT;
+	r2 = _palette1[alpha][r2];
+	g2 = _palette1[alpha][g2];
+	b2 = _palette1[alpha][b2];
 
-	*destP = destFormat.RGBToColor(r + r2, g + g2, b + b2);
+	*destP = destFormat.RGBToColor((r + r2) << RGB_SHIFT,
+		(g + g2) << RGB_SHIFT, (b + b2) << RGB_SHIFT);
 }
 
 /*------------------------------------------------------------------------*/

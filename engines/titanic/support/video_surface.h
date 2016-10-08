@@ -58,7 +58,6 @@ public:
 	 */
 	static void setup() {
 		setupPalette(_palette1, 0xff);
-		setupPalette(_palette2, 0xe0);
 	}
 private:
 	/**
@@ -340,8 +339,16 @@ public:
 
 	/**
 	 * Copies a pixel, handling transparency
+	 * @param destP		Dest pointer to 16-bit pixel
+	 * @param srcP		Source pointer to 16-bit pixel
+	 * @param alpha		Alpha (0-31). At 0, it's completely opaque,
+	 *	and overwrites the dest pixel. Through to 31, which is completely
+	 *	transparent, and ignores the source pixel.
+	 * @param srcFormat	The source surface format
+	 * @param isAlpha	If true, has alpha channel
 	 */
-	void copyPixel(uint16 *destP, const uint16 *srcP, byte transVal, bool is16Bit, bool isAlpha);
+	void copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
+		const Graphics::PixelFormat &srcFormat, bool isAlpha);
 };
 
 class OSVideoSurface : public CVideoSurface {

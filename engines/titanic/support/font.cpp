@@ -292,13 +292,13 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 	if (surface->lock()) {
 		uint16 *lineP = surface->getBasePtr(pt.x, pt.y);
 		uint16 color = getColor();
-		bool is16Bit = surface->getPixelDepth() == 2;
 
 		for (int yp = rect.top; yp < rect.bottom; ++yp, lineP += surface->getWidth()) {
 			uint16 *destP = lineP;
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
 				const byte *transP = _dataPtr + yp * _dataWidth + xp;
-				surface->copyPixel(destP, &color, *transP >> 3, is16Bit, true);
+				surface->copyPixel(destP, &color, *transP >> 3,
+					surface->getRawSurface()->format, true);
 			}
 		}
 
