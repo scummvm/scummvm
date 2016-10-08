@@ -669,6 +669,22 @@ private:
 	int16           word_378CC; //TODO: set by CLComputer_Init to 0
 	int16           word_378CE;
 
+	//// cube.c
+	int16 tabcos[361 * 2];
+	int dword_32424, dword_32428, dword_3242C;
+	int dword_32430, dword_32434, dword_32438;
+	int dword_3243C, dword_32440, dword_32444;
+	int16 word_32448;
+	int16 word_3244A, word_3244C;
+	float flt_32450, flt_32454;
+	cube_t cube;
+	int16 curs_cur_map;
+	int16 lines[200 * 8];
+	byte cube_texture[0x4000];
+	int cube_faces;
+	long curs_old_tick, curs_new_tick;
+
+
 };
 
 }

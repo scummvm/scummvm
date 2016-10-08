@@ -2706,7 +2706,7 @@ void EdenGame::my_bulle() {
 	byte i;
 	int16 words_on_line, word_width, line_width;
 	byte *icons = phraseIconsBuffer;
-	byte *lines = phraseCoordsBuffer;
+	byte *linesp = phraseCoordsBuffer;
 	byte *phrasePtr = phraseBuffer;
 	if (!p_global->textNum)
 		return;
@@ -2778,12 +2778,12 @@ void EdenGame::my_bulle() {
 			if (overrun > 0) {
 				num_text_lines++;
 				if (c != ' ') {
-					*lines++ = words_on_line;
-					*lines++ = word_width + space_width - overrun;
+					*linesp++ = words_on_line;
+					*linesp++ = word_width + space_width - overrun;
 					line_width = word_width;
 				} else {
-					*lines++ = words_on_line + 1;
-					*lines++ = space_width - overrun;   //TODO: checkme
+					*linesp++ = words_on_line + 1;
+					*linesp++ = space_width - overrun;   //TODO: checkme
 					line_width = 0;
 				}
 				word_width = 0;
@@ -2797,8 +2797,8 @@ void EdenGame::my_bulle() {
 		}
 	}
 	num_text_lines++;
-	*lines++ = words_on_line + 1;
-	*lines++ = word_width;
+	*linesp++ = words_on_line + 1;
+	*linesp++ = word_width;
 	*phrasePtr = c;
 	if (p_global->textBankIndex == 2 && p_global->textNum == 101 && p_global->pref_language == 1)
 		patchphrase();
@@ -2821,21 +2821,21 @@ void EdenGame::my_bulle() {
 void EdenGame::my_pr_bulle() {
 	byte *cur_out;
 	byte *coo = phraseCoordsBuffer;
-	int16 extra_spacing, lines;
+	int16 extra_spacing;
 	char done = 0;
 	CLBlitter_FillView(p_subtitlesview, 0);
 	if (p_global->pref_language == 0)
 		return;
 	textout = p_subtitlesview_buf;
 	text_ptr = phraseBuffer;
-	lines = 1;
+	int16 linesp = 1;
 	while (!done) {
 		byte c;
 		int16 num_words = *coo++;       // num words on line
 		int16 pad_size = *coo++;        // amount of extra spacing
 		cur_out = textout;
 		extra_spacing = num_words > 1 ? pad_size / (num_words - 1) + 1 : 0;
-		if (lines == num_text_lines)
+		if (linesp == num_text_lines)
 			extra_spacing = 0;
 		c = *text_ptr++;
 		while (!done & (num_words > 0)) { //TODO: bug - missed & ?
@@ -2873,7 +2873,7 @@ void EdenGame::my_pr_bulle() {
 				done = 1;
 		}
 		textout = cur_out + subtitles_x_width * FONT_HEIGHT;
-		lines++;
+		linesp++;
 		text_ptr--;
 	}
 }
@@ -8266,23 +8266,8 @@ void EdenGame::ret() {
 }
 
 //// cube.c
-int16 tabcos[361 * 2];
-int dword_32424, dword_32428, dword_3242C;
-int dword_32430, dword_32434, dword_32438;
-int dword_3243C, dword_32440, dword_32444;
-int16 word_32448;
-int16 word_3244A, word_3244C;
-float flt_32450, flt_32454;
-cube_t cube;
-int16 curs_cur_map;
-int16 lines[200 * 8];
-byte cube_texture[0x4000];
-int cube_faces;
-long curs_old_tick, curs_new_tick;
-
 void EdenGame::make_tabcos() {
-	int i;
-	for (i = 0; i < 361; i++) {
+	for (int i = 0; i < 361; i++) {
 		tabcos[i * 2] = (int)(cos(3.1416 * i / 180.0) * 255.0);
 		tabcos[i * 2 + 1] = (int)(sin(3.1416 * i / 180.0) * 255.0);
 	}
@@ -8310,8 +8295,7 @@ void EdenGame::make_matrice_fix() {
 }
 
 void EdenGame::projection_fix(cube_t *cubep, int n) {
-	int i;
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		int r24, r25, r26, r27, r28, r29;
 		r28 = cubep->vertices[i * 4];
 		r27 = cubep->vertices[i * 4 + 1];
@@ -8367,7 +8351,6 @@ void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
 }
 
 void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
-	int i, j, count2;
 	char *tmp1, *next, error;
 	cubeface_t **tmp4;
 	int16 *vertices, *projection;
@@ -8377,14 +8360,14 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
 	cube_faces = next_val(&next, &error);
 	vertices = (int16 *)malloc(cube_faces * 4 * sizeof(*vertices));
 	projection = (int16 *)malloc(cube_faces * 4 * sizeof(*projection));
-	for (i = 0; i < cube_faces; i++) {
+	for (int i = 0; i < cube_faces; i++) {
 		vertices[i * 4] = next_val(&next, &error);
 		vertices[i * 4 + 1] = next_val(&next, &error);
 		vertices[i * 4 + 2] = next_val(&next, &error);
 	}
-	count2 = next_val(&next, &error);
+	int count2 = next_val(&next, &error);
 	tmp4 = (cubeface_t **)malloc(count2 * sizeof(*tmp4));
-	for (i = 0; i < count2; i++) {
+	for (int i = 0; i < count2; i++) {
 		char textured;
 		tmp4[i] = (cubeface_t *)malloc(sizeof(cubeface_t));
 		tmp4[i]->tri = 3;
@@ -8392,7 +8375,7 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
 		tmp4[i]->ff_5 = next_val(&next, &error);
 		tmp4[i]->indices = (uint16 *)malloc(3 * sizeof(*tmp4[i]->indices));
 		tmp4[i]->uv = (int16 *)malloc(3 * 2 * sizeof(*tmp4[i]->uv));
-		for (j = 0; j < 3; j++) {
+		for (int j = 0; j < 3; j++) {
 			tmp4[i]->indices[j] = next_val(&next, &error);
 			if (textured) {
 				tmp4[i]->uv[j * 2] = next_val(&next, &error);
