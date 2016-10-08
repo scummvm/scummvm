@@ -56,6 +56,72 @@ int     curs_center = 11;
 
 EdenGame::EdenGame() {
 	_adamMapMarkPos = Common::Point(-1, -1);
+
+	_scrollPos = 0;
+	_frescoTalk = false;
+	torchCursor = false;
+	_curBankNum = 0;
+	needPaletteUpdate = 0;
+	curs_saved = false;
+	showBlackBars = false;
+	fond_saved = 0;
+	bank_data_ptr = nullptr;
+	tyranPtr = nullptr;
+	last_anim_frame_num = cur_anim_frame_num = 0;
+	_lastAnimTicks = 0;
+	cur_perso_rect = nullptr;
+	dword_30724 = dword_30728 = dword_3072C = animationTable = nullptr;
+	perso_img_bank_data_ptr = nullptr;
+	savedUnderSubtitles = 0;
+	text_ptr = nullptr;
+	currentSpecialObject = nullptr;
+	lastPhrasesFile = 0;
+	dialogSkipFlags = 0;
+	voiceSamplesBuffer = nullptr;
+	needToFade = 0;
+	lastMusicNum = 0;
+	main_bank_buf = nullptr;
+	music_buf = nullptr;
+	gameLipsync = nullptr;
+	gamePhrases = nullptr;
+	gameDialogs = nullptr;
+	gameConditions = nullptr;
+	sal_buf = nullptr;
+	bank_data_buf = nullptr;
+	gameIcons = nullptr;
+	gameRooms = nullptr;
+	bigfile_header = nullptr;
+	glow_buffer = nullptr;
+	gameFont = nullptr;
+	p_global = nullptr;
+	bufferAllocationErrorFl = quit_flag2 = quit_flag3 = false;
+	gameStarted = false;
+	_soundAllocated = false;
+	_musicChannel = hnmsound_ch = nullptr;
+	voiceSound = nullptr;
+	p_view2 = p_underSubtitlesView = p_subtitlesview = p_underBarsView = p_mainview = p_hnmview = nullptr;
+	_hnmContext = nullptr;
+	_doubledScreen = false;
+	curs_x_pan = 0;
+	_inventoryScrollDelay = 0;
+	curs_y = curs_x = 0;
+	current_cursor = 0;
+	current_spot = current_spot2 = nullptr;
+	pomme_q = 0;
+	keybd_held = false;
+	mouse_held = 0;
+	normalCursor = 0;
+	showVideoSubtitle = 0;
+	specialTextMode = false;
+	voiceSamplesSize = 0;
+	_personTalking = false;
+	_musicFadeFlag = 0;
+	musicPlaying = 0;
+	mus_samples_ptr = mus_patterns_ptr = mus_sequence_ptr = nullptr;
+	mus_queue_grp = nullptr;
+	pCurrentObjectLocation = nullptr;
+	gameLoaded = 0;
+	word_378CC = 0; //TODO: set by CLComputer_Init to 0
 }
 
 void EdenGame::removeConsole() {
