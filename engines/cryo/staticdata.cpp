@@ -555,18 +555,18 @@ byte tab_persxx[][5] = {   //TODO: struc?
 };
 
 area_t kAreasTable[] = {
-	{ Areas::arMo           , AreaType::atCitadel,                           0,   0, 0,  1},
-	{ Areas::arTausCave     , AreaType::atCave   ,                           0, 112, 0,  2},
-	{ Areas::arChamaar      , AreaType::atValley ,                           0, 133, 0,  3},
-	{ Areas::arUluru        , AreaType::atValley ,                           0, 187, 0,  4},
-	{ Areas::arKoto         , AreaType::atValley , AreaFlags::HasVelociraptors, 236, 0,  5},
-	{ Areas::arTamara       , AreaType::atValley ,                           0, 288, 0,  6},
-	{ Areas::arCantura      , AreaType::atValley ,                           0, 334, 0,  7},
-	{ Areas::arShandovra    , AreaType::atValley ,                           0, 371, 0,  8},
-	{ Areas::arNarimsCave   , AreaType::atCave   ,                           0, 115, 0,  9},
-	{ Areas::arEmbalmersCave, AreaType::atCave   ,                           0, 118, 0, 10},
-	{ Areas::arWhiteArch    , AreaType::atCave   ,                           0, 122, 0, 11},
-	{ Areas::arMoorkusLair  , AreaType::atCave   ,                           0, 127, 0, 12}
+	{ Areas::arMo           , AreaType::atCitadel,                           0,   0, 0,  1, 0, 0},
+	{ Areas::arTausCave     , AreaType::atCave   ,                           0, 112, 0,  2, 0, 0},
+	{ Areas::arChamaar      , AreaType::atValley ,                           0, 133, 0,  3, 0, 0},
+	{ Areas::arUluru        , AreaType::atValley ,                           0, 187, 0,  4, 0, 0},
+	{ Areas::arKoto         , AreaType::atValley , AreaFlags::HasVelociraptors, 236, 0,  5, 0, 0},
+	{ Areas::arTamara       , AreaType::atValley ,                           0, 288, 0,  6, 0, 0},
+	{ Areas::arCantura      , AreaType::atValley ,                           0, 334, 0,  7, 0, 0},
+	{ Areas::arShandovra    , AreaType::atValley ,                           0, 371, 0,  8, 0, 0},
+	{ Areas::arNarimsCave   , AreaType::atCave   ,                           0, 115, 0,  9, 0, 0},
+	{ Areas::arEmbalmersCave, AreaType::atCave   ,                           0, 118, 0, 10, 0, 0},
+	{ Areas::arWhiteArch    , AreaType::atCave   ,                           0, 122, 0, 11, 0, 0},
+	{ Areas::arMoorkusLair  , AreaType::atCave   ,                           0, 127, 0, 12, 0, 0}
 };
 
 int16 tab_2CEF0[64] = {
