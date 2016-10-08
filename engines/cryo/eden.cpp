@@ -1846,7 +1846,7 @@ void EdenGame::constcita() {
 }
 
 void EdenGame::depladino(perso_t *perso) {
-	char dir = getDirection(perso);
+	int dir = getDirection(perso);
 	if (dir != -1) {
 		melangedir();
 		char *dirs = tab_2CB1E[dir];
@@ -2265,7 +2265,7 @@ void EdenGame::perso_spr(byte *spr) {
 	byte c, cc;
 	while ((c = *spr++)) {
 		byte *src;
-		int16 index;
+		int16 index = 0;
 		cc = 0;
 		if (c == 1) {
 			cc = index;
@@ -2435,7 +2435,7 @@ void EdenGame::load_perso(perso_t *perso) {
 		ptr += PLE16(ptr) - 2;
 		p_global->persoSpritePtr = baseptr;
 		p_global->persoSpritePtr2 = baseptr + PLE16(ptr);
-		debug("load perso: b6 len is %d", p_global->persoSpritePtr2 - p_global->persoSpritePtr);
+		debug("load perso: b6 len is %ld", p_global->persoSpritePtr2 - p_global->persoSpritePtr);
 	} else {
 		useBank(p_global->perso_img_bank);
 		perso_img_bank_data_ptr = bank_data_ptr;
@@ -3140,7 +3140,7 @@ void EdenGame::persoparle(int16 pers) {
 	p_global->perso_ptr = perso;
 	p_global->dialogType = DialogType::dtInspect;
 	uint16 idx = perso->_id * 8 | p_global->dialogType;
-	char res = dialoscansvmas((dial_t *)getElem(gameDialogs, idx));
+	/* char res = */dialoscansvmas((dial_t *)getElem(gameDialogs, idx));
 	displayPlace();
 	af_subtitle();
 	persovox();
@@ -3596,7 +3596,7 @@ void EdenGame::dialautooff() {
 
 void EdenGame::follow() {
 	if (p_global->roomPersoType == PersonFlags::pfType12) {
-		debug("follow: hiding person %d", p_global->room_perso - kPersons);
+		debug("follow: hiding person %ld", p_global->room_perso - kPersons);
 		p_global->room_perso->_flags |= PersonFlags::pf80;
 		p_global->room_perso->_roomNum = 0;
 		p_global->gameFlags |= GameFlags::gfFlag8;
@@ -4588,7 +4588,7 @@ void EdenGame::loadFile(uint16 num, void *buffer) {
 	pakfile_t *file = &bigfile_header->files[num];
 	long size = PLE32(&file->size);
 	long offs = PLE32(&file->offs);
-	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
+	debug("* Loading resource %d (%s) at 0x%lX, %ld bytes", num, file->name, offs, size);
 	CLFile_SetPosition(h_bigfile, fsFromStart, offs);
 	CLFile_Read(h_bigfile, buffer, &size);
 }
@@ -4598,7 +4598,7 @@ void EdenGame::shnmfl(uint16 num) {
 	pakfile_t *file = &bigfile_header->files[num + 484];
 	int size = PLE32(&file->size);
 	int offs = PLE32(&file->offs);
-	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
+	debug("* Loading movie %d (%s) at 0x%X, %d bytes", num, file->name, (uint)offs, size);
 	CLHNM_SetPosIntoFile(_hnmContext, offs);
 }
 
@@ -4682,7 +4682,7 @@ void EdenGame::loadpartoffile(uint16 num, void *buffer, long pos, long len) {
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
 	long offs = PLE32(&file->offs);
-	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
+	debug("* Loading partial resource %d (%s) at 0x%lX(+0x%lX), %ld bytes", num, file->name, offs, pos, len);
 	CLFile_SetPosition(h_bigfile, 1, offs + pos);
 	CLFile_Read(h_bigfile, buffer, &len);
 }
@@ -5415,7 +5415,6 @@ void EdenGame::EmergencyExit() {
 }
 
 void EdenGame::run() {
-	debug("global size is %X", (size_t)(&((global_t *)0)->save_end));
 	if ((size_t)(&((global_t *)0)->__UNUSED_70) != 0x70) { // let's be more optimistic
 		// great, you broke the dialog system. expect all nasty stuff now
 		assert(0);
@@ -5620,7 +5619,7 @@ void EdenGame::entergame() {
 	}
 }
 
-void EdenGame::signon(char *s) {
+void EdenGame::signon(const char *s) {
 }
 
 void EdenGame::testPommeQ() {
@@ -6321,11 +6320,11 @@ void EdenGame::musicspy() {
 	if (_personTalking && !hnmsound_ch->_numSounds)
 		_musicFadeFlag = 3;
 	if (_musicChannel->_numSounds < 3) {
-		patnum = mus_sequence_ptr[musicSequencePos];
+		patnum = mus_sequence_ptr[(int)musicSequencePos];
 		if (patnum == 0xFF) {
 			// rewind
 			musicSequencePos = 0;
-			patnum = mus_sequence_ptr[musicSequencePos];
+			patnum = mus_sequence_ptr[(int)musicSequencePos];
 		}
 		musicSequencePos++;
 		patptr = mus_patterns_ptr + patnum * 6;
@@ -6739,7 +6738,7 @@ void EdenGame::noclicpanel() {
 		return;
 	}
 	if (current_spot2 >= &gameIcons[119]) {
-		debug("noclic: objid = %4X, glob3,2 = %2X %2X", current_spot2, p_global->menuItemIdHi, p_global->menuItemIdLo);
+		debug("noclic: objid = %p, glob3,2 = %2X %2X", (void *)current_spot2, p_global->menuItemIdHi, p_global->menuItemIdLo);
 		if (current_spot2->object_id == (p_global->menuItemIdLo + p_global->menuItemIdHi) << 8) //TODO: check me
 			return;
 	} else {
@@ -7396,7 +7395,7 @@ void EdenGame::perso_ici(int16 action) {
 }
 
 void EdenGame::setpersohere() {
-	debug("setpersohere, perso is %d", p_global->perso_ptr - kPersons);
+	debug("setpersohere, perso is %ld", p_global->perso_ptr - kPersons);
 	p_global->partyOutside = 0;
 	p_global->party = 0;
 	p_global->room_perso = 0;
@@ -7419,7 +7418,7 @@ void EdenGame::faire_suivre(int16 roomNum) {
 }
 
 void EdenGame::suis_moi5() {
-	debug("adding person %d to party", p_global->perso_ptr - kPersons);
+	debug("adding person %ld to party", p_global->perso_ptr - kPersons);
 	p_global->perso_ptr->_flags |= PersonFlags::pfInParty;
 	p_global->perso_ptr->_roomNum = p_global->roomNum;
 	p_global->party |= p_global->perso_ptr->_partyMask;
@@ -7434,7 +7433,7 @@ void EdenGame::suis_moi(int16 index) {
 }
 
 void EdenGame::reste_ici5() {
-	debug("removing person %d from party", p_global->perso_ptr - kPersons);
+	debug("removing person %ld from party", p_global->perso_ptr - kPersons);
 	p_global->perso_ptr->_flags &= ~PersonFlags::pfInParty;
 	p_global->partyOutside |= p_global->perso_ptr->_partyMask;
 	p_global->party &= ~p_global->perso_ptr->_partyMask;
@@ -8310,13 +8309,13 @@ void EdenGame::make_matrice_fix() {
 	dword_32444 = (tabcos[r28 * 2] * tabcos[r30 * 2]) >> 8;
 }
 
-void EdenGame::projection_fix(cube_t *cube, int n) {
+void EdenGame::projection_fix(cube_t *cubep, int n) {
 	int i;
 	for (i = 0; i < n; i++) {
 		int r24, r25, r26, r27, r28, r29;
-		r28 = cube->vertices[i * 4];
-		r27 = cube->vertices[i * 4 + 1];
-		r26 = cube->vertices[i * 4 + 2];
+		r28 = cubep->vertices[i * 4];
+		r27 = cubep->vertices[i * 4 + 1];
+		r26 = cubep->vertices[i * 4 + 2];
 
 		r25 = dword_32424 * r28 + dword_32428 * r27 + dword_3242C * r26 + (int)(flt_32454 * 256.0f);
 		r24 = dword_32430 * r28 + dword_32434 * r27 + dword_32438 * r26 + (int)(flt_32450 * 256.0f);
@@ -8325,9 +8324,9 @@ void EdenGame::projection_fix(cube_t *cube, int n) {
 		r29 >>= 8;
 		if (r29 == -256)
 			r29++;
-		cube->projection[i * 4    ] = r25 / (r29 + 256) + curs_x + 14 + _scrollPos;
-		cube->projection[i * 4 + 1] = r24 / (r29 + 256) + curs_y + 14;
-		cube->projection[i * 4 + 2] = r29;
+		cubep->projection[i * 4    ] = r25 / (r29 + 256) + curs_x + 14 + _scrollPos;
+		cubep->projection[i * 4 + 1] = r24 / (r29 + 256) + curs_y + 14;
+		cubep->projection[i * 4 + 2] = r29;
 
 //		assert(cube->projection[i * 4] < 640);
 //		assert(cube->projection[i * 4 + 1] < 200);
@@ -8347,17 +8346,15 @@ void EdenGame::moteur() {
 	affiche_objet(&cube);
 }
 
-void EdenGame::affiche_objet(cube_t *cube) {
-	int i;
-	for (i = 0; i < cube->num; i++)
-		affiche_polygone_mapping(cube, cube->faces[i]);
+void EdenGame::affiche_objet(cube_t *cubep) {
+	for (int i = 0; i < cubep->num; i++)
+		affiche_polygone_mapping(cubep, cubep->faces[i]);
 }
 
 void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
-	int i;
 	loadpartoffile(file_id, buffer, 32, 256 * 3);
 
-	for (i = 0; i < 256; i++) {
+	for (int i = 0; i < 256; i++) {
 		color3_t color;
 		color.r = buffer[i * 3] << 8;
 		color.g = buffer[i * 3 + 1] << 8;
@@ -8369,7 +8366,7 @@ void EdenGame::NEWcharge_map(int file_id, byte *buffer) {
 	loadpartoffile(file_id, buffer, 32 + 256 * 3, 0x4000);
 }
 
-void EdenGame::NEWcharge_objet_mob(cube_t *cube, int file_id, byte *texptr) {
+void EdenGame::NEWcharge_objet_mob(cube_t *cubep, int file_id, byte *texptr) {
 	int i, j, count2;
 	char *tmp1, *next, error;
 	cubeface_t **tmp4;
@@ -8409,10 +8406,10 @@ void EdenGame::NEWcharge_objet_mob(cube_t *cube, int file_id, byte *texptr) {
 			tmp4[i]->ff_4 = 0;
 	}
 	free(tmp1);
-	cube->num = count2;
-	cube->faces = tmp4;
-	cube->projection = projection;
-	cube->vertices = vertices;
+	cubep->num = count2;
+	cubep->faces = tmp4;
+	cubep->projection = projection;
+	cubep->vertices = vertices;
 }
 
 int EdenGame::next_val(char **ptr, char *error) {
@@ -8429,7 +8426,7 @@ int EdenGame::next_val(char **ptr, char *error) {
 void EdenGame::selectmap(int16 num) {
 	int i, j;
 	int16 k, x, y;
-	char mode;
+	int mode;
 	curs_cur_map = num;
 	k = 0;
 	mode = tab_2E138[num];
@@ -8524,23 +8521,23 @@ void EdenGame::restoreZDEP() {
 		flt_2DF7C -= flt_2DF84;
 }
 
-void EdenGame::affiche_polygone_mapping(cube_t *cube, cubeface_t *face) {
+void EdenGame::affiche_polygone_mapping(cube_t *cubep, cubeface_t *face) {
 	int16 r20, r30, r26, r31, r19, r18, /*r25,*/ r24, ymin, ymax, v46, v48, v4A, v4C, v4E, v50;
 	int16 *uv;
 	uint16 r25;
 	uint16 *indices = face->indices;
 	int r17, r29;
 	r29 = indices[0] * 4;
-	v46 = cube->projection[r29];
-	v48 = cube->projection[r29 + 1];
+	v46 = cubep->projection[r29];
+	v48 = cubep->projection[r29 + 1];
 
 	r29 = indices[1] * 4;
-	v4A = cube->projection[r29];
-	v4C = cube->projection[r29 + 1];
+	v4A = cubep->projection[r29];
+	v4C = cubep->projection[r29 + 1];
 
 	r29 = indices[2] * 4;
-	v4E = cube->projection[r29];
-	v50 = cube->projection[r29 + 1];
+	v4E = cubep->projection[r29];
+	v50 = cubep->projection[r29 + 1];
 
 	if ((v4C - v48) * (v4E - v46) - (v50 - v48) * (v4A - v46) > 0)
 		return;
@@ -8549,15 +8546,15 @@ void EdenGame::affiche_polygone_mapping(cube_t *cube, cubeface_t *face) {
 	ymin = 200; // min y
 	ymax = 0;   // max y
 	r29 = indices[0] * 4;
-	r20 = cube->projection[r29];
-	r30 = cube->projection[r29 + 1];
+	r20 = cubep->projection[r29];
+	r30 = cubep->projection[r29 + 1];
 	r19 = *uv++;
 	r18 = *uv++;
 	indices++;
 	for (r17 = 0; r17 < face->tri - 1; r17++, indices++) {
 		r29 = indices[0] * 4;
-		r26 = cube->projection[r29];
-		r31 = cube->projection[r29 + 1];
+		r26 = cubep->projection[r29];
+		r31 = cubep->projection[r29 + 1];
 		r25 = *uv++;    //TODO: unsigned
 		r24 = *uv++;    //TODO: unsigned
 		if (r30 < ymin)
@@ -8575,8 +8572,8 @@ void EdenGame::affiche_polygone_mapping(cube_t *cube, cubeface_t *face) {
 		r18 = r24;
 	}
 	r29 = face->indices[0] * 4;
-	r26 = cube->projection[r29];
-	r31 = cube->projection[r29 + 1];
+	r26 = cubep->projection[r29];
+	r31 = cubep->projection[r29 + 1];
 	uv = face->uv;
 	r25 = *uv++;    //TODO: this is unsigned
 	r24 = *uv;      //TODO: this is signed
@@ -8592,7 +8589,7 @@ void EdenGame::affiche_polygone_mapping(cube_t *cube, cubeface_t *face) {
 	affiche_ligne_mapping(ymin, ymax, p_mainview->_bufferPtr, face->texptr);
 }
 
-void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *lines) {
+void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16 r7, int16 r8, int16 r9, int16 r10, int16 *linesp) {
 	int16 t;
 	int16 r26;
 	int r30, r29, r28, r23, r24, r25;
@@ -8600,21 +8597,21 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 	r26 = r6 - r4;
 	if (r26 <= 0) {
 		if (r26 == 0) {
-			lines += r4 * 8;
+			linesp += r4 * 8;
 			if (r5 - r3 > 0) {
-				lines[0] = r3;
-				lines[1] = r5;
-				lines[4] = r7;
-				lines[5] = r9;
-				lines[6] = r8;
-				lines[7] = r10;
+				linesp[0] = r3;
+				linesp[1] = r5;
+				linesp[4] = r7;
+				linesp[5] = r9;
+				linesp[6] = r8;
+				linesp[7] = r10;
 			} else {
-				lines[0] = r5;
-				lines[1] = r3;
-				lines[4] = r9;
-				lines[5] = r7;
-				lines[6] = r10;
-				lines[7] = r8;
+				linesp[0] = r5;
+				linesp[1] = r3;
+				linesp[4] = r9;
+				linesp[5] = r7;
+				linesp[6] = r10;
+				linesp[7] = r8;
 			}
 			return;
 		}
@@ -8627,10 +8624,10 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 		t = r8;
 		r8 = r10;
 		r10 = t;
-		lines += r6 * 8;
+		linesp += r6 * 8;
 		r26 = -r26;
 	} else
-		lines += r4 * 8 + 1;    //TODO wha???
+		linesp += r4 * 8 + 1;    //TODO wha???
 
 	r30 = r3 << 16;
 	r29 = r7 << 16;
@@ -8641,14 +8638,14 @@ void EdenGame::trace_ligne_mapping(int16 r3, int16 r4, int16 r5, int16 r6, int16
 	r23 = ((r10 - r8) << 16) / r26;
 
 	for (i = 0; i < r26; i++) {
-		lines[0] = r30 >> 16;
-		lines[4] = r29 >> 16;
-		lines[6] = r28 >> 16;
+		linesp[0] = r30 >> 16;
+		linesp[4] = r29 >> 16;
+		linesp[6] = r28 >> 16;
 
 		r30 += r25;
 		r29 += r24;
 		r28 += r23;
-		lines += 8;
+		linesp += 8;
 	}
 }
 

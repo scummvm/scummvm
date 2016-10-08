@@ -358,7 +358,7 @@ void CLFile_SetFinderInfos(void *fs, int a4, int a5) {
 }
 void CLFile_GetFullPath(void *a3, char *a4) {
 }
-void CLFile_MakeStruct(int a3, int a4, char *name, filespec_t *fs) {
+void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs) {
 	strcpy(fs->name, name);
 	fs->create = 0;
 }

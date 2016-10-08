@@ -218,7 +218,7 @@ void CLPalette_BeSystem();
 void CLFile_SetFilter(int a3, int a4, int a5, int a6, int a7);
 void CLFile_SetFinderInfos(void *fs, int a4, int a5);
 void CLFile_GetFullPath(void *a3, char *a4);
-void CLFile_MakeStruct(int a3, int a4, char *name, filespec_t *fs);
+void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
 void CLFile_Create(filespec_t *fs);
 void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle);
 void CLFile_Close(file_t &handle);

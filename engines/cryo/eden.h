@@ -314,7 +314,7 @@ private:
 	void intro();
 	char testcdromspeed();
 	void entergame();
-	void signon(char *s);
+	void signon(const char *s);
 	void testPommeQ();
 	void FRDevents();
 	icon_t *scan_icon_list(int16 x, int16 y, int16 index);

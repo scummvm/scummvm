@@ -92,7 +92,7 @@ void CLHNM_DecompLempelZiv(byte *buffer, byte *output) {
 void CLHNM_DecompUBA(byte *output, byte *curr_buffer, byte *prev_buffer,
                      byte *input, int width, char flags) {
 	unsigned int code;
-	char mode, count, color;
+	byte mode, count, color;
 	uint16 offs;
 	byte *ref;
 	byte *out_start = output;
