@@ -28,6 +28,7 @@
 namespace Graphics {
 
 enum {
+	kMacFontNonStandard = -1,
 	kMacFontChicago = 0
 };
 
@@ -46,6 +47,7 @@ public:
 		_size = size;
 		_slant = slant;
 		_fallback = fallback;
+		_generated = false;
 	}
 
 	int getId() { return _id; };
@@ -55,6 +57,8 @@ public:
 	void setName(Common::String &name) { _name = name; }
 	void setName(const char *name) { _name = name; }
 	FontManager::FontUsage getFallback() { return _fallback; }
+	bool isGenerated() { return _generated; }
+	void setGenerated(bool gen) { _generated = gen; }
 
 private:
 	int _id;
@@ -62,6 +66,8 @@ private:
 	int _slant;
 	Common::String _name;
 	FontManager::FontUsage _fallback;
+
+	bool _generated;
 };
 
 class MacFontManager {
@@ -98,7 +104,11 @@ private:
 
 private:
 	bool _builtInFonts;
-	Common::HashMap<Common::String, BdfFont *> _fontRegistry;
+	Common::HashMap<Common::String, MacFont *> _fontRegistry;
+
+	Common::HashMap<Common::String, int> _fontNames;
+
+	int parseFontSlant(Common::String slant);
 };
 
 } // End of namespace Graphics
