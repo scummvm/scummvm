@@ -57,10 +57,11 @@ int     curs_center = 11;
 EdenGame::EdenGame() {
 	_adamMapMarkPos = Common::Point(-1, -1);
 
-	_scrollPos = 0;
+	_scrollPos = _oldScrollPos = 0;
 	_frescoTalk = false;
 	torchCursor = false;
 	_curBankNum = 0;
+	glow_h = glow_w = glow_y = glow_x = 0;
 	needPaletteUpdate = 0;
 	curs_saved = false;
 	showBlackBars = false;
@@ -70,11 +71,20 @@ EdenGame::EdenGame() {
 	last_anim_frame_num = cur_anim_frame_num = 0;
 	_lastAnimTicks = 0;
 	cur_perso_rect = nullptr;
+	num_anim_frames = max_perso_desc = num_img_desc = 0;
+	restartAnimation = animationActive = 0;
+	animationDelay = animationIndex = lastAnimationIndex = 0;
 	dword_30724 = dword_30728 = dword_3072C = animationTable = nullptr;
 	perso_img_bank_data_ptr = nullptr;
 	savedUnderSubtitles = 0;
+	num_text_lines = 0;
 	text_ptr = nullptr;
+	textoutptr = textout = nullptr;
 	currentSpecialObject = nullptr;
+	word_30AFC = 0;
+	byte_30AFE = 0;
+	byte_30B00 = 0;
+	dword_30B04 = 0;
 	lastPhrasesFile = 0;
 	dialogSkipFlags = 0;
 	voiceSamplesBuffer = nullptr;
@@ -94,6 +104,8 @@ EdenGame::EdenGame() {
 	glow_buffer = nullptr;
 	gameFont = nullptr;
 	p_global = nullptr;
+	mouse_y_center = mouse_x_center = 0;
+	machine_speed = 0;
 	bufferAllocationErrorFl = quit_flag2 = quit_flag3 = false;
 	gameStarted = false;
 	_soundAllocated = false;
@@ -114,14 +126,26 @@ EdenGame::EdenGame() {
 	showVideoSubtitle = 0;
 	specialTextMode = false;
 	voiceSamplesSize = 0;
+	animateTalking = 0;
 	_personTalking = false;
 	_musicFadeFlag = 0;
 	musicPlaying = 0;
 	mus_samples_ptr = mus_patterns_ptr = mus_sequence_ptr = nullptr;
 	mus_queue_grp = nullptr;
 	pCurrentObjectLocation = nullptr;
+	byte_31D64 = false;
+	no_palette = 0;
 	gameLoaded = 0;
+	memset(tapes, 0, sizeof(tapes));
+	confirmMode = 0;
+	cur_slider_value_ptr = nullptr;
+	lastMenuItemIdLo = 0;
+	lastTapeRoomNum = 0;
+	cur_slider_x = cur_slider_y = 0;
+	destinationRoom = 0;
+	word_31E7A = 0;
 	word_378CC = 0; //TODO: set by CLComputer_Init to 0
+	word_378CE = 0;
 }
 
 void EdenGame::removeConsole() {
