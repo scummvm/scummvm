@@ -632,12 +632,15 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 }
 
 void SoundCommandParser::reconstructPlayList() {
-	Common::StackLock lock(_music->_mutex);
+	_music->_mutex.lock();
 
 	// We store all songs here because starting songs may re-shuffle their order
 	MusicList songs;
 	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i)
 		songs.push_back(*i);
+
+	// Done with main playlist, so release lock
+	_music->_mutex.unlock();
 
 	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
 		initSoundResource(*i);
