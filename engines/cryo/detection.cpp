@@ -50,7 +50,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"losteden",
 		0,
-		AD_ENTRY1s("EDEN6.HSQ", nullptr, 17093),
+		AD_ENTRY1s("EDEN6.HSQ", 0, 17093),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO,
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"losteden",
 		0,
-		AD_ENTRY1s("EDEN.DAT", nullptr, 205473728),
+		AD_ENTRY1s("EDEN.DAT", 0, 205473728),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_DEMO,
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"losteden",
 		0,
-		AD_ENTRY1s("EDEN.DAT", nullptr, 449853776),
+		AD_ENTRY1s("EDEN.DAT", 0, 449853776),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
@@ -83,7 +83,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"losteden",
 		0,
-		AD_ENTRY1s("EDEN.DAT", nullptr, 489739536),
+		AD_ENTRY1s("EDEN.DAT", 0, 489739536),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
