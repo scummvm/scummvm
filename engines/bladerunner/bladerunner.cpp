@@ -34,6 +34,7 @@
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/image.h"
+#include "bladerunner/item_pickup.h"
 #include "bladerunner/items.h"
 #include "bladerunner/lights.h"
 #include "bladerunner/mouse.h"
@@ -77,6 +78,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_combat = new Combat(this);
 	_adq = new ADQ(this);
 	_obstacles = new Obstacles(this);
+	_itemPickup = new ItemPickup(this);
 
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
@@ -104,6 +106,7 @@ BladeRunnerEngine::~BladeRunnerEngine() {
 	// delete[] _zBuffer1;
 	// delete[] _zBuffer2;
 
+	delete _itemPickup;
 	delete _obstacles;
 	delete _adq;
 	delete _combat;
@@ -157,6 +160,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	r = _gameInfo->open("GAMEINFO.DAT");
 	if (!r)
 		return false;
+
+	// TODO: Create datetime - not used
 
 	// TODO: Create graphics surfaces 1-4
 
@@ -463,9 +468,10 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete KIA
 
-	// TODO: Delete SDB
+	delete _suspectsDatabase;
+	_suspectsDatabase = nullptr;
 
-	// TODO: Delete unknown stuff
+	// TODO: Delete datetime - not used
 
 	// TODO: Delete actors
 
@@ -614,7 +620,9 @@ void BladeRunnerEngine::gameTick() {
 
 			_items->tick();
 
-			// TODO: Draw item pickup
+			_itemPickup->tick();
+			_itemPickup->draw();
+
 			// TODO: Draw dialogue menu
 
 			Common::Point p = _eventMan->getMousePos();
@@ -630,7 +638,7 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if _DEBUG
+#if false
 			//draw scene objects
 			int count = _sceneObjects->_count;
 			if (count > 0) {

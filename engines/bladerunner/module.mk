@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	gameinfo.o \
 	image.o \
 	item.o \
+	item_pickup.o \
 	items.o \
 	light.o \
 	lights.o \

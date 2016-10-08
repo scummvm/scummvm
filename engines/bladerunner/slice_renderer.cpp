@@ -342,7 +342,7 @@ static void setupLookupTable(int t[256], int inc) {
 	}
 }
 
-void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
+void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
 	assert(_sliceFramePtr);
 	assert(_lights);
 	assert(_setEffects);
@@ -425,7 +425,7 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
 		if (frameY >= 0 && frameY < 480)
-			drawSlice((int)sliceLine, frameLinePtr, zBufferLinePtr);
+			drawSlice((int)sliceLine, true, frameLinePtr, zBufferLinePtr);
 
 		sliceLineIterator.advance();
 		frameY += 1;
@@ -434,7 +434,83 @@ void SliceRenderer::drawFrame(int animationId, int animationFrame, Vector3 posit
 	}
 }
 
-void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr) {
+void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
+	if (scale == 0.0f) {
+		return;
+	}
+	_animation = -1;// animationId;
+	_frame = animationFrame;
+	_position.x = 0;
+	_position.y = 0;
+	_position.z = 0;
+	_facing = facing;
+	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(animationId, animationFrame);
+	if(_sliceFramePtr == nullptr) {
+		return;
+	}
+
+	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[animationId].frameSize);
+
+	_frameScale.x = stream.readFloatLE();
+	_frameScale.y = stream.readFloatLE();
+	_frameSliceHeight = stream.readFloatLE();
+	_framePos.x = stream.readFloatLE();
+	_framePos.y = stream.readFloatLE();
+	_frameBottomZ = stream.readFloatLE();
+	_framePaletteIndex = stream.readUint32LE();
+	_frameSliceCount = stream.readUint32LE();
+
+	float v47 = _frameSliceHeight * _frameSliceCount;
+	float v50 = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
+	float v16 = MAX(v50, v47);
+	float v51 = scale / v16;
+	
+	float s = sinf(_facing);
+	float c = cosf(_facing);
+
+	Matrix3x2 m_rotation(c, -s, 0.0f,
+	                     s,  c, 0.0f);
+
+	Matrix3x2 m_frame(_frameScale.x, 0.0f, _framePos.x,
+	                  0.0f, _frameScale.y, _framePos.y);
+
+	Matrix3x2 m_scale_v51_25_5(v51,   0.0f, 0.0f,
+	                           0.0f, 25.5f, 0.0f);
+
+	Matrix3x2 m_translate_x_32k(1.0f, 0.0f, screenX,
+	                            0.0f, 1.0f, 32768.0f);
+
+	Matrix3x2 m_scale_64k_64(65536.0f,  0.0f, 0.0f,
+	                             0.0f, 64.0f, 0.0f);
+
+	Matrix3x2 m = m_scale_64k_64 * (m_translate_x_32k * (m_scale_v51_25_5 * (m_rotation * m_frame)));
+
+	setupLookupTable(_m11lookup, m(0,0));
+	setupLookupTable(_m12lookup, m(0,1));
+	_m13 = m(0, 2);
+	setupLookupTable(_m21lookup, m(1,0));
+	setupLookupTable(_m22lookup, m(1,1));
+	_m23 = m(1, 2);
+	
+	float v32 = 1.0f / v51 / _frameSliceHeight;
+	float currentSlice = 0;// _frameSliceCount;
+	
+	int frameY = screenY + (v51 / 2.0f * v47);
+	int currentY = frameY;
+	uint16 *frameLinePtr = (uint16*)surface.getPixels() + 640 * frameY;
+	uint16 lineZbuffer[640];
+	while(currentSlice < _frameSliceCount) {
+		if(currentY >= 0 && currentY < 480) {
+			memset(lineZbuffer, 0xFF, 640 * 2);
+			drawSlice(currentSlice, false, frameLinePtr, lineZbuffer);
+			currentSlice += v32;
+			currentY--;
+			frameLinePtr -= 640;
+		}
+	}
+}
+
+void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr) {
 	if (slice < 0 || (uint32)slice >= _frameSliceCount)
 		return;
 
@@ -467,16 +543,18 @@ void SliceRenderer::drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLineP
 				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) >> 6;
 
 				if (vertexZ >= 0 && vertexZ < 65536) {
-					Color256 color = palette.color[p[2]];
+					int color555 = palette.color555[p[2]];
+					if (advanced) {
+						Color256 color = palette.color[p[2]];
 
-					color.r = (int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16;
-					color.g = (int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16;
-					color.b = (int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16;
+						color.r = (int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16;
+						color.g = (int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16;
+						color.b = (int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16;
 
-					int bladeToScummVmConstant = 256 / 32;
+						int bladeToScummVmConstant = 256 / 32;
 
-					int color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
-
+						color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
+					}
 					for (int x = previousVertexX; x != vertexX; ++x) {
 						if (vertexZ < zbufLinePtr[x]) {
 							frameLinePtr[x] = color555;

@@ -34,6 +34,8 @@
 #include "bladerunner/combat.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
+#include "bladerunner/items.h"
+#include "bladerunner/item_pickup.h"
 #include "bladerunner/movement_track.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
@@ -47,7 +49,6 @@
 
 #include "bladerunner/script/ai_00_mccoy.h"
 #include "bladerunner/script/aiscript_officer_leroy.h"
-#include "bladerunner/items.h"
 
 namespace BladeRunner {
 
@@ -680,9 +681,8 @@ void ScriptBase::Item_Flag_As_Non_Target(int itemId) {
 	warning("Item_Flag_As_Non_Target(%d)", itemId);
 }
 
-void ScriptBase::Item_Pickup_Spin_Effect(int a1, int a2, int a3) {
-	//TODO
-	warning("Item_Pickup_Spin_Effect(%d, %d, %d)", a1, a2, a3);
+void ScriptBase::Item_Pickup_Spin_Effect(int animationId, int x, int y) {
+	_vm->_itemPickup->setup(animationId, x, y);
 }
 
 int ScriptBase::Animation_Open() {

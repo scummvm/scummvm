@@ -510,7 +510,7 @@ void Actor::draw() {
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->drawFrame(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zBuffer2);
+	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zBuffer2);
 	//todo udpate screenrect
 }
 

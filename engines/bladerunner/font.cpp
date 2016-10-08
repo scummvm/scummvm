@@ -68,7 +68,7 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i]._height = stream->readUint32LE();
 		_characters[i]._dataOffset = stream->readUint32LE();
 	}
-	for(int i = 0; i < _dataSize; i++) {
+	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
 	}
 	return true;
@@ -100,20 +100,8 @@ void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, i
 		return;
 	}
 
-	if (x < 0) {
-		x = 0;
-	}
-	if (y < 0) {
-		y = 0;
-	}
-
-	int textWidth = getTextWidth(text);
-	if (textWidth + x >= _screenWidth) {
-		x = _screenWidth - (textWidth + 1);
-	}
-	if (_maxHeight + y >= _screenHeight) {
-		y = _screenHeight - _maxHeight;
-	}
+	x = CLIP(x, 0, _screenWidth - getTextWidth(text) + 1);
+	y = CLIP(y, 0, _screenHeight - _maxHeight);
 
 	const char *character = text.c_str();
 	while (*character != 0) {
@@ -176,16 +164,17 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 }
 
 void Font::drawCharacter(const char character, Graphics::Surface &surface, int x, int y) {
-	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || character + 1 >= _characterCount) {
+	char characterIndex = character + 1;
+	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
 		return;
 	}
 
-	uint16 *dstPtr = (uint16*)surface.getBasePtr(x + _characters[character + 1]._x, y + _characters[character + 1]._y);
-	uint16 *srcPtr = &_data[_characters[character + 1]._dataOffset];
-	int width = _characters[character + 1]._width;
-	int height = _characters[character + 1]._height;
+	uint16 *dstPtr = (uint16*)surface.getBasePtr(x + _characters[characterIndex]._x, y + _characters[characterIndex]._y);
+	uint16 *srcPtr = &_data[_characters[characterIndex]._dataOffset];
+	int width = _characters[characterIndex]._width;
+	int height = _characters[characterIndex]._height;
 	if (_intersperse && y & 1) {
-		dstPtr += surface.w;
+		dstPtr += surface.pitch / 2;
 	}
 
 	int endY = height + y - 1;
@@ -194,17 +183,17 @@ void Font::drawCharacter(const char character, Graphics::Surface &surface, int x
 		int currentX = x;
 		int endX = width + x - 1;
 		while (currentX <= endX && currentX < _screenWidth) {
-			if (!(*srcPtr & 0x8000)) {
+			if ((*srcPtr & 0x8000) == 0) {
 				*dstPtr = *srcPtr;
 			}
 			dstPtr++;
 			srcPtr++;
 			currentX++;
 		}
-		dstPtr += surface.w - width;
+		dstPtr += surface.pitch / 2 - width;
 		if (_intersperse) {
 			srcPtr += width;
-			dstPtr += surface.w;
+			dstPtr += surface.pitch / 2;
 			currentY++;
 		}
 		currentY++;

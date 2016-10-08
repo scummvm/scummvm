@@ -79,7 +79,7 @@ void Item::tick(bool special) {
 	if (_isVisible) {
 		Vector3 postition(_position.x, -_position.z, _position.y);
 		int animationId = _animationId + (special ? 1 : 0);
-		_vm->_sliceRenderer->drawFrame(animationId, 0, postition, M_PI - _angle, 1.0f, _vm->_surface2, _vm->_zBuffer2);
+		_vm->_sliceRenderer->drawInWorld(animationId, 0, postition, M_PI - _angle, 1.0f, _vm->_surface2, _vm->_zBuffer2);
 		//todo udpate screenrect
 		if (_isSpinning) {
 			_facing += _facingChange;

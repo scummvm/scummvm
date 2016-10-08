@@ -88,7 +88,7 @@ class SliceRenderer {
 	Graphics::PixelFormat _pixelFormat;
 
 	Matrix3x2 calculateFacingRotationMatrix();
-	void drawSlice(int slice, uint16 *frameLinePtr, uint16 *zbufLinePtr);
+	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr);
 
 public:
 	SliceRenderer(BladeRunnerEngine *vm);
@@ -100,9 +100,9 @@ public:
 
 	void setupFrame(int animation, int frame, Vector3 position, float facing, float scale = 1.0f);
 	void calculateBoundingRect();
-
-	//void drawFrame(Graphics::Surface &surface, uint16 *zbuffer);
-	void drawFrame(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
+	
+	void drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
+	void drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
 
 	void preload(int animationId);
 

@@ -48,6 +48,7 @@ class Combat;
 class Font;
 class GameFlags;
 class GameInfo;
+class ItemPickup;
 class Items;
 class Lights;
 class Mouse;
@@ -79,6 +80,7 @@ public:
 	Combat           *_combat;
 	GameFlags        *_gameFlags;
 	GameInfo         *_gameInfo;
+	ItemPickup       *_itemPickup;
 	Items            *_items;
 	Lights           *_lights;
 	Font             *_mainFont;
