@@ -127,7 +127,7 @@ typedef struct hnm_t hnm_t;
 struct sound_t {
 	char *sndHandle;
 	int16 _headerLen;
-	long  _headerOffset;
+	int32  _headerOffset;
 	int16   ff_A;
 
 	char    *_buffer;
@@ -138,7 +138,7 @@ struct sound_t {
 	int     _length;
 	int16   _mode;
 	volatile int16  _locked;
-	long    _loopStart;
+	int32    _loopStart;
 	int16   _loopTimes;
 	bool   _reversed;
 	int16   ff_32;
@@ -173,7 +173,7 @@ struct soundchannel_t {
 };
 typedef struct soundchannel_t soundchannel_t;
 
-extern volatile long TimerTicks;
+extern volatile int32 TimerTicks;
 extern View ScreenView;
 
 
@@ -190,7 +190,7 @@ void CLSoundRaw_Free(sound_t *sound);
 void CLSoundRaw_AssignBuffer(sound_t *sound, void *buffer, int bufferOffs, int length);
 
 void SysBeep(int x);
-long TickCount();
+int32 TickCount();
 void FlushEvents(int16 arg1, int16 arg2);
 
 void CLBlitter_CopyViewRect(View *view1, View *view2, Common::Rect *rect1, Common::Rect *rect2);
@@ -222,9 +222,9 @@ void CLFile_MakeStruct(int a3, int a4, const char *name, filespec_t *fs);
 void CLFile_Create(filespec_t *fs);
 void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle);
 void CLFile_Close(file_t &handle);
-void CLFile_SetPosition(file_t &handle, int16 mode, long pos);
-void CLFile_Read(file_t &handle, void *buffer, long *size);
-void CLFile_Write(file_t &handle, void *buffer, long *size);
+void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos);
+void CLFile_Read(file_t &handle, void *buffer, int32 *size);
+void CLFile_Write(file_t &handle, void *buffer, int32 *size);
 
 void CLSound_PrepareSample(sound_t *sound, int16 mode);
 void CLSound_SetWantsDesigned(int16 designed);
@@ -316,7 +316,7 @@ void CLHNM_ReadHeader(hnm_t *hnm);
 int16 CLHNM_GetVersion(hnm_t *hnm);
 int CLHNM_GetFrameNum(hnm_t *hnm);
 void CLHNM_Prepare2Read(hnm_t *hnm, int mode);
-void CLHNM_SetPosIntoFile(hnm_t *hnm, long pos);
+void CLHNM_SetPosIntoFile(hnm_t *hnm, int32 pos);
 void CLHNM_Desentrelace320(byte *frame_buffer, byte *final_buffer, uint16 height);
 
 

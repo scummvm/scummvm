@@ -37,11 +37,11 @@ typedef int16 OSErr;
 void SysBeep(int x) {
 }
 
-OSErr SetFPos(int16 handle, int16 mode, long pos) {
+OSErr SetFPos(int16 handle, int16 mode, int32 pos) {
 	return 0;
 }
 
-OSErr FSRead(int16 handle, long *size, void *buffer) {
+OSErr FSRead(int16 handle, int32 *size, void *buffer) {
 	return 0;
 }
 
@@ -49,12 +49,12 @@ void FlushEvents(int16 arg1, int16 arg2) {
 }
 
 // from mw lib???
-long TickCount() {
+int32 TickCount() {
 	return g_system->getMillis();
 }
 
 ///// CLTimer
-volatile long TimerTicks = 0;   // incremented in realtime
+volatile int32 TimerTicks = 0;   // incremented in realtime
 
 ///// CLView
 void CLView_SetSrcZoomValues(View *view, int x, int y) {
@@ -371,14 +371,14 @@ void CLFile_Open(filespec_t *fs, int16 mode, file_t &handle) {
 void CLFile_Close(file_t &handle) {
 	handle.close();
 }
-void CLFile_SetPosition(file_t &handle, int16 mode, long pos) {
+void CLFile_SetPosition(file_t &handle, int16 mode, int32 pos) {
 	assert(mode == 1);
 	handle.seek(pos, 0);
 }
-void CLFile_Read(file_t &handle, void *buffer, long *size) {
+void CLFile_Read(file_t &handle, void *buffer, int32 *size) {
 	handle.read(buffer, *size);
 }
-void CLFile_Write(file_t &handle, void *buffer, long *size) {
+void CLFile_Write(file_t &handle, void *buffer, int32 *size) {
 	assert(0);
 }
 

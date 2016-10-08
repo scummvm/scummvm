@@ -4637,7 +4637,7 @@ void EdenGame::verifh(void *ptr) {
 
 void EdenGame::openbigfile() {
 	assert(sizeof(pakfile_t) == 25);
-	long size = 0x10000;
+	int32 size = 0x10000;
 	CLFile_MakeStruct(0, 0, "EDEN.DAT", &bigfilespec);
 	CLFile_Open(&bigfilespec, 1, h_bigfile);
 	CLFile_Read(h_bigfile, bigfile_header, &size);
@@ -4652,9 +4652,9 @@ void EdenGame::closebigfile() {
 void EdenGame::loadFile(uint16 num, void *buffer) {
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
-	long size = PLE32(&file->size);
-	long offs = PLE32(&file->offs);
-	debug("* Loading resource %d (%s) at 0x%lX, %ld bytes", num, file->name, offs, size);
+	int32 size = PLE32(&file->size);
+	int32 offs = PLE32(&file->offs);
+	debug("* Loading resource %d (%s) at 0x%X, %d bytes", num, file->name, offs, size);
 	CLFile_SetPosition(h_bigfile, fsFromStart, offs);
 	CLFile_Read(h_bigfile, buffer, &size);
 }
@@ -4671,8 +4671,8 @@ void EdenGame::shnmfl(uint16 num) {
 int EdenGame::ssndfl(uint16 num) {
 	assert(num + 660 < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num + 660];
-	long size = PLE32(&file->size);
-	long offs = PLE32(&file->offs);
+	int32 size = PLE32(&file->size);
+	int32 offs = PLE32(&file->offs);
 	if (_soundAllocated) {
 		free(voiceSamplesBuffer);
 		voiceSamplesBuffer = nullptr;
@@ -4734,7 +4734,7 @@ void EdenGame::loadpermfiles() {
 }
 
 char EdenGame::ReadDataSync(uint16 num) {
-	long pos, len;
+	int32 pos, len;
 	pos = PLE32(gameLipsync + num * 4);
 	len = 1024;
 	if (pos != -1) {
@@ -4744,11 +4744,11 @@ char EdenGame::ReadDataSync(uint16 num) {
 	return 0;
 }
 
-void EdenGame::loadpartoffile(uint16 num, void *buffer, long pos, long len) {
+void EdenGame::loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len) {
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
-	long offs = PLE32(&file->offs);
-	debug("* Loading partial resource %d (%s) at 0x%lX(+0x%lX), %ld bytes", num, file->name, offs, pos, len);
+	int32 offs = PLE32(&file->offs);
+	debug("* Loading partial resource %d (%s) at 0x%X(+0x%X), %d bytes", num, file->name, offs, pos, len);
 	CLFile_SetPosition(h_bigfile, 1, offs + pos);
 	CLFile_Read(h_bigfile, buffer, &len);
 }
@@ -6404,10 +6404,10 @@ void EdenGame::musicspy() {
 
 int EdenGame::loadmusicfile(int16 num) {
 	pakfile_t *file = &bigfile_header->files[num + 435];
-	long size = PLE32(&file->size);
-	long offs = PLE32(&file->offs);
+	int32 size = PLE32(&file->size);
+	int32 offs = PLE32(&file->offs);
 	CLFile_SetPosition(h_bigfile, 1, offs);
-	long numread = size;
+	int32 numread = size;
 	if (numread > 0x140000)     //TODO: const
 		numread = 0x140000;
 	CLFile_Read(h_bigfile, music_buf, &numread);
@@ -7984,7 +7984,7 @@ void EdenGame::phase560() {
 void EdenGame::savegame(char *name) {
 //	filespec_t fs;
 //	file_t handle;
-	long size;
+	int32 size;
 //	CLFile_MakeStruct(0, 0, name, &fs);
 //	CLFile_Create(&fs);
 //	CLFile_SetFinderInfos(&fs, 'EDNS', 'LEDN');
@@ -7995,7 +7995,7 @@ void EdenGame::savegame(char *name) {
 		return;
 
 #define CLFile_Write(h, ptr, size) \
-debug("writing 0x%lX bytes", *size); \
+debug("writing 0x%X bytes", *size); \
 h->write(ptr, *size);
 
 	vavaoffsetout();
@@ -8039,8 +8039,8 @@ h->write(ptr, *size);
 
 void EdenGame::loadrestart() {
 	assert(0);  //TODO: this won't work atm - all snapshots are BE
-	long offs = 0;
-	long size;
+	int32 offs = 0;
+	int32 size;
 	size = (char *)(&p_global->save_end) - (char *)(p_global);
 	loadpartoffile(2495, p_global, offs, size);
 	offs += size;
@@ -8082,7 +8082,7 @@ void EdenGame::loadrestart() {
 void EdenGame::loadgame(char *name) {
 //	filespec_t fs;
 //	file_t handle;
-	long size;
+	int32 size;
 //	CLFile_MakeStruct(0, 0, name, &fs);
 //	CLFile_Open(&fs, 3, handle);
 

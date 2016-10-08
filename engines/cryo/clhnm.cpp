@@ -316,8 +316,8 @@ void CLHNM_DeallocMemory(hnm_t *hnm) {
 }
 
 void CLHNM_Read(hnm_t *hnm, int size) {
-	long _size = size;
-	CLFile_Read(*hnm->_file, hnm->_readBuffer, &_size);
+	int32 size_ = size;
+	CLFile_Read(*hnm->_file, hnm->_readBuffer, &size_);
 }
 
 void CLHNM_GiveTime(hnm_t *hnm) {
@@ -608,7 +608,7 @@ bool CLHNM_NextElement(hnm_t *hnm) {
 }
 
 void CLHNM_ReadHeader(hnm_t *hnm) {
-	long size = sizeof(hnm->_header);
+	int32 size = sizeof(hnm->_header);
 	CLFile_Read(*hnm->_file, &hnm->_header, &size);
 
 	hnm->_header._width = LE16(hnm->_header._width);
@@ -639,7 +639,7 @@ void CLHNM_DeactivatePreloadBuffer() {
 void CLHNM_Prepare2Read(hnm_t *hnm, int mode) {
 }
 
-void CLHNM_SetPosIntoFile(hnm_t *hnm, long pos) {
+void CLHNM_SetPosIntoFile(hnm_t *hnm, int32 pos) {
 	CLFile_SetPosition(*hnm->_file, 1, pos);
 }
 

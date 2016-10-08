@@ -282,7 +282,7 @@ private:
 	void ConvertMacToPC();
 	void loadpermfiles();
 	char ReadDataSync(uint16 num);
-	void loadpartoffile(uint16 num, void *buffer, long pos, long len);
+	void loadpartoffile(uint16 num, void *buffer, int32 pos, int32 len);
 	void Expand_hsq(void *input, void *output);
 	void ajouinfo(byte info);
 	void unlockinfo();
@@ -682,7 +682,7 @@ private:
 	int16 lines[200 * 8];
 	byte cube_texture[0x4000];
 	int cube_faces;
-	long curs_old_tick, curs_new_tick;
+	int32 curs_old_tick, curs_new_tick;
 
 
 };

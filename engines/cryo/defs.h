@@ -769,8 +769,8 @@ typedef struct global_t global_t;
 
 struct pakfile_t {
 	char            name[16];
-	long            size;
-	long            offs;
+	int32            size;
+	int32            offs;
 	char            flag;
 };
 typedef struct pakfile_t pakfile_t;
