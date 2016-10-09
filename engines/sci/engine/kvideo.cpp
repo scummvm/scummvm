@@ -165,7 +165,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Video::AVIDecoder();
 
 			if (filename.equalsIgnoreCase("gk2a.avi")) {
 				// HACK: Switch to 16bpp graphics for Indeo3.
@@ -179,6 +178,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 					return NULL_REG;
 				}
 			}
+
+			videoDecoder = new Video::AVIDecoder();
 
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
