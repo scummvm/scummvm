@@ -2175,7 +2175,7 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < lt.size(); i++)
 			if (lt.isValidEntry(i)) {
 				debugPrintf("  [%04x]: ", i);
-				printList(&lt[i]);
+				printList(lt[i]);
 			}
 	}
 	break;
@@ -2779,16 +2779,8 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		switch (type) {
 		case 0:
 			break;
-		case SIG_TYPE_LIST: {
-			List *list = _engine->_gamestate->_segMan->lookupList(reg);
-
-			debugPrintf("list\n");
-
-			if (list)
-				printList(list);
-			else
-				debugPrintf("Invalid list.\n");
-		}
+		case SIG_TYPE_LIST:
+			printList(reg);
 			break;
 		case SIG_TYPE_NODE:
 			debugPrintf("list node\n");
@@ -2802,47 +2794,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
 				case SEG_TYPE_ARRAY: {
-					const SciArray *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					const char *arrayType;
-					switch (array->getType()) {
-						case kArrayTypeID:
-							arrayType = "reg_t";
-							break;
-						case kArrayTypeByte:
-							arrayType = "byte";
-							break;
-						case kArrayTypeInt16:
-							arrayType = "int16 (as reg_t)";
-							break;
-						case kArrayTypeString:
-							arrayType = "string";
-							break;
-						default:
-							arrayType = "invalid";
-							break;
-					}
-					debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array->size());
-					switch (array->getType()) {
-					case kArrayTypeInt16:
-					case kArrayTypeID: {
-						hexDumpReg((const reg_t *)array->getRawData(), array->size(), 4, 0, true);
-						break;
-					}
-					case kArrayTypeByte:
-					case kArrayTypeString: {
-						Common::hexdump((const byte *)array->getRawData(), array->size(), 16, 0);
-						break;
-					}
-					default:
-						break;
-					}
-
+					printArray(reg);
 					break;
 				}
 				case SEG_TYPE_BITMAP: {
-					debugPrintf("SCI32 bitmap:\n");
-					const SciBitmap *bitmap = _engine->_gamestate->_segMan->lookupBitmap(reg);
-					Common::hexdump((const byte *) bitmap->getRawData(), bitmap->getRawSize(), 16, 0);
+					printBitmap(reg);
 					break;
 				}
 #endif
@@ -4392,8 +4348,28 @@ void Console::printBasicVarInfo(reg_t variable) {
 		debugPrintf(" IS INVALID!");
 }
 
-void Console::printList(List *list) {
-	reg_t pos = list->first;
+void Console::printList(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_LISTS);
+
+	if (!mobj) {
+		debugPrintf("list:\nCould not find list segment.\n");
+		return;
+	}
+
+	ListTable *table = static_cast<ListTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("list:\nAddress does not contain a valid list.\n");
+		return;
+	}
+
+	const List &list = table->at(reg.getOffset());
+	debugPrintf("list:\n");
+	printList(list);
+}
+
+void Console::printList(const List &list) {
+	reg_t pos = list.first;
 	reg_t my_prev = NULL_REG;
 
 	debugPrintf("\t<\n");
@@ -4403,8 +4379,7 @@ void Console::printList(List *list) {
 		NodeTable *nt = (NodeTable *)_engine->_gamestate->_segMan->getSegment(pos.getSegment(), SEG_TYPE_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.getOffset())) {
-			debugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
-			          PRINT_REG(pos));
+			debugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n", PRINT_REG(pos));
 			return;
 		}
 
@@ -4413,16 +4388,15 @@ void Console::printList(List *list) {
 		debugPrintf("\t%04x:%04x  : %04x:%04x -> %04x:%04x\n", PRINT_REG(pos), PRINT_REG(node->key), PRINT_REG(node->value));
 
 		if (my_prev != node->pred)
-			debugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n",
-			          PRINT_REG(node->pred));
+			debugPrintf("   WARNING: current node gives %04x:%04x as predecessor!\n", PRINT_REG(node->pred));
 
 		my_prev = pos;
 		pos = node->succ;
 	}
 
-	if (my_prev != list->last)
+	if (my_prev != list.last)
 		debugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-		          PRINT_REG(list->last), PRINT_REG(my_prev));
+				  PRINT_REG(list.last), PRINT_REG(my_prev));
 	debugPrintf("\t>\n");
 }
 
@@ -4465,6 +4439,89 @@ int Console::printNode(reg_t addr) {
 
 	return 0;
 }
+
+#ifdef ENABLE_SCI32
+void Console::printArray(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_ARRAY);
+
+	if (!mobj) {
+		debugPrintf("SCI32 array:\nCould not find array segment.\n");
+		return;
+	}
+
+	ArrayTable *table = static_cast<ArrayTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("SCI32 array:\nAddress does not contain a valid array.\n");
+		return;
+	}
+
+	const SciArray &array = table->at(reg.getOffset());
+
+	const char *arrayType;
+	switch (array.getType()) {
+	case kArrayTypeID:
+		arrayType = "reg_t";
+		break;
+	case kArrayTypeByte:
+		arrayType = "byte";
+		break;
+	case kArrayTypeInt16:
+		arrayType = "int16 (as reg_t)";
+		break;
+	case kArrayTypeString:
+		arrayType = "string";
+		break;
+	default:
+		arrayType = "invalid";
+		break;
+	}
+	debugPrintf("SCI32 %s array (%u entries):\n", arrayType, array.size());
+	switch (array.getType()) {
+	case kArrayTypeInt16:
+	case kArrayTypeID: {
+		hexDumpReg((const reg_t *)array.getRawData(), array.size(), 4, 0, true);
+		break;
+	}
+	case kArrayTypeByte:
+	case kArrayTypeString: {
+		Common::hexdump((const byte *)array.getRawData(), array.size(), 16, 0);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+void Console::printBitmap(reg_t reg) {
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_BITMAP);
+
+	if (!mobj) {
+		debugPrintf("SCI32 bitmap:\nCould not find bitmap segment.\n");
+		return;
+	}
+
+	BitmapTable *table = static_cast<BitmapTable *>(mobj);
+
+	if (!table->isValidEntry(reg.getOffset())) {
+		debugPrintf("SCI32 bitmap:\nAddress does not contain a valid bitmap.\n");
+		return;
+	}
+
+	const SciBitmap &bitmap = table->at(reg.getOffset());
+
+	debugPrintf("SCI32 bitmap (%dx%d; res %dx%d; origin %dx%d; skip color %u; %s; %s):\n",
+				bitmap.getWidth(), bitmap.getHeight(),
+				bitmap.getXResolution(), bitmap.getYResolution(),
+				bitmap.getOrigin().x, bitmap.getOrigin().y,
+				bitmap.getSkipColor(),
+				bitmap.getRemap() ? "remap" : "no remap",
+				bitmap.getShouldGC() ? "GC" : "no GC");
+
+	Common::hexdump((const byte *) bitmap.getRawData(), bitmap.getRawSize(), 16, 0);
+}
+
+#endif
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _engine->_gamestate;	// for the several defines in this function
