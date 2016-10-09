@@ -36,7 +36,7 @@ int TTnpcScriptResponse::size() const {
 
 /*------------------------------------------------------------------------*/
 
-TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values, 
+TTscriptRange::TTscriptRange(uint id, const Common::Array<uint> &values,
 		bool isRandom, bool isSequential) :
 		_id(id), _nextP(nullptr) {
 	_mode = SF_NONE;

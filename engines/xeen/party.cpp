@@ -364,7 +364,7 @@ void Party::changeTime(int numMinutes) {
 		if (player._conditions[PARALYZED] && _vm->getRandomNumber(4) == 1)
 			player._conditions[PARALYZED]--;
 	}
-	
+
 	if (killed)
 		_vm->_interface->drawParty(true);
 
@@ -375,7 +375,7 @@ void Party::changeTime(int numMinutes) {
 void Party::addTime(int numMinutes) {
 	int day = _day;
 	_minutes += numMinutes;
-	
+
 	// If the total minutes has exceeded a day, move to next one
 	while (_minutes >= (24 * 60)) {
 		_minutes -= 24 * 60;
@@ -464,7 +464,7 @@ void Party::handleLight() {
 		}
 	}
 
-	_vm->_interface->_intrIndex1 = _lightCount || 
+	_vm->_interface->_intrIndex1 = _lightCount ||
 		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? 4 : 0;
 }
 
@@ -599,7 +599,7 @@ void Party::giveTreasure() {
 					// Important item, so clear a slot for it
 					_activeParty[0]._weapons[INV_ITEMS_TOTAL - 1].clear();
 				} else {
-					// Otherwise, clear all the remaining treasure items, 
+					// Otherwise, clear all the remaining treasure items,
 					// since all the party's packs are full
 					for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 						_treasure._weapons[idx].clear();
@@ -657,7 +657,7 @@ void Party::giveTreasure() {
 		while (!events.isKeyMousePressed() && events.timeElapsed() < 1)
 			events.pollEventsAndWait();
 	} while (!_vm->shouldQuit() && events.timeElapsed() == 1);
-	
+
 	if (_vm->_mode != MODE_COMBAT)
 		_vm->_mode = MODE_1;
 
@@ -666,7 +666,7 @@ void Party::giveTreasure() {
 	_gems += _treasure._gems;
 	_treasure._gold = 0;
 	_treasure._gems = 0;
-	
+
 	_treasure._hasItems = false;
 	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 		_treasure._weapons[idx].clear();
@@ -698,7 +698,7 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	Window &w = screen._windows[10];
 	XeenItem &treasureItem = _treasure._categories[category][itemIndex];
 	sound.playFX(20);
-	
+
 	if (treasureItem._id < 82) {
 		// Copy item into the character's inventory
 		c._items[category][INV_ITEMS_TOTAL - 1] = treasureItem;

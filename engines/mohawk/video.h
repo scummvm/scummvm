@@ -346,7 +346,7 @@ private:
 	// Utility functions for managing entries
 	VideoEntryPtr open(uint16 id);
 	VideoEntryPtr open(const Common::String &fileName);
-	
+
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
 	void removeEntry(VideoEntryPtr ptr);
 

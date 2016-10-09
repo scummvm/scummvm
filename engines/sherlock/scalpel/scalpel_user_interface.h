@@ -105,38 +105,38 @@ private:
 	 * Handles input when the file list window is being displayed
 	 */
 	void doEnvControl();
-	
+
 	/**
 	 * Handle input whilst the inventory is active
 	 */
 	void doInvControl();
-	
+
 	/**
 	 * Handles waiting whilst an object's description window is open.
 	 */
 	void doLookControl();
-	
+
 	/**
 	 * Handles input until one of the user interface buttons/commands is selected
 	 */
 	void doMainControl();
-	
+
 	/**
 	 * Handles the input for the MOVE, OPEN, and CLOSE commands
 	 */
 	void doMiscControl(int allowed);
-	
+
 	/**
 	 * Handles input for picking up items
 	 */
 	void doPickControl();
-	
+
 	/**
 	 * Handles input when in talk mode. It highlights the buttons and available statements,
 	 * and handles allowing the user to click on them
 	 */
 	void doTalkControl();
-	
+
 	/**
 	 * Handles events when the Journal is active.
 	 * @remarks		Whilst this would in theory be better in the Journal class, since it displays in
@@ -150,7 +150,7 @@ private:
 	 */
 	void checkUseAction(const UseType *use, const Common::String &invName, FixedTextActionId fixedTextActionId,
 		int objNum, bool giveMode);
-	
+
 	/**
 	 * Print the previously selected object's decription
 	 */
@@ -212,7 +212,7 @@ public:
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
-	 */	
+	 */
 	virtual void drawInterface(int bufferNum = 3);
 
 	/**
@@ -243,7 +243,7 @@ public:
 
 	/**
 	 * Print the previously selected object's decription
-	 */	
+	 */
 	virtual void printObjectDesc();
 };
 

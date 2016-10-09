@@ -32,7 +32,7 @@ BEGIN_MESSAGE_MAP(CExitArboretum, CMovePlayerTo)
 	ON_MESSAGE(TurnOff)
 END_MESSAGE_MAP()
 
-CExitArboretum::CExitArboretum() : CMovePlayerTo(), 
+CExitArboretum::CExitArboretum() : CMovePlayerTo(),
 		_seasonNum(0), _fieldCC(0), _enabled(true) {
 }
 

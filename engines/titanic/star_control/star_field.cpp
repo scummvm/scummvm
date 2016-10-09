@@ -69,7 +69,7 @@ void CStarField::render(CVideoSurface *surface, CStarControlSub12 *sub12) {
 	// TODO
 }
 
-int CStarField::get1() const { 
+int CStarField::get1() const {
 	return _val1;
 }
 
@@ -102,7 +102,7 @@ void CStarField::set3(int val) {
 }
 
 void CStarField::toggle4() {
-	_val4 = !_val4; 
+	_val4 = !_val4;
 }
 
 bool CStarField::set4(bool val) {

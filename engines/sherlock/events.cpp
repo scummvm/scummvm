@@ -94,7 +94,7 @@ void Events::setCursor(CursorId cursorId) {
 void Events::setCursor(const Graphics::Surface &src, int hotspotX, int hotspotY) {
 	_cursorId = INVALID_CURSOR;
 	_hotspotPos = Common::Point(hotspotX, hotspotY);
-	
+
 	if (!IS_3DO) {
 		// PC 8-bit palettized
 		CursorMan.replaceCursor(src.getPixels(), src.w, src.h, hotspotX, hotspotY, 0xff);
@@ -400,7 +400,7 @@ bool Events::checkInput() {
 
 void Events::incWaitCounter() {
 	setCursor(WAIT);
-	++_waitCounter;		
+	++_waitCounter;
 }
 
 void Events::decWaitCounter() {

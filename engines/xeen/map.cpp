@@ -80,13 +80,13 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ac
 		bool flying, int imageNumber, int loopAnimation, int animationEffect,
 		int fx, Common::String attackVoc):
 		_name(name), _experience(experience), _hp(hp), _accuracy(accuracy),
-		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass), 
-		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType), 
-		_specialAttack(specialAttack), _hitChance(hitChance), _rangeAttack(rangeAttack), 
-		_monsterType(monsterType), _fireResistence(fireResistence), 
+		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass),
+		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType),
+		_specialAttack(specialAttack), _hitChance(hitChance), _rangeAttack(rangeAttack),
+		_monsterType(monsterType), _fireResistence(fireResistence),
 		_electricityResistence(electricityResistence), _coldResistence(coldResistence),
 		_poisonResistence(poisonResistence), _energyResistence(energyResistence),
-		_magicResistence(magicResistence), _phsyicalResistence(phsyicalResistence), 
+		_magicResistence(magicResistence), _phsyicalResistence(phsyicalResistence),
 		_field29(field29), _gold(gold), _gems(gems), _itemDrop(itemDrop),
 		_flying(flying), _imageNumber(imageNumber), _loopAnimation(loopAnimation),
 		_animationEffect(animationEffect), _fx(fx), _attackVoc(attackVoc) {
@@ -127,7 +127,7 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_loopAnimation = s.readByte();
 	_animationEffect = s.readByte();
 	_fx = s.readByte();
-	
+
 	char attackVoc[10];
 	s.read(attackVoc, 9);
 	attackVoc[9] = '\0';
@@ -640,7 +640,7 @@ MazeObject::MazeObject() {
 	_direction = DIR_NORTH;
 	_flipped = false;
 	_sprites = nullptr;
-}	
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -1040,7 +1040,7 @@ void Map::load(int mapId) {
 	}
 
 	// TODO: Switch setting flags that don't seem to ever be used
- 
+
 	// Reload the monster data for the main maze that we're loading
 	mapId = _vm->_party->_mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
@@ -1062,7 +1062,7 @@ void Map::load(int mapId) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
-			filename = Common::String::format("%03d.%cbj", 
+			filename = Common::String::format("%03d.%cbj",
 				_mobData._objectSprites[i]._spriteId,
 				_mobData._objectSprites[i]._spriteId >= 100 ? '0' : 'o');
 		}
@@ -1074,7 +1074,7 @@ void Map::load(int mapId) {
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
-		ArchiveType archiveType = 
+		ArchiveType archiveType =
 			_mobData._monsterSprites[i]._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
 			ALTSIDE_ARCHIVE : GAME_ARCHIVE;
 
@@ -1101,7 +1101,7 @@ void Map::load(int mapId) {
 		outdoorList._sky1._sprites = &_skySprites[0];
 		outdoorList._sky2._sprites = &_skySprites[0];
 		outdoorList._groundSprite._sprites = &_groundSprites;
-		
+
 		for (int i = 0; i < TOTAL_SURFACES; ++i) {
 			_wallSprites._surfaces[i].clear();
 
@@ -1195,7 +1195,7 @@ void Map::load(int mapId) {
 
 		indoorList._fwl_1F._sprites = &_wallSprites._fwl1;
 		indoorList._fwl_1F1R._sprites = &_wallSprites._fwl1;
-		indoorList._fwl_1F1L._sprites = &_wallSprites._fwl1;		
+		indoorList._fwl_1F1L._sprites = &_wallSprites._fwl1;
 		indoorList._horizon._sprites = &_wallSprites._fwl1;
 
 		indoorList._ground._sprites = &_groundSprites;
@@ -1384,7 +1384,7 @@ void Map::setCellSurfaceFlags(const Common::Point &pt, int bits) {
 void Map::setWall(const Common::Point &pt, Direction dir, int v) {
 	const int XOR_MASKS[4] = { 0xFFF, 0xF0FF, 0xFF0F, 0xFFF0 };
 	mazeLookup(pt, 0, 0);
-	
+
 	Common::Point mapPos(pt.x & 15, pt.y & 15);
 	MazeWallLayers &wallLayer = _mazeData[_mazeDataIndex]._wallData[mapPos.y][mapPos.x];
 	wallLayer._data &= XOR_MASKS[dir];
@@ -1412,7 +1412,7 @@ int Map::getCell(int idx) {
 		}
 		_currentWall = INVALID_CELL;
 		return INVALID_CELL;
-	} 
+	}
 
 	_mazeDataIndex = 0;
 	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
@@ -1447,7 +1447,7 @@ int Map::getCell(int idx) {
 				_currentWall = INVALID_CELL;
 				return INVALID_CELL;
 			}
-		
+
 			_mazeDataIndex = 0;
 			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
 				++_mazeDataIndex;
@@ -1503,7 +1503,7 @@ int Map::getCell(int idx) {
 			_currentTile = 0;
 		}
 	} else {
-		if (!mapId) 
+		if (!mapId)
 			return 0;
 
 		if (pt.x > 31 || pt.y > 31)
@@ -1523,7 +1523,7 @@ void Map::loadSky() {
 
 	party._isNight = party._minutes < (5 * 60) || party._minutes >= (21 * 60);
 	_skySprites[0].load(((party._mazeId >= 89 && party._mazeId <= 112) ||
-		party._mazeId == 128 || party._mazeId == 129) || !party._isNight 
+		party._mazeId == 128 || party._mazeId == 129) || !party._isNight
 		? "sky.sky" : "night.sky");
 }
 

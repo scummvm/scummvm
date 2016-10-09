@@ -87,7 +87,7 @@ const char *const Resources::CREDITS =
 	"\t190Clayton Retzer\n"
 	"\t190David Vela\003""c";
 
-const char *const Resources::OPTIONS_TITLE = 
+const char *const Resources::OPTIONS_TITLE =
 	"\x0D\x01\003""c\014""dMight and Magic Options\n"
 	"World of Xeen\x02\n"
 	"\v117Copyright (c) 1993 NWC, Inc.\n"
@@ -316,13 +316,13 @@ const char *const Resources::SEX_NAMES[2] = { "Male", "Female" };
 
 const char *const Resources::SKILL_NAMES[18] = {
 	"Thievery", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
-	"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer", 
+	"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer",
 	"Navigator", "Path Finder", "Prayer Master", "Prestidigitator",
 	"Swimmer", "Tracker", "Spot Secret Door", "Danger Sense"
 };
 
 const char *const Resources::CLASS_NAMES[11] = {
-	"Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber", 
+	"Knight", "Paladin", "Archer", "Cleric", "Sorcerer", "Robber",
 	"Ninja", "Barbarian", "Druid", "Ranger", nullptr
 };
 
@@ -331,8 +331,8 @@ const uint Resources::CLASS_EXP_LEVELS[10] = {
 };
 
 const char *const Resources::CONDITION_NAMES[17] = {
-	"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased", 
-	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused", 
+	"Cursed", "Heart Broken", "Weak", "Poisoned", "Diseased",
+	"Insane", "In Love", "Drunk", "Asleep", "Depressed", "Confused",
 	"Paralyzed", "Unconscious", "Dead", "Stone", "Eradicated", "Good"
 };
 
@@ -353,28 +353,28 @@ const char *const Resources::HEROISM = "\n\t020Heroism\t095%+d";
 const char *const Resources::IN_PARTY = "\014""15In Party\014""d";
 
 const char *const Resources::PARTY_DETAILS = "\015\003l\002\014""00"
-	"\013""001""\011""035%s" 
-	"\013""009""\011""035%s" 
-	"\013""017""\011""035%s" 
-	"\013""025""\011""035%s" 
-	"\013""001""\011""136%s" 
-	"\013""009""\011""136%s" 
-	"\013""017""\011""136%s" 
-	"\013""025""\011""136%s" 
-	"\013""044""\011""035%s" 
-	"\013""052""\011""035%s" 
-	"\013""060""\011""035%s" 
-	"\013""068""\011""035%s" 
-	"\013""044""\011""136%s" 
-	"\013""052""\011""136%s" 
-	"\013""060""\011""136%s" 
+	"\013""001""\011""035%s"
+	"\013""009""\011""035%s"
+	"\013""017""\011""035%s"
+	"\013""025""\011""035%s"
+	"\013""001""\011""136%s"
+	"\013""009""\011""136%s"
+	"\013""017""\011""136%s"
+	"\013""025""\011""136%s"
+	"\013""044""\011""035%s"
+	"\013""052""\011""035%s"
+	"\013""060""\011""035%s"
+	"\013""068""\011""035%s"
+	"\013""044""\011""136%s"
+	"\013""052""\011""136%s"
+	"\013""060""\011""136%s"
 	"\013""068""\011""136%s";
 const char *const Resources::PARTY_DIALOG_TEXT =
 	"%s\x2\x3""c\v106\t013Up\t048Down\t083\f37D\fdel\t118\f37R\fdem"
 	"\t153\f37C\fdreate\t188E\f37x\fdit\x1";
 
-const int Resources::FACE_CONDITION_FRAMES[17] = { 
-	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0 
+const int Resources::FACE_CONDITION_FRAMES[17] = {
+	2, 2, 2, 1, 1, 4, 4, 4, 3, 2, 4, 3, 3, 5, 6, 7, 0
 };
 
 const int Resources::CHAR_FACES_X[6] = { 10, 45, 81, 117, 153, 189 };
@@ -386,7 +386,7 @@ const char *const Resources::NO_ONE_TO_ADVENTURE_WITH = "You have no one to adve
 const char *const Resources::YOUR_ROSTER_IS_FULL = "Your Roster is full!";
 
 const byte Resources::BACKGROUND_XLAT[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0xF7, 0xFF, 0x09, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0xF9, 0xFF, 0x07, 0x00, 0x00, 0x00,
@@ -409,7 +409,7 @@ const int8 Resources::SCREEN_POSITIONING_X[4][48] = {
 	{
 	-1,  0,  0,  0,  1, -1,  0,  0,  0,  1, -2, -1,
 	-1,  0,  0,  0,  1,  1,  2, -4, -3, -3, -2, -2,
-	-1, -1,  0,  0,  0,  1,  1,  2,  2,  3,  3,  4, 
+	-1, -1,  0,  0,  0,  1,  1,  2,  2,  3,  3,  4,
 	-3, -2, -1,  0,  0,  1,  2,  3, -4,  4,  0,  0
 	}, {
 	 0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  2,  2,
@@ -422,7 +422,7 @@ const int8 Resources::SCREEN_POSITIONING_X[4][48] = {
 	 1,  1,  0,  0,  0, -1, -1, -2, -2, -3, -3, -4,
 	 3,  2,  1,  0,  0, -1, -2, -3,  4, -4,  0,  0
 	}, {
-	 0,  0,  0,  0,  0, -1, -1, -1, -1, -1, -2, -2, 
+	 0,  0,  0,  0,  0, -1, -1, -1, -1, -1, -2, -2,
 	-2, -2, -2, -2, -2, -2, -2, -3, -3, -3, -3, -3,
 	-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3,
 	-4, -4, -4, -4, -4, -4, -4, -4, -4, -4,  0, -1
@@ -513,9 +513,9 @@ const byte Resources::WALL_SHIFTS[4][48] = {
 };
 
 const int Resources::DRAW_NUMBERS[25] = {
-	36, 37, 38, 43, 42, 41, 
-	39, 20, 22, 24, 33, 31, 
-	29, 26, 10, 11, 18, 16, 
+	36, 37, 38, 43, 42, 41,
+	39, 20, 22, 24, 33, 31,
+	29, 26, 10, 11, 18, 16,
 	13, 5, 9, 6, 0, 4, 1
 };
 
@@ -578,8 +578,8 @@ const int Resources::AGE_RANGES_ADJUST[2][10] = {
 };
 
 const uint Resources::STAT_VALUES[24] = {
-	3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 25, 30, 35, 40, 
-	50, 75, 100, 125, 150, 175, 200, 225, 250, 
+	3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 25, 30, 35, 40,
+	50, 75, 100, 125, 150, 175, 200, 225, 250,
 };
 
 const int Resources::STAT_BONUSES[24] = {
@@ -777,7 +777,7 @@ const char *const Resources::TEMPLE_TEXT =
 	"\x03l\x09""000\x0B""090Gold\x03r\x09""000%s"
 	"\x02\x03""c\x0B""122\x09""040ESC\x01";
 
-const char *const Resources::EXPERIENCE_FOR_LEVEL = 
+const char *const Resources::EXPERIENCE_FOR_LEVEL =
 	"%s needs %lu experience for level %u.";
 
 const char *const Resources::LEARNED_ALL = "%s has learned all we can teach!";
@@ -832,7 +832,7 @@ const char *const Resources::BUY_SPELLS =
 	"\x09""012\x0C""37B\x0C""duy Spells\n"
 	"\x09""012\x0C""37S\x0C""dpell Info";
 
-const char *const Resources::GUILD_OPTIONS = 
+const char *const Resources::GUILD_OPTIONS =
 	"\x0D\x0C""00\x03""c\x0B""000\x09""000Guild Options for%s"
 	"\x03l\x09""000\x0B""090Gold"
 	"\x03r\x09""000%s\x02\x03""c\x0B""122\x09""040ESC\x01";
@@ -870,8 +870,8 @@ const int Resources::SPELL_COSTS[77] = {
 };
 
 const int Resources::DARK_SPELL_RANGES[12][2] = {
-	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }, 
-	{ 0, 17 }, { 14, 34 }, { 26, 37 }, { 29, 39 }, 
+	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 },
+	{ 0, 17 }, { 14, 34 }, { 26, 37 }, { 29, 39 },
 	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
 };
 
@@ -948,7 +948,7 @@ const char *const Resources::SPELLS_PRESS_A_KEY =
 
 const char *const Resources::SPELLS_PURCHASE =
 	"\x3l\xB""000\x9""000\xC""d%s  Do you wish to purchase "
-	"\xC""09%s\xC""d for %u?"; 
+	"\xC""09%s\xC""d for %u?";
 
 const char *const Resources::MAP_TEXT =
 	"\x3""c\xB""000\x9""000%s\x3l\xB""139"
@@ -970,7 +970,7 @@ const char *const Resources::LEVITATE_TEXT = "%c%sLevitate%s";
 
 const char *const Resources::WALK_ON_WATER_TEXT = "%c%sWalk on Water";
 
-const char *const Resources::GAME_INFORMATION = 
+const char *const Resources::GAME_INFORMATION =
 	"\xD\x3""c\x9""000\xB""001\xC""37%s of Xeen\xC""d\n"
 	"Game Information\n"
 	"\n"
@@ -1043,7 +1043,7 @@ const char *const Resources::LEVEL_TEXT =
 	"\x3r\x9""054%u\x3l\x9""058/ %u\n"
 	"\x3""c%u Attack%s/Round\x1";
 
-const char *const Resources::RESISTENCES_TEXT = 
+const char *const Resources::RESISTENCES_TEXT =
 	"\x2\x3""c%s\x3l\n"
 	"\x9""020Fire\x9""100%u\n"
 	"\x9""020Cold\x9""100%u\n"
@@ -1072,7 +1072,7 @@ const char *const Resources::FOOD_TEXT =
 
 const char *const Resources::EXCHANGE_WITH_WHOM = "\t010\v005Exchange with whom?";
 
-const char *const Resources::QUICK_REF_LINE = 
+const char *const Resources::QUICK_REF_LINE =
 	"\xB%3d\x9""007%u)\x9""027%s\x9""110%c%c%c\x3r\x9""160\xC%02u%u\xC""d"
 	"\x3l\x9""170\xC%02u%d\xC""d\x9""208\xC%02u%u\xC""d\x9""247\xC"
 	"%02u%u\xC""d\x9""270\xC%02u%c%c%c%c\xC""d";
@@ -1118,11 +1118,11 @@ const char *const Resources::BONUS_NAMES[7] = {
 };
 
 const char *const Resources::WEAPON_NAMES[35] = {
-	nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ", 
-	"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ", 
-	"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ", 
+	nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ",
+	"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ",
+	"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ",
 	"bardiche ", "glaive ", "halberd ", "pike ", "flamberge ", "trident ",
-	"staff ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ", 
+	"staff ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ",
 	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword"
 };
 
@@ -1139,8 +1139,8 @@ const char *const Resources::ACCESSORY_NAMES[11] = {
 
 const char *const Resources::MISC_NAMES[22] = {
 	nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
-	"wand ", "whistle ", "potion ", "scroll ", "RogueVM", 
-	"bogusg", "bogus", "bogus", "bogus", "bogus", 
+	"wand ", "whistle ", "potion ", "scroll ", "RogueVM",
+	"bogusg", "bogus", "bogus", "bogus", "bogus",
 	"bogus", "bogus", "bogus", "bogus"
 };
 
@@ -1283,10 +1283,10 @@ const int Resources::ITEM_SKILL_DIVISORS[4] = { 1, 2, 100, 10 };
 const int Resources::RESTRICTION_OFFSETS[4] = { 0, 35, 49, 60 };
 
 const int Resources::ITEM_RESTRICTIONS[86] = {
-	0, 86, 86, 86, 86, 86, 86, 0, 6, 239, 239, 239, 2, 4, 4, 4, 4, 
-	6, 70, 70, 70, 70, 94, 70, 0, 4, 239, 86, 86, 86, 70, 70, 70, 70, 
-	0, 0, 0, 68, 100, 116, 125, 255, 255, 85, 0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 86, 86, 86, 86, 86, 86, 0, 6, 239, 239, 239, 2, 4, 4, 4, 4,
+	6, 70, 70, 70, 70, 94, 70, 0, 4, 239, 86, 86, 86, 70, 70, 70, 70,
+	0, 0, 0, 68, 100, 116, 125, 255, 255, 85, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
@@ -1326,7 +1326,7 @@ const char *const Resources::WHICH_ITEM = "\t010\v005%s which item?";
 const char *const Resources::WHATS_YOUR_HURRY = "\v007What's your hurry?\n"
 	"Wait till you get out of here!";
 
-const char *const Resources::USE_ITEM_IN_COMBAT = 
+const char *const Resources::USE_ITEM_IN_COMBAT =
 	"\v007To use an item in Combat, invoke the Use command on your turn!";
 
 const char *const Resources::NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abilities!";
@@ -1422,7 +1422,7 @@ const char *const Resources::QUEST_ITEMS_DATA =
 	"\f04 * \fd%s\n"
 	"\f04 * \fd%s\n"
 	"\f04 * \fd%s";
-const char *const Resources::CURRENT_QUESTS_DATA = 
+const char *const Resources::CURRENT_QUESTS_DATA =
 	"\r\x1\fd\x3""c\t000\v000Current Quests\x3l\x2\n"
 	"%s\n"
 	"\n"
@@ -1441,7 +1441,7 @@ const char *const Resources::AUTO_NOTES_DATA =
 	"%s\x3l\n"
 	"%s\x3l";
 
-const char *const Resources::REST_COMPLETE = 
+const char *const Resources::REST_COMPLETE =
 	"\v000\t0008 hours pass.  Rest complete.\n"
 	"%s\n"
 	"%d food consumed.";
@@ -1460,10 +1460,10 @@ const char *const Resources::YOUR_PARTY_IS_FULL = "\v007Your party is full!";
 
 const char *const Resources::HAS_SLAYER_SWORD =
 	"\v000\t000This character has the Xeen Slayer Sword and cannot be deleted!";
-const char *const Resources::SURE_TO_DELETE_CHAR = 
+const char *const Resources::SURE_TO_DELETE_CHAR =
 	"Are you sure you want to delete %s the %s?";
 
-const char *const Resources::CREATE_CHAR_DETAILS = 
+const char *const Resources::CREATE_CHAR_DETAILS =
 	"\f04\x3""c\x2\t144\v119\f37R\f04oll\t144\v149\f37C\f04reate"
 	"\t144\v179\f37ESC\f04\x3l\x1\t195\v021\f37M\f04gt"
 	"\t195\v045\f37I\f04nt\t195\v069\f37P\f04er\t195\v093\f37E\f04nd"
@@ -1514,7 +1514,7 @@ const char *const Resources::COMBAT_DETAILS = "\r\f00\x3""c\v000\t000\x2""Combat
 const char *Resources::NOT_ENOUGH_TO_CAST = "\x3""c\v010Not enough %s to Cast %s";
 const char *Resources::SPELL_CAST_COMPONENTS[2] = { "Spell Points", "Gems" };
 
-const char *const Resources::CAST_SPELL_DETAILS = 
+const char *const Resources::CAST_SPELL_DETAILS =
 	"\r\x2\x3""c\v122\t013\f37C\fdast\t040\f37N\fdew"
 	"\t067ESC\x1\t000\v000\x3""cCast Spell\n"
 	"\n"
@@ -1586,7 +1586,7 @@ const int Resources::TOWN_MAP_NUMBERS[2][5] = {
 	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }
 };
 
-const char *const Resources::MONSTER_DETAILS = 
+const char *const Resources::MONSTER_DETAILS =
 	"\x3l\n"
 	"%s\x3""c\t100%s\t140%u\t180%u\x3r\t000%s";
 

@@ -54,7 +54,7 @@ SpriteResource::~SpriteResource() {
 SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	delete[] _data;
 	_index.clear();
-	
+
 	_filesize = src._filesize;
 	_data = new byte[_filesize];
 	Common::copy(src._data, src._data + _filesize, _data);
@@ -100,9 +100,9 @@ void SpriteResource::clear() {
 	_filesize = 0;
 }
 
-void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
+void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
 		const Common::Rect &clipRect, int flags, int scale) {
-	static const uint SCALE_TABLE[] = { 
+	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
 	};
@@ -126,9 +126,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	Common::Point destPos;
 	destPos.x = pt.x + getScaledVal(xOffset, scaleMaskX);
 	destPos.x += (width - getScaledVal(width, scaleMaskX)) / 2;
-	
+
 	destPos.y = pt.y + getScaledVal(yOffset, scaleMaskY);
-	
+
 	// If the flags allow the dest surface to be resized, ensure dest surface is big enough
 	Common::Rect bounds = clipRect;
 	if (flags & SPRFLAG_RESIZE) {
@@ -136,7 +136,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			dest.create(xOffset + width, yOffset + height);
 		bounds = Common::Rect(0, 0, dest.w, dest.h);
 	}
-	
+
 	uint16 scaleMaskXCopy = scaleMaskX;
 	Common::Rect drawBounds;
 	drawBounds.left = SCREEN_WIDTH;
@@ -156,10 +156,10 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			continue;
 		}
 
-		// Roll the scale mask 
+		// Roll the scale mask
 		uint bit = (scaleMaskY >> 15) & 1;
 		scaleMaskY = ((scaleMaskY & 0x7fff) << 1) + bit;
-		
+
 		if (!bit) {
 			// Not a line to be drawn due to scaling down
 			f.skip(lineLength);
@@ -170,7 +170,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		} else {
 			scaleMaskX = scaleMaskXCopy;
 			xOffset = f.readByte();
-			
+
 			// Initialize the array to hold the temporary data for the line. We do this to make it simpler
 			// to handle both deciding which pixels to draw in a scaled image, as well as when images
 			// have been horizontally flipped. Note that we allocate an extra line for before and after our
@@ -308,7 +308,7 @@ void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos, 
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, int flags, int scale) {
 
 	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
@@ -330,7 +330,7 @@ uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
 		scaleMask = ((scaleMask & 0x7fff) << 1) + bit;
 		result += bit;
 	}
-	
+
 	return result;
 }
 

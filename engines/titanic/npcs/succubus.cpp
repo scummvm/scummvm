@@ -183,7 +183,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_startFrame2 = file->readNumber();
 	_endFrame2 = file->readNumber();
 	_field140 = file->readNumber();
-	
+
 	_v2 = file->readNumber();
 	_startFrame5 = file->readNumber();
 	_endFrame5 = file->readNumber();
@@ -282,7 +282,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 		CChicken *chicken = dynamic_cast<CChicken *>(item);
 		bool chickenFlag = chicken ? chicken->_string6 != "None" : false;
-		
+
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {
 			playSound("z#23.wav");
@@ -353,7 +353,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 		_enabled = false;
 		if (_startFrame10 >= 0)
 			playSound("z#27.wav", 100);
-		
+
 		if (_field15C)
 			setVisible(false);
 	}
@@ -397,7 +397,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		petDisplayMessage(2, NOTHING_IN_SUCCUBUS_TRAY);
 	} else {
 		_field19C = 0;
-		
+
 		CRoomFlags roomFlags = _roomFlags;
 		if (!pet->testRooms5(roomFlags) || getPassengerClass() > 0) {
 			roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
@@ -512,7 +512,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _endFrame10) {
 		if (_startFrame11 >= 0)
 			playSound("z#30.wav", 100);
-		
+
 		if (_field15C) {
 			_field15C = false;
 			setVisible(false);

@@ -75,7 +75,7 @@ private:
 		byte height;
 		int16 offset;
 	};
-	
+
 	byte _fontHeight;
 	uint16 _numChars;
 	Charinfo *_chars;

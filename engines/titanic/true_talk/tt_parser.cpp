@@ -147,16 +147,16 @@ int TTparser::normalize(TTsentence *sentence) {
 			case '!':
 				sentence->set38(3);
 				break;
-			
+
 			case '\'':
 				if (!normalizeContraction(srcLine, index, *destLine))
 					flag = true;
 				break;
-			
+
 			case '.':
 				sentence->set38(1);
 				break;
-			
+
 			case ':':
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal) {
@@ -166,7 +166,7 @@ int TTparser::normalize(TTsentence *sentence) {
 					flag = true;
 				}
 				break;
-			
+
 			case ';':
 				commandVal = isEmoticon(srcLine, index);
 				if (commandVal == 6) {
@@ -177,7 +177,7 @@ int TTparser::normalize(TTsentence *sentence) {
 					index += 2;
 				}
 				break;
-			
+
 			case '<':
 				++index;
 				commandVal = isEmoticon(srcLine, index);
@@ -315,7 +315,7 @@ bool TTparser::normalizeContraction(const TTstring &srcLine, int srcIndex, TTstr
 				destLine.deleteLastChar();
 				destLine.deleteLastChar();
 				destLine += "m";
-			} else if (srcLine.hasSuffix(" sha") || 
+			} else if (srcLine.hasSuffix(" sha") ||
 					(srcIndex == 4 && srcLine.hasSuffix("sha"))) {
 				// shan't -> shall not
 				destLine.deleteLastChar();
@@ -726,7 +726,7 @@ int TTparser::loadRequests(TTword *word) {
 int TTparser::considerRequests(TTword *word) {
 	if (!_nodesP || !word)
 		return 0;
-	
+
 	TTconcept *concept = nullptr;
 	int status = 0;
 	bool flag = false;
@@ -802,7 +802,7 @@ int TTparser::considerRequests(TTword *word) {
 				} else {
 					status = _sentenceConcept->createConcept(0, 2, word);
 				}
-					
+
 				if (!status && !_sentenceConcept->_concept4P && _sentenceConcept->_concept0P) {
 					TTconcept *oldConcept = _sentenceConcept->_concept2P;
 					flag = filterConcepts(5, 2);
@@ -814,14 +814,14 @@ int TTparser::considerRequests(TTword *word) {
 				}
 			}
 			break;
-			
+
 		case SEEK_OBJECT_OVERRIDE:
 			if ((word->_wordClass == WC_THING || word->_wordClass == WC_PRONOUN) &&
 					_sentence->fn2(2, TTstring("thePlayer"), _sentenceConcept) &&
 					!_sentenceConcept->_concept3P) {
 				_sentenceConcept->_concept3P = _sentenceConcept->_concept2P;
 				_sentenceConcept->_concept2P = nullptr;
-					
+
 				flag = filterConcepts(5, 2);
 				if (!flag) {
 					status = _sentenceConcept->createConcept(0, 2, word);
@@ -893,7 +893,7 @@ int TTparser::considerRequests(TTword *word) {
 			if (word->_id == 601) {
 				if (_conceptP->findByWordClass(WC_THING))
 					status = _conceptP->setOwner(word, false);
-					
+
 				flag = true;
 			}
 			break;
@@ -992,11 +992,11 @@ int TTparser::considerRequests(TTword *word) {
 					oldNode->_field1C = 2;
 					_sentenceConcept = oldNode->addSibling();
 					concept = nullptr;
-						
+
 					_sentenceConcept->_concept1P = oldNode->_concept1P;
 					_sentenceConcept->_concept5P = oldNode->_concept5P;
 					_sentenceConcept->_concept2P = oldNode->_concept2P;
-						
+
 					if (seekVal) {
 						seekVal = 0;
 
@@ -1107,7 +1107,7 @@ int TTparser::considerRequests(TTword *word) {
 					if (!_sentenceConcept->_concept0P) {
 						newPictP = new TTpicture(TTstring("?"), WC_THING, 0, 0, 0, 0, 0);
 						newConceptP = new TTconcept(newPictP);
-							
+
 						_sentenceConcept->_concept0P = newConceptP;
 						delete newPictP;
 						addNode(4);
@@ -1195,7 +1195,7 @@ int TTparser::considerRequests(TTword *word) {
 		case MKTAG('H', 'E', 'L', 'P'):
 			if (_sentence->_field2C == 1)
 				_sentence->_field2C = 18;
-			
+
 			flag = true;
 			break;
 
@@ -1273,7 +1273,7 @@ int TTparser::considerRequests(TTword *word) {
 			break;
 		}
 
-		TTparserNode *nextP = dynamic_cast<TTparserNode *>(nodeP->_nextP);		
+		TTparserNode *nextP = dynamic_cast<TTparserNode *>(nodeP->_nextP);
 		if (flag)
 			delete nodeP;
 		nodeP = nextP;
@@ -1288,7 +1288,7 @@ int TTparser::processRequests(TTword *word) {
 	switch (status) {
 	case 0:
 		status = considerRequests(word);
-		
+
 		// Iterate through the words
 		while (_currentWordP) {
 			considerRequests(_currentWordP);
@@ -1388,7 +1388,7 @@ int TTparser::checkForAction() {
 	if (_conceptP && _currentWordP) {
 		// Firstly we need to get the next word to process, and remove it from
 		// the list pointed to by _currentWordP
-		TTword *word = _currentWordP;	
+		TTword *word = _currentWordP;
 		if (word->_nextP) {
 			// Chain of words, so we need to find the last word of the chain,
 			// and set the last-but-one's _nextP to nullptr to detach the last one
@@ -1410,7 +1410,7 @@ int TTparser::checkForAction() {
 				word->_text == "done") {
 			TTstring doStr("do");
 			TTaction *action = new TTaction(doStr, WC_ACTION, 112, 0, _sentenceConcept->get18());
-			
+
 			if (!action->isValid()) {
 				status = SS_4;
 			} else {

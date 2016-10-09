@@ -45,7 +45,7 @@ void ButtonContainer::restoreButtons() {
 	_buttons = _savedButtons.pop();
 }
 
-void ButtonContainer::addButton(const Common::Rect &bounds, int val, 
+void ButtonContainer::addButton(const Common::Rect &bounds, int val,
 		SpriteResource *sprites) {
 	_buttons.push_back(UIButton(bounds, val, sprites, true));
 }
@@ -80,7 +80,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	} else if (events.isKeyPending()) {
 		Common::KeyState keyState;
 		events.getKey(keyState);
-		
+
 		_buttonValue = keyState.keycode;
 		if (_buttonValue == Common::KEYCODE_KP8)
 			_buttonValue = Common::KEYCODE_UP;
@@ -137,7 +137,7 @@ void CreditsScreen::show(XeenEngine *vm) {
 void CreditsScreen::execute() {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-	
+
 	// Handle drawing the credits screen
 	doScroll(true, false);
 	screen._windows[GAME_WINDOW].close();
@@ -145,7 +145,7 @@ void CreditsScreen::execute() {
 	screen.loadBackground("marb.raw");
 	screen._windows[0].writeString(Res.CREDITS);
 	doScroll(false, false);
-	
+
 	events.setCursor(0);
 	screen._windows[0].update();
 	clearButtons();

@@ -42,9 +42,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
-	
+
 	Character *startingChar = c;
-	ItemCategory category = mode == ITEMMODE_RECHARGE || mode == ITEMMODE_COMBAT ? 
+	ItemCategory category = mode == ITEMMODE_RECHARGE || mode == ITEMMODE_COMBAT ?
 		CATEGORY_MISC : CATEGORY_WEAPON;
 	int varA = mode == ITEMMODE_COMBAT ? 1 : 0;
 	if (varA != 0)
@@ -88,7 +88,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					Res.BTN_SELL, Res.BTN_IDENTIFY, Res.BTN_FIX);
 			} else if (mode != ITEMMODE_ENCHANT  && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT1,
-					category == 3 ? Res.BTN_USE : Res.BTN_EQUIP, 
+					category == 3 ? Res.BTN_USE : Res.BTN_EQUIP,
 					Res.BTN_REMOVE, Res.BTN_DISCARD, Res.BTN_QUEST);
 			} else if (mode == ITEMMODE_ENCHANT) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_ENCHANT);
@@ -138,7 +138,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				_itemsDrawList[idx]._y = 10 + idx * 9;
 
 				switch (category) {
-				case CATEGORY_WEAPON: 
+				case CATEGORY_WEAPON:
 				case CATEGORY_ARMOR:
 				case CATEGORY_ACCESSORY: {
 					XeenItem &i = (category == CATEGORY_WEAPON) ? c->_weapons[idx] :
@@ -147,7 +147,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					if (i._id) {
 						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
 								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
-							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE1, 
+							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE1,
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str()));
 						} else {
@@ -225,7 +225,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				// Original uses var in this block that's never set?!
 				const int v1 = 0;
 				screen._windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
-					Res.CATEGORY_NAMES[category], 
+					Res.CATEGORY_NAMES[category],
 					v1 ? "" : "s", party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
@@ -287,8 +287,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			default:
 				break;
 			}
-		} 
-		
+		}
+
 		// If it's time to do an item action, take care of it
 		if (actionIndex >= 0) {
 			int result = doItemOptions(*c, actionIndex, itemIndex, category, mode);
@@ -307,7 +307,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			// Otherwise, result and continue showing dialog
 			actionIndex = -1;
 		}
-		
+
 		// Wait for a selection
 		_buttonValue = 0;
 		while (!_vm->shouldQuit() && !_buttonValue) {
@@ -332,11 +332,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case Common::KEYCODE_F4:
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
-			if (!varA && mode != ITEMMODE_3 && mode != ITEMMODE_ENCHANT 
+			if (!varA && mode != ITEMMODE_3 && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD
 					&& party._mazeId != 0) {
 				_buttonValue -= Common::KEYCODE_F1;
-				
+
 				if (_buttonValue < (int)(_vm->_mode == MODE_COMBAT ?
 						combat._combatParty.size() : party._activeParty.size())) {
 					// Character number is valid
@@ -391,7 +391,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			// Select an item
 			if (mode == ITEMMODE_3)
 				break;
-				
+
 			_buttonValue -= Common::KEYCODE_1;
 			if (_buttonValue != itemIndex) {
 				// Check whether the new selection has an associated item
@@ -431,7 +431,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			if (mode == ITEMMODE_CHAR_INFO)
 				actionIndex = 3;
 			break;
-			
+
 		case Common::KEYCODE_e:
 			if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_ENCHANT ||
 					mode == ITEMMODE_TO_GOLD) {
@@ -447,7 +447,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				mode = ITEMMODE_REPAIR;
 				c = startingChar;
 				redrawFlag = REDRAW_TEXT;
-			}	
+			}
 			break;
 
 		case Common::KEYCODE_g:
@@ -653,7 +653,7 @@ void ItemsDialog::setEquipmentIcons() {
 					i._frame = 11;
 				break;
 			}
-			
+
 			default:
 				break;
 			}
@@ -684,7 +684,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	default:
 		break;
 	}
-	
+
 	switch (category) {
 	case CATEGORY_WEAPON:
 	case CATEGORY_ARMOR:
@@ -694,7 +694,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			(mode == 1 ? c->_armor[itemIndex] : c->_accessories[itemIndex]);
 		amount1 = (mode == 0) ? Res.WEAPON_BASE_COSTS[i._id] :
 			(mode == 1 ? Res.ARMOR_BASE_COSTS[i._id] : Res.ACCESSORY_BASE_COSTS[i._id]);
-		
+
 		if (i._material > 36 && i._material < 59) {
 			switch (i._material) {
 			case 37:
@@ -719,7 +719,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			amount2 = Res.ELEMENTAL_DAMAGE[i._material] * 100;
 		else if (i._material > 58)
 			amount3 = Res.ELEMENTAL_DAMAGE[i._material - 59 + 7] * 100;
-		
+
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
 		case ITEMMODE_2:
@@ -741,7 +741,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		XeenItem &i = c->_misc[itemIndex];
 		amount1 = Res.MISC_MATERIAL_COSTS[i._material];
 		amount4 = Res.MISC_BASE_COSTS[i._id];
-		
+
 		switch (mode) {
 		case ITEMMODE_BLACKSMITH:
 		case ITEMMODE_2:

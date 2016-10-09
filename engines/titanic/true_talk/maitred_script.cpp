@@ -106,7 +106,7 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			applyResponse();
 		}
 
-		return 2;		
+		return 2;
 	}
 
 	if (++_answerCtr > 50 || sentence->localWord("stop") || sentence->localWord("enough")

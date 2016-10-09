@@ -41,7 +41,7 @@ CString CString::left(uint count) const {
 
 CString CString::right(uint count) const {
 	uint strSize = size();
-	return (count > strSize) ? CString() : 
+	return (count > strSize) ? CString() :
 		CString(c_str() + strSize - count, c_str() + strSize);
 }
 
@@ -85,7 +85,7 @@ FileType CString::fileTypeSuffix() const {
 		return FILETYPE_WAV;
 	else if (ext == "2" || ext == "3")
 		return FILETYPE_MOVIE;
-	
+
 	ext = right(3);
 	if (ext == "tga" || ext == "jpg")
 		return FILETYPE_IMAGE;

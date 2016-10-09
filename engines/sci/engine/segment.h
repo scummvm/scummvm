@@ -834,7 +834,7 @@ public:
 			}
 		}
 	}
-	
+
 	/**
 	 * Copies the string data held by this array into a new Common::String.
 	 */

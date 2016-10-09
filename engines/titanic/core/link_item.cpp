@@ -57,8 +57,8 @@ CString CLinkItem::formName() {
 			view->getName().c_str(), destView->getName().c_str());
 
 	case 3:
-		return CString::format("_TRACK,%d,%s,%d,%s", 
-			node->_nodeNumber, view->getName().c_str(), 
+		return CString::format("_TRACK,%d,%s,%d,%s",
+			node->_nodeNumber, view->getName().c_str(),
 			destNode->_nodeNumber, destView->getName().c_str());
 
 	case 4:

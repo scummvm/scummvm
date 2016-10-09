@@ -45,7 +45,7 @@ void OutFile::finalize() {
 
 /*------------------------------------------------------------------------*/
 
-SavesManager::SavesManager(XeenEngine *vm, Party &party) : 
+SavesManager::SavesManager(XeenEngine *vm, Party &party) :
 		BaseCCArchive(), _vm(vm), _party(party) {
 	SearchMan.add("saves", this, 0, false);
 	_data = nullptr;
@@ -82,7 +82,7 @@ void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP)
 Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common::String &name) const {
 	CCEntry ccEntry;
 
-	// If the given resource has already been perviously "written" to the 
+	// If the given resource has already been perviously "written" to the
 	// save manager, then return that new resource
 	uint16 id = BaseCCArchive::convertNameToId(name);
 	if (_newData.contains(id)) {

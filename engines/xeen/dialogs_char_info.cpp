@@ -206,7 +206,7 @@ void CharacterInfo::execute(int charIndex) {
 			goto exit;
 		}
 	} while (!_vm->shouldQuit());
-exit:	
+exit:
 	w.close();
 	intf.unhighlightChar();
 	_vm->_mode = oldMode;
@@ -400,7 +400,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			stat1, stat2);
 		bounds.setHeight(42);
 		break;
-		
+
 	case 11:
 		// Spell Points
 		stat1 = c._currentSp;

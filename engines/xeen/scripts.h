@@ -132,7 +132,7 @@ struct MirrorEntry {
 	int _direction;
 
 	MirrorEntry() : _mapId(0), _direction(DIR_ALL) {}
-	
+
 	bool synchronize(Common::SeekableReadStream &s);
 };
 
@@ -174,7 +174,7 @@ private:
 	 * Displays a door text message using the large font
 	 */
 	void cmdDoorTextLrg(Common::Array<byte> &params);
-	
+
 	/**
 	 * Show a sign text on-screen
 	 */

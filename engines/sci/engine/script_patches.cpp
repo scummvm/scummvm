@@ -1882,7 +1882,7 @@ static const uint16 kq7SignatureSubtitleFix3[] = {
 static const uint16 kq7PatchSubtitleFix3[] = {
 	PATCH_ADDTOOFFSET(+2),              // skip over "pToa initialized code"
 	0x2f, 0x0c,                         // bt [skip init code] - saved 1 byte
-	0x38, 
+	0x38,
 	PATCH_GETORIGINALBYTE(+6),
 	PATCH_GETORIGINALBYTE(+7),          // pushi (init)
 	0x76,                               // push0
@@ -3916,7 +3916,7 @@ static const uint16 qfg3PatchRoom750Bounds1[] = {
 static const uint16 qfg3SignatureRoom750Bounds2[] = {
 	// (ego x: 294 y: 39)
 	0x78,                               // push1 ("x")
-	0x78,                               // push1 
+	0x78,                               // push1
 	0x38, SIG_UINT16(294),              // pushi 294
 	0x76,                               // push0 ("y")
 	0x78,                               // push1

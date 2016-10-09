@@ -78,7 +78,7 @@ public:
 
 	virtual void setWindowHandle(int v);
 	virtual bool resetWindowHandle(int v);
-	
+
 	/**
 	 * Sets the video mode
 	 */
@@ -88,17 +88,17 @@ public:
 	 * Handles drawing the cursors
 	 */
 	virtual void drawCursors() = 0;
-	
+
 	/**
 	 * Locks a specified surface number for access and returns a pointer to it
 	 */
 	virtual CVideoSurface *lockSurface(SurfaceNum surfaceNum) = 0;
-	
+
 	/**
 	 * Unlocks a previously locked surface
 	 */
 	virtual void unlockSurface(CVideoSurface *surface) = 0;
-	
+
 	/**
 	 * Gets a specified surface number
 	 */
@@ -108,7 +108,7 @@ public:
 	 * Return the front render surface
 	 */
 	virtual CVideoSurface *getFrontRenderSurface() const = 0;
-	
+
 	/**
 	 * Fill an area with a specific color
 	 */
@@ -191,7 +191,7 @@ public:
 	 * Creates a surface of a given size
 	 */
 	virtual CVideoSurface *createSurface(int w, int h) = 0;
-	
+
 	/**
 	 * Creates a surface from a specified resource
 	 */
@@ -213,7 +213,7 @@ public:
 	 * Show the mouse cursor
 	 */
 	virtual void showCursor() = 0;
-	
+
 	/**
 	 * Hide the mouse cursor
 	 */
@@ -272,12 +272,12 @@ public:
 	 * Locks a specified surface number for access and returns a pointer to it
 	 */
 	virtual CVideoSurface *lockSurface(SurfaceNum surfaceNum);
-	
+
 	/**
 	 * Unlocks a previously locked surface
 	 */
 	virtual void unlockSurface(CVideoSurface *surface);
-	
+
 	/**
 	 * Gets a specified surface number
 	 */
@@ -373,7 +373,7 @@ public:
 	 * Creates a surface of a given size
 	 */
 	virtual CVideoSurface *createSurface(int w, int h);
-	
+
 	/**
 	 * Creates a surface from a specified resource
 	 */
@@ -383,7 +383,7 @@ public:
 	 * Show the mouse cursor
 	 */
 	virtual void showCursor();
-	
+
 	/**
 	 * Hide the mouse cursor
 	 */

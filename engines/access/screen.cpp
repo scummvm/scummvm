@@ -300,10 +300,10 @@ void Screen::cyclePaletteBackwards() {
 		_vm->_timers[6]._flag++;
 		byte *pStart = &_rawPalette[_cycleStart * 3];
 		byte *pEnd = &_rawPalette[_endCycle * 3];
-		
+
 		for (int idx = _startCycle; idx < _endCycle; ++idx) {
 			g_system->getPaletteManager()->setPalette(pStart, idx, 1);
-			
+
 			pStart += 3;
 			if (pStart == pEnd)
 				pStart = &_rawPalette[_cycleStart * 3];

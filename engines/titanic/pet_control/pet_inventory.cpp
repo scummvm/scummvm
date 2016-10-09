@@ -53,7 +53,7 @@ void CPetInventory::draw(CScreenManager *screenManager) {
 	_text.draw(screenManager);
 }
 
-Rect CPetInventory::getBounds() const { 
+Rect CPetInventory::getBounds() const {
 	return _movie ? _movie->getBounds() : Rect();
 }
 
@@ -231,7 +231,7 @@ CGameObject *CPetInventory::getImage(int index) {
 			return _itemGlyphs[index];
 		}
 	}
-	
+
 	return nullptr;
 }
 

@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-const MSGMAP *CMessageTarget::getMessageMap() const { 
+const MSGMAP *CMessageTarget::getMessageMap() const {
 	return getThisMessageMap();
 }
 

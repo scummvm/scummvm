@@ -100,7 +100,7 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		playSound("a#48.wav");
 		playSound("a#47.wav");
 	}
-	
+
 	return true;
 }
 

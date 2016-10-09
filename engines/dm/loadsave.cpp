@@ -393,7 +393,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	file->flush();
 	file->finalize();
 	delete file;
-	
+
 	return true;
 }
 

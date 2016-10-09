@@ -71,7 +71,7 @@ bool CAutoMusicPlayerBase::TimerMsg(CTimerMsg *msg) {
 bool CAutoMusicPlayerBase::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 	if (_isRepeated)
 		playGlobalSound(_filename, _volumeMode, _initialMute, true, 0);
-	
+
 	return true;
 }
 

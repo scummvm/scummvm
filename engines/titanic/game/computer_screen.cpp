@@ -99,7 +99,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		playClip(51, 150);
 		playSound("a#31.wav");
 		playClip(151, 200);
-		
+
 		handle = playSound("a#27.wav");
 		playClip(200, 306);
 		playSound("a#30.wav");
@@ -116,7 +116,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
 		sleep(8000);
-		
+
 		playClip(450, 492);
 		startTalking("Doorbot", 0x36121);
 		playClip(492, 522);

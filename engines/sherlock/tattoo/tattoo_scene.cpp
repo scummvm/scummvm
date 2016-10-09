@@ -49,7 +49,7 @@ struct ShapeEntry {
 		_shape(nullptr), _person(person), _yp(yp), _isAnimation(false), _ordering(ordering) {}
 	ShapeEntry(Object *shape, int yp, int ordering) :
 		_shape(shape), _person(nullptr), _yp(yp), _isAnimation(false), _ordering(ordering) {}
-	ShapeEntry(int yp, int ordering) : 
+	ShapeEntry(int yp, int ordering) :
 		_shape(nullptr), _person(nullptr), _yp(yp), _isAnimation(true), _ordering(ordering) {}
 };
 typedef Common::List<ShapeEntry> ShapeList;
@@ -99,7 +99,7 @@ bool TattooScene::loadScene(const Common::String &filename) {
 
 	// If it's a new song, then start it up
 	if (music._currentSongName.compareToIgnoreCase(music._nextSongName)) {
-		// WORKAROUND: Stop playing music after Diogenes fire scene in the intro, 
+		// WORKAROUND: Stop playing music after Diogenes fire scene in the intro,
 		// since it overlaps slightly into the next scene
 		if (talk._scriptName == "prol80p" && _currentScene == 80) {
 			music.stopMusic();
@@ -361,7 +361,7 @@ void TattooScene::doBgAnim() {
 		if (people[idx]._type == CHARACTER)
 			people[idx].checkSprite();
 	}
-	
+
 	for (uint idx = 0; idx < _bgShapes.size(); ++idx) {
 		if (_bgShapes[idx]._type == ACTIVE_BG_SHAPE)
 			_bgShapes[idx].checkObject();
@@ -539,10 +539,10 @@ void TattooScene::doBgAnimDrawSprites() {
 		if (obj._type == ACTIVE_BG_SHAPE || obj._type == REMOVE) {
 			if (_goToScene == -1) {
 				if (obj._scaleVal == SCALE_THRESHOLD)
-					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y, 
+					screen.flushImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
 					&obj._oldSize.x, &obj._oldSize.y);
 				else
-					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y, 
+					screen.flushScaleImage(obj._imageFrame, obj._position, &obj._oldPosition.x, &obj._oldPosition.y,
 					&obj._oldSize.x, &obj._oldSize.y, obj._scaleVal);
 
 				if (obj._type == REMOVE)
@@ -595,7 +595,7 @@ int TattooScene::getScaleVal(const Point32 &pt) {
 		}
 	}
 
-	// If it wasn't found, we may be off screen to the left or right, so find the scale zone 
+	// If it wasn't found, we may be off screen to the left or right, so find the scale zone
 	// that would apply to the y val passed in disregarding the x
 	if (!found) {
 		for (uint idx = 0; idx < _scaleZones.size() && !found; ++idx) {
@@ -659,7 +659,7 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 
 	if (ui._windowOpen)
 		ui.banishWindow();
-	
+
 	// Open up the room resource file and get the data for the animation
 	Common::SeekableReadStream *stream = res.load(_roomFilename);
 	stream->seek(44 + cAnimNum * 4);
@@ -768,7 +768,7 @@ int TattooScene::findBgShape(const Common::Point &pt) {
 	for (int idx = (int)_bgShapes.size() - 1; idx >= 0 && result == -1; --idx) {
 		Object &o = _bgShapes[idx];
 
-		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN && 
+		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN &&
 				(o._aType <= PERSON || (ui._menuMode == LAB_MODE && o._aType == SOLID))) {
 			if (o.getNewBounds().contains(pt))
 				result = idx;

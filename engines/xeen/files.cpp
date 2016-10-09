@@ -118,14 +118,14 @@ int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
 
 /*------------------------------------------------------------------------*/
 
-CCArchive::CCArchive(const Common::String &filename, bool encoded): 
+CCArchive::CCArchive(const Common::String &filename, bool encoded):
 		BaseCCArchive(), _filename(filename), _encoded(encoded) {
 	File f(filename);
 	loadIndex(&f);
 }
 
-CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix, 
-		bool encoded): BaseCCArchive(), _filename(filename), 
+CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix,
+		bool encoded): BaseCCArchive(), _filename(filename),
 		_prefix(prefix), _encoded(encoded) {
 	_prefix.toLowercase();
 	File f(filename);

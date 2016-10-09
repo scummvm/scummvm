@@ -45,7 +45,7 @@ protected:
 
 	Input(XeenEngine *vm, Window *window) : ButtonContainer(vm), _window(window) {}
 public:
-	static int show(XeenEngine *vm, Window *window, Common::String &line, 
+	static int show(XeenEngine *vm, Window *window, Common::String &line,
 		uint maxLen, int maxWidth, bool isNumeric = false);
 };
 
@@ -53,10 +53,10 @@ class StringInput : public Input {
 protected:
 	StringInput(XeenEngine *vm);
 
-	int execute(bool type, const Common::String &expected, 
+	int execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode);
 public:
-	static int show(XeenEngine *vm, bool type, const Common::String &msg1, 
+	static int show(XeenEngine *vm, bool type, const Common::String &msg1,
 		const Common::String &msg2, int opcode);
 };
 

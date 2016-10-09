@@ -68,7 +68,7 @@ void CBasicRemoteGlyph::draw2(CScreenManager *screenManager) {
 }
 
 bool CBasicRemoteGlyph::MouseButtonDownMsg(const Point &pt) {
-	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt); 
+	return _gfxElement && _gfxElement->MouseButtonDownMsg(pt);
 }
 
 bool CBasicRemoteGlyph::MouseButtonUpMsg(const Point &pt) {
@@ -173,7 +173,7 @@ bool CTelevisionControlGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) 
 		_down = getElement(2);
 		_onOff = getElement(4);
 	}
-	
+
 	return true;
 }
 

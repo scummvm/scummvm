@@ -30,7 +30,7 @@
 
 namespace Xeen {
 
-Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog, 
+Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, int isCasting) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
 	Character *result = dlg->execute(priorDialog, c, isCasting);
@@ -228,7 +228,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
 
 				if (isCasting) {
-					selection = newSelection;					
+					selection = newSelection;
 				} else {
 					Common::String spellName = _spells[newSelection]._name;
 					Common::String msg = (castingCopy & 0x80) ?
@@ -499,7 +499,7 @@ int CastSpell::execute(Character *&c) {
 			int spCost = spells.calcSpellPoints(spellId, c->getCurrentLevel());
 
 			w.writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
-				c->_name.c_str(), spells._spellNames[spellId].c_str(), 
+				c->_name.c_str(), spells._spellNames[spellId].c_str(),
 				spCost, gemCost, c->_currentSp));
 			drawButtons(&screen);
 			w.update();
@@ -586,7 +586,7 @@ Character *SpellOnWho::show(XeenEngine *vm, int spellId) {
 
 	if (result == -1)
 		return nullptr;
-	
+
 	Combat &combat = *vm->_combat;
 	Party &party = *vm->_party;
 	return combat._combatMode == 2 ? combat._combatParty[result] :
@@ -851,7 +851,7 @@ bool LloydsBeacon::execute() {
 			c._lloydMap = party._mazeId;
 			c._lloydPosition = party._mazePosition;
 			c._lloydSide = isDarkCc ? 1 : 0;
-			
+
 			_buttonValue = Common::KEYCODE_ESCAPE;
 			break;
 		}
@@ -959,7 +959,7 @@ int TownPortal::execute() {
 		townNames[3].c_str(), townNames[4].c_str()
 	));
 	w.update();
-	
+
 	// Get the town number
 	int townNumber;
 	Common::String num;

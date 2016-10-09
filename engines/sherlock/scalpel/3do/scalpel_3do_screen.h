@@ -42,7 +42,7 @@ protected:
 	/**
 	 * Draws a surface at a given position within this surface with transparency
 	 */
-	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped, 
+	virtual void transBlitFromUnscaled(const Graphics::Surface &src, const Common::Point &pt, bool flipped,
 		int overrideColor);
 public:
 	Scalpel3DOScreen(SherlockEngine *vm);

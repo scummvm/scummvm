@@ -334,7 +334,7 @@ void Screen::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 								destP += width2 + widthDiff2;
 							}
 
-							addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2, 
+							addDirtyRect(Common::Rect(offset.x, offset.y, offset.x + width2,
 								offset.y + height1));
 						}
 					}

@@ -137,7 +137,7 @@ bool CTelevision::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 		_v3 = 0;
 	}
 
-	return true; 
+	return true;
 }
 
 bool CTelevision::EnterViewMsg(CEnterViewMsg *msg) {
@@ -219,7 +219,7 @@ bool CTelevision::PETActivateMsg(CPETActivateMsg *msg) {
 			stopMovie();
 			if (isSoundActive(_soundHandle))
 				stopSound(_soundHandle, 0);
-			
+
 			setVisible(false);
 		}
 

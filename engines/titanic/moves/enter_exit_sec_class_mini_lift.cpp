@@ -63,7 +63,7 @@ bool CEnterExitSecClassMiniLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_statics->_viewName = getRoomNodeName() + ".W";
 		changeView("SecClassLittleLift.Node 1.E");
 		_statics->_state = 1;
-		
+
 		CPetControl *pet = getPetControl();
 		if (pet) {
 			pet->setRoomsRoomNum(_roomNum);

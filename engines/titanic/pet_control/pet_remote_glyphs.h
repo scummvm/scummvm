@@ -90,7 +90,7 @@ private:
 	CString _gfxName, _tooltip, _msgString;
 public:
 	CBasicRemoteGlyph(const CString &gfxName, const CString &tooltip,
-		const CString &msgString) : CPetRemoteGlyph(), 
+		const CString &msgString) : CPetRemoteGlyph(),
 		_gfxName(gfxName), _tooltip(tooltip), _msgString(msgString) {}
 
 	/**
@@ -112,7 +112,7 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
@@ -144,7 +144,7 @@ public:
 	/**
 	 * Called for mouse button up messages to the default element
 	 */
-	bool elementMouseButtonUpMsg(const Point &pt, int petNum);	
+	bool elementMouseButtonUpMsg(const Point &pt, int petNum);
 };
 
 class CRemoteGotoGlyph : public CPetRemoteGlyph {
@@ -154,7 +154,7 @@ protected:
 	CString _gfxName, _tooltip;
 public:
 	CRemoteGotoGlyph() : CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21) {}
-	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip) : 
+	CRemoteGotoGlyph(const CString &gfxName, const CString &tooltip) :
 		CPetRemoteGlyph(), _gfxElement(nullptr), _roomIndex(21),
 		_gfxName(gfxName), _tooltip(tooltip) {}
 
@@ -177,7 +177,7 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
@@ -223,7 +223,7 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
@@ -257,7 +257,7 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
@@ -318,7 +318,7 @@ public:
 	virtual bool MouseButtonUpMsg(const Point &pt) {
 		return elementMouseButtonUpMsg(pt, 0);
 	}
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */

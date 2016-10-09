@@ -79,7 +79,7 @@ public:
 	 * Get a frame from the visage
 	 */
 	void getFrame(ObjectSurface &s, int frameNum);
-	
+
 	/**
 	 * Return the number of frames
 	 */

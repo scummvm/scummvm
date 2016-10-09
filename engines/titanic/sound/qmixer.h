@@ -156,7 +156,7 @@ struct QMIXPLAYPARAMS {
 	Audio::Mixer::SoundType _soundType;
 
 	QMIXPLAYPARAMS() : dwSize(36), lpImage(nullptr), hwndNotify(0), callback(nullptr),
-		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0), 
+		dwUser(nullptr), lStart(0), lStartLoop(0), lEndLoop(0), lEnd(0),
 		lpChannelParams(nullptr), _soundType(Audio::Mixer::kPlainSoundType)  {}
 };
 
@@ -165,7 +165,7 @@ struct QMIXPLAYPARAMS {
  * QSound Labs, Inc. Which itself is apparently based on Microsoft's
  * WaveMix API.
  *
- * It does not currently have any actual code from the library, 
+ * It does not currently have any actual code from the library,
  * and instead remaps calls to ScummVM's existing mixer where possible.
  * This means that advanced features of the QMixer library, like being
  * able to set up both the player and sounds at different positions are
@@ -189,7 +189,7 @@ class QMixer {
 		// Currently playing and any following queued sounds for the channel
 		Common::List<SoundEntry> _sounds;
 		// Current channel volume
-		byte _volume;				
+		byte _volume;
 		// Current time in milliseconds for paning (volume) changes
 		uint _panRate;
 		// Fields used to transition between volume levels

@@ -32,7 +32,7 @@
 
 namespace Xeen {
 
-enum ArchiveType { 
+enum ArchiveType {
 	ANY_ARCHIVE = -1, GAME_ARCHIVE = 0, ALTSIDE_ARCHIVE = 1,
 	INTRO_ARCHIVE = 2
 };

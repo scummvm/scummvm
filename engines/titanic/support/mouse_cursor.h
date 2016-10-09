@@ -86,12 +86,12 @@ public:
 	 * Hide the mouse cursor
 	 */
 	void hide();
-	
+
 	/**
 	 * Set the cursor
 	 */
 	void setCursor(CursorId cursorId);
-	
+
 	/**
 	 * Updates the mouse cursor
 	 */

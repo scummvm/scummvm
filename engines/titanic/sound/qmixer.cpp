@@ -31,7 +31,7 @@ QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
 bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
 	assert(_channels.empty());
 	assert(config.iChannels > 0 && config.iChannels < 256);
-	
+
 	_channels.resize(config.iChannels);
 	return true;
 }
@@ -71,7 +71,7 @@ void QMixer::qsWaveMixSetPanRate(int iChannel, uint flags, uint rate) {
 
 void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
 	ChannelEntry &channel = _channels[iChannel];
-	
+
 	// QMixer volumes go from 0-32767, but we need to convert to 0-255 for ScummVM
 	assert(volume <= 32767);
 	byte newVolume = (volume >= 32700) ? 255 : volume * 255 / 32767;
@@ -149,7 +149,7 @@ void QMixer::qsWaveMixPump() {
 		if (channel._volumeChangeEnd) {
 			byte oldVolume = channel._volume;
 			uint currentTicks = g_system->getMillis();
-			
+
 			if (currentTicks >= channel._volumeChangeEnd) {
 				// Reached end of transition period
 				channel._volume = channel._volumeEnd;

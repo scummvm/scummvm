@@ -975,7 +975,7 @@ void SystemUI::askForVerificationKeyPress(uint16 newKey) {
 	if (executeButton) {
 		if (_askForVerificationMouseActiveButtonNr >= 0) {
 			SystemUIButtonEntry *button = &_buttonArray[_askForVerificationMouseActiveButtonNr];
-		
+
 			if (button->active) {
 				if (!button->isDefault) {
 					// Not default button? -> that's cancel

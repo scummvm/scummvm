@@ -150,7 +150,7 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 			petDisplayMessage(1, BOT_BLOCKING_ELEVATOR);
 		} else {
 			_endFrame = pet->getRoomsFloorNum();
-			
+
 			if (petGetRoomsWellEntry() == 4 && !CLift::_v6
 					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
 				petDisplayMessage(1, ELEVATOR_NON_FUNCTIONAL);

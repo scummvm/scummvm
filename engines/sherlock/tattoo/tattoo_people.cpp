@@ -197,7 +197,7 @@ void TattooPerson::adjustSprite() {
 	// See if the player has come to a stop after clicking on an Arrow zone to leave the scene.
 	// If so, this will set up the exit information for the scene transition
 	if (!_walkCount && ui._exitZone != -1 && scene._walkedInScene && scene._goToScene == -1 &&
-			!_description.compareToIgnoreCase(people[HOLMES]._description)) { 
+			!_description.compareToIgnoreCase(people[HOLMES]._description)) {
 		Exit &exit = scene._exits[ui._exitZone];
 		scene._goToScene = exit._scene;
 
@@ -221,7 +221,7 @@ void TattooPerson::gotoStand() {
 	_walkCount = 0;
 	int oldFacing = _sequenceNumber;
 
-	// If the person was talking or listening, just return it to the standing sequence 
+	// If the person was talking or listening, just return it to the standing sequence
 	// in the direction they were pointing
 	if (_sequenceNumber >= TALK_UPRIGHT && _sequenceNumber <= LISTEN_UPLEFT) {
 		switch (_sequenceNumber) {
@@ -269,7 +269,7 @@ void TattooPerson::gotoStand() {
 		return;
 	}
 
-	// If the sprite that is stopping is an NPC and he is supposed to face a certain direction 
+	// If the sprite that is stopping is an NPC and he is supposed to face a certain direction
 	// when he stops, set that direction here
 	int npc = -1;
 	for (int idx = 1; idx < MAX_CHARACTERS; ++idx) {
@@ -317,7 +317,7 @@ void TattooPerson::gotoStand() {
 		}
 	}
 
-	// Only restart the frame number at 0 if the new sequence is different from the last sequence 
+	// Only restart the frame number at 0 if the new sequence is different from the last sequence
 	// so we don't let Holmes repeat standing.
 	if (_oldWalkSequence != -1) {
 		if (_seqTo) {
@@ -356,7 +356,7 @@ void TattooPerson::setWalking() {
 	Common::Point diagSpeed(MAX(WALK_SPEED_DIAG_X[scene._currentScene - 1] * SCALE_THRESHOLD / scaleVal, 2),
 		MAX((WALK_SPEED_Y[scene._currentScene - 1] - 2) * SCALE_THRESHOLD / scaleVal, 2));
 
-	// If the player is already close to the given destination that no walking is needed, 
+	// If the player is already close to the given destination that no walking is needed,
 	// move to the next  straight line segment in the overall walking route, if there is one
 	for (;;) {
 		if (_centerWalk || !_walkTo.empty()) {
@@ -505,7 +505,7 @@ void TattooPerson::setWalking() {
 	if (!_walkCount && _walkTo.empty())
 		gotoStand();
 
-	// If the sequence is the same as when we started, then Holmes was standing still and we're trying 
+	// If the sequence is the same as when we started, then Holmes was standing still and we're trying
 	// to re-stand him, so reset Holmes' rame to the old frame number from before it was reset to 0
 	if (_sequenceNumber == oldDirection)
 		_frameNumber = oldFrame;
@@ -536,7 +536,7 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 	_centerWalk = false;
 
 	// Only move the person if they're going an appreciable distance
-	if (ABS(_walkDest.x - (_position.x / FIXED_INT_MULTIPLIER)) > 8 || 
+	if (ABS(_walkDest.x - (_position.x / FIXED_INT_MULTIPLIER)) > 8 ||
 			ABS(_walkDest.y - (_position.y / FIXED_INT_MULTIPLIER)) > 4) {
 		goAllTheWay();
 
@@ -631,7 +631,7 @@ void TattooPerson::updateNPC() {
 
 		// Now see if we need to update the NPC's frame sequence so that he faces Holmes
 		if (_lookHolmes) {
-			// See where Holmes is with respect to the NPC (x coordinate)			
+			// See where Holmes is with respect to the NPC (x coordinate)
 			_npcFacing =  (people[HOLMES]._position.x < _position.x) ? STOP_LEFT : STOP_RIGHT;
 
 			// See where Holmes is with respect to the NPC (y coordinate)
@@ -643,7 +643,7 @@ void TattooPerson::updateNPC() {
 				_npcFacing = (_npcFacing == STOP_RIGHT) ? STOP_DOWNRIGHT : STOP_DOWNLEFT;
 			}
 
-			// See if we need to set the old_walk_sequence so the NPC will put his arms 
+			// See if we need to set the old_walk_sequence so the NPC will put his arms
 			// up if he turns another way
 			if (_sequenceNumber != _npcFacing)
 				_oldWalkSequence = _sequenceNumber;
@@ -660,7 +660,7 @@ void TattooPerson::updateNPC() {
 			if (!_npcPath[_npcIndex])
 				_npcIndex = 0;
 
-			// The NPC is stopped and any pause he was doing is done. We can now see what 
+			// The NPC is stopped and any pause he was doing is done. We can now see what
 			// the next command in the NPC path is.
 
 			// Scan Past any NPC Path Labels since they do nothing except mark places for If's and Goto's
@@ -725,7 +725,7 @@ void TattooPerson::updateNPC() {
 				}
 
 				case NPCPATH_TAKE_NOTES:
-					// Set the NPC to Pause where he is and set his frame sequences 
+					// Set the NPC to Pause where he is and set his frame sequences
 					// so he takes notes while he's paused
 					_npcPause = (_npcPath[_npcIndex + 1] - 1) * 256 + _npcPath[_npcIndex + 2] - 1;
 					_npcIndex += 3;
@@ -875,7 +875,7 @@ Common::Point TattooPerson::getSourcePoint() const {
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 	int scaleVal = scene.getScaleVal(_position);
 
-	return Common::Point(_position.x / FIXED_INT_MULTIPLIER + 
+	return Common::Point(_position.x / FIXED_INT_MULTIPLIER +
 		(_imageFrame ? _imageFrame->sDrawXSize(scaleVal) / 2 : 0), _position.y / FIXED_INT_MULTIPLIER);
 }
 
@@ -1028,7 +1028,7 @@ void TattooPerson::walkHolmesToNPC() {
 
 	// Clear the path variables
 	memset(_npcPath, 0, 100);
-	
+
 	// Set the NPC path so he pauses for 250 while looking at Holmes
 	_npcPath[0] = 6;
 	_npcPath[1] = 1;
@@ -1426,7 +1426,7 @@ bool TattooPeople::loadWalk() {
 
 			// Load the walk sequence data
 			Common::SeekableReadStream *stream = res.load(fname, _useWalkLib ? "walk.lib" : "vgs.lib");
-				
+
 			person._walkSequences.resize(stream->readByte());
 
 			for (uint seqNum = 0; seqNum < person._walkSequences.size(); ++seqNum)

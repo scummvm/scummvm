@@ -73,7 +73,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
-	
+
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
 	if (s->_delayedRestoreGame) {

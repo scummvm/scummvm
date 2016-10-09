@@ -125,7 +125,7 @@ void WidgetFoolscap::show() {
 	// Show the window
 	summonWindow();
 	ui._menuMode = FOOLSCAP_MODE;
-} 
+}
 
 void WidgetFoolscap::handleEvents() {
 	Events &events = *_vm->_events;

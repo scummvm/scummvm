@@ -53,7 +53,7 @@ private:
 
 	const char *setSpellText(Character *c, int isCasting);
 public:
-	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog, 
+	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, int isCasting);
 };
 

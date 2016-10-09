@@ -21,7 +21,7 @@
  */
 
 namespace Titanic {
-	
+
 static const TitanicGameDescription gameDescriptions[] = {
 	{
 		{

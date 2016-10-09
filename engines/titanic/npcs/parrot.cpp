@@ -116,13 +116,13 @@ CParrot::CParrot() : CTrueTalkNPC() {
 void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_assetNumber, indent);
-	
+
 	file->writeQuotedLine(_assetName, indent);
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_v1, indent);
 	file->writeNumberLine(_v2, indent);
 	file->writeNumberLine(_v3, indent);
-	
+
 	file->writeQuotedLine(_string2, indent);
 	file->writeNumberLine(_field118, indent);
 	file->writeNumberLine(_field11C, indent);
@@ -581,7 +581,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 				actMsg.execute(_field134);
 			}
 
-			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000 
+			_npcFlags &= ~(NPCFLAG_10000 | NPCFLAG_20000 | NPCFLAG_40000
 				| NPCFLAG_80000 | NPCFLAG_100000 | NPCFLAG_200000 | NPCFLAG_400000);
 			return true;
 		}

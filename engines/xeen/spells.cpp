@@ -81,7 +81,7 @@ void Spells::executeSpell(MagicSpell spellId) {
 		&Spells::starBurst, &Spells::stoneToFlesh, &Spells::sunRay,
 		&Spells::superShelter, &Spells::suppressDisease, &Spells::suppressPoison,
 		&Spells::teleport, &Spells::timeDistortion, &Spells::townPortal,
-		&Spells::toxicCloud, &Spells::turnUndead, &Spells::walkOnWater, 
+		&Spells::toxicCloud, &Spells::turnUndead, &Spells::walkOnWater,
 		&Spells::wizardEye
 	};
 
@@ -170,7 +170,7 @@ int Spells::castSpell(Character *c, MagicSpell spellId) {
 	int oldTillMove = intf._tillMove;
 	int result = 1;
 	combat._oldCharacter = c;
-	
+
 	// Try and subtract the SP and gem requirements for the spell
 	int resultError = subSpellCost(*c, spellId);
 	if (resultError) {
@@ -180,7 +180,7 @@ int Spells::castSpell(Character *c, MagicSpell spellId) {
 		// Some spells have special handling
 		switch (spellId) {
 		case MS_EnchantItem:
-		case MS_Etheralize:	
+		case MS_Etheralize:
 		case MS_Jump:
 		case MS_LloydsBeacon:
 		case MS_SuperShelter:
@@ -305,7 +305,7 @@ void Spells::coldRay() {
 	combat.multiAttack(8);
 }
 
-void Spells::createFood() { 
+void Spells::createFood() {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 
@@ -451,7 +451,7 @@ void Spells::detectMonster() {
 				if (monster._position == pt) {
 					if (++grid[yDiff][xDiff] > 3)
 						grid[yDiff][xDiff] = 3;
-				
+
 					sprites.draw(w, grid[yDiff][xDiff], Common::Point(xDiff * 9 + 244,
 						yDiff * 7 + 81));
 				}
@@ -806,7 +806,7 @@ void Spells::levitate() {
 	_vm->_sound->playFX(20);
 }
 
-void Spells::light() { 
+void Spells::light() {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
@@ -837,7 +837,7 @@ void Spells::lloydsBeacon() {
 	}
 }
 
-void Spells::magicArrow() { 
+void Spells::magicArrow() {
 	Combat &combat = *_vm->_combat;
 	combat._monsterDamage = 0;
 	combat._damageType = DT_MAGIC_ARROW;
@@ -966,7 +966,7 @@ void Spells::protectionFromElements() {
 	Sound &sound = *_vm->_sound;
 	Character &c = *combat._oldCharacter;
 	int resist = MIN(c.getCurrentLevel() * 2 + 5, (uint)200);
-	
+
 	int elementType = SelectElement::show(_vm, MS_ProtFromElements);
 	if (elementType != -1) {
 		switch (elementType) {
@@ -1040,7 +1040,7 @@ void Spells::resurrection() {
 		sound.playFX(30);
 		c->addHitPoints(0);
 		c->_conditions[ERADICATED] = 0;
-		
+
 		if (--c->_endurance._permanent < 1)
 			c->_endurance._permanent = 1;
 		if ((c->_tempAge + 5) >= 250)
@@ -1235,12 +1235,12 @@ void Spells::townPortal() {
 	if (map.mazeData()._mazeFlags & RESTRICTION_TOWN_PORTAL) {
 		spellFailed();
 		return;
-	} 
+	}
 
 	int townNumber = TownPortal::show(_vm);
 	if (!townNumber)
 		return;
-	
+
 	sound.playFX(51);
 	map._loadDarkSide = map._sideTownPortal;
 	_vm->_files->_isDarkCc = map._sideTownPortal > 0;
@@ -1318,7 +1318,7 @@ void Spells::wizardEye() {
 void Spells::frostbite2() {
 	Combat &combat = *_vm->_combat;
 	Sound &sound = *_vm->_sound;
-	
+
 	combat._monsterDamage = 35;
 	combat._damageType = DT_COLD;
 	combat._rangeType = RT_SINGLE;

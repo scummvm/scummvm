@@ -1004,14 +1004,14 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	int16 borderRight = curPort->rect.right + curPort->left - 1;
 	int16 borderBottom = curPort->rect.bottom + curPort->top - 1;
 	int16 curToLeft, curToRight, a_set, b_set;
-	
+
 	// Translate coordinates, if required (needed for Macintosh 480x300)
 	_screen->vectorAdjustCoordinate(&borderLeft, &borderTop);
 	_screen->vectorAdjustCoordinate(&borderRight, &borderBottom);
 	//return;
 
 	stack.push(p);
-	
+
 	while (stack.size()) {
 		p = stack.pop();
 		if ((matchedMask = _screen->vectorIsFillMatch(p.x, p.y, matchMask, searchColor, searchPriority, searchControl, isEGA)) == 0) // already filled
@@ -1239,7 +1239,7 @@ void GfxPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte c
 	byte bitNo = 0;
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
 	int y, x;
-	
+
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (bitmap & 1) {

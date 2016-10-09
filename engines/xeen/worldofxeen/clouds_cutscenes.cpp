@@ -154,7 +154,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 				lake3.draw(screen, lakeCtr, Common::Point(0, yCtr));
 			}
 		}
-		
+
 		xeen.draw(screen, 0);
 		screen.update();
 		WAIT(1);
@@ -218,7 +218,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	groupo.draw(screen, 1, Common::Point(160, 0));
 	crodo.draw(screen, 0, Common::Point(0, -5));
 	screen._windows[0].writeString(Res.CLOUDS_INTRO1);
-	
+
 	// Unroll a scroll
 	if (doScroll(false, true))
 		return false;
@@ -273,10 +273,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 			}
 
 			group.draw(screen, ctr4 + 5, Common::Point(0, 99));
-			group.draw(screen, ctr2 + 24, Common::Point(202, 12));			
+			group.draw(screen, ctr2 + 24, Common::Point(202, 12));
 			if ((++totalCtr % 30) == 0)
 				group.draw(screen, 43, Common::Point(178, 134));
-		
+
 			switch (lineCtr) {
 			case 2:
 			case 4:

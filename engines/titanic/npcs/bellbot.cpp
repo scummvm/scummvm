@@ -74,7 +74,7 @@ bool CBellBot::OnSummonBotMsg(COnSummonBotMsg *msg) {
 			{ "MusicRoomLobby", "z#192.wav" },
 			{ "1stClassRestaurant", "z#190.wav" }
 		};
-		
+
 		int idx;
 		for (idx = 0; idx < 8; ++idx) {
 			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {

@@ -130,7 +130,7 @@ void WidgetQuit::handleEvents() {
 		byte color = (_select == 1) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		int yp = (_surface.fontHeight() + 4) * 2 + 8;
 		_surface.writeString(FIXED(Yes), Common::Point((_surface.width() - _surface.stringWidth(FIXED(Yes))) / 2, yp), color);
-		
+
 		color = (_select == 0) ? COMMAND_HIGHLIGHTED : INFO_TOP;
 		yp += (_surface.fontHeight() + 7);
 		_surface.writeString(FIXED(No), Common::Point((_surface.width() - _surface.stringWidth(FIXED(No))) / 2, yp), color);

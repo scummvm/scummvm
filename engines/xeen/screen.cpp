@@ -47,9 +47,9 @@ Window::Window(const Window &src) : XSurface(), _enabled(src._enabled),
 	create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
-Window::Window(const Common::Rect &bounds, int a, int border, 
+Window::Window(const Common::Rect &bounds, int a, int border,
 		int xLo, int ycL, int xHi, int ycH): XSurface(),
-		_enabled(false), _a(a), _border(border), 
+		_enabled(false), _a(a), _border(border),
 		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
 	setBounds(bounds);
 	create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -196,7 +196,7 @@ void Window::drawList(DrawStruct *items, int count) {
 	for (int i = 0; i < count; ++i, ++items) {
 		if (items->_frame == -1 || items->_scale == -1 || items->_sprites == nullptr)
 			continue;
-			
+
 		Common::Point pt(items->_x, items->_y);
 		pt.x += _innerBounds.left;
 		pt.y += _innerBounds.top;
@@ -296,7 +296,7 @@ void Screen::update() {
 }
 
 void Screen::addDirtyRect(const Common::Rect &r) {
-	assert(r.isValidRect() && r.width() > 0 && r.height() > 0 
+	assert(r.isValidRect() && r.width() > 0 && r.height() > 0
 		&& r.left >= 0 && r.top >= 0
 		&& r.right <= SCREEN_WIDTH && r.bottom <= SCREEN_HEIGHT);
 	_dirtyRects.push_back(r);

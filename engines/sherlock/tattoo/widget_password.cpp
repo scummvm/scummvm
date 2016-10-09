@@ -119,7 +119,7 @@ void WidgetPassword::handleEvents() {
 		_surface.fillRect(Common::Rect(_cursorPos.x, _cursorPos.y, _cursorPos.x + width, _cursorPos.y + _surface.fontHeight()), TRANSPARENCY);
 		if (currentChar != ' ')
 			_surface.writeString(Common::String::format("%c", _password[_index]), _cursorPos, COMMAND_HIGHLIGHTED);
-		
+
 		switch (keycode) {
 		case Common::KEYCODE_LEFT:
 			_cursorPos.x -= _surface.charWidth(_password[_index - 1]);
@@ -136,7 +136,7 @@ void WidgetPassword::handleEvents() {
 		case Common::KEYCODE_END:
 			_cursorPos.x = _surface.stringWidth(_password) + _surface.widestChar();
 			_index = _password.size();
-			
+
 			while (_index > 0 && _password[_index - 1] == ' ') {
 				_cursorPos.x -= _surface.charWidth(_password[_index - 1]);
 				--_index;
@@ -187,7 +187,7 @@ void WidgetPassword::handleEvents() {
 
 void WidgetPassword::close() {
 	Talk &talk = *_vm->_talk;
-	
+
 	banishWindow();
 	if (talk._talkToAbort)
 		return;

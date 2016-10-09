@@ -32,7 +32,7 @@ struct FONT_CHAR_INFO {
   FONT_CHAR_INFO(byte width, uint16 offset) : _width(width), _offset(offset) {}
 };
 
-/* 
+/*
 **  Font data for DejaVu Sans 9pt
 */
 

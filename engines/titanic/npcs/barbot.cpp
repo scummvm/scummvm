@@ -142,7 +142,7 @@ void CBarbot::load(SimpleFile *file) {
 	_field158 = file->readNumber();
 	_field15C = file->readNumber();
 	_field160 = file->readNumber();
-	
+
 	CTrueTalkNPC::load(file);
 }
 
@@ -179,7 +179,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 		statusMsg._newStatus = 2;
 		statusMsg.execute("PickUpGlass");
 		_field158 = 3;
-		
+
 		playRange(_frames[32], MOVIE_NOTIFY_OBJECT);
 		playRange(_frames[30], MOVIE_NOTIFY_OBJECT);
 		_frameNum = _frames[30]._endFrame;
@@ -317,7 +317,7 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 			playRange(_frames[23], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[21], MOVIE_NOTIFY_OBJECT);
 			_frameNum = _frames[21]._endFrame;
-		
+
 			switch (g_vm->getRandomNumber(2)) {
 			case 0:
 				playRange(_frames[10], MOVIE_NOTIFY_OBJECT);
@@ -575,7 +575,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 }
 
 bool CBarbot::FrameMsg(CFrameMsg *msg) {
-	if (!_fieldC4 || _frameNum != -1 || _field148 != -1 
+	if (!_fieldC4 || _frameNum != -1 || _field148 != -1
 			|| (msg->_ticks - _field14C) <= 5000
 			|| (msg->_ticks - _field150) <= 1000)
 		return true;
@@ -611,7 +611,7 @@ bool CBarbot::FrameMsg(CFrameMsg *msg) {
 			playRange(_frames[1], MOVIE_NOTIFY_OBJECT);
 			_field148 = _frames[1]._endFrame;
 			break;
-			
+
 		case 4:
 			playRange(_frames[3], MOVIE_NOTIFY_OBJECT);
 			_field148 = _frames[3]._endFrame;

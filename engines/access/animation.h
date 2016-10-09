@@ -49,7 +49,7 @@ public:
 	~AnimationManager();
 	void freeAnimationData();
 	void loadAnimations(Resource *res);
-	
+
 	Animation *findAnimation(int animId);
 	Animation *setAnimation(int animId);
 

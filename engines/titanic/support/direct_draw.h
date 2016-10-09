@@ -70,7 +70,7 @@ public:
 	 * @param width				Screen width
 	 * @param height			Screen height
 	 * @param bpp				Bits per pixel
-	 * @param numBackSurfaces	Number of back surfaces	
+	 * @param numBackSurfaces	Number of back surfaces
 	 */
 	void initVideo(int width, int height, int bpp, int numBackSurfaces);
 

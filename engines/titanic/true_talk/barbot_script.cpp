@@ -107,7 +107,7 @@ int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentenc
 
 		applyResponse();
 		return 2;
-	
+
 	} else if (tag == MKTAG('B', 'A', 'R', 'U') && getRandomNumber(100) > 50) {
 		selectResponse(250025);
 		switch (getDialsBitset()) {
@@ -120,7 +120,7 @@ int BarbotScript::chooseResponse(const TTroomScript *roomScript, const TTsentenc
 		}
 
 		applyResponse();
-		return 2;	
+		return 2;
 	}
 
 	if (tag == MKTAG('T', 'H', 'R', 'T') || tag == MKTAG('S', 'L', 'O', 'W') ||
@@ -165,7 +165,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			dialogueId = ARRAY2[_arrIndex++];
 		} else if (getRandomNumber(100) > 35) {
 			dialogueId = ARRAY2[0];
-			_arrIndex = 1;		
+			_arrIndex = 1;
 		} else if (getRandomNumber(100) > 60) {
 			switch (sentence->_field2C) {
 			case 2:
@@ -204,7 +204,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 	CTrueTalkManager::setFlags(32, getValue(32) - 1);
 	CTrueTalkManager::setFlags(33, getValue(33) - 1);
 	CTrueTalkManager::setFlags(34, getValue(34) - 1);
-	
+
 	TTtreeResult treeResult;
 	int val34 = getState();
 	setState(0);
@@ -314,7 +314,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			return applySentenceIds(50382);
 		} else if (flag2) {
 			return applySentenceIds(51423);
-		} 
+		}
 		// Deliberate fall-through
 
 	case 16:
@@ -523,7 +523,7 @@ int BarbotScript::process(const TTroomScript *roomScript, const TTsentence *sent
 			CTrueTalkManager::triggerAction(30, 0);
 			return 2;
 		}
-		
+
 		return applySentenceIds(50320);
 	case 58:
 		if (val2C == 6 || val2C == 10)
@@ -935,7 +935,7 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
-	case MKTAG('S', 'C', 'I', 'E'):		
+	case MKTAG('S', 'C', 'I', 'E'):
 		tagId = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
@@ -1011,7 +1011,7 @@ uint BarbotScript::getDialsBitset() const {
 		bits |= 2;
 	if (!getDialRegion(2))
 		bits |= 4;
-	
+
 	return bits;
 }
 
@@ -1098,7 +1098,7 @@ int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScrip
 			}
 			break;
 		}
-			
+
 		case 10: {
 			uint val = CTrueTalkManager::getStateValue(3);
 			bool bit0 = (val & 1) != 0;

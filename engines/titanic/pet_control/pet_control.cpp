@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CPetControl::CPetControl() : CGameObject(), 
+CPetControl::CPetControl() : CGameObject(),
 		_currentArea(PET_CONVERSATION), _inputLockCount(0), _areaLockCount(0),
 		_areaChangeType(-1), _activeNPC(nullptr), _remoteTarget(nullptr),
 		_hiddenRoom(nullptr), _drawBounds(20, 350, 620, 480) {
@@ -68,12 +68,12 @@ void CPetControl::save(SimpleFile *file, int indent) {
 void CPetControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	isValid();
-	
+
 	if (!val) {
 		_currentArea = (PetArea)file->readNumber();
 		_activeNPCName = file->readString();
 		_remoteTargetName = file->readString();
-		
+
 		loadAreas(file, 0);
 	}
 
@@ -93,7 +93,7 @@ void CPetControl::setup() {
 
 bool CPetControl::isValid() {
 	return _conversations.isValid(this) &&
-		_rooms.isValid(this) && 
+		_rooms.isValid(this) &&
 		_remote.isValid(this) &&
 		_inventory.isValid(this) &&
 		_starfield.isValid(this) &&
@@ -427,7 +427,7 @@ void CPetControl::addToInventory(CGameObject *item) {
 	setArea(PET_INVENTORY);
 	if (_currentArea == PET_INVENTORY)
 		_inventory.highlightItem(item);
-	
+
 	makeDirty();
 	CPETGainedObjectMsg msg;
 	msg.execute(item);
@@ -471,7 +471,7 @@ bool CPetControl::checkNode(const CString &name) {
 		return true;
 	if (name == "NULL")
 		return false;
-	
+
 	CViewItem *view = gameManager->getView();
 	if (!view)
 		return true;
@@ -558,7 +558,7 @@ bool CPetControl::isBotInView(const CString &name) const {
 	CViewItem *view = gameManager->getView();
 	if (!view)
 		return false;
-	
+
 	// Iterate to find NPC
 	for (CTreeItem *child = view->getFirstChild(); child; child = child->scan(view)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(child);

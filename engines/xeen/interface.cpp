@@ -60,7 +60,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
 		Condition charCondition = ps.worstCondition();
 		int charFrame = Res.FACE_CONDITION_FRAMES[charCondition];
-		
+
 		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
 		if (charFrame > 4)
 			charFrame -= 5;
@@ -130,7 +130,7 @@ void PartyDrawer::resetHighlight() {
 }
 /*------------------------------------------------------------------------*/
 
-Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceMap(vm), 
+Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceMap(vm),
 		PartyDrawer(vm), _vm(vm) {
 	_buttonsLoaded = false;
 	_intrIndex1 = 0;
@@ -285,7 +285,7 @@ void Interface::perform() {
 		return;
 
 	if (_buttonValue == Common::KEYCODE_SPACE) {
-		int lookupId = map.mazeLookup(party._mazePosition, 
+		int lookupId = map.mazeLookup(party._mazePosition,
 			Res.WALL_SHIFTS[party._mazeDirection][2]);
 
 		bool eventsFlag = true;
@@ -497,7 +497,7 @@ void Interface::perform() {
 
 	case Common::KEYCODE_b:
 		chargeStep();
-		
+
 		if (map.getCell(2) < map.mazeData()._difficulties._wallNoPass
 				&& !map._isOutdoors) {
 			switch (party._mazeDirection) {
@@ -623,7 +623,7 @@ void Interface::stepTime() {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	doStepCode();
-	
+
 	if (++party._ctr24 == 24)
 		party._ctr24 = 0;
 
@@ -652,11 +652,11 @@ void Interface::doStepCode() {
 
 	switch (surfaceId) {
 	case SURFTYPE_SPACE:
-		// Wheeze.. can't breathe in space! Explosive decompression, here we come 
+		// Wheeze.. can't breathe in space! Explosive decompression, here we come
 		party._partyDead = true;
 		break;
 	case SURFTYPE_LAVA:
-		// It burns, it burns! 
+		// It burns, it burns!
 		damage = 100;
 		party._damageType = DT_FIRE;
 		break;
@@ -740,8 +740,8 @@ void Interface::startFalling(bool flag) {
 				map._isOutdoors) {
 			map.getNewMaze();
 		}
-	} 
-	
+	}
+
 	if (isDarkCc) {
 		switch (party._mazeId - 25) {
 		case 0:
@@ -944,7 +944,7 @@ bool Interface::checkMoveDirection(int key) {
 	default:
 		break;
 	}
-	
+
 	map.getCell(7);
 	int startSurfaceId = map._currentSurfaceId;
 	int surfaceId;
@@ -1064,7 +1064,7 @@ void Interface::rest() {
 			for (int idx = 0; idx < 10; ++idx) {
 				chargeStep();
 				draw3d(true);
-				
+
 				if (_vm->_mode == MODE_1) {
 					_vm->_mode = oldMode;
 					return;
@@ -1178,7 +1178,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	}
 
 	party._activeParty[charNum1 - 1].subtractHitPoints(2);
-	_charPowSprites.draw(screen._windows[0], 0, 
+	_charPowSprites.draw(screen._windows[0], 0,
 		Common::Point(Res.CHAR_FACES_X[charNum1 - 1], 150));
 	screen._windows[0].update();
 
@@ -1246,7 +1246,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	
+
 	if (screen._windows[11]._enabled)
 		return;
 
@@ -1286,7 +1286,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 			|| combat._attackMonsters[2] != -1) {
-		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) && 
+		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) &&
 				!combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
 			doCombat();
 			if (scripts._eventSkipped)
@@ -1862,7 +1862,7 @@ void Interface::doCombat() {
 	Sound &sound = *_vm->_sound;
 	bool upDoorText = _upDoorText;
 	bool reloadMap = false;
-	
+
 	_upDoorText = false;
 	combat._combatMode = COMBATMODE_2;
 	_vm->_mode = MODE_COMBAT;
@@ -1974,7 +1974,7 @@ void Interface::doCombat() {
 				combat.block();
 				nextChar();
 				break;
-				
+
 			case Common::KEYCODE_c: {
 				// Cast spell
 				int spellId = CastSpell::show(_vm);
@@ -2005,7 +2005,7 @@ void Interface::doCombat() {
 				FightOptions::show(_vm);
 				highlightChar(combat._whosTurn);
 				break;
-			
+
 			case Common::KEYCODE_q:
 				// Quick Reference dialog
 				QuickReferenceDialog::show(_vm);
@@ -2054,7 +2054,7 @@ void Interface::doCombat() {
 			case Common::KEYCODE_RIGHT:
 				// Rotate party direction left or right
 				if (_buttonValue == Common::KEYCODE_LEFT) {
-					party._mazeDirection = (party._mazeDirection == DIR_NORTH) ? 
+					party._mazeDirection = (party._mazeDirection == DIR_NORTH) ?
 						DIR_WEST : (Direction)((int)party._mazeDirection - 1);
 				} else {
 					party._mazeDirection = (party._mazeDirection == DIR_WEST) ?

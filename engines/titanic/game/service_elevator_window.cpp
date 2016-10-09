@@ -69,7 +69,7 @@ bool CServiceElevatorWindow::ServiceElevatorFloorChangeMsg(CServiceElevatorFloor
 
 		int count = _endFrame - _startFrame;
 		setMovieFrameRate(1.0 * count / val);
-			
+
 		int startFrame = clip->_startFrame + count * FACTORS[msg->_value1] / 100;
 		int endFrame = clip->_startFrame + count * FACTORS[msg->_value2] / 100;
 
@@ -107,7 +107,7 @@ bool CServiceElevatorWindow::EnterViewMsg(CEnterViewMsg *msg) {
 			loadFrame(0);
 		}
 	}
-	
+
 	return true;
 }
 

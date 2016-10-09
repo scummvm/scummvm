@@ -159,7 +159,7 @@ bool CTitania::ActMsg(CActMsg *msg) {
 		CSenseWorkingMsg workingMsg2("Not Working");
 		CSenseWorkingMsg workingMsg3("Not Working");
 		CSenseWorkingMsg workingMsg4("Not Working");
-		
+
 		if (_eye1 && _eye2) {
 			workingMsg1._value = _visionCentre ? "Working" : "Random";
 		}
@@ -201,10 +201,10 @@ bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
 		_showIntro = false;
 		disableMouse();
 		petHide();
-		
+
 		CSetFrameMsg frameMsg;
 		frameMsg._frameNumber = 25;
-		frameMsg.execute("Bomb");	
+		frameMsg.execute("Bomb");
 		playCutscene(0, 52);
 
 		setVisible(false);

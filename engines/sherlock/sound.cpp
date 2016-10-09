@@ -72,7 +72,7 @@ Sound::Sound(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		_vm->_res->addToCache("TITLE.SND");
 	else {
 		_vm->_res->addToCache("MUSIC.LIB");
-		
+
 		if (IS_ROSE_TATTOO) {
 			_vm->_res->addToCache("SOUND.LIB");
 		} else {

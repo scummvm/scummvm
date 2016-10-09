@@ -31,7 +31,7 @@ BEGIN_MESSAGE_MAP(CEnterExitView, CGameObject)
 END_MESSAGE_MAP()
 
 CEnterExitView::CEnterExitView() : CGameObject(), _leaveEndFrame(0),
-	_leaveStartFrame(0), _enterEndFrame(0), _enterStartFrame(0), 
+	_leaveStartFrame(0), _enterEndFrame(0), _enterStartFrame(0),
 	_visibleAfterMovie(true) {
 }
 

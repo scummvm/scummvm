@@ -117,7 +117,7 @@ private:
 
 	TownMessage(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	bool execute(int portrait, const Common::String &name, 
+	bool execute(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);
 
 	void loadButtons();

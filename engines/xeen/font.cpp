@@ -26,7 +26,7 @@
 
 namespace Xeen {
 
-FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG_COLOR), 
+FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG_COLOR),
 		_fontReduced(false),_fontJustify(JUSTIFY_NONE), _msgWraps(false) {
 	setTextColor(0);
 }
@@ -60,7 +60,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	for (;;) {
 		const char *msgStartP = _displayString;
 		_msgWraps = false;
-		
+
 		// Get the size of the string that can be displayed on the line
 		int xp = _fontJustify == JUSTIFY_CENTER ? bounds.left : _writePos.x;
 		while (!getNextCharWidth(xp)) {
@@ -94,7 +94,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 					break;
 				}
 			} else {
-				// Found word break, find end of previous word 
+				// Found word break, find end of previous word
 				while (endP > _displayString && (*endP & 0x7f) == ' ')
 					--endP;
 
@@ -136,7 +136,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 		// Main character display loop
 		while (_displayString <= displayEnd) {
 			char c = getNextChar();
-			
+
 			if (c == ' ') {
 				_writePos.x += _fontReduced ? 3 : 4;
 			} else if (c == '\r') {
@@ -281,7 +281,7 @@ bool FontSurface::newLine(const Common::Rect &bounds) {
 
 	_msgWraps = false;
 	_writePos.x = bounds.left;
-	
+
 	int hv = _fontReduced ? 9 : 10;
 	_writePos.y += hv;
 

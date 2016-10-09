@@ -63,7 +63,7 @@ DoorFrames::DoorFrames(Frame f1, Frame f2_1, Frame f2_2, Frame f2_3,
 	_rightHorizontal[1] = f4_2;
 	_rightHorizontal[2] = f4_3;
 }
-	
+
 DisplayMan::DisplayMan(DMEngine *dmEngine) : _vm(dmEngine) {
 	_bitmapScreen = nullptr;
 	_bitmaps = nullptr;
@@ -898,7 +898,7 @@ void DisplayMan::fillBoxBitmap(byte *destBitmap, Box &box, Color color, int16 by
 void DisplayMan::blitBoxFilledWithMaskedBitmap(byte *src, byte *dest, byte *mask, byte *tmp, Box& box,
 											   int16 lastUnitIndex, int16 firstUnitIndex, int16 destByteWidth, Color transparent,
 											   int16 xPos, int16 yPos, int16 destHeight, int16 height2) {
-	
+
 	// FIXME: does not produce the same effect as the original
 
 	byte nextUnitIndex = firstUnitIndex;

@@ -104,7 +104,7 @@ int Town::townAction(int actionId) {
 		sound.stopSound();
 		vocName = isDarkCc ? "bank1.voc" : "banker.voc";
 		break;
-	
+
 	case 1:
 		// Blacksmith
 		_icons1.load("esc.icn");
@@ -215,7 +215,7 @@ int Town::townAction(int actionId) {
 	Character *charP = &party._activeParty[0];
 	Common::String title = createTownText(*charP);
 	intf._face1UIFrame = intf._face2UIFrame = 0;
-	intf._dangerSenseUIFrame = 0; 
+	intf._dangerSenseUIFrame = 0;
 	intf._spotDoorsUIFrame = 0;
 	intf._levitateUIFrame = 0;
 
@@ -525,7 +525,7 @@ Character *Town::doBankOptions(Character *c) {
 Character *Town::doBlacksmithOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	
+
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
@@ -782,7 +782,7 @@ Character *Town::doTempleOptions(Character *c) {
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	
+
 	switch (_buttonValue) {
 	case Common::KEYCODE_F1:
 	case Common::KEYCODE_F2:
@@ -808,7 +808,7 @@ Character *Town::doTempleOptions(Character *c) {
 			if (_dayOfWeek == (party._day / 10)) {
 				party._clairvoyanceActive = true;
 				party._lightCount = 1;
-				
+
 				int amt = _dayOfWeek ? _dayOfWeek : 10;
 				party._heroism = amt;
 				party._holyBonus = amt;
@@ -916,7 +916,7 @@ Character *Town::doTrainingOptions(Character *c) {
 				sound.stopSound();
 				sound.playSound(isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
 
-				c->_experience -=  c->nextExperienceLevel() - 
+				c->_experience -=  c->nextExperienceLevel() -
 					(c->getCurrentExperience() - c->_experience);
 				c->_level._permanent++;
 
@@ -987,7 +987,7 @@ void Town::depositWithdrawl(int choice) {
 		default:
 			continue;
 		}
-		
+
 		if ((choice && !party._bankGems && flag) ||
 			(choice && !party._bankGold && !flag) ||
 			(!choice && !party._gems && flag) ||
@@ -1261,7 +1261,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 				break;
 
 			if (!msgEnd) {
-				if (confirm || _buttonValue == Common::KEYCODE_ESCAPE || 
+				if (confirm || _buttonValue == Common::KEYCODE_ESCAPE ||
 						_buttonValue == Common::KEYCODE_n)
 					result = 0;
 				else if (_buttonValue == Common::KEYCODE_y)

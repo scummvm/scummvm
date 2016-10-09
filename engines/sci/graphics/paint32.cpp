@@ -91,7 +91,7 @@ void GfxPaint32::plotter(int x, int y, int color, void *data) {
 	const uint16 bitmapWidth  = properties.bitmap->getWidth();
 	const uint16 bitmapHeight = properties.bitmap->getHeight();
 	const uint32 index = bitmapWidth * y + x;
-	
+
 	// Only draw the points in the bitmap, and ignore the rest. SSCI scripts
 	// can draw lines ending outside the visible area (e.g. negative coordinates)
 	if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight) {

@@ -202,12 +202,12 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 	const byte *textPtr = (const byte *)str.c_str();
 	byte curChar = 0;
 	byte curChar2 = 0;
-	
+
 	while (1) {
 		curChar = *textPtr;
 		if (!curChar)
 			break;
-		
+
 		if ((curChar == '%') || (curChar == '#')) {
 			curChar2 = *(textPtr + 1);
 			foundLanguage = charToLanguage(curChar2);
@@ -236,7 +236,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 
 			while (1) {
 				curChar = *textPtr;
-				
+
 				switch (curChar) {
 				case 0: // Terminator NUL
 					return fullWidth;
@@ -257,7 +257,7 @@ Common::String SciEngine::getSciLanguageString(const Common::String &str, kLangu
 						continue;
 					}
 				}
-				
+
 				textPtr++;
 
 				mappedChar = s_halfWidthSJISMap[curChar];

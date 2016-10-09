@@ -361,7 +361,7 @@ public:
 	 * Plays a song
 	 */
 	void playSong(const Common::String &name, int param = 0);
-	
+
 	/**
 	 * Plays a song
 	 */

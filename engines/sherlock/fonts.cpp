@@ -140,7 +140,7 @@ void Fonts::setFont(int fontNum) {
 		_yOffsets[idx] = 0;
 
 		if (IS_ROSE_TATTOO) {
-			if ((idx >= 129 && idx < 135) || (idx >= 136 && idx < 143) || (idx >= 147 && idx < 155) || 
+			if ((idx >= 129 && idx < 135) || (idx >= 136 && idx < 143) || (idx >= 147 && idx < 155) ||
 					(idx >= 156 && idx < 165))
 				_yOffsets[idx] = 1;
 			else if ((idx >= 143 && idx < 146) || idx == 165)

@@ -89,7 +89,7 @@ bool CSeasonNoises::ActMsg(CActMsg *msg) {
 	default:
 		break;
 	}
-	
+
 	CSignalObject signalMsg;
 	signalMsg._numValue = 2;
 	signalMsg.execute(this);

@@ -37,7 +37,7 @@ void InfoDialog::execute() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	
+
 	protectionText();
 	Common::String statusText = "";
 	for (uint idx = 0; idx < _lines.size(); ++idx)

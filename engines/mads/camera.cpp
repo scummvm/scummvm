@@ -148,7 +148,7 @@ bool Camera::camPan(int16 *picture_view, int16 *player_loc, int display_size, in
 
 			if (_direction < 0)
 				newTarget -= _distOffCenter;
-			else 
+			else
 				newTarget += _distOffCenter;
 
 			newTarget = MAX(0, newTarget);

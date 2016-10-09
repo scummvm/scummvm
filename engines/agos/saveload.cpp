@@ -1317,7 +1317,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 			if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS && derefItem(item->parent) == NULL)
 				item->parent = 0;
-						
+
 			parent_item = derefItem(parent);
 			setItemParent(item, parent_item);
 

@@ -78,7 +78,7 @@ private:
 	/**
 	 * Return details of the generated character
 	 */
-	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES], 
+	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
 		int selectedClass, Common::String &msg);
 

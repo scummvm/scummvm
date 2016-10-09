@@ -155,7 +155,7 @@ void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIn
 		error("Unknown format");
 
 	if (loop) {
-		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0, 
+		_queue.push_back(QueuedSound(new Audio::LoopingAudioStream(audioStream, 0,
 			DisposeAfterUse::NO), soundIndex));
 	} else {
 		_queue.push_back(QueuedSound(audioStream, soundIndex));

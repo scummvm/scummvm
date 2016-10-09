@@ -196,7 +196,7 @@ public:
 	/**
 	 * Flags whether the timer will be persisent across save & loads
 	 */
-	void setTimerPersisent(uint id, bool flag) { 
+	void setTimerPersisent(uint id, bool flag) {
 		_timers.setPersisent(id, flag);
 	}
 

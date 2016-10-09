@@ -96,7 +96,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		if (editMsg._param == 1000) {
 			editMsg._mode = 3;
 			editMsg.execute(loginControl);
-		
+
 			_string1 = editMsg._text;
 			if (!_string1.empty()) {
 				loadFrame(2);
@@ -222,7 +222,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		CString *strP = &_messages[_personIndex * 19];
 		for (_totalMessages = 0; !strP->empty(); ++strP, ++_totalMessages)
 			;
-		
+
 		CMissiveOMatActionMsg actionMsg;
 		actionMsg._action = REDRAW_MESSAGE;
 		actionMsg.execute(this);
@@ -237,7 +237,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 			actionMsg.execute(this);
 		}
 		break;
-	
+
 	case PRIOR_MESSAGE:
 		if (_messageNum > 0) {
 			--_messageNum;

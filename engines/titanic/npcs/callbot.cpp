@@ -57,7 +57,7 @@ bool CCallBot::TurnOn(CTurnOn *msg) {
 bool CCallBot::EnterViewMsg(CEnterViewMsg *msg) {
 	if (_enabled) {
 		CRoomItem *room = getRoom();
-		
+
 		if (room) {
 			CSummonBotQueryMsg queryMsg;
 			queryMsg._npcName = _npcName;

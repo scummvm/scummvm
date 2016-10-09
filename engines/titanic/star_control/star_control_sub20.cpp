@@ -43,7 +43,7 @@ CStarControlSub20::CStarControlSub20(const CStar20Data *src) {
 	}
 }
 
-CStarControlSub20::~CStarControlSub20() { 
+CStarControlSub20::~CStarControlSub20() {
 	clear();
 }
 

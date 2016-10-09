@@ -840,7 +840,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._hi = 255;
-	
+
 	if (_vm->getGameID() == GType_MartianMemorandum) {
 		_vm->_fonts._charFor._lo = 247;
 		_vm->_screen->_maxChars = 23;
@@ -912,7 +912,7 @@ void Scripts::cmdTexChoice() {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
 				for (int i = 0; i < BTN_COUNT; i++) {
-					if (((_vm->getGameID() == GType_MartianMemorandum) && (x >= BTN_RANGES_v1[i][0]) && (x < BTN_RANGES_v1[i][1])) 
+					if (((_vm->getGameID() == GType_MartianMemorandum) && (x >= BTN_RANGES_v1[i][0]) && (x < BTN_RANGES_v1[i][1]))
 					||  ((_vm->getGameID() == GType_Amazon) && (x >= BTN_RANGES_v2[i][0]) && (x < BTN_RANGES_v2[i][1]))) {
 
 						choice = i;
@@ -1049,7 +1049,7 @@ void Scripts::cmdDispAbout() {
 	if (btnSelected == 2)
 		_vm->_useItem = -1;
 	else
-		_vm->_useItem = _vm->_travelBox->_tempListIdx[boxX];		
+		_vm->_useItem = _vm->_travelBox->_tempListIdx[boxX];
 }
 
 void Scripts::cmdPushLocation() {

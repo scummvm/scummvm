@@ -94,19 +94,19 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 		me->_endFrame = endFrame;
 		me->_initialFrame = 0;
 		me->_gameObject = obj;
-		
+
 		info->addEvent(me);
 	}
 
 	_movieRangeInfo.push_back(info);
-	
+
 	if (_movieRangeInfo.size() == 1) {
 		// First play call, so start the movie playing
 		setReversed(info->_isReversed);
 		return startAtFrame(initialFrame);
 	} else {
 		return true;
-	}	
+	}
 }
 
 void AVISurface::stop() {
@@ -181,7 +181,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			setReversed(info->_isReversed);
 			seekToFrame(newFrame);
 		}
-	
+
 		// Get any events for the given position
 		info->getMovieFrame(events, newFrame);
 		return renderFrame();
@@ -221,7 +221,7 @@ void AVISurface::setupDecompressor() {
 			_decoder->getVideoTrack(idx).getPixelFormat());
 
 		bool flag = false;
-		if (idx == 0 && _videoSurface && 
+		if (idx == 0 && _videoSurface &&
 				_videoSurface->getPitch() == _movieFrameSurface[idx]->pitch) {
 			const uint bitCount = _decoder->getVideoTrack(0).getBitCount();
 			const int vDepth = _videoSurface->getPixelDepth();
@@ -300,7 +300,7 @@ bool AVISurface::renderFrame() {
 			// Blit the frame directly to the video surface
 			assert(_streamCount == 1);
 			_videoSurface->blitFrom(Point(0, 0), &_movieFrameSurface[0]->rawSurface());
-			
+
 			_videoSurface->unlock();
 		}
 	} else {

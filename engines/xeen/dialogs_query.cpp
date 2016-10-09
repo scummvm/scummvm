@@ -127,7 +127,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 
 	while (!_vm->shouldQuit()) {
 		events.updateGameCounter();
-		
+
 		if (town.isActive()) {
 			town.drawTownAnim(townFlag);
 			//numFrames = 3;

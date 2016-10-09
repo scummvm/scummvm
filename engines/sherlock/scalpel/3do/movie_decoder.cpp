@@ -140,7 +140,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				_stream->readUint32BE(); // Unknown 0x00004000
 				_stream->readUint32BE(); // Unknown 0x00000000
 				_stream->readUint32BE(); // Unknown 0x00000010
-				audioSampleRate = _stream->readUint32BE();			
+				audioSampleRate = _stream->readUint32BE();
 				audioChannels = _stream->readUint32BE();
 				audioCodecTag = _stream->readUint32BE();
 				_stream->readUint32BE(); // Unknown 0x00000004 compression ratio?

@@ -70,7 +70,7 @@ int TattooMap::show() {
 	}
 
 	if (music._musicOn) {
-		// See if Holmes or Watson is the active character	
+		// See if Holmes or Watson is the active character
 		Common::String song;
 		if (_vm->readFlags(FLAG_PLAYER_IS_HOLMES))
 			// Player is Holmes
@@ -86,7 +86,7 @@ int TattooMap::show() {
 	}
 
 	screen.initPaletteFade(1364485);
-	
+
 	// Load the custom mouse cursors for the map
 	ImageFile cursors("omouse.vgs");
 	events.setCursor(cursors[0]._frame);
@@ -298,7 +298,7 @@ void TattooMap::loadData() {
 void TattooMap::drawMapIcons() {
 	Debugger &debugger = *_vm->_debugger;
 	Screen &screen = *_vm->_screen;
-	
+
 	for (uint idx = 0; idx < _data.size(); ++idx) {
 		if (debugger._showAllLocations != LOC_DISABLED)
 			_vm->setFlagsDirect(idx + 1);
@@ -344,7 +344,7 @@ void TattooMap::checkMapNames(bool slamIt) {
 			const Common::String &desc = _data[_bgFound]._description;
 			_mapTooltip.setText(desc);
 		}
-	
+
 		_oldBgFound = _bgFound;
 	}
 

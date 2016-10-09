@@ -125,8 +125,8 @@ public:
 	/**
 	 * Returns true if the word is of the specified class
 	 */
-	bool isWordClass(WordClass wordClass) const { 
-		return _wordP && _wordP->isClass(wordClass); 
+	bool isWordClass(WordClass wordClass) const {
+		return _wordP && _wordP->isClass(wordClass);
 	}
 
 	void setFlag(bool val) { _flag = val; }

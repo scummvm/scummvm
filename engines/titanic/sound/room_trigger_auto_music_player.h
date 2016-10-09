@@ -31,7 +31,7 @@ namespace Titanic {
 class CRoomTriggerAutoMusicPlayer : public CTriggerAutoMusicPlayer {
 	DECLARE_MESSAGE_MAP;
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
-	bool EnterRoomMsg(CEnterRoomMsg *msg);	
+	bool EnterRoomMsg(CEnterRoomMsg *msg);
 public:
 	CLASSDEF;
 

@@ -60,7 +60,7 @@ protected:
 	 * Delete any responses set up for the script
 	 */
 	void deleteResponses();
-	
+
 	/**
 	 * Creates and appends a new response fragment to the script specified by
 	 * the given conversation Id
@@ -83,7 +83,7 @@ protected:
 	 * Set the script state
 	 */
 	void setState(int state) { _state = state; }
-	
+
 	/**
 	 * Get the current state
 	 */

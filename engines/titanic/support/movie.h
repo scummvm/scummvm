@@ -72,7 +72,7 @@ public:
 	 * Starts playing the movie
 	 */
 	virtual void play(uint flags, CGameObject *obj) = 0;
-	
+
 	/**
 	 * Starts playing the movie
 	 */
@@ -82,13 +82,13 @@ public:
 	 * Starts playing the movie
 	 */
 	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj) = 0;
-	
+
 	/**
 	 * Plays a sub-section of a movie, and doesn't return until either
 	 * the playback ends or a key has been pressed
 	 */
 	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) = 0;
-	
+
 	/**
 	 * Stops the movie
 	 */
@@ -103,12 +103,12 @@ public:
 	 * Set the current frame number
 	 */
 	virtual void setFrame(uint frameNumber) = 0;
-	
+
 	/**
 	 * Handle any pending movie events
 	 */
 	virtual bool handleEvents(CMovieEventList &events) = 0;
-	
+
 	/**
 	 * Return any movie range info associated with the movie
 	 */
@@ -171,17 +171,17 @@ public:
 	 * Starts playing the movie
 	 */
 	virtual void play(uint flags, CGameObject *obj);
-	
+
 	/**
 	 * Starts playing the movie
 	 */
 	virtual void play(uint startFrame, uint endFrame, uint flags, CGameObject *obj);
-	
+
 	/**
 	 * Starts playing the movie
 	 */
 	virtual void play(uint startFrame, uint endFrame, uint initialFrame, uint flags, CGameObject *obj);
-	
+
 	/**
 	 * Plays a sub-section of a movie, and doesn't return until either
 	 * the playback ends or a key has been pressed
@@ -192,7 +192,7 @@ public:
 	 * Stops the movie
 	 */
 	virtual void stop();
-	
+
 	/**
 	 * Add a playback event
 	 */
@@ -202,7 +202,7 @@ public:
 	 * Set the current frame number
 	 */
 	virtual void setFrame(uint frameNumber);
-	
+
 	/**
 	 * Handle any pending movie events
 	 */

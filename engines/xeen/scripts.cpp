@@ -126,7 +126,7 @@ int Scripts::checkEvents() {
 	Mode oldMode = _vm->_mode;
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
 	//int items = _treasureItems;
-	
+
 	if (party._treasure._gold & party._treasure._gems) {
 		// Backup any current treasure data
 		party._savedTreasure = party._treasure;
@@ -162,7 +162,7 @@ int Scripts::checkEvents() {
 			for (eventIndex = 0; eventIndex < map._events.size(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
-				if (event._position == _currentPos && party._mazeDirection != 
+				if (event._position == _currentPos && party._mazeDirection !=
 						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_9;
@@ -366,7 +366,7 @@ void Scripts::cmdDoorTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
 	Common::String paramText = _vm->_map->_events._text[_event->_parameters[0]];
-	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01", 
+	intf._screenText = Common::String::format("\x02\f""08\x03""c\t116\v025%s\x03""l\fd""\x01",
 		paramText.c_str());
 	intf._upDoorText = true;
 	intf.draw3d(true);
@@ -523,7 +523,7 @@ void Scripts::cmdIf(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdMoveObj(Common::Array<byte> &params) { 
+void Scripts::cmdMoveObj(Common::Array<byte> &params) {
 	MazeObject &mazeObj = _vm->_map->_mobData._objects[params[0]];
 
 	if (mazeObj._position.x == params[1] && mazeObj._position.y == params[2]) {
@@ -662,7 +662,7 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
 					party.giveTake(mode1, mask1, mode1, mask2, idx);
-					
+
 					switch (mode1) {
 					case 8:
 						mode1 = 0;
@@ -684,7 +684,7 @@ void Scripts::cmdTakeOrGive(Common::Array<byte> &params) {
 							case 106:
 								if (param2)
 									continue;
-								
+
 								// Break out of character loop
 								idx = party._activeParty.size();
 								break;
@@ -748,7 +748,7 @@ void Scripts::cmdNoAction(Common::Array<byte> &params) {
 	_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
 }
 
-void Scripts::cmdRemove(Common::Array<byte> &params) { 
+void Scripts::cmdRemove(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 
@@ -761,7 +761,7 @@ void Scripts::cmdRemove(Common::Array<byte> &params) {
 	cmdMakeNothingHere(params);
 }
 
-void Scripts::cmdSetChar(Common::Array<byte> &params) { 
+void Scripts::cmdSetChar(Common::Array<byte> &params) {
 	if (params[0] != 7) {
 		_charIndex = WhoWill::show(_vm, 22, 3, false);
 		if (_charIndex == 0) {
@@ -802,11 +802,11 @@ void Scripts::cmdDoTownEvent(Common::Array<byte> &params) {
 	cmdExit(params);
 }
 
-void Scripts::cmdExit(Common::Array<byte> &params) { 
+void Scripts::cmdExit(Common::Array<byte> &params) {
 	_lineNum = -1;
 }
 
-void Scripts::cmdAlterMap(Common::Array<byte> &params) { 
+void Scripts::cmdAlterMap(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 
 	if (params[2] == DIR_ALL) {
@@ -819,7 +819,7 @@ void Scripts::cmdAlterMap(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdGiveExtended(Common::Array<byte> &params) { 
+void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
 	uint32 mask;
 	int newLineNum;
@@ -862,7 +862,7 @@ void Scripts::cmdGiveExtended(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdConfirmWord(Common::Array<byte> &params) { 
+void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Common::String msg1 = params[2] ? map._events._text[params[2]] :
@@ -893,7 +893,7 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 		}
 		else if (result == 61 && !_vm->_files->_isDarkCc) {
 			doWorldEnd();
-		} else {		
+		} else {
 			if (result == 59 && !_vm->_files->_isDarkCc) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
@@ -902,7 +902,7 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 						item._material = 0;
 						item._bonusFlags = 0;
 						party._treasure._hasItems = true;
-						
+
 						cmdExit(params);
 						return;
 					}
@@ -910,7 +910,7 @@ void Scripts::cmdConfirmWord(Common::Array<byte> &params) {
 			}
 
 			_lineNum = result == -1 ? params[3] : params[1];
-			
+
 			return;
 		}
 	}
@@ -957,7 +957,7 @@ void Scripts::cmdAlterEvent(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdCallEvent(Common::Array<byte> &params) { 
+void Scripts::cmdCallEvent(Common::Array<byte> &params) {
 	_stack.push(StackEntry(_currentPos, _lineNum));
 	_currentPos = Common::Point(params[0], params[1]);
 	_lineNum = params[2] - 1;
@@ -973,7 +973,7 @@ void Scripts::cmdReturn(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdSetVar(Common::Array<byte> &params) { 
+void Scripts::cmdSetVar(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
 	uint val;
 	_refreshIcons = true;
@@ -1011,7 +1011,7 @@ void Scripts::cmdSetVar(Common::Array<byte> &params) {
 
 void Scripts::cmdCutsceneEndClouds(Common::Array<byte> &params) { error("TODO"); }
 
-void Scripts::cmdWhoWill(Common::Array<byte> &params) { 
+void Scripts::cmdWhoWill(Common::Array<byte> &params) {
 	_charIndex = WhoWill::show(_vm, params[0], params[1], true);
 
 	if (_charIndex == 0)
@@ -1020,7 +1020,7 @@ void Scripts::cmdWhoWill(Common::Array<byte> &params) {
 		cmdNoAction(params);
 }
 
-void Scripts::cmdRndDamage(Common::Array<byte> &params) { 
+void Scripts::cmdRndDamage(Common::Array<byte> &params) {
 	Combat &combat = *_vm->_combat;
 	Interface &intf = *_vm->_interface;
 
@@ -1049,7 +1049,7 @@ void Scripts::cmdAlterCellFlag(Common::Array<byte> &params) {
 		MazeWallLayers &wallData = map.mazeDataCurrent()._wallData[pt.y][pt.x];
 		wallData._data = (wallData._data & 0xFFF0) | params[2];
 	} else {
-		pt.x &= 0xF; 
+		pt.x &= 0xF;
 		pt.y &= 0xF;
 		MazeCell &cell = map.mazeDataCurrent()._cells[pt.y][pt.x];
 		cell._surfaceId = params[2];
@@ -1082,7 +1082,7 @@ void Scripts::cmdDisplayStat(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdSeatTextSml(Common::Array<byte> &params) { 
+void Scripts::cmdSeatTextSml(Common::Array<byte> &params) {
 	Interface &intf = *_vm->_interface;
 
 	intf._screenText = Common::String::format("\x2\f08\x3""c\t116\v090%s\x3l\fd\x1",
@@ -1270,12 +1270,12 @@ void Scripts::cmdFallToMap(Common::Array<byte> &params) {
 	_lineNum = -1;
 }
 
-void Scripts::cmdDisplayMain(Common::Array<byte> &params) { 
+void Scripts::cmdDisplayMain(Common::Array<byte> &params) {
 	display(false, 0);
 	cmdNoAction(params);
 }
 
-void Scripts::cmdGoto(Common::Array<byte> &params) { 
+void Scripts::cmdGoto(Common::Array<byte> &params) {
 	Map &map = *_vm->_map;
 	map.getCell(1);
 	if (params[0] == map._currentSurfaceId)
@@ -1284,12 +1284,12 @@ void Scripts::cmdGoto(Common::Array<byte> &params) {
 	cmdNoAction(params);
 }
 
-void Scripts::cmdGotoRandom(Common::Array<byte> &params) { 
+void Scripts::cmdGotoRandom(Common::Array<byte> &params) {
 	_lineNum = params[_vm->getRandomNumber(1, params[0])] - 1;
 	cmdNoAction(params);
 }
 
-void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) { 
+void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
 	Party &party = *_vm->_party;
 	_vm->_saves->_wonDarkSide = true;
 	party._questItems[53] = 1;
@@ -1301,13 +1301,13 @@ void Scripts::cmdCutsceneEndDarkside(Common::Array<byte> &params) {
 	doEndGame2();
 }
 
-void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) { 
+void Scripts::cmdCutsceneEdWorld(Common::Array<byte> &params) {
 	_vm->_saves->_wonWorld = true;
 	_vm->_party->_worldEnd = true;
 	doWorldEnd();
 }
 
-void Scripts::cmdFlipWorld(Common::Array<byte> &params) { 
+void Scripts::cmdFlipWorld(Common::Array<byte> &params) {
 	_vm->_map->_loadDarkSide = params[0] != 0;
 }
 
@@ -1342,7 +1342,7 @@ void Scripts::doWorldEnd() {
 
 void Scripts::doEnding(const Common::String &endStr, int v2) {
 	_vm->_saves->saveChars();
-	
+
 	warning("TODO: doEnding");
 }
 

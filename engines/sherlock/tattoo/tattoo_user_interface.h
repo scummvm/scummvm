@@ -42,7 +42,7 @@ namespace Sherlock {
 namespace Tattoo {
 
 // Button width/height
-#define BUTTON_SIZE 15				
+#define BUTTON_SIZE 15
 // How long to play the intro before it can be skipped
 #define STARTUP_KEYS_DISABLED_DELAY 200
 
@@ -241,7 +241,7 @@ public:
 
 	/**
 	 * Draw the user interface onto the screen's back buffers
-	 */	
+	 */
 	virtual void drawInterface(int bufferNum = 3);
 
 	/**

@@ -67,7 +67,7 @@ void CSauceDispensor::load(SimpleFile *file) {
 
 bool CSauceDispensor::Use(CUse *msg) {
 	CVisibleMsg visibleMsg(true);
-	
+
 	if (msg->_item->isEquals("Chicken")) {
 		CChicken *chicken = static_cast<CChicken *>(msg->_item);
 		_field104 = true;
@@ -113,7 +113,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 			CActMsg actMsg(_string3);
 			actMsg.execute("BeerGlass");
-		}	
+		}
 	}
 
 	return true;

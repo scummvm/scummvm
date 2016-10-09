@@ -70,7 +70,7 @@ public:
 
 	/**
 	 * Play an effect sound
-	 * 
+	 *
 	 * @param id Sound ID in the stack
 	 * @param volume Playback volume, between 0 and 255
 	 * @param playOnDraw Start playing when the current card is drawn instead of immediatly

@@ -53,7 +53,7 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl);
-	
+
 	/**
 	 * Reset the section
 	 */
@@ -63,12 +63,12 @@ public:
 	 * Draw the section
 	 */
 	virtual void draw(CScreenManager *screenManager);
-	
+
 	/**
 	 * Get the bounds for the section
 	 */
 	virtual Rect getBounds() const { return Rect(); }
-	
+
 	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
@@ -85,7 +85,7 @@ public:
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
 	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
-	
+
 	/**
 	 * Display a message
 	 */
@@ -115,7 +115,7 @@ public:
 	 * Called when a section is switched to
 	 */
 	virtual void enter(PetArea oldArea);
-	
+
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */

@@ -805,7 +805,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 	if (in) {
 		SavegameMetadata meta;
-	
+
 		if (!get_savegame_metadata(in, &meta)) {
 			// invalid
 			delete in;

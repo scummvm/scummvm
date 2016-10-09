@@ -168,7 +168,7 @@ public:
 
 	int32 _gameSysClock, _lastUpdateClock;
 	bool _animationsDone;
-	
+
 
 	Graphics::Surface *_backgroundSurface;
 	Graphics::Surface *_frontSurface;

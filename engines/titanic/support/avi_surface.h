@@ -44,12 +44,12 @@ public:
 		Video::AVIDecoder(soundType) {}
 	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
 		Video::AVIDecoder(frameRateOverride, soundType) {}
-	
+
 	/**
 	 * Returns the number of video tracks the decoder has
 	 */
 	uint videoTrackCount() const { return _videoTracks.size(); }
-	
+
 	/**
 	 * Returns the specified video track
 	 */

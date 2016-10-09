@@ -28,7 +28,7 @@ BEGIN_MESSAGE_MAP(CViewTogglesOtherMusic, CEnterViewTogglesOtherMusic)
 	ON_MESSAGE(LeaveViewMsg)
 END_MESSAGE_MAP()
 
-CViewTogglesOtherMusic::CViewTogglesOtherMusic() : 
+CViewTogglesOtherMusic::CViewTogglesOtherMusic() :
 		CEnterViewTogglesOtherMusic(), _value(1) {
 }
 

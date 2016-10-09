@@ -28,7 +28,7 @@ namespace Titanic {
 
 bool CPetSave::reset() {
 	CPetLoadSave::reset();
-	
+
 	CPetControl *pet = getPetControl();
 	if (pet) {
 		setName("PetSave", pet);

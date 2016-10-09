@@ -181,7 +181,7 @@ void Object::setAnimMode(bool isAnimating) {
 }
 
 void Object::setDestination(const Common::Point &pt) {
-	_destination = pt; 
+	_destination = pt;
 
 	int moveRate = 10;
 	_walkStartFrame = _vm->_events->getFrameCounter();
@@ -215,7 +215,7 @@ void Object::setDestination(const Common::Point &pt) {
 
 void Object::erase() {
 	Screen &screen = *_vm->_screen;
-	
+
 	if (_visage.isLoaded() && !_oldBounds.isEmpty())
 		screen.SHblitFrom(screen._backBuffer1, Common::Point(_oldBounds.left, _oldBounds.top), _oldBounds);
 }
@@ -233,7 +233,7 @@ void Object::update() {
 				move();
 			}
 		}
-		
+
 		if (_isAnimating) {
 			if (_frame < _visage.getFrameCount())
 				_frame = changeFrame();
@@ -436,7 +436,7 @@ Logo::Logo(ScalpelEngine *vm) : _vm(vm), _lib("sf3.rlb") {
 	_animateFrameDelay = 0;
 	_animateFrames = NULL;
 	_animateFrame = 0;
-	
+
 	// Save a copy of the original palette
 	_vm->_screen->getPalette(_originalPalette);
 
@@ -630,7 +630,7 @@ void Logo::startAnimation(uint object, uint frameDelay, const AnimationFrame *fr
 
 void Logo::loadBackground() {
 	Screen &screen = *_vm->_screen;
-	
+
 	for (int idx = 0; idx < 4; ++idx) {
 		// Get the portion of the screen
 		Common::SeekableReadStream *stream = _lib.getResource(RES_BITMAP, 10, idx);

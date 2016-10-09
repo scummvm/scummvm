@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CCDROMComputer, CGameObject)
 	ON_MESSAGE(MouseButtonDownMsg)
 END_MESSAGE_MAP()
 
-CCDROMComputer::CCDROMComputer() : CGameObject(), 
+CCDROMComputer::CCDROMComputer() : CGameObject(),
 		_clickRect(0, 3, 55, 32) {
 }
 
@@ -58,7 +58,7 @@ bool CCDROMComputer::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (tray) {
 		CStatusChangeMsg statusMsg;
 		statusMsg.execute(tray);
-		
+
 		if (!statusMsg._success) {
 			// Check if the mouse is within the clickable area
 			Rect tempRect = _clickRect;

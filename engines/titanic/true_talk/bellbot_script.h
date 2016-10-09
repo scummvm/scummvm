@@ -78,7 +78,7 @@ private:
 	bool checkCommonWords(const TTroomScript *roomScript, const TTsentence *sentence);
 
 	uint getRoomDialogueId(const TTroomScript *roomScript);
-	
+
 	/**
 	 * Adds a description of the room to the conversation response
 	 */

@@ -32,7 +32,7 @@
 #include "titanic/true_talk/succubus_script.h"
 
 namespace Titanic {
-	
+
 TTnpcScript *TTnpcScriptList::findById(int charId) const {
 	for (TTnpcScriptList::const_iterator i = begin(); i != end(); ++i) {
 		const TTnpcScriptListItem *item = *i;

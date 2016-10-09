@@ -51,7 +51,7 @@ private:
 	int _bgFound, _oldBgFound;
 	WidgetMapTooltip _mapTooltip;
 	Common::Point _targetScroll;
-	
+
 	/**
 	 * Load data  needed for the map
 	 */

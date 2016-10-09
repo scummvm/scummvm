@@ -26,7 +26,7 @@
 
 namespace Xeen {
 
-int Input::show(XeenEngine *vm, Window *window, Common::String &line, 
+int Input::show(XeenEngine *vm, Window *window, Common::String &line,
 		uint maxLen, int maxWidth, bool isNumeric) {
 	Input *dlg = new Input(vm, window);
 	int result = dlg->getString(line, maxLen, maxWidth, isNumeric);
@@ -129,7 +129,7 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 	return result;
 }
 
-int StringInput::execute(bool type, const Common::String &expected, 
+int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
@@ -211,7 +211,7 @@ int Choose123::execute(int numOptions) {
 	Interface &intf = *_vm->_interface;
 	Screen &screen = *_vm->_screen;
 	Town &town = *_vm->_town;
-	
+
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_DIALOG_123;
 

@@ -49,7 +49,7 @@ void TTroomScript::proc9(int v) {
 ScriptChangedResult TTroomScript::scriptChanged(TTscriptBase *npcScript, int id) {
 	if (id == 1)
 		_field54 = 1;
-	
+
 	return SCR_1;
 }
 

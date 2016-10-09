@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-enum ClipFlag { 
+enum ClipFlag {
 	CLIPFLAG_HAS_END_FRAME = 1,
 	CLIPFLAG_4 = 4,
 	CLIPFLAG_HAS_START_FRAME = 8,

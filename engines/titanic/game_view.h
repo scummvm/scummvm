@@ -57,7 +57,7 @@ public:
 	 * Set the currently active view
 	 */
 	virtual void setView(CViewItem *item) = 0;
-	
+
 	virtual void draw(const Rect &bounds) = 0;
 
 	/**

@@ -58,7 +58,7 @@ void CGameView::createSurface(const CResourceKey &key) {
 	_gameManager->initBounds();
 	delete _surface;
 	_surface = nullptr;
-	
+
 	// Create a fresh surface
 	CScreenManager::setCurrent();
 	_surface = CScreenManager::_currentScreenManagerPtr->createSurface(key);

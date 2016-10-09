@@ -33,7 +33,7 @@ namespace Titanic {
 
 class CGameManager;
 
-enum GameStateMode { 
+enum GameStateMode {
 	GSMODE_NONE = 0, GSMODE_INTERACTIVE = 1, GSMODE_CUTSCENE = 2,
 	GSMODE_3 = 3, GSMODE_4 = 4, GSMODE_INSERT_CD = 5, GSMODE_PENDING_LOAD = 6
 };

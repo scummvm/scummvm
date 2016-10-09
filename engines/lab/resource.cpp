@@ -147,7 +147,7 @@ void Resource::readViews(uint16 roomNum) {
 Common::String Resource::translateFileName(const Common::String filename) {
 	Common::String upperFilename;
 
-	// The DOS and Windows version aren't looking for the right file, 
+	// The DOS and Windows version aren't looking for the right file,
 	if (!filename.compareToIgnoreCase("P:ZigInt/BLK") && (_vm->getPlatform() != Common::kPlatformAmiga))
 		upperFilename = "P:ZigInt/ZIGINT.BLK";
 	else
