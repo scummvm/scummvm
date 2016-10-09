@@ -445,7 +445,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	_position.z = 0;
 	_facing = facing;
 	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(animationId, animationFrame);
-	if(_sliceFramePtr == nullptr) {
+	if (_sliceFramePtr == nullptr) {
 		return;
 	}
 
@@ -460,11 +460,10 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	_framePaletteIndex = stream.readUint32LE();
 	_frameSliceCount = stream.readUint32LE();
 
-	float v47 = _frameSliceHeight * _frameSliceCount;
-	float v50 = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
-	float v16 = MAX(v50, v47);
-	float v51 = scale / v16;
-	
+	float frameHeight = _frameSliceHeight * _frameSliceCount;
+	float frameSize = sqrtf(_frameScale.x * 255.0f * _frameScale.x * 255.0f + _frameScale.y * 255.0f * _frameScale.y * 255.0f);
+	float size = scale / MAX(frameSize, frameHeight);
+
 	float s = sinf(_facing);
 	float c = cosf(_facing);
 
@@ -474,8 +473,8 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	Matrix3x2 m_frame(_frameScale.x, 0.0f, _framePos.x,
 	                  0.0f, _frameScale.y, _framePos.y);
 
-	Matrix3x2 m_scale_v51_25_5(v51,   0.0f, 0.0f,
-	                           0.0f, 25.5f, 0.0f);
+	Matrix3x2 m_scale_size_25_5(size,  0.0f, 0.0f,
+	                            0.0f, 25.5f, 0.0f);
 
 	Matrix3x2 m_translate_x_32k(1.0f, 0.0f, screenX,
 	                            0.0f, 1.0f, 32768.0f);
@@ -483,27 +482,29 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	Matrix3x2 m_scale_64k_64(65536.0f,  0.0f, 0.0f,
 	                             0.0f, 64.0f, 0.0f);
 
-	Matrix3x2 m = m_scale_64k_64 * (m_translate_x_32k * (m_scale_v51_25_5 * (m_rotation * m_frame)));
+	Matrix3x2 m = m_scale_64k_64 * (m_translate_x_32k * (m_scale_size_25_5 * (m_rotation * m_frame)));
 
-	setupLookupTable(_m11lookup, m(0,0));
-	setupLookupTable(_m12lookup, m(0,1));
+	setupLookupTable(_m11lookup, m(0, 0));
+	setupLookupTable(_m12lookup, m(0, 1));
 	_m13 = m(0, 2);
-	setupLookupTable(_m21lookup, m(1,0));
-	setupLookupTable(_m22lookup, m(1,1));
+	setupLookupTable(_m21lookup, m(1, 0));
+	setupLookupTable(_m22lookup, m(1, 1));
 	_m23 = m(1, 2);
-	
-	float v32 = 1.0f / v51 / _frameSliceHeight;
-	float currentSlice = 0;// _frameSliceCount;
-	
-	int frameY = screenY + (v51 / 2.0f * v47);
+
+	int frameY = screenY + (size / 2.0f * frameHeight);
 	int currentY = frameY;
+	
+	float currentSlice = 0;
+	float sliceStep = 1.0f / size / _frameSliceHeight;
+
 	uint16 *frameLinePtr = (uint16*)surface.getPixels() + 640 * frameY;
 	uint16 lineZbuffer[640];
-	while(currentSlice < _frameSliceCount) {
-		if(currentY >= 0 && currentY < 480) {
+
+	while (currentSlice < _frameSliceCount) {
+		if (currentY >= 0 && currentY < 480) {
 			memset(lineZbuffer, 0xFF, 640 * 2);
 			drawSlice(currentSlice, false, frameLinePtr, lineZbuffer);
-			currentSlice += v32;
+			currentSlice += sliceStep;
 			currentY--;
 			frameLinePtr -= 640;
 		}

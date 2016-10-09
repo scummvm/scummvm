@@ -33,7 +33,7 @@ namespace BladeRunner {
 
 ItemPickup::ItemPickup(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_facingStep = float(1.0f / 3000.0f * M_PI);
+	_facingStep = float(2.0f / 3000.0f * (2.0f * M_PI));
 	reset();
 }
 
@@ -95,7 +95,7 @@ void ItemPickup::tick() {
 		_facing -= float(2.0f * M_PI);
 	}
 
-	_animationFrame = ((int)(_animationFrame + 1)) % ((int)_vm->_sliceAnimations->getFrameCount(_animationId));
+	_animationFrame = (_animationFrame + 1) % _vm->_sliceAnimations->getFrameCount(_animationId);
 }
 
 void ItemPickup::draw() {

@@ -164,7 +164,7 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 }
 
 void Font::drawCharacter(const char character, Graphics::Surface &surface, int x, int y) {
-	char characterIndex = character + 1;
+	uint8 characterIndex = (uint8)character + 1;
 	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
 		return;
 	}

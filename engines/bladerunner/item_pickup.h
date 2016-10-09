@@ -24,7 +24,6 @@
 #define BLADERUNNER_ITEMPICKUP_H
 
 #include "common/rect.h"
-#include "graphics/surface.h"
 
 namespace BladeRunner {
 
