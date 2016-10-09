@@ -66,6 +66,18 @@ Insane::Insane(ScummEngine_v7 *scumm) {
 		readFileToMem("minefite.flu", &_smush_minefiteFlu);
 		_smush_bensgoggNut = new NutRenderer(_vm, "bensgogg.nut");
 		_smush_bencutNut = new NutRenderer(_vm, "bencut.nut");
+	} else {
+		_smush_roadrashRip = NULL;
+		_smush_roadrsh2Rip = NULL;
+		_smush_roadrsh3Rip = NULL;
+		_smush_goglpaltRip = NULL;
+		_smush_tovista1Flu = NULL;
+		_smush_tovista2Flu = NULL;
+		_smush_toranchFlu = NULL;
+		_smush_minedrivFlu = NULL;
+		_smush_minefiteFlu = NULL;
+		_smush_bensgoggNut = NULL;
+		_smush_bencutNut = NULL;
 	}
 
 	_smush_iconsNut = new NutRenderer(_vm, "icons.nut");
