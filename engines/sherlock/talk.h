@@ -71,7 +71,7 @@ enum {
 	OP_ENABLE_END_KEY			= 31,
 	OP_DISABLE_END_KEY			= 32,
 	OP_END_TEXT_WINDOW			= 33,
-	
+
 	OP_MOUSE_OFF_ON				= 34,
 	OP_SET_WALK_CONTROL			= 35,
 	OP_SET_TALK_SEQUENCE		= 36,
@@ -123,7 +123,7 @@ struct SequenceEntry {
 	short _frameNumber;		// Frame number in frame sequence to draw
 	short _sequenceNumber;	// Start frame of sequences that are repeated
 	int _seqStack;			// Allows gosubs to return to calling frame
-	int _seqTo;				// Allows 1-5, 8-3 type sequences encoded 
+	int _seqTo;				// Allows 1-5, 8-3 type sequences encoded
 	int _seqCounter;		// How many times this sequence has been executed
 	int _seqCounter2;
 
@@ -315,7 +315,7 @@ public:
 	 * saved onto the sequence stack.
 	 */
 	void pushSequence(int speaker);
-	
+
 	/**
 	 * Push the details of a passed object onto the saved sequences stack
 	 */
@@ -351,7 +351,7 @@ public:
 	 * Prints a single conversation option in the interface window
 	 */
 	virtual int talkLine(int lineNum, int stateNum, byte color, int lineY, bool slamIt) { return 0; }
-	
+
 	/**
 	 * Pulls a background object sequence from the sequence stack and restore's the
 	 * object's sequence

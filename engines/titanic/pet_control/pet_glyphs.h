@@ -77,7 +77,7 @@ public:
 	 * Called when the PET area is entered
 	 */
 	virtual void enter() {}
-	
+
 	/**
 	 * Called when the PET area is left
 	 */
@@ -137,7 +137,7 @@ public:
 	 * Handles keypresses
 	 */
 	virtual bool KeyCharMsg(int key) { return false; }
-	
+
 	/**
 	 * Handles keypresses
 	 */
@@ -162,7 +162,7 @@ public:
 	 * Selects a glyph
 	 */
 	virtual void selectGlyph(const Point &topLeft, const Point &pt) {}
-	
+
 	/**
 	 * Called when a glyph drag starts
 	 */
@@ -195,7 +195,7 @@ public:
 	 * Called on a highlighted item when PET area is entered
 	 */
 	virtual bool enterHighlighted() { return false; }
-	
+
 	/**
 	 * Called on a highlighted item when PET area is left
 	 */
@@ -241,7 +241,7 @@ public:
 	 */
 	bool isHighlighted() const;
 };
-		
+
 class CPetGlyphs : public List<CPetGlyph> {
 private:
 	/**

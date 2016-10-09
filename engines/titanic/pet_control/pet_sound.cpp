@@ -111,7 +111,7 @@ bool CPetSound::reset() {
 
 void CPetSound::draw2(CScreenManager *screenManager) {
 	_element.draw(screenManager);
-	
+
 	_musicVolume.draw(screenManager);
 	_masterVolume.draw(screenManager);
 	_parrotVolume.draw(screenManager);
@@ -173,7 +173,7 @@ void CPetSound::sliderChanged(double offset, int sliderNum) {
 	CPetControl *pet = getPetControl();
 	if (!pet)
 		return;
-	
+
 	CGameManager *gameManager = pet->getGameManager();
 	if (!gameManager)
 		return;

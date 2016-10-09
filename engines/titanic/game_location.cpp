@@ -52,7 +52,7 @@ void CGameLocation::load(SimpleFile *file) {
 
 void CGameLocation::setView(CViewItem *view) {
 	if (_view) {
-		for (CTreeItem *treeItem = _view; treeItem; 
+		for (CTreeItem *treeItem = _view; treeItem;
 				treeItem = treeItem->scan(_view)) {
 			CGameObject *obj = dynamic_cast<CGameObject *>(treeItem);
 			if (obj)

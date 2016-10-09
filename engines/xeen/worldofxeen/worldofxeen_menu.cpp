@@ -53,7 +53,7 @@ void WorldOfXeenMenu::execute() {
 	SpriteResource special("special.icn");
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
-	
+
 	File newBright("newbrigh.m");
 	_vm->_sound->playSong(newBright);
 
@@ -210,7 +210,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	events.updateGameCounter();
-	
+
 	// Draw the background frame in a continous cycle
 	_bgFrame = (_bgFrame + 1) % 5;
 	title1.draw(screen._windows[0], _bgFrame);

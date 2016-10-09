@@ -66,7 +66,7 @@ private:
 	/**
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
-	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt, 
+	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
 		const Common::Rect &clipRect, int flags, int scale);
 
 	/**
@@ -99,7 +99,7 @@ public:
 	 */
 	void clear();
 
-	void draw(XSurface &dest, int frame, const Common::Point &destPos, 
+	void draw(XSurface &dest, int frame, const Common::Point &destPos,
 		int flags = 0, int scale = 0);
 
 	void draw(Window &dest, int frame, const Common::Point &destPos,

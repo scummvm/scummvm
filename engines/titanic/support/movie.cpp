@@ -125,7 +125,7 @@ void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags
 void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
 	if (!_movieSurface)
 		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340);
-	
+
 	bool widthLess = _videoSurface->getWidth() < 600;
 	bool heightLess = _videoSurface->getHeight() < 340;
 	Rect r(drawRect.left, drawRect.top,

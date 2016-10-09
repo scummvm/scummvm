@@ -91,12 +91,12 @@ void CStarControlSub13::load(SimpleFile *file, int param) {
 	_field14 = file->readFloat();
 	_field18 = file->readFloat();
 	_field1C = file->readFloat();
-	
+
 	int widthHeight = file->readNumber();
 	_width = widthHeight & 0xff;
 	_height = _width >> 16;
 	_field24 = file->readNumber();
-	
+
 	for (int idx = 0; idx < 5; ++idx)
 		_valArray[idx] = file->readFloat();
 

@@ -641,7 +641,7 @@ void ScummEngine_v0::setMode(byte mode) {
 		// Note: do not change freeze state here
 		state = USERSTATE_SET_IFACE |
 			USERSTATE_SET_CURSOR;
-		
+
 		break;
 	case kModeKeypad:
 		if (_game.features & GF_DEMO) {

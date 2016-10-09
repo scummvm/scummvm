@@ -27,7 +27,7 @@
 
 namespace Xeen {
 
-OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]), 
+OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_groundSprite(_data[2]), _attackImgs1(&_data[124]), _attackImgs2(&_data[95]),
 	_attackImgs3(&_data[76]), _attackImgs4(&_data[53]), _groundTiles(&_data[3]) {
 	_data[0] = DrawStruct(0, 8, 8);
@@ -166,21 +166,21 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 
 /*------------------------------------------------------------------------*/
 
-IndoorDrawList::IndoorDrawList() : 
+IndoorDrawList::IndoorDrawList() :
 	_sky1(_data[0]), _sky2(_data[1]), _ground(_data[2]), _horizon(_data[28]),
-	_swl_0F1R(_data[146]), _swl_0F1L(_data[144]), _swl_1F1R(_data[134]), 
-	_swl_1F1L(_data[133]), _swl_2F2R(_data[110]), _swl_2F1R(_data[109]), 
-	_swl_2F1L(_data[108]), _swl_2F2L(_data[107]), _swl_3F1R(_data[ 78]), 
+	_swl_0F1R(_data[146]), _swl_0F1L(_data[144]), _swl_1F1R(_data[134]),
+	_swl_1F1L(_data[133]), _swl_2F2R(_data[110]), _swl_2F1R(_data[109]),
+	_swl_2F1L(_data[108]), _swl_2F2L(_data[107]), _swl_3F1R(_data[ 78]),
 	_swl_3F2R(_data[ 77]), _swl_3F3R(_data[ 76]), _swl_3F4R(_data[ 75]),
-	_swl_3F1L(_data[ 74]), _swl_3F2L(_data[ 73]), _swl_3F3L(_data[ 72]), 
-	_swl_3F4L(_data[ 71]), _swl_4F4R(_data[ 33]), _swl_4F3R(_data[ 34]), 
+	_swl_3F1L(_data[ 74]), _swl_3F2L(_data[ 73]), _swl_3F3L(_data[ 72]),
+	_swl_3F4L(_data[ 71]), _swl_4F4R(_data[ 33]), _swl_4F3R(_data[ 34]),
 	_swl_4F2R(_data[ 35]), _swl_4F1R(_data[ 36]), _swl_4F1L(_data[ 32]),
 	_swl_4F2L(_data[ 31]), _swl_4F3L(_data[ 30]), _swl_4F4L(_data[ 29]),
-	_fwl_4F4R(_data[ 45]), _fwl_4F3R(_data[ 44]), _fwl_4F2R(_data[ 43]), 
-	_fwl_4F1R(_data[ 42]), _fwl_4F(  _data[ 41]), _fwl_4F1L(_data[ 40]), 
+	_fwl_4F4R(_data[ 45]), _fwl_4F3R(_data[ 44]), _fwl_4F2R(_data[ 43]),
+	_fwl_4F1R(_data[ 42]), _fwl_4F(  _data[ 41]), _fwl_4F1L(_data[ 40]),
 	_fwl_4F2L(_data[ 39]), _fwl_4F3L(_data[ 38]), _fwl_4F4L(_data[ 37]),
-	_fwl_2F1R(_data[121]), _fwl_2F(  _data[120]), _fwl_2F1L(_data[119]), 
-	_fwl_3F2R(_data[ 91]), _fwl_3F1R(_data[ 90]), _fwl_3F(  _data[ 89]), 
+	_fwl_2F1R(_data[121]), _fwl_2F(  _data[120]), _fwl_2F1L(_data[119]),
+	_fwl_3F2R(_data[ 91]), _fwl_3F1R(_data[ 90]), _fwl_3F(  _data[ 89]),
 	_fwl_3F1L(_data[ 88]), _fwl_3F2L(_data[ 87]), _fwl_1F(  _data[147]),
 	_fwl_1F1R(_data[145]), _fwl_1F1L(_data[143]),
 	_groundTiles(&_data[3]),
@@ -2608,7 +2608,7 @@ void InterfaceMap::setIndoorsMonsters() {
 	}
 }
 
-void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites, 
+void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites,
 		int frame, int defaultY) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	bool flying = monsterData._flying;
@@ -3533,7 +3533,7 @@ void InterfaceMap::drawIndoors() {
 		drawStruct._sprites = sprites.empty() ? (SpriteResource *)nullptr : &sprites;
 
 		surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
-		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA || 
+		if (surfaceId == SURFTYPE_WATER || surfaceId == SURFTYPE_LAVA ||
 				surfaceId == SURFTYPE_SEWER) {
 			drawStruct._frame = Res.DRAW_FRAMES[cellIndex][_flipWater ? 1 : 0];
 			drawStruct._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
@@ -4343,7 +4343,7 @@ void InterfaceMap::drawIndoors() {
 				_vm->_party->_mazeDirection][_vm->_party->_mazePosition.y]
 			);
 		map.cellFlagLookup(pt);
-		
+
 		_indoorList._sky2._sprites = &map._skySprites[0];
 	} else {
 		_indoorList._sky2._sprites = _indoorList[0]._sprites;
@@ -4362,7 +4362,7 @@ void InterfaceMap::drawIndoors() {
 		if (_vm->_combat->_shooting[idx])
 			_isAttacking = true;
 	}
-	
+
 	_charsShooting = _isAttacking;
 }
 

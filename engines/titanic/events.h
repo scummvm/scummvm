@@ -34,8 +34,8 @@ namespace Titanic {
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
 #define DOUBLE_CLICK_TIME 100
 
-enum SpecialButtons { 
-	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_SHIFT = 4, MK_CONTROL = 8, 
+enum SpecialButtons {
+	MK_LBUTTON = 1, MK_RBUTTON = 2, MK_SHIFT = 4, MK_CONTROL = 8,
 	MK_MBUTTON = 0x10
 };
 

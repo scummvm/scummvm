@@ -41,7 +41,7 @@ void CChevPanel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_startPos.x, indent);
 	file->writeNumberLine(_startPos.y, indent);
 	file->writeNumberLine(_chevCode, indent);
-	
+
 	CGameObject::save(file, indent);
 }
 

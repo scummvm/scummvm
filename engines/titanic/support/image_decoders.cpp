@@ -32,9 +32,9 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 	// Use the ScucmmVM deoder to decode it
 	loadStream(*file.readStream());
 	const Graphics::Surface *srcSurf = getSurface();
-	
+
 	// Resize the surface if necessary
-	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w 
+	if (!surface.hasSurface() || surface.getWidth() != srcSurf->w
 			|| surface.getHeight() != srcSurf->h)
 		surface.recreate(srcSurf->w, srcSurf->h);
 

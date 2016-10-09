@@ -100,12 +100,12 @@ public:
 	 * loading its index for future use
 	 */
 	void addToCache(const Common::String &filename);
-	
+
 	/**
 	 * Adds a resource from a library file to the cache
 	 */
 	void addToCache(const Common::String &filename, const Common::String &libFilename);
-	
+
 	/**
 	 * Adds a given stream to the cache under the given name
 	 */

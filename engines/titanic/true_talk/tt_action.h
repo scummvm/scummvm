@@ -29,7 +29,7 @@ namespace Titanic {
 
 class TTaction : public TTmajorWord {
 private:
-	static bool _staticFlag; 
+	static bool _staticFlag;
 protected:
 	int _field30;
 public:

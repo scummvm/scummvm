@@ -29,7 +29,7 @@ namespace Titanic {
 void CMouseButtonDownMsg::generate() {
 	CInputHandler &inputHandler = *CScreenManager::_screenManagerPtr->_inputHandler;
 	const Point &mousePos = inputHandler._mousePos;
-	
+
 	CMouseButtonDownMsg msg(mousePos, MB_LEFT);
 	inputHandler.handleMessage(msg, false);
 }

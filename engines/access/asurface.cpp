@@ -173,7 +173,7 @@ void BaseSurface::copyTo(BaseSurface *dest) {
 	if (dest->empty())
 		dest->create(this->w, this->h);
 
-	dest->blitFrom(*this); 
+	dest->blitFrom(*this);
 }
 
 void BaseSurface::saveBlock(const Common::Rect &bounds) {

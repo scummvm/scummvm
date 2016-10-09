@@ -75,7 +75,7 @@ bool CFilesManager::scanForFile(const CString &name) {
 
 	CString filename = name;
 	filename.toLowercase();
-	
+
 	if (filename[0] == 'y' || filename[0] == 'z')
 		return true;
 	else if (filename[0] < 'a' || filename[0] > 'c')

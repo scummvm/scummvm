@@ -236,7 +236,7 @@ SkyCompact::SkyCompact() {
 	for (cnt = 0; cnt < _numSaveIds; cnt++)
 		_saveIds[cnt] = FROM_LE_16(_saveIds[cnt]);
 	_resetDataPos = _cptFile->pos();
-	
+
 	checkAndFixOfficerBluntError();
 }
 
@@ -259,7 +259,7 @@ SkyCompact::~SkyCompact() {
 	delete _cptFile;
 }
 
-/* WORKAROUND for bug #2687: 
+/* WORKAROUND for bug #2687:
 	The first release of scummvm with externalized, binary compact data has one broken 16 bit reference.
 	When talking to Officer Blunt on ground level while in a crouched position, the game enters an
 	unfinishable state because Blunt jumps into the lake and can no longer be interacted with.

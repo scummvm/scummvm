@@ -109,7 +109,7 @@ void Debugger::listRooms() {
 	CRoomItem *room = gm._gameState._gameLocation.getRoom();
 	debugPrintf("Current location: %s, %s, %s\n", room->getName().c_str(),
 		node->getName().c_str(), view->getName().c_str());
-	
+
 	debugPrintf("Available rooms:\n");
 	for (CTreeItem *treeItem = root; treeItem; treeItem = treeItem->scan(root)) {
 		CRoomItem *roomItem = dynamic_cast<CRoomItem *>(treeItem);
@@ -139,7 +139,7 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	CTreeItem *root = g_vm->_window->_gameManager->_project;
 	if (argc == 2)
 		root = root->findByName(argv[1]);
-	
+
 	if (root == nullptr) {
 		debugPrintf("Could not find item\n");
 	} else {
@@ -204,7 +204,7 @@ bool Debugger::cmdPET(int argc, const char **argv) {
 			return true;
 		}
 	}
-	
+
 	debugPrintf("%s [on | off]\n", argv[0]);
 	return true;
 }

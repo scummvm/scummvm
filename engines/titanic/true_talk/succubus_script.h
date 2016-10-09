@@ -34,7 +34,7 @@ private:
 	/**
 	 * Setup sentence data
 	 */
-	void setupSentences(); 
+	void setupSentences();
 
 	/**
 	 * Add a response and optionally set the state

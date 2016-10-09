@@ -44,7 +44,7 @@ public:
 		Video::AVIDecoder(soundType, trackFn) {}
 	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
 		SelectTrackFn trackFn = nullptr) : Video::AVIDecoder(frameRateOverride, soundType, trackFn) {}
-	
+
 	Video::AVIDecoder::AVIVideoTrack &getVideoTrack();
 };
 

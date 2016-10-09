@@ -128,7 +128,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 					}
 				}
 				break;
-			
+
 			default:
 				break;
 			}

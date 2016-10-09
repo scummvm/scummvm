@@ -36,7 +36,7 @@ namespace Tattoo {
 #define MAX_INV_COMMANDS 10			// Maximum elements in dialog
 #define NUM_INV_PER_LINE 4			// Number of inentory items per line in the dialog
 
-WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) : 
+WidgetInventoryTooltip::WidgetInventoryTooltip(SherlockEngine *vm, WidgetInventory *owner) :
 		WidgetTooltipBase(vm), _owner(owner) {
 }
 
@@ -100,7 +100,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 		_surface.writeFancyString(str, Common::Point(0, 0), BLACK, INFO_TOP);
 	} else {
 		int xp, yp;
-		
+
 		xp = (_bounds.width() - _surface.stringWidth(line1) - 2) / 2;
 		_surface.writeFancyString(line1, Common::Point(xp, 0), BLACK, INFO_TOP);
 
@@ -110,7 +110,7 @@ void WidgetInventoryTooltip::setText(const Common::String &str) {
 	}
 }
 
-void WidgetInventoryTooltip::handleEvents() {	
+void WidgetInventoryTooltip::handleEvents() {
 	Events &events = *_vm->_events;
 	FixedText &fixedText = *_vm->_fixedText;
 	Inventory &inv = *_vm->_inventory;
@@ -133,7 +133,7 @@ void WidgetInventoryTooltip::handleEvents() {
 	if (_owner->_invVerbMode == 3) {
 		select = ui._bgFound;
 		oldSelect = ui._oldBgFound;
-	
+
 		if (select != -1 && (select != oldSelect || (select != -1 && _surface.empty()))) {
 			// See if we're pointing at a shape or a sprite
 			if (select < 1000) {
@@ -143,17 +143,17 @@ void WidgetInventoryTooltip::handleEvents() {
 					if (_vm->getLanguage() == Common::GR_GRE) {
 
 						if (!_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), obj._description.c_str(), 
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), obj._description.c_str(),
 								inv[_owner->_invSelect]._name.c_str(), _owner->_verb.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+							str = Common::String::format("%s %s %s %s", _owner->_action.c_str(), inv[_owner->_invSelect]._name.c_str(),
 								obj._description.c_str(), _owner->_verb.c_str());
 					} else {
 						if (_owner->_swapItems)
-							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), obj._description.c_str(), _owner->_action.c_str(), 
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), obj._description.c_str(), _owner->_action.c_str(),
 								inv[_owner->_invSelect]._name.c_str());
 						else
-							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), inv[_owner->_invSelect]._name.c_str(), 
+							str = Common::String::format("%s %s %s %s", _owner->_verb.c_str(), inv[_owner->_invSelect]._name.c_str(),
 								_owner->_action.c_str(), obj._description.c_str());
 					}
 				}
@@ -192,7 +192,7 @@ void WidgetInventoryTooltip::handleEvents() {
 				select = -1;
 			} else {
 				oldSelect = _owner->_invSelect;
-				
+
 				if (select != _owner->_invSelect || _surface.empty()) {
 
 					if (_owner->_invMode == 1) {
@@ -249,7 +249,7 @@ void WidgetInventoryTooltip::handleEvents() {
 
 /*----------------------------------------------------------------*/
 
-WidgetInventoryVerbs::WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner) : 
+WidgetInventoryVerbs::WidgetInventoryVerbs(SherlockEngine *vm, WidgetInventory *owner) :
 		WidgetBase(vm), _owner(owner) {
 	_invVerbSelect = _oldInvVerbSelect = -1;
 }
@@ -472,7 +472,7 @@ void WidgetInventoryVerbs::highlightControls() {
 
 /*----------------------------------------------------------------*/
 
-WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm), 
+WidgetInventory::WidgetInventory(SherlockEngine *vm) : WidgetBase(vm),
 		_tooltipWidget(vm, this), _verbList(vm, this) {
 	_invMode = 0;
 	_invVerbMode = 0;
@@ -571,7 +571,7 @@ void WidgetInventory::drawInventory() {
 		}
 	}
 
-	drawScrollBar(inv._invIndex / NUM_INV_PER_LINE, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+	drawScrollBar(inv._invIndex / NUM_INV_PER_LINE, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
 		(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 }
 
@@ -594,10 +594,10 @@ void WidgetInventory::handleEvents() {
 		int invIndex = inv._invIndex / NUM_INV_PER_LINE;
 
 		ScrollHighlight oldHighlight = ui._scrollHighlight;
-		handleScrollbarEvents(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+		handleScrollbarEvents(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
 			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 
-		handleScrolling(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE, 
+		handleScrolling(invIndex, NUM_INVENTORY_SHOWN / NUM_INV_PER_LINE,
 			(inv._holdings + NUM_INV_PER_LINE - 1) / NUM_INV_PER_LINE);
 
 		if (oldScrollIndex != invIndex) {
@@ -665,16 +665,16 @@ void WidgetInventory::handleEvents() {
 					ui.putMessage("%s", FIXED(NoEffect));
 			}
 		} else if ((_outsideMenu && !_bounds.contains(mousePos)) || ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
-			// Want to close the window (clicked outside of it). So close the window and return to Standard 
+			// Want to close the window (clicked outside of it). So close the window and return to Standard
 			close();
 
 		} else if (_bounds.contains(mousePos)) {
 			// Mouse button was released inside the inventory window
 			_outsideMenu = false;
-		
+
 			//  See if they are pointing at one of the inventory items
 			if (_invSelect != -1) {
-				// See if they are in Use Obj with Inv. Mode (they right clicked on an item 
+				// See if they are in Use Obj with Inv. Mode (they right clicked on an item
 				// in the room and selected "Use with Inv.")
 				if (_invMode == 1) {
 					_tooltipWidget.banishWindow();
@@ -709,13 +709,13 @@ void WidgetInventory::handleEvents() {
 						_verbList._oldInvVerbSelect = -1;
 						_tooltipWidget.banishWindow();
 
-						// Keep track of the name of the inventory object so we can check it against the target fields 
+						// Keep track of the name of the inventory object so we can check it against the target fields
 						// of verbs when we activate it
 						_invTarget = inv[_invSelect]._name;
 						_swapItems = false;
 
 						_verbList.load();
-					} else {		
+					} else {
 						// They left clicked on an inventory item, so Look at it
 
 						// Check if they are looking at the solved Foolscap
@@ -726,7 +726,7 @@ void WidgetInventory::handleEvents() {
 
 							_invVerbMode = 0;
 							inv.freeInv();
-							
+
 							events.clearEvents();
 							events.setCursor(ARROW);
 							ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;

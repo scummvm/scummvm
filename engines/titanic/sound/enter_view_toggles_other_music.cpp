@@ -28,7 +28,7 @@ BEGIN_MESSAGE_MAP(CEnterViewTogglesOtherMusic, CTriggerAutoMusicPlayer)
 	ON_MESSAGE(EnterViewMsg)
 END_MESSAGE_MAP()
 
-CEnterViewTogglesOtherMusic::CEnterViewTogglesOtherMusic() : 
+CEnterViewTogglesOtherMusic::CEnterViewTogglesOtherMusic() :
 		CTriggerAutoMusicPlayer(), _value(2) {
 }
 

@@ -507,7 +507,7 @@ bool ScalpelEngine::showAlleyCutscene() {
 	}
 
 	if (finished) {
-		// quick fade out 
+		// quick fade out
 		_screen->fadeToBlack(1);
 
 		// wait until after third "scream" in music happened

@@ -40,7 +40,7 @@ void CBarMenu::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_barFrameNumber, indent);
 	file->writeNumberLine(_visibleFlag, indent);
 	file->writeNumberLine(_numFrames, indent);
-	
+
 	CGameObject::save(file, indent);
 }
 
@@ -67,7 +67,7 @@ bool CBarMenu::PETDownMsg(CPETDownMsg *msg) {
 	if (_visibleFlag) {
 		if (--_barFrameNumber < 0)
 			_barFrameNumber = _numFrames - 1;
-		
+
 		loadFrame(_barFrameNumber);
 	}
 

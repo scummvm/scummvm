@@ -44,7 +44,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);	
+	virtual void load(SimpleFile *file);
 
 	/**
 	 * Returns true if the item is a file item

@@ -33,7 +33,7 @@ void CVariableListItem::save(SimpleFile *file, int indent) {
 	file->writeQuotedLine(_string2, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeQuotedLine(_string4, indent);
-	
+
 	ListItem::save(file, indent);
 }
 
@@ -66,7 +66,7 @@ void CVariableListItem::load(SimpleFile *file) {
 
 	_field40 = field40;
 	_field44 = field44;
-	
+
 	ListItem::load(file);
 }
 

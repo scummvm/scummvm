@@ -36,7 +36,7 @@ void CCredits::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_fieldBC, indent);
 	file->writeNumberLine(_fieldC0, indent);
-	
+
 	CGameObject::save(file, indent);
 }
 
@@ -60,7 +60,7 @@ bool CCredits::TimerMsg(CTimerMsg *msg) {
 	setVisible(true);
 	loadSound("a#16.wav");
 	loadSound("a#24.wav");
-	
+
 	playCutscene(0, 18);
 	playGlobalSound("a#16.wav", -1, false, false, 0);
 	playCutscene(19, 642);

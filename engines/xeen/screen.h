@@ -96,7 +96,7 @@ public:
 	void frame();
 
 	/**
-	 * Fill the content area of a window with the current background color 
+	 * Fill the content area of a window with the current background color
 	 */
 	void fill();
 

@@ -50,13 +50,13 @@ private:
 	 * Copys a rectangle representing a character in the font data to
 	 * a given destination position in the surface
 	 */
-	void copyRect(CVideoSurface *surface, const Common::Point &destPos, 
+	void copyRect(CVideoSurface *surface, const Common::Point &destPos,
 		Rect &srcRect);
 
 	/**
 	 * Write a character
 	 */
-	WriteCharacterResult writeChar(CVideoSurface *surface, unsigned char c, 
+	WriteCharacterResult writeChar(CVideoSurface *surface, unsigned char c,
 		const Common::Point &pt, const Rect &destRect, const Rect *srcRect);
 
 	/**

@@ -262,7 +262,7 @@ ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSetting
 		_numGlobalObjects = 256;
 		_numRooms = 55;
 		_numCostumes = 25;
-		
+
 		if (_game.features & GF_DEMO) {
 			_numScripts = 55;
 			_numSounds = 40;

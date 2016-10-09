@@ -44,9 +44,9 @@ public:
 public:
 	OutdoorDrawList();
 
-	DrawStruct &operator[](int idx) { 
+	DrawStruct &operator[](int idx) {
 		assert(idx < size());
-		return _data[idx]; 
+		return _data[idx];
 	}
 
 	int size() const { return 132; }
@@ -80,9 +80,9 @@ public:
 public:
 	IndoorDrawList();
 
-	DrawStruct &operator[](int idx) { 
+	DrawStruct &operator[](int idx) {
 		assert(idx < size());
-		return _data[idx]; 
+		return _data[idx];
 	}
 
 	int size() const { return 170; }
@@ -99,7 +99,7 @@ private:
 	 * Helper method for setIndoorsMonsters to set a draw structure
 	 * with the deatils for a given monster
 	 */
-	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, 
+	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster,
 		SpriteResource *sprites, int frame, int defaultY);
 protected:
 	int8 _wp[20];

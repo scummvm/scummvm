@@ -32,7 +32,7 @@ int CVideoSurface::_videoSurfaceCounter = 0;
 CVideoSurface::CVideoSurface(CScreenManager *screenManager) :
 		_screenManager(screenManager), _rawSurface(nullptr), _movie(nullptr),
 		_pendingLoad(false), _transBlitFlag(false), _fastBlitFlag(false),
-		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT), 
+		_movieFrameSurface(nullptr), _transparencyMode(TRANS_DEFAULT),
 		_freeMovieSurface(DisposeAfterUse::NO), _hasFrame(true), _lockCount(0) {
 	_videoSurfaceNum = _videoSurfaceCounter++;
 }
@@ -167,7 +167,7 @@ void CVideoSurface::movieBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 		if (src->lock()) {
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
-			
+
 			// TODO: Handle the transparency mode correctly
 			destSurface->blitFrom(*srcSurface, srcRect, Point(srcRect.left, srcRect.top));
 
@@ -210,7 +210,7 @@ OSVideoSurface::OSVideoSurface(CScreenManager *screenManager, const CResourceKey
 		CVideoSurface(screenManager) {
 	_ddSurface = nullptr;
 	_pendingLoad = pendingLoad;
-	
+
 	if (_pendingLoad) {
 		loadResource(key);
 	} else {
@@ -351,7 +351,7 @@ void OSVideoSurface::recreate(int width, int height) {
 }
 
 void OSVideoSurface::resize(int width, int height) {
-	if (!_ddSurface || _ddSurface->getWidth() != width || 
+	if (!_ddSurface || _ddSurface->getWidth() != width ||
 			_ddSurface->getHeight() != height)
 		recreate(width, height);
 }
@@ -365,7 +365,7 @@ int OSVideoSurface::getPixelDepth() {
 		error("Could not load resource");
 
 	lock();
-	
+
 	int result = _rawSurface->format.bytesPerPixel;
 	if (result == 1)
 		// Paletted 8-bit images don't store the color directly in the pixels

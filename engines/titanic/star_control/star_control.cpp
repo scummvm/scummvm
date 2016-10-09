@@ -58,7 +58,7 @@ void CStarControl::save(SimpleFile *file, int indent) {
 
 void CStarControl::load(SimpleFile *file) {
 	int val = file->readNumber();
-	
+
 	if (!val) {
 		_starField.load(file);
 		if (!_starField.initDocument())
@@ -74,7 +74,7 @@ void CStarControl::load(SimpleFile *file) {
 
 		_fieldBC = 1;
 	}
-	
+
 	CGameObject::load(file);
 }
 

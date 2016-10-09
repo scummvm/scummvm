@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(CParrotNutBowlActor, CGameObject)
 	ON_MESSAGE(NutPuzzleMsg)
 END_MESSAGE_MAP()
 
-CParrotNutBowlActor::CParrotNutBowlActor() : CGameObject(), 
+CParrotNutBowlActor::CParrotNutBowlActor() : CGameObject(),
 		_puzzleDone(0), _state(0) {
 }
 
@@ -43,7 +43,7 @@ void CParrotNutBowlActor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_puzzleDone, indent);
 	file->writeNumberLine(_state, indent);
-	
+
 	CGameObject::save(file, indent);
 }
 

@@ -44,7 +44,7 @@ void CPlaceHolderItem::save(SimpleFile *file, int indent) {
 	file->writePoint(_pos1, indent);
 	file->writePoint(_pos2, indent);
 	file->writeQuotedLine(_string1, indent);
-	
+
 	CNamedItem::save(file, indent);
 }
 
@@ -89,7 +89,7 @@ void CPlaceHolderItem::load(SimpleFile *file) {
 	default:
 		break;
 	}
-	
+
 	CNamedItem::load(file);
 }
 

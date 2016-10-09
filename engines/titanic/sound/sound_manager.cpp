@@ -304,7 +304,7 @@ void QSoundManager::setPolarPosition(int handle, double range, double azimuth, d
 		Slot &slot = _slots[idx];
 		if (slot._handle == handle) {
 			qsWaveMixSetPanRate(slot._channel, QMIX_USEONCE, panRate);
-			qsWaveMixSetPolarPosition(slot._channel, QMIX_USEONCE, 
+			qsWaveMixSetPolarPosition(slot._channel, QMIX_USEONCE,
 				QSPOLAR(azimuth, range, elevation));
 			break;
 		}
@@ -452,7 +452,7 @@ void QSoundManager::updateVolume(int channel, uint panRate) {
 	default:
 		break;
 	}
-	
+
 	volume = (_musicPercent * volume) / 100;
 	qsWaveMixSetPanRate(channel, 0, panRate);
 	qsWaveMixSetVolume(channel, 0, (uint)volume);

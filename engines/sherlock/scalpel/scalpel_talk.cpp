@@ -136,7 +136,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdHolmesOn,
 		(OpcodeMethod)&ScalpelTalk::cmdGotoScene,
 		(OpcodeMethod)&ScalpelTalk::cmdPlayPrologue,
-		
+
 		(OpcodeMethod)&ScalpelTalk::cmdAddItemToInventory,
 		(OpcodeMethod)&ScalpelTalk::cmdSetObject,
 		(OpcodeMethod)&ScalpelTalk::cmdCallTalkFile,
@@ -147,7 +147,7 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 		(OpcodeMethod)&ScalpelTalk::cmdRemoveItemFromInventory,
 		(OpcodeMethod)&ScalpelTalk::cmdEnableEndKey,
 		(OpcodeMethod)&ScalpelTalk::cmdDisableEndKey,
-		
+
 		(OpcodeMethod)&ScalpelTalk::cmdEndTextWindow,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
@@ -387,7 +387,7 @@ OpcodeReturn ScalpelTalk::cmdClearInfoLine(const byte *&str) {
 
 OpcodeReturn ScalpelTalk::cmdClearWindow(const byte *&str) {
 	UserInterface &ui = *_vm->_ui;
-	
+
 	ui.clearWindow();
 	_yp = CONTROLS_Y + 12;
 	_charCount = _line = 0;
@@ -450,7 +450,7 @@ OpcodeReturn ScalpelTalk::cmdMoveMouse(const byte *&str) {
 	if (_talkToAbort)
 		return RET_EXIT;
 	str += 3;
-	
+
 	return RET_SUCCESS;
 }
 
@@ -650,7 +650,7 @@ bool ScalpelTalk::talk3DOMovieTrigger(int subIndex) {
 }
 
 Common::Point ScalpelTalk::get3doPortraitPosition() const {
-	// TODO: This current method is only an assumption of how the original figured 
+	// TODO: This current method is only an assumption of how the original figured
 	// out where to place each character's portrait movie.
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
@@ -672,7 +672,7 @@ Common::Point ScalpelTalk::get3doPortraitPosition() const {
 
 		pt = scene._bgShapes[objNum]._position;
 	}
-	
+
 	// Adjust the top-left so the center of the portrait will be on the character,
 	// but ensure the portrait will be entirely on-screen
 	pt -= Common::Point(PORTRAIT_W / 2, PORTRAIT_H / 2);

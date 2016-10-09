@@ -3889,7 +3889,7 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	// Go back to the menu if requested, otherwise go to the requested page
 	if (returnToMenu)
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyGoToControls, 1));
-	else 
+	else
 		_vm->addNotifyEvent(NotifyEvent(kLBNotifyChangePage, destPage));
 
 	return false;

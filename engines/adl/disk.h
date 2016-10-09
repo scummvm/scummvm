@@ -135,7 +135,7 @@ private:
 	enum FileType {
 		kFileTypeText = 0,
 		kFileTypeAppleSoft = 2,
-		kFileTypeBinary = 4 
+		kFileTypeBinary = 4
 	};
 
 	enum {

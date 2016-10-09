@@ -46,7 +46,7 @@ public:
 	CEnterExitSecClassMiniLift() : CGameObject(), _roomNum(0) {}
 	static void init();
 	static void deinit();
-	
+
 	/**
 	 * Save the data for the class to file
 	 */

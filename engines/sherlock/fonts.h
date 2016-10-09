@@ -44,7 +44,7 @@ protected:
 	static int _widestChar;
 	static uint16 _charCount;
 
-	static void writeString(BaseSurface *surface, const Common::String &str, 
+	static void writeString(BaseSurface *surface, const Common::String &str,
 		const Common::Point &pt, int overrideColor = 0);
 
 	static inline byte translateChar(byte c);

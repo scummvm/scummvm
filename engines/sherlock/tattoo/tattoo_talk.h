@@ -103,7 +103,7 @@ protected:
 public:
 	TattooTalk(SherlockEngine *vm);
 	virtual ~TattooTalk() {}
-	
+
 	/**
 	 * Called whenever a conversation or item script needs to be run. For standard conversations,
 	 * it opens up a description window similar to how 'talk' does, but shows a 'reply' directly

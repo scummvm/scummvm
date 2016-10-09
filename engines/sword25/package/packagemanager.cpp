@@ -75,7 +75,7 @@ PackageManager::~PackageManager() {
 Common::String PackageManager::ensureSpeechLang(const Common::String &fileName) {
 	if (!_useEnglishSpeech || fileName.size() < 9 || !fileName.hasPrefix("/speech/"))
 		return fileName;
-	
+
 	// Always keep German speech as a fallback in case the English speech pack is not present.
 	// However this means we cannot play with German text and English voice.
 	if (fileName.hasPrefix("/speech/de"))

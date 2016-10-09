@@ -61,7 +61,7 @@ public:
 	virtual ~AmazonRoom();
 
 	virtual void init4Quads();
-	
+
 	virtual void roomMenu();
 };
 

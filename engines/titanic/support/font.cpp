@@ -80,7 +80,7 @@ int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) cons
 	if (_fontHeight == 0 || !_dataPtr)
 		// No font, so return immediately
 		return 0;
-	
+
 	// Loop through the characters of the string
 	if (!str.empty()) {
 		for (const char *strP = str.c_str(); *strP; ++strP) {
@@ -330,7 +330,7 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 			flag = true;
 		}
 	}
-	
+
 	if ((textSize.x + totalWidth) >= maxWidth && totalWidth < maxWidth) {
 		// Word wrap
 		textSize.x = 0;

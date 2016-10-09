@@ -61,7 +61,7 @@ void CExitPellerator::load(SimpleFile *file) {
 
 bool CExitPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	CString name = getName();
-	
+
 	if (name == "ExitPellerator") {
 		if (_statics->_v2 != 2) {
 			switch (getRandomNumber(2)) {

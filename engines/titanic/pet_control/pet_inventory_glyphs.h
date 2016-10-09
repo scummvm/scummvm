@@ -63,7 +63,7 @@ public:
 	CGameObject *_background;
 	CGameObject *_image;
 public:
-	CPetInventoryGlyph() : _item(nullptr), _field34(1), 
+	CPetInventoryGlyph() : _item(nullptr), _field34(1),
 		_background(nullptr), _image(nullptr) {}
 	CPetInventoryGlyph(CCarry *item, int val) : _item(item),
 		_field34(val), _background(nullptr), _image(nullptr) {}
@@ -72,7 +72,7 @@ public:
 	 * Called when the PET area is entered
 	 */
 	virtual void enter();
-	
+
 	/**
 	 * Called when the PET area is left
 	 */
@@ -97,7 +97,7 @@ public:
 	 * Glyph has been shifted to be first visible one
 	 */
 	virtual void glyphFocused(const Point &topLeft, bool flag);
-	
+
 	/**
 	 * Called when a glyph drag starts
 	 */
@@ -133,7 +133,7 @@ class CInventoryGlyphAction : public CGlyphAction {
 public:
 	CGameObject *_item;
 public:
-	CInventoryGlyphAction(CGameObject *item, GlyphActionMode mode) : 
+	CInventoryGlyphAction(CGameObject *item, GlyphActionMode mode) :
 		CGlyphAction(mode), _item(item) {}
 };
 

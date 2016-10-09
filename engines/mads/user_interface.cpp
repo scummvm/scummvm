@@ -339,7 +339,7 @@ UserInterface::UserInterface(MADSEngine *vm) : _vm(vm), _dirtyAreas(vm),
 	Common::fill(&_categoryIndexes[0], &_categoryIndexes[7], 0);
 
 	// Map the user interface to the bottom of the game's screen surface
-	create(*_vm->_screen, Common::Rect(0, MADS_SCENE_HEIGHT,  MADS_SCREEN_WIDTH, 
+	create(*_vm->_screen, Common::Rect(0, MADS_SCENE_HEIGHT,  MADS_SCREEN_WIDTH,
 		MADS_SCREEN_HEIGHT));
 
 	_surface.create(MADS_SCREEN_WIDTH, MADS_INTERFACE_HEIGHT);

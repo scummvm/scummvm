@@ -106,7 +106,7 @@ void WidgetBase::draw() {
 	if (_bounds.width() > 0 && !_surface.empty()) {
 		// Get the area to draw, adjusted for scroll position
 		restrictToScreen();
-		
+
 		// Draw the background for the widget
 		drawBackground();
 
@@ -146,7 +146,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		const char *lineStartP = strP;
 
 		// Find how many characters will fit on the next line
-		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] || 
+		while (width < maxWidth && *strP && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] ||
 				(byte)*strP == talk._opcodes[OP_NULL])) {
 			width += _surface.charWidth(*strP);
 
@@ -156,7 +156,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 			++strP;
 		}
 
-		// If the line was too wide to fit on a single line, go back to the last space 
+		// If the line was too wide to fit on a single line, go back to the last space
 		// if there was one, or otherwise simply break the line at this point
 		if (width >= maxWidth && spaceP != nullptr)
 			strP = spaceP;
@@ -167,7 +167,7 @@ Common::String WidgetBase::splitLines(const Common::String &str, Common::StringA
 		// Move the string ahead to the next line
 		if (*strP == ' ' || *strP == 13)
 			++strP;
-	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER] 
+	} while (*strP && (lines.size() < maxLines) && ((byte)*strP < talk._opcodes[OP_SWITCH_SPEAKER]
 			|| (byte)*strP == talk._opcodes[OP_NULL]));
 
 	// Return any remaining text left over
@@ -266,7 +266,7 @@ void WidgetBase::drawScrollBar(int index, int pageSize, int count) {
 	// Draw the scroll position bar
 	int barHeight = (r.height() - BUTTON_SIZE * 2) * pageSize / count;
 	barHeight = CLIP(barHeight, BUTTON_SIZE, r.height() - BUTTON_SIZE * 2);
-	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE + 
+	int barY = (count <= pageSize) ? r.top + BUTTON_SIZE : r.top + BUTTON_SIZE +
 		(r.height() - BUTTON_SIZE * 2 - barHeight) * index / (count - pageSize);
 
 	_surface.fillRect(Common::Rect(r.left + 2, barY + 2, r.right - 2, barY + barHeight - 3), INFO_MIDDLE);

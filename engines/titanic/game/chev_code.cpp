@@ -69,7 +69,7 @@ bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 	int section = (msg->_floorNum + 4) / 10;
 	int index = (msg->_floorNum + 4) % 10;
 	_chevCode &= ~0xFF00;
-	
+
 	int val = 0;
 	switch (section) {
 	case 0:
@@ -87,7 +87,7 @@ bool CChevCode::SetChevFloorBits(CSetChevFloorBits *msg) {
 	default:
 		break;
 	}
-	
+
 	_chevCode |= ((index + val) << 8);
 	return true;
 }

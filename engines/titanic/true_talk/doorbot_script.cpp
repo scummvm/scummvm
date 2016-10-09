@@ -70,7 +70,7 @@ void DoorbotScript::setupSentences() {
 
 	_mappings.load("Mappings/Doorbot", 4);
 	_entries.load("Sentences/Doorbot");
-	
+
 	static const int SENTENCE_NUMS[11] = {
 		2, 100, 101, 102, 107, 110, 111, 124, 129, 131, 132
 	};
@@ -364,7 +364,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 		case 32:
 			return setResponse(10110, 0);
-			
+
 		case 33:
 			if (sentence->contains("sieve") || sentence->contains("colander")
 					|| sentence->contains("vegetable") || sentence->contains("ground")
@@ -497,7 +497,7 @@ int DoorbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 			return setResponse(getDialogueId(220000));
 		break;
 	}
-	
+
 	return 2;
 }
 
@@ -672,7 +672,7 @@ int DoorbotScript::updateState(uint oldId, uint newId, int index) {
 	bool flag39 = getValue(39) != 0;
 	CTrueTalkManager::setFlags(38, 0);
 	CTrueTalkManager::setFlags(39, 0);
-	
+
 	if (newId > 220890) {
 		switch (newId) {
 		case 221064:
@@ -897,7 +897,7 @@ int DoorbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	case 29:
 		if (sentence->localWord("another") || sentence->localWord("more") ||
 				sentence->localWord("additional") || sentence->contains("another") ||
-				sentence->contains("more") || sentence->contains("additional")) { 
+				sentence->contains("more") || sentence->contains("additional")) {
 			addResponse(getDialogueId(220058));
 			applyResponse();
 			return 2;

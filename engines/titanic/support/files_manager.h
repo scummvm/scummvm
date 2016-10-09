@@ -39,7 +39,7 @@ class CFilesManager {
 	struct ResourceEntry {
 		uint _offset;
 		uint _size;
-		
+
 		ResourceEntry() : _offset(0), _size(0) {}
 		ResourceEntry(uint offset, uint size) : _offset(offset), _size(size) {}
 	};

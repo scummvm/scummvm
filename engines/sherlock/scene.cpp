@@ -374,7 +374,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				} else {
 					rrmStream->read(screen._backBuffer1.getPixels(), fullWidth * SHERLOCK_SCREEN_HEIGHT);
 				}
-			} 
+			}
 
 			// Read in the shapes header info
 			Common::Array<BgFileHeaderInfo> bgInfo;
@@ -528,7 +528,7 @@ bool Scene::loadScene(const Common::String &filename) {
 				delete[] cAnimOffsetTablePtr;
 			}
 
-			
+
 
 			// Read in the room bounding areas
 			int size = rrmStream->readUint16LE();
@@ -627,7 +627,7 @@ bool Scene::loadScene(const Common::String &filename) {
 			if (IS_ROSE_TATTOO) {
 				// Load the object sound list
 				char buffer[27];
-			
+
 				_objSoundList.resize(rrmStream->readUint16LE());
 				for (uint idx = 0; idx < _objSoundList.size(); ++idx) {
 					rrmStream->read(buffer, 27);
@@ -1205,9 +1205,9 @@ void Scene::transitionToScene() {
 		if (hSavedFacing < 8 && !saves._justLoaded) {
 			if (IS_ROSE_TATTOO)
 				hSavedFacing = Tattoo::FS_TRANS[hSavedFacing];
-			else			
+			else
 				hSavedFacing = Scalpel::FS_TRANS[hSavedFacing];
-			
+
 			hSavedPos.x *= FIXED_INT_MULTIPLIER;
 			hSavedPos.y *= FIXED_INT_MULTIPLIER;
 		}
@@ -1235,7 +1235,7 @@ void Scene::transitionToScene() {
 		people[HOLMES]._position = Common::Point(0, 0);
 	}
 
-	// If the scene is capable of scrolling, set the current scroll so that whoever has control 
+	// If the scene is capable of scrolling, set the current scroll so that whoever has control
 	// of the scroll code is in the middle of the screen
 	if (screen._backBuffer1.width() > SHERLOCK_SCREEN_WIDTH)
 		people[people._walkControl].centerScreenOnPerson();
@@ -1256,7 +1256,7 @@ void Scene::transitionToScene() {
 			}
 
 			if (Common::Rect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y).contains(
-					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER, 
+					Common::Point(people[HOLMES]._position.x / FIXED_INT_MULTIPLIER,
 					people[HOLMES]._position.y / FIXED_INT_MULTIPLIER))) {
 				// Current point is already inside box - impact occurred on
 				// a previous call. So simply do nothing except talk until the

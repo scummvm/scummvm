@@ -39,7 +39,7 @@ struct TTstringData {
 };
 
 enum TTstringStatus {
-	SS_VALID = 0, SS_1 = 1, SS_2 = 2, SS_3 = 3, SS_4 = 4, 
+	SS_VALID = 0, SS_1 = 1, SS_2 = 2, SS_3 = 3, SS_4 = 4,
 	SS_5 = 5, SS_7 = 7, SS_8 = 8, SS_11 = 11, SS_13 = 13
 };
 
@@ -127,7 +127,7 @@ public:
 	 * Get a char * pointer to the string data
 	 */
 	const char *c_str() const { return _data->_string.c_str(); }
-	
+
 	/**
 	 * Automatic operator to convert to a const char *
 	 */

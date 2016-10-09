@@ -31,7 +31,7 @@ namespace Xeen {
 
 enum ItemsMode {
 	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_2 = 2, ITEMMODE_3 = 3,
-	ITEMMODE_RECHARGE = 4, ITEMMODE_5 = 5, ITEMMODE_ENCHANT = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8, 
+	ITEMMODE_RECHARGE = 4, ITEMMODE_5 = 5, ITEMMODE_ENCHANT = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8,
 	ITEMMODE_REPAIR = 9, ITEMMODE_IDENTIFY = 10, ITEMMODE_TO_GOLD = 11
 };
 
@@ -73,10 +73,10 @@ private:
 	/**
 	 * Calculate the cost of an item
 	 */
-	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel, 
+	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel,
 		ItemCategory category);
 
-	int doItemOptions(Character &c, int actionIndex, int itemIndex, 
+	int doItemOptions(Character &c, int actionIndex, int itemIndex,
 		ItemCategory category, ItemsMode mode);
 
 	void itemToGold(Character &c, int itemIndex, ItemCategory category, ItemsMode mode);

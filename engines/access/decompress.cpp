@@ -31,7 +31,7 @@ namespace Access {
 void LzwDecompressor::decompress(byte *source, byte *dest) {
 
 	_source = source;
-	
+
 	byte litByte = 0;
 	uint16 oldCode = 0;
 	uint16 copyLength, maxCodeValue, code, nextCode, lastCode;

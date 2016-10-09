@@ -675,7 +675,7 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 
 bool Console::parseResourceNumber36(const char *userParameter, uint16 &resourceNumber, uint32 &resourceTuple) {
 	int userParameterLen = strlen(userParameter);
-	
+
 	if (userParameterLen != 10) {
 		debugPrintf("Audio36/Sync36 resource numbers must be specified as RRRNNVVCCS\n");
 		debugPrintf("where RRR is the resource number/map\n");
@@ -760,7 +760,7 @@ void Console::cmdDiskDumpWorker(ResourceType resourceType, int resourceNumber, u
 	ResourceId resourceId;
 	Resource *resource = NULL;
 	char outFileName[50];
-	
+
 	switch (resourceType) {
 	case kResourceTypeAudio36:
 	case kResourceTypeSync36: {
@@ -877,7 +877,7 @@ bool Console::cmdList(int argc, const char **argv) {
 				currentMap = map;
 				displayCount = 0;
 			}
-			
+
 			if (displayCount % 3 == 0)
 				debugPrintf("  ");
 
@@ -2919,7 +2919,7 @@ bool Console::cmdScriptObjects(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show objects inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -2941,7 +2941,7 @@ bool Console::cmdScriptStrings(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show strings inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get strings of all currently loaded scripts
 		curScriptNr = -1;
@@ -2963,7 +2963,7 @@ bool Console::cmdScriptSaid(int argc, const char **argv) {
 		debugPrintf("<script number> may be * to show said-strings inside all loaded scripts\n");
 		return true;
 	}
-	
+
 	if (strcmp(argv[1], "*") == 0) {
 		// get said-strings of all currently loaded scripts
 		curScriptNr = -1;

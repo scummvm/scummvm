@@ -24,7 +24,7 @@
 
 namespace Titanic {
 
-TTsynonym::TTsynonym() : TTstringNode(), _file(HANDLE_STDIN), 
+TTsynonym::TTsynonym() : TTstringNode(), _file(HANDLE_STDIN),
 		_mode(0), _field1C(0) {
 }
 
@@ -72,7 +72,7 @@ int TTsynonym::save(SimpleFile *file) {
 		}
 
 		file->writeFormat("%c", ' ');
-		
+
 		if (synP->_file) {
 			file->writeFormat("%2.0d", synP->_file);
 		} else {

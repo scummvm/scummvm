@@ -28,7 +28,7 @@ BEGIN_MESSAGE_MAP(CTurnOnPlaySound, CTurnOnObject)
 	ON_MESSAGE(MouseButtonUpMsg)
 END_MESSAGE_MAP()
 
-CTurnOnPlaySound::CTurnOnPlaySound() : CTurnOnObject(), 
+CTurnOnPlaySound::CTurnOnPlaySound() : CTurnOnObject(),
 		_soundName("NULL"), _soundVolume(80), _soundVal3(0) {
 }
 

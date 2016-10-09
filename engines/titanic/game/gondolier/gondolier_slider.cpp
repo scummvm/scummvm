@@ -190,7 +190,7 @@ bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 			int yp = 0;
 			if (_arrayIndex > 0)
 				yp = ARRAY[_arrayIndex] - ARRAY[_arrayIndex - 1];
-			
+
 			if (!_string2.empty()) {
 				CTranslateObjectMsg transMsg;
 				transMsg._delta = Point(0, yp);

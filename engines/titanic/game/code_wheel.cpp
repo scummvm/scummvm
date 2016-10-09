@@ -77,7 +77,7 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		_state = (_state + 1) % 15;
 		playMovie(START_FRAMES[_state], END_FRAMES[_state],
-			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);		
+			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 	} else {
 		if (_state == _field108)
 			_field110 = true;
@@ -112,7 +112,7 @@ bool CodeWheel::MovieEndMsg(CMovieEndMsg *msg) {
 		changeMsg._newStatus = 1;
 	changeMsg.execute("Bomb");
 
-	return true;	
+	return true;
 }
 
 } // End of namespace Titanic

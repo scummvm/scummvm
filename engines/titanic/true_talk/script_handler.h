@@ -58,7 +58,7 @@ public:
 	/**
 	 * Set the character and room
 	 */
-	ScriptChangedResult scriptChanged(TTroomScript *roomScript, 
+	ScriptChangedResult scriptChanged(TTroomScript *roomScript,
 		TTnpcScript *npcScript, uint dialogueId);
 
 	int processInput(TTroomScript *roomScript, TTnpcScript *npcScript,

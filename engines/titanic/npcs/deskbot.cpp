@@ -94,7 +94,7 @@ bool CDeskbot::EnterViewMsg(CEnterViewMsg *msg) {
 	_deskbotActive = false;
 	_fieldC4 = 0;
 	loadFrame(625);
-	
+
 	return true;
 }
 
@@ -264,7 +264,7 @@ bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 	default:
 		break;
 	}
-	
+
 	return true;
 }
 

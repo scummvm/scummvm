@@ -45,7 +45,7 @@ protected:
 public:
 	CSoundManager();
 	virtual ~CSoundManager() {}
-	
+
 	/**
 	 * Loads a sound
 	 * @param name		Name of sound resource
@@ -189,7 +189,7 @@ public:
 	 * Called after saving is complete
 	 */
 	virtual void postSave() {}
-	
+
 	/**
 	 * Sets the position and orientation for the listener (player)
 	 */

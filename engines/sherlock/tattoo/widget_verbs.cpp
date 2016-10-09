@@ -65,7 +65,7 @@ void WidgetVerbs::load(bool objectsOn) {
 
 			if (scumm_strnicmp(person._examine.c_str(), "_EXIT", 5))
 				_verbCommands.push_back(FIXED(Look));
-			
+
 			_verbCommands.push_back(FIXED(Talk));
 
 			// Add any extra active verbs from the NPC's verb list
@@ -116,7 +116,7 @@ void WidgetVerbs::load(bool objectsOn) {
 	// Set the bounds
 	_bounds = Common::Rect(width, height);
 	_bounds.moveTo(mousePos.x - _bounds.width() / 2, mousePos.y - _bounds.height() / 2);
-	
+
 	// Render the window on the internal surface
 	render();
 }
@@ -134,7 +134,7 @@ void WidgetVerbs::render() {
 
 	// Draw the verb commands and the lines separating them
 	for (uint idx = 0; idx < _verbCommands.size(); ++idx) {
-		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2, 
+		_surface.writeString(_verbCommands[idx], Common::Point((_bounds.width() - _surface.stringWidth(_verbCommands[idx])) / 2,
 			(_surface.fontHeight() + 7) * idx + 5), INFO_TOP);
 
 		if (idx < (_verbCommands.size() - 1)) {
@@ -143,7 +143,7 @@ void WidgetVerbs::render() {
 			_surface.hLine(3, (_surface.fontHeight() + 7) * (idx + 1) + 2, _bounds.width() - 4, INFO_BOTTOM);
 
 			_surface.SHtransBlitFrom(images[4], Common::Point(0, (_surface.fontHeight() + 7) * (idx + 1) - 1));
-			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width, 
+			_surface.SHtransBlitFrom(images[5], Common::Point(_bounds.width() - images[5]._width,
 				(_surface.fontHeight() + 7) * (idx + 1) - 1));
 		}
 	}
@@ -226,7 +226,7 @@ void WidgetVerbs::handleEvents() {
 				// Talk command is being activated
 				talk.initTalk(ui._activeObj);
 				ui._activeObj = -1;
-			
+
 			} else if (!_verbCommands[_selector].compareToIgnoreCase(strJournal)) {
 				ui.doJournal();
 

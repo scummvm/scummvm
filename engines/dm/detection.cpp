@@ -71,7 +71,7 @@ static const DMADGameDescription gameDescriptions[] = {
 	    { kDMSavePlatformAcceptAny }
 	},
 
-	{	
+	{
 		AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone,
 		{kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}
 	}

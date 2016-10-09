@@ -66,7 +66,7 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl);
-	
+
 	/**
 	 * Reset the section
 	 */
@@ -76,7 +76,7 @@ public:
 	 * Draw the section
 	 */
 	virtual void draw(CScreenManager *screenManager);
-	
+
 	/**
 	* Following are handlers for the various messages that the PET can
 	* pass onto the currently active section/area

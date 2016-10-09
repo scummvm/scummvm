@@ -28,7 +28,7 @@
 
 namespace Xeen {
 
-enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1, 
+enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
 	WT_2 = 2, WT_3 = 3 };
 
 class ErrorDialog : public ButtonContainer {
@@ -43,7 +43,7 @@ public:
 
 class ErrorScroll {
 public:
-	static void show(XeenEngine *vm, const Common::String &msg, 
+	static void show(XeenEngine *vm, const Common::String &msg,
 		ErrorWaitType waitType = WT_FREEZE_WAIT);
 };
 

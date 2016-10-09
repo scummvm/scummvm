@@ -25,7 +25,7 @@
 namespace Titanic {
 
 TTTitleScript::TTTitleScript() : TTscriptBase(1, "", 0, "", 0, -1, -1, -1, 0),
-		_field50(0), _field5C(-1), _field60(0) {	
+		_field50(0), _field5C(-1), _field60(0) {
 }
 
 } // End of namespace Titanic

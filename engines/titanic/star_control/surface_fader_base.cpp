@@ -70,7 +70,7 @@ CVideoSurface *CSurfaceFaderBase::fade(CScreenManager *screenManager, CVideoSurf
 
 	srcSurface->unlock();
 	_videoSurface->unlock();
-	
+
 	++_index;
 	return _videoSurface;
 }

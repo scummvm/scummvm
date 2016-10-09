@@ -87,7 +87,7 @@ protected:
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:
 	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm), _bgFrame(0) {}
-	
+
 	virtual ~WorldOptionsMenu() {}
 };
 

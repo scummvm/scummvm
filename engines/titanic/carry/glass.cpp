@@ -90,7 +90,7 @@ bool CGlass::UseWithCharMsg(CUseWithCharMsg *msg) {
 
 		if (_string6 != "Bird")
 			setPosition(_origPos);
-		
+
 		actMsg.execute(msg->_character);
 	} else {
 		petAddToInventory();

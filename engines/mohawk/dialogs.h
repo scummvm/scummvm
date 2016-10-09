@@ -81,7 +81,7 @@ public:
 	virtual void open() override;
 	virtual void reflowLayout() override;
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-	
+
 	int getLoadSlot() const {return _loadSlot;}
 
 private:
@@ -92,7 +92,7 @@ private:
 
 	GUI::SaveLoadChooser *_loadDialog;
 	GUI::SaveLoadChooser *_saveDialog;
-	
+
 	int _loadSlot;
 
 	void save();

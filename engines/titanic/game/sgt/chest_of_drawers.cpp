@@ -58,7 +58,7 @@ bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
 		visibleMsg.execute("Drawer");
 		_statics->_v6 = "Closed";
 		_fieldE0 = true;
-		
+
 		_startFrame = 14;
 		_endFrame = 27;
 		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);

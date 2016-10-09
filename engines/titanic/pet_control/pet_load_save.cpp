@@ -76,7 +76,7 @@ void CPetLoadSave::draw2(CScreenManager *screenManager) {
 bool CPetLoadSave::MouseButtonDownMsg(const Point &pt) {
 	if (_btnLoadSave.MouseButtonDownMsg(pt))
 		return true;
-	
+
 	checkSlotsHighlight(pt);
 	return false;
 }
@@ -95,7 +95,7 @@ bool CPetLoadSave::KeyCharMsg(int key) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:
 		if (_savegameSlotNum != -1) {
-			int slotNum = --_savegameSlotNum;			
+			int slotNum = --_savegameSlotNum;
 			highlightSlot((slotNum == -1) ? SAVEGAME_SLOTS_COUNT - 1 : slotNum);
 			getPetControl()->makeDirty();
 		}

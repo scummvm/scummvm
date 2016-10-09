@@ -356,7 +356,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-	
+
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter, sep);
 
@@ -832,7 +832,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 	uint16 languageSplitter = 0;
 	Common::String splitText;
-	
+
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -1191,7 +1191,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		argc--; argc--; argv++; argv++;
 		text = g_sci->getKernel()->lookupText(textp, index);
 	}
-	
+
 	uint16 languageSplitter = 0;
 	Common::String splitText = g_sci->strSplitLanguage(text.c_str(), &languageSplitter);
 

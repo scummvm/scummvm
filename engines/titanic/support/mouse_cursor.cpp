@@ -55,7 +55,7 @@ CMouseCursor::CursorEntry::~CursorEntry() {
 	delete _frameSurface;
 }
 
-CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
+CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
 		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
 	loadCursorImages();
@@ -81,7 +81,7 @@ void CMouseCursor::loadCursorImages() {
 		// Open the cursors video and move to the given frame
 		OSMovie movie(key, surface);
 		movie.setFrame(idx);
-		
+
 		Graphics::ManagedSurface *frameSurface = movie.duplicateFrame();
 		_cursors[idx]._frameSurface = frameSurface;
 		surface->setMovieFrameSurface(frameSurface);
@@ -129,7 +129,7 @@ void CMouseCursor::unlockE4() {
 
 void CMouseCursor::setPosition(const Point &pt, double rate) {
 	assert(rate >= 0.0 && rate <= 1.0);
-	
+
 	// TODO: Figure out use of the rate parameter
 	g_system->warpMouse(pt.x, pt.y);
 }

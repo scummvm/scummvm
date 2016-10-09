@@ -34,7 +34,7 @@ Video::AVIDecoder::AVIVideoTrack &AVIDecoder::getVideoTrack() {
 	for (TrackListIterator it = getTrackListBegin(); it != getTrackListEnd(); it++)
 		if ((*it)->getTrackType() == Track::kTrackTypeVideo)
 			return *dynamic_cast<AVIVideoTrack *>(*it);
-			
+
 	error("Could not find video track");
 }
 
@@ -120,19 +120,19 @@ bool AVISurface::play(int startFrame, int endFrame, int initialFrame, uint flags
 		me->_endFrame = endFrame;
 		me->_initialFrame = 0;
 		me->_gameObject = obj;
-		
+
 		info->addEvent(me);
 	}
 
 	_movieRangeInfo.push_back(info);
-	
+
 	if (_movieRangeInfo.size() == 1) {
 		// First play call, so start the movie playing
 		setReversed(info->_isReversed);
 		return startAtFrame(initialFrame);
 	} else {
 		return true;
-	}	
+	}
 }
 
 void AVISurface::stop() {
@@ -160,7 +160,7 @@ bool AVISurface::startAtFrame(int frameNumber) {
 	_decoders[0]->start();
 	if (_decoders[1])
 		_decoders[1]->start();
-	
+
 	return true;
 }
 
@@ -218,7 +218,7 @@ bool AVISurface::handleEvents(CMovieEventList &events) {
 			setReversed(info->_isReversed);
 			seekToFrame(newFrame);
 		}
-	
+
 		// Get any events for the given position
 		info->getMovieFrame(events, newFrame);
 		return renderFrame();
@@ -297,7 +297,7 @@ bool AVISurface::renderFrame() {
 	// Decode each decoder's video stream into the appropriate surface
 	for (int idx = 0; idx < _streamCount; ++idx) {
 		const Graphics::Surface *frame = _decoders[idx]->decodeNextFrame();
-			
+
 		if (_movieFrameSurface[idx]->format == frame->format) {
 			_movieFrameSurface[idx]->blitFrom(*frame);
 		} else {

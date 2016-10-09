@@ -29,7 +29,7 @@ namespace Titanic {
 
 class TTpronoun : public TTmajorWord {
 private:
-	static bool _staticFlag; 
+	static bool _staticFlag;
 protected:
 	int _field30;
 public:
@@ -48,7 +48,7 @@ public:
 	 */
 	virtual TTword *copy() const;
 
-	virtual bool comparePronounTo(int val) const { 
+	virtual bool comparePronounTo(int val) const {
 		return _field30 == val;
 	}
 

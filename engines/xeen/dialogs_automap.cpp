@@ -76,7 +76,7 @@ void AutoMapDialog::execute() {
 //	MazeData &mazeData = map.mazeDataCurrent();
 	bool drawFlag = true;
 	int v;
-	
+
 	events.updateGameCounter();
 	do {
 		if (drawFlag)
@@ -106,7 +106,7 @@ void AutoMapDialog::execute() {
 				}
 			}
 
-		
+
 			for (int yp = 38, yDiff = pt.y + 7; yp < 166; yp += 8, --yDiff) {
 				for (int xp = 80, xDiff = -7; xp < 240; xp += 10, ++xDiff) {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 8);
@@ -128,7 +128,7 @@ void AutoMapDialog::execute() {
 						map._tileSprites.draw(screen, 0, Common::Point(xp, yp));
 				}
 			}
-			
+
 			// Draw thinner ground tiles on the left edge of the map
 			for (int yp = 43, yDiff = pt.y + 7; yp < 171; yp += 8, --yDiff) {
 				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 0, 0xffff);
@@ -137,13 +137,13 @@ void AutoMapDialog::execute() {
 					map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
 						map._currentSurfaceId], Common::Point(75, yp));
 			}
-			
+
 			// Draw thin tile portion on top-left corner of map
 			v = map.mazeLookup(Common::Point(pt.x - 8, pt.y + 8), 0, 0xffff);
 			if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
 				map._tileSprites.draw(screen, 36 + map.mazeData()._surfaceTypes[
 					map._currentSurfaceId], Common::Point(75, 35));
-			
+
 			// Draw any thin tiles at the very top of the map
 			for (int xp = 85, xDiff = pt.x - 7; xp < 245; xp += 10, ++xDiff) {
 				v = map.mazeLookup(Common::Point(xDiff, pt.y + 8), 0, 0xffff);
@@ -165,7 +165,7 @@ void AutoMapDialog::execute() {
 			}
 
 			// Draw walls on left and top edges of map
-			for (int xp = 80, yp = 158, xDiff = pt.x - 7, yDiff = pt.y - 8; xp < 250; 
+			for (int xp = 80, yp = 158, xDiff = pt.x - 7, yDiff = pt.y - 8; xp < 250;
 					xp += 10, yp -= 8, ++xDiff, ++yDiff) {
 				// Draw walls on left edge of map
 				v = map.mazeLookup(Common::Point(pt.x - 8, yDiff), 12);
@@ -385,7 +385,7 @@ void AutoMapDialog::execute() {
 						map._tileSprites.draw(screen, frame, Common::Point(xp, yp));
 				}
 			}
-			
+
 			// Draw overlay on cells that haven't been stepped on yet
 			for (int yDiff = pt.y + 7, yp = 38; yp < 166; --yDiff, yp += 8) {
 				for (int xp = 80, xDiff = pt.x - 7; xp < 240; xp += 10, ++xDiff) {

@@ -32,7 +32,7 @@ private:
 	/**
 	 * Setup sentence data
 	 */
-	void setupSentences(); 
+	void setupSentences();
 public:
 	ParrotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2, int v4, int v5, int v6, int v7);

@@ -107,7 +107,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			_fieldE8 = 1;
 		}
 		break;
-	
+
 	default:
 		break;
 	}

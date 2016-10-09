@@ -136,7 +136,7 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl);
-	
+
 	/**
 	 * Reset the section
 	 */
@@ -146,12 +146,12 @@ public:
 	 * Draw the section
 	 */
 	virtual void draw(CScreenManager *screenManager);
-	
+
 	/**
 	 * Get the bounds for the section
 	 */
 	virtual Rect getBounds() const;
-	
+
 	/**
 	 * Returns true if the object is in a valid state
 	 */
@@ -190,7 +190,7 @@ public:
 	 * Called when a section is switched to
 	 */
 	virtual void enter(PetArea oldArea);
-	
+
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
@@ -220,7 +220,7 @@ public:
 	 * Show the text cursor
 	 */
 	virtual void showCursor();
-	
+
 	/**
 	 * Hide the text cursor
 	 */

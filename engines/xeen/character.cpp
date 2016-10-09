@@ -149,7 +149,7 @@ bool InventoryItems::discardItem(int itemIndex) {
 			sort();
 
 			return true;
-		}		
+		}
 	}
 
 	return true;
@@ -277,7 +277,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 		displayNum,
 		Res.WEAPON_NAMES[i._id],
 		!i._bonusFlags ? "" : Res.BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
-		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) || 
+		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
 }
@@ -315,7 +315,7 @@ Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &
 		maxVal += Res.METAL_DAMAGE[item._material - 37];
 		toHit = Common::String::format("%+d", Res.METAL_DAMAGE_PERCENT[item._material - 37]);
 	}
-	
+
 	physDamage = Common::String::format(Res.DAMAGE_X_TO_Y, minVal, maxVal);
 
 	// Next handle elemental/attribute damage
@@ -471,7 +471,7 @@ Common::String ArmorItems::getAttributes(XeenItem &item, const Common::String &c
 			int eCategory = ELEM_FIRE;
 			while (eCategory < ELEM_MAGIC && Res.ELEMENTAL_CATEGORIES[eCategory] < item._material)
 				++eCategory;
-				
+
 			elemResist = Common::String::format(Res.ATTR_XY_BONUS, resistence,
 				Res.ELEMENTAL_NAMES[eCategory]);
 		}
@@ -617,7 +617,7 @@ Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &cl
 	}
 
 	return Common::String::format(Res.ITEM_DETAILS, classes.c_str(),
-		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, 
+		Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE, Res.FIELD_NONE,
 		Res.FIELD_NONE, specialPower.c_str());
 }
 /*------------------------------------------------------------------------*/
@@ -743,7 +743,7 @@ void Character::synchronize(Common::Serializer &s) {
 	_level.synchronize(s);
 	s.syncAsByte(_birthDay);
 	s.syncAsByte(_tempAge);
-	
+
 	// Synchronize the skill list
 	for (int idx = 0; idx < 18; ++idx)
 		s.syncAsByte(_skills[idx]);
@@ -760,7 +760,7 @@ void Character::synchronize(Common::Serializer &s) {
 
 	// Synchronize spell list
 	for (int i = 0; i < MAX_SPELLS_PER_CLASS - 1; ++i)
-		s.syncAsByte(_spells[i]);	
+		s.syncAsByte(_spells[i]);
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
 	s.syncAsByte(_lloydPosition.y);
@@ -784,7 +784,7 @@ void Character::synchronize(Common::Serializer &s) {
 	_poisonResistence.synchronize(s);
 	_energyResistence.synchronize(s);
 	_magicResistence.synchronize(s);
-	
+
 	for (int i = 0; i < 16; ++i)
 		s.syncAsByte(_conditions[i]);
 
@@ -1025,7 +1025,7 @@ bool Character::noActions() {
 	case IN_LOVE:
 	case DRUNK: {
 		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
-		ErrorScroll::show(Party::_vm, msg, 
+		ErrorScroll::show(Party::_vm, msg,
 			Party::_vm->_mode == 17 ? WT_2 : WT_NONFREEZED_WAIT);
 		return true;
 	}
@@ -1170,7 +1170,7 @@ int Character::itemScan(int itemId) const {
 
 					if (itemId > 10 && item._material < 37) {
 						int mIndex = item.getElementalCategory() + 11;
-						
+
 						if (mIndex == itemId)
 							result += Res.ELEMENTAL_RESISTENCES[item._material];
 					}
@@ -1754,7 +1754,7 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 void Character::addHitPoints(int amount) {
 	Interface &intf = *Party::_vm->_interface;
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
-	
+
 	if (!isDead()) {
 		int maxHp = getMaxHP();
 		if (_currentHp <= maxHp) {
@@ -1824,11 +1824,11 @@ int Character::getClassCategory() const {
 	case CLASS_ARCHER:
 	case CLASS_SORCERER:
 		return 1;
-		
+
 	case CLASS_DRUID:
 	case CLASS_RANGER:
 		return 2;
-		
+
 	default:
 		return 0;
 	}

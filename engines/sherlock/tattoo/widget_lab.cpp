@@ -93,7 +93,7 @@ void WidgetLab::handleEvents() {
 			// Show the command list for this object
 			ui._verbsWidget.load(!noDesc);
 		} else if (!noDesc) {
-			// The player has released on an object, see if they had an object selected 
+			// The player has released on an object, see if they had an object selected
 			// that will be used with this new object
 			if (_labObject) {
 				// See if the dragged object can be used with the new object
@@ -150,7 +150,7 @@ void WidgetLab::handleEvents() {
 
 				// Set the mouse cursor to the object
 				Graphics::Surface &img = _labObject->_imageFrame->_frame;
-				Common::Point cursorOffset = mousePos - _labObject->_position;					
+				Common::Point cursorOffset = mousePos - _labObject->_position;
 				events.setCursor(ARROW, cursorOffset, img);
 				ui._tooltipWidget._offsetY = cursorOffset.y;
 

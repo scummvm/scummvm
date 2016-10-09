@@ -32,7 +32,7 @@
 
 namespace Xeen {
 
-PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(vm), 
+PartyDialog::PartyDialog(XeenEngine *vm) : ButtonContainer(vm),
 		PartyDrawer(vm), _vm(vm) {
 	initDrawStructs();
 }
@@ -264,7 +264,7 @@ void PartyDialog::execute() {
 					startingCharChanged(startingChar);
 				}
 				break;
-		
+
 			default:
 				break;
 			}
@@ -579,11 +579,11 @@ void PartyDialog::createChar() {
 					_buttons[destAttrib + 10]._bounds.left,
 					_buttons[destAttrib + 10]._bounds.top));
 				w.update();
-				
+
 				SWAP(attribs[srcAttrib], attribs[destAttrib]);
 				checkClass(attribs, allowedClasses);
 				classId = -1;
-				selectedClass = newCharDetails(attribs, allowedClasses, 
+				selectedClass = newCharDetails(attribs, allowedClasses,
 					race, sex, classId, selectedClass, msg);
 			} else {
 				icons.draw(w, srcAttrib * 2 + 10, Common::Point(
@@ -642,7 +642,7 @@ void PartyDialog::createChar() {
 		if (_buttonValue != Common::KEYCODE_PAGEDOWN) {
 			selectedClass = newCharDetails(attribs, allowedClasses,
 				race, sex, classId, selectedClass, msg);
-			
+
 			for (int idx = 0; idx < 7; ++idx)
 				icons.draw(w, 10 + idx * 2, Common::Point(168, 19 + idx * 24));
 			for (int idx = 0; idx < 10; ++idx)
@@ -656,7 +656,7 @@ void PartyDialog::createChar() {
 			icons.draw(w, 61, Common::Point(220, 19));
 			icons.draw(w, 64, Common::Point(220, 155));
 			icons.draw(w, 65, Common::Point(220, 170));
-			
+
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(w, 0,
 				Common::Point(27, 102));
 
@@ -675,7 +675,7 @@ void PartyDialog::createChar() {
 			}
 		}
 
-		// Move to next available class, or if the code block above resulted in 
+		// Move to next available class, or if the code block above resulted in
 		// selectedClass being -1, move to select the first available class
 		for (int tempClass = selectedClass + 1; tempClass <= CLASS_RANGER; ++tempClass) {
 			if (allowedClasses[tempClass]) {
@@ -686,7 +686,7 @@ void PartyDialog::createChar() {
 
 		printSelectionArrow(icons, selectedClass);
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
-		
+
 	_vm->_mode = oldMode;
 }
 
@@ -707,7 +707,7 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	w.update();
 
 	saveButtons();
-	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104), 
+	addButton(Common::Rect(225, isDelete ? 120 : 84, 249, isDelete ? 140 : 104),
 		Common::KEYCODE_ESCAPE, &iconSprites);
 	addButton(Common::Rect(16, 16, 48, 48), Common::KEYCODE_1);
 	addButton(Common::Rect(117, 16, 149, 48), Common::KEYCODE_2);
@@ -755,7 +755,7 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 		default:
 			break;
 		}
-	} 
+	}
 
 	w.close();
 	restoreButtons();
@@ -802,7 +802,7 @@ void PartyDialog::checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedC
 }
 
 int PartyDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
-		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId, 
+		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
 		int selectedClass, Common::String &msg) {
 	int foundClass = -1;
 	Common::String skillStr, classStr, raceSkillStr;

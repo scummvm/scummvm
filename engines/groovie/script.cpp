@@ -1681,7 +1681,7 @@ void Script::o2_copyscreentobg() {
 	// TODO: Parameter
 	if (val)
 		warning("o2_copyscreentobg: Param is %d", val);
-	
+
 	Graphics::Surface *screen = _vm->_system->lockScreen();
 	_vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
 	_vm->_system->unlockScreen();

@@ -53,7 +53,7 @@ public:
 	 * Checks whether the word's tag is a known type
 	 */
 	virtual bool checkTag() const;
-	
+
 	/**
 	 * Compare the word's tag to a given tag value
 	 */
@@ -63,7 +63,7 @@ public:
 	 * Return the tag associated with the word
 	 */
 	virtual uint getTag() const;
-	
+
 	virtual bool proc9(int val) const;
 	virtual int proc10() const;
 

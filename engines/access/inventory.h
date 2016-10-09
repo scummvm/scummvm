@@ -119,7 +119,7 @@ public:
 	int _startTravelItem;
 public:
 	InventoryManager(AccessEngine *vm);
-	
+
 	int &operator[](int idx);
 
 	int useItem();

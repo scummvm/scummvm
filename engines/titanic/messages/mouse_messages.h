@@ -157,7 +157,7 @@ public:
 public:
 	CLASSDEF;
 	CPassOnDragStartMsg() : CMessage() {}
-	CPassOnDragStartMsg(const Point &pt, int v3 = 0, int v4 = 0) : 
+	CPassOnDragStartMsg(const Point &pt, int v3 = 0, int v4 = 0) :
 		CMessage(), _mousePos(pt), _value3(v3), _value4(v4) {}
 
 	static bool isSupportedBy(const CTreeItem *item) {

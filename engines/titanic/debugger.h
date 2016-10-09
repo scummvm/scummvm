@@ -44,27 +44,27 @@ private:
 	 * Find a room by name or number
 	 */
 	CRoomItem *findRoom(const char *name);
-	
+
 	/**
 	 * Find a node within a room by name or number
 	 */
 	CNodeItem *findNode(CRoomItem *room, const char *name);
-	
+
 	/**
 	 * Find a view within a room node by name or number
 	 */
 	CViewItem *findView(CNodeItem *node, const char *name);
-	
+
 	/**
 	 * List all the rooms in the game
 	 */
 	void listRooms();
-	
+
 	/**
 	 * List the nodes within a room
 	 */
 	void listRoom(CRoomItem *room);
-	
+
 	/**
 	 * List the views within a room node
 	 */

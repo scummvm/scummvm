@@ -421,7 +421,7 @@ CSaveableObject *ClassDef::create() {
 
 /*------------------------------------------------------------------------*/
 
-Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
+Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 	CSaveableObject::_classList = nullptr;
 Common::List<ClassDef *> *CSaveableObject::_classDefs;
 
@@ -1346,7 +1346,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTextUp, CPetGraphic);
 	ADDFN(CToggleButton, CBackground);
 	ADDFN(CToggleSwitch, CGameObject);
-	
+
 	ADDFN(CActMsg, CMessage);
 	ADDFN(CActivationmsg, CMessage);
 	ADDFN(CAddHeadPieceMsg, CMessage);

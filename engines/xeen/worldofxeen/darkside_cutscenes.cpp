@@ -135,7 +135,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.loadBackground("jvc.raw");
 	screen.draw();
 	screen.fadeIn();
-	
+
 	WAIT(60);
 	return true;
 }
@@ -262,7 +262,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	title.clear();
 	pyraTop.clear();
 	pyramid.clear();
-	
+
 	//
 	SpriteResource dragon("dragon.int");
 	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
@@ -574,7 +574,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		sc08.draw(screen, 0);
 		showSubtitles();
 	} while (_subtitleSize);
-		
+
 	sc08.clear();
 
 	// Nowhere to run to
@@ -600,7 +600,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		screen.restoreBackground();
 		showSubtitles();
 	} while (_subtitleSize);
-	
+
 	sc09.clear();
 
 	// Nor do you!
@@ -760,7 +760,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.loadBackground("sc170001.raw");
 	screen.saveBackground();
 	screen.horizMerge(0);
-	sc16.draw(screen, 0, Common::Point(7, 29));	
+	sc16.draw(screen, 0, Common::Point(7, 29));
 	showSubtitles();
 	sound.playSound("fail1.voc");
 
@@ -834,7 +834,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	for (int idx = 0; idx < 4; ++idx)
 		sc18[idx].clear();
-	
+
 	// Closeup of Corak bleeding
 	SpriteResource sc19("sc19.end");
 	screen.loadBackground("sc190001.raw");
@@ -1013,7 +1013,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.saveBackground();
 	sc25.draw(screen, 0, Common::Point(27, 30));
 	screen.update();
-	
+
 	for (int struggleNum = 0; struggleNum < 2; ++struggleNum) {
 		for (int idx = 0; idx < 9; ++idx) {
 			if (struggleNum == 0 && idx == 2)
@@ -1220,7 +1220,7 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 
 			idx = (idx + 1) % 32;
 			screen.update();
-			
+
 			events.pollEventsAndWait();
 		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 

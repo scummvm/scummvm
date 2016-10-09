@@ -59,7 +59,7 @@ void CRoomItem::save(SimpleFile *file, int indent) {
 
 void CRoomItem::load(SimpleFile *file) {
 	int val = file->readNumber();
-	
+
 	switch (val) {
 	case 3:
 		// Read exit movie
@@ -114,7 +114,7 @@ void CRoomItem::postLoad() {
 
 void CRoomItem::calcNodePosition(const Point &nodePos, double &xVal, double &yVal) const {
 	xVal = yVal = 0.0;
-	
+
 	if (_roomDimensionX >= 0.0 && _roomDimensionY >= 0.0) {
 		xVal = _roomRect.width() / _roomDimensionX;
 		yVal = _roomRect.height() / _roomDimensionY;

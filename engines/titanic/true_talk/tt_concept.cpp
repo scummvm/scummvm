@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-TTconcept::TTconcept() : _string1(" "), _string2(" "), 
+TTconcept::TTconcept() : _string1(" "), _string2(" "),
 		_scriptP(nullptr), _wordP(nullptr) {
 	if (setStatus())
 		setScriptType(ST_UNKNOWN_SCRIPT);
@@ -51,7 +51,7 @@ TTconcept::TTconcept(TTscriptBase *script, ScriptType scriptType) :
 
 TTconcept::TTconcept(TTword *word, ScriptType scriptType) :
 	_string1(" "), _string2(" "), _wordP(nullptr), _scriptP(nullptr) {
-	
+
 	if (!word || !setStatus() || word->getStatus()) {
 		_status = SS_5;
 	} else {
@@ -74,7 +74,7 @@ TTconcept::TTconcept(TTconcept &src) :
 		if (setStatus()) {
 			_status = SS_VALID;
 			_scriptP = src._scriptP;
-			
+
 			if (src._wordP) {
 				_status = initializeWordRef(src._wordP);
 				initialize(src);
@@ -177,7 +177,7 @@ void TTconcept::initialize(TTconcept &src) {
 
 	_field30 = src._field30;
 	_field34 = src._field34;
-	
+
 	if (src._flag) {
 		g_vm->_exeResources._owner->setParserConcept(this, &src);
 		src.setFlag(true);
@@ -225,7 +225,7 @@ int TTconcept::setOwner(TTconcept *src) {
 
 int TTconcept::setOwner(TTword *src, bool dontDup) {
 	TTword *word = dontDup ? src : src->copy();
-	
+
 	if (word) {
 		if (!_word2P) {
 			_word2P = word;

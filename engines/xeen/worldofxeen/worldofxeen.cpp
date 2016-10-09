@@ -30,7 +30,7 @@ namespace Xeen {
 namespace WorldOfXeen {
 
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
-		: XeenEngine(syst, gameDesc), CloudsCutscenes(this), 
+		: XeenEngine(syst, gameDesc), CloudsCutscenes(this),
 		DarkSideCutscenes(this) {
 	_seenDarkSideIntro = false;
 }

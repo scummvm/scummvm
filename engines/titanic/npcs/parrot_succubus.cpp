@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(CParrotSuccUBus, CSuccUBus)
 	ON_MESSAGE(LeaveNodeMsg)
 END_MESSAGE_MAP()
 
-CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _field1DC(0), 
+CParrotSuccUBus::CParrotSuccUBus() : CSuccUBus(), _field1DC(0),
 	_field1EC(0), _field1F0(376), _field1F4(393) {
 }
 
@@ -43,7 +43,7 @@ void CParrotSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field1DC, indent);
 	file->writeQuotedLine(_string3, indent);
 	file->writeNumberLine(_field1EC, indent);
-	
+
 	CSuccUBus::save(file, indent);
 }
 

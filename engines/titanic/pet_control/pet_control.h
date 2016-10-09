@@ -340,12 +340,12 @@ public:
 	 * Returns true if all input is currently locked (disabled)
 	 */
 	bool isInputLocked() const { return _inputLockCount > 0; }
-	
+
 	/**
 	 * Increments the input locked count
 	 */
 	void incInputLocks() { ++_inputLockCount; }
-	
+
 	/**
 	 * Decremenst the input locked count
 	 */
@@ -364,7 +364,7 @@ public:
 	/**
 	 * Decrement the number of PET area (tab) locks
 	 */
-	void decAreaLocks() { 
+	void decAreaLocks() {
 		_areaLockCount = MAX(_areaLockCount - 1, 0);
 	}
 

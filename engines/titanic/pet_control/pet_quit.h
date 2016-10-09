@@ -58,7 +58,7 @@ public:
 	 * Handles mouse button up messages
 	 */
 	virtual bool MouseButtonUpMsg(const Point &pt);
-	
+
 	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */

@@ -139,7 +139,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	bool breakFlag = false;
 
 	screen.closeWindows();
-	
+
 	int idx = (int)party._activeParty.size();
 	if (!scripts._v2) {
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
@@ -611,7 +611,7 @@ void Combat::monstersAttack() {
 		intf.draw3d(true);
 		events.pollEventsAndWait();
 	} while (!_vm->shouldQuit() && intf._isAttacking);
-	
+
 	endAttack();
 
 	if (_vm->_mode != MODE_COMBAT) {
@@ -645,7 +645,7 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	for (int idx = 0; idx < 36; ++idx) {
 		if (_gmonHit[idx] != -1) {
 			int result = stopAttack(pt - party._mazePosition);
-			if (result) {	
+			if (result) {
 				_monstersAttacking = true;
 				_gmonHit[idx] = monsterDataIndex;
 
@@ -877,7 +877,7 @@ void Combat::doMonsterTurn(int monsterId) {
 				if (cond >= PARALYZED && cond <= ERADICATED) {
 					Common::Array<int> ableChars;
 					bool skip = false;
-					
+
 					for (uint idx = 0; idx < _combatParty.size() && !skip; ++idx) {
 						switch (_combatParty[idx]->worstCondition()) {
 						case PARALYZED:
@@ -976,7 +976,7 @@ int Combat::stopAttack(const Common::Point &diffPt) {
 				}
 			}
 			return dir == DIR_WEST ? diffPt.x * -1 + 1 : 1;
-		
+
 		} else if (diffPt.y <= 0) {
 			for (int y = diffPt.y; y < 0; ++y) {
 				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 4);
@@ -1032,7 +1032,7 @@ int Combat::stopAttack(const Common::Point &diffPt) {
 					return 0;
 			}
 			return dir == DIR_WEST ? diffPt.x * -1 + 1 : 1;
-		
+
 		} else if (diffPt.y <= 0) {
 			for (int y = diffPt.y; y < 0; ++y) {
 				int v = map.mazeLookup(Common::Point(mazePos.x, mazePos.y + y), 0, 0x8000);
@@ -1256,7 +1256,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						break;
 					}
 				}
-			} 
+			}
 		} else {
 			Common::fill(&_elemPow[0], &_elemPow[PARTY_AND_MONSTERS], ELEM_FIRE);
 			damage = 0;
@@ -1392,7 +1392,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			damage += 100;
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
-		
+
 		if ((!rangeType || !_damageType) && _attackWeaponId != 34) {
 			if (monsterData._phsyicalResistence != 0) {
 				if (monsterData._phsyicalResistence == 100) {
@@ -1446,14 +1446,14 @@ void Combat::attack2(int damage, RangeType rangeType) {
 				break;
 			}
 		}
-		
+
 		if (damage < 1) {
 			sound.playSound(_missVoc, 1);
 			sound.playFX(6);
 		} else {
 			_monsterScale[_monsterIndex] = getDamageScale(damage);
 			intf.draw3d(true);
-			
+
 			sound.stopSound();
 			File powVoc(Common::String::format("pow%d.voc",
 				POW_WEAPON_VOCS[_attackWeaponId]));
@@ -1506,7 +1506,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 				if (MONSTER_ITEM_RANGES[itemDrop] >= _vm->getRandomNumber(1, 100)) {
 					Character tempChar;
 					int category = tempChar.makeItem(itemDrop, 0, 0);
-					
+
 					switch (category) {
 					case CATEGORY_WEAPON:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
@@ -1609,7 +1609,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	getWeaponDamage(c, rangeType);
 	int chance = c.statBonus(c.getStat(ACCURACY)) + _hitChanceBonus;
 	int divisor = 0;
-	
+
 	switch (c._class) {
 	case CLASS_KNIGHT:
 	case CLASS_BARBARIAN:
@@ -1758,7 +1758,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 			else if (material < 34)
 				resistence = monsterData._energyResistence;
 			else
-				resistence = monsterData._magicResistence;			
+				resistence = monsterData._magicResistence;
 		}
 	}
 
@@ -1767,7 +1767,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 			return 0;
 		else
 			return ((100 - resistence) * damage) / 100;
-	} 
+	}
 
 	return damage;
 }
@@ -1840,7 +1840,7 @@ void Combat::multiAttack(int powNum) {
 	int monsterIndex = _monsterIndex;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;
-	
+
 	Common::Array<int> attackMonsters;
 	for (int idx = 0; idx < 3; ++idx) {
 		if (_attackMonsters[idx] != -1)

@@ -130,7 +130,7 @@ public:
 	 */
 	void destroyContents() {
 		typename Common::List<T *>::iterator i;
-		for (i = Common::List<T *>::begin(); 
+		for (i = Common::List<T *>::begin();
 				i != Common::List<T *>::end(); ++i) {
 			CSaveableObject *obj = *i;
 			delete obj;
@@ -149,7 +149,7 @@ public:
 	}
 
 	bool contains(const T *item) const {
-		for (typename Common::List<T *>::const_iterator i = Common::List<T *>::begin(); 
+		for (typename Common::List<T *>::const_iterator i = Common::List<T *>::begin();
 				i != Common::List<T *>::end(); ++i) {
 			if (*i == item)
 				return true;

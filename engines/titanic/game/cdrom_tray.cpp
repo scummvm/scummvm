@@ -110,7 +110,7 @@ bool CCDROMTray::ActMsg(CActMsg *msg) {
 
 bool CCDROMTray::MovieEndMsg(CMovieEndMsg *msg) {
 	CTreeItem *screen = getRoom()->findByName("newScreen");
-	
+
 	if (screen) {
 		CActMsg actMsg(_insertedCD);
 		actMsg.execute(screen);

@@ -37,7 +37,7 @@ private:
 public:
 	CLASSDEF;
 	CBarShelfVisCentre() : CPlaceHolder(), _flag(false) {}
-	
+
 	/**
 	 * Save the data for the class to file
 	 */

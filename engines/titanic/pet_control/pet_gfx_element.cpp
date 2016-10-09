@@ -48,7 +48,7 @@ void CPetGfxElement::reset(const CString &name, CPetControl *petControl, PetElem
 	if (!petControl)
 		return;
 
-	CString numString(3);	
+	CString numString(3);
 	int classNum = petControl->getPassengerClass();
 
 	if (classNum >= 1 && classNum <= 3) {

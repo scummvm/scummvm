@@ -37,7 +37,7 @@ void CResourceKey::save(SimpleFile *file, int indent) {
 
 void CResourceKey::load(SimpleFile *file) {
 	int val = file->readNumber();
-	
+
 	if (val == 0 || val == 1) {
 		file->readBuffer();
 		CString str = file->readString();

@@ -27,7 +27,7 @@
 
 namespace Titanic {
 
-CTextCursor::CTextCursor(CScreenManager *screenManager) : 
+CTextCursor::CTextCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _active(false), _blinkVisible(false),
 		_backRenderSurface(nullptr), _frontRenderSurface(nullptr),
 		_blinkDelay(300), _size(2, 10), _priorBlinkTime(0),
@@ -70,7 +70,7 @@ void CTextCursor::draw() {
 	if (_blinkVisible) {
 		Rect cursorRect = getCursorBounds();
 		_surface->blitFrom(Common::Point(0, 0), _backRenderSurface, &cursorRect);
-	
+
 		if (!_screenBounds.isEmpty())
 			// Limit the cursor rect to only within designated screen area
 			cursorRect.constrain(_screenBounds);
@@ -80,7 +80,7 @@ void CTextCursor::draw() {
 			_backRenderSurface->_ddSurface->fillRect(&cursorRect,
 				_cursorR, _cursorG, _cursorB);
 		}
-	
+
 		//_screenManager->blitFrom(SURFACE_BACKBUFFER, _surface, &_pos);
 	}
 }

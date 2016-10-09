@@ -83,7 +83,7 @@ void GfxText16::ClearChar(int16 chr) {
 }
 
 // This internal function gets called as soon as a '|' is found in a text. It
-// will process the encountered code and set new font/set color. 
+// will process the encountered code and set new font/set color.
 // Returns textcode character count.
 int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor, bool doingDrawing) {
 	const char *textCode = text;
@@ -179,7 +179,7 @@ static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 // return max # of chars to fit maxwidth with full words, does not include
 // breaking space
 //  Also adjusts text pointer to the new position for the caller
-// 
+//
 // Special cases in games:
 //  Laura Bow 2 - Credits in the game menu - all the text lines start with spaces (bug #5159)
 //                Act 6 Coroner questionaire - the text of all control buttons has trailing spaces
@@ -245,7 +245,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			break;
 		}
 		tempWidth += _font->getCharWidth(curChar);
-		
+
 		// Width is too large? -> break out
 		if (tempWidth > maxWidth)
 			break;
