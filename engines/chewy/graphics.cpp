@@ -115,7 +115,7 @@ void Graphics::drawText(Common::String text, uint x, uint y) {
 }
 
 void Graphics::playVideo(uint num) {
-	CfoDecoder *cfoDecoder = new CfoDecoder(_vm->_mixer);
+	CfoDecoder *cfoDecoder = new CfoDecoder(_vm->_sound);
 	VideoResource *videoResource = new VideoResource("cut.tap");
 	Common::SeekableReadStream *videoStream = videoResource->getVideoStream(num);
 

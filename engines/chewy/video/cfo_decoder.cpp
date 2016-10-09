@@ -20,15 +20,12 @@
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
 #include "common/events.h"
-#include "common/stream.h"
 #include "common/system.h"
 #include "engines/engine.h"
 #include "video/flic_decoder.h"
 
+#include "chewy/sound.h"
 #include "chewy/video/cfo_decoder.h"
 
 namespace Chewy {
@@ -70,12 +67,12 @@ bool CfoDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 width = stream->readUint16LE();
 	uint16 height = stream->readUint16LE();
 
-	addTrack(new CfoVideoTrack(stream, frameCount, width, height, _mixer));
+	addTrack(new CfoVideoTrack(stream, frameCount, width, height, _sound));
 	return true;
 }
 
-CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Audio::Mixer *mixer) :
-	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true) {
+CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound) :
+	Video::FlicDecoder::FlicVideoTrack(stream, frameCount, width, height, true), _sound(sound) {
 	readHeader();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
@@ -83,15 +80,18 @@ CfoDecoder::CfoVideoTrack::CfoVideoTrack(Common::SeekableReadStream *stream, uin
 		_soundEffectSize[i] = 0;
 	}
 
-	_mixer = mixer;
+	_musicData = nullptr;
+	_musicSize = 0;
 }
 
 CfoDecoder::CfoVideoTrack::~CfoVideoTrack() {
-	_mixer->stopAll();
+	_sound->stopAll();
 
 	for (int i = 0; i < MAX_SOUND_EFFECTS; i++) {
 		delete[] _soundEffects[i];
 	}
+
+	delete[] _musicData;
 }
 
 void CfoDecoder::CfoVideoTrack::readHeader() {
@@ -105,7 +105,7 @@ void CfoDecoder::CfoVideoTrack::readHeader() {
 #define FRAME_TYPE 0xF1FA
 #define CUSTOM_FRAME_TYPE 0xFAF1
 
-const Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
+const ::Graphics::Surface *CfoDecoder::CfoVideoTrack::decodeNextFrame() {
 	uint16 frameType;
 
 	// Read chunk
@@ -164,7 +164,7 @@ void CfoDecoder::CfoVideoTrack::handleFrame() {
 			/* PSTAMP - skip for now */
 			break;
 		default:
-			error("FlicDecoder::decodeNextFrame(): unknown subchunk type (type = 0x%02X)", frameType);
+			error("CfoDecoder::decodeNextFrame(): unknown subchunk type (type = 0x%02X)", frameType);
 			break;
 		}
 
@@ -176,7 +176,6 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	uint16 chunkCount = _fileStream->readUint16LE();
 
 	uint16 delay, number, channel, volume, repeat, balance;
-	Audio::AudioStream *stream;
 
 	// Read subchunks
 	for (uint32 i = 0; i < chunkCount; ++i) {
@@ -196,9 +195,9 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkLoadMusic:
 			// Used in videos 0, 18, 34, 71
-			warning("kChunkLoadMusic");
-			// TODO
-			_fileStream->skip(frameSize);
+			_musicSize = frameSize;
+			_musicData = new byte[frameSize];
+			_fileStream->read(_musicData, frameSize);
 			break;
 		case kChunkLoadRaw:
 			error("Unused chunk kChunkLoadRaw found");
@@ -214,9 +213,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkPlayMusic:
 			// Used in videos 0, 18, 34, 71
-			warning("kChunkPlayMusic");
-			// TODO
-			_fileStream->skip(frameSize);
+			_sound->playMusic(_musicData, _musicSize, false, DisposeAfterUse::NO);
 			break;
 		case kChunkPlaySeq:
 			error("Unused chunk kChunkPlaySeq found");
@@ -225,7 +222,11 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			error("Unused chunk kChunkPlayPattern found");
 			break;
 		case kChunkStopMusic:
-			_mixer->stopHandle(_musicHandle);
+			_sound->stopMusic();
+
+			// Game videos do not restart music after stopping it
+			delete[] _musicData;
+			_musicSize = 0;
 			break;
 		case kChunkWaitMusicEnd:
 			do {
@@ -233,12 +234,11 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 				while (g_system->getEventManager()->pollEvent(event)) {}	// ignore events
 				g_system->updateScreen();
 				g_system->delayMillis(10);
-			} while (_mixer->isSoundHandleActive(_musicHandle));
+			} while (_sound->isMusicActive());
 			break;
 		case kChunkSetMusicVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
-
-			_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+			_sound->setMusicVolume(volume);
 			break;
 		case kChunkSetLoopMode:
 			error("Unused chunk kChunkSetLoopMode found");
@@ -252,28 +252,19 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
 			repeat = _fileStream->readUint16LE();
 			assert(number < MAX_SOUND_EFFECTS);
-			assert(channel < MAX_SOUND_EFFECTS);
 
-			stream = Audio::makeLoopingAudioStream(
-				Audio::makeRawStream(_soundEffects[number],
-				_soundEffectSize[number], 22050, Audio::FLAG_UNSIGNED,
-				DisposeAfterUse::NO),
-				(repeat == 0) ? 1 : repeat);
-
-			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[channel], stream);
+			_sound->setSoundVolume(volume);
+			_sound->playSound(_soundEffects[number], _soundEffectSize[number], repeat, channel, DisposeAfterUse::NO);
 			break;
 		case kChunkSetSoundVolume:
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
-
-			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+			_sound->setSoundVolume(volume);
 			break;
 		case kChunkSetChannelVolume:
 			channel = _fileStream->readUint16LE();
 			volume = _fileStream->readUint16LE() * Audio::Mixer::kMaxChannelVolume / 63;
-			assert(channel < MAX_SOUND_EFFECTS);
 
-			_mixer->setChannelVolume(_soundHandle[channel], volume);
+			_sound->setSoundChannelVolume(channel, volume);
 			break;
 		case kChunkFreeSoundEffect:
 			number = _fileStream->readUint16LE();
@@ -294,9 +285,7 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 		case kChunkSetBalance:
 			channel = _fileStream->readUint16LE();
 			balance = (_fileStream->readUint16LE() * 2) - 127;
-			assert(channel < MAX_SOUND_EFFECTS);
-
-			_mixer->setChannelBalance(_soundHandle[channel], balance);
+			_sound->setSoundChannelBalance(channel, balance);
 			break;
 		case kChunkSetSpeed:
 			error("Unused chunk kChunkSetSpeed found");

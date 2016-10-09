@@ -23,7 +23,6 @@
 #ifndef CHEWY_VIDEO_CFO_DECODER_H
 #define CHEWY_VIDEO_CFO_DECODER_H
 
-#include "audio/mixer.h"
 #include "graphics/surface.h"
 #include "video/flic_decoder.h"
 
@@ -31,20 +30,22 @@ namespace Chewy {
 
 #define MAX_SOUND_EFFECTS 14
 
+class Sound;
+
 // A FLIC decoder, with a modified header and additional custom frames
 class CfoDecoder : public Video::FlicDecoder {
 public:
-	CfoDecoder(Audio::Mixer *mixer) : Video::FlicDecoder() { _mixer = mixer; }
+	CfoDecoder(Sound *sound) : Video::FlicDecoder(), _sound(sound) {}
 	virtual ~CfoDecoder() {}
 
 	bool loadStream(Common::SeekableReadStream *stream);
 
 private:
-	Audio::Mixer *_mixer;
+	Sound *_sound;
 
 	class CfoVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
 	public:
-		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Audio::Mixer *mixer);
+		CfoVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, Sound *sound);
 		virtual ~CfoVideoTrack();
 
 		void readHeader();
@@ -58,11 +59,12 @@ private:
 		void handleFrame();
 		void handleCustomFrame();
 
-		Audio::Mixer *_mixer;
-		Audio::SoundHandle _musicHandle;
-		Audio::SoundHandle _soundHandle[MAX_SOUND_EFFECTS];
+		Sound *_sound;
+
 		byte *_soundEffects[MAX_SOUND_EFFECTS];
 		uint32 _soundEffectSize[MAX_SOUND_EFFECTS];
+		byte *_musicData;
+		uint32 _musicSize;
 	};
 };
 
