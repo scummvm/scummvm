@@ -43,7 +43,7 @@ static const PlainGameDescriptor DMGames[] = {
 
 static const DMADGameDescription gameDescriptions[] = {
 	{
-		{"dm", "Amiga 2.0v English",
+		{"dm", "Amiga v2.0 English",
 			{
 				{"graphics.dat", 0, "c2205f6225bde728417de29394f97d55", 411960},
 				{"Dungeon.dat", 0, "43a213da8eda413541dd12f90ce202f6", 25006},
@@ -57,7 +57,7 @@ static const DMADGameDescription gameDescriptions[] = {
 		{ kDMSavePlatformAcceptAny}
 	},
 	{
-		{"dm", "Atari ???v English",
+		{"dm", "Atari v??? English",
 			{
 				{"graphics.dat", 0, "6ffff2a17e2df0effa9a12fb4b1bf6b6", 271911},
 				{"Dungeon.dat", 0, "be9468b460515741babec9a70501e2e9", 33286},
@@ -70,7 +70,20 @@ static const DMADGameDescription gameDescriptions[] = {
 	    { kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
 	    { kDMSavePlatformAcceptAny }
 	},
-
+	{
+		{"dm", "Amiga Demo v??? English",
+			{
+				{"graphics.dat", 0, "3932c8359bb36c24291b09e915114d38", 192421},
+				{"DemoDun.dat", 0, "78848e1a2d3d5a11e5954deb8c7b772b", 1209},
+				AD_LISTEND
+			},
+			Common::EN_ANY, Common::kPlatformAmiga, ADGF_NO_FLAGS, GUIO1(GUIO_NONE),
+		},
+		kDMSaveTargetDM21, kDMSaveFormatAmigaPC98FmTowns, kDMSavePlatformAtariSt,
+		{ kDMSaveTargetDM21, kDMSaveTargetEndOfList},
+		{ kDMSaveFormatAmigaPC98FmTowns, kDMSaveFormatEndOfList},
+		{ kDMSavePlatformAcceptAny }
+	},
 	{
 		AD_TABLE_END_MARKER, kDMSaveTargetNone, kDMSaveFormatNone, kDMSavePlatformNone,
 		{kDMSaveTargetNone}, {kDMSaveFormatNone}, {kDMSavePlatformNone}
