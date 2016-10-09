@@ -181,7 +181,7 @@ Font::~Font() {
 	_fontSurface.free();
 }
 
-::Graphics::Surface *Font::getLine(const Common::String text) {
+::Graphics::Surface *Font::getLine(const Common::String &text) {
 	::Graphics::Surface *line = new ::Graphics::Surface();
 	line->create(text.size() * _width, _height, ::Graphics::PixelFormat::createFormatCLUT8());
 
