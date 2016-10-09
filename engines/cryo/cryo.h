@@ -59,6 +59,7 @@ public:
 	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
+	bool isDemo() const;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;

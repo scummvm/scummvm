@@ -30,9 +30,9 @@
 
 namespace Cryo {
 
-const char *CryoEngine::getGameId() const {
-	return _gameDescription->gameId;
-}
+const char *CryoEngine::getGameId() const { return _gameDescription->gameId; }
+bool CryoEngine::isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
+Common::Platform CryoEngine::getPlatform() const { return _gameDescription->platform; }
 
 }
 
