@@ -34,8 +34,8 @@ class Combat {
 	bool _enabled;
 	int _hitSoundId[9];
 	int _missSoundId[9];
-	int _random1;
-	int _random2;
+//	int _random1;
+//	int _random2;
 
 public:
 	int _ammoDamage[3];

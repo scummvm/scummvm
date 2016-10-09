@@ -38,7 +38,7 @@ struct MovementTrackEntry {
 };
 
 class MovementTrack {
-	BladeRunnerEngine *_vm;
+//	BladeRunnerEngine *_vm;
 
 private:
 	int _currentIndex;

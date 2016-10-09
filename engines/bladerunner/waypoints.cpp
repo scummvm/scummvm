@@ -24,6 +24,7 @@
 namespace BladeRunner {
 
 Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
+	_vm = vm;
 	_count = count;
 	_waypoints = new Waypoint[count];
 }

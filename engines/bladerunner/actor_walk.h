@@ -47,7 +47,7 @@ private:
 	Vector3 _next;
 	int     _facing;
 	Common::Array<ActorWalk> _entries;
-	int     _field15;
+//	int     _field15;
 	int     _status;
 
 public:

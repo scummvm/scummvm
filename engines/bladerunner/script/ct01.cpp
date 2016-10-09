@@ -103,7 +103,8 @@ bool ScriptCT01::MouseClick(int x, int y) {
 }
 
 bool ScriptCT01::ClickedOn3DObject(const char *objectName, bool a2) {
-	if ("ASIANSITTINGANDEATI" == objectName) { //bug?
+//	if ("ASIANSITTINGANDEATI" == objectName) { //bug?
+	if (Object_Query_Click("ASIANSITTINGANDEATI", objectName)) {
 		Actor_Face_Object(0, "ASIANSITTINGANDEATI", true);
 		Actor_Says(0, 365, 13);
 		Actor_Says(28, 160, 13);

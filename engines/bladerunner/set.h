@@ -67,7 +67,7 @@ class Set {
 	Walkbox    *_walkboxes;
 	int         _walkboxStepSound[85];
 	int         _footstepSoundOverride;
-	float       _unknown[10];
+//	float       _unknown[10];
 public:
 	SetEffects *_effects;
 
