@@ -963,7 +963,7 @@ public:
 	/**
 	 * Allocates and initialises a new bitmap.
 	 */
-	inline void create(const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+	inline void create(const int16 width, const int16 height, const uint8 skipColor, const int16 originX, const int16 originY, const int16 xResolution, const int16 yResolution, const uint32 paletteSize, const bool remap, const bool gc) {
 
 		_dataSize = getBitmapSize(width, height) + paletteSize;
 		_data = (byte *)realloc(_data, _dataSize);
@@ -973,7 +973,7 @@ public:
 
 		setWidth(width);
 		setHeight(height);
-		setDisplace(Common::Point(displaceX, displaceY));
+		setOrigin(Common::Point(originX, originY));
 		setSkipColor(skipColor);
 		_data[9] = 0;
 		WRITE_SCI11ENDIAN_UINT16(_data + 10, 0);
@@ -984,8 +984,8 @@ public:
 		setDataOffset(bitmapHeaderSize);
 		setUncompressedDataOffset(bitmapHeaderSize);
 		setControlOffset(0);
-		setScaledWidth(scaledWidth);
-		setScaledHeight(scaledHeight);
+		setXResolution(xResolution);
+		setYResolution(yResolution);
 
 		_buffer = Buffer(getWidth(), getHeight(), getPixels());
 	}
@@ -1017,16 +1017,16 @@ public:
 	BITMAP_PROPERTY(16, Width, 0);
 	BITMAP_PROPERTY(16, Height, 2);
 
-	inline Common::Point getDisplace() const {
+	inline Common::Point getOrigin() const {
 		return Common::Point(
 			(int16)READ_SCI11ENDIAN_UINT16(_data + 4),
 			(int16)READ_SCI11ENDIAN_UINT16(_data + 6)
 		);
 	}
 
-	inline void setDisplace(const Common::Point &displace) {
-		WRITE_SCI11ENDIAN_UINT16(_data + 4, (uint16)displace.x);
-		WRITE_SCI11ENDIAN_UINT16(_data + 6, (uint16)displace.y);
+	inline void setOrigin(const Common::Point &origin) {
+		WRITE_SCI11ENDIAN_UINT16(_data + 4, (uint16)origin.x);
+		WRITE_SCI11ENDIAN_UINT16(_data + 6, (uint16)origin.y);
 	}
 
 	inline uint8 getSkipColor() const {
@@ -1075,7 +1075,7 @@ public:
 	// NOTE: This property always seems to be zero
 	BITMAP_PROPERTY(32, ControlOffset, 32);
 
-	inline uint16 getScaledWidth() const {
+	inline uint16 getXResolution() const {
 		if (getDataOffset() >= 40) {
 			return READ_SCI11ENDIAN_UINT16(_data + 36);
 		}
@@ -1084,13 +1084,13 @@ public:
 		return 320;
 	}
 
-	inline void setScaledWidth(uint16 scaledWidth) {
+	inline void setXResolution(uint16 xResolution) {
 		if (getDataOffset() >= 40) {
-			WRITE_SCI11ENDIAN_UINT16(_data + 36, scaledWidth);
+			WRITE_SCI11ENDIAN_UINT16(_data + 36, xResolution);
 		}
 	}
 
-	inline uint16 getScaledHeight() const {
+	inline uint16 getYResolution() const {
 		if (getDataOffset() >= 40) {
 			return READ_SCI11ENDIAN_UINT16(_data + 38);
 		}
@@ -1099,9 +1099,9 @@ public:
 		return 200;
 	}
 
-	inline void setScaledHeight(uint16 scaledHeight) {
+	inline void setYResolution(uint16 yResolution) {
 		if (getDataOffset() >= 40) {
-			WRITE_SCI11ENDIAN_UINT16(_data + 38, scaledHeight);
+			WRITE_SCI11ENDIAN_UINT16(_data + 38, yResolution);
 		}
 	}
 

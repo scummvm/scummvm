@@ -913,7 +913,7 @@ bool SegManager::isArray(reg_t addr) const {
 #pragma mark -
 #pragma mark Bitmaps
 
-SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 originX, const int16 originY, const int16 xResolution, const int16 yResolution, const uint32 paletteSize, const bool remap, const bool gc) {
 	BitmapTable *table;
 	int offset;
 
@@ -928,7 +928,7 @@ SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int1
 	*addr = make_reg(_bitmapSegId, offset);
 	SciBitmap &bitmap = table->at(offset);
 
-	bitmap.create(width, height, skipColor, displaceX, displaceY, scaledWidth, scaledHeight, paletteSize, remap, gc);
+	bitmap.create(width, height, skipColor, originX, originY, xResolution, yResolution, paletteSize, remap, gc);
 
 	return &bitmap;
 }

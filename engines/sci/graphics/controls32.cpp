@@ -400,7 +400,7 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
 	Common::Rect bitmapRect(gameRect);
-	mulinc(bitmapRect, Ratio(_gfxText32._scaledWidth, scriptWidth), Ratio(_gfxText32._scaledHeight, scriptHeight));
+	mulinc(bitmapRect, Ratio(_gfxText32._xResolution, scriptWidth), Ratio(_gfxText32._yResolution, scriptHeight));
 
 	_textRect.left = 2;
 	_textRect.top = 2;

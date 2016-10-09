@@ -75,14 +75,14 @@ reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	CelObjView celObj(viewId, loopNo, celNo);
 
 	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const Ratio scaleX(scriptWidth, celObj._scaledWidth);
+	const Ratio scaleX(scriptWidth, celObj._xResolution);
 
 	int16 brLeft;
 
 	if (celObj._mirrorX) {
-		brLeft = x - ((celObj._width - celObj._displace.x) * scaleX).toInt();
+		brLeft = x - ((celObj._width - celObj._origin.x) * scaleX).toInt();
 	} else {
-		brLeft = x - (celObj._displace.x * scaleX).toInt();
+		brLeft = x - (celObj._origin.x * scaleX).toInt();
 	}
 
 	const int16 brRight = brLeft + (celObj._width * scaleX).toInt() - 1;
@@ -427,7 +427,7 @@ reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
-	return make_reg(0, mulru(celObj._height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._scaledHeight)));
+	return make_reg(0, mulru(celObj._height, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight, celObj._yResolution)));
 }
 
 reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
@@ -435,7 +435,7 @@ reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
 	int16 loopNo = argv[1].toSint16();
 	int16 celNo = argv[2].toSint16();
 	CelObjView celObj(resourceId, loopNo, celNo);
-	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._scaledWidth)));
+	return make_reg(0, mulru(celObj._width, Ratio(g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth, celObj._xResolution)));
 }
 
 reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
@@ -448,10 +448,10 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0:
-		result = view._displace.x;
+		result = view._origin.x;
 		break;
 	case 1:
-		result = view._displace.y;
+		result = view._origin.y;
 		break;
 	case 2:
 	case 3:
@@ -616,13 +616,13 @@ reg_t kSetFontHeight(EngineState *s, int argc, reg_t *argv) {
 	// of setting the fontHeight on the font manager, in
 	// which case we could just get the font directly ourselves.
 	g_sci->_gfxText32->setFont(argv[0].toUint16());
-	g_sci->_gfxText32->_scaledHeight = (g_sci->_gfxText32->_font->getHeight() * g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight + g_sci->_gfxText32->_scaledHeight - 1) / g_sci->_gfxText32->_scaledHeight;
-	return make_reg(0, g_sci->_gfxText32->_scaledHeight);
+	g_sci->_gfxText32->_yResolution = (g_sci->_gfxText32->_font->getHeight() * g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight + g_sci->_gfxText32->_yResolution - 1) / g_sci->_gfxText32->_yResolution;
+	return make_reg(0, g_sci->_gfxText32->_yResolution);
 }
 
 reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxText32->_scaledWidth = argv[0].toUint16();
-	g_sci->_gfxText32->_scaledHeight = argv[1].toUint16();
+	g_sci->_gfxText32->_xResolution = argv[0].toUint16();
+	g_sci->_gfxText32->_yResolution = argv[1].toUint16();
 	return s->r_acc;
 }
 
@@ -637,12 +637,12 @@ reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
 	int16 height = argv[1].toSint16();
 	int16 skipColor = argv[2].toSint16();
 	int16 backColor = argv[3].toSint16();
-	int16 scaledWidth = argc > 4 ? argv[4].toSint16() : g_sci->_gfxText32->_scaledWidth;
-	int16 scaledHeight = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_scaledHeight;
+	int16 xResolution = argc > 4 ? argv[4].toSint16() : g_sci->_gfxText32->_xResolution;
+	int16 yResolution = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_yResolution;
 	bool useRemap = argc > 6 ? argv[6].toSint16() : false;
 
 	reg_t bitmapId;
-	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, width, height, skipColor, 0, 0, scaledWidth, scaledHeight, 0, useRemap, true);
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, width, height, skipColor, 0, 0, xResolution, yResolution, 0, useRemap, true);
 	memset(bitmap.getPixels(), backColor, width * height);
 	return bitmapId;
 }
@@ -676,12 +676,12 @@ reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
 	const int16 alignY = argc > 8 ? argv[8].toSint16() : -1;
 
 	Common::Point position(
-		x == -1 ? bitmap.getDisplace().x : x,
-		y == -1 ? bitmap.getDisplace().y : y
+		x == -1 ? bitmap.getOrigin().x : x,
+		y == -1 ? bitmap.getOrigin().y : y
 	);
 
-	position.x -= alignX == -1 ? view._displace.x : alignX;
-	position.y -= alignY == -1 ? view._displace.y : alignY;
+	position.x -= alignX == -1 ? view._origin.x : alignX;
+	position.y -= alignY == -1 ? view._origin.y : alignY;
 
 	Common::Rect drawRect(
 		position.x,
@@ -756,20 +756,20 @@ reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv) {
 	return kStubNull(s, argc + 1, argv - 1);
 }
 
-reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv) {
+reg_t kBitmapSetOrigin(EngineState *s, int argc, reg_t *argv) {
 	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
-	bitmap.setDisplace(Common::Point(argv[1].toSint16(), argv[2].toSint16()));
+	bitmap.setOrigin(Common::Point(argv[1].toSint16(), argv[2].toSint16()));
 	return s->r_acc;
 }
 
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
 	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
-	const uint8 skipColor = argc > 3 && argv[3].toSint16() != -1 ? argv[3].toSint16() : view._transparentColor;
-	const uint8 backColor = argc > 4 && argv[4].toSint16() != -1 ? argv[4].toSint16() : view._transparentColor;
+	const uint8 skipColor = argc > 3 && argv[3].toSint16() != -1 ? argv[3].toSint16() : view._skipColor;
+	const uint8 backColor = argc > 4 && argv[4].toSint16() != -1 ? argv[4].toSint16() : view._skipColor;
 	const bool useRemap = argc > 5 ? (bool)argv[5].toSint16() : false;
 
 	reg_t bitmapId;
-	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, view._width, view._height, skipColor, 0, 0, view._scaledWidth, view._scaledHeight, 0, useRemap, true);
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, view._width, view._height, skipColor, 0, 0, view._xResolution, view._yResolution, 0, useRemap, true);
 	Buffer &buffer = bitmap.getBuffer();
 
 	const Common::Rect viewRect(view._width, view._height);

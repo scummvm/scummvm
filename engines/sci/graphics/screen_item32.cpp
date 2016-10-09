@@ -275,18 +275,18 @@ void ScreenItem::calcRects(const Plane &plane) {
 	if (scaleX.getNumerator() && scaleY.getNumerator()) {
 		_screenItemRect = _insetRect;
 
-		const Ratio celToScreenX(screenWidth, celObj._scaledWidth);
-		const Ratio celToScreenY(screenHeight, celObj._scaledHeight);
+		const Ratio celToScreenX(screenWidth, celObj._xResolution);
+		const Ratio celToScreenY(screenHeight, celObj._yResolution);
 
 		// Cel may use a coordinate system that is not the same size as the
 		// script coordinate system (usually this means high-resolution
 		// pictures with low-resolution scripts)
-		if (celObj._scaledWidth != kLowResX || celObj._scaledHeight != kLowResY) {
+		if (celObj._xResolution != kLowResX || celObj._yResolution != kLowResY) {
 			// high resolution coordinates
 
 			if (_useInsetRect) {
-				const Ratio scriptToCelX(celObj._scaledWidth, scriptWidth);
-				const Ratio scriptToCelY(celObj._scaledHeight, scriptHeight);
+				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
 				mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
 
 				if (_screenItemRect.intersects(celRect)) {
@@ -296,11 +296,11 @@ void ScreenItem::calcRects(const Plane &plane) {
 				}
 			}
 
-			int displaceX = celObj._displace.x;
-			int displaceY = celObj._displace.y;
+			int originX = celObj._origin.x;
+			int originY = celObj._origin.y;
 
 			if (_mirrorX != celObj._mirrorX && _celInfo.type != kCelTypePic) {
-				displaceX = celObj._width - celObj._displace.x - 1;
+				originX = celObj._width - celObj._origin.x - 1;
 			}
 
 			if (!scaleX.isOne() || !scaleY.isOne()) {
@@ -328,13 +328,13 @@ void ScreenItem::calcRects(const Plane &plane) {
 					}
 				}
 
-				displaceX = (displaceX * scaleX).toInt();
-				displaceY = (displaceY * scaleY).toInt();
+				originX = (originX * scaleX).toInt();
+				originY = (originY * scaleY).toInt();
 			}
 
 			mulinc(_screenItemRect, celToScreenX, celToScreenY);
-			displaceX = (displaceX * celToScreenX).toInt();
-			displaceY = (displaceY * celToScreenY).toInt();
+			originX = (originX * celToScreenX).toInt();
+			originY = (originY * celToScreenY).toInt();
 
 			const Ratio scriptToScreenX = Ratio(screenWidth, scriptWidth);
 			const Ratio scriptToScreenY = Ratio(screenHeight, scriptHeight);
@@ -343,8 +343,8 @@ void ScreenItem::calcRects(const Plane &plane) {
 				_scaledPosition.x = _position.x;
 				_scaledPosition.y = _position.y;
 			} else {
-				_scaledPosition.x = (_position.x * scriptToScreenX).toInt() - displaceX;
-				_scaledPosition.y = (_position.y * scriptToScreenY).toInt() - displaceY;
+				_scaledPosition.x = (_position.x * scriptToScreenX).toInt() - originX;
+				_scaledPosition.y = (_position.y * scriptToScreenY).toInt() - originY;
 			}
 
 			_screenItemRect.translate(_scaledPosition.x, _scaledPosition.y);
@@ -362,7 +362,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				if (celObjPic == nullptr) {
 					error("Expected a CelObjPic");
 				}
-				temp.translate((celObjPic->_relativePosition.x * scriptToScreenX).toInt() - displaceX, 0);
+				temp.translate((celObjPic->_relativePosition.x * scriptToScreenX).toInt() - originX, 0);
 
 				// TODO: This is weird.
 				int deltaX = plane._planeRect.width() - temp.right - 1 - temp.left;
@@ -380,9 +380,9 @@ void ScreenItem::calcRects(const Plane &plane) {
 		} else {
 			// low resolution coordinates
 
-			int displaceX = celObj._displace.x;
+			int originX = celObj._origin.x;
 			if (_mirrorX != celObj._mirrorX && _celInfo.type != kCelTypePic) {
-				displaceX = celObj._width - celObj._displace.x - 1;
+				originX = celObj._width - celObj._origin.x - 1;
 			}
 
 			if (!scaleX.isOne() || !scaleY.isOne()) {
@@ -394,8 +394,8 @@ void ScreenItem::calcRects(const Plane &plane) {
 				_screenItemRect.bottom -= 1;
 			}
 
-			_scaledPosition.x = _position.x - (displaceX * scaleX).toInt();
-			_scaledPosition.y = _position.y - (celObj._displace.y * scaleY).toInt();
+			_scaledPosition.x = _position.x - (originX * scaleX).toInt();
+			_scaledPosition.y = _position.y - (celObj._origin.y * scaleY).toInt();
 			_screenItemRect.translate(_scaledPosition.x, _scaledPosition.y);
 
 			if (_mirrorX != celObj._mirrorX && _celInfo.type == kCelTypePic) {
@@ -410,7 +410,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 				if (celObjPic == nullptr) {
 					error("Expected a CelObjPic");
 				}
-				temp.translate(celObjPic->_relativePosition.x - (displaceX * scaleX).toInt(), celObjPic->_relativePosition.y - (celObj._displace.y * scaleY).toInt());
+				temp.translate(celObjPic->_relativePosition.x - (originX * scaleX).toInt(), celObjPic->_relativePosition.y - (celObj._origin.y * scaleY).toInt());
 
 				// TODO: This is weird.
 				int deltaX = plane._gameRect.width() - temp.right - 1 - temp.left;
@@ -423,7 +423,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			_scaledPosition.y += plane._gameRect.top;
 			_screenItemRect.translate(plane._gameRect.left, plane._gameRect.top);
 
-			if (celObj._scaledWidth != screenWidth || celObj._scaledHeight != screenHeight) {
+			if (celObj._xResolution != screenWidth || celObj._yResolution != screenHeight) {
 				mulru(_scaledPosition, celToScreenX, celToScreenY);
 				mulru(_screenItemRect, celToScreenX, celToScreenY, 1);
 			}
@@ -517,11 +517,11 @@ void ScreenItem::printDebugInfo(Console *con) const {
 		_celInfo.color
 	);
 	if (_celObj != nullptr) {
-		con->debugPrintf("    width %d, height %d, scaledWidth %d, scaledHeight %d\n",
+		con->debugPrintf("    width %d, height %d, x-resolution %d, y-resolution %d\n",
 			_celObj->_width,
 			_celObj->_height,
-			_celObj->_scaledWidth,
-			_celObj->_scaledHeight
+			_celObj->_xResolution,
+			_celObj->_yResolution
 		);
 	}
 }
@@ -603,19 +603,19 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		return Common::Rect();
 	}
 
-	int16 displaceX = celObj._displace.x;
-	int16 displaceY = celObj._displace.y;
+	int16 originX = celObj._origin.x;
+	int16 originY = celObj._origin.y;
 
 	if (_mirrorX != celObj._mirrorX && _celInfo.type != kCelTypePic) {
-		displaceX = celObj._width - displaceX - 1;
+		originX = celObj._width - originX - 1;
 	}
 
-	if (celObj._scaledWidth != kLowResX || celObj._scaledHeight != kLowResY) {
+	if (celObj._xResolution != kLowResX || celObj._yResolution != kLowResY) {
 		// high resolution coordinates
 
 		if (_useInsetRect) {
-			Ratio scriptToCelX(celObj._scaledWidth, scriptWidth);
-			Ratio scriptToCelY(celObj._scaledHeight, scriptHeight);
+			Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+			Ratio scriptToCelY(celObj._yResolution, scriptHeight);
 			mulru(nsRect, scriptToCelX, scriptToCelY, 0);
 
 			if (nsRect.intersects(celObjRect)) {
@@ -656,14 +656,14 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 			}
 		}
 
-		Ratio celToScriptX(scriptWidth, celObj._scaledWidth);
-		Ratio celToScriptY(scriptHeight, celObj._scaledHeight);
+		Ratio celToScriptX(scriptWidth, celObj._xResolution);
+		Ratio celToScriptY(scriptHeight, celObj._yResolution);
 
-		displaceX = (displaceX * scaleX * celToScriptX).toInt();
-		displaceY = (displaceY * scaleY * celToScriptY).toInt();
+		originX = (originX * scaleX * celToScriptX).toInt();
+		originY = (originY * scaleY * celToScriptY).toInt();
 
 		mulinc(nsRect, celToScriptX, celToScriptY);
-		nsRect.translate(_position.x - displaceX, _position.y - displaceY);
+		nsRect.translate(_position.x - originX, _position.y - originY);
 	} else {
 		// low resolution coordinates
 
@@ -676,9 +676,9 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 			nsRect.bottom -= 1;
 		}
 
-		displaceX = (displaceX * scaleX).toInt();
-		displaceY = (displaceY * scaleY).toInt();
-		nsRect.translate(_position.x - displaceX, _position.y - displaceY);
+		originX = (originX * scaleX).toInt();
+		originY = (originY * scaleY).toInt();
+		nsRect.translate(_position.x - originX, _position.y - originY);
 
 		if (_mirrorX != celObj._mirrorX && _celInfo.type != kCelTypePic) {
 			nsRect.translate(plane._gameRect.width() - nsRect.width(), 0);

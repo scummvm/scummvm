@@ -39,8 +39,8 @@
 namespace Sci {
 
 int16 GfxText32::_defaultFontId = 0;
-int16 GfxText32::_scaledWidth = 0;
-int16 GfxText32::_scaledHeight = 0;
+int16 GfxText32::_xResolution = 0;
+int16 GfxText32::_yResolution = 0;
 
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 	_segMan(segMan),
@@ -52,10 +52,10 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 		_fontId = _defaultFontId;
 		_font = _cache->getFont(_defaultFontId);
 
-		if (_scaledWidth == 0) {
+		if (_xResolution == 0) {
 			// initialize the statics
-			_scaledWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-			_scaledHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+			_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+			_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 		}
 	}
 
@@ -78,8 +78,8 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-		Ratio scaleX(_scaledWidth, scriptWidth);
-		Ratio scaleY(_scaledHeight, scriptHeight);
+		Ratio scaleX(_xResolution, scriptWidth);
+		Ratio scaleY(_yResolution, scriptHeight);
 
 		_width = (_width * scaleX).toInt();
 		_height = (_height * scaleY).toInt();
@@ -96,7 +96,7 @@ reg_t GfxText32::createFontBitmap(int16 width, int16 height, const Common::Rect 
 		_textRect = Common::Rect();
 	}
 
-	_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false, gc);
+	_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _xResolution, _yResolution, 0, false, gc);
 
 	erase(bitmapRect, false);
 
@@ -120,12 +120,12 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-	mulinc(_textRect, Ratio(_scaledWidth, scriptWidth), Ratio(_scaledHeight, scriptHeight));
+	mulinc(_textRect, Ratio(_xResolution, scriptWidth), Ratio(_yResolution, scriptHeight));
 
 	CelObjView view(celInfo.resourceId, celInfo.loopNo, celInfo.celNo);
-	_skipColor = view._transparentColor;
-	_width = view._width * _scaledWidth / view._scaledWidth;
-	_height = view._height * _scaledHeight / view._scaledHeight;
+	_skipColor = view._skipColor;
+	_width = view._width * _xResolution / view._xResolution;
+	_height = view._height * _yResolution / view._yResolution;
 
 	Common::Rect bitmapRect(_width, _height);
 	if (_textRect.intersects(bitmapRect)) {
@@ -134,7 +134,7 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 		_textRect = Common::Rect();
 	}
 
-	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _scaledWidth, _scaledHeight, 0, false, gc);
+	SciBitmap &bitmap = *_segMan->allocateBitmap(&_bitmap, _width, _height, _skipColor, 0, 0, _xResolution, _yResolution, 0, false, gc);
 
 	// NOTE: The engine filled the bitmap pixels with 11 here, which is silly
 	// because then it just erased the bitmap using the skip color. So we don't
@@ -144,7 +144,7 @@ reg_t GfxText32::createFontBitmap(const CelInfo32 &celInfo, const Common::Rect &
 	erase(bitmapRect, false);
 	_backColor = backColor;
 
-	view.draw(bitmap.getBuffer(), bitmapRect, Common::Point(0, 0), false, Ratio(_scaledWidth, view._scaledWidth), Ratio(_scaledHeight, view._scaledHeight));
+	view.draw(bitmap.getBuffer(), bitmapRect, Common::Point(0, 0), false, Ratio(_xResolution, view._xResolution), Ratio(_yResolution, view._yResolution));
 
 	if (_backColor != skipColor && _foreColor != skipColor) {
 		erase(_textRect, false);
@@ -332,7 +332,7 @@ void GfxText32::drawText(const uint index, uint length) {
 void GfxText32::invertRect(const reg_t bitmapId, int16 bitmapStride, const Common::Rect &rect, const uint8 foreColor, const uint8 backColor, const bool doScaling) {
 	Common::Rect targetRect = rect;
 	if (doScaling) {
-		bitmapStride = bitmapStride * _scaledWidth / g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+		bitmapStride = bitmapStride * _xResolution / g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 		targetRect = scaleRect(rect);
 	}
 
@@ -557,13 +557,13 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 	int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
 	int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
-	maxWidth = maxWidth * _scaledWidth / scriptWidth;
+	maxWidth = maxWidth * _xResolution / scriptWidth;
 
 	_text = text;
 
 	if (maxWidth >= 0) {
 		if (maxWidth == 0) {
-			maxWidth = _scaledWidth * 3 / 5;
+			maxWidth = _xResolution * 3 / 5;
 		}
 
 		result.right = maxWidth;
@@ -606,8 +606,8 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 	if (doScaling) {
 		// NOTE: The original engine code also scaled top/left but these are
 		// always zero so there is no reason to do that.
-		result.right = ((result.right - 1) * scriptWidth + _scaledWidth - 1) / _scaledWidth + 1;
-		result.bottom = ((result.bottom - 1) * scriptHeight + _scaledHeight - 1) / _scaledHeight + 1;
+		result.right = ((result.right - 1) * scriptWidth + _xResolution - 1) / _xResolution + 1;
+		result.bottom = ((result.bottom - 1) * scriptHeight + _yResolution - 1) / _yResolution + 1;
 	}
 
 	return result;
@@ -630,7 +630,7 @@ int16 GfxText32::getTextCount(const Common::String &text, const uint index, cons
 
 	Common::Rect scaledRect(textRect);
 	if (doScaling) {
-		mulinc(scaledRect, Ratio(_scaledWidth, scriptWidth), Ratio(_scaledHeight, scriptHeight));
+		mulinc(scaledRect, Ratio(_xResolution, scriptWidth), Ratio(_yResolution, scriptHeight));
 	}
 
 	Common::String oldText = _text;

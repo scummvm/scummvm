@@ -182,7 +182,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	if (_macCursorRemap.empty() && viewId != -1) {
 		CelObjView view(viewId, loopNo, celNo);
 
-		_hotSpot = view._displace;
+		_hotSpot = view._origin;
 		_width = view._width;
 		_height = view._height;
 

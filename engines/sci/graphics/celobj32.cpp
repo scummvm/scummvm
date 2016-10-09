@@ -287,7 +287,7 @@ private:
 	uint32 _uncompressedDataOffset;
 	int16 _y;
 	const int16 _sourceHeight;
-	const uint8 _transparentColor;
+	const uint8 _skipColor;
 	const int16 _maxWidth;
 
 public:
@@ -295,7 +295,7 @@ public:
 	_resource(celObj.getResPointer()),
 	_y(-1),
 	_sourceHeight(celObj._height),
-	_transparentColor(celObj._transparentColor),
+	_skipColor(celObj._skipColor),
 	_maxWidth(maxWidth) {
 		assert(maxWidth <= celObj._width);
 
@@ -326,7 +326,7 @@ public:
 
 					// Fill with skip color
 					if (controlByte & 0x40) {
-						memset(_buffer + i, _transparentColor, length);
+						memset(_buffer + i, _skipColor, length);
 					// Next value is fill color
 					} else {
 						memset(_buffer + i, *literal, length);
@@ -665,7 +665,7 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 
 	MAPPER mapper;
 	SCALER scaler(*this, targetRect.left - scaledPosition.x + targetRect.width(), scaledPosition);
-	RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _transparentColor);
+	RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _skipColor);
 	renderer.draw(target, targetRect, scaledPosition);
 }
 
@@ -675,10 +675,10 @@ void CelObj::render(Buffer &target, const Common::Rect &targetRect, const Common
 	MAPPER mapper;
 	SCALER scaler(*this, targetRect, scaledPosition, scaleX, scaleY);
 	if (_drawBlackLines) {
-		RENDERER<MAPPER, SCALER, true> renderer(mapper, scaler, _transparentColor);
+		RENDERER<MAPPER, SCALER, true> renderer(mapper, scaler, _skipColor);
 		renderer.draw(target, targetRect, scaledPosition);
 	} else {
-		RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _transparentColor);
+		RENDERER<MAPPER, SCALER, false> renderer(mapper, scaler, _skipColor);
 		renderer.draw(target, targetRect, scaledPosition);
 	}
 }
@@ -891,20 +891,20 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 
 	const byte *const data = resource->data;
 
-	_scaledWidth = READ_SCI11ENDIAN_UINT16(data + 14);
-	_scaledHeight = READ_SCI11ENDIAN_UINT16(data + 16);
+	_xResolution = READ_SCI11ENDIAN_UINT16(data + 14);
+	_yResolution = READ_SCI11ENDIAN_UINT16(data + 16);
 
-	if (_scaledWidth == 0 && _scaledHeight == 0) {
+	if (_xResolution == 0 && _yResolution == 0) {
 		byte sizeFlag = data[5];
 		if (sizeFlag == 0) {
-			_scaledWidth = kLowResX;
-			_scaledHeight = kLowResY;
+			_xResolution = kLowResX;
+			_yResolution = kLowResY;
 		} else if (sizeFlag == 1) {
-			_scaledWidth = 640;
-			_scaledHeight = 480;
+			_xResolution = 640;
+			_yResolution = 480;
 		} else if (sizeFlag == 2) {
-			_scaledWidth = 640;
-			_scaledHeight = 400;
+			_xResolution = 640;
+			_yResolution = 400;
 		}
 	}
 
@@ -958,9 +958,9 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 
 	_width = READ_SCI11ENDIAN_UINT16(celHeader);
 	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
-	_displace.x = _width / 2 - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
-	_displace.y = _height - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6) - 1;
-	_transparentColor = celHeader[8];
+	_origin.x = _width / 2 - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
+	_origin.y = _height - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6) - 1;
+	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
 
 	if (_compressionType != kCelCompressionNone && _compressionType != kCelCompressionRLE) {
@@ -989,7 +989,7 @@ bool CelObjView::analyzeUncompressedForRemap() const {
 		if (
 			pixel >= g_sci->_gfxRemap32->getStartColor() &&
 			pixel <= g_sci->_gfxRemap32->getEndColor() &&
-			pixel != _transparentColor
+			pixel != _skipColor
 		) {
 			return true;
 		}
@@ -1006,7 +1006,7 @@ bool CelObjView::analyzeForRemap() const {
 			if (
 				pixel >= g_sci->_gfxRemap32->getStartColor() &&
 				pixel <= g_sci->_gfxRemap32->getEndColor() &&
-				pixel != _transparentColor
+				pixel != _skipColor
 			) {
 				return true;
 			}
@@ -1080,9 +1080,9 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 
 	_width = READ_SCI11ENDIAN_UINT16(celHeader);
 	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
-	_displace.x = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
-	_displace.y = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6);
-	_transparentColor = celHeader[8];
+	_origin.x = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
+	_origin.y = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6);
+	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
 	_priority = READ_SCI11ENDIAN_UINT16(celHeader + 36);
 	_relativePosition.x = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 38);
@@ -1092,17 +1092,17 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 	const uint16 sizeFlag2 = READ_SCI11ENDIAN_UINT16(data + 12);
 
 	if (sizeFlag2) {
-		_scaledWidth = sizeFlag1;
-		_scaledHeight = sizeFlag2;
+		_xResolution = sizeFlag1;
+		_yResolution = sizeFlag2;
 	} else if (sizeFlag1 == 0) {
-		_scaledWidth = kLowResX;
-		_scaledHeight = kLowResY;
+		_xResolution = kLowResX;
+		_yResolution = kLowResY;
 	} else if (sizeFlag1 == 1) {
-		_scaledWidth = 640;
-		_scaledHeight = 480;
+		_xResolution = 640;
+		_yResolution = 480;
 	} else if (sizeFlag1 == 2) {
-		_scaledWidth = 640;
-		_scaledHeight = 400;
+		_xResolution = 640;
+		_yResolution = 400;
 	}
 
 	if (celHeader[10] & 128) {
@@ -1127,7 +1127,7 @@ bool CelObjPic::analyzeUncompressedForSkip() const {
 	const byte *const pixels = resource + READ_SCI11ENDIAN_UINT32(resource + _celHeaderOffset + 24);
 	for (int i = 0; i < _width * _height; ++i) {
 		uint8 pixel = pixels[i];
-		if (pixel == _transparentColor) {
+		if (pixel == _skipColor) {
 			return true;
 		}
 	}
@@ -1173,10 +1173,10 @@ CelObjMem::CelObjMem(const reg_t bitmapObject) {
 
 	_width = bitmap->getWidth();
 	_height = bitmap->getHeight();
-	_displace = bitmap->getDisplace();
-	_transparentColor = bitmap->getSkipColor();
-	_scaledWidth = bitmap->getScaledWidth();
-	_scaledHeight = bitmap->getScaledHeight();
+	_origin = bitmap->getOrigin();
+	_skipColor = bitmap->getSkipColor();
+	_xResolution = bitmap->getXResolution();
+	_yResolution = bitmap->getYResolution();
 	_hunkPaletteOffset = bitmap->getHunkPaletteOffset();
 	_remap = bitmap->getRemap();
 }
@@ -1195,10 +1195,10 @@ byte *CelObjMem::getResPointer() const {
 CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 height) {
 	_info.type = kCelTypeColor;
 	_info.color = color;
-	_displace.x = 0;
-	_displace.y = 0;
-	_scaledWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_scaledHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	_origin.x = 0;
+	_origin.y = 0;
+	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
+	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 	_hunkPaletteOffset = 0;
 	_mirrorX = false;
 	_remap = false;

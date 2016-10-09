@@ -286,7 +286,7 @@ public:
 	/**
 	 * TODO: Documentation
 	 */
-	Common::Point _displace;
+	Common::Point _origin;
 
 	/**
 	 * The dimensions of the original coordinate system for
@@ -301,21 +301,21 @@ public:
 	 * scriptWidth/Height but seems to typically be changed
 	 * to more closely match the native screen resolution.
 	 */
-	uint16 _scaledWidth, _scaledHeight;
+	uint16 _xResolution, _yResolution;
 
 	/**
 	 * The skip (transparent) color for the cel. When
 	 * compositing, any pixels matching this color will not
 	 * be copied to the buffer.
 	 */
-	uint8 _transparentColor;
+	uint8 _skipColor;
 
 	/**
 	 * Whether or not this cel has any transparent regions.
 	 * This is used for optimised drawing of non-transparent
 	 * cels.
 	 */
-	bool _transparent; // TODO: probably "skip"?
+	bool _transparent;
 
 	/**
 	 * The compression type for the pixel data for this cel.

@@ -391,7 +391,7 @@ static const SciKernelMapSubEntry kBitmap_subops[] = {
 	{ SIG_SINCE_SCI21,     5, MAP_CALL(BitmapDrawColor),           "riiiii",               NULL },
 	{ SIG_SINCE_SCI21,     6, MAP_CALL(BitmapDrawBitmap),          "rr(i)(i)(i)",          NULL },
 	{ SIG_SINCE_SCI21,     7, MAP_CALL(BitmapInvert),              "riiiiii",              NULL },
-	{ SIG_SINCE_SCI21MID,  8, MAP_CALL(BitmapSetDisplace),         "rii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  8, MAP_CALL(BitmapSetOrigin),           "rii",                  NULL },
 	{ SIG_SINCE_SCI21MID,  9, MAP_CALL(BitmapCreateFromView),      "iii(i)(i)(i)([r0])",   NULL },
 	{ SIG_SINCE_SCI21MID, 10, MAP_CALL(BitmapCopyPixels),          "rr",                   NULL },
 	{ SIG_SINCE_SCI21MID, 11, MAP_CALL(BitmapClone),               "r",                    NULL },

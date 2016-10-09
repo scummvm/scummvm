@@ -563,7 +563,7 @@ reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapSetDisplace(EngineState *s, int argc, reg_t *argv);
+reg_t kBitmapSetOrigin(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv);

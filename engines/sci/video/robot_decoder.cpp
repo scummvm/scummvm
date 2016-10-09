@@ -703,7 +703,7 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 					const int16 lowResX = (scaledX * screenToLowResX).toInt();
 					const int16 lowResY = (scaledY2 * screenToLowResY).toInt();
 
-					bitmap.setDisplace(Common::Point(
+					bitmap.setOrigin(Common::Point(
 						(scaledX - (lowResX * lowResToScreenX).toInt()) * -1,
 						(lowResY * lowResToScreenY).toInt() - scaledY1
 					));
@@ -713,7 +713,7 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 				} else {
 					const int16 scaledX = _originalScreenItemX[i] + _position.x;
 					const int16 scaledY = _originalScreenItemY[i] + _position.y + bitmap.getHeight() - 1;
-					bitmap.setDisplace(Common::Point(0, bitmap.getHeight() - 1));
+					bitmap.setOrigin(Common::Point(0, bitmap.getHeight() - 1));
 					_screenItemX[i] = scaledX;
 					_screenItemY[i] = scaledY;
 				}
@@ -1461,7 +1461,7 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
 	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
 
-	Common::Point displace;
+	Common::Point origin;
 	if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
 		const Ratio lowResToScreenX(screenWidth, kLowResX);
 		const Ratio lowResToScreenY(screenHeight, kLowResY);
@@ -1475,22 +1475,22 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 		const int16 lowResX = (scaledX * screenToLowResX).toInt();
 		const int16 lowResY = (scaledY2 * screenToLowResY).toInt();
 
-		displace.x = (scaledX - (lowResX * lowResToScreenX).toInt()) * -1;
-		displace.y = (lowResY * lowResToScreenY).toInt() - scaledY1;
+		origin.x = (scaledX - (lowResX * lowResToScreenX).toInt()) * -1;
+		origin.y = (lowResY * lowResToScreenY).toInt() - scaledY1;
 		_screenItemX[screenItemIndex] = lowResX;
 		_screenItemY[screenItemIndex] = lowResY;
 
-		debugC(kDebugLevelVideo, "Low resolution position c: %d %d l: %d/%d %d/%d d: %d %d s: %d/%d %d/%d x: %d y: %d", celPosition.x, celPosition.y, lowResX, scriptWidth, lowResY, scriptHeight, displace.x, displace.y, scaledX, screenWidth, scaledY2, screenHeight, scaledX - displace.x, scaledY2 - displace.y);
+		debugC(kDebugLevelVideo, "Low resolution position c: %d %d l: %d/%d %d/%d d: %d %d s: %d/%d %d/%d x: %d y: %d", celPosition.x, celPosition.y, lowResX, scriptWidth, lowResY, scriptHeight, origin.x, origin.y, scaledX, screenWidth, scaledY2, screenHeight, scaledX - origin.x, scaledY2 - origin.y);
 	} else {
 		const int16 highResX = celPosition.x + _position.x;
 		const int16 highResY = celPosition.y + _position.y + celHeight - 1;
 
-		displace.x = 0;
-		displace.y = celHeight - 1;
+		origin.x = 0;
+		origin.y = celHeight - 1;
 		_screenItemX[screenItemIndex] = highResX;
 		_screenItemY[screenItemIndex] = highResY;
 
-		debugC(kDebugLevelVideo, "High resolution position c: %d %d s: %d %d d: %d %d", celPosition.x, celPosition.y, highResX, highResY, displace.x, displace.y);
+		debugC(kDebugLevelVideo, "High resolution position c: %d %d s: %d %d d: %d %d", celPosition.x, celPosition.y, highResX, highResY, origin.x, origin.y);
 	}
 
 	_originalScreenItemX[screenItemIndex] = celPosition.x;
@@ -1500,9 +1500,9 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 
 	SciBitmap &bitmap = *_segMan->lookupBitmap(_celHandles[screenItemIndex].bitmapId);
 	assert(bitmap.getWidth() == celWidth && bitmap.getHeight() == celHeight);
-	assert(bitmap.getScaledWidth() == _xResolution && bitmap.getScaledHeight() == _yResolution);
+	assert(bitmap.getXResolution() == _xResolution && bitmap.getYResolution() == _yResolution);
 	assert(bitmap.getHunkPaletteOffset() == (uint32)bitmap.getWidth() * bitmap.getHeight() + SciBitmap::getBitmapHeaderSize());
-	bitmap.setDisplace(displace);
+	bitmap.setOrigin(origin);
 
 	byte *targetBuffer = nullptr;
 	if (_verticalScaleFactor == 100) {
