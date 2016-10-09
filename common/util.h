@@ -180,7 +180,7 @@ bool isPrint(int c);
 
 
 /**
- * Test whether the given character is a punctuation character, 
+ * Test whether the given character is a punctuation character,
  * (i.e not alphanumeric.
  *
  * @param c		the character to test

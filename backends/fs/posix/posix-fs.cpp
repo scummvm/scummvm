@@ -267,7 +267,7 @@ bool POSIXFilesystemNode::create(bool isDir) {
 		}
 	}
 
-	if (success) {		
+	if (success) {
 		setFlags();
 		if (_isValid) {
 			if (_isDirectory != isDir) warning("failed to create %s: got %s", isDir ? "directory" : "file", _isDirectory ? "directory" : "file");

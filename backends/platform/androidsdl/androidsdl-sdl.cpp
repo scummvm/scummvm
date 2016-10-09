@@ -28,7 +28,7 @@
 
 void OSystem_ANDROIDSDL::initBackend() {
 	// Create the backend custom managers
-  
+
 	if (_eventSource == 0)
 		_eventSource = new AndroidSdlEventSource();
 
@@ -37,10 +37,10 @@ void OSystem_ANDROIDSDL::initBackend() {
 
 	if (!ConfMan.hasKey("browser_lastpath"))
 		ConfMan.set("browser_lastpath", "/storage");
-	
+
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
-	
+
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();
 }

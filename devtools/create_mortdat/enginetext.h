@@ -43,7 +43,7 @@ const char *engineDataEn[] =  {
 	"% of hints...",
 	"Do you want to wake up?",
 	"OK",
-	"", 
+	"",
 	" Save",
 
 	" Load",
@@ -96,7 +96,7 @@ const char *engineDataFr[] = {
 	"% des indices...",
 	"D\202sirez-vous vous r\202veiller?",
 	"OK",
-	"", 
+	"",
 	" Sauvegarde",
 
 	" Chargement",
@@ -150,7 +150,7 @@ const char *engineDataDe[] =  {
 	"% der Hinweise|      bemerken muessen...",
 	"Moechten Sie aufwachen?",
 	"OK",
-	"", 
+	"",
 	" schreiben",
 
 	" lesen",

@@ -57,7 +57,7 @@ Sprite::~Sprite() {
 
 void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f) {
 	free();
-	
+
 	actualWidth = width;
 	actualHeight = height;
 	format = f;
@@ -73,7 +73,7 @@ void Sprite::create(uint16 width, uint16 height, const Graphics::PixelFormat &f)
 		assert(pixels && texture.data);
 		clear();
 	}
-	
+
 	float x = 0.f, y = 0.f;
 	float u = (float)width/w;
 	float v = (float)height/h;

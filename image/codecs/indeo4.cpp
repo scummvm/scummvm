@@ -610,7 +610,7 @@ int Indeo4Decoder::decodePlaneSubdivision() {
 			if (_ctx._gb->getBits(2) != 3)
 				return 0;
 		return 4;
-	
+
 	default:
 		return 0;
 	}

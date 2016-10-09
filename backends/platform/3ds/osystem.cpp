@@ -85,7 +85,7 @@ OSystem_3DS::~OSystem_3DS() {
 	destroyEvents();
 	destroyAudio();
 	destroyGraphics();
-	
+
 	delete _timerManager;
 	_timerManager = 0;
 }
@@ -109,7 +109,7 @@ void OSystem_3DS::initBackend() {
 
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("/3ds/scummvm/saves/");
-	
+
 	initGraphics();
 	initAudio();
 	initEvents();

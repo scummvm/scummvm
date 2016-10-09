@@ -33,11 +33,11 @@
 #include "common/translation.h"
 
 namespace _3DS {
-	
+
 bool optionMenuOpened = false;
 
 OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
-	
+
 	optionMenuOpened = true;
 
 	new GUI::ButtonWidget(this, 120, 180, 72, 16, _("~C~lose"), 0, GUI::kCloseCmd);
@@ -45,10 +45,10 @@ OptionsDialog::OptionsDialog() : GUI::Dialog(20, 20, 280, 200) {
 
 	_showCursorCheckbox = new GUI::CheckboxWidget(this, 5, 5, 130, 20, _("Show mouse cursor"), 0, 0, 'T');
 	_showCursorCheckbox->setState(config.showCursor);
-	
+
 	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 5, 22, 130, 20, _("Snap to edges"), 0, 0, 'T');
 	_snapToBorderCheckbox->setState(config.snapToBorder);
-	
+
 	_stretchToFitCheckbox = new GUI::CheckboxWidget(this, 140, 5, 130, 20, _("Stretch to fit"), 0, 0, 'T');
 	_stretchToFitCheckbox->setState(config.stretchToFit);
 

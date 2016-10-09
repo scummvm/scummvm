@@ -56,7 +56,7 @@ void OSystem_MacOSX::init() {
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
 #endif
-	
+
 	// Invoke parent implementation of this method
 	OSystem_POSIX::init();
 }

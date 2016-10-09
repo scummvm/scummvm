@@ -76,7 +76,7 @@ enum {
 };
 
 
-AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType, SelectTrackFn trackFn) : 
+AVIDecoder::AVIDecoder(Audio::Mixer::SoundType soundType, SelectTrackFn trackFn) :
 		_frameRateOverride(0), _soundType(soundType), _selectTrackFn(trackFn) {
 	initCommon();
 }

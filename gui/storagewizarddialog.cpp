@@ -69,7 +69,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	_openUrlWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_pasteCodeWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
 	_connectWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ConnectButton", _("Connect"), 0, kConnectCmd);
-		
+
 	// Initialy the code is empty, so disable the connect button
 	_connectWidget->setEnabled(false);
 
@@ -78,7 +78,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 		_returnLine1->setLabel(_("You will be directed to ScummVM's page where"));
 		_returnLine2->setLabel(_("you should allow it to access your storage."));
 	}
-        
+
 	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.theme()->supportsImages()) {

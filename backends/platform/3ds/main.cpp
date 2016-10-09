@@ -41,13 +41,13 @@ int main(int argc, char *argv[]) {
 	scummvm_main(0, nullptr);
 
 	delete dynamic_cast<_3DS::OSystem_3DS*>(g_system);
-	
+
 	// Turn on both screen backlights before exiting.
 	if (R_SUCCEEDED(gspLcdInit())) {
 		GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 		gspLcdExit();
 	}
-	
+
 	cfguExit();
 	gfxExit();
 	return 0;

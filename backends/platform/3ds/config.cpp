@@ -57,7 +57,7 @@ void loadConfig() {
 	config.stretchToFit = confGetBool("stretchtofit", false);
 	config.sensitivity = confGetInt("sensitivity", -5);
 	config.screen = confGetInt("screen", kScreenBoth);
-	
+
 	// Turn off the backlight of any screen not used
 	if (R_SUCCEEDED(gspLcdInit())) {
 		if (config.screen == kScreenTop) {
@@ -70,7 +70,7 @@ void loadConfig() {
 			GSPLCD_PowerOnBacklight(GSPLCD_SCREEN_BOTH);
 		gspLcdExit();
 	}
-	
+
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 	osys->updateConfig();
 }

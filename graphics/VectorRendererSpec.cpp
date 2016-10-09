@@ -850,7 +850,7 @@ blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const
 }
 
 template<typename PixelType>
-void VectorRendererSpec<PixelType>:: 
+void VectorRendererSpec<PixelType>::
 blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) {
 	int16 x = r.left;
 	int16 y = r.top;
@@ -3125,7 +3125,7 @@ drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType co
 
 	PixelType color1 = color;
 	PixelType color2 = color;
-	
+
 	while (sw++ < Base::_strokeWidth) {
 		blendFillClip(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t,
 			x1 + r, y1 + sp/pitch); // top
@@ -3297,7 +3297,7 @@ drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h, PixelType 
 				x1 + r - x, y1 + h - r + y);
 			gradientFillClip(ptr_bl - y + px, w - 2 * r + 2 * y, x1 + r - y - x, long_h - r + x,
 				x1 + r - y, y1 + h - r + x);
-	
+
 			BE_DRAWCIRCLE_XCOLOR_CLIP(ptr_tr, ptr_tl, ptr_bl, ptr_br, x, y, px, py,
 				x1 + w - r, y1 + r, x1 + r, y1 + r, x1 + r, y1 + h - r, x1 + w - r, y1 + h - r);
 		}
