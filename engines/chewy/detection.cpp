@@ -51,7 +51,7 @@ static const PlainGameDescriptor chewyGames[] = {
 };
 
 static const char *directoryGlobs[] = {
-	"back",
+	"txt",
 	0
 };
 
@@ -63,7 +63,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 		{
 			"chewy",
 			0,
-			AD_ENTRY1s("comic.tgp", "4f03228838663ddecebd750c04687a08", 6529814),
+			AD_ENTRY1s("atds.tap", "e6050c144dd4f23d79ea4f89a8ef306e", 218857),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
