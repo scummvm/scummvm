@@ -117,6 +117,7 @@ void Sound::playMusic(byte *data, uint32 size, bool loop, DisposeAfterUse::Flag 
 	modSize = size;
 	modData = (byte *)malloc(modSize);
 	memcpy(modData, data, size);
+	//convertTMFToMod(data, size, modData, modSize);
 
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 		Audio::makeRawStream(modData,
@@ -186,6 +187,71 @@ void Sound::setSpeechVolume(uint volume) {
 
 void Sound::stopAll() {
 	_mixer->stopAll();
+}
+
+void Sound::convertTMFToMod(byte *tmfData, uint32 tmfSize, byte *modData, uint32 &modSize) {
+	// Convert the TMF stream back to a regular Protracker MOD stream
+	const int maxInstruments = 31;
+	// Extra bytes needed: 20 bytes song name, 31 * 22 instrument names, 4 magic bytes "M.K."
+	modSize = tmfSize + 20 + maxInstruments * 22 + 4;
+	modData = (byte *)malloc(modSize);
+	byte *tmfPtr = tmfData;
+	byte *modPtr = modData;
+
+	const byte songName[20] = {
+		'S', 'C', 'U', 'M', 'M',
+		'V', 'M', ' ', 'M', 'O',
+		'D', 'U', 'L', 'E', '\0',
+		'\0', '\0', '\0', '\0', '\0'
+	};
+	const byte instrumentName[22] = {
+		'S', 'C', 'U', 'M', 'M',
+		'V', 'M', ' ', 'I', 'N',
+		'S', 'T', 'R', 'U', 'M',
+		'E', 'N', 'T', '\0', '\0',
+		'\0', '\0'
+	};
+
+	if (READ_BE_UINT32(tmfPtr) != MKTAG('T', 'M', 'F', '\0'))
+		error("Corrupt TBF resource");
+	tmfPtr += 4;
+
+	memcpy(modPtr, songName, 20);
+	modPtr += 20;
+
+	byte fineTune, instVolume;
+	uint16 repeatPoint, repeatLength, sampleLength;
+
+	for (int i = 0; i < maxInstruments; i++) {
+		fineTune = *tmfPtr++;
+		instVolume = *tmfPtr++;
+		repeatPoint = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
+		repeatLength = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
+		sampleLength = READ_BE_UINT16(tmfPtr);	tmfPtr += 2;
+
+		// Instrument name
+		memcpy(modPtr, instrumentName, 18);	modPtr += 18;
+		*modPtr++ = ' ';
+		*modPtr++ = i / 10;
+		*modPtr++ = i % 10;
+		*modPtr++ = '\0';
+
+		WRITE_BE_UINT16(modPtr, sampleLength / 2);	modPtr += 2;
+		*modPtr++ = fineTune;
+		*modPtr++ = instVolume;
+		WRITE_BE_UINT16(modPtr, repeatPoint / 2);	modPtr += 2;
+		WRITE_BE_UINT16(modPtr, repeatLength / 2);	modPtr += 2;
+	}
+
+	*modPtr++ = *tmfPtr++;	// song length
+	*modPtr++ = *tmfPtr++;	// undef
+	memcpy(modPtr, tmfPtr, 128);
+	modPtr += 128;
+	tmfPtr += 128;
+	WRITE_BE_UINT32(modPtr, MKTAG('M', '.', 'K', '.'));	modPtr += 4;
+	// TODO: 31 bytes instrument positions
+
+	// TODO: notes
 }
 
 } // End of namespace Chewy
