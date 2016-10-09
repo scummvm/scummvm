@@ -238,11 +238,10 @@ void OptionsDialog::open() {
 #ifdef GUI_ONLY_FULLSCREEN
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
-		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
-		_aspectCheckbox->setEnabled(false);
 #else // !GUI_ONLY_FULLSCREEN
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+#endif // GUI_ONLY_FULLSCREEN
 
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
@@ -252,7 +251,6 @@ void OptionsDialog::open() {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
-#endif // GUI_ONLY_FULLSCREEN
 
 	}
 
