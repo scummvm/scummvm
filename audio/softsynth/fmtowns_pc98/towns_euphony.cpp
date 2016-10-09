@@ -62,7 +62,7 @@ bool EuphonyPlayer::init() {
 			}
 		}
 	}
-	
+
 	if (!_drivers[0] || !_drivers[1])
 		return false;
 
@@ -323,7 +323,7 @@ bool EuphonyPlayer::parseEvent() {
 		EVENT(programChange_channelAftertouch),
 		EVENT(programChange_channelAftertouch),
 		EVENT(controlChange_pitchWheel),
-		
+
 		EVENT(sysex),
 		EVENT(advanceBar),
 		EVENT(notImpl),
@@ -661,7 +661,7 @@ bool EuphonyDriver::init() {
 	delete[] _channels;
 	delete[] _partToChanMapping;
 	delete[] _sustainChannels;
-	
+
 	_channels = new Channel[128];
 	_partToChanMapping = new int8[16];
 	_sustainChannels = new int8[16];
@@ -674,7 +674,7 @@ void EuphonyDriver::reset() {
 	_intf->callback(74);
 	_intf->callback(70, 0);
 	_intf->callback(75, 3);
-	
+
 	_currentEvent.clear();
 	memset(_sustainChannels, 0, 16);
 	memset(_partToChanMapping, -1, 16);

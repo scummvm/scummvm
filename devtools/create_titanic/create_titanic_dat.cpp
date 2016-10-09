@@ -527,7 +527,7 @@ static const char *const STRINGS_DE[] = {
 	"Sie befinden sich bereits an Ihrem gew\xFCnschten Reiseziel.",
 	"Passagieren Ihrer Klasse ist der Zugang zu diesem Bereich nicht gestattet.",
 	"Wir bedauern, aber Sie m\xFCssen mindestens Dritte Klasse sein "
-		"bevor Sie um Hilfe bitten k\xF6nnen.",	
+		"bevor Sie um Hilfe bitten k\xF6nnen.",
 	"Ihnen wurde keine Kabine zugeteilt.",
 	"Wir bedauern, aber dieser Aufzug geht nicht tiefer als bis in den 27. Stock.",
 	"Sie m\xFCssen zuerst das Spiel selektieren, das Sie laden m\xF6" "chten.",
@@ -560,7 +560,7 @@ static const char *const STRINGS_DE[] = {
 		"aber das k\xF6nnen Sie eben nicht.",
 	"Eine Schale Pistazien.",
 	"Keine Schale Pistazien.",
-	
+
 	"Sommer",
 	"Herbst",
 	"Winter",
@@ -572,7 +572,7 @@ static const char *const STRINGS_DE[] = {
 	"Pflanzen bitte nicht ber\0xFC" "nhren.",
 	"!\0xBC" "ta'\0xAD" "ta! !T\0xAA" "z n\0xAA" " sappibundli t\0xAA"
 		"cn\0xAA" "z!",
-	
+
 	"Stop",
 	"!Hanaz!",
 	"VorwSrts",

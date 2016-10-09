@@ -65,7 +65,7 @@ protected:
 	virtual Common::WriteStream *createLogFile();
 
 	virtual AudioCDManager *createAudioCDManager();
-	
+
 	bool launchBrowser(const Common::String& client, const Common::String &url);
 };
 

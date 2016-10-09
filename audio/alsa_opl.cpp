@@ -123,7 +123,7 @@ void OPL::clear() {
 		} else if (_type == Config::kOpl2) {
 			for (int i = 0; i < kOpl2Operators; ++i) {
 				_oper[i].left = 1;
-				_oper[i].right = 1;			
+				_oper[i].right = 1;
 			}
 		}
 	}
@@ -152,7 +152,7 @@ bool OPL::init() {
 		while (!snd_ctl_hwdep_next_device(ctl, &dev) && dev >= 0) {
 			name = Common::String::format("hw:%d,%d", card, dev);
 
-			if (snd_hwdep_open(&_opl, name.c_str(), SND_HWDEP_OPEN_WRITE) < 0) 
+			if (snd_hwdep_open(&_opl, name.c_str(), SND_HWDEP_OPEN_WRITE) < 0)
 				continue;
 
 			if (!snd_hwdep_info(_opl, info)) {

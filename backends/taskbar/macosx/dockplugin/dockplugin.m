@@ -72,7 +72,7 @@
 		NSString *gameId = [recentGame valueForKey:@"game"];
 		NSString *desc = [recentGame valueForKey:@"description"];
 		NSString *iconFile = [recentGame valueForKey:@"icon"];
-		
+
 		StartGameMenuItem *menuItem = [[StartGameMenuItem alloc] initWithGame:gameId description:desc icon:iconFile];
 		[recentGamesMenu addItem:menuItem];
 		[menuItem release];
@@ -88,7 +88,7 @@
 - (NSMenuItem*)initWithGame:(NSString *)gameId description:(NSString*)desc icon:(NSString*)iconFile {
 	self = [super initWithTitle:(desc == nil ? gameId : desc) action:@selector(startGame) keyEquivalent:@""];
 	[self setTarget:self];
-	
+
 	if (iconFile != nil) {
 		NSImage *image = [[NSImage alloc] initWithContentsOfFile:iconFile];
 		[self setImage:image];
@@ -97,7 +97,7 @@
 
 	game = gameId;
 	[game retain];
-	
+
 	return self;
 }
 
@@ -108,7 +108,7 @@
 
 - (IBAction) startGame {
 	NSLog(@"Starting Game %@...", game);
-	
+
 	NSString *scummVMPath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.scummvm.scummvm"];
 	if (scummVMPath == nil) {
 		NSLog(@"Cannot find ScummVM.app!");

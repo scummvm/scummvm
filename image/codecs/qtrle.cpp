@@ -535,7 +535,7 @@ void QTRLEDecoder::createSurface() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-	}	
+	}
 
 	_surface = new Graphics::Surface();
 	_surface->create(_paddedWidth, _height, getPixelFormat());

@@ -459,7 +459,7 @@ int Indeo5Decoder::decode_gop_header() {
 			mbSize = _ctx._gb->getBit();
 			blkSize = 8 >> _ctx._gb->getBit();
 			mbSize = blkSize << (!mbSize ? 1 : 0);
-			
+
 			if (p == 0 && blkSize == 4) {
 				warning("4x4 luma blocks are unsupported!");
 				return -2;

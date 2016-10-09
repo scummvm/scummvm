@@ -931,7 +931,7 @@ uint getSizeNextPOT(uint size) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
-			
+
 			[self addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
 		}
 	}

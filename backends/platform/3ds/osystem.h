@@ -57,12 +57,12 @@ class OSystem_3DS : public EventsBaseBackend, public PaletteManager {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();
-	
+
 	volatile bool exiting;
 	volatile bool sleeping;
 
 	virtual void initBackend();
-	
+
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
 	virtual bool getFeatureState(OSystem::Feature f);
@@ -72,22 +72,22 @@ public:
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &t) const;
-	
+
 	virtual MutexRef createMutex();
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
-	
+
 	virtual Audio::Mixer *getMixer();
 	virtual PaletteManager *getPaletteManager() { return this; }
 	virtual Common::String getSystemLanguage() const;
 	virtual void fatalError();
 	virtual void quit();
-	
+
 	virtual Common::String getDefaultConfigFileName();
-	
+
 	// Graphics
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
@@ -131,16 +131,16 @@ public:
 	                    int hotspotY, uint32 keycolor, bool dontScale = false,
 	                    const Graphics::PixelFormat *format = NULL);
 	void setCursorPalette(const byte *colors, uint start, uint num);
-	
+
 	// Transform point from touchscreen coords into gamescreen coords
 	void transformPoint(touchPosition &point);
-	
+
 	void setCursorDelta(float deltaX, float deltaY);
-	
+
 	void updateFocus();
 	void updateConfig();
 	void updateSize();
-	
+
 private:
 	void initGraphics();
 	void destroyGraphics();
@@ -148,18 +148,18 @@ private:
 	void destroyAudio();
 	void initEvents();
 	void destroyEvents();
-	
+
 	void flushGameScreen();
 	void flushCursor();
-	
+
 protected:
 	Audio::MixerImpl *_mixer;
-	
+
 private:
 	u16 _gameWidth, _gameHeight;
 	u16 _gameTopX, _gameTopY;
 	u16 _gameBottomX, _gameBottomY;
-	
+
 	// Audio
 	Thread audioThread;
 
@@ -169,15 +169,15 @@ private:
 	Graphics::PixelFormat _pfCursor;
 	byte _palette[3 * 256];
 	byte _cursorPalette[3 * 256];
-	
+
 	Graphics::Surface _gameScreen;
 	Sprite _gameTopTexture;
 	Sprite _gameBottomTexture;
 	Sprite _overlay;
-	
+
 	int _screenShakeOffset;
 	bool _overlayVisible;
-	
+
 	DVLB_s *_dvlb;
 	shaderProgram_s _program;
 	int _projectionLocation;
@@ -186,7 +186,7 @@ private:
 	C3D_Mtx _projectionBottom;
 	C3D_RenderTarget* _renderTargetTop;
 	C3D_RenderTarget* _renderTargetBottom;
-	
+
 	// Focus
 	Common::Rect _focusRect;
 	bool _focusDirty;
@@ -198,12 +198,12 @@ private:
 	float _focusTargetScaleX, _focusTargetScaleY;
 	float _focusStepScaleX, _focusStepScaleY;
 	uint32 _focusClearTime;
-	
+
 	// Events
 	Thread _eventThread;
 	Thread _timerThread;
 	Common::Queue<Common::Event> _eventQueue;
-	
+
 	// Cursor
 	Graphics::Surface _cursor;
 	Sprite _cursorTexture;

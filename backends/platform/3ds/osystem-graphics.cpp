@@ -35,7 +35,7 @@
 	 GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
 namespace _3DS {
-	
+
 void OSystem_3DS::initGraphics() {
 	_pfGame = Graphics::PixelFormat::createFormatCLUT8();
 	_pfGameTexture = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -60,23 +60,23 @@ void OSystem_3DS::initGraphics() {
 	shaderProgramInit(&_program);
 	shaderProgramSetVsh(&_program, &_dvlb->DVLE[0]);
 	C3D_BindProgram(&_program);
-	
+
 	_projectionLocation = shaderInstanceGetUniformLocation(_program.vertexShader, "projection");
 	_modelviewLocation = shaderInstanceGetUniformLocation(_program.vertexShader, "modelView");
-	
+
 	C3D_AttrInfo *attrInfo = C3D_GetAttrInfo();
 	AttrInfo_Init(attrInfo);
 	AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3); // v0=position
 	AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2); // v1=texcoord
-	
+
 	Mtx_OrthoTilt(&_projectionTop, 0.0, 400.0, 240.0, 0.0, 0.0, 1.0);
 	Mtx_OrthoTilt(&_projectionBottom, 0.0, 320.0, 240.0, 0.0, 0.0, 1.0);
-	
+
 	C3D_TexEnv *env = C3D_GetTexEnv(0);
 	C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, 0, 0);
 	C3D_TexEnvOp(env, C3D_Both, 0, 0, 0);
 	C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
-	
+
 	C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_ALL);
 	C3D_CullFace(GPU_CULL_NONE);
 }
@@ -148,14 +148,14 @@ void OSystem_3DS::initSize(uint width, uint height,
 	_gameHeight = height;
 	_gameTopTexture.create(width, height, _pfGameTexture);
 	_overlay.create(getOverlayWidth(), getOverlayHeight(), _pfGameTexture);
-	
+
 	if (format) {
 		debug("pixelformat: %d %d %d %d %d", format->bytesPerPixel, format->rBits(), format->gBits(), format->bBits(), format->aBits());;
 		_pfGame = *format;
 	}
 
 	_gameScreen.create(width, height, _pfGame);
-	
+
 	_focusDirty = true;
 	_focusRect = Common::Rect(_gameWidth, _gameHeight);
 
@@ -169,7 +169,7 @@ void OSystem_3DS::updateSize() {
 		_gameBottomTexture.setScale(320.f / _gameWidth, 240.f / _gameHeight);
 	} else {
 		float ratio = static_cast<float>(_gameWidth) / _gameHeight;
-		
+
 		if (ratio > 400.f / 240.f) {
 			float r = 400.f / _gameWidth;
 			_gameTopTexture.setScale(r, r);
@@ -224,7 +224,7 @@ OSystem::TransactionError OSystem_3DS::endGFXTransaction() {
 void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 	assert(start + num <= 256);
 	memcpy(_palette + 3 * start, colors, 3 * num);
-	
+
 	// Manually update all color that were changed
 	if (_gameScreen.format.bytesPerPixel == 1) {
 		flushGameScreen();
@@ -240,10 +240,10 @@ void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 	Common::Rect rect(x, y, x+w, y+h);
 	_gameScreen.copyRectToSurface(buf, pitch, x, y, w, h);
 	Graphics::Surface subSurface = _gameScreen.getSubArea(rect);
-	
+
 	Graphics::Surface *convertedSubSurface = subSurface.convertTo(_pfGameTexture, _palette);
 	_gameTopTexture.copyRectToSurface(*convertedSubSurface, x, y, Common::Rect(w, h));
-	
+
 	convertedSubSurface->free();
 	delete convertedSubSurface;
 	_gameTopTexture.markDirty();
@@ -268,7 +268,7 @@ void OSystem_3DS::updateScreen() {
 
 	if (sleeping || exiting)
 		return;
-	
+
 // 	updateFocus();
 
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -288,7 +288,7 @@ void OSystem_3DS::updateScreen() {
 				_cursorTexture.render();
 			}
 		}
-		
+
 		// Render bottom screen
 		C3D_FrameDrawOn(_renderTargetBottom);
 		if (config.screen == kScreenBottom || config.screen == kScreenBoth) {
@@ -327,7 +327,7 @@ void OSystem_3DS::clearFocusRectangle() {
 }
 
 void OSystem_3DS::updateFocus() {
-	
+
 	if (_focusClearTime && getMillis() - _focusClearTime > 5000) {
 		_focusClearTime = 0;
 		_focusDirty = true;
@@ -361,26 +361,26 @@ void OSystem_3DS::updateFocus() {
 		_focusStepScaleX = duration * (_focusTargetScaleX - _focusScaleX);
 		_focusStepScaleY = duration * (_focusTargetScaleY - _focusScaleY);
 	}
-	
+
 	if (_focusDirty || _focusPosX != _focusTargetPosX || _focusPosY != _focusTargetPosY ||
 			_focusScaleX != _focusTargetScaleX || _focusScaleY != _focusTargetScaleY) {
 		_focusDirty = false;
-	
+
 		if ((_focusStepPosX > 0 && _focusPosX > _focusTargetPosX) || (_focusStepPosX < 0 && _focusPosX < _focusTargetPosX))
 			_focusPosX = _focusTargetPosX;
 		else if (_focusPosX != _focusTargetPosX)
 			_focusPosX += _focusStepPosX;
-		
+
 		if ((_focusStepPosY > 0 && _focusPosY > _focusTargetPosY) || (_focusStepPosY < 0 && _focusPosY < _focusTargetPosY))
 			_focusPosY = _focusTargetPosY;
 		else if (_focusPosY != _focusTargetPosY)
 			_focusPosY += _focusStepPosY;
-		
+
 		if ((_focusStepScaleX > 0 && _focusScaleX > _focusTargetScaleX) || (_focusStepScaleX < 0 && _focusScaleX < _focusTargetScaleX))
 			_focusScaleX = _focusTargetScaleX;
 		else if (_focusScaleX != _focusTargetScaleX)
 			_focusScaleX += _focusStepScaleX;
-		
+
 		if ((_focusStepScaleY > 0 && _focusScaleY > _focusTargetScaleY) || (_focusStepScaleY < 0 && _focusScaleY < _focusTargetScaleY))
 			_focusScaleY = _focusTargetScaleY;
 		else if (_focusScaleY != _focusTargetScaleY)
@@ -476,10 +476,10 @@ void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 		_cursor.create(w, h, _pfCursor);
 		_cursorTexture.create(w, h, _pfGameTexture);
 	}
-	
+
 	_cursor.copyRectToSurface(buf, w, 0, 0, w, h);
 	flushCursor();
-	
+
 	warpMouse(_cursorX, _cursorY);
 }
 
@@ -497,7 +497,7 @@ void OSystem_3DS::flushCursor() {
 		_cursorTexture.markDirty();
 		converted->free();
 		delete converted;
-	
+
 		if (_pfCursor.bytesPerPixel == 1) {
 			uint* dest = (uint*) _cursorTexture.getPixels();
 			byte* src = (byte*) _cursor.getPixels();

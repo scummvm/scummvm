@@ -52,7 +52,7 @@
 - (id) init {
 	self = [super init];
 	_panel = 0;
-	
+
 	return self;
 }
 

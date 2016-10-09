@@ -628,7 +628,7 @@ bool OSystem_PS2::usbMassPresent(void) {
 }
 
 bool OSystem_PS2::netPresent(void) {
-	if (_useNet) 
+	if (_useNet)
 		return true;
 
 	return false;

@@ -55,7 +55,7 @@ Win32UpdateManager::Win32UpdateManager() {
 
     win_sparkle_set_appcast_url(appcastUrl);
     win_sparkle_init();
-    
+
     if (!ConfMan.hasKey("updates_check")
       || ConfMan.getInt("updates_check") == Common::UpdateManager::kUpdateIntervalNotSupported) {
         setAutomaticallyChecksForUpdates(kUpdateStateDisabled);
@@ -117,7 +117,7 @@ int Win32UpdateManager::getUpdateCheckInterval() {
 bool Win32UpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
     time_t updateTime = win_sparkle_get_last_check_time();
     tm *ut = localtime(&updateTime);
-    
+
     t.tm_wday = ut->tm_wday;
     t.tm_year = ut->tm_year;
     t.tm_mon  = ut->tm_mon;

@@ -24,8 +24,8 @@
 #include "graphics/surface.h"
 #include "image/codecs/codec.h"
 
-/* Common structures, macros, and base class shared by both Indeo4 and 
- * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5 
+/* Common structures, macros, and base class shared by both Indeo4 and
+ * Indeo5 decoders, derived from ffmpeg. We don't currently support Indeo5
  * decoding, but just in case we eventually need it, this is kept as a separate
  * file like it is in ffmpeg.
  *
@@ -343,7 +343,7 @@ struct AVFrame {
 	 * Constructor
 	 */
 	AVFrame();
-	
+
 	/**
 	 * Destructor
 	 */
@@ -564,7 +564,7 @@ protected:
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile) = 0;
 
 	/**
-	 * Decodes the Indeo frame from the bit reader already 
+	 * Decodes the Indeo frame from the bit reader already
 	 * loaded into the context
 	 */
 	int decodeIndeoFrame();
