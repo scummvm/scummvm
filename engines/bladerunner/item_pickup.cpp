@@ -95,7 +95,7 @@ void ItemPickup::tick() {
 		_facing -= float(2.0f * M_PI);
 	}
 
-	_animationFrame = (_animationFrame + 1) % _vm->_sliceAnimations->getFrameCount(_animationId);
+	_animationFrame = ((int)(_animationFrame + 1)) % ((int)_vm->_sliceAnimations->getFrameCount(_animationId));
 }
 
 void ItemPickup::draw() {
