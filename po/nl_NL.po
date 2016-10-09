@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2016-10-04 13:52+0200\n"
-"PO-Revision-Date: 2016-09-15 10:55+0200\n"
-"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
+"PO-Revision-Date: 2016-10-09 21:57+0100\n"
+"Last-Translator: Willem Jan Palenstijn <wjp@usecode.org>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -3113,9 +3113,8 @@ msgid "~W~ater Effect Enabled"
 msgstr "~W~ater Effect Aangezet"
 
 #: engines/mohawk/mohawk.cpp:61
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Spel is gepauzeerd. Druk op de spatiebalk om verder te gaan."
+msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
