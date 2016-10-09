@@ -904,8 +904,6 @@ bool MovesensMan::isObjectInPartyPossession(int16 objectType) {
 }
 
 void MovesensMan::triggerEffect(Sensor *sensor, SensorEffect effect, int16 mapX, int16 mapY, uint16 cell) {
-	bool leaderHandObjectProcessed = false;
-
 	static const TimelineEventType squareTypeToEventTypeArray[7] = { // @ G0059_auc_Graphic562_SquareTypeToEventType
 		kDMEventTypeWall,
 		kDMEventTypeCorridor,
