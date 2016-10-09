@@ -4674,6 +4674,11 @@ void EdenGame::closebigfile() {
 }
 
 void EdenGame::loadFile(uint16 num, void *buffer) {
+	if (g_ed->getPlatform() == Common::kPlatformDOS) {
+		if ((g_ed->isDemo() && num > 2204) || num > 2472) {
+			error("Trying to read invalid game resource");
+		}
+	}
 	assert(num < bigfile_header->count);
 	pakfile_t *file = &bigfile_header->files[num];
 	int32 size = PLE32(&file->size);
@@ -4693,8 +4698,9 @@ void EdenGame::shnmfl(uint16 num) {
 }
 
 int EdenGame::ssndfl(uint16 num) {
-	assert(num + 660 < bigfile_header->count);
-	pakfile_t *file = &bigfile_header->files[num + 660];
+	unsigned int resNum = num - 1 + ((g_ed->getPlatform() == Common::kPlatformDOS && g_ed->isDemo()) ? 656 : 661);
+	assert(resNum < bigfile_header->count);
+	pakfile_t *file = &bigfile_header->files[resNum];
 	int32 size = PLE32(&file->size);
 	int32 offs = PLE32(&file->offs);
 	if (_soundAllocated) {
@@ -4745,16 +4751,25 @@ void EdenGame::ConvertMacToPC() {
 #endif
 
 void EdenGame::loadpermfiles() {
-	loadFile(2498, gameIcons);
-	loadFile(2497, gameRooms);
-	loadFile(2486, gameLipsync);
+	switch (g_ed->getPlatform()) {
+	case Common::kPlatformDOS:
+	// PC version uses hotspots and rooms info hardcoded to the executable
+		assert(0);
+		break;
+	case Common::kPlatformMacintosh:
+		loadFile(2498, gameIcons);
+		loadFile(2497, gameRooms);
+		loadFile(2486, gameLipsync);
+		ConvertMacToPC();
+		break;
+	default:
+		error("Unsupported platform");
+	}
+
 	loadFile(0, main_bank_buf);
 	loadFile(402, gameFont);
 	loadFile(404, gameDialogs);
 	loadFile(403, gameConditions);
-#if 1
-	ConvertMacToPC();
-#endif
 }
 
 char EdenGame::ReadDataSync(uint16 num) {
@@ -5626,51 +5641,32 @@ void EdenGame::intro() {
 	return;
 #endif
 
-	int16 speed = 0;
-	if (!machine_speed) {
-		if (!word_378CC)
-			speed = 4;
-		else {
-			if (CLComputer_Has68030())
-				speed = 1;
-			if (CLComputer_Has68040())
-				speed = 2;
-		}
-		if (speed == 2)
-			if (testcdromspeed())
-				speed++;
-		machine_speed = speed;
-	}
-	if (machine_speed == 1) {
-		_doubledScreen = false;
-		p_mainview->_doubled = _doubledScreen;
-		if (ScreenView._width < 640 || ScreenView._height < 400)
-			allow_doubled = 0;
-	}
-	if (machine_speed < 3)
-		playHNM(98);
-	else {
+	if (g_ed->getPlatform() == Common::kPlatformMacintosh) {
+		// Play intro videos in HQ
 		CLSoundChannel_Stop(hnmsound_ch);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 16, 22050 * 65536.0, 0);
 		hnmsound_ch = CLHNM_GetSoundChannel();
 		playHNM(2012);
-	}
-	playHNM(171);
-	CLBlitter_FillScreenView(0);
-	specialTextMode = false;
-	if (machine_speed < 3)
-		playHNM(170);
-	else {
+		playHNM(171);
+		CLBlitter_FillScreenView(0);
+		specialTextMode = false;
 		playHNM(2001);
 		CLSoundChannel_Stop(hnmsound_ch);
 		CLHNM_CloseSound();
 		CLHNM_SetupSound(5, 0x2000, 8, 11025 * 65536.0, 0);
 		hnmsound_ch = CLHNM_GetSoundChannel();
+	} else {
+		playHNM(98);	// Cryo logo
+		playHNM(171);	// Virgin logo
+		CLBlitter_FillScreenView(0);
+		specialTextMode = false;
+		playHNM(170);	// Intro video
 	}
 }
 
 char EdenGame::testcdromspeed() {
+	//TODO: obsolete, remove me
 	return 1;
 }
 
