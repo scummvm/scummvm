@@ -31,6 +31,7 @@
 
 #include "chewy/chewy.h"
 #include "chewy/console.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
@@ -59,12 +60,14 @@ ChewyEngine::~ChewyEngine() {
 	delete _events;
 	delete _text;
 	delete _sound;
+	delete _cursor;
 	delete _graphics;
 	delete _console;
 }
 
 void ChewyEngine::initialize() {
 	_console = new Console(this);
+	_cursor = new Cursor(this);
 	_graphics = new Graphics(this);
 	_sound = new Sound(_mixer);
 	_text = new Text();
@@ -92,8 +95,8 @@ Common::Error ChewyEngine::run() {
 	_graphics->drawSprite("det1.taf", 0, 200, 100);
 	_graphics->loadFont("6x8.tff");
 	_graphics->drawText("This is a test", 200, 80);
-	_graphics->showCursor();
-	_graphics->setCursor(0);
+	_cursor->showCursor();
+	_cursor->setCursor(0);
 	//_sound->playSpeech(1);
 	//_sound->playSound(1);
 	//_sound->playMusic(2);
@@ -106,7 +109,7 @@ Common::Error ChewyEngine::run() {
 
 		// Cursor animation
 		if (_elapsedFrames % 30 == 0)
-			_graphics->animateCursor();
+			_cursor->animateCursor();
 
 		if (_videoNum >= 0) {
 			_graphics->playVideo(_videoNum);

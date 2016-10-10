@@ -26,6 +26,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "chewy/cursor.h"
 #include "chewy/graphics.h"
 #include "chewy/resource.h"
 #include "chewy/text.h"
@@ -52,15 +53,11 @@ const byte _cursorFrames[] = {
 };
 
 Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
-	_curCursor = 0;
-	_curCursorFrame = 0;
-	_cursorSprites = new SpriteResource("cursor.taf");
 	_font = nullptr;
 }
 
 Graphics::~Graphics() {
 	delete _font;
-	delete _cursorSprites;
 }
 
 void Graphics::drawSprite(Common::String filename, int spriteNum, uint x, uint y) {
@@ -131,7 +128,7 @@ void Graphics::playVideo(uint num) {
 	byte curPalette[256 * 3];
 
 	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
-	hideCursor();
+	_vm->_cursor->hideCursor();
 
 	cfoDecoder->start();
 
@@ -160,52 +157,7 @@ void Graphics::playVideo(uint num) {
 	cfoDecoder->close();
 
 	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
-	showCursor();
-}
-
-void Graphics::setCursor(uint num, bool newCursor) {
-	TAFChunk *cursor = _cursorSprites->getSprite(num);
-	if (newCursor)
-		_curCursor = num;
-
-	CursorMan.replaceCursor(cursor->data, cursor->width, cursor->height, 0, 0, 0);
-
-	delete[] cursor->data;
-	delete cursor;
-}
-
-void Graphics::showCursor() {
-	CursorMan.showMouse(true);
-}
-
-void Graphics::hideCursor() {
-	CursorMan.showMouse(false);
-}
-
-void Graphics::animateCursor() {
-	if (_cursorFrames[_curCursor] > 1) {
-		_curCursorFrame++;
-
-		if (_curCursorFrame >= _cursorFrames[_curCursor])
-			_curCursorFrame = 0;
-
-		setCursor(_curCursor + _curCursorFrame, false);
-	}
-}
-
-void Graphics::nextCursor() {
-	uint maxCursors = ARRAYSIZE(_cursorFrames);
-
-	if (_cursorFrames[_curCursor] > 0)
-		_curCursor += _cursorFrames[_curCursor];
-	else
-		_curCursor++;
-
-	if (_curCursor >= maxCursors)
-		_curCursor = 0;
-
-	_curCursorFrame = 0;
-	setCursor(_curCursor);
+	_vm->_cursor->showCursor();
 }
 
 } // End of namespace Chewy

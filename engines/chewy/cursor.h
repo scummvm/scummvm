@@ -20,44 +20,35 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
+#ifndef CHEWY_CURSOR_H
+#define CHEWY_CURSOR_H
 
 #include "chewy/chewy.h"
-#include "chewy/console.h"
-#include "chewy/cursor.h"
-#include "chewy/events.h"
-#include "chewy/graphics.h"
 
 namespace Chewy {
 
-Events::Events(ChewyEngine *vm, Graphics *graphics, Console *console) :
-	_vm(vm), _graphics(graphics), _console(console) {
+class SpriteResource;
+class Font;
 
-	_eventManager = g_system->getEventManager();
-}
+class Cursor {
+public:
+	Cursor(ChewyEngine *vm);
+	virtual ~Cursor();
 
-void Events::processEvents() {
-	while (_eventManager->pollEvent(_event)) {
-		if (_event.type == Common::EVENT_KEYDOWN) {
-			switch (_event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
-				_vm->quitGame();
-				break;
-			case Common::KEYCODE_SPACE:
-				_vm->_cursor->nextCursor();
-				break;
-			case Common::KEYCODE_d:
-				if (_event.kbd.flags & Common::KBD_CTRL)
-					_console->attach();
-				break;
-			default:
-				break;
-			}
-		} else if (_event.type == Common::EVENT_RBUTTONUP) {
-			_vm->_cursor->nextCursor();
-		}
-	}
-}
+	void setCursor(uint num, bool newCursor = true);
+	void showCursor();
+	void hideCursor();
+	void animateCursor();
+	void nextCursor();
+
+private:
+	ChewyEngine *_vm;
+
+	uint _curCursor;
+	uint _curCursorFrame;
+	SpriteResource *_cursorSprites;
+};
 
 } // End of namespace Chewy
+
+#endif

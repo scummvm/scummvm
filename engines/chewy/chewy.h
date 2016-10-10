@@ -38,6 +38,7 @@ namespace Chewy {
 
 struct ChewyGameDescription;
 class Console;
+class Cursor;
 class Events;
 class Graphics;
 class Sound;
@@ -59,6 +60,7 @@ public:
 	void setPlayVideo(uint num) { _videoNum = num; }
 
 	Graphics *_graphics;
+	Cursor *_cursor;
 	Sound *_sound;
 	Text *_text;
 
