@@ -34,24 +34,6 @@
 
 namespace Chewy {
 
-const byte _cursorFrames[] = {
-	4, 1, 1, 1,		// walk
-	4, 1, 1, 1,		// pick up / use
-	1, 1, 1, 1, 1,
-	4, 1, 1, 1,		// look
-	4, 1, 1, 1,		// talk
-	4, 1, 1, 1,		// open
-	1,
-	1, 1, 1, 1,		// left, right, up, down
-	1,				// save
-	1,
-	5, 1, 1, 1, 1,
-	1,
-	1,				// use (inventory)
-	1,				// look (inventory)
-	1				// gun
-};
-
 Graphics::Graphics(ChewyEngine *vm) : _vm(vm) {
 	_font = nullptr;
 }
