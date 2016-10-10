@@ -213,7 +213,7 @@ void Sound::convertTMFToMod(byte *tmfData, uint32 tmfSize, byte *modData, uint32
 	};
 
 	if (READ_BE_UINT32(tmfPtr) != MKTAG('T', 'M', 'F', '\0'))
-		error("Corrupt TBF resource");
+		error("Corrupt TMF resource");
 	tmfPtr += 4;
 
 	memcpy(modPtr, songName, 20);
