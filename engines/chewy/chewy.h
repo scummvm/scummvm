@@ -41,6 +41,7 @@ class Console;
 class Cursor;
 class Events;
 class Graphics;
+class Scene;
 class Sound;
 class Text;
 
@@ -61,6 +62,7 @@ public:
 
 	Graphics *_graphics;
 	Cursor *_cursor;
+	Scene *_scene;
 	Sound *_sound;
 	Text *_text;
 

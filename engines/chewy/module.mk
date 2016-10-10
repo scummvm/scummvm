@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	events.o \
 	graphics.o \
 	resource.o \
+	scene.o \
 	sound.o \
 	text.o \
 	video/cfo_decoder.o
