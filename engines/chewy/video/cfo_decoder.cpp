@@ -23,6 +23,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "engines/engine.h"
+#include "graphics/palette.h"
 #include "video/flic_decoder.h"
 
 #include "chewy/sound.h"
@@ -175,7 +176,7 @@ void CfoDecoder::CfoVideoTrack::handleFrame() {
 void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 	uint16 chunkCount = _fileStream->readUint16LE();
 
-	uint16 delay, number, channel, volume, repeat, balance;
+	uint16 number, channel, volume, repeat, balance;
 
 	// Read subchunks
 	for (uint32 i = 0; i < chunkCount; ++i) {
@@ -188,10 +189,8 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			break;
 		case kChunkFadeOut:
 			// Used in video 0
-			delay = _fileStream->readUint16LE();
-
-			warning("kChunkFadeOut, delay %d", delay);
-			// TODO
+			_fileStream->skip(2);	// delay, unused
+			fadeOut();
 			break;
 		case kChunkLoadMusic:
 			// Used in videos 0, 18, 34, 71
@@ -297,6 +296,23 @@ void CfoDecoder::CfoVideoTrack::handleCustomFrame() {
 			error("Unknown subchunk: %d", frameType);
 			break;
 		}
+	}
+}
+
+void CfoDecoder::CfoVideoTrack::fadeOut() {
+	for (int j = 0; j < 64; j++) {
+		for (int i = 0; i < 256; i++) {
+			if (_palette[i * 3 + 0] > 0)
+				--_palette[i * 3 + 0];
+			if (_palette[i * 3 + 1] > 0)
+				--_palette[i * 3 + 1];
+			if (_palette[i * 3 + 2] > 0)
+				--_palette[i * 3 + 2];
+		}
+
+		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 }
 

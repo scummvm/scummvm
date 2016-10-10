@@ -128,7 +128,9 @@ void Graphics::playVideo(uint num) {
 	uint16 x = (g_system->getWidth() - cfoDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - cfoDecoder->getHeight()) / 2;
 	bool skipVideo = false;
+	byte curPalette[256 * 3];
 
+	g_system->getPaletteManager()->grabPalette(curPalette, 0, 256);
 	hideCursor();
 
 	cfoDecoder->start();
@@ -157,6 +159,7 @@ void Graphics::playVideo(uint num) {
 
 	cfoDecoder->close();
 
+	g_system->getPaletteManager()->setPalette(curPalette, 0, 256);
 	showCursor();
 }
 

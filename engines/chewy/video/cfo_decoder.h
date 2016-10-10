@@ -58,6 +58,7 @@ private:
 	private:
 		void handleFrame();
 		void handleCustomFrame();
+		void fadeOut();
 
 		Sound *_sound;
 
