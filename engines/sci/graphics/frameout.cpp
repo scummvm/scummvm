@@ -1004,6 +1004,10 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 			_visiblePlanes.add(new Plane(plane));
 			--plane._created;
 		} else if (plane._updated) {
+			if (visiblePlane == nullptr) {
+				error("[GfxFrameout::calcLists]: Attempt to update nonexistent visible plane");
+			}
+
 			*visiblePlane = plane;
 			--plane._updated;
 		}
