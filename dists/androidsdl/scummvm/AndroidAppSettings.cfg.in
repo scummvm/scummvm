@@ -6,10 +6,10 @@ AppSettingVersion=19
 LibSdlVersion=1.2
 
 # Specify application name (e.x. My Application)
-AppName="ScummVM-SDL"
+AppName="ScummVM"
 
 # Specify reversed site name of application (e.x. com.mysite.myapp)
-AppFullName=org.scummvm.sdl
+AppFullName=org.scummvm.scummvm
 
 # Specify screen orientation: (v)ertical/(p)ortrait or (h)orizontal/(l)andscape
 ScreenOrientation=h
@@ -165,7 +165,7 @@ FirstStartMenuOptions=''
 
 # Enable multi-ABI binary, with hardware FPU support - it will also work on old devices,
 # but .apk size is 2x bigger (y) / (n) / (x86) / (all)
-MultiABI="armeabi-v7a"
+MultiABI="armeabi"
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
 AppMinimumRAM=256
