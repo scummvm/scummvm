@@ -336,10 +336,9 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			font.defaultBox.height = height;
 			font.defaultBox.xOffset = xOffset;
 			font.defaultBox.yOffset = yOffset;
-		} else if (line.hasPrefix("SIZE ")) {
-			int hDpi, vDpi;
-			if (sscanf(line.c_str(), "SIZE %d %d %d", &font.size, &hDpi, &vDpi) != 3) {
-				warning("BdfFont::loadFont: Invalid SIZE");
+		} else if (line.hasPrefix("PIXEL_SIZE ")) {
+			if (sscanf(line.c_str(), "PIXEL_SIZE %d", &font.size) != 1) {
+				warning("BdfFont::loadFont: Invalid PIXEL_SIZE");
 				freeBitmaps(bitmaps, font.numCharacters);
 				delete[] bitmaps;
 				delete[] advances;

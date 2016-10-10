@@ -142,10 +142,9 @@ int main(int argc, char *argv[]) {
 		if (in.fail() || in.eof())
 			error("Premature end of file");
 
-		if (hasPrefix(line, "SIZE ")) {
-			int hDpi, vDpi;
-			if (sscanf(line.c_str(), "SIZE %d %d %d", &font.size, &hDpi, &vDpi) != 3)
-				error("Invalid SIZE");
+		if (hasPrefix(line, "PIXEL_SIZE ")) {
+			if (sscanf(line.c_str(), "PIXEL_SIZE %d", &font.size) != 1)
+				error("Invalid PIXEL_SIZE");
 		} else if (hasPrefix(line, "FONT ")) {
 			fontName = line.substr(5);
 		} else if (hasPrefix(line, "COPYRIGHT ")) {
