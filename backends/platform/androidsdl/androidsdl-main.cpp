@@ -20,10 +20,15 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_system
+
 #include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
+
+	// Copy over config file from previous version of ScummVM if applicable
+	system("ls $DATADIR/.config/scummvm/scummvm.ini || (mkdir -p $DATADIR/.config/scummvm && cp $APPDIR/scummvmrc $DATADIR/.config/scummvm/scummvm.ini )");
 
 	// Create our OSystem instance
 	g_system = new OSystem_ANDROIDSDL();
