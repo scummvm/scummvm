@@ -62,7 +62,7 @@ enum {
 	BTN_L1			= 4
 };
 
-bool PSP2SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool PSP2EventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -100,7 +100,7 @@ bool PSP2SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event
 	return true;
 }
 
-bool PSP2SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool PSP2EventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -130,10 +130,10 @@ bool PSP2SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) 
 	return true;
 }
 
-/*
-bool PSP2SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
-	
+bool PSP2EventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+
 	int axis = ev.jaxis.value;
+	
 	if (axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
 		event.type = Common::EVENT_MOUSEMOVE;
@@ -143,12 +143,10 @@ bool PSP2SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 	} else
 		axis = 0;
 
-	if (ev.jaxis.axis == JOY_XAXIS
-		|| ev.jaxis.axis == JOY_XAXISR) {
+	if (ev.jaxis.axis == JOY_XAXIS) {
 		_km.x_vel = axis / 2000;
 		_km.x_down_count = 0;
-	} else if (ev.jaxis.axis == JOY_YAXIS
-		|| ev.jaxis.axis == JOY_YAXISR) {
+	} else if (ev.jaxis.axis == JOY_YAXIS) {
 		axis = -axis;
 		_km.y_vel = -axis / 2000;
 		_km.y_down_count = 0;
@@ -158,9 +156,8 @@ bool PSP2SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 
 	return true;
 }
-*/
 
-void PSP2SdlEventSource::preprocessEvents(SDL_Event *event) {
+void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 	
 	// prevent suspend (scummvm games contains a lot of cutscenes..)
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);

@@ -24,8 +24,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include <psp2shell.h>
-
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -37,6 +35,10 @@
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/fs/psp2/psp2-dirent.h"
 #include <sys/stat.h>
+
+#ifdef PSP2DEBUG
+#include <psp2shell.h>
+#endif
 
 int access(const char *pathname, int mode) {
 	struct stat sb;
@@ -82,7 +84,7 @@ void OSystem_PSP2::initBackend() {
 
 	// Event source
 	if (_eventSource == 0)
-		_eventSource = new PSP2SdlEventSource();
+		_eventSource = new PSP2EventSource();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
