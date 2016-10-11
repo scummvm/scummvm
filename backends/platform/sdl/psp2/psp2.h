@@ -24,6 +24,7 @@
 #define PLATFORM_SDL_PSP2_H
 
 #include "backends/platform/sdl/sdl.h"
+#define PSP2DEBUG 1
 
 class OSystem_PSP2 : public OSystem_SDL {
 public:
@@ -33,6 +34,7 @@ public:
 
 	virtual void init();
 	virtual void initBackend();
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 
 protected:
 	// Base string for creating the default path and filename

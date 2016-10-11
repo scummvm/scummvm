@@ -24,8 +24,11 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	// sys/stat.h includes sys/time.h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
+#include <psp2shell.h>
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/saves/default/default-saves.h"
@@ -50,6 +53,11 @@ OSystem_PSP2::OSystem_PSP2(Common::String baseConfigName)
 }
 
 void OSystem_PSP2::init() {
+	
+#if PSP2DEBUG
+	gDebugLevel = 3;
+#endif
+	
 	// Initialze File System Factory
 	sceIoMkdir("ux0:data", 0755);
 	sceIoMkdir("ux0:data/scummvm", 0755);
@@ -61,9 +69,12 @@ void OSystem_PSP2::init() {
 }
 
 void OSystem_PSP2::initBackend() {
+	
 	ConfMan.set("joystick_num", 0);
 	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", false);
+	ConfMan.registerDefault("gfx_mode", "1x");
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
@@ -75,6 +86,12 @@ void OSystem_PSP2::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
+}
+
+void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
+#if PSP2DEBUG
+	psp2shell_print(message);
+#endif
 }
 
 Common::String OSystem_PSP2::getDefaultConfigFileName() {

@@ -4,14 +4,16 @@ psp2vpk: $(EXECUTABLE)
 	$(STRIP) -g $(EXECUTABLE)
 	rm -rf psp2pkg
 	rm -f $(EXECUTABLE)-$(DATE).vpk
-	mkdir -p psp2pkg/sce_sys/
+	mkdir -p psp2pkg/sce_sys/livearea/contents
 	mkdir -p psp2pkg/data/
 	mkdir -p psp2pkg/doc/
 	vita-elf-create $(EXECUTABLE) $(EXECUTABLE).velf
-	vita-make-fself -s $(EXECUTABLE).velf psp2pkg/eboot.bin
+	vita-make-fself $(EXECUTABLE).velf psp2pkg/eboot.bin
 	vita-mksfoex -s TITLE_ID=VSCU00001 "$(EXECUTABLE)" psp2pkg/sce_sys/param.sfo
-	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/icon0.png
-	cp $(srcdir)/dists/psp2/pic0.png psp2pkg/sce_sys/pic0.png
+	cp $(srcdir)/dists/psp2/icon0.png psp2pkg/sce_sys/
+	cp $(srcdir)/dists/psp2/template.xml psp2pkg/sce_sys/livearea/contents/
+	cp $(srcdir)/dists/psp2/bg.png psp2pkg/sce_sys/livearea/contents/
+	cp $(srcdir)/dists/psp2/startup.png psp2pkg/sce_sys/livearea/contents/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip psp2pkg/data/
 	cp $(srcdir)/backends/vkeybd/packs/vkeybd_small.zip psp2pkg/data/
 	cp $(DIST_FILES_THEMES) psp2pkg/data/

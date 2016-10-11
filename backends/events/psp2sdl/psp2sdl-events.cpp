@@ -24,12 +24,25 @@
 
 #if defined(PSP2)
 
+#include <psp2/kernel/processmgr.h>
+#include "backends/platform/sdl/psp2/psp2.h"
 #include "backends/events/psp2sdl/psp2sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
 #include "engines/engine.h"
 
 #include "common/util.h"
 #include "common/events.h"
+
+#ifdef PSP2DEBUG
+#include <psp2shell.h>
+#endif
+
+#define JOY_DEADZONE 3200
+#define JOY_ANALOG
+#define JOY_XAXIS 0
+#define JOY_YAXIS 1
+#define JOY_XAXISR 2
+#define JOY_YAXISR 3
 
 enum {
 	BTN_LEFT		= 7,
@@ -116,5 +129,73 @@ bool PSP2SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) 
 	}
 	return true;
 }
+
+/*
+bool PSP2SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+	
+	int axis = ev.jaxis.value;
+	if (axis > JOY_DEADZONE) {
+		axis -= JOY_DEADZONE;
+		event.type = Common::EVENT_MOUSEMOVE;
+	} else if (axis < -JOY_DEADZONE) {
+		axis += JOY_DEADZONE;
+		event.type = Common::EVENT_MOUSEMOVE;
+	} else
+		axis = 0;
+
+	if (ev.jaxis.axis == JOY_XAXIS
+		|| ev.jaxis.axis == JOY_XAXISR) {
+		_km.x_vel = axis / 2000;
+		_km.x_down_count = 0;
+	} else if (ev.jaxis.axis == JOY_YAXIS
+		|| ev.jaxis.axis == JOY_YAXISR) {
+		axis = -axis;
+		_km.y_vel = -axis / 2000;
+		_km.y_down_count = 0;
+	}
+
+	processMouseEvent(event, _km.x, _km.y);
+
+	return true;
+}
+
+void PSP2SdlEventSource::preprocessEvents(SDL_Event *event) {
+	
+	// prevent suspend (scummvm games contains a lot of cutscenes..)
+	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
+	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
+	
+	if (event->type == SDL_WINDOWEVENT) {
+		if (event->window.event == SDL_WINDOWEVENT_LEAVE) {
+			// XMB opened
+			if (g_engine)
+				g_engine->pauseEngine(true);
+
+			for (;;) {
+				if (!SDL_PollEvent(event)) {
+					// Locking the screen forces a full redraw
+					Graphics::Surface* screen = g_system->lockScreen();
+					if (screen) {
+						g_system->unlockScreen();
+						g_system->updateScreen();
+					}
+					SDL_Delay(10);
+					continue;
+				}
+				if (event->type == SDL_QUIT)
+					return;
+				if (event->type != SDL_WINDOWEVENT)
+					continue;
+				if (event->window.event == SDL_WINDOWEVENT_ENTER) {
+					// XMB closed
+					if (g_engine)
+						g_engine->pauseEngine(false);
+					return;
+				}
+			}
+		}
+	}
+}
+*/
 
 #endif

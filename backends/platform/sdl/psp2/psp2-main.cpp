@@ -28,11 +28,18 @@
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
+#include <vita2d.h>
+#include <psp2shell.h>
+
+int _newlib_heap_size_user = 128 * 1024 * 1024;
+
 int main(int argc, char *argv[]) {
 
-	// prevent suspend (scummvm games contains a lot of cutscenes..)
-	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
+#if PSP2DEBUG
+	psp2shell_init(3333, 0);
+#endif
 
+	scePowerSetGpuClockFrequency(222);
 	scePowerSetArmClockFrequency(444);
 	
 	// Create our OSystem instance
@@ -51,6 +58,10 @@ int main(int argc, char *argv[]) {
 
 	// Free OSystem
 	delete (OSystem_PSP2 *)g_system;
+	
+#if PSP2DEBUG
+	psp2shell_exit();
+#endif
 
 	return res;
 }
