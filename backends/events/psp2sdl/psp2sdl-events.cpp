@@ -158,44 +158,13 @@ bool PSP2SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event
 
 	return true;
 }
+*/
 
 void PSP2SdlEventSource::preprocessEvents(SDL_Event *event) {
 	
 	// prevent suspend (scummvm games contains a lot of cutscenes..)
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_AUTO_SUSPEND);
 	sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
-	
-	if (event->type == SDL_WINDOWEVENT) {
-		if (event->window.event == SDL_WINDOWEVENT_LEAVE) {
-			// XMB opened
-			if (g_engine)
-				g_engine->pauseEngine(true);
-
-			for (;;) {
-				if (!SDL_PollEvent(event)) {
-					// Locking the screen forces a full redraw
-					Graphics::Surface* screen = g_system->lockScreen();
-					if (screen) {
-						g_system->unlockScreen();
-						g_system->updateScreen();
-					}
-					SDL_Delay(10);
-					continue;
-				}
-				if (event->type == SDL_QUIT)
-					return;
-				if (event->type != SDL_WINDOWEVENT)
-					continue;
-				if (event->window.event == SDL_WINDOWEVENT_ENTER) {
-					// XMB closed
-					if (g_engine)
-						g_engine->pauseEngine(false);
-					return;
-				}
-			}
-		}
-	}
 }
-*/
 
 #endif

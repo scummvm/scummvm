@@ -831,6 +831,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		vitatex = vita2d_create_empty_texture_format(_videoMode.hardwareWidth, _videoMode.hardwareHeight, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 		sdlpixels = _hwscreen->pixels; // for SDL_FreeSurface...
 		_hwscreen->pixels = vita2d_texture_get_datap(vitatex);
+		vita2d_set_vblank_wait(true);
 #endif
 	}
 

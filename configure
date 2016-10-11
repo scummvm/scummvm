@@ -2653,8 +2653,9 @@ case $_host_os in
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		append_var CXXFLAGS "-Wl,-q -g -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
+		append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
 		append_var LDFLAGS "-Wl,-q -g -L$VITASDK/arm-vita-eabi/lib"
-		_optimization_level=-O3
+		_optimization_level=-O1
 		add_line_to_config_mk 'PSP2 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
@@ -3157,8 +3158,8 @@ if test -n "$_host"; then
 			_backend="psp2"
 			_16bit=no
 			_vkeybd=yes
-			_build_scalers=no
-			_build_hq_scalers=no
+			_build_scalers=yes
+			_build_hq_scalers=yes
 			_mt32emu=no
 			_timidity=no
 			_eventrec=no
