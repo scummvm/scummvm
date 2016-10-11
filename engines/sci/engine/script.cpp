@@ -1058,11 +1058,17 @@ void Script::initializeObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 		obj->setSuperClassSelector(
 			segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
 
-		// If object is instance, get -propDict- from class and set it for this
-		// object. This is needed for ::isMemberOf() to work.
+		// -propDict- is used by Obj::isMemberOf to determine if an object
+		// is an instance of a class. For classes, we therefore relocate
+		// -propDict- to the script's segment. For instances, we copy
+		// -propDict- from its class.
 		// Example test case - room 381 of sq4cd - if isMemberOf() doesn't work,
-		// talk-clicks on the robot will act like clicking on ego
-		if (!obj->isClass()) {
+		// talk-clicks on the robot will act like clicking on ego.
+		if (obj->isClass()) {
+			reg_t propDict = obj->getPropDictSelector();
+			propDict.setSegment(segmentId);
+			obj->setPropDictSelector(propDict);
+		} else {
 			reg_t classObject = obj->getSuperClassSelector();
 			const Object *classObj = segMan->getObject(classObject);
 			obj->setPropDictSelector(classObj->getPropDictSelector());
