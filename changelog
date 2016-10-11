@@ -1,0 +1,7 @@
+changelog :
+
+improved speed by more than 50%
+enabled scalers and hq scalers (no need to enable 2x scalers on "HD" games like broken swords, will just slow down)
+ability to use "integer scaling" (disable fullscreen)
+corrected aspect ratio of some games
+enable right joystick
