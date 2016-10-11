@@ -2651,10 +2651,10 @@ case $_host_os in
 		append_var CXXFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
 		append_var LDFLAGS "--sysroot=$VITASDK/arm-vita-eabi"
 		append_var DEFINES "-DPSP2 -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		append_var CXXFLAGS "-Wl,-q -g -I$VITASDK/arm-vita-eabi/include"
+		append_var CXXFLAGS "-Wl,-q -I$VITASDK/arm-vita-eabi/include"
 		append_var CXXFLAGS "-march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=hard"
 		append_var CXXFLAGS "-ftree-vectorize -mword-relocations -fomit-frame-pointer -ffast-math"
-		append_var LDFLAGS "-Wl,-q -g -L$VITASDK/arm-vita-eabi/lib"
+		append_var LDFLAGS "-Wl,-q -L$VITASDK/arm-vita-eabi/lib"
 		_optimization_level=-O1
 		add_line_to_config_mk 'PSP2 = 1'
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
