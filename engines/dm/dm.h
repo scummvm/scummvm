@@ -211,7 +211,7 @@ public:
 
 // Note: F0026_MAIN_GetBoundedValue<T> has been replaced by CLIP<T>
 
-#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+#define CALL_MEMBER_FN(object, ptrToMember)  ((object).*(ptrToMember))
 
 struct SaveGameHeader {
 	byte _version;
@@ -242,6 +242,8 @@ public:
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
+
+	bool isDemo() const;
 
 	GUI::Debugger *getDebugger() { return _console; }
 
