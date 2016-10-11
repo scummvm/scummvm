@@ -417,6 +417,7 @@ void EventManager::setHotRectanglesActive(const bool active) {
 
 void EventManager::setHotRectangles(const Common::Array<Common::Rect> &rects) {
 	_hotRects = rects;
+	_activeRectIndex = -1;
 }
 
 void EventManager::checkHotRectangles(const Common::Point &mousePosition) {
