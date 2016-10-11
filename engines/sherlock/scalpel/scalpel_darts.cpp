@@ -408,7 +408,7 @@ int Darts::doPowerBar(const Common::Point &pt, byte color, int goToPower, bool i
 
 		if (!(idx % 8))
 			events.wait(1);
-	
+
 		++idx;
 	} while (!done);
 

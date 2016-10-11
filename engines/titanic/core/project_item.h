@@ -66,7 +66,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);	
+	virtual void load(SimpleFile *file);
 };
 
 /**
@@ -89,7 +89,7 @@ private:
 	 * Called during save, iterates through the children to do some stuff
 	 */
 	void buildFilesList();
-	
+
 	/**
 	 * Called at the beginning of loading a game
 	 */
@@ -161,7 +161,7 @@ public:
 	/**
 	 * Load the data for the class from file
 	 */
-	virtual void load(SimpleFile *file);	
+	virtual void load(SimpleFile *file);
 
 	/**
 	 * Get the game manager for the project

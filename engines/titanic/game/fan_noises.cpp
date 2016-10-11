@@ -96,7 +96,7 @@ bool CFanNoises::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 	if (getParent() == msg->_oldRoom && _soundHandle != -1) {
 		if (isSoundActive(_soundHandle))
 			stopSound(_soundHandle, _stopSeconds);
-		
+
 		_soundHandle = -1;
 		_startFlag = false;
 	}

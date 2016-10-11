@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_GAMELOADER_H
 #define FULLPIPE_GAMELOADER_H
 
+#include "engines/savestate.h"
+
 #include "fullpipe/objects.h"
 #include "fullpipe/inventory.h"
 #include "fullpipe/messages.h"
@@ -75,9 +77,21 @@ class PreloadItems : public Common::Array<PreloadItem *>, public CObject {
 };
 
 struct FullpipeSavegameHeader {
+	char id[6];
 	uint8 version;
 	Common::String saveName;
+	uint32 date;
+	uint16 time;
+	uint32 playtime;
 	Graphics::Surface *thumbnail;
+};
+
+struct SaveHeader {
+	int32 version;
+	char magic[32];
+	int32 updateCounter;
+	int32 unkField;
+	int32 encSize;
 };
 
 class GameLoader : public CObject {
@@ -98,8 +112,10 @@ class GameLoader : public CObject {
 	void saveScenePicAniInfos(int sceneId);
 	PicAniInfo **savePicAniInfos(Scene *sc, int flag1, int flag2, int *picAniInfoCount);
 
-	void readSavegame(const char *fname);
-	void writeSavegame(Scene *sc, const char *fname);
+	bool readSavegame(const char *fname);
+	bool writeSavegame(Scene *sc, const char *fname);
+
+	void addVar(GameVar *var, GameVar *subvar);
 
 	void restoreDefPicAniInfos();
 
@@ -110,7 +126,7 @@ class GameLoader : public CObject {
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	bool (*_preloadCallback)(PreloadItem &pre, int flag);
-	void *_readSavegameCallback;
+	void (*_savegameCallback)(MfcArchive *archive, bool mode);
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;
@@ -124,6 +140,7 @@ class GameLoader : public CObject {
 
 const char *getSavegameFile(int saveGameIdx);
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header);
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc);
 
 Inventory2 *getGameLoaderInventory();
 InteractionController *getGameLoaderInteractionController();

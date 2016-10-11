@@ -34,27 +34,31 @@ CMakeProvider::CMakeProvider(StringList &global_warnings, std::map<std::string, 
 	: ProjectProvider(global_warnings, project_warnings, version) {
 }
 
-const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature) const {
+const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *feature, bool useSDL2) const {
 	static const Library s_libraries[] = {
-		{ "sdl",       "FindSDL",      "SDL",      "SDL_INCLUDE_DIR",       "SDL_LIBRARY",         0            },
-		{ "sdl2",      0,              "SDL2",     "SDL2_INCLUDE_DIRS",     "SDL2_LIBRARIES",      0            },
-		{ "freetype",  "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES",  0            },
-		{ "libz",      "FindZLIB",     "ZLIB",     "ZLIB_INCLUDE_DIRS",     "ZLIB_LIBRARIES",      0            },
-		{ "png",       "FindPNG",      "PNG",      "PNG_INCLUDE_DIRS",      "PNG_LIBRARIES",       0            },
-		{ "jpeg",      "FindJPEG",     "JPEG",     "JPEG_INCLUDE_DIRS",     "JPEG_LIBRARIES",      0            },
-		{ "mpeg2",     "FindMPEG2",    "MPEG2",    "MPEG2_INCLUDE_DIRS",    "MPEG2_mpeg2_LIBRARY", 0            },
-		{ "flac",      0,              0,          0,                       0,                     "FLAC"       },
-		{ "mad",       0,              0,          0,                       0,                     "mad"        },
-		{ "vorbis",    0,              0,          0,                       0,                     "vorbisfile vorbis ogg" },
-		{ "theora",    0,              0,          0,                       0,                     "theoradec"  },
-		{ "fluidsynth",0,              0,          0,                       0,                     "fluidsynth" },
-		{ "faad",      0,              0,          0,                       0,                     "faad"       },
-		{ "libcurl",   "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
-		{ "sdlnet",    "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            }
+		{ "sdl",       kSDLVersion1,   "FindSDL",      "SDL",      "SDL_INCLUDE_DIR",       "SDL_LIBRARY",         0            },
+		{ "sdl",       kSDLVersion2,   0,              "SDL2",     "SDL2_INCLUDE_DIRS",     "SDL2_LIBRARIES",      0            },
+		{ "freetype",  kSDLVersionAny, "FindFreetype", "Freetype", "FREETYPE_INCLUDE_DIRS", "FREETYPE_LIBRARIES",  0            },
+		{ "libz",      kSDLVersionAny, "FindZLIB",     "ZLIB",     "ZLIB_INCLUDE_DIRS",     "ZLIB_LIBRARIES",      0            },
+		{ "png",       kSDLVersionAny, "FindPNG",      "PNG",      "PNG_INCLUDE_DIRS",      "PNG_LIBRARIES",       0            },
+		{ "jpeg",      kSDLVersionAny, "FindJPEG",     "JPEG",     "JPEG_INCLUDE_DIRS",     "JPEG_LIBRARIES",      0            },
+		{ "mpeg2",     kSDLVersionAny, "FindMPEG2",    "MPEG2",    "MPEG2_INCLUDE_DIRS",    "MPEG2_mpeg2_LIBRARY", 0            },
+		{ "flac",      kSDLVersionAny, 0,              0,          0,                       0,                     "FLAC"       },
+		{ "mad",       kSDLVersionAny, 0,              0,          0,                       0,                     "mad"        },
+		{ "vorbis",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisfile vorbis ogg" },
+		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
+		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
+		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
+		{ "libcurl",   kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
+		{ "sdlnet",    kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
+		{ "sdlnet",    kSDLVersion2,   0,              0,          0,                       0,                     "SDL2_net"   }
 	};
 
 	for (unsigned int i = 0; i < sizeof(s_libraries) / sizeof(s_libraries[0]); i++) {
-		if (std::strcmp(feature, s_libraries[i].feature) == 0) {
+		bool matchingSDL = (s_libraries[i].sdlVersion == kSDLVersionAny)
+		                   || (useSDL2 && s_libraries[i].sdlVersion == kSDLVersion2)
+		                   || (!useSDL2 && s_libraries[i].sdlVersion == kSDLVersion1);
+		if (std::strcmp(feature, s_libraries[i].feature) == 0 && matchingSDL) {
 			return &s_libraries[i];
 		}
 	}
@@ -81,11 +85,11 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 			"$ENV{"<<LIBS_DEFINE<<"}/include)\n\n";
 
 	workspace << "# Libraries and features\n";
-	writeFeatureLibSearch(workspace, setup.useSDL2 ? "sdl2" : "sdl");
+	writeFeatureLibSearch(setup, workspace, "sdl");
 	for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
 		if (!i->enable || featureExcluded(i->name)) continue;
 
-		writeFeatureLibSearch(workspace, i->name);
+		writeFeatureLibSearch(setup, workspace, i->name);
 		workspace << "add_definitions(-D" << i->define << ")\n";
 	}
 	workspace << "\n";
@@ -99,8 +103,8 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	writeGeneratePluginsTable(workspace);
 }
 
-void CMakeProvider::writeFeatureLibSearch(std::ofstream &workspace, const char *feature) const {
-	const Library *library = getLibraryFromFeature(feature);
+void CMakeProvider::writeFeatureLibSearch(const BuildSetup &setup, std::ofstream &workspace, const char *feature) const {
+	const Library *library = getLibraryFromFeature(feature, setup.useSDL2);
 	if (library) {
 		if (library->module) {
 			workspace << "Include(" << library->module << ")\n";
@@ -194,13 +198,13 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 
 	project << "# Libraries\n";
 	if (name == setup.projectName) {
-		const Library *sdlLibrary = getLibraryFromFeature(setup.useSDL2 ? "sdl2" : "sdl");
+		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL2);
 		project << "target_link_libraries(" << name << " ${" << sdlLibrary->librariesVar << "})\n";
 
 		for (FeatureList::const_iterator i = setup.features.begin(), end = setup.features.end(); i != end; ++i) {
 			if (!i->enable || featureExcluded(i->name)) continue;
 
-			const Library *library = getLibraryFromFeature(i->name);
+			const Library *library = getLibraryFromFeature(i->name, setup.useSDL2);
 			if (!library) continue;
 
 			if (library->librariesVar) {

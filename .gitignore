@@ -214,3 +214,6 @@ eboot.bin
 param.sfo
 *.velf
 *.vpk
+
+#Ignore gmon.out created by gprof
+gmon.out

@@ -55,7 +55,7 @@ struct TTscriptRange {
 
 	TTscriptRange() : _id(0), _nextP(nullptr),
 		_priorIndex(0), _mode(SF_NONE) {}
-	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom, 
+	TTscriptRange(uint id, const Common::Array<uint> &values, bool isRandom,
 		bool isSequential);
 };
 

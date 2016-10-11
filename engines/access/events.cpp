@@ -65,9 +65,9 @@ void EventsManager::setNormalCursor(CursorType cursorId) {
 
 void EventsManager::setCursor(CursorType cursorId) {
 	if (cursorId == _cursorId)
-		return;	
+		return;
 	_cursorId = cursorId;
-	
+
 	if (cursorId == CURSOR_INVENTORY) {
 		// Set the cursor
 		CursorMan.replaceCursor(_invCursor.getPixels(), _invCursor.w, _invCursor.h,
@@ -209,9 +209,9 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 		}
 		return;
 	}
-	
+
 	_keyCode = keycode;
-	
+
 	switch (keycode) {
 	case Common::KEYCODE_UP:
 	case Common::KEYCODE_KP8:

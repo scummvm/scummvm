@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2016-07-19 9:40:00+0200\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
 "Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
@@ -61,7 +61,7 @@ msgstr "Pfad hoch"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -119,7 +119,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -131,7 +131,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -415,8 +415,8 @@ msgstr "Verzeichnis für Spielstände auswählen"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
 "Spielstand-Synchronisierung funktioniert nicht mit anderen Verzeichnissen. "
 "Wenn SieIhre Spielstände synchronisieren möchten, verwenden Sie das Standard-"
@@ -862,7 +862,7 @@ msgstr ""
 "Spezielle Farbmischungsmethoden werden von manchen Spielen unterstützt."
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Vollbildmodus"
 
@@ -1197,7 +1197,7 @@ msgid "Used space:"
 msgstr "Belegter Speicher:"
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
+msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Von ScummVM-Spielständen beleger Speicherplatz auf diesem Cloud-Speicher"
 
@@ -1206,10 +1206,10 @@ msgid "Last sync time:"
 msgstr "Letzte Sync.:"
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
+msgid "When the last saved games sync for this storage occured"
 msgstr "Zeitpunkt der letzten Spielstand-Synchronisierung"
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
 msgstr "Verbinden"
 
@@ -1477,7 +1477,7 @@ msgid "New Save"
 msgstr "Neuer Spielstand"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Erstellt einen neuen Spielstand."
 
 #: gui/saveload-dialog.cpp:1053
@@ -1489,73 +1489,73 @@ msgstr "Name: "
 msgid "Enter a description for slot %d:"
 msgstr "Geben Sie eine Beschreibung für Speicherplatz %d ein:"
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
 msgstr "Verbindungs-Assistent für %s"
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
 msgstr "Rufen Sie folgende URL auf:"
 
-#: gui/storagewizarddialog.cpp:62
+#: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
 msgstr "Geben Sie den Code, den Sie von Ihrem Cloud-Speicher bekommen haben,"
 
-#: gui/storagewizarddialog.cpp:63
+#: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
 msgstr ""
 "geben Sie Ihn in das folgende Feld ein und klicken Sie auf 'Verbinden':"
 
-#: gui/storagewizarddialog.cpp:70
+#: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
 msgstr "URL öffnen"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Paste"
 msgstr "Einfügen"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
 msgstr "Fügt den Inhalt der Zwischenablage in die Felder ein"
 
-#: gui/storagewizarddialog.cpp:79
+#: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
 msgstr "Sie werden zur Webseite von ScummVM weitergeleitet,"
 
-#: gui/storagewizarddialog.cpp:80
+#: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
 msgstr "wo Sie den Zugriff auf die Cloud erlauben sollten."
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
 msgstr ""
 "Ein anderer Cloud-Speicher arbeitet gerade. Möchten Sie ihn unterbrechen?"
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Warten Sie, bis der Cloud-Speicher fertig ist und versuchen Sie es erneut."
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
 msgstr "Fehler in Feld %s."
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
 msgstr "Fehler in den Feldern %s"
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
 msgstr "Alles OK!"
 
-#: gui/storagewizarddialog.cpp:202
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
 msgstr "Code ungültig"
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1817,7 +1817,8 @@ msgstr "Zur Spiele~l~iste"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1834,8 +1835,8 @@ msgstr "Speichern:"
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1932,8 +1933,8 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "WARNUNG: Das Spiel, welches Sie starten wollen, wird noch nicht vollständig "
 "von ScummVM unterstützt. Somit ist es wahrscheinlich, dass es instabil ist "
@@ -2046,16 +2047,16 @@ msgid "C64 Audio Emulator"
 msgstr "C64-Audio-Emulator"
 
 #: backends/cloud/storage.cpp:210
-msgid "Saves sync complete."
+msgid "Saved games sync complete."
 msgstr "Spielstände synchronisiert."
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
+msgid "Saved games sync was cancelled."
 msgstr "Spielstand-Synchronisierung abgebrochen"
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
 "Spielstand-Synchronisierung fehlgeschlagen.\n"
@@ -2179,11 +2180,11 @@ msgstr "Automatisches Ziehen ist jetzt "
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Zum Umschalten mit drei Fingern nach rechts wischen."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (ohne Filter)"
 
@@ -2198,19 +2199,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal ohn.Skalieren"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur an"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Seitenverhältniskorrektur aus"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Aktiver Grafikfilter:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Fenstermodus"
 
@@ -2817,7 +2818,8 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2827,7 +2829,8 @@ msgstr "Spiel laden:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2883,7 +2886,7 @@ msgstr "Modus für Farbenblinde standardmäßig einschalten"
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3064,11 +3067,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "Die folgende originale Spielstand-Datei wurde in Ihrem Spieleverzeichnis "
@@ -3082,7 +3085,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "Eine Spielstand-Datei wurde im gewählten Speicherplatz %d gefunden. "
@@ -3092,8 +3095,8 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
@@ -3141,6 +3144,10 @@ msgstr "Haupt~m~enü"
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "~W~assereffekt aktiviert"
+
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Das Spiel ist pausiert. Zum Weiterspielen beliebige Taste drücken."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -4161,7 +4168,7 @@ msgstr "Zwischensequenz \"%s\" nicht gefunden"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -4178,8 +4185,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Die für den neuen Spielstand vorgesehene Datei existiert bereits!\n"
 "Möchten Sie den alten Speicherstand (%s) oder den neuen (%s) behalten?\n"

@@ -175,6 +175,7 @@
 #include "titanic/game/pet_disabler.h"
 #include "titanic/game/phonograph.h"
 #include "titanic/game/phonograph_lid.h"
+#include "titanic/game/place_holder_item.h"
 #include "titanic/game/play_music_button.h"
 #include "titanic/game/play_on_act.h"
 #include "titanic/game/port_hole.h"
@@ -207,6 +208,7 @@
 #include "titanic/game/tow_parrot_nav.h"
 #include "titanic/game/up_lighter.h"
 #include "titanic/game/useless_lever.h"
+#include "titanic/game/variable_list.h"
 #include "titanic/game/volume_control.h"
 #include "titanic/game/wheel_button.h"
 #include "titanic/game/wheel_hotspot.h"
@@ -383,6 +385,8 @@
 #include "titanic/pet_control/pet_pannel1.h"
 #include "titanic/pet_control/pet_pannel2.h"
 #include "titanic/pet_control/pet_pannel3.h"
+#include "titanic/pet_control/pet_show_translation.h"
+#include "titanic/pet_control/pet_translation.h"
 
 #include "titanic/sound/auto_music_player.h"
 #include "titanic/sound/auto_music_player_base.h"
@@ -417,7 +421,7 @@ CSaveableObject *ClassDef::create() {
 
 /*------------------------------------------------------------------------*/
 
-Common::HashMap<Common::String, CSaveableObject::CreateFunction> * 
+Common::HashMap<Common::String, CSaveableObject::CreateFunction> *
 	CSaveableObject::_classList = nullptr;
 Common::List<ClassDef *> *CSaveableObject::_classDefs;
 
@@ -586,6 +590,7 @@ DEFFN(CNutReplacer);
 DEFFN(CPetDisabler);
 DEFFN(CPhonograph);
 DEFFN(CPhonographLid);
+DEFFN(CPlaceHolderItem);
 DEFFN(CPlayMusicButton);
 DEFFN(CPlayOnAct);
 DEFFN(CPortHole);
@@ -618,6 +623,7 @@ DEFFN(CTitaniaStillControl);
 DEFFN(CTOWParrotNav);
 DEFFN(CUpLighter);
 DEFFN(CUselessLever);
+DEFFN(CVariableListItem);
 DEFFN(CVolumeControl);
 DEFFN(CWheelButton);
 DEFFN(CWheelHotSpot);
@@ -734,6 +740,7 @@ DEFFN(CPetModePanel);
 DEFFN(CPetPannel1);
 DEFFN(CPetPannel2);
 DEFFN(CPetPannel3);
+DEFFN(CPETShowTranslation);
 DEFFN(CSendToSucc);
 DEFFN(CSGTSelector);
 DEFFN(CSliderButton);
@@ -1174,6 +1181,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetDisabler, CGameObject);
 	ADDFN(CPhonograph, CMusicPlayer);
 	ADDFN(CPhonographLid, CGameObject);
+	ADDFN(CPlaceHolderItem, CNamedItem);
 	ADDFN(CPlayMusicButton, CBackground);
 	ADDFN(CPlayOnAct, CBackground);
 	ADDFN(CPortHole, CGameObject);
@@ -1206,6 +1214,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTOWParrotNav, CGameObject);
 	ADDFN(CUpLighter, CDropTarget);
 	ADDFN(CUselessLever, CToggleButton);
+	ADDFN(CVariableListItem, ListItem);
 	ADDFN(CVolumeControl, CGameObject);
 	ADDFN(CWheelButton, CBackground);
 	ADDFN(CWheelHotSpot, CBackground);
@@ -1322,6 +1331,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CPetPannel1, CPetGraphic);
 	ADDFN(CPetPannel2, CPetGraphic);
 	ADDFN(CPetPannel3, CPetGraphic);
+	ADDFN(CPETShowTranslation, CGameObject);
 	ADDFN(CSendToSucc, CToggleSwitch);
 	ADDFN(CSGTSelector, CPetGraphic);
 	ADDFN(CSliderButton, CSTButton);
@@ -1336,7 +1346,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CTextUp, CPetGraphic);
 	ADDFN(CToggleButton, CBackground);
 	ADDFN(CToggleSwitch, CGameObject);
-	
+
 	ADDFN(CActMsg, CMessage);
 	ADDFN(CActivationmsg, CMessage);
 	ADDFN(CAddHeadPieceMsg, CMessage);

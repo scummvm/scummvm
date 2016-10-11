@@ -49,7 +49,7 @@ void WidgetCredits::initCredits() {
 			const char *p = line.c_str() + 12;
 			while ((*p < '0') || (*p > '9'))
 				p++;
-			
+
 			_creditSpeed = atoi(p);
 		} else if (line.hasPrefix("Y Spacing")) {
 			const char *p = line.c_str() + 12;
@@ -73,7 +73,7 @@ void WidgetCredits::initCredits() {
 		if (p != nullptr && p[1] == '>') {
 			cl._line2 = Common::String(p + 3);
 			cl._line = Common::String(cl._line.c_str(), p);
-			
+
 			int width = cl._width;
 			int width1 = screen.stringWidth(cl._line);
 			int width2 = screen.stringWidth(cl._line2);

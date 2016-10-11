@@ -20,6 +20,7 @@
  *
  */
 
+#include "sci/console.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
@@ -118,6 +119,7 @@ void GfxTransitions32::processShowStyles() {
 
 		if (doFrameOut) {
 			g_sci->_gfxFrameout->frameOut(true);
+			g_sci->getSciDebugger()->onFrame();
 			throttle();
 		}
 	} while(continueProcessing && doFrameOut);
@@ -233,92 +235,98 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 		}
 	}
 
-	if (type > 0) {
-		if (createNewEntry) {
-			entry = new PlaneShowStyle;
-			// NOTE: SCI2.1 engine tests if allocation returned a null pointer
-			// but then only avoids setting currentStep if this is so. Since
-			// this is a nonsensical approach, we do not do that here
-			entry->currentStep = 0;
-			entry->processed = false;
-			entry->divisions = hasDivisions ? divisions : _defaultDivisions[type];
-			entry->plane = planeObj;
-			entry->fadeColorRangesCount = 0;
+	if (type == kShowStyleNone) {
+		if (createNewEntry == false) {
+			deleteShowStyle(findIteratorForPlane(planeObj));
+		}
 
-			if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
-				// for pixel dissolve
-				entry->bitmap = NULL_REG;
-				entry->bitmapScreenItem = nullptr;
+		return;
+	}
 
-				// for wipe
-				entry->screenItems.clear();
-				entry->width = plane->_gameRect.width();
-				entry->height = plane->_gameRect.height();
-			} else {
-				entry->fadeColorRanges = nullptr;
-				if (hasFadeArray) {
-					// NOTE: SCI2.1mid engine does no check to verify that an array is
-					// successfully retrieved, and SegMan will cause a fatal error
-					// if we try to use a memory segment that is not an array
-					SciArray<reg_t> *table = _segMan->lookupArray(pFadeArray);
+	if (createNewEntry) {
+		entry = new PlaneShowStyle;
+		// NOTE: SCI2.1 engine tests if allocation returned a null pointer
+		// but then only avoids setting currentStep if this is so. Since
+		// this is a nonsensical approach, we do not do that here
+		entry->currentStep = 0;
+		entry->processed = false;
+		entry->divisions = hasDivisions ? divisions : _defaultDivisions[type];
+		entry->plane = planeObj;
+		entry->fadeColorRangesCount = 0;
 
-					uint32 rangeCount = table->getSize();
-					entry->fadeColorRangesCount = rangeCount;
+		if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+			// for pixel dissolve
+			entry->bitmap = NULL_REG;
+			entry->bitmapScreenItem = nullptr;
 
-					// NOTE: SCI engine code always allocates memory even if the range
-					// table has no entries, but this does not really make sense, so
-					// we avoid the allocation call in this case
-					if (rangeCount > 0) {
-						entry->fadeColorRanges = new uint16[rangeCount];
-						for (size_t i = 0; i < rangeCount; ++i) {
-							entry->fadeColorRanges[i] = table->getValue(i).toUint16();
-						}
+			// for wipe
+			entry->screenItems.clear();
+			entry->width = plane->_gameRect.width();
+			entry->height = plane->_gameRect.height();
+		} else {
+			entry->fadeColorRanges = nullptr;
+			if (hasFadeArray) {
+				// NOTE: SCI2.1mid engine does no check to verify that an array is
+				// successfully retrieved, and SegMan will cause a fatal error
+				// if we try to use a memory segment that is not an array
+				SciArray &table = *_segMan->lookupArray(pFadeArray);
+
+				uint32 rangeCount = table.size();
+				entry->fadeColorRangesCount = rangeCount;
+
+				// NOTE: SCI engine code always allocates memory even if the range
+				// table has no entries, but this does not really make sense, so
+				// we avoid the allocation call in this case
+				if (rangeCount > 0) {
+					entry->fadeColorRanges = new uint16[rangeCount];
+					for (size_t i = 0; i < rangeCount; ++i) {
+						entry->fadeColorRanges[i] = table.getAsInt16(i);
 					}
 				}
 			}
 		}
+	}
 
-		// NOTE: The original engine had no nullptr check and would just crash
-		// if it got to here
-		if (entry == nullptr) {
-			error("Cannot edit non-existing ShowStyle entry");
-		}
+	// NOTE: The original engine had no nullptr check and would just crash
+	// if it got to here
+	if (entry == nullptr) {
+		error("Cannot edit non-existing ShowStyle entry");
+	}
 
-		entry->fadeUp = isFadeUp;
-		entry->color = color;
-		entry->nextTick = g_sci->getTickCount();
-		entry->type = type;
-		entry->animate = animate;
-		entry->delay = (seconds * 60 + entry->divisions - 1) / entry->divisions;
+	entry->fadeUp = isFadeUp;
+	entry->color = color;
+	entry->nextTick = g_sci->getTickCount();
+	entry->type = type;
+	entry->animate = animate;
+	entry->delay = (seconds * 60 + entry->divisions - 1) / entry->divisions;
 
-		if (entry->delay == 0) {
-			error("ShowStyle has no duration");
-		}
+	if (entry->delay == 0) {
+		error("ShowStyle has no duration");
+	}
 
-		if (frameOutNow) {
-			// Creates a reference frame for the pixel dissolves to use
-			g_sci->_gfxFrameout->frameOut(false);
-		}
+	if (frameOutNow) {
+		// Creates a reference frame for the pixel dissolves to use
+		g_sci->_gfxFrameout->frameOut(false);
+	}
 
-		if (createNewEntry) {
-			if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
-				switch (entry->type) {
-				case kShowStyleIrisOut:
-				case kShowStyleIrisIn:
-					configure21EarlyIris(*entry, priority);
-				break;
-				case kShowStyleDissolve:
-					configure21EarlyDissolve(*entry, priority, plane->_gameRect);
-				break;
-				default:
-					// do nothing
-				break;
-				}
+	if (createNewEntry) {
+		if (getSciVersion() <= SCI_VERSION_2_1_EARLY) {
+			switch (entry->type) {
+			case kShowStyleIrisOut:
+			case kShowStyleIrisIn:
+				configure21EarlyIris(*entry, priority);
+			break;
+			case kShowStyleDissolve:
+				configure21EarlyDissolve(*entry, priority, plane->_gameRect);
+			break;
+			default:
+				// do nothing
+			break;
 			}
-
-			_showStyles.push_back(*entry);
-			delete entry;
 		}
+
+		_showStyles.push_back(*entry);
+		delete entry;
 	}
 }
 
@@ -940,8 +948,9 @@ void GfxTransitions32::kernelSetScroll(const reg_t planeId, const int16 deltaX, 
 			g_sci->_gfxFrameout->frameOut(true);
 			throttle();
 		}
-		delete scroll;
 	}
+
+	delete scroll;
 }
 
 bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
@@ -953,7 +962,7 @@ bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
 
 	int deltaX = scroll.deltaX;
 	int deltaY = scroll.deltaY;
-	if (((scroll.x + deltaX) * scroll.y) <= 0) {
+	if (((scroll.x + deltaX) * scroll.x) <= 0) {
 		deltaX = -scroll.x;
 	}
 	if (((scroll.y + deltaY) * scroll.y) <= 0) {
@@ -964,6 +973,10 @@ bool GfxTransitions32::processScroll(PlaneScroll &scroll) {
 	scroll.y += deltaY;
 
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(scroll.plane);
+
+	if (plane == nullptr) {
+		error("[GfxTransitions32::processScroll]: Plane %04x:%04x not found", PRINT_REG(scroll.plane));
+	}
 
 	if ((scroll.x == 0) && (scroll.y == 0)) {
 		plane->deletePic(scroll.oldPictureId, scroll.newPictureId);

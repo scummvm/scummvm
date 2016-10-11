@@ -69,7 +69,7 @@ public:
 	bool quitDialog();
 
 private:
-	
+
 
 public:
 	const char *getInventoryTextNothing();

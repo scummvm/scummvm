@@ -33,6 +33,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
+#include "common/debug.h"
 #include <curl/curl.h>
 
 #ifdef ENABLE_RELEASE

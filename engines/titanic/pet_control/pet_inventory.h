@@ -64,7 +64,7 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl);
-	
+
 	/**
 	 * Sets up the section
 	 */
@@ -74,12 +74,12 @@ public:
 	 * Draw the section
 	 */
 	virtual void draw(CScreenManager *screenManager);
-	
+
 	/**
 	 * Get the bounds for the section
 	 */
 	virtual Rect getBounds() const;
-	
+
 	/**
 	 * Called when a general change occurs
 	 */
@@ -141,7 +141,7 @@ public:
 	virtual CGameObject *getBackground(int index) const;
 
 	/**
-	 * 
+	 *
 	 */
 	void change(CGameObject *item);
 

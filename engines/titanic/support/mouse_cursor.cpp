@@ -20,17 +20,15 @@
  *
  */
 
-#include "common/memstream.h"
-#include "common/textconsole.h"
 #include "graphics/cursorman.h"
 #include "titanic/support/mouse_cursor.h"
-#include "titanic/support/movie.h"
-#include "titanic/support/screen_manager.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/core/resource_key.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
+
+#define CURSOR_SIZE 64
 
 static const int CURSOR_DATA[NUM_CURSORS][4] = {
 	{ 1, 136, 19, 18 },
@@ -52,10 +50,10 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 
 CMouseCursor::CursorEntry::~CursorEntry() {
 	delete _videoSurface;
-	delete _frameSurface;
+	delete _transSurface;
 }
 
-CMouseCursor::CMouseCursor(CScreenManager *screenManager) : 
+CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
 		_screenManager(screenManager), _cursorId(CURSOR_HOURGLASS),
 		_setCursorCount(0), _fieldE4(0), _fieldE8(0) {
 	loadCursorImages();
@@ -75,16 +73,16 @@ void CMouseCursor::loadCursorImages() {
 			CURSOR_DATA[idx][3]);
 
 		// Create the surface
-		CVideoSurface *surface = _screenManager->createSurface(64, 64);
+		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
 		_cursors[idx]._videoSurface = surface;
 
 		// Open the cursors video and move to the given frame
 		OSMovie movie(key, surface);
 		movie.setFrame(idx);
-		
-		Graphics::ManagedSurface *frameSurface = movie.duplicateFrame();
-		_cursors[idx]._frameSurface = frameSurface;
-		surface->setMovieFrameSurface(frameSurface);
+
+		Graphics::ManagedSurface *transSurface = movie.duplicateTransparency();
+		_cursors[idx]._transSurface = transSurface;
+		surface->setTransparencySurface(transSurface);
 	}
 }
 
@@ -100,15 +98,35 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 	++_setCursorCount;
 
 	if (cursorId != _cursorId) {
+		// The original cursors supported partial alpha when rendering the cursor.
+		// Since we're using the ScummVM CursorMan, we can't do that, so we need
+		// to build up a surface of the cursor with even partially transparent
+		// pixels as wholy transparent
 		CursorEntry &ce = _cursors[cursorId - 1];
-		CVideoSurface &surface = *ce._videoSurface;
-		surface.lock();
+		CVideoSurface &srcSurface = *ce._videoSurface;
+		srcSurface.lock();
 
-		CursorMan.replaceCursor(surface.getPixels(), surface.getWidth(), surface.getHeight(),
-			ce._centroid.x, ce._centroid.y, 0, false, &g_vm->_screen->format);
-		surface.unlock();
+		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
+		const uint16 *srcP = srcSurface.getPixels();
+		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_DEFAULT);
+		uint16 *destP = (uint16 *)surface.getPixels();
 
+		for (int y = 0; y < CURSOR_SIZE; ++y) {
+			transSurface.setRow(y);
+			transSurface.setCol(0);
+
+			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++destP) {
+				*destP = transSurface.isPixelTransparent() ? srcSurface.getTransparencyColor() : *srcP;
+				transSurface.moveX();
+			}
+		}
+
+		srcSurface.unlock();
+
+		// Set the cursor
 		_cursorId = cursorId;
+		CursorMan.replaceCursor(surface.getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			ce._centroid.x, ce._centroid.y, srcSurface.getTransparencyColor(), false, &g_vm->_screen->format);
 	}
 }
 
@@ -129,7 +147,7 @@ void CMouseCursor::unlockE4() {
 
 void CMouseCursor::setPosition(const Point &pt, double rate) {
 	assert(rate >= 0.0 && rate <= 1.0);
-	
+
 	// TODO: Figure out use of the rate parameter
 	g_system->warpMouse(pt.x, pt.y);
 }

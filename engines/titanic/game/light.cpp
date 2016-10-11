@@ -101,10 +101,10 @@ bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 	bool flag = pet ? pet->isRoom59706() : false;
 
 	if (_fieldFC == 1 && flag) {
-		petDisplayMessage(1, "That light appears to be loose.");
+		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
-		petDisplayMessage(1, "Lumi-Glow(tm) Lights.  They glow in the dark!");
+		petDisplayMessage(1, LUMI_GLOW_LIGHTS);
 		playSound("z#62.wav", 70);
 	}
 
@@ -116,10 +116,10 @@ bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	bool flag = pet ? pet->isRoom59706() : false;
 
 	if (_fieldFC == 1 && flag) {
-		petDisplayMessage(1, "That light appears to be loose.");
+		petDisplayMessage(1, LIGHT_IS_LOOSE);
 		playSound("z#144.wav", 70);
 	} else {
-		petDisplayMessage(1, "Lumi-Glow(tm) Lights.  They glow in the dark!");
+		petDisplayMessage(1, LUMI_GLOW_LIGHTS);
 		playSound("z#62.wav", 70);
 	}
 

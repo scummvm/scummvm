@@ -81,7 +81,7 @@ bool CSeasonalAdjustment::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CSeasonalAdjustment::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	playSound("z#42.wav");
 	if (!_fieldE4) {
-		petDisplayMessage(1, "The Seasonal Adjustment switch is not operational at the present time.");
+		petDisplayMessage(1, SEASONAL_SWITCH_NOT_WORKING);
 	} else if (!_fieldE0) {
 		playMovie(0, 6, MOVIE_NOTIFY_OBJECT);
 		playMovie(6, 18, 0);

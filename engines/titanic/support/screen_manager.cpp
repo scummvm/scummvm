@@ -178,7 +178,7 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, CVideoSurface *src,
 		destSurface = _backSurfaces[surfaceNum]._surface;
 	if (!destSurface->hasSurface())
 		return;
-	
+
 	Point destPoint = destPos ? *destPos : Point(0, 0);
 	Rect srcBounds = srcRect ? *srcRect : Rect(0, 0, src->getWidth(), src->getHeight());
 	Rect *bounds = &srcBounds;
@@ -220,7 +220,7 @@ void OSScreenManager::blitFrom(SurfaceNum surfaceNum, const Rect *rect, CVideoSu
 		destSurface->blitFrom(Point(rect->left, rect->top), src, rect);
 }
 
-int OSScreenManager::writeString(int surfaceNum, const Rect &destRect, 
+int OSScreenManager::writeString(int surfaceNum, const Rect &destRect,
 		int yOffset, const CString &str, CTextCursor *textCursor) {
 	CVideoSurface *surface;
 	Rect bounds;

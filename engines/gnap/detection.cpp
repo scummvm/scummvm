@@ -43,7 +43,15 @@ static const ADGameDescription gameDescriptions[] = {
 			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12515823},
 			AD_LISTEND
 		},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_TESTING, GUIO0()
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
+	},
+	{
+		"gnap", "",
+		{
+			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 13497301},
+			AD_LISTEND
+		},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "",
@@ -51,7 +59,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12995485},
 			AD_LISTEND
 		},
-		Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING, GUIO0()
+		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "Fargus",
@@ -59,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12847726},
 			AD_LISTEND
 		},
-		Common::RU_RUS, Common::kPlatformWindows, ADGF_TESTING, GUIO0()
+		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 
 	AD_TABLE_END_MARKER

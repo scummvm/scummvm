@@ -25,6 +25,9 @@
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
+#include "common/memstream.h"
+
+#include "graphics/thumbnail.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/gameloader.h"
@@ -36,6 +39,241 @@
 #include "fullpipe/constants.h"
 
 namespace Fullpipe {
+
+bool GameLoader::readSavegame(const char *fname) {
+	SaveHeader header;
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
+
+	if (!saveFile) {
+		warning("Cannot open save %s for loading", fname);
+		return false;
+	}
+
+	header.version = saveFile->readUint32LE();
+	saveFile->read(header.magic, 32);
+	header.updateCounter = saveFile->readUint32LE();
+	header.unkField = saveFile->readUint32LE();
+	header.encSize = saveFile->readUint32LE();
+
+	debugC(3, kDebugLoading, "version: %d magic: %s updateCounter: %d unkField: %d encSize: %d, pos: %d",
+			header.version, header.magic, header.updateCounter, header.unkField, header.encSize, saveFile->pos());
+
+	if (header.version != 48)
+		return false;
+
+	_updateCounter = header.updateCounter;
+
+	byte *data = (byte *)malloc(header.encSize);
+	saveFile->read(data, header.encSize);
+
+	byte *map = (byte *)malloc(800);
+	saveFile->read(map, 800);
+
+	MfcArchive temp(new Common::MemoryReadStream(map, 800));
+
+	if (_savegameCallback)
+		_savegameCallback(&temp, false);
+
+	delete saveFile;
+
+	// Deobfuscate the data
+	for (uint i = 0; i < header.encSize; i++)
+		data[i] -= i & 0x7f;
+
+	MfcArchive *archive = new MfcArchive(new Common::MemoryReadStream(data, header.encSize));
+
+	GameVar *var = (GameVar *)archive->readClass();
+
+	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
+
+	if (!v) {
+		v = _gameVar->addSubVarAsInt("OBJSTATES", 0);
+
+		if (!v) {
+			warning("No state to save");
+			delete archive;
+			return false;
+		}
+	}
+
+	addVar(var, v);
+
+	getGameLoaderInventory()->loadPartial(*archive);
+
+	int32 arrSize = archive->readUint32LE();
+
+	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
+
+	for (uint i = 0; i < arrSize; i++) {
+		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
+
+		if (_sc2array[i]._picAniInfosCount)
+			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+
+		free(_sc2array[i]._picAniInfos);
+		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
+
+		for (uint j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
+			_sc2array[i]._picAniInfos[j]->load(*archive);
+		}
+
+		_sc2array[i]._isLoaded = 0;
+	}
+
+	delete archive;
+
+	getGameLoaderInventory()->rebuildItemRects();
+
+	PreloadItem preloadItem;
+
+	v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
+
+	if (v) {
+		if (g_fp->_currentScene)
+			preloadItem.preloadId1 = g_fp->_currentScene->_sceneId & 0xffff;
+		else
+			preloadItem.preloadId1 = 0;
+
+		preloadItem.param = v->getSubVarAsInt("Entrance");
+		preloadItem.preloadId2 = 0;
+		preloadItem.sceneId = v->getSubVarAsInt("Scene");
+
+		if (_preloadCallback) {
+			if (!_preloadCallback(preloadItem, 0))
+				return false;
+		}
+
+		clearGlobalMessageQueueList1();
+
+		if (g_fp->_currentScene)
+			unloadScene(g_fp->_currentScene->_sceneId);
+
+		g_fp->_currentScene = 0;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 50);
+
+		loadScene(preloadItem.sceneId);
+
+		ExCommand *ex = new ExCommand(preloadItem.sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+		ex->_excFlags = 2;
+		ex->_param = preloadItem.param;
+
+		if (_preloadCallback)
+			_preloadCallback(preloadItem, 100);
+
+		ex->postMessage();
+	}
+
+	return true;
+}
+
+void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDescriptor &desc) {
+	int day = (header.date >> 24) & 0xFF;
+	int month = (header.date >> 16) & 0xFF;
+	int year = header.date & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+	int hour = (header.time >> 8) & 0xFF;
+	int minutes = header.time & 0xFF;
+	desc.setSaveTime(hour, minutes);
+	desc.setPlayTime(header.playtime * 1000);
+
+	desc.setDescription(header.saveName);
+}
+
+void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
+	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
+	header.date = (20 << 24) | (9 << 16) | 2016;
+	header.time = (9 << 8) | 56;
+	header.playtime = 1000;
+}
+
+bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
+	header.thumbnail = NULL;
+
+	uint oldPos = in->pos();
+
+	in->seek(-4, SEEK_END);
+
+	uint headerOffset = in->readUint32LE();
+
+	// Sanity check
+	if (headerOffset >= in->pos() || headerOffset == 0) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	in->seek(headerOffset, SEEK_SET);
+
+	in->read(header.id, 6);
+
+	// Validate the header Id
+	if (strcmp(header.id, "SVMCR")) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	header.version = in->readByte();
+	if (header.version != FULLPIPE_SAVEGAME_VERSION) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		fillDummyHeader(header);
+		return false;
+	}
+
+	header.date = in->readUint32LE();
+	header.time = in->readUint16LE();
+	header.playtime = in->readUint32LE();
+
+	// Generate savename
+	SaveStateDescriptor desc;
+
+	parseSavegameHeader(header, desc);
+	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+
+	// Get the thumbnail
+	header.thumbnail = Graphics::loadThumbnail(*in);
+
+	in->seek(oldPos, SEEK_SET); // Rewind the file
+
+	if (!header.thumbnail)
+		return false;
+
+	return true;
+}
+
+void GameLoader::addVar(GameVar *var, GameVar *subvar) {
+	if (var && subvar) {
+		int type = var->_varType;
+		if (type == subvar->_varType && (!type || type == 1))
+			subvar->_value.intValue = var->_value.intValue;
+
+		for (GameVar *v = var->_subVars; v; v = v->_nextVarObj) {
+			GameVar *nv = subvar->getSubVarByName(v->_varName);
+			if (!nv) {
+				nv = new GameVar;
+				nv->_varName = (char *)calloc(strlen(v->_varName) + 1, 1);
+				strcpy(nv->_varName, v->_varName);
+				nv->_varType = v->_varType;
+
+				subvar->addSubVar(nv);
+			}
+
+			addVar(v, nv);
+		}
+	}
+}
+
+void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
+	if (mode)
+		for (int i = 0; i < 200; i++)
+			archive->writeUint32LE(g_fp->_mapTable[i]);
+	else
+		for (int i = 0; i < 200; i++)
+			g_fp->_mapTable[i] = archive->readUint32LE();
+}
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_gameLoader = new GameLoader();
@@ -60,7 +298,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
-	// _readSavegameCallback = gameLoaderReadSavegameCallback; // TODO
+	_gameLoader->_savegameCallback = gameLoaderSavegameCallback;
 
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
@@ -80,6 +318,9 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	initCursors();
 
 	setMusicAllowed(_gameLoader->_gameVar->getSubVarAsInt("MUSIC_ALLOWED"));
+
+	if (scene == -1)
+		return true;
 
 	if (scene) {
 		_gameLoader->loadScene(726);
@@ -159,6 +400,8 @@ GameVar::GameVar() {
 	_varType = 0;
 	_value.floatValue = 0;
 	_varName = 0;
+
+	_objtype = kObjTypeGameVar;
 }
 
 GameVar::~GameVar() {

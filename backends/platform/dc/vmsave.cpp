@@ -292,9 +292,18 @@ public:
 };
 
 class VMSaveManager : public Common::SaveFileManager {
+private:
+	static int nameCompare(const unsigned char *entry, const char *match) {
+		return !scumm_strnicmp(reinterpret_cast<const char *>(entry), match, 12);
+	}
+
 public:
 	virtual void updateSavefilesList(Common::StringArray &lockedFiles) {
 		// TODO: implement this (locks files, preventing them from being listed, saved or loaded)
+	}
+
+	VMSaveManager() {
+		vmsfs_name_compare_function = nameCompare;
 	}
 
 	virtual Common::InSaveFile *openRawFile(const Common::String &filename) {

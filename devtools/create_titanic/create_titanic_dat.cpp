@@ -55,16 +55,18 @@
  */
 
 #define VERSION_NUMBER 1
-#define HEADER_SIZE 0xD00
+#define HEADER_SIZE 0xF00
 
 Common::File inputFile, outputFile;
-Common::PEResources res;
+Common::PEResources resEng, resGer;
 uint headerOffset = 6;
 uint dataOffset = HEADER_SIZE;
 
 #define ENGLISH_10042C_FILESIZE 4099072
 #define ENGLISH_10042B_FILESIZE 4095488
 #define ENGLISH_10042_FILESIZE 4094976
+#define GERMAN_10042D_FILESIZE 4542464
+
 enum {
 	ENGLISH_10042C_DIFF = 0x401C00,
 	ENGLISH_10042B_DIFF = 0x401400,
@@ -414,6 +416,210 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
+static const char *const STRINGS_EN[] = {
+	"",
+	"You are standing outside the Pellerator.",
+	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
+	"The Succ-U-Bus is in Standby, or \"Off\" mode at present.",
+	"There is currently nothing to deliver.",
+	"There is currently nothing in the tray to send.",
+	"The Succ-U-Bus is a Single Entity Delivery Device.",
+	"Chickens are allocated on a one-per-customer basis.",
+	"Only one piece of chicken per passenger. Thank you.",
+	"You have been upgraded to 1st Class status. Enjoy hugely.",
+	"You have been upgraded to 2nd Class status. Enjoy.",
+	"This room is reserved for the exclusive use of first class passengers."
+	" That does not currently include you",
+	"No losers.",
+	"Passengers of your class are not permitted to enter this area.",
+	"Please exit from the other side.",
+	"For mysterious and unknowable reasons, this transport is temporarily out of order.",
+	"Unfortunately this fan controller has blown a fuse.",
+	"In case of emergency hammer requirement, poke with long stick.",
+	"This stick is too short to reach the branches.",
+	"You are standing outside Elevator %d",
+	"I'm sorry, you cannot enter this elevator at present as a bot is in the way.",
+	"This elevator is currently in an advanced state of non-functionality.",
+	"That light appears to be loose.",
+	"Lumi-Glow(tm) Lights.  They glow in the dark!",
+	"You already have one.",
+	"This glass is totally and utterly unbreakable.",
+	"For emergency long stick, smash glass.",
+	"This dispenser has suddenly been fitted with unbreakable glass "
+	"to prevent unseemly hoarding of sticks.",
+	"The Chicken is already quite clean enough, thank you.",
+	"Now would be an excellent opportunity to adjust your viewing apparatus.",
+	"You cannot take this because the cage is locked shut.",
+	"You are already at your chosen destination.",
+	"Passengers of your class are not permitted to enter this area.",
+	"Sorry, you must be at least 3rd class before you can summon for help.",
+	"You have not assigned a room to go to.",
+	"Sorry, this elevator does not go below floor 27.",
+	"You must select a game to load first.",
+	"You must select a game to save first.",
+	"Please supply Galactic reference material.",
+	"This is the restaurant music system.  It appears to be locked.",
+	"You can't pick this up on account of it being stuck to the branch.",
+	"You cannot get this, it is frozen to the branch.",
+	"Please check in at the reception desk.",
+	"This foodstuff is already sufficiently garnished.",
+	"Sadly, this dispenser is currently empty.",
+	"Please place food source beneath dispenser for sauce delivery.",
+	"The Seasonal Adjustment switch is not operational at the present time.",
+	"This is your stateroom. It is for sleeping. If you desire "
+	"entertainment or relaxation, please visit your local leisure lounge.",
+	"The bed will not currently support your weight."
+	" We are working on this problem but are unlikely to be able to fix it.",
+	"This is not your assigned room. Please do not enjoy.",
+	"Sadly, this is out of your reach.",
+	"The Succ-U-Bus is a Single Entity Delivery Device.",
+	"Sadly, the Grand Canal transport system is closed for the winter.",
+	"This area is off limits to passengers.",
+	"Go where?",
+	"It would be nice if you could take that but you can't.",
+	"A bowl of pistachio nuts.",
+	"Not a bowl of pistachio nuts."
+};
+
+static const char *const STRINGS_DE[] = {
+	// TODO: Translate these to their German versions
+	"",
+	"Sie befinden sich vor dem Pellerator.",
+	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
+		"glich, da die T\0xFC" "r zugefroren ist.",
+	"Der Sukk-U-Bus befindet sich gegenwSrtig im Standby-oder \"AUS\"-Betrieb.",
+	"Zur Zeit gibt es nichts zuzustellen.",
+	"Gegenw\xE4rtig befindet sich nichts im Ablagekorb.",
+	"Der Sukk-U-Bus ist ein Einzel-St\0xFC" "ck-Liefergerst.",
+	"Nur ein H\xFChnchen pro Passagier. Wir bedanken uns f\xFC"
+		"r Ihr Verst\xE4ndnis.",
+	"H\0xFChner werden nur in Eine-Einheit-Pro-Person-Rationen zugeteilt.",
+	"Sie sind in die Erste Klasse h\xF6hergestuft worden. Genie\xDF"
+		"en Sie es in vollen Z\xFCgen.",
+	"Sie sind in die Zweite Klasse h\xF6hergestuft worden. Genie\xDF"
+		"en Sie es.",
+	"Diese Kabine ist ausschlie\xDFlich f\xFCr Erste-Klasse-Passagiere "
+		"reserviert worden. Zur Zeit schlie\xDFt das Sie nicht ein.",
+	"Bitte keine Versager.",
+	"Passagieren Ihrer Klasse ist der Zugang zu diesem Bereich nicht gestattet.",
+	"Benutzen Sie bitte den Ausgang auf der anderen Seite.",
+	"Aus mysteri\xF6sen, v\xF6llig unbekannten Gr\xFCnden ist dieses "
+		"Transportmittel vor\xFC" "bergehend au\xDF" "er Betrieb.",
+	"Leider ist diesem Ventilatorschalter eine Sicherung durchgebrannt.",
+	"Im Falle eines dringenden Hammerbed\xFCrfnisses, bedienen Sie sich eines Stabs.",
+	"Dieser Stab ist zu kurz um die Aste zu erreichen.",
+	"Sie befinden sich vor dem Aufzug %d",
+	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der Zutritt "
+		"zu diesem Aufzug gegenwSrtig verwehrt.",
+	"Dieser Aufzug ist gegenwSrtig im fortgeschrittenen Zustand des "
+		"Nicht-Funktionierens.",
+	"Die Lampe scheint irgendwie los zu sein.",
+	"Lumina Leuchten. Sie leuchten im Dunkeln!",
+	"Sie haben doch schon eins.",
+	"Dieses Glas ist ganz und gar unzerbrechlich.",
+	"Im Falle von dringend ben\xF6tigtem Langen Stab, zertr\xFCmmern Sie das Glas.",
+	"Dieser Automat ist v\xF6llig unerwartet mit unzerbrechlichem Glas "
+		"ausgestattet worden um ungeb\xFC hrlichem Horten von "
+		"St\xF6" "cken vorzubeugen.",
+	"Das H\xFChnchen ist eigentlich schon sauber genug, danke vielmals.",
+	"Jetzt wSre der ideale Zeitpunkt, Ihre Sehhilfe zur Hand zu nehmen.",
+	"Dieses Objekt k\xF6nnen Sie nicht mitnehmen, da die T\xFCr fest verschlossen ist.",
+	"Sie befinden sich bereits an Ihrem gew\xFCnschten Reiseziel.",
+	"Passagieren Ihrer Klasse ist der Zugang zu diesem Bereich nicht gestattet.",
+	"Wir bedauern, aber Sie m\xFCssen mindestens Dritte Klasse sein "
+		"bevor Sie um Hilfe bitten k\xF6nnen.",
+	"Ihnen wurde keine Kabine zugeteilt.",
+	"Wir bedauern, aber dieser Aufzug geht nicht tiefer als bis in den 27. Stock.",
+	"Sie m\xFCssen zuerst das Spiel selektieren, das Sie laden m\xF6" "chten.",
+	"Sie m\xFCssen zuerst das Spiel selektieren, das Sie speichern m\xF6" "chten.",
+	"Stellen Sie bitte das Galaktische Referenzmaterial zur Verf\xFCgung.",
+	"Dies ist das Musiksystem des Restaurants. Scheinbar ist es verschlossen.",
+	" Aufgrund der Tatsache, da\xDF dieses Objekt an einem Ast festhSngt, "
+		"k\xF6nnen Sie es nicht entfernen.",
+	"Sie k\xF6nnen dieses Objekt nicht entfernen, es ist am Ast festgefroren.",
+	"Melden Sie sich bitte an der Rezeption an.",
+	"Dieses Nahrungsmittel ist bereits ausreichend garniert.",
+	"Leider ist dieser Automat gegenwSrtig leer.",
+	"Bei So¯enbedarf positionieren Sie bitte die Nahrungsquelle direkt "
+		"unter den Automaten.",
+	"Der Jahreszeitenschalter befindet sich zur Zeit au\xDF" "er Betrieb.",
+	"Dies ist Ihre Kabine. Sie dient zum Schlafen. Wenn Sie Unterhaltung "
+		"oder Entspannung w\xFCnschen, statten Sie bitte Ihrem "
+		"nSchstgelegenen Salon einen Besuch ab.",
+	"Das Bett ist Ihrem Gewicht momentan nicht gewachsen. Wir geben "
+		"uns gro\xDF" "e M\xFChe, aber es ist unwahrscheinlich, "
+		"da\xDF wir das Problem beheben k\xF6nnen.",
+	"Dies ist nicht die Ihnen zugeteilte Kabine. Genie\xDF" "en Sie den "
+		"Aufenthalt bitte nicht.",
+	"Leider ist dies f\xFCr Sie au\xDF" "er Reichweite.",
+	"Der Sukk-U-Bus ist ein Einzel-St\xFC" "ck-Lieferger\xE4t.",
+	"Leider ist das Gro¯e-Kanal-Bef\xF6rderungssystem im Winter geschlossen.",
+	"Passagieren ist der Zutritt zu diesem Bereich nicht gestattet.",
+	"Wohin m\xF6" "chten Sie gehen?",
+	"Es wSre zwar ganz nett, wenn Sie das mitnehmen k\xF6nnten, "
+		"aber das k\xF6nnen Sie eben nicht.",
+	"Eine Schale Pistazien.",
+	"Keine Schale Pistazien.",
+
+	"Sommer",
+	"Herbst",
+	"Winter",
+	"Fr\0xFC" "nhling",
+	"Sn'ood",
+	"J'af'ah",
+	"Bitta",
+	"Fr\0xAA" "ic",
+	"Pflanzen bitte nicht ber\0xFC" "nhren.",
+	"!\0xBC" "ta'\0xAD" "ta! !T\0xAA" "z n\0xAA" " sappibundli t\0xAA"
+		"cn\0xAA" "z!",
+
+	"Stop",
+	"!Hanaz!",
+	"VorwSrts",
+	"!Panaz!",
+	"T\0xAA" "z k'b\0xAA" "z",
+	"Ein wenig herumkurven",
+	"Otundo a\0x92" " doom\0xAA" "n n\0x92" "sanza",
+	"Sinnlose Drehung des Steuerrads",
+	"!0xBC" "ta\0x92\0xAD" "ta!  T\0xAA""z vidsta\0x92" "jaha i\0xAC"
+		"in\0x92" "qu\0xAA" " m\0xAA" "n\0xAA" "z",
+	"Sternenpanorama des Reiseziels hier einf\0xFC" "ngen.",
+
+	"V'lo\0xAC",
+	"Geschwindigkeit",
+	"Pan",
+	"Ein",
+	"Han",
+	"Aus",
+	"Turgo",
+	"Langsam",
+	"Pido",
+	"Schnell",
+
+	"\0xBC" "lu\0xAD" " q\0xB0 scu'b\0xAA" "rri",
+	"H\0xFC" "hnchen a la sauce tomate",
+	"\0xBC" "lu\0xAD" " q\0xB0 scu'jajaja",
+	"H0xFC" "hnchen a la sauce moutarde",
+	"\0xBC" "lu0xAD q\0xB0 scu'\0xAD" "lu\0xAD",
+	"H\0xFC" "hnchen a la sauce 'Vogel'",
+	"\0xBC" "lu\0xAD" " sanza scu, n\0xAA n\0xAA n\0xAA",
+	"H\0xFC" "hnchen bar jeglicher sauce",
+
+	"!\0xB2" "la! !\0xB2" "la!  !!!Sizzlo ab\0x92\0xAA\0xAA" "o s\0xAA"
+		"nza cr\0xAA" "dibo!!!  N\0xAA" "nto p\0xAA" "rificio i\0xAC" "ind\0xAA",
+	"Achtung, Lebensgefahr. Unglaublich hohe Voltzahl!!! Innen keine "
+		"artungsbed\0xFC" "rftigen Teile vorhanden.",
+	"!!!Birin\0xAC" "i sp\0xAA" "culato t\0xAA" "z n\0xAA n\0xAA n\0xAA"
+		" ouvraditiniz!  J\0x92" "in n\0xAA n\0xAA upraximus stifibilimus"
+		" j\0x92" "in sigorto funct",
+	"Sie hStten die erste Kontrollt\0xFC" "r nicht \0xF6"
+		"ffnen sollen! Dies ist nicht nur ungeheuer gef\0xE4"
+		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\0xFC" "che.",
+	"!T\0xAA" "z n\0xAA bleabaz t\0xAA" "z n\0xAA j\0x92" "abaz!  Coco?",
+	"Und sagen Sie hinterher blo\0xFC nicht, niemand hStte Sie gewarnt.",
+	"Pin\0xAA" "z-pin\0xAA" "z stot \0xAF" "r\0xB0 jibbli",
+	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
+};
 
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
@@ -495,19 +701,21 @@ void writeResource(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeResource(const char *sectionStr, uint32 resId) {
+void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
 	writeResource(nameBuffer, file);
 }
 
-void writeResource(const char *sectionStr, const char *resId) {
+void writeResource(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
@@ -531,20 +739,24 @@ void writeBitmap(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeBitmap(const char *sectionStr, const char *resId) {
+void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+	sprintf(nameBuffer, "%s/%s%s", sectionStr, resId,
+		isEnglish ? "" : "/DE");
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
 	writeBitmap(nameBuffer, file);
 }
 
-void writeBitmap(const char *sectionStr, uint32 resId) {
+void writeBitmap(const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	sprintf(nameBuffer, "%s/%u%s", sectionStr, resId,
+		isEnglish ? "" : "/DE");
 
+	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr),
 		Common::WinResourceID(resId));
 	assert(file);
@@ -839,18 +1051,22 @@ void writeHeader() {
 }
 
 void writeData() {
-	writeBitmap("Bitmap", "BACKDROP");
-	writeBitmap("Bitmap", "EVILTWIN");
-	writeBitmap("Bitmap", "RESTORED");
-	writeBitmap("Bitmap", "RESTOREF");
-	writeBitmap("Bitmap", "RESTOREU");
-	writeBitmap("Bitmap", "STARTD");
-	writeBitmap("Bitmap", "STARTF");
-	writeBitmap("Bitmap", "STARTU");
-	writeBitmap("Bitmap", "TITANIC");
-	writeBitmap("Bitmap", 133);
-	writeBitmap("Bitmap", 164);
-	writeBitmap("Bitmap", 165);
+	for (int idx = 0; idx < (resGer.empty() ? 1 : 2); ++idx) {
+		bool isEnglish = idx == 0;
+
+		writeBitmap("Bitmap", "BACKDROP", isEnglish);
+		writeBitmap("Bitmap", "EVILTWIN", isEnglish);
+		writeBitmap("Bitmap", "RESTORED", isEnglish);
+		writeBitmap("Bitmap", "RESTOREF", isEnglish);
+		writeBitmap("Bitmap", "RESTOREU", isEnglish);
+		writeBitmap("Bitmap", "STARTD", isEnglish);
+		writeBitmap("Bitmap", "STARTF", isEnglish);
+		writeBitmap("Bitmap", "STARTU", isEnglish);
+		writeBitmap("Bitmap", "TITANIC", isEnglish);
+		writeBitmap("Bitmap", 133, isEnglish);
+		writeBitmap("Bitmap", 164, isEnglish);
+		writeBitmap("Bitmap", 165, isEnglish);
+	}
 
 	writeResource("STFONT", 149);
 	writeResource("STFONT", 151);
@@ -869,7 +1085,8 @@ void writeData() {
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 58);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 104);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
@@ -1045,15 +1262,19 @@ void createScriptMap() {
 }
 
 int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Format: %s ST.exe titanic.dat\n", argv[0]);
+	if (argc < 2) {
+		printf("Format: %s ST.exe [ST_german.exe] [titanic.dat]\n", argv[0]);
 		exit(0);
 	}
 
 	if (!inputFile.open(argv[1])) {
 		error("Could not open input file");
 	}
-	res.loadFromEXE(argv[1]);
+	resEng.loadFromEXE(argv[1]);
+
+	if (argc >= 3) {
+		resGer.loadFromEXE(argv[2]);
+	}
 
 	if (inputFile.size() == ENGLISH_10042C_FILESIZE)
 		_version = ENGLISH_10042C;
@@ -1061,13 +1282,18 @@ int main(int argc, char *argv[]) {
 		_version = ENGLISH_10042B;
 	else if (inputFile.size() == ENGLISH_10042_FILESIZE)
 		_version = ENGLISH_10042;
-	else {
-		printf("Unknown version of ST.exe specified");
+	else if (inputFile.size() == GERMAN_10042D_FILESIZE) {
+		printf("German version detected. You must use an English versoin "
+			"for the primary input file\n");
+		exit(0);
+	} else {
+		printf("Unknown version of ST.exe specified\n");
 		exit(0);
 	}
 
-	if (!outputFile.open(argv[2], Common::kFileWriteMode)) {
-		error("Could not open output file");
+	if (!outputFile.open(argc == 4 ? argv[3] : "titanic.dat", Common::kFileWriteMode)) {
+		printf("Could not open output file\n");
+		exit(0);
 	}
 
 	writeHeader();

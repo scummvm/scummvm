@@ -57,11 +57,11 @@ public:
 	/**
 	 * Called on a highlighted item when PET area is entered
 	 */
-	virtual bool enterHighlighted() { 
+	virtual bool enterHighlighted() {
 		highlightSave(_savegameSlotNum);
 		return true;
 	}
-	
+
 	/**
 	 * Called on a highlighted item when PET area is left
 	 */

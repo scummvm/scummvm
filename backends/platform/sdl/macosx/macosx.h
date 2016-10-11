@@ -36,6 +36,8 @@ public:
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
 
+	virtual bool openUrl(const Common::String &url);
+
 	virtual Common::String getSystemLanguage() const;
 
 	virtual void init();

@@ -27,6 +27,11 @@ It's pretty simple if you are running Linux on an x86/amd64 machine:
 
 Troubleshooting
 ===============
+Please be advised that currently games with a resolution above 320x240
+are disabled due to the limited screen resolution on the GCW0. This could be
+changed in the future, but higher resolution games will require use of
+an HDMI connection.
+
 In case you need to submit a bugreport, you may find the log file at the
 following path:
 

@@ -60,7 +60,7 @@ bool CPetConversations::reset() {
 	_dials[0].setup(MODE_UNSELECTED, "3PetDial1", _petControl);
 	_dials[1].setup(MODE_UNSELECTED, "3PetDial2", _petControl);
 	_dials[2].setup(MODE_UNSELECTED, "3PetDial3", _petControl);
-	
+
 	_dialBackground.reset("PetDialBack", _petControl);
 	_scrollUp.reset("PetScrollUp", _petControl);
 	_scrollDown.reset("PetScrollDown", _petControl);
@@ -334,7 +334,7 @@ bool CPetConversations::setupControl(CPetControl *petControl) {
 
 		_dialBackground.setBounds(Rect(0, 0, 21, 130));
 		_dialBackground.translate(20, 350);
-		
+
 		const Rect rect1(0, 0, 22, 36);
 		_dials[0].setBounds(rect1);
 		_dials[0].translate(20, 359);
@@ -419,7 +419,7 @@ int CPetConversations::canSummonBot(const CString &name) {
 void CPetConversations::summonBot(const CString &name) {
 	if (_petControl) {
 		if (_petControl->getPassengerClass() >= 4) {
-			_petControl->displayMessage("Sorry, you must be at least 3rd class before you can summon for help.");
+			_petControl->displayMessage(AT_LEAST_3RD_CLASS_FOR_HELP);
 		} else {
 			_petControl->summonBot(name, 0);
 		}

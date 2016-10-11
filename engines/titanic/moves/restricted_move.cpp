@@ -52,10 +52,10 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		// Okay to change to the given destination
 		changeView(_destination);
 	} else if (classNum != 4) {
-		petDisplayMessage(1, "Passengers of your class are not permitted to enter this area.");
+		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (compareRoomNameTo("EmbLobby")) {
 		playSound("a#17.wav");
-		petDisplayMessage(1, "Please check in at the reception desk.");
+		petDisplayMessage(1, CHECK_IN_AT_RECEPTION);
 	} else if (compareViewNameTo("Titania.Node 1.S")) {
 		playSound("z#226.wav");
 		changeView(_destination);

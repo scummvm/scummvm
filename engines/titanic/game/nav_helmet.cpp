@@ -54,7 +54,7 @@ bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
 		CPetControl *pet = getPetControl();
 		if (pet) {
 			pet->setArea(PET_STARFIELD);
-			petDisplayMessage(1, "Now would be an excellent opportunity to adjust your viewing apparatus.");
+			petDisplayMessage(1, ADJUST_VIEWING_APPARATUS);
 			pet->incAreaLocks();
 		}
 
@@ -100,7 +100,7 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		playSound("a#48.wav");
 		playSound("a#47.wav");
 	}
-	
+
 	return true;
 }
 

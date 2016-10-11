@@ -353,7 +353,7 @@ int AgiEngine::playGame() {
 			if (appleIIgsDelayOverwrite->gameId == getGameID())
 				break; // game found
 			appleIIgsDelayOverwrite++;
-		}		
+		}
 	}
 
 	do {

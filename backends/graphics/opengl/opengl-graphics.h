@@ -30,6 +30,8 @@
 #include "common/frac.h"
 #include "common/mutex.h"
 
+#include "graphics/surface.h"
+
 namespace Graphics {
 class Font;
 } // End of namespace Graphics
@@ -115,9 +117,7 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual void displayMessageOnOSD(const char *msg);
-	virtual void copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h);
-	virtual void clearOSD();
-	virtual Graphics::PixelFormat getOSDFormat();
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon);
 
 	// PaletteManager interface
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -548,30 +548,61 @@ protected:
 
 private:
 	/**
-	 * The OSD's contents.
+	 * Request for the OSD icon surface to be updated.
 	 */
-	Surface *_osd;
+	bool _osdMessageChangeRequest;
 
 	/**
-	 * Current opacity level of the OSD.
+	 * The next OSD message.
+	 *
+	 * If this value is not empty, the OSD message will be set
+	 * to it on the next frame.
 	 */
-	uint8 _osdAlpha;
+	Common::String _osdMessageNextData;
 
 	/**
-	 * When fading the OSD has started.
+	 * Set the OSD message surface with the value of the next OSD message.
 	 */
-	uint32 _osdFadeStartTime;
+	void osdMessageUpdateSurface();
 
 	/**
-	 * Mutex to allow displayMessageOnOSD to be used from the audio thread.
+	 * The OSD message's contents.
 	 */
-	Common::Mutex _osdMutex;
+	Surface *_osdMessageSurface;
+
+	/**
+	 * Current opacity level of the OSD message.
+	 */
+	uint8 _osdMessageAlpha;
+
+	/**
+	 * When fading the OSD message has started.
+	 */
+	uint32 _osdMessageFadeStartTime;
 
 	enum {
-		kOSDFadeOutDelay = 2 * 1000,
-		kOSDFadeOutDuration = 500,
-		kOSDInitialAlpha = 80
+		kOSDMessageFadeOutDelay = 2 * 1000,
+		kOSDMessageFadeOutDuration = 500,
+		kOSDMessageInitialAlpha = 80
 	};
+
+	/**
+	 * The OSD background activity icon's contents.
+	 */
+	Surface *_osdIconSurface;
+
+	enum {
+		kOSDIconTopMargin = 10,
+		kOSDIconRightMargin = 10
+	};
+
+	/**
+	 * Mutex for the OSD draw calls.
+	 *
+	 * Mutex to allow displayMessageOnOSD and displayActivityIconOnOSD
+	 * to be used from the audio and network threads.
+	 */
+	Common::Mutex _osdMutex;
 #endif
 };
 

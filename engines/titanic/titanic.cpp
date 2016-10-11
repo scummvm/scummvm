@@ -85,7 +85,7 @@ void TitanicEngine::initialize() {
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound and Music handling");
 
 	_debugger = new Debugger(this);
-	_filesManager = new CFilesManager();
+	_filesManager = new CFilesManager(this);
 
 	CSaveableObject::initClassList();
 	CEnterExitFirstClassState::init();
@@ -100,8 +100,8 @@ void TitanicEngine::initialize() {
 	CExitPellerator::init();
 	CEnterExitSecClassMiniLift::init();
 	CTelevision::init();
+	CVideoSurface::setup();
 	TTnpcScript::init();
-	OSVideoSurface::setup();
 
 	_events = new Events(this);
 	_screen = new Graphics::Screen(0, 0);

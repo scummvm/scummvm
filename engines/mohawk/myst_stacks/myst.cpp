@@ -3271,7 +3271,7 @@ void Myst::towerRotationMapDrawLine(const Common::Point &center, const Common::P
 			color = pf.RGBToColor(0xFF, 0, 0); // Red
 	} else {
 		if (!_towerRotationOverSpot)
-			color = 0x00; // White
+			color = 0xFF; // White
 		else
 			color = 0xF9; // Red
 	}
@@ -3609,7 +3609,7 @@ void Myst::gullsFly2_run() {
 			VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename(gulls[video], kMystStack));
 			if (!handle)
 				error("Failed to open gulls movie");
-	
+
 			handle->moveTo(424, 0);
 			_gullsNextTime = time + _vm->_rnd->getRandomNumber(16667) + 13334;
 		}

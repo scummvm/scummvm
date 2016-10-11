@@ -165,7 +165,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Video::AVIDecoder();
 
 			if (filename.equalsIgnoreCase("gk2a.avi")) {
 				// HACK: Switch to 16bpp graphics for Indeo3.
@@ -179,6 +178,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 					return NULL_REG;
 				}
 			}
+
+			videoDecoder = new Video::AVIDecoder();
 
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
@@ -253,11 +254,13 @@ reg_t kRobotGetFrameSize(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect frameRect;
 	const uint16 numFramesTotal = g_sci->_video32->getRobotPlayer().getFrameSize(frameRect);
 
-	reg_t *outRect = s->_segMan->derefRegPtr(argv[0], 4);
-	outRect[0] = make_reg(0, frameRect.left);
-	outRect[1] = make_reg(0, frameRect.top);
-	outRect[2] = make_reg(0, frameRect.right - 1);
-	outRect[3] = make_reg(0, frameRect.bottom - 1);
+	SciArray *outRect = s->_segMan->lookupArray(argv[0]);
+	reg_t values[4] = {
+		make_reg(0, frameRect.left),
+		make_reg(0, frameRect.top),
+		make_reg(0, frameRect.right - 1),
+		make_reg(0, frameRect.bottom - 1) };
+	outRect->setElements(0, 4, values);
 
 	return make_reg(0, numFramesTotal);
 }
@@ -446,10 +449,10 @@ reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
 	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
 
 	Common::Rect blackoutArea;
-	blackoutArea.left = MAX((int16)0, argv[0].toSint16());
-	blackoutArea.top = MAX((int16)0, argv[1].toSint16());
-	blackoutArea.right = MIN(scriptWidth, (int16)(argv[2].toSint16() + 1));
-	blackoutArea.bottom = MIN(scriptHeight, (int16)(argv[3].toSint16() + 1));
+	blackoutArea.left = MAX<int16>(0, argv[0].toSint16());
+	blackoutArea.top = MAX<int16>(0, argv[1].toSint16());
+	blackoutArea.right = MIN<int16>(scriptWidth, argv[2].toSint16() + 1);
+	blackoutArea.bottom = MIN<int16>(scriptHeight, argv[3].toSint16() + 1);
 	g_sci->_video32->getVMDPlayer().setBlackoutArea(blackoutArea);
 	return s->r_acc;
 }

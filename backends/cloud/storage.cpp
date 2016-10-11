@@ -207,7 +207,7 @@ void Storage::savesSyncDefaultCallback(BoolResponse response) {
 
 	if (!response.value)
 		warning("SavesSyncRequest called success callback with `false` argument");
-	g_system->displayMessageOnOSD(_("Saves sync complete."));
+	g_system->displayMessageOnOSD(_("Saved games sync complete."));
 }
 
 void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
@@ -218,9 +218,9 @@ void Storage::savesSyncDefaultErrorCallback(Networking::ErrorResponse error) {
 	printErrorResponse(error);
 
 	if (error.interrupted)
-		g_system->displayMessageOnOSD(_("Saves sync was cancelled."));
+		g_system->displayMessageOnOSD(_("Saved games sync was cancelled."));
 	else
-		g_system->displayMessageOnOSD(_("Saves sync failed.\nCheck your Internet connection."));
+		g_system->displayMessageOnOSD(_("Saved games sync failed.\nCheck your Internet connection."));
 }
 
 ///// DownloadFolderRequest-related /////

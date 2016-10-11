@@ -39,20 +39,6 @@ void BaseBackend::displayMessageOnOSD(const char *msg) {
 	dialog.runModal();
 }
 
-void BaseBackend::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
-	warning("BaseBackend::copyRectToOSD not implemented"); //TODO
-}
-
-void BaseBackend::clearOSD() {
-	warning("BaseBackend::clearOSD not implemented"); //TODO
-	//what should I do? Remove all TimedMessageDialogs?
-}
-
-Graphics::PixelFormat BaseBackend::getOSDFormat() {
-	warning("BaseBackend::getOSDFormat not implemented");
-	return Graphics::PixelFormat();
-}
-
 void BaseBackend::initBackend() {
 	// Init Event manager
 #ifndef DISABLE_DEFAULT_EVENT_MANAGER

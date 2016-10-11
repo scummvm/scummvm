@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
 "PO-Revision-Date: 2011-12-15 14:53+0100\n"
 "Last-Translator: Mikel Iturbe Urretxa <mikel@hamahiru.org>\n"
 "Language-Team: Librezale <librezale@librezale.org>\n"
@@ -58,7 +58,7 @@ msgstr "Joan gora"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -113,7 +113,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -125,7 +125,7 @@ msgstr "Bai"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -404,8 +404,8 @@ msgstr "Partida gordeen direktorioa aukeratu"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
 
 #: gui/editgamedialog.cpp:536
@@ -843,7 +843,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Joko batzuk onarturiko lausotze-modu bereziak"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Pantaila osoa"
 
@@ -1176,7 +1176,7 @@ msgid "Used space:"
 msgstr ""
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
+msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 
 #: gui/options.cpp:1314
@@ -1184,10 +1184,10 @@ msgid "Last sync time:"
 msgstr ""
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
+msgid "When the last saved games sync for this storage occured"
 msgstr ""
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
 msgstr ""
 
@@ -1452,7 +1452,7 @@ msgid "New Save"
 msgstr "Gorde"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Sortu joko gorde berria"
 
 #: gui/saveload-dialog.cpp:1053
@@ -1464,71 +1464,71 @@ msgstr "Izena: "
 msgid "Enter a description for slot %d:"
 msgstr "Sartu deskribapena %d zirrikiturako: "
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:62
+#: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:63
+#: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:70
+#: gui/storagewizarddialog.cpp:69
 #, fuzzy
 msgid "Open URL"
 msgstr "OpenGL"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Paste"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:79
+#: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:80
+#: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:202
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
 msgstr ""
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1780,7 +1780,8 @@ msgstr "It~z~uli abiarazlera"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1797,8 +1798,8 @@ msgstr "Gorde jokoa:"
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1892,8 +1893,8 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "ABISUA: ScummVM-k ez du guztiz onartzen exekutatuko duzun jokoa oraindik. "
 "Hori dela eta, ezegonkorra izan daiteke eta gerta daiteke gordeta izan "
@@ -2006,16 +2007,16 @@ msgstr "C64 Audio emuladorea"
 
 #: backends/cloud/storage.cpp:210
 #, fuzzy
-msgid "Saves sync complete."
+msgid "Saved games sync complete."
 msgstr "Bilaketa amaitua!"
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
+msgid "Saved games sync was cancelled."
 msgstr ""
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
 
@@ -2137,11 +2138,11 @@ msgstr "Auto-arrastatzea orain:"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Pasatu hiru atzamar eskuinean gaitu/desgaitzeko."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (Iragazi gabe)"
 
@@ -2156,19 +2157,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normala"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Filtro grafiko aktiboa:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Leiho modua"
 
@@ -2773,7 +2774,8 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2783,7 +2785,8 @@ msgstr "Jokoa kargatu:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2839,7 +2842,7 @@ msgstr "Gaitu daltonikoentzako modua lehenetsi modura"
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3018,11 +3021,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "Hurrengo jatorrizko gordetako fitxategia aurkitu da bidean:\n"
@@ -3035,7 +3038,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "Joko gorde baten fitxategia aurkitu da zehaztutako %d zirrikituan."
@@ -3045,8 +3048,8 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
@@ -3092,6 +3095,11 @@ msgstr "Menu ~n~agusia"
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "~U~r-efektua gaituta"
+
+#: engines/mohawk/mohawk.cpp:61
+#, fuzzy
+msgid "The game is paused. Press any key to continue."
+msgstr "Joko pausatua. Sakatu ZURIUNEA jarraitzeko."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -4103,7 +4111,7 @@ msgstr "Ez da '%s' bideoa aurkitu"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -4120,8 +4128,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Gordetako partida jadanik existitzen da!\n"
 "Gordetako partida zaharra (%s) ala berria (%s) mantendu nahi zenuke?\n"

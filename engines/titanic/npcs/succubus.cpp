@@ -183,7 +183,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_startFrame2 = file->readNumber();
 	_endFrame2 = file->readNumber();
 	_field140 = file->readNumber();
-	
+
 	_v2 = file->readNumber();
 	_startFrame5 = file->readNumber();
 	_endFrame5 = file->readNumber();
@@ -274,7 +274,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 	if (!_enabled || !pet || !item || !tempRect.contains(item->getControid())) {
 		item->petAddToInventory();
 	} else if (mailExists(roomFlags)) {
-		petDisplayMessage("The Succ-U-Bus is a Single Entity Delivery Device.");
+		petDisplayMessage(SUCCUBUS_DESCRIPTION);
 		item->petAddToInventory();
 	} else {
 		petContainerRemove(item);
@@ -282,7 +282,7 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 		CChicken *chicken = dynamic_cast<CChicken *>(item);
 		bool chickenFlag = chicken ? chicken->_string6 != "None" : false;
-		
+
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {
 			playSound("z#23.wav");
@@ -337,7 +337,7 @@ bool CSuccUBus::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
-	petDisplayMessage(2, "");
+	petDisplayMessage(2, BLANK);
 	if (_startFrame8 >= 0)
 		loadFrame(_startFrame8);
 	else if (!_field15C && _startFrame9 >= 0)
@@ -353,7 +353,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 		_enabled = false;
 		if (_startFrame10 >= 0)
 			playSound("z#27.wav", 100);
-		
+
 		if (_field15C)
 			setVisible(false);
 	}
@@ -370,7 +370,7 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		return true;
 
 	if (!_enabled) {
-		petDisplayMessage(2, "The Succ-U-Bus is in Standby, or \"Off\" mode at present.");
+		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
 
@@ -394,10 +394,10 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 			break;
 		}
 
-		petDisplayMessage(2, "There is currently nothing in the tray to send.");
+		petDisplayMessage(2, NOTHING_IN_SUCCUBUS_TRAY);
 	} else {
 		_field19C = 0;
-		
+
 		CRoomFlags roomFlags = _roomFlags;
 		if (!pet->testRooms5(roomFlags) || getPassengerClass() > 0) {
 			roomFlags = pet->getSpecialRoomFlags("BilgeRoom");
@@ -458,7 +458,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	if (_field1D8 || !pet)
 		return true;
 	if (!_enabled) {
-		petDisplayMessage(2, "The Succ-U-Bus is in Standby, or \"Off\" mode at present.");
+		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return true;
 	}
 
@@ -489,7 +489,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 
 			playMovie(_startFrame6, _endFrame6, 0);
 			playMovie(_startFrame7, _endFrame7, 0);
-			petDisplayMessage(2, "There is currently nothing to deliver.");
+			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		} else {
 			startTalking(this, 230004, findView());
 
@@ -512,7 +512,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == _endFrame10) {
 		if (_startFrame11 >= 0)
 			playSound("z#30.wav", 100);
-		
+
 		if (_field15C) {
 			_field15C = false;
 			setVisible(false);

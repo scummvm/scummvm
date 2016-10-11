@@ -62,10 +62,8 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	typedef bool(*SelectTrackFn)(bool isVideo, int trackNumber);
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
-		SelectTrackFn trackFn = nullptr);
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -77,6 +75,7 @@ public:
 	bool isRewindable() const { return true; }
 	bool isSeekable() const;
 
+	const Graphics::Surface *decodeNextTransparency();
 protected:
 	// VideoDecoder API
 	void readNextPacket();
@@ -190,6 +189,7 @@ protected:
 
 		uint16 getWidth() const { return _bmInfo.width; }
 		uint16 getHeight() const { return _bmInfo.height; }
+		uint16 getBitCount() const { return _bmInfo.bitCount; }
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
@@ -287,7 +287,6 @@ protected:
 
 	int _videoTrackCounter, _audioTrackCounter;
 	Track *_lastAddedTrack;
-	SelectTrackFn _selectTrackFn;
 
 	void initCommon();
 
@@ -306,6 +305,14 @@ protected:
 
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
+
+	/**
+	 * Seek to a given frame.
+	 *
+	 * This only works when the video track(s) supports getFrameTime().
+	 * This calls seek() internally.
+	 */
+	virtual bool seekToFrame(uint frame);
 };
 
 } // End of namespace Video

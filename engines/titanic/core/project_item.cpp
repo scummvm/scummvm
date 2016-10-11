@@ -287,7 +287,7 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 		item->saveHeader(file, 0);
 		item->save(file, 1);
 		item->saveFooter(file, 0);
-	
+
 		CTreeItem *child = item->getFirstChild();
 		if (child) {
 			file->write("\n{\n", 3);
@@ -300,7 +300,7 @@ void CProjectItem::saveData(SimpleFile *file, CTreeItem *item) const {
 			file->write("\n{\n", 3);
 			file->writeQuotedString("ALONG");
 		}
-		
+
 		file->write("\n}\n", 3);
 		item = item->getNextSibling();
 	}

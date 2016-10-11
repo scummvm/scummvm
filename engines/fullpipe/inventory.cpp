@@ -94,6 +94,11 @@ Inventory2::~Inventory2() {
 }
 
 bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartially
+	for (uint i = 0; i < _inventoryItems.size(); i++)
+		delete _inventoryItems[i];
+
+	_inventoryItems.clear();
+
 	int numInvs = file.readUint32LE();
 
 	for (int i = 0; i < numInvs; i++) {
@@ -101,6 +106,17 @@ bool Inventory2::loadPartial(MfcArchive &file) { // Inventory2_SerializePartiall
 		t->itemId = file.readUint16LE();
 		t->count = file.readUint16LE();
 		_inventoryItems.push_back(t);
+	}
+
+	return true;
+}
+
+bool Inventory2::savePartial(MfcArchive &file) {
+	file.writeUint32LE(_inventoryItems.size());
+
+	for (uint i = 0; i < _inventoryItems.size(); i++) {
+		file.writeUint16LE(_inventoryItems[i]->itemId);
+		file.writeUint16LE(_inventoryItems[i]->count);
 	}
 
 	return true;

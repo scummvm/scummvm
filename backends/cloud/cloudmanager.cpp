@@ -45,6 +45,8 @@ const char *const CloudManager::kStoragePrefix = "storage_";
 CloudManager::CloudManager() : _currentStorageIndex(0), _activeStorage(nullptr) {}
 
 CloudManager::~CloudManager() {
+	g_system->getEventManager()->getEventDispatcher()->unregisterSource(this);
+
 	delete _activeStorage;
 	freeStorages();
 }
@@ -108,6 +110,8 @@ void CloudManager::init() {
 		_currentStorageIndex = ConfMan.getInt("current_storage", ConfMan.kCloudDomain);
 
 	loadStorage();
+
+	g_system->getEventManager()->getEventDispatcher()->registerSource(this, false);
 }
 
 void CloudManager::save() {
@@ -383,6 +387,10 @@ void CloudManager::setSyncTarget(GUI::CommandReceiver *target) const {
 		storage->setSyncTarget(target);
 }
 
+void CloudManager::showCloudDisabledIcon() {
+	_icon.show(CloudIcon::kDisabled, 3000);
+}
+
 ///// DownloadFolderRequest-related /////
 
 bool CloudManager::startDownload(Common::String remotePath, Common::String localPath) const {
@@ -451,6 +459,22 @@ Common::String CloudManager::getDownloadLocalDirectory() const {
 	if (storage)
 		return storage->getDownloadLocalDirectory();
 	return "";
+}
+
+bool CloudManager::pollEvent(Common::Event &event) {
+	if (_icon.needsUpdate()) {
+		if (_icon.getShownType() != CloudIcon::kDisabled) {
+			if (isWorking()) {
+				_icon.show(CloudIcon::kSyncing);
+			} else {
+				_icon.show(CloudIcon::kNone);
+			}
+		}
+
+		_icon.update();
+	}
+
+	return false;
 }
 
 } // End of namespace Cloud

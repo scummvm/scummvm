@@ -261,8 +261,7 @@ void sceneHandler06_buttonPush() {
 
 void sceneHandler06_showNextBall() {
 	if (g_vars->scene06_balls.size()) {
-		g_vars->scene06_currentBall = new StaticANIObject(g_vars->scene06_balls.front());
-		g_vars->scene06_balls.remove_at(0);
+		g_vars->scene06_currentBall = g_vars->scene06_balls.remove_at(0);
 
 		MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC6_SHOWNEXTBALL), 0, 1);
 
@@ -475,15 +474,11 @@ void sceneHandler06_catchBall() {
 }
 
 void sceneHandler06_checkBallTarget(int par) {
-	int pixel;
-
 	if (g_vars->scene06_ballY <= 475) {
-		if (g_vars->scene06_mumsy->getPixelAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY, &pixel)) {
-			if (pixel) {
-				chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
+		if (g_vars->scene06_mumsy->isPixelHitAtPos(g_vars->scene06_ballX, g_vars->scene06_ballY)) {
+			chainObjQueue(g_vars->scene06_mumsy, QU_MOM_JUMPBK, 0);
 
-				sceneHandler06_catchBall();
-			}
+			sceneHandler06_catchBall();
 		}
 	} else {
 		sceneHandler06_fallBall();

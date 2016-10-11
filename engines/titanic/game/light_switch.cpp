@@ -40,7 +40,7 @@ END_MESSAGE_MAP()
 
 bool CLightSwitch::_flag;
 
-CLightSwitch::CLightSwitch() : CBackground(), 
+CLightSwitch::CLightSwitch() : CBackground(),
 		_fieldE0(0), _fieldE4(0), _fieldE8(0) {
 }
 

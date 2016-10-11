@@ -267,7 +267,7 @@ void BaseObject::checkObject() {
 					break;
 				}
 				_frameNumber += 3;
-			
+
 			} else {
 				v -= 128;
 
@@ -306,7 +306,7 @@ void BaseObject::checkObject() {
 					}
 				} else if (IS_ROSE_TATTOO && v == 10) {
 					// Set delta for objects
-					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]), 
+					_delta = Common::Point(READ_LE_UINT16(&_sequences[_frameNumber + 1]),
 						READ_LE_UINT16(&_sequences[_frameNumber + 3]));
 					_noShapeSize = Common::Point(0, 0);
 					_frameNumber += 4;
@@ -644,7 +644,7 @@ void Sprite::clear() {
 void Sprite::setImageFrame() {
 	int frameNum = MAX(_frameNumber, 0);
 	int imageNumber = _walkSequences[_sequenceNumber][frameNum];
-	
+
 	if (IS_SERRATED_SCALPEL)
 		imageNumber = imageNumber + _walkSequences[_sequenceNumber][0] - 2;
 	else if (imageNumber > _maxFrames)
@@ -1014,7 +1014,7 @@ void Object::load(Common::SeekableReadStream &s, bool isRoseTattoo) {
 	_oldPosition.y = s.readSint16LE();
 	_oldSize.x = s.readUint16LE();
 	_oldSize.y = s.readUint16LE();
-	
+
 	_goto.x = s.readSint16LE();
 	_goto.y = s.readSint16LE();
 	if (!isRoseTattoo) {
@@ -1113,7 +1113,7 @@ void Object::load3DO(Common::SeekableReadStream &s) {
 	_oldPosition.y = s.readSint16BE();
 	_oldSize.x = s.readUint16BE();
 	_oldSize.y = s.readUint16BE();
-	
+
 	_goto.x = s.readSint16BE();
 	_goto.y = s.readSint16BE();
 	_goto.x = _goto.x * FIXED_INT_MULTIPLIER / 100;
@@ -1485,7 +1485,7 @@ void CAnim::load(Common::SeekableReadStream &s, bool isRoseTattoo, uint32 dataOf
 
 	_position.x = s.readSint16LE();
 	_position.y = s.readSint16LE();
-	
+
 	if (isRoseTattoo) {
 		_flags = s.readByte();
 		_scaleVal = s.readSint16LE();

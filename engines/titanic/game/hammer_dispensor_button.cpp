@@ -69,7 +69,7 @@ bool CHammerDispensorButton::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 
 bool CHammerDispensorButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	playSound("z#93.wav");
-	petDisplayMessage(1, "In case of emergency hammer requirement, poke with long stick.");
+	petDisplayMessage(1, POKE_WITH_LONG_STICK);
 	return true;
 }
 

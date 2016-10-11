@@ -20,17 +20,26 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "backends/platform/androidsdl/androidsdl-sdl.h"
 #include "backends/events/androidsdl/androidsdl-events.h"
 #include "backends/graphics/androidsdl/androidsdl-graphics.h"
 
 void OSystem_ANDROIDSDL::initBackend() {
 	// Create the backend custom managers
+
 	if (_eventSource == 0)
 		_eventSource = new AndroidSdlEventSource();
 
 	if (_graphicsManager == 0)
 		_graphicsManager = new AndroidSdlGraphicsManager(_eventSource, _window);
+
+	if (!ConfMan.hasKey("browser_lastpath"))
+		ConfMan.set("browser_lastpath", "/storage");
+
+	if (!ConfMan.hasKey("gfx_mode"))
+		ConfMan.set("gfx_mode", "2x");
 
 	// Call parent implementation of this method
 	OSystem_POSIX::initBackend();

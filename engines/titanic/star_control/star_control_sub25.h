@@ -35,7 +35,7 @@ public:
 	CStarControlSub26 _sub1;
 	CStarControlSub26 _sub2;
 public:
-	
+
 };
 
 } // End of namespace Titanic

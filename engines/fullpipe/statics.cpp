@@ -191,9 +191,9 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 		Movement *newmov;
 
 		if (src->_movements[i]->_currMovement) {
-			// WORKAROUND: Original uses weird construction here:
-			//	new Movement(getMovementById(src->getMovementIdById(mov->_id)), this);
-			newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
+			// This is weird code. Logically it should be
+			// newmov = new Movement(src->getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
+			newmov = new Movement(getMovementById(src->getMovementIdById(src->_movements[i]->_id)), this);
 			newmov->_id = src->_movements[i]->_id;
 		} else {
 			newmov = new Movement(src->_movements[i], 0, -1, this);
@@ -440,7 +440,7 @@ int StaticANIObject::getMovementIdById(int itemId) {
 
 		if (mov->_currMovement) {
 			if (mov->_id == itemId)
-				return mov->_id;
+				return mov->_currMovement->_id;
 
 			if (mov->_currMovement->_id == itemId)
 				return mov->_id;
@@ -458,7 +458,11 @@ Movement *StaticANIObject::getMovementByName(char *name) {
 	return 0;
 }
 
-bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
+bool StaticANIObject::isPixelHitAtPos(int x, int y) {
+	return getPixelAtPos(x, y, 0, true);
+}
+
+bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	bool res = false;
 	Picture *pic;
 
@@ -504,6 +508,10 @@ bool StaticANIObject::getPixelAtPos(int x, int y, int *pixel) {
 	y = pic->_y;
 	pic->_x = 0;
 	pic->_y = 0;
+
+	if (hitOnly)
+		return pic->isPixelHitAtPos(xtarget, ytarget);
+
 	if (pic->isPixelHitAtPos(xtarget, ytarget)) {
 		*pixel = pic->getPixelAtPos(xtarget, ytarget);
 
@@ -529,11 +537,6 @@ void Movement::draw(bool flipFlag, int angle) {
 
 	if (_currDynamicPhase->getPaletteData())
 		g_fp->_globalPalette = _currDynamicPhase->getPaletteData();
-
-	if (_currDynamicPhase->getAlpha() < 0xFF) {
-		warning("Movement::draw: alpha < 0xff: %d", _currDynamicPhase->getAlpha());
-		//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, _currDynamicPhase->getAlpha());
-	}
 
 	Bitmap *bmp;
 	if (_currMovement) {
@@ -1472,8 +1475,13 @@ bool Statics::load(MfcArchive &file) {
 void Statics::init() {
 	Picture::init();
 
-	if (_staticsId & 0x4000)
-		_bitmap->reverseImage();
+	if (_staticsId & 0x4000) {
+		Bitmap *reversed = _bitmap->reverseImage();
+		freePixelData();
+		// TODO: properly dispose old _bitmap
+		_bitmap = reversed;
+		// _data = ... // useless?
+	}
 }
 
 Common::Point *Statics::getSomeXY(Common::Point &p) {
@@ -1885,11 +1893,11 @@ int Movement::calcDuration() {
 
 	if (_currMovement)
 		for (uint i = 0; i < _currMovement->_dynamicPhases.size(); i++) {
-			res += _currMovement->_dynamicPhases[i]->_initialCountdown;
+			res += _currMovement->_dynamicPhases[i]->_initialCountdown + 1;
 		}
 	else
 		for (uint i = 0; i < _dynamicPhases.size(); i++) {
-			res += _dynamicPhases[i]->_initialCountdown;
+			res += _dynamicPhases[i]->_initialCountdown + 1;
 		}
 
 	return res;
@@ -1941,12 +1949,12 @@ DynamicPhase *Movement::getDynamicPhaseByIndex(int idx) {
 
 void Movement::loadPixelData() {
 	Movement *mov = this;
-	for (Movement *i = _currMovement; i; i = i->_currMovement)
-		mov = i;
+	while (mov->_currMovement)
+		mov = mov->_currMovement;
 
-	for (uint i = 0; i < _dynamicPhases.size(); i++) {
-		if ((Statics *)_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
-			_dynamicPhases[i]->getPixelData();
+	for (uint i = 0; i < mov->_dynamicPhases.size(); i++) {
+		if ((Statics *)mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
+			mov->_dynamicPhases[i]->getPixelData();
 	}
 
 	if (!(mov->_staticsObj1->_staticsId & 0x4000))
@@ -1971,8 +1979,8 @@ void Movement::removeFirstPhase() {
 			_dynamicPhases.remove_at(0);
 
 			for (uint i = 0; i < _dynamicPhases.size(); i++) {
-				_framePosOffsets[i - 1]->x = _framePosOffsets[i]->x;
-				_framePosOffsets[i - 1]->y = _framePosOffsets[i]->y;
+				_framePosOffsets[i]->x = _framePosOffsets[i + 1]->x;
+				_framePosOffsets[i]->y = _framePosOffsets[i + 1]->y;
 			}
 		}
 		_currDynamicPhaseIndex--;

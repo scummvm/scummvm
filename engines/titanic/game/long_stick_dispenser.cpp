@@ -22,6 +22,7 @@
 
 #include "titanic/game/long_stick_dispenser.h"
 #include "titanic/core/project_item.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -61,8 +62,8 @@ bool CLongStickDispenser::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 		_fieldC0 = 1;
 		loadFrame(19);
 	} else if (_fieldC0) {
-		playSound("z#63.wav");
-		petDisplayMessage(1, "'This glass is totally and utterly unbreakable.");
+		playSound(g_vm->isGerman() ? "z#594.wav" : "z#63.wav");
+		petDisplayMessage(1, GLASS_IS_UNBREAKABLE);
 	}
 
 	return true;
@@ -92,11 +93,10 @@ bool CLongStickDispenser::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		switch (_fieldBC) {
 		case 0:
-			petDisplayMessage(1, "For emergency long stick, smash glass.");
+			petDisplayMessage(1, FOR_STICK_BREAK_GLASS);
 			break;
 		case 1:
-			petDisplayMessage(1, "This dispenser has suddenly been fitted with unbreakable glass "
-				"to prevent unseemly hoarding of sticks.");
+			petDisplayMessage(1, DISPENSOR_HAS_UNBREAKABLE_GLASS);
 			break;
 		default:
 			break;

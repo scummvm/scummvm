@@ -45,7 +45,7 @@ bool CPetStarfield::reset() {
 		_btnSetDest.setup(MODE_UNSELECTED, "3PetSetDestin", _petControl);
 		_btnSetDest.setup(MODE_SELECTED, "3PetSetDestin1", _petControl);
 		_imgStarCtrl.setup(MODE_UNSELECTED, "3PetStarCtrl", _petControl);
-		
+
 		_leds[0].setup(MODE_UNSELECTED, "LEDOff1", _petControl);
 		_leds[1].setup(MODE_UNSELECTED, "LEDOn1", _petControl);
 		_leds[2].setup(MODE_UNSELECTED, "LEDOff2", _petControl);
@@ -91,7 +91,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			CPETPhotoOnOffMsg photoMsg;
 			photoMsg.execute(_petControl->_remoteTarget);
 		} else {
-			_petControl->displayMessage("Please supply Galactic reference material.");
+			_petControl->displayMessage(SUPPLY_GALACTIC_REFERENCE);
 		}
 	} else if (!_btnSetDest.MouseButtonDownMsg(msg->_mousePos)) {
 		return elementsMouseDown(msg);
@@ -106,7 +106,7 @@ bool CPetStarfield::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 	if (_petControl) {
 		CStarControl *starControl = _petControl->getStarControl();
-		
+
 		if (starControl && starControl->canSetStarDestination()) {
 			CPETSetStarDestinationMsg starfieldMsg;
 			starfieldMsg.execute(_petControl->_remoteTarget);

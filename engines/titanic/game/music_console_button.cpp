@@ -56,7 +56,7 @@ bool CMusicConsoleButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		CMusicHasStartedMsg startedMsg;
 		startedMsg.execute("Music Room Phonograph");
-	
+
 		if (CMusicRoom::_musicHandler->checkSound(1)
 				&& CMusicRoom::_musicHandler->checkSound(2)
 				&& CMusicRoom::_musicHandler->checkSound(3)) {
@@ -82,7 +82,7 @@ bool CMusicConsoleButton::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CMusicConsoleButton::SetMusicControlsMsg(CSetMusicControlsMsg *msg) {
 	CMusicRoom *musicRoom = getMusicRoom();
 	CQueryMusicControlSettingMsg queryMsg;
-	
+
 	queryMsg.execute("Bells Mute Control");
 	musicRoom->setMuteControl(BELLS, queryMsg._value == 1 ? 1 : 0);
 	queryMsg.execute("Bells Pitch Control");

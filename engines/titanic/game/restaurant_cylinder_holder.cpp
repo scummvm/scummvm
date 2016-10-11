@@ -121,7 +121,7 @@ bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 bool CRestaurantCylinderHolder::QueryCylinderHolderMsg(CQueryCylinderHolderMsg *msg) {
 	CNamedItem *cylinder = findByName("Phonograph Cylinder", true);
 
-	msg->_value1 = _field118;	
+	msg->_value1 = _field118;
 	if (cylinder) {
 		msg->_value2 = 1;
 		msg->_target = cylinder;

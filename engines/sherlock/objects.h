@@ -92,7 +92,7 @@ enum {
 #define GOTO_CODE 228
 #define TALK_SEQ_CODE 252		// Code specifying start of talk sequence frames in a Sequence
 #define TALK_LISTEN_CODE 251	// Code specifying start of talk listen frames in a Sequence
-#define ALLOW_TALK_CODE 250 
+#define ALLOW_TALK_CODE 250
 
 #define UPPER_LIMIT 0
 #define LOWER_LIMIT (IS_SERRATED_SCALPEL ? CONTROLS_Y : SHERLOCK_SCREEN_HEIGHT)
@@ -124,7 +124,7 @@ public:
 
 	PositionFacing() : Point32(), _facing(0) {}
 	PositionFacing(int xp, int yp, int theFacing) : Point32(xp, yp), _facing(theFacing) {}
-	PositionFacing &operator=(const Point32 &pt) { 
+	PositionFacing &operator=(const Point32 &pt) {
 		x = pt.x; y = pt.y;
 		return *this;
 	}

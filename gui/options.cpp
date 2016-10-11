@@ -238,11 +238,10 @@ void OptionsDialog::open() {
 #ifdef GUI_ONLY_FULLSCREEN
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
-		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
-		_aspectCheckbox->setEnabled(false);
 #else // !GUI_ONLY_FULLSCREEN
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
+#endif // GUI_ONLY_FULLSCREEN
 
 		// Aspect ratio setting
 		if (_guioptions.contains(GUIO_NOASPECT)) {
@@ -252,7 +251,6 @@ void OptionsDialog::open() {
 			_aspectCheckbox->setEnabled(true);
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
-#endif // GUI_ONLY_FULLSCREEN
 
 	}
 
@@ -1308,10 +1306,10 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_storageUsernameDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameDesc", _("Username:"), _("Username used by this storage"));
 	_storageUsername = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsernameLabel", "<none>");
 
-	_storageUsedSpaceDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saves on this storage"));
+	_storageUsedSpaceDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceDesc", _("Used space:"), _("Space used by ScummVM's saved games on this storage"));
 	_storageUsedSpace = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageUsedSpaceLabel", "0 bytes");
 
-	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When the last saves sync for this storage occured"));
+	_storageLastSyncDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncDesc", _("Last sync time:"), _("When the last saved games sync for this storage occured"));
 	_storageLastSync = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StorageLastSyncLabel", "<never>");
 
 	_storageConnectButton = new ButtonWidget(container, "GlobalOptions_Cloud_Container.ConnectButton", _("Connect"), _("Open wizard dialog to connect your cloud storage account"), kConfigureStorageCmd);

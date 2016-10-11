@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
-"PO-Revision-Date: 2016-02-21 00:43+0100\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
+"PO-Revision-Date: 2016-10-09 13:57+0200\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language: Galego\n"
@@ -59,7 +59,7 @@ msgstr "Arriba"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -76,9 +76,8 @@ msgid "Choose"
 msgstr "Elixir"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Selecciona un directorio con datos de xogo"
+msgstr "Selecciona un directorio para descargar os datos de xogo"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -86,35 +85,37 @@ msgstr "Selecciona un directorio con datos de xogo"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "De: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Para: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancelar descarga"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Cancelar descarga"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Parece que a conexión é limitada. Seguro que queres descargar ficheiros con "
+"ela?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -126,7 +127,7 @@ msgstr "Si"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -144,6 +145,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Non se pode crear un directorio para descargar. O directorio especificado "
+"ten un ficheiro co mesmo nome."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -171,16 +174,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" xa existe no directorio especificado.\n"
+"Seguro que queres descargar os ficheiros a ese directorio?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Descargado: %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Análise finalizada!"
+msgstr "Velocidade de descarga: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -404,9 +409,12 @@ msgstr "Selecciona un directorio para ficheiros de gardado"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
+"A característica de sincronización de partidas gardadas non funciona con "
+"directorios non predeterminados. Para sincronizar as partidas gardadas, "
+"emprega o directorio predeterminado."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -694,7 +702,7 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Aínda non se pode empregar este directorio. A descarga non rematou!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -842,7 +850,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Modos de interpolación de cores compatibles con algúns xogos"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Pantalla completa"
 
@@ -1130,36 +1138,36 @@ msgstr "Idioma da interfaz de ScummVM"
 
 #: gui/options.cpp:1264
 msgid "Update check:"
-msgstr ""
+msgstr "Comprobación de actualizacións:"
 
 #: gui/options.cpp:1264
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Frecuencia de comprobación das actualizacións de ScummVM"
 
 #: gui/options.cpp:1276
 msgid "Check now"
-msgstr ""
+msgstr "Comprobar agora"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Nube"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Nube"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Almacenamento:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Almacenamento na nube activo"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<ningún>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1167,101 +1175,102 @@ msgstr "Nome de usuario:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Nome de usuario empregado por este almacenamento"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Espazo empregado:"
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
+msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
+"Espazo empregado polas partidas gardadas de ScummVM neste almacenamento."
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Última sincronización:"
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
+msgid "When the last saved games sync for this storage occured"
 msgstr ""
+"O momento da última sincronización das partidas gardadas neste almacenamento."
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Conectar"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
+"Abre o diálogo do asistente para conectar coa túa conta de almacenamento na "
+"nube."
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Actualizar"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
+"Actualiza a información do almacenamento na nube actual (nome de usuario e "
+"espazo empregado)."
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Abaixo"
+msgstr "Descargar"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Abre o diálogo do xestor de descargas."
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Executar servidor"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Executar servidor web local"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Erro de execución do xogo:"
+msgstr "Non se está a executar"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Camiño adicional:"
+msgstr "Camiño de /root/:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Especifica o lugar dos ficheiros de gardado"
+msgstr "Especifica o directorio de acceso do xestor de ficheiros."
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Camiño adicional:"
+msgstr "Camiño de /root/:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Servidor:"
+msgstr "Porto do servidor:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"O porto empregado polo servidor.\n"
+"Autorización non dispoñible con portos non predeterminados."
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Debes reiniciar ScummVM para que os cambios teñan efecto."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Erro ao gardar a partida"
+msgstr "Erro ao cambiar o almacenamento na nube!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Xa está activo outro almacenamento na nube."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1280,9 +1289,8 @@ msgid "Select directory for plugins"
 msgstr "Seleccionar directorio para complementos"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Seleccionar directorio para ficheiros adicionais"
+msgstr "Seleccionar directorio para /root/ de xestor de ficheiros"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1295,31 +1303,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bytes"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<agora mesmo>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Nunca"
+msgstr "<nunca>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Servidor:"
+msgstr "Deter servidor"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Deter servidor web local"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Erro ao solicitar.\n"
+"Comproba a túa conexión á Internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1393,9 +1401,8 @@ msgid "Unknown Author"
 msgstr "Autor descoñecido"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM non foi quen de abrir o directorio!"
+msgstr "ScummVM non foi quen de acceder ao directorio!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1450,7 +1457,7 @@ msgid "New Save"
 msgstr "Novo ficheiro"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Crea un novo ficheiro de gardado"
 
 #: gui/saveload-dialog.cpp:1053
@@ -1462,75 +1469,76 @@ msgstr "Nome:"
 msgid "Enter a description for slot %d:"
 msgstr "Introduce unha descrición para o espazo %d:"
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Asistente de conexión ao almacenamento de %s"
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Ir á seguinte URL:"
+
+#: gui/storagewizarddialog.cpp:61
+msgid "Obtain the code from the storage, enter it"
+msgstr "Obtén o código do almacenamento."
 
 #: gui/storagewizarddialog.cpp:62
-msgid "Obtain the code from the storage, enter it"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "Escríbeo neste campo e preme Conectar:"
+
+#: gui/storagewizarddialog.cpp:69
+msgid "Open URL"
+msgstr "Abrir URL"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
-msgid "Open URL"
-msgstr "OpenGL"
-
-#: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Pegar"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Pega o contido do portapapeis nos campos."
+
+#: gui/storagewizarddialog.cpp:78
+msgid "You will be directed to ScummVM's page where"
+msgstr "Irás á páxina de ScummVM para facilitar"
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You will be directed to ScummVM's page where"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:80
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "os permisos de acceso ao teu almacenamento."
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Hai outro almacenamento activo. Seguro que queres interrompelo?"
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Agarda a que finalice o almacenamento actual e téntao de novo."
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "O campo %s ten un erro."
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Os campos %s teñen erros."
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Todo correcto!"
 
-#: gui/storagewizarddialog.cpp:202
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Código non válido"
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Erro ao abrir a URL!\n"
+"Por favor, accede a esta páxina manualmente."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1568,19 +1576,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM agora ofrece a busca automática\n"
+"de actualizacións. Require acceso á Internet.\n"
+"\n"
+"Queres activar esta característica?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Podes actívalo no diálogo de opción da pestana Misc.)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Buscar actualizacións..."
+msgstr "Buscar actualizacións automaticamente"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Continuar"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
@@ -1711,20 +1722,19 @@ msgstr "Hercules ámbar"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Diariamente"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Semanalmente"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Mensualmente"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Limpar valor"
+msgstr "<Valor erróneo>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -1778,7 +1788,8 @@ msgstr "~V~olver ao Iniciador"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1795,8 +1806,8 @@ msgstr "Gardar partida:"
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1891,8 +1902,8 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "Ollo: o xogo que vas iniciar non é aínda totalmente compatible con ScummVM. "
 "Por iso, talvez sexa inestable e os ficheiros de gardado talvez non "
@@ -2004,19 +2015,20 @@ msgid "C64 Audio Emulator"
 msgstr "Emulador de C64 Audio"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
-msgid "Saves sync complete."
-msgstr "Análise finalizada!"
+msgid "Saved games sync complete."
+msgstr "Sincronización de partidas gardadas completada."
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
-msgstr ""
+msgid "Saved games sync was cancelled."
+msgstr "Cancelouse a sincronización de partidas gardadas."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Erro ao sincronizar as partidas gardadas.\n"
+"Comproba a túa conexión á Internet."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2024,16 +2036,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Descarga completada.\n"
+"Erro ao descargar %u ficheiros."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Análise finalizada!"
+msgstr "Descarga completada."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Cargar ficheiro"
+msgstr "Erro ao descargar."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2136,11 +2148,11 @@ msgstr "O modo Autoarrastrar está"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Arrastra tres dedos á dereita para cambiar o estado."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (Sen filtraxe)"
 
@@ -2155,19 +2167,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sen escala)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Corrección de proporción activada"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Corrección de proporción desactivada"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Filtro de gráficos activo:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Modo en ventá"
 
@@ -2693,22 +2705,20 @@ msgid "Check for Updates..."
 msgstr "Buscar actualizacións..."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Modo accesible para daltonismo"
+msgstr "Modo de cor"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Empregar gráficos en cor"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Liñas de varrido"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Mostrar etiquetas"
+msgstr "Mostra liñas de varrido."
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2723,7 +2733,7 @@ msgstr "Empregar pantallas orixinais de gardado e carga"
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
-"Empregar as pantallas orixinais de gardado e carga, no canto das de ScummVM"
+"Emprega as pantallas orixinais de gardado e carga, no canto das de ScummVM."
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2734,8 +2744,8 @@ msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Empregar unha paleta alternativa, común para todos os xogos de Amiga (uso "
-"antigo)"
+"Emprega unha paleta alternativa, común para todos os xogos de Amiga (uso "
+"antigo)."
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -2749,29 +2759,31 @@ msgstr ""
 "os menús do xogo."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules verde"
+msgstr "Empregar fonte Hercules de alta resolución"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "Emprega a fonte Hércules de alta resolución se está dispoñible."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pausar ao introducir comandos"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Mostra unha ventá de comandos e pausa o xogo (como en SCI), no canto de "
+"facelo en tempo real."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2781,7 +2793,8 @@ msgstr "Restaurar xogo:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2837,7 +2850,7 @@ msgstr "Activa o modo accesible para daltonismo de xeito predeterminado."
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3016,11 +3029,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "Atopouse o seguinte ficheiro de gardado orixinal:\n"
@@ -3033,7 +3046,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "Atopouse un ficheiro de gardado no espazo %d. Sobreescribir?\n"
@@ -3042,8 +3055,8 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
@@ -3058,11 +3071,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Reproducir o filme de imaxes aéreas de Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "O filme de imaxes aéreas de Myst non se reproduciu co motor orixinal."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -3079,18 +3092,20 @@ msgid "~D~rop Page"
 msgstr "~D~eixar folla"
 
 #: engines/mohawk/dialogs.cpp:188
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "Mo~s~trar mapa"
+msgstr "Mostrar ~m~apa"
 
 #: engines/mohawk/dialogs.cpp:194
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "~M~enú principal"
+msgstr "Menú ~p~rincipal"
 
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "Efecto de ~a~uga activado"
+
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Xogo en pausa. Pulsa calquera tecla para continuar."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3229,13 +3244,12 @@ msgid "Enable high resolution graphics/content"
 msgstr "Activa os gráficos ou o contido de alta resolución."
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Activar modo Roland GS"
+msgstr "Activar vídeo con bordos"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Debuxa liñas negras sobre os vídeos para aumentar a nitidez aparente."
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3288,13 +3302,12 @@ msgstr ""
 "normais."
 
 #: engines/scumm/detection.cpp:1341
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Mostrar etiquetas"
+msgstr "Mostrar liña de obsecto"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Mostra os nomes dos obxectos na parte inferior da pantalla"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -4103,7 +4116,7 @@ msgstr "Non se atopou a secuencia %s"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -4120,8 +4133,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Xa existe unha partida con ese nome!\n"
 "Queres conservar a vella (%s) ou a nova (%s)?\n"
@@ -4155,12 +4168,13 @@ msgstr "Mostra as etiquetas dos obxectos ao apuntar co rato."
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Empregar voces en inglés"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
+"Emprega as voces en inglés no canto de alemán para o resto dos idiomas."
 
 #: engines/teenagent/resources.cpp:96
 msgid ""

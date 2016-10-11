@@ -94,7 +94,7 @@ public:
 	 * Saves the data for the glyph
 	 */
 	virtual void saveGlyph(SimpleFile *file, int indent);
-	
+
 	virtual bool proc33(CPetGlyph *glyph);
 
 	/**
@@ -125,12 +125,12 @@ public:
 	 * Returns true if the room is either currently or previously assigned
 	 */
 	bool isAssigned() const { return _mode != RGM_UNASSIGNED; }
-	
+
 	/**
 	 * Returns true if the room is the one currently assigned to the player
 	 */
 	bool isCurrentlyAssigned() const { return _mode == RGM_ASSIGNED_ROOM; }
-	
+
 	/**
 	 * Returns true if the room was previously assigned to the player
 	 */

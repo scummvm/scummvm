@@ -34,12 +34,22 @@ enum {
 	_K_FILE_MODE_CREATE = 2
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+	SCI_MAX_SAVENAME_LENGTH = 36, ///< Maximum length of a savegame name (including terminator character).
+	MAX_SAVEGAME_NR = 20 ///< Maximum number of savegames
 };
+
+#ifdef ENABLE_SCI32
+enum {
+	kAutoSaveId = 0,  ///< The save game slot number for autosaves
+	kNewGameId = 999, ///< The save game slot number for a "new game" save
+
+	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
+	// reserved for autosave, so non-autosave games get their IDs shifted up
+	// when saving or restoring, and shifted down when enumerating save games
+	kSaveIdShift = 1
+};
+#endif
 
 #define VIRTUALFILE_HANDLE_START 32000
 #define VIRTUALFILE_HANDLE_SCI32SAVE 32100
@@ -53,6 +63,14 @@ struct SavegameDesc {
 	int time;
 	int version;
 	char name[SCI_MAX_SAVENAME_LENGTH];
+	Common::String gameVersion;
+#ifdef ENABLE_SCI32
+	// Used by Shivers 1
+	uint16 lowScore;
+	uint16 highScore;
+	// Used by MGDX
+	uint8 avatarId;
+#endif
 };
 
 class FileHandle {

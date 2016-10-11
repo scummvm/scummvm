@@ -36,6 +36,8 @@ public:
 
 	virtual bool displayLogFile();
 
+	virtual bool openUrl(const Common::String &url);
+
 protected:
 	/**
 	 * The path of the currently open log file, if any.

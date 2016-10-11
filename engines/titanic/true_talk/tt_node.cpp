@@ -78,7 +78,7 @@ TTnode *TTnode::getHead() {
 TTnode *TTnode::getTail() {
 	if (_nextP == nullptr)
 		return this;
-	
+
 	TTnode *node = _nextP;
 	while (node->_nextP)
 		node = node->_nextP;

@@ -23,6 +23,7 @@
 #include "graphics/font.h"
 #include "graphics/primitives.h"
 #include "common/events.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "image/bmp.h"
@@ -67,7 +68,7 @@ MacWindow::~MacWindow() {
 }
 
 const Font *MacWindow::getTitleFont() {
-	return _wm->getFont("Chicago-12", FontManager::kBigGUIFont);
+	return _wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 }
 
 void MacWindow::setActive(bool active) {
@@ -276,7 +277,7 @@ void MacWindow::drawSimpleBorder(ManagedSurface *g) {
 
 	if (drawTitle) {
 		const Graphics::Font *font = getTitleFont();
-		int yOff = _wm->hasBuiltInFonts() ? 3 : 1;
+		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
 
 		int w = font->getStringWidth(_title) + 10;
 		int maxWidth = width - size * 2 - 7;

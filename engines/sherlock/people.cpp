@@ -244,7 +244,7 @@ bool People::freeWalk() {
 		if (_data[idx]->_walkLoaded) {
 			delete _data[idx]->_images;
 			_data[idx]->_images = nullptr;
-			
+
 			_data[idx]->_walkLoaded = false;
 			result = true;
 		}

@@ -31,15 +31,11 @@
 #include "titanic/support/movie.h"
 #include "titanic/support/movie_range_info.h"
 #include "titanic/support/rect.h"
+#include "titanic/support/transparency_surface.h"
 #include "titanic/core/list.h"
 #include "titanic/core/resource_key.h"
 
 namespace Titanic {
-
-enum TransparencyMode {
-	TRANS_MASK0 = 0, TRANS_MASK255 = 1, TRANS_ALPHA0 = 2,
-	TRANS_ALPHA255 = 3, TRANS_DEFAULT = 4
-};
 
 class CScreenManager;
 class CJPEGDecode;
@@ -49,23 +45,46 @@ class CVideoSurface : public ListItem {
 	friend class CJPEGDecode;
 	friend class CTargaDecode;
 private:
+	static byte _palette1[32][32];
+	static byte _palette2[32][32];
+
+	/**
+	 * Setup the shading palettes
+	 */
+	static void setupPalette(byte palette[32][32], byte val);
+public:
+	/**
+	 * Setup statics
+	 */
+	static void setup() {
+		setupPalette(_palette1, 0xff);
+	}
+private:
 	/**
 	 * Calculates blitting bounds
 	 */
 	void clipBounds(Rect &srcRect, Rect &destRect, CVideoSurface *srcSurface,
 		const Rect *subRect = nullptr, const Point *destPos = nullptr);
 
-	void blitRect1(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void blitRect2(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
-	void movieBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+	/**
+	 * Copies a rect from a given source surface
+	 */
+	void blitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+
+	/**
+	 * Copies a rect from a given source surface and draws it vertically flipped
+	 */
+	void flippedBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src);
+
+	void transBlitRect(const Rect &srcRect, const Rect &destRect, CVideoSurface *src, bool flipFlag);
 protected:
 	static int _videoSurfaceCounter;
 protected:
 	CScreenManager *_screenManager;
 	Graphics::ManagedSurface *_rawSurface;
 	bool _pendingLoad;
-	Graphics::ManagedSurface *_movieFrameSurface;
-	DisposeAfterUse::Flag _freeMovieSurface;
+	Graphics::ManagedSurface *_transparencySurface;
+	DisposeAfterUse::Flag _freeTransparencySurface;
 	int _videoSurfaceNum;
 	bool _hasFrame;
 	int _lockCount;
@@ -73,7 +92,7 @@ public:
 	CMovie *_movie;
 	DirectDrawSurface *_ddSurface;
 	bool _fastBlitFlag;
-	bool _transBlitFlag;
+	bool _flipVertically;
 	CResourceKey _resourceKey;
 	TransparencyMode _transparencyMode;
 public:
@@ -186,11 +205,6 @@ public:
 	virtual void setPixel(const Point &pt, uint pixel) = 0;
 
 	/**
-	 * Change a pixel
-	 */
-	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true) = 0;
-
-	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors() = 0;
@@ -270,9 +284,9 @@ public:
 	virtual bool hasFrame();
 
 	/**
-	 * Duplicates movie frame surface
+	 * Duplicates movie transparency surface
 	 */
-	virtual Graphics::ManagedSurface *dupMovieFrame() const = 0;
+	virtual Graphics::ManagedSurface *dupMovieTransparency() const = 0;
 
 	/**
 	 * Frees the underlying surface
@@ -295,14 +309,16 @@ public:
 	void blitFrom(const Point &destPos, const Graphics::Surface *src);
 
 	/**
-	 * Sets the movie frame surface containing frame data from an active movie
+	 * Sets a raw surface to use as a transparency mask for the surface
 	 */
-	void setMovieFrameSurface(Graphics::ManagedSurface *frameSurface) { _movieFrameSurface = frameSurface; }
+	void setTransparencySurface(Graphics::ManagedSurface *surface) { _transparencySurface = surface; }
 
 	/**
-	 * Get the previously set movie frame surface
+	 * Get the previously set transparency mask surface
 	 */
-	Graphics::ManagedSurface *getMovieFrameSurface() const { return _movieFrameSurface; }
+	const Graphics::Surface *getTransparencySurface() const {
+		return _transparencySurface ? &_transparencySurface->rawSurface() : nullptr;
+	}
 
 	/**
 	 * Get the pixels associated with the surface. Only valid when the
@@ -320,26 +336,23 @@ public:
 	 * Returns the transparent color
 	 */
 	uint getTransparencyColor();
+
+	/**
+	 * Copies a pixel, handling transparency
+	 * @param destP		Dest pointer to 16-bit pixel
+	 * @param srcP		Source pointer to 16-bit pixel
+	 * @param alpha		Alpha (0-31). At 0, it's completely opaque,
+	 *	and overwrites the dest pixel. Through to 31, which is completely
+	 *	transparent, and ignores the source pixel.
+	 * @param srcFormat	The source surface format
+	 * @param isAlpha	If true, has alpha channel
+	 */
+	void copyPixel(uint16 *destP, const uint16 *srcP, byte alpha,
+		const Graphics::PixelFormat &srcFormat, bool isAlpha);
 };
 
 class OSVideoSurface : public CVideoSurface {
 	friend class OSMovie;
-private:
-	static byte _palette1[32][32];
-	static byte _palette2[32][32];
-
-	/**
-	 * Setup the shading palettes
-	 */
-	static void setupPalette(byte palette[32][32], byte val);
-public:
-	/**
-	 * Setup statics
-	 */
-	static void setup() {
-		setupPalette(_palette1, 0xff);
-		setupPalette(_palette2, 0xe0);
-	}
 public:
 	OSVideoSurface(CScreenManager *screenManager, DirectDrawSurface *surface);
 	OSVideoSurface(CScreenManager *screenManager, const CResourceKey &key, bool flag = false);
@@ -437,11 +450,6 @@ public:
 	virtual void setPixel(const Point &pt, uint pixel);
 
 	/**
-	 * Change a pixel
-	 */
-	virtual void changePixel(uint16 *pixelP, uint16 *color, byte srcVal, bool remapFlag = true);
-
-	/**
 	 * Shifts the colors of the surface.. maybe greys it out?
 	 */
 	virtual void shiftColors();
@@ -516,10 +524,9 @@ public:
 	virtual void transPixelate();
 
 	/**
-	 * Duplicates movie frame surface
+	 * Duplicates movie transparency surface
 	 */
-	virtual Graphics::ManagedSurface *dupMovieFrame() const;
-
+	virtual Graphics::ManagedSurface *dupMovieTransparency() const;
 
 	/**
 	 * Frees the underlying surface

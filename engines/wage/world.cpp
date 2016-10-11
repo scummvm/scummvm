@@ -46,6 +46,7 @@
  */
 
 #include "common/file.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
@@ -203,8 +204,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
 			scene->_textBounds = readRect(res);
-			scene->_fontType = res->readUint16BE();
-			scene->_fontSize = res->readUint16BE();
+			int fontType = res->readUint16BE();
+			int fontSize = res->readUint16BE();
+			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::kMacFontRegular, Graphics::FontManager::kConsoleFont);
 
 			Common::String text;
 			while (res->pos() < res->size()) {

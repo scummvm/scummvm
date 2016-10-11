@@ -64,7 +64,7 @@ enum TattooSequences {
 	TALK_UPLEFT		= 21,
 
 	// NPC Listen Sequence Numbers
-	LISTEN_UPRIGHT	= 22,      
+	LISTEN_UPRIGHT	= 22,
 	LISTEN_RIGHT		= 23,
 	LISTEN_DOWNRIGHT	= 24,
 	LISTEN_DOWNLEFT	= 25,
@@ -160,7 +160,7 @@ public:
 	 * This means that the index must be decremented by 3
 	 * 2) The NPC was in route to a position
 	 * He must be set to walk to that position again. This is done by moving the path index
-	 * so that it points to the code that set the NPC walking there in the first place. 
+	 * so that it points to the code that set the NPC walking there in the first place.
 	 * The regular calls to updateNPC will handle the rest
 	 */
 	void pullNPCPath();
@@ -262,10 +262,10 @@ public:
 	virtual const Common::Point restrictToZone(int zoneId, const Common::Point &destPos);
 
 	/**
-	 * If the specified speaker is a background object, it will set it so that it uses 
-	 * the Listen Sequence (specified by the sequence number). If the current sequence 
-	 * has an Allow Talk Code in it, the _gotoSeq field will be set so that the object 
-	 * begins listening as soon as it hits the Allow Talk Code. If there is no Abort Code, 
+	 * If the specified speaker is a background object, it will set it so that it uses
+	 * the Listen Sequence (specified by the sequence number). If the current sequence
+	 * has an Allow Talk Code in it, the _gotoSeq field will be set so that the object
+	 * begins listening as soon as it hits the Allow Talk Code. If there is no Abort Code,
 	 * the Listen Sequence will begin immediately.
 	 * @param speaker		Who is speaking
 	 * @param sequenceNum	Which listen sequence to use

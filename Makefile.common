@@ -165,6 +165,11 @@ VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
+ifdef AMIGAOS
+# Amiga needs date in specific format for the version cookie
+AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
 
 ######################################################################
 # Get git's working copy information

@@ -1397,10 +1397,8 @@ static reg_t allocateOutputArray(SegManager *segMan, int size) {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SciArray<reg_t> *array = segMan->allocateArray(&addr);
+		SciArray *array = segMan->allocateArray(kArrayTypeInt16, size * 2, &addr);
 		assert(array);
-		array->setType(0);
-		array->setSize(size * 2);
 		return addr;
 	}
 #endif

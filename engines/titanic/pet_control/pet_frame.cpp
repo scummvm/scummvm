@@ -97,7 +97,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 		// Set the bounds of the individual elements
 		_background.setBounds(Rect(20, 350, 620, 480));
 		_modeBackground.setBounds(Rect(590, 365, 611, 467));
-		
+
 		// Squares used for holding glyphs in various tabs
 		Rect r(35, 373, 91, 429);
 		for (int idx = 0, xp = 0; idx < TOTAL_GLYPHS; ++idx, xp += 70) {
@@ -113,7 +113,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 			_modeButtons[idx].translate(4, YLIST[idx]);
 		}
 		_modeButtons[PET_AREAS[0]].setMode(MODE_SELECTED);
-		
+
 		const int XLIST[] = { 73, 54, 85, 109, 38, 71 };
 		for (int idx = 0; idx < 6; ++idx) {
 			_titles[idx].setBounds(Rect(0, 0, 110, 11));
@@ -126,7 +126,7 @@ bool CPetFrame::setPetControl(CPetControl *petControl) {
 
 void CPetFrame::setArea(PetArea newArea) {
 	resetArea();
-	if (newArea < PET_MESSAGE)
+	if (newArea < PET_TRANSLATION)
 		_modeButtons[PET_AREAS[newArea]].setMode(MODE_SELECTED);
 }
 

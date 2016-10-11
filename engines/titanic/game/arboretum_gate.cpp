@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/arboretum_gate.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -68,6 +69,14 @@ CArboretumGate::CArboretumGate() : CBackground() {
 	_endFrameWinterOn1 = 364;
 	_startFrameWinterOn2 = 365;
 	_endFrameWinterOn2 = 424;
+
+	// German specific fields
+	_field160 = _field164 = _field168 = _field16C = 0;
+	_field170 = _field174 = _field178 = _field17C = 0;
+	_field180 = _field184 = _field188 = _field18C = 0;
+	_field190 = _field194 = _field198 = _field19C = 0;
+	_field1A0 = _field1A4 = _field1A8 = _field1AC = 0;
+	_field1B0 = _field1B4 = _field1B8 = _field1BC = 0;
 }
 
 void CArboretumGate::save(SimpleFile *file, int indent) {
@@ -103,6 +112,33 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_startFrameWinterOn2, indent);
 	file->writeNumberLine(_endFrameWinterOn2, indent);
 	file->writeQuotedLine(_viewName2, indent);
+
+	if (g_vm->isGerman()) {
+		file->writeNumberLine(_field160, indent);
+		file->writeNumberLine(_field164, indent);
+		file->writeNumberLine(_field168, indent);
+		file->writeNumberLine(_field16C, indent);
+		file->writeNumberLine(_field170, indent);
+		file->writeNumberLine(_field174, indent);
+		file->writeNumberLine(_field178, indent);
+		file->writeNumberLine(_field17C, indent);
+		file->writeNumberLine(_field180, indent);
+		file->writeNumberLine(_field184, indent);
+		file->writeNumberLine(_field188, indent);
+		file->writeNumberLine(_field18C, indent);
+		file->writeNumberLine(_field190, indent);
+		file->writeNumberLine(_field194, indent);
+		file->writeNumberLine(_field198, indent);
+		file->writeNumberLine(_field19C, indent);
+		file->writeNumberLine(_field1A0, indent);
+		file->writeNumberLine(_field1A4, indent);
+		file->writeNumberLine(_field1A8, indent);
+		file->writeNumberLine(_field1AC, indent);
+		file->writeNumberLine(_field1B0, indent);
+		file->writeNumberLine(_field1B4, indent);
+		file->writeNumberLine(_field1B8, indent);
+		file->writeNumberLine(_field1BC, indent);
+	}
 
 	CBackground::save(file, indent);
 }
@@ -140,6 +176,33 @@ void CArboretumGate::load(SimpleFile *file) {
 	_startFrameWinterOn2 = file->readNumber();
 	_endFrameWinterOn2 = file->readNumber();
 	_viewName2 = file->readString();
+
+	if (g_vm->isGerman()) {
+		_field160 = file->readNumber();
+		_field164 = file->readNumber();
+		_field168 = file->readNumber();
+		_field16C = file->readNumber();
+		_field170 = file->readNumber();
+		_field174 = file->readNumber();
+		_field178 = file->readNumber();
+		_field17C = file->readNumber();
+		_field180 = file->readNumber();
+		_field184 = file->readNumber();
+		_field188 = file->readNumber();
+		_field18C = file->readNumber();
+		_field190 = file->readNumber();
+		_field194 = file->readNumber();
+		_field198 = file->readNumber();
+		_field19C = file->readNumber();
+		_field1A0 = file->readNumber();
+		_field1A4 = file->readNumber();
+		_field1A8 = file->readNumber();
+		_field1AC = file->readNumber();
+		_field1B0 = file->readNumber();
+		_field1B4 = file->readNumber();
+		_field1B8 = file->readNumber();
+		_field1BC = file->readNumber();
+	}
 
 	CBackground::load(file);
 }

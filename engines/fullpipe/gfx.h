@@ -47,7 +47,7 @@ struct Bitmap {
 
 	void load(Common::ReadStream *s);
 	void decode(int32 *palette);
-	void putDib(int x, int y, int32 *palette, int alpha);
+	void putDib(int x, int y, int32 *palette, byte alpha);
 	bool putDibRB(int32 *palette);
 	void putDibCB(int32 *palette);
 

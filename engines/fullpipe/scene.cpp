@@ -333,6 +333,10 @@ void Scene::deleteStaticANIObject(StaticANIObject *obj) {
 }
 
 void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
+	// WORKAROUND: This is used for making sure that the objects
+	// with same priority do not get swapped during drawing
+	obj->_cnum = _staticANIObjectList2.size() + 1;
+
 	if (obj->_odelay)
 		obj->renumPictures(&_staticANIObjectList1);
 
@@ -465,9 +469,14 @@ void Scene::initObjectCursors(const char *varname) {
 	}
 }
 
+#if 0
 bool Scene::compareObjPriority(const void *p1, const void *p2) {
 	if (((const GameObject *)p1)->_priority > ((const GameObject *)p2)->_priority)
 		return true;
+
+	if (((const GameObject *)p1)->_priority == ((const GameObject *)p2)->_priority)
+		if (((const GameObject *)p1)->_cnum > ((const GameObject *)p2)->_cnum)
+			return true;
 
 	return false;
 }
@@ -495,6 +504,30 @@ void Scene::objectList_sortByPriority(Common::Array<PictureObject *> &list, bool
 		Common::sort(list.begin(), list.end(), Scene::compareObjPriority);
 	}
 }
+#else
+template<typename T>
+void Scene::objectList_sortByPriority(Common::Array<T *> &list, int startIndex) {
+	if (list.size() > startIndex) {
+		int lastIndex = list.size() - 1;
+		bool changed;
+		do {
+			changed = false;
+			T *refElement = list[startIndex];
+			for (int i = startIndex; i < lastIndex; i++) {
+				T *curElement = list[i + 1];
+				if (curElement->_priority > refElement->_priority) {
+					// Push refElement down the list
+					list.remove_at(i);
+					list.insert_at(i + 1, refElement);
+					changed = true;
+				} else
+					refElement = curElement;
+			}
+			lastIndex--;
+		} while (changed);
+	}
+}
+#endif
 
 void Scene::draw() {
 	debugC(6, kDebugDrawing, ">>>>> Scene::draw()");
@@ -507,12 +540,14 @@ void Scene::draw() {
 
 	objectList_sortByPriority(_staticANIObjectList2);
 
-	for (uint i = 0; i < _staticANIObjectList2.size(); i++)
+	for (uint i = 0; i < _staticANIObjectList2.size(); i++) {
 		_staticANIObjectList2[i]->draw2();
+	}
 
 	int priority = -1;
 	for (uint i = 0; i < _staticANIObjectList2.size(); i++) {
 		drawContent(_staticANIObjectList2[i]->_priority, priority, false);
+
 		_staticANIObjectList2[i]->draw();
 
 		priority = _staticANIObjectList2[i]->_priority;
@@ -601,10 +636,9 @@ StaticANIObject *Scene::getStaticANIObjectAtPos(int x, int y) {
 
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
 		StaticANIObject *p = _staticANIObjectList1[i];
-		int pixel;
 
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
-				p->getPixelAtPos(x, y, &pixel) &&
+				p->isPixelHitAtPos(x, y) &&
 				(!res || res->_priority > p->_priority))
 			res = p;
 	}
@@ -660,9 +694,13 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
+#if 0
 	if (_picObjList.size() > 2) { // We need to z-sort them
 		objectList_sortByPriority(_picObjList, true);
 	}
+#else
+	objectList_sortByPriority(_picObjList, 1);
+#endif
 
 	if (minPri == -1 && _picObjList.size())
 		minPri = ((PictureObject *)_picObjList.back())->_priority - 1;

@@ -267,7 +267,7 @@ void LabEngine::doActions(const ActionList &actionList) {
 				// Puts a file into memory
 				_graphics->loadPict(action->_messages[0]);
 			break;
-		
+
 		case kActionLoadBitmap:
 			error("Unused opcode kActionLoadBitmap has been called");
 

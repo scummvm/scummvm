@@ -71,7 +71,11 @@ void scene09_initScene(Scene *sc) {
 
 	g_vars->scene09_flyingBalls.clear();
 
+	for (uint i = 0; i < g_vars->scene09_hangers.size(); i++)
+		delete g_vars->scene09_hangers[i];
+
 	g_vars->scene09_hangers.clear();
+
 	g_vars->scene09_numMovingHangers = 4;
 
 	StaticANIObject *hanger = sc->getStaticANIObject1ById(ANI_VISUNCHIK, -1);
@@ -365,19 +369,24 @@ void sceneHandler09_checkHangerCollide() {
 		}
 
 	LABEL_11:
-		int pixel;
+		bool hit;
 
 		for (int i = 0; i < g_vars->scene09_numMovingHangers; i++) {
 			for (int j = 0; j < 4; j++) {
-				g_vars->scene09_hangers[i]->ani->getPixelAtPos(newx + g_vars->scene09_hangerOffsets[j].x, ball->_oy + g_vars->scene09_hangerOffsets[j].y, &pixel);
+				int x1 = newx + g_vars->scene09_hangerOffsets[j].x;
+				int y1 = ball->_oy + g_vars->scene09_hangerOffsets[j].y;
 
-				if (pixel) {
+				// Check 2 pixels to compensate cord width
+				hit = g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1, y1)
+							&& g_vars->scene09_hangers[i]->ani->isPixelHitAtPos(x1 + 10, y1);
+
+				if (hit) {
 					sceneHandler09_ballExplode(b);
 					break;
 				}
 			}
 
-			if (pixel)
+			if (hit)
 				break;
 		}
 	}

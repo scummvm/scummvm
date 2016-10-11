@@ -199,7 +199,7 @@ Vars::Vars() {
 	scene11_swingOldAngle = 1.0;
 	scene11_swingSpeed = 1.0;
 	scene11_swingAngleDiff = 1.0;
-	scene11_swingInertia = 0.0;
+	scene11_swingInertia = 0.01;
 	scene11_swingCounter = 0;
 	scene11_swingCounterPrevTurn = 0;
 	scene11_swingDirection = 0;
@@ -445,7 +445,7 @@ Vars::Vars() {
 
 	scene37_rings.clear();
 	scene37_lastDudeX = -1;
-	scene37_cursorIsLocked = 0;
+	scene37_pipeIsOpen = 0;
 	scene37_plusMinus1 = 0;
 	scene37_plusMinus2 = 0;
 	scene37_plusMinus3 = 0;
@@ -1435,77 +1435,5 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		break;
 	}
 }
-
-void BallChain::init(Ball **ball) {
-	*ball = pTail;
-	pTail = (Ball *)ball;
-	numBalls--;
-
-	if (!numBalls) {
-		for (Ball *i = pHead; i; i = i->p0 )
-			;
-		numBalls = 0;
-		pTail = 0;
-		field_8 = 0;
-		pHead = 0;
-		free(cPlex);
-		cPlex = 0;
-	}
-}
-
-Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
-	if (!pTail) {
-		if (!cPlexLen)
-			error("BallChain::sub04: cPlexLen is 0");
-
-		cPlex = (byte *)calloc(cPlexLen, sizeof(Ball));
-
-		Ball *runPtr = (Ball *)&cPlex[(cPlexLen - 1) * sizeof(Ball)];
-
-		for (int i = 0; i < cPlexLen; i++) {
-			runPtr->p0 = pTail;
-			pTail = runPtr;
-
-			runPtr--;
-		}
-	}
-
-	Ball *res = pTail;
-
-	pTail = res->p0;
-	res->p1 = ballP;
-	res->p0 = ballN;
-	numBalls++;
-	res->ani = 0;
-
-	return res;
-}
-
-void BallChain::removeBall(Ball *ball) {
-	if (ball == pHead)
-		pHead = ball->p0;
-	else
-		ball->p1->p0 = ball->p0;
-
-	if (ball == field_8)
-		field_8 = ball->p1;
-	else
-		ball->p0->p1 = ball->p1;
-
-	ball->p0 = pTail;
-	pTail = ball;
-
-	numBalls--;
-
-	if (!numBalls) {
-		numBalls = 0;
-		pTail = 0;
-		field_8 = 0;
-		pHead = 0;
-		free(cPlex);
-		cPlex = 0;
-	}
-}
-
 
 } // End of namespace Fullpipe

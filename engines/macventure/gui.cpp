@@ -33,6 +33,7 @@
 #include "common/debug-channels.h"
 #include "common/debug.h"
 #include "image/bmp.h"
+#include "graphics/macgui/macfontmanager.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
@@ -266,7 +267,7 @@ const WindowData &Gui::getWindowData(WindowReference reference) {
 }
 
 const Graphics::Font &Gui::getCurrentFont() {
-	return *_wm.getFont("Chicago-12", Graphics::FontManager::kBigGUIFont);
+	return *_wm._fontMan->getFont(Graphics::MacFont(Graphics::kMacFontChicago, 12));
 }
 
 void Gui::bringToFront(WindowReference winID) {
@@ -1129,12 +1130,11 @@ Common::Point Gui::localizeTravelledDistance(Common::Point point, WindowReferenc
 
 void Gui::removeInventoryWindow(WindowReference ref) {
 	_inventoryWindows.remove_at(ref - kInventoryStart);
-	bool found = false;
 	Common::List<WindowData>::iterator it;
-	for (it = _windowData->begin(); it != _windowData->end() && !found; it++) {
+	for (it = _windowData->begin(); it != _windowData->end(); it++) {
 		if (it->refcon == ref) {
 			_windowData->erase(it);
-			found = true;
+			break;
 		}
 	}
 }

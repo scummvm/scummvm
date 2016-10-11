@@ -749,6 +749,9 @@ int Picture::getPixelAtPosEx(int x, int y) {
 	if (x < 0 || y < 0)
 		return 0;
 
+	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
+
+	// It looks like this doesn't really work. TODO. FIXME
 	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
 			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
@@ -787,6 +790,7 @@ Bitmap::~Bitmap() {
 	if (_pixels)
 		free(_pixels);
 
+	_surface->free();
 	delete _surface;
 
 	_pixels = 0;
@@ -829,7 +833,7 @@ void Bitmap::decode(int32 *palette) {
 		putDibCB(palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
+void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
@@ -839,25 +843,18 @@ void Bitmap::putDib(int x, int y, int32 *palette, int alpha) {
 		return;
 
 	Common::Rect sub(0, 0, _width, _height);
+	sub.translate(x, y);
+	sub.clip(g_fp->_sceneRect);
+	sub.translate(-x, -y);
 
-	if (x1 < 0) {
-		sub.left = -x1;
-		x1 = 0;
-	}
-
-	if (y1 < 0) {
-		sub.top = -y1;
-		y1 = 0;
-	}
-
-	if (x1 + sub.width() > 799)
-		sub.right -= x1 + sub.width() - 799;
-
-	if (y1 + sub.height() > 599)
-		sub.bottom -= y1 + sub.height() - 599;
-
-	if (sub.width() <= 0 || sub.height() <= 0)
+	if (sub.isEmpty())
 		return;
+
+	if (x1 < 0)
+		x1 = 0;
+
+	if (y1 < 0)
+		y1 = 0;
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
@@ -928,7 +925,7 @@ bool Bitmap::putDibRB(int32 *palette) {
 				}
 
 				if (fillLen > 0 || start1 >= 0) {
-					if (x <= 799 + 1 || (fillLen += 799 - x + 1, fillLen > 0)) {
+					if (x <= _width + 1 || (fillLen += _width - x + 1, fillLen > 0)) {
 						if (y <= endy) {
 							int bgcolor = palette[(pixel >> 8) & 0xff];
 							curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
@@ -950,8 +947,8 @@ bool Bitmap::putDibRB(int32 *palette) {
 					}
 				}
 
-				if (x > 799 + 1) {
-					fillLen += 799 - x + 1;
+				if (x > _width + 1) {
+					fillLen += _width - x + 1;
 					if (fillLen <= 0)
 						continue;
 				}
@@ -1183,15 +1180,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 		if (y != -1)
 			ny = y;
 
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, v9);
-		}
-
-		_bitmap->putDib(nx, ny, 0, 0xff);
-
-		if (_alpha < 0xFF) {
-			//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
-		}
+		_bitmap->putDib(nx, ny, 0, _alpha);
 	}
 }
 

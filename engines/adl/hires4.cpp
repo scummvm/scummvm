@@ -261,7 +261,7 @@ void HiRes4Engine_Atari::adjustDataBlockPtr(byte &track, byte &sector, byte &off
 
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {
 	switch (gd->desc.platform) {
-	case Common::kPlatformAtariST:
+	case Common::kPlatformAtari8Bit:
 		return new HiRes4Engine_Atari(syst, gd);
 	default:
 		error("Unsupported platform");

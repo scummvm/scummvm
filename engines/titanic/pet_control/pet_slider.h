@@ -106,7 +106,7 @@ public:
 	 * Reset the slider
 	 */
 	virtual void reset(const CString &name) {}
-	
+
 	/**
 	 * Draw the slider
 	 */
@@ -116,7 +116,7 @@ public:
 	 * Reset the dirty area
 	 */
 	virtual Rect clearDirtyArea();
-	
+
 	/**
 	 * Checks whether the slider is highlighted
 	 */
@@ -131,7 +131,7 @@ public:
 	 * Handles dragging the slider
 	 */
 	virtual bool MouseDragMoveMsg(const Point &pt);
-	
+
 	/**
 	 * Called when a slider drag ends
 	 */
@@ -144,8 +144,8 @@ public:
 
 	virtual bool proc13() { return false; }
 	virtual bool proc14() { return false; }
-	
-	
+
+
 	virtual bool contains(const Point &pt) const;
 
 	/**

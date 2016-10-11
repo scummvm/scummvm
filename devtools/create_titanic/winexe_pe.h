@@ -89,6 +89,8 @@ public:
 	/** Return a stream to the specified resource (or 0 if non-existent). */
 	File *getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang);
 
+	/** Returns true if the resources is empty */
+	bool empty() const { return _sections.empty(); }
 private:
 	struct Section {
 		uint32 virtualAddress;

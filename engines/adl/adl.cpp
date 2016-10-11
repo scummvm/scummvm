@@ -673,7 +673,7 @@ Common::Error AdlEngine::loadGameState(int slot) {
 	// NOTE: _state.curPicture is part of the save state in the original engine. We
 	// reconstruct it instead. This is believed to be safe for at least hires 0-2, but
 	// this may need to be re-evaluated for later games.
-	_state.curPicture = _state.rooms[_state.room].curPicture;
+	_state.curPicture = getCurRoom().curPicture;
 
 	size = inFile->readUint32BE();
 	if (size != _state.items.size())

@@ -306,7 +306,7 @@ void sceneHandler14_endArcade() {
 void sceneHandler14_winArcade() {
 	if (g_vars->scene14_arcadeIsOn) {
 		if (g_vars->scene14_dudeIsKicking) {
-			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 			g_vars->scene14_dudeIsKicking = false;
 		}
@@ -424,7 +424,7 @@ void sceneHandler14_dudeDecline() {
 	g_vars->scene14_mouseCursorPos.y = g_fp->_mouseVirtY;
 
 	g_fp->_aniMan->_callback2 = sceneHandler14_declineCallback;
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 	g_fp->_aniMan->startAnim(MV_MAN14_DECLINE, 0, -1);
 
 	g_vars->scene14_dudeIsKicking = true;
@@ -481,7 +481,7 @@ bool sceneHandler14_arcadeProcessClick(ExCommand *cmd) {
 void sceneHandler14_grandmaThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
-	MessageQueue *mq = new MessageQueue;
+	MessageQueue *mq = new MessageQueue(0);
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
@@ -521,7 +521,7 @@ void sceneHandler14_passToGrandma() {
 void sceneHandler14_grandmaJumpThrow() {
 	g_vars->scene14_grandma->changeStatics2(ST_GMA_SIT);
 
-	MessageQueue *mq = new MessageQueue;
+	MessageQueue *mq = new MessageQueue(0);
 	ExCommand *ex = new ExCommand(ANI_GRANDMA, 2, 30, 0, 0, 0, 1, 0, 0, 0);
 
 	ex->_excFlags |= 2;
@@ -547,7 +547,7 @@ void sceneHandler14_dudeFall() {
 	if (!g_fp->_aniMan->_movement || g_fp->_aniMan->_movement->_id != MV_MAN14_FALL) {
 		sceneHandler14_clearCallback();
 
-		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 		g_fp->_aniMan->startAnim(MV_MAN14_FALL, 0, -1);
 		g_vars->scene14_flyingBall->stopAnim_maybe();
 		g_vars->scene14_flyingBall->hide();
@@ -558,7 +558,7 @@ void sceneHandler14_dudeFall() {
 }
 
 void sceneHandler14_grandmaStepForward() {
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 	g_fp->_aniMan->startAnim(MV_MAN14_STEPFW, 0, -1);
 
 	g_vars->scene14_dude2X -= 71;
@@ -622,17 +622,18 @@ void sceneHandler14_arcadeLogic() {
 }
 
 void sceneHandler14_animateBall() {
-	int x = g_vars->scene14_ballDeltaX + g_vars->scene14_ballX;
-	int y = g_vars->scene14_ballDeltaY + g_vars->scene14_ballY;
-
 	g_vars->scene14_ballX += g_vars->scene14_ballDeltaX;
 	g_vars->scene14_ballY += g_vars->scene14_ballDeltaY;
 
+	int x = g_vars->scene14_ballX;
+	int y = g_vars->scene14_ballY;
+
 	g_vars->scene14_ballDeltaY++;
 
-	if (g_vars->scene14_ballDeltaY - 1 + g_vars->scene14_ballY > 517) {
-		if (x <= g_vars->scene14_dudeX - 16 ) {
-			if ( g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65 || x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102 ) {
+	if (g_vars->scene14_ballY <= 517) {
+		if (x <= g_vars->scene14_dudeX - 16) {
+			if (g_vars->scene14_ballDeltaX >= 0 || x >= g_vars->scene14_grandmaX + 65
+					|| x <= g_vars->scene14_grandmaX - 135 || y <= g_vars->scene14_grandmaY - 102) {
 				if (g_vars->scene14_flyingBall->_movement)
 					g_vars->scene14_flyingBall->_movement->setOXY(x, y);
 				else
@@ -810,9 +811,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 	case 29:
 		if (g_vars->scene14_arcadeIsOn) {
-			int pixel;
-
-			if (g_vars->scene14_dudeCanKick && g_fp->_aniMan->getPixelAtPos(cmd->_sceneClickX, cmd->_sceneClickY, &pixel) && !g_fp->_aniMan->_movement) {
+			if (g_vars->scene14_dudeCanKick && g_fp->_aniMan->isPixelHitAtPos(cmd->_sceneClickX, cmd->_sceneClickY) && !g_fp->_aniMan->_movement) {
 				sceneHandler14_dudeDecline();
 				break;
 			}
@@ -832,7 +831,7 @@ int sceneHandler14(ExCommand *cmd) {
 
 				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
-						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
+							|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 						sceneHandler14_arcadeProcessClick(cmd);
 						break;

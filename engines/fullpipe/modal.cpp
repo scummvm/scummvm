@@ -233,8 +233,6 @@ void ModalIntro::finish() {
 }
 
 void ModalVideoPlayer::play(const char *filename) {
-	// TODO: Videos are encoded using Intel Indeo 5 (IV50), which isn't supported yet
-
 	Video::AVIDecoder *aviDecoder = new Video::AVIDecoder();
 
 	if (!aviDecoder->loadFile(filename))
@@ -1023,7 +1021,7 @@ bool ModalMainMenu::init(int counterdiff) {
 }
 
 void ModalMainMenu::updateVolume() {
-	if (g_fp->_soundEnabled ) {
+	if (g_fp->_soundEnabled) {
 		for (int s = 0; s < g_fp->_currSoundListCount; s++)
 			for (int i = 0; i < g_fp->_currSoundList1[s]->getCount(); i++) {
 				updateSoundVolume(g_fp->_currSoundList1[s]->getSoundByIndex(i));
@@ -1199,7 +1197,7 @@ bool ModalMainMenu::isSaveAllowed() {
 }
 
 void ModalMainMenu::enableDebugMenu(char c) {
-	const char deb[] = "DEBUGER";
+	const char deb[] = "debuger";
 
 	if (c == deb[_debugKeyCount]) {
 		_debugKeyCount++;
@@ -1226,6 +1224,8 @@ void ModalMainMenu::enableDebugMenuButton() {
 	area->picObjL = _scene->getPictureObjectById(area->picIdL, 0);
 	area->picObjL->_flags &= 0xFFFB;
 	_areas.push_back(area);
+
+	g_fp->_mainMenu_debugEnabled = true;
 }
 
 void ModalMainMenu::setSliderPos() {
@@ -1603,7 +1603,7 @@ void ModalSaveGame::setup(Scene *sc, int mode) {
 		} else {
 			w = 0;
 
-			for (int j = 0; j < 16; j++) {
+			for (uint j = 0; j < _arrayL.size(); j++) {
 				_arrayL[j]->getDimensions(&point);
 				w += point.x + 2;
 			}
@@ -1624,7 +1624,7 @@ char *ModalSaveGame::getSaveName() {
 	if (_queryRes < 0)
 		return 0;
 
-	return _files[_queryRes]->filename;
+	return _files[_queryRes - 1]->filename;
 }
 
 bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
@@ -1642,7 +1642,9 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 	SaveStateDescriptor desc(slot, header.saveName);
 	char res[17];
 
-	snprintf(res, 17, "%s  %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
+	Fullpipe::parseSavegameHeader(header, desc);
+
+	snprintf(res, 17, "%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
 	for (int i = 0; i < 16; i++) {
 		switch(res[i]) {

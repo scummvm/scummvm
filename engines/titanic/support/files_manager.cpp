@@ -24,11 +24,12 @@
 #include "common/memstream.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
-CFilesManager::CFilesManager() : _gameManager(nullptr), _assetsPath("Assets"),
-		_drive(-1) {
+CFilesManager::CFilesManager(TitanicEngine *vm) : _vm(vm), _gameManager(nullptr),
+		_assetsPath("Assets"), _drive(-1) {
 	loadResourceIndex();
 }
 
@@ -74,7 +75,7 @@ bool CFilesManager::scanForFile(const CString &name) {
 
 	CString filename = name;
 	filename.toLowercase();
-	
+
 	if (filename[0] == 'y' || filename[0] == 'z')
 		return true;
 	else if (filename[0] < 'a' || filename[0] > 'c')
@@ -122,6 +123,12 @@ void CFilesManager::preload(const CString &name) {
 
 Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 	ResourceEntry resEntry = _resources[str];
+
+	// If we're running the German version, check for the existance of
+	// a German specific version of the given resource
+	if (_vm->isGerman() && _resources.contains(str + "/DE"))
+		resEntry = _resources[str + "/DE"];
+
 	_datFile.seek(resEntry._offset);
 
 	return (resEntry._size > 0) ? _datFile.readStream(resEntry._size) :

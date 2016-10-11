@@ -36,6 +36,10 @@
 
 namespace Fullpipe {
 
+void scene13_whirlgigCallback(int *phase) {
+	// Do nothing
+}
+
 void scene13_initScene(Scene *sc) {
 	g_vars->scene13_whirlgig = sc->getStaticANIObject1ById(ANI_WHIRLGIG_13, -1);
 	g_vars->scene13_guard = sc->getStaticANIObject1ById(ANI_STOROZH, -1);
@@ -63,7 +67,7 @@ void scene13_initScene(Scene *sc) {
 		lnk->_flags &= 0xDFFFFFFF;
 
 		g_vars->scene13_whirlgig->stopAnim_maybe();
-		g_vars->scene13_whirlgig->_callback2 = 0;
+		g_vars->scene13_whirlgig->_callback2 = scene13_whirlgigCallback;
 		g_vars->scene13_whirlgig->startAnim(MV_WHR13_SPIN, 0, -1);
 
 		if (g_vars->scene13_whirlgig->_movement)
@@ -155,7 +159,7 @@ void sceneHandler13_closeFast() {
 }
 
 void sceneHandler13_stopWhirlgig() {
-	g_vars->scene13_whirlgig->_callback2 = 0;
+	g_vars->scene13_whirlgig->_callback2 = scene13_whirlgigCallback;
 
 	g_fp->stopAllSoundInstances(SND_13_018);
 	g_fp->playSound(SND_13_033, 0);

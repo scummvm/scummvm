@@ -70,6 +70,7 @@
 #include "common/keyboard.h"
 #include "common/system.h"
 #include "common/file.h"
+#include "graphics/scaler.h"
 
 #if EXTENDED_DEBUGGER_ENABLED
 #include "engines/wintermute/base/scriptables/debuggable/debuggable_script_engine.h"
@@ -171,7 +172,12 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_forceNonStreamedSounds = false;
 
-	_thumbnailWidth = _thumbnailHeight = 0;
+	// These are NOT the actual engine defaults (they are 0, 0),
+	// but we have a use for thumbnails even for games that don't
+	// use them in-game, hence we set a default that is suitably
+	// sized for the GMM (expecting 4:3 ratio)
+	_thumbnailWidth = kThumbnailWidth;
+	_thumbnailHeight = kThumbnailHeight2;
 
 	_localSaveDir = "saves";
 

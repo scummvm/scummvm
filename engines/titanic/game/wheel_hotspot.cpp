@@ -69,7 +69,7 @@ bool CWheelHotSpot::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			break;
 		}
 	} else if (_fieldE4 == 3) {
-		petDisplayMessage("Go where?");
+		petDisplayMessage(GO_WHERE);
 	}
 
 	return true;

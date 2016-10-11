@@ -77,7 +77,7 @@ private:
 	 * Handles setting up the resource with a stream for the located resource
 	 */
 	void handleFile(Resource *res);
-	
+
 	/**
 	 * Handles loading a screen surface and palette with decoded resource
 	 */

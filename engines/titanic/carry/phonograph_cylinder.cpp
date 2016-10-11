@@ -118,7 +118,7 @@ bool CPhonographCylinder::QueryCylinderMsg(CQueryCylinderMsg *msg) {
 
 bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
 	_itemName = "STMusic";
-	
+
 	CQueryMusicControlSettingMsg queryMsg;
 	queryMsg.execute("Bells Mute Control");
 	_bellsMuteControl = queryMsg._value;
@@ -145,7 +145,7 @@ bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
 	queryMsg.execute("Piano Speed Control");
 	_pianoSpeedControl = queryMsg._value;
 	queryMsg.execute("Piano Pitch Control");
-	_pianoPitchControl = queryMsg._value;	
+	_pianoPitchControl = queryMsg._value;
 	queryMsg.execute("Piano Inversion Control");
 	_pianoInversionControl = queryMsg._value;
 	queryMsg.execute("Piano Direction Control");

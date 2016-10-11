@@ -49,7 +49,7 @@ class Interaction : public CObject {
 	MessageQueue *_messageQueue;
 	int _sceneId;
 	int _field_28;
-	int _flags;
+	uint _flags;
 	char *_actionName;
 
  public:

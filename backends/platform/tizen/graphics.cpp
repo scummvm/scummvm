@@ -103,7 +103,7 @@ Common::List<Graphics::PixelFormat> TizenGraphicsManager::getSupportedFormats() 
 }
 
 bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
-	bool result = 
+	bool result =
 			(f == OSystem::kFeatureVirtualKeyboard ||
 			OpenGLGraphicsManager::hasFeature(f));
 	return result;

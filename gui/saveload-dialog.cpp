@@ -229,7 +229,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 	if (!CloudMan.isSyncing()) {
 		if (hasSavepathOverride) {
-			ConnMan.showCloudDisabledIcon();
+			CloudMan.showCloudDisabledIcon();
 		} else {
 			Cloud::SavesSyncRequest *request = CloudMan.syncSaves();
 			if (request)
@@ -921,7 +921,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			// In the save mode we will always create a new save button as the first button.
 			if (_saveMode && curLine == 0 && curColumn == 0) {
 				_newSaveContainer = new ContainerWidget(this, curX, y, containerWidth, containerHeight);
-				ButtonWidget *newSave = new ButtonWidget(_newSaveContainer, dstX, dstY, buttonWidth, buttonHeight, _("New Save"), _("Create a new save game"), kNewSaveCmd);
+				ButtonWidget *newSave = new ButtonWidget(_newSaveContainer, dstX, dstY, buttonWidth, buttonHeight, _("New Save"), _("Create a new saved game"), kNewSaveCmd);
 				// In case no more slots are free, we will disable the new save button
 				if (_nextFreeSaveSlot == -1) {
 					newSave->setEnabled(false);

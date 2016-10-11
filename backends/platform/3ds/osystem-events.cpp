@@ -44,7 +44,7 @@ static void pushEventQueue(Common::Queue<Common::Event> *queue, Common::Event &e
 static void eventThreadFunc(void *arg) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
 	auto eventQueue = (Common::Queue<Common::Event> *)arg;
-	
+
 	uint32 touchStartTime = osys->getMillis();
 	touchPosition lastTouch = {0, 0};
 	bool isRightClick = false;
@@ -55,19 +55,19 @@ static void eventThreadFunc(void *arg) {
 	int circleDeadzone = 20;
 	int borderSnapZone = 6;
 	Common::Event event;
-	
+
 	while (!osys->exiting) {
 		do {
 			osys->delayMillis(10);
 		} while (osys->sleeping && !osys->exiting);
-		
+
 		hidScanInput();
 		touchPosition touch;
 		circlePosition circle;
 		u32 held = hidKeysHeld();
 		u32 keysPressed = hidKeysDown();
 		u32 keysReleased = hidKeysUp();
-		
+
 		// C-Pad used to control the cursor
 		hidCircleRead(&circle);
 		if (circle.dx < circleDeadzone && circle.dx > -circleDeadzone)
@@ -76,7 +76,7 @@ static void eventThreadFunc(void *arg) {
 			circle.dy = 0;
 		cursorDeltaX = (0.0002f + config.sensitivity / 100000.f) * circle.dx * abs(circle.dx);
 		cursorDeltaY = (0.0002f + config.sensitivity / 100000.f) * circle.dy * abs(circle.dy);
-		
+
 		// Touch screen events
 		if (held & KEY_TOUCH) {
 			hidTouchRead(&touch);
@@ -97,7 +97,7 @@ static void eventThreadFunc(void *arg) {
 			osys->warpMouse(touch.px, touch.py);
 			event.mouse.x = touch.px;
 			event.mouse.y = touch.py;
-			
+
 			if (keysPressed & KEY_TOUCH) {
 				touchStartTime = osys->getMillis();
 				isRightClick = (held & KEY_X || held & KEY_DUP);
@@ -109,7 +109,7 @@ static void eventThreadFunc(void *arg) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				pushEventQueue(eventQueue, event);
 			}
-			
+
 			lastTouch = touch;
 		} else if (keysReleased & KEY_TOUCH) {
 			event.mouse.x = lastTouch.px;
@@ -136,13 +136,13 @@ static void eventThreadFunc(void *arg) {
 			lastTouch.px = cursorX;
 			lastTouch.py = cursorY;
 			osys->transformPoint(lastTouch);
-			osys->warpMouse(lastTouch.px, lastTouch.py); 
+			osys->warpMouse(lastTouch.px, lastTouch.py);
 			event.mouse.x = lastTouch.px;
 			event.mouse.y = lastTouch.py;
 			event.type = Common::EVENT_MOUSEMOVE;
 			pushEventQueue(eventQueue, event);
 		}
-		
+
 		// Button events
 		if (keysPressed & KEY_R) {
 			if (inputMode == MODE_DRAG) {
@@ -195,7 +195,7 @@ static void eventThreadFunc(void *arg) {
 			event.kbd.flags = 0;
 			pushEventQueue(eventQueue, event);
 		}
-		
+
 		// TODO: EVENT_PREDICTIVE_DIALOG
 		// EVENT_SCREEN_CHANGED
 	}
@@ -203,7 +203,7 @@ static void eventThreadFunc(void *arg) {
 
 static void aptHookFunc(APT_HookType hookType, void *param) {
 	OSystem_3DS *osys = (OSystem_3DS *)g_system;
-	
+
 	switch (hookType) {
 		case APTHOOK_ONSUSPEND:
 		case APTHOOK_ONSLEEP:
@@ -246,7 +246,7 @@ void OSystem_3DS::initEvents() {
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	_timerThread = threadCreate(&timerThreadFunc, this, 32 * 1024, prio - 1, -2, false);
 	_eventThread = threadCreate(&eventThreadFunc, &_eventQueue, 32 * 1024, prio - 1, -2, false);
-	
+
 	aptHook(&cookie, aptHookFunc, this);
 }
 
@@ -277,7 +277,7 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 		StatusMessageDialog dialog(messageOSD, 800);
 		dialog.runModal();
 	}
-	
+
 	aptMainLoop(); // Call apt hook when necessary
 
 	if (optionMenuOpening) {
@@ -289,12 +289,12 @@ bool OSystem_3DS::pollEvent(Common::Event &event) {
 		if (g_engine)
 			g_engine->pauseEngine(false);
 	}
-	
+
 	Common::StackLock lock(*eventMutex);
-	
+
 	if (_eventQueue.empty())
 		return false;
-	
+
 	event = _eventQueue.pop();
 	return true;
 }

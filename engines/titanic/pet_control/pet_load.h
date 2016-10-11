@@ -33,7 +33,7 @@ public:
 	 * Reset the glyph
 	 */
 	virtual bool reset();
-	
+
 	/**
 	 * Handles mouse button up messages
 	 */

@@ -29,6 +29,7 @@
 
 namespace Titanic {
 
+class TitanicEngine;
 class CGameManager;
 
 class CFilesManagerList : public List<ListItem> {
@@ -38,12 +39,13 @@ class CFilesManager {
 	struct ResourceEntry {
 		uint _offset;
 		uint _size;
-		
+
 		ResourceEntry() : _offset(0), _size(0) {}
 		ResourceEntry(uint offset, uint size) : _offset(offset), _size(size) {}
 	};
 	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
 private:
+	TitanicEngine *_vm;
 	CGameManager *_gameManager;
 	Common::File _datFile;
 	ResourceHash _resources;
@@ -53,7 +55,7 @@ private:
 private:
 	void loadResourceIndex();
 public:
-	CFilesManager();
+	CFilesManager(TitanicEngine *vm);
 	~CFilesManager();
 
 	/**

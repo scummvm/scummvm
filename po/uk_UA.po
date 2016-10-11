@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ScummVM 1.3.0svn\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
-"PO-Revision-Date: 2015-11-06 10:07+0300\n"
+"Project-Id-Version: ScummVM 1.9.0git\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
+"PO-Revision-Date: 2016-09-17 22:36+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
 "Language: Ukrainian\n"
@@ -61,7 +61,7 @@ msgstr "Вгору"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Вибрати"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Виберіть папку з файлами гри"
+msgstr "Виберіть папку куди завантажувати файли гри"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -88,35 +87,37 @@ msgstr "Виберіть папку з файлами гри"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Від: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "До: "
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Припинити завантаження"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Припинити"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Сховати"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Виглядає, що ваше поточне з'єднання лімітовано. Ви насправді хочете зараз "
+"завантажувати файи на цьому з'єднанні?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -128,7 +129,7 @@ msgstr "Так"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -146,6 +147,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Неможливо створити папку для скачування: вказана папка має файл з такою ж "
+"назвою."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -173,16 +176,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" вже існує у вказаній папці.\n"
+"Чи ви дійсно хочете завантажити файли в цю папку?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Завантажено %s %s з %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Пошук закінчено!"
+msgstr "Швидкість завантаження: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -198,8 +203,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Короткий ідентифікатор, який використовується для назв збережених ігор і для "
-"запуску з командної стрічки"
+"Короткий ідентифікатор, який використовується для назв збережений станів "
+"ігор і для запуску з командної стрічки"
 
 #: gui/editgamedialog.cpp:138
 msgctxt "lowres"
@@ -266,12 +271,12 @@ msgstr "Грф"
 
 #: gui/editgamedialog.cpp:187
 msgid "Override global graphic settings"
-msgstr "Перекрити глобальні установки графіки"
+msgstr "Перекрити глобальні налаштування графіки"
 
 #: gui/editgamedialog.cpp:189
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Перекрити глобальні установки графіки"
+msgstr "Перекрити глобальні налаштування графіки"
 
 #: gui/editgamedialog.cpp:196 gui/options.cpp:1121
 msgid "Audio"
@@ -279,12 +284,12 @@ msgstr "Аудіо"
 
 #: gui/editgamedialog.cpp:199
 msgid "Override global audio settings"
-msgstr "Перекрити глобальні установки аудіо"
+msgstr "Перекрити глобальні налаштування аудіо"
 
 #: gui/editgamedialog.cpp:201
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Перекрити глобальні установки аудіо"
+msgstr "Перекрити глобальні налаштування аудіо"
 
 #: gui/editgamedialog.cpp:210 gui/options.cpp:1126
 msgid "Volume"
@@ -297,12 +302,12 @@ msgstr "Гучн."
 
 #: gui/editgamedialog.cpp:215
 msgid "Override global volume settings"
-msgstr "Перекрити глобальні установки гучності"
+msgstr "Перекрити глобальні налаштування гучності"
 
 #: gui/editgamedialog.cpp:217
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Перекрити глобальні установки гучності"
+msgstr "Перекрити глобальні налаштування гучності"
 
 #: gui/editgamedialog.cpp:226 gui/options.cpp:1136
 msgid "MIDI"
@@ -310,12 +315,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:229
 msgid "Override global MIDI settings"
-msgstr "Перекрити глобальні установки MIDI"
+msgstr "Перекрити глобальні налаштування MIDI"
 
 #: gui/editgamedialog.cpp:231
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Перекрити глобальні установки MIDI"
+msgstr "Перекрити глобальні нааштування MIDI"
 
 #: gui/editgamedialog.cpp:241 gui/options.cpp:1146
 msgid "MT-32"
@@ -323,12 +328,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:244
 msgid "Override global MT-32 settings"
-msgstr "Перекрити глобальні установки MT-32"
+msgstr "Перекрити глобальні налаштування MT-32"
 
 #: gui/editgamedialog.cpp:246
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Перекрити глобальні установки MT-32"
+msgstr "Перекрити глобальні налаштування MT-32"
 
 #: gui/editgamedialog.cpp:255 gui/options.cpp:1153
 msgid "Paths"
@@ -370,7 +375,7 @@ msgstr "Шлях збер.:"
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1163 gui/options.cpp:1165
 #: gui/options.cpp:1166
 msgid "Specifies where your saved games are put"
-msgstr "Вказує шлях до збережень гри"
+msgstr "Вказує шлях до збережених станів ігор"
 
 #: gui/editgamedialog.cpp:282 gui/options.cpp:1165
 msgctxt "lowres"
@@ -404,13 +409,15 @@ msgstr "Виберіть додаткову папку гри"
 
 #: gui/editgamedialog.cpp:504 gui/options.cpp:1555
 msgid "Select directory for saved games"
-msgstr "Виберіть папку для збережень"
+msgstr "Виберіть папку для збережених станів ігор"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
+"Запис станів ігор працює тільки з папкою за замовченням. Якщо ви хочете, щоб "
+"ваші стани ігр синхронізувалися, використовуйте папку за замовченням."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -622,7 +629,7 @@ msgstr "~З~авантажити..."
 
 #: gui/launcher.cpp:124
 msgid "Load saved game for selected game"
-msgstr "Завантажити збереження для вибраної гри"
+msgstr "Завантажити збережений стан для вибраної гри"
 
 #: gui/launcher.cpp:129
 msgid "~A~dd Game..."
@@ -697,19 +704,20 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Цю папку ще не можна використовувати, в неї іде завантаження!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
-msgstr "Ви дійсно хочете видалити установки для цієї гри?"
+msgstr "Ви дійсно хочете видалити налаштування для цієї гри?"
 
 #: gui/launcher.cpp:452
 msgid "Do you want to load saved game?"
-msgstr "Ви хочете завантажити збережену гру?"
+msgstr "Ви хочете завантажити збережений стан гри?"
 
 #: gui/launcher.cpp:501
 msgid "This game does not support loading games from the launcher."
-msgstr "Ця гра не підтримує завантаження збережень через головне меню."
+msgstr ""
+"Ця гра не підтримує завантаження збережених станів ігор через головне меню."
 
 #: gui/launcher.cpp:505
 msgid "ScummVM could not find any engine capable of running the selected game!"
@@ -845,7 +853,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Спеціальні режими растрування, які підтримують деякі ігри"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Повноекранний режим"
 
@@ -1146,24 +1154,24 @@ msgstr "Перевірити зараз"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Хмара"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Хмара"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Середовище:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Активне хмарне середовище"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<немає>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1171,101 +1179,99 @@ msgstr "Користувач:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Користувач для цього сердовища"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Використаний об'єм"
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
+msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
+"Об'єм, використаний для збережених станів ігор ScummVM на цьому середовищі"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Остання синхронизація:"
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
-msgstr ""
+msgid "When the last saved games sync for this storage occured"
+msgstr "Час, коли було зроблено останню синхронизацію з цим середовищем"
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Залучитись"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
+"Розпочати кроки для залучення до вашого облікового засобу на хмарному "
+"середовищі"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Поновити"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Поновити поточні дані хмарного середовища (ім'я користувача та об'єм)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Донизу"
+msgstr "Завантажити"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Відкрити керування завантаженнями"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Запустити сервер"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Запускає локвальний веб-сервер"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Помилка запуску гри:"
+msgstr "Вимкнено"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Додатк. шлях:"
+msgstr "Шлях /root/:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Вказує шлях до збережень гри"
+msgstr "Вказує шлях до якого можна мати доступ через Керування файлами"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Додатк. шлях:"
+msgstr "Корінний шлях:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Сервер:"
+msgstr "Порт сервера:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Порт, который будет использован сервером\n"
+"Аутентификация с сервером доступна только для порта по умолчанию"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Ви повинні перезапустити ScummVM щоб застосувати зміни."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Не вдалося записати гру"
+msgstr "Не вдалося змінити змарне середовище!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Другое облако уже активно."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1284,9 +1290,8 @@ msgid "Select directory for plugins"
 msgstr "Виберіть папку зі втулками"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Виберіть папку з додатковими файлами"
+msgstr "Виберіть папку /root/ для Керування файлами"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1299,31 +1304,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu байт"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<зараз>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Ніколи"
+msgstr "<ніколи>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Сервер:"
+msgstr "Вимкнути сервер"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Вимкнути локальний веб-сервер"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Помилка запиту.\n"
+"Перевірте ваше інтернет-з'єднання."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1397,9 +1402,8 @@ msgid "Unknown Author"
 msgstr "Невідомий автор"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM не може відкрити вказану папку!"
+msgstr "ScummVM не має доступу до вказаної папки!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1423,7 +1427,7 @@ msgstr "Час гри не записано"
 
 #: gui/saveload-dialog.cpp:442
 msgid "Do you really want to delete this saved game?"
-msgstr "Ви дійсно хочете видалити це збереження?"
+msgstr "Ви дійсно хочете видалити цей збережений стан гри?"
 
 #: gui/saveload-dialog.cpp:554 gui/saveload-dialog.cpp:1060
 msgid "Date: "
@@ -1451,10 +1455,10 @@ msgstr "Попередній"
 
 #: gui/saveload-dialog.cpp:924
 msgid "New Save"
-msgstr "Нове збереження"
+msgstr "Новий стан"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Створити новий запис гри"
 
 #: gui/saveload-dialog.cpp:1053
@@ -1466,75 +1470,76 @@ msgstr "Назва: "
 msgid "Enter a description for slot %d:"
 msgstr "Введіть опис для слоту %d:"
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Діалог підключення до хмари %s"
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Перейдіть за наступним URL:"
+
+#: gui/storagewizarddialog.cpp:61
+msgid "Obtain the code from the storage, enter it"
+msgstr "Після отримання коду від хмарного середовища, введіть"
 
 #: gui/storagewizarddialog.cpp:62
-msgid "Obtain the code from the storage, enter it"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "його до комірок нижче і натисніть 'Під'єднатись'"
+
+#: gui/storagewizarddialog.cpp:69
+msgid "Open URL"
+msgstr "Відкрити URL"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
-msgid "Open URL"
-msgstr "OpenGL"
-
-#: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Вставити"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Вставляє вміст буфера обміну до комірки"
+
+#: gui/storagewizarddialog.cpp:78
+msgid "You will be directed to ScummVM's page where"
+msgstr "Вас буде перенаправлено до сторінки ScummVM, де"
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You will be directed to ScummVM's page where"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:80
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "вам буде потрібно дозволити доступ до вашої хмари."
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Активна інше хмарне середовище. Чи ви хочете припинити процес?"
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Комірка %s має похибку."
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Комірки %s мають похибки."
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Все добре!"
 
-#: gui/storagewizarddialog.cpp:202
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Невірний код"
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Не вдалося відкрити URL!\n"
+"Будь-ласка, перейдіть вручну на вказану сторінку."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1679,7 +1684,7 @@ msgstr "Не можу знайти необхідного втулка для движка"
 
 #: common/error.cpp:68
 msgid "Engine plugin does not support save states"
-msgstr "Втулок движка не підтримує збереження ігор"
+msgstr "Втулок движка не підтримує збережені стани ігор"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1784,7 +1789,8 @@ msgstr "~П~овер.в головне меню"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1801,8 +1807,8 @@ msgstr "Зберегти гру: "
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1897,12 +1903,12 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "ПОПЕРЕДЖЕННЯ: Гра, яку ви хочете запустити, ще не підтримується повністю "
-"ScummVM. Скорше за все вона не буде працювати стабільно, і збереження ігор, "
-"які ви зробите, можуть не працювати у подальших версіях ScummVM."
+"ScummVM. Скорше за все вона не буде працювати стабільно, і збережені стани "
+"ігор, які ви зробите, можуть не працювати у подальших версіях ScummVM."
 
 #: engines/engine.cpp:549
 msgid "Start anyway"
@@ -1945,7 +1951,7 @@ msgid ""
 "information."
 msgstr ""
 "Вибраний звуковий пристрій '%s' не може бути використаний. Дивіться файл "
-"логу для додаткової інформації."
+"протоколу для додаткової інформації."
 
 #: audio/mididrv.cpp:257
 #, c-format
@@ -1963,7 +1969,7 @@ msgid ""
 "information."
 msgstr ""
 "Уподобаний звуковий пристрій '%s' не може бути використаний. Дивіться файл "
-"логу для додаткової інформації."
+"протоколу для додаткової інформації."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
@@ -2010,19 +2016,20 @@ msgid "C64 Audio Emulator"
 msgstr "C64 Аудіо Емулятор"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
-msgid "Saves sync complete."
-msgstr "Пошук закінчено!"
+msgid "Saved games sync complete."
+msgstr "Синхронизацію збережених станів закінчено!"
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
-msgstr ""
+msgid "Saved games sync was cancelled."
+msgstr "Синхронизацію збережених станів припинено."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Помилка синхронизації збережених станів.\n"
+"Перевірте ваше з'єднання з інтернет."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2030,16 +2037,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Завантаження закінчено.\n"
+"Не вдалося завантажити %u файлів."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Пошук закінчено!"
+msgstr "Завантаження закінчено."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Завантажити файл"
+msgstr "Помилка завантаження."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2142,11 +2149,11 @@ msgstr "Режим самотягнення включено"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Проведіть трьома пальцямі направо для переключення."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (без фільтрів)"
 
@@ -2161,19 +2168,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Без збільшення"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін увімкнено"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Корекцію співвідношення сторін вимкнено"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Поточний графічний фільтр:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Віконний режим"
 
@@ -2699,22 +2706,20 @@ msgid "Check for Updates..."
 msgstr "Перевірити оновлення..."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Режим без кольору"
+msgstr "Кольоровий режим"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Використовувати кольорову графіку"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Скан-лінії"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Показувати лінії об'єктів"
+msgstr "Показувати скан-лінії"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2729,7 +2734,7 @@ msgstr "Використовувати ориг. збереження/завантаження екрани"
 #: engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
-"Використовувати оригінальні збереження/завантаження екрани, замість ScummVM"
+"Використовувати оригінальні екрани збереження/завантаження замість ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
@@ -2780,7 +2785,8 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2790,7 +2796,8 @@ msgstr "Відновити гру:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2803,7 +2810,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Не вдалося завантажити стан гри з файлу:\n"
+"Не вдалося завантажити збережений стан гри з файлу:\n"
 "\n"
 "%s"
 
@@ -2846,13 +2853,13 @@ msgstr "Включає режим для людей з погіршенним сприяттям кольору"
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM знайшов, що Ви маєте старі збереження ігор для Drascula.\n"
+"ScummVM знайшов, що Ви маєте старі збережені стани ігор для Drascula.\n"
 "Збереження у старому форматі не підтримуються, і Ви не зможете їх "
 "завантажити, якщо не переведете у новий формат.\n"
 "\n"
@@ -2870,7 +2877,7 @@ msgstr "Відображення графіки з використанням яскравої палітри ігр"
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
 msgid "Failed to load game state from file."
-msgstr "Не вдалося завантажити стан гри з файлу."
+msgstr "Не вдалося завантажити зюережений стан гри з файлу."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
@@ -3024,40 +3031,42 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Наступний оригінальний файл стану гри було знайдено у вашій папці з грою:\n"
+"Наступний оригінальний файл збереженого стану гри було знайдено у вашій "
+"папці з грою:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Чи ви бажаєте використовувати цей стан гри зі ScummVM?\n"
+"Чи ви бажаєте використовувати цей збережений стан гри зі ScummVM?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Файл стану гри було знайдено у вказаній позиції %d. Перетерти?\n"
+"Файл збереженого стану гри було знайдено у вказаній позиції %d. Перетерти?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d оригінальних файлів зі станом гри було успішно імпортовано у\n"
+"%d оригінальних файлів зі збереженеми станами гри було успішно імпортовано "
+"у\n"
 "ScummVM. Якщо ви захочете пізніше імпортувати оригінальні файли зі станом "
 "гри, вам потрібно\n"
 "відкрити консоль відладчика і ввести команду 'import_savefile'.\n"
@@ -3097,6 +3106,10 @@ msgstr "Головне меню"
 msgid "~W~ater Effect Enabled"
 msgstr "Ефекти води увімкнено"
 
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Ігру призупинено. Натисніть будь-яку клавішу для продовження."
+
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
 msgstr "Перескакувати Залу Рекордів"
@@ -3119,7 +3132,7 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Не можу зберегти гру у слот %i\n"
+"Не можу зберегти стан гри у слот %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
@@ -3147,7 +3160,7 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM знайшов, що Ви маєте старі збереження ігор для Nippon Safes.\n"
+"ScummVM знайшов, що Ви маєте старі збережені стани ігор для Nippon Safes.\n"
 "Збереження у старому форматі не підтримуються, і Ви не зможете їх "
 "завантажити, якщо не переведете у новий формат.\n"
 "\n"
@@ -3156,7 +3169,7 @@ msgstr ""
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your savefiles."
-msgstr "ScummVM успішно перевів усі Ваші збереження."
+msgstr "ScummVM успішно перевів усі Ваші збережені стани."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3172,7 +3185,7 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:714
 msgid "Invalid save file name"
-msgstr "Неправильна назва файлу збереження"
+msgstr "Неправильна назва файлу збереження стану"
 
 #: engines/pegasus/pegasus.cpp:2507
 msgid "Up/Zoom In/Move Forward/Open Doors"
@@ -3234,11 +3247,11 @@ msgstr "Увімкнути графіку та контент у високому розгалуженні"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "Увімкнути відео з чорними лініями"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Малювати чорні лінії поверху відео щоб посилити їхню чіткість"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3333,7 +3346,7 @@ msgstr "Грати"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr "Вставте диск зі збереженням ігор"
+msgstr "Вставте диск зі збереженими станами ігор"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
@@ -3359,7 +3372,7 @@ msgstr "Завантажую '%s'"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "Name your SAVE game"
-msgstr "Назовіть своє збереження ігри"
+msgstr "Назовіть свій збережений стан ігри"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
@@ -4100,13 +4113,13 @@ msgstr "Ролик '%s' не знайдено"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM знайшов, що Ви маєте старі збереження ігор для Broken Sword 1.\n"
+"ScummVM знайшов, що Ви маєте старі збережені стани ігор для Broken Sword 1.\n"
 "Збереження у старому форматі не підтримуються, і Ви не зможете їх "
 "завантажити, якщо не переведете у новий формат.\n"
 "\n"
@@ -4116,11 +4129,11 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Збереження гри з такою назвою вже існує!\n"
-"Чи ви хочете лишити старе збереження (%s) або нове (%s)?\n"
+"Чи ви хочете лишити старий збережений стан (%s) або нове (%s)?\n"
 
 #: engines/sword1/control.cpp:1235
 msgid "Keep the old one"
@@ -4219,7 +4232,3 @@ msgid "Use MPEG video from the DVD version, instead of lower resolution AVI"
 msgstr ""
 "Використовувати відео MPEG з DVD-версії, замість файлів AVI з ніжчою "
 "роздільною здатністю"
-
-#, fuzzy
-#~ msgid "Specifies where Files Manager can access to"
-#~ msgstr "Вказує шлях до збережень гри"

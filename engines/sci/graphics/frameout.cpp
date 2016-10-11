@@ -58,7 +58,7 @@
 namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
-	_isHiRes(ConfMan.getBool("enable_high_resolution_graphics")),
+	_isHiRes(gameIsHiRes()),
 	_palette(palette),
 	_cursor(cursor),
 	_segMan(segMan),
@@ -70,11 +70,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_frameNowVisible(false),
 	_overdrawThreshold(0),
 	_palMorphIsOn(false) {
-
-	// QFG4 is the only SCI32 game that doesn't have a high-resolution version
-	if (g_sci->getGameId() == GID_QFG4) {
-		_isHiRes = false;
-	}
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer = Buffer(630, 450, nullptr);
@@ -146,7 +141,7 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 		return;
 
 	// Get planes list object
-	reg_t planesListObject = engineState->variables[VAR_GLOBAL][10];
+	reg_t planesListObject = engineState->variables[VAR_GLOBAL][kGlobalVarPlanes];
 	reg_t planesListElements = readSelector(segMan, planesListObject, SELECTOR(elements));
 
 	List *planesList = segMan->lookupList(planesListElements);
@@ -211,6 +206,26 @@ void GfxFrameout::syncWithScripts(bool addElements) {
 
 		planesNodeObject = planesNode->succ;
 	}
+}
+
+bool GfxFrameout::gameIsHiRes() const {
+	// QFG4 is always low resolution
+	if (g_sci->getGameId() == GID_QFG4) {
+		return false;
+	}
+
+	// GK1 DOS floppy is low resolution only, but GK1 Mac floppy is high
+	// resolution only
+	if (g_sci->getGameId() == GID_GK1 &&
+		!g_sci->isCD() &&
+		g_sci->getPlatform() != Common::kPlatformMacintosh) {
+
+		return false;
+	}
+
+	// All other games are either high resolution by default, or have a
+	// user-defined toggle
+	return ConfMan.getBool("enable_high_resolution_graphics");
 }
 
 #pragma mark -
@@ -550,7 +565,7 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 	Palette sourcePalette(_palette->getNextPalette());
 	alterVmap(sourcePalette, sourcePalette, -1, styleRanges);
 
-	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][12].toSint16();
+	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][kGlobalVarPreviousRoomNo].toSint16();
 
 	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
 	_showList.add(rect);
@@ -989,6 +1004,10 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 			_visiblePlanes.add(new Plane(plane));
 			--plane._created;
 		} else if (plane._updated) {
+			if (visiblePlane == nullptr) {
+				error("[GfxFrameout::calcLists]: Attempt to update nonexistent visible plane");
+			}
+
 			*visiblePlane = plane;
 			--plane._updated;
 		}
@@ -1108,6 +1127,7 @@ void GfxFrameout::mergeToShowList(const Common::Rect &drawRect, RectList &showLi
 
 void GfxFrameout::showBits() {
 	if (!_showList.size()) {
+		g_system->updateScreen();
 		return;
 	}
 
@@ -1146,6 +1166,7 @@ void GfxFrameout::showBits() {
 	_cursor->donePainting();
 
 	_showList.clear();
+	g_system->updateScreen();
 }
 
 void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, const int8 style, const int8 *const styleRanges) {
@@ -1327,7 +1348,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		scaledPosition.x -= screenItem._scaledPosition.x;
 		scaledPosition.y -= screenItem._scaledPosition.y;
 
-		mulru(scaledPosition, Ratio(celObj._scaledWidth, _currentBuffer.screenWidth), Ratio(celObj._scaledHeight, _currentBuffer.screenHeight));
+		mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.screenWidth), Ratio(celObj._yResolution, _currentBuffer.screenHeight));
 
 		if (screenItem._scale.signal != kScaleSignalNone && screenItem._scale.x && screenItem._scale.y) {
 			scaledPosition.x = scaledPosition.x * 128 / screenItem._scale.x;
@@ -1335,7 +1356,7 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		}
 
 		uint8 pixel = celObj.readPixel(scaledPosition.x, scaledPosition.y, mirrorX);
-		return pixel != celObj._transparentColor;
+		return pixel != celObj._skipColor;
 	}
 
 	return true;

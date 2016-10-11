@@ -87,9 +87,9 @@ bool CHeadSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 }
 
 bool CHeadSlot::SenseWorkingMsg(CSenseWorkingMsg *msg) {
-	if (_fieldEC) 
+	if (_fieldEC)
 		playMovie(_fieldE4, _fieldE8, 0);
-	
+
 	_string1 = msg->_value;
 	_fieldEC = false;
 	return true;

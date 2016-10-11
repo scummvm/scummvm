@@ -120,7 +120,11 @@ void MystCursorManager::setCursor(uint16 id) {
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
-		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 255);
+		// The transparent color is almost always 255, except for the main cursor (100)
+		// in the D'ni archive, where it is 0.
+		// Using the color of the first pixel as the transparent color seems to always work.
+		byte transparentColor = ((byte *)surface->getPixels())[0];
+		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, transparentColor);
 
 		// We're using the screen palette for the original game, but we need
 		// to use this for any 8bpp cursor in ME.

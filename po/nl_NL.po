@@ -6,16 +6,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
-"PO-Revision-Date: 2016-07-05 10:07+0200\n"
-"Last-Translator: Ben Castricum <scummvm@bencastricum.nl>\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
+"PO-Revision-Date: 2016-10-09 21:57+0100\n"
+"Last-Translator: Willem Jan Palenstijn <wjp@usecode.org>\n"
 "Language-Team: Ben Castricum <scummvm@bencastricum.nl>\n"
 "Language: Nederlands\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -61,7 +61,7 @@ msgstr "Ga omhoog"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Selecteer"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Selecteer map met speldata"
+msgstr "Selecteer map voor de te downloaden speldata"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -88,35 +87,35 @@ msgstr "Selecteer map met speldata"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Van: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Naar:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Download annuleren"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Download annuleren"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Verberg"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "Uw verbinding lijkt beperkt. Wilt u echt bestanden ermee downloaden?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -128,7 +127,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -146,6 +145,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Kan geen download folder creëren - de gespecificeerde folder bevat een file "
+"met dezelfde naam."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -173,16 +174,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"De \"%s\" bestaat al in de gespecificeerde map.\n"
+"Wilt u echt bestanden in die map downloaden?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "%s %s / %s %s gedownload"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Klaar met zoeken!"
+msgstr "Download snelheid: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -408,9 +411,12 @@ msgstr "Selecteer map voor opgeslagen spellen"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
+"Synchronisatie van opgeslagen spellen optie werkt niet met niet-standaard "
+"mappen. Als u de opgeslagen spellen wilt synchroniseren, gebruik dan de "
+"standaard map."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -699,7 +705,7 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Deze map kan nog niet gebruikt worden, er wordt al in gedownload!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -853,7 +859,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Speciale ditheringmodi die door sommige games ondersteund worden."
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Volledig-scherm modus"
 
@@ -1153,24 +1159,24 @@ msgstr "Controleer nu"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Opslag:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Actieve cloud opslag"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<geen>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1178,101 +1184,97 @@ msgstr "Gebruikersnaam:"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Gebruikersnaam gebruikt voor deze opslag"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Gebruikte ruimte:"
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
-msgstr ""
+msgid "Space used by ScummVM's saved games on this storage"
+msgstr "Ruimte in gebruikt door ScummVM's opgeslagen spellen op deze opslag"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Laatste synchronisatie:"
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
-msgstr ""
+msgid "When the last saved games sync for this storage occured"
+msgstr "Wanneer de laatste synchronisatie voor deze opslag is geweest."
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Verbinden"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
+"Open de Wizard dialoogvenster voor verbinden met uw cloud opslag account"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Ververs"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Ververs de huidige opslag informatie (gebruikersnaam en gebruik)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Omlaag"
+msgstr "Download"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Open downloads manager dialoogvenster"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Start server"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Draai lokale webserver"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Fout tijdens het starten van spel:"
+msgstr "Draait niet"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Extra Pad:"
+msgstr "/root/ Pad:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Bepaalt waar opgeslagen spellen worden bewaard."
+msgstr "Bepaalt welke map de Bestanden Manager gebruiken mag"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Extra Pad:"
+msgstr "/root/ Pad:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Serverport:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Welke port is gebruikt voor de server\n"
+"Auth met server is niet beschikbaar met een niet standaard port"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "U dient ScummVM opnieuw op te starten om de wijzigingen te activeren."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Opslaan van spel mislukt."
+msgstr "Veranderen van cloud opslag mislukt!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Er is al een andere cloud opslag actief."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1292,9 +1294,8 @@ msgid "Select directory for plugins"
 msgstr "Selecteer map voor plugins"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Selecteer map voor extra bestanden"
+msgstr "Selecteer map voor Bestanden Manager /root/"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1307,31 +1308,29 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bytes"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<nu>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Nooit"
+msgstr "<nooit>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Stop server"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Stop lokale webserver"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
-msgstr ""
+msgstr "Verzoek mislukt. Controleer uw Internet verbinding."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1405,7 +1404,6 @@ msgid "Unknown Author"
 msgstr "Onbekende Auteur"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM kon de opgegeven map niet openen!"
 
@@ -1462,7 +1460,7 @@ msgid "New Save"
 msgstr "Nieuw spel opslaan"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Nieuw spel opslaan"
 
 #: gui/saveload-dialog.cpp:1053
@@ -1474,75 +1472,74 @@ msgstr "Naam: "
 msgid "Enter a description for slot %d:"
 msgstr "Geef een omschrijving voor slot %d:"
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "%s Opslag Verbindings Wizard"
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Navigeer naar de volgende URL:"
+
+#: gui/storagewizarddialog.cpp:61
+msgid "Obtain the code from the storage, enter it"
+msgstr "Verkrijg de code van de opslag, voer het in"
 
 #: gui/storagewizarddialog.cpp:62
-msgid "Obtain the code from the storage, enter it"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "in het volgende veld, en druk op 'Verbind';"
+
+#: gui/storagewizarddialog.cpp:69
+msgid "Open URL"
+msgstr "Open URL"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
-msgid "Open URL"
-msgstr "OpenGL"
-
-#: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Plakken"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Pakt de inhoud van het clipboard in the velden"
+
+#: gui/storagewizarddialog.cpp:78
+msgid "You will be directed to ScummVM's page where"
+msgstr "U wordt doorgestuurd naar ScummVM's pagina waar"
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You will be directed to ScummVM's page where"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:80
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "u zou het toegang moeten geven tot uw opslag"
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Een andere opslag is actief. Wilt u die onderbreken?"
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Wacht totdat de huidige opslag klaar is en probeer het opnieuw."
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Er zit een fout in veld %s."
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Er zitten fouten in de velden %s."
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Alles OK!"
 
-#: gui/storagewizarddialog.cpp:202
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr ""
+msgstr "Ongeldige code"
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
-msgstr ""
+msgstr "URL openen mislukt! Navigeer a.u.b. handmatig naar deze pagina."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1794,7 +1791,8 @@ msgstr "S~t~artmenu"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1811,8 +1809,8 @@ msgstr "Spel opslaan:"
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1909,8 +1907,8 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "WAARSCHUWING: Het spel dat u wilt gaan spelen is nog niet volledig "
 "ondersteund door ScummVM. Om die reden is het waarschijnlijk dat het spel "
@@ -2023,19 +2021,20 @@ msgid "C64 Audio Emulator"
 msgstr "C64 Audio Emulator"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
-msgid "Saves sync complete."
-msgstr "Klaar met zoeken!"
+msgid "Saved games sync complete."
+msgstr "Klaar met synchronisatie van opgeslagen spellen."
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
-msgstr ""
+msgid "Saved games sync was cancelled."
+msgstr "Synchronisatie van opgeslagen spellen was geannuleerd."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Synchronisatie van opgeslagen spellen is mislukt.\n"
+"Controleer a.u.b. uw Internet verbinding."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2043,16 +2042,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Download klaar.\n"
+"%u bestanden konden niet gedownload worden."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Klaar met zoeken!"
+msgstr "Download klaar."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Laad bestand"
+msgstr "Download mislukt."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2155,11 +2154,11 @@ msgstr "Auto-sleep modus is nu"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Swipe drie vingers naar rechts om te schakelen."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (geen filters)"
 
@@ -2174,19 +2173,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normaal (niet schalen)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie ingeschakeld"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie uitgeschakeld"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Actieve grafische filter:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Venstermodus"
 
@@ -2793,7 +2792,8 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2803,7 +2803,8 @@ msgstr "Laad opgeslagen spel:"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2859,7 +2860,7 @@ msgstr "Schakel Kleurenblind modus standaard in"
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3037,11 +3038,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "Het volgende originele opgeslagen spel was gevonden in uw spel pad:\n"
@@ -3054,7 +3055,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "Er is al een opgeslagen spel in slot %d. Deze overschrijven?\n"
@@ -3063,8 +3064,8 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
@@ -3110,6 +3111,10 @@ msgstr "~H~oofdmenu"
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "~W~ater Effect Aangezet"
+
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3252,11 +3257,12 @@ msgstr "Gebruik hoge resolutie beelden"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable black-lined video"
-msgstr ""
+msgstr "Activeer black-lined video"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
+"Teken zwarte lijntjes over videos om de scherpte ogenschijnlijk te verhogen"
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -4121,7 +4127,7 @@ msgstr "Cutscene '%s' niet gevonden"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -4138,8 +4144,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Bestand voor het nieuwe opgeslagen spel bestaat al!\n"
 "Wilt u het oude opgeslagen spel (%s) of de nieuwe (%s) behouden?\n"

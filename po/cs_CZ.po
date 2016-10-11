@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2016-09-05 10:12+0200\n"
-"PO-Revision-Date: 2016-02-03 22:59+0100\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
+"POT-Creation-Date: 2016-10-04 13:52+0200\n"
+"PO-Revision-Date: 2016-10-09 11:46+0200\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "X-Poedit-Basepath: ..\n"
 
 #: gui/about.cpp:94
@@ -62,7 +62,7 @@ msgstr "Jít nahoru"
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:443
 #: gui/saveload-dialog.cpp:717 gui/saveload-dialog.cpp:1111
-#: gui/storagewizarddialog.cpp:69 gui/themebrowser.cpp:55
+#: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
 #: gui/updates-dialog.cpp:113 engines/engine.cpp:549
 #: backends/events/default/default-events.cpp:196
 #: backends/events/default/default-events.cpp:218
@@ -79,9 +79,8 @@ msgid "Choose"
 msgstr "Zvolit"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Vyberte adresáø s daty hry"
+msgstr "Vyberte adresáø kam data her stáhnout"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:472 gui/launcher.cpp:173
 msgid "Select directory with game data"
@@ -89,35 +88,37 @@ msgstr "Vyberte adresáø s daty hry"
 
 #: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
 msgid "From: "
-msgstr ""
+msgstr "Z:"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "To: "
-msgstr ""
+msgstr "Do:"
 
 #: gui/downloaddialog.cpp:63
 msgid "Cancel download"
-msgstr ""
+msgstr "Zru¹it stahování"
 
 #: gui/downloaddialog.cpp:65
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "Zru¹it stahování"
 
 #: gui/downloaddialog.cpp:67
 msgid "Hide"
-msgstr ""
+msgstr "Skrýt"
 
 #: gui/downloaddialog.cpp:117
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Zdá se, ¾e va¹e pøipojení je omezeno. Opravdu chcete pomocí nìj soubory "
+"stáhnout?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -129,7 +130,7 @@ msgstr "Ano"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:286 gui/launcher.cpp:394 gui/launcher.cpp:453
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 #: backends/events/symbiansdl/symbiansdl-events.cpp:186
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -147,6 +148,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Nelze vytvoøit adresáø pro stahování - zadaný adresáø má soubor se stejným "
+"názvem."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:501
@@ -174,16 +177,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" ji¾ v zadaném adresáøi existuje.\n"
+"Opravdu chcete soubory do tohoto adresáøe stáhnout?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Sta¾eno %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Hledání dokonèeno!"
+msgstr "Rychlost stahování: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -407,9 +412,11 @@ msgstr "Vyberte adresáø pro ulo¾ené hry"
 
 #: gui/editgamedialog.cpp:510
 msgid ""
-"Saves sync feature doesn't work with non-default directories. If you want "
-"your saves to sync, use default directory."
+"Saved games sync feature doesn't work with non-default directories. If you "
+"want your saved games to sync, use default directory."
 msgstr ""
+"Funkce synchronizace ulo¾ených her nefunguje s nestandardními adresáøi. "
+"Pokud chcete va¹e hry synchronizovat, je nutné pou¾ít výchozí adresáø."
 
 #: gui/editgamedialog.cpp:536
 msgid "This game ID is already taken. Please choose another one."
@@ -489,7 +496,7 @@ msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Triangle"
-msgstr "Trojúhrlník"
+msgstr "Trojúhelník"
 
 #: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1199
 msgid "Misc"
@@ -696,7 +703,7 @@ msgstr ""
 
 #: gui/launcher.cpp:344
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Tento adresáø prozatím nejde pou¾ít, je do nìj stahováno!"
 
 #: gui/launcher.cpp:394
 msgid "Do you really want to remove this game configuration?"
@@ -844,7 +851,7 @@ msgid "Special dithering modes supported by some games"
 msgstr "Speciální re¾imy chvìní podporované nìkterými hrami"
 
 #: gui/options.cpp:789
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2458
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2389
 msgid "Fullscreen mode"
 msgstr "Re¾im celé obrazovky"
 
@@ -1130,36 +1137,36 @@ msgstr "Jazyk GUI ScummVM"
 
 #: gui/options.cpp:1264
 msgid "Update check:"
-msgstr ""
+msgstr "Kontrola aktualizací:"
 
 #: gui/options.cpp:1264
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Jak èasto ScummVM kontroluje aktualizace"
 
 #: gui/options.cpp:1276
 msgid "Check now"
-msgstr ""
+msgstr "Zkontrolovat nyní"
 
 #: gui/options.cpp:1284
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1286
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Cloud"
 
 #: gui/options.cpp:1297
 msgid "Storage:"
-msgstr ""
+msgstr "Úlo¾i¹tì:"
 
 #: gui/options.cpp:1297
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Aktivní cloudové úlo¾i¹tì"
 
 #: gui/options.cpp:1304 gui/options.cpp:1855
 msgid "<none>"
-msgstr ""
+msgstr "<¾ádné>"
 
 #: gui/options.cpp:1308 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1167,101 +1174,99 @@ msgstr "U¾ivatelské jméno"
 
 #: gui/options.cpp:1308
 msgid "Username used by this storage"
-msgstr ""
+msgstr "U¾ivatelská jména která toto úlo¾i¹tì vyu¾ívají"
 
 #: gui/options.cpp:1311
 msgid "Used space:"
-msgstr ""
+msgstr "Vyu¾itý prostor:"
 
 #: gui/options.cpp:1311
-msgid "Space used by ScummVM's saves on this storage"
-msgstr ""
+msgid "Space used by ScummVM's saved games on this storage"
+msgstr "Prostor vyu¾itý ulo¾enými hrami ScummVM v tomto úlo¾i¹ti"
 
 #: gui/options.cpp:1314
 msgid "Last sync time:"
-msgstr ""
+msgstr "Datum poslední synchronizace:"
 
 #: gui/options.cpp:1314
-msgid "When the last saves sync for this storage occured"
-msgstr ""
+msgid "When the last saved games sync for this storage occured"
+msgstr "Kdy byla provedena poslední synchronizace ulo¾ených her"
 
-#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:72
+#: gui/options.cpp:1317 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Pøipojit"
 
 #: gui/options.cpp:1317
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
+"Otevøít dialogové okno prùvodce pro pøipojení k va¹emu úètu cloudového "
+"úlo¾i¹tì"
 
 #: gui/options.cpp:1318
 msgid "Refresh"
-msgstr ""
+msgstr "Obnovit"
 
 #: gui/options.cpp:1318
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
+"Obnovit souèasné údaje cloudového úlo¾i¹tì (u¾ivatelské jméno a vyu¾ití)"
 
 #: gui/options.cpp:1319
-#, fuzzy
 msgid "Download"
-msgstr "Dolù"
+msgstr "Stáhnout"
 
 #: gui/options.cpp:1319
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Otevøít dialogové okno správce stahovaní"
 
 #: gui/options.cpp:1321
 msgid "Run server"
-msgstr ""
+msgstr "Spustit server"
 
 #: gui/options.cpp:1321
 msgid "Run local webserver"
-msgstr ""
+msgstr "Spustit místní internetový server"
 
 #: gui/options.cpp:1322 gui/options.cpp:1965
-#, fuzzy
 msgid "Not running"
-msgstr "Chyba pøi spu¹tìní hry:"
+msgstr "Nespu¹tìno"
 
 #: gui/options.cpp:1326
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Dodateèná Cesta:"
+msgstr "Cesta /root/:"
 
 #: gui/options.cpp:1326 gui/options.cpp:1328 gui/options.cpp:1329
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Stanovuje, kam jsou umístìny va¹e ulo¾ené hry"
+msgstr "Urèuje do kterého adresáøe má Správce souborù pøístup"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Dodateèná Cesta:"
+msgstr "Cesta /root/:"
 
 #: gui/options.cpp:1338
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Port serveru:"
 
 #: gui/options.cpp:1338
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Který port server pou¾ívá\n"
+"Pøihlá¹ení pomocí serveru není dostupné pøi pou¾ití nestandardního portu"
 
 #: gui/options.cpp:1498
 msgid "You have to restart ScummVM before your changes will take effect."
 msgstr "Pro pou¾ití tìchto nastavení musíte restartovat ScummVM."
 
 #: gui/options.cpp:1521
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Nelze ulo¾it hru."
+msgstr "Nelze zmìnit cloudové úlo¾i¹tì!"
 
 #: gui/options.cpp:1524
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "Jiné cloudové úlo¾i¹tì ji¾ je aktivní."
 
 #: gui/options.cpp:1562
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1280,9 +1285,8 @@ msgid "Select directory for plugins"
 msgstr "Vyberte adresáø pro zásuvné moduly"
 
 #: gui/options.cpp:1604
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Vyberte adresáø pro dodateèné soubory"
+msgstr "Vyberte adresáø pro koøen Správce souborù"
 
 #: gui/options.cpp:1666
 msgid ""
@@ -1295,31 +1299,31 @@ msgstr ""
 #: gui/options.cpp:1862
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bajtù"
 
 #: gui/options.cpp:1870
 msgid "<right now>"
-msgstr ""
+msgstr "<právì nyní>"
 
 #: gui/options.cpp:1872
-#, fuzzy
 msgid "<never>"
-msgstr "Nikdy"
+msgstr "<nikdy>"
 
 #: gui/options.cpp:1956
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Zastavit server"
 
 #: gui/options.cpp:1957
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Zastavit místní internetový server"
 
 #: gui/options.cpp:2046
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"®ádost selhala.\n"
+"Zkontrolujte své internetové pøipojení."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1393,9 +1397,8 @@ msgid "Unknown Author"
 msgstr "Neznámý autor"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM nemohl tento adresáø otevøít!"
+msgstr "ScummVM nemá k tomuto adresáøi pøístup!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1450,7 +1453,7 @@ msgid "New Save"
 msgstr "Nová ulo¾ená pozice"
 
 #: gui/saveload-dialog.cpp:924
-msgid "Create a new save game"
+msgid "Create a new saved game"
 msgstr "Vytvoøit novou ulo¾enou hru."
 
 #: gui/saveload-dialog.cpp:1053
@@ -1462,76 +1465,78 @@ msgstr "Název:"
 msgid "Enter a description for slot %d:"
 msgstr "Zadejte popis pro pozici %d:"
 
-#: gui/storagewizarddialog.cpp:56
+#: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "Prùvodce pøipojením k úlo¾i¹ti %s"
 
-#: gui/storagewizarddialog.cpp:59
+#: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Pøejdìte na následující URL:"
+
+#: gui/storagewizarddialog.cpp:61
+msgid "Obtain the code from the storage, enter it"
+msgstr "Získejte kód z úlo¾i¹tì, zadejte ho"
 
 #: gui/storagewizarddialog.cpp:62
-msgid "Obtain the code from the storage, enter it"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:63
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "do následujícího poel a kliknìte na 'Pøipojit':"
+
+#: gui/storagewizarddialog.cpp:69
+msgid "Open URL"
+msgstr "Otevøít URL"
 
 #: gui/storagewizarddialog.cpp:70
-#, fuzzy
-msgid "Open URL"
-msgstr "OpenGL"
-
-#: gui/storagewizarddialog.cpp:71
 msgid "Paste"
-msgstr ""
+msgstr "Vlo¾it"
 
-#: gui/storagewizarddialog.cpp:71
+#: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Vlo¾í obsah schránky do polí"
+
+#: gui/storagewizarddialog.cpp:78
+msgid "You will be directed to ScummVM's page where"
+msgstr "Budete pøesmìrováni na stránku ScummVM kde"
 
 #: gui/storagewizarddialog.cpp:79
-msgid "You will be directed to ScummVM's page where"
-msgstr ""
-
-#: gui/storagewizarddialog.cpp:80
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "budete muset povolit pøístup k va¹emu úlo¾i¹ti."
 
-#: gui/storagewizarddialog.cpp:113
+#: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "Jiné úlo¾i¹tì je aktivní. Chcete ho pøeru¹it?"
 
-#: gui/storagewizarddialog.cpp:122
+#: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
+"Vyèkejte, ne¾ operace se souèasným úlo¾i¹tìm jsou dokonèeny, a pak to zkuste "
+"znova."
 
-#: gui/storagewizarddialog.cpp:183
+#: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Pole %s obsahuje chybu."
 
-#: gui/storagewizarddialog.cpp:185
+#: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Pole %s obsahují chybu."
 
-#: gui/storagewizarddialog.cpp:200
+#: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "V¹e v poøádku!"
 
-#: gui/storagewizarddialog.cpp:202
-#, fuzzy
+#: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr "Neplatná Cesta"
+msgstr "Neplatný kód"
 
-#: gui/storagewizarddialog.cpp:210
+#: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Nelze otevøít URL!\n"
+"Prosím pøejdìte na tuto stránku sami."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1569,19 +1574,22 @@ msgid ""
 "\n"
 "Would you like to enable this feature?"
 msgstr ""
+"ScummVM nyní podporuje automatickou kontrolu\n"
+"aktualizací která vy¾aduje pøipojení k internetu.\n"
+"\n"
+"Chtìli byste tuto funkci nyní zapnout?"
 
 #: gui/updates-dialog.cpp:55
 msgid "(You can always enable it in the options dialog on the Misc tab)"
-msgstr ""
+msgstr "(Toto nastavení v¾dy mù¾ete zmìnit ve Volbách v kartì Rùzné)"
 
 #: gui/updates-dialog.cpp:92
-#, fuzzy
 msgid "Check for updates automatically"
-msgstr "Zkontrolovat Aktualizace..."
+msgstr "Automaticky kontrolovat aktualizace"
 
 #: gui/updates-dialog.cpp:111
 msgid "Proceed"
-msgstr ""
+msgstr "Pokraèovat"
 
 #: gui/widget.cpp:366 gui/widget.cpp:368 gui/widget.cpp:374 gui/widget.cpp:376
 msgid "Clear value"
@@ -1712,20 +1720,19 @@ msgstr "Hercules Jantarová"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Dennì"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Týdnì"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Mìsíènì"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Vyèistit hodnotu"
+msgstr "<©patná hodnota>"
 
 #: engines/advancedDetector.cpp:334
 #, c-format
@@ -1779,7 +1786,8 @@ msgstr "~N~ávrat do Spou¹tìèe"
 #: engines/drascula/saveload.cpp:364 engines/dreamweb/saveload.cpp:262
 #: engines/hugo/file.cpp:298 engines/mohawk/dialogs.cpp:104
 #: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save game:"
@@ -1796,8 +1804,8 @@ msgstr "Ulo¾it hru:"
 #: engines/dreamweb/saveload.cpp:262 engines/hugo/file.cpp:298
 #: engines/mohawk/dialogs.cpp:104 engines/neverhood/menumodule.cpp:880
 #: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:377
-#: engines/sci/engine/kfile.cpp:753 engines/scumm/dialogs.cpp:184
-#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sci/engine/kfile.cpp:887 engines/sci/engine/kfile.cpp:1163
+#: engines/scumm/dialogs.cpp:184 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 msgid "Save"
@@ -1892,8 +1900,8 @@ msgstr ""
 #: engines/engine.cpp:546
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
-"ScummVM. As such, it is likely to be unstable, and any saves you make might "
-"not work in future versions of ScummVM."
+"ScummVM. As such, it is likely to be unstable, and any saved game you make "
+"might not work in future versions of ScummVM."
 msgstr ""
 "VAROVÁNÍ: Hra, kterou se chystáte spustit, není je¹tì plnì podporována "
 "ScummVM. Proto je mo¾né, ¾e bude nestabilní a jakékoli ulo¾ené hry nemusí "
@@ -2005,19 +2013,20 @@ msgid "C64 Audio Emulator"
 msgstr "Emulátor zvuku C64"
 
 #: backends/cloud/storage.cpp:210
-#, fuzzy
-msgid "Saves sync complete."
-msgstr "Hledání dokonèeno!"
+msgid "Saved games sync complete."
+msgstr "Synchronizace ulo¾ených her dokonèena."
 
 #: backends/cloud/storage.cpp:221
-msgid "Saves sync was cancelled."
-msgstr ""
+msgid "Saved games sync was cancelled."
+msgstr "Synchronizace ulo¾ených her byla zru¹ena."
 
 #: backends/cloud/storage.cpp:223
 msgid ""
-"Saves sync failed.\n"
+"Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Synchronizace ulo¾ených her byla zru¹ena.\n"
+"Zkontrolujte své internetové pøipojení."
 
 #: backends/cloud/storage.cpp:327
 #, c-format
@@ -2025,16 +2034,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Stahování dokonèeno.\n"
+"Ne¹lo stáhnout %u souborù."
 
 #: backends/cloud/storage.cpp:329
-#, fuzzy
 msgid "Download complete."
-msgstr "Hledání dokonèeno!"
+msgstr "Stahování dokonèeno."
 
 #: backends/cloud/storage.cpp:339
-#, fuzzy
 msgid "Download failed."
-msgstr "Nahrát hru:"
+msgstr "Sta¾ení selhalo."
 
 #: backends/events/default/default-events.cpp:196
 msgid "Do you really want to return to the Launcher?"
@@ -2137,11 +2146,11 @@ msgstr "Re¾im automatického ta¾ení je nyní"
 msgid "Swipe three fingers to the right to toggle."
 msgstr "Pro zapnutí pøejeïte tøemi prsty doprava."
 
-#: backends/graphics/opengl/opengl-graphics.cpp:126
+#: backends/graphics/opengl/opengl-graphics.cpp:128
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:127
+#: backends/graphics/opengl/opengl-graphics.cpp:129
 msgid "OpenGL (No filtering)"
 msgstr "OpenGL (bez filtrování)"
 
@@ -2156,19 +2165,19 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normální (bez zmìny velikosti)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2357
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2290
 msgid "Enabled aspect ratio correction"
 msgstr "Povolena korekce pomìru stran"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2363
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2296
 msgid "Disabled aspect ratio correction"
 msgstr "Zakázána korekce pomìru stran"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2418
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2350
 msgid "Active graphics filter:"
 msgstr "Aktivní grafický filtr:"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2460
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2391
 msgid "Windowed mode"
 msgstr "Re¾im do okna"
 
@@ -2696,22 +2705,20 @@ msgid "Check for Updates..."
 msgstr "Zkontrolovat Aktualizace..."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Re¾im pro barvoslepé"
+msgstr "Barevný re¾im"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Pou¾ít barevné grafiky"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Linie snímání"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Zobrazit jmenovky objektù"
+msgstr "Zobrazit linie snímání"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2751,29 +2758,31 @@ msgstr ""
 "nabídek."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules Zelená"
+msgstr "Pou¾ít Hercules písmo s vysokým rozli¹ením"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "Pou¾ít písmo Hercules ve vysokém rozli¹ení, pokud je dostupné."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pozastavit pøi zadávání pøíkazù"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Zobrazí okno s pøíkazovou øádkou a pozastaví hru (jako v hrách SCI) místo "
+"øádku v reálném èase"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore game:"
@@ -2783,7 +2792,8 @@ msgstr "Obnovit hru"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
 #: engines/drascula/saveload.cpp:377 engines/dreamweb/saveload.cpp:170
 #: engines/hugo/file.cpp:400 engines/neverhood/menumodule.cpp:893
-#: engines/sci/engine/kfile.cpp:888 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sci/engine/kfile.cpp:1006 engines/sci/engine/kfile.cpp:1235
+#: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432
 msgid "Restore"
@@ -2839,7 +2849,7 @@ msgstr "Standardnì zapínat re¾im pro barvoslepé"
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -3018,11 +3028,11 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
 msgid ""
-"The following original save game file has been found in your game path:\n"
+"The following original saved game file has been found in your game path:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Do you wish to use this save game file with ScummVM?\n"
+"Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
 "V cestì va¹í hry byl nalezen následující soubor s ulo¾enou hrou:\n"
@@ -3035,7 +3045,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:590
 #, c-format
 msgid ""
-"A save game file was found in the specified slot %d. Overwrite?\n"
+"A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
 "V urèené pozici %d byl nalezen soubor s ulo¾enou hrou. Pøepsat?\n"
@@ -3044,8 +3054,8 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:623
 #, c-format
 msgid ""
-"%d original save game files have been successfully imported into\n"
-"ScummVM. If you want to manually import original save game files later you "
+"%d original saved game files have been successfully imported into\n"
+"ScummVM. If you want to manually import original saved game files later you "
 "will\n"
 "need to open the ScummVM debug console and use the command "
 "'import_savefile'.\n"
@@ -3058,11 +3068,11 @@ msgstr ""
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Pøehrát video pøeletu v the Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Video pøeletu v The Myst pùvodní jádro nepøehrávalo."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:181 engines/mohawk/dialogs.cpp:267
@@ -3079,18 +3089,20 @@ msgid "~D~rop Page"
 msgstr "~Z~ahodit Stránku"
 
 #: engines/mohawk/dialogs.cpp:188
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "~Z~obrazit Mapu"
+msgstr "~Z~obrazit mapu"
 
 #: engines/mohawk/dialogs.cpp:194
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "~H~lavní Menu"
+msgstr "~H~lavní nabídka"
 
 #: engines/mohawk/dialogs.cpp:268
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fekt Vody Zapnut"
+
+#: engines/mohawk/mohawk.cpp:61
+msgid "The game is paused. Press any key to continue."
+msgstr "Hra je pozastavena. Pro pokraèovaní stisknìte libovolnou klávesu."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
@@ -3118,18 +3130,16 @@ msgstr ""
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
-#, fuzzy
 msgid "Load file"
-msgstr "Nahrát hru:"
+msgstr "Naèíst soubor"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
 msgstr "Nahrávání hry..."
 
 #: engines/parallaction/saveload.cpp:209
-#, fuzzy
 msgid "Save file"
-msgstr "Ukládání hry selhalo!"
+msgstr "Ulo¾it soubor"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
@@ -3229,13 +3239,12 @@ msgid "Enable high resolution graphics/content"
 msgstr "Povolit grafiku/obsah ve vysokém rozli¹ení"
 
 #: engines/sci/detection.cpp:410
-#, fuzzy
 msgid "Enable black-lined video"
-msgstr "Zapnout re¾im Roland GS"
+msgstr "Povolit video s èernými èarami"
 
 #: engines/sci/detection.cpp:411
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr ""
+msgstr "Vykreslovat u videí èerné èáry pro zvý¹ení jejich zdánlivé ostrosti."
 
 #: engines/sci/detection.cpp:420
 msgid "Prefer digital sound effects"
@@ -3284,13 +3293,12 @@ msgid ""
 msgstr "Pou¾ít alternativní sadu støíbrných kurzorù místo standardních zlatých"
 
 #: engines/scumm/detection.cpp:1341
-#, fuzzy
 msgid "Show Object Line"
-msgstr "Zobrazit jmenovky objektù"
+msgstr "Zobrazit øádek objektù"
 
 #: engines/scumm/detection.cpp:1342
 msgid "Show the names of objects at the bottom of the screen"
-msgstr ""
+msgstr "Zobrazit názvy objektù v dolní èásti obrazovky"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
@@ -3993,58 +4001,61 @@ msgstr ""
 "jeho¾ mají být naèteny hudební nástroje. Hudba bude zakázána."
 
 #: engines/sherlock/detection.cpp:71
-#, fuzzy
 msgid "Use original savegame dialog"
-msgstr "Pou¾ít pùvodní obrazovky naètení/ulo¾ení"
+msgstr "Pou¾ít pùvodní obrazovky ulo¾ení hry"
 
 #: engines/sherlock/detection.cpp:72
 msgid ""
 "Files button in-game shows original savegame dialog rather than the ScummVM "
 "menu"
 msgstr ""
+"Tlaèítko Files ve høe zobrazí pùvodní dialogové okno pro ulo¾ení hry místo "
+"nabídky ScummVM"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr ""
+msgstr "Pixelované pøechody scén"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr ""
+msgstr "Pøi zmìnì scény je proveden náhodný pixelový pøechod"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "Nezobarzovat aktivní body pøi pohybu my¹í"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
+"Aktivní body zobrazovat pouze pøi kliknutí na nì nebo tlaèítko èinnosti"
 
 #: engines/sherlock/detection.cpp:101
-#, fuzzy
 msgid "Show character portraits"
-msgstr "Zamìnit znaky"
+msgstr "Zobrazit portréty postav"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "Zobrazit portréty postav kdy¾ mluví"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr ""
+msgstr "Dialogová okna vplují na obrazovku"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
+"Dialohová okna rozhraní vplují na obrazovku, místo aby se zobrazovala "
+"okam¾itì"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr ""
+msgstr "Prùhledná okna"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr ""
+msgstr "Zobrazit okna s èásteènì prùhledným pozadím"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -4093,7 +4104,7 @@ msgstr "Video '%s' nenalezeno"
 msgid ""
 "ScummVM found that you have old savefiles for Broken Sword 1 that should be "
 "converted.\n"
-"The old save game format is no longer supported, so you will not be able to "
+"The old saved game format is no longer supported, so you will not be able to "
 "load your games if you don't convert them.\n"
 "\n"
 "Press OK to convert them now, otherwise you will be asked again the next "
@@ -4110,8 +4121,8 @@ msgstr ""
 #: engines/sword1/control.cpp:1232
 #, c-format
 msgid ""
-"Target new save game already exists!\n"
-"Would you like to keep the old save game (%s) or the new one (%s)?\n"
+"Target new saved game already exists!\n"
+"Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
 "Nová cílová ulo¾ená hra ji¾ existuje!\n"
 "Chtìli byste ponechat starou ulo¾enou hru (%s), nebo novou (%s)?\n"
@@ -4143,12 +4154,12 @@ msgstr "Zobrazit jmenovky objektù pøi najetí my¹i"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr ""
+msgstr "Pou¾ít anglickou øeè"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr ""
+msgstr "Pou¾ít anglickou øeè místo nìmecké pro ka¾dý jazyk kromì nìmèiny."
 
 #: engines/teenagent/resources.cpp:96
 msgid ""

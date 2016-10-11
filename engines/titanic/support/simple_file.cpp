@@ -52,7 +52,7 @@ SimpleFile::~SimpleFile() {
 }
 
 void SimpleFile::open(Common::SeekableReadStream *stream) {
-	close();	
+	close();
 	_inStream = stream;
 }
 
@@ -290,7 +290,7 @@ void SimpleFile::writeString(const CString &str) const {
 
 	const char *msgP = str.c_str();
 	char c;
-	
+
 	while ((c = *msgP++) != '\0') {
 		switch (c) {
 		case '\r':
@@ -422,8 +422,8 @@ bool SimpleFile::scanf(const char *format, ...) {
 	while (!formatStr.empty()) {
 		if (formatStr.hasPrefix(" ")) {
 			formatStr.deleteChar(0);
-			
-			safeRead(&c, 1);			
+
+			safeRead(&c, 1);
 			if (!Common::isSpace(c))
 				return false;
 
@@ -434,7 +434,7 @@ bool SimpleFile::scanf(const char *format, ...) {
 			formatStr = CString(formatStr.c_str() + 2);
 			int *param = (int *)va_arg(va, int *);
 			*param = readNumber();
-			
+
 			if (!eos())
 				_inStream->seek(-1, SEEK_CUR);
 		} else if (formatStr.hasPrefix("%s")) {
@@ -488,7 +488,7 @@ bool StdCWadFile::open(const Common::String &filename) {
 	CString resStr = name.mid(idx + 1, extPos - idx - 1);
 	int resIndex = resStr.readInt();
 
-	// Open up the index for access 
+	// Open up the index for access
 	f.open(fname);
 	int indexSize = f.readUint32LE() / 4;
 	assert(resIndex < indexSize);

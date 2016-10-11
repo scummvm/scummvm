@@ -34,6 +34,25 @@ public:
 public:
 	FPoint() : _x(0), _y(0) {}
 	FPoint(double x, double y) : _x(x), _y(y) {}
+
+	bool operator==(const FPoint &p) const { return _x == p._x && _y == p._y; }
+	bool operator!=(const FPoint &p) const { return _x != p._x || _y != p._y; }
+
+	void operator+=(const FPoint &delta) {
+		_x += delta._x;
+		_y += delta._y;
+	}
+
+	void operator-=(const FPoint &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
+	}
+
+	/**
+	 * Normalises the X and Y coordinates as fractions relative to the
+	 * value of the hypotenuse formed by a triangle from the origin (0,0)
+	 */
+	void normalize();
 };
 
 } // End of namespace Titanic

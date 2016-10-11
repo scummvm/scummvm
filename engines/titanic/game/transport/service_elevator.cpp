@@ -24,7 +24,7 @@
 #include "titanic/core/room_item.h"
 #include "titanic/npcs/doorbot.h"
 
-namespace Titanic {	
+namespace Titanic {
 
 BEGIN_MESSAGE_MAP(CServiceElevator, CTransport)
 	ON_MESSAGE(BodyInBilgeRoomMsg)
@@ -182,7 +182,7 @@ bool CServiceElevator::TimerMsg(CTimerMsg *msg) {
 					else if (_v3 == 1)
 						actMsg._action = "DoorbotPlayerPressedMiddleButton";
 
-					actMsg.execute(doorbot);	
+					actMsg.execute(doorbot);
 				}
 			}
 		}

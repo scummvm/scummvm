@@ -276,17 +276,6 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList 
 Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 	debug (0, "Replacing sound %d", id);
 
-	// TODO: The original engine does fading
-
-	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
-
-	// Check if sound is already playing
-	for (uint32 i = 0; i < _handles.size(); i++)
-		if (_handles[i].type == kUsedHandle
-				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
-				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
-			return &_handles[i].handle;
-
 	// The original engine also forces looping for those sounds
 	switch (id) {
 	case 2205:

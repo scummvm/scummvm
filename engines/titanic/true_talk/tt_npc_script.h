@@ -259,7 +259,7 @@ public:
 	 * and adds it to the response
 	 */
 	virtual void selectResponse(int id);
-	
+
 	/**
 	 * Handles scanning the word list for a given Id, and if
 	 * found adds it to the sentence concept list
@@ -275,7 +275,7 @@ public:
 	 * either a random value, or each value in turn
 	 */
 	virtual uint getRangeValue(uint id);
-	
+
 	/**
 	 * Resets the prior used index for the specified range
 	 */
@@ -295,7 +295,7 @@ public:
 	 * Returns a bitset of the dials being off or not
 	 */
 	virtual uint getDialsBitset() const { return 0; }
-	
+
 	virtual const TTscriptMapping *getMapping(int index);
 	virtual int doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence);
 
@@ -303,7 +303,7 @@ public:
 	 * Handles any post-response NPC processing
 	 */
 	virtual void postResponse(int v1, const TTsentenceEntry *entry, const TTroomScript *roomScript, const TTsentence *sentence) {}
-	
+
 	virtual void save(SimpleFile *file);
 	virtual void load(SimpleFile *file);
 	virtual void saveBody(SimpleFile *file);
@@ -337,7 +337,7 @@ public:
 	 * Handles a randomzied response
 	 */
 	virtual bool randomResponse(uint index);
-	
+
 	virtual uint translateId(uint id) const;
 
 	void preLoad();

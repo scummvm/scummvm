@@ -33,7 +33,7 @@
 #include "scumm/dialogs.h"
 
 namespace _3DS {
-	
+
 enum {
 	kSave = 0x10000000,
 	kScreenRadioGroup,
@@ -41,7 +41,7 @@ enum {
 	kScreenBottom,
 	kScreenBoth,
 };
-	
+
 extern bool optionMenuOpened;
 
 class OptionsDialog : public GUI::Dialog {

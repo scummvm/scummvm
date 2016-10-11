@@ -66,7 +66,7 @@ private:
 	Audio::SoundHandle _digitalMusicHandle;
 	MusicType _musicType;
 	byte *_midiMusicData;
-	
+
 	/**
 	 * Play the specified music resource
 	 */
@@ -100,7 +100,7 @@ public:
 	 * Start playing a song
 	 */
 	void startSong();
-	
+
 	/**
 	 * Free any currently loaded song
 	 */
@@ -110,7 +110,7 @@ public:
 	 * Stop playing the music
 	 */
 	void stopMusic();
-	
+
 	bool isPlaying();
 	uint32 getCurrentPosition();
 

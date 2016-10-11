@@ -21,6 +21,7 @@ MODULE_OBJS := \
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
+	cloud/cloudicon.o \
 	cloud/cloudmanager.o \
 	cloud/iso8601.o \
 	cloud/storage.o \
@@ -54,7 +55,6 @@ MODULE_OBJS += \
 	cloud/onedrive/onedriveuploadrequest.o \
 	networking/curl/connectionmanager.o \
 	networking/curl/networkreadstream.o \
-	networking/curl/cloudicon.o \
 	networking/curl/curlrequest.o \
 	networking/curl/curljsonrequest.o \
 	networking/curl/request.o
@@ -147,33 +147,6 @@ endif
 ifdef USE_OPENGL
 MODULE_OBJS += \
 	graphics/openglsdl/openglsdl-graphics.o
-endif
-endif
-
-# openUrl
-ifeq ($(BACKEND),android)
-MODULE_OBJS += \
-	networking/browser/openurl-android.o
-else
-ifdef MACOSX
-MODULE_OBJS += \
-	networking/browser/openurl-osx.o
-else
-ifdef WIN32
-MODULE_OBJS += \
-	networking/browser/openurl-windows.o
-else
-	ifdef POSIX
-	MODULE_OBJS += \
-		networking/browser/openurl-posix.o
-	else
-		# create_project doesn't know something about `else`
-		ifndef WIN32
-		MODULE_OBJS += \
-		networking/browser/openurl-default.o
-		endif
-	endif
-endif
 endif
 endif
 

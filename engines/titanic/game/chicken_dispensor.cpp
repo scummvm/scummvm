@@ -65,14 +65,14 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	for (obj = pet->getFirstObject(); obj; obj = pet->getNextObject(obj)) {
 		if (obj->isEquals("Chicken")) {
-			petDisplayMessage(1, "Chickens are allocated on a one-per-customer basis.");
+			petDisplayMessage(1, ONE_CHICKEN_PER_CUSTOMER);
 			return true;
 		}
 	}
 
 	for (obj = getMailManFirstObject(); obj; obj = getNextMail(obj)) {
 		if (obj->isEquals("Chicken")) {
-			petDisplayMessage(1, "Chickens are allocated on a one-per-customer basis.");
+			petDisplayMessage(1, ONE_CHICKEN_PER_CUSTOMER);
 			return true;
 		}
 	}
@@ -82,7 +82,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	switch (v1) {
 	case 0:
-		petDisplayMessage(1, "Only one piece of chicken per passenger. Thank you.");
+		petDisplayMessage(1, ONE_ALLOCATED_CHICKEN_PER_CUSTOMER);
 		break;
 	case 1:
 		setVisible(true);
@@ -107,7 +107,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 			_fieldE8 = 1;
 		}
 		break;
-	
+
 	default:
 		break;
 	}

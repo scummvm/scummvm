@@ -47,7 +47,7 @@ void CParrotPerchHolder::load(SimpleFile *file) {
 bool CParrotPerchHolder::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (CParrot::_v1) {
 		if (CCage::_open) {
-			petDisplayMessage("You cannot take this because the cage is locked shut.");
+			petDisplayMessage(CANNOT_TAKE_CAGE_LOCKED);
 		} else if (!CParrot::_v4) {
 			CTrueTalkTriggerActionMsg triggerMsg(280252, 0, 0);
 			triggerMsg.execute(getRoot(), CParrot::_type,

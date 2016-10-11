@@ -171,8 +171,11 @@ void Kernel::loadSelectorNames() {
 // (io) -> optionally integer AND an object
 // (i) -> optional integer
 // . -> any type
-// i* -> optional multiple integers
-// .* -> any parameters afterwards (or none)
+// i* -> at least one integer, more integers may follow after that
+// (i*) -> optional multiple integers
+// .* -> at least one parameter of any type and more parameters of any type may follow
+// (.*) -> any parameters afterwards (or none)
+// * -> means "more of the last parameter may follow (or none at all)", must be at the end of a signature. Is not valid anywhere else.
 static uint16 *parseKernelSignature(const char *kernelName, const char *writtenSig) {
 	const char *curPos;
 	char curChar;
@@ -407,7 +410,6 @@ uint16 Kernel::findRegType(reg_t reg) {
 	case SEG_TYPE_HUNK:
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_ARRAY:
-	case SEG_TYPE_STRING:
 	case SEG_TYPE_BITMAP:
 #endif
 		result |= SIG_TYPE_REFERENCE;

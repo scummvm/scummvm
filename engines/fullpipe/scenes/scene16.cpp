@@ -65,7 +65,7 @@ void scene16_initScene(Scene *sc) {
 
 			idx++;
 
-			if (idx >= 2)
+			if (idx > 1)
 				idx = 0;
 		}
 
@@ -76,7 +76,7 @@ void scene16_initScene(Scene *sc) {
 
 			idx++;
 
-			if (idx >= 2)
+			if (idx > 1)
 				idx = 0;
 		}
 	} else {
@@ -269,7 +269,7 @@ void sceneHandler16_drink() {
 							mq->setFlags(mq->getFlags() | 1);
 							mq->chain(0);
 						} else {
-							g_fp->_aniMan->_flags |= 1;
+							g_fp->_aniMan->_flags |= 0x100;
 
 							mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC16_MANDRINK), 0, 1);
 
@@ -460,7 +460,7 @@ int sceneHandler16(ExCommand *cmd) {
 		if (g_vars->scene16_placeIsOccupied) {
 			g_vars->scene16_walkingCount++;
 
-			if (g_vars->scene16_walkingCount < 280) {
+			if (g_vars->scene16_walkingCount >= 280) {
 				sceneHandler16_putOnWheel();
 
 				g_vars->scene16_walkingCount = 0;

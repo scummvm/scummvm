@@ -45,7 +45,7 @@ void DrasculaEngine::checkForOldSaveGames() {
 
 	GUI::MessageDialog dialog0(
 	    _("ScummVM found that you have old savefiles for Drascula that should be converted.\n"
-	      "The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
@@ -255,7 +255,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (!(in = _saveFileMan->openForLoading(saveFileName))) {
 		error("missing savegame file %s", saveFileName.c_str());
 	}
-	
+
 	// If we currently are in room 102 while being attached below the pendulum
 	// the character is invisible and some surface are temporarily used for other
 	// things. Reset those before loading the savegame otherwise we may have some
@@ -267,7 +267,7 @@ bool DrasculaEngine::loadGame(int slot) {
 		loadPic(97, extraSurface);
 		loadPic(99, backSurface);
 	}
-	
+
 
 	loadMetaData(in, slot, true);
 	Graphics::skipThumbnail(*in);
@@ -300,7 +300,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	if (!sscanf(currentData, "%d.ald", &roomNum)) {
 		error("Bad save format");
 	}
-	
+
 	// When loading room 102 while being attached below the pendulum Some variables
 	// are not correctly set and can cause random crashes when calling enterRoom below.
 	// The crash occurs in moveCharacters() when accessing factor_red[curY + curHeight].
@@ -309,10 +309,10 @@ bool DrasculaEngine::loadGame(int slot) {
 		curY = 108;
 		curWidth = curHeight = 0;
 	}
-	
+
 	enterRoom(roomNum);
 	selectVerb(kVerbNone);
-	
+
 	// When loading room 102 while being attached below the pendulum we
 	// need to call activatePendulum() to properly initialized the scene.
 	if (_roomNumber == 102 && flags[1] == 2)

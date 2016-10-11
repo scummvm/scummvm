@@ -78,11 +78,6 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 	return request;
 }
 
-void ConnectionManager::showCloudDisabledIcon() {
-	_icon.showDisabled();
-	startTimer();
-}
-
 Common::String ConnectionManager::urlEncode(Common::String s) const {
 	if (!_multi)
 		return "";
@@ -137,7 +132,7 @@ void ConnectionManager::handle() {
 	if (_frame % CURL_PERIOD == 0)
 		processTransfers();
 
-	if (_icon.draw() && _requests.empty() && !hasAddedRequests())
+	if (_requests.empty() && !hasAddedRequests())
 		stopTimer();
 	_handleMutex.unlock();
 }

@@ -74,9 +74,7 @@ bool CLiftindicator::EnterViewMsg(CEnterViewMsg *msg) {
 		petSetRemoteTarget();
 		petSetArea(PET_REMOTE);
 
-		CString str = CString::format("You are standing outside Elevator %d",
-			petGetRoomsWellEntry());
-		petDisplayMessage(-1, str);
+		petDisplayMessage(OUTSIDE_ELEVATOR_NUM, petGetRoomsWellEntry());
 
 		debugC(kDebugScripts, "Claiming PET - %d, Multiplier = %f",
 			_liftNum, multiplier);
@@ -149,14 +147,13 @@ bool CLiftindicator::PETActivateMsg(CPETActivateMsg *msg) {
 
 	if (msg->_name == "Lift") {
 		if (petDoorOrBellbotPresent()) {
-			petDisplayMessage(1, "I'm sorry, you cannot enter this elevator at present "
-				"as a bot is in the way.");
+			petDisplayMessage(1, BOT_BLOCKING_ELEVATOR);
 		} else {
 			_endFrame = pet->getRoomsFloorNum();
-			
+
 			if (petGetRoomsWellEntry() == 4 && !CLift::_v6
 					&& pet->getRoomsFloorNum() != CLift::_elevator4Floor) {
-				petDisplayMessage(1, "This elevator is currently in an advanced state of non-functionality.");
+				petDisplayMessage(1, ELEVATOR_NON_FUNCTIONAL);
 			} else {
 				_start = _indicatorPos.y + (int)(_startFrame * multiplier);
 				_end = _indicatorPos.y + (int)(_endFrame * multiplier);

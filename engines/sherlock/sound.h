@@ -85,7 +85,7 @@ public:
 	 * Load a sound
 	 */
 	void loadSound(const Common::String &name, int priority);
-	
+
 	/**
 	 * Play the sound in the specified resource
 	 */
@@ -100,17 +100,17 @@ public:
 	 * Stop the AIFF sound that was started with playAiff().
 	 */
 	void stopAiff();
-	
+
 	/**
 	 * Play a previously loaded sound
 	 */
 	void playLoadedSound(int bufNum, WaitType waitType);
-	
+
 	/**
 	 * Free any previously loaded sounds
 	 */
 	void freeLoadedSounds();
-	
+
 	/**
 	 * Stop playing any active sound
 	 */

@@ -105,7 +105,7 @@ bool CSGTStateRoom::ActMsg(CActMsg *msg) {
 	uint assignedRoom = pet->getAssignedRoomFlags();
 
 	if (roomFlags != assignedRoom) {
-		petDisplayMessage("This is not your assigned room. Please do not enjoy.");
+		petDisplayMessage(NOT_YOUR_ASSIGNED_ROOM);
 	} else if (_fieldE0) {
 		CTurnOn onMsg;
 		onMsg.execute(this);

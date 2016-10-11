@@ -183,6 +183,9 @@ int Audio32::writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::R
 	do {
 		if (loop && sourceStream->endOfStream()) {
 			Audio::RewindableAudioStream *rewindableStream = dynamic_cast<Audio::RewindableAudioStream *>(sourceStream);
+			if (rewindableStream == nullptr) {
+				error("[Audio32::writeAudioInternal]: Unable to cast stream");
+			}
 			rewindableStream->rewind();
 		}
 
@@ -453,7 +456,11 @@ void Audio32::freeUnusedChannels() {
 		const AudioChannel &channel = getChannel(channelIndex);
 		if (!channel.robot && channel.stream->endOfStream()) {
 			if (channel.loop) {
-				dynamic_cast<Audio::SeekableAudioStream *>(channel.stream)->rewind();
+				Audio::SeekableAudioStream *stream = dynamic_cast<Audio::SeekableAudioStream *>(channel.stream);
+				if (stream == nullptr) {
+					error("[Audio32::freeUnusedChannels]: Unable to cast stream for resource %s", channel.id.toString().c_str());
+				}
+				stream->rewind();
 			} else {
 				stop(channelIndex--);
 			}
@@ -658,6 +665,9 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	if (channelIndex != kNoExistingChannel) {
 		AudioChannel &channel = getChannel(channelIndex);
 		Audio::SeekableAudioStream *stream = dynamic_cast<Audio::SeekableAudioStream *>(channel.stream);
+		if (stream == nullptr) {
+			error("[Audio32::play]: Unable to cast stream for resource %s", resourceId.toString().c_str());
+		}
 
 		if (channel.pausedAtTick) {
 			resume(channelIndex);
@@ -764,7 +774,12 @@ uint16 Audio32::play(int16 channelIndex, const ResourceId resourceId, const bool
 	// use audio streams, and allocate and fill the monitoring buffer
 	// when reading audio data from the stream.
 
-	channel.duration = /* round up */ 1 + (dynamic_cast<Audio::SeekableAudioStream *>(channel.stream)->getLength().msecs() * 60 / 1000);
+	Audio::SeekableAudioStream *stream = dynamic_cast<Audio::SeekableAudioStream *>(channel.stream);
+	if (stream == nullptr) {
+		error("[Audio32::play]: Unable to cast stream for resource %s", resourceId.toString().c_str());
+	}
+
+	channel.duration = /* round up */ 1 + (stream->getLength().msecs() * 60 / 1000);
 
 	const uint32 now = g_sci->getTickCount();
 	channel.pausedAtTick = autoPlay ? 0 : now;
@@ -1012,7 +1027,7 @@ int16 Audio32::getVolume(const int16 channelIndex) const {
 }
 
 void Audio32::setVolume(const int16 channelIndex, int16 volume) {
-	volume = MIN((int16)kMaxVolume, volume);
+	volume = MIN<int16>(kMaxVolume, volume);
 	if (channelIndex == kAllChannels) {
 		ConfMan.setInt("sfx_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);
 		ConfMan.setInt("speech_volume", volume * Audio::Mixer::kMaxChannelVolume / kMaxVolume);

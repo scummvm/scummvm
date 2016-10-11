@@ -47,7 +47,7 @@ public:
 template<typename T>
 class TypeTemplate : public ClassDef {
 public:
-	TypeTemplate(const char *className, ClassDef *parent) : 
+	TypeTemplate(const char *className, ClassDef *parent) :
 		ClassDef(className, parent) {}
 	virtual CSaveableObject *create() { return new T(); }
 };
@@ -79,7 +79,7 @@ public:
 public:
 	CLASSDEF
 	virtual ~CSaveableObject() {}
-	
+
 	bool isInstanceOf(const ClassDef *classDef) const;
 
 	/**
@@ -91,13 +91,13 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
-	
+
 	/**
 	 * Write out a header definition for the class to file
 	 * prior to saving the actual data for the class
 	 */
 	virtual void saveHeader(SimpleFile *file, int indent);
-	
+
 	/**
 	 * Writes out a footer for the class after it's data has
 	 * been written to file

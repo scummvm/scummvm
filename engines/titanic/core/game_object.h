@@ -25,13 +25,14 @@
 
 #include "audio/mixer.h"
 #include "common/stream.h"
+#include "titanic/core/named_item.h"
+#include "titanic/sound/proximity.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
-#include "titanic/sound/proximity.h"
 #include "titanic/support/rect.h"
+#include "titanic/support/strings.h"
 #include "titanic/support/movie_clip.h"
-#include "titanic/core/named_item.h"
 #include "titanic/pet_control/pet_section.h"
 #include "titanic/pet_control/pet_text.h"
 #include "titanic/game_state.h"
@@ -400,7 +401,7 @@ protected:
 	 * Clear the PET display
 	 */
 	void petClear() const;
-	
+
 	/**
 	 * Returns the MailMan
 	 */
@@ -487,7 +488,7 @@ protected:
 	 * Locks the PET, disabling all input. Can be called multiple times
 	 */
 	void petLockInput();
-	
+
 	/**
 	 * Unlocks PET input
 	 */
@@ -645,7 +646,7 @@ public:
 	 * Change the object's status
 	 */
 	void playMovie(uint flags);
-	
+
 	/**
 	 * Play the movie specified in _resource
 	 */
@@ -670,7 +671,7 @@ public:
 	 * Get the current movie frame
 	 */
 	int getMovieFrame() const;
-	
+
 	/**
 	 * Returns the object's frame number
 	 */
@@ -705,7 +706,7 @@ public:
 	 * Return the player's passenger class
 	 */
 	int getPassengerClass() const;
-	
+
 	/**
 	 * Return the player's previous passenger class
 	 */
@@ -731,7 +732,7 @@ public:
 	 * Returns a hidden object
 	 */
 	CGameObject *getHiddenObject(const CString &name) const;
-	
+
 	/**
 	 * Sets up credits text
 	 */
@@ -741,7 +742,7 @@ public:
 	 * Support function for drag moving
 	 */
 	void dragMove(const Point &pt);
-	
+
 	/**
 	 * Returns the currently dragging item (if any) if it's a game object
 	 */
@@ -826,12 +827,22 @@ public:
 	/**
 	 * Display a message in the PET
 	 */
-	void petDisplayMessage(int unused, const CString &msg);
+	void petDisplayMessage(int unused, StringId stringId);
 
 	/**
 	 * Display a message in the PET
 	 */
-	void petDisplayMessage(const CString &msg);
+	void petDisplayMessage(int unused, const CString &str);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(StringId stringId, int param = 0);
+
+	/**
+	 * Display a message in the PET
+	 */
+	void petDisplayMessage(const CString &str, int param = 0);
 
 	/**
 	 * Gets the entry number used when last arriving at the well
@@ -954,17 +965,17 @@ public:
 	/*--- CGameState Methods ---*/
 
 	void setState1C(bool flag);
-	
+
 	/**
 	 * Change to the next season
 	 */
 	void stateChangeSeason();
-	
+
 	/**
 	 * Returns the currently active season
 	 */
 	Season stateGetSeason() const;
-	
+
 	void stateSet24();
 	int stateGet24() const;
 	void stateInc38();

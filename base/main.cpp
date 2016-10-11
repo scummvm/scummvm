@@ -482,7 +482,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		dlg.runModal();
 	}
 #endif
-		
+
 #ifdef USE_LIBCURL
 	CloudMan.init();
 	CloudMan.syncSaves();

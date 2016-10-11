@@ -73,12 +73,12 @@ public:
 	void set54(int val);
 	int get3() const;
 	void set3(int val);
-	void toggle4();	
+	void toggle4();
 	bool set4(bool val);
 	int get88() const;
 	int get5() const;
 	void update6();
-	int get6() const;	
+	int get6() const;
 };
 
 } // End of namespace Titanic

@@ -99,7 +99,7 @@ static const byte v0ActorTalk[25] = {
 	0x06, // Sandy (Cut-Scene)
 };
 
-static const byte v0WalkboxSlantedModifier[0x16] = { 
+static const byte v0WalkboxSlantedModifier[0x16] = {
 	0x00,0x01,0x02,0x03,0x03,0x04,0x05,0x06,
 	0x06,0x07,0x08,0x09,0x09,0x0A,0x0B,
 	0x0C,0x0C,0x0D,0x0E,0x0F,0x10,0x10
@@ -237,7 +237,7 @@ void Actor_v0::initActor(int mode) {
 	_costCommand = 0xFF;
 	_miscflags = 0;
 	_speaking = 0;
-	
+
 	_walkCountModulo = 0;
 	_newWalkBoxEntered = false;
 	_walkDirX = 0;
@@ -297,7 +297,7 @@ void Actor_v0::walkboxQueueReverse() {
 		return;
 
 	for (int i = 1; i < j && j >= 1 ; ++i, --j) {
-		
+
 		byte tmp = _walkboxQueue[i];
 
 		_walkboxQueue[i] = _walkboxQueue[j];
@@ -371,7 +371,7 @@ bool Actor_v0::walkBoxQueuePrepare() {
 			_walkboxQueue[--_walkboxQueueIndex] = kInvalidBox;
 
 			BoxFound = _walkboxQueue[_walkboxQueueIndex - 1];
-		} 
+		}
 
 	} while (_walkboxQueueIndex > 0);
 
@@ -616,7 +616,7 @@ bool Actor_v0::calcWalkDistances() {
 	if (!_walkXCountInc && !_walkYCountInc)
 		return true;
 
-	if (_walkXCountInc <= _walkYCountInc) 
+	if (_walkXCountInc <= _walkYCountInc)
 		_walkYCountGreaterThanXCount = 1;
 
 	// 2FCC
@@ -652,7 +652,7 @@ byte Actor_v0::actorWalkX() {
 		setActorFromTmp();
 
 		return 3;
-	} 
+	}
 	// 2EBF
 	if (_tmp_Dest.x == _CurrentWalkTo.x)
 		return 1;
@@ -679,7 +679,7 @@ byte Actor_v0::actorWalkY() {
 		// 2EF8
 		setActorFromTmp();
 		return 4;
-	} 
+	}
 	// 2EFE
 	if (_walkYCountInc != 0) {
 		if (_walkYCountInc == 0xFF) {
@@ -690,7 +690,7 @@ byte Actor_v0::actorWalkY() {
 	// 2F0D
 	if (_CurrentWalkTo.y == _tmp_Dest.y)
 		return 1;
-	
+
 	return 0;
 }
 
@@ -904,8 +904,8 @@ L2A33:;
 		}
 
 		directionUpdate();
-		
-		if (_moving & 0x80) 
+
+		if (_moving & 0x80)
 			return;
 
 		animateActor(newDirToOldDir(_facing));
@@ -913,7 +913,7 @@ L2A33:;
 	} else {
 		// 2A0A
 		if ((_moving & 0x7F) != 1) {
-			
+
 			if (_NewWalkTo == _pos)
 				return;
 		}
@@ -1025,7 +1025,7 @@ L2CA3:;
 				_moving &= 0xF0;
 				_moving |= A;
 			} else {
-				if (A == 4) 
+				if (A == 4)
 					stopActorMoving();
 			}
 
@@ -1061,7 +1061,7 @@ L2CA3:;
 				} else {
 					_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*-1, V12_Y_MULTIPLIER*0, false);
 				}
-				
+
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
 				goto L2CA3;
@@ -1433,13 +1433,13 @@ void Actor::turnToDirection(int newdir) {
 
 	if (_vm->_game.version <= 6) {
 		_targetFacing = newdir;
-		
+
 		if (_vm->_game.version == 0) {
 			setDirection(newdir);
 			return;
 		}
 		_moving = MF_TURN;
-		
+
 	} else {
 		_moving &= ~MF_TURN;
 		if (newdir != _facing) {
@@ -1637,7 +1637,7 @@ AdjustBoxResult Actor_v0::adjustPosInBorderWalkbox(AdjustBoxResult box) {
 
 	int16 A;
 	boxMask &= 0x7C;
-	if (boxMask == 0x0C) 
+	if (boxMask == 0x0C)
 		A = 2;
 	else {
 		if (boxMask != 0x08)
@@ -2114,7 +2114,7 @@ void ScummEngine::processActors() {
 		// comment further up in this method for some details.
 		if (a->_costume) {
 
-			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor' (which is before drawing the actor)... 
+			// Unfortunately in V0, the 'animateCostume' call happens right after the call to 'walkActor' (which is before drawing the actor)...
 			// doing it the other way with V0, causes animation glitches (when beginnning to walk, as the costume hasnt been updated).
 			// Updating the costume directly after 'walkActor' and again, after drawing... causes frame skipping
 			if (_game.version == 0) {
@@ -3476,7 +3476,7 @@ void Actor_v0::saveLoadWithSerializer(Serializer *ser) {
 
 		// valid costume command?
 		if (_costCommand != 0xFF) {
-			
+
 			// Do we have a walkbox queue?
 			if (_walkboxQueueIndex < 1) {
 				_costCommand = 0xFF;

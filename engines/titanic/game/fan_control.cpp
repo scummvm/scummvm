@@ -128,7 +128,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 					}
 				}
 				break;
-			
+
 			default:
 				break;
 			}
@@ -137,7 +137,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 			statusMsg._newStatus = _state;
 			statusMsg.execute("RightFan");
 		} else {
-			petDisplayMessage(1, "Unfortunately this fan controller has blown a fuse.");
+			petDisplayMessage(1, FAN_HAS_BLOWN_A_FUSE);
 		}
 	}
 

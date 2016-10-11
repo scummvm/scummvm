@@ -73,7 +73,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
-	
+
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
 	if (s->_delayedRestoreGame) {
@@ -236,7 +236,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// check bugs #3058865 and #3127824
 	if (s->_gameIsBenchmarking) {
 		// Game is benchmarking, don't add a delay
-	} else {
+	} else if (getSciVersion() < SCI_VERSION_2) {
 		g_system->delayMillis(10);
 	}
 
@@ -368,6 +368,30 @@ reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv) {
 	writeSelectorValue(s->_segMan, result, SELECTOR(y), y);
 
 	return make_reg(0, visible);
+}
+
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 1) {
+		g_sci->getEventManager()->setHotRectanglesActive((bool)argv[0].toUint16());
+		return s->r_acc;
+	}
+
+	const int16 numRects = argv[0].toSint16();
+	SciArray &hotRects = *s->_segMan->lookupArray(argv[1]);
+
+	Common::Array<Common::Rect> rects;
+	rects.resize(numRects);
+
+	for (int16 i = 0; i < numRects; ++i) {
+		rects[i].left   = hotRects.getAsInt16(i * 4);
+		rects[i].top    = hotRects.getAsInt16(i * 4 + 1);
+		rects[i].right  = hotRects.getAsInt16(i * 4 + 2) + 1;
+		rects[i].bottom = hotRects.getAsInt16(i * 4 + 3) + 1;
+	}
+
+	g_sci->getEventManager()->setHotRectanglesActive(true);
+	g_sci->getEventManager()->setHotRectangles(rects);
+	return s->r_acc;
 }
 #endif
 

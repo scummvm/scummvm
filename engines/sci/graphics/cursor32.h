@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-class GfxCursor32 : Common::Serializable {
+class GfxCursor32 : public Common::Serializable {
 public:
 	GfxCursor32();
 	~GfxCursor32();

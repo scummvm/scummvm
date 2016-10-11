@@ -78,7 +78,7 @@ int CScriptHandler::processInput(TTroomScript *roomScript, TTnpcScript *npcScrip
 		const TTstring &line) {
 	if (!roomScript || !line.isValid())
 		return SS_5;
-	
+
 	TTsentence *sentence = new TTsentence(_inputCtr++, line, this, roomScript, npcScript);
 	int result = _parser.preprocess(sentence);
 	roomScript->scriptPreprocess(sentence);

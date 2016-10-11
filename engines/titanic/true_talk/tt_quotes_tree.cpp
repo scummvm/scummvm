@@ -33,12 +33,12 @@ static uint TABLE_INDEXES[3] = { 922, 1015, 1018 };
 
 void TTquotesTree::load() {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/TREE");
-	
+
 	for (int idx = 0; idx < QUOTES_TREE_COUNT; ++idx) {
 		TTquotesTreeEntry &rec = _entries[idx];
 		assert(r->pos() < r->size());
-		
-		rec._id = r->readUint32LE();		
+
+		rec._id = r->readUint32LE();
 		if (rec._id == 0) {
 			// Nothing needed
 		} else {
@@ -64,14 +64,14 @@ int TTquotesTree::search(const char *str, QuoteTreeNum treeNum,
 	const TTquotesTreeEntry *bTree = &_entries[TABLE_INDEXES[treeNum]];
 	if (!search1(&str, bTree, buffer, tagId) || !buffer->_treeItemP)
 		return -1;
-	
+
 	if (remainder) {
 		while (*str) {
 			if (*str >= 'a' && *str != 's')
 				*remainder += *str;
 		}
 	}
-	
+
 	return buffer->_treeItemP->_id & 0xffffff;
 }
 
@@ -83,7 +83,7 @@ bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
 	const char *strP = *str;
 	bool flag = false;
 
-	for (uint mode = bTree->_id >> 24; mode != 0; 
+	for (uint mode = bTree->_id >> 24; mode != 0;
 			++bTree, mode = bTree->_id >> 24) {
 
 		switch (mode) {
@@ -91,11 +91,11 @@ bool TTquotesTree::search1(const char **str, const TTquotesTreeEntry *bTree,
 			if (compareWord(str, bTree->_string.c_str()))
 				flag = true;
 			break;
-		
+
 		case 2:
 			compareWord(str, bTree->_string.c_str());
 			break;
-		
+
 		case 5:
 			if (READ_LE_UINT32(bTree->_string.c_str()) == tagId)
 				flag = true;

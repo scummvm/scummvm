@@ -40,21 +40,30 @@ enum MovieFlag {
 
 class AVIDecoder : public Video::AVIDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType, SelectTrackFn trackFn = nullptr) :
-		Video::AVIDecoder(soundType, trackFn) {}
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
-		SelectTrackFn trackFn = nullptr) : Video::AVIDecoder(frameRateOverride, soundType, trackFn) {}
-	
-	Video::AVIDecoder::AVIVideoTrack &getVideoTrack();
+	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
+		Video::AVIDecoder(soundType) {}
+	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
+		Video::AVIDecoder(frameRateOverride, soundType) {}
+
+	/**
+	 * Returns the number of video tracks the decoder has
+	 */
+	uint videoTrackCount() const { return _videoTracks.size(); }
+
+	/**
+	 * Returns the specified video track
+	 */
+	Video::AVIDecoder::AVIVideoTrack &getVideoTrack(uint idx);
 };
 
 class AVISurface {
 private:
-	AVIDecoder *_decoders[2];
+	AVIDecoder *_decoder;
 	CVideoSurface *_videoSurface;
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
+	Graphics::ManagedSurface *_framePixels;
 	bool _isReversed;
 	int _currentFrame;
 private:
@@ -113,7 +122,7 @@ public:
 	/**
 	 * Return true if a video is currently playing
 	 */
-	virtual bool isPlaying() const { return _decoders[0]->isPlaying(); }
+	virtual bool isPlaying() const { return _decoder->isPlaying(); }
 
 	/**
 	 * Handle any movie events relevent for the frame
@@ -168,9 +177,9 @@ public:
 	}
 
 	/**
-	 * Duplicates the secondary frame, if the movie has a second video track
+	 * Duplicates the transparency mask for the frame, if the movie includes it
 	 */
-	Graphics::ManagedSurface *duplicateSecondaryFrame() const;
+	Graphics::ManagedSurface *duplicateTransparency() const;
 
 	/**
 	 * Returns true if it's time for the next

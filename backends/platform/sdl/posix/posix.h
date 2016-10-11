@@ -35,6 +35,8 @@ public:
 
 	virtual bool displayLogFile();
 
+	virtual bool openUrl(const Common::String &url);
+
 	virtual void init();
 	virtual void initBackend();
 
@@ -63,6 +65,8 @@ protected:
 	virtual Common::WriteStream *createLogFile();
 
 	virtual AudioCDManager *createAudioCDManager();
+
+	bool launchBrowser(const Common::String& client, const Common::String &url);
 };
 
 #endif

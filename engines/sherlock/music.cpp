@@ -196,7 +196,7 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 
 	_numTracks = 1;
 	_tracks[0] = pos;
-	
+
 	_ppqn = 1;
 	setTempo(16667);
 	setTrack(0);

@@ -1,14 +1,21 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.9.0 (YYYY-MM-DD)
+1.10.0 (YYYY-MM-DD)
+
+
+1.9.0 (2016-10-17)
  New Games:
    - Added support for Myst.
    - Added support for Myst: Masterpiece Edition.
    - Added support for U.F.O.s.
+   - Added support for Hi-Res Adventure #0: Mission Asteroid.
+   - Added support for Hi-Res Adventure #1: Mystery House.
+   - Added support for Hi-Res Adventure #2: The Wizard and the Princess.
 
  General:
    - Fixed audio corruption in the MS ADPCM decoder.
+   - Fixed audio pitch in the CMS/GameBlaster emulation.
    - Switched SDL backend to SDL2 by default. SDL1 is still a fallback.
 
  AGI:
@@ -31,12 +38,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated Italian EOB1 translation.
    - Fixed a bug that caused a crash in Lands of Lore.
 
- Mohawk:
-   - Fixed visual glitches in the Spanish version of Myst.
-   - Changed the cancel button in the options dialog of Riven not to save the settings.
-   - Riven savegames created by ScummVM are now loadable in the original game.
-   - Fixed missing mouse cursor in Myst after loading a savegame while the intro is playing.
-
  SCI:
    - Fixed a missing dialog line in QfG3 which awards the player with 3 additional
      points. This is a bug in the original game interpreter. Due to this bug,
@@ -58,17 +59,20 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Sherlock:
    - Fixed a bug that could cause a crash in The Case of the Serrated Scalpel.
+   - Fixed an issue with item hotspots in The Case of the Serrated Scalpel.
    - Fixed a bug that caused game lockups in the inventory of The Case of the Rose Tattoo.
 
- WAGE:
-   - Closed memory leak.
+ Amiga port:
+   - Added support for AmiUpdate autoupdates.
+
+ Linux port:
+   - Added basic support for the snap packaging system.
 
  Windows port:
    - Fixed taskbar support on Windows 10 onwards.
    - Fixed keymapping for non-QWERTY keyboards.
+   - Added support for WinSparkle updater.
 
- Linux port:
-   - Added basic support for the snap packaging system.
 
 1.8.1 (2016-05-25)
  New ports:

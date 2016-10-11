@@ -348,6 +348,17 @@ void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 
 void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	// We sometime get outdated resize events from SDL2. So check that the size we get
+	// is the actual current window size. If not ignore the resize.
+	// The issue for example occurs when switching from fullscreen to windowed mode or
+	// when switching between different fullscreen resolutions because SDL_DestroyWindow
+	// for a fullscreen window that doesn't have the SDL_WINDOW_FULLSCREEN_DESKTOP flag
+	// causes a SDL_WINDOWEVENT_RESIZED event with the old resolution to be sent, and this
+	// event is processed after recreating the window at the new resolution.
+	int currentWidth, currentHeight;
+	getWindowDimensions(&currentWidth, &currentHeight);
+	if (width != currentWidth || height != currentHeight)
+		return;
 	setActualScreenSize(width, height);
 	_eventSource->resetKeyboadEmulation(width - 1, height - 1);
 #else

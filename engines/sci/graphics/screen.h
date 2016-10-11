@@ -289,7 +289,7 @@ public:
 		default:
 			break;
 		}
-		
+
 		// For non-upscaled mode and 480x300 Mac put pixels directly
 		int offset = y * _width + x;
 

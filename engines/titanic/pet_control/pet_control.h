@@ -31,11 +31,12 @@
 #include "titanic/pet_control/pet_conversations.h"
 #include "titanic/pet_control/pet_frame.h"
 #include "titanic/pet_control/pet_inventory.h"
-#include "titanic/pet_control/pet_message.h"
+#include "titanic/pet_control/pet_translation.h"
 #include "titanic/pet_control/pet_starfield.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/pet_control/pet_remote.h"
 #include "titanic/pet_control/pet_rooms.h"
+#include "titanic/support/strings.h"
 #include "titanic/room_flags.h"
 
 namespace Titanic {
@@ -60,13 +61,14 @@ private:
 	CPetRemote _remote;
 	CPetRooms _rooms;
 	CPetRealLife _realLife;
-	CPetMessage _message;
+	CPetTranslation _translation;
 	CPetFrame _frame;
 	CString _activeNPCName;
 	CString _remoteTargetName;
 	CRoomItem *_hiddenRoom;
 	Rect _drawBounds;
 	PetEventInfo _timers[2];
+	Strings _strings;
 private:
 	/**
 	 * Returns true if the control is in a valid state
@@ -232,7 +234,22 @@ public:
 	/**
 	 * Display a message
 	 */
-	void displayMessage(const CString &msg) const;
+	void displayMessage(StringId stringId, int param = 0) const;
+
+	/**
+	 * Display a message
+	 */
+	void displayMessage(const CString &str, int param = 0) const;
+
+	/**
+	 * Switches to the Translation display, and adds a line to it's content
+	 */
+	void addTranslation(StringId id1, StringId id2);
+
+	/**
+	 * Clears the translation display
+	 */
+	void clearTranslation();
 
 	/**
 	 * Get the first game object stored in the PET
@@ -323,12 +340,12 @@ public:
 	 * Returns true if all input is currently locked (disabled)
 	 */
 	bool isInputLocked() const { return _inputLockCount > 0; }
-	
+
 	/**
 	 * Increments the input locked count
 	 */
 	void incInputLocks() { ++_inputLockCount; }
-	
+
 	/**
 	 * Decremenst the input locked count
 	 */
@@ -347,7 +364,7 @@ public:
 	/**
 	 * Decrement the number of PET area (tab) locks
 	 */
-	void decAreaLocks() { 
+	void decAreaLocks() {
 		_areaLockCount = MAX(_areaLockCount - 1, 0);
 	}
 

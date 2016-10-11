@@ -43,7 +43,7 @@ void CTripDownCanal::load(SimpleFile *file) {
 
 bool CTripDownCanal::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (stateGetSeason() == SEASON_WINTER) {
-		petDisplayMessage("Sadly, the Grand Canal transport system is closed for the winter.");
+		petDisplayMessage(CANAL_CLOSED_FOR_WINTER);
 	} else if (getGameManager()) {
 		changeView(_destination);
 	}

@@ -49,12 +49,12 @@ public:
 
 	virtual bool proc8() const = 0;
 	virtual void proc9(int v) = 0;
-	
+
 	/**
 	 * Called when the script changes
 	 */
 	virtual ScriptChangedResult scriptChanged(TTscriptBase *npcScript, int id) = 0;
-	
+
 	virtual bool proc11() const = 0;
 };
 

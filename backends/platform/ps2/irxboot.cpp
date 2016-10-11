@@ -151,7 +151,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules, IrxT
 	irxFiles = irxType[type];
 	numFiles = numIrx[type];
 	resModules = (IrxReference *)memalign(64, numFiles * sizeof(IrxReference));
-	curModule = resModules;	
+	curModule = resModules;
 
 	for (int i = 0; i < numFiles; i++) {
 		curModule->fileRef = irxFiles + i;

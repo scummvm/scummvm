@@ -159,7 +159,7 @@ static const ResourceType s_resTypeMapSci21[] = {
 	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeAnimation,     // 0x00-0x03
 	kResourceTypeSound, kResourceTypeEtc, kResourceTypeVocab, kResourceTypeFont,          // 0x04-0x07
 	kResourceTypeCursor, kResourceTypePatch, kResourceTypeBitmap, kResourceTypePalette,   // 0x08-0x0B
-	kResourceTypeInvalid, kResourceTypeAudio, kResourceTypeSync, kResourceTypeMessage,    // 0x0C-0x0F
+	kResourceTypeAudio, kResourceTypeAudio, kResourceTypeSync, kResourceTypeMessage,      // 0x0C-0x0F
 	kResourceTypeMap, kResourceTypeHeap, kResourceTypeChunk, kResourceTypeAudio36,        // 0x10-0x13
 	kResourceTypeSync36, kResourceTypeTranslation, kResourceTypeRobot, kResourceTypeVMD,  // 0x14-0x17
 	kResourceTypeDuck, kResourceTypeClut, kResourceTypeTGA, kResourceTypeZZZ              // 0x18-0x1B
@@ -948,7 +948,7 @@ void ResourceManager::init() {
 	// cache, leading to constant decompression of picture resources
 	// and making the renderer very slow.
 	if (getSciVersion() >= SCI_VERSION_2) {
-		_maxMemoryLRU = 2048 * 1024; // 2MiB
+		_maxMemoryLRU = 4096 * 1024; // 4MiB
 	}
 
 	switch (_viewType) {

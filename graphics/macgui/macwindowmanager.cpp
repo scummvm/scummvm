@@ -22,16 +22,14 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/list.h"
-#include "common/unzip.h"
 #include "common/system.h"
-#include "common/stream.h"
 
 #include "graphics/cursorman.h"
-#include "graphics/fonts/bdf.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macmenu.h"
 
@@ -100,14 +98,12 @@ MacWindowManager::MacWindowManager() {
 
 	_fullRefresh = true;
 
-	_builtInFonts = true;
-
 	for (int i = 0; i < ARRAYSIZE(fillPatterns); i++)
 		_patterns.push_back(fillPatterns[i]);
 
-	loadFonts();
-
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
+
+	_fontMan = new MacFontManager();
 
 	CursorMan.replaceCursorPalette(palette, 0, ARRAYSIZE(palette) / 3);
 	CursorMan.replaceCursor(macCursorArrow, 11, 16, 1, 1, 3);
@@ -118,6 +114,8 @@ MacWindowManager::MacWindowManager() {
 MacWindowManager::~MacWindowManager() {
 	for (int i = 0; i < _lastId; i++)
 		delete _windows[i];
+
+	delete _fontMan;
 }
 
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
@@ -320,124 +318,6 @@ void MacWindowManager::removeFromWindowList(BaseMacWindow *target) {
 		}
 	}
 	_windows.remove_at(ndx);
-}
-
-//////////////////////
-// Font stuff
-//////////////////////
-void MacWindowManager::loadFonts() {
-	Common::Archive *dat;
-
-	dat = Common::makeZipArchive("classicmacfonts.dat");
-
-	if (!dat) {
-		warning("Could not find classicmacfonts.dat. Falling back to built-in fonts");
-		_builtInFonts = true;
-
-		return;
-	}
-
-	Common::ArchiveMemberList list;
-	dat->listMembers(list);
-
-	for (Common::ArchiveMemberList::iterator it = list.begin(); it != list.end(); ++it) {
-		Common::SeekableReadStream *stream = dat->createReadStreamForMember((*it)->getName());
-
-		Graphics::BdfFont *font = Graphics::BdfFont::loadFont(*stream);
-
-		delete stream;
-
-		Common::String fontName = (*it)->getName();
-
-		// Trim the .bdf extension
-		for (int i = fontName.size() - 1; i >= 0; --i) {
-			if (fontName[i] == '.') {
-				while ((uint)i < fontName.size()) {
-					fontName.deleteLastChar();
-				}
-				break;
-			}
-		}
-
-		FontMan.assignFontToName(fontName, font);
-
-		debug(2, " %s", fontName.c_str());
-	}
-
-	_builtInFonts = false;
-
-	delete dat;
-}
-
-const Graphics::Font *MacWindowManager::getFont(const char *name, Graphics::FontManager::FontUsage fallback) {
-	const Graphics::Font *font = 0;
-
-	if (!_builtInFonts) {
-		font = FontMan.getFontByName(name);
-
-		if (!font)
-			warning("Cannot load font %s", name);
-	}
-
-	if (_builtInFonts || !font)
-		font = FontMan.getFontByUsage(fallback);
-
-	return font;
-}
-
-// Source: Apple IIGS Technical Note #41, "Font Family Numbers"
-// http://apple2.boldt.ca/?page=til/tn.iigs.041
-static const char *const fontNames[] = {
-	"Chicago",	// system font
-	"Geneva",	// application font
-	"New York",
-	"Geneva",
-
-	"Monaco",
-	"Venice",
-	"London",
-	"Athens",
-
-	"San Francisco",
-	"Toronto",
-	NULL,
-	"Cairo",
-	"Los Angeles", // 12
-
-	"Zapf Dingbats",
-	"Bookman",
-	"Helvetica Narrow",
-	"Palatino",
-	NULL,
-	"Zapf Chancery",
-	NULL,
-
-	"Times", // 20
-	"Helvetica",
-	"Courier",
-	"Symbol",
-	"Taliesin", // mobile?
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL, // 30
-	NULL,
-	NULL,
-	"Avant Garde",
-	"New Century Schoolbook"
-};
-
-const char *MacWindowManager::getFontName(int id, int size) {
-	static char name[128];
-
-	if (id > ARRAYSIZE(fontNames))
-		return NULL;
-
-	snprintf(name, 128, "%s-%d", fontNames[id], size);
-
-	return name;
 }
 
 /////////////////

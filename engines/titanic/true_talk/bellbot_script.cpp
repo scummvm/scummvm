@@ -245,7 +245,7 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 					&& sentence->localWord("we") && sentence->localWord("in"))
 			|| (sentence->_field2C == 3 && sentence->localWord("rom")
 					&& sentence->localWord("is") && sentence->localWord("this"))
-			) { 
+			) {
 		uint id = getRangeValue(getRoomDialogueId(roomScript));
 		addResponse(getDialogueId(id ? id : 201384));
 		applyResponse();
@@ -258,7 +258,7 @@ int BellbotScript::process(const TTroomScript *roomScript, const TTsentence *sen
 		result = processEntries(&_sentences[2], 0, roomScript, sentence);
 	} else if (getValue(1) == 1) {
 		result = processEntries(&_sentences[3], 0, roomScript, sentence);
-		
+
 		if (sentence->contains("shrinkbot")) {
 			addResponse(getDialogueId(200583));
 			applyResponse();
@@ -521,7 +521,7 @@ int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	default:
 		break;
 	}
-	
+
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 }
 
@@ -835,7 +835,7 @@ int BellbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 		}
 		break;
-	
+
 	case 5:
 		if (sentence->_field2C == 11 || sentence->_field2C == 13) {
 			addResponse(getDialogueId(200492));
@@ -1497,7 +1497,7 @@ stateFlag = false;
 	case 84:
 		if (sentence->_field2C == 12) {
 			addResponse(getDialogueId(202119));
-			
+
 			switch (getValue(1)) {
 			case 1:
 				addResponse(getDialogueId(202024));
@@ -1631,7 +1631,7 @@ bool BellbotScript::randomResponse1(const TTroomScript *roomScript, uint id) {
 		randomResponse3(roomScript, id);
 		applyResponse();
 	}
-	
+
 	return false;
 }
 
@@ -1729,7 +1729,7 @@ bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsen
 		addResponse(getDialogueId(200847));
 	} else if (sentence->localWord("canal")) {
 		addResponse(getDialogueId(getValue(1) == 1 ? 200846 : 200847));
-	} else if (sentence->localWord("firstclass") && 
+	} else if (sentence->localWord("firstclass") &&
 			(sentence->localWord("stateroom") || sentence->localWord("room"))) {
 		addResponse(getDialogueId(getValue(1) == 1 ? 200840 : 200306));
 	} else if (sentence->localWord("secondclass") && sentence->localWord("stateroom") && sentence->localWord("room")) {
@@ -1790,12 +1790,12 @@ bool BellbotScript::checkCommonWords(const TTroomScript *roomScript, const TTsen
 		} else {
 			addResponse(getDialogueId(200686));
 		}
-	} else if (sentence->localWord("embarklobby") 
+	} else if (sentence->localWord("embarklobby")
 			|| sentence->localWord("lobby")) {
 		addResponse(getDialogueId(200850));
 	} else if (sentence->localWord("pellerator")) {
 		addResponse(getDialogueId(200862));
-	} else if (sentence->localWord("servicelift") 
+	} else if (sentence->localWord("servicelift")
 			|| (sentence->localWord("service") && sentence->localWord("elevator"))) {
 		addResponse(getDialogueId(200855));
 	} else if (sentence->localWord("elevator")) {

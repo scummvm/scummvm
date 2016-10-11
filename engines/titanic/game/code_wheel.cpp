@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/code_wheel.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -31,7 +32,8 @@ BEGIN_MESSAGE_MAP(CodeWheel, CBomb)
 	ON_MESSAGE(MovieEndMsg)
 END_MESSAGE_MAP()
 
-CodeWheel::CodeWheel() : CBomb(), _field108(0), _state(4), _field110(0) {
+CodeWheel::CodeWheel() : CBomb(), _field108(0), _state(4),
+		_field110(0), _field114(0), _field118(0) {
 }
 
 void CodeWheel::save(SimpleFile *file, int indent) {
@@ -39,6 +41,10 @@ void CodeWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field108, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_field110, indent);
+	if (g_vm->isGerman()) {
+		file->writeNumberLine(_field114, indent);
+		file->writeNumberLine(_field118, indent);
+	}
 
 	CBomb::save(file, indent);
 }
@@ -48,6 +54,10 @@ void CodeWheel::load(SimpleFile *file) {
 	_field108 = file->readNumber();
 	_state = file->readNumber();
 	_field110 = file->readNumber();
+	if (g_vm->isGerman()) {
+		_field114 = file->readNumber();
+		_field118 = file->readNumber();
+	}
 
 	CBomb::load(file);
 }
@@ -67,7 +77,7 @@ bool CodeWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 		_state = (_state + 1) % 15;
 		playMovie(START_FRAMES[_state], END_FRAMES[_state],
-			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);		
+			MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
 	} else {
 		if (_state == _field108)
 			_field110 = true;
@@ -102,7 +112,7 @@ bool CodeWheel::MovieEndMsg(CMovieEndMsg *msg) {
 		changeMsg._newStatus = 1;
 	changeMsg.execute("Bomb");
 
-	return true;	
+	return true;
 }
 
 } // End of namespace Titanic

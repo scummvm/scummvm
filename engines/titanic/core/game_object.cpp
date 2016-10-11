@@ -89,7 +89,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 
 	if (_surface) {
 		const CMovieRangeInfoList *rangeList = _surface->getMovieRangeInfo();
-		
+
 		if (rangeList) {
 			for (CMovieRangeInfoList::const_iterator i = rangeList->begin();
 				i != rangeList->end(); ++i) {
@@ -109,7 +109,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_field40, indent + 1);
 	file->writeQuotedLine(_resource, indent + 1);
 	file->writeBounds(_bounds, indent + 1);
-	
+
 	file->writeFloatLine(_field34, indent + 1);
 	file->writeFloatLine(_field38, indent + 1);
 	file->writeFloatLine(_field3C, indent + 1);
@@ -178,7 +178,7 @@ void CGameObject::load(SimpleFile *file) {
 		_id = file->readNumber();
 		_roomFlags = file->readNumber();
 
-		resourceKey.load(file);		
+		resourceKey.load(file);
 		_surface = nullptr;
 		val = file->readNumber();
 		if (val) {
@@ -199,7 +199,7 @@ void CGameObject::draw(CScreenManager *screenManager) {
 	if (_credits && _credits->_objectP == this) {
 		if (!_credits->draw())
 			CGameObject::deinit();
-		
+
 		return;
 	}
 
@@ -281,7 +281,7 @@ bool CGameObject::checkPoint(const Point &pt, bool ignore40, bool visibleOnly) {
 	}
 
 	Common::Point pixelPos = pt - _bounds;
-	if (_surface->_transBlitFlag) {
+	if (_surface->_flipVertically) {
 		pixelPos.y = ((_bounds.height() - _bounds.top) / 2) * 2 - pixelPos.y;
 	}
 
@@ -354,7 +354,7 @@ void CGameObject::loadMovie(const CString &name, bool pendingFlag) {
 	// Create the surface if it doesn't already exist
 	if (!_surface) {
 		CGameManager *gameManager = getGameManager();
-		_surface = new OSVideoSurface(gameManager->setScreenManager(), nullptr);		
+		_surface = new OSVideoSurface(gameManager->setScreenManager(), nullptr);
 	}
 
 	// Load the new movie resource
@@ -402,9 +402,10 @@ void CGameObject::loadImage(const CString &name, bool pendingFlag) {
 }
 
 void CGameObject::loadFrame(int frameNumber) {
-	if (frameNumber != -1 && !_resource.empty())
+	_frameNumber = -1;
+	if (!_resource.empty())
 		loadResource(_resource);
-	
+
 	if (_surface)
 		_surface->setMovieFrame(frameNumber);
 
@@ -749,13 +750,13 @@ int CGameObject::playSound(const CString &name, CProximity &prox) {
 	}
 
 	CGameManager *gameManager = getGameManager();
-	if (gameManager) {
+	if (gameManager && !name.empty()) {
 		g_vm->_filesManager->preload(name);
 
 		gameManager->_sound.playSound(name, prox);
 	}
 
-	return 0;
+	return -1;
 }
 
 int CGameObject::queueSound(const CString &name, uint priorHandle, uint volume, int balance, bool repeated) {
@@ -858,14 +859,14 @@ CViewItem *CGameObject::parseView(const CString &viewString) {
 
 	CRoomItem *room = gameManager->getRoom();
 	CProjectItem *project = room->getRoot();
-	
+
 	// Ensure we have the specified room
 	if (project) {
 		if (room->getName() != roomName) {
 			// Scan for the correct room
 			for (room = project->findFirstRoom(); room && room->getName() != roomName;
 					room = project->findNextRoom(room)) ;
-		}			
+		}
 	}
 	if (!room)
 		return nullptr;
@@ -953,7 +954,7 @@ CGameObject *CGameObject::findMailByFlags(int mode, uint roomFlags) {
 	CMailMan *mailMan = getMailMan();
 	if (!mailMan)
 		return nullptr;
-	
+
 	for (CGameObject *obj = mailMan->getFirstObject(); obj;
 			obj = mailMan->getNextObject(obj)) {
 		if (compareRoomFlags(mode, roomFlags, obj->_roomFlags))
@@ -1077,7 +1078,7 @@ void CGameObject::setText(const CString &str, int border, int borderRight) {
 		_text = new CPetText();
 	_textBorder = border;
 	_textBorderRight = borderRight;
-	
+
 	_text->setText(str);
 	CScreenManager *screenManager = getGameManager()->setScreenManager();
 	_text->scrollToTop(screenManager);
@@ -1207,7 +1208,7 @@ bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
 
 	if (!oldView || !newView)
 		return false;
-	
+
 	CMovieClip *clip = nullptr;
 	if (!clipName.empty()) {
 		clip = oldView->findNode()->findRoom()->findClip(clipName);
@@ -1536,14 +1537,24 @@ bool CGameObject::petDoorOrBellbotPresent() const {
 	return pet ? pet->isDoorOrBellbotPresent() : false;
 }
 
+void CGameObject::petDisplayMessage(int unused, StringId stringId) {
+	petDisplayMessage(stringId);
+}
+
+void CGameObject::petDisplayMessage(StringId stringId, int param) {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->displayMessage(stringId, param);
+}
+
 void CGameObject::petDisplayMessage(int unused, const CString &msg) {
 	petDisplayMessage(msg);
 }
 
-void CGameObject::petDisplayMessage(const CString &msg) {
+void CGameObject::petDisplayMessage(const CString &msg, int param) {
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->displayMessage(msg);
+		pet->displayMessage(msg, param);
 }
 
 void CGameObject::petInvChange() {

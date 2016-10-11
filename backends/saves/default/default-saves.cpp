@@ -182,6 +182,16 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	if (getError().getCode() != Common::kNoError)
 		return false;
 
+#ifdef USE_LIBCURL
+	// Update file's timestamp
+	Common::HashMap<Common::String, uint32> timestamps = loadTimestamps();
+	Common::HashMap<Common::String, uint32>::iterator it = timestamps.find(filename);
+	if (it != timestamps.end()) {
+		timestamps.erase(it);
+		saveTimestamps(timestamps);
+	}
+#endif
+
 	// Obtain node if exists.
 	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
 	if (file == _saveFileCache.end()) {
@@ -330,7 +340,8 @@ Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps()
 		//parse timestamp
 		uint32 timestamp = buffer.asUint64();
 		if (buffer == "" || timestamp == 0) break;
-		timestamps[filename] = timestamp;
+		if (timestamps.contains(filename))
+			timestamps[filename] = timestamp;
 	}
 
 	delete file;

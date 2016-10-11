@@ -67,7 +67,7 @@ void CCreditText::setup() {
 
 		// Create a new group and line within it
 		CCreditLineGroup *group = new CCreditLineGroup();
-		CCreditLine *line = new CCreditLine(srcLine, 
+		CCreditLine *line = new CCreditLine(srcLine,
 			_screenManagerP->stringWidth(srcLine));
 		group->_lines.push_back(line);
 
@@ -125,7 +125,7 @@ void CCreditText::handleDots(CCreditLineGroup *group) {
 	// Figure out the maximum width of secondary lines
 	for (CCreditLines::iterator i = second; i != group->_lines.end(); ++i)
 		maxWidth = MAX(maxWidth, (*i)->_lineWidth);
-	
+
 	int charWidth = _screenManagerP->stringWidth(".");
 
 	// Process the secondary lines

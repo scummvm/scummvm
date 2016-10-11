@@ -45,6 +45,14 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Loads a movie
+	 */
+	void loadMovie(const CString &name, bool pendingFlag = true) {
+		CGameObject::loadMovie(name, pendingFlag);
+		_surface->flipVertically();
+	}
 };
 
 } // End of namespace Titanic

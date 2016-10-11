@@ -257,7 +257,8 @@ public:
 	MessageQueue *changeStatics1(int msgNum);
 	void changeStatics2(int objId);
 
-	bool getPixelAtPos(int x, int y, int *pixel);
+	bool getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly = false);
+	bool isPixelHitAtPos(int x, int y);
 };
 
 struct MovTable {

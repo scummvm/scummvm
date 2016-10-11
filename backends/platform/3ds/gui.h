@@ -33,7 +33,7 @@ public:
 
 protected:
 	virtual void close();
-	
+
 	uint32 _timer;
 	static StatusMessageDialog* _opened;
 };

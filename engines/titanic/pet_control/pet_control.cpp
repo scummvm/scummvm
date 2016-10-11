@@ -42,7 +42,7 @@ BEGIN_MESSAGE_MAP(CPetControl, CGameObject)
 	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
-CPetControl::CPetControl() : CGameObject(), 
+CPetControl::CPetControl() : CGameObject(),
 		_currentArea(PET_CONVERSATION), _inputLockCount(0), _areaLockCount(0),
 		_areaChangeType(-1), _activeNPC(nullptr), _remoteTarget(nullptr),
 		_hiddenRoom(nullptr), _drawBounds(20, 350, 620, 480) {
@@ -52,7 +52,7 @@ CPetControl::CPetControl() : CGameObject(),
 	_sections[PET_ROOMS] = &_rooms;
 	_sections[PET_REAL_LIFE] = &_realLife;
 	_sections[PET_STARFIELD] = &_starfield;
-	_sections[PET_MESSAGE] = &_message;
+	_sections[PET_TRANSLATION] = &_translation;
 }
 
 void CPetControl::save(SimpleFile *file, int indent) {
@@ -68,12 +68,12 @@ void CPetControl::save(SimpleFile *file, int indent) {
 void CPetControl::load(SimpleFile *file) {
 	int val = file->readNumber();
 	isValid();
-	
+
 	if (!val) {
 		_currentArea = (PetArea)file->readNumber();
 		_activeNPCName = file->readString();
 		_remoteTargetName = file->readString();
-		
+
 		loadAreas(file, 0);
 	}
 
@@ -87,18 +87,18 @@ void CPetControl::setup() {
 	_inventory.setup(this);
 	_starfield.setup(this);
 	_realLife.setup(this);
-	_message.setup(this);
+	_translation.setup(this);
 	_frame.setup(this);
 }
 
 bool CPetControl::isValid() {
 	return _conversations.isValid(this) &&
-		_rooms.isValid(this) && 
+		_rooms.isValid(this) &&
 		_remote.isValid(this) &&
 		_inventory.isValid(this) &&
 		_starfield.isValid(this) &&
 		_realLife.isValid(this) &&
-		_message.isValid(this) &&
+		_translation.isValid(this) &&
 		_frame.isValid(this);
 }
 
@@ -109,7 +109,7 @@ void CPetControl::loadAreas(SimpleFile *file, int param) {
 	_inventory.load(file, param);
 	_starfield.load(file, param);
 	_realLife.load(file, param);
-	_message.load(file, param);
+	_translation.load(file, param);
 	_frame.load(file, param);
 }
 
@@ -120,7 +120,7 @@ void CPetControl::saveAreas(SimpleFile *file, int indent) {
 	_inventory.save(file, indent);
 	_starfield.save(file, indent);
 	_realLife.save(file, indent);
-	_message.save(file, indent);
+	_translation.save(file, indent);
 	_frame.save(file, indent);
 }
 
@@ -165,7 +165,7 @@ void CPetControl::loaded() {
 	_inventory.postLoad();
 	_starfield.postLoad();
 	_realLife.postLoad();
-	_message.postLoad();
+	_translation.postLoad();
 	_frame.postLoad();
 }
 
@@ -376,8 +376,23 @@ bool CPetControl::checkDragEnd(CGameObject *item) const {
 	return _sections[_currentArea]->checkDragEnd(item);
 }
 
-void CPetControl::displayMessage(const CString &msg) const {
+void CPetControl::displayMessage(StringId stringId, int param) const {
+	CString msg = CString::format(_strings[stringId].c_str(), param);
 	_sections[_currentArea]->displayMessage(msg);
+}
+
+void CPetControl::displayMessage(const CString &str, int param) const {
+	CString msg = CString::format(str.c_str(), param);
+	_sections[_currentArea]->displayMessage(msg);
+}
+
+void CPetControl::addTranslation(StringId id1, StringId id2) {
+	setArea(PET_TRANSLATION);
+	_translation.addTranslation(_strings[id1], _strings[id2]);
+}
+
+void CPetControl::clearTranslation() {
+	_translation.clearTranslation();
 }
 
 CGameObject *CPetControl::getFirstObject() const {
@@ -412,7 +427,7 @@ void CPetControl::addToInventory(CGameObject *item) {
 	setArea(PET_INVENTORY);
 	if (_currentArea == PET_INVENTORY)
 		_inventory.highlightItem(item);
-	
+
 	makeDirty();
 	CPETGainedObjectMsg msg;
 	msg.execute(item);
@@ -456,7 +471,7 @@ bool CPetControl::checkNode(const CString &name) {
 		return true;
 	if (name == "NULL")
 		return false;
-	
+
 	CViewItem *view = gameManager->getView();
 	if (!view)
 		return true;
@@ -543,7 +558,7 @@ bool CPetControl::isBotInView(const CString &name) const {
 	CViewItem *view = gameManager->getView();
 	if (!view)
 		return false;
-	
+
 	// Iterate to find NPC
 	for (CTreeItem *child = view->getFirstChild(); child; child = child->scan(view)) {
 		CGameObject *gameObject = dynamic_cast<CGameObject *>(child);

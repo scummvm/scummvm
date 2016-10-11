@@ -130,14 +130,14 @@ int CMainGameWindow::selectSavegame() {
 
 void CMainGameWindow::setActiveView(CViewItem *viewItem) {
 	_gameManager->_gameState._gameLocation.setView(viewItem);
-	
+
 	CResourceKey key;
 	if (viewItem->getResourceKey(&key)) {
 		// Create a surface based on the key
 		_gameView->createSurface(key);
 	}
 }
- 
+
 void CMainGameWindow::draw() {
 	if (_gameManager) {
 		if (!_gameView->_surface) {

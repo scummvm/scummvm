@@ -120,7 +120,7 @@ public:
 
 	int setTempo(int tempo);
 	void setLoopStatus(bool loop);
-	
+
 	bool isPlaying() {return _playing; }
 
 	int configPart_enable(int part, int val);
@@ -148,10 +148,10 @@ private:
 
 	void updateHangingNotes();
 	void clearHangingNotes();
-	
+
 	void resetAllControls();
 	void allPartsOff();
-	
+
 	uint8 appendEvent(uint8 evt, uint8 chan);
 
 	typedef bool(EuphonyPlayer::*EuphonyEvent)();
@@ -190,7 +190,7 @@ private:
 		uint16 len;
 		SavedEvent *next;
 	};
-	
+
 	SavedEvent *_savedEventsChain;
 
 	uint8 _defaultBarLength;

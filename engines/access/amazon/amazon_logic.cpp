@@ -1333,7 +1333,7 @@ void Cast::doCast(int param1) {
 		for (int idx = 0; idx < 5 && !_vm->shouldQuit() &&
 				!_vm->_events->isKeyMousePressed(); ++idx)
 			_vm->_events->pollEventsAndWait();
-		
+
 		if (_vm->_events->isKeyMousePressed())
 			break;
 
@@ -1682,7 +1682,7 @@ void River::updateObstacles() {
 
 void River::riverSetPhysX() {
 	int xAmt = (_vm->_scrollCol * 16) + _vm->_scrollX;
-	
+
 	for (RiverStruct *cur = _topList; cur <= _botList; ++cur) {
 		cur->_xp = xAmt - (_screenVertX - cur->_riverX);
 	}

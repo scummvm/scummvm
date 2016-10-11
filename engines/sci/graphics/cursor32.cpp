@@ -122,6 +122,7 @@ void GfxCursor32::drawToHardware(const DrawRegion &source) {
 	byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
 
 	g_system->copyRectToScreen(sourcePixel, source.rect.width(), drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
+	g_system->updateScreen();
 }
 
 void GfxCursor32::unhide() {
@@ -181,7 +182,7 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	if (_macCursorRemap.empty() && viewId != -1) {
 		CelObjView view(viewId, loopNo, celNo);
 
-		_hotSpot = view._displace;
+		_hotSpot = view._origin;
 		_width = view._width;
 		_height = view._height;
 

@@ -238,8 +238,8 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	// initialized to 0, whereas it's 6 in other versions. Thus, we assign it
 	// to 6 here, fixing the speed of the introduction. Refer to bug #3102071.
 	if (g_sci->getGameId() == GID_PQ2 && script == 200 &&
-		s->variables[VAR_GLOBAL][3].isNull()) {
-		s->variables[VAR_GLOBAL][3] = make_reg(0, 6);
+		s->variables[VAR_GLOBAL][kGlobalVarSpeed].isNull()) {
+		s->variables[VAR_GLOBAL][kGlobalVarSpeed] = make_reg(0, 6);
 	}
 
 	return make_reg(scriptSeg, address);

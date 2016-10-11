@@ -358,7 +358,7 @@ void FullpipeEngine::lift_walkAndGo() {
 
 		mq->chain(0);
 
-		_aniMan->_flags |= 1;
+		_aniMan->_flags |= 0x100;
 	}
 }
 
@@ -423,12 +423,12 @@ void FullpipeEngine::lift_goAnimation() {
 
 				mq->addExCommandToEnd(ex);
 
-				_aniMan->_flags &= 0xFEFF;
+				_aniMan->_flags &= ~0x100;
 
 				if (!mq->chain(_aniMan))
 					delete mq;
 
-				_aniMan->_flags |= 1;
+				_aniMan->_flags |= 0x100;
 
 				return;
 			}

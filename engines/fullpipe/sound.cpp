@@ -29,6 +29,7 @@
 #include "fullpipe/messages.h"
 #include "fullpipe/statics.h"
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
@@ -41,6 +42,12 @@ SoundList::SoundList() {
 	_soundItems = 0;
 	_soundItemsCount = 0;
 	_libHandle = 0;
+}
+
+SoundList::~SoundList() {
+	for (int i = 0; i < _soundItemsCount; i++)
+		delete _soundItems[i];
+	free(_soundItems);
 }
 
 bool SoundList::load(MfcArchive &file, char *fname) {
@@ -208,8 +215,8 @@ void Sound::setPanAndVolumeByStaticAni() {
 }
 
 void Sound::setPanAndVolume(int vol, int pan) {
-	g_fp->_mixer->setChannelVolume(*_handle, vol / 39); // 0..10000
-	g_fp->_mixer->setChannelBalance(*_handle, pan / 78); // -10000..10000
+	g_fp->_mixer->setChannelVolume(*_handle, MIN((vol + 10000) / 39, 255)); // -10000..0
+	g_fp->_mixer->setChannelBalance(*_handle, CLIP(pan / 78, -127, 127)); // -10000..10000
 }
 
 void Sound::play(int flag) {
@@ -514,8 +521,11 @@ void FullpipeEngine::stopAllSoundInstances(int id) {
 }
 
 void FullpipeEngine::updateSoundVolume() {
+	ConfMan.setInt("sfx_volume", MAX((_sfxVolume + 10000) / 39, 255));
+	syncSoundSettings();
+
 	for (int i = 0; i < _currSoundListCount; i++)
-		for (int j = 0; i < _currSoundList1[i]->getCount(); j++) {
+		for (int j = 0; j < _currSoundList1[i]->getCount(); j++) {
 			_currSoundList1[i]->getSoundByIndex(j)->setPanAndVolume(_sfxVolume, 0);
 		}
 }
@@ -523,7 +533,8 @@ void FullpipeEngine::updateSoundVolume() {
 void FullpipeEngine::setMusicVolume(int vol) {
 	_musicVolume = vol;
 
-	g_fp->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	ConfMan.setInt("music_volume", _musicVolume);
+	syncSoundSettings();
 }
 
 } // End of namespace Fullpipe

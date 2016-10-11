@@ -240,7 +240,7 @@ GfxSurface::GfxSurface() : Graphics::Screen(0, 0), _bounds(0, 0, SCREEN_WIDTH, S
 GfxSurface::GfxSurface(const GfxSurface &s): Graphics::Screen(0, 0) {
 	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_lockSurfaceCtr = 0;
-	
+
 	operator=(s);
 }
 

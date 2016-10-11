@@ -91,7 +91,7 @@ void CMovieRangeInfo::process(CGameObject *owner) {
 		flags |= MOVIE_REPEAT;
 	if (_startFrame)
 		flags |= MOVIE_REVERSE;
-	
+
 	for (CMovieEventList::iterator i = _events.begin(); i != _events.end(); ++i) {
 		CMovieEvent *movieEvent = *i;
 		if (movieEvent->_type == MET_MOVIE_END) {

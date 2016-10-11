@@ -44,10 +44,10 @@ void WidgetTooltipBase::draw() {
 
 		// Blit the affected area to the screen
 		screen.slamRect(_bounds);
-		
+
 		// Draw the widget directly onto the screen. Unlike other widgets, we don't draw to the back buffer,
 		// since nothing should be drawing on top of tooltips, so there's no need to store in the back buffer
-		screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x, 
+		screen.SHtransBlitFrom(_surface, Common::Point(_bounds.left - screen._currentScroll.x,
 			_bounds.top - screen._currentScroll.y));
 
 		// Store a copy of the drawn area for later erasing
@@ -76,7 +76,7 @@ void WidgetTooltip::setText(const Common::String &str) {
 	Events &events = *_vm->_events;
 	Common::Point mousePos = events.mousePos();
 	bool reset = false;
-	
+
 	// Make sure that the description is present
 	if (!str.empty()) {
 		int width = _surface.stringWidth(str) + 2;
@@ -200,7 +200,7 @@ void WidgetSceneTooltip::handleEvents() {
 				str = scene._exits[ui._arrowZone]._dest;
 			}
 
-			setText(str.hasPrefix(" ") ? Common::String() : str);			
+			setText(str.hasPrefix(" ") ? Common::String() : str);
 		} else if ((ui._bgFound == -1 && ui._oldBgFound != -1) || (ui._arrowZone == -1 && ui._oldArrowZone != -1)) {
 			setText("");
 		}

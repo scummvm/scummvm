@@ -51,7 +51,7 @@ void CTreeItem::dump(int indent) {
 	CTreeItem *item = getFirstChild();
 	while (item) {
 		item->dump(indent + 1);
-		
+
 		item = item->getNextSibling();
 	}
 }

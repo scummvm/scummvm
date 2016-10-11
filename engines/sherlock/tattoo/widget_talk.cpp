@@ -133,7 +133,7 @@ void WidgetTalk::handleEvents() {
 	// Flag if they started pressing outside of the window
 	if (events._firstPress && !_bounds.contains(mousePos))
 		_outsideMenu = true;
-		
+
 	// Check for which statement they are pointing at
 	_selector = -1;
 	if (ui._scrollHighlight == SH_NONE) {
@@ -159,7 +159,7 @@ void WidgetTalk::handleEvents() {
 	if (keycode == Common::KEYCODE_TAB && ui._scrollHighlight == SH_NONE) {
 		if (_selector == -1) {
 			_selector = _statementLines[_scroll ? _talkScrollIndex : 0]._num;
-			
+
 			events.warpMouse(Common::Point(_bounds.right - BUTTON_SIZE - 10, _bounds.top + _surface.fontHeight() + 2));
 		} else {
 			if (ui._keyState.flags & Common::KBD_SHIFT) {
@@ -196,22 +196,21 @@ void WidgetTalk::handleEvents() {
 
 	// Handle selecting a talk entry if a numeric key has been pressed
 	if (keycode >= Common::KEYCODE_1 && keycode <= Common::KEYCODE_9) {
-		int x = 0, t = 0, y = 0;
+		int x = 0, y = 0, t;
 
-		do {
+		for (t = 0; t < (int)_statementLines.size(); ++t) {
+			if (t > 0 && _statementLines[x]._num != _statementLines[t]._num) {
+				x = t;
+				++y;
+			}
+
 			if (y == (keycode - Common::KEYCODE_1)) {
 				_selector = _statementLines[t]._num;
 				_outsideMenu = false;
 				hotkey = true;
 				break;
 			}
-
-			++t;
-			if (_statementLines[x]._num != _statementLines[t]._num) {
-				x = t;
-				++y;
-			}
-		} while (t < (int)_statementLines.size());
+		}
 	}
 
 	// Display the selected statement highlighted and reset the last statement.
@@ -276,7 +275,7 @@ void WidgetTalk::handleEvents() {
 			do {
 				talk._scriptSelect = _selector;
 				talk._speaker = talk._talkTo;
-				
+
 				// Make a copy of the reply (since talkTo can reload the statements list), and call talkTo
 				Common::String reply = talk._statements[_selector]._reply;
 				talk.doScript(reply);
@@ -431,7 +430,7 @@ void WidgetTalk::setStatementLines() {
 			++numStatements;
 	}
 
-	// If there are more lines than can be displayed in the interface window at one time, adjust the allowed 
+	// If there are more lines than can be displayed in the interface window at one time, adjust the allowed
 	// width to take into account needing a scrollbar
 	int xSize = _scroll ? _bounds.width() - BUTTON_SIZE - 3 : _bounds.width();
 

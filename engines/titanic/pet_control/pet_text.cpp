@@ -27,7 +27,7 @@ namespace Titanic {
 CPetText::CPetText(uint count) :
 		_stringsMerged(false), _maxCharsPerLine(-1), _lineCount(0),
 		_linesStart(-1), _unused1(0), _unused2(0), _unused3(0),
-		_backR(0xff), _backG(0xff), _backB(0xff), 
+		_backR(0xff), _backG(0xff), _backB(0xff),
 		_textR(0), _textG(0), _textB(200),
 		_fontNumber(0), _npcFlag(0), _npcId(0), _hasBorder(true),
 		_scrollTop(0), _textCursor(nullptr) {
@@ -61,6 +61,11 @@ void CPetText::setLineColor(uint lineNum, uint col) {
 }
 
 void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
+	_array[lineNum]._rgb = getColorText(r, g, b);
+	_stringsMerged = false;
+}
+
+CString CPetText::getColorText(byte r, byte g, byte b) {
 	char buffer[6];
 	if (!r)
 		r = 1;
@@ -75,9 +80,8 @@ void CPetText::setLineColor(uint lineNum, byte r, byte g, byte b) {
 	buffer[3] = b;
 	buffer[4] = TEXTCMD_SET_COLOR;
 	buffer[5] = '\0';
-	_array[lineNum]._rgb = buffer;
 
-	_stringsMerged = false;
+	return CString(buffer);
 }
 
 void CPetText::load(SimpleFile *file, int param) {
@@ -106,7 +110,7 @@ void CPetText::load(SimpleFile *file, int param) {
 			_array[idx]._line = file->readString();
 			_array[idx]._rgb = file->readString();
 			_array[idx]._string3 = file->readString();
-		}	
+		}
 	}
 }
 
@@ -221,7 +225,7 @@ void CPetText::appendText(const CString &str) {
 		// Only add part of the str up to the maximum allowed limit for line
 		_array[_lineCount]._line += str.left(_maxCharsPerLine - lineSize);
 	}
-	
+
 	updateStr3(_lineCount);
 	_stringsMerged = false;
 }
@@ -256,7 +260,7 @@ void CPetText::remapColors(uint count, uint *srcColors, uint *destColors) {
 			}
 		}
 	}
-	
+
 	_stringsMerged = false;
 }
 
@@ -273,7 +277,7 @@ void CPetText::updateStr3(int lineNum) {
 		line[2] = _npcId;
 		line[4] = '\0';
 		_array[lineNum]._string3 = CString(line);
-		
+
 		_stringsMerged = false;
 		_npcFlag = _npcId = 0;
 	}
@@ -466,7 +470,7 @@ int CPetText::getNPCNum(uint npcId, uint startIndex) {
 			strP += 4;
 		}
 	}
-	
+
 	return - 1;
 }
 

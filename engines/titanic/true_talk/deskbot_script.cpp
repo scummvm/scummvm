@@ -276,7 +276,7 @@ int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	default:
 		break;
 	}
-	
+
 	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
 
 }
@@ -324,7 +324,7 @@ int DeskbotScript::updateState(uint oldId, uint newId, int index) {
 		newId = getStateDialogueId();
 	if (newId == 240464 && getValue(1) != 1)
 		newId = 240462;
-	
+
 	if (newId == 241635 && isDial1Medium()) {
 		addResponse(getDialogueId(241556));
 		newId = getRangeValue(241632);
@@ -408,7 +408,7 @@ int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScri
 	default:
 		break;
 	}
-	
+
 	return 0;
 }
 
@@ -480,7 +480,7 @@ uint DeskbotScript::addAssignedRoomDialogue2() {
 void DeskbotScript::addAssignedRoomDialogue3() {
 	addResponse(getDialogueId(241513));
 	addResponse(getDialogueId(241510));
-	
+
 	CTrueTalkManager::setFlags(1, 2);
 	setDialRegion(0, 0);
 	setDialRegion(1, 0);
@@ -618,7 +618,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (isDial1Low() && getValue(1) == 4) {
 			if (sentence->_field2C == 12 || sentence->_field2C == 13
 					|| sentence->contains("do not")) {
-				
+
 				addResponse(getDialogueId(240447));
 				setDialRegion(0, 0);
 				setDialRegion(1, 0);
@@ -1148,7 +1148,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(241267));
 			break;
 		}
-		
+
 		add241716();
 		applyFlag = true;
 		stateFlag = false;
@@ -1223,7 +1223,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 			addResponse(getDialogueId(241711));
 		}
-			
+
 		applyFlag = true;
 		stateFlag = false;
 		break;
@@ -1244,7 +1244,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			}
 
 		}
-		
+
 		applyFlag = true;
 		stateFlag = false;
 		break;
@@ -1254,7 +1254,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| sentence->contains("balcony") || sentence->contains("neither")
 				|| sentence->contains("the 1") || sentence->contains("the 2")
 				|| sentence->contains("former") || sentence->contains("latter")
-				|| sentence->contains("either")) { 
+				|| sentence->contains("either")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241687));
 		} else {
@@ -1299,7 +1299,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| sentence->contains("princess") || sentence->contains("small")
 				|| sentence->contains("the 1") || sentence->contains("the 2")
 				|| sentence->contains("the 3") || sentence->contains("the 4")
-				|| sentence->contains("big") || sentence->contains("large")) { 
+				|| sentence->contains("big") || sentence->contains("large")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1317,7 +1317,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 		if (sentence->contains("constitutional") || sentence->contains("const")
 				|| sentence->contains("absolute") || sentence->contains("small")
 				|| sentence->contains("the 1") || sentence->contains("the 2")
-				|| sentence->contains("big") || sentence->contains("large")) { 
+				|| sentence->contains("big") || sentence->contains("large")) {
 			addResponse(getDialogueId(241700));
 			addResponse(getDialogueId(241739));
 		} else {
@@ -1334,7 +1334,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 	case 91:
 		if (sentence->contains("benev") || sentence->contains("dict")
 				|| sentence->contains("small") || sentence->contains("the 1")
-				|| sentence->contains("the 2") || sentence->contains("big") 
+				|| sentence->contains("the 2") || sentence->contains("big")
 				|| sentence->contains("large") || sentence->contains("former")
 				|| sentence->contains("latter")) {
 			addResponse(getDialogueId(241700));
@@ -1384,7 +1384,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 				|| sentence->contains("suite") || sentence->contains("next door")
 				|| sentence->contains("the 1") || sentence->contains("the 2")
 				|| sentence->contains("former") || sentence->contains("latter")
-				|| sentence->contains("same room")) { 
+				|| sentence->contains("same room")) {
 			addAssignedRoom();
 			setState(0);
 			CTrueTalkManager::setFlags(17, 0);
@@ -1424,7 +1424,7 @@ int DeskbotScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			stateFlag = false;
 		}
 		break;
-	
+
 	default:
 		break;
 	}

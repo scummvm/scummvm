@@ -73,7 +73,7 @@ bool CGondolierMixer::EnterRoomMsg(CEnterRoomMsg *msg) {
 		CTurnOn onMsg;
 		onMsg.execute(this);
 	}
-	
+
 	return true;
 }
 

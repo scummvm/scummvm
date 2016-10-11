@@ -36,7 +36,7 @@ namespace Graphics {
 /**
  * Implements a specialised surface that represents the screen.
  * It keeps track of any areas of itself that are updated by drawing
- * calls, and provides an update that method that blits the affected 
+ * calls, and provides an update that method that blits the affected
  * areas to the physical screen
  */
 class Screen : public ManagedSurface {
@@ -72,7 +72,7 @@ public:
 	bool isDirty() const { return !_dirtyRects.empty(); }
 
 	/**
-	 * Marks the whole screen as dirty. This forces the next call to update 
+	 * Marks the whole screen as dirty. This forces the next call to update
 	 * to copy the entire screen contents
 	 */
 	void makeAllDirty();

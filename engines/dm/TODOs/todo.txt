@@ -1,0 +1,21 @@
+Bugs:
+	Display:
+		Spellcasting tabs are displayed inproperly, switching between them is possible tho
+		Cursor icons are drawn twice
+		DisplayMan::blitBoxFilledWithMaskedBitmap does not produce the same effect as the original
+
+	Logic:
+		Items thrown on the right side end up on the left side
+		Restarting the game after the party is dead segfaults
+
+Todo:
+	Add wiki entry for DM
+
+	Double check enums with hex literals
+	Double check strcat, strstr usages
+	I forgot to add a bunch of warning for show/hide mouse pointer and other mouse functions
+
+Code stuff todo:
+	Complete stub methods(blitShrink)
+	Add proper save header, add error handling to it
+	Add translations to f433_processCommand140_saveGame 'LOAD'

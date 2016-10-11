@@ -179,7 +179,7 @@ int MidiPlayer::open(int gameType, bool isDemo) {
 		//setTimerRate(_driver->getBaseTempo());
 		return 0;
 	}
-	
+
 	case kMusicModeMilesAudio: {
 		switch (musicType) {
 		case MT_ADLIB: {

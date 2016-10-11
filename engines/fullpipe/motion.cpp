@@ -38,7 +38,31 @@ bool MotionController::load(MfcArchive &file) {
 }
 
 void MotionController::enableLinks(const char *linkName, bool enable) {
-	warning("STUB: MotionController::enableLinks()");
+	if (_objtype != kObjTypeMctlCompound)
+		return;
+
+	MctlCompound *obj = (MctlCompound *)this;
+
+	for (uint i = 0;  i < obj->getMotionControllerCount(); i++) {
+		MotionController *con = obj->getMotionController(i);
+
+		if (con->_objtype == kObjTypeMovGraph) {
+			MovGraph *gr = (MovGraph *)con;
+
+			for (ObList::iterator l = gr->_links.begin(); l != gr->_links.end(); ++l) {
+				assert(((CObject *)*l)->_objtype == kObjTypeMovGraphLink);
+
+				MovGraphLink *lnk = (MovGraphLink *)*l;
+
+				if (!strcmp(lnk->_name, linkName)) {
+					if (enable)
+						lnk->_flags |= 0x20000000;
+					else
+						lnk->_flags &= 0xDFFFFFFF;
+				}
+			}
+		}
+	}
 }
 
 MovGraphLink *MotionController::getLinkByName(const char *name) {
@@ -1675,8 +1699,9 @@ int MctlGraph::getDirByStatics(int idx, int staticsId) {
 
 int MctlGraph::getDirByMovement(int idx, int movId) {
 	for (int i = 0; i < 4; i++)
-		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId || _items2[idx]->_subItems[i]._turn[0]._movementId == movId ||
-			_items2[idx]->_subItems[i]._turnS[0]._movementId == movId)
+		if (_items2[idx]->_subItems[i]._walk[0]._movementId == movId
+		 || _items2[idx]->_subItems[i]._walk[1]._movementId == movId
+		 || _items2[idx]->_subItems[i]._walk[2]._movementId == movId)
 			return i;
 
 	return -1;
@@ -2224,9 +2249,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 	}
 
 	if (obj->_ox == xpos && obj->_oy == ypos) {
-		g_fp->_globalMessageQueueList->compact();
-
-		MessageQueue *mq = new MessageQueue();
+		MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
 
 		if (staticsId && obj->_statics->_staticsId != staticsId) {
 			int idxwalk = getDirByStatics(idx, staticsId);
@@ -2238,7 +2261,7 @@ MessageQueue *MctlGraph::makeQueue(StaticANIObject *obj, int xpos, int ypos, int
 				return 0;
 			}
 
-			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._walk[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
+			ExCommand *ex = new ExCommand(picAniInfo.objectId, 1, _items2[idx]->_subItems[idxsub]._turnS[idxwalk]._movementId, 0, 0, 0, 1, 0, 0, 0);
 
 			ex->_field_24 = 1;
 			ex->_param = picAniInfo.field_8;
@@ -2736,16 +2759,16 @@ MovGraphLink *MctlGraph::getNearestLink(int x, int y) {
 			double n1y = lnk->_graphSrc->_y;
 			double n2x = lnk->_graphDst->_x;
 			double n2y = lnk->_graphDst->_y;
-			double n1dx = n1x - x;
+			double n1dx = x - n1x;
 			double n1dy = n1y - y;
 			double dst1 = sqrt(n1dy * n1dy + n1dx * n1dx);
 			double coeff1 = ((n1y - n2y) * n1dy + (n2x - n1x) * n1dx) / lnk->_length / dst1;
 			double dst3 = coeff1 * dst1;
 			double dst2 = sqrt(1.0 - coeff1 * coeff1) * dst1;
 
-			if (coeff1 * dst1 < 0.0) {
+			if (dst3 < 0.0) {
 				dst3 = 0.0;
-				dst2 = sqrt(n1dy * n1dy + n1dx * n1dx);
+				dst2 = sqrt((n1x - x) * (n1x - x) + (n1y - y) * (n1y - y));
 			}
 			if (dst3 > lnk->_length) {
 				dst3 = lnk->_length;
@@ -3056,13 +3079,13 @@ void ReactPolygonal::getBBox(Common::Rect *rect) {
 		if (rect->left > _points[i]->x)
 			rect->left = _points[i]->x;
 
-		if (rect->top < _points[i]->y)
+		if (rect->top > _points[i]->y)
 			rect->top = _points[i]->y;
 
 		if (rect->right < _points[i]->x)
 			rect->right = _points[i]->x;
 
-		if (rect->bottom > _points[i]->y)
+		if (rect->bottom < _points[i]->y)
 			rect->bottom = _points[i]->y;
 	}
 

@@ -21,7 +21,7 @@
  */
 
 namespace Titanic {
-	
+
 static const TitanicGameDescription gameDescriptions[] = {
 	{
 		{
@@ -35,7 +35,6 @@ static const TitanicGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// German version currently disabled because it won't start up,
 	// even with the English generated titanic.dat file
 	{
@@ -49,7 +48,6 @@ static const TitanicGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NONE)
 		},
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER }
 };

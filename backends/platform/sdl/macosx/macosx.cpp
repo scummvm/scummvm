@@ -56,7 +56,7 @@ void OSystem_MacOSX::init() {
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
 #endif
-	
+
 	// Invoke parent implementation of this method
 	OSystem_POSIX::init();
 }
@@ -107,7 +107,7 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 }
 
 bool OSystem_MacOSX::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport)
+	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport || f == kFeatureOpenUrl)
 		return true;
 	return OSystem_POSIX::hasFeature(f);
 }
@@ -131,6 +131,13 @@ bool OSystem_MacOSX::hasTextInClipboard() {
 
 Common::String OSystem_MacOSX::getTextFromClipboard() {
 	return getTextFromClipboardMacOSX();
+}
+
+bool OSystem_MacOSX::openUrl(const Common::String &url) {
+	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
+	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
+	CFRelease(urlRef);
+	return err != noErr;
 }
 
 Common::String OSystem_MacOSX::getSystemLanguage() const {

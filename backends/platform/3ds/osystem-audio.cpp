@@ -41,31 +41,31 @@ static void audioThreadFunc(void *arg) {
 	uint32 lastTime = osys->getMillis(true);
 	uint32 time = lastTime;
 	ndspWaveBuf buffers[bufferCount];
-	
+
 	for (i = 0; i < bufferCount; ++i) {
 		memset(&buffers[i], 0, sizeof(ndspWaveBuf));
 		buffers[i].data_vaddr = linearAlloc(bufferSize);
 		buffers[i].looping = false;
 		buffers[i].status = NDSP_WBUF_FREE;
 	}
-	
+
 	ndspChnReset(channel);
 	ndspChnSetInterp(channel, NDSP_INTERP_LINEAR);
 	ndspChnSetRate(channel, sampleRate);
 	ndspChnSetFormat(channel, NDSP_FORMAT_STEREO_PCM16);
 
-	while (!osys->exiting) {		
+	while (!osys->exiting) {
 		osys->delayMillis(100); // Note: Increasing the delay requires a bigger buffer
-		
+
 		time = osys->getMillis(true);
 		sampleLen = (time - lastTime) * 22 * 4; // sampleRate / 1000 * channelCount * sizeof(int16);
 		lastTime = time;
-		
+
 		if (!osys->sleeping && sampleLen > 0) {
 			bufferIndex++;
 			bufferIndex %= bufferCount;
 			ndspWaveBuf *buf = &buffers[bufferIndex];
-		
+
 			buf->nsamples = mixer->mixCallback(buf->data_adpcm, sampleLen);
 			if (buf->nsamples > 0) {
 				DSP_FlushDataCache(buf->data_vaddr, bufferSize);
@@ -73,14 +73,14 @@ static void audioThreadFunc(void *arg) {
 			}
 		}
 	}
-	
+
 	for (i = 0; i < bufferCount; ++i)
 		linearFree(buffers[i].data_pcm8);
 }
 
 void OSystem_3DS::initAudio() {
 	_mixer = new Audio::MixerImpl(this, 22050);
-	
+
 	hasAudio = R_SUCCEEDED(ndspInit());
 	_mixer->setReady(false);
 
@@ -97,7 +97,7 @@ void OSystem_3DS::destroyAudio() {
 		threadFree(audioThread);
 		ndspExit();
 	}
-	
+
 	delete _mixer;
 	_mixer = 0;
 }

@@ -102,66 +102,6 @@ void syncWithSerializer(Common::Serializer &s, Node &obj) {
 	syncWithSerializer(s, obj.value);
 }
 
-#ifdef ENABLE_SCI32
-void syncWithSerializer(Common::Serializer &s, SciArray<reg_t> &obj) {
-	byte type = 0;
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		type = (byte)obj.getType();
-		size = obj.getSize();
-	}
-	s.syncAsByte(type);
-	s.syncAsUint32LE(size);
-	if (s.isLoading()) {
-		obj.setType((int8)type);
-
-		// HACK: Skip arrays that have a negative type
-		if ((int8)type < 0)
-			return;
-
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		reg_t value;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		syncWithSerializer(s, value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-void syncWithSerializer(Common::Serializer &s, SciString &obj) {
-	uint32 size = 0;
-
-	if (s.isSaving()) {
-		size = obj.getSize();
-		s.syncAsUint32LE(size);
-	} else {
-		s.syncAsUint32LE(size);
-		obj.setSize(size);
-	}
-
-	for (uint32 i = 0; i < size; i++) {
-		char value = 0;
-
-		if (s.isSaving())
-			value = obj.getValue(i);
-
-		s.syncAsByte(value);
-
-		if (s.isLoading())
-			obj.setValue(i, value);
-	}
-}
-
-#endif
-
 #pragma mark -
 
 // By default, sync using syncWithSerializer, which in turn can easily be overloaded.
@@ -292,9 +232,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		} else if (type == SEG_TYPE_ARRAY) {
 			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
-		} else if (type == SEG_TYPE_STRING) {
-			// Set the correct segment for SCI32 strings
-			_stringSegId = i;
 		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
 			_bitmapSegId = i;
 #endif
@@ -392,6 +329,28 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 			obj.playTime = g_engine->getTotalPlayTime() / 1000;
 		}
 		s.syncAsUint32LE(obj.playTime);
+	}
+
+	// Some games require additional metadata to display their restore screens
+	// correctly
+	if (s.getVersion() >= 39) {
+		if (s.isSaving()) {
+			const reg_t *globals = g_sci->getEngineState()->variables[VAR_GLOBAL];
+			if (g_sci->getGameId() == GID_SHIVERS) {
+				obj.lowScore = globals[kGlobalVarScore].toUint16();
+				obj.highScore = globals[kGlobalVarShivers1Score].toUint16();
+				obj.avatarId = 0;
+			} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+				obj.lowScore = obj.highScore = 0;
+				obj.avatarId = readSelectorValue(g_sci->getEngineState()->_segMan, globals[kGlobalVarEgo], SELECTOR(view));
+			} else {
+				obj.lowScore = obj.highScore = obj.avatarId = 0;
+			}
+		}
+
+		s.syncAsUint16LE(obj.lowScore);
+		s.syncAsUint16LE(obj.highScore);
+		s.syncAsByte(obj.avatarId);
 	}
 }
 
@@ -673,12 +632,15 @@ void SoundCommandParser::syncPlayList(Common::Serializer &s) {
 }
 
 void SoundCommandParser::reconstructPlayList() {
-	Common::StackLock lock(_music->_mutex);
+	_music->_mutex.lock();
 
 	// We store all songs here because starting songs may re-shuffle their order
 	MusicList songs;
 	for (MusicList::iterator i = _music->getPlayListStart(); i != _music->getPlayListEnd(); ++i)
 		songs.push_back(*i);
+
+	// Done with main playlist, so release lock
+	_music->_mutex.unlock();
 
 	for (MusicList::iterator i = songs.begin(); i != songs.end(); ++i) {
 		initSoundResource(*i);
@@ -707,11 +669,35 @@ void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 	sync_Table<ArrayTable>(ser, *this);
 }
 
-void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
-	if (ser.getVersion() < 18)
-		return;
+void SciArray::saveLoadWithSerializer(Common::Serializer &s) {
+	uint16 savedSize;
 
-	sync_Table<StringTable>(ser, *this);
+	if (s.isSaving()) {
+		savedSize = _size;
+	}
+
+	s.syncAsByte(_type);
+	s.syncAsByte(_elementSize);
+	s.syncAsUint16LE(savedSize);
+
+	if (s.isLoading()) {
+		resize(savedSize);
+	}
+
+	switch (_type) {
+	case kArrayTypeInt16:
+	case kArrayTypeID:
+		for (int i = 0; i < savedSize; ++i) {
+			syncWithSerializer(s, ((reg_t *)_data)[i]);
+		}
+		break;
+	case kArrayTypeByte:
+	case kArrayTypeString:
+		s.syncBytes((byte *)_data, savedSize);
+		break;
+	default:
+		error("Attempt to sync invalid SciArray type %d", _type);
+	}
 }
 
 void BitmapTable::saveLoadWithSerializer(Common::Serializer &ser) {
@@ -784,7 +770,7 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 #ifdef ENABLE_SCI32
-void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
+static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 	s.syncAsUint32LE(palette->timestamp);
 	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
 		s.syncAsByte(palette->colors[i].used);
@@ -794,7 +780,7 @@ void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
 	}
 }
 
-void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
 	bool hasPalette;
 	if (s.isSaving()) {
 		hasPalette = (*palette != nullptr);
@@ -815,6 +801,16 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		++_version;
+
+		for (int i = 0; i < kNumCyclers; ++i) {
+			delete _cyclers[i];
+			_cyclers[i] = nullptr;
+		}
+
+		delete _varyTargetPalette;
+		_varyTargetPalette = nullptr;
+		delete _varyStartPalette;
+		_varyStartPalette = nullptr;
 	}
 
 	s.syncAsSint16LE(_varyDirection);
@@ -1044,10 +1040,11 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
 
 	// Checking here again
-	if (s->executionStackBase) {
-		warning("Cannot save from below kernel function");
-		return false;
-	}
+// TODO: This breaks Torin autosave, is there actually any reason for it?
+//	if (s->executionStackBase) {
+//		warning("Cannot save from below kernel function");
+//		return false;
+//	}
 
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);

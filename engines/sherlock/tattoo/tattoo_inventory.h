@@ -38,7 +38,7 @@ public:
 	 * Load the list of names the inventory items correspond to, if not already loaded,
 	 * and then calls loadGraphics to load the associated graphics
 	 */
-	virtual void loadInv();	
+	virtual void loadInv();
 };
 
 } // End of namespace Tattoo

@@ -41,7 +41,11 @@ public:
 	Console(SciEngine *engine);
 	virtual ~Console();
 
-	int printObject(reg_t pos);
+#ifdef ENABLE_SCI32
+	void printArray(reg_t reg);
+	void printBitmap(reg_t reg);
+#endif
+	int printObject(reg_t reg);
 
 private:
 	virtual void preEnter();
@@ -169,7 +173,8 @@ private:
 	void printBasicVarInfo(reg_t variable);
 
 	bool segmentInfo(int nr);
-	void printList(List *list);
+	void printList(reg_t addr);
+	void printList(const List &list);
 	int printNode(reg_t addr);
 	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
 	void printOffsets(int scriptNr, uint16 showType);

@@ -189,7 +189,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 }
 
 void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {

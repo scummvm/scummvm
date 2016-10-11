@@ -24,9 +24,12 @@
 #define CLOUD_CLOUDMANAGER_H
 
 #include "backends/cloud/storage.h"
+#include "backends/cloud/cloudicon.h"
+
 #include "common/array.h"
 #include "common/singleton.h"
 #include "common/str-array.h"
+#include "common/events.h"
 
 namespace GUI {
 
@@ -47,7 +50,7 @@ enum StorageID {
 	kStorageTotal
 };
 
-class CloudManager : public Common::Singleton<CloudManager> {
+class CloudManager : public Common::Singleton<CloudManager>, public Common::EventSource {
 	static const char *const kStoragePrefix;
 
 	struct StorageConfig {
@@ -61,6 +64,8 @@ class CloudManager : public Common::Singleton<CloudManager> {
 	Storage *_activeStorage;
 	Common::Array<Storage *> _storagesToRemove;
 
+	CloudIcon _icon;
+
 	void loadStorage();
 
 	Common::String getStorageConfigName(uint32 index) const;
@@ -70,6 +75,18 @@ class CloudManager : public Common::Singleton<CloudManager> {
 
 	/** Calls the error callback with a special "no storage connected" message. */
 	void passNoStorageConnected(Networking::ErrorCallback errorCallback) const;
+
+	/**
+	 * Common::EventSource interface
+	 *
+	 * The cloud manager registers itself as an event source even if does not
+	 * actually produce events as a mean to be polled periodically by the GUI
+	 * or engine code.
+	 *
+	 * The periodical polling is used to update the OSD icon indicating
+	 * background sync activity.
+	 */
+	virtual bool pollEvent(Common::Event &event) override;
 
 public:
 	CloudManager();
@@ -232,6 +249,9 @@ public:
 
 	/** Sets SavesSyncRequest's target to given CommandReceiver. */
 	void setSyncTarget(GUI::CommandReceiver *target) const;
+
+	/** Shows a "cloud disabled" icon for three seconds. */
+	void showCloudDisabledIcon();
 
 	///// DownloadFolderRequest-related /////
 

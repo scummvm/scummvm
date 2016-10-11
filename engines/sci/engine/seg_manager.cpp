@@ -42,7 +42,6 @@ SegManager::SegManager(ResourceManager *resMan, ScriptPatcher *scriptPatcher)
 
 #ifdef ENABLE_SCI32
 	_arraysSegId = 0;
-	_stringSegId = 0;
 	_bitmapSegId = 0;
 #endif
 
@@ -72,7 +71,6 @@ void SegManager::resetSegMan() {
 
 #ifdef ENABLE_SCI32
 	_arraysSegId = 0;
-	_stringSegId = 0;
 	_bitmapSegId = 0;
 #endif
 
@@ -88,9 +86,8 @@ void SegManager::initSysStrings() {
 		_parserPtr = make_reg(_saveDirPtr.getSegment(), _saveDirPtr.getOffset() + 256);
 #ifdef ENABLE_SCI32
 	} else {
-		SciString *saveDirString = allocateString(&_saveDirPtr);
-		saveDirString->setSize(256);
-		saveDirString->setValue(0, 0);
+		SciArray *saveDirString = allocateArray(kArrayTypeString, 256, &_saveDirPtr);
+		saveDirString->byteAt(0) = '\0';
 
 		_parserPtr = NULL_REG;	// no SCI2 game had a parser
 #endif
@@ -863,7 +860,10 @@ bool SegManager::freeDynmem(reg_t addr) {
 }
 
 #ifdef ENABLE_SCI32
-SciArray<reg_t> *SegManager::allocateArray(reg_t *addr) {
+#pragma mark -
+#pragma mark Arrays
+
+SciArray *SegManager::allocateArray(SciArrayType type, uint16 size, reg_t *addr) {
 	ArrayTable *table;
 	int offset;
 
@@ -875,10 +875,14 @@ SciArray<reg_t> *SegManager::allocateArray(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(_arraysSegId, offset);
-	return &table->at(offset);
+
+	SciArray *array = &table->at(offset);
+	array->setType(type);
+	array->resize(size);
+	return array;
 }
 
-SciArray<reg_t> *SegManager::lookupArray(reg_t addr) {
+SciArray *SegManager::lookupArray(reg_t addr) {
 	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_ARRAY)
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
@@ -899,54 +903,17 @@ void SegManager::freeArray(reg_t addr) {
 	if (!arrayTable.isValidEntry(addr.getOffset()))
 		error("Attempt to use non-array %04x:%04x as array", PRINT_REG(addr));
 
-	arrayTable[addr.getOffset()].destroy();
 	arrayTable.freeEntry(addr.getOffset());
 }
 
-SciString *SegManager::allocateString(reg_t *addr) {
-	StringTable *table;
-	int offset;
-
-	if (!_stringSegId) {
-		table = (StringTable *)allocSegment(new StringTable(), &(_stringSegId));
-	} else
-		table = (StringTable *)_heap[_stringSegId];
-
-	offset = table->allocEntry();
-
-	*addr = make_reg(_stringSegId, offset);
-	return &table->at(offset);
-}
-
-SciString *SegManager::lookupString(reg_t addr) {
-	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_STRING)
-		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
-
-	StringTable &stringTable = *(StringTable *)_heap[addr.getSegment()];
-
-	if (!stringTable.isValidEntry(addr.getOffset()))
-		error("lookupString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
-
-	return &(stringTable[addr.getOffset()]);
-}
-
-void SegManager::freeString(reg_t addr) {
-	if (_heap[addr.getSegment()]->getType() != SEG_TYPE_STRING)
-		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
-
-	StringTable &stringTable = *(StringTable *)_heap[addr.getSegment()];
-
-	if (!stringTable.isValidEntry(addr.getOffset()))
-		error("freeString: Attempt to use non-string %04x:%04x as string", PRINT_REG(addr));
-
-	stringTable[addr.getOffset()].destroy();
-	stringTable.freeEntry(addr.getOffset());
+bool SegManager::isArray(reg_t addr) const {
+	return addr.getSegment() == _arraysSegId;
 }
 
 #pragma mark -
 #pragma mark Bitmaps
 
-SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 displaceX, const int16 displaceY, const int16 scaledWidth, const int16 scaledHeight, const uint32 paletteSize, const bool remap, const bool gc) {
+SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor, const int16 originX, const int16 originY, const int16 xResolution, const int16 yResolution, const uint32 paletteSize, const bool remap, const bool gc) {
 	BitmapTable *table;
 	int offset;
 
@@ -961,7 +928,7 @@ SciBitmap *SegManager::allocateBitmap(reg_t *addr, const int16 width, const int1
 	*addr = make_reg(_bitmapSegId, offset);
 	SciBitmap &bitmap = table->at(offset);
 
-	bitmap.create(width, height, skipColor, displaceX, displaceY, scaledWidth, scaledHeight, paletteSize, remap, gc);
+	bitmap.create(width, height, skipColor, originX, originY, xResolution, yResolution, paletteSize, remap, gc);
 
 	return &bitmap;
 }

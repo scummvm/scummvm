@@ -62,6 +62,8 @@ namespace Fullpipe {
 #define PIC_CSR_DEFAULT_INV 4892
 #define PIC_CSR_ITN 4893
 #define PIC_CSR_ITN_INV 4894
+#define PIC_CSR_ITN_GREEN 5330
+#define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_GOFAR_L 4895
 #define PIC_CSR_GOFAR_R 4896
 #define PIC_CSR_ARCADE1 4901
@@ -75,19 +77,11 @@ namespace Fullpipe {
 #define PIC_CSR_ARCADE7 4909
 #define PIC_CSR_ARCADE7_D 4910
 #define PIC_CSR_ARCADE8 4911
-#define PIC_CSR_DEFAULT 4891
-#define PIC_CSR_DEFAULT_INV 4892
 #define PIC_CSR_GOD 4900
-#define PIC_CSR_GOFAR_L 4895
-#define PIC_CSR_GOFAR_R 4896
 #define PIC_CSR_GOL 4897
 #define PIC_CSR_GOR 4898
 #define PIC_CSR_GOU 4899
 #define PIC_CSR_HELPERBGR 5331
-#define PIC_CSR_ITN 4893
-#define PIC_CSR_ITN_GREEN 5330
-#define PIC_CSR_ITN_INV 4894
-#define PIC_CSR_ITN_RED 5329
 #define PIC_CSR_LIFT 5176
 #define PIC_CSR_MAP 5339
 #define PIC_HLP_BGR 3562
@@ -462,7 +456,6 @@ namespace Fullpipe {
 #define MV_SC4_COIN_default 1029
 #define MV_SPK4_PLAY 3276
 #define MV_SPR_LOWER 543
-#define PIC_MAP_P03 5279
 #define PIC_SC4_BOTTLE 568
 #define PIC_SC4_BOTTLE2 2936
 #define PIC_SC4_DOWNTRUBA 619
@@ -591,7 +584,7 @@ namespace Fullpipe {
 #define ST_NBL_NORM 1076
 
 // Scene 7
-#define ANI_CORNERSITTER 71
+#define ANI_CORNERSITTER 711
 #define ANI_HOOLIGAN 808
 #define ANI_LUKE 803
 #define ANI_PLUSMINUS 2938
@@ -1137,7 +1130,6 @@ namespace Fullpipe {
 #define ST_WTR24_FLOWLOWER 1843
 
 // Scene 25
-#define ANI_BEARDED_CMN 3420
 #define ANI_BOARD25 1898
 #define ANI_DROP_25 3499
 #define ANI_INV_BOARD 1872

@@ -46,7 +46,7 @@ const char *segmentTypeNames[] = {
 	"dynmem",    // 9
 	"obsolete",  // 10: obsolete string fragments
 	"array",     // 11: SCI32 arrays
-	"string"     // 12: SCI32 strings
+	"obsolete"   // 12: obsolete SCI32 strings
 };
 #endif
 

@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 #include "graphics/font.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "image/bmp.h"
 
@@ -606,16 +607,14 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteID) {
 	int height = _sprites[spriteID]->_height;
 	int width = _sprites[spriteID]->_width;
 
-	const char *fontName;
+	Graphics::MacFont macFont(textCast->fontId, textCast->fontSize);
 
 	if (_vm->_currentScore->_fontMap.contains(textCast->fontId)) {
-		fontName = _vm->_currentScore->_fontMap[textCast->fontId].c_str();
-	} else if ((fontName = _vm->_wm->getFontName(textCast->fontId, textCast->fontSize)) == NULL) {
-		warning("Unknown font id %d, falling back to default", textCast->fontId);
-		fontName = _vm->_wm->getFontName(0, 12);
+		// Override
+		macFont.setName(_vm->_currentScore->_fontMap[textCast->fontId]);
 	}
 
-	const Graphics::Font *font = _vm->_wm->getFont(fontName, Graphics::FontManager::kBigGUIFont);
+	const Graphics::Font *font = _vm->_wm->_fontMan->getFont(macFont);
 
 	font->drawString(&surface, text, x, y, width, 0);
 

@@ -507,7 +507,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			Common::FSNode dir(browser.getResult());
 			_savePathWidget->setLabel(dir.getPath());
 #ifdef USE_LIBCURL
-			MessageDialog warningMessage(_("Saves sync feature doesn't work with non-default directories. If you want your saves to sync, use default directory."));
+			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
 			draw();

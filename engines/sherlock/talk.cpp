@@ -172,7 +172,7 @@ void Talk::talkTo(const Common::String filename) {
 	// Turn on the Exit option
 	ui._endKeyActive = true;
 
-	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() && 
+	if (people[HOLMES]._walkCount || (!people[HOLMES]._walkTo.empty() &&
 			(IS_SERRATED_SCALPEL || people._allowWalkAbort))) {
 		// Only interrupt if trying to do an action, and not just if player is walking around the scene
 		if (people._allowWalkAbort)
@@ -1195,7 +1195,7 @@ OpcodeReturn Talk::cmdWalkToCAnimation(const byte *&str) {
 	++str;
 	CAnim &animation = scene._cAnim[str[0] - 1];
 	people[HOLMES].walkToCoords(animation._goto[0], animation._goto[0]._facing);
-	
+
 	return _talkToAbort ? RET_EXIT : RET_SUCCESS;
 }
 

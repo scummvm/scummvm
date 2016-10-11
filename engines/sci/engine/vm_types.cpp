@@ -66,13 +66,10 @@ void reg_t::setOffset(uint32 offset) {
 }
 
 reg_t reg_t::lookForWorkaround(const reg_t right, const char *operation) const {
-	SciTrackOriginReply originReply;
+	SciCallOrigin originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, arithmeticWorkarounds, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("Invalid arithmetic operation (%s - params: %04x:%04x and %04x:%04x) from method %s::%s (room %d, script %d, localCall %x)",
-		operation, PRINT_REG(*this), PRINT_REG(right), originReply.objectName.c_str(),
-		originReply.methodName.c_str(), g_sci->getEngineState()->currentRoomNumber(), originReply.scriptNr,
-		originReply.localCallOffset);
+		error("Invalid arithmetic operation (%s - params: %04x:%04x and %04x:%04x) from %s", operation, PRINT_REG(*this), PRINT_REG(right), originReply.toString().c_str());
 	assert(solution.type == WORKAROUND_FAKE);
 	return make_reg(0, solution.value);
 }

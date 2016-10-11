@@ -43,6 +43,8 @@ static const int scene04_speakerPhases[] = {
 	0, 2, -1, -1, -1, -1
 };
 
+void sceneHandler04_putKozyawkaBack(StaticANIObject *ani);
+
 void scene04_speakerCallback(int *phase) {
 	if (g_vars->scene04_soundPlaying) {
 		if (g_vars->scene04_speakerPhase >= 0) {
@@ -413,7 +415,7 @@ void sceneHandler04_jumpOnLadder() {
 
 	g_fp->_aniMan->changeStatics2(ST_MAN_LADDERDOWN);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
@@ -527,7 +529,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 
 		if (mq->chain(g_fp->_aniMan)) {
 			g_fp->_aniMan->_priority = 12;
-			g_fp->_aniMan->_flags |= 1;
+			g_fp->_aniMan->_flags |= 0x100;
 		} else {
 			delete mq;
 		}
@@ -572,6 +574,8 @@ void sceneHandler04_raisePlank() {
 MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
+
+	debugC(2, kDebugSceneLogic, "scene04: kozFly3 (OK)");
 
 	aniHandler.attachObject(ANI_KOZAWKA);
 
@@ -621,6 +625,8 @@ MessageQueue *sceneHandler04_kozFly3(StaticANIObject *ani, double phase) {
 MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
+
+	debugC(2, kDebugSceneLogic, "scene04: kozFly5 (OK)");
 
 	aniHandler.attachObject(ANI_KOZAWKA);
 
@@ -693,6 +699,8 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
 
+	debugC(2, kDebugSceneLogic, "scene04: kozFly6 (OK)");
+
 	aniHandler.attachObject(ANI_KOZAWKA);
 
 	mkQueue.ani = ani;
@@ -750,6 +758,8 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 MessageQueue *sceneHandler04_kozFly7(StaticANIObject *ani, double phase) {
 	AniHandler aniHandler;
 	MakeQueueStruct mkQueue;
+
+	debugC(2, kDebugSceneLogic, "scene04: kozFly7");
 
 	aniHandler.attachObject(ANI_KOZAWKA);
 
@@ -943,9 +953,15 @@ void sceneHandler04_walkKozyawka() {
 
 void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
-		GameObject *obj = *it;
+		if ((*it)->_objtype == kObjTypeStaticANIObject) {
+			StaticANIObject *st = (StaticANIObject *)*it;
 
-		obj->setOXY(obj->_ox, off + obj->_oy);
+			st->setOXY(st->_ox, off + st->_oy);
+		} else {
+			GameObject *obj = *it;
+
+			obj->setOXY(obj->_ox, off + obj->_oy);
+		}
 	}
 }
 
@@ -1179,6 +1195,8 @@ void sceneHandler04_handTake() {
 }
 
 void sceneHandler04_putKozyawkaBack(StaticANIObject *ani) {
+	debugC(2, kDebugSceneLogic, "scene04: putKozyawkaBack");
+
 	g_vars->scene04_bottleObjList.push_back(ani);
 	g_vars->scene04_kozyawkiAni.push_back(ani);
 

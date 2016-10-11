@@ -67,7 +67,7 @@ void CSauceDispensor::load(SimpleFile *file) {
 
 bool CSauceDispensor::Use(CUse *msg) {
 	CVisibleMsg visibleMsg(true);
-	
+
 	if (msg->_item->isEquals("Chicken")) {
 		CChicken *chicken = static_cast<CChicken *>(msg->_item);
 		_field104 = true;
@@ -75,7 +75,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 			playSound("b#15.wav", 50);
 
 			if (chicken->_string6 != "None") {
-				petDisplayMessage(1, "This foodstuff is already sufficiently garnished.");
+				petDisplayMessage(1, FOODSTUFF_ALREADY_GARNISHED);
 				msg->execute("Chicken");
 			} else {
 				setVisible(true);
@@ -96,7 +96,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 		endMsg.execute(this);
 		playSound("z#120.wav");
 
-		petDisplayMessage(1, "Sadly, this dispenser is currently empty.");
+		petDisplayMessage(1, DISPENSOR_IS_EMPTY);
 	} else if (msg->_item->isEquals("BeerGlass")) {
 		CGlass *glass = dynamic_cast<CGlass *>(msg->_item);
 		_field108 = true;
@@ -113,7 +113,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 			CActMsg actMsg(_string3);
 			actMsg.execute("BeerGlass");
-		}	
+		}
 	}
 
 	return true;
@@ -157,12 +157,12 @@ bool CSauceDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CSauceDispensor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	petDisplayMessage(1, "Please place food source beneath dispenser for sauce delivery.");
+	petDisplayMessage(1, PUT_FOOD_UNDER_DISPENSOR);
 	return true;
 }
 
 bool CSauceDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
-	petDisplayMessage(1, "Please place food source beneath dispenser for sauce delivery.");
+	petDisplayMessage(1, PUT_FOOD_UNDER_DISPENSOR);
 	return true;
 }
 

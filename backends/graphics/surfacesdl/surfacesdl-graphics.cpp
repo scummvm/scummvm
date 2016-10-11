@@ -133,7 +133,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	:
 	SdlGraphicsManager(sdlEventSource, window),
 #ifdef USE_OSD
-	_osdSurface(0), _osdMessageSurface(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
+	_osdMessageSurface(nullptr), _osdMessageAlpha(SDL_ALPHA_TRANSPARENT), _osdMessageFadeStartTime(0),
+	_osdIconSurface(nullptr),
 #endif
 	_hwscreen(0),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -896,23 +897,6 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_tmpscreen2 == NULL)
 		error("allocating _tmpscreen2 failed");
 
-#ifdef USE_OSD
-	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_hwscreen->w,
-						_hwscreen->h,
-						32,
-						0xFF000000,
-						0x00FF0000,
-						0x0000FF00,
-						0x000000FF
-	);
-	if (_osdSurface == NULL)
-		error("allocating _osdSurface failed");
-
-	_osdFormat = getSurfaceFormat(_osdSurface);
-	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
-#endif
-
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// For SDL2 the output resolution might differ from the requested
 	// resolution. We handle resetting the keyboard emulation properly inside
@@ -966,14 +950,14 @@ void SurfaceSdlGraphicsManager::unloadGFXMode() {
 	}
 
 #ifdef USE_OSD
-	if (_osdSurface) {
-		SDL_FreeSurface(_osdSurface);
-		_osdSurface = NULL;
-	}
-
 	if (_osdMessageSurface) {
 		SDL_FreeSurface(_osdMessageSurface);
 		_osdMessageSurface = NULL;
+	}
+
+	if (_osdIconSurface) {
+		SDL_FreeSurface(_osdIconSurface);
+		_osdIconSurface = NULL;
 	}
 #endif
 	DestroyScalers();
@@ -1007,11 +991,6 @@ bool SurfaceSdlGraphicsManager::hotswapGFXMode() {
 
 	SDL_FreeSurface(_tmpscreen); _tmpscreen = NULL;
 	SDL_FreeSurface(_tmpscreen2); _tmpscreen2 = NULL;
-
-#ifdef USE_OSD
-	// Release the OSD surface
-	SDL_FreeSurface(_osdSurface); _osdSurface = NULL;
-#endif
 
 	// Setup the new GFX mode
 	if (!loadGFXMode()) {
@@ -1090,38 +1069,6 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		_forceFull = true;
 	}
 
-#ifdef USE_OSD
-	// OSD visible (i.e. non-transparent)?
-	if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT) {
-		// Updated alpha value
-		const int diff = SDL_GetTicks() - _osdMessageFadeStartTime;
-		if (diff > 0) {
-			if (diff >= kOSDFadeOutDuration) {
-				// Back to full transparency
-				_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
-			} else {
-				// Do a linear fade out...
-				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
-			}
-			_forceFull = true;
-		}
-
-		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
-			removeOSDMessage();
-		} else {
-			if (_osdMessageSurface && _osdSurface) {
-				SDL_Rect dstRect;
-				dstRect.x = (_osdSurface->w - _osdMessageSurface->w) / 2;
-				dstRect.y = (_osdSurface->h - _osdMessageSurface->h) / 2;
-				dstRect.w = _osdMessageSurface->w;
-				dstRect.h = _osdMessageSurface->h;
-				blitOSDMessage(dstRect);
-			}
-		}
-	}
-#endif
-
 	if (!_overlayVisible) {
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
@@ -1143,6 +1090,10 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	// we have to redraw the mouse.
 	if (_mouseNeedsRedraw)
 		undrawMouse();
+
+#ifdef USE_OSD
+	updateOSD();
+#endif
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -1226,8 +1177,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT)
-			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
+		drawOSD();
 #endif
 
 #ifdef USE_SDL_DEBUG_FOCUSRECT
@@ -2198,14 +2148,14 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	}
 
 	// Clip the rect
-	if (width > _osdSurface->w)
-		width = _osdSurface->w;
-	if (height > _osdSurface->h)
-		height = _osdSurface->h;
+	if (width > _hwscreen->w)
+		width = _hwscreen->w;
+	if (height > _hwscreen->h)
+		height = _hwscreen->h;
 
 	_osdMessageSurface = SDL_CreateRGBSurface(
-		SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-		width, height, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+		SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+		width, height, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask
 	);
 
 	// Lock the surface
@@ -2238,138 +2188,121 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	// Init the OSD display parameters, and the fade out
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdMessageFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
-
-	// Ensure a full redraw takes place next time the screen is updated
-	_forceFull = true;
 }
 
-void SurfaceSdlGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
-	assert(_transactionMode == kTransactionNone);
-	assert(buf);
-
-	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
-
-	// Lock the OSD surface for drawing
-	if (SDL_LockSurface(_osdSurface))
-		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
-
-	// Mark that area as "dirty"
-	addDirtyRect(x, y, w, h, true);
-
-#ifdef USE_RGB_COLOR
-	byte *dst = (byte *)_osdSurface->pixels + y * _osdSurface->pitch + x * _osdSurface->format->BytesPerPixel;
-	if (_videoMode.screenWidth == w && pitch == _osdSurface->pitch) {
-		memcpy(dst, buf, h*pitch);
-	} else {
-		const byte *src = (const byte *)buf;
-		do {
-			memcpy(dst, src, w * _osdSurface->format->BytesPerPixel);
-			src += pitch;
-			dst += _osdSurface->pitch;
-		} while (--h);
-	}
-#else
-	byte *dst = (byte *)_osdSurface->pixels + y * _osdSurface->pitch + x;
-	if (_osdSurface->pitch == pitch && pitch == w) {
-		memcpy(dst, buf, h*w);
-	} else {
-		const byte *src = (const byte *)buf;
-		do {
-			memcpy(dst, src, w);
-			src += pitch;
-			dst += _osdSurface->pitch;
-		} while (--h);
-	}
-#endif
-
-	// Finished drawing, so unlock the OSD surface again
-	SDL_UnlockSurface(_osdSurface);
+SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
+	SDL_Rect rect;
+	rect.x = (_hwscreen->w - _osdMessageSurface->w) / 2;
+	rect.y = (_hwscreen->h - _osdMessageSurface->h) / 2;
+	rect.w = _osdMessageSurface->w;
+	rect.h = _osdMessageSurface->h;
+	return rect;
 }
 
-void SurfaceSdlGraphicsManager::clearOSD() {
+void SurfaceSdlGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *icon) {
 	assert(_transactionMode == kTransactionNone);
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
-	// Lock the OSD surface for drawing
-	if (SDL_LockSurface(_osdSurface))
-		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+	if (_osdIconSurface && !icon) {
+		// Force a redraw to clear the icon on the next update
+		_forceFull = true;
+	}
 
-	// Clear everything with the "transparent" color, i.e. the colorkey
-	SDL_FillRect(_osdSurface, 0, kOSDColorKey);
+	if (_osdIconSurface) {
+		SDL_FreeSurface(_osdIconSurface);
+		_osdIconSurface = nullptr;
+	}
 
-	// Finished drawing, so unlock the OSD surface again
-	SDL_UnlockSurface(_osdSurface);
+	if (icon) {
+		const Graphics::PixelFormat &iconFormat = icon->format;
 
-	// Remove OSD message as well
-	removeOSDMessage();
+		_osdIconSurface = SDL_CreateRGBSurface(
+				SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCALPHA,
+				icon->w, icon->h, iconFormat.bytesPerPixel * 8,
+				((0xFF >> iconFormat.rLoss) << iconFormat.rShift),
+				((0xFF >> iconFormat.gLoss) << iconFormat.gShift),
+				((0xFF >> iconFormat.bLoss) << iconFormat.bShift),
+				((0xFF >> iconFormat.aLoss) << iconFormat.aShift)
+		);
 
-	// Ensure a full redraw takes place next time the screen is updated
-	_forceFull = true;
+		// Lock the surface
+		if (SDL_LockSurface(_osdIconSurface))
+			error("displayActivityIconOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
+
+		byte *dst = (byte *) _osdIconSurface->pixels;
+		const byte *src = (const byte *) icon->getPixels();
+		for (uint y = 0; y < icon->h; y++) {
+			memcpy(dst, src, icon->w * iconFormat.bytesPerPixel);
+			src += icon->pitch;
+			dst += _osdIconSurface->pitch;
+		}
+
+		// Finished drawing, so unlock the OSD icon surface
+		SDL_UnlockSurface(_osdIconSurface);
+	}
+}
+
+SDL_Rect SurfaceSdlGraphicsManager::getOSDIconRect() const {
+	SDL_Rect dstRect;
+	dstRect.x = _hwscreen->w - _osdIconSurface->w - 10;
+	dstRect.y = 10;
+	dstRect.w = _osdIconSurface->w;
+	dstRect.h = _osdIconSurface->h;
+	return dstRect;
 }
 
 void SurfaceSdlGraphicsManager::removeOSDMessage() {
-	// Lock the OSD surface for drawing
-	if (SDL_LockSurface(_osdSurface))
-		error("displayMessageOnOSD: SDL_LockSurface failed: %s", SDL_GetError());
-
-	//remove previous message
+	// Remove the previous message
 	if (_osdMessageSurface) {
-		SDL_Rect osdRect;
-		osdRect.x = (_osdSurface->w - _osdMessageSurface->w) / 2;
-		osdRect.y = (_osdSurface->h - _osdMessageSurface->h) / 2;
-		osdRect.w = _osdMessageSurface->w;
-		osdRect.h = _osdMessageSurface->h;
-		SDL_FillRect(_osdSurface, &osdRect, kOSDColorKey);
 		SDL_FreeSurface(_osdMessageSurface);
 	}
 
 	_osdMessageSurface = NULL;
 	_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
-
-	// Finished drawing, so unlock the OSD surface again
-	SDL_UnlockSurface(_osdSurface);
 }
 
-void SurfaceSdlGraphicsManager::blitOSDMessage(SDL_Rect dstRect) {
-	SDL_Surface *src = _osdMessageSurface;
-	SDL_Surface *dst = _osdSurface;
-	Graphics::PixelFormat srcFormat = getSurfaceFormat(src);
-	Graphics::PixelFormat dstFormat = _osdFormat;
-	for (int y = 0; y < dstRect.h; y++) {
-		const byte *srcRow = (const byte *)((const byte *)(src->pixels) + y * src->pitch); //src (x, y) == (0, 0)
-		byte *dstRow = (byte *)((byte *)(dst->pixels) + (dstRect.y + y) * dst->pitch + dstRect.x * dstFormat.bytesPerPixel);
-
-		for (int x = 0; x < dstRect.w; x++) {
-			uint32 srcColor;
-			if (dst->format->BytesPerPixel == 2)
-				srcColor = READ_UINT16(srcRow);
-			else if (dst->format->BytesPerPixel == 3)
-				srcColor = READ_UINT24(srcRow);
-			else
-				srcColor = READ_UINT32(srcRow);
-
-			srcRow += srcFormat.bytesPerPixel;
-
-			// Convert that color to the new format
-			byte r, g, b, a;
-			srcFormat.colorToARGB(srcColor, a, r, g, b);
-			a = _osdMessageAlpha; //this is the important line, because apart from that this is plain surface copying
-			uint32 color = dstFormat.ARGBToColor(a, r, g, b);
-
-			if (dstFormat.bytesPerPixel == 2)
-				*((uint16 *)dstRow) = color;
-			else
-				*((uint32 *)dstRow) = color;
-
-			dstRow += dstFormat.bytesPerPixel;
+void SurfaceSdlGraphicsManager::updateOSD() {
+	// OSD message visible (i.e. non-transparent)?
+	if (_osdMessageAlpha != SDL_ALPHA_TRANSPARENT) {
+		// Updated alpha value
+		const int diff = SDL_GetTicks() - _osdMessageFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency
+				_osdMessageAlpha = SDL_ALPHA_TRANSPARENT;
+			} else {
+				// Do a linear fade out...
+				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+				_osdMessageAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
+			}
+			SDL_SetAlpha(_osdMessageSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdMessageAlpha);
+			_forceFull = true;
 		}
+
+		if (_osdMessageAlpha == SDL_ALPHA_TRANSPARENT) {
+			removeOSDMessage();
+		}
+	}
+
+	if (_osdIconSurface) {
+		// Redraw the area below the icon for the transparent blit to give correct results.
+		_forceFull = true;
 	}
 }
 
-Graphics::PixelFormat SurfaceSdlGraphicsManager::getOSDFormat() {
-	return _osdFormat;
+void SurfaceSdlGraphicsManager::drawOSD() {
+	if (_osdMessageSurface) {
+		SDL_Rect dstRect = getOSDMessageRect();
+		SDL_BlitSurface(_osdMessageSurface, 0, _hwscreen, &dstRect);
+	}
+
+	if (_osdIconSurface) {
+		SDL_Rect dstRect = getOSDIconRect();
+		SDL_BlitSurface(_osdIconSurface, 0, _hwscreen, &dstRect);
+	}
 }
+
 #endif
 
 bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
@@ -2431,26 +2364,24 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			setGraphicsMode(newMode);
 		endGFXTransaction();
 #ifdef USE_OSD
-		if (_osdSurface) {
-			const char *newScalerName = 0;
-			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
-			while (g->name) {
-				if (g->id == _videoMode.mode) {
-					newScalerName = g->description;
-					break;
-				}
-				g++;
+		const char *newScalerName = 0;
+		const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
+		while (g->name) {
+			if (g->id == _videoMode.mode) {
+				newScalerName = g->description;
+				break;
 			}
-			if (newScalerName) {
-				char buffer[128];
-				sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
-					_("Active graphics filter:"),
-					newScalerName,
-					_videoMode.screenWidth, _videoMode.screenHeight,
-					_hwscreen->w, _hwscreen->h
-					);
-				displayMessageOnOSD(buffer);
-			}
+			g++;
+		}
+		if (newScalerName) {
+			char buffer[128];
+			sprintf(buffer, "%s %s\n%d x %d -> %d x %d",
+				_("Active graphics filter:"),
+				newScalerName,
+				_videoMode.screenWidth, _videoMode.screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+			displayMessageOnOSD(buffer);
 		}
 #endif
 		internUpdateScreen();
@@ -2686,23 +2617,5 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 #endif
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
-
-Graphics::PixelFormat SurfaceSdlGraphicsManager::getSurfaceFormat(SDL_Surface *surface) {
-	Graphics::PixelFormat format;
-	if (surface) {
-		format.bytesPerPixel = surface->format->BytesPerPixel;
-
-		format.rLoss = surface->format->Rloss;
-		format.gLoss = surface->format->Gloss;
-		format.bLoss = surface->format->Bloss;
-		format.aLoss = surface->format->Aloss;
-
-		format.rShift = surface->format->Rshift;
-		format.gShift = surface->format->Gshift;
-		format.bShift = surface->format->Bshift;
-		format.aShift = surface->format->Ashift;
-	}
-	return format;
-}
 
 #endif

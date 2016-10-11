@@ -82,4 +82,22 @@ bool AndroidSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
+int AndroidSdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
+	Common::KeyCode key = SDLToOSystemKeycode(sdlKey);
+
+	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
+		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
+	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
+		return key - Common::KEYCODE_KP0 + '0';
+	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
+		return key;
+	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
+		return key & ~0x20;
+	} else if (key >= Common::KEYCODE_NUMLOCK && key <= Common::KEYCODE_EURO) {
+		return 0;
+	} else {
+		return key;
+	}
+}
+
 #endif

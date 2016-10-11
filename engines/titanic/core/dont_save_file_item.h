@@ -41,6 +41,11 @@ public:
 	 * Load the data for the class from file
 	 */
 	virtual void load(SimpleFile *file);
+
+	/**
+	 * Returns true if the item is a file item
+	 */
+	virtual bool isFileItem() const { return false; }
 };
 
 } // End of namespace Titanic

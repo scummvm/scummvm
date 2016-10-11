@@ -29,7 +29,7 @@
 
 namespace Titanic {
 
-enum MessageFlag { 
+enum MessageFlag {
 	MSGFLAG_SCAN = 1,
 	MSGFLAG_BREAK_IF_HANDLED = 2,
 	MSGFLAG_CLASS_DEF = 4

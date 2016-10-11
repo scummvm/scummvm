@@ -46,16 +46,16 @@ public:
 	void render();
 	void clear(uint32 color = 0);
 	void markDirty(){ dirtyPixels = true; }
-	
+
 	void setPosition(int x, int y);
 	void setScale(float x, float y);
 	float getScaleX(){ return scaleX; }
 	float getScaleY(){ return scaleY; }
 	C3D_Mtx* getMatrix();
-	
+
 	uint16 actualWidth;
 	uint16 actualHeight;
-	
+
 private:
 	bool dirtyPixels;
 	bool dirtyMatrix;

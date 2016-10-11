@@ -23,7 +23,6 @@
 #ifndef BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 #define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
 
-#include "backends/networking/curl/cloudicon.h"
 #include "backends/networking/curl/request.h"
 #include "common/str.h"
 #include "common/singleton.h"
@@ -79,7 +78,6 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests, _addedRequests;
 	Common::Mutex _handleMutex, _addedRequestsMutex;
-	CloudIcon _icon;
 	uint32 _frame;
 
 	void startTimer(int interval = TIMER_INTERVAL);
@@ -114,9 +112,6 @@ public:
 	 * @return the same Request pointer, just as a shortcut
 	 */
 	Request *addRequest(Request *request, RequestCallback callback = nullptr);
-
-	/** Shows a "cloud disabled" icon for a three seconds. */
-	void showCloudDisabledIcon();
 
 	/** Return URL-encoded version of given string. */
 	Common::String urlEncode(Common::String s) const;

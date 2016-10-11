@@ -741,7 +741,7 @@ int ScalpelScene::findBgShape(const Common::Point &pt) {
 	for (int idx = (int)_bgShapes.size() - 1; idx >= 0; --idx) {
 		Object &o = _bgShapes[idx];
 		if (o._type != INVALID && o._type != NO_SHAPE && o._type != HIDDEN
-			&& o._aType <= PERSON) {
+				&& o._type != REMOVE && o._aType <= PERSON) {
 			if (o.getNewBounds().contains(pt))
 				return idx;
 		} else if (o._type == NO_SHAPE) {

@@ -30,7 +30,6 @@
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif
-#include "backends/networking/browser/openurl.h"
 #include "common/translation.h"
 
 namespace GUI {
@@ -70,7 +69,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 	_openUrlWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.OpenUrlButton", _("Open URL"), 0, kOpenUrlCmd);
 	_pasteCodeWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.PasteCodeButton", _("Paste"), _("Pastes clipboard contents into fields"), kPasteCodeCmd);
 	_connectWidget = new ButtonWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.ConnectButton", _("Connect"), 0, kConnectCmd);
-		
+
 	// Initialy the code is empty, so disable the connect button
 	_connectWidget->setEnabled(false);
 
@@ -79,7 +78,7 @@ StorageWizardDialog::StorageWizardDialog(uint32 storageId):
 		_returnLine1->setLabel(_("You will be directed to ScummVM's page where"));
 		_returnLine2->setLabel(_("you should allow it to access your storage."));
 	}
-        
+
 	_picture = new GraphicsWidget(container, "GlobalOptions_Cloud_ConnectionWizard_Container.Picture");
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.theme()->supportsImages()) {
@@ -206,7 +205,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kOpenUrlCmd: {
-		if (!Networking::Browser::openUrl(getUrl())) {
+		if (!g_system->openUrl(getUrl())) {
 			MessageDialog alert(_("Failed to open URL!\nPlease navigate to this page manually."));
 			alert.runModal();
 		}
@@ -293,7 +292,10 @@ void StorageWizardDialog::containerWidgetsReflow() {
 	if (_picture) {
 		_picture->setVisible(g_system->getOverlayWidth() > 320);
 	}
-	if (_openUrlWidget) _openUrlWidget->setVisible(true);
+	if (_openUrlWidget) {
+		bool visible = g_system->hasFeature(OSystem::kFeatureOpenUrl);
+		_openUrlWidget->setVisible(visible);
+	}
 	if (_pasteCodeWidget) {
 		bool visible = showFields && g_system->hasFeature(OSystem::kFeatureClipboardSupport);
 		_pasteCodeWidget->setVisible(visible);

@@ -101,9 +101,9 @@ int scene25_updateCursor() {
 
 		if (g_fp->_objectIdAtCursor == ANI_WATER25) {
 			if ((g_vars->scene25_boardIsSelectable && (!inv || inv == ANI_INV_BOARD)) || (g_vars->scene25_dudeIsOnBoard && (inv == ANI_INV_LOPAT || !inv)))
-				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV; // FIXME check
+				g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
 		} else if (g_fp->_objectIdAtCursor == ANI_BOARD25 && (!inv || inv == ANI_INV_SWAB || inv == ANI_INV_BROOM || inv == ANI_INV_LOPAT)) {
-			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN : PIC_CSR_ITN_INV;
+			g_fp->_cursorId = (g_fp->_cursorId != PIC_CSR_DEFAULT) ? PIC_CSR_ITN_INV : PIC_CSR_ITN;
 		}
 	}
 
@@ -365,7 +365,7 @@ void sceneHandler25_tryRow(int obj) {
 
 	g_fp->_aniMan->getPicAniInfo(&info);
 	g_fp->_aniMan->_messageQueueId = 0;
-	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
@@ -377,12 +377,12 @@ void sceneHandler25_tryRow(int obj) {
 	if (x == 788 && y == 468) {
 		if (g_vars->scene25_board->_statics->_staticsId == ST_BRD25_RIGHT2) {
 			if (obj == ANI_INV_BROOM) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYBROOM;
 			}
 			if (obj == ANI_INV_LOPAT) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				qid = QU_SC25_TRYSPADE;
 			}
@@ -396,18 +396,18 @@ void sceneHandler25_tryRow(int obj) {
 			}
 
 			if (obj == ANI_INV_SWAB) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				chainQueue(QU_SC25_TRYSWAB, 1);
 			} else if (!obj) {
-				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+				g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 				chainObjQueue(g_fp->_aniMan, QU_SC25_TRYHAND, 1);
 
 				g_fp->playSound(SND_25_028, 0);
 			}
-		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_MAN_RIGHT|0x4000) && !obj) {
-			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT|0x4000);
+		} else if (g_vars->scene25_board->_statics->_staticsId == (ST_BRD25_RIGHT2 | 0x4000) && !obj) {
+			g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 			chainQueue(QU_SC25_TRUBATOBOARD, 1);
 
@@ -516,7 +516,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 		ani->restartMessageQueue(mq);
 	}
 
-	ani->_flags |= 1;
+	ani->_flags |= 0x100;
 }
 
 bool sceneHandler25_isOnLadder(ExCommand *cmd) {
@@ -645,7 +645,7 @@ int sceneHandler25(ExCommand *cmd) {
 				if ((picId == PIC_SC25_LADDERUP || picId == PIC_SC25_LADDERDOWN) && sceneHandler25_isOnLadder(cmd))
 					cmd->_messageKind = 0;
 
-				break;
+				return 0;
 			}
 
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
@@ -656,23 +656,31 @@ int sceneHandler25(ExCommand *cmd) {
 						if (!(g_fp->_aniMan->_flags & 0x100)) {
 							if (ani->_id == ANI_WATER25) {
 								if (g_vars->scene25_dudeIsOnBoard) {
-									if (cmd->_param == ANI_INV_LOPAT)
+									if (cmd->_param == ANI_INV_LOPAT) {
 										sceneHandler25_rowShovel();
+										return 0;
+									}
 
-									if (!cmd->_param)
+									if (!cmd->_param) {
 										sceneHandler25_rowHand();
+										return 0;
+									}
 								} else {
-									if (cmd->_param == ANI_INV_BOARD)
+									if (cmd->_param == ANI_INV_BOARD) {
 										sceneHandler25_putBoard();
+										return 0;
+									}
 
-									if (!cmd->_param)
+									if (!cmd->_param) {
 										sceneHandler25_tryWater();
+										return 0;
+									}
 								}
 							} else if (ani->_id == ANI_BOARD25) {
 								sceneHandler25_tryRow(cmd->_param);
-								break;
+								return 0;
 							}
-							break;
+							return 0;
 						}
 					}
 				}
@@ -682,37 +690,37 @@ int sceneHandler25(ExCommand *cmd) {
 				cmd->_messageKind = 0;
 
 			if (!g_fp->_aniMan->isIdle() || (g_fp->_aniMan->_flags & 0x100))
-				break;
+				return 0;
 
 			if (g_vars->scene25_dudeIsOnBoard) {
 				if (picId == PIC_SC25_RTRUBA && !cmd->_param) {
 					sceneHandler25_enterTruba();
-					break;
+					return 0;
 				}
 			} else {
 				if (picId != PIC_SC25_RTRUBA) {
 					if (picId == PIC_SC25_LADDERUP && !cmd->_param)
 						sceneHandler25_ladderUp();
-					break;
+					return 0;
 				}
 
 				if (!cmd->_param) {
 					sceneHandler25_backToPipe();
-					break;
+					return 0;
 				}
 			}
 			if (g_vars->scene25_dudeIsOnBoard) {
 				if (picId != PIC_SC25_LADDERUP || cmd->_param)
-					break;
+					return 0;
 
 				sceneHandler25_toLadder();
-				break;
+				return 0;
 			}
 
 			if (picId == PIC_SC25_LADDERUP && !cmd->_param)
 				sceneHandler25_ladderUp();
 
-			break;
+			return 0;
 		}
 	}
 

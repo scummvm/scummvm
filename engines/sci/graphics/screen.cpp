@@ -37,7 +37,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
-	
+
 	// we default to scripts running at 320x200
 	_scriptWidth = 320;
 	_scriptHeight = 200;
@@ -45,7 +45,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_height = 0;
 	_displayWidth = 0;
 	_displayHeight = 0;
-	
+
 	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
 	// to provide that under DOS as well, but as gk1/floppy does support
 	// upscaled hires scriptswise, but doesn't actually have the hires content
@@ -58,7 +58,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	// Japanese versions of games use hi-res font on upscaled version of the game.
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
-	
+
 	// Macintosh SCI0 games used 480x300, while the scripts were running at 320x200
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		if (getSciVersion() <= SCI_VERSION_01) {
@@ -66,7 +66,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_width = 480;
 			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
 		}
-	
+
 		// Some Mac SCI1/1.1 games only take up 190 rows and do not
 		// have the menu bar.
 		// TODO: Verify that LSL1 and LSL5 use height 190
@@ -145,7 +145,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	}
 
 	_displayPixels = _displayWidth * _displayHeight;
-	
+
 	// Allocate visual, priority, control and display screen
 	_visualScreen = (byte *)calloc(_pixels, 1);
 	_priorityScreen = (byte *)calloc(_pixels, 1);
@@ -314,7 +314,7 @@ void GfxScreen::vectorAdjustLineCoordinates(int16 *left, int16 *top, int16 *righ
 void GfxScreen::vectorPutLinePixel(int16 x, int16 y, byte drawMask, byte color, byte priority, byte control) {
 	if (_upscaledHires == GFX_SCREEN_UPSCALED_480x300) {
 		vectorPutLinePixel480x300(x, y, drawMask, color, priority, control);
-		return;		
+		return;
 	}
 
 	// For anything else forward to the regular putPixel
@@ -628,7 +628,7 @@ void GfxScreen::dither(bool addToFlag) {
 	byte color, ditheredColor;
 	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
-	
+
 	if (!_unditheringEnabled) {
 		// Do dithering on visual and display-screen
 		for (y = 0; y < _height; y++) {

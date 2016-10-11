@@ -42,7 +42,7 @@ bool WidgetList::contains(const WidgetBase *item) const {
 /*-------------------------------------------------------------------------*/
 
 TattooUserInterface::TattooUserInterface(SherlockEngine *vm): UserInterface(vm),
-		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm), 
+		_inventoryWidget(vm), _messageWidget(vm), _textWidget(vm), _tooltipWidget(vm),
 		_verbsWidget(vm), _creditsWidget(vm), _optionsWidget(vm), _quitWidget(vm) {
 	Common::fill(&_lookupTable[0], &_lookupTable[PALETTE_COUNT], 0);
 	Common::fill(&_lookupTable1[0], &_lookupTable1[PALETTE_COUNT], 0);
@@ -126,7 +126,7 @@ void TattooUserInterface::lookAtObject() {
 						name.deleteLastChar();
 
 					// See if this Object Sound List entry matches the object's name
-					if (!_bgShape->_name.compareToIgnoreCase(name)) {					
+					if (!_bgShape->_name.compareToIgnoreCase(name)) {
 						// Move forward to get the sound filename
 						while ((*p == ' ') || (*p == '='))
 							++p;
@@ -266,7 +266,7 @@ void TattooUserInterface::handleInput() {
 
 	if (_lockoutTimer)
 		--_lockoutTimer;
-	
+
 	// Key handling
 	if (events.kbHit()) {
 		_keyState = events.getKey();
@@ -416,7 +416,7 @@ void TattooUserInterface::doStandardControl() {
 		if (vm.readFlags(FLAG_PLAYER_IS_HOLMES)) {
 			freeMenu();
 			doJournal();
-			
+
 			// See if we're in a Lab Table Room
 			_menuMode = (scene._labTableScene) ? LAB_MODE : STD_MODE;
 			return;
@@ -573,7 +573,7 @@ void TattooUserInterface::displayObjectNames() {
 void TattooUserInterface::doInventory(int mode) {
 	People &people = *_vm->_people;
 	people[HOLMES].gotoStand();
-	
+
 	_inventoryWidget.load(mode);
 	_inventoryWidget.summonWindow();
 
@@ -661,7 +661,7 @@ void TattooUserInterface::putMessage(const char *formatStr, ...) {
 void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 	Scene &scene = *_vm->_scene;
 
-	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter 
+	// This requires that there is a 16 grayscale palette sequence in the palette that goes from lighter
 	// to darker as the palette numbers go up. The last palette entry in that run is specified by _bgColor
 	byte *p = &_lookupTable[0];
 	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
@@ -693,7 +693,7 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 				g = cMap[idx * 3 + 1] * 4 / 3;
 				b = cMap[idx * 3 + 2] * 4 / 3;
 				break;
-			
+
 			default:
 				r = g = b = 0;
 				break;
@@ -703,7 +703,7 @@ void TattooUserInterface::setupBGArea(const byte cMap[PALETTE_SIZE]) {
 			int cd = 99999;
 
 			for (int pal = 0; pal < PALETTE_COUNT; ++pal) {
-				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) + 
+				int d = (r - cMap[pal * 3]) * (r - cMap[pal * 3]) + (g - cMap[pal * 3 + 1]) * (g - cMap[pal * 3 + 1]) +
 					(b - cMap[pal * 3 + 2]) * (b - cMap[pal * 3 + 2]);
 
 				if (d < cd) {
@@ -722,12 +722,12 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 	People &people = *_vm->_people;
 	Scene &scene = *_vm->_scene;
 	Screen &screen = *_vm->_screen;
-	
+
 	static const int16 OFFSETS[16] = { -1, -2, -3, -3, -2, -1, -1, 0, 1, 2, 3, 3, 2, 1, 0, 0 };
 
 	if (_mask != nullptr) {
 		// Since a mask is active, restore the screen from the secondary back buffer prior to applying the mask
-		screen._backBuffer1.SHblitFrom(screen._backBuffer2, screen._currentScroll, Common::Rect(screen._currentScroll.x, 0, 
+		screen._backBuffer1.SHblitFrom(screen._backBuffer2, screen._currentScroll, Common::Rect(screen._currentScroll.x, 0,
 			screen._currentScroll.x + SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT));
 
 		switch (scene._currentScene) {
@@ -768,7 +768,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 	} else {
 		// Standard scene without mask, so call user interface to erase any UI elements as necessary
 		doBgAnimRestoreUI();
-		
+
 		// Restore background for any areas covered by characters and shapes
 		for (int idx = 0; idx < MAX_CHARACTERS; ++idx)
 			screen.restoreBackground(Common::Rect(people[idx]._oldPosition.x, people[idx]._oldPosition.y,
@@ -776,10 +776,10 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 
 		for (uint idx = 0; idx < scene._bgShapes.size(); ++idx) {
 			Object &obj = scene._bgShapes[idx];
-						
-			if ((obj._type == ACTIVE_BG_SHAPE && (obj._maxFrames > 1 || obj._delta.x != 0 || obj._delta.y != 0)) || 
+
+			if ((obj._type == ACTIVE_BG_SHAPE && (obj._maxFrames > 1 || obj._delta.x != 0 || obj._delta.y != 0)) ||
 					obj._type == HIDE_SHAPE || obj._type == REMOVE)
-				screen._backBuffer1.SHblitFrom(screen._backBuffer2, obj._oldPosition, 
+				screen._backBuffer1.SHblitFrom(screen._backBuffer2, obj._oldPosition,
 					Common::Rect(obj._oldPosition.x, obj._oldPosition.y, obj._oldPosition.x + obj._oldSize.x,
 						obj._oldPosition.y + obj._oldSize.y));
 		}
@@ -801,10 +801,10 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 	}
 
 	// Adjust the Target Scroll if needed
-	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - screen._currentScroll.x) < 
+	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - screen._currentScroll.x) <
 			(SHERLOCK_SCREEN_WIDTH / 8) && people[people._walkControl]._delta.x < 0) {
-		
-		_targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
+
+		_targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER -
 				SHERLOCK_SCREEN_WIDTH / 8 - 250);
 		if (_targetScroll.x < 0)
 			_targetScroll.x = 0;
@@ -812,7 +812,7 @@ void TattooUserInterface::doBgAnimEraseBackground() {
 
 	if ((people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - screen._currentScroll.x) >
 			(SHERLOCK_SCREEN_WIDTH / 4 * 3)	&& people[people._walkControl]._delta.x > 0)
-		_targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER - 
+		_targetScroll.x = (short)(people[people._walkControl]._position.x / FIXED_INT_MULTIPLIER -
 			SHERLOCK_SCREEN_WIDTH / 4 * 3 + 250);
 
 	if (_targetScroll.x > _scrollSize)

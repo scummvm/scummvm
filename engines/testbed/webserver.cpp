@@ -23,7 +23,6 @@
 #include "testbed/webserver.h"
 #include "backends/networking/sdl_net/localwebserver.h"
 #include "common/config-manager.h"
-#include "backends/networking/browser/openurl.h"
 
 namespace Testbed {
 
@@ -92,7 +91,7 @@ TestExitStatus WebserverTests::testIndexPage() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress());
+	g_system->openUrl(LocalServer.getAddress());
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("The %s page opens well?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {
@@ -118,7 +117,7 @@ TestExitStatus WebserverTests::testFilesPageInvalidParameterValue() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress()+"files?path=error");
+	g_system->openUrl(LocalServer.getAddress()+"files?path=error");
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("The %sfiles?path=error page displays error message?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {
@@ -144,7 +143,7 @@ TestExitStatus WebserverTests::testFilesPageCreateDirectory() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress() + "files?path=/root/");
+	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("You could go to %sfiles page, navigate to some directory with write access and create a directory there?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {
@@ -170,7 +169,7 @@ TestExitStatus WebserverTests::testFilesPageUploadFile() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress() + "files?path=/root/");
+	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("You're able to upload a file in some directory with write access through %sfiles page?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {
@@ -196,7 +195,7 @@ TestExitStatus WebserverTests::testFilesPageUploadDirectory() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress() + "files?path=/root/");
+	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("You're able to upload a directory into some directory with write access through %sfiles page using Chrome?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {
@@ -222,7 +221,7 @@ TestExitStatus WebserverTests::testFilesPageDownloadFile() {
 		return kTestSkipped;
 	}
 
-	Networking::Browser::openUrl(LocalServer.getAddress() + "files?path=/root/");
+	g_system->openUrl(LocalServer.getAddress() + "files?path=/root/");
 	if (Testsuite::handleInteractiveInput(
 		Common::String::format("You're able to download a file through %sfiles page?", LocalServer.getAddress().c_str()),
 		"Yes", "No", kOptionRight)) {

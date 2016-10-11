@@ -30,7 +30,7 @@ namespace Titanic {
 
 enum PetArea {
 	PET_INVENTORY = 0, PET_CONVERSATION = 1, PET_REMOTE = 2,
-	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_STARFIELD = 5, PET_MESSAGE = 6
+	PET_ROOMS = 3, PET_REAL_LIFE = 4, PET_STARFIELD = 5, PET_TRANSLATION = 6
 };
 
 class CPetControl;
@@ -75,7 +75,7 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl) { return false; }
-	
+
 	/**
 	 * Reset the section
 	 */
@@ -85,17 +85,17 @@ public:
 	 * Draw the section
 	 */
 	virtual void draw(CScreenManager *screenManager) {}
-	
+
 	/**
 	 * Get the bounds for the section
 	 */
 	virtual Rect getBounds() const { return Rect(); }
-	
+
 	/**
 	 * Called when a general change occurs
 	 */
 	virtual void changed(int changeType) {}
-	
+
 	/**
 	 * Following are handlers for the various messages that the PET can
 	 * pass onto the currently active section/area
@@ -113,12 +113,12 @@ public:
 	 * Check whether a drag drop can occur
 	 */
 	virtual bool checkDragEnd(CGameObject *item) { return false; }
-	
+
 	/**
 	 * Returns item a drag-drop operation has dropped on, if any
 	 */
 	virtual CGameObject *dragEnd(const Point &pt) const { return nullptr; }
-	
+
 	/**
 	 * Display a message
 	 */
@@ -148,12 +148,12 @@ public:
 	 * Called when a section is switched to
 	 */
 	virtual void enter(PetArea oldArea) {}
-	
+
 	/**
 	 * Called when a section is being left, to switch to another area
 	 */
 	virtual void leave() {}
-	
+
 	virtual void proc23() {}
 
 	/**
@@ -175,7 +175,7 @@ public:
 	 * Removes text after a given duration
 	 */
 	virtual void removeText(int duration);
-	
+
 	/**
 	 * Removes text after a given duration
 	 */
@@ -217,7 +217,7 @@ public:
 	 * Show the text cursor
 	 */
 	virtual void showCursor() {}
-	
+
 	/**
 	 * Hide the text cursor
 	 */
@@ -237,7 +237,7 @@ public:
 	 * Get a specified color in the currently active UI color table
 	 */
 	uint getColor(uint index);
-	
+
 	/**
 	 * Get one of the game's three UI color tables. If the default
 	 * tableNum of -1 is used, the table is taken from the game state

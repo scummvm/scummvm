@@ -30,7 +30,7 @@ namespace Titanic {
 
 bool CPetLoad::reset() {
 	CPetLoadSave::reset();
-	
+
 	CPetControl *pet = getPetControl();
 	if (pet) {
 		setName("PetLoad", pet);
@@ -63,7 +63,7 @@ void CPetLoad::execute() {
 		// WORKAROUND: Schedule the savegame to be loaded after frame rendering ends
 		window->loadGame(_savegameSlotNum);
 	} else if (pet) {
-		pet->displayMessage("You must select a game to load first.");
+		pet->displayMessage(SELECT_GAME_TO_LOAD);
 	}
 }
 

@@ -446,7 +446,7 @@ int LogicHEmoonbase::op_net_get_session_player_count(int op, int numArgs, int32 
 	return _vm1->_moonbase->_net->getSessionPlayerCount(args[0] - 1);
 }
 
-int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {	
+int LogicHEmoonbase::op_net_destroy_player(int op, int numArgs, int32 *args) {
 	return _vm1->_moonbase->_net->destroyPlayer(args[0]);
 }
 
@@ -506,7 +506,7 @@ int LogicHEmoonbase::op_net_who_am_i(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEmoonbase::op_net_set_provider_by_name(int op, int numArgs, int32 *args) {
-	// Parameter 1 is the provider name and 
+	// Parameter 1 is the provider name and
 	// Parameter 2 is the (optional) tcp/ip address
 	return _vm1->_moonbase->_net->setProviderByName(args[0], args[1]);
 }

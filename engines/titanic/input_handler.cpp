@@ -36,6 +36,10 @@ CInputHandler::CInputHandler(CGameManager *owner) :
 	CScreenManager::_screenManagerPtr->_inputHandler = this;
 }
 
+CInputHandler::~CInputHandler() {
+	CScreenManager::_screenManagerPtr->_inputHandler = nullptr;
+}
+
 void CInputHandler::setTranslator(CInputTranslator *translator) {
 	_inputTranslator = translator;
 }
@@ -160,7 +164,7 @@ CGameObject *CInputHandler::dragEnd(const Point &pt, CTreeItem *dragItem) {
 	if (target) {
 		// Check if the cursor is on the PET. If so, pass to the PET
 		// to see what specific element the drag ended on
-		CProjectItem *project = view->getRoot();		
+		CProjectItem *project = view->getRoot();
 		if (project) {
 			CPetControl *petControl = project->getPetControl();
 			if (petControl && petControl->contains(pt)) {

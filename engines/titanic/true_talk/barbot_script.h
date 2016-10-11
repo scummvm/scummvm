@@ -74,7 +74,7 @@ public:
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
 		uint val, uint tagId, uint remainder);
-	
+
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions
 	 */

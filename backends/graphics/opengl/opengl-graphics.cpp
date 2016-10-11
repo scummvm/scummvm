@@ -57,7 +57,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
       _cursorKeyColor(0), _cursorVisible(false), _cursorDontScale(false), _cursorPaletteEnabled(false),
       _forceRedraw(false), _scissorOverride(3)
 #ifdef USE_OSD
-      , _osdAlpha(0), _osdFadeStartTime(0), _osd(nullptr)
+      , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
+      _osdIconSurface(nullptr)
 #endif
     {
 	memset(_gamePalette, 0, sizeof(_gamePalette));
@@ -69,7 +70,8 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _overlay;
 	delete _cursor;
 #ifdef USE_OSD
-	delete _osd;
+	delete _osdMessageSurface;
+	delete _osdIconSurface;
 #endif
 #if !USE_FORCED_GLES
 	ShaderManager::destroy();
@@ -362,13 +364,26 @@ void OpenGLGraphicsManager::updateScreen() {
 		return;
 	}
 
+#ifdef USE_OSD
+	{
+		Common::StackLock lock(_osdMutex);
+		if (_osdMessageChangeRequest) {
+			osdMessageUpdateSurface();
+		}
+	}
+
+	if (_osdIconSurface) {
+		_osdIconSurface->updateGLTexture();
+	}
+#endif
+
 	// We only update the screen when there actually have been any changes.
 	if (   !_forceRedraw
 	    && !_gameScreen->isDirty()
 	    && !(_overlayVisible && _overlay->isDirty())
 	    && !(_cursorVisible && _cursor && _cursor->isDirty())
 #ifdef USE_OSD
-	    && _osdAlpha == 0
+	    && !_osdMessageSurface && !_osdIconSurface
 #endif
 	    ) {
 		return;
@@ -381,9 +396,6 @@ void OpenGLGraphicsManager::updateScreen() {
 		_cursor->updateGLTexture();
 	}
 	_overlay->updateGLTexture();
-#ifdef USE_OSD
-	_osd->updateGLTexture();
-#endif
 
 	// Clear the screen buffer.
 	if (_scissorOverride && !_overlayVisible) {
@@ -424,29 +436,45 @@ void OpenGLGraphicsManager::updateScreen() {
 
 #ifdef USE_OSD
 	// Fourth step: Draw the OSD.
-	if (_osdAlpha > 0) {
-		Common::StackLock lock(_osdMutex);
-
+	if (_osdMessageSurface) {
 		// Update alpha value.
-		const int diff = g_system->getMillis(false) - _osdFadeStartTime;
+		const int diff = g_system->getMillis(false) - _osdMessageFadeStartTime;
 		if (diff > 0) {
-			if (diff >= kOSDFadeOutDuration) {
+			if (diff >= kOSDMessageFadeOutDuration) {
 				// Back to full transparency.
-				_osdAlpha = 0;
+				_osdMessageAlpha = 0;
 			} else {
 				// Do a fade out.
-				_osdAlpha = kOSDInitialAlpha - diff * kOSDInitialAlpha / kOSDFadeOutDuration;
+				_osdMessageAlpha = kOSDMessageInitialAlpha - diff * kOSDMessageInitialAlpha / kOSDMessageFadeOutDuration;
 			}
 		}
 
 		// Set the OSD transparency.
-		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
+
+		int dstX = (_outputScreenWidth - _osdMessageSurface->getWidth()) / 2;
+		int dstY = (_outputScreenHeight - _osdMessageSurface->getHeight()) / 2;
 
 		// Draw the OSD texture.
-		g_context.getActivePipeline()->drawTexture(_osd->getGLTexture(), 0, 0, _outputScreenWidth, _outputScreenHeight);
+		g_context.getActivePipeline()->drawTexture(_osdMessageSurface->getGLTexture(),
+		                                           dstX, dstY, _osdMessageSurface->getWidth(), _osdMessageSurface->getHeight());
 
 		// Reset color.
 		g_context.getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+		if (_osdMessageAlpha <= 0) {
+			delete _osdMessageSurface;
+			_osdMessageSurface = nullptr;
+		}
+	}
+
+	if (_osdIconSurface) {
+		int dstX = _outputScreenWidth - _osdIconSurface->getWidth() - kOSDIconRightMargin;
+		int dstY = kOSDIconTopMargin;
+
+		// Draw the OSD icon texture.
+		g_context.getActivePipeline()->drawTexture(_osdIconSurface->getGLTexture(),
+		                                           dstX, dstY, _osdIconSurface->getWidth(), _osdIconSurface->getHeight());
 	}
 #endif
 
@@ -703,84 +731,112 @@ void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uin
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 #ifdef USE_OSD
 	// HACK: Actually no client code should use graphics functions from
-	// another thread. But the MT-32 emulator still does, thus we need to
-	// make sure this doesn't happen while a updateScreen call is done.
+	// another thread. But the MT-32 emulator and network synchronization still do,
+	// thus we need to make sure this doesn't happen while a updateScreen call is done.
 	Common::StackLock lock(_osdMutex);
 
-	// Slip up the lines.
+	_osdMessageChangeRequest = true;
+
+	_osdMessageNextData = msg;
+#endif
+}
+
+#ifdef USE_OSD
+void OpenGLGraphicsManager::osdMessageUpdateSurface() {
+	// Split up the lines.
 	Common::Array<Common::String> osdLines;
-	Common::StringTokenizer tokenizer(msg, "\n");
+	Common::StringTokenizer tokenizer(_osdMessageNextData, "\n");
 	while (!tokenizer.empty()) {
 		osdLines.push_back(tokenizer.nextToken());
 	}
 
 	// Do the actual drawing like the SDL backend.
 	const Graphics::Font *font = getFontOSD();
-	Graphics::Surface *dst = _osd->getSurface();
-	_osd->fill(0);
-	_osd->flagDirty();
 
 	// Determine a rect which would contain the message string (clipped to the
 	// screen dimensions).
 	const int vOffset = 6;
 	const int lineSpacing = 1;
 	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
-	int width = 0;
-	int height = lineHeight * osdLines.size() + 2 * vOffset;
+	uint width = 0;
+	uint height = lineHeight * osdLines.size() + 2 * vOffset;
 	for (uint i = 0; i < osdLines.size(); i++) {
-		width = MAX(width, font->getStringWidth(osdLines[i]) + 14);
+		width = MAX<uint>(width, font->getStringWidth(osdLines[i]) + 14);
 	}
 
 	// Clip the rect
-	width  = MIN<int>(width,  dst->w);
-	height = MIN<int>(height, dst->h);
+	width  = MIN<uint>(width,  _displayWidth);
+	height = MIN<uint>(height, _displayHeight);
 
-	int dstX = (dst->w - width) / 2;
-	int dstY = (dst->h - height) / 2;
+	delete _osdMessageSurface;
+	_osdMessageSurface = nullptr;
+
+	_osdMessageSurface = createSurface(_defaultFormatAlpha);
+	assert(_osdMessageSurface);
+	// We always filter the osd with GL_LINEAR. This assures it's
+	// readable in case it needs to be scaled and does not affect it
+	// otherwise.
+	_osdMessageSurface->enableLinearFiltering(true);
+
+	_osdMessageSurface->allocate(width, height);
+
+	Graphics::Surface *dst = _osdMessageSurface->getSurface();
 
 	// Draw a dark gray rect.
 	const uint32 color = dst->format.RGBToColor(40, 40, 40);
-	dst->fillRect(Common::Rect(dstX, dstY, dstX + width, dstY + height), color);
+	dst->fillRect(Common::Rect(0, 0, width, height), color);
 
-	// Render the message, centered, and in white
+	// Render the message in white
 	const uint32 white = dst->format.RGBToColor(255, 255, 255);
 	for (uint i = 0; i < osdLines.size(); ++i) {
 		font->drawString(dst, osdLines[i],
-		                 dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
+		                 0, i * lineHeight + vOffset + lineSpacing, width,
 		                 white, Graphics::kTextAlignCenter);
 	}
 
-	// Init the OSD display parameters.
-	_osdAlpha = kOSDInitialAlpha;
-	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
-#endif
-}
-
-void OpenGLGraphicsManager::copyRectToOSD(const void *buf, int pitch, int x, int y, int w, int h) {
-#ifdef USE_OSD
-	_osd->copyRectToTexture(x, y, w, h, buf, pitch);
-#endif
-}
-
-void OpenGLGraphicsManager::clearOSD() {
-#ifdef USE_OSD
-	// HACK: Actually no client code should use graphics functions from
-	// another thread. But the MT-32 emulator still does, thus we need to
-	// make sure this doesn't happen while a updateScreen call is done.
-	Common::StackLock lock(_osdMutex);
-
-	Graphics::Surface *dst = _osd->getSurface();
-	_osd->fill(0);
-	_osd->flagDirty();
+	_osdMessageSurface->updateGLTexture();
 
 	// Init the OSD display parameters.
-	_osdAlpha = kOSDInitialAlpha;
-	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
-#endif
-}
+	_osdMessageAlpha = kOSDMessageInitialAlpha;
+	_osdMessageFadeStartTime = g_system->getMillis() + kOSDMessageFadeOutDelay;
 
-Graphics::PixelFormat OpenGLGraphicsManager::getOSDFormat() {
-	return _defaultFormatAlpha;
+	// Clear the text update request
+	_osdMessageNextData.clear();
+	_osdMessageChangeRequest = false;
+}
+#endif
+
+void OpenGLGraphicsManager::displayActivityIconOnOSD(const Graphics::Surface *icon) {
+#ifdef USE_OSD
+	if (_osdIconSurface) {
+		delete _osdIconSurface;
+		_osdIconSurface = nullptr;
+
+		// Make sure the icon is cleared on the next update
+		_forceRedraw = true;
+	}
+
+	if (icon) {
+		Graphics::Surface *converted = icon->convertTo(_defaultFormatAlpha);
+
+		_osdIconSurface = createSurface(_defaultFormatAlpha);
+		assert(_osdIconSurface);
+		// We always filter the osd with GL_LINEAR. This assures it's
+		// readable in case it needs to be scaled and does not affect it
+		// otherwise.
+		_osdIconSurface->enableLinearFiltering(true);
+
+		_osdIconSurface->allocate(converted->w, converted->h);
+
+		Graphics::Surface *dst = _osdIconSurface->getSurface();
+
+		// Copy the icon to the texture
+		dst->copyRectToSurface(*converted, 0, 0, Common::Rect(0, 0, converted->w, converted->h));
+
+		converted->free();
+		delete converted;
+	}
+#endif
 }
 
 void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num) {
@@ -848,22 +904,6 @@ void OpenGLGraphicsManager::setActualScreenSize(uint width, uint height) {
 	}
 	_overlay->allocate(overlayWidth, overlayHeight);
 	_overlay->fill(0);
-
-#ifdef USE_OSD
-	if (!_osd || _osd->getFormat() != _defaultFormatAlpha) {
-		delete _osd;
-		_osd = nullptr;
-
-		_osd = createSurface(_defaultFormatAlpha);
-		assert(_osd);
-		// We always filter the osd with GL_LINEAR. This assures it's
-		// readable in case it needs to be scaled and does not affect it
-		// otherwise.
-		_osd->enableLinearFiltering(true);
-	}
-	_osd->allocate(_overlay->getWidth(), _overlay->getHeight());
-	_osd->fill(0);
-#endif
 
 	// Re-setup the scaling for the screen and cursor
 	recalculateDisplayArea();
@@ -949,8 +989,12 @@ void OpenGLGraphicsManager::notifyContextCreate(const Graphics::PixelFormat &def
 	}
 
 #ifdef USE_OSD
-	if (_osd) {
-		_osd->recreate();
+	if (_osdMessageSurface) {
+		_osdMessageSurface->recreate();
+	}
+
+	if (_osdIconSurface) {
+		_osdIconSurface->recreate();
 	}
 #endif
 }
@@ -969,8 +1013,12 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	}
 
 #ifdef USE_OSD
-	if (_osd) {
-		_osd->destroy();
+	if (_osdMessageSurface) {
+		_osdMessageSurface->destroy();
+	}
+
+	if (_osdIconSurface) {
+		_osdIconSurface->destroy();
 	}
 #endif
 

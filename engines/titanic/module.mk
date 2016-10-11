@@ -167,6 +167,7 @@ MODULE_OBJS := \
 	game/pet_disabler.o \
 	game/phonograph.o \
 	game/phonograph_lid.o \
+	game/place_holder_item.o \
 	game/play_music_button.o \
 	game/play_on_act.o \
 	game/port_hole.o \
@@ -199,6 +200,7 @@ MODULE_OBJS := \
 	game/titania_still_control.o \
 	game/up_lighter.o \
 	game/useless_lever.o \
+	game/variable_list.o \
 	game/volume_control.o \
 	game/wheel_button.o \
 	game/wheel_hotspot.o \
@@ -370,7 +372,6 @@ MODULE_OBJS := \
 	pet_control/pet_gfx_element.o \
 	pet_control/pet_inventory.o \
 	pet_control/pet_inventory_glyphs.o \
-	pet_control/pet_message.o \
 	pet_control/pet_starfield.o \
 	pet_control/pet_real_life.o \
 	pet_control/pet_remote.o \
@@ -378,6 +379,7 @@ MODULE_OBJS := \
 	pet_control/pet_rooms.o \
 	pet_control/pet_rooms_glyphs.o \
 	pet_control/pet_section.o \
+	pet_control/pet_translation.o \
 	pet_control/pet_drag_chev.o \
 	pet_control/pet_graphic2.o \
 	pet_control/pet_graphic.o \
@@ -393,6 +395,7 @@ MODULE_OBJS := \
 	pet_control/pet_pannel3.o \
 	pet_control/pet_quit.o \
 	pet_control/pet_save.o \
+	pet_control/pet_show_translation.o \
 	pet_control/pet_slider.o \
 	pet_control/pet_sound.o \
 	pet_control/pet_text.o \
@@ -463,6 +466,7 @@ MODULE_OBJS := \
 	support/font.o \
 	support/image.o \
 	support/image_decoders.o \
+	support/strings.o \
 	support/mouse_cursor.o \
 	support/movie.o \
 	support/movie_clip.o \
@@ -470,6 +474,7 @@ MODULE_OBJS := \
 	support/movie_range_info.o \
 	support/movie_manager.o \
 	support/credit_text.o \
+	support/transparency_surface.o \
 	support/rect.o \
 	support/screen_manager.o \
 	support/simple_file.o \

@@ -42,7 +42,7 @@ MystArea::MystArea(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream
 		_rect.top = rlstStream->readSint16LE();
 
 		if (_rect.top == -1) {
-			warning("Invalid _rect.top of -1 found - clamping to 0");
+			debugC(kDebugResource, "Invalid _rect.top of -1 found - clamping to 0");
 			_rect.top = 0;
 		}
 

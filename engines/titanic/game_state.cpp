@@ -89,7 +89,7 @@ void CGameState::setMode(GameStateMode newMode) {
 	} else if (newMode != GSMODE_CUTSCENE && newMode != _mode) {
 		if (sm && sm->_mouseCursor)
 			sm->_mouseCursor->show();
-	
+
 		if (_gameManager)
 			_gameManager->unlockInputHandler();
 	}

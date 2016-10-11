@@ -187,7 +187,7 @@ void BinkDecoder::readNextPacket() {
 			audio.sampleCount = _bink->readUint32LE() / (2 * audio.channels);
 
 			audio.bits = new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
-					audioPacketStart + 4, audioPacketEnd), true);
+					audioPacketStart + 4, audioPacketEnd), DisposeAfterUse::YES);
 
 			audioTrack->decodePacket();
 
@@ -204,7 +204,7 @@ void BinkDecoder::readNextPacket() {
 	uint32 videoPacketEnd   = _bink->pos() + frameSize;
 
 	frame.bits = new Common::BitStream32LELSB(new Common::SeekableSubReadStream(_bink,
-			videoPacketStart, videoPacketEnd), true);
+			videoPacketStart, videoPacketEnd), DisposeAfterUse::YES);
 
 	videoTrack->decodePacket(frame);
 

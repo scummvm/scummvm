@@ -32,7 +32,7 @@ class CSendToSucc : public CToggleSwitch {
 public:
 	CLASSDEF;
 	CSendToSucc();
-	
+
 	/**
 	 * Save the data for the class to file
 	 */

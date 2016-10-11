@@ -63,7 +63,7 @@ void CViewItem::save(SimpleFile *file, int indent) {
 
 void CViewItem::load(SimpleFile *file) {
 	int val = file->readNumber();
-	
+
 	switch (val) {
 	case 1:
 		_resourceKey.load(file);
@@ -86,7 +86,7 @@ bool CViewItem::getResourceKey(CResourceKey *key) {
 }
 
 void CViewItem::leaveView(CViewItem *newView) {
-	// Only do the processing if we've been passed a view, and it's not the same 
+	// Only do the processing if we've been passed a view, and it's not the same
 	if (newView && newView != this) {
 		CLeaveViewMsg viewMsg(this, newView);
 		viewMsg.execute(this, nullptr, MSGFLAG_SCAN);
@@ -112,7 +112,7 @@ void CViewItem::leaveView(CViewItem *newView) {
 }
 
 void CViewItem::preEnterView(CViewItem *newView) {
-	// Only do the processing if we've been passed a view, and it's not the same 
+	// Only do the processing if we've been passed a view, and it's not the same
 	if (newView && newView != this) {
 		CPreEnterViewMsg viewMsg(this, newView);
 		viewMsg.execute(newView, nullptr, MSGFLAG_SCAN);
@@ -134,7 +134,7 @@ void CViewItem::preEnterView(CViewItem *newView) {
 }
 
 void CViewItem::enterView(CViewItem *newView) {
-	// Only do the processing if we've been passed a view, and it's not the same 
+	// Only do the processing if we've been passed a view, and it's not the same
 	if (newView && newView != this) {
 		CEnterViewMsg viewMsg(this, newView);
 		viewMsg.execute(newView, nullptr, MSGFLAG_SCAN);

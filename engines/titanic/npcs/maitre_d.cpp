@@ -156,7 +156,7 @@ bool CMaitreD::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 
 	if (msg->_value2 != 2) {
 		msg->_names = NAMES;
-		
+
 		CAnimateMaitreDMsg animMsg;
 		if (_field12C)
 			animMsg._value = 0;

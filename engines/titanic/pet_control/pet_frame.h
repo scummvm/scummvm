@@ -53,12 +53,12 @@ public:
 	 * Sets up the section
 	 */
 	virtual bool setup(CPetControl *petControl);
-	
+
 	/**
 	 * Sets up the section
 	 */
 	virtual bool reset();
-	
+
 	/**
 	 * Handles mouse down messages
 	 */

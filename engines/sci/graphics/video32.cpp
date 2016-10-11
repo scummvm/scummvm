@@ -58,7 +58,10 @@ SEQPlayer::SEQPlayer(SegManager *segMan) :
 void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const int16 x, const int16 y) {
 	delete _decoder;
 	_decoder = new SEQDecoder(numTicks);
-	_decoder->loadFile(fileName);
+	if (!_decoder->loadFile(fileName)) {
+		warning("[SEQPlayer::play]: Failed to load %s", fileName.c_str());
+		return;
+	}
 
 	// NOTE: In the original engine, video was output directly to the hardware,
 	// bypassing the game's rendering engine. Instead of doing this, we use a
@@ -86,9 +89,8 @@ void SEQPlayer::play(const Common::String &fileName, const int16 numTicks, const
 	_decoder->start();
 
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
 		renderFrame();
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
 	}
 
 	_segMan->freeBitmap(_screenItem->_celInfo.bitmap);
@@ -119,8 +121,8 @@ void SEQPlayer::renderFrame() const {
 	}
 
 	g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-	g_sci->getSciDebugger()->onFrame();
 	g_sci->_gfxFrameout->frameOut(true);
+	g_sci->getSciDebugger()->onFrame();
 }
 
 #pragma mark -
@@ -311,9 +313,8 @@ AVIPlayer::IOStatus AVIPlayer::play(const int16 from, const int16 to, const int1
 void AVIPlayer::renderVideo() const {
 	_decoder->start();
 	while (!g_engine->shouldQuit() && !_decoder->endOfVideo()) {
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 	}
@@ -408,8 +409,8 @@ void AVIPlayer::renderFrame() const {
 		}
 
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->frameOut(true);
+		g_sci->getSciDebugger()->onFrame();
 	} else {
 		assert(surface->format.bytesPerPixel == 4);
 
@@ -457,9 +458,8 @@ AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
 			break;
 		}
 
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		g_sci->sleep(_decoder->getTimeToNextFrame());
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 
@@ -484,13 +484,6 @@ AVIPlayer::EventFlags AVIPlayer::playUntilEvent(EventFlags flags) {
 				stopFlag = kEventFlagEscapeKey;
 				break;
 			}
-		}
-
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
-			stopFlag = kEventFlagHotRectangle;
-			break;
 		}
 	}
 
@@ -635,7 +628,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 	const int32 maxFrameNo = (int32)(_decoder->getFrameCount() - 1);
 
 	if ((flags & kEventFlagToFrame) && lastFrameNo > 0) {
-		_decoder->setEndFrame(MIN((int32)lastFrameNo, maxFrameNo));
+		_decoder->setEndFrame(MIN<int32>(lastFrameNo, maxFrameNo));
 	} else {
 		_decoder->setEndFrame(maxFrameNo);
 	}
@@ -645,7 +638,7 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 		if (yieldInterval == -1 && !(flags & kEventFlagToFrame)) {
 			_yieldInterval = lastFrameNo;
 		} else if (yieldInterval != -1) {
-			_yieldInterval = MIN((int32)yieldInterval, maxFrameNo);
+			_yieldInterval = MIN<int32>(yieldInterval, maxFrameNo);
 		}
 	} else {
 		_yieldInterval = maxFrameNo;
@@ -655,19 +648,17 @@ VMDPlayer::EventFlags VMDPlayer::kernelPlayUntilEvent(const EventFlags flags, co
 }
 
 VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
-	// Flushing all the keyboard and mouse events out of the event manager to
-	// avoid letting any events queued from before the video started from
-	// accidentally activating an event callback
+	// Flushing all the keyboard and mouse events out of the event manager
+	// keeps events queued from before the start of playback from accidentally
+	// activating a video stop flag
 	for (;;) {
-		const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_MOUSE_PRESS | SCI_EVENT_MOUSE_RELEASE | SCI_EVENT_QUIT);
+		const SciEvent event = _eventMan->getSciEvent(SCI_EVENT_KEYBOARD | SCI_EVENT_MOUSE_PRESS | SCI_EVENT_MOUSE_RELEASE | SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_QUIT);
 		if (event.type == SCI_EVENT_NONE) {
 			break;
 		} else if (event.type == SCI_EVENT_QUIT) {
 			return kEventFlagEnd;
 		}
 	}
-
-	_decoder->pauseVideo(false);
 
 	if (flags & kEventFlagReverse) {
 		// NOTE: This flag may not work properly since SSCI does not care
@@ -698,12 +689,12 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 		if (_doublePixels) {
 			vmdScaleInfo.x = 256;
 			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalDoScaling32;
+			vmdScaleInfo.signal = kScaleSignalManual;
 			vmdRect.right += vmdRect.width();
 			vmdRect.bottom += vmdRect.height();
 		} else if (_stretchVertical) {
 			vmdScaleInfo.y = 256;
-			vmdScaleInfo.signal = kScaleSignalDoScaling32;
+			vmdScaleInfo.signal = kScaleSignalManual;
 			vmdRect.bottom += vmdRect.height();
 		}
 
@@ -748,6 +739,14 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 
 		g_sci->_gfxFrameout->addScreenItem(*_screenItem);
 
+		// HACK: When VMD playback is allowed to yield back to the VM, this
+		// causes the VMD decoder to freak out for some reason and video output
+		// starts jittering horribly. This problem does not happen if audio sync
+		// is disabled, but this causes some audible clicking between frames
+		// of audio (and, presumably, will cause some AV sync problems). Still,
+		// that's better than really bad jitter.
+		_decoder->setAudioSync(!(flags & kEventFlagYieldToVM));
+
 		_decoder->start();
 	}
 
@@ -758,9 +757,11 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			break;
 		}
 
-		g_sci->getEngineState()->speedThrottler(_decoder->getTimeToNextFrame());
-		g_sci->getEngineState()->_throttleTrigger = true;
-		if (_decoder->needsUpdate()) {
+		// Sleeping any more than 1/60th of a second will make the mouse feel
+		// very sluggish during VMD action sequences because the frame rate of
+		// VMDs is usually only 15fps
+		g_sci->sleep(MIN<uint32>(10, _decoder->getTimeToNextFrame()));
+		while (_decoder->needsUpdate()) {
 			renderFrame();
 		}
 
@@ -802,15 +803,13 @@ VMDPlayer::EventFlags VMDPlayer::playUntilEvent(const EventFlags flags) {
 			}
 		}
 
-		// TODO: Hot rectangles
-		if ((flags & kEventFlagHotRectangle) /* && event.type == SCI_EVENT_HOT_RECTANGLE */) {
-			warning("Hot rectangles not implemented in VMD player");
+		event = _eventMan->getSciEvent(SCI_EVENT_HOT_RECTANGLE | SCI_EVENT_PEEK);
+		if ((flags & kEventFlagHotRectangle) && event.type == SCI_EVENT_HOT_RECTANGLE) {
 			stopFlag = kEventFlagHotRectangle;
 			break;
 		}
 	}
 
-	_decoder->pauseVideo(true);
 	return stopFlag;
 }
 
@@ -857,9 +856,8 @@ void VMDPlayer::renderFrame() const {
 		}
 	} else {
 		g_sci->_gfxFrameout->updateScreenItem(*_screenItem);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->_gfxFrameout->throttle();
+		g_sci->getSciDebugger()->onFrame();
 	}
 }
 
@@ -891,7 +889,7 @@ void VMDPlayer::restrictPalette(const uint8 startColor, const int16 endColor) {
 	// At least GK2 sends 256 as the end color, which is wrong,
 	// but works in the original engine as the storage size is 4 bytes
 	// and used values are clamped to 0-255
-	_endColor = MIN((int16)255, endColor);
+	_endColor = MIN<int16>(255, endColor);
 }
 
 } // End of namespace Sci

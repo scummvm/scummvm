@@ -217,7 +217,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int letterY = 0, letterX = 0, i;
 	uint len = strlen(said);
 	byte c;
-	
+
 	byte *srcSurface = tableSurface;
 	if (_lang == kSpanish && currentChapter == 6)
 		srcSurface = extraSurface;
@@ -329,7 +329,7 @@ bool DrasculaEngine::textFitsCentered(char *text, int x) {
 	//if (x > 160)
 	//	x = 315 - x;
 	//return (halfLen <= x);
-	
+
 	// The commented out code above is what the original engine is doing. Instead of testing the
 	// upper bound if x is greater than 160 it takes the complement to 315 and test only the lower
 	// bounds.
@@ -349,15 +349,15 @@ bool DrasculaEngine::textFitsCentered(char *text, int x) {
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	char msg[200];
 	Common::strlcpy(msg, message, 200);
-	
+
 	// We make sure to have a width of at least 120 pixels by clipping the center.
 	// In theory since the screen width is 320 I would expect something like this:
 	// x = CLIP<int>(x, 60, 260);
 	// return (x - halfLen >= 0 && x + halfLen <= 319);
-	
+
 	// The engines does things differently though. It tries to clips text at 315 instead of 319.
 	// See also the comment in textFitsCentered().
-	
+
 	textX = CLIP<int>(textX, 60, 255);
 
 	// If the message fits on screen as-is, just print it here
@@ -424,7 +424,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 				Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
 		}
 	}
-	
+
 	// The original starts to draw (nbLines + 2) lines above textY.
 	// Also clip to the screen height although the original does not do it.
 	int y = textY - (curLine + 2) * CHAR_HEIGHT;

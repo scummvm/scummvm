@@ -80,7 +80,7 @@ int STFont::getTextBounds(const CString &str, int maxWidth, Point *sizeOut) cons
 	if (_fontHeight == 0 || !_dataPtr)
 		// No font, so return immediately
 		return 0;
-	
+
 	// Loop through the characters of the string
 	if (!str.empty()) {
 		for (const char *strP = str.c_str(); *strP; ++strP) {
@@ -296,8 +296,9 @@ void STFont::copyRect(CVideoSurface *surface, const Point &pt, Rect &rect) {
 		for (int yp = rect.top; yp < rect.bottom; ++yp, lineP += surface->getWidth()) {
 			uint16 *destP = lineP;
 			for (int xp = rect.left; xp < rect.right; ++xp, ++destP) {
-				const byte *srcP = _dataPtr + yp * _dataWidth + xp;
-				surface->changePixel(destP, &color, *srcP >> 3, true);
+				const byte *transP = _dataPtr + yp * _dataWidth + xp;
+				surface->copyPixel(destP, &color, *transP >> 3,
+					surface->getRawSurface()->format, true);
 			}
 		}
 
@@ -330,7 +331,7 @@ void STFont::checkLineWrap(Point &textSize, int maxWidth, const char *&str) cons
 			flag = true;
 		}
 	}
-	
+
 	if ((textSize.x + totalWidth) >= maxWidth && totalWidth < maxWidth) {
 		// Word wrap
 		textSize.x = 0;

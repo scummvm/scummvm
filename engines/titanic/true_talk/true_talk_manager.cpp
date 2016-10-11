@@ -45,7 +45,7 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 
 /*------------------------------------------------------------------------*/
 
-CTrueTalkManager::CTrueTalkManager(CGameManager *owner) : 
+CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
 		_gameManager(owner), _scripts(&_titleEngine), _currentCharId(0),
 		_dialogueFile(nullptr), _dialogueId(0) {
 	_titleEngine.setup(3, 3);
@@ -209,7 +209,7 @@ void CTrueTalkManager::preLoad() {
 void CTrueTalkManager::removeCompleted() {
 	for (TTtalkerList::iterator i = _talkers.begin(); i != _talkers.end(); ) {
 		TTtalker *talker = *i;
-		
+
 		if (talker->_done) {
 			i = _talkers.erase(i);
 			delete talker;
@@ -222,7 +222,7 @@ void CTrueTalkManager::removeCompleted() {
 void CTrueTalkManager::start(CTrueTalkNPC *npc, uint id, CViewItem *view) {
 	TTnpcScript *npcScript = getNpcScript(npc);
 	TTroomScript *roomScript = getRoomScript();
-	
+
 	_titleEngine.reset();
 	uint charId = npcScript->charId();
 	loadAssets(npc, charId);
@@ -337,7 +337,7 @@ void CTrueTalkManager::processInput(CTrueTalkNPC *npc, CTextInputMsg *msg, CView
 		loadAssets(npc, npcScript->charId());
 		setDialogue(npc, roomScript, view);
 	}
-	
+
 	_currentNPC = nullptr;
 }
 
@@ -376,7 +376,7 @@ CString CTrueTalkManager::readDialogueString() {
 		size_t entrySize = textRes->size();
 		byte *tempBuffer = (entrySize < STRING_BUFFER_SIZE) ? buffer :
 			new byte[entrySize + 1];
-		
+
 		_dialogueFile->read(textRes, tempBuffer, entrySize);
 		buffer[entrySize] = '\0';
 
@@ -406,7 +406,7 @@ uint CTrueTalkManager::readDialogueSpeech() {
 	for (uint idx = 0; idx < _titleEngine._indexes.size(); ++idx) {
 		CWaveFile *waveFile = _gameManager->_sound.getTrueTalkSound(
 			_dialogueFile, _titleEngine._indexes[idx] - _dialogueId);
-		if (waveFile) {			
+		if (waveFile) {
 			_speechDuration += waveFile->getDuration();
 		}
 	}

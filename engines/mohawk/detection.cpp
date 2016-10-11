@@ -114,7 +114,7 @@ bool MohawkEngine_Riven::hasFeature(EngineFeature f) const {
 static const PlainGameDescriptor mohawkGames[] = {
 	{"mohawk", "Mohawk Game"},
 	{"myst", "Myst"},
-	{"MakingOfMyst", "The Making of Myst"},
+	{"makingofmyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
 	{"zoombini", "Logical Journey of the Zoombinis"},
 	{"cstime", "Where in Time is Carmen Sandiego?"},
