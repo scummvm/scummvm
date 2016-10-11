@@ -259,9 +259,18 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	generateFont(macFont, MacFont(macFont.getId(), maxSize, macFont.getSlant()));
 }
 
-void MacFontManager::generateFont(MacFont fromFont, MacFont toFont) {
+void MacFontManager::generateFont(MacFont toFont, MacFont fromFont) {
 	debugN("Found font substitute for font %s ", getFontName(fromFont));
 	debug("as %s", getFontName(toFont));
+
+	Graphics::BdfFont *bdfFont = (Graphics::BdfFont *)getFont(fromFont);
+
+	Graphics::BdfFont *font = Graphics::BdfFont::scaleFont(bdfFont, toFont.getSize());
+
+	toFont.setGenerated(true);
+
+	FontMan.assignFontToName(getFontName(toFont), font);
+	_fontRegistry.setVal(getFontName(toFont), &toFont);
 }
 
 } // End of namespace Graphics

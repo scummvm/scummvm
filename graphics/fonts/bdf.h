@@ -76,6 +76,7 @@ public:
 	static BdfFont *loadFont(Common::SeekableReadStream &stream);
 	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
 	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
+	static BdfFont *scaleFont(BdfFont *src, int newSize);
 private:
 	int mapToIndex(uint32 ch) const;
 
