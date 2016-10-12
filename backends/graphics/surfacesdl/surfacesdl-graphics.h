@@ -250,6 +250,10 @@ protected:
 		bool aspectRatioCorrection;
 		AspectRatio desiredAspectRatio;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		bool filtering;
+#endif
+
 		int mode;
 		int scaleFactor;
 
@@ -383,6 +387,9 @@ protected:
 
 	virtual void setFullscreenMode(bool enable);
 	virtual void setAspectRatioCorrection(bool enable);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual void setFilteringMode(bool enable);
+#endif
 
 	virtual int effectiveScreenHeight() const;
 
