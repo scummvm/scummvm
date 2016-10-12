@@ -1317,6 +1317,10 @@ arguments -- see the next section.
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
   -g, --gfx-mode=MODE      Select graphics scaler (see also section 5.3)
+  --filtering              Force filtered graphics mode
+  --no-filtering           Force unfiltered graphics mode
+
+  
   --gui-theme=THEME        Select GUI theme (default, modern, classic)
   --themepath=PATH         Path to where GUI themes are stored
   --list-themes            Display list of all usable GUI themes
@@ -1502,6 +1506,7 @@ other games.
                              modern monitors. Aspect-ratio correction
                              stretches the image to use 320x240 pixels
                              instead, or a multiple thereof
+    Ctrl-Alt f             - Enable/disable graphics filtering
     Alt-Enter              - Toggles full screen/windowed
     Alt-s                  - Make a screenshot (SDL backend only)
     Ctrl-F7                - Open virtual keyboard (if enabled)
@@ -2426,8 +2431,8 @@ The following keywords are recognized:
     aspect_ratio       bool     Enable aspect ratio correction
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
-                                hq2x, hq3x, tv2x, dotmatrix, opengl_linear,
-                                opengl_nearest)
+                                hq2x, hq3x, tv2x, dotmatrix, opengl)
+    filtering          bool     Enable graphics filtering
 
     confirm_exit       bool     Ask for confirmation by the user before
                                 quitting (SDL backend only).
