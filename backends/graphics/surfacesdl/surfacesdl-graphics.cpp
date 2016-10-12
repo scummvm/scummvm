@@ -2341,6 +2341,24 @@ bool SurfaceSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		internUpdateScreen();
 		return true;
 	}
+	
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// Ctrl-Alt-f toggles filtering
+	if (key == 'f') {
+		beginGFXTransaction();
+		setFeatureState(OSystem::kFeatureFilteringMode, !_videoMode.filtering);
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+			displayMessageOnOSD(_("Filtering enabled"));
+		} else {
+			displayMessageOnOSD(_("Filtering disabled"));
+		}
+#endif
+		internUpdateScreen();
+		return true;
+	}
+#endif
 
 	int newMode = -1;
 	int factor = _videoMode.scaleFactor - 1;
@@ -2414,6 +2432,10 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 			if (keyValue >= ARRAYSIZE(s_gfxModeSwitchTable))
 				return false;
 		}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (event.kbd.keycode == 'f')
+			return true;
+#endif
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
 	return false;
